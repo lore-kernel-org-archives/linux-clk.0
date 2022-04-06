@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0CD3C4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE9DC4167E
 	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 17:56:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239491AbiDFR6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46382 "EHLO
+        id S239988AbiDFR6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 13:58:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240191AbiDFR55 (ORCPT
+        with ESMTP id S240192AbiDFR55 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 13:57:57 -0400
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0653C1F46;
-        Wed,  6 Apr 2022 09:19:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B92012B5F0;
+        Wed,  6 Apr 2022 09:19:10 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 8CEE520004;
-        Wed,  6 Apr 2022 16:19:02 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 50E7C2000F;
+        Wed,  6 Apr 2022 16:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649261944;
+        t=1649261949;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ufacyo2BIZ8ell+Qh9P+IyEHIkAIPJ9lkLf9WuXjjMM=;
-        b=IWneDAfeH3U/5eQlvH3mKSEOfI1lyVMKH474IFG0uEfBpnQOub14H+vkUBY6Gcz1TQJHuG
-        D1uRW7c+elQYdIaRMFgxq/1tLiLRd/vCl+yVzdgvDQvpkaHDv3i5TB9jE6D5diqlckKG0r
-        osi5SvJdC5KjjVdJd7P8/GFSS0y2i7YeA4t4oxo6iTbFf3CnZk5NrU++cDqG9cr0lE+bnA
-        E6P4qjxfRmiCA5WabSfClx9DEKJWN42XLyL+i2gKCqQ43iqJnzXYdaX9GSV+3L6T7SQzHa
-        T6UQ5bfHV/C+YWRo4FR351+sf97ofr44K5joKmHH2Gd4KdzQUFaFSaHWUrvqXw==
+        bh=XZQwq9EVWiu0S9glnJx6yd3klQequgPHgMCbo1b5VzU=;
+        b=FsvGVXL9fu5CFh3MsiFusTfXlZDFmOPcG8opJdpgs1YRwwX2w0t4/B8a1VFEdcCPocYqAn
+        dh7BhNezbKzIzHPUli/H0naBgcSxKQYWsaNrW9GCkOgKgY3UtK8N77SCYv6TU/tmjK1dbS
+        ZtgNGINM8WftNeMMPOHiCvJeExJHBHhF+eJM594Ts/Oi/khvC7P4S3rU86+JFwKmTZSofT
+        0hMZJxQxUBXM2sRb8Vp1nrg0Kt/7pnOYZS0VU7jjl43wRlLD5xLQDOh0sBbtvqXxF59uKB
+        +hhJPIhlKB5gvd6oZcnNnNveXJqUErLKqaNXnpU7BWiS6tyHHi2LOpOyUOGIQQ==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -49,9 +49,9 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
         Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 2/9] dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
-Date:   Wed,  6 Apr 2022 18:18:49 +0200
-Message-Id: <20220406161856.1669069-3-miquel.raynal@bootlin.com>
+Subject: [PATCH v8 4/9] soc: renesas: rzn1-sysc: Export function to set dmamux
+Date:   Wed,  6 Apr 2022 18:18:51 +0200
+Message-Id: <20220406161856.1669069-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
 References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
@@ -62,39 +62,99 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This system controller contains several registers that have nothing to
-do with the clock handling, like the DMA mux register. Describe this
-part of the system controller as a subnode.
+The dmamux register is located within the system controller.
+
+Without syscon, we need an extra helper in order to give write access to
+this register to a dmamux driver.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- .../bindings/clock/renesas,r9a06g032-sysctrl.yaml     | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/renesas/r9a06g032-clocks.c        | 35 ++++++++++++++++++-
+ include/linux/soc/renesas/r9a06g032-sysctrl.h | 11 ++++++
+ 2 files changed, 45 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-index 25dbb0fac065..95bf485c6cec 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-@@ -39,6 +39,17 @@ properties:
-   '#power-domain-cells':
-     const: 0
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index c99942f0e4d4..052d99059981 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -20,9 +20,12 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/slab.h>
++#include <linux/soc/renesas/r9a06g032-sysctrl.h>
+ #include <linux/spinlock.h>
+ #include <dt-bindings/clock/r9a06g032-sysctrl.h>
  
-+  '#address-cells':
-+    const: 1
++#define R9A06G032_SYSCTRL_DMAMUX 0xA0
 +
-+  '#size-cells':
-+    const: 1
+ struct r9a06g032_gate {
+ 	u16 gate, reset, ready, midle,
+ 		scon, mirack, mistat;
+@@ -315,6 +318,30 @@ struct r9a06g032_priv {
+ 	void __iomem *reg;
+ };
+ 
++static struct r9a06g032_priv *sysctrl_priv;
 +
-+patternProperties:
-+  "^dma-router@[a-f0-9]+$":
-+    type: object
-+    $ref: "../dma/renesas,rzn1-dmamux.yaml#"
++/* Exported helper to access the DMAMUX register */
++int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
++{
++	unsigned long flags;
++	u32 dmamux;
 +
- required:
-   - compatible
-   - reg
++	if (!sysctrl_priv)
++		return -EPROBE_DEFER;
++
++	spin_lock_irqsave(&sysctrl_priv->lock, flags);
++
++	dmamux = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
++	dmamux &= ~mask;
++	dmamux |= val & mask;
++	writel(dmamux, sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
++
++	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
++
+ /* register/bit pairs are encoded as an uint16_t */
+ static void
+ clk_rdesc_set(struct r9a06g032_priv *clocks,
+@@ -963,7 +990,13 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
+-	return r9a06g032_add_clk_domain(dev);
++	error = r9a06g032_add_clk_domain(dev);
++	if (error)
++		return error;
++
++	sysctrl_priv = clocks;
++
++	return 0;
+ }
+ 
+ static const struct of_device_id r9a06g032_match[] = {
+diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+new file mode 100644
+index 000000000000..066dfb15cbdd
+--- /dev/null
++++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
++#define __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
++
++#ifdef CONFIG_CLK_R9A06G032
++int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
++#else
++static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
++#endif
++
++#endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
 -- 
 2.27.0
 
