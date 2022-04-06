@@ -2,134 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1975C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 17:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EE8C43219
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 21:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239667AbiDFR7T convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44778 "EHLO
+        id S233552AbiDFVN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 17:13:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239903AbiDFR6l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 13:58:41 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0CC3BCB7B;
-        Wed,  6 Apr 2022 09:18:38 -0700 (PDT)
-Received: from [213.70.33.226] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1nc8MP-0007f5-Ur; Wed, 06 Apr 2022 18:18:22 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        zhangqing@rock-chips.com, Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
-Date:   Wed, 06 Apr 2022 18:18:20 +0200
-Message-ID: <14123901.uLZWGnKmhe@phil>
-In-Reply-To: <4b7af0ed-c5e1-7523-0abc-4204596edeb9@linaro.org>
-References: <20220329111323.3569-1-jbx6244@gmail.com> <0eed395b-ca02-2308-a5c6-7c4a72720175@gmail.com> <4b7af0ed-c5e1-7523-0abc-4204596edeb9@linaro.org>
+        with ESMTP id S236338AbiDFVNA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 17:13:00 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE6E1C1EFC
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 12:57:42 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id i15so3203479qvh.0
+        for <linux-clk@vger.kernel.org>; Wed, 06 Apr 2022 12:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KUZUtAp0dNwDr70/3lwG/QXaTgnWDHbJ/WL9ZfSGWRk=;
+        b=QbEWGQvz8QdfpaSSWzt2ahUaFClQusByq1H7eAXIihyrMv69CUSc0Obwe9mDIEr+oq
+         NVWT1dMj8rWahYjX3IMWk05Ru6cZtKqAjPdMbDTslI8oP6q38LzSn9KvbFLG82O0eNLk
+         nz3dUf6pE/rhl9TEzuuT5wZJiYKG1jTyA8zUQMMPF8d5hExV6C24zDjKWnELb7k4bqMo
+         DQGpCIhtv25SC5mskEG2mecROEJIZo4OJZIlx09IKRBVlYVeXc0BT4p4NA8jU/npMJxs
+         Kd9v1vP26RIrHpzdWT89Mj8lmCH62Y+loDYx6ml3LCJFpfxLaYcMX2ww4Z5yBdrkl+mE
+         Dxsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KUZUtAp0dNwDr70/3lwG/QXaTgnWDHbJ/WL9ZfSGWRk=;
+        b=O62DhseIAmy6rcXxoIRBMTc2vRSSpfheEuMimC50Ij42V0guR3+Mgxig3DHbhMuUAe
+         qZ+Fx8toHFwfB3+Jok4JFOq1Wg8dsffNXW9WShjO5KLI6JxI8+mONTElK/W6eOxRYiNg
+         W/XdpVojpwOhJSn4IBEa+WyIvlPD0S5wno5Lp3k3ehjp+45bEmclOtk1VwDR1u61zztb
+         ZFxtT6hI3x9yqUOLSY0nNXFsIYD4wCuM/PJgT9mFG28VCNVuR5Ho+G0LtGufShgKNhBd
+         TwbF4KcDS2SxCoNItqh1tbbTbwzrgNMWVG9TV3K4/reYggyXLiI+0HJODEXIz1mmwne0
+         K8/g==
+X-Gm-Message-State: AOAM533Ibt/RMPCipbFNKqPpH7Kr+sjBCHcgcQTl9s/BuEycuTHqsbre
+        wJ2eT4HFgejbNq67uIxkUAp9ga0sq0YoRzGwpCmd/w==
+X-Google-Smtp-Source: ABdhPJwW5Y59IRMz9jgyY9HfpNawpulXkvT7vk6Ukk08ydzcarQ2XkfE97k98h2L3Ubtj03m63GiXZksPtvgTMY9kOk=
+X-Received: by 2002:a05:6214:20e4:b0:441:7bed:5ccd with SMTP id
+ 4-20020a05621420e400b004417bed5ccdmr8928927qvk.119.1649275061386; Wed, 06 Apr
+ 2022 12:57:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20220406002648.393486-1-dmitry.baryshkov@linaro.org> <20220406154028.EC897C385A3@smtp.kernel.org>
+In-Reply-To: <20220406154028.EC897C385A3@smtp.kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 6 Apr 2022 22:57:30 +0300
+Message-ID: <CAA8EJpod2cNOYr3g+DmdWo_2Ujv7-pW39fBKqcpCPvtVgP5-NQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] arm: qcom: qcom-apq8064: add separate device node
+ for tsens
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Amit Kucheria <amitk@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Samstag, 2. April 2022, 18:01:11 CEST schrieb Krzysztof Kozlowski:
-> On 02/04/2022 14:20, Johan Jonker wrote:
-> > 
-> > 
-> > On 4/2/22 14:16, Krzysztof Kozlowski wrote:
-> >> On 02/04/2022 13:45, Johan Jonker wrote:
-> >>>
-> >>>
-> >>> On 4/2/22 13:41, Krzysztof Kozlowski wrote:
-> >>>> On 01/04/2022 09:55, Heiko Stübner wrote:
-> >>>>> Hi Stephen,
-> >>>>>
-> >>>>> Am Freitag, 1. April 2022, 00:51:32 CEST schrieb Stephen Boyd:
-> >>>>>> Quoting Johan Jonker (2022-03-29 04:13:22)
-> >>>>>>> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> >>>>>>> new file mode 100644
-> >>>>>>> index 000000000..ddd7e46af
-> >>>>>>> --- /dev/null
-> >>>>>>> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> >>>>>>> @@ -0,0 +1,78 @@
-> >>>>>>> +# SPDX-License-Identifier: GPL-2.0
-> >>>>>>> +%YAML 1.2
-> >>>>>>> +---
-> >>>>>>> +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
-> >>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>>>>>> +
-> >>>>>>> +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
-> >>>>>>> +
-> >>>>>>> +maintainers:
-> >>>>>>> +  - Elaine Zhang <zhangqing@rock-chips.com>
-> >>>>>>> +  - Heiko Stuebner <heiko@sntech.de>
-> >>>>>>> +
-> >>>>>>> +description: |
-> >>>>>>> +  The RK3188/RK3066 clock controller generates and supplies clocks to various
-> >>>>>>> +  controllers within the SoC and also implements a reset controller for SoC
-> >>>>>>> +  peripherals.
-> >>>>>>> +  Each clock is assigned an identifier and client nodes can use this identifier
-> >>>>>>> +  to specify the clock which they consume. All available clocks are defined as
-> >>>>>>> +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
-> >>>>>>> +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
-> >>>>>>> +  Similar macros exist for the reset sources in these files.
-> >>>>>>> +  There are several clocks that are generated outside the SoC. It is expected
-> >>>>>>> +  that they are defined using standard clock bindings with following
-> >>>>>>> +  clock-output-names:
-> >>>>>>> +    - "xin24m"    - crystal input                 - required
-> >>>>>>> +    - "xin32k"    - RTC clock                     - optional
-> >>>>>>> +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
-> >>>>>>> +    - "ext_hsadc" - external HSADC clock          - optional
-> >>>>>>> +    - "ext_cif0"  - external camera clock         - optional
-> >>>>>>> +    - "ext_rmii"  - external RMII clock           - optional
-> >>>>>>> +    - "ext_jtag"  - external JTAG clock           - optional
-> >>>>>>
-> >>>>>> I'd expect all these clks here to be inputs to this node.
-> >>>>>
-> >>>>> The optional clocks are all part of a circular dependency.
-> >>>>>
-> >>>>> So for example xin32k normally is generated by the pmic and fed
-> >>>>> back into the system, so to get xin32k, we need the pmic to probe,
-> >>>>> which needs i2c, which in turn already needs the clock controller.
-> >>>>
-> >>>> Are you sure that xin32k (RTC) clock should be input to the clock
-> >>>> controller? I would expect it is the input to the SoC RTC block, so
-> >>>> there is no circular dependency.
-> >>>
-> >>> clk-rk3188.c:
-> >>>
-> >>> PNAME(mux_pll_p)		= { "xin24m", "xin32k" };
-> >>
-> >> Thanks, but that's not the answer whether it is an input to the clock
-> >> controller. It's the answer how the driver implements this. :)
-> > 
-> > PX2 == rk3066
-> > 
-> > Rockchip PX2 TRM V1.0.pdf
-> > 
-> > page 30
-> > 
-> > Chip Clock Architecture Diagram 1
-> 
-> I found it, thanks. That's the answer, so indeed this is an input.
-> 
-> Answering partially to Heiko/Stephen, this could be still modeled in DTS
-> as a fixed-frequency clock going as input to the clock-controller. The
-> trouble with that approach is that it would actually duplicate the
-> definition (another one coming from PMIC).
+On Wed, 6 Apr 2022 at 18:40, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dmitry Baryshkov (2022-04-05 17:26:44)
+> > Currently gcc-msm8960 driver manually creates tsens device. Instantiate
+> > the device using DT node instead. This follow the IPQ8064 device tree
+> > schema.
+>
+> Why can't the schema be changed?
 
-And it has the issue that the pmic doesn't necessarily has the clock
-enabled at boot. Also this would combat one issue by introducing
-a different one, as this would be modelling a clock in a way that is
-not reflected by hardware at all.
+But these commits change the schema. They make apq8064 follow more
+logical scheme of ipq8064.
 
 
+-- 
+With best wishes
+Dmitry
