@@ -2,114 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6685C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 15:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB328C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 15:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236139AbiDFPao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
+        id S236887AbiDFP6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 11:58:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236086AbiDFPa0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 11:30:26 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A802F6CCD14;
-        Wed,  6 Apr 2022 05:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649249380; x=1680785380;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IYoVpyb3l2wM7Z7eVoU8dR1W5tEkmTa6mGYnlgO8Gh4=;
-  b=DHR/thF4iFN+EWlQ1KW+wQZO7eNGtUpMEzZ46RqmLo51/B9+i1MnCPKx
-   k0+3pH78xlBz3e6IgpzVMF8nqyfKjF3Z9DRw06PHAWZUtqkg65PdQThXF
-   6b6A1SPSFA1XJZieaqeUKe+koX4tyxC5ilUUprHNuLvDq4VT/O8U4xxNH
-   f2xQgtuKFtA6unaPJycIbEMC3NorvPNBxdvsAg0Zy+H89oqWC/PiXRc0Z
-   ClIlNwnv4sPshR6LxIe3LorlFKK14E6Arkr1Hra/j6gPd3xnSPYmHhP53
-   KGfpfWjsYviIa/94sTeowPrMyW39tv96sQZDUUcv2tDStvgy3go+sMEYy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="347478440"
-X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
-   d="scan'208";a="347478440"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 05:48:49 -0700
-X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
-   d="scan'208";a="588356315"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 05:48:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nc544-000Dyb-V4;
-        Wed, 06 Apr 2022 15:47:12 +0300
-Date:   Wed, 6 Apr 2022 15:47:12 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v7 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <Yk2L0MAMjMnWB2sU@smile.fi.intel.com>
-References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
- <20220405081911.1349563-6-miquel.raynal@bootlin.com>
- <YkxXUdMA75b8keSd@smile.fi.intel.com>
- <20220406094908.48ecc4bb@xps13>
- <Yk1WWaJ9IJsU5HXV@smile.fi.intel.com>
- <20220406141346.5caf746c@xps13>
+        with ESMTP id S237199AbiDFP57 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 11:57:59 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E1763878E4;
+        Wed,  6 Apr 2022 06:24:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C2610B823C7;
+        Wed,  6 Apr 2022 13:24:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0213AC385A1;
+        Wed,  6 Apr 2022 13:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649251457;
+        bh=9iYA/HOkMsWd89xBB9FdVueeuaKg1IVIScRynNGasXk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wpaqx5OrP/4ZKQO7wVVNRivuU9PduzghP7WZFdbFV1oWuzboEOjXWlHlw1i+uF4Ls
+         /j61ifCOE8Rjo5NM/5Z17bQ7EmY+v+/L+r92Bw11OGpb8oojwLOf4q1I/HClI8uOG+
+         Yp6I/Nnv2fg/oC7WlSpYYDnHoNN37hmMpek58gTzEADadSK/dP9Xd7DICdBofEJG7B
+         790vgg5v93oORrpnbzuSsTLW0cQ7KOKCzxhXLe8g+j9t7rW1GvdsixESie1v2xpuZL
+         7i/vo78aL3JUrSlTRzeV5hj4aevp2HDHLkv/dlTbec3/WjnBaBp5T3tU4j+sjKU++J
+         hlxVKMxLo9wPg==
+Date:   Wed, 6 Apr 2022 21:24:10 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     sboyd@kernel.org, robh+dt@kernel.org, s.hauer@pengutronix.de,
+        abel.vesa@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mq: add hdmi phy 27m clock
+Message-ID: <20220406132410.GS129381@dragon>
+References: <20220225090002.2497057-1-peng.fan@oss.nxp.com>
+ <20220225090002.2497057-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220406141346.5caf746c@xps13>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20220225090002.2497057-2-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 06, 2022 at 02:13:46PM +0200, Miquel Raynal wrote:
-> andriy.shevchenko@linux.intel.com wrote on Wed, 6 Apr 2022 11:59:05
-> +0300:
-> > On Wed, Apr 06, 2022 at 09:49:08AM +0200, Miquel Raynal wrote:
-> > > andriy.shevchenko@linux.intel.com wrote on Tue, 5 Apr 2022 17:50:57
-> > > +0300:  
-> > > > On Tue, Apr 05, 2022 at 10:19:07AM +0200, Miquel Raynal wrote:  
-
-...
-
-> > > > > +#define RZN1_DMAMUX_SPLIT 16  
-> > > >
-> > > > I would name it more explicitly:
-> > > > 
-> > > > #define RZN1_DMAMUX_SPLIT_1_0	 16  
-> > > 
-> > > I am sorry but I don't understand this suffix, which probably means
-> > > that it is not as clear as we wish. Do you mind if I stick to
-> > > RZN1_DMAMUX_SPLIT?  
-> > 
-> > The suffix to show that this is the value between part 0 (indexed by 0) and
-> > part 1 (indexed by 1) as far as I can see they are different by size. Since
-> > they are not equal, the original name without suffix is confusing (I would
-> > expect indexing up to 4 in such case).
+On Fri, Feb 25, 2022 at 05:00:01PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> They are equivalent in size (0-15/16-31), or aren't we talking about the
-> same thing?
+> The i.MX8MQ PLL support hdmi phy 27m as pll reference clock,
+> so add a fixed clock for it.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Hmm... I have misread something then. To clarify that the portions are equal
-perhaps we can name it MAX_LINES or so instead of SPLIT?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Applied, thanks!
