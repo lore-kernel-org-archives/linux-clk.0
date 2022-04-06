@@ -2,103 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C5C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03BDC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbiDFMHH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
+        id S229772AbiDFMIG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232465AbiDFMGz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:06:55 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614372220D6
-        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 00:46:57 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id ot30so2420724ejb.12
-        for <linux-clk@vger.kernel.org>; Wed, 06 Apr 2022 00:46:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=KmxEJzWVtAPtT0hHJKYkYT+MKJ5FKhKIUSiktqCv3H0=;
-        b=FTwM4mW7Uk8wlU0y17I9NC3iOW9d3uTv7LnOyLd+urZwYIj4tdPV6Zf7Sb8CC92yuI
-         WycSjTVsqfFPfulEQS1WWVrpihU6LDNZofWNUFMhX5Kr89oM6wSe+X7UKK5BiHHKOpCm
-         wSWgqlQybRaPxjM9aEF059CgvzrzMCMLa6aWzlqWaugml52gVv1puQYh9xhyqYyEVVPM
-         Zf351ZPxXApZKClS3Fb1gMUw62rea/lC0Z4p6HUMl2LhOxgLJdBtcnSRFo58AFJArklC
-         w6X7nCd7JAlb9hWt5DW+TJwYQtOZ7UDwcixBtfUcT8HF7WZrqCgMVc05AlMXm/W8erCY
-         rfpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=KmxEJzWVtAPtT0hHJKYkYT+MKJ5FKhKIUSiktqCv3H0=;
-        b=6nggu5ypM3QYymhBXpPBmFwNCN05zT7D1reLrovCQp5ZHcLNTqGUDVazANUM7FD3ro
-         UOtK/LCNaN4ZBtEfmcy3b1JHrTd0087PNH4uLsFwtsYj0vZqZ55SSZwSHjp6O24FC+fI
-         S121g8BuvOcEuGp5lrVeIsY0TedqSEoxM3PzcaZVzqKWKOmdMy+LF2RhigHZX0c4Zeiy
-         5/RwRe7MB4yJ0JrspzHUVCuu+ulkCd51P/DenacrhXoUgAe8Da5TeM90qyVb9QAim/tY
-         t8pEGyn3YYnRJdG0Yawj7Q3/MlCGe7xQY9IYqCFudlwEjMa/OsV5QjTQWVmGvryYYzpL
-         AzcA==
-X-Gm-Message-State: AOAM531BBrCigmt+7CxtiRfIwf1esKaAl3AG59MavV+0bAmTEdDYd9M/
-        gEVmFa899hhMa/pjwyfzhWUXug==
-X-Google-Smtp-Source: ABdhPJyLX+kJl66+LI5ZU/LOjINI9y85HnNQVRa6f1zZCdvyKyniSugFb2Co7cWo++WiAQK3v1vv7A==
-X-Received: by 2002:a17:907:7d9e:b0:6df:9fe8:856a with SMTP id oz30-20020a1709077d9e00b006df9fe8856amr6996138ejc.373.1649231215957;
-        Wed, 06 Apr 2022 00:46:55 -0700 (PDT)
-Received: from [192.168.0.182] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id p22-20020a17090653d600b006e7eb81d0b6sm3717673ejo.29.2022.04.06.00.46.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Apr 2022 00:46:55 -0700 (PDT)
-Message-ID: <d94ffddf-8bec-fecd-1eb1-a873966e60a0@linaro.org>
-Date:   Wed, 6 Apr 2022 09:46:53 +0200
+        with ESMTP id S233065AbiDFMHy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:07:54 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 790521D2;
+        Wed,  6 Apr 2022 00:49:13 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id BCE68FF816;
+        Wed,  6 Apr 2022 07:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649231352;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=v+Um5lcXyFGsJu7XXClC2r25jtPHetLl/vRWs5TLU7A=;
+        b=XSa7K7eEsA5vD799sP0Ueq8b6b5wG8u6GscKYgcCywD8uL8GnDaldmyJXkVO0jBYOcn7IW
+        UNaJQ1SemC4STYvW0xE7pd9MkT3hvZZOppJFktp3e0gVJKHsU3q/iHNQ+neyvxLA39k1e0
+        SjDXQFfJ0pU4VSl06zfCU7Nq9ErvGPplK+aUOIV6m2mJsZRQ551KJWt16gxM9Imoj8bcFg
+        fOYbRq7DxdYlKoTd4/g+XJfvYhuicyG7jSrQ+yU0xHLJAdCtYC89gsw5oK/r2ZNu9EvEDf
+        F+JXuMliiZ9mTKPEJujJMNA0Z0sUfShVcxW9e9hDUto+wmCe04esaEU431j5TQ==
+Date:   Wed, 6 Apr 2022 09:49:08 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v7 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <20220406094908.48ecc4bb@xps13>
+In-Reply-To: <YkxXUdMA75b8keSd@smile.fi.intel.com>
+References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+        <20220405081911.1349563-6-miquel.raynal@bootlin.com>
+        <YkxXUdMA75b8keSd@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: add binding for MA35D1 clock
- controller
-Content-Language: en-US
-To:     Jacky Huang <ychuang3@nuvoton.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
-        "soc@kernel.org" <soc@kernel.org>, MS10 CFLi0 <CFLi0@nuvoton.com>
-References: <20220331024256.14762-1-ychuang3@nuvoton.com>
- <20220331024256.14762-2-ychuang3@nuvoton.com>
- <866c6b42-434d-e7db-5319-2256cd7003d7@linaro.org>
- <cbe5c963-c727-0fe6-6e03-039c4334f7a9@linaro.org>
- <724094ab-ed58-debd-8901-466540a66eab@nuvoton.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <724094ab-ed58-debd-8901-466540a66eab@nuvoton.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/04/2022 06:00, Jacky Huang wrote:
->> You also ignored my comments from your v1 (because this is not v1...).
->> Do not resend without discussion or implementation.
->>
->> Best regards,
->> Krzysztof
-> 
-> Hi Krzysztof,
-> 
-> I am finding out the comments from all mails of this series and working 
-> on them.
-> I will fix all the issues before sending the next version.
-> So, the next version should be V3, right?
-> I will add modification history "V1 -> V2" and "V2 -> V3" to [PATCH V3 0/3].
-> Is that OK?
+Hi Andy,
 
-Yes
+andriy.shevchenko@linux.intel.com wrote on Tue, 5 Apr 2022 17:50:57
++0300:
+
+> On Tue, Apr 05, 2022 at 10:19:07AM +0200, Miquel Raynal wrote:
+> > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+> > dmamux register located in the system control area which can take up to
+> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> > two different peripherals.
+> >=20
+> > We need two additional information from the 'dmas' property: the channel
+> > (bit in the dmamux register) that must be accessed and the value of the
+> > mux for this channel. =20
+>=20
+> ...
+>=20
+> >  dw_dmac-y			:=3D platform.o
+> >  dw_dmac-$(CONFIG_OF)		+=3D of.o =20
+>=20
+> > +obj-$(CONFIG_RZN1_DMAMUX)	+=3D rzn1-dmamux.o =20
+>=20
+> I would move it down in the file to distinguish more generic drivers
+> from specific quirks.
+
+Ok.
+
+>=20
+> >  obj-$(CONFIG_DW_DMAC_PCI)	+=3D dw_dmac_pci.o
+> >  dw_dmac_pci-y			:=3D pci.o =20
+>=20
+> ...
+>=20
+> > +#define RZN1_DMAMUX_SPLIT 16 =20
+>=20
+> I would name it more explicitly:
+>=20
+> #define RZN1_DMAMUX_SPLIT_1_0	 16
+
+I am sorry but I don't understand this suffix, which probably means
+that it is not as clear as we wish. Do you mind if I stick to
+RZN1_DMAMUX_SPLIT?
+
+> ...
+>=20
+> > +	dmac_idx =3D map->req_idx < RZN1_DMAMUX_SPLIT ? 0 : 1; =20
+>=20
+> ...and hence use positive conditional:
+>=20
+> 	dmac_idx =3D map->req_idx >=3D RZN1_DMAMUX_SPLIT_1_0 ? 1 : 0;
+
+I will.
+
+>=20
+> With above addressed
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>=20
 
 
-Best regards,
-Krzysztof
+Thanks,
+Miqu=C3=A8l
