@@ -2,96 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA70C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 11:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C5C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbiDFLXM convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 07:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36868 "EHLO
+        id S232071AbiDFMHH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:07:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231220AbiDFLWJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 07:22:09 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBC3547CDE4;
-        Wed,  6 Apr 2022 00:43:33 -0700 (PDT)
-Received: from mail-wr1-f41.google.com ([209.85.221.41]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MFsd7-1nmEnM3hqJ-00HNtg; Wed, 06 Apr 2022 09:43:31 +0200
-Received: by mail-wr1-f41.google.com with SMTP id w4so1820729wrg.12;
-        Wed, 06 Apr 2022 00:43:31 -0700 (PDT)
-X-Gm-Message-State: AOAM533IjTKvRVuFr1hpf6jVR0dbpC0/ev/LOyYjVm64OGy6k0xQK0PI
-        v8edVyjyzWFukyGufgdR/NfbTxoZYWajygNpRG4=
-X-Google-Smtp-Source: ABdhPJypJul9cdCELa/1AnvYtkz00lmeff9mRrfOlzOzJtIgInlf166z4d0cq68yNgLel+5mgKe5/LD/ixwy4Exk7RQ=
-X-Received: by 2002:a05:6000:178c:b0:204:648:b4c4 with SMTP id
- e12-20020a056000178c00b002040648b4c4mr5368683wrg.219.1649231011518; Wed, 06
- Apr 2022 00:43:31 -0700 (PDT)
+        with ESMTP id S232465AbiDFMGz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:06:55 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614372220D6
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 00:46:57 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id ot30so2420724ejb.12
+        for <linux-clk@vger.kernel.org>; Wed, 06 Apr 2022 00:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=KmxEJzWVtAPtT0hHJKYkYT+MKJ5FKhKIUSiktqCv3H0=;
+        b=FTwM4mW7Uk8wlU0y17I9NC3iOW9d3uTv7LnOyLd+urZwYIj4tdPV6Zf7Sb8CC92yuI
+         WycSjTVsqfFPfulEQS1WWVrpihU6LDNZofWNUFMhX5Kr89oM6wSe+X7UKK5BiHHKOpCm
+         wSWgqlQybRaPxjM9aEF059CgvzrzMCMLa6aWzlqWaugml52gVv1puQYh9xhyqYyEVVPM
+         Zf351ZPxXApZKClS3Fb1gMUw62rea/lC0Z4p6HUMl2LhOxgLJdBtcnSRFo58AFJArklC
+         w6X7nCd7JAlb9hWt5DW+TJwYQtOZ7UDwcixBtfUcT8HF7WZrqCgMVc05AlMXm/W8erCY
+         rfpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=KmxEJzWVtAPtT0hHJKYkYT+MKJ5FKhKIUSiktqCv3H0=;
+        b=6nggu5ypM3QYymhBXpPBmFwNCN05zT7D1reLrovCQp5ZHcLNTqGUDVazANUM7FD3ro
+         UOtK/LCNaN4ZBtEfmcy3b1JHrTd0087PNH4uLsFwtsYj0vZqZ55SSZwSHjp6O24FC+fI
+         S121g8BuvOcEuGp5lrVeIsY0TedqSEoxM3PzcaZVzqKWKOmdMy+LF2RhigHZX0c4Zeiy
+         5/RwRe7MB4yJ0JrspzHUVCuu+ulkCd51P/DenacrhXoUgAe8Da5TeM90qyVb9QAim/tY
+         t8pEGyn3YYnRJdG0Yawj7Q3/MlCGe7xQY9IYqCFudlwEjMa/OsV5QjTQWVmGvryYYzpL
+         AzcA==
+X-Gm-Message-State: AOAM531BBrCigmt+7CxtiRfIwf1esKaAl3AG59MavV+0bAmTEdDYd9M/
+        gEVmFa899hhMa/pjwyfzhWUXug==
+X-Google-Smtp-Source: ABdhPJyLX+kJl66+LI5ZU/LOjINI9y85HnNQVRa6f1zZCdvyKyniSugFb2Co7cWo++WiAQK3v1vv7A==
+X-Received: by 2002:a17:907:7d9e:b0:6df:9fe8:856a with SMTP id oz30-20020a1709077d9e00b006df9fe8856amr6996138ejc.373.1649231215957;
+        Wed, 06 Apr 2022 00:46:55 -0700 (PDT)
+Received: from [192.168.0.182] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id p22-20020a17090653d600b006e7eb81d0b6sm3717673ejo.29.2022.04.06.00.46.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 00:46:55 -0700 (PDT)
+Message-ID: <d94ffddf-8bec-fecd-1eb1-a873966e60a0@linaro.org>
+Date:   Wed, 6 Apr 2022 09:46:53 +0200
 MIME-Version: 1.0
-References: <20220307091923.9909-1-ychuang3@nuvoton.com> <20220307091923.9909-4-ychuang3@nuvoton.com>
- <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org> <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
-In-Reply-To: <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 6 Apr 2022 09:43:15 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1Gbr4PoJbPy3BEQ=T3iJo9kQdjes7+0UK5vnc4CDckSw@mail.gmail.com>
-Message-ID: <CAK8P3a1Gbr4PoJbPy3BEQ=T3iJo9kQdjes7+0UK5vnc4CDckSw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
-To:     Jacky Huang <ychuang3@nuvoton.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 1/3] dt-bindings: clock: add binding for MA35D1 clock
+ controller
+Content-Language: en-US
+To:     Jacky Huang <ychuang3@nuvoton.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "soc@kernel.org" <soc@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:cod3+ULkmqjUacHdjf5UZW7aCbxyF+7tIg50DqEUz8mEsXgH0sl
- uZKrEa6zhJMhYJ+vGs9nAV1CW04UrMXbEVt0YCqzrDyWToIib8QKuNBFmMDcg/Q3ETQOFth
- oJK9Xp+jE0vgxkzxalCpqTdd7uQrP+B4YIybLbsDzACQqOoZ9kVXTHxpKJLnEvKwBN0i9Lm
- 3wb9zc3rsZUkeo/BkXBSQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:R5IAkjZISys=:FngXoHQq/KgkR9R5mahVcA
- tRM+t/sQsia7jhhwHJjc8DxunLAd8SwsJtA4kbZzkEk+sks8gtes3EIbkmzfj9eQKN3ssHxaT
- VEh2zd187vBhBzauTLu64YJjRJeD0dmKI3/6Qt4fsAqcPRQluT62AaQLTHQSoLN5N6XK2VEoe
- oJFNmkx2jr3amWhBDOx76iA6Siz8b6yMlWlikjRtLAhI+Mt3WdnhhXOaGwbhK+k4KwDNprEn1
- pqID0q0ITYy0VTdNhM1nvaw0lRD/pYX/aiHRYqdbDu2e1u6tEmus9cQ5CsQa4U/DG4qm64KB9
- GlpZGzMQ6+aPamjFLeeQrOUmFMV8Iev760I1+GbtQbAYr7ZAMFGDg5k3mYSb+CZ6HF28BRQvo
- NUM5XppSwArBHs4B5/VKpgFnuiLeNFcTWKQLjVUL8AFbtDZqLr6Qd81QaaD250KDyvbX5YyDg
- 2x/PhGu+qA/BlPWYxbsS0L8fL/u9KNSiYzMh25Fcyh9w/yMJLd+c8WhDz8a2JCwJQTYMXLgDX
- 1pftjyCeO/s/SeEmUK377d/NNccKtoQdI6TqFBQWJlSek36O3YfQ0m/EysRUZakb6Kgh73ZR/
- kVfdDJlFd8SCetz2Js0xLDmYAgnHsAPRoBA3XV9iiyygBaXEibGX6fe0di420kp41iByQNdmV
- glv9LFocZn3eom/ZVN36Rnp3LMfgo+cad2eTRG5tYzah488eM5AM2CxtIBj2SqtKFemd05C3b
- ne5cE6mtnWccz8HtvWQJvBGLej4znt75LRlcHLPYth2gIYQkLAjJfpyQOGxI+c8jAWsodtbD9
- XFts5fc6XHqhBjKyOF5rvHisCR/Y61aEuT7tfM9DWvMmV7sLe8=
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
+        "soc@kernel.org" <soc@kernel.org>, MS10 CFLi0 <CFLi0@nuvoton.com>
+References: <20220331024256.14762-1-ychuang3@nuvoton.com>
+ <20220331024256.14762-2-ychuang3@nuvoton.com>
+ <866c6b42-434d-e7db-5319-2256cd7003d7@linaro.org>
+ <cbe5c963-c727-0fe6-6e03-039c4334f7a9@linaro.org>
+ <724094ab-ed58-debd-8901-466540a66eab@nuvoton.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <724094ab-ed58-debd-8901-466540a66eab@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 6, 2022 at 4:58 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
-> On 2022/3/7 下午 06:25, Krzysztof Kozlowski wrote:
-> > On 07/03/2022 10:19, Jacky Huang wrote:
->
-> I would add the following to end of arch/arm64/Kconfig.platforms, and
-> add the
-> modification to this patch series.
->
-> config ARCH_MA35D1
->      bool "Nuvoton MA35D1 SOC Family"
->      select PINCTRL
->      select PINCTRL_MA35D1
->      select PM
->      select GPIOLIB
->      select SOC_BUS
->      select VIDEOMODE_HELPERS
->      select FB_MODE_HELPERS
->      help
->        This enables support for Nuvoton MA35D1 SOC Family.
+On 06/04/2022 06:00, Jacky Huang wrote:
+>> You also ignored my comments from your v1 (because this is not v1...).
+>> Do not resend without discussion or implementation.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Hi Krzysztof,
+> 
+> I am finding out the comments from all mails of this series and working 
+> on them.
+> I will fix all the issues before sending the next version.
+> So, the next version should be V3, right?
+> I will add modification history "V1 -> V2" and "V2 -> V3" to [PATCH V3 0/3].
+> Is that OK?
 
-Selecting SOC_BUS and the gpio/pinctrl stuff is ok, but please don't
-select the video helpers from the platform config, those should not
-be essential for building a kernel.
+Yes
 
-       Arnd
+
+Best regards,
+Krzysztof
