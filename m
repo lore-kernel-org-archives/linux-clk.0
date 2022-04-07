@@ -2,143 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BDAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 13:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D58AC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240024AbiDGNsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 09:48:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46078 "EHLO
+        id S1344724AbiDGP3g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 11:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiDGNsU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 09:48:20 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AB42BB18;
-        Thu,  7 Apr 2022 06:46:20 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 3CB773201591;
-        Thu,  7 Apr 2022 09:46:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 07 Apr 2022 09:46:20 -0400
+        with ESMTP id S1344753AbiDGP3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:29:34 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39491DAFBD;
+        Thu,  7 Apr 2022 08:27:24 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id EB5753200B8B;
+        Thu,  7 Apr 2022 11:27:21 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 07 Apr 2022 11:27:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=5MSx+d/bXZx5XVZ50S+zjx2/Cpj0N8/ygeOMyG
-        KvsCs=; b=G3q6HFdoLRkTmNBNumrXdlcJS8czebdcWGFIoOney3lh9BIiMK4bPk
-        B/NIRqJWmvEWZbcEw0iGQBi896zGgdWlDnEPuV1kGcKU1nWPHK6bNE/eIvFvMpI6
-        /to7w4McrLT21izHjXAWfB+1u2TPWRpKTB9tshlOCV+6UtsoDjWUjVONg2dYvXey
-        lXrqXWSHWsr7aOKYie6jGuGouXdr9eox1P3l79F5gQEDCk7LkauHoQJKjrkf38on
-        v5A3PfbRCPyyWbbKtq6sFiYmspIeKBLuS4NyOftHhVp9/seUGBAbf3qvbfbGtFFW
-        nKTDkm2xo+Id/Ww+MpvmIG2++F1orA2A==
+        :subject:to:to; s=fm3; bh=KmaGcpZRZ7EQ4bZea01sp8yB4p8jkdhNq5RVEO
+        ba/aU=; b=ZC/EmOMaklVwlaOUYGRA6+5UYh6ky6gYpnWTWwcPx8XJ3AaZa2KBAn
+        55M3Rzs+J/p5DL/lco6rAfEStMPHY7i4aWjLxqBgPCEFiAyC+7M1dIgEf/r6N98J
+        7+AhpEQhbrE/nLLofv0LuDLPWOehlAXqK6rJMY4x+bT+JpEHsjIq2H+PgRh/dc5Y
+        qvUbabXHppC7mwi/076ztx2kNwSS1qEjpNHr0X5m/aF6eZIUC9oxKhu+Lxta8T5g
+        w7uExXEO7eOOo/ghPRCXeNnDDhnGoukSpoPMnOwL+HZnMA/wzBSHDsNKbVoszD/d
+        7MWoKUlL0+KkMx8ToYfW/D8tKMQIz8aQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=5MSx+d/bXZx5XVZ50
-        S+zjx2/Cpj0N8/ygeOMyGKvsCs=; b=F3kF1OkFZOgLN5KdNWcDu4ISxuQ8KHqzm
-        9yLyWIgKjO7g8qJBrb689juCdmpD1GTZXgnH+QMJDa2lm6kgoeJ/pwDmbVDfjeQi
-        B+oaMLTxUJgiZ4RlvpHosLycd9WE9pGVgD7LHBsaLCDpcY9k2qJC7Kk+FzHVrSWK
-        IZ6gcFu/1RGG37KxmGFSkVAZn/BNNn3o6rYbZklExFZmzQFEFv/xppT4fXfurvDy
-        2xUZe5rY3M61iJtAc8wc6B7hpR6q05DCJDFcVbscENsC5Nqvbw3qcfxaQh4aqEQX
-        SkNiersEJENFgOfXRgYjcoFXAC5RWyvz250pKctDuVkINSF0ST4IQ==
-X-ME-Sender: <xms:KetOYhEPeSNlbcKftz7DvQP1Mwu4B8fMn8eTGPRDBRea8ETtJgd30w>
-    <xme:KetOYmXMtsdCZ6Udi84yb2N1TMDaqS5qQ_BjfvIogicWWD937Lq_EtUJ7WYBw-Di5
-    EAqJyiaGWT4RcyfobY>
-X-ME-Received: <xmr:KetOYjId9D55254Q5KgdNxUEcvM6VAsWymziLCH-ykei5y8SKRBP6SBnUiB-i-5laV3-1uSjcEW4zq3tnunIHUyV7cIko04O80wPV7U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgieekucetufdoteggodetrfdotf
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=KmaGcpZRZ7EQ4bZea
+        01sp8yB4p8jkdhNq5RVEOba/aU=; b=lsBDDNpa5ywNO5zmZh7tgirPLm8o5Itfm
+        MGkBLjJouVReHgBu7eGhe+4X+IMToTo4BxkCJiFl5Dej+tJX9aH8VmTxdQUCo6Kl
+        oqwGrYKv0abTKpSQqQU1TS4WLVBUwfW4yo0j80YipG+Jh0R/dbFY9zDyHWuOWpz0
+        4QFjV8GkYGHuWvW0iCcfgOmiPzgMYIsb1QUc2+gZ9Kvd05WXjnFtjr9AH7lEl18V
+        GBMGF5fwYPuX0JOIf9z2HyZyHF0s8El4Hgx3EY3HLMo+CoqLL4hQtBzT3jQgQPr+
+        m9NP8+QKwRlTvjDxOUdWOEiiDAA+Z+SIBw60KdXucMJBeC4emR78g==
+X-ME-Sender: <xms:2QJPYlIyFEhGYEMHwniI0clflIidfcyjNbGHSWpMiyjMKvZwMMU3wg>
+    <xme:2QJPYhI1XZ22UMuU4JFXWL3iW4kw6J_DlmZ8pf4_5oTN8g81_zJ8_tqA0tx55X0fj
+    x9j1EpAAmVdhr3iaGQ>
+X-ME-Received: <xmr:2QJPYtscVj6PoOZ7GgwV1o2yO9K_sD2_YXMSZguIrjG-NaB37ORbO67aLGne08cuE0O0D9Qzf4UCUvkYL7s4BM4HBCm14RYnjB92Tuo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeelucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepkeegveefgefgtdeifeeijefhvdehffekudetheejgeefteeihefffffhlefh
-    gefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgv
-    segtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:KetOYnHGJqscSlNMgp2WMHjZbbAXtZeEPQ94vnntAWBQSu58jui4_g>
-    <xmx:KetOYnXIO-Bhlt9HHApAJTyfMBGvxE7_L1AgrvSGPmmDG79j1W5OYA>
-    <xmx:KetOYiMUUPK0YPnUubxWXRmdOMbgihzmXy6SshvNttj4dmZxh3FCKg>
-    <xmx:KutOYgVBjRG0zdeycNJhX0xBWTOTbPqfwj4HD3dmXtSCfCpbgf76cQ>
+    htvghrnhepveegudetkeethfetgffgtdekkefghefhffefgeduleehgeehieeuveefgedv
+    ieegnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:2QJPYmZ3XrG5-XRVnXxdWeUX7tBpbl80pJUbl_PB4Fd9oT3Yb9Bn0g>
+    <xmx:2QJPYsY-yiZ3S_u6lwWdAxAlj1OQ8XAUnST6lfXqI4PRXVWECajrfg>
+    <xmx:2QJPYqA68UtjXMJb4_VuC6w858IyEk49kBIsgVnAQQZVXkWrImEauQ>
+    <xmx:2QJPYiPyAetQn4EWmJXjpSZRd_ERPmof4pbFHj2bZUfvwV-egU-5wQ>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 7 Apr 2022 09:46:16 -0400 (EDT)
-Date:   Thu, 7 Apr 2022 15:46:15 +0200
+ 7 Apr 2022 11:27:20 -0400 (EDT)
+Date:   Thu, 7 Apr 2022 17:27:19 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-        gabriel.fernandez@foss.st.com,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [next] db845c: WARNING: CPU: 5 PID: 8 at
- drivers/clk/clk-divider.c:139 divider_recalc_rate
-Message-ID: <20220407134615.pqx4lxvgl4ofjrki@houat>
-References: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
- <20220401151058.fipdax3kvmxknctv@houat>
- <CA+G9fYu+WddXTb0NcbviUfGQHhsmThssVCafLPw7+nj3JsoFAA@mail.gmail.com>
- <20220407075435.ahlylmbqmqnpxz64@houat>
- <CA+G9fYvT_W9+0AguQu97mqTm5zNnSvF0asnatZX8BTf=_1oANg@mail.gmail.com>
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] clk: Always clamp the rounded rate
+Message-ID: <20220407152719.fjyrfglm3qprtzv3@houat>
+References: <20220406183714.830218-1-y.oudjana@protonmail.com>
+ <20220407080833.fkieuqx3hgdnwqy2@houat>
+ <wv5t_wS8upUbTp267ngk1_SkGV7a-6vOpeQ13QMZ3HGGcD8RqrTriBjZs7aFbP4rS1D_YC4eKmga-r4o3Ke8sp0xsp9NMV9WX87ZTEV6oOU=@protonmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qlotqj4qfa6bze52"
+        protocol="application/pgp-signature"; boundary="7h2a37eao5bbiz7x"
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvT_W9+0AguQu97mqTm5zNnSvF0asnatZX8BTf=_1oANg@mail.gmail.com>
+In-Reply-To: <wv5t_wS8upUbTp267ngk1_SkGV7a-6vOpeQ13QMZ3HGGcD8RqrTriBjZs7aFbP4rS1D_YC4eKmga-r4o3Ke8sp0xsp9NMV9WX87ZTEV6oOU=@protonmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---qlotqj4qfa6bze52
+--7h2a37eao5bbiz7x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Naresh,
-
-On Thu, Apr 07, 2022 at 05:12:09PM +0530, Naresh Kamboju wrote:
-> On Thu, 7 Apr 2022 at 13:24, Maxime Ripard <maxime@cerno.tech> wrote:
+On Thu, Apr 07, 2022 at 08:27:39AM +0000, Yassine Oudjana wrote:
+> On Thursday, April 7th, 2022 at 12:08 PM, Maxime Ripard <maxime@cerno.tec=
+h> wrote:
+> > I've been piling up few fixes already for other platforms, could you
+> > also test ?
 > >
-> > Hi,
-> >
-> > > > I'm not sure if it's feasible, but if it is, it looks like something
-> > > > that could be fixed by the patch pasted here:
-> > > >
-> > > > https://lore.kernel.org/linux-clk/20220401122736.5yvanksa4pla7uql@h=
-ouat/
-> > > > Could you test it?
-> > >
-> > > I have tested the single line patch and reported problems not fixed.
-> >
-> > Could you test this branch?
 > > https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
 >=20
-> I have tested your tree and branch.
-> I saw more clk prints in the boot log and did not notice the reported war=
-ning.
+> Alright, will test.
 
-I just pushed a new version of my branch? It should get rid of most of
-the side effects (and logs) you were seeing.
+I've pushed another version of my branch a few minutes ago, so make sure
+you pulled the last version if you want to test it :)
 
 Thanks!
 Maxime
 
---qlotqj4qfa6bze52
+--7h2a37eao5bbiz7x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk7rJwAKCRDj7w1vZxhR
-xbTsAQC7LjET/cX1wvLVmcjsot44URT7Kp4tB6E6WFMkcILK7AEAzPiySlA4o95h
-mfsabSaOvr20D/J3iMVsLQUyauL6xwQ=
-=E5bt
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk8C1wAKCRDj7w1vZxhR
+xU0dAP4jZClKIm61CiKsBBAFnC3/GkrxttiZma06zocqzEEB1AD+KOo5KUJHo7LU
+qema2fJDsfFOuBrGofBOUmFEPPC6rQs=
+=0eyT
 -----END PGP SIGNATURE-----
 
---qlotqj4qfa6bze52--
+--7h2a37eao5bbiz7x--
