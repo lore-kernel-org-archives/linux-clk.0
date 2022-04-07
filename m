@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63649C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA245C43219
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232934AbiDGPkd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 11:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33734 "EHLO
+        id S1345459AbiDGQAT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 12:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344823AbiDGPkb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:40:31 -0400
-X-Greylist: delayed 611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:38:27 PDT
-Received: from 4.mo583.mail-out.ovh.net (4.mo583.mail-out.ovh.net [178.33.111.247])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D231117066
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:38:26 -0700 (PDT)
-Received: from player796.ha.ovh.net (unknown [10.109.138.203])
-        by mo583.mail-out.ovh.net (Postfix) with ESMTP id 2CA16243B4
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:20:07 +0000 (UTC)
+        with ESMTP id S1345464AbiDGQAP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 12:00:15 -0400
+X-Greylist: delayed 2239 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:58:13 PDT
+Received: from 11.mo583.mail-out.ovh.net (11.mo583.mail-out.ovh.net [46.105.47.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBD4DD960
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:58:12 -0700 (PDT)
+Received: from player796.ha.ovh.net (unknown [10.111.172.147])
+        by mo583.mail-out.ovh.net (Postfix) with ESMTP id 586B1245A4
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:20:48 +0000 (UTC)
 Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
         (Authenticated sender: steve@sk2.org)
-        by player796.ha.ovh.net (Postfix) with ESMTPSA id AB6C7293300E7;
-        Thu,  7 Apr 2022 15:20:00 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G0034c962ea5-ae9c-4d67-a931-d80837463e79,
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id 2CD432933024D;
+        Thu,  7 Apr 2022 15:20:39 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G003d16187d4-fb51-4483-a7dc-35d224eb3c4e,
                     5995496A90EC26C6A3824F4C00BBD29EFE55D398) smtp.auth=steve@sk2.org
 X-OVh-ClientIp: 82.65.25.201
 From:   Stephen Kitt <steve@sk2.org>
@@ -30,18 +30,18 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 05/10] clk: si514: use simple i2c probe function
-Date:   Thu,  7 Apr 2022 17:18:26 +0200
-Message-Id: <20220407151831.2371706-6-steve@sk2.org>
+Subject: [PATCH v2 10/10] clk: renesas-pcie: use simple i2c probe function
+Date:   Thu,  7 Apr 2022 17:18:31 +0200
+Message-Id: <20220407151831.2371706-11-steve@sk2.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220407151831.2371706-1-steve@sk2.org>
 References: <20220407151831.2371706-1-steve@sk2.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 83035121023354502
+X-Ovh-Tracer-Id: 94575596027086470
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -54,32 +54,31 @@ This avoids scanning the identifier tables during probes.
 
 Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
- drivers/clk/clk-si514.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/clk-renesas-pcie.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 364b62b9928d..4481c4303534 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -327,8 +327,7 @@ static const struct regmap_config si514_regmap_config = {
- 	.volatile_reg = si514_regmap_is_volatile,
- };
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index 59d9cf0053eb..4f5df1fc74b4 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -213,7 +213,7 @@ rs9_of_clk_get(struct of_phandle_args *clkspec, void *data)
+ 	return rs9->clk_dif[idx];
+ }
  
--static int si514_probe(struct i2c_client *client,
--		const struct i2c_device_id *id)
-+static int si514_probe(struct i2c_client *client)
+-static int rs9_probe(struct i2c_client *client, const struct i2c_device_id *id)
++static int rs9_probe(struct i2c_client *client)
  {
- 	struct clk_si514 *data;
- 	struct clk_init_data init;
-@@ -394,7 +393,7 @@ static struct i2c_driver si514_driver = {
- 		.name = "si514",
- 		.of_match_table = clk_si514_of_match,
+ 	unsigned char name[5] = "DIF0";
+ 	struct rs9_driver_data *rs9;
+@@ -312,7 +312,7 @@ static struct i2c_driver rs9_driver = {
+ 		.pm	= &rs9_pm_ops,
+ 		.of_match_table = clk_rs9_of_match,
  	},
--	.probe		= si514_probe,
-+	.probe_new	= si514_probe,
- 	.remove		= si514_remove,
- 	.id_table	= si514_id,
+-	.probe		= rs9_probe,
++	.probe_new	= rs9_probe,
+ 	.id_table	= rs9_id,
  };
+ module_i2c_driver(rs9_driver);
 -- 
 2.27.0
 
