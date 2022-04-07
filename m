@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC00C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 17:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31D1C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 17:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231477AbiDGRu0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 13:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
+        id S1346587AbiDGRvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 13:51:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231892AbiDGRuZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 13:50:25 -0400
-X-Greylist: delayed 7793 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 10:48:05 PDT
-Received: from 6.mo582.mail-out.ovh.net (6.mo582.mail-out.ovh.net [87.98.177.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECF1184B46
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 10:48:05 -0700 (PDT)
-Received: from player796.ha.ovh.net (unknown [10.109.143.72])
-        by mo582.mail-out.ovh.net (Postfix) with ESMTP id E916723E90
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:19:52 +0000 (UTC)
+        with ESMTP id S1346623AbiDGRvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 13:51:13 -0400
+X-Greylist: delayed 8442 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 10:49:12 PDT
+Received: from 2.mo550.mail-out.ovh.net (2.mo550.mail-out.ovh.net [178.32.119.250])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3332222EBC4
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 10:49:11 -0700 (PDT)
+Received: from player796.ha.ovh.net (unknown [10.108.1.146])
+        by mo550.mail-out.ovh.net (Postfix) with ESMTP id 24D2022C24
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:19:39 +0000 (UTC)
 Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
         (Authenticated sender: steve@sk2.org)
-        by player796.ha.ovh.net (Postfix) with ESMTPSA id 7E7F629330054;
-        Thu,  7 Apr 2022 15:19:46 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G003d3dd2c8b-474f-437f-be15-a227636e2f9d,
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id 33AA82932FF73;
+        Thu,  7 Apr 2022 15:19:30 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G00317a306e9-b8ed-4920-a317-7c45dbaba21a,
                     5995496A90EC26C6A3824F4C00BBD29EFE55D398) smtp.auth=steve@sk2.org
 X-OVh-ClientIp: 82.65.25.201
 From:   Stephen Kitt <steve@sk2.org>
@@ -30,15 +30,15 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 03/10] clk: cs2000-cp: use simple i2c probe function
-Date:   Thu,  7 Apr 2022 17:18:24 +0200
-Message-Id: <20220407151831.2371706-4-steve@sk2.org>
+Subject: [PATCH v2 01/10] clk: cdce706: use simple i2c probe function
+Date:   Thu,  7 Apr 2022 17:18:22 +0200
+Message-Id: <20220407151831.2371706-2-steve@sk2.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220407151831.2371706-1-steve@sk2.org>
 References: <20220407151831.2371706-1-steve@sk2.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 78812996052420230
+X-Ovh-Tracer-Id: 75153822891935366
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
 X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
@@ -54,31 +54,31 @@ This avoids scanning the identifier tables during probes.
 
 Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
- drivers/clk/clk-cs2000-cp.c | 5 ++---
+ drivers/clk/clk-cdce706.c | 5 ++---
  1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index dc5040a84dcc..aa5c72bab83e 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -570,8 +570,7 @@ static int cs2000_remove(struct i2c_client *client)
- 	return 0;
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index c91e9096b070..5467d941ddfd 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -627,8 +627,7 @@ of_clk_cdce_get(struct of_phandle_args *clkspec, void *data)
+ 	return &cdce->clkout[idx].hw;
  }
  
--static int cs2000_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
-+static int cs2000_probe(struct i2c_client *client)
+-static int cdce706_probe(struct i2c_client *client,
+-			 const struct i2c_device_id *id)
++static int cdce706_probe(struct i2c_client *client)
  {
- 	struct cs2000_priv *priv;
- 	struct device *dev = &client->dev;
-@@ -625,7 +624,7 @@ static struct i2c_driver cs2000_driver = {
- 		.pm	= &cs2000_pm_ops,
- 		.of_match_table = cs2000_of_match,
+ 	struct i2c_adapter *adapter = client->adapter;
+ 	struct cdce706_dev_data *cdce;
+@@ -692,7 +691,7 @@ static struct i2c_driver cdce706_i2c_driver = {
+ 		.name	= "cdce706",
+ 		.of_match_table = of_match_ptr(cdce706_dt_match),
  	},
--	.probe		= cs2000_probe,
-+	.probe_new	= cs2000_probe,
- 	.remove		= cs2000_remove,
- 	.id_table	= cs2000_id,
+-	.probe		= cdce706_probe,
++	.probe_new	= cdce706_probe,
+ 	.remove		= cdce706_remove,
+ 	.id_table	= cdce706_id,
  };
 -- 
 2.27.0
