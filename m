@@ -2,54 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B0FC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6247C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbiDGJao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52706 "EHLO
+        id S243839AbiDGJhU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 05:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232761AbiDGJan (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:30:43 -0400
-Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FDC860A86
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 02:28:40 -0700 (PDT)
+        with ESMTP id S243840AbiDGJhS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:37:18 -0400
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E8F12220C
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 02:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1649323718;
-        bh=qrEk1KaQqHvx86BvGZbTrk+9iRUH0cmWZPEc61qHsBI=;
+        s=s201512; t=1649324114;
+        bh=DyWMmxwvueYQtUN0i/Vyg4p9gpIkRWzZvm2GGvGoZXg=;
         h=From:To:Cc:Subject:Date;
-        b=LDd5Jay6Ua4M7Rk3quFdJb8SgDPSuZjtqWrWwqliBIg5ntSUNjqp/XacMdFtX7jJp
-         /X/fkzdKAMvVmFPEWFBR5+U+YOHa9IUv2mpP35DLCjkdZ6mH4VgDyKFE3QoEKTYe/d
-         ap5kgwwuIo7p3ExFZYpafOI6djHPnxvewqi5BfBA=
+        b=xlI6PJVaMQjgVAsNkkdOpicNBSKXQFqHzbfj17hnODUwT/vaawapM6lWqAmXZPHSV
+         mmbi8JRULVPZcRpecbiEtcHxruk4tBBKbOeGwMtVZlmnOvk1l8JeDHvCNdr6nXARWl
+         +lw+m3cMRr39uQFNo5xlCphEcTg5P0EIkDvEKQic=
 Received: from localhost.localdomain ([218.197.153.188])
-        by newxmesmtplogicsvrszb7.qq.com (NewEsmtp) with SMTP
-        id 720A506C; Thu, 07 Apr 2022 17:28:32 +0800
-X-QQ-mid: xmsmtpt1649323712txu21a4wf
-Message-ID: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com>
-X-QQ-XMAILINFO: N7h1OCCDntuj7gXE9EPckixmarPTNotNuv+oSnMoBzpUK/sMEAhv3nREl6ig4F
-         WQJ6nhIBxe2K/G1fr9R9+gtZonkh3jygJuZ11VbRvBqkl5ltFnuySv/Ab/xXcSbXLs/I26jTHjYw
-         Ue94j8EPgpcxzvysMVwld7y8MEbEIOq/E4BOaBeW8/kMyxhPwSTTiPQ3MOX7MDNLUB+lfky6+oMd
-         uSxl0GUqHlZdpZPfN0KYKeI8Knxijp76AVpKZfEmmnom/CEKwg9NwiOzjILt4ZottQlcuA4isZI1
-         jxGg2MFn2Mb6PNfTfBKhlDvxASNCfpkOwvK/HyWYTaivYPstV4gqChWxWclJgOXtuqQ1e3rHDwhR
-         E5WFqZGKDFfXkByYRoqsN/qnitiIgXsAuSTKAgWxS8NCPyD1b0LuUYzoKuXImaZc9TchccBLE4tA
-         AGZkm9AmCXPumw1p1FNP6y0N7vmQlAub0vil0WaN4TbWDQQuYFtKSMoDx7TLX+uXuhWYdIltiR2/
-         m8okaFJ+Kqz6N/xt4eEy4Ejv2Qpa0E+yaT/LoU4xn4K9r6wbSd5PqfXbWty57ne8XcmBEQRArlAo
-         tvk9rp2HNOnTwphtSaeWOHph0juckClHzUyvvcvC21s/1MCH6bM/EviXSKH0kfqUXbuJREFF0NA0
-         K06MIYPG929N93yoTBdhpN9yLFKOqjkF8VuSm0p5ewxQZ9A23FBUtAl+Q9VBfugEZs8Y8dEtzglv
-         59qZsx+fsWyxH1kfRDDeEPLQqZgkc7B5nUr8sxvZ9QjjXK6nq2/hh3kOxBzwz0oJLrdLP0lYNzEi
-         O6gTz8WCRcBZXshOfUfT90itR1do5p+lKNawaEIIkv155skoaya19lO4/5+nSKYFti2oNGuFtpQ8
-         dnp9yrsJiXTwC73mMqm8VB9ggIKxe9oaUuRGmwP+W6fQrZFg+LgM9XTS8FcnYFgHCn+hiihv4tru
-         6p8ph7Pu7QCPHt1RcbTWBImgJyEfXKKucZRq8W7nEeBuH89iORSw==
+        by newxmesmtplogicsvrszc8.qq.com (NewEsmtp) with SMTP
+        id 8810AC49; Thu, 07 Apr 2022 17:34:01 +0800
+X-QQ-mid: xmsmtpt1649324041tq9osk1yb
+Message-ID: <tencent_2B9817738F38B02844C245946EFF3B407E09@qq.com>
+X-QQ-XMAILINFO: M3Q/Kj4zjy60dkerLqbXeBwvcAhmYce6CAkj5VIPEgRTkNhoorWI/XYqrIWo2c
+         Jwsvc9UP9gtG638C/RTf9aQqoh0FiQXLFlm3OOE62DtjZPQ8XTx7V27o2x+ve+XkyESFJqI9xwDN
+         U73OiKWhD8ZfiBE2TgOqFwwRTyafrdTtcV7AvJhEhoATREeFfsB/VHzVYSwZYD2TcgdzT9zOYnY/
+         6iL8Biidnl6uY1d+Hv2znImVkut9J5tLDDAWUv/UXhxFY3Rxbr8ly9wqE9hR8//QpaJ2jtxuydgd
+         EpCuliM8XZW27IQxwoz0zLoBIkOLXz/Ovx08fDnqLOEnaHKnFwBoCHMnTnCMttD0W2MQgjrZPyv3
+         QzIwJD6Hsdwtk9dBCxq+6tyxevb+O4s14J9lwIhBlR51eO9COZMHi9XqXXieUhmdE6sgRdYoUtbp
+         Opw//rezjMzSunqtqA8XZOxRQuMgstO8QrRDW9jSha3q+0dX04yn6nOQ38TZ7G7vbgOnAymHmokD
+         jwn+3q1B1CvOjzcRaIMNXBx2h7tZREDVGJ4+s/o2jdCErqJY0CDdMA80+AUWNS0tLco1W+mID43F
+         fyVSlpN9f+ISbOtHwmTDx8g5E9VGq6Wie/Ey3RwR6C09GCKOGjzRl8vcsBYONS4cvBsR3n51LXQl
+         xi8WVvnjLq6u+ozm05NiwoeA/+C8o5MZ37fbccHzvxcbJp0C8r6JtEJ+OLC+1TrlVF3C38m841Mz
+         W0Ui129Qqm/I4QZ33ss0NmkYjJ1wOO936vrAcZURaDIdxKTfWYY5KPObvsCAsJbGrmogjUnp5LGh
+         70qOKHG+yWiD2vPSh3FP7YggKzX844Qeu4xlaDBNALEcrsa801pWptZsj4Ex9w+i40t0OSPpFZmc
+         QDRLX1BWjxNWGXEfoWWrnjMvSFysOsgyXvfCD+rT2gleusfmXaAMb+guK01D4cI0CpgRZRkZdXLw
+         bQbPOpkz3x0yy2RMVa9g==
 From:   xkernel.wang@foxmail.com
-To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com
-Cc:     martin.blumenstingl@googlemail.com, p.zabel@pengutronix.de,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Xiaoke Wang <xkernel.wang@foxmail.com>
-Subject: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
-Date:   Thu,  7 Apr 2022 17:28:23 +0800
-X-OQ-MSGID: <20220407092823.14526-1-xkernel.wang@foxmail.com>
+Subject: [PATCH v2] clk: pxa: add a check for the return value of kzalloc()
+Date:   Thu,  7 Apr 2022 17:33:49 +0800
+X-OQ-MSGID: <20220407093349.14639-1-xkernel.wang@foxmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -58,26 +55,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Xiaoke Wang <xkernel.wang@foxmail.com>
 
-`rstc` is allocated by kzalloc() for resetting the controller register,
-however, if reset_controller_register() fails, `rstc` is not properly
-released before returning, which can lead to memory leak.
-Therefore, this patch adds kfree(rstc) on the above error path.
+kzalloc() is a memory allocation function which can return NULL when
+some internal memory errors happen. So it is better to check it to
+prevent potential wrong memory access.
 
 Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
 ---
- drivers/clk/meson/meson8b.c | 1 +
- 1 file changed, 1 insertion(+)
+ChangeLog:
+v1->v2 stop trying to allocate more and return an error.
+ drivers/clk/pxa/clk-pxa.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index a844d35..823eacc 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3741,6 +3741,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- 	if (ret) {
- 		pr_err("%s: Failed to register clkc reset controller: %d\n",
- 		       __func__, ret);
-+		kfree(rstc);
- 		return;
- 	}
+diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+index cfc79f9..be6b950 100644
+--- a/drivers/clk/pxa/clk-pxa.c
++++ b/drivers/clk/pxa/clk-pxa.c
+@@ -102,6 +102,8 @@ int __init clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks)
  
+ 	for (i = 0; i < nb_clks; i++) {
+ 		pxa_clk = kzalloc(sizeof(*pxa_clk), GFP_KERNEL);
++		if (!pxa_clk)
++			return -ENOMEM;
+ 		pxa_clk->is_in_low_power = clks[i].is_in_low_power;
+ 		pxa_clk->lp = clks[i].lp;
+ 		pxa_clk->hp = clks[i].hp;
 -- 
