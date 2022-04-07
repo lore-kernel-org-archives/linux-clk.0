@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADE3C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B909FC433EF
 	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbiDGPkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 11:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33182 "EHLO
+        id S230168AbiDGPkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 11:40:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229474AbiDGPkN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:40:13 -0400
-X-Greylist: delayed 599 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:38:13 PDT
-Received: from 8.mo575.mail-out.ovh.net (8.mo575.mail-out.ovh.net [46.105.74.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9DCB85B
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:38:12 -0700 (PDT)
-Received: from player796.ha.ovh.net (unknown [10.110.171.96])
-        by mo575.mail-out.ovh.net (Postfix) with ESMTP id C7868233EA
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:20:39 +0000 (UTC)
+        with ESMTP id S229640AbiDGPkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:40:12 -0400
+X-Greylist: delayed 593 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:38:11 PDT
+Received: from 2.mo560.mail-out.ovh.net (2.mo560.mail-out.ovh.net [188.165.53.149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C025BB7EB
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:38:11 -0700 (PDT)
+Received: from player796.ha.ovh.net (unknown [10.111.208.192])
+        by mo560.mail-out.ovh.net (Postfix) with ESMTP id 33F0F23AC7
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:19:30 +0000 (UTC)
 Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
         (Authenticated sender: steve@sk2.org)
-        by player796.ha.ovh.net (Postfix) with ESMTPSA id B079E29330215;
-        Thu,  7 Apr 2022 15:20:30 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G003da191969-9655-4f56-b741-88365d4a5fb6,
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id 9BEC22932FE43;
+        Thu,  7 Apr 2022 15:19:24 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G003fbe37ff8-48bc-4f04-b220-b5b9d6c02b3b,
                     5995496A90EC26C6A3824F4C00BBD29EFE55D398) smtp.auth=steve@sk2.org
 X-OVh-ClientIp: 82.65.25.201
 From:   Stephen Kitt <steve@sk2.org>
@@ -30,84 +30,91 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 09/10] clk: si570: use i2c_match_id and simple i2c probe
-Date:   Thu,  7 Apr 2022 17:18:30 +0200
-Message-Id: <20220407151831.2371706-10-steve@sk2.org>
+Subject: [PATCH v2 00/10] clk: switch to simple i2c probe function
+Date:   Thu,  7 Apr 2022 17:18:21 +0200
+Message-Id: <20220407151831.2371706-1-steve@sk2.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220407151831.2371706-1-steve@sk2.org>
-References: <20220407151831.2371706-1-steve@sk2.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 92042318176945798
+X-Ovh-Tracer-Id: 72620546474870406
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeetgedugfelkeeikeetgeegteevfeeufeetuefgudeiiedthfehtdeffeekvdeffeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As part of the ongoing i2c transition to the simple probe
-("probe_new"), this patch uses i2c_match_id to retrieve the
-driver_data for the probed device. The id parameter is thus no longer
-necessary and the simple probe can be used instead.
+This series of patches updates i2c probes in clk to use the simple
+probe variant (simple as in "single argument"), probe_new, following
+one of two scenarios.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- drivers/clk/clk-si570.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+In the first scenario, the existing probe function
 
-diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
-index eea50121718a..1ff8f32f734d 100644
---- a/drivers/clk/clk-si570.c
-+++ b/drivers/clk/clk-si570.c
-@@ -398,11 +398,20 @@ static const struct regmap_config si570_regmap_config = {
- 	.volatile_reg = si570_regmap_is_volatile,
- };
- 
--static int si570_probe(struct i2c_client *client,
--		const struct i2c_device_id *id)
-+static const struct i2c_device_id si570_id[] = {
-+	{ "si570", si57x },
-+	{ "si571", si57x },
-+	{ "si598", si59x },
-+	{ "si599", si59x },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, si570_id);
-+
-+static int si570_probe(struct i2c_client *client)
- {
- 	struct clk_si570 *data;
- 	struct clk_init_data init;
-+	const struct i2c_device_id *id = i2c_match_id(si570_id, client);
- 	u32 initial_fout, factory_fout, stability;
- 	bool skip_recall;
- 	int err;
-@@ -495,15 +504,6 @@ static int si570_remove(struct i2c_client *client)
- 	return 0;
- }
- 
--static const struct i2c_device_id si570_id[] = {
--	{ "si570", si57x },
--	{ "si571", si57x },
--	{ "si598", si59x },
--	{ "si599", si59x },
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, si570_id);
--
- static const struct of_device_id clk_si570_of_match[] = {
- 	{ .compatible = "silabs,si570" },
- 	{ .compatible = "silabs,si571" },
-@@ -518,7 +518,7 @@ static struct i2c_driver si570_driver = {
- 		.name = "si570",
- 		.of_match_table = clk_si570_of_match,
- 	},
--	.probe		= si570_probe,
-+	.probe_new	= si570_probe,
- 	.remove		= si570_remove,
- 	.id_table	= si570_id,
- };
+int (*probe)(struct i2c_client *client, const struct i2c_device_id *id);
+
+(see struct i2c_driver in include/linux/i2c.h) doesn't use the id
+argument, so it can be trivially converted to
+
+int (*probe_new)(struct i2c_client *client);
+
+and the i2c_driver declaration updated to use .probe_new instead of
+.probe.
+
+In the second scenario, the probe function does use the id argument.
+In this case, the relevant part of the calling code,
+
+        /*
+         * When there are no more users of probe(),
+         * rename probe_new to probe.
+         */
+        if (driver->probe_new)
+                status = driver->probe_new(client);
+        else if (driver->probe)
+                status = driver->probe(client,
+                                       i2c_match_id(driver->id_table, client));
+        else
+                status = -EINVAL;
+
+(from drivers/i2c/i2c-core-base.c) is moved down into the probe
+function, typically along the lines of
+
+const struct i2c_device_id *id = i2c_match_id(ids, id);
+
+where ids is the i2c_device_id table. The latter needs to be declared
+before the probe function; as suggested by Wolfram Sang, the full
+definition is moved above the probe function.
+
+Changes since v1:
+  - the pair of patches have been split up into a single patch series
+    with one patch per modified file, and the commit titles adjusted
+    accordingly
+  - renesas-pcie has been added
+
+
+Stephen Kitt (10):
+  clk: cdce706: use simple i2c probe function
+  clk: cdce925: use i2c_match_id and simple i2c probe
+  clk: cs2000-cp: use simple i2c probe function
+  clk: max9485: use simple i2c probe function
+  clk: si514: use simple i2c probe function
+  clk: si5341: use simple i2c probe function
+  clk: si5351: use i2c_match_id and simple i2c probe
+  clk: si544: use i2c_match_id and simple i2c probe
+  clk: si570: use i2c_match_id and simple i2c probe
+  clk: renesas-pcie: use simple i2c probe function
+
+ drivers/clk/clk-cdce706.c      |  5 ++---
+ drivers/clk/clk-cdce925.c      | 24 ++++++++++++------------
+ drivers/clk/clk-cs2000-cp.c    |  5 ++---
+ drivers/clk/clk-max9485.c      |  5 ++---
+ drivers/clk/clk-renesas-pcie.c |  4 ++--
+ drivers/clk/clk-si514.c        |  5 ++---
+ drivers/clk/clk-si5341.c       |  5 ++---
+ drivers/clk/clk-si5351.c       | 24 ++++++++++++------------
+ drivers/clk/clk-si544.c        | 22 +++++++++++-----------
+ drivers/clk/clk-si570.c        | 24 ++++++++++++------------
+ 10 files changed, 59 insertions(+), 64 deletions(-)
+
 -- 
 2.27.0
 
