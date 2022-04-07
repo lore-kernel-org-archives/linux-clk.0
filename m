@@ -2,74 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41EEC433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 03:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7903C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 04:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235018AbiDGDgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 23:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45404 "EHLO
+        id S233709AbiDGEJd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 00:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbiDGDgL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 23:36:11 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F69229CA6;
-        Wed,  6 Apr 2022 20:34:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 61D66B8269A;
-        Thu,  7 Apr 2022 03:34:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC889C385A1;
-        Thu,  7 Apr 2022 03:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649302449;
-        bh=CzpCh+DZuA4tm7ZwIdm62bJnfKCjs5B1CyTpOTHCkLo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hZSIYtqgBssFY8OJg0G93whVvaL7mppBNXCidYafwXTIns3GAriHoGIS8jL1wMvFU
-         8qIhlBB5hgfFxzLtAM46Z5lGE5eaZNzINj51Lm5c35zApxE4H9ZGW4YxmsiFDegR/q
-         cI5g9L8xxwjwjMVYFe/Tfv6fCxL246luicP4eXBAqT2tMnltZ1WS7Gm2vD0GCo1/SO
-         V5uvaLY9DeCQByvljwYdZ4zOVsIcuwrjGmcn3mKSrNBNMKT0h9jELouVkTukO3EPwc
-         42Tqt3rLrC8XpcH5zkG18qkYPGyouhqocCIs4+e1EO/3ZpCS0DYqzfjrhcVkP60u6U
-         5xibJFeihjwLw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230131AbiDGEJb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 00:09:31 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40B7D58E67;
+        Wed,  6 Apr 2022 21:07:31 -0700 (PDT)
+Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 640071C810A3;
+        Thu,  7 Apr 2022 12:07:29 +0800 (CST)
+Received: from NTHCCAS03.nuvoton.com (10.1.20.28) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Thu, 7 Apr 2022
+ 12:07:29 +0800
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS03.nuvoton.com
+ (10.1.20.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Thu, 7 Apr 2022
+ 12:07:28 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS01.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
+ Transport; Thu, 7 Apr 2022 12:07:28 +0800
+Message-ID: <125f4a13-cd4c-7deb-6ff6-0dc2e5458bf1@nuvoton.com>
+Date:   Thu, 7 Apr 2022 12:07:28 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <tencent_C0622B5C4209E83F1C6495D926979F239D05@qq.com>
-References: <tencent_C0622B5C4209E83F1C6495D926979F239D05@qq.com>
-Subject: Re: [PATCH] clk: pxa: add a check for the return value of kzalloc()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiaoke Wang <xkernel.wang@foxmail.com>
-To:     mturquette@baylibre.com, xkernel.wang@foxmail.com
-Date:   Wed, 06 Apr 2022 20:34:07 -0700
-User-Agent: alot/0.10
-Message-Id: <20220407033409.DC889C385A1@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Krzysztof Kozlowski <krzk@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220307091923.9909-1-ychuang3@nuvoton.com>
+ <20220307091923.9909-4-ychuang3@nuvoton.com>
+ <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
+ <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
+ <CAK8P3a1Gbr4PoJbPy3BEQ=T3iJo9kQdjes7+0UK5vnc4CDckSw@mail.gmail.com>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <CAK8P3a1Gbr4PoJbPy3BEQ=T3iJo9kQdjes7+0UK5vnc4CDckSw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting xkernel.wang@foxmail.com (2022-03-25 03:27:20)
-> From: Xiaoke Wang <xkernel.wang@foxmail.com>
->=20
-> kzalloc() is a memory allocation function which can return NULL when
-> some internal memory errors happen. So it is better to check it to
-> prevent potential wrong memory access.
->=20
-> Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
-> ---
->  drivers/clk/pxa/clk-pxa.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-> index cfc79f9..d0df104 100644
-> --- a/drivers/clk/pxa/clk-pxa.c
-> +++ b/drivers/clk/pxa/clk-pxa.c
-> @@ -102,6 +102,8 @@ int __init clk_pxa_cken_init(const struct desc_clk_ck=
-en *clks, int nb_clks)
-> =20
->         for (i =3D 0; i < nb_clks; i++) {
->                 pxa_clk =3D kzalloc(sizeof(*pxa_clk), GFP_KERNEL);
-> +               if (!pxa_clk)
-> +                       continue;
 
-Shouldn't we stop trying to allocate more and return an error?
+
+On 2022/4/6 下午 03:43, Arnd Bergmann wrote:
+> On Wed, Apr 6, 2022 at 4:58 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
+>> On 2022/3/7 下午 06:25, Krzysztof Kozlowski wrote:
+>>> On 07/03/2022 10:19, Jacky Huang wrote:
+>> I would add the following to end of arch/arm64/Kconfig.platforms, and
+>> add the
+>> modification to this patch series.
+>>
+>> config ARCH_MA35D1
+>>       bool "Nuvoton MA35D1 SOC Family"
+>>       select PINCTRL
+>>       select PINCTRL_MA35D1
+>>       select PM
+>>       select GPIOLIB
+>>       select SOC_BUS
+>>       select VIDEOMODE_HELPERS
+>>       select FB_MODE_HELPERS
+>>       help
+>>         This enables support for Nuvoton MA35D1 SOC Family.
+> Selecting SOC_BUS and the gpio/pinctrl stuff is ok, but please don't
+> select the video helpers from the platform config, those should not
+> be essential for building a kernel.
+>
+>         Arnd
+
+Yes, I will remove  VIDEOMODE_HELPERS and FB_MODE_HELPERS.
+
+
+Best Regards,
+Jacky
+
