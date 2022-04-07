@@ -2,82 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C126C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 00:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41EEC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 03:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232255AbiDGArQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 20:47:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
+        id S235018AbiDGDgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 23:36:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229775AbiDGArO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 20:47:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9A021CD7C7;
-        Wed,  6 Apr 2022 17:45:14 -0700 (PDT)
+        with ESMTP id S231231AbiDGDgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 23:36:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F69229CA6;
+        Wed,  6 Apr 2022 20:34:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E4CFB82475;
-        Thu,  7 Apr 2022 00:45:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6D1C385A3;
-        Thu,  7 Apr 2022 00:45:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 61D66B8269A;
+        Thu,  7 Apr 2022 03:34:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC889C385A1;
+        Thu,  7 Apr 2022 03:34:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649292311;
-        bh=HTXn7kVKBe4UU307aYiMEL2SVHwhEFq0F/tZioWsuFQ=;
+        s=k20201202; t=1649302449;
+        bh=CzpCh+DZuA4tm7ZwIdm62bJnfKCjs5B1CyTpOTHCkLo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=E4hZR+Vc1njlKy9GM/dEpt9PCuaDXMQgC3N+3MskIf0i501Hn62DQV9HxbAu0svyG
-         Kfqv6SOsm1kaLdQ/idNLppb4syr2IzcCS95bdvf/2qHJRu/V8i3wNXR5rEHapYfhLC
-         1Ys2Z0w5mgrvdYupIHPtupB9u7pYAz88dUP431cMcKcj/4bXvQkQr25lltVYSpyMQJ
-         6gQbz2JO9sNbviytwhXtMcoCfcqx0KPOAaIzebjjvekUODjZSomu0SO14aY/bbfmsn
-         pgwtnA0NaULJiIMpjKZ3Y5pxPaE/uWuLC44VG2T5l2W8zPA3/xltqgiGbupcBTTFbf
-         VVl9BvBXYZzhA==
+        b=hZSIYtqgBssFY8OJg0G93whVvaL7mppBNXCidYafwXTIns3GAriHoGIS8jL1wMvFU
+         8qIhlBB5hgfFxzLtAM46Z5lGE5eaZNzINj51Lm5c35zApxE4H9ZGW4YxmsiFDegR/q
+         cI5g9L8xxwjwjMVYFe/Tfv6fCxL246luicP4eXBAqT2tMnltZ1WS7Gm2vD0GCo1/SO
+         V5uvaLY9DeCQByvljwYdZ4zOVsIcuwrjGmcn3mKSrNBNMKT0h9jELouVkTukO3EPwc
+         42Tqt3rLrC8XpcH5zkG18qkYPGyouhqocCIs4+e1EO/3ZpCS0DYqzfjrhcVkP60u6U
+         5xibJFeihjwLw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
+In-Reply-To: <tencent_C0622B5C4209E83F1C6495D926979F239D05@qq.com>
+References: <tencent_C0622B5C4209E83F1C6495D926979F239D05@qq.com>
+Subject: Re: [PATCH] clk: pxa: add a check for the return value of kzalloc()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-To:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>
-Date:   Wed, 06 Apr 2022 17:45:09 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiaoke Wang <xkernel.wang@foxmail.com>
+To:     mturquette@baylibre.com, xkernel.wang@foxmail.com
+Date:   Wed, 06 Apr 2022 20:34:07 -0700
 User-Agent: alot/0.10
-Message-Id: <20220407004511.3A6D1C385A3@smtp.kernel.org>
+Message-Id: <20220407033409.DC889C385A1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2022-04-06 09:18:47)
-> Hello,
+Quoting xkernel.wang@foxmail.com (2022-03-25 03:27:20)
+> From: Xiaoke Wang <xkernel.wang@foxmail.com>
 >=20
-> Here is a first series bringing DMA support to RZN1 platforms. Soon a
-> second series will come with changes made to the UART controller
-> driver, in order to interact with the RZN1 DMA controller.
+> kzalloc() is a memory allocation function which can return NULL when
+> some internal memory errors happen. So it is better to check it to
+> prevent potential wrong memory access.
 >=20
-> Stephen acked the sysctrl patch (in the clk driver) but somehow I feel
-> like it would be good to have this patch applied on both sides
-> (dmaengine and clk) because more changes will depend on the addition of
-> this helper, that are not related to DMA at all. I'll let you folks
-> figure out what is best.
+> Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+> ---
+>  drivers/clk/pxa/clk-pxa.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
+> index cfc79f9..d0df104 100644
+> --- a/drivers/clk/pxa/clk-pxa.c
+> +++ b/drivers/clk/pxa/clk-pxa.c
+> @@ -102,6 +102,8 @@ int __init clk_pxa_cken_init(const struct desc_clk_ck=
+en *clks, int nb_clks)
+> =20
+>         for (i =3D 0; i < nb_clks; i++) {
+>                 pxa_clk =3D kzalloc(sizeof(*pxa_clk), GFP_KERNEL);
+> +               if (!pxa_clk)
+> +                       continue;
 
-Are you sending more patches in the next 7 weeks or so that will touch
-the same area? If so, then it sounds like I'll need to take the clk
-patch through clk tree. I don't know what is best because I don't have
-the information about what everyone plans to do in that file.
+Shouldn't we stop trying to allocate more and return an error?
