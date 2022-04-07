@@ -2,95 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94410C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 20:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D63EC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 20:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbiDGUSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 16:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46660 "EHLO
+        id S229585AbiDGUaI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 16:30:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiDGUR7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 16:17:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F884898B2;
-        Thu,  7 Apr 2022 13:14:43 -0700 (PDT)
+        with ESMTP id S229533AbiDGUaG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 16:30:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17779488582;
+        Thu,  7 Apr 2022 13:14:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8404161E42;
-        Thu,  7 Apr 2022 20:14:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 740B0C385A0;
-        Thu,  7 Apr 2022 20:14:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 26BD260FD0;
+        Thu,  7 Apr 2022 20:14:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD18DC385A4;
+        Thu,  7 Apr 2022 20:14:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649362481;
-        bh=nFMrAtUPPaCHomT6JLKSuZ4IJiLqRKp10zNiu+A1TE8=;
+        s=k20201202; t=1649362441;
+        bh=Ory3bJORFZJ4ro9wMV1GkV5iCozFO5IKAD1TZRPL+4M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S5k3c0vzZQKZrZ81T01/9OBFsblOxWb0Fj+MJ2zrCA3apMyLgXrX/sx+ZTXeX99cq
-         Bo+sLcD8BQH1c/5aHzts70kr0zFBNM3uzOgSVrHlYzq/3GQFWy+shjqRAGx5NtgrRC
-         gB7wrRYDwVDOsXLS00S/xxZ1dMw9DM5Eis6YdTCkNLY51yhzBm03t3tTdPEobsfC7W
-         LHf8ium0YQRZ+JJ+WMMW0RTb/x4wQ1YPb5vHUcabkhsYlADVHXZ/QW6BNYYKmarC4N
-         UQesMwvfcxugjQtuXROAV+n0lBfm+wwTGKk4P1BFnUhSCbHxNW8gZlZU7TkSxP0D2Y
-         xV79XyaV6fZIg==
-Date:   Thu, 7 Apr 2022 22:14:38 +0200
+        b=rb1yhzDTndTwydnLZgKkom6IjQUNcKk9vbebaFO2AZUg1jHcCdi0OD3H5mdugIBDH
+         7RKIzpvaLjeEDboNgStLaY3vTq7veQFAJwY2y9/LP5iLxbCvsRKGL0qzfPC434OmNy
+         aaCfx+tm7jw4XtghUYpEnl35gMxRwevvRE9RhnF1Qoj5KRrTczHOkX4b6cKWSOXyEo
+         MNpRi8yqm7PsvSQ02laiLAwJ5Nw+RogXs6daOb+lP+Usv8HoyJWMnEgjw1LYGYBCC9
+         qigDRd5BUKejf6wGqg8dWGa8REEsSBO7a46/CGFQ5eMcZPD0bAgjndn7PRV46t9fly
+         +tpRuoV4eYyrw==
+Date:   Thu, 7 Apr 2022 22:13:57 +0200
 From:   Wolfram Sang <wsa@kernel.org>
 To:     Stephen Kitt <steve@sk2.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] clk: si514: use simple i2c probe function
-Message-ID: <Yk9GLj9YD7u/sIv9@shikoro>
+Subject: Re: [PATCH v2 02/10] clk: cdce925: use i2c_match_id and simple i2c
+ probe
+Message-ID: <Yk9GBZtMngOMi6b5@shikoro>
 Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
         Stephen Kitt <steve@sk2.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20220407151831.2371706-1-steve@sk2.org>
- <20220407151831.2371706-6-steve@sk2.org>
+ <20220407151831.2371706-3-steve@sk2.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VxAQcXxq88U68ZkA"
+        protocol="application/pgp-signature"; boundary="QAwNc0UyivCrPLbF"
 Content-Disposition: inline
-In-Reply-To: <20220407151831.2371706-6-steve@sk2.org>
+In-Reply-To: <20220407151831.2371706-3-steve@sk2.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---VxAQcXxq88U68ZkA
+--QAwNc0UyivCrPLbF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 07, 2022 at 05:18:26PM +0200, Stephen Kitt wrote:
-> The i2c probe function here doesn't use the id information provided in
-> its second argument, so the single-parameter i2c probe function
-> ("probe_new") can be used instead.
->=20
-> This avoids scanning the identifier tables during probes.
+On Thu, Apr 07, 2022 at 05:18:23PM +0200, Stephen Kitt wrote:
+> As part of the ongoing i2c transition to the simple probe
+> ("probe_new"), this patch uses i2c_match_id to retrieve the
+> driver_data for the probed device. The id parameter is thus no longer
+> necessary and the simple probe can be used instead.
 >=20
 > Signed-off-by: Stephen Kitt <steve@sk2.org>
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---VxAQcXxq88U68ZkA
+--QAwNc0UyivCrPLbF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJPRi4ACgkQFA3kzBSg
-KbbKyA//SS9Ibq36h9SQHkYbdkMwqZ83V96bsg5XpDQMo2XfZIe2QkcmRmdCTvvA
-WOutHp/H+7Bfk3HqMIbMyPI7mHUbrQJBeCftsjm8+wokKxOetFMFbpI7sLIFSB4h
-vdhQLBCoFHwNWeKTirjocTIERXtf05UOk4oyEyh33OLFrkWd1KzTModgZYMtI0TW
-2kj1hj359SMX54OCUm3758e2mb/azzp+1Y8p580G1D3bkd+Ao8WP8aM0n6Ur7ThL
-ZufAEClxoYbpPKvAp3Lsddr6lE2ZcGyqMRIXF2pzd1DzGiJ4yYu2yHg83E63NUSt
-KxG4kPZu7+U1taxzmGGbLaoxpPnfFjNdRlFUYYp4dOzU5D4ybUfuaiOCl3AmY5Fk
-8NK7MJbvTHRcll74O2FsoDIE0pT7DRD2BbzvN/NVJJBlY9IYgFGk/Xt3Fhf4rBV4
-F6UxgsOQZnFZ+YLL1PRHaiQHMm1zWOC0k1fjfqC+c6op5aZk3MPB93TTkjvqF+bL
-/HkAgj80xYzJaO3dFiR+9ER65JfxFIkBDD2Wt7r8D5DOV7He75UJJdoZV+NsROMU
-Lhq+5AhhpCaxPD9+D8V6WlXXwXP72sDCKdpVFQimycdyGMcIu6tyywwXjEehnNh/
-oldPpvOfh9PczrMX0ujoHvDSJ6S2kKeQnxL0i1o0Lsq2BkucUP0=
-=2O/1
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJPRgQACgkQFA3kzBSg
+KbZ+1Q//dvf44/ZZYFKiPq7IBQkBR1GvTLAK54S5fuDNJMjS+9Go8yehKgzQP0RD
+O7m9Ryuh3xTtGonC6boRBKQZaidCoOG294yOmyUZ5MDL4yZNHV7AIKeBjjYfj7pC
+GpDTU7mt2e/WfNByF2ldkF82iBmziuzagbJQIQcCtCg2x4m6JSGI25eIPhDCdZJK
+Lj7Ebd/TLP+mvZyvE+JZzZKRa7c7ZKwWzhQFHGlAIqdBjLDSp72ThtBMYuYlBOeg
+rQd3Ao6N6f16MgpSrWo38y17RTHlDkqsRobz6/Ad7SgFPxMNd88wLoOM7XjAilYu
+8cMsDujJ/KfE5JG0PP+WIWihooI64yqNkh3hvYPp/brS5+PfCIIJMLwgmF9/P9u1
+mVusYCtxDAsKqxw9vaPSqh1bvUCDL1yWBC+hKXdjXFDA/qAmvIja8iuYAZQZnuU7
+ZdDDvhD6MBh9RXduqxZR5t3saTIn0Nb2sjcvwWtgO1IwTBtFhG1ZAXCWTGep6iWK
+/CTdo002V5rVw0Kh8C+CYg2mDjdh1uI/z4dtc5yUxJNEO3YAKwNxhy9j5CEbqYBk
+3t+VDwr9xz8QP/Yc5JY4U9YP52IsWPZRTfXKnznJnKSm3U4C1xCnJvV29PaPGn1u
+BEUW9O1601uVMjMTgNfbU7GtdrYfjowxr12AXfHRefJXrp/mNN8=
+=RYNI
 -----END PGP SIGNATURE-----
 
---VxAQcXxq88U68ZkA--
+--QAwNc0UyivCrPLbF--
