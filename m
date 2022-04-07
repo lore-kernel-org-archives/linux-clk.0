@@ -2,126 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892DAC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 11:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68A5C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 12:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238296AbiDGLoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 07:44:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
+        id S244128AbiDGMxz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 08:53:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244866AbiDGLoW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 07:44:22 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DDACF3A46
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 04:42:22 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id t21so5299870oie.11
-        for <linux-clk@vger.kernel.org>; Thu, 07 Apr 2022 04:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4SlNyJLkNkQjFibbjG7LibUXxMJ0vZJMxjm1ghUeLSo=;
-        b=RyFz37RFrTq9tfEhm7CeR0XjT0XDM8te7eZ7yZTVn04gO23o3fYXZcM43nomGQETne
-         k7I9SVLcJZsWi3Hfk8otl/I4P4YAlBF6HAuW+IhPYqZvKLVPsNuLUFvm76frX+RVZmn1
-         EJLaHovsDsDTZqlT52trbcbd7nTvNGMLBZSNLyaXtpuq4KNeE/iKlH9MRyPxWNrglS2v
-         8Hh6gIDU7InmRt+pgufza4JN2xpcLZLF1ef0u06op9zmgSjZXMHNmOh+MS+oXQmIX2pQ
-         5HIWmA8Bu6/Qz5CvJGKvBtlb34aWLqpEGknEKNYwVumxYck8dYVDggcxvT5hL6UqNVYC
-         G9PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4SlNyJLkNkQjFibbjG7LibUXxMJ0vZJMxjm1ghUeLSo=;
-        b=B4a+0AzJgDfdWHoN2pxr8O4UiU6hJzQOBP9VwAloaxrLna03zOdZkQONHoMyoc5LaI
-         J4pcX6YRO2vmMPlV0ImVV0FKbQHbynNIMmIClFGTM+lfLq2pZHu2VSmYfWK06DFUXVSk
-         3CW6KICBIZPb0xxe3H1i0aSbHfcVN4bcPiPT/cOth4O+GwHZLnbB9kbvuwyLKE5Km9QW
-         /zNKeq9Ugwm98TaXr5ei3O5d+ZMYz5WiZjMI+xbPk5gOJJlkLXkq8HyWRbcbshYIqLEk
-         OKcgOTr+Hn3v5jH363a3xDet5bwwmtTOu32QOD6bMmiPc7Ul9OUHFDcDvsJK57RsacBe
-         nLzA==
-X-Gm-Message-State: AOAM533cY6k/NRbJ2IQ2dj7VZhSW81FiF3lyjqts2OCSrOYa20/lEqed
-        dmskMjM7obqQHylTpEWCt614V61MBBDlAfJW9+5l3g==
-X-Google-Smtp-Source: ABdhPJwmb8NPaOfFwbH1UoLl7ZnI0TLh1pppFo6Oeu8yFnd1iYpTTiurcyIBl4X6Tu7dcJs42w/30+ElAs6L8dIdvzc=
-X-Received: by 2002:a05:6808:1991:b0:2da:350d:f9fc with SMTP id
- bj17-20020a056808199100b002da350df9fcmr5606947oib.251.1649331741621; Thu, 07
- Apr 2022 04:42:21 -0700 (PDT)
+        with ESMTP id S230055AbiDGMxy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 08:53:54 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9DF2224741;
+        Thu,  7 Apr 2022 05:51:54 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 237Aq0jf009474;
+        Thu, 7 Apr 2022 14:51:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=13b18C+QnCO96hAQswheWvxn/oYiNl1M/rXD0ThSX+o=;
+ b=pzC0Z1TuNgjH4uMUvTS0kcpw+02eWvd/3XkZGoakzGMa7sjEyFM3Yg7MUheEh0HTbOwH
+ VmvyQOIFjpj2NTdIYMlhHt47GnXNoFXyPmciTpB1iLc1e+vaqubl7YGzq5Qg+4Q3KMRR
+ 2p1yPs3XChyMlevkosOJpnNBl47eZ6c417MZ18n/eGisfLL5kdwSMLQ3APtG2R9K5Ufz
+ jdvx/2tjDDMj9wt0xg9ZAjA3KnXNPIuFhbBdSXkVqmTcbhuZ607gG7OvtaQRXIT3iCLY
+ 2n60AKkdncFjGPFtMBiAQBpGLQevJIjmuV/J7gRPfIWNzR4/h9dvEMx7CG4x5Xsr582Q Uw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f8x4rm2j0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Apr 2022 14:51:42 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 72D5F10002A;
+        Thu,  7 Apr 2022 14:51:41 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5DB7A21B52C;
+        Thu,  7 Apr 2022 14:51:41 +0200 (CEST)
+Received: from [10.48.0.142] (10.75.127.44) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Thu, 7 Apr
+ 2022 14:51:40 +0200
+Message-ID: <60b04d4f-71ae-2c06-4570-eacd1f3db172@foss.st.com>
+Date:   Thu, 7 Apr 2022 14:51:39 +0200
 MIME-Version: 1.0
-References: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
- <20220401151058.fipdax3kvmxknctv@houat> <CA+G9fYu+WddXTb0NcbviUfGQHhsmThssVCafLPw7+nj3JsoFAA@mail.gmail.com>
- <20220407075435.ahlylmbqmqnpxz64@houat>
-In-Reply-To: <20220407075435.ahlylmbqmqnpxz64@houat>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Thu, 7 Apr 2022 17:12:09 +0530
-Message-ID: <CA+G9fYvT_W9+0AguQu97mqTm5zNnSvF0asnatZX8BTf=_1oANg@mail.gmail.com>
-Subject: Re: [next] db845c: WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
- divider_recalc_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-        gabriel.fernandez@foss.st.com,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH RESEND v3 00/13] Introduction of STM32MP13 RCC driver
+ (Reset Clock Controller)
+Content-Language: en-US
+To:     <gabriel.fernandez@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220316131000.9874-1-gabriel.fernandez@foss.st.com>
+From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20220316131000.9874-1-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-07_01,2022-04-07_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 7 Apr 2022 at 13:24, Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi,
->
-> > > I'm not sure if it's feasible, but if it is, it looks like something
-> > > that could be fixed by the patch pasted here:
-> > >
-> > > https://lore.kernel.org/linux-clk/20220401122736.5yvanksa4pla7uql@houat/
-> > > Could you test it?
-> >
-> > I have tested the single line patch and reported problems not fixed.
->
-> Could you test this branch?
-> https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
+Hi Gabriel,
 
-I have tested your tree and branch.
-I saw more clk prints in the boot log and did not notice the reported warning.
+On 3/16/22 14:09, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> v3:
+>    - cosmetic change from Stephen Boyd
+>    - rename some functions in clk-stm32-core
+>    - add missing static for variables or functions
+> 
+> v2:
+>    - Resend because patch 9,10,12,13 has not been sent
+>    - add Reviewed by Krzysztof Kozlowski for patch 1
+> 
+> Gabriel Fernandez (13):
+>    dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
+>    clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
+>    clk: stm32mp13: add stm32_mux clock management
+>    clk: stm32mp13: add stm32_gate management
+>    clk: stm32mp13: add stm32 divider clock
+>    clk: stm32mp13: add composite clock
+>    clk: stm32mp13: manage secured clocks
+>    clk: stm32mp13: add all STM32MP13 peripheral clocks
+>    clk: stm32mp13: add all STM32MP13 kernel clocks
+>    clk: stm32mp13: add multi mux function
+>    clk: stm32mp13: add safe mux management
+>    ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
+>    ARM: dts: stm32: add RCC on STM32MP13x SoC family
+> 
 
-[    0.734195] clk_set_rate_range_nolock: qdss: orphan ? n
-[    0.734222] clk_set_rate_range_nolock: qdss: core req rate 0
-[    0.734235] clk_set_rate_range_nolock: qdss: clamped rate 0
-[    0.734249] clk_core_set_rate_nolock: qdss: rate 0
-[    0.734262] clk_core_set_rate_nolock: qdss: rounded rate 0
-...
-[    3.574169] clk_set_rate_range_nolock: gcc_ufs_phy_ice_core_clk: orphan ? n
-[    3.581271] clk_set_rate_range_nolock: gcc_ufs_phy_ice_core_clk:
-core req rate 300000000
-[    3.589446] clk_set_rate_range_nolock: gcc_ufs_phy_ice_core_clk:
-clamped rate 300000000
-[    3.597521] clk_core_set_rate_nolock: gcc_ufs_phy_ice_core_clk:
-rate 300000000
-...
+DT patches look good for me. I'll apply them on stm32-next as soon as 
+dt-bindings + drivers patch are applied.
 
-Please refer this link for detail boot log,
-https://lkft.validation.linaro.org/scheduler/job/4861930#L2712
-
-Build link
-https://builds.tuxbuild.com/27SxYLYlZcKEUQGVbmnmLP3GxEp/
-
-- Naresh
-
->
-> Thanks!
-> Maxime
+cheers
+Alex
 
 
---
-Linaro LKFT
-https://lkft.linaro.org
+
+>   .../bindings/clock/st,stm32mp1-rcc.yaml       |    2 +
+>   arch/arm/boot/dts/stm32mp131.dtsi             |  128 +-
+>   arch/arm/boot/dts/stm32mp133.dtsi             |    4 +-
+>   arch/arm/boot/dts/stm32mp13xf.dtsi            |    3 +-
+>   drivers/clk/Kconfig                           |    5 +
+>   drivers/clk/Makefile                          |    1 +
+>   drivers/clk/stm32/Makefile                    |    1 +
+>   drivers/clk/stm32/clk-stm32-core.c            |  695 +++++++
+>   drivers/clk/stm32/clk-stm32-core.h            |  188 ++
+>   drivers/clk/stm32/clk-stm32mp13.c             | 1620 +++++++++++++++
+>   drivers/clk/stm32/reset-stm32.c               |  122 ++
+>   drivers/clk/stm32/reset-stm32.h               |    8 +
+>   drivers/clk/stm32/stm32mp13_rcc.h             | 1748 +++++++++++++++++
+>   include/dt-bindings/clock/stm32mp13-clks.h    |  229 +++
+>   include/dt-bindings/reset/stm32mp13-resets.h  |  100 +
+>   15 files changed, 4794 insertions(+), 60 deletions(-)
+>   create mode 100644 drivers/clk/stm32/Makefile
+>   create mode 100644 drivers/clk/stm32/clk-stm32-core.c
+>   create mode 100644 drivers/clk/stm32/clk-stm32-core.h
+>   create mode 100644 drivers/clk/stm32/clk-stm32mp13.c
+>   create mode 100644 drivers/clk/stm32/reset-stm32.c
+>   create mode 100644 drivers/clk/stm32/reset-stm32.h
+>   create mode 100644 drivers/clk/stm32/stm32mp13_rcc.h
+>   create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
+>   create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
+> 
+
