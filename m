@@ -2,144 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5855BC433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B0FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229447AbiDGJXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
+        id S232136AbiDGJao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 05:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243912AbiDGJXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:23:32 -0400
-X-Greylist: delayed 138847 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 02:21:29 PDT
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E9B176659;
-        Thu,  7 Apr 2022 02:21:28 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9A21DC0005;
-        Thu,  7 Apr 2022 09:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649323286;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ovt995Vz+TKYIu2nKkb+/jaggU7Fdt/74L9w/t6FZTQ=;
-        b=EZt+u37SQDG+9nMmzmDtiw13PSpBGAclDEGCvXaHchYpOpByVGUl8CKehpHWzkn7DJSd7X
-        aObsbLj0jO072kwKE1K7+2MmTeQ3wPkBBKnLL6DhN465yh1CRVKOGm1K29OWABIkXxOdg/
-        SbmRkkYjTBb5Gv9MciFpGN6ap89l7fOrv7DfuSODYCn7nagx+2qeK8bM4YwkgbHMAlsUIX
-        lZIzDWDYHRaGhNNL7Jkj9JbZU+uVZprD4RK+XgByZtxDH/bZ8RqX91BphqN5mTW43N3x8N
-        O6y4KrdAEdZFalz+lT3ATKvCi75/FvxE6MqlG080zgluJZQ7RfNUZC7yOFf6Tg==
-Date:   Thu, 7 Apr 2022 11:21:22 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 1/7] dt-bindings: rtc: rzn1: Describe the RZN1 RTC
-Message-ID: <20220407112122.11321834@xps13>
-In-Reply-To: <bdaad2e0-6662-c6aa-974a-326dd513282f@linaro.org>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
-        <20220405184716.1578385-2-miquel.raynal@bootlin.com>
-        <bdaad2e0-6662-c6aa-974a-326dd513282f@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S232761AbiDGJan (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:30:43 -0400
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FDC860A86
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 02:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1649323718;
+        bh=qrEk1KaQqHvx86BvGZbTrk+9iRUH0cmWZPEc61qHsBI=;
+        h=From:To:Cc:Subject:Date;
+        b=LDd5Jay6Ua4M7Rk3quFdJb8SgDPSuZjtqWrWwqliBIg5ntSUNjqp/XacMdFtX7jJp
+         /X/fkzdKAMvVmFPEWFBR5+U+YOHa9IUv2mpP35DLCjkdZ6mH4VgDyKFE3QoEKTYe/d
+         ap5kgwwuIo7p3ExFZYpafOI6djHPnxvewqi5BfBA=
+Received: from localhost.localdomain ([218.197.153.188])
+        by newxmesmtplogicsvrszb7.qq.com (NewEsmtp) with SMTP
+        id 720A506C; Thu, 07 Apr 2022 17:28:32 +0800
+X-QQ-mid: xmsmtpt1649323712txu21a4wf
+Message-ID: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntuj7gXE9EPckixmarPTNotNuv+oSnMoBzpUK/sMEAhv3nREl6ig4F
+         WQJ6nhIBxe2K/G1fr9R9+gtZonkh3jygJuZ11VbRvBqkl5ltFnuySv/Ab/xXcSbXLs/I26jTHjYw
+         Ue94j8EPgpcxzvysMVwld7y8MEbEIOq/E4BOaBeW8/kMyxhPwSTTiPQ3MOX7MDNLUB+lfky6+oMd
+         uSxl0GUqHlZdpZPfN0KYKeI8Knxijp76AVpKZfEmmnom/CEKwg9NwiOzjILt4ZottQlcuA4isZI1
+         jxGg2MFn2Mb6PNfTfBKhlDvxASNCfpkOwvK/HyWYTaivYPstV4gqChWxWclJgOXtuqQ1e3rHDwhR
+         E5WFqZGKDFfXkByYRoqsN/qnitiIgXsAuSTKAgWxS8NCPyD1b0LuUYzoKuXImaZc9TchccBLE4tA
+         AGZkm9AmCXPumw1p1FNP6y0N7vmQlAub0vil0WaN4TbWDQQuYFtKSMoDx7TLX+uXuhWYdIltiR2/
+         m8okaFJ+Kqz6N/xt4eEy4Ejv2Qpa0E+yaT/LoU4xn4K9r6wbSd5PqfXbWty57ne8XcmBEQRArlAo
+         tvk9rp2HNOnTwphtSaeWOHph0juckClHzUyvvcvC21s/1MCH6bM/EviXSKH0kfqUXbuJREFF0NA0
+         K06MIYPG929N93yoTBdhpN9yLFKOqjkF8VuSm0p5ewxQZ9A23FBUtAl+Q9VBfugEZs8Y8dEtzglv
+         59qZsx+fsWyxH1kfRDDeEPLQqZgkc7B5nUr8sxvZ9QjjXK6nq2/hh3kOxBzwz0oJLrdLP0lYNzEi
+         O6gTz8WCRcBZXshOfUfT90itR1do5p+lKNawaEIIkv155skoaya19lO4/5+nSKYFti2oNGuFtpQ8
+         dnp9yrsJiXTwC73mMqm8VB9ggIKxe9oaUuRGmwP+W6fQrZFg+LgM9XTS8FcnYFgHCn+hiihv4tru
+         6p8ph7Pu7QCPHt1RcbTWBImgJyEfXKKucZRq8W7nEeBuH89iORSw==
+From:   xkernel.wang@foxmail.com
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com
+Cc:     martin.blumenstingl@googlemail.com, p.zabel@pengutronix.de,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Xiaoke Wang <xkernel.wang@foxmail.com>
+Subject: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
+Date:   Thu,  7 Apr 2022 17:28:23 +0800
+X-OQ-MSGID: <20220407092823.14526-1-xkernel.wang@foxmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+From: Xiaoke Wang <xkernel.wang@foxmail.com>
 
-krzysztof.kozlowski@linaro.org wrote on Thu, 7 Apr 2022 09:37:39 +0200:
+`rstc` is allocated by kzalloc() for resetting the controller register,
+however, if reset_controller_register() fails, `rstc` is not properly
+released before returning, which can lead to memory leak.
+Therefore, this patch adds kfree(rstc) on the above error path.
 
-> On 05/04/2022 20:47, Miquel Raynal wrote:
-> > Add new binding file for this RTC.
-> >=20
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
-> >  .../bindings/rtc/renesas,rzn1-rtc.yaml        | 69 +++++++++++++++++++
-> >  1 file changed, 69 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzn1-=
-rtc.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yam=
-l b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> > new file mode 100644
-> > index 000000000000..903f0cd361fa
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-> > @@ -0,0 +1,69 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rtc/renesas,rzn1-rtc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Renesas RZ/N1 SoCs Real-Time Clock DT bindings
-> > +
-> > +maintainers:
-> > +  - Miquel Raynal <miquel.raynal@bootlin.com>
-> > +
-> > +allOf:
-> > +  - $ref: rtc.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf: =20
->=20
-> Why oneOf?
+Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+---
+ drivers/clk/meson/meson8b.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Right, copy-paste leftover.
-
->=20
-> > +      - items:
-> > +          - enum:
-> > +              - renesas,r9a06g032-rtc
-> > +          - const: renesas,rzn1-rtc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    minItems: 3
-> > +    maxItems: 3
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: alarm
-> > +      - const: timer
-> > +      - const: pps
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  clock-names:
-> > +    const: hclk
-> > +
-> > +  start-year: true =20
->=20
-> You don't need this, it's coming from rtc.yaml.
-
-Right.
-
-Thanks,
-Miqu=C3=A8l
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index a844d35..823eacc 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -3741,6 +3741,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 	if (ret) {
+ 		pr_err("%s: Failed to register clkc reset controller: %d\n",
+ 		       __func__, ret);
++		kfree(rstc);
+ 		return;
+ 	}
+ 
+-- 
