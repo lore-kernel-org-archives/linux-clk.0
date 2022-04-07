@@ -2,27 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4250AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADE3C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344763AbiDGPaf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 11:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
+        id S229640AbiDGPkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 11:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241773AbiDGPae (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:30:34 -0400
-X-Greylist: delayed 471 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:28:29 PDT
-Received: from 6.mo576.mail-out.ovh.net (6.mo576.mail-out.ovh.net [46.105.50.107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A12F130
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:28:28 -0700 (PDT)
-Received: from player796.ha.ovh.net (unknown [10.110.103.132])
-        by mo576.mail-out.ovh.net (Postfix) with ESMTP id 654E523E85
-        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:20:22 +0000 (UTC)
+        with ESMTP id S229474AbiDGPkN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:40:13 -0400
+X-Greylist: delayed 599 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:38:13 PDT
+Received: from 8.mo575.mail-out.ovh.net (8.mo575.mail-out.ovh.net [46.105.74.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9DCB85B
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:38:12 -0700 (PDT)
+Received: from player796.ha.ovh.net (unknown [10.110.171.96])
+        by mo575.mail-out.ovh.net (Postfix) with ESMTP id C7868233EA
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:20:39 +0000 (UTC)
 Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
         (Authenticated sender: steve@sk2.org)
-        by player796.ha.ovh.net (Postfix) with ESMTPSA id 8208729330148;
-        Thu,  7 Apr 2022 15:20:15 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G0034497206b-6a9c-4c63-891e-297cf9db652a,
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id B079E29330215;
+        Thu,  7 Apr 2022 15:20:30 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G003da191969-9655-4f56-b741-88365d4a5fb6,
                     5995496A90EC26C6A3824F4C00BBD29EFE55D398) smtp.auth=steve@sk2.org
 X-OVh-ClientIp: 82.65.25.201
 From:   Stephen Kitt <steve@sk2.org>
@@ -30,18 +30,18 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v2 07/10] clk: si5351: use i2c_match_id and simple i2c probe
-Date:   Thu,  7 Apr 2022 17:18:28 +0200
-Message-Id: <20220407151831.2371706-8-steve@sk2.org>
+Subject: [PATCH v2 09/10] clk: si570: use i2c_match_id and simple i2c probe
+Date:   Thu,  7 Apr 2022 17:18:30 +0200
+Message-Id: <20220407151831.2371706-10-steve@sk2.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220407151831.2371706-1-steve@sk2.org>
 References: <20220407151831.2371706-1-steve@sk2.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 87257243844511366
+X-Ovh-Tracer-Id: 92042318176945798
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -53,56 +53,60 @@ necessary and the simple probe can be used instead.
 
 Signed-off-by: Stephen Kitt <steve@sk2.org>
 ---
- drivers/clk/clk-si5351.c | 24 ++++++++++++------------
+ drivers/clk/clk-si570.c | 24 ++++++++++++------------
  1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 93fa8c9e11be..b9f088c4ba2f 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1367,9 +1367,18 @@ si53351_of_clk_get(struct of_phandle_args *clkspec, void *data)
- }
- #endif /* CONFIG_OF */
+diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
+index eea50121718a..1ff8f32f734d 100644
+--- a/drivers/clk/clk-si570.c
++++ b/drivers/clk/clk-si570.c
+@@ -398,11 +398,20 @@ static const struct regmap_config si570_regmap_config = {
+ 	.volatile_reg = si570_regmap_is_volatile,
+ };
  
--static int si5351_i2c_probe(struct i2c_client *client,
--			    const struct i2c_device_id *id)
-+static const struct i2c_device_id si5351_i2c_ids[] = {
-+	{ "si5351a", SI5351_VARIANT_A },
-+	{ "si5351a-msop", SI5351_VARIANT_A3 },
-+	{ "si5351b", SI5351_VARIANT_B },
-+	{ "si5351c", SI5351_VARIANT_C },
+-static int si570_probe(struct i2c_client *client,
+-		const struct i2c_device_id *id)
++static const struct i2c_device_id si570_id[] = {
++	{ "si570", si57x },
++	{ "si571", si57x },
++	{ "si598", si59x },
++	{ "si599", si59x },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(i2c, si5351_i2c_ids);
++MODULE_DEVICE_TABLE(i2c, si570_id);
 +
-+static int si5351_i2c_probe(struct i2c_client *client)
++static int si570_probe(struct i2c_client *client)
  {
-+	const struct i2c_device_id *id = i2c_match_id(si5351_i2c_ids, client);
- 	enum si5351_variant variant = (enum si5351_variant)id->driver_data;
- 	struct si5351_platform_data *pdata;
- 	struct si5351_driver_data *drvdata;
-@@ -1649,21 +1658,12 @@ static int si5351_i2c_remove(struct i2c_client *client)
+ 	struct clk_si570 *data;
+ 	struct clk_init_data init;
++	const struct i2c_device_id *id = i2c_match_id(si570_id, client);
+ 	u32 initial_fout, factory_fout, stability;
+ 	bool skip_recall;
+ 	int err;
+@@ -495,15 +504,6 @@ static int si570_remove(struct i2c_client *client)
  	return 0;
  }
  
--static const struct i2c_device_id si5351_i2c_ids[] = {
--	{ "si5351a", SI5351_VARIANT_A },
--	{ "si5351a-msop", SI5351_VARIANT_A3 },
--	{ "si5351b", SI5351_VARIANT_B },
--	{ "si5351c", SI5351_VARIANT_C },
+-static const struct i2c_device_id si570_id[] = {
+-	{ "si570", si57x },
+-	{ "si571", si57x },
+-	{ "si598", si59x },
+-	{ "si599", si59x },
 -	{ }
 -};
--MODULE_DEVICE_TABLE(i2c, si5351_i2c_ids);
+-MODULE_DEVICE_TABLE(i2c, si570_id);
 -
- static struct i2c_driver si5351_driver = {
- 	.driver = {
- 		.name = "si5351",
- 		.of_match_table = of_match_ptr(si5351_dt_ids),
+ static const struct of_device_id clk_si570_of_match[] = {
+ 	{ .compatible = "silabs,si570" },
+ 	{ .compatible = "silabs,si571" },
+@@ -518,7 +518,7 @@ static struct i2c_driver si570_driver = {
+ 		.name = "si570",
+ 		.of_match_table = clk_si570_of_match,
  	},
--	.probe = si5351_i2c_probe,
-+	.probe_new = si5351_i2c_probe,
- 	.remove = si5351_i2c_remove,
- 	.id_table = si5351_i2c_ids,
+-	.probe		= si570_probe,
++	.probe_new	= si570_probe,
+ 	.remove		= si570_remove,
+ 	.id_table	= si570_id,
  };
 -- 
 2.27.0
