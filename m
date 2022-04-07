@@ -2,111 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2E3C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F027AC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:02:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231712AbiDGJDr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 05:03:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
+        id S238003AbiDGJE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 05:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243762AbiDGJDZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:03:25 -0400
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141F252E78;
-        Thu,  7 Apr 2022 02:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1649322080;
-        bh=Z9pMcqz9PcDTm7oWvk9GqY4NaqgI4eR0toGt5vtlbW4=;
-        h=From:To:Cc:Subject:Date;
-        b=haIP9U+GA29bAgfGUyTWqmPbnOF9FxzvVPxJnuRs1gbBwCzrcF4inxO3IZOFeP29I
-         p2S/iXORSgM/woOB+3QA4B5wHQ6lSN+S0sBJhJjAXAESEoLOXd85bNPgfp+QkQlL4u
-         pOFGGFsEGtCL/ZjsVuDfhuAY8prm0WZY6z4xRjq0=
-Received: from localhost.localdomain ([218.197.153.188])
-        by newxmesmtplogicsvrsza5.qq.com (NewEsmtp) with SMTP
-        id 50B1A45; Thu, 07 Apr 2022 17:01:16 +0800
-X-QQ-mid: xmsmtpt1649322076tfjkopifx
-Message-ID: <tencent_BD8B1CF914FDE1104AFDFFEA200DCC0EB908@qq.com>
-X-QQ-XMAILINFO: MOwr6TNsEdeBxNTJKWZPE4J5SMyu2l167fUiO/OWz+5vIbAc87uSegMPpk0cbb
-         7iIF/BI5MZ5Dj9Uu01oqG/6M0XIq8HPTYij1IcuIdlArPBN41hUzcj5V6D1pVjl0LhmZvjVQMev1
-         1tOSe8qT0ruG7t+WScxEXrfGDujvpbCqhcTrK3mGg1UQw9gq6Zpn6bcMzDJyc90t5Sr+jKau0yq7
-         Q2T/p6sr7jw8A86xlaQxjwV1Vrhmv6ZUd9Te0i9h5BM3pWZxX1r0EEEPC8D+yiTkCXwMA4O4lHOG
-         Pq5J0hm/r3fKGDbZV0U9tlMBcisEmeEhs0yr/K7asDwphayN0mIawe/5WUfLqIr8gyqfeI+67SQK
-         vBbA7/YwkWkjzJRJqgUUIQOypSu3nMibAv1pq0vGQjMVrr37RvlJPGRQ3Z61h5BjSBDjQ+/ygsUG
-         98lgqHsjLFEpoHRos6Z8oAJGU5Vj4eXmM7Vdcv/OQyIerVlo6VAYFx42tPQR3JKzE0ZM0gHAnNoH
-         HPOOt30/qCFSwOE5hAF3r3F57IAhDVxJSOyfa+Cap2cYo0IZ6p6dgATlCLCx0mgPfVWX4tfbwpCN
-         SX8fRlsNzOzecg8vSpgpBLPXb3/t9Jcr4/HrG10W51k7Fp6sXyhA6MYM6Mqg2x6ap19JljxMy0SI
-         wDkb9xiI3JMOxB0tK6FxODYEUjhgbQ3wPc7CaG/BJWp69RhDCFbdCBY1SR9TaKP2ttj1TBIc2tZC
-         r1ESZ5bB7c4A4yGXQBFFgFThJUecqQPHEgrfDVvapvCgCJlpa6Oc0b8+LFdYN6qc/xzeXTFY67dp
-         aiF1FZuEb5XCtNt2PF9Nhv+Ito1RJT/4PEoFR9xRazUqqLNZyrFUma7tKndCjRna4XX0ok1amIZX
-         DvpoLRiOdUYXGpLBZbv8h4ugRwmm/qmVKTFmO98jhnyAmd6wWKF5z+LWWQY8JbtgxEns1dch35
-From:   xkernel.wang@foxmail.com
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiaoke Wang <xkernel.wang@foxmail.com>
-Subject: [PATCH] clk: mmp: pxa168: fix potential memory leaks in pxa168_clk_init()
-Date:   Thu,  7 Apr 2022 17:01:05 +0800
-X-OQ-MSGID: <20220407090105.14361-1-xkernel.wang@foxmail.com>
+        with ESMTP id S243697AbiDGJEh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:04:37 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A212CFD6DB
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 02:02:28 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id u3so6846185wrg.3
+        for <linux-clk@vger.kernel.org>; Thu, 07 Apr 2022 02:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=USC7C7RCVNx7KuEUt+BY/YKNIMEfhL2JjE70IEcuxEE=;
+        b=RG94Ae0RY0Ql8bXpoWaw7oEdKOADumRFMHqZyC8iQGSeS9kOIbxXBGx9jEKZL4+ZnE
+         Dw5kxlQPY5pu0NDZ01Y5tOgZXeQOf/bzU5O1b96B0uyRHFv8GouQsMlYIOtojCErkI8X
+         3eYdOpp4takmZCE++lSBbtRR549fY3PeDHvTbdEMi3l/22aM+r2YZt9jXtBSvTzg9vKR
+         l5MQoYKuMxlE3w5/a8X6aYyH8f1KJu1yIUN4ySD7joybh1a3DbDjbJWxFgZKJzzbOryL
+         y8lKxQyhMWVGIRzxGDFwXYkiJs3yn2Eo74Y1OOoIIjMn6tpQbXPKzud3d7l6F+lNqs+A
+         nPsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=USC7C7RCVNx7KuEUt+BY/YKNIMEfhL2JjE70IEcuxEE=;
+        b=3xzZpe2c67bXI6kj2iVhbUYnkohyaRMVU5xHjHmTKc8Z60yvEm2Jfmp3KUZfhAWHTe
+         4wsfnsDNW64ek0+QuE6nPcgjWJb9ieU0OueNjQUCoiLTY0FISTHI1sgcJ7VJ+J5H5DEE
+         OeyklB+qvZCZ4vRgJ1jAKkbN5lpt7YaB/hiAeznKf75F9ZiyGJhmNqBNHbPhKnIX9vCd
+         7yQzUUJMRkZukLT30CufgPaOtLNBhngO2G7K+h+LkUtF0GTPLTcEpqMiF1JAmf7wuupM
+         YJE9hY1aigD7xhPJq3shKKdKNR/SVCgiesWswqrwYUVhffGSmf/u8MDuTJ6IqX09qQx/
+         rYMw==
+X-Gm-Message-State: AOAM530S9zibrKHcB62uk5wgyCdBqnYkcZZ3qcOZEtcww/11kts7NhSw
+        GicXtPfTD6faplK9xO69CIlZOg==
+X-Google-Smtp-Source: ABdhPJzF7coRnBfWLLqluJRervg9467q13ZsvflHJDge79gXpqC21tQ1cPoa/MFzvvpqmqoXL6xn1w==
+X-Received: by 2002:a5d:64eb:0:b0:205:d418:4798 with SMTP id g11-20020a5d64eb000000b00205d4184798mr10078636wri.11.1649322146858;
+        Thu, 07 Apr 2022 02:02:26 -0700 (PDT)
+Received: from ?IPV6:2a01:e34:ed2f:f020:f2a2:7d81:4e67:6c1c? ([2a01:e34:ed2f:f020:f2a2:7d81:4e67:6c1c])
+        by smtp.googlemail.com with ESMTPSA id f13-20020a05600c4e8d00b0038c949ef0d5sm8640927wmq.8.2022.04.07.02.02.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Apr 2022 02:02:25 -0700 (PDT)
+Message-ID: <66db272d-0bc0-8c77-a106-327cd0bd3405@linaro.org>
+Date:   Thu, 7 Apr 2022 11:02:22 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2 1/4] dt-bindings: thermal: qcom-tsens.yaml: add msm8960
+ compat string
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220406002648.393486-1-dmitry.baryshkov@linaro.org>
+ <20220406002648.393486-2-dmitry.baryshkov@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20220406002648.393486-2-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Xiaoke Wang <xkernel.wang@foxmail.com>
+On 06/04/2022 02:26, Dmitry Baryshkov wrote:
+> Add compatibility string for the thermal sensors on MSM8960/APQ8064
+> platforms.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-In pxa168_clk_init(), except for the first error path, the other error
-paths directly return without releasing the allocated resources, which
-can lead to memory leaks.
+Applied, thanks
 
-This patch unifies the error handling code and each error will jump to
-the corresponding tag to release the resources.
 
-Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
----
- drivers/clk/mmp/clk-of-pxa168.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index f110c02..05b96cf 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -258,19 +258,19 @@ static void __init pxa168_clk_init(struct device_node *np)
- 	pxa_unit->mpmu_base = of_iomap(np, 0);
- 	if (!pxa_unit->mpmu_base) {
- 		pr_err("failed to map mpmu registers\n");
--		return;
-+		goto free_memory;
- 	}
- 
- 	pxa_unit->apmu_base = of_iomap(np, 1);
- 	if (!pxa_unit->apmu_base) {
- 		pr_err("failed to map apmu registers\n");
--		return;
-+		goto unmap_mpmu_region;
- 	}
- 
- 	pxa_unit->apbc_base = of_iomap(np, 2);
- 	if (!pxa_unit->apbc_base) {
- 		pr_err("failed to map apbc registers\n");
--		return;
-+		goto unmap_apmu_region;
- 	}
- 
- 	mmp_clk_init(np, &pxa_unit->unit, PXA168_NR_CLKS);
-@@ -282,6 +282,15 @@ static void __init pxa168_clk_init(struct device_node *np)
- 	pxa168_axi_periph_clk_init(pxa_unit);
- 
- 	pxa168_clk_reset_init(np, pxa_unit);
-+
-+	return;
-+
-+unmap_apmu_region:
-+	iounmap(pxa_unit->apmu_base);
-+unmap_mpmu_region:
-+	iounmap(pxa_unit->mpmu_base);
-+free_memory:
-+	kfree(pxa_unit);
- }
- 
- CLK_OF_DECLARE(pxa168_clk, "marvell,pxa168-clock", pxa168_clk_init);
 -- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
