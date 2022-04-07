@@ -2,51 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CF2C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 08:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2E3C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 09:01:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbiDGIlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46724 "EHLO
+        id S231712AbiDGJDr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 05:03:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236861AbiDGIlo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 04:41:44 -0400
-Received: from out203-205-221-191.mail.qq.com (out203-205-221-191.mail.qq.com [203.205.221.191])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2259120BE;
-        Thu,  7 Apr 2022 01:39:43 -0700 (PDT)
+        with ESMTP id S243762AbiDGJDZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 05:03:25 -0400
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141F252E78;
+        Thu,  7 Apr 2022 02:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1649320776;
-        bh=Cy/4caoQyRfSCeYZUmuheRRJi79wq1ci+HMqsv+5X4Y=;
+        s=s201512; t=1649322080;
+        bh=Z9pMcqz9PcDTm7oWvk9GqY4NaqgI4eR0toGt5vtlbW4=;
         h=From:To:Cc:Subject:Date;
-        b=ZKVrD0eAyTGHxUBLwWfhjaIqop/5mz8noJqbmXyl9MmEao6UtVR+rZSbXVJaQ59Z5
-         PeLLdTXyjxPuoCBp6hWNO6rc2wps9GEpgFwwmInLS7SnDZG/6MQ+tHHDqwqTANhzUj
-         L8ldc3PiXc0uFCioUbsmQCOwdS1418o7ODjICME0=
-Received: from localhost.localdomain ([43.227.136.188])
-        by newxmesmtplogicsvrszc11.qq.com (NewEsmtp) with SMTP
-        id 9E1B10FB; Thu, 07 Apr 2022 16:39:33 +0800
-X-QQ-mid: xmsmtpt1649320773tiw9d97zn
-Message-ID: <tencent_9E7070526485FB289DFDDB81903167E73E0A@qq.com>
-X-QQ-XMAILINFO: NnA3IMNPwBd+OiSGe/aAItQ8doPtOvQ04QX/EdbrUyPBoq5N58AazA8iDPQVsl
-         lbnUfwQJyLcpjtoaJDwv4SGPOM6Yg7lCmtgU2eerkswfV8yFmq4SSVPSPXx5gi5bFSFzzSftpK/c
-         y8k36KuC4/a8o6pmlYSx7EvgMIwHT6pYd8WDPKGg1lAiLZSctPbqKkqgfd9nCPgQg5sspAPu07nu
-         xMY2pEo9xOBiCfePyI3Sk3A9ykHBWHhZ4jcS+Qm8xjZRwap6+n02ix4K/4sEeIP2XxaOfxuyf10M
-         U1X1z6mJqYxwR64aRX7d7qyDc1Bd+eWI4mp+HtNgbuvYg3j78/1sMo5QqFF10Q+APGVIiM0nqAoZ
-         3h0dUnIojZvb78J9D9D6xK72pACKMR9pM0du9jcEI4QfBhIxI8SM4fAyF4MLLtgOJscQw/dTd2kt
-         klRAGml0ZP4wxeSS+cRdXz9e8q6H2714yW9deECZRHGmLytSRo79oAH6fNkns/cFxVxIy4WCdHYT
-         aloewsbEjaNbPWZyBn8kbVIfEyTwgIQzb2+550LrP8SsD6S3O0uSlslyiN1QLe+I4A3odk4JHhLI
-         1ugH7WvZm/Uf5y8cnlJNthNf2LKtUUFNd0vf+S62fP8kZTEv0urzKbGhqOk0BC1kyV5KsDAHhhaM
-         A9AA6vbrF3mGS1xoTK+Jyz0tABH/RvWOvH32KjyLiEApkNyO/ndQH5Faat8sKIyTkSXKXURl5GHa
-         hCejsnNNvKkVFjxyJ1+Z2QIJnIm7bT8d7Zs0rorJm4c/8da5TaybIO63llYzuTwn/D28ZV1YJelo
-         Hhrk0MugV0jmOoatSiv37UsXprLb47hKCLduicc+Zf/VHxpn/xsSWIrZCIAxnlp90920avA3cD9P
-         X2De+YbOeKjOt0ZoW5arHmEguN48Jn6Lncfq9LoW9qxFXtF28Mm5anS+HWQh9JZYEZ306NYBajwd
-         Fn4MBh+2ZXoD3O7lMBdQ==
+        b=haIP9U+GA29bAgfGUyTWqmPbnOF9FxzvVPxJnuRs1gbBwCzrcF4inxO3IZOFeP29I
+         p2S/iXORSgM/woOB+3QA4B5wHQ6lSN+S0sBJhJjAXAESEoLOXd85bNPgfp+QkQlL4u
+         pOFGGFsEGtCL/ZjsVuDfhuAY8prm0WZY6z4xRjq0=
+Received: from localhost.localdomain ([218.197.153.188])
+        by newxmesmtplogicsvrsza5.qq.com (NewEsmtp) with SMTP
+        id 50B1A45; Thu, 07 Apr 2022 17:01:16 +0800
+X-QQ-mid: xmsmtpt1649322076tfjkopifx
+Message-ID: <tencent_BD8B1CF914FDE1104AFDFFEA200DCC0EB908@qq.com>
+X-QQ-XMAILINFO: MOwr6TNsEdeBxNTJKWZPE4J5SMyu2l167fUiO/OWz+5vIbAc87uSegMPpk0cbb
+         7iIF/BI5MZ5Dj9Uu01oqG/6M0XIq8HPTYij1IcuIdlArPBN41hUzcj5V6D1pVjl0LhmZvjVQMev1
+         1tOSe8qT0ruG7t+WScxEXrfGDujvpbCqhcTrK3mGg1UQw9gq6Zpn6bcMzDJyc90t5Sr+jKau0yq7
+         Q2T/p6sr7jw8A86xlaQxjwV1Vrhmv6ZUd9Te0i9h5BM3pWZxX1r0EEEPC8D+yiTkCXwMA4O4lHOG
+         Pq5J0hm/r3fKGDbZV0U9tlMBcisEmeEhs0yr/K7asDwphayN0mIawe/5WUfLqIr8gyqfeI+67SQK
+         vBbA7/YwkWkjzJRJqgUUIQOypSu3nMibAv1pq0vGQjMVrr37RvlJPGRQ3Z61h5BjSBDjQ+/ygsUG
+         98lgqHsjLFEpoHRos6Z8oAJGU5Vj4eXmM7Vdcv/OQyIerVlo6VAYFx42tPQR3JKzE0ZM0gHAnNoH
+         HPOOt30/qCFSwOE5hAF3r3F57IAhDVxJSOyfa+Cap2cYo0IZ6p6dgATlCLCx0mgPfVWX4tfbwpCN
+         SX8fRlsNzOzecg8vSpgpBLPXb3/t9Jcr4/HrG10W51k7Fp6sXyhA6MYM6Mqg2x6ap19JljxMy0SI
+         wDkb9xiI3JMOxB0tK6FxODYEUjhgbQ3wPc7CaG/BJWp69RhDCFbdCBY1SR9TaKP2ttj1TBIc2tZC
+         r1ESZ5bB7c4A4yGXQBFFgFThJUecqQPHEgrfDVvapvCgCJlpa6Oc0b8+LFdYN6qc/xzeXTFY67dp
+         aiF1FZuEb5XCtNt2PF9Nhv+Ito1RJT/4PEoFR9xRazUqqLNZyrFUma7tKndCjRna4XX0ok1amIZX
+         DvpoLRiOdUYXGpLBZbv8h4ugRwmm/qmVKTFmO98jhnyAmd6wWKF5z+LWWQY8JbtgxEns1dch35
 From:   xkernel.wang@foxmail.com
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Xiaoke Wang <xkernel.wang@foxmail.com>
-Subject: [PATCH] clk: hi3620: fix potential memory leak in hi3620_mmc_clk_init()
-Date:   Thu,  7 Apr 2022 16:39:24 +0800
-X-OQ-MSGID: <20220407083924.14190-1-xkernel.wang@foxmail.com>
+Subject: [PATCH] clk: mmp: pxa168: fix potential memory leaks in pxa168_clk_init()
+Date:   Thu,  7 Apr 2022 17:01:05 +0800
+X-OQ-MSGID: <20220407090105.14361-1-xkernel.wang@foxmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -55,50 +54,59 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Xiaoke Wang <xkernel.wang@foxmail.com>
 
-In hi3620_mmc_clk_init(), if `clk_data->clks` which is allocated by
-kcalloc() fails, it will directly return without releasing `clk_data`
-that is allocated by kzalloc(), which may lead to memory leak.
-So this patch added kfree(clk_data) to the above error path before
-returning.
+In pxa168_clk_init(), except for the first error path, the other error
+paths directly return without releasing the allocated resources, which
+can lead to memory leaks.
 
-Besides, `base` is mapped by of_iomap(). However, two error paths ignore
-to unmap it. Therefore, this patch also added iounmap(map) to these two
-error paths.
+This patch unifies the error handling code and each error will jump to
+the corresponding tag to release the resources.
 
 Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
 ---
- drivers/clk/hisilicon/clk-hi3620.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/mmp/clk-of-pxa168.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/hisilicon/clk-hi3620.c b/drivers/clk/hisilicon/clk-hi3620.c
-index a3d04c7..bdd36eb 100644
---- a/drivers/clk/hisilicon/clk-hi3620.c
-+++ b/drivers/clk/hisilicon/clk-hi3620.c
-@@ -464,11 +464,11 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
- 
- 	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
- 	if (WARN_ON(!clk_data))
+diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
+index f110c02..05b96cf 100644
+--- a/drivers/clk/mmp/clk-of-pxa168.c
++++ b/drivers/clk/mmp/clk-of-pxa168.c
+@@ -258,19 +258,19 @@ static void __init pxa168_clk_init(struct device_node *np)
+ 	pxa_unit->mpmu_base = of_iomap(np, 0);
+ 	if (!pxa_unit->mpmu_base) {
+ 		pr_err("failed to map mpmu registers\n");
 -		return;
-+		goto unmap_base;
++		goto free_memory;
+ 	}
  
- 	clk_data->clks = kcalloc(num, sizeof(*clk_data->clks), GFP_KERNEL);
- 	if (!clk_data->clks)
+ 	pxa_unit->apmu_base = of_iomap(np, 1);
+ 	if (!pxa_unit->apmu_base) {
+ 		pr_err("failed to map apmu registers\n");
 -		return;
-+		goto free_clk_data;
++		goto unmap_mpmu_region;
+ 	}
  
- 	for (i = 0; i < num; i++) {
- 		struct hisi_mmc_clock *mmc_clk = &hi3620_mmc_clks[i];
-@@ -478,6 +478,12 @@ static void __init hi3620_mmc_clk_init(struct device_node *node)
+ 	pxa_unit->apbc_base = of_iomap(np, 2);
+ 	if (!pxa_unit->apbc_base) {
+ 		pr_err("failed to map apbc registers\n");
+-		return;
++		goto unmap_apmu_region;
+ 	}
  
- 	clk_data->clk_num = num;
- 	of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	mmp_clk_init(np, &pxa_unit->unit, PXA168_NR_CLKS);
+@@ -282,6 +282,15 @@ static void __init pxa168_clk_init(struct device_node *np)
+ 	pxa168_axi_periph_clk_init(pxa_unit);
+ 
+ 	pxa168_clk_reset_init(np, pxa_unit);
++
 +	return;
 +
-+free_clk_data:
-+	kfree(clk_data);
-+unmap_base:
-+	iounmap(base);
++unmap_apmu_region:
++	iounmap(pxa_unit->apmu_base);
++unmap_mpmu_region:
++	iounmap(pxa_unit->mpmu_base);
++free_memory:
++	kfree(pxa_unit);
  }
  
- CLK_OF_DECLARE(hi3620_mmc_clk, "hisilicon,hi3620-mmc-clock", hi3620_mmc_clk_init);
+ CLK_OF_DECLARE(pxa168_clk, "marvell,pxa168-clock", pxa168_clk_init);
 -- 
