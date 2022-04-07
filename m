@@ -2,118 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D58AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513FBC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 15:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344724AbiDGP3g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 11:29:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
+        id S1343669AbiDGPaP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 11:30:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344753AbiDGP3e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:29:34 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39491DAFBD;
-        Thu,  7 Apr 2022 08:27:24 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id EB5753200B8B;
-        Thu,  7 Apr 2022 11:27:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 07 Apr 2022 11:27:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=KmaGcpZRZ7EQ4bZea01sp8yB4p8jkdhNq5RVEO
-        ba/aU=; b=ZC/EmOMaklVwlaOUYGRA6+5UYh6ky6gYpnWTWwcPx8XJ3AaZa2KBAn
-        55M3Rzs+J/p5DL/lco6rAfEStMPHY7i4aWjLxqBgPCEFiAyC+7M1dIgEf/r6N98J
-        7+AhpEQhbrE/nLLofv0LuDLPWOehlAXqK6rJMY4x+bT+JpEHsjIq2H+PgRh/dc5Y
-        qvUbabXHppC7mwi/076ztx2kNwSS1qEjpNHr0X5m/aF6eZIUC9oxKhu+Lxta8T5g
-        w7uExXEO7eOOo/ghPRCXeNnDDhnGoukSpoPMnOwL+HZnMA/wzBSHDsNKbVoszD/d
-        7MWoKUlL0+KkMx8ToYfW/D8tKMQIz8aQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=KmaGcpZRZ7EQ4bZea
-        01sp8yB4p8jkdhNq5RVEOba/aU=; b=lsBDDNpa5ywNO5zmZh7tgirPLm8o5Itfm
-        MGkBLjJouVReHgBu7eGhe+4X+IMToTo4BxkCJiFl5Dej+tJX9aH8VmTxdQUCo6Kl
-        oqwGrYKv0abTKpSQqQU1TS4WLVBUwfW4yo0j80YipG+Jh0R/dbFY9zDyHWuOWpz0
-        4QFjV8GkYGHuWvW0iCcfgOmiPzgMYIsb1QUc2+gZ9Kvd05WXjnFtjr9AH7lEl18V
-        GBMGF5fwYPuX0JOIf9z2HyZyHF0s8El4Hgx3EY3HLMo+CoqLL4hQtBzT3jQgQPr+
-        m9NP8+QKwRlTvjDxOUdWOEiiDAA+Z+SIBw60KdXucMJBeC4emR78g==
-X-ME-Sender: <xms:2QJPYlIyFEhGYEMHwniI0clflIidfcyjNbGHSWpMiyjMKvZwMMU3wg>
-    <xme:2QJPYhI1XZ22UMuU4JFXWL3iW4kw6J_DlmZ8pf4_5oTN8g81_zJ8_tqA0tx55X0fj
-    x9j1EpAAmVdhr3iaGQ>
-X-ME-Received: <xmr:2QJPYtscVj6PoOZ7GgwV1o2yO9K_sD2_YXMSZguIrjG-NaB37ORbO67aLGne08cuE0O0D9Qzf4UCUvkYL7s4BM4HBCm14RYnjB92Tuo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepveegudetkeethfetgffgtdekkefghefhffefgeduleehgeehieeuveefgedv
-    ieegnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:2QJPYmZ3XrG5-XRVnXxdWeUX7tBpbl80pJUbl_PB4Fd9oT3Yb9Bn0g>
-    <xmx:2QJPYsY-yiZ3S_u6lwWdAxAlj1OQ8XAUnST6lfXqI4PRXVWECajrfg>
-    <xmx:2QJPYqA68UtjXMJb4_VuC6w858IyEk49kBIsgVnAQQZVXkWrImEauQ>
-    <xmx:2QJPYiPyAetQn4EWmJXjpSZRd_ERPmof4pbFHj2bZUfvwV-egU-5wQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 7 Apr 2022 11:27:20 -0400 (EDT)
-Date:   Thu, 7 Apr 2022 17:27:19 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7 04/12] clk: Always clamp the rounded rate
-Message-ID: <20220407152719.fjyrfglm3qprtzv3@houat>
-References: <20220406183714.830218-1-y.oudjana@protonmail.com>
- <20220407080833.fkieuqx3hgdnwqy2@houat>
- <wv5t_wS8upUbTp267ngk1_SkGV7a-6vOpeQ13QMZ3HGGcD8RqrTriBjZs7aFbP4rS1D_YC4eKmga-r4o3Ke8sp0xsp9NMV9WX87ZTEV6oOU=@protonmail.com>
+        with ESMTP id S245358AbiDGPaP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 11:30:15 -0400
+X-Greylist: delayed 492 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Apr 2022 08:28:14 PDT
+Received: from 17.mo561.mail-out.ovh.net (17.mo561.mail-out.ovh.net [87.98.178.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D898BFA
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 08:28:14 -0700 (PDT)
+Received: from player796.ha.ovh.net (unknown [10.110.171.96])
+        by mo561.mail-out.ovh.net (Postfix) with ESMTP id 7B4DF23A05
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 15:19:46 +0000 (UTC)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player796.ha.ovh.net (Postfix) with ESMTPSA id CD8F02932FFCF;
+        Thu,  7 Apr 2022 15:19:39 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G0036ce79144-b56c-4add-9154-6fb98c6ebeca,
+                    5995496A90EC26C6A3824F4C00BBD29EFE55D398) smtp.auth=steve@sk2.org
+X-OVh-ClientIp: 82.65.25.201
+From:   Stephen Kitt <steve@sk2.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v2 02/10] clk: cdce925: use i2c_match_id and simple i2c probe
+Date:   Thu,  7 Apr 2022 17:18:23 +0200
+Message-Id: <20220407151831.2371706-3-steve@sk2.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220407151831.2371706-1-steve@sk2.org>
+References: <20220407151831.2371706-1-steve@sk2.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7h2a37eao5bbiz7x"
-Content-Disposition: inline
-In-Reply-To: <wv5t_wS8upUbTp267ngk1_SkGV7a-6vOpeQ13QMZ3HGGcD8RqrTriBjZs7aFbP4rS1D_YC4eKmga-r4o3Ke8sp0xsp9NMV9WX87ZTEV6oOU=@protonmail.com>
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 77124144948741766
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudejkedgkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeejleelvdefieeiuddtfeevkeegueehkeekvdffgedvhedugeekgfejjeekgfeugeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejleeirdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+As part of the ongoing i2c transition to the simple probe
+("probe_new"), this patch uses i2c_match_id to retrieve the
+driver_data for the probed device. The id parameter is thus no longer
+necessary and the simple probe can be used instead.
 
---7h2a37eao5bbiz7x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ drivers/clk/clk-cdce925.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-On Thu, Apr 07, 2022 at 08:27:39AM +0000, Yassine Oudjana wrote:
-> On Thursday, April 7th, 2022 at 12:08 PM, Maxime Ripard <maxime@cerno.tec=
-h> wrote:
-> > I've been piling up few fixes already for other platforms, could you
-> > also test ?
-> >
-> > https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
->=20
-> Alright, will test.
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index 308b353815e1..ef9a2d44e40c 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -634,11 +634,20 @@ static struct regmap_bus regmap_cdce925_bus = {
+ 	.read = cdce925_regmap_i2c_read,
+ };
+ 
+-static int cdce925_probe(struct i2c_client *client,
+-		const struct i2c_device_id *id)
++static const struct i2c_device_id cdce925_id[] = {
++	{ "cdce913", CDCE913 },
++	{ "cdce925", CDCE925 },
++	{ "cdce937", CDCE937 },
++	{ "cdce949", CDCE949 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, cdce925_id);
++
++static int cdce925_probe(struct i2c_client *client)
+ {
+ 	struct clk_cdce925_chip *data;
+ 	struct device_node *node = client->dev.of_node;
++	const struct i2c_device_id *id = i2c_match_id(cdce925_id, client);
+ 	const char *parent_name;
+ 	const char *pll_clk_name[MAX_NUMBER_OF_PLLS] = {NULL,};
+ 	struct clk_init_data init;
+@@ -814,15 +823,6 @@ static int cdce925_probe(struct i2c_client *client,
+ 	return err;
+ }
+ 
+-static const struct i2c_device_id cdce925_id[] = {
+-	{ "cdce913", CDCE913 },
+-	{ "cdce925", CDCE925 },
+-	{ "cdce937", CDCE937 },
+-	{ "cdce949", CDCE949 },
+-	{ }
+-};
+-MODULE_DEVICE_TABLE(i2c, cdce925_id);
+-
+ static const struct of_device_id clk_cdce925_of_match[] = {
+ 	{ .compatible = "ti,cdce913" },
+ 	{ .compatible = "ti,cdce925" },
+@@ -837,7 +837,7 @@ static struct i2c_driver cdce925_driver = {
+ 		.name = "cdce925",
+ 		.of_match_table = of_match_ptr(clk_cdce925_of_match),
+ 	},
+-	.probe		= cdce925_probe,
++	.probe_new	= cdce925_probe,
+ 	.id_table	= cdce925_id,
+ };
+ module_i2c_driver(cdce925_driver);
+-- 
+2.27.0
 
-I've pushed another version of my branch a few minutes ago, so make sure
-you pulled the last version if you want to test it :)
-
-Thanks!
-Maxime
-
---7h2a37eao5bbiz7x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk8C1wAKCRDj7w1vZxhR
-xU0dAP4jZClKIm61CiKsBBAFnC3/GkrxttiZma06zocqzEEB1AD+KOo5KUJHo7LU
-qema2fJDsfFOuBrGofBOUmFEPPC6rQs=
-=0eyT
------END PGP SIGNATURE-----
-
---7h2a37eao5bbiz7x--
