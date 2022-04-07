@@ -2,125 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1222C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 04:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B8DC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 06:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235740AbiDGETD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 00:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58010 "EHLO
+        id S240056AbiDGGsK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 02:48:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232256AbiDGETC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 00:19:02 -0400
-Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BC5D4186F8E;
-        Wed,  6 Apr 2022 21:17:02 -0700 (PDT)
-Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
-        by maillog.nuvoton.com (Postfix) with ESMTP id B94761C810A3;
-        Thu,  7 Apr 2022 12:17:01 +0800 (CST)
-Received: from NTHCML01A.nuvoton.com (10.1.8.177) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Thu, 7 Apr 2022
- 12:17:01 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01A.nuvoton.com
- (10.1.8.177) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 7 Apr 2022
- 12:17:01 +0800
-Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS01.nuvoton.com
- (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
- Transport; Thu, 7 Apr 2022 12:17:01 +0800
-Message-ID: <70edfb84-fb04-9492-ba94-ba0781f1e8fe@nuvoton.com>
-Date:   Thu, 7 Apr 2022 12:17:01 +0800
+        with ESMTP id S241366AbiDGGsJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 02:48:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D76A9211EC9;
+        Wed,  6 Apr 2022 23:46:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8C892B8174F;
+        Thu,  7 Apr 2022 06:46:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4B9C385A0;
+        Thu,  7 Apr 2022 06:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649313967;
+        bh=JVlK5dG/ahpnYbfzEZ3q8jQHxJoXHPZ6XKp289k6Cgg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z9Pt0Bb6/8vMrUlwXwVyDyYdjLQaG/1q5pUGFmZ2mZrE7l7C+BdHY6WkNetzxs89c
+         UNbu7R6x9prl6MhbZrQgfqlRTVlFG/moE97tJI99FqHCB7J8cLfdZ0KnPx5MvZbqJI
+         d4RVEmEYINbDvTZlvd0vuUjuald6heyRDJzLb3Ma/3tIuMxpDPl/raH5GpcXm2Jq3p
+         Hq1BRkNg1RtzEfNlu4RU8Jf5LpmKn7PncRCeAPUGQTsab5JbPXytu+579YEda/vGPX
+         mdyaTX2hL2CM9KDGZnBi5xF6qNO2d9GRzJbIWC8FuStvKCVvF5PyOeeVbj8//AOUDM
+         6L+X5+7zC1JHQ==
+Date:   Thu, 7 Apr 2022 08:46:03 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: renesas: r8a77990: Add RPC clocks
+Message-ID: <Yk6IqweUS/INEJiC@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <cover.1648546700.git.geert+renesas@glider.be>
+ <3295013f27f1e4b8fbf3f79b950d65157ea95ef2.1648546700.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "soc@kernel.org" <soc@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220307091923.9909-1-ychuang3@nuvoton.com>
- <20220307091923.9909-4-ychuang3@nuvoton.com>
- <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
- <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
- <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
- <ab89589f-6dd7-d4ff-635d-ff8dbd2d3e02@nuvoton.com>
- <CAK8P3a034bvYcD81h-jo92PbQwDDapa8JvS140fsBhaP7qrFXw@mail.gmail.com>
-From:   Jacky Huang <ychuang3@nuvoton.com>
-In-Reply-To: <CAK8P3a034bvYcD81h-jo92PbQwDDapa8JvS140fsBhaP7qrFXw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xi2MF2/6sUk+Az02"
+Content-Disposition: inline
+In-Reply-To: <3295013f27f1e4b8fbf3f79b950d65157ea95ef2.1648546700.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--xi2MF2/6sUk+Az02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2022/4/6 下午 05:40, Arnd Bergmann wrote:
-> On Wed, Apr 6, 2022 at 11:25 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
->> On 2022/4/6 下午 03:14, Krzysztof Kozlowski wrote:
->>> On 06/04/2022 04:58, Jacky Huang wrote:
->>>> config ARCH_MA35D1
->>>>        bool "Nuvoton MA35D1 SOC Family"
->>> We do not add options for specific SoCs, but for entire families, so
->>> ARCH_NUVOTON is correct.
->> Yes, I would like to modify it as the following:
->>
->> config ARCH_NUVOTON
->>       bool "Nuvoton SoC Family"
->>       select PINCTRL
->>       select PINCTRL_MA35D1
->>       select PM
->>       select GPIOLIB
->>       select SOC_BUS
->>       help
->>         This enables support for Nuvoton MA35D1 ARMv8 SoC.
->>
->> (Currently, we have MA35D1 only in the support list for arm64 SoC.).
-> You could reword this to "This enables support for Nuvoton ARMv8 SoCs
-> such as the MA35D1", to prevent this from getting stale, or repeatedly
-> updated when future SoCs are added.
->
-> Another change you can consider is to remove the 'select PINCTRL_MA35D1'
-> here and instead change the pinctrl Kconfig entry to
->
-> config PINCTRL_MA35D1
->             bool "..."
->             depends on ARCH_NUVOTON || COMPILE_TEST
->             default ARCH_NUVOTON
->
-> That way you get it default-enabled when ARCH_NUVOTON is
-> turned on, or disabled in configurations without ARCH_NUVOTON,
-> but can make a more fine-grained selection for a particular SoC
-> if you get more than one such driver in the future.
->
->          Arnd
+On Tue, Mar 29, 2022 at 11:44:25AM +0200, Geert Uytterhoeven wrote:
+> Describe the various clocks used by the SPI Multi I/O Bus Controller
+> (RPC-IF) on the R-Car E3 SoC: RPCSRC internal clock, RPC{,D2} clocks
+> derived from it, and RPC-IF module clock.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes, it looks better.
-So, I will modify it as:
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-config ARCH_NUVOTON
-     bool "Nuvoton SoC Family"
-     select PINCTRL
-     select PM
-     select GPIOLIB
-     select SOC_BUS
-     help
-       This enables support for Nuvoton MA35D1 ARMv8 SoC such as MA35D1.
+One minor question, though:
 
-And move PINCTRL_MA35D1 to pinctrl Kconfig when we submit the pictrl 
-driver.
+> +	DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
+> +
+>  	DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+> =20
+>  	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
+> @@ -107,6 +110,11 @@ static const struct cpg_core_clk r8a77990_core_clks[=
+] __initconst =3D {
+>  	DEF_GEN3_SD("sd1",     R8A77990_CLK_SD1,   R8A77990_CLK_SD1H, 0x0078),
+>  	DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   R8A77990_CLK_SD3H, 0x026c),
+> =20
+> +	DEF_BASE("rpc",		R8A77990_CLK_RPC, CLK_TYPE_GEN3_RPC,
+> +		 CLK_RPCSRC),
+> +	DEF_BASE("rpcd2",	R8A77990_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
+> +		 R8A77990_CLK_RPC),
+> +
 
-Thanks you.
-
-Jacky
+Any reason the RPC clocks are not grouped together? All other SoCs I
+checked have that.
 
 
+--xi2MF2/6sUk+Az02
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmJOiKsACgkQFA3kzBSg
+KbYu6Q//SJPCkYutGoT58DPnkL40fNy16RDSXHgHP8HguacNInKt1pGxPgA4aa6e
+B/4oGxlV9PgeGzdR4HW0jHrV2K/IlxGNG6gq7jI2RTo/je1dPi3TVKBKTwlbK7/6
+88kBP+P2ZakcZxeh87sXCy7aIzUERcCM1nRbskLK6KJ70RHbdKx/cSneU1jVuBRs
+Lalk4znLSml68MV5Tubw+r0SihL+yh/SyV03k45/TgUPNU4evNlgaRvtqeqTErnd
+nCJu6vhFSSJJfuOGBEJZU5jWY8InziYiYm//t/Byj2l2MDP/sJfx5hRpxKgBvgVP
+JHhWqcRq0x/WCIMxvhavdTYdR28vZ44scKbNHy5pKzHH9CS3QZVRGyBGHg5LqGEZ
+IB3icJ8025KODpVCCdJhvjl4qezl7/ACAV7EczZ9NtYmQOt1UjxGjpPRhOrfpq5w
+QRzSTC7aw6AJqajYhfOiNRzmHkxX7M7rcR2nqE2Z2zAi7iXr7wBOnw07/zcd5LGS
+C7p0RKS0urogkQDqeAtDRVFzwhKBflWM21KnSU7rYDXb26MPaAYkgbR3mmJrkEgP
+Z5AqBsUA2eMMTSaqa8Sm0aXgZ0BnqGSRRzUuGLq7afkzHDnncLld2j4ry8WiH0QY
+y9TSDMVlGkb1TRn7Njowj9XzpyYHqYF4Crx/fVwu8enbT8u9gHc=
+=/umx
+-----END PGP SIGNATURE-----
+
+--xi2MF2/6sUk+Az02--
