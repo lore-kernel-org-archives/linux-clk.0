@@ -2,232 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCE2C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 07:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1048C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Apr 2022 07:57:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242351AbiDGH4m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Apr 2022 03:56:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
+        id S242449AbiDGH70 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Apr 2022 03:59:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242389AbiDGH4i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 03:56:38 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D1EB1EA5EA;
-        Thu,  7 Apr 2022 00:54:39 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id DA65B3200EC0;
-        Thu,  7 Apr 2022 03:54:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 07 Apr 2022 03:54:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=hvRJV0pvl3fLnQVaefDbK7s+xg+2wLBb3A3T1r
-        b+a40=; b=eHXmPPGVwTO8n00CRZPJ/6qTXK53BXAYGEUgX5Q4ulhZYaZVBXofVC
-        e+73TlEPGRjNEFTAp62XHawGFRcv2Vx+8OLji0ezh+6h6xAdNRW+gVDTsxgOQ6xC
-        SSSNTiV9WCeODs5dwjKJW3t8vBPjfA7m+chKp6C+lGrfMDNC88Yuj90znL63t3pl
-        aWYzG9i7wNkWts7SEosxihm928gTA1/9LUPssyeWPbh4Lj642vl5JvABNea7TPJo
-        kLVEo5rbL5yXxkuw11T5gy46szdIEA3Vr6eA6rfeYdOWTVKgsogCd9vomaoqQQWZ
-        aXf+NG3BJKBREvlz5Wb1UUhlKOL2tO3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hvRJV0pvl3fLnQVae
-        fDbK7s+xg+2wLBb3A3T1rb+a40=; b=ddD17FI/e7dTpvPXM+oT59gLJeP8esacR
-        qzemYeqBlTAXFmFAjU3Ldoh3ezkkg2slPyZBqvXnbGGWQ5ASMbPNM1J43qkF5d+V
-        AI5ivyyhGS9fHqtymUlz7K9Y/nxQKulVmN16w5HNL+KBQ7qC+R6r0G7fJZltQdMW
-        6tWmP4v6PVLaLkuxmLzI3pQmA7tME4yYOlmJF4aNC+ZWy24REG6fL8ihMJA1Hwhw
-        Vffq64B7/L4MvQUX2Wsm54NG+oWDZQBRT3fCbnJ1veDg0D2hlx1iHJtUcncteV7L
-        dhCWtywu5mHtmGmhdFJvH81fui0Ev1ead+22PGH7VzxNm1DcxNEnQ==
-X-ME-Sender: <xms:vZhOYvSYNG6eJq3NPujn5RnFmTh3UGDWuwo-62PxUGlhVgTTtmjPbw>
-    <xme:vZhOYgx0tg6Ra_heBgZ3o603PS36jkw_8ZAyXHIauJYx7-pH1wdkySWiEoCbud1mY
-    zrAcdO9lrQKuNeRj0s>
-X-ME-Received: <xmr:vZhOYk2JYooCHNI9FCJpq7_sVxnIYri9TrxS18AA_SiesYmfy0UiungjQWLUdo004MsR8R-ctJao0kU_HDNMVJd2czLP5DuMczGRYGA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejjedguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpefhffdtueegvedvueffjeeuffejfeffjedtfeevfeeuleejkeeghfeuheet
-    ffduheenucffohhmrghinhepghhithhlrggsrdgtohhmpdhtuhigsghuihhlugdrtghomh
-    dpkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigv
-    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtg
-    hh
-X-ME-Proxy: <xmx:vZhOYvAPLxH8jNLQWE9e3F1tB7METMXDutZ6OGPwtL9BbYgXU02n7Q>
-    <xmx:vZhOYogt36ZM9nWwgr3bYUgxrLqKVLAdYNmmjA3730hgffxEdR-Lyg>
-    <xmx:vZhOYjovNfrQvOv4Uvu9GX1FkT1TLcjJPQQ6R-sMH-M1iSSnu43eaQ>
-    <xmx:vZhOYkwGstWp97xfECSUvb9tHw6Elo7bdYe_jGXMYDxSvXroLaMOrw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 7 Apr 2022 03:54:36 -0400 (EDT)
-Date:   Thu, 7 Apr 2022 09:54:35 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-        gabriel.fernandez@foss.st.com,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S242605AbiDGH7P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Apr 2022 03:59:15 -0400
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F4E510CF0B
+        for <linux-clk@vger.kernel.org>; Thu,  7 Apr 2022 00:56:51 -0700 (PDT)
+Date:   Thu, 07 Apr 2022 07:56:42 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1649318206;
+        bh=NwWI/CVe9BuDopA3lqAlNlI7tOW+IzhN4aHq+ZYIg9s=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:From:To:Cc:Date:
+         Subject:Reply-To:Feedback-ID:Message-ID;
+        b=AIROCQcsy0u1fRHSv7ocIkteLyaxavb9N3sX9a0jtqh3AQXHfkHYO64ACRR3FXNdY
+         m9rkLXc+JP9LSVRA2iUav/OUI/9J6UB+rIRew96URcyB0gPrhlhCRSLoymbWKyx+KQ
+         gixmPSGuv3M51fMp0zAd0ZNYkBjVLhLkAtXDbgapaHTeRMwlyJSCmFafN5p8+8GtTa
+         4KZ3S3YgEU3sizNL+KSAwoMFzGO3l9ddDCZ6MRaaxkCx3MOkdy+wvOk8OCvyJYMIan
+         /UojdXkRcdHUyOkTVgJ9S2TpPhC6BcTXbAj93+arrjBW/ulbXzDFaBEayVQUTyaXv5
+         skAtJYo1YZ8Dw==
+To:     Maxime Ripard <maxime@cerno.tech>
+From:   Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Subject: Re: [next] db845c: WARNING: CPU: 5 PID: 8 at
- drivers/clk/clk-divider.c:139 divider_recalc_rate
-Message-ID: <20220407075435.ahlylmbqmqnpxz64@houat>
-References: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
- <20220401151058.fipdax3kvmxknctv@houat>
- <CA+G9fYu+WddXTb0NcbviUfGQHhsmThssVCafLPw7+nj3JsoFAA@mail.gmail.com>
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: Re: [PATCH v7 04/12] clk: Always clamp the rounded rate
+Message-ID: <20220406183714.830218-1-y.oudjana@protonmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i5yz424gkn64kvgh"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYu+WddXTb0NcbviUfGQHhsmThssVCafLPw7+nj3JsoFAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 25 Feb 2022 15:35:26 +0100, Maxime Ripard <maxime@cerno.tech> wrote=
+:
+> The current core while setting the min and max rate properly in the
+> clk_request structure will not make sure that the requested rate is
+> within these boundaries, leaving it to each and every driver to make
+> sure it is.
+>
+> It's not clear if this was on purpose or not, but this introduces some
+> inconsistencies within the API.
+>
+> For example, a user setting a range and then calling clk_round_rate()
+> with a value outside of that range will get the same value back
+> (ignoring any driver adjustements), effectively ignoring the range that
+> was just set.
+>
+> Another one, arguably worse, is that it also makes clk_round_rate() and
+> clk_set_rate() behave differently if there's a range and the rate being
+> used for both is outside that range. As we have seen, the rate will be
+> returned unchanged by clk_round_rate(), but clk_set_rate() will error
+> out returning -EINVAL.
+>
+> Let's make sure the framework will always clamp the rate to the current
+> range found on the clock, which will fix both these inconsistencies.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/clk.c      |  2 ++
+>  drivers/clk/clk_test.c | 50 +++++++++++++++++++++++++++---------------
+>  2 files changed, 34 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 112911138a7b..6c4e10209568 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1348,6 +1348,8 @@ static int clk_core_determine_round_nolock(struct c=
+lk_core *core,
+>  =09if (!core)
+>  =09=09return 0;
+>
+> +=09req->rate =3D clamp(req->rate, req->min_rate, req->max_rate);
+> +
 
---i5yz424gkn64kvgh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This breaks mmpll8_early on mmcc-msm8996, making GPU power up fail:
 
-Hi,
+------------[ cut here ]------------
+mmpll8_early failed to enable!
+WARNING: CPU: 3 PID: 354 at drivers/clk/qcom/clk-alpha-pll.c:238 wait_for_p=
+ll+0xe8/0xfc
+Modules linked in: q6asm_dai(+) ath10k_pci(+) q6afe_dai q6routing venus_enc=
+ panel_lgphilips_sw43101(+) venus_dec ath10k_core q6asm q6adm videobuf2_dma=
+_contig qcom_camss snd_q6dsp_common snd_soc_wcd9335 q6afe snd_soc_apq8096 m=
+sm q6core ath regmap_slimbus v4l2_fwnode snd_soc_qcom_common apr snd_soc_co=
+re v4l2_async mac80211 venus_core videobuf2_dma_sg snd_compress v4l2_mem2me=
+m videobuf2_memops videobuf2_v4l2 snd_pcm nxp_nci_i2c videobuf2_common liba=
+rc4 nxp_nci snd_timer gpu_sched videodev hci_uart drm_dp_helper snd i2c_qco=
+m_cci nci btqca drm_kms_helper mc soundcore nfc syscopyarea sysfillrect blu=
+etooth slim_qcom_ngd_ctrl sysimgblt pdr_interface fb_sys_fops slimbus lzo_r=
+le qcom_spmi_haptics qcom_q6v5_mss qcom_spmi_temp_alarm qcom_q6v5_pas indus=
+trialio qcom_pil_info qcom_common qcom_q6v5 qcom_sysmon qmi_helpers mdt_loa=
+der socinfo pwm_ir_tx rmtfs_mem cfg80211 rfkill zram atmel_mxt_ts drm drm_p=
+anel_orientation_quirks ip_tables
+CPU: 3 PID: 354 Comm: systemd-udevd Not tainted 5.18.0-rc1+ #361
+Hardware name: Xiaomi Mi Note 2 (DT)
+pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+pc : wait_for_pll+0xe8/0xfc
+lr : wait_for_pll+0xe8/0xfc
+sp : ffff80000b01b250
+x29: ffff80000b01b250 x28: ffff0000ae071960 x27: ffff000096a9ec00
+x26: ffff0000801d7cf4 x25: 00000001cd074651 x24: 0000000000000000
+x23: ffff800009129090 x22: ffff8000090d7c30 x21: 0000000000000000
+x20: 0000000080000000 x19: ffff8000097b4598 x18: 0000000000000ca8
+x17: 00000000000032a0 x16: 0000000000000007 x15: 00000000ffffffff
+x14: 0000000000000001 x13: 0000000000000020 x12: fffffffffffcaebf
+x11: ffff80000968afb0 x10: 000000000000000a x9 : ffff80000815bcc8
+x8 : 000000000000000a x7 : 0000000000000006 x6 : 000000000000000c
+x5 : ffff0000fdd16990 x4 : 0000000000000000 x3 : 0000000000000027
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000857e3b00
+Call trace:
+ wait_for_pll+0xe8/0xfc
+ clk_alpha_pll_enable+0x118/0x150
+ clk_core_enable+0x78/0x290
+ clk_core_enable+0x58/0x290
+ clk_core_enable+0x58/0x290
+ clk_core_enable+0x58/0x290
+ clk_enable+0x38/0x60
+ clk_bulk_enable+0x48/0xb0
+ msm_gpu_pm_resume+0xb4/0x20c [msm]
+ a5xx_pm_resume+0x28/0x200 [msm]
+ adreno_resume+0x2c/0x40 [msm]
+ pm_generic_runtime_resume+0x38/0x50
+ __genpd_runtime_resume+0x38/0x90
+ genpd_runtime_resume+0xa4/0x2cc
+ __rpm_callback+0x50/0x180
+ rpm_callback+0x74/0x80
+ rpm_resume+0x434/0x6b0
+ __pm_runtime_resume+0x64/0xb0
+ adreno_load_gpu+0x68/0x1b0 [msm]
+ msm_open+0xf0/0x100 [msm]
+ drm_file_alloc+0x150/0x234 [drm]
+ drm_client_init+0xdc/0x180 [drm]
+ drm_fb_helper_init+0x60/0x70 [drm_kms_helper]
+ msm_fbdev_init+0x6c/0x100 [msm]
+ msm_drm_bind+0x56c/0x640 [msm]
+ try_to_bring_up_aggregate_device+0x230/0x320
+ __component_add+0xac/0x194
+ component_add+0x20/0x30
+ dsi_dev_attach+0x2c/0x3c [msm]
+ dsi_host_attach+0xa0/0x154 [msm]
+ mipi_dsi_attach+0x34/0x50
+ sw43101_probe+0x144/0x200 [panel_lgphilips_sw43101]
+ mipi_dsi_drv_probe+0x2c/0x40
+ really_probe+0x184/0x3d0
+ __driver_probe_device+0x11c/0x190
+ driver_probe_device+0x44/0xf4
+ __driver_attach+0xd8/0x1f0
+ bus_for_each_dev+0x7c/0xe0
+ driver_attach+0x30/0x40
+ bus_add_driver+0x150/0x230
+ driver_register+0x84/0x140
+ mipi_dsi_driver_register_full+0x64/0x70
+ sw43101_driver_init+0x2c/0x1000 [panel_lgphilips_sw43101]
+ do_one_initcall+0x50/0x2b0
+ do_init_module+0x50/0x260
+ load_module+0x229c/0x2ae0
+ __do_sys_finit_module+0xac/0x12c
+ __arm64_sys_finit_module+0x2c/0x3c
+ invoke_syscall+0x50/0x120
+ el0_svc_common.constprop.0+0xdc/0x100
+ do_el0_svc+0x34/0xa0
+ el0_svc+0x34/0xb0
+ el0t_64_sync_handler+0xa4/0x130
+ el0t_64_sync+0x18c/0x190
+---[ end trace 0000000000000000 ]---
+Failed to enable clk 'core': -110
+msm 900000.mdss: [drm:adreno_load_gpu [msm]] *ERROR* Couldn't power up the =
+GPU: -110
 
-On Sat, Apr 02, 2022 at 12:16:48AM +0530, Naresh Kamboju wrote:
-> On Fri, 1 Apr 2022 at 20:41, Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Mar 31, 2022 at 05:33:57PM +0530, Naresh Kamboju wrote:
-> > > Following kernel warning noticed on db845c while booting linux next-2=
-0220331.
-> > >
-> > > metadata:
-> > >   git_ref: master
-> > >   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> > >   git_sha: fdcbcd1348f4ef713668bae1b0fa9774e1811205
-> > >   git_describe: next-20220331
-> > >   kernel_version: 5.17.0
-> > >   kernel-config: https://builds.tuxbuild.com/278RLnhgJL7XdlJbcbv07jiw=
-bYB/config
-> > >
-> > > Boot log:
-> > > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x517f803c]
-> > > [    0.000000] Linux version 5.17.0-next-20220331 (tuxmake@tuxmake)
-> > > (aarch64-linux-gnu-gcc (Debian 11.2.0-18) 11.2.0, GNU ld (GNU Binutils
-> > > for Debian) 2.38) #1 SMP PREEMPT @1648699852
-> > > [    0.000000] Machine model: Thundercomm Dragonboard 845c
-> > > <trim>
-> > > [    8.131366] ------------[ cut here ]------------
-> > > [    8.131374] dsi0_pll_bit_clk: Zero divisor and CLK_DIVIDER_ALLOW_Z=
-ERO not set
-> > > [    8.131387] WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
-> > > divider_recalc_rate+0x8c/0xc0
-> > > [    8.131398] Modules linked in: qcom_spmi_adc5 snd_soc_sdm845
-> > > qcom_vadc_common qcom_spmi_temp_alarm qcom_pon crct10dif_ce rtc_pm8xxx
-> > > snd_soc_rt5663 msm snd_soc_qcom_common gpu_sched snd_soc_rl6231
-> > > soundwire_bus reset_qcom_pdc drm_dp_helper qcom_camss hci_uart
-> > > videobuf2_dma_sg btqca v4l2_fwnode venus_core ath10k_snoc v4l2_async
-> > > btbcm ath10k_core i2c_qcom_geni v4l2_mem2mem videobuf2_memops
-> > > videobuf2_v4l2 ath bluetooth camcc_sdm845 videobuf2_common
-> > > spi_geni_qcom i2c_qcom_cci qcom_rng mac80211 xhci_pci qcom_q6v5_mss
-> > > xhci_pci_renesas cfg80211 icc_osm_l3 slim_qcom_ngd_ctrl qcom_wdt
-> > > rfkill qrtr lmh pdr_interface display_connector slimbus qcom_q6v5_pas
-> > > drm_kms_helper qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common
-> > > qcom_glink_smem qmi_helpers drm mdt_loader socinfo rmtfs_mem fuse
-> > > [    8.131462] CPU: 5 PID: 8 Comm: kworker/u16:0 Not tainted
-> > > 5.17.0-next-20220331 #1
-> > > [    8.131465] Hardware name: Thundercomm Dragonboard 845c (DT)
-> > > [    8.131467] Workqueue: events_unbound deferred_probe_work_func
-> > > [    8.131475] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS =
-BTYPE=3D--)
-> > > [    8.131477] pc : divider_recalc_rate+0x8c/0xc0
-> > > [    8.131479] lr : divider_recalc_rate+0x8c/0xc0
-> > > [    8.131481] sp : ffff8000080936c0
-> > > [    8.131482] x29: ffff8000080936c0 x28: ffff781940e58d00 x27: ffffa=
-7f3f1bc6d38
-> > > [    8.131485] x26: ffffa7f3f1bc6cf8 x25: 0000000000000000 x24: fffff=
-fffffffffff
-> > > [    8.131488] x23: ffff781947e8a400 x22: 000000003b9aca50 x21: ffff7=
-81940be0800
-> > > [    8.131491] x20: ffff781947e8a800 x19: 000000003b9aca50 x18: 00000=
-00000000000
-> > > [    8.131494] x17: 0000000000000000 x16: 0000000000000000 x15: 00000=
-00000000000
-> > > [    8.131497] x14: ffff7819bd718000 x13: 0a74657320746f6e x12: 204f5=
-2455a5f574f
-> > > [    8.131500] x11: 4c4c415f52454449 x10: 5649445f4b4c4320 x9 : ffffa=
-7f3f011de84
-> > > [    8.131502] x8 : 445f4b4c4320646e x7 : 6120726f73697669 x6 : 00000=
-00000000001
-> > > [    8.131505] x5 : ffffa7f3f288f000 x4 : ffffa7f3f288f2d0 x3 : 00000=
-00000000000
-> > > [    8.131508] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff7=
-819402c7000
-> > > [    8.131511] Call trace:
-> > > [    8.131512]  divider_recalc_rate+0x8c/0xc0
-> > > [    8.131513]  clk_divider_recalc_rate+0x64/0x90
-> > > [    8.131515]  clk_recalc+0x40/0xb0
-> > > [    8.131519]  clk_calc_subtree+0x58/0x90
-> > > [    8.131521]  clk_calc_subtree+0x70/0x90
-> > > [    8.131523]  clk_calc_new_rates+0x150/0x290
-> > > [    8.131526]  clk_calc_new_rates+0x100/0x290
-> > > [    8.131528]  clk_calc_new_rates+0x100/0x290
-> > > [    8.131530]  clk_calc_new_rates+0x100/0x290
-> > > [    8.131533]  clk_core_set_rate_nolock+0xa0/0x2a4
-> > > [    8.131535]  clk_set_rate_range_nolock.part.0+0xbc/0x2a0
-> > > [    8.131538]  __clk_put+0x70/0x140
-> > > [    8.131540]  clk_put+0x1c/0x30
-> > > [    8.131543]  of_clk_set_defaults+0x140/0x3c0
-> > > [    8.131546]  platform_probe+0x48/0xf0
-> > > [    8.131548]  really_probe+0x184/0x3d0
-> > > [    8.131550]  __driver_probe_device+0x11c/0x190
-> > > [    8.131553]  driver_probe_device+0x44/0xf4
-> > > [    8.131556]  __device_attach_driver+0xa4/0x140
-> > > [    8.131558]  bus_for_each_drv+0x84/0xe0
-> > > [    8.131561]  __device_attach+0xe4/0x1c0
-> > > [    8.131563]  device_initial_probe+0x20/0x30
-> > > [    8.131565]  bus_probe_device+0xa4/0xb0
-> > > [    8.131567]  deferred_probe_work_func+0xa8/0xfc
-> > > [    8.131570]  process_one_work+0x1dc/0x450
-> > > [    8.131575]  worker_thread+0x154/0x450
-> > > [    8.131577]  kthread+0x100/0x110
-> > > [    8.131579]  ret_from_fork+0x10/0x20
-> > > [    8.131584] ---[ end trace 0000000000000000 ]---
-> > > [    8.131588] ------------[ cut here ]------------
-> >
-> > I'm not sure if it's feasible, but if it is, it looks like something
-> > that could be fixed by the patch pasted here:
-> >
-> > https://lore.kernel.org/linux-clk/20220401122736.5yvanksa4pla7uql@houat/
-> > Could you test it?
->=20
-> I have tested the single line patch and reported problems not fixed.
 
-Could you test this branch?
-https://github.com/mripard/linux/tree/rpi/clk-improvements-more-fixes
-
-Thanks!
-Maxime
-
---i5yz424gkn64kvgh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYk6YuwAKCRDj7w1vZxhR
-xUChAP0UVOSNtC1qP84XhYgR5jOX0+qkLgOnE+8H9phnEaSRYAD/b4tGeJzdEGe1
-t+sCqPDcVmNLKYmYYv37511sduZt7Qw=
-=U3cn
------END PGP SIGNATURE-----
-
---i5yz424gkn64kvgh--
