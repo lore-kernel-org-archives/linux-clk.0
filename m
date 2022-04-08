@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9852EC433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 09:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919EAC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 09:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233221AbiDHJQC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Apr 2022 05:16:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42416 "EHLO
+        id S233632AbiDHJQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Apr 2022 05:16:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233028AbiDHJOC (ORCPT
+        with ESMTP id S233062AbiDHJOC (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 05:14:02 -0400
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C20211F7B5
-        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 02:11:01 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 72DF75C0150;
-        Fri,  8 Apr 2022 05:11:00 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE369124C0B
+        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 02:11:02 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4E4AA5C013A;
+        Fri,  8 Apr 2022 05:11:02 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 08 Apr 2022 05:11:00 -0400
+  by compute4.internal (MEProxy); Fri, 08 Apr 2022 05:11:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; bh=maaLIQUn5IZDUVnYZhfLKmx8Wf/FAY
-        uQGfSmF8keZxc=; b=EmsZa50tR0uuwyo61dkHhIL6mWDRpwzgtz1bn/AJcmDgtK
-        yls2d4enxPPyhXW48fQ6lUcrEha+RzVPJoNNamuNZa+np/82yoX64hr12Y3+rrS0
-        oRmIdrcj3D+yvG1/alWEEJwsm64WthZLjOn40sO/yocDW2xkbHdba6JfirwYFcOA
-        3ayYiik7PmgEs6HdkVdR6HrVjUQYOhVjzWgTI5S4EKwwzT3pO4uEwMS1pNGbOHeN
-        8ZJ6ncyN4QjDZKdW8V/SJjkGuBUqHnnMSxEcOIGwOPRIFbQ3SDynjvoT6ejU8UBp
-        QApy/KvHfDJURpBUN4dOqgNjstWhK5VKLoFIEQ6A==
+        :subject:subject:to:to; s=fm3; bh=eN9cAZfllC/Q1c0jFouk0LanqqLrGT
+        7W/Vb6xXaC/sg=; b=DNhWe1VFdp9GOgou5Yzvd+7Dh+NTPrS7zN8jruBKaLyAHq
+        7HQ/wZDd/wUacOKSYL/BAm4/KNhvvrYKjbJ+Z4RgQazOiyHff7bnQP/iwRhAAxXj
+        /PckUbp9B1rzoNsTSnAU4GvQJKr4TiVtaPknRJ3c9XiwviDNfQw+yOkgeLONTOLp
+        CxvdaHLoWXy3bqaoebAFHQdW2PBKZ0jjlKVIerBy2NUGOq4zAk0P5yBaMZ/nLNmd
+        S8zDyLHg81SGiwMZ0UmgBQbVM6aWK7Uvwd/iMIm2La2zv41SGGxPEnjfFjJPaVLJ
+        FFk3QTIj9MzYTwuZsqayRy6J0gq4kxz0NzQwiVuQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=maaLIQ
-        Un5IZDUVnYZhfLKmx8Wf/FAYuQGfSmF8keZxc=; b=Nc0HKIcDVgzd3FY3MrVMNN
-        hc7AW3vGGy0JQOt6Raap1d+wYPjHFYLnuuwarSJBQYkwB717mNPsxT23Zz0mqYL1
-        xM9x6hpch8K81UZe1q1AhGPw43C1o6DAgFrgUdm4YTXNhTHUYbYtOryzeslinn0g
-        6U9H+sroqAi369O9JDw/WRUY4KYkX7RE2+lNIiQGFyVry4ddTfQAjSD3a1ClIi65
-        9MLkfWp5w9kK4vFwLg8PunJcYCgtsAPm2ve/eUzWZlWLhDGkQ2R45VXuNWxcfBSo
-        Kan7rLlx5dTTWXDEvsgOYro+u036R6Nr0ZQExyyJjXwe+wmwaXxHYXwMYRJfNKqg
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=eN9cAZ
+        fllC/Q1c0jFouk0LanqqLrGT7W/Vb6xXaC/sg=; b=dWhdBeAlBRqhnOAKeF+Zk+
+        fY/Z0yQrIQTLaz7GnJOGpjso8x9OgLj0tIvz8GANfOAw7y/2ZS3QU+C4O/qgfm7/
+        q3WRuM97Lpt/utHpMqDl2wz5KYYUirsFH5lAk7IQ3uRuluCbYUh7H3lUOWQa4hWF
+        /bNgfIxfXDRqU8Qc+5BBy1mQnxxzc/Xbb32OdP8x5ydAeHAv25hlPOvcx4wQ/s4E
+        W0DX6Uc5/vbGQ2Ge7RPGcgYFfWTyQl/ByUFPF4Wgw83M7SvUjhwk0GPhLUSMkiL/
+        66Dz9VIqNalngslPJJEITozMu5PhyPmX7qrusrMA5Zf0cTA/lqJ+mcsp/0+rCVLg
         ==
-X-ME-Sender: <xms:JPxPYszsDba8rAKr2Dw-Vre5ngwmVaBLGj8dL-o36Z3GdsL1te9n7A>
-    <xme:JPxPYgQ3s4K1kWYvE2Qmi_BU2ncL5fjjgEmoDGMrBZukXPg_AjPcZhntgbqd-Nwj3
-    PWUd0LPLnKwA7JBUrw>
-X-ME-Received: <xmr:JPxPYuVczNCH-jkQE-91U9xiQQME1yTRZPx2H4kUEap8upZfsNn2P7P3PIBMDXrQ_j7u_DA87196-9iQFwlruXvB89cs8wQznhvEYTg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudektddguddvucetufdoteggodetrfdotf
+X-ME-Sender: <xms:JvxPYnQFO_aU_A9snefrjxMq03hZDRuetchKl524yoF0Adm7pDI5eA>
+    <xme:JvxPYoym7cTeNRiw4zA-_O8AenZkDc5wEp2hcjYt9H8jBOJ9WRYcwCfRt6VuuHxpH
+    O0Wi14dbnfVSTXcgUw>
+X-ME-Received: <xmr:JvxPYs0JQkXHS-wzCR11qYpvelxYrOziH8i3S5ncdunD9n9-tdyNV07gtnidwx_q1MWCfl0OhdXWjITm2Af9SURNPozvy1kVmnWldNA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudektddgudduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:JPxPYqi3eAD8tAKSN5e2SxP5bO8qrtWjdvc3bvm04sQuyHIOfMPFeg>
-    <xmx:JPxPYuDmiuOqsmg-dLk9XXLkJ7WwbDythK3FhCIFDMv3zao0RvdfJw>
-    <xmx:JPxPYrIp-ERd-hIEZ91ie4Qla3VfCn0HvqiYNXbm7n32JIPy1srGog>
-    <xmx:JPxPYmsSS2XzOnY8-CNhGAP79T_vmqMFKGYEe8wXc7NKYxBVohlP5g>
+    htvghrnhepjeetueeludeikefgheethfefgfektdfgheefleetheffuddvleegffekvdfh
+    vdffnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:JvxPYnDGy-X7LTNlG6iVpukrxY--yZhtw1urCJ_-4T-BiKQLaGv9NQ>
+    <xmx:JvxPYgjijzdBIlRAuCLh0R5Rg8gagAIHtFBlPlCkKN6V2D5DgYEt8g>
+    <xmx:JvxPYroJnb3lzyVbVxSoAwLr51xybpAeP-4jyPyjuvJZviWcEhwV1g>
+    <xmx:JvxPYjNjH_i4vRdVhuDWp3xfc62lpx37qa8qz2B4dR3sR7HbpkUzHw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Apr 2022 05:10:59 -0400 (EDT)
+ 8 Apr 2022 05:11:01 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -70,9 +70,9 @@ Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 09/22] clk: Fix clk_get_parent() documentation
-Date:   Fri,  8 Apr 2022 11:10:24 +0200
-Message-Id: <20220408091037.2041955-10-maxime@cerno.tech>
+Subject: [PATCH 10/22] clk: Set req_rate on reparenting
+Date:   Fri,  8 Apr 2022 11:10:25 +0200
+Message-Id: <20220408091037.2041955-11-maxime@cerno.tech>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220408091037.2041955-1-maxime@cerno.tech>
 References: <20220408091037.2041955-1-maxime@cerno.tech>
@@ -82,72 +82,337 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_get_parent() documentation in the header states that it will
-return a valid pointer, or an error pointer on failure.
+If a non-rate clock started by default with a parent that never
+registered, core->req_rate will be 0. The expectation is that whenever
+the parent will be registered, req_rate will be updated with the new
+value that has just been computed.
 
-However, the documentation in the source file, and the code itself, will
-return also return NULL if there isn't any parent for that clock. Let's
-mention it.
-
-An orphan clock should return NULL too, so let's add a test for it.
+However, if that clock is a mux, clk_set_parent() can also make that
+clock no longer orphan. In this case however, we never update req_rate.
+Let's make sure it's the case for the newly unorphan clock and all its
+children.
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk_test.c | 17 +++++++++++++++++
- include/linux/clk.h    |  5 +++--
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ drivers/clk/clk.c      |  18 ++++
+ drivers/clk/clk_test.c | 231 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 249 insertions(+)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 70fee35c43c6..0f2d52d3a25d 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -532,6 +532,22 @@ clk_orphan_transparent_multiple_parent_mux_test_exit(struct kunit *test)
- 	clk_hw_unregister(&ctx->parents_ctx[1].hw);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 80eebf62d1f3..5b6ec11fcfcd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1759,6 +1759,23 @@ static void clk_core_update_orphan_status(struct clk_core *core, bool is_orphan)
+ 		clk_core_update_orphan_status(child, is_orphan);
  }
  
 +/*
-+ * Test that, for a mux whose current parent hasn't been registered yet,
-+ * clk_get_parent() will return NULL.
++ * Update the orphan rate and req_rate of @core and all its children.
++ */
++static void clk_core_update_orphan_child_rates(struct clk_core *core)
++{
++	struct clk_core *child;
++	unsigned long parent_rate = 0;
++
++	if (core->parent)
++		parent_rate = core->parent->rate;
++
++	core->rate = core->req_rate = clk_recalc(core, parent_rate);
++
++	hlist_for_each_entry(child, &core->children, child_node)
++		clk_core_update_orphan_child_rates(child);
++}
++
+ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+ {
+ 	bool was_orphan = core->orphan;
+@@ -1783,6 +1800,7 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
+ 	}
+ 
+ 	core->parent = new_parent;
++	clk_core_update_orphan_child_rates(core);
+ }
+ 
+ static struct clk_core *__clk_set_parent_before(struct clk_core *core,
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 0f2d52d3a25d..fa6e32c460ac 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -575,6 +575,39 @@ clk_test_orphan_transparent_multiple_parent_mux_set_parent(struct kunit *test)
+ 	clk_put(parent);
+ }
+ 
++/*
++ * Test that, for a mux that started orphan but got switched to a valid
++ * parent, calling clk_drop_range() on the mux won't affect the parent
++ * rate.
 + */
 +static void
-+clk_test_orphan_transparent_multiple_parent_mux_get_parent(struct kunit *test)
++clk_test_orphan_transparent_multiple_parent_mux_set_parent_drop_range(struct kunit *test)
 +{
 +	struct clk_multiple_parent_ctx *ctx = test->priv;
 +	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = hw->clk;
-+	struct clk *parent;
++	struct clk *clk = hw->clk, *parent;
++	unsigned long parent_rate, new_parent_rate;
++	int ret;
 +
-+	parent = clk_get_parent(clk);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, NULL);
++	parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++
++	parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, parent_rate, 0);
++
++	ret = clk_set_parent(clk, parent);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ret = clk_drop_range(clk);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	new_parent_rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, new_parent_rate, 0);
++	KUNIT_EXPECT_EQ(test, parent_rate, new_parent_rate);
++
++	clk_put(parent);
++}
++
+ /*
+  * Test that, for a mux that started orphan but got switched to a valid
+  * parent, the rate of the mux and its new parent are consistent.
+@@ -603,6 +636,39 @@ clk_test_orphan_transparent_multiple_parent_mux_set_parent_get_rate(struct kunit
+ 	KUNIT_EXPECT_EQ(test, parent_rate, rate);
+ }
+ 
++/*
++ * Test that, for a mux that started orphan but got switched to a valid
++ * parent, calling clk_put() on the mux won't affect the parent rate.
++ */
++static void
++clk_test_orphan_transparent_multiple_parent_mux_set_parent_put(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++	struct clk *clk, *parent;
++	unsigned long parent_rate, new_parent_rate;
++	int ret;
++
++	parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++
++	clk = clk_hw_get_clk(&ctx->hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, clk);
++
++	parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, parent_rate, 0);
++
++	ret = clk_set_parent(clk, parent);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	clk_put(clk);
++
++	new_parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, new_parent_rate, 0);
++	KUNIT_EXPECT_EQ(test, parent_rate, new_parent_rate);
++
++	clk_put(parent);
++}
++
+ /*
+  * Test that, for a mux that started orphan but got switched to a valid
+  * parent, calling clk_set_rate_range() will affect the parent state if
+@@ -634,6 +700,41 @@ clk_test_orphan_transparent_multiple_parent_mux_set_parent_set_range_modified(st
+ 	clk_put(parent);
+ }
+ 
++/*
++ * Test that, for a mux that started orphan but got switched to a valid
++ * parent, calling clk_set_rate_range() won't affect the parent state if
++ * its rate is within range.
++ */
++static void
++clk_test_orphan_transparent_multiple_parent_mux_set_parent_set_range_untouched(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = hw->clk, *parent;
++	unsigned long parent_rate, new_parent_rate;
++	int ret;
++
++	parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
++
++	parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, parent_rate, 0);
++
++	ret = clk_set_parent(clk, parent);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ret = clk_set_rate_range(clk,
++				 DUMMY_CLOCK_INIT_RATE - 1000,
++				 DUMMY_CLOCK_INIT_RATE + 1000);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	new_parent_rate = clk_get_rate(parent);
++	KUNIT_ASSERT_GT(test, new_parent_rate, 0);
++	KUNIT_EXPECT_EQ(test, parent_rate, new_parent_rate);
++
++	clk_put(parent);
 +}
 +
  /*
   * Test that, for a mux whose current parent hasn't been registered yet,
-  * calling clk_set_parent() to a valid parent will properly update the
-@@ -642,6 +658,7 @@ clk_test_orphan_transparent_multiple_parent_mux_set_range_round_rate(struct kuni
- }
- 
+  * calling clk_set_rate_range() will succeed, and will be taken into
+@@ -660,8 +761,11 @@ clk_test_orphan_transparent_multiple_parent_mux_set_range_round_rate(struct kuni
  static struct kunit_case clk_orphan_transparent_multiple_parent_mux_test_cases[] = {
-+	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_get_parent),
+ 	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_get_parent),
  	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent),
++	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent_drop_range),
  	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent_get_rate),
++	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent_put),
  	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent_set_range_modified),
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 39faa54efe88..3b8cf492ff1a 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -744,8 +744,9 @@ int clk_set_parent(struct clk *clk, struct clk *parent);
-  * clk_get_parent - get the parent clock source for this clock
-  * @clk: clock source
-  *
-- * Returns struct clk corresponding to parent clock source, or
-- * valid IS_ERR() condition containing errno.
-+ * Returns struct clk corresponding to parent clock source, a NULL
-+ * pointer if it doesn't have a parent, or a valid IS_ERR() condition
-+ * containing errno.
-  */
- struct clk *clk_get_parent(struct clk *clk);
++	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_parent_set_range_untouched),
+ 	KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_range_round_rate),
+ 	{}
+ };
+@@ -946,6 +1050,132 @@ static struct kunit_suite clk_orphan_transparent_single_parent_test_suite = {
+ 	.test_cases = clk_orphan_transparent_single_parent_mux_test_cases,
+ };
  
++struct clk_single_parent_two_lvl_ctx {
++	struct clk_dummy_context parent_parent_ctx;
++	struct clk_dummy_context parent_ctx;
++	struct clk_hw hw;
++};
++
++static int
++clk_orphan_two_level_root_last_test_init(struct kunit *test)
++{
++	struct clk_single_parent_two_lvl_ctx *ctx;
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	test->priv = ctx;
++
++	ctx->parent_ctx.hw.init =
++		CLK_HW_INIT("intermediate-parent",
++			    "root-parent",
++			    &clk_dummy_single_parent_ops,
++			    CLK_SET_RATE_PARENT);
++	ret = clk_hw_register(NULL, &ctx->parent_ctx.hw);
++	if (ret)
++		return ret;
++
++	ctx->hw.init =
++		CLK_HW_INIT("test-clk", "intermediate-parent",
++			    &clk_dummy_single_parent_ops,
++			    CLK_SET_RATE_PARENT);
++	ret = clk_hw_register(NULL, &ctx->hw);
++	if (ret)
++		return ret;
++
++	ctx->parent_parent_ctx.rate = DUMMY_CLOCK_INIT_RATE;
++	ctx->parent_parent_ctx.hw.init =
++		CLK_HW_INIT_NO_PARENT("root-parent",
++				      &clk_dummy_rate_ops,
++				      0);
++	ret = clk_hw_register(NULL, &ctx->parent_parent_ctx.hw);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void
++clk_orphan_two_level_root_last_test_exit(struct kunit *test)
++{
++	struct clk_single_parent_two_lvl_ctx *ctx = test->priv;
++
++	clk_hw_unregister(&ctx->hw);
++	clk_hw_unregister(&ctx->parent_ctx.hw);
++	clk_hw_unregister(&ctx->parent_parent_ctx.hw);
++}
++
++/*
++ * Test that, for a clock whose parent used to be orphan, clk_get_rate()
++ * will return the proper rate.
++ */
++static void
++clk_orphan_two_level_root_last_test_get_rate(struct kunit *test)
++{
++	struct clk_single_parent_two_lvl_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = hw->clk;
++	unsigned long rate;
++
++	rate = clk_get_rate(clk);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_INIT_RATE);
++}
++
++/*
++ * Test that, for a clock whose parent used to be orphan,
++ * clk_set_rate_range() won't affect its rate if it is already within
++ * range.
++ *
++ * See (for Exynos 4210):
++ * https://lore.kernel.org/linux-clk/366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com/
++ */
++static void
++clk_orphan_two_level_root_last_test_set_range(struct kunit *test)
++{
++	struct clk_single_parent_two_lvl_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = hw->clk;
++	unsigned long rate;
++	int ret;
++
++	ret = clk_set_rate_range(clk,
++				 DUMMY_CLOCK_INIT_RATE - 1000,
++				 DUMMY_CLOCK_INIT_RATE + 1000);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_INIT_RATE);
++}
++
++static struct kunit_case
++clk_orphan_two_level_root_last_test_cases[] = {
++	KUNIT_CASE(clk_orphan_two_level_root_last_test_get_rate),
++	KUNIT_CASE(clk_orphan_two_level_root_last_test_set_range),
++	{}
++};
++
++/*
++ * Test suite for a basic, transparent, clock with a parent that is also
++ * such a clock. The parent's parent is registered last, while the
++ * parent and its child are registered in that order. The intermediate
++ * and leaf clocks will thus be orphan when registered, but the leaf
++ * clock itself will always have its parent and will never be
++ * reparented. Indeed, it's only orphan because its parent is.
++ *
++ * These tests are supposed to exercise the behaviour of the consumer
++ * API when dealing with an orphan clock, and how we deal with the
++ * transition to a valid parent.
++ */
++static struct kunit_suite
++clk_orphan_two_level_root_last_test_suite = {
++	.name = "clk-orphan-two-level-root-last-test",
++	.init = clk_orphan_two_level_root_last_test_init,
++	.exit = clk_orphan_two_level_root_last_test_exit,
++	.test_cases = clk_orphan_two_level_root_last_test_cases,
++};
++
+ /*
+  * Test that clk_set_rate_range won't return an error for a valid range
+  * and that it will make sure the rate of the clock is within the
+@@ -1629,6 +1859,7 @@ kunit_test_suites(
+ 	&clk_multiple_parents_mux_test_suite,
+ 	&clk_orphan_transparent_multiple_parent_mux_test_suite,
+ 	&clk_orphan_transparent_single_parent_test_suite,
++	&clk_orphan_two_level_root_last_test_suite,
+ 	&clk_range_test_suite,
+ 	&clk_range_maximize_test_suite,
+ 	&clk_range_minimize_test_suite,
 -- 
 2.35.1
 
