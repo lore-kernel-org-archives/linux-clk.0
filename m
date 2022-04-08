@@ -2,344 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716B0C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 12:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFD1C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 13:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233861AbiDHM5j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Apr 2022 08:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58434 "EHLO
+        id S236157AbiDHNOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Apr 2022 09:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236052AbiDHM5f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 08:57:35 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E647F9563
-        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 05:55:31 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 550BC32022C6;
-        Fri,  8 Apr 2022 08:55:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 08 Apr 2022 08:55:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=6beO8pQKrzgmzwHSOF3skfhImsmqQd1Vw49znH
-        4sdRo=; b=Jl7uCh/q66zLSQe1sWZDQ3oVsPtGYdWsWbUEk3WLbokeXlW4Ntv5A6
-        ++UzApAkAnpaKeGFTxAoqbDiRhkH++LzCtF9GSfk04YTB2L+vHN9UJDCuITcXsbB
-        F5FZ9+Kk6GNtVzEPlbXvDfvECKt9DgN6z22OeJnWjCVqgc8DHaNESOiwbO+nTl62
-        SPqA744AklNnmZPLgsNQp0ZqfK+E+LgoAPJGPG8aWRipIWcz/bZWSc13Id34ZELm
-        PvE9u/mo6JHrgDlfnTMXKyfjqk074pj++ZbFMdoVC2totlpNaq8HHGy6bAqPxfai
-        49GscFTXsdrzNEXPg4J9BR8i1OBIwC1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=6beO8pQKrzgmzwHSO
-        F3skfhImsmqQd1Vw49znH4sdRo=; b=UuBrYfxK8E/ESmWbe0eePklsSOMagalgD
-        iBByGtKvGsdVs252xg01d3caMBa+BT94LaH3p1yKd6jOcvWozm5YnVOjLjkXGRoz
-        dRtPzQEVe/nVzh8nGShZvDihNitB5rbvpuXFP1iDxyhtPj8eAGZo1Y3Qwd6hoOte
-        DybnIfmBcpjETlJAs+GVc4I+a/Uw7uHcUppEEhdwzUSXOUxc7SktJe4B/NchbVq9
-        BTP4axHjRiAdbSzPfSWDdYGVSLLNsQFy1ZpuwhrGsAKTFwsmEWLhZBtK1ZHNr6MM
-        8r85IYH+V0rsG1bo1OCswzub7Os4CFr0lZlUVfYNiVaxeHGyyKt/w==
-X-ME-Sender: <xms:wDBQYq8zJG7mhFbffBbkWk-mOF5V6uWmw2fu3BcOMDGIr2Im1cNiMw>
-    <xme:wDBQYqtXIxtJQqHBTMENAHXZbnjdhXlS1ItQReso2stfaWdu7n5xqhbJ2NLFJrheM
-    _2l85e5WgOeIKknamI>
-X-ME-Received: <xmr:wDBQYgBO1GF4K1BDKfD8BjcXIZ7DiqomwoYoCAahd5KTIHU7mwXP4bv7LPhiI2t9djqqYxX4EUZ4q3xW8f1eMniMQ6iZ49z-ka83K2U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudektddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepudehudegleeggeeiteehkeetgeduffefueduhfeuhfduiefhleehleehfefh
-    heelnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhm
-    vgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:wTBQYieiXJL8FU-edqNLIxUGOgWbFsTRIDKIjsSvVlZRsCUwKcrwUQ>
-    <xmx:wTBQYvPYVxXeRFK4bPC6sNewYhPC5nbGJcbt8iVg8YPF4Ioxtd5TEA>
-    <xmx:wTBQYslNPD79FmRD_I_3ppKSA2ra_SFkcRVEkYnnWjLx1fCN8Z7DkA>
-    <xmx:wTBQYoi2Mg93mldwl_V4cNa_rZGX2V7wnt30sUeb7Y-QbxR5NMs_dw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Apr 2022 08:55:28 -0400 (EDT)
-Date:   Fri, 8 Apr 2022 14:55:26 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
+        with ESMTP id S236480AbiDHNNk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 09:13:40 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2098.outbound.protection.outlook.com [40.107.255.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E174722E940;
+        Fri,  8 Apr 2022 06:06:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AWsjOBzZSDqTPi1amDTj3ocDFeO2waHxfEJ9Ys8BDxcN/gKxMD4xi4Lqoncu812VsQsJzIX7fDwM3SQMrZJ7B2l6yKh/vQr8euXcpPRAIEEzoRmoKpKYfL3XHF1KzhQEEjT66jbOISTKNBv/qA3DA65UJHPDRtd5NpRP9FLqGkFzpv4q57LK94Av9xc/CCJwhi+QwfMMCvleUtlElec1/43ZiWcRRg4dEGfXfGU9ph7sEygPghGs/sAYvJnJl/DwPc//yQWcbw3C6tCmmMvDvM3U2ocY28g45VACgti5YUyn9Fwh4yHvW8/nF3r1ks/g+uuF437OIZHRW9FZIm3a1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R+k6waTZ5YOSZw9H7v/SifDNhBaEa4TB4WwExJMJtBk=;
+ b=WQpAp4vzw0ItoNp6bPDPXlo1T7Y1g4OlfVreu0jWhzyUF0/pD1ZvPbthi2r9/ckfHAxek1sdGOL0EP+PRJK+LsanRyQr7sGhlyH3+f2pibPqmTdwf8p76Ves2lI2Ii0P45TvF039xoYE91wDv/7uRDnnRDlPT+H3di1asuo0KHdi9FQTT0PwFkCuxlc02HM3TYd7EJ4LjmVz2b8hvTQp2LQ393BGQQSvS6a666xk5wtAgE1iQ7l23CZlJXEYPZxbRHUDgggTyJBKn6cbWMqeg1d+OdazxoksvJtYdqQwXiIZtY4uug8wvCacVwaE3UxcVSV6diIfqFHzXlZWzRrh+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R+k6waTZ5YOSZw9H7v/SifDNhBaEa4TB4WwExJMJtBk=;
+ b=SDUhd6Qfr+k6YZuCOAU1rR3o2GmzUe4lL07Tx9FKqL7BlNP51yWKBHaRi3TtvbXhAjVcQBM8Uoc+M2fV7J9mIOKj6bzY3V5EQNFvPfEO66iRPBJf00z066v2myTuogxD1Y9iVByvq9OKIZHtWfeTcwkCAB9H1+JSGHnq5Z0xOx8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4173.apcprd06.prod.outlook.com (2603:1096:400:26::14)
+ by SL2PR06MB3083.apcprd06.prod.outlook.com (2603:1096:100:3d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.26; Fri, 8 Apr
+ 2022 13:06:35 +0000
+Received: from TYZPR06MB4173.apcprd06.prod.outlook.com
+ ([fe80::2813:af2f:32d0:7be]) by TYZPR06MB4173.apcprd06.prod.outlook.com
+ ([fe80::2813:af2f:32d0:7be%9]) with mapi id 15.20.5144.022; Fri, 8 Apr 2022
+ 13:06:35 +0000
+From:   Yihao Han <hanyihao@vivo.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
-Message-ID: <20220408125526.ykk5ktix52mnwvh2@houat>
-References: <20220408091037.2041955-1-maxime@cerno.tech>
- <20220408091037.2041955-23-maxime@cerno.tech>
- <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
- <20220408104127.ilmcntbhvktr2fbh@houat>
- <1jpmlrlq0h.fsf@starbuckisacylon.baylibre.com>
+        linux-kernel@vger.kernel.org
+Cc:     kernel@vivo.com, Yihao Han <hanyihao@vivo.com>
+Subject: [PATCH] clk: clk-xgene: simplify if-if to if-else
+Date:   Fri,  8 Apr 2022 06:06:09 -0700
+Message-Id: <20220408130617.14963-1-hanyihao@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0401CA0020.apcprd04.prod.outlook.com
+ (2603:1096:202:2::30) To TYZPR06MB4173.apcprd06.prod.outlook.com
+ (2603:1096:400:26::14)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5u66o6fiwjrcv3qj"
-Content-Disposition: inline
-In-Reply-To: <1jpmlrlq0h.fsf@starbuckisacylon.baylibre.com>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 19dbbd20-70b5-4366-d1b5-08da19609c14
+X-MS-TrafficTypeDiagnostic: SL2PR06MB3083:EE_
+X-Microsoft-Antispam-PRVS: <SL2PR06MB3083030514A8D7588562C253A2E99@SL2PR06MB3083.apcprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 01AuCZH+t6PPGrANYUSz0pwW4Hf6nJdNfS6nUBgJSxPtR3aABgm2gJYUDR4P3jJwHCtiA7S93BfIfMjLJWYCMXnISPnLXN9MS48Q1ts+Gbv8XO9PEunUA9LLDG/v51HctFzpibBkHluDHsi4vU4ByJWt5VwjbIPQm8jdsYIGA9xYUhMm1oNAJpx1lGxhdrYo2/zn/BlsizGUepWw7GfPk/gaPkUHLlpQ/lP4FCiSA9EDgi05pTik5UAOrhk1LXFgh4Z14T2hb3DB2y9jdXDFtwmIoqp7pMsVLbVMMtTkO0jtShRYNCj4coCxb3c6LXitO4A+RHqJ42bSgy8VlcP6emGlOAk7ATj5QThp8yz1nAZasWeaxII1dOV5FRIqdJmjbFvqTZ+FtYmHOKz4k7gkN2r9UuVTE3imBHUDcEUyrfsl/kRpaJOEM/T2H3WNTC8W+bZpQoiqOLjddwqpARZBpO6vg2uVBH+55wVBV9ndbV1JMlq6Abi3McL0dBi5Pgjnd5hPwT1ehyUKpBoFbx4tP5GpN+odCAJGVXITWhcMFNWUPfMs+aPmcGxKfgZQ4JTmFj2q3aURh//wdaVCtkA2Oo2I2ll0NXz1xHf+qG6ZxhT+pSzdqpR5t/UVq2qRmdm6qRr5NzXirP1Cd5EtsX9P0K+LV8i+rs0dySVDG+XKKAl6ZNFqbRzWW2EM99Sp89yETDPJoK/DSoushUvVRg+jwES5qQpetra7PWhXjoYyEbToZpJNOzdNLFgFaRt6RaabLkA5JdFQsxmDSsl9mzM05zhxIMGKdJbe1V/WfXg0MTY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4173.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(110136005)(4326008)(8676002)(1076003)(2616005)(8936002)(107886003)(6666004)(6512007)(6506007)(86362001)(26005)(52116002)(316002)(186003)(5660300002)(966005)(6486002)(508600001)(2906002)(66946007)(66556008)(66476007)(36756003)(83380400001)(38100700002)(38350700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YhReKgBT8iHcjMSX+HD/Z6C2nBj5ZaMCs3MjhksBCoMUBNdTFtTLbe2lWWwi?=
+ =?us-ascii?Q?XuXFZ0n3FLDl3L8zB4eZKpxc7/OdC/h2YKpfhQVeBAKIYyBXwonMXqP2EHQ3?=
+ =?us-ascii?Q?P5fKEoEf3l3n2H9/tcrTK+8PMF0nkw1wNSDT+021C36DhL2ECkqNLrya9WBD?=
+ =?us-ascii?Q?vQGllpnY+xU5JVEY/q7+aKAZVg57UI9EyGZzOWCwmLq7RfYX0ow3JGpkUKWA?=
+ =?us-ascii?Q?BPHhMLbgotJ7P2/L79gqavao+93Gi3LfRFt5bEJHA7i4xKg8LRNyKIr+mOHS?=
+ =?us-ascii?Q?TPO6P5uh9ahxB2JJCPv8mDB3FhtsrS/5uNHiyE8z2/qw9bElwZ+2Hm7h0R/0?=
+ =?us-ascii?Q?B3+GlUIBTUowUbh6L8EzkAEF81+Jrv/8pF55gabjWjrxxeNqmwZeY/D6vJKn?=
+ =?us-ascii?Q?7Gtj+KaisD3TT2ojzzDeCwfTFF+yQgsjxLiY5wDu7KlaraqyhoqU39RfHdPx?=
+ =?us-ascii?Q?UZ7bupEK+Hq+NldTCz2XMxzdZECV5RtGnyMHrDX7pZoVVOe3STicm6LDTE7/?=
+ =?us-ascii?Q?r2GdaAtHi0c0zjISm3I8Kdlq2szOUQjPFHnpvCb2FEC3IDJkqDsrQgRFjOW4?=
+ =?us-ascii?Q?UNKC0yT4xfhwh4fpXypdl7axHEyC7BiOuGuyhqfbxNwreosjhSXlnCkw1TmH?=
+ =?us-ascii?Q?FQUkRNH458XB4LVX+tj/vbOoy0Qwp+bu7NyhBKKjEqLmDxJjsmjjgx86Hm7X?=
+ =?us-ascii?Q?Oip+ekEz3cU9xqSwAbNKNcp4P+hMDbsavdHMBP5wFEJ7Ej/exjBQXchNaD/I?=
+ =?us-ascii?Q?zSQX1yXYhtrmtbYsFS4C6maRLtheruNupBcyJ7Ybmo5Q2FnL5Q9QMo26Jpwp?=
+ =?us-ascii?Q?xiGl9MItOaw2FwkKhtYr4aX++gVo//TWqGz3aaBTIFbo21ZUAa1/z74F7HY9?=
+ =?us-ascii?Q?ZbOoiLIhzy/NlQih5EWgE73nPzb4WjkElg3SYVVORPtFww1zSa53zY3J1aFk?=
+ =?us-ascii?Q?nCRSYPiVpm19YCOqC+xnNOm7KbVV0xG73rBpyT7NvWzPCPd7VFhGQyxuMB1x?=
+ =?us-ascii?Q?Y0O5X4midEAanNZ9IzQK2LkcrGsRWqFxav+WaTOHprrNKoXGzOloYOPvEvfL?=
+ =?us-ascii?Q?Oh5uv6wWvy8qyOxZLVrO6pD3dYtPs3D/pXXAdpN4jgcm7MvbVeTSGnzK5vxY?=
+ =?us-ascii?Q?g7YDI5mHyJphDsdGN2e8/8oCHbEEcug+4ep+Al2+2kB3D76BH7Ag6pohzJ0E?=
+ =?us-ascii?Q?6mAF4YagJm6SvvvVHQB7vAf0cKIY593J51H5QiSegl1+WMrLYtca5SnbLHov?=
+ =?us-ascii?Q?bh5c8g3F9K4rv4sBVcM5b7MeEQBPJ3xHS8Ym3uiOVXd+Ft11WCXAwQ8CNKSM?=
+ =?us-ascii?Q?DjtOBRV6Ri854ToU20FqiALTowOQbhUIjPo6BM+T0W7TQJjxfgQcShwTB5c3?=
+ =?us-ascii?Q?Dlh0BK+kUZ4PCJCtWHb1kK73piLz9084mIcCOrvTNopuiKckW/d/X6jVz8n4?=
+ =?us-ascii?Q?O1L9oiq/aDFH3JlPeuIBBjmRol+G0knM+6f3OEjIdPyIM1ITld6pdAVcIlWK?=
+ =?us-ascii?Q?QfZjVzdptrj3gYTnfvG0Ld83GlR1NA3CPBeHYDhTjh8v7OXiess/wETigL4x?=
+ =?us-ascii?Q?icXn5P6F4R7Ddt7iavW2DRVdY1yyGGQr0Ox5M0O2XFHQQFxISlfx2QSfI2eg?=
+ =?us-ascii?Q?r8LKCbg37/sPaGUywN3xZZfgkpggFarWTZ/U4BHjPHy0g3HuF2vDTgIkzgSa?=
+ =?us-ascii?Q?GUp9ns8+bBGxzT+BRuycgcw1ze4Tcx8/et8DTrLSsPi1/UaydhghBpAHtWnt?=
+ =?us-ascii?Q?6tt9zd950w=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19dbbd20-70b5-4366-d1b5-08da19609c14
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4173.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2022 13:06:35.7197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SJhCg68lg8eg/aDFZlnonKs4pL3x6Gr3CQpbTmmvFwt+dORAP/WpsJCsKSA8rgYv7ijvtr75n6cHmmTe/7CnEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3083
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Replace `if (!pclk->param.csr_reg)` with `else` for simplification
+and add curly brackets according to the kernel coding style:
 
---5u66o6fiwjrcv3qj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"Do not unnecessarily use braces where a single statement will do."
 
-On Fri, Apr 08, 2022 at 01:24:59PM +0200, Jerome Brunet wrote:
-> On Fri 08 Apr 2022 at 12:41, Maxime Ripard <maxime@cerno.tech> wrote:
-> > [[PGP Signed Part:Undecided]]
-> > On Fri, Apr 08, 2022 at 11:18:58AM +0200, Jerome Brunet wrote:
-> >> On Fri 08 Apr 2022 at 11:10, Maxime Ripard <maxime@cerno.tech> wrote:
-> >> > A rate of 0 for a clock is considered an error, as evidenced by the
-> >> > documentation of clk_get_rate() and the code of clk_get_rate() and
-> >> > clk_core_get_rate_nolock().
-> >> >
-> >> > The main source of that error is if the clock is supposed to have a
-> >> > parent but is orphan at the moment of the call. This is likely to be
-> >> > transient and solved later in the life of the system as more clocks =
-are
-> >> > registered.
-> >> >
-> >> > The corollary is thus that if a clock is not an orphan, has a parent=
- that
-> >> > has a rate (so is not an orphan itself either) but returns a rate of=
- 0,
-> >> > something is wrong in the driver. Let's return an error in such a ca=
-se.
-> >> >
-> >> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> >> > ---
-> >> >  drivers/clk/clk.c | 10 ++++++++++
-> >> >  1 file changed, 10 insertions(+)
-> >> >
-> >> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >> > index 8bbb6adeeead..e8c55678da85 100644
-> >> > --- a/drivers/clk/clk.c
-> >> > +++ b/drivers/clk/clk.c
-> >> > @@ -3773,6 +3773,16 @@ static int __clk_core_init(struct clk_core *c=
-ore)
-> >> >  		rate =3D 0;
-> >> >  	core->rate =3D core->req_rate =3D rate;
-> >> > =20
-> >> > +	/*
-> >> > +	 * If we're not an orphan clock and our parent has a rate, then
-> >> > +	 * if our rate is 0, something is badly broken in recalc_rate.
-> >> > +	 */
-> >> > +	if (!core->orphan && (parent && parent->rate) && !core->rate) {
-> >> > +		ret =3D -EINVAL;
-> >> > +		pr_warn("%s: recalc_rate returned a null rate\n", core->name);
-> >> > +		goto out;
-> >> > +	}
-> >> > +
-> >>=20
-> >> As hinted in the cover letter, I don't really agree with that.
-> >>=20
-> >> There are situations where we can't compute the rate. Getting invalid
-> >> value in the register is one reason.
-> >>=20
-> >> You mentioned the PLLs of the Amlogic SoCs (it is not limited to g12 -=
- all
-> >> SoCs would be affected):
-> >>=20
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/drivers/clk/meson/clk-pll.c#n82
-> >> Yes, PLL that have not been previously used (by the ROMCode or the
-> >> bootloader) tend to have the value of the divider set to 0 which in
-> >> invalid as it would result in a division by zero.
-> >>=20
-> >> I don't think this is a bug. It is just what the HW is, an unlocked,
-> >> uninitialized PLL. There is no problem here and the PLL can remain like
-> >> that until it is needed.
-> >
-> > I think the larger issue is around the semantics of clk_get_rate(), and
-> > especially whether we can call it without a clk_enable(), and whether
-> > returning 0 is fine.
-> >
-> > The (clk.h) documentation of clk_get_rate() mentions that "This is only
-> > valid once the clock source has been enabled", and it's fairly
-> > ambiguous. I can see how it could be interpreted as "you need to call
-> > clk_enable() before calling clk_get_rate()", but it can also be
-> > interpreted as "The returned rate will only be valid once clk_enable()
-> > is called".
-> >
-> > I think the latter is the proper interpretation though based on what the
-> > drivers are doing, and even the CCF itself will call recalc_rate without
-> > making sure that the clock is enabled (in __clk_core_init() for example=
-).
-> >
-> > Then there is the question of whether returning 0 is fine. Again
-> > clk_get_rate() (clk.c) documentation states that "If clk is NULL then
-> > returns 0.". This is indeed returned in case of an error condition (in
-> > clk_get_rate() itself, but also in clk_core_get_rate_nolock()).
-> >
-> > All the drivers I could find either assume the rate is valid, or test
-> > whether it's 0 or not (randomly picked, but across completely different
-> > platforms):
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clocksource/armv=
-7m_systick.c#L50
-> > https://elixir.bootlin.com/linux/latest/source/drivers/cpufreq/armada-8=
-k-cpufreq.c#L74
-> > https://elixir.bootlin.com/linux/latest/source/sound/soc/sti/uniperif_p=
-layer.c#L194
-> > https://elixir.bootlin.com/linux/latest/source/sound/soc/tegra/tegra20_=
-i2s.c#L278
-> >
-> > So my understanding is that the consensus is that clk_get_rate() can be
-> > called even if the clock hasn't been enabled, and that returning 0 is
-> > only meant to be used for errors in general, a NULL pointer according to
-> > the documentation.
-> >
-> > That would mean that pcie_pll_dco is buggy because it assumes that
-> > clk_enable()
->=20
-> This one indeed does everything in the enable and I could agree it is
-> fishy, but since it supports only a single rate I don't think it is a
-> problem. Even if it had a proper set_rate(), it would not change your
-> problem since it would still return 0 until some consumer actually needs
-> its parameter to change.
->=20
-> > is going to be called before clk_get_rate(), gp0_pll_dco
-> > and hifi_pll_dco because they expect "someone" to call clk_set_rate()
-> > before clk_get_rate(),
->=20
-> No, they don't expect anything. They will return 0 until they are set
-> with a an actual rate. I don't think returning 0 should be
-> problem and it has not been so far.
+...
 
-So, if I was to rephrase, gp0_pll_dco and hifi_pll_dco expect someone to
-call clk_set_rate() before clk_get_rate() to have it return anything
-other than 0.
+"This does not apply if only one branch of a conditional statement is
+a single statement; in the latter case use braces in both branches"
 
-> I understand the ambiguity you mentioned above. If the framework decides
-> it is clearly forbidden to return 0, we'll change.
->=20
-> Still I don't think it would be wise. What are the alternative if you
-> can't compute a rate ? return 1 ? This looks aweful to me. At least 0 is
-> a clear indication that the clock is not in a working state.
+Please refer to:
+https://www.kernel.org/doc/html/v5.17-rc8/process/coding-style.html
 
-No, the alternative would be to initialize the clock to something
-sensible before registering it (or in init).
+Signed-off-by: Yihao Han <hanyihao@vivo.com>
+---
+ drivers/clk/clk-xgene.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > and hdmi_pll_dco because it will always return 0,
->=20
-> It is a read-only clock - whatever we do in CCF, it is not going to
-> change. CCF has always supported RO clocks.
+diff --git a/drivers/clk/clk-xgene.c b/drivers/clk/clk-xgene.c
+index 857217cbcef8..0c3d0cee98c8 100644
+--- a/drivers/clk/clk-xgene.c
++++ b/drivers/clk/clk-xgene.c
+@@ -522,10 +522,10 @@ static int xgene_clk_is_enabled(struct clk_hw *hw)
+ 		pr_debug("%s clock is %s\n", clk_hw_get_name(hw),
+ 			data & pclk->param.reg_clk_mask ? "enabled" :
+ 							"disabled");
++	} else {
++		return 1;
+ 	}
+ 
+-	if (!pclk->param.csr_reg)
+-		return 1;
+ 	return data & pclk->param.reg_clk_mask ? 1 : 0;
+ }
+ 
+-- 
+2.17.1
 
-Yes, if a clock has a rate of 0Hz it's entirely useless. And if it's
-useful in anyway, it should report its current rate. Read-only or not.
-
-> > unless the display driver comes around and updates it. If it never does,
-> > or if it's not compiled in, then you're out of luck.
->=20
-> I'm all for managing the display clocks from CCF but it has proved tricky
-> so far. Maybe it will someday.
->=20
-> Being a read-only clock, the value is what it is and CCF should
-> deal with it gracefully. It has so far.
->
-> If the driver actually managing the clock is not compiled in, then the
-> clock will never be set, and it should not be a problem either.
-
-Again, it depends on what you expect from clk_get_rate(). If it can only
-report a rate of 0 on error, then it's definitely a problem.
-
-And it's not because it was done before that it wasn't just as
-problematic then.
-
-> >> IMO, whenever possible we should not put default values in the clocks
-> >> which is why I chose to leave it like that.
-> >>
-> >> The PLL being unlocked, it has no rate. It is not set to have any rate.
-> >> IMO a returning a rate of 0 is valid here.
-> >
-> > If there's not a sensible default in the hardware already, I don't see
-> > what the big issue is to be honest. You already kind of do that for all
-> > the other PLL parameters with init_regs
->=20
-> Those initial parameters are "magic" analog setting which don't have an
-> impact on the rate setting. The initial rate of the clock is never set
-> by the clock driver on purpose.
-
-It's still fundamentally the same: whatever is there at boot isn't good
-enough, so you change it to have a somewhat sensible default.
-
-> > , and most drivers do that for
-> > various stuff:
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/imx/clk-imx6=
-q.c#L917
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/nxp/clk-lpc3=
-2xx.c#L1550
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/rockchip/clk=
--rk3036.c#L448
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/sunxi-ng/ccu=
--sun8i-h3.c#L1157
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/tegra/clk-te=
-gra20.c#L1013
->=20
-> It is done by other drivers or controllers, yes. It does not make it
-> right (again, it is just my opinion). Rate should never be set by the
-> clock driver or the clock controller - Those should just implement what
-> consumer wants. I would agree it sometimes proves tricky to hold onto
-> this.
->=20
-> Taking one of the example above:
-> https://elixir.bootlin.com/linux/latest/source/drivers/clk/nxp/clk-lpc32x=
-x.c#L1550
->=20
-> I think it would be better to have an "assigned-clock" on the related
-> PLL in the USB node of the platform DT. That way the PLL is set when
-> needed.
-
-Both are valid. Assigned-clocks is arguably more fragile, but that's not
-really the point.
-
-> If we go down the road of "others are doing it, so why not ?", I think Ma=
-rek
-> initial regression report mentioned Exynos too ;)=20
-
-Yes, he did mention exynos as well, but the issue was entirely
-different.
-
-Exynos had the issue that req_rate wasn't updated whenever a clock
-wasn't orphan anymore because it changed parent. It's fixed in patch 10.
-
-Out of the drivers I tested this week (sunxi-ng, exynos, omap3, qcom,
-imx6, imx8 and g12b), only meson is in this case.
-
-> > If the driver needs that kind of quirks in order to make the clock
-> > usable in itself, then it just makes sense to do that, especially if
-> > it's to avoid breaking a generic API.
->=20
-> As it is the clock are usable and it did not break anything so far.
-
-Anything but the abstraction.
-
-> I have no problem updating the drivers if need be. I do have a problem
-> with the framework changing and requiring the clock driver to set an
-> initial rate to make it happy.
-
-I mean, the alternative is changing the semantics of clk_get_rate(), and
-all the call sites. Fixing one inconsistent driver definitely seems
-preferable.
-
-Maxime
-
---5u66o6fiwjrcv3qj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYlAwvgAKCRDj7w1vZxhR
-xbSEAPkBMz2TRgJLYtLkQzVsKLbpZyfgxIfqyNgcsXCz5pfLbwD/f5Dpf8RkUJpl
-PsOihILiue45n3hhuNRcStHUvCQNfwE=
-=9tYH
------END PGP SIGNATURE-----
-
---5u66o6fiwjrcv3qj--
