@@ -2,110 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F556C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 15:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872C3C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 15:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234109AbiDHPbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Apr 2022 11:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
+        id S237666AbiDHPii (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Apr 2022 11:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237598AbiDHPbf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 11:31:35 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FDD11DD19
-        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 08:29:31 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id w21so13486354wra.2
-        for <linux-clk@vger.kernel.org>; Fri, 08 Apr 2022 08:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ifY6DMbLg1SCliDlEYY8vn7YQNz7rwzE6gWMsXWpwWQ=;
-        b=f+pyN4QcTJS1ikUlp6zjJcPGoEm4rBGxHM19/nqQZbVxnOqEcOk2tnU1AWTctJfUBJ
-         fv/a+ioFkF8LckXVZPc4njJ05ACyEe7V2pw8eBC9HuIGeKsEUjJtdKrcOq5XKn/Nedgy
-         MHpAJG7Ww/lDRZHMBeJj3zDtNFQrJjDPZv2aki1LdrTy1FIF3azC8RVqVNXxL/yCBmMX
-         AUV/MQTx+o96TemNGq3MEXkq+vSI2R841mjlTLWdta3s3sw1pNv/75mudQVfVyEGZyBa
-         0F+N0emulepgjY3lCG0t36N9cFBgVe/dxYBjr8T5HozlaUYA0BJKml00E+I5AQk+aWOM
-         RGVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ifY6DMbLg1SCliDlEYY8vn7YQNz7rwzE6gWMsXWpwWQ=;
-        b=ZefbklU9ldVumumc5lp8BXLOjsTwtKMzpwgsYLXGW+RMZd6gTReqKL3VhXyj9BIHfk
-         2VWPGwJShVEPmWj+Z04qCp0ZhSf0MiVf2tOLfRMgLSUm3UgBIq0CrygD9LneYx13AqJr
-         rPDUuXp3qdDY2UzRBnCWUc6XgMhZ32z9jIx5hpm0lpS6ubACW6rHuzB+Ct4eC3XhR2ZJ
-         TmMTmUz+VpYmBoboRQmKuXkeDzD0q7T8N/3BF5mZMixz3pDy/VqeKFBKsbeZevX55RWH
-         btDGZ3wgsUleovLCyXnqgGnXjZmz2v0e2RgIGq0ca0iD8hGTNCVmpmvE0NhksXxsxheG
-         7/sw==
-X-Gm-Message-State: AOAM530WKpHBVKH3Z9gb28M8oR6ygvi7VdKENpoD4c2H/1PJTHbQin54
-        y5GSeoymUlcQ0QAQN08PaSeX4w==
-X-Google-Smtp-Source: ABdhPJze7wG69pOLr7bONpv65bzq93TZexBOiF5c8eNlAqorPQ/UAQk7C54nPkcIOHDXC/mmjbKaaw==
-X-Received: by 2002:a05:6000:1848:b0:204:e92:5af6 with SMTP id c8-20020a056000184800b002040e925af6mr14917867wri.180.1649431770416;
-        Fri, 08 Apr 2022 08:29:30 -0700 (PDT)
-Received: from [192.168.2.222] ([51.37.209.28])
-        by smtp.gmail.com with ESMTPSA id p14-20020a05600c1d8e00b0038dbb5ecc8asm10965530wms.2.2022.04.08.08.29.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Apr 2022 08:29:29 -0700 (PDT)
-Message-ID: <cc11d576-3670-ff0a-e0a1-e92780a04c2a@conchuod.ie>
-Date:   Fri, 8 Apr 2022 16:29:28 +0100
+        with ESMTP id S232719AbiDHPii (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 11:38:38 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C3E2E910B
+        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 08:36:32 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 772BD3201F73;
+        Fri,  8 Apr 2022 11:36:29 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 08 Apr 2022 11:36:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=tayP8QYKlaqjKwWZPqodLD1uTKbKUz8LMPvXUX
+        XD2u0=; b=l2lsDJVBrR4fTIc62lxsMER1Izw8fPkzpK4mMDLC7QXeeVtUB2z7aD
+        wQqi+b/AQYZfKqlnS9PHHkwqe6rt9sJ4ciqeYfV0/0Xi/ak/7JSLyTPMLpxPZASN
+        eLp3GJAZXopm/ex/Uub6yLqI7xjboUEa2I8cH0y/mDHUx/b1GHkRtXO5K2X+nOaA
+        4A2mdI+DWwvP0EeWDFLxIlHgOhjnOSBhstW3Qq8xmWVJE2mF8sHD7fnaBt4zhADn
+        +txZADDvxjRlc6UTW1Qx0axNWM4nASEklN6n/+5lrL9phcQ0aSMqMwna1driSQrC
+        KHf2/AH0/lCwoH7Kb0Sj9ldSl9v24FhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=tayP8QYKlaqjKwWZP
+        qodLD1uTKbKUz8LMPvXUXXD2u0=; b=gTH/Hbt+gMZ0lmnDvv6pC/Qm2MiLxYE5I
+        8WGaU3r4JCPAyUYSMLvLwc4rmVsG0LF2dUuIdaRB2TpXJZvR5+bwKi/Zuzk3jLrS
+        xikmKTCMbHo7t+yokQ/f/VZZAnqwHwcCmqqY9adEolYfvQ+eQww7wesU+C1otP0I
+        FqImu98HNQDd7Bm1GFjWcYPYjJZ7rZWsPtpPZOfwFrkky2WYwEhWrgRJnLYckson
+        bXITf8nMmYJ+OJ+lmUk52dz6pmtM7ewNoMEFyYzk3/8zYt2x3U/eYkwtiQZGWC99
+        3pgedvX8g7SXJV7gPW3LAH2ICQwaNGcr0l5FhwLVedmXh3bYlXUIQ==
+X-ME-Sender: <xms:e1ZQYo_mY2ST_DHVYUGuVhwgRi9Q4wZxYRgdKCsa6T6HZrgpawKfog>
+    <xme:e1ZQYgvBd1VcRKl8Y-Bf6M3Vw3CIdO69OHuHDg3oG3dDQ6Q7Q7j-SuJ8PinMBTpDw
+    UxBparkPnJGzbC87QM>
+X-ME-Received: <xmr:e1ZQYuBr8XIMvKMM2nbOfA9Z99bxD7WHFshkH8jVEgzgNsH57x3pH7T8RsaB_PkdV7UnudB1y7Bm1m_ZMjuXnsYBavNW3MOownoXN58>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudektddgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:fFZQYoeaGc8U8uyWRwzqPD9lVLJ3wTXpwZ5yIDWjRJyoxDVKxt7BYw>
+    <xmx:fFZQYtPZc_Ec02Cy1Ih6PgninnSxJvcpmP07oy67DGPkDtkFgIBYaA>
+    <xmx:fFZQYintcS0pYgXXN7EUffKRNv-aX5A7VgNMfoW3jpcpBxrZ2UWHNg>
+    <xmx:fVZQYmgMUyszweQ_39VchdGP15z_4pByWRjzZV4Jjmapiifx4Yi6Zg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Apr 2022 11:36:27 -0400 (EDT)
+Date:   Fri, 8 Apr 2022 17:36:25 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
+Message-ID: <20220408153625.ugodcmfwtanr75gu@houat>
+References: <20220408091037.2041955-1-maxime@cerno.tech>
+ <20220408091037.2041955-23-maxime@cerno.tech>
+ <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
+ <20220408104127.ilmcntbhvktr2fbh@houat>
+ <1jpmlrlq0h.fsf@starbuckisacylon.baylibre.com>
+ <20220408125526.ykk5ktix52mnwvh2@houat>
+ <1jlewflizh.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v1 0/7] Add rtc refclk support for PolarFire SoC
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, aou@eecs.berkeley.edu,
-        paul.walmsley@sifive.com, palmer@rivosinc.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        robh+dt@kernel.org, krzk+dt@kernel.org
-Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220408143646.3693104-1-conor.dooley@microchip.com>
- <1fa15b36-7a84-e0ac-2c56-d6a2bec566ff@linaro.org>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <1fa15b36-7a84-e0ac-2c56-d6a2bec566ff@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ixb2nc3hs2outtpn"
+Content-Disposition: inline
+In-Reply-To: <1jlewflizh.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--ixb2nc3hs2outtpn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/04/2022 15:57, Krzysztof Kozlowski wrote:
-> On 08/04/2022 16:36, Conor Dooley wrote:
->> Hey,
->> As I mentioned in my fixes for 5.18 [0], found out that the reference
->> clock for the rtc is actually missing from the clock driver (and the
->> dt binding).
->>
->> Currently the mpfs clock driver uses a reference clock called the
->> "msspll", set in the device tree, as the parent for the cpu/axi/ahb
->> (config) clocks. The frequency of the msspll is determined by the FPGA
->> bitstream & the bootloader configures the clock to match the bitstream.
->> The real reference is provided by a 100 or 125 MHz off chip oscillator.
->>
->> However, the msspll clock is not actually the parent of all clocks on
->> the system - the reference clock for the rtc/mtimer actually has the
->> off chip oscillator as its parent.
->>
->> This series enables reading the rate of the msspll clock, converts
->> the refclock in the device tree to the external reference & adds
->> the missing rtc reference clock.
->>
->> I assume it is okay not to add fixes tags for the rtc dt binding?
->> Since the clock was previously missing, the binding is wrong, but
->> idk if that qualifies as a fix?
-> 
-> Usually ABI breakage, even if accepted, should be be tagged as fix
-> because it is clearly then a break of other peoples' trees...
-> 
+On Fri, Apr 08, 2022 at 04:48:08PM +0200, Jerome Brunet wrote:
+> >> > and hdmi_pll_dco because it will always return 0,
+> >>=20
+> >> It is a read-only clock - whatever we do in CCF, it is not going to
+> >> change. CCF has always supported RO clocks.
+> >
+> > Yes, if a clock has a rate of 0Hz it's entirely useless. And if it's
+> > useful in anyway, it should report its current rate. Read-only or not.
+> >
+>=20
+> It does report its rate, it does not have any.
+> ... and It would pretty weird to initialize a read-only clock.
 
-That means either a) do something messy in the clock driver or b) mark
-the whole series as fixes (and roll it into [0]).
+The KMS driver doesn't seem to have a problem with that.
 
-The second option seems far more sensible to me, do you agree?
+> >> > unless the display driver comes around and updates it. If it never d=
+oes,
+> >> > or if it's not compiled in, then you're out of luck.
+> >>=20
+> >> I'm all for managing the display clocks from CCF but it has proved tri=
+cky
+> >> so far. Maybe it will someday.
+> >>=20
+> >> Being a read-only clock, the value is what it is and CCF should
+> >> deal with it gracefully. It has so far.
+> >>
+> >> If the driver actually managing the clock is not compiled in, then the
+> >> clock will never be set, and it should not be a problem either.
+> >
+> > Again, it depends on what you expect from clk_get_rate(). If it can only
+> > report a rate of 0 on error, then it's definitely a problem.
+>=20
+> Agreed, it depends on what you expect from clk_get_rate().
+> Still when something does not oscillate, the rate is 0.
+>=20
+> If a driver call clk_get_rate() on an uninitialized, unlocked PLL, I
+> think returning 0 makes sense.
+
+You're confusing two things: the rate output by the hardware, and what
+the CCF needs to return. We're discussing the latter here, a software
+construct. It models the hardware, but it doesn't have to be true to the
+hardware.
+
+And even the meson driver doesn't follow what you're claiming to the
+letter and is inconsistent with what you're saying. Any disabled gate
+will also have a hardware rate of 0. Yet, it doesn't return 0 in such a
+case. And no one does, because clk_get_rate() isn't supposed to return
+the actual rate in hardware at the moment. It's supposed to return what
+would be the rate if it was enabled.
+
+> > And it's not because it was done before that it wasn't just as
+> > problematic then.
+> >
+> >> >> IMO, whenever possible we should not put default values in the cloc=
+ks
+> >> >> which is why I chose to leave it like that.
+> >> >>
+> >> >> The PLL being unlocked, it has no rate. It is not set to have any r=
+ate.
+> >> >> IMO a returning a rate of 0 is valid here.
+> >> >
+> >> > If there's not a sensible default in the hardware already, I don't s=
+ee
+> >> > what the big issue is to be honest. You already kind of do that for =
+all
+> >> > the other PLL parameters with init_regs
+> >>=20
+> >> Those initial parameters are "magic" analog setting which don't have an
+> >> impact on the rate setting. The initial rate of the clock is never set
+> >> by the clock driver on purpose.
+> >
+> > It's still fundamentally the same: whatever is there at boot isn't good
+> > enough, so you change it to have a somewhat sensible default.
+>=20
+> If you don't need it, no.
+
+I mean, I provided multiple examples that the meson driver is being
+inconsistent with both the CCF documentation and the expected usage of
+the CCF consumers. And I suggested solutions to fix this inconsistency
+both here and on IRC to Neil and you.
+
+The only argument you provided so far is that you don't like or want it.
+I'm sorry you feel this way, but it doesn't change either the consensus
+or the documentation that every other driver and consumer is following.
+Nor does it provide any solution.
+
+In the grand scheme of things, I don't care, if you want to have your
+own conventions a policies, go ahead. Just don't expect me to debug
+whatever is going on next time it falls apart.
+
+Maxime
+
+--ixb2nc3hs2outtpn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYlBWeQAKCRDj7w1vZxhR
+xaGWAQDivSZOT6D8CHH02AssyRyJ0uNPQexpy6GRGSfAiLRiSAEAhdrLpZlR/9Eh
+BHdtl6SU06bzXoB+YYcKhA+nDVdGEQE=
+=Vd/z
+-----END PGP SIGNATURE-----
+
+--ixb2nc3hs2outtpn--
