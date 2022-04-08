@@ -2,147 +2,192 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BF1C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 11:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 047A2C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Apr 2022 12:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235300AbiDHL5g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Apr 2022 07:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37326 "EHLO
+        id S232014AbiDHMUH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Apr 2022 08:20:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235287AbiDHL5c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 07:57:32 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2048.outbound.protection.outlook.com [40.107.21.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC9772E05;
-        Fri,  8 Apr 2022 04:55:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ij+42JIeNzskrDtVJp6VeU8GsmZhKVC1/S9qqmLB4zZ4U6IBeqyQUYisxLK8CiVVhnlBtnhWMxV4R3HQEXwhf2utE3RaJd4f8wOAIFkrUIFxtnZ4duDHjPuXLYP/0D8sCGzyzLsePxWGDatslmtBXTvr7HTy/LO633dNCuKjl6+P9uSSPXMWF6wsDoIpcFdQyTtQBpTGKBSUWuiaoWXskRcZYVmCR/qm78HiB+015i+cT9hUfMRAxHkHjvYMRnYzxJMbhFtyQ2/zjBydH9faTrg3md/f8z1NOXthMY5HgeUXspvDrDUWX6J+qMtn6c7M1bE4eEwalQqExDR+zBF84A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZsZsmYFNT1Gph68gNqQ2T3vroeAABtjB+EzOi3TGcKY=;
- b=mWHtSrvafEe+vosDE2hUq5tHlusj+YGdyT20WwoNyelkPsbRM0kXLrchu0CmhBa8euCKGVTnFx7ngl6tZiZQ+Pgku9HXtFNmhJOCg+lRbvJqvyv5r78huS+5XL2IJJzFxO8n5iQJteNspqjFHwkrKhNGP8ZsKOy9jQaIJZBhaUR0dW3xlbzK7eRb+VLYHSwdBvbW3AMKZO34XWZEPuS9N4gLkPSFOP7ObCLi3OVUrqODY4U0wkUaL9vBEpWM8/YEQ43bILT15tuQjvrh42V+o1JTVVI/9JyqZ8JmApiO/SvswYOCRMkkdGCoKda7rClgCO30VdJoWfwLpbbCCxzztA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZsZsmYFNT1Gph68gNqQ2T3vroeAABtjB+EzOi3TGcKY=;
- b=PowzwEllosEqiqpbqiN7g27xdM/KBWFpajidWrc0v2tyBC6kdxzkADAiOs/6NlMJzNAtxtfmI1PPQQDcyweQII4hjztWY2Zg2dr9ElX4FZTxBBq2AwWQIYrkCAVznAlqm5KMKwuubWjUCjVrmQcNr2cszk2FyMksw2XvWQWgS2g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by AM0PR04MB6978.eurprd04.prod.outlook.com (2603:10a6:208:17d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.22; Fri, 8 Apr
- 2022 11:55:24 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f%6]) with mapi id 15.20.5123.031; Fri, 8 Apr 2022
- 11:55:24 +0000
-Date:   Fri, 8 Apr 2022 14:55:22 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     xkernel.wang@foxmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: scu: fix a potential memory leak in
- __imx_clk_gpr_scu()
-Message-ID: <YlAiqhRf1p+svR1O@abelvesa>
-References: <tencent_27FF59903EE6AB5C0D0E6D0A8E7059A59007@qq.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_27FF59903EE6AB5C0D0E6D0A8E7059A59007@qq.com>
-X-ClientProxiedBy: VI1PR07CA0238.eurprd07.prod.outlook.com
- (2603:10a6:802:58::41) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
+        with ESMTP id S229762AbiDHMUG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Apr 2022 08:20:06 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F581E5328
+        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 05:18:00 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220408121757euoutp0298e61e24ead98eae9a121384f8ed8c50~j6wDClV0k1186511865euoutp02l
+        for <linux-clk@vger.kernel.org>; Fri,  8 Apr 2022 12:17:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220408121757euoutp0298e61e24ead98eae9a121384f8ed8c50~j6wDClV0k1186511865euoutp02l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1649420277;
+        bh=KNoDlojck1BbleDfchKOzn4aT5+3lTjBp0fNGhYr1Xk=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=KQrHPN7dWEa+qZ3jpFt2I1PR6e44k2jE+1Xz71datNBPhqof1nxh8byD9Qsi38eui
+         p1pLub/3RBS9Sq9AgfitcrU6FNPVTtbDbOqorJeP+EemQxvjmNeoh+aiO7hPJGUoVJ
+         b556Cw7eqCyaQ6e44Mf+TF3tbZQ0Mwt7sAXUPO08=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220408121756eucas1p157b309beeea50ba9c4a5fd080bd4cf5b~j6wCkIzPJ3057230572eucas1p1U;
+        Fri,  8 Apr 2022 12:17:56 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id CE.7B.09887.4F720526; Fri,  8
+        Apr 2022 13:17:56 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220408121755eucas1p15a867f100b29640db83bc5488c51e597~j6wBrIN_g0935009350eucas1p1D;
+        Fri,  8 Apr 2022 12:17:55 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220408121755eusmtrp2cb043273c9311c13962564be0006ef10~j6wBqNEMS3126231262eusmtrp20;
+        Fri,  8 Apr 2022 12:17:55 +0000 (GMT)
+X-AuditID: cbfec7f4-45bff7000000269f-14-625027f4fc9c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FE.6F.09522.3F720526; Fri,  8
+        Apr 2022 13:17:55 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220408121754eusmtip21daeb804de70a22ccda89729765c6d18~j6wBIapz_0592305923eusmtip2v;
+        Fri,  8 Apr 2022 12:17:54 +0000 (GMT)
+Message-ID: <351cfb4a-7457-d4e1-8317-9ebf2a3167f8@samsung.com>
+Date:   Fri, 8 Apr 2022 14:17:55 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9136091b-79cc-46c2-915e-08da1956aa83
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6978:EE_
-X-Microsoft-Antispam-PRVS: <AM0PR04MB6978E62DFEE5014C097CEF46F6E99@AM0PR04MB6978.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: b3H9UXRDunl7e+r+5C0BAuVkwuX8/x3FeMVcfLLJc22NdNVZc68ubummyAEdDuzh91ss2vBqGdTubO4ls+k4M2Vpz2SsCirjfsQa/3MLs4SDkprD13OBFNfudS6VYDj5Q4m4qLPNJEI1bOA4/0kqD8UoK8wIiLedtUZ3jykkjNCAoO5rRZ6XqFX3SmOkrts9o3VNjsWauzt9DJTadCQkPRXfVYht4SXETLvNfncd7So5ypQgk81Bkb5TOU4d/Tzc/zA1tWXz2AI1isXvFtmuI5E1YBz4xjD5akjm9uA95FNG4XI1tHkM/86CGsACBRaFFcGDPAkgXU4kx1j3pR/PMHjnM9x8rqEF8I6+QtW2nhZtBY205/sRuoW56Pk8cF7LmRI+tKopTOC7c7G3IFkkAPXlpCE0tiPei7FgpaI1r2ZHq2IPjy+xEVXTm/PWDo4ovb8eUMQu8ajco3KnKVxt2lVOLf1moXLXXan6y0SkvU0yP8Wpd08x/rWwMerRnERqG+9jnKfC9usRq7uAPXRehrQm6QLq4tV8G7MrzLiikoPdNT82bYJ6/HmqHAoWH5QMf3jS1RgvVVNMdOu4sviokA3ykCxHEag1TqXPOJHAO9go0hDF6VMFYbiuU+cR4PTFojja2Xj5U4ZOb0yJPGVKmZWopKGlw5AsO0cAHocKM2Nw2I90DJT+LUBntV/s9vG36ETG4Qjn1hBTeMbRa9e1FNRu1YiJmCEmyHKory59m/KtDhxPeLlrbNq0y1oxB6Kx
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(38350700002)(8676002)(4326008)(66946007)(52116002)(2906002)(9686003)(38100700002)(66556008)(66476007)(508600001)(316002)(6486002)(6512007)(6916009)(186003)(26005)(83380400001)(6506007)(86362001)(53546011)(7416002)(5660300002)(8936002)(44832011)(33716001)(48020200002)(67856001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7S0TR5d7Xj3Y77eo6tclzF29XZlb5iP7kQUjAV3O4Yz7LaLNFTvotf8qTmj5?=
- =?us-ascii?Q?y2FL7o6L8s0tMWSMVSVhAlF65vaH2ZnBy6yJ0K5uFX9rK1KssWuYQdGGcVoL?=
- =?us-ascii?Q?PIBuNV6oo2pm0Oo3jU5jUBD5Trfm5j4qTitdU52c5DBOZAuFPYPISxBK/9Ue?=
- =?us-ascii?Q?4d5LV+/GOFbac2SED/0tk36gHT6OzUxyRqoZcuylJJ4pJfQe7QF28HfvXumf?=
- =?us-ascii?Q?LndNz21EpudWH/nes8upZOCko4DHWt6F4LPm6tj3orX8TDYAORueb9+vq28E?=
- =?us-ascii?Q?JWnNwrHzNZgm6a6mEflqJAsh4XfHMNBsdLh4UPWb0c/im3lGge2vYdCWS2QA?=
- =?us-ascii?Q?lvYsf1603HodFkpjMJjxBIdS9a44SIur4dbq7grej8qS9cPCd5KIQIcXt+j6?=
- =?us-ascii?Q?0aHITs0FcRklC0+QuNjWbIUahiPp+aKZ3FlxiswhIEMARHcgFv5CHAjF+tyT?=
- =?us-ascii?Q?mbDoZIncEyDwASgD6zTDQK7FejM/a1YExaL97hJ8urc74P9NZ1+6V45osq0c?=
- =?us-ascii?Q?2DlYUCFqNSEVj3ZH6nx1diHw4RKs2UQtwN71wrWdfL70Fwx2pLk97J5GhQHb?=
- =?us-ascii?Q?PCVrk3tlHt+/8bzcAlV4LzFcGLCkM2Kd2LbO8zzv6tLBIjwr3xnB5q0o9rHD?=
- =?us-ascii?Q?CqjJ71dLizuJn+9e+d8VvmYqrPke5UTl7eWPKdwTmHmKYKKku0vgmRr/fe9l?=
- =?us-ascii?Q?T0qtLJ2pCDeqZKYBLS6xcqLuwrHRRXaiwVxLI1qonoDQM4CdcR0JA3o3GuMP?=
- =?us-ascii?Q?fhbsxwRaM2rXxbwsQZmRRNEIJFYLyFkAzaFSSPM3SofMkMJ4YVOrDxh/7RYz?=
- =?us-ascii?Q?HB8H1dX8x7icZw+QuICplVdKsv9VqZEXOxuZMy/iq83sUF1aCs2OFtAmBzOe?=
- =?us-ascii?Q?qRevAWk8/poOTO3wnhRSfWBBH/hMikgzfxiyhG27mGQCg5Fj8XvKS6DANQsf?=
- =?us-ascii?Q?wopLlWe+HF3S1TIZ8EElpq9DKSHwoIbzw2YKkj4Hh/RZG9DCUJnozdxWc+9l?=
- =?us-ascii?Q?GkwCVIrQeRsKfBrf5AkgxZ5C8mP/tuXGYAUpkjHbOjabW6XB4ciZQ0wLz4dA?=
- =?us-ascii?Q?shl13r0c4yzsR7pglXpSAr3KuItaa8IUiUuo1dEIJZWXWTKf05ryOtXO8T3G?=
- =?us-ascii?Q?oCiCfOClTUf9Jeve13WK9Lm6eROTnCihPMMTuhjFKnJhqX1FmqtXsb/9Mkzd?=
- =?us-ascii?Q?mIrz2IUkRPzSXV5WUK3ZEL5k3HoZGQpfmgmLIKCpSJHBQ7WKUhAPT2fVoxOh?=
- =?us-ascii?Q?YoGGz7di5rmtmfyRBL+sBNVe3cWKMgq5nLpCSmyCKeS58EoZ9kD6qU3Zz0mZ?=
- =?us-ascii?Q?ujmKXkkDhXbVlYLHsPc6p+ThoQD+zfDiZtYt8FgAJPkT77ufFFddUzCODwQJ?=
- =?us-ascii?Q?hLJQOJfvoWwBEXDBUSRJHKdZXIS+CMPsbnzSf8jRGprsdNKTLpcCqc6dBEyK?=
- =?us-ascii?Q?rKa9x/NKUzyte526I0n8Xb9nObDoB9MWy5FfGN29+3bhe8p2wha+WGiqtv88?=
- =?us-ascii?Q?X31MXyGX+rAJ3i3VDJ6j6uI+dqT9yRl27iTjdViRLgB8x+RyU0vbfQ06K+f+?=
- =?us-ascii?Q?q8p1BqM7WEMhKn6R+sfz0SXxVGAJx1p03oh68f1/yqAypsrPT1Fk1F6qbpci?=
- =?us-ascii?Q?GrAYuAptSmzrMtbF1f5hMUJ56D6F1dYJuS/NXW1MEpAICK7yoP6z3OHzNkHG?=
- =?us-ascii?Q?Vow1VC2xnjK3mR3vw0wNOaLcDzuveeH4FEyfsHvqV+SsQCMN51Q4P+Qt/dV+?=
- =?us-ascii?Q?6b7Yw9W3MQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9136091b-79cc-46c2-915e-08da1956aa83
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2022 11:55:24.6539
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oSKirM5zzgjQsUjXx3w13JqnwLaixciXOMfckd/4/EFn5I6+yl+beZ2TO6UQh1k2dnR/yJEFUTCpRJrhcijGDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6978
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.7.0
+Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCKsWRmVeSWpSXmKPExsWy7djP87pf1AOSDKYfF7d4PWUtk8WbR0eY
+        LT723GO1mPHjH6PFxVOuFrc+8Vsc6ou2+HdtI4vF/iteFlfXTWR34PL49nUSi8f7G63sHnfO
+        nWfzeDHhH5PHplWdbB53ru1h8+hp28Tk8XmTXABHFJdNSmpOZllqkb5dAlfGpoMbWAu+ilfs
+        +d3A2MD4RqiLkZNDQsBEontLBxOILSSwglHi+8K8LkYuIPsLo0TjnptsEM5nRomlx94zwnTs
+        XDwDKrGcUWLxpKMsEM5HRoktZ/cCZTg4eAXsJG5sMwFpYBFQkfhw4wo7iM0rIChxcuYTFhBb
+        VCBJYvX21WDlwgJeEiu+WICEmQXEJW49mc8EMlJEYCujxJr2J+wgDrPAXUaJK48ngDWzCRhK
+        dL3tYgOxOQWsJXY+WcQG0S0vsf3tHGaQBgmBbk6JlvfzWUE2SAi4SEzelAPxgbDEq+Nb2CFs
+        GYn/O0G2gZTkS/ydYQwRrpC49noNM4RtLXHn3C+wO5kFNCXW79KHCDtKtB+axwzRySdx460g
+        xAF8EpO2TYcK80p0tEHDWU1i1vF1cDsPXrjEPIFRaRZSmMxC8vwsJK/MQti7gJFlFaN4amlx
+        bnpqsVFearlecWJucWleul5yfu4mRmDCOv3v+JcdjMtffdQ7xMjEwXiIUYKDWUmEtyrXJ0mI
+        NyWxsiq1KD++qDQntfgQozQHi5I4b3LmhkQhgfTEktTs1NSC1CKYLBMHp1QDk4ig/Mvo630e
+        0z8kFTllnc/le73nyIEYvwln6rNd3A2rOPek8371fPFfSMDTUv7g5rsT4l8bn2+yuc13V0FI
+        ZJPxxr2pjD/rdu1eW/NGZ/GUH8d6SnzWC2xo77KzSAmeN89y18Hip1N83A3++v38tHY2w0/P
+        kzUT67glOx4d4JC8pK56k9vjywsNr+SS0OCq/VztT87pztpyiP/y572dHzuuRMw4fW9PUMYG
+        kTWBdi/feJptzV4jYpKfsE7twx71Pb2yLxw+/ln0ZKpqGFfBjRXrLt3eMknkIff3GyeU6/9G
+        KX7J3Vm4dOuUk59nV+z9m/grKDiTVdPy3adNG//aL/i/9MkGz298lw+tZ5wcnl+rxFKckWio
+        xVxUnAgAf3hY9scDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7qf1QOSDDZsl7V4PWUtk8WbR0eY
+        LT723GO1mPHjH6PFxVOuFrc+8Vsc6ou2+HdtI4vF/iteFlfXTWR34PL49nUSi8f7G63sHnfO
+        nWfzeDHhH5PHplWdbB53ru1h8+hp28Tk8XmTXABHlJ5NUX5pSapCRn5xia1StKGFkZ6hpYWe
+        kYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GpoMbWAu+ilfs+d3A2MD4RqiLkZNDQsBEYufi
+        GWxdjFwcQgJLGSXWnznCCpGQkTg5rQHKFpb4c60Lqug9o8TUDwsZuxg5OHgF7CRubDMBqWER
+        UJH4cOMKO4jNKyAocXLmExYQW1QgSeJSVztYubCAl8SKLxYgYWYBcYlbT+YzgYwUEdjKKHG6
+        cQsriMMscJ9R4uG96YwQy94ySsx93MQM0sImYCjR9RbkCk4OTgFriZ1PFrFBjDKT6NraxQhh
+        y0tsfzuHeQKj0Cwkh8xCsnEWkpZZSFoWMLKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIzV
+        bcd+bt7BOO/VR71DjEwcjIcYJTiYlUR4q3J9koR4UxIrq1KL8uOLSnNSiw8xmgJDYyKzlGhy
+        PjBZ5JXEG5oZmBqamFkamFqaGSuJ83oWdCQKCaQnlqRmp6YWpBbB9DFxcEo1MO0xmPv0f2uZ
+        WIdP+o5VH8TFE7PNTu/K3rNQfZrg+U/lyoL/HKXd/n51yH54LDSS//6ExLr39pbrbmtfVFfX
+        v35glx+/3pKZ3eV+Lf1vb+3Z21yi/Pfpb824sGC9R2ZVVtOemoaeOjrdVcDYsXiV38dVBuz/
+        Lvp07NHj13g2ZYHox2eb2qv+B8zzY1IwyBIxE27W6RRuuxrmq+L8zEYuhpvR65zvCgmnciVV
+        BhPnB98e7WyT1d3tavby9sL/jGmznvoIVsUUyPAIzZo/pUJiS7bGjKBpPzZMf1Pck/nw43lx
+        1qnVqS+3eVkHeX9+qpDhmRJm9l5onkiU857l7+8sPtYatF9fbuHylrd1D/IZlFiKMxINtZiL
+        ihMB32g9pF4DAAA=
+X-CMS-MailID: 20220408121755eucas1p15a867f100b29640db83bc5488c51e597
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220408093618eucas1p27b1e9b34a7439020b052f18dcc178925
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220408093618eucas1p27b1e9b34a7439020b052f18dcc178925
+References: <20220408091037.2041955-1-maxime@cerno.tech>
+        <20220408091037.2041955-23-maxime@cerno.tech>
+        <CGME20220408093618eucas1p27b1e9b34a7439020b052f18dcc178925@eucas1p2.samsung.com>
+        <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-04-07 15:37:22, xkernel.wang@foxmail.com wrote:
-> From: Xiaoke Wang <xkernel.wang@foxmail.com>
->
-> In __imx_clk_gpr_scu(), if imx_scu_clk_is_valid(rsrc_id) fails, then
-> `clk_node` which is allocated by kzalloc() is not properly released,
-> which may lead to memory leak.
-> So this patch added kfree(clk_node) on the above error path before
-> return ERR_PTR(-EINVAL).
->
-> Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+Hi All,
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+On 08.04.2022 11:18, Jerome Brunet wrote:
+> On Fri 08 Apr 2022 at 11:10, Maxime Ripard <maxime@cerno.tech> wrote:
+>
+>> A rate of 0 for a clock is considered an error, as evidenced by the
+>> documentation of clk_get_rate() and the code of clk_get_rate() and
+>> clk_core_get_rate_nolock().
+>>
+>> The main source of that error is if the clock is supposed to have a
+>> parent but is orphan at the moment of the call. This is likely to be
+>> transient and solved later in the life of the system as more clocks are
+>> registered.
+>>
+>> The corollary is thus that if a clock is not an orphan, has a parent that
+>> has a rate (so is not an orphan itself either) but returns a rate of 0,
+>> something is wrong in the driver. Let's return an error in such a case.
+>>
+>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>> ---
+>>   drivers/clk/clk.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 8bbb6adeeead..e8c55678da85 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -3773,6 +3773,16 @@ static int __clk_core_init(struct clk_core *core)
+>>   		rate = 0;
+>>   	core->rate = core->req_rate = rate;
+>>   
+>> +	/*
+>> +	 * If we're not an orphan clock and our parent has a rate, then
+>> +	 * if our rate is 0, something is badly broken in recalc_rate.
+>> +	 */
+>> +	if (!core->orphan && (parent && parent->rate) && !core->rate) {
+>> +		ret = -EINVAL;
+>> +		pr_warn("%s: recalc_rate returned a null rate\n", core->name);
+>> +		goto out;
+>> +	}
+>> +
+> As hinted in the cover letter, I don't really agree with that.
+>
+> There are situations where we can't compute the rate. Getting invalid
+> value in the register is one reason.
+>
+> You mentioned the PLLs of the Amlogic SoCs (it is not limited to g12 - all
+> SoCs would be affected):
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/meson/clk-pll.c#n82
+> Yes, PLL that have not been previously used (by the ROMCode or the
+> bootloader) tend to have the value of the divider set to 0 which in
+> invalid as it would result in a division by zero.
+>
+> I don't think this is a bug. It is just what the HW is, an unlocked,
+> uninitialized PLL. There is no problem here and the PLL can remain like
+> that until it is needed.
+>
+> IMO, whenever possible we should not put default values in the clocks
+> which is why I chose to leave it like that.
+>
+> The PLL being unlocked, it has no rate. It is not set to have any rate.
+> IMO a returning a rate of 0 is valid here.
 
-> ---
->  drivers/clk/imx/clk-scu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-> index 083da31..ed3c01d 100644
-> --- a/drivers/clk/imx/clk-scu.c
-> +++ b/drivers/clk/imx/clk-scu.c
-> @@ -837,8 +837,10 @@ struct clk_hw *__imx_clk_gpr_scu(const char *name, const char * const *parent_na
->  	if (!clk_node)
->  		return ERR_PTR(-ENOMEM);
->
-> -	if (!imx_scu_clk_is_valid(rsrc_id))
-> +	if (!imx_scu_clk_is_valid(rsrc_id)) {
-> +		kfree(clk_node);
->  		return ERR_PTR(-EINVAL);
-> +	}
->
->  	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
->  	if (!clk) {
-> --
+I agree that it should be possible to register so called unconfigured 
+clock, which doesn't have any rate set yet. It might be used later by 
+some drivers, which will do the whole initialization (set rate and or 
+parents). I also wonder why the above patch triggers warning on the 
+Amlogic Socs, while on Exynos I still have some unused clocks with 0 
+rate registered properly.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
