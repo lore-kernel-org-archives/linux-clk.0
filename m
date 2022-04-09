@@ -2,141 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B06C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Apr 2022 13:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B1C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Apr 2022 16:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242035AbiDIN1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Apr 2022 09:27:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        id S242624AbiDIQni (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Apr 2022 12:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242031AbiDIN0a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Apr 2022 09:26:30 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5671C1CA6;
-        Sat,  9 Apr 2022 06:24:08 -0700 (PDT)
-X-UUID: 73704c264fdd4ea7a7597aaa0df1f2b2-20220409
-X-UUID: 73704c264fdd4ea7a7597aaa0df1f2b2-20220409
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1000773465; Sat, 09 Apr 2022 21:24:05 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Sat, 9 Apr 2022 21:24:04 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Sat, 9 Apr 2022 21:24:04 +0800
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [PATCH v5 15/15] clk: mediatek: Add MT8186 ipesys clock support
-Date:   Sat, 9 Apr 2022 21:22:51 +0800
-Message-ID: <20220409132251.31725-16-chun-jie.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220409132251.31725-1-chun-jie.chen@mediatek.com>
-References: <20220409132251.31725-1-chun-jie.chen@mediatek.com>
+        with ESMTP id S242712AbiDIQng (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Apr 2022 12:43:36 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B1A388
+        for <linux-clk@vger.kernel.org>; Sat,  9 Apr 2022 09:41:27 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id r13so22952673ejd.5
+        for <linux-clk@vger.kernel.org>; Sat, 09 Apr 2022 09:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=CQhk5hApj0EFmEVr3Hslgk8a+qSY0Z0pKIrPYXFktCg=;
+        b=wCafsTZxwiHB+GK0QWRVTBN8dKlNlx+Kf54DTtn/U9vq9F6ZMdry9l8A5NmvR/vfFe
+         H1lEY/KQNN2rDYPO9U/+RFzDklQB2yVMDAUvXoj65wwG4vg9zq1m9Kqg8nRGOPZKG+Hr
+         9v1SVA2szMVXKBOsIFPkMm5GNOUNhPlM3SEdD2Ov8WH1nmRDAK9V+4IVSezJvzMkZZQa
+         HlND9SDXzoIzbvs40IoTLwxk4I9SWHn4f/eSzS7WwNAqPatHRIV9OYCC8wnLcxLZYMxZ
+         rekD/9Pve9NNHn1n+CWeEiStsrEvqXG9kUGvr0QE1881ITLx2+BV85ESvv9ECxhqEAmP
+         1dFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=CQhk5hApj0EFmEVr3Hslgk8a+qSY0Z0pKIrPYXFktCg=;
+        b=GxTLvtULCgWuHNOh8wgR8MwnO39w4W7a1qrmWoD7JEv/Ur+lAj4iH3EQsoi2h1YltW
+         6cAMtKTylqPj/qAFE1JdnNGnFc+0aMLRa6i7xn86uH6UdjcmHrPeWmP5YIx06qY02+6z
+         EVgABbFlwqVOO53TVoBQKvZ6zSzuTTo22tjb9gSrmw97AyRYUVHfZpUHrFKgHbxVrqU+
+         wcOYIj3IB0pC45rNkHzpXxGjaXgEZw5igGsmevHQpB9A0Jipd2Ip1x17kolC5FO8bfSv
+         LbsEwH6DSVFDWYXTGikleVXxZ2QpVF23EedJctYSpLtLHYVLq945RV0MJW84/jW57r4i
+         IyYw==
+X-Gm-Message-State: AOAM530WJfe5myAvD4rhdytL/UIjqYLQG67EEd3M/HO2bgH3psvJNW/F
+        DHLlEmQSAFbmUiEtnzs02ZOZZxQ7vqUMSSfT
+X-Google-Smtp-Source: ABdhPJwOUiVW1lPWC4ZWp7ynuh79JGlAU7q/GJ2aBONCbOuM17U9l1zobDbHcZs0VHodT3LaWf5u6g==
+X-Received: by 2002:a17:907:9868:b0:6e8:7ae3:7f42 with SMTP id ko8-20020a170907986800b006e87ae37f42mr1363115ejc.224.1649522486528;
+        Sat, 09 Apr 2022 09:41:26 -0700 (PDT)
+Received: from [192.168.0.188] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id n9-20020a05640205c900b00418d79d4a61sm12426553edx.97.2022.04.09.09.41.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Apr 2022 09:41:26 -0700 (PDT)
+Message-ID: <0eb126b3-b323-9614-361a-22c2762b590a@linaro.org>
+Date:   Sat, 9 Apr 2022 18:41:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC
+ bindings
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220408224321.627126-1-bjorn.andersson@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220408224321.627126-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8186 ipesys clock controller which provides clock gate
-control for Image Process Engine.
+On 09/04/2022 00:43, Bjorn Andersson wrote:
+> Add binding for the Qualcomm SC8280XP Global Clock controller.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  .../bindings/clock/qcom,gcc-sc8280xp.yaml     | 199 +++++++
+>  include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 496 ++++++++++++++++++
+>  2 files changed, 695 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> new file mode 100644
+> index 000000000000..44e5f0d0a795
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> @@ -0,0 +1,199 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc8280xp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for SC8280xp
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets and
+> +  power domains on SC8280xp.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,gcc-sc8280xp.h
 
-Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
----
- drivers/clk/mediatek/Makefile         |  2 +-
- drivers/clk/mediatek/clk-mt8186-ipe.c | 55 +++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mt8186-ipe.c
+include/dt-bindings/...
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 6902da61e150..caf2ce93d666 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -75,7 +75,7 @@ obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt
- 				   clk-mt8186-apmixedsys.o clk-mt8186-imp_iic_wrap.o \
- 				   clk-mt8186-mfg.o clk-mt8186-mm.o clk-mt8186-wpe.o \
- 				   clk-mt8186-img.o clk-mt8186-vdec.o clk-mt8186-venc.o \
--				   clk-mt8186-cam.o clk-mt8186-mdp.o
-+				   clk-mt8186-cam.o clk-mt8186-mdp.o clk-mt8186-ipe.o
- obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
- obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
- obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8186-ipe.c b/drivers/clk/mediatek/clk-mt8186-ipe.c
-new file mode 100644
-index 000000000000..8fca148effa6
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8186-ipe.c
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Copyright (c) 2022 MediaTek Inc.
-+// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/mt8186-clk.h>
-+
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+static const struct mtk_gate_regs ipe_cg_regs = {
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x8,
-+	.sta_ofs = 0x0,
-+};
-+
-+#define GATE_IPE(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &ipe_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate ipe_clks[] = {
-+	GATE_IPE(CLK_IPE_LARB19, "ipe_larb19", "top_ipe", 0),
-+	GATE_IPE(CLK_IPE_LARB20, "ipe_larb20", "top_ipe", 1),
-+	GATE_IPE(CLK_IPE_SMI_SUBCOM, "ipe_smi_subcom", "top_ipe", 2),
-+	GATE_IPE(CLK_IPE_FD, "ipe_fd", "top_ipe", 3),
-+	GATE_IPE(CLK_IPE_FE, "ipe_fe", "top_ipe", 4),
-+	GATE_IPE(CLK_IPE_RSC, "ipe_rsc", "top_ipe", 5),
-+	GATE_IPE(CLK_IPE_DPE, "ipe_dpe", "top_ipe", 6),
-+	GATE_IPE(CLK_IPE_GALS_IPE, "ipe_gals_ipe", "top_img1", 8),
-+};
-+
-+static const struct mtk_clk_desc ipe_desc = {
-+	.clks = ipe_clks,
-+	.num_clks = ARRAY_SIZE(ipe_clks),
-+};
-+
-+static const struct of_device_id of_match_clk_mt8186_ipe[] = {
-+	{
-+		.compatible = "mediatek,mt8186-ipesys",
-+		.data = &ipe_desc,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static struct platform_driver clk_mt8186_ipe_drv = {
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
-+	.driver = {
-+		.name = "clk-mt8186-ipe",
-+		.of_match_table = of_match_clk_mt8186_ipe,
-+	},
-+};
-+builtin_platform_driver(clk_mt8186_ipe_drv);
--- 
-2.18.0
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sc8280xp
+> +
 
+(...)
+
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  protected-clocks:
+> +    description:
+> +      Protected clock specifier list as per common clock binding.
+
+There is still no schema with protected-clocks, so you need a type,
+unless someoone is working on adding this to schema?
+
+Rest looks good.
+
+Best regards,
+Krzysztof
