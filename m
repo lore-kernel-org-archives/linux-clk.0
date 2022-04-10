@@ -2,151 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13417C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Apr 2022 20:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98609C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Apr 2022 02:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbiDIUTz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Apr 2022 16:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33098 "EHLO
+        id S243568AbiDJCl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Apr 2022 22:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231158AbiDIUTy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Apr 2022 16:19:54 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A822180
-        for <linux-clk@vger.kernel.org>; Sat,  9 Apr 2022 13:17:46 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id u17-20020a05600c211100b0038eaf4cdaaeso1039127wml.1
-        for <linux-clk@vger.kernel.org>; Sat, 09 Apr 2022 13:17:46 -0700 (PDT)
+        with ESMTP id S243518AbiDJClt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Apr 2022 22:41:49 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EFEF18361;
+        Sat,  9 Apr 2022 19:39:21 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id bk12so8062733qkb.7;
+        Sat, 09 Apr 2022 19:39:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=q1lxCdHBuJxbjBxwpnh6sKKElMTUleBSs75hBgURlRY=;
-        b=hzHf7vRkvfJeJMWuL8VfxUjnk/K7K0xF6pvUkc5En63ToYPb5e1Kt0qs9ReOGfoKUQ
-         K5RUJkfF8N/75TpttuyMN/9Ch5kjQJ+6bU/kCu10Q6wjQfDxPaFtYOfTKPsUDNak7ZkY
-         3/ciwURzduGUWoQyT51AbESlQIqsFW98O8X32z7MdJgn0xoiMFniCK1BXmGuHrUm5at4
-         Wdc4DqlvacvML9hP2Ni6W36HKJyMougYeCWwLnin88SV8RJb3JJ6E7uYEct1V85SPRy7
-         bKGPTDG0cCpQh5SUvKCGgo0SpmWorZVgf1Kr8KN98og14ov3Ew9IizrwHQOImZ33qRIo
-         1wZw==
+        bh=4k9M3A5SaOTIoKov6CrPu7jYsykoDqASGcsbW1Bxs2g=;
+        b=AHZSbnkdgSigwea2G56xzm53+YbTuhFFSPXwIgKn+Vviezo7xUX1B2Z5IYdWp+5z2b
+         4rk4NO0j6irlPJ2XebeMhDD7nfoylM58cb2TQ15TLd4FN4mKLsMFzKNaBIIswUe025y+
+         TRu3hCw5NeC4HSbbJTq20TmKkYuKk1yo5b99hpRfySbk+Szci0AHKV3qwekfuofJMyvR
+         3GQnTbRs4lVWtGKCaw+hLKJz10LPMAUBzldPxQwxI6PkeqEq90yGYJcU5MkCTO/LsMhX
+         E7xXxcI7UEq66//XhQXdxb9Zzk3xs/65tvDsOfkni4xZZvAIH9zzvDgJ3vue5cf55908
+         g8ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=q1lxCdHBuJxbjBxwpnh6sKKElMTUleBSs75hBgURlRY=;
-        b=uYV1HLG7j0nYqwrU08iHyYIQaphtNqEm+yscnDwoEvkirqMC/7EOETOQndYdYWtCVj
-         F7+53RpJd4HM0D5KEyNDeMmFrbGgMCT/jCuzWO0f3VSYD84YmQB7C/g2d254M7OVEqnX
-         PzmoBWrnCu4vkSis3uyvBFjDkyr+zlxW+75tcMjgQAP9ASIrK+JCaWOzrSiieR0j+R7+
-         6KynvLa0W2bDOW3Ept+T6wxMk/EN5n3zHGu0MrUUqD1CrOohXYhNUohrDFUR78HrnjDa
-         AUVvPkD62cwLsoSh5eJVxks5HMvsN2DsGuuTOEoastPFnwEfWoMKb7iAc6uveb1imAf8
-         rV7A==
-X-Gm-Message-State: AOAM533YXOBPDmqXrzsBtVbmj6v/NAr1cgZxG6TdLxUOLeKxBkWye+E9
-        JoptmVr/60NuDw20EKlmWjrgDQ==
-X-Google-Smtp-Source: ABdhPJyPhXW8Dtj381wf89dQcXMgzwmh+JZcAU60DG4J9/z8AKiVUazKM/8tyzG9vucLww9Zp15s6g==
-X-Received: by 2002:a05:600c:500e:b0:38c:6d79:d5ac with SMTP id n14-20020a05600c500e00b0038c6d79d5acmr23120020wmr.42.1649535464708;
-        Sat, 09 Apr 2022 13:17:44 -0700 (PDT)
-Received: from [192.168.2.222] ([51.37.209.28])
-        by smtp.gmail.com with ESMTPSA id 20-20020a05600c22d400b0038c8dbdc1a3sm13115012wmg.38.2022.04.09.13.17.43
+        bh=4k9M3A5SaOTIoKov6CrPu7jYsykoDqASGcsbW1Bxs2g=;
+        b=MKIQUViXHiQ047vYQsuer38eJStqRrk46t5ggkKqJhVyjG17F42k7AZ1y6Y5w4Mn9k
+         XoEwpNBkXHOEAkSIhGxMrmBT5sBQMZKMYpwo9rML7baoBSZmYWFitzbciGXoYtrJYmne
+         mI4IbYKmDEcdx/ir+34qF8g8bR6whzZ23siIDywZgePpVfV/UlA931M6LOfCM+Gw2/CI
+         f2PHKlKfu6NtQO6b32ZW/gAL4UoGW38LRCSfAJvGwUejW2ZBRTijKq3pDkkVTtl/oBhp
+         CA8pJBF9YNY1mph68ebiRN5OZPrWMiC6BS0k+IRDVcNH6rgsrEQA7Xiahfo/syOQF3Js
+         r//w==
+X-Gm-Message-State: AOAM532P4hQ5LPU7ukWEpLXky3ruWBOcGZsL4LI9lJ2wPbB9scVflX7j
+        zsd9QmjNd/EjMzyQkk0cHRE=
+X-Google-Smtp-Source: ABdhPJwReclOWi6comV7f0t4FE3p7oaNQ35SJ8JbEQWYuT+E14luIOkj8va8kxoE4ZlzpOywqqEzKQ==
+X-Received: by 2002:a37:f508:0:b0:69b:ed2f:e56 with SMTP id l8-20020a37f508000000b0069bed2f0e56mr5681454qkk.384.1649558360126;
+        Sat, 09 Apr 2022 19:39:20 -0700 (PDT)
+Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id d3-20020a05622a15c300b002eb9af4c945sm24191439qty.3.2022.04.09.19.39.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Apr 2022 13:17:44 -0700 (PDT)
-Message-ID: <8a7e16c3-ce17-3726-5702-763d57075c25@conchuod.ie>
-Date:   Sat, 9 Apr 2022 21:17:43 +0100
+        Sat, 09 Apr 2022 19:39:19 -0700 (PDT)
+Message-ID: <8d6595d8-13c3-0f29-1a5e-e48e78b01f89@gmail.com>
+Date:   Sat, 9 Apr 2022 22:39:14 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v1 0/7] Add rtc refclk support for PolarFire SoC
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v1 00/12] Add support for the i.MXRT1170-evk
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Conor Dooley <conor.dooley@microchip.com>, sboyd@kernel.org,
-        aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-        palmer@rivosinc.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org, mturquette@baylibre.com
-Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220408143646.3693104-1-conor.dooley@microchip.com>
- <1fa15b36-7a84-e0ac-2c56-d6a2bec566ff@linaro.org>
- <cc11d576-3670-ff0a-e0a1-e92780a04c2a@conchuod.ie>
- <98026c4a-a065-3965-27f0-71de29cdb264@conchuod.ie>
- <7e6a0489-f90f-a362-e37b-b219fe2d71fe@linaro.org>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <7e6a0489-f90f-a362-e37b-b219fe2d71fe@linaro.org>
+To:     linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/04/2022 11:48, Krzysztof Kozlowski wrote:
-> On 09/04/2022 09:14, Conor Dooley wrote:
->> On 08/04/2022 16:29, Conor Dooley wrote:
->>> On 08/04/2022 15:57, Krzysztof Kozlowski wrote:
->>>> On 08/04/2022 16:36, Conor Dooley wrote:
->>>>> Hey,
->>>>> As I mentioned in my fixes for 5.18 [0], found out that the reference
->>>>> clock for the rtc is actually missing from the clock driver (and the
->>>>> dt binding).
->>>>>
->>>>> Currently the mpfs clock driver uses a reference clock called the
->>>>> "msspll", set in the device tree, as the parent for the cpu/axi/ahb
->>>>> (config) clocks. The frequency of the msspll is determined by the FPGA
->>>>> bitstream & the bootloader configures the clock to match the bitstream.
->>>>> The real reference is provided by a 100 or 125 MHz off chip oscillator.
->>>>>
->>>>> However, the msspll clock is not actually the parent of all clocks on
->>>>> the system - the reference clock for the rtc/mtimer actually has the
->>>>> off chip oscillator as its parent.
->>>>>
->>>>> This series enables reading the rate of the msspll clock, converts
->>>>> the refclock in the device tree to the external reference & adds
->>>>> the missing rtc reference clock.
->>>>>
->>>>> I assume it is okay not to add fixes tags for the rtc dt binding?
->>>>> Since the clock was previously missing, the binding is wrong, but
->>>>> idk if that qualifies as a fix?
->>>>
->>>> Usually ABI breakage, even if accepted, should be be tagged as fix
->>>> because it is clearly then a break of other peoples' trees...
->>>>
->>>
->>> That means either a) do something messy in the clock driver or b) mark
->>> the whole series as fixes (and roll it into [0]).
->>>
->>> The second option seems far more sensible to me, do you agree?
->>
->> Having thought some more about it, patches 2, 3 and the rtc part of 7
->> should be moved into [0] since they're fixing a binding that only
->> arrived in 5.18-rc1.
->> For the rest, make the second part of the reg optional and if it doesnt
->> exist just return prate for the msspll clock?
+
+
+On 3/26/22 10:43, Jesse Taube wrote:
+> This patch continues support for the imxrt series now with the imxrt1170
 > 
-> Ah, so this got into v5.18-rc1?
+> This patch contains:
+> - Update to imxrt_defconfig
+> - Devicetree
+> - Clock driver
+> - Pinctrl driver
+> - New pll
+> 
+> This patch also updates some documentation for both imxrt1170 an 1050.
+> 
+> The i.MXRT1170 has a vast array of fetures includeing two cores. 2 Ethernet, 2 USB phy, and a 2d gpu.
+> 
+> It also is fetured in a new google coral board
+> https://coral.ai/products/dev-board-micro
+> Not affiliated unfortunaly.
+> 
+> Jesse Taube (12):
+>    dt-bindings: arm: imx: Add i.MXRT compatible Documentation
+>    dt-bindings: timer: gpt: Add i.MXRT compatible Documentation
+>    dt-bindings: pinctrl: add i.MXRT1170 pinctrl Documentation
+>    dt-bindings: clock: imx: Add documentation for i.MXRT1170 clock
+>    ARM: mach-imx: Add support for i.MXRT1170
+>    ARM: clk: imx: Update pllv3 to support i.MXRT1170
+>    dt-bindings: imx: Add clock binding for i.MXRT1170
+>    clk: imx: Add initial support for i.MXRT1170 clock driver
+>    pinctrl: freescale: Add i.MXRT1170 pinctrl driver support
+>    ARM: dts: imxrt1170-pinfunc: Add pinctrl binding header
+>    ARM: dts: imx: Add i.MXRT1170-EVK support
+>    ARM: imxrt_defconfig: Add i.MXRT1170
+> 
+>   .../devicetree/bindings/arm/fsl.yaml          |   12 +
+>   .../bindings/clock/imxrt1170-clock.yaml       |   59 +
+>   .../bindings/pinctrl/fsl,imxrt1170.yaml       |   77 +
+>   .../devicetree/bindings/timer/fsl,imxgpt.yaml |    2 +
+>   arch/arm/boot/dts/Makefile                    |    3 +-
+>   arch/arm/boot/dts/imxrt1170-evk.dts           |  126 ++
+>   arch/arm/boot/dts/imxrt1170-pinfunc.h         | 1561 +++++++++++++++++
+>   arch/arm/boot/dts/imxrt1170.dtsi              |  278 +++
+>   arch/arm/configs/imxrt_defconfig              |   26 +
+>   arch/arm/mach-imx/mach-imxrt.c                |    1 +
+>   drivers/clk/imx/Kconfig                       |    7 +
+>   drivers/clk/imx/Makefile                      |    1 +
+>   drivers/clk/imx/clk-imxrt1170.c               |  391 +++++
+>   drivers/clk/imx/clk-pllv3.c                   |   57 +-
+>   drivers/clk/imx/clk.h                         |    4 +
+>   drivers/pinctrl/freescale/Kconfig             |    7 +
+>   drivers/pinctrl/freescale/Makefile            |    1 +
+>   drivers/pinctrl/freescale/pinctrl-imxrt1170.c |  349 ++++
+>   include/dt-bindings/clock/imxrt1170-clock.h   |  282 +++
+>   19 files changed, 3241 insertions(+), 3 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/imxrt1170-clock.yaml
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
+>   create mode 100644 arch/arm/boot/dts/imxrt1170-evk.dts
+>   create mode 100644 arch/arm/boot/dts/imxrt1170-pinfunc.h
+>   create mode 100644 arch/arm/boot/dts/imxrt1170.dtsi
+>   create mode 100644 drivers/clk/imx/clk-imxrt1170.c
+>   create mode 100644 drivers/pinctrl/freescale/pinctrl-imxrt1170.c
+>   create mode 100644 include/dt-bindings/clock/imxrt1170-clock.h
+> 
+Hi Freind's,
 
-Yeah, so for context he clock driver & relevant the dt-bindings only
-arrived in 5.18-rc1. The device tree itself has been around (I think)
-5.12 but it wasn't bootable until now. The rtc stanza is also new.
-The clock stanza & "wrong" refclk existed since the device tree was
-first added.
+Are there any more comments on this patch set or should V2 be sent.
+If there is something obviously wrong that I have missed an you haven't 
+I would love to know because I haven't noticed yet.
 
-> I think I missed that information from
-> the patches description and focused on backporting to stables.
-
-Yeah, zero intention of backporting any of this. Pretty pointless since
-the board hasn't booted until now anyway.
-
-> Then indeed you could combine all fixes together, mark them with Fixes.
-
-I had split the series (plural) since the clock driver change is fairly
-big, adding a new "layer" of clocks & like 200 lines to a 400 line
-driver. I will respin then, with the dt binding patches marked as fixes
-and combined with the other series.
-
-Do I have to maintain backwards compatibility with the device tree
-from before the board actually booted mainline? If not, I'll merge
-it all into one series, marked as fixes. Otherwise I'll keep the clock 
-changes in this series out of the fixes, mark the second reg entry in
-the clock binding as optional & handle the old, "naive" dt stanza in the
-driver.
-
-Thanks!
-Conor.
+Cheers,
+Jesse Taube
