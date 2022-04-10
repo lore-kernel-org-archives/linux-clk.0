@@ -2,89 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E88C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 10 Apr 2022 08:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF06C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Apr 2022 12:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229562AbiDJIOd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Apr 2022 04:14:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45370 "EHLO
+        id S238469AbiDJMJP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Apr 2022 08:09:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234687AbiDJIOa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2022 04:14:30 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08A521818
-        for <linux-clk@vger.kernel.org>; Sun, 10 Apr 2022 01:12:19 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id n6so24966010ejc.13
-        for <linux-clk@vger.kernel.org>; Sun, 10 Apr 2022 01:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=FtELbYASsIxS0aQTgGGqXwDAZ/GpbndTchli/odvm3k=;
-        b=gYBRVF/kBdNo3ij65pV2qlbIreM4cbzN/gCh0MV+6pP9HCfyM9MOvSck4PyIn9ivS8
-         T01nzCS4cwJ+WMQv+JduJw+jO/5OOZiQCVabi0RqfbS0zQsRP0jRpuz3iUO3dXGYDgDK
-         JFfgP0cmD2YwzbK4CZle/nnOVVlKL6AhLMxDoBbSnOnKzRx6zDOT1xuHfs4Mu1qX8QFW
-         M36NJ9LhTUnPvB/uBADohvlD9G9we/OIYk79CEKEmaCPMbPOGS0/zroSyEY/e8qSvtbI
-         g/IJdPneWDtxEWggm00OcjfBXP99I61MC0WoP70iLFMK4AOmUbTuBov152RngifrSHwQ
-         DSGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=FtELbYASsIxS0aQTgGGqXwDAZ/GpbndTchli/odvm3k=;
-        b=cVlr6c0cLDVCs2A7j0slhzbkDa/PqfliQBJ887Mkl7hSktgIKG+ZGUHNpMObsoVY8e
-         nnUFI19MoX7zthY2jXJ8jEExD8Pg5B//puNVgUK+UndgZoCAtrKx168Q1SJBSTg3gN5m
-         tIXm4DMjXzGLr8XTeXGZu37YQz1wsZyCWoWtKQ0hpu1e7muueGDWUgDhLnqGZ8YzHqCR
-         5MsIh2YPxWhPffcVR0jd4fuXW0U5r3ByPDbaxImbNhR0JNi9CRBoNzV/ULuL+zdrXUXk
-         u0/porGrB1OFNw1zExGqZpgRx2+BMmyDbCSqxJ0lhYzKgviqJbX3twkh/etKkKuxy+c7
-         hHFQ==
-X-Gm-Message-State: AOAM532XBOM9oePzVHWNDcgEqmFcL4wjz43tGOFYRzVM7Xd8fFcOJHHc
-        pL4MWnEVIJ0APEcASoHqGz6nxQ==
-X-Google-Smtp-Source: ABdhPJxsZUC9oxQbPCBUcyzIoMbQjfj3XeNiOb7tZ6MkaNwW/bpJ/JstEQ9Hp8nxvD3ij5ICrqtI0Q==
-X-Received: by 2002:a17:907:6088:b0:6e8:62ea:1dae with SMTP id ht8-20020a170907608800b006e862ea1daemr8379303ejc.173.1649578338482;
-        Sun, 10 Apr 2022 01:12:18 -0700 (PDT)
-Received: from [192.168.0.188] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id r18-20020a05640251d200b0041d1600ab09sm3987710edd.54.2022.04.10.01.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Apr 2022 01:12:18 -0700 (PDT)
-Message-ID: <c0ff5173-aad5-1814-6758-89d99e83b936@linaro.org>
-Date:   Sun, 10 Apr 2022 10:12:16 +0200
+        with ESMTP id S232013AbiDJMJO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2022 08:09:14 -0400
+Received: from mail-40137.protonmail.ch (mail-40137.protonmail.ch [185.70.40.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F40CF2A70C
+        for <linux-clk@vger.kernel.org>; Sun, 10 Apr 2022 05:07:03 -0700 (PDT)
+Date:   Sun, 10 Apr 2022 12:06:55 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail; t=1649592421;
+        bh=zzb8o4OJF+w831oexy0cIfChUgIXNNxRvdimfske2No=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
+         References:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+         Message-ID;
+        b=xm5tY9+0DuTW3nfMoS8dtx0WM2jh2QiTrG44WMgzDGyS//F/1dt9dSfX/qcqJlgWN
+         sHU3ATi9j7tAy6qoHAFMGVhnJ7XtIrJxDroCwlMMNzADdrrd/wLwLaf4cPDMin0VcK
+         /uCviv+DnO7WAPg0+M1FEEL60McC7vM4gMw2bsTpia4YIOUXtiNmC3CWdzUVsRl8U0
+         6/RPQUlv/vApNYqLg8AGT7GY8zieATJlvZeZf/7QmrO2rGIwQNR8BtdqXy2lyWjr/B
+         Bh9fkY4ShlJ762vOqYV9rreYdMhyLDkDoCjeXb/vZpNwU07exZyoQiTTOe5eGw9FQy
+         BFWKNtUV15qcQ==
+To:     Maxime Ripard <maxime@cerno.tech>
+From:   Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: Re: [PATCH 00/22] clk: More clock rate fixes and tests
+Message-ID: <72HmVB9N_Hm0q8rTTo4Pg9uzlcm_ZYIrKuNEGp3SKbNAMcCo_E9UDLemXOEYYIW4fz9EE-AhP0qxjLh1Kmcjxu9SO1UBLFi5EldKRMZV54U=@protonmail.com>
+In-Reply-To: <20220408091037.2041955-1-maxime@cerno.tech>
+References: <20220408091037.2041955-1-maxime@cerno.tech>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v1 0/7] Add rtc refclk support for PolarFire SoC
-Content-Language: en-US
-To:     Conor Dooley <mail@conchuod.ie>,
-        Conor Dooley <conor.dooley@microchip.com>, sboyd@kernel.org,
-        aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-        palmer@rivosinc.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org, mturquette@baylibre.com
-Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220408143646.3693104-1-conor.dooley@microchip.com>
- <1fa15b36-7a84-e0ac-2c56-d6a2bec566ff@linaro.org>
- <cc11d576-3670-ff0a-e0a1-e92780a04c2a@conchuod.ie>
- <98026c4a-a065-3965-27f0-71de29cdb264@conchuod.ie>
- <7e6a0489-f90f-a362-e37b-b219fe2d71fe@linaro.org>
- <8a7e16c3-ce17-3726-5702-763d57075c25@conchuod.ie>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8a7e16c3-ce17-3726-5702-763d57075c25@conchuod.ie>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/04/2022 22:17, Conor Dooley wrote:
-> 
-> Do I have to maintain backwards compatibility with the device tree
-> from before the board actually booted mainline? If not, I'll merge
-> it all into one series, marked as fixes. 
+On Friday, April 8th, 2022 at 1:10 PM, Maxime Ripard <maxime@cerno.tech> wr=
+ote:
+> Hi,
+>
+> Thanks to the feedback I got on the previous series, I found and fixed a
+> number of bugs in the clock framework and how it deals with rates,
+> especially when it comes to orphan clocks.
+>
+> In order to make sure this doesn't pop up again as a regression, I've
+> extended the number of tests.
+>
+> The first patch reintroduces the clk_set_rate_range call on clk_put, but
+> this time will only do so if there was a range set on that clock to
+> begin with. It should be less intrusive, and reduce the number of
+> potential side effects considerably.
+>
+> All the other patches should be probably be flagged as fixes, but
+> they've never seem to have shown any real-world issues until now, and
+> they aren't all really trivial to backport either, so I'm not sure it's
+> worth it.
+>
+> The last patch will probably prove to be controversial, but it can be
+> left out without affecting the rest of the series. It will affect the
+> meson clock drivers for the g12b SoC at least. It stems from the
+> realisation that on the g12b, 4 PLLs (and thus all their children) have
+> a rate of 0, pretty much forever which feels like a bug considering the
+> rate 0 is used as an error in most places.
+>
+> Those 4 PLLs have a rate of 0 because meson_clk_pll_recalc_rate will
+> return 0 if the diviser of the PLL is set to 0 in the register, but:
+>
+> - pcie_pll_dco has a few registers to initialize set in
+> g12a_pcie_pll_dco, but meson_clk_pcie_pll_ops don't set the init
+> hook and will instead call it in the enable hook. This looks like a
+> bug and could be easily fixed by adding that init hook.
+>
+> - gp0_pll_dco and hifi_pll_dco both don't set any of there n field in
+> the initialisation of their register (g12a_gp0_init_regs and
+> g12a_hifi_init_regs). So if the bootloader doesn't set it, and as
+> long as set_rate isn't called, that field is going to remain at 0. And
+> since all but one users don't have CLK_SET_RATE_PARENT, this is
+> still fairly unlikely.
+>
+> - hdmi_pll_dco doesn't set the n field in the initialisation either,
+> but also doesn't have a set_rate implementation. Thus, if the
+> bootloader doesn't set it, this clock and all its children will
+> always report a rate of 0, even if the clock is functional.
+>
+> During the discussion with amlogic clock maintainers, we kind of ended
+> up on a disagreement of whether returning 0 was ok or not, hence the
+> expected controversy :)
+>
+> Let me know what you think,
+> Maxime
+>
+> Maxime Ripard (22):
+> clk: Drop the rate range on clk_put()
+> clk: tests: Add test suites description
+> clk: tests: Add reference to the orphan mux bug report
+> clk: tests: Add tests for uncached clock
+> clk: tests: Add tests for single parent mux
+> clk: tests: Add tests for mux with multiple parents
+> clk: tests: Add some tests for orphan with multiple parents
+> clk: Take into account uncached clocks in clk_set_rate_range()
+> clk: Fix clk_get_parent() documentation
+> clk: Set req_rate on reparenting
+> clk: Skip set_rate_range if our clock is orphan
+> clk: Add our request boundaries in clk_core_init_rate_req
+> clk: Change clk_core_init_rate_req prototype
+> clk: Introduce clk_hw_init_rate_request()
+> clk: Add missing clk_core_init_rate_req calls
+> clk: Remove redundant clk_core_init_rate_req() call
+> clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
+> clk: Introduce clk_core_has_parent()
+> clk: Stop forwarding clk_rate_requests to the parent
+> clk: Zero the clk_rate_request structure
+> clk: Test the clock pointer in clk_hw_get_name()
+> clk: Prevent a clock without a rate to register
+>
+> drivers/clk/clk.c | 239 +++++--
+> drivers/clk/clk_test.c | 1256 +++++++++++++++++++++++++++++++++-
+> include/linux/clk-provider.h | 6 +
+> include/linux/clk.h | 5 +-
+> 4 files changed, 1439 insertions(+), 67 deletions(-)
+>
+> --
+> 2.35.1
 
-Usually not, although it is not actually my call. :)
+It appears that this series breaks mmcc-msm8996:
 
-Best regards,
-Krzysztof
+[    8.713810] mmpll2_early: recalc_rate returned a null rate
+[    8.713864] mmcc-msm8996: probe of 8c0000.clock-controller failed with e=
+rror -22
+
+I haven't yet tried to figure out the exact patch that causes
+this or how it does. I just wanted to report it as soon as possible.
+
