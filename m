@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6E8C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC14C43217
 	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 09:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbiDKJCu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 05:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46606 "EHLO
+        id S245742AbiDKJCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 05:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344102AbiDKJCi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:02:38 -0400
+        with ESMTP id S1344147AbiDKJCr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:02:47 -0400
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0E93ED1C;
-        Mon, 11 Apr 2022 02:00:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9D5D3ED25;
+        Mon, 11 Apr 2022 02:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1649667625; x=1681203625;
+  t=1649667633; x=1681203633;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EWytXuYekgoEisOZ0234lmOJ3vcDaaP1r/uaU+xZy7s=;
-  b=0bsieISWGoCX9T70oluw8VoPohUBSWIO6wNVcSLNlaOVK5Vxqrh+TSAT
-   HNVHfnQw/6Afdq6oSjFdl51GmAr8lI6WN48qBm2G4cCwsOUwzAX1dFENV
-   AnR0zjnBRoiWvuN2UaEj0HQHL0C2JzxtUUZiRuQvd89erHNV9gwZ99Q3O
-   jsJt4idR91HU2W9pu++CjycsnpS+G43VqDOdye9vhKlcL3GVRXhQfESt0
-   /JDg8HS0tru7s/wLLgJnR6egJWR8QFTbpWpxc9Kz133uTO8s2RbpQ6hQI
-   Is0keRbtd+QcIwry+DRrdz0c/JZfvNI5WGidYgUwfw3f88aHx78Pgae1l
-   g==;
+  bh=Lxe+6YYnQOFRMxYyv3uPO62UdmsWV3nnAQEdb9zRcIU=;
+  b=sgdKZ2n/WiE9tPjtfmYxLpV7KXZY8aty6kEha2ZLZkw+Z8WQdfHfRu6V
+   caBwIdUfD1UmXYnPr4CGmAm+tcctCsH0CCzDf4IUQ/HPTbA4uW+l07pbX
+   MR+BoeDWwD/d7mAElUg1fTejZpdCt+QUeM21dGS5seMRc51EE4RxzprtA
+   4JvfwzbQwH/q1wMLQEJuW4/c6Tl6UrTA5kmnR6DwGpaTGkeefrQBx8xgp
+   NCMd3ITZ9VKpOO0JS/bgUiyqIgU63f2MApwHwtneZz9rCsPNsdzB6zrgm
+   6ZDF+GQ9NGUunvnisONhul41b5Aug3GlE65CyLMhEKsMulCIuFWeL0Ekd
+   w==;
 X-IronPort-AV: E=Sophos;i="5.90,251,1643698800"; 
-   d="scan'208";a="152206716"
+   d="scan'208";a="155112892"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Apr 2022 02:00:24 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Apr 2022 02:00:32 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 11 Apr 2022 02:00:23 -0700
+ 15.1.2375.17; Mon, 11 Apr 2022 02:00:30 -0700
 Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
  (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Mon, 11 Apr 2022 02:00:19 -0700
+ Transport; Mon, 11 Apr 2022 02:00:27 -0700
 From:   Conor Dooley <conor.dooley@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <aou@eecs.berkeley.edu>, <paul.walmsley@sifive.com>,
@@ -48,9 +48,9 @@ CC:     <daire.mcnamara@microchip.com>, <linux-rtc@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-riscv@lists.infradead.org>,
         Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 2/9] clk: microchip: mpfs: mark CLK_ATHENA as critical
-Date:   Mon, 11 Apr 2022 09:59:10 +0100
-Message-ID: <20220411085916.941433-3-conor.dooley@microchip.com>
+Subject: [PATCH v2 4/9] dt-bindings: clk: mpfs document msspll dri registers
+Date:   Mon, 11 Apr 2022 09:59:12 +0100
+Message-ID: <20220411085916.941433-5-conor.dooley@microchip.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220411085916.941433-1-conor.dooley@microchip.com>
 References: <20220411085916.941433-1-conor.dooley@microchip.com>
@@ -61,43 +61,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CLK_ATHENA is another fabric interconnect and should be marked as critical
-as with FIC0-3, since disabling it will cause part of the fabric to go
-into reset.
+As there are two sections of registers that are responsible for clock
+configuration on the PolarFire SoC: add the dynamic reconfiguration
+interface section to the binding & describe what each of the sections
+are used for.
 
-Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Fixes: 2145bb687e3f ("dt-bindings: clk: microchip: Add Microchip PolarFire host binding")
 Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/clk/microchip/clk-mpfs.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/clock/microchip,mpfs.yaml     | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index 7485a5eeb5c0..a361b8743a32 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -249,8 +249,10 @@ static const struct clk_ops mpfs_periph_clk_ops = {
-  *   trap handler
-  * - CLK_MMUART0: reserved by the hss
-  * - CLK_DDRC: provides clock to the ddr subsystem
-- * - CLK_FICx: these provide clocks for sections of the fpga fabric, disabling them would
-- *   cause the fabric to go into reset
-+ * - CLK_FICx: these provide the processor side clocks to the "FIC" (Fabric InterConnect)
-+ *   clock domain crossers which provide the interface to the FPGA fabric. Disabling them
-+ *   causes the FPGA fabric to go into reset.
-+ * - CLK_ATHENA: The athena clock is FIC4, which is reserved for the Athena TeraFire.
-  */
+diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+index 0c15afa2214c..42919df322ab 100644
+--- a/Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
++++ b/Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+@@ -22,7 +22,14 @@ properties:
+     const: microchip,mpfs-clkcfg
  
- static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
-@@ -281,7 +283,7 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
- 	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AXI), 25, CLK_IS_CRITICAL),
- 	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AXI), 26, CLK_IS_CRITICAL),
- 	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AXI), 27, CLK_IS_CRITICAL),
--	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AXI), 28, 0),
-+	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AXI), 28, CLK_IS_CRITICAL),
- 	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
- };
+   reg:
+-    maxItems: 1
++    items:
++      - description: |
++          clock config registers:
++          These registers contain enable, reset & divider tables for the, cpu, axi, ahb and
++          rtc/mtimer reference clocks as well as enable and reset for the peripheral clocks.
++      - description: |
++          mss pll dri registers:
++          Block of registers responsible for dynamic reconfiguration of the mss pll
  
+   clocks:
+     maxItems: 1
+@@ -51,7 +58,7 @@ examples:
+             #size-cells = <2>;
+             clkcfg: clock-controller@20002000 {
+                 compatible = "microchip,mpfs-clkcfg";
+-                reg = <0x0 0x20002000 0x0 0x1000>;
++                reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
+                 clocks = <&ref>;
+                 #clock-cells = <1>;
+         };
 -- 
 2.35.1
 
