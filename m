@@ -2,221 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED02C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 11:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2538CC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 11:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229537AbiDKL1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 07:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55182 "EHLO
+        id S1345922AbiDKLld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 07:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiDKL1O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 07:27:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 533372654E;
-        Mon, 11 Apr 2022 04:25:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 08E7DB812AB;
-        Mon, 11 Apr 2022 11:24:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26DDC385A4;
-        Mon, 11 Apr 2022 11:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649676297;
-        bh=wg7y9W7+1wtuUP8K8s5H/JdupTDeh8S8WNk1NMp09l8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qitRrUFkz04RxBchZcJrkV33p9Op3aPYQ1tIZupjpDjFpB32yEKZwwr3AKOSvFKJH
-         VesCSnofR3mZSl3nYvfZioYZzwhXeHcLU52NnEuhyfCF6nUmaKN7PS0jPWSE5b6X9d
-         BMiqbUK2Uz3f6YePIbz4hmsP4WMIOehw+9wBL+lM6njAyvQ9qqpEGsA+AJVsjLvqfr
-         jkjf8h0i3OqfzzpVBKVNyvqGwqJKT+dIW/w6wJ8Ng905RDsO9CziouM7Bxb+rR3k27
-         vOLCn/5z6EB6Ow70PbxMcvQl4FwP8P2S+ohn9DQnCXnrcR49t1xS2j61ROdmrD4Vz+
-         mIuUPiAPX+8rg==
-Date:   Mon, 11 Apr 2022 16:54:52 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <YlQQBIeM0GZQ6UOE@matsya>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
- <20220406161856.1669069-6-miquel.raynal@bootlin.com>
+        with ESMTP id S1345698AbiDKLlb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 07:41:31 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C45DFA0
+        for <linux-clk@vger.kernel.org>; Mon, 11 Apr 2022 04:39:10 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id AA9193202091;
+        Mon, 11 Apr 2022 07:39:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 11 Apr 2022 07:39:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1649677147; x=1649763547; bh=tB46c0l9Ao
+        aVbVvc5g1kxKnuAb1ReNjOH3JW6gBAZ9M=; b=f5S/R9dFRu6rjRLDuaFckJrnTo
+        uop/rse+ywQJw5tB3NxEaBBecd5aQy2bXzD7oSCFnhmbWYwDDnX8KxCGqWPrQCBc
+        wx0JyeydcWqiNcIYh0RZrKKRqYGRFDM1kBPYpS2ZfnTEGxpBT3h3djJCG+DrX7b7
+        bz+/Jv5ljTU3s90Jx4RAx9/AhHn/Tzc+qa9LPew6qNto/x315zeXfEmqXhTj2/gV
+        dnJL5gxfvN3qZaekYyXVpBsWWBeK+Czs4TfxYYR2JJEL1T5C1GObNI80OPKkJWsY
+        fCCgYnXzVd/Z8nAN3MM6JSUsUY7GgwWdiJaLzxRFzsmfLzeHgBauIhVCTxZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1649677147; x=
+        1649763547; bh=tB46c0l9AoaVbVvc5g1kxKnuAb1ReNjOH3JW6gBAZ9M=; b=M
+        m7uK4SWh56tj3K+pJOAMe3iEvH+DaaT18wgRk4apDXMRFdrVlaugTYseJIzu5LWf
+        5Yc7v5TZKUGW2ERy1wneAt04WmeIMnJQKK685/lLh6OoRarIF36CD+m2vdSVbll2
+        364xZYz/uYlja+4ndafY96HXNs9CcvD0q4lu/DfJoKKyEubV59PyZyfctraSTW/v
+        WzbY3g4gcut8pTGskxSMG7F2vbw3QJr9wZHxGYJ9jlEWrIk803BWbP/qmU9MC4vk
+        sIgloi0VKC9D3a+a3rCoOEaPRXg70d3AMvnSN2Q1lP3S3Z6QfmGCE8O4i//t2OXA
+        LvUeODioRz2XAKV+HYSoA==
+X-ME-Sender: <xms:WRNUYokeS3MPu8eJi-KRNNnMbGErdNjAHRnSjNvD1b_PZkIBp7J2-A>
+    <xme:WRNUYn0yrdAaQWgBuiViT3raXc6L3ZvBqsYOJX62xnn151TxNEPewk8ddp1KoA6y1
+    vwDF8ipWAJYFuHsUsM>
+X-ME-Received: <xmr:WRNUYmolt133PXxpakbgQNW4q9nSU7X84LD918AoIuEKEFgwTo3Nm4xruDN7Kvi8fPEv_mcwCiZ1Y6vNaXoeFWdsufVOYFal1frLHB4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekiedggeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:WRNUYkmWMyFnJwKi8S55XhsR7iKa3FgL4MBofeYyhA4r-GYo2WY30Q>
+    <xmx:WRNUYm1XjJEMZc11rXb8dzfLLWG9JV5C5-oPxhbPrljsCFjJx7zSNg>
+    <xmx:WRNUYrvDr65dXH-_tnPHHbEBVxpFiYmeTxo27-UODdBRMKXhrFSa2A>
+    <xmx:WxNUYnI8giX7Uwewc5u2Z7mFkg7v3FQJwc2Q1MQft8dcWv7EL8EnMA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Apr 2022 07:39:05 -0400 (EDT)
+Date:   Mon, 11 Apr 2022 13:39:03 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 00/22] clk: More clock rate fixes and tests
+Message-ID: <20220411113903.34naepgw23zrnbdx@houat>
+References: <20220408091037.2041955-1-maxime@cerno.tech>
+ <72HmVB9N_Hm0q8rTTo4Pg9uzlcm_ZYIrKuNEGp3SKbNAMcCo_E9UDLemXOEYYIW4fz9EE-AhP0qxjLh1Kmcjxu9SO1UBLFi5EldKRMZV54U=@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rmgckxstwtijpoel"
 Content-Disposition: inline
-In-Reply-To: <20220406161856.1669069-6-miquel.raynal@bootlin.com>
+In-Reply-To: <72HmVB9N_Hm0q8rTTo4Pg9uzlcm_ZYIrKuNEGp3SKbNAMcCo_E9UDLemXOEYYIW4fz9EE-AhP0qxjLh1Kmcjxu9SO1UBLFi5EldKRMZV54U=@protonmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06-04-22, 18:18, Miquel Raynal wrote:
-> The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
-> dmamux register located in the system control area which can take up to
-> 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> two different peripherals.
-> 
-> We need two additional information from the 'dmas' property: the channel
-> (bit in the dmamux register) that must be accessed and the value of the
-> mux for this channel.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/dma/dw/Kconfig       |   9 ++
->  drivers/dma/dw/Makefile      |   2 +
->  drivers/dma/dw/rzn1-dmamux.c | 157 +++++++++++++++++++++++++++++++++++
->  3 files changed, 168 insertions(+)
->  create mode 100644 drivers/dma/dw/rzn1-dmamux.c
-> 
-> diff --git a/drivers/dma/dw/Kconfig b/drivers/dma/dw/Kconfig
-> index db25f9b7778c..a9828ddd6d06 100644
-> --- a/drivers/dma/dw/Kconfig
-> +++ b/drivers/dma/dw/Kconfig
-> @@ -16,6 +16,15 @@ config DW_DMAC
->  	  Support the Synopsys DesignWare AHB DMA controller. This
->  	  can be integrated in chips such as the Intel Cherrytrail.
->  
-> +config RZN1_DMAMUX
-> +	tristate "Renesas RZ/N1 DMAMUX driver"
-> +	depends on DW_DMAC
-> +	depends on ARCH_RZN1 || COMPILE_TEST
-> +	help
-> +	  Support the Renesas RZ/N1 DMAMUX which is located in front of
-> +	  the Synopsys DesignWare AHB DMA controller located on Renesas
-> +	  SoCs.
-> +
->  config DW_DMAC_PCI
->  	tristate "Synopsys DesignWare AHB DMA PCI driver"
->  	depends on PCI
-> diff --git a/drivers/dma/dw/Makefile b/drivers/dma/dw/Makefile
-> index a6f358ad8591..e1796015f213 100644
-> --- a/drivers/dma/dw/Makefile
-> +++ b/drivers/dma/dw/Makefile
-> @@ -9,3 +9,5 @@ dw_dmac-$(CONFIG_OF)		+= of.o
->  
->  obj-$(CONFIG_DW_DMAC_PCI)	+= dw_dmac_pci.o
->  dw_dmac_pci-y			:= pci.o
-> +
-> +obj-$(CONFIG_RZN1_DMAMUX)	+= rzn1-dmamux.o
-> diff --git a/drivers/dma/dw/rzn1-dmamux.c b/drivers/dma/dw/rzn1-dmamux.c
-> new file mode 100644
-> index 000000000000..5f878a55158f
-> --- /dev/null
-> +++ b/drivers/dma/dw/rzn1-dmamux.c
-> @@ -0,0 +1,157 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2022 Schneider-Electric
-> + * Author: Miquel Raynal <miquel.raynal@bootlin.com
-> + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalusi@ti.com>
-> + */
-> +#include <linux/of_device.h>
-> +#include <linux/of_dma.h>
-> +#include <linux/slab.h>
-> +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> +
-> +#define RZN1_DMAMUX_LINES 64
-> +#define RZN1_DMAMUX_MAX_LINES 16
-> +
-> +struct rzn1_dmamux_data {
-> +	struct dma_router dmarouter;
-> +	u32 used_chans;
-> +	struct mutex lock;
-> +};
-> +
-> +struct rzn1_dmamux_map {
-> +	unsigned int req_idx;
-> +};
-> +
-> +static void rzn1_dmamux_free(struct device *dev, void *route_data)
-> +{
-> +	struct rzn1_dmamux_data *dmamux = dev_get_drvdata(dev);
-> +	struct rzn1_dmamux_map *map = route_data;
-> +
-> +	dev_dbg(dev, "Unmapping DMAMUX request %u\n", map->req_idx);
-> +
-> +	mutex_lock(&dmamux->lock);
-> +	dmamux->used_chans &= ~BIT(map->req_idx);
-> +	mutex_unlock(&dmamux->lock);
 
-Why not use idr or bitmap for this. Hint: former does locking as well
+--rmgckxstwtijpoel
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +	kfree(map);
-> +}
-> +
-> +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
-> +					struct of_dma *ofdma)
-> +{
-> +	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
-> +	struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
-> +	struct rzn1_dmamux_map *map;
-> +	unsigned int dmac_idx, chan, val;
-> +	u32 mask;
-> +	int ret;
-> +
-> +	if (dma_spec->args_count != 6)
+Hi Yassine,
 
-magic
+On Sun, Apr 10, 2022 at 12:06:55PM +0000, Yassine Oudjana wrote:
+> On Friday, April 8th, 2022 at 1:10 PM, Maxime Ripard <maxime@cerno.tech> =
+wrote:
+> > Hi,
+> >
+> > Thanks to the feedback I got on the previous series, I found and fixed a
+> > number of bugs in the clock framework and how it deals with rates,
+> > especially when it comes to orphan clocks.
+> >
+> > In order to make sure this doesn't pop up again as a regression, I've
+> > extended the number of tests.
+> >
+> > The first patch reintroduces the clk_set_rate_range call on clk_put, but
+> > this time will only do so if there was a range set on that clock to
+> > begin with. It should be less intrusive, and reduce the number of
+> > potential side effects considerably.
+> >
+> > All the other patches should be probably be flagged as fixes, but
+> > they've never seem to have shown any real-world issues until now, and
+> > they aren't all really trivial to backport either, so I'm not sure it's
+> > worth it.
+> >
+> > The last patch will probably prove to be controversial, but it can be
+> > left out without affecting the rest of the series. It will affect the
+> > meson clock drivers for the g12b SoC at least. It stems from the
+> > realisation that on the g12b, 4 PLLs (and thus all their children) have
+> > a rate of 0, pretty much forever which feels like a bug considering the
+> > rate 0 is used as an error in most places.
+> >
+> > Those 4 PLLs have a rate of 0 because meson_clk_pll_recalc_rate will
+> > return 0 if the diviser of the PLL is set to 0 in the register, but:
+> >
+> > - pcie_pll_dco has a few registers to initialize set in
+> > g12a_pcie_pll_dco, but meson_clk_pcie_pll_ops don't set the init
+> > hook and will instead call it in the enable hook. This looks like a
+> > bug and could be easily fixed by adding that init hook.
+> >
+> > - gp0_pll_dco and hifi_pll_dco both don't set any of there n field in
+> > the initialisation of their register (g12a_gp0_init_regs and
+> > g12a_hifi_init_regs). So if the bootloader doesn't set it, and as
+> > long as set_rate isn't called, that field is going to remain at 0. And
+> > since all but one users don't have CLK_SET_RATE_PARENT, this is
+> > still fairly unlikely.
+> >
+> > - hdmi_pll_dco doesn't set the n field in the initialisation either,
+> > but also doesn't have a set_rate implementation. Thus, if the
+> > bootloader doesn't set it, this clock and all its children will
+> > always report a rate of 0, even if the clock is functional.
+> >
+> > During the discussion with amlogic clock maintainers, we kind of ended
+> > up on a disagreement of whether returning 0 was ok or not, hence the
+> > expected controversy :)
+> >
+> > Let me know what you think,
+> > Maxime
+> >
+> > Maxime Ripard (22):
+> > clk: Drop the rate range on clk_put()
+> > clk: tests: Add test suites description
+> > clk: tests: Add reference to the orphan mux bug report
+> > clk: tests: Add tests for uncached clock
+> > clk: tests: Add tests for single parent mux
+> > clk: tests: Add tests for mux with multiple parents
+> > clk: tests: Add some tests for orphan with multiple parents
+> > clk: Take into account uncached clocks in clk_set_rate_range()
+> > clk: Fix clk_get_parent() documentation
+> > clk: Set req_rate on reparenting
+> > clk: Skip set_rate_range if our clock is orphan
+> > clk: Add our request boundaries in clk_core_init_rate_req
+> > clk: Change clk_core_init_rate_req prototype
+> > clk: Introduce clk_hw_init_rate_request()
+> > clk: Add missing clk_core_init_rate_req calls
+> > clk: Remove redundant clk_core_init_rate_req() call
+> > clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock
+> > clk: Introduce clk_core_has_parent()
+> > clk: Stop forwarding clk_rate_requests to the parent
+> > clk: Zero the clk_rate_request structure
+> > clk: Test the clock pointer in clk_hw_get_name()
+> > clk: Prevent a clock without a rate to register
+> >
+> > drivers/clk/clk.c | 239 +++++--
+> > drivers/clk/clk_test.c | 1256 +++++++++++++++++++++++++++++++++-
+> > include/linux/clk-provider.h | 6 +
+> > include/linux/clk.h | 5 +-
+> > 4 files changed, 1439 insertions(+), 67 deletions(-)
+> >
+> > --
+> > 2.35.1
+>=20
+> It appears that this series breaks mmcc-msm8996:
+>=20
+> [    8.713810] mmpll2_early: recalc_rate returned a null rate
+> [    8.713864] mmcc-msm8996: probe of 8c0000.clock-controller failed with=
+ error -22
+>=20
+> I haven't yet tried to figure out the exact patch that causes
+> this or how it does. I just wanted to report it as soon as possible.
 
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	map = kzalloc(sizeof(*map), GFP_KERNEL);
-> +	if (!map)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	chan = dma_spec->args[0];
-> +	map->req_idx = dma_spec->args[4];
-> +	val = dma_spec->args[5];
-> +	dma_spec->args_count -= 2;
-> +
-> +	if (chan >= RZN1_DMAMUX_MAX_LINES) {
-> +		dev_err(&pdev->dev, "Invalid DMA request line: %u\n", chan);
-> +		ret = -EINVAL;
-> +		goto free_map;
-> +	}
-> +
-> +	if (map->req_idx >= RZN1_DMAMUX_LINES ||
-> +	    (map->req_idx % RZN1_DMAMUX_MAX_LINES) != chan) {
-> +		dev_err(&pdev->dev, "Invalid MUX request line: %u\n", map->req_idx);
-> +		ret = -EINVAL;
-> +		goto free_map;
-> +	}
-> +
-> +	dmac_idx = map->req_idx >= RZN1_DMAMUX_MAX_LINES ? 1 : 0;
-> +	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", dmac_idx);
-> +	if (!dma_spec->np) {
-> +		dev_err(&pdev->dev, "Can't get DMA master\n");
-> +		ret = -EINVAL;
-> +		goto free_map;
-> +	}
-> +
-> +	dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n",
-> +		map->req_idx, dmac_idx, chan);
-> +
-> +	mask = BIT(map->req_idx);
-> +	mutex_lock(&dmamux->lock);
-> +	dmamux->used_chans |= mask;
-> +	ret = r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
+Could you test without the last patch?
 
-I guess due to this it would be merged by whosoever merges this api.
-Please mention this in cover letter and how you propose this should be
-merged
+Thanks,
+Maxime
 
--- 
-~Vinod
+--rmgckxstwtijpoel
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYlQTVwAKCRDj7w1vZxhR
+xXYhAQCISWL3pwrHzpqXe0ppl6zNTxLW7NdcrUlzvRHyCfOjnwD+OHrRtOatXG7V
+LNvfap98eJcBdiEmVAAsoX6IEikjagg=
+=c1B+
+-----END PGP SIGNATURE-----
+
+--rmgckxstwtijpoel--
