@@ -2,127 +2,201 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB96DC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 09:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B28DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 10:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344088AbiDKJDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 05:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48522 "EHLO
+        id S1345085AbiDKKHU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 06:07:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344111AbiDKJDD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:03:03 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DC53ED2F;
-        Mon, 11 Apr 2022 02:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1649667649; x=1681203649;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dPt81KGByL2JT3h91dRTMfPIeeyxRYvMJGbksSYGCkQ=;
-  b=lwG3my8wtILXVpW3tuPue1yGyrx8cjcs72RR8pcXvHvVtsfY5VbZWzyY
-   C2zFiJlXmLEQm6QgFXghREVuyKtqmZPjrd2JylXT7YLjPCPAZEa6bume6
-   EVs4exKcMQHoUofqVzJIRHQClCj8GXe9JEd91B3uNLUf7Ec+CfSqorOYX
-   LjSeml1leEZOMzICocrLRg0xP7wfE2DHt0Oxq7eqffk+/4kVFe6WqN36B
-   hGsddOAwefXTE8d7dwMn1CXV4MmK+W6bM/2YiWrmj8C+X3+W3bLhz3+Ap
-   bBFlpqlSYp8D+L6bAvqrBVAtDrIx9ReoOKC+h5qojePR2qTF+XChhB/RS
-   w==;
-X-IronPort-AV: E=Sophos;i="5.90,251,1643698800"; 
-   d="scan'208";a="155113068"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Apr 2022 02:00:48 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+        with ESMTP id S1345061AbiDKKHL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 06:07:11 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2077.outbound.protection.outlook.com [40.107.236.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65A4DFAC;
+        Mon, 11 Apr 2022 03:04:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B0gTXIxvbrfoFqKkmokdyC6ObD3uTmAZGbLWR7TEcSJVbz73TXAiXK6Z2R84D9BQst3TCy40PULR3+Sh5kpPrMTquVhvwNHXrdMSRwt3mjucB6B1X76/G7FwCrNcNAVTVdzDfEOecfWVC16q/6PXw9usiKwKq65y3K/gZcHmxdyHcQISrcHg7HQMOJajzAf6LJfrDpzofFw/XiXn3Xy46Rk3TbILkXsQyEGajfoFVLhU9ykbndZptN3y4awXdYKp73DQYdpauuluIjOqyYVA+lNrBPabWT1OUwiAoSgwwPUKW0f5zsLQm2ns+AigZkLcGLMj/AfXXy+i0zO/xUeklA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZLTs/yH/omQ/+m5FhT4GbTHTIl8DetDvfEBtfBbxQw4=;
+ b=aEm5XnxGiKm/pmOdZWEBozuTgM9cli2bLpypT98gmgf1Qr9R4ZEUSE3umihtjLXmGPG1+NqOltouHhuIN1OGyaVK+IhmMgRVciLjcmk9cLzbHj1TgJe+M9BbklyK824Kdk8VLL55R8GpbnY3ehKv3gF00RvYvQo9m+YwW/TXtbKfyZqejLaMPjYvW5UiWMgKJRkE6LCxhZGmR6PHMrmbfK0wXOJ1ikSma6aiUmuWG5FUKQOFBsMtTvqmT7RFgVajP18PRrHeQ3FmdRYwjm2Sn9+YDvMs2C+n6xyr6Z2ZexBICy65ZZHxxEFfwf2dq7Q4HVNFQFnL9Rl1Kqna1x9vsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZLTs/yH/omQ/+m5FhT4GbTHTIl8DetDvfEBtfBbxQw4=;
+ b=WEuO8TGzGDi2zMTcSMlvI3XMzGxvf9iyApdxqYlQlDv6ODqTBqMueYpSue8dWh0OpPrB/lhIdAvMSMeXFCR0H5zcHciju1++KelM97/HvYPg0BDeYzlPZ6d1RyUgi9PE1kgrZdGjB6tKRW8C5DTTgQgVOLEdkRZcjj/P78566tI=
+Received: from BN6PR13CA0022.namprd13.prod.outlook.com (2603:10b6:404:10a::32)
+ by BY5PR02MB6212.namprd02.prod.outlook.com (2603:10b6:a03:1f6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Mon, 11 Apr
+ 2022 10:04:51 +0000
+Received: from BN1NAM02FT032.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:404:10a:cafe::20) by BN6PR13CA0022.outlook.office365.com
+ (2603:10b6:404:10a::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.17 via Frontend
+ Transport; Mon, 11 Apr 2022 10:04:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ BN1NAM02FT032.mail.protection.outlook.com (10.13.3.192) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5144.21 via Frontend Transport; Mon, 11 Apr 2022 10:04:50 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 11 Apr 2022 02:00:48 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Mon, 11 Apr 2022 02:00:44 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <aou@eecs.berkeley.edu>, <paul.walmsley@sifive.com>,
-        <palmer@rivosinc.com>, <a.zummo@towertech.it>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>
-CC:     <daire.mcnamara@microchip.com>, <linux-rtc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2 9/9] riscv: dts: microchip: reparent mpfs clocks
-Date:   Mon, 11 Apr 2022 09:59:17 +0100
-Message-ID: <20220411085916.941433-10-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220411085916.941433-1-conor.dooley@microchip.com>
-References: <20220411085916.941433-1-conor.dooley@microchip.com>
+ 15.1.2176.14; Mon, 11 Apr 2022 03:04:50 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Mon, 11 Apr 2022 03:04:50 -0700
+Envelope-to: linux-clk@vger.kernel.org,
+ robh+dt@kernel.org,
+ gregkh@linuxfoundation.org,
+ sboyd@kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Received: from [10.140.6.59] (port=36530 helo=xhdshubhraj40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <shubhrajyoti.datta@xilinx.com>)
+        id 1ndquf-0003Jf-LI; Mon, 11 Apr 2022 03:04:50 -0700
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <robh+dt@kernel.org>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH v14 1/5] dt-bindings: add documentation of xilinx clocking wizard
+Date:   Mon, 11 Apr 2022 15:34:39 +0530
+Message-ID: <20220411100443.15132-2-shubhrajyoti.datta@xilinx.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
+References: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 750e4e5d-53d9-4a58-96f3-08da1ba2b7e1
+X-MS-TrafficTypeDiagnostic: BY5PR02MB6212:EE_
+X-Microsoft-Antispam-PRVS: <BY5PR02MB621223970E418F666794C678AAEA9@BY5PR02MB6212.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: O7MwLo2yjY1Ljv4Sn/Fzz6ufgJd/a2sQgfpSC3HHwDluj/PSUmV0wTQ0UCaPiMlCmIHPCqK3sKZ2Zvr3IKbM/URMSfO3zipHet3bX/QVtO9MwRstJHBfwa2bYFZbUJvFfNDAaoCN3jUrk4Ex6NhL849Reu5aEF1zsAzASon1UAQHMywZoeHCvqtoR1VeAZiBiyNiLgyV6Bh+uSUWq5aot+wxyxoHoLTvbuYGFSUKOVJF0+ScEv6Rq1MyG/FggxmbttU78kKJ5kYWx/opBvVwY9g8MzHN1fDR6eD3OPk19pdhUaDLWUuEugGTAw2RQG7Q8PkBq8YhpDaxieN/7ecXrE61HORczXc+ZcOgi6V7swAeH5FYV88KHwHsNKs7plV1rV7S2XpFsA/FZr1EqsS1mGjTIxIzJ9fpRZ0BjjTzGDKb+WO98OYc7Is7lmrtQe/yYMsobTwuPkSqCgk13Js7O69hzVi/xq6vdaiV03v5DD/b1307CMkyniIXP5YtRvPWksJff6KZDc8IqOhI/CA1ZpmjFY52jPJL70NhVE0S0C75O/fyLcLTN7mRa5xxsZD87WMQ9KE+75CIn6RKIX3ZWAt8BF5I+u7ipTAOZmjTesMdxeYi9gIr/GMp2vHkcPVa5/OI+BkDd+74E61lROB2Vmr2VfDALoC4pGrUeNYnCBMkxl7IExHEbPPsy54oyUjNcVEFvJztEdaqt9pAOlHYzh55NbN+HkdBF9h0kXBI0IOeYXUeI45PP1Kh5AVFGYsJnGBTRcj4iF+KGb8Z1Qvyqm4mt5HW37Rpz1pO1sx9LTC2MAbc+LbuBToPugoWBTALx9R4wphZ8sncvFnDxpquTA==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(40470700004)(36840700001)(36860700001)(426003)(336012)(40460700003)(47076005)(26005)(1076003)(508600001)(54906003)(6916009)(36756003)(82310400005)(316002)(2616005)(107886003)(7696005)(70206006)(83380400001)(70586007)(6666004)(2906002)(186003)(44832011)(5660300002)(9786002)(8936002)(356005)(4326008)(8676002)(7636003)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2022 10:04:50.8763
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 750e4e5d-53d9-4a58-96f3-08da1ba2b7e1
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT032.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6212
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 600M clock in the fabric is not the real reference, replace it with
-a 125M clock which is the correct value for the icicle kit. Rename the
-msspllclk node to mssrefclk since this is now the input to, not the
-output of, the msspll clock. Control of the msspll clock has been moved
-into the clock configurator, so add the register range for it to the clk
-configurator. Finally, add a new output of the clock config block which
-will provide the 1M reference clock for the MTIMER and the rtc.
+Add the devicetree binding for the xilinx clocking wizard.
 
-Fixes: feeb38685523 ("Update the Icicle Kit device tree")
-Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
- .../boot/dts/microchip/microchip-mpfs-icicle-kit.dts      | 2 +-
- arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi         | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ .../bindings/clock/xlnx,clocking-wizard.yaml  | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
 
-diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-index cd2fe80fa81a..3392153dd0f1 100644
---- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-+++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-@@ -45,7 +45,7 @@ ddrc_cache_hi: memory@1000000000 {
- };
- 
- &refclk {
--	clock-frequency = <600000000>;
-+	clock-frequency = <125000000>;
- };
- 
- &mmuart1 {
-diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-index 3b48b7f35410..746c4d4e7686 100644
---- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-@@ -141,7 +141,7 @@ cpu4_intc: interrupt-controller {
- 		};
- 	};
- 
--	refclk: msspllclk {
-+	refclk: mssrefclk {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 	};
-@@ -190,7 +190,7 @@ plic: interrupt-controller@c000000 {
- 
- 		clkcfg: clkcfg@20002000 {
- 			compatible = "microchip,mpfs-clkcfg";
--			reg = <0x0 0x20002000 0x0 0x1000>;
-+			reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
- 			clocks = <&refclk>;
- 			#clock-cells = <1>;
- 		};
-@@ -393,8 +393,8 @@ rtc: rtc@20124000 {
- 			reg = <0x0 0x20124000 0x0 0x1000>;
- 			interrupt-parent = <&plic>;
- 			interrupts = <80>, <81>;
--			clocks = <&clkcfg CLK_RTC>;
--			clock-names = "rtc";
-+			clocks = <&clkcfg CLK_RTC>, <&clkcfg CLK_RTCREF>;
-+			clock-names = "rtc", "rtcref";
- 			status = "disabled";
- 		};
- 
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+new file mode 100644
+index 000000000000..634b7b964606
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Xilinx clocking wizard
++
++maintainers:
++  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
++
++description:
++  The clocking wizard is a soft ip clocking block of Xilinx versal. It
++  reads required input clock frequencies from the devicetree and acts as clock
++  clock output.
++
++properties:
++  compatible:
++    enum:
++      - xlnx,clocking-wizard
++      - xlnx,clocking-wizard-v5.2
++      - xlnx,clocking-wizard-v6.0
++
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    items:
++      - description: clock input
++      - description: axi clock
++
++  clock-names:
++    items:
++      - const: clk_in1
++      - const: s_axi_aclk
++
++
++  xlnx,speed-grade:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [1, 2, 3]
++    description:
++      Speed grade of the device. Higher the speed grade faster is the FPGA device.
++
++  xlnx,nr-outputs:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    maximum: 8
++    description:
++      Number of outputs.
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - clocks
++  - clock-names
++  - xlnx,speed-grade
++  - xlnx,nr-outputs
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@b0000000  {
++        compatible = "xlnx,clocking-wizard";
++        reg = <0xb0000000 0x10000>;
++        #clock-cells = <1>;
++        xlnx,speed-grade = <1>;
++        xlnx,nr-outputs = <6>;
++        clock-names = "clk_in1", "s_axi_aclk";
++        clocks = <&clkc 15>, <&clkc 15>;
++    };
++...
 -- 
-2.35.1
+2.17.1
 
