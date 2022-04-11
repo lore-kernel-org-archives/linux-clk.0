@@ -2,109 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8983FC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 08:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E743CC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 08:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbiDKIis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 04:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44470 "EHLO
+        id S244137AbiDKJAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 05:00:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232648AbiDKIir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 04:38:47 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498D83CA58
-        for <linux-clk@vger.kernel.org>; Mon, 11 Apr 2022 01:36:33 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id t1so4164224wra.4
-        for <linux-clk@vger.kernel.org>; Mon, 11 Apr 2022 01:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=bQk4CSXCvxodfbzwB8mGoUwybmZ5jCU30b79Cr4ncpo=;
-        b=Bkzs2EHUoAt9FUIbbCl+CWcKQNhFujwYKw+VPO71yGgP76vM8SoU760ZqyEscxtDHX
-         /Wdj8HYUnOWrIQAJecyoRIOuHF1M6wkREhd9z9I4QqVUIlnqJERgTKFBD17ilXuVcpfP
-         HAbdymSsTlrmHHvFgdI/IWjabpAt84oDE/P2dW53BbKjR6zwAhiTFadijcjlsuo2xTuu
-         I+rOZv9x1YuJ2zzng2Axi0+a9hESIjiShcgjTeiy9U4VAFltRXYnEsOJermd3i9cxPUx
-         nUyKI1bOiyh7qfJnEuMpny8T/NlFNCvGyz3Xzi5l4R9DINX/PU7RcjJRBPNTL2JyOJDa
-         DdSQ==
+        with ESMTP id S236336AbiDKJAM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:00:12 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33A93EBAF;
+        Mon, 11 Apr 2022 01:57:58 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id b189so10081192qkf.11;
+        Mon, 11 Apr 2022 01:57:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=bQk4CSXCvxodfbzwB8mGoUwybmZ5jCU30b79Cr4ncpo=;
-        b=SGOy5LD0QnTx4I2ueQtNvSWPD0P+JnEsFf2BPXxYsh7DrLfpFGhUJAB6malW0/FbRG
-         JuvKL5cD0WfgYwo9UL/VuATPYfF5MtUzwEQP7CS6R+EPXa0g7C0mLKMZ97rlv0k7BuZe
-         yj7j12mZyGJ0A//9ak9I7fhmnQbb6fICdJg7a0bpZHafPgSD2PqumuTPJewjVTiHz2eY
-         qo0tPVdnEJU9IEZMwUg0/xuX9hiAVvqjJMc1n61sQHvXqcZWgzPPefvwdQ66P/t3yHeB
-         E/NE0Ik3kwFUNrnesxZxUV8Bq4Cc3Xxy13G9AkLDupHUfQkWr5FVk67AznXJBGHwMQnj
-         RoqA==
-X-Gm-Message-State: AOAM5329iCg4t9rQFIcdEqaQVxklyec7ZrnvJugfQQHDisDyQ6xLk3eT
-        QcoQp6YrYo67Jry6gIqrEfkZfQ==
-X-Google-Smtp-Source: ABdhPJx2hJ0WGgSSBkrd1paqaTROOhfsqN4pOFjz1KqJOwY9XO0qpnXZ5QHpy7B5NcSy1DfRajqOig==
-X-Received: by 2002:a05:6000:1a8d:b0:204:39fa:d21c with SMTP id f13-20020a0560001a8d00b0020439fad21cmr23593807wry.9.1649666191704;
-        Mon, 11 Apr 2022 01:36:31 -0700 (PDT)
-Received: from localhost (82-65-169-74.subs.proxad.net. [82.65.169.74])
-        by smtp.gmail.com with ESMTPSA id u7-20020a05600c19c700b0038cc9aac1a3sm18656708wmq.23.2022.04.11.01.36.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Apr 2022 01:36:31 -0700 (PDT)
-References: <20220408091037.2041955-1-maxime@cerno.tech>
- <20220408091037.2041955-23-maxime@cerno.tech>
- <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
- <20220408104127.ilmcntbhvktr2fbh@houat>
- <1jpmlrlq0h.fsf@starbuckisacylon.baylibre.com>
- <20220408125526.ykk5ktix52mnwvh2@houat>
- <1jlewflizh.fsf@starbuckisacylon.baylibre.com>
- <20220408153625.ugodcmfwtanr75gu@houat>
-User-agent: mu4e 1.6.10; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
-Date:   Mon, 11 Apr 2022 10:20:51 +0200
-In-reply-to: <20220408153625.ugodcmfwtanr75gu@houat>
-Message-ID: <1jczhoauen.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UYOd5uPKUg9Pu/5HEV4rtkFPoYqAMXA0OJu/OmCqEfk=;
+        b=bwMGZXsX8lA8V8CGXrGboQjCllbR2mJDpIZdnBK9cxHUcbPtcLyNpH6gaWP5YTWrHU
+         TwHcbS12nWi1b270C+x6UOmYGBhiL18OXOtGcStTyrhTgujIrf2/EpLqPtkxajy7L+TE
+         n71vdv7HI3Pj+Zf2oob7itTf95ULLEzueHLj+S5eGa0yLobW4e714/ozga2bm7Gbj59S
+         27QGcbvnaaBabJngcvzgAYqmNeFt33EuCKNM5aduW+gwibeTvvrRbEh+iIhZRy8urKDb
+         mrvQ1kfknsDrfMmZQ7ihknwBFpzhnFJlgC+ckWkC2LYmU7ALkJbHg8ForrQDfvn6XzT9
+         IcBQ==
+X-Gm-Message-State: AOAM530hPiMa+r55cnrNW/MFoicqRnHwfH8Ml10pusi/PlIjUWgB2Thf
+        cqvEQMLzpCO8YeilfVL0OcLG+2W2hFKaXg==
+X-Google-Smtp-Source: ABdhPJzXo0/WFy33PsVqImjZ+IZ4ZLZUAE7b/xyj9aH6PPYIMHY7N+Zn5vHfKUEoTgPQZY7NVUdqkQ==
+X-Received: by 2002:a37:67c5:0:b0:69b:ed21:e345 with SMTP id b188-20020a3767c5000000b0069bed21e345mr8493441qkc.732.1649667477740;
+        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id n10-20020a05622a040a00b002e315b9f08asm26257527qtx.35.2022.04.11.01.57.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ebf4b91212so58692877b3.8;
+        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
+X-Received: by 2002:a81:c703:0:b0:2d0:cc6b:3092 with SMTP id
+ m3-20020a81c703000000b002d0cc6b3092mr24633663ywi.449.1649667477171; Mon, 11
+ Apr 2022 01:57:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1648546700.git.geert+renesas@glider.be> <3295013f27f1e4b8fbf3f79b950d65157ea95ef2.1648546700.git.geert+renesas@glider.be>
+ <Yk6IqweUS/INEJiC@ninjato>
+In-Reply-To: <Yk6IqweUS/INEJiC@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Apr 2022 10:57:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWb3HJqE6EXtqoDOCzPohpmNrbGJ42OBZ0LrHkOFZq5og@mail.gmail.com>
+Message-ID: <CAMuHMdWb3HJqE6EXtqoDOCzPohpmNrbGJ42OBZ0LrHkOFZq5og@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: r8a77990: Add RPC clocks
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Wolfram,
 
-On Fri 08 Apr 2022 at 17:36, Maxime Ripard <maxime@cerno.tech> wrote:
-
+On Thu, Apr 7, 2022 at 8:46 AM Wolfram Sang <wsa@kernel.org> wrote:
+> On Tue, Mar 29, 2022 at 11:44:25AM +0200, Geert Uytterhoeven wrote:
+> > Describe the various clocks used by the SPI Multi I/O Bus Controller
+> > (RPC-IF) on the R-Car E3 SoC: RPCSRC internal clock, RPC{,D2} clocks
+> > derived from it, and RPC-IF module clock.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> You're confusing two things: the rate output by the hardware, and what
-> the CCF needs to return. We're discussing the latter here, a software
-> construct. It models the hardware, but it doesn't have to be true to the
-> hardware.
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Thanks!
+
+> One minor question, though:
 >
-> And even the meson driver doesn't follow what you're claiming to the
-> letter and is inconsistent with what you're saying. Any disabled gate
-> will also have a hardware rate of 0. Yet, it doesn't return 0 in such a
-> case. And no one does, because clk_get_rate() isn't supposed to return
-> the actual rate in hardware at the moment. It's supposed to return what
-> would be the rate if it was enabled.
+> > +     DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
+> > +
+> >       DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+> >
+> >       DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
+> > @@ -107,6 +110,11 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+> >       DEF_GEN3_SD("sd1",     R8A77990_CLK_SD1,   R8A77990_CLK_SD1H, 0x0078),
+> >       DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   R8A77990_CLK_SD3H, 0x026c),
+> >
+> > +     DEF_BASE("rpc",         R8A77990_CLK_RPC, CLK_TYPE_GEN3_RPC,
+> > +              CLK_RPCSRC),
+> > +     DEF_BASE("rpcd2",       R8A77990_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
+> > +              R8A77990_CLK_RPC),
+> > +
+>
+> Any reason the RPC clocks are not grouped together? All other SoCs I
 
-I don't think I am confused at all.
+Yes :-)
+The "rpc" and "rpcd2" clocks are not internal clocks, so they do not belong
+under "/* Internal Core Clocks */", but under "/* Core Clock Outputs */"...
 
-What rate would you get if you would hit enable on those PLLs with the
-invalid setting as they are ? 0 - no lock.
+> checked have that.
 
-recalc_rate() is about giving the rate of the clock based on its current
-parameters. This is exactly what the amlogic PLL driver does. I can't
-compute a division by zero, sorry.
+... Hence soon I'll send out a patch to fix that...
 
-The fact that some parameters may be invalid for a clock element is not
-specific to any SoC and we have to deal with it.
+Gr{oetje,eeting}s,
 
-It is not up to the clock driver to select a random rate to just to make
-that valid again, assuming it even can do so  which is not necessarily
-the case.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
