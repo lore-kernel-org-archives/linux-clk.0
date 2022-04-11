@@ -2,23 +2,23 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B8BC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 06:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D49FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 06:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245133AbiDKG7u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 02:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38358 "EHLO
+        id S243206AbiDKG7w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 02:59:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbiDKG7p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 02:59:45 -0400
+        with ESMTP id S245154AbiDKG7u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 02:59:50 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C1D02C130
-        for <linux-clk@vger.kernel.org>; Sun, 10 Apr 2022 23:57:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CBB672C138
+        for <linux-clk@vger.kernel.org>; Sun, 10 Apr 2022 23:57:28 -0700 (PDT)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
 Received: from 172.28.114.216
         by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1173:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Mon, 11 Apr 2022 14:49:06 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Mon, 11 Apr 2022 14:49:05 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     krzysztof.kozlowski@linaro.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -27,9 +27,9 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v13 8/9] ARM: sunplus: Add initial support for Sunplus SP7021 SoC
-Date:   Mon, 11 Apr 2022 14:49:58 +0800
-Message-Id: <c6fd4e91d55caee869c9c05896d668a450e42cd1.1649659095.git.qinjian@cqplus1.com>
+Subject: [PATCH v13 3/9] reset: Add Sunplus SP7021 reset driver
+Date:   Mon, 11 Apr 2022 14:49:53 +0800
+Message-Id: <8f61634e7566552b27488ddb42b508355cb3ceb8.1649659095.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1649659095.git.qinjian@cqplus1.com>
 References: <cover.1649659095.git.qinjian@cqplus1.com>
@@ -39,129 +39,282 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch aims to add an initial support for Sunplus SP7021 SoC.
+Add reset driver for Sunplus SP7021 SoC.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- MAINTAINERS                    |  1 +
- arch/arm/Kconfig               |  2 ++
- arch/arm/Makefile              |  1 +
- arch/arm/mach-sunplus/Kconfig  | 27 +++++++++++++++++++++++++++
- arch/arm/mach-sunplus/Makefile |  9 +++++++++
- arch/arm/mach-sunplus/sp7021.c | 16 ++++++++++++++++
- 6 files changed, 56 insertions(+)
- create mode 100644 arch/arm/mach-sunplus/Kconfig
- create mode 100644 arch/arm/mach-sunplus/Makefile
- create mode 100644 arch/arm/mach-sunplus/sp7021.c
+Move HW mapping from dt-binding header to driver.
+---
+ MAINTAINERS                   |   1 +
+ drivers/reset/Kconfig         |   9 ++
+ drivers/reset/Makefile        |   1 +
+ drivers/reset/reset-sunplus.c | 212 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 223 insertions(+)
+ create mode 100644 drivers/reset/reset-sunplus.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index cf6873295..38890c055 100644
+index a8be86b25..26066f199 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2747,6 +2747,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+@@ -2745,6 +2745,7 @@ S:	Maintained
+ W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	arch/arm/mach-sunplus/
- F:	drivers/clk/clk-sp7021.c
- F:	drivers/irqchip/irq-sp7021-intc.c
- F:	drivers/reset/reset-sunplus.c
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 4c97cb40e..1ee9a27a3 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -693,6 +693,8 @@ source "arch/arm/mach-sti/Kconfig"
++F:	drivers/reset/reset-sunplus.c
+ F:	include/dt-bindings/reset/sp-sp7021.h
  
- source "arch/arm/mach-stm32/Kconfig"
+ ARM/Synaptics SoC support
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 6f8ba0ddc..36825787e 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -231,6 +231,15 @@ config RESET_STARFIVE_JH7100
+ 	help
+ 	  This enables the reset controller driver for the StarFive JH7100 SoC.
  
-+source "arch/arm/mach-sunplus/Kconfig"
-+
- source "arch/arm/mach-sunxi/Kconfig"
- 
- source "arch/arm/mach-tegra/Kconfig"
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 77172d555..1e19d2f4b 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -216,6 +216,7 @@ machine-$(CONFIG_ARCH_RENESAS)	 	+= shmobile
- machine-$(CONFIG_ARCH_INTEL_SOCFPGA)	+= socfpga
- machine-$(CONFIG_ARCH_STI)		+= sti
- machine-$(CONFIG_ARCH_STM32)		+= stm32
-+machine-$(CONFIG_ARCH_SUNPLUS)		+= sunplus
- machine-$(CONFIG_ARCH_SUNXI)		+= sunxi
- machine-$(CONFIG_ARCH_TEGRA)		+= tegra
- machine-$(CONFIG_ARCH_U8500)		+= ux500
-diff --git a/arch/arm/mach-sunplus/Kconfig b/arch/arm/mach-sunplus/Kconfig
-new file mode 100644
-index 000000000..be20425c2
---- /dev/null
-+++ b/arch/arm/mach-sunplus/Kconfig
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+menuconfig ARCH_SUNPLUS
-+	bool "Sunplus SoCs"
-+	depends on ARCH_MULTI_V7
-+	help
-+	  Support for Sunplus SoC family: SP7021 and succeeding SoC-based systems,
-+	  such as the Banana Pi BPI-F2S development board (and derivatives).
-+	  (<http://www.sinovoip.com.cn/ecp_view.asp?id=586>)
-+	  (<https://tibbo.com/store/plus1.html>)
-+
-+config SOC_SP7021
-+	bool "Sunplus SP7021 SoC support"
-+	depends on ARCH_SUNPLUS
++config RESET_SUNPLUS
++	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
 +	default ARCH_SUNPLUS
-+	select HAVE_ARM_ARCH_TIMER
-+	select ARM_GIC
-+	select ARM_PSCI
-+	select PINCTRL
-+	select PINCTRL_SPPCTL
-+	select SERIAL_SUNPLUS
-+	select SERIAL_SUNPLUS_CONSOLE
 +	help
-+	  Support for Sunplus SP7021 SoC. It is based on ARM 4-core
-+	  Cortex-A7 with various peripherals (ex: I2C, SPI, SDIO,
-+	  Ethernet and etc.), FPGA interface,  chip-to-chip bus.
-+	  It is designed for industrial control.
-diff --git a/arch/arm/mach-sunplus/Makefile b/arch/arm/mach-sunplus/Makefile
++	  This enables the reset driver support for Sunplus SoCs.
++	  The reset lines that can be asserted and deasserted by toggling bits
++	  in a contiguous, exclusive register space. The register is HIWORD_MASKED,
++	  which means each register hold 16 reset lines.
++
+ config RESET_SUNXI
+ 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+ 	default ARCH_SUNXI
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index bd0a97be1..cadc46d3e 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+ obj-$(CONFIG_RESET_STARFIVE_JH7100) += reset-starfive-jh7100.o
++obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
 new file mode 100644
-index 000000000..c902580a7
+index 000000000..2f23ecaa7
 --- /dev/null
-+++ b/arch/arm/mach-sunplus/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for the linux kernel.
-+#
-+
-+# Object file lists.
-+
-+obj-$(CONFIG_SOC_SP7021)	+= sp7021.o
-+
-diff --git a/arch/arm/mach-sunplus/sp7021.c b/arch/arm/mach-sunplus/sp7021.c
-new file mode 100644
-index 000000000..774d0a5bd
---- /dev/null
-+++ b/arch/arm/mach-sunplus/sp7021.c
-@@ -0,0 +1,16 @@
++++ b/drivers/reset/reset-sunplus.c
+@@ -0,0 +1,212 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
++ * SP7021 reset driver
++ *
 + * Copyright (C) Sunplus Technology Co., Ltd.
 + *       All rights reserved.
 + */
-+#include <linux/kernel.h>
-+#include <asm/mach/arch.h>
 +
-+static const char *sp7021_compat[] __initconst = {
-+	"sunplus,sp7021",
-+	NULL
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/reboot.h>
++
++/* HIWORD_MASK_REG BITS */
++#define BITS_PER_HWM_REG	16
++
++/* resets HW info: reg_index_shift */
++static const u32 sp_resets[] = {
++/* SP7021: mo_reset0 ~ mo_reset9 */
++	0x00,
++	0x02,
++	0x03,
++	0x04,
++	0x05,
++	0x06,
++	0x07,
++	0x08,
++	0x09,
++	0x0a,
++	0x0b,
++	0x0d,
++	0x0e,
++	0x0f,
++	0x10,
++	0x12,
++	0x14,
++	0x15,
++	0x16,
++	0x17,
++	0x18,
++	0x19,
++	0x1a,
++	0x1b,
++	0x1c,
++	0x1d,
++	0x1e,
++	0x1f,
++	0x20,
++	0x21,
++	0x22,
++	0x23,
++	0x24,
++	0x25,
++	0x26,
++	0x2a,
++	0x2b,
++	0x2d,
++	0x2e,
++	0x30,
++	0x31,
++	0x32,
++	0x33,
++	0x3d,
++	0x3e,
++	0x3f,
++	0x42,
++	0x44,
++	0x4b,
++	0x4c,
++	0x4d,
++	0x4e,
++	0x4f,
++	0x50,
++	0x55,
++	0x60,
++	0x61,
++	0x6a,
++	0x6f,
++	0x70,
++	0x73,
++	0x74,
++	0x86,
++	0x8a,
++	0x8b,
++	0x8d,
++	0x8e,
++	0x8f,
++	0x90,
++	0x92,
++	0x93,
++	0x94,
++	0x95,
++	0x96,
++	0x97,
++	0x98,
++	0x99,
 +};
 +
-+DT_MACHINE_START(SP7021_DT, "SP7021")
-+	.dt_compat	= sp7021_compat,
-+MACHINE_END
++struct sp_reset {
++	struct reset_controller_dev rcdev;
++	struct notifier_block notifier;
++	void __iomem *base;
++};
++
++static inline struct sp_reset *to_sp_reset(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct sp_reset, rcdev);
++}
++
++static int sp_reset_update(struct reset_controller_dev *rcdev,
++			   unsigned long id, bool assert)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = sp_resets[id] / BITS_PER_HWM_REG;
++	int shift = sp_resets[id] % BITS_PER_HWM_REG;
++	u32 val;
++
++	val = (1 << (16 + shift)) | (assert << shift);
++	writel(val, reset->base + (index * 4));
++
++	return 0;
++}
++
++static int sp_reset_assert(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	return sp_reset_update(rcdev, id, true);
++}
++
++static int sp_reset_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	return sp_reset_update(rcdev, id, false);
++}
++
++static int sp_reset_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = sp_resets[id] / BITS_PER_HWM_REG;
++	int shift = sp_resets[id] % BITS_PER_HWM_REG;
++	u32 reg;
++
++	reg = readl(reset->base + (index * 4));
++
++	return !!(reg & BIT(shift));
++}
++
++static const struct reset_control_ops sp_reset_ops = {
++	.assert   = sp_reset_assert,
++	.deassert = sp_reset_deassert,
++	.status   = sp_reset_status,
++};
++
++static int sp_restart(struct notifier_block *nb, unsigned long mode,
++		      void *cmd)
++{
++	struct sp_reset *reset = container_of(nb, struct sp_reset, notifier);
++
++	sp_reset_assert(&reset->rcdev, 0);
++	sp_reset_deassert(&reset->rcdev, 0);
++
++	return NOTIFY_DONE;
++}
++
++static int sp_reset_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct sp_reset *reset;
++	struct resource *res;
++	int ret;
++
++	reset = devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reset->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(reset->base))
++		return PTR_ERR(reset->base);
++
++	reset->rcdev.ops = &sp_reset_ops;
++	reset->rcdev.owner = THIS_MODULE;
++	reset->rcdev.of_node = dev->of_node;
++	reset->rcdev.nr_resets = resource_size(res) / 4 * BITS_PER_HWM_REG;
++
++	ret = devm_reset_controller_register(dev, &reset->rcdev);
++	if (ret)
++		return ret;
++
++	reset->notifier.notifier_call = sp_restart;
++	reset->notifier.priority = 192;
++
++	return register_restart_handler(&reset->notifier);
++}
++
++static const struct of_device_id sp_reset_dt_ids[] = {
++	{.compatible = "sunplus,sp7021-reset",},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver sp_reset_driver = {
++	.probe = sp_reset_probe,
++	.driver = {
++		.name			= "sunplus-reset",
++		.of_match_table		= sp_reset_dt_ids,
++		.suppress_bind_attrs	= true,
++	},
++};
++builtin_platform_driver(sp_reset_driver);
 -- 
 2.33.1
 
