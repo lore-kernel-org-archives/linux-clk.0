@@ -2,63 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81D9C43219
-	for <linux-clk@archiver.kernel.org>; Sun, 10 Apr 2022 17:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA23C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 04:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243702AbiDJRPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Apr 2022 13:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
+        id S231264AbiDKEmU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 00:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239341AbiDJRPQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Apr 2022 13:15:16 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF85034B8A;
-        Sun, 10 Apr 2022 10:13:04 -0700 (PDT)
-Received: from p508fdda7.dip0.t-ipconnect.de ([80.143.221.167] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1ndb7T-0006hD-1c; Sun, 10 Apr 2022 19:12:59 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     zhangqing@rock-chips.com, Johan Jonker <jbx6244@gmail.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, krzk+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: fix some conversion style issues for rockchip,rk3399-cru.yaml
-Date:   Sun, 10 Apr 2022 19:12:54 +0200
-Message-Id: <164961074166.23152.14936570481603649083.b4-ty@sntech.de>
+        with ESMTP id S229938AbiDKEmS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 00:42:18 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475EE3389F;
+        Sun, 10 Apr 2022 21:40:05 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 05C1A3201EA6;
+        Mon, 11 Apr 2022 00:40:03 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 11 Apr 2022 00:40:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
+         s=fm2; t=1649652003; x=1649738403; bh=xY/wsEH93CLjHX3lnrlxC12c9
+        aUtKmnweAqaU5N4rg4=; b=oDJTDlLyoCJ6TK2o2LA6TDMjl2y1IFBrqBIo5liCY
+        z5D8lsP9oZST5sJLYswUakSVeaTtVEovvvypqNXuoe1KoyABrcacM8KgOo3sP14G
+        hR1uP1z6OZ8PSVi6K+pfKNZjojgX75GXKbtjSNEcBMzLJCuqqGpkjGXeJ06GZBKc
+        wNVNofa9UL4TqmPlxrr7zdKUlSlqPWVm2D3BbJdsTk/Tyj1dgzgvIaaRJ9SpYYY6
+        kzMFIXJrA9sMau7OsTDnH3UA0qYYR3ljEP5PAkKpOX5WOOv4DYZIvqzjvf8LvVm3
+        sx/1CCh4VdW14RGl7VxWUuCj7OVhqTxe1gbyNduRvWy3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; t=1649652003; x=1649738403; bh=x
+        Y/wsEH93CLjHX3lnrlxC12c9aUtKmnweAqaU5N4rg4=; b=kxypa8Bcw88WgH1mY
+        hrzyrTfSkVLdlWckbs/+tl52gBlES/ZiLqrzIAN1mNNv2muSEkzAYfFbtERwqH4X
+        sBaEckUA8cNkgqpNhQT+lbsyCq7cY9ppFoohvPeIaRAStl35ez4s7SdNExd9mGCi
+        uQz95t0vMmHuGr/I6oa4bEUt5EjaO7vzywT9XaWMXArSVvG/0jSp84wFMwGOun3W
+        LyFEBy5j9Ws6kQc6EdgNhP8J7dl4YPVa4R+YyrPpIGvog+JQkltPB4FoIcuXvf4J
+        1H6I92AC+3mGn3WCqs6o47ocbjXEQ5jSeoWB7w0oC41+qn0tk+FyNe6Jhv1IzTdX
+        Gbang==
+X-ME-Sender: <xms:I7FTYvxm9BuHpOEKbTkZA_xx6OPK6mEAH1I0etIyzDYV9tq2Czl3NA>
+    <xme:I7FTYnRd3DukF-oLIhlp6qr8cEFXGy2iZqZQayLXJ7JjrXqvAU9ywbzebbSmjaVNR
+    k1qgoVwDJXeRYe03A>
+X-ME-Received: <xmr:I7FTYpVaGi_oinM-rauqXvW186CY71ZvnlBSepKZ13sZkb5RpGJKfgQpAAWisqIS2Q4oAeVW4CYq_TyOEDwSg9yREHvewGU65H-8sYa8a1VfxS-YIoQiy5jLDyVYToLAagSL7A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekhedgkedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtffrrg
+    htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
+    vedtveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:I7FTYpjb2bcmFeoexQvKnNA-aP9vHa7tkDRLQ9vNKTTm2bZ-ICXxuQ>
+    <xmx:I7FTYhDUcH-S-U0hnOaBH_wEvXw2xG_tbXMh6oCeRK1gADyYfKBxpA>
+    <xmx:I7FTYiJHN4EJ6x6qVj4Q3mdFWuJdT8qR09C1eUrmFT_oiP79mnBJdA>
+    <xmx:I7FTYmJmlXcfPGgRkDVHsNGzh1a1hR_FSequw1vfqDM4Tom2qgKlNg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Apr 2022 00:40:02 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH] dt-bindings: clock: Add compatible for D1 DE2 clocks
+Date:   Sun, 10 Apr 2022 23:40:01 -0500
+Message-Id: <20220411044002.37579-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220329150742.22093-1-jbx6244@gmail.com>
-References: <20220329150742.22093-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 29 Mar 2022 17:07:37 +0200, Johan Jonker wrote:
-> With the conversion of rockchip,rk3399-cru.txt a table with external clocks
-> was copied. Make it a bit cleaner by aligning the columns. Also fix
-> a description. Phrases start with a capital.
+Allwinner D1 contains a display engine 2.0. Its clock controller
+matches the layout of the H5 DE2 clocks (2 mixers, no rotation engine,
+and separate resets), so use that compatible as a fallback.
 
-Applied, thanks!
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
 
-[1/6] dt-bindings: clock: fix some conversion style issues for rockchip,rk3399-cru.yaml
-      commit: 04d3e427148f8ed7322f70e324731c81460671df
-[2/6] dt-bindings: clock: replace a maintainer for rockchip,rk3399-cru.yaml
-      commit: 50cfde33494072c74bf39a0c281cfa0c3289bd57
-[3/6] dt-bindings: clock: use generic node name for pmucru example in rockchip,rk3399-cru.yaml
-      commit: 91154f0cd889ed3772a0ac0e24ee363f93fe784c
-[4/6] dt-bindings: clock: fix rk3399 cru clock issues
-      commit: 7adc1b98bb6e6611bc9122de77737b193b693122
-[5/6] arm64: dts: rockchip: rk3399: use generic node name for pmucru
-      commit: e03774ff21493f4f82ec7853b33fb3ccc35e4363
-[6/6] arm64: dts: rockchip: add clocks property to cru nodes rk3399
-      commit: 14fc86b9aa5435bf7dd75839c9a73d9a85a98396
+ .../bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml           | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+index e79eeac5f086..17caf78f0ccf 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+@@ -28,6 +28,9 @@ properties:
+       - items:
+           - const: allwinner,sun8i-r40-de2-clk
+           - const: allwinner,sun8i-h3-de2-clk
++      - items:
++          - const: allwinner,sun20i-d1-de2-clk
++          - const: allwinner,sun50i-h5-de2-clk
+ 
+   reg:
+     maxItems: 1
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.35.1
+
