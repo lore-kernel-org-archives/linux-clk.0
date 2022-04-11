@@ -2,191 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4C5C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 16:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170F7C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 18:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348578AbiDKQiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 12:38:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
+        id S1349116AbiDKSd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 14:33:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348290AbiDKQis (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 12:38:48 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431E62DAB8;
-        Mon, 11 Apr 2022 09:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1649694991; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JKIdiPCa6AdKy3aeZWJmLncBvmV88ceUe5XNIR3UBxQ=;
-        b=pzqHrTBTxMmTIZ2GuBCvRERJgNhDuydhqoWEJh9pjC/YFx/WdQ2znC6qX+HJ4MkXnZdJQJ
-        /7Tnsvmm9KSay0Z3MifEH9QGPldSI3yD30YYVDzv4N/mXkxXRA6/ld2KpqKHfMybdo9XWa
-        bDvgPhryvUsMzLNiOkoSikXrus7yb10=
-Date:   Mon, 11 Apr 2022 17:36:21 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v4 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
- SoCs
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, tsbogend@alpha.franken.de,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Message-Id: <LSO6AR.0DFDW2C6UEWT@crapouillou.net>
-In-Reply-To: <YlRSiUkdFkNoPMaH@localhost>
-References: <20220411154241.50834-1-aidanmacdonald.0x0@gmail.com>
-        <20220411154241.50834-3-aidanmacdonald.0x0@gmail.com>
-        <FKM6AR.T3U5W4W42W2R3@crapouillou.net> <YlRSiUkdFkNoPMaH@localhost>
+        with ESMTP id S1348874AbiDKSd7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 14:33:59 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3312B132;
+        Mon, 11 Apr 2022 11:31:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 8FA24CE19E5;
+        Mon, 11 Apr 2022 18:31:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA17C385A4;
+        Mon, 11 Apr 2022 18:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649701900;
+        bh=gf6psStw1GAOWRBXxHx1fc7I0v5BTAOUapSwAlu8h6E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K3WOWpuNioT3TzpcMRDQSdZMJ5c92D+8/VFQX71ML0cqHb+Lj1kBRD3KD4+nqHCPQ
+         c+1loD+UqTB+kja9pII1I8ZzSNkX0wxpD4dyIEea+v6GE/x5LpcCmCHRgGOCvtRjr5
+         9mMxRwZqqP2Vv/42h7FPph8psR8ac8/s72WKU6bqm4cjFaoVME0/JBfg1nB3kHV7vD
+         wa5tnh92Lcb/3l74vOLWDvaTObOvbirRK5LXIhOgc3Gus92zgDYCDDwsSnV/3g76GM
+         +MeOPRiETT89wYw0r6MGtuN0EzdcU63tY89Fn3olX7jVdwUzWYDx82XpUY99kjqtjo
+         yrtD52cD+VM6A==
+Date:   Tue, 12 Apr 2022 00:01:35 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: add sc8280xp GCC driver
+Message-ID: <YlR0B8N443IQZFEN@matsya>
+References: <20220408224321.627126-1-bjorn.andersson@linaro.org>
+ <20220408224321.627126-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220408224321.627126-2-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aidan,
+On 08-04-22, 15:43, Bjorn Andersson wrote:
 
-Le lun., avril 11 2022 at 17:08:41 +0100, Aidan MacDonald=20
-<aidanmacdonald.0x0@gmail.com> a =E9crit :
-> On Mon, Apr 11, 2022 at 04:48:15PM +0100, Paul Cercueil wrote:
->>  Hi Aidan,
->>=20
->>  Le lun., avril 11 2022 at 16:42:41 +0100, Aidan MacDonald
->>  <aidanmacdonald.0x0@gmail.com> a =E9crit :
->>  > The TCU clock gate on X1000 wasn't requested by the driver and=20
->> could
->>  > be gated automatically later on in boot, which prevents timers=20
->> from
->>  > running and breaks PWM.
->>  >
->>  > Add a workaround to support old device trees that don't specify=20
->> the
->>  > "tcu" clock gate. In this case the kernel will print a warning and
->>  > attempt to continue without the clock, which is wrong, but it=20
->> could
->>  > work if "clk_ignore_unused" is in the kernel arguments.
->>  >
->>  > Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
->>  > ---
->>  >  drivers/clk/ingenic/tcu.c | 38=20
->> ++++++++++++++++++++++++++------------
->>  >  1 file changed, 26 insertions(+), 12 deletions(-)
->>  >
->>  > diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
->>  > index 77acfbeb4830..ce8c768db997 100644
->>  > --- a/drivers/clk/ingenic/tcu.c
->>  > +++ b/drivers/clk/ingenic/tcu.c
->>  > @@ -31,6 +31,7 @@ struct ingenic_soc_info {
->>  >  	unsigned int num_channels;
->>  >  	bool has_ost;
->>  >  	bool has_tcu_clk;
->>  > +	bool allow_missing_tcu_clk;
->>  >  };
->>  >
->>  >  struct ingenic_tcu_clk_info {
->>  > @@ -320,7 +321,8 @@ static const struct ingenic_soc_info
->>  > jz4770_soc_info =3D {
->>  >  static const struct ingenic_soc_info x1000_soc_info =3D {
->>  >  	.num_channels =3D 8,
->>  >  	.has_ost =3D false, /* X1000 has OST, but it not belong TCU */
->>  > -	.has_tcu_clk =3D false,
->>  > +	.has_tcu_clk =3D true,
->>  > +	.allow_missing_tcu_clk =3D true,
->>  >  };
->>  >
->>  >  static const struct of_device_id __maybe_unused
->>  > ingenic_tcu_of_match[] __initconst =3D {
->>  > @@ -354,15 +356,27 @@ static int __init ingenic_tcu_probe(struct
->>  > device_node *np)
->>  >  	if (tcu->soc_info->has_tcu_clk) {
->>  >  		tcu->clk =3D of_clk_get_by_name(np, "tcu");
->>  >  		if (IS_ERR(tcu->clk)) {
->>  > -			ret =3D PTR_ERR(tcu->clk);
->>  > -			pr_crit("Cannot get TCU clock\n");
->>  > -			goto err_free_tcu;
->>  > -		}
->>  > -
->>  > -		ret =3D clk_prepare_enable(tcu->clk);
->>  > -		if (ret) {
->>  > -			pr_crit("Unable to enable TCU clock\n");
->>  > -			goto err_put_clk;
->>  > +			/*
->>  > +			 * Old device trees for some SoCs did not include the
->>  > +			 * TCU clock because this driver (incorrectly) didn't
->>  > +			 * use it. In this case we complain loudly and attempt
->>  > +			 * to continue without the clock, which might work if
->>  > +			 * booting with workarounds like "clk_ignore_unused".
->>  > +			 */
->>=20
->>  Why not unconditionally enable it instead? Then it would boot=20
->> without
->>  clk_ignore_unused.
->>=20
->>  Cheers,
->>  -Paul
->=20
-> I could, but why add essentially dead code to the kernel? Maintaining=20
-> the
-> old behavior has the "advantage" that it remains broken in the same=20
-> way as
-> before, so any workarounds anyone was using will continue to work the=20
-> same.
-> And if they were not using workarounds and got a broken kernel, this=20
-> patch
-> will not make anything *more* broken, in fact it will not cause any=20
-> change
-> in behavior in that case (aside from the warning message).
+> +static struct clk_branch gcc_aggre_ufs_card_axi_hw_ctl_clk = {
+> +	.halt_reg = 0x750cc,
+> +	.halt_check = BRANCH_HALT_VOTED,
+> +	.hwcg_reg = 0x750cc,
+> +	.hwcg_bit = 1,
+> +	.clkr = {
+> +		.enable_reg = 0x750cc,
+> +		.enable_mask = BIT(1),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_aggre_ufs_card_axi_hw_ctl_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&gcc_ufs_card_axi_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops, /* XXX: clk_branch2_hw_ctl_ops */
 
-OK.
+I think comment should be removed (couple of them here)
 
--Paul
+> +static struct clk_branch gcc_gpu_memnoc_gfx_clk = {
+> +	.halt_reg = 0x71010,
+> +	.halt_check = BRANCH_HALT_VOTED,
+> +	.hwcg_reg = 0x71010,
+> +	.hwcg_bit = 1,
+> +	.clkr = {
+> +		.enable_reg = 0x71010,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_gpu_memnoc_gfx_clk",
+> +//			.flags = CLK_DONT_HOLD_STATE,
 
-> But if you think it's best to just enable the clock anyway, let me=20
-> know
-> and I'll send a new patch.
->=20
-> Regards,
-> Aidan
->=20
->>=20
->>  > +			if (tcu->soc_info->allow_missing_tcu_clk &&
->>  > +			    PTR_ERR(tcu->clk) =3D=3D -EINVAL) {
->>  > +				pr_warn("TCU clock missing from device tree, please update=20
->> your
->>  > device tree\n");
->>  > +				tcu->clk =3D NULL;
->>  > +			} else {
->>  > +				pr_crit("Cannot get TCU clock from device tree\n");
->>  > +				goto err_free_tcu;
->>  > +			}
->>  > +		} else {
->>  > +			ret =3D clk_prepare_enable(tcu->clk);
->>  > +			if (ret) {
->>  > +				pr_crit("Unable to enable TCU clock\n");
->>  > +				goto err_put_clk;
->>  > +			}
->>  >  		}
->>  >  	}
->>  >
->>  > @@ -432,10 +446,10 @@ static int __init ingenic_tcu_probe(struct
->>  > device_node *np)
->>  >  			clk_hw_unregister(tcu->clocks->hws[i]);
->>  >  	kfree(tcu->clocks);
->>  >  err_clk_disable:
->>  > -	if (tcu->soc_info->has_tcu_clk)
->>  > +	if (tcu->clk)
->>  >  		clk_disable_unprepare(tcu->clk);
->>  >  err_put_clk:
->>  > -	if (tcu->soc_info->has_tcu_clk)
->>  > +	if (tcu->clk)
->>  >  		clk_put(tcu->clk);
->>  >  err_free_tcu:
->>  >  	kfree(tcu);
->>  > --
->>  > 2.35.1
->>  >
->>=20
->>=20
+This need to be removed/updated
 
-
+-- 
+~Vinod
