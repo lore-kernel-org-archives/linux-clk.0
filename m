@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA23C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 04:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B75BC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 05:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231264AbiDKEmU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 00:42:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
+        id S232399AbiDKFDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 01:03:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229938AbiDKEmS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 00:42:18 -0400
+        with ESMTP id S230030AbiDKFDR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 01:03:17 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475EE3389F;
-        Sun, 10 Apr 2022 21:40:05 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 05C1A3201EA6;
-        Mon, 11 Apr 2022 00:40:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 11 Apr 2022 00:40:04 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE893668A;
+        Sun, 10 Apr 2022 22:01:03 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 090853201DA0;
+        Mon, 11 Apr 2022 01:01:01 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 11 Apr 2022 01:01:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :message-id:mime-version:reply-to:sender:subject:subject:to:to;
-         s=fm2; t=1649652003; x=1649738403; bh=xY/wsEH93CLjHX3lnrlxC12c9
-        aUtKmnweAqaU5N4rg4=; b=oDJTDlLyoCJ6TK2o2LA6TDMjl2y1IFBrqBIo5liCY
-        z5D8lsP9oZST5sJLYswUakSVeaTtVEovvvypqNXuoe1KoyABrcacM8KgOo3sP14G
-        hR1uP1z6OZ8PSVi6K+pfKNZjojgX75GXKbtjSNEcBMzLJCuqqGpkjGXeJ06GZBKc
-        wNVNofa9UL4TqmPlxrr7zdKUlSlqPWVm2D3BbJdsTk/Tyj1dgzgvIaaRJ9SpYYY6
-        kzMFIXJrA9sMau7OsTDnH3UA0qYYR3ljEP5PAkKpOX5WOOv4DYZIvqzjvf8LvVm3
-        sx/1CCh4VdW14RGl7VxWUuCj7OVhqTxe1gbyNduRvWy3g==
+         s=fm2; t=1649653261; x=1649739661; bh=3FHnb4Cp18Y2LEkoS1WKw6+37
+        m2cFQoTwhF2MLKmC/w=; b=YQglM7b1OaG6yKb7vCNnryOcqE4cTBWx6iwlmHuDB
+        qCm1/CfTZH8tVCt6bBV4RAWOo9daFIJkg/6MbJobk1+v1vyAwmIRPUbJTptHzNvO
+        ihXTTvAlGltHyfvb9cnR4xNgxT9X9m8WyhAdiiHc132QqOHIOm7zFUoEEGo9RF1n
+        2p8RnfLjY0kFkP5NBSBO7LyVEpHpXxCE4HGHik9Den3zyVSKg0LY3CGpyyJv4gj+
+        RpJKHpzXm0x/ZCQcxw+nctOv3cZpeFpa5nwEOCBCDKQ1SuKPfLmD8aPQpY55KmeG
+        rcxqIsMf9wexUN6lET9Mz24Jcav2EQmmub72lc6cZiEZw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:message-id:mime-version:reply-to:sender
         :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; t=1649652003; x=1649738403; bh=x
-        Y/wsEH93CLjHX3lnrlxC12c9aUtKmnweAqaU5N4rg4=; b=kxypa8Bcw88WgH1mY
-        hrzyrTfSkVLdlWckbs/+tl52gBlES/ZiLqrzIAN1mNNv2muSEkzAYfFbtERwqH4X
-        sBaEckUA8cNkgqpNhQT+lbsyCq7cY9ppFoohvPeIaRAStl35ez4s7SdNExd9mGCi
-        uQz95t0vMmHuGr/I6oa4bEUt5EjaO7vzywT9XaWMXArSVvG/0jSp84wFMwGOun3W
-        LyFEBy5j9Ws6kQc6EdgNhP8J7dl4YPVa4R+YyrPpIGvog+JQkltPB4FoIcuXvf4J
-        1H6I92AC+3mGn3WCqs6o47ocbjXEQ5jSeoWB7w0oC41+qn0tk+FyNe6Jhv1IzTdX
-        Gbang==
-X-ME-Sender: <xms:I7FTYvxm9BuHpOEKbTkZA_xx6OPK6mEAH1I0etIyzDYV9tq2Czl3NA>
-    <xme:I7FTYnRd3DukF-oLIhlp6qr8cEFXGy2iZqZQayLXJ7JjrXqvAU9ywbzebbSmjaVNR
-    k1qgoVwDJXeRYe03A>
-X-ME-Received: <xmr:I7FTYpVaGi_oinM-rauqXvW186CY71ZvnlBSepKZ13sZkb5RpGJKfgQpAAWisqIS2Q4oAeVW4CYq_TyOEDwSg9yREHvewGU65H-8sYa8a1VfxS-YIoQiy5jLDyVYToLAagSL7A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekhedgkedtucetufdoteggodetrfdotf
+        :x-me-sender:x-sasl-enc; s=fm3; t=1649653261; x=1649739661; bh=3
+        FHnb4Cp18Y2LEkoS1WKw6+37m2cFQoTwhF2MLKmC/w=; b=bnzl9FDRGFlxJ9fCC
+        CPx36tV1Qm6cl9vXlZ4sqrUqZpYKaEjn9Q1mguLUm5isG5DXAx2NOSd0HL0jGU9x
+        /qjHv7Q5vFLc8/iVaNvsDsgMWA3hj+GD0SMNj3Dfhdn9TGWhV/6+dnY4wvEVPTjx
+        mhOexhhBd/fqpR75MsBA7PlItZcJCeGtJq3LCkLaLL6JUZueWzjYi91yAjPYOm80
+        fsmWf2nJFQshQvDRSGy+FP1ADB5S4gmVSsrNu0vsK9v+oQaGxWYwARatK+1ExG4P
+        GxjiulwepTnmbSHiK07g3guWYlBvlMwQVsutBSQvHpj+spy2kHZJKIj/rAG6N3f2
+        HftpQ==
+X-ME-Sender: <xms:DbZTYrTZxqHBi12UjGcn0DxqPCHp1b_1B-AiuNkvkCgvG_SuVbWzMQ>
+    <xme:DbZTYsyFKJs5MzPI5yCn4uHRfBkzYHJQ4shNbMQEvcZB8IZES0l67OAdk-Njw4N0O
+    vuTHGSjkCgdtSQ4AA>
+X-ME-Received: <xmr:DbZTYg2Y5q8kOfZOFcam_ZABdcDps87WHIVsZCtgFgCF9uI87DOm0UeNIFl3AJ-Foe9_-kZzZuL9kANZKjcU8GLh2tbLh-Y6KmkGBwHuNqCAeOYRQGGCxYvPzruk_qKIfNKKgQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekhedgkeehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
@@ -53,26 +53,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekhedgkedtucetufdoteggod
     htthgvrhhnpeeiteekhfehuddugfeltddufeejjeefgeevheekueffhffhjeekheeiffdt
     vedtveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:I7FTYpjb2bcmFeoexQvKnNA-aP9vHa7tkDRLQ9vNKTTm2bZ-ICXxuQ>
-    <xmx:I7FTYhDUcH-S-U0hnOaBH_wEvXw2xG_tbXMh6oCeRK1gADyYfKBxpA>
-    <xmx:I7FTYiJHN4EJ6x6qVj4Q3mdFWuJdT8qR09C1eUrmFT_oiP79mnBJdA>
-    <xmx:I7FTYmJmlXcfPGgRkDVHsNGzh1a1hR_FSequw1vfqDM4Tom2qgKlNg>
+X-ME-Proxy: <xmx:DbZTYrDXqcjk8JATPB836J7RVkbL85HOYcdtMW-5oNQVQOIYt_PJOQ>
+    <xmx:DbZTYki6nLrQipo1VDNW2L3z_FcNSivDbexyHZJUK3ss3XwtCRumyw>
+    <xmx:DbZTYvqcXu97qR6Z2PnI_R7A2EVgqrXG5_evXmUGtyEIXBqiDZ54nw>
+    <xmx:DbZTYnNEpB-jgaQez46rBiXST_MzTOwfkH2ksu0kQKyCLfI4V_pBcw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Apr 2022 00:40:02 -0400 (EDT)
+ 11 Apr 2022 01:01:00 -0400 (EDT)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH] dt-bindings: clock: Add compatible for D1 DE2 clocks
-Date:   Sun, 10 Apr 2022 23:40:01 -0500
-Message-Id: <20220411044002.37579-1-samuel@sholland.org>
+Subject: [PATCH] clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical
+Date:   Mon, 11 Apr 2022 00:00:59 -0500
+Message-Id: <20220411050100.40964-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -80,30 +79,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allwinner D1 contains a display engine 2.0. Its clock controller
-matches the layout of the H5 DE2 clocks (2 mixers, no rotation engine,
-and separate resets), so use that compatible as a fallback.
+Because some newer hardware variants have multiple possible parents for
+the RTC's timekeeping clock, this driver models it as a "rtc-32k" clock.
+However, it does not add any consumer for this clock. This causes the
+common clock framework to disable it, preventing RTC time access.
 
+Since the RTC's timekeeping clock should always be enabled, regardless
+of which drivers are loaded, let's mark this clock as critical instead
+of adding a consumer in the RTC driver.
+
+Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
 
- .../bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml           | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-index e79eeac5f086..17caf78f0ccf 100644
---- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-@@ -28,6 +28,9 @@ properties:
-       - items:
-           - const: allwinner,sun8i-r40-de2-clk
-           - const: allwinner,sun8i-h3-de2-clk
-+      - items:
-+          - const: allwinner,sun20i-d1-de2-clk
-+          - const: allwinner,sun50i-h5-de2-clk
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+index 8a10bade7e0d..3d9c9ce5a3db 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+@@ -241,6 +241,7 @@ static struct clk_init_data rtc_32k_init_data = {
+ 	.ops		= &ccu_mux_ops,
+ 	.parent_hws	= rtc_32k_parents,
+ 	.num_parents	= ARRAY_SIZE(rtc_32k_parents), /* updated during probe */
++	.flags		= CLK_IS_CRITICAL,
+ };
  
-   reg:
-     maxItems: 1
+ static struct ccu_mux rtc_32k_clk = {
 -- 
 2.35.1
 
