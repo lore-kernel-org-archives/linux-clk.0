@@ -2,95 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E362C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 15:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1749AC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 15:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241470AbiDKPZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 11:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46274 "EHLO
+        id S1347911AbiDKP22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 11:28:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347871AbiDKPZG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 11:25:06 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291593BF82;
-        Mon, 11 Apr 2022 08:22:51 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id bk12so10882473qkb.7;
-        Mon, 11 Apr 2022 08:22:51 -0700 (PDT)
+        with ESMTP id S1348375AbiDKP2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 11:28:01 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2F318E32;
+        Mon, 11 Apr 2022 08:25:01 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id u17-20020a05600c211100b0038eaf4cdaaeso3691187wml.1;
+        Mon, 11 Apr 2022 08:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RzsEqdN9GWBZCp9gbidm1vb5G8aw4lFe2X8gpnY6F9U=;
+        b=JQrYEIFBxiKgk+B/U4eSm8qQmxNxlhQQJSFEVnH4IiJtIEp3Iyxq5LhWBdVbC9LXNE
+         fjx+B0j5+rGkH6hhrv3Vhu2BCOPj7AWkXgjJ8+uaYU2cbY/BVn09qPoZtz4r7WmtCgRc
+         6jAhjsJke1LITOa0Vfldz77wZj1VlbRfWgN7pe8I6kxAzvSOYjNJJc4Nw7MG9YNr4aUG
+         SGm8GZ0/H9xwhSw4bjPRJ9LCkvogFt2nujW+EA73cCJFafK8gHwzuZw+mRbDJ1aVEqlI
+         0njk9NS0L8d1rnRwHRpEArL4g96GYrOCP53MSQAnvE3aRkjnwc2JjwMeLuM8fqhl4EFJ
+         Kb9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lku+hoHFzt1e28Ahk8UaGKlfUPzqGYonqFhWJ98wq7g=;
-        b=q9YbdKAiqR/XTl7eW7yU7a41tsT4j2VSefLRDxK62445GPhgpZgKifcQwUVJgojpx/
-         YSHZQvPkxHGr0N3qVB9I+7jbys5gUJ0MsWx5CABRCEfSIMzlRe5AKZ1Ws2Ax8dM5EVdU
-         cKmJEy+pGV79sEN9ffDXs3PtiBfisNDqh4y7k1oMdRpRq+qANp5kfGJLMyvna2aYvHl+
-         J5PotLDYU+m/6CnAzVtC1rMhCKtldX6QwM4MzcnfHEJfftGNtbrlOzGGhzcR+hIYpZId
-         vEsp6OwtByzIJ0mof+OXVwUTMqJuJG50PMDhHMgiYOm5KGbFEkKqZ19NlMidcT9+aVTY
-         dhdg==
-X-Gm-Message-State: AOAM533bhOQ1YYxWtzbNsdaepwQWIEdvjciFIpQOmGxoLA4QGWaqRb//
-        SoSDv028H/O3scSVtowRHtU/GhFJvnCKkg==
-X-Google-Smtp-Source: ABdhPJwWX3jRX6WeAgI6DT2YEK/BcXC0KeDlUdI2hg0VMxJZkToU49DQOVAyYQGhTMxMUNi0WbPqRw==
-X-Received: by 2002:a05:620a:44d3:b0:680:9eb3:e7ad with SMTP id y19-20020a05620a44d300b006809eb3e7admr21753851qkp.376.1649690569408;
-        Mon, 11 Apr 2022 08:22:49 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id c10-20020ac87dca000000b002e1db1b7b10sm25337271qte.25.2022.04.11.08.22.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Apr 2022 08:22:49 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-2ebf3746f87so74612727b3.6;
-        Mon, 11 Apr 2022 08:22:48 -0700 (PDT)
-X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
- v133-20020a81618b000000b002dbd9528a39mr26340123ywb.132.1649690568687; Mon, 11
- Apr 2022 08:22:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com> <20220405184716.1578385-7-miquel.raynal@bootlin.com>
-In-Reply-To: <20220405184716.1578385-7-miquel.raynal@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Apr 2022 17:22:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVQFXYKBiqN0eZTVH4VCf6WuVLWezWj4CCzhkYkt2WMeA@mail.gmail.com>
-Message-ID: <CAMuHMdVQFXYKBiqN0eZTVH4VCf6WuVLWezWj4CCzhkYkt2WMeA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] MAINTAINERS: Add myself as maintainer of the RZN1 RTC driver
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RzsEqdN9GWBZCp9gbidm1vb5G8aw4lFe2X8gpnY6F9U=;
+        b=owLh2HgLeV2mOLeM+m3QoIE+10TxU9l8YDJL6P+5Of4Mqyusetg4rjkuUD3STENhNI
+         9dLu5XpxeweZ2UmQ6k3aMeCo35HDaqGh2fQBo7GEffyG87bx58w363k+Qbi/MMozCbih
+         4U3QsGXHkWamBFOR8gxTXtap+r9QMqJ6C52LCKV5K6lZxhDbsS1HoloiEvhcLOM+QdkG
+         JW4LSjo9nOHtTaWiHFTjqSwtUMSq6IkBmJl1HKO9gOkv7M3nfETNHIrSD/UT02Qm5/Pe
+         r+WLFm9rGDtGGxd2UG8sfwW+395CZLred9PRaYyeCECohxE/p783eOxlOFKI4VwB4MfC
+         xpRQ==
+X-Gm-Message-State: AOAM532mQJXb5017l400UucUUVxr6LkoK6tXYje2uZyt9bisb5L90FDV
+        FBOt0v2qLF9zx2TeDAm9Gs8=
+X-Google-Smtp-Source: ABdhPJwEBfXcqXbo6nKoX7IGK2b48hhx00NtVYuq45Z9JeLIYxRw6WPyZdqv7NpnPbruES0SS+KWOQ==
+X-Received: by 2002:a1c:f607:0:b0:381:1db:d767 with SMTP id w7-20020a1cf607000000b0038101dbd767mr28969100wmc.165.1649690700192;
+        Mon, 11 Apr 2022 08:25:00 -0700 (PDT)
+Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
+        by smtp.gmail.com with ESMTPSA id a7-20020adffb87000000b00207982c7f4dsm9126970wrr.67.2022.04.11.08.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Apr 2022 08:24:59 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Samuel Holland <samuel@sholland.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical
+Date:   Mon, 11 Apr 2022 17:24:58 +0200
+Message-ID: <2233461.ElGaqSPkdT@kista>
+In-Reply-To: <20220411050100.40964-1-samuel@sholland.org>
+References: <20220411050100.40964-1-samuel@sholland.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 8:47 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> After contributing it, I'll volunteer to maintain it.
+Dne ponedeljek, 11. april 2022 ob 07:00:59 CEST je Samuel Holland napisal(a):
+> Because some newer hardware variants have multiple possible parents for
+> the RTC's timekeeping clock, this driver models it as a "rtc-32k" clock.
+> However, it does not add any consumer for this clock. This causes the
+> common clock framework to disable it, preventing RTC time access.
+> 
+> Since the RTC's timekeeping clock should always be enabled, regardless
+> of which drivers are loaded, let's mark this clock as critical instead
+> of adding a consumer in the RTC driver.
+> 
+> Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Thanks a lot!
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Best regards,
+Jernej
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> 
+>  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-
+sun6i-rtc.c
+> index 8a10bade7e0d..3d9c9ce5a3db 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> @@ -241,6 +241,7 @@ static struct clk_init_data rtc_32k_init_data = {
+>  	.ops		= &ccu_mux_ops,
+>  	.parent_hws	= rtc_32k_parents,
+>  	.num_parents	= ARRAY_SIZE(rtc_32k_parents), /* updated 
+during probe */
+> +	.flags		= CLK_IS_CRITICAL,
+>  };
+>  
+>  static struct ccu_mux rtc_32k_clk = {
+> -- 
+> 2.35.1
+> 
+> 
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
