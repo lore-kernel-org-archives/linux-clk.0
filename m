@@ -2,112 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E743CC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 08:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6E8C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 09:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244137AbiDKJAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 05:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
+        id S232573AbiDKJCu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 05:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236336AbiDKJAM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:00:12 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D33A93EBAF;
-        Mon, 11 Apr 2022 01:57:58 -0700 (PDT)
-Received: by mail-qk1-f178.google.com with SMTP id b189so10081192qkf.11;
-        Mon, 11 Apr 2022 01:57:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UYOd5uPKUg9Pu/5HEV4rtkFPoYqAMXA0OJu/OmCqEfk=;
-        b=bwMGZXsX8lA8V8CGXrGboQjCllbR2mJDpIZdnBK9cxHUcbPtcLyNpH6gaWP5YTWrHU
-         TwHcbS12nWi1b270C+x6UOmYGBhiL18OXOtGcStTyrhTgujIrf2/EpLqPtkxajy7L+TE
-         n71vdv7HI3Pj+Zf2oob7itTf95ULLEzueHLj+S5eGa0yLobW4e714/ozga2bm7Gbj59S
-         27QGcbvnaaBabJngcvzgAYqmNeFt33EuCKNM5aduW+gwibeTvvrRbEh+iIhZRy8urKDb
-         mrvQ1kfknsDrfMmZQ7ihknwBFpzhnFJlgC+ckWkC2LYmU7ALkJbHg8ForrQDfvn6XzT9
-         IcBQ==
-X-Gm-Message-State: AOAM530hPiMa+r55cnrNW/MFoicqRnHwfH8Ml10pusi/PlIjUWgB2Thf
-        cqvEQMLzpCO8YeilfVL0OcLG+2W2hFKaXg==
-X-Google-Smtp-Source: ABdhPJzXo0/WFy33PsVqImjZ+IZ4ZLZUAE7b/xyj9aH6PPYIMHY7N+Zn5vHfKUEoTgPQZY7NVUdqkQ==
-X-Received: by 2002:a37:67c5:0:b0:69b:ed21:e345 with SMTP id b188-20020a3767c5000000b0069bed21e345mr8493441qkc.732.1649667477740;
-        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id n10-20020a05622a040a00b002e315b9f08asm26257527qtx.35.2022.04.11.01.57.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ebf4b91212so58692877b3.8;
-        Mon, 11 Apr 2022 01:57:57 -0700 (PDT)
-X-Received: by 2002:a81:c703:0:b0:2d0:cc6b:3092 with SMTP id
- m3-20020a81c703000000b002d0cc6b3092mr24633663ywi.449.1649667477171; Mon, 11
- Apr 2022 01:57:57 -0700 (PDT)
+        with ESMTP id S1344102AbiDKJCi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 05:02:38 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C0E93ED1C;
+        Mon, 11 Apr 2022 02:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1649667625; x=1681203625;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=EWytXuYekgoEisOZ0234lmOJ3vcDaaP1r/uaU+xZy7s=;
+  b=0bsieISWGoCX9T70oluw8VoPohUBSWIO6wNVcSLNlaOVK5Vxqrh+TSAT
+   HNVHfnQw/6Afdq6oSjFdl51GmAr8lI6WN48qBm2G4cCwsOUwzAX1dFENV
+   AnR0zjnBRoiWvuN2UaEj0HQHL0C2JzxtUUZiRuQvd89erHNV9gwZ99Q3O
+   jsJt4idR91HU2W9pu++CjycsnpS+G43VqDOdye9vhKlcL3GVRXhQfESt0
+   /JDg8HS0tru7s/wLLgJnR6egJWR8QFTbpWpxc9Kz133uTO8s2RbpQ6hQI
+   Is0keRbtd+QcIwry+DRrdz0c/JZfvNI5WGidYgUwfw3f88aHx78Pgae1l
+   g==;
+X-IronPort-AV: E=Sophos;i="5.90,251,1643698800"; 
+   d="scan'208";a="152206716"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Apr 2022 02:00:24 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Mon, 11 Apr 2022 02:00:23 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Mon, 11 Apr 2022 02:00:19 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <aou@eecs.berkeley.edu>, <paul.walmsley@sifive.com>,
+        <palmer@rivosinc.com>, <a.zummo@towertech.it>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <krzk+dt@kernel.org>
+CC:     <daire.mcnamara@microchip.com>, <linux-rtc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>,
+        Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v2 2/9] clk: microchip: mpfs: mark CLK_ATHENA as critical
+Date:   Mon, 11 Apr 2022 09:59:10 +0100
+Message-ID: <20220411085916.941433-3-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220411085916.941433-1-conor.dooley@microchip.com>
+References: <20220411085916.941433-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
-References: <cover.1648546700.git.geert+renesas@glider.be> <3295013f27f1e4b8fbf3f79b950d65157ea95ef2.1648546700.git.geert+renesas@glider.be>
- <Yk6IqweUS/INEJiC@ninjato>
-In-Reply-To: <Yk6IqweUS/INEJiC@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Apr 2022 10:57:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWb3HJqE6EXtqoDOCzPohpmNrbGJ42OBZ0LrHkOFZq5og@mail.gmail.com>
-Message-ID: <CAMuHMdWb3HJqE6EXtqoDOCzPohpmNrbGJ42OBZ0LrHkOFZq5og@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r8a77990: Add RPC clocks
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
+CLK_ATHENA is another fabric interconnect and should be marked as critical
+as with FIC0-3, since disabling it will cause part of the fabric to go
+into reset.
 
-On Thu, Apr 7, 2022 at 8:46 AM Wolfram Sang <wsa@kernel.org> wrote:
-> On Tue, Mar 29, 2022 at 11:44:25AM +0200, Geert Uytterhoeven wrote:
-> > Describe the various clocks used by the SPI Multi I/O Bus Controller
-> > (RPC-IF) on the R-Car E3 SoC: RPCSRC internal clock, RPC{,D2} clocks
-> > derived from it, and RPC-IF module clock.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
+Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/clk-mpfs.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Thanks!
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 7485a5eeb5c0..a361b8743a32 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -249,8 +249,10 @@ static const struct clk_ops mpfs_periph_clk_ops = {
+  *   trap handler
+  * - CLK_MMUART0: reserved by the hss
+  * - CLK_DDRC: provides clock to the ddr subsystem
+- * - CLK_FICx: these provide clocks for sections of the fpga fabric, disabling them would
+- *   cause the fabric to go into reset
++ * - CLK_FICx: these provide the processor side clocks to the "FIC" (Fabric InterConnect)
++ *   clock domain crossers which provide the interface to the FPGA fabric. Disabling them
++ *   causes the FPGA fabric to go into reset.
++ * - CLK_ATHENA: The athena clock is FIC4, which is reserved for the Athena TeraFire.
+  */
+ 
+ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
+@@ -281,7 +283,7 @@ static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
+ 	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AXI), 25, CLK_IS_CRITICAL),
+ 	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AXI), 26, CLK_IS_CRITICAL),
+ 	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AXI), 27, CLK_IS_CRITICAL),
+-	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AXI), 28, 0),
++	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AXI), 28, CLK_IS_CRITICAL),
+ 	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
+ };
+ 
+-- 
+2.35.1
 
-> One minor question, though:
->
-> > +     DEF_FIXED_RPCSRC_E3(".rpcsrc", CLK_RPCSRC, CLK_PLL0, CLK_PLL1),
-> > +
-> >       DEF_DIV6_RO(".r",      CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
-> >
-> >       DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
-> > @@ -107,6 +110,11 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
-> >       DEF_GEN3_SD("sd1",     R8A77990_CLK_SD1,   R8A77990_CLK_SD1H, 0x0078),
-> >       DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   R8A77990_CLK_SD3H, 0x026c),
-> >
-> > +     DEF_BASE("rpc",         R8A77990_CLK_RPC, CLK_TYPE_GEN3_RPC,
-> > +              CLK_RPCSRC),
-> > +     DEF_BASE("rpcd2",       R8A77990_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
-> > +              R8A77990_CLK_RPC),
-> > +
->
-> Any reason the RPC clocks are not grouped together? All other SoCs I
-
-Yes :-)
-The "rpc" and "rpcd2" clocks are not internal clocks, so they do not belong
-under "/* Internal Core Clocks */", but under "/* Core Clock Outputs */"...
-
-> checked have that.
-
-... Hence soon I'll send out a patch to fix that...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
