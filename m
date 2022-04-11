@@ -2,90 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170F7C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 18:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40FCC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Apr 2022 19:08:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349116AbiDKSd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 14:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
+        id S237444AbiDKTK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Apr 2022 15:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348874AbiDKSd7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 14:33:59 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3312B132;
-        Mon, 11 Apr 2022 11:31:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 8FA24CE19E5;
-        Mon, 11 Apr 2022 18:31:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA17C385A4;
-        Mon, 11 Apr 2022 18:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649701900;
-        bh=gf6psStw1GAOWRBXxHx1fc7I0v5BTAOUapSwAlu8h6E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K3WOWpuNioT3TzpcMRDQSdZMJ5c92D+8/VFQX71ML0cqHb+Lj1kBRD3KD4+nqHCPQ
-         c+1loD+UqTB+kja9pII1I8ZzSNkX0wxpD4dyIEea+v6GE/x5LpcCmCHRgGOCvtRjr5
-         9mMxRwZqqP2Vv/42h7FPph8psR8ac8/s72WKU6bqm4cjFaoVME0/JBfg1nB3kHV7vD
-         wa5tnh92Lcb/3l74vOLWDvaTObOvbirRK5LXIhOgc3Gus92zgDYCDDwsSnV/3g76GM
-         +MeOPRiETT89wYw0r6MGtuN0EzdcU63tY89Fn3olX7jVdwUzWYDx82XpUY99kjqtjo
-         yrtD52cD+VM6A==
-Date:   Tue, 12 Apr 2022 00:01:35 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: add sc8280xp GCC driver
-Message-ID: <YlR0B8N443IQZFEN@matsya>
-References: <20220408224321.627126-1-bjorn.andersson@linaro.org>
- <20220408224321.627126-2-bjorn.andersson@linaro.org>
+        with ESMTP id S1349557AbiDKTKU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 15:10:20 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B0A3668E;
+        Mon, 11 Apr 2022 12:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1649704071; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vqJQvLBob9o2FSeSd5l4KE87w/nznL23PCavGWCmLcY=;
+        b=Tnw7mi0ee7C6wrqRmY65oHIMegDslwW6B7ivLNzIusGwCfYUDUWGcorfx2sz0Yf6QwusBE
+        ekLNxKMlDUoHWDf2PoPj9v77GYhrVkO5pDeRWrHmNj900U7aW3uBRYGDljyhBBQuxcADuN
+        PrKmHnA5BWYHaeZHDxPNs8UMPUupZfE=
+Date:   Mon, 11 Apr 2022 20:07:38 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v4 1/2] mips: dts: ingenic: Add TCU clock to x1000/x1830
+ tcu device node
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, tsbogend@alpha.franken.de,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Message-Id: <QSV6AR.PLRNTAMVY5PA3@crapouillou.net>
+In-Reply-To: <20220411154241.50834-2-aidanmacdonald.0x0@gmail.com>
+References: <20220411154241.50834-1-aidanmacdonald.0x0@gmail.com>
+        <20220411154241.50834-2-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220408224321.627126-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08-04-22, 15:43, Bjorn Andersson wrote:
+Hi,
 
-> +static struct clk_branch gcc_aggre_ufs_card_axi_hw_ctl_clk = {
-> +	.halt_reg = 0x750cc,
-> +	.halt_check = BRANCH_HALT_VOTED,
-> +	.hwcg_reg = 0x750cc,
-> +	.hwcg_bit = 1,
-> +	.clkr = {
-> +		.enable_reg = 0x750cc,
-> +		.enable_mask = BIT(1),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_aggre_ufs_card_axi_hw_ctl_clk",
-> +			.parent_hws = (const struct clk_hw*[]){
-> +				&gcc_ufs_card_axi_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops, /* XXX: clk_branch2_hw_ctl_ops */
+Le lun., avril 11 2022 at 16:42:40 +0100, Aidan MacDonald=20
+<aidanmacdonald.0x0@gmail.com> a =E9crit :
+> This clock is a gate for the TCU hardware block on these SoCs, but
+> it wasn't included in the device tree since the ingenic-tcu driver
+> erroneously did not request it.
+>=20
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 
-I think comment should be removed (couple of them here)
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
-> +static struct clk_branch gcc_gpu_memnoc_gfx_clk = {
-> +	.halt_reg = 0x71010,
-> +	.halt_check = BRANCH_HALT_VOTED,
-> +	.hwcg_reg = 0x71010,
-> +	.hwcg_bit = 1,
-> +	.clkr = {
-> +		.enable_reg = 0x71010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_gpu_memnoc_gfx_clk",
-> +//			.flags = CLK_DONT_HOLD_STATE,
+Cheers,
+-Paul
 
-This need to be removed/updated
+> ---
+>  arch/mips/boot/dts/ingenic/x1000.dtsi | 5 +++--
+>  arch/mips/boot/dts/ingenic/x1830.dtsi | 5 +++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi=20
+> b/arch/mips/boot/dts/ingenic/x1000.dtsi
+> index 8bd27edef216..c69df8eb158e 100644
+> --- a/arch/mips/boot/dts/ingenic/x1000.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+> @@ -111,8 +111,9 @@ tcu: timer@10002000 {
+>=20
+>  		clocks =3D <&cgu X1000_CLK_RTCLK>,
+>  			 <&cgu X1000_CLK_EXCLK>,
+> -			 <&cgu X1000_CLK_PCLK>;
+> -		clock-names =3D "rtc", "ext", "pclk";
+> +			 <&cgu X1000_CLK_PCLK>,
+> +			 <&cgu X1000_CLK_TCU>;
+> +		clock-names =3D "rtc", "ext", "pclk", "tcu";
+>=20
+>  		interrupt-controller;
+>  		#interrupt-cells =3D <1>;
+> diff --git a/arch/mips/boot/dts/ingenic/x1830.dtsi=20
+> b/arch/mips/boot/dts/ingenic/x1830.dtsi
+> index 2595df8671c7..4408df24ca98 100644
+> --- a/arch/mips/boot/dts/ingenic/x1830.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/x1830.dtsi
+> @@ -104,8 +104,9 @@ tcu: timer@10002000 {
+>=20
+>  		clocks =3D <&cgu X1830_CLK_RTCLK>,
+>  			 <&cgu X1830_CLK_EXCLK>,
+> -			 <&cgu X1830_CLK_PCLK>;
+> -		clock-names =3D "rtc", "ext", "pclk";
+> +			 <&cgu X1830_CLK_PCLK>,
+> +			 <&cgu X1830_CLK_TCU>;
+> +		clock-names =3D "rtc", "ext", "pclk", "tcu";
+>=20
+>  		interrupt-controller;
+>  		#interrupt-cells =3D <1>;
+> --
+> 2.35.1
+>=20
 
--- 
-~Vinod
+
