@@ -2,142 +2,289 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0892C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 12:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5136BC4321E
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 12:03:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349516AbiDLMFv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 08:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39716 "EHLO
+        id S1349702AbiDLMFx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 08:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352911AbiDLMDo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 08:03:44 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2062.outbound.protection.outlook.com [40.107.20.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B779B6;
-        Tue, 12 Apr 2022 04:01:31 -0700 (PDT)
+        with ESMTP id S1353035AbiDLMDq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 08:03:46 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1AE2721;
+        Tue, 12 Apr 2022 04:04:07 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23C8l1tP028053;
+        Tue, 12 Apr 2022 10:57:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : in-reply-to : mime-version;
+ s=corp-2021-07-09; bh=y5dG09weU4oZVbgKlUL5cBXNFP0fOjlHttvgMCgOZiI=;
+ b=RSnHZk+RtyTdwvQKukCPLyRo4tktlq0F6R5WTFicIuzP3BtauSMMnOT43tClCvVzWtIt
+ Lb5Bs9m2U+pgXQ0uc5jMzAvPHa/9ut+hrdeW1uD8W1Q3rFsUbU/KLkehRdiKNlLPWbNQ
+ BEKIfP/So7ZRKA2NQcxw8pwINSAaKexXYmJTEDiwMJfswzItVzBI/R3ZObs+qwDPuE2M
+ lZjv7OCew4+kGZa6MNNLBnQK+XqNujgOd1IYa0mpcJqPUd89rJPtA7hPRgNc4Mf/4k1P
+ hn9tMxINdCdBPNP/4rXtif6gQaHhpdkex1SHbnvDDq/vGZObToaFFH0qCKei/vOzJaqy 3g== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3fb219x6aq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Apr 2022 10:57:52 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23CApKqn011000;
+        Tue, 12 Apr 2022 10:57:51 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3fb0k32dv4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Apr 2022 10:57:51 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WmDPkc0ro6Ey/nAhl7mrDEZSxUT1iYVGIhLh8+s4qBB3igDz0fs10sHRElYMyJX3bIge32N7puXF2v17rOZ456Y1ude1iPvtSlP3tTYJy1BNd2R+sCejCTlZZ0QsDCCS1wSk8usNXk4qWYiH5B9mqcmS4LLzNF8ADoC+Gd2CwiSrMMvA5d1q3aqdaf0VcsLt23uwTLdMIBQZlooX9sNWgU++dH3cS97R2v5be+q5mH/FdpjZNNxyUD+H3nimugXeQKWlYLCMPt3A1VXQngsWcjmWbrzHriTJi1Noa3hxUTfQo6ifYOg3YjHUXMPRKwDPyMPHV70ZJs6Q8Jq5lwgTvA==
+ b=I3EGwGVKtjlsteaExbtuIguxkSYbtCLFxQ4N8z2kAQpsDRPp7GzSz1pjAvEr29JAo1hMperi/Hs4Da2PTfFSorYVJjtUZrARZeI+m044XiaCt09Wlcv7TUfAUg7XT6DX2U+EazPWzlC86Ng/ugPUWF+k+h9netrfEIDgX8oiF1WQjuuJa19+eSXLGN6WZuqFun2xbzFwU+nuOM22MN7GWE80BPdOHcFtx2TIR7MWZw4kOCN8rAK2jSsUGuKAWijnF00bIZbTm05ZUjwTpwyKCJWShMGupy6DApVPBRGcsn6j23FLYiP+QRI3WCDEB7yuFcPx+ZwfR6bL2ly4eX+ppA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ApBmchM206ziv6PHdYyademKDkFTVG9QuECmRAu0GVs=;
- b=JgJ4nHs69j0ZJtJ+b5C7OBW6v1Ct4SP22FEpqWpMh9MwX3vIaTnN25Futw0nqQEJp218B4LW7Z50Ku3taVxSpI7PuXwe9BPLF+t6iWJVj/1RpAipQhmUBCYd2k7dBMsf4ycyUCsHqkuztg/DcB1mWsER45Hop+2HXpsgrBmRHf+3vIcXDVac3tQgp5CjAzXf/PYj0GZoMgV2unpxubSswNa9lRvMWqjKcqYC1m1r0UfgnsbOUYTIXhaQAKFoTZ+Q+E+ztFxWLsgL2F7uJo45PNK9mBOMq4NxXbKoVnYiD3UsyiqcLSnCpCQ7AIJdXsMWX1pQ2Y7BgS1jVjkMibEREA==
+ bh=y5dG09weU4oZVbgKlUL5cBXNFP0fOjlHttvgMCgOZiI=;
+ b=Bwa1whJ1NFIdru2lbb/WUYM5BXtMN18VvobUqfDjahCG3JCXoVPcmAtDZjlX9FmiUtTxi/4gqc1FpCPLR1TEyQRePdhBBbVS8/k4NmtJ7d4dHPLjd/9IpdQ9ZdB8rqQ1NrW5/L09RSdgMXCI8zI2QomyEEfMgtD9GdrHcJiJwN6qaGZpRi86ne+mhv6/M5uYf4aSef9RBDYjHiycP736AOZs7oaduJJatNw8CULaP7Osaax6yICX15s1vmAR6uMQ0KK5MRsNlQNIjKdWwl+e3EADOwEOl+ocAu8Cl/NdNoH2sOjwuGHLoFo1u3XxE3e3adJLwjUKFE2IADVmzJkYNA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ApBmchM206ziv6PHdYyademKDkFTVG9QuECmRAu0GVs=;
- b=VpbEV2/3AkSNzFMcfwpxbrZVIKqJaYP5GwhgqTNXAxN00gDOf3dw+XvKWcj8KKd4R8nS2wPUJHy+DjAHRIFfZGeXv4MKjfkOlXVM7Yz4WO/kKsQ4gH9q4pl0p5Vc7cTzJ/Fi1lzmaA95JuJU/j1FPaLTlj+MoM/J6zL+itGGpvs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by DB6PR0401MB2567.eurprd04.prod.outlook.com (2603:10a6:4:3b::11) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=y5dG09weU4oZVbgKlUL5cBXNFP0fOjlHttvgMCgOZiI=;
+ b=dd41DOt4sPKjDpg/Oi+PGHmXnPQ4aBRZxDxWnPMRuTj3sZn55LoZEwGMFSxi/YR81KlLsmrgZunQtd9CmhRF959lcKgKGYLRBkbq2PiKIaZ/9mJz3W60LDCsAXe4TR2Z4ghjfIJfqmnNGYIoXEUGT9GYPd6IU244lRFHFuaFYHE=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by DM5PR1001MB2139.namprd10.prod.outlook.com
+ (2603:10b6:4:2c::33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Tue, 12 Apr
- 2022 11:01:28 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f%6]) with mapi id 15.20.5144.029; Tue, 12 Apr 2022
- 11:01:28 +0000
-Date:   Tue, 12 Apr 2022 14:01:26 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: Add check for kcalloc
-Message-ID: <YlVcBviIvBBId9WV@abelvesa>
-References: <20220310080257.1988412-1-jiasheng@iscas.ac.cn>
+ 2022 10:57:49 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::b5d5:7b39:ca2d:1b87%5]) with mapi id 15.20.5144.022; Tue, 12 Apr 2022
+ 10:57:49 +0000
+Date:   Tue, 12 Apr 2022 13:57:22 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org,
+        Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
+        paul@crapouillou.net, robh+dt@kernel.org, krzk+dt@kernel.org,
+        tsbogend@alpha.franken.de, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     lkp@intel.com, kbuild-all@lists.01.org, linux-mips@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
+ SoCs
+Message-ID: <202204121856.LxK9kEyg-lkp@intel.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220310080257.1988412-1-jiasheng@iscas.ac.cn>
-X-ClientProxiedBy: VI1PR04CA0116.eurprd04.prod.outlook.com
- (2603:10a6:803:f0::14) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
+In-Reply-To: <20220411154241.50834-3-aidanmacdonald.0x0@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0035.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4d::19)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e50d1fb0-b6fe-40d8-ef03-08da1c73cb64
-X-MS-TrafficTypeDiagnostic: DB6PR0401MB2567:EE_
-X-Microsoft-Antispam-PRVS: <DB6PR0401MB2567213DF0D6B5FD360B591AF6ED9@DB6PR0401MB2567.eurprd04.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 242117c6-1e2a-4c25-4289-08da1c7348a7
+X-MS-TrafficTypeDiagnostic: DM5PR1001MB2139:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR1001MB21394892381FD7184CB61E6D8EED9@DM5PR1001MB2139.namprd10.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Dm1PddQsj2UZnyc3Ra+4j2UVqRDhDXMKMPaw2WW2k6MREn2REoEPmx6gIYGuFqxlCR/0lEh2QB8YxJOO46q5xVoHjFf+QDudW81wgpZTdKLdhnUI/ELR0Q2FoWqLtZ5PLdru1ZYbxa8fL347p+vdzaYNYJflza+cupeTv75YylVrJIX98MKoCbj50DBp7AO4hhfshUpxvR8/tsIskYlU1L5/T/NKaTs9dKVnun+Hes7nA12eblxs1Ihd3MT3NeuTi3uSe17n0f5xvhZMKzDb4v766ovgz0MqWrk/Q4t1zR7caSpJSl9h71fRA0izKsuYvu+x8mC9K5wTlXs9fwlbORj6v/oBR/geVIAWzG3zpJ2G8ZQvWhTMQZ0rx3qiZ71pqIQA/A7jJxUpq7slEhm3VJR1Lbr7yrg08piHhQImtO8pLokZz2Dz2dBnGKWSKb/IMEygQqH5mrTaxRKagrTnn5ULSPmBbxICdx2bIn50ISObDVMM1fJS/KhkF17iVNV20wVFOuh2oVrwK/rL/ab6CEFb1xz9YWGJSicy/sZLl7g8+pUr79Hc2jWT3xceQoevjWTEVEVGQbQjxoiwqjSxN6Ma11e3OEg5+az0ZlqSXOydBd7d+ed2os8sApZTk7mZ8jMuENG6t62tFFwLw8h746870LFXvS3vsOCn7dKeaef5oVn4TJr2h0V4k5TWmG6EsXt2NGYOpo029ulcwQpIHg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(4326008)(508600001)(8676002)(6916009)(5660300002)(7416002)(186003)(2906002)(83380400001)(6486002)(316002)(8936002)(86362001)(26005)(6506007)(52116002)(53546011)(66476007)(9686003)(66556008)(33716001)(44832011)(38350700002)(38100700002)(6512007)(66946007)(4744005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 2OpnJiC8dtNT2L2KT2r5/3JR/JmoCzkQIpyrrjb5Xg2hhY7j9TLcHwCZ6JFLitISzRbnZ3lBAXnwPq/vlKmRC/wmQJd8rVpl3y2jPyiILFqHrzdeATpswWw26aZtS5+lHoOJs4m+XYBJAaqxdy3D7Pk5o0Z5hTTFPFvv8O9+QVkw5saKaKEDNQd6r+v73ZIxFqljbMON5tM1NoQFEpkU9BVAPxTweF43ODhOd3+hQuv6oz5yMHSzIRkI+w4Xusjkw/SVr4yX79mQw8jp85kZ8FIPpevnNNmschBxgPSvMSXHM4YeIMuN5dax1uVrL0aBlAQGSOJbQBg7WqxfiKaTg5L9WFmNgMu0c0dVlO09EmF1cPkPBHDbWStgMlJ658W6pCpEbJX8RrFaQ23PkAiFj5BCBfsKJVvHSN0f+KnFm8GYX0iQDGg6hBWvocaj3gc2o0cTz0FfW44kQlKBhtkuZHh7uuqVX19vgH09fdBa7NsCNk6IAGmeb0B2SHk/TItK4RkwpH4+tDxrNDDFmmOLFwSq4E4sYOmaDNCzBoGQPHTod/QKi0kNREPaSNrqyW2vzegcZVI4gudzzIpJ3VdSNPVcx/vLeXScVtYl/e2X7u7fJzsq0MoFe68SKlQ+NFfJx4LUY/x0zFS8bH2tAVdjz9MhL4XU47d9Wm5WhAru2zTnv6aVqZa/KSdv6oPJ/e4QKvzq1ZJKGpUhYOIwkVRJuPUnc8eDDCM7/eOn82c3MokZtSJSATDvBDPFvsDzU70iuegR3v8Rit7SG6Q011d762OiOktfxWwt3xz7DIyu1TQ76bRJkCRbiLdmRCQcyk7Q
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(6029001)(366004)(316002)(83380400001)(38100700002)(9686003)(66556008)(1076003)(26005)(86362001)(66946007)(186003)(8676002)(4326008)(508600001)(66476007)(6512007)(966005)(38350700002)(6486002)(52116002)(6666004)(6506007)(2906002)(7416002)(8936002)(44832011)(5660300002)(36756003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?y8gsynWZwlOraSkBX3N6MtCwmtosgLo0nwJGtNP/HtzIKdTeyjaMuNy/MBtt?=
- =?us-ascii?Q?ZQgWtIdEC9GIiNfxNOVr8ZE128QhC4GcO7vwKtaMUljuSvc3ijBsQB+v1zUz?=
- =?us-ascii?Q?XgXzoMdpyn0Yj/Nj2ZGDHYsunWwU/qF12sQh0z31SweRPWSLW9DSSkrgZRI8?=
- =?us-ascii?Q?SepdpFKaXqL4ZuJ5ag32VT27ZMIt75HMLQ4t21uHrHEaxR0BIjnj/fevcT0G?=
- =?us-ascii?Q?92Nh9aolCypeg4dRZxRD8Ul4p9aoLNxrJKeDIaPNJ9cHur863m069urj0Xwo?=
- =?us-ascii?Q?apGRmCLRzIawfDYU/7tOfMs+KC9xoCOO5EPtxNCfJ9Bf/EXmm7VJGQFZVBK1?=
- =?us-ascii?Q?rTef4Hpg1t7AxKQbWWFJQmSh0sJT1emKq/0N+88dzl8jQRN/9Uvyfj5ZAJVO?=
- =?us-ascii?Q?aHCG0B8/x5zucuyLfEqRJ4orl+Ua+vBGuh+OxDJmVkh1McG9553Aep8B1dQ9?=
- =?us-ascii?Q?r34PC6fYFrT4hKRAP3f2FUeM/PA2RJjVwxRVBxhx3Giq7OSxOb1Aa+UTYo7C?=
- =?us-ascii?Q?tw5QGnskEEcyykHAfBtkWQw4pJ38ly/7zLVMK3eMIfKShq+DC4VjeFkOFlcU?=
- =?us-ascii?Q?VwuaTZY5Ku3+9JkUABk+SdRWRb2WevcB+ymmq3+eFxEanmSysfqzpKqec0QL?=
- =?us-ascii?Q?YnpLVBGKcGlI57l80p5X5C1MGE75z/x5buioXj53l7+kB2PvXLXGErT4T0on?=
- =?us-ascii?Q?lFQ1qIb9qe8cYIK4I5pACXJqT2HxHKuOV2f0Z14/oQie+Q4EyAaiofGQ/zol?=
- =?us-ascii?Q?uGtQ1ySTu6YMTsrnWZKE/ErhVdCRmDN7DNwmhDQPidnComMcxHNHyaiU5Grj?=
- =?us-ascii?Q?rE1rpiifmjonHMM2qqUJGT1b79a5ObrQhkiep9ItRYGqTjumc+vKQhgYaSEV?=
- =?us-ascii?Q?XyBLWpIx0xWa9dRrlA950tneet+MvAG60zVj36Nf5JgCqd+Qwy8NV+vZtgTA?=
- =?us-ascii?Q?IAjN96p2MsYwPor9oNt4u3HDJuIMlfe+TsMWLZQ+hoJil6vO/rSV+kSDdXIs?=
- =?us-ascii?Q?qRMBjZveHHfUkw+NBjdvm8O+iXwShHBte7nvdbJssLNQHF8QB/7sFNCFbvQR?=
- =?us-ascii?Q?JPgEToGYkCcrLejwjMLNjXEhK1R9PYuWMAxDBf46dgecQMAq4TEBY0ymviYg?=
- =?us-ascii?Q?bKRPO1OAbKifa9Ysxb8vZmrIZEK6RG3ihByYKClGlR3/WwFVItIAj9Uv3YJm?=
- =?us-ascii?Q?YbN23aPAdUMNI5yFRdkf3vj6MmpWHyyiB9JvLnWPL2QqhAgqg0JAR6CCk/P+?=
- =?us-ascii?Q?JqX/3XO3/Qw7L/RbC5g332jYPa/EYwIoJ7kAyP4Z3+ge9Im+Uf9b0Rzam0Yy?=
- =?us-ascii?Q?E4Hvyp76laUzMBdzY/SaNtJrH7mT6Ret/w1o/5QRtw2MvjHHcVM4aIVcOyIH?=
- =?us-ascii?Q?b9Ou7iVZ6PeVD3sUVsfnwfEqEOClwGYKXkCPtCTi/VVoapf0ewpwP9q1WCqe?=
- =?us-ascii?Q?BWiK+ZqtMylnSyiiaLrRKqnhBIJOx+Ay14CME/RhbZ+BBACc/nbB/eQ3CNfl?=
- =?us-ascii?Q?vZ61Ra3ieLwRuc7qfm2xQA5DjXg6Fz8f/moll8+9Z/9Fe9Spdwq/kfRM2p6D?=
- =?us-ascii?Q?FVQBPWffMsCgpyeJvaJkBNawUoA3OCdNRM6AnUWyvEBZGECm7EL9r0/M4//E?=
- =?us-ascii?Q?MNsnBDteV2Sl0ph3Fp+Z3g7a5GwC7jvgqfg9DSGr3UYnHUyOJ+wR39cx1kkw?=
- =?us-ascii?Q?nJVP2CbugmrMryj2dV6WP9MhaihoQTNKWhn5TKJpAHH5A35vRrpE+09Y7pfU?=
- =?us-ascii?Q?T1AM7EHFxA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e50d1fb0-b6fe-40d8-ef03-08da1c73cb64
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?53ece73Ue5NvGzcePgjbuvdQlA3tKwg31pL5MgZBksKE41309XumMhkYwl59?=
+ =?us-ascii?Q?rMbrSVm+kaiV5Z3bgo/OR0gMkdFewLNxnN/egJRNvFoipzJEZFFML62eNu8m?=
+ =?us-ascii?Q?t19n8S0uYC75NJ0iOjpJ78uZmcPRapbPp0Jdp3PjoE3i2cXkbl8r8TK6ah0D?=
+ =?us-ascii?Q?WZgA02V57mR6NBLu8b0PdFc18KghWI6yuyjRB5Ub3WrLPZYAfLte6PXXKYfr?=
+ =?us-ascii?Q?vC3SfDBY9l4gCcaY0mM9In2HbBP3g0vU6crklvzn7SgpceMbumGvPdffqOw4?=
+ =?us-ascii?Q?+b4J2otZc1HaXOaPgpLARus3dwDpUSc4IYgcuuv5iKPewXHELmAHJ6CF2dDn?=
+ =?us-ascii?Q?+8p8NJkpxD6pRcfaj8Xx6ATnNWqaWMc7hKVVUPQ/JXI6kA4go3swmTG7VDpQ?=
+ =?us-ascii?Q?a1aCprwv/XhfPgkjf3zE0Yy6mQhrNsZbwOrdxfXh7c7tPs12ZypdAZhv99Sj?=
+ =?us-ascii?Q?Al4UOiZZmvxtiLlzcleKnAwVJ0rQN+v2mgweQgluRUzphcFySVZNzZIOufQ7?=
+ =?us-ascii?Q?2ZmjSPISXPUOyJsbV1K7aEPrguf1lBQpxo09+uk6TmvnCpK7E4IoW4wCHRDW?=
+ =?us-ascii?Q?xzvElyZkU7u4+O/5nXEWXCdtEqbuuytIcKYenqMJBMtqpyBpFgjYgHfL5OYv?=
+ =?us-ascii?Q?vApFlGch8S147jeujsFgBqtNJZ9Dp+cmt3G8+mJ2LSuVyupCFRh9iFHoUTeV?=
+ =?us-ascii?Q?na7Nv/UxgDYTpmshcwmvBVYBEBPSP6N5vYs7lar66oXTn8nbQNaSYmZtinSy?=
+ =?us-ascii?Q?ZL+svLcm7do85KIhc/3IYTTgwQEk8NajF+ZqVrsUO3KhoW+jwyGgX+xY0Pi1?=
+ =?us-ascii?Q?bvMAadpvXaGY2PpkyvFMOaHjQty7yIXP6WpO5pvPTRjfX3lvBWnONeRT8MbU?=
+ =?us-ascii?Q?KMAggwLns6XohZTmchdrIciEl8uLzp/myuU3FqKpIVlrc0hkav844RmaqQgq?=
+ =?us-ascii?Q?h4Md7oi22bmTEJHWmVKy4xlMDQblzR/uoiVKwMozjlqzGUW39EFn4J76zwFu?=
+ =?us-ascii?Q?vgjEk5/B2OxE7E3bGylyL/Ja3/GS2pdqHK2aIcsQUpjv8Fqv9rKiYlJ1Am7R?=
+ =?us-ascii?Q?5W5S70DlXrOAUodC1e3FuLA360MWzP4l4P8ST8t3+q0e930TdA2+R1Za9U9Q?=
+ =?us-ascii?Q?2hMnQW696XK69GXQRnr6BCXG9KrPyZln0lYqMdhS1dAzmfIrufKHnb27MTLA?=
+ =?us-ascii?Q?/C3cQafAD8XOEdwicCL4/9JAuosWh/RjUhG24AtB7MLw6wWkG86mDP9gJLqm?=
+ =?us-ascii?Q?Lf+l8HK+FSLT5uw0SWTKBmW2dQB5W6+cZ179TwlWSl43mO3vmGmDmDIQYPhA?=
+ =?us-ascii?Q?xKUdxQCLDn2CI2SNT8fFqoSvMHjjZUqUZOMtptUGD54osQapYQ/TPtZ+8P8y?=
+ =?us-ascii?Q?LK+gTNB8oFFLP2doq8gsk8wxraM7ZhpeoBH2qxitkxEpKcSBAer+5u65SCiu?=
+ =?us-ascii?Q?cPlsV7ahXKG3FTwLTEGFbmmjixSFgrRGAZRxWVknvb7GePY6TAOASoCoDWW5?=
+ =?us-ascii?Q?onRIZMAX8f2dOW5YHalVrY8wrZLy+SDeqHAfOji/ZBQ9CsLOWaj9j7KHQJzX?=
+ =?us-ascii?Q?ymAEGCd0tZBvb2FXeI2Qb5lhKWTvAB2vNGiH9LSFs9SVzvfMRqwl1Omkj0cS?=
+ =?us-ascii?Q?grvef3biNkK+9tlxfU+KuzGh/rJeS46Lng6itFZT6pkuqg+6KaUrN8yAPi6t?=
+ =?us-ascii?Q?fXQwFnAkhj0EBM353oQEcbi4j1KsBEChiyH4dL45YNi9PGt1T1OPjyB4v4mX?=
+ =?us-ascii?Q?Wrq6cfTsRyfvtFCyiBwLB7oOVJXl0GM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 242117c6-1e2a-4c25-4289-08da1c7348a7
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2022 11:01:28.6959
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2022 10:57:49.5677
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IuNJ8kvEQv9KKRj94tKGGVNf72yUmA+WSGnM/75F7tH+bOt0A53RFUOlY6Emen3bGQkNGvDh87M+wtpWEYlauQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2567
+X-MS-Exchange-CrossTenant-UserPrincipalName: x65xCrLzeDiL5e0sp5PJo7jxjbwcCeirW4A8ckU0CTI3XQWJKsPGGS9PapEO7zZa642nWaS7V87NZ5XFSgx6e2BTJCsbJ8H/Pe86H4U6FOg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1001MB2139
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-04-12_03:2022-04-11,2022-04-12 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204120052
+X-Proofpoint-GUID: yb1h2rD4dv6I0O77_g4QJHhsInr2h_mb
+X-Proofpoint-ORIG-GUID: yb1h2rD4dv6I0O77_g4QJHhsInr2h_mb
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-03-10 16:02:57, Jiasheng Jiang wrote:
-> As the potential failure of the kcalloc(),
-> it should be better to check it in order to
-> avoid the dereference of the NULL pointer.
->
-> Fixes: 379c9a24cc23 ("clk: imx: Fix reparenting of UARTs not associated with stdout")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Hi Aidan,
 
-Applied, thanks!
+url:    https://github.com/intel-lab-lkp/linux/commits/Aidan-MacDonald/Fix-missing-TCU-clock-for-X1000-X1830-SoCs/20220411-234531
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arc-randconfig-m031-20220411 (https://download.01.org/0day-ci/archive/20220412/202204121856.LxK9kEyg-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 11.2.0
 
-> ---
->  drivers/clk/imx/clk.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index 7cc669934253..99249ab361d2 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -173,6 +173,8 @@ void imx_register_uart_clocks(unsigned int clk_count)
->  		int i;
->
->  		imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
-> +		if (!imx_uart_clocks)
-> +			return;
->
->  		if (!of_stdout)
->  			return;
-> --
-> 2.25.1
->
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+smatch warnings:
+drivers/clk/ingenic/tcu.c:456 ingenic_tcu_probe() error: uninitialized symbol 'ret'.
+
+vim +/ret +456 drivers/clk/ingenic/tcu.c
+
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  337  static int __init ingenic_tcu_probe(struct device_node *np)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  338  {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  339  	const struct of_device_id *id = of_match_node(ingenic_tcu_of_match, np);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  340  	struct ingenic_tcu *tcu;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  341  	struct regmap *map;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  342  	unsigned int i;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  343  	int ret;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  344  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  345  	map = device_node_to_regmap(np);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  346  	if (IS_ERR(map))
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  347  		return PTR_ERR(map);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  348  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  349  	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  350  	if (!tcu)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  351  		return -ENOMEM;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  352  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  353  	tcu->map = map;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  354  	tcu->soc_info = id->data;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  355  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  356  	if (tcu->soc_info->has_tcu_clk) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  357  		tcu->clk = of_clk_get_by_name(np, "tcu");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  358  		if (IS_ERR(tcu->clk)) {
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  359  			/*
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  360  			 * Old device trees for some SoCs did not include the
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  361  			 * TCU clock because this driver (incorrectly) didn't
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  362  			 * use it. In this case we complain loudly and attempt
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  363  			 * to continue without the clock, which might work if
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  364  			 * booting with workarounds like "clk_ignore_unused".
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  365  			 */
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  366  			if (tcu->soc_info->allow_missing_tcu_clk &&
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  367  			    PTR_ERR(tcu->clk) == -EINVAL) {
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  368  				pr_warn("TCU clock missing from device tree, please update your device tree\n");
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  369  				tcu->clk = NULL;
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  370  			} else {
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  371  				pr_crit("Cannot get TCU clock from device tree\n");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  372  				goto err_free_tcu;
+
+no error code.
+
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  373  			}
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  374  		} else {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  375  			ret = clk_prepare_enable(tcu->clk);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  376  			if (ret) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  377  				pr_crit("Unable to enable TCU clock\n");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  378  				goto err_put_clk;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  379  			}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  380  		}
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  381  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  382  
+e620a1e061c4738 Stephen Kitt    2019-09-27  383  	tcu->clocks = kzalloc(struct_size(tcu->clocks, hws, TCU_CLK_COUNT),
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  384  			      GFP_KERNEL);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  385  	if (!tcu->clocks) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  386  		ret = -ENOMEM;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  387  		goto err_clk_disable;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  388  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  389  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  390  	tcu->clocks->num = TCU_CLK_COUNT;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  391  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  392  	for (i = 0; i < tcu->soc_info->num_channels; i++) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  393  		ret = ingenic_tcu_register_clock(tcu, i, TCU_PARENT_EXT,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  394  						 &ingenic_tcu_clk_info[i],
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  395  						 tcu->clocks);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  396  		if (ret) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  397  			pr_crit("cannot register clock %d\n", i);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  398  			goto err_unregister_timer_clocks;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  399  		}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  400  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  401  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  402  	/*
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  403  	 * We set EXT as the default parent clock for all the TCU clocks
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  404  	 * except for the watchdog one, where we set the RTC clock as the
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  405  	 * parent. Since the EXT and PCLK are much faster than the RTC clock,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  406  	 * the watchdog would kick after a maximum time of 5s, and we might
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  407  	 * want a slower kicking time.
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  408  	 */
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  409  	ret = ingenic_tcu_register_clock(tcu, TCU_CLK_WDT, TCU_PARENT_RTC,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  410  					 &ingenic_tcu_watchdog_clk_info,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  411  					 tcu->clocks);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  412  	if (ret) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  413  		pr_crit("cannot register watchdog clock\n");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  414  		goto err_unregister_timer_clocks;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  415  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  416  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  417  	if (tcu->soc_info->has_ost) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  418  		ret = ingenic_tcu_register_clock(tcu, TCU_CLK_OST,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  419  						 TCU_PARENT_EXT,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  420  						 &ingenic_tcu_ost_clk_info,
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  421  						 tcu->clocks);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  422  		if (ret) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  423  			pr_crit("cannot register ost clock\n");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  424  			goto err_unregister_watchdog_clock;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  425  		}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  426  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  427  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  428  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, tcu->clocks);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  429  	if (ret) {
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  430  		pr_crit("cannot add OF clock provider\n");
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  431  		goto err_unregister_ost_clock;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  432  	}
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  433  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  434  	ingenic_tcu = tcu;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  435  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  436  	return 0;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  437  
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  438  err_unregister_ost_clock:
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  439  	if (tcu->soc_info->has_ost)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  440  		clk_hw_unregister(tcu->clocks->hws[i + 1]);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  441  err_unregister_watchdog_clock:
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  442  	clk_hw_unregister(tcu->clocks->hws[i]);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  443  err_unregister_timer_clocks:
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  444  	for (i = 0; i < tcu->clocks->num; i++)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  445  		if (tcu->clocks->hws[i])
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  446  			clk_hw_unregister(tcu->clocks->hws[i]);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  447  	kfree(tcu->clocks);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  448  err_clk_disable:
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  449  	if (tcu->clk)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  450  		clk_disable_unprepare(tcu->clk);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  451  err_put_clk:
+8c04eee82a9d67a Aidan MacDonald 2022-04-11  452  	if (tcu->clk)
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  453  		clk_put(tcu->clk);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  454  err_free_tcu:
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  455  	kfree(tcu);
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24 @456  	return ret;
+4f89e4b8f1215c1 Paul Cercueil   2019-07-24  457  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
+
