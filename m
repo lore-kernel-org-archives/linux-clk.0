@@ -2,40 +2,40 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEC1C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 11:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F284C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 11:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230444AbiDLLgr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:36:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40258 "EHLO
+        id S238567AbiDLLoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 07:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244584AbiDLLe1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 07:34:27 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A305675E40;
-        Tue, 12 Apr 2022 03:12:38 -0700 (PDT)
+        with ESMTP id S1347304AbiDLLlX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 07:41:23 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21CF7A9AD;
+        Tue, 12 Apr 2022 03:21:55 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9B51560005;
-        Tue, 12 Apr 2022 10:12:33 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 54015FF80B;
+        Tue, 12 Apr 2022 10:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649758357;
+        t=1649758914;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7W7OOcrrKTOVlol+0rT6FrGel11SznXB9OxT0OrvmLY=;
-        b=S2dApP1cK3k2G5XFtr78njfdto9xIO1n4H6AI1VnDvhqeLMLzlqyysr8YuJZBjltlubKXE
-        4pDruN07AolH2TsJxGRx5JM3O1puZ/wswQjWt9tWdjrRBikvKl5MpkkvXIldO4zuCOOi3l
-        +c/5p5DRpGxsB0U2wI7P7gqyDTssQO7xIHfN1xeChU/onWKYxlrAcwGAFvmmfh1629PDmg
-        3WeVSA3GIkqeLuZZT6ag91ezPm5Zqo4QOGbXOJ4XS2JDjQwb9/MYAKYDbjhDsGUwjIG3OR
-        eZw/ieqZ9RI5/2hiTJXMp+y4H2Sgw/Y7m6ZNBJ3kQ+HlpTaoSWXm6e36sP6cbA==
-Date:   Tue, 12 Apr 2022 12:12:32 +0200
+        bh=psSRZJhAOXsPUtZ0dZbzo0PztnR1Q8vauZShn+Y/BqQ=;
+        b=pWUSysFPjH1EHeeEbcjujZta2mzlYSPEzxiP0pQLc4kcqEtxIr/MgP3xtVMhl8WSbVsGZq
+        Gb9OKkWQUGVNxcGafmJBvBHL80dzDpCqaUjU6TZwyoHgjeUpnjHnUo//YmBQB+iad9E6eB
+        gB3xf0QMuFmufZ+V+y+ZWvvPeWLHf/7lHUvnGGefO7F5ZD3rnVXW3qX7fLblU0q094LjpU
+        HHDz8LlltmY35xtZGeT2sSo4Pzg8eXGVAMEi/kpxerg5xMPC+tp5bcVC1aGERsPUW6ioYQ
+        ZwcJFlV227AGgT1a/pwcSNP08EDTfvD0gj6g3xEAdm4h8yVHdfU80THIDOy8lg==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
@@ -48,96 +48,51 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v8 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <20220412121232.69c85b20@xps13>
-In-Reply-To: <YlQQBIeM0GZQ6UOE@matsya>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-        <20220406161856.1669069-6-miquel.raynal@bootlin.com>
-        <YlQQBIeM0GZQ6UOE@matsya>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v9 3/9] dt-bindings: dmaengine: Introduce RZN1 DMA compatible
+Date:   Tue, 12 Apr 2022 12:21:32 +0200
+Message-Id: <20220412102138.45975-4-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220412102138.45975-1-miquel.raynal@bootlin.com>
+References: <20220412102138.45975-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Vinod,
+Just like for the NAND controller that is also on this SoC, let's
+provide a SoC generic and a more specific couple of compatibles for the
+DMA controller.
 
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> > +static void rzn1_dmamux_free(struct device *dev, void *route_data)
-> > +{
-> > +	struct rzn1_dmamux_data *dmamux =3D dev_get_drvdata(dev);
-> > +	struct rzn1_dmamux_map *map =3D route_data;
-> > +
-> > +	dev_dbg(dev, "Unmapping DMAMUX request %u\n", map->req_idx);
-> > +
-> > +	mutex_lock(&dmamux->lock);
-> > +	dmamux->used_chans &=3D ~BIT(map->req_idx);
-> > +	mutex_unlock(&dmamux->lock); =20
->=20
-> Why not use idr or bitmap for this. Hint: former does locking as well
+diff --git a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+index 6b35089ac017..c13649bf7f19 100644
+--- a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
++++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+@@ -15,7 +15,13 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: snps,dma-spear1340
++    oneOf:
++      - const: snps,dma-spear1340
++      - items:
++          - enum:
++              - renesas,r9a06g032-dma
++          - const: renesas,rzn1-dma
++
+ 
+   "#dma-cells":
+     minimum: 3
+-- 
+2.27.0
 
-I've changed the code to use a proper bitmap.
-
->=20
-> > +
-> > +	kfree(map);
-> > +}
-> > +
-> > +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_sp=
-ec,
-> > +					struct of_dma *ofdma)
-> > +{
-> > +	struct platform_device *pdev =3D of_find_device_by_node(ofdma->of_nod=
-e);
-> > +	struct rzn1_dmamux_data *dmamux =3D platform_get_drvdata(pdev);
-> > +	struct rzn1_dmamux_map *map;
-> > +	unsigned int dmac_idx, chan, val;
-> > +	u32 mask;
-> > +	int ret;
-> > +
-> > +	if (dma_spec->args_count !=3D 6) =20
->=20
-> magic
-
-Defined.
-
->=20
-> > +		return ERR_PTR(-EINVAL);
-> > +
-> > +	map =3D kzalloc(sizeof(*map), GFP_KERNEL);
-> > +	if (!map)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	chan =3D dma_spec->args[0];
-> > +	map->req_idx =3D dma_spec->args[4];
-> > +	val =3D dma_spec->args[5];
-> > +	dma_spec->args_count -=3D 2;
-> > +
-
-[...]
-
-> > +	dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n=
-",
-> > +		map->req_idx, dmac_idx, chan);
-> > +
-> > +	mask =3D BIT(map->req_idx);
-> > +	mutex_lock(&dmamux->lock);
-> > +	dmamux->used_chans |=3D mask;
-> > +	ret =3D r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0); =20
->=20
-> I guess due to this it would be merged by whosoever merges this api.
-> Please mention this in cover letter and how you propose this should be
-> merged
-
-Yes, the cover letter mentions this issue, but since then Geert
-proposed to take everything through the renesas trees, which I agree
-with. I will send a v9 and if you agree with it please provide your Ack
-so that Geert can take it.
-
-Thanks,
-Miqu=C3=A8l
