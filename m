@@ -2,113 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DECC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C39C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229463AbiDMIoQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:44:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
+        id S233945AbiDMIpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 04:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233330AbiDMIoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:44:15 -0400
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108234ECD9;
-        Wed, 13 Apr 2022 01:41:55 -0700 (PDT)
-Received: by mail-qv1-f53.google.com with SMTP id b17so1052920qvf.12;
-        Wed, 13 Apr 2022 01:41:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EvuJzQp96B8cTDCcG+qyKDAB37NSc3zpMTaTjtbLzLE=;
-        b=l2/9tgmUxRwiW999l7KguZ00THK6zjctwfXGJMdpOivvF7CUVb0KzwuXDtKkFyhnxe
-         Wi06Ty3kuMm2j6y84DsuGrpx93tJjnxVmtQPcFCa5LG36vpLneW295eeHdpZ/atVNLUK
-         jyazwzEnv4NujCQvaruON53yYnNt/Rn2Rt87A76mFuYJ4L12kn2D3MSPERjZ/tzkn1vk
-         547BWr3QTqigrVIkRbo+KIkcUEu3VFnL1aGJi+pK5Q1iUK0Su7GulitAV/792zmhcLIA
-         nYR7J8j0QLWhwbxYQ+wpj4cwOw76K5Bpy2IzZWwyV937m9K/3yFvxx1v9Pz3fSP5djKY
-         IVvQ==
-X-Gm-Message-State: AOAM5301PTUMH3MS6gBjulws91Yzqw5OQHKINnctLzp8V/N9tBaF1RfZ
-        nKl2xr7Fk5+nppiFpJqxVJunkSB5l8yX6w==
-X-Google-Smtp-Source: ABdhPJx9ya1mQHKDfyW8AwxGfWcbKOim0OH7ofB6ErYY3UYx3M4I3VKsymiAEM213cBkRqyy2ucmJg==
-X-Received: by 2002:a05:6214:2421:b0:444:3fa7:716e with SMTP id gy1-20020a056214242100b004443fa7716emr13446567qvb.43.1649839313998;
-        Wed, 13 Apr 2022 01:41:53 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id b126-20020a37b284000000b0069a11927e57sm10459028qkf.101.2022.04.13.01.41.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Apr 2022 01:41:53 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-2eba37104a2so14963417b3.0;
-        Wed, 13 Apr 2022 01:41:53 -0700 (PDT)
-X-Received: by 2002:a81:413:0:b0:2ec:31d7:7e60 with SMTP id
- 19-20020a810413000000b002ec31d77e60mr10993822ywe.62.1649839313333; Wed, 13
- Apr 2022 01:41:53 -0700 (PDT)
+        with ESMTP id S233921AbiDMIpc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:45:32 -0400
+X-Greylist: delayed 89244 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 01:43:12 PDT
+Received: from mail.growthmindset24.pl (mail.growthmindset24.pl [212.237.36.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF90D4EA25
+        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 01:43:12 -0700 (PDT)
+Received: by mail.growthmindset24.pl (Postfix, from userid 1001)
+        id 2E009881CA; Tue, 12 Apr 2022 08:52:42 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=growthmindset24.pl;
+        s=mail; t=1649750047;
+        bh=FDuFY3XQoq0gMX1b2gxgT7Py2p4Sxl0PJZYZ4NVaPho=;
+        h=Date:From:To:Subject:From;
+        b=Fhay+sASzSB5qxkQ0LIXsvX4mFTskZtfMax6PmIP5d0xHBS+mi2DN8aJDKJarrZsb
+         FGNR5GQF8ZRwlGguOvAamxluszg9xrUWJHw8SebRuJVj/WF/4wbp2H2vDVn8VDZfaB
+         a1154Eij0aEDJmW1jw+tyQYlitc2PyLCDuxiO/zU9/whD1GbkoCOAqzlU4GemN6QX1
+         TF/qvFcOB2ww1K+Fy4e/lVyH8aZJi+Uwo6t9m8cMlpxf/2Whni+/BdNOk9g3LIP9Y6
+         nHUMkpLqoSwxpiv37iLH+z5xNI3BMhab+nHj+KuZ+x/uZp38WI3o2/dTrxvHSEOHg2
+         130D0+rxY205g==
+Received: by mail.growthmindset24.pl for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 07:50:49 GMT
+Message-ID: <20220412073001-0.1.2w.d7dy.0.x4bohokspf@growthmindset24.pl>
+Date:   Tue, 12 Apr 2022 07:50:49 GMT
+From:   =?UTF-8?Q? "Przemys=C5=82aw_Wr=C3=B3blewski" ?= 
+        <przemyslaw.wroblewski@growthmindset24.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.growthmindset24.pl
 MIME-Version: 1.0
-References: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
-In-Reply-To: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Apr 2022 10:41:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXcNBq5e6K6YUorLCF0hiFsp6VVKrUcy5E4mdAQAbH7Sg@mail.gmail.com>
-Message-ID: <CAMuHMdXcNBq5e6K6YUorLCF0hiFsp6VVKrUcy5E4mdAQAbH7Sg@mail.gmail.com>
-Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
-To:     Haowen Bai <baihaowen@meizu.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Haowen,
+Dzie=C5=84 dobry,
 
-On Wed, Apr 13, 2022 at 10:30 AM Haowen Bai <baihaowen@meizu.com> wrote:
-> Fix this issue by freeing the cpg when exiting the function in the
-> error/normal path.
->
-> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-Thanks for your patch!
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-> --- a/drivers/clk/renesas/clk-r8a73a4.c
-> +++ b/drivers/clk/renesas/clk-r8a73a4.c
-> @@ -215,7 +215,7 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
->
->         cpg->reg = of_iomap(np, 0);
->         if (WARN_ON(cpg->reg == NULL))
-> -               return;
-> +               goto out_free_cpg;
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
-Note that this is a fatal error, i.e. no chance the system will survive this,
-so cleaning up is moot.
 
->
->         for (i = 0; i < num_clks; ++i) {
->                 const char *name;
-> @@ -233,6 +233,9 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
->         }
->
->         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
-> +out_free_cpg:
-> +       kfree(cpg);
-> +       kfree(clks);
-
-Both cpg and clks are still used after returning from this function,
-through the registered clocks and clock provider.
-
->  }
->  CLK_OF_DECLARE(r8a73a4_cpg_clks, "renesas,r8a73a4-cpg-clocks",
->                r8a73a4_cpg_clocks_init);
-
-NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pozdrawiam,
+Przemys=C5=82aw Wr=C3=B3blewski
