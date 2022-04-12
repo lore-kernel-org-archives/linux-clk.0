@@ -2,120 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71D0C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 20:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0F0C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:00:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiDLUNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 16:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33694 "EHLO
+        id S231215AbiDLVDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 17:03:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232376AbiDLUMO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 16:12:14 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 523109969E
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:08:07 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id e189so20166936oia.8
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:08:07 -0700 (PDT)
+        with ESMTP id S231339AbiDLVDG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:03:06 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39983C627B
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:50:45 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id t207so13367478qke.2
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HS/t9fInoBASlo5XNi/0B/mBl/RmkpwKB28iS3MPbuY=;
-        b=lkBFXM7aaukUHOGTj1Ot2swztuEx9Ac+pPU5fa3ML5oaYHBBbxyM1yco+GVNGPyiLq
-         0l/peM1b/Cadt9njBgMHbFAtpCoKguiT9dNODNqahVT8/WGH/VNerKkPYZJG/TpskZwE
-         fBqS2KoJyyd6LdkFmRqpPMMyV/gLWE7/iPl+PYZ62CpL5w/OGz62cDndGa9udw6oLMxX
-         iKZk8pYaF0t5uL3P9cxvYLkuWA2pcHseFbj8X1Xy3dZsPPohtzF+Tz+u+GgUWQeL4GyX
-         gK41UDwjUB9xRQpkP94OVRK80uB5/oGCjMg8lrNO3ODFKkCGVG7npVuhEY1xLpqvEdD4
-         WLkA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Q+h04QniZy9JFOQoK0z9/PVBPK4EocYqj6rRLx+j0L0=;
+        b=SMIgV8aLDiNeKnmDEIb0Inx08TYPHvQgnS+zOknfZE0gUH0ZFQ3H1dUPPJnEpjuINQ
+         H3p7qQqcbUqSIHEuDAkLI20wHOcfbLenWoHzsQ8kY/MY4d4Lp6/rtZoWb7CWVyUX8/94
+         MQjNGjiioQKb2uwTczKfJivg9TlEvPBDsSeQSjoos1HKfj3DhuCB3vTmHH6KkeSVXZSv
+         L2EKgQc2Fr3VG+hSAIebU/2SRI+jbmUGzI3HA9sJf4J3nFA1zMP6faG5cVLOBXGarhpe
+         QOuATxLwJDWBvdr/A/3E0ubrxZRnXzrlTHIUwg35KHPm4aW6cstT40J605DLoLT8hG9Q
+         R36g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HS/t9fInoBASlo5XNi/0B/mBl/RmkpwKB28iS3MPbuY=;
-        b=F6cgcPeJwFaLgM62hjjoyZt22ymRpjW0e71yAo58BQ785lOTw0fTnyArMAwu55Oz0w
-         b+uZGMBAECTDyuVGl/NIoYAdeqz/H3W33yprjLYcJPnYYUbgwocEAoZ/WBGUyYVRprfX
-         +Lh1O02bGJjk8UKlzr5pkPjCEDatUAcZBGLmjjNghqEVj2fCUrNotHl2/HjcNb1dhbbs
-         K6KXEH/muaZSG1bTy1R++IKpeRDL1Ndm2M6fqTg2dYOdxIFDNtrTpa5PCIWPI5x0WM0P
-         PGcGY+J8vo6ecNl+8edB9XxVzAQyplquZc9wf6eXvG5DSefndUKcpRTOdtx/MX7HAJNu
-         T5/w==
-X-Gm-Message-State: AOAM531DflYsUs24E2bBzQrcsxcW4krbLSlJ1LkExcSQrtxgJ93rgP7Y
-        YVeW1SC4+t+4NYpOS8iAysQaWw==
-X-Google-Smtp-Source: ABdhPJzoB3ldGw8dI1IaA47ugaHgwdHizRBi2jaMxfcrdgLQQ7xwYbP5cKugEete7oH7ExqXNlJVeA==
-X-Received: by 2002:a05:6808:1115:b0:2ec:e78e:3fc0 with SMTP id e21-20020a056808111500b002ece78e3fc0mr2580411oih.207.1649793991113;
-        Tue, 12 Apr 2022 13:06:31 -0700 (PDT)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id v17-20020a9d69d1000000b005b2319a08c4sm13705206oto.18.2022.04.12.13.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 13:06:30 -0700 (PDT)
-Date:   Tue, 12 Apr 2022 13:08:44 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Amit Kucheria <amitk@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] arm: qcom: qcom-apq8064: add separate device node
- for tsens
-Message-ID: <YlXcTNv4ex54G/ig@ripper>
-References: <20220406002648.393486-1-dmitry.baryshkov@linaro.org>
- <20220406154028.EC897C385A3@smtp.kernel.org>
- <CAA8EJpod2cNOYr3g+DmdWo_2Ujv7-pW39fBKqcpCPvtVgP5-NQ@mail.gmail.com>
- <20220412184304.79012C385A8@smtp.kernel.org>
- <CAA8EJppha+V77S6LAZW9us6XiVu9vD9X=RF+RKd+5cvCz+NxEg@mail.gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Q+h04QniZy9JFOQoK0z9/PVBPK4EocYqj6rRLx+j0L0=;
+        b=zBY0e6Pozf3Om8QbUB+pZA5MskTXp7671oz+1khtg4TcjM2h+UnB79t2d/5mMSy7Sl
+         9lAoiqN8Xg3+r5BYR76PVIUp6KGJtcpAGMenZk0g4O4e8aALNH3cwaDxt9w7xXxe92IB
+         1bYXdYmRH2+AKfL2MdNmAHSFMu6HEzxJSiAvczV/APR3LJulLLdfR7w4Ntgy7vScPE7K
+         yICx5DTpDbr8IGbWe3AjugrjgrYEWfkfJ6sXfzXOzY3MyiD6KzsMx3dH3Sh09rf+iAo3
+         MX+GlLYSgmG2WwUimUvjD/Gl5Cpj2HWPKRD4tmJ30x6Qaxadx4k846oQIvKopOTrhd6V
+         KCZg==
+X-Gm-Message-State: AOAM5313qh6q5zCJwDWeE2IjSKBT06znmeHzfbwiDG5A19f/Kbf0r2IW
+        Sw/2mKjT182oF5+2BSHg10r0yuqFF/RZHA==
+X-Google-Smtp-Source: ABdhPJyHK84NQIavAf1tKxFEr0MsaqmU0Ke82mZQQrRn63U0+bN8oY1vPi9nSGHo0FSmPMVTmsqQfA==
+X-Received: by 2002:a05:6638:d82:b0:323:9bb9:e62a with SMTP id l2-20020a0566380d8200b003239bb9e62amr18747267jaj.124.1649796157160;
+        Tue, 12 Apr 2022 13:42:37 -0700 (PDT)
+Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id m7-20020a056e02158700b002c61541edd7sm22548667ilu.3.2022.04.12.13.42.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 13:42:36 -0700 (PDT)
+Message-ID: <9af84dd7-75ed-3fa3-d1ea-f71a778bfaaf@linaro.org>
+Date:   Tue, 12 Apr 2022 15:42:35 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppha+V77S6LAZW9us6XiVu9vD9X=RF+RKd+5cvCz+NxEg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
+Content-Language: en-US
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
+        Taniya Das <quic_tdas@quicinc.com>
+References: <20220412194505.614002-1-swboyd@chromium.org>
+From:   Alex Elder <elder@linaro.org>
+In-Reply-To: <20220412194505.614002-1-swboyd@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 12 Apr 12:20 PDT 2022, Dmitry Baryshkov wrote:
-
-> On Tue, 12 Apr 2022 at 21:43, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Dmitry Baryshkov (2022-04-06 12:57:30)
-> > > On Wed, 6 Apr 2022 at 18:40, Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Dmitry Baryshkov (2022-04-05 17:26:44)
-> > > > > Currently gcc-msm8960 driver manually creates tsens device. Instantiate
-> > > > > the device using DT node instead. This follow the IPQ8064 device tree
-> > > > > schema.
-> > > >
-> > > > Why can't the schema be changed?
-> > >
-> > > But these commits change the schema. They make apq8064 follow more
-> > > logical scheme of ipq8064.
-> > >
-> >
-> > Sounds like ipq8064 and apq8064 follow different schemas. Is there any
-> > benefit to harmonizing the two vs. just leaving it as it is in the dts
-> > and making the schema match whatever the dts has?
+On 4/12/22 2:45 PM, Stephen Boyd wrote:
+> Set the wake and sleep state for BCM clks here, not just the active
+> state, as the active only state is dropped when CPUs go to deep idle.
+> This ensures the clk is always on when the driver thinks it is on.
 > 
-> I'd prefer to harmonize them. It makes no sense to have two different
-> approaches for the single IP block (shared between ipq and apq/msm).
-> And having a separate device tree node for the tsens removes a
-> dependency from gcc on the nvmem/qfprom.
-> Note, upstream qcom-msm8960.dtsi doesn't describe tsens at all, so we
-> don't have to worry about it.
+> This was found by inspection, and could very well be incorrect if the
+> RPMh hardware copies over the active only state to the sleep and wake
+> states.
+
+I ran with this code and found no obvious errors.  And
+it looks reasonable to me.
+
+However someone (probably Taniya) needs to comment on
+whether it's the right thing to do (based on Stephen's
+second paragraph above), or if not, why not.  It might
+warrant an additional comment also.
+
+I can add a "Tested-by" but I'm going to wait for
+some more input.
+
+					-Alex
+
+> Cc: Alex Elder <elder@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>   drivers/clk/qcom/clk-rpmh.c | 19 ++++++++++++-------
+>   1 file changed, 12 insertions(+), 7 deletions(-)
 > 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index aed907982344..29da1ffd10cf 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -260,6 +260,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+>   	struct tcs_cmd cmd = { 0 };
+>   	u32 cmd_state;
+>   	int ret = 0;
+> +	enum rpmh_state state;
+>   
+>   	mutex_lock(&rpmh_clk_lock);
+>   	if (enable) {
+> @@ -274,15 +275,19 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+>   		cmd.addr = c->res_addr;
+>   		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+>   
+> -		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
+> -		if (ret) {
+> -			dev_err(c->dev, "set active state of %s failed: (%d)\n",
+> -				c->res_name, ret);
+> -		} else {
+> -			c->last_sent_aggr_state = cmd_state;
+> +		for (state = RPMH_SLEEP_STATE; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
+> +			ret = clk_rpmh_send(c, state, &cmd, enable);
+> +			if (ret) {
+> +				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
+> +					!state ? "sleep" :
+> +					state == RPMH_WAKE_ONLY_STATE	?
+> +					"wake" : "active", c->res_name, ret);
+> +				goto out;
+> +			}
+>   		}
+> +		c->last_sent_aggr_state = cmd_state;
+>   	}
+> -
+> +out:
+>   	mutex_unlock(&rpmh_clk_lock);
+>   
+>   	return ret;
+> 
+> base-commit: 3123109284176b1532874591f7c81f3837bbdc17
 
-The apq8064 design was chosen in order to make the dts represent the GCC
-being a single hardware block, and the fact that this is a clock and a
-thermal driver in Linux is an implementation decision.
-
-Seems like we forgot about this decision when we introduce the
-ipq8064...
-
-
-I'm not against harmonizing the two, but I don't see any changes to
-Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml and the
-clock patch describes what happens, but not why (i.e. if it's to
-harmonize the implementations the commit message should say so).
-
-Regards,
-Bjorn
