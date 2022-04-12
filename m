@@ -2,102 +2,232 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93976C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 17:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B811C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 17:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241381AbiDLRM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 13:12:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
+        id S1354388AbiDLRPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 13:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344490AbiDLRMz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 13:12:55 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266544B1C3
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 10:10:37 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id u15so19969886ejf.11
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 10:10:37 -0700 (PDT)
+        with ESMTP id S233243AbiDLRPj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 13:15:39 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7ECD60AB3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 10:13:20 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-d39f741ba0so21388895fac.13
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 10:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=tMeG91UsHNrr1jeURVpZbmaohRl615AR2PfwG+NbeOY=;
-        b=W15pYa9ziqyAmV1HDCWHwRBRTqSvEu/iOCz92WY5pNesraZw1EIXwkODapHvkpfWQF
-         bN3aiY1CcNT/hQwQbxjwitUYoYN43PMoVPbVEKQxZ6YXG9ozUXVPamy5pkaWawwPmGyv
-         oSolzNetAiUpnYTeqgPtRZnqXzaOWyjChvqAEde5vCprALDckGhhBt3eGbBJfxGiktxY
-         k62OI5TowS0z/igbMvQF5ObocGgMiJ1JJrZX7fYKHLZzF7cm3Zr797FMLMumza6PjI6t
-         6tqsai9+0MDoGfPZRQOY1vDhhpzTT5giiyM+bV4eQOW4eZukRlXtTWc+pBIAJMS+t1MW
-         D9Hw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TDPbcSp/vDTixVI6qzYrMBMUYnORkP5HblVB6RjbSwM=;
+        b=r0SjzZOBYNqLp6nRCKLDf8cy3mSN1YDPUqcvXb/qYRZMDOcLrLiyzOd25flwgCl3Jz
+         w+ewN48LvT8QrAYQTcAryJzLLdsDU4VhEk0xa+xeqn4tA5olHz/Irmqw6wowx5d49PGp
+         uLytBhUEF2EyN4b364eb7jvp6zxqPxlFzEetCZC8+fwnbq3HIstDQApbRZ8rBKCOGt2D
+         AuojgPgEZFXxHxJOhm6q0Lhs+UjmEyUwtVm8ixwgB0uetUPgwpybq3i/ZOWZn76lWkfN
+         rkBwMDsEbVWE7wpGisL/Dzg3Si+usBnvAupPSrjmglLn9Uz4kkNOKLtazFTjhBQ+R07l
+         u68w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=tMeG91UsHNrr1jeURVpZbmaohRl615AR2PfwG+NbeOY=;
-        b=d1wY7eV9rnhSGAbWS00f512QXJwTzqP38rdaLH/hVsbGGHgMYVMPn8cdGDuhf/JLVG
-         xFPsb73XZZVSPCPLlnPYmBdKLt+eQIHMwTmwtHnKJ8iIqJncZdxvNoTjzq8MxiaIXZ4n
-         pNqGOvtaWlu67FLJT0GaT01IEomWMY3KicUluup8iY+0NxUT+Z6HgknL8ulBcMUokA6D
-         Bh8nhpz2g4KDVJbO1XuZWptVaI1MUewvistHbly2ESHNfaGpSUVqUrGh+xr6AC5TlBfH
-         YzHscenkAhf/ett5HVxjIDfii0MzOhhMrSVVlkUCfP/xDQB0rjK9D2LeMgZYIcDVwhw5
-         vM6A==
-X-Gm-Message-State: AOAM530caOWx+7ogSn7sGiKqBgovUjMe3P1MMRKLFapMeSWIRFUwQ4Fv
-        rwk8TWH7Oj2MTTPTkZP/VfTnYg==
-X-Google-Smtp-Source: ABdhPJyW6jA3Sb1IAzTFPzNcXRxHllkbhigW34XX0ozquIGx3DHlGVvuMIBsx2RWUYdKx7U5B6SZJQ==
-X-Received: by 2002:a17:907:960f:b0:6e8:8df9:ce3a with SMTP id gb15-20020a170907960f00b006e88df9ce3amr10579415ejc.211.1649783435680;
-        Tue, 12 Apr 2022 10:10:35 -0700 (PDT)
-Received: from [192.168.0.198] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id lb4-20020a170907784400b006e0d13f65e5sm13334706ejc.167.2022.04.12.10.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 10:10:35 -0700 (PDT)
-Message-ID: <ba518d4d-0f92-0d34-029c-c477c84db81d@linaro.org>
-Date:   Tue, 12 Apr 2022 19:10:34 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TDPbcSp/vDTixVI6qzYrMBMUYnORkP5HblVB6RjbSwM=;
+        b=Ax8eUyja2FSNp9sVSyZSd5ufblLxJ9ejs/bJ06L5DHuUupBT9LA842WynrmfjsgBfQ
+         QpNFrJ5zwlNgug4332goD9hZXRYXY+5R0SmBqN95oWsX6ctAgh1uYys5Qw6mPXbkvbbg
+         FBdHGEb9UJptd5DmwmLhCF9XVm4DWGf6/zM+Njls2KjUgJcoavxmswS0ludwhmB3bLye
+         nYgftJ20uotcu7gboSRqKmFMho+ggkB7oVzpdRRUY4wAXqTMj6ZU2z0MDHZNj2jkl5rh
+         JedaPxmpXs9KPdqwkHyYQzmC2dfogvxcB3tiXttBGvvfcJVAKV/OUlDHKhzD4TvMk8u6
+         mRTg==
+X-Gm-Message-State: AOAM531hhChrgGotzFDavcwM5z9HeAA2P57Q4vpAheOImvmYcduV+iDD
+        2xh7MauI31eQUK/38W7CAedqIQ==
+X-Google-Smtp-Source: ABdhPJwpxs1FgqJej6N6Ii8DouynWEV8uS72s+flB0CU1W3DfVPueaybQVWOAV+BCWqU0iB/5DfddA==
+X-Received: by 2002:a05:6870:738a:b0:de:e1b7:2371 with SMTP id z10-20020a056870738a00b000dee1b72371mr2586315oam.176.1649783599875;
+        Tue, 12 Apr 2022 10:13:19 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id c30-20020a056830349e00b005b272587f47sm13824595otu.38.2022.04.12.10.13.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 10:13:19 -0700 (PDT)
+Date:   Tue, 12 Apr 2022 10:15:33 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Message-ID: <YlWztZknl4OBmekp@ripper>
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 5/9] dt-bindings: clk: mpfs: add defines for two new
- clocks
-Content-Language: en-US
-To:     Conor.Dooley@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-        palmer@rivosinc.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org
-Cc:     Daire.McNamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220411085916.941433-1-conor.dooley@microchip.com>
- <20220411085916.941433-6-conor.dooley@microchip.com>
- <d49f38e7-5fd9-4e9a-cc20-2c839eb53712@linaro.org>
- <2e1b0207-dfb3-4cc5-d306-d2b0c6ed8cfd@microchip.com>
- <25feb189-4d97-f9b1-518e-69aae9a274e0@linaro.org>
- <74695e55-0b59-9236-be19-b02060ad4177@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <74695e55-0b59-9236-be19-b02060ad4177@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/04/2022 14:26, Conor.Dooley@microchip.com wrote:
->>> Additionally MSSPLL is the source for CLK_{CPI,AXI,AHB} so I put it at
->>> the top. I have no particular preference, so if you want them reordered
->>> so that MSSPLL is under RTCREF just say the word :)
->>
->> Hm, are these in the same clock controller (device, not driver)? If yes,
->> then please order them numerically. Pretty often one binding header have
->> IDs for several clock controllers, so then it's a different case.
+On Mon 11 Apr 08:43 PDT 2022, Krzysztof Kozlowski wrote:
+
+> Devices might need to control several clocks when scaling the frequency
+> and voltage.  Example is the Universal Flash Storage (UFS) which scales
+> several independent clocks with change of performance levels.
 > 
-> Not *quite* sure what you mean by device. There is only one SoC that
-> this header applies to, but in the actual design the MSSPLL is in one
-> block, the RTC divider in another and CLK_CPU -> CLK_CFM in a third.
+> Add parsing of multiple clocks and clock names and scale all of them,
+> when needed.  If only one clock is provided, the code should behave the
+> same as before.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/opp/core.c     | 205 ++++++++++++++++++++++++++++++++---------
+>  drivers/opp/of.c       |  48 ++++++++++
+>  drivers/opp/opp.h      |   9 +-
+>  include/linux/pm_opp.h |  23 +++++
+>  4 files changed, 242 insertions(+), 43 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+[..]
+> @@ -1295,21 +1344,32 @@ static struct opp_table *_update_opp_table_clk(struct device *dev,
+>  	 * Return early if we don't need to get clk or we have already tried it
+>  	 * earlier.
+>  	 */
+> -	if (!getclk || IS_ERR(opp_table) || opp_table->clk)
+> +	if (!getclk || IS_ERR(opp_table) || opp_table->clks)
+>  		return opp_table;
+>  
+> +	opp_table->clks = kmalloc_array(1, sizeof(*opp_table->clks),
+> +					GFP_KERNEL);
 
-By device I meant here part of Soc responsible for clocks which could be
-called a self-containing block. Pretty often such block maps to a Linux
-"struct device" or some wrapper around it (e.g. clock-controller
-device). For example such "self-containing block" has device node in DTS.
+This seems to be 81 chars long, perhaps worth not line breaking?
 
-Judging by your description, these will be different blocks / device
-nodes in DTS?
+> +	if (!opp_table->clks)
+> +		return ERR_PTR(-ENOMEM);
+> +
+>  	/* Find clk for the device */
+> -	opp_table->clk = clk_get(dev, NULL);
+> +	opp_table->clks[0] = clk_get(dev, NULL);
+>  
+> -	ret = PTR_ERR_OR_ZERO(opp_table->clk);
+> -	if (!ret)
+> +	ret = PTR_ERR_OR_ZERO(opp_table->clks[0]);
+> +	if (!ret) {
+> +		opp_table->clk_count = 1;
+>  		return opp_table;
+> +	}
+[..]
+> +struct opp_table *dev_pm_opp_set_clknames(struct device *dev,
+> +					  const char * const names[],
+> +					  unsigned int count)
+>  {
+>  	struct opp_table *opp_table;
+> -	int ret;
+> +	struct clk *clk;
+> +	int ret, i;
+>  
+>  	opp_table = _add_opp_table(dev, false);
+>  	if (IS_ERR(opp_table))
+> @@ -2159,70 +2259,92 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name)
+>  	}
+>  
+>  	/* clk shouldn't be initialized at this point */
+> -	if (WARN_ON(opp_table->clk)) {
+> +	if (WARN_ON(opp_table->clks)) {
+>  		ret = -EBUSY;
+>  		goto err;
+>  	}
+>  
+> -	/* Find clk for the device */
+> -	opp_table->clk = clk_get(dev, name);
+> -	if (IS_ERR(opp_table->clk)) {
+> -		ret = dev_err_probe(dev, PTR_ERR(opp_table->clk),
+> -				    "%s: Couldn't find clock\n", __func__);
+> +	opp_table->clks = kmalloc_array(count, sizeof(*opp_table->clks),
+> +					GFP_KERNEL);
+> +	if (!opp_table->clks) {
+> +		ret = -ENOMEM;
+>  		goto err;
+>  	}
+>  
+> +	for (i = 0; i < count; i++) {
+> +		clk = clk_get(dev, names[i]);
+> +		if (IS_ERR(clk)) {
+> +			ret =  dev_err_probe(dev, PTR_ERR(clk),
+> +					     "%s: Couldn't find clock %s\n",
+> +					     __func__, names[i]);
+> +			goto free_clks;
+> +		}
+> +
+> +		opp_table->clks[i] = clk;
+> +	}
 
-Best regards,
-Krzysztof
+Wouldn't it be convenient to make clks a struct clk_bulk_data array
+and use clk_bulk_get()/clk_bulk_put() instead?
+
+> +
+> +	opp_table->clk_count = count;
+> +
+>  	return opp_table;
+>  
+> +free_clks:
+> +	while (i != 0)
+> +		clk_put(opp_table->clks[--i]);
+> +
+> +	kfree(opp_table->clks);
+> +	opp_table->clks = NULL;
+> +	opp_table->clk_count = -1;
+>  err:
+>  	dev_pm_opp_put_opp_table(opp_table);
+>  
+>  	return ERR_PTR(ret);
+>  }
+> -EXPORT_SYMBOL_GPL(dev_pm_opp_set_clkname);
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_set_clknames);
+[..]
+> +static int _read_clocks(struct dev_pm_opp *opp, struct opp_table *opp_table,
+> +			struct device_node *np)
+> +{
+> +	int count, ret;
+> +	u64 *freq;
+> +
+> +	count = of_property_count_u64_elems(np, "opp-hz");
+> +	if (count < 0) {
+> +		pr_err("%s: Invalid %s property (%d)\n",
+> +			__func__, of_node_full_name(np), count);
+
+Wouldn't %pOF be convenient to use here, seems like it becomes short
+enough that you don't have to wrap this line then.
+
+> +		return count;
+> +	}
+> +
+> +	if (count != opp_table->clk_count) {
+> +		pr_err("%s: number of rates %d does not match number of clocks %d in %s\n",
+> +		       __func__, count, opp_table->clk_count,
+> +		       of_node_full_name(np));
+> +		return -EINVAL;
+> +	}
+> +
+> +	freq = kmalloc_array(count, sizeof(*freq), GFP_KERNEL);
+> +	if (!freq)
+> +		return -ENOMEM;
+> +
+> +	ret = of_property_read_u64_array(np, "opp-hz", freq, count);
+> +	if (ret) {
+> +		pr_err("%s: error parsing %s: %d\n", __func__,
+> +		       of_node_full_name(np), ret);
+> +		ret = -EINVAL;
+> +		goto free_freq;
+> +	}
+
+Regards,
+Bjorn
