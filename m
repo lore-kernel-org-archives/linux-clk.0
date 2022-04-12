@@ -2,144 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0F0C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B9DC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:29:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231215AbiDLVDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 17:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42176 "EHLO
+        id S229971AbiDLVcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 17:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbiDLVDG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:03:06 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39983C627B
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:50:45 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id t207so13367478qke.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 13:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Q+h04QniZy9JFOQoK0z9/PVBPK4EocYqj6rRLx+j0L0=;
-        b=SMIgV8aLDiNeKnmDEIb0Inx08TYPHvQgnS+zOknfZE0gUH0ZFQ3H1dUPPJnEpjuINQ
-         H3p7qQqcbUqSIHEuDAkLI20wHOcfbLenWoHzsQ8kY/MY4d4Lp6/rtZoWb7CWVyUX8/94
-         MQjNGjiioQKb2uwTczKfJivg9TlEvPBDsSeQSjoos1HKfj3DhuCB3vTmHH6KkeSVXZSv
-         L2EKgQc2Fr3VG+hSAIebU/2SRI+jbmUGzI3HA9sJf4J3nFA1zMP6faG5cVLOBXGarhpe
-         QOuATxLwJDWBvdr/A/3E0ubrxZRnXzrlTHIUwg35KHPm4aW6cstT40J605DLoLT8hG9Q
-         R36g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Q+h04QniZy9JFOQoK0z9/PVBPK4EocYqj6rRLx+j0L0=;
-        b=zBY0e6Pozf3Om8QbUB+pZA5MskTXp7671oz+1khtg4TcjM2h+UnB79t2d/5mMSy7Sl
-         9lAoiqN8Xg3+r5BYR76PVIUp6KGJtcpAGMenZk0g4O4e8aALNH3cwaDxt9w7xXxe92IB
-         1bYXdYmRH2+AKfL2MdNmAHSFMu6HEzxJSiAvczV/APR3LJulLLdfR7w4Ntgy7vScPE7K
-         yICx5DTpDbr8IGbWe3AjugrjgrYEWfkfJ6sXfzXOzY3MyiD6KzsMx3dH3Sh09rf+iAo3
-         MX+GlLYSgmG2WwUimUvjD/Gl5Cpj2HWPKRD4tmJ30x6Qaxadx4k846oQIvKopOTrhd6V
-         KCZg==
-X-Gm-Message-State: AOAM5313qh6q5zCJwDWeE2IjSKBT06znmeHzfbwiDG5A19f/Kbf0r2IW
-        Sw/2mKjT182oF5+2BSHg10r0yuqFF/RZHA==
-X-Google-Smtp-Source: ABdhPJyHK84NQIavAf1tKxFEr0MsaqmU0Ke82mZQQrRn63U0+bN8oY1vPi9nSGHo0FSmPMVTmsqQfA==
-X-Received: by 2002:a05:6638:d82:b0:323:9bb9:e62a with SMTP id l2-20020a0566380d8200b003239bb9e62amr18747267jaj.124.1649796157160;
-        Tue, 12 Apr 2022 13:42:37 -0700 (PDT)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id m7-20020a056e02158700b002c61541edd7sm22548667ilu.3.2022.04.12.13.42.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 13:42:36 -0700 (PDT)
-Message-ID: <9af84dd7-75ed-3fa3-d1ea-f71a778bfaaf@linaro.org>
-Date:   Tue, 12 Apr 2022 15:42:35 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
-Content-Language: en-US
-To:     Stephen Boyd <swboyd@chromium.org>,
+        with ESMTP id S229908AbiDLVcI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:32:08 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8107819483B;
+        Tue, 12 Apr 2022 14:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649797846; x=1681333846;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fsC3N9+404/5tl0jll2ggxWkaFkkOSR8q6gQ3tnrsoo=;
+  b=BEXfsLEfCgsaQmtJzDprGXCpJ1VNP13b1xhxs9yCumLFkV4lgD25Acy/
+   BLdYehHy55MFDWDSMHnnt4FS4uHv3lIN9uCvUCOqvx8yS17XjN0MVihBC
+   /b7eHkNPqbI51KdbQJWZ9gwGe4UuIKBBhitO6XgTpjL4HPDwVyh60AjSb
+   YAKOOpiTJ65MlmNe8bgnNgVGIcJpHRjThOyCwuMwm/lXeSL0Lj8rHPIv2
+   DFdRjLWWNZQVoNvpjYPfmUy6+yctmHNSGjSHRgu1H1am6ObEhWfnFhAzJ
+   /MaysOtuC6szTIdL3DTFPXvDQw8TwLHi40yXBIZ7l6H5Ewhkc/ih+mE/W
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10315"; a="242441601"
+X-IronPort-AV: E=Sophos;i="5.90,254,1643702400"; 
+   d="scan'208";a="242441601"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2022 14:06:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,254,1643702400"; 
+   d="scan'208";a="526218846"
+Received: from lkp-server02.sh.intel.com (HELO d3fc50ef50de) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 12 Apr 2022 14:06:15 -0700
+Received: from kbuild by d3fc50ef50de with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1neNiI-0003Ac-Gg;
+        Tue, 12 Apr 2022 21:06:14 +0000
+Date:   Wed, 13 Apr 2022 05:05:12 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
-        Taniya Das <quic_tdas@quicinc.com>
-References: <20220412194505.614002-1-swboyd@chromium.org>
-From:   Alex Elder <elder@linaro.org>
-In-Reply-To: <20220412194505.614002-1-swboyd@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 1/3] clk: renesas: Add support for RZ/G2UL SoC
+Message-ID: <202204130437.n3GTbhuH-lkp@intel.com>
+References: <20220412161314.13800-2-biju.das.jz@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220412161314.13800-2-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/12/22 2:45 PM, Stephen Boyd wrote:
-> Set the wake and sleep state for BCM clks here, not just the active
-> state, as the active only state is dropped when CPUs go to deep idle.
-> This ensures the clk is always on when the driver thinks it is on.
-> 
-> This was found by inspection, and could very well be incorrect if the
-> RPMh hardware copies over the active only state to the sleep and wake
-> states.
+Hi Biju,
 
-I ran with this code and found no obvious errors.  And
-it looks reasonable to me.
+Thank you for the patch! Yet something to improve:
 
-However someone (probably Taniya) needs to comment on
-whether it's the right thing to do (based on Stephen's
-second paragraph above), or if not, why not.  It might
-warrant an additional comment also.
+[auto build test ERROR on geert-renesas-drivers/renesas-clk]
+[also build test ERROR on geert-renesas-devel/next krzk/for-next v5.18-rc2 next-20220412]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-I can add a "Tested-by" but I'm going to wait for
-some more input.
+url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/Add-Renesas-RZ-G2UL-Type-1-SoC-SMARC-EVK-support/20220413-003233
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220413/202204130437.n3GTbhuH-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/ecfc4ccb6c8bc2ea667b9387be29a4b96212499d
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Biju-Das/Add-Renesas-RZ-G2UL-Type-1-SoC-SMARC-EVK-support/20220413-003233
+        git checkout ecfc4ccb6c8bc2ea667b9387be29a4b96212499d
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash
 
-					-Alex
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> Cc: Alex Elder <elder@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->   drivers/clk/qcom/clk-rpmh.c | 19 ++++++++++++-------
->   1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index aed907982344..29da1ffd10cf 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -260,6 +260,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->   	struct tcs_cmd cmd = { 0 };
->   	u32 cmd_state;
->   	int ret = 0;
-> +	enum rpmh_state state;
->   
->   	mutex_lock(&rpmh_clk_lock);
->   	if (enable) {
-> @@ -274,15 +275,19 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->   		cmd.addr = c->res_addr;
->   		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
->   
-> -		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
-> -		if (ret) {
-> -			dev_err(c->dev, "set active state of %s failed: (%d)\n",
-> -				c->res_name, ret);
-> -		} else {
-> -			c->last_sent_aggr_state = cmd_state;
-> +		for (state = RPMH_SLEEP_STATE; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
-> +			ret = clk_rpmh_send(c, state, &cmd, enable);
-> +			if (ret) {
-> +				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
-> +					!state ? "sleep" :
-> +					state == RPMH_WAKE_ONLY_STATE	?
-> +					"wake" : "active", c->res_name, ret);
-> +				goto out;
-> +			}
->   		}
-> +		c->last_sent_aggr_state = cmd_state;
->   	}
-> -
-> +out:
->   	mutex_unlock(&rpmh_clk_lock);
->   
->   	return ret;
-> 
-> base-commit: 3123109284176b1532874591f7c81f3837bbdc17
+All errors (new ones prefixed by >>):
 
+>> drivers/clk/renesas/r9a07g043-cpg.c:13:10: fatal error: dt-bindings/clock/r9a07g043-cpg.h: No such file or directory
+      13 | #include <dt-bindings/clock/r9a07g043-cpg.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +13 drivers/clk/renesas/r9a07g043-cpg.c
+
+    12	
+  > 13	#include <dt-bindings/clock/r9a07g043-cpg.h>
+    14	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
