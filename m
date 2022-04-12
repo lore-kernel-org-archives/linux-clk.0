@@ -2,95 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BF0C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65817C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347412AbiDLTno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 15:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54600 "EHLO
+        id S231858AbiDLTuL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 15:50:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359138AbiDLTmk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:40 -0400
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16CA4A3D2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:40:04 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2D890200002;
-        Tue, 12 Apr 2022 19:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649792398;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gDMgEYZK2TXVp0tig+qscRTbrixY++njrNcYKAKseyE=;
-        b=ULacIuA629hgYD2MgoH0xFbz65HWDpG6veG/exq1g5EC57bFBrh1V8/haFzMMGHwkPMPzJ
-        4rEpoUOJAb+EOkyWMRjb9ibXvEKvHfz5ondy5mgXFkV3FYFVPdgR9Gp1bwiMDi4jfW13Wi
-        guXEUnssmwirK9jA9oVRBC4LCtQg0cZSigFaMqxg4fQ5jR5KbJrNAbXMSXIM1eUo6dMBHA
-        ybruFjo6MCE9wPi2APpxutZejWojipE6i1Yrs3ygR+YRP6moIZ1xCx+vyXLnbB3Op2zNi4
-        2vD/fT65EVK92iwQKOCD/nOyfnBlHJtUaSpI13QurgjcxdPshmT7MCZVdzRB3Q==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
+        with ESMTP id S229671AbiDLTtb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:49:31 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD94B6B09B
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:45:07 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id u2so2925089pgq.10
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Yxt65tffffagVJ4U912AUE06OtMy/uby86IV/Jpv1M=;
+        b=ME7iQ15peYitKfSrqIs0ojrtwYW9+F94eedLg4yFY+Y3Zx+TNqMtjQJ7ZFtlAN/Fys
+         tWY3mSMTBwp+Pabg2+cdapFMz0zkAi0/lL+KTrj9CeBIgLRUTdV7RpQxS9UpEDmxcUmK
+         ve0ssqy815Sy3kLOplwK2pO1w7ep8xdnK938A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2Yxt65tffffagVJ4U912AUE06OtMy/uby86IV/Jpv1M=;
+        b=0/kZj/IsB4X2u+zfw1SglhUS/tN0cvu7tSX4m4KSDAF79BHtiMa/PjSdDY3Niwz8DX
+         fw54exXvjzsH++ethwDMByB51cU8P7wUA6LeifJIQwvspkZtDBxBRnAljQBwW847WnRN
+         r/KnKKouAPgtP5PinvvV6VQUFaAh2MHvRx0IfvMZIUB25TcGhyWCpmHpjiaDL5j5Gegw
+         oaNrKaGqvbjfWcIwNdSuxLcDBZo9i8BSejbFtZenywH4aiPsOa4Ilje9M3BuoaCesbA2
+         TlTbg8xn8+UZWulV7Fh717pGrOUracCBckN4OH82/ra24GR0BvulqQUmNkh+dujsYlG4
+         GA+A==
+X-Gm-Message-State: AOAM533UQtkjWFTU33w7QmT2y0MuJ2wjpsEL14Wr2+UePZH2k66L8Kq2
+        StaFTKOhahoCEVl9KP7P6lWmaw==
+X-Google-Smtp-Source: ABdhPJzX3wsolXB3gh4HLIugnLXEvTj+2HYpykcX60mAnwZSgmxSksBkiiajaUu2dKLK1IoBcOmU0A==
+X-Received: by 2002:a05:6a00:c8f:b0:505:d602:679a with SMTP id a15-20020a056a000c8f00b00505d602679amr8329790pfv.66.1649792707292;
+        Tue, 12 Apr 2022 12:45:07 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:e880:a5db:8eff:6b6a])
+        by smtp.gmail.com with ESMTPSA id x24-20020aa793b8000000b00505d614f4e0sm5793424pff.112.2022.04.12.12.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 12:45:06 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v10 9/9] ARM: dts: r9a06g032: Describe the DMA router
-Date:   Tue, 12 Apr 2022 21:39:36 +0200
-Message-Id: <20220412193936.63355-10-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220412193936.63355-1-miquel.raynal@bootlin.com>
-References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
+        Alex Elder <elder@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
+Date:   Tue, 12 Apr 2022 12:45:05 -0700
+Message-Id: <20220412194505.614002-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.35.1.1178.g4f1659d476-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a dmamux on this SoC which allows picking two different sources
-for a single DMA request.
+Set the wake and sleep state for BCM clks here, not just the active
+state, as the active only state is dropped when CPUs go to deep idle.
+This ensures the clk is always on when the driver thinks it is on.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+This was found by inspection, and could very well be incorrect if the
+RPMh hardware copies over the active only state to the sleep and wake
+states.
+
+Cc: Alex Elder <elder@linaro.org>
+Cc: Taniya Das <quic_tdas@quicinc.com>
+Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/qcom/clk-rpmh.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 839580ec21ee..c854aa4cfa77 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -91,6 +91,16 @@ sysctrl: system-controller@4000c000 {
- 			clocks = <&ext_mclk>, <&ext_rtc_clk>,
- 					<&ext_jtag_clk>, <&ext_rgmii_ref>;
- 			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			dmamux: dma-router@a0 {
-+				compatible = "renesas,rzn1-dmamux";
-+				reg = <0xa0 4>;
-+				#dma-cells = <6>;
-+				dma-requests = <32>;
-+				dma-masters = <&dma0 &dma1>;
-+			};
- 		};
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index aed907982344..29da1ffd10cf 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -260,6 +260,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 	struct tcs_cmd cmd = { 0 };
+ 	u32 cmd_state;
+ 	int ret = 0;
++	enum rpmh_state state;
  
- 		uart0: serial@40060000 {
+ 	mutex_lock(&rpmh_clk_lock);
+ 	if (enable) {
+@@ -274,15 +275,19 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 		cmd.addr = c->res_addr;
+ 		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+ 
+-		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
+-		if (ret) {
+-			dev_err(c->dev, "set active state of %s failed: (%d)\n",
+-				c->res_name, ret);
+-		} else {
+-			c->last_sent_aggr_state = cmd_state;
++		for (state = RPMH_SLEEP_STATE; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
++			ret = clk_rpmh_send(c, state, &cmd, enable);
++			if (ret) {
++				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
++					!state ? "sleep" :
++					state == RPMH_WAKE_ONLY_STATE	?
++					"wake" : "active", c->res_name, ret);
++				goto out;
++			}
+ 		}
++		c->last_sent_aggr_state = cmd_state;
+ 	}
+-
++out:
+ 	mutex_unlock(&rpmh_clk_lock);
+ 
+ 	return ret;
+
+base-commit: 3123109284176b1532874591f7c81f3837bbdc17
 -- 
-2.27.0
+https://chromeos.dev
 
