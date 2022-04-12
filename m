@@ -2,146 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C36BC43217
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 08:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57183C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 08:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236329AbiDLINp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 04:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
+        id S232714AbiDLIN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 04:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355537AbiDLIIb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 04:08:31 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4561EAF;
-        Tue, 12 Apr 2022 00:37:36 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id bb38so3505920qtb.3;
-        Tue, 12 Apr 2022 00:37:36 -0700 (PDT)
+        with ESMTP id S1353747AbiDLHQC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 03:16:02 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DAB140E40;
+        Mon, 11 Apr 2022 23:57:26 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id s2so16691101pfh.6;
+        Mon, 11 Apr 2022 23:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=bNjBEe/YPe6Z4q3I9FKAbfmaWyUfpZN/Nwef8zNH/KU=;
+        b=HXDUZRx+zwaxgI7xlkULMXh5Y+QtBcnOXlT16mLRmI7TL2jnSxkSQEC675xjS/jG1t
+         pqoGTyAUJLsUK2BKmyFQeizPhltMgs/iMcSsIuyzJQvl3t/89GJUJUHDqNfi5vgAuZq9
+         ey7EKWRtPPdXHh011jhNutwRey/N7slZjc0hfqnR0x8ZqfZGwe1f6zjAhOEyIBkL89tp
+         L4VBSqoI3nLb2PGX6K8zHJrWifQgJ2uU/NHsMQG+Kn6c2iHE+LLrhxQhhKNHANPPUXQr
+         BP9MOrxNNRGSDQQwk7CmYe8lLy32WsX/0G8OL31HCSqVxECsxpaQxprBLcK2MkZZ52hY
+         OZag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sju++ztFGWh+V8NuvYNnn8xfQchBMBltAHAO3s39Z8k=;
-        b=2M8avMGi86TQhn4sBd37R69XQoNn2fM1odo1WemkhQYVk7scFF6khtTsUXdGKOYU7K
-         W/ZM12BXJMEIsl/MHSBp23LEXzPAN6iUvHHva4YWhAQn1p03f/lVzLT1UF/RbHkfBc+6
-         jti2On7M5ZbqVqb2Wd1cEYO4y25D1zczyW7A//hTV6b6ggIDFRZysDLTDwkgnjgsR9q3
-         TUHDlP8Qm4dKeopceD8JVhQs3RDQM7eiL/S6nP1obq4eWyw6GmCmLf2+5dXqxQyvjeyo
-         Uybae/rh/qG7rl8eSdpYZxeP/n6CQQq2s/f+1R/QV7LpcrLFpt6SYLKpD9DK5C8UKA/7
-         8Yfw==
-X-Gm-Message-State: AOAM5326Thx93oKLJ9BVa6qUvIzmIL+qwyFeZZGtGWglxRzLoHKEsRFI
-        FuJpI1knpp/d48FfhebK1MgxYnawMPAbdQgB
-X-Google-Smtp-Source: ABdhPJxwDNiiKwUSnwbzZvP2H+H+3GoKCQzp3NGQUr5JFvKWH4Kpv+yw6iIPGCR2L2+ARROXrJTkQw==
-X-Received: by 2002:ac8:5e10:0:b0:2e1:cb3e:bb87 with SMTP id h16-20020ac85e10000000b002e1cb3ebb87mr2398455qtx.4.1649749055431;
-        Tue, 12 Apr 2022 00:37:35 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id r7-20020ac85c87000000b002e234014a1fsm27598557qta.81.2022.04.12.00.37.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 00:37:34 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-2ed65e63afcso32361177b3.9;
-        Tue, 12 Apr 2022 00:37:34 -0700 (PDT)
-X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
- u124-20020a814782000000b002eb1cb15441mr28177896ywa.479.1649749054017; Tue, 12
- Apr 2022 00:37:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
- <20220407004511.3A6D1C385A3@smtp.kernel.org> <20220407101605.7d2a17cc@xps13>
- <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com> <20220412093155.090de9d6@xps13>
-In-Reply-To: <20220412093155.090de9d6@xps13>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 09:37:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
-Message-ID: <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bNjBEe/YPe6Z4q3I9FKAbfmaWyUfpZN/Nwef8zNH/KU=;
+        b=xZ9CflJoZQD0WD1L5Y/VGnvl8qLLXPK8wBnNL8X3lcRDH6LFaI9Wz/Dn/ZCfqzsBqY
+         Ty13N0l1hGYjSj1cz3Uyb8yVlT15Ao0M2bo23NV82iULpzm6jKa9J2dFal+sRbKJG3r+
+         6vRZL1Anc5uXQ+zmuPym2YFElBRUNwCxz6/4ypy/Pj0xfx6zyBnxV6TSha7SFEBkUCNy
+         OXCTdBJL98QMjNki5OmF/n9dbL9N7WOmqA0bRHmPI9Yhns5EnZQasB+FFYqE/66xLZe3
+         BadQYVkrt0nFq2DvNN5TrCqwSz8WHRf2wwTcosONh2RRN7SI2ZzSNWZsQA1JOT9C5kuA
+         3nKA==
+X-Gm-Message-State: AOAM531kcBpB4p5rUpcnWH2ygY1pbNNn7v3M2e/GQlGWeuft+zt+9fv/
+        Nlxvsm09rOpH4EJr3wR8q6Y=
+X-Google-Smtp-Source: ABdhPJwEOsSUBhuxpQW12wQ4nw3SgeA7lRPZ/kq+Y7rTFTCDN6m6jj7rBzvOGQ/DxADd6iG97ABukg==
+X-Received: by 2002:a05:6a00:238f:b0:4f7:78b1:2f6b with SMTP id f15-20020a056a00238f00b004f778b12f6bmr36673622pfc.17.1649746645568;
+        Mon, 11 Apr 2022 23:57:25 -0700 (PDT)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id s16-20020a056a001c5000b00505688553e1sm16442805pfw.57.2022.04.11.23.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Apr 2022 23:57:25 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] clk: imx: scu: Fix pm_runtime_get_sync() error checking
+Date:   Tue, 12 Apr 2022 06:57:18 +0000
+Message-Id: <20220412065719.17735-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+If the device is already in a runtime PM enabled state
+pm_runtime_get_sync() will return 1, so a test for negative
+value should be used to check for errors.
 
-On Tue, Apr 12, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200:
-> > On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> > > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700:
-> > > > Quoting Miquel Raynal (2022-04-06 09:18:47)
-> > > > > Here is a first series bringing DMA support to RZN1 platforms. Soon a
-> > > > > second series will come with changes made to the UART controller
-> > > > > driver, in order to interact with the RZN1 DMA controller.
-> > > > >
-> > > > > Stephen acked the sysctrl patch (in the clk driver) but somehow I feel
-> > > > > like it would be good to have this patch applied on both sides
-> > > > > (dmaengine and clk) because more changes will depend on the addition of
-> > > > > this helper, that are not related to DMA at all. I'll let you folks
-> > > > > figure out what is best.
-> > > >
-> > > > Are you sending more patches in the next 7 weeks or so that will touch
-> > > > the same area? If so, then it sounds like I'll need to take the clk
-> > > > patch through clk tree. I don't know what is best because I don't have
-> > > > the information about what everyone plans to do in that file.
-> > >
-> > > This series brings DMA support and needs to access the dmamux registers
-> > > that are in the sysctrl area.
-> > >
-> > > I've sent an RTC series which needs to access this area as well, but
-> > > it is not fully ready yet as it was advised to go for a reset
-> > > controller in this case. The reset controller would be registered by
-> > > the clock driver, so yes it would touch the same file.
-> > >
-> > > Finally, there is an USB series that is coming soon, I don't know if
-> > > it will be ready for merge for 5.19, but it needs to access a specific
-> > > register in this area as well (h2mode).
-> > >
-> > > So provided that we are able to contribute this reset driver quickly
-> > > enough, I would argue that it is safer to merge the clk changes in the
-> > > clk tree.
-> >
-> > The clk tree or the renesas-clk tree? ;-)
->
-> Actually I forgot about this tree, would you mind to merge *all* the
-> patches that depend on the sysctrl changes in the renesas/renesas-clk
-> tree? This also stands for the UART and RTC for instance. Otherwise
-> you'll need to set up immutable branches and share them with the
-> dmaengine, serial and rtc trees. I'm fine either way, it's just much
-> less work in the first situation IMHO.
+Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/imx/clk-scu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure, I can do that, given acks from the DMA, UART, and RTC
-maintainers.
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 083da31dc3ea..18c6190eeffd 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -529,7 +529,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 		pm_runtime_enable(dev);
+ 
+ 		ret = pm_runtime_get_sync(dev);
+-		if (ret) {
++		if (ret < 0) {
+ 			pm_genpd_remove_device(dev);
+ 			pm_runtime_disable(dev);
+ 			return ret;
+-- 
+2.17.1
 
-So far I've been rather terse in giving feedback on these series,
-as I'm in wait-and-see mode w.r.t. what else you've planned for the
-sysctrl DT node[1] and clock/sys controller code...
-
-[1] Did I say I'm not that fond of child nodes? But for the dmamux,
-    it looks like a good solution to handle this.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
