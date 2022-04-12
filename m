@@ -2,130 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1802C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6542FC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 23:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229865AbiDLVeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 17:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41002 "EHLO
+        id S229507AbiDLXTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 19:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbiDLVeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:34:15 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7BD19A57F
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 14:13:21 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id bq30so92166lfb.3
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 14:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=5MGAtg924xQO54iJ+qv/RwdxCFigZdsll8ZfNIcJPJc=;
-        b=IRqKqtapX/MHyA0kDhcmneShyhbP439lD8Z4ajJgKEEMZUq7Vj+sED/f2zG9UVnerm
-         jpzuGuKrJfonnDeOMuIf0vIONMOIwnyrV3mqp8hjXo3XRoLeZeoo5BR1yxZ0us5IGLCX
-         H9JVNJpKmIEhAUOLZsJ/ckHDfJizPDyhh1LzKV9AJtaDXTMi6VVYWGZyQloKrFqD7Mdn
-         9mlgMDkO81cme6GlAzsCleTj8LTu7ADAE1Mw8pFcgc04Vg340p+7NMYOHu9JOT4aQDus
-         /ERJHCjamQajYUIAoG0AWxsglQKtacsyg28H/ioh0WG/5bTnm3HRNiz9TzBHQCOjpLva
-         mUsQ==
+        with ESMTP id S229537AbiDLXTB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 19:19:01 -0400
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39176433A1;
+        Tue, 12 Apr 2022 15:06:50 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id e4so193610oif.2;
+        Tue, 12 Apr 2022 15:06:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5MGAtg924xQO54iJ+qv/RwdxCFigZdsll8ZfNIcJPJc=;
-        b=UL+sO8+jF6JvHequ3COuCgbej2VJV/Kqxkay0cMIf17jKsh8py24JoKkh9UOPukG4f
-         YYbuzxEWk+X3U9S1M7m7UId2HLOKKTCxwLPzCq6VDe0XY2qr64LH+IqcQRhDyXZlxPWj
-         neTn3q3XY7CA3D3eaWIab/lW5Hhg+VlGDic34Fx3SEdXMm0T9lKo7IuSvmdo416ijeTE
-         fPpylJaqKE8BBQLCWnPsRU8nUb8EASoe1/c1+1ZvNbz8zwOlKBnkrT4vdBR521eZlmRu
-         vsztJYUNNq7i4W9sUdtJYW2a52csXZV/ZzenFqJK/onBKnr9LjtcmwS4CVDfZ7SzUtac
-         IG0w==
-X-Gm-Message-State: AOAM531Who0x/YCD3tl1N0coev5i+BFQiJRPRRT8uZW7L01pxk6tmSVI
-        3UxztN7dofVqMTFhmddyY+IwNoa6ocpYHQ==
-X-Google-Smtp-Source: ABdhPJxdvBgpOsgvYWc5ohlR+DrAhqAl4jpj9UN/qFwISEbPBxwK1JrxbDhyByhkPcvbEwT59vMZ5g==
-X-Received: by 2002:a2e:a585:0:b0:24b:70d2:249b with SMTP id m5-20020a2ea585000000b0024b70d2249bmr3482854ljp.78.1649797049159;
-        Tue, 12 Apr 2022 13:57:29 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id p9-20020a2e93c9000000b0024b3c2ecc18sm1861940ljh.115.2022.04.12.13.57.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 13:57:28 -0700 (PDT)
-Message-ID: <3c96b6f5-878f-ee90-657e-71e8de16e290@linaro.org>
-Date:   Tue, 12 Apr 2022 23:57:27 +0300
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=G0pAhD9aV5AnyvwmtEpWGX9c5HWPBuJjLdVCNmvb9b0=;
+        b=dMsjOhm/N8YBqpt3hVD5slD8DOgLJRA4+YCmqdH/HbLlgR+wv+LWU1sYWu4dSfIPyx
+         eOnguFiUNWlFcy5iE0+WM1LxYj8I7DylPnYjEyn0VS+JnmJCNOBDx1mgcTWkRQc/kktt
+         7hBqgdyjWf3esvLcgLkDlba1ISGo5vB+iTDEf1WQEVpTZGs/appZ9tmKVHR5GhBUV6xw
+         N2RDFY4ipDVvWwq6lHIlajydBp5/JIoSpBnSeM7DXEe+59AYAEjcXXbyLehb1d+A/ueJ
+         DnIwZOKQ/HrzR6bsaTaBrSDe2A7sqCpg6tNqyBPOPJ3c95KUxST7y+lS5aqTdVghsPKO
+         YWUw==
+X-Gm-Message-State: AOAM5328BMKTyGTNzu05h6X99cR+ogvtTOLH4jmtKhPf3/6JKukbrGYS
+        ma7CLDdW8eqagczr4vDdDg==
+X-Google-Smtp-Source: ABdhPJxE/UsRuMfOAtqMzMZJgMh3Iphs+MRCEPCalHC0CQNxxJhgkhfFrPYjVDsBukILcUlibYaHNw==
+X-Received: by 2002:a05:6808:13d2:b0:2f9:b876:31e8 with SMTP id d18-20020a05680813d200b002f9b87631e8mr2798341oiw.157.1649801209539;
+        Tue, 12 Apr 2022 15:06:49 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id ek23-20020a056870f61700b000e2f14d4f8csm1439791oab.53.2022.04.12.15.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 15:06:49 -0700 (PDT)
+Received: (nullmailer pid 1028482 invoked by uid 1000);
+        Tue, 12 Apr 2022 22:06:48 -0000
+Date:   Tue, 12 Apr 2022 17:06:48 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     krzysztof.kozlowski@linaro.org, linux-clk@vger.kernel.org,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, maz@kernel.org, robh+dt@kernel.org,
+        tglx@linutronix.de, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, arnd@arndb.de
+Subject: Re: [PATCH v13 2/9] dt-bindings: reset: Add bindings for SP7021
+ reset driver
+Message-ID: <YlX3+EgShsr01dkT@robh.at.kernel.org>
+References: <cover.1649659095.git.qinjian@cqplus1.com>
+ <11b8f60a7f19f25d2fdaa7a2ed770e9383cec3ba.1649659095.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 0/4] arm: qcom: qcom-apq8064: add separate device node
- for tsens
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Amit Kucheria <amitk@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220406002648.393486-1-dmitry.baryshkov@linaro.org>
- <20220406154028.EC897C385A3@smtp.kernel.org>
- <CAA8EJpod2cNOYr3g+DmdWo_2Ujv7-pW39fBKqcpCPvtVgP5-NQ@mail.gmail.com>
- <20220412184304.79012C385A8@smtp.kernel.org>
- <CAA8EJppha+V77S6LAZW9us6XiVu9vD9X=RF+RKd+5cvCz+NxEg@mail.gmail.com>
- <YlXcTNv4ex54G/ig@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YlXcTNv4ex54G/ig@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11b8f60a7f19f25d2fdaa7a2ed770e9383cec3ba.1649659095.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/04/2022 23:08, Bjorn Andersson wrote:
-> On Tue 12 Apr 12:20 PDT 2022, Dmitry Baryshkov wrote:
+On Mon, 11 Apr 2022 14:49:52 +0800, Qin Jian wrote:
+> Add documentation to describe Sunplus SP7021 reset driver bindings.
 > 
->> On Tue, 12 Apr 2022 at 21:43, Stephen Boyd <sboyd@kernel.org> wrote:
->>>
->>> Quoting Dmitry Baryshkov (2022-04-06 12:57:30)
->>>> On Wed, 6 Apr 2022 at 18:40, Stephen Boyd <sboyd@kernel.org> wrote:
->>>>>
->>>>> Quoting Dmitry Baryshkov (2022-04-05 17:26:44)
->>>>>> Currently gcc-msm8960 driver manually creates tsens device. Instantiate
->>>>>> the device using DT node instead. This follow the IPQ8064 device tree
->>>>>> schema.
->>>>>
->>>>> Why can't the schema be changed?
->>>>
->>>> But these commits change the schema. They make apq8064 follow more
->>>> logical scheme of ipq8064.
->>>>
->>>
->>> Sounds like ipq8064 and apq8064 follow different schemas. Is there any
->>> benefit to harmonizing the two vs. just leaving it as it is in the dts
->>> and making the schema match whatever the dts has?
->>
->> I'd prefer to harmonize them. It makes no sense to have two different
->> approaches for the single IP block (shared between ipq and apq/msm).
->> And having a separate device tree node for the tsens removes a
->> dependency from gcc on the nvmem/qfprom.
->> Note, upstream qcom-msm8960.dtsi doesn't describe tsens at all, so we
->> don't have to worry about it.
->>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+> Move HW mapping from dt-binding header to driver.
+> ---
+>  .../bindings/reset/sunplus,reset.yaml         | 38 ++++++++
+>  MAINTAINERS                                   |  2 +
+>  include/dt-bindings/reset/sp-sp7021.h         | 87 +++++++++++++++++++
+>  3 files changed, 127 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+>  create mode 100644 include/dt-bindings/reset/sp-sp7021.h
 > 
-> The apq8064 design was chosen in order to make the dts represent the GCC
-> being a single hardware block, and the fact that this is a clock and a
-> thermal driver in Linux is an implementation decision.
-> 
-> Seems like we forgot about this decision when we introduce the
-> ipq8064...
-> 
-> 
-> I'm not against harmonizing the two, but I don't see any changes to
-> Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml and the
-> clock patch describes what happens, but not why (i.e. if it's to
-> harmonize the implementations the commit message should say so).
 
-Nice catch. I forgot about the gcc-apq8064 schema. Will fix in the next 
-iteration.
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Rob Herring <robh@kernel.org>
