@@ -2,109 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B9DC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1802C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 21:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbiDLVcK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 17:32:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32822 "EHLO
+        id S229865AbiDLVeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 17:34:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiDLVcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:32:08 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8107819483B;
-        Tue, 12 Apr 2022 14:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649797846; x=1681333846;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fsC3N9+404/5tl0jll2ggxWkaFkkOSR8q6gQ3tnrsoo=;
-  b=BEXfsLEfCgsaQmtJzDprGXCpJ1VNP13b1xhxs9yCumLFkV4lgD25Acy/
-   BLdYehHy55MFDWDSMHnnt4FS4uHv3lIN9uCvUCOqvx8yS17XjN0MVihBC
-   /b7eHkNPqbI51KdbQJWZ9gwGe4UuIKBBhitO6XgTpjL4HPDwVyh60AjSb
-   YAKOOpiTJ65MlmNe8bgnNgVGIcJpHRjThOyCwuMwm/lXeSL0Lj8rHPIv2
-   DFdRjLWWNZQVoNvpjYPfmUy6+yctmHNSGjSHRgu1H1am6ObEhWfnFhAzJ
-   /MaysOtuC6szTIdL3DTFPXvDQw8TwLHi40yXBIZ7l6H5Ewhkc/ih+mE/W
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10315"; a="242441601"
-X-IronPort-AV: E=Sophos;i="5.90,254,1643702400"; 
-   d="scan'208";a="242441601"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2022 14:06:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,254,1643702400"; 
-   d="scan'208";a="526218846"
-Received: from lkp-server02.sh.intel.com (HELO d3fc50ef50de) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 12 Apr 2022 14:06:15 -0700
-Received: from kbuild by d3fc50ef50de with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1neNiI-0003Ac-Gg;
-        Tue, 12 Apr 2022 21:06:14 +0000
-Date:   Wed, 13 Apr 2022 05:05:12 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@lists.01.org, Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 1/3] clk: renesas: Add support for RZ/G2UL SoC
-Message-ID: <202204130437.n3GTbhuH-lkp@intel.com>
-References: <20220412161314.13800-2-biju.das.jz@bp.renesas.com>
+        with ESMTP id S229602AbiDLVeP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 17:34:15 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7BD19A57F
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 14:13:21 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id bq30so92166lfb.3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 14:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=5MGAtg924xQO54iJ+qv/RwdxCFigZdsll8ZfNIcJPJc=;
+        b=IRqKqtapX/MHyA0kDhcmneShyhbP439lD8Z4ajJgKEEMZUq7Vj+sED/f2zG9UVnerm
+         jpzuGuKrJfonnDeOMuIf0vIONMOIwnyrV3mqp8hjXo3XRoLeZeoo5BR1yxZ0us5IGLCX
+         H9JVNJpKmIEhAUOLZsJ/ckHDfJizPDyhh1LzKV9AJtaDXTMi6VVYWGZyQloKrFqD7Mdn
+         9mlgMDkO81cme6GlAzsCleTj8LTu7ADAE1Mw8pFcgc04Vg340p+7NMYOHu9JOT4aQDus
+         /ERJHCjamQajYUIAoG0AWxsglQKtacsyg28H/ioh0WG/5bTnm3HRNiz9TzBHQCOjpLva
+         mUsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=5MGAtg924xQO54iJ+qv/RwdxCFigZdsll8ZfNIcJPJc=;
+        b=UL+sO8+jF6JvHequ3COuCgbej2VJV/Kqxkay0cMIf17jKsh8py24JoKkh9UOPukG4f
+         YYbuzxEWk+X3U9S1M7m7UId2HLOKKTCxwLPzCq6VDe0XY2qr64LH+IqcQRhDyXZlxPWj
+         neTn3q3XY7CA3D3eaWIab/lW5Hhg+VlGDic34Fx3SEdXMm0T9lKo7IuSvmdo416ijeTE
+         fPpylJaqKE8BBQLCWnPsRU8nUb8EASoe1/c1+1ZvNbz8zwOlKBnkrT4vdBR521eZlmRu
+         vsztJYUNNq7i4W9sUdtJYW2a52csXZV/ZzenFqJK/onBKnr9LjtcmwS4CVDfZ7SzUtac
+         IG0w==
+X-Gm-Message-State: AOAM531Who0x/YCD3tl1N0coev5i+BFQiJRPRRT8uZW7L01pxk6tmSVI
+        3UxztN7dofVqMTFhmddyY+IwNoa6ocpYHQ==
+X-Google-Smtp-Source: ABdhPJxdvBgpOsgvYWc5ohlR+DrAhqAl4jpj9UN/qFwISEbPBxwK1JrxbDhyByhkPcvbEwT59vMZ5g==
+X-Received: by 2002:a2e:a585:0:b0:24b:70d2:249b with SMTP id m5-20020a2ea585000000b0024b70d2249bmr3482854ljp.78.1649797049159;
+        Tue, 12 Apr 2022 13:57:29 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id p9-20020a2e93c9000000b0024b3c2ecc18sm1861940ljh.115.2022.04.12.13.57.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 13:57:28 -0700 (PDT)
+Message-ID: <3c96b6f5-878f-ee90-657e-71e8de16e290@linaro.org>
+Date:   Tue, 12 Apr 2022 23:57:27 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220412161314.13800-2-biju.das.jz@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2 0/4] arm: qcom: qcom-apq8064: add separate device node
+ for tsens
+Content-Language: en-GB
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Amit Kucheria <amitk@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220406002648.393486-1-dmitry.baryshkov@linaro.org>
+ <20220406154028.EC897C385A3@smtp.kernel.org>
+ <CAA8EJpod2cNOYr3g+DmdWo_2Ujv7-pW39fBKqcpCPvtVgP5-NQ@mail.gmail.com>
+ <20220412184304.79012C385A8@smtp.kernel.org>
+ <CAA8EJppha+V77S6LAZW9us6XiVu9vD9X=RF+RKd+5cvCz+NxEg@mail.gmail.com>
+ <YlXcTNv4ex54G/ig@ripper>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <YlXcTNv4ex54G/ig@ripper>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On 12/04/2022 23:08, Bjorn Andersson wrote:
+> On Tue 12 Apr 12:20 PDT 2022, Dmitry Baryshkov wrote:
+> 
+>> On Tue, 12 Apr 2022 at 21:43, Stephen Boyd <sboyd@kernel.org> wrote:
+>>>
+>>> Quoting Dmitry Baryshkov (2022-04-06 12:57:30)
+>>>> On Wed, 6 Apr 2022 at 18:40, Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>
+>>>>> Quoting Dmitry Baryshkov (2022-04-05 17:26:44)
+>>>>>> Currently gcc-msm8960 driver manually creates tsens device. Instantiate
+>>>>>> the device using DT node instead. This follow the IPQ8064 device tree
+>>>>>> schema.
+>>>>>
+>>>>> Why can't the schema be changed?
+>>>>
+>>>> But these commits change the schema. They make apq8064 follow more
+>>>> logical scheme of ipq8064.
+>>>>
+>>>
+>>> Sounds like ipq8064 and apq8064 follow different schemas. Is there any
+>>> benefit to harmonizing the two vs. just leaving it as it is in the dts
+>>> and making the schema match whatever the dts has?
+>>
+>> I'd prefer to harmonize them. It makes no sense to have two different
+>> approaches for the single IP block (shared between ipq and apq/msm).
+>> And having a separate device tree node for the tsens removes a
+>> dependency from gcc on the nvmem/qfprom.
+>> Note, upstream qcom-msm8960.dtsi doesn't describe tsens at all, so we
+>> don't have to worry about it.
+>>
+> 
+> The apq8064 design was chosen in order to make the dts represent the GCC
+> being a single hardware block, and the fact that this is a clock and a
+> thermal driver in Linux is an implementation decision.
+> 
+> Seems like we forgot about this decision when we introduce the
+> ipq8064...
+> 
+> 
+> I'm not against harmonizing the two, but I don't see any changes to
+> Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml and the
+> clock patch describes what happens, but not why (i.e. if it's to
+> harmonize the implementations the commit message should say so).
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on geert-renesas-drivers/renesas-clk]
-[also build test ERROR on geert-renesas-devel/next krzk/for-next v5.18-rc2 next-20220412]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Biju-Das/Add-Renesas-RZ-G2UL-Type-1-SoC-SMARC-EVK-support/20220413-003233
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
-config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220413/202204130437.n3GTbhuH-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/ecfc4ccb6c8bc2ea667b9387be29a4b96212499d
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Biju-Das/Add-Renesas-RZ-G2UL-Type-1-SoC-SMARC-EVK-support/20220413-003233
-        git checkout ecfc4ccb6c8bc2ea667b9387be29a4b96212499d
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/renesas/r9a07g043-cpg.c:13:10: fatal error: dt-bindings/clock/r9a07g043-cpg.h: No such file or directory
-      13 | #include <dt-bindings/clock/r9a07g043-cpg.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   compilation terminated.
-
-
-vim +13 drivers/clk/renesas/r9a07g043-cpg.c
-
-    12	
-  > 13	#include <dt-bindings/clock/r9a07g043-cpg.h>
-    14	
+Nice catch. I forgot about the gcc-apq8064 schema. Will fix in the next 
+iteration.
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+With best wishes
+Dmitry
