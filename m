@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F10BC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 10:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487C4C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 10:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357415AbiDLKMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34878 "EHLO
+        id S1354578AbiDLKMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 06:12:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357442AbiDLITB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 04:19:01 -0400
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345C622BEC;
-        Tue, 12 Apr 2022 00:43:46 -0700 (PDT)
+        with ESMTP id S1383870AbiDLIiZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 04:38:25 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A735839F;
+        Tue, 12 Apr 2022 01:03:07 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 6DB4A20000B;
-        Tue, 12 Apr 2022 07:43:39 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 563D6FF816;
+        Tue, 12 Apr 2022 08:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649749422;
+        t=1649750586;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=CNKKl0B89mxTmL7IuuBmptC0vwMqvThJjA4HAX6u/T8=;
-        b=a5vmG4pPPcFZ8V+LB/7K4J7GtH/fKvOXBzIPD4Aovpf6xIFjrXhK495+KFN8X+XrHr01rQ
-        jwMJ6TPkrnFLnpFTjLUT5qD2v++77dahW60KzRQm26JOXdh2l+kVhu5Vo95yWr2Pw0vHje
-        6B4ZvYofpy83brEw08RYSYeMNncaNq1nk08wALlrJZj1N3GH/qjD6RM21+suDK0dPh47Kn
-        ewLEPbH5DZszfhJT4qt7h8PDTLOBQ4I5pek2zHLl6/aT7HQmDxLJTVKmjPX+9ozICNIqmU
-        M7KomQhkB0uHlIV4YJ/HaAI5gUMeaS4vdfdAlRu4ODKw2wQ6Bf0EIkRDsuGSLQ==
-Date:   Tue, 12 Apr 2022 09:43:38 +0200
+        bh=NnvDEEExY37Xv5wSccm3tc8qzWAN9+4FKDvuyDplVRY=;
+        b=R5s2ELhONPy26eG7hZH8wA7hpK/ahyrHOLlK97/xc1FxMnxSFNFB57rRdYz9gHCmUuBZIi
+        JMt8XZqT9vwzVSOmT4hOFqwAv7xeCRKCoPa6X0vOL+QCvROFILRKEpTqVTTDH0FnclRGOP
+        6mSiCmGy7Dq5IGCHSYLLj2wEeNLXtIrj9FvZZaNDiP8u6ff4ui9OaLzn1R60d6jQ7Ei6VW
+        P7CmbSb/cCTl2sEtg4i/HXfn4BW+MBFheSljDrtUDaceW3pfTFYy0lLPs+w4eL9M7ChDFw
+        K+kDw3AzuwCnITQLZBwvlwr1vujUFCIzxUrUEJ6nZjrdMyvN+yozPuVVed3tBw==
+Date:   Tue, 12 Apr 2022 10:03:01 +0200
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -54,14 +54,16 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
 Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-Message-ID: <20220412094338.382e8754@xps13>
-In-Reply-To: <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
+Message-ID: <20220412100301.03ccece8@xps13>
+In-Reply-To: <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
 References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
         <20220407004511.3A6D1C385A3@smtp.kernel.org>
         <20220407101605.7d2a17cc@xps13>
         <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
         <20220412093155.090de9d6@xps13>
         <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
+        <20220412094338.382e8754@xps13>
+        <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -73,90 +75,111 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Geert,
 
-geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200:
+geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:52:25 +0200:
 
 > Hi Miquel,
 >=20
-> On Tue, Apr 12, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.com>=
+> On Tue, Apr 12, 2022 at 9:43 AM Miquel Raynal <miquel.raynal@bootlin.com>=
  wrote:
-> > geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200: =20
-> > > On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@bootlin.=
+> > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200: =20
+> > > On Tue, Apr 12, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.=
 com> wrote: =20
-> > > > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700: =20
-> > > > > Quoting Miquel Raynal (2022-04-06 09:18:47) =20
-> > > > > > Here is a first series bringing DMA support to RZN1 platforms. =
-Soon a
-> > > > > > second series will come with changes made to the UART controller
-> > > > > > driver, in order to interact with the RZN1 DMA controller.
+> > > > geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200: =20
+> > > > > On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@boot=
+lin.com> wrote: =20
+> > > > > > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700: =20
+> > > > > > > Quoting Miquel Raynal (2022-04-06 09:18:47) =20
+> > > > > > > > Here is a first series bringing DMA support to RZN1 platfor=
+ms. Soon a
+> > > > > > > > second series will come with changes made to the UART contr=
+oller
+> > > > > > > > driver, in order to interact with the RZN1 DMA controller.
+> > > > > > > >
+> > > > > > > > Stephen acked the sysctrl patch (in the clk driver) but som=
+ehow I feel
+> > > > > > > > like it would be good to have this patch applied on both si=
+des
+> > > > > > > > (dmaengine and clk) because more changes will depend on the=
+ addition of
+> > > > > > > > this helper, that are not related to DMA at all. I'll let y=
+ou folks
+> > > > > > > > figure out what is best. =20
+> > > > > > >
+> > > > > > > Are you sending more patches in the next 7 weeks or so that w=
+ill touch
+> > > > > > > the same area? If so, then it sounds like I'll need to take t=
+he clk
+> > > > > > > patch through clk tree. I don't know what is best because I d=
+on't have
+> > > > > > > the information about what everyone plans to do in that file.=
+ =20
 > > > > > >
-> > > > > > Stephen acked the sysctrl patch (in the clk driver) but somehow=
- I feel
-> > > > > > like it would be good to have this patch applied on both sides
-> > > > > > (dmaengine and clk) because more changes will depend on the add=
-ition of
-> > > > > > this helper, that are not related to DMA at all. I'll let you f=
-olks
-> > > > > > figure out what is best. =20
+> > > > > > This series brings DMA support and needs to access the dmamux r=
+egisters
+> > > > > > that are in the sysctrl area.
+> > > > > >
+> > > > > > I've sent an RTC series which needs to access this area as well=
+, but
+> > > > > > it is not fully ready yet as it was advised to go for a reset
+> > > > > > controller in this case. The reset controller would be register=
+ed by
+> > > > > > the clock driver, so yes it would touch the same file.
+> > > > > >
+> > > > > > Finally, there is an USB series that is coming soon, I don't kn=
+ow if
+> > > > > > it will be ready for merge for 5.19, but it needs to access a s=
+pecific
+> > > > > > register in this area as well (h2mode).
+> > > > > >
+> > > > > > So provided that we are able to contribute this reset driver qu=
+ickly
+> > > > > > enough, I would argue that it is safer to merge the clk changes=
+ in the
+> > > > > > clk tree. =20
 > > > > >
-> > > > > Are you sending more patches in the next 7 weeks or so that will =
-touch
-> > > > > the same area? If so, then it sounds like I'll need to take the c=
+> > > > > The clk tree or the renesas-clk tree? ;-) =20
+> > > >
+> > > > Actually I forgot about this tree, would you mind to merge *all* the
+> > > > patches that depend on the sysctrl changes in the renesas/renesas-c=
 lk
-> > > > > patch through clk tree. I don't know what is best because I don't=
- have
-> > > > > the information about what everyone plans to do in that file. =20
-> > > >
-> > > > This series brings DMA support and needs to access the dmamux regis=
-ters
-> > > > that are in the sysctrl area.
-> > > >
-> > > > I've sent an RTC series which needs to access this area as well, but
-> > > > it is not fully ready yet as it was advised to go for a reset
-> > > > controller in this case. The reset controller would be registered by
-> > > > the clock driver, so yes it would touch the same file.
-> > > >
-> > > > Finally, there is an USB series that is coming soon, I don't know if
-> > > > it will be ready for merge for 5.19, but it needs to access a speci=
-fic
-> > > > register in this area as well (h2mode).
-> > > >
-> > > > So provided that we are able to contribute this reset driver quickly
-> > > > enough, I would argue that it is safer to merge the clk changes in =
-the
-> > > > clk tree. =20
+> > > > tree? This also stands for the UART and RTC for instance. Otherwise
+> > > > you'll need to set up immutable branches and share them with the
+> > > > dmaengine, serial and rtc trees. I'm fine either way, it's just much
+> > > > less work in the first situation IMHO. =20
 > > >
-> > > The clk tree or the renesas-clk tree? ;-) =20
+> > > Sure, I can do that, given acks from the DMA, UART, and RTC
+> > > maintainers. =20
 > >
-> > Actually I forgot about this tree, would you mind to merge *all* the
-> > patches that depend on the sysctrl changes in the renesas/renesas-clk
-> > tree? This also stands for the UART and RTC for instance. Otherwise
-> > you'll need to set up immutable branches and share them with the
-> > dmaengine, serial and rtc trees. I'm fine either way, it's just much
-> > less work in the first situation IMHO. =20
+> > Ok, I'll say so in the cover letter of the v9.
+> > =20
+> > > So far I've been rather terse in giving feedback on these series,
+> > > as I'm in wait-and-see mode w.r.t. what else you've planned for the
+> > > sysctrl DT node[1] and clock/sys controller code...
+> > >
+> > > [1] Did I say I'm not that fond of child nodes? But for the dmamux,
+> > >     it looks like a good solution to handle this. =20
+> >
+> > O:-)
+> >
+> > I plan in the coming days to write a proper reset controller driver
+> > that will be queried by the rtc driver (as proposed by Alexandre). =20
 >=20
-> Sure, I can do that, given acks from the DMA, UART, and RTC
-> maintainers.
-
-Ok, I'll say so in the cover letter of the v9.
-
-> So far I've been rather terse in giving feedback on these series,
-> as I'm in wait-and-see mode w.r.t. what else you've planned for the
-> sysctrl DT node[1] and clock/sys controller code...
+> OK.
 >=20
-> [1] Did I say I'm not that fond of child nodes? But for the dmamux,
->     it looks like a good solution to handle this.
+> > Which means I'll have to declare this reset controller as a child of
+> > the systrl node. If you disagree with it, you may jump-in, see this
+> > thread :
+> >
+> >         Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
+> >                  function to  enable/disable the RTC
+> >         Date: Wed, 6 Apr 2022 10:32:31 +0200 =20
+>=20
+> But do you need a child node for that? All(most all) other Renesas
+> clock drivers provide reset functionality, and none of them use a
+> child node for that.
 
-O:-)
-
-I plan in the coming days to write a proper reset controller driver
-that will be queried by the rtc driver (as proposed by Alexandre).
-Which means I'll have to declare this reset controller as a child of
-the systrl node. If you disagree with it, you may jump-in, see this
-thread :
-
-	Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
-		 function to  enable/disable the RTC
-	Date: Wed, 6 Apr 2022 10:32:31 +0200
+How do you "request" the reset handle from the consumer driver if it's
+not described in the DT? Do you have examples to share?
 
 Thanks,
 Miqu=C3=A8l
