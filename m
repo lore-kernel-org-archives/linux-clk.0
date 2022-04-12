@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81361C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 23:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B2EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 23:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbiDLX0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 19:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
+        id S229877AbiDLX1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 19:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229730AbiDLX0Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 19:26:16 -0400
+        with ESMTP id S230072AbiDLX00 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 19:26:26 -0400
 Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D083DE7F69;
-        Tue, 12 Apr 2022 15:40:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 217155E16F;
+        Tue, 12 Apr 2022 15:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1649803201; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1649803132; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=V1gGyPRrzq2+IYxEgFqW+9RQDsjKShTJNXfR19CIx0I=;
-        b=2YZwLXLEOWmPN8AG89OD4NVqzNK4VfhnQx7xlDnTY9/fpGKt2Obems9m9WNsIiHrvzDcSk
-        NNWm/rrmyH825SKRrCZa7iZnBkYHm234qRt83tCCnE/uRiz0xYyKZGaWJHx9yd6CaQkwDl
-        nR9cViVY9zzy4XSyG1brnH8GxMYFB8k=
-Date:   Tue, 12 Apr 2022 23:39:50 +0100
+        bh=xNAG0SZZHvrLl10xQGGWue13a4HRKmHPzD7hJXX4nXw=;
+        b=JrCsWn2rWIljaUBYBbe4lfE1WQfRTPty5lP17RS5P46896a7F0Klgi9OrmOXuP9gLhIkNH
+        SG1EzrVTvrFCtbI+6rPgdFfNjm3BNfEQ+cz4GyEfA1e0Fs3s8MWOnmdedVoks84rkkFpKu
+        qVg9d2d/TTBZq+Y0afxP2tEHOqRfv08=
+Date:   Tue, 12 Apr 2022 23:38:42 +0100
 From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
- SoCs
+Subject: Re: [PATCH v5 1/2] mips: dts: ingenic: Add TCU clock to x1000/x1830
+ tcu device node
 To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, tsbogend@alpha.franken.de,
         mturquette@baylibre.com, sboyd@kernel.org,
         linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         dan.carpenter@oracle.com
-Message-Id: <EA09AR.6F7SVEL62WAI1@crapouillou.net>
-In-Reply-To: <20220412122750.279058-3-aidanmacdonald.0x0@gmail.com>
+Message-Id: <I809AR.0C3UZTFR7V5I1@crapouillou.net>
+In-Reply-To: <20220412122750.279058-2-aidanmacdonald.0x0@gmail.com>
 References: <20220412122750.279058-1-aidanmacdonald.0x0@gmail.com>
-        <20220412122750.279058-3-aidanmacdonald.0x0@gmail.com>
+        <20220412122750.279058-2-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
@@ -47,16 +47,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-Le mar., avril 12 2022 at 13:27:50 +0100, Aidan MacDonald=20
+Le mar., avril 12 2022 at 13:27:49 +0100, Aidan MacDonald=20
 <aidanmacdonald.0x0@gmail.com> a =E9crit :
-> The TCU clock gate on X1000 wasn't requested by the driver and could
-> be gated automatically later on in boot, which prevents timers from
-> running and breaks PWM.
->=20
-> Add a workaround to support old device trees that don't specify the
-> "tcu" clock gate. In this case the kernel will print a warning and
-> attempt to continue without the clock, which is wrong, but it could
-> work if "clk_ignore_unused" is in the kernel arguments.
+> This clock is a gate for the TCU hardware block on these SoCs, but
+> it wasn't included in the device tree since the ingenic-tcu driver
+> erroneously did not request it.
 >=20
 > Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 
@@ -66,84 +61,44 @@ Cheers,
 -Paul
 
 > ---
->  drivers/clk/ingenic/tcu.c | 35 +++++++++++++++++++++++++----------
->  1 file changed, 25 insertions(+), 10 deletions(-)
+>  arch/mips/boot/dts/ingenic/x1000.dtsi | 5 +++--
+>  arch/mips/boot/dts/ingenic/x1830.dtsi | 5 +++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
 >=20
-> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-> index 77acfbeb4830..201bf6e6b6e0 100644
-> --- a/drivers/clk/ingenic/tcu.c
-> +++ b/drivers/clk/ingenic/tcu.c
-> @@ -31,6 +31,7 @@ struct ingenic_soc_info {
->  	unsigned int num_channels;
->  	bool has_ost;
->  	bool has_tcu_clk;
-> +	bool allow_missing_tcu_clk;
->  };
+> diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi=20
+> b/arch/mips/boot/dts/ingenic/x1000.dtsi
+> index 8bd27edef216..c69df8eb158e 100644
+> --- a/arch/mips/boot/dts/ingenic/x1000.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+> @@ -111,8 +111,9 @@ tcu: timer@10002000 {
 >=20
->  struct ingenic_tcu_clk_info {
-> @@ -320,7 +321,8 @@ static const struct ingenic_soc_info=20
-> jz4770_soc_info =3D {
->  static const struct ingenic_soc_info x1000_soc_info =3D {
->  	.num_channels =3D 8,
->  	.has_ost =3D false, /* X1000 has OST, but it not belong TCU */
-> -	.has_tcu_clk =3D false,
-> +	.has_tcu_clk =3D true,
-> +	.allow_missing_tcu_clk =3D true,
->  };
+>  		clocks =3D <&cgu X1000_CLK_RTCLK>,
+>  			 <&cgu X1000_CLK_EXCLK>,
+> -			 <&cgu X1000_CLK_PCLK>;
+> -		clock-names =3D "rtc", "ext", "pclk";
+> +			 <&cgu X1000_CLK_PCLK>,
+> +			 <&cgu X1000_CLK_TCU>;
+> +		clock-names =3D "rtc", "ext", "pclk", "tcu";
 >=20
->  static const struct of_device_id __maybe_unused=20
-> ingenic_tcu_of_match[] __initconst =3D {
-> @@ -355,14 +357,27 @@ static int __init ingenic_tcu_probe(struct=20
-> device_node *np)
->  		tcu->clk =3D of_clk_get_by_name(np, "tcu");
->  		if (IS_ERR(tcu->clk)) {
->  			ret =3D PTR_ERR(tcu->clk);
-> -			pr_crit("Cannot get TCU clock\n");
-> -			goto err_free_tcu;
-> -		}
+>  		interrupt-controller;
+>  		#interrupt-cells =3D <1>;
+> diff --git a/arch/mips/boot/dts/ingenic/x1830.dtsi=20
+> b/arch/mips/boot/dts/ingenic/x1830.dtsi
+> index 2595df8671c7..4408df24ca98 100644
+> --- a/arch/mips/boot/dts/ingenic/x1830.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/x1830.dtsi
+> @@ -104,8 +104,9 @@ tcu: timer@10002000 {
 >=20
-> -		ret =3D clk_prepare_enable(tcu->clk);
-> -		if (ret) {
-> -			pr_crit("Unable to enable TCU clock\n");
-> -			goto err_put_clk;
-> +			/*
-> +			 * Old device trees for some SoCs did not include the
-> +			 * TCU clock because this driver (incorrectly) didn't
-> +			 * use it. In this case we complain loudly and attempt
-> +			 * to continue without the clock, which might work if
-> +			 * booting with workarounds like "clk_ignore_unused".
-> +			 */
-> +			if (tcu->soc_info->allow_missing_tcu_clk && ret =3D=3D -EINVAL) {
-> +				pr_warn("TCU clock missing from device tree, please update your=20
-> device tree\n");
-> +				tcu->clk =3D NULL;
-> +			} else {
-> +				pr_crit("Cannot get TCU clock from device tree\n");
-> +				goto err_free_tcu;
-> +			}
-> +		} else {
-> +			ret =3D clk_prepare_enable(tcu->clk);
-> +			if (ret) {
-> +				pr_crit("Unable to enable TCU clock\n");
-> +				goto err_put_clk;
-> +			}
->  		}
->  	}
+>  		clocks =3D <&cgu X1830_CLK_RTCLK>,
+>  			 <&cgu X1830_CLK_EXCLK>,
+> -			 <&cgu X1830_CLK_PCLK>;
+> -		clock-names =3D "rtc", "ext", "pclk";
+> +			 <&cgu X1830_CLK_PCLK>,
+> +			 <&cgu X1830_CLK_TCU>;
+> +		clock-names =3D "rtc", "ext", "pclk", "tcu";
 >=20
-> @@ -432,10 +447,10 @@ static int __init ingenic_tcu_probe(struct=20
-> device_node *np)
->  			clk_hw_unregister(tcu->clocks->hws[i]);
->  	kfree(tcu->clocks);
->  err_clk_disable:
-> -	if (tcu->soc_info->has_tcu_clk)
-> +	if (tcu->clk)
->  		clk_disable_unprepare(tcu->clk);
->  err_put_clk:
-> -	if (tcu->soc_info->has_tcu_clk)
-> +	if (tcu->clk)
->  		clk_put(tcu->clk);
->  err_free_tcu:
->  	kfree(tcu);
+>  		interrupt-controller;
+>  		#interrupt-cells =3D <1>;
 > --
 > 2.35.1
 >=20
