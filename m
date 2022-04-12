@@ -2,114 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742B9C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 15:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0672C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 15:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357173AbiDLPX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 11:23:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
+        id S1357132AbiDLPlc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 11:41:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357047AbiDLPXs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 11:23:48 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715E71C923
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 08:21:29 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e2442907a1so20726039fac.8
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 08:21:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Qu3x8sdL450TLQDqbPVZSB+mpayh/+CyyZ7ypbjcaSU=;
-        b=r6cizZbLbT+19O9rXJANpT82cGCsvqn2fYt+NJUHZ8fWAx5bqrlJO1ag9v+NDtvUQF
-         dgcyRF7V4pQ6a7huSydcAB2zpQZk8DNUK/w6mGMoFUUeotYHOYeGBOucp9BP+KopXz7r
-         O2xrj9ulrpRv7XGAdFDjVmdcUgtCQQcxy92strzrfd68YVAGjofGmylhBoURLQjuD1D/
-         K7QretzqMAeumMbaAmOMG+age3q4DNJBSPh2Bu6J5lH3ChfrXR4DOZ+++4Pe2na04YJH
-         dBjXX23PBn5/Kn3szYQOVTT+nCDJDBhpcIY4LO/cj9sRSW2GeCTIVQK95Qb2s8YHhm4i
-         7Tpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Qu3x8sdL450TLQDqbPVZSB+mpayh/+CyyZ7ypbjcaSU=;
-        b=aOpfHJIoA4T5NyKhtoRMye7M5yYiaRFbgmusHsgHwigSKpS52HNAp3nYX//cX5FiTu
-         /k9nuSb6q8zV5hdYdidaZ1D+BIGmmC9hXVayjbJdZgKGROmFBR33WZcqlFuxjkPvgeMH
-         bruRNPjo+IlPda3TknUX+fg0wnPrFjnmWxH1Fq4ykERqdoD4xAwt6qK+vxCtOgBmuwd7
-         nudt04T7n/rI2uM4giZEMzncx8ZRfCDX7acnl46/2t3ECA1iaqtLq+KDyIyCJGl3TyOm
-         gOr3+gW52HIrX5KcFLrrY1TZZSQOqFyt/05a6+QnzlNBSrbFDFlrvzLp8lj6kRFXeoEe
-         0L5Q==
-X-Gm-Message-State: AOAM531XiSksyXyj441QQdW4eW2ventLWwE++U+xqqlTJDIb8ypMlsMk
-        NybOQqdsa8x7L+BVMX2fanGatg==
-X-Google-Smtp-Source: ABdhPJwSMU6rLdoiFiE1YWIqEnAgFX38AXPmGE4lImEOYvnaGOANJ32c//Fqg3miUjWLSjDcu6Zvjw==
-X-Received: by 2002:a05:6870:e893:b0:e2:ecbc:e581 with SMTP id q19-20020a056870e89300b000e2ecbce581mr2203328oan.193.1649776888814;
-        Tue, 12 Apr 2022 08:21:28 -0700 (PDT)
-Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id n6-20020a9d6f06000000b005b266e43c92sm13460871otq.73.2022.04.12.08.21.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 08:21:27 -0700 (PDT)
-Date:   Tue, 12 Apr 2022 08:23:42 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1357139AbiDLPlb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 11:41:31 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D574621270;
+        Tue, 12 Apr 2022 08:39:09 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 6ADB91BF20F;
+        Tue, 12 Apr 2022 15:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649777948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rKZtJGJxW/aFxcS9buXo0jT+71lDfrClh+EY4VvAKZ8=;
+        b=NFPEDLDUjvoDfqIpEQdkNnl2orzguZG1zn0hdbX8XWTmBZcGLFOH3wj5qLaGkg3oMx+qR5
+        m5XHV4wb9sniARGqp5cmg858TxaOJth7N5R2kg6xbKAaFNL76X9w0hDgbxu0OLlv5NXC/F
+        3DkrAxr7PPmRpPFkft64wembdhVk6LU+ujgRUo7MBDGeDu7hgQ4vNLrqCv9A6HNcwCXEWW
+        VMQvHT7lLfsOZAWM6fbNbDQz3e9FWzHctJ2mAvybiwrglgk4LeqQWs174eLm6WhFw3w4rR
+        t1t4faF75wbdcTXo6dS4uZ+bjO/dmYzqwaEQRth2Cb/LsEFyQVXqbmPKKLdW5Q==
+Date:   Tue, 12 Apr 2022 17:39:03 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/6] dt-bindings: opp: accept array of frequencies
-Message-ID: <YlWZfioKrHO9tqQv@ripper>
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-3-krzysztof.kozlowski@linaro.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <20220412173903.2af6df21@xps13>
+In-Reply-To: <YlVdNpuYdgzo7Vgi@smile.fi.intel.com>
+References: <20220412102138.45975-1-miquel.raynal@bootlin.com>
+        <20220412102138.45975-6-miquel.raynal@bootlin.com>
+        <YlVdNpuYdgzo7Vgi@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220411154347.491396-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 11 Apr 08:43 PDT 2022, Krzysztof Kozlowski wrote:
+Hi Andy,
 
-> Devices might need to control several clocks when scaling the frequency
-> and voltage.  Allow passing array of clock frequencies, similarly to the
-> voltages.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+andriy.shevchenko@linux.intel.com wrote on Tue, 12 Apr 2022 14:06:30
++0300:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> On Tue, Apr 12, 2022 at 12:21:34PM +0200, Miquel Raynal wrote:
+> > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+> > dmamux register located in the system control area which can take up to
+> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> > two different peripherals.
+> >=20
+> > We need two additional information from the 'dmas' property: the channel
+> > (bit in the dmamux register) that must be accessed and the value of the
+> > mux for this channel. =20
+>=20
+> ...
+>=20
+> Some headers are absent, e.g.: types.h, bitops.h.
+>=20
+> > +#include <linux/of_device.h>
+> > +#include <linux/of_dma.h>
+> > +#include <linux/slab.h> =20
+>=20
+> ...
+>=20
+> > +	mutex_lock(&dmamux->lock);
+> > +	clear_bit(BIT(map->req_idx), dmamux->used_chans); =20
+>=20
+> Why do you need atomic bit operation here _and_ mutex?
+>=20
+> > +	mutex_unlock(&dmamux->lock); =20
+>=20
+> Ditto for the rest similar cases.
 
-> ---
->  Documentation/devicetree/bindings/opp/opp-v2-base.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> index 76c8acd981b3..1d7216008f95 100644
-> --- a/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> +++ b/Documentation/devicetree/bindings/opp/opp-v2-base.yaml
-> @@ -50,6 +50,14 @@ patternProperties:
->            property to uniquely identify the OPP nodes exists. Devices like power
->            domains must have another (implementation dependent) property.
->  
-> +          This can be also an array of frequencies for each clock provided to the
-> +          device.  In such case value of 0 means the clock frequency should not
-> +          be configured for given clock.
-> +        minItems: 1
-> +        maxItems: 16
-> +        items:
-> +          maxItems: 1
-> +
->        opp-microvolt:
->          description: |
->            Voltage for the OPP
-> -- 
-> 2.32.0
-> 
+We no longer need the lock however I re-ordered things like they were
+before because I need to add a check on the bitmap when setting the bit
+and this must be done before touching the dmamux registers.
+
+Thanks,
+Miqu=C3=A8l
