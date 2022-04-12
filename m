@@ -2,33 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96156C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41182C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359075AbiDLTmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 15:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54526 "EHLO
+        id S236724AbiDLTnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 15:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359019AbiDLTmJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:09 -0400
+        with ESMTP id S1359038AbiDLTmK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:10 -0400
 Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 961A13818C;
-        Tue, 12 Apr 2022 12:39:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FEB149F04
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:39:49 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id EBA65200002;
-        Tue, 12 Apr 2022 19:39:43 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 21B41200003;
+        Tue, 12 Apr 2022 19:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649792385;
+        t=1649792379;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=b/2uPiY2TYWmapERUhN8j/bje3sF8nIU5bDWIigV/vE=;
-        b=NwWosyLMq11NrocrEPdmxWE8jcvNnCKX027NN0M2MkHblDyflY8uDFOck73Mxa/67F4dHF
-        OgubyQC/5/4AA/XlB+Nj6m12BTYbDiPTdvosa2D3/i0sJenze/nqeS41jUnNhQrya4xNN3
-        SEa41ubDWDLKtdnJG3LyKRC7WsdlSe/Ig7d0OqEnuhqCclUN50U/u9KdJXOhUF5cjqbLVR
-        NCYSc2jmCEdZmXE485HXFHJmqyUQkbwJIeJm1Wyk//SyirVOvmTSGwRWfkvnOy8Q4syUlH
-        0DOoVvUVFb8lp7ouGQSDyLzLNb6oh9dhjJVXn0mZ1J/OJyl1Np0PeIfAZPrc3A==
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aQqqKDJLeqAg05mxttTqBgx1rKGx6AcoWAOrMvrbhs8=;
+        b=pU/A85F9XCM1C0mGVJIUPL3AfVPvV4WCBVXXR08nhNTR/+a/pVSxLMNMZ+2JV7NcZv92eK
+        BQSsyJK0/IAxikQtqMH76qgxOtckTbK5wyvvu2mPjN3Cr05qn5/f0GG82IOMIahQBtRdX0
+        j60L7SDQZ9771YuGy5+i+m2AhHUN3sqvr0mryvmteqeRlPIityX/V1UB20TxIfqfw1P/kl
+        EHSShjbv6kZIEwHLGG0Jmv4vXs1BZ7Ww6dCDFMD+PLWvujHeauUgiBceL9yrz5rGT1kcHw
+        OPOQxnOIeLsMyi4SbKBvxEzpgPMrZWUj2aoak5NMNBxh0D88K38oqF/kiJhKjw==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -48,14 +47,11 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v10 3/9] dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-Date:   Tue, 12 Apr 2022 21:39:30 +0200
-Message-Id: <20220412193936.63355-4-miquel.raynal@bootlin.com>
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v10 0/9] RZN1 DMA support
+Date:   Tue, 12 Apr 2022 21:39:27 +0200
+Message-Id: <20220412193936.63355-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220412193936.63355-1-miquel.raynal@bootlin.com>
-References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -63,37 +59,136 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Just like for the NAND controller that is also on this SoC, let's
-provide a SoC generic and a more specific couple of compatibles for the
-DMA controller.
+Hello,
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-By: Vinod Koul <vkoul@kernel.org>
----
- .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Here is a first series bringing DMA support to RZN1 platforms. Soon a
+second series will come with changes made to the UART controller
+driver, in order to interact with the RZN1 DMA controller.
 
-diff --git a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-index 6b35089ac017..c13649bf7f19 100644
---- a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-+++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-@@ -15,7 +15,13 @@ allOf:
- 
- properties:
-   compatible:
--    const: snps,dma-spear1340
-+    oneOf:
-+      - const: snps,dma-spear1340
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-dma
-+          - const: renesas,rzn1-dma
-+
- 
-   "#dma-cells":
-     minimum: 3
+Stephen acked the sysctrl patch (in the clk driver) but as this series
+is a base for more canges (serial, RTC), it would be best to merge
+everything through the Renesas trees. So, maintainers, if you agree with
+it, your acks are welcome.
+
+Cheers,
+Miquèl
+
+Changes in v10:
+* Collected more tags.
+* Dropped the mutex from the dmamux driver.
+* Added missing includes in the dmamux driver.
+* Replaced set_bit() by test_and_set_bit() in order to check if the chan
+  is already used or not in the dmamux driver.
+* Corrected the misuse of the set_bit() macro in the dmamux driver.
+
+Changes in v9:
+* Collected more tags.
+* Changed a u32 into a regular bitmap and used the bitmap API.
+* Reordered two function calls to save one extra line.
+* Added a define to avoid a magic value.
+
+Changes in v8:
+* Collected more tags.
+* Moved the Makefile line adding the dmamux driver to the bottom of the
+  file.
+* Reversed the logic in a ternary operation as suggested by Andy.
+* Changed a bit the naming of a #define as suggested by Andy.
+
+Changes in v7:
+* This time, really added Stephen's Acks (sorry for the error).
+* Moved an error check to get rid of one mutex_unlock/lock call as
+  suggested by Ilpo.
+* Split the patch adding the dmamux driver as advised by Vinod. One
+  patch introduces the dmamux driver, the other populates the children
+  of the system controller. As the original patch got acked by Stephen
+  Boyd, I moved his tag to the patch touching the clock controller only.
+
+Changes in v6:
+* Added Stephen's acks.
+* Fixed an extra newline added in the middle of nowhere.
+* Rebased on top of v5.18-rc1.
+
+Changes in v5:
+* Used gotos in rzn1_dmamux_route_allocate().
+* Changed the prefix to "dmaengine:".
+* Dropped the partial transfers fix.
+* Added Rob's acks.
+
+Changes in v4:
+* Freed "map" in the error path of the dmamux driver.
+* Improved a bit the style as requested by Prabhakar.
+* Dropped a __maybe_unused.
+* Reorder the includes.
+* Added a dependency on ARCH_RZN1.
+* Added Rob's Ack.
+* Added a reg property to the dmamux binding file.
+* Referenced the dmamux binding from the system controller file.
+* Called of_platform_populate from the end of the system controller
+  (clock) driver probe in order to probe the dmamux if it was
+  populated.
+* Added DMA properties to all the relevant UARTs.
+
+Changes in v3:
+* Added Reviewed-by tags.
+* Exported the set_dmamux* symbol properly.
+* Dropped a useless check in the probe and moved the sysctrl_priv
+  assignation to the end of the probe.
+* Renamed the dmamux driver
+* Added a couple of missing MODULE_ macros in the dmamux driver.
+* Decided to use a regular platform init call instead of the
+  arch_initcall() initially proposed.
+* s/%d/%u/ in printk's when appropriate.
+* Used a hardcoded value instead of dmamux->dmac_requests when
+  appropriate.
+* Changed the variable name "master" to "dmac_idx" to be more
+  descriptive.
+* Dropped most of the of_* calls in favor of #define's.
+* Fixed a typo.
+* Exported two symbols from 8250_dma.c.
+
+Changes in v2:
+* Clarified that the 'fix' regarding non aligned reads would only apply
+  to the DEV_TO_MEM case.
+* Fix the DMA controller compatible string (copy-paste error).
+* s/syscon/sysctrl/ as advised by Geert.
+* Disabled irqs when taking the spinlock from the clocks driver.
+* Moved the DMAMUX offset inside the driver.
+* Removed extra commas.
+* Improved the style as suggested by Andy.
+* Removed a dupplicated check against the device node presence.
+* Reduced the number of lines of code by using dev_err_probe().
+* Created a Kconfig symbol for DMAMUX to fix the two robot reports
+  received and be sure there was no useless overhead with other
+  platforms.
+* Exported the serial8250_{tx,rx}_dma() symbols.
+
+Miquel Raynal (9):
+  dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+  dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
+  dt-bindings: dmaengine: Introduce RZN1 DMA compatible
+  soc: renesas: rzn1-sysc: Export function to set dmamux
+  dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+  clk: renesas: r9a06g032: Probe possible children
+  dmaengine: dw: Add RZN1 compatible
+  ARM: dts: r9a06g032: Add the two DMA nodes
+  ARM: dts: r9a06g032: Describe the DMA router
+
+ .../clock/renesas,r9a06g032-sysctrl.yaml      |  11 ++
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     |  51 ++++++
+ .../bindings/dma/snps,dma-spear1340.yaml      |   8 +-
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  40 +++++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  36 +++-
+ drivers/dma/dw/Kconfig                        |   9 +
+ drivers/dma/dw/Makefile                       |   2 +
+ drivers/dma/dw/platform.c                     |   1 +
+ drivers/dma/dw/rzn1-dmamux.c                  | 160 ++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |  11 ++
+ 11 files changed, 328 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ create mode 100644 drivers/dma/dw/rzn1-dmamux.c
+ create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
+
 -- 
 2.27.0
 
