@@ -2,138 +2,167 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEA7C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 10:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFF4C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 10:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357442AbiDLKMG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 06:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50888 "EHLO
+        id S238424AbiDLKcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 06:32:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385668AbiDLIw2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 04:52:28 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7176764710;
-        Tue, 12 Apr 2022 01:12:55 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id d71so4989105qkg.12;
-        Tue, 12 Apr 2022 01:12:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZnqEEZ1zFWnMJmtyNXblrY5MQvtZ5RBg/IUnGVTe7nE=;
-        b=FaAqLTPeR8zQW28ZYZCMsxHJuewq63COHX12yxCzeSPASMWiVkxApRM3Q3N9L+L4gq
-         SwzrLNp28g8Fza8b7iA+Bn806a+TLVhbGXjg3G3nFx1qgsUVaLdyMT962s8VxEpvMgpV
-         SuX5jB4EGecuEgxRLSVOjIgbzaO85PELkhf9gx8d9We0r15ZopzQxn6RpcipRcYZggek
-         sFr+ZYnsgu9W2jkkBhPYaasyV4a/6H7uRSt1oza4W4q+LHlDE0JDLuT67NtRSeiRT6KT
-         AN1qgmi9qBQfCayw1HNgK08q+k+nq+lJ72v8TAvVFM4DghVj8v3GOssu3pxP4uijJwjz
-         ZuSA==
-X-Gm-Message-State: AOAM5311HGp/B+P25j7ipmDN3k7bSZL578NQ/EmMqkJpotTwPBbMD+YF
-        e/jtqM4spaOz2upd1PUWuLR4vffv/g8R4hXt
-X-Google-Smtp-Source: ABdhPJyRBsmcscwkqiImLbeE05pXeu7rnAt4FYsRfXBmLtITfkTGWrMy+PSIdz+V0vv2MKO7WXgsJQ==
-X-Received: by 2002:a37:a897:0:b0:69c:329:2310 with SMTP id r145-20020a37a897000000b0069c03292310mr2241446qke.349.1649751174055;
-        Tue, 12 Apr 2022 01:12:54 -0700 (PDT)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id e15-20020ac8670f000000b002e22d9c756dsm23923536qtp.30.2022.04.12.01.12.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 01:12:53 -0700 (PDT)
-Received: by mail-yb1-f172.google.com with SMTP id p65so13523245ybp.9;
-        Tue, 12 Apr 2022 01:12:53 -0700 (PDT)
-X-Received: by 2002:a25:2c89:0:b0:641:2884:b52e with SMTP id
- s131-20020a252c89000000b006412884b52emr9459376ybs.506.1649751173092; Tue, 12
- Apr 2022 01:12:53 -0700 (PDT)
+        with ESMTP id S1380840AbiDLKZs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 06:25:48 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3703213D6C;
+        Tue, 12 Apr 2022 02:29:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649755751; x=1681291751;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Rb2OhLPdmdoOp2xQrfaVfs6H3bBcZA5IDC3PKqaob3g=;
+  b=bYOJH8NGQfBqrL0nLEI7MD+FZq+zK3wAfIys0YcjO4xWRgb9xMLkepjA
+   gvj1K09aknzZDWgKKu+H6ZvXMNnqqiNLVjx4bOb+mvg/0O1XxhqblvP+S
+   kacxBAxmZGDIShzYScQ/xYrf9dV08KmmAQlpYUDReMQK1kUOm4o1iYmCc
+   2hkkRQFOjpGA0KRrGYUL2Pn0dlLGfoKSIZ+jlJxQNZdls1gM64bfW/A+X
+   U4Dgvz9QkLoUUnWlyzdN/mywCGa8KDvFHEyMCjqWIg/u/UJ6Pjb7o9gyw
+   VGtyxYnwaCt8TpgVfx9TdrytPY2VwEL7Qc9rbzeqQSyklJyaNJ93NoFjv
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10314"; a="261766254"
+X-IronPort-AV: E=Sophos;i="5.90,253,1643702400"; 
+   d="scan'208";a="261766254"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2022 02:29:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,253,1643702400"; 
+   d="scan'208";a="854289795"
+Received: from lkp-server02.sh.intel.com (HELO d3fc50ef50de) ([10.239.97.151])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Apr 2022 02:28:59 -0700
+Received: from kbuild by d3fc50ef50de with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1neCpW-0002hb-W8;
+        Tue, 12 Apr 2022 09:28:59 +0000
+Date:   Tue, 12 Apr 2022 17:28:47 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qin Jian <qinjian@cqplus1.com>, krzysztof.kozlowski@linaro.org
+Cc:     kbuild-all@lists.01.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>
+Subject: Re: [PATCH v13 7/9] irqchip: Add Sunplus SP7021 interrupt controller
+ driver
+Message-ID: <202204121739.itrMS2oq-lkp@intel.com>
+References: <20437e316e49a3a66e7003a7dc5258086558ce9a.1649659095.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
- <20220407004511.3A6D1C385A3@smtp.kernel.org> <20220407101605.7d2a17cc@xps13>
- <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
- <20220412093155.090de9d6@xps13> <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
- <20220412094338.382e8754@xps13> <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
- <20220412100301.03ccece8@xps13>
-In-Reply-To: <20220412100301.03ccece8@xps13>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Apr 2022 10:12:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
-Message-ID: <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20437e316e49a3a66e7003a7dc5258086558ce9a.1649659095.git.qinjian@cqplus1.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+Hi Qin,
 
-On Tue, Apr 12, 2022 at 10:03 AM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
-> geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:52:25 +0200:
-> > On Tue, Apr 12, 2022 at 9:43 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> > > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200:
-> > > > So far I've been rather terse in giving feedback on these series,
-> > > > as I'm in wait-and-see mode w.r.t. what else you've planned for the
-> > > > sysctrl DT node[1] and clock/sys controller code...
-> > > >
-> > > > [1] Did I say I'm not that fond of child nodes? But for the dmamux,
-> > > >     it looks like a good solution to handle this.
-> > >
-> > > O:-)
-> > >
-> > > I plan in the coming days to write a proper reset controller driver
-> > > that will be queried by the rtc driver (as proposed by Alexandre).
-> >
-> > OK.
-> >
-> > > Which means I'll have to declare this reset controller as a child of
-> > > the systrl node. If you disagree with it, you may jump-in, see this
-> > > thread :
-> > >
-> > >         Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
-> > >                  function to  enable/disable the RTC
-> > >         Date: Wed, 6 Apr 2022 10:32:31 +0200
-> >
-> > But do you need a child node for that? All(most all) other Renesas
-> > clock drivers provide reset functionality, and none of them use a
-> > child node for that.
->
-> How do you "request" the reset handle from the consumer driver if it's
-> not described in the DT? Do you have examples to share?
+I love your patch! Perhaps something to improve:
 
-I didn't say it does not need to be described in DT ;-)
+[auto build test WARNING on pza/reset/next]
+[also build test WARNING on clk/clk-next tip/irq/core linus/master v5.18-rc2 next-20220411]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Just add "#reset-cells = <1>" to the sysctrl node, and nodes can
-start referring to it using "resets = <&sysctrl N>".
-Currently, the sysctrl node is already a clock and power-domain provider.
+url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220411-145949
+base:   https://git.pengutronix.de/git/pza/linux reset/next
+config: ia64-allmodconfig (https://download.01.org/0day-ci/archive/20220412/202204121739.itrMS2oq-lkp@intel.com/config)
+compiler: ia64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/75f77401bb7a6f669659aab4efb2779bdd6aae9e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220411-145949
+        git checkout 75f77401bb7a6f669659aab4efb2779bdd6aae9e
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/irqchip/
 
-Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-shows an R-Car CPG/MSSR node providing clock, power-domain, and
-reset functionalities.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Gr{oetje,eeting}s,
+All warnings (new ones prefixed by >>):
 
-                        Geert
+   drivers/irqchip/irq-sp7021-intc.c: In function 'sp_intc_handle_ext_cascaded':
+>> drivers/irqchip/irq-sp7021-intc.c:170:23: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     170 |         int ext_num = (int)irq_desc_get_handler_data(desc);
+         |                       ^
+   drivers/irqchip/irq-sp7021-intc.c: In function 'sp_intc_irq_map':
+>> drivers/irqchip/irq-sp7021-intc.c:218:76: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+     218 |         irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
+         |                                                                            ^
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+vim +170 drivers/irqchip/irq-sp7021-intc.c
+
+   166	
+   167	static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
+   168	{
+   169		struct irq_chip *chip = irq_desc_get_chip(desc);
+ > 170		int ext_num = (int)irq_desc_get_handler_data(desc);
+   171		int hwirq;
+   172	
+   173		chained_irq_enter(chip, desc);
+   174	
+   175		while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
+   176			if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_ACTIVE))) { // WORKAROUND
+   177				ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
+   178				sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, TEST_STATE(hwirq, _IS_LOW));
+   179			} else {
+   180				generic_handle_domain_irq(sp_intc.domain, hwirq);
+   181			}
+   182		}
+   183	
+   184		chained_irq_exit(chip, desc);
+   185	}
+   186	
+   187	static struct irq_chip sp_intc_chip = {
+   188		.name = "sp_intc",
+   189		.irq_ack = sp_intc_ack_irq,
+   190		.irq_mask = sp_intc_mask_irq,
+   191		.irq_unmask = sp_intc_unmask_irq,
+   192		.irq_set_type = sp_intc_set_type,
+   193	};
+   194	
+   195	static int sp_intc_irq_domain_map(struct irq_domain *domain,
+   196					  unsigned int irq, irq_hw_number_t hwirq)
+   197	{
+   198		irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
+   199		irq_set_chip_data(irq, &sp_intc_chip);
+   200		irq_set_noprobe(irq);
+   201	
+   202		return 0;
+   203	}
+   204	
+   205	static const struct irq_domain_ops sp_intc_dm_ops = {
+   206		.xlate = irq_domain_xlate_twocell,
+   207		.map = sp_intc_irq_domain_map,
+   208	};
+   209	
+   210	static int sp_intc_irq_map(struct device_node *node, int i)
+   211	{
+   212		unsigned int irq;
+   213	
+   214		irq = irq_of_parse_and_map(node, i);
+   215		if (!irq)
+   216			return -ENOENT;
+   217	
+ > 218		irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
+   219	
+   220		return 0;
+   221	}
+   222	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
