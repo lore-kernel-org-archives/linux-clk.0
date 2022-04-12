@@ -2,211 +2,264 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0215C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 12:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA505C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 13:12:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354696AbiDLMzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 08:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
+        id S1355289AbiDLNPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 09:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355261AbiDLMxz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 08:53:55 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D100CFA;
-        Tue, 12 Apr 2022 05:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1649766393; x=1681302393;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=hA8rpGkMFdEJU3cGq4hSizCsf3y+zOUCMScAdW1aImw=;
-  b=AiDLt8qRlrkDCI0w2JqXaBVKagB+W2/veH+JLVPI24SvVU1ECcInlYIe
-   BdhwTBMAQVUL75FycAI5DtwY9hFrsUHQ4mh/2MfyVGBP4QBG7xkM0NWu5
-   HwyXLBzLEn43muh2zCkq092H1giM9vOK6xR6UbDf+8Clfb4WgicFbJgKY
-   VQGctF2x3muYGQm+6bK5IoCzRc0UzYCe7v4yhjcYfFxyVyz8ezZgN/KIU
-   kB2/LfX7cipsy0k72GxtV/3pe0xGUQLj5tnWlNNQoE8LBiog7Yy4iWcij
-   1LAdeuzrw9VR5UAqpSRBN/QWp6WHH+yJqscTaFDJjUVpXtpdy8gaxxWJm
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,253,1643698800"; 
-   d="scan'208";a="169343840"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Apr 2022 05:26:32 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 12 Apr 2022 05:26:31 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17 via Frontend Transport; Tue, 12 Apr 2022 05:26:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E5qmZrcEka0uO5xHrSMr0qpu6tJseRQoKGn+c+J02i/q5jbN1+CUdcHZiiDQhtjKkWb2cKd2EhO7Q0dMrohgup37moml4N5jQHdc8VAJIg3jlDaAdI2NJW82MJXPgmZmenI922ZTyUKHKFo4kkXjW7NUcvJRFBkjMUL0Mkh1a5u10gDsvW981fsM4oRXyQInwZzRGi9keAaPs74RMT+J6ld2SauK+D0qcARE1zCtz1kH3FF7w4eRNblY1zGeX5MzWbG1Gui1PSmYOzUNebtAOVjjzAe7X04j0DZxQd65ijfZYDqUxm696bzegUqI7xsKIu0fQntfkkUb1m8pYlmDPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hA8rpGkMFdEJU3cGq4hSizCsf3y+zOUCMScAdW1aImw=;
- b=kwC6SxbzLhYs0oEwolI20PIby9Z1V335kbhbWNlu4BnQ0AS+bet+i0DmcxugRZjEVuua+8G8TdoTCEyF2qXlKjZtETfD8g9gfsI6FhfIc0INxWK21GJDS0p85uGMyPgxb13ibDP3VcTTpB7Bz0tMzVvtLK5RoefbZWbPxTvCpDL3RkhIAksG2YLebbMqLBtRyn7duJ6Co3Z87cOTKpnFxeVbbbzygA+Lhml0KrpcmO+B4FA1Lng6PUVCBk2EpuEkBAqoogSQjBNcmTwckVhuduZwIOX3NLmOU9XCm8T26g8H9AAe2K32d4h7t8YJ+AojsuopikM2Ra+fjC60+RAqHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hA8rpGkMFdEJU3cGq4hSizCsf3y+zOUCMScAdW1aImw=;
- b=rYiZ2o/Gha031imXwqR+n+LGgkXC4pRemoHS407jmKkEQgKFtYvJNyfaOWoMxDvu6AwPgepFUYmGGGNyR2rNA4Tpyq9NhrMlZ3yD/A/C/AOFSM0r1kI3eKSfsh6rvxv33RTfnatIFwuy+Jfvu0JLn/EMA+wY1komdBso7zH4PQo=
-Received: from CO1PR11MB5154.namprd11.prod.outlook.com (2603:10b6:303:95::7)
- by DM6PR11MB3035.namprd11.prod.outlook.com (2603:10b6:5:69::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Tue, 12 Apr
- 2022 12:26:26 +0000
-Received: from CO1PR11MB5154.namprd11.prod.outlook.com
- ([fe80::dc95:437b:6564:f220]) by CO1PR11MB5154.namprd11.prod.outlook.com
- ([fe80::dc95:437b:6564:f220%8]) with mapi id 15.20.5144.029; Tue, 12 Apr 2022
- 12:26:26 +0000
-From:   <Conor.Dooley@microchip.com>
-To:     <krzysztof.kozlowski@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <aou@eecs.berkeley.edu>,
-        <paul.walmsley@sifive.com>, <palmer@rivosinc.com>,
-        <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>
-CC:     <Daire.McNamara@microchip.com>, <linux-rtc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 5/9] dt-bindings: clk: mpfs: add defines for two new
- clocks
-Thread-Topic: [PATCH v2 5/9] dt-bindings: clk: mpfs: add defines for two new
- clocks
-Thread-Index: AQHYTYKslABeLE5gO0q5nkv48GN1+azsKxIAgAAE2YCAAAGbgIAABGeA
-Date:   Tue, 12 Apr 2022 12:26:25 +0000
-Message-ID: <74695e55-0b59-9236-be19-b02060ad4177@microchip.com>
-References: <20220411085916.941433-1-conor.dooley@microchip.com>
- <20220411085916.941433-6-conor.dooley@microchip.com>
- <d49f38e7-5fd9-4e9a-cc20-2c839eb53712@linaro.org>
- <2e1b0207-dfb3-4cc5-d306-d2b0c6ed8cfd@microchip.com>
- <25feb189-4d97-f9b1-518e-69aae9a274e0@linaro.org>
-In-Reply-To: <25feb189-4d97-f9b1-518e-69aae9a274e0@linaro.org>
-Accept-Language: en-IE, en-US
-Content-Language: en-IE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f1885032-f410-4148-bd11-08da1c7fa9d3
-x-ms-traffictypediagnostic: DM6PR11MB3035:EE_
-x-microsoft-antispam-prvs: <DM6PR11MB303588A9762C6FD02AC8A59298ED9@DM6PR11MB3035.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EsgMI98O5ohhcIzJ39R0zzLX/JhyNER8ZmU14npNA8YWq84ZoPunlVmo7sfH2Wcai70xU7t6Ltp2Cn3D4FqgxZT4fLJVafhZY7E3Seea0mZ5uW/wVj3ST9hvDSizS57DUJIgmEoF2JLkUCcezBabMEtwvWvRMZQV9uDlkvvAF1nGHu2jZOkQZwR4l6ZMFglVFJOSfS3/HOi33D4wYIXhHYxZtUigXZLs9PR+ZWSvMeQB96DxLPCI2SoesdV1pCp5FmAqD/SipydyeiZCMyzNMIImvOEbPePP/j/l5rBScK74J/l5Pwdd6i+SbnOCPILUUQSRFc0RrX19/2+pTMkZWPahd+rdB0yNdEbiZfxkztfcnjDXGcMkSlhHSvXTkEPwhoyfdYCFn8jBG9KwoHIMYhq+dWh5X05dQcRhhQgJjoZRdx+f7I7catpVb7y6RuutE0SxSpySEyJ3eE3JTQpswpF78BgZetXBRsc8NiAZohQNEigxMkNEocEXBeqSvfQ09lQbgq2b0a0Pl05eK6G3PZHK+XgE0xzab5TlF4gV6rwAIuVrHbsMIWYZP7Ydr6ny/WWDDy/MUzPiwLS7LkzF40lKT/vwSgO16mTAKg1AMKO43eS3gpC5kgxMCEPWPjRcSy7qeZUSbJFLt0Ug18pSxN244XB37O1sGbL/UvAFCVJlSSkxTC3NdnbXoFUnOD6D+Zfg+pxHzDLKbz11hfnv160kFf7reMHO44Vasq3oksV2MTzP/ray0/dU2Y67XopiW5hZdi/dZqEIWgsOsS/qmTrabNWrkAu11eaBKM5cpPyEp9Jo1mZMi802oHvrpfNt
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5154.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6512007)(54906003)(8936002)(5660300002)(26005)(4326008)(6506007)(2616005)(53546011)(36756003)(66476007)(8676002)(66446008)(64756008)(66556008)(76116006)(66946007)(91956017)(508600001)(83380400001)(2906002)(7416002)(110136005)(31686004)(6486002)(186003)(38070700005)(38100700002)(316002)(122000001)(31696002)(921005)(71200400001)(86362001)(87944003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bEZlMDI1NWh3OFVTOEJaNHhXazd5U1RXRW5OUVUxTlhrcUpTT2dwczZNY2ZT?=
- =?utf-8?B?NG1NQnZRam4rUElZcmtZM3NkdWV2cXRlcGZENHE4bU9CM3phTDN5aUZJTXlM?=
- =?utf-8?B?cjFJWFRnb3UxM3I0TnVCQy9jU0FkM3kwT2xFZmpkNTFBM2hmQUZxSWpYZXNJ?=
- =?utf-8?B?VTFaNElqaVRHSzlrUUlvS1BQaE81T1RaTmlxN1J3MWRuZjhVQnZoeDczTVM3?=
- =?utf-8?B?bDdpWlhPZ254Mk9YdEFwUEVkTHhEVXpNWGRQRWVXZWJpNTQ3Vlc2UDZTM1A3?=
- =?utf-8?B?WHZXNGlCdWRuZDRjWWozemNuVWs5RFpPZmRGUzluTzFJckkwSlp2dlQ1Zkk0?=
- =?utf-8?B?ZW1QWlYrSVVOTlM2UGZ4N2VURHM4V1lwZlB0NXFHMC80NkZLWDVyMVZGQXVO?=
- =?utf-8?B?d2RXTkFpSFlxKzF1RmpqWmR3a1dGSTlLRFF2SUFMS3lTbUdwVmNwaWlKNk0r?=
- =?utf-8?B?Y3p0YkxCUlFNOXBlRWRQQ0hIVjdjbUcwODBJTDZPdzZ1dEdYUlZTUXRsdkF0?=
- =?utf-8?B?OWoyTWZxdVlLOFpZVW4yZm82ZHU1T2xZZTBrelh3ZHFBNE0vTGNVNC9Kb2ly?=
- =?utf-8?B?ejBtNkdxbnVrVTZXdlV6dE1zQ0RhR0pnVlMzOCt4QVQwTWEzUVoxNXNwSm4r?=
- =?utf-8?B?Rnh6THNXeW9pZWhwdlA0L0FKTE1kZUR5eDAzQ0Ewb3BEZS83cUsreHJnVTRK?=
- =?utf-8?B?WEwrdnZ2MEprYURpZU0vMVVWUVZVcDQwK3M4Y056b1NIMWtZUGFyZlNYY3l0?=
- =?utf-8?B?M2JDWXlhcERKaExQbDNrVmxxMXNvODJhS08xVmREQXNSc2tpWGxMWEVqcVpw?=
- =?utf-8?B?SkVwREJ1eEpIUmwyeUFVZ0MwT09leW9hazlLKzZ3MEhzZE9xZjB3dSt5RUlI?=
- =?utf-8?B?ZXk0dzZSbDFkdGNtS0RhRmx6bkNjSDhnQVJ0c3RXMXdJaUNsaDVEQ0FjSTVG?=
- =?utf-8?B?OVU4bEFMLytqTm92Nm14OXRiYmUyRlh5aVZGRzJONkU1YVRwM2JJTm5BbGVm?=
- =?utf-8?B?VE9LcmEwVVhCK2p1U0J2a29hSnFvQ1BUeWpLR2Z3cDZqek1kVk1OZk9iNlor?=
- =?utf-8?B?M0VkV3FnVnRVUm9zN05mTVloWkJFa3JWNGpvVlZmbm15OHdCa1puaGZ5YzNi?=
- =?utf-8?B?Sk8yVThuSm1Yejg5UmJHZ1hLbnJqalNYODFMMDd2dTZjRWo1SnVrZXVyMVF4?=
- =?utf-8?B?MEZkemZuTWlXLysweXRId0RvdkkycDR0WDZsUUZ2YTBwNjRYa0dLWHd1RjRE?=
- =?utf-8?B?bmNmVmQ5YTRYeTJRa1ZhQWljZ1RFdEpSU016d1JlcHJxQVFuejRiNHhoZTdl?=
- =?utf-8?B?UEtFOHBZbVMzNFZ4ZVN1aWd6VFpyRG5pTVlvSVI1MUxkZDJjbHlrMmVlR2hI?=
- =?utf-8?B?Z25acnpuZnZPanlZRUR4TkhPc2tPdEdOQlYxZXovRDNLY3R4MysvMGRWbEIv?=
- =?utf-8?B?Zk9BdHZhKzgxT3FXUGNaell3R1RVRzNpditvR0RJWjJwVFpXOGRmZk5vcWt0?=
- =?utf-8?B?VHVrTTJraGhzVmpydzY1WGFvdUV2K2lTVWRQRzNuVUhIeDI2WjJwTXdETHdq?=
- =?utf-8?B?dGFuRHExamQ4d0tWRHJvQ0VTL0lGSFNjYzVuNzkwRmhpZ3k2dVc3MDZqNk53?=
- =?utf-8?B?NGdJalB3Q1lkcnAxb1EvQkx6S0dvRzA2ajl0MytyeENDQWZ5blhMVTlLbjJB?=
- =?utf-8?B?TGJsNWpmanZtSDhvU3ZTcTlmSTllbnVsUGxCc25aTmxzZW5IVjBURDRoeTNz?=
- =?utf-8?B?V3ZFZU1RU0dnTGJtc0MvaUFxRnUwWlpmdSsxcFMyR3hrbU9TbnQyVkdUYkVL?=
- =?utf-8?B?bEI1dXdlOUV3QkV0MVZGaGpsTjNvRG1mdkowQmIrSytOQ01HNGMzL0hrSm14?=
- =?utf-8?B?b09ua2lZN2NXZFJBeFAxQUFzZGZrSFhQbUZ2TmVRQnNUbjVPcklzdzlLU1dW?=
- =?utf-8?B?VkhuMUN6cEpETTA3cS85dzNKcXUyR1dSSUFEMWN4aktucG4wZkNGd2ZwSnhs?=
- =?utf-8?B?ejNwM2pIV2VmSzBuNmptV2hnZlJYbnFKMTdYek5vNTdGVkJwdFpYRHFQejZ2?=
- =?utf-8?B?TDdWQVFMNlFsVjRnZ21ZQS9Gd1F2ZmwrbTR5amNncDU4ZDdFUlZqU0xCV0M5?=
- =?utf-8?B?RUJPMG9KeCt0eURrUWY2NzJINkd5VzNjRDJkRzAvMFpHL2U4Qi9BN1ZTUlZO?=
- =?utf-8?B?R3EwTUgxWldNN3Y2R3NCK0xuTStSVkJkUm9NREJ5ZlZrSjJOekx5VWY1Y3lU?=
- =?utf-8?B?ZC84ZTV0bU12dFhkMk1VeTJPbFJ4WkozakJ0UFBIVEFmN2ZIWmN1TndxTExW?=
- =?utf-8?B?d2tHcEh3Wm1Vd0xIZGdlUi8zbGVDdnYrUkcxcVJLMlRnS042eWduQT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <173D1FE1D3C99746B8576B13986E61B3@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        with ESMTP id S1356007AbiDLNN2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 09:13:28 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE55562E3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 05:56:54 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 2F5C23201F01;
+        Tue, 12 Apr 2022 08:56:51 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 12 Apr 2022 08:56:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1649768210; x=1649854610; bh=pAoLh9nZvx
+        PTrw9vEMJDmYMRW9rmSXGXkLbWZcU+hkE=; b=kyXjIczR6+XNTi+uewKj0KdVSa
+        zqxGQ5pCBLiMJuf/qPiuulfSjq8LAqwn9v9ER/16UvwErQ1evPYDHJ4YNs028hVy
+        SVMZl/9EQHgEk8CSzFwnu4iwaK2w9dJrN2ZTzVT2qE4HSgS4f6G8UiIihQqWmFHN
+        b5/JhF/hNlm4CBV8fC74Vura7NwGL4g6Xwqbai93i0xmDfa+AVYXNBCqWGOZ6Yys
+        OX7f4W3Ym1iNf/BSgKbVnTnz8kJwHTpkSRRh3wthm0Aic+JXWaYt9nbtIgRIGcpI
+        YDqSJEGBvaq1BExYglgMQ3gOgX3egWk0LSx9q17MzbNPxsqZoD/drUkY7KaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1649768210; x=
+        1649854610; bh=pAoLh9nZvxPTrw9vEMJDmYMRW9rmSXGXkLbWZcU+hkE=; b=k
+        jAubypF4OX430tEhYkcal01vK+D2VjsOeleEPJp/UssZ5qwN44ygKsIR9BzABamu
+        o4A+lOVGw1X2pUWZFRc+YLVby9XOAXK0cyx23dpBCeKCBb35uEj8xILorysxmPXA
+        v/JVojE8nPdQ+q+9MYTqrvNc7bxHygHzOkl0kvn/LfkQ411X9l0KchUaQPILVaie
+        XE6uVSN/0OGW4HeOghW1ctAqpKz9y1amSG5xCcfepQU0Bz2a1k5eujTqmqpwhvKk
+        lgPhcBEAEcjflGSuG4Vpb9nxJIyvWHhmgeEThxKBRUw7+5rrXMU6qqGrstPjrrhZ
+        hyf0H71qhmUZ0vHw+9OzQ==
+X-ME-Sender: <xms:EXdVYuDrVIk8uKp0WPmJRQQ8vo5XOZEsnNlisaHFV6QwQMNeTE1_AA>
+    <xme:EXdVYojKib-IPHmiZE6asKlqCWTMPuJ2v-rgQfLDuRBOcMCW57qgw0uFQ5HId-US6
+    d0LJBVNjMx1rwVnpcU>
+X-ME-Received: <xmr:EXdVYhnEYfb1sBCOLH-iXDTCa0DeaL3Ch5zLGm_UhSneh0UMcoHfKHVD5oOsbYhhGNRgzpuGCz_IMUFJ3IIjRoAKmNQ2bh5DIbbz3uA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekkedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:EXdVYsxgvneAQK_kU4DTnoBVSJkl80DxidNhZsQ7oxsWtOPpZYq3xA>
+    <xmx:EXdVYjRDWmfpK7t7NOpF6oFVc9u7v8-j5rUATxsYdMX_VJD8ELuP0A>
+    <xmx:EXdVYnbxpaYTIcCluSsFA4IhpE7GjYaw2oUaJSyP0MRLtMe8rAXs8w>
+    <xmx:EndVYuHkXcUzbQkuUEfjxPfTglHT9rnbMllhaiMaoFq6zjrRkQezEQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Apr 2022 08:56:49 -0400 (EDT)
+Date:   Tue, 12 Apr 2022 14:56:47 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>
+Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
+Message-ID: <20220412125647.pgbpjqmnv4phhfok@houat>
+References: <20220408091037.2041955-1-maxime@cerno.tech>
+ <20220408091037.2041955-23-maxime@cerno.tech>
+ <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com>
+ <20220408104127.ilmcntbhvktr2fbh@houat>
+ <1jpmlrlq0h.fsf@starbuckisacylon.baylibre.com>
+ <20220408125526.ykk5ktix52mnwvh2@houat>
+ <1jlewflizh.fsf@starbuckisacylon.baylibre.com>
+ <20220408153625.ugodcmfwtanr75gu@houat>
+ <a30e6471-eb1d-cf41-9ca9-cf33fd570c6a@baylibre.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5154.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1885032-f410-4148-bd11-08da1c7fa9d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2022 12:26:25.7788
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u45XeXOErabK9ZdwXC86NBdmNrw3nT6gQ4Rjh4MxFMFArtxytLhlucLFPkzR/7XjOoqXk1uV5lrvfNIajp1XVBv+yR85rkCTxbekJJWRGNo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3035
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s6stoylfdf3ukgw5"
+Content-Disposition: inline
+In-Reply-To: <a30e6471-eb1d-cf41-9ca9-cf33fd570c6a@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMTIvMDQvMjAyMiAxMjoxMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gRVhURVJO
-QUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5
-b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiAxMi8wNC8yMDIyIDE0OjA0LCBD
-b25vci5Eb29sZXlAbWljcm9jaGlwLmNvbSB3cm90ZToNCj4+IE9uIDEyLzA0LzIwMjIgMTE6NDcs
-IEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+Pj4gRVhURVJOQUwgRU1BSUw6IERvIG5vdCBj
-bGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0aGUgY29udGVu
-dCBpcyBzYWZlDQo+Pj4NCj4+PiBPbiAxMS8wNC8yMDIyIDEwOjU5LCBDb25vciBEb29sZXkgd3Jv
-dGU6DQo+Pj4+IFRoZSBSVEMgcmVmZXJlbmNlIGFuZCBNU1NQTEwgd2VyZSBwcmV2aW91c2x5IG5v
-dCBkb2N1bWVudGVkIG9yIGRlZmluZWQsDQo+Pj4+IGFzIHRoZXkgd2VyZSB1bnVzZWQuIEFkZCB0
-aGVpciBkZWZpbmVzIHRvIHRoZSBQb2xhckZpcmUgU29DIGhlYWRlci4NCj4+Pj4NCj4+Pj4gRml4
-ZXM6IDIxNDViYjY4N2UzZiAoImR0LWJpbmRpbmdzOiBjbGs6IG1pY3JvY2hpcDogQWRkIE1pY3Jv
-Y2hpcCBQb2xhckZpcmUgaG9zdCBiaW5kaW5nIikNCj4+Pj4gUmV2aWV3ZWQtYnk6IERhaXJlIE1j
-TmFtYXJhIDxkYWlyZS5tY25hbWFyYUBtaWNyb2NoaXAuY29tPg0KPj4+PiBTaWduZWQtb2ZmLWJ5
-OiBDb25vciBEb29sZXkgPGNvbm9yLmRvb2xleUBtaWNyb2NoaXAuY29tPg0KPj4+PiAtLS0NCj4+
-Pj4gICAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9taWNyb2NoaXAsbXBmcy1jbG9jay5oIHwg
-NSArKysrLQ0KPj4+PiAgICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0
-aW9uKC0pDQo+Pj4+DQo+Pj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2Nr
-L21pY3JvY2hpcCxtcGZzLWNsb2NrLmggYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL21pY3Jv
-Y2hpcCxtcGZzLWNsb2NrLmgNCj4+Pj4gaW5kZXggNzNmMmE5MzI0ODU3Li4zY2JhNDZiOTE5MWYg
-MTAwNjQ0DQo+Pj4+IC0tLSBhL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svbWljcm9jaGlwLG1w
-ZnMtY2xvY2suaA0KPj4+PiArKysgYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL21pY3JvY2hp
-cCxtcGZzLWNsb2NrLmgNCj4+Pj4gQEAgLTEsMTUgKzEsMTggQEANCj4+Pj4gICAgLyogU1BEWC1M
-aWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wLW9ubHkgT1IgQlNELTItQ2xhdXNlKSAqLw0KPj4+
-PiAgICAvKg0KPj4+PiAgICAgKiBEYWlyZSBNY05hbWFyYSw8ZGFpcmUubWNuYW1hcmFAbWljcm9j
-aGlwLmNvbT4NCj4+Pj4gLSAqIENvcHlyaWdodCAoQykgMjAyMCBNaWNyb2NoaXAgVGVjaG5vbG9n
-eSBJbmMuICBBbGwgcmlnaHRzIHJlc2VydmVkLg0KPj4+PiArICogQ29weXJpZ2h0IChDKSAyMDIw
-LTIwMjIgTWljcm9jaGlwIFRlY2hub2xvZ3kgSW5jLiAgQWxsIHJpZ2h0cyByZXNlcnZlZC4NCj4+
-Pj4gICAgICovDQo+Pj4+DQo+Pj4+ICAgICNpZm5kZWYgX0RUX0JJTkRJTkdTX0NMS19NSUNST0NI
-SVBfTVBGU19IXw0KPj4+PiAgICAjZGVmaW5lIF9EVF9CSU5ESU5HU19DTEtfTUlDUk9DSElQX01Q
-RlNfSF8NCj4+Pj4NCj4+Pj4gKyNkZWZpbmUgQ0xLX01TU1BMTCAgIDM0DQo+Pj4NCj4+PiBZb3Ug
-aGF2ZSBzb21lIHdlaXJkIG9yZGVyIGhlcmUuIFNob3VsZG4ndCBpdCBiZSB1bmRlciBDTEtfUlRD
-UkVGPw0KPj4NCj4+IFllYWggbnVtZXJpY2FsbHkgd2VpcmRseSBvcmRlcmVkIC0gSSBncm91cGVk
-IHRoZSBjbG9ja3MgYnkgdHlwZToNCj4+IE1TU1BMTCBpcyBhIHBsbCwgQ1BVL0FYSS9BSEIvUlRD
-IGFyZSBhbGwgZGl2aWRlcnMgJiB0aGUgcmVzdCBhcmUgb24vb2ZmDQo+PiB0b2dnbGVzLiBJJ2Qn
-dmUgcHJlZmVyZWQgdG8gaGF2ZSByZW51bWJlcmVkIHRoZSB3aG9sZSBsaXN0LCBidXQgdGhhdA0K
-Pj4gZGlkbid0IGZlZWwgbGlrZSBhIGdvb2QgaWRlYS4NCj4+DQo+PiBBZGRpdGlvbmFsbHkgTVNT
-UExMIGlzIHRoZSBzb3VyY2UgZm9yIENMS197Q1BJLEFYSSxBSEJ9IHNvIEkgcHV0IGl0IGF0DQo+
-PiB0aGUgdG9wLiBJIGhhdmUgbm8gcGFydGljdWxhciBwcmVmZXJlbmNlLCBzbyBpZiB5b3Ugd2Fu
-dCB0aGVtIHJlb3JkZXJlZA0KPj4gc28gdGhhdCBNU1NQTEwgaXMgdW5kZXIgUlRDUkVGIGp1c3Qg
-c2F5IHRoZSB3b3JkIDopDQo+IA0KPiBIbSwgYXJlIHRoZXNlIGluIHRoZSBzYW1lIGNsb2NrIGNv
-bnRyb2xsZXIgKGRldmljZSwgbm90IGRyaXZlcik/IElmIHllcywNCj4gdGhlbiBwbGVhc2Ugb3Jk
-ZXIgdGhlbSBudW1lcmljYWxseS4gUHJldHR5IG9mdGVuIG9uZSBiaW5kaW5nIGhlYWRlciBoYXZl
-DQo+IElEcyBmb3Igc2V2ZXJhbCBjbG9jayBjb250cm9sbGVycywgc28gdGhlbiBpdCdzIGEgZGlm
-ZmVyZW50IGNhc2UuDQoNCk5vdCAqcXVpdGUqIHN1cmUgd2hhdCB5b3UgbWVhbiBieSBkZXZpY2Uu
-IFRoZXJlIGlzIG9ubHkgb25lIFNvQyB0aGF0DQp0aGlzIGhlYWRlciBhcHBsaWVzIHRvLCBidXQg
-aW4gdGhlIGFjdHVhbCBkZXNpZ24gdGhlIE1TU1BMTCBpcyBpbiBvbmUNCmJsb2NrLCB0aGUgUlRD
-IGRpdmlkZXIgaW4gYW5vdGhlciBhbmQgQ0xLX0NQVSAtPiBDTEtfQ0ZNIGluIGEgdGhpcmQuDQoN
-Cg0K
+
+--s6stoylfdf3ukgw5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 11, 2022 at 09:40:03AM +0200, Neil Armstrong wrote:
+> On 08/04/2022 17:36, Maxime Ripard wrote:
+> > On Fri, Apr 08, 2022 at 04:48:08PM +0200, Jerome Brunet wrote:
+> > > > > > and hdmi_pll_dco because it will always return 0,
+> > > > >=20
+> > > > > It is a read-only clock - whatever we do in CCF, it is not going =
+to
+> > > > > change. CCF has always supported RO clocks.
+> > > >=20
+> > > > Yes, if a clock has a rate of 0Hz it's entirely useless. And if it's
+> > > > useful in anyway, it should report its current rate. Read-only or n=
+ot.
+> > > >=20
+> > >=20
+> > > It does report its rate, it does not have any.
+> > > ... and It would pretty weird to initialize a read-only clock.
+> >=20
+> > The KMS driver doesn't seem to have a problem with that.
+> >=20
+> > > > > > unless the display driver comes around and updates it. If it ne=
+ver does,
+> > > > > > or if it's not compiled in, then you're out of luck.
+> > > > >=20
+> > > > > I'm all for managing the display clocks from CCF but it has prove=
+d tricky
+> > > > > so far. Maybe it will someday.
+> > > > >=20
+> > > > > Being a read-only clock, the value is what it is and CCF should
+> > > > > deal with it gracefully. It has so far.
+> > > > >=20
+> > > > > If the driver actually managing the clock is not compiled in, the=
+n the
+> > > > > clock will never be set, and it should not be a problem either.
+> > > >=20
+> > > > Again, it depends on what you expect from clk_get_rate(). If it can=
+ only
+> > > > report a rate of 0 on error, then it's definitely a problem.
+> > >=20
+> > > Agreed, it depends on what you expect from clk_get_rate().
+> > > Still when something does not oscillate, the rate is 0.
+> > >=20
+> > > If a driver call clk_get_rate() on an uninitialized, unlocked PLL, I
+> > > think returning 0 makes sense.
+> >=20
+> > You're confusing two things: the rate output by the hardware, and what
+> > the CCF needs to return. We're discussing the latter here, a software
+> > construct. It models the hardware, but it doesn't have to be true to the
+> > hardware.
+> >=20
+> > And even the meson driver doesn't follow what you're claiming to the
+> > letter and is inconsistent with what you're saying. Any disabled gate
+> > will also have a hardware rate of 0. Yet, it doesn't return 0 in such a
+> > case. And no one does, because clk_get_rate() isn't supposed to return
+> > the actual rate in hardware at the moment. It's supposed to return what
+> > would be the rate if it was enabled.
+>=20
+> You're pointing a real issue, what should we return as a rate then ?
+>=20
+> The rate is not only the rate output by the HW but is also used by the
+> whole subtree of the PLL to calculate the rates.
+>=20
+> If we return a fake or dummy rate instead of 0 (which is the physical
+> reality), the clock subtree will be populated from a fake rate and if
+> we did set a clock rate using assigned-clock, eventually this fake
+> rate would match and no set_rate() would be called on the PLL.
+>=20
+> This is why we return the true physical rate, it's the software to
+> adapt in order to handle the possible HW states.
+
+I'm not sure why you insist so much on the "true physical rate" tbh.
+That was never really a thing. It's not for a gate, it's not for a
+spread-spectrum clock (which would be even more interesting to report
+properly following your criteria). And then you have the clock
+accuracies that are throwing it off entirely too.
+
+It just isn't practical, and that's why no-one relies on it.
+
+Or let's turn it the other way around. When you'll have called
+clk_enable() on those clocks (but only that), what do you expect the
+rate to be? 0? Yet, the "true physical rate" probably changed by then.
+
+If that was a thing, we would also have to:
+
+  * make sure clk_set_rate can't be called on a disabled clock, because
+    the true physical rate would never match what is required
+
+  * rate ranges just wouldn't be usable either, because we would have no
+    way to check that the true physical rate is actually within that
+    range at any given time.
+
+  * All clocks rate wouldn't be cacheable to account for the jitter in
+    the system clock source.
+
+  * We would need to use some hardware engine that reads the clock rate
+    being output at any given time, to account for spread-spectrum and
+    the clock source accuracy.
+
+  * We wouldn't be able to report phases properly, because you can't
+    really measure the clock skew either.
+
+I understand that it's convenient for you, but it isn't practical if we
+look at it from the framework's PoV.
+
+You could very well initialize the PLLs to have a 1/1 ratio to their
+parent, that would probably be sensible and would make the framework
+happy.
+
+> > > > And it's not because it was done before that it wasn't just as
+> > > > problematic then.
+> > > >=20
+> > > > > > > IMO, whenever possible we should not put default values in th=
+e clocks
+> > > > > > > which is why I chose to leave it like that.
+> > > > > > >=20
+> > > > > > > The PLL being unlocked, it has no rate. It is not set to have=
+ any rate.
+> > > > > > > IMO a returning a rate of 0 is valid here.
+> > > > > >=20
+> > > > > > If there's not a sensible default in the hardware already, I do=
+n't see
+> > > > > > what the big issue is to be honest. You already kind of do that=
+ for all
+> > > > > > the other PLL parameters with init_regs
+> > > > >=20
+> > > > > Those initial parameters are "magic" analog setting which don't h=
+ave an
+> > > > > impact on the rate setting. The initial rate of the clock is neve=
+r set
+> > > > > by the clock driver on purpose.
+> > > >=20
+> > > > It's still fundamentally the same: whatever is there at boot isn't =
+good
+> > > > enough, so you change it to have a somewhat sensible default.
+> > >=20
+> > > If you don't need it, no.
+> >=20
+> > I mean, I provided multiple examples that the meson driver is being
+> > inconsistent with both the CCF documentation and the expected usage of
+> > the CCF consumers. And I suggested solutions to fix this inconsistency
+> > both here and on IRC to Neil and you.
+>=20
+> It's not that we don't like it, we only care the actual HW state is
+> correctly reported in the clock tree, nothing else.
+>
+> If a new flag like CLK_INVALID_RATE existed then we would use it.
+>=20
+> But so far a zero rate never was problematic, and iMX8mp HDMI PLL
+
+That patch isn't upstream.
+
+> and MSM mmpll2 also return a 0 rate as init because it's probably the
+> default PLL state at HW startup.
+
+And two wrongs never made a right.
+
+--s6stoylfdf3ukgw5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYlV3DwAKCRDj7w1vZxhR
+xReCAP0SjlgfwSFNG0Ctbb/kWqeaGlzrOM9IdC0Cn/b01oFkxwEAqoyOlgy7aaiC
+bvPY/arcg0dSPgfAuEM1/er31wlhpAQ=
+=KpqP
+-----END PGP SIGNATURE-----
+
+--s6stoylfdf3ukgw5--
