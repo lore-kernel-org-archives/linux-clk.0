@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0E3C4167E
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F91C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243128AbiDLTnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 15:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53812 "EHLO
+        id S1358983AbiDLTnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 15:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238286AbiDLTmP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:15 -0400
+        with ESMTP id S1359067AbiDLTmS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:18 -0400
 Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C6BF13F19
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:39:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B806FA191;
+        Tue, 12 Apr 2022 12:39:57 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 0ED41200006;
-        Tue, 12 Apr 2022 19:39:45 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 1B912200003;
+        Tue, 12 Apr 2022 19:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649792387;
+        t=1649792396;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XZQwq9EVWiu0S9glnJx6yd3klQequgPHgMCbo1b5VzU=;
-        b=bLb3N1GusMPD8qnjT5lZDDFBgzQnVpGHSlSNKoaj6xTFlpJWbiitSaHPwDu9z5oqL4p3EI
-        e6OfAxsdVZ75zkqGO7vlfngPgG2i2v4/MjFfLQNJj2DiSjecKDS4VBeNcoN/8/4ybn7BLX
-        WlUbXd9Ek4sg/NRd5xqDp2WW3uBGAzm3MhrUhAcLrhdX79rr2Fho8BdMjMe552tJgklNbW
-        VPbR+29zA5ubyqqf3DuLHUla4IYxlqHcdb2i3aJNFbp9l1duBuVFJj/t+qbd3XhAGea+Py
-        impCNjIEEHSkViAAzhZGyIh9UxED+aJBBjT9zV22XwCrWnDgR06xhrTVAvsf+g==
+        bh=Ge58NimhaKWCxwe0+hrNu+VcWrBPIvnbMynidvFnOMc=;
+        b=AZAcNfJQONKwoYSLlZDoAScxnBEbP/1ZAHZxftEdZxUlr+BbglS6kvFfFBLr8GRRKIdnpB
+        7iHGOJry81GMMjlxnL88QSTINpBA08cBB9TGewa0Oym7ea3vPjWgMIiBrq2Fu+KmmCAxJm
+        8ahOFsnj3S2d+aIaU6IYFJiAi5yvp83sbhl8FgUTZXwCc76IJ2i1T/y4wF3NsiIof1V6UT
+        /zcB7nl0PjtT11hjbgPzSOAoB8OUgAmKGk8lGDpccNFV4VuteMy8eAuIt3O3qreNAvLa4Y
+        ZoDHFucfcsCIZpnr9IIoAZwiAdwu3BO1iSh46UVruVb2h8hw+z4YMLboXTCorQ==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -48,10 +48,11 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v10 4/9] soc: renesas: rzn1-sysc: Export function to set dmamux
-Date:   Tue, 12 Apr 2022 21:39:31 +0200
-Message-Id: <20220412193936.63355-5-miquel.raynal@bootlin.com>
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v10 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
+Date:   Tue, 12 Apr 2022 21:39:35 +0200
+Message-Id: <20220412193936.63355-9-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220412193936.63355-1-miquel.raynal@bootlin.com>
 References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
@@ -62,99 +63,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The dmamux register is located within the system controller.
-
-Without syscon, we need an extra helper in order to give write access to
-this register to a dmamux driver.
+Describe the two DMA controllers available on this SoC.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c        | 35 ++++++++++++++++++-
- include/linux/soc/renesas/r9a06g032-sysctrl.h | 11 ++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
+ arch/arm/boot/dts/r9a06g032.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c99942f0e4d4..052d99059981 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -20,9 +20,12 @@
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
- #include <linux/slab.h>
-+#include <linux/soc/renesas/r9a06g032-sysctrl.h>
- #include <linux/spinlock.h>
- #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+index 636a6ab31c58..839580ec21ee 100644
+--- a/arch/arm/boot/dts/r9a06g032.dtsi
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
+ 			status = "disabled";
+ 		};
  
-+#define R9A06G032_SYSCTRL_DMAMUX 0xA0
++		dma0: dma-controller@40104000 {
++			compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
++			reg = <0x40104000 0x1000>;
++			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "hclk";
++			clocks = <&sysctrl R9A06G032_HCLK_DMA0>;
++			dma-channels = <8>;
++			dma-requests = <16>;
++			dma-masters = <1>;
++			#dma-cells = <3>;
++			block_size = <0xfff>;
++			data_width = <3>;
++			status = "disabled";
++		};
 +
- struct r9a06g032_gate {
- 	u16 gate, reset, ready, midle,
- 		scon, mirack, mistat;
-@@ -315,6 +318,30 @@ struct r9a06g032_priv {
- 	void __iomem *reg;
- };
- 
-+static struct r9a06g032_priv *sysctrl_priv;
++		dma1: dma-controller@40105000 {
++			compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
++			reg = <0x40105000 0x1000>;
++			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++			clock-names = "hclk";
++			clocks = <&sysctrl R9A06G032_HCLK_DMA1>;
++			dma-channels = <8>;
++			dma-requests = <16>;
++			dma-masters = <1>;
++			#dma-cells = <3>;
++			block_size = <0xfff>;
++			data_width = <3>;
++			status = "disabled";
++		};
 +
-+/* Exported helper to access the DMAMUX register */
-+int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
-+{
-+	unsigned long flags;
-+	u32 dmamux;
-+
-+	if (!sysctrl_priv)
-+		return -EPROBE_DEFER;
-+
-+	spin_lock_irqsave(&sysctrl_priv->lock, flags);
-+
-+	dmamux = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
-+	dmamux &= ~mask;
-+	dmamux |= val & mask;
-+	writel(dmamux, sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
-+
-+	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
-+
- /* register/bit pairs are encoded as an uint16_t */
- static void
- clk_rdesc_set(struct r9a06g032_priv *clocks,
-@@ -963,7 +990,13 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
--	return r9a06g032_add_clk_domain(dev);
-+	error = r9a06g032_add_clk_domain(dev);
-+	if (error)
-+		return error;
-+
-+	sysctrl_priv = clocks;
-+
-+	return 0;
- }
- 
- static const struct of_device_id r9a06g032_match[] = {
-diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-new file mode 100644
-index 000000000000..066dfb15cbdd
---- /dev/null
-+++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
-+#define __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
-+
-+#ifdef CONFIG_CLK_R9A06G032
-+int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
-+#else
-+static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
-+#endif
-+
-+#endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
+ 		gic: interrupt-controller@44101000 {
+ 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
+ 			interrupt-controller;
 -- 
 2.27.0
 
