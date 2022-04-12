@@ -2,122 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8516DC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 18:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DC3C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 18:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354301AbiDLSb6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 14:31:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
+        id S241834AbiDLSep (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 14:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231543AbiDLSb5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 14:31:57 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F713B563
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 11:29:35 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id l62-20020a1c2541000000b0038e4570af2fso2149437wml.5
-        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 11:29:35 -0700 (PDT)
+        with ESMTP id S231543AbiDLSeo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 14:34:44 -0400
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6C04EDF5
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 11:32:25 -0700 (PDT)
+Received: by mail-oi1-x22b.google.com with SMTP id q189so19881393oia.9
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 11:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=UjxIBnENYM5U2jkWppTggWI+KxOeSkcWqhHcXf9FYqw=;
-        b=11sTjSH1gbk/qCcQN0/ARIYXCXnOcFxU4vzfQ1Vs6ka8Wt/7zjsDx1QZ7gtQAv3NUv
-         Y+ooPC+x2KvutL41Gauvs8AqrDmQruDOdZFfUZFiJFW4FiqQuYhurLH8FH8OBrNtu2tS
-         LlhFXVEmrfG+PJFDSe2VXHkJmExOcBDNZm0SVhVuOrHYQDzakLf1q6yaiw8Xgs5wZmq8
-         6htLSxJKlLKXY4CjNzv8m5G7iZTddUQHVrAXZ3jyytt69hi5h0ie4bWXgyY1vAXCYqXy
-         BFQf9Xihic1PzVS1oFLrnflYWji+yxOgS3IAfnEeL40Y2whEvxEoOcauhQdGJ1iLgD79
-         iGkQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2WXD2iuN6pAX6EeuItghKADIiBu6DLmqZqNZpUmEXOc=;
+        b=EMPEg9LFAWgd3a+DMjzgPTmhKsM6uLowfqpCHmXQhQZs/+/GOsTGlejnBfFZdMHtHh
+         FlWAI/CZUYOz00Z8i4AE7heKXRlTIYlk8HGghgFd69LLA2JSfITxN/Qfoe3EPX50SpHK
+         uWrHxz1IT70mjfsQHtt+CQN0fG7RQ1iOCzyqbtwQ3Cxqhru3rQXAo7HhA3qJy5qQGgm/
+         XknH2NzfrUDG2XDjhLlG/8aHVtAlMYSq7AIzlhNUhXDTfhC/v66dyYKVoY4UCmh5ODXs
+         uQvA8InWhkZMCy+/Qk4bt+H1ECJGla+CWDuBPvv7X5W70fGuJZKFh8fGLPLxchn5Vg5E
+         J2TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UjxIBnENYM5U2jkWppTggWI+KxOeSkcWqhHcXf9FYqw=;
-        b=DO4dbtpY7Tw58ziybET9SQAs2KRspWWPqYEBlDsYQr+kRrr/dlxWKg6VoAjBkT4eiK
-         +u+4RDmDWCXDQxQRPt4DoMEbXiXiv+XYykapcuBAqtrH1+aemo49L04ePHyIxkxUJJPz
-         3oGY9wOiT7ZeV7MZJpbODaDQv1Dij16p4z/t97q1qz1N/f5V41XNoZR/UzaqRLKIPU/6
-         nfGqsYOga7Ia8YsLQlGQBme72mMFjJ3HcfsEi6+08uAHhzk2hiIMldW5ErDbCfM6RHZ5
-         8EtSbv/v7wmc95jrfYZmcxTpqYvOoRHqBZ0vD5PIxrnF/2oDnGo6xmBFmGBYEPqM+Aw2
-         tljA==
-X-Gm-Message-State: AOAM533jLsoCd9TX7UtJTz7IGBura4k+M8R5mBa/P2GRdkMWft2W9zMJ
-        huBiwO2PVqYpesKZfk1alZeCyQ==
-X-Google-Smtp-Source: ABdhPJwvSYOIASwIs3kLC7MAm5IUtV/fvZEEwuxh9fOfTBXevk03vh5KF/4ouNQNb8gOY9WFjkXibg==
-X-Received: by 2002:a05:600c:4f95:b0:38e:b596:b3f5 with SMTP id n21-20020a05600c4f9500b0038eb596b3f5mr5224649wmq.164.1649788173749;
-        Tue, 12 Apr 2022 11:29:33 -0700 (PDT)
-Received: from [192.168.2.222] ([51.37.209.28])
-        by smtp.gmail.com with ESMTPSA id f4-20020a7bc8c4000000b0038ebbe10c5esm211622wml.25.2022.04.12.11.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 11:29:32 -0700 (PDT)
-Message-ID: <f2c0c8ba-bdfd-faeb-cdff-ed3fe5215029@conchuod.ie>
-Date:   Tue, 12 Apr 2022 19:29:31 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2WXD2iuN6pAX6EeuItghKADIiBu6DLmqZqNZpUmEXOc=;
+        b=v6e98QO6mzkGSGsNniv37Lia1mQC5KCYOroBcoF2cY8oZD7IurdhGgOGdvjInUzGIU
+         n/OH0MNpQt0+IMiAB5a7EBhcBt0ttP4TbA3ixnTIOSzHmZR31HNAKXpmzOHVb8EMrJnq
+         iAKOEs3YjU9Xi5Cq3xUPOPe4Iv/aNvX/Y8CnObowaczQnqyz4HciH8OX1p1RTSd+XR/K
+         xPASdun0Ajet96ul+bF1ikflzeEDxFJJjrOEzv9dNHKAOn57sfwnhA92fIPqp19wi21N
+         9aT5Z+jc+VxXtYlVtEYS37bnPGt0KOUgY9YcO+fJc4KnpcQrcmBvvDCMCB14ipxXHJXT
+         VMAw==
+X-Gm-Message-State: AOAM532j8gtrUz4JkPEjjYgYbmqzXMiF4jxwjMxfbgpxeWpgexG6+jgp
+        x3Y/DVQVgOKBJ8O3CV9kv67Hag==
+X-Google-Smtp-Source: ABdhPJy2zx0uyPdG59VNJ1iJmbVIEDs1PL1AmyuQKjinnL1M/SJFFtLw2w90LUGh1zi1vgTtWzYpXg==
+X-Received: by 2002:a05:6808:1925:b0:2f9:b8ca:8333 with SMTP id bf37-20020a056808192500b002f9b8ca8333mr2443295oib.12.1649788345125;
+        Tue, 12 Apr 2022 11:32:25 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id r23-20020a056830237700b005b2610517c8sm14236071oth.56.2022.04.12.11.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Apr 2022 11:32:24 -0700 (PDT)
+Date:   Tue, 12 Apr 2022 13:32:22 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Wilczy??ski <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] clk: qcom: regmap-mux: add pipe clk implementation
+Message-ID: <YlXFtt/+YwpMQ0va@builder.lan>
+References: <20220323085010.1753493-1-dmitry.baryshkov@linaro.org>
+ <20220323085010.1753493-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 5/9] dt-bindings: clk: mpfs: add defines for two new
- clocks
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Conor.Dooley@microchip.com, mturquette@baylibre.com,
-        sboyd@kernel.org, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-        palmer@rivosinc.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        krzk+dt@kernel.org
-Cc:     Daire.McNamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220411085916.941433-1-conor.dooley@microchip.com>
- <20220411085916.941433-6-conor.dooley@microchip.com>
- <d49f38e7-5fd9-4e9a-cc20-2c839eb53712@linaro.org>
- <2e1b0207-dfb3-4cc5-d306-d2b0c6ed8cfd@microchip.com>
- <25feb189-4d97-f9b1-518e-69aae9a274e0@linaro.org>
- <74695e55-0b59-9236-be19-b02060ad4177@microchip.com>
- <ba518d4d-0f92-0d34-029c-c477c84db81d@linaro.org>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <ba518d4d-0f92-0d34-029c-c477c84db81d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220323085010.1753493-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/04/2022 18:10, Krzysztof Kozlowski wrote:
-> On 12/04/2022 14:26, Conor.Dooley@microchip.com wrote:
->>>> Additionally MSSPLL is the source for CLK_{CPI,AXI,AHB} so I put it at
->>>> the top. I have no particular preference, so if you want them reordered
->>>> so that MSSPLL is under RTCREF just say the word :)
->>>
->>> Hm, are these in the same clock controller (device, not driver)? If yes,
->>> then please order them numerically. Pretty often one binding header have
->>> IDs for several clock controllers, so then it's a different case.
->>
->> Not *quite* sure what you mean by device. There is only one SoC that
->> this header applies to, but in the actual design the MSSPLL is in one
->> block, the RTC divider in another and CLK_CPU -> CLK_CFM in a third.
+On Wed 23 Mar 03:50 CDT 2022, Dmitry Baryshkov wrote:
+
+> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> muxes which must be parked to the "safe" source (bi_tcxo) when
+> corresponding GDSC is turned off and on again. Currently this is
+> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> clock. However the same code sequence should be applied in the
+> pcie-qcom endpoint, USB3 and UFS drivers.
 > 
-> By device I meant here part of Soc responsible for clocks which could be
-> called a self-containing block. Pretty often such block maps to a Linux
-> "struct device" or some wrapper around it (e.g. clock-controller
-> device). For example such "self-containing block" has device node in DTS.
+> Rather than copying this sequence over and over again, follow the
+> example of clk_rcg2_shared_ops and implement this parking in the
+> enable() and disable() clock operations. As we are changing the parent
+> behind the back of the clock framework, also implement custom
+> set_parent() and get_parent() operations behaving accroding to the clock
+> framework expectations (cache the new parent if the clock is in disabled
+> state, return cached parent).
 > 
-> Judging by your description, these will be different blocks / device
-> nodes in DTS?
 
-The way it's implemented is a bit interconnected and none of the three
-blocks would satisfy a "self contained" constraint. Eg. The rtcref
-divider's control reg sits between two registers responsible for the
-CLK_CPU -> CLK_CFM clocks but it's input clock mux is in the same 
-sub-block as the MSSPLL.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-I guess its better put that each of the three are sub-blocks of a self
-contained clock controller for the mss core complex. There are several
-other clock domains on the chip which would have distinct clock
-controllers & may be added to this header in the future, if letting
-Linux control them makes any sense. For example, clocks in (and used for
-the clocking of) the fpga fabric.
-
-This controller is a single node in the device tree. Sounds like
-reordering it numerically makes the most sense then - I'll resend
-tomorrow if that's okay.
-
-Thanks,
-Conor.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-regmap-mux.c | 78 +++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-mux.h |  3 ++
+>  2 files changed, 81 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+> index 45d9cca28064..c39ee783ee83 100644
+> --- a/drivers/clk/qcom/clk-regmap-mux.c
+> +++ b/drivers/clk/qcom/clk-regmap-mux.c
+> @@ -49,9 +49,87 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+>  	return regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+>  }
+>  
+> +static u8 mux_safe_get_parent(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	unsigned int val;
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return mux_get_parent(hw);
+> +
+> +	val = mux->stored_parent_cfg;
+> +
+> +	if (mux->parent_map)
+> +		return qcom_find_cfg_index(hw, mux->parent_map, val);
+> +
+> +	return val;
+> +}
+> +
+> +static int mux_safe_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return mux_set_parent(hw, index);
+> +
+> +	if (mux->parent_map)
+> +		index = mux->parent_map[index].cfg;
+> +
+> +	mux->stored_parent_cfg = index;
+> +
+> +	return 0;
+> +}
+> +
+> +static void mux_safe_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+> +	unsigned int val;
+> +
+> +	regmap_read(clkr->regmap, mux->reg, &val);
+> +
+> +	mux->stored_parent_cfg = (val & mask) >> mux->shift;
+> +
+> +	val = mux->safe_src_parent;
+> +	if (mux->parent_map) {
+> +		int index = qcom_find_src_index(hw, mux->parent_map, val);
+> +
+> +		if (WARN_ON(index < 0))
+> +			return;
+> +
+> +		val = mux->parent_map[index].cfg;
+> +	}
+> +	val <<= mux->shift;
+> +
+> +	regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+> +}
+> +
+> +static int mux_safe_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+> +	unsigned int val;
+> +
+> +	val = mux->stored_parent_cfg;
+> +	val <<= mux->shift;
+> +
+> +	return regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+> +}
+> +
+>  const struct clk_ops clk_regmap_mux_closest_ops = {
+>  	.get_parent = mux_get_parent,
+>  	.set_parent = mux_set_parent,
+>  	.determine_rate = __clk_mux_determine_rate_closest,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_regmap_mux_closest_ops);
+> +
+> +const struct clk_ops clk_regmap_mux_safe_ops = {
+> +	.enable = mux_safe_enable,
+> +	.disable = mux_safe_disable,
+> +	.get_parent = mux_safe_get_parent,
+> +	.set_parent = mux_safe_set_parent,
+> +	.determine_rate = __clk_mux_determine_rate_closest,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_mux_safe_ops);
+> diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+> index db6f4cdd9586..f86c674ce139 100644
+> --- a/drivers/clk/qcom/clk-regmap-mux.h
+> +++ b/drivers/clk/qcom/clk-regmap-mux.h
+> @@ -14,10 +14,13 @@ struct clk_regmap_mux {
+>  	u32			reg;
+>  	u32			shift;
+>  	u32			width;
+> +	u8			safe_src_parent;
+> +	u8			stored_parent_cfg;
+>  	const struct parent_map	*parent_map;
+>  	struct clk_regmap	clkr;
+>  };
+>  
+>  extern const struct clk_ops clk_regmap_mux_closest_ops;
+> +extern const struct clk_ops clk_regmap_mux_safe_ops;
+>  
+>  #endif
+> -- 
+> 2.35.1
+> 
