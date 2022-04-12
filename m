@@ -2,77 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6542FC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 23:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81361C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 23:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbiDLXTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 19:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51708 "EHLO
+        id S229849AbiDLX0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 19:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiDLXTB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 19:19:01 -0400
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39176433A1;
-        Tue, 12 Apr 2022 15:06:50 -0700 (PDT)
-Received: by mail-oi1-f177.google.com with SMTP id e4so193610oif.2;
-        Tue, 12 Apr 2022 15:06:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=G0pAhD9aV5AnyvwmtEpWGX9c5HWPBuJjLdVCNmvb9b0=;
-        b=dMsjOhm/N8YBqpt3hVD5slD8DOgLJRA4+YCmqdH/HbLlgR+wv+LWU1sYWu4dSfIPyx
-         eOnguFiUNWlFcy5iE0+WM1LxYj8I7DylPnYjEyn0VS+JnmJCNOBDx1mgcTWkRQc/kktt
-         7hBqgdyjWf3esvLcgLkDlba1ISGo5vB+iTDEf1WQEVpTZGs/appZ9tmKVHR5GhBUV6xw
-         N2RDFY4ipDVvWwq6lHIlajydBp5/JIoSpBnSeM7DXEe+59AYAEjcXXbyLehb1d+A/ueJ
-         DnIwZOKQ/HrzR6bsaTaBrSDe2A7sqCpg6tNqyBPOPJ3c95KUxST7y+lS5aqTdVghsPKO
-         YWUw==
-X-Gm-Message-State: AOAM5328BMKTyGTNzu05h6X99cR+ogvtTOLH4jmtKhPf3/6JKukbrGYS
-        ma7CLDdW8eqagczr4vDdDg==
-X-Google-Smtp-Source: ABdhPJxE/UsRuMfOAtqMzMZJgMh3Iphs+MRCEPCalHC0CQNxxJhgkhfFrPYjVDsBukILcUlibYaHNw==
-X-Received: by 2002:a05:6808:13d2:b0:2f9:b876:31e8 with SMTP id d18-20020a05680813d200b002f9b87631e8mr2798341oiw.157.1649801209539;
-        Tue, 12 Apr 2022 15:06:49 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id ek23-20020a056870f61700b000e2f14d4f8csm1439791oab.53.2022.04.12.15.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Apr 2022 15:06:49 -0700 (PDT)
-Received: (nullmailer pid 1028482 invoked by uid 1000);
-        Tue, 12 Apr 2022 22:06:48 -0000
-Date:   Tue, 12 Apr 2022 17:06:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     krzysztof.kozlowski@linaro.org, linux-clk@vger.kernel.org,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, maz@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, p.zabel@pengutronix.de,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, arnd@arndb.de
-Subject: Re: [PATCH v13 2/9] dt-bindings: reset: Add bindings for SP7021
- reset driver
-Message-ID: <YlX3+EgShsr01dkT@robh.at.kernel.org>
-References: <cover.1649659095.git.qinjian@cqplus1.com>
- <11b8f60a7f19f25d2fdaa7a2ed770e9383cec3ba.1649659095.git.qinjian@cqplus1.com>
+        with ESMTP id S229730AbiDLX0Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 19:26:16 -0400
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D083DE7F69;
+        Tue, 12 Apr 2022 15:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1649803201; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=V1gGyPRrzq2+IYxEgFqW+9RQDsjKShTJNXfR19CIx0I=;
+        b=2YZwLXLEOWmPN8AG89OD4NVqzNK4VfhnQx7xlDnTY9/fpGKt2Obems9m9WNsIiHrvzDcSk
+        NNWm/rrmyH825SKRrCZa7iZnBkYHm234qRt83tCCnE/uRiz0xYyKZGaWJHx9yd6CaQkwDl
+        nR9cViVY9zzy4XSyG1brnH8GxMYFB8k=
+Date:   Tue, 12 Apr 2022 23:39:50 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
+ SoCs
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, tsbogend@alpha.franken.de,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dan.carpenter@oracle.com
+Message-Id: <EA09AR.6F7SVEL62WAI1@crapouillou.net>
+In-Reply-To: <20220412122750.279058-3-aidanmacdonald.0x0@gmail.com>
+References: <20220412122750.279058-1-aidanmacdonald.0x0@gmail.com>
+        <20220412122750.279058-3-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11b8f60a7f19f25d2fdaa7a2ed770e9383cec3ba.1649659095.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Apr 2022 14:49:52 +0800, Qin Jian wrote:
-> Add documentation to describe Sunplus SP7021 reset driver bindings.
-> 
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> ---
-> Move HW mapping from dt-binding header to driver.
-> ---
->  .../bindings/reset/sunplus,reset.yaml         | 38 ++++++++
->  MAINTAINERS                                   |  2 +
->  include/dt-bindings/reset/sp-sp7021.h         | 87 +++++++++++++++++++
->  3 files changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
->  create mode 100644 include/dt-bindings/reset/sp-sp7021.h
-> 
+Hi,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Le mar., avril 12 2022 at 13:27:50 +0100, Aidan MacDonald=20
+<aidanmacdonald.0x0@gmail.com> a =E9crit :
+> The TCU clock gate on X1000 wasn't requested by the driver and could
+> be gated automatically later on in boot, which prevents timers from
+> running and breaks PWM.
+>=20
+> Add a workaround to support old device trees that don't specify the
+> "tcu" clock gate. In this case the kernel will print a warning and
+> attempt to continue without the clock, which is wrong, but it could
+> work if "clk_ignore_unused" is in the kernel arguments.
+>=20
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
+Cheers,
+-Paul
+
+> ---
+>  drivers/clk/ingenic/tcu.c | 35 +++++++++++++++++++++++++----------
+>  1 file changed, 25 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+> index 77acfbeb4830..201bf6e6b6e0 100644
+> --- a/drivers/clk/ingenic/tcu.c
+> +++ b/drivers/clk/ingenic/tcu.c
+> @@ -31,6 +31,7 @@ struct ingenic_soc_info {
+>  	unsigned int num_channels;
+>  	bool has_ost;
+>  	bool has_tcu_clk;
+> +	bool allow_missing_tcu_clk;
+>  };
+>=20
+>  struct ingenic_tcu_clk_info {
+> @@ -320,7 +321,8 @@ static const struct ingenic_soc_info=20
+> jz4770_soc_info =3D {
+>  static const struct ingenic_soc_info x1000_soc_info =3D {
+>  	.num_channels =3D 8,
+>  	.has_ost =3D false, /* X1000 has OST, but it not belong TCU */
+> -	.has_tcu_clk =3D false,
+> +	.has_tcu_clk =3D true,
+> +	.allow_missing_tcu_clk =3D true,
+>  };
+>=20
+>  static const struct of_device_id __maybe_unused=20
+> ingenic_tcu_of_match[] __initconst =3D {
+> @@ -355,14 +357,27 @@ static int __init ingenic_tcu_probe(struct=20
+> device_node *np)
+>  		tcu->clk =3D of_clk_get_by_name(np, "tcu");
+>  		if (IS_ERR(tcu->clk)) {
+>  			ret =3D PTR_ERR(tcu->clk);
+> -			pr_crit("Cannot get TCU clock\n");
+> -			goto err_free_tcu;
+> -		}
+>=20
+> -		ret =3D clk_prepare_enable(tcu->clk);
+> -		if (ret) {
+> -			pr_crit("Unable to enable TCU clock\n");
+> -			goto err_put_clk;
+> +			/*
+> +			 * Old device trees for some SoCs did not include the
+> +			 * TCU clock because this driver (incorrectly) didn't
+> +			 * use it. In this case we complain loudly and attempt
+> +			 * to continue without the clock, which might work if
+> +			 * booting with workarounds like "clk_ignore_unused".
+> +			 */
+> +			if (tcu->soc_info->allow_missing_tcu_clk && ret =3D=3D -EINVAL) {
+> +				pr_warn("TCU clock missing from device tree, please update your=20
+> device tree\n");
+> +				tcu->clk =3D NULL;
+> +			} else {
+> +				pr_crit("Cannot get TCU clock from device tree\n");
+> +				goto err_free_tcu;
+> +			}
+> +		} else {
+> +			ret =3D clk_prepare_enable(tcu->clk);
+> +			if (ret) {
+> +				pr_crit("Unable to enable TCU clock\n");
+> +				goto err_put_clk;
+> +			}
+>  		}
+>  	}
+>=20
+> @@ -432,10 +447,10 @@ static int __init ingenic_tcu_probe(struct=20
+> device_node *np)
+>  			clk_hw_unregister(tcu->clocks->hws[i]);
+>  	kfree(tcu->clocks);
+>  err_clk_disable:
+> -	if (tcu->soc_info->has_tcu_clk)
+> +	if (tcu->clk)
+>  		clk_disable_unprepare(tcu->clk);
+>  err_put_clk:
+> -	if (tcu->soc_info->has_tcu_clk)
+> +	if (tcu->clk)
+>  		clk_put(tcu->clk);
+>  err_free_tcu:
+>  	kfree(tcu);
+> --
+> 2.35.1
+>=20
+
+
