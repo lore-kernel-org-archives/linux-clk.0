@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F91C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EE2C4167D
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358983AbiDLTnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 15:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
+        id S1359019AbiDLTnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 15:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359067AbiDLTmS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:18 -0400
+        with ESMTP id S1359098AbiDLTmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:42:24 -0400
 Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B806FA191;
-        Tue, 12 Apr 2022 12:39:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5189E4B1C3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Apr 2022 12:40:00 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 1B912200003;
-        Tue, 12 Apr 2022 19:39:54 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 00F1E200007;
+        Tue, 12 Apr 2022 19:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649792396;
+        t=1649792391;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Ge58NimhaKWCxwe0+hrNu+VcWrBPIvnbMynidvFnOMc=;
-        b=AZAcNfJQONKwoYSLlZDoAScxnBEbP/1ZAHZxftEdZxUlr+BbglS6kvFfFBLr8GRRKIdnpB
-        7iHGOJry81GMMjlxnL88QSTINpBA08cBB9TGewa0Oym7ea3vPjWgMIiBrq2Fu+KmmCAxJm
-        8ahOFsnj3S2d+aIaU6IYFJiAi5yvp83sbhl8FgUTZXwCc76IJ2i1T/y4wF3NsiIof1V6UT
-        /zcB7nl0PjtT11hjbgPzSOAoB8OUgAmKGk8lGDpccNFV4VuteMy8eAuIt3O3qreNAvLa4Y
-        ZoDHFucfcsCIZpnr9IIoAZwiAdwu3BO1iSh46UVruVb2h8hw+z4YMLboXTCorQ==
+        bh=zAtIbUPsxkJ2Vkxs0B9jhzXSzY5HA+HvzfhgI4EksRw=;
+        b=Z5yEfUP2u6zl+zMupNYCcdj6Ryn3dn6jNqtFyLiYbPb5m0QjwwYzGe5GhyzV+/0KQwRGHd
+        iMSe3Uv2GxpK2mIl8+XklvWnrjnxhZPTBAHQYSE1gKldBx3NdDZo5NqYH/UYlmj2dHIWUg
+        8hjB1gSxplulHMXzHBjGHJ1J2Gr6fAO1dBjBN4aI9U1m0tZQdM8zV2tbhDJp6VNgDA96OA
+        HMB43kV1FmTZ1n4XHUi6P1zBB5HozT9iFKXT3tqcuOKktVVlK5XdBmd0H5CqfytSyk4rfO
+        MOflkpGKQZNps1wOnZqRdxrZSSu5UYZ0cd+IXhPX9e3Kh1+5oTVXjy5+3sLzTg==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -48,11 +48,10 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v10 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
-Date:   Tue, 12 Apr 2022 21:39:35 +0200
-Message-Id: <20220412193936.63355-9-miquel.raynal@bootlin.com>
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH v10 6/9] clk: renesas: r9a06g032: Probe possible children
+Date:   Tue, 12 Apr 2022 21:39:33 +0200
+Message-Id: <20220412193936.63355-7-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220412193936.63355-1-miquel.raynal@bootlin.com>
 References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
@@ -63,55 +62,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe the two DMA controllers available on this SoC.
+The clock controller device on r9a06g032 takes all the memory range that
+is described as being a system controller. This range contains many
+different (unrelated?) registers besides the ones belonging to the clock
+controller, that can necessitate to be accessed from other peripherals.
+
+For instance, the dmamux registers are there. The dmamux "device" will
+be described as a child node of the clock/system controller node, which
+means we need the top device driver (the clock controller driver in this
+case) to populate its children manually.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 636a6ab31c58..839580ec21ee 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 052d99059981..1df56d7ab3e1 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -16,6 +16,7 @@
+ #include <linux/math64.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+@@ -996,7 +997,7 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
  
-+		dma0: dma-controller@40104000 {
-+			compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
-+			reg = <0x40104000 0x1000>;
-+			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "hclk";
-+			clocks = <&sysctrl R9A06G032_HCLK_DMA0>;
-+			dma-channels = <8>;
-+			dma-requests = <16>;
-+			dma-masters = <1>;
-+			#dma-cells = <3>;
-+			block_size = <0xfff>;
-+			data_width = <3>;
-+			status = "disabled";
-+		};
-+
-+		dma1: dma-controller@40105000 {
-+			compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
-+			reg = <0x40105000 0x1000>;
-+			interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names = "hclk";
-+			clocks = <&sysctrl R9A06G032_HCLK_DMA1>;
-+			dma-channels = <8>;
-+			dma-requests = <16>;
-+			dma-masters = <1>;
-+			#dma-cells = <3>;
-+			block_size = <0xfff>;
-+			data_width = <3>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@44101000 {
- 			compatible = "arm,gic-400", "arm,cortex-a7-gic";
- 			interrupt-controller;
+ 	sysctrl_priv = clocks;
+ 
+-	return 0;
++	return of_platform_populate(np, NULL, NULL, dev);
+ }
+ 
+ static const struct of_device_id r9a06g032_match[] = {
 -- 
 2.27.0
 
