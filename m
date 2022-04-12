@@ -2,103 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2035CC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03471C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 19:14:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353652AbiDLTH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 15:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49152 "EHLO
+        id S231406AbiDLTRL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 15:17:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355179AbiDLTHy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:07:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 656C5419A0;
-        Tue, 12 Apr 2022 12:05:36 -0700 (PDT)
+        with ESMTP id S244301AbiDLTRJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 15:17:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373DF522E8;
+        Tue, 12 Apr 2022 12:14:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AC93561B5D;
-        Tue, 12 Apr 2022 19:05:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 092A1C385A5;
-        Tue, 12 Apr 2022 19:05:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C15D1B81FB3;
+        Tue, 12 Apr 2022 19:14:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66335C385A1;
+        Tue, 12 Apr 2022 19:14:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649790335;
-        bh=ZbSkaC5MBfF62iamJnsXlTvwu8C3ghdAlvLgcGBAFjo=;
+        s=k20201202; t=1649790887;
+        bh=bcAefXnMbjN8CcigBKO+g1I/idDevweEN7l4fJ9EEgU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kqBrKtUiARnFtFQ4c56T+sZHxkMznV0/BHbnW0R3BzLCLsIwLkw/macH4R4XL6GGQ
-         cLSTuq75Gf0TfAXsz/nrYkfGBISUsBWa2jBuPDlhtJcWq2m4omI2LZQPnwR+wAp//r
-         VApgztD69V7jhEf1/4tUeve7dDegd1saJntevQn2zZZuOXx+is5a+sdjDJKvIRLAoS
-         nc74datHUPpbeHcgDQJuLcKpiWNPtPV+cSO+J3cOIrt3516Ke7TWMbzvzN/5NlFPFr
-         51ofQynDkxS8vMaj7x1ce/1c4l5ZK0/XG/sLysQP9eLi8PS/8yI/QJyO9RluiBtHSZ
-         CctreOpAWwA/Q==
+        b=i2CBPPGcMCEfc7GP3tVSa1cfoGzVqvE7SZZh9K8M6Qfx09N6T2gvGP29wI3z/2CbP
+         Z8pLTIGtQoLUl7Wx9ILSS1PuHI8UCOmFeYgr6Gt7tUqaONznxPD3Wh9L5PG9VRcyUB
+         Je9xLtuDhd1Yj5XsHdE/JtLQexAtlASNYuXNIoHe7Y5ohLLQiD6VeYzWb/xenjQNgS
+         +oY5rOm+rrxbMU72L8ZYfDMoKlSRlpFYW7zdFXcZ8QZ4BhAq7DtZ1o4dJRsaOyfcAW
+         A1eMrBKoAev2PYV6rVBlcJkI9wBjXl4eu7AErOrvEPz7ALx/aPrczwdj4yig/7UU4I
+         DuWCep8evarPQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220408224321.627126-2-bjorn.andersson@linaro.org>
-References: <20220408224321.627126-1-bjorn.andersson@linaro.org> <20220408224321.627126-2-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: add sc8280xp GCC driver
+In-Reply-To: <20220411085916.941433-8-conor.dooley@microchip.com>
+References: <20220411085916.941433-1-conor.dooley@microchip.com> <20220411085916.941433-8-conor.dooley@microchip.com>
+Subject: Re: [PATCH v2 7/9] clk: microchip: mpfs: re-parent the configurable clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 12 Apr 2022 12:05:33 -0700
+Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Conor Dooley <conor.dooley@microchip.com>
+To:     Conor Dooley <conor.dooley@microchip.com>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, aou@eecs.berkeley.edu,
+        krzk+dt@kernel.org, mturquette@baylibre.com, palmer@rivosinc.com,
+        paul.walmsley@sifive.com, robh+dt@kernel.org
+Date:   Tue, 12 Apr 2022 12:14:45 -0700
 User-Agent: alot/0.10
-Message-Id: <20220412190535.092A1C385A5@smtp.kernel.org>
+Message-Id: <20220412191447.66335C385A1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-04-08 15:43:21)
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc828=
-0xp.c
-> new file mode 100644
-> index 000000000000..e621a25a4a40
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -0,0 +1,7463 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Linaro Ltd.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-[...]
-> +
-> +static struct clk_alpha_pll gcc_gpll0 =3D {
-> +       .offset =3D 0x0,
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x52028,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
+Quoting Conor Dooley (2022-04-11 01:59:15)
+> Currently the mpfs clock driver uses a reference clock called the
+> "msspll", set in the device tree, as the parent for the cpu/axi/ahb
+> (config) clocks. The frequency of the msspll is determined by the FPGA
+> bitstream & the bootloader configures the clock to match the bitstream.
+> The real reference is provided by a 100 or 125 MHz off chip oscillator.
+>=20
+> However, the msspll clock is not actually the parent of all clocks on
+> the system - the reference clock for the rtc/mtimer actually has the
+> off chip oscillator as its parent.
+>=20
+> In order to fix this, add support for reading the configuration of the
+> msspll & reparent the "config" clocks so that they are derived from
+> this clock rather than the reference in the device tree.
+>=20
+> Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire =
+SoC")
+> Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>=20
+> @Stephen/Mike: Is it acceptable to add the recalc rate without a set
+> rate? If not lmk and I will add one.
 
-const
-
-> +                       .name =3D "gcc_gpll0",
-> +                       .parent_data =3D &(const struct clk_parent_data){
-> +                               .fw_name =3D "bi_tcxo",
-
-This can't be shared for multiple PLLs?
-
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .ops =3D &clk_alpha_pll_fixed_lucid_5lpe_ops,
-> +               },
-> +       },
-> +};
-> +
+Only recalc_rate is OK. It's like a read-only divider.
