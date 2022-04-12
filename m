@@ -2,71 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DECEC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 11:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CB5C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 11:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348644AbiDLL0R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
+        id S234169AbiDLLgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 07:36:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352726AbiDLLZl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 07:25:41 -0400
-X-Greylist: delayed 8667 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Apr 2022 03:08:12 PDT
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86B16F490;
-        Tue, 12 Apr 2022 03:08:11 -0700 (PDT)
+        with ESMTP id S232561AbiDLLeu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 07:34:50 -0400
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BB075E72;
+        Tue, 12 Apr 2022 03:13:00 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9247710000F;
-        Tue, 12 Apr 2022 10:08:05 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id B91CE60003;
+        Tue, 12 Apr 2022 10:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649758090;
+        t=1649758379;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=p+pU7ygeIBoD5cgptW7tVVN2WGEHNcfDZpAgzFijefk=;
-        b=nY4VFDHwkAeXyE5ftBFksBWhAf6NDoWPXWH++Wu28KBgrUQ9SyKHJTbLameuYgFn0yk8PN
-        AJgXwOAbCrF7bxVfzYvpoeoBDCkKjwrV92A3CBYxp0gh9p7oIZyyZsxlzwpLwoN2VSz0lt
-        m1XL81YpbLHqgbDk0DO2rLHfvT7ZabbXSYbWYOHObJrQtRXEkQq0IvF0NO6aIZL9PxbULM
-        HGRT9KpufwQ/ZRH7GDyMpma5971KEMo7PT14YgVDfhRgcSaTqrzUyB7AjiZSZFqTipuNyD
-        U/Stnew9V4bQnkKaiRtaDAzwcI314JgiJTatLt6L6CbTczK03Dzrrc/RWiWHxw==
-Date:   Tue, 12 Apr 2022 12:08:04 +0200
+        bh=68UMe/N6Z3nFxIrYdpsovoXjPbZxFhEBEnyv/vU9mcw=;
+        b=NOJcrTnbofpEXSCB/eWW3epn5H6PfJo97VOcruxHuNItNcwXcS7y7xH+h1/m+S7Abuvs8S
+        g6pu3R3xx8XHHcL1dvAI058NzOP7A6JhLR8yly/HhrkMndi5XCzHbtSbllF74wwpW3ECuy
+        z8qy/jd3l/SkiyMTfKlvAgEIKxGFqz0y6EDRO4cGloQXok57QTYG54sHX9cq6B1yJFoChV
+        u7bijyh2cnJxFnmuIvsdeb6RnivjDDMe2wVDFjkf14iXPjAHadlQW0t4g4xfcnvz/p40gS
+        EemqwIJLg0iAOIPfRHo/Xdrcitl2JfGsgwAHWn6xgBaSe2kF9Hq2G6MJsyp7MQ==
+Date:   Tue, 12 Apr 2022 12:12:55 +0200
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
+To:     Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-Message-ID: <20220412120804.480419b4@xps13>
-In-Reply-To: <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <20220412121255.63ebe280@xps13>
+In-Reply-To: <8d10c313-ecfe-4460-4040-8886aa421ef@linux.intel.com>
 References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-        <20220407004511.3A6D1C385A3@smtp.kernel.org>
-        <20220407101605.7d2a17cc@xps13>
-        <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
-        <20220412093155.090de9d6@xps13>
-        <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
-        <20220412094338.382e8754@xps13>
-        <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
-        <20220412100301.03ccece8@xps13>
-        <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
+        <20220406161856.1669069-6-miquel.raynal@bootlin.com>
+        <6fbeebe2-9693-f91-78bd-451480f7a6dd@linux.intel.com>
+        <YlAgbh2AFevBktxd@smile.fi.intel.com>
+        <8d10c313-ecfe-4460-4040-8886aa421ef@linux.intel.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -76,77 +67,72 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Hi Ilpo, Andy,
 
-geert@linux-m68k.org wrote on Tue, 12 Apr 2022 10:12:41 +0200:
+ilpo.jarvinen@linux.intel.com wrote on Fri, 8 Apr 2022 15:38:48 +0300
+(EEST):
 
-> Hi Miquel,
+> On Fri, 8 Apr 2022, Andy Shevchenko wrote:
 >=20
-> On Tue, Apr 12, 2022 at 10:03 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:52:25 +0200: =20
-> > > On Tue, Apr 12, 2022 at 9:43 AM Miquel Raynal <miquel.raynal@bootlin.=
-com> wrote: =20
-> > > > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200: =20
-> > > > > So far I've been rather terse in giving feedback on these series,
-> > > > > as I'm in wait-and-see mode w.r.t. what else you've planned for t=
-he
-> > > > > sysctrl DT node[1] and clock/sys controller code...
-> > > > >
-> > > > > [1] Did I say I'm not that fond of child nodes? But for the dmamu=
-x,
-> > > > >     it looks like a good solution to handle this. =20
-> > > >
-> > > > O:-)
-> > > >
-> > > > I plan in the coming days to write a proper reset controller driver
-> > > > that will be queried by the rtc driver (as proposed by Alexandre). =
-=20
-> > >
-> > > OK.
-> > > =20
-> > > > Which means I'll have to declare this reset controller as a child of
-> > > > the systrl node. If you disagree with it, you may jump-in, see this
-> > > > thread :
-> > > >
-> > > >         Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
-> > > >                  function to  enable/disable the RTC
-> > > >         Date: Wed, 6 Apr 2022 10:32:31 +0200 =20
-> > >
-> > > But do you need a child node for that? All(most all) other Renesas
-> > > clock drivers provide reset functionality, and none of them use a
-> > > child node for that. =20
-> >
-> > How do you "request" the reset handle from the consumer driver if it's
-> > not described in the DT? Do you have examples to share? =20
+> > On Fri, Apr 08, 2022 at 12:55:47PM +0300, Ilpo J=C3=A4rvinen wrote: =20
+> > > On Wed, 6 Apr 2022, Miquel Raynal wrote:
+> > >  =20
+> > > > The Renesas RZN1 DMA IP is based on a DW core, with eg. an addition=
+al
+> > > > dmamux register located in the system control area which can take u=
+p to
+> > > > 32 requests (16 per DMA controller). Each DMA channel can be wired =
+to
+> > > > two different peripherals.
+> > > >=20
+> > > > We need two additional information from the 'dmas' property: the ch=
+annel
+> > > > (bit in the dmamux register) that must be accessed and the value of=
+ the
+> > > > mux for this channel. =20
+> >  =20
+> > > > +	mask =3D BIT(map->req_idx);
+> > > > +	mutex_lock(&dmamux->lock);
+> > > > +	dmamux->used_chans |=3D mask;
+> > > > +	ret =3D r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
+> > > > +	if (ret)
+> > > > +		goto release_chan_and_unlock;
+> > > > +
+> > > > +	mutex_unlock(&dmamux->lock);
+> > > > +
+> > > > +	return map;
+> > > > +
+> > > > +release_chan_and_unlock:
+> > > > +	dmamux->used_chans &=3D ~mask; =20
+> > >=20
+> > > Now that I check this again, I'm not sure why dmamux->used_chans |=3D=
+ mask;=20
+> > > couldn't be done after r9a06g032_sysctrl_set_dmamux() call so this=20
+> > > rollback of it wouldn't be necessary. =20
+> >=20
+> > I would still need the mutex unlock which I believe is down path there =
+under
+> > some other label. Hence you are proposing something like
+> >=20
+> > 	mask =3D BIT(map->req_idx);
+> >=20
+> > 	mutex_lock(&dmamux->lock);
+> > 	ret =3D r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
+> > 	if (ret)
+> > 		goto err_unlock; // or whatever label is
+> >=20
+> > 	dmamux->used_chans |=3D mask;
+> > 	mutex_unlock(&dmamux->lock);
+> >=20
+> > 	return map;
+> >=20
+> > Is that correct? If so, I don't see impediments either. =20
 >=20
-> I didn't say it does not need to be described in DT ;-)
+> Yes, and yes, the mutex still has to be unlocked on that error path.
 >=20
-> Just add "#reset-cells =3D <1>" to the sysctrl node, and nodes can
-> start referring to it using "resets =3D <&sysctrl N>".
-> Currently, the sysctrl node is already a clock and power-domain provider.
->=20
-> Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-> shows an R-Car CPG/MSSR node providing clock, power-domain, and
-> reset functionalities.
+> > > Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =20
 
-Ok, works for me ;)
-
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->=20
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
-
+I've done the modification, thanks for your feedback.
 
 Thanks,
 Miqu=C3=A8l
