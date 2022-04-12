@@ -2,250 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E433DC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 02:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C36BC43217
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Apr 2022 08:25:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231782AbiDLCGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Apr 2022 22:06:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53182 "EHLO
+        id S236329AbiDLINp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Apr 2022 04:13:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229521AbiDLCGL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Apr 2022 22:06:11 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4062431509;
-        Mon, 11 Apr 2022 19:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649729035; x=1681265035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r4GRUR6zF+v37vBUgf/DDdpurM7HAtY37B8rErw3mbA=;
-  b=JEe38TGTC2X7hqpCztRf3L6Y+bRFMM4jyuOFdAHvlpCs1HbAHpHgxkHu
-   PruMz6yRsqL8YE1Q4DuhtMfm5dOr79i7v5NSqGHWxaHqMWefH6PKP+YHs
-   hdPXeZZJYfSKFqeisSzWpygvaS1Be2YYkwiG4guongAkYqdvxyKp2yFIq
-   Tudpz0Xcu6gOOfeg77U65KCWyBbkqXtsjW+FTf8UPx6Ns7eyLeDv0H91F
-   I8mQ2dHYRiVprLBuIHHlcA5yMHM4niHcJy0yiUe0QvqS4ySFK9/Uu9YJN
-   wc+3uFIdhtIOgRsFV58hgtySd25ceNvjfQk3hqJFdkHvoKF4OH5pub9OG
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10314"; a="244140624"
-X-IronPort-AV: E=Sophos;i="5.90,252,1643702400"; 
-   d="scan'208";a="244140624"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2022 19:03:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,252,1643702400"; 
-   d="scan'208";a="854158711"
-Received: from lkp-server02.sh.intel.com (HELO d3fc50ef50de) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 11 Apr 2022 19:03:51 -0700
-Received: from kbuild by d3fc50ef50de with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ne5sk-0002QX-Cy;
-        Tue, 12 Apr 2022 02:03:50 +0000
-Date:   Tue, 12 Apr 2022 10:03:05 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
-        paul@crapouillou.net, robh+dt@kernel.org, krzk+dt@kernel.org,
-        tsbogend@alpha.franken.de, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
- SoCs
-Message-ID: <202204120958.uBiGandq-lkp@intel.com>
-References: <20220411154241.50834-3-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S1355537AbiDLIIb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Apr 2022 04:08:31 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4561EAF;
+        Tue, 12 Apr 2022 00:37:36 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id bb38so3505920qtb.3;
+        Tue, 12 Apr 2022 00:37:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sju++ztFGWh+V8NuvYNnn8xfQchBMBltAHAO3s39Z8k=;
+        b=2M8avMGi86TQhn4sBd37R69XQoNn2fM1odo1WemkhQYVk7scFF6khtTsUXdGKOYU7K
+         W/ZM12BXJMEIsl/MHSBp23LEXzPAN6iUvHHva4YWhAQn1p03f/lVzLT1UF/RbHkfBc+6
+         jti2On7M5ZbqVqb2Wd1cEYO4y25D1zczyW7A//hTV6b6ggIDFRZysDLTDwkgnjgsR9q3
+         TUHDlP8Qm4dKeopceD8JVhQs3RDQM7eiL/S6nP1obq4eWyw6GmCmLf2+5dXqxQyvjeyo
+         Uybae/rh/qG7rl8eSdpYZxeP/n6CQQq2s/f+1R/QV7LpcrLFpt6SYLKpD9DK5C8UKA/7
+         8Yfw==
+X-Gm-Message-State: AOAM5326Thx93oKLJ9BVa6qUvIzmIL+qwyFeZZGtGWglxRzLoHKEsRFI
+        FuJpI1knpp/d48FfhebK1MgxYnawMPAbdQgB
+X-Google-Smtp-Source: ABdhPJxwDNiiKwUSnwbzZvP2H+H+3GoKCQzp3NGQUr5JFvKWH4Kpv+yw6iIPGCR2L2+ARROXrJTkQw==
+X-Received: by 2002:ac8:5e10:0:b0:2e1:cb3e:bb87 with SMTP id h16-20020ac85e10000000b002e1cb3ebb87mr2398455qtx.4.1649749055431;
+        Tue, 12 Apr 2022 00:37:35 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id r7-20020ac85c87000000b002e234014a1fsm27598557qta.81.2022.04.12.00.37.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Apr 2022 00:37:34 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-2ed65e63afcso32361177b3.9;
+        Tue, 12 Apr 2022 00:37:34 -0700 (PDT)
+X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
+ u124-20020a814782000000b002eb1cb15441mr28177896ywa.479.1649749054017; Tue, 12
+ Apr 2022 00:37:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220411154241.50834-3-aidanmacdonald.0x0@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
+ <20220407004511.3A6D1C385A3@smtp.kernel.org> <20220407101605.7d2a17cc@xps13>
+ <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com> <20220412093155.090de9d6@xps13>
+In-Reply-To: <20220412093155.090de9d6@xps13>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 12 Apr 2022 09:37:22 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
+Message-ID: <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/9] RZN1 DMA support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aidan,
+Hi Miquel,
 
-Thank you for the patch! Perhaps something to improve:
+On Tue, Apr 12, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> geert@linux-m68k.org wrote on Mon, 11 Apr 2022 17:09:50 +0200:
+> > On Thu, Apr 7, 2022 at 10:16 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> > > sboyd@kernel.org wrote on Wed, 06 Apr 2022 17:45:09 -0700:
+> > > > Quoting Miquel Raynal (2022-04-06 09:18:47)
+> > > > > Here is a first series bringing DMA support to RZN1 platforms. Soon a
+> > > > > second series will come with changes made to the UART controller
+> > > > > driver, in order to interact with the RZN1 DMA controller.
+> > > > >
+> > > > > Stephen acked the sysctrl patch (in the clk driver) but somehow I feel
+> > > > > like it would be good to have this patch applied on both sides
+> > > > > (dmaengine and clk) because more changes will depend on the addition of
+> > > > > this helper, that are not related to DMA at all. I'll let you folks
+> > > > > figure out what is best.
+> > > >
+> > > > Are you sending more patches in the next 7 weeks or so that will touch
+> > > > the same area? If so, then it sounds like I'll need to take the clk
+> > > > patch through clk tree. I don't know what is best because I don't have
+> > > > the information about what everyone plans to do in that file.
+> > >
+> > > This series brings DMA support and needs to access the dmamux registers
+> > > that are in the sysctrl area.
+> > >
+> > > I've sent an RTC series which needs to access this area as well, but
+> > > it is not fully ready yet as it was advised to go for a reset
+> > > controller in this case. The reset controller would be registered by
+> > > the clock driver, so yes it would touch the same file.
+> > >
+> > > Finally, there is an USB series that is coming soon, I don't know if
+> > > it will be ready for merge for 5.19, but it needs to access a specific
+> > > register in this area as well (h2mode).
+> > >
+> > > So provided that we are able to contribute this reset driver quickly
+> > > enough, I would argue that it is safer to merge the clk changes in the
+> > > clk tree.
+> >
+> > The clk tree or the renesas-clk tree? ;-)
+>
+> Actually I forgot about this tree, would you mind to merge *all* the
+> patches that depend on the sysctrl changes in the renesas/renesas-clk
+> tree? This also stands for the UART and RTC for instance. Otherwise
+> you'll need to set up immutable branches and share them with the
+> dmaengine, serial and rtc trees. I'm fine either way, it's just much
+> less work in the first situation IMHO.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on clk/clk-next linus/master linux/master v5.18-rc2 next-20220411]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Sure, I can do that, given acks from the DMA, UART, and RTC
+maintainers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aidan-MacDonald/Fix-missing-TCU-clock-for-X1000-X1830-SoCs/20220411-234531
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: mips-randconfig-c004-20220411 (https://download.01.org/0day-ci/archive/20220412/202204120958.uBiGandq-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project c6e83f560f06cdfe8aa47b248d8bdc58f947274b)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install mips cross compiling tool for clang build
-        # apt-get install binutils-mips-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/8c04eee82a9d67a768bb6c787d66724782fce89b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Aidan-MacDonald/Fix-missing-TCU-clock-for-X1000-X1830-SoCs/20220411-234531
-        git checkout 8c04eee82a9d67a768bb6c787d66724782fce89b
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/clk/ingenic/
+So far I've been rather terse in giving feedback on these series,
+as I'm in wait-and-see mode w.r.t. what else you've planned for the
+sysctrl DT node[1] and clock/sys controller code...
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+[1] Did I say I'm not that fond of child nodes? But for the dmamux,
+    it looks like a good solution to handle this.
 
-All warnings (new ones prefixed by >>):
+Gr{oetje,eeting}s,
 
->> drivers/clk/ingenic/tcu.c:366:8: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-                           if (tcu->soc_info->allow_missing_tcu_clk &&
-                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/ingenic/tcu.c:456:9: note: uninitialized use occurs here
-           return ret;
-                  ^~~
-   drivers/clk/ingenic/tcu.c:366:4: note: remove the 'if' if its condition is always true
-                           if (tcu->soc_info->allow_missing_tcu_clk &&
-                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/clk/ingenic/tcu.c:366:8: warning: variable 'ret' is used uninitialized whenever '&&' condition is false [-Wsometimes-uninitialized]
-                           if (tcu->soc_info->allow_missing_tcu_clk &&
-                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/ingenic/tcu.c:456:9: note: uninitialized use occurs here
-           return ret;
-                  ^~~
-   drivers/clk/ingenic/tcu.c:366:8: note: remove the '&&' if its condition is always true
-                           if (tcu->soc_info->allow_missing_tcu_clk &&
-                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/ingenic/tcu.c:343:9: note: initialize the variable 'ret' to silence this warning
-           int ret;
-                  ^
-                   = 0
-   2 warnings generated.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-vim +366 drivers/clk/ingenic/tcu.c
-
-   336	
-   337	static int __init ingenic_tcu_probe(struct device_node *np)
-   338	{
-   339		const struct of_device_id *id = of_match_node(ingenic_tcu_of_match, np);
-   340		struct ingenic_tcu *tcu;
-   341		struct regmap *map;
-   342		unsigned int i;
-   343		int ret;
-   344	
-   345		map = device_node_to_regmap(np);
-   346		if (IS_ERR(map))
-   347			return PTR_ERR(map);
-   348	
-   349		tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
-   350		if (!tcu)
-   351			return -ENOMEM;
-   352	
-   353		tcu->map = map;
-   354		tcu->soc_info = id->data;
-   355	
-   356		if (tcu->soc_info->has_tcu_clk) {
-   357			tcu->clk = of_clk_get_by_name(np, "tcu");
-   358			if (IS_ERR(tcu->clk)) {
-   359				/*
-   360				 * Old device trees for some SoCs did not include the
-   361				 * TCU clock because this driver (incorrectly) didn't
-   362				 * use it. In this case we complain loudly and attempt
-   363				 * to continue without the clock, which might work if
-   364				 * booting with workarounds like "clk_ignore_unused".
-   365				 */
- > 366				if (tcu->soc_info->allow_missing_tcu_clk &&
-   367				    PTR_ERR(tcu->clk) == -EINVAL) {
-   368					pr_warn("TCU clock missing from device tree, please update your device tree\n");
-   369					tcu->clk = NULL;
-   370				} else {
-   371					pr_crit("Cannot get TCU clock from device tree\n");
-   372					goto err_free_tcu;
-   373				}
-   374			} else {
-   375				ret = clk_prepare_enable(tcu->clk);
-   376				if (ret) {
-   377					pr_crit("Unable to enable TCU clock\n");
-   378					goto err_put_clk;
-   379				}
-   380			}
-   381		}
-   382	
-   383		tcu->clocks = kzalloc(struct_size(tcu->clocks, hws, TCU_CLK_COUNT),
-   384				      GFP_KERNEL);
-   385		if (!tcu->clocks) {
-   386			ret = -ENOMEM;
-   387			goto err_clk_disable;
-   388		}
-   389	
-   390		tcu->clocks->num = TCU_CLK_COUNT;
-   391	
-   392		for (i = 0; i < tcu->soc_info->num_channels; i++) {
-   393			ret = ingenic_tcu_register_clock(tcu, i, TCU_PARENT_EXT,
-   394							 &ingenic_tcu_clk_info[i],
-   395							 tcu->clocks);
-   396			if (ret) {
-   397				pr_crit("cannot register clock %d\n", i);
-   398				goto err_unregister_timer_clocks;
-   399			}
-   400		}
-   401	
-   402		/*
-   403		 * We set EXT as the default parent clock for all the TCU clocks
-   404		 * except for the watchdog one, where we set the RTC clock as the
-   405		 * parent. Since the EXT and PCLK are much faster than the RTC clock,
-   406		 * the watchdog would kick after a maximum time of 5s, and we might
-   407		 * want a slower kicking time.
-   408		 */
-   409		ret = ingenic_tcu_register_clock(tcu, TCU_CLK_WDT, TCU_PARENT_RTC,
-   410						 &ingenic_tcu_watchdog_clk_info,
-   411						 tcu->clocks);
-   412		if (ret) {
-   413			pr_crit("cannot register watchdog clock\n");
-   414			goto err_unregister_timer_clocks;
-   415		}
-   416	
-   417		if (tcu->soc_info->has_ost) {
-   418			ret = ingenic_tcu_register_clock(tcu, TCU_CLK_OST,
-   419							 TCU_PARENT_EXT,
-   420							 &ingenic_tcu_ost_clk_info,
-   421							 tcu->clocks);
-   422			if (ret) {
-   423				pr_crit("cannot register ost clock\n");
-   424				goto err_unregister_watchdog_clock;
-   425			}
-   426		}
-   427	
-   428		ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, tcu->clocks);
-   429		if (ret) {
-   430			pr_crit("cannot add OF clock provider\n");
-   431			goto err_unregister_ost_clock;
-   432		}
-   433	
-   434		ingenic_tcu = tcu;
-   435	
-   436		return 0;
-   437	
-   438	err_unregister_ost_clock:
-   439		if (tcu->soc_info->has_ost)
-   440			clk_hw_unregister(tcu->clocks->hws[i + 1]);
-   441	err_unregister_watchdog_clock:
-   442		clk_hw_unregister(tcu->clocks->hws[i]);
-   443	err_unregister_timer_clocks:
-   444		for (i = 0; i < tcu->clocks->num; i++)
-   445			if (tcu->clocks->hws[i])
-   446				clk_hw_unregister(tcu->clocks->hws[i]);
-   447		kfree(tcu->clocks);
-   448	err_clk_disable:
-   449		if (tcu->clk)
-   450			clk_disable_unprepare(tcu->clk);
-   451	err_put_clk:
-   452		if (tcu->clk)
-   453			clk_put(tcu->clk);
-   454	err_free_tcu:
-   455		kfree(tcu);
-   456		return ret;
-   457	}
-   458	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
