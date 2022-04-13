@@ -2,87 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D5AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 07:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95536C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 07:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233231AbiDMHPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 03:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57588 "EHLO
+        id S233472AbiDMHwv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 03:52:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbiDMHPy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 03:15:54 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF91B35247;
-        Wed, 13 Apr 2022 00:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1649834013; x=1681370013;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=h3C/0JKkds2vE5J17NOx80JGTh8SJToIN8IB1dF+FE8=;
-  b=RHAMW0YWL9QnM/JspOo1W5EIiUMuPeJMTUkTlOxjHwyrGFcR4dn3vFvm
-   YE2/2nIFai98DUNarlgMwA+9f+J8kaJ/a2WdQc52/ttfUnXT99ZWOxljk
-   0UfflXUcoRZSq8aO7crvmZtYu/yWllX8hvKYMYgQaNLwO36HWRWMXDzTW
-   EPy4+Abfe5o4kc9nX3olW8SQq9DA7vimCut7SjE1WbC4ZBLbfSBhfuskS
-   pnRubE1JH8wH9ACxaTBcz01m7/DeTJMLV1/ddc6W8RbXSAXTBfdCtKUJ0
-   E5seD+4sGiBODcG5xur3+nTwCkdP3/5b6VFcjEBuTCA5+xOB6UnSLuBZN
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,256,1643698800"; 
-   d="scan'208";a="159933363"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Apr 2022 00:13:32 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 13 Apr 2022 00:13:31 -0700
-Received: from rob-ult-m19940.amer.actel.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Wed, 13 Apr 2022 00:13:29 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+        with ESMTP id S233465AbiDMHwu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 03:52:50 -0400
+Received: from mail.meizu.com (unknown [14.29.68.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2318627FCB;
+        Wed, 13 Apr 2022 00:50:26 -0700 (PDT)
+Received: from IT-EXMB-1-125.meizu.com (172.16.1.125) by mz-mail04.meizu.com
+ (172.16.1.16) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 13 Apr
+ 2022 15:50:25 +0800
+Received: from meizu.meizu.com (172.16.137.70) by IT-EXMB-1-125.meizu.com
+ (172.16.1.125) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.14; Wed, 13 Apr
+ 2022 15:50:24 +0800
+From:   Haowen Bai <baihaowen@meizu.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Haowen Bai <baihaowen@meizu.com>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [PATCH] clk: at91: generated: consider range when calculating best rate
-Date:   Wed, 13 Apr 2022 10:13:18 +0300
-Message-ID: <20220413071318.244912-1-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.32.0
+Subject: [PATCH] clk: renesas: Fix memory leak of 'cpg'
+Date:   Wed, 13 Apr 2022 15:50:21 +0800
+Message-ID: <1649836222-17581-1-git-send-email-baihaowen@meizu.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-Originating-IP: [172.16.137.70]
+X-ClientProxiedBy: IT-EXMB-1-126.meizu.com (172.16.1.126) To
+ IT-EXMB-1-125.meizu.com (172.16.1.125)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_generated_best_diff() helps in finding the parent and the divisor to
-compute a rate closest to the required one. However, it doesn't take into
-account the request's range for the new rate. Make sure the new rate
-is within the required range.
+Fix this issue by freeing the cpg when exiting the function in the
+error/normal path.
 
-Fixes: 8a8f4bf0c480 ("clk: at91: clk-generated: create function to find best_diff")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Haowen Bai <baihaowen@meizu.com>
 ---
- drivers/clk/at91/clk-generated.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/renesas/clk-r8a73a4.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 23cc8297ec4c..d429ba52a719 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -117,6 +117,10 @@ static void clk_generated_best_diff(struct clk_rate_request *req,
- 		tmp_rate = parent_rate;
- 	else
- 		tmp_rate = parent_rate / div;
-+
-+	if (tmp_rate < req->min_rate || tmp_rate > req->max_rate)
-+		return;
-+
- 	tmp_diff = abs(req->rate - tmp_rate);
+diff --git a/drivers/clk/renesas/clk-r8a73a4.c b/drivers/clk/renesas/clk-r8a73a4.c
+index cfed11c659d9..6cacda1f91d8 100644
+--- a/drivers/clk/renesas/clk-r8a73a4.c
++++ b/drivers/clk/renesas/clk-r8a73a4.c
+@@ -215,7 +215,7 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
  
- 	if (*best_diff < 0 || *best_diff >= tmp_diff) {
+ 	cpg->reg = of_iomap(np, 0);
+ 	if (WARN_ON(cpg->reg == NULL))
+-		return;
++		goto out_free_cpg;
+ 
+ 	for (i = 0; i < num_clks; ++i) {
+ 		const char *name;
+@@ -233,6 +233,8 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+ 	}
+ 
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
++out_free_cpg:
++	kfree(cpg);
+ }
+ CLK_OF_DECLARE(r8a73a4_cpg_clks, "renesas,r8a73a4-cpg-clocks",
+ 	       r8a73a4_cpg_clocks_init);
 -- 
-2.32.0
+2.7.4
 
