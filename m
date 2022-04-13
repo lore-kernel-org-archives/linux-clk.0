@@ -2,65 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F80C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 13:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E11C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 15:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiDMNMo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 09:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50284 "EHLO
+        id S232298AbiDMPZ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 11:25:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235711AbiDMNMe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 09:12:34 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE32369FF;
-        Wed, 13 Apr 2022 06:10:12 -0700 (PDT)
+        with ESMTP id S231797AbiDMPZ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 11:25:58 -0400
+X-Greylist: delayed 71033 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 08:23:35 PDT
+Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [217.70.178.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E1347566;
+        Wed, 13 Apr 2022 08:23:35 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 8ADB560006;
-        Wed, 13 Apr 2022 13:10:08 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 1B091200007;
+        Wed, 13 Apr 2022 15:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649855411;
+        t=1649863413;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Zq0/0xA2JZ05vFh/LQxUdxfXIW45kzNdF9iAIigkAL0=;
-        b=dgBzt2BY+uWtcgOkQ2QOiFv5e00IthNbA6vS4ChNlw4ltj7qbgUtlOv/B/NUaeXCCp4Zxi
-        1TY+VRfwlt3APCqV2qUzgd7sPHBMSmzOQLv2NcM1kyyoYy62G2D5jieoZOg8aE+1dhY+Gs
-        4yuF0rUIiiC7rOLbWe7UEfj8Z0FW+LWNwo6uYNx5qM84krPVjIY54oV97xDjciztMEJ6T0
-        HG/MgeAOCE02L4rguZetP3pa5DJ7jf1jY93kgZXcP5se0i1MYZR0yBaoSJeS5ZOyCuCKm4
-        Isz3w7T/SK7tmzwiQrH6dmtYpPHpX1e+y5mVUlTk74dGy/WVc/Gxs+siGs7l/g==
-Date:   Wed, 13 Apr 2022 15:10:07 +0200
+        bh=W8BfYBj4EiPXDdXWGpBdNp7BTk+bWEhw6PcxdbWPC5U=;
+        b=exBAHR2/Wc4rkJGI565FgelNlGjkvILC/NsKCynnTTFPU14J1dS3KU7xRktK7nQtgTmDUu
+        ja/YRK/kwVKigfDISerrtpiU41fF2vij6sWGwNQZcjkAVg5/MhXOMveWL0I347LVagFawW
+        XJ/5ZMfdlCF4XlEhylUbDVUv/+siycujgmP6qq6485blJRuTrBLzbnFnDwYRHgNSWo5YGV
+        3aVcPMVCWMiV6DTbE9qyi31J0Ss7SAkx1ux/jJ+ckmdEmEDGnW/RLkIDtmqRmfAxnl2jog
+        O/C9ndLSP8sQN2qGMGQW1jfyjK207kNs+pMEZmEZ3UTDV8oMqmcZ5d0bq5ZXIg==
+Date:   Wed, 13 Apr 2022 17:23:27 +0200
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v10 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA
- router support
-Message-ID: <20220413151007.15cc54fd@xps13>
-In-Reply-To: <Ylaom9pRMm0C0Nsz@smile.fi.intel.com>
-References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
-        <20220412193936.63355-6-miquel.raynal@bootlin.com>
-        <CAMuHMdV_KWuDRWtNaL2n8+1y4GbOSSosesd3RPK60i6zYkQPDA@mail.gmail.com>
-        <Ylaom9pRMm0C0Nsz@smile.fi.intel.com>
+        linux-rtc@vger.kernel.org,
+        Michel Pollet <michel.pollet@bp.renesas.com>
+Subject: Re: [PATCH 3/7] rtc: rzn1: Add new RTC driver
+Message-ID: <20220413172327.73d1fcc1@xps13>
+In-Reply-To: <Yk1UXjTk32Vc9+/k@mail.local>
+References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+        <20220405184716.1578385-4-miquel.raynal@bootlin.com>
+        <Yk1UXjTk32Vc9+/k@mail.local>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -70,33 +67,140 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Andy,
+Hi Alex,
 
-andriy.shevchenko@linux.intel.com wrote on Wed, 13 Apr 2022 13:40:27
-+0300:
-
-> On Wed, Apr 13, 2022 at 09:53:09AM +0200, Geert Uytterhoeven wrote:
-> > On Tue, Apr 12, 2022 at 9:39 PM Miquel Raynal <miquel.raynal@bootlin.co=
-m> wrote: =20
+> > +	tm->tm_sec =3D bcd2bin(tm->tm_sec);
+> > +	tm->tm_min =3D bcd2bin(tm->tm_min);
+> > +	tm->tm_hour =3D bcd2bin(tm->tm_hour);
+> > +	tm->tm_wday =3D bcd2bin(tm->tm_wday);
+> > +	tm->tm_mday =3D bcd2bin(tm->tm_mday);
+> > +	tm->tm_mon =3D bcd2bin(tm->tm_mon);
+> > +	tm->tm_year =3D bcd2bin(tm->tm_year);
+> > +
+> > +	dev_dbg(dev, "%d-%d-%d(%d)T%d:%d:%d\n",
+> > +		tm->tm_year, tm->tm_mon, tm->tm_mday, tm->tm_wday,
+> > +		tm->tm_hour, tm->tm_min, tm->tm_sec);
+> > + =20
 >=20
-> ...
+> This is not really useful because we have tracepoints in the core.
+> Anyway, please use %ptR.
+
+Nice printk operator :)
+
+I've dropped this dev_dbg call, it actually does not serve any useful
+purpose.
+
+
+[...]
+
+> > +static int rzn1_rtc_probe(struct platform_device *pdev)
+> > +{
+> > +	struct rzn1_rtc *rtc;
+> > +	int ret;
+> > +
+> > +	rtc =3D devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+> > +	if (!rtc)
+> > +		return -ENOMEM;
+> > +
+> > +	platform_set_drvdata(pdev, rtc);
+> > +
+> > +	rtc->clk =3D devm_clk_get(&pdev->dev, "hclk");
+> > +	if (IS_ERR(rtc->clk))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk), "Missing hclk\n"=
+);
+> > +
+> > +	rtc->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(rtc->base))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n"=
+);
+> > +
+> > +	rtc->rtcdev =3D devm_rtc_allocate_device(&pdev->dev);
+> > +	if (IS_ERR(rtc->rtcdev))
+> > +		return PTR_ERR(rtc);
+> > +
+> > +	rtc->rtcdev->range_max =3D 3178591199UL; /* 100 years */ =20
 >=20
-> > You might as well declare it in rzn1_dmamux_data as:
-> >=20
-> >     unsigned long used_chans[BITS_TO_LONGS(2 * RZN1_DMAMUX_MAX_LINES)];=
- =20
+> I'm not sure how you came to this value, this is 2070-09-22T05:59:59.
+> I'm pretty sure the RTC will not fail at that time. Also, the comment
+> seems fishy.
 
-Now at the top of the driver I have
+The RTC itself as no "starting point", but just a counter that can
+count up to 100. So the max range is start-year + 100 years. But at
+this point I don't yet have access to the start-year value. What's
+your advise?
 
-#define RZN1_DMAMUX_LINES 64
-#define RZN1_DMAMUX_MAX_LINES 16
+> > +	rtc->rtcdev->ops =3D &rzn1_rtc_ops;
+> > +
+> > +	ret =3D r9a06g032_sysctrl_enable_rtc(true);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D clk_prepare_enable(rtc->clk);
+> > +	if (ret)
+> > +		goto disable_rtc;
+> > +
+> > +	/*
+> > +	 * Ensure the clock counter is enabled.
+> > +	 * Set 24-hour mode and possible oscillator offset compensation in SU=
+BU mode.
+> > +	 */
+> > +	writel(RZN1_RTC_CTL0_CE | RZN1_RTC_CTL0_AMPM | RZN1_RTC_CTL0_SLSB_SUB=
+U,
+> > +	       rtc->base + RZN1_RTC_CTL0);
+> > +
+> > +	/* Disable all interrupts */
+> > +	writel(0, rtc->base + RZN1_RTC_CTL1);
+> > +
+> > +	/* Enable counter operation */
+> > +	writel(0, rtc->base + RZN1_RTC_CTL2);
+> > + =20
+>=20
+> I don't think you should do that unconditionally. The RTC is either
+> not already started (and doesn't carry the proper time/date) or already
+> started. It would be better to start it in .set_time. Maybe you can even
+> use that to detect whether it has already been set once.
 
-Which does not look right. So FYI I decided to change them to
+Actually there is only one (interesting) writeable bit in this register
+and it defaults to 0 whenever we enable the register interface so we
+don't really need to enable anything.
 
-#define RZN1_DMAMUX_MAX_LINES 64
-#define RZN1_DMAMUX_LINES_PER_CTLR 16
+But I've added the necessary logic to handle the situation where the
+bootloader would disable the rtc (which is the only situation where
+the driver can diagnose an erroneous time/date).
 
-which feels much more clear.
+> > +	ret =3D devm_rtc_register_device(rtc->rtcdev);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Failed to register RTC\n"); =20
+>=20
+> No error message is needed here.
+
+Ok.
+
+>=20
+> > +		goto disable_clk;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +disable_clk:
+> > +	clk_disable_unprepare(rtc->clk);
+> > +disable_rtc:
+> > +	r9a06g032_sysctrl_enable_rtc(false);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int rzn1_rtc_remove(struct platform_device *pdev)
+> > +{
+> > +	struct rzn1_rtc *rtc =3D platform_get_drvdata(pdev);
+> > +
+> > +	clk_disable_unprepare(rtc->clk);
+> > +	r9a06g032_sysctrl_enable_rtc(false); =20
+>=20
+> Does this stop the RTC or just the register interface?
+
+Mmmh actually if I reset the sysctrl bit manually I loose the counter
+entirely, so I'll drop this call.
 
 Thanks,
 Miqu=C3=A8l
