@@ -2,126 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F3CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 21:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1831BC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 21:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238911AbiDMVI1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 17:08:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49542 "EHLO
+        id S231520AbiDMVqp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 17:46:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238880AbiDMVIT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 17:08:19 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57CA8567F;
-        Wed, 13 Apr 2022 14:05:45 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id e4so3408707oif.2;
-        Wed, 13 Apr 2022 14:05:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gFOeEZI4pNvyN/LTAgs9rmC19q7UkYUYT1AJpJxfpdI=;
-        b=CLMygoQkFZgsg9JIYleQ/To94LdtInmzdM0RwpZCpzVvzNCyqjeHcuZwVNW2eqGrgo
-         h6XsG/emJnvdlU1e+R4GyW1vj0HUgrEJlzXoFJGiOtD+ug7MPOL1MdRV3o7O6nVEWvbH
-         92Ka1+EXAp1BofddkFnvJidBQ7A/pnqUFojJtJ7Ix2j+3tME1dE5xtYvlrGECdoKivpW
-         chHUfy5HIe4layMfrRk122/b45OvX8l6LBmQ4bEqUqKzsYf+0PeGw8b4QcaBcBT5ysCr
-         zO9nPeDYSarqdUyr+yKsUvqrXsYWdXP46aiaNElAT4CRBfV7Wl1O0AH0JRfEquSlaRRt
-         38qw==
-X-Gm-Message-State: AOAM532qyjP+jGApTg6EWXS6jw174s5pWl/ZUBp91oAnNQB7L4IFzq/r
-        aeGMLegu6sZkVQHzNpQZCA==
-X-Google-Smtp-Source: ABdhPJx5RFeYJLnhl//6T0M97AfdmhJRF0naPw/lnbT5EgrjjTgh8f2EadEd00qJESa3eceTDi9c0w==
-X-Received: by 2002:a05:6808:1a26:b0:2da:1bae:5186 with SMTP id bk38-20020a0568081a2600b002da1bae5186mr22287oib.144.1649883945133;
-        Wed, 13 Apr 2022 14:05:45 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o7-20020a056871078700b000e29ff467dcsm44358oap.50.2022.04.13.14.05.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 14:05:44 -0700 (PDT)
-Received: (nullmailer pid 3917373 invoked by uid 1000);
-        Wed, 13 Apr 2022 21:05:44 -0000
-Date:   Wed, 13 Apr 2022 16:05:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC
- bindings
-Message-ID: <Ylc7KJBXPXNML7UM@robh.at.kernel.org>
-References: <20220408224321.627126-1-bjorn.andersson@linaro.org>
- <0eb126b3-b323-9614-361a-22c2762b590a@linaro.org>
+        with ESMTP id S233218AbiDMVqo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 17:46:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33958C30;
+        Wed, 13 Apr 2022 14:44:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E3555B82793;
+        Wed, 13 Apr 2022 21:44:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EDFC385A8;
+        Wed, 13 Apr 2022 21:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649886255;
+        bh=REiyYi+mAYXjrShDQXfJol6vF7Esfj2JO/hO4v7g+W0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EkvpSCsm95a5C0y+uRSD+EzG/PTSs/+RWmwGAbXcsuraTlgp5LKBQ0w2zVRH4JnNu
+         s0urlqeS+1AgvyOzbARE29DvfMEPnnUdOxfiHz6npuDhnx0uO+I0kHoIHSnLlqj3aV
+         RFYf98RymVZamj3KNvwjJ1DdkDr0FOKj1smDDDYmDQxYay2/2oWN5/MzNfZWAPmYm4
+         h2exISzIil0hKsR+ZshZCtGrxW8d1JpSa2mFfUL+tknIfyqSiQIbCTJASSVmSTX5uD
+         ycPF/rgVgSYGeOE6rjqQ1KlKyr8/NXAwztiWMx8bJi32zFJXxyMzsPABxawgh0nnBj
+         +spT08jahXJgA==
+Received: by mail-io1-f51.google.com with SMTP id x4so3411714iop.7;
+        Wed, 13 Apr 2022 14:44:15 -0700 (PDT)
+X-Gm-Message-State: AOAM531gvGk6AK2HArWihcyWLxu4RyUmvBfNlrdfYaaxa6/V6pIOSav4
+        3XOijKM+c0lCD2Ru4hXGDhBR9KdobaA7zEPUVw==
+X-Google-Smtp-Source: ABdhPJy4uYEv5eq5qGfZfRlrdz3pvFGWusEa99bVYRYSjIEyLUJ+2rxHj/odHZIg8lnVBKbLdVtR5AqTxuzbun3IYB4=
+X-Received: by 2002:a6b:e60a:0:b0:646:3e9e:172f with SMTP id
+ g10-20020a6be60a000000b006463e9e172fmr19128552ioh.1.1649886254463; Wed, 13
+ Apr 2022 14:44:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0eb126b3-b323-9614-361a-22c2762b590a@linaro.org>
+References: <20220324133229.24035-1-jbx6244@gmail.com> <f7493d93-6c8a-efa9-1f2c-a0003a6d43b2@kernel.org>
+ <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com> <20220325005130.C45A3C340EC@smtp.kernel.org>
+ <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org> <20220331223759.B8B12C340ED@smtp.kernel.org>
+In-Reply-To: <20220331223759.B8B12C340ED@smtp.kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 13 Apr 2022 16:44:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLsE9kGzpHr6bkLmU9xmdxXiq-dWBFFO-W+4Z33iqK8_g@mail.gmail.com>
+Message-ID: <CAL_JsqLsE9kGzpHr6bkLmU9xmdxXiq-dWBFFO-W+4Z33iqK8_g@mail.gmail.com>
+Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Johan Jonker <jbx6244@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 09, 2022 at 06:41:25PM +0200, Krzysztof Kozlowski wrote:
-> On 09/04/2022 00:43, Bjorn Andersson wrote:
-> > Add binding for the Qualcomm SC8280XP Global Clock controller.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  .../bindings/clock/qcom,gcc-sc8280xp.yaml     | 199 +++++++
-> >  include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 496 ++++++++++++++++++
-> >  2 files changed, 695 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-> >  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-> > new file mode 100644
-> > index 000000000000..44e5f0d0a795
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
-> > @@ -0,0 +1,199 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc8280xp.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Global Clock & Reset Controller Binding for SC8280xp
-> > +
-> > +maintainers:
-> > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
-> > +
-> > +description: |
-> > +  Qualcomm global clock control module which supports the clocks, resets and
-> > +  power domains on SC8280xp.
-> > +
-> > +  See also:
-> > +  - dt-bindings/clock/qcom,gcc-sc8280xp.h
-> 
-> include/dt-bindings/...
-> 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qcom,gcc-sc8280xp
-> > +
-> 
-> (...)
-> 
-> > +
-> > +  '#power-domain-cells':
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  protected-clocks:
-> > +    description:
-> > +      Protected clock specifier list as per common clock binding.
-> 
-> There is still no schema with protected-clocks, so you need a type,
-> unless someoone is working on adding this to schema?
+On Thu, Mar 31, 2022 at 5:38 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Krzysztof Kozlowski (2022-03-25 00:31:25)
+> > On 25/03/2022 01:51, Stephen Boyd wrote:
+> > > Quoting Johan Jonker (2022-03-24 12:51:36)
+> > >> Hi Heiko, Krzysztof,
+> > >>
+> > >> Question for the Rockchip clock maintainer:
+> > >> What clock should be used here and other SoCs with several clock parents
+> > >> in the tree?
+> > >>
+> > >> The clock.yaml produces a lot off notifications like:
+> > >>
+> > >> /arch/arm/boot/dts/rk3036-evb.dtb: clock-controller@20000000: 'clocks'
+> > >> is a dependency of 'assigned-clocks'
+> > >
+> > > 'clocks' is not a dependency of 'assigned-clocks'. The dt-schema should
+> > > be fixed to remove that requirement.
+> >
+> > If the driver does not have any clock inputs ("clocks" property), why
+> > does it care about some clock frequencies and parents?
+>
+> Because it's a clock provider itself. In this case I suspect because
+> this is a clock-controller node it was skipping describing some crystal
+> input though. Maybe it wants to configure the various PLLs in the
+> clock-controller for a particular board. I can imagine some node with
+> #clock-cells may want to configure the frequency of the clock outputs or
+> configure the clk parents for a certain board/SoC. In that case there
+> may not be any clocks property, but we still want to configure things.
+>
+> >
+> > The clocks is the logical dependency of assigned-clocks, because
+> > otherwise hardware description is not complete.
+>
+> Sure, but also #clock-cells indicating that this is a clock-controller
+> itself means something. The existing bindings are what they are so
+> forcing bindings to be updated to comply with having a 'clocks' property
+> doesn't seem very nice.
+>
+> >
+> > What should be here for Rockhip? We had similar cases like this for many
+> > drivers, I was fixing some of Exynos as well. In my case usually the
+> > root/external clock was missing, so I supplied is as input clock to the
+> > clock controller.
+> >
+>
+> Can the schema consider either #clock-cells or clocks? I think that will
+> work for most cases. It would also be good to have a comment in the
+> schema or more detail around the definition of assigned-clocks in
+> bindings/clock/clock-bindings.txt that clocks or #clock-cells are
+> required. It would be super cool if assigned-clocks only applied if
+> #clock-cells was present, otherwise clocks property applies, but I doubt
+> we can do that anymore given how long the binding has been around.
 
-The 16th addition always gets caught...
+I've just made a schema change to allow this. This will still require
+'assigned-clocks' to be explicitly listed in the clock controller
+schemas if 'clocks' is not present.
 
-I've just added one to dtschema.
+Please don't add to clock-bindings.txt, but improve the schema
+instead. I need Samsung's permission to relicense all the
+assigned-clocks text though.
 
 Rob
