@@ -2,147 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA1C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF7EC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232693AbiDMIDd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
+        id S233653AbiDMIE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 04:04:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233692AbiDMICy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:02:54 -0400
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9461E3C8;
-        Wed, 13 Apr 2022 01:00:32 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 75ED01C0014;
-        Wed, 13 Apr 2022 08:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649836831;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fqBnj4E/IArS778TbFuQ/LXdhPkqCVHeLCS/sR1tXo8=;
-        b=bG4D7mAptj9IoSxJDX73pRGt2qJyJ6MhlJzmHqx4amX7xWZJm1qu7Sqa9uAf5BjVmOQ+n1
-        eQOk+Z5lAp9DL/AqgxiHaxckOcuNH6ZoVXUJKlMSD9bvvVeEGZE3AZkRbXEseZJ6DD6JhC
-        IXlPYM/hmzpPEiTfbLAtLYIMIvTDgpGl7N0gi0h0pimcZ8JL4M3lvPIxtkZh4CMXcvcZlv
-        nHQv0fqfW3xApEpSvRalk9lOx4oKbdsMPxbqJPWVjW1TYDf+FUM36obalcd06t496V77C6
-        k7wU9AuGnbCamtYJ3IGPqxQmZ+QnkmKIVpzhsQirtKrej+Bisik8tovOyua9iA==
-Date:   Wed, 13 Apr 2022 10:00:26 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v10 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA
- router support
-Message-ID: <20220413100026.73e11004@xps13>
-In-Reply-To: <CAMuHMdV_KWuDRWtNaL2n8+1y4GbOSSosesd3RPK60i6zYkQPDA@mail.gmail.com>
-References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
-        <20220412193936.63355-6-miquel.raynal@bootlin.com>
-        <CAMuHMdV_KWuDRWtNaL2n8+1y4GbOSSosesd3RPK60i6zYkQPDA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S233662AbiDMIET (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:04:19 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66D44E391;
+        Wed, 13 Apr 2022 01:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1649836918; x=1681372918;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9mN7tnwERo/cEVPyPzj2pzfxIMFtqlOYcaSwSE8vo64=;
+  b=vE7RqAN1/FmxXimEJYxAESxN5ACHjvVDHJqtd8it1/6+Gm28q0K6sSZj
+   tKssCFy1eMggkJACEkmmN0bL/XPfYbK8RiB5MFw8Ta8jb9wahXeF2kfO5
+   0jjHCEP7LNWDLWsaJatHumwILxNGioaq/FRqnDTZpgmOR1L4e5qRN5zKw
+   3/QTDNrqcI+hu43UxR21HbYYn23Y9y+9sKHSOUH2CU83RDxUm+zE6KxvZ
+   oljLRpVH0G8qXKXc+0SwQ1hgbsQ7j6MzXYoee0OYkyfR3DhI1x16U9oTi
+   gppslE0ugAFd9SBQrj/A1KWv7D13IwXmTqghUtaThU2RaoEHVgn+D0OdQ
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.90,256,1643698800"; 
+   d="scan'208";a="152488361"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Apr 2022 01:01:56 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Wed, 13 Apr 2022 01:01:56 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Wed, 13 Apr 2022 01:01:53 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <aou@eecs.berkeley.edu>, <paul.walmsley@sifive.com>,
+        <palmer@rivosinc.com>, <a.zummo@towertech.it>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <krzk+dt@kernel.org>
+CC:     <daire.mcnamara@microchip.com>, <linux-rtc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>,
+        Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 0/9] More PolarFire SoC Fixes for 5.18
+Date:   Wed, 13 Apr 2022 08:58:27 +0100
+Message-ID: <20220413075835.3354193-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Hey all,
+After the clock driver for the PolarFire SoC was accepted I started work
+on the onboard RTC & found out that the reference clock for the rtc was
+actually missing from the clock driver.
 
-geert@linux-m68k.org wrote on Wed, 13 Apr 2022 09:53:09 +0200:
+While restructuring the clock driver to add support for the rtc
+reference, I also noticed that there were some problems with how the FIC
+clocks were being used. The FIC clocks are the cpu side inputs to the
+AXI fabric interconnections & are not the clocks for any peripherals.
 
-> Hi Miquel,
->=20
-> On Tue, Apr 12, 2022 at 9:39 PM Miquel Raynal <miquel.raynal@bootlin.com>=
- wrote:
-> > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
-> > dmamux register located in the system control area which can take up to
-> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> > two different peripherals.
-> >
-> > We need two additional information from the 'dmas' property: the channel
-> > (bit in the dmamux register) that must be accessed and the value of the
-> > mux for this channel.
-> >
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com> =20
->=20
-> Thanks for your patch!
->=20
-> > --- /dev/null
-> > +++ b/drivers/dma/dw/rzn1-dmamux.c
-> > @@ -0,0 +1,160 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2022 Schneider-Electric
-> > + * Author: Miquel Raynal <miquel.raynal@bootlin.com
-> > + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalu=
-si@ti.com>
-> > + */
-> > +#include <linux/bitops.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/of_dma.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> > +#include <linux/types.h>
-> > +
-> > +#define RNZ1_DMAMUX_NCELLS 6
-> > +#define RZN1_DMAMUX_LINES 64
-> > +#define RZN1_DMAMUX_MAX_LINES 16
-> > +
-> > +struct rzn1_dmamux_data {
-> > +       struct dma_router dmarouter;
-> > +       unsigned long *used_chans; =20
->=20
-> Why a pointer?
->=20
-> > +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device_node *mux_node =3D pdev->dev.of_node;
-> > +       const struct of_device_id *match;
-> > +       struct device_node *dmac_node;
-> > +       struct rzn1_dmamux_data *dmamux;
-> > +
-> > +       dmamux =3D devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL=
-);
-> > +       if (!dmamux)
-> > +               return -ENOMEM;
-> > +
-> > +       dmamux->used_chans =3D devm_bitmap_zalloc(&pdev->dev, 2 * RZN1_=
-DMAMUX_MAX_LINES,
-> > +                                               GFP_KERNEL); =20
->=20
-> ... Oh, you want to allocate the bitmap separately, although you
-> know it's just a single long.
->=20
-> You might as well declare it in rzn1_dmamux_data as:
->=20
->     unsigned long used_chans[BITS_TO_LONGS(2 * RZN1_DMAMUX_MAX_LINES)];
+This first three patches in this series fixes the problems with the FICs:
+- the fic clocks incorrectly had the AHB clock as their parents
+- the last fic, named differently to the others, had not been set as
+  a critical clock
+- some peripherals on the fabric side were incorrectly using the cpu
+  side fic clocks, resulting in incorrect rates.
 
-I've done that in versions v1..v8 and it was explicitly requested by
-Ilpo that I used something more specific like a bitmap (or an idr, but
-I don't think it fits well here). So now I'm using a bitmap...
+The second part of the series fixes the missing rtc reference clock.
+There are three main changes:
+- Changing the reference clock in the dt to the external 125 MHz
+  oscillator rather than using the output of an internal pll. This has
+  the added benefit of not requiring changes to the device tree if this
+  part of the bitstream changes.
+- Adding a new clock into the driver that sits above the existing
+  configurable clocks & has the external reference as a parent. The new
+  clock provides the parent for the AHB/AXI clocks which formerly came
+  from the device tree.
+- Adding the rtc reference clock to the dt bindings, device tree and
+  clock driver at the configurable clock level, alongside AXI and AHB.
+
+I kept series separate from [0] since that's tied to the CONFIG_PM stuff
+& fixes a specific problem.
+
+Changes since v1:
+After speaking with Krzysztof, I have merged the rtc reference changes
+[1] with these fixes for 5.18. This was done since the relevant drivers
+and bindings only arrived in v5.18 & there'll now be no issue with
+breaking the ABI.
+Backwards compatiblity with the device tree from before 5.18 will be
+broken by these changes, but the board did not boot then anyway... If
+that is not okay, please lmk.
+
+The patch renaming sys_base was dropped since that's not a fix.
+
+Version 1 would not apply without [0] & that should be fixed too.
 
 Thanks,
-Miqu=C3=A8l
+Conor.
+
+Changes since v2:
+- Wrapped text in dt-binding changes at 80 cols
+- Ordered the clock defines numerically in the binding header
+- Fixed the Fixes tag on the last patch and added the second tag
+
+[0] https://lore.kernel.org/linux-riscv/20220408143646.3693104-1-conor.dooley@microchip.com
+[1] https://lore.kernel.org/linux-riscv/20220411072340.740981-1-conor.dooley@microchip.com
+
+Conor Dooley (9):
+  clk: microchip: mpfs: fix parents for FIC clocks
+  clk: microchip: mpfs: mark CLK_ATHENA as critical
+  riscv: dts: microchip: fix usage of fic clocks on mpfs
+  dt-bindings: clk: mpfs document msspll dri registers
+  dt-bindings: clk: mpfs: add defines for two new clocks
+  dt-bindings: rtc: add refclk to mpfs-rtc
+  clk: microchip: mpfs: re-parent the configurable clocks
+  clk: microchip: mpfs: add RTCREF clock control
+  riscv: dts: microchip: reparent mpfs clocks
+
+ .../bindings/clock/microchip,mpfs.yaml        |  13 +-
+ .../bindings/rtc/microchip,mfps-rtc.yaml      |  15 +-
+ .../dts/microchip/microchip-mpfs-fabric.dtsi  |  16 +-
+ .../microchip/microchip-mpfs-icicle-kit.dts   |   2 +-
+ .../boot/dts/microchip/microchip-mpfs.dtsi    |  10 +-
+ drivers/clk/microchip/clk-mpfs.c              | 191 +++++++++++++++---
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |   5 +-
+ 7 files changed, 211 insertions(+), 41 deletions(-)
+
+-- 
+2.35.1
+
