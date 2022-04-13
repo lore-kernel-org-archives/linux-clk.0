@@ -2,117 +2,219 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E13C43217
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 17:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC62C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 17:25:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235622AbiDMRDF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 13:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37994 "EHLO
+        id S233268AbiDMR2A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 13:28:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237147AbiDMRCc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 13:02:32 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31F91BEA7;
-        Wed, 13 Apr 2022 10:00:09 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 21so3207479edv.1;
-        Wed, 13 Apr 2022 10:00:09 -0700 (PDT)
+        with ESMTP id S237559AbiDMR15 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 13:27:57 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09EEA4B400
+        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 10:25:35 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id bn33so3057581ljb.6
+        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 10:25:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DlQ+pyRwe7qHszIiHVeIqVG2GBzeusjMOdi25t/1dbg=;
-        b=BDvmBiS2gYedfQA2KXmxPJAL1lMWmhK6f8oQN6Kz/fvX4fDJSe5yGvVMvDjhKRjV31
-         QHnRJ96yYht1eMZIw87RIcDWQnRtH1paF67z7mYeyQyINTEtxPMvDmoqbZSpH3C1tnLx
-         qmw1tKv7O4cnKoD2+oSgIPgu+GDmoGoXB8SAQosGbT0nt9vTmctp/gPpahD4PUt/CarL
-         L0EDaKyBTvIpTM9Ja2exmQsDC2o7n65ZcrKCWQ56Z3uBmhL2gSf7SmdZhGFGhHLV1JFw
-         POgmf6NIs+6BQvgAQDCN8nVGJBn2so7VEJ7nShnBq1YYUzLKB69+z3f59N8MyVZGhx1K
-         1sOw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=AFB49n3ccwShObe5VN2eXkvESc9Ed3xNAe5Qs7+1brY=;
+        b=QY+cPkHvf3eaxsMvtzkMqHp4F7hLMr1CTxp9exKWWZvaXt+fnyMN5vj6VC/XvpRDkU
+         cCjQrufYXvUv/f1KnaTH+IlrqA7X/wbO8c+cRDo5FP+v2sg36+cZoxCAgTPvOWO0Az2c
+         goKcBgOvs1mXGzZEDW7gHvxKN2kZUbxf1tnAL9tjxeJFHlw45Tsqy9m1umzRsTcIvc4k
+         H0U7dVImQ+sETmw013aDrkrdijqG4f+HTw4IpdgUIdcnA9LOgoKeXTNi5wT3qjJxRMIE
+         lrCNT6RuUDVbKFdQYzpnsnv4fjhOqDnW3Z/11FKcfRJ6vL0G22Fu+IseFAMMyY50c/8r
+         HO2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DlQ+pyRwe7qHszIiHVeIqVG2GBzeusjMOdi25t/1dbg=;
-        b=f5gQdh/AF/8GNVeqMyjDzzKbCuAe1TMzoQf5n+9svW8wdABpg71w9wrq2x+KOx85h9
-         AdzHCfgYoU3owiezNw0eG8QvoSllerqHsOm8NYNyuUYelzi2H0co/8CQEiGV5MzLrg7m
-         vxajaICQKkBx9qe9szeHsF7rDMuIHDeNQMLGEJ6KPE5OrPAsoAf0ybLnoM+ZCKmOtmGW
-         dj+8OqbRgwycGWKKn8zZzjgMnIhvZi5CC0cGDvX0NwuQ/Vb+ai+u60SS46USKkCwdPbX
-         5E3fHsAcsHpibZDNFz1wYM53riGoT5I1bk2joBszdBvEbtdVoF6YR2TpY2Z2qRYyjJi0
-         7TtA==
-X-Gm-Message-State: AOAM533ZkowOc2BfHno64c75AdYxkgk65ElO8kN2QrK6WxEB+gm9lsOG
-        laaRlAVDQRKtQlxLM1DHAos=
-X-Google-Smtp-Source: ABdhPJwy+Dys3iMoOhXVWrnmlUQTYocjmBYLYWmiTaWOy2UFycV6wC/zhJ6z3ewvvfPNHNXno43nAQ==
-X-Received: by 2002:aa7:cb93:0:b0:415:d57a:4603 with SMTP id r19-20020aa7cb93000000b00415d57a4603mr44262449edt.62.1649869208260;
-        Wed, 13 Apr 2022 10:00:08 -0700 (PDT)
-Received: from Ansuel-xps. (host-80-182-176-248.retail.telecomitalia.it. [80.182.176.248])
-        by smtp.gmail.com with ESMTPSA id f1-20020a056402194100b00416b174987asm1425800edz.35.2022.04.13.10.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 10:00:07 -0700 (PDT)
-Message-ID: <62570197.1c69fb81.c3de2.7b70@mx.google.com>
-X-Google-Original-Message-ID: <YlcBlmQHjwylg8XX@Ansuel-xps.>
-Date:   Wed, 13 Apr 2022 19:00:06 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 03/18] clk: qcom: gcc-ipq806x: add PXO_SRC in clk table
-References: <20220321231548.14276-1-ansuelsmth@gmail.com>
- <20220321231548.14276-4-ansuelsmth@gmail.com>
- <20220325011037.03173C340EC@smtp.kernel.org>
- <Yj0XTYgoMScoiUHP@Ansuel-xps.localdomain>
- <20220325012231.899FBC340EC@smtp.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=AFB49n3ccwShObe5VN2eXkvESc9Ed3xNAe5Qs7+1brY=;
+        b=27hwakOu5+SugCpI+mlDsmalivO76B5K1XDCtHp3+CFVsdUG76cz/Bqh1vZj9vMD5x
+         kYhX/nwyVDvHc4FyEo7vmsQe8R2M7IqUF3DDsdtc/UHo2QqhavIKRBlGg2Wd3Bm9Y6HI
+         aA8Un6iCaU3xDDwxP5w4NQuFcU9yIovW6B1Wgpt4MBcMdjBy9/rn8Pkke4ug0UdtDacD
+         2XarUsOT/W7QRTMt/I2r2WWJR9Wx72l7dWSdIIERMYUnfIU74bAbKarI6tKM+udEaT3c
+         PWFKF0GQnwGHUb2VndcaDaAVUiJ0FltaYsFiJ+BGtAKkqD6aVTDCLxUpVT076halTVbj
+         4Jcw==
+X-Gm-Message-State: AOAM530wXgLmUfLogzClWJLLGJqRDiSY/WDm8azqTfEf8M1xBf1Oc3ZN
+        0zd7Vkd3S2CAXSyUwTksfnydGQ==
+X-Google-Smtp-Source: ABdhPJzpycJQkkZDnmqk2bGVOzQniY60qCiAK4HWIrUsUuASrZH96tJQHM0BT7H45jINIdrndzGujw==
+X-Received: by 2002:a2e:5c41:0:b0:24b:156c:7100 with SMTP id q62-20020a2e5c41000000b0024b156c7100mr27190253ljb.80.1649870733246;
+        Wed, 13 Apr 2022 10:25:33 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id a5-20020ac25045000000b0046ba5e7edb0sm1260418lfm.270.2022.04.13.10.25.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Apr 2022 10:25:32 -0700 (PDT)
+Message-ID: <af104d82-34bc-2ab6-75bf-e54aafb3ae83@linaro.org>
+Date:   Wed, 13 Apr 2022 20:25:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220325012231.899FBC340EC@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v6 10/18] clk: qcom: krait-cc: drop hardcoded safe_sel
+Content-Language: en-GB
+To:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220321231548.14276-1-ansuelsmth@gmail.com>
+ <20220321231548.14276-11-ansuelsmth@gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220321231548.14276-11-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 24, 2022 at 06:22:29PM -0700, Stephen Boyd wrote:
-> Quoting Ansuel Smith (2022-03-24 18:13:49)
-> > On Thu, Mar 24, 2022 at 06:10:35PM -0700, Stephen Boyd wrote:
-> > > Quoting Ansuel Smith (2022-03-21 16:15:33)
-> > > > PXO_SRC is currently defined in the gcc include and referenced in the
-> > > > ipq8064 DTSI. Correctly provide a clk after gcc probe to fix kernel
-> > > > panic if a driver starts to actually use it.
-> > > > 
-> > > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > > ---
-> > > 
-> > > What is this patch about? clk providers shouldn't be calling clk_get().
-> > >
-> > 
-> > If pxo is passed as a clock in dts and defined as a fixed clock, what
-> > should be used? 
+On 22/03/2022 02:15, Ansuel Smith wrote:
+> Drop hardcoded safe_sel definition and use helper to correctly calculate
+> it. We assume qsb clk is always present as it should be declared in DTS
+> per Documentation and in the absence of that, it's declared as a fixed
+> clk.
+
+Why? Can safe_sel (sec_mux index) change?
+
 > 
-> clk_parent_data
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>   drivers/clk/qcom/krait-cc.c | 40 +++++++++++++++++++++++++------------
+>   1 file changed, 27 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+> index e9508e3104ea..5f98ee1c3681 100644
+> --- a/drivers/clk/qcom/krait-cc.c
+> +++ b/drivers/clk/qcom/krait-cc.c
+> @@ -26,6 +26,17 @@ static unsigned int pri_mux_map[] = {
+>   	0,
+>   };
+>   
+> +static u8 krait_get_mux_sel(struct krait_mux_clk *mux, struct clk *safe_clk)
+> +{
+> +	struct clk_hw *safe_hw = __clk_get_hw(safe_clk);
+> +
+> +	/*
+> +	 * We can ignore errors from clk_hw_get_index_of_parent()
+> +	 * as we create these parents in this driver.
+> +	 */
+> +	return clk_hw_get_index_of_parent(&mux->hw, safe_hw);
+> +}
+> +
+>   /*
+>    * Notifier function for switching the muxes to safe parent
+>    * while the hfpll is getting reprogrammed.
+> @@ -116,8 +127,8 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+>   }
+>   
+>   static struct clk *
+> -krait_add_sec_mux(struct device *dev, int id, const char *s,
+> -		  unsigned int offset, bool unique_aux)
+> +krait_add_sec_mux(struct device *dev, struct clk *qsb, int id,
+> +		  const char *s, unsigned int offset, bool unique_aux)
+>   {
+>   	int ret;
+>   	struct krait_mux_clk *mux;
+> @@ -144,7 +155,6 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
+>   	mux->shift = 2;
+>   	mux->parent_map = sec_mux_map;
+>   	mux->hw.init = &init;
+> -	mux->safe_sel = 0;
+>   
+>   	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
+>   	if (!init.name)
+> @@ -166,6 +176,7 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
+>   	if (IS_ERR(clk))
+>   		goto err_clk;
+>   
+> +	mux->safe_sel = krait_get_mux_sel(mux, qsb);
+>   	ret = krait_notifier_register(dev, clk, mux);
+>   	if (ret)
+>   		clk = ERR_PTR(ret);
+> @@ -204,7 +215,6 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
+>   	mux->lpl = id >= 0;
+>   	mux->parent_map = pri_mux_map;
+>   	mux->hw.init = &init;
+> -	mux->safe_sel = 2;
+>   
+>   	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
+>   	if (!init.name)
+> @@ -226,6 +236,7 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
+>   	if (IS_ERR(clk))
+>   		goto err_clk;
+>   
+> +	mux->safe_sel = krait_get_mux_sel(mux, sec_mux);
+>   	ret = krait_notifier_register(dev, clk, mux);
+>   	if (ret)
+>   		clk = ERR_PTR(ret);
+> @@ -238,7 +249,9 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
+>   }
+>   
+>   /* id < 0 for L2, otherwise id == physical CPU number */
+> -static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
+> +static struct clk *
+> +krait_add_clks(struct device *dev, struct clk *qsb, int id,
+> +	       bool unique_aux)
+>   {
+>   	unsigned int offset;
+>   	void *p = NULL;
+> @@ -261,7 +274,7 @@ static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
+>   		goto err;
+>   	}
+>   
+> -	sec_mux = krait_add_sec_mux(dev, id, s, offset, unique_aux);
+> +	sec_mux = krait_add_sec_mux(dev, qsb, id, s, offset, unique_aux);
+>   	if (IS_ERR(sec_mux)) {
+>   		clk = sec_mux;
+>   		goto err;
+> @@ -301,18 +314,19 @@ static int krait_cc_probe(struct platform_device *pdev)
+>   	int cpu;
+>   	struct clk *clk;
+>   	struct clk **clks;
+> -	struct clk *l2_pri_mux_clk;
+> +	struct clk *l2_pri_mux_clk, *qsb;
+>   
+>   	id = of_match_device(krait_cc_match_table, dev);
+>   	if (!id)
+>   		return -ENODEV;
+>   
+>   	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
+> -	if (IS_ERR(clk_get(dev, "qsb")))
+> -		clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
+> +	qsb = clk_get(dev, "qsb");
+> +	if (IS_ERR(qsb))
+> +		qsb = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
+>   
+> -	if (IS_ERR(clk))
+> -		return PTR_ERR(clk);
+> +	if (IS_ERR(qsb))
+> +		return PTR_ERR(qsb);
+>   
+>   	if (!id->data) {
+>   		clk = clk_register_fixed_factor(dev, "acpu_aux",
+> @@ -327,13 +341,13 @@ static int krait_cc_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>   
+>   	for_each_possible_cpu(cpu) {
+> -		clk = krait_add_clks(dev, cpu, id->data);
+> +		clk = krait_add_clks(dev, qsb, cpu, id->data);
+>   		if (IS_ERR(clk))
+>   			return PTR_ERR(clk);
+>   		clks[cpu] = clk;
+>   	}
+>   
+> -	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
+> +	l2_pri_mux_clk = krait_add_clks(dev, qsb, -1, id->data);
+>   	if (IS_ERR(l2_pri_mux_clk))
+>   		return PTR_ERR(l2_pri_mux_clk);
+>   	clks[4] = l2_pri_mux_clk;
 
-Sorry but I'm not following you. No idea if you missed the cover letter
-where i describe the problem with PXO_SRC.
-
-The problem here is that
-- In DTS we have node that reference <&gcc PXO_SRC>
-But
-- gcc driver NEVER defined PXO_SRC
-As
-- PXO_SRC is actually pxo_board that should be defined as a fixed-clock
-  in dts or is defined using qcom_cc_register_board_clk.
-
-So in theory we should just put in PXO_SRC the clk hw of the
-fixed-clock. That is why I'm using clk_get(). I can use __clk_lookup()
-as an alternative but I really can't find a way to get the clock defined
-from DTS or qcom_cc_register_board_clk.
-
-(I have the same exact problem with the cpu qsb clock where is defined
-using fixed-clock API but can also defined directly in DTS and I have to
-use clk_get())
-
-I'm totally missing something so I would love some hint on how to solve
-this.
 
 -- 
-	Ansuel
+With best wishes
+Dmitry
