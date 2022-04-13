@@ -2,236 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B95C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 18:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2663EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 19:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237656AbiDMS0x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 14:26:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44916 "EHLO
+        id S232933AbiDMT0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 15:26:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237647AbiDMS0w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 14:26:52 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3060725583
-        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 11:24:29 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 17so3262675lji.1
-        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 11:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2a3wbWov4ja8bGu9EbYHU1Qhcuzm1jktvfc7w0skBC8=;
-        b=dOpaT0YDlzuuDrfVnCxhWnNIeMmJC//DHP7/D39zf2S0iawOpBL6kOFXwHX9uoOt7D
-         BvOYOrWH1NQTegsf23OOiQ9ioIFocQn8CwJvqojc9PpR1T08rZsxjLFjZSYuzkqwJr+n
-         DszhhEgCWM8YMJzPK/b435aROWPDjksQ2o75mRc5sWpQ44pLz9qTQH2pcFv7tG1kvCOY
-         ayQb2gJH3sxX2/H57xZG2Rh69W4/ZLbIc1tas/vrPMnom5RHPe4Xx3Un6zt/05Dq0xUu
-         oQJAmuUkQYhJTMB2C6425NLRaRA3DwyJ/P5C2PPKR3a4PkuyNpw/0I/AB2V4Bscwhe2Z
-         JOaA==
+        with ESMTP id S230090AbiDMT0C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 15:26:02 -0400
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B842B66C94;
+        Wed, 13 Apr 2022 12:23:40 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-deb9295679so3036305fac.6;
+        Wed, 13 Apr 2022 12:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=2a3wbWov4ja8bGu9EbYHU1Qhcuzm1jktvfc7w0skBC8=;
-        b=E8f0noUOPJarzDceZ30XhStgKZwgHARqp+5AhqHhD+TI0kSas3/bRpTAa+Jyw7nxyF
-         ngZrX/HEiHkDGViShyb71xTAG+moi02D7zbkpSwbqABSJDR/E+NkcEI+gewys0eV7a9p
-         uwVWMsESWqe0FkaEfIyjc4KVT5w2iFQXGOxfS8EZoCPFS16OzjA+0nX3jk6y6u4KrOqi
-         cQ/6+sWPwFOaU2W/qFrIrv3z97MtOF2m+nJh9cqe4N8OLdw9MXeorskakcT0FJBcs6OU
-         aylLJPTMcJ4D1bephLfmUALGdrY6IBrS7PI6JXlp1eRL+5TwabAcvgVbCIVXehDtdbVG
-         fbAg==
-X-Gm-Message-State: AOAM5318Nr6DpO1dZGFMjJtwc17l0HH562jEECJwga/z5H5gbqQDxB5v
-        3QpX/dsdbqC2U+t8A7Yk91zDUQ==
-X-Google-Smtp-Source: ABdhPJz4vXs9AouohzXFyqpmRdiZdSgntOpsBq/dFOabcBnbPW0Ohk7LjZA5IcL9bfQWgRSnqxbRUA==
-X-Received: by 2002:a05:651c:2121:b0:24b:5d31:fcd with SMTP id a33-20020a05651c212100b0024b5d310fcdmr12499350ljq.19.1649874267258;
-        Wed, 13 Apr 2022 11:24:27 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id k5-20020a2e9205000000b0024b5545acb2sm1622198ljg.80.2022.04.13.11.24.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Apr 2022 11:24:26 -0700 (PDT)
-Message-ID: <cf95b1b4-194b-09c0-5bd4-80c962c18818@linaro.org>
-Date:   Wed, 13 Apr 2022 21:24:25 +0300
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Nw71/WQRUhg0t6rL1I9s4rl1al7MOSJ4hA/po68c59c=;
+        b=Hi9NgTHV+W9qd1x2p122OKMVrkDAePSIymyNt+TFv7lXxtUzUsQ4/xB0bECDR3P/fc
+         kmqNCUs1IhtmxbOz1o9i4orRfKdJPfn06KnMDQyZIWcyrz1YDf7QwP1QdXtOrFTeeAZY
+         zepxO+JbgdPB9g6SFSAWfPXpI4hYxBg+xfF7+9RiVpRWAHzSbau+5YVEdvarEMwn6bEv
+         VDM3n3gvWqJp5ztkR6ODk2xkdujplTRVetCf3mCoXD7H6S0TzrZlGULoWkUR504F0LCo
+         Jb8lnnD6PPn1xtrDML6rexLKYqUMl/kFkkLgsHL/3a+JSJiJKU50Xki/FwrKsJO05fYJ
+         lQcQ==
+X-Gm-Message-State: AOAM531W2XscTsccCI0bF8PAPNe6t2ui6aVK73054WRP3bcVcXy+0/1y
+        w3Wmd9kO8VyXnnzd1A70FQ==
+X-Google-Smtp-Source: ABdhPJxP64aD70NQFPYD4OZ1flPgBgyxec0fISdcdAOFAJz1bEO3+F98ejSye1fVUWMJpuCrR0ZnZg==
+X-Received: by 2002:a05:6870:208:b0:e2:a000:d65f with SMTP id j8-20020a056870020800b000e2a000d65fmr100270oad.265.1649877819991;
+        Wed, 13 Apr 2022 12:23:39 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id e8-20020a9d63c8000000b005b235a56831sm15240880otl.49.2022.04.13.12.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Apr 2022 12:23:39 -0700 (PDT)
+Received: (nullmailer pid 3681503 invoked by uid 1000);
+        Wed, 13 Apr 2022 19:23:38 -0000
+Date:   Wed, 13 Apr 2022 14:23:38 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Cixi Geng <gengcixi@gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clk: sprd: add bindings for ums512
+ clock controller
+Message-ID: <YlcjOmDAx6OAl+s0@robh.at.kernel.org>
+References: <20220408104520.1896568-1-gengcixi@gmail.com>
+ <20220408104520.1896568-2-gengcixi@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v6 10/18] clk: qcom: krait-cc: drop hardcoded safe_sel
-Content-Language: en-GB
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220321231548.14276-1-ansuelsmth@gmail.com>
- <20220321231548.14276-11-ansuelsmth@gmail.com>
- <af104d82-34bc-2ab6-75bf-e54aafb3ae83@linaro.org>
- <625709ca.1c69fb81.b4268.12bc@mx.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <625709ca.1c69fb81.b4268.12bc@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220408104520.1896568-2-gengcixi@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/04/2022 20:35, Ansuel Smith wrote:
-> On Wed, Apr 13, 2022 at 08:25:31PM +0300, Dmitry Baryshkov wrote:
->> On 22/03/2022 02:15, Ansuel Smith wrote:
->>> Drop hardcoded safe_sel definition and use helper to correctly calculate
->>> it. We assume qsb clk is always present as it should be declared in DTS
->>> per Documentation and in the absence of that, it's declared as a fixed
->>> clk.
->>
->> Why? Can safe_sel (sec_mux index) change?
->>
+On Fri, Apr 08, 2022 at 06:45:18PM +0800, Cixi Geng wrote:
+> From: Cixi Geng <cixi.geng1@unisoc.com>
 > 
-> No it can't but I think it would be better to have stuff that is based
-> on real defined data instead of wrong struct that works just because a
-> hardcoded value is used.
-> 
-> Example for the reason of using this hardcoded value, nobody notice that
-> the mux list for the secondary mux was wrong. Now it didn't cause any
-> problem as we use the secondary mux just to source out of qsb and we
-> used the hardcoded value so the error was bypassed but as soon as the
-> value was actually parsed from the defined table, bam secondary mux was
-> sourcing out of pll8.
-> 
-> I honestly think that dropping the hardcoded value would make more clear
-> what the safe sel is and what is referring to.
+> add a new bindings to describe ums512 clock compatible string.
 
-Can you define indices in the parents and use defined indice instead?
-
-I see your point, but in my opinion adding an API to determine a 
-compile-time constant value is a bit of overkill.
+s/add a/Add/
 
 > 
->>>
->>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
->>> ---
->>>    drivers/clk/qcom/krait-cc.c | 40 +++++++++++++++++++++++++------------
->>>    1 file changed, 27 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
->>> index e9508e3104ea..5f98ee1c3681 100644
->>> --- a/drivers/clk/qcom/krait-cc.c
->>> +++ b/drivers/clk/qcom/krait-cc.c
->>> @@ -26,6 +26,17 @@ static unsigned int pri_mux_map[] = {
->>>    	0,
->>>    };
->>> +static u8 krait_get_mux_sel(struct krait_mux_clk *mux, struct clk *safe_clk)
->>> +{
->>> +	struct clk_hw *safe_hw = __clk_get_hw(safe_clk);
->>> +
->>> +	/*
->>> +	 * We can ignore errors from clk_hw_get_index_of_parent()
->>> +	 * as we create these parents in this driver.
->>> +	 */
->>> +	return clk_hw_get_index_of_parent(&mux->hw, safe_hw);
->>> +}
->>> +
->>>    /*
->>>     * Notifier function for switching the muxes to safe parent
->>>     * while the hfpll is getting reprogrammed.
->>> @@ -116,8 +127,8 @@ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
->>>    }
->>>    static struct clk *
->>> -krait_add_sec_mux(struct device *dev, int id, const char *s,
->>> -		  unsigned int offset, bool unique_aux)
->>> +krait_add_sec_mux(struct device *dev, struct clk *qsb, int id,
->>> +		  const char *s, unsigned int offset, bool unique_aux)
->>>    {
->>>    	int ret;
->>>    	struct krait_mux_clk *mux;
->>> @@ -144,7 +155,6 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
->>>    	mux->shift = 2;
->>>    	mux->parent_map = sec_mux_map;
->>>    	mux->hw.init = &init;
->>> -	mux->safe_sel = 0;
->>>    	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
->>>    	if (!init.name)
->>> @@ -166,6 +176,7 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
->>>    	if (IS_ERR(clk))
->>>    		goto err_clk;
->>> +	mux->safe_sel = krait_get_mux_sel(mux, qsb);
->>>    	ret = krait_notifier_register(dev, clk, mux);
->>>    	if (ret)
->>>    		clk = ERR_PTR(ret);
->>> @@ -204,7 +215,6 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
->>>    	mux->lpl = id >= 0;
->>>    	mux->parent_map = pri_mux_map;
->>>    	mux->hw.init = &init;
->>> -	mux->safe_sel = 2;
->>>    	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
->>>    	if (!init.name)
->>> @@ -226,6 +236,7 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
->>>    	if (IS_ERR(clk))
->>>    		goto err_clk;
->>> +	mux->safe_sel = krait_get_mux_sel(mux, sec_mux);
->>>    	ret = krait_notifier_register(dev, clk, mux);
->>>    	if (ret)
->>>    		clk = ERR_PTR(ret);
->>> @@ -238,7 +249,9 @@ krait_add_pri_mux(struct device *dev, struct clk *hfpll_div, struct clk *sec_mux
->>>    }
->>>    /* id < 0 for L2, otherwise id == physical CPU number */
->>> -static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
->>> +static struct clk *
->>> +krait_add_clks(struct device *dev, struct clk *qsb, int id,
->>> +	       bool unique_aux)
->>>    {
->>>    	unsigned int offset;
->>>    	void *p = NULL;
->>> @@ -261,7 +274,7 @@ static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
->>>    		goto err;
->>>    	}
->>> -	sec_mux = krait_add_sec_mux(dev, id, s, offset, unique_aux);
->>> +	sec_mux = krait_add_sec_mux(dev, qsb, id, s, offset, unique_aux);
->>>    	if (IS_ERR(sec_mux)) {
->>>    		clk = sec_mux;
->>>    		goto err;
->>> @@ -301,18 +314,19 @@ static int krait_cc_probe(struct platform_device *pdev)
->>>    	int cpu;
->>>    	struct clk *clk;
->>>    	struct clk **clks;
->>> -	struct clk *l2_pri_mux_clk;
->>> +	struct clk *l2_pri_mux_clk, *qsb;
->>>    	id = of_match_device(krait_cc_match_table, dev);
->>>    	if (!id)
->>>    		return -ENODEV;
->>>    	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
->>> -	if (IS_ERR(clk_get(dev, "qsb")))
->>> -		clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
->>> +	qsb = clk_get(dev, "qsb");
->>> +	if (IS_ERR(qsb))
->>> +		qsb = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
->>> -	if (IS_ERR(clk))
->>> -		return PTR_ERR(clk);
->>> +	if (IS_ERR(qsb))
->>> +		return PTR_ERR(qsb);
->>>    	if (!id->data) {
->>>    		clk = clk_register_fixed_factor(dev, "acpu_aux",
->>> @@ -327,13 +341,13 @@ static int krait_cc_probe(struct platform_device *pdev)
->>>    		return -ENOMEM;
->>>    	for_each_possible_cpu(cpu) {
->>> -		clk = krait_add_clks(dev, cpu, id->data);
->>> +		clk = krait_add_clks(dev, qsb, cpu, id->data);
->>>    		if (IS_ERR(clk))
->>>    			return PTR_ERR(clk);
->>>    		clks[cpu] = clk;
->>>    	}
->>> -	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
->>> +	l2_pri_mux_clk = krait_add_clks(dev, qsb, -1, id->data);
->>>    	if (IS_ERR(l2_pri_mux_clk))
->>>    		return PTR_ERR(l2_pri_mux_clk);
->>>    	clks[4] = l2_pri_mux_clk;
->>
->>
->> -- 
->> With best wishes
->> Dmitry
+> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> ---
+>  .../bindings/clock/sprd,ums512-clk.yaml       | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> new file mode 100644
+> index 000000000000..a80bd6ca4a7a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> @@ -0,0 +1,100 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2022 Unisoc Inc.
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: UMS512 Clock Control Unit Device Tree Bindings
+> +
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    enum:
+> +      - sprd,ums512-aon-gate
+> +      - sprd,ums512-apahb-gate
+> +      - sprd,ums512-apapb-gate
+> +      - sprd,ums512-audcpahb-gate
+> +      - sprd,ums512-audcpapb-gate
+> +      - sprd,ums512-g0-pll
+> +      - sprd,ums512-g2-pll
+> +      - sprd,ums512-g3-pll
+> +      - sprd,ums512-gc-pll
+> +      - sprd,ums512-gpu-clk
+> +      - sprd,ums512-mm-clk
+> +      - sprd,ums512-mm-gate-clk
+> +      - sprd,ums512-pmu-gate
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      The input parent clock(s) phandle for this clock, only list fixed
+> +      clocks which are declared in devicetree.
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    items:
+> +      - const: ext-26m
+> +      - const: ext-32k
+> +      - const: ext-4m
+> +      - const: rco-100m
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      enum:
+> +        - sprd,ums512-ap-clk
+> +        - sprd,ums512-aonapb-clk
+> +then:
+> +  required:
+> +    - reg
+> +
+> +else:
+> +  description: |
+> +    Other UMS512 clock nodes should be the child of a syscon node in
+> +    which compatible string should be:
+> +            "sprd,ums512-glbregs", "syscon", "simple-mfd"
 
+This doesn't match your example.
 
--- 
-With best wishes
-Dmitry
+> +
+> +    The 'reg' property for the clock node is also required if there is a sub
+> +    range of registers for the clocks.
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        ap_clk: clock-controller@20200000 {
+> +                compatible = "sprd,ums512-ap-clk";
+> +                reg = <0 0x20200000 0 0x1000>;
+> +                clocks = <&ext_26m>;
+> +                clock-names = "ext-26m";
+> +                #clock-cells = <1>;
+> +        };
+> +
+> +        syscon@20100000{
+> +               compatible = "sprd,ums512-glbregs", "syscon","simple-mfd";
+> +               reg = <0 0x20100000 0 0x4000>;
+> +               clocks = <&ext_32k>, <&ext_26m>;
+> +               clock-names = "ext-32k", "ext-26m";
+> +               #clock-cells = <1>;
+> +        };
+> +    };
+> +...
+> -- 
+> 2.25.1
+> 
+> 
