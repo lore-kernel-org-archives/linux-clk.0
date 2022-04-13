@@ -2,97 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E92DC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 10:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D293C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 11:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbiDMKrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 06:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
+        id S233145AbiDML0a convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 07:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235015AbiDMKr2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 06:47:28 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB28032076;
-        Wed, 13 Apr 2022 03:45:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649846707; x=1681382707;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tEfjdwY23aKsvFoAZXPuaR84pVXUkXydcu5CIrt9EcU=;
-  b=kNjI9kFmGs/RGczAg8RN1VHANg0whIUqtLDVy+POUeknLWdXUfAlCRRR
-   yX46L8vyvCoGTTa2I1FHP1SHiIuss48sYYFrV1gsbrP1+HSzMKs7VrHpH
-   YvABZ42Cby9+BDqPvSpCqwd0ecYV4W4RuKKAG4GdnI7rtzL4YA8O9iWZY
-   mLSbKscaBRbCJtE8JZY0K6MKvkEgVkC/GBKSItGJgzSpwBB4fDvGOVoWT
-   PVhNXvjBGSIKY+SUJaqx5pCNKXwuaEYylAELzyzfhj856tC5xQHCulH11
-   szyY4gOfmd1CRNQmA4dVZySSJzzJO9Ya4HGiQ/YdEtT571b7qg1It6Aqk
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10315"; a="262386193"
-X-IronPort-AV: E=Sophos;i="5.90,256,1643702400"; 
-   d="scan'208";a="262386193"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 03:45:07 -0700
-X-IronPort-AV: E=Sophos;i="5.90,256,1643702400"; 
-   d="scan'208";a="700201266"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 03:45:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1neaR9-001nON-Fb;
-        Wed, 13 Apr 2022 13:41:23 +0300
-Date:   Wed, 13 Apr 2022 13:41:23 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v10 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <Ylao068kNANViy4B@smile.fi.intel.com>
-References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
- <20220412193936.63355-6-miquel.raynal@bootlin.com>
- <CAMuHMdV_KWuDRWtNaL2n8+1y4GbOSSosesd3RPK60i6zYkQPDA@mail.gmail.com>
- <20220413100026.73e11004@xps13>
- <CAMuHMdU3pEX3oGoHQ71cm7m0DpguJOqpOTq4_kfAxD98XN325A@mail.gmail.com>
+        with ESMTP id S229539AbiDML02 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 07:26:28 -0400
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 527A3433A3;
+        Wed, 13 Apr 2022 04:24:07 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id n11so1378426qvl.0;
+        Wed, 13 Apr 2022 04:24:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7S4lgK2QrO8fzXxW9jJpjJIpoGOl0SicN1VsO2+FA3g=;
+        b=NB5Vh5qypxdnz8rUJben7tiWr7Fdk8NKoc24kuiC47s79Pd5y/MDXdYejcX/Hi22Vc
+         pvodS9+S3F8Cb9qywm6IHkEMn5K+T2vKtbEH6zsWblcjgebNmNr3jBroFhL2DEFY5khK
+         OvdH8nudEa7bgV+/ZvoKlcoSFVEW5ijS9KXMETgGTZeVQQIV/acH3xwjINkLcYcNtfLb
+         LPyglBZK3Uia3dafAKVZg1QEecklZSJ88o0/7SkHBkEq7z8RYl6KnWESUGZoV+hGp761
+         g8yOI0rhrDHTJbKmmiKlUfqwrpHIkVoosvTbRFQJdWqJAJk1v1v/tq+mc2AqtpbSKsPU
+         rhDw==
+X-Gm-Message-State: AOAM5319AJgnOi9OSDRFQgcl/1F4UHfvxoA8WCuFlR8XVw6Ehw94E/Yx
+        6AYDdpCy+CM6Uud57AcRVEPwj5Jdu9Jk8A==
+X-Google-Smtp-Source: ABdhPJwtYLWiUMzC+O2absxiP07jcQrLBSSDocYeIG88C36l1YN3LV+nIAkszOohiwKJ7NRrvkI6dA==
+X-Received: by 2002:a05:6214:1c85:b0:443:8347:d7a5 with SMTP id ib5-20020a0562141c8500b004438347d7a5mr7835672qvb.11.1649849046180;
+        Wed, 13 Apr 2022 04:24:06 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id d15-20020a05622a15cf00b002ef31d86837sm5401917qty.55.2022.04.13.04.24.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Apr 2022 04:24:05 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-2ef5380669cso1457727b3.9;
+        Wed, 13 Apr 2022 04:24:05 -0700 (PDT)
+X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
+ v133-20020a81618b000000b002dbd9528a39mr34095306ywb.132.1649849045399; Wed, 13
+ Apr 2022 04:24:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU3pEX3oGoHQ71cm7m0DpguJOqpOTq4_kfAxD98XN325A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <8dvhtgydaq7tflf8q4rq4fpu.1649846600874@email.android.com>
+In-Reply-To: <8dvhtgydaq7tflf8q4rq4fpu.1649846600874@email.android.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Apr 2022 13:23:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXkUKD_+A2B6-x0C5SSva6fr2Ht0N73t9gboOBp5z13xw@mail.gmail.com>
+Message-ID: <CAMuHMdXkUKD_+A2B6-x0C5SSva6fr2Ht0N73t9gboOBp5z13xw@mail.gmail.com>
+Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
+To:     =?UTF-8?B?55m95rWp5paH?= <baihaowen@meizu.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 13, 2022 at 10:05:43AM +0200, Geert Uytterhoeven wrote:
-> On Wed, Apr 13, 2022 at 10:00 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
+Hi Haowen,
 
-...
+On Wed, Apr 13, 2022 at 12:44 PM 白浩文 <baihaowen@meizu.com> wrote:
+> But this function __init r8a73a4_cpg_clocks_init will auto free by system after boot
 
->     DECLARE_BITMAP(used_chans, 2 * RZN1_DMAMUX_MAX_LINES);
+The memory containing the code for the function
+r8a73a4_cpg_clocks_init() will indeed be freed.  But the data
+structures allocated and prepared by the function will continue to
+exist afterwards.
 
-Yep, this one.
+> On Wed, Apr 13, 2022 at 11:24 AM baihaowen <baihaowen@meizu.com> wrote:
+> > 在 4/13/22 4:41 PM, Geert Uytterhoeven 写道:
+> > > On Wed, Apr 13, 2022 at 10:30 AM Haowen Bai <baihaowen@meizu.com> wrote:
+> > >> Fix this issue by freeing the cpg when exiting the function in the
+> > >> error/normal path.
+> > >>
+> > >> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+> > >> --- a/drivers/clk/renesas/clk-r8a73a4.c
+> > >> +++ b/drivers/clk/renesas/clk-r8a73a4.c
+> > >> @@ -215,7 +215,7 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+> > >>
+> > >>         cpg->reg = of_iomap(np, 0);
+> > >>         if (WARN_ON(cpg->reg == NULL))
+> > >> -               return;
+> > >> +               goto out_free_cpg;
+> > > Note that this is a fatal error, i.e. no chance the system will survive this,
+> > > so cleaning up is moot.
+> > >
+> > >>         for (i = 0; i < num_clks; ++i) {
+> > >>                 const char *name;
+> > >> @@ -233,6 +233,9 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+> > >>         }
+> > >>
+> > >>         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+> > >> +out_free_cpg:
+> > >> +       kfree(cpg);
+> > >> +       kfree(clks);
+> > > Both cpg and clks are still used after returning from this function,
+> > > through the registered clocks and clock provider.
+> > >
+> > >>  }
+> > >>  CLK_OF_DECLARE(r8a73a4_cpg_clks, "renesas,r8a73a4-cpg-clocks",
+> > >>                r8a73a4_cpg_clocks_init);
+> > > NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > Could you show me how and when cpg & clks free ?
+>
+> They are never freed, as they stay in-use for the lifetime of the system.
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
