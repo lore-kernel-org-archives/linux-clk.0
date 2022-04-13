@@ -2,88 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CDDC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 09:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059FFC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 09:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234374AbiDMJWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 05:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33058 "EHLO
+        id S232829AbiDMJ1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 05:27:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232517AbiDMJWy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 05:22:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960A62B19E;
-        Wed, 13 Apr 2022 02:20:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 308F361B60;
-        Wed, 13 Apr 2022 09:20:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D55C385A4;
-        Wed, 13 Apr 2022 09:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649841633;
-        bh=1PoK9KprQ2GxAfUSolyz5kPTMvtxfF+a54uVEf66VQI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l/a3UmxBHEg5dah7MADpl+KYLLovMCq1Vl3x5ExNOJKPN+WKXdl87EB3aLgLtTaJS
-         IIc5JoPhpbO4gqxYE4j1nGnD8Jlk6Df00G22K+oVihHZn0SzW1LiBBAXh32lLqesm5
-         WjqyzXImWoReq+mVlViZtIdTlKqnnvWjF91pUwqE8ypFtwk2OHwImMglaYXzJIngtc
-         LqhDIF1wZOUzKfaR3WV/5zD/SSEg7YKVMsSwIBEeRfMXyAaQ7ygD7dQd48iGd3cqVc
-         VsomuLyXZ4Q2vtN5tUqZ3avuRXo+Mqn2JPDbkHutFGx1SmNEe/dMR+JUTKAwkp7tF1
-         v7/3PxsguytkA==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1neZAp-0005R4-TW; Wed, 13 Apr 2022 11:20:27 +0200
-Date:   Wed, 13 Apr 2022 11:20:27 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] PCI: qcom: rework pipe_clk/pipe_clk_src handling
-Message-ID: <YlaV2/AQJaQhytR8@hovoldconsulting.com>
-References: <20220412193839.2545814-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S234423AbiDMJ1B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 05:27:01 -0400
+Received: from mail.meizu.com (edge05.meizu.com [157.122.146.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C1E0DEE0;
+        Wed, 13 Apr 2022 02:24:36 -0700 (PDT)
+Received: from IT-EXMB-1-125.meizu.com (172.16.1.125) by mz-mail12.meizu.com
+ (172.16.1.108) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 13 Apr
+ 2022 17:24:36 +0800
+Received: from [172.16.137.70] (172.16.137.70) by IT-EXMB-1-125.meizu.com
+ (172.16.1.125) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.14; Wed, 13 Apr
+ 2022 17:24:34 +0800
+Message-ID: <05f14aa0-4001-d08d-610e-12749437ec9a@meizu.com>
+Date:   Wed, 13 Apr 2022 17:24:33 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220412193839.2545814-1-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
+ <CAMuHMdXcNBq5e6K6YUorLCF0hiFsp6VVKrUcy5E4mdAQAbH7Sg@mail.gmail.com>
+From:   baihaowen <baihaowen@meizu.com>
+In-Reply-To: <CAMuHMdXcNBq5e6K6YUorLCF0hiFsp6VVKrUcy5E4mdAQAbH7Sg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.16.137.70]
+X-ClientProxiedBy: IT-EXMB-1-126.meizu.com (172.16.1.126) To
+ IT-EXMB-1-125.meizu.com (172.16.1.125)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[ Dropping tdas@codeaurora.org, which bounces. ]
+在 4/13/22 4:41 PM, Geert Uytterhoeven 写道:
+> Hi Haowen,
+>
+> On Wed, Apr 13, 2022 at 10:30 AM Haowen Bai <baihaowen@meizu.com> wrote:
+>> Fix this issue by freeing the cpg when exiting the function in the
+>> error/normal path.
+>>
+>> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+> Thanks for your patch!
+>
+>> --- a/drivers/clk/renesas/clk-r8a73a4.c
+>> +++ b/drivers/clk/renesas/clk-r8a73a4.c
+>> @@ -215,7 +215,7 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+>>
+>>         cpg->reg = of_iomap(np, 0);
+>>         if (WARN_ON(cpg->reg == NULL))
+>> -               return;
+>> +               goto out_free_cpg;
+> Note that this is a fatal error, i.e. no chance the system will survive this,
+> so cleaning up is moot.
+>
+>>         for (i = 0; i < num_clks; ++i) {
+>>                 const char *name;
+>> @@ -233,6 +233,9 @@ static void __init r8a73a4_cpg_clocks_init(struct device_node *np)
+>>         }
+>>
+>>         of_clk_add_provider(np, of_clk_src_onecell_get, &cpg->data);
+>> +out_free_cpg:
+>> +       kfree(cpg);
+>> +       kfree(clks);
+> Both cpg and clks are still used after returning from this function,
+> through the registered clocks and clock provider.
+>
+>>  }
+>>  CLK_OF_DECLARE(r8a73a4_cpg_clks, "renesas,r8a73a4-cpg-clocks",
+>>                r8a73a4_cpg_clocks_init);
+> NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+Dear Geert Uytterhoeven
+Could you show me how and when cpg & clks free ?
 
-On Tue, Apr 12, 2022 at 10:38:34PM +0300, Dmitry Baryshkov wrote:
-> PCIe pipe clk (and some other clocks) must be parked to the "safe"
-> source (bi_tcxo) when corresponding GDSC is turned off and on again.
-> Currently this is handcoded in the PCIe driver by reparenting the
-> gcc_pipe_N_clk_src clock.
-> 
-> Instead of doing it manually, follow the approach used by
-> clk_rcg2_shared_ops and implement this parking in the enable() and
-> disable() clock operations for respective pipe clocks.
-> 
-> PCIe part depends on [1].
+-- 
+Haowen Bai
 
-Looks like you forgot to add the link to the prerequisite patch:
-
-	[1] https://lore.kernel.org/all/20220401133351.10113-1-johan+linaro@kernel.org/
-
-> Changes since v1:
->  - Rebased on top of [1].
->  - Removed erroneous Fixes tag from the patch 4.
-> 
-> Changes since RFC:
->  - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
->    than specifying the register value directly
->  - Expand commit message to the first patch to specially mention that
->    it is required only on newer generations of Qualcomm chipsets.
-
-Johan
