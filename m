@@ -2,237 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195B2C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 09:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0840BC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 09:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229999AbiDMJJn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 05:09:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47910 "EHLO
+        id S234330AbiDMJSB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 05:18:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233950AbiDMJJl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 05:09:41 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01694EA15
-        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 02:07:19 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id g20so1555071edw.6
-        for <linux-clk@vger.kernel.org>; Wed, 13 Apr 2022 02:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=z84tQ9PE482BMfOh0tGEWBbuxsfWf7PM713AXwUAt8U=;
-        b=FI4d7X6SsxtqQKnRO595Rrvz+y7TCy5uSYJ1E4ffWmuz2lWCdWKO43S4bMqsVkOxGp
-         ghHiStu6lESL6/iYdJXXxzZYobNuJsIrC1KdLa8PVUStA5DZKFsPrQT8BYrXyhomp21y
-         VSsGIkMvmt3feVHT8TrQzjGBp/5d4bX/0M29dI3FiNAKQmPUT7PD41ZHwWSaslZ/AxrY
-         B0ueTpkUhXjcKuyJ7AnqLgZ0c21j82tT1uVZEeG7Djp64Jfp9EVMsq7Kryz8I4jbiSH4
-         Uo7QMxUVhOzx9CgUOY4N5Tgb0whGI5vAc03PdQWoKlsLvIFHgQgv+V6nQeauHa4eT7Nr
-         tQ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=z84tQ9PE482BMfOh0tGEWBbuxsfWf7PM713AXwUAt8U=;
-        b=SEx7kkqwMkoH94apaLVQ2KMpLDU+Y3+9QFiu1FPEv2ypLoF5FhpqcoOps8CRBcgEcy
-         xm+J1AiOtVSf26SpQk892VHCUJTTW6n2tdK3fCgWlHY+DzZd37A8M+g2p1OmyH1f3S9W
-         MS8mYn1FddZqb17LcwCWGrtwVEfbsI+etvFFXF2ymnMjyIgTP7Lb+qMgsHUtc1a54+rs
-         wb/vTP4a5JmtujHjZsDmXkvwa7+VHkjkMaTLzfpH8eWkGSOz1idXjFq5N9XKhQg2ixJF
-         gvy605D73MPq/4AQREhqm5xnB5qAm3hX2Drgzg9tLBLqQRohq47NxZwdikXSE6DB0Pw7
-         j13Q==
-X-Gm-Message-State: AOAM530uqjzb48nCQc5AzzBaMX8tuXb4RLu+RMaN8SUCIbRdyQX0dnSg
-        pTzctSOdDWKuSsmw2s5kqBptNQ==
-X-Google-Smtp-Source: ABdhPJybTYoB6hFzkTnGzb9M3CRBUVTSHcKTnFZfrgqbnaYoSiDSY2iH30hdSK5/Q287fVX6yfQFbQ==
-X-Received: by 2002:a50:d4d2:0:b0:410:9fa2:60d6 with SMTP id e18-20020a50d4d2000000b004109fa260d6mr43074728edj.35.1649840838413;
-        Wed, 13 Apr 2022 02:07:18 -0700 (PDT)
-Received: from [192.168.0.203] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id a22-20020a50ff16000000b00410d029ea5csm908162edu.96.2022.04.13.02.07.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Apr 2022 02:07:17 -0700 (PDT)
-Message-ID: <02fc797a-190f-3558-5ee1-c9c3320f3d57@linaro.org>
-Date:   Wed, 13 Apr 2022 11:07:16 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+        with ESMTP id S234324AbiDMJSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 05:18:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD971245B6;
+        Wed, 13 Apr 2022 02:15:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3721861B65;
+        Wed, 13 Apr 2022 09:15:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF9CC385AD;
+        Wed, 13 Apr 2022 09:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649841338;
+        bh=7gv8n9sZbHEBMpYf/WaXUD9WERbNzyDJPUSPAwT/RuM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jzdcG2M40kGlN6MyPAc/+Z2k5q7V4Ox8Dgk8+YiEHGyNoUfl3Hmvb4o2HSDwEa+Fr
+         AiYAFgzGOrbR/8SIauuOJk7jAq8G/oQswgzqElT+bZdMylkL2epIsxZn+6RKG6Ht51
+         1sa6AoIuFsXanpYF5Pc9hOADkuXODTs/hx5O8nsDeBpNeyxxpMoh+PgqdYcMSa5H6H
+         rxqPRcy1wVDgk2gEXYShBkqLLES0U4xv/RKd2QORF9kZ8aDhYTV6+9hLa/c2/D69O4
+         VBplZT373Yts54JLo73Uu7JZDkRo8/8XJGVrVANPDlhCDc9IxDU29ZoHJJbh05qKs3
+         jYXpuNgfm3T6g==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1neZ64-0005OB-CF; Wed, 13 Apr 2022 11:15:33 +0200
+Date:   Wed, 13 Apr 2022 11:15:32 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
- <YlWztZknl4OBmekp@ripper>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <YlWztZknl4OBmekp@ripper>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: qcom: regmap-mux: add pipe clk implementation
+Message-ID: <YlaUtCuMZZL4bM2U@hovoldconsulting.com>
+References: <20220412193839.2545814-1-dmitry.baryshkov@linaro.org>
+ <20220412193839.2545814-2-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220412193839.2545814-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/04/2022 19:15, Bjorn Andersson wrote:
->>  
->> +	opp_table->clks = kmalloc_array(1, sizeof(*opp_table->clks),
->> +					GFP_KERNEL);
+On Tue, Apr 12, 2022 at 10:38:35PM +0300, Dmitry Baryshkov wrote:
+> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> muxes which must be parked to the "safe" source (bi_tcxo) when
+> corresponding GDSC is turned off and on again. Currently this is
+> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> clock. However the same code sequence should be applied in the
+> pcie-qcom endpoint, USB3 and UFS drivers.
+
+I'm starting to think this really belongs in the PHY driver which is the
+provider of the pipe clock. Moving it there would also allow the code to
+be shared between PCIe, USB, and UFS.
+
+The PHY driver enables the pipe clock by starting the PHY and before
+doing so there's no point in updating the mux. Similarly, the PHY driver
+can restore the "safe" source after disabling the pipe clock.
+
+That way there's no magic happening behind scenes, the clock framework
+always reports the actual state of the tree, and the reason for all of
+this can be documented in the QMP PHY driver once and for all.
+
+The only change to the bindings compared to what this series proposes is
+that the PHY driver also needs a reference to bi_tcxo.
+
+Also note that updating the mux separately from starting the PHY as this
+series allows for, doesn't really make the pipe clock any safer to use.
+
+Either way, there are also some problems with this safe-mux
+implementation that I point out below.
+
+> Rather than copying this sequence over and over again, follow the
+> example of clk_rcg2_shared_ops and implement this parking in the
+> enable() and disable() clock operations. As we are changing the parent
+> behind the back of the clock framework, also implement custom
+> set_parent() and get_parent() operations behaving accroding to the clock
+> framework expectations (cache the new parent if the clock is in disabled
+> state, return cached parent).
+>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/clk-regmap-mux.c | 78 +++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-mux.h |  3 ++
+>  2 files changed, 81 insertions(+)
 > 
-> This seems to be 81 chars long, perhaps worth not line breaking?
+> diff --git a/drivers/clk/qcom/clk-regmap-mux.c b/drivers/clk/qcom/clk-regmap-mux.c
+> index 45d9cca28064..c39ee783ee83 100644
+> --- a/drivers/clk/qcom/clk-regmap-mux.c
+> +++ b/drivers/clk/qcom/clk-regmap-mux.c
+> @@ -49,9 +49,87 @@ static int mux_set_parent(struct clk_hw *hw, u8 index)
+>  	return regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+>  }
+>  
+> +static u8 mux_safe_get_parent(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	unsigned int val;
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return mux_get_parent(hw);
+> +
+> +	val = mux->stored_parent_cfg;
+> +
+> +	if (mux->parent_map)
+> +		return qcom_find_cfg_index(hw, mux->parent_map, val);
+> +
+> +	return val;
+> +}
+> +
+> +static int mux_safe_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +
+> +	if (clk_hw_is_enabled(hw))
+> +		return mux_set_parent(hw, index);
+> +
+> +	if (mux->parent_map)
+> +		index = mux->parent_map[index].cfg;
+> +
+> +	mux->stored_parent_cfg = index;
+> +
+> +	return 0;
+> +}
+> +
+> +static void mux_safe_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+> +	unsigned int val;
+> +
+> +	regmap_read(clkr->regmap, mux->reg, &val);
+> +
+> +	mux->stored_parent_cfg = (val & mask) >> mux->shift;
+> +
+> +	val = mux->safe_src_parent;
+> +	if (mux->parent_map) {
+> +		int index = qcom_find_src_index(hw, mux->parent_map, val);
+> +
+> +		if (WARN_ON(index < 0))
+> +			return;
+> +
+> +		val = mux->parent_map[index].cfg;
+> +	}
+> +	val <<= mux->shift;
+> +
+> +	regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+> +}
+> +
+> +static int mux_safe_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_mux *mux = to_clk_regmap_mux(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(mux->width + mux->shift - 1, mux->shift);
+> +	unsigned int val;
+> +
+> +	val = mux->stored_parent_cfg;
+> +	val <<= mux->shift;
+> +
+> +	return regmap_update_bits(clkr->regmap, mux->reg, mask, val);
+> +}
 
-I doubt that it will increase the readability:
+The caching of the parent is broken since set_parent() is typically not
+called before enabling the clock.
 
-	opp_table->clks = kmalloc_array(1,
-					sizeof(*opp_table->clks),
-					GFP_KERNEL);
+This means that the above code will set the mux to its zero-initialised
+value, which currently only works by chance as the pipe clock config
+value happens to be zero.
 
-80-character is not anymore that strict hard limit and in such case
-using 1-2 characters longer improves the code.
+For this to work generally, you'd also need to define also the
+(default/initial) non-safe parent for each mux. Handling handover from
+the bootloader might also be tricky.
 
-> 
->> +	if (!opp_table->clks)
->> +		return ERR_PTR(-ENOMEM);
->> +
->>  	/* Find clk for the device */
->> -	opp_table->clk = clk_get(dev, NULL);
->> +	opp_table->clks[0] = clk_get(dev, NULL);
->>  
->> -	ret = PTR_ERR_OR_ZERO(opp_table->clk);
->> -	if (!ret)
->> +	ret = PTR_ERR_OR_ZERO(opp_table->clks[0]);
->> +	if (!ret) {
->> +		opp_table->clk_count = 1;
->>  		return opp_table;
->> +	}
-> [..]
->> +struct opp_table *dev_pm_opp_set_clknames(struct device *dev,
->> +					  const char * const names[],
->> +					  unsigned int count)
->>  {
->>  	struct opp_table *opp_table;
->> -	int ret;
->> +	struct clk *clk;
->> +	int ret, i;
->>  
->>  	opp_table = _add_opp_table(dev, false);
->>  	if (IS_ERR(opp_table))
->> @@ -2159,70 +2259,92 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char *name)
->>  	}
->>  
->>  	/* clk shouldn't be initialized at this point */
->> -	if (WARN_ON(opp_table->clk)) {
->> +	if (WARN_ON(opp_table->clks)) {
->>  		ret = -EBUSY;
->>  		goto err;
->>  	}
->>  
->> -	/* Find clk for the device */
->> -	opp_table->clk = clk_get(dev, name);
->> -	if (IS_ERR(opp_table->clk)) {
->> -		ret = dev_err_probe(dev, PTR_ERR(opp_table->clk),
->> -				    "%s: Couldn't find clock\n", __func__);
->> +	opp_table->clks = kmalloc_array(count, sizeof(*opp_table->clks),
->> +					GFP_KERNEL);
->> +	if (!opp_table->clks) {
->> +		ret = -ENOMEM;
->>  		goto err;
->>  	}
->>  
->> +	for (i = 0; i < count; i++) {
->> +		clk = clk_get(dev, names[i]);
->> +		if (IS_ERR(clk)) {
->> +			ret =  dev_err_probe(dev, PTR_ERR(clk),
->> +					     "%s: Couldn't find clock %s\n",
->> +					     __func__, names[i]);
->> +			goto free_clks;
->> +		}
->> +
->> +		opp_table->clks[i] = clk;
->> +	}
-> 
-> Wouldn't it be convenient to make clks a struct clk_bulk_data array
-> and use clk_bulk_get()/clk_bulk_put() instead?
+Furthermore, the current implementation appears to ignore locking and
+doesn't handle the case where set_parent() races with enable(). The
+former is protected by the prepare mutex and the latter by the enable
+spinlock and a driver that needs to serialise the two needs to handle
+that itself.
 
-I was thinking about this but clk_bulk_get() requires struct
-clk_bulk_data, so the code in "get" is not actually smaller if function
-receives array of clock names.
+> +
+>  const struct clk_ops clk_regmap_mux_closest_ops = {
+>  	.get_parent = mux_get_parent,
+>  	.set_parent = mux_set_parent,
+>  	.determine_rate = __clk_mux_determine_rate_closest,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_regmap_mux_closest_ops);
+> +
+> +const struct clk_ops clk_regmap_mux_safe_ops = {
+> +	.enable = mux_safe_enable,
+> +	.disable = mux_safe_disable,
+> +	.get_parent = mux_safe_get_parent,
+> +	.set_parent = mux_safe_set_parent,
+> +	.determine_rate = __clk_mux_determine_rate_closest,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_mux_safe_ops);
+> diff --git a/drivers/clk/qcom/clk-regmap-mux.h b/drivers/clk/qcom/clk-regmap-mux.h
+> index db6f4cdd9586..f86c674ce139 100644
+> --- a/drivers/clk/qcom/clk-regmap-mux.h
+> +++ b/drivers/clk/qcom/clk-regmap-mux.h
+> @@ -14,10 +14,13 @@ struct clk_regmap_mux {
+>  	u32			reg;
+>  	u32			shift;
+>  	u32			width;
+> +	u8			safe_src_parent;
+> +	u8			stored_parent_cfg;
+>  	const struct parent_map	*parent_map;
+>  	struct clk_regmap	clkr;
+>  };
+>  
+>  extern const struct clk_ops clk_regmap_mux_closest_ops;
+> +extern const struct clk_ops clk_regmap_mux_safe_ops;
+>  
+>  #endif
 
-OTOH, usage of clk_bulk_get() would reduce code in: _put_clocks(). Rest
-of the code would be more-or-less the same, including all corner cases
-when clocks are missing.
-
-> 
->> +
->> +	opp_table->clk_count = count;
->> +
->>  	return opp_table;
->>  
->> +free_clks:
->> +	while (i != 0)
->> +		clk_put(opp_table->clks[--i]);
->> +
->> +	kfree(opp_table->clks);
->> +	opp_table->clks = NULL;
->> +	opp_table->clk_count = -1;
->>  err:
->>  	dev_pm_opp_put_opp_table(opp_table);
->>  
->>  	return ERR_PTR(ret);
->>  }
->> -EXPORT_SYMBOL_GPL(dev_pm_opp_set_clkname);
->> +EXPORT_SYMBOL_GPL(dev_pm_opp_set_clknames);
-> [..]
->> +static int _read_clocks(struct dev_pm_opp *opp, struct opp_table *opp_table,
->> +			struct device_node *np)
->> +{
->> +	int count, ret;
->> +	u64 *freq;
->> +
->> +	count = of_property_count_u64_elems(np, "opp-hz");
->> +	if (count < 0) {
->> +		pr_err("%s: Invalid %s property (%d)\n",
->> +			__func__, of_node_full_name(np), count);
-> 
-> Wouldn't %pOF be convenient to use here, seems like it becomes short
-> enough that you don't have to wrap this line then.
-
-Yes, I forgot about %pOF.
-
-> 
->> +		return count;
->> +	}
->> +
->> +	if (count != opp_table->clk_count) {
->> +		pr_err("%s: number of rates %d does not match number of clocks %d in %s\n",
->> +		       __func__, count, opp_table->clk_count,
->> +		       of_node_full_name(np));
->> +		return -EINVAL;
->> +	}
->> +
->> +	freq = kmalloc_array(count, sizeof(*freq), GFP_KERNEL);
->> +	if (!freq)
->> +		return -ENOMEM;
->> +
->> +	ret = of_property_read_u64_array(np, "opp-hz", freq, count);
->> +	if (ret) {
->> +		pr_err("%s: error parsing %s: %d\n", __func__,
->> +		       of_node_full_name(np), ret);
->> +		ret = -EINVAL;
->> +		goto free_freq;
->> +	}
-> 
-> Regards,
-> Bjorn
-
-
-Best regards,
-Krzysztof
+Johan
