@@ -2,128 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3720C43219
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8D5C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Apr 2022 08:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233674AbiDMIEu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56386 "EHLO
+        id S230342AbiDMIIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Apr 2022 04:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233666AbiDMIEt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:04:49 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19646205F8;
-        Wed, 13 Apr 2022 01:02:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1649836949; x=1681372949;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=oTEpoAPnyso2h61BCD6hUWgh5IMvEBbrEh0BiLEeJ8s=;
-  b=PcVbmL6eEoFl2NwF/9J5lVl7wWaQDbk8zxP+ZiqDu7VZqr3ZqOR2QPXB
-   Um7nB70X9wMlrav5MS1p2XvOEVFao6A9HJOsMHNU1bX1c/nsI2pLb0df2
-   iV2dxF+54ZnFrVJXrrk6leXIPRU8WzCpYhNx1XePfpJnQ0yt8bcSijtR9
-   BI98dM+9mk9YWnLhnV6PbBRaG4ZyDW31FkC+x7rTEAPDHY3/qvElFLx+P
-   QzcwYE42y2jdtljhU265nn8j4pV9/zSwDHVUWlv770lrt+ixiR3g0eZHs
-   /lg0Ejt1Qt/CwFf+FW+/UA9J2zC7gzzWh1AFm0nv0N6g5hQpf1jpksJri
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,256,1643698800"; 
-   d="scan'208";a="159940090"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Apr 2022 01:02:29 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 13 Apr 2022 01:02:28 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Wed, 13 Apr 2022 01:02:24 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <aou@eecs.berkeley.edu>, <paul.walmsley@sifive.com>,
-        <palmer@rivosinc.com>, <a.zummo@towertech.it>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>
-CC:     <daire.mcnamara@microchip.com>, <linux-rtc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3 9/9] riscv: dts: microchip: reparent mpfs clocks
-Date:   Wed, 13 Apr 2022 08:58:36 +0100
-Message-ID: <20220413075835.3354193-10-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220413075835.3354193-1-conor.dooley@microchip.com>
-References: <20220413075835.3354193-1-conor.dooley@microchip.com>
+        with ESMTP id S231229AbiDMIIR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 04:08:17 -0400
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D462E2C667;
+        Wed, 13 Apr 2022 01:05:56 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id x20so1017725qvl.10;
+        Wed, 13 Apr 2022 01:05:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eShz8c4bu7O4JS8en3GZmmUYK1gOC/MkNa7sLyDYepI=;
+        b=VIwvexumHEqGkbJbLA8rQfDTDbow32/ok5xtJcY5FFQ5wjjonEafgAQqnq3nP2PBwX
+         duCj+pgw/I7/yqDm57no/NtBWf1E0fhCeRe6hZqlcTlDE2MwUI5DTWkshySfUH0gaHZr
+         QbuI/6uacZO4GyrMeZyCaMfDCsp92NvXdswwAk0JGthFZLDX6dIkj+roOxGOzhltKe+Q
+         oK7DmMRPWJ+X4s/h0a/rwb3eaWl8vdfv2vXgpNv0QOiZOW4LUTbsLJPWb2br468IxdZY
+         VVUFNIT1c4QPmk/FzsSIP1eW4XVEc8MV/GKyTlYF+00DulQVQKt1YemYCFyudWEwUCJl
+         /YZw==
+X-Gm-Message-State: AOAM531DXfPpSAuQVYpDmLKTcREW0QfijRMnadSObsMj4qXWJdbi/F2U
+        xDHQ+kAZPly+YKUhyj71NeE1OtKY+dYgFw==
+X-Google-Smtp-Source: ABdhPJxVlRbM2XckZYyQcyukOtCCqPD2RXY1rCLUn68L4gujAbrEnS/GoifWwlIkD8+vKaF7ICtHug==
+X-Received: by 2002:a05:6214:e4f:b0:442:88d4:ecc0 with SMTP id o15-20020a0562140e4f00b0044288d4ecc0mr34730109qvc.47.1649837155669;
+        Wed, 13 Apr 2022 01:05:55 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id d2-20020ac85ac2000000b002e1cc2d363asm29430074qtd.24.2022.04.13.01.05.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Apr 2022 01:05:54 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ec05db3dfbso13435817b3.7;
+        Wed, 13 Apr 2022 01:05:54 -0700 (PDT)
+X-Received: by 2002:a81:4f0d:0:b0:2ec:1556:815 with SMTP id
+ d13-20020a814f0d000000b002ec15560815mr12482102ywb.256.1649837154173; Wed, 13
+ Apr 2022 01:05:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20220412193936.63355-1-miquel.raynal@bootlin.com>
+ <20220412193936.63355-6-miquel.raynal@bootlin.com> <CAMuHMdV_KWuDRWtNaL2n8+1y4GbOSSosesd3RPK60i6zYkQPDA@mail.gmail.com>
+ <20220413100026.73e11004@xps13>
+In-Reply-To: <20220413100026.73e11004@xps13>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Apr 2022 10:05:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU3pEX3oGoHQ71cm7m0DpguJOqpOTq4_kfAxD98XN325A@mail.gmail.com>
+Message-ID: <CAMuHMdU3pEX3oGoHQ71cm7m0DpguJOqpOTq4_kfAxD98XN325A@mail.gmail.com>
+Subject: Re: [PATCH v10 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 600M clock in the fabric is not the real reference, replace it with
-a 125M clock which is the correct value for the icicle kit. Rename the
-msspllclk node to mssrefclk since this is now the input to, not the
-output of, the msspll clock. Control of the msspll clock has been moved
-into the clock configurator, so add the register range for it to the clk
-configurator. Finally, add a new output of the clock config block which
-will provide the 1M reference clock for the MTIMER and the rtc.
+Hi Miquel,
 
-Fixes: 528a5b1f2556 ("riscv: dts: microchip: add new peripherals to icicle kit device tree")
-Fixes: 0fa6107eca41 ("RISC-V: Initial DTS for Microchip ICICLE board")
-Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- .../boot/dts/microchip/microchip-mpfs-icicle-kit.dts      | 2 +-
- arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi         | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+On Wed, Apr 13, 2022 at 10:00 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> geert@linux-m68k.org wrote on Wed, 13 Apr 2022 09:53:09 +0200:
+> > On Tue, Apr 12, 2022 at 9:39 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> > > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+> > > dmamux register located in the system control area which can take up to
+> > > 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> > > two different peripherals.
+> > >
+> > > We need two additional information from the 'dmas' property: the channel
+> > > (bit in the dmamux register) that must be accessed and the value of the
+> > > mux for this channel.
+> > >
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- /dev/null
+> > > +++ b/drivers/dma/dw/rzn1-dmamux.c
+> > > @@ -0,0 +1,160 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright (C) 2022 Schneider-Electric
+> > > + * Author: Miquel Raynal <miquel.raynal@bootlin.com
+> > > + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalusi@ti.com>
+> > > + */
+> > > +#include <linux/bitops.h>
+> > > +#include <linux/of_device.h>
+> > > +#include <linux/of_dma.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +#define RNZ1_DMAMUX_NCELLS 6
+> > > +#define RZN1_DMAMUX_LINES 64
+> > > +#define RZN1_DMAMUX_MAX_LINES 16
+> > > +
+> > > +struct rzn1_dmamux_data {
+> > > +       struct dma_router dmarouter;
+> > > +       unsigned long *used_chans;
+> >
+> > Why a pointer?
+> >
+> > > +static int rzn1_dmamux_probe(struct platform_device *pdev)
+> > > +{
+> > > +       struct device_node *mux_node = pdev->dev.of_node;
+> > > +       const struct of_device_id *match;
+> > > +       struct device_node *dmac_node;
+> > > +       struct rzn1_dmamux_data *dmamux;
+> > > +
+> > > +       dmamux = devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL);
+> > > +       if (!dmamux)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       dmamux->used_chans = devm_bitmap_zalloc(&pdev->dev, 2 * RZN1_DMAMUX_MAX_LINES,
+> > > +                                               GFP_KERNEL);
+> >
+> > ... Oh, you want to allocate the bitmap separately, although you
+> > know it's just a single long.
+> >
+> > You might as well declare it in rzn1_dmamux_data as:
+> >
+> >     unsigned long used_chans[BITS_TO_LONGS(2 * RZN1_DMAMUX_MAX_LINES)];
+>
+> I've done that in versions v1..v8 and it was explicitly requested by
+> Ilpo that I used something more specific like a bitmap (or an idr, but
+> I don't think it fits well here). So now I'm using a bitmap...
 
-diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-index cd2fe80fa81a..3392153dd0f1 100644
---- a/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-+++ b/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dts
-@@ -45,7 +45,7 @@ ddrc_cache_hi: memory@1000000000 {
- };
- 
- &refclk {
--	clock-frequency = <600000000>;
-+	clock-frequency = <125000000>;
- };
- 
- &mmuart1 {
-diff --git a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-index 3b48b7f35410..746c4d4e7686 100644
---- a/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/microchip-mpfs.dtsi
-@@ -141,7 +141,7 @@ cpu4_intc: interrupt-controller {
- 		};
- 	};
- 
--	refclk: msspllclk {
-+	refclk: mssrefclk {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 	};
-@@ -190,7 +190,7 @@ plic: interrupt-controller@c000000 {
- 
- 		clkcfg: clkcfg@20002000 {
- 			compatible = "microchip,mpfs-clkcfg";
--			reg = <0x0 0x20002000 0x0 0x1000>;
-+			reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
- 			clocks = <&refclk>;
- 			#clock-cells = <1>;
- 		};
-@@ -393,8 +393,8 @@ rtc: rtc@20124000 {
- 			reg = <0x0 0x20124000 0x0 0x1000>;
- 			interrupt-parent = <&plic>;
- 			interrupts = <80>, <81>;
--			clocks = <&clkcfg CLK_RTC>;
--			clock-names = "rtc";
-+			clocks = <&clkcfg CLK_RTC>, <&clkcfg CLK_RTCREF>;
-+			clock-names = "rtc", "rtcref";
- 			status = "disabled";
- 		};
- 
--- 
-2.35.1
+Right, my bad ;-)
 
+    DECLARE_BITMAP(used_chans, 2 * RZN1_DMAMUX_MAX_LINES);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
