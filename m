@@ -2,140 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6717AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 11:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6DCC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 12:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242747AbiDNL1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 07:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39516 "EHLO
+        id S240613AbiDNMTj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 08:19:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238980AbiDNL12 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 07:27:28 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517243AA4D;
-        Thu, 14 Apr 2022 04:25:02 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BC95B20003;
-        Thu, 14 Apr 2022 11:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649935500;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CpXnu283Y9BImJWjRcqDTNSCLv7O9zSkjtgobyNWNkk=;
-        b=VFAvo1HKcbMfgjPRb2K9JOxVgtxYM2fmACdTAMdXP0BC1ewA06cPBHbL2LVnWCi+C5Cg26
-        mEYbILpM2nuTEikkL+qgf+6KRGYPdcSqYhjZz7Ow5ldkr4qodvIFf9Wo9J4XEzxA6L4FEz
-        4tGL+eHeZKNwe+wyHPqHnHzOSdLYm223GjiKHhl8wLIYojFKrptNVWdqLnmwISxS9H6GwL
-        D/xaoxNPH0hOPaZFrdL+YeGYJ/5b5nWllgRj3/exsblpTuSJ5xtCto2d+iCqdz1tILV7Aa
-        Z+PzrYk9/Yp37RTga3x2OLYx10YZjkWyhV5QM3KscvlE0Yp1h7Sos+XiDcGChA==
-Date:   Thu, 14 Apr 2022 13:24:56 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
+        with ESMTP id S231996AbiDNMTj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 08:19:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCF95F8F0;
+        Thu, 14 Apr 2022 05:17:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B36161ED4;
+        Thu, 14 Apr 2022 12:17:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCCFC385A5;
+        Thu, 14 Apr 2022 12:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649938633;
+        bh=qmbesC0/Icw9+qiYiA7mFVyYz0+S7SQX+MroNisSWkE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uXX9tSRGzz1beJZ8yex9mmqV4YesXnyLh+DB7Jjmr1W4J/dH/ssQOoq7x5wdiNoeY
+         q0/Tne4i2dibfZ7F42CXHJcLT/2hygd4qZ0g+rW8DgcvBkdLxAtvyxoAI9w9vl+TWt
+         qdKV0uANJl5pivFnsr7ymEHwo6JVkrt2DpI5eggxlxVTUSDJmthOegs1WcaRP6c+56
+         mDFxc5t8xKXJpFA4dRfaIvkgcf96rwB/AA5QunOuHDRonkw2iLsGwib9nK8ShJYfcV
+         NqjetuYa5cBpZiLL3cjx7ox2IEcGwy8NOnTVwpb576iQTb5nzCnav1ic3YaWBKuNil
+         R6IaNiPDc4B0g==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1neyPO-0006BB-Cw; Thu, 14 Apr 2022 14:17:10 +0200
+Date:   Thu, 14 Apr 2022 14:17:10 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v8 0/9] RZN1 DMA support
-Message-ID: <20220414132456.30b19306@xps13>
-In-Reply-To: <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-        <20220407004511.3A6D1C385A3@smtp.kernel.org>
-        <20220407101605.7d2a17cc@xps13>
-        <CAMuHMdUZFTm+0NFLUFoXT7ujtxDot_Y+gya9ETK1FOai2MXfvA@mail.gmail.com>
-        <20220412093155.090de9d6@xps13>
-        <CAMuHMdVpfHuJi1+bm2jvsz8ZpMn8u=5bNYqHBRv7DYykyrC-XQ@mail.gmail.com>
-        <20220412094338.382e8754@xps13>
-        <CAMuHMdVaWskmiqUEyGyz7HKUjgzFhx+5hAJxd5od7Hp4hFD1KA@mail.gmail.com>
-        <20220412100301.03ccece8@xps13>
-        <CAMuHMdXPRb0SiCtYcqAy5YJEGp3U30FaXcmjMpgc=szXUnShpA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: qcom: regmap-mux: add pipe clk implementation
+Message-ID: <YlgQxrKNOMcvy4cd@hovoldconsulting.com>
+References: <20220412193839.2545814-1-dmitry.baryshkov@linaro.org>
+ <20220412193839.2545814-2-dmitry.baryshkov@linaro.org>
+ <YlaUtCuMZZL4bM2U@hovoldconsulting.com>
+ <bbf1386f-0902-75ff-bb61-f4ebbc82f174@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbf1386f-0902-75ff-bb61-f4ebbc82f174@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+[ Please trim your replies. ]
 
-geert@linux-m68k.org wrote on Tue, 12 Apr 2022 10:12:41 +0200:
+On Wed, Apr 13, 2022 at 08:57:47PM +0300, Dmitry Baryshkov wrote:
+> On 13/04/2022 12:15, Johan Hovold wrote:
+> > On Tue, Apr 12, 2022 at 10:38:35PM +0300, Dmitry Baryshkov wrote:
+> >> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> >> muxes which must be parked to the "safe" source (bi_tcxo) when
+> >> corresponding GDSC is turned off and on again. Currently this is
+> >> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> >> clock. However the same code sequence should be applied in the
+> >> pcie-qcom endpoint, USB3 and UFS drivers.
+> > 
+> > I'm starting to think this really belongs in the PHY driver which is the
+> > provider of the pipe clock. Moving it there would also allow the code to
+> > be shared between PCIe, USB, and UFS.
+> > 
+> > The PHY driver enables the pipe clock by starting the PHY and before
+> > doing so there's no point in updating the mux. Similarly, the PHY driver
+> > can restore the "safe" source after disabling the pipe clock.
+> 
+> I thought about this at some point. However it would still mean that the 
+> driver does the dance manually: disable pipe_clock, switch parent, 
+> sleep, switch the parent back, enable pipe clock. Switching parents is 
+> tied to disabling pipe_clock, so enforcing this link seems like a better 
+> option to me.
 
-> Hi Miquel,
->=20
-> On Tue, Apr 12, 2022 at 10:03 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:52:25 +0200: =20
-> > > On Tue, Apr 12, 2022 at 9:43 AM Miquel Raynal <miquel.raynal@bootlin.=
-com> wrote: =20
-> > > > geert@linux-m68k.org wrote on Tue, 12 Apr 2022 09:37:22 +0200: =20
-> > > > > So far I've been rather terse in giving feedback on these series,
-> > > > > as I'm in wait-and-see mode w.r.t. what else you've planned for t=
-he
-> > > > > sysctrl DT node[1] and clock/sys controller code...
-> > > > >
-> > > > > [1] Did I say I'm not that fond of child nodes? But for the dmamu=
-x,
-> > > > >     it looks like a good solution to handle this. =20
-> > > >
-> > > > O:-)
-> > > >
-> > > > I plan in the coming days to write a proper reset controller driver
-> > > > that will be queried by the rtc driver (as proposed by Alexandre). =
-=20
-> > >
-> > > OK.
-> > > =20
-> > > > Which means I'll have to declare this reset controller as a child of
-> > > > the systrl node. If you disagree with it, you may jump-in, see this
-> > > > thread :
-> > > >
-> > > >         Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a
-> > > >                  function to  enable/disable the RTC
-> > > >         Date: Wed, 6 Apr 2022 10:32:31 +0200 =20
-> > >
-> > > But do you need a child node for that? All(most all) other Renesas
-> > > clock drivers provide reset functionality, and none of them use a
-> > > child node for that. =20
-> >
-> > How do you "request" the reset handle from the consumer driver if it's
-> > not described in the DT? Do you have examples to share? =20
->=20
-> I didn't say it does not need to be described in DT ;-)
->=20
-> Just add "#reset-cells =3D <1>" to the sysctrl node, and nodes can
-> start referring to it using "resets =3D <&sysctrl N>".
-> Currently, the sysctrl node is already a clock and power-domain provider.
->=20
-> Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-> shows an R-Car CPG/MSSR node providing clock, power-domain, and
-> reset functionalities.
+No, that's precisely my point. It is not tied to disabling (gating) the
+pipe clock, it is tied to powering down the PHY (i.e. disabling the pipe
+clock source). And that is under the control of the PHY driver.
 
-While working on implementing a reset controller driver, I realized
-that almost all the clocks had a reset, which was already managed by the
-driver as part of a number of additional possible signals (gate
-reset, gate master idle, gate ready...). So I actually figured out
-that my issue originated from an incomplete description of the RTC clock
-gate, which I fulfilled. Now it works without the need for an additional
-exported symbol.
+In practise, once we've cleaned up the other users of the pipe clock,
+tying it to pipe clock disabling will work, but it doesn't prevent
+anyone from shooting themselves in the foot as the "safe-mux" name
+suggests (i.e. it is still possibly to enable the pipe clock while its
+source is disabled).
 
-Thanks,
-Miqu=C3=A8l
+> No to mention that it would complicate already overcomplicated QMP driver.
+
+That driver sure could use some love, but that's not a valid argument
+against adding things were they belong.
+
+And regarding complexity, I have a working prototype implementation here
+which is smaller than what you're proposing and very straight forward.
+
+> > That way there's no magic happening behind scenes, the clock framework
+> > always reports the actual state of the tree, and the reason for all of
+> > this can be documented in the QMP PHY driver once and for all.
+> 
+> We already have such 'magic' for the RCG2 (clk_rcg2_shared_ops), with 
+> the very practical reason. If the clock is running from the tcxo, it is 
+> as good as disabled from the practical purpose.
+
+That implementation doesn't try to implement the caching you're
+proposing and hence doesn't suffer from the associated implementation
+issues.
+ 
+> > The only change to the bindings compared to what this series proposes is
+> > that the PHY driver also needs a reference to bi_tcxo.
+> 
+> And this looks as bad, as providing bi_tcxo to the PCI device. From the 
+> schematics/silicon point of view neither of them actually uses these 
+> parents. Neither of them uses the pipe_clock_src. What do they need is 
+> just the pipe_clock. The rest should be in the programming API.
+
+No, the PHY driver is both the provider of the source clock for the
+pipe clock and the consumer of the latter.
+
+That it may need to handle any muxes in between the two only makes
+sense.
+
+Hiding this away and spreading the implementation out over multiple
+clock drivers (i.e. every mux definition for each platform + the
+regmap-mux hack) only obscures things.
+
+Johan
