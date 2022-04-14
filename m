@@ -2,182 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44819C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 10:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC39BC4167B
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 11:19:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbiDNK7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 06:59:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32882 "EHLO
+        id S238316AbiDNLWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 07:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiDNK7W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 06:59:22 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C64775E4B;
-        Thu, 14 Apr 2022 03:56:58 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A59F21F746;
-        Thu, 14 Apr 2022 10:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649933816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S242599AbiDNLWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 07:22:09 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D4A1EC6F;
+        Thu, 14 Apr 2022 04:19:39 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 38EF8240002;
+        Thu, 14 Apr 2022 11:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649935177;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qHwXlFiPhb+8uq3WbY4A9X/xnSchmkHO2lazKJa/1C0=;
-        b=xTC5BJvI3EIrrso3wUf3g1Nr7SOacNh0j7iO37GlzhLh9dS93gEQUQ7+pC7UTv3Yxp9HHo
-        7a95Me/ooKHX3mLKAkBbwlwnRM4Z11xTG3FPMqFZy85xh1nplyN07tFTpohWc1Q3zZHx3G
-        SZ6KliHB8WrlgfICPUQ5iTNTJ5bMMH8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649933816;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qHwXlFiPhb+8uq3WbY4A9X/xnSchmkHO2lazKJa/1C0=;
-        b=HSr8JiCOgkenIg7wB2Xon9FwkRKUvHaA6puuu4B3JMM3Ug4KlPFkmiOeosnWoqQEzSxbJN
-        ziYtJKRIz8IMNDDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8533E132C0;
-        Thu, 14 Apr 2022 10:56:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id NbhsIPj9V2JxCQAAMHmgww
-        (envelope-from <iivanov@suse.de>); Thu, 14 Apr 2022 10:56:56 +0000
-Date:   Thu, 14 Apr 2022 13:56:56 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        bh=ZXu+LLMNfkUfWr3T7CXhJ1D/5v2k50j/CT0WpseHv5E=;
+        b=GX1HCgY+ayJUwFdp5ht4sKpJN8GAVyXJ8Qr37WNL14jWfOSKoRPTXPcgeB115Q+tRIzp7o
+        61e8s1FfJbEg0Zdsa6zhLCVOQx6nvfFRKo4TM49Cr+qSkNTiimx+D6uVNxhriG1EuxoXLP
+        MzpOxKIgnFB7vVKycvuQxsoVJTkfPzTR0qn4XQg5JfZu50Mzg7WpTM6p8aeHrtzwBakVQD
+        iOb/5ebsjHceMBSPFdhKZq66equNp/gxywTEU9V1APU20UQ0hZ3iDn27kTZZZ8qtyidEd9
+        UuK3818tlpALWD+uyCLiWpM9tHF/S4kpO6mt5FHeimTxfBwkv60g1p5xDKTA9g==
+Date:   Thu, 14 Apr 2022 13:19:32 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
-Message-ID: <20220414105656.qt52zmr5vjmjdcxc@suse>
-References: <20220404125113.80239-1-iivanov@suse.de>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        linux-rtc@vger.kernel.org,
+        Michel Pollet <michel.pollet@bp.renesas.com>
+Subject: Re: [PATCH 3/7] rtc: rzn1: Add new RTC driver
+Message-ID: <20220414131932.5f5285d4@xps13>
+In-Reply-To: <Ylbw3bEc+QK4m9hX@mail.local>
+References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+        <20220405184716.1578385-4-miquel.raynal@bootlin.com>
+        <Yk1UXjTk32Vc9+/k@mail.local>
+        <20220413172327.73d1fcc1@xps13>
+        <Ylbw3bEc+QK4m9hX@mail.local>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220404125113.80239-1-iivanov@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stefan,
+Hi Alex,
 
-Please, could you take a look into following patch?
+alexandre.belloni@bootlin.com wrote on Wed, 13 Apr 2022 17:48:45 +0200:
 
-Thanks!
-Ivan
+> Hi Miqu=C3=A8l,
+>=20
+> On 13/04/2022 17:23:27+0200, Miquel Raynal wrote:
+> > > > +static int rzn1_rtc_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +	struct rzn1_rtc *rtc;
+> > > > +	int ret;
+> > > > +
+> > > > +	rtc =3D devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+> > > > +	if (!rtc)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	platform_set_drvdata(pdev, rtc);
+> > > > +
+> > > > +	rtc->clk =3D devm_clk_get(&pdev->dev, "hclk");
+> > > > +	if (IS_ERR(rtc->clk))
+> > > > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk), "Missing hcl=
+k\n");
+> > > > +
+> > > > +	rtc->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > > > +	if (IS_ERR(rtc->base))
+> > > > +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing re=
+g\n");
+> > > > +
+> > > > +	rtc->rtcdev =3D devm_rtc_allocate_device(&pdev->dev);
+> > > > +	if (IS_ERR(rtc->rtcdev))
+> > > > +		return PTR_ERR(rtc);
+> > > > +
+> > > > +	rtc->rtcdev->range_max =3D 3178591199UL; /* 100 years */   =20
+> > >=20
+> > > I'm not sure how you came to this value, this is 2070-09-22T05:59:59.
+> > > I'm pretty sure the RTC will not fail at that time. Also, the comment
+> > > seems fishy. =20
+> >=20
+> > The RTC itself as no "starting point", but just a counter that can
+> > count up to 100. So the max range is start-year + 100 years. But at
+> > this point I don't yet have access to the start-year value. What's
+> > your advise? =20
+>=20
+> The question is why is this limited to 100 years? My guess is that it
+> doesn't handle leap years properly if this is the case, there is only
+> one range that works, this is 2000-01-01 to 2099-12-31 like many other
+> RTCs.
 
-On 04-04 15:51, Ivan T. Ivanov wrote:
-> Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
-> Message-Id: <20220404125113.80239-1-iivanov@suse.de>
-> 
-> The UART clock is initialised to be as close to the requested
-> frequency as possible without exceeding it. Now that there is a
-> clock manager that returns the actual frequencies, an expected
-> 48MHz clock is reported as 47999625. If the requested baudrate
-> == requested clock/16, there is no headroom and the slight
-> reduction in actual clock rate results in failure.
-> 
-> If increasing a clock by less than 0.1% changes it from ..999..
-> to ..000.., round it up.
-> 
-> This is reworked version of a downstream fix:
-> https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
-> 
-> Cc: Phil Elwell <phil@raspberrypi.org>
-> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
-> ---
-> Changes since v1
-> Make bcm2835_clock_round() static to fix following warning
-> when compiling for riscv:
-> drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
->  drivers/clk/bcm/clk-bcm2835.c | 30 ++++++++++++++++++++++++++++--
->  1 file changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 3ad20e75fd23..c29b643d1bf5 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -502,6 +502,8 @@ struct bcm2835_clock_data {
->  	bool low_jitter;
->  
->  	u32 tcnt_mux;
-> +
-> +	bool round_up;
->  };
->  
->  struct bcm2835_gate_data {
-> @@ -992,12 +994,30 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
->  	return temp;
->  }
->  
-> +static unsigned long bcm2835_clock_round(unsigned long clk)
-> +{
-> +	unsigned long scaler;
-> +
-> +	/*
-> +	 * If increasing a clock by less than 0.1% changes it
-> +	 * from ..999.. to ..000.., round up.
-> +	 */
-> +	scaler = 1;
-> +	while (scaler * 100000 < clk)
-> +		scaler *= 10;
-> +	if ((clk + scaler - 1) / scaler % 1000 == 0)
-> +		clk = (clk / scaler + 1) * scaler;
-> +
-> +	return clk;
-> +}
-> +
->  static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
->  					    unsigned long parent_rate)
->  {
->  	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
->  	struct bcm2835_cprman *cprman = clock->cprman;
->  	const struct bcm2835_clock_data *data = clock->data;
-> +	unsigned long rate;
->  	u32 div;
->  
->  	if (data->int_bits == 0 && data->frac_bits == 0)
-> @@ -1005,7 +1025,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
->  
->  	div = cprman_read(cprman, data->div_reg);
->  
-> -	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-> +	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-> +
-> +	if (data->round_up)
-> +		rate = bcm2835_clock_round(rate);
-> +
-> +	return rate;
->  }
->  
->  static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
-> @@ -2142,7 +2167,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
->  		.div_reg = CM_UARTDIV,
->  		.int_bits = 10,
->  		.frac_bits = 12,
-> -		.tcnt_mux = 28),
-> +		.tcnt_mux = 28,
-> +		.round_up = true),
->  
->  	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
->  	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
-> -- 
-> 2.26.2
+I don't know the real reason, actually there is just written that the
+"year" register counts up from 00 to 99 (in bcd).
+
+> You can run rtc-range from rtc-tools after removing range_max to find
+> out.
+
+Here is the result. It fails at 2069, which I believe means "100 years"
+from 1970. So what do you conclude with this? Shall I use
+rtc_time64_to_tm(2069-12-31 23:59:59) as the range_max value?
+
+# rtc-range=20
+
+Testing 2000-02-28 23:59:59.
+OK
+
+Testing 2038-01-19 03:14:07.
+OK
+
+Testing 2069-12-31 23:59:59.
+KO RTC_RD_TIME returned 22 (line 124)
+
+Thanks,
+Miqu=C3=A8l
