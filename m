@@ -2,64 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B224AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 09:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D260C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 09:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239819AbiDNJbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 05:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57422 "EHLO
+        id S241249AbiDNJdm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 05:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241762AbiDNJbj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 05:31:39 -0400
-Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3365D5ED;
-        Thu, 14 Apr 2022 02:29:12 -0700 (PDT)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru C51A620A19A5
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
+        with ESMTP id S241817AbiDNJdk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 05:33:40 -0400
+Received: from mail.meizu.com (edge05.meizu.com [157.122.146.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3A670062;
+        Thu, 14 Apr 2022 02:31:13 -0700 (PDT)
+Received: from IT-EXMB-1-125.meizu.com (172.16.1.125) by mz-mail12.meizu.com
+ (172.16.1.108) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 14 Apr
+ 2022 17:31:12 +0800
+Received: from [172.16.137.70] (172.16.137.70) by IT-EXMB-1-125.meizu.com
+ (172.16.1.125) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.14; Thu, 14 Apr
+ 2022 17:31:11 +0800
+Message-ID: <ef55ac6b-a62b-2589-08ba-973ef83e096d@meizu.com>
+Date:   Thu, 14 Apr 2022 17:31:10 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
 Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
-To:     Haowen Bai <baihaowen@meizu.com>,
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 CC:     <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 References: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <2ed01eb3-ff46-425c-75dc-81729a5c30a8@omp.ru>
-Date:   Thu, 14 Apr 2022 12:29:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+ <2ed01eb3-ff46-425c-75dc-81729a5c30a8@omp.ru>
+From:   baihaowen <baihaowen@meizu.com>
+In-Reply-To: <2ed01eb3-ff46-425c-75dc-81729a5c30a8@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.16.137.70]
+X-ClientProxiedBy: IT-EXMB-1-126.meizu.com (172.16.1.126) To
+ IT-EXMB-1-125.meizu.com (172.16.1.125)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello!
+在 4/14/22 5:29 PM, Sergey Shtylyov 写道:
+> Hello!
+>
+> On 4/13/22 11:19 AM, Haowen Bai wrote:
+>
+>> Fix this issue by freeing the cpg when exiting the function in the
+>> error/normal path.
+>>
+>> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+>> ---
+>> V1->V2: free both cpg&clks.
+>>
+>>  drivers/clk/renesas/clk-r8a73a4.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>    2 patches with the same name won't do -- you always need to include the chip name
+> part of the file name in the subject (in this case r8a73a4).
+>
+> MBR, Sergey
+Got it, thank you for your kindly reminder.
 
-On 4/13/22 11:19 AM, Haowen Bai wrote:
+-- 
+Haowen Bai
 
-> Fix this issue by freeing the cpg when exiting the function in the
-> error/normal path.
-> 
-> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
-> ---
-> V1->V2: free both cpg&clks.
-> 
->  drivers/clk/renesas/clk-r8a73a4.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-
-   2 patches with the same name won't do -- you always need to include the chip name
-part of the file name in the subject (in this case r8a73a4).
-
-MBR, Sergey
