@@ -2,69 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB07C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 01:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CEAC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 07:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbiDNBFT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Apr 2022 21:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
+        id S230502AbiDNHLJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 03:11:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiDNBFT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Apr 2022 21:05:19 -0400
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF9D4EF70;
-        Wed, 13 Apr 2022 18:02:56 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-e2afb80550so3833492fac.1;
-        Wed, 13 Apr 2022 18:02:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=h6QfWYe0L/R6LmSe0XRfjKt0AATaB1wV6Th611NeW5g=;
-        b=inuKCzKFbxF3SxYmg2JnGj3MeU2NrViqRGJRvnjxmtVG6fmvnYxN8q3rFhvqLjuMJ5
-         J0hU4ZzpZ1k6JQb8aVrmi5ujFPFMfNBLDra5+EBInthofWg4GCk0Bi/gk023VIdJiLer
-         F1pcywcxKPSKwzSzqFowz3l3YdRn5wzrNQkORr4BmDGycE9CGFRb1yQoHz3Fk2S7AoVW
-         v1zFpuQAkY5c0o8lc9VO12vulPVPzXVVMinXrnQM0UtKS72nSgG/ZXtM0GI7sPFUHexB
-         SFZNbX/HIxzOh6sRHlBPZPRbfA0gNlevN81lJbjcbLLhbPdwilgx+MXRyQ03mCM6SGmN
-         j7xA==
-X-Gm-Message-State: AOAM533oBmPNg7w+v+fDqyKOKYwQBkggnQtAfpR/BZAS7KoyAZdbJ0sk
-        3Ar0HsHemqJbYaxQgtZ5nXWMLF2jEg==
-X-Google-Smtp-Source: ABdhPJz4MKNSCFMKbR30Yh3D5kcNkXHL+Bpl0ws/EYlphVQ7bxh2WwxtMDznmpWbuS7xHXyqBjYhOA==
-X-Received: by 2002:a05:6870:32d6:b0:e3:6e1a:e56b with SMTP id r22-20020a05687032d600b000e36e1ae56bmr354954oac.206.1649898175797;
-        Wed, 13 Apr 2022 18:02:55 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k14-20020a4a2a0e000000b0032ec90bf156sm195974oof.25.2022.04.13.18.02.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 18:02:55 -0700 (PDT)
-Received: (nullmailer pid 91005 invoked by uid 1000);
-        Thu, 14 Apr 2022 01:02:54 -0000
-Date:   Wed, 13 Apr 2022 20:02:54 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     sboyd@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v14 1/5] dt-bindings: add documentation of xilinx
- clocking wizard
-Message-ID: <YldyvmGMjODs6nL3@robh.at.kernel.org>
-References: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
- <20220411100443.15132-2-shubhrajyoti.datta@xilinx.com>
+        with ESMTP id S240235AbiDNHLI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 03:11:08 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B0E5C48381
+        for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2022 00:08:36 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1174:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 14 Apr 2022 15:05:15 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.18; Thu, 14 Apr 2022 15:06:12 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.018; Thu, 14 Apr 2022 15:06:12 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v13 4/9] dt-bindings: clock: Add bindings for SP7021 clock
+ driver
+Thread-Topic: [PATCH v13 4/9] dt-bindings: clock: Add bindings for SP7021
+ clock driver
+Thread-Index: AQHYTXFtZBGBuhiVAkyYeiqgxa8/hazs4N6AgAIgI/A=
+Date:   Thu, 14 Apr 2022 07:06:12 +0000
+Message-ID: <b1b85440f7d647a0adf014b091e31c10@cqplus1.com>
+References: <cover.1649659095.git.qinjian@cqplus1.com>
+ <f8d5675d1bc32962af6379f78a171ed35b181ebc.1649659095.git.qinjian@cqplus1.com>
+ <c2a7f2e0-1a21-bb0c-9221-c184cfaa3626@linaro.org>
+In-Reply-To: <c2a7f2e0-1a21-bb0c-9221-c184cfaa3626@linaro.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220411100443.15132-2-shubhrajyoti.datta@xilinx.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Apr 2022 15:34:39 +0530, Shubhrajyoti Datta wrote:
-> Add the devicetree binding for the xilinx clocking wizard.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
->  .../bindings/clock/xlnx,clocking-wizard.yaml  | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> 
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+DQo+ID4gKyNpZm5kZWYgX0RUX0JJTkRJTkdTX0NMT0NLX1NVTlBMVVNfU1A3MDIxX0gNCj4gPiAr
+I2RlZmluZSBfRFRfQklORElOR1NfQ0xPQ0tfU1VOUExVU19TUDcwMjFfSA0KPiA+ICsNCj4gPiAr
+I2RlZmluZSBYVEFMICAgICAgICAgICAgMjcwMDAwMDANCj4gDQo+IFRoaXMgbG9va3MgbGlrZSBm
+cmVxdWVuY3kgd2hpY2ggdXN1YWxseSBkb2VzIG5vdCBiZWxvbmcgdG8gYmluZGluZ3MuIFdoeQ0K
+PiBkbyB5b3UgbmVlZCBpdCBoZXJlPw0KPiANCg0KT0ssIEknbGwgcmVtb3ZlIGl0Lg0K
