@@ -2,91 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB015C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 16:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066F0C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 16:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241427AbiDNQHC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 12:07:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51070 "EHLO
+        id S232064AbiDNQHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 12:07:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348944AbiDNPkM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 11:40:12 -0400
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BFBC5583;
-        Thu, 14 Apr 2022 08:19:00 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 12so5699020oix.12;
-        Thu, 14 Apr 2022 08:19:00 -0700 (PDT)
+        with ESMTP id S1358853AbiDNPmV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 11:42:21 -0400
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8990EFF83;
+        Thu, 14 Apr 2022 08:25:19 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id q129so5748821oif.4;
+        Thu, 14 Apr 2022 08:25:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=rTnbii0TkfiP0IgylH+LPQeyfK4chNSMZIeQMu2dlZ0=;
-        b=44Lvk3aKbxtOBzPkD6hHm1CjWoWpgA2QoNMfqHRlgXnizhX3EsCyxHVnWDrEIuFXZm
-         OKSKF4h0xAwKNpzt8GbSoFbgZsmTbNDz1GtOV5S0ZkB8M6fFedYV8Yz1LTp4NzMNlmml
-         xLJz1eR0hN8/+MRc9t087Y/+QNhiOgMIcu5YLWG8cbXEiAuZyW8Ppp1zRBKBwRvjQ1MK
-         0Jsf1Uj/PGGIz/+qgviNF3h9+NwbCYm7YkPEWVCnDNuA9oGJ/maWtdjJWYj7LG2wQlNb
-         WDaNDTnh3Jr4cjrm68uhWtIzKOxNPXp0zM+QPN45OyFobk68bnRaT3N6NATyVEBQPWmi
-         cG1A==
-X-Gm-Message-State: AOAM5337BI4i00pmA/TgLak4RiYeZCtyuB0uTv8alrQdJGGz8JsgKKAy
-        sPCyM5TH9XBS6myCBshuMg==
-X-Google-Smtp-Source: ABdhPJx97/FQcjk9Be6OMKujrhUC85sEPYMS6H5cAeRSjdGYelkOgG068e0xOR/WfxQnx5K/o4EfsQ==
-X-Received: by 2002:aca:2418:0:b0:2ee:f7da:795f with SMTP id n24-20020aca2418000000b002eef7da795fmr1833724oic.276.1649949539942;
-        Thu, 14 Apr 2022 08:18:59 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to;
+        bh=iGvtGvGGEIxpm5BQlfNMXTkv7Z8pGaPcOXe2M6C3Cas=;
+        b=aYt6X9BzMYljJX4kKcZt1mAmjd+cndcYi0uxv33poCvLCL/lfueW8sF2m/J6tLKtCh
+         18YJQw9yecW31YLCv77RtxtyY5YDdVc65vuJdriYjsPeWjV6ofVUOGg87kj2EoBtsQBD
+         Ex1609o1WhFxcqVDb2hu6xvW8dgRrQywM3o4NPOfZkykHfKk+T3kZMPg7CH4TSamuvUr
+         hhekA5SA8+hzk4ZC+ZMR5w7Ll+H/Xz6zPJk9NHwI6g+IWSBLgZFX5jL2PYmM1x0Eukvn
+         3GKg04fQm1dMgQAE6laY1yfrN3i/bDBeGzXCudDgMccaRNfpOXUYvX0pxEOg35o6Cn5G
+         T9kw==
+X-Gm-Message-State: AOAM530+teyKRDnmnscr9xQKt5hl1T68csu3NHEadhVOij5bS0TsmGtw
+        czGld5fDII7gdkXsf2Z8+Q==
+X-Google-Smtp-Source: ABdhPJzIxerz58hWNig5nTrpL6dkloaMuyfdKXuIbiX9eWx++lxdk+IcTfSHEMKJGaZJEi6lhXlV3Q==
+X-Received: by 2002:a05:6808:144d:b0:2f9:d667:19f7 with SMTP id x13-20020a056808144d00b002f9d66719f7mr1706639oiv.64.1649949919023;
+        Thu, 14 Apr 2022 08:25:19 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id c19-20020a9d7853000000b005cdbc0f02ccsm106314otm.68.2022.04.14.08.18.59
+        by smtp.gmail.com with ESMTPSA id be21-20020a056808219500b002fa6227ba8dsm135067oib.34.2022.04.14.08.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 08:18:59 -0700 (PDT)
-Received: (nullmailer pid 2073887 invoked by uid 1000);
-        Thu, 14 Apr 2022 15:18:58 -0000
-Date:   Thu, 14 Apr 2022 10:18:58 -0500
+        Thu, 14 Apr 2022 08:25:18 -0700 (PDT)
+Received: (nullmailer pid 2083464 invoked by uid 1000);
+        Thu, 14 Apr 2022 15:25:17 -0000
+Date:   Thu, 14 Apr 2022 10:25:17 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v13 4/9] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Message-ID: <Ylg7Yl9GmgpOFipk@robh.at.kernel.org>
-References: <cover.1649659095.git.qinjian@cqplus1.com>
- <f8d5675d1bc32962af6379f78a171ed35b181ebc.1649659095.git.qinjian@cqplus1.com>
- <c2a7f2e0-1a21-bb0c-9221-c184cfaa3626@linaro.org>
- <b1b85440f7d647a0adf014b091e31c10@cqplus1.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/6] dt-bindings: ufs: common: add OPP table
+Message-ID: <Ylg83Ub7wuElT+Bu@robh.at.kernel.org>
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-4-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1b85440f7d647a0adf014b091e31c10@cqplus1.com>
+In-Reply-To: <20220411154347.491396-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 07:06:12AM +0000, qinjian[覃健] wrote:
+On Mon, Apr 11, 2022 at 05:43:44PM +0200, Krzysztof Kozlowski wrote:
+> Except scaling UFS and bus clocks, it's necessary to scale also the
+> voltages of regulators or power domain performance state levels.  Adding
+> Operating Performance Points table allows to adjust power domain
+> performance state, depending on the UFS clock speed.
 > 
-> > > +#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-> > > +#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-> > > +
-> > > +#define XTAL            27000000
-> > 
-> > This looks like frequency which usually does not belong to bindings. Why
-> > do you need it here?
-> > 
+> OPPv2 deprecates previous property limited to clock scaling:
+> freq-table-hz.
 > 
-> OK, I'll remove it.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Not adding Rob's review tag because patch changed significantly.
+> ---
+>  .../devicetree/bindings/ufs/ufs-common.yaml   | 34 +++++++++++++++++--
+>  1 file changed, 31 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> index 47a4e9e1a775..d7d2c8a136bb 100644
+> --- a/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
+> @@ -20,11 +20,24 @@ properties:
+>        items:
+>          - description: Minimum frequency for given clock in Hz
+>          - description: Maximum frequency for given clock in Hz
+> +    deprecated: true
+>      description: |
+> +      Preferred is operating-points-v2.
+> +
+>        Array of <min max> operating frequencies in Hz stored in the same order
+> -      as the clocks property. If this property is not defined or a value in the
+> -      array is "0" then it is assumed that the frequency is set by the parent
+> -      clock or a fixed rate clock source.
+> +      as the clocks property. If either this property or operating-points-v2 is
+> +      not defined or a value in the array is "0" then it is assumed that the
+> +      frequency is set by the parent clock or a fixed rate clock source.
+> +
+> +  operating-points-v2:
+> +    description:
+> +      Preferred over freq-table-hz.
+> +      If present, each OPP must contain array of frequencies stored in the same
+> +      order for each clock.  If clock frequency in the array is "0" then it is
+> +      assumed that the frequency is set by the parent clock or a fixed rate
+> +      clock source.
+> +
+> +  opp-table: true
+>  
+>    interrupts:
+>      maxItems: 1
+> @@ -75,8 +88,23 @@ properties:
+>  
+>  dependencies:
+>    freq-table-hz: [ 'clocks' ]
+> +  operating-points-v2: [ 'clocks', 'clock-names' ]
+>  
+>  required:
+>    - interrupts
+>  
+> +allOf:
+> +  - if:
+> +      required:
+> +        - freq-table-hz
+> +    then:
+> +      properties:
+> +        operating-points-v2: false
+> +  - if:
+> +      required:
+> +        - operating-points-v2
+> +    then:
+> +      properties:
+> +        freq-table-hz: false
 
-If that's the input frequency to the clock controller and it could 
-possibly change, then it should be defined in DT with a 'fixed-clock' 
-node and 'clocks' property in the clock controller.
+You could also express this as:
 
-Rob
+oneOf:
+  - required: [ freq-table-hz ]
+  - required: [ operating-points-v2 ]
+  - not:
+      required: [ freq-table-hz, operating-points-v2 ]
 
+
+> +
+>  additionalProperties: true
+> -- 
+> 2.32.0
+> 
+> 
