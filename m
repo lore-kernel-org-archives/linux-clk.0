@@ -2,80 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A7CC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 18:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2A9C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 18:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344599AbiDNSfS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 14:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55260 "EHLO
+        id S244585AbiDNTCP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 15:02:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343590AbiDNSfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 14:35:17 -0400
-X-Greylist: delayed 368 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Apr 2022 11:32:51 PDT
-Received: from mxout02.lancloud.ru (mxout02.lancloud.ru [45.84.86.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F85EEA749
-        for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2022 11:32:51 -0700 (PDT)
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout02.lancloud.ru DFC32233D6F3
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Haowen Bai <baihaowen@meizu.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
- <2ed01eb3-ff46-425c-75dc-81729a5c30a8@omp.ru>
- <CAMuHMdVCRRbhYEnk4bjvPugrosw4mNQCcHQqsNrx0RhFL+dJDQ@mail.gmail.com>
-From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <ad8972c2-5261-406a-c98e-d8c3d382fc7d@omp.ru>
-Date:   Thu, 14 Apr 2022 21:26:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVCRRbhYEnk4bjvPugrosw4mNQCcHQqsNrx0RhFL+dJDQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
- LFEX1907.lancloud.ru (fd00:f066::207)
+        with ESMTP id S237212AbiDNTCO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 15:02:14 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B363915C;
+        Thu, 14 Apr 2022 11:59:48 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-e2fa360f6dso6198226fac.2;
+        Thu, 14 Apr 2022 11:59:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=lZfkYDeAjm+6YQ8+2GjY/45c8G+URa8JyKyRL4TBTWg=;
+        b=eDnHQ9UBfY1agg27rgPGLcXvAQnk4WLl9MH+wUcuURBBPODgoe1MpkzBT0BpAQA1Av
+         AZrzm1jtkLBBgcXOAGREiL5j4kVxXHXIukXGeI5UXRPvqKRQbwW90FOh/u3Ozfkk9YDL
+         X0S0GT7Vvr55JxMx0iilGz8EnloP4FsONzLxjrNOrNX2sJgKgf41mw7OIybTuN5VZrSF
+         ZiMTXsY2YsZJZ9aQzkx9qfXQXJi36obY1EHSkCeQydpsbLgxkigcPJwInRhTwLxGVsOJ
+         0KQPtS6DSaDIGtqN4IHRDpKiXjbUYZWsAEnwqifGWOe8FXvQrF66HlQkOsQHyp69oW9U
+         4eyg==
+X-Gm-Message-State: AOAM531mfrNjTMsbQ+mG9ONe+7oz1GeXC2A42fjx40G9sAl+B+lcgkQ1
+        HpavUWw9bnA5R898jOm9fINdfDXiWA==
+X-Google-Smtp-Source: ABdhPJzX7pRO8egJ5JEFd1QYqY3meBNkQfkQAz4MY34/Zz8sNPdgaQK2ZYpFC5e/5IA9h/iYF7Yf0Q==
+X-Received: by 2002:a05:6870:a546:b0:e2:ddbe:bdd6 with SMTP id p6-20020a056870a54600b000e2ddbebdd6mr6811oal.77.1649962787668;
+        Thu, 14 Apr 2022 11:59:47 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id e22-20020a056870239600b000e2f0c69849sm995484oap.11.2022.04.14.11.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 11:59:47 -0700 (PDT)
+Received: (nullmailer pid 2441856 invoked by uid 1000);
+        Thu, 14 Apr 2022 18:59:45 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Cixi Geng <gengcixi@gmail.com>
+Cc:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org, sboyd@kernel.org,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
+        linux-kernel@vger.kernel.org, orsonzhai@gmail.com
+In-Reply-To: <20220414122657.526406-2-gengcixi@gmail.com>
+References: <20220414122657.526406-1-gengcixi@gmail.com> <20220414122657.526406-2-gengcixi@gmail.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+Date:   Thu, 14 Apr 2022 13:59:45 -0500
+Message-Id: <1649962785.225391.2441855.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/14/22 12:32 PM, Geert Uytterhoeven wrote:
-
-[...]
->>> Fix this issue by freeing the cpg when exiting the function in the
->>> error/normal path.
->>>
->>> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
->>> ---
->>> V1->V2: free both cpg&clks.
->>>
->>>  drivers/clk/renesas/clk-r8a73a4.c | 5 ++++-
->>>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->>    2 patches with the same name won't do -- you always need to include the chip name
->> part of the file name in the subject (in this case r8a73a4).
+On Thu, 14 Apr 2022 20:26:55 +0800, Cixi Geng wrote:
+> From: Cixi Geng <cixi.geng1@unisoc.com>
 > 
-> Oh, they were for multiple drivers?
-
-   I counted 3! :-)
-
-> I hadn't even noticed , as Gmail collapsed them all into the same thread...
-
-   Hm, they weren't actually posted in the same thread...
-
-> Gr{oetje,eeting}s,
+> Add a new bindings to describe ums512 clock compatible string.
 > 
->                         Geert
-[...]
+> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> ---
+>  .../bindings/clock/sprd,ums512-clk.yaml       | 108 ++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> 
 
-MBR, Sergey
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml:22:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml: properties:clock-names: {'minItems': 1, 'maxItems': 4, 'items': [{'const': 'ext-26m'}, {'const': 'ext-32k'}, {'const': 'ext-4m'}, {'const': 'rco-100m'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml: ignoring, error in schema: properties: clock-names
+Documentation/devicetree/bindings/clock/sprd,ums512-clk.example.dtb:0:0: /example-0/soc/clock-controller@20200000: failed to match any schema with compatible: ['sprd,ums512-ap-clk']
+Documentation/devicetree/bindings/clock/sprd,ums512-clk.example.dtb:0:0: /example-0/soc/syscon@20100000: failed to match any schema with compatible: ['sprd,ums512-glbregs', 'syscon', 'simple-mfd']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
