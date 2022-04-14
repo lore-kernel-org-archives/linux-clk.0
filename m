@@ -2,111 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27D1C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 12:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D9AC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 12:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239678AbiDNMaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 08:30:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S243374AbiDNMaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 08:30:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243348AbiDNM3W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 08:29:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B428D69A;
-        Thu, 14 Apr 2022 05:26:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E958B82938;
-        Thu, 14 Apr 2022 12:26:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D033C385A1;
-        Thu, 14 Apr 2022 12:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649939215;
-        bh=Bm7Q2ZnByE6GSEUiZhqmxSzL/BKHsqE5oxAj9ul5+wo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZMwU4DE3YXocQcCgSia+UsHiXnrwjYJYgwMnuIBAp+K+WBbtipcU2L5g+Siej6Kxn
-         X7LofKt9QOyjnegvTaiY7/y53qp0tvUAGoiq2XQrYFVrKOdxI6HkMqjeOYgVbJEWz+
-         hdwe+nDMp4MXEqbRYYU3oZtMbhBMsBxfaBCZE3RGamOQ5qCDBjkYyOdOeFlyTZcXqZ
-         ub6uhlrGxEU7O7C480uM1DU851I8xYMfbgK/3WNwb46fuOleWBQ2wSA5YqS0FmgA3E
-         apmerTJ5rlH96vO2KBC/7IG1ZtfrZ5IUwyPFaB2ULabHW5uvkX/1GsmodWY7pypASk
-         w3XfZaa8NEL7Q==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1neyYl-0006Fo-3g; Thu, 14 Apr 2022 14:26:51 +0200
-Date:   Thu, 14 Apr 2022 14:26:51 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] clk: qcom: regmap-mux: add pipe clk implementation
-Message-ID: <YlgTC5RdDXC3abrI@hovoldconsulting.com>
-References: <20220412193839.2545814-1-dmitry.baryshkov@linaro.org>
- <20220412193839.2545814-2-dmitry.baryshkov@linaro.org>
- <YlaUtCuMZZL4bM2U@hovoldconsulting.com>
- <82c6813c-fcff-5097-56e0-0cb7aac2eac2@linaro.org>
+        with ESMTP id S242775AbiDNMaM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 08:30:12 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5634E90CC6;
+        Thu, 14 Apr 2022 05:27:20 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id c12so4508799plr.6;
+        Thu, 14 Apr 2022 05:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hgmXgR00QIvN0EExWeBXD0io2j2TnCvQ61c8fzNW+rY=;
+        b=lBhx+rdb4hdC3YMcxjpgviIlzjH0B9ZCqf6Ct2MgxT6NghOvYjqU/940zldXEfAO19
+         znO6rFvRm5qAn4o3HeiO/V4nGgKVwz7szCyvQLz7t3izCfFxpwXGk8JcQ6MGD32qpPib
+         9dX0ACO7neSZP56wSm2/RKkt2YLUCWLoqY2zo3UPOcv0lZ0eWknBFoqwBLH/yiL6DmdG
+         bsYFyJP8IcPQKQGhhEFgLOwkD1H4eiYctXBaMR+VqANA5qQJUke0MQTS6A4sAlFyXKaT
+         GmgRKADylZasl7QhsHQ6e7ykXicekGuaUyQwpQaYbxz5VtYFQAnhx7h9EC1L1H0GYQXg
+         qSMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hgmXgR00QIvN0EExWeBXD0io2j2TnCvQ61c8fzNW+rY=;
+        b=SOtLp/61/dhu1HYa7LMDJJjfO/S+2IdwvRqHgMOqdHWJdVSr9vn+xVPxkdlspdpZpD
+         x65jimiydVbtP9PtchDjGBlgDBwg76n+N+emRY1PFg1mu0vtjpWbx9MTEt19c5SmJ1BL
+         0Fm72z6QfaQitMZN1yMia22DrX8sYxZCi9tHWMTmPOQHWN3WnvuiZzPicsGh2wHoM61T
+         +kXbUadqEvNaIsEFChX1rD45NN0r+bmzUWMMuoI/9RX6ymJsJ4o6W1khR6Rge2dFtqum
+         oi8g9TLGBvX11Sd9G13O/elRJuCWu+5oFlRi7l3dz0IISExYAD9q+UZ8EApjNCAoi5R4
+         XsbQ==
+X-Gm-Message-State: AOAM530k6dRqKHK4C/aVSA3QtwJVictcoWQ+kELwVlUk9jmCSzAD3ygW
+        RP7XZwWAy2g6QUqQbIgqRnHaOGhaVQA=
+X-Google-Smtp-Source: ABdhPJwaCAGXUNk5NBVP//O6IYwtnSgFoauuQgLqwkJQkCTYfcsq+wKr4HFi6STjucSyAflguiB0/w==
+X-Received: by 2002:a17:90b:1d11:b0:1cd:9d72:3f40 with SMTP id on17-20020a17090b1d1100b001cd9d723f40mr3442196pjb.99.1649939239780;
+        Thu, 14 Apr 2022 05:27:19 -0700 (PDT)
+Received: from tj10039pcu.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id pi2-20020a17090b1e4200b001c7b15928e0sm6265826pjb.23.2022.04.14.05.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 05:27:19 -0700 (PDT)
+From:   Cixi Geng <gengcixi@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/3] Add ums512 clocks and relative bindings file
+Date:   Thu, 14 Apr 2022 20:26:54 +0800
+Message-Id: <20220414122657.526406-1-gengcixi@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82c6813c-fcff-5097-56e0-0cb7aac2eac2@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 01:21:29AM +0300, Dmitry Baryshkov wrote:
-> On 13/04/2022 12:15, Johan Hovold wrote:
-> > On Tue, Apr 12, 2022 at 10:38:35PM +0300, Dmitry Baryshkov wrote:
-> >> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
-> >> muxes which must be parked to the "safe" source (bi_tcxo) when
-> >> corresponding GDSC is turned off and on again. Currently this is
-> >> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
-> >> clock. However the same code sequence should be applied in the
-> >> pcie-qcom endpoint, USB3 and UFS drivers.
+From: Cixi Geng <cixi.geng1@unisoc.com>
 
-> > The caching of the parent is broken since set_parent() is typically not
-> > called before enabling the clock.
-> > 
-> > This means that the above code will set the mux to its zero-initialised
-> > value, which currently only works by chance as the pipe clock config
-> > value happens to be zero.
-> > 
-> > For this to work generally, you'd also need to define also the
-> > (default/initial) non-safe parent for each mux. Handling handover from
-> > the bootloader might also be tricky.
-> 
-> It's not tricky at all. We can set stored_parent_cfg from gcc probe from 
-> function. Or set statically from the config. I'll probably do the latter.
+This patchset is add the UMS512 clocks support
 
-That means you're just ignoring the problem. How is hard coding the
-initial mux configuration in any way dealing with bootloader handover?
- 
-> > Furthermore, the current implementation appears to ignore locking and
-> > doesn't handle the case where set_parent() races with enable(). The
-> > former is protected by the prepare mutex and the latter by the enable
-> > spinlock and a driver that needs to serialise the two needs to handle
-> > that itself.
-> 
-> Since I'm trying to remove pipe_clk usage from pcie driver itself, there 
-> is just one user left - qmp phy. And while you are correct that there is 
-> a race, I think we can neglect that for now. Or shift enable/disable ops 
-> to prepare/unprepare, thus using the same mutex everywhere.
+v2 changes:
+  adjust description and add the "sprd,ums512-glbregs,syscon,simple-mfd"
+  compatibles to fix match failed logs in the dt_binding_check.
+  add the property license and copyright notice.
 
-Let's not add known broken code. Correctness first.
+Cixi Geng (3):
+  dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+  clk: sprd: Add dt-bindings include file for UMS512
+  clk: sprd: Add clocks support for UMS512
 
-Handling the muxing the prepare/unprepare might work. I even considered
-using those callbacks to let CCF know about the reparenting so that for
-example debugfs continues to reflect the actual state of things.
+ .../bindings/clock/sprd,ums512-clk.yaml       |  108 +
+ drivers/clk/sprd/Kconfig                      |    6 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/ums512-clk.c                 | 2199 +++++++++++++++++
+ include/dt-bindings/clock/sprd,ums512-clk.h   |  397 +++
+ 5 files changed, 2711 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+ create mode 100644 drivers/clk/sprd/ums512-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,ums512-clk.h
 
-But I'm still leaning towards this being a misguided endeavour as I've
-explained elsewhere.
+-- 
+2.25.1
 
-Johan
