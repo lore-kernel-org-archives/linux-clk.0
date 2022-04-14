@@ -2,69 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CEAC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 07:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B224AC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 09:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbiDNHLJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 03:11:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36356 "EHLO
+        id S239819AbiDNJbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 05:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240235AbiDNHLI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 03:11:08 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B0E5C48381
-        for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2022 00:08:36 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1174:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Thu, 14 Apr 2022 15:05:15 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Thu, 14 Apr 2022 15:06:12 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Thu, 14 Apr 2022 15:06:12 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v13 4/9] dt-bindings: clock: Add bindings for SP7021 clock
- driver
-Thread-Topic: [PATCH v13 4/9] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Index: AQHYTXFtZBGBuhiVAkyYeiqgxa8/hazs4N6AgAIgI/A=
-Date:   Thu, 14 Apr 2022 07:06:12 +0000
-Message-ID: <b1b85440f7d647a0adf014b091e31c10@cqplus1.com>
-References: <cover.1649659095.git.qinjian@cqplus1.com>
- <f8d5675d1bc32962af6379f78a171ed35b181ebc.1649659095.git.qinjian@cqplus1.com>
- <c2a7f2e0-1a21-bb0c-9221-c184cfaa3626@linaro.org>
-In-Reply-To: <c2a7f2e0-1a21-bb0c-9221-c184cfaa3626@linaro.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        with ESMTP id S241762AbiDNJbj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 05:31:39 -0400
+Received: from mxout03.lancloud.ru (mxout03.lancloud.ru [45.84.86.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED3365D5ED;
+        Thu, 14 Apr 2022 02:29:12 -0700 (PDT)
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru C51A620A19A5
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Subject: Re: [PATCH V2] clk: renesas: Fix memory leak of 'cpg'
+To:     Haowen Bai <baihaowen@meizu.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <2ed01eb3-ff46-425c-75dc-81729a5c30a8@omp.ru>
+Date:   Thu, 14 Apr 2022 12:29:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <1649837953-10984-1-git-send-email-baihaowen@meizu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
+ LFEX1907.lancloud.ru (fd00:f066::207)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQo+ID4gKyNpZm5kZWYgX0RUX0JJTkRJTkdTX0NMT0NLX1NVTlBMVVNfU1A3MDIxX0gNCj4gPiAr
-I2RlZmluZSBfRFRfQklORElOR1NfQ0xPQ0tfU1VOUExVU19TUDcwMjFfSA0KPiA+ICsNCj4gPiAr
-I2RlZmluZSBYVEFMICAgICAgICAgICAgMjcwMDAwMDANCj4gDQo+IFRoaXMgbG9va3MgbGlrZSBm
-cmVxdWVuY3kgd2hpY2ggdXN1YWxseSBkb2VzIG5vdCBiZWxvbmcgdG8gYmluZGluZ3MuIFdoeQ0K
-PiBkbyB5b3UgbmVlZCBpdCBoZXJlPw0KPiANCg0KT0ssIEknbGwgcmVtb3ZlIGl0Lg0K
+Hello!
+
+On 4/13/22 11:19 AM, Haowen Bai wrote:
+
+> Fix this issue by freeing the cpg when exiting the function in the
+> error/normal path.
+> 
+> Signed-off-by: Haowen Bai <baihaowen@meizu.com>
+> ---
+> V1->V2: free both cpg&clks.
+> 
+>  drivers/clk/renesas/clk-r8a73a4.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+
+   2 patches with the same name won't do -- you always need to include the chip name
+part of the file name in the subject (in this case r8a73a4).
+
+MBR, Sergey
