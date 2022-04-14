@@ -2,95 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2A9C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 18:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF55FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Apr 2022 22:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244585AbiDNTCP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Apr 2022 15:02:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
+        id S230023AbiDNWW0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Apr 2022 18:22:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237212AbiDNTCO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 15:02:14 -0400
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B363915C;
-        Thu, 14 Apr 2022 11:59:48 -0700 (PDT)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-e2fa360f6dso6198226fac.2;
-        Thu, 14 Apr 2022 11:59:48 -0700 (PDT)
+        with ESMTP id S231220AbiDNWW0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Apr 2022 18:22:26 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FA691ADB
+        for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2022 15:19:59 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id r18so7767834ljp.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 Apr 2022 15:19:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zVI2dfsgSOLO2htNz0upjB4yRACLNzu4k7rX6kKtzIg=;
+        b=kqmq64jm/5A9pFR4/LXTYueNq6Bn8uAfqB07LssUBsoLhvko3YMBOr8yIyudwJbD1W
+         MDzejUOBgLzhZxx4AkeMlScKofNmaQIfBbf9Z+CrC/zm7aCIgDpfaoLgOTq7h2jjPD65
+         nUJXhv491kuZFojQbc6b3nS5TNHB2cxV7id3J0zc9SRGlhXGQeeQOQadMVjy5pF/F48L
+         zS+OY75bt/Krdj3IbqmjrwU/y26ybcwV17WSUYz5vwkzt0HaAV1PF8yUV1N2lw1gAY/R
+         7UV+95H38/2+q6hqJAO3N6u37kaz7dvc94hhA8r7OVHuKHFLfiVrwKkdpiiGEp0JB3q8
+         R7Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=lZfkYDeAjm+6YQ8+2GjY/45c8G+URa8JyKyRL4TBTWg=;
-        b=eDnHQ9UBfY1agg27rgPGLcXvAQnk4WLl9MH+wUcuURBBPODgoe1MpkzBT0BpAQA1Av
-         AZrzm1jtkLBBgcXOAGREiL5j4kVxXHXIukXGeI5UXRPvqKRQbwW90FOh/u3Ozfkk9YDL
-         X0S0GT7Vvr55JxMx0iilGz8EnloP4FsONzLxjrNOrNX2sJgKgf41mw7OIybTuN5VZrSF
-         ZiMTXsY2YsZJZ9aQzkx9qfXQXJi36obY1EHSkCeQydpsbLgxkigcPJwInRhTwLxGVsOJ
-         0KQPtS6DSaDIGtqN4IHRDpKiXjbUYZWsAEnwqifGWOe8FXvQrF66HlQkOsQHyp69oW9U
-         4eyg==
-X-Gm-Message-State: AOAM531mfrNjTMsbQ+mG9ONe+7oz1GeXC2A42fjx40G9sAl+B+lcgkQ1
-        HpavUWw9bnA5R898jOm9fINdfDXiWA==
-X-Google-Smtp-Source: ABdhPJzX7pRO8egJ5JEFd1QYqY3meBNkQfkQAz4MY34/Zz8sNPdgaQK2ZYpFC5e/5IA9h/iYF7Yf0Q==
-X-Received: by 2002:a05:6870:a546:b0:e2:ddbe:bdd6 with SMTP id p6-20020a056870a54600b000e2ddbebdd6mr6811oal.77.1649962787668;
-        Thu, 14 Apr 2022 11:59:47 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e22-20020a056870239600b000e2f0c69849sm995484oap.11.2022.04.14.11.59.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zVI2dfsgSOLO2htNz0upjB4yRACLNzu4k7rX6kKtzIg=;
+        b=SbvQURxnZhDKJF0kpfpDqINe0G+povjS1E42uGs1d5+FdQ/zwsPigbXZJV7tjbNoh5
+         30peorEpH5srHqgFhtfRUm8pO8ZqwhWBisltn21tbZjo5kU9YnprxvtMpS1caui+CVYp
+         ia2r6/Sdh/ZSRx6NWgJdZMIU19h23E2uFvcJJWcZA/EX6kIfMdUkP9GAdytEbetowWpO
+         x28uJLudMkhSWBKuH9uRRXeC5d05gIjmIY2epPhO2Dqs7xPX7dqJ3/5h+/DsAF49lANV
+         xIDmsp/oaK4feYyS+nNMKrTQ5LYST+wtZPWP6g/8xji1szMMorAlznMZGSooZf6ZhOqb
+         pk6g==
+X-Gm-Message-State: AOAM530lXVvt88+LBig0sOBwfk4solq1ghXmq2/lhqyuIzFLjKmtqesY
+        2KxGTvSi4QAmFuQPRHcJSGFTRw==
+X-Google-Smtp-Source: ABdhPJzamfKnSI4hlcFuydynJdp6/1S6Ib/k1xTV14f+mbmvSYwTvkDYsIooirrsLT0sFrm7q88g0g==
+X-Received: by 2002:a2e:a4cc:0:b0:24b:652a:40a2 with SMTP id p12-20020a2ea4cc000000b0024b652a40a2mr2762615ljm.425.1649974798280;
+        Thu, 14 Apr 2022 15:19:58 -0700 (PDT)
+Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
+        by smtp.gmail.com with ESMTPSA id j18-20020a056512029200b0046b9ba1c0edsm125169lfp.224.2022.04.14.15.19.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 11:59:47 -0700 (PDT)
-Received: (nullmailer pid 2441856 invoked by uid 1000);
-        Thu, 14 Apr 2022 18:59:45 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Cixi Geng <gengcixi@gmail.com>
-Cc:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org, sboyd@kernel.org,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com,
-        linux-kernel@vger.kernel.org, orsonzhai@gmail.com
-In-Reply-To: <20220414122657.526406-2-gengcixi@gmail.com>
-References: <20220414122657.526406-1-gengcixi@gmail.com> <20220414122657.526406-2-gengcixi@gmail.com>
-Subject: Re: [PATCH V2 1/3] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
-Date:   Thu, 14 Apr 2022 13:59:45 -0500
-Message-Id: <1649962785.225391.2441855.nullmailer@robh.at.kernel.org>
+        Thu, 14 Apr 2022 15:19:57 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/5 v3] U8500 clkout clocks v3
+Date:   Fri, 15 Apr 2022 00:17:46 +0200
+Message-Id: <20220414221751.323525-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 14 Apr 2022 20:26:55 +0800, Cixi Geng wrote:
-> From: Cixi Geng <cixi.geng1@unisoc.com>
-> 
-> Add a new bindings to describe ums512 clock compatible string.
-> 
-> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> ---
->  .../bindings/clock/sprd,ums512-clk.yaml       | 108 ++++++++++++++++++
->  1 file changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> 
+This third iteration just fix a few small snags on the last
+patch and picks up Ulf's review tags.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The second iteration added patches that:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml:22:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+- Drops custom .is_enabled and .is_prepared implementations
+  for the U8500 PRCMU clocks.
+- Rewrite the PRCMU clocks to use clk_hw
+- Then adds the new clkout clocks in the same style
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml: properties:clock-names: {'minItems': 1, 'maxItems': 4, 'items': [{'const': 'ext-26m'}, {'const': 'ext-32k'}, {'const': 'ext-4m'}, {'const': 'rco-100m'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml: ignoring, error in schema: properties: clock-names
-Documentation/devicetree/bindings/clock/sprd,ums512-clk.example.dtb:0:0: /example-0/soc/clock-controller@20200000: failed to match any schema with compatible: ['sprd,ums512-ap-clk']
-Documentation/devicetree/bindings/clock/sprd,ums512-clk.example.dtb:0:0: /example-0/soc/syscon@20100000: failed to match any schema with compatible: ['sprd,ums512-glbregs', 'syscon', 'simple-mfd']
+Modernizing the PRCMU clock was necessary so the new clock
+would not look off.
 
-doc reference errors (make refcheckdocs):
+We can go on and fix the rest of the ux500 clocks to use
+clk_hw style registration on top of this series if there
+is desire.
 
-See https://patchwork.ozlabs.org/patch/
+Linus Walleij (5):
+  dt-bindings: clock: u8500: Add clkout clock bindings
+  clk: ux500: Drop .is_enabled state from PRCMU clocks
+  clk: ux500: Drop .is_prepared state from PRCMU clocks
+  clk: ux500: Rewrite PRCMU clocks to use clk_hw_*
+  clk: ux500: Implement the missing CLKOUT clocks
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+ .../bindings/clock/stericsson,u8500-clks.yaml |  57 +++
+ drivers/clk/ux500/clk-prcmu.c                 | 252 ++++++++-----
+ drivers/clk/ux500/clk.h                       |  70 ++--
+ drivers/clk/ux500/u8500_of_clk.c              | 350 ++++++++++--------
+ include/dt-bindings/clock/ste-db8500-clkout.h |  17 +
+ 5 files changed, 463 insertions(+), 283 deletions(-)
+ create mode 100644 include/dt-bindings/clock/ste-db8500-clkout.h
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+-- 
+2.35.1
 
