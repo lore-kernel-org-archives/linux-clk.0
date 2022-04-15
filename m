@@ -2,94 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E04EC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Apr 2022 07:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E5EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Apr 2022 08:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244611AbiDOHvK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Apr 2022 03:51:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34946 "EHLO
+        id S243477AbiDOIlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Apr 2022 04:41:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235361AbiDOHvJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Apr 2022 03:51:09 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D379DA1459;
-        Fri, 15 Apr 2022 00:48:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 82A1121618;
-        Fri, 15 Apr 2022 07:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650008920; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SHVQJFSF6barKXVP5eNQt8zwcx4jeHu5qFNnwwGnjLA=;
-        b=bcn2jl6FWieXGxHcV7o5ppZtKfOfaMtvzEtKXIERzHvWFxF5vGbAkofujHE/CN/4038/tM
-        GzcpzFui2ajY1PwNNEXSFQwsaIUNTnSL9yo/+n3+H8bKhk14at+r+DoIcfY89x9WcnPSGl
-        dqBECyh/gRHwYm2aDcgcLbwnR1wmZGc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650008920;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SHVQJFSF6barKXVP5eNQt8zwcx4jeHu5qFNnwwGnjLA=;
-        b=3II8MECqZB1GOOjxEcgbFSkk8JazJqH1Wxoxb7Yy3OdlG+YHsUCNpM//wx+ZTjgP0vB+1j
-        1WLpXYKoFJqonBDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6AD19139B3;
-        Fri, 15 Apr 2022 07:48:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id b51kGFgjWWIJDAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Fri, 15 Apr 2022 07:48:40 +0000
-Date:   Fri, 15 Apr 2022 10:48:39 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S230462AbiDOIlY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Apr 2022 04:41:24 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA39B644D;
+        Fri, 15 Apr 2022 01:38:54 -0700 (PDT)
+Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1N7RHv-1o053a1yXN-017pkv; Fri, 15 Apr 2022 10:38:39 +0200
+Message-ID: <117b7806-b394-7f8e-af4d-7db4d6108526@i2se.com>
+Date:   Fri, 15 Apr 2022 10:38:38 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
 Subject: Re: [PATCH v2 0/2] clk: bcm: rpi: Add support for two more clocks
-Message-ID: <20220415074839.5ma5n57rmhv7tk4s@suse>
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20220405082503.61041-1-iivanov@suse.de>
  <20220405090431.ktlybn62eueh7gqi@houat>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405090431.ktlybn62eueh7gqi@houat>
+ <20220415074839.5ma5n57rmhv7tk4s@suse>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220415074839.5ma5n57rmhv7tk4s@suse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:cZgK5sTZHfGRZeyxtgFg8pVkqJDjSp8tYu8rmtAorm2jijl5Dxl
+ VXBWtP/oHE875dzas7+qhjMrSVMjgS0+cxarXqmjVWR0I7J7K+oE9bf2PlzHxr75w+at4BM
+ ennNT9PZWMdrPzVg3zjxTOtB5WSdEMXNydOXEyFTDLP8eeWayusQkF4/SVN1BiqP+LgVz7D
+ tESLpDVKrrOl5AUYlmUGQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H8vQr8KjXGA=:WTzYYnsU7oX/1ocjDoO0as
+ YnaX6vcbca7piDsyA9FFDIDp9O4APmGVLfAHzDTtxBM6lKkxCwMuz2Iegh5VCPWbp6pekutKt
+ sShP2BN4ywHTxkbeq1R0jfoQTsveleJsMRnVMELk6DAQwlpSSX7/YpePpCDR/FuRYmJxtAFqx
+ GOXa2VcIIAyztjGy5io5Fer38AAjpF5MhuNBL5SluJDbNfPkhPH4OZNjEdlEr0e+VqKACurXb
+ 5euxQVjwqnTTYg+nHBv7KSRhLT7ahguCU5PFNt2FtMIsyEmSzLXviPy6MAOGQJOLWNhLite2y
+ C6F8Eg5jRDmONcNZm/U4K7L8vM28vDBmM/sVumsxvHNGZYxCMXFf/gqIg+n/VK/or3BuSCa6o
+ OVgRQ8B+j2ajvGPZMhbEcVi5000eRzCbxd+La1AuIN5YSkb7SMGs0QAnurV7t+U0nEW/evMce
+ ROM2d6pjhMPKLhPozC9bIzSvgs592IgxiKQgtnpWrjzPApWtbs2FCpMj2qMjIGKwzQHcQ5p6T
+ XW46Vy7bT+YqkaiC1NuMNjeIBrRnAc0lPQRNodzi0h6tDOWbLeHFeeTRSUFl3Tua5GFkLXNbn
+ cYciQxfNnbU+rS+BB8ZzLiGz1XzTIA5nM3V1/Iwj3/pMVb3DAImIzRMWNx5Bm16QUAw2GNSKD
+ XzSGTn0FLeR+Iul39QiZKQl9B7munn3HheqwuJgxzmw9qbduoWFT3UdEACNEHuJ44zD6buojo
+ 31vyxGkwdAFZEKIF
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Michael, Stephen,
+Hi Ivan,
 
-On 04-05 11:04, Maxime Ripard wrote:
-> Date: Tue, 5 Apr 2022 11:04:31 +0200
-> From: Maxime Ripard <maxime@cerno.tech>
-> To: "Ivan T. Ivanov" <iivanov@suse.de>
-> Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
->  <sboyd@kernel.org>, linux-clk@vger.kernel.org,
->  linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 0/2] clk: bcm: rpi: Add support for two more clocks
-> Message-ID: <20220405090431.ktlybn62eueh7gqi@houat>
-Tags: all clk linux me ring
-> 
-> On Tue, Apr 05, 2022 at 11:25:01AM +0300, Ivan T. Ivanov wrote:
-> > Add missing clock required by RPiVid video decoder and make HDMI
-> > pixel clock more reliable.
-> 
-> For both patches:
-> Acked-by: Maxime Ripard <maxime@cerno.tech>
-> 
+Am 15.04.22 um 09:48 schrieb Ivan T. Ivanov:
+> Hi Michael, Stephen,
+>
+> On 04-05 11:04, Maxime Ripard wrote:
+>> Date: Tue, 5 Apr 2022 11:04:31 +0200
+>> From: Maxime Ripard <maxime@cerno.tech>
+>> To: "Ivan T. Ivanov" <iivanov@suse.de>
+>> Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+>>   <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+>>   linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v2 0/2] clk: bcm: rpi: Add support for two more clocks
+>> Message-ID: <20220405090431.ktlybn62eueh7gqi@houat>
+> Tags: all clk linux me ring
+>> On Tue, Apr 05, 2022 at 11:25:01AM +0300, Ivan T. Ivanov wrote:
+>>> Add missing clock required by RPiVid video decoder and make HDMI
+>>> pixel clock more reliable.
+>> For both patches:
+>> Acked-by: Maxime Ripard <maxime@cerno.tech>
+>>
+> Any chance that this is merged in foreseeable future?
+> Do you have any comments or objections?
 
-Any chance that this is merged in foreseeable future?
-Do you have any comments or objections?
+could you please send a new version with all tags and consider the whole 
+audience based on this patch [1]?
 
-Thanks,
-Ivan
+Thanks
 
+[1] - 
+https://lore.kernel.org/linux-arm-kernel/20220409184017.114804-1-stefan.wahren@i2se.com/T/
 
+>
+> Thanks,
+> Ivan
+>
+>
