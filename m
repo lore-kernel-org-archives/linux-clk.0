@@ -2,101 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65688C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Apr 2022 17:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A217C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Apr 2022 19:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244504AbiDORmm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Apr 2022 13:42:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
+        id S1347847AbiDOTGd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Apr 2022 15:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243665AbiDORmg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Apr 2022 13:42:36 -0400
+        with ESMTP id S1347906AbiDOTGc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Apr 2022 15:06:32 -0400
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D2C5C369;
-        Fri, 15 Apr 2022 10:40:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4794DA09A;
+        Fri, 15 Apr 2022 12:04:02 -0700 (PDT)
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 23FHe20X130102;
-        Fri, 15 Apr 2022 12:40:02 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 23FJ3vih058700;
+        Fri, 15 Apr 2022 14:03:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1650044402;
-        bh=kaZ6Nxqiacg38fVMqIk7hdcjqcvJLSzaBMBHEm/y8Vc=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=itdH7JQUJ+w8UIxkM+bDMYJF9a3CWCIV1odpgLrX+a0x8l2+vdpGlVgu7Np8lqNL1
-         HNeBfhIehcN18VM1M0RGejhvbug2SkawhSNoBhaCVYNm0BPEHaIbNmG13jfDpr/kUZ
-         9/1lIbJvdh8cyUTsh/qZcqaE0Ogrs3CEYnblqoIA=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 23FHe11W098273
+        s=ti-com-17Q1; t=1650049437;
+        bh=BslSMdu73pVBgd3BSmFd1gMSPuoi9kEPCzNkUUPbvZY=;
+        h=From:To:CC:Subject:Date;
+        b=O7eblJeaB9nXFRpt898DRvzXhHgKQTU0AyDzfsOr0o9mnYTaOD1CVUh5Uf7NPOI7b
+         n+Ki0N5hYRIC1A3FRY6fZwJ/XKwAXs4iP9NhddcTLkU5gJDzDXfLUuvSNzOoMvyZ0o
+         bb1uAEXlvBxFQDntZkx2I/VY9d3g/95D0xaziKNQ=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 23FJ3vJT041636
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Apr 2022 12:40:01 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 15 Apr 2022 14:03:57 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 15
- Apr 2022 12:40:00 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2022 14:03:57 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Fri, 15 Apr 2022 12:40:00 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 23FHe0vM069602;
-        Fri, 15 Apr 2022 12:40:00 -0500
-Date:   Fri, 15 Apr 2022 12:40:00 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Georgi Vlaev <g-vlaev@ti.com>
-CC:     <ssantosh@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Add AM62 specific
- compatible
-Message-ID: <20220415174000.cnnmolsaktl7ghye@jurist>
-References: <20220415134142.12141-1-g-vlaev@ti.com>
- <20220415134142.12141-3-g-vlaev@ti.com>
+ Frontend Transport; Fri, 15 Apr 2022 14:03:57 -0500
+Received: from localhost.localdomain (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 23FJ3mfb067536;
+        Fri, 15 Apr 2022 14:03:49 -0500
+From:   Georgi Vlaev <g-vlaev@ti.com>
+To:     <ssantosh@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        Georgi Vlaev <g-vlaev@ti.com>
+Subject: [PATCH v2 0/2] clk: keystone: Add support for AM62 specific ewpm-tbclk
+Date:   Fri, 15 Apr 2022 22:03:41 +0300
+Message-ID: <20220415190343.6284-1-g-vlaev@ti.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20220415134142.12141-3-g-vlaev@ti.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16:41-20220415, Georgi Vlaev wrote:
-> Introduce AM62 specific compatible for EPWM time-base
-> sub-module clock. The time-base clock setup is identical
-> to AM64. The only difference is AM62 provides 3 time-base
-> clocks instead of the 9 found in AM64.
-> 
-> Signed-off-by: Georgi Vlaev <g-vlaev@ti.com>
-> Tested-by: Vignesh Raghavendra <vigneshr@ti.com>
+This patch series adds support for TI's AM62 specific time-based
+submodule clock (tbclk). On AM62 SoCs we have to provide 3 tbclk
+instances, as the SoC features 3 EPWM modules.
 
-Reviewed-by: Nishanth Menon <nm@ti.com>
+Changes:
+v1 -> v2: Reorder the patches with dt-bindings patch first.
+
+Georgi Vlaev (2):
+  dt-bindings: clock: ehrpwm: Add AM62 specific compatible
+  clk: keystone: syscon-clk: Add support for AM62 epwm-tbclk
+
+ .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml         |  1 +
+ drivers/clk/keystone/syscon-clk.c                     | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
 
-That said, please re-org the patches. Bindings come before the driver
-changes :)
-
-> ---
->  .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml         | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> index 9b537bc876b5..66765116aff5 100644
-> --- a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> @@ -15,6 +15,7 @@ properties:
->        - enum:
->            - ti,am654-ehrpwm-tbclk
->            - ti,am64-epwm-tbclk
-> +          - ti,am62-epwm-tbclk
->        - const: syscon
->  
->    "#clock-cells":
-> -- 
-> 2.30.2
-> 
-
+base-commit: ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+2.30.2
+
