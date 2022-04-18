@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2D6C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 12:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81781C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 12:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238040AbiDRMOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 08:14:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41770 "EHLO
+        id S237557AbiDRMXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 08:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237456AbiDRMOR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 08:14:17 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 694F31A824
-        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:11:38 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id l7so26542923ejn.2
-        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:11:38 -0700 (PDT)
+        with ESMTP id S238844AbiDRMWx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 08:22:53 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2411F600
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:18:23 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id g18so26498389ejc.10
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:18:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=+Nbh/Prc/5H/cORCat6vWbX6y9/y12F3+R8EiMn4z8U=;
-        b=Dm4XMjPYCtdWA3+pMzuuvBgBW44TWQH3InrfQd1a0hq7Ob49UlvwiCHAN4ZWvJ2y2q
-         +yzvclbmmfLi8ARs9lokw+4HyAR4OfObvE+VJm1/QHMoG8/6c73qAkgTz3aC8v29MHz7
-         qVaiWh5oclYzdnwqFl/v0Kdtyjc33wAKTtZBwPgH+dP75Zei0myGjOASKfxImNlyCHXi
-         x6yFw94J3CaPW2OBnqLltUmOjDHvVj9PyIdhil2JglCu/pso0MDmodEaDLL0QCVnq2AB
-         NZMS5jHhb5h4lNtVobaLz4MrJm3uiX64/3mkg2BeGQG7KiQC50PvFPOt3j1FcgFhI71w
-         ur7A==
+        bh=304FwvbODPc/e7NTdlGUu0OxXKV91QMvJtVzbIwOzsY=;
+        b=oauAcvfa+/M3D5189r4makzPKYi0gCRiGm46EFxvtnJHKSzGdOdw+IekjUokWg84mc
+         /rr5jvl3u5ivgV3bvm3wQyLnaP5CfC36SOlsJU4Wevk5/RREie3FSqKEDgZS1TmOWAxH
+         aJEwSBcXIiX0WBv/QSZqjCivrgFhZLNODCv9X4f2om5D3JhiJp87qgRGS7DMYfYcTUSQ
+         pcoco8zBK29ToYbxN7NYkAzgTqL/G8njWL3GcEqAKChlRSwyFxORKmBbLMb0wJ42rvSS
+         k5RX1MVZkQ5ZakdB2Tomatx5c2GrMwJubXZQwEVZV9Di+0O3WSTNWPBWRoz+8B+RSpxs
+         +jFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=+Nbh/Prc/5H/cORCat6vWbX6y9/y12F3+R8EiMn4z8U=;
-        b=m3aU7NoBltYrVJs/vk4WOfOmjG2IPcU0W2Jmg+xJ4XQTqvktDiwkN//wZcc1DLf+y0
-         LByyuF71EBNma0vtEqm7wGx8IXpMhXqRZZzLF0x2QEZqkoObSH3HjfojPCXdDPChWtHR
-         2Gl7zGQ3m307dCQ8QWt38+WNR3F9SP3TZAZL3f7Aounwv75k+llehLOWB+hSPMt7lPy9
-         qbSY5Cx+2cebb2ASRgipbAR0W0DqEE+aNicQxTDRsgMoPD6bSOb25rM0HgzNgzUaFVKs
-         /ln4kvving8ogReQRevdGgxpuO33vGoqZv2jcITveo294KQI2pGQAOhWRN+P3HuEmyCp
-         1nLQ==
-X-Gm-Message-State: AOAM532yHG8P4PRGM4Pq3S/Th7PyHfNe54BxYcgfKnk62kvLpiYb1ICo
-        Y+y2mtGygTo7gn10f5UA102Hdw==
-X-Google-Smtp-Source: ABdhPJxwyW9e6YDW1vaDtAloi25ghlPcrr65ZHDnvPjhycYnJSWeOGX1Kex17Bi6It3cYwT7mCnGZA==
-X-Received: by 2002:a17:907:60c9:b0:6e8:ae9e:d052 with SMTP id hv9-20020a17090760c900b006e8ae9ed052mr8666429ejc.628.1650283896988;
-        Mon, 18 Apr 2022 05:11:36 -0700 (PDT)
+        bh=304FwvbODPc/e7NTdlGUu0OxXKV91QMvJtVzbIwOzsY=;
+        b=kg/df13X2ubckD6pGdl+5i+etfikM3LQUuTrSwZvevxEx0B4vyb2Dx+RguYS9+cC03
+         qlUxiagAmNEEsTYR/vVijzuxHg50DWdf0NTrAm1qJN4JREE0typHdCXTCNIEdKk9M4US
+         xdnFmTUXcgMQkoKjwg1+OtMPXMntQwepYi6caDwDXsiOfVG1XN1pc+tXHEjo268J5d0B
+         8FzMjOsWUJStwdrtN++WQl+u5FdeNPsuLAstw0jlhQvRupEz1v0B3jGBr4leSfpzx5cb
+         rEY4bH7y6pLBU3wGemFRyLjUTlIbnkH22gl3nW4ZO0gzvUCvU//o/LAf8iAilmxfXHUT
+         ZJ/w==
+X-Gm-Message-State: AOAM530xUpXvVdrNE5hkUBfOtuxrFnl8t3SeyzEOjC0D+3sC+XRNSNKZ
+        siWFalX1Snp8/0Vm0g6XfBwttQ==
+X-Google-Smtp-Source: ABdhPJwitUmBeZrL4/JQi7iDB4R8V82XjKuvEHdTLZYkZ4ZYC6c9hFCwam2fEu49tYxcY++zvLSjng==
+X-Received: by 2002:a17:907:7206:b0:6ef:b47c:e5ec with SMTP id dr6-20020a170907720600b006efb47ce5ecmr3565212ejc.351.1650284301960;
+        Mon, 18 Apr 2022 05:18:21 -0700 (PDT)
 Received: from [192.168.0.217] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h9-20020aa7c949000000b0041b4d8ae50csm6861903edt.34.2022.04.18.05.11.35
+        by smtp.gmail.com with ESMTPSA id h23-20020a0564020e9700b00420fff23180sm6441720eda.41.2022.04.18.05.18.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Apr 2022 05:11:36 -0700 (PDT)
-Message-ID: <fd9316a6-7df6-e1fa-50dc-ff50934afb5c@linaro.org>
-Date:   Mon, 18 Apr 2022 14:11:35 +0200
+        Mon, 18 Apr 2022 05:18:21 -0700 (PDT)
+Message-ID: <2f8d2f6a-32dc-15cc-321c-f75721edf8a2@linaro.org>
+Date:   Mon, 18 Apr 2022 14:18:20 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v3 5/5] dt-bindings: arm: Add initial bindings for Nuvoton
- Platform
+Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Document MA35D1 clock
+ controller bindings
 Content-Language: en-US
 To:     Jacky Huang <ychuang3@nuvoton.com>, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -63,9 +63,9 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
         arnd@arndb.de, olof@lixom.net, will@kernel.org, soc@kernel.org,
         cfli0@nuvoton.com
 References: <20220418082738.11301-1-ychuang3@nuvoton.com>
- <20220418082738.11301-6-ychuang3@nuvoton.com>
+ <20220418082738.11301-3-ychuang3@nuvoton.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220418082738.11301-6-ychuang3@nuvoton.com>
+In-Reply-To: <20220418082738.11301-3-ychuang3@nuvoton.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -73,21 +73,105 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 18/04/2022 10:27, Jacky Huang wrote:
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - nuvoton,ma35d1
-> +          - nuvoton,ma35d1-evb
-> +          - nuvoton,ma35d1-iot
-> +          - nuvoton,ma35d1-som512
-> +          - nuvoton,ma35d1-som1g
+> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
+> 
 
-This does not match your DTS and does not look reasonable (SoC
-compatible should not be part of this enum). Check some other board
-bindings for examples.
+You skipped the review tag, so I assume because of amount of changes.
+Usually it is nice to mention it...
+
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> ---
+>  .../bindings/clock/nuvoton,ma35d1-clk.yaml    | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+> new file mode 100644
+> index 000000000000..d0d37c5e84af
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/nuvoton,ma35d1-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Chi-Fang Li <cfli0@nuvoton.com>
+> +  - Jacky Huang <ychuang3@nuvoton.com>
+> +
+> +description: |
+> +  The MA35D1 clock controller generates clocks for the whole chip,
+> +  including system clocks and all peripheral clocks.
+> +
+> +  See also:
+> +    include/dt-bindings/clock/ma35d1-clk.h
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  assigned-clocks:
+
+What about clocks? This depends on clocks. What clocks do you want to
+assign if they are not an input to the device?
+
+> +    minItems: 5
+> +    maxItems: 5
+
+This is different than before. minItems should not be here.
+
+Why do you need assigned-clocks in the binding at all?
+
+> +
+> +  assigned-clock-rates:
+> +    minItems: 5
+> +    maxItems: 5
+> +
+> +  nuvoton,clk-pll-mode:
+> +    A list of PLL operation mode corresponding to DDRPLL, APLL, EPLL,
+> +    and VPLL in sequential.
+
+This does not look like a binding which was tested. Read
+"writing-schema" and test your bindings.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 5
+
+No need for minItems.
+
+> +    maxItems: 5
+> +    items:
+> +      enum: [ 0, 1, 2 ]
+
+You need to describe the values in description, what's their meaning.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+> +
+> +    clk: clock-controller@40460200 {
+> +        compatible = "nuvoton,ma35d1-clk";
+> +        reg = <0x0 0x40460200 0x0 0x100>;
+> +        #clock-cells = <1>;
+> +    };
+> +...
 
 
 Best regards,
