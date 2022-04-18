@@ -2,156 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 863B6C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 11:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2490C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 11:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235399AbiDRLkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 07:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45320 "EHLO
+        id S237923AbiDRL5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 07:57:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234797AbiDRLkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 07:40:42 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FBF1571C;
-        Mon, 18 Apr 2022 04:38:03 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7FA9B1F74E;
-        Mon, 18 Apr 2022 11:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650281882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TbRknrTjqcZQLj9bQONGiVyMtqLOj4pkBWNrFhAEU3M=;
-        b=TevqHiPDO5sDzTMD9KoJV7kCn9asimT+v60nKh0cpf+/BvaY15cK4/J+7zWSSQ+evR+DZ5
-        8vvIo4R3TYjA8PIQDaOXu2c2U3M/ejdyKNP7x0UVkj+xjko8/w6OZhPVVth9rjNHIiKmEM
-        1TyzqKUqEsHEI3puTYJXcYqhtcuwzPo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650281882;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TbRknrTjqcZQLj9bQONGiVyMtqLOj4pkBWNrFhAEU3M=;
-        b=YxZ/OdyX/3fSMyny6Ud4835gtkMzpUaWKFFO81IUzfRn+3wEQlOSju3KvZW5I9QQBcYsbH
-        /kIkx4/LWOJsnHAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F4DE13A9B;
-        Mon, 18 Apr 2022 11:38:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id bBPVFppNXWJYHAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Mon, 18 Apr 2022 11:38:02 +0000
-Date:   Mon, 18 Apr 2022 14:38:01 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
+        with ESMTP id S229823AbiDRL5S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 07:57:18 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70084.outbound.protection.outlook.com [40.107.7.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F176301;
+        Mon, 18 Apr 2022 04:54:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j9zmhEGTezNdhXPjYVwEhHZJ5cqflOF1WDOGGmArJT4rFJZctwwTKzd1II4BifM5hybpSa7oJ5SoBuX1VJOkgw2Op5wY8kA+kUFD+ovU4ndgCkI4bgOHdx6simPzTKE4Ps9+UgDd91c0gj9eLAyPMDSRAwdThEIpeCc1Knwz3B08f8yLS5kcPDPG9+PfX7Aomm7u6aY6yr3spX46hP198bIa1Ey6fvwTAGQ1/HsPjul2HIpJYkZ8AiuWf7tFFDR5ksI0QBHFrKBa2vtp0RWIGMJTcGeqw2Bzy8WE6R1mAwVWtu2JdtK2EXXiL6G3trAgy9tmOJmyJ+nrYJervxwP3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QaQ14GZone6JpFMyVvqJCb9nZcMp/GXcGnFd6Zda4hA=;
+ b=mdj/2V3GX6sN8cC0FmPqwYjQW0s7Ydn5k8VSk9V6TsaN+88HTxJwRzQVy/I/uKBbEpTZiDgTIJJC/7bIEjAnzc/WZbsnvgVW7qru4zYC1kUPJQBry0oyv3Li2WFLQrDeJiM9PlJlJSLJ7dlDfC7CDgZ0oWTAGh6DaiWDjoBnltVNNT2z0DO/Ez5hSsqoeYp4cisA33oTnGwGSP5Erf8/jSETMv1VnrmoZThcf2wB543WBnZknO9YarDo6K5hbBwjGr8CIQmQ33hLQI3eMk2ATTJfa8Ky27QJWVXMWm2u2oqKYm/9BWJGRKzrqiSLmkTpaVLquKuxmzt/WbEBsYo8oQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QaQ14GZone6JpFMyVvqJCb9nZcMp/GXcGnFd6Zda4hA=;
+ b=BBWr4wxIgJ1vuwjYKCXfCtkRqljxiYZ3jezBS1Bkw3CTvDQ8ogQR+pc/ISW0+a0crkr8bqMC4xZgxDBZ1fSgo988lIXmz+SRtB1dfH1/ec5IvCjeuJ+viu0dmG+7dmSHKej0XvA3YgA8Rzo3xCESwd56s8byQSCnbp7QfCjwVLk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by DU0PR04MB9273.eurprd04.prod.outlook.com (2603:10a6:10:354::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.25; Mon, 18 Apr
+ 2022 11:54:36 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::a9d1:199:574b:502f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::a9d1:199:574b:502f%6]) with mapi id 15.20.5164.025; Mon, 18 Apr 2022
+ 11:54:36 +0000
+Date:   Mon, 18 Apr 2022 14:54:34 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Miaoqian Lin <linmq006@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
-Message-ID: <20220418113801.uree7rvkzxpiwyni@suse>
-References: <20220404125113.80239-1-iivanov@suse.de>
- <20220414105656.qt52zmr5vjmjdcxc@suse>
- <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
- <20220418110516.s7jxsfa3jl7aagrf@suse>
- <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Subject: Re: [PATCH] clk: imx: scu: Fix pm_runtime_get_sync() error checking
+Message-ID: <Yl1Rege1GhPwwU6n@abelvesa>
+References: <20220412065719.17735-1-linmq006@gmail.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
+In-Reply-To: <20220412065719.17735-1-linmq006@gmail.com>
+X-ClientProxiedBy: VI1PR0202CA0034.eurprd02.prod.outlook.com
+ (2603:10a6:803:14::47) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ac1aa0aa-f560-40c9-76e0-08da2132360a
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9273:EE_
+X-Microsoft-Antispam-PRVS: <DU0PR04MB9273D8C3CC790E3407D88E39F6F39@DU0PR04MB9273.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: e/xCcXQNUC1cJo1y9CnfLOL3Z0lwG8p0EazTD63MkGw/pgLn8s3ihCCOqKPQYAEJPjJAzykvx8pR5pO78VGPzUxM8zdzo4DZDsp9FaURseWDMzanJ0ehDNNvMj+fSCeKcqK4Jr4hy6YRbwO8xkuhNAmN4zflenLDUAEextqgBCw3I45GemtiTrfTfWjwfJo3kMWE0ZSqWd9jrUFCxrXmYpEQcIb1SN2QrsUA1k4jWhS9x2gG8YNh2QGXgN0g5qgOpZ/A/8kwrVXIcJpeEwsvZULdgg7Xr9/sjWvZ9IZKynzDk2Cwobx7wH1YcT/+3RvDYlzOrIW2awQcu/OAXRsomQK2bmfo0IrLpUxVJE3girO1tf6eCtwdxFkKR5NqDqiip6TH6STC7Vkk8AqU9Hwviwcdstabym4Tcsj5jPIlq0Og7efwsz5yLBmjaQ/Rzx7eMMlj2TkYdP3xfncu3mnoMLEbOyWgcXifqu4szS45y9WTYu9o4PiD3k09zm3g1rGfk/9va/YLdcHpDZ6+F/d+V+Gfpz7ZDvwxxHYQLK3vEbd6h2rwHchL4FftEC27I61qut3VpirnBPJEDbLD2KvMcD/nYHesd/KRhFrpsovTnwIlrwPu/bQ512x8rkXuyurgXGqvKWrfiUqEhVFEm8BMfvtyfdOEdj/EWEPORW5ujIcdy2xafsLDNeR41d9uAp0wPPFcc1B51MnPReZqzGo6FA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(52116002)(66946007)(66476007)(54906003)(66556008)(4326008)(8676002)(6916009)(6512007)(8936002)(4744005)(6506007)(9686003)(2906002)(33716001)(86362001)(53546011)(38350700002)(316002)(38100700002)(83380400001)(26005)(5660300002)(7416002)(508600001)(186003)(6486002)(44832011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VX5H0kd9fLAti0HjGNwOr23JctCz/8/MUT1N0R0db6c7WT6jzOBCFL0Xfiqx?=
+ =?us-ascii?Q?UHtz0tYWYIcAM1uBt8ZS3DKiADzt0mPbcJa4m4Iy2LeNFMCYxw3ncfAWfPX8?=
+ =?us-ascii?Q?tKZCeNsWh6Rsu5a5qQ6QrXQibtB+Zy2YjmoKVHltcZNV5gxAqFFA/bYT1xfK?=
+ =?us-ascii?Q?tnR/EtmKl16P4LxKDwC7oscaDmf+0QvyVkO3aqVbUsM0o8gM2Ri9boRREsEu?=
+ =?us-ascii?Q?1A5sBGy7ndJQOUWWvmnZCDAtNNuqRuQ60ZvNVOQ3CdfrgzrzMdhYjwRykZpe?=
+ =?us-ascii?Q?R6V1HTe9yuHSYx5X0ZMc24bXoFDrjvUNT2+Vt2JQckFprndJGYb38/n8TxNh?=
+ =?us-ascii?Q?4bqSN0xDDrwhnvkcSI+VRSevoXxRLW6dnkEFrqqdaXNY+zRl6qM9uWq2dzwq?=
+ =?us-ascii?Q?P0LnZEWJFGI06y6VGigE6nDwdJsAoV2wFiszZvimUCtX/iyzzzhTF7rjHXxq?=
+ =?us-ascii?Q?BxmS/A4qCx1/yRSAGFDvKADigdHmWgWJHSADqkRTi9cxsV85WZJ6aWEkqDhW?=
+ =?us-ascii?Q?S65U3MuGRS8njG3VtfTdqhnQsrGjruLjmrPkOs0//I2SjVOTSEjIU3XK6TRg?=
+ =?us-ascii?Q?e5D+/bAc4ow4nsqYdnQanLVbVaZyw5vlCTnQw+qV7D+PqupewQOSAG+QU50W?=
+ =?us-ascii?Q?EC4sGjRldrifHKLy0/45JALMzore1tkdq5jVW+EgLJHk2bZXF1Pe323KiCmH?=
+ =?us-ascii?Q?8+KheyfsfsEFFtZVBs96lecAuSXyVnbtf4LFQmIJmk8CUV/IeefC9XZk2sWc?=
+ =?us-ascii?Q?lc7iK+kb9wBTv8u6B7Ws0AR/Jl38tp+nO8iBQHRS9DvkR7Hb32svnymiegEV?=
+ =?us-ascii?Q?YWdiYgCxL9Qwo5m1ObYMWgVVQx+i1tITeJE3yG6sRDmY0gMFtEM4RpJmqipc?=
+ =?us-ascii?Q?ez0kuZJcUoysMhtW68WouuDuQpCkJ3GrdvIQqOk6qO0XgRRa1FIfVT5fxoyu?=
+ =?us-ascii?Q?3pIpb7jJYSEM2JTCQIBMwIZG/7dk8zFJIaI6IUFdtrCuVIplAqZBiZF7mZKM?=
+ =?us-ascii?Q?jViGHHGr0AOaLZg02GTy0SnJicOsSnLzySGtjmfn1t3pAm4rajRT52nl7n65?=
+ =?us-ascii?Q?oZJ9qc0Tl9eee6GdxoxfRF2OZ8cnLDD+KJARL6ahgdVMVCSWkJ+TCAWp9KR6?=
+ =?us-ascii?Q?CoNbIJl7GSN70VfLKYASNMzjt4HCJEXPu+xWvxLoxieiino9onGBEGhSG3i7?=
+ =?us-ascii?Q?l1AR63xXp5lh5RlatW3vZG75gv3dB9M7bgter6oX88IoWH1wcaONeOC0ETj3?=
+ =?us-ascii?Q?gk3RQF+MogytFR/lfY5FtHZmBnZwan5+Sclrh6VP1rkfqigc+A3tCzxgTIE7?=
+ =?us-ascii?Q?2BLOGC61ILNNF0r9yW3LkoXzg5LkFxAEs306iGmMJkIralQfZlwT5nE3Gbgw?=
+ =?us-ascii?Q?zc6XW3j8nf2Cl+eVe8uJAC4WpqYLmJKTbPvenATabS+zrUJT+GcMyz1ZmHWU?=
+ =?us-ascii?Q?Mg5fPW+lm1GJsVKuXP1SrlgJu25mjlH4eaKuLlLrx9+zMDyApJ9O/ElUL54+?=
+ =?us-ascii?Q?wHwRGK7l/JUWqSiFzuOBHP81MR5tECkMLmVYyl99T53hnjywqkuM7IMUHV3X?=
+ =?us-ascii?Q?6uvFiabXFG+TQNz8rM+ftRJHrp0lvfi1P0zi7irn9NZso5jqiVWEd/OWhj+b?=
+ =?us-ascii?Q?yevMvTbaggd+Gr/yqphH6AlyniJeCSuwgmIrsxHd4S7TrD6xrWb9+k61eEL0?=
+ =?us-ascii?Q?U59soDVzKzQxpYgeldN2YVvrBeEvXztxcfalN9/FX61Izd8Y4fgU9NmOCjSF?=
+ =?us-ascii?Q?QQJT+1o3yA=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac1aa0aa-f560-40c9-76e0-08da2132360a
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2022 11:54:36.6801
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yLoCrNXLCI1k0t7WUbrGvwuixcglM7OKJDMxGHrZWG794ozxK1gzLHVzLshwfeiMw+QgFUfC5Eh5pOjDjtuB0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9273
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04-18 13:22, Stefan Wahren wrote:
-> 
-> Hi Ivan,
-> 
-> Am 18.04.22 um 13:05 schrieb Ivan T. Ivanov:
-> > Hi Stefan,
-> > 
-> > On 04-15 10:52, Stefan Wahren wrote:
-> > > Hi Ivan,
-> > > 
-> > > Am 14.04.22 um 12:56 schrieb Ivan T. Ivanov:
-> > > > Hi Stefan,
-> > > > 
-> > > > Please, could you take a look into following patch?
-> > > yes, but i cannot give a technical review. But from my gut feeling this
-> > > doesn't look really elegant to me.
-> > > > Thanks!
-> > > > Ivan
-> > > > 
-> > > > On 04-04 15:51, Ivan T. Ivanov wrote:
-> > > > > Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
-> > > > > Message-Id: <20220404125113.80239-1-iivanov@suse.de>
-> > > > > 
-> > > > > The UART clock is initialised to be as close to the requested
-> > > > > frequency as possible without exceeding it. Now that there is a
-> > > > > clock manager that returns the actual frequencies, an expected
-> > > > > 48MHz clock is reported as 47999625. If the requested baudrate
-> > > > > == requested clock/16, there is no headroom and the slight
-> > > > > reduction in actual clock rate results in failure.
-> > > > > 
-> > > > > If increasing a clock by less than 0.1% changes it from ..999..
-> > > > > to ..000.., round it up.
-> > > Based on this commit message this looks like a fix / workaround for an
-> > > issue. It would be very helpful to know:
-> > > 
-> > > What issue should be fixed?
-> > > 
-> > > Why is it fixed here and not in the UART driver for instance?
-> > The UART driver is amba-pl011. Original fix, see below Github link,
-> > was inside pl011 module, but somehow it didn't look as the right
-> > place either. Beside that this rounding function is not exactly
-> > perfect for all possible clock values. So I deiced to move the hack
-> > to the platform which actually need it.
-> thanks for your explanation. These are import information which belongs in
-> the commit log, because the motivation and the affected UART is very
-> important.
-> > 
-> > > In case it fixes a regression, a Fixes tag should be necessary.
-> > I found the issue because it was reported that RPi3[1] and RPi Zero 2W
-> > boards have issues with the Bluetooth. So it turns out that when
-> > switching from initial to operation speed host and device no longer
-> > can talk each other because host uses incorrect baud rate.
-> 
-> Now i remember this issue, for the mainline kernel we decide to workaround
-> the issue by lowering the BT baudrate to 2000000 baud.
+On 22-04-12 06:57:18, Miaoqian Lin wrote:
+> If the device is already in a runtime PM enabled state
+> pm_runtime_get_sync() will return 1, so a test for negative
+> value should be used to check for errors.
+>
+> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 
-I have workaranded this the same, at first, but then decided to look at
-vendor tree and voilà!
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-> I didn't investigate
-> the issue further, but your approach is a better solution.
-> 
-> Do you use the mainline DTS or the vendor DTS to see this issue?
-> 
-
-For (open)SUSE we use downstream DTS.
-
-Do you think that if I put better description in commit message fix will
-be more acceptable. Or if someone could suggest anything else I am open
-to discussion.
-
-Regards,
-Ivan
-
+> ---
+>  drivers/clk/imx/clk-scu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+> index 083da31dc3ea..18c6190eeffd 100644
+> --- a/drivers/clk/imx/clk-scu.c
+> +++ b/drivers/clk/imx/clk-scu.c
+> @@ -529,7 +529,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+>  		pm_runtime_enable(dev);
+>
+>  		ret = pm_runtime_get_sync(dev);
+> -		if (ret) {
+> +		if (ret < 0) {
+>  			pm_genpd_remove_device(dev);
+>  			pm_runtime_disable(dev);
+>  			return ret;
+> --
+> 2.17.1
+>
