@@ -2,147 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2490C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 11:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD2FC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 12:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237923AbiDRL5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 07:57:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55902 "EHLO
+        id S236400AbiDRMMV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 08:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbiDRL5S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 07:57:18 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-eopbgr70084.outbound.protection.outlook.com [40.107.7.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F176301;
-        Mon, 18 Apr 2022 04:54:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j9zmhEGTezNdhXPjYVwEhHZJ5cqflOF1WDOGGmArJT4rFJZctwwTKzd1II4BifM5hybpSa7oJ5SoBuX1VJOkgw2Op5wY8kA+kUFD+ovU4ndgCkI4bgOHdx6simPzTKE4Ps9+UgDd91c0gj9eLAyPMDSRAwdThEIpeCc1Knwz3B08f8yLS5kcPDPG9+PfX7Aomm7u6aY6yr3spX46hP198bIa1Ey6fvwTAGQ1/HsPjul2HIpJYkZ8AiuWf7tFFDR5ksI0QBHFrKBa2vtp0RWIGMJTcGeqw2Bzy8WE6R1mAwVWtu2JdtK2EXXiL6G3trAgy9tmOJmyJ+nrYJervxwP3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QaQ14GZone6JpFMyVvqJCb9nZcMp/GXcGnFd6Zda4hA=;
- b=mdj/2V3GX6sN8cC0FmPqwYjQW0s7Ydn5k8VSk9V6TsaN+88HTxJwRzQVy/I/uKBbEpTZiDgTIJJC/7bIEjAnzc/WZbsnvgVW7qru4zYC1kUPJQBry0oyv3Li2WFLQrDeJiM9PlJlJSLJ7dlDfC7CDgZ0oWTAGh6DaiWDjoBnltVNNT2z0DO/Ez5hSsqoeYp4cisA33oTnGwGSP5Erf8/jSETMv1VnrmoZThcf2wB543WBnZknO9YarDo6K5hbBwjGr8CIQmQ33hLQI3eMk2ATTJfa8Ky27QJWVXMWm2u2oqKYm/9BWJGRKzrqiSLmkTpaVLquKuxmzt/WbEBsYo8oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QaQ14GZone6JpFMyVvqJCb9nZcMp/GXcGnFd6Zda4hA=;
- b=BBWr4wxIgJ1vuwjYKCXfCtkRqljxiYZ3jezBS1Bkw3CTvDQ8ogQR+pc/ISW0+a0crkr8bqMC4xZgxDBZ1fSgo988lIXmz+SRtB1dfH1/ec5IvCjeuJ+viu0dmG+7dmSHKej0XvA3YgA8Rzo3xCESwd56s8byQSCnbp7QfCjwVLk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by DU0PR04MB9273.eurprd04.prod.outlook.com (2603:10a6:10:354::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.25; Mon, 18 Apr
- 2022 11:54:36 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::a9d1:199:574b:502f%6]) with mapi id 15.20.5164.025; Mon, 18 Apr 2022
- 11:54:36 +0000
-Date:   Mon, 18 Apr 2022 14:54:34 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Miaoqian Lin <linmq006@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: scu: Fix pm_runtime_get_sync() error checking
-Message-ID: <Yl1Rege1GhPwwU6n@abelvesa>
-References: <20220412065719.17735-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220412065719.17735-1-linmq006@gmail.com>
-X-ClientProxiedBy: VI1PR0202CA0034.eurprd02.prod.outlook.com
- (2603:10a6:803:14::47) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
+        with ESMTP id S231506AbiDRMMR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 08:12:17 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B7F1929F
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:09:34 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id c6so17223034edn.8
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 05:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=SSv/kGw/sPtJ7xffy1Sqnr1P6e8jX6vTWYRNPrJXy+E=;
+        b=jl0s2qu3zHzXOOG/XXwBXtdHcq+UyIspnmNveiot9OMZOHyKn4v4BKCOQKD3pkrCK0
+         eum9+ZF1+q8e+Rrh7RG1F2HOY0m66DpMB1sr8Yt+ut9a6x0bspNKX5HFWjOpW56YSIri
+         oU8+DwbzF8UOaGf3e2FPU4nd6+15wc5vAyCsFKnTQnDNhqLq6wPTDO71rtAMHGmrP8WS
+         ICxFiFLJ1Qwsh/Ugwo4zoH3CQl5Iw2J2Ro5IfC/VlHP33UwCBg1/0lWX6CsGMidiKZtV
+         c/bcNDX7ErJz2rvQkBkpQxtATla7/1mh6xTifwt7S8mONzxQ5IyJuBuFDgF/FIDHEQL3
+         bfEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=SSv/kGw/sPtJ7xffy1Sqnr1P6e8jX6vTWYRNPrJXy+E=;
+        b=M4GIgJjey/BuwWvl5X0IVBTQm7dYISesEgs8g+Lt6ZO4Jj3SnaJTY1jTipgLwHKhqT
+         F9gZwlg/SeN3jPmzJ0vSPo1UYcuNNQLNAerQncggByn1KL866r15Lh9lzd2mFZHSfZhH
+         +QjZu3hNNm0PYTSy/xo+BXJhTMRhuekJHjLQG5YmqV2MaouIFzq534RXtvodD4OQ76WU
+         4yfnXBwPx+jJg8O/BcWwRamWkMsiztixKwPp5d+qVAwRL58SBjq6mGCaD6gYuA5lDjlE
+         5NhvMu7xVxmKcxXCMKP4nK/f4HWvNWK0+e6S9LOpNTmzjO3K7kSaIhJV7Cxnw0m536+l
+         pBQQ==
+X-Gm-Message-State: AOAM531IfNVcuwJoRpvoCl4I20PEt8/4yO1mT+RdIc0J6reJX+WZN27o
+        sVMUpTOX5jzBz57ecxIZonyzpg==
+X-Google-Smtp-Source: ABdhPJwA8yjnwIzDfarUC+vVVrE8aSLrawiRP6weL99Jh6WKXgbp7zK0u3Ij8+I1lNxfhsABKRUrJg==
+X-Received: by 2002:aa7:ccd0:0:b0:41d:70e5:b87f with SMTP id y16-20020aa7ccd0000000b0041d70e5b87fmr11607725edt.20.1650283773577;
+        Mon, 18 Apr 2022 05:09:33 -0700 (PDT)
+Received: from [192.168.0.217] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id u26-20020a17090626da00b006e7cb663277sm4541728ejc.90.2022.04.18.05.09.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 05:09:33 -0700 (PDT)
+Message-ID: <f419829d-87f7-17ff-50ce-fd3628df71fe@linaro.org>
+Date:   Mon, 18 Apr 2022 14:09:31 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ac1aa0aa-f560-40c9-76e0-08da2132360a
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9273:EE_
-X-Microsoft-Antispam-PRVS: <DU0PR04MB9273D8C3CC790E3407D88E39F6F39@DU0PR04MB9273.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: e/xCcXQNUC1cJo1y9CnfLOL3Z0lwG8p0EazTD63MkGw/pgLn8s3ihCCOqKPQYAEJPjJAzykvx8pR5pO78VGPzUxM8zdzo4DZDsp9FaURseWDMzanJ0ehDNNvMj+fSCeKcqK4Jr4hy6YRbwO8xkuhNAmN4zflenLDUAEextqgBCw3I45GemtiTrfTfWjwfJo3kMWE0ZSqWd9jrUFCxrXmYpEQcIb1SN2QrsUA1k4jWhS9x2gG8YNh2QGXgN0g5qgOpZ/A/8kwrVXIcJpeEwsvZULdgg7Xr9/sjWvZ9IZKynzDk2Cwobx7wH1YcT/+3RvDYlzOrIW2awQcu/OAXRsomQK2bmfo0IrLpUxVJE3girO1tf6eCtwdxFkKR5NqDqiip6TH6STC7Vkk8AqU9Hwviwcdstabym4Tcsj5jPIlq0Og7efwsz5yLBmjaQ/Rzx7eMMlj2TkYdP3xfncu3mnoMLEbOyWgcXifqu4szS45y9WTYu9o4PiD3k09zm3g1rGfk/9va/YLdcHpDZ6+F/d+V+Gfpz7ZDvwxxHYQLK3vEbd6h2rwHchL4FftEC27I61qut3VpirnBPJEDbLD2KvMcD/nYHesd/KRhFrpsovTnwIlrwPu/bQ512x8rkXuyurgXGqvKWrfiUqEhVFEm8BMfvtyfdOEdj/EWEPORW5ujIcdy2xafsLDNeR41d9uAp0wPPFcc1B51MnPReZqzGo6FA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(52116002)(66946007)(66476007)(54906003)(66556008)(4326008)(8676002)(6916009)(6512007)(8936002)(4744005)(6506007)(9686003)(2906002)(33716001)(86362001)(53546011)(38350700002)(316002)(38100700002)(83380400001)(26005)(5660300002)(7416002)(508600001)(186003)(6486002)(44832011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VX5H0kd9fLAti0HjGNwOr23JctCz/8/MUT1N0R0db6c7WT6jzOBCFL0Xfiqx?=
- =?us-ascii?Q?UHtz0tYWYIcAM1uBt8ZS3DKiADzt0mPbcJa4m4Iy2LeNFMCYxw3ncfAWfPX8?=
- =?us-ascii?Q?tKZCeNsWh6Rsu5a5qQ6QrXQibtB+Zy2YjmoKVHltcZNV5gxAqFFA/bYT1xfK?=
- =?us-ascii?Q?tnR/EtmKl16P4LxKDwC7oscaDmf+0QvyVkO3aqVbUsM0o8gM2Ri9boRREsEu?=
- =?us-ascii?Q?1A5sBGy7ndJQOUWWvmnZCDAtNNuqRuQ60ZvNVOQ3CdfrgzrzMdhYjwRykZpe?=
- =?us-ascii?Q?R6V1HTe9yuHSYx5X0ZMc24bXoFDrjvUNT2+Vt2JQckFprndJGYb38/n8TxNh?=
- =?us-ascii?Q?4bqSN0xDDrwhnvkcSI+VRSevoXxRLW6dnkEFrqqdaXNY+zRl6qM9uWq2dzwq?=
- =?us-ascii?Q?P0LnZEWJFGI06y6VGigE6nDwdJsAoV2wFiszZvimUCtX/iyzzzhTF7rjHXxq?=
- =?us-ascii?Q?BxmS/A4qCx1/yRSAGFDvKADigdHmWgWJHSADqkRTi9cxsV85WZJ6aWEkqDhW?=
- =?us-ascii?Q?S65U3MuGRS8njG3VtfTdqhnQsrGjruLjmrPkOs0//I2SjVOTSEjIU3XK6TRg?=
- =?us-ascii?Q?e5D+/bAc4ow4nsqYdnQanLVbVaZyw5vlCTnQw+qV7D+PqupewQOSAG+QU50W?=
- =?us-ascii?Q?EC4sGjRldrifHKLy0/45JALMzore1tkdq5jVW+EgLJHk2bZXF1Pe323KiCmH?=
- =?us-ascii?Q?8+KheyfsfsEFFtZVBs96lecAuSXyVnbtf4LFQmIJmk8CUV/IeefC9XZk2sWc?=
- =?us-ascii?Q?lc7iK+kb9wBTv8u6B7Ws0AR/Jl38tp+nO8iBQHRS9DvkR7Hb32svnymiegEV?=
- =?us-ascii?Q?YWdiYgCxL9Qwo5m1ObYMWgVVQx+i1tITeJE3yG6sRDmY0gMFtEM4RpJmqipc?=
- =?us-ascii?Q?ez0kuZJcUoysMhtW68WouuDuQpCkJ3GrdvIQqOk6qO0XgRRa1FIfVT5fxoyu?=
- =?us-ascii?Q?3pIpb7jJYSEM2JTCQIBMwIZG/7dk8zFJIaI6IUFdtrCuVIplAqZBiZF7mZKM?=
- =?us-ascii?Q?jViGHHGr0AOaLZg02GTy0SnJicOsSnLzySGtjmfn1t3pAm4rajRT52nl7n65?=
- =?us-ascii?Q?oZJ9qc0Tl9eee6GdxoxfRF2OZ8cnLDD+KJARL6ahgdVMVCSWkJ+TCAWp9KR6?=
- =?us-ascii?Q?CoNbIJl7GSN70VfLKYASNMzjt4HCJEXPu+xWvxLoxieiino9onGBEGhSG3i7?=
- =?us-ascii?Q?l1AR63xXp5lh5RlatW3vZG75gv3dB9M7bgter6oX88IoWH1wcaONeOC0ETj3?=
- =?us-ascii?Q?gk3RQF+MogytFR/lfY5FtHZmBnZwan5+Sclrh6VP1rkfqigc+A3tCzxgTIE7?=
- =?us-ascii?Q?2BLOGC61ILNNF0r9yW3LkoXzg5LkFxAEs306iGmMJkIralQfZlwT5nE3Gbgw?=
- =?us-ascii?Q?zc6XW3j8nf2Cl+eVe8uJAC4WpqYLmJKTbPvenATabS+zrUJT+GcMyz1ZmHWU?=
- =?us-ascii?Q?Mg5fPW+lm1GJsVKuXP1SrlgJu25mjlH4eaKuLlLrx9+zMDyApJ9O/ElUL54+?=
- =?us-ascii?Q?wHwRGK7l/JUWqSiFzuOBHP81MR5tECkMLmVYyl99T53hnjywqkuM7IMUHV3X?=
- =?us-ascii?Q?6uvFiabXFG+TQNz8rM+ftRJHrp0lvfi1P0zi7irn9NZso5jqiVWEd/OWhj+b?=
- =?us-ascii?Q?yevMvTbaggd+Gr/yqphH6AlyniJeCSuwgmIrsxHd4S7TrD6xrWb9+k61eEL0?=
- =?us-ascii?Q?U59soDVzKzQxpYgeldN2YVvrBeEvXztxcfalN9/FX61Izd8Y4fgU9NmOCjSF?=
- =?us-ascii?Q?QQJT+1o3yA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac1aa0aa-f560-40c9-76e0-08da2132360a
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2022 11:54:36.6801
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yLoCrNXLCI1k0t7WUbrGvwuixcglM7OKJDMxGHrZWG794ozxK1gzLHVzLshwfeiMw+QgFUfC5Eh5pOjDjtuB0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9273
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 1/5] dt-bindings: clock: add binding for MA35D1 clock
+ controller
+Content-Language: en-US
+To:     Jacky Huang <ychuang3@nuvoton.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, ychuang570808@gmail.com
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
+        arnd@arndb.de, olof@lixom.net, will@kernel.org, soc@kernel.org,
+        cfli0@nuvoton.com
+References: <20220418082738.11301-1-ychuang3@nuvoton.com>
+ <20220418082738.11301-2-ychuang3@nuvoton.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220418082738.11301-2-ychuang3@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-04-12 06:57:18, Miaoqian Lin wrote:
-> If the device is already in a runtime PM enabled state
-> pm_runtime_get_sync() will return 1, so a test for negative
-> value should be used to check for errors.
->
-> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+On 18/04/2022 10:27, Jacky Huang wrote:
+> Add the dt-bindings header for Nuvoton MA35D1, that gets shared
+> between the clock controller and clock references in the dts.
+> 
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-> ---
->  drivers/clk/imx/clk-scu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-> index 083da31dc3ea..18c6190eeffd 100644
-> --- a/drivers/clk/imx/clk-scu.c
-> +++ b/drivers/clk/imx/clk-scu.c
-> @@ -529,7 +529,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
->  		pm_runtime_enable(dev);
->
->  		ret = pm_runtime_get_sync(dev);
-> -		if (ret) {
-> +		if (ret < 0) {
->  			pm_genpd_remove_device(dev);
->  			pm_runtime_disable(dev);
->  			return ret;
-> --
-> 2.17.1
->
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
