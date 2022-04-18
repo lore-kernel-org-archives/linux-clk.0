@@ -2,90 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E126EC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 16:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741E0C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 19:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346329AbiDRQmw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 12:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
+        id S1347585AbiDRTRO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 15:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346323AbiDRQmt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 12:42:49 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC801CB1E;
-        Mon, 18 Apr 2022 09:40:09 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id i27so27801231ejd.9;
-        Mon, 18 Apr 2022 09:40:09 -0700 (PDT)
+        with ESMTP id S238177AbiDRTRN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 15:17:13 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1EF932EEB;
+        Mon, 18 Apr 2022 12:14:32 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 21so18568997edv.1;
+        Mon, 18 Apr 2022 12:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FuAliLqkyYXn5Ey/EtjXF/Yu7oHI4/uKKrNgvBgX40c=;
-        b=HebNsdKGP3yphWPGFSkZWvD1iaQWfLNxZhW5jTbTLcZ0S9fAgKGiXLbBg0TTnvT1FV
-         c+JA3Udj18Mo6SUExXKSxsdd9J7tPqMULdZH0/E38SvMlKDPHNy2U+HBA4bTUcZCELQ9
-         7aWOae4pdxva6sKGa8anR8axhqdxJafsgCBs6B0HLBVIqjT55F6K0yVvqtpVlHgzSsR3
-         oqcazq59cY18iTwty+ozgl8CAztirZoyHNS+kPeicq2sOhwdQVAYx5IGmz7Eo8t2HBO/
-         16egiV3IkjJrfXb4R7JU3+I3tsrPwTNDTiTQRUITme099wLOvPIWWFiseZdAVpqdnhIs
-         Fs0Q==
+        d=gmail.com; s=20210112;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=8vjH6cZOjMPKmMYM8U9yyT827f2QaB+PvuhuwLr3Xlk=;
+        b=lQut0xtvDeVyqYFPNTUqB22vY5AIURHZF+Fe0MzIHbLB827ZUpJlIGKgfE7xtIjJjx
+         Jgm8uySI+v0v3rL/dRX4/9A8Rv99A53Iey5zDd6KsgRsbKx6P6N9CC+Oaz+rY9zlRjUz
+         e8edov02aG07IciohsEZ3TGk7AmOKKC8ylg2s+iuD8IMccbF0jTZFREN4klRVT6Zgt7W
+         eVWCrafZJEP7Zm64CBJu9mRf++JU3PEbEVJTsZswm+5+ho7oRuqLlFRJhSO+6/n2HdBH
+         iC0cR7ZHrpFqa8qwexHoLPDIG40j6aqXk5sDAOaEMu5i3AeyKnllppZpjOGmuMuKz+0e
+         XZfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FuAliLqkyYXn5Ey/EtjXF/Yu7oHI4/uKKrNgvBgX40c=;
-        b=Q8FLVFVIVU4kLNZvewQoOd+PBOS90CheqTms8PWlcJM2WQNdUmSo1SQQa73Vq7+55S
-         Df7nDdSIVwbv9LZQMu4gCGCTa9g7ePItHUnp2fZJnxog1MhUxP1PWKsDqwIxT626GO1C
-         dcskOXS71Q/MG9CWlUyCfT3Woc+EkxPk2T3z0LeA7uWUZCvTj8mvEMEpfQ//Z20+eOi6
-         IukD4siND63melzMKiW1TlAS/QzwkirABdCOk9bqNcdmYSs1j3y5uojp9o/O+pS/tPTa
-         QqhP6vkwHHT4EjtHNOQmAcXj0q+IfGroXCrbld8hP1ClIzA/7t1R63iSXRXuW480JL1Z
-         JBcQ==
-X-Gm-Message-State: AOAM532D5Qu1BCfX/q03pZTpuPufybxYONt2JM4cXE1ppmbkA9vQ6lXl
-        iWBlVwjegane26gVLIXSgPBTS9hvXkfHwDC7kZK18fapW40=
-X-Google-Smtp-Source: ABdhPJyaKoj4mv6UqdwrhwT31wWEjGcRuUu2PMnQVHnJsiFOgYOIT6nlTXzwAvL3RiTlQyiw6ulI4AiN0g5tlciXxKs=
-X-Received: by 2002:a17:907:7d90:b0:6e8:cd12:8893 with SMTP id
- oz16-20020a1709077d9000b006e8cd128893mr10072953ejc.13.1650300008182; Mon, 18
- Apr 2022 09:40:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=8vjH6cZOjMPKmMYM8U9yyT827f2QaB+PvuhuwLr3Xlk=;
+        b=iQGUBPjzdUqBbKp4cVpthytRMfNhxfrZ6kcUBCCnikPSHnZ+HNgDG5EQbLy/ikFBpk
+         azrToOexID6iIVOcP8DtCXUdOE8qh7phoWJbT4M/2fO3M1ozyAfU93l03ZGGbjirb/G/
+         CvWLt4rd9jCeU5OLz+1ji2cZcpj4mZla/P9xcBHxqChrq6KPMkh984apBORcJy3G4gyn
+         ZulqhIp8wRuoyAz1QjiiAcyR9HXzclznAilPLSDrdgaTkFz0gDSGP4TfzERKNf1TxE7Z
+         Io1Od58Z+nZiu5t9baYZNc7eDCSs2l+TTuOAyQHIjSbrphCNjSRLHNd7+SteJUhitEZd
+         pxMw==
+X-Gm-Message-State: AOAM531RnGeQD+y3NYc5/R6ZRRPIT1s8tDMnQQTZL6XS84q+28a81ZOL
+        JgCzDxxsEug4p4OBJ/kY+yg=
+X-Google-Smtp-Source: ABdhPJwev6wR4b0ex38BXGBB7t3VDqhLP5+ZMFkH/K4ICKFNkbcCGUKBkCym9mkKwf/H1vSzl6s9qA==
+X-Received: by 2002:a05:6402:515b:b0:41d:82c2:2749 with SMTP id n27-20020a056402515b00b0041d82c22749mr13806249edd.38.1650309271494;
+        Mon, 18 Apr 2022 12:14:31 -0700 (PDT)
+Received: from [192.168.11.247] (190-2-132-198.hosted-by-worldstream.net. [190.2.132.198])
+        by smtp.gmail.com with ESMTPSA id mx14-20020a1709065a0e00b006e8bc3ce121sm4841045ejc.6.2022.04.18.12.14.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Apr 2022 12:14:31 -0700 (PDT)
+Date:   Mon, 18 Apr 2022 23:12:31 +0400
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH RESEND v2 1/9] dt-bindings: clk: qcom: msm8996-apcc: Add
+ CBF
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Rob Herring <robh@kernel.org>
+Message-Id: <VOUJAR.IJKRF5T1P4ZE@gmail.com>
+In-Reply-To: <813f4a3d-255b-0ec1-cc3e-a1280e4d74ae@linaro.org>
+References: <20220416025637.83484-1-y.oudjana@protonmail.com>
+        <20220416025637.83484-2-y.oudjana@protonmail.com>
+        <813f4a3d-255b-0ec1-cc3e-a1280e4d74ae@linaro.org>
+X-Mailer: geary/40.0
 MIME-Version: 1.0
-References: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com>
-In-Reply-To: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 18 Apr 2022 18:39:57 +0200
-Message-ID: <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
-To:     xkernel.wang@foxmail.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        p.zabel@pengutronix.de, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
 
-first of all: thank you for this patch!
+On Mon, Apr 18 2022 at 18:04:08 +0200, Krzysztof Kozlowski 
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 16/04/2022 04:56, Yassine Oudjana wrote:
+>>  Add CBF clock and reg.
+>> 
+>>  Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>  Acked-by: Rob Herring <robh@kernel.org>
+>>  ---
+>>   .../devicetree/bindings/clock/qcom,msm8996-apcc.yaml   | 10 
+>> ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>> 
+>>  diff --git 
+>> a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml 
+>> b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  index a20cb10636dd..325f8aef53b2 100644
+>>  --- a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  +++ b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  @@ -10,8 +10,8 @@ maintainers:
+>>     - Loic Poulain <loic.poulain@linaro.org>
+>> 
+>>   description: |
+>>  -  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for 
+>> Power cluster
+>>  -  and clock 1 is for Perf cluster.
+>>  +  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for 
+>> Power cluster,
+>>  +  clock 1 is for Perf cluster, and clock 2 is for Coherent bus 
+>> fabric (CBF).
+>> 
+>>   properties:
+>>     compatible:
+>>  @@ -19,7 +19,9 @@ properties:
+>>         - qcom,msm8996-apcc
+>> 
+>>     reg:
+>>  -    maxItems: 1
+>>  +    items:
+>>  +      - description: Cluster clock registers
+>>  +      - description: CBF clock registers
+> 
+> This breaks the ABI (which might be okay or might be not, but was not
+> mentioned in the commit) and breaks existing DTSes. Please fix them
+> before this patch.
 
-On Thu, Apr 7, 2022 at 11:28 AM <xkernel.wang@foxmail.com> wrote:
->
-> From: Xiaoke Wang <xkernel.wang@foxmail.com>
->
-> `rstc` is allocated by kzalloc() for resetting the controller register,
-> however, if reset_controller_register() fails, `rstc` is not properly
-> released before returning, which can lead to memory leak.
-> Therefore, this patch adds kfree(rstc) on the above error path.
-In general I am fine with this approach. There's some more "return"
-statements below. Should these be covered as well?
+This is only documenting changes made in an earlier patch[1] this
+series depends on, and the DTSes are fixed in another patch[2] that
+is also listed as a dependency in the cover letter (both patches
+aren't applied yet). Shouldn't the ABI changes should be mentioned in
+those patches instead?
 
-Also a note about meson8b_clkc_init_common() itself: failures in that
-function will result in a non-working system.
-If we can't register the reset controller then most devices won't
-probe and CPU SMP cannot work.
-If registering any clock or the clock controller doesn't work then the
-system also won't work as clocks are not available to other drivers.
-So freeing memory in case of an error is good to have, but the end
-result is still the same: the system won't work.
+[1] 
+https://lore.kernel.org/linux-arm-msm/20210528192541.1120703-1-konrad.dybcio@somainline.org/
+[2] 
+https://lore.kernel.org/linux-arm-msm/20210528192541.1120703-2-konrad.dybcio@somainline.org/
 
 
-Best regards,
-Martin
