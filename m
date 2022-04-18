@@ -2,29 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988F8C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 11:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 863B6C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 11:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232596AbiDRLZv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 07:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34620 "EHLO
+        id S235399AbiDRLkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 07:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232243AbiDRLZu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 07:25:50 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3BCF1A399;
-        Mon, 18 Apr 2022 04:23:11 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MLzeb-1nOT6l1oQr-00Ht6j; Mon, 18 Apr 2022 13:22:46 +0200
-Message-ID: <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
-Date:   Mon, 18 Apr 2022 13:22:44 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
-Content-Language: en-US
-To:     "Ivan T. Ivanov" <iivanov@suse.de>
+        with ESMTP id S234797AbiDRLkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 07:40:42 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FBF1571C;
+        Mon, 18 Apr 2022 04:38:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7FA9B1F74E;
+        Mon, 18 Apr 2022 11:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650281882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TbRknrTjqcZQLj9bQONGiVyMtqLOj4pkBWNrFhAEU3M=;
+        b=TevqHiPDO5sDzTMD9KoJV7kCn9asimT+v60nKh0cpf+/BvaY15cK4/J+7zWSSQ+evR+DZ5
+        8vvIo4R3TYjA8PIQDaOXu2c2U3M/ejdyKNP7x0UVkj+xjko8/w6OZhPVVth9rjNHIiKmEM
+        1TyzqKUqEsHEI3puTYJXcYqhtcuwzPo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650281882;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TbRknrTjqcZQLj9bQONGiVyMtqLOj4pkBWNrFhAEU3M=;
+        b=YxZ/OdyX/3fSMyny6Ud4835gtkMzpUaWKFFO81IUzfRn+3wEQlOSju3KvZW5I9QQBcYsbH
+        /kIkx4/LWOJsnHAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F4DE13A9B;
+        Mon, 18 Apr 2022 11:38:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id bBPVFppNXWJYHAAAMHmgww
+        (envelope-from <iivanov@suse.de>); Mon, 18 Apr 2022 11:38:02 +0000
+Date:   Mon, 18 Apr 2022 14:38:01 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Nicolas Saenz Julienne <nsaenz@kernel.org>,
@@ -39,105 +65,93 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
+Message-ID: <20220418113801.uree7rvkzxpiwyni@suse>
 References: <20220404125113.80239-1-iivanov@suse.de>
  <20220414105656.qt52zmr5vjmjdcxc@suse>
  <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
  <20220418110516.s7jxsfa3jl7aagrf@suse>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220418110516.s7jxsfa3jl7aagrf@suse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XYHshlfjxi+RT/GL4GmBwzdxbmRf+BCvlC8OzxwcZuYRIC3lBQI
- mqxuml29UVfMGYn6W49CXof5Dy+d+X8yYAdj1vsVJw6PzIrl7O5u3gmyl06mPy/llHJS7eY
- 59Gg+i1kQsezcVP+mkiupAHXyZXw+hBN8/WtDX2jIhQesj7wUAHu43okpBuIC5yaNbs40na
- 4bQn7ELtf4LMsB/w/8pHw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ysIhcjiCcPc=:lecKA5TUn4TZ3C8GYV0yat
- vpXwBLtY3lN4fhUwDTe5Gtw/OgXHG0nKqHqoJ113yjQ8URE88OwxfLXs9NuvQZZyEefEmQqMG
- byMIZWja/Zitw8pvlKLrI/f/AV77Mb9bAizaH/dLAp91Guh8gf6iTjUp0Oz7VcXRdPz4AZQwr
- XBMQTQRgsoevUofrlnbKZjkrM/Dg0LbDA8aWSpe3aKAKAM1vNJZE6QYTgkWQquCf8z+A5xSru
- twf2L4X3C4KeboWyAmmYWFungkBbSWaZQBTVB8QyBjYYgaTzxOBfZROGOZ1vbsJfUqqnG2eva
- cCODw+RgzCoyFPsYL7SjofaK0H9CPi3xAR3YHOsFwyv53+mkYU/L9W1Y1LYLVG74AlzeVCinM
- GEDEhPdsdrY4AGgGOQiTzoCuGHFdMdc4UQlI8kguLwLOiSxrubY+Q5VboK8/LJ0GxGF9++q31
- n2FBcT3w4jgeOPpGVVaaDylH4uiv92fg8exRtq1ZcuZTJJKhy0gipc3GhgECauvMri1SgYClg
- 8pIoTfhPWiCEsSuzbICKI9F/P5TUZgELb0ul4vcyGtkp2l+o8Wf+OngI1PRQyPXvV0IZGAURe
- AShmR+5hr2zfWIbpESZjGMvbdh5e1tH6PIsWs7Lf5OV0C5SFoBwyBqT+Y9O0gbWQTNgA1ZgEo
- 8O/P1kpsRbXC9IPXZQpNrzf9NrHgmF6FWbcC5l9fl4JIIfeyxyqB4pVQt1lyokK/Gk6MngVND
- lOkESWV/9nQE/Xqg
+ <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ivan,
+On 04-18 13:22, Stefan Wahren wrote:
+> 
+> Hi Ivan,
+> 
+> Am 18.04.22 um 13:05 schrieb Ivan T. Ivanov:
+> > Hi Stefan,
+> > 
+> > On 04-15 10:52, Stefan Wahren wrote:
+> > > Hi Ivan,
+> > > 
+> > > Am 14.04.22 um 12:56 schrieb Ivan T. Ivanov:
+> > > > Hi Stefan,
+> > > > 
+> > > > Please, could you take a look into following patch?
+> > > yes, but i cannot give a technical review. But from my gut feeling this
+> > > doesn't look really elegant to me.
+> > > > Thanks!
+> > > > Ivan
+> > > > 
+> > > > On 04-04 15:51, Ivan T. Ivanov wrote:
+> > > > > Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
+> > > > > Message-Id: <20220404125113.80239-1-iivanov@suse.de>
+> > > > > 
+> > > > > The UART clock is initialised to be as close to the requested
+> > > > > frequency as possible without exceeding it. Now that there is a
+> > > > > clock manager that returns the actual frequencies, an expected
+> > > > > 48MHz clock is reported as 47999625. If the requested baudrate
+> > > > > == requested clock/16, there is no headroom and the slight
+> > > > > reduction in actual clock rate results in failure.
+> > > > > 
+> > > > > If increasing a clock by less than 0.1% changes it from ..999..
+> > > > > to ..000.., round it up.
+> > > Based on this commit message this looks like a fix / workaround for an
+> > > issue. It would be very helpful to know:
+> > > 
+> > > What issue should be fixed?
+> > > 
+> > > Why is it fixed here and not in the UART driver for instance?
+> > The UART driver is amba-pl011. Original fix, see below Github link,
+> > was inside pl011 module, but somehow it didn't look as the right
+> > place either. Beside that this rounding function is not exactly
+> > perfect for all possible clock values. So I deiced to move the hack
+> > to the platform which actually need it.
+> thanks for your explanation. These are import information which belongs in
+> the commit log, because the motivation and the affected UART is very
+> important.
+> > 
+> > > In case it fixes a regression, a Fixes tag should be necessary.
+> > I found the issue because it was reported that RPi3[1] and RPi Zero 2W
+> > boards have issues with the Bluetooth. So it turns out that when
+> > switching from initial to operation speed host and device no longer
+> > can talk each other because host uses incorrect baud rate.
+> 
+> Now i remember this issue, for the mainline kernel we decide to workaround
+> the issue by lowering the BT baudrate to 2000000 baud.
 
-Am 18.04.22 um 13:05 schrieb Ivan T. Ivanov:
-> Hi Stefan,
->
-> On 04-15 10:52, Stefan Wahren wrote:
->> Hi Ivan,
->>
->> Am 14.04.22 um 12:56 schrieb Ivan T. Ivanov:
->>> Hi Stefan,
->>>
->>> Please, could you take a look into following patch?
->> yes, but i cannot give a technical review. But from my gut feeling this
->> doesn't look really elegant to me.
->>> Thanks!
->>> Ivan
->>>
->>> On 04-04 15:51, Ivan T. Ivanov wrote:
->>>> Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
->>>> Message-Id: <20220404125113.80239-1-iivanov@suse.de>
->>>>
->>>> The UART clock is initialised to be as close to the requested
->>>> frequency as possible without exceeding it. Now that there is a
->>>> clock manager that returns the actual frequencies, an expected
->>>> 48MHz clock is reported as 47999625. If the requested baudrate
->>>> == requested clock/16, there is no headroom and the slight
->>>> reduction in actual clock rate results in failure.
->>>>
->>>> If increasing a clock by less than 0.1% changes it from ..999..
->>>> to ..000.., round it up.
->> Based on this commit message this looks like a fix / workaround for an
->> issue. It would be very helpful to know:
->>
->> What issue should be fixed?
->>
->> Why is it fixed here and not in the UART driver for instance?
-> The UART driver is amba-pl011. Original fix, see below Github link,
-> was inside pl011 module, but somehow it didn't look as the right
-> place either. Beside that this rounding function is not exactly
-> perfect for all possible clock values. So I deiced to move the hack
-> to the platform which actually need it.
-thanks for your explanation. These are import information which belongs 
-in the commit log, because the motivation and the affected UART is very 
-important.
->
->> In case it fixes a regression, a Fixes tag should be necessary.
-> I found the issue because it was reported that RPi3[1] and RPi Zero 2W
-> boards have issues with the Bluetooth. So it turns out that when
-> switching from initial to operation speed host and device no longer
-> can talk each other because host uses incorrect baud rate.
+I have workaranded this the same, at first, but then decided to look at
+vendor tree and voilà!
 
-Now i remember this issue, for the mainline kernel we decide to 
-workaround the issue by lowering the BT baudrate to 2000000 baud. I 
-didn't investigate the issue further, but your approach is a better 
-solution.
+> I didn't investigate
+> the issue further, but your approach is a better solution.
+> 
+> Do you use the mainline DTS or the vendor DTS to see this issue?
+> 
 
-Do you use the mainline DTS or the vendor DTS to see this issue?
+For (open)SUSE we use downstream DTS.
 
-Best regards
+Do you think that if I put better description in commit message fix will
+be more acceptable. Or if someone could suggest anything else I am open
+to discussion.
 
-> I open to better solution of the issue.
->
-> Thanks,
-> Ivan
->
->> In best case this is explained in the commit message.
->>
->> Best regards
->>
->>>> This is reworked version of a downstream fix:
->>>> https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
->>>>
-> [1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
->
+Regards,
+Ivan
+
