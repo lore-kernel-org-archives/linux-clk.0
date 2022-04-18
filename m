@@ -2,158 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB14C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 16:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CB1C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 16:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236153AbiDRQEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 12:04:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37890 "EHLO
+        id S230451AbiDRQGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 12:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbiDRQEh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 12:04:37 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F84D1263E;
-        Mon, 18 Apr 2022 09:01:56 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1McZfZ-1oBxc824lh-00d0eK; Mon, 18 Apr 2022 18:01:33 +0200
-Message-ID: <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
-Date:   Mon, 18 Apr 2022 18:01:31 +0200
+        with ESMTP id S1345892AbiDRQGv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 12:06:51 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB4B512AD1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 09:04:11 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id y20so7495762eju.7
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 09:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=JrJapQKuYp8OSttBEWIA4svvfpv63Q1QVGJr1i9oSXc=;
+        b=OfyfwmujRMIJ+rOvyOsAQK+0pnnPTwmJegSUmTlOuC6J/9Lbnfp+oGZ2zDtoT3A+Eh
+         u0YQg5przbTeXsCFBsszJpsKJh9KXxLpFVpspOpYKS5jc+ekQxpknw5tMryhn8tRjlpS
+         WDID1nFFMdTNeRiz6dcFg/BIV+VddaZz/B0QwoJBt+cR4FttDp8fUevmVAFx6QDywqIo
+         EevzUqbsP0mnRiiLISfbtJhfm933PLNkv4RBTIcrLTSjIWltXYjbZz3F5kJhPOwAZE0B
+         ZRA+Dsi38Io3U2S29EoCirTVc3UW5rhOtFxhXajGGXgg6OxkCjh6t9u0PlMmS53UlP/I
+         Znng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=JrJapQKuYp8OSttBEWIA4svvfpv63Q1QVGJr1i9oSXc=;
+        b=0jknRqQYUGBkCJgZH05m5f150h3TksW8ziKdpwYsf0QRkK5WRUPDO1R89THBi+kce2
+         eP29x4O9XpTUV4NyoHHOrqbdBQzYBtOTLjbENXRUVMuZXHTdkTWnhJyWLXnEd54wt5ua
+         eaaW+l/y/q5A2+/JvnyGFXLCVgHPuB6eUV1CS7jSkYlMUR8WjlpTklL3hewFKMu/IdvE
+         AOMLxg08nUsIC91Ej0N3hwUlyFjhjCTmeGcLe4samvNrlAuDtRwzI2k9LKH5knx14EiH
+         EHbwbGafYO9r1Dw33Tw9NF1cbD2scg61dz+5W1cRMeFCjQCROs7qtRDAhohRyxoi2qOa
+         /vkA==
+X-Gm-Message-State: AOAM531PvSkRTJmtNayMVENAm/ILp0VkyO0RZjYqQIGNlzwLdsfDKBCE
+        tkizsVam4G9dJpr4As7IV2thBQ==
+X-Google-Smtp-Source: ABdhPJxGsHJGdjSoIphlhjXGf6naO4I8zToZdrpkO2BR5tTYnz1navkLvmGeJrlYROJEaBe9r1Dnvw==
+X-Received: by 2002:a17:907:8a11:b0:6df:db0a:e5ab with SMTP id sc17-20020a1709078a1100b006dfdb0ae5abmr9732352ejc.528.1650297850270;
+        Mon, 18 Apr 2022 09:04:10 -0700 (PDT)
+Received: from [192.168.0.217] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id k15-20020aa7c04f000000b004229daeaf37sm5184233edo.40.2022.04.18.09.04.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 09:04:09 -0700 (PDT)
+Message-ID: <813f4a3d-255b-0ec1-cc3e-a1280e4d74ae@linaro.org>
+Date:   Mon, 18 Apr 2022 18:04:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
+Subject: Re: [PATCH RESEND v2 1/9] dt-bindings: clk: qcom: msm8996-apcc: Add
+ CBF
 Content-Language: en-US
-To:     "Ivan T. Ivanov" <iivanov@suse.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220404125113.80239-1-iivanov@suse.de>
- <20220414105656.qt52zmr5vjmjdcxc@suse>
- <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
- <20220418110516.s7jxsfa3jl7aagrf@suse>
- <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
- <20220418113801.uree7rvkzxpiwyni@suse>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220418113801.uree7rvkzxpiwyni@suse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:somyTe8OKM+gwMLHE0W9aM3scGr9zISIgwFNXJUxuaeY1grPwQq
- zwe/l9QjjFBVWXHE5RWylPudfTtBVJv+ge88de36wgx1+9qOmOpSfnqOPhY9YL7+/XXXOgR
- WomYlQ5UvWWDQDr1K4TY87GCVGfILbhtzVxUQiVIzLUwj7S27AX3bwRiz56SWiONFtjtI9Q
- QFL3NepSpMQQ60mx6yN/w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4RHdFWUUmV4=:tU8hjna7N5CmiJVvNdndmL
- 43hLDo7Iy1d6+z1rLM1D+rVHImaV9kuvIX45KHqk6PRuJTEkN01YO5x93bswzPJ9HCU9HLzwf
- wlXwunxAZ3FWtBLf6LLp3R312O1Q8YQlgyyjq0Fb/91tjHWFMdO9soQPLD6C+bc0MjhgVW8Tf
- gi45xDwBUnBzHH2WXVdzhyJGOt9Ur7Xa2bQ4WJiMbKr/+9+v44aH2DIKJTQ21JWgBbGc/OLoL
- PbUHG52dhpSutI/hkdTcPq78YOZyULWNUhWgarCCk2QGhGZHqRnKYa4I6Z+88au6JOcZTDy+u
- 5myaIqWJaKvhs5GSnXb5CZ5V9EJCOwnB/y+uHcUYUGKSOtzYAvuesMEstu5nwPhoxBseAMfjW
- c9u9FJBI0pUvdWXO/rHfuQ820tMcV0ir66jo1TcS2dqVoxYwVzqj7AFvDv3E0zfei3tIlgJiL
- Ap5EP1rM5IJkJqB11XUCUo2MhzzbTNnkjnSIaPtLVX0YZvZA3K0u/LeuoDXBYTtIdkICgpjj6
- 7Nc4zFnluECn3DKfCXG3bWbNSKxsWV4576hLbKR4czFq+4GZB8c8qCRb25RkJMLnslLbzhh51
- je4mINwWH0u6Jboje0Dl8rLcwUL7DvEPHzZKFOztEex0DvkEGEp5G3g6+G6ShBo7t83aMJwIl
- bzNA+q63ZT0RGt8Wv/kxaMA/ChXI1LzlxYB9l2caIQDnMrx/CfrG5ydGCoGSg4SoEJtgjybus
- sgPNkFK/sAVq7tNg
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Rob Herring <robh@kernel.org>
+References: <20220416025637.83484-1-y.oudjana@protonmail.com>
+ <20220416025637.83484-2-y.oudjana@protonmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220416025637.83484-2-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 18.04.22 um 13:38 schrieb Ivan T. Ivanov:
-> On 04-18 13:22, Stefan Wahren wrote:
->> Hi Ivan,
->>
->> Am 18.04.22 um 13:05 schrieb Ivan T. Ivanov:
->>> Hi Stefan,
->>>
->>> On 04-15 10:52, Stefan Wahren wrote:
->>>> Hi Ivan,
->>>>
->>>> Am 14.04.22 um 12:56 schrieb Ivan T. Ivanov:
->>>>> Hi Stefan,
->>>>>
->>>>> Please, could you take a look into following patch?
->>>> yes, but i cannot give a technical review. But from my gut feeling this
->>>> doesn't look really elegant to me.
->>>>> Thanks!
->>>>> Ivan
->>>>>
->>>>> On 04-04 15:51, Ivan T. Ivanov wrote:
->>>>>> Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
->>>>>> Message-Id: <20220404125113.80239-1-iivanov@suse.de>
->>>>>>
->>>>>> The UART clock is initialised to be as close to the requested
->>>>>> frequency as possible without exceeding it. Now that there is a
->>>>>> clock manager that returns the actual frequencies, an expected
->>>>>> 48MHz clock is reported as 47999625. If the requested baudrate
->>>>>> == requested clock/16, there is no headroom and the slight
->>>>>> reduction in actual clock rate results in failure.
->>>>>>
->>>>>> If increasing a clock by less than 0.1% changes it from ..999..
->>>>>> to ..000.., round it up.
->>>> Based on this commit message this looks like a fix / workaround for an
->>>> issue. It would be very helpful to know:
->>>>
->>>> What issue should be fixed?
->>>>
->>>> Why is it fixed here and not in the UART driver for instance?
->>> The UART driver is amba-pl011. Original fix, see below Github link,
->>> was inside pl011 module, but somehow it didn't look as the right
->>> place either. Beside that this rounding function is not exactly
->>> perfect for all possible clock values. So I deiced to move the hack
->>> to the platform which actually need it.
->> thanks for your explanation. These are import information which belongs in
->> the commit log, because the motivation and the affected UART is very
->> important.
->>>> In case it fixes a regression, a Fixes tag should be necessary.
->>> I found the issue because it was reported that RPi3[1] and RPi Zero 2W
->>> boards have issues with the Bluetooth. So it turns out that when
->>> switching from initial to operation speed host and device no longer
->>> can talk each other because host uses incorrect baud rate.
->> Now i remember this issue, for the mainline kernel we decide to workaround
->> the issue by lowering the BT baudrate to 2000000 baud.
-> I have workaranded this the same, at first, but then decided to look at
-> vendor tree and voilà!
->
->> I didn't investigate
->> the issue further, but your approach is a better solution.
->>
->> Do you use the mainline DTS or the vendor DTS to see this issue?
->>
-> For (open)SUSE we use downstream DTS.
+On 16/04/2022 04:56, Yassine Oudjana wrote:
+> Add CBF clock and reg.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,msm8996-apcc.yaml   | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+> index a20cb10636dd..325f8aef53b2 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+> @@ -10,8 +10,8 @@ maintainers:
+>    - Loic Poulain <loic.poulain@linaro.org>
+>  
+>  description: |
+> -  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for Power cluster
+> -  and clock 1 is for Perf cluster.
+> +  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for Power cluster,
+> +  clock 1 is for Perf cluster, and clock 2 is for Coherent bus fabric (CBF).
+>  
+>  properties:
+>    compatible:
+> @@ -19,7 +19,9 @@ properties:
+>        - qcom,msm8996-apcc
+>  
+>    reg:
+> -    maxItems: 1
+> +    items:
+> +      - description: Cluster clock registers
+> +      - description: CBF clock registers
 
-This is popular and bad at the same time. We as the mainline kernel 
-developer cannot guarantee that this works as expected. A lot of issues 
-are caused by mixing vendor DTS with mainline kernel, so in general (not 
-for this specific issue) you are on your own with this approach.
+This breaks the ABI (which might be okay or might be not, but was not
+mentioned in the commit) and breaks existing DTSes. Please fix them
+before this patch.
 
-I know this is a little bit off topic but except from overlay support, 
-can you provide a list of most missing features of the mainline kernel / 
-DTS?
-
-> Do you think that if I put better description in commit message fix will
-> be more acceptable.
-At least it would increase the chance to be accepted. This rounding 
-behavior looks open coded, maybe there is already a function to achieve 
-this.
-> Or if someone could suggest anything else I am open
-> to discussion.
->
-> Regards,
-> Ivan
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
