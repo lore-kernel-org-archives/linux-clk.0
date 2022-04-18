@@ -2,97 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4386CC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 15:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8CDC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 15:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345194AbiDRPTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 11:19:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
+        id S1345454AbiDRPpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 11:45:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345179AbiDRPT2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 11:19:28 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41AF4A3DD;
-        Mon, 18 Apr 2022 07:15:39 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id bv16so1576023wrb.9;
-        Mon, 18 Apr 2022 07:15:39 -0700 (PDT)
+        with ESMTP id S1345474AbiDRPoo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 11:44:44 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0411C45078
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 08:10:31 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id lc2so27309597ejb.12
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 08:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aK4MeadfQ+1NbFGxEqfyTLxfUGxa4k4UU8oEM9B0q3s=;
-        b=fcEZ9fAONKGlYYsNruXnYxFgZt19JDTUK8qp+ByuHZ0JkZbH6apbRDkpc1XRJ59vft
-         0uVcpml9F0gde7E4M5U5QtNEoU2sKbwXixRQID624emGxR+19fSTboUFSCnNulgMuClO
-         xRHjqLPCpEr7hbf3m6k+ZimfLyIEmJKmcQh3JoiRI4Or8ZAX3uu4w3vPtsvzaD+63XeX
-         Ge6Mdc5QyyAExIhyfa6dhdyJSSYv4sbnf7LEuFrypf4ghQi3A7IkQAhvWGDbkm2bnCxR
-         1C/M8CoplMnC6av7EWCpT+cwepH0T2C+EQNsE45ZwoRGasPn7+VFXWA1VODqG9N5pfYs
-         qizA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=8eEBlJjFdUmWzuzGoXrrvhfqXeGbJkQSJU2hZzKNYCI=;
+        b=EHozyYSTs+5oPjLpwLz6skDmf0dsTBEPko7/7suTBa+gI2A+zwXn00kXLAUzuBr1RO
+         PT7F4dLcn6sndBN6fDlyRtkvYfxO8npN+n5jlUMfg7js3R6iRy1tNlyDmkv2JhIN7kNp
+         Iw8ZSPVRUnBR8fNsdil1SonXyqmdwdwelG6+ZJbIezoWBe4rj3dVxvpJHHo9zsaZHWZ5
+         xGYgtzzP44UQzZrFlnYjWdJM5O6z+fuiBzOCiR1L8fp/uJLxk7RkjuGSfcUFoFjcfV0M
+         kvnx2pnC2ncF18255EmrLtRCeToBxxMWBlzJSrP6Bi+nMGjR37L7xJmIgD6MbHl8EuLL
+         vtRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=aK4MeadfQ+1NbFGxEqfyTLxfUGxa4k4UU8oEM9B0q3s=;
-        b=vW8SQVlDIme23ufMD605rrYfeqltNwDHqch8kG9VcArVX6Wi6fG/apUWcarvUJM8Nv
-         5CEAW6/UBUgQ6zfmmU1MJnFU9UVImLv5zvLbr40d+pzJ3/eBvTXpEsHnTnTIGbK+k8cc
-         tr8CLCHpfQLOI4NVyJJmja4s/Wj4iZ3ZqoL4R7uiRf8J0TzPMYxc8BIdAsFfzPFDFn3O
-         jNSYWaja0EtTrG2+F9rA9R2gWpGFJvPK5014JKQMHW6NyPZSyYJAGxFs+gmbp4Lvct/v
-         s1m6vFhgTLJjNK/c1xKY07BqOrhZnGLSUBFnVT8VQlNDoaiPonMCSm7PnaL7ATee8Z/G
-         Ibgg==
-X-Gm-Message-State: AOAM531YnTt6g3WaKS17KWGsTlgmUiFUCeMDFN3URvu4f+qop2tK6foP
-        bP1/O8TInXXsbIgPXw7ade0=
-X-Google-Smtp-Source: ABdhPJw/7Vqg6N8cUyh7HbbfJ6gTu0/cjFNupDra5Dx1rU7/OccnES44M2MLGIYQlL+fIUwxVz4Dsw==
-X-Received: by 2002:a05:6000:154a:b0:20a:9529:aa8d with SMTP id 10-20020a056000154a00b0020a9529aa8dmr4413418wry.93.1650291338318;
-        Mon, 18 Apr 2022 07:15:38 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id j14-20020a05600c190e00b00392910b276csm6875688wmq.27.2022.04.18.07.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 07:15:37 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-Subject: [PATCH] clk: actions: remove redundant assignment after a mask operation
-Date:   Mon, 18 Apr 2022 15:15:37 +0100
-Message-Id: <20220418141537.83994-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        bh=8eEBlJjFdUmWzuzGoXrrvhfqXeGbJkQSJU2hZzKNYCI=;
+        b=R/bmMBBc41q7hFh2j0ATjHrCI4fjSQdBK7KPVoYI/EJaQm6JdHIqrCvzP2Wn3tiA+j
+         v5nkgS4La8HLry2WNGGgvUVXJfl5oG0rTvpaDqFV5fkRtr3r7AG2wK2A5Nd3gPbC/MY4
+         SOWhOcOiFvVr8JamDL6aDokTgdIjRv+rDNEETJAck+yS8tSMcISYDyJ5dBGUJeTuJV0p
+         RKqXfKteT1kXF54XDboAXNsTbwKQU/HLVYIfIKtEm8IFpZlvsGz8yMSk2YlLz6etvxxO
+         oJllP8ZeDBfWaNPxOlT5dTef9zhmiT7Q84mtXvKU5ueFsOa21SE3dSkZMA84KodoP/um
+         wOCw==
+X-Gm-Message-State: AOAM5317Z/HfjC9XJqIiaDXEWJXlqUd5RyOzYtEf3sGnUQfeH80Gb9AQ
+        /ReZWPv4Fj6hCytFU449vLcatQ==
+X-Google-Smtp-Source: ABdhPJwNJnrCTL6Ja5pljID2zs7UqXpsSz+qhAsvZEoVY7eD0haejH7NWyA6OB7wc0H3iRkKr7oU0Q==
+X-Received: by 2002:a17:906:301a:b0:6e8:a0b2:340a with SMTP id 26-20020a170906301a00b006e8a0b2340amr9345551ejz.248.1650294629608;
+        Mon, 18 Apr 2022 08:10:29 -0700 (PDT)
+Received: from [192.168.0.217] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id u6-20020a170906124600b006e843964f9asm4640720eja.55.2022.04.18.08.10.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 08:10:28 -0700 (PDT)
+Message-ID: <d68442c5-f1ed-d502-aae5-2770f9653c81@linaro.org>
+Date:   Mon, 18 Apr 2022 17:10:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 06/10] ARM: dts: qcom: msm8974: override nodes by label
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+ <20220401201035.189106-7-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220401201035.189106-7-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The assignment operation after a & mask operation is redundant,
-the &= operator can be replaced with just the & operator.
+On 01/04/2022 22:10, Krzysztof Kozlowski wrote:
+> Using node paths to extend or override a device tree node is error
+> prone.  If there was a typo error, a new node will be created instead of
+> extending the existing node.  This will lead to run-time errors that
+> could be hard to detect.
+> 
+> A mistyped label on the other hand, will cause a dtc compile error
+> (during build time).  This also reduces the indentation making the code
+> easier to read.
+> 
+> Re-order the overrides by label name.  The pre/post DTBS are the same.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../arm/boot/dts/qcom-apq8074-dragonboard.dts |  614 +++++-----
+>  .../boot/dts/qcom-msm8974-fairphone-fp2.dts   |  581 +++++----
+>  .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 1075 ++++++++--------
+>  .../boot/dts/qcom-msm8974-samsung-klte.dts    | 1083 ++++++++---------
+>  .../dts/qcom-msm8974-sony-xperia-amami.dts    |  569 +++++----
+>  .../dts/qcom-msm8974-sony-xperia-castor.dts   |  908 +++++++-------
+>  .../dts/qcom-msm8974-sony-xperia-honami.dts   |  636 +++++-----
+>  arch/arm/boot/dts/qcom-msm8974.dtsi           |   16 +-
+>  8 files changed, 2730 insertions(+), 2752 deletions(-)
+> 
 
-Cleans up a clang-scan warning:
-drivers/clk/actions/owl-pll.c:28:9: warning: Although the value
-stored to 'mul' is used in the enclosing expression, the value is
-never actually read from 'mul' [deadcode.DeadStores]
+Hi Bjorn,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/actions/owl-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I see you applied other arm-dts patches from this set, except this one.
+Any comments here? This is quite a big one, so maybe it had trouble
+making through the discussion lists?
 
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-index 02437bdedf4d..155f313986b4 100644
---- a/drivers/clk/actions/owl-pll.c
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -25,7 +25,7 @@ static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
- 	else if (mul > pll_hw->max_mul)
- 		mul = pll_hw->max_mul;
- 
--	return mul &= mul_mask(pll_hw);
-+	return mul & mul_mask(pll_hw);
- }
- 
- static unsigned long _get_table_rate(const struct clk_pll_table *table,
--- 
-2.35.1
 
+Best regards,
+Krzysztof
