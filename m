@@ -2,111 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F93C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 14:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4386CC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Apr 2022 15:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345316AbiDROtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Apr 2022 10:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
+        id S1345194AbiDRPTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Apr 2022 11:19:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345324AbiDROsx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 10:48:53 -0400
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C4E65812;
-        Mon, 18 Apr 2022 06:35:51 -0700 (PDT)
-Received: by mail-oo1-f52.google.com with SMTP id x22-20020a4aca96000000b00338fbaf797bso1224496ooq.10;
-        Mon, 18 Apr 2022 06:35:51 -0700 (PDT)
+        with ESMTP id S1345179AbiDRPT2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Apr 2022 11:19:28 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41AF4A3DD;
+        Mon, 18 Apr 2022 07:15:39 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id bv16so1576023wrb.9;
+        Mon, 18 Apr 2022 07:15:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aK4MeadfQ+1NbFGxEqfyTLxfUGxa4k4UU8oEM9B0q3s=;
+        b=fcEZ9fAONKGlYYsNruXnYxFgZt19JDTUK8qp+ByuHZ0JkZbH6apbRDkpc1XRJ59vft
+         0uVcpml9F0gde7E4M5U5QtNEoU2sKbwXixRQID624emGxR+19fSTboUFSCnNulgMuClO
+         xRHjqLPCpEr7hbf3m6k+ZimfLyIEmJKmcQh3JoiRI4Or8ZAX3uu4w3vPtsvzaD+63XeX
+         Ge6Mdc5QyyAExIhyfa6dhdyJSSYv4sbnf7LEuFrypf4ghQi3A7IkQAhvWGDbkm2bnCxR
+         1C/M8CoplMnC6av7EWCpT+cwepH0T2C+EQNsE45ZwoRGasPn7+VFXWA1VODqG9N5pfYs
+         qizA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=/7DrYrmalKThMdy4LcLfM/HEgQyeZb4ql4+RxoW5Tek=;
-        b=n82QxnLUGM1ZVFYN1x60081DH8QIjn9dyhiDhQPB1TQixPgDHDEC2BfnunviyMMRGt
-         kvqpD97I6TQBAn1o7kSyMKMcfTKqe5fVpbPmLtPl713PxVIyq9JIxQbcabP/SrTx6mC4
-         Y8VCAW4LuNkCscXcFSu2Ic6wnTc4PfafYUBNygCKs0S6M1mO610YE/E5y16/edwMEDCB
-         NZp9MNABTsTzS8914mUZqJjbKL+iZJhDt+zfv1TkbZol0ODlrHSCHbI10yA0fnsJmakP
-         q0Dlejijiu0JEuJG2dEQsiHgrmENFP7M706VT/MJpsJpkA3oDf9S+TYGlY8BzjriEPYj
-         gOxQ==
-X-Gm-Message-State: AOAM530AOwmWD3vKoVW95y9I2+Px0nFGsmCpAtpieEN9hyEHag2Sh78i
-        3LO4QCWGfNVBx0CwSDiALg==
-X-Google-Smtp-Source: ABdhPJycojyv4H+nJQ2x1+adkeuVDAjldV3SjAu/92fF+LKn4/jU3ne8TQqcEwIkD35VyIOwx2l8gQ==
-X-Received: by 2002:a4a:8888:0:b0:321:7448:42df with SMTP id j8-20020a4a8888000000b00321744842dfmr3575456ooa.82.1650288951046;
-        Mon, 18 Apr 2022 06:35:51 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id g15-20020a05687054cf00b000e29cbc65e4sm3956240oan.51.2022.04.18.06.35.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aK4MeadfQ+1NbFGxEqfyTLxfUGxa4k4UU8oEM9B0q3s=;
+        b=vW8SQVlDIme23ufMD605rrYfeqltNwDHqch8kG9VcArVX6Wi6fG/apUWcarvUJM8Nv
+         5CEAW6/UBUgQ6zfmmU1MJnFU9UVImLv5zvLbr40d+pzJ3/eBvTXpEsHnTnTIGbK+k8cc
+         tr8CLCHpfQLOI4NVyJJmja4s/Wj4iZ3ZqoL4R7uiRf8J0TzPMYxc8BIdAsFfzPFDFn3O
+         jNSYWaja0EtTrG2+F9rA9R2gWpGFJvPK5014JKQMHW6NyPZSyYJAGxFs+gmbp4Lvct/v
+         s1m6vFhgTLJjNK/c1xKY07BqOrhZnGLSUBFnVT8VQlNDoaiPonMCSm7PnaL7ATee8Z/G
+         Ibgg==
+X-Gm-Message-State: AOAM531YnTt6g3WaKS17KWGsTlgmUiFUCeMDFN3URvu4f+qop2tK6foP
+        bP1/O8TInXXsbIgPXw7ade0=
+X-Google-Smtp-Source: ABdhPJw/7Vqg6N8cUyh7HbbfJ6gTu0/cjFNupDra5Dx1rU7/OccnES44M2MLGIYQlL+fIUwxVz4Dsw==
+X-Received: by 2002:a05:6000:154a:b0:20a:9529:aa8d with SMTP id 10-20020a056000154a00b0020a9529aa8dmr4413418wry.93.1650291338318;
+        Mon, 18 Apr 2022 07:15:38 -0700 (PDT)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id j14-20020a05600c190e00b00392910b276csm6875688wmq.27.2022.04.18.07.15.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 06:35:50 -0700 (PDT)
-Received: (nullmailer pid 3125299 invoked by uid 1000);
-        Mon, 18 Apr 2022 13:35:48 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jacky Huang <ychuang3@nuvoton.com>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, will@kernel.org,
-        arnd@arndb.de, ychuang570808@gmail.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        olof@lixom.net, cfli0@nuvoton.com, soc@kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org
-In-Reply-To: <20220418082738.11301-3-ychuang3@nuvoton.com>
-References: <20220418082738.11301-1-ychuang3@nuvoton.com> <20220418082738.11301-3-ychuang3@nuvoton.com>
-Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Document MA35D1 clock controller bindings
-Date:   Mon, 18 Apr 2022 08:35:48 -0500
-Message-Id: <1650288948.503037.3125298.nullmailer@robh.at.kernel.org>
+        Mon, 18 Apr 2022 07:15:37 -0700 (PDT)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev
+Subject: [PATCH] clk: actions: remove redundant assignment after a mask operation
+Date:   Mon, 18 Apr 2022 15:15:37 +0100
+Message-Id: <20220418141537.83994-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 18 Apr 2022 16:27:35 +0800, Jacky Huang wrote:
-> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
-> 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  .../bindings/clock/nuvoton,ma35d1-clk.yaml    | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-> 
+The assignment operation after a & mask operation is redundant,
+the &= operator can be replaced with just the & operator.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Cleans up a clang-scan warning:
+drivers/clk/actions/owl-pll.c:28:9: warning: Although the value
+stored to 'mul' is used in the enclosing expression, the value is
+never actually read from 'mul' [deadcode.DeadStores]
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:41:9: [error] syntax error: mapping values are not allowed here (syntax)
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/clk/actions/owl-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-dtschema/dtc warnings/errors:
-make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts'
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-extract-example", line 52, in <module>
-    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
-    return constructor.get_single_data()
-  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 119, in get_single_data
-    node = self.composer.get_single_node()
-  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
-  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
-  File "_ruamel_yaml.pyx", line 891, in _ruamel_yaml.CParser._compose_mapping_node
-  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
-ruamel.yaml.scanner.ScannerError: mapping values are not allowed in this context
-  in "<unicode string>", line 41, column 9
-make[1]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:  mapping values are not allowed in this context
-  in "<unicode string>", line 41, column 9
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml: ignoring, error parsing file
-make: *** [Makefile:1401: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
+index 02437bdedf4d..155f313986b4 100644
+--- a/drivers/clk/actions/owl-pll.c
++++ b/drivers/clk/actions/owl-pll.c
+@@ -25,7 +25,7 @@ static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
+ 	else if (mul > pll_hw->max_mul)
+ 		mul = pll_hw->max_mul;
+ 
+-	return mul &= mul_mask(pll_hw);
++	return mul & mul_mask(pll_hw);
+ }
+ 
+ static unsigned long _get_table_rate(const struct clk_pll_table *table,
+-- 
+2.35.1
 
