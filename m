@@ -2,159 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF013C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D02C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:48:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355246AbiDSQsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54166 "EHLO
+        id S1355286AbiDSQvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355091AbiDSQoa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:44:30 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1C323BF4;
-        Tue, 19 Apr 2022 09:41:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0DEB5B819DE;
-        Tue, 19 Apr 2022 16:41:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B048C385A5;
-        Tue, 19 Apr 2022 16:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386504;
-        bh=F7MBpdNOWf67bimqHOji31bTXpJ1ZCUAsldDqvgUu28=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9+kiqJIfUhfsFE1H4YAU921VV0VonfY9j1NKObGUwzCjRXR46YiY5Nj5Dl5rsV5L
-         iADk6/ddM85QG95gOh8OUVYyoEgAxa4D3s0bKJkfzDri4GMhVZSzQQuTx0F/9H+wsJ
-         MVlTyeihlRVWFJ5B3aJxEUdAG2tMIaPk7ers3/ONTltRkZsg/z88XIF9SNvMLClZls
-         I6TvEKcDx5DRBX76OZrUNtcSo4m6dLcfqZX2lAkhvSfR9zZVl354Yk7Zy6TbAGL6Ya
-         K7sfhczH1+GW+wFu7/eCNYeSzMXgdYelcxwq9ivucHJV+x+FdLYDsJhrGZDEpOBDtI
-         Wp06/+3vmFtwg==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Tomas Cech <sleep_walker@suse.com>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        with ESMTP id S1347137AbiDSQur (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:50:47 -0400
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6F62E9CE;
+        Tue, 19 Apr 2022 09:48:04 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-e5e433d66dso6780058fac.5;
+        Tue, 19 Apr 2022 09:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=X+AXNMLWD2gr4sUawt8zM45zbI7Ji8fHi+fcM1ppF9I=;
+        b=z2MPOkgQHCWqtQzrp32OVqVwA0hVbXVQ6TWfP5uv5gPCpc+lYDpjLRAHlClFxDDFvi
+         EpFayrzAI5w7TSxOymWvjLWgx6vMzJO2BinCN4QdFojjRRTCLRj7GmT2wbhuc3gf2jsp
+         OdspoCd9bVFwGDzWXtRkry6lBBfba8e9+Qg4d7zzDg2fVmGRgc9SfhEB7n7mwFpeU/yf
+         c75BeOnQxqQcPYKZPasQNvqDnPePdG4wwu1StU8gAxSwxrH5kZjeKPMKsZPcdWnr1rdz
+         mte/Xd4+ufdgeshL1BujSIaKvQkbbLGdscinvgUfZbXH3ff0aUbbxo+t2dndtvNMZnd4
+         Aa7Q==
+X-Gm-Message-State: AOAM532/M9IxqkKyN9DKGFGwVs1aaezLcInJmtxUUIkc9baWuuuLWBuE
+        lrcuoiy6PoiJCtRNE3QePRkNIXLv6Q==
+X-Google-Smtp-Source: ABdhPJz+3g6+lO0qye+IXcUEdQNPhIlO6UqTYDf3G8PQ0F8bwlBj/dLVjj64lf/Bz8frYomFDttRkA==
+X-Received: by 2002:a05:6871:b27:b0:e5:ee1a:2188 with SMTP id fq39-20020a0568710b2700b000e5ee1a2188mr4841471oab.109.1650386883998;
+        Tue, 19 Apr 2022 09:48:03 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id x24-20020a056870a79800b000e2e53716fbsm5534368oao.31.2022.04.19.09.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Apr 2022 09:48:03 -0700 (PDT)
+Received: (nullmailer pid 2939567 invoked by uid 1000);
+        Tue, 19 Apr 2022 16:48:02 -0000
+Date:   Tue, 19 Apr 2022 11:48:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Andy Gross <agross@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
-        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 22/48] ARM: pxa: z2: use gpio lookup for audio device
-Date:   Tue, 19 Apr 2022 18:37:44 +0200
-Message-Id: <20220419163810.2118169-23-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
-References: <20220419163810.2118169-1-arnd@kernel.org>
+        devicetree@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [RFC PATCH v2 2/6] dt-bindings: opp: accept array of frequencies
+Message-ID: <Yl7nwvTN2JyinAyd@robh.at.kernel.org>
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-3-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220411154347.491396-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, 11 Apr 2022 17:43:43 +0200, Krzysztof Kozlowski wrote:
+> Devices might need to control several clocks when scaling the frequency
+> and voltage.  Allow passing array of clock frequencies, similarly to the
+> voltages.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/opp/opp-v2-base.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-The audio device is allocated by the audio driver, and it uses a gpio
-number from the mach/z2.h header file.
-
-Change it to use a gpio lookup table for the device allocated by the
-driver to keep the header file local to the machine.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-pxa/z2.c | 11 +++++++++++
- sound/soc/pxa/z2.c     |  5 ++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/mach-pxa/z2.c b/arch/arm/mach-pxa/z2.c
-index 7eaeda269927..bb854e903c8f 100644
---- a/arch/arm/mach-pxa/z2.c
-+++ b/arch/arm/mach-pxa/z2.c
-@@ -651,6 +651,15 @@ static void __init z2_spi_init(void)
- static inline void z2_spi_init(void) {}
- #endif
- 
-+static struct gpiod_lookup_table z2_audio_gpio_table = {
-+	.dev_id = "soc-audio",
-+	.table = {
-+		GPIO_LOOKUP("gpio-pxa", GPIO37_ZIPITZ2_HEADSET_DETECT,
-+			    "hsdet-gpio", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
- /******************************************************************************
-  * Core power regulator
-  ******************************************************************************/
-@@ -755,6 +764,8 @@ static void __init z2_init(void)
- 	z2_keys_init();
- 	z2_pmic_init();
- 
-+	gpiod_add_lookup_table(&z2_audio_gpio_table);
-+
- 	pm_power_off = z2_power_off;
- }
- 
-diff --git a/sound/soc/pxa/z2.c b/sound/soc/pxa/z2.c
-index dc6c48e4738b..7f1c6bc69510 100644
---- a/sound/soc/pxa/z2.c
-+++ b/sound/soc/pxa/z2.c
-@@ -13,7 +13,7 @@
- #include <linux/timer.h>
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- 
- #include <sound/core.h>
- #include <sound/pcm.h>
-@@ -22,7 +22,6 @@
- 
- #include <asm/mach-types.h>
- #include <linux/platform_data/asoc-pxa.h>
--#include <mach/z2.h>
- 
- #include "../codecs/wm8750.h"
- #include "pxa2xx-i2s.h"
-@@ -89,7 +88,6 @@ static struct snd_soc_jack_pin hs_jack_pins[] = {
- /* Headset jack detection gpios */
- static struct snd_soc_jack_gpio hs_jack_gpios[] = {
- 	{
--		.gpio		= GPIO37_ZIPITZ2_HEADSET_DETECT,
- 		.name		= "hsdet-gpio",
- 		.report		= SND_JACK_HEADSET,
- 		.debounce_time	= 200,
-@@ -195,6 +193,7 @@ static int __init z2_init(void)
- 	if (!z2_snd_device)
- 		return -ENOMEM;
- 
-+	hs_jack_gpios[0].gpiod_dev = &z2_snd_device->dev;
- 	platform_set_drvdata(z2_snd_device, &snd_soc_z2);
- 	ret = platform_device_add(z2_snd_device);
- 
--- 
-2.29.2
-
+Acked-by: Rob Herring <robh@kernel.org>
