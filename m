@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0BFC35280
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F58AC352A1
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355250AbiDSQsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:48:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55740 "EHLO
+        id S1355259AbiDSQst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344299AbiDSQrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:47:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7C039692;
-        Tue, 19 Apr 2022 09:44:36 -0700 (PDT)
+        with ESMTP id S1354886AbiDSQmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:42:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B8D415FDD;
+        Tue, 19 Apr 2022 09:39:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D4B961884;
-        Tue, 19 Apr 2022 16:44:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98879C385B2;
-        Tue, 19 Apr 2022 16:44:28 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0D7A3B81BEB;
+        Tue, 19 Apr 2022 16:39:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CD1C385AF;
+        Tue, 19 Apr 2022 16:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386675;
-        bh=E21UhST9fsmcKihylxjEyCuP25oDJbc3hkCHxxEC7Wk=;
+        s=k20201202; t=1650386378;
+        bh=7xEnZ0JSPWZhTH940v/NcGNAbOyRIyfBWQe+0s0khHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EB/6DhNFIygUIJNqebbXaCuU1Caq5c1sBLelCq0shsuEm3FRNZV2B59x6I2trbDEc
-         mGp4dOD9Ygy0j8x6aPCdDEEtBsFVyQmwX6Z6ETiwL8f+P+6YAU8qYTWV4eD8Y1tRSO
-         YeNzajYLagp6ruLgMBiU+soJeU4jvRsJU8tDlT8ym5RNBHHt5mLJ6idSKE8ueFa7Fq
-         gHunt4HKHZZrSSLT70Pil89w5mgdiwlO4CenyC2gybqFS5NJ/dJWeID+kklVKdk6Y5
-         Ntms9VwIzEHT/wAhZPE58MouPij2FW+YnFEqM77U/IG+gpakryHwwwc9+78N5VekkF
-         55njOa7JMJYOw==
+        b=U2+iU6c8bjeJ3b4/hWR8738LXyw2qX/PeoFQkQee06q/vC7ddu3A5paCnfw9cViZ0
+         1fBHsL7duftcUL7G4nuM2IRlQk2KY6lsgVtQuDj/pHPyjLxqHD/8dTXiqD3xm3lzOw
+         3zqMMyS3sa9kuU55H0WPkrepH99Qln75vsXp46325cju4AxH9JOASF64ejSwaYDiQW
+         XK4cjQPK/vvSqzAbE/RPMy1oHrXG/vxp89TInVKBQwrtCc6W5mnrs/h8bNfSFxEhEX
+         cWCDK6zl1DWuudpeHuSJIn2jTIsuGmr5kz5m3ceIgi2uQGIuHn5uclCDYzNllRUsoG
+         VX9+70vTRthWw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,10 +58,11 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 44/48] ARM: pxa: move plat-pxa to drivers/soc/
-Date:   Tue, 19 Apr 2022 18:38:06 +0200
-Message-Id: <20220419163810.2118169-45-arnd@kernel.org>
+        alsa-devel@alsa-project.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 06/48] ARM: pxa: stop using mach/bitfield.h
+Date:   Tue, 19 Apr 2022 18:37:28 +0200
+Message-Id: <20220419163810.2118169-7-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,228 +74,82 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-There are two drivers in arch/arm/plat-pxa: mfp and ssp. Both
-of them should ideally not be needed at all, as there are
-proper subsystems to replace them.
+There are two identical copies of mach/bitfield.h, one for
+mach-sa1100 and one for mach-pxa. The pxafb driver only
+makes use of two macros, which can be trivially open-coded
+in the header.
 
-OTOH, they are self-contained and can simply be normal
-SoC drivers, so move them over there to eliminate one more
-of the plat-* directories.
-
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr> (mach-pxa)
-Acked-by: Lubomir Rintel <lkundrak@v3.sk> (mach-mmp)
+Cc: dri-devel@lists.freedesktop.org
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/Kconfig                                            | 4 ----
- arch/arm/Makefile                                           | 1 -
- arch/arm/mach-mmp/mfp.h                                     | 2 +-
- arch/arm/mach-pxa/include/mach/mfp.h                        | 2 +-
- arch/arm/mach-pxa/mfp-pxa2xx.h                              | 2 +-
- arch/arm/mach-pxa/mfp-pxa3xx.h                              | 2 +-
- drivers/soc/Kconfig                                         | 1 +
- drivers/soc/Makefile                                        | 1 +
- {arch/arm/plat-pxa => drivers/soc/pxa}/Kconfig              | 5 ++---
- {arch/arm/plat-pxa => drivers/soc/pxa}/Makefile             | 4 ----
- {arch/arm/plat-pxa => drivers/soc/pxa}/mfp.c                | 2 +-
- {arch/arm/plat-pxa => drivers/soc/pxa}/ssp.c                | 0
- .../plat-pxa/include/plat => include/linux/soc/pxa}/mfp.h   | 6 ++----
- 13 files changed, 11 insertions(+), 21 deletions(-)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/Kconfig (83%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/Makefile (51%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/mfp.c (99%)
- rename {arch/arm/plat-pxa => drivers/soc/pxa}/ssp.c (100%)
- rename {arch/arm/plat-pxa/include/plat => include/linux/soc/pxa}/mfp.h (98%)
+ arch/arm/mach-pxa/idp.c                   | 1 -
+ arch/arm/mach-pxa/include/mach/regs-lcd.h | 5 +++--
+ arch/arm/mach-pxa/regs-u2d.h              | 2 --
+ drivers/video/fbdev/pxafb.c               | 1 -
+ 4 files changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2e8091e2d8a8..eef8cbf20045 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -667,7 +667,6 @@ source "arch/arm/mach-orion5x/Kconfig"
- source "arch/arm/mach-oxnas/Kconfig"
+diff --git a/arch/arm/mach-pxa/idp.c b/arch/arm/mach-pxa/idp.c
+index 57c0511472bc..525d01ddfbbb 100644
+--- a/arch/arm/mach-pxa/idp.c
++++ b/arch/arm/mach-pxa/idp.c
+@@ -30,7 +30,6 @@
+ #include "pxa25x.h"
+ #include "idp.h"
+ #include <linux/platform_data/video-pxafb.h>
+-#include <mach/bitfield.h>
+ #include <linux/platform_data/mmc-pxamci.h>
+ #include <linux/smc91x.h>
  
- source "arch/arm/mach-pxa/Kconfig"
--source "arch/arm/plat-pxa/Kconfig"
+diff --git a/arch/arm/mach-pxa/include/mach/regs-lcd.h b/arch/arm/mach-pxa/include/mach/regs-lcd.h
+index e2b6e3d1f625..6a434675f84a 100644
+--- a/arch/arm/mach-pxa/include/mach/regs-lcd.h
++++ b/arch/arm/mach-pxa/include/mach/regs-lcd.h
+@@ -2,8 +2,6 @@
+ #ifndef __ASM_ARCH_REGS_LCD_H
+ #define __ASM_ARCH_REGS_LCD_H
  
- source "arch/arm/mach-qcom/Kconfig"
- 
-@@ -753,9 +752,6 @@ config PLAT_ORION_LEGACY
- 	bool
- 	select PLAT_ORION
- 
--config PLAT_PXA
--	bool
+-#include <mach/bitfield.h>
 -
- config PLAT_VERSATILE
- 	bool
- 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index a2391b8de5a5..206a900fc87c 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -230,7 +230,6 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
- # by CONFIG_* macro name.
- plat-$(CONFIG_ARCH_OMAP)	+= omap
- plat-$(CONFIG_PLAT_ORION)	+= orion
--plat-$(CONFIG_PLAT_PXA)		+= pxa
- plat-$(CONFIG_PLAT_VERSATILE)	+= versatile
- 
- # The byte offset of the kernel image in RAM from the start of RAM.
-diff --git a/arch/arm/mach-mmp/mfp.h b/arch/arm/mach-mmp/mfp.h
-index 75a4acb33b1b..6f3057987756 100644
---- a/arch/arm/mach-mmp/mfp.h
-+++ b/arch/arm/mach-mmp/mfp.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_MACH_MFP_H
- #define __ASM_MACH_MFP_H
- 
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
- 
  /*
-  * NOTE: the MFPR register bit definitions on PXA168 processor lines are a
-diff --git a/arch/arm/mach-pxa/include/mach/mfp.h b/arch/arm/mach-pxa/include/mach/mfp.h
-index dbb961fb570e..7e0879bd4102 100644
---- a/arch/arm/mach-pxa/include/mach/mfp.h
-+++ b/arch/arm/mach-pxa/include/mach/mfp.h
-@@ -13,6 +13,6 @@
- #ifndef __ASM_ARCH_MFP_H
- #define __ASM_ARCH_MFP_H
+  * LCD Controller Registers and Bits Definitions
+  */
+@@ -86,6 +84,9 @@
+ #define LCCR0_OUC	(1 << 25)	/* Overlay Underlay control bit */
+ #define LCCR0_LDDALT	(1 << 26)	/* LDD alternate mapping control */
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
++#define Fld(Size, Shft)	(((Size) << 16) + (Shft))
++#define FShft(Field)	((Field) & 0x0000FFFF)
++
+ #define LCCR1_PPL	Fld (10, 0)	/* Pixels Per Line - 1 */
+ #define LCCR1_DisWdth(Pixel)	(((Pixel) - 1) << FShft (LCCR1_PPL))
  
- #endif /* __ASM_ARCH_MFP_H */
-diff --git a/arch/arm/mach-pxa/mfp-pxa2xx.h b/arch/arm/mach-pxa/mfp-pxa2xx.h
-index 980145e7ee99..683a3ea5f154 100644
---- a/arch/arm/mach-pxa/mfp-pxa2xx.h
-+++ b/arch/arm/mach-pxa/mfp-pxa2xx.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_ARCH_MFP_PXA2XX_H
- #define __ASM_ARCH_MFP_PXA2XX_H
+diff --git a/arch/arm/mach-pxa/regs-u2d.h b/arch/arm/mach-pxa/regs-u2d.h
+index fe4c80ad87ec..ab517ba62c9a 100644
+--- a/arch/arm/mach-pxa/regs-u2d.h
++++ b/arch/arm/mach-pxa/regs-u2d.h
+@@ -2,8 +2,6 @@
+ #ifndef __ASM_ARCH_PXA3xx_U2D_H
+ #define __ASM_ARCH_PXA3xx_U2D_H
  
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
- 
- /*
-  * the following MFP_xxx bit definitions in mfp.h are re-used for pxa2xx:
-diff --git a/arch/arm/mach-pxa/mfp-pxa3xx.h b/arch/arm/mach-pxa/mfp-pxa3xx.h
-index cdd830926d1c..81fec4fa5a0f 100644
---- a/arch/arm/mach-pxa/mfp-pxa3xx.h
-+++ b/arch/arm/mach-pxa/mfp-pxa3xx.h
-@@ -2,7 +2,7 @@
- #ifndef __ASM_ARCH_MFP_PXA3XX_H
- #define __ASM_ARCH_MFP_PXA3XX_H
- 
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
- 
- #define MFPR_BASE	(0x40e10000)
- 
-diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-index c5aae42673d3..86ccf5970bc1 100644
---- a/drivers/soc/Kconfig
-+++ b/drivers/soc/Kconfig
-@@ -14,6 +14,7 @@ source "drivers/soc/ixp4xx/Kconfig"
- source "drivers/soc/litex/Kconfig"
- source "drivers/soc/mediatek/Kconfig"
- source "drivers/soc/microchip/Kconfig"
-+source "drivers/soc/pxa/Kconfig"
- source "drivers/soc/qcom/Kconfig"
- source "drivers/soc/renesas/Kconfig"
- source "drivers/soc/rockchip/Kconfig"
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 904eec2a7871..fd7717d597fc 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_SOC_XWAY)		+= lantiq/
- obj-$(CONFIG_LITEX_SOC_CONTROLLER) += litex/
- obj-y				+= mediatek/
- obj-y				+= microchip/
-+obj-y				+= pxa/
- obj-y				+= amlogic/
- obj-y				+= qcom/
- obj-y				+= renesas/
-diff --git a/arch/arm/plat-pxa/Kconfig b/drivers/soc/pxa/Kconfig
-similarity index 83%
-rename from arch/arm/plat-pxa/Kconfig
-rename to drivers/soc/pxa/Kconfig
-index 6f7a0a39c2b9..c5c265aa4f07 100644
---- a/arch/arm/plat-pxa/Kconfig
-+++ b/drivers/soc/pxa/Kconfig
-@@ -1,9 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
--if PLAT_PXA
-+config PLAT_PXA
-+	bool
- 
- config PXA_SSP
- 	tristate
- 	help
- 	  Enable support for PXA2xx SSP ports
+-#include <mach/bitfield.h>
 -
--endif
-diff --git a/arch/arm/plat-pxa/Makefile b/drivers/soc/pxa/Makefile
-similarity index 51%
-rename from arch/arm/plat-pxa/Makefile
-rename to drivers/soc/pxa/Makefile
-index 349ea0af8450..413deceddbdd 100644
---- a/arch/arm/plat-pxa/Makefile
-+++ b/drivers/soc/pxa/Makefile
-@@ -1,8 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--#
--# Makefile for code common across different PXA processor families
--#
--ccflags-$(CONFIG_ARCH_MMP) := -I$(srctree)/$(src)/include
- 
- obj-$(CONFIG_PXA3xx)		+= mfp.o
- obj-$(CONFIG_ARCH_MMP)		+= mfp.o
-diff --git a/arch/arm/plat-pxa/mfp.c b/drivers/soc/pxa/mfp.c
-similarity index 99%
-rename from arch/arm/plat-pxa/mfp.c
-rename to drivers/soc/pxa/mfp.c
-index 17fc4f33f35b..6220ba321cfc 100644
---- a/arch/arm/plat-pxa/mfp.c
-+++ b/drivers/soc/pxa/mfp.c
-@@ -15,7 +15,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
- 
--#include <plat/mfp.h>
-+#include <linux/soc/pxa/mfp.h>
- 
- #define MFPR_SIZE	(PAGE_SIZE)
- 
-diff --git a/arch/arm/plat-pxa/ssp.c b/drivers/soc/pxa/ssp.c
-similarity index 100%
-rename from arch/arm/plat-pxa/ssp.c
-rename to drivers/soc/pxa/ssp.c
-diff --git a/arch/arm/plat-pxa/include/plat/mfp.h b/include/linux/soc/pxa/mfp.h
-similarity index 98%
-rename from arch/arm/plat-pxa/include/plat/mfp.h
-rename to include/linux/soc/pxa/mfp.h
-index 3accaa9ee781..39779cbed0c0 100644
---- a/arch/arm/plat-pxa/include/plat/mfp.h
-+++ b/include/linux/soc/pxa/mfp.h
-@@ -1,7 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
  /*
-- * arch/arm/plat-pxa/include/plat/mfp.h
-- *
-  *   Common Multi-Function Pin Definitions
-  *
-  * Copyright (C) 2007 Marvell International Ltd.
-@@ -453,8 +451,8 @@ struct mfp_addr_map {
- 
- #define MFP_ADDR_END	{ MFP_PIN_INVALID, 0 }
- 
--void __init mfp_init_base(void __iomem *mfpr_base);
--void __init mfp_init_addr(struct mfp_addr_map *map);
-+void mfp_init_base(void __iomem *mfpr_base);
-+void mfp_init_addr(struct mfp_addr_map *map);
+  * USB2 device controller registers and bits definitions
+  */
+diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+index e3d1a184d2be..edf080f64a8c 100644
+--- a/drivers/video/fbdev/pxafb.c
++++ b/drivers/video/fbdev/pxafb.c
+@@ -64,7 +64,6 @@
+ #include <asm/io.h>
+ #include <asm/irq.h>
+ #include <asm/div64.h>
+-#include <mach/bitfield.h>
+ #include <linux/platform_data/video-pxafb.h>
  
  /*
-  * mfp_{read, write}()	- for direct read/write access to the MFPR register
 -- 
 2.29.2
 
