@@ -2,101 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F011C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E8DC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344162AbiDSIo6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 04:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44420 "EHLO
+        id S1350155AbiDSIwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 04:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344219AbiDSIo5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:44:57 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3235FDFE5
-        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 01:42:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D49DB212CA;
-        Tue, 19 Apr 2022 08:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650357733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CYfvMhwTj1duuSdq8AvpKgdxgg9tyg/I/6KROTUsPcI=;
-        b=Pk3GDcz7P/fgVYN9GYb1/BXnZDoyuUxOk4f2ymmr2M6nCvSrtwl76IA3CblKH6tnMN+crw
-        x7DePuWrevInbuVacXkmSG/m1C5QESLcD48HE/bCiirlW8HEEVU5yk3Il1pV62vSjWZ1o8
-        PNgEP3POZtDGI45HLNM95bROod0JX5A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650357733;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CYfvMhwTj1duuSdq8AvpKgdxgg9tyg/I/6KROTUsPcI=;
-        b=xx+gw7gHnObqDwN3khQhxz+u2+uw3F28sQoZFWXLa5H8XvA1lmM7lUF46M8QedTMSBWXV9
-        MObMXqqIU1OGHKDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C462C139BE;
-        Tue, 19 Apr 2022 08:42:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id QG64L+V1XmKpdAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Tue, 19 Apr 2022 08:42:13 +0000
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Ivan T. Ivanov" <iivanov@suse.de>
-Subject: [PATCH v3 2/2] clk: bcm: rpi: Handle pixel clock in firmware
-Date:   Tue, 19 Apr 2022 11:40:58 +0300
-Message-Id: <20220419084058.146509-3-iivanov@suse.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220419084058.146509-1-iivanov@suse.de>
-References: <20220419084058.146509-1-iivanov@suse.de>
+        with ESMTP id S1350156AbiDSIwa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:52:30 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EDA4DC41;
+        Tue, 19 Apr 2022 01:49:46 -0700 (PDT)
+Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 0A9B31C81111;
+        Tue, 19 Apr 2022 16:49:45 +0800 (CST)
+Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 19
+ Apr 2022 16:49:44 +0800
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCML01B.nuvoton.com
+ (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Tue, 19 Apr
+ 2022 16:49:44 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Tue, 19 Apr 2022 16:49:44 +0800
+Message-ID: <32867abe-49ae-ae8e-56dd-a0c80011f870@nuvoton.com>
+Date:   Tue, 19 Apr 2022 16:49:44 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Document MA35D1 clock
+ controller bindings
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+CC:     <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <will@kernel.org>,
+        <arnd@arndb.de>, <ychuang570808@gmail.com>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <olof@lixom.net>,
+        <cfli0@nuvoton.com>, <soc@kernel.org>,
+        <devicetree@vger.kernel.org>, <sboyd@kernel.org>
+References: <20220418082738.11301-1-ychuang3@nuvoton.com>
+ <20220418082738.11301-3-ychuang3@nuvoton.com>
+ <1650288948.503037.3125298.nullmailer@robh.at.kernel.org>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <1650288948.503037.3125298.nullmailer@robh.at.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk-bcm2835 handling of the pixel clock does not function
-correctly when the HDMI power domain is disabled.
 
-The firmware supports it correctly, so add it to the
-firmware clock driver.
 
-Acked-by: Maxime Ripard <maxime@cerno.tech>
-Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
- drivers/clk/bcm/clk-raspberrypi.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 2022/4/18 下午 09:35, Rob Herring wrote:
+> On Mon, 18 Apr 2022 16:27:35 +0800, Jacky Huang wrote:
+>> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>>   .../bindings/clock/nuvoton,ma35d1-clk.yaml    | 63 +++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+>>
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:41:9: [error] syntax error: mapping values are not allowed here (syntax)
+>
+> dtschema/dtc warnings/errors:
+> make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts'
+> Traceback (most recent call last):
+>    File "/usr/local/bin/dt-extract-example", line 52, in <module>
+>      binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+>    File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
+>      return constructor.get_single_data()
+>    File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 119, in get_single_data
+>      node = self.composer.get_single_node()
+>    File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
+>    File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
+>    File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+>    File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+>    File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+>    File "_ruamel_yaml.pyx", line 891, in _ruamel_yaml.CParser._compose_mapping_node
+>    File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
+> ruamel.yaml.scanner.ScannerError: mapping values are not allowed in this context
+>    in "<unicode string>", line 41, column 9
+> make[1]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> ./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:  mapping values are not allowed in this context
+>    in "<unicode string>", line 41, column 9
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml: ignoring, error parsing file
+> make: *** [Makefile:1401: dt_binding_check] Error 2
+>
+> doc reference errors (make refcheckdocs):
+>
+> See https://patchwork.ozlabs.org/patch/
+>
+> This check can fail if there are any dependencies. The base for a patch
+> series is generally the most recent rc1.
+>
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+>
+> pip3 install dtschema --upgrade
+>
+> Please check and re-submit.
+>
+Thanks for your review.
+I see this error and know where the problem is. I will fix it in the 
+next version.
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 2e2491d85835..530820d13104 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -129,6 +129,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	[RPI_FIRMWARE_V3D_CLK_ID] = {
- 		.export = true,
- 	},
-+	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
-+		.export = true,
-+	},
- 	[RPI_FIRMWARE_HEVC_CLK_ID] = {
- 		.export = true,
- 	},
--- 
-2.34.1
+Sincerely,
+Jacky Huang
+
+
 
