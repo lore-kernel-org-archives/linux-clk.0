@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B99C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBFCC4321E
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354690AbiDSQr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
+        id S1345242AbiDSQsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354973AbiDSQoi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:44:38 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E8F23BF4;
-        Tue, 19 Apr 2022 09:41:55 -0700 (PDT)
+        with ESMTP id S1348967AbiDSQqC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:46:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113A5396A3;
+        Tue, 19 Apr 2022 09:43:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E5D23B81BE5;
-        Tue, 19 Apr 2022 16:41:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45319C385A7;
-        Tue, 19 Apr 2022 16:41:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A15E56145C;
+        Tue, 19 Apr 2022 16:43:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED67C385A9;
+        Tue, 19 Apr 2022 16:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386512;
-        bh=QiDjZY966XEBc6DDR2J3pcVF2OHhXSmFgleX733S9R8=;
+        s=k20201202; t=1650386598;
+        bh=v2JXUsT+aPSiyV8AWZ0OLtn99RZRKtVDeuty5M4eG68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gAb4FzNkgoM3kCYs/HBpqHCO1xMlxG5aT22Kue78YyBRs5uYsdsLCEDp2uFk/Vpzj
-         hBDEq0hPQ68ZrCETwUOUBIQ2Db2JnIDFmuhgzGViMIGfnVQ2WxWAJUyKuIHYvbfq1m
-         JXSPFaIX/U6ER3sOlUmZBa1lA6lTZ2W4rIZqUFJhqPLVeSnIq0rECTEwLS9CEDhCB8
-         LhU1ezCsE89PPHvmS5iP2R/xWcyyTkdL0NJVZF/DNBTFkKyMS50SZFGSjKPwZ+uEQr
-         hIdROGX5ZctaUoAgIY+3w7w75y6TV79tuXyYb0/fV3nVTh/49O18UBQ5KVVCtSnWp3
-         alA42Hgz/7LBw==
+        b=tt/fiI6JfMKScsjC4gupDTlXwIFAYWcsYENflWn5n3kMrbCN+Y2cCr3glEwE1sItJ
+         cONsIQQLt01Y/qCAeHUUbJd9TpD27gE/DUc3zMZ7c0U2VwpCWQ+qBf7uwrq/GZGzTX
+         3FGOj+knk17r2GSyltkagM0yCF+n9LJkDIwNmtctqNly1C9p720AIevLts/VbLM17G
+         O+4nFGEcvsfnWMk8Au/5OQB6coNhg3LP2cgERB8iHAG0NNlBzSNRpU2laCxc90/bD8
+         8gZIgUWRqfgnaIv2WyLz/01oqgCe1ixn6EBO/7GUMc0aVvmzyH6K1PsZ1Shk5OoOYF
+         /MoVumyBheReg==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 23/48] ARM: pxa: magician: use platform driver for audio
-Date:   Tue, 19 Apr 2022 18:37:45 +0200
-Message-Id: <20220419163810.2118169-24-arnd@kernel.org>
+Subject: [PATCH 34/48] ARM: pxa: pcmcia: move smemc configuration back to arch
+Date:   Tue, 19 Apr 2022 18:37:56 +0200
+Message-Id: <20220419163810.2118169-35-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,300 +73,193 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The magician audio driver creates a codec device and gets
-data from a board specific header file, both of which is
-a bit suspicious. Move these into the board file itself,
-using a gpio lookup table.
+Rather than poking at the smemc registers directly from the
+pcmcia/pxa2xx_base driver, move those bits into machine file
+to have a cleaner interface.
 
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: alsa-devel@alsa-project.org
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Link: https://lore.kernel.org/lkml/87d0egjzxk.fsf@belgarion.home/
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/magician.c |  50 +++++++++++++
- sound/soc/pxa/magician.c     | 141 +++++++++--------------------------
- 2 files changed, 87 insertions(+), 104 deletions(-)
+ arch/arm/mach-pxa/generic.c   | 29 ++++++++++++++++++++++
+ drivers/pcmcia/pxa2xx_base.c  | 46 ++++++++++++-----------------------
+ include/linux/soc/pxa/smemc.h | 10 ++++++++
+ 3 files changed, 55 insertions(+), 30 deletions(-)
+ create mode 100644 include/linux/soc/pxa/smemc.h
 
-diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
-index d105deb1e098..598c977a8ae6 100644
---- a/arch/arm/mach-pxa/magician.c
-+++ b/arch/arm/mach-pxa/magician.c
-@@ -53,6 +53,7 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/pxa2xx_spi.h>
- #include <linux/spi/ads7846.h>
-+#include <sound/uda1380.h>
+diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
+index f9083c4f0aea..fe1d55d328e5 100644
+--- a/arch/arm/mach-pxa/generic.c
++++ b/arch/arm/mach-pxa/generic.c
+@@ -70,6 +70,35 @@ unsigned int get_clk_frequency_khz(int info)
+ }
+ EXPORT_SYMBOL(get_clk_frequency_khz);
  
- static unsigned long magician_pin_config[] __initdata = {
- 
-@@ -898,6 +899,53 @@ static struct platform_device strataflash = {
- 	},
- };
- 
-+/*
-+ * audio support
-+ */
-+static struct uda1380_platform_data uda1380_info = {
-+	.gpio_power = EGPIO_MAGICIAN_CODEC_POWER,
-+	.gpio_reset = EGPIO_MAGICIAN_CODEC_RESET,
-+	.dac_clk    = UDA1380_DAC_CLK_WSPLL,
-+};
-+
-+static struct i2c_board_info magician_audio_i2c_board_info[] = {
-+	{
-+		I2C_BOARD_INFO("uda1380", 0x18),
-+		.platform_data = &uda1380_info,
-+	},
-+};
-+
-+static struct gpiod_lookup_table magician_audio_gpio_table = {
-+	.dev_id = "magician-audio",
-+	.table = {
-+		GPIO_LOOKUP("htc-egpio-0",
-+			    EGPIO_MAGICIAN_SPK_POWER - MAGICIAN_EGPIO_BASE,
-+			    "SPK_POWER", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("htc-egpio-0",
-+			    EGPIO_MAGICIAN_EP_POWER - MAGICIAN_EGPIO_BASE,
-+			    "EP_POWER", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("htc-egpio-0",
-+			    EGPIO_MAGICIAN_MIC_POWER - MAGICIAN_EGPIO_BASE,
-+			    "MIC_POWER", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("htc-egpio-0",
-+			    EGPIO_MAGICIAN_IN_SEL0 - MAGICIAN_EGPIO_BASE,
-+			    "IN_SEL0", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("htc-egpio-0",
-+			    EGPIO_MAGICIAN_IN_SEL1 - MAGICIAN_EGPIO_BASE,
-+			    "IN_SEL1", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
-+static void magician_audio_init(void)
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio)
 +{
-+	i2c_register_board_info(0,
-+		ARRAY_AND_SIZE(magician_audio_i2c_board_info));
-+
-+	gpiod_add_lookup_table(&magician_audio_gpio_table);
-+	platform_device_register_simple("magician-audio", -1, NULL, 0);
++	__raw_writel(mcmem, MCMEM(sock));
++	__raw_writel(mcatt, MCATT(sock));
++	__raw_writel(mcio, MCIO(sock));
 +}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_timing);
++
++void pxa_smemc_set_pcmcia_socket(int nr)
++{
++	switch (nr) {
++	case 0:
++		__raw_writel(0, MECR);
++		break;
++	case 1:
++		/*
++		 * We have at least one socket, so set MECR:CIT
++		 * (Card Is There)
++		 */
++		__raw_writel(MECR_CIT, MECR);
++		break;
++	case 2:
++		/* Set CIT and MECR:NOS (Number Of Sockets) */
++		__raw_writel(MECR_CIT | MECR_NOS, MECR);
++		break;
++	}
++}
++EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_socket);
 +
  /*
-  * PXA I2C main controller
-  */
-@@ -1048,6 +1096,8 @@ static void __init magician_init(void)
- 	gpiod_add_lookup_table(&bq24022_gpiod_table);
- 	gpiod_add_lookup_table(&gpio_vbus_gpiod_table);
- 	platform_add_devices(ARRAY_AND_SIZE(devices));
-+
-+	magician_audio_init();
- }
- 
- MACHINE_START(MAGICIAN, "HTC Magician")
-diff --git a/sound/soc/pxa/magician.c b/sound/soc/pxa/magician.c
-index a5f326c97af2..9433cc927755 100644
---- a/sound/soc/pxa/magician.c
-+++ b/sound/soc/pxa/magician.c
-@@ -14,16 +14,14 @@
- #include <linux/interrupt.h>
+  * Intel PXA2xx internal register mapping.
+  *
+diff --git a/drivers/pcmcia/pxa2xx_base.c b/drivers/pcmcia/pxa2xx_base.c
+index 7cd1375d6087..0ea41f1411e5 100644
+--- a/drivers/pcmcia/pxa2xx_base.c
++++ b/drivers/pcmcia/pxa2xx_base.c
+@@ -24,11 +24,10 @@
+ #include <linux/spinlock.h>
  #include <linux/platform_device.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
+ #include <linux/soc/pxa/cpu.h>
++#include <linux/soc/pxa/smemc.h>
  
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
--#include <sound/uda1380.h>
- 
--#include <mach/magician.h>
+-#include <mach/smemc.h>
+ #include <asm/io.h>
+ #include <asm/irq.h>
+-#include <mach/pxa2xx-regs.h>
  #include <asm/mach-types.h>
- #include "../codecs/uda1380.h"
- #include "pxa2xx-i2s.h"
-@@ -36,6 +34,9 @@ static int magician_hp_switch;
- static int magician_spk_switch = 1;
- static int magician_in_sel = MAGICIAN_MIC;
  
-+static struct gpio_desc *gpiod_spk_power, *gpiod_ep_power, *gpiod_mic_power;
-+static struct gpio_desc *gpiod_in_sel0, *gpiod_in_sel1;
-+
- static void magician_ext_control(struct snd_soc_dapm_context *dapm)
- {
- 
-@@ -215,10 +216,10 @@ static int magician_set_input(struct snd_kcontrol *kcontrol,
- 
- 	switch (magician_in_sel) {
- 	case MAGICIAN_MIC:
--		gpio_set_value(EGPIO_MAGICIAN_IN_SEL1, 1);
-+		gpiod_set_value(gpiod_in_sel1, 1);
- 		break;
- 	case MAGICIAN_MIC_EXT:
--		gpio_set_value(EGPIO_MAGICIAN_IN_SEL1, 0);
-+		gpiod_set_value(gpiod_in_sel1, 0);
- 	}
- 
- 	return 1;
-@@ -227,21 +228,21 @@ static int magician_set_input(struct snd_kcontrol *kcontrol,
- static int magician_spk_power(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *k, int event)
- {
--	gpio_set_value(EGPIO_MAGICIAN_SPK_POWER, SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value(gpiod_spk_power, SND_SOC_DAPM_EVENT_ON(event));
- 	return 0;
+ #include <pcmcia/ss.h>
+@@ -113,7 +112,7 @@ static inline u_int pxa2xx_pcmcia_cmd_time(u_int mem_clk_10khz,
+ 	return (300000 * (pcmcia_mcxx_asst + 1) / mem_clk_10khz);
  }
  
- static int magician_hp_power(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *k, int event)
+-static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
++static uint32_t pxa2xx_pcmcia_mcmem(int sock, int speed, int clock)
  {
--	gpio_set_value(EGPIO_MAGICIAN_EP_POWER, SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value(gpiod_ep_power, SND_SOC_DAPM_EVENT_ON(event));
- 	return 0;
- }
+ 	uint32_t val;
  
- static int magician_mic_bias(struct snd_soc_dapm_widget *w,
- 				struct snd_kcontrol *k, int event)
- {
--	gpio_set_value(EGPIO_MAGICIAN_MIC_POWER, SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value(gpiod_mic_power, SND_SOC_DAPM_EVENT_ON(event));
- 	return 0;
- }
+@@ -124,12 +123,10 @@ static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
  
-@@ -328,106 +329,38 @@ static struct snd_soc_card snd_soc_card_magician = {
- 	.fully_routed = true,
- };
- 
--static struct platform_device *magician_snd_device;
--
--/*
-- * FIXME: move into magician board file once merged into the pxa tree
-- */
--static struct uda1380_platform_data uda1380_info = {
--	.gpio_power = EGPIO_MAGICIAN_CODEC_POWER,
--	.gpio_reset = EGPIO_MAGICIAN_CODEC_RESET,
--	.dac_clk    = UDA1380_DAC_CLK_WSPLL,
--};
--
--static struct i2c_board_info i2c_board_info[] = {
--	{
--		I2C_BOARD_INFO("uda1380", 0x18),
--		.platform_data = &uda1380_info,
--	},
--};
--
--static int __init magician_init(void)
--{
--	int ret;
--	struct i2c_adapter *adapter;
--	struct i2c_client *client;
--
--	if (!machine_is_magician())
--		return -ENODEV;
--
--	adapter = i2c_get_adapter(0);
--	if (!adapter)
--		return -ENODEV;
--	client = i2c_new_client_device(adapter, i2c_board_info);
--	i2c_put_adapter(adapter);
--	if (IS_ERR(client))
--		return PTR_ERR(client);
--
--	ret = gpio_request(EGPIO_MAGICIAN_SPK_POWER, "SPK_POWER");
--	if (ret)
--		goto err_request_spk;
--	ret = gpio_request(EGPIO_MAGICIAN_EP_POWER, "EP_POWER");
--	if (ret)
--		goto err_request_ep;
--	ret = gpio_request(EGPIO_MAGICIAN_MIC_POWER, "MIC_POWER");
--	if (ret)
--		goto err_request_mic;
--	ret = gpio_request(EGPIO_MAGICIAN_IN_SEL0, "IN_SEL0");
--	if (ret)
--		goto err_request_in_sel0;
--	ret = gpio_request(EGPIO_MAGICIAN_IN_SEL1, "IN_SEL1");
--	if (ret)
--		goto err_request_in_sel1;
--
--	gpio_set_value(EGPIO_MAGICIAN_IN_SEL0, 0);
--
--	magician_snd_device = platform_device_alloc("soc-audio", -1);
--	if (!magician_snd_device) {
--		ret = -ENOMEM;
--		goto err_pdev;
--	}
--
--	platform_set_drvdata(magician_snd_device, &snd_soc_card_magician);
--	ret = platform_device_add(magician_snd_device);
--	if (ret) {
--		platform_device_put(magician_snd_device);
--		goto err_pdev;
--	}
+-	__raw_writel(val, MCMEM(sock));
 -
 -	return 0;
--
--err_pdev:
--	gpio_free(EGPIO_MAGICIAN_IN_SEL1);
--err_request_in_sel1:
--	gpio_free(EGPIO_MAGICIAN_IN_SEL0);
--err_request_in_sel0:
--	gpio_free(EGPIO_MAGICIAN_MIC_POWER);
--err_request_mic:
--	gpio_free(EGPIO_MAGICIAN_EP_POWER);
--err_request_ep:
--	gpio_free(EGPIO_MAGICIAN_SPK_POWER);
--err_request_spk:
--	return ret;
--}
--
--static void __exit magician_exit(void)
-+static int magician_audio_probe(struct platform_device *pdev)
- {
--	platform_device_unregister(magician_snd_device);
--
--	gpio_set_value(EGPIO_MAGICIAN_SPK_POWER, 0);
--	gpio_set_value(EGPIO_MAGICIAN_EP_POWER, 0);
--	gpio_set_value(EGPIO_MAGICIAN_MIC_POWER, 0);
--
--	gpio_free(EGPIO_MAGICIAN_IN_SEL1);
--	gpio_free(EGPIO_MAGICIAN_IN_SEL0);
--	gpio_free(EGPIO_MAGICIAN_MIC_POWER);
--	gpio_free(EGPIO_MAGICIAN_EP_POWER);
--	gpio_free(EGPIO_MAGICIAN_SPK_POWER);
-+	struct device *dev = &pdev->dev;
-+
-+	gpiod_spk_power = devm_gpiod_get(dev, "SPK_POWER", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_spk_power))
-+		return PTR_ERR(gpiod_spk_power);
-+	gpiod_ep_power = devm_gpiod_get(dev, "EP_POWER", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_ep_power))
-+		return PTR_ERR(gpiod_ep_power);
-+	gpiod_mic_power = devm_gpiod_get(dev, "MIC_POWER", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_mic_power))
-+		return PTR_ERR(gpiod_mic_power);
-+	gpiod_in_sel0 = devm_gpiod_get(dev, "IN_SEL0", GPIOD_OUT_HIGH);
-+	if (IS_ERR(gpiod_in_sel0))
-+		return PTR_ERR(gpiod_in_sel0);
-+	gpiod_in_sel1 = devm_gpiod_get(dev, "IN_SEL1", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_in_sel1))
-+		return PTR_ERR(gpiod_in_sel1);
-+
-+	snd_soc_card_magician.dev = &pdev->dev;
-+	return devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_magician);
++	return val;
  }
  
--module_init(magician_init);
--module_exit(magician_exit);
-+static struct platform_driver magician_audio_driver = {
-+	.driver.name = "magician-audio",
-+	.driver.pm = &snd_soc_pm_ops,
-+	.probe = magician_audio_probe,
-+};
-+module_platform_driver(magician_audio_driver);
+-static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcio(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
  
- MODULE_AUTHOR("Philipp Zabel");
- MODULE_DESCRIPTION("ALSA SoC Magician");
- MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:magician-audio");
+@@ -140,12 +137,11 @@ static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCIO(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
++static int pxa2xx_pcmcia_mcatt(int sock, int speed, int clock)
+ {
+ 	uint32_t val;
+ 
+@@ -156,31 +152,26 @@ static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
+ 		| ((pxa2xx_mcxx_hold(speed, clock)
+ 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
+ 
+-	__raw_writel(val, MCATT(sock));
+ 
+-	return 0;
++	return val;
+ }
+ 
+-static int pxa2xx_pcmcia_set_mcxx(struct soc_pcmcia_socket *skt, unsigned int clk)
++static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
+ {
++	unsigned long clk = clk_get_rate(skt->clk) / 10000;
+ 	struct soc_pcmcia_timing timing;
+ 	int sock = skt->nr;
+ 
+ 	soc_common_pcmcia_get_timing(skt, &timing);
+ 
+-	pxa2xx_pcmcia_set_mcmem(sock, timing.mem, clk);
+-	pxa2xx_pcmcia_set_mcatt(sock, timing.attr, clk);
+-	pxa2xx_pcmcia_set_mcio(sock, timing.io, clk);
++	pxa_smemc_set_pcmcia_timing(sock,
++		pxa2xx_pcmcia_mcmem(sock, timing.mem, clk),
++		pxa2xx_pcmcia_mcatt(sock, timing.attr, clk),
++		pxa2xx_pcmcia_mcio(sock, timing.io, clk));
+ 
+ 	return 0;
+ }
+ 
+-static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
+-{
+-	unsigned long clk = clk_get_rate(skt->clk);
+-	return pxa2xx_pcmcia_set_mcxx(skt, clk / 10000);
+-}
+-
+ #ifdef CONFIG_CPU_FREQ
+ 
+ static int
+@@ -215,18 +206,13 @@ pxa2xx_pcmcia_frequency_change(struct soc_pcmcia_socket *skt,
+ 
+ void pxa2xx_configure_sockets(struct device *dev, struct pcmcia_low_level *ops)
+ {
+-	/*
+-	 * We have at least one socket, so set MECR:CIT
+-	 * (Card Is There)
+-	 */
+-	uint32_t mecr = MECR_CIT;
++	int nr = 1;
+ 
+-	/* Set MECR:NOS (Number Of Sockets) */
+ 	if ((ops->first + ops->nr) > 1 ||
+ 	    machine_is_viper() || machine_is_arcom_zeus())
+-		mecr |= MECR_NOS;
++		nr = 2;
+ 
+-	__raw_writel(mecr, MECR);
++	pxa_smemc_set_pcmcia_socket(nr);
+ }
+ EXPORT_SYMBOL(pxa2xx_configure_sockets);
+ 
+diff --git a/include/linux/soc/pxa/smemc.h b/include/linux/soc/pxa/smemc.h
+new file mode 100644
+index 000000000000..cbf1a2d8af29
+--- /dev/null
++++ b/include/linux/soc/pxa/smemc.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef __PXA_REGS_H
++#define __PXA_REGS_H
++
++#include <linux/types.h>
++
++void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio);
++void pxa_smemc_set_pcmcia_socket(int nr);
++
++#endif
 -- 
 2.29.2
 
