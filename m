@@ -2,309 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49617C4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 10:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E27C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 10:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350759AbiDSKt1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 06:49:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
+        id S1350805AbiDSKvs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 06:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350746AbiDSKtZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 06:49:25 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1500315A39;
-        Tue, 19 Apr 2022 03:46:43 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 296241F41FED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650365201;
-        bh=LnqSUtBwZPUm5/PXU0VqgPrbRkp9kCvPI/w5X2wzHus=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=G9OKdXqiTAz+yHzeqbtbvVkiPFzfq4QA7gORSLdSPj5OJvRicnapKQoQUQxBFs8BZ
-         +LUJyL6sa7/TbIt7lmZBHWjjkpiVK9oQPGotYWlsCzXIm1VMdAd2WOM2aBggVDst/t
-         mzYUH07wThjFVkdXSs3VK4xYUAnxdzZkwdDrqJ8nJ3wscr3JPdkML0FJNItrB20BOu
-         unElsw3pC3F9eEbWI4fW9WcdFwZXBb4m0HD9Vbo3+mHWAxs+bDGSs/kadyXTZhCio5
-         dNGVT4X/qcHAqHKNd4EnuWZNub1uoUavQ1kp39XK8ufUZpCkAUMxaRYzx0jqyhrSQ8
-         uKGLiY+3VMrDg==
-Message-ID: <dc4277ce-cf80-7176-a71f-cb9f93411086@collabora.com>
-Date:   Tue, 19 Apr 2022 12:46:38 +0200
+        with ESMTP id S1350826AbiDSKvp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 06:51:45 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 58DD82A251;
+        Tue, 19 Apr 2022 03:49:03 -0700 (PDT)
+Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 8BA9F1C8111A;
+        Tue, 19 Apr 2022 18:49:02 +0800 (CST)
+Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Tue, 19 Apr
+ 2022 18:49:02 +0800
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCML01B.nuvoton.com
+ (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Tue, 19 Apr
+ 2022 18:49:02 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Tue, 19 Apr 2022 18:49:01 +0800
+Message-ID: <c59686fe-a9dd-9835-2ccb-e574ea01d7a2@nuvoton.com>
+Date:   Tue, 19 Apr 2022 18:49:01 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 5/7] clk: mediatek: reset: Revise structure to control
- reset register
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Document MA35D1 clock
+ controller bindings
 Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     matthias.bgg@gmail.com, p.zabel@pengutronix.de,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        yong.liang@mediatek.com, runyang.chen@mediatek.com,
-        linux-kernel@vger.kernel.org, allen-kh.cheng@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220418132154.7401-1-rex-bc.chen@mediatek.com>
- <20220418132154.7401-6-rex-bc.chen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220418132154.7401-6-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <ychuang570808@gmail.com>
+CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>, <krzk+dt@kernel.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <will@kernel.org>,
+        <soc@kernel.org>, <cfli0@nuvoton.com>
+References: <20220418082738.11301-1-ychuang3@nuvoton.com>
+ <20220418082738.11301-3-ychuang3@nuvoton.com>
+ <2f8d2f6a-32dc-15cc-321c-f75721edf8a2@linaro.org>
+ <29b00c24-681a-7f6f-f27d-b7525c5b8485@nuvoton.com>
+ <b2e32685-73a6-98be-50be-5121c67431ed@linaro.org>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <b2e32685-73a6-98be-50be-5121c67431ed@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 18/04/22 15:21, Rex-BC Chen ha scritto:
-> Replace the structure "struct mtk_reset" to reset.h, and rename it as
-> "mtk_clk_rst_data". We use it to input the resset register data and
-> store reset controller device.
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> ---
->   drivers/clk/mediatek/clk-mt2701-eth.c |  9 +++-
->   drivers/clk/mediatek/clk-mt2701-g3d.c |  9 +++-
->   drivers/clk/mediatek/clk-mt2701-hif.c |  9 +++-
->   drivers/clk/mediatek/clk-mt2701.c     | 19 +++++++-
->   drivers/clk/mediatek/clk-mt2712.c     | 19 +++++++-
->   drivers/clk/mediatek/clk-mt7622-eth.c |  9 +++-
->   drivers/clk/mediatek/clk-mt7622-hif.c | 19 +++++++-
->   drivers/clk/mediatek/clk-mt7622.c     | 19 +++++++-
->   drivers/clk/mediatek/clk-mt7629-eth.c |  9 +++-
->   drivers/clk/mediatek/clk-mt7629-hif.c | 19 +++++++-
->   drivers/clk/mediatek/clk-mt8135.c     | 19 +++++++-
->   drivers/clk/mediatek/clk-mt8173.c     | 19 +++++++-
->   drivers/clk/mediatek/clk-mt8183.c     | 10 ++++-
->   drivers/clk/mediatek/reset.c          | 62 +++++++++++++--------------
->   drivers/clk/mediatek/reset.h          | 12 +++++-
->   15 files changed, 209 insertions(+), 53 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt2701-eth.c b/drivers/clk/mediatek/clk-mt2701-eth.c
-> index 71257714e6a6..16fc4a50d513 100644
-> --- a/drivers/clk/mediatek/clk-mt2701-eth.c
-> +++ b/drivers/clk/mediatek/clk-mt2701-eth.c
-> @@ -36,6 +36,13 @@ static const struct mtk_gate eth_clks[] = {
->   	GATE_ETH(CLK_ETHSYS_CRYPTO, "crypto_clk", "ethif_sel", 29),
->   };
->   
-> +static struct mtk_clk_rst_data clk_rst_data = {
-
-static const struct mtk_clk_rst_data clk_rst_data[] = {
-
-...because this is initialization data that is never supposed to change, and
-in the init function of reset.c, you should never modify this struct.
-
-> +	.supported = true,
-
-It would make no sense to call mtk_clk_register_rst_ctrl() if the resets
-are not supported, so this .supported member is useless and should be
-removed.
-
-I will avoid commenting on patch 7/7 and will say it here: I know that on that
-patch you're checking for this one but, especially if this reset data becomes a
-const you can, at that point, simply check if anything has been assigned to it
-so that if it's not NULL, we implicitly know that said clock controller instance
-supports resets, and we register them:
-
-int mtk_clk_simple_probe(...)
-{
-	.. blah blah ..
-
-	if (mcd->rst)
-		r = mtk_clk_register_rst_ctrl(....)
-	return r;
-}
 
 
-> +	.version = MTK_RST_V1,
-> +	.reg_num = 1,
-> +	.reg_ofs = 0x34,
-> +};
-> +
->   static const struct of_device_id of_match_clk_mt2701_eth[] = {
->   	{ .compatible = "mediatek,mt2701-ethsys", },
->   	{}
+On 2022/4/19 下午 06:39, Krzysztof Kozlowski wrote:
+> On 19/04/2022 12:12, Jacky Huang wrote:
+>>>> +
+>>>> +  assigned-clock-rates:
+>>>> +    minItems: 5
+>>>> +    maxItems: 5
+>>>> +
+>>>> +  nuvoton,clk-pll-mode:
+>>>> +    A list of PLL operation mode corresponding to DDRPLL, APLL, EPLL,
+>>>> +    and VPLL in sequential.
+>>> This does not look like a binding which was tested. Read
+>>> "writing-schema" and test your bindings.
+>> "nuvoton,clk-pll-mode" is a nonstandard property used to describe the
+>> operation mode of
+>> corresponding PLLs.
+>>
+>> (According to Device tree Specification section "2.2.4 Properties"
+>> Nonstandard property names should specify a unique string prefix, such
+>> as a stock ticker symbol, identifying the name of
+>> the company or organization that defined the property. Examples:
+> I am not saying about property name. I replied under some description
+> below which fails to build.
+>
+> Instead please test your bindings.
+>
+> Best regards,
+> Krzysztof
 
-..snip..
+OK, I got it. I found the error by dt_binding_check.
+I will fix them in the next version.
 
-> diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-> index c1100a20c7ed..a8ac3d11ced6 100644
-> --- a/drivers/clk/mediatek/clk-mt2701.c
-> +++ b/drivers/clk/mediatek/clk-mt2701.c
-> @@ -735,6 +735,21 @@ static const struct mtk_fixed_factor infra_fixed_divs[] = {
->   	FACTOR(CLK_INFRA_CLK_13M, "clk13m", "clk26m", 1, 2),
->   };
->   
+Thank you very much.
 
-For increased readability, perhaps it's a good idea to do something like...
-
-> +static struct mtk_clk_rst_data clk_rst_data[] = {
-> +	{
-	{	/* infrasys */
-
-> +		.supported = true,
-> +		.version = MTK_RST_V1,
-> +		.reg_num = 2,
-> +		.reg_ofs = 0x30,
-> +	},
-
-	{	/* pericfg */
-
-> +	{
-> +		.supported = true,
-> +		.version = MTK_RST_V1,
-> +		.reg_num = 2,
-> +		.reg_ofs = 0x0,
-> +	},
-> +};
-> +
->   static struct clk_onecell_data *infra_clk_data;
->   
->   static void __init mtk_infrasys_init_early(struct device_node *node)
-
-..snip...
-
-> diff --git a/drivers/clk/mediatek/clk-mt7622-hif.c b/drivers/clk/mediatek/clk-mt7622-hif.c
-> index 6be894299ae3..a10ecc5b88a1 100644
-> --- a/drivers/clk/mediatek/clk-mt7622-hif.c
-> +++ b/drivers/clk/mediatek/clk-mt7622-hif.c
-> @@ -76,6 +76,21 @@ static const struct mtk_gate pcie_clks[] = {
->   	GATE_PCIE(CLK_SATA_PM_EN, "sata_pm_en", "univpll2_d4", 30),
->   };
->   
-> +static struct mtk_clk_rst_data clk_rst_data[] = {
-> +	{
-> +		.supported = true,
-> +		.version = MTK_RST_V1,
-> +		.reg_num = 1,
-> +		.reg_ofs = 0x34,
-> +	},
-
-I get that the intention here is to separate the reset data between ssusbsys
-and pciesys, but both entries are declaring the exact same... since (as pointed out
-earlier) this should be a const, you can use the same entry for both.
-
-> +	{
-> +		.supported = true,
-> +		.version = MTK_RST_V1,
-> +		.reg_num = 1,
-> +		.reg_ofs = 0x34,
-> +	},
-> +};
-> +
->   static int clk_mt7622_ssusbsys_init(struct platform_device *pdev)
->   {
->   	struct clk_onecell_data *clk_data;
-
-..snip..
+Jacky Huang
 
 
-> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> index 2a55e8bf6b28..709ae54efc18 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-
-..snip..
-
-> @@ -117,21 +123,15 @@ int mtk_clk_register_rst_ctrl(struct device_node *np,
->   		return -EINVAL;
->   	}
->   
-> -	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> -	if (!data)
-> -		return -ENOMEM;
-> -
-> -	data->regmap = regmap;
-> -	data->regofs = reg_ofs;
-> -	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = reg_num * 32;
-> -	data->rcdev.ops = rst_op[version];
-> -	data->rcdev.of_node = np;
-
-
-Here's a cleaner version of this:
-
-int mtk_clk_register_rst_ctrl(struct device *dev,
-			      const struct mtk_clk_rst_desc *rst_desc)
-{
-	....some code....
-
-	struct mtk_reset_data *mtk_reset;
-
-	mtk_reset = devm_kzalloc(dev, sizeof(*mtk_reset), GFP_KERNEL)
-	if (!mtk_reset)
-		return -ENOMEM;
-
-	mtk_reset->desc = rst_desc;
-	mtk_reset->regmap = regmap;
-	mtk_reset->rcdev.owner = .... blah blah
-
-	ret = devm_reset_controller_register(dev, &mtk_reset->rcdev);
-	if (ret)
-		return ret;
-
-....so if you use the devm_* variant, you don't need patch 6/7, as unregistering
-the reset controller will be taken care of by devm actions.
-
-Besides, this is most probably not the case but remember that if you need to
-perform more operations to unregister this reset controller, you can always
-add a custom devm action with function devm_add_action_or_reset(dev, func, parm).
-
-
-> +	clk_rst->regmap = regmap;
-> +	clk_rst->rcdev.owner = THIS_MODULE;
-> +	clk_rst->rcdev.nr_resets = clk_rst->reg_num * 32;
-> +	clk_rst->rcdev.ops = rst_op[clk_rst->version];
-> +	clk_rst->rcdev.of_node = np;
->   
-> -	ret = reset_controller_register(&data->rcdev);
-> +	ret = reset_controller_register(&clk_rst->rcdev);
->   	if (ret) {
->   		pr_err("could not register reset controller: %d\n", ret);
-> -		kfree(data);
->   		return -EINVAL;
->   	}
->   
-> diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-> index 0af77531b918..851a29c92440 100644
-> --- a/drivers/clk/mediatek/reset.h
-> +++ b/drivers/clk/mediatek/reset.h
-> @@ -6,6 +6,7 @@
->   #ifndef __DRV_CLK_MTK_RESET_H
->   #define __DRV_CLK_MTK_RESET_H
->   
-> +#include <linux/reset-controller.h>
->   #include <linux/types.h>
->   
->   enum mtk_reset_version {
-> @@ -14,7 +15,16 @@ enum mtk_reset_version {
->   	MTK_RST_MAX,
->   };
->   
-> +struct mtk_clk_rst_data {
-> +	struct reset_controller_dev rcdev;
-> +	struct regmap *regmap;
-> +	bool supported;
-> +	u8 version;
-> +	u32 reg_num;
-> +	u16 reg_ofs;
-> +};
-
-...so here you'd have something like:
-
-struct mtk_clk_rst_desc {
-	u8 version;
-	u32 reg_num;
-	u16 reg_ofs;
-};
-
-struct mtk_reset_data {
-	struct regmap *regmap;
-	struct reset_controller_dev rcdev;
-	const struct mtk_clk_rst_desc *desc;
-};
-
-
-Cheers,
-Angelo
 
