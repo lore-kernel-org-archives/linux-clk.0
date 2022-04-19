@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0E1C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB761C4707F
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355043AbiDSQoL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52278 "EHLO
+        id S1355081AbiDSQoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:44:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354943AbiDSQmm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:42:42 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 012846326;
-        Tue, 19 Apr 2022 09:39:57 -0700 (PDT)
+        with ESMTP id S1355077AbiDSQn5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:43:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600E22A249;
+        Tue, 19 Apr 2022 09:41:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B02D0B81BE9;
-        Tue, 19 Apr 2022 16:39:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B3DC385A5;
-        Tue, 19 Apr 2022 16:39:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F21E661821;
+        Tue, 19 Apr 2022 16:41:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23064C385A5;
+        Tue, 19 Apr 2022 16:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386394;
-        bh=hFjukvDjrGmDvm4krCMb+MU1l1A2h39IWiElATYXAZM=;
+        s=k20201202; t=1650386473;
+        bh=UmyAEDevE+rFHmIeeKFFlzSBscHHSEtR+AtXVKUZXjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lw6cz36jNJbw7uXSplFymJG+YYC214yKxF6jaNLG32GXhdt0Xp1Iv9XNJKThc4ame
-         9m5IbTOvGXgyUoBaYsmhIbsImLWjW8Zzoudc5fIeQKQm6o9EWWfrIWNDmvly1Me3nA
-         hkxpQEAZRwl97Jk566xVc0It5Jnx+8gBPuAV+8W6cFsvApSsFk3hpsqb3HYANtM4gn
-         4o2gbRGCwzgZfCiW/d+Yo6XPlZ75THdr882ZNtbbK/pSv62iFmjbTZ/WWiVqJPdvQT
-         o6RWdFWodHhhvVLXb64hmn3Q8X1pTVVTcGZrGVZBBNv7XV2AmUCzRAmRyDP6gZplnF
-         X0wvsWgyj2gZQ==
+        b=VBOATLbRuYChK3MBgRX8mPip9VFQsTd4uM6E3FKAYou3P3IZa9nmev0mrBBoYpVGs
+         Nl+voA7jYEZWdMuLiO7BEMPH+MVsDjnXXGALSLYw1w1AX0WnSQTPUBDuRtK63hpICj
+         8+5p1J7vvcJkBz7CuQogkh9GDU2SBWlcgjibaorUtjAG4DdHSgFg+dieu5I1H5UTwe
+         yODr+X/HyGXAHTGbi4Lq4APNxVx4sfb3QJu3sbtv29oNO8I1LDZpvn7U0jmcS7bSjQ
+         9f0xIKo83CR6rz6qWgvk3LUsWMEix8qqKI0I+7fX418R/bEF9m0lgtwSh1l4J0GIYp
+         y51mpx0B4pZoQ==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,11 +58,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 08/48] ARM: pxa: move regs-lcd.h into driver
-Date:   Tue, 19 Apr 2022 18:37:30 +0200
-Message-Id: <20220419163810.2118169-9-arnd@kernel.org>
+        alsa-devel@alsa-project.org
+Subject: [PATCH 18/48] ARM: pxa: hx4700: use gpio descriptors for audio
+Date:   Tue, 19 Apr 2022 18:37:40 +0200
+Message-Id: <20220419163810.2118169-19-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -74,106 +73,194 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Only the pxafb driver uses this header, so move it into the
-same directory. The SMART_* macros are required by some
-platform data definitions and can go into the
-linux/platform_data/video-pxafb.h header.
+The audio driver should not use a hardwired gpio number
+from the header. Change it to use a lookup table.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Philipp Zabel <philipp.zabel@gmail.com>
+Cc: Paul Parsons <lost.distance@yahoo.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-fbdev@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../video/fbdev/pxa3xx-regs.h                 | 19 ----------------
- drivers/video/fbdev/pxafb.c                   |  1 +
- include/linux/platform_data/video-pxafb.h     | 22 ++++++++++++++++++-
- 3 files changed, 22 insertions(+), 20 deletions(-)
- rename arch/arm/mach-pxa/include/mach/regs-lcd.h => drivers/video/fbdev/pxa3xx-regs.h (90%)
+ arch/arm/mach-pxa/hx4700-pcmcia.c             |  2 +-
+ arch/arm/mach-pxa/hx4700.c                    | 16 ++++++++-
+ arch/arm/mach-pxa/{include/mach => }/hx4700.h |  2 +-
+ sound/soc/pxa/hx4700.c                        | 34 ++++++++-----------
+ 4 files changed, 31 insertions(+), 23 deletions(-)
+ rename arch/arm/mach-pxa/{include/mach => }/hx4700.h (99%)
 
-diff --git a/arch/arm/mach-pxa/include/mach/regs-lcd.h b/drivers/video/fbdev/pxa3xx-regs.h
-similarity index 90%
-rename from arch/arm/mach-pxa/include/mach/regs-lcd.h
-rename to drivers/video/fbdev/pxa3xx-regs.h
-index 6a434675f84a..6a96610ef9b5 100644
---- a/arch/arm/mach-pxa/include/mach/regs-lcd.h
-+++ b/drivers/video/fbdev/pxa3xx-regs.h
-@@ -177,23 +177,4 @@
- #define PRSR_ST_OK	(1 << 9)	/* Status OK */
- #define PRSR_CON_NT	(1 << 10)	/* Continue to Next Command */
+diff --git a/arch/arm/mach-pxa/hx4700-pcmcia.c b/arch/arm/mach-pxa/hx4700-pcmcia.c
+index e8acbfc9ef6c..e2331dfe427d 100644
+--- a/arch/arm/mach-pxa/hx4700-pcmcia.c
++++ b/arch/arm/mach-pxa/hx4700-pcmcia.c
+@@ -10,7 +10,7 @@
+ #include <linux/irq.h>
  
--#define SMART_CMD_A0			 (0x1 << 8)
--#define SMART_CMD_READ_STATUS_REG	 (0x0 << 9)
--#define SMART_CMD_READ_FRAME_BUFFER	((0x0 << 9) | SMART_CMD_A0)
--#define SMART_CMD_WRITE_COMMAND		 (0x1 << 9)
--#define SMART_CMD_WRITE_DATA		((0x1 << 9) | SMART_CMD_A0)
--#define SMART_CMD_WRITE_FRAME		((0x2 << 9) | SMART_CMD_A0)
--#define SMART_CMD_WAIT_FOR_VSYNC	 (0x3 << 9)
--#define SMART_CMD_NOOP			 (0x4 << 9)
--#define SMART_CMD_INTERRUPT		 (0x5 << 9)
+ #include <asm/mach-types.h>
+-#include <mach/hx4700.h>
++#include "hx4700.h"
+ 
+ #include <pcmcia/soc_common.h>
+ 
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 140a44cb2989..2b7f37172725 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -41,7 +41,7 @@
+ 
+ #include "pxa27x.h"
+ #include "addr-map.h"
+-#include <mach/hx4700.h>
++#include "hx4700.h"
+ #include <linux/platform_data/irda-pxaficp.h>
+ 
+ #include <sound/ak4641.h>
+@@ -834,6 +834,19 @@ static struct i2c_board_info i2c_board_info[] __initdata = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table hx4700_audio_gpio_table = {
++	.dev_id = "hx4700-audio",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO75_HX4700_EARPHONE_nDET,
++			    "earphone-ndet", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa", GPIO92_HX4700_HP_DRIVER,
++			    "hp-driver", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa", GPIO107_HX4700_SPK_nSD,
++			    "spk-nsd", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ static struct platform_device audio = {
+ 	.name	= "hx4700-audio",
+ 	.id	= -1,
+@@ -895,6 +908,7 @@ static void __init hx4700_init(void)
+ 
+ 	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	gpiod_add_lookup_table(&gpio_vbus_gpiod_table);
++	gpiod_add_lookup_table(&hx4700_audio_gpio_table);
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+ 
+diff --git a/arch/arm/mach-pxa/include/mach/hx4700.h b/arch/arm/mach-pxa/hx4700.h
+similarity index 99%
+rename from arch/arm/mach-pxa/include/mach/hx4700.h
+rename to arch/arm/mach-pxa/hx4700.h
+index 0c30e6d9c660..ce2db33989e1 100644
+--- a/arch/arm/mach-pxa/include/mach/hx4700.h
++++ b/arch/arm/mach-pxa/hx4700.h
+@@ -10,7 +10,7 @@
+ 
+ #include <linux/gpio.h>
+ #include <linux/mfd/asic3.h>
+-#include "irqs.h" /* PXA_NR_BUILTIN_GPIO */
++#include <mach/irqs.h> /* PXA_NR_BUILTIN_GPIO */
+ 
+ #define HX4700_ASIC3_GPIO_BASE	PXA_NR_BUILTIN_GPIO
+ #define HX4700_EGPIO_BASE	(HX4700_ASIC3_GPIO_BASE + ASIC3_NUM_GPIOS)
+diff --git a/sound/soc/pxa/hx4700.c b/sound/soc/pxa/hx4700.c
+index 7334fac758de..e70dc38d9892 100644
+--- a/sound/soc/pxa/hx4700.c
++++ b/sound/soc/pxa/hx4700.c
+@@ -10,7 +10,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/core.h>
+ #include <sound/jack.h>
+@@ -18,10 +18,10 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ 
+-#include <mach/hx4700.h>
+ #include <asm/mach-types.h>
+ #include "pxa2xx-i2s.h"
+ 
++static struct gpio_desc *gpiod_hp_driver, *gpiod_spk_nsd;
+ static struct snd_soc_jack hs_jack;
+ 
+ /* Headphones jack detection DAPM pin */
+@@ -40,9 +40,8 @@ static struct snd_soc_jack_pin hs_jack_pin[] = {
+ 
+ /* Headphones jack detection GPIO */
+ static struct snd_soc_jack_gpio hs_jack_gpio = {
+-	.gpio		= GPIO75_HX4700_EARPHONE_nDET,
+ 	.invert		= true,
+-	.name		= "hp-gpio",
++	.name		= "earphone-ndet",
+ 	.report		= SND_JACK_HEADPHONE,
+ 	.debounce_time	= 200,
+ };
+@@ -81,14 +80,14 @@ static const struct snd_soc_ops hx4700_ops = {
+ static int hx4700_spk_power(struct snd_soc_dapm_widget *w,
+ 			    struct snd_kcontrol *k, int event)
+ {
+-	gpio_set_value(GPIO107_HX4700_SPK_nSD, !!SND_SOC_DAPM_EVENT_ON(event));
++	gpiod_set_value(gpiod_spk_nsd, !!SND_SOC_DAPM_EVENT_ON(event));
+ 	return 0;
+ }
+ 
+ static int hx4700_hp_power(struct snd_soc_dapm_widget *w,
+ 			   struct snd_kcontrol *k, int event)
+ {
+-	gpio_set_value(GPIO92_HX4700_HP_DRIVER, !!SND_SOC_DAPM_EVENT_ON(event));
++	gpiod_set_value(gpiod_hp_driver, !!SND_SOC_DAPM_EVENT_ON(event));
+ 	return 0;
+ }
+ 
+@@ -162,11 +161,6 @@ static struct snd_soc_card snd_soc_card_hx4700 = {
+ 	.fully_routed		= true,
+ };
+ 
+-static struct gpio hx4700_audio_gpios[] = {
+-	{ GPIO107_HX4700_SPK_nSD, GPIOF_OUT_INIT_HIGH, "SPK_POWER" },
+-	{ GPIO92_HX4700_HP_DRIVER, GPIOF_OUT_INIT_LOW, "EP_POWER" },
+-};
 -
--#define SMART_CMD(x)	(SMART_CMD_WRITE_COMMAND | ((x) & 0xff))
--#define SMART_DAT(x)	(SMART_CMD_WRITE_DATA | ((x) & 0xff))
+ static int hx4700_audio_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -174,26 +168,26 @@ static int hx4700_audio_probe(struct platform_device *pdev)
+ 	if (!machine_is_h4700())
+ 		return -ENODEV;
+ 
+-	ret = gpio_request_array(hx4700_audio_gpios,
+-				ARRAY_SIZE(hx4700_audio_gpios));
++	gpiod_hp_driver = devm_gpiod_get(&pdev->dev, "hp-driver", GPIOD_OUT_HIGH);
++	ret = PTR_ERR_OR_ZERO(gpiod_hp_driver);
++	if (ret)
++		return ret;
++	gpiod_spk_nsd = devm_gpiod_get(&pdev->dev, "spk-nsd", GPIOD_OUT_HIGH);
++	ret = PTR_ERR_OR_ZERO(gpiod_spk_nsd);
+ 	if (ret)
+ 		return ret;
+ 
++	hs_jack_gpio.gpiod_dev = &pdev->dev;
+ 	snd_soc_card_hx4700.dev = &pdev->dev;
+ 	ret = devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_hx4700);
+-	if (ret)
+-		gpio_free_array(hx4700_audio_gpios,
+-				ARRAY_SIZE(hx4700_audio_gpios));
+ 
+ 	return ret;
+ }
+ 
+ static int hx4700_audio_remove(struct platform_device *pdev)
+ {
+-	gpio_set_value(GPIO92_HX4700_HP_DRIVER, 0);
+-	gpio_set_value(GPIO107_HX4700_SPK_nSD, 0);
 -
--/* SMART_DELAY() is introduced for software controlled delay primitive which
-- * can be inserted between command sequences, unused command 0x6 is used here
-- * and delay ranges from 0ms ~ 255ms
-- */
--#define SMART_CMD_DELAY		(0x6 << 9)
--#define SMART_DELAY(ms)		(SMART_CMD_DELAY | ((ms) & 0xff))
- #endif /* __ASM_ARCH_REGS_LCD_H */
-diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-index edf080f64a8c..ab5bc8272d8e 100644
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -72,6 +72,7 @@
- #define DEBUG_VAR 1
+-	gpio_free_array(hx4700_audio_gpios, ARRAY_SIZE(hx4700_audio_gpios));
++	gpiod_set_value(gpiod_hp_driver, 0);
++	gpiod_set_value(gpiod_spk_nsd, 0);
+ 	return 0;
+ }
  
- #include "pxafb.h"
-+#include "pxa3xx-regs.h"
- 
- /* Bits which should not be set in machine configuration structures */
- #define LCCR0_INVALID_CONFIG_MASK	(LCCR0_OUM | LCCR0_BM | LCCR0_QDM |\
-diff --git a/include/linux/platform_data/video-pxafb.h b/include/linux/platform_data/video-pxafb.h
-index b3d574778326..6333bac166a5 100644
---- a/include/linux/platform_data/video-pxafb.h
-+++ b/include/linux/platform_data/video-pxafb.h
-@@ -8,7 +8,6 @@
-  */
- 
- #include <linux/fb.h>
--#include <mach/regs-lcd.h>
- 
- /*
-  * Supported LCD connections
-@@ -153,6 +152,27 @@ struct pxafb_mach_info {
- void pxa_set_fb_info(struct device *, struct pxafb_mach_info *);
- unsigned long pxafb_get_hsync_time(struct device *dev);
- 
-+/* smartpanel related */
-+#define SMART_CMD_A0			 (0x1 << 8)
-+#define SMART_CMD_READ_STATUS_REG	 (0x0 << 9)
-+#define SMART_CMD_READ_FRAME_BUFFER	((0x0 << 9) | SMART_CMD_A0)
-+#define SMART_CMD_WRITE_COMMAND		 (0x1 << 9)
-+#define SMART_CMD_WRITE_DATA		((0x1 << 9) | SMART_CMD_A0)
-+#define SMART_CMD_WRITE_FRAME		((0x2 << 9) | SMART_CMD_A0)
-+#define SMART_CMD_WAIT_FOR_VSYNC	 (0x3 << 9)
-+#define SMART_CMD_NOOP			 (0x4 << 9)
-+#define SMART_CMD_INTERRUPT		 (0x5 << 9)
-+
-+#define SMART_CMD(x)	(SMART_CMD_WRITE_COMMAND | ((x) & 0xff))
-+#define SMART_DAT(x)	(SMART_CMD_WRITE_DATA | ((x) & 0xff))
-+
-+/* SMART_DELAY() is introduced for software controlled delay primitive which
-+ * can be inserted between command sequences, unused command 0x6 is used here
-+ * and delay ranges from 0ms ~ 255ms
-+ */
-+#define SMART_CMD_DELAY		(0x6 << 9)
-+#define SMART_DELAY(ms)		(SMART_CMD_DELAY | ((ms) & 0xff))
-+
- #ifdef CONFIG_FB_PXA_SMARTPANEL
- extern int pxafb_smart_queue(struct fb_info *info, uint16_t *cmds, int);
- extern int pxafb_smart_flush(struct fb_info *info);
 -- 
 2.29.2
 
