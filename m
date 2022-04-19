@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBFCC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E43EC43219
 	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345242AbiDSQsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:48:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
+        id S1354847AbiDSQr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348967AbiDSQqC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:46:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113A5396A3;
-        Tue, 19 Apr 2022 09:43:19 -0700 (PDT)
+        with ESMTP id S1354977AbiDSQqR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:46:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9682039692;
+        Tue, 19 Apr 2022 09:43:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A15E56145C;
-        Tue, 19 Apr 2022 16:43:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED67C385A9;
-        Tue, 19 Apr 2022 16:43:10 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 277516145C;
+        Tue, 19 Apr 2022 16:43:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C435C385A5;
+        Tue, 19 Apr 2022 16:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386598;
-        bh=v2JXUsT+aPSiyV8AWZ0OLtn99RZRKtVDeuty5M4eG68=;
+        s=k20201202; t=1650386613;
+        bh=1CznP/IcfkJndLnXKlEqV7YtwAE/0IZ23NVP7Os5Lbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tt/fiI6JfMKScsjC4gupDTlXwIFAYWcsYENflWn5n3kMrbCN+Y2cCr3glEwE1sItJ
-         cONsIQQLt01Y/qCAeHUUbJd9TpD27gE/DUc3zMZ7c0U2VwpCWQ+qBf7uwrq/GZGzTX
-         3FGOj+knk17r2GSyltkagM0yCF+n9LJkDIwNmtctqNly1C9p720AIevLts/VbLM17G
-         O+4nFGEcvsfnWMk8Au/5OQB6coNhg3LP2cgERB8iHAG0NNlBzSNRpU2laCxc90/bD8
-         8gZIgUWRqfgnaIv2WyLz/01oqgCe1ixn6EBO/7GUMc0aVvmzyH6K1PsZ1Shk5OoOYF
-         /MoVumyBheReg==
+        b=gkyeNvpegI/KQIRWnjwkEYCied4Du61ntShcs66DzkQFnJHkJWp70dBzOiTP/ZG6j
+         n96w9hkpW3grm9KvPbPA2R8JMHGs0B28jY9iQ2TtUgdW5V+XoN0ZLiqkWwVdMXxfJ1
+         g4lG/kC3swRcBOnkw50SSbGy5I/KjmkMOKQ/SlEhuKtrq2jtmRtW2c5FwToKh8BGwy
+         tQTv4ia+QOAVOVszdbwIbLvRCF+TpW81A0z+kf9LYr2Zgm++jGTXkxtLEd4wDmJIYw
+         XmyDe5w2feEiHmwvkFrvwJr16KElh9yxIpw5HNExil/VCLxaA6PWzlCybRgA8G+uZe
+         V5QDp19UieVxQ==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 34/48] ARM: pxa: pcmcia: move smemc configuration back to arch
-Date:   Tue, 19 Apr 2022 18:37:56 +0200
-Message-Id: <20220419163810.2118169-35-arnd@kernel.org>
+Subject: [PATCH 36/48] cpufreq: pxa3: move clk register access to clk driver
+Date:   Tue, 19 Apr 2022 18:37:58 +0200
+Message-Id: <20220419163810.2118169-37-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,192 +73,229 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Rather than poking at the smemc registers directly from the
-pcmcia/pxa2xx_base driver, move those bits into machine file
-to have a cleaner interface.
+The driver needs some low-level register access for setting
+the core and bus frequencies. These registers are owned
+by the clk driver, so move the low-level access into that
+driver with a slightly higher-level interface and avoid
+any machine header file dependencies.
 
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Link: https://lore.kernel.org/lkml/87d0egjzxk.fsf@belgarion.home/
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/generic.c   | 29 ++++++++++++++++++++++
- drivers/pcmcia/pxa2xx_base.c  | 46 ++++++++++++-----------------------
- include/linux/soc/pxa/smemc.h | 10 ++++++++
- 3 files changed, 55 insertions(+), 30 deletions(-)
- create mode 100644 include/linux/soc/pxa/smemc.h
+ arch/arm/mach-pxa/generic.h              |  1 -
+ arch/arm/mach-pxa/include/mach/generic.h |  5 --
+ arch/arm/mach-pxa/pxa3xx.c               |  1 +
+ drivers/clk/pxa/clk-pxa3xx.c             | 16 ++++++
+ drivers/cpufreq/pxa2xx-cpufreq.c         |  3 --
+ drivers/cpufreq/pxa3xx-cpufreq.c         | 64 +++++++++++++-----------
+ include/linux/clk/pxa.h                  |  9 ++++
+ 7 files changed, 62 insertions(+), 37 deletions(-)
+ delete mode 100644 arch/arm/mach-pxa/include/mach/generic.h
+ create mode 100644 include/linux/clk/pxa.h
 
-diff --git a/arch/arm/mach-pxa/generic.c b/arch/arm/mach-pxa/generic.c
-index f9083c4f0aea..fe1d55d328e5 100644
---- a/arch/arm/mach-pxa/generic.c
-+++ b/arch/arm/mach-pxa/generic.c
-@@ -70,6 +70,35 @@ unsigned int get_clk_frequency_khz(int info)
- }
- EXPORT_SYMBOL(get_clk_frequency_khz);
+diff --git a/arch/arm/mach-pxa/generic.h b/arch/arm/mach-pxa/generic.h
+index 2f706ef97357..487eadb0fc2a 100644
+--- a/arch/arm/mach-pxa/generic.h
++++ b/arch/arm/mach-pxa/generic.h
+@@ -7,7 +7,6 @@
+  */
  
-+void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio)
-+{
-+	__raw_writel(mcmem, MCMEM(sock));
-+	__raw_writel(mcatt, MCATT(sock));
-+	__raw_writel(mcio, MCIO(sock));
-+}
-+EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_timing);
-+
-+void pxa_smemc_set_pcmcia_socket(int nr)
-+{
-+	switch (nr) {
-+	case 0:
-+		__raw_writel(0, MECR);
-+		break;
-+	case 1:
-+		/*
-+		 * We have at least one socket, so set MECR:CIT
-+		 * (Card Is There)
-+		 */
-+		__raw_writel(MECR_CIT, MECR);
-+		break;
-+	case 2:
-+		/* Set CIT and MECR:NOS (Number Of Sockets) */
-+		__raw_writel(MECR_CIT | MECR_NOS, MECR);
-+		break;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(pxa_smemc_set_pcmcia_socket);
-+
- /*
-  * Intel PXA2xx internal register mapping.
-  *
-diff --git a/drivers/pcmcia/pxa2xx_base.c b/drivers/pcmcia/pxa2xx_base.c
-index 7cd1375d6087..0ea41f1411e5 100644
---- a/drivers/pcmcia/pxa2xx_base.c
-+++ b/drivers/pcmcia/pxa2xx_base.c
-@@ -24,11 +24,10 @@
- #include <linux/spinlock.h>
- #include <linux/platform_device.h>
+ #include <linux/reboot.h>
+-#include <mach/generic.h>
+ 
+ struct irq_data;
+ 
+diff --git a/arch/arm/mach-pxa/include/mach/generic.h b/arch/arm/mach-pxa/include/mach/generic.h
+deleted file mode 100644
+index 613f6a299d0d..000000000000
+--- a/arch/arm/mach-pxa/include/mach/generic.h
++++ /dev/null
+@@ -1,5 +0,0 @@
+-#ifdef CONFIG_PXA3xx
+-extern unsigned	pxa3xx_get_clk_frequency_khz(int);
+-#else
+-#define pxa3xx_get_clk_frequency_khz(x)		(0)
+-#endif
+diff --git a/arch/arm/mach-pxa/pxa3xx.c b/arch/arm/mach-pxa/pxa3xx.c
+index 7881888107c7..f4657f4edb3b 100644
+--- a/arch/arm/mach-pxa/pxa3xx.c
++++ b/arch/arm/mach-pxa/pxa3xx.c
+@@ -25,6 +25,7 @@
+ #include <linux/platform_data/i2c-pxa.h>
+ #include <linux/platform_data/mmp_dma.h>
  #include <linux/soc/pxa/cpu.h>
-+#include <linux/soc/pxa/smemc.h>
++#include <linux/clk/pxa.h>
  
--#include <mach/smemc.h>
- #include <asm/io.h>
- #include <asm/irq.h>
+ #include <asm/mach/map.h>
+ #include <asm/suspend.h>
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index 027b78183565..60a0db4f3790 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -16,6 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/soc/pxa/cpu.h>
+ #include <mach/smemc.h>
++#include <linux/clk/pxa.h>
+ #include <mach/pxa3xx-regs.h>
+ 
+ #include <dt-bindings/clock/pxa-clock.h>
+@@ -79,6 +80,21 @@ unsigned int pxa3xx_get_clk_frequency_khz(int info)
+ 	return (unsigned int)clks[0] / KHz;
+ }
+ 
++void pxa3xx_clk_update_accr(u32 disable, u32 enable, u32 xclkcfg, u32 mask)
++{
++	u32 accr = ACCR;
++
++	accr &= ~disable;
++	accr |= enable;
++
++	ACCR = accr;
++	if (xclkcfg)
++		__asm__("mcr p14, 0, %0, c6, c0, 0\n" : : "r"(xclkcfg));
++
++	while ((ACSR & mask) != (accr & mask))
++		cpu_relax();
++}
++
+ static unsigned long clk_pxa3xx_ac97_get_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+diff --git a/drivers/cpufreq/pxa2xx-cpufreq.c b/drivers/cpufreq/pxa2xx-cpufreq.c
+index e74d36d6f78d..ed1ae061a687 100644
+--- a/drivers/cpufreq/pxa2xx-cpufreq.c
++++ b/drivers/cpufreq/pxa2xx-cpufreq.c
+@@ -27,9 +27,6 @@
+ #include <linux/soc/pxa/cpu.h>
+ #include <linux/io.h>
+ 
 -#include <mach/pxa2xx-regs.h>
- #include <asm/mach-types.h>
- 
- #include <pcmcia/ss.h>
-@@ -113,7 +112,7 @@ static inline u_int pxa2xx_pcmcia_cmd_time(u_int mem_clk_10khz,
- 	return (300000 * (pcmcia_mcxx_asst + 1) / mem_clk_10khz);
- }
- 
--static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
-+static uint32_t pxa2xx_pcmcia_mcmem(int sock, int speed, int clock)
- {
- 	uint32_t val;
- 
-@@ -124,12 +123,10 @@ static int pxa2xx_pcmcia_set_mcmem( int sock, int speed, int clock )
- 		| ((pxa2xx_mcxx_hold(speed, clock)
- 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
- 
--	__raw_writel(val, MCMEM(sock));
+-#include <mach/smemc.h>
 -
--	return 0;
-+	return val;
- }
+ #ifdef DEBUG
+ static unsigned int freq_debug;
+ module_param(freq_debug, uint, 0);
+diff --git a/drivers/cpufreq/pxa3xx-cpufreq.c b/drivers/cpufreq/pxa3xx-cpufreq.c
+index d3b398b4aa6a..4afa48d172db 100644
+--- a/drivers/cpufreq/pxa3xx-cpufreq.c
++++ b/drivers/cpufreq/pxa3xx-cpufreq.c
+@@ -9,12 +9,10 @@
+ #include <linux/init.h>
+ #include <linux/cpufreq.h>
+ #include <linux/soc/pxa/cpu.h>
++#include <linux/clk/pxa.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
  
--static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
-+static int pxa2xx_pcmcia_mcio(int sock, int speed, int clock)
- {
- 	uint32_t val;
- 
-@@ -140,12 +137,11 @@ static int pxa2xx_pcmcia_set_mcio( int sock, int speed, int clock )
- 		| ((pxa2xx_mcxx_hold(speed, clock)
- 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
- 
--	__raw_writel(val, MCIO(sock));
- 
--	return 0;
-+	return val;
- }
- 
--static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
-+static int pxa2xx_pcmcia_mcatt(int sock, int speed, int clock)
- {
- 	uint32_t val;
- 
-@@ -156,31 +152,26 @@ static int pxa2xx_pcmcia_set_mcatt( int sock, int speed, int clock )
- 		| ((pxa2xx_mcxx_hold(speed, clock)
- 		& MCXX_HOLD_MASK) << MCXX_HOLD_SHIFT);
- 
--	__raw_writel(val, MCATT(sock));
- 
--	return 0;
-+	return val;
- }
- 
--static int pxa2xx_pcmcia_set_mcxx(struct soc_pcmcia_socket *skt, unsigned int clk)
-+static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
- {
-+	unsigned long clk = clk_get_rate(skt->clk) / 10000;
- 	struct soc_pcmcia_timing timing;
- 	int sock = skt->nr;
- 
- 	soc_common_pcmcia_get_timing(skt, &timing);
- 
--	pxa2xx_pcmcia_set_mcmem(sock, timing.mem, clk);
--	pxa2xx_pcmcia_set_mcatt(sock, timing.attr, clk);
--	pxa2xx_pcmcia_set_mcio(sock, timing.io, clk);
-+	pxa_smemc_set_pcmcia_timing(sock,
-+		pxa2xx_pcmcia_mcmem(sock, timing.mem, clk),
-+		pxa2xx_pcmcia_mcatt(sock, timing.attr, clk),
-+		pxa2xx_pcmcia_mcio(sock, timing.io, clk));
- 
- 	return 0;
- }
- 
--static int pxa2xx_pcmcia_set_timing(struct soc_pcmcia_socket *skt)
--{
--	unsigned long clk = clk_get_rate(skt->clk);
--	return pxa2xx_pcmcia_set_mcxx(skt, clk / 10000);
--}
+-#include <mach/generic.h>
+-#include <mach/pxa3xx-regs.h>
 -
- #ifdef CONFIG_CPU_FREQ
+ #define HSS_104M	(0)
+ #define HSS_156M	(1)
+ #define HSS_208M	(2)
+@@ -35,6 +33,28 @@
+ #define DMCFS_26M	(0)
+ #define DMCFS_260M	(3)
  
- static int
-@@ -215,18 +206,13 @@ pxa2xx_pcmcia_frequency_change(struct soc_pcmcia_socket *skt,
++#define ACCR_XPDIS		(1 << 31)	/* Core PLL Output Disable */
++#define ACCR_SPDIS		(1 << 30)	/* System PLL Output Disable */
++#define ACCR_D0CS		(1 << 26)	/* D0 Mode Clock Select */
++#define ACCR_PCCE		(1 << 11)	/* Power Mode Change Clock Enable */
++#define ACCR_DDR_D0CS		(1 << 7)	/* DDR SDRAM clock frequency in D0CS (PXA31x only) */
++
++#define ACCR_SMCFS_MASK		(0x7 << 23)	/* Static Memory Controller Frequency Select */
++#define ACCR_SFLFS_MASK		(0x3 << 18)	/* Frequency Select for Internal Memory Controller */
++#define ACCR_XSPCLK_MASK	(0x3 << 16)	/* Core Frequency during Frequency Change */
++#define ACCR_HSS_MASK		(0x3 << 14)	/* System Bus-Clock Frequency Select */
++#define ACCR_DMCFS_MASK		(0x3 << 12)	/* Dynamic Memory Controller Clock Frequency Select */
++#define ACCR_XN_MASK		(0x7 << 8)	/* Core PLL Turbo-Mode-to-Run-Mode Ratio */
++#define ACCR_XL_MASK		(0x1f)		/* Core PLL Run-Mode-to-Oscillator Ratio */
++
++#define ACCR_SMCFS(x)		(((x) & 0x7) << 23)
++#define ACCR_SFLFS(x)		(((x) & 0x3) << 18)
++#define ACCR_XSPCLK(x)		(((x) & 0x3) << 16)
++#define ACCR_HSS(x)		(((x) & 0x3) << 14)
++#define ACCR_DMCFS(x)		(((x) & 0x3) << 12)
++#define ACCR_XN(x)		(((x) & 0x7) << 8)
++#define ACCR_XL(x)		((x) & 0x1f)
++
+ struct pxa3xx_freq_info {
+ 	unsigned int cpufreq_mhz;
+ 	unsigned int core_xl : 5;
+@@ -112,41 +132,29 @@ static int setup_freqs_table(struct cpufreq_policy *policy,
  
- void pxa2xx_configure_sockets(struct device *dev, struct pcmcia_low_level *ops)
+ static void __update_core_freq(struct pxa3xx_freq_info *info)
  {
--	/*
--	 * We have at least one socket, so set MECR:CIT
--	 * (Card Is There)
--	 */
--	uint32_t mecr = MECR_CIT;
-+	int nr = 1;
+-	uint32_t mask = ACCR_XN_MASK | ACCR_XL_MASK;
+-	uint32_t accr = ACCR;
+-	uint32_t xclkcfg;
+-
+-	accr &= ~(ACCR_XN_MASK | ACCR_XL_MASK | ACCR_XSPCLK_MASK);
+-	accr |= ACCR_XN(info->core_xn) | ACCR_XL(info->core_xl);
++	u32 mask, disable, enable, xclkcfg;
  
--	/* Set MECR:NOS (Number Of Sockets) */
- 	if ((ops->first + ops->nr) > 1 ||
- 	    machine_is_viper() || machine_is_arcom_zeus())
--		mecr |= MECR_NOS;
-+		nr = 2;
++	mask	= ACCR_XN_MASK | ACCR_XL_MASK;
++	disable = mask | ACCR_XSPCLK_MASK;
++	enable  = ACCR_XN(info->core_xn) | ACCR_XL(info->core_xl);
+ 	/* No clock until core PLL is re-locked */
+-	accr |= ACCR_XSPCLK(XSPCLK_NONE);
+-
++	enable |= ACCR_XSPCLK(XSPCLK_NONE);
+ 	xclkcfg = (info->core_xn == 2) ? 0x3 : 0x2;	/* turbo bit */
  
--	__raw_writel(mecr, MECR);
-+	pxa_smemc_set_pcmcia_socket(nr);
+-	ACCR = accr;
+-	__asm__("mcr p14, 0, %0, c6, c0, 0\n" : : "r"(xclkcfg));
+-
+-	while ((ACSR & mask) != (accr & mask))
+-		cpu_relax();
++	pxa3xx_clk_update_accr(disable, enable, xclkcfg, mask);
  }
- EXPORT_SYMBOL(pxa2xx_configure_sockets);
  
-diff --git a/include/linux/soc/pxa/smemc.h b/include/linux/soc/pxa/smemc.h
+ static void __update_bus_freq(struct pxa3xx_freq_info *info)
+ {
+-	uint32_t mask;
+-	uint32_t accr = ACCR;
+-
+-	mask = ACCR_SMCFS_MASK | ACCR_SFLFS_MASK | ACCR_HSS_MASK |
+-		ACCR_DMCFS_MASK;
+-
+-	accr &= ~mask;
+-	accr |= ACCR_SMCFS(info->smcfs) | ACCR_SFLFS(info->sflfs) |
+-		ACCR_HSS(info->hss) | ACCR_DMCFS(info->dmcfs);
++	u32 mask, disable, enable;
+ 
+-	ACCR = accr;
++	mask	= ACCR_SMCFS_MASK | ACCR_SFLFS_MASK | ACCR_HSS_MASK |
++		  ACCR_DMCFS_MASK;
++	disable = mask;
++	enable	= ACCR_SMCFS(info->smcfs) | ACCR_SFLFS(info->sflfs) |
++		  ACCR_HSS(info->hss) | ACCR_DMCFS(info->dmcfs);
+ 
+-	while ((ACSR & mask) != (accr & mask))
+-		cpu_relax();
++	pxa3xx_clk_update_accr(disable, enable, 0, mask);
+ }
+ 
+ static unsigned int pxa3xx_cpufreq_get(unsigned int cpu)
+diff --git a/include/linux/clk/pxa.h b/include/linux/clk/pxa.h
 new file mode 100644
-index 000000000000..cbf1a2d8af29
+index 000000000000..e5516c608c99
 --- /dev/null
-+++ b/include/linux/soc/pxa/smemc.h
-@@ -0,0 +1,10 @@
++++ b/include/linux/clk/pxa.h
+@@ -0,0 +1,9 @@
 +/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef __PXA_REGS_H
-+#define __PXA_REGS_H
 +
-+#include <linux/types.h>
-+
-+void pxa_smemc_set_pcmcia_timing(int sock, u32 mcmem, u32 mcatt, u32 mcio);
-+void pxa_smemc_set_pcmcia_socket(int nr);
-+
++#ifdef CONFIG_PXA3xx
++extern unsigned	pxa3xx_get_clk_frequency_khz(int);
++extern void pxa3xx_clk_update_accr(u32 disable, u32 enable, u32 xclkcfg, u32 mask);
++#else
++#define pxa3xx_get_clk_frequency_khz(x)		(0)
++#define pxa3xx_clk_update_accr(disable, enable, xclkcfg, mask) do { } while (0)
 +#endif
 -- 
 2.29.2
