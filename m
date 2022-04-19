@@ -2,111 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4D0C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7021C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349785AbiDSIQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 04:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40772 "EHLO
+        id S1349836AbiDSISq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 04:18:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349779AbiDSIQF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:16:05 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4301F2C12F
-        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 01:13:16 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id c23so14731581plo.0
-        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 01:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ymcXL9mZkOXE1tvy2X8sRlDYOjiY7V/45QxE3N+k/bg=;
-        b=d2lwlqxOipd23SNVAohwHf+gxo5amqNUclnUkRETxFfTTn1ZTq3HvQws+brlFkt85c
-         Hfof9ZusLxWdVXKJ3l1Gg3TZenarfIXBwbKaK3la2n/LByuTNRdooFo/cte6FrHY39Eq
-         9ncMqc58sVmkJwKE9Skxnh51bHyEICko8Uspo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ymcXL9mZkOXE1tvy2X8sRlDYOjiY7V/45QxE3N+k/bg=;
-        b=bYtJdANCxB9hq8dLB0yqtuH42WK57S6tkyWzBQz5/UnC+VsKMvGpfPxQZuhIMKCynt
-         apCvRX1VqYIsi1g5eEMvGgrEPLRqxDm5s+6K1ASBQm0ORthyqg3Tbf+bpAfp2Ah03Lm5
-         cldFrztqk1FUc5vi64z7LugCHi1TD+oUu9T0S66VI9yYVuR1gLVZJDLFt9116gKYovoI
-         WdoEIV5JjrrkodXTCjF3d/Y/EBvAsQg0sxeJs5XFQTugoNJGA9C1iraNopiozcN3pwIq
-         1SNQGP3tlXYlZiZJ/D1u6p955IG6UiYAZt0nt5ftq9EFiOSYF2e2Q9noOC27nealkET5
-         CtOQ==
-X-Gm-Message-State: AOAM533ZrD8JZ24ezEweZoLIFgw8K+SSmL2rgxh1Llt3PVQKSe45EPNG
-        Xx1yV86AOOKiwt/pUBUi3HLCnw==
-X-Google-Smtp-Source: ABdhPJyPJGvPpTMNIeDwzlbJl89ma0IN1rYEVyRw7X+rYVNTUlAWEMm81vh00KrOJ1Q0dNCJ5surTw==
-X-Received: by 2002:a17:902:eb8c:b0:158:4cc9:6998 with SMTP id q12-20020a170902eb8c00b001584cc96998mr14826627plg.35.1650355995603;
-        Tue, 19 Apr 2022 01:13:15 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:33f6:f1e6:3e21:a253])
-        by smtp.gmail.com with ESMTPSA id n13-20020a654ccd000000b0039db6f73e9dsm15767448pgt.28.2022.04.19.01.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 01:13:15 -0700 (PDT)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 7/7] clk: mediatek: mt8173: Switch to clk_hw provider APIs
-Date:   Tue, 19 Apr 2022 16:12:46 +0800
-Message-Id: <20220419081246.2546159-8-wenst@chromium.org>
-X-Mailer: git-send-email 2.36.0.rc0.470.gd361397f0d-goog
-In-Reply-To: <20220419081246.2546159-1-wenst@chromium.org>
-References: <20220419081246.2546159-1-wenst@chromium.org>
+        with ESMTP id S1349892AbiDSIS1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:18:27 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22AB2F009;
+        Tue, 19 Apr 2022 01:15:43 -0700 (PDT)
+X-UUID: ffc4d363a4fe484c94746d57181154b2-20220419
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:72a0743e-9742-4747-84d6-b10151435cbb,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
+        ION:release,TS:45
+X-CID-INFO: VERSION:1.1.4,REQID:72a0743e-9742-4747-84d6-b10151435cbb,OB:0,LOB:
+        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
+        N:release,TS:45
+X-CID-META: VersionHash:faefae9,CLOUDID:c2305bef-06b0-4305-bfbf-554bfc9d151a,C
+        OID:IGNORED,Recheck:0,SF:13|15|28|17|19|48,TC:nil,Content:0,EDM:-3,File:ni
+        l,QS:0,BEC:nil
+X-UUID: ffc4d363a4fe484c94746d57181154b2-20220419
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1300040232; Tue, 19 Apr 2022 16:15:36 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Tue, 19 Apr 2022 16:15:36 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 19 Apr 2022 16:15:36 +0800
+Message-ID: <438d21a46fffebdf858c327c92155b5b91646376.camel@mediatek.com>
+Subject: Re: [PATCH 3/7] clk: mediatek: reset: Merge and revise reset
+ register function
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <yong.liang@mediatek.com>,
+        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Tue, 19 Apr 2022 16:15:36 +0800
+In-Reply-To: <CAGXv+5GQR27+iomwHfwYb0gB_QVTZSy6TaZ+1qViMmNPka3Yjw@mail.gmail.com>
+References: <20220418132154.7401-1-rex-bc.chen@mediatek.com>
+         <20220418132154.7401-4-rex-bc.chen@mediatek.com>
+         <CAGXv+5GQR27+iomwHfwYb0gB_QVTZSy6TaZ+1qViMmNPka3Yjw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As part of the effort to improve the MediaTek clk drivers, the next step
-is to switch from the old 'struct clk' clk prodivder APIs to the new
-'struct clk_hw' ones.
+On Tue, 2022-04-19 at 15:26 +0800, Chen-Yu Tsai wrote:
+> On Mon, Apr 18, 2022 at 9:22 PM Rex-BC Chen <rex-bc.chen@mediatek.com
+> > wrote:
+> > 
+> > Merge the reset register function of v1 and v2 into one function.
+> > - Input the version number to determine which version we will use.
+> > - Add return value of reset register function for error handling.
+> 
+> Please do this in a separate patch. Also you are adding error
+> messages
+> for when of_clk_add_provider() fails, which is not mentioned either.
+> 
+> Most of these platform drivers require a good cleanup of their error
+> handling anyway. It might be a good idea to tackle them later. Or if
+> they look the same, you could try using coccinelle to do a bulk
+> cleanup.
+> 
+> 
+> Thanks
+> ChenYu
 
-The MT8173 clk driver has one clk that is registered directly with the
-clk provider APIs, instead of going through the MediaTek clk library.
+Hello ChenYu,
 
-Switch this instance to use the clk_hw provider API.
+I will separate the error handle in another patch.
+I think I will just add a return value. As for cleanup the clock error 
+handling flow, it's not the purpose of this series.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/clk/mediatek/clk-mt8173.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 68d3a9749316..d34b248c42ca 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -994,7 +994,6 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
- 	struct clk_hw_onecell_data *clk_data;
- 	void __iomem *base;
- 	struct clk_hw *hw;
--	struct clk *clk;
- 	int r, i;
- 
- 	base = of_iomap(node, 0);
-@@ -1023,10 +1022,10 @@ static void __init mtk_apmixedsys_init(struct device_node *node)
- 		clk_data->hws[cku->id] = hw;
- 	}
- 
--	clk = clk_register_divider(NULL, "hdmi_ref", "tvdpll_594m", 0,
--				   base + 0x40, 16, 3, CLK_DIVIDER_POWER_OF_TWO,
--				   NULL);
--	clk_data->hws[CLK_APMIXED_HDMI_REF] = __clk_get_hw(clk);
-+	hw = clk_hw_register_divider(NULL, "hdmi_ref", "tvdpll_594m", 0,
-+				     base + 0x40, 16, 3, CLK_DIVIDER_POWER_OF_TWO,
-+				     NULL);
-+	clk_data->hws[CLK_APMIXED_HDMI_REF] = hw;
- 
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
- 	if (r)
--- 
-2.36.0.rc0.470.gd361397f0d-goog
+BRs,
+Rex
+> 
+> > - Rename reset register function to "mtk_clk_register_rst_ctrl"
 
