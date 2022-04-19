@@ -2,73 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBADC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 14:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EFCC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 15:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiDSOso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 10:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
+        id S239268AbiDSPIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 11:08:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbiDSOsn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 10:48:43 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7907824963;
-        Tue, 19 Apr 2022 07:46:00 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id F0FCF1F418EE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650379558;
-        bh=FVuKTUec4tBCzLgLqf1gROYOLTVYEwjYfzcNXIVZxLA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Dg7kzEFRHsPSTzBwTQUmD6Owo+bMJHYmWIxU6FFgzIoaYG+NLZ1deDBXubLqBI4kh
-         Nq9OlalmpgHIk01fCbDn6Ode2D13fDxy3w9rdbRl78lf0yvXRVpwSqZb9W5yeiH7Vr
-         TDKLMiPCWb0ZgWNs1kzaUv40MZbacg/a6VA9lO+wgm+cHOcg8P2DspuZ/MmLogKDrL
-         RbiwMJkmfn9GdZ6Yn8KzbbXUo23ABKHi7EBfmAgil2+/cPlsJzSXmYk+UU5MV32Zjw
-         PmxR0Bgp3KLlGD3V7qXwGngXqqFMop+r4cpQU7d5EtH3/qZNacGr1hmBjnSYnnT3B3
-         qjCNxSo3pfLlA==
-Message-ID: <3b622166-6d03-0e8c-8812-47e9fae6e374@collabora.com>
-Date:   Tue, 19 Apr 2022 16:45:55 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC PATCH 1/7] clk: mediatek: Make mtk_clk_register_composite()
- static
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S236347AbiDSPIj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 11:08:39 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440CB3968B;
+        Tue, 19 Apr 2022 08:05:57 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E46C12129B;
+        Tue, 19 Apr 2022 15:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650380755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RIeKtDiX0nw/kN8tZFnbYwbUF0osRimfD25Cqjw9rO0=;
+        b=p0AkssQvCUGX2FIMw2M6305MzO023ILQ5u5IfEsBVHXyJHDV+Ebng9/Or4tm5v9ZLS2kLq
+        hoWrwtxaDSJOTaOA3LVtFIwda/AweGfgvh+HYRp+GubmdbcetanPTiaxtoKJsw/GevrmpQ
+        1tb0zNKv/NJqEwQgpoFNU25svmJC4qE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650380755;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=RIeKtDiX0nw/kN8tZFnbYwbUF0osRimfD25Cqjw9rO0=;
+        b=VIM4uKnDgGnQYW+y/rVChWFXlTtd7njqOyGqs9fi4c7mcZ9x9bowKajd514kd6PgEoABL8
+        YF5T9AcBpjedztCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C9CE2139BE;
+        Tue, 19 Apr 2022 15:05:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id kgk+MdPPXmLlMAAAMHmgww
+        (envelope-from <iivanov@suse.de>); Tue, 19 Apr 2022 15:05:55 +0000
+Date:   Tue, 19 Apr 2022 18:05:55 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Phil Elwell <phil@raspberrypi.org>,
+        kernel test robot <lkp@intel.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220419081246.2546159-1-wenst@chromium.org>
- <20220419081246.2546159-2-wenst@chromium.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220419081246.2546159-2-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
+Message-ID: <20220419150555.igh6tdxgjb7meygx@suse>
+References: <20220404125113.80239-1-iivanov@suse.de>
+ <20220414105656.qt52zmr5vjmjdcxc@suse>
+ <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
+ <20220418110516.s7jxsfa3jl7aagrf@suse>
+ <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
+ <20220418113801.uree7rvkzxpiwyni@suse>
+ <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
-> mtk_clk_register_composite() is not used anywhere outside of the file it
-> is defined.
+On 04-18 18:01, Stefan Wahren wrote:
+> > > 
+> > > Do you use the mainline DTS or the vendor DTS to see this issue?
+> > > 
+> > For (open)SUSE we use downstream DTS.
 > 
-> Make it static.
+> This is popular and bad at the same time. We as the mainline kernel
+> developer cannot guarantee that this works as expected. A lot of issues are
+> caused by mixing vendor DTS with mainline kernel, so in general (not for
+> this specific issue) you are on your own with this approach.
 > 
-> Fixes: 9741b1a68035 ("clk: mediatek: Add initial common clock support for Mediatek SoCs.")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Hello Chen-Yu,
-I think that you should send this patch separately from the rest, as this is
-just a simple cleanup that is totally unrelated to the more important conversion
-that you're doing in this series.
+Yep, I am aware of that. I am still trying to recover after recent
+gpio-ranges fiasco, also still working on fixing non-exported firmware
+clocks, which break HDMI output on some of the devices.
 
-By the way, for this one, feel free to take my
+> I know this is a little bit off topic but except from overlay support, can
+> you provide a list of most missing features of the mainline kernel / DTS?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Well, 260+ overlays for free is not insignificant benefit. Beside few
+breakages from time to time using downstream device tree works fine.
+
+Regards,
+Ivan
+
