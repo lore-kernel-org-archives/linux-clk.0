@@ -2,166 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A0AC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 05:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754ADC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 05:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229733AbiDSFOK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 01:14:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39502 "EHLO
+        id S233705AbiDSFvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 01:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbiDSFOJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 01:14:09 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21DE21E21;
-        Mon, 18 Apr 2022 22:11:27 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id d19so4841854qko.3;
-        Mon, 18 Apr 2022 22:11:27 -0700 (PDT)
+        with ESMTP id S233588AbiDSFvh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 01:51:37 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A314727FD1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 22:48:56 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id j2so29262044ybu.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 22:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JXEZ5C8fYOz+un4E/+M4H7uOYX0LQVxNU9wzlCZQgnI=;
-        b=eII8IdHoWLxjcKl0Sg+2eT49DZP+AhiUxs7TAqxbXeF/yiv5sjwIDUKREFQEKWxzn4
-         kSnJJ1XwNvrRRwdX5GOzB9qaejlo8q7L5vi9bmG0ntRIXlvZpwIfyMCQJpGcgl92Pe69
-         DF5QLpTFc6wX8ijdI2lRKhCKS4VGlrKh2vFFnWSwPK2hA8iLfbAkaKvuSUxFenLECl0P
-         qzmXCo7ex0FCiLKn4X0oTUyBNPzczXwDlJstIk7jlj3UMuG9qnDF7lh+B/IQm+HZALNU
-         ZAPq5xhYHdKN8cptiEwAg/wXKel1AWBE//GqQ88X+fX8w7DYzE1E9pTcz/OEDtyuqgSv
-         Trhg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nMJ889Dz0Epk94th8NM3EDZyolTDHRMoctXfRSXxfd0=;
+        b=Vx5iJ070v0mFXMFcDOjxZ8J6MVVAEYWG73pK/G8UxwB8GDV0NpdBihuTD+dxl9Tx11
+         jA4hOZA9+5GSkKipnXhENUttTKNoejkJjvBQoofj1XjfhYhkbX2W2dxAysPpLeTh3Atn
+         61tUCHd474/nb+6j3Muh9EnQYmm9BcBwVWqFs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JXEZ5C8fYOz+un4E/+M4H7uOYX0LQVxNU9wzlCZQgnI=;
-        b=mDnGX4q1KPobaDjBilkf82pg6P3F72xG+fgcCMYmDiBYJVgz9hhb+G10GA2h+nCIaw
-         eTWXigXB3FcWpEGqFjqhPUUjJ5kC9epwozgSuDPXAXXJiCGL20A/giBSeREQSxnyjA8u
-         DvF6mkat6MDfOt1A7mFEkp37DF76eOygcLaU9rSd06Nks2dp2QgnYbiqZMBS6vDJdIzo
-         Qfmwqx7sJ3/CIh4zsTFjVyhUT4vq+Soz73JUT09BBzAXkrqpP/SQCiKdh3y3/vZdC8s5
-         G6irql30l5iOu/wLxtP3OGtL5yh2cW7wI2qTrQGEp/fzj21vOuiC+KkThJb+ryOpo/xL
-         bXIQ==
-X-Gm-Message-State: AOAM533L897+uI3pNDuj0U0GTGNFjHw2DNRT52FUD9oFfeuoE81C2haZ
-        ZY5fbB0+viZHs5/p0NjzrL92AC9407s=
-X-Google-Smtp-Source: ABdhPJwxG8YlmBr7Dtj1KIGOFk9rucVNbIgI/EDbWfI/FxwsK8Eu2be6DFUis7xFz986aFYem0hfKw==
-X-Received: by 2002:a37:a196:0:b0:69e:b207:16ee with SMTP id k144-20020a37a196000000b0069eb20716eemr3051364qke.321.1650345086571;
-        Mon, 18 Apr 2022 22:11:26 -0700 (PDT)
-Received: from godwin.fios-router.home (pool-108-18-137-133.washdc.fios.verizon.net. [108.18.137.133])
-        by smtp.gmail.com with ESMTPSA id y85-20020a376458000000b0069e64801b7dsm5327222qkb.62.2022.04.18.22.11.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 22:11:26 -0700 (PDT)
-From:   Sean Anderson <seanga2@gmail.com>
-To:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Du Huanpeng <dhu@hodcarrier.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Yang Ling <gnaygnil@gmail.com>,
-        Sean Anderson <seanga2@gmail.com>
-Subject: [RFT PATCH] clk: ls1c: Fix PLL rate calculation
-Date:   Tue, 19 Apr 2022 01:11:14 -0400
-Message-Id: <20220419051114.1569291-1-seanga2@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nMJ889Dz0Epk94th8NM3EDZyolTDHRMoctXfRSXxfd0=;
+        b=fqYR0TlFWB9505sApwqcNfZapimqf+KlvqG1jokeGckYKPhCFUtSo9ZCIxrCXMsUkS
+         /edfRUN8O58YaC+hsZ+4r7rGZB6g/UPm2qGk7iR5NKRmPx05VLc3CBOw3n19smwqdWnO
+         9h8Fjy4L5OrHRHHJqHgRan12DBYpGIl+ZDRGzh5mJo1mLTE6pA0efSMBFUqL1mM8po2F
+         j33g/mG6YkuB8QCPpN7WenNPcXpMjBfZyPyE7CvFjnfG7o8eDGQVUqQejMA0vANVU2nQ
+         cWvxoVJAGi2RwEPXpVe8rlE8m6sUZVltjM1BvJVgEfehSvk3rdgDupZ0Bv3XHT6dm3Y8
+         cVJg==
+X-Gm-Message-State: AOAM531DTTIZEzHxr8DLn0v9Ba6i3VH8nq8yh3H9v8b62XT+IItY5YyA
+        r6K1O5DRy+MBcHbUt47dqzSn9OkSzQ4K6Gn9HqsG8Q==
+X-Google-Smtp-Source: ABdhPJxCrtHIsV7KofTQzS7x17ALKuUB39G39gb4IwHCx6860d625lxMWoMCGDPQwz11vBINp5tlTNP0b8aQpGFQwm8=
+X-Received: by 2002:a25:8d90:0:b0:634:7136:4570 with SMTP id
+ o16-20020a258d90000000b0063471364570mr13323397ybl.582.1650347335888; Mon, 18
+ Apr 2022 22:48:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220418132154.7401-1-rex-bc.chen@mediatek.com> <20220418132154.7401-2-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220418132154.7401-2-rex-bc.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 19 Apr 2022 13:48:45 +0800
+Message-ID: <CAGXv+5FXTft7-E5LnuZdNo8Tq6OKOKwt58GgJD_+z1N5u6B8yw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: mediatek: reset: Correct the logic of setting register
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, yong.liang@mediatek.com,
+        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        allen-kh.cheng@mediatek.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1], I
-noticed the following calculation, which is copied from
-drivers/clk/loongson1/clk-loongson1c.c:
+Hi,
 
-ulong ls1c300_pll_get_rate(struct clk *clk)
-{
-	unsigned int mult;
-	long long parent_rate;
-	void *base;
-	unsigned int val;
+On Mon, Apr 18, 2022 at 9:22 PM Rex-BC Chen <rex-bc.chen@mediatek.com> wrote:
+>
 
-	parent_rate = clk_get_parent_rate(clk);
-	base = (void *)clk->data;
+The subject could be written as "Fix written reset bit offset" to make it
+more specific.
 
-	val = readl(base + START_FREQ);
-	mult = FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
-	return (mult * parent_rate) / 4;
-}
+> Original assert/deassert bit is BIT(0), but it's more resonable to modify
+> them to BIT(id % 32) which is based on id.
+>
+> This patch will not influence any previous driver because the reset is
+> only used for thermal. The id (MT8183_INFRACFG_AO_THERM_SW_RST) is 0.
+>
+> Fixes: 64ebb57a3df6 ("clk: reset: Modify reset-controller driver")
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 
-I would like to examine the use of M_PLL and FRAC_N to calculate the multiplier
-for the PLL. The datasheet has the following to say:
+Otherwise,
 
-START_FREQ 位    缺省值      描述
-========== ===== =========== ====================================
-FRAC_N     23:16 0           PLL 倍频系数的小数部分
-
-                 由          PLL 倍频系数的整数部分
-M_PLL      15:8  NAND_D[3:0] (理论可以达到 255，建议不要超过 100)
-                 配置
-
-which according to google translate means
-
-START_FREQ Bits  Default       Description
-========== ===== ============= ================================================
-FRAC_N     23:16 0             Fractional part of the PLL multiplication factor
-
-                 Depends on    Integer part of PLL multiplication factor
-M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] it is
-                 configuration  recommended not to exceed 100)
-
-So just based on this description, I would expect that the formula to be
-something like
-
-	rate = parent * (255 * M_PLL + FRAC_N) / 255 / 4
-
-However, the datasheet also gives the following formula:
-
-	rate = parent * (M_PLL + FRAC_N) / 4
-
-which is what the Linux driver has implemented. I find this very unusual.
-First, the datasheet specifically says that these fields are the integer and
-fractional parts of the multiplier. Second, I think such a construct does not
-easily map to traditional PLL building blocks. Implementing this formula in
-hardware would likely require an adder, just to then set the threshold of a
-clock divider.
-
-I think it is much more likely that the first formula is correct. The author of
-the datasheet may think of a multiplier of (say) 3.14 as
-
-	M_PLL = 3
-	FRAC_N = 0.14
-
-which together sum to the correct multiplier, even though the actual value
-stored in FRAC_N would be 36.
-
-I suspect that this has slipped by unnoticed because when FRAC_N is 0, there is
-no difference in the formulae. The following patch is untested, but I suspect
-it will fix this issue. I would appreciate if anyone with access to the
-hardware could measure the output of the PLL (or one of its derived clocks) and
-determine the correct formula.
-
-[1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrier.org/T/#u
-
-Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
-Signed-off-by: Sean Anderson <seanga2@gmail.com>
----
-
- drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-index 703f87622cf5..2b98a116c1ea 100644
---- a/drivers/clk/loongson1/clk-loongson1c.c
-+++ b/drivers/clk/loongson1/clk-loongson1c.c
-@@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
- 	u32 pll, rate;
- 
- 	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
--	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-+	rate = (pll & 0xff00) + ((pll >> 16) & 0xff);
- 	rate *= OSC;
--	rate >>= 2;
-+	rate >>= 10;
- 
- 	return rate;
- }
--- 
-2.35.1
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
