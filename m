@@ -2,109 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8BFC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3AEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354548AbiDSQTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
+        id S238492AbiDSQhQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354562AbiDSQTm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:19:42 -0400
-X-Greylist: delayed 314 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Apr 2022 09:16:59 PDT
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F69139BA5;
-        Tue, 19 Apr 2022 09:16:58 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MOiLv-1nHAaj40lT-00Q8zV; Tue, 19 Apr 2022 18:11:23 +0200
-Message-ID: <c57d6490-7439-d49f-369c-5356b6c4eeee@i2se.com>
-Date:   Tue, 19 Apr 2022 18:11:21 +0200
+        with ESMTP id S230428AbiDSQhP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:37:15 -0400
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E7DA29C9B;
+        Tue, 19 Apr 2022 09:34:32 -0700 (PDT)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-de3eda6b5dso18122501fac.0;
+        Tue, 19 Apr 2022 09:34:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=M9eDzAyk4sGVv8K5LskKnAnIYX6zDJ5kUNQhT7FAjz0=;
+        b=BuRkvSvI8I2ODbbx30ZgqM1sUhpZEG0YSEbGoA9d+Mo352ydVvSH1SQGbZBy7DfEc8
+         W/qzo/aI8j8t3C6kSniJVoN9ni3e0SDbIhWE430XWRqXNlEOl1lnM2RGASArNCJp3hWR
+         jP9wq+lL5ngO/V224+gxjN3nmOR+ryukRSNPT32DKSkq4cA+X+StV3xzFMjVY4cflW14
+         9E0RZhJR/7F8UCwrYyDX8Z+AB5Jv7wF0P46c/VkdHlrYO3J9n45l8kOoz/AVftZRUkw7
+         ctQNxzxcOZqBfZmyYcDJehtVgugU5KqqRbBdBrC6j1rjH51hQMeQUDkpEfCRulhVu+OR
+         o7CQ==
+X-Gm-Message-State: AOAM533bHIFMeasbKlQaLWa//shDXwpLcgg8kMi4kPJb55GmeF1z6Itz
+        mGgsjlktQ31zxC2bahLR/g==
+X-Google-Smtp-Source: ABdhPJxNq0Y98ca5iv9R82zAY8/p7woHmaFMtJBI59fHLXUFRFR45IJO9m0vWUl0Ukh8l8LKLUFIeQ==
+X-Received: by 2002:a05:6870:17a4:b0:e5:8eee:1607 with SMTP id r36-20020a05687017a400b000e58eee1607mr7272179oae.12.1650386071551;
+        Tue, 19 Apr 2022 09:34:31 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b16-20020a056870471000b000e5caa2b264sm2750013oaq.20.2022.04.19.09.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Apr 2022 09:34:31 -0700 (PDT)
+Received: (nullmailer pid 2915852 invoked by uid 1000);
+        Tue, 19 Apr 2022 16:34:30 -0000
+Date:   Tue, 19 Apr 2022 11:34:30 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/5 v3] dt-bindings: clock: u8500: Add clkout clock
+ bindings
+Message-ID: <Yl7klt2S5Jo+PZHN@robh.at.kernel.org>
+References: <20220414221751.323525-1-linus.walleij@linaro.org>
+ <20220414221751.323525-2-linus.walleij@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
-Content-Language: en-US
-To:     "Ivan T. Ivanov" <iivanov@suse.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220404125113.80239-1-iivanov@suse.de>
- <20220414105656.qt52zmr5vjmjdcxc@suse>
- <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
- <20220418110516.s7jxsfa3jl7aagrf@suse>
- <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
- <20220418113801.uree7rvkzxpiwyni@suse>
- <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
- <20220419150555.igh6tdxgjb7meygx@suse>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220419150555.igh6tdxgjb7meygx@suse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:k3v/NjHx03Qa/XH+nWoErQY7BDb3NBOyLbmyf1V5wOpAQtoDudw
- 4VXzBC+qhQ0H4BHTZqM4sxz+ESp0lpXES+WXAWbdyOtA7U28+GJeGna9MWoPxztgPny06Tg
- hS8Qau/S4iZikBn0umzGHi96HxBgKi+hSanLuFGIlLIGhH1JFD4oquk4WgoWfL+5rtteZtc
- WfE3saZE5EtoY+4A5Blrg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:T4Jiz90U13c=:whMxW1OBO7TIa3bDIsB8CF
- gl6HKv3l2vVNP/ZfATukcL5xLZh1HEMF5zmBJ19j2VGF2dN6ccMwBElJDU+D0fILlIEnyf6ZS
- ClkXjDby6EFZiehBxT2DCc7M5tg/2/cgqY4obd8VfDBNSQ6Yed4SA9LnhtGu0d3Z374xx67pK
- spIwa7Wcg/h+JJVrZbgCVnyaBwNVuZLSBbUB6XK2b8k9lM3bFlodcZFrhRi6tp9L66kCp7+Qe
- DzCM+AhRsceFR7u7Cj6XMRFsKTdyHhZWkriMGJs7LRobDjr3N+UWUZa8AXkrcvGYHzFBRTA2I
- ff2li5NmRGdYUNIN9i/c8gBQ2l4X1OBS2OUrqUEV1Vb0Mc/OcLkZwIpt16Pv/sF/bkMwSKfYT
- 44RLj9c8kW0BDokS6rkHhL83/2WfrZocB7stPZw3pL0EIkzQ+E3mJ/C4sjk/ZZRBKLZp2bM4k
- 36tZnATf4ALTSVrg9SVowq+cwsRPLPtVpFNLbtAnJCLwrDAlnfENRvtgBjau0F4kSvfueRODe
- xhVcfjihnOJuAtXnPbqfd79Rd/Q30gRI9VsAJnoXq3q3yQ2KEgIdI3ZsNiMbYb3b8Vch9prV9
- RuGK9Ie47vvBeyrJdAIAc3lLFgGLf8tyAuzS+gEZaL/L+5V7AcTGLLwT+33twGQdZRmHf4ESp
- e5CgLIW4BkCgF+bkn6O36UsRZXUisUFEPd0XedmBwdSK9tTQx79Qwh21zfWUQWqDl1VHlUkzS
- CflDzaTsmNVv/Yru
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220414221751.323525-2-linus.walleij@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ivan,
+On Fri, 15 Apr 2022 00:17:47 +0200, Linus Walleij wrote:
+> This adds device tree bindings for the externally routed clocks
+> CLKOUT1 and CLKOUT2 clocks found in the DB8500.
+> 
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Pick up Ulf's ACK.
+> ChangeLog v1->v2:
+> - Push the description of the clock-cells down under the clock-cells
+>   subnode.
+> - Add an example, as this was missing and requested.
+> ---
+>  .../bindings/clock/stericsson,u8500-clks.yaml | 57 +++++++++++++++++++
+>  include/dt-bindings/clock/ste-db8500-clkout.h | 17 ++++++
+>  2 files changed, 74 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/ste-db8500-clkout.h
+> 
 
-Am 19.04.22 um 17:05 schrieb Ivan T. Ivanov:
-> On 04-18 18:01, Stefan Wahren wrote:
->>>> Do you use the mainline DTS or the vendor DTS to see this issue?
->>>>
->>> For (open)SUSE we use downstream DTS.
->> This is popular and bad at the same time. We as the mainline kernel
->> developer cannot guarantee that this works as expected. A lot of issues are
->> caused by mixing vendor DTS with mainline kernel, so in general (not for
->> this specific issue) you are on your own with this approach.
->>
-> Yep, I am aware of that. I am still trying to recover after recent
-> gpio-ranges fiasco, also still working on fixing non-exported firmware
-> clocks, which break HDMI output on some of the devices.
-I guess, these firmware clock issues are only reproducible with vendor DTS?
->
->> I know this is a little bit off topic but except from overlay support, can
->> you provide a list of most missing features of the mainline kernel / DTS?
-> Well, 260+ overlays for free is not insignificant benefit. Beside few
-> breakages from time to time using downstream device tree works fine.
-
-I think the better approach is to add the missing steps for overlay 
-support in mainline.
-
-Best regards
-
->
-> Regards,
-> Ivan
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Reviewed-by: Rob Herring <robh@kernel.org>
