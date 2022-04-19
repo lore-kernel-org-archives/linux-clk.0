@@ -2,106 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EFCC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 15:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C56C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 15:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239268AbiDSPIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 11:08:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
+        id S236710AbiDSPLE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 11:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236347AbiDSPIj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 11:08:39 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440CB3968B;
-        Tue, 19 Apr 2022 08:05:57 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E46C12129B;
-        Tue, 19 Apr 2022 15:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650380755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RIeKtDiX0nw/kN8tZFnbYwbUF0osRimfD25Cqjw9rO0=;
-        b=p0AkssQvCUGX2FIMw2M6305MzO023ILQ5u5IfEsBVHXyJHDV+Ebng9/Or4tm5v9ZLS2kLq
-        hoWrwtxaDSJOTaOA3LVtFIwda/AweGfgvh+HYRp+GubmdbcetanPTiaxtoKJsw/GevrmpQ
-        1tb0zNKv/NJqEwQgpoFNU25svmJC4qE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650380755;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RIeKtDiX0nw/kN8tZFnbYwbUF0osRimfD25Cqjw9rO0=;
-        b=VIM4uKnDgGnQYW+y/rVChWFXlTtd7njqOyGqs9fi4c7mcZ9x9bowKajd514kd6PgEoABL8
-        YF5T9AcBpjedztCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C9CE2139BE;
-        Tue, 19 Apr 2022 15:05:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id kgk+MdPPXmLlMAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Tue, 19 Apr 2022 15:05:55 +0000
-Date:   Tue, 19 Apr 2022 18:05:55 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
-Message-ID: <20220419150555.igh6tdxgjb7meygx@suse>
-References: <20220404125113.80239-1-iivanov@suse.de>
- <20220414105656.qt52zmr5vjmjdcxc@suse>
- <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
- <20220418110516.s7jxsfa3jl7aagrf@suse>
- <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
- <20220418113801.uree7rvkzxpiwyni@suse>
- <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
+        with ESMTP id S235986AbiDSPLD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 11:11:03 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD653A721;
+        Tue, 19 Apr 2022 08:08:20 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id AC9801F4267B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1650380899;
+        bh=wE87yBeheg5nImXJNHE8hDnX7SEP4mrWfxluB9Rr99Q=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=iAOE9Sv0da11Nw5ZlOwrnD+04YO8d9pRVEOtAeTuuCzELSb0e7r/+3sVXylYRdLNQ
+         2YbLQXFNhKthcsABt5iOFOH1mk+ZXJZAwIjWnWJs41gl6KEW2zt11XwvpnCSeqSdb4
+         lz7nKBrFFdFl5zTztschsp8IA7iYk+v7jynLoRJYRdDxiDbMbXoK+u7MqAux3e4T1p
+         VpAEml7dKCrm4ljeWeXPvYHHZq/cE/Mqo3kxN5m4EXoFNbSmB8soa7F+L76TUbdpEW
+         6/PyKOYJq4yZVcSd4tK9Npksy0IzurV1FRNS0ibppcHt6wvZXZQ7eUOHQbv+fFAMka
+         lb1JTfaq6WZ4Q==
+Message-ID: <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
+Date:   Tue, 19 Apr 2022 17:08:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider
+ APIs
+Content-Language: en-US
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220419081246.2546159-1-wenst@chromium.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220419081246.2546159-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04-18 18:01, Stefan Wahren wrote:
-> > > 
-> > > Do you use the mainline DTS or the vendor DTS to see this issue?
-> > > 
-> > For (open)SUSE we use downstream DTS.
+Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
+> Hi everyone,
 > 
-> This is popular and bad at the same time. We as the mainline kernel
-> developer cannot guarantee that this works as expected. A lot of issues are
-> caused by mixing vendor DTS with mainline kernel, so in general (not for
-> this specific issue) you are on your own with this approach.
+> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
 > 
 
-Yep, I am aware of that. I am still trying to recover after recent
-gpio-ranges fiasco, also still working on fixing non-exported firmware
-clocks, which break HDMI output on some of the devices.
+..snip..
 
-> I know this is a little bit off topic but except from overlay support, can
-> you provide a list of most missing features of the mainline kernel / DTS?
+> 
+> The next phase of the cleanup/improvement shall be to introduce some
+> variant of `struct clk_parent_data` to describe clk relationships
+> efficiently.
+> 
+> Please have a look.
+> 
 
-Well, 260+ overlays for free is not insignificant benefit. Beside few
-breakages from time to time using downstream device tree works fine.
+Hello Chen-Yu,
 
-Regards,
-Ivan
+I am grateful to see this series, as the MediaTek clock drivers are getting
+a bit old, despite new platforms being implemented practically as we speak.
 
+With this, you surely get that I completely agree with the proposed cleanup
+and modernization of the entire MediaTek clocks infrastructure, but I think
+that introducing a `struct clk_parent_data` for these drivers is, at this
+point, a must, that not only fully justifies these patches, but also "makes
+the point" - as the effect of that would be a performance improvement as we
+would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
+case or parent_data where no .fw_name is provided (which would be the case
+for most of the clocks).
+
+That said, my advice would be to add that conversion to declaring clocks
+with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
+really make it complete.
+
+Of course, if you have concerns about old platforms that you cannot test,
+or for which this kind of conversion would require a huge amount of effort,
+then I would go for converting as many as possible as a first step and then
+leave the others for later.
+
+I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
+candidates for this great effort.
+
+Cheers,
+Angelo
