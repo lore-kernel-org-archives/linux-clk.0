@@ -2,95 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72759C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 06:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4828C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 06:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348936AbiDSGle (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 02:41:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53020 "EHLO
+        id S1348951AbiDSHCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 03:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348944AbiDSGlc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 02:41:32 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40C42ED65;
-        Mon, 18 Apr 2022 23:38:50 -0700 (PDT)
-X-UUID: 76d3548de5da4a5aadd8b08a5b9e2abe-20220419
-X-UUID: 76d3548de5da4a5aadd8b08a5b9e2abe-20220419
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1289611600; Tue, 19 Apr 2022 14:38:42 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 19 Apr 2022 14:38:41 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 19 Apr
- 2022 14:38:40 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 19 Apr 2022 14:38:40 +0800
-Message-ID: <7e6ca7055ad6c236cb43b73c0b32a435033bb37d.camel@mediatek.com>
-Subject: Re: [PATCH 1/7] clk: mediatek: reset: Correct the logic of setting
- register
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Chen-Yu Tsai <wenst@chromium.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <yong.liang@mediatek.com>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 19 Apr 2022 14:38:40 +0800
-In-Reply-To: <CAGXv+5FXTft7-E5LnuZdNo8Tq6OKOKwt58GgJD_+z1N5u6B8yw@mail.gmail.com>
-References: <20220418132154.7401-1-rex-bc.chen@mediatek.com>
-         <20220418132154.7401-2-rex-bc.chen@mediatek.com>
-         <CAGXv+5FXTft7-E5LnuZdNo8Tq6OKOKwt58GgJD_+z1N5u6B8yw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S1349208AbiDSHCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 03:02:13 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C718B3193D
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 23:59:18 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id h8so29350478ybj.11
+        for <linux-clk@vger.kernel.org>; Mon, 18 Apr 2022 23:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KLIrmWP9mXkLIC9iIHIn3XCQoyxe5sOSyoG//x2aOB8=;
+        b=ThTeM3jBhBi2PiZY4yzkoSbixU5AkEHN0BKQVu2jZHDget4O3JgkMf9IsR5Zh8cPWZ
+         Kh6IPc3MfXo81VDJ8zu2NXays2VI1Py8TNWRih6cW/zMfTr1eYTM/cE1+8DgVcbkWAqO
+         B57yNQW8rfX0tdpnq9btq3LQ/72k6jMszPNeI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KLIrmWP9mXkLIC9iIHIn3XCQoyxe5sOSyoG//x2aOB8=;
+        b=mvTFd49aKYpG32hGpbD6+K/It9lOvSFasN/t5U+18mcu/6wxTSu95WA1j8Oepcvu97
+         yXQntbReAs6u/c5F3Tg/Z6pOyNfXJW7EGG9d5Ckg/EQoyTBs3KL0rsSCprmMULLKwIlk
+         mEj5d6cx+VU7aOA2xdRyul2s6d0w9xtrH6GBYiJPRVvKYSt4iejWGmhJFO0bBEdjEWIB
+         zU5v9qdW5REIaMQ0qidW6/MIaBeYYuq/0URVrstwznGyi6oJsRLUDHVoaHBqGPv2iLIo
+         xgqmMWm1kcjK4bqJ4HSwDZ0Vi1v3EFdEiMZLz32T/X+seTH8+TAcI+wclsHmiyHpzan2
+         dQUA==
+X-Gm-Message-State: AOAM531t9w22M3ByLOGZzNGXFrFvSOVIoRb+v097S1EWGnAhMc1bHdMd
+        CdBjR6QSWamRLWuOnt5MuultTPSSN9RlMP9Gfv1OKg==
+X-Google-Smtp-Source: ABdhPJzek0zDeLDFbfPQO12QrLbP1YaoyRNgh912u/LHMLJKfU2u0znkiciiHGBZwK1caQDmdSb5GTb/aZ7aUwEgMjg=
+X-Received: by 2002:a25:2ac3:0:b0:645:36f4:2db3 with SMTP id
+ q186-20020a252ac3000000b0064536f42db3mr2136588ybq.189.1650351557830; Mon, 18
+ Apr 2022 23:59:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20220418132154.7401-1-rex-bc.chen@mediatek.com>
+ <20220418132154.7401-3-rex-bc.chen@mediatek.com> <CAGXv+5F027EsJCG4zQarcoqCR8S4tew1n1DjeqU7_+HOzmZs2Q@mail.gmail.com>
+ <a5da87dbed150b8de4495da4a7f9b98d88e176a8.camel@mediatek.com>
+In-Reply-To: <a5da87dbed150b8de4495da4a7f9b98d88e176a8.camel@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 19 Apr 2022 14:59:06 +0800
+Message-ID: <CAGXv+5FSfF=vEx71MUhpw+80baHaAYcw9cWTsQD6BfMx-p6WWw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] clk: mediatek: reset: Rename reset function
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, yong.liang@mediatek.com,
+        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        allen-kh.cheng@mediatek.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2022-04-19 at 13:48 +0800, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Mon, Apr 18, 2022 at 9:22 PM Rex-BC Chen <rex-bc.chen@mediatek.com
-> > wrote:
-> > 
-> 
-> The subject could be written as "Fix written reset bit offset" to
-> make it
-> more specific.
+On Tue, Apr 19, 2022 at 2:37 PM Rex-BC Chen <rex-bc.chen@mediatek.com> wrote:
+>
+> On Tue, 2022-04-19 at 13:57 +0800, Chen-Yu Tsai wrote:
+> > On Mon, Apr 18, 2022 at 9:22 PM Rex-BC Chen <rex-bc.chen@mediatek.com
+> > > wrote:
+> > >
+> > > There are two version for clock reset register control of MediaTek
+> > > SoCs.
+> > > Since MT8183, the version 2 is adopted.
+> > >
+> > > To make the driver more readable,
+> > > - Rename them to v2 for MT8183 and v1 for previous SoCs.
+> > > - Adjust the fuinction order in reset.c.
+> >
+> > I'm not sure that the renaming actually helps, since it is not given
+> > that
+> > people outside of MediaTek would know which chip use which version.
+> > The
+> > original name of "_set_clr" at least relays how the hardware works,
+> > which
+> > coupled with the register naming in the datasheets make it quite
+> > obvious
+> > if the hardware is using the "set/clr" variant.
+> >
+> > On a different note, the v1 hardware, where a hardware bit represents
+> > the
+> > state, is quite common, and there is a common reset driver that
+> > handles it.
+> > Perhaps that could be reused instead of code duplicated?
+> > See drivers/reset/reset-simple.c.
+> >
+> >
+> > Thanks
+> > ChenYu
+>
+> Hello ChenYu,
+>
+> Thanks for your review.
+> I will use reset_simple_ops to replace v1 in next version.
+>
+> What do you think the proper name of v2?
+> Or I just use mtk_reset_assert for v2?
 
-Hello ChenYu,
+I would just keep the current name.
 
-I will update the topic in next version.
-Thanks for your suggestion.
 
-BRs,
-Rex
-
-> 
-> > Original assert/deassert bit is BIT(0), but it's more resonable to
-> > modify
-> > them to BIT(id % 32) which is based on id.
-> > 
-> > This patch will not influence any previous driver because the reset
-> > is
-> > only used for thermal. The id (MT8183_INFRACFG_AO_THERM_SW_RST) is
-> > 0.
-> > 
-> > Fixes: 64ebb57a3df6 ("clk: reset: Modify reset-controller driver")
-> > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> 
-> Otherwise,
-> 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-
+ChenYu
