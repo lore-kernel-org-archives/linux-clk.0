@@ -2,98 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7021C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F8EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349836AbiDSISq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 04:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46266 "EHLO
+        id S1344168AbiDSIo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 04:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349892AbiDSIS1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:18:27 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22AB2F009;
-        Tue, 19 Apr 2022 01:15:43 -0700 (PDT)
-X-UUID: ffc4d363a4fe484c94746d57181154b2-20220419
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:72a0743e-9742-4747-84d6-b10151435cbb,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:45
-X-CID-INFO: VERSION:1.1.4,REQID:72a0743e-9742-4747-84d6-b10151435cbb,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:45
-X-CID-META: VersionHash:faefae9,CLOUDID:c2305bef-06b0-4305-bfbf-554bfc9d151a,C
-        OID:IGNORED,Recheck:0,SF:13|15|28|17|19|48,TC:nil,Content:0,EDM:-3,File:ni
-        l,QS:0,BEC:nil
-X-UUID: ffc4d363a4fe484c94746d57181154b2-20220419
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1300040232; Tue, 19 Apr 2022 16:15:36 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 19 Apr 2022 16:15:36 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 19 Apr 2022 16:15:36 +0800
-Message-ID: <438d21a46fffebdf858c327c92155b5b91646376.camel@mediatek.com>
-Subject: Re: [PATCH 3/7] clk: mediatek: reset: Merge and revise reset
- register function
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Chen-Yu Tsai <wenst@chromium.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <yong.liang@mediatek.com>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 19 Apr 2022 16:15:36 +0800
-In-Reply-To: <CAGXv+5GQR27+iomwHfwYb0gB_QVTZSy6TaZ+1qViMmNPka3Yjw@mail.gmail.com>
-References: <20220418132154.7401-1-rex-bc.chen@mediatek.com>
-         <20220418132154.7401-4-rex-bc.chen@mediatek.com>
-         <CAGXv+5GQR27+iomwHfwYb0gB_QVTZSy6TaZ+1qViMmNPka3Yjw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S233610AbiDSIo5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:44:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEDFFDB0
+        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 01:42:14 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A56182129B;
+        Tue, 19 Apr 2022 08:42:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650357733; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=8A35fbJ1aXxS3Cy5VGlkYUBzaCwNnJPPmCylYMT0NOA=;
+        b=PEXxIJVjEo69kptkwo9lgZ/BCDnAyiplvil+WZU/vA6swV54qbs8SdPtvLA0tx9NdBnddK
+        ccHH9iMgorYSW56U2w3HX+ZePlw+wMQeUlboD7m3yPrDSgRiBMbVd86M/GQ9Wz3pahzjc/
+        xLGug/kMoPRjfRVSRgCuXGNxpCO4WKg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650357733;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=8A35fbJ1aXxS3Cy5VGlkYUBzaCwNnJPPmCylYMT0NOA=;
+        b=w4y02gQ0igmEe9Zsmw7zGQiSEwzPoEihXPByuNcUkosfwz+xPHmMn9MG3vbPnjdMyyBo1t
+        gqBFUjFGdHjb72Bg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 85AA3139BE;
+        Tue, 19 Apr 2022 08:42:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 6xYtIOV1XmKpdAAAMHmgww
+        (envelope-from <iivanov@suse.de>); Tue, 19 Apr 2022 08:42:13 +0000
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        "Ivan T. Ivanov" <iivanov@suse.de>
+Subject: [PATCH v3 0/2] clk: bcm: rpi: Add support for two more clocks
+Date:   Tue, 19 Apr 2022 11:40:56 +0300
+Message-Id: <20220419084058.146509-1-iivanov@suse.de>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2022-04-19 at 15:26 +0800, Chen-Yu Tsai wrote:
-> On Mon, Apr 18, 2022 at 9:22 PM Rex-BC Chen <rex-bc.chen@mediatek.com
-> > wrote:
-> > 
-> > Merge the reset register function of v1 and v2 into one function.
-> > - Input the version number to determine which version we will use.
-> > - Add return value of reset register function for error handling.
-> 
-> Please do this in a separate patch. Also you are adding error
-> messages
-> for when of_clk_add_provider() fails, which is not mentioned either.
-> 
-> Most of these platform drivers require a good cleanup of their error
-> handling anyway. It might be a good idea to tackle them later. Or if
-> they look the same, you could try using coccinelle to do a bulk
-> cleanup.
-> 
-> 
-> Thanks
-> ChenYu
+Add missing clock required by RPiVid video decoder and make HDMI
+pixel clock more reliable.
 
-Hello ChenYu,
+Changes since v2
+- Added Acks from Maxime Ripard and Dave Stevenson
 
-I will separate the error handle in another patch.
-I think I will just add a return value. As for cleanup the clock error 
-handling flow, it's not the purpose of this series.
+Changes since v1
+- Drop RPI_FIRMWARE_VEC_CLK_ID clock it doesn't seems to be used.
+- Rework downstream changes on top of recent Maxime changes.
 
-BRs,
-Rex
-> 
-> > - Rename reset register function to "mtk_clk_register_rst_ctrl"
+Ivan T. Ivanov (2):
+  clk: bcm: rpi: Add support HEVC clock
+  clk: bcm: rpi: Handle pixel clock in firmware
+
+ drivers/clk/bcm/clk-raspberrypi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+-- 
+2.34.1
 
