@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0519BC47090
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F814C47092
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355203AbiDSQse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54080 "EHLO
+        id S1355222AbiDSQsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355082AbiDSQoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:44:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8AC523BF4;
-        Tue, 19 Apr 2022 09:41:31 -0700 (PDT)
+        with ESMTP id S1344193AbiDSQpP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:45:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 834293467B;
+        Tue, 19 Apr 2022 09:42:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 81744B819DE;
-        Tue, 19 Apr 2022 16:41:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 035C7C385AE;
-        Tue, 19 Apr 2022 16:41:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDD8E61874;
+        Tue, 19 Apr 2022 16:42:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A777C385AC;
+        Tue, 19 Apr 2022 16:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386489;
-        bh=CV2DfOuzXf7kUPil8tZ7gZo9izvbbtgmXRdVGoTTjS0=;
+        s=k20201202; t=1650386551;
+        bh=ZitIFNWOGNclnWEkC5k5wKgP8LZADBB8lqdOWZNB8wQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KP5D3/+gEbUNQwq4+2Dg5ZiO0/4UD7UBYxqQ+Yhzyb8rcMpQy8IwFnD3vc7nRThh9
-         0S/UDwriRgtkpACByKJG0x9h6S5YK9TudrYKnkr6NhsX4J5fKn6ygewSDktxKDpnIv
-         tCIuO2FwqWl//65PEBymVPwNOmkUQYMSZ9p1GIJ8MV0q3d+ZIUxvSSsZsxbivMXbmX
-         rBvFb4Uy8VNcVIp7gUj0ZEUm+nWs62XeJSEZiKgu2W6BY2wI3KzjhVsDVg/3FFR+Sz
-         R7ffATntjCQqbOT5/L1YIUTX+OZ6M/ixyUEcIRbi2l9O7ozPWfqM11qZUjM90rXQq0
-         vHB3D8vED3y3w==
+        b=M+b/M4GGqpVoZ/vtuDGOrUAXIOp7QmnE+sliunl9FKuasZGbZF8J7WC0f5+dwHIfV
+         QC+dZIBkk7Hf4pg+kZCT8EC/A41AqH2ENGG3vZIkxJLPpRBM+Aex4V3HjClb5ZY2s8
+         QXyUz7wFF1e86cNx2J/LH32cIfYAT9jRVz/3EZvQYWNJDZXGGvuD5wmAvR7FCCQYz2
+         NZPv5X3QIar8bWv9pUOFMdDuQHRolS5csdfPn4P7i2wmWxafJsowCMdw66MeqUo3e4
+         4cfMCEif39tK7z2xRA3fIStlRIiOkBAdJrgnC88utYEWooh/HHVaMdBdkWFUYWuz/m
+         6oQTHQqp34oXw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 20/48] ARM: pxa: spitz: use gpio descriptors for audio
-Date:   Tue, 19 Apr 2022 18:37:42 +0200
-Message-Id: <20220419163810.2118169-21-arnd@kernel.org>
+Subject: [PATCH 28/48] Input: touchscreen: use wrapper for pxa2xx ac97 registers
+Date:   Tue, 19 Apr 2022 18:37:50 +0200
+Message-Id: <20220419163810.2118169-29-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,247 +73,176 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The audio driver should not use a hardwired gpio number
-from the header. Change it to use a lookup table.
+To avoid a dependency on the pxa platform header files with
+hardcoded registers, change the driver to call a wrapper
+in the pxa2xx-ac97-lib that encapsulates all the other
+ac97 stuff.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: linux-input@vger.kernel.org
 Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/spitz.c                    | 33 ++++++++++-
- arch/arm/mach-pxa/{include/mach => }/spitz.h |  2 +-
- arch/arm/mach-pxa/spitz_pm.c                 |  2 +-
- sound/soc/pxa/spitz.c                        | 58 ++++++++------------
- 4 files changed, 57 insertions(+), 38 deletions(-)
- rename arch/arm/mach-pxa/{include/mach => }/spitz.h (99%)
+ drivers/input/touchscreen/Kconfig            |  2 ++
+ drivers/input/touchscreen/mainstone-wm97xx.c | 16 ++++++++--------
+ drivers/input/touchscreen/zylonite-wm97xx.c  | 12 ++++++------
+ include/sound/pxa2xx-lib.h                   |  4 ++++
+ sound/arm/pxa2xx-ac97-lib.c                  | 12 ++++++++++++
+ 5 files changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index a648e7094e84..cd8f00945373 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -44,7 +44,7 @@
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include <linux/platform_data/video-pxafb.h>
--#include <mach/spitz.h>
-+#include "spitz.h"
- #include "sharpsl_pm.h"
- #include <mach/smemc.h>
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index 43c7d6e5bdc0..2d70c945b20a 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -902,6 +902,7 @@ config TOUCHSCREEN_WM9713
+ config TOUCHSCREEN_WM97XX_MAINSTONE
+ 	tristate "WM97xx Mainstone/Palm accelerated touch"
+ 	depends on TOUCHSCREEN_WM97XX && ARCH_PXA
++	depends on SND_PXA2XX_LIB_AC97
+ 	help
+ 	  Say Y here for support for streaming mode with WM97xx touchscreens
+ 	  on Mainstone, Palm Tungsten T5, TX and LifeDrive systems.
+@@ -914,6 +915,7 @@ config TOUCHSCREEN_WM97XX_MAINSTONE
+ config TOUCHSCREEN_WM97XX_ZYLONITE
+ 	tristate "Zylonite accelerated touch"
+ 	depends on TOUCHSCREEN_WM97XX && MACH_ZYLONITE
++	depends on SND_PXA2XX_LIB_AC97
+ 	select TOUCHSCREEN_WM9713
+ 	help
+ 	  Say Y here for support for streaming mode with the touchscreen
+diff --git a/drivers/input/touchscreen/mainstone-wm97xx.c b/drivers/input/touchscreen/mainstone-wm97xx.c
+index 940d3c92b1f8..8f6fe68f1f99 100644
+--- a/drivers/input/touchscreen/mainstone-wm97xx.c
++++ b/drivers/input/touchscreen/mainstone-wm97xx.c
+@@ -28,7 +28,7 @@
+ #include <linux/soc/pxa/cpu.h>
+ #include <linux/wm97xx.h>
  
-@@ -962,11 +962,42 @@ static void __init spitz_i2c_init(void)
- static inline void spitz_i2c_init(void) {}
- #endif
+-#include <mach/regs-ac97.h>
++#include <sound/pxa2xx-lib.h>
  
-+static struct gpiod_lookup_table spitz_audio_gpio_table = {
-+	.dev_id = "spitz-audio",
-+	.table = {
-+		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_L - SPITZ_SCP_GPIO_BASE,
-+			    "mute-l", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_R - SPITZ_SCP_GPIO_BASE,
-+			    "mute-r", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("sharp-scoop.1", SPITZ_GPIO_MIC_BIAS - SPITZ_SCP2_GPIO_BASE,
-+			    "mic", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
-+static struct gpiod_lookup_table akita_audio_gpio_table = {
-+	.dev_id = "spitz-audio",
-+	.table = {
-+		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_L - SPITZ_SCP_GPIO_BASE,
-+			    "mute-l", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("sharp-scoop.0", SPITZ_GPIO_MUTE_R - SPITZ_SCP_GPIO_BASE,
-+			    "mute-r", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("i2c-max7310", AKITA_GPIO_MIC_BIAS - AKITA_IOEXP_GPIO_BASE,
-+			    "mic", GPIO_ACTIVE_HIGH),
-+		{ },
-+	},
-+};
-+
- /******************************************************************************
-  * Audio devices
-  ******************************************************************************/
- static inline void spitz_audio_init(void)
- {
-+	if (machine_is_akita())
-+		gpiod_add_lookup_table(&akita_audio_gpio_table);
-+	else
-+		gpiod_add_lookup_table(&spitz_audio_gpio_table);
-+
- 	platform_device_register_simple("spitz-audio", -1, NULL, 0);
+ #include <asm/mach-types.h>
+ 
+@@ -104,11 +104,11 @@ static void wm97xx_acc_pen_up(struct wm97xx *wm)
+ 	msleep(1);
+ 
+ 	if (cpu_is_pxa27x()) {
+-		while (MISR & (1 << 2))
+-			MODR;
++		while (pxa2xx_ac97_read_misr() & (1 << 2))
++			pxa2xx_ac97_read_modr();
+ 	} else if (cpu_is_pxa3xx()) {
+ 		for (count = 0; count < 16; count++)
+-			MODR;
++			pxa2xx_ac97_read_modr();
+ 	}
  }
  
-diff --git a/arch/arm/mach-pxa/include/mach/spitz.h b/arch/arm/mach-pxa/spitz.h
-similarity index 99%
-rename from arch/arm/mach-pxa/include/mach/spitz.h
-rename to arch/arm/mach-pxa/spitz.h
-index 04828d8918aa..f97e3ebd762d 100644
---- a/arch/arm/mach-pxa/include/mach/spitz.h
-+++ b/arch/arm/mach-pxa/spitz.h
-@@ -11,7 +11,7 @@
- #define __ASM_ARCH_SPITZ_H  1
- #endif
- 
--#include "irqs.h" /* PXA_NR_BUILTIN_GPIO, PXA_GPIO_TO_IRQ */
-+#include <mach/irqs.h> /* PXA_NR_BUILTIN_GPIO, PXA_GPIO_TO_IRQ */
- #include <linux/fb.h>
- 
- /* Spitz/Akita GPIOs */
-diff --git a/arch/arm/mach-pxa/spitz_pm.c b/arch/arm/mach-pxa/spitz_pm.c
-index 201dabe883b6..6689b67f9ce5 100644
---- a/arch/arm/mach-pxa/spitz_pm.c
-+++ b/arch/arm/mach-pxa/spitz_pm.c
-@@ -19,7 +19,7 @@
- #include <asm/irq.h>
- #include <asm/mach-types.h>
- 
--#include <mach/spitz.h>
-+#include "spitz.h"
- #include "pxa27x.h"
- #include "sharpsl_pm.h"
- 
-diff --git a/sound/soc/pxa/spitz.c b/sound/soc/pxa/spitz.c
-index 7c1384a869ca..44303b6eb228 100644
---- a/sound/soc/pxa/spitz.c
-+++ b/sound/soc/pxa/spitz.c
-@@ -14,13 +14,12 @@
- #include <linux/timer.h>
- #include <linux/interrupt.h>
- #include <linux/platform_device.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/soc.h>
- 
- #include <asm/mach-types.h>
--#include <mach/spitz.h>
- #include "../codecs/wm8750.h"
- #include "pxa2xx-i2s.h"
- 
-@@ -37,7 +36,7 @@
- 
- static int spitz_jack_func;
- static int spitz_spk_func;
--static int spitz_mic_gpio;
-+static struct gpio_desc *gpiod_mic, *gpiod_mute_l, *gpiod_mute_r;
- 
- static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- {
-@@ -56,8 +55,8 @@ static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Mic Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Line Jack");
- 		snd_soc_dapm_enable_pin_unlocked(dapm, "Headphone Jack");
--		gpio_set_value(SPITZ_GPIO_MUTE_L, 1);
--		gpio_set_value(SPITZ_GPIO_MUTE_R, 1);
-+		gpiod_set_value(gpiod_mute_l, 1);
-+		gpiod_set_value(gpiod_mute_r, 1);
- 		break;
- 	case SPITZ_MIC:
- 		/* enable mic jack and bias, mute hp */
-@@ -65,8 +64,8 @@ static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Headset Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Line Jack");
- 		snd_soc_dapm_enable_pin_unlocked(dapm, "Mic Jack");
--		gpio_set_value(SPITZ_GPIO_MUTE_L, 0);
--		gpio_set_value(SPITZ_GPIO_MUTE_R, 0);
-+		gpiod_set_value(gpiod_mute_l, 0);
-+		gpiod_set_value(gpiod_mute_r, 0);
- 		break;
- 	case SPITZ_LINE:
- 		/* enable line jack, disable mic bias and mute hp */
-@@ -74,8 +73,8 @@ static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Headset Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Mic Jack");
- 		snd_soc_dapm_enable_pin_unlocked(dapm, "Line Jack");
--		gpio_set_value(SPITZ_GPIO_MUTE_L, 0);
--		gpio_set_value(SPITZ_GPIO_MUTE_R, 0);
-+		gpiod_set_value(gpiod_mute_l, 0);
-+		gpiod_set_value(gpiod_mute_r, 0);
- 		break;
- 	case SPITZ_HEADSET:
- 		/* enable and unmute headset jack enable mic bias, mute L hp */
-@@ -83,8 +82,8 @@ static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_enable_pin_unlocked(dapm, "Mic Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Line Jack");
- 		snd_soc_dapm_enable_pin_unlocked(dapm, "Headset Jack");
--		gpio_set_value(SPITZ_GPIO_MUTE_L, 0);
--		gpio_set_value(SPITZ_GPIO_MUTE_R, 1);
-+		gpiod_set_value(gpiod_mute_l, 0);
-+		gpiod_set_value(gpiod_mute_r, 1);
- 		break;
- 	case SPITZ_HP_OFF:
- 
-@@ -93,8 +92,8 @@ static void spitz_ext_control(struct snd_soc_dapm_context *dapm)
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Headset Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Mic Jack");
- 		snd_soc_dapm_disable_pin_unlocked(dapm, "Line Jack");
--		gpio_set_value(SPITZ_GPIO_MUTE_L, 0);
--		gpio_set_value(SPITZ_GPIO_MUTE_R, 0);
-+		gpiod_set_value(gpiod_mute_l, 0);
-+		gpiod_set_value(gpiod_mute_r, 0);
- 		break;
+@@ -130,7 +130,7 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
+ 		return RC_PENUP;
  	}
  
-@@ -199,7 +198,7 @@ static int spitz_set_spk(struct snd_kcontrol *kcontrol,
- static int spitz_mic_bias(struct snd_soc_dapm_widget *w,
- 	struct snd_kcontrol *k, int event)
- {
--	gpio_set_value_cansleep(spitz_mic_gpio, SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value_cansleep(gpiod_mic, SND_SOC_DAPM_EVENT_ON(event));
- 	return 0;
+-	x = MODR;
++	x = pxa2xx_ac97_read_modr();
+ 	if (x == last) {
+ 		tries++;
+ 		return RC_AGAIN;
+@@ -138,10 +138,10 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
+ 	last = x;
+ 	do {
+ 		if (reads)
+-			x = MODR;
+-		y = MODR;
++			x = pxa2xx_ac97_read_modr();
++		y = pxa2xx_ac97_read_modr();
+ 		if (pressure)
+-			p = MODR;
++			p = pxa2xx_ac97_read_modr();
+ 
+ 		dev_dbg(wm->dev, "Raw coordinates: x=%x, y=%x, p=%x\n",
+ 			x, y, p);
+diff --git a/drivers/input/touchscreen/zylonite-wm97xx.c b/drivers/input/touchscreen/zylonite-wm97xx.c
+index cabdd6e3c6f8..ed7eae638713 100644
+--- a/drivers/input/touchscreen/zylonite-wm97xx.c
++++ b/drivers/input/touchscreen/zylonite-wm97xx.c
+@@ -24,7 +24,7 @@
+ #include <linux/soc/pxa/cpu.h>
+ #include <linux/wm97xx.h>
+ 
+-#include <mach/regs-ac97.h>
++#include <sound/pxa2xx-lib.h>
+ 
+ struct continuous {
+ 	u16 id;    /* codec id */
+@@ -79,7 +79,7 @@ static void wm97xx_acc_pen_up(struct wm97xx *wm)
+ 	msleep(1);
+ 
+ 	for (i = 0; i < 16; i++)
+-		MODR;
++		pxa2xx_ac97_read_modr();
  }
  
-@@ -287,39 +286,28 @@ static int spitz_probe(struct platform_device *pdev)
- 	struct snd_soc_card *card = &snd_soc_spitz;
- 	int ret;
+ static int wm97xx_acc_pen_down(struct wm97xx *wm)
+@@ -100,7 +100,7 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
+ 		return RC_PENUP;
+ 	}
  
--	if (machine_is_akita())
--		spitz_mic_gpio = AKITA_GPIO_MIC_BIAS;
--	else
--		spitz_mic_gpio = SPITZ_GPIO_MIC_BIAS;
--
--	ret = gpio_request(spitz_mic_gpio, "MIC GPIO");
--	if (ret)
--		goto err1;
--
--	ret = gpio_direction_output(spitz_mic_gpio, 0);
--	if (ret)
--		goto err2;
-+	gpiod_mic = devm_gpiod_get(&pdev->dev, "mic", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_mic))
-+		return PTR_ERR(gpiod_mic);
-+	gpiod_mute_l = devm_gpiod_get(&pdev->dev, "mute-l", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_mute_l))
-+		return PTR_ERR(gpiod_mute_l);
-+	gpiod_mute_r = devm_gpiod_get(&pdev->dev, "mute-r", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_mute_r))
-+		return PTR_ERR(gpiod_mute_r);
+-	x = MODR;
++	x = pxa2xx_ac97_read_modr();
+ 	if (x == last) {
+ 		tries++;
+ 		return RC_AGAIN;
+@@ -108,10 +108,10 @@ static int wm97xx_acc_pen_down(struct wm97xx *wm)
+ 	last = x;
+ 	do {
+ 		if (reads)
+-			x = MODR;
+-		y = MODR;
++			x = pxa2xx_ac97_read_modr();
++		y = pxa2xx_ac97_read_modr();
+ 		if (pressure)
+-			p = MODR;
++			p = pxa2xx_ac97_read_modr();
  
- 	card->dev = &pdev->dev;
+ 		dev_dbg(wm->dev, "Raw coordinates: x=%x, y=%x, p=%x\n",
+ 			x, y, p);
+diff --git a/include/sound/pxa2xx-lib.h b/include/sound/pxa2xx-lib.h
+index 95100cff25d1..0a6f8dabf8c4 100644
+--- a/include/sound/pxa2xx-lib.h
++++ b/include/sound/pxa2xx-lib.h
+@@ -52,4 +52,8 @@ extern int pxa2xx_ac97_hw_resume(void);
+ extern int pxa2xx_ac97_hw_probe(struct platform_device *dev);
+ extern void pxa2xx_ac97_hw_remove(struct platform_device *dev);
  
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
--	if (ret) {
-+	if (ret)
- 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
- 			ret);
--		goto err2;
--	}
--
--	return 0;
- 
--err2:
--	gpio_free(spitz_mic_gpio);
--err1:
- 	return ret;
++/* modem registers, used by touchscreen driver */
++u32 pxa2xx_ac97_read_modr(void);
++u32 pxa2xx_ac97_read_misr(void);
++
+ #endif
+diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
+index 8c79d224f03b..572b73d73762 100644
+--- a/sound/arm/pxa2xx-ac97-lib.c
++++ b/sound/arm/pxa2xx-ac97-lib.c
+@@ -428,6 +428,18 @@ void pxa2xx_ac97_hw_remove(struct platform_device *dev)
  }
+ EXPORT_SYMBOL_GPL(pxa2xx_ac97_hw_remove);
  
- static int spitz_remove(struct platform_device *pdev)
- {
--	gpio_free(spitz_mic_gpio);
- 	return 0;
- }
- 
++u32 pxa2xx_ac97_read_modr(void)
++{
++	return MODR;
++}
++EXPORT_SYMBOL_GPL(pxa2xx_ac97_read_modr);
++
++u32 pxa2xx_ac97_read_misr(void)
++{
++	return MISR;
++}
++EXPORT_SYMBOL_GPL(pxa2xx_ac97_read_misr);
++
+ MODULE_AUTHOR("Nicolas Pitre");
+ MODULE_DESCRIPTION("Intel/Marvell PXA sound library");
+ MODULE_LICENSE("GPL");
 -- 
 2.29.2
 
