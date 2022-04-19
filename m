@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB761C4707F
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B99C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355081AbiDSQoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53978 "EHLO
+        id S1354690AbiDSQr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355077AbiDSQn5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:43:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600E22A249;
-        Tue, 19 Apr 2022 09:41:14 -0700 (PDT)
+        with ESMTP id S1354973AbiDSQoi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:44:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E8F23BF4;
+        Tue, 19 Apr 2022 09:41:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F21E661821;
-        Tue, 19 Apr 2022 16:41:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23064C385A5;
-        Tue, 19 Apr 2022 16:41:05 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E5D23B81BE5;
+        Tue, 19 Apr 2022 16:41:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45319C385A7;
+        Tue, 19 Apr 2022 16:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386473;
-        bh=UmyAEDevE+rFHmIeeKFFlzSBscHHSEtR+AtXVKUZXjI=;
+        s=k20201202; t=1650386512;
+        bh=QiDjZY966XEBc6DDR2J3pcVF2OHhXSmFgleX733S9R8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VBOATLbRuYChK3MBgRX8mPip9VFQsTd4uM6E3FKAYou3P3IZa9nmev0mrBBoYpVGs
-         Nl+voA7jYEZWdMuLiO7BEMPH+MVsDjnXXGALSLYw1w1AX0WnSQTPUBDuRtK63hpICj
-         8+5p1J7vvcJkBz7CuQogkh9GDU2SBWlcgjibaorUtjAG4DdHSgFg+dieu5I1H5UTwe
-         yODr+X/HyGXAHTGbi4Lq4APNxVx4sfb3QJu3sbtv29oNO8I1LDZpvn7U0jmcS7bSjQ
-         9f0xIKo83CR6rz6qWgvk3LUsWMEix8qqKI0I+7fX418R/bEF9m0lgtwSh1l4J0GIYp
-         y51mpx0B4pZoQ==
+        b=gAb4FzNkgoM3kCYs/HBpqHCO1xMlxG5aT22Kue78YyBRs5uYsdsLCEDp2uFk/Vpzj
+         hBDEq0hPQ68ZrCETwUOUBIQ2Db2JnIDFmuhgzGViMIGfnVQ2WxWAJUyKuIHYvbfq1m
+         JXSPFaIX/U6ER3sOlUmZBa1lA6lTZ2W4rIZqUFJhqPLVeSnIq0rECTEwLS9CEDhCB8
+         LhU1ezCsE89PPHvmS5iP2R/xWcyyTkdL0NJVZF/DNBTFkKyMS50SZFGSjKPwZ+uEQr
+         hIdROGX5ZctaUoAgIY+3w7w75y6TV79tuXyYb0/fV3nVTh/49O18UBQ5KVVCtSnWp3
+         alA42Hgz/7LBw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -59,9 +59,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 18/48] ARM: pxa: hx4700: use gpio descriptors for audio
-Date:   Tue, 19 Apr 2022 18:37:40 +0200
-Message-Id: <20220419163810.2118169-19-arnd@kernel.org>
+Subject: [PATCH 23/48] ARM: pxa: magician: use platform driver for audio
+Date:   Tue, 19 Apr 2022 18:37:45 +0200
+Message-Id: <20220419163810.2118169-24-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,194 +73,300 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The audio driver should not use a hardwired gpio number
-from the header. Change it to use a lookup table.
+The magician audio driver creates a codec device and gets
+data from a board specific header file, both of which is
+a bit suspicious. Move these into the board file itself,
+using a gpio lookup table.
 
-Cc: Philipp Zabel <philipp.zabel@gmail.com>
-Cc: Paul Parsons <lost.distance@yahoo.com>
 Acked-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Cc: alsa-devel@alsa-project.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/hx4700-pcmcia.c             |  2 +-
- arch/arm/mach-pxa/hx4700.c                    | 16 ++++++++-
- arch/arm/mach-pxa/{include/mach => }/hx4700.h |  2 +-
- sound/soc/pxa/hx4700.c                        | 34 ++++++++-----------
- 4 files changed, 31 insertions(+), 23 deletions(-)
- rename arch/arm/mach-pxa/{include/mach => }/hx4700.h (99%)
+ arch/arm/mach-pxa/magician.c |  50 +++++++++++++
+ sound/soc/pxa/magician.c     | 141 +++++++++--------------------------
+ 2 files changed, 87 insertions(+), 104 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/hx4700-pcmcia.c b/arch/arm/mach-pxa/hx4700-pcmcia.c
-index e8acbfc9ef6c..e2331dfe427d 100644
---- a/arch/arm/mach-pxa/hx4700-pcmcia.c
-+++ b/arch/arm/mach-pxa/hx4700-pcmcia.c
-@@ -10,7 +10,7 @@
- #include <linux/irq.h>
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index d105deb1e098..598c977a8ae6 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -53,6 +53,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/pxa2xx_spi.h>
+ #include <linux/spi/ads7846.h>
++#include <sound/uda1380.h>
  
- #include <asm/mach-types.h>
--#include <mach/hx4700.h>
-+#include "hx4700.h"
+ static unsigned long magician_pin_config[] __initdata = {
  
- #include <pcmcia/soc_common.h>
- 
-diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
-index 140a44cb2989..2b7f37172725 100644
---- a/arch/arm/mach-pxa/hx4700.c
-+++ b/arch/arm/mach-pxa/hx4700.c
-@@ -41,7 +41,7 @@
- 
- #include "pxa27x.h"
- #include "addr-map.h"
--#include <mach/hx4700.h>
-+#include "hx4700.h"
- #include <linux/platform_data/irda-pxaficp.h>
- 
- #include <sound/ak4641.h>
-@@ -834,6 +834,19 @@ static struct i2c_board_info i2c_board_info[] __initdata = {
+@@ -898,6 +899,53 @@ static struct platform_device strataflash = {
  	},
  };
  
-+static struct gpiod_lookup_table hx4700_audio_gpio_table = {
-+	.dev_id = "hx4700-audio",
++/*
++ * audio support
++ */
++static struct uda1380_platform_data uda1380_info = {
++	.gpio_power = EGPIO_MAGICIAN_CODEC_POWER,
++	.gpio_reset = EGPIO_MAGICIAN_CODEC_RESET,
++	.dac_clk    = UDA1380_DAC_CLK_WSPLL,
++};
++
++static struct i2c_board_info magician_audio_i2c_board_info[] = {
++	{
++		I2C_BOARD_INFO("uda1380", 0x18),
++		.platform_data = &uda1380_info,
++	},
++};
++
++static struct gpiod_lookup_table magician_audio_gpio_table = {
++	.dev_id = "magician-audio",
 +	.table = {
-+		GPIO_LOOKUP("gpio-pxa", GPIO75_HX4700_EARPHONE_nDET,
-+			    "earphone-ndet", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("gpio-pxa", GPIO92_HX4700_HP_DRIVER,
-+			    "hp-driver", GPIO_ACTIVE_HIGH),
-+		GPIO_LOOKUP("gpio-pxa", GPIO107_HX4700_SPK_nSD,
-+			    "spk-nsd", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("htc-egpio-0",
++			    EGPIO_MAGICIAN_SPK_POWER - MAGICIAN_EGPIO_BASE,
++			    "SPK_POWER", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("htc-egpio-0",
++			    EGPIO_MAGICIAN_EP_POWER - MAGICIAN_EGPIO_BASE,
++			    "EP_POWER", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("htc-egpio-0",
++			    EGPIO_MAGICIAN_MIC_POWER - MAGICIAN_EGPIO_BASE,
++			    "MIC_POWER", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("htc-egpio-0",
++			    EGPIO_MAGICIAN_IN_SEL0 - MAGICIAN_EGPIO_BASE,
++			    "IN_SEL0", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("htc-egpio-0",
++			    EGPIO_MAGICIAN_IN_SEL1 - MAGICIAN_EGPIO_BASE,
++			    "IN_SEL1", GPIO_ACTIVE_HIGH),
 +		{ },
 +	},
 +};
 +
- static struct platform_device audio = {
- 	.name	= "hx4700-audio",
- 	.id	= -1,
-@@ -895,6 +908,7 @@ static void __init hx4700_init(void)
- 
++static void magician_audio_init(void)
++{
++	i2c_register_board_info(0,
++		ARRAY_AND_SIZE(magician_audio_i2c_board_info));
++
++	gpiod_add_lookup_table(&magician_audio_gpio_table);
++	platform_device_register_simple("magician-audio", -1, NULL, 0);
++}
++
+ /*
+  * PXA I2C main controller
+  */
+@@ -1048,6 +1096,8 @@ static void __init magician_init(void)
  	gpiod_add_lookup_table(&bq24022_gpiod_table);
  	gpiod_add_lookup_table(&gpio_vbus_gpiod_table);
-+	gpiod_add_lookup_table(&hx4700_audio_gpio_table);
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+ 	platform_add_devices(ARRAY_AND_SIZE(devices));
++
++	magician_audio_init();
+ }
  
-diff --git a/arch/arm/mach-pxa/include/mach/hx4700.h b/arch/arm/mach-pxa/hx4700.h
-similarity index 99%
-rename from arch/arm/mach-pxa/include/mach/hx4700.h
-rename to arch/arm/mach-pxa/hx4700.h
-index 0c30e6d9c660..ce2db33989e1 100644
---- a/arch/arm/mach-pxa/include/mach/hx4700.h
-+++ b/arch/arm/mach-pxa/hx4700.h
-@@ -10,7 +10,7 @@
- 
- #include <linux/gpio.h>
- #include <linux/mfd/asic3.h>
--#include "irqs.h" /* PXA_NR_BUILTIN_GPIO */
-+#include <mach/irqs.h> /* PXA_NR_BUILTIN_GPIO */
- 
- #define HX4700_ASIC3_GPIO_BASE	PXA_NR_BUILTIN_GPIO
- #define HX4700_EGPIO_BASE	(HX4700_ASIC3_GPIO_BASE + ASIC3_NUM_GPIOS)
-diff --git a/sound/soc/pxa/hx4700.c b/sound/soc/pxa/hx4700.c
-index 7334fac758de..e70dc38d9892 100644
---- a/sound/soc/pxa/hx4700.c
-+++ b/sound/soc/pxa/hx4700.c
-@@ -10,7 +10,7 @@
+ MACHINE_START(MAGICIAN, "HTC Magician")
+diff --git a/sound/soc/pxa/magician.c b/sound/soc/pxa/magician.c
+index a5f326c97af2..9433cc927755 100644
+--- a/sound/soc/pxa/magician.c
++++ b/sound/soc/pxa/magician.c
+@@ -14,16 +14,14 @@
  #include <linux/interrupt.h>
  #include <linux/platform_device.h>
  #include <linux/delay.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
  
  #include <sound/core.h>
- #include <sound/jack.h>
-@@ -18,10 +18,10 @@
+ #include <sound/pcm.h>
  #include <sound/pcm_params.h>
  #include <sound/soc.h>
+-#include <sound/uda1380.h>
  
--#include <mach/hx4700.h>
+-#include <mach/magician.h>
  #include <asm/mach-types.h>
+ #include "../codecs/uda1380.h"
  #include "pxa2xx-i2s.h"
+@@ -36,6 +34,9 @@ static int magician_hp_switch;
+ static int magician_spk_switch = 1;
+ static int magician_in_sel = MAGICIAN_MIC;
  
-+static struct gpio_desc *gpiod_hp_driver, *gpiod_spk_nsd;
- static struct snd_soc_jack hs_jack;
- 
- /* Headphones jack detection DAPM pin */
-@@ -40,9 +40,8 @@ static struct snd_soc_jack_pin hs_jack_pin[] = {
- 
- /* Headphones jack detection GPIO */
- static struct snd_soc_jack_gpio hs_jack_gpio = {
--	.gpio		= GPIO75_HX4700_EARPHONE_nDET,
- 	.invert		= true,
--	.name		= "hp-gpio",
-+	.name		= "earphone-ndet",
- 	.report		= SND_JACK_HEADPHONE,
- 	.debounce_time	= 200,
- };
-@@ -81,14 +80,14 @@ static const struct snd_soc_ops hx4700_ops = {
- static int hx4700_spk_power(struct snd_soc_dapm_widget *w,
- 			    struct snd_kcontrol *k, int event)
++static struct gpio_desc *gpiod_spk_power, *gpiod_ep_power, *gpiod_mic_power;
++static struct gpio_desc *gpiod_in_sel0, *gpiod_in_sel1;
++
+ static void magician_ext_control(struct snd_soc_dapm_context *dapm)
  {
--	gpio_set_value(GPIO107_HX4700_SPK_nSD, !!SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value(gpiod_spk_nsd, !!SND_SOC_DAPM_EVENT_ON(event));
+ 
+@@ -215,10 +216,10 @@ static int magician_set_input(struct snd_kcontrol *kcontrol,
+ 
+ 	switch (magician_in_sel) {
+ 	case MAGICIAN_MIC:
+-		gpio_set_value(EGPIO_MAGICIAN_IN_SEL1, 1);
++		gpiod_set_value(gpiod_in_sel1, 1);
+ 		break;
+ 	case MAGICIAN_MIC_EXT:
+-		gpio_set_value(EGPIO_MAGICIAN_IN_SEL1, 0);
++		gpiod_set_value(gpiod_in_sel1, 0);
+ 	}
+ 
+ 	return 1;
+@@ -227,21 +228,21 @@ static int magician_set_input(struct snd_kcontrol *kcontrol,
+ static int magician_spk_power(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *k, int event)
+ {
+-	gpio_set_value(EGPIO_MAGICIAN_SPK_POWER, SND_SOC_DAPM_EVENT_ON(event));
++	gpiod_set_value(gpiod_spk_power, SND_SOC_DAPM_EVENT_ON(event));
  	return 0;
  }
  
- static int hx4700_hp_power(struct snd_soc_dapm_widget *w,
- 			   struct snd_kcontrol *k, int event)
+ static int magician_hp_power(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *k, int event)
  {
--	gpio_set_value(GPIO92_HX4700_HP_DRIVER, !!SND_SOC_DAPM_EVENT_ON(event));
-+	gpiod_set_value(gpiod_hp_driver, !!SND_SOC_DAPM_EVENT_ON(event));
+-	gpio_set_value(EGPIO_MAGICIAN_EP_POWER, SND_SOC_DAPM_EVENT_ON(event));
++	gpiod_set_value(gpiod_ep_power, SND_SOC_DAPM_EVENT_ON(event));
  	return 0;
  }
  
-@@ -162,11 +161,6 @@ static struct snd_soc_card snd_soc_card_hx4700 = {
- 	.fully_routed		= true,
+ static int magician_mic_bias(struct snd_soc_dapm_widget *w,
+ 				struct snd_kcontrol *k, int event)
+ {
+-	gpio_set_value(EGPIO_MAGICIAN_MIC_POWER, SND_SOC_DAPM_EVENT_ON(event));
++	gpiod_set_value(gpiod_mic_power, SND_SOC_DAPM_EVENT_ON(event));
+ 	return 0;
+ }
+ 
+@@ -328,106 +329,38 @@ static struct snd_soc_card snd_soc_card_magician = {
+ 	.fully_routed = true,
  };
  
--static struct gpio hx4700_audio_gpios[] = {
--	{ GPIO107_HX4700_SPK_nSD, GPIOF_OUT_INIT_HIGH, "SPK_POWER" },
--	{ GPIO92_HX4700_HP_DRIVER, GPIOF_OUT_INIT_LOW, "EP_POWER" },
+-static struct platform_device *magician_snd_device;
+-
+-/*
+- * FIXME: move into magician board file once merged into the pxa tree
+- */
+-static struct uda1380_platform_data uda1380_info = {
+-	.gpio_power = EGPIO_MAGICIAN_CODEC_POWER,
+-	.gpio_reset = EGPIO_MAGICIAN_CODEC_RESET,
+-	.dac_clk    = UDA1380_DAC_CLK_WSPLL,
 -};
 -
- static int hx4700_audio_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -174,26 +168,26 @@ static int hx4700_audio_probe(struct platform_device *pdev)
- 	if (!machine_is_h4700())
- 		return -ENODEV;
- 
--	ret = gpio_request_array(hx4700_audio_gpios,
--				ARRAY_SIZE(hx4700_audio_gpios));
-+	gpiod_hp_driver = devm_gpiod_get(&pdev->dev, "hp-driver", GPIOD_OUT_HIGH);
-+	ret = PTR_ERR_OR_ZERO(gpiod_hp_driver);
-+	if (ret)
-+		return ret;
-+	gpiod_spk_nsd = devm_gpiod_get(&pdev->dev, "spk-nsd", GPIOD_OUT_HIGH);
-+	ret = PTR_ERR_OR_ZERO(gpiod_spk_nsd);
- 	if (ret)
- 		return ret;
- 
-+	hs_jack_gpio.gpiod_dev = &pdev->dev;
- 	snd_soc_card_hx4700.dev = &pdev->dev;
- 	ret = devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_hx4700);
--	if (ret)
--		gpio_free_array(hx4700_audio_gpios,
--				ARRAY_SIZE(hx4700_audio_gpios));
- 
- 	return ret;
- }
- 
- static int hx4700_audio_remove(struct platform_device *pdev)
- {
--	gpio_set_value(GPIO92_HX4700_HP_DRIVER, 0);
--	gpio_set_value(GPIO107_HX4700_SPK_nSD, 0);
+-static struct i2c_board_info i2c_board_info[] = {
+-	{
+-		I2C_BOARD_INFO("uda1380", 0x18),
+-		.platform_data = &uda1380_info,
+-	},
+-};
 -
--	gpio_free_array(hx4700_audio_gpios, ARRAY_SIZE(hx4700_audio_gpios));
-+	gpiod_set_value(gpiod_hp_driver, 0);
-+	gpiod_set_value(gpiod_spk_nsd, 0);
- 	return 0;
+-static int __init magician_init(void)
+-{
+-	int ret;
+-	struct i2c_adapter *adapter;
+-	struct i2c_client *client;
+-
+-	if (!machine_is_magician())
+-		return -ENODEV;
+-
+-	adapter = i2c_get_adapter(0);
+-	if (!adapter)
+-		return -ENODEV;
+-	client = i2c_new_client_device(adapter, i2c_board_info);
+-	i2c_put_adapter(adapter);
+-	if (IS_ERR(client))
+-		return PTR_ERR(client);
+-
+-	ret = gpio_request(EGPIO_MAGICIAN_SPK_POWER, "SPK_POWER");
+-	if (ret)
+-		goto err_request_spk;
+-	ret = gpio_request(EGPIO_MAGICIAN_EP_POWER, "EP_POWER");
+-	if (ret)
+-		goto err_request_ep;
+-	ret = gpio_request(EGPIO_MAGICIAN_MIC_POWER, "MIC_POWER");
+-	if (ret)
+-		goto err_request_mic;
+-	ret = gpio_request(EGPIO_MAGICIAN_IN_SEL0, "IN_SEL0");
+-	if (ret)
+-		goto err_request_in_sel0;
+-	ret = gpio_request(EGPIO_MAGICIAN_IN_SEL1, "IN_SEL1");
+-	if (ret)
+-		goto err_request_in_sel1;
+-
+-	gpio_set_value(EGPIO_MAGICIAN_IN_SEL0, 0);
+-
+-	magician_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!magician_snd_device) {
+-		ret = -ENOMEM;
+-		goto err_pdev;
+-	}
+-
+-	platform_set_drvdata(magician_snd_device, &snd_soc_card_magician);
+-	ret = platform_device_add(magician_snd_device);
+-	if (ret) {
+-		platform_device_put(magician_snd_device);
+-		goto err_pdev;
+-	}
+-
+-	return 0;
+-
+-err_pdev:
+-	gpio_free(EGPIO_MAGICIAN_IN_SEL1);
+-err_request_in_sel1:
+-	gpio_free(EGPIO_MAGICIAN_IN_SEL0);
+-err_request_in_sel0:
+-	gpio_free(EGPIO_MAGICIAN_MIC_POWER);
+-err_request_mic:
+-	gpio_free(EGPIO_MAGICIAN_EP_POWER);
+-err_request_ep:
+-	gpio_free(EGPIO_MAGICIAN_SPK_POWER);
+-err_request_spk:
+-	return ret;
+-}
+-
+-static void __exit magician_exit(void)
++static int magician_audio_probe(struct platform_device *pdev)
+ {
+-	platform_device_unregister(magician_snd_device);
+-
+-	gpio_set_value(EGPIO_MAGICIAN_SPK_POWER, 0);
+-	gpio_set_value(EGPIO_MAGICIAN_EP_POWER, 0);
+-	gpio_set_value(EGPIO_MAGICIAN_MIC_POWER, 0);
+-
+-	gpio_free(EGPIO_MAGICIAN_IN_SEL1);
+-	gpio_free(EGPIO_MAGICIAN_IN_SEL0);
+-	gpio_free(EGPIO_MAGICIAN_MIC_POWER);
+-	gpio_free(EGPIO_MAGICIAN_EP_POWER);
+-	gpio_free(EGPIO_MAGICIAN_SPK_POWER);
++	struct device *dev = &pdev->dev;
++
++	gpiod_spk_power = devm_gpiod_get(dev, "SPK_POWER", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_spk_power))
++		return PTR_ERR(gpiod_spk_power);
++	gpiod_ep_power = devm_gpiod_get(dev, "EP_POWER", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ep_power))
++		return PTR_ERR(gpiod_ep_power);
++	gpiod_mic_power = devm_gpiod_get(dev, "MIC_POWER", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_mic_power))
++		return PTR_ERR(gpiod_mic_power);
++	gpiod_in_sel0 = devm_gpiod_get(dev, "IN_SEL0", GPIOD_OUT_HIGH);
++	if (IS_ERR(gpiod_in_sel0))
++		return PTR_ERR(gpiod_in_sel0);
++	gpiod_in_sel1 = devm_gpiod_get(dev, "IN_SEL1", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_in_sel1))
++		return PTR_ERR(gpiod_in_sel1);
++
++	snd_soc_card_magician.dev = &pdev->dev;
++	return devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_magician);
  }
  
+-module_init(magician_init);
+-module_exit(magician_exit);
++static struct platform_driver magician_audio_driver = {
++	.driver.name = "magician-audio",
++	.driver.pm = &snd_soc_pm_ops,
++	.probe = magician_audio_probe,
++};
++module_platform_driver(magician_audio_driver);
+ 
+ MODULE_AUTHOR("Philipp Zabel");
+ MODULE_DESCRIPTION("ALSA SoC Magician");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:magician-audio");
 -- 
 2.29.2
 
