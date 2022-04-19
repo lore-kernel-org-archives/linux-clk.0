@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33954C38A06
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFB4C35280
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355294AbiDSQtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51718 "EHLO
+        id S1355318AbiDSQtO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:49:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354910AbiDSQmc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:42:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F54C39;
-        Tue, 19 Apr 2022 09:39:47 -0700 (PDT)
+        with ESMTP id S1355163AbiDSQqw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:46:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2A0E39692;
+        Tue, 19 Apr 2022 09:44:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1EDD56182B;
-        Tue, 19 Apr 2022 16:39:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9A2C385AC;
-        Tue, 19 Apr 2022 16:39:39 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 483B2B81BF9;
+        Tue, 19 Apr 2022 16:44:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DF2C385AB;
+        Tue, 19 Apr 2022 16:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650386386;
-        bh=LG1bcBYOkdyP7KLIymt99RG2NdIiaXEuRSrVvs573KY=;
+        s=k20201202; t=1650386644;
+        bh=dqIJ/cXf0VPjwidEepmxEeZMiI7iN357W1VgCgckmDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T4H7dpvXVANFtFG0af2IjmNie+uHIUShZAvOn5+alhwiwzWuBABhSLilb4FntAhkl
-         4imNwHrVwSEHgo3fZAIk6eFmmbos3nMQK+2PjuXVe24Fz2RZQwZl2AFECOq1lvtND1
-         zOhTT7LlzFsRKVGze1tRhKmDiBuAvKvZQyo6LeIL1a0E/8C8W5iNqIJxcoCANAELae
-         +0Jz2e4Q0RxrvG0QLmW5gSNVi55sHZ5paYTOzFzPMcbrvXkLms2rBkuPOn8C2igEVo
-         7NMJqhgh31cgPGSKy0Sn7sP5T3vY8TL6kJyHyGaucJKImVbhxu7YvS9tj2UsEOHtSw
-         u/x4fel6q7MzQ==
+        b=SgAVx6hkZdaHv3CD8CN9Q7eFkd1WUAxX4YYUeFf05mJNMCnPu3lsKbjbIJb+nrCSH
+         MbRo2uS1vlrWa6T8ShtJWreZbTLJrb3dXDPHBc25PMNa0XNB4hScmCRsBeQkEkqSCv
+         +D1EK+XAc5braLuQb46aOEU3+7YIhdjNAW0N5PZNZrplKGnsuxTJ6x799OQOgfgMbW
+         sbEfJMfJtKirlg5dW3FA+g0LbZALwv1CD2pNQ8XdFMVqsxpox+u5NY6tYIKKBroYh4
+         rdb9urn3q2CZRyIE88jk1iLQ4cIwwCb8rIZ4FbWkBX8VTcNRrzaU+7vSzuv+G4IMMQ
+         4B9UEXBmi+xuw==
 From:   Arnd Bergmann <arnd@kernel.org>
 To:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org
 Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -58,10 +58,10 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
         linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 07/48] ARM: pxa: move mach/sound.h to linux/platform_data/
-Date:   Tue, 19 Apr 2022 18:37:29 +0200
-Message-Id: <20220419163810.2118169-8-arnd@kernel.org>
+        alsa-devel@alsa-project.org, Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 40/48] ARM: pxa: tosa: use gpio lookup for battery
+Date:   Tue, 19 Apr 2022 18:38:02 +0200
+Message-Id: <20220419163810.2118169-41-arnd@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20220419163810.2118169-1-arnd@kernel.org>
 References: <20220419163810.2118169-1-arnd@kernel.org>
@@ -73,611 +73,423 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-This is a basically a platform_data file, so move it out of
-the mach/* header directory.
+The battery driver uses a lot of GPIO lines, hardcoded from a
+machine header file.
 
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Tomas Cech <sleep_walker@suse.com>
-Cc: Sergey Lapin <slapin@ossfans.org>
-Acked-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: alsa-devel@alsa-project.org
+Change it to use a gpiod lookup table instead.
+
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Acked-by: Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/mach-pxa/balloon3.c                                  | 2 +-
- arch/arm/mach-pxa/cm-x300.c                                   | 2 +-
- arch/arm/mach-pxa/colibri-pxa270.c                            | 2 +-
- arch/arm/mach-pxa/colibri-pxa300.c                            | 2 +-
- arch/arm/mach-pxa/colibri-pxa320.c                            | 2 +-
- arch/arm/mach-pxa/csb726.c                                    | 2 +-
- arch/arm/mach-pxa/devices.c                                   | 2 +-
- arch/arm/mach-pxa/eseries.c                                   | 2 +-
- arch/arm/mach-pxa/lpd270.c                                    | 2 +-
- arch/arm/mach-pxa/lubbock.c                                   | 2 +-
- arch/arm/mach-pxa/mainstone.c                                 | 2 +-
- arch/arm/mach-pxa/mioa701.c                                   | 2 +-
- arch/arm/mach-pxa/palm27x.c                                   | 2 +-
- arch/arm/mach-pxa/palmld.c                                    | 2 +-
- arch/arm/mach-pxa/palmt5.c                                    | 2 +-
- arch/arm/mach-pxa/palmtc.c                                    | 2 +-
- arch/arm/mach-pxa/palmte2.c                                   | 2 +-
- arch/arm/mach-pxa/palmtreo.c                                  | 2 +-
- arch/arm/mach-pxa/palmtx.c                                    | 2 +-
- arch/arm/mach-pxa/palmz72.c                                   | 2 +-
- arch/arm/mach-pxa/pcm990-baseboard.c                          | 2 +-
- arch/arm/mach-pxa/tosa.c                                      | 2 +-
- arch/arm/mach-pxa/trizeps4.c                                  | 2 +-
- arch/arm/mach-pxa/viper.c                                     | 2 +-
- arch/arm/mach-pxa/vpac270.c                                   | 2 +-
- arch/arm/mach-pxa/zeus.c                                      | 2 +-
- arch/arm/mach-pxa/zylonite.c                                  | 2 +-
- .../mach/audio.h => include/linux/platform_data/asoc-pxa.h    | 4 ++--
- sound/arm/pxa2xx-ac97-lib.c                                   | 2 +-
- sound/arm/pxa2xx-ac97.c                                       | 2 +-
- sound/soc/pxa/corgi.c                                         | 2 +-
- sound/soc/pxa/e740_wm9705.c                                   | 2 +-
- sound/soc/pxa/e750_wm9705.c                                   | 2 +-
- sound/soc/pxa/e800_wm9712.c                                   | 2 +-
- sound/soc/pxa/em-x270.c                                       | 2 +-
- sound/soc/pxa/mioa701_wm9713.c                                | 2 +-
- sound/soc/pxa/palm27x.c                                       | 2 +-
- sound/soc/pxa/poodle.c                                        | 2 +-
- sound/soc/pxa/pxa2xx-ac97.c                                   | 2 +-
- sound/soc/pxa/pxa2xx-i2s.c                                    | 2 +-
- sound/soc/pxa/tosa.c                                          | 2 +-
- sound/soc/pxa/z2.c                                            | 2 +-
- 42 files changed, 43 insertions(+), 43 deletions(-)
- rename arch/arm/mach-pxa/include/mach/audio.h => include/linux/platform_data/asoc-pxa.h (93%)
+ arch/arm/mach-pxa/tosa.c            |  23 +++++
+ drivers/power/supply/tosa_battery.c | 147 ++++++++++++++++------------
+ 2 files changed, 109 insertions(+), 61 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/balloon3.c b/arch/arm/mach-pxa/balloon3.c
-index 26140249c784..82f9299f67d3 100644
---- a/arch/arm/mach-pxa/balloon3.c
-+++ b/arch/arm/mach-pxa/balloon3.c
-@@ -41,7 +41,7 @@
- 
- #include "pxa27x.h"
- #include <mach/balloon3.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include "udc.h"
-diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
-index 85e2537fdc15..09a5264a27c8 100644
---- a/arch/arm/mach-pxa/cm-x300.c
-+++ b/arch/arm/mach-pxa/cm-x300.c
-@@ -53,7 +53,7 @@
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include <linux/platform_data/mtd-nand-pxa3xx.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/usb-pxa3xx-ulpi.h>
- 
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-pxa/colibri-pxa270.c b/arch/arm/mach-pxa/colibri-pxa270.c
-index 2f2cd2ae4187..5dc669752836 100644
---- a/arch/arm/mach-pxa/colibri-pxa270.c
-+++ b/arch/arm/mach-pxa/colibri-pxa270.c
-@@ -23,7 +23,7 @@
- #include <asm/mach-types.h>
- #include <linux/sizes.h>
- 
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "colibri.h"
- #include "pxa27x.h"
- 
-diff --git a/arch/arm/mach-pxa/colibri-pxa300.c b/arch/arm/mach-pxa/colibri-pxa300.c
-index 4ceeea142bfd..11ca6c4795e7 100644
---- a/arch/arm/mach-pxa/colibri-pxa300.c
-+++ b/arch/arm/mach-pxa/colibri-pxa300.c
-@@ -24,7 +24,7 @@
- #include "colibri.h"
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include <linux/platform_data/video-pxafb.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- 
- #include "generic.h"
- #include "devices.h"
-diff --git a/arch/arm/mach-pxa/colibri-pxa320.c b/arch/arm/mach-pxa/colibri-pxa320.c
-index 35dd3adb7712..1a59056e181e 100644
---- a/arch/arm/mach-pxa/colibri-pxa320.c
-+++ b/arch/arm/mach-pxa/colibri-pxa320.c
-@@ -24,7 +24,7 @@
- #include "colibri.h"
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "pxa27x-udc.h"
- #include "udc.h"
- 
-diff --git a/arch/arm/mach-pxa/csb726.c b/arch/arm/mach-pxa/csb726.c
-index d48493445ae5..88f2f1d96c7b 100644
---- a/arch/arm/mach-pxa/csb726.c
-+++ b/arch/arm/mach-pxa/csb726.c
-@@ -22,7 +22,7 @@
- #include "pxa27x.h"
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/smemc.h>
- 
- #include "generic.h"
-diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-index 7ca97ddef6fe..454523237c97 100644
---- a/arch/arm/mach-pxa/devices.c
-+++ b/arch/arm/mach-pxa/devices.c
-@@ -20,7 +20,7 @@
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include <linux/platform_data/keypad-pxa27x.h>
- #include <linux/platform_data/media/camera-pxa.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/mmp_dma.h>
- #include <linux/platform_data/mtd-nand-pxa3xx.h>
- 
-diff --git a/arch/arm/mach-pxa/eseries.c b/arch/arm/mach-pxa/eseries.c
-index f37c44b6139d..a8b6483ff665 100644
---- a/arch/arm/mach-pxa/eseries.c
-+++ b/arch/arm/mach-pxa/eseries.c
-@@ -34,7 +34,7 @@
- #include "pxa25x.h"
- #include <mach/eseries-gpio.h>
- #include "eseries-irq.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include "udc.h"
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/lpd270.c b/arch/arm/mach-pxa/lpd270.c
-index eac32bd9e385..7f10b86f85fd 100644
---- a/arch/arm/mach-pxa/lpd270.c
-+++ b/arch/arm/mach-pxa/lpd270.c
-@@ -39,7 +39,7 @@
- #include "pxa27x.h"
- #include "lpd270.h"
- #include <mach/addr-map.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/lubbock.c b/arch/arm/mach-pxa/lubbock.c
-index 72816e7c206f..46aef93c0615 100644
---- a/arch/arm/mach-pxa/lubbock.c
-+++ b/arch/arm/mach-pxa/lubbock.c
-@@ -45,7 +45,7 @@
- #include <asm/hardware/sa1111.h>
- 
- #include "pxa25x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/lubbock.h>
- #include "udc.h"
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/mainstone.c b/arch/arm/mach-pxa/mainstone.c
-index cf74adfe65df..c8200fc2159d 100644
---- a/arch/arm/mach-pxa/mainstone.c
-+++ b/arch/arm/mach-pxa/mainstone.c
-@@ -45,7 +45,7 @@
- 
- #include "pxa27x.h"
- #include "mainstone.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/mioa701.c b/arch/arm/mach-pxa/mioa701.c
-index a79f296e81e0..907cd7b5f58c 100644
---- a/arch/arm/mach-pxa/mioa701.c
-+++ b/arch/arm/mach-pxa/mioa701.c
-@@ -41,7 +41,7 @@
- #include "udc.h"
- #include "pxa27x-udc.h"
- #include <linux/platform_data/media/camera-pxa.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/smemc.h>
- 
- #include "mioa701.h"
-diff --git a/arch/arm/mach-pxa/palm27x.c b/arch/arm/mach-pxa/palm27x.c
-index 6230381a7ca0..1a8d25eecac3 100644
---- a/arch/arm/mach-pxa/palm27x.c
-+++ b/arch/arm/mach-pxa/palm27x.c
-@@ -25,7 +25,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/palmld.c b/arch/arm/mach-pxa/palmld.c
-index 5f73716a77f0..d85146957004 100644
---- a/arch/arm/mach-pxa/palmld.c
-+++ b/arch/arm/mach-pxa/palmld.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/palmld.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmt5.c b/arch/arm/mach-pxa/palmt5.c
-index 7c7cbb4e677e..460a8b1043a5 100644
---- a/arch/arm/mach-pxa/palmt5.c
-+++ b/arch/arm/mach-pxa/palmt5.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "palmt5.h"
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmtc.c b/arch/arm/mach-pxa/palmtc.c
-index 455cb8ccaf26..c59fc76c0c3d 100644
---- a/arch/arm/mach-pxa/palmtc.c
-+++ b/arch/arm/mach-pxa/palmtc.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa25x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/palmtc.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmte2.c b/arch/arm/mach-pxa/palmte2.c
-index a2b10db4aacc..fedac670a8af 100644
---- a/arch/arm/mach-pxa/palmte2.c
-+++ b/arch/arm/mach-pxa/palmte2.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa25x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "palmte2.h"
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmtreo.c b/arch/arm/mach-pxa/palmtreo.c
-index 2bf0f7f3ea24..d6d5b90d9578 100644
---- a/arch/arm/mach-pxa/palmtreo.c
-+++ b/arch/arm/mach-pxa/palmtreo.c
-@@ -29,7 +29,7 @@
- 
- #include "pxa27x.h"
- #include "pxa27x-udc.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "palmtreo.h"
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmtx.c b/arch/arm/mach-pxa/palmtx.c
-index 07332c92c9f7..097b88638863 100644
---- a/arch/arm/mach-pxa/palmtx.c
-+++ b/arch/arm/mach-pxa/palmtx.c
-@@ -32,7 +32,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/palmtx.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/palmz72.c b/arch/arm/mach-pxa/palmz72.c
-index b4a5fe02a0af..66e8fe6f1661 100644
---- a/arch/arm/mach-pxa/palmz72.c
-+++ b/arch/arm/mach-pxa/palmz72.c
-@@ -34,7 +34,7 @@
- #include <asm/mach/map.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include "palmz72.h"
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/pcm990-baseboard.c b/arch/arm/mach-pxa/pcm990-baseboard.c
-index 8dfcc366d0fe..33a9d2eeca1c 100644
---- a/arch/arm/mach-pxa/pcm990-baseboard.c
-+++ b/arch/arm/mach-pxa/pcm990-baseboard.c
-@@ -26,7 +26,7 @@
- 
- #include <asm/mach/map.h>
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/usb-ohci-pxa27x.h>
- #include "pcm990_baseboard.h"
 diff --git a/arch/arm/mach-pxa/tosa.c b/arch/arm/mach-pxa/tosa.c
-index 431709725d02..5af980d77d39 100644
+index 5a16a025192c..19fe79518aaf 100644
 --- a/arch/arm/mach-pxa/tosa.c
 +++ b/arch/arm/mach-pxa/tosa.c
-@@ -45,7 +45,7 @@
- #include <linux/platform_data/mmc-pxamci.h>
- #include "udc.h"
- #include "tosa_bt.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/smemc.h>
+@@ -366,6 +366,28 @@ static struct pxaficp_platform_data tosa_ficp_platform_data = {
+ 	.shutdown		= tosa_irda_shutdown,
+ };
  
- #include <asm/mach/arch.h>
-diff --git a/arch/arm/mach-pxa/trizeps4.c b/arch/arm/mach-pxa/trizeps4.c
-index f76f8be09554..1337008cc760 100644
---- a/arch/arm/mach-pxa/trizeps4.c
-+++ b/arch/arm/mach-pxa/trizeps4.c
-@@ -41,7 +41,7 @@
++static struct gpiod_lookup_table tosa_battery_gpio_table = {
++	.dev_id = "wm97xx-battery",
++	.table = {
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_CHARGE_OFF - TOSA_TC6393XB_GPIO_BASE,    "main charge off", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_CHARGE_OFF_JC - TOSA_TC6393XB_GPIO_BASE, "jacket charge off", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT_SW_ON - TOSA_TC6393XB_GPIO_BASE,     "battery switch", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT0_V_ON - TOSA_TC6393XB_GPIO_BASE,     "main battery", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT1_V_ON - TOSA_TC6393XB_GPIO_BASE,     "jacket battery", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT1_TH_ON - TOSA_TC6393XB_GPIO_BASE,    "main battery temp", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BAT0_TH_ON - TOSA_TC6393XB_GPIO_BASE,    "jacket battery temp", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("tc6393xb", TOSA_GPIO_BU_CHRG_ON - TOSA_TC6393XB_GPIO_BASE,    "backup battery", GPIO_ACTIVE_HIGH ),
++
++		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT0_CRG,      "main battery full", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT1_CRG,      "jacket battery full", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT0_LOW,      "main battery low", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_BAT1_LOW,      "jacket battery low", GPIO_ACTIVE_HIGH ),
++		GPIO_LOOKUP("gpio-pxa", TOSA_GPIO_JACKET_DETECT, "jacket detect", GPIO_ACTIVE_HIGH ),
++		{ },
++	},
++};
++
++
+ /*
+  * Tosa AC IN
+  */
+@@ -954,6 +976,7 @@ static void __init tosa_init(void)
+ 	/* enable batt_fault */
+ 	PMCR = 0x01;
  
- #include "pxa27x.h"
- #include <mach/trizeps4.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/irda-pxaficp.h>
-diff --git a/arch/arm/mach-pxa/viper.c b/arch/arm/mach-pxa/viper.c
-index 4b81c0117971..ac94b10bf8c1 100644
---- a/arch/arm/mach-pxa/viper.c
-+++ b/arch/arm/mach-pxa/viper.c
-@@ -46,7 +46,7 @@
- #include <linux/syscore_ops.h>
++	gpiod_add_lookup_table(&tosa_battery_gpio_table);
+ 	gpiod_add_lookup_table(&tosa_mci_gpio_table);
+ 	gpiod_add_lookup_table(&tosa_audio_gpio_table);
+ 	pxa_set_mci_info(&tosa_mci_platform_data);
+diff --git a/drivers/power/supply/tosa_battery.c b/drivers/power/supply/tosa_battery.c
+index b26b0eca33e1..d10320f348d0 100644
+--- a/drivers/power/supply/tosa_battery.c
++++ b/drivers/power/supply/tosa_battery.c
+@@ -15,11 +15,16 @@
+ #include <linux/gpio.h>
  
- #include "pxa25x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include "regs-uart.h"
- #include <linux/platform_data/pcmcia-pxa2xx_viper.h>
-diff --git a/arch/arm/mach-pxa/vpac270.c b/arch/arm/mach-pxa/vpac270.c
-index 14505e83479e..7067d1464689 100644
---- a/arch/arm/mach-pxa/vpac270.c
-+++ b/arch/arm/mach-pxa/vpac270.c
-@@ -29,7 +29,7 @@
- #include <asm/mach/arch.h>
- 
- #include "pxa27x.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/vpac270.h>
- #include <linux/platform_data/mmc-pxamci.h>
- #include <linux/platform_data/video-pxafb.h>
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index 5d02f10b5b5a..67396e85bb66 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -46,7 +46,7 @@
- #include "udc.h"
- #include <linux/platform_data/video-pxafb.h>
- #include "pm.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/pcmcia-pxa2xx_viper.h>
- #include "zeus.h"
- #include <mach/smemc.h>
-diff --git a/arch/arm/mach-pxa/zylonite.c b/arch/arm/mach-pxa/zylonite.c
-index 9bcb81688201..c48dd6d03df9 100644
---- a/arch/arm/mach-pxa/zylonite.c
-+++ b/arch/arm/mach-pxa/zylonite.c
-@@ -25,7 +25,7 @@
  #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include "pxa3xx.h"
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/video-pxafb.h>
- #include "zylonite.h"
- #include <linux/platform_data/mmc-pxamci.h>
-diff --git a/arch/arm/mach-pxa/include/mach/audio.h b/include/linux/platform_data/asoc-pxa.h
-similarity index 93%
-rename from arch/arm/mach-pxa/include/mach/audio.h
-rename to include/linux/platform_data/asoc-pxa.h
-index 7beebf7297b5..327454cd8246 100644
---- a/arch/arm/mach-pxa/include/mach/audio.h
-+++ b/include/linux/platform_data/asoc-pxa.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ASM_ARCH_AUDIO_H__
--#define __ASM_ARCH_AUDIO_H__
-+#ifndef __SOC_PXA_AUDIO_H__
-+#define __SOC_PXA_AUDIO_H__
+-#include <mach/tosa.h>
  
- #include <sound/core.h>
- #include <sound/pcm.h>
-diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
-index 84d5f85073b9..9b5c1f0f8998 100644
---- a/sound/arm/pxa2xx-ac97-lib.c
-+++ b/sound/arm/pxa2xx-ac97-lib.c
-@@ -23,7 +23,7 @@
+ static DEFINE_MUTEX(bat_lock); /* protects gpio pins */
+ static struct work_struct bat_work;
  
- #include <mach/irqs.h>
- #include <mach/regs-ac97.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
++struct tosa_gpio {
++	const char *con;
++	enum gpiod_flags flags;
++	struct gpio_desc *desc;
++};
++
+ struct tosa_bat {
+ 	int status;
+ 	struct power_supply *psy;
+@@ -28,38 +33,42 @@ struct tosa_bat {
+ 	struct mutex work_lock; /* protects data */
  
- static DEFINE_MUTEX(car_mutex);
- static DECLARE_WAIT_QUEUE_HEAD(gsr_wq);
-diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-index c17a19fe59ed..57c3e12e6629 100644
---- a/sound/arm/pxa2xx-ac97.c
-+++ b/sound/arm/pxa2xx-ac97.c
-@@ -22,7 +22,7 @@
- #include <sound/dmaengine_pcm.h>
+ 	bool (*is_present)(struct tosa_bat *bat);
+-	int gpio_full;
+-	int gpio_charge_off;
++	struct tosa_gpio gpio_full;
++	struct tosa_gpio gpio_charge_off;
  
- #include <mach/regs-ac97.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
+ 	int technology;
  
- static void pxa2xx_ac97_legacy_reset(struct snd_ac97 *ac97)
+-	int gpio_bat;
++	struct tosa_gpio gpio_bat;
+ 	int adc_bat;
+ 	int adc_bat_divider;
+ 	int bat_max;
+ 	int bat_min;
+ 
+-	int gpio_temp;
++	struct tosa_gpio gpio_temp;
+ 	int adc_temp;
+ 	int adc_temp_divider;
+ };
+ 
+ static struct tosa_bat tosa_bat_main;
+ static struct tosa_bat tosa_bat_jacket;
++static struct tosa_gpio gpiod_jacket_det = { "jacket detect", GPIOD_IN };
++static struct tosa_gpio gpiod_battery_switch = { "battery switch", GPIOD_OUT_LOW };
++static struct tosa_gpio gpiod_main_battery_low = { "main battery low", GPIOD_IN };
++static struct tosa_gpio gpiod_jacket_battery_low = { "jacket battery low", GPIOD_IN };
+ 
+ static unsigned long tosa_read_bat(struct tosa_bat *bat)
  {
-diff --git a/sound/soc/pxa/corgi.c b/sound/soc/pxa/corgi.c
-index 8ee2dea25a8d..8b83709431cb 100644
---- a/sound/soc/pxa/corgi.c
-+++ b/sound/soc/pxa/corgi.c
-@@ -22,7 +22,7 @@
+ 	unsigned long value = 0;
  
- #include <asm/mach-types.h>
- #include <mach/corgi.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
+-	if (bat->gpio_bat < 0 || bat->adc_bat < 0)
++	if (!bat->gpio_bat.desc || bat->adc_bat < 0)
+ 		return 0;
  
- #include "../codecs/wm8731.h"
- #include "pxa2xx-i2s.h"
-diff --git a/sound/soc/pxa/e740_wm9705.c b/sound/soc/pxa/e740_wm9705.c
-index eafa1482afbe..f922be7e0016 100644
---- a/sound/soc/pxa/e740_wm9705.c
-+++ b/sound/soc/pxa/e740_wm9705.c
-@@ -13,7 +13,7 @@
- #include <sound/pcm.h>
- #include <sound/soc.h>
+ 	mutex_lock(&bat_lock);
+-	gpio_set_value(bat->gpio_bat, 1);
++	gpiod_set_value(bat->gpio_bat.desc, 1);
+ 	msleep(5);
+ 	value = wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
+ 			bat->adc_bat);
+-	gpio_set_value(bat->gpio_bat, 0);
++	gpiod_set_value(bat->gpio_bat.desc, 0);
+ 	mutex_unlock(&bat_lock);
  
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/eseries-gpio.h>
- 
- #include <asm/mach-types.h>
-diff --git a/sound/soc/pxa/e750_wm9705.c b/sound/soc/pxa/e750_wm9705.c
-index d75510d7b16b..308828cd736b 100644
---- a/sound/soc/pxa/e750_wm9705.c
-+++ b/sound/soc/pxa/e750_wm9705.c
-@@ -13,7 +13,7 @@
- #include <sound/pcm.h>
- #include <sound/soc.h>
- 
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/eseries-gpio.h>
- 
- #include <asm/mach-types.h>
-diff --git a/sound/soc/pxa/e800_wm9712.c b/sound/soc/pxa/e800_wm9712.c
-index 56d543da938a..d74fcceef687 100644
---- a/sound/soc/pxa/e800_wm9712.c
-+++ b/sound/soc/pxa/e800_wm9712.c
-@@ -14,7 +14,7 @@
- #include <sound/soc.h>
- 
- #include <asm/mach-types.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/eseries-gpio.h>
- 
- static int e800_spk_amp_event(struct snd_soc_dapm_widget *w,
-diff --git a/sound/soc/pxa/em-x270.c b/sound/soc/pxa/em-x270.c
-index 9076ea7e9339..b59ec22e1e7e 100644
---- a/sound/soc/pxa/em-x270.c
-+++ b/sound/soc/pxa/em-x270.c
-@@ -23,7 +23,7 @@
- #include <sound/soc.h>
- 
- #include <asm/mach-types.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- 
- SND_SOC_DAILINK_DEFS(ac97,
- 	DAILINK_COMP_ARRAY(COMP_CPU("pxa2xx-ac97")),
-diff --git a/sound/soc/pxa/mioa701_wm9713.c b/sound/soc/pxa/mioa701_wm9713.c
-index 763db7bbd9bb..0fa37637eca9 100644
---- a/sound/soc/pxa/mioa701_wm9713.c
-+++ b/sound/soc/pxa/mioa701_wm9713.c
-@@ -33,7 +33,7 @@
- #include <linux/platform_device.h>
- 
- #include <asm/mach-types.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- 
- #include <sound/core.h>
- #include <sound/pcm.h>
-diff --git a/sound/soc/pxa/palm27x.c b/sound/soc/pxa/palm27x.c
-index b92ea1a0453f..275c86379e88 100644
---- a/sound/soc/pxa/palm27x.c
-+++ b/sound/soc/pxa/palm27x.c
-@@ -20,7 +20,7 @@
- #include <sound/jack.h>
- 
- #include <asm/mach-types.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <linux/platform_data/asoc-palm27x.h>
- 
- static struct snd_soc_jack hs_jack;
-diff --git a/sound/soc/pxa/poodle.c b/sound/soc/pxa/poodle.c
-index 323ba3e23039..176a0441235a 100644
---- a/sound/soc/pxa/poodle.c
-+++ b/sound/soc/pxa/poodle.c
-@@ -22,7 +22,7 @@
- #include <asm/mach-types.h>
- #include <asm/hardware/locomo.h>
- #include <mach/poodle.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- 
- #include "../codecs/wm8731.h"
- #include "pxa2xx-i2s.h"
-diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-index 8f78c5a359c5..9443c1390d2f 100644
---- a/sound/soc/pxa/pxa2xx-ac97.c
-+++ b/sound/soc/pxa/pxa2xx-ac97.c
-@@ -23,7 +23,7 @@
- 
- #include <mach/pxa-regs.h>
- #include <mach/regs-ac97.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- 
- static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
+ 	value = value * 1000000 / bat->adc_bat_divider;
+@@ -71,15 +80,15 @@ static unsigned long tosa_read_temp(struct tosa_bat *bat)
  {
-diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
-index 114a33c4a064..5164c60ba89f 100644
---- a/sound/soc/pxa/pxa2xx-i2s.c
-+++ b/sound/soc/pxa/pxa2xx-i2s.c
-@@ -22,7 +22,7 @@
- #include <sound/dmaengine_pcm.h>
+ 	unsigned long value = 0;
  
- #include <mach/pxa-regs.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
+-	if (bat->gpio_temp < 0 || bat->adc_temp < 0)
++	if (!bat->gpio_temp.desc || bat->adc_temp < 0)
+ 		return 0;
  
- #include "pxa2xx-i2s.h"
+ 	mutex_lock(&bat_lock);
+-	gpio_set_value(bat->gpio_temp, 1);
++	gpiod_set_value(bat->gpio_temp.desc, 1);
+ 	msleep(5);
+ 	value = wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
+ 			bat->adc_temp);
+-	gpio_set_value(bat->gpio_temp, 0);
++	gpiod_set_value(bat->gpio_temp.desc, 0);
+ 	mutex_unlock(&bat_lock);
  
-diff --git a/sound/soc/pxa/tosa.c b/sound/soc/pxa/tosa.c
-index 3b40b5fa5de7..06226f9b863e 100644
---- a/sound/soc/pxa/tosa.c
-+++ b/sound/soc/pxa/tosa.c
-@@ -24,7 +24,7 @@
+ 	value = value * 10000 / bat->adc_temp_divider;
+@@ -136,7 +145,7 @@ static int tosa_bat_get_property(struct power_supply *psy,
  
- #include <asm/mach-types.h>
- #include <mach/tosa.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
+ static bool tosa_jacket_bat_is_present(struct tosa_bat *bat)
+ {
+-	return gpio_get_value(TOSA_GPIO_JACKET_DETECT) == 0;
++	return gpiod_get_value(gpiod_jacket_det.desc) == 0;
+ }
  
- #define TOSA_HP        0
- #define TOSA_MIC_INT   1
-diff --git a/sound/soc/pxa/z2.c b/sound/soc/pxa/z2.c
-index 7e8f33d7b83f..dc6c48e4738b 100644
---- a/sound/soc/pxa/z2.c
-+++ b/sound/soc/pxa/z2.c
-@@ -21,7 +21,7 @@
- #include <sound/jack.h>
+ static void tosa_bat_external_power_changed(struct power_supply *psy)
+@@ -166,23 +175,23 @@ static void tosa_bat_update(struct tosa_bat *bat)
+ 		bat->full_chrg = -1;
+ 	} else if (power_supply_am_i_supplied(psy)) {
+ 		if (bat->status == POWER_SUPPLY_STATUS_DISCHARGING) {
+-			gpio_set_value(bat->gpio_charge_off, 0);
++			gpiod_set_value(bat->gpio_charge_off.desc, 0);
+ 			mdelay(15);
+ 		}
  
- #include <asm/mach-types.h>
--#include <mach/audio.h>
-+#include <linux/platform_data/asoc-pxa.h>
- #include <mach/z2.h>
+-		if (gpio_get_value(bat->gpio_full)) {
++		if (gpiod_get_value(bat->gpio_full.desc)) {
+ 			if (old == POWER_SUPPLY_STATUS_CHARGING ||
+ 					bat->full_chrg == -1)
+ 				bat->full_chrg = tosa_read_bat(bat);
  
- #include "../codecs/wm8750.h"
+-			gpio_set_value(bat->gpio_charge_off, 1);
++			gpiod_set_value(bat->gpio_charge_off.desc, 1);
+ 			bat->status = POWER_SUPPLY_STATUS_FULL;
+ 		} else {
+-			gpio_set_value(bat->gpio_charge_off, 0);
++			gpiod_set_value(bat->gpio_charge_off.desc, 0);
+ 			bat->status = POWER_SUPPLY_STATUS_CHARGING;
+ 		}
+ 	} else {
+-		gpio_set_value(bat->gpio_charge_off, 1);
++		gpiod_set_value(bat->gpio_charge_off.desc, 1);
+ 		bat->status = POWER_SUPPLY_STATUS_DISCHARGING;
+ 	}
+ 
+@@ -251,18 +260,18 @@ static struct tosa_bat tosa_bat_main = {
+ 	.full_chrg = -1,
+ 	.psy = NULL,
+ 
+-	.gpio_full = TOSA_GPIO_BAT0_CRG,
+-	.gpio_charge_off = TOSA_GPIO_CHARGE_OFF,
++	.gpio_full = { "main battery full", GPIOD_IN },
++	.gpio_charge_off = { "main charge off" , GPIOD_OUT_HIGH },
+ 
+ 	.technology = POWER_SUPPLY_TECHNOLOGY_LIPO,
+ 
+-	.gpio_bat = TOSA_GPIO_BAT0_V_ON,
++	.gpio_bat = { "main battery", GPIOD_OUT_LOW },
+ 	.adc_bat = WM97XX_AUX_ID3,
+ 	.adc_bat_divider = 414,
+ 	.bat_max = 4310000,
+ 	.bat_min = 1551 * 1000000 / 414,
+ 
+-	.gpio_temp = TOSA_GPIO_BAT1_TH_ON,
++	.gpio_temp = { "main battery temp", GPIOD_OUT_LOW },
+ 	.adc_temp = WM97XX_AUX_ID2,
+ 	.adc_temp_divider = 10000,
+ };
+@@ -273,18 +282,18 @@ static struct tosa_bat tosa_bat_jacket = {
+ 	.psy = NULL,
+ 
+ 	.is_present = tosa_jacket_bat_is_present,
+-	.gpio_full = TOSA_GPIO_BAT1_CRG,
+-	.gpio_charge_off = TOSA_GPIO_CHARGE_OFF_JC,
++	.gpio_full = { "jacket battery full", GPIOD_IN },
++	.gpio_charge_off = { "jacket charge off", GPIOD_OUT_HIGH },
+ 
+ 	.technology = POWER_SUPPLY_TECHNOLOGY_LIPO,
+ 
+-	.gpio_bat = TOSA_GPIO_BAT1_V_ON,
++	.gpio_bat = { "jacket battery", GPIOD_OUT_LOW },
+ 	.adc_bat = WM97XX_AUX_ID3,
+ 	.adc_bat_divider = 414,
+ 	.bat_max = 4310000,
+ 	.bat_min = 1551 * 1000000 / 414,
+ 
+-	.gpio_temp = TOSA_GPIO_BAT0_TH_ON,
++	.gpio_temp = { "jacket battery temp", GPIOD_OUT_LOW },
+ 	.adc_temp = WM97XX_AUX_ID2,
+ 	.adc_temp_divider = 10000,
+ };
+@@ -294,36 +303,16 @@ static struct tosa_bat tosa_bat_bu = {
+ 	.full_chrg = -1,
+ 	.psy = NULL,
+ 
+-	.gpio_full = -1,
+-	.gpio_charge_off = -1,
+-
+ 	.technology = POWER_SUPPLY_TECHNOLOGY_LiMn,
+ 
+-	.gpio_bat = TOSA_GPIO_BU_CHRG_ON,
++	.gpio_bat = { "backup battery", GPIOD_OUT_LOW },
+ 	.adc_bat = WM97XX_AUX_ID4,
+ 	.adc_bat_divider = 1266,
+ 
+-	.gpio_temp = -1,
+ 	.adc_temp = -1,
+ 	.adc_temp_divider = -1,
+ };
+ 
+-static struct gpio tosa_bat_gpios[] = {
+-	{ TOSA_GPIO_CHARGE_OFF,	   GPIOF_OUT_INIT_HIGH, "main charge off" },
+-	{ TOSA_GPIO_CHARGE_OFF_JC, GPIOF_OUT_INIT_HIGH, "jacket charge off" },
+-	{ TOSA_GPIO_BAT_SW_ON,	   GPIOF_OUT_INIT_LOW,	"battery switch" },
+-	{ TOSA_GPIO_BAT0_V_ON,	   GPIOF_OUT_INIT_LOW,	"main battery" },
+-	{ TOSA_GPIO_BAT1_V_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery" },
+-	{ TOSA_GPIO_BAT1_TH_ON,	   GPIOF_OUT_INIT_LOW,	"main battery temp" },
+-	{ TOSA_GPIO_BAT0_TH_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery temp" },
+-	{ TOSA_GPIO_BU_CHRG_ON,	   GPIOF_OUT_INIT_LOW,	"backup battery" },
+-	{ TOSA_GPIO_BAT0_CRG,	   GPIOF_IN,		"main battery full" },
+-	{ TOSA_GPIO_BAT1_CRG,	   GPIOF_IN,		"jacket battery full" },
+-	{ TOSA_GPIO_BAT0_LOW,	   GPIOF_IN,		"main battery low" },
+-	{ TOSA_GPIO_BAT1_LOW,	   GPIOF_IN,		"jacket battery low" },
+-	{ TOSA_GPIO_JACKET_DETECT, GPIOF_IN,		"jacket detect" },
+-};
+-
+ #ifdef CONFIG_PM
+ static int tosa_bat_suspend(struct platform_device *dev, pm_message_t state)
+ {
+@@ -343,6 +332,21 @@ static int tosa_bat_resume(struct platform_device *dev)
+ #define tosa_bat_resume NULL
+ #endif
+ 
++static int tosa_bat_gpio_get(struct device *dev, struct tosa_gpio *gpio)
++{
++	int ret;
++
++	if (!gpio->con)
++		return 0;
++
++	gpio->desc = devm_gpiod_get(dev, gpio->con, gpio->flags);
++	ret = PTR_ERR_OR_ZERO(gpio->desc);
++	if (ret)
++		dev_warn(dev, "failed to get gpio \"%s\"\n", gpio->con);
++
++	return ret;
++}
++
+ static int tosa_power_supply_register(struct device *dev,
+ 			struct tosa_bat *bat,
+ 			const struct power_supply_desc *desc)
+@@ -350,6 +354,23 @@ static int tosa_power_supply_register(struct device *dev,
+ 	struct power_supply_config cfg = {
+ 		.drv_data = bat,
+ 	};
++	int ret;
++
++	ret = tosa_bat_gpio_get(dev, &bat->gpio_full);
++	if (ret)
++		return ret;
++
++	ret = tosa_bat_gpio_get(dev, &bat->gpio_charge_off);
++	if (ret)
++		return ret;
++
++	ret = tosa_bat_gpio_get(dev, &bat->gpio_bat);
++	if (ret)
++		return ret;
++
++	ret = tosa_bat_gpio_get(dev, &bat->gpio_temp);
++	if (ret)
++		return ret;
+ 
+ 	mutex_init(&bat->work_lock);
+ 	bat->psy = power_supply_register(dev, desc, &cfg);
+@@ -358,49 +379,55 @@ static int tosa_power_supply_register(struct device *dev,
+ }
+ 
+ 
+-static int tosa_bat_probe(struct platform_device *dev)
++static int tosa_bat_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	int ret;
+ 
+ 	if (!machine_is_tosa())
+ 		return -ENODEV;
+ 
+-	ret = gpio_request_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
++	ret = tosa_bat_gpio_get(dev, &gpiod_jacket_det);
+ 	if (ret)
+ 		return ret;
+ 
++	/* these are not used anywhere, continue on failure */
++	tosa_bat_gpio_get(dev, &gpiod_battery_switch);
++	tosa_bat_gpio_get(dev, &gpiod_main_battery_low);
++	tosa_bat_gpio_get(dev, &gpiod_jacket_battery_low);
++
+ 	INIT_WORK(&bat_work, tosa_bat_work);
+ 
+-	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_main,
++	ret = tosa_power_supply_register(dev, &tosa_bat_main,
+ 					 &tosa_bat_main_desc);
+ 	if (ret)
+ 		goto err_psy_reg_main;
+ 
+-	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_jacket,
++	ret = tosa_power_supply_register(dev, &tosa_bat_jacket,
+ 					 &tosa_bat_jacket_desc);
+ 	if (ret)
+ 		goto err_psy_reg_jacket;
+ 
+-	ret = tosa_power_supply_register(&dev->dev, &tosa_bat_bu,
++	ret = tosa_power_supply_register(dev, &tosa_bat_bu,
+ 					 &tosa_bat_bu_desc);
+ 	if (ret)
+ 		goto err_psy_reg_bu;
+ 
+-	ret = request_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG),
++	ret = request_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc),
+ 				tosa_bat_gpio_isr,
+ 				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				"main full", &tosa_bat_main);
+ 	if (ret)
+ 		goto err_req_main;
+ 
+-	ret = request_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG),
++	ret = request_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc),
+ 				tosa_bat_gpio_isr,
+ 				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				"jacket full", &tosa_bat_jacket);
+ 	if (ret)
+ 		goto err_req_jacket;
+ 
+-	ret = request_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT),
++	ret = request_irq(gpiod_to_irq(gpiod_jacket_det.desc),
+ 				tosa_bat_gpio_isr,
+ 				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				"jacket detect", &tosa_bat_jacket);
+@@ -409,9 +436,9 @@ static int tosa_bat_probe(struct platform_device *dev)
+ 		return 0;
+ 	}
+ 
+-	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
++	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket);
+ err_req_jacket:
+-	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
++	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
+ err_req_main:
+ 	power_supply_unregister(tosa_bat_bu.psy);
+ err_psy_reg_bu:
+@@ -423,15 +450,14 @@ static int tosa_bat_probe(struct platform_device *dev)
+ 	/* see comment in tosa_bat_remove */
+ 	cancel_work_sync(&bat_work);
+ 
+-	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+ 	return ret;
+ }
+ 
+ static int tosa_bat_remove(struct platform_device *dev)
+ {
+-	free_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT), &tosa_bat_jacket);
+-	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
+-	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
++	free_irq(gpiod_to_irq(gpiod_jacket_det.desc), &tosa_bat_jacket);
++	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket);
++	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
+ 
+ 	power_supply_unregister(tosa_bat_bu.psy);
+ 	power_supply_unregister(tosa_bat_jacket.psy);
+@@ -443,7 +469,6 @@ static int tosa_bat_remove(struct platform_device *dev)
+ 	 * unregistered now.
+ 	 */
+ 	cancel_work_sync(&bat_work);
+-	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+ 	return 0;
+ }
+ 
 -- 
 2.29.2
 
