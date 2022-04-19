@@ -2,147 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D49C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8BFC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354415AbiDSQMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 12:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45864 "EHLO
+        id S1354548AbiDSQTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354410AbiDSQL7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:11:59 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123A81FCF7
-        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 09:09:15 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id f17so31856633ybj.10
-        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 09:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dbizut872liacGVURGZMlMNbflBr9epUzTZJN1naRRU=;
-        b=jQv1RSMsFzje+yB/e6v+OpSiCJnR44fMcWevRJTPKbrmn6IihmoSIIrfqoWFaqzc/O
-         F6YrSuYN0LGc6K0+nJQaTGmy7YT2SPv+KLYl7TLDCXZC/Dd0bkJZWnRH9/8Dmy6kXiTm
-         YSWrSlPH8N1NZV/8YOzffDWMyqRr1kHgM1diM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dbizut872liacGVURGZMlMNbflBr9epUzTZJN1naRRU=;
-        b=zwhHG4y/rU0k9wgGShIm7m+TQ4HYrehy2QrLYVEE0Z/FBdIiLiaUezGcg40g7e6Iv3
-         NOhGvRPDIBFTKpF6TxF24Hcah5jB/KgC5c6yA4XL8vB7Caqxbr1ZTZTeqNF4IYUIAIcV
-         rkWO28DFWha/08oSMU5uBbmFrKyCOTXxz+2pJTfq7WkFO2NujtJB7B97zYYbHHuSERP4
-         46NRvXZFOrGzi79oXU9Ice7s8XycXGtuNpdh4YfAG6HxNoe1XEaVtcI+kBNTKDTf3oMj
-         78UJImNg2RzBiD8FHfhph6DcXKLaqNmP3qOJ4VDXNJaFuwymVBjYjRy0H+mhiTDSPFRn
-         w6Sw==
-X-Gm-Message-State: AOAM532F+QNeYIF6q+GCVAxsKDy2IcnYmFoWxV+ZDupgsR8ygKQ2SABh
-        CPg9PFOQAmmYDWWGN96MmhF1jwFpnQnS3iE4akfNxw==
-X-Google-Smtp-Source: ABdhPJxDMzjn5Y2J9FTFdHSqniel5HGl8fBt4c5FpZBarwwavL1g/XXm4Hv35bLv7P1296yIbQnPlOL9AD+nB2QKHEM=
-X-Received: by 2002:a25:2ac3:0:b0:645:36f4:2db3 with SMTP id
- q186-20020a252ac3000000b0064536f42db3mr4262319ybq.189.1650384554231; Tue, 19
- Apr 2022 09:09:14 -0700 (PDT)
+        with ESMTP id S1354562AbiDSQTm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:19:42 -0400
+X-Greylist: delayed 314 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 19 Apr 2022 09:16:59 PDT
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F69139BA5;
+        Tue, 19 Apr 2022 09:16:58 -0700 (PDT)
+Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MOiLv-1nHAaj40lT-00Q8zV; Tue, 19 Apr 2022 18:11:23 +0200
+Message-ID: <c57d6490-7439-d49f-369c-5356b6c4eeee@i2se.com>
+Date:   Tue, 19 Apr 2022 18:11:21 +0200
 MIME-Version: 1.0
-References: <20220419081246.2546159-1-wenst@chromium.org> <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
-In-Reply-To: <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 20 Apr 2022 00:09:03 +0800
-Message-ID: <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider APIs
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2] clk: bcm2835: Round UART input clock up
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Phil Elwell <phil@raspberrypi.org>,
+        kernel test robot <lkp@intel.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+References: <20220404125113.80239-1-iivanov@suse.de>
+ <20220414105656.qt52zmr5vjmjdcxc@suse>
+ <0b3356c0-b4c8-91ed-dfde-9f50483ec36f@i2se.com>
+ <20220418110516.s7jxsfa3jl7aagrf@suse>
+ <2a46bd1c-600b-5bd9-1c19-20c809f63945@i2se.com>
+ <20220418113801.uree7rvkzxpiwyni@suse>
+ <6adc9c1c-ec75-b52c-9c44-00296eaa00f6@i2se.com>
+ <20220419150555.igh6tdxgjb7meygx@suse>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220419150555.igh6tdxgjb7meygx@suse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:k3v/NjHx03Qa/XH+nWoErQY7BDb3NBOyLbmyf1V5wOpAQtoDudw
+ 4VXzBC+qhQ0H4BHTZqM4sxz+ESp0lpXES+WXAWbdyOtA7U28+GJeGna9MWoPxztgPny06Tg
+ hS8Qau/S4iZikBn0umzGHi96HxBgKi+hSanLuFGIlLIGhH1JFD4oquk4WgoWfL+5rtteZtc
+ WfE3saZE5EtoY+4A5Blrg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:T4Jiz90U13c=:whMxW1OBO7TIa3bDIsB8CF
+ gl6HKv3l2vVNP/ZfATukcL5xLZh1HEMF5zmBJ19j2VGF2dN6ccMwBElJDU+D0fILlIEnyf6ZS
+ ClkXjDby6EFZiehBxT2DCc7M5tg/2/cgqY4obd8VfDBNSQ6Yed4SA9LnhtGu0d3Z374xx67pK
+ spIwa7Wcg/h+JJVrZbgCVnyaBwNVuZLSBbUB6XK2b8k9lM3bFlodcZFrhRi6tp9L66kCp7+Qe
+ DzCM+AhRsceFR7u7Cj6XMRFsKTdyHhZWkriMGJs7LRobDjr3N+UWUZa8AXkrcvGYHzFBRTA2I
+ ff2li5NmRGdYUNIN9i/c8gBQ2l4X1OBS2OUrqUEV1Vb0Mc/OcLkZwIpt16Pv/sF/bkMwSKfYT
+ 44RLj9c8kW0BDokS6rkHhL83/2WfrZocB7stPZw3pL0EIkzQ+E3mJ/C4sjk/ZZRBKLZp2bM4k
+ 36tZnATf4ALTSVrg9SVowq+cwsRPLPtVpFNLbtAnJCLwrDAlnfENRvtgBjau0F4kSvfueRODe
+ xhVcfjihnOJuAtXnPbqfd79Rd/Q30gRI9VsAJnoXq3q3yQ2KEgIdI3ZsNiMbYb3b8Vch9prV9
+ RuGK9Ie47vvBeyrJdAIAc3lLFgGLf8tyAuzS+gEZaL/L+5V7AcTGLLwT+33twGQdZRmHf4ESp
+ e5CgLIW4BkCgF+bkn6O36UsRZXUisUFEPd0XedmBwdSK9tTQx79Qwh21zfWUQWqDl1VHlUkzS
+ CflDzaTsmNVv/Yru
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 11:08 PM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+Hi Ivan,
+
+Am 19.04.22 um 17:05 schrieb Ivan T. Ivanov:
+> On 04-18 18:01, Stefan Wahren wrote:
+>>>> Do you use the mainline DTS or the vendor DTS to see this issue?
+>>>>
+>>> For (open)SUSE we use downstream DTS.
+>> This is popular and bad at the same time. We as the mainline kernel
+>> developer cannot guarantee that this works as expected. A lot of issues are
+>> caused by mixing vendor DTS with mainline kernel, so in general (not for
+>> this specific issue) you are on your own with this approach.
+>>
+> Yep, I am aware of that. I am still trying to recover after recent
+> gpio-ranges fiasco, also still working on fixing non-exported firmware
+> clocks, which break HDMI output on some of the devices.
+I guess, these firmware clock issues are only reproducible with vendor DTS?
 >
-> Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
-> > Hi everyone,
-> >
-> > This is part 2 of my proposed MediaTek clk driver cleanup work [1].
-> >
+>> I know this is a little bit off topic but except from overlay support, can
+>> you provide a list of most missing features of the mainline kernel / DTS?
+> Well, 260+ overlays for free is not insignificant benefit. Beside few
+> breakages from time to time using downstream device tree works fine.
+
+I think the better approach is to add the missing steps for overlay 
+support in mainline.
+
+Best regards
+
 >
-> ..snip..
+> Regards,
+> Ivan
 >
-> >
-> > The next phase of the cleanup/improvement shall be to introduce some
-> > variant of `struct clk_parent_data` to describe clk relationships
-> > efficiently.
-> >
-> > Please have a look.
-> >
 >
-> Hello Chen-Yu,
->
-> I am grateful to see this series, as the MediaTek clock drivers are getting
-> a bit old, despite new platforms being implemented practically as we speak.
->
-> With this, you surely get that I completely agree with the proposed cleanup
-> and modernization of the entire MediaTek clocks infrastructure, but I think
-> that introducing a `struct clk_parent_data` for these drivers is, at this
-> point, a must, that not only fully justifies these patches, but also "makes
-> the point" - as the effect of that would be a performance improvement as we
-> would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
-> case or parent_data where no .fw_name is provided (which would be the case
-> for most of the clocks).
-
-You and me both. :) And yes, one of the intended results is to make the
-clk driver probe faster.
-
-> That said, my advice would be to add that conversion to declaring clocks
-> with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
-> really make it complete.
-
-This series itself already touches a lot of code, even if most of it was
-done by coccinelle. I'd like to send them separately to not overwhelm
-people.
-
-Also, I haven't actually started on that part yet. It is actually part 3
-of my overall plan. I have a good idea of what to do, given I did similar
-work for the sunxi-ng clk drivers (though half finished...).
-
-Most of the clk references are internal to each driver, and those would
-be mapped from some CLK_ID to some `struct clk_hw *` internally, but all
-blocks have external parents that need to be modeled as well, and we
-would likely need global clk name fallbacks for the blocks that don't
-have parents declared in the device tree, which is unfortunately most
-of them. Especially the central clock controllers like infracfg or pericfg
-take many clk inputs, to the point that MediaTek folks were somewhat
-unwilling to bloat the device tree with them.
-
-So it does seem easier to use something like clk_parent_data with
-`struct clk_hw *` replaced with an index everywhere. This structure
-would get converted into clk_parent_data by the singular clk registration
-helpers.
-
-This would have to coexist with the existing helpers we have. So I think
-this work would be combined with the helper API cleanup / alignment with
-clk provider API.
-
-Does that make sense to you?
-
-> Of course, if you have concerns about old platforms that you cannot test,
-> or for which this kind of conversion would require a huge amount of effort,
-> then I would go for converting as many as possible as a first step and then
-> leave the others for later.
->
-> I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
-> candidates for this great effort.
-
-I'm working with MT8183 right now, as it can readily boot mainline to a
-shell. Depending on the schedule and whose on board with resources, I'd
-probably handle the other ChromeOS platforms, or delegate it internally.
-
-
-Regards
-ChenYu
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
