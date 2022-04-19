@@ -2,53 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E8DC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 08:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD078C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 10:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350155AbiDSIwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 04:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49968 "EHLO
+        id S1350513AbiDSKO5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 06:14:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350156AbiDSIwa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 04:52:30 -0400
+        with ESMTP id S1350531AbiDSKOy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 06:14:54 -0400
 Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EDA4DC41;
-        Tue, 19 Apr 2022 01:49:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BE9C255B1;
+        Tue, 19 Apr 2022 03:12:10 -0700 (PDT)
 Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 0A9B31C81111;
-        Tue, 19 Apr 2022 16:49:45 +0800 (CST)
-Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS04.nuvoton.com
+        by maillog.nuvoton.com (Postfix) with ESMTP id 3DD611C81110;
+        Tue, 19 Apr 2022 18:12:09 +0800 (CST)
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS04.nuvoton.com
  (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Tue, 19
- Apr 2022 16:49:44 +0800
-Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCML01B.nuvoton.com
- (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Tue, 19 Apr
- 2022 16:49:44 +0800
+ Apr 2022 18:12:08 +0800
 Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
  (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Tue, 19 Apr 2022 16:49:44 +0800
-Message-ID: <32867abe-49ae-ae8e-56dd-a0c80011f870@nuvoton.com>
-Date:   Tue, 19 Apr 2022 16:49:44 +0800
+ Transport; Tue, 19 Apr 2022 18:12:08 +0800
+Message-ID: <29b00c24-681a-7f6f-f27d-b7525c5b8485@nuvoton.com>
+Date:   Tue, 19 Apr 2022 18:12:08 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
 Subject: Re: [PATCH v3 2/5] dt-bindings: clock: Document MA35D1 clock
  controller bindings
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     <robh+dt@kernel.org>, <krzk+dt@kernel.org>, <will@kernel.org>,
-        <arnd@arndb.de>, <ychuang570808@gmail.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <olof@lixom.net>,
-        <cfli0@nuvoton.com>, <soc@kernel.org>,
-        <devicetree@vger.kernel.org>, <sboyd@kernel.org>
+        <linux-arm-kernel@lists.infradead.org>, <ychuang570808@gmail.com>
+CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>, <krzk+dt@kernel.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <will@kernel.org>,
+        <soc@kernel.org>, <cfli0@nuvoton.com>
 References: <20220418082738.11301-1-ychuang3@nuvoton.com>
  <20220418082738.11301-3-ychuang3@nuvoton.com>
- <1650288948.503037.3125298.nullmailer@robh.at.kernel.org>
+ <2f8d2f6a-32dc-15cc-321c-f75721edf8a2@linaro.org>
 From:   Jacky Huang <ychuang3@nuvoton.com>
-In-Reply-To: <1650288948.503037.3125298.nullmailer@robh.at.kernel.org>
+In-Reply-To: <2f8d2f6a-32dc-15cc-321c-f75721edf8a2@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -57,68 +52,149 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 2022/4/18 下午 09:35, Rob Herring wrote:
-> On Mon, 18 Apr 2022 16:27:35 +0800, Jacky Huang wrote:
+On 2022/4/18 下午 08:18, Krzysztof Kozlowski wrote:
+> On 18/04/2022 10:27, Jacky Huang wrote:
 >> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
 >>
+> You skipped the review tag, so I assume because of amount of changes.
+> Usually it is nice to mention it...
+
+I search the mail loop and find the "Reviewed-by" tag.
+Now I know I should add the review tag to my patch.
+Thanks for your reminding.
+
+
 >> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
 >> ---
 >>   .../bindings/clock/nuvoton,ma35d1-clk.yaml    | 63 +++++++++++++++++++
 >>   1 file changed, 63 insertions(+)
 >>   create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
 >>
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+>> new file mode 100644
+>> index 000000000000..d0d37c5e84af
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+>> @@ -0,0 +1,63 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Fnuvoton%2Cma35d1-clk.yaml%23&amp;data=05%7C01%7Cychuang3%40nuvoton.com%7C345b237bf1254018654b08da213588f9%7Ca3f24931d4034b4a94f17d83ac638e07%7C0%7C0%7C637858811062058468%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=gCnLGCaMeUI4kdu23m0T9g6eGPd37z8%2BatQQb%2Ftnxb4%3D&amp;reserved=0
+>> +$schema: https://apc01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=05%7C01%7Cychuang3%40nuvoton.com%7C345b237bf1254018654b08da213588f9%7Ca3f24931d4034b4a94f17d83ac638e07%7C0%7C0%7C637858811062058468%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=dj6FannQd0GxVJ%2BGlAjqs08SbNzPKi6ibdyLxLfR4q4%3D&amp;reserved=0
+>> +
+>> +title: Nuvoton MA35D1 Clock Control Module Binding
+>> +
+>> +maintainers:
+>> +  - Chi-Fang Li <cfli0@nuvoton.com>
+>> +  - Jacky Huang <ychuang3@nuvoton.com>
+>> +
+>> +description: |
+>> +  The MA35D1 clock controller generates clocks for the whole chip,
+>> +  including system clocks and all peripheral clocks.
+>> +
+>> +  See also:
+>> +    include/dt-bindings/clock/ma35d1-clk.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: nuvoton,ma35d1-clk
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  assigned-clocks:
+> What about clocks? This depends on clocks. What clocks do you want to
+> assign if they are not an input to the device?
+
+The clock source of all PLLs are from external 24 MHz crystal.
+Yes, I should add clocks such as
+clocks = <&hxt_24m>
+
+and add a node
+     hxt_24m: hxt_24m {
+         compatible = "fixed-clock";
+         #clock-cells = <0>;
+         clock-frequency = <24000000>;
+         clock-output-names = "hxt_24m";
+     };
+
+
+>> +    minItems: 5
+>> +    maxItems: 5
+> This is different than before. minItems should not be here.
 >
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:41:9: [error] syntax error: mapping values are not allowed here (syntax)
+> Why do you need assigned-clocks in the binding at all?
+
+The clock controller is equipped with 5 PLLs, which generated clocks for
+CPU, DDR, and various peripheral bus. The assigned-clocks describe
+these PLL output clocks.
+I will remove the minItems.
+
+>> +
+>> +  assigned-clock-rates:
+>> +    minItems: 5
+>> +    maxItems: 5
+>> +
+>> +  nuvoton,clk-pll-mode:
+>> +    A list of PLL operation mode corresponding to DDRPLL, APLL, EPLL,
+>> +    and VPLL in sequential.
+> This does not look like a binding which was tested. Read
+> "writing-schema" and test your bindings.
+
+"nuvoton,clk-pll-mode" is a nonstandard property used to describe the 
+operation mode of
+corresponding PLLs.
+
+(According to Device tree Specification section "2.2.4 Properties"
+Nonstandard property names should specify a unique string prefix, such 
+as a stock ticker symbol, identifying the name of
+the company or organization that defined the property. Examples:
+fsl,channel-fifo-len
+ibm,ppc-interrupt-server#s
+linux,network-index)
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 5
+> No need for minItems.
+
+Yes, I will remove it.
+
+>> +    maxItems: 5
+>> +    items:
+>> +      enum: [ 0, 1, 2 ]
+> You need to describe the values in description, what's their meaning.
+
+OK, I will add description about the values represented for PLL 
+operation modes.
+
+
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - "#clock-cells"
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +
+>> +    clk: clock-controller@40460200 {
+>> +        compatible = "nuvoton,ma35d1-clk";
+>> +        reg = <0x0 0x40460200 0x0 0x100>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> +...
 >
-> dtschema/dtc warnings/errors:
-> make[1]: *** Deleting file 'Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts'
-> Traceback (most recent call last):
->    File "/usr/local/bin/dt-extract-example", line 52, in <module>
->      binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
->    File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
->      return constructor.get_single_data()
->    File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 119, in get_single_data
->      node = self.composer.get_single_node()
->    File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
->    File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
->    File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
->    File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
->    File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
->    File "_ruamel_yaml.pyx", line 891, in _ruamel_yaml.CParser._compose_mapping_node
->    File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
-> ruamel.yaml.scanner.ScannerError: mapping values are not allowed in this context
->    in "<unicode string>", line 41, column 9
-> make[1]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.example.dts] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> ./Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml:  mapping values are not allowed in this context
->    in "<unicode string>", line 41, column 9
-> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml: ignoring, error parsing file
-> make: *** [Makefile:1401: dt_binding_check] Error 2
->
-> doc reference errors (make refcheckdocs):
->
-> See https://patchwork.ozlabs.org/patch/
->
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
->
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
->
-> pip3 install dtschema --upgrade
->
-> Please check and re-submit.
->
+> Best regards,
+> Krzysztof
+
 Thanks for your review.
-I see this error and know where the problem is. I will fix it in the 
-next version.
 
 Sincerely,
 Jacky Huang
-
 
 
