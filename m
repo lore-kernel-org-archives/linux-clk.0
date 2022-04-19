@@ -2,99 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C56C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 15:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D49C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Apr 2022 16:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236710AbiDSPLE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Apr 2022 11:11:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
+        id S1354415AbiDSQMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Apr 2022 12:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235986AbiDSPLD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 11:11:03 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD653A721;
-        Tue, 19 Apr 2022 08:08:20 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id AC9801F4267B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650380899;
-        bh=wE87yBeheg5nImXJNHE8hDnX7SEP4mrWfxluB9Rr99Q=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iAOE9Sv0da11Nw5ZlOwrnD+04YO8d9pRVEOtAeTuuCzELSb0e7r/+3sVXylYRdLNQ
-         2YbLQXFNhKthcsABt5iOFOH1mk+ZXJZAwIjWnWJs41gl6KEW2zt11XwvpnCSeqSdb4
-         lz7nKBrFFdFl5zTztschsp8IA7iYk+v7jynLoRJYRdDxiDbMbXoK+u7MqAux3e4T1p
-         VpAEml7dKCrm4ljeWeXPvYHHZq/cE/Mqo3kxN5m4EXoFNbSmB8soa7F+L76TUbdpEW
-         6/PyKOYJq4yZVcSd4tK9Npksy0IzurV1FRNS0ibppcHt6wvZXZQ7eUOHQbv+fFAMka
-         lb1JTfaq6WZ4Q==
-Message-ID: <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
-Date:   Tue, 19 Apr 2022 17:08:16 +0200
+        with ESMTP id S1354410AbiDSQL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Apr 2022 12:11:59 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123A81FCF7
+        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 09:09:15 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id f17so31856633ybj.10
+        for <linux-clk@vger.kernel.org>; Tue, 19 Apr 2022 09:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dbizut872liacGVURGZMlMNbflBr9epUzTZJN1naRRU=;
+        b=jQv1RSMsFzje+yB/e6v+OpSiCJnR44fMcWevRJTPKbrmn6IihmoSIIrfqoWFaqzc/O
+         F6YrSuYN0LGc6K0+nJQaTGmy7YT2SPv+KLYl7TLDCXZC/Dd0bkJZWnRH9/8Dmy6kXiTm
+         YSWrSlPH8N1NZV/8YOzffDWMyqRr1kHgM1diM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dbizut872liacGVURGZMlMNbflBr9epUzTZJN1naRRU=;
+        b=zwhHG4y/rU0k9wgGShIm7m+TQ4HYrehy2QrLYVEE0Z/FBdIiLiaUezGcg40g7e6Iv3
+         NOhGvRPDIBFTKpF6TxF24Hcah5jB/KgC5c6yA4XL8vB7Caqxbr1ZTZTeqNF4IYUIAIcV
+         rkWO28DFWha/08oSMU5uBbmFrKyCOTXxz+2pJTfq7WkFO2NujtJB7B97zYYbHHuSERP4
+         46NRvXZFOrGzi79oXU9Ice7s8XycXGtuNpdh4YfAG6HxNoe1XEaVtcI+kBNTKDTf3oMj
+         78UJImNg2RzBiD8FHfhph6DcXKLaqNmP3qOJ4VDXNJaFuwymVBjYjRy0H+mhiTDSPFRn
+         w6Sw==
+X-Gm-Message-State: AOAM532F+QNeYIF6q+GCVAxsKDy2IcnYmFoWxV+ZDupgsR8ygKQ2SABh
+        CPg9PFOQAmmYDWWGN96MmhF1jwFpnQnS3iE4akfNxw==
+X-Google-Smtp-Source: ABdhPJxDMzjn5Y2J9FTFdHSqniel5HGl8fBt4c5FpZBarwwavL1g/XXm4Hv35bLv7P1296yIbQnPlOL9AD+nB2QKHEM=
+X-Received: by 2002:a25:2ac3:0:b0:645:36f4:2db3 with SMTP id
+ q186-20020a252ac3000000b0064536f42db3mr4262319ybq.189.1650384554231; Tue, 19
+ Apr 2022 09:09:14 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider
- APIs
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220419081246.2546159-1-wenst@chromium.org> <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
+In-Reply-To: <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Wed, 20 Apr 2022 00:09:03 +0800
+Message-ID: <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider APIs
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220419081246.2546159-1-wenst@chromium.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220419081246.2546159-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
-> Hi everyone,
-> 
-> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
-> 
+On Tue, Apr 19, 2022 at 11:08 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
+> > Hi everyone,
+> >
+> > This is part 2 of my proposed MediaTek clk driver cleanup work [1].
+> >
+>
+> ..snip..
+>
+> >
+> > The next phase of the cleanup/improvement shall be to introduce some
+> > variant of `struct clk_parent_data` to describe clk relationships
+> > efficiently.
+> >
+> > Please have a look.
+> >
+>
+> Hello Chen-Yu,
+>
+> I am grateful to see this series, as the MediaTek clock drivers are getting
+> a bit old, despite new platforms being implemented practically as we speak.
+>
+> With this, you surely get that I completely agree with the proposed cleanup
+> and modernization of the entire MediaTek clocks infrastructure, but I think
+> that introducing a `struct clk_parent_data` for these drivers is, at this
+> point, a must, that not only fully justifies these patches, but also "makes
+> the point" - as the effect of that would be a performance improvement as we
+> would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
+> case or parent_data where no .fw_name is provided (which would be the case
+> for most of the clocks).
 
-..snip..
+You and me both. :) And yes, one of the intended results is to make the
+clk driver probe faster.
 
-> 
-> The next phase of the cleanup/improvement shall be to introduce some
-> variant of `struct clk_parent_data` to describe clk relationships
-> efficiently.
-> 
-> Please have a look.
-> 
+> That said, my advice would be to add that conversion to declaring clocks
+> with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
+> really make it complete.
 
-Hello Chen-Yu,
+This series itself already touches a lot of code, even if most of it was
+done by coccinelle. I'd like to send them separately to not overwhelm
+people.
 
-I am grateful to see this series, as the MediaTek clock drivers are getting
-a bit old, despite new platforms being implemented practically as we speak.
+Also, I haven't actually started on that part yet. It is actually part 3
+of my overall plan. I have a good idea of what to do, given I did similar
+work for the sunxi-ng clk drivers (though half finished...).
 
-With this, you surely get that I completely agree with the proposed cleanup
-and modernization of the entire MediaTek clocks infrastructure, but I think
-that introducing a `struct clk_parent_data` for these drivers is, at this
-point, a must, that not only fully justifies these patches, but also "makes
-the point" - as the effect of that would be a performance improvement as we
-would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
-case or parent_data where no .fw_name is provided (which would be the case
-for most of the clocks).
+Most of the clk references are internal to each driver, and those would
+be mapped from some CLK_ID to some `struct clk_hw *` internally, but all
+blocks have external parents that need to be modeled as well, and we
+would likely need global clk name fallbacks for the blocks that don't
+have parents declared in the device tree, which is unfortunately most
+of them. Especially the central clock controllers like infracfg or pericfg
+take many clk inputs, to the point that MediaTek folks were somewhat
+unwilling to bloat the device tree with them.
 
-That said, my advice would be to add that conversion to declaring clocks
-with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
-really make it complete.
+So it does seem easier to use something like clk_parent_data with
+`struct clk_hw *` replaced with an index everywhere. This structure
+would get converted into clk_parent_data by the singular clk registration
+helpers.
 
-Of course, if you have concerns about old platforms that you cannot test,
-or for which this kind of conversion would require a huge amount of effort,
-then I would go for converting as many as possible as a first step and then
-leave the others for later.
+This would have to coexist with the existing helpers we have. So I think
+this work would be combined with the helper API cleanup / alignment with
+clk provider API.
 
-I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
-candidates for this great effort.
+Does that make sense to you?
 
-Cheers,
-Angelo
+> Of course, if you have concerns about old platforms that you cannot test,
+> or for which this kind of conversion would require a huge amount of effort,
+> then I would go for converting as many as possible as a first step and then
+> leave the others for later.
+>
+> I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
+> candidates for this great effort.
+
+I'm working with MT8183 right now, as it can readily boot mainline to a
+shell. Depending on the schedule and whose on board with resources, I'd
+probably handle the other ChromeOS platforms, or delegate it internally.
+
+
+Regards
+ChenYu
