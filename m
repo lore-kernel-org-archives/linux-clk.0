@@ -2,37 +2,39 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7611C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 13:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F646C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 13:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378782AbiDTNI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 09:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47186 "EHLO
+        id S1378791AbiDTNI3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 09:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378773AbiDTNIY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 09:08:24 -0400
+        with ESMTP id S1378776AbiDTNIZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 09:08:25 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28AD8222AC;
-        Wed, 20 Apr 2022 06:05:37 -0700 (PDT)
-X-UUID: 4a7794cfb1334ff78f2ef6ee569b40a5-20220420
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A3A6565;
+        Wed, 20 Apr 2022 06:05:38 -0700 (PDT)
+X-UUID: 2bc8eefb15294387ab8c5cbb2af48cc0-20220420
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:82528a0a-2cf6-477e-a1bb-8f6a0b76cbe3,OB:0,LO
+X-CID-O-INFO: VERSION:1.1.4,REQID:fbf3316f-3d82-48f2-8099-cb368e871edf,OB:0,LO
         B:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,AC
         TION:release,TS:-20
-X-CID-META: VersionHash:faefae9,CLOUDID:1ee65cf0-da02-41b4-b6df-58f4ccd36682,C
+X-CID-META: VersionHash:faefae9,CLOUDID:30e65cf0-da02-41b4-b6df-58f4ccd36682,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: 4a7794cfb1334ff78f2ef6ee569b40a5-20220420
+X-UUID: 2bc8eefb15294387ab8c5cbb2af48cc0-20220420
 Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1192217164; Wed, 20 Apr 2022 21:05:32 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 20 Apr 2022 21:05:30 +0800
+        with ESMTP id 1538950905; Wed, 20 Apr 2022 21:05:31 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 20 Apr 2022 21:05:30 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 20 Apr
+ 2022 21:05:30 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 20 Apr 2022 21:05:30 +0800
+ Transport; Wed, 20 Apr 2022 21:05:29 +0800
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
 CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
@@ -44,9 +46,9 @@ CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH V2 11/12] clk: mediatek: reset: Add infra_ao reset support for MT8192
-Date:   Wed, 20 Apr 2022 21:05:26 +0800
-Message-ID: <20220420130527.23200-12-rex-bc.chen@mediatek.com>
+Subject: [PATCH V2 07/12] clk: mediatek: reset: Add return for clock reset register function
+Date:   Wed, 20 Apr 2022 21:05:22 +0800
+Message-ID: <20220420130527.23200-8-rex-bc.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
 References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
@@ -57,71 +59,80 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The infra_ao reset is needed for MT8192. Therefore, we add this patch
-to support it.
+To make error handling, we add return for mtk_clk_register_rst_ctrl().
 
 Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mt8192.c         | 11 +++++++++++
- include/dt-bindings/reset/mt8192-resets.h | 11 +++++++++++
- 2 files changed, 22 insertions(+)
+ drivers/clk/mediatek/reset.c | 14 ++++++++------
+ drivers/clk/mediatek/reset.h |  4 ++--
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index ab27cd66b866..7926b83b9035 100644
---- a/drivers/clk/mediatek/clk-mt8192.c
-+++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -1114,6 +1114,13 @@ static const struct mtk_gate top_clks[] = {
- 	GATE_TOP(CLK_TOP_SSUSB_PHY_REF, "ssusb_phy_ref", "clk26m", 25),
+diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+index d67c13958458..b164b1da7dd3 100644
+--- a/drivers/clk/mediatek/reset.c
++++ b/drivers/clk/mediatek/reset.c
+@@ -64,8 +64,8 @@ static const struct reset_control_ops *rst_op[MTK_RST_MAX] = {
+ 	[MTK_RST_SET_CLR] = &mtk_reset_ops_set_clr,
  };
  
-+static const struct mtk_clk_rst_desc clk_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.reg_num = 4,
-+	.reg_ofs = 0x0,
-+	.reset_n_cells = 2,
-+};
+-void mtk_clk_register_rst_ctrl(struct device_node *np,
+-			       const struct mtk_clk_rst_desc *desc)
++int mtk_clk_register_rst_ctrl(struct device_node *np,
++			      const struct mtk_clk_rst_desc *desc)
+ {
+ 	struct regmap *regmap;
+ 	struct mtk_clk_rst_data *data;
+@@ -73,23 +73,23 @@ void mtk_clk_register_rst_ctrl(struct device_node *np,
+ 
+ 	if (!desc) {
+ 		pr_err("mtk clock reset desc is NULL\n");
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	if (desc->version >= MTK_RST_MAX) {
+ 		pr_err("Error version number: %d\n", desc->version);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap)) {
+ 		pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-		return;
++		return -ENOMEM;
+ 
+ 	data->desc = desc;
+ 	data->regmap = regmap;
+@@ -103,6 +103,8 @@ void mtk_clk_register_rst_ctrl(struct device_node *np,
+ 		pr_err("could not register reset controller: %d\n", ret);
+ 		kfree(data);
+ 	}
 +
- #define MT8192_PLL_FMAX		(3800UL * MHZ)
- #define MT8192_PLL_FMIN		(1500UL * MHZ)
- #define MT8192_INTEGER_BITS	8
-@@ -1239,6 +1246,10 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
- 	if (r)
- 		goto free_clk_data;
++	return ret;
+ }
  
-+	r = mtk_clk_register_rst_ctrl_with_dev(&pdev->dev, &clk_rst_desc);
-+	if (r)
-+		goto free_clk_data;
-+
- 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- 	if (r)
- 		goto free_clk_data;
-diff --git a/include/dt-bindings/reset/mt8192-resets.h b/include/dt-bindings/reset/mt8192-resets.h
-index be9a7ca245b9..feac1ac85906 100644
---- a/include/dt-bindings/reset/mt8192-resets.h
-+++ b/include/dt-bindings/reset/mt8192-resets.h
-@@ -7,6 +7,7 @@
- #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8192
- #define _DT_BINDINGS_RESET_CONTROLLER_MT8192
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
+index 3a93f61e106e..d59f4b89384d 100644
+--- a/drivers/clk/mediatek/reset.h
++++ b/drivers/clk/mediatek/reset.h
+@@ -27,7 +27,7 @@ struct mtk_clk_rst_data {
+ 	const struct mtk_clk_rst_desc *desc;
+ };
  
-+/* TOPRGU */
- #define MT8192_TOPRGU_MM_SW_RST					1
- #define MT8192_TOPRGU_MFG_SW_RST				2
- #define MT8192_TOPRGU_VENC_SW_RST				3
-@@ -27,4 +28,14 @@
+-void mtk_clk_register_rst_ctrl(struct device_node *np,
+-			       const struct mtk_clk_rst_desc *desc);
++int mtk_clk_register_rst_ctrl(struct device_node *np,
++			      const struct mtk_clk_rst_desc *desc);
  
- #define MT8192_TOPRGU_SW_RST_NUM				23
- 
-+/* INFRA RST0 */
-+#define MT8192_INFRA_RST0_LVTS_AP_RST				0
-+/* INFRA RST2 */
-+#define MT8192_INFRA_RST2_PCIE_PHY_RST				15
-+/* INFRA RST3 */
-+#define MT8192_INFRA_RST3_PTP_RST				5
-+/* INFRA RST4 */
-+#define MT8192_INFRA_RST4_LVTS_MCU				12
-+#define MT8192_INFRA_RST4_PCIE_TOP				1
-+
- #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8192 */
+ #endif /* __DRV_CLK_MTK_RESET_H */
 -- 
 2.18.0
 
