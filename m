@@ -2,192 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B03C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 10:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92E7C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 12:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377432AbiDTKHL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 06:07:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
+        id S1376472AbiDTMFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 08:05:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377464AbiDTKHK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 06:07:10 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746D03ED27
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 03:04:23 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id b24so1570970edu.10
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 03:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=O/+Bq4GD0i1aeDJZB6KF270FrYsDWC9ZLK3WKl7pvtw=;
-        b=iQg0xYNVkHIZo0BFivFUh7zcofwerY9qIBuS1eg1pq1Wa+PK0moNksnXr2ibxPi8Nt
-         U4lJJn9AKf4k/TObba/Cc6oO4TsZpgIvDsGSOI4d+MrBlA6kaCK7lviv+aa2F++37KgR
-         N/r+QzoV+OnRGchrRwCncCZWkuUNshBr9/El/cp2eZVL39X0sLxwhSLBbrR2SosL706Q
-         QGwTbqgSZE0x2tcPBwFlyXbQQGpGtE5ZbEhr9iglUhXQg2XhGbPhvxh1iQ7sSxD8Ekyp
-         pSwmybpiz//I9XHylVbYKw8D03YZv3IELSfETGs8FfNIZ0DB7WpSpuQJKb7nPEVuVJ9w
-         vvUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=O/+Bq4GD0i1aeDJZB6KF270FrYsDWC9ZLK3WKl7pvtw=;
-        b=sQobqbKtBMNMc5QGaR/YreYizGYCNwRm5qpha4bKamGRTgMsmZSfrYkTh8atij2Csb
-         nD98F8z2vJ8InHfNOtudhqD3tEse6wz77J0nnQOUuvxXO4ejuuOoj/tSi+f3dtA8gU/r
-         5gZXNR3tFol2PR7QtuFWJKK91kk7v6/PH5d6N0KuWZl0But6aOsczErwZ555Qs+JhW5i
-         OSDOV3AV6Mi6NWESOkxUCLyN/y45CVLikYbt7+nkWuUgmYHwvX0L6NaEqPYlKcZUjsVi
-         8REkEM6CvDV8IX2H2LMLfLZoQbY+PZRuXxjUxvqXl+B23OQdzigVkNz48ePU242f/YtJ
-         Ookg==
-X-Gm-Message-State: AOAM532Tf5HneeIoHD4cTi/QMx4RVJ8xH9I0Q71kHVuNTiy3rY3CKVRo
-        w83HPmrLtbhNZi62emUn24wzKw==
-X-Google-Smtp-Source: ABdhPJzL1lJX7sEUE2x5amjeU9v9hVjpMQnJ3qC7rbHT6pjZahpCdoZq2EmtCY7VhfWQbkBr/EYySQ==
-X-Received: by 2002:a05:6402:31ee:b0:41d:7038:c04a with SMTP id dy14-20020a05640231ee00b0041d7038c04amr22411161edb.142.1650449061949;
-        Wed, 20 Apr 2022 03:04:21 -0700 (PDT)
-Received: from [192.168.0.224] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id kw5-20020a170907770500b006db075e5358sm6599740ejc.66.2022.04.20.03.04.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 03:04:21 -0700 (PDT)
-Message-ID: <6dc5e28b-e84d-95c3-3967-476b2126314e@linaro.org>
-Date:   Wed, 20 Apr 2022 12:04:20 +0200
+        with ESMTP id S1352524AbiDTMFH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 08:05:07 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7161B3D4A9;
+        Wed, 20 Apr 2022 05:02:21 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 85CC01F439F1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1650456140;
+        bh=eypPEIA55pVQnebCMYcNZUnShmDUItvbJq79kOP8Xm4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Eesz4c8/weJ3EMUtyNbhLYHLboEvf0/+iP4MdFSQFJLVB9lst9DeGrbGoFvpoqeNS
+         3uALJ1UZTkkVzxVP8TyK21Dh52LhKRc1HUo2pGeBwEJBJmfygQvXKdh41/LAn6+C4i
+         vA1u8WEYOf0usJcEuu0i9ntO0wBBUs6/Ulg+rcuLOaES6zgk+e3dYCiJ+87L1s9WaO
+         gdRbM9nsohNdOKyV+QWx5/bHAN9c2QdgyaLUCrgLx54QrCxPGofynOi22MCrAoEYup
+         evNeI/T/Hd3OowZZi6qNgGdYTv5xKDUJtrnUpeyQL5Sd10FhXYQTOEDaGuA1/cjJ/u
+         2NdUmz7RnitLg==
+Message-ID: <ca8048f4-2e75-a49b-6c54-9f6abba6ead3@collabora.com>
+Date:   Wed, 20 Apr 2022 14:02:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [RFC PATCH v2 5/6] ufs: use PM OPP when scaling gears
+Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider
+ APIs
 Content-Language: en-US
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-6-krzysztof.kozlowski@linaro.org>
- <20220419170149.GB8699@thinkpad>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220419170149.GB8699@thinkpad>
-Content-Type: text/plain; charset=UTF-8
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220419081246.2546159-1-wenst@chromium.org>
+ <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
+ <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/04/2022 19:01, Manivannan Sadhasivam wrote:
-> On Mon, Apr 11, 2022 at 05:43:46PM +0200, Krzysztof Kozlowski wrote:
->> Scaling gears requires not only scaling clocks, but also voltage levels,
->> e.g. via performance states.
+Il 19/04/22 18:09, Chen-Yu Tsai ha scritto:
+> On Tue, Apr 19, 2022 at 11:08 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
 >>
->> Use the provided OPP table, to set proper OPP frequency which through
->> required-opps will trigger performance state change.  This deprecates
->> the old freq-table-hz Devicetree property and old clock scaling method
->> in favor of PM core code.
+>> Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
+>>> Hi everyone,
+>>>
+>>> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
+>>>
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  drivers/scsi/ufs/ufshcd-pltfrm.c |  69 +++++++++++++++++++
->>  drivers/scsi/ufs/ufshcd.c        | 115 +++++++++++++++++++++++--------
->>  drivers/scsi/ufs/ufshcd.h        |   4 ++
->>  3 files changed, 158 insertions(+), 30 deletions(-)
+>> ..snip..
 >>
->> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> index c1d8b6f46868..edba585db0c1 100644
->> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
->> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> @@ -107,6 +107,69 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
->>  	return ret;
->>  }
->>  
->> +static int ufshcd_parse_operating_points(struct ufs_hba *hba)
->> +{
->> +	struct device *dev = hba->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct ufs_clk_info *clki;
->> +	const char *names[16];
->> +	bool clocks_done;
+>>>
+>>> The next phase of the cleanup/improvement shall be to introduce some
+>>> variant of `struct clk_parent_data` to describe clk relationships
+>>> efficiently.
+>>>
+>>> Please have a look.
+>>>
+>>
+>> Hello Chen-Yu,
+>>
+>> I am grateful to see this series, as the MediaTek clock drivers are getting
+>> a bit old, despite new platforms being implemented practically as we speak.
+>>
+>> With this, you surely get that I completely agree with the proposed cleanup
+>> and modernization of the entire MediaTek clocks infrastructure, but I think
+>> that introducing a `struct clk_parent_data` for these drivers is, at this
+>> point, a must, that not only fully justifies these patches, but also "makes
+>> the point" - as the effect of that would be a performance improvement as we
+>> would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
+>> case or parent_data where no .fw_name is provided (which would be the case
+>> for most of the clocks).
 > 
-> Maybe freq_table?
+> You and me both. :) And yes, one of the intended results is to make the
+> clk driver probe faster.
+> 
+>> That said, my advice would be to add that conversion to declaring clocks
+>> with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
+>> really make it complete.
+> 
+> This series itself already touches a lot of code, even if most of it was
+> done by coccinelle. I'd like to send them separately to not overwhelm
+> people.
+> 
+> Also, I haven't actually started on that part yet. It is actually part 3
+> of my overall plan. I have a good idea of what to do, given I did similar
+> work for the sunxi-ng clk drivers (though half finished...).
 
-ok
+Having a good plan means that you're already half-done though :) :) :)
+
+Besides, the reason why I said that you should do the conversion in the same
+series was exactly because your changes are done with coccinelle scripts...
+...but I thought that you already had something in the works for that.
+
+Since you still need some time for the final part, having this kind of (even
+if partial) modernization is still golden.
+Let's do it in two steps as you prefer then, that's fine for me.
 
 > 
->> +	int cnt, i, ret;
->> +
->> +	if (!of_find_property(dev->of_node, "operating-points-v2", NULL))
->> +		return 0;
->> +
->> +	cnt = of_property_count_strings(np, "clock-names");
->> +	if (cnt <= 0) {
->> +		dev_warn(dev, "%s: Missing clock-names\n",
->> +			 __func__);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (cnt > ARRAY_SIZE(names)) {
->> +		dev_info(dev, "%s: Too many clock-names\n",  __func__);
->> +		return -EINVAL;
->> +	}
+> Most of the clk references are internal to each driver, and those would
+> be mapped from some CLK_ID to some `struct clk_hw *` internally, but all
+> blocks have external parents that need to be modeled as well, and we
+> would likely need global clk name fallbacks for the blocks that don't
+> have parents declared in the device tree, which is unfortunately most
+> of them. Especially the central clock controllers like infracfg or pericfg
+> take many clk inputs, to the point that MediaTek folks were somewhat
+> unwilling to bloat the device tree with them.
 > 
-> How did you come up with 16 as the max clock count? Is this check necessary?
-
-16 was an arbitrary choice, also mentioned in the bindings:
-https://lore.kernel.org/all/20220411154347.491396-3-krzysztof.kozlowski@linaro.org/
-
-The check is necessary from current code point of view - array is
-locally allocated with fixed size. Since bindings do not allow more than
-16, I am not sure if there is a point to make the code flexible now...
-but if this is something you wish, I can change.
-
+> So it does seem easier to use something like clk_parent_data with
+> `struct clk_hw *` replaced with an index everywhere. This structure
+> would get converted into clk_parent_data by the singular clk registration
+> helpers.
 > 
->> +
->> +	/* clocks parsed by ufshcd_parse_clock_info() */
->> +	clocks_done = !!of_find_property(np, "freq-table-hz", NULL);
+
+I may not be understanding what you mean by mapping the CLK_ID internally, but
+from what my brain processed, I think that you want to look at, and basically
+replicate, how it's done in the Qualcomm clock drivers (and perhaps standardize
+that in the clock API?).
+
+Specifically, clk/qcom/common.h, struct parent_map.
+
+Though, I admit I haven't looked at the MTK clocks *very deeply*, so I may be
+misunderstanding something.
+
+> This would have to coexist with the existing helpers we have. So I think
+> this work would be combined with the helper API cleanup / alignment with
+> clk provider API.
 > 
-> freq-table-hz and opp-table are mutually exclusive, isn't it?
-
-You're right, this should be an exit.
-
-(...)
-
->>  	ufshcd_init_lanes_per_dir(hba);
->>  
->>  	err = ufshcd_init(hba, mmio_base, irq);
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index 5bfa62fa288a..aec7da18a550 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -1022,6 +1022,9 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
->>  	int ret = 0;
->>  	ktime_t start = ktime_get();
->>  
->> +	if (hba->use_pm_opp)
->> +		return 0;
->> +
+> Does that make sense to you?
 > 
-> So you don't need pre and post clock changes below?
 
-That's tricky. The UFS HCD core does not need it, but of course the
-question is about the drivers actually using ufshcd_vops_clk_scale_notify().
+Yes that does fully make sense to me.
 
-Only QCOM UFS driver implements it and actually we might need it. Qcom
-driver changes DME_VS_CORE_CLK_CTRL, so maybe this should be done here
-as well. I don't know yet how to incorporate it into PM-opp framework,
-because now changing frequencies and voltage is atomic from the UFS
-driver perspective. Before it was not - for example first clock (with
-these pre/post changes) and then voltage.
+>> Of course, if you have concerns about old platforms that you cannot test,
+>> or for which this kind of conversion would require a huge amount of effort,
+>> then I would go for converting as many as possible as a first step and then
+>> leave the others for later.
+>>
+>> I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
+>> candidates for this great effort.
+> 
+> I'm working with MT8183 right now, as it can readily boot mainline to a
+> shell. Depending on the schedule and whose on board with resources, I'd
+> probably handle the other ChromeOS platforms, or delegate it internally.
+> 
+> 
 
-I will need to solve it somehow...
+That sounds like a plan. Besides, I wasn't trying to give you any hurry
+whatsoever - I was simply thinking out loud :))
 
+Regards,
+Angelo
 
-Best regards,
-Krzysztof
+> Regards
+> ChenYu
+
