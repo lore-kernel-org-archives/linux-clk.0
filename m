@@ -2,114 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA8AC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 09:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B03C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 10:04:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377158AbiDTJW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 05:22:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50974 "EHLO
+        id S1377432AbiDTKHL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 06:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352549AbiDTJW4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 05:22:56 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0942D237D3
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 02:20:10 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id s18so2318604ejr.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 02:20:09 -0700 (PDT)
+        with ESMTP id S1377464AbiDTKHK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 06:07:10 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746D03ED27
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 03:04:23 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id b24so1570970edu.10
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 03:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=nAIc8jlNaoNP4j8LrfgKPUem0987eG/5mImWoVHHT10=;
-        b=rSRtnZiF0xfnneRi/FQEzgnTo4L29Yzksiymt9g7h909EamxwG1M03+cfLGJz2BCOj
-         30CAL0kYOBVzStPIrvYb0monKtCFSnzsD3kwCqSU+bWHouMJvSzgKzZ6TdGkdgNy2yzz
-         C01rq4MLEeIVrGL5bI2/gmeJphR7o7jGVzdRCQK8jV3eM/SIu9DarQScr8dPeApgsm4q
-         PVkvnWdJ0MciYcWlYYKEOAtj/lRtmYDnu4oNkN19u4GUIU3PjvK/cEdkwCiD73LdOoQg
-         xyjB1TqyC1taYNXURg86XIpc8UnubKhBcODOIH7ohGWzGoAIPK9A3eD02O9kuRE3/jfE
-         /lCg==
+        bh=O/+Bq4GD0i1aeDJZB6KF270FrYsDWC9ZLK3WKl7pvtw=;
+        b=iQg0xYNVkHIZo0BFivFUh7zcofwerY9qIBuS1eg1pq1Wa+PK0moNksnXr2ibxPi8Nt
+         U4lJJn9AKf4k/TObba/Cc6oO4TsZpgIvDsGSOI4d+MrBlA6kaCK7lviv+aa2F++37KgR
+         N/r+QzoV+OnRGchrRwCncCZWkuUNshBr9/El/cp2eZVL39X0sLxwhSLBbrR2SosL706Q
+         QGwTbqgSZE0x2tcPBwFlyXbQQGpGtE5ZbEhr9iglUhXQg2XhGbPhvxh1iQ7sSxD8Ekyp
+         pSwmybpiz//I9XHylVbYKw8D03YZv3IELSfETGs8FfNIZ0DB7WpSpuQJKb7nPEVuVJ9w
+         vvUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=nAIc8jlNaoNP4j8LrfgKPUem0987eG/5mImWoVHHT10=;
-        b=ng2Wj5CysBG7LWdfV45YYGsn3Tsm/BFUT6gdVMjhQ/Mxgu0LdWjqvfgYGboErtZk2R
-         5Uq/vTO8D8AUG9UD0yhvPZ4tWiLQkQv63OQ65CvwuGBlu7Ia4XX0IExuXe9FP70X7M0/
-         te8EPGxfJet0TLKjIrqrjlQoNiDdibKdqmnwE5s0IfTuCcbpeGF17/epZkLmuAY5uwKJ
-         2Dp4l2JNGU/teQO71KCGDe/7oFFwlsJrMhW3G1IR8Q8QiOvh+JfTvCeqD3D/M5y2pMrw
-         xa6FnluVsOLnxlfCughqOeQf8JHJIgKZ4d7LHRuKlEoT1udXod6Pwa2ga0YOsRxgNFGc
-         t6TQ==
-X-Gm-Message-State: AOAM533veABsTjEqHna21YJcE3uHTPZNl9f9RSGBha3NPNJ8MPZlLdkI
-        5GYUVtZ0jHBt3qnhqRwO56wx5g==
-X-Google-Smtp-Source: ABdhPJzOe0WrGTYQeCapieJbroGE75Jk3m16hGQK/9UYOPl2KmErfi3BqssRPBI5BShzU5h2D40NFw==
-X-Received: by 2002:a17:906:7a51:b0:6e8:8e6c:f182 with SMTP id i17-20020a1709067a5100b006e88e6cf182mr17160922ejo.506.1650446408596;
-        Wed, 20 Apr 2022 02:20:08 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id kx5-20020a170907774500b006e1382b8192sm6643906ejc.147.2022.04.20.02.20.06
+        bh=O/+Bq4GD0i1aeDJZB6KF270FrYsDWC9ZLK3WKl7pvtw=;
+        b=sQobqbKtBMNMc5QGaR/YreYizGYCNwRm5qpha4bKamGRTgMsmZSfrYkTh8atij2Csb
+         nD98F8z2vJ8InHfNOtudhqD3tEse6wz77J0nnQOUuvxXO4ejuuOoj/tSi+f3dtA8gU/r
+         5gZXNR3tFol2PR7QtuFWJKK91kk7v6/PH5d6N0KuWZl0But6aOsczErwZ555Qs+JhW5i
+         OSDOV3AV6Mi6NWESOkxUCLyN/y45CVLikYbt7+nkWuUgmYHwvX0L6NaEqPYlKcZUjsVi
+         8REkEM6CvDV8IX2H2LMLfLZoQbY+PZRuXxjUxvqXl+B23OQdzigVkNz48ePU242f/YtJ
+         Ookg==
+X-Gm-Message-State: AOAM532Tf5HneeIoHD4cTi/QMx4RVJ8xH9I0Q71kHVuNTiy3rY3CKVRo
+        w83HPmrLtbhNZi62emUn24wzKw==
+X-Google-Smtp-Source: ABdhPJzL1lJX7sEUE2x5amjeU9v9hVjpMQnJ3qC7rbHT6pjZahpCdoZq2EmtCY7VhfWQbkBr/EYySQ==
+X-Received: by 2002:a05:6402:31ee:b0:41d:7038:c04a with SMTP id dy14-20020a05640231ee00b0041d7038c04amr22411161edb.142.1650449061949;
+        Wed, 20 Apr 2022 03:04:21 -0700 (PDT)
+Received: from [192.168.0.224] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id kw5-20020a170907770500b006db075e5358sm6599740ejc.66.2022.04.20.03.04.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 02:20:08 -0700 (PDT)
-Message-ID: <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
-Date:   Wed, 20 Apr 2022 11:20:06 +0200
+        Wed, 20 Apr 2022 03:04:21 -0700 (PDT)
+Message-ID: <6dc5e28b-e84d-95c3-3967-476b2126314e@linaro.org>
+Date:   Wed, 20 Apr 2022 12:04:20 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v7 00/12] Fix broken usage of driver_override (and kfree
- of static memory)
+Subject: Re: [RFC PATCH v2 5/6] ufs: use PM OPP when scaling gears
 Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Stuart Yoder <stuyoder@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-6-krzysztof.kozlowski@linaro.org>
+ <20220419170149.GB8699@thinkpad>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220419170149.GB8699@thinkpad>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/04/2022 13:34, Krzysztof Kozlowski wrote:
+On 19/04/2022 19:01, Manivannan Sadhasivam wrote:
+> On Mon, Apr 11, 2022 at 05:43:46PM +0200, Krzysztof Kozlowski wrote:
+>> Scaling gears requires not only scaling clocks, but also voltage levels,
+>> e.g. via performance states.
+>>
+>> Use the provided OPP table, to set proper OPP frequency which through
+>> required-opps will trigger performance state change.  This deprecates
+>> the old freq-table-hz Devicetree property and old clock scaling method
+>> in favor of PM core code.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  drivers/scsi/ufs/ufshcd-pltfrm.c |  69 +++++++++++++++++++
+>>  drivers/scsi/ufs/ufshcd.c        | 115 +++++++++++++++++++++++--------
+>>  drivers/scsi/ufs/ufshcd.h        |   4 ++
+>>  3 files changed, 158 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> index c1d8b6f46868..edba585db0c1 100644
+>> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> @@ -107,6 +107,69 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+>>  	return ret;
+>>  }
+>>  
+>> +static int ufshcd_parse_operating_points(struct ufs_hba *hba)
+>> +{
+>> +	struct device *dev = hba->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	struct ufs_clk_info *clki;
+>> +	const char *names[16];
+>> +	bool clocks_done;
+> 
+> Maybe freq_table?
 
-Hi Greg, Rafael,
+ok
 
-The patchset was for some time on the lists, got some reviews, some
-changes/feedback which I hope I applied/responded.
+> 
+>> +	int cnt, i, ret;
+>> +
+>> +	if (!of_find_property(dev->of_node, "operating-points-v2", NULL))
+>> +		return 0;
+>> +
+>> +	cnt = of_property_count_strings(np, "clock-names");
+>> +	if (cnt <= 0) {
+>> +		dev_warn(dev, "%s: Missing clock-names\n",
+>> +			 __func__);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (cnt > ARRAY_SIZE(names)) {
+>> +		dev_info(dev, "%s: Too many clock-names\n",  __func__);
+>> +		return -EINVAL;
+>> +	}
+> 
+> How did you come up with 16 as the max clock count? Is this check necessary?
 
-Entire set depends on the driver core changes, so maybe you could pick
-up everything via drivers core tree?
+16 was an arbitrary choice, also mentioned in the bindings:
+https://lore.kernel.org/all/20220411154347.491396-3-krzysztof.kozlowski@linaro.org/
 
-> Dependencies (and stable):
-> ==========================
-> 1. All patches, including last three fixes, depend on the first patch
->    introducing the helper.
-> 2. The last three commits - fixes - are probably not backportable
->    directly, because of this dependency. I don't know how to express
->    this dependency here, since stable-kernel-rules.rst mentions only commits as
->    possible dependencies.
+The check is necessary from current code point of view - array is
+locally allocated with fixed size. Since bindings do not allow more than
+16, I am not sure if there is a point to make the code flexible now...
+but if this is something you wish, I can change.
+
+> 
+>> +
+>> +	/* clocks parsed by ufshcd_parse_clock_info() */
+>> +	clocks_done = !!of_find_property(np, "freq-table-hz", NULL);
+> 
+> freq-table-hz and opp-table are mutually exclusive, isn't it?
+
+You're right, this should be an exit.
+
+(...)
+
+>>  	ufshcd_init_lanes_per_dir(hba);
+>>  
+>>  	err = ufshcd_init(hba, mmio_base, irq);
+>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> index 5bfa62fa288a..aec7da18a550 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -1022,6 +1022,9 @@ static int ufshcd_scale_clks(struct ufs_hba *hba, bool scale_up)
+>>  	int ret = 0;
+>>  	ktime_t start = ktime_get();
+>>  
+>> +	if (hba->use_pm_opp)
+>> +		return 0;
+>> +
+> 
+> So you don't need pre and post clock changes below?
+
+That's tricky. The UFS HCD core does not need it, but of course the
+question is about the drivers actually using ufshcd_vops_clk_scale_notify().
+
+Only QCOM UFS driver implements it and actually we might need it. Qcom
+driver changes DME_VS_CORE_CLK_CTRL, so maybe this should be done here
+as well. I don't know yet how to incorporate it into PM-opp framework,
+because now changing frequencies and voltage is atomic from the UFS
+driver perspective. Before it was not - for example first clock (with
+these pre/post changes) and then voltage.
+
+I will need to solve it somehow...
 
 
 Best regards,
