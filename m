@@ -2,418 +2,511 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7806C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 13:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AE0C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 13:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378657AbiDTNJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 09:09:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47228 "EHLO
+        id S1353707AbiDTNqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 09:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378835AbiDTNIr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 09:08:47 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32823427DE;
-        Wed, 20 Apr 2022 06:05:48 -0700 (PDT)
-X-UUID: 896ad5c2ae5c41998de3e0a01ef00ac7-20220420
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:4ee30c01-9368-442c-9edb-32244c95bbcc,OB:-327
-        68,LOB:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:-32768,FILE:0,RULE:Rele
-        ase_Ham,ACTION:release,TS:-20
-X-CID-INFO: VERSION:1.1.4,REQID:4ee30c01-9368-442c-9edb-32244c95bbcc,OB:-32768
-        ,LOB:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:-32768,FILE:0,RULE:Releas
-        e_Ham,ACTION:release,TS:-20
-X-CID-META: VersionHash:faefae9,CLOUDID:70e286ef-06b0-4305-bfbf-554bfc9d151a,C
-        OID:nil,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: 896ad5c2ae5c41998de3e0a01ef00ac7-20220420
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 838861984; Wed, 20 Apr 2022 21:05:30 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 20 Apr 2022 21:05:30 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 20 Apr
- 2022 21:05:29 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 20 Apr 2022 21:05:29 +0800
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH V2 04/12] clk: mediatek: reset: Merge and revise reset register function
-Date:   Wed, 20 Apr 2022 21:05:19 +0800
-Message-ID: <20220420130527.23200-5-rex-bc.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
-References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
+        with ESMTP id S235764AbiDTNp6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 09:45:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F4B3ED31;
+        Wed, 20 Apr 2022 06:43:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C2138B81ED6;
+        Wed, 20 Apr 2022 13:43:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1680EC385A0;
+        Wed, 20 Apr 2022 13:43:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650462188;
+        bh=qAX+7/fdnliZOw4nv8Rp4dEJx8oAsndLLAxA2eMiTfA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L42/09/yCO9iNyPaBjWiMD4CSiTKyzal96En6UIVXJBZ8TPeOhlOYXYfO7wwHRjSz
+         mUlV0LBvzIO8NbyfVzbA9Aarvuh36VplGfIaRP9pJJVszuFHqYb7WlIOsh/oyVO4qG
+         aA8T52kx+JWbq+JATh1Fxbwi+3v3CFqWmeQPmDbDRK6YfpctuZ+IkierB/lu1ZgyZ0
+         WTCCChm3if9vCxR4x5Z35u1OMDN8F1sOEGE5B+msjpxzRMWH7MTl9piR4VDraZeqsi
+         Jw3Kw/aMlVggHe4NwSpY6Bx/JG8t1s+d2GRmilCIN5Wi7oDusCKGLouwvXqt3hK4+j
+         hqRCMkShofHPg==
+Received: by mercury (Postfix, from userid 1000)
+        id 5D41D1060347; Wed, 20 Apr 2022 15:43:05 +0200 (CEST)
+Date:   Wed, 20 Apr 2022 15:43:05 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Tomas Cech <sleep_walker@suse.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 40/48] ARM: pxa: tosa: use gpio lookup for battery
+Message-ID: <20220420134305.fq7pc3fsz5fxkryj@mercury.elektranox.org>
+References: <20220419163810.2118169-1-arnd@kernel.org>
+ <20220419163810.2118169-41-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qpvv5pfrnllxtjfz"
+Content-Disposition: inline
+In-Reply-To: <20220419163810.2118169-41-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Merge the reset register function of simple and set_clr into one function.
-- Input the version number to determine which version we will use.
-- Rename reset register function to "mtk_clk_register_rst_ctrl"
 
-Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
----
- drivers/clk/mediatek/clk-mt2701-eth.c |  2 +-
- drivers/clk/mediatek/clk-mt2701-g3d.c |  2 +-
- drivers/clk/mediatek/clk-mt2701-hif.c |  2 +-
- drivers/clk/mediatek/clk-mt2701.c     |  4 +--
- drivers/clk/mediatek/clk-mt2712.c     |  4 +--
- drivers/clk/mediatek/clk-mt7622-eth.c |  2 +-
- drivers/clk/mediatek/clk-mt7622-hif.c |  4 +--
- drivers/clk/mediatek/clk-mt7622.c     |  4 +--
- drivers/clk/mediatek/clk-mt7629-eth.c |  2 +-
- drivers/clk/mediatek/clk-mt7629-hif.c |  4 +--
- drivers/clk/mediatek/clk-mt8135.c     |  4 +--
- drivers/clk/mediatek/clk-mt8173.c     |  4 +--
- drivers/clk/mediatek/clk-mt8183.c     |  3 ++-
- drivers/clk/mediatek/clk-mtk.h        | 13 ++++++----
- drivers/clk/mediatek/reset.c          | 35 ++++++++++++---------------
- 15 files changed, 44 insertions(+), 45 deletions(-)
+--qpvv5pfrnllxtjfz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-eth.c b/drivers/clk/mediatek/clk-mt2701-eth.c
-index 1a6318fbcb32..85a993279506 100644
---- a/drivers/clk/mediatek/clk-mt2701-eth.c
-+++ b/drivers/clk/mediatek/clk-mt2701-eth.c
-@@ -58,7 +58,7 @@ static int clk_mt2701_eth_probe(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt2701-g3d.c b/drivers/clk/mediatek/clk-mt2701-g3d.c
-index 0cd6b57657b3..42b9ec1bc926 100644
---- a/drivers/clk/mediatek/clk-mt2701-g3d.c
-+++ b/drivers/clk/mediatek/clk-mt2701-g3d.c
-@@ -52,7 +52,7 @@ static int clk_mt2701_g3dsys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0xc);
-+	mtk_clk_register_rst_ctrl(node, 1, 0xc, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt2701-hif.c b/drivers/clk/mediatek/clk-mt2701-hif.c
-index 883a23bb024d..f20e9b1033e7 100644
---- a/drivers/clk/mediatek/clk-mt2701-hif.c
-+++ b/drivers/clk/mediatek/clk-mt2701-hif.c
-@@ -57,7 +57,7 @@ static int clk_mt2701_hif_probe(struct platform_device *pdev)
- 		return r;
- 	}
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 3f6508ff8e7f..e6ff09b2f915 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -785,7 +785,7 @@ static int mtk_infrasys_init(struct platform_device *pdev)
- 	if (r)
- 		return r;
- 
--	mtk_register_reset_controller_simple(node, 2, 0x30);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x30, MTK_RST_SIMPLE);
- 
- 	return 0;
- }
-@@ -908,7 +908,7 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 	if (r)
- 		return r;
- 
--	mtk_register_reset_controller_simple(node, 2, 0x0);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x0, MTK_RST_SIMPLE);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index 9b4470ac7be7..d337ca91de60 100644
---- a/drivers/clk/mediatek/clk-mt2712.c
-+++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -1361,7 +1361,7 @@ static int clk_mt2712_infra_probe(struct platform_device *pdev)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0x30);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x30, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-@@ -1383,7 +1383,7 @@ static int clk_mt2712_peri_probe(struct platform_device *pdev)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0);
-+	mtk_clk_register_rst_ctrl(node, 2, 0, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt7622-eth.c b/drivers/clk/mediatek/clk-mt7622-eth.c
-index 647bf752a8af..ac3bf5aba73b 100644
---- a/drivers/clk/mediatek/clk-mt7622-eth.c
-+++ b/drivers/clk/mediatek/clk-mt7622-eth.c
-@@ -82,7 +82,7 @@ static int clk_mt7622_ethsys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt7622-hif.c b/drivers/clk/mediatek/clk-mt7622-hif.c
-index 1287db1e3cc2..5041126852b6 100644
---- a/drivers/clk/mediatek/clk-mt7622-hif.c
-+++ b/drivers/clk/mediatek/clk-mt7622-hif.c
-@@ -93,7 +93,7 @@ static int clk_mt7622_ssusbsys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-@@ -115,7 +115,7 @@ static int clk_mt7622_pciesys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
-index 2b744afd9233..d453a2db0da7 100644
---- a/drivers/clk/mediatek/clk-mt7622.c
-+++ b/drivers/clk/mediatek/clk-mt7622.c
-@@ -663,7 +663,7 @@ static int mtk_infrasys_init(struct platform_device *pdev)
- 	if (r)
- 		return r;
- 
--	mtk_register_reset_controller_simple(node, 1, 0x30);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x30, MTK_RST_SIMPLE);
- 
- 	return 0;
- }
-@@ -714,7 +714,7 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 
- 	clk_prepare_enable(clk_data->clks[CLK_PERI_UART0_PD]);
- 
--	mtk_register_reset_controller_simple(node, 2, 0x0);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x0, MTK_RST_SIMPLE);
- 
- 	return 0;
- }
-diff --git a/drivers/clk/mediatek/clk-mt7629-eth.c b/drivers/clk/mediatek/clk-mt7629-eth.c
-index 0fb5780ae048..6baf515591f3 100644
---- a/drivers/clk/mediatek/clk-mt7629-eth.c
-+++ b/drivers/clk/mediatek/clk-mt7629-eth.c
-@@ -92,7 +92,7 @@ static int clk_mt7629_ethsys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt7629-hif.c b/drivers/clk/mediatek/clk-mt7629-hif.c
-index 6f7d013814ac..2f27dac66e38 100644
---- a/drivers/clk/mediatek/clk-mt7629-hif.c
-+++ b/drivers/clk/mediatek/clk-mt7629-hif.c
-@@ -88,7 +88,7 @@ static int clk_mt7629_ssusbsys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-@@ -110,7 +110,7 @@ static int clk_mt7629_pciesys_init(struct platform_device *pdev)
- 			"could not register clock provider: %s: %d\n",
- 			pdev->name, r);
- 
--	mtk_register_reset_controller_simple(node, 1, 0x34);
-+	mtk_clk_register_rst_ctrl(node, 1, 0x34, MTK_RST_SIMPLE);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mt8135.c b/drivers/clk/mediatek/clk-mt8135.c
-index 476c6fb5fc5d..fa860e3b2257 100644
---- a/drivers/clk/mediatek/clk-mt8135.c
-+++ b/drivers/clk/mediatek/clk-mt8135.c
-@@ -559,7 +559,7 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0x30);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x30, MTK_RST_SIMPLE);
- }
- CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt8135-infracfg", mtk_infrasys_init);
- 
-@@ -587,7 +587,7 @@ static void __init mtk_pericfg_init(struct device_node *node)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0);
-+	mtk_clk_register_rst_ctrl(node, 2, 0, MTK_RST_SIMPLE);
- }
- CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt8135-pericfg", mtk_pericfg_init);
- 
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 92beb45de8a0..13ec0e4bdf5c 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -882,7 +882,7 @@ static void __init mtk_infrasys_init(struct device_node *node)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0x30);
-+	mtk_clk_register_rst_ctrl(node, 2, 0x30, MTK_RST_SIMPLE);
- }
- CLK_OF_DECLARE(mtk_infrasys, "mediatek,mt8173-infracfg", mtk_infrasys_init);
- 
-@@ -910,7 +910,7 @@ static void __init mtk_pericfg_init(struct device_node *node)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
- 
--	mtk_register_reset_controller_simple(node, 2, 0);
-+	mtk_clk_register_rst_ctrl(node, 2, 0, MTK_RST_SIMPLE);
- }
- CLK_OF_DECLARE(mtk_pericfg, "mediatek,mt8173-pericfg", mtk_pericfg_init);
- 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 68496554dd3d..82a0a4980180 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -1239,7 +1239,8 @@ static int clk_mt8183_infra_probe(struct platform_device *pdev)
- 		return r;
- 	}
- 
--	mtk_register_reset_controller_set_clr(node, 4, INFRA_RST0_SET_OFFSET);
-+	mtk_clk_register_rst_ctrl(node, 4,
-+				  INFRA_RST0_SET_OFFSET, MTK_RST_SET_CLR);
- 
- 	return r;
- }
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f767c9585d8c..399f1b2dc7d0 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -178,6 +178,12 @@ struct mtk_clk_divider {
- 		.div_width = _width,				\
- }
- 
-+enum mtk_reset_version {
-+	MTK_RST_SIMPLE = 0,
-+	MTK_RST_SET_CLR,
-+	MTK_RST_MAX,
-+};
-+
- int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
- 			      void __iomem *base, spinlock_t *lock,
- 			      struct clk_onecell_data *clk_data);
-@@ -190,11 +196,8 @@ void mtk_free_clk_data(struct clk_onecell_data *clk_data);
- struct clk *mtk_clk_register_ref2usb_tx(const char *name,
- 			const char *parent_name, void __iomem *reg);
- 
--void mtk_register_reset_controller_simple(struct device_node *np,
--					  unsigned int num_regs, int regofs);
--
--void mtk_register_reset_controller_set_clr(struct device_node *np,
--					   unsigned int num_regs, int regofs);
-+void mtk_clk_register_rst_ctrl(struct device_node *np,
-+			       u32 reg_num, u16 reg_ofs, u8 version);
- 
- struct mtk_clk_desc {
- 	const struct mtk_gate *clks;
-diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index 6574b19daf0f..8e42deee80a3 100644
---- a/drivers/clk/mediatek/reset.c
-+++ b/drivers/clk/mediatek/reset.c
-@@ -65,14 +65,23 @@ static const struct reset_control_ops mtk_reset_ops_set_clr = {
- 	.reset = mtk_reset_set_clr,
+Hi,
+
+On Tue, Apr 19, 2022 at 06:38:02PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The battery driver uses a lot of GPIO lines, hardcoded from a
+> machine header file.
+>=20
+> Change it to use a gpiod lookup table instead.
+>=20
+> Reviewed-by: Sebastian Reichel <sre@kernel.org>
+> Acked-by: Sebastian Reichel <sre@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+
+That's the last power-supply driver not yet using descriptor based
+gpio API :)
+
+> [...]
+> diff --git a/drivers/power/supply/tosa_battery.c b/drivers/power/supply/t=
+osa_battery.c
+> index b26b0eca33e1..d10320f348d0 100644
+> --- a/drivers/power/supply/tosa_battery.c
+> +++ b/drivers/power/supply/tosa_battery.c
+> @@ -15,11 +15,16 @@
+>  #include <linux/gpio.h>
+
+This should be <linux/gpio/consumer.h> now.
+
+-- Sebastian
+
+
+> =20
+>  #include <asm/mach-types.h>
+> -#include <mach/tosa.h>
+> =20
+>  static DEFINE_MUTEX(bat_lock); /* protects gpio pins */
+>  static struct work_struct bat_work;
+> =20
+> +struct tosa_gpio {
+> +	const char *con;
+> +	enum gpiod_flags flags;
+> +	struct gpio_desc *desc;
+> +};
+> +
+>  struct tosa_bat {
+>  	int status;
+>  	struct power_supply *psy;
+> @@ -28,38 +33,42 @@ struct tosa_bat {
+>  	struct mutex work_lock; /* protects data */
+> =20
+>  	bool (*is_present)(struct tosa_bat *bat);
+> -	int gpio_full;
+> -	int gpio_charge_off;
+> +	struct tosa_gpio gpio_full;
+> +	struct tosa_gpio gpio_charge_off;
+> =20
+>  	int technology;
+> =20
+> -	int gpio_bat;
+> +	struct tosa_gpio gpio_bat;
+>  	int adc_bat;
+>  	int adc_bat_divider;
+>  	int bat_max;
+>  	int bat_min;
+> =20
+> -	int gpio_temp;
+> +	struct tosa_gpio gpio_temp;
+>  	int adc_temp;
+>  	int adc_temp_divider;
+>  };
+> =20
+>  static struct tosa_bat tosa_bat_main;
+>  static struct tosa_bat tosa_bat_jacket;
+> +static struct tosa_gpio gpiod_jacket_det =3D { "jacket detect", GPIOD_IN=
  };
- 
--static void mtk_register_reset_controller_common(struct device_node *np,
--			unsigned int num_regs, int regofs,
--			const struct reset_control_ops *reset_ops)
-+static const struct reset_control_ops *rst_op[MTK_RST_MAX] = {
-+	[MTK_RST_SIMPLE] = &reset_simple_ops,
-+	[MTK_RST_SET_CLR] = &mtk_reset_ops_set_clr,
-+};
-+
-+void mtk_clk_register_rst_ctrl(struct device_node *np,
-+			       u32 reg_num, u16 reg_ofs, u8 version)
- {
- 	struct mtk_reset *data;
- 	int ret;
- 	struct regmap *regmap;
- 
-+	if (version >= MTK_RST_MAX) {
-+		pr_err("Error version number: %d\n", version);
-+		return;
-+	}
-+
- 	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap)) {
- 		pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
-@@ -84,10 +93,10 @@ static void mtk_register_reset_controller_common(struct device_node *np,
- 		return;
- 
- 	data->regmap = regmap;
--	data->regofs = regofs;
-+	data->regofs = reg_ofs;
- 	data->rcdev.owner = THIS_MODULE;
--	data->rcdev.nr_resets = num_regs * 32;
--	data->rcdev.ops = reset_ops;
-+	data->rcdev.nr_resets = reg_num * 32;
-+	data->rcdev.ops = rst_op[version];
- 	data->rcdev.of_node = np;
- 
- 	ret = reset_controller_register(&data->rcdev);
-@@ -98,18 +107,4 @@ static void mtk_register_reset_controller_common(struct device_node *np,
- 	}
- }
- 
--void mtk_register_reset_controller_simple(struct device_node *np,
--	unsigned int num_regs, int regofs)
--{
--	mtk_register_reset_controller_common(np, num_regs, regofs,
--					     &reset_simple_ops);
--}
--
--void mtk_register_reset_controller_set_clr(struct device_node *np,
--	unsigned int num_regs, int regofs)
--{
--	mtk_register_reset_controller_common(np, num_regs, regofs,
--					     &mtk_reset_ops_set_clr);
--}
--
- MODULE_LICENSE("GPL");
--- 
-2.18.0
+> +static struct tosa_gpio gpiod_battery_switch =3D { "battery switch", GPI=
+OD_OUT_LOW };
+> +static struct tosa_gpio gpiod_main_battery_low =3D { "main battery low",=
+ GPIOD_IN };
+> +static struct tosa_gpio gpiod_jacket_battery_low =3D { "jacket battery l=
+ow", GPIOD_IN };
+> =20
+>  static unsigned long tosa_read_bat(struct tosa_bat *bat)
+>  {
+>  	unsigned long value =3D 0;
+> =20
+> -	if (bat->gpio_bat < 0 || bat->adc_bat < 0)
+> +	if (!bat->gpio_bat.desc || bat->adc_bat < 0)
+>  		return 0;
+> =20
+>  	mutex_lock(&bat_lock);
+> -	gpio_set_value(bat->gpio_bat, 1);
+> +	gpiod_set_value(bat->gpio_bat.desc, 1);
+>  	msleep(5);
+>  	value =3D wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
+>  			bat->adc_bat);
+> -	gpio_set_value(bat->gpio_bat, 0);
+> +	gpiod_set_value(bat->gpio_bat.desc, 0);
+>  	mutex_unlock(&bat_lock);
+> =20
+>  	value =3D value * 1000000 / bat->adc_bat_divider;
+> @@ -71,15 +80,15 @@ static unsigned long tosa_read_temp(struct tosa_bat *=
+bat)
+>  {
+>  	unsigned long value =3D 0;
+> =20
+> -	if (bat->gpio_temp < 0 || bat->adc_temp < 0)
+> +	if (!bat->gpio_temp.desc || bat->adc_temp < 0)
+>  		return 0;
+> =20
+>  	mutex_lock(&bat_lock);
+> -	gpio_set_value(bat->gpio_temp, 1);
+> +	gpiod_set_value(bat->gpio_temp.desc, 1);
+>  	msleep(5);
+>  	value =3D wm97xx_read_aux_adc(dev_get_drvdata(bat->psy->dev.parent),
+>  			bat->adc_temp);
+> -	gpio_set_value(bat->gpio_temp, 0);
+> +	gpiod_set_value(bat->gpio_temp.desc, 0);
+>  	mutex_unlock(&bat_lock);
+> =20
+>  	value =3D value * 10000 / bat->adc_temp_divider;
+> @@ -136,7 +145,7 @@ static int tosa_bat_get_property(struct power_supply =
+*psy,
+> =20
+>  static bool tosa_jacket_bat_is_present(struct tosa_bat *bat)
+>  {
+> -	return gpio_get_value(TOSA_GPIO_JACKET_DETECT) =3D=3D 0;
+> +	return gpiod_get_value(gpiod_jacket_det.desc) =3D=3D 0;
+>  }
+> =20
+>  static void tosa_bat_external_power_changed(struct power_supply *psy)
+> @@ -166,23 +175,23 @@ static void tosa_bat_update(struct tosa_bat *bat)
+>  		bat->full_chrg =3D -1;
+>  	} else if (power_supply_am_i_supplied(psy)) {
+>  		if (bat->status =3D=3D POWER_SUPPLY_STATUS_DISCHARGING) {
+> -			gpio_set_value(bat->gpio_charge_off, 0);
+> +			gpiod_set_value(bat->gpio_charge_off.desc, 0);
+>  			mdelay(15);
+>  		}
+> =20
+> -		if (gpio_get_value(bat->gpio_full)) {
+> +		if (gpiod_get_value(bat->gpio_full.desc)) {
+>  			if (old =3D=3D POWER_SUPPLY_STATUS_CHARGING ||
+>  					bat->full_chrg =3D=3D -1)
+>  				bat->full_chrg =3D tosa_read_bat(bat);
+> =20
+> -			gpio_set_value(bat->gpio_charge_off, 1);
+> +			gpiod_set_value(bat->gpio_charge_off.desc, 1);
+>  			bat->status =3D POWER_SUPPLY_STATUS_FULL;
+>  		} else {
+> -			gpio_set_value(bat->gpio_charge_off, 0);
+> +			gpiod_set_value(bat->gpio_charge_off.desc, 0);
+>  			bat->status =3D POWER_SUPPLY_STATUS_CHARGING;
+>  		}
+>  	} else {
+> -		gpio_set_value(bat->gpio_charge_off, 1);
+> +		gpiod_set_value(bat->gpio_charge_off.desc, 1);
+>  		bat->status =3D POWER_SUPPLY_STATUS_DISCHARGING;
+>  	}
+> =20
+> @@ -251,18 +260,18 @@ static struct tosa_bat tosa_bat_main =3D {
+>  	.full_chrg =3D -1,
+>  	.psy =3D NULL,
+> =20
+> -	.gpio_full =3D TOSA_GPIO_BAT0_CRG,
+> -	.gpio_charge_off =3D TOSA_GPIO_CHARGE_OFF,
+> +	.gpio_full =3D { "main battery full", GPIOD_IN },
+> +	.gpio_charge_off =3D { "main charge off" , GPIOD_OUT_HIGH },
+> =20
+>  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LIPO,
+> =20
+> -	.gpio_bat =3D TOSA_GPIO_BAT0_V_ON,
+> +	.gpio_bat =3D { "main battery", GPIOD_OUT_LOW },
+>  	.adc_bat =3D WM97XX_AUX_ID3,
+>  	.adc_bat_divider =3D 414,
+>  	.bat_max =3D 4310000,
+>  	.bat_min =3D 1551 * 1000000 / 414,
+> =20
+> -	.gpio_temp =3D TOSA_GPIO_BAT1_TH_ON,
+> +	.gpio_temp =3D { "main battery temp", GPIOD_OUT_LOW },
+>  	.adc_temp =3D WM97XX_AUX_ID2,
+>  	.adc_temp_divider =3D 10000,
+>  };
+> @@ -273,18 +282,18 @@ static struct tosa_bat tosa_bat_jacket =3D {
+>  	.psy =3D NULL,
+> =20
+>  	.is_present =3D tosa_jacket_bat_is_present,
+> -	.gpio_full =3D TOSA_GPIO_BAT1_CRG,
+> -	.gpio_charge_off =3D TOSA_GPIO_CHARGE_OFF_JC,
+> +	.gpio_full =3D { "jacket battery full", GPIOD_IN },
+> +	.gpio_charge_off =3D { "jacket charge off", GPIOD_OUT_HIGH },
+> =20
+>  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LIPO,
+> =20
+> -	.gpio_bat =3D TOSA_GPIO_BAT1_V_ON,
+> +	.gpio_bat =3D { "jacket battery", GPIOD_OUT_LOW },
+>  	.adc_bat =3D WM97XX_AUX_ID3,
+>  	.adc_bat_divider =3D 414,
+>  	.bat_max =3D 4310000,
+>  	.bat_min =3D 1551 * 1000000 / 414,
+> =20
+> -	.gpio_temp =3D TOSA_GPIO_BAT0_TH_ON,
+> +	.gpio_temp =3D { "jacket battery temp", GPIOD_OUT_LOW },
+>  	.adc_temp =3D WM97XX_AUX_ID2,
+>  	.adc_temp_divider =3D 10000,
+>  };
+> @@ -294,36 +303,16 @@ static struct tosa_bat tosa_bat_bu =3D {
+>  	.full_chrg =3D -1,
+>  	.psy =3D NULL,
+> =20
+> -	.gpio_full =3D -1,
+> -	.gpio_charge_off =3D -1,
+> -
+>  	.technology =3D POWER_SUPPLY_TECHNOLOGY_LiMn,
+> =20
+> -	.gpio_bat =3D TOSA_GPIO_BU_CHRG_ON,
+> +	.gpio_bat =3D { "backup battery", GPIOD_OUT_LOW },
+>  	.adc_bat =3D WM97XX_AUX_ID4,
+>  	.adc_bat_divider =3D 1266,
+> =20
+> -	.gpio_temp =3D -1,
+>  	.adc_temp =3D -1,
+>  	.adc_temp_divider =3D -1,
+>  };
+> =20
+> -static struct gpio tosa_bat_gpios[] =3D {
+> -	{ TOSA_GPIO_CHARGE_OFF,	   GPIOF_OUT_INIT_HIGH, "main charge off" },
+> -	{ TOSA_GPIO_CHARGE_OFF_JC, GPIOF_OUT_INIT_HIGH, "jacket charge off" },
+> -	{ TOSA_GPIO_BAT_SW_ON,	   GPIOF_OUT_INIT_LOW,	"battery switch" },
+> -	{ TOSA_GPIO_BAT0_V_ON,	   GPIOF_OUT_INIT_LOW,	"main battery" },
+> -	{ TOSA_GPIO_BAT1_V_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery" },
+> -	{ TOSA_GPIO_BAT1_TH_ON,	   GPIOF_OUT_INIT_LOW,	"main battery temp" },
+> -	{ TOSA_GPIO_BAT0_TH_ON,	   GPIOF_OUT_INIT_LOW,	"jacket battery temp" },
+> -	{ TOSA_GPIO_BU_CHRG_ON,	   GPIOF_OUT_INIT_LOW,	"backup battery" },
+> -	{ TOSA_GPIO_BAT0_CRG,	   GPIOF_IN,		"main battery full" },
+> -	{ TOSA_GPIO_BAT1_CRG,	   GPIOF_IN,		"jacket battery full" },
+> -	{ TOSA_GPIO_BAT0_LOW,	   GPIOF_IN,		"main battery low" },
+> -	{ TOSA_GPIO_BAT1_LOW,	   GPIOF_IN,		"jacket battery low" },
+> -	{ TOSA_GPIO_JACKET_DETECT, GPIOF_IN,		"jacket detect" },
+> -};
+> -
+>  #ifdef CONFIG_PM
+>  static int tosa_bat_suspend(struct platform_device *dev, pm_message_t st=
+ate)
+>  {
+> @@ -343,6 +332,21 @@ static int tosa_bat_resume(struct platform_device *d=
+ev)
+>  #define tosa_bat_resume NULL
+>  #endif
+> =20
+> +static int tosa_bat_gpio_get(struct device *dev, struct tosa_gpio *gpio)
+> +{
+> +	int ret;
+> +
+> +	if (!gpio->con)
+> +		return 0;
+> +
+> +	gpio->desc =3D devm_gpiod_get(dev, gpio->con, gpio->flags);
+> +	ret =3D PTR_ERR_OR_ZERO(gpio->desc);
+> +	if (ret)
+> +		dev_warn(dev, "failed to get gpio \"%s\"\n", gpio->con);
+> +
+> +	return ret;
+> +}
+> +
+>  static int tosa_power_supply_register(struct device *dev,
+>  			struct tosa_bat *bat,
+>  			const struct power_supply_desc *desc)
+> @@ -350,6 +354,23 @@ static int tosa_power_supply_register(struct device =
+*dev,
+>  	struct power_supply_config cfg =3D {
+>  		.drv_data =3D bat,
+>  	};
+> +	int ret;
+> +
+> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_full);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_charge_off);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_bat);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D tosa_bat_gpio_get(dev, &bat->gpio_temp);
+> +	if (ret)
+> +		return ret;
+> =20
+>  	mutex_init(&bat->work_lock);
+>  	bat->psy =3D power_supply_register(dev, desc, &cfg);
+> @@ -358,49 +379,55 @@ static int tosa_power_supply_register(struct device=
+ *dev,
+>  }
+> =20
+> =20
+> -static int tosa_bat_probe(struct platform_device *dev)
+> +static int tosa_bat_probe(struct platform_device *pdev)
+>  {
+> +	struct device *dev =3D &pdev->dev;
+>  	int ret;
+> =20
+>  	if (!machine_is_tosa())
+>  		return -ENODEV;
+> =20
+> -	ret =3D gpio_request_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+> +	ret =3D tosa_bat_gpio_get(dev, &gpiod_jacket_det);
+>  	if (ret)
+>  		return ret;
+> =20
+> +	/* these are not used anywhere, continue on failure */
+> +	tosa_bat_gpio_get(dev, &gpiod_battery_switch);
+> +	tosa_bat_gpio_get(dev, &gpiod_main_battery_low);
+> +	tosa_bat_gpio_get(dev, &gpiod_jacket_battery_low);
+> +
+>  	INIT_WORK(&bat_work, tosa_bat_work);
+> =20
+> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_main,
+> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_main,
+>  					 &tosa_bat_main_desc);
+>  	if (ret)
+>  		goto err_psy_reg_main;
+> =20
+> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_jacket,
+> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_jacket,
+>  					 &tosa_bat_jacket_desc);
+>  	if (ret)
+>  		goto err_psy_reg_jacket;
+> =20
+> -	ret =3D tosa_power_supply_register(&dev->dev, &tosa_bat_bu,
+> +	ret =3D tosa_power_supply_register(dev, &tosa_bat_bu,
+>  					 &tosa_bat_bu_desc);
+>  	if (ret)
+>  		goto err_psy_reg_bu;
+> =20
+> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG),
+> +	ret =3D request_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc),
+>  				tosa_bat_gpio_isr,
+>  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+>  				"main full", &tosa_bat_main);
+>  	if (ret)
+>  		goto err_req_main;
+> =20
+> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG),
+> +	ret =3D request_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc),
+>  				tosa_bat_gpio_isr,
+>  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+>  				"jacket full", &tosa_bat_jacket);
+>  	if (ret)
+>  		goto err_req_jacket;
+> =20
+> -	ret =3D request_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT),
+> +	ret =3D request_irq(gpiod_to_irq(gpiod_jacket_det.desc),
+>  				tosa_bat_gpio_isr,
+>  				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+>  				"jacket detect", &tosa_bat_jacket);
+> @@ -409,9 +436,9 @@ static int tosa_bat_probe(struct platform_device *dev)
+>  		return 0;
+>  	}
+> =20
+> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
+> +	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket=
+);
+>  err_req_jacket:
+> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
+> +	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
+>  err_req_main:
+>  	power_supply_unregister(tosa_bat_bu.psy);
+>  err_psy_reg_bu:
+> @@ -423,15 +450,14 @@ static int tosa_bat_probe(struct platform_device *d=
+ev)
+>  	/* see comment in tosa_bat_remove */
+>  	cancel_work_sync(&bat_work);
+> =20
+> -	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+>  	return ret;
+>  }
+> =20
+>  static int tosa_bat_remove(struct platform_device *dev)
+>  {
+> -	free_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT), &tosa_bat_jacket);
+> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
+> -	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
+> +	free_irq(gpiod_to_irq(gpiod_jacket_det.desc), &tosa_bat_jacket);
+> +	free_irq(gpiod_to_irq(tosa_bat_jacket.gpio_full.desc), &tosa_bat_jacket=
+);
+> +	free_irq(gpiod_to_irq(tosa_bat_main.gpio_full.desc), &tosa_bat_main);
+> =20
+>  	power_supply_unregister(tosa_bat_bu.psy);
+>  	power_supply_unregister(tosa_bat_jacket.psy);
+> @@ -443,7 +469,6 @@ static int tosa_bat_remove(struct platform_device *de=
+v)
+>  	 * unregistered now.
+>  	 */
+>  	cancel_work_sync(&bat_work);
+> -	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+>  	return 0;
+>  }
+> =20
+> --=20
+> 2.29.2
+>=20
 
+--qpvv5pfrnllxtjfz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmJgDd8ACgkQ2O7X88g7
++pqj0A//Qrvjjke5jQ/QnNji1ayQEZh8WgQVSUMTFK98PKNf0ZJ2sLS9c7EAMHLC
+R8IODTm2NLMY0kQ+fDtHrmXBsOsLfHCqG1WtFQdO55BmIc3R6J0m0VhTySlsijYo
+BZDAVJ9uWMlxPzCXayQqS9BiMot+BTKRU+iPbCyBUwiMlym+w+Itz+InhEq24J22
+xORG4+qSQ8moQPcSG40gzASRE1mtAo811/hndnzJlzhR67vOKmKQlS6lOnQKW6CQ
+eVpYLvmASViXotq74d89al73jRsz7BBPS5pEZjh6cQwpwX8fb+fhwIioFidPtyL7
+CjzaU1hqrNrxzI0DtMNY3J72PIEJ7+UdVlLasO9hGji8P/O4RSiXD41jQ6bpL2zN
+7LtRseESnbxK1ifOqobpEhexJHAfFz9MBRHzd2xUgv8qSTGAltkwK5y+hEzkPvwz
+d1b2ey+CIL8apFUlgffrR1OGS/Ja6vt+uTX5xSu1SVXSsk1GYLa1yifDyjD1HOAb
+hYb5Q+OLjGZjmZkSW6B8KYl3LUQ9S3kqXkrRNwUK/MH4DyZvfi3kl4JgqyQk9cVE
+O3sdikHUATBxGKeLzRh9y0ur3oMmnRTp+X/eldjhYtRHp4EYhwNnXF2wci7F32B5
+PUUv/t/hAp8AJKaJsnFeApn5Bh6EpGumWsXh3QMcS7KoAKgCagw=
+=gkQY
+-----END PGP SIGNATURE-----
+
+--qpvv5pfrnllxtjfz--
