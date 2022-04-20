@@ -2,174 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92E7C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 12:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6EBC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 13:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376472AbiDTMFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 08:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
+        id S1378746AbiDTNIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 09:08:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352524AbiDTMFH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 08:05:07 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7161B3D4A9;
-        Wed, 20 Apr 2022 05:02:21 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 85CC01F439F1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650456140;
-        bh=eypPEIA55pVQnebCMYcNZUnShmDUItvbJq79kOP8Xm4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Eesz4c8/weJ3EMUtyNbhLYHLboEvf0/+iP4MdFSQFJLVB9lst9DeGrbGoFvpoqeNS
-         3uALJ1UZTkkVzxVP8TyK21Dh52LhKRc1HUo2pGeBwEJBJmfygQvXKdh41/LAn6+C4i
-         vA1u8WEYOf0usJcEuu0i9ntO0wBBUs6/Ulg+rcuLOaES6zgk+e3dYCiJ+87L1s9WaO
-         gdRbM9nsohNdOKyV+QWx5/bHAN9c2QdgyaLUCrgLx54QrCxPGofynOi22MCrAoEYup
-         evNeI/T/Hd3OowZZi6qNgGdYTv5xKDUJtrnUpeyQL5Sd10FhXYQTOEDaGuA1/cjJ/u
-         2NdUmz7RnitLg==
-Message-ID: <ca8048f4-2e75-a49b-6c54-9f6abba6ead3@collabora.com>
-Date:   Wed, 20 Apr 2022 14:02:17 +0200
+        with ESMTP id S1378730AbiDTNIW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 09:08:22 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A22C222AC;
+        Wed, 20 Apr 2022 06:05:35 -0700 (PDT)
+X-UUID: 8efc8a194b904a08b4a9be22b1302d1a-20220420
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:afe8f461-0493-4026-80dd-6d9311084c55,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,AC
+        TION:release,TS:-20
+X-CID-META: VersionHash:faefae9,CLOUDID:f2e55cf0-da02-41b4-b6df-58f4ccd36682,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: 8efc8a194b904a08b4a9be22b1302d1a-20220420
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1575507492; Wed, 20 Apr 2022 21:05:31 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Wed, 20 Apr 2022 21:05:29 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 20 Apr
+ 2022 21:05:29 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 20 Apr 2022 21:05:29 +0800
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
+        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Subject: [PATCH V2 03/12] clk: mediatek: reset: Refine functions of set_clr
+Date:   Wed, 20 Apr 2022 21:05:18 +0800
+Message-ID: <20220420130527.23200-4-rex-bc.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
+References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider
- APIs
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220419081246.2546159-1-wenst@chromium.org>
- <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
- <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/04/22 18:09, Chen-Yu Tsai ha scritto:
-> On Tue, Apr 19, 2022 at 11:08 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
->>> Hi everyone,
->>>
->>> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
->>>
->>
->> ..snip..
->>
->>>
->>> The next phase of the cleanup/improvement shall be to introduce some
->>> variant of `struct clk_parent_data` to describe clk relationships
->>> efficiently.
->>>
->>> Please have a look.
->>>
->>
->> Hello Chen-Yu,
->>
->> I am grateful to see this series, as the MediaTek clock drivers are getting
->> a bit old, despite new platforms being implemented practically as we speak.
->>
->> With this, you surely get that I completely agree with the proposed cleanup
->> and modernization of the entire MediaTek clocks infrastructure, but I think
->> that introducing a `struct clk_parent_data` for these drivers is, at this
->> point, a must, that not only fully justifies these patches, but also "makes
->> the point" - as the effect of that would be a performance improvement as we
->> would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
->> case or parent_data where no .fw_name is provided (which would be the case
->> for most of the clocks).
-> 
-> You and me both. :) And yes, one of the intended results is to make the
-> clk driver probe faster.
-> 
->> That said, my advice would be to add that conversion to declaring clocks
->> with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
->> really make it complete.
-> 
-> This series itself already touches a lot of code, even if most of it was
-> done by coccinelle. I'd like to send them separately to not overwhelm
-> people.
-> 
-> Also, I haven't actually started on that part yet. It is actually part 3
-> of my overall plan. I have a good idea of what to do, given I did similar
-> work for the sunxi-ng clk drivers (though half finished...).
+To make driver more readable, revise functions of set_clr.
+- Add to_rst_data().
+- Extract common code within assert and deassert to
+  mtk_reset_update_set_clr().
 
-Having a good plan means that you're already half-done though :) :) :)
+Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+---
+ drivers/clk/mediatek/reset.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
-Besides, the reason why I said that you should do the conversion in the same
-series was exactly because your changes are done with coccinelle scripts...
-...but I thought that you already had something in the works for that.
-
-Since you still need some time for the final part, having this kind of (even
-if partial) modernization is still golden.
-Let's do it in two steps as you prefer then, that's fine for me.
-
-> 
-> Most of the clk references are internal to each driver, and those would
-> be mapped from some CLK_ID to some `struct clk_hw *` internally, but all
-> blocks have external parents that need to be modeled as well, and we
-> would likely need global clk name fallbacks for the blocks that don't
-> have parents declared in the device tree, which is unfortunately most
-> of them. Especially the central clock controllers like infracfg or pericfg
-> take many clk inputs, to the point that MediaTek folks were somewhat
-> unwilling to bloat the device tree with them.
-> 
-> So it does seem easier to use something like clk_parent_data with
-> `struct clk_hw *` replaced with an index everywhere. This structure
-> would get converted into clk_parent_data by the singular clk registration
-> helpers.
-> 
-
-I may not be understanding what you mean by mapping the CLK_ID internally, but
-from what my brain processed, I think that you want to look at, and basically
-replicate, how it's done in the Qualcomm clock drivers (and perhaps standardize
-that in the clock API?).
-
-Specifically, clk/qcom/common.h, struct parent_map.
-
-Though, I admit I haven't looked at the MTK clocks *very deeply*, so I may be
-misunderstanding something.
-
-> This would have to coexist with the existing helpers we have. So I think
-> this work would be combined with the helper API cleanup / alignment with
-> clk provider API.
-> 
-> Does that make sense to you?
-> 
-
-Yes that does fully make sense to me.
-
->> Of course, if you have concerns about old platforms that you cannot test,
->> or for which this kind of conversion would require a huge amount of effort,
->> then I would go for converting as many as possible as a first step and then
->> leave the others for later.
->>
->> I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
->> candidates for this great effort.
-> 
-> I'm working with MT8183 right now, as it can readily boot mainline to a
-> shell. Depending on the schedule and whose on board with resources, I'd
-> probably handle the other ChromeOS platforms, or delegate it internally.
-> 
-> 
-
-That sounds like a plan. Besides, I wasn't trying to give you any hurry
-whatsoever - I was simply thinking out loud :))
-
-Regards,
-Angelo
-
-> Regards
-> ChenYu
+diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+index 9110d0b4229f..6574b19daf0f 100644
+--- a/drivers/clk/mediatek/reset.c
++++ b/drivers/clk/mediatek/reset.c
+@@ -20,26 +20,36 @@ struct mtk_reset {
+ 	struct reset_controller_dev rcdev;
+ };
+ 
+-static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++static inline struct mtk_reset *to_rst_data(struct reset_controller_dev *rcdev)
+ {
+-	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-	unsigned int reg = data->regofs + ((id / 32) << 4);
++	return container_of(rcdev, struct mtk_reset, rcdev);
++}
+ 
+-	return regmap_write(data->regmap, reg, BIT(id % 32));
++static int mtk_reset_update_set_clr(struct reset_controller_dev *rcdev,
++				    unsigned long id, bool deassert)
++{
++	struct mtk_reset *data = to_rst_data(rcdev);
++	unsigned int deassert_ofs = deassert ? 0x4 : 0;
++
++	return regmap_write(data->regmap,
++			    data->regofs + ((id / 32) << 4) + deassert_ofs,
++			    BIT(id % 32));
+ }
+ 
+-static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
++				    unsigned long id)
+ {
+-	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-	unsigned int reg = data->regofs + ((id / 32) << 4) + 0x4;
++	return mtk_reset_update_set_clr(rcdev, id, false);
++}
+ 
+-	return regmap_write(data->regmap, reg, BIT(id % 32));
++static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
++				      unsigned long id)
++{
++	return mtk_reset_update_set_clr(rcdev, id, true);
+ }
+ 
+ static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++			     unsigned long id)
+ {
+ 	int ret;
+ 
+-- 
+2.18.0
 
