@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAACC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 07:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A2DC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 07:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386047AbiDUHsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 03:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
+        id S1382346AbiDUHu0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 03:50:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386466AbiDUHsR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 03:48:17 -0400
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9BD51CFEA;
-        Thu, 21 Apr 2022 00:44:25 -0700 (PDT)
-Received: by mail-qv1-f47.google.com with SMTP id b17so3101234qvf.12;
-        Thu, 21 Apr 2022 00:44:25 -0700 (PDT)
+        with ESMTP id S1386199AbiDUHuS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 03:50:18 -0400
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B981CFFC;
+        Thu, 21 Apr 2022 00:47:19 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id i14so3093843qvk.13;
+        Thu, 21 Apr 2022 00:47:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=x/C2V/rznWNGQsuCioSZMR+9YfGIDZLNLCJXl9I/3O4=;
-        b=fTuhfU0fYXsW6MG2UWNALBQ/FbeqZGsO6YMuq+L4+BoArIX+tfg96N/6I2Hfyk8vEK
-         0s3UPqXA9iQZEnD4CBZ8FXc5h6pgUIQ7XoqcHhx6E4LxKorpX1g8mLuLYtZYV4SiG3m4
-         PhwtqqWJuQNvGg1th0loCpanJ44RwD/vbmYhKlpikken2IL9K8upxc0sQsGVigCBdRFT
-         jG+Kr9AbX7HHcU6Kmv7SGqH0/7nQ9mPN/b4yPEYy69nU/GQW88XhbPugRldBHr/wWxVJ
-         ETMfzldoA+0s3lW2g8NKeBKm7s6bT0ski5FS2mPncGc/DmTgTtd5/DIkY3YdcIKwfIxJ
-         nbuw==
-X-Gm-Message-State: AOAM531uIJXvKsyprxtyqVbJRcN3l8bkHjHO36kMZfJcGarPjEccRkrM
-        4V8pPziILD9Mq9d5QDa2pMY0xexvEHkP392S
-X-Google-Smtp-Source: ABdhPJx8vKTzNVDpLH71rcLks7RrdZ8nJdMfnH67uYlsa4Akm/VHF0SjBsEer0ttqQdlGINFW3yIhQ==
-X-Received: by 2002:a05:6214:2268:b0:446:66a8:85ca with SMTP id gs8-20020a056214226800b0044666a885camr11692061qvb.21.1650527064925;
-        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id k14-20020ac85fce000000b002f344fc0e0bsm1824729qta.38.2022.04.21.00.44.24
+        bh=OV/7tcnzdy27pvul6KQIYfS/Jl6IACQLBr7xNZ1dFlg=;
+        b=hCAcw03Qnf3nQ9Z7gfoxeOs1GlalfHxwfnbjdt4qcLb9cnEADzLFpb9WU+5NlA8xW7
+         F0oIURUtT0CrWfvEAqBWgsaRGcTivls0NXhl5yZx+BwwGVXnKnzSknbfaM5OWrVbQP7G
+         /vd2wVYxmLxHuF8vGOekqmXeIsYoCd4AR6xJcBD83xnDCrAqYgzIBu/5z3LyYdgo7cXD
+         3Rc7wwir6NeCz5jwzOlRemiMgZvvTp1s8+flNuIdps+Tzsd/6RxIMVtReGMA3xqcl3zc
+         b4Peu4gVPG5ZM35Cuh8FTNfCaLBxsiaXyZK3XD+QP8GoqDOFj+yxBzmSCEq2UqR+nMku
+         YnjQ==
+X-Gm-Message-State: AOAM532IMyQ4VlB7btDduPqYRVU6r3k3G/h6y8STaHHCQOc+L5eBlcqf
+        T2wSYGHVHsMdFvinYxXJVyFVS3kf3bNTLJaE
+X-Google-Smtp-Source: ABdhPJwTWkKWxVU0BLHEbKt/fEpDfdjXaJtiFuGsmFSmw1uEhuGkplgIrIFGfAr8mRwJlo6Ba+WUAw==
+X-Received: by 2002:a05:6214:2301:b0:435:38af:2f87 with SMTP id gc1-20020a056214230100b0043538af2f87mr18226367qvb.83.1650527238431;
+        Thu, 21 Apr 2022 00:47:18 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id e13-20020ac85dcd000000b002eb9458498esm3181923qtx.95.2022.04.21.00.47.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id j2so7299171ybu.0;
-        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
-X-Received: by 2002:a5b:984:0:b0:63f:8c38:676c with SMTP id
- c4-20020a5b0984000000b0063f8c38676cmr24106688ybq.393.1650527064136; Thu, 21
- Apr 2022 00:44:24 -0700 (PDT)
+        Thu, 21 Apr 2022 00:47:18 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id w133so4576493ybe.5;
+        Thu, 21 Apr 2022 00:47:18 -0700 (PDT)
+X-Received: by 2002:a25:3492:0:b0:645:6f78:b3b4 with SMTP id
+ b140-20020a253492000000b006456f78b3b4mr3412717yba.546.1650527237818; Thu, 21
+ Apr 2022 00:47:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220318175113.8956-1-biju.das.jz@bp.renesas.com> <20220318175113.8956-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220318175113.8956-2-biju.das.jz@bp.renesas.com>
+References: <20220318175113.8956-1-biju.das.jz@bp.renesas.com> <20220318175113.8956-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220318175113.8956-3-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Apr 2022 09:44:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWvk9_Lr4VfGERrV4L7Q78v_zrZN-iS7p5ioxUUBGdT5Q@mail.gmail.com>
-Message-ID: <CAMuHMdWvk9_Lr4VfGERrV4L7Q78v_zrZN-iS7p5ioxUUBGdT5Q@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: renesas: rzg2l: Add FOUTPOSTDIV clk support
+Date:   Thu, 21 Apr 2022 09:47:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUCos4aDTXBQeKNW4BvM=rXTGO-PZe9EHhaafT+sY30VQ@mail.gmail.com>
+Message-ID: <CAMuHMdUCos4aDTXBQeKNW4BvM=rXTGO-PZe9EHhaafT+sY30VQ@mail.gmail.com>
+Subject: Re: [PATCH 2/9] clk: renesas: rzg2l: Add PLL5_4 clk mux support
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -65,63 +65,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Hi Biju,
 
 On Fri, Mar 18, 2022 at 6:51 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> PLL5 generates FOUTPOSTDIV clk and is sourced by LCDC/DSI modules.
-> The FOUTPOSTDIV is connected to PLL5_4 MUX. Video clock is sourced
-> from DSI divider which is connected to PLL5_4 MUX.
->
-> This patch adds support for generating FOUTPOSTDIV clk.
+> Add PLL5_4 clk mux support to select clock from clock
+> sources FOUTPOSTDIV and FOUT1PH0.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
 > RFC->V1:
 >  * Removed LUT.
->  * Replaced magic numbers with macros.
 
 Thanks for the update!
 
 > --- a/drivers/clk/renesas/rzg2l-cpg.c
 > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -71,6 +71,7 @@ struct rzg2l_pll5_param {
+>         u8 pl5_intin;
+>         u8 pl5_postdiv1;
+>         u8 pl5_postdiv2;
+> +       u8 clksrc;
+>  };
 
-> @@ -266,6 +278,131 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
->         return clk_hw->clk;
->  }
->
-> +struct sipll5 {
-> +       struct clk_hw hw;
-> +       u32 conf;
-> +       struct rzg2l_cpg_priv *priv;
-> +};
-> +
-> +#define to_sipll5(_hw) container_of(_hw, struct sipll5, hw)
-> +
-> +static unsigned long rzg2l_cpg_sipll5_recalc_rate(struct clk_hw *hw,
-> +                                                 unsigned long parent_rate)
-> +{
-> +       struct sipll5 *sipll5 = to_sipll5(hw);
-> +       struct rzg2l_cpg_priv *priv = sipll5->priv;
-> +
-> +       return priv->pll5_params.frequency;
-> +}
-> +
-> +static long rzg2l_cpg_sipll5_round_rate(struct clk_hw *hw,
-> +                                       unsigned long rate,
-> +                                       unsigned long *parent_rate)
-> +{
-> +       struct sipll5 *sipll5 = to_sipll5(hw);
-> +       struct rzg2l_cpg_priv *priv = sipll5->priv;
-> +
-> +       return priv->pll5_params.frequency;
-> +}
-> +
-> +static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
-> +                                    unsigned long rate,
-> +                                    unsigned long parent_rate)
-> +{
-
-The above 3 functions all ignore their input rates and parent_rates,
-as you rely on setting up pll5_params in the DSI divider (patch 3),
-and the clock core propagating up to all parents (PLL5_4 in patch 2,
-and FOUTPOSDIV here), right?
+I understand you cannot use the plain DEF_MUX() here, as "clksrc"
+is set up in pll5_params in the DSI divider (patch 3), and you rely
+on parent propagation again to program the mux according to that?
 
 I think it would help to document that somewhere.
 
