@@ -2,130 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7DAC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 06:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAACC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 07:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385436AbiDUG7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 02:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
+        id S1386047AbiDUHsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 03:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385484AbiDUG7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 02:59:35 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4650115FC8
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:56:46 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id g18so7991845ejc.10
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=4PKhdf8WzDnZowwZrhfJmcEZbvR9EkexBiBw0CwxFDE=;
-        b=s0VhQFRqpo2tuyDY4V/atE+9w0bOZvKXb6KQtrb8lBCnOudvqK+QCGoEvTFHxSy5E6
-         zPePUlI5UXCINOKd3AfhEWvNKJads0draYU+Voi+X48Z7ynGLU16QCJAkjO3h+WTMbP2
-         3b7sJf5gwbFo4fL7IfEa99ahYJJjLDWArjNqEUeD3jf/3mF3KKqMr8yMKS2ymST0BuoA
-         Boif7OUCyh+5Q8PaJ1czC5rau8rkBl5dQRimEp9BCpXjyDXZOfn6XR1a8XRItNZwshQD
-         aegAR5VbJjRKgkx9Dgvunzqis/OvS527CJ1vxwQu97jMhQw/gmhoWZHwud27lfEXEnJV
-         ii5w==
+        with ESMTP id S1386466AbiDUHsR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 03:48:17 -0400
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9BD51CFEA;
+        Thu, 21 Apr 2022 00:44:25 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id b17so3101234qvf.12;
+        Thu, 21 Apr 2022 00:44:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4PKhdf8WzDnZowwZrhfJmcEZbvR9EkexBiBw0CwxFDE=;
-        b=Wc5eYHUwDrfpVOSSknwAbdCj/XCoOY8dWFf5pxQVjwih4X6D0xK0lu8EMtGHPyWzEg
-         6Yzcy6FHBfuS6allwILzQ+RGwSefA3RzR3MFIMOx3ilhzQ/pkn9xVepz4ja5VsRdDD6s
-         PLsGsXqtUJzWy+M8ASGRC1XwdoyNIu92T+IjsiB839yXyOnGVb4L4iGA20rvdWbC4N7h
-         BOvFWeY3fQfSRPTJyNcnllLiNkZwX4CpZmovBZ7P18aNAjzegHAvgndBcwWE5lKdytRK
-         mUP9fjjEPXKIFsz986nV6TctLRNkC5iddP9qOj5SypX0SY9/+27aC/whgPUOWOwpDIFO
-         WcTg==
-X-Gm-Message-State: AOAM532LxqSObKBttaFYiZR64ZNqyhfpAG/OmtqPNnker9xOlErKRPfT
-        DDpWnG7xeoJORO3Ih8rpXWqUaw==
-X-Google-Smtp-Source: ABdhPJxU9qR62ZWZ18FtHlLxXexbcA0ITexAROMRGXFpYN87GP559GP3pejAuLGXMq/BvQzPj+6kAQ==
-X-Received: by 2002:a17:906:19c3:b0:6ec:c7b:ed28 with SMTP id h3-20020a17090619c300b006ec0c7bed28mr21313882ejd.612.1650524204904;
-        Wed, 20 Apr 2022 23:56:44 -0700 (PDT)
-Received: from [192.168.0.226] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id g9-20020aa7c849000000b00412fc6bf26dsm11052288edt.80.2022.04.20.23.56.43
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x/C2V/rznWNGQsuCioSZMR+9YfGIDZLNLCJXl9I/3O4=;
+        b=fTuhfU0fYXsW6MG2UWNALBQ/FbeqZGsO6YMuq+L4+BoArIX+tfg96N/6I2Hfyk8vEK
+         0s3UPqXA9iQZEnD4CBZ8FXc5h6pgUIQ7XoqcHhx6E4LxKorpX1g8mLuLYtZYV4SiG3m4
+         PhwtqqWJuQNvGg1th0loCpanJ44RwD/vbmYhKlpikken2IL9K8upxc0sQsGVigCBdRFT
+         jG+Kr9AbX7HHcU6Kmv7SGqH0/7nQ9mPN/b4yPEYy69nU/GQW88XhbPugRldBHr/wWxVJ
+         ETMfzldoA+0s3lW2g8NKeBKm7s6bT0ski5FS2mPncGc/DmTgTtd5/DIkY3YdcIKwfIxJ
+         nbuw==
+X-Gm-Message-State: AOAM531uIJXvKsyprxtyqVbJRcN3l8bkHjHO36kMZfJcGarPjEccRkrM
+        4V8pPziILD9Mq9d5QDa2pMY0xexvEHkP392S
+X-Google-Smtp-Source: ABdhPJx8vKTzNVDpLH71rcLks7RrdZ8nJdMfnH67uYlsa4Akm/VHF0SjBsEer0ttqQdlGINFW3yIhQ==
+X-Received: by 2002:a05:6214:2268:b0:446:66a8:85ca with SMTP id gs8-20020a056214226800b0044666a885camr11692061qvb.21.1650527064925;
+        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id k14-20020ac85fce000000b002f344fc0e0bsm1824729qta.38.2022.04.21.00.44.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Apr 2022 23:56:44 -0700 (PDT)
-Message-ID: <4e9eaede-2208-bd73-35ae-89e128562653@linaro.org>
-Date:   Thu, 21 Apr 2022 08:56:42 +0200
+        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id j2so7299171ybu.0;
+        Thu, 21 Apr 2022 00:44:24 -0700 (PDT)
+X-Received: by 2002:a5b:984:0:b0:63f:8c38:676c with SMTP id
+ c4-20020a5b0984000000b0063f8c38676cmr24106688ybq.393.1650527064136; Thu, 21
+ Apr 2022 00:44:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 5/5] dt-bindings: arm: Add initial bindings for Nuvoton
- Platform
-Content-Language: en-US
-To:     Jacky Huang <ychuang3@nuvoton.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, ychuang570808@gmail.com
-Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
-        arnd@arndb.de, olof@lixom.net, will@kernel.org, soc@kernel.org,
-        cfli0@nuvoton.com
-References: <20220418082738.11301-1-ychuang3@nuvoton.com>
- <20220418082738.11301-6-ychuang3@nuvoton.com>
- <fd9316a6-7df6-e1fa-50dc-ff50934afb5c@linaro.org>
- <caf4867f-7f71-9262-f190-463325eb13ab@nuvoton.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <caf4867f-7f71-9262-f190-463325eb13ab@nuvoton.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220318175113.8956-1-biju.das.jz@bp.renesas.com> <20220318175113.8956-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220318175113.8956-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Apr 2022 09:44:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWvk9_Lr4VfGERrV4L7Q78v_zrZN-iS7p5ioxUUBGdT5Q@mail.gmail.com>
+Message-ID: <CAMuHMdWvk9_Lr4VfGERrV4L7Q78v_zrZN-iS7p5ioxUUBGdT5Q@mail.gmail.com>
+Subject: Re: [PATCH 1/9] clk: renesas: rzg2l: Add FOUTPOSTDIV clk support
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/04/2022 08:39, Jacky Huang wrote:
-> 
-> 
-> On 2022/4/18 下午 08:11, Krzysztof Kozlowski wrote:
->> On 18/04/2022 10:27, Jacky Huang wrote:
->>> +properties:
->>> +  $nodename:
->>> +    const: '/'
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - nuvoton,ma35d1
->>> +          - nuvoton,ma35d1-evb
->>> +          - nuvoton,ma35d1-iot
->>> +          - nuvoton,ma35d1-som512
->>> +          - nuvoton,ma35d1-som1g
->> This does not match your DTS and does not look reasonable (SoC
->> compatible should not be part of this enum). Check some other board
->> bindings for examples.
->>
->>
->> Best regards,
->> Krzysztof
-> 
-> I would like to modify it as follows:
-> 
-> description: |
->    Boards with an ARMv8 based Nuvoton SoC shall have the following
->    properties.
-> 
-> properties:
->    $nodename:
->      const: '/'
->    compatible:
->      oneOf:
-> 
->        - description: MA35D1 evaluation board
->          items:
->            - const: nuvoton,ma35d1-evb
->            - const: nuvoton,ma35d1
-> 
->        - description: MA35D1 IoT board
->          items:
->            - const: nuvoton,ma35d1-iot
+Hi Biju,
 
-Instead just enum with all board compatibles.
+On Fri, Mar 18, 2022 at 6:51 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> PLL5 generates FOUTPOSTDIV clk and is sourced by LCDC/DSI modules.
+> The FOUTPOSTDIV is connected to PLL5_4 MUX. Video clock is sourced
+> from DSI divider which is connected to PLL5_4 MUX.
+>
+> This patch adds support for generating FOUTPOSTDIV clk.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> RFC->V1:
+>  * Removed LUT.
+>  * Replaced magic numbers with macros.
 
-> 
-> Thank you very much.
-> Jacky Huang
-> 
+Thanks for the update!
 
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
 
-Best regards,
-Krzysztof
+> @@ -266,6 +278,131 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+>         return clk_hw->clk;
+>  }
+>
+> +struct sipll5 {
+> +       struct clk_hw hw;
+> +       u32 conf;
+> +       struct rzg2l_cpg_priv *priv;
+> +};
+> +
+> +#define to_sipll5(_hw) container_of(_hw, struct sipll5, hw)
+> +
+> +static unsigned long rzg2l_cpg_sipll5_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_rate)
+> +{
+> +       struct sipll5 *sipll5 = to_sipll5(hw);
+> +       struct rzg2l_cpg_priv *priv = sipll5->priv;
+> +
+> +       return priv->pll5_params.frequency;
+> +}
+> +
+> +static long rzg2l_cpg_sipll5_round_rate(struct clk_hw *hw,
+> +                                       unsigned long rate,
+> +                                       unsigned long *parent_rate)
+> +{
+> +       struct sipll5 *sipll5 = to_sipll5(hw);
+> +       struct rzg2l_cpg_priv *priv = sipll5->priv;
+> +
+> +       return priv->pll5_params.frequency;
+> +}
+> +
+> +static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
+> +                                    unsigned long rate,
+> +                                    unsigned long parent_rate)
+> +{
+
+The above 3 functions all ignore their input rates and parent_rates,
+as you rely on setting up pll5_params in the DSI divider (patch 3),
+and the clock core propagating up to all parents (PLL5_4 in patch 2,
+and FOUTPOSDIV here), right?
+
+I think it would help to document that somewhere.
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
