@@ -2,181 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F8AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 08:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97ECC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 08:04:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236715AbiDUIFh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 04:05:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55900 "EHLO
+        id S1386242AbiDUIHR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 04:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230143AbiDUIFg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 04:05:36 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACCE11DA42;
-        Thu, 21 Apr 2022 01:02:47 -0700 (PDT)
-Received: by mail-qk1-f175.google.com with SMTP id d198so3007981qkc.12;
-        Thu, 21 Apr 2022 01:02:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JS19xcD6LNTnBbdmni9cWeEjFiCX9oJ/TIi1UwXhMpI=;
-        b=mvQ54pJxvqebhCaZNE2Bw31fV7RTVVMaiWdhgZXteR3vAkC5h6kLEQmu8dHzIG4U1L
-         Y7cc9ZojtjpUx36eSEJyyvTAfcFG8PWFlXqaatNzd3xLeX6bevA4rh47gnaglLxVRGY1
-         z3vJGvNru1HsfrjiqriK94FBNrfynsm/7ySFxuwmtQlB6BiTwdcrIeIFxM0eV/2+eup4
-         5xU0cIi6xWk27nfvKb9//D7sIQcT6PH4wl/geIL9KKQGAuQG3B4yeFYUvR/wukILpYjm
-         M2HAeG8XeFYxFyCvpVxdpWpvDEQbIMIKMjL7dVRbUgclcj627fbvbqVJYudu030fT3S8
-         mbuQ==
-X-Gm-Message-State: AOAM533yZ68Ii9O9FxIvwlnHf4h4/1ccdGn+fAru5Cj3WXocykm65D+3
-        rTf+sKvJv3dYAu9IMHB+SkPOQjRmznD8EW9R
-X-Google-Smtp-Source: ABdhPJxDFA0skZ5QIZmolP71GNLDZf+TjicyIaOS6MB+V8z2qsRSUVljbmDAlqQDJKjABLuPWn/42Q==
-X-Received: by 2002:a05:620a:1495:b0:69e:6de0:e8f1 with SMTP id w21-20020a05620a149500b0069e6de0e8f1mr14777099qkj.426.1650528166603;
-        Thu, 21 Apr 2022 01:02:46 -0700 (PDT)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id u129-20020a376087000000b0067e401d7177sm2765649qkb.3.2022.04.21.01.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 01:02:46 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2edbd522c21so43248927b3.13;
-        Thu, 21 Apr 2022 01:02:46 -0700 (PDT)
-X-Received: by 2002:a81:6ccb:0:b0:2f1:68f1:d90e with SMTP id
- h194-20020a816ccb000000b002f168f1d90emr22742571ywc.62.1650528165845; Thu, 21
- Apr 2022 01:02:45 -0700 (PDT)
+        with ESMTP id S230143AbiDUIHP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 04:07:15 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7F221C920;
+        Thu, 21 Apr 2022 01:04:25 -0700 (PDT)
+Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id C80FA1C810F7;
+        Thu, 21 Apr 2022 16:04:24 +0800 (CST)
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 21
+ Apr 2022 16:04:24 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Thu, 21 Apr 2022 16:04:24 +0800
+Message-ID: <80994f4b-136f-7669-4674-0c9826e88248@nuvoton.com>
+Date:   Thu, 21 Apr 2022 16:04:24 +0800
 MIME-Version: 1.0
-References: <20220318175113.8956-1-biju.das.jz@bp.renesas.com> <20220318175113.8956-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220318175113.8956-4-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Apr 2022 10:02:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9Rt6_VQ4oU-FAAM=vdrG22Qc2yBHTrEd-NrAu3FejWw@mail.gmail.com>
-Message-ID: <CAMuHMdV9Rt6_VQ4oU-FAAM=vdrG22Qc2yBHTrEd-NrAu3FejWw@mail.gmail.com>
-Subject: Re: [PATCH 3/9] clk: renesas: rzg2l: Add DSI divider clk support
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 5/5] dt-bindings: arm: Add initial bindings for Nuvoton
+ Platform
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <ychuang570808@gmail.com>
+CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>, <krzk+dt@kernel.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <will@kernel.org>,
+        <soc@kernel.org>, <cfli0@nuvoton.com>
+References: <20220418082738.11301-1-ychuang3@nuvoton.com>
+ <20220418082738.11301-6-ychuang3@nuvoton.com>
+ <fd9316a6-7df6-e1fa-50dc-ff50934afb5c@linaro.org>
+ <caf4867f-7f71-9262-f190-463325eb13ab@nuvoton.com>
+ <4e9eaede-2208-bd73-35ae-89e128562653@linaro.org>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <4e9eaede-2208-bd73-35ae-89e128562653@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
 
-On Fri, Mar 18, 2022 at 6:51 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> M3 clock is sourced from DSI Divider (DSIDIVA * DSIDIVB)
+
+On 2022/4/21 下午 02:56, Krzysztof Kozlowski wrote:
+> On 21/04/2022 08:39, Jacky Huang wrote:
+>>
+>> On 2022/4/18 下午 08:11, Krzysztof Kozlowski wrote:
+>>> On 18/04/2022 10:27, Jacky Huang wrote:
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    const: '/'
+>>>> +  compatible:
+>>>> +    items:
+>>>> +      - enum:
+>>>> +          - nuvoton,ma35d1
+>>>> +          - nuvoton,ma35d1-evb
+>>>> +          - nuvoton,ma35d1-iot
+>>>> +          - nuvoton,ma35d1-som512
+>>>> +          - nuvoton,ma35d1-som1g
+>>> This does not match your DTS and does not look reasonable (SoC
+>>> compatible should not be part of this enum). Check some other board
+>>> bindings for examples.
+>>>
+>>>
+>>> Best regards,
+>>> Krzysztof
+>> I would like to modify it as follows:
+>>
+>> description: |
+>>     Boards with an ARMv8 based Nuvoton SoC shall have the following
+>>     properties.
+>>
+>> properties:
+>>     $nodename:
+>>       const: '/'
+>>     compatible:
+>>       oneOf:
+>>
+>>         - description: MA35D1 evaluation board
+>>           items:
+>>             - const: nuvoton,ma35d1-evb
+>>             - const: nuvoton,ma35d1
+>>
+>>         - description: MA35D1 IoT board
+>>           items:
+>>             - const: nuvoton,ma35d1-iot
+> Instead just enum with all board compatibles.
+
+How about to modify it as the follows:
+
+   compatible:
+     oneOf:
+
+       - description: MA35D1 evaluation board
+         items:
+           - enum:
+               - nuvoton,ma35d1-evb
+           - const: nuvoton,ma35d1
+
+       - description: MA35D1 IoT board
+         items:
+           - enum:
+               - nuvoton,ma35d1-iot
+           - const: nuvoton,ma35d1
+
+       - description: MA35D1 SOM board
+         items:
+           - enum:
+               - nuvoton,ma35d1-som512
+               - nuvoton,ma35d1-som1g
+           - const: nuvoton,ma35d1
+
+>> Thank you very much.
+>> Jacky Huang
+>>
 >
-> This patch add support for DSI divider clk by combaining
-> DSIDIVA and DSIDIVB .
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> RFC->V1
->  * Removed LUT and added an equation for computing VCLK.
+> Best regards,
+> Krzysztof
 
-Thanks for the update!
+Sincerely,
+Jacky Huang
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -279,6 +282,114 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
->         return clk_hw->clk;
->  }
->
-> +struct dsi_div_hw_data {
-> +       struct clk_hw hw;
-> +       u32 conf;
-> +       unsigned long rate;
-> +       struct rzg2l_cpg_priv *priv;
-> +};
-> +
-> +#define to_dsi_div_hw_data(_hw)        container_of(_hw, struct dsi_div_hw_data, hw)
-> +
-> +static unsigned long rzg2l_cpg_dsi_div_recalc_rate(struct clk_hw *hw,
-> +                                                  unsigned long parent_rate)
-> +{
-> +       struct dsi_div_hw_data *dsi_div = to_dsi_div_hw_data(hw);
-> +
-> +       return dsi_div->rate;
-> +}
-> +
-> +static long rzg2l_cpg_dsi_div_round_rate(struct clk_hw *hw,
-> +                                        unsigned long rate,
-> +                                        unsigned long *parent_rate)
 
-Please implement the determine_rate() instead.
-
-> +
-
-Please drop the blank line.
-
-> +{
-> +       struct dsi_div_hw_data *dsi_div = to_dsi_div_hw_data(hw);
-> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
-> +
-> +       dsi_div->rate = rate;
-> +
-> +       priv->pll5_params.pl5_intin = rate / MEGA;
-
-.round_rate() (and .determine_rate()) is used to check if a rate
-is supported, without actually changing the clock rate.  Hence this
-should not operate on priv->pll5_params, but on a local variable.
-
-> +       priv->pll5_params.pl5_fracin = ((rate % MEGA) << 24) / MEGA;
-
-While this works fine on 64-bit (RZ/G2L is arm64, so that's OK),
-"(rate % MEGA) << 24" will overflow when compile-testing on 32-bit.
-Taking into account the 64-by-32 division, I think this should be:
-
-    div_u64(((u64)rate % MEGA) << 24, MEGA);
-
-> +       priv->pll5_params.pl5_refdiv = 2;
-> +       priv->pll5_params.pl5_postdiv1 = 1;
-> +       priv->pll5_params.pl5_postdiv2 = 1;
-> +       priv->pll5_params.clksrc = 1;
-> +       priv->pll5_params.dsi_div_a = 1;
-> +       priv->pll5_params.dsi_div_b = 2;
-> +
-> +       priv->pll5_params.frequency =
-> +               EXTAL_FREQ_IN_MEGA_HZ * MEGA / priv->pll5_params.pl5_refdiv *
-> +               ((((priv->pll5_params.pl5_intin << 24) + priv->pll5_params.pl5_fracin)) >> 24) /
-> +               (priv->pll5_params.pl5_postdiv1 * priv->pll5_params.pl5_postdiv2);
-> +
-> +       if (priv->pll5_params.clksrc)
-> +               priv->pll5_params.frequency /= 2;
-> +
-> +       *parent_rate = priv->pll5_params.frequency;
-> +
-> +       return dsi_div->rate;
-> +}
-> +
-> +static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
-> +                                     unsigned long rate,
-> +                                     unsigned long parent_rate)
-> +{
-> +       struct dsi_div_hw_data *dsi_div = to_dsi_div_hw_data(hw);
-> +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
-> +
-
-You should update priv->pll5_params here, instead of in your
-.round_rate() callback.
-
-> +       writel(CPG_PL5_SDIV_DIV_DSI_A_WEN | CPG_PL5_SDIV_DIV_DSI_B_WEN |
-> +              (priv->pll5_params.dsi_div_a << 0) | (priv->pll5_params.dsi_div_b << 8),
-> +              priv->base + CPG_PL5_SDIV);
-> +
-> +       return 0;
-> +}
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
