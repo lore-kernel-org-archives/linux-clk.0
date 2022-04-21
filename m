@@ -2,90 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF9EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 04:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACC9C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 05:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbiDUEHY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 00:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50640 "EHLO
+        id S1384473AbiDUFjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 01:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbiDUEHX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 00:07:23 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 837CFDEA6
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 21:04:35 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id y14so3053564pfe.10
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 21:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tpfDonpRUmG38e9TnYZ913heAJIMSDn888Zn5gQcpGg=;
-        b=dDXjEiQhDkUIA+u25W7rod+UdShPVr5Yk71YCFjRgk42t8ZDQAMbc4FxwT9Bpd6xwF
-         GxYv2Yr0aPvc7HfTzlcCNtBn7bVAWINfi8fdat6iCpvgWjtuqt06OQIWuNOjbZIS2/rX
-         d1QmyubJNsIeFkuPf3KuBqJeuBlguRFbB01h3KWgUDiVlq0a5KZ8N1OpyuhtFDGWuYi2
-         ng5nh8Eh1Inu9tSUN9RfJGiR5NgHLSEg1nJHSqbK30IQ5DKENt/t3b5P5EzOUtk4cx25
-         iz+jjX0Nfg1EibxMi8mO1xtQDBwW6c4B8Q17qRfE/mxuMCc35rOUKcHuq/ns6XGnByvX
-         Opbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=tpfDonpRUmG38e9TnYZ913heAJIMSDn888Zn5gQcpGg=;
-        b=s+hAnU/5eWc3xlMUJ+2qj5UBUd0nA35XIvxCzdCqNz5X6OCtaP9OkNAGH/+8joTfs7
-         LngCIs2NeUHQ4FgLN/SgLVEiaIwa6iMZ701o5B9qZ1B86zvjHn4PPLAI3v5pW77h5z55
-         tcpBX+sN9Y4OtAlss6FE0zfjQ+vLlYy4YQPaQTAn4zllRGGhyqDhc2zJe+kCeG4WzTSZ
-         coDdG+lfBHme2/K2KUWFougstW+3p5m3SV97fcCrQx8x7G+VvsISSUnFOJVSODfhxuf5
-         q0OU4ys2lfRGU/k1WoiSICX8k6O6K+35ffXK9GCfb1KZ99/AWnAAKzu/TJAOH2tFn521
-         tG/w==
-X-Gm-Message-State: AOAM5328qjDD/lwd45vVW8Sky4SGY5x7Xxhiruy9kAvx3wJYnBODkV5Q
-        DHoyErgY9Bz0XarYUmpTyBgEfJVxjX4=
-X-Google-Smtp-Source: ABdhPJx+hV59qQDmAFHtCXedOW4O+iea2nBUbk26jY4E2agRgCJlLBhb9wtgGyAYmqbyxlqYKKSkDQ==
-X-Received: by 2002:a05:6a00:10c7:b0:4fd:9ee6:4130 with SMTP id d7-20020a056a0010c700b004fd9ee64130mr27392367pfu.84.1650513874912;
-        Wed, 20 Apr 2022 21:04:34 -0700 (PDT)
-Received: from voyager.lan ([45.124.203.14])
-        by smtp.gmail.com with ESMTPSA id p12-20020a634f4c000000b003a94e71ca01sm13184040pgl.46.2022.04.20.21.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Apr 2022 21:04:33 -0700 (PDT)
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From:   Joel Stanley <joel@jms.id.au>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ryan Chen <ryan_chen@aspeedtech.com>, BMC-SW@aspeedtech.com
-Cc:     linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: ast2600: BCLK comes from EPLL
-Date:   Thu, 21 Apr 2022 13:34:26 +0930
-Message-Id: <20220421040426.171256-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S1345361AbiDUFjK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 01:39:10 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1EE12093;
+        Wed, 20 Apr 2022 22:36:20 -0700 (PDT)
+X-UUID: a9312b898733484fa1ac93e97664829f-20220421
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:5e5ef666-9c2a-421e-9c78-5042f2324c18,OB:0,LO
+        B:0,IP:0,URL:8,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:8
+X-CID-META: VersionHash:faefae9,CLOUDID:6cb79aef-06b0-4305-bfbf-554bfc9d151a,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: a9312b898733484fa1ac93e97664829f-20220421
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 562152983; Thu, 21 Apr 2022 13:36:16 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 21 Apr 2022 13:36:14 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 21 Apr
+ 2022 13:36:14 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 21 Apr 2022 13:36:14 +0800
+Message-ID: <8c42fd4345063a9a538b0c28342171616c9d0b02.camel@mediatek.com>
+Subject: Re: [PATCH V2 09/12] clk: mediatek: reset: Add support for input
+ offset and bit from DT
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
+        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Thu, 21 Apr 2022 13:36:14 +0800
+In-Reply-To: <20220420130527.23200-10-rex-bc.chen@mediatek.com>
+References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
+         <20220420130527.23200-10-rex-bc.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This correction was made in the u-boot SDK recently. There are no
-in-tree users of this clock so the impact is minimal.
+On Wed, 2022-04-20 at 21:05 +0800, Rex-BC Chen wrote:
+> To use the clock reset function easier, we implement the of_xlate.
+> This function is only adopted in version MTK_SET_CLR because of
+> the method of id calculation.
+> 
+> There is no impact for original use. If the argument number is not
+> larger than 1, it will return original id.
+> 
+> With this implementation if we want to set offset 0x120 and bit 16,
+> we can just write something like "resets = <&infra_rst 0x120 16>;".
+> 
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> ---
+>  drivers/clk/mediatek/reset.c | 24 ++++++++++++++++++++++++
+>  drivers/clk/mediatek/reset.h |  1 +
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/drivers/clk/mediatek/reset.c
+> b/drivers/clk/mediatek/reset.c
+> index 1173111af3ab..dbe812062bf5 100644
+> --- a/drivers/clk/mediatek/reset.c
+> +++ b/drivers/clk/mediatek/reset.c
+> @@ -59,6 +59,20 @@ static const struct reset_control_ops
+> mtk_reset_ops_set_clr = {
+>  	.reset = mtk_reset_set_clr,
+>  };
+>  
+> +static int reset_xlate(struct reset_controller_dev *rcdev,
+> +		       const struct of_phandle_args *reset_spec)
+> +{
+> +	unsigned int offset, bit;
+> +
+> +	if (reset_spec->args_count <= 1)
+> +		return reset_spec->args[0];
+> +
+> +	offset = reset_spec->args[0];
+> +	bit = reset_spec->args[1];
+> +
+> +	return (offset >> 4) * 32 + bit;
+> +}
+> +
+>  static const struct reset_control_ops *rst_op[MTK_RST_MAX] = {
+>  	[MTK_RST_SIMPLE] = &reset_simple_ops,
+>  	[MTK_RST_SET_CLR] = &mtk_reset_ops_set_clr,
+> @@ -98,6 +112,11 @@ int mtk_clk_register_rst_ctrl(struct device_node
+> *np,
+>  	data->rcdev.ops = rst_op[desc->version];
+>  	data->rcdev.of_node = np;
+>  
+> +	if (desc->version == MTK_RST_SET_CLR) {
+> +		data->rcdev.of_reset_n_cells = max(desc->reset_n_cells, 
+> 1);
+> +		data->rcdev.of_xlate = reset_xlate;
+> +	}
+> +
+>  	ret = reset_controller_register(&data->rcdev);
+>  	if (ret) {
+>  		pr_err("could not register reset controller: %d\n",
+> ret);
+> @@ -143,6 +162,11 @@ int mtk_clk_register_rst_ctrl_with_dev(struct
+> device *dev,
+>  	data->rcdev.of_node = np;
+>  	data->rcdev.dev = dev;
+>  
+> +	if (desc->version == MTK_RST_SET_CLR) {
+> +		data->rcdev.of_reset_n_cells = max(desc->reset_n_cells, 
+> 1);
+> +		data->rcdev.of_xlate = reset_xlate;
+> +	}
+> +
+>  	ret = devm_reset_controller_register(dev, &data->rcdev);
+>  	if (ret)
+>  		dev_err(dev, "could not register reset controller:
+> %d\n", ret);
+> diff --git a/drivers/clk/mediatek/reset.h
+> b/drivers/clk/mediatek/reset.h
+> index 30559bf45f7e..4cfc281fc50d 100644
+> --- a/drivers/clk/mediatek/reset.h
+> +++ b/drivers/clk/mediatek/reset.h
+> @@ -19,6 +19,7 @@ struct mtk_clk_rst_desc {
+>  	u8 version;
+>  	u32 reg_num;
+>  	u16 reg_ofs;
+> +	int reset_n_cells;
+>  };
+>  
+>  struct mtk_clk_rst_data {
 
-Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-Link: https://github.com/AspeedTech-BMC/u-boot/commit/8ad54a5ae15f27fea5e894cc2539a20d90019717
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-ast2600.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello all,
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 24dab2312bc6..9c3305bcb27a 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -622,7 +622,7 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
- 	regmap_write(map, 0x308, 0x12000); /* 3x3 = 9 */
- 
- 	/* P-Bus (BCLK) clock divider */
--	hw = clk_hw_register_divider_table(dev, "bclk", "hpll", 0,
-+	hw = clk_hw_register_divider_table(dev, "bclk", "epll", 0,
- 			scu_g6_base + ASPEED_G6_CLK_SELECTION1, 20, 3, 0,
- 			ast2600_div_table,
- 			&aspeed_g6_clk_lock);
--- 
-2.35.1
+I think reset_xlate can also support for MTK_RST_SIMPLE.
+If this patch is acceptable, I will modify for MTK_RST_SIMPLE in next
+version.
+
+BRs,
+Rex
 
