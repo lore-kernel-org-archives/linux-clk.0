@@ -2,101 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF90C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 19:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E11BC43217
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 23:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345242AbiDUUAy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 16:00:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59010 "EHLO
+        id S1442788AbiDUXvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 19:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392141AbiDUUAx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 16:00:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA654D9F9
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 12:58:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C439461CC8
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 19:58:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2127DC385A1;
-        Thu, 21 Apr 2022 19:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650571082;
-        bh=B0JWcJfG0YCIygbKxygn9MaBZrNGL78/DsZ8Gnu9ukI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=slqZFZsIvHC92/Yo3Mvtnfmdely6GimtmUfRab45f6OU57Zw2piJX0dMWABsTRswX
-         5x/eq6Kwyr7QMXYYwB2gDaFt8YOC2u9u8FKQjQO6bpz3QQzNKPz5mx+mDojP6KfQHy
-         W1GJoLtqGH/gkbhJ0FtPwEdrPJZnq/6lficETUymnD3uSixocBkHTr4I9NGBHGDUkR
-         Ob/K1kyEwY84pUw8KXqh3fAJXZJoEkC+BWogC86AlchKVWdYflbs67tihh7aKFxnSk
-         9GFdWGvjkFNu31hcIxJzfhcuPWUSIyUBuB8EnLommcnz28lzpXbCBocIk8sSyRnrH8
-         KGCYGZ1iV9UFg==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1442780AbiDUXvq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 19:51:46 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6F7434B5;
+        Thu, 21 Apr 2022 16:48:52 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id b68so4762558qkc.4;
+        Thu, 21 Apr 2022 16:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oNDSaAZDG6c0X/AAevWMv+Hj9gwc9S8Gx1Ep4WfFpAo=;
+        b=VMU6PqlaX0QEhB+kkqlvjU1fkuHokcH7krOoWy5GOTHB8xoeliEuXGVXpsNB0Dz+Xd
+         BbBATqDrqEH9zXyhcIYU8xg7bZ1JhBV8iGp3kkSWUqKMomusN/sgcMfT+gW3paOL0z3D
+         xu+vNW1zW7yY6vvYvHo0CFYHAFF9dyoP3mhjAP98M6NsbPyd+evObJBdpFzWsd4+lEZR
+         OH5d2DANgk2raeqFASbkpduWa1goBPgzND0tgfUA3jO11r4ld93k7+lDwMyGGi1W1Fuk
+         Cs/ulF5PpUoDQGVoea0bxdhTSej86O9eKfFC9FOSsryEROrxk/2xDFa7k9hHEFctVbCg
+         an4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oNDSaAZDG6c0X/AAevWMv+Hj9gwc9S8Gx1Ep4WfFpAo=;
+        b=zvZD2+KXFR7ErAUA09ghtb6T9XLMquCpY3Enj6uqWALyWyno5sOfmAFJRsSqX9X2Fv
+         H/XsbxX1F8sdEfuv1Q2vV3+wHkfhPrZgFJA6Cgwe8swqBqU2SekhG7cYNiVF8TQxfE19
+         ME/B3d0PVtdKecBWc4mLfh1k+ufCSZNsjKvgVRzOzl0MLXJe69Tpep81E97YoF8Xn5Ss
+         x1fF3JusvyJsM2c9sx8G1jisT2j9q+eSueYGkW4nDX8ay6E/XHmRZZT1D1GAP7pdYYmM
+         O9FNNr5hlm5o7Pa6LSZ3bpbNQOCzFl+yDV3/K5IWvvol57PicBC0Ur5dGSYQg40M3B9r
+         jGRw==
+X-Gm-Message-State: AOAM530+UxCYO45spay9BArpG2kleWCnssSXlX7fSEBW0qf8Rcirbcco
+        WNTnNS7CvXpE1SuNsg9i6gsdpOQfVESu
+X-Google-Smtp-Source: ABdhPJzQcjTL3dqTlGkITB2iTWhj3H7yjo6OI6wlcQC1KEOsTaT9FApw/Jt+AfmjLr6ymBNQvEZ7iQ==
+X-Received: by 2002:a05:620a:24c6:b0:69e:9d81:1e15 with SMTP id m6-20020a05620a24c600b0069e9d811e15mr1188307qkn.270.1650584931201;
+        Thu, 21 Apr 2022 16:48:51 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Apr 2022 16:48:50 -0700 (PDT)
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>, hch@lst.de,
+        hannes@cmpxchg.org, akpm@linux-foundation.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, roman.gushchin@linux.dev
+Subject: [PATCH v2 0/8] Printbufs & improved shrinker debugging
+Date:   Thu, 21 Apr 2022 19:48:29 -0400
+Message-Id: <20220421234837.3629927-6-kent.overstreet@gmail.com>
+X-Mailer: git-send-email 2.35.2
+In-Reply-To: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220407133036.213217-2-nuno.sa@analog.com>
-References: <20220407133036.213217-1-nuno.sa@analog.com> <20220407133036.213217-2-nuno.sa@analog.com>
-Subject: Re: [RFC PATCH 1/4] clk: clk-conf: properly release of nodes
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>
-To:     Nuno =?utf-8?q?S=C3=A1?= <nuno.sa@analog.com>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 21 Apr 2022 12:58:00 -0700
-User-Agent: alot/0.10
-Message-Id: <20220421195802.2127DC385A1@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nuno S=C3=A1 (2022-04-07 06:30:33)
-> We need to call 'of_node_put()' when we are done with the node or on
-> error paths. Otherwise this can leak memory in DYNAMIC_OF setups.
->=20
-> Fixes: 86be408bfbd8 ("clk: Support for clock parents and rates assigned f=
-rom device tree")
-> Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-> (cherry picked from commit 69eb47a26e7f728a5c052687380993cd9a0dd643)
+v1 of this patch series here:
+https://lore.kernel.org/linux-mm/20220419203202.2670193-1-kent.overstreet@gmail.com/T/
 
-This line should be removed.
+Changes since v1:
 
-> ---
->  drivers/clk/clk-conf.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 2ef819606c41..d6065cdf1540 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -33,9 +33,12 @@ static int __set_clk_parents(struct device_node *node,=
- bool clk_supplier)
->                         else
->                                 return rc;
->                 }
-> -               if (clkspec.np =3D=3D node && !clk_supplier)
-> +               if (clkspec.np =3D=3D node && !clk_supplier) {
-> +                       of_node_put(clkspec.np);
->                         return 0;
-> +               }
->                 pclk =3D of_clk_get_from_provider(&clkspec);
-> +               of_node_put(clkspec.np);
->                 if (IS_ERR(pclk)) {
->                         if (PTR_ERR(pclk) !=3D -EPROBE_DEFER)
->                                 pr_warn("clk: couldn't get parent clock %=
-d for %pOF\n",
+ - Converted some, not all, seq_buf code to printbufs (thanks Christoph for
+   pointing out seq_buf).
 
-I suspect it would be easier to follow and fix if the code was
-reorganized to have most of the contents inside this function as a
-sub-routine that is called for each index. Then all the node putting and
-clk putting can be in one place in that other function and this is a
-simple loop around that stops on the first error.
+   The seq_buf code I didn't convert is arch specific code where the memory
+   allocation context is unclear, and they're using seq_buf to do everything on
+   the stack. I'm considering adding a mode to printbufs where we point it at an
+   external buffer instead - it wouldn't be much code, but OTOH seq_buf isn't
+   much code either and it seems to be somewhat tied to tracing infrastructure.
+   Deferring a decision on what to do for now.
 
-> @@ -49,7 +52,7 @@ static int __set_clk_parents(struct device_node *node, =
-bool clk_supplier)
->                         goto err;
->                 if (clkspec.np =3D=3D node && !clk_supplier) {
->                         rc =3D 0;
-> -                       goto err;
-> +                       goto err_of_put;
->                 }
->                 clk =3D of_clk_get_from_provider(&clkspec);
->                 if (IS_ERR(clk)) {
+ - pr_human_readable_u64() now uses string_get_size() (thanks Matthew for
+   pointing this one out)
+
+ - added new helpers printbuf_str() for getting a guaranteed-null-terminated
+   string, and printbuf_atomic_inc() and printbuf_atomic_dec() for marking
+   sections where allocations must be GFP_ATOMIC.
+
+ - Broke out shrinker_to_text(): this new helper could be used by new sysfs or
+   debugfs code, for displaying information about a single shrinker (as Roman is
+   working on)
+
+ - Added new tracking, per shrinker, for # of objects requested to be freed and
+   # actually freed. Shrinkers won't necessarily free all objects requested for
+   perfectly legitimate reasons, but if the two numbers are wildly off then
+   that's going to lead to memory reclaim issues - these are both also included
+   in shrinker_to_text().
+
+Kent Overstreet (8):
+  lib/printbuf: New data structure for heap-allocated strings
+  Input/joystick/analog: Convert from seq_buf -> printbuf
+  mm/memcontrol.c: Convert to printbuf
+  clk: tegra: bpmp: Convert to printbuf
+  mm: Add a .to_text() method for shrinkers
+  mm: Count requests to free & nr freed per shrinker
+  mm: Move lib/show_mem.c to mm/
+  mm: Centralize & improve oom reporting in show_mem.c
+
+ drivers/clk/tegra/clk-bpmp.c    |  21 ++-
+ drivers/input/joystick/analog.c |  37 +++--
+ include/linux/printbuf.h        | 164 +++++++++++++++++++
+ include/linux/shrinker.h        |   8 +
+ lib/Makefile                    |   4 +-
+ lib/printbuf.c                  | 274 ++++++++++++++++++++++++++++++++
+ mm/Makefile                     |   2 +-
+ mm/memcontrol.c                 |  68 ++++----
+ mm/oom_kill.c                   |  23 ---
+ {lib => mm}/show_mem.c          |  14 ++
+ mm/slab.h                       |   6 +-
+ mm/slab_common.c                |  53 +++++-
+ mm/vmscan.c                     |  88 ++++++++++
+ 13 files changed, 666 insertions(+), 96 deletions(-)
+ create mode 100644 include/linux/printbuf.h
+ create mode 100644 lib/printbuf.c
+ rename {lib => mm}/show_mem.c (77%)
+
+-- 
+2.35.2
+
