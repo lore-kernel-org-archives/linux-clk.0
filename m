@@ -2,89 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D29BC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 06:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4DBC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 06:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384996AbiDUGo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 02:44:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44642 "EHLO
+        id S1385351AbiDUG5I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 02:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385061AbiDUGos (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 02:44:48 -0400
-Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 25EE913F86;
-        Wed, 20 Apr 2022 23:42:00 -0700 (PDT)
-Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 50DAE1C810D0;
-        Thu, 21 Apr 2022 14:41:59 +0800 (CST)
-Received: from NTHCCAS02.nuvoton.com (10.1.9.121) by NTHCCAS04.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 21
- Apr 2022 14:41:59 +0800
-Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS02.nuvoton.com
- (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Thu, 21 Apr
- 2022 14:41:58 +0800
-Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
- (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Thu, 21 Apr 2022 14:41:58 +0800
-Message-ID: <d24391c8-6153-d835-b17a-a013ed2c55c8@nuvoton.com>
-Date:   Thu, 21 Apr 2022 14:41:59 +0800
+        with ESMTP id S1385454AbiDUG5B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 02:57:01 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8E115806
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:53:24 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-2ebf4b91212so42087017b3.8
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BxxyCE6218CsP33ncCT/QjJmGyzhJs4lIXEcCs7Cp7E=;
+        b=NtyTmm73BO2ZpdykD4mRz6MZYwBQaD//bYiwl1WzFNjs/yuG3viWAA5tnQ3+Np0V7l
+         9WJLbq1ASUtwB+n3y06WniFE8c5Q/NVHtWLHM/GRWczXMTFwtr1ZtGUPLoVIShUqOy4R
+         wjEB14EJIEVodi7+Q2nUKIr/n1UDFi2JG+ekw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BxxyCE6218CsP33ncCT/QjJmGyzhJs4lIXEcCs7Cp7E=;
+        b=3DNWIa67Imk+vel50UuNOzvsFEH2277L19X6Am8tyDe5OkNAdj7Fj1wMHuUVwHMR5T
+         eKI6pbXCIzU3K9yvQBKYqKSBQPE/kTX8RGPcX3cB9NUlo5TZKGKM11ekiKcWwpFAE9EN
+         ShGz+iW5LWdUwniTegC7Wz+EK0VrOr9oYwocb7qmmm1lCWKAL62lMzphC00t4SPEfm+B
+         n6RkSI39x+Hb/UNSxbmaCHcRoHxPBJW7GhsFnNl7KlS8hLyZfS0vZNfg+Ux4UFFFh/mE
+         VwJKfmwy+kXQJMYXlBQrrE2aSUtrsC0uQKyDSjPT6lb5GUoJXBIOV0vZ7ONwo38gq4HO
+         ep0g==
+X-Gm-Message-State: AOAM530hcrjargayUh499LnnQutcKj7qCARkZYNug1YBDWJLQnaaUgyw
+        5yKH9bYIIoYsMhStiZD7rSQJrfwkilJ3IskxBTemNg==
+X-Google-Smtp-Source: ABdhPJzVfB7TYnUrWb3CObQ/ODXX6LZUZjYXGH+wB1eh9ocMpbmW/G3DUs7pecxGAlW308Nn1wwuqQuNoV0zmu7lPZc=
+X-Received: by 2002:a0d:eb46:0:b0:2ef:4946:544 with SMTP id
+ u67-20020a0deb46000000b002ef49460544mr24654407ywe.286.1650524004092; Wed, 20
+ Apr 2022 23:53:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v3 3/5] arm64: dts: nuvoton: Add initial support for
- MA35D1
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <ychuang570808@gmail.com>
-CC:     <robh+dt@kernel.org>, <sboyd@kernel.org>, <krzk+dt@kernel.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <will@kernel.org>,
-        <soc@kernel.org>, <cfli0@nuvoton.com>
-References: <20220418082738.11301-1-ychuang3@nuvoton.com>
- <20220418082738.11301-4-ychuang3@nuvoton.com>
- <60e50c11-118d-431f-7120-95fcbb53eeb5@linaro.org>
-From:   Jacky Huang <ychuang3@nuvoton.com>
-In-Reply-To: <60e50c11-118d-431f-7120-95fcbb53eeb5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220420130527.23200-1-rex-bc.chen@mediatek.com> <20220420130527.23200-12-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220420130527.23200-12-rex-bc.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 21 Apr 2022 14:53:13 +0800
+Message-ID: <CAGXv+5HMe7LaXiMJofW4ZT0Ku70mNAt2A=98YzZbx-frF7kQGQ@mail.gmail.com>
+Subject: Re: [PATCH V2 11/12] clk: mediatek: reset: Add infra_ao reset support
+ for MT8192
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, runyang.chen@mediatek.com,
+        linux-kernel@vger.kernel.org, allen-kh.cheng@mediatek.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 2022/4/18 下午 08:20, Krzysztof Kozlowski wrote:
-> On 18/04/2022 10:27, Jacky Huang wrote:
->> Add the initial device tree files for Nuvoton MA35D1 Soc.
->>
-> (...)
+On Wed, Apr 20, 2022 at 9:05 PM Rex-BC Chen <rex-bc.chen@mediatek.com> wrote:
 >
->> +	gic: interrupt-controller@50800000 {
-> The unit address does not match first reg property. Don't you have
-> warnings with this?
-
-Yes, I will modify it as
-gic: interrupt-controller@50801000
-
+> The infra_ao reset is needed for MT8192. Therefore, we add this patch
+> to support it.
 >
->> +		compatible = "arm,gic-400";
->> +		#interrupt-cells = <3>;
->> +		interrupt-parent = <&gic>;
->> +		interrupt-controller;
->> +		reg = <0x0 0x50801000 0x0 0x1000>,
->> +		      <0x0 0x50802000 0x0 0x2000>,
->> +		      <0x0 0x50804000 0x0 0x2000>,
->> +		      <0x0 0x50806000 0x0 0x2000>;
->> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_RAW(0x13) |
->> +			      IRQ_TYPE_LEVEL_HIGH)>;
->> +	};
->> +};
-> Best regards,
-> Krzysztof
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-mt8192.c         | 11 +++++++++++
+>  include/dt-bindings/reset/mt8192-resets.h | 11 +++++++++++
+>  2 files changed, 22 insertions(+)
+>
+> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+> index ab27cd66b866..7926b83b9035 100644
+> --- a/drivers/clk/mediatek/clk-mt8192.c
+> +++ b/drivers/clk/mediatek/clk-mt8192.c
+> @@ -1114,6 +1114,13 @@ static const struct mtk_gate top_clks[] = {
+>         GATE_TOP(CLK_TOP_SSUSB_PHY_REF, "ssusb_phy_ref", "clk26m", 25),
+>  };
+>
+> +static const struct mtk_clk_rst_desc clk_rst_desc = {
+> +       .version = MTK_RST_SET_CLR,
+> +       .reg_num = 4,
+> +       .reg_ofs = 0x0,
+> +       .reset_n_cells = 2,
 
-Thanks for your review.
+If you want to do this, you need to update the bindings first.
 
-Jacky Huang
+> +};
+> +
+>  #define MT8192_PLL_FMAX                (3800UL * MHZ)
+>  #define MT8192_PLL_FMIN                (1500UL * MHZ)
+>  #define MT8192_INTEGER_BITS    8
+> @@ -1239,6 +1246,10 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+>         if (r)
+>                 goto free_clk_data;
+>
+> +       r = mtk_clk_register_rst_ctrl_with_dev(&pdev->dev, &clk_rst_desc);
+> +       if (r)
+> +               goto free_clk_data;
+> +
+>         r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>         if (r)
+>                 goto free_clk_data;
+> diff --git a/include/dt-bindings/reset/mt8192-resets.h b/include/dt-bindings/reset/mt8192-resets.h
+> index be9a7ca245b9..feac1ac85906 100644
+> --- a/include/dt-bindings/reset/mt8192-resets.h
+> +++ b/include/dt-bindings/reset/mt8192-resets.h
+> @@ -7,6 +7,7 @@
+>  #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8192
+>  #define _DT_BINDINGS_RESET_CONTROLLER_MT8192
+>
+> +/* TOPRGU */
+>  #define MT8192_TOPRGU_MM_SW_RST                                        1
+>  #define MT8192_TOPRGU_MFG_SW_RST                               2
+>  #define MT8192_TOPRGU_VENC_SW_RST                              3
+> @@ -27,4 +28,14 @@
+>
+>  #define MT8192_TOPRGU_SW_RST_NUM                               23
+>
+> +/* INFRA RST0 */
+> +#define MT8192_INFRA_RST0_LVTS_AP_RST                          0
+> +/* INFRA RST2 */
+> +#define MT8192_INFRA_RST2_PCIE_PHY_RST                         15
+> +/* INFRA RST3 */
+> +#define MT8192_INFRA_RST3_PTP_RST                              5
+> +/* INFRA RST4 */
+> +#define MT8192_INFRA_RST4_LVTS_MCU                             12
+> +#define MT8192_INFRA_RST4_PCIE_TOP                             1
+> +
+
+This change should be part of the binding change.
+
+For these, please also add a patch for the actual device tree changes.
+
+
+ChenYu
+
+>  #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8192 */
+> --
+> 2.18.0
+>
