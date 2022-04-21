@@ -2,173 +2,361 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08374C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Apr 2022 23:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB144C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 03:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383235AbiDTXfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Apr 2022 19:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
+        id S1383895AbiDUDTh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Apr 2022 23:19:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380312AbiDTXfn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 19:35:43 -0400
-X-Greylist: delayed 135 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 20 Apr 2022 16:32:54 PDT
-Received: from p3plsmtpa11-10.prod.phx3.secureserver.net (p3plsmtpa11-10.prod.phx3.secureserver.net [68.178.252.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0672F03A
-        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 16:32:54 -0700 (PDT)
-Received: from black ([209.234.248.132])
-        by :SMTPAUTH: with ESMTPSA
-        id hJmNn85L8pmFVhJmPn5OZs; Wed, 20 Apr 2022 16:30:39 -0700
-X-CMAE-Analysis: v=2.4 cv=f82NuM+M c=1 sm=1 tr=0 ts=6260979f
- a=QYjdx1n8fnJJ/8JFsBbjTg==:117 a=QYjdx1n8fnJJ/8JFsBbjTg==:17
- a=IkcTkHD0fZMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=_twTT5zqAAAA:8
- a=pGLkceISAAAA:8 a=VrlHBnlMTWxngOB4VMsA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=ILoXdGDbYT3DTB7Z0gVI:22
-X-SECURESERVER-ACCT: dhu@hodcarrier.org
-Date:   Thu, 21 Apr 2022 07:30:34 +0800
-From:   Du Huanpeng <dhu@hodcarrier.org>
-To:     Sean Anderson <seanga2@gmail.com>
-Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Yang Ling <gnaygnil@gmail.com>
-Subject: Re: [RFT PATCH] clk: ls1c: Fix PLL rate calculation
-Message-ID: <20220420233034.GA5694@black>
-References: <20220419051114.1569291-1-seanga2@gmail.com>
+        with ESMTP id S1383888AbiDUDTg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Apr 2022 23:19:36 -0400
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96E061262A
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 20:16:46 -0700 (PDT)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-e2afb80550so4130004fac.1
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 20:16:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5JB0gUMTmyGNaaB0sHkZ7WLGgPRHKvvOXuIeU593CwY=;
+        b=t6uXv3HdWpPzQFokq9nFqKyzjG8FMVTZXGj3xBOJq/tD78N6+spaYMgCxqM5o9UsUB
+         yGF3TdM7WDSclO7v/4X59nZm15yhyybppqRr73qIBr+QdFyQS+UfpVM78ER/TMLazdND
+         Zx/ioYJvXx8HYK+fRt+I2dSxnLglXJDGggYjBwDnt8ZUr+j0dezbtugfAue46BfNjfrm
+         QHXu2UvboYOk5VnAPvLdKIqqJZIoUjkh3HmXXQ3H27EAN5K5g3NWXv4dSt934jWkHRMG
+         cmtwklzhLNuFppsnepCWUcC1wkGVUTqcHwbBaGnpUjsrbcaG9AdMNNp9KfQq4j28gZoQ
+         vILw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5JB0gUMTmyGNaaB0sHkZ7WLGgPRHKvvOXuIeU593CwY=;
+        b=RlBM0lDwT+EOPKAfnvR8ZF4WylVoLQD31qE/KRfjLTZJZJ0blxFlEjFf8eb/tLcZaF
+         i9dypmzRVfbjiyGXqI8mZ0X7sScl1eh1xWK1tbxuDdMMN84SXnVwOEp4PxYLpV0FoXD8
+         x+IOie+MKMzSvmZ851qNXp6a8BwX2PmO/8V7rGeOwT5VpfOssomhGvYXzihxlPhybTFg
+         8r6G0FxP6SIGI4+FDNEjNsypa1BbIE/JFjTMU9zN01JTKzSBQm0qW3TxUyBlkcTAnR7O
+         5z/onpStWY5HoZ3l/RSwhxKO7K+L+bn/q31xrUsBLLILflzw8NoR1AzEmunFAzK4Xa4+
+         hZXQ==
+X-Gm-Message-State: AOAM530Chwq7fkgWwFuIE5b/dUjHilPcLMuZDZ/OJMAMrYXhFC2BFMOp
+        9t44f0y07aM3kaNtEp2Nkjs22A==
+X-Google-Smtp-Source: ABdhPJyQdEmZ1cOI+Mu68onPfacFGFzdSHci+WhfKL+DEbliYtaiQkOEIeu0U+r2ttiEQaeKCVb2IA==
+X-Received: by 2002:a05:6870:8a0a:b0:e5:b7dd:9a04 with SMTP id p10-20020a0568708a0a00b000e5b7dd9a04mr2957492oaq.96.1650511005887;
+        Wed, 20 Apr 2022 20:16:45 -0700 (PDT)
+Received: from ripper.. ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id x20-20020a4ac594000000b00329a02f2f34sm7339509oop.16.2022.04.20.20.16.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Apr 2022 20:16:45 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] clk: qcom: rcg2: Cache CFG register updates for parked RCGs
+Date:   Wed, 20 Apr 2022 20:18:49 -0700
+Message-Id: <20220421031849.454626-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220419051114.1569291-1-seanga2@gmail.com>
-X-CMAE-Envelope: MS4xfPEYo7+TzSzfoE9wr4Xt4tpOgDEJytkfrpg2EqyGeYHbHaYWP6bKmr5LO4CKiw1emz9MS9a9tONXOH3zWVOOolpKx9DPH65StwNnh8Rboe7/Jnfq0SSO
- 2SobRlNcKtY82aUuVQD41sNEEIATrrPb1Xk17EJfGQzc++4JjxLGe9009S0nXdWcsDB+23TZJwf43bA2zglMg9irWhYhiuZXQHerNQ9yf+c7oVPob8sIUnZ4
- bEILzOcC1rLn1hbO8mt5sV/dKh8E1wjOm8UgWsyNiMf6/SGPAT7C9x9xmq4ombpsd8kJ6Y0lKnU2id+n9dTkifRR/coD1neFSW1LttSoO9cwZW1zsMx9QNbE
- XwqyhtPJBHnB6vlDaxZElhYb7t8Y3VL1sJjKm9NdAcSWJOjEQuM=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 01:11:14AM -0400, Sean Anderson wrote:
-> While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1], I
-> noticed the following calculation, which is copied from
-> drivers/clk/loongson1/clk-loongson1c.c:
-Hi, the calculate method is based on Loongson's manual(龙芯 1C300
-处理器用户手册 1.4)in page 35.
-| 注： PLL 的分频系数 N 固定为 4， PLL 的频率计算公式如下：
-| Freq_PLL = XIN *(M_PLL + FRAC_N)/4
+As GDSCs are turned on and off some associated clocks are momentarily
+enabled for house keeping purposes. For this, and similar, purposes the
+"shared RCGs" will park the RCG on a source clock which is known to be
+available.
+When the RCG is parked, a safe clock source will be selected and
+committed, then the original source would be written back and upon enable
+the change back to the unparked source would be committed.
 
-I aslo made a tool to set pll rate and generate asm code at the same
-time, I also put the formulae from the manual in code:
+But starting with SM8350 this fails, as the value in CFG is committed by
+the GDSC handshake and without a ticking parent the GDSC enablement will
+time out.
 
-the tool:
-[1]. https://github.com/hodcarrier/ls1c300_bsp/blob/master/clk-ls1c300.xlsx
+This becomes a concrete problem if the runtime supended state of a
+device includes disabling such rcg's parent clock. As the device
+attempts to power up the domain again the rcg will fail to enable and
+hence the GDSC enablement will fail, preventing the device from
+returning from the suspended state.
 
-lowlevel_init.S:
-[2]. https://github.com/hodcarrier/u-boot/blob/lsmips/ls1c300b/arch/mips/mach-lsmips/ls1c300/lowlevel_init.S#L48
-|/* Document:
-| * Freq_PLL = XIN *(M_PLL + FRAC_N)/4
-| */
+This can be seen in e.g. the display stack during probe on SM8350.
 
-The my v1 patch was using magic number for initialize pll, because I
-use this tool to generate the code.
+To avoid this problem, the software needs to ensure that the RCG is
+configured to a active parent clock while it is disabled. This is done
+by caching the CFG register content while the shared RCG is parked on
+this safe source.
 
-Set FRAC_N to 0, the pll can be adjust by step 6MHz. I noticed this
-issues, you can see I always set the FRAC_N to 0 in the tool[1].
-this will lost some pricise, but avoid to do the adventure...
+Writes to M, N and D registers are committed as they are requested. New
+helpers for get_parent() and recalc_rate() are extracted from their
+previous implementations and __clk_rcg2_configure() is modified to allow
+it to operate on the cached value.
 
-> 
-> ulong ls1c300_pll_get_rate(struct clk *clk)
-> {
-> 	unsigned int mult;
-> 	long long parent_rate;
-> 	void *base;
-> 	unsigned int val;
-> 
-> 	parent_rate = clk_get_parent_rate(clk);
-> 	base = (void *)clk->data;
-> 
-> 	val = readl(base + START_FREQ);
-> 	mult = FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
-> 	return (mult * parent_rate) / 4;
-> }
-> 
-> I would like to examine the use of M_PLL and FRAC_N to calculate the multiplier
-> for the PLL. The datasheet has the following to say:
-> 
-> START_FREQ 位    缺省值      描述
-> ========== ===== =========== ====================================
-> FRAC_N     23:16 0           PLL 倍频系数的小数部分
-> 
->                  由          PLL 倍频系数的整数部分
-> M_PLL      15:8  NAND_D[3:0] (理论可以达到 255，建议不要超过 100)
->                  配置
-> 
-> which according to google translate means
-> 
-> START_FREQ Bits  Default       Description
-> ========== ===== ============= ================================================
-> FRAC_N     23:16 0             Fractional part of the PLL multiplication factor
-> 
->                  Depends on    Integer part of PLL multiplication factor
-> M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] it is
->                  configuration  recommended not to exceed 100)
-> 
-> So just based on this description, I would expect that the formula to be
-> something like
-> 
-> 	rate = parent * (255 * M_PLL + FRAC_N) / 255 / 4
-> 
-> However, the datasheet also gives the following formula:
-> 
-> 	rate = parent * (M_PLL + FRAC_N) / 4
-> 
-> which is what the Linux driver has implemented. I find this very unusual.
-> First, the datasheet specifically says that these fields are the integer and
-> fractional parts of the multiplier. Second, I think such a construct does not
-> easily map to traditional PLL building blocks. Implementing this formula in
-> hardware would likely require an adder, just to then set the threshold of a
-> clock divider.
-> 
-> I think it is much more likely that the first formula is correct. The author of
-> the datasheet may think of a multiplier of (say) 3.14 as
-> 
-> 	M_PLL = 3
-> 	FRAC_N = 0.14
-> 
-> which together sum to the correct multiplier, even though the actual value
-> stored in FRAC_N would be 36.
-> 
-> I suspect that this has slipped by unnoticed because when FRAC_N is 0, there is
-> no difference in the formulae. The following patch is untested, but I suspect
-> it will fix this issue. I would appreciate if anyone with access to the
-> hardware could measure the output of the PLL (or one of its derived clocks) and
-> determine the correct formula.
-> 
-> [1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrier.org/T/#u
-> 
-> Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
-> Signed-off-by: Sean Anderson <seanga2@gmail.com>
-> ---
-> 
->  drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-> index 703f87622cf5..2b98a116c1ea 100644
-> --- a/drivers/clk/loongson1/clk-loongson1c.c
-> +++ b/drivers/clk/loongson1/clk-loongson1c.c
-> @@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_hw *hw,
->  	u32 pll, rate;
->  
->  	pll = __raw_readl(LS1X_CLK_PLL_FREQ);
-> -	rate = ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
-> +	rate = (pll & 0xff00) + ((pll >> 16) & 0xff);
->  	rate *= OSC;
-> -	rate >>= 2;
-> +	rate >>= 10;
->  
->  	return rate;
->  }
-> -- 
-> 2.35.1
-> 
+Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+Changes since v2:
+- Explained the symptoms in commit message
+- Reduced error in clk_rcg2_get_parent() to pr_debug()
+- Reduced the size of the change in __clk_rcg2_configure()
+- Polished comment in clk_rcg2_shared_set_rate()
+- Use clk_hw_is_enabled() in clk_rcg2_shared_set_parent()
+
+ drivers/clk/qcom/clk-rcg.h  |   2 +
+ drivers/clk/qcom/clk-rcg2.c | 124 ++++++++++++++++++++++++++++--------
+ 2 files changed, 100 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 00cea508d49e..012e745794fd 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -140,6 +140,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @freq_tbl: frequency table
+  * @clkr: regmap clock handle
+  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
++ * @parked_cfg: cached value of the CFG register for parked RCGs
+  */
+ struct clk_rcg2 {
+ 	u32			cmd_rcgr;
+@@ -150,6 +151,7 @@ struct clk_rcg2 {
+ 	const struct freq_tbl	*freq_tbl;
+ 	struct clk_regmap	clkr;
+ 	u8			cfg_off;
++	u32			parked_cfg;
+ };
+ 
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index f675fd969c4d..9d218b04aa49 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -73,16 +73,11 @@ static int clk_rcg2_is_enabled(struct clk_hw *hw)
+ 	return (cmd & CMD_ROOT_OFF) == 0;
+ }
+ 
+-static u8 clk_rcg2_get_parent(struct clk_hw *hw)
++static u8 __clk_rcg2_get_parent(struct clk_hw *hw, u32 cfg)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+-	u32 cfg;
+-	int i, ret;
+-
+-	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+-	if (ret)
+-		goto err;
++	int i;
+ 
+ 	cfg &= CFG_SRC_SEL_MASK;
+ 	cfg >>= CFG_SRC_SEL_SHIFT;
+@@ -91,12 +86,27 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+ 		if (cfg == rcg->parent_map[i].cfg)
+ 			return i;
+ 
+-err:
+ 	pr_debug("%s: Clock %s has invalid parent, using default.\n",
+ 		 __func__, clk_hw_get_name(hw));
+ 	return 0;
+ }
+ 
++static u8 clk_rcg2_get_parent(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++	int ret;
++
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret) {
++		pr_debug("%s: Unable to read CFG register for %s\n",
++			 __func__, clk_hw_get_name(hw));
++		return 0;
++	}
++
++	return __clk_rcg2_get_parent(hw, cfg);
++}
++
+ static int update_config(struct clk_rcg2 *rcg)
+ {
+ 	int count, ret;
+@@ -163,12 +173,10 @@ calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
+ }
+ 
+ static unsigned long
+-clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++__clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate, u32 cfg)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+-	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
+-
+-	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	u32 hid_div, m = 0, n = 0, mode = 0, mask;
+ 
+ 	if (rcg->mnd_width) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+@@ -189,6 +197,17 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	return calc_rate(parent_rate, m, n, mode, hid_div);
+ }
+ 
++static unsigned long
++clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++
++	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++
++	return __clk_rcg2_recalc_rate(hw, parent_rate, cfg);
++}
++
+ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 				    struct clk_rate_request *req,
+ 				    enum freq_policy policy)
+@@ -262,7 +281,8 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
+ 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
+ }
+ 
+-static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
++static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
+ {
+ 	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+@@ -304,15 +324,27 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+-	return regmap_update_bits(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg),
+-					mask, cfg);
++
++	*_cfg &= ~mask;
++	*_cfg |= cfg;
++
++	return 0;
+ }
+ 
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ {
++	u32 cfg;
+ 	int ret;
+ 
+-	ret = __clk_rcg2_configure(rcg, f);
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure(rcg, f, &cfg);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -979,11 +1011,12 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * In case clock is disabled, update the CFG, M, N and D registers
+-	 * and don't hit the update bit of CMD register.
++	 * In case clock is disabled, update the M, N and D registers, cache
++	 * the CFG value in parked_cfg and don't hit the update bit of CMD
++	 * register.
+ 	 */
+ 	if (!__clk_is_enabled(hw->clk))
+-		return __clk_rcg2_configure(rcg, f);
++		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
+ 
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+ }
+@@ -1007,6 +1040,11 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Write back the stored configuration corresponding to current rate */
++	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, rcg->parked_cfg);
++	if (ret)
++		return ret;
++
+ 	ret = update_config(rcg);
+ 	if (ret)
+ 		return ret;
+@@ -1017,13 +1055,12 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+-	u32 cfg;
+ 
+ 	/*
+ 	 * Store current configuration as switching to safe source would clear
+ 	 * the SRC and DIV of CFG register
+ 	 */
+-	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
++	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &rcg->parked_cfg);
+ 
+ 	/*
+ 	 * Park the RCG at a safe configuration - sourced off of safe source.
+@@ -1041,17 +1078,52 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	update_config(rcg);
+ 
+ 	clk_rcg2_clear_force_enable(hw);
++}
+ 
+-	/* Write back the stored configuration corresponding to current rate */
+-	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
++static u8 clk_rcg2_shared_get_parent(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked used the cached cfg instead */
++	if (!__clk_is_enabled(hw->clk))
++		return __clk_rcg2_get_parent(hw, rcg->parked_cfg);
++
++	return clk_rcg2_get_parent(hw);
++}
++
++static int clk_rcg2_shared_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked only update the cached cfg */
++	if (!clk_hw_is_enabled(hw)) {
++		rcg->parked_cfg &= ~CFG_SRC_SEL_MASK;
++		rcg->parked_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++		return 0;
++	}
++
++	return clk_rcg2_set_parent(hw, index);
++}
++
++static unsigned long
++clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked used the cached cfg instead */
++	if (!__clk_is_enabled(hw->clk))
++		return __clk_rcg2_recalc_rate(hw, parent_rate, rcg->parked_cfg);
++
++	return clk_rcg2_recalc_rate(hw, parent_rate);
+ }
+ 
+ const struct clk_ops clk_rcg2_shared_ops = {
+ 	.enable = clk_rcg2_shared_enable,
+ 	.disable = clk_rcg2_shared_disable,
+-	.get_parent = clk_rcg2_get_parent,
+-	.set_parent = clk_rcg2_set_parent,
+-	.recalc_rate = clk_rcg2_recalc_rate,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
+ 	.determine_rate = clk_rcg2_determine_rate,
+ 	.set_rate = clk_rcg2_shared_set_rate,
+ 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
+-- 
+2.35.1
+
