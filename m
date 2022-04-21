@@ -2,107 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC37C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 11:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D0EC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 11:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1388464AbiDULkj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 07:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34736 "EHLO
+        id S241226AbiDULlB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 07:41:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383040AbiDULkj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 07:40:39 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A8BB2BB37
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 04:37:49 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id y32so8182026lfa.6
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 04:37:49 -0700 (PDT)
+        with ESMTP id S244998AbiDULlA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 07:41:00 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941F4289AF
+        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 04:38:10 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id l7so9474208ejn.2
+        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 04:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=RsyMZ+3bz7iZqyG5PUvCw9htX6TYzgOo4J4yh71zpuI=;
-        b=gWpk+C7Y8yNeYTzGrteWODT0Ty2/cOa1ye8rnWxX4nOhjdnewnRTUZGfVSel4vVzqv
-         pfYaIcB0TRT8aqF3BGout/T/WgXUlORDXq8z/7s293Oo7Yc++V+MykeR26utUSXcZo2h
-         ZwhIvnZ1LDuwEt6+gpwhWAsx3PbMp2YTi1QwmkteTFukC4xX4c9/amqr/8U0CvxEAaeC
-         9g1uySEn6uDleNGwI6zm7y4v+nEA5VrUlmkNW5LB2kRtboaAhOuUGWuqdSeSPPpPoAWv
-         2UtTaqDGzRHqJGOXVRMu4UbOG1JYsk1JUXqFStKhosXJ5zmtLO0dLFgMOACCk5m0eI5O
-         nEHQ==
+        bh=BbZlix/BzmsuD7I7W1o8Rx4IjqXoi2CX5l01Yagkz5M=;
+        b=W2rjq2y9YqaOuYf8zTJ1wzzT2AMRGdVbEftqU8zzXRe6I8mieJPZ+YBkSlwLe/X0Q5
+         mGYasxN84wNpYoQOJkT/hD0kE2+Cv0XReA3+DDerVPjBsawNyeYN8/7BNRBT8/mSNKHA
+         q7Dh3nWTo99y8Akguo6s8m0NTeXQZqXDel2ohH9sPTOuj1HQ5JIGCrUVYOYTbliYYI/q
+         MWe2TWaT5C/Mii6aw7bvMe9HYMtg2rL1lZGWIVrfOxAE1RuO+qTwkm2APy03Gds2QpFV
+         fnxaQtFIf5ZOW3PlYdJop+6cHSemT+7q4hkMzhawfcVrICNqCFB+aZRsUP6Wwky4HZ+Q
+         jmpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=RsyMZ+3bz7iZqyG5PUvCw9htX6TYzgOo4J4yh71zpuI=;
-        b=OO7NTQckvBDfpN+R8h+TmWglwbeErfUcWR2XIRB4QOYokahlACDh01327MaolrCx5u
-         3FDUmaNhVjUFIhhMdpsT+g6Z750YZP4kIHVMx7AVz7ZrF5mToRdohHPL7vKyQKAmEfaL
-         aXQKHC7+Kap2JIzWExbywxPD0WoazKe4gUeuKX3B4gQd/1T1Axru2JItckknZX+Ymo2f
-         3KaDrxVi6o4kfdhJIWaRF00sW6d72uHkJGfpXJY6/gKy2drr9HNicquS74X4hjw4A6Oq
-         NjlwV5DIfIYj+qf9E//lhw7/EunZbgnm/L+LvpLhv8frha0B7u9z012HSPntrB60CzVC
-         tn0w==
-X-Gm-Message-State: AOAM530Qdk3mE5Prwi11vakAkBmP0J5PJk2n1Q0M8tBbU/4BT3vAGD02
-        IoT9uT5QFmLER7qrBe5YxCzgAQ==
-X-Google-Smtp-Source: ABdhPJwoyEHiKGX2LHWti1yU+tp0BLmD36xMlD41AnkPLxpFfYI0J8MsaCAhBWjLpF7+Wu5WGVLvug==
-X-Received: by 2002:ac2:410b:0:b0:448:58a8:3e8a with SMTP id b11-20020ac2410b000000b0044858a83e8amr17874063lfi.258.1650541067634;
-        Thu, 21 Apr 2022 04:37:47 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id n17-20020a2e8791000000b0024db2d87102sm1518618lji.64.2022.04.21.04.37.47
+        bh=BbZlix/BzmsuD7I7W1o8Rx4IjqXoi2CX5l01Yagkz5M=;
+        b=Xi8UvsiIWqXZ1FVLXA8jRoWCkNw8XEfCgGjgZIU3CJxot5/wb6kcSsFTSTBuPwLst+
+         eilMwOVWD93j6uO2pyYxmmzfdQKF39ocuKFw03uW2pgiEy3nUKFaiYYMpMLXB8GA5bac
+         nfI2VOGIjU48lJNpCq9o2fN6T+6eVM/dLBzXH73ll6/Cc1FqfL/t1zSEGVrqG1G8V2Pv
+         CQ+6E+WksvZZDbzqDZgaSshK5XbG24t2YWQXicRU636n7WQFYO/yZTrMaY1GUOuuQwuQ
+         8euDgODJvX3o/fc71zuONESMavyMosBokD95h6+JM3liL8ycE2JvlM3/iQoZExbADDzd
+         4sxQ==
+X-Gm-Message-State: AOAM532yz1i7If6Cv4MC4cj3Qj4od1zJurxmiJK8ZFu0oD4d/B14/x8e
+        IZ+0p0wKaw0tbZh7A6GL9w82Mw==
+X-Google-Smtp-Source: ABdhPJxMBUlR5ao1WK3GENZZnLpDO9xTkm8MNJXZhEi091FFEHDY5G607AlLBEJKJu8Z8vgOtUjYgA==
+X-Received: by 2002:a17:907:6da9:b0:6ef:f582:6fcd with SMTP id sb41-20020a1709076da900b006eff5826fcdmr8255172ejc.685.1650541089149;
+        Thu, 21 Apr 2022 04:38:09 -0700 (PDT)
+Received: from [192.168.0.227] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id o2-20020a170906768200b006e89514a449sm7644875ejm.96.2022.04.21.04.38.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 04:37:47 -0700 (PDT)
-Message-ID: <4642b8dd-a638-79c6-c0c6-d72eca41d900@linaro.org>
-Date:   Thu, 21 Apr 2022 14:37:46 +0300
+        Thu, 21 Apr 2022 04:38:08 -0700 (PDT)
+Message-ID: <79a50292-15bd-ef6c-68f2-c84923c2b8e8@linaro.org>
+Date:   Thu, 21 Apr 2022 13:38:06 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v3 0/6] PCI: qcom: rework pipe_clk/pipe_clk_src handling
-Content-Language: en-GB
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2 1/7] dt-bindings: rtc: rzn1: Describe the RZN1 RTC
+Content-Language: en-US
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20220413233144.275926-1-dmitry.baryshkov@linaro.org>
- <YmEx5JPcDucjDiho@hovoldconsulting.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YmEx5JPcDucjDiho@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>
+References: <20220421090016.79517-1-miquel.raynal@bootlin.com>
+ <20220421090016.79517-2-miquel.raynal@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220421090016.79517-2-miquel.raynal@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/04/2022 13:28, Johan Hovold wrote:
-> On Thu, Apr 14, 2022 at 02:31:38AM +0300, Dmitry Baryshkov wrote:
->> PCIe pipe clk (and some other clocks) must be parked to the "safe"
->> source (bi_tcxo) when corresponding GDSC is turned off and on again.
->> Currently this is handcoded in the PCIe driver by reparenting the
->> gcc_pipe_N_clk_src clock.
->>
->> Instead of doing it manually, follow the approach used by
->> clk_rcg2_shared_ops and implement this parking in the enable() and
->> disable() clock operations for respective pipe clocks.
+On 21/04/2022 11:00, Miquel Raynal wrote:
+> Add new binding file for this RTC.
 > 
-> Please take a look at the alternative approach of moving the pipe clock
-> muxing into the PHY driver:
-> 
-> 	https://lore.kernel.org/all/20220421102041.17345-1-johan+linaro@kernel.org/
-> 
-> The implementation is more straight forward and I believe it is also
-> more conceptually sound as it ties the muxing to when the PHY is powered
-> on so that the GCC pipe clock always has a valid source.
-
-I still have a slight preference for the automated variant:
-  - Your code is manually doing exactly the same thing. Remuxing the 
-clocks in connection to the GCC_PIPE_n_CLOCK enabling/disabling
-  - DTS compatibility is preserved
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
 
--- 
-With best wishes
-Dmitry
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
