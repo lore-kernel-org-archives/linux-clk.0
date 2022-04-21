@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E11BC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B176BC4167E
 	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 23:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442788AbiDUXvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 19:51:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
+        id S1442800AbiDUXvs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 19:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442780AbiDUXvq (ORCPT
+        with ESMTP id S1442787AbiDUXvq (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 19:51:46 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF6F7434B5;
-        Thu, 21 Apr 2022 16:48:52 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id b68so4762558qkc.4;
-        Thu, 21 Apr 2022 16:48:52 -0700 (PDT)
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA98042EF1;
+        Thu, 21 Apr 2022 16:48:55 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id c1so4878901qvl.3;
+        Thu, 21 Apr 2022 16:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oNDSaAZDG6c0X/AAevWMv+Hj9gwc9S8Gx1Ep4WfFpAo=;
-        b=VMU6PqlaX0QEhB+kkqlvjU1fkuHokcH7krOoWy5GOTHB8xoeliEuXGVXpsNB0Dz+Xd
-         BbBATqDrqEH9zXyhcIYU8xg7bZ1JhBV8iGp3kkSWUqKMomusN/sgcMfT+gW3paOL0z3D
-         xu+vNW1zW7yY6vvYvHo0CFYHAFF9dyoP3mhjAP98M6NsbPyd+evObJBdpFzWsd4+lEZR
-         OH5d2DANgk2raeqFASbkpduWa1goBPgzND0tgfUA3jO11r4ld93k7+lDwMyGGi1W1Fuk
-         Cs/ulF5PpUoDQGVoea0bxdhTSej86O9eKfFC9FOSsryEROrxk/2xDFa7k9hHEFctVbCg
-         an4w==
+        bh=SE94/Kbz0iYkWqSiwiZXgkxJUhacoUay8DsU/fM4rGc=;
+        b=O+Cm9zSSCAsfuY1cv1uyHWIfLd6AHQdXHkxkvQ1owHl1q4ed7gdNQPhDpX5U39ujmv
+         yxHn/O7exq1vCm2R4Di+f5GdGcazARxVpYR+LbOz/om50ZJUiuhNwSe/W6O8i7ARpSGQ
+         sY60BVfp3B8pLDaUfDS918qDgPQvki6XTXv1SXJUne0mHecVCvAkhP5SeB7Jl11anPcV
+         tOw2oSITm50Hq0EvbwOmG5qp2GC/7aihcvhgAY7xt6OtbutHsyMm6T/DKNO72WWyzLXb
+         2+dFGD2ybpnAYizCWKXrnWd+g1rkN8/gCfZSr+xRjYSlsTPkWNm/Ms8qB1RnC85iuZTd
+         JJzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oNDSaAZDG6c0X/AAevWMv+Hj9gwc9S8Gx1Ep4WfFpAo=;
-        b=zvZD2+KXFR7ErAUA09ghtb6T9XLMquCpY3Enj6uqWALyWyno5sOfmAFJRsSqX9X2Fv
-         H/XsbxX1F8sdEfuv1Q2vV3+wHkfhPrZgFJA6Cgwe8swqBqU2SekhG7cYNiVF8TQxfE19
-         ME/B3d0PVtdKecBWc4mLfh1k+ufCSZNsjKvgVRzOzl0MLXJe69Tpep81E97YoF8Xn5Ss
-         x1fF3JusvyJsM2c9sx8G1jisT2j9q+eSueYGkW4nDX8ay6E/XHmRZZT1D1GAP7pdYYmM
-         O9FNNr5hlm5o7Pa6LSZ3bpbNQOCzFl+yDV3/K5IWvvol57PicBC0Ur5dGSYQg40M3B9r
-         jGRw==
-X-Gm-Message-State: AOAM530+UxCYO45spay9BArpG2kleWCnssSXlX7fSEBW0qf8Rcirbcco
-        WNTnNS7CvXpE1SuNsg9i6gsdpOQfVESu
-X-Google-Smtp-Source: ABdhPJzQcjTL3dqTlGkITB2iTWhj3H7yjo6OI6wlcQC1KEOsTaT9FApw/Jt+AfmjLr6ymBNQvEZ7iQ==
-X-Received: by 2002:a05:620a:24c6:b0:69e:9d81:1e15 with SMTP id m6-20020a05620a24c600b0069e9d811e15mr1188307qkn.270.1650584931201;
-        Thu, 21 Apr 2022 16:48:51 -0700 (PDT)
+        bh=SE94/Kbz0iYkWqSiwiZXgkxJUhacoUay8DsU/fM4rGc=;
+        b=kI9ve79GTJP9TH4fUIhtIe5rbWwpMg09m529I99NoFP92ggHBzvgDOFdVLW//LyuSI
+         QQv/t3PTRFkcr2a0HrW+0ff+qZW8srkY6nuZ5PLLCEGSUgTQDBZM/OKrAHQ1ofdWaI6r
+         wcFXc3c7PZ48sI+5BMBe9n///RV1ohx0dcB5h843+WoRG9Zz93zGTlRf3kkqislbh3d2
+         zZJ0w82kE+jRoeJtoMgmaSnIk64vU7RrdTEhzPDqNdoNKkJepVrpK7liw8R+Z2N4SKQA
+         U6th1P+TpRPJfkHwutHbSGJHlhSpvHu6PkLrxzx9KGreOpxF6nKQT6ibVYxAXOfig0FU
+         Wnsw==
+X-Gm-Message-State: AOAM530O4wDXdsjvYsqWJBZr4jAsjkAj9W0VTNP7flGuK6RKE8FdE/pJ
+        6z2PM2nMyyhnOLHBIBHC5wMkcVnVpzjD
+X-Google-Smtp-Source: ABdhPJy1Vx4dCLoAejscY+AlE0uvjsIV8mL4rJ+39tNdmbaMB3K37JbaK9DmVM8bGfz4EduxkZW3sw==
+X-Received: by 2002:a05:6214:c85:b0:441:2b1c:dd46 with SMTP id r5-20020a0562140c8500b004412b1cdd46mr1437161qvr.41.1650584934575;
+        Thu, 21 Apr 2022 16:48:54 -0700 (PDT)
 Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.49
+        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 16:48:50 -0700 (PDT)
+        Thu, 21 Apr 2022 16:48:53 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
@@ -54,9 +54,9 @@ Cc:     Kent Overstreet <kent.overstreet@gmail.com>, hch@lst.de,
         hannes@cmpxchg.org, akpm@linux-foundation.org,
         linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: [PATCH v2 0/8] Printbufs & improved shrinker debugging
-Date:   Thu, 21 Apr 2022 19:48:29 -0400
-Message-Id: <20220421234837.3629927-6-kent.overstreet@gmail.com>
+Subject: [PATCH v2 2/8] Input/joystick/analog: Convert from seq_buf -> printbuf
+Date:   Thu, 21 Apr 2022 19:48:31 -0400
+Message-Id: <20220421234837.3629927-8-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <20220421234837.3629927-1-kent.overstreet@gmail.com>
 References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
@@ -66,66 +66,88 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-v1 of this patch series here:
-https://lore.kernel.org/linux-mm/20220419203202.2670193-1-kent.overstreet@gmail.com/T/
+seq_buf is being deprecated, this converts to printbuf which is similar
+but heap allocates the string buffer.
 
-Changes since v1:
+This means we have to consider memory allocation context & failure: Here
+we're in device initialization so GFP_KERNEL should be fine, and also as
+we're in device initialization returning -ENOMEM is fine.
 
- - Converted some, not all, seq_buf code to printbufs (thanks Christoph for
-   pointing out seq_buf).
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ drivers/input/joystick/analog.c | 37 ++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
 
-   The seq_buf code I didn't convert is arch specific code where the memory
-   allocation context is unclear, and they're using seq_buf to do everything on
-   the stack. I'm considering adding a mode to printbufs where we point it at an
-   external buffer instead - it wouldn't be much code, but OTOH seq_buf isn't
-   much code either and it seems to be somewhat tied to tracing infrastructure.
-   Deferring a decision on what to do for now.
-
- - pr_human_readable_u64() now uses string_get_size() (thanks Matthew for
-   pointing this one out)
-
- - added new helpers printbuf_str() for getting a guaranteed-null-terminated
-   string, and printbuf_atomic_inc() and printbuf_atomic_dec() for marking
-   sections where allocations must be GFP_ATOMIC.
-
- - Broke out shrinker_to_text(): this new helper could be used by new sysfs or
-   debugfs code, for displaying information about a single shrinker (as Roman is
-   working on)
-
- - Added new tracking, per shrinker, for # of objects requested to be freed and
-   # actually freed. Shrinkers won't necessarily free all objects requested for
-   perfectly legitimate reasons, but if the two numbers are wildly off then
-   that's going to lead to memory reclaim issues - these are both also included
-   in shrinker_to_text().
-
-Kent Overstreet (8):
-  lib/printbuf: New data structure for heap-allocated strings
-  Input/joystick/analog: Convert from seq_buf -> printbuf
-  mm/memcontrol.c: Convert to printbuf
-  clk: tegra: bpmp: Convert to printbuf
-  mm: Add a .to_text() method for shrinkers
-  mm: Count requests to free & nr freed per shrinker
-  mm: Move lib/show_mem.c to mm/
-  mm: Centralize & improve oom reporting in show_mem.c
-
- drivers/clk/tegra/clk-bpmp.c    |  21 ++-
- drivers/input/joystick/analog.c |  37 +++--
- include/linux/printbuf.h        | 164 +++++++++++++++++++
- include/linux/shrinker.h        |   8 +
- lib/Makefile                    |   4 +-
- lib/printbuf.c                  | 274 ++++++++++++++++++++++++++++++++
- mm/Makefile                     |   2 +-
- mm/memcontrol.c                 |  68 ++++----
- mm/oom_kill.c                   |  23 ---
- {lib => mm}/show_mem.c          |  14 ++
- mm/slab.h                       |   6 +-
- mm/slab_common.c                |  53 +++++-
- mm/vmscan.c                     |  88 ++++++++++
- 13 files changed, 666 insertions(+), 96 deletions(-)
- create mode 100644 include/linux/printbuf.h
- create mode 100644 lib/printbuf.c
- rename {lib => mm}/show_mem.c (77%)
-
+diff --git a/drivers/input/joystick/analog.c b/drivers/input/joystick/analog.c
+index 3088c5b829..72e1e30d19 100644
+--- a/drivers/input/joystick/analog.c
++++ b/drivers/input/joystick/analog.c
+@@ -19,7 +19,7 @@
+ #include <linux/input.h>
+ #include <linux/gameport.h>
+ #include <linux/jiffies.h>
+-#include <linux/seq_buf.h>
++#include <linux/printbuf.h>
+ #include <linux/timex.h>
+ #include <linux/timekeeping.h>
+ 
+@@ -337,26 +337,32 @@ static void analog_calibrate_timer(struct analog_port *port)
+  * analog_name() constructs a name for an analog joystick.
+  */
+ 
+-static void analog_name(struct analog *analog)
++static int analog_name(struct analog *analog)
+ {
+-	struct seq_buf s;
++	struct printbuf buf = PRINTBUF;
++	int ret = 0;
+ 
+-	seq_buf_init(&s, analog->name, sizeof(analog->name));
+-	seq_buf_printf(&s, "Analog %d-axis %d-button",
+-		 hweight8(analog->mask & ANALOG_AXES_STD),
+-		 hweight8(analog->mask & ANALOG_BTNS_STD) + !!(analog->mask & ANALOG_BTNS_CHF) * 2 +
+-		 hweight16(analog->mask & ANALOG_BTNS_GAMEPAD) + !!(analog->mask & ANALOG_HBTN_CHF) * 4);
++	pr_buf(&buf, "Analog %d-axis %d-button",
++	       hweight8(analog->mask & ANALOG_AXES_STD),
++	       hweight8(analog->mask & ANALOG_BTNS_STD) + !!(analog->mask & ANALOG_BTNS_CHF) * 2 +
++	       hweight16(analog->mask & ANALOG_BTNS_GAMEPAD) + !!(analog->mask & ANALOG_HBTN_CHF) * 4);
+ 
+ 	if (analog->mask & ANALOG_HATS_ALL)
+-		seq_buf_printf(&s, " %d-hat",
+-			       hweight16(analog->mask & ANALOG_HATS_ALL));
++		pr_buf(&buf, " %d-hat",
++		       hweight16(analog->mask & ANALOG_HATS_ALL));
+ 
+ 	if (analog->mask & ANALOG_HAT_FCS)
+-		seq_buf_printf(&s, " FCS");
++		pr_buf(&buf, " FCS");
+ 	if (analog->mask & ANALOG_ANY_CHF)
+-		seq_buf_printf(&s, (analog->mask & ANALOG_SAITEK) ? " Saitek" : " CHF");
++		pr_buf(&buf, (analog->mask & ANALOG_SAITEK) ? " Saitek" : " CHF");
+ 
+-	seq_buf_printf(&s, (analog->mask & ANALOG_GAMEPAD) ? " gamepad" : " joystick");
++	pr_buf(&buf, (analog->mask & ANALOG_GAMEPAD) ? " gamepad" : " joystick");
++
++	ret = buf.allocation_failure ? -ENOMEM : 0;
++	if (!ret)
++		strlcpy(analog->name, buf.buf, sizeof(analog->name));
++	printbuf_exit(&buf);
++	return ret;
+ }
+ 
+ /*
+@@ -369,7 +375,10 @@ static int analog_init_device(struct analog_port *port, struct analog *analog, i
+ 	int i, j, t, v, w, x, y, z;
+ 	int error;
+ 
+-	analog_name(analog);
++	error = analog_name(analog);
++	if (error)
++		return error;
++
+ 	snprintf(analog->phys, sizeof(analog->phys),
+ 		 "%s/input%d", port->gameport->phys, index);
+ 	analog->buttons = (analog->mask & ANALOG_GAMEPAD) ? analog_pad_btn : analog_joy_btn;
 -- 
 2.35.2
 
