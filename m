@@ -2,159 +2,222 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACC9C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 05:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B460C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Apr 2022 06:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384473AbiDUFjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 01:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36662 "EHLO
+        id S1384633AbiDUGIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 02:08:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345361AbiDUFjK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 01:39:10 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C1EE12093;
-        Wed, 20 Apr 2022 22:36:20 -0700 (PDT)
-X-UUID: a9312b898733484fa1ac93e97664829f-20220421
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:5e5ef666-9c2a-421e-9c78-5042f2324c18,OB:0,LO
-        B:0,IP:0,URL:8,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:8
-X-CID-META: VersionHash:faefae9,CLOUDID:6cb79aef-06b0-4305-bfbf-554bfc9d151a,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: a9312b898733484fa1ac93e97664829f-20220421
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 562152983; Thu, 21 Apr 2022 13:36:16 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 21 Apr 2022 13:36:14 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 21 Apr
- 2022 13:36:14 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 21 Apr 2022 13:36:14 +0800
-Message-ID: <8c42fd4345063a9a538b0c28342171616c9d0b02.camel@mediatek.com>
-Subject: Re: [PATCH V2 09/12] clk: mediatek: reset: Add support for input
- offset and bit from DT
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <allen-kh.cheng@mediatek.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Thu, 21 Apr 2022 13:36:14 +0800
-In-Reply-To: <20220420130527.23200-10-rex-bc.chen@mediatek.com>
-References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
-         <20220420130527.23200-10-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S1358324AbiDUGIM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 02:08:12 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3CBC2194
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:05:22 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-2ebf3746f87so41268967b3.6
+        for <linux-clk@vger.kernel.org>; Wed, 20 Apr 2022 23:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gEbbg2zUxEbfOPOeQbHxD+QIKFZ02AhkGwLbMa0NQSM=;
+        b=KLsAX0i9jDGFxcJ1StIniQy3cR6kMX25Hk/LgVmLefBQl/yALbKZ+rvMpxwfzZ9B9A
+         wqulaM7y65JqbZWNrH23JjM7ZCVW9hCgBbLIm3x4Qo3l3uOrLKR7cBwrXzuzUhxDhpnc
+         +AGPPjIGkT/talsWQY5pjnXm7wvtFWO4cssX0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gEbbg2zUxEbfOPOeQbHxD+QIKFZ02AhkGwLbMa0NQSM=;
+        b=dsLn0Wg+5BpGW5Y4rd+v2/1FKBrfCMl0XArRos2GvdBqlz/je/r2hYZHi/3VbhlYoU
+         e+3BrwI5ATCwHyfmNgXW3kVS8BtxmO84daoQtO4xcsx3nmlz/NFFuTiy/tAlts7n+uZU
+         RNYDK3Hl9QC/ZDZHgGD2jIVAKDVB1YB0JW8crK/iFJY0FUa5pQ2kVzmQXiqPUcMJuMbW
+         rJIpzb3wYfXYaX472aTAaYcYdMGbvHTItLwk0uNvdg3VXw7lFFMB7D7bXna+4r2+5OfA
+         /78hJSOUnAsJNbu/PkB3g8Cg4V6oBeC2L3jAHQW25OR3iRM9x45D1XuDmLaIdylBJyYb
+         7U7w==
+X-Gm-Message-State: AOAM532Mp4QmckJIqsms9F5SsD+f14hDs472VyikMSQIbBvKZ4FlGwZo
+        mZW8WVNQxGsOXVGWqgofTTwhYFu+wd0CeFcDDPrAOA==
+X-Google-Smtp-Source: ABdhPJzzdgkklWVlYeUDIN7ffgffId2uPhqM9WuJYRxVahXvUomxKUoe1jLZymEecsTdjNSGDTjwSXCB2zRhqiYXq+o=
+X-Received: by 2002:a05:690c:110:b0:2ec:2d79:eee1 with SMTP id
+ bd16-20020a05690c011000b002ec2d79eee1mr24722358ywb.21.1650521121784; Wed, 20
+ Apr 2022 23:05:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20220419081246.2546159-1-wenst@chromium.org> <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
+ <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com> <ca8048f4-2e75-a49b-6c54-9f6abba6ead3@collabora.com>
+In-Reply-To: <ca8048f4-2e75-a49b-6c54-9f6abba6ead3@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Thu, 21 Apr 2022 14:05:10 +0800
+Message-ID: <CAGXv+5G2Uyq5fdMUnhr5wOm6O8M3dHNKGaSP2L_Vv1o28mXmOQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider APIs
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2022-04-20 at 21:05 +0800, Rex-BC Chen wrote:
-> To use the clock reset function easier, we implement the of_xlate.
-> This function is only adopted in version MTK_SET_CLR because of
-> the method of id calculation.
-> 
-> There is no impact for original use. If the argument number is not
-> larger than 1, it will return original id.
-> 
-> With this implementation if we want to set offset 0x120 and bit 16,
-> we can just write something like "resets = <&infra_rst 0x120 16>;".
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> ---
->  drivers/clk/mediatek/reset.c | 24 ++++++++++++++++++++++++
->  drivers/clk/mediatek/reset.h |  1 +
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/clk/mediatek/reset.c
-> b/drivers/clk/mediatek/reset.c
-> index 1173111af3ab..dbe812062bf5 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -59,6 +59,20 @@ static const struct reset_control_ops
-> mtk_reset_ops_set_clr = {
->  	.reset = mtk_reset_set_clr,
->  };
->  
-> +static int reset_xlate(struct reset_controller_dev *rcdev,
-> +		       const struct of_phandle_args *reset_spec)
-> +{
-> +	unsigned int offset, bit;
-> +
-> +	if (reset_spec->args_count <= 1)
-> +		return reset_spec->args[0];
-> +
-> +	offset = reset_spec->args[0];
-> +	bit = reset_spec->args[1];
-> +
-> +	return (offset >> 4) * 32 + bit;
-> +}
-> +
->  static const struct reset_control_ops *rst_op[MTK_RST_MAX] = {
->  	[MTK_RST_SIMPLE] = &reset_simple_ops,
->  	[MTK_RST_SET_CLR] = &mtk_reset_ops_set_clr,
-> @@ -98,6 +112,11 @@ int mtk_clk_register_rst_ctrl(struct device_node
-> *np,
->  	data->rcdev.ops = rst_op[desc->version];
->  	data->rcdev.of_node = np;
->  
-> +	if (desc->version == MTK_RST_SET_CLR) {
-> +		data->rcdev.of_reset_n_cells = max(desc->reset_n_cells, 
-> 1);
-> +		data->rcdev.of_xlate = reset_xlate;
-> +	}
-> +
->  	ret = reset_controller_register(&data->rcdev);
->  	if (ret) {
->  		pr_err("could not register reset controller: %d\n",
-> ret);
-> @@ -143,6 +162,11 @@ int mtk_clk_register_rst_ctrl_with_dev(struct
-> device *dev,
->  	data->rcdev.of_node = np;
->  	data->rcdev.dev = dev;
->  
-> +	if (desc->version == MTK_RST_SET_CLR) {
-> +		data->rcdev.of_reset_n_cells = max(desc->reset_n_cells, 
-> 1);
-> +		data->rcdev.of_xlate = reset_xlate;
-> +	}
-> +
->  	ret = devm_reset_controller_register(dev, &data->rcdev);
->  	if (ret)
->  		dev_err(dev, "could not register reset controller:
-> %d\n", ret);
-> diff --git a/drivers/clk/mediatek/reset.h
-> b/drivers/clk/mediatek/reset.h
-> index 30559bf45f7e..4cfc281fc50d 100644
-> --- a/drivers/clk/mediatek/reset.h
-> +++ b/drivers/clk/mediatek/reset.h
-> @@ -19,6 +19,7 @@ struct mtk_clk_rst_desc {
->  	u8 version;
->  	u32 reg_num;
->  	u16 reg_ofs;
-> +	int reset_n_cells;
->  };
->  
->  struct mtk_clk_rst_data {
+On Wed, Apr 20, 2022 at 8:02 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 19/04/22 18:09, Chen-Yu Tsai ha scritto:
+> > On Tue, Apr 19, 2022 at 11:08 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> Il 19/04/22 10:12, Chen-Yu Tsai ha scritto:
+> >>> Hi everyone,
+> >>>
+> >>> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
+> >>>
+> >>
+> >> ..snip..
+> >>
+> >>>
+> >>> The next phase of the cleanup/improvement shall be to introduce some
+> >>> variant of `struct clk_parent_data` to describe clk relationships
+> >>> efficiently.
+> >>>
+> >>> Please have a look.
+> >>>
+> >>
+> >> Hello Chen-Yu,
+> >>
+> >> I am grateful to see this series, as the MediaTek clock drivers are getting
+> >> a bit old, despite new platforms being implemented practically as we speak.
+> >>
+> >> With this, you surely get that I completely agree with the proposed cleanup
+> >> and modernization of the entire MediaTek clocks infrastructure, but I think
+> >> that introducing a `struct clk_parent_data` for these drivers is, at this
+> >> point, a must, that not only fully justifies these patches, but also "makes
+> >> the point" - as the effect of that would be a performance improvement as we
+> >> would *at least* avoid lots of clk_cpy_name() in case of parent_hws, or in
+> >> case or parent_data where no .fw_name is provided (which would be the case
+> >> for most of the clocks).
 
-Hello all,
+BTW, clk_cpy_name() handles const values correctly, i.e. it won't actually
+copy them. The performance issue with using names is the clk core has to
+match them against the ever increasing list of clks in the system to find
+the actual clk object.
 
-I think reset_xlate can also support for MTK_RST_SIMPLE.
-If this patch is acceptable, I will modify for MTK_RST_SIMPLE in next
-version.
+> > You and me both. :) And yes, one of the intended results is to make the
+> > clk driver probe faster.
+> >
+> >> That said, my advice would be to add that conversion to declaring clocks
+> >> with .hw.init.parent_data and/or .hw.init.parent_hws to this series as to
+> >> really make it complete.
+> >
+> > This series itself already touches a lot of code, even if most of it was
+> > done by coccinelle. I'd like to send them separately to not overwhelm
+> > people.
+> >
+> > Also, I haven't actually started on that part yet. It is actually part 3
+> > of my overall plan. I have a good idea of what to do, given I did similar
+> > work for the sunxi-ng clk drivers (though half finished...).
+>
+> Having a good plan means that you're already half-done though :) :) :)
+>
+> Besides, the reason why I said that you should do the conversion in the same
+> series was exactly because your changes are done with coccinelle scripts...
+> ...but I thought that you already had something in the works for that.
 
-BRs,
-Rex
+The final part won't be doable with coccinelle scripts though. It involves
+converting the existing list of clk parent names to IDs. It might be doable
+in Perl or Python, but would likely involve a whole lot of string parsing
+and pattern matching ...
 
+> Since you still need some time for the final part, having this kind of (even
+> if partial) modernization is still golden.
+> Let's do it in two steps as you prefer then, that's fine for me.
+>
+> >
+> > Most of the clk references are internal to each driver, and those would
+> > be mapped from some CLK_ID to some `struct clk_hw *` internally, but all
+> > blocks have external parents that need to be modeled as well, and we
+> > would likely need global clk name fallbacks for the blocks that don't
+> > have parents declared in the device tree, which is unfortunately most
+> > of them. Especially the central clock controllers like infracfg or pericfg
+> > take many clk inputs, to the point that MediaTek folks were somewhat
+> > unwilling to bloat the device tree with them.
+> >
+> > So it does seem easier to use something like clk_parent_data with
+> > `struct clk_hw *` replaced with an index everywhere. This structure
+> > would get converted into clk_parent_data by the singular clk registration
+> > helpers.
+> >
+>
+> I may not be understanding what you mean by mapping the CLK_ID internally, but
+> from what my brain processed, I think that you want to look at, and basically
+> replicate, how it's done in the Qualcomm clock drivers (and perhaps standardize
+> that in the clock API?).
+>
+> Specifically, clk/qcom/common.h, struct parent_map.
+>
+> Though, I admit I haven't looked at the MTK clocks *very deeply*, so I may be
+> misunderstanding something.
+
+Not exactly. All the clocks in the MTK drivers are allocated at runtime,
+so we can't use clk_parent_data to point to not-yet-allocated clk_hw-s.
+Instead we'll need to have
+
+    struct mtk_clk_parent_data {
+        unsigned int clk_id; /* Match CLK_XXX_YYY from dt-binding headers */
+        ... /* remaining fields same as mtk_clk_parent_data */
+    };
+
+and create the actual clk_parent_data at runtime by looking up clk_id in
+the set of already registered clks:
+
+    int mtk_clk_register_XXX(..., struct mtk_clk_parent_data *pdata,
+                             struct clk_hw_onecell_data *clk_data) {
+        struct clk_parent_data data = {
+            .hw = clk_data[pdata->clk_id],
+            /* copy other fields verbatim */
+        };
+        ...
+    }
+
+Obviously this forces some ordering of how the clks are registered.
+I believe the order is already correct, and if it isn't, it would be
+easy to detect, and we can reorder things to fix it.
+
+> > This would have to coexist with the existing helpers we have. So I think
+> > this work would be combined with the helper API cleanup / alignment with
+> > clk provider API.
+> >
+> > Does that make sense to you?
+> >
+>
+> Yes that does fully make sense to me.
+>
+> >> Of course, if you have concerns about old platforms that you cannot test,
+> >> or for which this kind of conversion would require a huge amount of effort,
+> >> then I would go for converting as many as possible as a first step and then
+> >> leave the others for later.
+> >>
+> >> I would envision MT8183, 8186, 8192, 8195 to be a good amount of first
+> >> candidates for this great effort.
+> >
+> > I'm working with MT8183 right now, as it can readily boot mainline to a
+> > shell. Depending on the schedule and whose on board with resources, I'd
+
+* who's onboard *
+
+> > probably handle the other ChromeOS platforms, or delegate it internally.
+> >
+> >
+>
+> That sounds like a plan. Besides, I wasn't trying to give you any hurry
+> whatsoever - I was simply thinking out loud :))
+
+Got it. :)
+
+
+Regards
+ChenYu
