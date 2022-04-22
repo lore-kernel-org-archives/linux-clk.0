@@ -2,136 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF536C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 04:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4C4C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 04:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442794AbiDVERk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 00:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56004 "EHLO
+        id S1443894AbiDVEXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 00:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239354AbiDVERj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 00:17:39 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E23E14EA20
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 21:14:47 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-2ec0bb4b715so73198117b3.5
-        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 21:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R7jGqyYJMUVo08fKH+szIIQUXUxBVoUo95cPDD/inJ4=;
-        b=I9zUiMzdx0x2AlBPle+xfx0YbHSjxYYQzMOxKnLzS5AN60wHrUGdTUNXRzRKZNWmRB
-         9/3o8X4D7FM5xD5BeHyIcf8ZQ9PSZkS6eg6Sku3+6xyQH3NVx54VTYCYGsVZsyq3yAZz
-         vrLRrZwZGIuU8vS6PrH96FzJkh+IepxJW45pY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R7jGqyYJMUVo08fKH+szIIQUXUxBVoUo95cPDD/inJ4=;
-        b=jiW64thJowO1xTx9/nD54drL+53j1B1PhKRf66AWTiUxs3cZXrxwxBv1OlOhmguxhh
-         bt4UqTQg/Mr/s291pi7gyBfqYtpb4U9R6z/EDs1GNFK2EBm3TvCGIr5ZgWxz7z1t++/Q
-         bydSLNNf0REarB2GGayk4IaOjqTkxdmX/i94h/cukrIUnlgdtdupyaBkfb+NNs53NZRq
-         i4bVacwShefEHEPTGKPjl+00oyNiG+2rU8XBEtNzakUtW5Zt1hL+/Bz2XQNc0YvYfN82
-         HItrchW10XZSvAsoc4KwlTfCGIIymutfAVD1qjlA7bz+GtccvhCNK+H9VZBBgsxEteM9
-         /kqw==
-X-Gm-Message-State: AOAM532Vfex/POiBay6UPTiFaqHHxoRwntqiWE+2YOJ1O4lmwvD8Y+ou
-        ZAOIMi7hc31izWfdckChlUK52kZPkipc/FiRNHkxSw==
-X-Google-Smtp-Source: ABdhPJzT2Ffgf1KZKr2ZKeMbm0T2FTTmEEP6KdtEZrJKSquU8IPPEsmgOIJHitJbSdrl7JmX2J8oRdgb7gZjDarf8wc=
-X-Received: by 2002:a81:ad1f:0:b0:2f4:da5b:5133 with SMTP id
- l31-20020a81ad1f000000b002f4da5b5133mr3074648ywh.105.1650600887150; Thu, 21
- Apr 2022 21:14:47 -0700 (PDT)
+        with ESMTP id S1355549AbiDVEXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 00:23:13 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191534992B;
+        Thu, 21 Apr 2022 21:20:20 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4F58068B05; Fri, 22 Apr 2022 06:20:17 +0200 (CEST)
+Date:   Fri, 22 Apr 2022 06:20:17 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
+        roman.gushchin@linux.dev, rostedt@goodmis.org
+Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
+ heap-allocated strings
+Message-ID: <20220422042017.GA9946@lst.de>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com> <20220421234837.3629927-7-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-References: <20220419081246.2546159-1-wenst@chromium.org> <3591fcc1-d34a-b40a-4e78-edcf9d2ddf08@collabora.com>
- <CAGXv+5HhcQbdGLQFtgPnvzVbSKaQ5GQGvmjwPVOVxjrYnMh1dg@mail.gmail.com>
- <ca8048f4-2e75-a49b-6c54-9f6abba6ead3@collabora.com> <CAGXv+5G2Uyq5fdMUnhr5wOm6O8M3dHNKGaSP2L_Vv1o28mXmOQ@mail.gmail.com>
- <20220422014044.16530C385A7@smtp.kernel.org>
-In-Reply-To: <20220422014044.16530C385A7@smtp.kernel.org>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 22 Apr 2022 12:14:36 +0800
-Message-ID: <CAGXv+5HJ2EmxH49L4a3t-gGcQpNLwgi74=uZ1iB1fNzSFz7Gbw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider APIs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220421234837.3629927-7-kent.overstreet@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 9:40 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Chen-Yu Tsai (2022-04-20 23:05:10)
-> >
-> > Not exactly. All the clocks in the MTK drivers are allocated at runtime,
-> > so we can't use clk_parent_data to point to not-yet-allocated clk_hw-s.
-> > Instead we'll need to have
-> >
-> >     struct mtk_clk_parent_data {
-> >         unsigned int clk_id; /* Match CLK_XXX_YYY from dt-binding headers */
-> >         ... /* remaining fields same as mtk_clk_parent_data */
-> >     };
-> >
-> > and create the actual clk_parent_data at runtime by looking up clk_id in
-> > the set of already registered clks:
-> >
-> >     int mtk_clk_register_XXX(..., struct mtk_clk_parent_data *pdata,
-> >                              struct clk_hw_onecell_data *clk_data) {
-> >         struct clk_parent_data data = {
-> >             .hw = clk_data[pdata->clk_id],
-> >             /* copy other fields verbatim */
-> >         };
-> >         ...
-> >     }
-> >
-> > Obviously this forces some ordering of how the clks are registered.
-> > I believe the order is already correct, and if it isn't, it would be
-> > easy to detect, and we can reorder things to fix it.
->
-> If this is a common problem, we may need to come up with a generic
-> solution that either adds a new clk registration API that fills in the
-> clk_parent_data hw pointer or add another member to struct
-> clk_parent_data that says "index into this other array of clk_hw
-> pointers".
-
-Looking through the large clk drivers, at least Rockchip and MediaTek
-drivers would benefit from this. And maybe the Tegra ones as well, though
-I'm not familiar with them.
-
-Meson, Qcom, and sunxi-ng all use the static clk_hw scheme, so they're
-unaffected.
-
-I can think of a couple ways to tackle this:
-
-A. Add a new data structure as I showed above, and a helper to fill in
-   |struct clk_parent_data| from said data structure. This basically moves
-   what I planned to do for the MediaTek clk driver to the clk provider
-   API. This is the least intrusive option.
-
-B. Add the |clk_id| field to |struct clk_parent_data|, and a |struct clk_hw *|
-   field to |struct clk_init_data| for the array. Lookup would be done at
-   clk registration time in clk_core_populate_parent_map(). This still
-   forces checking of the clk_hw pointer and proper ordering of clk
-   registration though. And it also bloats the data structures for folks
-   not using the feature.
-
-C. Same as B, but keep the pointer to the array around (in clk_core?), and
-   move the lookup into clk_core_fill_parent_index(). This provides similar
-   behavior to using global clk name or static |struct clk_hw *| values in
-   that clk registration order is not restricted.
-
-All the above options are designed around the desire to be able to make
-either the new data structure or |struct clk_parent_data| constant.
-
-Thoughts?
-
-
-Regards
-ChenYu
+I still see absolutel no reason to bloat the kernel with a duplicate
+of the existing seq_buf functionality.  Please use that and improve it
+where needed for your use case.
