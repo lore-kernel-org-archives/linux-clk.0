@@ -2,117 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAA2C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 14:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FB2C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 14:54:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1448760AbiDVOlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 10:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55258 "EHLO
+        id S1448977AbiDVO5A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 10:57:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448757AbiDVOk7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 10:40:59 -0400
+        with ESMTP id S1448987AbiDVO47 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 10:56:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D0EF5BD3B;
-        Fri, 22 Apr 2022 07:38:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA78E5C36E;
+        Fri, 22 Apr 2022 07:54:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DB86360A6A;
-        Fri, 22 Apr 2022 14:38:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A66C385A4;
-        Fri, 22 Apr 2022 14:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650638285;
-        bh=2KebUru9Oip9dwY6heZ6bnUO3jvAGYTmEfS1DsUFi3Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Mfj6dWMxh99Gz193yLbjJA6A8S0nfoOyYro41TieznHo2CfRLaNXSp1nLz2WGMXxs
-         iZrMWJTT4P0wU9C35c8ezGmYqW98A4hqworQy5NVgaAu3vOdrP0BTY5m3cltV5bXME
-         kBTOlulQjJ9Utq7Q2Gzaa9kh1aRyRQVRU/pvgSCsw7EDoO02eMtpxTFy5N+H2ve164
-         rE09lZ17NluAimAgO5g+AD0yxKZBMfah6W9d7Ixb/60j2L1/DbZKEnP9zIX/oz16P1
-         ldZbT31gBN9QrbtyyMh9VnmiTvjjRbAB+vTlje54hMpTDu8NNVroCVmwCo1ol1zCIV
-         4RBabTRGhDaIQ==
-From:   matthias.bgg@kernel.org
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     weiyi.lu@mediatek.com, chun-jie.chen@mediatek.com,
-        ikjn@chromium.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        allen-kh.cheng@mediatek.com,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH] clk: mediatek: Delete MT8192 msdc gate
-Date:   Fri, 22 Apr 2022 16:37:56 +0200
-Message-Id: <20220422143756.14806-1-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE36614CB;
+        Fri, 22 Apr 2022 14:54:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC7EC385AB;
+        Fri, 22 Apr 2022 14:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1650639244;
+        bh=c/tlEA8ZlzdxmIQcMOOwVpEn66NWm3rRj8+jDgV6xxc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gqA0vzwFNzldjsjjRmYleh3zBQQsf2csoe8Klhv/3GjBm4DNaPy55KzSHN+92OUFG
+         m3GNyJl25wnUK7V/vD5eogrGZ+M/bqPHb977EwGlbc3JNLGzmYWVnypL9eTSt5TC+O
+         s80RQTbQw2OrYCwnCnsa3LtgR6qLawgvnYBRHp1Q=
+Date:   Fri, 22 Apr 2022 16:54:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 00/12] Fix broken usage of driver_override (and kfree
+ of static memory)
+Message-ID: <YmLBiQjyKhFZsPlG@kroah.com>
+References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
+ <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Matthias Brugger <matthias.bgg@gmail.com>
+On Wed, Apr 20, 2022 at 11:20:06AM +0200, Krzysztof Kozlowski wrote:
+> On 19/04/2022 13:34, Krzysztof Kozlowski wrote:
+> 
+> Hi Greg, Rafael,
+> 
+> The patchset was for some time on the lists, got some reviews, some
+> changes/feedback which I hope I applied/responded.
+> 
+> Entire set depends on the driver core changes, so maybe you could pick
+> up everything via drivers core tree?
 
-The msdc gate is part of the MMC driver. Delete the not used code.
+Ok, will do, thanks.
 
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/clk/mediatek/clk-mt8192-msdc.c | 21 ---------------------
- 1 file changed, 21 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8192-msdc.c b/drivers/clk/mediatek/clk-mt8192-msdc.c
-index 87c3b79b79cf..635f7a0b629a 100644
---- a/drivers/clk/mediatek/clk-mt8192-msdc.c
-+++ b/drivers/clk/mediatek/clk-mt8192-msdc.c
-@@ -12,28 +12,15 @@
- 
- #include <dt-bindings/clock/mt8192-clk.h>
- 
--static const struct mtk_gate_regs msdc_cg_regs = {
--	.set_ofs = 0xb4,
--	.clr_ofs = 0xb4,
--	.sta_ofs = 0xb4,
--};
--
- static const struct mtk_gate_regs msdc_top_cg_regs = {
- 	.set_ofs = 0x0,
- 	.clr_ofs = 0x0,
- 	.sta_ofs = 0x0,
- };
- 
--#define GATE_MSDC(_id, _name, _parent, _shift)	\
--	GATE_MTK(_id, _name, _parent, &msdc_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
--
- #define GATE_MSDC_TOP(_id, _name, _parent, _shift)	\
- 	GATE_MTK(_id, _name, _parent, &msdc_top_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
- 
--static const struct mtk_gate msdc_clks[] = {
--	GATE_MSDC(CLK_MSDC_AXI_WRAP, "msdc_axi_wrap", "axi_sel", 22),
--};
--
- static const struct mtk_gate msdc_top_clks[] = {
- 	GATE_MSDC_TOP(CLK_MSDC_TOP_AES_0P, "msdc_top_aes_0p", "aes_msdcfde_sel", 0),
- 	GATE_MSDC_TOP(CLK_MSDC_TOP_SRC_0P, "msdc_top_src_0p", "infra_msdc0_src", 1),
-@@ -52,11 +39,6 @@ static const struct mtk_gate msdc_top_clks[] = {
- 	GATE_MSDC_TOP(CLK_MSDC_TOP_AHB2AXI_BRG_AXI, "msdc_top_ahb2axi_brg_axi", "axi_sel", 14),
- };
- 
--static const struct mtk_clk_desc msdc_desc = {
--	.clks = msdc_clks,
--	.num_clks = ARRAY_SIZE(msdc_clks),
--};
--
- static const struct mtk_clk_desc msdc_top_desc = {
- 	.clks = msdc_top_clks,
- 	.num_clks = ARRAY_SIZE(msdc_top_clks),
-@@ -64,9 +46,6 @@ static const struct mtk_clk_desc msdc_top_desc = {
- 
- static const struct of_device_id of_match_clk_mt8192_msdc[] = {
- 	{
--		.compatible = "mediatek,mt8192-msdc",
--		.data = &msdc_desc,
--	}, {
- 		.compatible = "mediatek,mt8192-msdc_top",
- 		.data = &msdc_top_desc,
- 	}, {
--- 
-2.34.1
-
+greg k-h
