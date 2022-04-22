@@ -2,96 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ED9C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 02:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBB9C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 03:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351910AbiDVCwI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 22:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44782 "EHLO
+        id S1376337AbiDVEBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 00:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbiDVCwI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 22:52:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56314C789;
-        Thu, 21 Apr 2022 19:49:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9DC23B81C21;
-        Fri, 22 Apr 2022 02:49:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 203CEC385A7;
-        Fri, 22 Apr 2022 02:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650595754;
-        bh=ynXWJulUKAJWMF8HdFOHcGKwE2cXFFHsR9jUHo/1jSg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cFVW8kQbSHVtzy/pdc3oWjxTkmJ7DOvFIh8QCUjeKML4/MvUgiumEtDm0YOSCMXfQ
-         WNUPu2BqCurG8LFXHt1exiDjshWmr55qDTTVZRtv1v/F7KAikKu/ucIemRuq9f0/4z
-         iWlX/m9QQmc7/xJUWMrUcAYbMc2zWFiR91pnB+IjOFY9AXUGSnchfnakjOjD1FkIXh
-         Glwdbr73aSDw3dyRSAOyqE5fkVf7UvP7eNad/njmFCHVPhjfWKUWU0bl2HlkfWxwrs
-         YCh4DSyV8N1ZF6Fu0O7N3Stm2WACjcXvmVJedgkKYX0hdln7ZrVvOvzG9rwA/HxX+D
-         XP+bYn+KW6zrg==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S236246AbiDVEBf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 00:01:35 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42AD84E3A7;
+        Thu, 21 Apr 2022 20:58:41 -0700 (PDT)
+X-UUID: a16b5bc0407b40ec8c56e6d5a17aecfc-20220422
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:28b2e4a0-a850-4a01-96e1-b159076f3c24,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:6,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:6
+X-CID-META: VersionHash:faefae9,CLOUDID:4ca58ef0-da02-41b4-b6df-58f4ccd36682,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:4,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: a16b5bc0407b40ec8c56e6d5a17aecfc-20220422
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1221863590; Fri, 22 Apr 2022 11:58:37 +0800
+Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 22 Apr 2022 11:58:36 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 22 Apr
+ 2022 11:58:36 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 22 Apr 2022 11:58:36 +0800
+Message-ID: <496c00b0225e8e2ce567225b94e1ce0f3ab8096d.camel@mediatek.com>
+Subject: Re: [PATCH V2 02/12] clk: mediatek: reset: Use simple reset
+ operations
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <p.zabel@pengutronix.de>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <runyang.chen@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <allen-kh.cheng@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Fri, 22 Apr 2022 11:58:36 +0800
+In-Reply-To: <CAGXv+5FJBKYoEuazH9broYSM4uOy=e_3O-86tOOQrsp0xH=4wQ@mail.gmail.com>
+References: <20220420130527.23200-1-rex-bc.chen@mediatek.com>
+         <20220420130527.23200-3-rex-bc.chen@mediatek.com>
+         <CAGXv+5FJBKYoEuazH9broYSM4uOy=e_3O-86tOOQrsp0xH=4wQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220419235447.1586192-1-dmitry.baryshkov@linaro.org>
-References: <20220419235447.1586192-1-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: clk-rcg2: fix gfx3d frequency calculation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        freedreno@lists.freedesktop.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Date:   Thu, 21 Apr 2022 19:49:12 -0700
-User-Agent: alot/0.10
-Message-Id: <20220422024914.203CEC385A7@smtp.kernel.org>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-+Maxime
+Hello Cehn-Yu,
 
-Quoting Dmitry Baryshkov (2022-04-19 16:54:47)
-> Since the commit 948fb0969eae ("clk: Always clamp the rounded rate"),
-> the clk_core_determine_round_nolock() would clamp the requested rate
-> between min and max rates from the rate request. Normally these fields
-> would be filled by clk_core_get_boundaries() called from
-> clk_round_rate().
->=20
-> However clk_gfx3d_determine_rate() uses a manually crafted rate request,
-> which did not have these fields filled. Thus the requested frequency
-> would be clamped to 0, resulting in weird frequencies being requested
-> from the hardware.
->=20
-> Fix this by filling min_rate and max_rate to the values valid for the
-> respective PLLs (0 and ULONG_MAX).
->=20
-> Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+On Thu, 2022-04-21 at 15:52 +0800, Chen-Yu Tsai wrote:
+> On Wed, Apr 20, 2022 at 9:05 PM Rex-BC Chen <rex-bc.chen@mediatek.com
+> > wrote:
+> > 
+> > There are two version for clock reset register control of MediaTek
+> > SoCs.
+> > The reset operations before MT8183 can use simple reset to cover.
+> 
+> I would go slightly into more detail, i.e.
+> 
+>     The old hardware is one bit per reset control, and does not have
+>     separate registers for bit set, clear and read-back operations.
+> This
+>     matches the scheme supported by the simple reset driver. ...
+> 
+> > Therefore, we replace mtk_reset_ops with reset_simple_ops.
+> 
+>    ... to remove redundant code.
+> 
+> The "why" is more important than "what" in commit logs. "What" you
+> did
+> is already visible in the diff.
+> 
 
-I hope there aren't others like this lurking.
+Got it, I will modify this in next version.
 
->  drivers/clk/qcom/clk-rcg2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index f675fd969c4d..e9c357309fd9 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -818,7 +818,7 @@ EXPORT_SYMBOL_GPL(clk_pixel_ops);
->  static int clk_gfx3d_determine_rate(struct clk_hw *hw,
->                                     struct clk_rate_request *req)
->  {
-> -       struct clk_rate_request parent_req =3D { };
-> +       struct clk_rate_request parent_req =3D { .min_rate =3D 0, .max_ra=
-te =3D ULONG_MAX };
->         struct clk_rcg2_gfx3d *cgfx =3D to_clk_rcg2_gfx3d(hw);
->         struct clk_hw *xo, *p0, *p1, *p2;
->         unsigned long p0_rate;
+> > In addition, we also rename mtk_register_reset_controller to
+> > mtk_register_reset_controller_simple.
+> > 
+> > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/Kconfig          |  1 +
+> >  drivers/clk/mediatek/clk-mt2701-eth.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt2701-g3d.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt2701-hif.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt2701.c     |  4 +--
+> >  drivers/clk/mediatek/clk-mt2712.c     |  4 +--
+> >  drivers/clk/mediatek/clk-mt7622-eth.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt7622-hif.c |  4 +--
+> >  drivers/clk/mediatek/clk-mt7622.c     |  4 +--
+> >  drivers/clk/mediatek/clk-mt7629-eth.c |  2 +-
+> >  drivers/clk/mediatek/clk-mt7629-hif.c |  4 +--
+> >  drivers/clk/mediatek/clk-mt8135.c     |  4 +--
+> >  drivers/clk/mediatek/clk-mt8173.c     |  4 +--
+> >  drivers/clk/mediatek/clk-mtk.h        |  6 ++--
+> >  drivers/clk/mediatek/reset.c          | 43 +++------------------
+> > ------
+> >  15 files changed, 27 insertions(+), 61 deletions(-)
+> 
+> [...]
+> 
+> >  void mtk_register_reset_controller_set_clr(struct device_node *np,
+> >         unsigned int num_regs, int regofs)
+> >  {
+> >         mtk_register_reset_controller_common(np, num_regs, regofs,
+> > -               &mtk_reset_ops_set_clr);
+> > +                                            &mtk_reset_ops_set_clr
+> > );
+> 
+> This change is unrelated and should not be included.
+> 
+> ChenYu
+> 
+
+I add a refinement patch in next version, and I will move this to that
+patch.
+
+BRs,
+Rex
+
+> 
+> >  }
+> > 
+> >  MODULE_LICENSE("GPL");
+> > --
+> > 2.18.0
+> > 
+
