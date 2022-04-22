@@ -2,116 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A81C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 02:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEB4C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 02:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbiDVCDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 22:03:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49404 "EHLO
+        id S1443411AbiDVCgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 22:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443361AbiDVCDI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 22:03:08 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAEE621806;
-        Thu, 21 Apr 2022 19:00:16 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id bg9so6156718pgb.9;
-        Thu, 21 Apr 2022 19:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=64m28fBryaa/0LokFVk4B8cMevkIz2gMYP82HTmvutw=;
-        b=Rcr/31RNS0r5SCKGGMwWmIxQv8IW1Y4db6TclnbUeN0Kw20gfWTdHHjDvJZ7SFnvXB
-         IUXtYwmFCB/ovV8mGOj1s+xXqA7SDoW74lU5hEGBAFLklRFInVbUeRWJTRPlNzBOwUE4
-         gjH1CyHoRSz10/6qCb3H0QnuyorJ+ozpBg42jdEWaxAKAf9yMtu7Ch8pX1tZ6vRYlX3p
-         utR+xraG0gjPS5q7+SxccJq0L0xA5B2gOe/FsM5vFq+riSDUf/OZf9RncPAwKiM2ITtV
-         5RiGkTT37O03nvst0BlN9CLoHOEmBoi3SVLMLr38nsBzPkJpyBFVzk6O+lRUfxo6lxll
-         6uVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=64m28fBryaa/0LokFVk4B8cMevkIz2gMYP82HTmvutw=;
-        b=idet9FAtTJMcsi6ceVDwLZkdIdKX+IUK3PlibVVa88XoFflKqIWvncClfznip0hpGa
-         DxUvue6iKLx2tV9MSCHSlSJfpDF7GEBWoZZMk6v0xL7n0/f9Rv/TunQ+qLpCfGQHpwey
-         bxSvauPDMzw5+QAkTmY2PSzQQvmgfqx8nBBM1Y/zDStVKSo6NF/dxMyQJl0WRmhaQhx9
-         hMDkgutkyNf4QqG4u8Eh8bDjRnRl7KSQmBCUHgn0zYEJt4OxeAOVlxIZDcUOmEo/tidX
-         sZegpCqf1hz9WkncdgN/H0mSmm5GqbX6Ja8IlPVyYYMjhcQj0gN9D9IBWRml+cKSUe2i
-         B5nw==
-X-Gm-Message-State: AOAM53369GeCBBeHwBbvSTZAS8DHKgFMwyfaybxUuNTOsZ8NbAbpeCdI
-        bOLqKC3boniA+Q9WWjwN55I=
-X-Google-Smtp-Source: ABdhPJzFAWyBCdn951bBPGFgOuZyTdWDZQBjgBFBLLXESwJ8SnJjeDwVU119HyzOasnAI4M2loDWdA==
-X-Received: by 2002:a63:a551:0:b0:3aa:5150:a94a with SMTP id r17-20020a63a551000000b003aa5150a94amr1987597pgu.144.1650592816370;
-        Thu, 21 Apr 2022 19:00:16 -0700 (PDT)
-Received: from [192.168.1.100] ([159.226.95.33])
-        by smtp.gmail.com with ESMTPSA id y9-20020aa79429000000b0050ad02027d9sm396208pfo.197.2022.04.21.19.00.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 19:00:16 -0700 (PDT)
-Message-ID: <8e893363-3e47-2abe-7111-b3fb0888d4fc@gmail.com>
-Date:   Fri, 22 Apr 2022 09:59:54 +0800
+        with ESMTP id S1386192AbiDVCgx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 22:36:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CAF4B412;
+        Thu, 21 Apr 2022 19:34:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D10B6B82A18;
+        Fri, 22 Apr 2022 02:34:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E8FC385A8;
+        Fri, 22 Apr 2022 02:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650594839;
+        bh=uSHrkLY+dZ+wKF/t6k1olPqi38KWpu6Mopr6O6CB9PE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YSv6iuKjih2OATi0FEAB6NTD3yg8Uiz50zars69ikIxL9k7591IqZeT0kqu8oF+20
+         WCczCSeDEZfVxUPVmjoqPOQ4l/CZ1mAQXk5OUsRwAXR3nCGmNxtjbWEanZdbhXCDwr
+         eBf+gR4MADAa6NYKBiiPZtUTqiKWw8uEqdAR6oTFCCtqLcJbD0y26ZCt2kPiTiDWe1
+         akoK0pDf9OmXbSDnGd7DMyLHOgUu9SnNUncCjY8K2mWW7UuxsC3tqVm78S/2S9ihdm
+         mdOkbwqtBNs04Oh1xEqmXEFRLBZS1+wIvHJ8XDHgZHMZioGE0k0tRF+blwIwTpO139
+         zFoZ+ahClPsBQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix
- pm_runtime_get_sync() usage
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220422012059.52267C385A5@smtp.kernel.org>
- <20220422013317.30362-1-linmq006@gmail.com>
- <20220422014411.4F96BC385A7@smtp.kernel.org>
-From:   Miaoqian Lin <linmq006@gmail.com>
-In-Reply-To: <20220422014411.4F96BC385A7@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220411101441.17020-3-aidanmacdonald.0x0@gmail.com>
+References: <20220411101441.17020-1-aidanmacdonald.0x0@gmail.com> <20220411101441.17020-3-aidanmacdonald.0x0@gmail.com>
+Subject: Re: [RESEND PATCH 2/3] clk: ingenic: Mark critical clocks in Ingenic SoCs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
+        mturquette@baylibre.com, paul@crapouillou.net,
+        paulburton@kernel.org, tsbogend@alpha.franken.de
+Date:   Thu, 21 Apr 2022 19:33:57 -0700
+User-Agent: alot/0.10
+Message-Id: <20220422023359.87E8FC385A8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Aidan MacDonald (2022-04-11 03:14:40)
+> Consider the CPU, L2 cache, and memory as critical to ensure they
+> are not disabled.
+>=20
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
-On 2022/4/22 9:44, Stephen Boyd wrote:
-> Quoting Miaoqian Lin (2022-04-21 18:33:16)
->> If the device is already in a runtime PM enabled state
->> pm_runtime_get_sync() will return 1.
->>
->> Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync()
->> fails, so use pm_runtime_resume_and_get() instead. this function
->> will handle this.
->>
->> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
->> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
->> ---
-> Please don't send patches as replies to previous versions of the patch.
-
-Sorry, I thought I should keep them in one thread, to provide the context
-
-for other people to follow up. Am I suppose to resend it?
-
->>  drivers/clk/imx/clk-scu.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
->> index 083da31dc3ea..2044e62980e3 100644
->> --- a/drivers/clk/imx/clk-scu.c
->> +++ b/drivers/clk/imx/clk-scu.c
->> @@ -528,7 +528,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
->>                 pm_runtime_use_autosuspend(&pdev->dev);
->>                 pm_runtime_enable(dev);
->>  
->> -               ret = pm_runtime_get_sync(dev);
->> +               ret = pm_runtime_resume_and_get(dev);
->>                 if (ret) {
->>                         pm_genpd_remove_device(dev);
->>                         pm_runtime_disable(dev);
->> -- 
->> 2.17.1
->>
+General comment, please add a comment around CLK_IS_CRITICAL usage if it
+isn't very clear why such a clk shouldn't be turned off. Second, is
+there any point in describing these clks in the kernel and using memory
+to do that if they're just going to always be on? Wouldn't a dummy clk
+returned from clk_get() work just as well if anything is grabbing a
+reference with clk_get()?
