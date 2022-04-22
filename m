@@ -2,86 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66D4C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6353BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234287AbiDVPN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
+        id S234298AbiDVPN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 11:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1449230AbiDVPMy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:12:54 -0400
-Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB1F1083;
-        Fri, 22 Apr 2022 08:09:58 -0700 (PDT)
-Date:   Fri, 22 Apr 2022 08:09:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1650640196;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FuSilkQrD0XHypF9NHM/iQufTOifJtoJtKA0QjM80gQ=;
-        b=ogvZvMz0qmRqn6QDbBgi2ylHy0TQA3uWaXlbE2Qr5PhovLBd6Wn+NU6jdRIreeLszV8F0T
-        6vKrZZb2n1v73UODttDRnOV+VFz4bTzSb5v8lROD6lWxhYq1rSkVWs2ELGwxEOI0lkMR0a
-        /6VVGN0zpZMKdJS97D22pC8bfMik1wM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Roman Gushchin <roman.gushchin@linux.dev>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
- show_mem.c
-Message-ID: <YmLFPJTyoE4GYWp4@carbon>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-14-kent.overstreet@gmail.com>
- <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+        with ESMTP id S1449286AbiDVPNT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:13:19 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC345C371;
+        Fri, 22 Apr 2022 08:10:26 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id j6so5983082qkp.9;
+        Fri, 22 Apr 2022 08:10:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XUbWiCFAOjrj391k9XEhMaJ647zWOrTQk080omU6HvE=;
+        b=ZCnBvtoKxYSbTlw2sO2lWvi/dQeleCfh0rTpflbjX0XEwkCczRbJ5y2QJfKbNnyRry
+         b9XL8/U3EOmYLaSmMN74M4dKXnQOABbSzvX9Rz/ZBXdp1annasY7Rym4JZp32cOCubXN
+         9RrVX+srX5zso87iZgjF1QXSsJ5qXR7tYEhuRyPflah6qKYQFF7MuEFrUXfL9D9TjQIY
+         Y9b8+jrpm3kDTZ7X5gfz/mdTy5aBZdvNq2XI+MbpYLjKX8gsQ0fHut1And/vTPW4xPFM
+         lBasyNj/gilZsKHJkCkU77zkU7nCh6+83IWNBHfP28N/WflOOJMsyM0k0/K2BzoIwRmu
+         TNmw==
+X-Gm-Message-State: AOAM533FEMCoOolVG2uXkNT21ztpkHeotEBGkGaRfYQrGY7eMGy/649I
+        LhNjqqYDqfXiZr7NtKFFgJK2NGjDFAsANw==
+X-Google-Smtp-Source: ABdhPJzxV256wnoQvx4M/K32FgDLHCbr/e7+ChkpLioq1OPy6UUfsqi/+oskkYdj6bwMxEAWmo0FWg==
+X-Received: by 2002:a05:620a:1341:b0:69e:cd37:763c with SMTP id c1-20020a05620a134100b0069ecd37763cmr2933095qkl.284.1650640224935;
+        Fri, 22 Apr 2022 08:10:24 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 22-20020ac85916000000b002f3402e34a3sm1444452qty.55.2022.04.22.08.10.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Apr 2022 08:10:24 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2eba37104a2so88931587b3.0;
+        Fri, 22 Apr 2022 08:10:24 -0700 (PDT)
+X-Received: by 2002:a81:e10d:0:b0:2f7:bb2a:6529 with SMTP id
+ w13-20020a81e10d000000b002f7bb2a6529mr1523744ywh.62.1650640224270; Fri, 22
+ Apr 2022 08:10:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
+References: <20220318175113.8956-1-biju.das.jz@bp.renesas.com>
+ <20220318175113.8956-4-biju.das.jz@bp.renesas.com> <CAMuHMdV9Rt6_VQ4oU-FAAM=vdrG22Qc2yBHTrEd-NrAu3FejWw@mail.gmail.com>
+ <OS0PR01MB59220A6CE01D617EB4F1A29D86F79@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB59220A6CE01D617EB4F1A29D86F79@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Apr 2022 17:10:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXaYHBDm5TmOskMgQGg2bPVgx4RmQVEJ3d5nXjS3s8wvw@mail.gmail.com>
+Message-ID: <CAMuHMdXaYHBDm5TmOskMgQGg2bPVgx4RmQVEJ3d5nXjS3s8wvw@mail.gmail.com>
+Subject: Re: [PATCH 3/9] clk: renesas: rzg2l: Add DSI divider clk support
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 02:58:19PM +0200, Michal Hocko wrote:
-> On Thu 21-04-22 19:48:37, Kent Overstreet wrote:
-> > This patch:
-> >  - Changes show_mem() to always report on slab usage
-> >  - Instead of reporting on all slabs, we only report on top 10 slabs,
-> >    and in sorted order
-> 
-> As I've already pointed out in the email thread for the previous
-> version, this would be better in its own patch explaining why we want to
-> make this unconditional and why to limit the number caches to print.
-> Why the trashold shouldn't be absolute size based?
-> 
-> >  - Also reports on shrinkers, with the new shrinkers_to_text().
-> >    Shrinkers need to be included in OOM/allocation failure reporting
-> >    because they're responsible for memory reclaim - if a shrinker isn't
-> >    giving up its memory, we need to know which one and why.
+Hi Biju,
+
+On Fri, Apr 22, 2022 at 1:15 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH 3/9] clk: renesas: rzg2l: Add DSI divider clk support
+> > On Fri, Mar 18, 2022 at 6:51 PM Biju Das <biju.das.jz@bp.renesas.com>
+> > wrote:
+> > > M3 clock is sourced from DSI Divider (DSIDIVA * DSIDIVB)
+> > >
+> > > This patch add support for DSI divider clk by combaining DSIDIVA and
+> > > DSIDIVB .
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+> > > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> > > +static long rzg2l_cpg_dsi_div_round_rate(struct clk_hw *hw,
+> > > +                                        unsigned long rate,
+> > > +                                        unsigned long *parent_rate)
+> > > +{
+> > > +       struct dsi_div_hw_data *dsi_div = to_dsi_div_hw_data(hw);
+> > > +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> > > +
+> > > +       dsi_div->rate = rate;
+> > > +
+> > > +       priv->pll5_params.pl5_intin = rate / MEGA;
+> >
+> > .round_rate() (and .determine_rate()) is used to check if a rate is
+> > supported, without actually changing the clock rate.  Hence this should not
+> > operate on priv->pll5_params, but on a local variable.
+> >
+> > > +       priv->pll5_params.pl5_fracin = ((rate % MEGA) << 24) / MEGA;
+> > > +       priv->pll5_params.pl5_refdiv = 2;
+> > > +       priv->pll5_params.pl5_postdiv1 = 1;
+> > > +       priv->pll5_params.pl5_postdiv2 = 1;
+> > > +       priv->pll5_params.clksrc = 1;
+> > > +       priv->pll5_params.dsi_div_a = 1;
+> > > +       priv->pll5_params.dsi_div_b = 2;
+> > > +
+> > > +       priv->pll5_params.frequency =
+> > > +               EXTAL_FREQ_IN_MEGA_HZ * MEGA / priv-
+> > >pll5_params.pl5_refdiv *
+> > > +               ((((priv->pll5_params.pl5_intin << 24) + priv-
+> > >pll5_params.pl5_fracin)) >> 24) /
+> > > +               (priv->pll5_params.pl5_postdiv1 *
+> > > + priv->pll5_params.pl5_postdiv2);
+> > > +
+> > > +       if (priv->pll5_params.clksrc)
+> > > +               priv->pll5_params.frequency /= 2;
+> > > +
+> > > +       *parent_rate = priv->pll5_params.frequency;
+> > > +
+> > > +       return dsi_div->rate;
+> > > +}
+> > > +
+> > > +static int rzg2l_cpg_dsi_div_set_rate(struct clk_hw *hw,
+> > > +                                     unsigned long rate,
+> > > +                                     unsigned long parent_rate) {
+> > > +       struct dsi_div_hw_data *dsi_div = to_dsi_div_hw_data(hw);
+> > > +       struct rzg2l_cpg_priv *priv = dsi_div->priv;
+> > > +
+> >
+> > You should update priv->pll5_params here, instead of in your
+> > .round_rate() callback.
 >
-> Again, I do agree that information about shrinkers can be useful but
-> there are two main things to consider. Do we want to dump that
-> information unconditionaly? E.g. does it make sense to print for all
-> allocation requests (even high order, GFP_NOWAIT...)? Should there be
-> any explicit trigger when to dump this data (like too many shrinkers
-> failing etc)?
+> I need to find parent_rate based on video clock during {determine,round rate}
 
-To add a concern: largest shrinkers are usually memcg-aware. Scanning
-over the whole cgroup tree (with potentially hundreds or thousands of cgroups)
-and over all shrinkers from the oom context sounds like a bad idea to me.
+There is no guarantee that .set_rate() is called right after
+.determine_rate() with the exact same parameters, or that it is called
+at all. Modifying priv->pll5_params prematurely may affect the other
+clocks in hard to debug ways.  So please modify priv->pll5_params
+only when actually setting the clock rate.
 
-IMO it's more appropriate to do from userspace by oomd or a similar daemon,
-well before the in-kernel OOM kicks in.
+> I have added there to avoid duplication.
 
-> 
-> Last but not least let me echo the concern from the other reply. Memory
-> allocations are not really reasonable to be done from the oom context so
-> the pr_buf doesn't sound like a good tool here.
+You can use a helper that takes a pointer to a struct rzg2l_pll5_param,
+calculates the values, and fills them in.
+.{determine,round rate}() would call it with a pointer to a local variable.
+.set_rate() would call it with a pointer to &priv->pll5_params.
 
-+1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
