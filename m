@@ -2,128 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B7BC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 22:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D57C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 22:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233841AbiDVWno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43786 "EHLO
+        id S233926AbiDVWoA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233818AbiDVWna (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:43:30 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F4B1765EC;
-        Fri, 22 Apr 2022 14:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1650663703;
-        bh=8RE6J/48SaezMLYOSRQdb+dos/63a0S80cGWNaaY89M=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=bXqN0HxN/QQTsPVdZP4VwcyzjGY8iA92O8TmXTtJqtf628Jb9RnNaDSWWlVJSamfu
-         LVrCT6xfdBwD0xHIJEtlOP+Jv7Ydwi4wxzEv/Ky+/7G3hfhkjTD4AnuF7vo6+Y4nSz
-         pw514YWPfkzdRJHC9a/hcVUqM5zCjTCqXE6GfHq8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([87.78.190.74]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MaJ3t-1nNDlI3YKj-00WIp0; Fri, 22
- Apr 2022 20:31:49 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 3/7] watchdog: npcm: Enable clock if provided
-Date:   Fri, 22 Apr 2022 20:30:08 +0200
-Message-Id: <20220422183012.444674-4-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220422183012.444674-1-j.neuschaefer@gmx.net>
-References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DzdlIpOpxoHVmzoWSwK/nL5QieYQdzPf0cfyielup2/bHsKDAwQ
- N2kbPBEm068bJ2qlsUpy1PuMDBxL0Al4q+6mC29jVCwWJ/ZDGDodyr0gOx42IbCkPI7CSfx
- IoV+Hxjssgj5OQwTO2pN9A2e91iagZFyoIx2I3C0VnPPyceNuz2gFz1TMWf3aXtkNj8+Rde
- HcSt22thU4XWdRXPBq43A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CBOfWkKmFVM=:FRw7nNLWbQ3bNBPv90sVik
- qODJZKuinuG5QGsuYOs/jvHQDVAwkxAhbrVKGyHAfejM02F1o6pXo6Y53EgqoqL+f20r/hEBO
- VHTj8XfmXgX0C1S8IleVp2m2obNr9mee52dRf6O88DoMm2X7FBtOo0Pbcjimat1k92swzUkZX
- nMRDluyneiJgxhQ2oHIpStiY8+Y8+T0JA3Hp9QNpwkrlilL9Eb1k2H6GvOslXWCtsa0Ywha6E
- oeBd2tfshMcuis970o4dXC6i1DSaLkmVy7b4NfUqok0BRcKmBZ4G1dLqHITq3EnmlKT4hKcOe
- xuSfm2VI5SKq6uJuWVMNXymlkbfSCf85jtPqgCgpyJcYZ8nGGBfcwzscooefR9lXFD3X4ia/t
- IXdiwBDm0SsHb8N7E1LLRHyQb8RxgfhwsRAinHUVfskP/AtdwOO2/cUqE9JdbEHVz3JioBkul
- Vu9x2vN/THEL2RPnVTgm/ZhxBtuI7kcRsL7BAmeL0fstcrpTqhSHrQa3YdPts2oJM7YHaah0O
- vqCYCffcjZtKuJvTcAlqOEhRBXvMSAdx9Ls/THjGaLt8uvKCAVk6tnJaILFfYmk52RxJUW26U
- sZ2hopESgei/M5uelSeRHdEx2nxxed56Mo5JNT0EdX3HogPkRJ+64+1ZmfbcjNBm3TTCtJ1pk
- zwSCtgn0dhhD4GEKUNiv1ruTHBAEIaS3JJYdhTHb85UYpg/CKck+bLvS1FZaZzHzEWnL78sGp
- XamLpO/CUQMLD4lUf71TWCNinLhqAqxRuUa2evW3aiXBlMhIuKmSXcsceXDhUzHCdCWmDQYJs
- 5Z8i1m+r+M0wPWu8yaRSyJ2G25MzlyuWozFVNwAVgOs7KR37f+ElSo9McLk7Z0rlbIJYB4qRh
- lK6tFnJS9P/S6q2p9q1vDnx2P2qwU7ijdI7Kb3ibOf5YFr6pc6EwTm6inHkK5RxgxOPfyybaP
- M78QedtmEKiLOJQdYwr58JVKfKkuu1kC+xgjXbjq6ZJRNg/TeMfo/O8i9o5EJ1ckbkb74RYaO
- RElyBVxbk3HOApjbdJHAVPnB28rD6nTZDNl5mmiFTCAFu/0R/1Y4G+teLqb8r0FJWOIoJQFoh
- CvWx+XXBm1Xaw0=
+        with ESMTP id S233939AbiDVWnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:43:39 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955AF20F202
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 14:40:34 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id q3so13620737plg.3
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 14:40:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hprmnOUA4/3FlmJh7kQF6XL3/Oe5JP21iOb+ppvENHA=;
+        b=VdTgxJp6iaQGYLdO2T00e5mydN8yUlSBKdxKAR02oKgdllMIajdCnVACLvEDHFAm0K
+         +FdTgKJYWpIdn0HVA3RD0Ql+Vl0U2Q0CyCxHBWI8W56ilGD7Bdh0PK0Ho6bF49WHDXH6
+         WrFIMtgPHK9MqZchFV7tUBu3FHfY/x4rQj7vlxQ6bvaQDGcFvS4155E5zFh5RNxjf/zq
+         wnOYaXbdhPyWGL2hUvO9hiETdErtm3tKRfS24aAbvMbl/UQn/Fjo2xF6Ldw9kixJdZ84
+         B2zbkO5eAi3VuDIrZhhODYWj7oqQ3yL+07L9w/3Q7N2IQIEv5wS/okO4N3rdG3E5bphy
+         0prA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=hprmnOUA4/3FlmJh7kQF6XL3/Oe5JP21iOb+ppvENHA=;
+        b=BpZw9q5CiA910o3D/0+HMo46RTeirvO5STNXUuylh4rUFfdoKDuOLbq4cA4/7jLJgp
+         olGgs4NWMAqeBOdYzwEcGswe7NMLQYQTVkry9XqwSUNzhYp+BCgGWWIb/q3zbz73tnnR
+         WdiU0KvrZ0ZIbsbyOV0AnLS2z3iCM0zQsnPzKLXuQ+aq8abH0X4pf6ru74j61vZX+EF1
+         oi+qEnJAGdS0eSIpvv26Qy4ugZuxP6QYxTqNsLnAbAkyjnHtbf8XSbiI19ulHoxxIM7j
+         HqfVTki/ouSbIwiNmhq3W3XyWyri+h5kT6dloY3jWQ7EyitNOD+3rDAKabDWXU7dXotU
+         aluA==
+X-Gm-Message-State: AOAM530f6VXNYJGvl1Xv9lPRDI0MAvWCeeRd7dgfqaDfGA754McAEm8B
+        wWedlOlUeTEON4iAZqIvKVQIBg==
+X-Google-Smtp-Source: ABdhPJy36dziWxrx9VNGKb+ZJ9QYf23DzNrptVA5BjFCnHIlqW+yS/E17cWlIdJ736Efbyw8yGz3uw==
+X-Received: by 2002:a17:90a:8418:b0:1d2:7c69:e3bf with SMTP id j24-20020a17090a841800b001d27c69e3bfmr18408269pjn.44.1650663634143;
+        Fri, 22 Apr 2022 14:40:34 -0700 (PDT)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id i6-20020a628706000000b0050adb5a4452sm3540245pfe.101.2022.04.22.14.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 14:40:33 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 14:40:33 -0700 (PDT)
+X-Google-Original-Date: Fri, 22 Apr 2022 14:40:27 PDT (-0700)
+Subject:     Re: [PATCH v3 0/9] More PolarFire SoC Fixes for 5.18
+In-Reply-To: <986c73df-9634-d18b-eed3-37584fa2ea89@conchuod.ie>
+CC:     sboyd@kernel.org, mturquette@baylibre.com, aou@eecs.berkeley.edu,
+        Paul Walmsley <paul.walmsley@sifive.com>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org, daire.mcnamara@microchip.com,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        conor.dooley@microchip.com, atulkhare@rivosinc.com
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     mail@conchuod.ie
+Message-ID: <mhng-08dea5a1-77b8-4b79-93e3-cda9fffdf2ff@palmer-ri-x1c9>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the Nuvoton WPCM450 SoC, with its upcoming clock driver, peripheral
-clocks are individually gated and ungated. Therefore, the watchdog
-driver must be able to ungate the watchdog clock.
+On Fri, 22 Apr 2022 14:10:55 PDT (-0700), mail@conchuod.ie wrote:
+>
+>
+> On 22/04/2022 22:00, Stephen Boyd wrote:
+>> Quoting Conor Dooley (2022-04-22 12:59:09)
+>>> On 22/04/2022 20:39, Palmer Dabbelt wrote:
+>>>>
+>>>> Thanks.  These generally look good to me, but I don't see acks from everyone.  I'm perfectly fine treating these as fixes and taking them through the RISC-V tree, but looks like it's mostly clk stuff so
+>>>>
+>>>> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+>>>
+>>> Ye, hopefully they go via clk. Stephen replied to v1 or 2 so
+>>> I figure they're in his queue :)
+>>
+>> It helps to be explicit in the cover letter. It's in my queue but I put
+>> it on hold because the cover letter didn't clarify what tree it was
+>> intended for nor the priority of what is being fixed.
+>
+> Ah right, my bad. The coordinating things between trees stuff is
+> still pretty new to me. If you could take the lot via clk, that'd
+> be great?
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- drivers/watchdog/npcm_wdt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+No problem, the multi-tree stuff is always tricky.  It ended up in my 
+queue too, but I fast-forward to the latest version of each set as I 
+stumble into earlier ones so I guess I got here quickly.
 
-diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-index 28a24caa2627c..6d27f0e16188e 100644
-=2D-- a/drivers/watchdog/npcm_wdt.c
-+++ b/drivers/watchdog/npcm_wdt.c
-@@ -3,6 +3,7 @@
- // Copyright (c) 2018 IBM Corp.
+Having these go through clk is better for me, I'll ignore them.
 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
-@@ -180,6 +181,7 @@ static int npcm_wdt_probe(struct platform_device *pdev=
-)
- {
- 	struct device *dev =3D &pdev->dev;
- 	struct npcm_wdt *wdt;
-+	struct clk *clk;
- 	int irq;
- 	int ret;
+Thanks!
 
-@@ -191,6 +193,13 @@ static int npcm_wdt_probe(struct platform_device *pde=
-v)
- 	if (IS_ERR(wdt->reg))
- 		return PTR_ERR(wdt->reg);
-
-+	clk =3D devm_clk_get_optional(&pdev->dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	if (clk)
-+		clk_prepare_enable(clk);
-+
- 	irq =3D platform_get_irq(pdev, 0);
- 	if (irq < 0)
- 		return irq;
-=2D-
-2.35.1
-
+>> Is boot broken? Do I need to send these up to Linus next week as part of
+>> fixes for this merge window?
+>
+> Boot is not broken, I was hoping this would go into 5.18 to avoid
+> having to deal with two different sorts of reference clock DT
+> entries - 5.18 where the DT provides the mss pll & 5.18+n where
+> the DT provides the input to the mss pll.
+>
+> So, not next week urgent, but as fixes for this window please.
+>
+> Thanks,
+> Conor.
