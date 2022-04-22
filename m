@@ -2,75 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B035C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990C5C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234213AbiDVPnS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46222 "EHLO
+        id S1449559AbiDVP4Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 11:56:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1449473AbiDVPke (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:40:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8DD55AED6;
-        Fri, 22 Apr 2022 08:37:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 81C436193E;
-        Fri, 22 Apr 2022 15:37:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A80C5C385A4;
-        Fri, 22 Apr 2022 15:37:38 +0000 (UTC)
-Date:   Fri, 22 Apr 2022 11:37:36 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        hannes@cmpxchg.org, akpm@linux-foundation.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220422113736.460058cc@gandalf.local.home>
-In-Reply-To: <YmI/v35IvxhOZpXJ@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
-        <20220421234837.3629927-7-kent.overstreet@gmail.com>
-        <20220422042017.GA9946@lst.de>
-        <YmI5yA1LrYrTg8pB@moria.home.lan>
-        <20220422052208.GA10745@lst.de>
-        <YmI/v35IvxhOZpXJ@moria.home.lan>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S1355262AbiDVP4P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:56:15 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B411CFEC;
+        Fri, 22 Apr 2022 08:53:22 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id k22so11686289wrd.2;
+        Fri, 22 Apr 2022 08:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=r7VFn3nngH4hNjFd5Mmo4mWEZGaDYjUWd1EsyxAItoo=;
+        b=DTP9DHNq5jUm2XHGh/m/MlF5ZHRM+6H84xoxglPZV5KB0b8Dxe02cU/kU8iMZVhGEA
+         XMl8T6DYI+31yC7qfkqTb2p8nihDO0fQQMWRDzwy86DOwMwHT8tbT9g0HU6cnla9n5ec
+         lYhSg0YT2G96BPHcq+hHnlsWtcFQIeNeNczMBVOluy0HSXBc+PydxuyN3nPcXmLSKuqC
+         puKlMJEIXxR+4KLNlT8z36Z7qIqzHlaISjgpskp+5iafoz74oqj14Vz4HVBFK1AhSs5z
+         qhrVhm6B5iWwh7gwktS2j1U7Y/7l8Yvl5l5Vv5mvvjWlvXqq3qMLaWN1wyhzanAmWWuO
+         4CFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=r7VFn3nngH4hNjFd5Mmo4mWEZGaDYjUWd1EsyxAItoo=;
+        b=s0VF2+J48Rl7FwG+K9XT8fPY+P2S/yuE86cd2i7mS63KqNx4MQjAFcN1Qw+U8rm5tN
+         chsTnfIREVn+8rn4Yll2/ZmeAKC0EpSgbO8tmZztASahq4wAbmsrmePLivm+GjWTxs8R
+         kKd8P9D1parVq8y3+Tr6ulMxcxX0TqvTblGVLFOEk0vd20zfPy/apBSZy9PV6ZjU44/A
+         fht+p2IXUAhiNNWMxB+JcgDc8+JP7lzo6Z3iO3tX0J+0bxJNQFrEDrwuLTOlM3gBnf0P
+         sGdlYINSchq/XysduoIlDk5JhNg7KfOfFI+n69hh2l2ak2sSf7+26T4L22+T2tjburWS
+         bsww==
+X-Gm-Message-State: AOAM532UVIHX4kp4dsRrMHlws3XxTcnZNXHqcv1N+oBTIyji+m/92Rbf
+        98MF87/Ag9hmrFpGz6Y0bBI=
+X-Google-Smtp-Source: ABdhPJxoFu1IAbWDj7jx4O7GbR2IpYAyiPT7hQ5/DScUoGyOeD3rzzw5Cta6ExLlJ3lVrTakmnoufw==
+X-Received: by 2002:a5d:4e07:0:b0:207:9a41:842f with SMTP id p7-20020a5d4e07000000b002079a41842fmr4269077wrt.232.1650642800770;
+        Fri, 22 Apr 2022 08:53:20 -0700 (PDT)
+Received: from localhost (92.40.203.64.threembb.co.uk. [92.40.203.64])
+        by smtp.gmail.com with ESMTPSA id p3-20020adfaa03000000b00207a1db96cfsm2185493wrd.71.2022.04.22.08.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 08:53:20 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 16:54:10 +0100
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, mturquette@baylibre.com,
+        paul@crapouillou.net, paulburton@kernel.org,
+        tsbogend@alpha.franken.de
+Subject: Re: [RESEND PATCH 2/3] clk: ingenic: Mark critical clocks in Ingenic
+ SoCs
+Message-ID: <YmLPotnIBStYpapa@localhost>
+References: <20220411101441.17020-1-aidanmacdonald.0x0@gmail.com>
+ <20220411101441.17020-3-aidanmacdonald.0x0@gmail.com>
+ <20220422023359.87E8FC385A8@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220422023359.87E8FC385A8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 22 Apr 2022 01:40:15 -0400
-Kent Overstreet <kent.overstreet@gmail.com> wrote:
-
-> So I'm honestly not super eager to start modifying tricky arch code that I can't
-> test, and digging into what looked like non trivial interactions between the way
-> the traceing code using seq_buf (naturally, given that's where it originates).
-
-Yes, seq_buf came from the tracing system but was to be used in a more
-broader way. I had originally pushed trace_seq into the lib directory, but
-Andrew Morton said it was too specific to tracing. Thus, I gutted the
-generic parts out of it and created seq_buf, which looks to be something
-that you could use. I had patches to convert seq_file to it, but ran out of
-time. I probably can pull them out of the closet and start that again.
-
+On Thu, Apr 21, 2022 at 07:33:57PM -0700, Stephen Boyd wrote:
+> Quoting Aidan MacDonald (2022-04-11 03:14:40)
+> > Consider the CPU, L2 cache, and memory as critical to ensure they
+> > are not disabled.
+> > 
+> > Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+> > Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+> > ---
 > 
-> Now yes, I _could_ do a wholesale conversion of seq_buf to printbuf and delete
-> that code, but doing that job right, to be confident that I'm not introducing
-> bugs, is going to take more time than I really want to invest right now. I
-> really don't like to play fast and loose with that stuff.
+> General comment, please add a comment around CLK_IS_CRITICAL usage if it
+> isn't very clear why such a clk shouldn't be turned off. Second, is
+> there any point in describing these clks in the kernel and using memory
+> to do that if they're just going to always be on? Wouldn't a dummy clk
+> returned from clk_get() work just as well if anything is grabbing a
+> reference with clk_get()?
 
-I would be happy to work with you to convert to seq_buf. If there's
-something missing from it, I can help you change it so that it doesn't
-cause any regressions with the tracing subsystem.
+I'd guess they're there to keep track of which PLLs are in use, at least
+for SoCs that have more than one PLL. Using a dummy clock sounds like a
+bad idea since it won't represent that, and besides the clock configuration
+is something that can change at runtime so hardcoding it would be foolish.
 
-This is how open source programming is suppose to work ;-)
+I'll send a v2 with explanatory comments around CLK_IS_CRITICAL.
 
--- Steve
+Regards,
+Aidan
