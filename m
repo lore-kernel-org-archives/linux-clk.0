@@ -2,164 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BED2C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 21:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27591C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 21:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231235AbiDVWAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:00:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47578 "EHLO
+        id S231345AbiDVWBX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:01:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231277AbiDVWAs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:00:48 -0400
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F142C5223;
-        Fri, 22 Apr 2022 13:43:55 -0700 (PDT)
-Received: by mail-vs1-xe2d.google.com with SMTP id j16so8567745vsv.2;
-        Fri, 22 Apr 2022 13:43:55 -0700 (PDT)
+        with ESMTP id S231276AbiDVWBW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:01:22 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7EF2303F53
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 13:44:32 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id e189so10318454oia.8
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 13:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3NGyHwNzcPpl7RBhf4au6sQueS2Jmki+EL6hXZnP8PQ=;
-        b=QDq+OMzhXiDZE3ekAGb1VjqbjweR6q15vhiF8oMbAkui5VdjtN0MnvTvkPzXwTNfid
-         wp+k4NSNy3zdWHIgDyAm2OCTr7k1D7/aotkTNki3fw8w796Pmo7fMMf+Wi0VkdbsY6gT
-         TtP5jIFZLS146fJvbNfZJR2IEUqMEAmO8rF2Y0WhgolbJS9+5Wm9tXxgIUyP2wgfGzdk
-         56LkNxicQnznIOk+Z63Zc2ynlTh8ZtDGTR4CtFvXBaDLHP/ZSsNrqyzyI9mF3W2uoO0b
-         7l8q01HtgPOTX21HWNDPxfWs9iqsrMXPDmO4JFG9H/KchRQNvq50cgw8FfRVJIYwRo21
-         n+xQ==
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HUMQ8dOwWcozf0T8hyC7PrAL47Bqnr3PZuCCA3VDyQ8=;
+        b=67m2EolxDI3u9U8jdfMMCm41tCPw6FMxg+fnkdtSbwlJM4k4eP9W3LbDIKh3AhJxs7
+         5qZNjt6QYsglpHq/suVtVCLxrzzCpxJGw6rQWPL6JRc9iW6vSWoLtwOQuuZCtwFLVQUO
+         H05xbTinKEH6Lwyvg5MdlCVc+AdFGtNC3IAz/SfpNS22x7cR3oyaOuN0UANm6sH146jv
+         muw+9aZR2Ey8x+YcFiCoURseMa90IhIXX3VRZaMRIG3sa5EsXDEcFXMcTLG3Qd9S8uxg
+         C02xg/sP6xPdLUKEBbrTK5WNBPTvZTEC3wq7NoEjIJqe0VhIBcUGzFpKYwjW3gvhty0d
+         xCkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3NGyHwNzcPpl7RBhf4au6sQueS2Jmki+EL6hXZnP8PQ=;
-        b=q6rimmhhMR7wZ1gXO0xj2Vq+fOpWF6DFWJS1vLaZlR9PrrW8XBFW7P1UyuHUvSCW6p
-         9qXeXLn014AvOvqdhSuG5Glxfcz4AiyNkf4kjq3HU+Lm9GeBvBqzpefz53E4CO4F/eU0
-         D3s6Q1cPqgUh/t8+8brcryP8LveBOfipIvkAFcfFAU0jElK/Go4BiyywrYYpcWRAVn/t
-         jzZFK7ajoKA9utV2Zsbr36oZ2uSvJFveV75E8vKpDLi/DuSZchvOYy8qWyMva3L+oxuu
-         I8DfApynYbT6EUOcJ2l/gJXQb6MFNKHA7R1LjwiBlQvglhJHZl3CQal1LJXyN3HLemvs
-         yfCg==
-X-Gm-Message-State: AOAM5300NSFvHrPkbri8ujkcvDF3CZU5oJ3kytoH8C9hxtliUFVTal/Y
-        zpMqBgTJyRkSeTvVKY5S12MkyJqb/45J
-X-Google-Smtp-Source: ABdhPJxzISRgHHODXKrrwyPqtpJH5WzT+DrLyG8K/Zt/m0UNqJazuD3i0Bd7jVRhJazqucNnus+6QQ==
-X-Received: by 2002:a0c:d7cb:0:b0:444:2b27:80d3 with SMTP id g11-20020a0cd7cb000000b004442b2780d3mr5088064qvj.57.1650659460120;
-        Fri, 22 Apr 2022 13:31:00 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id n22-20020ac85b56000000b002f1d7a2867dsm1790112qtw.67.2022.04.22.13.30.58
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=HUMQ8dOwWcozf0T8hyC7PrAL47Bqnr3PZuCCA3VDyQ8=;
+        b=kiieHkp214CRiNvQV7vtuh+nq9yjho+31EjfC9/8yfjUu3g6yAN222yJGsSSdVuIfo
+         yQFU9zkAo2tSjSJHxO/ex1exW7Rhgv/AqsDhp4kEPF/9xC+eg5Ccb8AcnVnuKT2NU1zX
+         Hk+HluBB33iU981WthdfNvkQzNtig3VmcHcp++1UmMu8A3p/Xieozgo4ek+65Z3VFrcs
+         foex4tW8qwXh1HmOdzHn11S4UYuoZViiuPYauNp/jhf+/nB0te0fWtxEAf67OalMwsQW
+         FfJ7AssfSvtRZ8WfPO8F9KFEbgZ23xRYgXP9+Y25sWPgjgBusOdjzn3QB2HNXFd4HYHt
+         d+rA==
+X-Gm-Message-State: AOAM532Fg9sfbw0cgN6YtvndNChLziSx5+7fwyFVOdxnDu8HhnotSnTj
+        oKT+dxu4P24jDr/W8yOa6erHRuR1Vlc85w==
+X-Google-Smtp-Source: ABdhPJz91Vr1VWL78e6GXi1sN4DfrxfIkWJFZuUB5PF2qPCekCsORokaFVPX1JbXifzQAib4CZoXKQ==
+X-Received: by 2002:a17:90a:d082:b0:1ca:be58:c692 with SMTP id k2-20020a17090ad08200b001cabe58c692mr18098614pju.238.1650656359441;
+        Fri, 22 Apr 2022 12:39:19 -0700 (PDT)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id dw16-20020a17090b095000b001cd4989ff66sm6951168pjb.45.2022.04.22.12.39.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 13:30:59 -0700 (PDT)
-Date:   Fri, 22 Apr 2022 16:30:57 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        hannes@cmpxchg.org, akpm@linux-foundation.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220422203057.iscsmurtrmwkpwnq@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-7-kent.overstreet@gmail.com>
- <20220422042017.GA9946@lst.de>
- <YmI5yA1LrYrTg8pB@moria.home.lan>
- <20220422052208.GA10745@lst.de>
- <YmI/v35IvxhOZpXJ@moria.home.lan>
- <20220422113736.460058cc@gandalf.local.home>
- <20220422193015.2rs2wvqwdlczreh3@moria.home.lan>
- <20220422153916.7ebf20c3@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220422153916.7ebf20c3@gandalf.local.home>
+        Fri, 22 Apr 2022 12:39:18 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 12:39:18 -0700 (PDT)
+X-Google-Original-Date: Fri, 22 Apr 2022 12:39:14 PDT (-0700)
+Subject:     Re: [PATCH v3 0/9] More PolarFire SoC Fixes for 5.18
+In-Reply-To: <20220413075835.3354193-1-conor.dooley@microchip.com>
+CC:     mturquette@baylibre.com, sboyd@kernel.org, aou@eecs.berkeley.edu,
+        Paul Walmsley <paul.walmsley@sifive.com>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        krzk+dt@kernel.org, daire.mcnamara@microchip.com,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        conor.dooley@microchip.com
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     conor.dooley@microchip.com, atulkhare@rivosinc.com
+Message-ID: <mhng-185e3a61-0634-4671-adfd-a1cc223920cf@palmer-ri-x1c9>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 03:39:16PM -0400, Steven Rostedt wrote:
-> I do not consider Facebook an open source company. One reason I turned them
-> down.
+On Wed, 13 Apr 2022 00:58:27 PDT (-0700), conor.dooley@microchip.com wrote:
+> Hey all,
+> After the clock driver for the PolarFire SoC was accepted I started work
+> on the onboard RTC & found out that the reference clock for the rtc was
+> actually missing from the clock driver.
+>
+> While restructuring the clock driver to add support for the rtc
+> reference, I also noticed that there were some problems with how the FIC
+> clocks were being used. The FIC clocks are the cpu side inputs to the
+> AXI fabric interconnections & are not the clocks for any peripherals.
+>
+> This first three patches in this series fixes the problems with the FICs:
+> - the fic clocks incorrectly had the AHB clock as their parents
+> - the last fic, named differently to the others, had not been set as
+>   a critical clock
+> - some peripherals on the fabric side were incorrectly using the cpu
+>   side fic clocks, resulting in incorrect rates.
+>
+> The second part of the series fixes the missing rtc reference clock.
+> There are three main changes:
+> - Changing the reference clock in the dt to the external 125 MHz
+>   oscillator rather than using the output of an internal pll. This has
+>   the added benefit of not requiring changes to the device tree if this
+>   part of the bitstream changes.
+> - Adding a new clock into the driver that sits above the existing
+>   configurable clocks & has the external reference as a parent. The new
+>   clock provides the parent for the AHB/AXI clocks which formerly came
+>   from the device tree.
+> - Adding the rtc reference clock to the dt bindings, device tree and
+>   clock driver at the configurable clock level, alongside AXI and AHB.
+>
+> I kept series separate from [0] since that's tied to the CONFIG_PM stuff
+> & fixes a specific problem.
+>
+> Changes since v1:
+> After speaking with Krzysztof, I have merged the rtc reference changes
+> [1] with these fixes for 5.18. This was done since the relevant drivers
+> and bindings only arrived in v5.18 & there'll now be no issue with
+> breaking the ABI.
+> Backwards compatiblity with the device tree from before 5.18 will be
+> broken by these changes, but the board did not boot then anyway... If
+> that is not okay, please lmk.
+>
+> The patch renaming sys_base was dropped since that's not a fix.
+>
+> Version 1 would not apply without [0] & that should be fixed too.
+>
+> Thanks,
+> Conor.
+>
+> Changes since v2:
+> - Wrapped text in dt-binding changes at 80 cols
+> - Ordered the clock defines numerically in the binding header
+> - Fixed the Fixes tag on the last patch and added the second tag
+>
+> [0] https://lore.kernel.org/linux-riscv/20220408143646.3693104-1-conor.dooley@microchip.com
+> [1] https://lore.kernel.org/linux-riscv/20220411072340.740981-1-conor.dooley@microchip.com
+>
+> Conor Dooley (9):
+>   clk: microchip: mpfs: fix parents for FIC clocks
+>   clk: microchip: mpfs: mark CLK_ATHENA as critical
+>   riscv: dts: microchip: fix usage of fic clocks on mpfs
+>   dt-bindings: clk: mpfs document msspll dri registers
+>   dt-bindings: clk: mpfs: add defines for two new clocks
+>   dt-bindings: rtc: add refclk to mpfs-rtc
+>   clk: microchip: mpfs: re-parent the configurable clocks
+>   clk: microchip: mpfs: add RTCREF clock control
+>   riscv: dts: microchip: reparent mpfs clocks
+>
+>  .../bindings/clock/microchip,mpfs.yaml        |  13 +-
+>  .../bindings/rtc/microchip,mfps-rtc.yaml      |  15 +-
+>  .../dts/microchip/microchip-mpfs-fabric.dtsi  |  16 +-
+>  .../microchip/microchip-mpfs-icicle-kit.dts   |   2 +-
+>  .../boot/dts/microchip/microchip-mpfs.dtsi    |  10 +-
+>  drivers/clk/microchip/clk-mpfs.c              | 191 +++++++++++++++---
+>  .../dt-bindings/clock/microchip,mpfs-clock.h  |   5 +-
+>  7 files changed, 211 insertions(+), 41 deletions(-)
 
-Surely you can see how NIH syndrome isn't something that just happens at
-closed-source companies? How a default cultural assumption of "we do things the
-way we've always done" leads to things getting insular?
+Thanks.  These generally look good to me, but I don't see acks from 
+everyone.  I'm perfectly fine treating these as fixes and taking them 
+through the RISC-V tree, but looks like it's mostly clk stuff so
 
-> > The reason I bring that up is that in this case, printbuf is the more evolved,
-> > more widely used implementation, and you're asking me to discard it so the
-> > kernel can stick with its more primitive, less widely used implementation.
-> > 
-> > $ git grep -w seq_buf|wc -l
-> > 86
-> > 
-> > $ git grep -w printbuf|wc -l
-> > 366
-> 
-> $ git grep printbuf
-> drivers/media/i2c/ccs/ccs-reg-access.c:                 char printbuf[(MAX_WRITE_LEN << 1) +
-> drivers/media/i2c/ccs/ccs-reg-access.c:                 bin2hex(printbuf, regdata, msg.len);
-> drivers/media/i2c/ccs/ccs-reg-access.c:                         regs->addr + j, printbuf);
-> 
-> I don't see it.
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-Here: https://evilpiepirate.org/git/bcachefs.git/
+in case someone else wants to take it.  I've put these over at 
+palmer/riscv-pfsoc-clk but haven't merged that anywhere, I'll hold off 
+until at least next week to give everyone time to chime in.
 
-It may not be merged yet, but it is actively developed open source code with
-active users that's intended to be merged!
+On a somewhat related note, I'm getting some DT schema failures 
 
-> I'd like to know more to why seq_buf is not good for you. And just telling
-> me that you never seriously tried to make it work because you were afraid
-> of causing tracing regressions without ever asking the tracing maintainer
-> is not going to cut it.
-
-I didn't know about seq_buf until a day or two ago, that's literally all it was.
-
-And Steve, apologies if I've come across as being a dick about this, that wasn't
-my intent.  I've got nothing against you or your code - I'd love it if we could
-just have a discussion about them on their merits, and if it feels like I'm
-making an issue about this unnecessarily that's because I think there's
-something about kernel process and culture worth improving that I want to raise,
-so I'm sticking my neck out a bit here.
-
-So here's the story of how I got from where seq_buf is now to where printbuf is
-now:
-
- - Printbuf started out as almost an exact duplicate of seq_buf (like I said,
-   not intentionally), with an external buffer typically allocated on the stack.
-
- - As error/log messages got to be bigger and more structured, stack usage
-   eventually became an issue, so eventually I added the heap allocations. 
-
- - This made them a lot more convenient to use, and made possible entirely new
-   ways of using them - so I started using them more, and converting everything
-   that outputted to strings to them.
-
- - This lead to the realization that when pretty-printers are easy and
-   convenient to write, that leads to writing pretty-printers for _more_ stuff,
-   which makes it easy to stay in the habit of adding anything relevant to
-   sysfs/debugfs - and log/error messages got a _whole_ lot better when I
-   realized instead of writing format strings for every basic C type I can just
-   use the .to_text() methods of the high level objects I'm working with.
-
-Basically, my debugging life has gotten _drastically_ easier because of this
-change in process and approach - deadlocks that I used to have to attach a
-debugger for are now trivial because all the relevant state is in debugfs and
-greppable, and filesystem inconsistencies that used to suck to debug I now just
-take what's in the error message and grep through the journal for.
-
-I can't understate how invaluable all this stuff has been, and I'm excited to
-take the lessons I've learned and apply them to the wider kernel and make other
-people's lives easier too.
-
-The shrinkers-OOM-reporting patch was an obvious starting point because
- - shrinkers have internal state that's definitely worth reporting on
- - we shouldn't just be logging this on OOM, we should also make this available
-   in sysfs or debugfs.
-
-Feature wise, printbufs have:
- - heap allocation
- - extra state for formatting: indent level, tabstops, and a way of specifying
-   units.
-
-That's basically it. Heap allocation adds very little code and eliminates a
-_lot_ of headaches in playing the "how much do I need to/can I put on the stack"
-game, and you'll want the formatting options as soon as you start formatting
-multi line output and writing pretty printers that call other pretty printers.
+    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dtb: /: memory@80000000: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+            From schema: /home/palmer/.local/lib/python3.8/site-packages/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/memory.yaml
+    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dtb: /: memory@1000000000: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+            From schema: /home/palmer/.local/lib/python3.8/site-packages/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/memory.yaml
+    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/microchip/microchip-mpfs-icicle-kit.dtb: soc: syscontroller: {'compatible': ['microchip,mpfs-sys-controller'], 'mboxes': [[15, 0]], 'status': ['okay']} should not be valid under {'type': 'object'}
+            From schema: /home/palmer/.local/lib/python3.8/site-packages/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/simple-bus.yaml
+    
+Looks like none of them are new from this patch set, though.  Atul's 
+been chasing down various DT schema failures so they might be fixed 
+already.
