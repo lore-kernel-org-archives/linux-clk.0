@@ -2,65 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEB4C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 02:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA558C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 02:35:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443411AbiDVCgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 22:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        id S243870AbiDVCiH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 22:38:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386192AbiDVCgx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 22:36:53 -0400
+        with ESMTP id S1443290AbiDVCiG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 22:38:06 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CAF4B412;
-        Thu, 21 Apr 2022 19:34:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8150B4B412
+        for <linux-clk@vger.kernel.org>; Thu, 21 Apr 2022 19:35:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D10B6B82A18;
-        Fri, 22 Apr 2022 02:34:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E8FC385A8;
-        Fri, 22 Apr 2022 02:33:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 30A8AB81C21
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 02:35:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01EEC385A7;
+        Fri, 22 Apr 2022 02:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650594839;
-        bh=uSHrkLY+dZ+wKF/t6k1olPqi38KWpu6Mopr6O6CB9PE=;
+        s=k20201202; t=1650594912;
+        bh=9bdSIGjXftPYDw2zoU9ZhcnuKxacuGWiim8SFrqnmjs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YSv6iuKjih2OATi0FEAB6NTD3yg8Uiz50zars69ikIxL9k7591IqZeT0kqu8oF+20
-         WCczCSeDEZfVxUPVmjoqPOQ4l/CZ1mAQXk5OUsRwAXR3nCGmNxtjbWEanZdbhXCDwr
-         eBf+gR4MADAa6NYKBiiPZtUTqiKWw8uEqdAR6oTFCCtqLcJbD0y26ZCt2kPiTiDWe1
-         akoK0pDf9OmXbSDnGd7DMyLHOgUu9SnNUncCjY8K2mWW7UuxsC3tqVm78S/2S9ihdm
-         mdOkbwqtBNs04Oh1xEqmXEFRLBZS1+wIvHJ8XDHgZHMZioGE0k0tRF+blwIwTpO139
-         zFoZ+ahClPsBQ==
+        b=sbrNFO4vmmSoJtB15Y2pMJQoQO+TJ/xXFaKfzeInH6/UB5P6OiwHE9pduYriMmwSR
+         jVe3v161VAk+RSDRT1XoX3PiO23AoMQqGg8uzNtRUuqatI290In5Zmp3GZ0++Pl34l
+         EMUggPHDHAdETytdlKR1KYkcw0KbuPOU2MjvUsILDzjgNzJwZBX7UWLomaDidIfNLY
+         XpMIhbWHfhWXZHmyfJKsi23fff4aLpfm5GIV6V+pic1UFTGdchIwIo4P7Gi0JIsT2S
+         wsDut3kYv7lAjLvd3xqiUxyWpSC1LfSi+lIsge6UngEEgnhyUV+aSLDef2TPDfRqsn
+         rHmJRN5wZxFXQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220411101441.17020-3-aidanmacdonald.0x0@gmail.com>
-References: <20220411101441.17020-1-aidanmacdonald.0x0@gmail.com> <20220411101441.17020-3-aidanmacdonald.0x0@gmail.com>
-Subject: Re: [RESEND PATCH 2/3] clk: ingenic: Mark critical clocks in Ingenic SoCs
+In-Reply-To: <20220411072340.740981-1-conor.dooley@microchip.com>
+References: <20220411072340.740981-1-conor.dooley@microchip.com>
+Subject: Re: [PATCH v2] clk: microchip: mpfs: don't reset disabled peripherals
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>,
-        mturquette@baylibre.com, paul@crapouillou.net,
-        paulburton@kernel.org, tsbogend@alpha.franken.de
-Date:   Thu, 21 Apr 2022 19:33:57 -0700
+Cc:     daire.mcnamara@microchip.com, linux-riscv@lists.infradead.org,
+        palmer@rivosinc.com, andrew@lunn.ch, linux@armlinux.org.uk,
+        Conor Dooley <conor.dooley@microchip.com>
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+Date:   Thu, 21 Apr 2022 19:35:10 -0700
 User-Agent: alot/0.10
-Message-Id: <20220422023359.87E8FC385A8@smtp.kernel.org>
+Message-Id: <20220422023512.C01EEC385A7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aidan MacDonald (2022-04-11 03:14:40)
-> Consider the CPU, L2 cache, and memory as critical to ensure they
-> are not disabled.
+Quoting Conor Dooley (2022-04-11 00:23:41)
+> The current clock driver for PolarFire SoC puts the hardware behind
+> "periph" clocks into reset if their clock is disabled. CONFIG_PM was
+> recently added to the riscv defconfig and exposed issues caused by this
+> behaviour, where the Cadence GEM was being put into reset between its
+> bringup & the PHY bringup:
 >=20
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+> https://lore.kernel.org/linux-riscv/9f4b057d-1985-5fd3-65c0-f944161c7792@=
+microchip.com/
+>=20
+> Fix this (for now) by removing the reset from mpfs_periph_clk_disable.
+>=20
+> Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire =
+SoC")
+> Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
 
-General comment, please add a comment around CLK_IS_CRITICAL usage if it
-isn't very clear why such a clk shouldn't be turned off. Second, is
-there any point in describing these clks in the kernel and using memory
-to do that if they're just going to always be on? Wouldn't a dummy clk
-returned from clk_get() work just as well if anything is grabbing a
-reference with clk_get()?
+Applied to clk-fixes
