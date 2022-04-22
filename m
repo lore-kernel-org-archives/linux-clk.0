@@ -2,106 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A00C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 01:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E43C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 01:33:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355151AbiDVBfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Apr 2022 21:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35528 "EHLO
+        id S1443102AbiDVBgR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Apr 2022 21:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1443057AbiDVBfH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 21:35:07 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F04849F2C;
-        Thu, 21 Apr 2022 18:32:16 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id n18so7550981plg.5;
-        Thu, 21 Apr 2022 18:32:16 -0700 (PDT)
+        with ESMTP id S1344083AbiDVBgQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Apr 2022 21:36:16 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5EBC49F94;
+        Thu, 21 Apr 2022 18:33:24 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id k14so6161905pga.0;
+        Thu, 21 Apr 2022 18:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=tqPDRS4nUWLBZ4JoPctO88qdw7Y1CafvutU8eDymN/U=;
-        b=kFtNcHZTf2FKloMVXOAzRxo+H41+Xtg7jWHH1Xf1l0W9zZJlqMfeJgjHhC9+crPjM6
-         N+t4E36meUhTeGrgL5Y3r4eTI+uCHhJ/Swsu9Nib0nqJOpYzUs9Fik8YeDyDtozYjXxx
-         9+zeSAcM2IM20NqSgPP7SzBQHXf7C8hxCoYrR64aphYUIbo5E/BNCjPVA90OK/qFJGUk
-         oiR8Xw/93AHSf7YTumh3NcrLbMnSU2E5mf/iF/SVHJSjJsdyWr6G/mlF17XvJHCkQf6l
-         P7TlvBKMJkntE8NjnzcQdu5JnCnXwyIGsf1746TFUO1Rf4MJJhodaFZ69B01KpotA0l8
-         HoCg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ihxe6zxbUA/1vzj66/JVhIWgSQBXfTvpOsIAjBTzmgI=;
+        b=dMgP5O6mpu60na3kHGDMSK73m9DHFBs2SGazQ1eRLrH0DwCHnlEfFT8bmKffGEga+C
+         yiugD8GVWVG32heRbcq/6H35SUnC90ACuAyGywpOaDYjPTPviqG2YxJFvOs4J3Pg5RVk
+         EU6m/ozHfU4JfH5S/b1YU8D4cUE2YGUoXFnI46nqv2C3L/hqLF0MY7rO4Fht5PlXk2Vy
+         iNbHpyQm7dqb3Ui6U/pnIVg8MHQhRjGSDP0ScdZcUyO1PrpQvg6OW+nJ835fulm0iYLP
+         Hi3yhfO6w81oYUsokRogJ9MECCBYWz09wGRww4n4/IJQH9pYpUq8CqUc6NbI35ms6T3g
+         VJ9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=tqPDRS4nUWLBZ4JoPctO88qdw7Y1CafvutU8eDymN/U=;
-        b=CHs6U0ewurQX5vriGWfJwbkVNJ8TcoR1ZQ+1FBfF3dyFO+U2MTVsshCi2eMQ8F0ym3
-         QXPpWi95jphUymHJo0XMqET+GM3zfRkEVlS+SdVyhN0WqmYKuj/gxgnEEKGeEyeEJJ4A
-         eoBPXD0bdONvfpjy3eOgFVPC/D3sTGq1Ujd0slK2cChMV5xxMWIBiJ86ENiedmewTI6p
-         XrvQSUtKT/bjU5QltTjIuMyGfi1QGxI+xREZ4E59+RYIeQ9d5Lu0YmDzTI6zOG1v5/Vh
-         Jeyw/PCHXDg07xLIaao0VTqu8Be8vqBwQRG43jdI2gpYJ6DUTCOAlH6J9w73HhYTjhQn
-         dPYQ==
-X-Gm-Message-State: AOAM531Ed/igIeZkVG51qtYL2aFCEsVZPvJX/vJrHmmfZ/X0j/CwJGGN
-        rCs4ZG6Z4bNErlYQgSWA50g=
-X-Google-Smtp-Source: ABdhPJxFJnOIJNpFTRlL010JQMDVFmMgl+P7c+HrY3I81Q3POTN8/7Xmgyz+jXP4oA+FC3ZSAk1k0Q==
-X-Received: by 2002:a17:902:6b0b:b0:158:f889:edd9 with SMTP id o11-20020a1709026b0b00b00158f889edd9mr1993953plk.122.1650591135627;
-        Thu, 21 Apr 2022 18:32:15 -0700 (PDT)
-Received: from [192.168.1.100] ([159.226.95.33])
-        by smtp.gmail.com with ESMTPSA id r9-20020aa79889000000b0050a6fbc0c6bsm367159pfl.105.2022.04.21.18.32.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Apr 2022 18:32:15 -0700 (PDT)
-Message-ID: <40b90933-a881-3bd8-4533-3ded023a3e95@gmail.com>
-Date:   Fri, 22 Apr 2022 09:32:08 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] clk: imx: scu: Fix pm_runtime_get_sync() error checking
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220412065719.17735-1-linmq006@gmail.com>
- <20220422012059.52267C385A5@smtp.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ihxe6zxbUA/1vzj66/JVhIWgSQBXfTvpOsIAjBTzmgI=;
+        b=B6A+gmbfjxko9sjhSUnHyDp/corV8z5yjJDR2bcZIdzHDs2TV/mrA6L3LVAR0U5YRM
+         yPAxFigIkW1lA/4ednO/ByG9V9bSnErvcW+ARgrOfc2w+6/n+A9TfUlGOMX4UwjLPmk9
+         lBF/BR7HbL0QGo9YICDQaN7VfKv+JvK75Ks1uQp9L62TurGDxU88z4yZetjoBfhK7mSN
+         JL/tyOYvCeaU4QsseEajZqfNRwu/q+k4WADx+HgoBr9iZ6fhB1789hWJ5mAbES3eQNli
+         bflpUl7lY713bY/csXVkF11zV9FVcDKeTgibZRB+8Cy84Qrq4pGRTiJmwqbE55bjNl19
+         IeKQ==
+X-Gm-Message-State: AOAM5339WsGHpkyCWLoKqYNj3ngVAK8GhrIFQIQdIVG3V/d68t7QMlKP
+        5JSsBzcKOz/12g0//LuoWws=
+X-Google-Smtp-Source: ABdhPJyZwxQGChQpNHE19k0m0w52P/We+iqsLDG16PSwTJvTGWUMlaU+NNKLetC+Bi3ifjkdMJWr/w==
+X-Received: by 2002:a63:2a02:0:b0:3aa:c641:cd86 with SMTP id q2-20020a632a02000000b003aac641cd86mr537891pgq.614.1650591204218;
+        Thu, 21 Apr 2022 18:33:24 -0700 (PDT)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id 21-20020a630715000000b003aa63b1fd1bsm395634pgh.1.2022.04.21.18.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Apr 2022 18:33:23 -0700 (PDT)
 From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
+Date:   Fri, 22 Apr 2022 09:33:16 +0800
+Message-Id: <20220422013317.30362-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220422012059.52267C385A5@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220422012059.52267C385A5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+If the device is already in a runtime PM enabled state
+pm_runtime_get_sync() will return 1.
 
-On 2022/4/22 9:20, Stephen Boyd wrote:
-> Quoting Miaoqian Lin (2022-04-11 23:57:18)
->> If the device is already in a runtime PM enabled state
->> pm_runtime_get_sync() will return 1, so a test for negative
->> value should be used to check for errors.
-> Maybe it should use pm_runtime_resume_and_get() instead?
-Fair enough，I will send patch v2.
->> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
->> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
->> ---
->>  drivers/clk/imx/clk-scu.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
->> index 083da31dc3ea..18c6190eeffd 100644
->> --- a/drivers/clk/imx/clk-scu.c
->> +++ b/drivers/clk/imx/clk-scu.c
->> @@ -529,7 +529,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
->>                 pm_runtime_enable(dev);
->>  
->>                 ret = pm_runtime_get_sync(dev);
->> -               if (ret) {
->> +               if (ret < 0) {
->>                         pm_genpd_remove_device(dev);
->>                         pm_runtime_disable(dev);
->>                         return ret;
->> -- 
->> 2.17.1
->>
+Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync()
+fails, so use pm_runtime_resume_and_get() instead. this function
+will handle this.
+
+Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/imx/clk-scu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 083da31dc3ea..2044e62980e3 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -528,7 +528,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 		pm_runtime_use_autosuspend(&pdev->dev);
+ 		pm_runtime_enable(dev);
+ 
+-		ret = pm_runtime_get_sync(dev);
++		ret = pm_runtime_resume_and_get(dev);
+ 		if (ret) {
+ 			pm_genpd_remove_device(dev);
+ 			pm_runtime_disable(dev);
+-- 
+2.17.1
+
