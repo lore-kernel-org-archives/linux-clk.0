@@ -2,85 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FB2C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 14:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE966C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 14:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1448977AbiDVO5A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 10:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40208 "EHLO
+        id S1448615AbiDVO6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 10:58:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1448987AbiDVO47 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 10:56:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA78E5C36E;
-        Fri, 22 Apr 2022 07:54:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE36614CB;
-        Fri, 22 Apr 2022 14:54:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC7EC385AB;
-        Fri, 22 Apr 2022 14:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1650639244;
-        bh=c/tlEA8ZlzdxmIQcMOOwVpEn66NWm3rRj8+jDgV6xxc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gqA0vzwFNzldjsjjRmYleh3zBQQsf2csoe8Klhv/3GjBm4DNaPy55KzSHN+92OUFG
-         m3GNyJl25wnUK7V/vD5eogrGZ+M/bqPHb977EwGlbc3JNLGzmYWVnypL9eTSt5TC+O
-         s80RQTbQw2OrYCwnCnsa3LtgR6qLawgvnYBRHp1Q=
-Date:   Fri, 22 Apr 2022 16:54:01 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v7 00/12] Fix broken usage of driver_override (and kfree
- of static memory)
-Message-ID: <YmLBiQjyKhFZsPlG@kroah.com>
-References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
- <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
+        with ESMTP id S1449032AbiDVO6C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 10:58:02 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABE75FFE
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 07:55:08 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:2928:9f72:c4af:fbd9])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Mqv72700c2Ah9RF01qv7Vh; Fri, 22 Apr 2022 16:55:07 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nhugd-001cR4-8c; Fri, 22 Apr 2022 16:55:07 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nhugc-00COnU-GI; Fri, 22 Apr 2022 16:55:06 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.19
+Date:   Fri, 22 Apr 2022 16:55:05 +0200
+Message-Id: <cover.1650638810.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 20, 2022 at 11:20:06AM +0200, Krzysztof Kozlowski wrote:
-> On 19/04/2022 13:34, Krzysztof Kozlowski wrote:
-> 
-> Hi Greg, Rafael,
-> 
-> The patchset was for some time on the lists, got some reviews, some
-> changes/feedback which I hope I applied/responded.
-> 
-> Entire set depends on the driver core changes, so maybe you could pick
-> up everything via drivers core tree?
+	Hi Mike, Stephen,
 
-Ok, will do, thanks.
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-greg k-h
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.19-tag1
+
+for you to fetch changes up to 59086e4193f4fc920a23d2045a473f62450b4269:
+
+  clk: renesas: r9a07g043: Add SDHI clock and reset entries (2022-04-13 12:30:19 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.19
+
+  - Add support for the new RZ/G2UL SoC,
+  - Add RPC (QSPI/HyperFlash) clocks on R-Car E3 and D3,
+  - Miscellaneous fixes and improvements.
+
+Note that the new Renesas RZ/G2UL DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.19" (for soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.19" (for clk).
+
+Thanks for pulling!
+----------------------------------------------------------------
+Biju Das (7):
+      dt-bindings: clock: renesas: Document RZ/G2UL SoC
+      dt-bindings: clock: Add R9A07G043 CPG Clock and Reset Definitions
+      clk: renesas: Add support for RZ/G2UL SoC
+      clk: renesas: r9a07g043: Add GPIO clock and reset entries
+      clk: renesas: r9a07g043: Add ethernet clock sources
+      clk: renesas: r9a07g043: Add GbEthernet clock/reset
+      clk: renesas: r9a07g043: Add SDHI clock and reset entries
+
+Geert Uytterhoeven (5):
+      clk: renesas: r8a77990: Add RPC clocks
+      clk: renesas: r8a77995: Add RPC clocks
+      clk: renesas: rzg2l: Simplify multiplication/shift logic
+      clk: renesas: Move RPC core clocks
+      Merge tag 'renesas-r9a07g043-dt-binding-defs-tag' into renesas-clk-for-v5.19
+
+Phil Edworthy (1):
+      clk: renesas: rzg2l: Remove unused notifiers
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml          |   7 +-
+ drivers/clk/renesas/Kconfig                        |   7 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   8 +-
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   9 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   9 +-
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r8a77980-cpg-mssr.c            |  10 +-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |   7 +
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |  11 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  11 +-
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c            |   9 +-
+ drivers/clk/renesas/r9a07g043-cpg.c                | 220 +++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h                |   5 +-
+ drivers/clk/renesas/rzg2l-cpg.c                    |  10 +-
+ drivers/clk/renesas/rzg2l-cpg.h                    |   1 +
+ include/dt-bindings/clock/r9a07g043-cpg.h          | 184 +++++++++++++++++
+ 20 files changed, 488 insertions(+), 57 deletions(-)
+ create mode 100644 drivers/clk/renesas/r9a07g043-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a07g043-cpg.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
