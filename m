@@ -2,209 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BFCC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 22:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D276C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 22:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233088AbiDVWgc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 18:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57116 "EHLO
+        id S233789AbiDVWjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 18:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233150AbiDVWgP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:36:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D1E222E954;
-        Fri, 22 Apr 2022 14:52:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4EAE61F08;
-        Fri, 22 Apr 2022 21:52:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54CC4C385AF;
-        Fri, 22 Apr 2022 21:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650664338;
-        bh=SiAUjoz3T+1aeVALD2Eh+giKN0JVMqZN76YryIJ4mt8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JZlHS9SnrcUwTN/8SirsExgdtVW06cE0Tb9Ajn3T+CmGlQ8/99Cjok2tbbdXMSX6I
-         unOwrG3SN2csgsIcinwjjBZx3GTIxzgbb+v4Fex8cj0XJz5wi5ztxP2iKBTnGMZmEN
-         xgnXpklcG6WExd4GDNi21Jjj2n/3K7UiDNa7vQwFx0AE/8QmCJPjhMncwbi6Nkz1U5
-         uISD3pMZIVmI5AbcpmJJOyf5gG2FrNGDLL85lv57phdoz8pXq8i8Ap4iz20oK0h9sD
-         BwRNMtdqatNr6husm399n58uFqRMjbQwgOyVxcTU4HSaKfgP+5tJzh/wg351eXGa9z
-         AWGy6x7+ryIWA==
-Received: by mail-pl1-f177.google.com with SMTP id c12so13644612plr.6;
-        Fri, 22 Apr 2022 14:52:18 -0700 (PDT)
-X-Gm-Message-State: AOAM531qgsmZvAQTF0XyClNQxwawZDDQMucznU3aX5ztSydwMrVS7+8t
-        5j/oOPjSDxw7XfRvDta6SwaXiFhMYafbUd+WSA==
-X-Google-Smtp-Source: ABdhPJxwTRWYr1mK8u4TOSQmwU1J9n4B/PUTMMO4yVY9LMlSYIg2sLv98fHfLXLaS6h423zejzhIyKAdFgTdwgHJxgQ=
-X-Received: by 2002:a17:902:b694:b0:153:1d9a:11a5 with SMTP id
- c20-20020a170902b69400b001531d9a11a5mr6374024pls.151.1650664337751; Fri, 22
- Apr 2022 14:52:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <mhng-185e3a61-0634-4671-adfd-a1cc223920cf@palmer-ri-x1c9> <0f99ec7b-0c2f-cf6c-162d-af615eb73373@conchuod.ie>
-In-Reply-To: <0f99ec7b-0c2f-cf6c-162d-af615eb73373@conchuod.ie>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 22 Apr 2022 16:52:05 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJpd1dBNmWcsbLQZAWj=0am_98ztonOxEgGjXBGddfiNA@mail.gmail.com>
-Message-ID: <CAL_JsqJpd1dBNmWcsbLQZAWj=0am_98ztonOxEgGjXBGddfiNA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] More PolarFire SoC Fixes for 5.18
-To:     Conor Dooley <mail@conchuod.ie>
-Cc:     Palmer Dabbelt <palmer@rivosinc.com>, atulkhare@rivosinc.com,
+        with ESMTP id S234437AbiDVWiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 18:38:17 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E67C200389;
+        Fri, 22 Apr 2022 14:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1650663022;
+        bh=BHUkq4qIz1dh922+/iqR/+zEXRIaC4ZyZF4Bphn8Po8=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=EXay7kgGE8SkMAk7JaTrpqsmjmE+KTqTL3U60OahfcTP4a0uhZGt1TALutDYVF3im
+         M/dCpgzDLEepZkFvF89gCdMzhB7ac4NIR/nuWleWMud/8uWT2N1OdDKDdZ24UdzTND
+         Agi3x+W+yvHXOI3DRqZbvc1rgIezKKwRa4KtuWPs=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([87.78.190.74]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8ofO-1nvSO519eg-015ujL; Fri, 22
+ Apr 2022 20:31:55 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 5/7] ARM: dts: wpcm450: Add clock controller node
+Date:   Fri, 22 Apr 2022 20:30:10 +0200
+Message-Id: <20220422183012.444674-6-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220422183012.444674-1-j.neuschaefer@gmx.net>
+References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Fag6c+9a1Pz3T5xG3Pe4SmIRM1zshVKs/bhtGtFRhEqmEKmvImL
+ mQiew5bwtAn5jmH7DaPyUusvR9/woaryKVpQFAXUKgw39r3F9k9/a1u2LQItUrXdsy7diry
+ CBT1J59AfeqO/3Z6yii0UgOL51/2BFCdmCC74iM+zjFRl7g/SRd0Lu5Q5I0YJ4tANpkLGDo
+ PYSdA+hdkEp96fsM9/7sw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IHgVYjueDIk=:s19Olf0VBPcmGPERNqaAVP
+ TIOWAFRCJ8h1zX3LmbH8ZStBHDP6P9A5eQhP0ofSiugsP6jIVRCLO8XSlS6TkrTZNKvhaLg+Y
+ l3o2Uw5FF+BiEH4ITCaIkibSAAw3yYvsmBeEVhI968R+qU+j9jemDR8uiXPckM6NFLlFG3MAA
+ //3Vkn/yzDI+S/DuzZwc4m/fSRP+2u+UhapM3X/x049NPxHSkiKu7Fh0mueR1t73aFB3MqSeU
+ GJMIl3QD9eYoPieeluQDBN3OK/0o5YTLLeJyOrFJLmOGPVANCkGgqyuiY8kxs0yUAo3CYH310
+ YISle7JZrIyFsKumD7yMJwq1DCcT9+BKojeTsB1kLGIfNIrhpEj9bJAEYZrMi4yFhfIr+MuuI
+ oGC7OW38CccejsUeblq3l6NtVKZZGEAk3UXxla3VXvcEOrzM816Y/3YHc18+YQFLVwfym/Rs6
+ HpfcVHsbxMIRnekokDxudI2DP2FZbSsMA7xtr7SkkFrZowFAwaTQ8p2TOBmk0zC/iq5KbO5Y2
+ B91g/xGxfwmhLJJlfHpUjcoIij9CJrmWE0jOPVVktEgdGEoXFbA1ac67XnVeR/SrX/4uFZrob
+ M199YNDpY5+S2cDOf0LRmhL6spD/JnMzvcfaEu2Sg3Fp8Fa+uul9rFFDhAeaNT/23jcmtjwMW
+ Zo1zEe9o8swvO7N3pQTF1PZ2R6K4gxjYouhqdV7DJLsyauGhM7Mq+wdRH8rTk610Aso3QbTiQ
+ HwSYs628upNHfP0XUwISxTcddajIdD53mgG8fgFZBKzt21QSfEDTI9swvdN2Oz4WWaElbqF6E
+ L9fbql54Lgwr8/NXZiYsyHbZDTRoY4Bv1c7TE7ZvHo1RSPL5/Pfp1Y25wggRhQ8r+J3i26fe9
+ Vv+YrLmcvWdfZrrSlui3Z1+SOYosJuorgnTGoBDmJLf2J6TVA8hXRNBVx7L0dWxh0yyGqKvhD
+ QDvvT0otLfKlDfcTjrwYS9Nm73804oL+q7n4v+JhNmqdDbG2O1rdGJj+qDuyTokLdmwVCoi9S
+ RSWbkjlIiwj7PvZR83cBPpgFFVTjIFdAVO36ZXoSfQbHbtQJeMDAM+IwJ/uSrTbWysAcEpG4d
+ J+80VCwdWTBYn4=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 2:59 PM Conor Dooley <mail@conchuod.ie> wrote:
->
-> On 22/04/2022 20:39, Palmer Dabbelt wrote:
-> > On Wed, 13 Apr 2022 00:58:27 PDT (-0700), conor.dooley@microchip.com wr=
-ote:
-> >> Hey all,
-> >> After the clock driver for the PolarFire SoC was accepted I started wo=
-rk
-> >> on the onboard RTC & found out that the reference clock for the rtc wa=
-s
-> >> actually missing from the clock driver.
-> >>
-> >> While restructuring the clock driver to add support for the rtc
-> >> reference, I also noticed that there were some problems with how the F=
-IC
-> >> clocks were being used. The FIC clocks are the cpu side inputs to the
-> >> AXI fabric interconnections & are not the clocks for any peripherals.
-> >>
-> >> This first three patches in this series fixes the problems with the FI=
-Cs:
-> >> - the fic clocks incorrectly had the AHB clock as their parents
-> >> - the last fic, named differently to the others, had not been set as
-> >>   a critical clock
-> >> - some peripherals on the fabric side were incorrectly using the cpu
-> >>   side fic clocks, resulting in incorrect rates.
-> >>
-> >> The second part of the series fixes the missing rtc reference clock.
-> >> There are three main changes:
-> >> - Changing the reference clock in the dt to the external 125 MHz
-> >>   oscillator rather than using the output of an internal pll. This has
-> >>   the added benefit of not requiring changes to the device tree if thi=
-s
-> >>   part of the bitstream changes.
-> >> - Adding a new clock into the driver that sits above the existing
-> >>   configurable clocks & has the external reference as a parent. The ne=
-w
-> >>   clock provides the parent for the AHB/AXI clocks which formerly came
-> >>   from the device tree.
-> >> - Adding the rtc reference clock to the dt bindings, device tree and
-> >>   clock driver at the configurable clock level, alongside AXI and AHB.
-> >>
-> >> I kept series separate from [0] since that's tied to the CONFIG_PM stu=
-ff
-> >> & fixes a specific problem.
-> >>
-> >> Changes since v1:
-> >> After speaking with Krzysztof, I have merged the rtc reference changes
-> >> [1] with these fixes for 5.18. This was done since the relevant driver=
-s
-> >> and bindings only arrived in v5.18 & there'll now be no issue with
-> >> breaking the ABI.
-> >> Backwards compatiblity with the device tree from before 5.18 will be
-> >> broken by these changes, but the board did not boot then anyway... If
-> >> that is not okay, please lmk.
-> >>
-> >> The patch renaming sys_base was dropped since that's not a fix.
-> >>
-> >> Version 1 would not apply without [0] & that should be fixed too.
-> >>
-> >> Thanks,
-> >> Conor.
-> >>
-> >> Changes since v2:
-> >> - Wrapped text in dt-binding changes at 80 cols
-> >> - Ordered the clock defines numerically in the binding header
-> >> - Fixed the Fixes tag on the last patch and added the second tag
-> >>
-> >> [0] https://lore.kernel.org/linux-riscv/20220408143646.3693104-1-conor=
-.dooley@microchip.com
-> >> [1] https://lore.kernel.org/linux-riscv/20220411072340.740981-1-conor.=
-dooley@microchip.com
-> >>
-> >> Conor Dooley (9):
-> >>   clk: microchip: mpfs: fix parents for FIC clocks
-> >>   clk: microchip: mpfs: mark CLK_ATHENA as critical
-> >>   riscv: dts: microchip: fix usage of fic clocks on mpfs
-> >>   dt-bindings: clk: mpfs document msspll dri registers
-> >>   dt-bindings: clk: mpfs: add defines for two new clocks
-> >>   dt-bindings: rtc: add refclk to mpfs-rtc
-> >>   clk: microchip: mpfs: re-parent the configurable clocks
-> >>   clk: microchip: mpfs: add RTCREF clock control
-> >>   riscv: dts: microchip: reparent mpfs clocks
-> >>
-> >>  .../bindings/clock/microchip,mpfs.yaml        |  13 +-
-> >>  .../bindings/rtc/microchip,mfps-rtc.yaml      |  15 +-
-> >>  .../dts/microchip/microchip-mpfs-fabric.dtsi  |  16 +-
-> >>  .../microchip/microchip-mpfs-icicle-kit.dts   |   2 +-
-> >>  .../boot/dts/microchip/microchip-mpfs.dtsi    |  10 +-
-> >>  drivers/clk/microchip/clk-mpfs.c              | 191 +++++++++++++++--=
--
-> >>  .../dt-bindings/clock/microchip,mpfs-clock.h  |   5 +-
-> >>  7 files changed, 211 insertions(+), 41 deletions(-)
-> >
-> > Thanks.  These generally look good to me, but I don't see acks from eve=
-ryone.  I'm perfectly fine treating these as fixes and taking them through =
-the RISC-V tree, but looks like it's mostly clk stuff so
-> >
-> > Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
->
-> Ye, hopefully they go via clk. Stephen replied to v1 or 2 so
-> I figure they're in his queue :)
->
-> >
-> > in case someone else wants to take it.  I've put these over at palmer/r=
-iscv-pfsoc-clk but haven't merged that anywhere, I'll hold off until at lea=
-st next week to give everyone time to chime in.
-> >
-> > On a somewhat related note, I'm getting some DT schema failures
-> >    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/m=
-icrochip/microchip-mpfs-icicle-kit.dtb: /: memory@80000000: 'clocks' does n=
-ot match any of the regexes: 'pinctrl-[0-9]+'
-> >            From schema: /home/palmer/.local/lib/python3.8/site-packages=
-/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/memory.yaml
-> >    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/m=
-icrochip/microchip-mpfs-icicle-kit.dtb: /: memory@1000000000: 'clocks' does=
- not match any of the regexes: 'pinctrl-[0-9]+'
-> >            From schema: /home/palmer/.local/lib/python3.8/site-packages=
-/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/memory.yaml
-> >    /scratch/riscv-systems-ci-fixes/check/dt_check/arch/riscv/boot/dts/m=
-icrochip/microchip-mpfs-icicle-kit.dtb: soc: syscontroller: {'compatible': =
-['microchip,mpfs-sys-controller'], 'mboxes': [[15, 0]], 'status': ['okay']}=
- should not be valid under {'type': 'object'}
-> >            From schema: /home/palmer/.local/lib/python3.8/site-packages=
-/dtschema-2022.3.2-py3.8.egg/dtschema/schemas/simple-bus.yaml
-> >    Looks like none of them are new from this patch set, though.  Atul's=
- been chasing down various DT schema failures so they might be fixed alread=
-y.
->
-> Ye, I do know about those. I meant to try deleting the clocks
-> property but didn't get a chance, just been busy. It's not
-> related to this series nor does it matter if it makes it prior
-> to 5.18 so I was going to submit it on its own.
-> The other is in my list-of-things-to-ask-Rob/Krzk-when-I-know-
-> for-sure-what-my-question-actually-is...
+This declares the clock controller and the necessary 48 Mhz reference
+clock in the WPCM450 device. Switching devices over to the clock
+controller is intentionally done in a separate patch to give time for
+the clock controller driver to land.
 
-microchip,mpfs-sys-controller doesn't have MMIO registers, so it's not
-on a MMIO bus (aka simple-bus). Move it to an appropriate location
-(top level if not part of something else).
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+=2D--
+ arch/arm/boot/dts/nuvoton-wpcm450.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Rob
+diff --git a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi b/arch/arm/boot/dts/nu=
+voton-wpcm450.dtsi
+index 1c63ab14c4383..62d70fda7b520 100644
+=2D-- a/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
++++ b/arch/arm/boot/dts/nuvoton-wpcm450.dtsi
+@@ -39,6 +39,14 @@ clk24m: clock-24mhz {
+ 		#clock-cells =3D <0>;
+ 	};
+
++	refclk: clock-48mhz {
++		/* 48 MHz reference oscillator */
++		compatible =3D "fixed-clock";
++		clock-output-names =3D "refclk";
++		clock-frequency =3D <48000000>;
++		#clock-cells =3D <0>;
++	};
++
+ 	soc {
+ 		compatible =3D "simple-bus";
+ 		#address-cells =3D <1>;
+@@ -51,6 +59,15 @@ gcr: syscon@b0000000 {
+ 			reg =3D <0xb0000000 0x200>;
+ 		};
+
++		clk: clock-controller@b0000200 {
++			compatible =3D "nuvoton,wpcm450-clk";
++			reg =3D <0xb0000200 0x100>;
++			clocks =3D <&refclk>;
++			clock-names =3D "refclk";
++			#clock-cells =3D <1>;
++			#reset-cells =3D <1>;
++		};
++
+ 		serial0: serial@b8000000 {
+ 			compatible =3D "nuvoton,wpcm450-uart";
+ 			reg =3D <0xb8000000 0x20>;
+=2D-
+2.35.1
+
