@@ -2,121 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B391C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66D4C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Apr 2022 15:10:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1449201AbiDVPGH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:06:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48364 "EHLO
+        id S234287AbiDVPN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 11:13:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1449204AbiDVPFa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:05:30 -0400
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41AD5D5C2;
-        Fri, 22 Apr 2022 08:02:34 -0700 (PDT)
-Received: by mail-qv1-f43.google.com with SMTP id jt15so222997qvb.13;
-        Fri, 22 Apr 2022 08:02:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nl7wQaLVnrUxRifrIlCw6eSjmlS3kXxae69A9xpqkSw=;
-        b=I4lmG3HiTR46fbSA3AwAE1RKgSL8I0kc5KJXZJa+ubLfjK0th6YuFI4a4tPiXme9iF
-         VEgJSfr6VHRQdnuGcIf9Qzjy4yMoAZmAW3mkmi6P2aVpff3OMnKn7Cf8XKKWgrwWyKI/
-         m2av1wcnwj7xZw//g3rQCmErr6ZIBXNHu2fNwEfhf6FzFMBSP/pEj4x2fJNeN5Vm2VYP
-         nQ0bg9dAP1z7haqLRu1jw68x8g4lmEqEIa/AOereVGWWsVMIywZnHiRxGvgkE24DQWq0
-         aLP0OAfCC3IctJ1M7uQCKCgPAA8CMbe69kB/vP/cBuMp7Jc6W0ic0jirDHHy0AJzk2bf
-         +fHw==
-X-Gm-Message-State: AOAM532v9wvb+RiaX1iNU63os4Y3x9el3kWDiJqTjxnNuPozIaL2MQ8B
-        fRXN0CIdLYLE79VSYNJR04SbrpO6qSoORQ==
-X-Google-Smtp-Source: ABdhPJwPmTYnQqkYaq7o3h0uiBTxF7i8t4PkT4X9qQ+xrtWOBg9b3Hk0Ukn8vDYj8Tq+aJrkYZHmXg==
-X-Received: by 2002:a05:6214:f07:b0:446:693d:196c with SMTP id gw7-20020a0562140f0700b00446693d196cmr3727725qvb.23.1650639753246;
-        Fri, 22 Apr 2022 08:02:33 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id t10-20020a05622a180a00b002f202b7806esm1318698qtc.81.2022.04.22.08.02.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Apr 2022 08:02:33 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-2f18982c255so88284947b3.1;
-        Fri, 22 Apr 2022 08:02:32 -0700 (PDT)
-X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
- v133-20020a81618b000000b002dbd9528a39mr5231596ywb.132.1650639752748; Fri, 22
- Apr 2022 08:02:32 -0700 (PDT)
+        with ESMTP id S1449230AbiDVPMy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 11:12:54 -0400
+Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB1F1083;
+        Fri, 22 Apr 2022 08:09:58 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 08:09:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1650640196;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FuSilkQrD0XHypF9NHM/iQufTOifJtoJtKA0QjM80gQ=;
+        b=ogvZvMz0qmRqn6QDbBgi2ylHy0TQA3uWaXlbE2Qr5PhovLBd6Wn+NU6jdRIreeLszV8F0T
+        6vKrZZb2n1v73UODttDRnOV+VFz4bTzSb5v8lROD6lWxhYq1rSkVWs2ELGwxEOI0lkMR0a
+        /6VVGN0zpZMKdJS97D22pC8bfMik1wM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Roman Gushchin <roman.gushchin@linux.dev>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <YmLFPJTyoE4GYWp4@carbon>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com>
- <20220330154024.112270-4-phil.edworthy@renesas.com> <CAMuHMdXy7XPcAmBLuCeXwZcPxNrfBs2yBN+tLicjHLQxQO=B2Q@mail.gmail.com>
- <TYYPR01MB70867EDF52038CBA6FD42383F5F79@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYYPR01MB70867EDF52038CBA6FD42383F5F79@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Apr 2022 17:02:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXBf1RANzoTK_TKh73_5vYqTrYaA3eTKo+joNrFaNoDeg@mail.gmail.com>
-Message-ID: <CAMuHMdXBf1RANzoTK_TKh73_5vYqTrYaA3eTKo+joNrFaNoDeg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/13] dt-bindings: clock: Add r9a09g011 CPG Clock Definitions
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Phil,
-
-On Fri, Apr 22, 2022 at 1:29 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 20 April 2022 22:13 Geert Uytterhoeven wrote:
-> > On Wed, Mar 30, 2022 at 5:41 PM Phil Edworthy wrote:
-> > > Define RZ/V2M (R9A09G011) Clock Pulse Generator core clocks, module
-> > clock
-> >
-> > The definitions contain no core clocks, only module clocks and resets?
-> > Perhaps you will need a core clock for the Ethernet reference clock,
-> > like on RZ/G2L?
-> It looks like rz/v2m has a gate for every clock, so no need for any core
-> clocks.
-
-OK. Then please remove "core clock," from the patch description.
-
-> > > outputs (CPG_CLK_ON* registers), and reset definitions (CPG_RST_*
-> > > registers) in Section 48.5 ("Register Description") of the RZ/V2M
-> > Hardware
-> > > User's Manual (Rev. 1.10, Sep. 2021).
-> > >
-> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/r9a09g011-cpg.h
-
-> > > +#define R9A09G011_IIC01_PCLK           79
-> >
-> > IIC0_PCLK?
-> There are four IIC peripherals, this pclk if for iic0 and iic1.
-
-I know.
-
-> Would IIC0_1_PCLK be a better name for this?
+On Fri, Apr 22, 2022 at 02:58:19PM +0200, Michal Hocko wrote:
+> On Thu 21-04-22 19:48:37, Kent Overstreet wrote:
+> > This patch:
+> >  - Changes show_mem() to always report on slab usage
+> >  - Instead of reporting on all slabs, we only report on top 10 slabs,
+> >    and in sorted order
+> 
+> As I've already pointed out in the email thread for the previous
+> version, this would be better in its own patch explaining why we want to
+> make this unconditional and why to limit the number caches to print.
+> Why the trashold shouldn't be absolute size based?
+> 
+> >  - Also reports on shrinkers, with the new shrinkers_to_text().
+> >    Shrinkers need to be included in OOM/allocation failure reporting
+> >    because they're responsible for memory reclaim - if a shrinker isn't
+> >    giving up its memory, we need to know which one and why.
 >
-> > > +#define R9A09G011_IIC23_PCLK           89
-> > IIC1_PCLK?
-> and IIC2_3_PCLK?
+> Again, I do agree that information about shrinkers can be useful but
+> there are two main things to consider. Do we want to dump that
+> information unconditionaly? E.g. does it make sense to print for all
+> allocation requests (even high order, GFP_NOWAIT...)? Should there be
+> any explicit trigger when to dump this data (like too many shrinkers
+> failing etc)?
 
-Well, IIC0_PCLK andIIC1_PCLK match the Hardware Manual.
+To add a concern: largest shrinkers are usually memcg-aware. Scanning
+over the whole cgroup tree (with potentially hundreds or thousands of cgroups)
+and over all shrinkers from the oom context sounds like a bad idea to me.
 
-BTW, for resets, they avoided the confusion by naming the groups
-A and B, instead of 0 and 1.
+IMO it's more appropriate to do from userspace by oomd or a similar daemon,
+well before the in-kernel OOM kicks in.
 
-Gr{oetje,eeting}s,
+> 
+> Last but not least let me echo the concern from the other reply. Memory
+> allocations are not really reasonable to be done from the oom context so
+> the pr_buf doesn't sound like a good tool here.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
++1
