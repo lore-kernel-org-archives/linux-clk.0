@@ -2,88 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E33C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 17:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2386C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 19:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236673AbiDWSB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Apr 2022 14:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38642 "EHLO
+        id S236902AbiDWTsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Apr 2022 15:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233848AbiDWSBz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 14:01:55 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC971DA429
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 10:58:57 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id b19so15249941wrh.11
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 10:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=8Kp5Q1vS0qC7/glbftIgd1JyC43ZLOUVon+K5fIPn5o=;
-        b=kdFHFAQI714HGQRNu3HLEzwruvNHj2VG2kP5gN91fvdPuj5IQKcwIQ2h9B6TZe9++t
-         LRqVj6ve0sVqn92288cEAFhgJZ+5OEBGqs7KSN6IHMmpA4yOS8ByPlLU71u8VssdxID5
-         L1Ab5WnwFlgN3YJfk6UT7bXMX/d9APnKhinl0YiP0TGliMEvtrEVsDn7696t54iIo5Hk
-         dJXNS1B8jOE4XUs3e2686L7vXwB8zwVUYFWd/NbTl6bAlGuy7RwONIS2OCfJkp/k/Vbr
-         QzoZ1IUAufWjVmT4dp9rNQjWYP/XNO2Gz9ubSQo1xH80juy9eJfNFs3hdc2y0TarnAPe
-         pvdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=8Kp5Q1vS0qC7/glbftIgd1JyC43ZLOUVon+K5fIPn5o=;
-        b=4AfKJfmrnKztqQnI4AKYdnlIxWATj8WiXhjuGgOMIBXidGfvfgMhLnhqRMBojKwg90
-         KbSBTRBZJxyWXPtmeKZ7dGp7l4lsPk7evLQCq0Q2f9ewdJFH8ad7yShEFdr7NWHdZ1Ul
-         hDaxL167DNrOyxGTQgIYShN+hdHY7UKldZZtysSe+ZSUd4XgpuCenotYko9a5BoYiqIs
-         0hrmT+3JXCfKCcWMRWBZaHZdUi5dxWZyyV+WBx7u9tOJpgJgWW7qQ/qjHupJEe9Pc4fu
-         tbgnuvqL2M6ZvYORTFGRWv6jylYsbMkw90prLRUL1t1h8Qfqn5xmNAffLfaKTgJjaqzB
-         Dy8A==
-X-Gm-Message-State: AOAM531bsQ57fASUH7AhRvzal863cZMIbY/OU84eXFkpZjOEMolY3UVE
-        mq1s/UdUlm4LR+nG2SMj59FyYA==
-X-Google-Smtp-Source: ABdhPJy4qom34eZ6mVdIY8SbAZlO8Hyobh8HVWgZA+5RgKrP5ipkq5Vn3x0OnSwah/JrOmbFwKj6pQ==
-X-Received: by 2002:a05:6000:1864:b0:20a:9ac6:b166 with SMTP id d4-20020a056000186400b0020a9ac6b166mr8334383wri.354.1650736736178;
-        Sat, 23 Apr 2022 10:58:56 -0700 (PDT)
-Received: from [192.168.2.116] ([109.76.213.55])
-        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b00392951086efsm7744297wmq.34.2022.04.23.10.58.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Apr 2022 10:58:55 -0700 (PDT)
-Message-ID: <207bacb2-40a3-49e9-e766-433d152149c4@conchuod.ie>
-Date:   Sat, 23 Apr 2022 18:58:53 +0100
+        with ESMTP id S236918AbiDWTsF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 15:48:05 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401CED88;
+        Sat, 23 Apr 2022 12:45:08 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id A59735C013A;
+        Sat, 23 Apr 2022 15:45:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Sat, 23 Apr 2022 15:45:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1650743107; x=
+        1650829507; bh=h1ToIWPq6OSSwLnJ0g8sY57Xw3btjZPjZHe3fJxISP0=; b=q
+        jK62bDYmKLKKt7KIUq6xRKJoE9LOG6WmubRZJw6MAXLxh0+w3zCbfVsCN3BJEP4O
+        DP4Ynb1murUnVqduMpPcpfywxEomaHp3YoKKy2GK9P0CZWW0FCuo9+ikOMnC7Ruh
+        m4JUVTbVikFl2YjVMP6WKilRp4u/nSNuUDETgZ1nUi5RvqTh5qUdqQ2/4msX+FZE
+        AotYMdHyAunPRRIPCLi3WyJvIm75bCQY+UgIj4qrQ4ISd/cQNr+gs1EVda7H10xx
+        Q2Apl+gfgJm1JCaAD5F0RHv4EbiE+KYqrm7yqBzyfts0zmqV0FTQxhVwuQg+5Ayp
+        CAG1iwHnR8KxLQ6bVy24A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1650743107; x=1650829507; bh=h1ToIWPq6OSSw
+        LnJ0g8sY57Xw3btjZPjZHe3fJxISP0=; b=wJiL1f87DzHpR5NY7Vmu0j2wSacSG
+        vg30qER4x3PQEpEjXZ5WtXA+PVm1kjxHWyfMBSWj3U6jj9ZjOLFvoFWtYLe6e52D
+        CwKAezzvsJvbEtAomXvIWJg7c3hQm8UiMYk4EDDbkdDlkIoZkj361LwyNP0fI3s/
+        gCjF/fXsgg2OjK2xWjQyGBOMzHaz+7sdXTVpT2dTUREa5DH/NPDCBT/1nOevNgCa
+        H5GAMbtS/SqCMPkGqx7SW7IxNGOJ8oqHB+8MhwfmQxIUfl6wPfat46HkH1yEehN6
+        YBxJqs5d64vVsuK9XCzTrZyR3/yzVXWKrfv0dTLxjytjZfwD5/cVXT4eg==
+X-ME-Sender: <xms:QldkYq0yGPeCcj2zuuAfsqrrwf5mCgn_S6X6qJWDrmjxLPHJQAqL1g>
+    <xme:QldkYtEdR_j79gElvu6_BbJp-NWaDZQMhn10FMUerF80yNUhLszFN2-eJMc-hGDdJ
+    EgwOexab4muuhW57A>
+X-ME-Received: <xmr:QldkYi7QHU2bDKXYJ-N6rWbTffII6DPN-LOxkKw1Yo6acQZMpA-dLDr0_dDbqTEu9aCZzKJyXQ-Fz5OLs0sRE_UMy8RAIasOYZ7v-a3DKJHrrRcn4hfKc2o_fg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrtdeigddugeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpefftdevkedvgeekueeutefgteffieelvedukeeuhfehledvhfei
+    tdehudfhudehhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:QldkYr1jBrKeelkkuwOD-r59eBSOqsHEa8Bvr0B-JBTihudOGKXTUw>
+    <xmx:QldkYtEJ1J50S5nTvvBEhpJHPmGM2gVaP4JzkK4_PTfQJuxA4M2lpg>
+    <xmx:QldkYk-QrOwx2TXK33_pf7Hz5IH8pONIjT_fLx5-GN01Ken5JSrNJQ>
+    <xmx:Q1dkYmMYMmdHBvGc6_3Xwuj-4Pe3Yj9mNgs81i3_JowvdbhuMGXtfw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 23 Apr 2022 15:45:06 -0400 (EDT)
+Subject: Re: [PATCH] clk: sunxi: sun9i-mmc: check return value after calling
+ platform_get_resource()
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     wens@csie.org, maxime@cerno.tech
+References: <20220421134308.2885094-1-yangyingliang@huawei.com>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <9ebabc53-72de-bbec-895c-fa3760ed5374@sholland.org>
+Date:   Sat, 23 Apr 2022 14:45:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 1/9] clk: microchip: mpfs: fix parents for FIC clocks
+In-Reply-To: <20220421134308.2885094-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        aou@eecs.berkeley.edu, krzk+dt@kernel.org, mturquette@baylibre.com,
-        palmer@rivosinc.com, paul.walmsley@sifive.com, robh+dt@kernel.org
-Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-References: <20220413075835.3354193-1-conor.dooley@microchip.com>
- <20220413075835.3354193-2-conor.dooley@microchip.com>
- <20220423014103.8574CC385A0@smtp.kernel.org>
-From:   Conor Dooley <mail@conchuod.ie>
-In-Reply-To: <20220423014103.8574CC385A0@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/04/2022 02:41, Stephen Boyd wrote:
-> Quoting Conor Dooley (2022-04-13 00:58:28)
->> The fabric interconnects are on the AXI bus not AHB.
->> Update their parent clocks to fix this.
->>
->> Fixes: 635e5e73370e ("clk: microchip: Add driver for Microchip PolarFire SoC")
->> Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
->> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->> ---
+On 4/21/22 8:43 AM, Yang Yingliang wrote:
+> It will cause null-ptr-deref if platform_get_resource() returns NULL,
+> we need check the return value.
 > 
-> Applied to clk-fixes
+> Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/resets")
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-Thanks!
+Reviewed-by: Samuel Holland <samuel@sholland.org>
