@@ -2,61 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED44EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6020FC433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:40:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232254AbiDWCiX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:38:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
+        id S232153AbiDWCnk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 22:43:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231970AbiDWCiW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:38:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 710317520B;
-        Fri, 22 Apr 2022 19:35:27 -0700 (PDT)
+        with ESMTP id S231970AbiDWCnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:43:39 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671AC14EC54;
+        Fri, 22 Apr 2022 19:40:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D9526179F;
-        Sat, 23 Apr 2022 02:35:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B11C385A4;
-        Sat, 23 Apr 2022 02:35:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0CE04B8335C;
+        Sat, 23 Apr 2022 02:40:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC928C385A4;
+        Sat, 23 Apr 2022 02:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650681326;
-        bh=XJ14PyQ4pg/RzzeycrZxq8OeRG230tLNBOK8Xilz1x4=;
+        s=k20201202; t=1650681640;
+        bh=IdCFcgvm/zKae6TiKI2zjh09ofMsIgLxzcaNuyCmHiQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=A+//P+TRh6DazDzlapDxWTwXOzAAdgmlOEAvhemMcMPNdrqS5S7+Lx2+FoFxLHe8Z
-         /LHNA0RnPFCmsDgsiYm//sf13nQmSqmE43SdtT+fOyC6Vr5kWpl0NnQOlfKdz5mAPR
-         83ZObdLfdcp5i27EQ6DHXImQ+aSKxfIZNCI1bpeSv1xseNhAa4yYeH6wxvVNeBqQzZ
-         cQebyaU1A/NeQMG/fZEaZWKELpmJ61wAUiqnErEWUD7BP0ymjPpQ0KVdYXdxwkyZR6
-         3tNcWhdOa+jhtF6q+b5JbEzx4wJAbtz/UmCvMgW05gYpfDVV09meaDEQ6vc5EhxbSm
-         B1bGs58jkl7Tg==
+        b=CTmzRzmmh3Mw/xh2EsRf2TDOnNH7aiE+fxjXesKyFXSoKBDHZyrsQ7PHJf/7EGCqB
+         RzcgUHtbhGnpA5FXudw4OSPjZv9rfavP6Qb349Nv56uajErL42/UG4HwD8hh6D4QD2
+         Y7ER6Ix7fu3u31FP8MeDNfA1cDLPRPfBLdGPUveyY2UScsyxH+NIeLEw5pQPeRmYa0
+         3nusJuqZn3Xj0UcbaWOD3J+Hean6ouWPLYLLe/0GE5rrIiM1huSK/Hce9xE520sln3
+         Il0RgeWe4vjYDp/4o7XcNuzdcWrR740SavFqfxdewuPsYg429Q9+AAw/EIQpzLT5mP
+         rC3zc+MGrCB9g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220407151831.2371706-11-steve@sk2.org>
-References: <20220407151831.2371706-1-steve@sk2.org> <20220407151831.2371706-11-steve@sk2.org>
-Subject: Re: [PATCH v2 10/10] clk: renesas-pcie: use simple i2c probe function
+In-Reply-To: <cover.1650638810.git.geert+renesas@glider.be>
+References: <cover.1650638810.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.19
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Kitt <steve@sk2.org>
-Date:   Fri, 22 Apr 2022 19:35:23 -0700
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 22 Apr 2022 19:40:37 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423023526.63B11C385A4@smtp.kernel.org>
+Message-Id: <20220423024040.BC928C385A4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Kitt (2022-04-07 08:18:31)
-> The i2c probe function here doesn't use the id information provided in
-> its second argument, so the single-parameter i2c probe function
-> ("probe_new") can be used instead.
+Quoting Geert Uytterhoeven (2022-04-22 07:55:05)
+>         Hi Mike, Stephen,
 >=20
-> This avoids scanning the identifier tables during probes.
+> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc=
+17:
 >=20
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
+>   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.19-tag1
+>=20
+> for you to fetch changes up to 59086e4193f4fc920a23d2045a473f62450b4269:
+>=20
+>   clk: renesas: r9a07g043: Add SDHI clock and reset entries (2022-04-13 1=
+2:30:19 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into clk-next
