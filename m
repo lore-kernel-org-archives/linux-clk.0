@@ -2,61 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AB5C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FE8C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229818AbiDWCGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
+        id S230435AbiDWCJI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 22:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiDWCGQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:06:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF5392D13;
-        Fri, 22 Apr 2022 19:03:21 -0700 (PDT)
+        with ESMTP id S230128AbiDWCJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:09:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24EA13539B;
+        Fri, 22 Apr 2022 19:06:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B06BBB83241;
-        Sat, 23 Apr 2022 02:03:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A40EC385A4;
-        Sat, 23 Apr 2022 02:03:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3173D61563;
+        Sat, 23 Apr 2022 02:06:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808E8C385A4;
+        Sat, 23 Apr 2022 02:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650679398;
-        bh=LyyLXju/U8yIek5c5heUbEsX0vPDdKgnKPoWKhsvV2o=;
+        s=k20201202; t=1650679568;
+        bh=0MnhiBkDTqfJrZ1djD2Yts4XXJT4BYD6t/G8WOVnua8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=P2A1r6Fc7+VFfyYfl0PKDzul8sxpllOobQa/6M6JIBqd+sui3v/hpDhmodfnj5AQo
-         6Zqd7cJk5PwBKXXWl4Sv9Rm5sXTwDABesa67ORguyfNa00p9Fl4xWAFDQN4qNqd1QB
-         WUFqh7PpOVjdwahQjnktX0S8VcDDTUA6f2LiNegNRpEwus9CMFOSPKtLeoH/ELFZb6
-         hFyfrJHfX9p8xsBwkRR1hxW4u2GqF/lJCJeOXEoEfEbbphKL7LKzaUF6zCDIyYBvUI
-         JKJmsqPwjPj/iUJtNLBftpSsPwYUn6jsFDGIjwkOPDuTIy+UBA10G2+C6vGqdq28qc
-         682e0KYkapo6w==
+        b=DjqWEcm/4on4m1Kp0+9ZXJrDrCQp8svEXidHBUlui7rSL4/3Y1zpzTrtWLyG4vvmN
+         EQXaJr81o2uByAz1Beylux2Akr8Kr+XblOd7Cy+JUFNZy8AWkXEjf25shVQruPVEkw
+         md67qND4mfbXGhLZF/658ACYYLq2NKzYttUW3jVPyWktDA0pGlIDXqTADO5PwpggFx
+         9/oKY+Gau1ztO/Oi7rnOr1bjoO2lrmlkrhOt6OZKKHQMeL+F5Jng4cLBwdIljxgEMO
+         Kos4AYtNiGAtVwLS8C4IVla9eYExi39VNELqI+L3D4niXuZYZ4vmoqghIdlAY9NlNy
+         tcGVmAsOe5cSA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220418110455.2559264-1-chi.minghao@zte.com.cn>
-References: <20220418110455.2559264-1-chi.minghao@zte.com.cn>
-Subject: Re: [PATCH] clk: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
+In-Reply-To: <20220406050321.26177-1-guozhengkui@vivo.com>
+References: <20220406050321.26177-1-guozhengkui@vivo.com>
+Subject: Re: [PATCH linux-next] clk: keystone: sci-clk: change `struct sci_clk **clk` to `struct sci_clk *clk`
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-To:     cgel.zte@gmail.com, mturquette@baylibre.com
-Date:   Fri, 22 Apr 2022 19:03:16 -0700
+Cc:     zhengkui_guo@outlook.com, Guo Zhengkui <guozhengkui@vivo.com>
+To:     Guo Zhengkui <guozhengkui@vivo.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 22 Apr 2022 19:06:06 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423020318.6A40EC385A4@smtp.kernel.org>
+Message-Id: <20220423020608.808E8C385A4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting cgel.zte@gmail.com (2022-04-18 04:04:55)
-> From: Minghao Chi <chi.minghao@zte.com.cn>
+Quoting Guo Zhengkui (2022-04-05 22:02:32)
+> `struct sci_clk **clk` is unnecessary. Change it to `struct sci_clk *clk`.
 >=20
-> Using pm_runtime_resume_and_get is more appropriate
-> for simplifing code
+> Also fix functions relating to it.
 >=20
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+> Signed-off-by: Guo Zhengkui <guozhengkui@vivo.com>
 > ---
 
-Applied to clk-next
+Waiting for Nishanth to review.
