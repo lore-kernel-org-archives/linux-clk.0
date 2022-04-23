@@ -2,71 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6020FC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01455C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 03:01:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232153AbiDWCnk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:43:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32864 "EHLO
+        id S232304AbiDWDD4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 23:03:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231970AbiDWCnj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:43:39 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 671AC14EC54;
-        Fri, 22 Apr 2022 19:40:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0CE04B8335C;
-        Sat, 23 Apr 2022 02:40:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC928C385A4;
-        Sat, 23 Apr 2022 02:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650681640;
-        bh=IdCFcgvm/zKae6TiKI2zjh09ofMsIgLxzcaNuyCmHiQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CTmzRzmmh3Mw/xh2EsRf2TDOnNH7aiE+fxjXesKyFXSoKBDHZyrsQ7PHJf/7EGCqB
-         RzcgUHtbhGnpA5FXudw4OSPjZv9rfavP6Qb349Nv56uajErL42/UG4HwD8hh6D4QD2
-         Y7ER6Ix7fu3u31FP8MeDNfA1cDLPRPfBLdGPUveyY2UScsyxH+NIeLEw5pQPeRmYa0
-         3nusJuqZn3Xj0UcbaWOD3J+Hean6ouWPLYLLe/0GE5rrIiM1huSK/Hce9xE520sln3
-         Il0RgeWe4vjYDp/4o7XcNuzdcWrR740SavFqfxdewuPsYg429Q9+AAw/EIQpzLT5mP
-         rC3zc+MGrCB9g==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231970AbiDWDDy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 23:03:54 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 999261FE6CC
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 20:00:57 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id e189so11081980oia.8
+        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 20:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Z01ZX/eSD7gWHPOLzm6BsqAyU5hOlUHJpTNJkHkEOQk=;
+        b=OQy5pbi2V8P7+8nbw7viv9EC72ztvMlIp4uoHQvN373CnFpxUXkLDcJiMbkwKSd1TX
+         /xi8gjeHVmuqnUV1Nhr5n3MYF6tej6+mG4Nx6gOSWLEn/ftlyavgPCjR66kNssmEVtW1
+         ARFGPOYoAHU7haQdipuTcAt1c3G4pfIpIRK0bn6qSnUDoYDU1Pz0euQJYi4criK9cuSh
+         m1kIWx+93qHWQYcLG+6ArbyWnOmtbXkpGz7hYDfsgIhCLfqy2e0tYkQSzPzsaIu1epVS
+         ad01IS6j8ABAIDLL/o03uYgzB5HTW9R+XMFXmtVenh77JzoAyYLQyDCylGJM47fmQRUW
+         lWuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Z01ZX/eSD7gWHPOLzm6BsqAyU5hOlUHJpTNJkHkEOQk=;
+        b=44yDK+VoF2SYXh9sGjYZhADWlH3ykfDtmTP11cmsz1mhDl9Umx6I5rCcYd7Z2Seiu5
+         KlG9uNXUuVRiTuj6C9RQTqvKdoa/1wsmTmUbmXtS0SSwt+jTnypPcJrog9Ym1+rOAdas
+         lob+VdS+u1UfJrLRpKWMtw2Rlma9owVgzel0ucYUV4+dHN9aOagMGAqHzOBUy87COYcn
+         ooimqScUYwaEFHpE9A46afpo3+0wd7HEHUsIz++CV6lONo+dHePNM90RrP+F6oT5A/kg
+         35DkDday6jaWqaF1JlpkHeUCfJwvreII1504MaJpoCmTgVcP1HTrN/pURFQTVbhmXRt/
+         /EUA==
+X-Gm-Message-State: AOAM530MTB3AlAKYwOSN2dWeGephqFA3IXzwFRkE+Rl4+XUTuDzRaexY
+        fHCVKGToTXfgjcjGP41FbtFvug==
+X-Google-Smtp-Source: ABdhPJxaDzvRJf2bpiAF38YoDo5+oP+LcNWYr+r/d8JYzz3aKhSEJuv2rYkuoct5XvlvfFivi7Nskw==
+X-Received: by 2002:a05:6808:1881:b0:322:9e57:9e56 with SMTP id bi1-20020a056808188100b003229e579e56mr7863341oib.97.1650682856893;
+        Fri, 22 Apr 2022 20:00:56 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id b14-20020a056870160e00b000e67f5bd9b9sm1363747oae.45.2022.04.22.20.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 20:00:56 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 20:02:57 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tdas@quicinc.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC
+ bindings
+Message-ID: <YmNsYSxLtwLpw98t@ripper>
+References: <20220422230013.1332993-1-bjorn.andersson@linaro.org>
+ <20220423014824.912ACC385A0@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1650638810.git.geert+renesas@glider.be>
-References: <cover.1650638810.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.19
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 22 Apr 2022 19:40:37 -0700
-User-Agent: alot/0.10
-Message-Id: <20220423024040.BC928C385A4@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220423014824.912ACC385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2022-04-22 07:55:05)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc=
-17:
->=20
->   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.19-tag1
->=20
-> for you to fetch changes up to 59086e4193f4fc920a23d2045a473f62450b4269:
->=20
->   clk: renesas: r9a07g043: Add SDHI clock and reset entries (2022-04-13 1=
-2:30:19 +0200)
->=20
-> ----------------------------------------------------------------
+On Fri 22 Apr 18:48 PDT 2022, Stephen Boyd wrote:
 
-Thanks. Pulled into clk-next
+> Quoting Bjorn Andersson (2022-04-22 16:00:12)
+> > Add binding for the Qualcomm SC8280XP Global Clock controller.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Why no cover letter?
+> 
+
+I didn't have anything useful to write in it. Will provide you one in
+the future...
+
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> > new file mode 100644
+> > index 000000000000..44e5f0d0a795
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> > @@ -0,0 +1,199 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc8280xp.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Qualcomm Global Clock & Reset Controller Binding for SC8280xp
+> > +
+> > +maintainers:
+> > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> > +
+> > +description: |
+> > +  Qualcomm global clock control module which supports the clocks, resets and
+> > +  power domains on SC8280xp.
+> > +
+> > +  See also:
+> > +  - dt-bindings/clock/qcom,gcc-sc8280xp.h
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: qcom,gcc-sc8280xp
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: XO reference clock
+> 
+> "clock" is redundant in all these descriptions. Please remove.
+> 
+
+You don't think it's a little bit odd to have description such as
+"Sleep", "PCIe 2a pipe" or First EMAC controller reference"?
+
+I mean I agree that it's obviously clocks we're talking about, but to me
+that makes it seems like the descriptions are cut short, just for the
+sake of avoiding "clock".
+
+> > +      - description: Sleep clock
+> > +      - description: UFS memory first RX symbol clock
+> > +      - description: UFS memory second RX symbol clock
+> > +      - description: UFS memory first TX symbol clock
+> > +      - description: UFS card first RX symbol clock
+> > +      - description: UFS card second RX symbol clock
+> > +      - description: UFS card first TX symbol clock
+> > +      - description: Primary USB SuperSpeed pipe clock
+> > +      - description: gcc_usb4_phy_pipegmux_clk_src
+> > +      - description: gcc_usb4_phy_dp_gmux_clk_src
+> > +      - description: gcc_usb4_phy_sys_pipegmux_clk_src
+> > +      - description: usb4_phy_gcc_usb4_pcie_pipe_clk
+> > +      - description: usb4_phy_gcc_usb4rtr_max_pipe_clk
+> > +      - description: Primary USB4 RX0 clock
+> > +      - description: Primary USB4 RX1 clock
+> > +      - description: Secondary USB SuperSpeed pipe clock
+> > +      - description: gcc_usb4_1_phy_pipegmux_clk_src
+> > +      - description: gcc_usb4_1_phy_dp_gmux_clk_src
+> > +      - description: gcc_usb4_1_phy_sys_pipegmux_clk_src
+> > +      - description: usb4_1_phy_gcc_usb4_pcie_pipe_clk
+> > +      - description: usb4_1_phy_gcc_usb4rtr_max_pipe_clk
+> > +      - description: Secondary USB4 RX0 clock
+> > +      - description: Secondary USB4 RX0 clock
+> > +      - description: Multiport USB first SupserSpeed pipe clock
+> > +      - description: Multiport USB second SuperSpeed pipe clock
+> > +      - description: PCIe 2a pipe clock
+> > +      - description: PCIe 2b pipe clock
+> > +      - description: PCIe 3a pipe clock
+> > +      - description: PCIe 3b pipe clock
+> > +      - description: PCIe 4 pipe clock
+> > +      - description: First EMAC controller reference clock
+> > +      - description: Second EMAC controller reference clock
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: bi_tcxo
+> > +      - const: sleep_clk
+> 
+> And "_clk" postfix is redundant in all these strings. Remove?
+> 
+
+In this case I think they should include _clk, as they actually matches
+the clock names in the documentation.
+
+Regards,
+Bjorn
+
+> > +      - const: ufs_phy_rx_symbol_0_clk
+> > +      - const: ufs_phy_rx_symbol_1_clk
+> > +      - const: ufs_phy_tx_symbol_0_clk
+> > +      - const: ufs_card_rx_symbol_0_clk
+> > +      - const: ufs_card_rx_symbol_1_clk
+> > +      - const: ufs_card_tx_symbol_0_clk
+> > +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
+> > +      - const: gcc_usb4_phy_pipegmux_clk_src
+> > +      - const: gcc_usb4_phy_dp_gmux_clk_src
+> > +      - const: gcc_usb4_phy_sys_pipegmux_clk_src
+> > +      - const: usb4_phy_gcc_usb4_pcie_pipe_clk
+> > +      - const: usb4_phy_gcc_usb4rtr_max_pipe_clk
+> > +      - const: qusb4phy_gcc_usb4_rx0_clk
+> > +      - const: qusb4phy_gcc_usb4_rx1_clk
+> > +      - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk
