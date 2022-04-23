@@ -2,86 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA950C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3691FC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:25:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229455AbiDWC0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56188 "EHLO
+        id S232056AbiDWC2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 22:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232081AbiDWC0e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:26:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B1519C742;
-        Fri, 22 Apr 2022 19:23:33 -0700 (PDT)
+        with ESMTP id S232114AbiDWC2j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:28:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EFA1DB076;
+        Fri, 22 Apr 2022 19:25:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 76AA0615A2;
-        Sat, 23 Apr 2022 02:23:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04D6C385A0;
-        Sat, 23 Apr 2022 02:23:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DC986135F;
+        Sat, 23 Apr 2022 02:25:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12F3C385A0;
+        Sat, 23 Apr 2022 02:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650680612;
-        bh=haZUNetI18mwticLWcDQIHl1eNz0IU+GIiz4lHFqO2o=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=NJVBlWtCwHJSzgU8Bjes7Sdh8ZHwb3qWfO2cph12yW4KJKdJ3CgqbEvh0q/SzGTTf
-         CdqygZJCDjvDSpo0lvse2ZJEwUCi6xSlmYwE5TnvilFFZ5dz/ksZgfPd/CNhd7uRuY
-         TJir3f622QHjlMRS4GOxI7zjKvjyybz4GJZRacem74bO+/3PnWPmOGN1Fc4Ppybp4t
-         fmLJOwMSg6Lk+t252b5EC5t35QxapQRpjLkstpdlctW82g3XD8DvGazuepzK4PFA4F
-         lS/cJB/zUlCW63iKpc/SDog9tbXpueL3eU2vk0eecxsDLJsn1MfIzQAP3YRQV8RHKJ
-         bpDp6ZBUcJJtQ==
+        s=k20201202; t=1650680741;
+        bh=ArGHhgbdlHjKWbPeB+8c0u0ViOzzzUuy497doDzrEaY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=jK/9zgIeTIm8RlKZGOcSF3oBPkR0dPTvs2UzoFurZ6y5CJzEdnKdDn0OvZeaKFWA4
+         8E5XNdUQihWTCTb5bMAxnpCK3Yat0a6tGWidLP1sWdROsbDYcQ+CVj9Rf5tZrOjH2e
+         3Fq9j8+RYVzuDem9X3JF/Zr6rNSyOicK4trYxpj4S7Ft+8JCB7P2phfidfFGtQsfPf
+         AwNl3beD1qNAb/U+k26wOsBxl3isvQK51gs6h3ADwRpxfDJOhiVNaRnGmI8c/EVXiN
+         38mCkSFHmkHnLN7qi0GaggpucOBiLnJMAl8aWY9Eh541KX8b79zR0hUbEoATnkV7a4
+         /9viIpBT/lM/A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8e893363-3e47-2abe-7111-b3fb0888d4fc@gmail.com>
-References: <20220422012059.52267C385A5@smtp.kernel.org> <20220422013317.30362-1-linmq006@gmail.com> <20220422014411.4F96BC385A7@smtp.kernel.org> <8e893363-3e47-2abe-7111-b3fb0888d4fc@gmail.com>
-Subject: Re: [PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
+In-Reply-To: <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com>
+References: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com> <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Miaoqian Lin <linmq006@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
+        mturquette@baylibre.com, khilman@baylibre.com,
+        p.zabel@pengutronix.de, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 22 Apr 2022 19:23:30 -0700
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        xkernel.wang@foxmail.com
+Date:   Fri, 22 Apr 2022 19:25:39 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423022332.C04D6C385A0@smtp.kernel.org>
+Message-Id: <20220423022541.B12F3C385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miaoqian Lin (2022-04-21 18:59:54)
+Quoting Martin Blumenstingl (2022-04-18 09:39:57)
+> Hello,
 >=20
-> On 2022/4/22 9:44, Stephen Boyd wrote:
-> > Quoting Miaoqian Lin (2022-04-21 18:33:16)
-> >> If the device is already in a runtime PM enabled state
-> >> pm_runtime_get_sync() will return 1.
-> >>
-> >> Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync=
-()
-> >> fails, so use pm_runtime_resume_and_get() instead. this function
-> >> will handle this.
-> >>
-> >> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
-> >> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> >> ---
-> > Please don't send patches as replies to previous versions of the patch.
+> first of all: thank you for this patch!
 >=20
-> Sorry, I thought I should keep them in one thread, to provide the context
+> On Thu, Apr 7, 2022 at 11:28 AM <xkernel.wang@foxmail.com> wrote:
+> >
+> > From: Xiaoke Wang <xkernel.wang@foxmail.com>
+> >
+> > `rstc` is allocated by kzalloc() for resetting the controller register,
+> > however, if reset_controller_register() fails, `rstc` is not properly
+> > released before returning, which can lead to memory leak.
+> > Therefore, this patch adds kfree(rstc) on the above error path.
+> In general I am fine with this approach. There's some more "return"
+> statements below. Should these be covered as well?
 
-Please link back to previous revisions with lore.
-
-https://lore.kernel.org/r/<message-id-of-rev1>
-
-and then add a change log below the triple dash referencing that lore
-link and anything that has changed since that revision.
+Probably!
 
 >=20
-> for other people to follow up. Am I suppose to resend it?
+> Also a note about meson8b_clkc_init_common() itself: failures in that
+> function will result in a non-working system.
+> If we can't register the reset controller then most devices won't
+> probe and CPU SMP cannot work.
+> If registering any clock or the clock controller doesn't work then the
+> system also won't work as clocks are not available to other drivers.
+> So freeing memory in case of an error is good to have, but the end
+> result is still the same: the system won't work.
+>=20
 
-Yes. Might as well practice making a changelog at the same time.
+Can we get far enough to record this fact into either a pstore ramoops
+location or the serial console? That would be ideal to make debugging
+early problems easier.
