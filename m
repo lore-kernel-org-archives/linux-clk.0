@@ -2,104 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5741AC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 10:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACBFC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 10:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235018AbiDWKcN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Apr 2022 06:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55246 "EHLO
+        id S235009AbiDWKfh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Apr 2022 06:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234999AbiDWKcM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 06:32:12 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB0F1BFCAE
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 03:29:15 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id g20so13207486edw.6
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 03:29:15 -0700 (PDT)
+        with ESMTP id S234903AbiDWKfg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 06:35:36 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5793F22BF6;
+        Sat, 23 Apr 2022 03:32:39 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id bf11so12378996ljb.7;
+        Sat, 23 Apr 2022 03:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=T1doDOEgacffxYLHRh8rB/qzYEgOkZW9WRd7tL8Bnmg=;
-        b=Uq2QkeMj4YDx/HQMSBiMYbQ6hB5oDmdQNO5vrv6RZsV0W4hbLOlfcQfE9Fx+SorbgG
-         MeBfPLDNjGQBN9jXgG5BBgWMk4ku+EZIK5tA7n91BL7LiJUig2PZR20nB4vhxhCfJcMG
-         t6d2xzbi1EuNuz47K+u9ehbXvvjZ8kcpDisSvAJK4yj0jNqNnr/FlmotFTQIdwngVGZi
-         87mIRQutpRMvI7Y76Ke2obhz8pH7azA2gURjmJ0JSv954JHBmzuGdv1BKUsPx5/slIgm
-         vwbdwjM6Bl9W5ADyXkYlNsUd38w3K77+S6uxSZ6nNh9W2/Sj+Q0SNxkXfiIZlZvSWi/e
-         IXsQ==
+        bh=FjHVIpwQVF2j9Z1J3pzN5aGfezd4ZG1gp/yXo52Doyk=;
+        b=XFmDGucF/OcegOVH0xx/d8n/IGwkExBInzgnH2Lm7dLvoea6vEpiarJprM8axfZYn6
+         xdqdozexD2dH6IbHU5LMU7IS9U+oioxj5yy6DIUWl2cXiOWkfXf0jBRUlbUac9HTVnqB
+         RiOklvCNDaZGnqGSqOn6qqrJh+pq6gQJAqGVe8G1NMAPMjHTihC998Aaq06Jmcc+fcT+
+         iz/U5Gi7FQk1R1FbfVjnYWzi8EXNYk8F+GlASybLnp/xB8AV28jXILYawb2+8Cn5XGAL
+         kLLkAgfNwnWBTuxawnfafuToG52yusZv5V839takuTzRzaFeEZiTEDGv/G0oXano+ONU
+         j+Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=T1doDOEgacffxYLHRh8rB/qzYEgOkZW9WRd7tL8Bnmg=;
-        b=LJlGS4L377GZa8QgLuKJNkXYXdE1ghYcghIk2lSqS47ho7HbPMTs10JRt6p1eQGoBU
-         fUQFbCTZXeL3K6xVdKlmJhKBu9OJ8Weuv0Fbib2JC97LdnBLbiZHlkcRklSerVWXKxKr
-         b4XByLlno2gRW+u2qgWxSt36U3yA5qUIcozMMLejZG50xFai5YY8ZqACG5x67uUp3mel
-         +kiDHidYB2QXERQm7PkNZ1aBN4H5p/qYLkj/F+PxJsLeThay5dPOrnbUi87vn+I/liX/
-         7081/X7ISwr7U8C+BNf/z2L6NFPyLHOuDSGp2/2lSA8JJUjszpRR4iO7/Ttb/BEpMcad
-         nORA==
-X-Gm-Message-State: AOAM5316rSxgZJwr47PWgFrxH+hKopSKAHN489+x00pjlLLEvkmMxETg
-        gRA8+FyvB5VSpgLjObqx38AJNg==
-X-Google-Smtp-Source: ABdhPJzzZENHEHVJTTVj4i/LY2EyfuP6i5J51hweFIRBo2TrNePYugK61Ib5JXoKcujbhrjpbonMsg==
-X-Received: by 2002:a05:6402:1941:b0:413:2555:53e3 with SMTP id f1-20020a056402194100b00413255553e3mr9457841edz.164.1650709754411;
-        Sat, 23 Apr 2022 03:29:14 -0700 (PDT)
-Received: from [192.168.0.234] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id oz20-20020a170906cd1400b006e872188edbsm1557661ejb.104.2022.04.23.03.29.13
+        bh=FjHVIpwQVF2j9Z1J3pzN5aGfezd4ZG1gp/yXo52Doyk=;
+        b=KCTlJkNynU29CGY0k2iS81iCNCEOGuOpqK1owtrkqjYtW9EO5paYyQlyV3HRpxptj3
+         ZVyoXEIQommDlftZ+YPgYDLeFY0CpLlTvzcYcGPWOXHOK75L2YOsC83huyF0KS/JNBwZ
+         S+0Nxbtj+ALrihwndKCtJtqjkuhI8ldU6JPeQNUeKoBGNmKLizoGzs7fd0tRVzVkLMms
+         vprBWwpDFtuWjHRdVNBdjb7vkB1Fo1GczA8POVV0ejg3DxnTBXI4h4t61A2YsJFmQFnN
+         XIvV+sTjewtA9H3Gw87gS8B4WHyVdw7Tr3ZeuAMcjMM2Ddt685/0G4L2+/5oJd664yOu
+         Djpg==
+X-Gm-Message-State: AOAM531xjJ8tckkekqujWsIJ+QxIpoaJncC2WDbCNDQRoPNiV75YtuHu
+        xvnF+LzMYql2RVymtFwA/rQ=
+X-Google-Smtp-Source: ABdhPJypw+C0OHw2I6BBqFjoROXfn7uqBt7/o3BKuV0y5z0fzD6WCOzfmSwCSW856LNxwR99k8GuRg==
+X-Received: by 2002:a05:651c:1781:b0:247:daa7:4358 with SMTP id bn1-20020a05651c178100b00247daa74358mr5186355ljb.477.1650709957430;
+        Sat, 23 Apr 2022 03:32:37 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-138-167.dynamic.spd-mgts.ru. [109.252.138.167])
+        by smtp.googlemail.com with ESMTPSA id m1-20020a2e7101000000b0024f081cb0absm73107ljc.83.2022.04.23.03.32.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Apr 2022 03:29:14 -0700 (PDT)
-Message-ID: <16311e64-6a7f-e20e-de12-5a9eab10af83@linaro.org>
-Date:   Sat, 23 Apr 2022 12:29:12 +0200
+        Sat, 23 Apr 2022 03:32:36 -0700 (PDT)
+Message-ID: <0ac35b47-720e-ae99-45d2-3f8d63868a1e@gmail.com>
+Date:   Sat, 23 Apr 2022 13:32:35 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH V3 14/17] dt-binding: mt8195: Add infra_ao reset bit
+ Thunderbird/91.5.0
+Subject: Re: [PATCHv1 08/19] mmc: sdhci-of-dwcmshc: add reset call back for
+ rockchip Socs
 Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
- <20220422060152.13534-15-rex-bc.chen@mediatek.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220422060152.13534-15-rex-bc.chen@mediatek.com>
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
+        Yifeng Zhao <yifeng.zhao@rock-chips.com>, kernel@collabora.com
+References: <20220422170920.401914-1-sebastian.reichel@collabora.com>
+ <20220422170920.401914-9-sebastian.reichel@collabora.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220422170920.401914-9-sebastian.reichel@collabora.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/04/2022 08:01, Rex-BC Chen wrote:
-> To support reset of infra_ao, add the bit definition for thermal/SVS.
+22.04.2022 20:09, Sebastian Reichel пишет:
+> From: Yifeng Zhao <yifeng.zhao@rock-chips.com>
 > 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> The reset function build in the SDHCI will not reset the logic
+> circuit related to the tuning function, which may cause data
+> reading errors. Resetting the complete SDHCI controller through
+> the reset controller fixes the issue.
+> 
+> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> [rebase]
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
->  include/dt-bindings/reset/mt8195-resets.h | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/dt-bindings/reset/mt8195-resets.h b/include/dt-bindings/reset/mt8195-resets.h
-> index a26bccc8b957..2479680616fb 100644
-> --- a/include/dt-bindings/reset/mt8195-resets.h
-> +++ b/include/dt-bindings/reset/mt8195-resets.h
-> @@ -26,4 +26,11 @@
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index bac874ab0b33..d95ae6ca1256 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/reset.h>
+>  #include <linux/sizes.h>
 >  
->  #define MT8195_TOPRGU_SW_RST_NUM               16
+>  #include "sdhci-pltfm.h"
+> @@ -63,6 +64,7 @@
+>  struct rk3568_priv {
+>  	/* Rockchip specified optional clocks */
+>  	struct clk_bulk_data rockchip_clks[RK3568_MAX_CLKS];
+> +	struct reset_control *reset;
+>  	u8 txclk_tapnum;
+>  };
 >  
-> +/* INFRA RST0 */
-> +#define MT8195_INFRA_RST0_THERMAL_AP_RST       0
-> +/* INFRA RST3 */
-> +#define MT8195_INFRA_RST3_PTP_RST              5
-> +/* INFRA RST4 */
-> +#define MT8195_INFRA_RST4_THERMAL_MCU_RST      10
+> @@ -255,6 +257,23 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+>  	sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_STRBIN);
+>  }
+>  
+> +static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
+> +	struct rk35xx_priv *priv = dwc_priv->priv;
+> +
+> +	if (mask & SDHCI_RESET_ALL) {
+> +		if (!IS_ERR_OR_NULL(priv->reset)) {
 
-Same comments as for other reset.
+priv->reset can't be a error ptr since probe fails on error.
 
+> +			reset_control_assert(priv->reset);
+> +			udelay(1);
+> +			reset_control_deassert(priv->reset);
+> +		}
+> +	}
+> +
+> +	sdhci_reset(host, mask);
+> +}
+> +
+>  static const struct sdhci_ops sdhci_dwcmshc_ops = {
+>  	.set_clock		= sdhci_set_clock,
+>  	.set_bus_width		= sdhci_set_bus_width,
+> @@ -269,7 +288,7 @@ static const struct sdhci_ops sdhci_dwcmshc_rk3568_ops = {
+>  	.set_bus_width		= sdhci_set_bus_width,
+>  	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+>  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+> -	.reset			= sdhci_reset,
+> +	.reset			= rk35xx_sdhci_reset,
+>  	.adma_write_desc	= dwcmshc_adma_write_desc,
+>  };
+>  
+> @@ -292,6 +311,13 @@ static int dwcmshc_rk3568_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
+>  	int err;
+>  	struct rk3568_priv *priv = dwc_priv->priv;
+>  
+> +	priv->reset = devm_reset_control_array_get_exclusive(mmc_dev(host->mmc));
 
-Best regards,
-Krzysztof
+The devm_reset_control_array_get_exclusive() never returns NULL.
+
+The devm_reset_control_array_get_optional_exclusive(() may return NULL
+if reset is missing in DT, perhaps that's what you actually want?
+
+> +	if (IS_ERR_OR_NULL(priv->reset)) {
+> +		err = PTR_ERR(priv->reset);
+
+NULL isn't a error
+
+> +		dev_err(mmc_dev(host->mmc), "failed to get reset control %d\n", err);
+
+dev_err_probe()?
+
