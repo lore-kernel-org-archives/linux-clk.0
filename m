@@ -2,203 +2,233 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28085C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 04:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AADAC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 07:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbiDWEpZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Apr 2022 00:45:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41000 "EHLO
+        id S230383AbiDWHUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Apr 2022 03:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230471AbiDWEpZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 00:45:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5883B12EF17
-        for <linux-clk@vger.kernel.org>; Fri, 22 Apr 2022 21:42:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD92960B25
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 04:42:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA7AC385A0;
-        Sat, 23 Apr 2022 04:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650688948;
-        bh=jVYj4xRZQcQ7pCTntHC1ZSSKMWMGHnyhLMrJiTkvtNk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=odtvTXe/KYsQ+wJMdCPD64WBLvIA4DuCOLxSM57ai7eysZIqqAyq9ZJJoOQtu51kU
-         KjRPToCz8buuotD/ZbzRWtiXvPPVaCChRs8BOS/BsmQCu/Hp84+5I/7cZOenm6EHUx
-         +IDWfg+QD/SNaKEmnjug6mQ9hOeeCfuQ3QQ33VcdJUPBIU+WEF4J2W/NGaKJYF7HjE
-         l06We6qfxufzRP5eKq1u1TSbaFcCXm24M3IhdbL+L59nk/4nhpvMU4wpQzUvXKhcgb
-         G9wWHT1RQINJWeGkU73w+bm7xfOXEVA2LeT8bS8udP31CxJf6Vdi/DsMMVZLIxnR9K
-         4rI2pS2B1Lq+w==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220408104127.ilmcntbhvktr2fbh@houat>
-References: <20220408091037.2041955-1-maxime@cerno.tech> <20220408091037.2041955-23-maxime@cerno.tech> <1jwnfzlxx1.fsf@starbuckisacylon.baylibre.com> <20220408104127.ilmcntbhvktr2fbh@houat>
-Subject: Re: [PATCH 22/22] clk: Prevent a clock without a rate to register
-From:   Stephen Boyd <sboyd@kernel.org>
+        with ESMTP id S229569AbiDWHUa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 03:20:30 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F53136969
+        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 00:17:29 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 36CE23200FA9;
+        Sat, 23 Apr 2022 03:17:25 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 23 Apr 2022 03:17:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1650698244; x=
+        1650784644; bh=7geXDW3WmMzWv3sJPMUU1YJO0TU7D0rZdzrGif3a0jk=; b=a
+        fwqvGv/vtzjJdo+0woJ48Pa9K83/71yYxc1og//KTTkNks+AyAKE++LVfihBsQ31
+        /najBxC6344Mghwuv7nbfIKXF/atS+V7KmrLm27/IqOrGNmzpuKyASqqj1E46kN9
+        GmIZPIF7P1Z9RCEYomfM27ehQjI0wRxfA96nNjaIBM0VDU0+xs/5Bc5rppx1g4JL
+        v9RfAbUlUZFe2oLvCG9WIZqaEnyQ6pBopo7Yx4Tnz1VnJG3fZAf8+I6I3w7mJQB/
+        XKVonJJDTZgMKfFq4V1z5YkzPimsTTqaou3gZiSfOa5Yks6hd5gbzWcxYMsD+Dp3
+        KvOr7NpMZJt1RcSe/oECA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1650698244; x=1650784644; bh=7geXDW3WmMzWv
+        3sJPMUU1YJO0TU7D0rZdzrGif3a0jk=; b=biMNK5Kl/hkJ+DjNjW9Pei389sG5n
+        XsgnG2FZmGyQVCvJSSkqLjrd+8zPeJdk3DPUR/H2iTqnijdz1vumvkNGsE5g4eb0
+        DvJG84N8GGDXxKs8w2KSFBOLSwZhDvIw3nX4SdMGJWh3i12V3s86qStolaEKIFlX
+        EQYSn1S3FfoQx6EA3llY6xx6LwuBefVjTKPCbSUye1gUXSZFNtVnYyOBZdCEu7Wk
+        e8JLctF3sgvnX1YC7ra57+utbeY8uBLnzRImCZWM7zL3UKi3PCzScg3NpG02gGax
+        AlhBH1e72UqVmodYQWgSzLx4XgMAzITaH6HPa4ZUpMBXY9e2emvswu9rQ==
+X-ME-Sender: <xms:A6hjYh8zkmm5-D8YtNcoEYS2Y9wTTk7KHuTh1JlTREofGSiXkyy-rg>
+    <xme:A6hjYlu6t5dFG3MPqD1pnTakRY-JBSgkZRXYCZhlzqodNV9RCw4B6ktyObYshqOku
+    llGvzKGDGfgE_Gq7qg>
+X-ME-Received: <xmr:A6hjYvBy7FdH4kuztlQp2wDJwEE6kkD_RqYWmWqVF-NEfjvxjFx3KaBYUfEthOfGIkgJi0Vso2k5ABgvYlw2_Sr06nyosg0EriC6OEw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrtdehgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepheejffefgefgieevjedvfffgvdfghedtgfdvueejvdejgfffvdeuteei
+    vedufedvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordht
+    vggthh
+X-ME-Proxy: <xmx:A6hjYlf8EzmQcs6k2p4axECm0Xm0yJa01YcdzarsNaaaCjjXHLbgIQ>
+    <xmx:A6hjYmNfsJB2tzpUArcnVEWIXfgS2durqCUB6b7tbPQBtCJ_qIDDWg>
+    <xmx:A6hjYnkr9lqHl8Vs0BSLAjDOFo-qHrWwKXADSeqhcRt9SVVyjedMIA>
+    <xmx:BKhjYnj3XXiqAfjJDafK_A9PPHv63_V3B4UlzqMWyZnP5WHJN9ZEHA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 23 Apr 2022 03:17:22 -0400 (EDT)
+Date:   Sat, 23 Apr 2022 09:17:20 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Mike Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Tony Lindgren <tony@atomide.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         Neil Armstrong <narmstrong@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 22 Apr 2022 21:42:26 -0700
-User-Agent: alot/0.10
-Message-Id: <20220423044228.2AA7AC385A0@smtp.kernel.org>
+Subject: Re: [PATCH 14/22] clk: Introduce clk_hw_init_rate_request()
+Message-ID: <20220423071720.35x5hxcxevh5erny@houat>
+References: <20220408091037.2041955-1-maxime@cerno.tech>
+ <20220408091037.2041955-15-maxime@cerno.tech>
+ <20220423034623.A43CBC385A0@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220423034623.A43CBC385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-04-08 03:41:27)
-> On Fri, Apr 08, 2022 at 11:18:58AM +0200, Jerome Brunet wrote:
-> > On Fri 08 Apr 2022 at 11:10, Maxime Ripard <maxime@cerno.tech> wrote:
-> > > A rate of 0 for a clock is considered an error, as evidenced by the
-> > > documentation of clk_get_rate() and the code of clk_get_rate() and
-> > > clk_core_get_rate_nolock().
+Hi Stephen,
 
-Where?
+Thanks for your reviews :)
 
-> > >
-> > > The main source of that error is if the clock is supposed to have a
-> > > parent but is orphan at the moment of the call. This is likely to be
-> > > transient and solved later in the life of the system as more clocks a=
-re
-> > > registered.
-> > >
-> > > The corollary is thus that if a clock is not an orphan, has a parent =
-that
-> > > has a rate (so is not an orphan itself either) but returns a rate of =
-0,
-> > > something is wrong in the driver. Let's return an error in such a cas=
-e.
-> > >
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > ---
-> > >  drivers/clk/clk.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index 8bbb6adeeead..e8c55678da85 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -3773,6 +3773,16 @@ static int __clk_core_init(struct clk_core *co=
-re)
-> > >             rate =3D 0;
-> > >     core->rate =3D core->req_rate =3D rate;
-> > > =20
-> > > +   /*
-> > > +    * If we're not an orphan clock and our parent has a rate, then
-> > > +    * if our rate is 0, something is badly broken in recalc_rate.
-> > > +    */
-> > > +   if (!core->orphan && (parent && parent->rate) && !core->rate) {
-> > > +           ret =3D -EINVAL;
-> > > +           pr_warn("%s: recalc_rate returned a null rate\n", core->n=
-ame);
-> > > +           goto out;
-> > > +   }
-> > > +
-> >=20
-> > As hinted in the cover letter, I don't really agree with that.
-> >=20
-> > There are situations where we can't compute the rate. Getting invalid
-> > value in the register is one reason.
-> >=20
-> > You mentioned the PLLs of the Amlogic SoCs (it is not limited to g12 - =
-all
-> > SoCs would be affected):
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/clk/meson/clk-pll.c#n82
-> > Yes, PLL that have not been previously used (by the ROMCode or the
-> > bootloader) tend to have the value of the divider set to 0 which in
-> > invalid as it would result in a division by zero.
-> >=20
-> > I don't think this is a bug. It is just what the HW is, an unlocked,
-> > uninitialized PLL. There is no problem here and the PLL can remain like
-> > that until it is needed.
+On Fri, Apr 22, 2022 at 08:46:21PM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-04-08 02:10:29)
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 399080456e45..83dd5f1df0b9 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1396,6 +1396,26 @@ static void clk_core_init_rate_req(struct clk_co=
+re * const core,
+> >         }
+> >  }
+> > =20
+> > +/**
+> > + * clk_hw_init_rate_request - Initializes a clk_rate_request
+> > + * @hw: the clk for which we want to submit a rate request
+> > + * @req: the clk_rate_request structure we want to initialise
+> > + * @rate: the rate which is to be requested
+> > + *
+> > + * Initializes and fills a clk_rate_request structure to submit to
 >=20
-> I think the larger issue is around the semantics of clk_get_rate(), and
-> especially whether we can call it without a clk_enable(), and whether
-> returning 0 is fine.
+> s/and fills//
 >=20
-> The (clk.h) documentation of clk_get_rate() mentions that "This is only
-> valid once the clock source has been enabled", and it's fairly
-> ambiguous. I can see how it could be interpreted as "you need to call
-> clk_enable() before calling clk_get_rate()", but it can also be
-> interpreted as "The returned rate will only be valid once clk_enable()
-> is called".
-
-I enjoy the ambiguity! :) This question has come up before and it
-doesn't really matter. Drivers can call clk_prepare_enable() if they
-want to be sure that clk_get_rate() is meaningful to them, or they can
-not. The CCF returns a rate that it gets from calling recalc_rate, which
-could be inaccurate for others reasons, either because some driver has
-called clk_set_rate() after the clk_get_rate() or because the clk is an
-orphan still and clk_get() succeeded, or because the clk_op couldn't
-calculate it at the time of caching. Indeed the CCF doesn't try to
-recalc the rate after enabling the clk. Maybe we should do that? It
-would mean that we have to schedule a work from the enable path to
-update the rate accounting outside of any atomic context.
-
-Just thinking out loud, the simpler solution is to probably drop all
-rate caching in the CCF and get the frequency on a clk_get_rate() call.
-It complicates some of the core though when we check to see if we need
-to update clk rates. We could have some middle ground where drivers
-indicate that they want to update their cached rate because it's valid
-now (either from their enable path or from somewhere else). This may be
-nice actually because we could have clk providers call this to force a
-recalc down the tree from where they've updated. I think the qcom
-DisplayPort phy would want this.
-
+> > + * __clk_determine_rate or similar functions.
 >=20
-> I think the latter is the proper interpretation though based on what the
-> drivers are doing, and even the CCF itself will call recalc_rate without
-> making sure that the clock is enabled (in __clk_core_init() for example).
+> __clk_determine_rate()
 >=20
-> Then there is the question of whether returning 0 is fine. Again
-> clk_get_rate() (clk.c) documentation states that "If clk is NULL then
-> returns 0.". This is indeed returned in case of an error condition (in
-> clk_get_rate() itself, but also in clk_core_get_rate_nolock()).
-
-A NULL clk isn't an error. We use NULL in the CCF to indicate that it's
-an optional clk. Returning 0 from clk_get_rate() is not an error. If
-clk_get() returns an error pointer then it's an error. And NULL isn't an
-error value per PTR_ERR() (because NULL =3D=3D 0 when casted, this isn't
-golang).
-
+> > + */
+> > +void clk_hw_init_rate_request(struct clk_hw * const hw,
 >=20
-> All the drivers I could find either assume the rate is valid, or test
-> whether it's 0 or not (randomly picked, but across completely different
-> platforms):
-> https://elixir.bootlin.com/linux/latest/source/drivers/clocksource/armv7m=
-_systick.c#L50
-> https://elixir.bootlin.com/linux/latest/source/drivers/cpufreq/armada-8k-=
-cpufreq.c#L74
-> https://elixir.bootlin.com/linux/latest/source/sound/soc/sti/uniperif_pla=
-yer.c#L194
-> https://elixir.bootlin.com/linux/latest/source/sound/soc/tegra/tegra20_i2=
-s.c#L278
->=20
-> So my understanding is that the consensus is that clk_get_rate() can be
-> called even if the clock hasn't been enabled, and that returning 0 is
-> only meant to be used for errors in general, a NULL pointer according to
-> the documentation.
+> I don't get why it isn't 'const struct clk_hw *hw', but it looks to be
+> following clk_core_init_rate_req() so that can be figured out later.
 
-Again, NULL isn't an invalid clk handle.
+We won't modify either the pointer nor the clk_hw itself, so it made
+sense to me?
 
->=20
-> That would mean that pcie_pll_dco is buggy because it assumes that
-> clk_enable() is going to be called before clk_get_rate(), gp0_pll_dco
-> and hifi_pll_dco because they expect "someone" to call clk_set_rate()
-> before clk_get_rate(), and hdmi_pll_dco because it will always return 0,
-> unless the display driver comes around and updates it. If it never does,
-> or if it's not compiled in, then you're out of luck.
->=20
+> Please remove the const from here regardless; it's not doing anything.
 
-I think this is all fine.
+Ok, I'll remove it.
+
+> > +                             struct clk_rate_request *req,
+> > +                             unsigned long rate)
+> > +{
+> > +       if (WARN_ON(!hw || !req))
+>=20
+> Why would you call it without those two items? Another copy/paste from
+> clk_core_init_rate_req()?
+
+I never know what to do here honestly. It's true that calling it with
+NULL as a parameter seems dumb, but I could very well see a NULL pointer
+stored in a variable and using that variable.
+
+Preventing a NULL pointer dereference in such a case seems sane, but I
+couldn't find a consistent policy in the kernel about what to do. I'll
+remove it if you don't like it.
+
+> > +               return;
+> > +
+> > +       clk_core_init_rate_req(hw->core, req, rate);
+> > +}
+> > +EXPORT_SYMBOL_GPL(clk_hw_init_rate_request);
+> > +
+> >  static bool clk_core_can_round(struct clk_core * const core)
+> >  {
+> >         return core->ops->determine_rate || core->ops->round_rate;
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index c10dc4c659e2..39e4ed301ec5 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -42,6 +42,8 @@ struct dentry;
+> >   * struct clk_rate_request - Structure encoding the clk constraints th=
+at
+> >   * a clock user might require.
+> >   *
+> > + * Should be initialized by calling clk_hw_init_rate_request().
+>=20
+> How is that enforced?
+
+I'm sure we can come up with some coccinelle script if needed, but yeah
+it's a pretty loose requirement for now.
+
+> This has only become a problem after commit 948fb0969eae ("clk: Always
+> clamp the rounded rate") from what I can tell. I guess we can't skip the
+> clamp when both min/max are zero though because it may be stack junk?
+
+Yeah, but it isn't the only issue, really.
+
+Prior to this series, the most glaring issue is that most
+CLK_SET_RATE_PARENT handling is just updating the rate, or even just
+copying the clk_request_rate and forwarding it to the parent:
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L553
+
+In this case, the requested rate is wrong, but the best_parent_hw and
+best_parent_rate fields will be the one of the child clock, and thus
+will point to the parent itself, not the parent's parent.
+
+at91 has the same issue in multiple places:
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/at91/clk-generat=
+ed.c#L191
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/at91/clk-master.=
+c#L402
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/at91/clk-master.=
+c#L731
+
+So making it available to drivers seems to add some value at least,
+whether we require it or not.
+
+> But I looked at all the call sites and either they zero initialize the
+> whole struct (qcom) or they copy the req from what is passed into the
+> determine_rate clk_op (others). So we could simply not clamp if both
+> values are equal to zero and then qcom would be happy, but that has been
+> fixed by setting the min/max to 0 and max instead.
+
+Like I said, it's more of a symptom of a larger issue than a bug in
+itself. It's not just that the driver doesn't enforce any boundary (so
+at the clk_hw level), which would be fine, it's also that it will ignore
+any user boundary, and that's where the bug is in my book. And it was
+there prior to the patch you mentioned.
+
+I'd be ok to add that kind of check for the time being, but it should at
+least come with some kind of warning to report that something fishy is
+going on and needs to be addressed.
+
+> That leaves the other users, which already copy what is being passed
+> in, i.e. what is done by clk_core_init_rate_req().
+
+> I guess my question is who is going to use this? And if we can't even
+> enforce that it is used then it feels like we shouldn't add it. Maybe it
+> can be useful to cleanup the core request initialization logic because
+> it's sort of spread out but probably not as a clk_hw API.
+
+The main user really will be a unit test I added for
+__clk_determine_rate() to make sure the returned clk_request_rate is
+sane. All the drivers we discussed so far would probably need to use
+clk_core_forward_rate_req() instead.
+
+If we follow what is being done for the rest of the clk_core_*
+functions, clk_core_forward_rate_req() isn't available to providers and
+isn't exported, to it would be difficult to use as is in the tests.
+Could we create a clk_internal.h header or something maybe to export it
+only to the tests if you don't want to expose it to drivers?
+
+Maxime
