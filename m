@@ -2,70 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60509C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA950C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231787AbiDWCKg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:10:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53578 "EHLO
+        id S229455AbiDWC0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 22:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbiDWCKe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:10:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E97C13938D;
-        Fri, 22 Apr 2022 19:07:38 -0700 (PDT)
+        with ESMTP id S232081AbiDWC0e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:26:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B1519C742;
+        Fri, 22 Apr 2022 19:23:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A9B761581;
-        Sat, 23 Apr 2022 02:07:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BCD6C385A4;
-        Sat, 23 Apr 2022 02:07:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 76AA0615A2;
+        Sat, 23 Apr 2022 02:23:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04D6C385A0;
+        Sat, 23 Apr 2022 02:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650679657;
-        bh=Hjoy/MGw9f0k9/2aqTPiEmWu2eaD4BY2AnpOdvDLAGY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fn7LDR8PWloLKeb2pm4TPrApcLRZDC865eOSAbwBjgTLkdzBr4LIi5Amx2lh1gSVF
-         1+/e88vJYHA1XrSBttWCwAGg26yxgqkupQiCBNrgb9i6bnfqtJiBQnHrsizTVEVEyj
-         ygGkUVupgtmC7Fz5OnB6hZIugl1hTBbsxehkROTSxVPlLCqVWVz8lvmnFeffl/pTmU
-         jc15Dvpwsaf8oEFAqcKOyTyPIDxvc5XhwDj3FDU1kkW0ZzbdD1eYasZ//OK6UZWhlw
-         1fd8elPLHnXOm8kAcrdXdvSmSAPGeOpKFjVFVDBD9aDEoAFHyX6rfFq9DnZi1v7bJE
-         GBpPB8bW7T6uA==
+        s=k20201202; t=1650680612;
+        bh=haZUNetI18mwticLWcDQIHl1eNz0IU+GIiz4lHFqO2o=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=NJVBlWtCwHJSzgU8Bjes7Sdh8ZHwb3qWfO2cph12yW4KJKdJ3CgqbEvh0q/SzGTTf
+         CdqygZJCDjvDSpo0lvse2ZJEwUCi6xSlmYwE5TnvilFFZ5dz/ksZgfPd/CNhd7uRuY
+         TJir3f622QHjlMRS4GOxI7zjKvjyybz4GJZRacem74bO+/3PnWPmOGN1Fc4Ppybp4t
+         fmLJOwMSg6Lk+t252b5EC5t35QxapQRpjLkstpdlctW82g3XD8DvGazuepzK4PFA4F
+         lS/cJB/zUlCW63iKpc/SDog9tbXpueL3eU2vk0eecxsDLJsn1MfIzQAP3YRQV8RHKJ
+         bpDp6ZBUcJJtQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220415190343.6284-3-g-vlaev@ti.com>
-References: <20220415190343.6284-1-g-vlaev@ti.com> <20220415190343.6284-3-g-vlaev@ti.com>
-Subject: Re: [PATCH v2 2/2] clk: keystone: syscon-clk: Add support for AM62 epwm-tbclk
+In-Reply-To: <8e893363-3e47-2abe-7111-b3fb0888d4fc@gmail.com>
+References: <20220422012059.52267C385A5@smtp.kernel.org> <20220422013317.30362-1-linmq006@gmail.com> <20220422014411.4F96BC385A7@smtp.kernel.org> <8e893363-3e47-2abe-7111-b3fb0888d4fc@gmail.com>
+Subject: Re: [PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, nm@ti.com, vigneshr@ti.com,
-        Georgi Vlaev <g-vlaev@ti.com>
-To:     Georgi Vlaev <g-vlaev@ti.com>, mturquette@baylibre.com,
-        robh+dt@kernel.org, ssantosh@kernel.org
-Date:   Fri, 22 Apr 2022 19:07:34 -0700
+To:     Abel Vesa <abel.vesa@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 22 Apr 2022 19:23:30 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423020737.5BCD6C385A4@smtp.kernel.org>
+Message-Id: <20220423022332.C04D6C385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Georgi Vlaev (2022-04-15 12:03:43)
-> AM62 has 3 instances of EPWM modules. Each EPWM module has
-> an EPWM TBCLKEN module input used to individually enable or
-> disable its EPWM time-base clock. The EPWM time-base clock
-> enable input comes from the CTRLMMR_EPWM_TB_CLKEN register
-> bits 0 to 2 in CTRL_MMR0 module (6.1.1.4.1.48 [1]). This
-> is virtually the same setup as in AM64 but with 3 instead
-> of 9 clock providers on AM62.
+Quoting Miaoqian Lin (2022-04-21 18:59:54)
 >=20
-> Update the driver with the 3 instances of clocks associated
-> to a new compatible: "ti,am62-epwm-tbclk".
+> On 2022/4/22 9:44, Stephen Boyd wrote:
+> > Quoting Miaoqian Lin (2022-04-21 18:33:16)
+> >> If the device is already in a runtime PM enabled state
+> >> pm_runtime_get_sync() will return 1.
+> >>
+> >> Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync=
+()
+> >> fails, so use pm_runtime_resume_and_get() instead. this function
+> >> will handle this.
+> >>
+> >> Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+> >> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> >> ---
+> > Please don't send patches as replies to previous versions of the patch.
 >=20
-> [1] https://www.ti.com/lit/pdf/spruiv7
->=20
-> Signed-off-by: Georgi Vlaev <g-vlaev@ti.com>
-> Tested-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
+> Sorry, I thought I should keep them in one thread, to provide the context
 
-Applied to clk-next
+Please link back to previous revisions with lore.
+
+https://lore.kernel.org/r/<message-id-of-rev1>
+
+and then add a change log below the triple dash referencing that lore
+link and anything that has changed since that revision.
+
+>=20
+> for other people to follow up. Am I suppose to resend it?
+
+Yes. Might as well practice making a changelog at the same time.
