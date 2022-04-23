@@ -2,71 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747F0C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 01:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A69C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 01:48:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231599AbiDWBpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 21:45:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49196 "EHLO
+        id S231616AbiDWBvZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 21:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231559AbiDWBpH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 21:45:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC6A1F8D99;
-        Fri, 22 Apr 2022 18:42:12 -0700 (PDT)
+        with ESMTP id S229899AbiDWBvX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 21:51:23 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250173587F;
+        Fri, 22 Apr 2022 18:48:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3D92EB8335A;
-        Sat, 23 Apr 2022 01:42:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C566CC385A4;
-        Sat, 23 Apr 2022 01:42:09 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 6A983CE2E18;
+        Sat, 23 Apr 2022 01:48:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912ACC385A0;
+        Sat, 23 Apr 2022 01:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650678129;
-        bh=tcithC5DzEZer/G1ZlAY81222Ep4Lx6hTBgIm+kR3yg=;
+        s=k20201202; t=1650678504;
+        bh=hHFunL2zCFYg46oYKDc9LxdH0yRIK7MV5FENkAwkkGg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m8nGQ2us8izwcK0E9KYE2RDKp3QUQJ8pPw/6f/CKVx+WwIo18sdW4JibVXg+hszcC
-         gEYfv1/A1/zygFiQoblrcYsDTwz/8s6HCvxjInhunLk9EJUG9JVdFc3jzGcEN8I2Nt
-         KzemqXxNbad+7ty+HfA/7gvDtewkWXvL4jfVUJtjmKfpG/4NKXih/oRKJ5AgjT7mMS
-         s8fNWGMznevxfss27DTVmUAwbbro5qCTV3sr2/P/RfLGxgXg2u6I3N5MikoTW6YreY
-         bUnS5CtjQkMLZhHN1JH4szEABZjmqm55I4tswYrxXZuAcZchU9Y6y+QNs3PcJR56j/
-         56NOaVaZYAvJQ==
+        b=h02VcFEoyKQ4Fuk/0NtUF/t4IhPFhP/8lwznmwiJKzLEHvikMr/ueI/SnFS/dT/p6
+         82wQgl7nmeiGUWQe53hoCipE0yHrvzPhkiojhKDm03E7h0Vtq1pfjgZ1Of1CDVnVdl
+         jEOTYwnFqpwkj0xs5M2DA9CZda1FzG13SuTqhK19TEUm4Hf0nrDc95KLvQDFfgY70L
+         wb1cHeIA4ocg7XwasMFFYKpHZfMCVikbR+Z2Z1+8WfgxHuI3Bs8lOrcSdGSI4hZ9bv
+         LF8dbxZz2NlpQkaVQr4p1hWEtDbzPNg16V8k6V8lGyDEZJa3ooIzZZ5mMfk4LRStxP
+         G13fDaWWxhfTg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220413075835.3354193-10-conor.dooley@microchip.com>
-References: <20220413075835.3354193-1-conor.dooley@microchip.com> <20220413075835.3354193-10-conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 9/9] riscv: dts: microchip: reparent mpfs clocks
+In-Reply-To: <20220422230013.1332993-1-bjorn.andersson@linaro.org>
+References: <20220422230013.1332993-1-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     daire.mcnamara@microchip.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Conor Dooley <conor.dooley@microchip.com>
-To:     Conor Dooley <conor.dooley@microchip.com>, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, aou@eecs.berkeley.edu,
-        krzk+dt@kernel.org, mturquette@baylibre.com, palmer@rivosinc.com,
-        paul.walmsley@sifive.com, robh+dt@kernel.org
-Date:   Fri, 22 Apr 2022 18:42:08 -0700
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tdas@quicinc.com
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 22 Apr 2022 18:48:22 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423014209.C566CC385A4@smtp.kernel.org>
+Message-Id: <20220423014824.912ACC385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2022-04-13 00:58:36)
-> The 600M clock in the fabric is not the real reference, replace it with
-> a 125M clock which is the correct value for the icicle kit. Rename the
-> msspllclk node to mssrefclk since this is now the input to, not the
-> output of, the msspll clock. Control of the msspll clock has been moved
-> into the clock configurator, so add the register range for it to the clk
-> configurator. Finally, add a new output of the clock config block which
-> will provide the 1M reference clock for the MTIMER and the rtc.
+Quoting Bjorn Andersson (2022-04-22 16:00:12)
+> Add binding for the Qualcomm SC8280XP Global Clock controller.
 >=20
-> Fixes: 528a5b1f2556 ("riscv: dts: microchip: add new peripherals to icicl=
-e kit device tree")
-> Fixes: 0fa6107eca41 ("RISC-V: Initial DTS for Microchip ICICLE board")
-> Reviewed-by: Daire McNamara <daire.mcnamara@microchip.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Applied to clk-fixes
+Why no cover letter?
+
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.ya=
+ml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> new file mode 100644
+> index 000000000000..44e5f0d0a795
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> @@ -0,0 +1,199 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc8280xp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for SC8280xp
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets=
+ and
+> +  power domains on SC8280xp.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,gcc-sc8280xp.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sc8280xp
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO reference clock
+
+"clock" is redundant in all these descriptions. Please remove.
+
+> +      - description: Sleep clock
+> +      - description: UFS memory first RX symbol clock
+> +      - description: UFS memory second RX symbol clock
+> +      - description: UFS memory first TX symbol clock
+> +      - description: UFS card first RX symbol clock
+> +      - description: UFS card second RX symbol clock
+> +      - description: UFS card first TX symbol clock
+> +      - description: Primary USB SuperSpeed pipe clock
+> +      - description: gcc_usb4_phy_pipegmux_clk_src
+> +      - description: gcc_usb4_phy_dp_gmux_clk_src
+> +      - description: gcc_usb4_phy_sys_pipegmux_clk_src
+> +      - description: usb4_phy_gcc_usb4_pcie_pipe_clk
+> +      - description: usb4_phy_gcc_usb4rtr_max_pipe_clk
+> +      - description: Primary USB4 RX0 clock
+> +      - description: Primary USB4 RX1 clock
+> +      - description: Secondary USB SuperSpeed pipe clock
+> +      - description: gcc_usb4_1_phy_pipegmux_clk_src
+> +      - description: gcc_usb4_1_phy_dp_gmux_clk_src
+> +      - description: gcc_usb4_1_phy_sys_pipegmux_clk_src
+> +      - description: usb4_1_phy_gcc_usb4_pcie_pipe_clk
+> +      - description: usb4_1_phy_gcc_usb4rtr_max_pipe_clk
+> +      - description: Secondary USB4 RX0 clock
+> +      - description: Secondary USB4 RX0 clock
+> +      - description: Multiport USB first SupserSpeed pipe clock
+> +      - description: Multiport USB second SuperSpeed pipe clock
+> +      - description: PCIe 2a pipe clock
+> +      - description: PCIe 2b pipe clock
+> +      - description: PCIe 3a pipe clock
+> +      - description: PCIe 3b pipe clock
+> +      - description: PCIe 4 pipe clock
+> +      - description: First EMAC controller reference clock
+> +      - description: Second EMAC controller reference clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: sleep_clk
+
+And "_clk" postfix is redundant in all these strings. Remove?
+
+> +      - const: ufs_phy_rx_symbol_0_clk
+> +      - const: ufs_phy_rx_symbol_1_clk
+> +      - const: ufs_phy_tx_symbol_0_clk
+> +      - const: ufs_card_rx_symbol_0_clk
+> +      - const: ufs_card_rx_symbol_1_clk
+> +      - const: ufs_card_tx_symbol_0_clk
+> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
+> +      - const: gcc_usb4_phy_pipegmux_clk_src
+> +      - const: gcc_usb4_phy_dp_gmux_clk_src
+> +      - const: gcc_usb4_phy_sys_pipegmux_clk_src
+> +      - const: usb4_phy_gcc_usb4_pcie_pipe_clk
+> +      - const: usb4_phy_gcc_usb4rtr_max_pipe_clk
+> +      - const: qusb4phy_gcc_usb4_rx0_clk
+> +      - const: qusb4phy_gcc_usb4_rx1_clk
+> +      - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk
