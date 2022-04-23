@@ -2,85 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3691FC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C38C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Apr 2022 02:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232056AbiDWC2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Apr 2022 22:28:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34876 "EHLO
+        id S231753AbiDWCfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Apr 2022 22:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232114AbiDWC2j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:28:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EFA1DB076;
-        Fri, 22 Apr 2022 19:25:42 -0700 (PDT)
+        with ESMTP id S231733AbiDWCfU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Apr 2022 22:35:20 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183F45E143;
+        Fri, 22 Apr 2022 19:32:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5DC986135F;
-        Sat, 23 Apr 2022 02:25:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12F3C385A0;
-        Sat, 23 Apr 2022 02:25:41 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 71634CE2E45;
+        Sat, 23 Apr 2022 02:32:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B47C385A0;
+        Sat, 23 Apr 2022 02:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650680741;
-        bh=ArGHhgbdlHjKWbPeB+8c0u0ViOzzzUuy497doDzrEaY=;
+        s=k20201202; t=1650681141;
+        bh=dKbDsWIxzId4sVO9IYKZLxmEb8V/7ZxzwKP19SLJrnI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jK/9zgIeTIm8RlKZGOcSF3oBPkR0dPTvs2UzoFurZ6y5CJzEdnKdDn0OvZeaKFWA4
-         8E5XNdUQihWTCTb5bMAxnpCK3Yat0a6tGWidLP1sWdROsbDYcQ+CVj9Rf5tZrOjH2e
-         3Fq9j8+RYVzuDem9X3JF/Zr6rNSyOicK4trYxpj4S7Ft+8JCB7P2phfidfFGtQsfPf
-         AwNl3beD1qNAb/U+k26wOsBxl3isvQK51gs6h3ADwRpxfDJOhiVNaRnGmI8c/EVXiN
-         38mCkSFHmkHnLN7qi0GaggpucOBiLnJMAl8aWY9Eh541KX8b79zR0hUbEoATnkV7a4
-         /9viIpBT/lM/A==
+        b=pNpBlmxoKXPZEBLBxSit60KQFpktqZE2coflpGSYyzK+Jcyho/dpaQMi87l2WBYJZ
+         lUIu5mubjFJLYW9108HX8SQ+tHPuclhcdqp7k/7fXpwUV5KSIwhE6Q1WXxphb4sCUc
+         e8mzVYBwQgrMoe31tYsEJ4ysVA47Eh/1dY1EhcgClYRnodSlBCF0npBkMUIfDp+rl9
+         ItLSGMHE246VSXlTqzuj/5etzGuAtkxueoLXean8CfDWKcEQ53SoTif0j3oKznyb+h
+         aAxv/tCXmIYg6w6RuI7T93yLHVgF5eKP/lx/goEopRGHHpjWFXzwDNmrZpmIv80lBV
+         vrSThePMtuk0Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com>
-References: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com> <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
+In-Reply-To: <20220407151831.2371706-2-steve@sk2.org>
+References: <20220407151831.2371706-1-steve@sk2.org> <20220407151831.2371706-2-steve@sk2.org>
+Subject: Re: [PATCH v2 01/10] clk: cdce706: use simple i2c probe function
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        mturquette@baylibre.com, khilman@baylibre.com,
-        p.zabel@pengutronix.de, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        xkernel.wang@foxmail.com
-Date:   Fri, 22 Apr 2022 19:25:39 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Kitt <steve@sk2.org>
+Date:   Fri, 22 Apr 2022 19:32:18 -0700
 User-Agent: alot/0.10
-Message-Id: <20220423022541.B12F3C385A0@smtp.kernel.org>
+Message-Id: <20220423023221.75B47C385A0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2022-04-18 09:39:57)
-> Hello,
+Quoting Stephen Kitt (2022-04-07 08:18:22)
+> The i2c probe function here doesn't use the id information provided in
+> its second argument, so the single-parameter i2c probe function
+> ("probe_new") can be used instead.
 >=20
-> first of all: thank you for this patch!
+> This avoids scanning the identifier tables during probes.
 >=20
-> On Thu, Apr 7, 2022 at 11:28 AM <xkernel.wang@foxmail.com> wrote:
-> >
-> > From: Xiaoke Wang <xkernel.wang@foxmail.com>
-> >
-> > `rstc` is allocated by kzalloc() for resetting the controller register,
-> > however, if reset_controller_register() fails, `rstc` is not properly
-> > released before returning, which can lead to memory leak.
-> > Therefore, this patch adds kfree(rstc) on the above error path.
-> In general I am fine with this approach. There's some more "return"
-> statements below. Should these be covered as well?
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
+> ---
 
-Probably!
-
->=20
-> Also a note about meson8b_clkc_init_common() itself: failures in that
-> function will result in a non-working system.
-> If we can't register the reset controller then most devices won't
-> probe and CPU SMP cannot work.
-> If registering any clock or the clock controller doesn't work then the
-> system also won't work as clocks are not available to other drivers.
-> So freeing memory in case of an error is good to have, but the end
-> result is still the same: the system won't work.
->=20
-
-Can we get far enough to record this fact into either a pstore ramoops
-location or the serial console? That would be ideal to make debugging
-early problems easier.
+Applied to clk-next
