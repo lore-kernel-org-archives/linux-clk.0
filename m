@@ -2,170 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C768C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 15:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4A1C433FE
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 15:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbiDXPg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 11:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37174 "EHLO
+        id S229551AbiDXPg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 11:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240462AbiDXPb1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 11:31:27 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98985171C04;
-        Sun, 24 Apr 2022 08:28:25 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id e4so14578216oif.2;
-        Sun, 24 Apr 2022 08:28:25 -0700 (PDT)
+        with ESMTP id S229579AbiDXPQa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 11:16:30 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C179D15DD62;
+        Sun, 24 Apr 2022 08:13:28 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id t6so14119183wra.4;
+        Sun, 24 Apr 2022 08:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:content-language:to
-         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=yr0/AkbMMu8pn1dkU35YlQmF7na7yjrNnK/horRQvq8=;
-        b=YTsJBncPwlsdJoy0clMDPkRYsap010NbelrrDwP4gT2p8VkAeOwyCadOMVg4EkLC3g
-         BU6v4rcHRP7TcChruJdux/6WqtJmUToOWUlOimc0ldD0p/STL+v6YSxQqTz/SiEj3JGk
-         6SfYzDXOC60C+Zk6YtFsjMz2c7gYsvaefbEF/eKAM03STJHCFm25OuC/Z0YH/2cfNqkA
-         U538FM4O480tv4oZ6rwPTTcYDvIV4RyyrEvA6n7gY5KKJPB4B+s22HrjImpN8j9osv2G
-         SEdJ9k63zxNOgRDgM+KmfcxMquHhbq8CJJjUKerT4sEDujG7ogRPrwOnyNIjdLCE9lFh
-         BU0Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FWeCcnpzZqH7svo/ZdB5Q/Oo1t1JBiHSzF3RVitO9AI=;
+        b=Gm8BIwyhq8yHVI47LdqrobLhOB/zcyGWNZJ8N4Vbax/cOxbo4+LOmw6PSI8Z8Qz0F+
+         j/UMUXmtqfgEW7l1AIjRMa9VQZVuqrCcONP7DGpkyBrPDRIftp64s2AANLUEcw4Y4J5e
+         GD1DQcKgH8ITWJBcSbZI61LA9RjRD36OljQUG7aoAIN10f3bMVNdkOrbcfe02qV2a1FM
+         oNo0Ru0tZqAFHFr+94pOueK9vWG4FL9deBwSd6Sw84RWZZ136t55YkSwal+tkY37R8kb
+         8RwrsabYmEnVrebn+Ypcn9dZNhQt9KEl3+w8Tp1iQBBq/RSeYx1qo7rNzntbuiIvgRRe
+         OVAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
-         :content-transfer-encoding;
-        bh=yr0/AkbMMu8pn1dkU35YlQmF7na7yjrNnK/horRQvq8=;
-        b=6vnD+8dQFmxyCIkjIp2rzinoLopet/bOToKxMnl2YtHOByGo/3uzEEWghB5ivZYWCi
-         +rlylgSvpddSCP7L/jowhR+EY8PKx8gmUpaAklTLvOnGzBu+KsO0K5sZma/VxYfD+8O7
-         cY1obNpFAKSpXcqX/vynqo70JQqRpH2fX6OJ/az/sdloBzVT1Hlbsy0t+ISTk9eja4i2
-         NPP0370RoYz/QRrb9fuISYcH3nGQX0swBEPrmTAqQY3CW47NEd9aiH8cBNciV3kMxAg/
-         0HhL+B10ELgesmaEYtrPaSpDfQrPLH0USQ0+qkRh8SEWZ8FsnZoU4Bz5k5H7i2AYbXQ+
-         GfoA==
-X-Gm-Message-State: AOAM533aS0heWnGx1qtXYFFuC/rH9r8ilEPuKVhXK6t5ZIQox5cSnKAm
-        JAmIERVQLb6nkLj0Rfc7TIQ=
-X-Google-Smtp-Source: ABdhPJy+gDyQI+jYYZai2x5URiEV01l+fMZDWT8YjU8/GgIriEk0FB5ZVdkvpb6NfVQx+IMk0aUfQA==
-X-Received: by 2002:aca:f286:0:b0:2da:58ba:c578 with SMTP id q128-20020acaf286000000b002da58bac578mr6576017oih.127.1650814104777;
-        Sun, 24 Apr 2022 08:28:24 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w8-20020a056830410800b00605b48122eesm53063ott.14.2022.04.24.08.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Apr 2022 08:28:23 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
-Date:   Sun, 24 Apr 2022 08:28:19 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FWeCcnpzZqH7svo/ZdB5Q/Oo1t1JBiHSzF3RVitO9AI=;
+        b=4kqYV4cGZd/+UNS9/HVdZHirdvNQxTinJgqd5FnvD3Pf/ypsvn79DK5uSsKZM8VuEF
+         Wl/PgjK+MdajO//JlCIuKck20i47Ano6CjWSxllevJ4od5vX0OWYDfSxlVhFh/n9wR4d
+         msfbXyy0hlsBPTSybRG7uUlKqFrmfSgJUmgr1dcjFA50GMTn5gHK84OGjJltSDuT4kfI
+         36VG5VWzI9RmastOk7TLTC/Jz/nY9ZsuFcXGfaMojNDJrla9r7o835KmFvjrbrv7SEaC
+         EnmstSJaE3Ngi6TGDI9BGCrj3wUdh8MTDdQO83jjYonqmi299T+LWiziKdm3Ok2xxlM0
+         xixw==
+X-Gm-Message-State: AOAM531Z7WOJOsdNvd8vsVt5sSAyJrbwmceoa6Qol9aHqWt1veMVmEyX
+        Mnr5ig+YlkjpzuzgbIbuOawiCE4RGBPiD4ApIBw=
+X-Google-Smtp-Source: ABdhPJzfdZ8+nLnH1Kpa93XiW8FsjIIqN1jTW9uKwPw5/4uzXbPDdbXn1Ob18xayy7S/oNKmqzsqZhQtaCGlfY97wcw=
+X-Received: by 2002:adf:f50e:0:b0:20a:c54a:42b0 with SMTP id
+ q14-20020adff50e000000b0020ac54a42b0mr10805165wro.511.1650813207388; Sun, 24
+ Apr 2022 08:13:27 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Tomas Cech <sleep_walker@suse.com>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-References: <20220419163810.2118169-1-arnd@kernel.org>
- <20220422170530.GA2338209@roeck-us.net>
- <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
- <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
- <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
- <20220422234150.GA3442771@roeck-us.net>
- <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
- <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
- <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
-In-Reply-To: <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220418125630.2342538-1-gengcixi@gmail.com> <20220418125630.2342538-2-gengcixi@gmail.com>
+ <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org> <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
+ <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org> <CAF12kFu5KW+fw=0kP6LrEqOvKYR38mELfPjG64=n+gudRxsZUQ@mail.gmail.com>
+ <baa73bda-91af-8a31-67f4-6d5615862c73@linaro.org> <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
+ <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org>
+In-Reply-To: <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org>
+From:   Cixi Geng <gengcixi@gmail.com>
+Date:   Sun, 24 Apr 2022 23:12:51 +0800
+Message-ID: <CAF12kFt=L7CV5RDBViPSNb9Y_Te4JJ-TZrx2N+w_P2px7_FemQ@mail.gmail.com>
+Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/24/22 01:52, Arnd Bergmann wrote:
-> On Sun, Apr 24, 2022 at 4:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
->> On 4/23/22 12:55, Arnd Bergmann wrote:
->>> On Sat, Apr 23, 2022 at 1:41 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>>> On Sat, Apr 23, 2022 at 12:04:31AM +0200, Arnd Bergmann wrote:
->>>
->>> Odd, I can't reproduce this at all. Do you get any console output at
->>> all for this?
->>>
->>> Is this the plain omap1_defconfig, or something else?
->>>
->>
->> No, it is my own sx1 specific configuration.
->>
->> https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/qemu_sx1_defconfig
->>
->> I don't recall where I got it from but ...
-> 
-> Ok, that explains it, thanks!
-> 
-> I fixed all the defconfig files that come with the kernel, but for your own
-> ones you have to add
-> 
-> # CONFIG_ARCH_MULTI_V7 is not set
-> 
-> into the defconfig file, otherwise the multiplatform target defaults to
-> an ARMv7 instead of ARMv5 build. For an OMAP15xx as in the SX1,
-> you also need to enable CONFIG_ARCH_MULTI_V4T.
-> 
-> This is slightly unfortunate, but I don't see any way to avoid it, and the
-> modified defconfig will still work fine with older kernel trees.
-> 
-
-Yes, that works. I changed it in my configuration.
-
->>> One thing I keep having to apply myself is this snippet:
->>>
->>> diff --git a/arch/arm/mm/proc-arm925.S b/arch/arm/mm/proc-arm925.S
->>> index 0bfad62ea858..87c695703580 100644
->>> --- a/arch/arm/mm/proc-arm925.S
->>> +++ b/arch/arm/mm/proc-arm925.S
->>> @@ -441,7 +441,6 @@ __arm925_setup:
->>>
->>>    #ifdef CONFIG_CPU_DCACHE_WRITETHROUGH
->>>           mov     r0, #4                          @ disable write-back
->>> on caches explicitly
->>> -       mcr     p15, 7, r0, c15, c0, 0
->>>    #endif
->>
->> it does not have CONFIG_CPU_DCACHE_WRITETHROUGH enabled.
-> 
-> Maybe it was disabled explicitly for the sx1_defconfig because of this
-> bug. I would think that this is required for actual sx1 hardware because the
-> option is default-enabled for ARM925T, and that CPU core is exclusively
-> used in OMAP15xx.
-> 
-
-That looks like a bug in qemu. ARM925T instruction support is limited to V4T
-instructions. qemu doesn't have explicit 5T support. It is either V4T
-or V5.
-
-Guenter
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=B9=B4=
+4=E6=9C=8824=E6=97=A5=E5=91=A8=E6=97=A5 22:30=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 24/04/2022 16:22, Cixi Geng wrote:
+> >>>>
+> >>>> Neither here nor later you did not answer the question - why do you =
+need
+> >>>> such complex construction, instead of adding syscon to the clock con=
+troller?
+> >>>>
+> >>>> Let me paste again my concerns:
+> >>>>
+> >>>>   You have nodes with reg but without unit address ("rpll"). These n=
+odes
+> >>>>   are modeled as children but they are not children - it's a workaro=
+und
+> >>>>   for exposing syscon, isn't it? The sc9863a looks like broken desig=
+n,
+> >>>>   so please do not duplicate it here.
+> >>>>
+> >>>> IOW, sc9863a uses similar pattern as here and the DTS is made wrong.
+> >>>> Because of this you need to create complex ways to get the regmap fo=
+r
+> >>>> the clock controller... Why not making it simple? Clock controller w=
+ith
+> >>>> syscon?
+> >>>
+> >>> I find the history discuss about the sp9863 clock[1] and last
+> >>> ums512-clk dt-bindings patch[2] which from chunyan.
+> >>> please refer to the reasons below.
+> >>>
+> >>> These clocks are at the same register range with global registers.
+> >>> the registers shared with more than one devices  which  basically
+> >>> are multimedia devices. You may noticed that these are all gate
+> >>> clocks which are in the global registers  ranges and are used to
+> >>> controll the enable status of some devices or some part of devices.
+> >>>
+> >>> [1] https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=3DFTe5S7CzAHC5mahX=
+BH2fJm7mXS7Xys1Q@mail.gmail.com/#r
+> >>> [2] https://lore.kernel.org/all/163425295208.1688384.1102318762579311=
+4662@swboyd.mtv.corp.google.com/#r
+> >>
+> >> Which looks like discussion about different bindings. You had there a
+> >> clock controller and additional clock device using "sprd,syscon". Why
+> >> the rpll is a subdevice and not a part of clock controller. The same a=
+s
+> >> all other clocks coming from that clock-controller, right? What is so
+> >> special about rpll that is is a separate device, not part of the clock
+> >> controller? It's the same address space, isn't it?
+> > The hardware spec design these clocks are not belonged to the syscon,
+> > the phandle is only used to get virtual  map address for clocks which
+> > have the same phsical address base with one syscon.(I don't know the
+> > historical reason for this design) It also can wroten a clock sperated =
+from
+> > syscon by add the reg which same as syscon. but will lead to a duplicat=
+e
+> > mapping--one is from the clock,and one is from syscon. which make diffi=
+culty
+> >  in analyzing some panic problems.
+>
+> I don't understand still. You said that they do not belong to same
+> address space, right? But the sprd,ums512-apahb-gate in this patch or
+> mentioned rpll
+> (https://elixir.bootlin.com/linux/v5.18-rc3/source/arch/arm64/boot/dts/sp=
+rd/sharkl3.dtsi#L106)
+> does not reference any other address space. It's entire address space is
+> the same as address space of glbregs.
+Maybe I didn't describe clearly, what I said is these clocks isn't the
+syscom sub-clock.
+from chunyan's explain:
+ they  are at the same register range with global registers. in
+originally we put them
+directly onto the bus indeed when submitting the patches for SC9863A
+clocks last year,
+and it had a private property named 'sprd,syscon' which could provide
+regmap for these clocks.
+after follow Rob's suggetion we make them a child of the syscon. these
+are all gate clocks which
+are in the global registers ranges and are used to controll the enable
+status of some devices
+or some part of devices.
+>
+> So if it does not belong to the same address space, where is this space
+> defined?
+>
+> Best regards,
+> Krzysztof
