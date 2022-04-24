@@ -2,206 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BCBC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 03:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF14C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 06:16:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238085AbiDXD4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Apr 2022 23:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
+        id S238308AbiDXGTS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 02:19:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236524AbiDXD4W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 23:56:22 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8E918351;
-        Sat, 23 Apr 2022 20:53:23 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id a5so9302724qvx.1;
-        Sat, 23 Apr 2022 20:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=6jWJt9XTXVVwmHW6n7cY0VehyahZoXhvY7honrosNaM=;
-        b=UHOC4oaV0BK0SaJf96f+kbk6a9WOcVogxsr62v7w+RBq1tdVir5KiH5uikGln619q3
-         dkaRuLKXu+QOZOXiEejJziFxEyogLLE3eQezNiv80pEIbt8qn9ESnd1m+36MHWqEsOlg
-         BI5kR8SmQtMLYmvizST8jFFom5YQ2wnu/ctkNMO9pDGgs4ysrYc7HehF1WUly3KSf6bQ
-         3RJZZKOIwUEpNBRwmgTzB48flpCNmiKJGChCtiwLeOmRM4hjzFXWl8TydWWyZhbESz+H
-         f6R2Hua/4A8qF5iAt4D+D79e4uubIVgLyam5gGoUSIlqAyA4Sty1FHWiAyo9g/quGH2u
-         6Tmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=6jWJt9XTXVVwmHW6n7cY0VehyahZoXhvY7honrosNaM=;
-        b=7CXkcVus//QbnKRTJr5JvPqUeK63avo3wCW0tzgBbXi/VD/o+WqSn9iMXonT8YyfxQ
-         dO30KmzLkSzyMqLgLqv4tYMWi06HlYuryW49dBF98pv70d5rDBWM6K8Qq879LQeLYN8E
-         AMJshC/vMpADMMChsfGpt3aITJi7UgRulLmIHZATURHjxNoD3/cuupKepVLjGchgJNdS
-         vPwG4WqVvQC87ba5vdrxKTjTC5M6cmaoKOdpjTK14gDS6zpNcDOmS0jjAO0/y7CcZaG8
-         a/PPNHvnRMN/k78suaYLqC4n3CYJM3NcMso7TtGzOLsgbAfnJy5Io2BAONtVYVh/hS1C
-         zM3Q==
-X-Gm-Message-State: AOAM530lTNQtRy66+xxj6xz1CXVvUXpNiscQw3W5sWRHHjh3ec+EsvcH
-        CjEg2siQCAOjCm6KY/jXxnU=
-X-Google-Smtp-Source: ABdhPJz5JdrJrl5qLtHz+/NCpPnsgRZA3P+rkWCFTYCInOshw9B3LibU+/G07m3g5ZT2dcBgwo6hIw==
-X-Received: by 2002:a05:6214:2344:b0:441:8201:7246 with SMTP id hu4-20020a056214234400b0044182017246mr9094442qvb.120.1650772402262;
-        Sat, 23 Apr 2022 20:53:22 -0700 (PDT)
-Received: from [10.4.10.60] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id r7-20020a05622a034700b002f337000725sm3855022qtw.42.2022.04.23.20.53.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Apr 2022 20:53:21 -0700 (PDT)
-Message-ID: <506edc5d-8f66-5414-361a-0b517d8c4f38@gmail.com>
-Date:   Sat, 23 Apr 2022 23:53:19 -0400
+        with ESMTP id S229726AbiDXGSz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 02:18:55 -0400
+X-Greylist: delayed 911 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 23 Apr 2022 23:15:42 PDT
+Received: from sender4-op-o18.zoho.com (sender4-op-o18.zoho.com [136.143.188.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A830646673
+        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 23:15:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1650780010; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=G89X2QBmE4EgM05XnfpsouYFoZIwMCV4C80WgFtSCHEqtJ1USTKQNGd75ZfgyKFfA/VR+4LaG2l90nRU4ptZDPGbIquuaCq/gh0yYuzFtkuQyQCQ8Xpz8j5aPQkm0PUpx0kmj00glUINx4wBOK4zo/NXy2Psfri2kL3itnB1IHA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1650780010; h=Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=pq60l/Yh375tVKL8zIdox/f7EvRbMx2DWdqcnGIxLow=; 
+        b=my5c5RvIj2i2qc6kQ8YLW6odsXvMl+pdBiN+aPMZdcg21ecrA9g5Mnac3ZSAWWd+wF6k6kWEgyPnKPp0wVtLbAXfQJLzODPIg9HKk7f2yERMXQ+6Xm7s1d9QfxFTXSAnCMxzBwJK2YACb/qXYJ1ZRl2SolMk3MgNQLv0qE3MLgM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=icenowy.me;
+        spf=pass  smtp.mailfrom=uwu@icenowy.me;
+        dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1650780010;
+        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
+        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+        bh=pq60l/Yh375tVKL8zIdox/f7EvRbMx2DWdqcnGIxLow=;
+        b=JpEonNAv7xyTDgfxMVHzMV1Qf9VYuiUBA09QEAYdS5WfHIpAKRMHGKWVaHvYHRKO
+        0FZo3Cter02dJQMXBir09R/RCF4bDvYK5a1wcfEpKZ1y0zaZdCotmkgIbqB3unYXgxT
+        EEC+lp18e3PfzcsLeHx+q1kzin2W8zWCaEHGYKNc=
+Received: from petra.. (64.225.114.122 [64.225.114.122]) by mx.zohomail.com
+        with SMTPS id 1650780009289608.5266651606395; Sat, 23 Apr 2022 23:00:09 -0700 (PDT)
+From:   Icenowy Zheng <uwu@icenowy.me>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH] clk: sunxi-ng: ccu-sun6i-rtc: set rtc-32k to critical
+Date:   Sun, 24 Apr 2022 13:59:59 +0800
+Message-Id: <20220424055959.109286-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v1 08/12] clk: imx: Add initial support for i.MXRT1170
- clock driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, linux-imx@nxp.com
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, linus.walleij@linaro.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
-        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
-        tharvey@gateworks.com, leoyang.li@nxp.com,
-        sebastian.reichel@collabora.com, cniedermaier@dh-electronics.com,
-        clin@suse.com, giulio.benetti@benettiengineering.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org
-References: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
- <20220326144313.673549-9-Mr.Bossman075@gmail.com>
- <20220423030331.0E85CC385A0@smtp.kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20220423030331.0E85CC385A0@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+RTC itself is the one and only consumer of rtc-32k clock. As the rtc
+should be always running, set rtc-32k clock to critical, to prevent it
+from being gated by the kernel.
 
+Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 4/22/22 23:03, Stephen Boyd wrote:
-> Quoting Jesse Taube (2022-03-26 07:43:09)
->> diff --git a/drivers/clk/imx/clk-imxrt1170.c b/drivers/clk/imx/clk-imxrt1170.c
->> new file mode 100644
->> index 000000000000..041aea3d4b02
->> --- /dev/null
->> +++ b/drivers/clk/imx/clk-imxrt1170.c
->> @@ -0,0 +1,391 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
->> +/*
->> + * Copyright (C) 2022
->> + * Author(s):
->> + * Jesse Taube <Mr.Bossman075@gmail.com>
->> + */
->> +#include <linux/clk.h>
->> +#include <linux/of_address.h>
-> 
-> Is this include used?
-> 
-Yes `of_iomap`
->> +#include <linux/of_irq.h>
-> 
-> Is this include used?
-> 
-No, but includes
-#include <linux/slab.h>
-for `kzalloc`
->> +#include <linux/platform_device.h>
-> 
-> Need to include clk-provider.h
-> 
->> +#include <dt-bindings/clock/imxrt1170-clock.h>
->> +
->> +#include "clk.h"
->> +
->> +#define CLOCK_MUX_DEFAULT "rcosc48M_div2", "osc", "rcosc400M", "rcosc16M"
->> +
->> +#define LPCG_GATE(gate) (0x6000 + (gate * 0x20))
->> +
->> +#define DEF_CLOCK(flags, macro, name) \
->> +do { \
->> +       hws[macro##_SEL] = imx_clk_hw_mux(#name"_sel", ccm_base + (name * 0x80), \
->> +               8, 3, root_clocks[name], 8); \
->> +       hws[macro##_GATE] = imx_clk_hw_gate_dis_flags(#name"_gate", #name"_sel", \
->> +               ccm_base + (name * 0x80), 24, flags); \
->> +       hws[macro] = imx_clk_hw_divider(#name, #name"_gate", ccm_base + (name * 0x80), 0, 8); \
->> +} while (0)
->> +
->> +enum root_clock_names {
->> +       m7,             /* root clock m7. */
-> 
-> Is the comment adding any value? It has the enum name after "root clock"
-> and the enum is "root_clock_names" so it looks very obvious.
-> 
->> +       m4,             /* root clock m4. */
->> +       bus,            /* root clock bus. */
->> +       bus_lpsr,       /* root clock bus lpsr. */
-> [...]
->> +       end,            /* root clock end. */
->> +};
->> +
->> +static const char * const root_clocks[79][8] = {
->> +       {CLOCK_MUX_DEFAULT, "pll_arm", "pll1_sys", "pll3_sys", "pll_video"},
-> 
-> Space after { and before }
-> 
->> +       {CLOCK_MUX_DEFAULT, "pll3_pfd3", "pll3_sys", "pll2_sys", "pll1_div5"},
->> +       {CLOCK_MUX_DEFAULT, "pll3_sys", "pll1_div5", "pll2_sys", "pll2_pfd3"},
-> [...]
->> +       {CLOCK_MUX_DEFAULT, "pll2_pfd3", "rcosc48M", "pll3_pfd1", "pll_audio"}
->> +};
->> +
->> +static const char * const pll_arm_mux[] = {"pll_arm_pre", "osc"};
->> +static const char * const pll3_mux[] = {"pll3_pre", "osc"};
->> +static const char * const pll2_mux[] = {"pll2_pre", "osc"};
->> +
->> +static const struct clk_div_table post_div_table[] = {
->> +       { .val = 3, .div = 1, },
->> +       { .val = 2, .div = 8, },
->> +       { .val = 1, .div = 4, },
->> +       { .val = 0, .div = 2, },
->> +       { }
->> +};
->> +
->> +static struct clk_hw **hws;
->> +static struct clk_hw_onecell_data *clk_hw_data;
-> 
-> Do either of these need to be static global variables? They could be
-> local function pointers allocated on the heap (like they already are).
-> 
->> +
->> +static int imxrt1170_clocks_probe(struct platform_device *pdev)
->> +{
-> [...]
->> +       hws[IMXRT1170_CLK_PLL2_PFD3] = imx_clk_hw_pfd("pll2_pfd3", "pll2_sys", pll_base + 0x270, 3);
->> +
->> +       /* CCM clocks */
->> +       ccm_base = devm_platform_ioremap_resource(pdev, 0);
->> +       if (WARN_ON(IS_ERR(ccm_base)))
->> +               return PTR_ERR(ccm_base);
->> +
->> +       DEF_CLOCK(CLK_IS_CRITICAL, IMXRT1170_CLK_M7, m7);
-> 
-> Don't have macros do things to variables that are in global scope. It
-> makes things very non-obvious. Instead, pass hw to the macro, or better
-> yet make a static inline function and let the compiler decide to inline
-> it or not.
-> 
->> +       DEF_CLOCK(CLK_IS_CRITICAL, IMXRT1170_CLK_M4, m4);
-> [...]
->> +       DEF_CLOCK(0, IMXRT1170_CLK_CSI2_UI, csi2_ui);
->> +       DEF_CLOCK(0, IMXRT1170_CLK_CSI, csi);
->> +       DEF_CLOCK(0, IMXRT1170_CLK_CKO1, cko1);
->> +       DEF_CLOCK(0, IMXRT1170_CLK_CKO2, cko2);
->> +
->> +       hws[IMXRT1170_CLK_USB] = imx_clk_hw_gate("usb", "bus", ccm_base + LPCG_GATE(115), 0);
->> +
->> +       clk_set_rate(hws[IMXRT1170_CLK_PLL_ARM]->clk, 90000000);
-> 
-> Use assigned-clock-rates?
-> 
->> +
->> +       imx_check_clk_hws(hws, IMXRT1170_CLK_END);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+index 8a10bade7e0d..3d9c9ce5a3db 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+@@ -241,6 +241,7 @@ static struct clk_init_data rtc_32k_init_data = {
+ 	.ops		= &ccu_mux_ops,
+ 	.parent_hws	= rtc_32k_parents,
+ 	.num_parents	= ARRAY_SIZE(rtc_32k_parents), /* updated during probe */
++	.flags		= CLK_IS_CRITICAL,
+ };
+ 
+ static struct ccu_mux rtc_32k_clk = {
+-- 
+2.35.1
+
