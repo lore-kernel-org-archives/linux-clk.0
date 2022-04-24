@@ -2,79 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF14C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 06:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7540FC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 08:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238308AbiDXGTS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 02:19:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        id S238727AbiDXIxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 04:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiDXGSz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 02:18:55 -0400
-X-Greylist: delayed 911 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 23 Apr 2022 23:15:42 PDT
-Received: from sender4-op-o18.zoho.com (sender4-op-o18.zoho.com [136.143.188.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A830646673
-        for <linux-clk@vger.kernel.org>; Sat, 23 Apr 2022 23:15:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1650780010; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=G89X2QBmE4EgM05XnfpsouYFoZIwMCV4C80WgFtSCHEqtJ1USTKQNGd75ZfgyKFfA/VR+4LaG2l90nRU4ptZDPGbIquuaCq/gh0yYuzFtkuQyQCQ8Xpz8j5aPQkm0PUpx0kmj00glUINx4wBOK4zo/NXy2Psfri2kL3itnB1IHA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1650780010; h=Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
-        bh=pq60l/Yh375tVKL8zIdox/f7EvRbMx2DWdqcnGIxLow=; 
-        b=my5c5RvIj2i2qc6kQ8YLW6odsXvMl+pdBiN+aPMZdcg21ecrA9g5Mnac3ZSAWWd+wF6k6kWEgyPnKPp0wVtLbAXfQJLzODPIg9HKk7f2yERMXQ+6Xm7s1d9QfxFTXSAnCMxzBwJK2YACb/qXYJ1ZRl2SolMk3MgNQLv0qE3MLgM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=icenowy.me;
-        spf=pass  smtp.mailfrom=uwu@icenowy.me;
-        dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1650780010;
-        s=zmail; d=icenowy.me; i=uwu@icenowy.me;
-        h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-        bh=pq60l/Yh375tVKL8zIdox/f7EvRbMx2DWdqcnGIxLow=;
-        b=JpEonNAv7xyTDgfxMVHzMV1Qf9VYuiUBA09QEAYdS5WfHIpAKRMHGKWVaHvYHRKO
-        0FZo3Cter02dJQMXBir09R/RCF4bDvYK5a1wcfEpKZ1y0zaZdCotmkgIbqB3unYXgxT
-        EEC+lp18e3PfzcsLeHx+q1kzin2W8zWCaEHGYKNc=
-Received: from petra.. (64.225.114.122 [64.225.114.122]) by mx.zohomail.com
-        with SMTPS id 1650780009289608.5266651606395; Sat, 23 Apr 2022 23:00:09 -0700 (PDT)
-From:   Icenowy Zheng <uwu@icenowy.me>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH] clk: sunxi-ng: ccu-sun6i-rtc: set rtc-32k to critical
-Date:   Sun, 24 Apr 2022 13:59:59 +0800
-Message-Id: <20220424055959.109286-1-uwu@icenowy.me>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S237601AbiDXIxR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 04:53:17 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B3821EAE1;
+        Sun, 24 Apr 2022 01:50:16 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id g20so15177588edw.6;
+        Sun, 24 Apr 2022 01:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pSeVxZ7kFGybIVIVrBXvwtctttqQblAdAr2j0viXYNA=;
+        b=aukjRI/5KCMQTzkPd19KIyPbTyUf0ZA/YZ1GLvemCzic3DvYYjMVirH5qMtR7rgyta
+         vCVzb+ANU3LrzBCTusfG7ydBMZLWBP0f9MyP+0tQwyY1EfCDcY+ipSMaie6NP5XiGlRe
+         AUSKBx3vVW0g99i7TQNCNg5hoDZqEUluAjLnrjDrg2Gue/HSL39DB9iOBBjhHODZIpr2
+         RLPrpzzxEuXZHkDBk03eFAYGhdUs+0c8geLCrBsnQrE89C3pc2HNhhMF1AWTFLFKYD2b
+         2J9g/FEVML8LWPkgmUq0RljlySLR0Hv0esSVVPkbvOzMwsOYN/2+s0PRqdBb2Kc9GHVl
+         oaJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pSeVxZ7kFGybIVIVrBXvwtctttqQblAdAr2j0viXYNA=;
+        b=hYyoAUorTRrroufp8nkK8p8tYD1OP8U4/P3A5hkGa5dwSfJ0v3gwukC8m70mB4jAWO
+         ZqDmq0XcKzVDX/gNvNM+ll6qGZ1TeA6ADFNAtsM/sbxUiIU0QzNRDvzYy0m+GTQmFP8r
+         M4zqp61yeMP+KYfYFnkG0Q1C1KkkZB/paFGeRYWmDOqsre/ciZaKxfSz/BgBWicHuMO4
+         UN6+A13y0xZa9kgr3SpTVryXMKJUr16M3m3IaQUvVXrGPu6yxK/6V7tLZs3gmRgPyP7J
+         HIK0/MncFtcrHKkfPlbw//qsQLDj41x9wxx2HxvrzFVNrZGFH27JZu+z7I2arbX74T5p
+         fHww==
+X-Gm-Message-State: AOAM533xAcqElzzTI+01/Iu4O4DBlmoWU3nhye+AxrzA+gS6LILnn9Y1
+        3ft3sOTeYpfHmfqox+uT9clrqN8yjnFz6AwMP7Q=
+X-Google-Smtp-Source: ABdhPJykDiz0AzVaoaUs4aHkau3AAtDAZ/ewV87Q1XEIBzcMj6OlpB+UYSoFWakcVx5TXsbYw/LJFw==
+X-Received: by 2002:a05:6402:e85:b0:41d:121b:f436 with SMTP id h5-20020a0564020e8500b0041d121bf436mr13518567eda.121.1650790214813;
+        Sun, 24 Apr 2022 01:50:14 -0700 (PDT)
+Received: from localhost.localdomain ([138.199.7.245])
+        by smtp.gmail.com with ESMTPSA id gy10-20020a170906f24a00b006e894144707sm2435971ejb.53.2022.04.24.01.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Apr 2022 01:50:14 -0700 (PDT)
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Sam Shih <sam.shih@mediatek.com>, Ryder Lee <ryder.lee@kernel.org>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: [PATCH v2 0/3] dt-bindings: arm: mediatek: Convert some docs to DT schema
+Date:   Sun, 24 Apr 2022 12:46:44 +0400
+Message-Id: <20220424084647.76577-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RTC itself is the one and only consumer of rtc-32k clock. As the rtc
-should be always running, set rtc-32k clock to critical, to prevent it
-from being gated by the kernel.
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
- 1 file changed, 1 insertion(+)
+This series includes DT schema conversions for topckgen, apmixedsys
+and infracfg bindings.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index 8a10bade7e0d..3d9c9ce5a3db 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -241,6 +241,7 @@ static struct clk_init_data rtc_32k_init_data = {
- 	.ops		= &ccu_mux_ops,
- 	.parent_hws	= rtc_32k_parents,
- 	.num_parents	= ARRAY_SIZE(rtc_32k_parents), /* updated during probe */
-+	.flags		= CLK_IS_CRITICAL,
- };
- 
- static struct ccu_mux rtc_32k_clk = {
+Changes since v1:
+- Move mediatek,topckgen.yaml and mediatek,apmixedsys.yaml to ../bindings/clock/
+- Remove items from first enums in topckgen and apmixedsys schemas
+- Mention headers with clock and reset values in all schema descriptions
+- Add clock framework maintainers to topckgen and apmixedsys schemas
+- Rename node name in infracfg example to clock-controller
+
+Yassine Oudjana (3):
+  dt-bindings: arm: mediatek: topckgen: Convert to DT schema
+  dt-bindings: arm: mediatek: apmixedsys: Convert to DT schema
+  dt-bindings: arm: mediatek: infracfg: Convert to DT schema
+
+ .../arm/mediatek/mediatek,apmixedsys.txt      | 35 --------
+ .../arm/mediatek/mediatek,infracfg.txt        | 42 ----------
+ .../arm/mediatek/mediatek,infracfg.yaml       | 81 +++++++++++++++++++
+ .../arm/mediatek/mediatek,topckgen.txt        | 35 --------
+ .../bindings/clock/mediatek,apmixedsys.yaml   | 61 ++++++++++++++
+ .../bindings/clock/mediatek,topckgen.yaml     | 61 ++++++++++++++
+ 6 files changed, 203 insertions(+), 112 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+ delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
+
 -- 
-2.35.1
+2.36.0
 
