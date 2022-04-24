@@ -2,89 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B266CC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 19:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECDBC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 19:55:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239336AbiDXTj3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 15:39:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54928 "EHLO
+        id S239467AbiDXT6Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 15:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239339AbiDXTj2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 15:39:28 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB3932EF8;
-        Sun, 24 Apr 2022 12:36:25 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id p18so11004181edr.7;
-        Sun, 24 Apr 2022 12:36:25 -0700 (PDT)
+        with ESMTP id S239396AbiDXT6V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 15:58:21 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04B8F83B1C;
+        Sun, 24 Apr 2022 12:55:20 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id g6so3098604ejw.1;
+        Sun, 24 Apr 2022 12:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yVOHIop480qd4Gr/LYjCSPrgKYLop4lt8wSVfH5qvF0=;
-        b=TrUTwR7kbvxcWabpO31VkDST1D26rIHkqeg351cvGg9gtptLAvDealNIt/RGogS5Bh
-         d3EhuP5daLZq54Bt2ZPHUdF8SzNbv8BpALtrktPx7wkDMRJQlRXMiNhXiFSeoUAl8OfZ
-         1692tOWuiNTLpovvo90VfOT7jQhOslWy8QQgCeFjZjQMRsFbhtyfwxFDwlV6Pe5I+5DX
-         c9r6RZaZspORLPC/LRc4aq7gs0cvaGENDsFdNreWwn9U/d+nvF2WV5lrJEjNP2gOYaPW
-         Ip8nOiM1SEWXQYSyOTojv/vDxnovsZdX/g5N4uaUqPTkCDgWfIhyHrzo+kLD0AfkQdrD
-         OHWg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jnZc7DP16ZcOaHpZ/GNMFf37KvUcvRnbmi+EyiBH2ZE=;
+        b=AcnpSf+5qxUgF0srl66FGmfTo7OdTmIAm/XziK6pVlV5y+Ze8LSEtuXW01aQzj32eD
+         UhvkN+CUxB0D3gTzfZU5NC0QWTw1BPK7YYpaU6MzOU/HsH+8Q08WP7KHA5mIa7oZBEwE
+         wAXKdW9/pDIDzu/uB8msTCKmtU8eteJ1GqlEBa1lSC1CYvQgFj3AiA+B5ttspv5NeG5+
+         aIbecn5OirPqnhzLhgyFahyxe4soSmeTe+KIlqfaE0aAlRk9Mm9V3Ay9AtE5BhubNBLb
+         +zPQgLpKF2iXZPpAq80rAdwJyn5049gSdgXFXx41HPG3B+FeEvCHhfCuQfP9Mtfj1qZF
+         HJqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yVOHIop480qd4Gr/LYjCSPrgKYLop4lt8wSVfH5qvF0=;
-        b=d/kx7aL5GbVR7VW6cw+p5APdYTU7uRNJN/0VKSbRftyBOyBINtClJA0AH19NhCljhu
-         kWRl+a9NaF6vFwetuaEY0LcHZfE6oDBaTfVpw+niziaRW6xz1Y7W6PLSgpZY0+gH6Yif
-         ZnR558PG6cpuehkGiGzFlvXTbVrGj7AAHqopUygY6ZnTFB9kj3WhfsQx2VQo/w4QbLg4
-         HxKaYb85Ik68GJSQLJ0nDd/uCMTcd/iMQDkNDbi54qrTTCfyrlQSLrc6icrBsxlFqyKI
-         IlAR9ivOD0kfUBzo/WrvfbEafb/f7UDEpBX7g1DBYPW6Zr8QWqA7Y7pxJLStAKB7g7T9
-         VleA==
-X-Gm-Message-State: AOAM533/JQCuJzDLfmn/XXQrJ8mU0fqszd885cSQiwEPS5f3SpeXAmS0
-        hfgSx8+0RjB4uKkxsqcAaE0uIQbVWlVtmNpgo9g=
-X-Google-Smtp-Source: ABdhPJzEKN5IOZJlCldmBtOqeOCM2SeHaSYlmVF6btock30J6RluGq7St0OGRGpWdKOxzf5CvxRmm8BGyY/Ea+Dz7/o=
-X-Received: by 2002:a50:ed0e:0:b0:425:e476:f4ed with SMTP id
- j14-20020a50ed0e000000b00425e476f4edmr2696289eds.32.1650828983747; Sun, 24
- Apr 2022 12:36:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jnZc7DP16ZcOaHpZ/GNMFf37KvUcvRnbmi+EyiBH2ZE=;
+        b=y3RCXVhxzPO4CKTkaPewi7158XoGDSZxF1yEVYonF6wmtkozHt6hEj4yUgxOui7YQx
+         qxAOdybxy5+AsHqSK00s+g5BkHynx3fGBF1SjOJ4nddGqk3EYlAHJyD4GudbrAfFO2EX
+         mfFyepIUFqe3ZkGFxNFAmkfJXBqrA3oCnDer21avg3EtyEdsc3rsYll3tr31+S27u+YT
+         0W+Rr9jIWM91WBoJVtHo9fAj4gy1cahRJz1SaSLIECj1f0MzyGA2qIH8rioUC7Eg76ge
+         UQPAL3IUBTxqLsqZtb/boLJeN16c4yhNAcABFAl9+hGC+skJT9zGM9Z59MoRtANcG92k
+         aVdQ==
+X-Gm-Message-State: AOAM532LermcVVqMWz7O+h+snpoi4fnxVkZ6oBh5ur0JFiS/2iHUsjQR
+        /aX0UgtK3pX6DPZQlyN84Zc=
+X-Google-Smtp-Source: ABdhPJzN3eVFBus3yS50upLR1PqeRSF6bppisLjUxreAllvxq33VJBsVI+bSpN1WSBIgUo8tDD0BvQ==
+X-Received: by 2002:a17:906:5006:b0:6ce:3762:c72e with SMTP id s6-20020a170906500600b006ce3762c72emr13049979ejj.30.1650830118484;
+        Sun, 24 Apr 2022 12:55:18 -0700 (PDT)
+Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
+        by smtp.gmail.com with ESMTPSA id ak18-20020a170906889200b006f39a445b93sm148849ejc.141.2022.04.24.12.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Apr 2022 12:55:18 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+        Icenowy Zheng <uwu@icenowy.me>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Icenowy Zheng <uwu@icenowy.me>
+Subject: Re: [PATCH] clk: sunxi-ng: ccu-sun6i-rtc: set rtc-32k to critical
+Date:   Sun, 24 Apr 2022 21:55:17 +0200
+Message-ID: <5560593.DvuYhMxLoT@kista>
+In-Reply-To: <20220424055959.109286-1-uwu@icenowy.me>
+References: <20220424055959.109286-1-uwu@icenowy.me>
 MIME-Version: 1.0
-References: <tencent_FE734C50BC851F2AB5FE1380F833A7E67A0A@qq.com>
- <CAFBinCC=Dp4bXT9sbmT=ZTiVfC1Mj=oRVxeDXfKbDczq45iekQ@mail.gmail.com> <20220423022541.B12F3C385A0@smtp.kernel.org>
-In-Reply-To: <20220423022541.B12F3C385A0@smtp.kernel.org>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 24 Apr 2022 21:36:12 +0200
-Message-ID: <CAFBinCB+o1vBECV+q_VnDx8yZW_wg4yQ7d5m68B_iwPO+RzUbQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: meson8b: fix a memory leak in meson8b_clkc_init_common()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     xkernel.wang@foxmail.com, Neil Armstrong <narmstrong@baylibre.com>,
-        jbrunet@baylibre.com, mturquette@baylibre.com,
-        khilman@baylibre.com, p.zabel@pengutronix.de,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Dne nedelja, 24. april 2022 ob 07:59:59 CEST je Icenowy Zheng napisal(a):
+> RTC itself is the one and only consumer of rtc-32k clock. As the rtc
+> should be always running, set rtc-32k clock to critical, to prevent it
+> from being gated by the kernel.
+> 
+> Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 
-On Sat, Apr 23, 2022 at 4:25 AM Stephen Boyd <sboyd@kernel.org> wrote:
-[...]
-> > Also a note about meson8b_clkc_init_common() itself: failures in that
-> > function will result in a non-working system.
-> > If we can't register the reset controller then most devices won't
-> > probe and CPU SMP cannot work.
-> > If registering any clock or the clock controller doesn't work then the
-> > system also won't work as clocks are not available to other drivers.
-> > So freeing memory in case of an error is good to have, but the end
-> > result is still the same: the system won't work.
-> >
->
-> Can we get far enough to record this fact into either a pstore ramoops
-> location or the serial console? That would be ideal to make debugging
-> early problems easier.
-earlycon shows these messages (as it's enabled by the bootloader)
-while "normal" serial console won't come up without the corresponding
-clocks.
-I never tried ramoops but I expect it to be able to log these errors as well.
-
+This one was already submitted here:
+https://lore.kernel.org/linux-sunxi/20220411050100.40964-1-samuel@sholland.org/
 
 Best regards,
-Martin
+Jernej
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-
+sun6i-rtc.c
+> index 8a10bade7e0d..3d9c9ce5a3db 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> @@ -241,6 +241,7 @@ static struct clk_init_data rtc_32k_init_data = {
+>  	.ops		= &ccu_mux_ops,
+>  	.parent_hws	= rtc_32k_parents,
+>  	.num_parents	= ARRAY_SIZE(rtc_32k_parents), /* updated 
+during probe */
+> +	.flags		= CLK_IS_CRITICAL,
+>  };
+>  
+>  static struct ccu_mux rtc_32k_clk = {
+> -- 
+> 2.35.1
+> 
+> 
+> 
+
+
