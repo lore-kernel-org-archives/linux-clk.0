@@ -2,139 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD6FC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 14:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C768C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 15:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233285AbiDXOdZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 10:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51346 "EHLO
+        id S232338AbiDXPg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 11:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239334AbiDXOdT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 10:33:19 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612D760DE
-        for <linux-clk@vger.kernel.org>; Sun, 24 Apr 2022 07:30:18 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id g20so15673805edw.6
-        for <linux-clk@vger.kernel.org>; Sun, 24 Apr 2022 07:30:18 -0700 (PDT)
+        with ESMTP id S240462AbiDXPb1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 11:31:27 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98985171C04;
+        Sun, 24 Apr 2022 08:28:25 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id e4so14578216oif.2;
+        Sun, 24 Apr 2022 08:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=t+cFAdULg2hxlZvpL8mkzZTJUv6nL4wjsFN6y1hgc60=;
-        b=kIF8xCGrdnFF/XqcVlc6s4kC6K77erAVfHofi8ozMEg05dnYENDavy4NkKFKSc0Q1U
-         4c9xuk8zEFVPonGkld9PDg+F1bw8e9AFPi+eO5BD27m+ZMpnfflE6sVMsi/aI9dxlsD6
-         UaXeDgZkHCqSHf8gq8mScRrKG46blsX+Crw3/5cR1Q7J2BUk5ppWwxOmgE7W/28F2fx3
-         i0/WYN5vVqZ4Ax00gOb58lfU7mmHt3xU98W49RZNRio+kO5s8bDNwXQQ/DP7WGP/Jd1z
-         Hsc9yKvhjj16NmSjW/+1VRkYmqQ1rB1i2lLpB3p5W5i6PW9pRciEQ5QeU5CjJ+RmIzX9
-         nVcw==
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:content-language:to
+         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=yr0/AkbMMu8pn1dkU35YlQmF7na7yjrNnK/horRQvq8=;
+        b=YTsJBncPwlsdJoy0clMDPkRYsap010NbelrrDwP4gT2p8VkAeOwyCadOMVg4EkLC3g
+         BU6v4rcHRP7TcChruJdux/6WqtJmUToOWUlOimc0ldD0p/STL+v6YSxQqTz/SiEj3JGk
+         6SfYzDXOC60C+Zk6YtFsjMz2c7gYsvaefbEF/eKAM03STJHCFm25OuC/Z0YH/2cfNqkA
+         U538FM4O480tv4oZ6rwPTTcYDvIV4RyyrEvA6n7gY5KKJPB4B+s22HrjImpN8j9osv2G
+         SEdJ9k63zxNOgRDgM+KmfcxMquHhbq8CJJjUKerT4sEDujG7ogRPrwOnyNIjdLCE9lFh
+         BU0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
          :content-transfer-encoding;
-        bh=t+cFAdULg2hxlZvpL8mkzZTJUv6nL4wjsFN6y1hgc60=;
-        b=vJGB6h4a0Gj3KFvrG2febQuUye8npIH5FDhpB3+EUrnPX1z8Tiw2aJWfvrDm/oVLdD
-         ia1psHBbgge19UeVLf22vk1LlcZrnoRanofRAeIX0x4c49oukG/OLQlqmUhG8v/LrQdA
-         Rmr/Y8o5UT9hQDklZqvmp3KBZJNhl4VA8eTHmOpzwerTUf6OAu483YmmWykVZQ+TkxEq
-         O0alger17cU50960GT98eJmh72+GIUHzxon/ZBJFJRTiGp3LojcKnXE4oA4+OsyY/j/9
-         fegto3+OdvbyOB0g5wUNDw/oiWYh0iECPmZY1vfkmyykn7PXXl6duPaxJYCl/b60rbTJ
-         DzNA==
-X-Gm-Message-State: AOAM532vSeyY5RNWbjliFRTngh/yIlfZfuL3ricdvP9G+OPVGdRBDl+3
-        UobvNPOxc8LTvz7ngTiHEuISIA==
-X-Google-Smtp-Source: ABdhPJziQDp0bSnyNdDldXqRA1oudD2LgKNlgAYkmoWx/OmfU3A29d1hMrX9VLFgL6qNVy1ZMH1f4g==
-X-Received: by 2002:a05:6402:d0a:b0:421:10e6:2ecc with SMTP id eb10-20020a0564020d0a00b0042110e62eccmr14690714edb.329.1650810616878;
-        Sun, 24 Apr 2022 07:30:16 -0700 (PDT)
-Received: from [192.168.0.235] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id jl7-20020a17090775c700b006f38e51ec81sm520413ejc.129.2022.04.24.07.30.15
+        bh=yr0/AkbMMu8pn1dkU35YlQmF7na7yjrNnK/horRQvq8=;
+        b=6vnD+8dQFmxyCIkjIp2rzinoLopet/bOToKxMnl2YtHOByGo/3uzEEWghB5ivZYWCi
+         +rlylgSvpddSCP7L/jowhR+EY8PKx8gmUpaAklTLvOnGzBu+KsO0K5sZma/VxYfD+8O7
+         cY1obNpFAKSpXcqX/vynqo70JQqRpH2fX6OJ/az/sdloBzVT1Hlbsy0t+ISTk9eja4i2
+         NPP0370RoYz/QRrb9fuISYcH3nGQX0swBEPrmTAqQY3CW47NEd9aiH8cBNciV3kMxAg/
+         0HhL+B10ELgesmaEYtrPaSpDfQrPLH0USQ0+qkRh8SEWZ8FsnZoU4Bz5k5H7i2AYbXQ+
+         GfoA==
+X-Gm-Message-State: AOAM533aS0heWnGx1qtXYFFuC/rH9r8ilEPuKVhXK6t5ZIQox5cSnKAm
+        JAmIERVQLb6nkLj0Rfc7TIQ=
+X-Google-Smtp-Source: ABdhPJy+gDyQI+jYYZai2x5URiEV01l+fMZDWT8YjU8/GgIriEk0FB5ZVdkvpb6NfVQx+IMk0aUfQA==
+X-Received: by 2002:aca:f286:0:b0:2da:58ba:c578 with SMTP id q128-20020acaf286000000b002da58bac578mr6576017oih.127.1650814104777;
+        Sun, 24 Apr 2022 08:28:24 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w8-20020a056830410800b00605b48122eesm53063ott.14.2022.04.24.08.28.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Apr 2022 07:30:16 -0700 (PDT)
-Message-ID: <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org>
-Date:   Sun, 24 Apr 2022 16:30:15 +0200
+        Sun, 24 Apr 2022 08:28:23 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
+Date:   Sun, 24 Apr 2022 08:28:19 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
 Content-Language: en-US
-To:     Cixi Geng <gengcixi@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20220418125630.2342538-1-gengcixi@gmail.com>
- <20220418125630.2342538-2-gengcixi@gmail.com>
- <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org>
- <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
- <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org>
- <CAF12kFu5KW+fw=0kP6LrEqOvKYR38mELfPjG64=n+gudRxsZUQ@mail.gmail.com>
- <baa73bda-91af-8a31-67f4-6d5615862c73@linaro.org>
- <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Tomas Cech <sleep_walker@suse.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+References: <20220419163810.2118169-1-arnd@kernel.org>
+ <20220422170530.GA2338209@roeck-us.net>
+ <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
+ <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
+ <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
+ <20220422234150.GA3442771@roeck-us.net>
+ <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
+ <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+In-Reply-To: <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/04/2022 16:22, Cixi Geng wrote:
->>>>
->>>> Neither here nor later you did not answer the question - why do you need
->>>> such complex construction, instead of adding syscon to the clock controller?
->>>>
->>>> Let me paste again my concerns:
->>>>
->>>>   You have nodes with reg but without unit address ("rpll"). These nodes
->>>>   are modeled as children but they are not children - it's a workaround
->>>>   for exposing syscon, isn't it? The sc9863a looks like broken design,
->>>>   so please do not duplicate it here.
->>>>
->>>> IOW, sc9863a uses similar pattern as here and the DTS is made wrong.
->>>> Because of this you need to create complex ways to get the regmap for
->>>> the clock controller... Why not making it simple? Clock controller with
->>>> syscon?
+On 4/24/22 01:52, Arnd Bergmann wrote:
+> On Sun, Apr 24, 2022 at 4:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 4/23/22 12:55, Arnd Bergmann wrote:
+>>> On Sat, Apr 23, 2022 at 1:41 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>> On Sat, Apr 23, 2022 at 12:04:31AM +0200, Arnd Bergmann wrote:
 >>>
->>> I find the history discuss about the sp9863 clock[1] and last
->>> ums512-clk dt-bindings patch[2] which from chunyan.
->>> please refer to the reasons below.
+>>> Odd, I can't reproduce this at all. Do you get any console output at
+>>> all for this?
 >>>
->>> These clocks are at the same register range with global registers.
->>> the registers shared with more than one devices  which  basically
->>> are multimedia devices. You may noticed that these are all gate
->>> clocks which are in the global registers  ranges and are used to
->>> controll the enable status of some devices or some part of devices.
+>>> Is this the plain omap1_defconfig, or something else?
 >>>
->>> [1] https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=FTe5S7CzAHC5mahXBH2fJm7mXS7Xys1Q@mail.gmail.com/#r
->>> [2] https://lore.kernel.org/all/163425295208.1688384.11023187625793114662@swboyd.mtv.corp.google.com/#r
 >>
->> Which looks like discussion about different bindings. You had there a
->> clock controller and additional clock device using "sprd,syscon". Why
->> the rpll is a subdevice and not a part of clock controller. The same as
->> all other clocks coming from that clock-controller, right? What is so
->> special about rpll that is is a separate device, not part of the clock
->> controller? It's the same address space, isn't it?
-> The hardware spec design these clocks are not belonged to the syscon,
-> the phandle is only used to get virtual  map address for clocks which
-> have the same phsical address base with one syscon.(I don't know the
-> historical reason for this design) It also can wroten a clock sperated from
-> syscon by add the reg which same as syscon. but will lead to a duplicate
-> mapping--one is from the clock,and one is from syscon. which make difficulty
->  in analyzing some panic problems.
+>> No, it is my own sx1 specific configuration.
+>>
+>> https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/qemu_sx1_defconfig
+>>
+>> I don't recall where I got it from but ...
+> 
+> Ok, that explains it, thanks!
+> 
+> I fixed all the defconfig files that come with the kernel, but for your own
+> ones you have to add
+> 
+> # CONFIG_ARCH_MULTI_V7 is not set
+> 
+> into the defconfig file, otherwise the multiplatform target defaults to
+> an ARMv7 instead of ARMv5 build. For an OMAP15xx as in the SX1,
+> you also need to enable CONFIG_ARCH_MULTI_V4T.
+> 
+> This is slightly unfortunate, but I don't see any way to avoid it, and the
+> modified defconfig will still work fine with older kernel trees.
+> 
 
-I don't understand still. You said that they do not belong to same
-address space, right? But the sprd,ums512-apahb-gate in this patch or
-mentioned rpll
-(https://elixir.bootlin.com/linux/v5.18-rc3/source/arch/arm64/boot/dts/sprd/sharkl3.dtsi#L106)
-does not reference any other address space. It's entire address space is
-the same as address space of glbregs.
+Yes, that works. I changed it in my configuration.
 
-So if it does not belong to the same address space, where is this space
-defined?
+>>> One thing I keep having to apply myself is this snippet:
+>>>
+>>> diff --git a/arch/arm/mm/proc-arm925.S b/arch/arm/mm/proc-arm925.S
+>>> index 0bfad62ea858..87c695703580 100644
+>>> --- a/arch/arm/mm/proc-arm925.S
+>>> +++ b/arch/arm/mm/proc-arm925.S
+>>> @@ -441,7 +441,6 @@ __arm925_setup:
+>>>
+>>>    #ifdef CONFIG_CPU_DCACHE_WRITETHROUGH
+>>>           mov     r0, #4                          @ disable write-back
+>>> on caches explicitly
+>>> -       mcr     p15, 7, r0, c15, c0, 0
+>>>    #endif
+>>
+>> it does not have CONFIG_CPU_DCACHE_WRITETHROUGH enabled.
+> 
+> Maybe it was disabled explicitly for the sx1_defconfig because of this
+> bug. I would think that this is required for actual sx1 hardware because the
+> option is default-enabled for ARM925T, and that CPU core is exclusively
+> used in OMAP15xx.
+> 
 
-Best regards,
-Krzysztof
+That looks like a bug in qemu. ARM925T instruction support is limited to V4T
+instructions. qemu doesn't have explicit 5T support. It is either V4T
+or V5.
+
+Guenter
