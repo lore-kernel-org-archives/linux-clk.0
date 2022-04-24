@@ -2,330 +2,206 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6679FC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 03:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BCBC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 03:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237932AbiDXDSY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Apr 2022 23:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
+        id S238085AbiDXD4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Apr 2022 23:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237931AbiDXDSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 23:18:23 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D601B9B;
-        Sat, 23 Apr 2022 20:15:23 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id x18so16308302wrc.0;
-        Sat, 23 Apr 2022 20:15:23 -0700 (PDT)
+        with ESMTP id S236524AbiDXD4W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Apr 2022 23:56:22 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D8E918351;
+        Sat, 23 Apr 2022 20:53:23 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id a5so9302724qvx.1;
+        Sat, 23 Apr 2022 20:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WpZl1eDbTl8L5h6pp/lwpzQKXmpUJMkk+Xg6ZZpHnFo=;
-        b=bTxKqgqiGoSgX/J++WwuOAVkMK7jffkB+/mXcZXxInFZjpSD2E9jDAImJJbxQEwtzx
-         OH7M/EXBgiv1SvcLEbYu/bAPUxALyPwWaLlcjmMZHZ2EabBAlvxalav4Fai5UrOGK84r
-         IMEw1v9zkjoWzF8FyTLDJLldFCzvc/c4HGYXU0KS7pmGx37hlnFbVv3EdxArOQRqeyyq
-         sPiPxfxvx4jS6y66SO08aYVRvr8b8/za3iZaLFTPvkAaGjk/gbFPCFGsGYveX2+QW8St
-         sPhvDYPliglrPbw+6siDiyhbDNDgprtIw3SAmnPVqpAszyhYKI6zCi32eDzBt3/a4snO
-         ZA+g==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6jWJt9XTXVVwmHW6n7cY0VehyahZoXhvY7honrosNaM=;
+        b=UHOC4oaV0BK0SaJf96f+kbk6a9WOcVogxsr62v7w+RBq1tdVir5KiH5uikGln619q3
+         dkaRuLKXu+QOZOXiEejJziFxEyogLLE3eQezNiv80pEIbt8qn9ESnd1m+36MHWqEsOlg
+         BI5kR8SmQtMLYmvizST8jFFom5YQ2wnu/ctkNMO9pDGgs4ysrYc7HehF1WUly3KSf6bQ
+         3RJZZKOIwUEpNBRwmgTzB48flpCNmiKJGChCtiwLeOmRM4hjzFXWl8TydWWyZhbESz+H
+         f6R2Hua/4A8qF5iAt4D+D79e4uubIVgLyam5gGoUSIlqAyA4Sty1FHWiAyo9g/quGH2u
+         6Tmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WpZl1eDbTl8L5h6pp/lwpzQKXmpUJMkk+Xg6ZZpHnFo=;
-        b=DqDTKvLohPpV+oPwaHY2DouVB8Vifp1QArceJcUUD2yDNeeMBOhrA8D6lqDD956Lw5
-         nGFVLHBkU9B/CpywJi9fSZhr3BQIccUSK7VQw9bnSYik01qCeEHlcuqmIpNibK1L30VG
-         n5QddTjQ+9awzQMhlq3W67FWQ0Keb7BoHgX/z6E+gSHa2XY3eQBefH5mA59yspxeRdfI
-         MbCyclQYU8BtF+C9ZcWJvDS9exVsh4Hw6TjmdekOEmuy1VB+E/i0LKzLrCNG2pvL/Rm3
-         Thl8DJdlgLyPikoiDsRIpgGuIH9LRPYMKORjXiCCayUbXVFFo7k5svPbTvoMrQjOqhWT
-         G1LQ==
-X-Gm-Message-State: AOAM530XV8pFe0EpymxNb2DvoxKwYaCu6/I6bb1zS/iZdlloRQwf1F4D
-        ujh33xzxqwnk6XGHsR1okZEdZnOu8qMCRTm+xC4=
-X-Google-Smtp-Source: ABdhPJypN7WQoJioTvhOXHv8P94YLOJNbZHRXFFzhj8FGR+6aY4YxPNytGYQC2lIOjec6QYLujA4sfkB72EaSu+r4CI=
-X-Received: by 2002:a05:6000:15cd:b0:20a:aaf7:33e4 with SMTP id
- y13-20020a05600015cd00b0020aaaf733e4mr9376876wry.406.1650770121745; Sat, 23
- Apr 2022 20:15:21 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6jWJt9XTXVVwmHW6n7cY0VehyahZoXhvY7honrosNaM=;
+        b=7CXkcVus//QbnKRTJr5JvPqUeK63avo3wCW0tzgBbXi/VD/o+WqSn9iMXonT8YyfxQ
+         dO30KmzLkSzyMqLgLqv4tYMWi06HlYuryW49dBF98pv70d5rDBWM6K8Qq879LQeLYN8E
+         AMJshC/vMpADMMChsfGpt3aITJi7UgRulLmIHZATURHjxNoD3/cuupKepVLjGchgJNdS
+         vPwG4WqVvQC87ba5vdrxKTjTC5M6cmaoKOdpjTK14gDS6zpNcDOmS0jjAO0/y7CcZaG8
+         a/PPNHvnRMN/k78suaYLqC4n3CYJM3NcMso7TtGzOLsgbAfnJy5Io2BAONtVYVh/hS1C
+         zM3Q==
+X-Gm-Message-State: AOAM530lTNQtRy66+xxj6xz1CXVvUXpNiscQw3W5sWRHHjh3ec+EsvcH
+        CjEg2siQCAOjCm6KY/jXxnU=
+X-Google-Smtp-Source: ABdhPJz5JdrJrl5qLtHz+/NCpPnsgRZA3P+rkWCFTYCInOshw9B3LibU+/G07m3g5ZT2dcBgwo6hIw==
+X-Received: by 2002:a05:6214:2344:b0:441:8201:7246 with SMTP id hu4-20020a056214234400b0044182017246mr9094442qvb.120.1650772402262;
+        Sat, 23 Apr 2022 20:53:22 -0700 (PDT)
+Received: from [10.4.10.60] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id r7-20020a05622a034700b002f337000725sm3855022qtw.42.2022.04.23.20.53.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Apr 2022 20:53:21 -0700 (PDT)
+Message-ID: <506edc5d-8f66-5414-361a-0b517d8c4f38@gmail.com>
+Date:   Sat, 23 Apr 2022 23:53:19 -0400
 MIME-Version: 1.0
-References: <20220418125630.2342538-1-gengcixi@gmail.com> <20220418125630.2342538-2-gengcixi@gmail.com>
- <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org> <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
- <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org>
-In-Reply-To: <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org>
-From:   Cixi Geng <gengcixi@gmail.com>
-Date:   Sun, 24 Apr 2022 11:14:45 +0800
-Message-ID: <CAF12kFsqOSZDZ9iw+KfR-x533YzNa=yxR1rqWuoGX=vBgh+wGw@mail.gmail.com>
-Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH v1 08/12] clk: imx: Add initial support for i.MXRT1170
+ clock driver
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, stefan@agner.ch, linus.walleij@linaro.org,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
+        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
+        tharvey@gateworks.com, leoyang.li@nxp.com,
+        sebastian.reichel@collabora.com, cniedermaier@dh-electronics.com,
+        clin@suse.com, giulio.benetti@benettiengineering.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+References: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
+ <20220326144313.673549-9-Mr.Bossman075@gmail.com>
+ <20220423030331.0E85CC385A0@smtp.kernel.org>
+From:   Jesse Taube <mr.bossman075@gmail.com>
+In-Reply-To: <20220423030331.0E85CC385A0@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof:
-I find the history discuss about the sp9863 clock[1] and last
-ums512-clk dt-bindings patch[2] which from chunyan.
-please refer to the reasons below.
 
-These clocks are at the same register range with global registers.
-the registers shared with more than one devices
- which  basically are multimedia devices. You may noticed that these
-are all gate clocks which are in the global registers
- ranges and are used to controll the enable status of some devices or
-some part of devices.
 
-[1].https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=3DFTe5S7CzAHC5mahXBH2fJm=
-7mXS7Xys1Q@mail.gmail.com/
-[2].https://lore.kernel.org/all/163425295208.1688384.11023187625793114662@s=
-wboyd.mtv.corp.google.com/
-
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=B9=B4=
-4=E6=9C=8819=E6=97=A5=E5=91=A8=E4=BA=8C 14:38=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 19/04/2022 03:53, Cixi Geng wrote:
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=
-=B9=B44=E6=9C=8819=E6=97=A5=E5=91=A8=E4=BA=8C 00:28=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >>
-> >> On 18/04/2022 14:56, Cixi Geng wrote:
-> >>> From: Cixi Geng <cixi.geng1@unisoc.com>
-> >>>
-> >>> Add a new bindings to describe ums512 clock compatible string.
-> >>>
-> >>> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> >>> ---
-> >>>  .../bindings/clock/sprd,ums512-clk.yaml       | 112 ++++++++++++++++=
-++
-> >>>  1 file changed, 112 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums5=
-12-clk.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.=
-yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..89824d7c6be4
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> >>> @@ -0,0 +1,112 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +# Copyright 2022 Unisoc Inc.
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
-> >>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> >>> +
-> >>> +title: UMS512 Clock Control Unit Device Tree Bindings
-> >>
-> >> Remove "Device Tree Bindings". You could do the same also in the
-> >> subject, because you repeat the prefix ("dt-bindings: clk: sprd: Add
-> >> ums512 clock controller").
-> >>
-> >>> +
-> >>> +maintainers:
-> >>> +  - Orson Zhai <orsonzhai@gmail.com>
-> >>> +  - Baolin Wang <baolin.wang7@gmail.com>
-> >>> +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> >>> +
-> >>> +properties:
-> >>> +  "#clock-cells":
-> >>> +    const: 1
-> >>> +
-> >>> +  compatible:
-> >>
-> >> Put the compatible first, by convention and makes finding matching
-> >> bindings easier.
-> >>
-> >>> +    oneOf:
-> >>> +      - items:
-> >>> +          - const: sprd,ums512-glbregs
-> >>> +          - const: syscon
-> >>> +          - const: simple-mfd
-> >>
-> >> Why do you need simple-mfd for these? This looks like a regular syscon=
-,
-> >> so usually does not come with children. What is more, why this "usual
-> >> syscon" is a separate clock controller in these bindings?
-> > there is a warning log before add these const.  and the reason we need
-> > the simply-mfd
-> > is some clock is a child of syscon node,which should set these compatib=
-le.
-> > failed to match any schema with compatible: ['sprd,ums512-glbregs',
-> > 'syscon', 'simple-mfd']
->
-> Neither here nor later you did not answer the question - why do you need
-> such complex construction, instead of adding syscon to the clock controll=
-er?
->
-> Let me paste again my concerns:
->
->   You have nodes with reg but without unit address ("rpll"). These nodes
->   are modeled as children but they are not children - it's a workaround
->   for exposing syscon, isn't it? The sc9863a looks like broken design,
->   so please do not duplicate it here.
->
-> IOW, sc9863a uses similar pattern as here and the DTS is made wrong.
-> Because of this you need to create complex ways to get the regmap for
-> the clock controller... Why not making it simple? Clock controller with
-> syscon?
->
-> >>
-> >>> +      - items:
-> >>> +          - enum:
-> >>> +              - sprd,ums512-apahb-gate
-> >>> +              - sprd,ums512-ap-clk
-> >>> +              - sprd,ums512-aonapb-clk
-> >>> +              - sprd,ums512-pmu-gate
-> >>> +              - sprd,ums512-g0-pll
-> >>> +              - sprd,ums512-g2-pll
-> >>> +              - sprd,ums512-g3-pll
-> >>> +              - sprd,ums512-gc-pll
-> >>> +              - sprd,ums512-aon-gate
-> >>> +              - sprd,ums512-audcpapb-gate
-> >>> +              - sprd,ums512-audcpahb-gate
-> >>> +              - sprd,ums512-gpu-clk
-> >>> +              - sprd,ums512-mm-clk
-> >>> +              - sprd,ums512-mm-gate-clk
-> >>> +              - sprd,ums512-apapb-gate
-> >>> +
-> >>> +  clocks:
-> >>> +    minItems: 1
-> >>
-> >> maxItems needed
-> > the previous version did has the maxitems, but makes error when run
-> > 'make DT_CHECKER_FLAGS=3D-m dt_binding_check O=3D./dt-out  \
-> > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/clock/sprd,ums512-c=
-lk.yaml'
-> >   CHKDT   Documentation/devicetree/bindings/processed-schema.json
-> > /path-to-linux/Documentation/devicetree/bindings/clock/sprd,ums512-clk.=
-yaml:
-> > properties:clock-names: {'minItems': 1, 'maxItems': 4, 'items':
-> > [{'const': 'ext-26m'}, {'const': 'ext-32k'}, {'const': 'ext-4m'},
-> > {'const': 'rco-100m'}]} should not be valid under {'required':
-> > ['maxItems']}
-> > hint: "maxItems" is not needed with an "items" list
->
-> Warning is about clock-names, not about clocks. Fix the bindings.
->
-> >
-> >>
-> >>> +    description: |
-> >>> +      The input parent clock(s) phandle for this clock, only list fi=
-xed
-> >>> +      clocks which are declared in devicetree.
-> >>
-> >> The description does not make sense. These are bindings for a clock
-> >> controller, but you say here "for this clock", so what does "this" mea=
-n
-> >> here?
-> >>
-> >>> +
-> >>> +  clock-names:
-> >>> +    minItems: 1
-> >>> +    items:
-> >>> +      - const: ext-26m
-> >>> +      - const: ext-32k
-> >>> +      - const: ext-4m
-> >>> +      - const: rco-100m
-> >>> +
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - '#clock-cells'
-> >>
-> >> Isn't reg also required? Always? Do you have examples where it is not
-> >> required? How do you configure the clocks without "reg"? I see you
-> >> copied a lot from sprd,sc9863a-clk.yaml but that file does not look co=
-rrect.
-> >>
-> >> You have nodes with reg but without unit address ("rpll"). These nodes
-> >> are modeled as children but they are not children - it's a workaround
-> >> for exposing syscon, isn't it? The sc9863a looks like broken design, s=
-o
-> >> please do not duplicate it here.
-> >>
-> >>> +
-> >>> +if:
-> >>> +  properties:
-> >>> +    compatible:
-> >>> +      enum:
-> >>> +        - sprd,ums512-ap-clk
-> >>> +        - sprd,ums512-aonapb-clk
-> >>> +        - sprd,ums512-mm-clk
-> >>> +then:
-> >>> +  required:
-> >>> +    - reg
-> >>> +
-> >>> +else:
-> >>> +  description: |
-> >>> +    Other UMS512 clock nodes should be the child of a syscon node in
-> >>> +    which compatible string should be:
-> >>> +            "sprd,ums512-glbregs", "syscon", "simple-mfd"
-> >>> +
-> >>> +    The 'reg' property for the clock node is also required if there =
-is a sub
-> >>> +    range of registers for the clocks.
-> >>> +
-> >>> +additionalProperties: true
-> >>
-> >> false
-> > the "false" makes error log:
-> > /path-to-linux/Documentation/devicetree/bindings/clock/sprd,ums512-clk.=
-example.dtb:
-> > syscon@71000000: '#address-cells', '#size-cells',
-> > 'clock-controller@0', 'ranges' do not match any of the regexes:
-> > 'pinctrl-[0-9]+'
-> > and I reference the patch
-> > [https://www.spinics.net/lists/linux-leds/msg17032.html]
->
-> Which needs fixing. The "false" is a strict requirement for such end
-> (non-extendable) bindings.
->
-> >
-> >>
-> >>> +
-> >>> +examples:
-> >>> +  - |
-> >>> +    ap_clk: clock-controller@20200000 {
-> >>> +      compatible =3D "sprd,ums512-ap-clk";
-> >>> +      reg =3D <0x20200000 0x1000>;
-> >>> +      clocks =3D <&ext_26m>;
-> >>> +      clock-names =3D "ext-26m";
-> >>> +      #clock-cells =3D <1>;
-> >>> +    };
-> >>> +
-> >>> +  - |
-> >>> +    ap_apb_regs: syscon@71000000 {
-> >>> +      compatible =3D "sprd,ums512-glbregs", "syscon", "simple-mfd";
-> >>
-> >> So here is the answer why you added MFD, but I still don't get why do
-> >> you need it for one child? It is quite a dance here and in your driver=
-s,
-> >> instead of adding "syscon" to your clock controller.
-> >
-> > [1]in the if/else describtion,  th other UMS512 clock nodes should be
-> > the child of a syscon node in
-> > which compatible string should be:   "sprd,ums512-glbregs", "syscon",
-> > "simple-mfd"
->
-> No, it should not. Fix the drivers, fix the DTS and the bindings. Then
-> the "should" disappears.
-> >
-> >>
-> >> This also pollutes the actual bindings because you did not add
-> >> properties required for clock controllers, because of describing here
-> >> the syscon part.
->
->
->
-> Best regards,
-> Krzysztof
+On 4/22/22 23:03, Stephen Boyd wrote:
+> Quoting Jesse Taube (2022-03-26 07:43:09)
+>> diff --git a/drivers/clk/imx/clk-imxrt1170.c b/drivers/clk/imx/clk-imxrt1170.c
+>> new file mode 100644
+>> index 000000000000..041aea3d4b02
+>> --- /dev/null
+>> +++ b/drivers/clk/imx/clk-imxrt1170.c
+>> @@ -0,0 +1,391 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>> +/*
+>> + * Copyright (C) 2022
+>> + * Author(s):
+>> + * Jesse Taube <Mr.Bossman075@gmail.com>
+>> + */
+>> +#include <linux/clk.h>
+>> +#include <linux/of_address.h>
+> 
+> Is this include used?
+> 
+Yes `of_iomap`
+>> +#include <linux/of_irq.h>
+> 
+> Is this include used?
+> 
+No, but includes
+#include <linux/slab.h>
+for `kzalloc`
+>> +#include <linux/platform_device.h>
+> 
+> Need to include clk-provider.h
+> 
+>> +#include <dt-bindings/clock/imxrt1170-clock.h>
+>> +
+>> +#include "clk.h"
+>> +
+>> +#define CLOCK_MUX_DEFAULT "rcosc48M_div2", "osc", "rcosc400M", "rcosc16M"
+>> +
+>> +#define LPCG_GATE(gate) (0x6000 + (gate * 0x20))
+>> +
+>> +#define DEF_CLOCK(flags, macro, name) \
+>> +do { \
+>> +       hws[macro##_SEL] = imx_clk_hw_mux(#name"_sel", ccm_base + (name * 0x80), \
+>> +               8, 3, root_clocks[name], 8); \
+>> +       hws[macro##_GATE] = imx_clk_hw_gate_dis_flags(#name"_gate", #name"_sel", \
+>> +               ccm_base + (name * 0x80), 24, flags); \
+>> +       hws[macro] = imx_clk_hw_divider(#name, #name"_gate", ccm_base + (name * 0x80), 0, 8); \
+>> +} while (0)
+>> +
+>> +enum root_clock_names {
+>> +       m7,             /* root clock m7. */
+> 
+> Is the comment adding any value? It has the enum name after "root clock"
+> and the enum is "root_clock_names" so it looks very obvious.
+> 
+>> +       m4,             /* root clock m4. */
+>> +       bus,            /* root clock bus. */
+>> +       bus_lpsr,       /* root clock bus lpsr. */
+> [...]
+>> +       end,            /* root clock end. */
+>> +};
+>> +
+>> +static const char * const root_clocks[79][8] = {
+>> +       {CLOCK_MUX_DEFAULT, "pll_arm", "pll1_sys", "pll3_sys", "pll_video"},
+> 
+> Space after { and before }
+> 
+>> +       {CLOCK_MUX_DEFAULT, "pll3_pfd3", "pll3_sys", "pll2_sys", "pll1_div5"},
+>> +       {CLOCK_MUX_DEFAULT, "pll3_sys", "pll1_div5", "pll2_sys", "pll2_pfd3"},
+> [...]
+>> +       {CLOCK_MUX_DEFAULT, "pll2_pfd3", "rcosc48M", "pll3_pfd1", "pll_audio"}
+>> +};
+>> +
+>> +static const char * const pll_arm_mux[] = {"pll_arm_pre", "osc"};
+>> +static const char * const pll3_mux[] = {"pll3_pre", "osc"};
+>> +static const char * const pll2_mux[] = {"pll2_pre", "osc"};
+>> +
+>> +static const struct clk_div_table post_div_table[] = {
+>> +       { .val = 3, .div = 1, },
+>> +       { .val = 2, .div = 8, },
+>> +       { .val = 1, .div = 4, },
+>> +       { .val = 0, .div = 2, },
+>> +       { }
+>> +};
+>> +
+>> +static struct clk_hw **hws;
+>> +static struct clk_hw_onecell_data *clk_hw_data;
+> 
+> Do either of these need to be static global variables? They could be
+> local function pointers allocated on the heap (like they already are).
+> 
+>> +
+>> +static int imxrt1170_clocks_probe(struct platform_device *pdev)
+>> +{
+> [...]
+>> +       hws[IMXRT1170_CLK_PLL2_PFD3] = imx_clk_hw_pfd("pll2_pfd3", "pll2_sys", pll_base + 0x270, 3);
+>> +
+>> +       /* CCM clocks */
+>> +       ccm_base = devm_platform_ioremap_resource(pdev, 0);
+>> +       if (WARN_ON(IS_ERR(ccm_base)))
+>> +               return PTR_ERR(ccm_base);
+>> +
+>> +       DEF_CLOCK(CLK_IS_CRITICAL, IMXRT1170_CLK_M7, m7);
+> 
+> Don't have macros do things to variables that are in global scope. It
+> makes things very non-obvious. Instead, pass hw to the macro, or better
+> yet make a static inline function and let the compiler decide to inline
+> it or not.
+> 
+>> +       DEF_CLOCK(CLK_IS_CRITICAL, IMXRT1170_CLK_M4, m4);
+> [...]
+>> +       DEF_CLOCK(0, IMXRT1170_CLK_CSI2_UI, csi2_ui);
+>> +       DEF_CLOCK(0, IMXRT1170_CLK_CSI, csi);
+>> +       DEF_CLOCK(0, IMXRT1170_CLK_CKO1, cko1);
+>> +       DEF_CLOCK(0, IMXRT1170_CLK_CKO2, cko2);
+>> +
+>> +       hws[IMXRT1170_CLK_USB] = imx_clk_hw_gate("usb", "bus", ccm_base + LPCG_GATE(115), 0);
+>> +
+>> +       clk_set_rate(hws[IMXRT1170_CLK_PLL_ARM]->clk, 90000000);
+> 
+> Use assigned-clock-rates?
+> 
+>> +
+>> +       imx_check_clk_hws(hws, IMXRT1170_CLK_END);
