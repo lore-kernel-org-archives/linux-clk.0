@@ -2,79 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14AFC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 22:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CF6C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Apr 2022 23:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239671AbiDXWd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 18:33:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34194 "EHLO
+        id S239914AbiDXXjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 19:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239595AbiDXWd2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 18:33:28 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFE1424BF1
-        for <linux-clk@vger.kernel.org>; Sun, 24 Apr 2022 15:30:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 122B1B80139
-        for <linux-clk@vger.kernel.org>; Sun, 24 Apr 2022 22:30:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771E0C385A7;
-        Sun, 24 Apr 2022 22:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650839422;
-        bh=hYFLXl6wWtoTzWaTkcL5ZGI7jII5VVhw0xu5nDplZN8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XtlLlS+EcTSwRF2UkB7iNNOJQjLZOrq+wzM4pnPCudfsdmjLuM5Mq0bH1sXyRXHCT
-         FWmVOzEqrZLMrHnCkturZ8r9izhrv1y8m62Gx/9EYG18AsKWbrgb/RPBbuvP3dS3A/
-         +OPRdl/FRwAWxk10z9ZduJfcKOnI7RjDYlSNcnHt6fkeWuP06D/7F4WLzWbKMc4Y0Z
-         Gza+UfMFm6XrhrbeGVVjuWkelmkuX/SdAwauNUciAXbWhIw1b8K2Xd1kUDz4pS+Qmw
-         z9z/bq9igxUc7ZoigywSCjWZIq2N5DvtrZXfN8HW1PIk6qN3353mUQqZ0PZhif1doC
-         lRQI6yPRXYKLg==
-Date:   Mon, 25 Apr 2022 00:30:18 +0200
-From:   Jernej Skrabec <jernej@kernel.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-Subject: [GIT PULL] Allwinner clock fixes for 4.18
-Message-ID: <YmXPemmFqfcj4p/p@kista.localdomain>
+        with ESMTP id S239896AbiDXXjz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 19:39:55 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 720A917E21;
+        Sun, 24 Apr 2022 16:36:52 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B0581FB;
+        Sun, 24 Apr 2022 16:36:52 -0700 (PDT)
+Received: from slackpad.lan (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2342B3F5A1;
+        Sun, 24 Apr 2022 16:36:50 -0700 (PDT)
+Date:   Mon, 25 Apr 2022 00:36:43 +0100
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Ondrej Jirman <megous@megous.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v10 01/18] clk: sunxi-ng: h616-r: Add RTC gate clock
+Message-ID: <20220425003557.696c9de8@slackpad.lan>
+In-Reply-To: <01e8d2a0-cdeb-ab64-42a7-48376b49c00e@sholland.org>
+References: <20220211122643.1343315-1-andre.przywara@arm.com>
+        <20220211122643.1343315-2-andre.przywara@arm.com>
+        <01e8d2a0-cdeb-ab64-42a7-48376b49c00e@sholland.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-slackware-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+On Tue, 22 Feb 2022 21:22:07 -0600
+Samuel Holland <samuel@sholland.org> wrote:
 
-Please pull following changes for current release.
+Hi Samuel,
 
-Best regards,
-Jernej
+> On 2/11/22 6:26 AM, Andre Przywara wrote:
+> > The H616 features an (undocumented) bus clock gate for accessing the RTC
+> > registers. This seems to be enabled at reset (or by the BootROM), but is
+> > there anyway.
+> > Since the new RTC clock binding for the H616 requires this "bus" clock
+> > to be specified in the DT, add this to R_CCU clock driver and expose it
+> > on the DT side with a new number.  
+> 
+> It would be good to note why you didn't add this clock to H6, even though it
+> exists in that hardware.
 
-The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+What explanation do you prefer here? The main reason I expose this is
+because of the H616 binding, so this is not required for the H6.
+Plus is would break compatibility with older kernels, which is not so
+much an issue for the H616.
+Do you want to expose the clock on the H6 side as well, and mark it
+as CLK_IS_CRITICAL there? I guess otherwise it would get turned off.
+Or were you just after some kind of rationale as above, for the
+commit log records?
 
-  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+> 
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c      | 4 ++++
+> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h      | 2 +-
+> >  include/dt-bindings/clock/sun50i-h6-r-ccu.h | 1 +
+> >  3 files changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > index 712e103382d8..26fb092f6df6 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> > @@ -98,6 +98,8 @@ static SUNXI_CCU_GATE(r_apb1_ir_clk,	"r-apb1-ir",	"r-apb1",
+> >  		      0x1cc, BIT(0), 0);
+> >  static SUNXI_CCU_GATE(r_apb1_w1_clk,	"r-apb1-w1",	"r-apb1",
+> >  		      0x1ec, BIT(0), 0);
+> > +static SUNXI_CCU_GATE(r_apb1_rtc_clk,	"r-apb1-rtc",	"r-apb1",
+> > +		      0x20c, BIT(0), 0);  
+> 
+> All of the documentation I have found (manuals, A100 driver, BSP D1 driver)
+> points to this clock coming off of R_AHB, not R_APB1.
 
-are available in the Git repository at:
+Really, can you provide some pointer? In the H616 manual I see
+AHBS->AHB2APB->APBS1BUS->RTC, next to the other R_ peripherals. Also
+typically *register access* is done via APB busses, not AHB.
+Is any of those documentation sources actually reliable? And
+regardless, the AHB vs. APB parenthood is mostly academic, isn't it?
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-5.18-1
+Cheers,
+Andre
 
-for you to fetch changes up to b4f3d5f06e29b7020f19cc788b2c2de750e888a1:
+> 
+> Regards,
+> Samuel
+> 
+> >  
+> >  /* Information of IR(RX) mod clock is gathered from BSP source code */
+> >  static const char * const r_mod0_default_parents[] = { "osc32k", "osc24M" };
+> > @@ -147,6 +149,7 @@ static struct ccu_common *sun50i_h616_r_ccu_clks[] = {
+> >  	&r_apb2_i2c_clk.common,
+> >  	&r_apb2_rsb_clk.common,
+> >  	&r_apb1_ir_clk.common,
+> > +	&r_apb1_rtc_clk.common,
+> >  	&ir_clk.common,
+> >  };
+> >  
+> > @@ -179,6 +182,7 @@ static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
+> >  		[CLK_R_APB2_I2C]	= &r_apb2_i2c_clk.common.hw,
+> >  		[CLK_R_APB2_RSB]	= &r_apb2_rsb_clk.common.hw,
+> >  		[CLK_R_APB1_IR]		= &r_apb1_ir_clk.common.hw,
+> > +		[CLK_R_APB1_RTC]	= &r_apb1_rtc_clk.common.hw,
+> >  		[CLK_IR]		= &ir_clk.common.hw,
+> >  	},
+> >  	.num	= CLK_NUMBER,
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> > index 7e290b840803..10e9b66afc6a 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
+> > @@ -14,6 +14,6 @@
+> >  
+> >  #define CLK_R_APB2	3
+> >  
+> > -#define CLK_NUMBER	(CLK_R_APB2_RSB + 1)
+> > +#define CLK_NUMBER	(CLK_R_APB1_RTC + 1)
+> >  
+> >  #endif /* _CCU_SUN50I_H6_R_H */
+> > diff --git a/include/dt-bindings/clock/sun50i-h6-r-ccu.h b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+> > index 890368d252c4..a96087abc86f 100644
+> > --- a/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+> > +++ b/include/dt-bindings/clock/sun50i-h6-r-ccu.h
+> > @@ -22,5 +22,6 @@
+> >  #define CLK_W1			12
+> >  
+> >  #define CLK_R_APB2_RSB		13
+> > +#define CLK_R_APB1_RTC		14
+> >  
+> >  #endif /* _DT_BINDINGS_CLK_SUN50I_H6_R_CCU_H_ */
+> >   
+> 
+> 
 
-  clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical (2022-04-24 23:22:46 +0200)
-
-----------------------------------------------------------------
-Two clock fixes:
-- missing sentinel in device id array
-- missing critical flag for rtc-32k clock
-
-----------------------------------------------------------------
-Samuel Holland (1):
-      clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical
-
-Wan Jiabing (1):
-      clk: sunxi-ng: fix not NULL terminated coccicheck error
-
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 ++
- 1 file changed, 2 insertions(+)
