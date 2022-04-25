@@ -2,101 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522E1C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 08:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99A4C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 09:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237138AbiDYIoq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 04:44:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
+        id S240736AbiDYJD1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 05:03:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233425AbiDYIop (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 04:44:45 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA93882D34
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 01:41:39 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id l7so28233651ejn.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 01:41:38 -0700 (PDT)
+        with ESMTP id S240900AbiDYJDX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 05:03:23 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17A3817E1C
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 02:00:14 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id y3so7898601ejo.12
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 02:00:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=+pzRVC0gT9zFiZtrDMedaHXZTcAEp3gFNZ9jUtyJUSY=;
-        b=gcfVAfz/SAa5L6EAzl0d7kO/pyYnSWLEY6OCjuijoNMVR99RSWK9cVFketV78ewi1H
-         Ew0QpplSg3Y4hSY4ba2DbNsv6o5V+71OlPeDcLKm2YIMA5XS42Ip/OZzBNJ+jbyUIDOT
-         snK3oFi0DQz4OfeKc0usAxbgN8t+KohsIfgiZnkAAXCQA6HRVBIVOaC/Xm2zM/2Ebdhh
-         vcTiT0uaEYLi8y7pL3L1SLnqMPCjU9o0GVqoSatDU3ljfwmxf0Gd9w+Fe0Qcg6XOZzJJ
-         Se1aoaTJ0DeTwQA9oaDBdfM1XMGOrIAySC8azw4lJtpiQ94CU1UcxeDntWJ0IPZ99BnA
-         SUUg==
+        bh=w3IxbLwGG5AOreFgCaa2xIIUFHyNEgC4AZtZjxOzrog=;
+        b=t6e/aV7+adIXldn+lDhrKWw3VnVedpv9hCrz6tFIISVjzmysEbe5zTjdbRTb7bm3Ia
+         HWNa9xDFWcmvf7H4BNoMSRtMo/QRFj8Q83a48zgJ4sJOfqXfbKK91PVjn4b/Nhd6cpNS
+         6+fw/Uxhcw9GcgMXrK7ceLBui8w7jq3YpdqV/RgPnCjRuPBlcvnb+BIlHga4Cz2VxszA
+         U2wxzlrMMXgguJvgiQ/IByjwIHbo4jkeEP0BM3UBYBgmrCRad+wRwkZ/IR8V4GVA3/dD
+         krbZu0cTCm3qrP2aA+15+0pTP01kT9lpXl7VQYgjuTCwTDn5zkdE/cxe95bRhpWp5LYg
+         3luw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=+pzRVC0gT9zFiZtrDMedaHXZTcAEp3gFNZ9jUtyJUSY=;
-        b=2WCHsIMn6BWGYTDlobhd3ZSnJkhWP2Ne/685PobTrSlEOL1DLB0cfxoL1V7XbpCqVk
-         8PkyjZbW0aIZj2arJ1WDgOFIP+u3B63svsFB1BWHwbamxYSOEbC0YSLp2uNsHtMOZhNe
-         LEFSPgKF3gqkY52akIAbWoxmCOgpOB079Q2eVKxXCVFGZmrEIUNmeiZKBrpjWyIO4nh9
-         u4k9Mby/UvbBFU8n23onGytnb0Ha4JporoLwOhxmnaPfUsta2Z5ISZoMRcDqWDx/yzQM
-         rqwqvKBLuFBShMeEopXhI1Pz7YaLCD2BkopB+myCe9PY6qAfC3oM3SJBmGljxpPB7AtL
-         Vrag==
-X-Gm-Message-State: AOAM532ESco6aF4ezQmwjOpUQzpA2vNxD4/A9elt8Vf0NPnqATUe4M33
-        2cC/7nspeG24AhU1y+LGNY99nw==
-X-Google-Smtp-Source: ABdhPJzUz/psaa+nbuSchDlMQ1Kx2x7dlomMaZKQcYPZHDJjZTlyyQ5QQ+jEZR6VnuzLVIoagHwRiw==
-X-Received: by 2002:a17:907:3d94:b0:6f3:8b47:cd95 with SMTP id he20-20020a1709073d9400b006f38b47cd95mr5577978ejc.134.1650876097639;
-        Mon, 25 Apr 2022 01:41:37 -0700 (PDT)
-Received: from [192.168.0.240] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id bq23-20020a056402215700b0041d8fcac53asm4302602edb.23.2022.04.25.01.41.36
+        bh=w3IxbLwGG5AOreFgCaa2xIIUFHyNEgC4AZtZjxOzrog=;
+        b=f/c7tiNztHkEF6DPATPVebLDnoPZiIcL2mP1Cp/0bD2UtAKpPdWZ2hbanD6xnvTXBM
+         hA8ITTr6ay9h+KkVKvY91UhO8+AeBoazhvynkC2gceNMOMByvQLcaRwg4wNRJQgxnZQb
+         WxVNX3/Q+3TCTb6iLslT77j2rExTxi671OJ7NBoxeQLpdJ70gRFTGBr+OOk2RxD1/uVa
+         nozKLOiS5CeEbPX4kfSniaP9sl9dUlojTp5a/4qiXc4D98Savye0KQJGzjshV3535wKA
+         pX54aPZxNSFON6sjrai4g3wxy9jbqBuwShSnCO853sSPbX+MK73vgt6M6iUgliNIzn4o
+         dEqQ==
+X-Gm-Message-State: AOAM533oCwPMAmKO3FPC8crWCU8Wlv1ChoWBPy1X9EhpS8gcmOGKmGkW
+        cWU8wv05Hio3XnKqrOGLZ+ZKMg==
+X-Google-Smtp-Source: ABdhPJzdbNg2b9AX+OMDJh3C6SX9WPbUhIqKlPOP8EHiK7RMRR8j+81XqbqyspeHGmnaUkmKKwBXMQ==
+X-Received: by 2002:a17:906:9746:b0:6e0:5c9a:1a20 with SMTP id o6-20020a170906974600b006e05c9a1a20mr15830210ejy.714.1650877212608;
+        Mon, 25 Apr 2022 02:00:12 -0700 (PDT)
+Received: from [192.168.0.241] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id el14-20020a056402360e00b0042121aee887sm4087663edb.77.2022.04.25.02.00.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Apr 2022 01:41:37 -0700 (PDT)
-Message-ID: <9f5fafe8-c032-2aac-185b-8ecb5c52f363@linaro.org>
-Date:   Mon, 25 Apr 2022 10:41:36 +0200
+        Mon, 25 Apr 2022 02:00:12 -0700 (PDT)
+Message-ID: <0423e827-9592-ce6f-74ca-111a099a263f@linaro.org>
+Date:   Mon, 25 Apr 2022 11:00:11 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: mediatek: infracfg: Convert to
- DT schema
+Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
 Content-Language: en-US
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+To:     Cixi Geng <gengcixi@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Sam Shih <sam.shih@mediatek.com>, Ryder Lee <ryder.lee@kernel.org>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Yassine Oudjana <y.oudjana@protonmail.com>
-References: <20220424084647.76577-1-y.oudjana@protonmail.com>
- <20220424084647.76577-4-y.oudjana@protonmail.com>
+        krzysztof.kozlowski+dt@linaro.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20220418125630.2342538-1-gengcixi@gmail.com>
+ <20220418125630.2342538-2-gengcixi@gmail.com>
+ <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org>
+ <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
+ <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org>
+ <CAF12kFu5KW+fw=0kP6LrEqOvKYR38mELfPjG64=n+gudRxsZUQ@mail.gmail.com>
+ <baa73bda-91af-8a31-67f4-6d5615862c73@linaro.org>
+ <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
+ <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org>
+ <CAF12kFt=L7CV5RDBViPSNb9Y_Te4JJ-TZrx2N+w_P2px7_FemQ@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220424084647.76577-4-y.oudjana@protonmail.com>
+In-Reply-To: <CAF12kFt=L7CV5RDBViPSNb9Y_Te4JJ-TZrx2N+w_P2px7_FemQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/04/2022 10:46, Yassine Oudjana wrote:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Convert infracfg bindings to DT schema format. Not all drivers
-> currently implement resets, so #reset-cells is made a required
-> property only for those that do. Using power-controller in the
-> example node name makes #power-domain-cells required causing
-> a dt_binding_check error. To solve this, the node is renamed to
-> syscon@10001000.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->  .../arm/mediatek/mediatek,infracfg.txt        | 42 ----------
->  .../arm/mediatek/mediatek,infracfg.yaml       | 81 +++++++++++++++++++
->  2 files changed, 81 insertions(+), 42 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
-> 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 24/04/2022 17:12, Cixi Geng wrote:
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2022年4月24日周日 22:30写道：
+>>
+>> On 24/04/2022 16:22, Cixi Geng wrote:
+>>>>>>
+>>>>>> Neither here nor later you did not answer the question - why do you need
+>>>>>> such complex construction, instead of adding syscon to the clock controller?
+>>>>>>
+>>>>>> Let me paste again my concerns:
+>>>>>>
+>>>>>>   You have nodes with reg but without unit address ("rpll"). These nodes
+>>>>>>   are modeled as children but they are not children - it's a workaround
+>>>>>>   for exposing syscon, isn't it? The sc9863a looks like broken design,
+>>>>>>   so please do not duplicate it here.
+>>>>>>
+>>>>>> IOW, sc9863a uses similar pattern as here and the DTS is made wrong.
+>>>>>> Because of this you need to create complex ways to get the regmap for
+>>>>>> the clock controller... Why not making it simple? Clock controller with
+>>>>>> syscon?
+>>>>>
+>>>>> I find the history discuss about the sp9863 clock[1] and last
+>>>>> ums512-clk dt-bindings patch[2] which from chunyan.
+>>>>> please refer to the reasons below.
+>>>>>
+>>>>> These clocks are at the same register range with global registers.
+>>>>> the registers shared with more than one devices  which  basically
+>>>>> are multimedia devices. You may noticed that these are all gate
+>>>>> clocks which are in the global registers  ranges and are used to
+>>>>> controll the enable status of some devices or some part of devices.
+>>>>>
+>>>>> [1] https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=FTe5S7CzAHC5mahXBH2fJm7mXS7Xys1Q@mail.gmail.com/#r
+>>>>> [2] https://lore.kernel.org/all/163425295208.1688384.11023187625793114662@swboyd.mtv.corp.google.com/#r
+>>>>
+>>>> Which looks like discussion about different bindings. You had there a
+>>>> clock controller and additional clock device using "sprd,syscon". Why
+>>>> the rpll is a subdevice and not a part of clock controller. The same as
+>>>> all other clocks coming from that clock-controller, right? What is so
+>>>> special about rpll that is is a separate device, not part of the clock
+>>>> controller? It's the same address space, isn't it?
+>>> The hardware spec design these clocks are not belonged to the syscon,
+>>> the phandle is only used to get virtual  map address for clocks which
+>>> have the same phsical address base with one syscon.(I don't know the
+>>> historical reason for this design) It also can wroten a clock sperated from
+>>> syscon by add the reg which same as syscon. but will lead to a duplicate
+>>> mapping--one is from the clock,and one is from syscon. which make difficulty
+>>>  in analyzing some panic problems.
+>>
+>> I don't understand still. You said that they do not belong to same
+>> address space, right? But the sprd,ums512-apahb-gate in this patch or
+>> mentioned rpll
+>> (https://elixir.bootlin.com/linux/v5.18-rc3/source/arch/arm64/boot/dts/sprd/sharkl3.dtsi#L106)
+>> does not reference any other address space. It's entire address space is
+>> the same as address space of glbregs.
+> Maybe I didn't describe clearly, what I said is these clocks isn't the
+> syscom sub-clock.
+> from chunyan's explain:
+>  they  are at the same register range with global registers. in
+> originally we put them
+> directly onto the bus indeed when submitting the patches for SC9863A
+> clocks last year,
+> and it had a private property named 'sprd,syscon' which could provide
+> regmap for these clocks.
+> after follow Rob's suggetion we make them a child of the syscon. these
+> are all gate clocks which
+> are in the global registers ranges and are used to controll the enable
+> status of some devices
+> or some part of devices.
 
+You need to help me here with the naming. What is "global registers"
+range? Let's focus on sharkl3.dtsi and syscon@4035c000 with "rpll".
+
+You have a clock controller @4035c000, which provides several clocks,
+right? Then you have a rpll also @4035c000, so the register range is the
+same. The register range is the same, isn't it?
+
+I still don't see the answer to my question - why do you need a child
+device for one clock if this looks like part of the clock-controller?
 
 Best regards,
 Krzysztof
