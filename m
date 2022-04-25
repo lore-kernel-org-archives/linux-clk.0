@@ -2,90 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE5E2C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 19:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C02DDC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 19:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244842AbiDYTHu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 15:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36546 "EHLO
+        id S244947AbiDYTgA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 15:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237610AbiDYTHr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 15:07:47 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB7F12C688
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 12:04:42 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id k27so4426837edk.4
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 12:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dkJK/bIXn+MjYWm2XRzMDddvE/wybEFyuqEkS+yBujQ=;
-        b=w2hlctq3j0qr6JmyRLhuyLCwiyKXnEGlMGtrwDINRO5qUUg7AP3r/DE+QY8iz+289K
-         9UnbpwX6BVc3ryyYMIK9dlsTjGrfHX0OnuJfe3w2Dwxk+MZLH3YlomnC76yxuiHIT82n
-         7cNw7m1Jc0osEfCPcsjUYmsqv9OZ5dtkoA3Fk8aUyJHf2sw30WeBRVJR/ADQ+wSu65py
-         TqR0/yydhPPvNuoxOYJSOXwD1irZR4r7s8SrysTYxthYTxi9zs9N4eh4SUszu2aGGSgm
-         AW7mneB8qxrK92xEO4RpB/svfdOF7ag8G/dsMF9Qh8z4+0YVfv7WgquuTplHgCM/Hyq1
-         kJmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dkJK/bIXn+MjYWm2XRzMDddvE/wybEFyuqEkS+yBujQ=;
-        b=Nz8ZJ9tpoXfyZ+ZoFsJXHXtnn0ooocHjmdtekLZnnAQaj4BUpwXgGTWeOTWs3SCbuY
-         0nTunFw4l7TMu0NGj/YmvhBqkkUMqhtR/At5B6LWQIdzoN+YOMHhDgqdqfZBSytDel8Y
-         P/eEURpAPI7+awY/Xosj2ISltSZCsQf4AhZ8Gkw0tP6TJSwppO0lszbQUP71ia7K6OOQ
-         QCbWkb5oBlo1qsC0QXOHxU5dS/vMmvsUYQRHptpRyQQjuTROmTjns9dIm1049xHs3Ez2
-         v1P46IbRPSAdveLSYh25OeRRo5VfLt4zQ5cEX0Z6oWm6EzTbI4f9xm87bfMqKBPHvCo4
-         eRxw==
-X-Gm-Message-State: AOAM5317NPqGhvSSUz6qxkhMZVurxPpDxlc6ALyy/6/Ya/dzcQ86E/u1
-        7jS5ybMPcBulyHg+w+WPenCcEg==
-X-Google-Smtp-Source: ABdhPJx9ZZG4M6AYqL/6gLcP9gmx1DMtXiCtvOZldKX8Fm4IY4JLn4h8Lxwf+bdbC7O3xNQVDZZitA==
-X-Received: by 2002:a50:9f06:0:b0:425:c1ba:5037 with SMTP id b6-20020a509f06000000b00425c1ba5037mr17765566edf.285.1650913478943;
-        Mon, 25 Apr 2022 12:04:38 -0700 (PDT)
-Received: from [192.168.0.244] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id z14-20020a170906944e00b006f38c33b6e3sm1894061ejx.68.2022.04.25.12.04.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Apr 2022 12:04:37 -0700 (PDT)
-Message-ID: <377a84e8-504f-7716-937a-4c97d8a04a2a@linaro.org>
-Date:   Mon, 25 Apr 2022 21:04:36 +0200
+        with ESMTP id S242465AbiDYTgA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 15:36:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB5F11114B;
+        Mon, 25 Apr 2022 12:32:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 64A68B81A2B;
+        Mon, 25 Apr 2022 19:32:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06828C385A4;
+        Mon, 25 Apr 2022 19:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650915173;
+        bh=+Ldmjo2nOkdw5AcH6ZzgLglBh0fhTCqRCzAYPRBrJ2k=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=dn8bgOUj9DkwKFWUn6Rk8A0RTJrf8u4iAM9vb9E4FSVQEb57hveL2yyjljPehhFHP
+         pGdEZ9pEvyE23cnIrKcY5PxUmkoRdoRZvYMZBhrawVkDL8i0T32y1YinycXywWddh8
+         g47bGhux2twSn7n4+lk864+gxJiOizDVPU7fu+o8VtvC3XWwGViGJTsmgp26eWqOPi
+         AFgXl9hZP6Rg/nXCQx3G0A6UMVOMyqW66BceiGY3Aofm3Yj8lyYI72sKzfhrUwef8L
+         49kvuox9ef5ytd1V8d6ngt0pudXu1qbGFSm5c4DoKkmRIZzWgw/M62VF9BGtmSoPEB
+         oxExbf8gd61WA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/3] clk: qcom: gcc-msm8976: Set floor ops for SDCC
-Content-Language: en-US
-To:     Adam Skladowski <a39.skl@gmail.com>, phone-devel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220425133527.3723233-1-robh@kernel.org>
+References: <20220425133527.3723233-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible string
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20220425185140.15154-1-a39.skl@gmail.com>
- <20220425185140.15154-2-a39.skl@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220425185140.15154-2-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Taniya Das <tdas@codeaurora.org>
+Date:   Mon, 25 Apr 2022 12:32:51 -0700
+User-Agent: alot/0.10
+Message-Id: <20220425193253.06828C385A4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thank you for your patch. There is something to discuss/improve.
+Quoting Rob Herring (2022-04-25 06:35:27)
+> The compatible string should be 'qcom,gcc-apq8064', not
+> 'qcom,gcc-apq8084'. Found by enabling undocumented compatible checks.
+>=20
+> Cc: Ansuel Smith <ansuelsmth@gmail.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yam=
+l b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> index 97936411b6b4..9910a3e033bb 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> @@ -25,7 +25,7 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: qcom,gcc-apq8084
+> +    const: qcom,gcc-apq8064
 
-On 25/04/2022 20:51, Adam Skladowski wrote:
-> Just like in case of other SoCs change SDCC1/SDCC2 ops to floor to avoid overclocking controller.
-> This commit only sets SDCC1/SDCC2 which are used for EMMC/SDCARD.
-> It leaves SDCC3 because on this platform it's mostly used for WIFI/BT chips like on Sony Loire family devices.
-
-You need to wrap your commit msg.
-
-https://elixir.bootlin.com/linux/v5.18-rc4/source/Documentation/process/submitting-patches.rst#L586
-
-
-Best regards,
-Krzysztof
+This file has dt-bindings/clock/qcom,gcc-apq8084.h referenced. Should
+that be removed? It looks like commit a469bf89a009 ("dt-bindings: clock:
+simplify qcom,gcc-apq8064 Documentation") took the more than just the
+compatible for apq8084 from qcom,gcc-other.yaml and put it in here while
+removing gcc-apq8064. Probably the apq8084 part needs to be a copy of
+the apq8064 file with the single compatible changed.
