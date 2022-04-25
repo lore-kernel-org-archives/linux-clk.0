@@ -2,131 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 292D6C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 18:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A22C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 18:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244370AbiDYS0W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 14:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
+        id S243738AbiDYSwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 14:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243733AbiDYS0E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:26:04 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F76111CB4;
-        Mon, 25 Apr 2022 11:22:59 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id w16so10011781ejb.13;
-        Mon, 25 Apr 2022 11:22:59 -0700 (PDT)
+        with ESMTP id S244654AbiDYSwc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:52:32 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C961291D1
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 11:49:25 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id y3so11032933ejo.12
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 11:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gvu98N+OnM/luhCQReYWbF6uR2tYpArXdOPWVpsiRFE=;
-        b=NCfMAGpyr61KewdUdbjWyMKju/GFaW1uLf0R5mbdIzKkrnjW/iySxCT0jLufknsz6m
-         WMa0rxN3gY0PRUE6wq9FJgJY6gY1hzzgsvjiCm4l2HImfkBtpbgB5dZkri+HqoXpphAc
-         Zu84I2CTWl4pIsltG9rVZUUn7swSf3SN2ipyU4wIhlVPKPJjryqD/69jUF4JZQjBDTaR
-         QlBQRFO3XFSfMBFK3MVwKiHqIqujBYq66JK7Ybu1vmeKvP+zhwQqiWdZYKuCMMxkXceb
-         OYA37jHbQuXidZeqbyEA72LmccSSVwdpThdVCTJzTMNMmA1+bJr//QJl7xwjgeXZrpxM
-         rVdQ==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=83hu77dgmAdgOlmu6Sz8NpPU54JO4fW9HRIvIUjVaz4=;
+        b=QP3o+fHSOMrRf40mzyQrQUCqiB0DMBCJz7V49S2SDp/tc2/AlG+yOb/+Esp+KWOxHL
+         Hpd2VguxluR47JPQ7RUFjqWjp/g46bH0bAvwx6tea3mKXa1M97jR4AagwTKTLN4UH9US
+         oexyug+MYU33h2mlCaUkcRz2Vkk1Zer9seA6uomrtdnVNL8epo2381tJFdfmQG9jCMi5
+         bfAzJlaVM1CNzAup4ELb1Ig7i7aUD5ox7Vi9SC3khNWG+XjdB6du+U4k4Wma2+0/SX/Q
+         rqNDwH1ZUAVdlN/TYUZnT/JUFn3aoGcu8o+AUoI8ADGEKu5Si8gUCIU079DUbDpAAIJl
+         d/9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gvu98N+OnM/luhCQReYWbF6uR2tYpArXdOPWVpsiRFE=;
-        b=Nb4w68aR+fExecOomBiWGvrKGjYMZ48gN3SQt+wlwUz4ayZ3nN71O3AmHulgaNkTPy
-         CaEB3HHl8IxMq0cJzJndPonKY52V3+IZSybFrhombV4PcjLAEpmo3TmkuM64MzNppP+C
-         JmN2030jV/sLXuHIO/u7yM0R2tlZ2XXiGxjzOF79e61YOw8M8ALSfcPQYF4zx9AcgCZj
-         KR9UxtfkKfBqL+pgm84KkYkNIT0yAWkZwnpskEPFFCG4Vq1rOB2fnE7NqcN7CKWqEYTH
-         Y1jVLHM/eCQ8FJ0ypI0OpQ/jz2LLNs/tfq2CMW7whtnS67uTi0d6kSfywUC81SK+oAmo
-         RG5w==
-X-Gm-Message-State: AOAM533ifLPv9mDBmNeX7XTGDdd5mcX2SvbsBDflaPuACoFzvxFfoEtJ
-        w0wvXMpIE/DKxlDBMm7b35I=
-X-Google-Smtp-Source: ABdhPJxYeRdgw7s6UWLZspqRmHYG9DJMH7dAXUm9Tk3Tt7gyDGSAf5mgdfnntKNs12BqzpDn+zUiYg==
-X-Received: by 2002:a17:907:1686:b0:6f0:c0f:2773 with SMTP id hc6-20020a170907168600b006f00c0f2773mr17640149ejc.445.1650910978204;
-        Mon, 25 Apr 2022 11:22:58 -0700 (PDT)
-Received: from fedora.robimarko.hr (cpe-94-253-165-91.zg.cable.xnet.hr. [94.253.165.91])
-        by smtp.googlemail.com with ESMTPSA id h13-20020a170906590d00b006f39021e683sm1677210ejq.12.2022.04.25.11.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 11:22:57 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=83hu77dgmAdgOlmu6Sz8NpPU54JO4fW9HRIvIUjVaz4=;
+        b=lIaFb6jUSZ2SFZgisYUFacb5dIXRyiRN5PQxKk2eLiJtM2ogO0Ks2HLVD0YqLimS0N
+         BMdKVyApyuSl7Z1GnviyWOvvxBkwYK+3V4VyCwY+OXVBTup/cR67ohwCI4DQMGAhkoO+
+         +SNj7YxTnWh+27KlrCocvZVya000vpjftqG6H80HhgVdSaDVlbk2txcLQwgUGPvKxWQJ
+         JaQDyrlybQA4pr4EqcdNkDqTm1By9NtYZXKRqz+RgIEgdm4QEi3GA9htbC70z5PrgmPM
+         kBuDMaK8OQQZzHnl9+VVUO9xPyECFbJRwCiIDfFTgpW/H0FcPcI/iMYAdUOUUUqcs40T
+         GcTg==
+X-Gm-Message-State: AOAM5312BouiiSNWanW+YwUp6b9BLT2UP+qaSEZMT8My2k9nBpd2mUKt
+        UYLa5WF17LzyNeWsNqhKf33pVg==
+X-Google-Smtp-Source: ABdhPJyQ7KfkySdz2j3okSsEM8q3uVin74vtr55i0ci5U16Z53odwYJ/cgDVkR+3Ym2GAk7d/IyFFA==
+X-Received: by 2002:a17:906:a2c5:b0:6e7:f44d:ed7d with SMTP id by5-20020a170906a2c500b006e7f44ded7dmr17731309ejb.329.1650912563700;
+        Mon, 25 Apr 2022 11:49:23 -0700 (PDT)
+Received: from [192.168.0.244] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id b16-20020a170906709000b006f3a8aac0eesm277773ejk.0.2022.04.25.11.49.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Apr 2022 11:49:23 -0700 (PDT)
+Message-ID: <3139ef34-322b-9afe-e5c8-ae0f1b7f1848@linaro.org>
+Date:   Mon, 25 Apr 2022 20:49:22 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 6/7] dt-bindings: clock: qcom: ipq8074: add PPE crypto
+ clock
+Content-Language: en-US
+To:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, absahu@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH 4/7] clk: qcom: ipq8074: fix NSS port frequency tables
-Date:   Mon, 25 Apr 2022 20:22:46 +0200
-Message-Id: <20220425182249.2753690-4-robimarko@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220425182249.2753690-1-robimarko@gmail.com>
 References: <20220425182249.2753690-1-robimarko@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220425182249.2753690-6-robimarko@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220425182249.2753690-6-robimarko@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-NSS port 5 and 6 frequency tables are currently broken and are causing a
-wide ranges of issue like 1G not working at all on port 6 or port 5 being
-clocked with 312 instead of 125 MHz as UNIPHY1 gets selected.
+On 25/04/2022 20:22, Robert Marko wrote:
+> Add binding for the PPE crypto clock in IPQ8074.
+> 
+> Signed-off-by: Robert Marko <robimarko@gmail.com>
 
-So, update the frequency tables with the ones from the downstream QCA 5.4
-based kernel which has already fixed this.
 
-Fixes: 7117a51ed303 ("clk: qcom: ipq8074: add NSS ethernet port clocks")
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- drivers/clk/qcom/gcc-ipq8074.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 969b38d4ba08..37af41d8b192 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -1788,8 +1788,10 @@ static struct clk_regmap_div nss_port4_tx_div_clk_src = {
- static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(25000000, P_UNIPHY1_RX, 12.5, 0, 0),
-+	F(25000000, P_UNIPHY0_RX, 5, 0, 0),
- 	F(78125000, P_UNIPHY1_RX, 4, 0, 0),
- 	F(125000000, P_UNIPHY1_RX, 2.5, 0, 0),
-+	F(125000000, P_UNIPHY0_RX, 1, 0, 0),
- 	F(156250000, P_UNIPHY1_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_RX, 1, 0, 0),
- 	{ }
-@@ -1828,8 +1830,10 @@ static struct clk_regmap_div nss_port5_rx_div_clk_src = {
- static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(25000000, P_UNIPHY1_TX, 12.5, 0, 0),
-+	F(25000000, P_UNIPHY0_TX, 5, 0, 0),
- 	F(78125000, P_UNIPHY1_TX, 4, 0, 0),
- 	F(125000000, P_UNIPHY1_TX, 2.5, 0, 0),
-+	F(125000000, P_UNIPHY0_TX, 1, 0, 0),
- 	F(156250000, P_UNIPHY1_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY1_TX, 1, 0, 0),
- 	{ }
-@@ -1867,8 +1871,10 @@ static struct clk_regmap_div nss_port5_tx_div_clk_src = {
- 
- static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
-+	F(25000000, P_UNIPHY2_RX, 5, 0, 0),
- 	F(25000000, P_UNIPHY2_RX, 12.5, 0, 0),
- 	F(78125000, P_UNIPHY2_RX, 4, 0, 0),
-+	F(125000000, P_UNIPHY2_RX, 1, 0, 0),
- 	F(125000000, P_UNIPHY2_RX, 2.5, 0, 0),
- 	F(156250000, P_UNIPHY2_RX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_RX, 1, 0, 0),
-@@ -1907,8 +1913,10 @@ static struct clk_regmap_div nss_port6_rx_div_clk_src = {
- 
- static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
-+	F(25000000, P_UNIPHY2_TX, 5, 0, 0),
- 	F(25000000, P_UNIPHY2_TX, 12.5, 0, 0),
- 	F(78125000, P_UNIPHY2_TX, 4, 0, 0),
-+	F(125000000, P_UNIPHY2_TX, 1, 0, 0),
- 	F(125000000, P_UNIPHY2_TX, 2.5, 0, 0),
- 	F(156250000, P_UNIPHY2_TX, 2, 0, 0),
- 	F(312500000, P_UNIPHY2_TX, 1, 0, 0),
--- 
-2.35.1
 
+Best regards,
+Krzysztof
