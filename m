@@ -2,111 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2A3C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 09:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3046BC43217
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 10:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233076AbiDYJ4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 05:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        id S236299AbiDYKGY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 06:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239974AbiDYJ4T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 05:56:19 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0722E403D3
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 02:52:55 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOn-0008Mo-Ji; Mon, 25 Apr 2022 11:52:53 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOo-0057Ws-93; Mon, 25 Apr 2022 11:52:52 +0200
-Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOm-0015Vq-2S; Mon, 25 Apr 2022 11:52:52 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        David Jander <david@protonic.nl>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 1/2] clk: imx8mp: Enable no longer handled gates
-Date:   Mon, 25 Apr 2022 11:52:48 +0200
-Message-Id: <20220425095249.259406-2-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220425095249.259406-1-s.hauer@pengutronix.de>
-References: <20220425095249.259406-1-s.hauer@pengutronix.de>
+        with ESMTP id S241493AbiDYKGQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 06:06:16 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D1F2252A
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 03:03:11 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id dk23so5235925ejb.8
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 03:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=2WgIrPk8Gi6VJyQTSCt7yrmHnUX10MpNP4vrR/luUsk=;
+        b=FtmLTt9nLJTfd8E53+GL35FEXD6Y2iUV/bCMkbQrdI1H1Mn+b+qjzwcSx9WoKwN1oZ
+         3ibqxm1YuE+QsJOp0cAPCUCldZX2uxaSb3Q0hBhc2DHv8QVBidVPj4A8R+h56IxQkEDK
+         la6PsdSwjHEknO4cjKbgVgXZQxYuKYffSxEuJ7UpCt0nyri7ESoqrygRVL2BWIKYtY39
+         tcr0n6yb72i7KItNmP0T1QnDjjl3r+iq1ddxZo+DYAJHff7TDwycGbc8nGDwjCkg0T/W
+         sj2WopWH2wMf4CjEDllsNO8lLi0C3dRfAfv/JdAFGE9DvVFJatS8LuGF2RKoO8+JfirJ
+         Tmiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=2WgIrPk8Gi6VJyQTSCt7yrmHnUX10MpNP4vrR/luUsk=;
+        b=5a9ER1GrOR9YjwE9v/bGzEQ9hL/4MthyiHY4BmobpU1Viw6ulpG0Js2H4qZdrAmw8o
+         5Tj1Q4Pmu/byvDqy84f2GUWcL61v9Y0z5NWzN8+w0Kos64avkgdhflfoQCWFkEsPfHp/
+         08jAV89A2vQXRDHC7nX96oLzBt/ezYT0FDml1mNz8gE1Us5vLCgCyBVsi8SiqdBqqllU
+         vhkEepUlUFHzJ8hyp5WxIWkmOP2jEsD/0dt88ooRxTPgKyLqORs+loL8bmagmRX5ceh9
+         AsKyrUDaxPqzjrP7AkTgvpVGkv/1xj0PGDpFpiIZb+pBVYWmP4gxCLQ6IwikeCkKWPc5
+         cn7Q==
+X-Gm-Message-State: AOAM5336+40aaEB46bkEcledCabAhqu577Z4J7YZ/sZInYRuXKbNSdrl
+        p3aP95uogUI8t9wXC167EHKFEw==
+X-Google-Smtp-Source: ABdhPJzkai7WwAl5gkr1Z6X8P9PyQmQBzG0zYuIWg22TReBOZg1vlzz5jQ1xhjuQjOsO2p5ns99SXQ==
+X-Received: by 2002:a17:907:1ca0:b0:6f3:a59c:288e with SMTP id nb32-20020a1709071ca000b006f3a59c288emr175991ejc.716.1650880990272;
+        Mon, 25 Apr 2022 03:03:10 -0700 (PDT)
+Received: from [192.168.0.241] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id g17-20020a056402425100b00425f2816b85sm381941edb.27.2022.04.25.03.03.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Apr 2022 03:03:09 -0700 (PDT)
+Message-ID: <e059bd49-a301-032a-d089-9ef6cb313089@linaro.org>
+Date:   Mon, 25 Apr 2022 12:03:08 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Gross <agross@kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
+ <20220422234402.B66DDC385A4@smtp.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220422234402.B66DDC385A4@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Handling of the divided pll output gates in CCM_ANALOG_SYS_PLL1_GEN_CTRL
-was removed in d097cc045b649. We shouldn't assume these gates are at
-their reset-default enabled state. Enable them to let the kernel work
-when the bootloader has changed the values.
+On 23/04/2022 01:44, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2022-04-11 08:43:45)
+>> Devices might need to control several clocks when scaling the frequency
+>> and voltage.  Example is the Universal Flash Storage (UFS) which scales
+>> several independent clocks with change of performance levels.
+>>
+>> Add parsing of multiple clocks and clock names and scale all of them,
+>> when needed.  If only one clock is provided, the code should behave the
+>> same as before.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+> 
+> I vaguely recall that scaling more than one clk with an OPP table is
+> confusing? I think it's because things like dev_pm_opp_find_freq_ceil()
+> don't make sense when there's more than one frequency table. How is that
+> handled here?
 
-Fixes: d097cc045b649 ("clk: imx8mp: remove SYS PLL 1/2 clock gates")
-Reported-by: David Jander <david@protonic.nl>
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/imx/clk-imx8mp.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+The assumption (which might need better documentation) is that first
+clock frequency is the main one:
+1. It is still in opp->rate field, so it is used everywhere when OPPs
+are compared/checked for rates.
+1. Usually is used also in opp-table nodes names.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 18f5b7c3ca9d8..10446a1b509e7 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -407,6 +407,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np;
- 	void __iomem *anatop_base, *ccm_base;
-+	u32 val;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
- 	anatop_base = of_iomap(np, 0);
-@@ -480,6 +481,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_ARM_PLL_OUT] = imx_clk_hw_gate("arm_pll_out", "arm_pll_bypass", anatop_base + 0x84, 11);
- 	hws[IMX8MP_SYS_PLL3_OUT] = imx_clk_hw_gate("sys_pll3_out", "sys_pll3_bypass", anatop_base + 0x114, 11);
- 
-+	/*
-+	 * The gates in CCM_ANALOG_SYS_PLL1_GEN_CTRL are not handled by the
-+	 * driver, make sure they are all enabled.
-+	 */
-+	val = readl(anatop_base + 0x94);
-+	val |= BIT(13) | BIT(15) | BIT(17) | BIT(19) | BIT(21) | BIT(23) |
-+	       BIT(25) | BIT(27);
-+	writel(val, anatop_base + 0x94);
-+
- 	hws[IMX8MP_SYS_PLL1_OUT] = imx_clk_hw_gate("sys_pll1_out", "sys_pll1_bypass", anatop_base + 0x94, 11);
- 
- 	hws[IMX8MP_SYS_PLL1_40M] = imx_clk_hw_fixed_factor("sys_pll1_40m", "sys_pll1_out", 1, 20);
-@@ -494,6 +504,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 
- 	hws[IMX8MP_SYS_PLL2_OUT] = imx_clk_hw_gate("sys_pll2_out", "sys_pll2_bypass", anatop_base + 0x104, 11);
- 
-+	/*
-+	 * The gates in CCM_ANALOG_SYS_PLL2_GEN_CTRL are not handled by the
-+	 * driver, make sure they are all enabled.
-+	 */
-+	val = readl(anatop_base + 0x104);
-+	val |= BIT(13) | BIT(15) | BIT(17) | BIT(19) | BIT(21) | BIT(23) |
-+	       BIT(25) | BIT(27);
-+	writel(val, anatop_base + 0x104);
-+
- 	hws[IMX8MP_SYS_PLL2_50M] = imx_clk_hw_fixed_factor("sys_pll2_50m", "sys_pll2_out", 1, 20);
- 	hws[IMX8MP_SYS_PLL2_100M] = imx_clk_hw_fixed_factor("sys_pll2_100m", "sys_pll2_out", 1, 10);
- 	hws[IMX8MP_SYS_PLL2_125M] = imx_clk_hw_fixed_factor("sys_pll2_125m", "sys_pll2_out", 1, 8);
--- 
-2.30.2
+The logical explanation is that devices has some main operating
+frequency, e.g. the core clock, and this determines the performance. In
+the same time such device might not be able to scale this on core clock
+independently from others, this this patches.
 
+Best regards,
+Krzysztof
