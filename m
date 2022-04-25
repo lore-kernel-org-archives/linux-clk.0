@@ -2,100 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6193C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 22:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A4AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 22:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234711AbiDYWnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 18:43:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47358 "EHLO
+        id S235351AbiDYWwl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 18:52:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234222AbiDYWnJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 18:43:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D2C13D56;
-        Mon, 25 Apr 2022 15:40:03 -0700 (PDT)
+        with ESMTP id S229807AbiDYWwk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 18:52:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F22113CAF;
+        Mon, 25 Apr 2022 15:49:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C0DFB81B3B;
-        Mon, 25 Apr 2022 22:40:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB7F3C385A4;
-        Mon, 25 Apr 2022 22:40:00 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 34D34B818FA;
+        Mon, 25 Apr 2022 22:49:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8670C385A9;
+        Mon, 25 Apr 2022 22:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650926400;
-        bh=h7RDfe2a3sJr2RK2cGF4nK3ZDfwiN2x7Q64bU+1Ban4=;
+        s=k20201202; t=1650926972;
+        bh=65ZfwId3z88lOwarYLJJhKmde8T17svhcGfPB01Bnvw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fNluzzAJeFvpiOSIejoB1hwIajiWamkuO3xqZ9lU3VQwwnBL18bSXnjGDQs4MO6RA
-         LdOsjKB9vib366T34VA1UiuiHwZxZlpKZl8bJY0Sonu1c5Ib5GjDpCMrlp442Sv3p3
-         h8ZuRCLS2uVbHbddQp7kzWVrbrpfIBHF/9sVJArWQ8rF+FSYCAexmkfP2QaQv2StJK
-         9XyoJJLUnFa0GoxSR2vxCm179uEPnY5LteN2GwnXk6QiAozzmU5yMzPvB1sr7jTft9
-         AK8N005F2FRo9aMlCum49qx1nNoIYGc5vCzz89ghLB8tCppS/PZ2VfxXNm25tr0kQ2
-         OBkg1mDuNGazw==
+        b=CrrSdpUqm4Tmvc9osrbNHIaPBwyO3lJXvtU/LDsR18kATGOLwlzYSE76KpTrC5/qc
+         teHsGxBZiE0jvEEtNeaYbsgwR4UkI6AFguyJkEe92+qum0SFjtSpxVc3EmbFFrmw5S
+         KZVpI2vUA7Kc4OmHr/Hatj0o2ai+Nc1J0PKL45g6ZFcD1HqxbiQU2Nw5xPvaz5f8RL
+         ZtqmGQWEkI+qqMdgJsQDBhSWsQbWowgiwTaEQWIz1I4leCWE+UzXoW+bYbF7J8gljb
+         jUtRpZmQKr5CoujoMXZ7CHV7AqJD7zYprzDCGD6RjAvYu87tW1kdwlh8hpypUI9tX8
+         t5oomTJ57X7VQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220425204001.710238-1-krzysztof.kozlowski@linaro.org>
-References: <20220425204001.710238-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
+In-Reply-To: <20220424182227.1364966-1-colin.i.king@gmail.com>
+References: <20220424182227.1364966-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk: mux: remove redundant initialization of variable width
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin Ian King <colin.i.king@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 25 Apr 2022 15:39:58 -0700
+        linux-clk@vger.kernel.org
+Date:   Mon, 25 Apr 2022 15:49:30 -0700
 User-Agent: alot/0.10
-Message-Id: <20220425224000.CB7F3C385A4@smtp.kernel.org>
+Message-Id: <20220425224932.C8670C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-04-25 13:40:01)
-> The qcom,gcc-apq8064.yaml was meant to describe only APQ8064 and APQ8084
-> should have slightly different bindings (without Qualcomm thermal sensor
-> device).
+Quoting Colin Ian King (2022-04-24 11:22:27)
+> Variable width is being ininitialized with a value that is never read.
+> The ininitializtion is redundant and can be removed. Move the variable
+> to the scope it is required.
 >=20
-> Fixes: a469bf89a009 ("dt-bindings: clock: simplify qcom,gcc-apq8064 Docum=
-entation")
-> Reported-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cleans up cppcheck warning:
+> Variable 'width' is assigned a value that is never used.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  .../bindings/clock/qcom,gcc-apq8064.yaml      |  4 +-
->  .../bindings/clock/qcom,gcc-apq8084.yaml      | 42 +++++++++++++++++++
->  2 files changed, 43 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8=
-084.yaml
 
-If it's generated with 'format-patch -C -M' does it detect the copy?
-
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
-> new file mode 100644
-> index 000000000000..63d08e82b3d8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-apq8084.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for APQ8084
-> +
-> +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
-> +  - Taniya Das <tdas@codeaurora.org>
-
-Please fix Taniya's email quic_tdas@quicinc.com
-
-> +
-> +description: |
+Applied to clk-next
