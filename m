@@ -2,201 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FFAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 07:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF08C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 07:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236781AbiDYHaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 03:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47316 "EHLO
+        id S232136AbiDYHeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 03:34:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231577AbiDYHaS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 03:30:18 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F117649
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 00:27:13 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id k4so13493323plk.7
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 00:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rxyP1rA1NVCKi+Fqd9RTEgWTAs6MpVuSe+By3MBiK+g=;
-        b=uhHdnNiHGlo6+p+WxcM0C9NfBcZ1yMZ4ZL8lPJjCqFO59XftyiBXmxLnJ4x/8IHesk
-         Iz/e+72c+hpYYtSkpN9st79ktLRdF9ucEIcsSZFrJz8zW/33b/zII36XFlgftlgRt/Rn
-         NcV0nn+GcFItTljdcQkhhruORyaimT8Hcjdf+33DifIdLTWHRc7f4BBjOpmEow9TxUAk
-         H3AoQBVj8pg7peGOZ40pMWJPb4v77MByQ/hq2wnaWxWmitojdTlAcivhdbQ8eALivIcc
-         CxsiobTeJA1GwrggCLqf/tliVYwpbUOcyyC+5xohbYhPGazYOIMkwv+sGtPOlvneNaO1
-         ub6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rxyP1rA1NVCKi+Fqd9RTEgWTAs6MpVuSe+By3MBiK+g=;
-        b=MOFb4dVL4eyNVvjMvSyiJeW7xp6ml9vcEj5LFuZ0+y/dh0m2DkxRViVPV7ji5n8bBS
-         PWNot4QVbjwZ+oOr7vVFkIjA9vXNCG0sQSTN9AW5qYFmeDBbEe/8vf3wMw89qejM3yQt
-         2W4vz7SKMGeO6kd6ab3Nf3jnxtq+wmktq+gnl5MRTDyRexzBqVjX2vlj0zSyvCC2Tuav
-         O+J8oqrHacBBSnG+qiKIENovvSHk95nmB5xDwSUUK01ok+eroHOYE5GUyOa/EN84KdGy
-         DN6tMG5/VXzKkIOpltWBEFdmwM6/NfWLal/8rr0yd1kjaIBRH9JgcDLQfJd0GOm6VCPH
-         sL9A==
-X-Gm-Message-State: AOAM533GNqJExGQVlVQ56hNZbH4fFhFXsSANoGQA4+DSa/5AFk+k6ssH
-        TCDGA2IcLE4vLN40zNw07CUUikBSvSx1pg==
-X-Google-Smtp-Source: ABdhPJxE5RcvTjEYwI71Iu772xtRFctxCEAFvy9tKFHoG9lHlSKr+lSmvTHqmcMFobuMjeZomF3jKA==
-X-Received: by 2002:a17:90b:3b46:b0:1c7:9ca8:a19e with SMTP id ot6-20020a17090b3b4600b001c79ca8a19emr29586651pjb.245.1650871632716;
-        Mon, 25 Apr 2022 00:27:12 -0700 (PDT)
-Received: from localhost ([122.171.250.232])
-        by smtp.gmail.com with ESMTPSA id p4-20020a637404000000b00375948e63d6sm8596664pgc.91.2022.04.25.00.27.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 00:27:12 -0700 (PDT)
-Date:   Mon, 25 Apr 2022 12:57:10 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
-Message-ID: <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S229850AbiDYHeS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 03:34:18 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D746BF4D;
+        Mon, 25 Apr 2022 00:31:14 -0700 (PDT)
+X-UUID: 6af38d5ae7974373884764c4e35798f6-20220425
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:0d139e3b-a55a-4be2-9d40-579c688deee9,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:faefae9,CLOUDID:650500f0-06b0-4305-bfbf-554bfc9d151a,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: 6af38d5ae7974373884764c4e35798f6-20220425
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1572274440; Mon, 25 Apr 2022 15:31:09 +0800
+Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Mon, 25 Apr 2022 15:31:09 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 25 Apr
+ 2022 15:30:54 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 25 Apr 2022 15:30:54 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <matthias.bgg@kernel.org>
+CC:     <allen-kh.cheng@mediatek.com>, <chun-jie.chen@mediatek.com>,
+        <ikjn@chromium.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <weiyi.lu@mediatek.com>
+Subject: Re: [PATCH] clk: mediatek: Delete MT8192 msdc gate
+Date:   Mon, 25 Apr 2022 15:30:54 +0800
+Message-ID: <20220425073054.1391-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220422143756.14806-1-matthias.bgg@kernel.org>
+References: <20220422143756.14806-1-matthias.bgg@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11-04-22, 17:43, Krzysztof Kozlowski wrote:
-> Devices might need to control several clocks when scaling the frequency
-> and voltage.  Example is the Universal Flash Storage (UFS) which scales
-> several independent clocks with change of performance levels.
+Hi Matthias,
+
+>The msdc gate is part of the MMC driver. Delete the not used code.
+>
+>Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+>---
+> drivers/clk/mediatek/clk-mt8192-msdc.c | 21 ---------------------
+> 1 file changed, 21 deletions(-)
+>
+>diff --git a/drivers/clk/mediatek/clk-mt8192-msdc.c b/drivers/clk/mediatek/clk-mt8192-msdc.c
+>index 87c3b79b79cf..635f7a0b629a 100644
+>--- a/drivers/clk/mediatek/clk-mt8192-msdc.c
+>+++ b/drivers/clk/mediatek/clk-mt8192-msdc.c
+>@@ -12,28 +12,15 @@
 > 
-> Add parsing of multiple clocks and clock names
+> #include <dt-bindings/clock/mt8192-clk.h>
+> 
+>-static const struct mtk_gate_regs msdc_cg_regs = {
+>-	.set_ofs = 0xb4,
+>-	.clr_ofs = 0xb4,
+>-	.sta_ofs = 0xb4,
+>-};
+>-
+> static const struct mtk_gate_regs msdc_top_cg_regs = {
+> 	.set_ofs = 0x0,
+> 	.clr_ofs = 0x0,
+> 	.sta_ofs = 0x0,
+> };
+> 
+>-#define GATE_MSDC(_id, _name, _parent, _shift)	\
+>-	GATE_MTK(_id, _name, _parent, &msdc_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>-
+> #define GATE_MSDC_TOP(_id, _name, _parent, _shift)	\
+> 	GATE_MTK(_id, _name, _parent, &msdc_top_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
+> 
+>-static const struct mtk_gate msdc_clks[] = {
+>-	GATE_MSDC(CLK_MSDC_AXI_WRAP, "msdc_axi_wrap", "axi_sel", 22),
+>-};
+>-
+> static const struct mtk_gate msdc_top_clks[] = {
+> 	GATE_MSDC_TOP(CLK_MSDC_TOP_AES_0P, "msdc_top_aes_0p", "aes_msdcfde_sel", 0),
+> 	GATE_MSDC_TOP(CLK_MSDC_TOP_SRC_0P, "msdc_top_src_0p", "infra_msdc0_src", 1),
+>@@ -52,11 +39,6 @@ static const struct mtk_gate msdc_top_clks[] = {
+> 	GATE_MSDC_TOP(CLK_MSDC_TOP_AHB2AXI_BRG_AXI, "msdc_top_ahb2axi_brg_axi", "axi_sel", 14),
+> };
+> 
+>-static const struct mtk_clk_desc msdc_desc = {
+>-	.clks = msdc_clks,
+>-	.num_clks = ARRAY_SIZE(msdc_clks),
+>-};
+>-
+> static const struct mtk_clk_desc msdc_top_desc = {
+> 	.clks = msdc_top_clks,
+> 	.num_clks = ARRAY_SIZE(msdc_top_clks),
+>@@ -64,9 +46,6 @@ static const struct mtk_clk_desc msdc_top_desc = {
+> 
+> static const struct of_device_id of_match_clk_mt8192_msdc[] = {
+> 	{
+>-		.compatible = "mediatek,mt8192-msdc",
+>-		.data = &msdc_desc,
+>-	}, {
 
-This part is fine, the OPP core should be able to do this.
+grep '"mediatek,mt8192-msdc"' * -RnH
+arch/arm64/boot/dts/mediatek/mt8192.dtsi:868:                   compatible = "mediatek,mt8192-msdc";
+Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml:112:        compatible = "mediatek,mt8192-msdc";
+drivers/clk/mediatek/clk-mt8192-msdc.c:67:              .compatible = "mediatek,mt8192-msdc",
 
-> and scale all of them,
+I am wondering that in this case, should we have also modify the bindings document
+(mediatek,mt8192-clock.yaml)?
 
-This is tricky as the OPP core can't really assume the order in which the clocks
-needs to be programmed. We had the same problem with multiple regulators and the
-same is left for drivers to do via the custom-api.
 
-Either we can take the same route here, and let platforms add their own OPP
-drivers which can handle this, Or hide this all behind a basic device clock's
-driver, which you get with clk_get(dev, NULL).
+thanks,
+Miles
 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-
-> +static int _generic_set_opp_clks_only(struct device *dev,
-> +				      struct opp_table *opp_table,
-> +				      struct dev_pm_opp *opp)
-> +{
-> +	int i, ret;
-> +
-> +	if (!opp_table->clks)
-> +		return 0;
-> +
-> +	for (i = 0; i < opp_table->clk_count; i++) {
-> +		if (opp->rates[i]) {
-
-This should mean that we can disable that clock and it isn't required.
-
-> +			ret = _generic_set_opp_clk_only(dev, opp_table->clks[i],
-> +							opp->rates[i]);
-> +			if (ret) {
-> +				dev_err(dev, "%s: failed to set clock %pC rate: %d\n",
-> +					__func__, opp_table->clks[i], ret);
-> +				return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-As said earlier, this won't work in the core.
-
-> +
->  static int _generic_set_opp_regulator(struct opp_table *opp_table,
->  				      struct device *dev,
->  				      struct dev_pm_opp *opp,
-> @@ -796,7 +835,7 @@ static int _generic_set_opp_regulator(struct opp_table *opp_table,
->  	}
->  
->  	/* Change frequency */
-> -	ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
-> +	ret = _generic_set_opp_clks_only(dev, opp_table, opp);
->  	if (ret)
->  		goto restore_voltage;
->  
-> @@ -820,7 +859,7 @@ static int _generic_set_opp_regulator(struct opp_table *opp_table,
->  	return 0;
->  
->  restore_freq:
-> -	if (_generic_set_opp_clk_only(dev, opp_table->clk, old_opp->rate))
-> +	if (_generic_set_opp_clks_only(dev, opp_table, old_opp))
->  		dev_err(dev, "%s: failed to restore old-freq (%lu Hz)\n",
->  			__func__, old_opp->rate);
->  restore_voltage:
-> @@ -880,7 +919,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
-
-This is where we can handle it in your case, if you don't want to hide it behind
-a clk driver.
-
->  	}
->  
->  	data->regulators = opp_table->regulators;
-> -	data->clk = opp_table->clk;
-> +	data->clk = (opp_table->clks ? opp_table->clks[0] : NULL);
->  	data->dev = dev;
->  	data->old_opp.rate = old_opp->rate;
->  	data->new_opp.rate = freq;
-> @@ -969,8 +1008,8 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
-
-I think this routine breaks as soon as we add support for multiple clocks.
-clks[0]'s frequency can be same for multiple OPPs and this won't get you the
-right OPP then.
-
->  	struct dev_pm_opp *opp = ERR_PTR(-ENODEV);
->  	unsigned long freq;
->  
-> -	if (!IS_ERR(opp_table->clk)) {
-> -		freq = clk_get_rate(opp_table->clk);
-> +	if (opp_table->clks && !IS_ERR(opp_table->clks[0])) {
-> +		freq = clk_get_rate(opp_table->clks[0]);
->  		opp = _find_freq_ceil(opp_table, &freq);
->  	}
->  
-> @@ -1070,7 +1109,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
->  						 scaling_down);
->  	} else {
->  		/* Only frequency scaling */
-> -		ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
-> +		ret = _generic_set_opp_clks_only(dev, opp_table, opp);
->  	}
->  
->  	if (ret)
-> @@ -1135,11 +1174,15 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
-
-This should have a BUG or WARN _ON() now if clock count is more than one. This
-routine can't be called unless custom handler is available.
-
-I skipped rest of the code as we need to work/decide on the design first.
-
-Thanks.
-
--- 
-viresh
+> 		.compatible = "mediatek,mt8192-msdc_top",
+> 		.data = &msdc_top_desc,
+> 	}, {
+>-- 
+>2.34.1
