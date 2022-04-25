@@ -2,98 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F024C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 00:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B655FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 01:11:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240033AbiDYAtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 20:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34660 "EHLO
+        id S240089AbiDYBOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 21:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240032AbiDYAtF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 20:49:05 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E371C903;
-        Sun, 24 Apr 2022 17:46:00 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id v2so2727496qto.6;
-        Sun, 24 Apr 2022 17:46:00 -0700 (PDT)
+        with ESMTP id S230410AbiDYBOb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 21:14:31 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A114D63CD;
+        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id z30so5491198pfw.6;
+        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lUfRNFCLBP3uFMSuVP2gohDe8N80eyAcPJ7OERj4nyU=;
-        b=Zhlu1wPjtycgm4h/SbFthtBn6M7XP5HH9QzvnlBs8/gkCnV1FfpIpmYLGTTiXqmfaZ
-         b/XOB9GBUX7NsJJvw3DYcjZemRe4zK2AVq7vICdzvDbsG4y1qf6fcfsQThlXZJ+ZLhug
-         Zgrjq3EiuyKsZKBr1Lqd5H7GfgD+LkCsu/E4fXYKQoQp+nOVDfl2TZdq1kSQlXYE+spq
-         vKG9RSg8ClFj2el1cExDAPn9vMq3/2p9IbMttzTeQPZu/p7ZamPuJAVwpZWjuR9dJ7D2
-         HrQvJZRxTSYMsO5a8HNmVB5VBZjns/lk1r/oV+p3m+ywT27uFdWXc9pL9M59NhtpuXbW
-         hmGw==
+        h=from:to:cc:subject:date:message-id;
+        bh=YSoCH0xVGmx+Sdnu3ggx76S2cnidmkkBhFjPR4Sas3Q=;
+        b=eyAYYSh01WWPXIJLX/iUTF9URHfNEL/mtDXc3taArEVl5Iynmgn+WbCXqlZc2ldIC/
+         h0bfG6wXJFRFCxaaKz5CF0rWaGnJ28JrUdPVvpUzWArWjYgcrgVbKtsR2dIRVJuLqKTu
+         BFLHffJwBOdLOPkUIitqqTdw9L4xq4M73vtX+7B6KJQzxjMDSAROQUWkBO4a3SUi8jQA
+         g11pxgD9rIzDbOXf8ZKxMGoqRfOjJcJJ/1B1/hldzilMJvA13rmVNA+m/oGvcXcPHvrk
+         Ca68izmnC0REjk4qmvFrk2EjYLSaOnsgKGLDv1hcUqSwsC9kxIYszIMDA25HOv3a4G3V
+         qJbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lUfRNFCLBP3uFMSuVP2gohDe8N80eyAcPJ7OERj4nyU=;
-        b=UnsNH8S9kJlwQ19wAT2wuKjzwMImALqtRz3IDxGlz8rH5utNy6C4GfRCJ68nmATrO4
-         n1HzryiSDDF3bGMte/LStQReZF77jE2OZU7Zh3NG4IF83ChHyRHFW5+6iiNZQ96MwW2e
-         wqakNfzj7FFhRAUF3sjsRvtetAHDnky72UyutXSaEsQkhTsbWk6TkxBOiIoVfWoU4xYc
-         F1pcX0cypwqBCBLCcnMBiNE+hWHzO+4Gw8lFXac1KDMCTctEnZDfFkeqVA2Nla3AeCfj
-         o8Rm08D627OSbBpRuTmBjLuaZ5Pq+1eSEFQ+m5xNrEXzT2+ZHMwbHFb/99uJcnsRhqDy
-         wfnQ==
-X-Gm-Message-State: AOAM5326YgZUKi6PRCAjea7keeBeWAFTKuMS2bJP3b89MutP7iyA0H9d
-        t0t74lLuCjnLmYb4RsrlkQ==
-X-Google-Smtp-Source: ABdhPJyI5g4R5aAGDCwE3uoQfWTCQnIEklx2JnXGiFsOoOFU+YQFmrGStZwOa52FAmkfmSaAOohC8Q==
-X-Received: by 2002:ac8:7d08:0:b0:2f1:e349:adb7 with SMTP id g8-20020ac87d08000000b002f1e349adb7mr10338487qtb.616.1650847559580;
-        Sun, 24 Apr 2022 17:45:59 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id p13-20020a05622a048d00b002e1ce0c627csm5625644qtx.58.2022.04.24.17.45.58
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YSoCH0xVGmx+Sdnu3ggx76S2cnidmkkBhFjPR4Sas3Q=;
+        b=ejbRbXMOA7zzq2VHOxxxpyfXHfb2/kFWzHARZTYAzOAOQK6QQNCp4ANe80K9zMh33W
+         +lPAFXDcFcDgH6R0r8qmQuYJ/JAw0lqCjMtaoequqAQyy10IRwROC7vPzLF308q5AQPM
+         INfdqBURCEjRuooo6OiPqAaDg92a5UVdJpGMTozFJYK95KomkNZ49UL9epDrpnty+q2A
+         /jJp32hYmRF19d7WZ9qcUSWoeZrvzwuGYkm3ME+Uebq8IhrHmJ7ZcoMD3MHeprQCyzm2
+         vcOj/xjZfRUOaqT1LdaQ2nPXCHcuiQ+qu294icV7NXFL0NERA1cGDpuxe4VpVwXHC+fd
+         cmRA==
+X-Gm-Message-State: AOAM5310OnmpnVbZfQnxELRx+vdNSBdW+qzoIb/zsxOiFsslf624Pv2T
+        ELRR56+754cjy+TmIOs5c0Zn8dAXtqXAwZhE
+X-Google-Smtp-Source: ABdhPJwjHPGVOQINTadNkXbVqfZRxpPxLBKfTY2pBzNO0y9ZECO7/SZbHVLb9GTtJhJsZ2tGBrnR7w==
+X-Received: by 2002:a63:1114:0:b0:3aa:30b3:dd5f with SMTP id g20-20020a631114000000b003aa30b3dd5fmr12725982pgl.222.1650849088179;
+        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id f186-20020a62dbc3000000b0050d3aa8c904sm2458157pfg.206.2022.04.24.18.11.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 17:45:58 -0700 (PDT)
-Date:   Sun, 24 Apr 2022 20:45:56 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220425004556.psqcz3vxfhetuuak@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-7-kent.overstreet@gmail.com>
- <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
+        Sun, 24 Apr 2022 18:11:27 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [RESEND PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
+Date:   Mon, 25 Apr 2022 09:11:17 +0800
+Message-Id: <20220425011117.25093-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 24, 2022 at 04:46:03PM -0700, Joe Perches wrote:
-> On Thu, 2022-04-21 at 19:48 -0400, Kent Overstreet wrote:
-> > This adds printbufs: simple heap-allocated strings meant for building up
-> > structured messages, for logging/procfs/sysfs and elsewhere. They've
-> > been heavily used in bcachefs for writing .to_text() functions/methods -
-> > pretty printers, which has in turn greatly improved the overall quality
-> > of error messages.
-> > 
-> > Basic usage is documented in include/linux/printbuf.h.
-> 
-> Given the maximum printk output is less than 1024 bytes, why should
-> this be allowed to be larger than that or larger than PAGE_SIZE?
+If the device is already in a runtime PM enabled state
+pm_runtime_get_sync() will return 1.
 
-It's not just used there - in bcachefs I use it for sysfs & debugfs, as well as
-userspace code for e.g. printing out the superblock (which gets pretty big when
-including all the variable length sections).
+Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync()
+fails, so use pm_runtime_resume_and_get() instead. this function
+will handle this.
 
-> > + * pr_human_readable_u64, pr_human_readable_s64: Print an integer with human
-> > + * readable units.
-> 
-> Why not extend vsprintf for this using something like %pH[8|16|32|64] 
-> or %pH[c|s|l|ll|uc|us|ul|ull] ?
+Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+changes in v2:
+- change pm_runtime_get_sync to pm_runtime_resume_and_get
+- current check works fine for pm_runtime_resume_and_get() so stay the
+same.
+Link: https://lore.kernel.org/all/20220412065719.17735-1-linmq006@gmail.com/
+---
+ drivers/clk/imx/clk-scu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It'd be incompatible with userspace printf. I do like the way we extend printf
-is the kernel, but I'm trying to make sure the code I write now is by default
-portable between both kernel space and userspace. Glibc has its own mechanism
-for extending printf, I've been meaning to look at that more and see if it'd be
-possible to do something more generic and extensible that works for both.
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 083da31dc3ea..2044e62980e3 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -528,7 +528,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+ 		pm_runtime_use_autosuspend(&pdev->dev);
+ 		pm_runtime_enable(dev);
+ 
+-		ret = pm_runtime_get_sync(dev);
++		ret = pm_runtime_resume_and_get(dev);
+ 		if (ret) {
+ 			pm_genpd_remove_device(dev);
+ 			pm_runtime_disable(dev);
+-- 
+2.17.1
+
