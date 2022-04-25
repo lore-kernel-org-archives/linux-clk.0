@@ -2,99 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E577C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 22:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD22C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 22:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234616AbiDYWYl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 18:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37742 "EHLO
+        id S233909AbiDYWhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 18:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343516AbiDYVa7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 17:30:59 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85565220CE
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 14:27:54 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id k12so4140119lfr.9
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 14:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3gVY44DVF1y7zdefajo6u3CKe3aVY/euE49UOOawFzk=;
-        b=jRmo0SpHDBz5apKEalXqAVnP3JNXwC7+7qia8GGi4s29oRf4tpppZx81UJ8xpalkXa
-         99kv5SA9q5apsKoqs4Ay7wP6B+uw6LNJq2k0rmVYxQfxkUDQVmNBVJpwuzXvtNCcC7MI
-         zl3+zKJECuuTRqFvE/xgGgAWjvbQCJgmaOUICvE0xiaf4yzSU8w1tWQlOVCla7PU3bv8
-         g++aykqaJ4RkMeQ95A0PR2yEg4ZefxW9tOtjQbumouvfrWRuin9M8eMCzQRnxRQWYaq1
-         c4e79A9dLJBuOyyv2WasqlE6csEzFV9i/BDZfS8KWu+O8xLJn2aeSLulTZyrE86QnMil
-         Ouog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3gVY44DVF1y7zdefajo6u3CKe3aVY/euE49UOOawFzk=;
-        b=4hdsBTA/q6L7FEtY/qWM4GYR5luoDOWjlAj5mDMLSZ6oRjq41l+NotN6v5F61MnTre
-         S70V+4QmFim6Y4PUW4P4TOdy4Ka9aN1vhEti18EvBv5ghn2Dp8Ae1Q/6PF8Axjfy0bIH
-         Y7r8Jk73MD0QwlJCvRV+1RFYn+iCp6lV0Y9VbdoP27YS6zx+eisG1pwe+DdXImPgllL6
-         i59xN3MbBrjcR6P0ZvdlB3ZlajRRTzpjCfs3/rtVGrBkgXQM+5m/dlzmDEvVk4raHXML
-         YOQ61uav75p1zdaoAlJ31Z8OI8gKOY3RfWBzoGI+uQ9QiIjv/b4GQxif9QbQFs3qCKG6
-         Qlqw==
-X-Gm-Message-State: AOAM533T2vnWviwHXwqZTdsu5GgEhgt3cnw7294ReeyFBW78OCDu67P0
-        tmSHhkcH8nDeOMwpNfsbUv+DWw==
-X-Google-Smtp-Source: ABdhPJz7e+TOf2sNiJDfS84im2PT7UAjBiL9ICoMFGaLk1Fe7kPvyMqdqdXDDus3YzQZEvT/mM0O2A==
-X-Received: by 2002:ac2:4e0c:0:b0:472:5d1:ce49 with SMTP id e12-20020ac24e0c000000b0047205d1ce49mr5340928lfr.602.1650922072862;
-        Mon, 25 Apr 2022 14:27:52 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id l13-20020a19494d000000b0046ba0e38750sm1533314lfj.3.2022.04.25.14.27.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 14:27:52 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 0/3] arm: qcom: qcom-apq8064: add separate device node for tsens
-Date:   Tue, 26 Apr 2022 00:27:47 +0300
-Message-Id: <20220425212750.2749135-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S230484AbiDYWhc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 18:37:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF72104F2C;
+        Mon, 25 Apr 2022 15:34:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7A46061553;
+        Mon, 25 Apr 2022 22:34:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE973C385A4;
+        Mon, 25 Apr 2022 22:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650926066;
+        bh=kcoJOwxO7li9dg8WiipeoY/VN7Fr/qwxU1nP5uosILM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=pOb/CjVMTnNj5CtyEGmtzZu4ukywwssAoRr6dCrvih/QV+LtwArQKq3zBai0RCpQ4
+         /e5snSqYfUO+LCP1azsjP8yTgLm1KgrZPQCoHbUX/GPDl88MabLpNDuu016aDz3j8l
+         jsvhHMCCl56daLBIP1YKtTS59MZrERDn1wvWvJAaBXQnHR79+wivFJwMOoxlLjiNK6
+         b8xjvbKWsIeWJCGJjRf4RlhrZCtpC7JYTI1f4yPh/4YZMt9mLWQsE9k/B0WAdbmrsV
+         MJ0K/zgfEMII79g+Z/8NPeXb+FKfpp8nqSzaD1wtCe8JUfwsus48jgftn1o5etP/gG
+         WVQGk/hEli9aQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YmN11qt/PqogYruQ@ripper>
+References: <20220422230013.1332993-1-bjorn.andersson@linaro.org> <20220423014824.912ACC385A0@smtp.kernel.org> <YmNsYSxLtwLpw98t@ripper> <20220423031350.01299C385A0@smtp.kernel.org> <YmN11qt/PqogYruQ@ripper>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tdas@quicinc.com
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Date:   Mon, 25 Apr 2022 15:34:24 -0700
+User-Agent: alot/0.10
+Message-Id: <20220425223426.BE973C385A4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently gcc-msm8960 driver manually creates tsens device. Instantiate
-the device using DT node instead. This makes the APQ8064 follow the
-IPQ8064 device tree schema (which is also closer to the way tsens
-devices are described on newer Qualcomm platforms).
+Quoting Bjorn Andersson (2022-04-22 20:43:18)
+> On Fri 22 Apr 20:13 PDT 2022, Stephen Boyd wrote:
+> >=20
+> > I'd really rather not have clock-names at all because we spend a bunch
+> > of time comparing strings with them when we could just as easily use
+> > a number.
+>=20
+> I know that you would like to get rid of the clock-names for the clock
+> controllers. I've looked at it since and while it will be faster to
+> execute I still feel that it's going to be harder to write and maintain.
+>=20
+> E.g. look at gcc_pcie_4_pipe_clk_src, its parents today are
+> pcie_4_pipe_clk and bi_tcxo. Something I can reason about being correct
+> or not.
+>=20
+> If we ditch the clock-names I will have:
+>=20
+> static const struct clk_parent_data gcc_parent_data_14[] =3D {
+>         { .index =3D 30 },
+>         { .index =3D 0 },
 
-Compatibility with the previous devices trees is kept intact.
+Those numbers could have some #define.
 
-Changes since v2:
-- Remove patches merged by Daniel
-- Rephrase commit messages to emphasize that these changes make apq8064
-  follow ipq8064
+	{ .index =3D PCIE_4_PIPE_CLK_DT }
+	{ .index =3D BI_TCXO_DT }
 
-Changes since v1:
-- populate child devices in gcc-msm8960
-- add syscon to the gcc device tree node
+> };
+>=20
+> Generally we would perhaps use some compile time constant, but that
+> won't work here because we're talking about the index in the clocks
+> array in the yaml.
+>=20
+>=20
+> But perhaps I'm missing something that would make this manageable?
 
-Dmitry Baryshkov (3):
-  clk: qcom: gcc-msm8960: create tsens device if there are no child
-    nodes
-  arm: dts: qcom-apq8064: create tsens device node
-  dt-bindings: clock: qcom,gcc-apq8064: split tsens to the child node
+I dunno. Maybe a macro in the dt-binding header could be used to specify
+the 'clocks' property of the DT node that is providing the other side?
+The idea is to make a bunch of macros that insert the arguments of the
+macro in the right place for the clocks property and then define the
+order of arguments otherwise. It would be similar to how
+CREATE_TRACE_POINTS is used in include/trace/define_trace.h=20
 
- .../bindings/clock/qcom,gcc-apq8064.yaml      | 45 +++++++------------
- arch/arm/boot/dts/qcom-apq8064.dtsi           | 25 +++++++----
- drivers/clk/qcom/gcc-msm8960.c                |  6 ++-
- 3 files changed, 39 insertions(+), 37 deletions(-)
+In the dt-bindings/qcom,gcc-soc.h file:
 
--- 
-2.35.1
+	#ifdef IN_DTSI
 
+	#undef GCC_DT_NODE_CLOCKS
+	#define GCC_DT_NODE_CLOCKS
+		clocks =3D <BI_TCXO_DT>,
+			 <SLEEP_CLK_DT>;
+
+	#endif /* IN_DTSI */
+
+	#define BI_TCXO_DT 0
+	#define SLEEP_CLK_DT 1
+
+
+And then in the SoC.dtsi file have
+
+	#define IN_DTSI
+	#include <dt-bindings/qcom,gcc-soc.h>
+
+	#define BI_TCXO_DT	&xo_board
+	#define SLEEP_CLK_DT	&sleep_clk
+
+	...
+
+	clock-controller@a000000 {
+		compatible =3D "qcom,gcc-soc";
+		reg =3D <0xa000000 0x10000>;
+		GCC_DT_NODE_CLOCKS
+	};
+
+
+and then in drivers/clk/qcom/gcc-soc.c file:
+
+	#include <dt-bindings/qcom,gcc-soc.h>
+
+	static const struct clk_parent_data gcc_parent_data_14[] =3D {
+		{ .index =3D PCIE_4_PIPE_CLK_DT },
+		{ .index =3D BI_TCXO_DT },
+	};
+
+The benefit I see to this is that the index for each clock is in the
+header file (BI_TCXO_DT is 0) and it's next to the clocks property.
+Someone could still mess up the index based on where the macro is used
+in the clocks property though.
