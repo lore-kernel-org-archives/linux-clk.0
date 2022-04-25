@@ -2,61 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CB2C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 17:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E71C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 17:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235421AbiDYR4a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 13:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42258 "EHLO
+        id S231231AbiDYSCp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 14:02:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232110AbiDYR43 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 13:56:29 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73461107723
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 10:53:24 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id kq17so7980685ejb.4
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 10:53:24 -0700 (PDT)
+        with ESMTP id S229504AbiDYSCp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:02:45 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D6D2458D;
+        Mon, 25 Apr 2022 10:59:40 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id bv19so31152397ejb.6;
+        Mon, 25 Apr 2022 10:59:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cnF2m4xWmZU4mmTA2zlwzl8U0HY1WmVOSdpsqMfFRDc=;
-        b=p6SLmrfQUx8YcxlTOmJAR84PN2KLXoayR3X3avOVC2jJ0BKBczgjaxo4/ZioSw5rJC
-         XcWA77v9eo9E872XR3TTclpykB2zLNieZY9uA8gUhumW/WauL5W11CoQe/3UNS/Cd7Gf
-         LC2BS37K69LetCrBqbA07l2xsWu0DUHYJlvqVSDPW4Wm53YNUf7GiSNdYxcihCQAL9SH
-         OtAKyhz/H4ElgMoQekvE3ApZ76ZwVdINRyOGG1MrXgFdiHNe3F18kUQB+H00FlslBwID
-         R0L2q2jBozTD/r4egbzs7jJU2AhazHMJ5Olhn1Ds4sf0wl2O2+mKWb7jiMG/o4RMlCix
-         X5ew==
+        bh=TtgZ9hhhM4u37jsTuLZNpiEojGjDtunmh77jaqRuyTQ=;
+        b=Z4guqvZ1DmvBpFabB1XWYbAjbioMhUlKBS9dG6i3rc6ljtSqq1aV39L5YsbAbrMIqU
+         dVigS191k+K5O711V4uWIdpI6CB/75y22CLZml6p4Hfv0TKF1Ga8tsaXt7fVglHSgtr7
+         dM6gVArOUOlZk6VDrG9RL3cmF/AcVTflft/tnR4Mrr7uBPOGL8zBF+S9yIlWy04nR9hE
+         2EymrYGUwA+2DYX3iegcO1njjYDVm7to9pnz5eq7jMaYxadCux9aKQnVi6PgTmjvLYvr
+         I/9sEt39ou7PEEjajbQtGkEyDAppODxySeUDq5l2B5mflpUp62/5T78j2ha4CXy4wHiD
+         GrVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cnF2m4xWmZU4mmTA2zlwzl8U0HY1WmVOSdpsqMfFRDc=;
-        b=SFdHoGIgxeqMQ3Hs0CEMdTVh9vgZO+y5Vedm4P6pXwyfLxdKhT6YuUIuvsodi6Y8yl
-         ci9z6clyFzeuXKL+Mf9K2HRd9u5TAX+s6BeBTr4CbhxNW0w8h/X3V6WjlFNG/IjAEqDH
-         QVu0wnPXyjy+qcCAQM0bd1nnYdkJ227A+8LFK9um0K3zq++GEURq2h3gPivTFLWyOm+K
-         nCbJdpKS926zedBr42bYnHBrM0wKTbiJmpYo03BzyjBfYpzT5rPNF1T7UFbH7z02dTCk
-         10j+YnqIv4Knz9+z+sIqXnJ1qLzGJrm8wbA3IHHHj1qkRy2nN4NvmPgXtXASm7KPbuwS
-         QJQA==
-X-Gm-Message-State: AOAM532FRDvhSqMw2y9fBDld99EJARihkVK8NmTdYV1rEelXXsUQlJtZ
-        IgEP/w6umhAz/Z6RGutRqEk=
-X-Google-Smtp-Source: ABdhPJzWj22q1Zgr6ZMUTNPCd7QA9rkf7OLHscY5eDZc4kof7XQpeQG3Hs6FXiWTaMlCqelcYMasQQ==
-X-Received: by 2002:a17:907:2d8e:b0:6f0:fac:4423 with SMTP id gt14-20020a1709072d8e00b006f00fac4423mr16262553ejc.310.1650909202965;
-        Mon, 25 Apr 2022 10:53:22 -0700 (PDT)
+        bh=TtgZ9hhhM4u37jsTuLZNpiEojGjDtunmh77jaqRuyTQ=;
+        b=iGiv/EPHPQOn5wy48px2pEk2wOJa18u/sx9J7FALgIWd8AuEjbEFg9/D163SU71g6Y
+         Wb4KMeUw7jIvgXwpwYy42T1qUwV1/tY89sxdB7dxSASfJcHlmkNxgzbJV6uBILQoSxzU
+         eukC7S52bWA/oK2XMbt+Hp0tVfLcuv+NCLIzBMpIQXXi7S2WzeAHYzzrwO9dXd0K8/lV
+         u3nUKgkYMpWemP67znTXftoN9PS4DtdI1W6MCLvnvp0e5vBVhXb0+YttVl48J+P52YWK
+         DgUCFBnfD8T40Th5uYYxlL5SYQIW4ndrQsKqVcHoxDS1dKWOm5t4VNOMsNnIxd4Nwvcq
+         2Pag==
+X-Gm-Message-State: AOAM533Kb8OH8XvQpQ2HKQwetmdruxkzh/6F2DvSRypACgBQs4Y8w3mE
+        YyE4mNDcHP6fBe3DbaEfN+k=
+X-Google-Smtp-Source: ABdhPJzYYWBWzPgmXZIuANGBFazqlekbk38HKp1EanXlXkro9F+u0aIvfoRGlTvJnkHEgdkYjebayw==
+X-Received: by 2002:a17:907:3e1d:b0:6d7:1031:7e0 with SMTP id hp29-20020a1709073e1d00b006d7103107e0mr17169875ejc.580.1650909579477;
+        Mon, 25 Apr 2022 10:59:39 -0700 (PDT)
 Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
-        by smtp.gmail.com with ESMTPSA id bm6-20020a170906c04600b006e89a5f5b8fsm3875338ejb.153.2022.04.25.10.53.22
+        by smtp.gmail.com with ESMTPSA id u18-20020a17090626d200b006efdd9b95c8sm3867949ejc.47.2022.04.25.10.59.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 10:53:22 -0700 (PDT)
+        Mon, 25 Apr 2022 10:59:39 -0700 (PDT)
 From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        Jernej Skrabec <jernej@kernel.org>
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.18
-Date:   Mon, 25 Apr 2022 19:53:21 +0200
-Message-ID: <1741873.TLkxdtWsSY@kista>
-In-Reply-To: <YmXPemmFqfcj4p/p@kista.localdomain>
-References: <YmXPemmFqfcj4p/p@kista.localdomain>
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Samuel Holland <samuel@sholland.org>
+Cc:     wens@csie.org, maxime@cerno.tech
+Subject: Re: Re: [PATCH] clk: sunxi: sun9i-mmc: check return value after calling platform_get_resource()
+Date:   Mon, 25 Apr 2022 19:59:37 +0200
+Message-ID: <2976854.CbtlEUcBR6@kista>
+In-Reply-To: <9ebabc53-72de-bbec-895c-fa3760ed5374@sholland.org>
+References: <20220421134308.2885094-1-yangyingliang@huawei.com> <9ebabc53-72de-bbec-895c-fa3760ed5374@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -64,49 +65,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 25. april 2022 ob 00:30:18 CEST je Jernej Skrabec napisal(a):
-> Hi!
+Dne sobota, 23. april 2022 ob 21:45:05 CEST je Samuel Holland napisal(a):
+> On 4/21/22 8:43 AM, Yang Yingliang wrote:
+> > It will cause null-ptr-deref if platform_get_resource() returns NULL,
+> > we need check the return value.
+> > 
+> > Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/
+resets")
+> > Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 > 
-> Please pull following changes for current release.
+> Reviewed-by: Samuel Holland <samuel@sholland.org>
+> 
+> 
 
-Disregards this, I missed one more fix.
+Applied to sunxi/clk-fixes-for-5.18, thanks!
 
-Regards,
+Best regards,
 Jernej
-
-> 
-> Best regards,
-> Jernej
-> 
-> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
-> 
->   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/
-sunxi-clk-fixes-for-5.18-1
-> 
-> for you to fetch changes up to b4f3d5f06e29b7020f19cc788b2c2de750e888a1:
-> 
->   clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical (2022-04-24 23:22:46 
-+0200)
-> 
-> ----------------------------------------------------------------
-> Two clock fixes:
-> - missing sentinel in device id array
-> - missing critical flag for rtc-32k clock
-> 
-> ----------------------------------------------------------------
-> Samuel Holland (1):
->       clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical
-> 
-> Wan Jiabing (1):
->       clk: sunxi-ng: fix not NULL terminated coccicheck error
-> 
->  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> 
 
 
