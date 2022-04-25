@@ -2,139 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361ACC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 18:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ED6C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 18:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244259AbiDYSRR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 14:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37556 "EHLO
+        id S244308AbiDYS0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 14:26:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234471AbiDYSRQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:17:16 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 884EC111C9D;
-        Mon, 25 Apr 2022 11:14:11 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 6AD461F434BE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650910449;
-        bh=+vu9o/CZqfUNibXQvmDVF1hJUAxnBrwgimcD4Mba0jg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZP6K7KzwXEVNKX2HyZ4QUjuyvzf5FJtDVgmPzM59lSh9nWsbRBHoQRFzmZhJomtvL
-         3vzoqEUiOJN2OneraErip2kP0JuEJOAumCMXzhtSeJqgF+OLAWrnnJ3H5MD7otLS05
-         gwAxQx+7LLLz311DagC1dLTqdllw1/mdv7PN96fkMaNJt8MyN9V8VESrXH61uMCVz7
-         Ag0Cm514lQ8yY2GxR7+2+/YDQL3TvoDZ3unHc1AyWnXJ6D/Ny0KO6KB5BJInKtQWjZ
-         DP/15us/pwd7bVI0bs+P1SROGYTG8hbrXLjibw5xymsy5HB5K1/ozkXIgPKdMdfSzy
-         Hi0PDIMXyQ3ag==
-Received: by mercury (Postfix, from userid 1000)
-        id 5A3741060431; Mon, 25 Apr 2022 20:14:07 +0200 (CEST)
-Date:   Mon, 25 Apr 2022 20:14:07 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Kever Yang <kever.yang@rock-chips.com>, kernel@collabora.com,
-        Yifeng Zhao <yifeng.zhao@rock-chips.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>
-Subject: Re: [PATCHv1 18/19] arm64: dts: rockchip: Add base DT for rk3588 SoC
-Message-ID: <20220425181407.lknemxqooz7yidcz@mercury.elektranox.org>
-References: <20220422170920.401914-1-sebastian.reichel@collabora.com>
- <20220422170920.401914-19-sebastian.reichel@collabora.com>
- <36551341-60f5-8b61-59d1-176ece8204d6@arm.com>
+        with ESMTP id S229668AbiDYSZ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:25:59 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FC08930A;
+        Mon, 25 Apr 2022 11:22:55 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id r13so31291419ejd.5;
+        Mon, 25 Apr 2022 11:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qzYBm1Mg5ELnZ9VCZbiqSgNhv5b4M2fdTVMavRogM9Y=;
+        b=dKbii47PzYUtTzXl3x34dyKNQhk2j/2D511n/Jbfg7hyiROT1AuEBZRi4jpwz4PR4g
+         MVXSElIxfONshrRoSxxd5DjXj9glhaelxc17GEqqNwMNLKQerD9XoqBky+Mh5SsRy9Xz
+         w+k2037LBcZGFrM5rYjiHf/CV6tlnYzcDIlMAaIwgYGYM6HJQTZVC0AMPWO+A4tPn64E
+         oNPAsXIcAzoknRgdGnZXLgpGpkQ4Y0z3tBZ2CvXDtrbHkmvvM1kSGrsxKUDQ/EfmR2Nm
+         h/EyRMJvrx8hG2vToTAING6dY5rTi+Qj/bz5ewm7qyLiUfTxI/3FwbwX7ikKoI38VzLX
+         ggNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qzYBm1Mg5ELnZ9VCZbiqSgNhv5b4M2fdTVMavRogM9Y=;
+        b=oi4xwJD09qehLw9CweMh6GrW8NnzY54pu48P+RR01HhHYN3NDIqREwYp42By05ac/O
+         oWSUTrf3qAxxhklZ+50/fWz9y6iZPoI67aEPfHasw9p4PMMc3Nh8JUkcaFaZHI73L1Kk
+         /xnIAdxMjMnRr9tXgxsoXzVbNLJB4swaHyy3tR3RVdDykWdm6M0g3wIQjAMxhgO97eCd
+         b24Bxnc1MtxVwuRhrARtUHkHjHzIQSIiGNpFa+GM2lFxRliquqzj/YWT2hSa8/XPTNod
+         RYxr3vWdC6EzcwOLdvkJn4pCuckA/AaC7nWL/SvXZuwk0mzh2i231TPUeaZ3fX8OqeHx
+         bpNg==
+X-Gm-Message-State: AOAM5332EdaC7ffk7puLQGFmfwxuElNCdgvdb13Ant+AB09A5ycaNQQ4
+        OPFE9vWO2t1rBEKgTrQnbw4=
+X-Google-Smtp-Source: ABdhPJzqf8TDkVAWYyl2awXpsYE0dqc0V5iR3CO442aW5Dsip2FxjVztqZ4xH+J9d4V4TIWlWmi1eg==
+X-Received: by 2002:a17:906:8685:b0:6f3:9575:e352 with SMTP id g5-20020a170906868500b006f39575e352mr6059784ejx.622.1650910973455;
+        Mon, 25 Apr 2022 11:22:53 -0700 (PDT)
+Received: from fedora.robimarko.hr (cpe-94-253-165-91.zg.cable.xnet.hr. [94.253.165.91])
+        by smtp.googlemail.com with ESMTPSA id h13-20020a170906590d00b006f39021e683sm1677210ejq.12.2022.04.25.11.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Apr 2022 11:22:52 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, absahu@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH 1/7] clk: qcom: ipq8074: fix NSS core PLL-s
+Date:   Mon, 25 Apr 2022 20:22:43 +0200
+Message-Id: <20220425182249.2753690-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mh7nzemffealimob"
-Content-Disposition: inline
-In-Reply-To: <36551341-60f5-8b61-59d1-176ece8204d6@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Like in IPQ6018 the NSS related Alpha PLL-s require initial configuration
+to work.
 
---mh7nzemffealimob
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So, obtain the regmap that is required for the Alpha PLL configuration
+and thus utilize the qcom_cc_really_probe() as we already have the regmap.
+Then utilize the Alpha PLL configs from the downstream QCA 5.4 based
+kernel to configure them.
 
-Hi,
+This fixes the UBI32 and NSS crypto PLL-s failing to get enabled by the
+kernel.
 
-Thanks for having a look.
+Fixes: b8e7e519625f ("clk: qcom: ipq8074: add remaining PLL’s")
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 39 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-On Fri, Apr 22, 2022 at 07:16:13PM +0100, Robin Murphy wrote:
-> On 2022-04-22 18:09, Sebastian Reichel wrote:
-> > ...
-> > +		cpu_l0: cpu@0 {
-> > +			device_type =3D "cpu";
-> > +			compatible =3D "arm,cortex-a55";
-> > +			reg =3D <0x0>;
-> > +			enable-method =3D "psci";
-> > +			capacity-dmips-mhz =3D <530>;
-> > +			clocks =3D <&scmi_clk SCMI_CLK_CPUL>;
-> > +			i-cache-size =3D <32768>;
-> > +			i-cache-line-size =3D <64>;
-> > +			i-cache-sets =3D <128>;
-> > +			d-cache-size =3D <32768>;
-> > +			d-cache-line-size =3D <64>;
-> > +			d-cache-sets =3D <128>;
-> > +			next-level-cache =3D <&l2_cache_l0>;
-> > +			#cooling-cells =3D <2>;
-> > +			dynamic-power-coefficient =3D <228>;
-> > +		};
->=20
-> Is there any particular reason for not including more of the CPUs?
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index e79c3329febd..2ebd1462db78 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4371,6 +4371,33 @@ static struct clk_branch gcc_pcie0_axi_s_bridge_clk = {
+ 	},
+ };
+ 
++static const struct alpha_pll_config ubi32_pll_config = {
++	.l = 0x4e,
++	.config_ctl_val = 0x200d4aa8,
++	.config_ctl_hi_val = 0x3c2,
++	.main_output_mask = BIT(0),
++	.aux_output_mask = BIT(1),
++	.pre_div_val = 0x0,
++	.pre_div_mask = BIT(12),
++	.post_div_val = 0x0,
++	.post_div_mask = GENMASK(9, 8),
++};
++
++static const struct alpha_pll_config nss_crypto_pll_config = {
++	.l = 0x3e,
++	.alpha = 0x0,
++	.alpha_hi = 0x80,
++	.config_ctl_val = 0x4001055b,
++	.main_output_mask = BIT(0),
++	.pre_div_val = 0x0,
++	.pre_div_mask = GENMASK(14, 12),
++	.post_div_val = 0x1 << 8,
++	.post_div_mask = GENMASK(11, 8),
++	.vco_mask = GENMASK(21, 20),
++	.vco_val = 0x0,
++	.alpha_en_mask = BIT(24),
++};
++
+ static struct clk_hw *gcc_ipq8074_hws[] = {
+ 	&gpll0_out_main_div2.hw,
+ 	&gpll6_out_main_div2.hw,
+@@ -4773,7 +4800,17 @@ static const struct qcom_cc_desc gcc_ipq8074_desc = {
+ 
+ static int gcc_ipq8074_probe(struct platform_device *pdev)
+ {
+-	return qcom_cc_probe(pdev, &gcc_ipq8074_desc);
++	struct regmap *regmap;
++
++	regmap = qcom_cc_map(pdev, &gcc_ipq8074_desc);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
++	clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
++				&nss_crypto_pll_config);
++
++	return qcom_cc_really_probe(pdev, &gcc_ipq8074_desc, regmap);
+ }
+ 
+ static struct platform_driver gcc_ipq8074_driver = {
+-- 
+2.35.1
 
-Yes, see below.
-
-> > +		its: interrupt-controller@fe640000 {
-> > +			compatible =3D "arm,gic-v3-its";
-> > +			msi-controller;
-> > +			#msi-cells =3D <1>;
-> > +			reg =3D <0x0 0xfe640000 0x0 0x20000>;
-> > +		};
-> > +	};
->=20
-> Does the ITS (and other bits related to GIC memory accesses) actually wor=
-k,
-> or will we have more of the same issues as RK356x?
-
-The GIC in RK3588 is has the same shareability limitation as the RK356x,
-but fixed the 32bit limitation. That's why I just added the boot cpu core
-for now; adding any other cpu core breaks the boot without the downstream
-shareability patch and I'm still investigating.
-
--- Sebastian
-
---mh7nzemffealimob
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmJm5OcACgkQ2O7X88g7
-+pomsA//UD8f1YBkOw4gRGQyVzSSA2PqMAMOONSb31R90fNo5c78tg87EkNoxwvg
-2iPkn4dnvOSE5zpTt4U579b1wyrlxU3msJBN+pwcyWTAQW8XNLt/Le/9zU3Laafa
-4KyT4xJd9rrU4GMEvW+6RrmWJE3tcUYEw59a2BN40LYoQIayi864EwGIgD3z1XG7
-MAqdI1on6d4XFD6mGu7uJSvfodEnCqjRIbv1tk/+2UCw9IhyWrhveJsagLEBn8GY
-6SRfLMkMU9Ja6oqnDHmoj6WfrTaihFhbx3xS0gm9gErdrfaqxbcG6jsgFTT6nDQ1
-xRSenEAPlxMK7EOiejVfE5Fs5Se8Tse/HLseVGSvkJv01wVj1yMO+ex2XUk5cGjW
-UecLNiZfWL039S0F2Jaiqw9FrCmGbgpWB7yvg9mczuO2ewG3NORzh//fhSokCjXs
-Yl247K8Q9jtsqYJRFBTh0A0mO8EG3PY9lYjzc96FeIWoza5beKSW/t8KU1LXWwb+
-fSroO0KBa2oeajwhLvYi/cmZnKaPWr05H18Rsgudq+DmKHi82yWX6YslxXk2JVuN
-F2ihbx0Yst3xUD4UIgiD06H2xPo1ufk3ZqdsENgIiVpn284n8VV7lYZyToczMJF2
-OzPacQ4N7iJy+KxEcH26FyUhylu29QIf2L8kwKW/xnzYKmidA9A=
-=vp9R
------END PGP SIGNATURE-----
-
---mh7nzemffealimob--
