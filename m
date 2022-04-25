@@ -2,101 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B655FC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 01:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83934C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 02:37:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240089AbiDYBOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Apr 2022 21:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54212 "EHLO
+        id S240348AbiDYCkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Apr 2022 22:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbiDYBOb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 21:14:31 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A114D63CD;
-        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id z30so5491198pfw.6;
-        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=YSoCH0xVGmx+Sdnu3ggx76S2cnidmkkBhFjPR4Sas3Q=;
-        b=eyAYYSh01WWPXIJLX/iUTF9URHfNEL/mtDXc3taArEVl5Iynmgn+WbCXqlZc2ldIC/
-         h0bfG6wXJFRFCxaaKz5CF0rWaGnJ28JrUdPVvpUzWArWjYgcrgVbKtsR2dIRVJuLqKTu
-         BFLHffJwBOdLOPkUIitqqTdw9L4xq4M73vtX+7B6KJQzxjMDSAROQUWkBO4a3SUi8jQA
-         g11pxgD9rIzDbOXf8ZKxMGoqRfOjJcJJ/1B1/hldzilMJvA13rmVNA+m/oGvcXcPHvrk
-         Ca68izmnC0REjk4qmvFrk2EjYLSaOnsgKGLDv1hcUqSwsC9kxIYszIMDA25HOv3a4G3V
-         qJbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YSoCH0xVGmx+Sdnu3ggx76S2cnidmkkBhFjPR4Sas3Q=;
-        b=ejbRbXMOA7zzq2VHOxxxpyfXHfb2/kFWzHARZTYAzOAOQK6QQNCp4ANe80K9zMh33W
-         +lPAFXDcFcDgH6R0r8qmQuYJ/JAw0lqCjMtaoequqAQyy10IRwROC7vPzLF308q5AQPM
-         INfdqBURCEjRuooo6OiPqAaDg92a5UVdJpGMTozFJYK95KomkNZ49UL9epDrpnty+q2A
-         /jJp32hYmRF19d7WZ9qcUSWoeZrvzwuGYkm3ME+Uebq8IhrHmJ7ZcoMD3MHeprQCyzm2
-         vcOj/xjZfRUOaqT1LdaQ2nPXCHcuiQ+qu294icV7NXFL0NERA1cGDpuxe4VpVwXHC+fd
-         cmRA==
-X-Gm-Message-State: AOAM5310OnmpnVbZfQnxELRx+vdNSBdW+qzoIb/zsxOiFsslf624Pv2T
-        ELRR56+754cjy+TmIOs5c0Zn8dAXtqXAwZhE
-X-Google-Smtp-Source: ABdhPJwjHPGVOQINTadNkXbVqfZRxpPxLBKfTY2pBzNO0y9ZECO7/SZbHVLb9GTtJhJsZ2tGBrnR7w==
-X-Received: by 2002:a63:1114:0:b0:3aa:30b3:dd5f with SMTP id g20-20020a631114000000b003aa30b3dd5fmr12725982pgl.222.1650849088179;
-        Sun, 24 Apr 2022 18:11:28 -0700 (PDT)
-Received: from localhost.localdomain ([159.226.95.43])
-        by smtp.googlemail.com with ESMTPSA id f186-20020a62dbc3000000b0050d3aa8c904sm2458157pfg.206.2022.04.24.18.11.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 18:11:27 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [RESEND PATCH v2] clk: imx: scu: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
-Date:   Mon, 25 Apr 2022 09:11:17 +0800
-Message-Id: <20220425011117.25093-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S240315AbiDYCkL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Apr 2022 22:40:11 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5D794B417;
+        Sun, 24 Apr 2022 19:37:08 -0700 (PDT)
+X-UUID: f4ba8226d13c448dbc6b2e2d86ee9c43-20220425
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:b40454e7-8c83-49e6-8c7b-f0fe2e99d525,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:faefae9,CLOUDID:ce2af5ef-06b0-4305-bfbf-554bfc9d151a,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: f4ba8226d13c448dbc6b2e2d86ee9c43-20220425
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 201482578; Mon, 25 Apr 2022 10:37:04 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 25 Apr 2022 10:37:03 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 25 Apr 2022 10:37:03 +0800
+Message-ID: <fdedea6f20738bfe2ede7e526aa653af1ac35768.camel@mediatek.com>
+Subject: Re: [PATCH V3 11/17] dt-bindings: arm: mediatek: Add #reset-cells
+ property for MT8192-sys-clock
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "angelogioacchino.delregno@collabora.com" 
+        <angelogioacchino.delregno@collabora.com>,
+        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
+        <Chun-Jie.Chen@mediatek.com>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
+        <Runyang.Chen@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Mon, 25 Apr 2022 10:37:02 +0800
+In-Reply-To: <288f55f3-b3ed-32b8-9a44-652f3d53617d@linaro.org>
+References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
+         <20220422060152.13534-12-rex-bc.chen@mediatek.com>
+         <288f55f3-b3ed-32b8-9a44-652f3d53617d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the device is already in a runtime PM enabled state
-pm_runtime_get_sync() will return 1.
+On Sat, 2022-04-23 at 18:27 +0800, Krzysztof Kozlowski wrote:
+> On 22/04/2022 08:01, Rex-BC Chen wrote:
+> > We will use the infra_ao reset which is defined in mt8192-sys-
+> > clock.
+> > The maximum value of reset-cells is 2. Therefore, we add this patch
+> > to
+> > define it.
+> 
+> Remove entire last sentence, does not make sense in the commit.
+> 
 
-Also, we need to call pm_runtime_put_noidle() when pm_runtime_get_sync()
-fails, so use pm_runtime_resume_and_get() instead. this function
-will handle this.
+Hello Krzysztof,
 
-Fixes: 78edeb080330 ("clk: imx: scu: add runtime pm support")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
-changes in v2:
-- change pm_runtime_get_sync to pm_runtime_resume_and_get
-- current check works fine for pm_runtime_resume_and_get() so stay the
-same.
-Link: https://lore.kernel.org/all/20220412065719.17735-1-linmq006@gmail.com/
----
- drivers/clk/imx/clk-scu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for your review.
+I will drop "Therefore, we add this patch to define it." and add more
+detailed messages in next version.
 
-diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index 083da31dc3ea..2044e62980e3 100644
---- a/drivers/clk/imx/clk-scu.c
-+++ b/drivers/clk/imx/clk-scu.c
-@@ -528,7 +528,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
- 		pm_runtime_use_autosuspend(&pdev->dev);
- 		pm_runtime_enable(dev);
- 
--		ret = pm_runtime_get_sync(dev);
-+		ret = pm_runtime_resume_and_get(dev);
- 		if (ret) {
- 			pm_genpd_remove_device(dev);
- 			pm_runtime_disable(dev);
--- 
-2.17.1
+> > 
+> > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,mt8192-sys-clock.yaml       | 3
+> > +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-
+> > sys-clock.yaml
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-
+> > sys-clock.yaml
+> > index 5705bcf1fe47..28ebcecc8258 100644
+> > ---
+> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-
+> > sys-clock.yaml
+> > +++
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-
+> > sys-clock.yaml
+> > @@ -29,6 +29,9 @@ properties:
+> >    '#clock-cells':
+> >      const: 1
+> >  
+> > +  '#reset-cells':
+> > +    maximum: 2
+> 
+> Why this is a maximum? Usually this is const, so how do you use it
+> (with
+> what values)?
+> 
+We need to let the driver compatible with previous setting in
+drivers/clk/mediatek/reset.c
+
+There are two use cases in our reset driver:
+(Refer to [1])
+
+1. #reset-cells = <1>
+   When we input the argument, the older driver
+use is to calculate  
+   bank and bit by different method. From the implementation of
+   reset_xlate(), we can see if the argument number is 1, it will
+   return directly.
+
+2. #reset-cells = <2>
+   The input arguments is offset and bit. When we input two arguments,
+   we can use reset_xlate() to calculate the corresponding id to assert
+   and deassert.
+
+[1]:
+https://lore.kernel.org/all/20220422060152.13534-10-rex-bc.chen@mediatek.com/
+
+If it's acceptable, I will add this in commit message.
+
+BRs,
+Rex
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> 
+> 
+> Best regards,
+> Krzysztof
 
