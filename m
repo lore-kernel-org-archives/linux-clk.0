@@ -2,85 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E71C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 17:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730C8C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 18:02:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbiDYSCp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 14:02:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38030 "EHLO
+        id S244197AbiDYSFb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 14:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiDYSCp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:02:45 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D6D2458D;
-        Mon, 25 Apr 2022 10:59:40 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id bv19so31152397ejb.6;
-        Mon, 25 Apr 2022 10:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TtgZ9hhhM4u37jsTuLZNpiEojGjDtunmh77jaqRuyTQ=;
-        b=Z4guqvZ1DmvBpFabB1XWYbAjbioMhUlKBS9dG6i3rc6ljtSqq1aV39L5YsbAbrMIqU
-         dVigS191k+K5O711V4uWIdpI6CB/75y22CLZml6p4Hfv0TKF1Ga8tsaXt7fVglHSgtr7
-         dM6gVArOUOlZk6VDrG9RL3cmF/AcVTflft/tnR4Mrr7uBPOGL8zBF+S9yIlWy04nR9hE
-         2EymrYGUwA+2DYX3iegcO1njjYDVm7to9pnz5eq7jMaYxadCux9aKQnVi6PgTmjvLYvr
-         I/9sEt39ou7PEEjajbQtGkEyDAppODxySeUDq5l2B5mflpUp62/5T78j2ha4CXy4wHiD
-         GrVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TtgZ9hhhM4u37jsTuLZNpiEojGjDtunmh77jaqRuyTQ=;
-        b=iGiv/EPHPQOn5wy48px2pEk2wOJa18u/sx9J7FALgIWd8AuEjbEFg9/D163SU71g6Y
-         Wb4KMeUw7jIvgXwpwYy42T1qUwV1/tY89sxdB7dxSASfJcHlmkNxgzbJV6uBILQoSxzU
-         eukC7S52bWA/oK2XMbt+Hp0tVfLcuv+NCLIzBMpIQXXi7S2WzeAHYzzrwO9dXd0K8/lV
-         u3nUKgkYMpWemP67znTXftoN9PS4DtdI1W6MCLvnvp0e5vBVhXb0+YttVl48J+P52YWK
-         DgUCFBnfD8T40Th5uYYxlL5SYQIW4ndrQsKqVcHoxDS1dKWOm5t4VNOMsNnIxd4Nwvcq
-         2Pag==
-X-Gm-Message-State: AOAM533Kb8OH8XvQpQ2HKQwetmdruxkzh/6F2DvSRypACgBQs4Y8w3mE
-        YyE4mNDcHP6fBe3DbaEfN+k=
-X-Google-Smtp-Source: ABdhPJzYYWBWzPgmXZIuANGBFazqlekbk38HKp1EanXlXkro9F+u0aIvfoRGlTvJnkHEgdkYjebayw==
-X-Received: by 2002:a17:907:3e1d:b0:6d7:1031:7e0 with SMTP id hp29-20020a1709073e1d00b006d7103107e0mr17169875ejc.580.1650909579477;
-        Mon, 25 Apr 2022 10:59:39 -0700 (PDT)
-Received: from kista.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
-        by smtp.gmail.com with ESMTPSA id u18-20020a17090626d200b006efdd9b95c8sm3867949ejc.47.2022.04.25.10.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 10:59:39 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Samuel Holland <samuel@sholland.org>
-Cc:     wens@csie.org, maxime@cerno.tech
-Subject: Re: Re: [PATCH] clk: sunxi: sun9i-mmc: check return value after calling platform_get_resource()
-Date:   Mon, 25 Apr 2022 19:59:37 +0200
-Message-ID: <2976854.CbtlEUcBR6@kista>
-In-Reply-To: <9ebabc53-72de-bbec-895c-fa3760ed5374@sholland.org>
-References: <20220421134308.2885094-1-yangyingliang@huawei.com> <9ebabc53-72de-bbec-895c-fa3760ed5374@sholland.org>
+        with ESMTP id S241982AbiDYSFb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 14:05:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C73714667B
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 11:02:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B52461604
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 18:02:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72054C385A7;
+        Mon, 25 Apr 2022 18:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650909745;
+        bh=wB6QZNYJ+oigdgmtL/ndlegdP8U81yYisNMbo36102Y=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iaINlQhOetMw4ZQcRcyRzKjDu6PnAjZVThe3WnxFpHshtLNbYkOs31HD3B7trPAY7
+         4IPu4ID9sYoEjVwM6u14Hcat0R38AUTYQbRkd+oMa3u0Tq1z4pPtnkKYQOiC+T4NTw
+         OGwGvL2uifMo1RGkMepLv+oYs6XQf5jXkKn+UZ2VBLa1mb3WXoVWNh2VJhzYnVJwrE
+         MB6I/cGDF5nRuiqqNZ0RfCSvkyzf8+8PIK+FmaNtKa9UWQhBbAX7kV+qRPgxunUDxF
+         WNFCZ8BoUqLqoUwKOuJxQr+1F4+JcPbPKq8/lb3YbL9FFIP5SL+RjDKbOE/Ywh3ulA
+         vfz1fvegGAkoA==
+Date:   Mon, 25 Apr 2022 20:02:21 +0200
+From:   Jernej Skrabec <jernej@kernel.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev
+Subject: [GIT PULL] Allwinner clock fixes for 4.18, take 2
+Message-ID: <YmbiLbQmqIUec0fM@kista.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 23. april 2022 ob 21:45:05 CEST je Samuel Holland napisal(a):
-> On 4/21/22 8:43 AM, Yang Yingliang wrote:
-> > It will cause null-ptr-deref if platform_get_resource() returns NULL,
-> > we need check the return value.
-> > 
-> > Fixes: 7a6fca879f59 ("clk: sunxi: Add driver for A80 MMC config clocks/
-resets")
-> > Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> 
-> Reviewed-by: Samuel Holland <samuel@sholland.org>
-> 
-> 
+Hi!
 
-Applied to sunxi/clk-fixes-for-5.18, thanks!
+Please pull following changes for current release.
 
 Best regards,
 Jernej
 
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-5.18-2
+
+for you to fetch changes up to f58ca215cda1975f77b2b762903684a3c101bec9:
+
+  clk: sunxi: sun9i-mmc: check return value after calling platform_get_resource() (2022-04-25 19:50:53 +0200)
+
+----------------------------------------------------------------
+Add missing sentinel, check return value and mark rtc-32k as critical
+
+----------------------------------------------------------------
+Samuel Holland (1):
+      clk: sunxi-ng: sun6i-rtc: Mark rtc-32k as critical
+
+Wan Jiabing (1):
+      clk: sunxi-ng: fix not NULL terminated coccicheck error
+
+Yang Yingliang (1):
+      clk: sunxi: sun9i-mmc: check return value after calling platform_get_resource()
+
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 ++
+ drivers/clk/sunxi/clk-sun9i-mmc.c    | 2 ++
+ 2 files changed, 4 insertions(+)
