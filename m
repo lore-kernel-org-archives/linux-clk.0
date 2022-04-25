@@ -2,87 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B907C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 15:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7780DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 16:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242842AbiDYPbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 11:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42736 "EHLO
+        id S238909AbiDYQIw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 12:08:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbiDYPbT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 11:31:19 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3806210F3AC;
-        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id f22so10503874qtp.13;
-        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
-        b=By74vmVJQ/MnB36Y7p6UwVteaImK9ZjGLjA9uBcyypNXMkNwHVqIYGK4LLUcjyQtwV
-         gCml6JlzZPU91AeAqZVjwtBCd+WwrZU4BVZsBjzlpPumMon3lVhe0cPKfjc3T5oxKnVu
-         HJ5Owst1glYb9C6e5TXhR3fTu3L1w8PXstENMx4mPrtVGsmT1tseZ/NvR5iK5LJTXNZg
-         qaxWBUpARNbeAAWobmN/fHMcJmydLk2qbVbiAKVv9qIChHO4FvS64QyRqN8zBVicu+LX
-         1maxLaF5CMblXanXaZ6cfZOWpA4usEyZSVoq02wkcfGtCBDTvc54kVTcu/Wq0NKsMOmU
-         ntgQ==
+        with ESMTP id S235505AbiDYQIv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 12:08:51 -0400
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0E93D490;
+        Mon, 25 Apr 2022 09:05:47 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id e17so12096911qvj.11;
+        Mon, 25 Apr 2022 09:05:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
-        b=5lU8nCz2nwBrbkPDAcr/afoqETh1U4g3ZxKqLCLYoE/qmAOIxegp6CPWoHvjUSfy1L
-         5M7rqM8WbL7sxnhxxI9d0XGG3dqqp6tpWxvbJvMaYXR6hBILf26JWYqo5dSZeoh4C/GC
-         EIpgq/T7QsHlxCmOaeOBUq9MNUAqlP7S2letKZI+wWCxbaT0FPe8CliXK+9rdTgn5suX
-         7ih6ll4u9beBCmFtBk/WQKw3GW40nkKW7r/HjL5FRMoLlqnp/UipfFfdEbPWxZZb6k4E
-         Ik61TqP9wIZOAZ1NgRDi4nlChidhpwoaCTsGDFBJ+f6C2vbJg4XKVWDAOVFDjZcm4kiv
-         CitA==
-X-Gm-Message-State: AOAM530FyiD1pdoeAGd/Ej5s1FSrvXbbjaB8bz7R45o+rdRYn2VmTqvp
-        0EVrTe5D3t1Qg65SvCkGQQ==
-X-Google-Smtp-Source: ABdhPJyn1L63ig8CXlJylyOHi+tBOKG6YcgedNBUKOf6xBOnteBc+GTPyVacwZlkcADPpljIaz9lmQ==
-X-Received: by 2002:a05:622a:1314:b0:2f3:5726:e034 with SMTP id v20-20020a05622a131400b002f35726e034mr12185089qtk.297.1650900494382;
-        Mon, 25 Apr 2022 08:28:14 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id 128-20020a370486000000b0069e9d72b45fsm5193739qke.13.2022.04.25.08.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 08:28:13 -0700 (PDT)
-Date:   Mon, 25 Apr 2022 11:28:11 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        rostedt@goodmis.org
-Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
- show_mem.c
-Message-ID: <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-14-kent.overstreet@gmail.com>
- <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
- <YmLFPJTyoE4GYWp4@carbon>
- <20220422234820.plusgyixgybebfmi@moria.home.lan>
- <YmNH/fh8OwTJ6ASC@carbon>
- <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
- <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WBB3hJAHggg/Ymff4O89TctaqpmLz5c/VRSvQSPD6EU=;
+        b=Parj+JdMS+7P/atDGKVlzVylPEIdEQeItI0RPe4FKg/lcrpLysFz7UIoFTp9vCdMHu
+         pqQBb/XjKSK5qctQxA6Bo4o2LskF55SYQn5YBkySGAq2NAAUZLZanRe3xWib6oCBG4IS
+         ijMMG9jQWUx9+kbQC4LdUq9jEGt1VS+pD+V6Nh7l+Pa6JqI2v2VuXmst5yfSQAI4hIUx
+         U/lfUSOf6p7Tjso4Jm0rS2RKrvXvM6L76bROgYOZJ/PU3YMAxVOoRvO6XVy8LXqcOZQy
+         97fIRxJDW5Kf/dBAzDJF9ootnOYCECjIRLmNgI9W8Eei6HyK4CAwcCwtCPEhNuM3CG4P
+         HC/g==
+X-Gm-Message-State: AOAM531qm6Z6ixXBfCin138O/dUPvOSdO/3sGsN8UQrwXPXWzsHlGyp/
+        xwCkP2h/td/ql5Kr1ZX644K2abfdjGaaQQ==
+X-Google-Smtp-Source: ABdhPJzgvTjHlgO41b046TZZXPUlZ1cbIJMoPrw3ADSVutUEaYSOUrknjJdHiD6A2ezNJuVoAGuPqg==
+X-Received: by 2002:a05:6214:e64:b0:446:3d57:d320 with SMTP id jz4-20020a0562140e6400b004463d57d320mr13034649qvb.87.1650902745825;
+        Mon, 25 Apr 2022 09:05:45 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 2-20020a05620a06c200b0069ea498aec7sm5176862qky.16.2022.04.25.09.05.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Apr 2022 09:05:45 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id r189so27907232ybr.6;
+        Mon, 25 Apr 2022 09:05:45 -0700 (PDT)
+X-Received: by 2002:a5b:24e:0:b0:63d:cba0:3d55 with SMTP id
+ g14-20020a5b024e000000b0063dcba03d55mr16307751ybp.613.1650902745080; Mon, 25
+ Apr 2022 09:05:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
+In-Reply-To: <20220421085112.78858-1-miquel.raynal@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Apr 2022 18:05:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com>
+Message-ID: <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com>
+Subject: Re: [PATCH v11 0/9] RZN1 DMA support
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 11:28:26AM +0200, Michal Hocko wrote:
-> 
-> > Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
-> > or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
-> > generate the report on slabs, since we're taking the slab mutex there.
-> 
-> No it's not. You simply _cannot_ allocate from the oom context.
+Hi Miquel,
 
-Hmm, no, that can't be right. I've been using the patch set and it definitely
-works, at least in my testing. Do you mean to say that we shouldn't? Can you
-explain why?
+On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> This is the series bringing DMA support to RZN1 platforms.
+> Other series follow with eg. UART and RTC support as well.
+
+Thanks for your series!
+
+> There is no other conflicting dependency with the other series, so this
+> series can now entirely be merged in the dmaengine tree I believe.
+>
+> Changes in v11:
+> * Renamed two defines.
+> * Changed the way the bitmap is declared.
+> * Updated the cover letter: this series can now go in through the
+>   dmaengine tree.
+
+/me confused
+
+> Miquel Raynal (9):
+>   dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+>   dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
+>   dt-bindings: dmaengine: Introduce RZN1 DMA compatible
+>   soc: renesas: rzn1-sysc: Export function to set dmamux
+>   dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+>   clk: renesas: r9a06g032: Probe possible children
+>   dmaengine: dw: Add RZN1 compatible
+>   ARM: dts: r9a06g032: Add the two DMA nodes
+>   ARM: dts: r9a06g032: Describe the DMA router
+
+The last two DTS parts have to go in through the renesas-arm-dt and
+soc trees.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
