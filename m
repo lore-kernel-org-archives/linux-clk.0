@@ -2,103 +2,201 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C70C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 05:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FFAC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 07:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231645AbiDYF72 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 01:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38968 "EHLO
+        id S236781AbiDYHaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 03:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiDYF71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 01:59:27 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1381B38D91;
-        Sun, 24 Apr 2022 22:56:25 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id kk26so3101827qvb.6;
-        Sun, 24 Apr 2022 22:56:25 -0700 (PDT)
+        with ESMTP id S231577AbiDYHaS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 03:30:18 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37F117649
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 00:27:13 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id k4so13493323plk.7
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 00:27:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=yEtpP0V8bXsR3hzvKMHsezmMX2/PHsvriv0+UQGZXkA=;
-        b=qn2xWHxfsL/YflUV6AWs2jqwGqY0JddqzwNB+5uzZOzncVjZYAcn5WvcPXUp1tf1x5
-         JLRfjecTfxjeocC3JVUK/btbt/zYSx96hXaF6yZFILa/RgKhbdzXPLV+wvFkt3yhVOi9
-         WyjRVBmRcn6CaS8PxDTgMcwPiHqZVOjqX5eGw5FbkssBdKNGhV7G7DFTyzwXBUiy4Lrq
-         PpuIIvAsGPaakypH45Jo62fUl/bSWck+Lbh4P94WC6kd/dAg96vRnaofuMpx4lxL5o7l
-         VHKlraViEOzc6qtAjbz/iySaIaPnkyLg6cYcIJILYoGabdeDqBvN0dIS+40Nd62zk6w9
-         +e0g==
+         :content-disposition:in-reply-to:user-agent;
+        bh=rxyP1rA1NVCKi+Fqd9RTEgWTAs6MpVuSe+By3MBiK+g=;
+        b=uhHdnNiHGlo6+p+WxcM0C9NfBcZ1yMZ4ZL8lPJjCqFO59XftyiBXmxLnJ4x/8IHesk
+         Iz/e+72c+hpYYtSkpN9st79ktLRdF9ucEIcsSZFrJz8zW/33b/zII36XFlgftlgRt/Rn
+         NcV0nn+GcFItTljdcQkhhruORyaimT8Hcjdf+33DifIdLTWHRc7f4BBjOpmEow9TxUAk
+         H3AoQBVj8pg7peGOZ40pMWJPb4v77MByQ/hq2wnaWxWmitojdTlAcivhdbQ8eALivIcc
+         CxsiobTeJA1GwrggCLqf/tliVYwpbUOcyyC+5xohbYhPGazYOIMkwv+sGtPOlvneNaO1
+         ub6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=yEtpP0V8bXsR3hzvKMHsezmMX2/PHsvriv0+UQGZXkA=;
-        b=u1mVzv3sFw6xKdL1kYKNIvjr6Wv/MAaoE7NFiH1OpZ6av4eNq7zEA8lKIcvdMgGUV4
-         BSSlKCXIuDWtiDpfEoaR/C4y0pvA5irwYgCYGyUly9iNqzawD35n6xncO/2m8HCU3jlI
-         972iGviaoDlfwDAv3TQ7ByjlgrOmrhF3Wvg8rZ5N+J/hdgpCeYL8ck3rLkoO0WW6W6wZ
-         qccMSIrKa6l3d1+GYdDH47N+cKgwP3ijL1k44j/w2T4UXclcEL2o8ozEeHkGQ7cEU+EG
-         Thunkohwdh/BlTZRKgpfQ1G1SE0Ebu4Iu1T8sHJPE5u9oquC8yAUSSsoQG9mZHqWbPs2
-         looQ==
-X-Gm-Message-State: AOAM531KxeZfo3wnxKQooBTkK0ykeBuPQdt6WLoPMQnVmhOhrP0QH7QO
-        9UId2PMHWVApHt3JlXsJXw==
-X-Google-Smtp-Source: ABdhPJzAxFXsVJ0WWB+a/uW3ENjomgA1MnU7dbP9wMly0PKxY+hDawYHFLH4F7OZHRJDaudnhEK29A==
-X-Received: by 2002:ad4:5d68:0:b0:446:64dc:79db with SMTP id fn8-20020ad45d68000000b0044664dc79dbmr11197375qvb.111.1650866184049;
-        Sun, 24 Apr 2022 22:56:24 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a28-20020a05620a02fc00b0069e8e766a0csm4610371qko.94.2022.04.24.22.56.22
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rxyP1rA1NVCKi+Fqd9RTEgWTAs6MpVuSe+By3MBiK+g=;
+        b=MOFb4dVL4eyNVvjMvSyiJeW7xp6ml9vcEj5LFuZ0+y/dh0m2DkxRViVPV7ji5n8bBS
+         PWNot4QVbjwZ+oOr7vVFkIjA9vXNCG0sQSTN9AW5qYFmeDBbEe/8vf3wMw89qejM3yQt
+         2W4vz7SKMGeO6kd6ab3Nf3jnxtq+wmktq+gnl5MRTDyRexzBqVjX2vlj0zSyvCC2Tuav
+         O+J8oqrHacBBSnG+qiKIENovvSHk95nmB5xDwSUUK01ok+eroHOYE5GUyOa/EN84KdGy
+         DN6tMG5/VXzKkIOpltWBEFdmwM6/NfWLal/8rr0yd1kjaIBRH9JgcDLQfJd0GOm6VCPH
+         sL9A==
+X-Gm-Message-State: AOAM533GNqJExGQVlVQ56hNZbH4fFhFXsSANoGQA4+DSa/5AFk+k6ssH
+        TCDGA2IcLE4vLN40zNw07CUUikBSvSx1pg==
+X-Google-Smtp-Source: ABdhPJxE5RcvTjEYwI71Iu772xtRFctxCEAFvy9tKFHoG9lHlSKr+lSmvTHqmcMFobuMjeZomF3jKA==
+X-Received: by 2002:a17:90b:3b46:b0:1c7:9ca8:a19e with SMTP id ot6-20020a17090b3b4600b001c79ca8a19emr29586651pjb.245.1650871632716;
+        Mon, 25 Apr 2022 00:27:12 -0700 (PDT)
+Received: from localhost ([122.171.250.232])
+        by smtp.gmail.com with ESMTPSA id p4-20020a637404000000b00375948e63d6sm8596664pgc.91.2022.04.25.00.27.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 22:56:23 -0700 (PDT)
-Date:   Mon, 25 Apr 2022 01:56:21 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
-        hannes@cmpxchg.org, akpm@linux-foundation.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220425055621.ffzp4lokgtsi72z2@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-7-kent.overstreet@gmail.com>
- <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
- <YmYLEovwj9BqeZQA@casper.infradead.org>
- <20220425041909.hcyirjphrkhxz6hx@moria.home.lan>
- <9ab6601364a16c782ca36ab22a2c67face0785a7.camel@perches.com>
- <20220425045909.rhot6b4xrd4tv6h6@moria.home.lan>
- <2df59c0f4763b81741b12894434ceeaee35c85a2.camel@perches.com>
+        Mon, 25 Apr 2022 00:27:12 -0700 (PDT)
+Date:   Mon, 25 Apr 2022 12:57:10 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Message-ID: <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2df59c0f4763b81741b12894434ceeaee35c85a2.camel@perches.com>
+In-Reply-To: <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 24, 2022 at 10:00:32PM -0700, Joe Perches wrote:
-> On Mon, 2022-04-25 at 00:59 -0400, Kent Overstreet wrote:
-> > On Sun, Apr 24, 2022 at 09:48:58PM -0700, Joe Perches wrote:
-> > > On Mon, 2022-04-25 at 00:19 -0400, Kent Overstreet wrote:
-> > > > On Mon, Apr 25, 2022 at 03:44:34AM +0100, Matthew Wilcox wrote:
-> > > > > On Sun, Apr 24, 2022 at 04:46:03PM -0700, Joe Perches wrote:
-> > > > > > > + * pr_human_readable_u64, pr_human_readable_s64: Print an integer with human
-> > > > > > > + * readable units.
-> > > > > > 
-> > > > > > Why not extend vsprintf for this using something like %pH[8|16|32|64] 
-> > > > > > or %pH[c|s|l|ll|uc|us|ul|ull] ?
-> > > > > 
-> > > > > The %pX extension we have is _cute_, but ultimately a bad idea.  It
-> > > > > centralises all kinds of unrelated things in vsprintf.c, eg bdev_name()
-> > > > > and clock() and ip_addr_string().
-> > > > 
-> > > > And it's not remotely discoverable. I didn't realize we had bdev_name()
-> > > > available as a format string until just now or I would've been using it!
-> > > 
-> > > Documentation/core-api/printk-formats.rst
-> > 
-> > Who has time for docs?
+On 11-04-22, 17:43, Krzysztof Kozlowski wrote:
+> Devices might need to control several clocks when scaling the frequency
+> and voltage.  Example is the Universal Flash Storage (UFS) which scales
+> several independent clocks with change of performance levels.
 > 
-> The same people that have time to reimplement the already implemented?
+> Add parsing of multiple clocks and clock names
 
-Touché :)
+This part is fine, the OPP core should be able to do this.
+
+> and scale all of them,
+
+This is tricky as the OPP core can't really assume the order in which the clocks
+needs to be programmed. We had the same problem with multiple regulators and the
+same is left for drivers to do via the custom-api.
+
+Either we can take the same route here, and let platforms add their own OPP
+drivers which can handle this, Or hide this all behind a basic device clock's
+driver, which you get with clk_get(dev, NULL).
+
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+
+> +static int _generic_set_opp_clks_only(struct device *dev,
+> +				      struct opp_table *opp_table,
+> +				      struct dev_pm_opp *opp)
+> +{
+> +	int i, ret;
+> +
+> +	if (!opp_table->clks)
+> +		return 0;
+> +
+> +	for (i = 0; i < opp_table->clk_count; i++) {
+> +		if (opp->rates[i]) {
+
+This should mean that we can disable that clock and it isn't required.
+
+> +			ret = _generic_set_opp_clk_only(dev, opp_table->clks[i],
+> +							opp->rates[i]);
+> +			if (ret) {
+> +				dev_err(dev, "%s: failed to set clock %pC rate: %d\n",
+> +					__func__, opp_table->clks[i], ret);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+As said earlier, this won't work in the core.
+
+> +
+>  static int _generic_set_opp_regulator(struct opp_table *opp_table,
+>  				      struct device *dev,
+>  				      struct dev_pm_opp *opp,
+> @@ -796,7 +835,7 @@ static int _generic_set_opp_regulator(struct opp_table *opp_table,
+>  	}
+>  
+>  	/* Change frequency */
+> -	ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
+> +	ret = _generic_set_opp_clks_only(dev, opp_table, opp);
+>  	if (ret)
+>  		goto restore_voltage;
+>  
+> @@ -820,7 +859,7 @@ static int _generic_set_opp_regulator(struct opp_table *opp_table,
+>  	return 0;
+>  
+>  restore_freq:
+> -	if (_generic_set_opp_clk_only(dev, opp_table->clk, old_opp->rate))
+> +	if (_generic_set_opp_clks_only(dev, opp_table, old_opp))
+>  		dev_err(dev, "%s: failed to restore old-freq (%lu Hz)\n",
+>  			__func__, old_opp->rate);
+>  restore_voltage:
+> @@ -880,7 +919,7 @@ static int _set_opp_custom(const struct opp_table *opp_table,
+
+This is where we can handle it in your case, if you don't want to hide it behind
+a clk driver.
+
+>  	}
+>  
+>  	data->regulators = opp_table->regulators;
+> -	data->clk = opp_table->clk;
+> +	data->clk = (opp_table->clks ? opp_table->clks[0] : NULL);
+>  	data->dev = dev;
+>  	data->old_opp.rate = old_opp->rate;
+>  	data->new_opp.rate = freq;
+> @@ -969,8 +1008,8 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
+
+I think this routine breaks as soon as we add support for multiple clocks.
+clks[0]'s frequency can be same for multiple OPPs and this won't get you the
+right OPP then.
+
+>  	struct dev_pm_opp *opp = ERR_PTR(-ENODEV);
+>  	unsigned long freq;
+>  
+> -	if (!IS_ERR(opp_table->clk)) {
+> -		freq = clk_get_rate(opp_table->clk);
+> +	if (opp_table->clks && !IS_ERR(opp_table->clks[0])) {
+> +		freq = clk_get_rate(opp_table->clks[0]);
+>  		opp = _find_freq_ceil(opp_table, &freq);
+>  	}
+>  
+> @@ -1070,7 +1109,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
+>  						 scaling_down);
+>  	} else {
+>  		/* Only frequency scaling */
+> -		ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
+> +		ret = _generic_set_opp_clks_only(dev, opp_table, opp);
+>  	}
+>  
+>  	if (ret)
+> @@ -1135,11 +1174,15 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+
+This should have a BUG or WARN _ON() now if clock count is more than one. This
+routine can't be called unless custom handler is available.
+
+I skipped rest of the code as we need to work/decide on the design first.
+
+Thanks.
+
+-- 
+viresh
