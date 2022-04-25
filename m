@@ -2,71 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 011D4C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 09:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0454C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 09:53:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239274AbiDYJ4b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 05:56:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49002 "EHLO
+        id S231502AbiDYJ4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 05:56:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235807AbiDYJ4T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 05:56:19 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0032F403CF
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 02:52:55 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOn-0008Mn-Ji; Mon, 25 Apr 2022 11:52:53 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOo-0057Wp-5x; Mon, 25 Apr 2022 11:52:52 +0200
-Received: from sha by dude02.red.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nivOm-0015Vo-1l; Mon, 25 Apr 2022 11:52:52 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        David Jander <david@protonic.nl>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 0/2] clk: i.MX8M[PQ] fixes
-Date:   Mon, 25 Apr 2022 11:52:47 +0200
-Message-Id: <20220425095249.259406-1-s.hauer@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        with ESMTP id S235072AbiDYJ4S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 05:56:18 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F406D403CC;
+        Mon, 25 Apr 2022 02:52:53 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,287,1643641200"; 
+   d="scan'208";a="119075168"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2022 18:52:52 +0900
+Received: from localhost.localdomain (unknown [10.226.93.95])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EAC0E4218186;
+        Mon, 25 Apr 2022 18:52:49 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/6] clk: renesas: r9a07g043: Add I2C clocks/resets
+Date:   Mon, 25 Apr 2022 10:52:39 +0100
+Message-Id: <20220425095244.156720-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220425095244.156720-1-biju.das.jz@bp.renesas.com>
+References: <20220425095244.156720-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series has two fixes for the i.MX8MP and i.MX8MQ clk support. It
-was decided that the gates of the divided outputs of the System PLLs
-are not useful for the Kernel and so the gate clocks were removed.
-Nevertheless they are of course still there in hardware and the Kernel
-needs them to be enabled for the consumers hanging on these gates.
-Enable them explicitly instead of assuming that the gates are still
-at their reset default on state.
+Add I2C{0,1,2,3} clock and reset entries.
 
-Sascha
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g043-cpg.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Sascha Hauer (2):
-  clk: imx8mp: Enable no longer handled gates
-  clk: imx8mq: Enable no longer handled gates
-
- drivers/clk/imx/clk-imx8mp.c | 19 +++++++++++++++++++
- drivers/clk/imx/clk-imx8mq.c | 19 +++++++++++++++++++
- 2 files changed, 38 insertions(+)
-
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index 2d6c96789f5c..961216d55e0b 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -152,6 +152,14 @@ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 				0x57c, 1),
+ 	DEF_COUPLED("eth1_chi",	R9A07G043_ETH1_CLK_CHI, R9A07G043_CLK_ZT,
+ 				0x57c, 1),
++	DEF_MOD("i2c0",		R9A07G043_I2C0_PCLK, R9A07G043_CLK_P0,
++				0x580, 0),
++	DEF_MOD("i2c1",		R9A07G043_I2C1_PCLK, R9A07G043_CLK_P0,
++				0x580, 1),
++	DEF_MOD("i2c2",		R9A07G043_I2C2_PCLK, R9A07G043_CLK_P0,
++				0x580, 2),
++	DEF_MOD("i2c3",		R9A07G043_I2C3_PCLK, R9A07G043_CLK_P0,
++				0x580, 3),
+ 	DEF_MOD("scif0",	R9A07G043_SCIF0_CLK_PCK, R9A07G043_CLK_P0,
+ 				0x584, 0),
+ 	DEF_MOD("scif1",	R9A07G043_SCIF1_CLK_PCK, R9A07G043_CLK_P0,
+@@ -180,6 +188,10 @@ static struct rzg2l_reset r9a07g043_resets[] = {
+ 	DEF_RST(R9A07G043_SDHI1_IXRST, 0x854, 1),
+ 	DEF_RST(R9A07G043_ETH0_RST_HW_N, 0x87c, 0),
+ 	DEF_RST(R9A07G043_ETH1_RST_HW_N, 0x87c, 1),
++	DEF_RST(R9A07G043_I2C0_MRST, 0x880, 0),
++	DEF_RST(R9A07G043_I2C1_MRST, 0x880, 1),
++	DEF_RST(R9A07G043_I2C2_MRST, 0x880, 2),
++	DEF_RST(R9A07G043_I2C3_MRST, 0x880, 3),
+ 	DEF_RST(R9A07G043_SCIF0_RST_SYSTEM_N, 0x884, 0),
+ 	DEF_RST(R9A07G043_SCIF1_RST_SYSTEM_N, 0x884, 1),
+ 	DEF_RST(R9A07G043_SCIF2_RST_SYSTEM_N, 0x884, 2),
 -- 
-2.30.2
+2.25.1
 
