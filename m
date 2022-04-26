@@ -2,196 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231E4C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 05:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BCBC43217
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 06:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244955AbiDZFov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 01:44:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45632 "EHLO
+        id S241728AbiDZGnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 02:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245012AbiDZFol (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 01:44:41 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77717393E3;
-        Mon, 25 Apr 2022 22:41:05 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id d5so8583083wrb.6;
-        Mon, 25 Apr 2022 22:41:05 -0700 (PDT)
+        with ESMTP id S236675AbiDZGnV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 02:43:21 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67146336
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 23:40:12 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id y3so13630681ejo.12
+        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 23:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ivY9A8MlugZ6JM+jO9WfyfI8NDozRx01AU86/wCMjkk=;
-        b=Y46WTmyvQ1TX2po88VJOtwZs3frKBkWm7UrRr4XGjsqw8mXs3kmWdf5CTJ6n2mgnNs
-         s2r7IwmeLOY7UQT28VxgsxDM3rK1oV5g7gODgMPaX84y5vq+R8NwKwjJTITbZTltuK/K
-         N9vxNiW7g+A6Y2O1GCMcEirKJWpsBr7S35w1nrcZ9enpB77Ly3J/1UbnJNzlNdZMxZah
-         2dRZyg47Fr63FW4byIAoFHwRf7pnuHUubfqbfBxpnSuFNprCAxrV4q0dQKI+sNCvYKGr
-         sBIFV4XaAsBub5wMl6ZHzt4xTklEiZmxBcCGZ/nlWVLxZwmH/Aa9enusyQA+3STVcqpI
-         JUfQ==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=YQBirjcHw1XssjMgenO6HRfRZsWWatGT2BxMsOHFYCE=;
+        b=IBjeDJUQPPgNrNiqtJATmu07ecSQmbmK+jJQ9Qkqm68KYBT2mZNkWUVJVPy5PP28iC
+         ZZ5YiSPdZxmlFb9F21Hv6A+edHNDWn1wc2SnbnTRFUMJQVRVZYnI6etGe9iHNhOZg5fG
+         RMKKEG/rXDg2iKI6iDxzFMiZH+w+BxAN7X+a15HLRXcrIZBPXGDDzgfbFlnhh5Mo+Xwc
+         5QLsw9I2ampq1hTraxXnKTLSoGq6LkPZCV7WBSQhuah3W2lWXHHgu1iftsIPNLV/YbGG
+         MGepN8bjr7Iauo5KoUBkHqk4ReN7oFG+cfLmxYq0peiDALMtxKCbbfG3TQ89HGsNxOcy
+         k0qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ivY9A8MlugZ6JM+jO9WfyfI8NDozRx01AU86/wCMjkk=;
-        b=40naeQIxIveGWtNbu9t3tlIgeSgPuvFlLPhUl8/1xfyKsnIWIPLThfSGskS3a4VU4w
-         mT8JFuSWqPEdsWJsKrtn5joAStg1srML7M+za5ozRCKKCAkH/rCxCfv5RXoIZ2QdMEcr
-         ZEt8uJMOFLYQCd2CHwNlynG6yJ0Cyhnx/RGewx3BSgYOtkxCw2iLvaUn7lcawqB0pjkt
-         RQ4BUPux4DGP/rksTNnXQaVLdGvxr4Fs4wIKDjAt9Mk8IeTfGu+Ljy8HBSTZZCzQ059d
-         DupUavN88axSYTqZZddskuACvOW9N6EcW7B0rJVSrFvWu823PV5fHJxUh8o4QmPdvuCh
-         TLAA==
-X-Gm-Message-State: AOAM533Kcj1O4JaOJKlcf+ENd83Sg8afnmKuoUxlUDfdpVB1fhtdNNSr
-        mH6ACTMtQgU0Ov/1LjWXQlSW38wOScJ8Y8FD1lo=
-X-Google-Smtp-Source: ABdhPJz4Be6fGelqulSb5go88CmpvpBppykdtB4VLAYI+zCd0IsU+v6yJwkDXWUpCzFIMC3z3y9zrrzkLeQ5bZlpUZI=
-X-Received: by 2002:a5d:6e85:0:b0:207:a435:d9a7 with SMTP id
- k5-20020a5d6e85000000b00207a435d9a7mr16610956wrz.217.1650951663941; Mon, 25
- Apr 2022 22:41:03 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=YQBirjcHw1XssjMgenO6HRfRZsWWatGT2BxMsOHFYCE=;
+        b=lLA0T73k8gl7yzNyAaEE0CotaPvBMStJsCYnC/+yeBMxjDZ6pehOwyQgvWIA0TYGpQ
+         grixUtUlVOSDJLMpvRoHAf+Wtj737fIyTl05I0OnC2z+ckZyZu0lKn6IEAUOQk5xIX57
+         BxT76cxKoYr3hkAvKE4jWYPvzMhBWjEzmDThyb5I/sReWAptaXH+eW9+uwAYYvhnQwAQ
+         QiOw+IIS9MqkBeu9qQtJ1hft6JR6z6YheuDwApSXg+5w24gxDOyxZ6dfxMJXXGVnSMgr
+         9+3R0krc3RIB3XbdaJO5ZIEbdpyzdGa8zsLHlwKb03XYufYpQ0/VV+YPaNl8pexH2Ec/
+         ab1Q==
+X-Gm-Message-State: AOAM5306mP13i0QgUj15HjHk8FQhYAX4p8UziTSLfvQzriEdYS+tDNzu
+        Aa58Vc79MM9880FaeUUXTRd5jw==
+X-Google-Smtp-Source: ABdhPJxZhXFQhcEzCB8B5dlgOiWdecKG+rf6v1oIMQ4/m9NvZbzVShnAUy6VkZ6totD6LEgaHzmIYQ==
+X-Received: by 2002:a17:907:8a0d:b0:6f3:a595:6136 with SMTP id sc13-20020a1709078a0d00b006f3a5956136mr4544804ejc.54.1650955211482;
+        Mon, 25 Apr 2022 23:40:11 -0700 (PDT)
+Received: from [192.168.0.244] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id r13-20020a508d8d000000b00425d3555fc6sm4309024edh.30.2022.04.25.23.40.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Apr 2022 23:40:11 -0700 (PDT)
+Message-ID: <8498c0b4-ed1f-b4a0-d53c-a7addf75ea66@linaro.org>
+Date:   Tue, 26 Apr 2022 08:40:09 +0200
 MIME-Version: 1.0
-References: <20220418125630.2342538-1-gengcixi@gmail.com> <20220418125630.2342538-2-gengcixi@gmail.com>
- <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org> <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
- <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org> <CAF12kFu5KW+fw=0kP6LrEqOvKYR38mELfPjG64=n+gudRxsZUQ@mail.gmail.com>
- <baa73bda-91af-8a31-67f4-6d5615862c73@linaro.org> <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
- <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org> <CAF12kFt=L7CV5RDBViPSNb9Y_Te4JJ-TZrx2N+w_P2px7_FemQ@mail.gmail.com>
- <0423e827-9592-ce6f-74ca-111a099a263f@linaro.org>
-In-Reply-To: <0423e827-9592-ce6f-74ca-111a099a263f@linaro.org>
-From:   Cixi Geng <gengcixi@gmail.com>
-Date:   Tue, 26 Apr 2022 13:40:27 +0800
-Message-ID: <CAF12kFuwgGJSXpC8e=6L1XgP4zFOjbdLazwuqR0jg=2OJ=RtRA@mail.gmail.com>
-Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in
+ compatible and split apq8084
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Taniya Das <quic_tdas@quicinc.com>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>
+References: <20220425204001.710238-1-krzysztof.kozlowski@linaro.org>
+ <20220425224000.CB7F3C385A4@smtp.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220425224000.CB7F3C385A4@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=B9=B4=
-4=E6=9C=8825=E6=97=A5=E5=91=A8=E4=B8=80 17:00=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 24/04/2022 17:12, Cixi Geng wrote:
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=
-=B9=B44=E6=9C=8824=E6=97=A5=E5=91=A8=E6=97=A5 22:30=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >>
-> >> On 24/04/2022 16:22, Cixi Geng wrote:
-> >>>>>>
-> >>>>>> Neither here nor later you did not answer the question - why do yo=
-u need
-> >>>>>> such complex construction, instead of adding syscon to the clock c=
-ontroller?
-> >>>>>>
-> >>>>>> Let me paste again my concerns:
-> >>>>>>
-> >>>>>>   You have nodes with reg but without unit address ("rpll"). These=
- nodes
-> >>>>>>   are modeled as children but they are not children - it's a worka=
-round
-> >>>>>>   for exposing syscon, isn't it? The sc9863a looks like broken des=
-ign,
-> >>>>>>   so please do not duplicate it here.
-> >>>>>>
-> >>>>>> IOW, sc9863a uses similar pattern as here and the DTS is made wron=
-g.
-> >>>>>> Because of this you need to create complex ways to get the regmap =
-for
-> >>>>>> the clock controller... Why not making it simple? Clock controller=
- with
-> >>>>>> syscon?
-> >>>>>
-> >>>>> I find the history discuss about the sp9863 clock[1] and last
-> >>>>> ums512-clk dt-bindings patch[2] which from chunyan.
-> >>>>> please refer to the reasons below.
-> >>>>>
-> >>>>> These clocks are at the same register range with global registers.
-> >>>>> the registers shared with more than one devices  which  basically
-> >>>>> are multimedia devices. You may noticed that these are all gate
-> >>>>> clocks which are in the global registers  ranges and are used to
-> >>>>> controll the enable status of some devices or some part of devices.
-> >>>>>
-> >>>>> [1] https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=3DFTe5S7CzAHC5ma=
-hXBH2fJm7mXS7Xys1Q@mail.gmail.com/#r
-> >>>>> [2] https://lore.kernel.org/all/163425295208.1688384.11023187625793=
-114662@swboyd.mtv.corp.google.com/#r
-> >>>>
-> >>>> Which looks like discussion about different bindings. You had there =
-a
-> >>>> clock controller and additional clock device using "sprd,syscon". Wh=
-y
-> >>>> the rpll is a subdevice and not a part of clock controller. The same=
- as
-> >>>> all other clocks coming from that clock-controller, right? What is s=
-o
-> >>>> special about rpll that is is a separate device, not part of the clo=
-ck
-> >>>> controller? It's the same address space, isn't it?
-> >>> The hardware spec design these clocks are not belonged to the syscon,
-> >>> the phandle is only used to get virtual  map address for clocks which
-> >>> have the same phsical address base with one syscon.(I don't know the
-> >>> historical reason for this design) It also can wroten a clock sperate=
-d from
-> >>> syscon by add the reg which same as syscon. but will lead to a duplic=
-ate
-> >>> mapping--one is from the clock,and one is from syscon. which make dif=
-ficulty
-> >>>  in analyzing some panic problems.
-> >>
-> >> I don't understand still. You said that they do not belong to same
-> >> address space, right? But the sprd,ums512-apahb-gate in this patch or
-> >> mentioned rpll
-> >> (https://elixir.bootlin.com/linux/v5.18-rc3/source/arch/arm64/boot/dts=
-/sprd/sharkl3.dtsi#L106)
-> >> does not reference any other address space. It's entire address space =
-is
-> >> the same as address space of glbregs.
-> > Maybe I didn't describe clearly, what I said is these clocks isn't the
-> > syscom sub-clock.
-> > from chunyan's explain:
-> >  they  are at the same register range with global registers. in
-> > originally we put them
-> > directly onto the bus indeed when submitting the patches for SC9863A
-> > clocks last year,
-> > and it had a private property named 'sprd,syscon' which could provide
-> > regmap for these clocks.
-> > after follow Rob's suggetion we make them a child of the syscon. these
-> > are all gate clocks which
-> > are in the global registers ranges and are used to controll the enable
-> > status of some devices
-> > or some part of devices.
->
-> You need to help me here with the naming. What is "global registers"
-> range? Let's focus on sharkl3.dtsi and syscon@4035c000 with "rpll".
->
-> You have a clock controller @4035c000, which provides several clocks,
-> right? Then you have a rpll also @4035c000, so the register range is the
-> same. The register range is the same, isn't it?
+On 26/04/2022 00:39, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2022-04-25 13:40:01)
+>> The qcom,gcc-apq8064.yaml was meant to describe only APQ8064 and APQ8084
+>> should have slightly different bindings (without Qualcomm thermal sensor
+>> device).
+>>
+>> Fixes: a469bf89a009 ("dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation")
+>> Reported-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  .../bindings/clock/qcom,gcc-apq8064.yaml      |  4 +-
+>>  .../bindings/clock/qcom,gcc-apq8084.yaml      | 42 +++++++++++++++++++
+>>  2 files changed, 43 insertions(+), 3 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+> 
+> If it's generated with 'format-patch -C -M' does it detect the copy?
 
-the anlg_phy_g5_regs is not a clock controller.
-In fact, this is just to provide an address for other modules to call regma=
-p.
-not provide a clk interface or device.
-The clk configuration of rpll is based on the anlg_phy_g5_regs register.
-The analog_g5 asic document is not only used to configure rpll, but also ot=
-her
-functions can be configured, but currently our driver is only used to provi=
-de
-configuration rpll, so the range of the device node of rpll can be less tha=
-n or
-equal to the range of anlg_phy_g5_regs.
-Hope this could explains your question
+Nope, and I think these are default. The files are not that similar,
+because while copying I cleaned it up.
+
+format-patch -C20% -M20% also does not detect it. Only `git format-patch
+-1 -C20% -M20% --find-copies-harder` detects a copy. I will use it, but
+you won't see nice copy-patch.
+
+> 
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+>> new file mode 100644
+>> index 000000000000..63d08e82b3d8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+>> @@ -0,0 +1,42 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-apq8084.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller Binding for APQ8084
+>> +
+>> +maintainers:
+>> +  - Stephen Boyd <sboyd@kernel.org>
+>> +  - Taniya Das <tdas@codeaurora.org>
+> 
+> Please fix Taniya's email quic_tdas@quicinc.com
+
+I wished Codeaurora/QUIC folks updated their emails all over the tree
+because otherwise it looks like they do not want or cannot maintain
+these files.
 
 Best regards,
-Cixi
->
-> I still don't see the answer to my question - why do you need a child
-> device for one clock if this looks like part of the clock-controller?
->
-> Best regards,
-> Krzysztof
+Krzysztof
