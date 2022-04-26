@@ -2,102 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B153C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 14:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBC2C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 14:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351561AbiDZOYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 10:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
+        id S231493AbiDZOju (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 10:39:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346521AbiDZOYj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 10:24:39 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8467015817;
-        Tue, 26 Apr 2022 07:21:31 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id f22so12708415qtp.13;
-        Tue, 26 Apr 2022 07:21:31 -0700 (PDT)
+        with ESMTP id S1351742AbiDZOjR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 10:39:17 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD1113A2C9;
+        Tue, 26 Apr 2022 07:36:09 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id v65so16155060oig.10;
+        Tue, 26 Apr 2022 07:36:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U4A617tk0nNBBFScQn0uljcqEi3aKbLGbWvmjOlIlM0=;
-        b=cQi2P4t4f5t2ae2xzGeo2VJdceQL6834VW89UKpoyMV/n3do4+kdfHQbNdbDMbtVds
-         4LREVEAnvGASD6WF1+Vb3iyt8wXzIpsHUnpFVw+wiEJjF3my7pqEzf5vMPelndm9KTxo
-         wCKWvsq2WDsUbMFal+T1DbL19LmKAy0+CPxCsH54IkI06kCA1qqt+afD0Cm8p/WPOsm1
-         iGmJhq23b7xIQ+OFEENarMkXII7/EGguPRyK8qF8grbVtGHW/WMGg9i4FAQhJeeIt6mi
-         CRiXj4llPDaj3cqQ2Iq7j81taxSMEocSaZ2GDl2PbTVUXMI0z3lNLM0JQTJg24VFdlTK
-         +Rrw==
-X-Gm-Message-State: AOAM530s7qQDj4hfa0DRV+36+piazwu5oVFHwQDSHwK67t/tSNLfN5Cz
-        YgG2j43AFhV3tvLqQKApsxjNe7bufaTJFw==
-X-Google-Smtp-Source: ABdhPJxoTGOwfiIpO87FcoNvbMnBrDfjmPvjSc+OcSQ9iWbH6UYyXJ7h+e/hFzISq/sF+QDsTH/LAw==
-X-Received: by 2002:a05:622a:14c:b0:2f3:7232:f5d8 with SMTP id v12-20020a05622a014c00b002f37232f5d8mr4211812qtw.390.1650982890421;
-        Tue, 26 Apr 2022 07:21:30 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id x24-20020ac87318000000b002f1fc5fcaedsm7474982qto.68.2022.04.26.07.21.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 07:21:29 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id m128so15290981ybm.5;
-        Tue, 26 Apr 2022 07:21:29 -0700 (PDT)
-X-Received: by 2002:a25:9e89:0:b0:63c:ad37:a5de with SMTP id
- p9-20020a259e89000000b0063cad37a5demr21057779ybq.342.1650982889534; Tue, 26
- Apr 2022 07:21:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BKz27xjENn2dqQwcuHoytM2LiUIHNQx317aKGLFn1nA=;
+        b=sKwPNNWbUXiWwcEDKPLPrsSWL2SK8EEf2SZC4EK5alIQEJydL4boqVm+O8BaZnEvXg
+         3XnRHRTZpOHiFgBPOPtQm1bjpz/LNN0eQ7xpLPzYz2ihQZtyk9EIEs1lPGlumywmWROz
+         Txtihf+DooiX6X5yTKl/hfmPQHgoNJvZVd4ldL6RCYyn1s28/dtiPiifEWcXd+Us4YnO
+         QmCVcDeSNWOVvXJJlxqazbR0ulwRDjRCQ2FrYwsKIAowEA/6hfabfYH73vlz0V+zzS93
+         GfpXMN4kaXJRCNaW5nS+bZeXTn0lT2V8yN1j+M9FJloGZQ+Nj51VKpmoE5iZfMFttXNu
+         LqiQ==
+X-Gm-Message-State: AOAM530W1wgl+6AaiegsGHsuwaQg+a4kWQnbxO7jMT1BvWglOxoQE95T
+        gd4RPXfmLF5S92d7cQcHBQ==
+X-Google-Smtp-Source: ABdhPJzZ6umTB6cveiNT/3a6G9nFAAAkglX0p2BOuAq+o5kBRE6eba6sXuaqa5J24T4St9aSTTd/uw==
+X-Received: by 2002:a05:6808:1709:b0:2f9:30ec:c95b with SMTP id bc9-20020a056808170900b002f930ecc95bmr14452302oib.240.1650983768539;
+        Tue, 26 Apr 2022 07:36:08 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id d3-20020a9d2903000000b005cda765f578sm4934662otb.0.2022.04.26.07.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 07:36:07 -0700 (PDT)
+Received: (nullmailer pid 1948504 invoked by uid 1000);
+        Tue, 26 Apr 2022 14:36:07 -0000
+Date:   Tue, 26 Apr 2022 09:36:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: clock/qcom,gcc-apq8064: move msm8960
+ compat from gcc-other.yaml
+Message-ID: <YmgDVzRMELjQIrb5@robh.at.kernel.org>
+References: <20220426093608.2957210-1-dmitry.baryshkov@linaro.org>
+ <20220426093608.2957210-3-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-5-phil.edworthy@renesas.com>
-In-Reply-To: <20220330154024.112270-5-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Apr 2022 16:21:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWErGQuE+ESi3ZGVgyW5ouUthr5XsmnwLJD0VX6D3QVPA@mail.gmail.com>
-Message-ID: <CAMuHMdWErGQuE+ESi3ZGVgyW5ouUthr5XsmnwLJD0VX6D3QVPA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/13] dt-bindings: clock: renesas,rzg2l: Document
- RZ/V2M SoC
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426093608.2957210-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Phil,
+On Tue, 26 Apr 2022 12:36:08 +0300, Dmitry Baryshkov wrote:
+> MSM8960 shares the design (and the driver) of the global clock
+> controller. Move it from clock/qcom,gcc-other.yaml to
+> clock/qcom,gcc-apq8064.yaml.
+> 
+> As the eaxmple in gcc-other.yaml was using the msm8960 compat string,
+> change it to qcom,gcc-msm8660.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml         | 6 ++++--
+>  Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml | 5 ++---
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+> 
 
-On Wed, Mar 30, 2022 at 5:41 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> Document the device tree binding for the Renesas RZ/V2M (r9a09g011) SoC.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-> @@ -42,9 +44,10 @@ properties:
->      description: |
->        - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
->          and a core clock reference, as defined in
-> -        <dt-bindings/clock/r9a07g*-cpg.h>
-> +        <dt-bindings/clock/r9a07g*-cpg.h> or <dt-bindings/clock/r9a09g011-cpg.h>
-
-I guess we can simplify to dt-bindings/clock/r9a0*-cpg.h?
-
-The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
