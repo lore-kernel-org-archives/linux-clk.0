@@ -2,98 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C68C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76969C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343696AbiDZHUw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
+        id S241790AbiDZH1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 03:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242416AbiDZHUt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:20:49 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD7F8BF6E;
-        Tue, 26 Apr 2022 00:17:42 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C2E6E210EA;
-        Tue, 26 Apr 2022 07:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1650957460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E341m0oGAZ8uwfYf1PyOsWw2EY2ezQuuipQASY4qGhM=;
-        b=HDAJXwas5NvCqoiwQ7rHZHQ0CIxgB0k64TTcJDFBbBPmbmlYEtZEgoyDMKzktRiMq8g43s
-        jbaUFHMY7zDJ0b7SsFz/ywwwxzjoQKkex/6FYfVDeotPaaGalAH5DhVqFUbjp+N9ReAUB2
-        EIfEH/eIZDzw3BtusTQi5w69L1izR3Y=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 4270D2C141;
-        Tue, 26 Apr 2022 07:17:40 +0000 (UTC)
-Date:   Tue, 26 Apr 2022 09:17:39 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        rostedt@goodmis.org
-Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
- show_mem.c
-Message-ID: <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-14-kent.overstreet@gmail.com>
- <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
- <YmLFPJTyoE4GYWp4@carbon>
- <20220422234820.plusgyixgybebfmi@moria.home.lan>
- <YmNH/fh8OwTJ6ASC@carbon>
- <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
- <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
- <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
+        with ESMTP id S239695AbiDZH1K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:27:10 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBBAADD69
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:24:02 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id t25so30324755lfg.7
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=eXtqXcAbsPLbhUnLplLAUrfp7LOU/SjKEif65DdFddY=;
+        b=RjT5NS3KcY2orNbvmBSpXy1jJ8Ow9Y+AEZGN5UeedbFepPo9eZYSsJBrlk+M5HbJgJ
+         N9/gQJO/jn2vJt3H27RywyKgpVpMjjxP76plx+pwErzZgekg2SR3fJktjch6jQEAyYoE
+         XnGIoDJ7jlYs1Su26aGwLO5ks+T+Alz8JBMY2PmQujoa1NedM7TLmMNxOdL5DQb755Eh
+         Wu4waf+E4G1JenQAveLgZUHXprIGoPTTMiULWL020YzzUsewq3RMcVi8q9jwNe0X8Tf0
+         nEELfrh4YxZUGX9MNR1JQv1Ps1h098fC7rfWAiCL/vvtTFKlkDKnCWDGCN9vRUDHRxNc
+         9m8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=eXtqXcAbsPLbhUnLplLAUrfp7LOU/SjKEif65DdFddY=;
+        b=N4zhrAt2Er6gTyLSes7ESSWzLSi5rgXXMjzT9ML3/PcdlzTFPx2rpKWwn/vCDkbli+
+         3WY63xRmlbXUTID5KDcwHsw11FxigFB++9fpT9InE0M05dCosh4oPfVSmgqbDAtZuMEO
+         DIN5ypcw8RYgKlf9Mil4uB8RdZ5ywLyT9SwltsOVDTP3Qnw7OeavQqwURPkf8jg42VKH
+         gygIG9CdodsT25RTAd6sBQzw+0K0J9sf1tamQ/c8OX2+U4XWSgz6UIOvCU5o90n3l8US
+         g2VEistPIO7pmmtEN4lPDzPBRksUl8KjfHe5ZtNAnlAs+mI2tZ/uWcARlmKPhe1NZ8kt
+         YPTQ==
+X-Gm-Message-State: AOAM530c7wSq73GH74/Z1jASH599II/d1ZUdLOaxAOg96pQiVRv6Sl4w
+        kjE2cUOu6AcM9braqIh6C4Xjog==
+X-Google-Smtp-Source: ABdhPJwsG0y9iB+agiH1tnKpqhvSRk36yyN2InhyHQ8i1YlREGRjoX7xFZzC3EusBEs84fst8AhOgA==
+X-Received: by 2002:ac2:5e9c:0:b0:471:eba5:afe with SMTP id b28-20020ac25e9c000000b00471eba50afemr13348036lfq.477.1650957840955;
+        Tue, 26 Apr 2022 00:24:00 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id y15-20020a056512044f00b004721549b9c2sm176712lfk.219.2022.04.26.00.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 00:24:00 -0700 (PDT)
+Message-ID: <d8e1b7b7-a37d-d177-71d6-78e89a7cfa80@linaro.org>
+Date:   Tue, 26 Apr 2022 10:23:59 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in
+ compatible and split apq8084
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh@kernel.org>
+References: <20220425204001.710238-1-krzysztof.kozlowski@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220425204001.710238-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 25-04-22 11:28:11, Kent Overstreet wrote:
-> On Mon, Apr 25, 2022 at 11:28:26AM +0200, Michal Hocko wrote:
-> > 
-> > > Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
-> > > or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
-> > > generate the report on slabs, since we're taking the slab mutex there.
-> > 
-> > No it's not. You simply _cannot_ allocate from the oom context.
+On 25/04/2022 23:40, Krzysztof Kozlowski wrote:
+> The qcom,gcc-apq8064.yaml was meant to describe only APQ8064 and APQ8084
+> should have slightly different bindings (without Qualcomm thermal sensor
+> device).
 > 
-> Hmm, no, that can't be right. I've been using the patch set and it definitely
-> works, at least in my testing.
+> Fixes: a469bf89a009 ("dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation")
+> Reported-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Yes, the world will not fall down and it really depends on the workload
-what kind of effect this might have.
+I think we can simply move it to the gcc-other.yaml. I'll send a patch.
 
-> Do you mean to say that we shouldn't? Can you explain why?
+> ---
+>   .../bindings/clock/qcom,gcc-apq8064.yaml      |  4 +-
+>   .../bindings/clock/qcom,gcc-apq8084.yaml      | 42 +++++++++++++++++++
+>   2 files changed, 43 insertions(+), 3 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> index 97936411b6b4..9fafcb080069 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> @@ -20,12 +20,10 @@ description: |
+>     See also:
+>     - dt-bindings/clock/qcom,gcc-msm8960.h
+>     - dt-bindings/reset/qcom,gcc-msm8960.h
+> -  - dt-bindings/clock/qcom,gcc-apq8084.h
+> -  - dt-bindings/reset/qcom,gcc-apq8084.h
+>   
+>   properties:
+>     compatible:
+> -    const: qcom,gcc-apq8084
+> +    const: qcom,gcc-apq8064
+>   
+>     nvmem-cells:
+>       minItems: 1
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+> new file mode 100644
+> index 000000000000..63d08e82b3d8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-apq8084.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for APQ8084
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets and
+> +  power domains on APQ8064/APQ8084.
+> +
+> +  See also::
+> +  - dt-bindings/clock/qcom,gcc-apq8084.h
+> +  - dt-bindings/reset/qcom,gcc-apq8084.h
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-apq8084
+> +
+> +required:
+> +  - compatible
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@fc400000 {
+> +        compatible = "qcom,gcc-apq8084";
+> +        reg = <0xfc400000 0x4000>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +        #power-domain-cells = <1>;
+> +    };
+> +...
 
-I have already touched on that but let me reiterate. Allocation context
-called from the oom path will have an unbound access to memory reserves.
-Those are a last resort emergency pools of memory that are not available
-normally and there are areas which really depend on them to make a
-further progress to release the memory pressure.
 
-Swap over NFS would be one such example. If some other code path messes
-with those reserves the swap IO path could fail with all sorts of
-fallouts.
-
-So to be really exact in my statement. You can allocate from the OOM
-context but it is _strongly_ discouraged unless there is no other way
-around that.
-
-I would even claim that the memory reclaim in general shouldn't rely on
-memory allocations (other than mempools). If an allocation is really
-necessary then an extra care has to prevent from complete memory
-depletion.
 -- 
-Michal Hocko
-SUSE Labs
+With best wishes
+Dmitry
