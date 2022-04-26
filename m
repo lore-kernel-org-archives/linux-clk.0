@@ -2,140 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF627C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE6AC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245538AbiDZPku (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 11:40:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58164 "EHLO
+        id S234098AbiDZPtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 11:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232690AbiDZPkt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:40:49 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5908139B8D;
-        Tue, 26 Apr 2022 08:37:41 -0700 (PDT)
-Received: by mail-qt1-f172.google.com with SMTP id f22so12895079qtp.13;
-        Tue, 26 Apr 2022 08:37:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MEt8P7eOKBR9M1XuSzWJ53KBmD5NL2u25LqPO0CMA6g=;
-        b=mPt+M7xLb26EONf9WOqIwhLoDDaBOIMrgV80m4zfCOOvSls9QhOIdGL1g0bcrVv9G6
-         cMyuQkMsDt8mBhxH1swKXZqP1AiIFIvA8J/lT1VbAbB57rbvoL9WyA3eNbgbu6dm+Xwk
-         IJwFgoeHVntKEgO9YvkIsw+SElUlAruz7OON7i9r9kSwvt2y1mifEk4EUaJ5W5NdvEB8
-         8zGxpT4hg9UnsnqVwu/XJXg6KNCR44ww3Y7fJHVlichfZe8Kh6X3dD1jtvhjBIfY2h8H
-         Dtjsdc5w5bfJIHFU6N444QHWifGQ3H/oYC01G/OM+ei2ZCT+U67AK/01FioGXuuLvqrt
-         0UWg==
-X-Gm-Message-State: AOAM530JDk/sjBjSCGfA74DDGBwyZZrrRMMUkOK5N25BzUq9gjdPdI7p
-        TGd7UU8OYxrdDzkMr7cF1rsW+whdcJBGjw==
-X-Google-Smtp-Source: ABdhPJyHeBIBl0W7ju6lMuGrk+rVSQbacs6rlXaWTWlydy+Muj9ldWY0RuRRJ16ko7ZrLSbYJQaq3w==
-X-Received: by 2002:ac8:5913:0:b0:2f1:f114:6b44 with SMTP id 19-20020ac85913000000b002f1f1146b44mr15871190qty.403.1650987460279;
-        Tue, 26 Apr 2022 08:37:40 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id d77-20020a379b50000000b0069f6b324e8asm2269635qke.80.2022.04.26.08.37.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 08:37:40 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-2ebf4b91212so186681797b3.8;
-        Tue, 26 Apr 2022 08:37:39 -0700 (PDT)
-X-Received: by 2002:a81:8489:0:b0:2f7:edff:239f with SMTP id
- u131-20020a818489000000b002f7edff239fmr10223492ywf.256.1650987459637; Tue, 26
- Apr 2022 08:37:39 -0700 (PDT)
+        with ESMTP id S1352485AbiDZPts (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:49:48 -0400
+Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB43DAFC2;
+        Tue, 26 Apr 2022 08:46:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=11sZUzwOjgs+gqwyNHC5h0Ql+65wp5IZuERrTmCmbK4=; b=pG0nlL6azQzK0tOk/EhPcANpAo
+        VJqakP9gUhg8WYAEcFCLAUouzbg0YDBYr3chOxbb+Jp1PbU3TTG7KI6OAS34vhSElE3jViDq+njUS
+        Sa7LT4uI14w9kJKyFd+IJrjxcdPsEvEV7GiwiLhtnbasXwTrLa/uP/gVVv4sZBr4DQBg=;
+Received: from [217.114.218.26] (helo=nf.local)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1njNOe-00013r-7F; Tue, 26 Apr 2022 17:46:36 +0200
+Message-ID: <14c5ad61-370b-bcc9-c41c-45312275a0ff@nbd.name>
+Date:   Tue, 26 Apr 2022 17:46:35 +0200
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-10-phil.edworthy@renesas.com>
-In-Reply-To: <20220330154024.112270-10-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Apr 2022 17:37:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXSRx5XxS0a0OkJd+tiyXmXGxprQkwgWDT9FODLz5=msw@mail.gmail.com>
-Message-ID: <CAMuHMdXSRx5XxS0a0OkJd+tiyXmXGxprQkwgWDT9FODLz5=msw@mail.gmail.com>
-Subject: Re: [PATCH v2 09/13] clk: renesas: rzg2l: Add support for RZ/V2M
- reset monitor reg
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH -next] clk: en7523: fix wrong pointer check in
+ en7523_clk_probe()
+Content-Language: en-US
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com
+References: <20220426131539.388382-1-yangyingliang@huawei.com>
+From:   Felix Fietkau <nbd@nbd.name>
+In-Reply-To: <20220426131539.388382-1-yangyingliang@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Phil,
+On 26.04.22 15:15, Yang Yingliang wrote:
+> Check the real return value of devm_platform_ioremap_resource()
+> in en7523_clk_probe().
+> 
+> Fixes: 1e6273179190 ("clk: en7523: Add clock driver for Airoha EN7523 SoC")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-On Wed, Mar 30, 2022 at 5:42 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> The RZ/V2M doesn't have a matching set of reset monitor regs for each reset
-> reg like the RZ/G2L. Instead, it has a single CPG_RST_MON reg which has a
-> single bit per module.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -748,8 +748,12 @@ static int rzg2l_cpg_status(struct reset_controller_dev *rcdev,
->         const struct rzg2l_cpg_info *info = priv->info;
->         unsigned int reg = info->resets[id].off;
->         u32 bitmask = BIT(info->resets[id].bit);
-> +       u32 monbitmask = BIT(info->resets[id].monbit);
-
-BIT(-1) is not defined...
-
->
-> -       return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-> +       if (info->has_clk_mon_regs)
-> +               return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);
-> +       else
-> +               return !!(readl(priv->base + CPG_RST_MON) & monbitmask);
-
-... hence the above may behave badly when the reset has no bit in
-CPG_RST_MON (69 resets do not have a bit in CPG_RST_MON).
-
-> --- a/drivers/clk/renesas/rzg2l-cpg.h
-> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> @@ -18,6 +18,7 @@
->  #define CPG_PL3_SSEL           (0x408)
->  #define CPG_PL6_SSEL           (0x414)
->  #define CPG_PL6_ETH_SSEL       (0x418)
-> +#define CPG_RST_MON            (0x680)
->
->  #define CPG_CLKSTATUS_SELSDHI0_STS     BIT(28)
->  #define CPG_CLKSTATUS_SELSDHI1_STS     BIT(29)
-> @@ -151,17 +152,22 @@ struct rzg2l_mod_clk {
->   *
->   * @off: register offset
->   * @bit: reset bit
-> + * @monbit: monitor bit in CPG_RST_MON register, -1 if none
->   */
->  struct rzg2l_reset {
->         u16 off;
->         u8 bit;
-> +       s8 monbit;
->  };
->
-> -#define DEF_RST(_id, _off, _bit)       \
-> +#define DEF_RST_MON(_id, _off, _bit, _monbit)  \
->         [_id] = { \
->                 .off = (_off), \
-> -               .bit = (_bit) \
-> +               .bit = (_bit), \
-> +               .monbit = (_monbit) \
->         }
-> +#define DEF_RST(_id, _off, _bit)       \
-> +       DEF_RST_MON(_id, _off, _bit, -1)
->
->  /**
->   * struct rzg2l_cpg_info - SoC-specific CPG Description
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Felix Fietkau <nbd@nbd.name>
