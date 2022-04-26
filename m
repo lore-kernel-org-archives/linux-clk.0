@@ -2,180 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78B5C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C68C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343626AbiDZHL2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41714 "EHLO
+        id S1343696AbiDZHUw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 03:20:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343725AbiDZHLY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:11:24 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E69F37BCA
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:08:17 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id i27so34100461ejd.9
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=myMJmmFzXabm0MK8zN+AefUrpxOTRg0KpTHnfY8SV+k=;
-        b=dky4F+ZpEvfdqcQOTGzp4A+aq5RvLb28otRcNi3DcgkiqiFA2nKPK/Y9UDrHakFyMj
-         fUlE7g537+mnO5GDaDHPiSjZVRCfCv02qJBG0mu8swW5UCNIXVIWvAMqpOoEvwaiaK/E
-         MOvmPKiAr5XCwpx0dMWqecvTvO5NozzKjYbVyoDirTAPzUzU5abZrnwPwajnoCh+8hO7
-         UTUaucOUhwjTvWpxhezi+x4agKcerorZDZ5pFKuMUZmk9jYL9oURCNjOvQzcBZpZiCa/
-         nDeSBEfZuujw3mebo3w5NOy+Pi1Wu5Pe230s1dJg4M/4tC2/3/Da/wMa4hwMKxger2ps
-         DQpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=myMJmmFzXabm0MK8zN+AefUrpxOTRg0KpTHnfY8SV+k=;
-        b=Tm8bs6AzpKvqjTwkaQeQ7VN8b0HQmIZx00CrYb9bULZZtc7DdLtdU6cX14qQrRtoLN
-         2QRKkGxdw5wqLDH69Ryct7xSj/+DdE9P7dRBLiER7xV3XsuCpqS1GwtPjWPZfG/UJqjS
-         x2deNxS2IPNiTUxoaieYxmmii+IgRT/fxI3NVlZJcUtHpOGVBN3X57926eJM8R1rcuUQ
-         Bjl7quYpc590HPa+Zr5aMZ2gi9A1XNoF1UQWRENJFxOILqmNsFThKjJlNFnhem0HBPHh
-         lf7KRRFyKbdk9j2I6XuSbj4t+pfhKUPX92F+paheUfPzlN5eO1kJ67TLE/MUc9dZ0HtS
-         KdoA==
-X-Gm-Message-State: AOAM533miOESYmtbxG6axzZ05Z3bIQHD3fhT5PsUbgy3ncAS96hoyGEg
-        bUJvqXCfafAsgaLIC5+eZ1v82A==
-X-Google-Smtp-Source: ABdhPJyJm7edS3wk4FQaxMVtJqIYWKgMPmgVMD3GlzTqVk274oieHiuG28hXKbIevNFawdYIy0Kihw==
-X-Received: by 2002:a17:906:5d0d:b0:6f3:a870:ff2a with SMTP id g13-20020a1709065d0d00b006f3a870ff2amr3803917ejt.171.1650956895542;
-        Tue, 26 Apr 2022 00:08:15 -0700 (PDT)
-Received: from [192.168.0.244] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id p12-20020a50c94c000000b00425c48132bfsm5005280edh.55.2022.04.26.00.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 00:08:15 -0700 (PDT)
-Message-ID: <8579a3df-1a1d-c258-f65e-531cf0731949@linaro.org>
-Date:   Tue, 26 Apr 2022 09:08:14 +0200
+        with ESMTP id S242416AbiDZHUt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:20:49 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD7F8BF6E;
+        Tue, 26 Apr 2022 00:17:42 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C2E6E210EA;
+        Tue, 26 Apr 2022 07:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1650957460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=E341m0oGAZ8uwfYf1PyOsWw2EY2ezQuuipQASY4qGhM=;
+        b=HDAJXwas5NvCqoiwQ7rHZHQ0CIxgB0k64TTcJDFBbBPmbmlYEtZEgoyDMKzktRiMq8g43s
+        jbaUFHMY7zDJ0b7SsFz/ywwwxzjoQKkex/6FYfVDeotPaaGalAH5DhVqFUbjp+N9ReAUB2
+        EIfEH/eIZDzw3BtusTQi5w69L1izR3Y=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 4270D2C141;
+        Tue, 26 Apr 2022 07:17:40 +0000 (UTC)
+Date:   Tue, 26 Apr 2022 09:17:39 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+ <YmLFPJTyoE4GYWp4@carbon>
+ <20220422234820.plusgyixgybebfmi@moria.home.lan>
+ <YmNH/fh8OwTJ6ASC@carbon>
+ <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
+ <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+ <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 3/3] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220425212750.2749135-1-dmitry.baryshkov@linaro.org>
- <20220425212750.2749135-4-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220425212750.2749135-4-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/04/2022 23:27, Dmitry Baryshkov wrote:
-> Split tsens properties to the child node of the gcc. This follows the
-> lead of ipq8064 (which also uses a separate node for tsens) and makes
-> device tree closer to other platforms, where tsens is a completely
-> separate device.
+On Mon 25-04-22 11:28:11, Kent Overstreet wrote:
+> On Mon, Apr 25, 2022 at 11:28:26AM +0200, Michal Hocko wrote:
+> > 
+> > > Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
+> > > or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
+> > > generate the report on slabs, since we're taking the slab mutex there.
+> > 
+> > No it's not. You simply _cannot_ allocate from the oom context.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../bindings/clock/qcom,gcc-apq8064.yaml      | 45 +++++++------------
->  1 file changed, 17 insertions(+), 28 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> index b867da12761e..f2762599f679 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> @@ -23,47 +23,36 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - qcom,gcc-apq8064
-> -      - qcom,gcc-msm8060
+> Hmm, no, that can't be right. I've been using the patch set and it definitely
+> works, at least in my testing.
 
-Hm, such list does not exist in mainline, so is your set rebased on
-something? See also:
-https://lore.kernel.org/linux-devicetree/20220425133527.3723233-1-robh@kernel.org/
-https://lore.kernel.org/linux-devicetree/20220426064241.6379-1-krzysztof.kozlowski@linaro.org/
+Yes, the world will not fall down and it really depends on the workload
+what kind of effect this might have.
 
+> Do you mean to say that we shouldn't? Can you explain why?
 
-> -
-> -  nvmem-cells:
-> -    minItems: 1
-> -    maxItems: 2
-> -    description:
-> -      Qualcomm TSENS (thermal sensor device) on some devices can
-> -      be part of GCC and hence the TSENS properties can also be part
-> -      of the GCC/clock-controller node.
-> -      For more details on the TSENS properties please refer
-> -      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> -
-> -  nvmem-cell-names:
-> -    minItems: 1
->      items:
-> -      - const: calib
-> -      - const: calib_backup
+I have already touched on that but let me reiterate. Allocation context
+called from the oom path will have an unbound access to memory reserves.
+Those are a last resort emergency pools of memory that are not available
+normally and there are areas which really depend on them to make a
+further progress to release the memory pressure.
 
-I see the removal of tsens properties, but I do not see the other part
-of split - adding them as child. It does not come from qcom,gcc.yaml,
-either.
+Swap over NFS would be one such example. If some other code path messes
+with those reserves the swap IO path could fail with all sorts of
+fallouts.
 
-> -
-> -  '#thermal-sensor-cells':
-> -    const: 1
-> +      - enum:
-> +          - qcom,gcc-apq8064
-> +          - qcom,gcc-msm8060
-> +      - const: syscon
->  
->  required:
->    - compatible
-> -  - nvmem-cells
-> -  - nvmem-cell-names
-> -  - '#thermal-sensor-cells'
->  
->  unevaluatedProperties: false
->  
->  examples:
->    - |
->      clock-controller@900000 {
-> -      compatible = "qcom,gcc-apq8064";
-> +      compatible = "qcom,gcc-apq8064", "syscon";
->        reg = <0x00900000 0x4000>;
-> -      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-> -      nvmem-cell-names = "calib", "calib_backup";
->        #clock-cells = <1>;
->        #reset-cells = <1>;
->        #power-domain-cells = <1>;
-> -      #thermal-sensor-cells = <1>;
-> +
-> +      thermal-sensor {
-> +        compatible = "qcom,msm8960-tsens";
-> +
-> +        nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-> +        nvmem-cell-names = "calib", "calib_backup";
-> +        interrupts = <0 178 4>;
+So to be really exact in my statement. You can allocate from the OOM
+context but it is _strongly_ discouraged unless there is no other way
+around that.
 
-0 and 4 look like GIC/interrupt flags, so please use defines.
-
-> +        interrupt-names = "uplow";
-> +
-> +        #qcom,sensors = <11>;
-> +        #thermal-sensor-cells = <1>;
-> +        };
-
-Indentation looks weird here.
-
->      };
->  ...
-
-
-Best regards,
-Krzysztof
+I would even claim that the memory reclaim in general shouldn't rely on
+memory allocations (other than mempools). If an allocation is really
+necessary then an extra care has to prevent from complete memory
+depletion.
+-- 
+Michal Hocko
+SUSE Labs
