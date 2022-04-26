@@ -2,152 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ED1C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 18:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF9FC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 18:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239535AbiDZS1Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 14:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
+        id S1352413AbiDZSur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 14:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235205AbiDZS1W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 14:27:22 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B661524B7;
-        Tue, 26 Apr 2022 11:24:14 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id l203so10764556oif.0;
-        Tue, 26 Apr 2022 11:24:14 -0700 (PDT)
+        with ESMTP id S1352469AbiDZSuq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 14:50:46 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04C818BF57;
+        Tue, 26 Apr 2022 11:47:38 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id r8so21705962oib.5;
+        Tue, 26 Apr 2022 11:47:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=eYGpzVL6z/9v1Xf7+HUnb3XtEpbv7g1nd4l3yujJBqU=;
-        b=g0mQlxclTxCDLMthMXeZxF5RI6PEX2kV3FVg8Oq2chf7qqniHPcRxzNo7VGLRp13/x
-         UQd2tLiBscbDFvpTU7OEaM/CWo0tzVfVixSGmW7s4409hLzUKS+GZ53d/kS56SLoYUF1
-         Jqjrzy2AimgDIBe28bshQQIaRShsnLB1jroVd2D3bJh3TmdKPO9fXCoTaLFv1DPVoKQL
-         ruYOnTo4Iu6W2Iva0pG3rF3UIo1xjFDy0yEhzolZZ/JqIj9FPUz2alOjDhx2bbdeiuZT
-         L/xfZv+HOtD5VxwVnCAQFPNzXGE9yD/9Qxa2hQMZeayLefU26dULjwjJkN8eqHdChlWg
-         XmFg==
-X-Gm-Message-State: AOAM5307WoZD0NL/zX7NI5lbs3ZfSgIZIbPqrW+n7k0+ZsGSDHKNWuRk
-        ZY+GKhiSR4hxceumwpjl8u4kD3gPbQ==
-X-Google-Smtp-Source: ABdhPJwqJ/M/GPcWpn4KFmsYPNq6cn7iuEhMpX3WrbveRkvKdJR+4UP5ufGYG8dqHTiVlMa8p7jzuw==
-X-Received: by 2002:a05:6808:8da:b0:324:be6a:e866 with SMTP id k26-20020a05680808da00b00324be6ae866mr9705228oij.72.1650997453643;
-        Tue, 26 Apr 2022 11:24:13 -0700 (PDT)
+        bh=1uymfQiPxL3nM8OAUppQEvfmPuzquyZRpSRTKhxYVpY=;
+        b=Jc/RE+XefSQzNhXSgVxjw1n8LtYZBfRr+jzRYSmBI+lV0+QN+ejID6PjyHRnI4VX3s
+         HKisYKqDeom8cLb0wf9lH0OWaGXbOYVOV4umqys8jsz2JK/Odp99m3QqpDGWyK5GvVAp
+         a+xLMNM3wi+QU63LVaoP9SzTqCFPy8+9ZyR0sUZgVjmmDvBlK+zVXkL9RWgTn/NM3gOC
+         GT90riQrSd9/57MYBRd5H8sJyTzXDitvbGww2gHAD2KInXuKo5aMzQEhUVsvtMRK2Ss3
+         BKdjQrJsfe2d2Ni5tHqDCTSTLKmzwGJSYzsY80KjKwnOUm26hIJbC+DWQ6P1wBO2fN70
+         prPw==
+X-Gm-Message-State: AOAM531IV3iBOHrqvpa5xTmNKRXFa25DN5v7a3oYLNXGYoi2CtBP2Oyd
+        Q3tVrY1jvDo6eXf4a2ufjw==
+X-Google-Smtp-Source: ABdhPJyM1lyE288UlIkDddumXd32y92F4WYqMeTFtZj6sy25wfIWqHkKXBOpvngFKm3dl2kOjf0I7A==
+X-Received: by 2002:a05:6808:f02:b0:325:e78:3bbf with SMTP id m2-20020a0568080f0200b003250e783bbfmr7542341oiw.86.1650998858297;
+        Tue, 26 Apr 2022 11:47:38 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id l16-20020a9d6a90000000b0060548d240d4sm5160969otq.74.2022.04.26.11.24.12
+        by smtp.gmail.com with ESMTPSA id h1-20020a056870d34100b000e686d1389dsm1113835oag.55.2022.04.26.11.47.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 11:24:13 -0700 (PDT)
-Received: (nullmailer pid 2302730 invoked by uid 1000);
-        Tue, 26 Apr 2022 18:24:12 -0000
-Date:   Tue, 26 Apr 2022 13:24:12 -0500
+        Tue, 26 Apr 2022 11:47:37 -0700 (PDT)
+Received: (nullmailer pid 2339368 invoked by uid 1000);
+        Tue, 26 Apr 2022 18:47:37 -0000
+Date:   Tue, 26 Apr 2022 13:47:37 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_tdas@quicinc.com
-Subject: Re: [PATCH v4 3/3] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Message-ID: <Ymg4zFsQB2MAQ/T5@robh.at.kernel.org>
-References: <20220426094144.2958416-1-dmitry.baryshkov@linaro.org>
- <20220426094144.2958416-4-dmitry.baryshkov@linaro.org>
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-mediatek@lists.infradead.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Ryder Lee <ryder.lee@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: mediatek: topckgen: Convert to
+ DT schema
+Message-ID: <Ymg+SUzI6FMFDE4J@robh.at.kernel.org>
+References: <20220424084647.76577-1-y.oudjana@protonmail.com>
+ <20220424084647.76577-2-y.oudjana@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220426094144.2958416-4-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220424084647.76577-2-y.oudjana@protonmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 12:41:44PM +0300, Dmitry Baryshkov wrote:
-> Split tsens properties to the child node of the gcc. This follows the
-> lead of ipq8064 (which also uses a separate node for tsens) and makes
-> device tree closer to other platforms, where tsens is a completely
-> separate device.
+On Sun, 24 Apr 2022 12:46:45 +0400, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Convert topckgen bindings to DT schema format. MT2701, MT7623 and
+> MT7629 device trees currently have the syscon compatible without
+> it being mentioned in the old DT bindings file which introduces
+> dtbs_check errors when converting to DT schema as-is, so
+> mediatek,mt2701-topckgen and mediatek,mt7629-topckgen are placed
+> in the last items list with the syscon compatible, and syscon is
+> added to the mediatek,mt7623-topckgen list.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 > ---
->  .../bindings/clock/qcom,gcc-apq8064.yaml      | 45 +++++++------------
->  1 file changed, 17 insertions(+), 28 deletions(-)
+>  .../arm/mediatek/mediatek,topckgen.txt        | 35 -----------
+>  .../bindings/clock/mediatek,topckgen.yaml     | 61 +++++++++++++++++++
+>  2 files changed, 61 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> index b867da12761e..f2762599f679 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> @@ -23,47 +23,36 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - qcom,gcc-apq8064
-> -      - qcom,gcc-msm8060
-> -
-> -  nvmem-cells:
-> -    minItems: 1
-> -    maxItems: 2
-> -    description:
-> -      Qualcomm TSENS (thermal sensor device) on some devices can
-> -      be part of GCC and hence the TSENS properties can also be part
-> -      of the GCC/clock-controller node.
-> -      For more details on the TSENS properties please refer
-> -      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> -
-> -  nvmem-cell-names:
-> -    minItems: 1
->      items:
-> -      - const: calib
-> -      - const: calib_backup
-> -
-> -  '#thermal-sensor-cells':
-> -    const: 1
-> +      - enum:
-> +          - qcom,gcc-apq8064
-> +          - qcom,gcc-msm8060
-> +      - const: syscon
->  
->  required:
->    - compatible
-> -  - nvmem-cells
-> -  - nvmem-cell-names
-> -  - '#thermal-sensor-cells'
->  
->  unevaluatedProperties: false
->  
->  examples:
->    - |
->      clock-controller@900000 {
-> -      compatible = "qcom,gcc-apq8064";
-> +      compatible = "qcom,gcc-apq8064", "syscon";
->        reg = <0x00900000 0x4000>;
-> -      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-> -      nvmem-cell-names = "calib", "calib_backup";
->        #clock-cells = <1>;
->        #reset-cells = <1>;
->        #power-domain-cells = <1>;
-> -      #thermal-sensor-cells = <1>;
-> +
-> +      thermal-sensor {
 
-This should throw a warning I think as 'thermal-sensor' needs to be 
-defined. The patch didn't apply for me though.
-
-> +        compatible = "qcom,msm8960-tsens";
-> +
-> +        nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-> +        nvmem-cell-names = "calib", "calib_backup";
-> +        interrupts = <0 178 4>;
-> +        interrupt-names = "uplow";
-> +
-> +        #qcom,sensors = <11>;
-> +        #thermal-sensor-cells = <1>;
-> +        };
->      };
->  ...
-> -- 
-> 2.35.1
-> 
-> 
+Applied, thanks!
