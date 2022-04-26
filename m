@@ -2,38 +2,40 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5868EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30156C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:29:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344719AbiDZI1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 04:27:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
+        id S1344870AbiDZIcj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 04:32:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344758AbiDZI0o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:26:44 -0400
+        with ESMTP id S1344899AbiDZIbF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:31:05 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13B9F3DDF9;
-        Tue, 26 Apr 2022 01:23:18 -0700 (PDT)
-X-UUID: ca5bc5c1788243d9bdf00873341344a6-20220426
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9AF67DAAF;
+        Tue, 26 Apr 2022 01:24:59 -0700 (PDT)
+X-UUID: 8e75016a60514b81be909cfb7eeb1e30-20220426
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:deaf5418-98ed-4509-9059-884e43cd696f,OB:0,LO
+X-CID-O-INFO: VERSION:1.1.4,REQID:3fd02bc8-e753-422f-add6-d674bf6e7ff4,OB:0,LO
         B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
         ON:release,TS:0
-X-CID-META: VersionHash:faefae9,CLOUDID:c5bdbb2e-6199-437e-8ab4-9920b4bc5b76,C
+X-CID-META: VersionHash:faefae9,CLOUDID:cac083c6-85ee-4ac1-ac05-bd3f1e72e732,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: ca5bc5c1788243d9bdf00873341344a6-20220426
+X-UUID: 8e75016a60514b81be909cfb7eeb1e30-20220426
 Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1906228943; Tue, 26 Apr 2022 16:23:11 +0800
+        with ESMTP id 1336388002; Tue, 26 Apr 2022 16:24:55 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 26 Apr 2022 16:23:10 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Tue, 26 Apr 2022 16:24:54 +0800
 Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 26 Apr 2022 16:23:10 +0800
-Message-ID: <9547368870f6a8d5c5e6bd5dd497ddbe04c51b93.camel@mediatek.com>
-Subject: Re: [PATCH V3 12/17] dt-binding: mt8192: Add infra_ao reset bit
+ Transport; Tue, 26 Apr 2022 16:24:54 +0800
+Message-ID: <edaf444b9c45e5f36757116fe098749348cb54b7.camel@mediatek.com>
+Subject: Re: [PATCH V3 11/17] dt-bindings: arm: mediatek: Add #reset-cells
+ property for MT8192-sys-clock
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -59,13 +61,13 @@ CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         Project_Global_Chrome_Upstream_Group 
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 26 Apr 2022 16:23:10 +0800
-In-Reply-To: <418c5f0c-5279-41f5-3705-345ec9a97ea2@linaro.org>
+Date:   Tue, 26 Apr 2022 16:24:54 +0800
+In-Reply-To: <64411bc7-ce4d-9f85-be8f-c93d6b2a0360@linaro.org>
 References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
-         <20220422060152.13534-13-rex-bc.chen@mediatek.com>
-         <e5b18654-ce83-44ee-e4c8-4cdfc4ceaa1d@linaro.org>
-         <5ec37a01b0b84140a7d171b9a5cff7ad8f9fbe87.camel@mediatek.com>
-         <418c5f0c-5279-41f5-3705-345ec9a97ea2@linaro.org>
+         <20220422060152.13534-12-rex-bc.chen@mediatek.com>
+         <288f55f3-b3ed-32b8-9a44-652f3d53617d@linaro.org>
+         <fdedea6f20738bfe2ede7e526aa653af1ac35768.camel@mediatek.com>
+         <64411bc7-ce4d-9f85-be8f-c93d6b2a0360@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -75,119 +77,64 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2022-04-25 at 15:52 +0800, Krzysztof Kozlowski wrote:
-> On 25/04/2022 07:01, Rex-BC Chen wrote:
-> > On Sat, 2022-04-23 at 18:28 +0800, Krzysztof Kozlowski wrote:
-> > > On 22/04/2022 08:01, Rex-BC Chen wrote:
-> > > > To support reset of infra_ao, add the bit definition for
-> > > > thermal/PCIe/SVS.
-> > > > 
-> > > > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> > > > ---
-> > > >  include/dt-bindings/reset/mt8192-resets.h | 10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > > 
-> > > > diff --git a/include/dt-bindings/reset/mt8192-resets.h
-> > > > b/include/dt-bindings/reset/mt8192-resets.h
-> > > > index be9a7ca245b9..d5f3433175c1 100644
-> > > > --- a/include/dt-bindings/reset/mt8192-resets.h
-> > > > +++ b/include/dt-bindings/reset/mt8192-resets.h
-> > > > @@ -27,4 +27,14 @@
-> > > >  
-> > > >  #define MT8192_TOPRGU_SW_RST_NUM				
-> > > > 23
-> > > >  
-> > > > +/* INFRA RST0 */
-> > > > +#define MT8192_INFRA_RST0_LVTS_AP_RST				
-> > > > 0
-> > > > +/* INFRA RST2 */
-> > > > +#define MT8192_INFRA_RST2_PCIE_PHY_RST				
-> > > > 15
-> > > > +/* INFRA RST3 */
-> > > > +#define MT8192_INFRA_RST3_PTP_RST				
-> > > > 5
-> > > > +/* INFRA RST4 */
-> > > > +#define MT8192_INFRA_RST4_LVTS_MCU				
-> > > > 12
-> > > > +#define MT8192_INFRA_RST4_PCIE_TOP				
-> > > > 1
+On Mon, 2022-04-25 at 15:44 +0800, Krzysztof Kozlowski wrote:
+> On 25/04/2022 04:37, Rex-BC Chen wrote:
+> > > > +  '#reset-cells':
+> > > > +    maximum: 2
 > > > 
-> > > These should be the IDs of reset, not some register
-> > > values/offsets.
-> > > Therefore it is expected to have them incremented by 1.
-> > > 
+> > > Why this is a maximum? Usually this is const, so how do you use
+> > > it
+> > > (with
+> > > what values)?
 > > > 
 > > 
-> > Hello Krzysztof,
-> > 
-> > This is define bit.
-> > 
-> > There is serveral reset set for infra_ao while it's not serial.
-> > For MT8192, it's 0x120/0x130/0x140/0x150/0x730.
-> > We are implement #reset-cells = <2>, and we can use this reset
-> > drive
-> > more easier.
-> > 
-> > For example, in dts, we can define
-> > infra_ao: syscon {
-> > 	compatible = "mediatek,mt8192-infracfg", "syscon";
-> >  	reg = <0 0x10001000 0 0x1000>;
-> >  	#clock-cells = <1>;
-> > 	#reset-cells = <2>;
-> > };
-> > 
-> > thermal {
-> > 	...
-> > 	resets = <&infra_ao 0x730 MT8192_INFRA_RST4_LVTS_MCU>;
-> > 	...
-> > };
-> > 
-> > If it's acceptabel, I can update all bit difinition from 0 to 15
-> > for
-> > all reset set.
+> > We need to let the driver compatible with previous setting in
+> > drivers/clk/mediatek/reset.c
 > 
-> Bits are not acceptable, because you embed specific device
-> programming
-> model (register bits) into the binding.
+> Then it should be enum [1, 2], because '0' is not valid.
 > 
-> These should be IDs, so decimal numbers incremented from 0, so:
-> #define MT8192_INFRA_RST0_LVTS_AP_RST				0
-> #define MT8192_INFRA_RST4_LVTS_MCU				1
-> #define MT8192_INFRA_RST4_PCIE_TOP				2
+> > There are two use cases in our reset driver:
+> > (Refer to [1])
+> > 
+> > 1. #reset-cells = <1>
+> >    When we input the argument, the older driver
+> > use is to calculate  
+> >    bank and bit by different method. From the implementation of
+> >    reset_xlate(), we can see if the argument number is 1, it will
+> >    return directly.
 > 
-> And what is 0x730 in your example? It does not look like ID of a
-> reset...
+> I understand this is an old binding with older compatibles, so this
+> should be restricted per each variant (allOf:if:then)... but wait,
+> old
+> binding did not allow any reset-cells! You add an entirely new
+> binding
+> property and already want to support some older (deprecated?) way.
 > 
-> Entire changeset look wrong from DT point of view.
+> > 
+> > 2. #reset-cells = <2>
+> >    The input arguments is offset and bit. When we input two
+> > arguments,
+> >    we can use reset_xlate() to calculate the corresponding id to
+> > assert
+> >    and deassert.
+> > 
+> > [1]:
+> > 
+https://urldefense.com/v3/__https://lore.kernel.org/all/20220422060152.13534-10-rex-bc.chen@mediatek.com/__;!!CTRNKA9wMg0ARbw!0U0Yrp6WQxZ0YNMjaLJbAdq6Zyc524B4CY57-TP7QJ5FoSkCM72VI7mHJyWa1SZCnYTK$
+> >  
+> > 
+> > If it's acceptable, I will add this in commit message.
+> 
 > 
 > Best regards,
 > Krzysztof
 
 Hello Krzysztof,
 
-Got it. I will modify them to reset index.
-And the dts in my next version would somthing like this:
+I will let #reset-cells = <1> in next version and abandon the
+modification of reset_xlate().
 
-----
-#define MT8192_INFRA_THERMAL_CTRL_RST			0
-#define MT8192_INFRA_PEXTP_PHY_RST			79
-#define MT8192_INFRA_PTP_RST				101
-#define MT8192_INFRA_RST4_PCIE_TOP			129
-#define MT8192_INFRA_THERMAL_CTRL_MCU_RST		140
-----
-
-infra_ao: syscon {
-	compatible = "mediatek,mt8192-infracfg", "syscon";
-	reg = <0 0x10001000 0 0x1000>;
-	#clock-cells = <1>;
-	#reset-cells = <1>;
-};
-
-thermal {
-	...
-	resets = <&infra_ao MT8192_INFRA_THERMAL_CTRL_MCU_RST>;
-	...
-};
+Thanks!
 
 BRs,
 Rex
