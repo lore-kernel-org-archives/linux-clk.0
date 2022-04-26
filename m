@@ -2,71 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDFCC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 13:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B153C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 14:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245501AbiDZNGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 09:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41320 "EHLO
+        id S1351561AbiDZOYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 10:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345378AbiDZNGr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 09:06:47 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5D03BBEF;
-        Tue, 26 Apr 2022 06:03:39 -0700 (PDT)
-Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Knhp55RD9zGpTQ;
-        Tue, 26 Apr 2022 21:01:01 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 26 Apr 2022 21:03:37 +0800
-Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
- (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Tue, 26 Apr
- 2022 21:03:37 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <nbd@nbd.name>,
-        <matthias.bgg@gmail.com>
-Subject: [PATCH -next] clk: en7523: fix wrong pointer check in en7523_clk_probe()
-Date:   Tue, 26 Apr 2022 21:15:39 +0800
-Message-ID: <20220426131539.388382-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1346521AbiDZOYj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 10:24:39 -0400
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8467015817;
+        Tue, 26 Apr 2022 07:21:31 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id f22so12708415qtp.13;
+        Tue, 26 Apr 2022 07:21:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U4A617tk0nNBBFScQn0uljcqEi3aKbLGbWvmjOlIlM0=;
+        b=cQi2P4t4f5t2ae2xzGeo2VJdceQL6834VW89UKpoyMV/n3do4+kdfHQbNdbDMbtVds
+         4LREVEAnvGASD6WF1+Vb3iyt8wXzIpsHUnpFVw+wiEJjF3my7pqEzf5vMPelndm9KTxo
+         wCKWvsq2WDsUbMFal+T1DbL19LmKAy0+CPxCsH54IkI06kCA1qqt+afD0Cm8p/WPOsm1
+         iGmJhq23b7xIQ+OFEENarMkXII7/EGguPRyK8qF8grbVtGHW/WMGg9i4FAQhJeeIt6mi
+         CRiXj4llPDaj3cqQ2Iq7j81taxSMEocSaZ2GDl2PbTVUXMI0z3lNLM0JQTJg24VFdlTK
+         +Rrw==
+X-Gm-Message-State: AOAM530s7qQDj4hfa0DRV+36+piazwu5oVFHwQDSHwK67t/tSNLfN5Cz
+        YgG2j43AFhV3tvLqQKApsxjNe7bufaTJFw==
+X-Google-Smtp-Source: ABdhPJxoTGOwfiIpO87FcoNvbMnBrDfjmPvjSc+OcSQ9iWbH6UYyXJ7h+e/hFzISq/sF+QDsTH/LAw==
+X-Received: by 2002:a05:622a:14c:b0:2f3:7232:f5d8 with SMTP id v12-20020a05622a014c00b002f37232f5d8mr4211812qtw.390.1650982890421;
+        Tue, 26 Apr 2022 07:21:30 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id x24-20020ac87318000000b002f1fc5fcaedsm7474982qto.68.2022.04.26.07.21.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 07:21:29 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id m128so15290981ybm.5;
+        Tue, 26 Apr 2022 07:21:29 -0700 (PDT)
+X-Received: by 2002:a25:9e89:0:b0:63c:ad37:a5de with SMTP id
+ p9-20020a259e89000000b0063cad37a5demr21057779ybq.342.1650982889534; Tue, 26
+ Apr 2022 07:21:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-5-phil.edworthy@renesas.com>
+In-Reply-To: <20220330154024.112270-5-phil.edworthy@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 26 Apr 2022 16:21:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWErGQuE+ESi3ZGVgyW5ouUthr5XsmnwLJD0VX6D3QVPA@mail.gmail.com>
+Message-ID: <CAMuHMdWErGQuE+ESi3ZGVgyW5ouUthr5XsmnwLJD0VX6D3QVPA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/13] dt-bindings: clock: renesas,rzg2l: Document
+ RZ/V2M SoC
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Check the real return value of devm_platform_ioremap_resource()
-in en7523_clk_probe().
+Hi Phil,
 
-Fixes: 1e6273179190 ("clk: en7523: Add clock driver for Airoha EN7523 SoC")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/clk/clk-en7523.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Mar 30, 2022 at 5:41 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> Document the device tree binding for the Renesas RZ/V2M (r9a09g011) SoC.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 076a70c2e173..29f0126cbd05 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -314,7 +314,7 @@ static int en7523_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(base);
- 
- 	np_base = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(base))
-+	if (IS_ERR(np_base))
- 		return PTR_ERR(np_base);
- 
- 	clk_data = devm_kzalloc(&pdev->dev,
--- 
-2.25.1
+Thanks for your patch!
 
+> --- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> @@ -42,9 +44,10 @@ properties:
+>      description: |
+>        - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+>          and a core clock reference, as defined in
+> -        <dt-bindings/clock/r9a07g*-cpg.h>
+> +        <dt-bindings/clock/r9a07g*-cpg.h> or <dt-bindings/clock/r9a09g011-cpg.h>
+
+I guess we can simplify to dt-bindings/clock/r9a0*-cpg.h?
+
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
