@@ -2,254 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847A9C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCECC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 09:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345687AbiDZIrH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 04:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
+        id S1348028AbiDZJrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 05:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346843AbiDZIpZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:45:25 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A7991546;
-        Tue, 26 Apr 2022 01:35:56 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id bz24so12079749qtb.2;
-        Tue, 26 Apr 2022 01:35:56 -0700 (PDT)
+        with ESMTP id S1346374AbiDZJrd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 05:47:33 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCD4184;
+        Tue, 26 Apr 2022 02:03:17 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id c15so21051351ljr.9;
+        Tue, 26 Apr 2022 02:03:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MX4vOhzYQqxe/6ioulymTKqPZgxEMTYGPJeDxEb8L4A=;
-        b=VL4pcSVBuJM2bnh8rLbrUm0y8adJi6vaYPktQzUL3HHS6E9fi4DCCoAt5fCxCg0BdE
-         e+2lPWjBsrT2t300U1JCGqMuAtoqNaEkhLnHNTaNh6guaB4E1pbg0TDxF5LfrVK0hU1E
-         lqARju3qAhWjmnYKrVoG5/S92P+MRImS+QoxY=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Si96HTniFqAHPeuy1DolLYYuwT3M1Hn5V7Wkw5gU8dw=;
+        b=I+zMLdnK0IsKBTQHU/XV/hEh4vvw0myMCRtn4sbatiHozSMkOGb0FOsgBwA/vfVjhD
+         uU3Wiv1PLIRpzYcRSCNwViH2i0lwYGHFTaY2x93DkdzTQeM9+yTozlQdsu1MwoDTeEfA
+         LQwypL7I8OR19vYMCUMA9bgIFROc42Fk+7758yQa+ZGI6I3Je+iRLrEGRvJFPQEDP1YH
+         eg5btLnW9fI1aWbIFt5yGI1wx0SJGRfUyi3NkT7Obcs8U1PTFPkhV8SxVCMe8YEIDRbJ
+         95YjluZXoumd/xFuH+z8ChJ5PBx7lJtuoHAqfgeNSPK6o5e9hHuIP3vPMS8mzs7OfhmG
+         IKzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MX4vOhzYQqxe/6ioulymTKqPZgxEMTYGPJeDxEb8L4A=;
-        b=OiNimLNb4iH2hSZAHu6Upt6LD9wQvzLcPOlhRmXZdgd0zhKb38cQD5VJMUd+71r5nQ
-         9KMo5iss0l6Z0zmFKmleXtinS9giXzrUL7a0zGS7Ro3sXdYctWKaXyJNZ7Jk8cC3dmQa
-         jdTkN5+HJG91tnuh8nLOpfVJHq2M1UqISyWxtpHLLS5EnHL5s4xV/kaclV5zhfwDe5gJ
-         xJsj3frmrsVwxpuVlVjWh2WRJmq+6++h/3cPmOXmdL5tMbJD+dwqKJkacLT7hdVBN1wi
-         Y8Tl8kis6LXtNZRBqN/S0MT7XGohOrvS6GVd14+vGHJsqZynT1HoDF2b3PIg1czzgnVr
-         UGUw==
-X-Gm-Message-State: AOAM530iHlrxehO4y9sIUEInIA5gwIpRnQg/9UgSYUj98OBEAkoC4E6x
-        I2aPHsHg5ombPHsZaHSYqcLzRzLrL8n+13WcSSM=
-X-Google-Smtp-Source: ABdhPJz2mzhqu6B2cvzIz1ZBaACtI91w2Kuc7FS9HFztq9oN9ipATALm+M2aAJrOqWRGmtgoCMVf35NR7B+BW650jf0=
-X-Received: by 2002:a05:622a:c4:b0:2e1:cb5b:9b5c with SMTP id
- p4-20020a05622a00c400b002e1cb5b9b5cmr14578628qtw.69.1650962155447; Tue, 26
- Apr 2022 01:35:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
- <20220422183012.444674-5-j.neuschaefer@gmx.net> <31cb9af1-173d-bef5-64da-ccf5a01f2485@linaro.org>
-In-Reply-To: <31cb9af1-173d-bef5-64da-ccf5a01f2485@linaro.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 26 Apr 2022 08:35:43 +0000
-Message-ID: <CACPK8XdRYvike9Z98JzfO1r0W2jfkESr8xMGSH4kkigwZ_MkyQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Si96HTniFqAHPeuy1DolLYYuwT3M1Hn5V7Wkw5gU8dw=;
+        b=F3ad8Ygr3euGH+2PkLYDcUz/aaAV5iEzxt81R1E+iJ7x1ODJ5Co3SfDKgJ11DXMQaE
+         /kgS/Qncg+tUNMnG6ElySDrwhsvoMqUUDAFRbJUTeq3mxUo02O+jZkF9k6bo1BvIFs6W
+         RqQdfdXjarGTBzc+sDef9qoL0YMizmTNojH+yX5+v7rYUxyW16tnPsdhAHYyL+dS4NUf
+         CrTmcSahgX1whqIfLyZwaV5YjbQHyU1wIuvzJk8agSETivkqOs4nlg9yE4zWWIe8pia1
+         6rFmAw/N602N3dPUP2SV71+KpCyJ8ONHBDuZvB8wXzfeSEbrK78mQNHPrq8g6qLKTVRU
+         tEiQ==
+X-Gm-Message-State: AOAM5328jPU/RLz/yhUjbqM3bI1/Uq7zJRJg/Bh1AY7K4TGoJCZwN8fY
+        teipAvg8NKDd3o6CStZkbwH4svJxX0o=
+X-Google-Smtp-Source: ABdhPJyp8ibW5mSQfSOznK4zZ6YB3MyymZuzLrP+5/DL3Ssiv5SEM3UZA1quuwjQGYWglB+c6A0XgQ==
+X-Received: by 2002:a2e:b901:0:b0:24f:f84:9793 with SMTP id b1-20020a2eb901000000b0024f0f849793mr6657359ljb.256.1650963796118;
+        Tue, 26 Apr 2022 02:03:16 -0700 (PDT)
+Received: from localhost.localdomain (adla4.neoplus.adsl.tpnet.pl. [79.185.4.4])
+        by smtp.gmail.com with ESMTPSA id i6-20020a198c46000000b0044424910c94sm1676907lfj.113.2022.04.26.02.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 02:03:15 -0700 (PDT)
+From:   Adam Skladowski <a39.skl@gmail.com>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: smd: Update MSM8976 RPM clocks.
+Date:   Tue, 26 Apr 2022 11:02:17 +0200
+Message-Id: <20220426090226.27293-1-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 25 Apr 2022 at 07:59, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 22/04/2022 20:30, Jonathan Neusch=C3=A4fer wrote:
-> > The Nuvoton WPCM450 SoC has a combined clock and reset controller.
-> > Add a devicetree binding for it, as well as definitions for the bit
-> > numbers used by it.
-> >
-> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > ---
->
-> Thank you for your patch. There is something to discuss/improve.
->
-> >  .../bindings/clock/nuvoton,wpcm450-clk.yaml   | 74 +++++++++++++++++++
-> >  .../dt-bindings/clock/nuvoton,wpcm450-clk.h   | 67 +++++++++++++++++
-> >  2 files changed, 141 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpc=
-m450-clk.yaml
-> >  create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-cl=
-k.yaml b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
-> > new file mode 100644
-> > index 0000000000000..0fffa8a68dee4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
-> > @@ -0,0 +1,74 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/nuvoton,wpcm450-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton WPCM450 clock controller binding
->
-> s/binding//
->
-> > +
-> > +maintainers:
-> > +  - Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > +
-> > +description:
-> > +  This binding describes the clock controller of the Nuvoton WPCM450 S=
-oC, which
-> > +  supplies clocks and resets to the rest of the chip.
->
-> s/This binding describes//
->
-> Just describe the hardware.
->
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: nuvoton,wpcm450-clk
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Reference clock oscillator (should be 48 MHz)
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: refclk
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - '#clock-cells'
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/nuvoton,wpcm450-clk.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +    refclk: clock-48mhz {
-> > +      /* 48 MHz reference oscillator */
-> > +      compatible =3D "fixed-clock";
-> > +      clock-output-names =3D "refclk";
-> > +      clock-frequency =3D <48000000>;
-> > +      #clock-cells =3D <0>;
-> > +    };
-> > +
-> > +    clk: clock-controller@b0000200 {
-> > +      reg =3D <0xb0000200 0x100>;
-> > +      compatible =3D "nuvoton,wpcm450-clk";
-> > +      clocks =3D <&refclk>;
-> > +      clock-names =3D "refclk";
-> > +      #clock-cells =3D <1>;
-> > +      #reset-cells =3D <1>;
-> > +    };
-> > +
-> > +    serial@b8000000 {
-> > +      compatible =3D "nuvoton,wpcm450-uart";
-> > +      reg =3D <0xb8000000 0x20>;
-> > +      reg-shift =3D <2>;
-> > +      interrupts =3D <7 IRQ_TYPE_LEVEL_HIGH>;
-> > +      clocks =3D <&clk WPCM450_CLK_UART0>;
-> > +    };
->
-> Skip the consumer example, it's obvious/trivial/duplicating.
->
-> > diff --git a/include/dt-bindings/clock/nuvoton,wpcm450-clk.h b/include/=
-dt-bindings/clock/nuvoton,wpcm450-clk.h
-> > new file mode 100644
-> > index 0000000000000..86e1c895921b7
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/nuvoton,wpcm450-clk.h
-> > @@ -0,0 +1,67 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> > +
-> > +#ifndef _DT_BINDINGS_CLOCK_NUVOTON_WPCM450_CLK_H
-> > +#define _DT_BINDINGS_CLOCK_NUVOTON_WPCM450_CLK_H
-> > +
-> > +/* Clocks based on CLKEN bits */
-> > +#define WPCM450_CLK_FIU            0
-> > +#define WPCM450_CLK_XBUS           1
-> > +#define WPCM450_CLK_KCS            2
-> > +#define WPCM450_CLK_SHM            4
-> > +#define WPCM450_CLK_USB1           5
-> > +#define WPCM450_CLK_EMC0           6
-> > +#define WPCM450_CLK_EMC1           7
-> > +#define WPCM450_CLK_USB0           8
-> > +#define WPCM450_CLK_PECI           9
-> > +#define WPCM450_CLK_AES           10
-> > +#define WPCM450_CLK_UART0         11
-> > +#define WPCM450_CLK_UART1         12
-> > +#define WPCM450_CLK_SMB2          13
-> > +#define WPCM450_CLK_SMB3          14
-> > +#define WPCM450_CLK_SMB4          15
-> > +#define WPCM450_CLK_SMB5          16
-> > +#define WPCM450_CLK_HUART         17
-> > +#define WPCM450_CLK_PWM           18
-> > +#define WPCM450_CLK_TIMER0        19
-> > +#define WPCM450_CLK_TIMER1        20
-> > +#define WPCM450_CLK_TIMER2        21
-> > +#define WPCM450_CLK_TIMER3        22
-> > +#define WPCM450_CLK_TIMER4        23
-> > +#define WPCM450_CLK_MFT0          24
-> > +#define WPCM450_CLK_MFT1          25
-> > +#define WPCM450_CLK_WDT           26
-> > +#define WPCM450_CLK_ADC           27
-> > +#define WPCM450_CLK_SDIO          28
-> > +#define WPCM450_CLK_SSPI          29
-> > +#define WPCM450_CLK_SMB0          30
-> > +#define WPCM450_CLK_SMB1          31
-> > +
-> > +/* Other clocks */
-> > +#define WPCM450_CLK_USBPHY        32
-> > +
-> > +#define WPCM450_NUM_CLKS          33
-> > +
-> > +/* Resets based on IPSRST bits */
->
-> All these defines should be in second header in dt-bindings/reset/...
+MSM8976 does not have rpm clock named mmssnoc,
+instead it's called sysmmnoc, drop define and reuse.
+While we are at it add XO clock to list.
 
-I disagree. It makes more sense to keep the definitions together, and
-it's all for the same hardware and driver.
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->
-> > +#define WPCM450_RESET_FIU          0
->
->
-> Best regards,
-> Krzysztof
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index afc6dc930011..10b4e6d8d10f 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -563,17 +563,19 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+ 	.num_clks = ARRAY_SIZE(msm8974_clks),
+ };
+ 
+-DEFINE_CLK_SMD_RPM(msm8976, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
+-		   QCOM_SMD_RPM_BUS_CLK, 2);
+ DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+ 
+ static struct clk_smd_rpm *msm8976_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
+ 	[RPM_SMD_PCNOC_CLK] = &msm8916_pcnoc_clk,
+ 	[RPM_SMD_PCNOC_A_CLK] = &msm8916_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK] = &msm8916_snoc_clk,
+ 	[RPM_SMD_SNOC_A_CLK] = &msm8916_snoc_a_clk,
+ 	[RPM_SMD_BIMC_CLK] = &msm8916_bimc_clk,
+ 	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
++	[RPM_SMD_SYSMMNOC_CLK]	= &msm8936_sysmmnoc_clk,
++	[RPM_SMD_SYSMMNOC_A_CLK] = &msm8936_sysmmnoc_a_clk,
+ 	[RPM_SMD_QDSS_CLK] = &msm8916_qdss_clk,
+ 	[RPM_SMD_QDSS_A_CLK] = &msm8916_qdss_a_clk,
+ 	[RPM_SMD_BB_CLK1] = &msm8916_bb_clk1,
+@@ -586,8 +588,6 @@ static struct clk_smd_rpm *msm8976_clks[] = {
+ 	[RPM_SMD_BB_CLK1_A_PIN] = &msm8916_bb_clk1_a_pin,
+ 	[RPM_SMD_BB_CLK2_PIN] = &msm8916_bb_clk2_pin,
+ 	[RPM_SMD_BB_CLK2_A_PIN] = &msm8916_bb_clk2_a_pin,
+-	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8976_mmssnoc_ahb_clk,
+-	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8976_mmssnoc_ahb_a_clk,
+ 	[RPM_SMD_DIV_CLK2] = &msm8974_div_clk2,
+ 	[RPM_SMD_DIV_A_CLK2] = &msm8974_div_a_clk2,
+ 	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
+-- 
+2.25.1
+
