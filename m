@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0483C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986BBC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347896AbiDZPY3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 11:24:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48312 "EHLO
+        id S1352344AbiDZPea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 11:34:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352448AbiDZPYT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:24:19 -0400
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ECCCBB3;
-        Tue, 26 Apr 2022 08:21:11 -0700 (PDT)
-Received: by mail-qk1-f173.google.com with SMTP id b189so13448439qkf.11;
-        Tue, 26 Apr 2022 08:21:11 -0700 (PDT)
+        with ESMTP id S243577AbiDZPe3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:34:29 -0400
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7665C1AD87;
+        Tue, 26 Apr 2022 08:31:21 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id js10so105050qvb.0;
+        Tue, 26 Apr 2022 08:31:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cPGJBJ0AiPoZkNeSDq9yGoCEaxqw/S2DWD3bykpa3sc=;
-        b=T6zGm+l2YLrAtLroMpXk9BFdrTFAdMyHz3HsomJmjSXs0H5EVXHjYxYZ7HdyQXCjFi
-         YqGHVwzzdhDCVIg/EU/MlJdTVI46Ulf8CW8Umk6xdMv2iZ5MtFTY4VoIgn4PFM6AAUgC
-         8MBAmnSgxG9p/5g+c0kmyDslZfsBbH+vWs40KpA6ye00ArHQhvyGdcLvSdrsKyYcgZho
-         x/AIhBAhJmw15BitrOwaLrnLkIMQWabEMDT2k7cLuN+0TeGXMWaWz4NGO3EvjzT1kIda
-         r2cIfPSa8qo0Ydf86S+6Q8twWM0GIXqKfYGftkrtKR/BulMZzRV1n9dvpN+p1Pkclp8z
-         +BKw==
-X-Gm-Message-State: AOAM532G/l5zWPoRpyZERnpaw1MTFRZyoU+bvcrXCBMpwcDi53sECAVN
-        XjExEqu4dkNVAGXlw+e6jFybVJYckZL5KA==
-X-Google-Smtp-Source: ABdhPJzuljJjlNYiFoFql1QJn+uYrUwWNs+dvA9H5rEZLdSqIrVThd1qpBImRgwpJT5Kr9PYUdzMiw==
-X-Received: by 2002:a05:620a:4012:b0:69e:714f:e783 with SMTP id h18-20020a05620a401200b0069e714fe783mr13210609qko.275.1650986470456;
-        Tue, 26 Apr 2022 08:21:10 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id j62-20020a378741000000b0069ebd098171sm6781340qkd.8.2022.04.26.08.21.09
+        bh=hB+pp9AwgTTg6+jJpSAlmzyr4/1KcUDhmmghLlm/slY=;
+        b=Djoe6dgpHbtdmRnpVeUv6dMtviZ4xAo5i/84xELaPYwqQUQZo8SZB1N8scNhOOIlJx
+         kCXP/M9JuXh5PkgqHPyx57B+DaGauA7UcQfuLxTP2abl3N+AwWewXi7KbHESTC/tUTcR
+         CgwlKHNjUrr2PYM4xyjtxPSrSDv2o/FP3+c5T3PsikiJlQ1VPK6JzXHHuezb+UBTAy1G
+         lZjGvm5xRPvwwl4WxVi45GO9hzm1XGerVTvMKDs8akrR/UI83ZnvGf8cSWf5GMlKENuC
+         DVN5aiBgzuMejMPWUqKI1M375BvWoCS1yb3R5IyfcohBGKvkg/nOYsy7gP1Xau723dOI
+         eBEQ==
+X-Gm-Message-State: AOAM530JyUK8gFRSP+vJxbzLnC1rDM0ob9yUTUJ6cNshF58Yrh4aC2s3
+        jjboNU7D9ni5cTCGiWxdQBGh08Q/ZIE+cw==
+X-Google-Smtp-Source: ABdhPJxsLehGUX51c8GTIR1UqNen679wPDk8ZQmKD90Tmwm1PAUtKIwOnftxQw08JTGkdUdpCJQkVg==
+X-Received: by 2002:ad4:594d:0:b0:456:2e2c:957e with SMTP id eo13-20020ad4594d000000b004562e2c957emr11284637qvb.39.1650987080301;
+        Tue, 26 Apr 2022 08:31:20 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id m130-20020a37a388000000b0069f7f0262a2sm737517qke.2.2022.04.26.08.31.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 08:21:10 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-2f7d621d1caso74572347b3.11;
-        Tue, 26 Apr 2022 08:21:09 -0700 (PDT)
+        Tue, 26 Apr 2022 08:31:20 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-2ec42eae76bso186266697b3.10;
+        Tue, 26 Apr 2022 08:31:19 -0700 (PDT)
 X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
- u124-20020a814782000000b002eb1cb15441mr21194596ywa.479.1650986469718; Tue, 26
- Apr 2022 08:21:09 -0700 (PDT)
+ u124-20020a814782000000b002eb1cb15441mr21247662ywa.479.1650987079566; Tue, 26
+ Apr 2022 08:31:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-8-phil.edworthy@renesas.com>
-In-Reply-To: <20220330154024.112270-8-phil.edworthy@renesas.com>
+References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-9-phil.edworthy@renesas.com>
+In-Reply-To: <20220330154024.112270-9-phil.edworthy@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Apr 2022 17:20:58 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUyv6LV0tbVmnkyyCVtjmgZuyQn94trO7KmPM-m3OEU0A@mail.gmail.com>
-Message-ID: <CAMuHMdUyv6LV0tbVmnkyyCVtjmgZuyQn94trO7KmPM-m3OEU0A@mail.gmail.com>
-Subject: Re: [PATCH v2 07/13] clk: renesas: rzg2l: Set HIWORD mask for all mux
- and dividers
+Date:   Tue, 26 Apr 2022 17:31:08 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXkMEXzBosVfpnhvoQ+f9AiDwkAdXFfj=2h+tEtyx9EcQ@mail.gmail.com>
+Message-ID: <CAMuHMdXkMEXzBosVfpnhvoQ+f9AiDwkAdXFfj=2h+tEtyx9EcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/13] clk: renesas: rzg2l: Make use of CLK_MON
+ registers optional
 To:     Phil Edworthy <phil.edworthy@renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -63,26 +63,58 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Phil,
 
+Thanks for your patch!
+
 On Wed, Mar 30, 2022 at 5:42 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> All of the muxes and dividers that can be modified require the HIWORD
-> flags, so make the macros set them. It won't affect read only muxes and
-> dividers.
-> This will make the clock tables a little easier to read, particularly for
-> new SoCs coming.
+> The rz/v2m SoC doesn't use CLK_MON registers, so make it optional.
+
+RZ/V2M ... them
+
 >
 > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Thanks for your patch!
-
-> ---
->  drivers/clk/renesas/r9a07g044-cpg.c | 16 +++++++---------
->  drivers/clk/renesas/rzg2l-cpg.h     |  5 +++--
->  2 files changed, 10 insertions(+), 11 deletions(-)
+>  drivers/clk/renesas/r9a07g044-cpg.c |  4 ++++
+>  drivers/clk/renesas/rzg2l-cpg.c     | 25 +++++++++++++++----------
+>  drivers/clk/renesas/rzg2l-cpg.h     |  3 +++
+>  3 files changed, 22 insertions(+), 10 deletions(-)
 
 This needs an update for the new drivers/clk/renesas/r9a07g043-cpg.c.
 
-The rest LGTM.
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -498,16 +498,18 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+>         if (!enable)
+>                 return 0;
+>
+> -       for (i = 1000; i > 0; --i) {
+> -               if (((readl(priv->base + CLK_MON_R(reg))) & bitmask))
+> -                       break;
+> -               cpu_relax();
+> -       }
+> +       if (priv->info->has_clk_mon_regs) {
+> +               for (i = 1000; i > 0; --i) {
+> +                       if (((readl(priv->base + CLK_MON_R(reg))) & bitmask))
+> +                               break;
+> +                       cpu_relax();
+> +               }
+>
+> -       if (!i) {
+> -               dev_err(dev, "Failed to enable CLK_ON %p\n",
+> -                       priv->base + CLK_ON_R(reg));
+> -               return -ETIMEDOUT;
+> +               if (!i) {
+> +                       dev_err(dev, "Failed to enable CLK_ON %p\n",
+> +                               priv->base + CLK_ON_R(reg));
+> +                       return -ETIMEDOUT;
+> +               }
+
+or just insert:
+
+    if (!priv->info->has_clk_mon_regs)
+            return 0;
+
+and no more changes are needed to this function.
 
 Gr{oetje,eeting}s,
 
