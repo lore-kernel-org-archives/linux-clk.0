@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46801C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 00:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7033C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 00:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239647AbiDZAQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 20:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56554 "EHLO
+        id S239736AbiDZAQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 20:16:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239658AbiDZAQW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 20:16:22 -0400
+        with ESMTP id S239658AbiDZAQa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 20:16:30 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C3D120139;
-        Mon, 25 Apr 2022 17:13:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AB656EC57;
+        Mon, 25 Apr 2022 17:13:24 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 573CFB81BA9;
-        Tue, 26 Apr 2022 00:13:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E35EAC385AE;
-        Tue, 26 Apr 2022 00:13:12 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2DC35B81BA9;
+        Tue, 26 Apr 2022 00:13:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DAFC385A9;
+        Tue, 26 Apr 2022 00:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650931993;
-        bh=2pOIqk/1MTAUoNZqI21mUlSzVaSA+8cvo6c8NdB/7YU=;
+        s=k20201202; t=1650932001;
+        bh=xLr9N/+WzLJZbvbidRC1oHUW9u+ry45aKTZWakbCfb4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NnewxImx735aiqVB/1VgC9Md61kBQIn2GEKRnk7xpdj7vWB2kVeDtsxj34LWUoETQ
-         qbg/068f+c1mmYLMbOp24211B+2ruFRIBGTkjXLT/6uBxUmb1xckwuRi/DQKkX1q26
-         o+JilLLZnQw/v5MZWW18hqoFPUOJghGu5aITXO8Ddq1mqCg/oLP/+Yy1OavmnDtez7
-         uoCPrVmnh2hQKeCK+nvlnCxcaihc/KOarYq7dqKmjV5ybqcrJJLa9qEbA6bxNabJaa
-         tI1Z2NZ20/nwcTvnyvNQCW4k9ICWSVAIR/ulboWje9RCJCfEw91iH5TOuqWx3LEti0
-         qCOCp4TRS9XpQ==
+        b=Uh1wvjPAbzRkjQ84Y1vnI73CrhBiQKOxACd8fYeWv2JwYro9PqWhaEWMEh7WQfEeU
+         Hyieo1tIBdB/ABAbyNuCAYFKXqOrgT6MSQCFRF7gUdqdXA/kBrjMpvsLfzGI1lhXHj
+         lmcDOTJaw99MgY35FtFzowBhOj9Lx//mI4zDmpQo4fJ5zLgRTJG1NtGSDJMD/Xb/Ic
+         cGa1NKM+Qq7cN7rXV+qH8KLmDU5K5zk3OHzk1xD1ZRGtg18lcRidZgVqFhPTt4zmE+
+         LDmvKFq6zwI4y1Odexl+ds4aszVDVdBoGkE/zR+CXMwVPj5eWPeqS1RtMCeO7xB1oc
+         GOyPNhaDGzwDA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220409132251.31725-9-chun-jie.chen@mediatek.com>
-References: <20220409132251.31725-1-chun-jie.chen@mediatek.com> <20220409132251.31725-9-chun-jie.chen@mediatek.com>
-Subject: Re: [PATCH v5 08/15] clk: mediatek: Add MT8186 mmsys clock support
+In-Reply-To: <20220409132251.31725-10-chun-jie.chen@mediatek.com>
+References: <20220409132251.31725-1-chun-jie.chen@mediatek.com> <20220409132251.31725-10-chun-jie.chen@mediatek.com>
+Subject: Re: [PATCH v5 09/15] clk: mediatek: Add MT8186 wpesys clock support
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -47,18 +47,16 @@ To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 25 Apr 2022 17:13:10 -0700
+Date:   Mon, 25 Apr 2022 17:13:19 -0700
 User-Agent: alot/0.10
-Message-Id: <20220426001312.E35EAC385AE@smtp.kernel.org>
+Message-Id: <20220426001321.D1DAFC385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chun-Jie Chen (2022-04-09 06:22:44)
-> Add MT8186 mmsys clock controller which provides clock gate
-> control in video system. This is integrated with mtk-mmsys
-> driver which will populate device by platform_device_register_data
-> to start mmsys clock driver.
+Quoting Chun-Jie Chen (2022-04-09 06:22:45)
+> Add MT8186 wpesys clock controllers which provide clock gate
+> control in Wrapping Engine.
 >=20
 > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
