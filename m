@@ -2,75 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BD5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Apr 2022 23:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BCFC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 00:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbiDYXvx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 19:51:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42778 "EHLO
+        id S234070AbiDZAPK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Apr 2022 20:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbiDYXvw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 19:51:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67086E49FF
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 16:48:47 -0700 (PDT)
+        with ESMTP id S229774AbiDZAPK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 20:15:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A47B45504;
+        Mon, 25 Apr 2022 17:12:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 206FCB81B84
-        for <linux-clk@vger.kernel.org>; Mon, 25 Apr 2022 23:48:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FDFC385A9;
-        Mon, 25 Apr 2022 23:48:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A3E616166E;
+        Tue, 26 Apr 2022 00:12:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4623C385A4;
+        Tue, 26 Apr 2022 00:12:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650930524;
-        bh=tUUuiAFPaMgRSJByGoGe+z0kBD778AoJmtWJqA6I9+U=;
+        s=k20201202; t=1650931924;
+        bh=2cinohATxPD5jIOjLzdaNPIP5C9FIyAkI8AzF3YNoaU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=erJCa6LOMAbEBaHkVL5faM1SZk8nJDLgBtuqTR8ozKO6UPSAZxMD03W4Y+TJsEpqL
-         r5TDGoEJZAJ5zow455YvZTPuF8HZGJHTvcjDAhfmpv+Dgu3iFWoYuExcxD0Ik/+Qmf
-         bCbueSfJMdOyiKUo9sHQoRH3KuaixhO02bN6GsVrBMoCtulCWjv0uAg7fvE+jRKjXd
-         A2mCejTrRaK+YI97J17ziOUiJFhP2FkW+mMoivkrz7MvFpTRZWxTcxbLWaA8n/aeEg
-         LbdO+aJpFNuh+STK+bryg0dnA/j32QXjgEFBqvOfLt/NMRR+Bys2BnHcdE4jVUASUB
-         lu77nPIkyAmDw==
+        b=iOUDS1uCgZ5NV/o6YT3TLhIpF/e/JOfqlNY+wqwbvekbkOfCGbRdqFAQlNxegWOOr
+         3xrDpswREEqCUCQVwldihOvYkz+1z3yMWoYH/ZDXBFE2MBu+6b4L0LX+Easoyi+J/S
+         11MIu6JC1QxSpkyxdDm4g8MiKYtDLgirl3T+MDqDCjz3u85UPOu6gYbMgCPkO3+zy/
+         D5XBmvavXxSXG+TnKHQTNQCDlDSKznkWpdD9pHcOyGEmwiJg1k5iULEuJndtOyUYCY
+         OUxZiJxs0mFMPQEDXHkYLzeRIGNc7Vq3xfmfqO8luOKrctWacHzt1NjguVJA1KNq94
+         bQQhhRgTblFoQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YmbiLbQmqIUec0fM@kista.localdomain>
-References: <YmbiLbQmqIUec0fM@kista.localdomain>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.18, take 2
+In-Reply-To: <20220409132251.31725-2-chun-jie.chen@mediatek.com>
+References: <20220409132251.31725-1-chun-jie.chen@mediatek.com> <20220409132251.31725-2-chun-jie.chen@mediatek.com>
+Subject: Re: [PATCH v5 01/15] dt-bindings: ARM: MediaTek: Add new document bindings of MT8186 clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-To:     Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
-Date:   Mon, 25 Apr 2022 16:48:42 -0700
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 25 Apr 2022 17:12:01 -0700
 User-Agent: alot/0.10
-Message-Id: <20220425234844.A9FDFC385A9@smtp.kernel.org>
+Message-Id: <20220426001203.E4623C385A4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-04-25 11:02:21)
-> Hi!
+Quoting Chun-Jie Chen (2022-04-09 06:22:37)
+> This patch adds the new binding documentation for system clock
+> and functional clock on MediaTek MT8186.
 >=20
-> Please pull following changes for current release.
->=20
-> Best regards,
-> Jernej
->=20
-> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc=
-17:
->=20
->   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-fixes-for-5.18-2
->=20
-> for you to fetch changes up to f58ca215cda1975f77b2b762903684a3c101bec9:
->=20
->   clk: sunxi: sun9i-mmc: check return value after calling platform_get_re=
-source() (2022-04-25 19:50:53 +0200)
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-Thanks. Pulled into clk-fixes.
+Applied to clk-next
