@@ -2,182 +2,196 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B82FC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 02:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231E4C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 05:41:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241747AbiDZCZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Apr 2022 22:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45626 "EHLO
+        id S244955AbiDZFov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 01:44:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbiDZCZK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Apr 2022 22:25:10 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB66E86E09;
-        Mon, 25 Apr 2022 19:22:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1650939723;
-        bh=rOas/IZ4nk8ZseOMrCeHITIudB+xnsliDrTtFFh9E84=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=xSi6gI23nT8tAQZ85B39xUrcB0nxfG6MDm7hyHB6N8b7bEIKgTD/ulrhLKuAmmkjP
-         3QYRR1p3MWsUj+9dnJsohNg7NXJMhOtZ6ErqRE3qX+Or1Lx2WRFRnuFAdD9CKgc1EQ
-         wVv25XAYGq/ciqUvVDMJ101Q5shuPYsv/yHaWhS4=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4ED901287A1F;
-        Mon, 25 Apr 2022 22:22:03 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gZEvPG-9iFTr; Mon, 25 Apr 2022 22:22:03 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1650939723;
-        bh=rOas/IZ4nk8ZseOMrCeHITIudB+xnsliDrTtFFh9E84=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=xSi6gI23nT8tAQZ85B39xUrcB0nxfG6MDm7hyHB6N8b7bEIKgTD/ulrhLKuAmmkjP
-         3QYRR1p3MWsUj+9dnJsohNg7NXJMhOtZ6ErqRE3qX+Or1Lx2WRFRnuFAdD9CKgc1EQ
-         wVv25XAYGq/ciqUvVDMJ101Q5shuPYsv/yHaWhS4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2741512810AB;
-        Mon, 25 Apr 2022 22:22:02 -0400 (EDT)
-Message-ID: <4b7a9126e3988f0f08245df398ffe1e0ec0b9558.camel@HansenPartnership.com>
-Subject: Re: Rust and Kernel Vendoring [Was Re: [PATCH v2 1/8] lib/printbuf:
- New data structure for heap-allocated strings]
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        hannes@cmpxchg.org, akpm@linux-foundation.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Date:   Mon, 25 Apr 2022 22:22:00 -0400
-In-Reply-To: <20220424203626.sdppoyvyrn4yeglp@moria.home.lan>
-References: <20220421234837.3629927-7-kent.overstreet@gmail.com>
-         <20220422042017.GA9946@lst.de> <YmI5yA1LrYrTg8pB@moria.home.lan>
-         <20220422052208.GA10745@lst.de> <YmI/v35IvxhOZpXJ@moria.home.lan>
-         <20220422113736.460058cc@gandalf.local.home>
-         <20220422193015.2rs2wvqwdlczreh3@moria.home.lan>
-         <1f3ce897240bf0f125ca3e5f6ded7c290118a8dc.camel@HansenPartnership.com>
-         <20220422211350.qn2brzkfwsulwbiq@moria.home.lan>
-         <afdda017cbd0dc0f41d673fe53d2a9c48fba9a6c.camel@HansenPartnership.com>
-         <20220424203626.sdppoyvyrn4yeglp@moria.home.lan>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        with ESMTP id S245012AbiDZFol (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 01:44:41 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77717393E3;
+        Mon, 25 Apr 2022 22:41:05 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id d5so8583083wrb.6;
+        Mon, 25 Apr 2022 22:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ivY9A8MlugZ6JM+jO9WfyfI8NDozRx01AU86/wCMjkk=;
+        b=Y46WTmyvQ1TX2po88VJOtwZs3frKBkWm7UrRr4XGjsqw8mXs3kmWdf5CTJ6n2mgnNs
+         s2r7IwmeLOY7UQT28VxgsxDM3rK1oV5g7gODgMPaX84y5vq+R8NwKwjJTITbZTltuK/K
+         N9vxNiW7g+A6Y2O1GCMcEirKJWpsBr7S35w1nrcZ9enpB77Ly3J/1UbnJNzlNdZMxZah
+         2dRZyg47Fr63FW4byIAoFHwRf7pnuHUubfqbfBxpnSuFNprCAxrV4q0dQKI+sNCvYKGr
+         sBIFV4XaAsBub5wMl6ZHzt4xTklEiZmxBcCGZ/nlWVLxZwmH/Aa9enusyQA+3STVcqpI
+         JUfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ivY9A8MlugZ6JM+jO9WfyfI8NDozRx01AU86/wCMjkk=;
+        b=40naeQIxIveGWtNbu9t3tlIgeSgPuvFlLPhUl8/1xfyKsnIWIPLThfSGskS3a4VU4w
+         mT8JFuSWqPEdsWJsKrtn5joAStg1srML7M+za5ozRCKKCAkH/rCxCfv5RXoIZ2QdMEcr
+         ZEt8uJMOFLYQCd2CHwNlynG6yJ0Cyhnx/RGewx3BSgYOtkxCw2iLvaUn7lcawqB0pjkt
+         RQ4BUPux4DGP/rksTNnXQaVLdGvxr4Fs4wIKDjAt9Mk8IeTfGu+Ljy8HBSTZZCzQ059d
+         DupUavN88axSYTqZZddskuACvOW9N6EcW7B0rJVSrFvWu823PV5fHJxUh8o4QmPdvuCh
+         TLAA==
+X-Gm-Message-State: AOAM533Kcj1O4JaOJKlcf+ENd83Sg8afnmKuoUxlUDfdpVB1fhtdNNSr
+        mH6ACTMtQgU0Ov/1LjWXQlSW38wOScJ8Y8FD1lo=
+X-Google-Smtp-Source: ABdhPJz4Be6fGelqulSb5go88CmpvpBppykdtB4VLAYI+zCd0IsU+v6yJwkDXWUpCzFIMC3z3y9zrrzkLeQ5bZlpUZI=
+X-Received: by 2002:a5d:6e85:0:b0:207:a435:d9a7 with SMTP id
+ k5-20020a5d6e85000000b00207a435d9a7mr16610956wrz.217.1650951663941; Mon, 25
+ Apr 2022 22:41:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20220418125630.2342538-1-gengcixi@gmail.com> <20220418125630.2342538-2-gengcixi@gmail.com>
+ <714caf6e-5f81-6d73-7629-b2c675f1f1d4@linaro.org> <CAF12kFv6uioc7ATtXLpGTTDBFT1wYWZUBoyjQqP1bSUnut0pKA@mail.gmail.com>
+ <a5a59f3c-00a3-afc5-24aa-1ae3de2600ec@linaro.org> <CAF12kFu5KW+fw=0kP6LrEqOvKYR38mELfPjG64=n+gudRxsZUQ@mail.gmail.com>
+ <baa73bda-91af-8a31-67f4-6d5615862c73@linaro.org> <CAF12kFsxqdYERwhjC3tq9bNqzWS3P6Sb7VPCwHmQ=StF28Q-+A@mail.gmail.com>
+ <5b00db5b-b179-af0f-71e4-e940c6a41018@linaro.org> <CAF12kFt=L7CV5RDBViPSNb9Y_Te4JJ-TZrx2N+w_P2px7_FemQ@mail.gmail.com>
+ <0423e827-9592-ce6f-74ca-111a099a263f@linaro.org>
+In-Reply-To: <0423e827-9592-ce6f-74ca-111a099a263f@linaro.org>
+From:   Cixi Geng <gengcixi@gmail.com>
+Date:   Tue, 26 Apr 2022 13:40:27 +0800
+Message-ID: <CAF12kFuwgGJSXpC8e=6L1XgP4zFOjbdLazwuqR0jg=2OJ=RtRA@mail.gmail.com>
+Subject: Re: [PATCH V3 1/3] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 2022-04-24 at 16:36 -0400, Kent Overstreet wrote:
-> On Sat, Apr 23, 2022 at 10:16:37AM -0400, James Bottomley wrote:
-> > You stripped the nuance of that.  I said many no_std crates could
-> > be used in the kernel.  I also said that the async crate couldn't
-> > because the rust compiler itself would have to support the kernel
-> > threading model.
-> 
-> I just scanned through that thread and that's not what you said. What
-> you said was:
-> 
-> > The above is also the rust crate problem in miniature: the crates
-> > grow API features the kernel will never care about and importing
-> > them wholesale is going to take forever because of the internal
-> > kernel support issue.  In the end, to take rust async as an
-> > example, it will be much better to do for rust what we've done for
-> > zlib: take the core that can support the kernel threading model and
-> > reimplement that in the kernel crate.  The act of doing that will
-> > a) prove people care enough about the functionality and b) allow us
-> > to refine it nicely.
-> > 
-> > I also don't think rust would really want to import crates
-> > wholesale.  The reason for no_std is that rust is trying to adapt
-> > to embedded environments, which the somewhat harsh constraints of
-> > the kernel is very similar to.
-> 
-> But maybe your position has changed somewhat?
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=B9=B4=
+4=E6=9C=8825=E6=97=A5=E5=91=A8=E4=B8=80 17:00=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 24/04/2022 17:12, Cixi Geng wrote:
+> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2022=E5=
+=B9=B44=E6=9C=8824=E6=97=A5=E5=91=A8=E6=97=A5 22:30=E5=86=99=E9=81=93=EF=BC=
+=9A
+> >>
+> >> On 24/04/2022 16:22, Cixi Geng wrote:
+> >>>>>>
+> >>>>>> Neither here nor later you did not answer the question - why do yo=
+u need
+> >>>>>> such complex construction, instead of adding syscon to the clock c=
+ontroller?
+> >>>>>>
+> >>>>>> Let me paste again my concerns:
+> >>>>>>
+> >>>>>>   You have nodes with reg but without unit address ("rpll"). These=
+ nodes
+> >>>>>>   are modeled as children but they are not children - it's a worka=
+round
+> >>>>>>   for exposing syscon, isn't it? The sc9863a looks like broken des=
+ign,
+> >>>>>>   so please do not duplicate it here.
+> >>>>>>
+> >>>>>> IOW, sc9863a uses similar pattern as here and the DTS is made wron=
+g.
+> >>>>>> Because of this you need to create complex ways to get the regmap =
+for
+> >>>>>> the clock controller... Why not making it simple? Clock controller=
+ with
+> >>>>>> syscon?
+> >>>>>
+> >>>>> I find the history discuss about the sp9863 clock[1] and last
+> >>>>> ums512-clk dt-bindings patch[2] which from chunyan.
+> >>>>> please refer to the reasons below.
+> >>>>>
+> >>>>> These clocks are at the same register range with global registers.
+> >>>>> the registers shared with more than one devices  which  basically
+> >>>>> are multimedia devices. You may noticed that these are all gate
+> >>>>> clocks which are in the global registers  ranges and are used to
+> >>>>> controll the enable status of some devices or some part of devices.
+> >>>>>
+> >>>>> [1] https://lore.kernel.org/all/CAAfSe-s0gcehu0ZDj=3DFTe5S7CzAHC5ma=
+hXBH2fJm7mXS7Xys1Q@mail.gmail.com/#r
+> >>>>> [2] https://lore.kernel.org/all/163425295208.1688384.11023187625793=
+114662@swboyd.mtv.corp.google.com/#r
+> >>>>
+> >>>> Which looks like discussion about different bindings. You had there =
+a
+> >>>> clock controller and additional clock device using "sprd,syscon". Wh=
+y
+> >>>> the rpll is a subdevice and not a part of clock controller. The same=
+ as
+> >>>> all other clocks coming from that clock-controller, right? What is s=
+o
+> >>>> special about rpll that is is a separate device, not part of the clo=
+ck
+> >>>> controller? It's the same address space, isn't it?
+> >>> The hardware spec design these clocks are not belonged to the syscon,
+> >>> the phandle is only used to get virtual  map address for clocks which
+> >>> have the same phsical address base with one syscon.(I don't know the
+> >>> historical reason for this design) It also can wroten a clock sperate=
+d from
+> >>> syscon by add the reg which same as syscon. but will lead to a duplic=
+ate
+> >>> mapping--one is from the clock,and one is from syscon. which make dif=
+ficulty
+> >>>  in analyzing some panic problems.
+> >>
+> >> I don't understand still. You said that they do not belong to same
+> >> address space, right? But the sprd,ums512-apahb-gate in this patch or
+> >> mentioned rpll
+> >> (https://elixir.bootlin.com/linux/v5.18-rc3/source/arch/arm64/boot/dts=
+/sprd/sharkl3.dtsi#L106)
+> >> does not reference any other address space. It's entire address space =
+is
+> >> the same as address space of glbregs.
+> > Maybe I didn't describe clearly, what I said is these clocks isn't the
+> > syscom sub-clock.
+> > from chunyan's explain:
+> >  they  are at the same register range with global registers. in
+> > originally we put them
+> > directly onto the bus indeed when submitting the patches for SC9863A
+> > clocks last year,
+> > and it had a private property named 'sprd,syscon' which could provide
+> > regmap for these clocks.
+> > after follow Rob's suggetion we make them a child of the syscon. these
+> > are all gate clocks which
+> > are in the global registers ranges and are used to controll the enable
+> > status of some devices
+> > or some part of devices.
+>
+> You need to help me here with the naming. What is "global registers"
+> range? Let's focus on sharkl3.dtsi and syscon@4035c000 with "rpll".
+>
+> You have a clock controller @4035c000, which provides several clocks,
+> right? Then you have a rpll also @4035c000, so the register range is the
+> same. The register range is the same, isn't it?
 
-I read those two as saying the same thing just with differing levels of
-detail.
+the anlg_phy_g5_regs is not a clock controller.
+In fact, this is just to provide an address for other modules to call regma=
+p.
+not provide a clk interface or device.
+The clk configuration of rpll is based on the anlg_phy_g5_regs register.
+The analog_g5 asic document is not only used to configure rpll, but also ot=
+her
+functions can be configured, but currently our driver is only used to provi=
+de
+configuration rpll, so the range of the device node of rpll can be less tha=
+n or
+equal to the range of anlg_phy_g5_regs.
+Hope this could explains your question
 
->  It sounds like you've been arguing against just directly depending
-> on foreign reposotories and for the staus quo of just ad-hoc copying
-> of code.
-
-I don't think I've said anything generalised about that either way. 
-However, I have noted that most of the external repositories I've
-looked at can't (or shouldn't) be imported directly.  Perhaps if we
-could find one that could be pulled in directly, we could use that to
-drive a discussion of how.
-
-> I'll help by stating my own position: I think we should be coming up
-> with a process for how dependencies on other git repositories are
-> going to work, something better than just cut and paste. Whether or
-> not we vendorize code isn't really that important, but I'd say that
-> if we are vendorizing code and we're notincluding entire sub-
-> repositories (like cargo vendor does) we ought to still make this a
-> scripted process that takes as an input a list of files we're
-> pulling and a remote repository we're pulling from, and the file list
-> and the remote repo (and commit ID we're pulling from) should all be
-> checked in.
-
-Do we have an example of an external piece of code we could do this to?
-
-[...]
-> > > The kernel community has a lot of that going on here. Again,
-> > > sorry to pick on you James, but I wanted to make the argument
-> > > that - maybe the kernel _should_ be adopting a more structured
-> > > way of using code from outside repositories, like cargo, or git
-> > > submodules (except I've never had a positive experience with git
-> > > submodules, so ignore that suggestion, unless I've just been
-> > > using them wrong, in which case someone please teach me). To read
-> > > you and Greg saying "nah, just copy code from other repos, it's
-> > > fine" - it felt like being back in the old days when we were
-> > > still trying to get people to use source control, and having that
-> > > one older colleague who _insisted_ on not using source control of
-> > > any kind, and that's a bit disheartening.
-> > 
-> > Even in C terms, the kernel is a nostdlib environment.  If a C
-> > project has too much libc dependency it's not going to work
-> > directly in the kernel, nor should it.  Let's look at zstd (which
-> > is pretty much a nostdlib project) as a great example: the facebook
-> > people didn't actually port the top of their tree (1.5) to the
-> > kernel, they backported bug fixes to the 1.4 branch and made a
-> > special release (1.4.10) just for us.  Why did they do this?  It
-> > was because the 1.5 version vastly increased stack use to the
-> > extent it would run off the end of the limited kernel stack so
-> > couldn't be ported directly into the kernel.  A lot of C libraries
-> > that are nostdlib have problems like this as well (you can use
-> > recursion, but not in the kernel).  There's no easy way of shimming
-> > environmental constraints like this.
-> 
-> I wonder if we might have come up with a better solution if there'd
-> been more cross-project communication and less siloing. Small stacks
-> aren't particular to the kernel - it's definitely not unheard of to
-> write userspace code where you want to have a lot of small stacks
-> (especially if you're doing some kind of coroutine style threading;
-> I've done stuff like this in the past)
-
-But would you say that every piece of userspace code should reject
-recursion and write for small stacks just in case it needs to be reused
-in a more extreme environment?
-
-I don't; I think it's fine there are loads of implementations that
-would never work in our environment, because mostly there's no reason
-to use them in the kernel (or another embedded environment).  I also
-understand why people build for the standard userspace environment
-first ... it reduces complexity and makes the construction way easier. 
-
->  - and to me, as someone who's been incrementing on and maintaining a
-> codebase in active use for 10 years, having multiple older versions
-> in active use that need bugfixes gives me cold shivers.
-> 
-> I wouldn't be surprised if at some point the zstd people walk back
-> some of their changes or make it configurable at some point :)
-
-Many things can happen in the future, but right at the moment I still
-think zstd is working fine for both parties.
-
-James
-
-
+Best regards,
+Cixi
+>
+> I still don't see the answer to my question - why do you need a child
+> device for one clock if this looks like part of the clock-controller?
+>
+> Best regards,
+> Krzysztof
