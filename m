@@ -2,67 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB98C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0483C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 15:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348098AbiDZPEL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 11:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48994 "EHLO
+        id S1347896AbiDZPY3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 11:24:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351874AbiDZPEE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:04:04 -0400
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EA83AA6D;
-        Tue, 26 Apr 2022 08:00:56 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id s4so13462057qkh.0;
-        Tue, 26 Apr 2022 08:00:56 -0700 (PDT)
+        with ESMTP id S1352448AbiDZPYT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 11:24:19 -0400
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ECCCBB3;
+        Tue, 26 Apr 2022 08:21:11 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id b189so13448439qkf.11;
+        Tue, 26 Apr 2022 08:21:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8u2BCnP+IT5NHEoYZZRGH2WaaPF7J5QqhEMq961Y7b0=;
-        b=G+t/DfgZ1HCj2cFLwFgJ+4Q/DNBqIzCz8nCAfZ0kpi00Lhid4kW9CpxmQEG1vOjiZQ
-         kxSG8yt3XEfurKER1/fhDbBY/1/Z1QctkH+TImjA3qzEK/QPOFRfcbiOXwzTEL1Fdc0j
-         ESwMbEWyrnRhWiUO5MM67GXDxOxILPdXjqcqndPYKKpF58xZoDTirZmzO0LhDolbqStZ
-         L3tS5vIYRex0o6zKljiaoNZ7ocN8ommApEp0wrO9x4n+WOXVtWDMEDpLXHY+2aiWInW6
-         VL93fU4u8oGtwTKaUGCNwnczZWc8phVSlOKbqJvQVWzMJAPEzY9ip8Y5DgS4sh+Cqyol
-         IPlw==
-X-Gm-Message-State: AOAM531cID0hZ8ITD5ODAM3p3RBHAZUR2mclACGqPMhUe4Bna1AX5Ro/
-        PHGM83U+c21dgoR3d6PiNwBJxkMTPjbTLg==
-X-Google-Smtp-Source: ABdhPJzPaVuXsmDcbzHzyAz5bcenDR++AiVpblgp23UuJH6IBGlF0FsYumLB8q5kWFhRBvxlzB9xHQ==
-X-Received: by 2002:a05:620a:440e:b0:69e:a751:109b with SMTP id v14-20020a05620a440e00b0069ea751109bmr13376549qkp.469.1650985255493;
-        Tue, 26 Apr 2022 08:00:55 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id o14-20020a05622a044e00b002f3656df6f6sm4410589qtx.78.2022.04.26.08.00.55
+        bh=cPGJBJ0AiPoZkNeSDq9yGoCEaxqw/S2DWD3bykpa3sc=;
+        b=T6zGm+l2YLrAtLroMpXk9BFdrTFAdMyHz3HsomJmjSXs0H5EVXHjYxYZ7HdyQXCjFi
+         YqGHVwzzdhDCVIg/EU/MlJdTVI46Ulf8CW8Umk6xdMv2iZ5MtFTY4VoIgn4PFM6AAUgC
+         8MBAmnSgxG9p/5g+c0kmyDslZfsBbH+vWs40KpA6ye00ArHQhvyGdcLvSdrsKyYcgZho
+         x/AIhBAhJmw15BitrOwaLrnLkIMQWabEMDT2k7cLuN+0TeGXMWaWz4NGO3EvjzT1kIda
+         r2cIfPSa8qo0Ydf86S+6Q8twWM0GIXqKfYGftkrtKR/BulMZzRV1n9dvpN+p1Pkclp8z
+         +BKw==
+X-Gm-Message-State: AOAM532G/l5zWPoRpyZERnpaw1MTFRZyoU+bvcrXCBMpwcDi53sECAVN
+        XjExEqu4dkNVAGXlw+e6jFybVJYckZL5KA==
+X-Google-Smtp-Source: ABdhPJzuljJjlNYiFoFql1QJn+uYrUwWNs+dvA9H5rEZLdSqIrVThd1qpBImRgwpJT5Kr9PYUdzMiw==
+X-Received: by 2002:a05:620a:4012:b0:69e:714f:e783 with SMTP id h18-20020a05620a401200b0069e714fe783mr13210609qko.275.1650986470456;
+        Tue, 26 Apr 2022 08:21:10 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id j62-20020a378741000000b0069ebd098171sm6781340qkd.8.2022.04.26.08.21.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 08:00:55 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-2f7d621d1caso73827097b3.11;
-        Tue, 26 Apr 2022 08:00:55 -0700 (PDT)
-X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
- v133-20020a81618b000000b002dbd9528a39mr22406962ywb.132.1650985254804; Tue, 26
- Apr 2022 08:00:54 -0700 (PDT)
+        Tue, 26 Apr 2022 08:21:10 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-2f7d621d1caso74572347b3.11;
+        Tue, 26 Apr 2022 08:21:09 -0700 (PDT)
+X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
+ u124-20020a814782000000b002eb1cb15441mr21194596ywa.479.1650986469718; Tue, 26
+ Apr 2022 08:21:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220330154024.112270-1-phil.edworthy@renesas.com>
- <20220330154024.112270-5-phil.edworthy@renesas.com> <CAMuHMdWErGQuE+ESi3ZGVgyW5ouUthr5XsmnwLJD0VX6D3QVPA@mail.gmail.com>
- <TYYPR01MB7086454DB14FF78DD09EAB7DF5FB9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYYPR01MB7086454DB14FF78DD09EAB7DF5FB9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
+References: <20220330154024.112270-1-phil.edworthy@renesas.com> <20220330154024.112270-8-phil.edworthy@renesas.com>
+In-Reply-To: <20220330154024.112270-8-phil.edworthy@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Apr 2022 17:00:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVE-DAWaSia_iBkjrB86v=kDG2bwrTP9kJmkzgkgvEQ+A@mail.gmail.com>
-Message-ID: <CAMuHMdVE-DAWaSia_iBkjrB86v=kDG2bwrTP9kJmkzgkgvEQ+A@mail.gmail.com>
-Subject: Re: [PATCH v2 04/13] dt-bindings: clock: renesas,rzg2l: Document
- RZ/V2M SoC
+Date:   Tue, 26 Apr 2022 17:20:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyv6LV0tbVmnkyyCVtjmgZuyQn94trO7KmPM-m3OEU0A@mail.gmail.com>
+Message-ID: <CAMuHMdUyv6LV0tbVmnkyyCVtjmgZuyQn94trO7KmPM-m3OEU0A@mail.gmail.com>
+Subject: Re: [PATCH v2 07/13] clk: renesas: rzg2l: Set HIWORD mask for all mux
+ and dividers
 To:     Phil Edworthy <phil.edworthy@renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
+        Biju Das <biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -70,38 +63,26 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Phil,
 
-On Tue, Apr 26, 2022 at 4:39 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 26 April 2022 15:21
-> > On Wed, Mar 30, 2022 at 5:41 PM Phil Edworthy wrote:
-> > > Document the device tree binding for the Renesas RZ/V2M (r9a09g011) SoC.
-> > >
-> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > > --- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-> > > @@ -42,9 +44,10 @@ properties:
-> > >      description: |
-> > >        - For CPG core clocks, the two clock specifier cells must be
-> > "CPG_CORE"
-> > >          and a core clock reference, as defined in
-> > > -        <dt-bindings/clock/r9a07g*-cpg.h>
-> > > +        <dt-bindings/clock/r9a07g*-cpg.h> or <dt-
-> > bindings/clock/r9a09g011-cpg.h>
-> >
-> > I guess we can simplify to dt-bindings/clock/r9a0*-cpg.h?
-> We can, it was just to ensure we don't ever catch a file related
-> to rz/n1 (r9a06g032). However, r9a06g032 has -sysctrl.h suffix.
+On Wed, Mar 30, 2022 at 5:42 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> All of the muxes and dividers that can be modified require the HIWORD
+> flags, so make the macros set them. It won't affect read only muxes and
+> dividers.
+> This will make the clock tables a little easier to read, particularly for
+> new SoCs coming.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Even if RZ/N1 had the -cpg.h suffix, it would fall under different
-bindings. Not much we can do anyway, when people include the wrong
-header file ;-)
+Thanks for your patch!
 
-> I'm easy either way...
+> ---
+>  drivers/clk/renesas/r9a07g044-cpg.c | 16 +++++++---------
+>  drivers/clk/renesas/rzg2l-cpg.h     |  5 +++--
+>  2 files changed, 10 insertions(+), 11 deletions(-)
 
-I'm trying to avoid having to update (too) many places when
-adding support for a new SoC.
+This needs an update for the new drivers/clk/renesas/r9a07g043-cpg.c.
+
+The rest LGTM.
 
 Gr{oetje,eeting}s,
 
