@@ -2,180 +2,358 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFD6C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 20:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ACBC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 21:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354679AbiDZUYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 16:24:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48592 "EHLO
+        id S1355360AbiDZVWu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 17:22:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355110AbiDZUYA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 16:24:00 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5842BF40
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 13:20:49 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id y32so33924321lfa.6
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 13:20:49 -0700 (PDT)
+        with ESMTP id S1355351AbiDZVWt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 17:22:49 -0400
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FC6C8676
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 14:19:40 -0700 (PDT)
+Received: by mail-oi1-x230.google.com with SMTP id e4so38522oif.2
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 14:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=VeBTftEEBF4n+zC0W35RUFpsE8vBxIydsA294RvLU5U=;
-        b=dlhxKFfKur1lHnoc+nbcJrk/Ps0SWozlkk+0HPMTatI/NQMMwJL97BQUiNcOD1Oeal
-         QJFuApixc8IRyxFPLyP+BkDzQ93RcLLBvE+fLc5XlngnHHm7zZj9ZVsF/Ux911ZFApTs
-         JkOSiOYqFhFTtgTn9U409Kg+DUTgRLSPwlo7Ec2bYU+Ud25CayZOhieuTzzfuO4HRZ50
-         7NqNtvaJkgMIHRkHtHFZ4WGpOoo8PoPz2HgO8KGfORMmLHNp0ml0W4D/vBKCsWAbBXJz
-         Hvuy2gj4XX0W6SPDVMkAXjJUtb4YYIrBSxtyrDWyNEk8A3IkLu9CJ823W5eMLVLCTbQj
-         ky5w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AN/1dER+uo2WEykDZuoRWB0XO6TL5U8nwLLso0KWEms=;
+        b=Kw3bXcx7YPM5ZBIpbyIFnw7bFVaZf3QFuDmj5IdfPkcg1EdlMDE2rIqVev1wFqD3Fm
+         Rsa3I/iI5sVrNYV0sjJE/o/cRamYBLEL9pyeJDRPwEG8jfelit5delkXP7Nit4dwFEA5
+         fXw5LXaOEdEHGuz6O70UsxZ7RcajmTd9X+0qKqxyED5mCKiHHgFESrxVK4hp788LJDoB
+         sHPCL+7BmRo+lzacl0tcL1wA15VinwKgIWy09OqLUeP6D8o8hNHr9Y8O9a5ZHMWEV6iH
+         aSm1dSZEaCwNGpRh+I0v8aPt34KjFb7AncgrWXSV1aGHcJfvOif3juvjoM4GTR9zCGz9
+         StuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VeBTftEEBF4n+zC0W35RUFpsE8vBxIydsA294RvLU5U=;
-        b=YhMc6TwNvkf/6j/JuD+1YXq7ui4Mnnlbcih1mLAkkk4AUQI2vogFPLJpKb1xgtNPve
-         g7dysJMpFIHsRjkjRu2BVP/QZ/apZkKTrKsgKkfxJCzrcVRkstAIFEQzMMiY3r3y+oOG
-         9/iN+aG6PcwvA+33sF2AGsRx+1EOoEV7PjoPzzodBUqwkgg35RJBcdg2RyWwmUVib4f1
-         NJvuSKi/7tGFfDy2j+GAXgbCIPwe/5a2MSBrqGxb5sLmEN7OhXeTpQQ954rbWX2oBVVS
-         hf6pUuPrGAeQDYybQgDbdt32JN6cgTzSOzr9f1ojf6Ila+Qn/TYHl2zqM2bdDapXVcJT
-         npDg==
-X-Gm-Message-State: AOAM533oZQHUMVbYoDXeBtwLw3va+XfVsoLT0EBW/kiwV+DzYQq9Ucgc
-        DtIC9FKba5x972TOLyBuiUj67w==
-X-Google-Smtp-Source: ABdhPJzwQe3J31B9Au3qGIefBxGSsd11mJQrRCRg4tWK2TaU2RtYfE+qhsPAOoHHBkhMiyRJxa92GA==
-X-Received: by 2002:a19:ac42:0:b0:448:1f15:4b18 with SMTP id r2-20020a19ac42000000b004481f154b18mr17762502lfc.32.1651004448075;
-        Tue, 26 Apr 2022 13:20:48 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id m1-20020a2e7101000000b0024f081cb0absm1169380ljc.83.2022.04.26.13.20.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 13:20:47 -0700 (PDT)
-Message-ID: <9df0eb75-0b2c-446e-ef66-1eb3ce442d0d@linaro.org>
-Date:   Tue, 26 Apr 2022 23:20:46 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v4 3/3] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Content-Language: en-GB
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        bh=AN/1dER+uo2WEykDZuoRWB0XO6TL5U8nwLLso0KWEms=;
+        b=YLRU01X8jklmuY5OaZMHpfLeTNx4/Ffc4kLdNavMMmO557TYYFc3H1wtzTwbYejxcY
+         0d3oUk/SPXkEXokKuzH/kXOK9ntB6okGqoYyCBCmHsQkK7k7YsIrF21SfyM9CS1KRN0J
+         D9h8yx28s/Ar7XBslnDWyG7/4J1VMidOU/qg9PJQGOxa1FOXaR0Cy96BwEt6E90f/oB8
+         wdk4FrthMdBFLt2sfis4h6NGvBlTMAlL7q86VQbrGDMKdBupsqdr7yVrGsham8YrUoHc
+         BKGOr+gl4blD7A6uCVSLg3G+qAh5suU4na5Cw0KvtSbmH3yAjxWQmo0J9dFJ5R4/lQY2
+         cv2A==
+X-Gm-Message-State: AOAM530w/uMhIAChUe+E8cgGl5j6+fIahYnC2Wx1IQCcI4kvfb8QK4te
+        oUS7+Gv2EybmOLD880UQv5/q4Q==
+X-Google-Smtp-Source: ABdhPJyAKkrSxkvDtKRTKzZJqYx0L0iuPm9QWFBeTt5ZxSJoZ5VpwDUmrB8R65JEqNvewJgzEqYbgw==
+X-Received: by 2002:a05:6808:bc1:b0:323:286d:4201 with SMTP id o1-20020a0568080bc100b00323286d4201mr11793433oik.280.1651007979945;
+        Tue, 26 Apr 2022 14:19:39 -0700 (PDT)
+Received: from ripper.. ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id q11-20020a05683033cb00b005e686fd52d6sm5347053ott.17.2022.04.26.14.19.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 14:19:39 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_tdas@quicinc.com
-References: <20220426094144.2958416-1-dmitry.baryshkov@linaro.org>
- <20220426094144.2958416-4-dmitry.baryshkov@linaro.org>
- <Ymg4zFsQB2MAQ/T5@robh.at.kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <Ymg4zFsQB2MAQ/T5@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4] clk: qcom: rcg2: Cache CFG register updates for parked RCGs
+Date:   Tue, 26 Apr 2022 14:21:36 -0700
+Message-Id: <20220426212136.1543984-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/04/2022 21:24, Rob Herring wrote:
-> On Tue, Apr 26, 2022 at 12:41:44PM +0300, Dmitry Baryshkov wrote:
->> Split tsens properties to the child node of the gcc. This follows the
->> lead of ipq8064 (which also uses a separate node for tsens) and makes
->> device tree closer to other platforms, where tsens is a completely
->> separate device.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   .../bindings/clock/qcom,gcc-apq8064.yaml      | 45 +++++++------------
->>   1 file changed, 17 insertions(+), 28 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> index b867da12761e..f2762599f679 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> @@ -23,47 +23,36 @@ description: |
->>   
->>   properties:
->>     compatible:
->> -    enum:
->> -      - qcom,gcc-apq8064
->> -      - qcom,gcc-msm8060
->> -
->> -  nvmem-cells:
->> -    minItems: 1
->> -    maxItems: 2
->> -    description:
->> -      Qualcomm TSENS (thermal sensor device) on some devices can
->> -      be part of GCC and hence the TSENS properties can also be part
->> -      of the GCC/clock-controller node.
->> -      For more details on the TSENS properties please refer
->> -      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
->> -
->> -  nvmem-cell-names:
->> -    minItems: 1
->>       items:
->> -      - const: calib
->> -      - const: calib_backup
->> -
->> -  '#thermal-sensor-cells':
->> -    const: 1
->> +      - enum:
->> +          - qcom,gcc-apq8064
->> +          - qcom,gcc-msm8060
->> +      - const: syscon
->>   
->>   required:
->>     - compatible
->> -  - nvmem-cells
->> -  - nvmem-cell-names
->> -  - '#thermal-sensor-cells'
->>   
->>   unevaluatedProperties: false
->>   
->>   examples:
->>     - |
->>       clock-controller@900000 {
->> -      compatible = "qcom,gcc-apq8064";
->> +      compatible = "qcom,gcc-apq8064", "syscon";
->>         reg = <0x00900000 0x4000>;
->> -      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->> -      nvmem-cell-names = "calib", "calib_backup";
->>         #clock-cells = <1>;
->>         #reset-cells = <1>;
->>         #power-domain-cells = <1>;
->> -      #thermal-sensor-cells = <1>;
->> +
->> +      thermal-sensor {
-> 
-> This should throw a warning I think as 'thermal-sensor' needs to be
-> defined. The patch didn't apply for me though.
+As GDSCs are turned on and off some associated clocks are momentarily
+enabled for house keeping purposes. For this, and similar, purposes the
+"shared RCGs" will park the RCG on a source clock which is known to be
+available.
+When the RCG is parked, a safe clock source will be selected and
+committed, then the original source would be written back and upon enable
+the change back to the unparked source would be committed.
 
-This series depends on 
-https://lore.kernel.org/linux-arm-msm/20220426093608.2957210-1-dmitry.baryshkov@linaro.org/T/#u
+But starting with SM8350 this fails, as the value in CFG is committed by
+the GDSC handshake and without a ticking parent the GDSC enablement will
+time out.
 
-Regarding the warnings, I think this is related to the issue Krzyshtof 
-has reported few days ago. I was not able to trigger warnings for 
-unknown properties if unevaluatedProperties:false is used.
+This becomes a concrete problem if the runtime supended state of a
+device includes disabling such rcg's parent clock. As the device
+attempts to power up the domain again the rcg will fail to enable and
+hence the GDSC enablement will fail, preventing the device from
+returning from the suspended state.
 
-> 
->> +        compatible = "qcom,msm8960-tsens";
->> +
->> +        nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->> +        nvmem-cell-names = "calib", "calib_backup";
->> +        interrupts = <0 178 4>;
->> +        interrupt-names = "uplow";
->> +
->> +        #qcom,sensors = <11>;
->> +        #thermal-sensor-cells = <1>;
->> +        };
->>       };
->>   ...
->> -- 
->> 2.35.1
->>
->>
+This can be seen in e.g. the display stack during probe on SM8350.
 
+To avoid this problem, the software needs to ensure that the RCG is
+configured to a active parent clock while it is disabled. This is done
+by caching the CFG register content while the shared RCG is parked on
+this safe source.
 
+Writes to M, N and D registers are committed as they are requested. New
+helpers for get_parent() and recalc_rate() are extracted from their
+previous implementations and __clk_rcg2_configure() is modified to allow
+it to operate on the cached value.
+
+Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+Changes since v3:
+- Three more __clk_is_enabled() replaced with clk_hw_is_enabled()
+- Fix spelling used -> use in two places
+
+ drivers/clk/qcom/clk-rcg.h  |   2 +
+ drivers/clk/qcom/clk-rcg2.c | 126 ++++++++++++++++++++++++++++--------
+ 2 files changed, 101 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 00cea508d49e..012e745794fd 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -140,6 +140,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @freq_tbl: frequency table
+  * @clkr: regmap clock handle
+  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
++ * @parked_cfg: cached value of the CFG register for parked RCGs
+  */
+ struct clk_rcg2 {
+ 	u32			cmd_rcgr;
+@@ -150,6 +151,7 @@ struct clk_rcg2 {
+ 	const struct freq_tbl	*freq_tbl;
+ 	struct clk_regmap	clkr;
+ 	u8			cfg_off;
++	u32			parked_cfg;
+ };
+ 
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index f675fd969c4d..c913fd326f1a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -73,16 +73,11 @@ static int clk_rcg2_is_enabled(struct clk_hw *hw)
+ 	return (cmd & CMD_ROOT_OFF) == 0;
+ }
+ 
+-static u8 clk_rcg2_get_parent(struct clk_hw *hw)
++static u8 __clk_rcg2_get_parent(struct clk_hw *hw, u32 cfg)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int num_parents = clk_hw_get_num_parents(hw);
+-	u32 cfg;
+-	int i, ret;
+-
+-	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+-	if (ret)
+-		goto err;
++	int i;
+ 
+ 	cfg &= CFG_SRC_SEL_MASK;
+ 	cfg >>= CFG_SRC_SEL_SHIFT;
+@@ -91,12 +86,27 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+ 		if (cfg == rcg->parent_map[i].cfg)
+ 			return i;
+ 
+-err:
+ 	pr_debug("%s: Clock %s has invalid parent, using default.\n",
+ 		 __func__, clk_hw_get_name(hw));
+ 	return 0;
+ }
+ 
++static u8 clk_rcg2_get_parent(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++	int ret;
++
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret) {
++		pr_debug("%s: Unable to read CFG register for %s\n",
++			 __func__, clk_hw_get_name(hw));
++		return 0;
++	}
++
++	return __clk_rcg2_get_parent(hw, cfg);
++}
++
+ static int update_config(struct clk_rcg2 *rcg)
+ {
+ 	int count, ret;
+@@ -163,12 +173,10 @@ calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
+ }
+ 
+ static unsigned long
+-clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++__clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate, u32 cfg)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+-	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
+-
+-	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	u32 hid_div, m = 0, n = 0, mode = 0, mask;
+ 
+ 	if (rcg->mnd_width) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+@@ -189,6 +197,17 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	return calc_rate(parent_rate, m, n, mode, hid_div);
+ }
+ 
++static unsigned long
++clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 cfg;
++
++	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++
++	return __clk_rcg2_recalc_rate(hw, parent_rate, cfg);
++}
++
+ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 				    struct clk_rate_request *req,
+ 				    enum freq_policy policy)
+@@ -262,7 +281,8 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
+ 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
+ }
+ 
+-static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
++static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
+ {
+ 	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+@@ -304,15 +324,27 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+-	return regmap_update_bits(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg),
+-					mask, cfg);
++
++	*_cfg &= ~mask;
++	*_cfg |= cfg;
++
++	return 0;
+ }
+ 
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ {
++	u32 cfg;
+ 	int ret;
+ 
+-	ret = __clk_rcg2_configure(rcg, f);
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure(rcg, f, &cfg);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -979,11 +1011,12 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * In case clock is disabled, update the CFG, M, N and D registers
+-	 * and don't hit the update bit of CMD register.
++	 * In case clock is disabled, update the M, N and D registers, cache
++	 * the CFG value in parked_cfg and don't hit the update bit of CMD
++	 * register.
+ 	 */
+-	if (!__clk_is_enabled(hw->clk))
+-		return __clk_rcg2_configure(rcg, f);
++	if (!clk_hw_is_enabled(hw))
++		return __clk_rcg2_configure(rcg, f, &rcg->parked_cfg);
+ 
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+ }
+@@ -1007,6 +1040,11 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Write back the stored configuration corresponding to current rate */
++	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, rcg->parked_cfg);
++	if (ret)
++		return ret;
++
+ 	ret = update_config(rcg);
+ 	if (ret)
+ 		return ret;
+@@ -1017,13 +1055,12 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+-	u32 cfg;
+ 
+ 	/*
+ 	 * Store current configuration as switching to safe source would clear
+ 	 * the SRC and DIV of CFG register
+ 	 */
+-	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
++	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &rcg->parked_cfg);
+ 
+ 	/*
+ 	 * Park the RCG at a safe configuration - sourced off of safe source.
+@@ -1041,17 +1078,52 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	update_config(rcg);
+ 
+ 	clk_rcg2_clear_force_enable(hw);
++}
+ 
+-	/* Write back the stored configuration corresponding to current rate */
+-	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
++static u8 clk_rcg2_shared_get_parent(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked use the cached cfg instead */
++	if (!clk_hw_is_enabled(hw))
++		return __clk_rcg2_get_parent(hw, rcg->parked_cfg);
++
++	return clk_rcg2_get_parent(hw);
++}
++
++static int clk_rcg2_shared_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked only update the cached cfg */
++	if (!clk_hw_is_enabled(hw)) {
++		rcg->parked_cfg &= ~CFG_SRC_SEL_MASK;
++		rcg->parked_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++		return 0;
++	}
++
++	return clk_rcg2_set_parent(hw, index);
++}
++
++static unsigned long
++clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++
++	/* If the shared rcg is parked use the cached cfg instead */
++	if (!clk_hw_is_enabled(hw))
++		return __clk_rcg2_recalc_rate(hw, parent_rate, rcg->parked_cfg);
++
++	return clk_rcg2_recalc_rate(hw, parent_rate);
+ }
+ 
+ const struct clk_ops clk_rcg2_shared_ops = {
+ 	.enable = clk_rcg2_shared_enable,
+ 	.disable = clk_rcg2_shared_disable,
+-	.get_parent = clk_rcg2_get_parent,
+-	.set_parent = clk_rcg2_set_parent,
+-	.recalc_rate = clk_rcg2_recalc_rate,
++	.get_parent = clk_rcg2_shared_get_parent,
++	.set_parent = clk_rcg2_shared_set_parent,
++	.recalc_rate = clk_rcg2_shared_recalc_rate,
+ 	.determine_rate = clk_rcg2_determine_rate,
+ 	.set_rate = clk_rcg2_shared_set_rate,
+ 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
 -- 
-With best wishes
-Dmitry
+2.35.1
+
