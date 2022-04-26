@@ -2,114 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB1CC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA314C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:40:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235326AbiDZHfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33686 "EHLO
+        id S1344159AbiDZHni (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 03:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344028AbiDZHft (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:35:49 -0400
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 900E9F8E70;
-        Tue, 26 Apr 2022 00:32:38 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 78C7324000B;
-        Tue, 26 Apr 2022 07:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1650958356;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        with ESMTP id S1344275AbiDZHne (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:43:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BEB6BB4;
+        Tue, 26 Apr 2022 00:40:27 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 1D235210FC;
+        Tue, 26 Apr 2022 07:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1650958826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=xKTZnsZsqmXZVFHnJzXGzABByJosRfbnUL/DTMhMw7w=;
-        b=Ws1WNfBRgV6efObectf5Wi/XBQWi92pIPZwEEsYSAcFP+yC4UgmVjxUA95jETo0mW8Uy7y
-        AE2F5ssPhKibSBdiKtU3oUq2I5yGneK0UIaHF7Q7a742FlXOtKyn8kviG9mmSJStV2l91M
-        vockGRJiiS6XMrptQBRod6sSrLPpsx4juFt2hJRqCXpiOjNaLmq8SWVzV1CTVTglJIv+cU
-        ny/3cfW3Tss6IVioRz+ol/djjTIlZXWKJ4CKQrnxFaUAKm83Yup6OFNyTw4RkkaOUn5hZq
-        PNxfIAf0FBJzj+dB4WLcQ5AwuZ99V2MoL+brwHRZbQLW/Hk4ZVxYtEIcDco+yA==
-Date:   Tue, 26 Apr 2022 09:32:32 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v11 0/9] RZN1 DMA support
-Message-ID: <20220426093232.350ed9f4@xps13>
-In-Reply-To: <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com>
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
-        <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        bh=wMAdxJZJ6A0n7iKNAeF0d/axVH6mYUkchW85fLcAB0I=;
+        b=rOpfkgxOFp21qgWpq0YAojVkCTCU3fM7vqtzuV2Al7un1+Vk4WynSRLQWOMYOWFHXRpgv2
+        FYW/QW9rrJdGaWTSJSVGw8UuH+1PC97ffapuceZA5eUO3xDoKwGgJ5ElcFI6ooeVhCym+4
+        IVn5UYD4FHQqY5y0FDFN0ENWJ8QTNBo=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A0A272C142;
+        Tue, 26 Apr 2022 07:40:25 +0000 (UTC)
+Date:   Tue, 26 Apr 2022 09:40:23 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <Ymeh51L7XGTeCkDG@dhcp22.suse.cz>
+References: <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+ <YmLFPJTyoE4GYWp4@carbon>
+ <20220422234820.plusgyixgybebfmi@moria.home.lan>
+ <YmNH/fh8OwTJ6ASC@carbon>
+ <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
+ <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+ <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
+ <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
+ <20220426072612.7wgpzndigr4ybrh4@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426072612.7wgpzndigr4ybrh4@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Tue 26-04-22 03:26:12, Kent Overstreet wrote:
+[...]
+> Anyways, the reason I think this allocation is fine is it's GFP_NOWAIT and it's
+> completely fine if it fails - all we lose is some diagnostics, and also it's
+> released right away.
 
-geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:05:34 +0200:
-
-> Hi Miquel,
->=20
-> On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > This is the series bringing DMA support to RZN1 platforms.
-> > Other series follow with eg. UART and RTC support as well. =20
->=20
-> Thanks for your series!
->=20
-> > There is no other conflicting dependency with the other series, so this
-> > series can now entirely be merged in the dmaengine tree I believe.
-> >
-> > Changes in v11:
-> > * Renamed two defines.
-> > * Changed the way the bitmap is declared.
-> > * Updated the cover letter: this series can now go in through the
-> >   dmaengine tree. =20
->=20
-> /me confused
->=20
-> > Miquel Raynal (9):
-> >   dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
-> >   dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
-> >   dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-> >   soc: renesas: rzn1-sysc: Export function to set dmamux
-> >   dmaengine: dw: dmamux: Introduce RZN1 DMA router support
-> >   clk: renesas: r9a06g032: Probe possible children
-> >   dmaengine: dw: Add RZN1 compatible
-> >   ARM: dts: r9a06g032: Add the two DMA nodes
-> >   ARM: dts: r9a06g032: Describe the DMA router =20
->=20
-> The last two DTS parts have to go in through the renesas-arm-dt and
-> soc trees.
-
-Yes, DT usually never go in through subsystem trees anyway, of
-course they should be taken in through the Renesas tree. For the other
-patches I think its simpler if everything goes through the dmaengine
-tree, but I'm fine either way, I'll let you discuss this with the DMA
-folks if you disagree.
-
-Thanks,
-Miqu=C3=A8l
+I think you are still missing the PF_MEMALLOC point. Please have a look
+how this leads to no reclaim recursion so GFP_NOWAIT has no meaning when
+you are allocating from PF_MEMALLOC context (which the oom killer and
+any reclaim path is). Also have a look at how __gfp_pfmemalloc_flags
+makes the allocation request from that context ALLOC_NO_WATERMARKS.
+See?
+-- 
+Michal Hocko
+SUSE Labs
