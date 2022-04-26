@@ -2,140 +2,254 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30156C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847A9C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344870AbiDZIcj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 04:32:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
+        id S1345687AbiDZIrH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 04:47:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344899AbiDZIbF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:31:05 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9AF67DAAF;
-        Tue, 26 Apr 2022 01:24:59 -0700 (PDT)
-X-UUID: 8e75016a60514b81be909cfb7eeb1e30-20220426
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:3fd02bc8-e753-422f-add6-d674bf6e7ff4,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:faefae9,CLOUDID:cac083c6-85ee-4ac1-ac05-bd3f1e72e732,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: 8e75016a60514b81be909cfb7eeb1e30-20220426
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1336388002; Tue, 26 Apr 2022 16:24:55 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 26 Apr 2022 16:24:54 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 26 Apr 2022 16:24:54 +0800
-Message-ID: <edaf444b9c45e5f36757116fe098749348cb54b7.camel@mediatek.com>
-Subject: Re: [PATCH V3 11/17] dt-bindings: arm: mediatek: Add #reset-cells
- property for MT8192-sys-clock
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>,
-        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
-        <Runyang.Chen@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 26 Apr 2022 16:24:54 +0800
-In-Reply-To: <64411bc7-ce4d-9f85-be8f-c93d6b2a0360@linaro.org>
-References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
-         <20220422060152.13534-12-rex-bc.chen@mediatek.com>
-         <288f55f3-b3ed-32b8-9a44-652f3d53617d@linaro.org>
-         <fdedea6f20738bfe2ede7e526aa653af1ac35768.camel@mediatek.com>
-         <64411bc7-ce4d-9f85-be8f-c93d6b2a0360@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S1346843AbiDZIpZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:45:25 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A7991546;
+        Tue, 26 Apr 2022 01:35:56 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id bz24so12079749qtb.2;
+        Tue, 26 Apr 2022 01:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MX4vOhzYQqxe/6ioulymTKqPZgxEMTYGPJeDxEb8L4A=;
+        b=VL4pcSVBuJM2bnh8rLbrUm0y8adJi6vaYPktQzUL3HHS6E9fi4DCCoAt5fCxCg0BdE
+         e+2lPWjBsrT2t300U1JCGqMuAtoqNaEkhLnHNTaNh6guaB4E1pbg0TDxF5LfrVK0hU1E
+         lqARju3qAhWjmnYKrVoG5/S92P+MRImS+QoxY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MX4vOhzYQqxe/6ioulymTKqPZgxEMTYGPJeDxEb8L4A=;
+        b=OiNimLNb4iH2hSZAHu6Upt6LD9wQvzLcPOlhRmXZdgd0zhKb38cQD5VJMUd+71r5nQ
+         9KMo5iss0l6Z0zmFKmleXtinS9giXzrUL7a0zGS7Ro3sXdYctWKaXyJNZ7Jk8cC3dmQa
+         jdTkN5+HJG91tnuh8nLOpfVJHq2M1UqISyWxtpHLLS5EnHL5s4xV/kaclV5zhfwDe5gJ
+         xJsj3frmrsVwxpuVlVjWh2WRJmq+6++h/3cPmOXmdL5tMbJD+dwqKJkacLT7hdVBN1wi
+         Y8Tl8kis6LXtNZRBqN/S0MT7XGohOrvS6GVd14+vGHJsqZynT1HoDF2b3PIg1czzgnVr
+         UGUw==
+X-Gm-Message-State: AOAM530iHlrxehO4y9sIUEInIA5gwIpRnQg/9UgSYUj98OBEAkoC4E6x
+        I2aPHsHg5ombPHsZaHSYqcLzRzLrL8n+13WcSSM=
+X-Google-Smtp-Source: ABdhPJz2mzhqu6B2cvzIz1ZBaACtI91w2Kuc7FS9HFztq9oN9ipATALm+M2aAJrOqWRGmtgoCMVf35NR7B+BW650jf0=
+X-Received: by 2002:a05:622a:c4:b0:2e1:cb5b:9b5c with SMTP id
+ p4-20020a05622a00c400b002e1cb5b9b5cmr14578628qtw.69.1650962155447; Tue, 26
+ Apr 2022 01:35:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
+ <20220422183012.444674-5-j.neuschaefer@gmx.net> <31cb9af1-173d-bef5-64da-ccf5a01f2485@linaro.org>
+In-Reply-To: <31cb9af1-173d-bef5-64da-ccf5a01f2485@linaro.org>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Tue, 26 Apr 2022 08:35:43 +0000
+Message-ID: <CACPK8XdRYvike9Z98JzfO1r0W2jfkESr8xMGSH4kkigwZ_MkyQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] dt-bindings: clock: Add Nuvoton WPCM450 clock/reset controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2022-04-25 at 15:44 +0800, Krzysztof Kozlowski wrote:
-> On 25/04/2022 04:37, Rex-BC Chen wrote:
-> > > > +  '#reset-cells':
-> > > > +    maximum: 2
-> > > 
-> > > Why this is a maximum? Usually this is const, so how do you use
-> > > it
-> > > (with
-> > > what values)?
-> > > 
-> > 
-> > We need to let the driver compatible with previous setting in
-> > drivers/clk/mediatek/reset.c
-> 
-> Then it should be enum [1, 2], because '0' is not valid.
-> 
-> > There are two use cases in our reset driver:
-> > (Refer to [1])
-> > 
-> > 1. #reset-cells = <1>
-> >    When we input the argument, the older driver
-> > use is to calculate  
-> >    bank and bit by different method. From the implementation of
-> >    reset_xlate(), we can see if the argument number is 1, it will
-> >    return directly.
-> 
-> I understand this is an old binding with older compatibles, so this
-> should be restricted per each variant (allOf:if:then)... but wait,
-> old
-> binding did not allow any reset-cells! You add an entirely new
-> binding
-> property and already want to support some older (deprecated?) way.
-> 
-> > 
-> > 2. #reset-cells = <2>
-> >    The input arguments is offset and bit. When we input two
-> > arguments,
-> >    we can use reset_xlate() to calculate the corresponding id to
-> > assert
-> >    and deassert.
-> > 
-> > [1]:
-> > 
-https://urldefense.com/v3/__https://lore.kernel.org/all/20220422060152.13534-10-rex-bc.chen@mediatek.com/__;!!CTRNKA9wMg0ARbw!0U0Yrp6WQxZ0YNMjaLJbAdq6Zyc524B4CY57-TP7QJ5FoSkCM72VI7mHJyWa1SZCnYTK$
-> >  
-> > 
-> > If it's acceptable, I will add this in commit message.
-> 
-> 
+On Mon, 25 Apr 2022 at 07:59, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 22/04/2022 20:30, Jonathan Neusch=C3=A4fer wrote:
+> > The Nuvoton WPCM450 SoC has a combined clock and reset controller.
+> > Add a devicetree binding for it, as well as definitions for the bit
+> > numbers used by it.
+> >
+> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > ---
+>
+> Thank you for your patch. There is something to discuss/improve.
+>
+> >  .../bindings/clock/nuvoton,wpcm450-clk.yaml   | 74 +++++++++++++++++++
+> >  .../dt-bindings/clock/nuvoton,wpcm450-clk.h   | 67 +++++++++++++++++
+> >  2 files changed, 141 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpc=
+m450-clk.yaml
+> >  create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-cl=
+k.yaml b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
+> > new file mode 100644
+> > index 0000000000000..0fffa8a68dee4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
+> > @@ -0,0 +1,74 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/nuvoton,wpcm450-clk.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Nuvoton WPCM450 clock controller binding
+>
+> s/binding//
+>
+> > +
+> > +maintainers:
+> > +  - Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > +
+> > +description:
+> > +  This binding describes the clock controller of the Nuvoton WPCM450 S=
+oC, which
+> > +  supplies clocks and resets to the rest of the chip.
+>
+> s/This binding describes//
+>
+> Just describe the hardware.
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: nuvoton,wpcm450-clk
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: Reference clock oscillator (should be 48 MHz)
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: refclk
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  '#reset-cells':
+> > +    const: 1
+> > +
+> > +additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - '#clock-cells'
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/nuvoton,wpcm450-clk.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    refclk: clock-48mhz {
+> > +      /* 48 MHz reference oscillator */
+> > +      compatible =3D "fixed-clock";
+> > +      clock-output-names =3D "refclk";
+> > +      clock-frequency =3D <48000000>;
+> > +      #clock-cells =3D <0>;
+> > +    };
+> > +
+> > +    clk: clock-controller@b0000200 {
+> > +      reg =3D <0xb0000200 0x100>;
+> > +      compatible =3D "nuvoton,wpcm450-clk";
+> > +      clocks =3D <&refclk>;
+> > +      clock-names =3D "refclk";
+> > +      #clock-cells =3D <1>;
+> > +      #reset-cells =3D <1>;
+> > +    };
+> > +
+> > +    serial@b8000000 {
+> > +      compatible =3D "nuvoton,wpcm450-uart";
+> > +      reg =3D <0xb8000000 0x20>;
+> > +      reg-shift =3D <2>;
+> > +      interrupts =3D <7 IRQ_TYPE_LEVEL_HIGH>;
+> > +      clocks =3D <&clk WPCM450_CLK_UART0>;
+> > +    };
+>
+> Skip the consumer example, it's obvious/trivial/duplicating.
+>
+> > diff --git a/include/dt-bindings/clock/nuvoton,wpcm450-clk.h b/include/=
+dt-bindings/clock/nuvoton,wpcm450-clk.h
+> > new file mode 100644
+> > index 0000000000000..86e1c895921b7
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/nuvoton,wpcm450-clk.h
+> > @@ -0,0 +1,67 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +
+> > +#ifndef _DT_BINDINGS_CLOCK_NUVOTON_WPCM450_CLK_H
+> > +#define _DT_BINDINGS_CLOCK_NUVOTON_WPCM450_CLK_H
+> > +
+> > +/* Clocks based on CLKEN bits */
+> > +#define WPCM450_CLK_FIU            0
+> > +#define WPCM450_CLK_XBUS           1
+> > +#define WPCM450_CLK_KCS            2
+> > +#define WPCM450_CLK_SHM            4
+> > +#define WPCM450_CLK_USB1           5
+> > +#define WPCM450_CLK_EMC0           6
+> > +#define WPCM450_CLK_EMC1           7
+> > +#define WPCM450_CLK_USB0           8
+> > +#define WPCM450_CLK_PECI           9
+> > +#define WPCM450_CLK_AES           10
+> > +#define WPCM450_CLK_UART0         11
+> > +#define WPCM450_CLK_UART1         12
+> > +#define WPCM450_CLK_SMB2          13
+> > +#define WPCM450_CLK_SMB3          14
+> > +#define WPCM450_CLK_SMB4          15
+> > +#define WPCM450_CLK_SMB5          16
+> > +#define WPCM450_CLK_HUART         17
+> > +#define WPCM450_CLK_PWM           18
+> > +#define WPCM450_CLK_TIMER0        19
+> > +#define WPCM450_CLK_TIMER1        20
+> > +#define WPCM450_CLK_TIMER2        21
+> > +#define WPCM450_CLK_TIMER3        22
+> > +#define WPCM450_CLK_TIMER4        23
+> > +#define WPCM450_CLK_MFT0          24
+> > +#define WPCM450_CLK_MFT1          25
+> > +#define WPCM450_CLK_WDT           26
+> > +#define WPCM450_CLK_ADC           27
+> > +#define WPCM450_CLK_SDIO          28
+> > +#define WPCM450_CLK_SSPI          29
+> > +#define WPCM450_CLK_SMB0          30
+> > +#define WPCM450_CLK_SMB1          31
+> > +
+> > +/* Other clocks */
+> > +#define WPCM450_CLK_USBPHY        32
+> > +
+> > +#define WPCM450_NUM_CLKS          33
+> > +
+> > +/* Resets based on IPSRST bits */
+>
+> All these defines should be in second header in dt-bindings/reset/...
+
+I disagree. It makes more sense to keep the definitions together, and
+it's all for the same hardware and driver.
+
+>
+> > +#define WPCM450_RESET_FIU          0
+>
+>
 > Best regards,
 > Krzysztof
-
-Hello Krzysztof,
-
-I will let #reset-cells = <1> in next version and abandon the
-modification of reset_xlate().
-
-Thanks!
-
-BRs,
-Rex
-
