@@ -2,40 +2,40 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4350EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 10:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69079C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 10:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348133AbiDZKLP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 06:11:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44582 "EHLO
+        id S1348318AbiDZKLY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 06:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244367AbiDZKLD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 06:11:03 -0400
+        with ESMTP id S1348337AbiDZKLG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 06:11:06 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B48121CFFA8;
-        Tue, 26 Apr 2022 02:34:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 074D9209069;
+        Tue, 26 Apr 2022 02:34:11 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 922591F42EA8
+        with ESMTPSA id F17291F42EAB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650965646;
-        bh=ZjCrWBTNIv5WU4cFrZdi3/7uMy715irejzScTBuxtFg=;
+        s=mail; t=1650965650;
+        bh=rb6ZxyZT0dyUbID79DdULqa8/WRjiOlgTOrn8dU0NJg=;
         h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=MNhLlpuE19PCP8voK4ItuiOevt4DVE4teezmVQe5coKAwKvswAq+rjmWdWFl74kyv
-         rG/RiyLC9HUEie6DIKqUxEbj2kwidF+j+H/TRuVHNIZyNVrsfW4yfbFldoS21W7jpN
-         etnzk2u6l234Be2xaHKcECRZ3XKVBPFaQMet0tiWbiAEuSaRjUyAc8Ms2MLnDy00Mq
-         ItzetMQweZOMa9wI+dMq2mQfndZMwMFpFVTre48uZO2i7QjQyHcl3Wc7nugFc1MSB9
-         VTqB6Xz4rFHsO3bmSJv7tsY15a+M8Q6bwKRp+CkTxJoHaqCHQfGE1QcC7WX9zB7SRD
-         rILSmxApmGFOg==
-Message-ID: <2653c5f1-5582-82ae-ec20-b9ee85325530@collabora.com>
-Date:   Tue, 26 Apr 2022 11:34:03 +0200
+        b=A0G98VygsLasScLoSR3LYJ/RpGMk1rJduo9ZbtTHiA8z6ACqNh2+IuiM74QRylEhY
+         X9Jme/cyDF8oAUZF+VvXvrw2E14SL8ldIonkiW9GnNud1is3t2MnePuFWqZp7BcvVJ
+         ZTGnatfyE4hNboFXSsxOeaBadkyhATJtx1McVKChj1oOPsjWuQNtP/LLeccxbWQe8M
+         JWcxIEch7KGTZvX3CrlqlifWeyiEd1ldxq4AJZlGe6vGywN9c94FiYePl9Nq+IdtBn
+         HkVtDhLB+5dSkWK1c7Ca4hcEUjXS7dQWFLvkWouXvnQV2rl9Kq7Sh6fSByd0EETRec
+         X6jquPXMEaiyg==
+Message-ID: <d235bfc8-8f43-aa87-b79a-ce15d81877d3@collabora.com>
+Date:   Tue, 26 Apr 2022 11:34:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH V3 04/17] clk: mediatek: reset: Extract common drivers to
- update function
+Subject: Re: [PATCH V3 06/17] clk: mediatek: reset: Revise structure to
+ control reset register
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
         sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
@@ -46,9 +46,9 @@ Cc:     p.zabel@pengutronix.de, chun-jie.chen@mediatek.com,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
- <20220422060152.13534-5-rex-bc.chen@mediatek.com>
+ <20220422060152.13534-7-rex-bc.chen@mediatek.com>
 Content-Language: en-US
-In-Reply-To: <20220422060152.13534-5-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220422060152.13534-7-rex-bc.chen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -56,9 +56,14 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Il 22/04/22 08:01, Rex-BC Chen ha scritto:
-> To make drivers more clear and readable, we extract common code
-> within assert and deassert to mtk_reset_update_set_clr() and
-> mtk_reset_update().
+> To declare the reset data easier instead of using many input variables
+> to mtk_register_reset_controller().
+> 
+> - Add mtk_clk_rst_desc to input the reset register data.
+> - Rename "mtk_reset" to "mtk_clk_rst_data". We use it to store reset
+>    register data and store reset controller device. It's more easy to
+>    manager the data for each reset controller.
+> - Extract container_of in update functions to to_mtk_clk_rst_data().
 > 
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 
