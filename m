@@ -2,76 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA314C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5868EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 08:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344159AbiDZHni (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:43:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        id S1344719AbiDZI1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 04:27:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344275AbiDZHne (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:43:34 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BEB6BB4;
-        Tue, 26 Apr 2022 00:40:27 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 1D235210FC;
-        Tue, 26 Apr 2022 07:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1650958826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wMAdxJZJ6A0n7iKNAeF0d/axVH6mYUkchW85fLcAB0I=;
-        b=rOpfkgxOFp21qgWpq0YAojVkCTCU3fM7vqtzuV2Al7un1+Vk4WynSRLQWOMYOWFHXRpgv2
-        FYW/QW9rrJdGaWTSJSVGw8UuH+1PC97ffapuceZA5eUO3xDoKwGgJ5ElcFI6ooeVhCym+4
-        IVn5UYD4FHQqY5y0FDFN0ENWJ8QTNBo=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id A0A272C142;
-        Tue, 26 Apr 2022 07:40:25 +0000 (UTC)
-Date:   Tue, 26 Apr 2022 09:40:23 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        rostedt@goodmis.org
-Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
- show_mem.c
-Message-ID: <Ymeh51L7XGTeCkDG@dhcp22.suse.cz>
-References: <20220421234837.3629927-14-kent.overstreet@gmail.com>
- <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
- <YmLFPJTyoE4GYWp4@carbon>
- <20220422234820.plusgyixgybebfmi@moria.home.lan>
- <YmNH/fh8OwTJ6ASC@carbon>
- <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
- <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
- <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
- <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
- <20220426072612.7wgpzndigr4ybrh4@moria.home.lan>
+        with ESMTP id S1344758AbiDZI0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 04:26:44 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13B9F3DDF9;
+        Tue, 26 Apr 2022 01:23:18 -0700 (PDT)
+X-UUID: ca5bc5c1788243d9bdf00873341344a6-20220426
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:deaf5418-98ed-4509-9059-884e43cd696f,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:faefae9,CLOUDID:c5bdbb2e-6199-437e-8ab4-9920b4bc5b76,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: ca5bc5c1788243d9bdf00873341344a6-20220426
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1906228943; Tue, 26 Apr 2022 16:23:11 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 26 Apr 2022 16:23:10 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 26 Apr 2022 16:23:10 +0800
+Message-ID: <9547368870f6a8d5c5e6bd5dd497ddbe04c51b93.camel@mediatek.com>
+Subject: Re: [PATCH V3 12/17] dt-binding: mt8192: Add infra_ao reset bit
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "angelogioacchino.delregno@collabora.com" 
+        <angelogioacchino.delregno@collabora.com>,
+        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
+        <Chun-Jie.Chen@mediatek.com>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
+        <Runyang.Chen@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Tue, 26 Apr 2022 16:23:10 +0800
+In-Reply-To: <418c5f0c-5279-41f5-3705-345ec9a97ea2@linaro.org>
+References: <20220422060152.13534-1-rex-bc.chen@mediatek.com>
+         <20220422060152.13534-13-rex-bc.chen@mediatek.com>
+         <e5b18654-ce83-44ee-e4c8-4cdfc4ceaa1d@linaro.org>
+         <5ec37a01b0b84140a7d171b9a5cff7ad8f9fbe87.camel@mediatek.com>
+         <418c5f0c-5279-41f5-3705-345ec9a97ea2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220426072612.7wgpzndigr4ybrh4@moria.home.lan>
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 26-04-22 03:26:12, Kent Overstreet wrote:
-[...]
-> Anyways, the reason I think this allocation is fine is it's GFP_NOWAIT and it's
-> completely fine if it fails - all we lose is some diagnostics, and also it's
-> released right away.
+On Mon, 2022-04-25 at 15:52 +0800, Krzysztof Kozlowski wrote:
+> On 25/04/2022 07:01, Rex-BC Chen wrote:
+> > On Sat, 2022-04-23 at 18:28 +0800, Krzysztof Kozlowski wrote:
+> > > On 22/04/2022 08:01, Rex-BC Chen wrote:
+> > > > To support reset of infra_ao, add the bit definition for
+> > > > thermal/PCIe/SVS.
+> > > > 
+> > > > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> > > > ---
+> > > >  include/dt-bindings/reset/mt8192-resets.h | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > > 
+> > > > diff --git a/include/dt-bindings/reset/mt8192-resets.h
+> > > > b/include/dt-bindings/reset/mt8192-resets.h
+> > > > index be9a7ca245b9..d5f3433175c1 100644
+> > > > --- a/include/dt-bindings/reset/mt8192-resets.h
+> > > > +++ b/include/dt-bindings/reset/mt8192-resets.h
+> > > > @@ -27,4 +27,14 @@
+> > > >  
+> > > >  #define MT8192_TOPRGU_SW_RST_NUM				
+> > > > 23
+> > > >  
+> > > > +/* INFRA RST0 */
+> > > > +#define MT8192_INFRA_RST0_LVTS_AP_RST				
+> > > > 0
+> > > > +/* INFRA RST2 */
+> > > > +#define MT8192_INFRA_RST2_PCIE_PHY_RST				
+> > > > 15
+> > > > +/* INFRA RST3 */
+> > > > +#define MT8192_INFRA_RST3_PTP_RST				
+> > > > 5
+> > > > +/* INFRA RST4 */
+> > > > +#define MT8192_INFRA_RST4_LVTS_MCU				
+> > > > 12
+> > > > +#define MT8192_INFRA_RST4_PCIE_TOP				
+> > > > 1
+> > > 
+> > > These should be the IDs of reset, not some register
+> > > values/offsets.
+> > > Therefore it is expected to have them incremented by 1.
+> > > 
+> > > 
+> > 
+> > Hello Krzysztof,
+> > 
+> > This is define bit.
+> > 
+> > There is serveral reset set for infra_ao while it's not serial.
+> > For MT8192, it's 0x120/0x130/0x140/0x150/0x730.
+> > We are implement #reset-cells = <2>, and we can use this reset
+> > drive
+> > more easier.
+> > 
+> > For example, in dts, we can define
+> > infra_ao: syscon {
+> > 	compatible = "mediatek,mt8192-infracfg", "syscon";
+> >  	reg = <0 0x10001000 0 0x1000>;
+> >  	#clock-cells = <1>;
+> > 	#reset-cells = <2>;
+> > };
+> > 
+> > thermal {
+> > 	...
+> > 	resets = <&infra_ao 0x730 MT8192_INFRA_RST4_LVTS_MCU>;
+> > 	...
+> > };
+> > 
+> > If it's acceptabel, I can update all bit difinition from 0 to 15
+> > for
+> > all reset set.
+> 
+> Bits are not acceptable, because you embed specific device
+> programming
+> model (register bits) into the binding.
+> 
+> These should be IDs, so decimal numbers incremented from 0, so:
+> #define MT8192_INFRA_RST0_LVTS_AP_RST				0
+> #define MT8192_INFRA_RST4_LVTS_MCU				1
+> #define MT8192_INFRA_RST4_PCIE_TOP				2
+> 
+> And what is 0x730 in your example? It does not look like ID of a
+> reset...
+> 
+> Entire changeset look wrong from DT point of view.
+> 
+> Best regards,
+> Krzysztof
 
-I think you are still missing the PF_MEMALLOC point. Please have a look
-how this leads to no reclaim recursion so GFP_NOWAIT has no meaning when
-you are allocating from PF_MEMALLOC context (which the oom killer and
-any reclaim path is). Also have a look at how __gfp_pfmemalloc_flags
-makes the allocation request from that context ALLOC_NO_WATERMARKS.
-See?
--- 
-Michal Hocko
-SUSE Labs
+Hello Krzysztof,
+
+Got it. I will modify them to reset index.
+And the dts in my next version would somthing like this:
+
+----
+#define MT8192_INFRA_THERMAL_CTRL_RST			0
+#define MT8192_INFRA_PEXTP_PHY_RST			79
+#define MT8192_INFRA_PTP_RST				101
+#define MT8192_INFRA_RST4_PCIE_TOP			129
+#define MT8192_INFRA_THERMAL_CTRL_MCU_RST		140
+----
+
+infra_ao: syscon {
+	compatible = "mediatek,mt8192-infracfg", "syscon";
+	reg = <0 0x10001000 0 0x1000>;
+	#clock-cells = <1>;
+	#reset-cells = <1>;
+};
+
+thermal {
+	...
+	resets = <&infra_ao MT8192_INFRA_THERMAL_CTRL_MCU_RST>;
+	...
+};
+
+BRs,
+Rex
+
