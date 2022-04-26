@@ -2,192 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68A8C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCD7C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Apr 2022 07:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245343AbiDZH3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 03:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33998 "EHLO
+        id S243980AbiDZH3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 03:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344022AbiDZH3M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:29:12 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 013DA1F6
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:26:04 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id s27so5072523ljd.2
-        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 00:26:04 -0700 (PDT)
+        with ESMTP id S245744AbiDZH3X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 03:29:23 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C90CBC26;
+        Tue, 26 Apr 2022 00:26:16 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id d14so11992137qtw.5;
+        Tue, 26 Apr 2022 00:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Ip4yKprUwa5CWGfKSGf6LxYHkAhSkHn2zyYdRVkuKYU=;
-        b=lM/cGyNPCgOlRbQmCDv2N0LFI8Z/V1E3GPTN3qhv6IeGaKXN89UYs3/xI2kcwElbtG
-         g4o7WQ9jIP5pxzL9gWHSBOjFqAIZilmXBnEWYQbWRlG+Vvr6Uu2mZXDNgx7F6qhoP6p7
-         KaIajNLuJH6vtSFd0Cptuqa6QLdml1zWy9D/S4XCiWhQOyKo2zKpYW8fOhzah8JTnb86
-         byhACWCLlrYEWu40468Fal0BIm0Ber8W91ukxTecLm6UqPyfCBNLhBWoewva5Gu7p9wu
-         q6TWpnHeZ36EqEBakXDRlUbSiJXMjItpxV2Ynu6tgFrxGp+jmdY5mQuKU/zP36H7BgBq
-         q9kw==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yrE6/KgEQNtC6XhgTjcpn5HXwreHk+7lNm/A5Ylaexs=;
+        b=MMOnHZll5VuB7PYy60Iysska6rZSf2D5NP4yAERa9ryhogeag6xqgyUSPbZb7bCeBK
+         zbPmDR7lIYjgg0DO3yolNQW7Ogg07Z4TUMtWNedywiiUIx0jk/eaAtWyItzk/sxt+yed
+         4SRUSei87FUEuymIi/ktCyE2nuDCXqfJKyc2XXy53P716xjN7yKfexduMdDMsZiv4XEP
+         9vcmY1/aI/VVw/kLKbTXqZ/peUEm3mEvblkK9ttYNhxNT2YqT5nsVou+xnqP34ArGUw9
+         qdsC5WFU/Wo9Z2mZHsrZOr8pR4Yq89/4smKLo3zo3V05YP0f/XOv861ZQoTPtID7L4E2
+         0n8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Ip4yKprUwa5CWGfKSGf6LxYHkAhSkHn2zyYdRVkuKYU=;
-        b=iwb7OgAOS/+2J3Sey4AN7f4KQC3Vnkb6YaRRNJFNg+nDVC0vaSUeETcnAXJJ/VIL56
-         N3uO7Cq1xRh4pGlMIU1e4S2+NYIw04Kq9c5+QEWzJrwfwQvPOU/dQ6R0jEWGtfX6gm8M
-         QfZ0MQWacVF3QBiCa7t5ezb8IStqvc96sT4wvL7DM+wdxKfsqy5rSZ44Aj1yChF9vBtV
-         JzClC/OHyTv3cm2qzDRSAhORTq+j2Cgd679Oe5udrFraWn//tHVoIJbkUzW+mAd0ar2y
-         fzq6n2xVSj+bzbqUsz2g+YW4IjBuQCtYXh39AlN8sX6iOYe1m8irAZpCJ7JMrHsFFVU0
-         9qXA==
-X-Gm-Message-State: AOAM530f2NW4omHEXSpTfoWFnLpAQ0hg9DFzrlOgS1FtD8ks9yymrt83
-        Hn1EUJMAYmDuEudx5JLjcl1uoQ==
-X-Google-Smtp-Source: ABdhPJwYgtV/i5ybL48Y+kjThwzp8oCL1bzTgORpgBsO3BcnlY+Ccb/X9tyWeGjjIRdQU0g/NK/9JQ==
-X-Received: by 2002:a2e:bf12:0:b0:249:3a3b:e91a with SMTP id c18-20020a2ebf12000000b002493a3be91amr13833393ljr.343.1650957963192;
-        Tue, 26 Apr 2022 00:26:03 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id h13-20020a056512338d00b0047203470747sm795653lfg.245.2022.04.26.00.26.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 00:26:02 -0700 (PDT)
-Message-ID: <3f407912-be75-19a8-d406-ae042d23fd9e@linaro.org>
-Date:   Tue, 26 Apr 2022 10:26:02 +0300
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yrE6/KgEQNtC6XhgTjcpn5HXwreHk+7lNm/A5Ylaexs=;
+        b=fSKD7JcW5cVIdrEHfLMpSbTQfrkWSmSwzlffPlAqzKZ5pxy0Ha5ZpaihMVxtSTT3g8
+         OnU93mAC+Bijv6vP3xjjtTATCW4LPbXHkZowH+rELfFu9vophRx7KmTayZQ9Vs9ItRu/
+         +5i5pvdss6lZo6ezs5ypaglut/E3N4PzrIkCiqEg/yHxGhLBmrhIGMe+tsjLH/e3QByf
+         H+T6KmUOExppkUPKr23s6YNB1zY1ftlBjrUiDWzmbRO97G1a/PSX4i6K0gF6UaTiQett
+         a2aNXuRH9UEke1E6Tlqe5grEPGQK/0uDw8WVljRtdNAEOIebHtm3oZlb7OQyiiSZYiwb
+         n1mg==
+X-Gm-Message-State: AOAM532rfP9m2l3xBjks+LrwTBTAxBQvuyvik0/zrL2widLvVGyE4vTc
+        O7XtbTe5K3dyN3mJ1XpTVncdT4hvZ/QD
+X-Google-Smtp-Source: ABdhPJzHLhUkK0sbZJ+wWcmBR8J6P7yXgVyWf0qd7Fln2lMBrwIRo1ub7hHecfTdSVOahkHtW1uTeA==
+X-Received: by 2002:a05:622a:34d:b0:2f3:44d9:41a8 with SMTP id r13-20020a05622a034d00b002f344d941a8mr14286734qtw.217.1650957975499;
+        Tue, 26 Apr 2022 00:26:15 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id f127-20020a379c85000000b0069c921d6576sm6308392qke.76.2022.04.26.00.26.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 00:26:14 -0700 (PDT)
+Date:   Tue, 26 Apr 2022 03:26:12 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
+        rostedt@goodmis.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <20220426072612.7wgpzndigr4ybrh4@moria.home.lan>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+ <YmLFPJTyoE4GYWp4@carbon>
+ <20220422234820.plusgyixgybebfmi@moria.home.lan>
+ <YmNH/fh8OwTJ6ASC@carbon>
+ <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
+ <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+ <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
+ <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v3 3/3] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Content-Language: en-GB
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220425212750.2749135-1-dmitry.baryshkov@linaro.org>
- <20220425212750.2749135-4-dmitry.baryshkov@linaro.org>
- <8579a3df-1a1d-c258-f65e-531cf0731949@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <8579a3df-1a1d-c258-f65e-531cf0731949@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ymeck8AaTwaB29KS@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/04/2022 10:08, Krzysztof Kozlowski wrote:
-> On 25/04/2022 23:27, Dmitry Baryshkov wrote:
->> Split tsens properties to the child node of the gcc. This follows the
->> lead of ipq8064 (which also uses a separate node for tsens) and makes
->> device tree closer to other platforms, where tsens is a completely
->> separate device.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   .../bindings/clock/qcom,gcc-apq8064.yaml      | 45 +++++++------------
->>   1 file changed, 17 insertions(+), 28 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> index b867da12761e..f2762599f679 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
->> @@ -23,47 +23,36 @@ description: |
->>   
->>   properties:
->>     compatible:
->> -    enum:
->> -      - qcom,gcc-apq8064
->> -      - qcom,gcc-msm8060
+On Tue, Apr 26, 2022 at 09:17:39AM +0200, Michal Hocko wrote:
+> I have already touched on that but let me reiterate. Allocation context
+> called from the oom path will have an unbound access to memory reserves.
+> Those are a last resort emergency pools of memory that are not available
+> normally and there are areas which really depend on them to make a
+> further progress to release the memory pressure.
 > 
-> Hm, such list does not exist in mainline, so is your set rebased on
-> something? See also:
-> https://lore.kernel.org/linux-devicetree/20220425133527.3723233-1-robh@kernel.org/
-> https://lore.kernel.org/linux-devicetree/20220426064241.6379-1-krzysztof.kozlowski@linaro.org/
+> Swap over NFS would be one such example. If some other code path messes
+> with those reserves the swap IO path could fail with all sorts of
+> fallouts.
+> 
+> So to be really exact in my statement. You can allocate from the OOM
+> context but it is _strongly_ discouraged unless there is no other way
+> around that.
+> 
+> I would even claim that the memory reclaim in general shouldn't rely on
+> memory allocations (other than mempools). If an allocation is really
+> necessary then an extra care has to prevent from complete memory
+> depletion.
 
-Ugh, yes. I missed a patch during git send-email. I've sent it 
-separately (dt-bindings: clock: gcc-apq8064: move qcom,apq8084 back to 
-gcc-other.yaml)
+100% agreement with this, I've always made sure IO paths I touched were fully
+mempool-ified (some of my early work was actually for making sure bio allocation
+underneath generic_make_request() won't deadlock - previously allocated bios
+won't make forward progress and be freed due to generic_make_request() turning
+recursion into iteration, but that's all ancient history).
 
-> 
-> 
->> -
->> -  nvmem-cells:
->> -    minItems: 1
->> -    maxItems: 2
->> -    description:
->> -      Qualcomm TSENS (thermal sensor device) on some devices can
->> -      be part of GCC and hence the TSENS properties can also be part
->> -      of the GCC/clock-controller node.
->> -      For more details on the TSENS properties please refer
->> -      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
->> -
->> -  nvmem-cell-names:
->> -    minItems: 1
->>       items:
->> -      - const: calib
->> -      - const: calib_backup
-> 
-> I see the removal of tsens properties, but I do not see the other part
-> of split - adding them as child. It does not come from qcom,gcc.yaml,
-> either.
-> 
->> -
->> -  '#thermal-sensor-cells':
->> -    const: 1
->> +      - enum:
->> +          - qcom,gcc-apq8064
->> +          - qcom,gcc-msm8060
->> +      - const: syscon
->>   
->>   required:
->>     - compatible
->> -  - nvmem-cells
->> -  - nvmem-cell-names
->> -  - '#thermal-sensor-cells'
->>   
->>   unevaluatedProperties: false
->>   
->>   examples:
->>     - |
->>       clock-controller@900000 {
->> -      compatible = "qcom,gcc-apq8064";
->> +      compatible = "qcom,gcc-apq8064", "syscon";
->>         reg = <0x00900000 0x4000>;
->> -      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->> -      nvmem-cell-names = "calib", "calib_backup";
->>         #clock-cells = <1>;
->>         #reset-cells = <1>;
->>         #power-domain-cells = <1>;
->> -      #thermal-sensor-cells = <1>;
->> +
->> +      thermal-sensor {
->> +        compatible = "qcom,msm8960-tsens";
->> +
->> +        nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->> +        nvmem-cell-names = "calib", "calib_backup";
->> +        interrupts = <0 178 4>;
-> 
-> 0 and 4 look like GIC/interrupt flags, so please use defines.
-> 
->> +        interrupt-names = "uplow";
->> +
->> +        #qcom,sensors = <11>;
->> +        #thermal-sensor-cells = <1>;
->> +        };
-> 
-> Indentation looks weird here.
-> 
->>       };
->>   ...
-> 
-> 
-> Best regards,
-> Krzysztof
+Anyways, the reason I think this allocation is fine is it's GFP_NOWAIT and it's
+completely fine if it fails - all we lose is some diagnostics, and also it's
+released right away.
 
+But there's also no need for it to be a point of contention, the way I'm going
+with printbufs it'll be trivial to mempool-ify this if we want.
 
--- 
-With best wishes
-Dmitry
+Before I get back to this I'm changing the approach I'm taking with printbufs
+and first using it to clean up vsnprintf() and all the related code, which is..
+a bit of an undertaking. End result is going to be really cool though.
