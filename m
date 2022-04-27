@@ -2,25 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7D8C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 09:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1FEC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 09:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229873AbiD0J7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 05:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
+        id S229697AbiD0KAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 06:00:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbiD0J7w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 05:59:52 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 04D093FE7E7;
-        Wed, 27 Apr 2022 02:53:12 -0700 (PDT)
+        with ESMTP id S229586AbiD0KAW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:00:22 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E3669402AD8;
+        Wed, 27 Apr 2022 02:53:40 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.90,292,1643641200"; 
-   d="scan'208";a="118179427"
+   d="scan'208";a="119361579"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Apr 2022 18:48:57 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 27 Apr 2022 18:48:43 +0900
 Received: from localhost.localdomain (unknown [10.226.93.29])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 53E3D4264DAF;
-        Wed, 27 Apr 2022 18:48:54 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C44E24264DAF;
+        Wed, 27 Apr 2022 18:48:40 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -30,9 +30,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 8/9] clk: renesas: r9a07g044: Add LCDC clock and reset entries
-Date:   Wed, 27 Apr 2022 10:48:22 +0100
-Message-Id: <20220427094823.3319-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 4/9] clk: renesas: r9a07g044: Add M1 clock support
+Date:   Wed, 27 Apr 2022 10:48:18 +0100
+Message-Id: <20220427094823.3319-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
 References: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
@@ -42,7 +42,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add LCDC clock and reset entries to CPG driver.
+Add support for M1 clock which is sourced from FOUTPOSTDIV.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -52,43 +52,64 @@ V1->V2:
 RFC->V1:
  * Added Rb tag from Geert
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/r9a07g044-cpg.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 66608696d2e2..b5ddc5058670 100644
+index bdfabb992a20..0c9fa1f705af 100644
 --- a/drivers/clk/renesas/r9a07g044-cpg.c
 +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -194,7 +194,7 @@ static const struct {
- };
+@@ -40,6 +40,8 @@ enum clk_ids {
+ 	CLK_DIV_PLL3_C,
+ 	CLK_PLL4,
+ 	CLK_PLL5,
++	CLK_PLL5_FOUTPOSTDIV,
++	CLK_PLL5_FOUT1PH0,
+ 	CLK_PLL5_FOUT3,
+ 	CLK_PLL5_250,
+ 	CLK_PLL6,
+@@ -52,6 +54,7 @@ enum clk_ids {
+ 	CLK_SD0_DIV4,
+ 	CLK_SD1_DIV4,
+ 	CLK_SEL_GPU2,
++	CLK_SEL_PLL5_4,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -77,12 +80,13 @@ static const struct clk_div_table dtable_1_32[] = {
+ 
+ /* Mux clock tables */
+ static const char * const sel_pll3_3[] = { ".pll3_533", ".pll3_400" };
++static const char * const sel_pll5_4[] = { ".pll5_foutpostdiv", ".pll5_fout1ph0" };
+ static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
+ static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
+ static const char * const sel_gpu2[] = { ".pll6", ".pll3_div2_2" };
  
  static const struct {
--	struct rzg2l_mod_clk common[62];
-+	struct rzg2l_mod_clk common[65];
+-	struct cpg_core_clk common[44];
++	struct cpg_core_clk common[48];
  #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
+ 	struct cpg_core_clk drp[0];
  #endif
-@@ -254,6 +254,12 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
-+		DEF_COUPLED("lcdc_a",	R9A07G044_LCDC_CLK_A, R9A07G044_CLK_M0,
-+					0x56c, 0),
-+		DEF_COUPLED("lcdc_p",	R9A07G044_LCDC_CLK_P, R9A07G044_CLK_ZT,
-+					0x56c, 0),
-+		DEF_MOD("lcdc_clk_d",	R9A07G044_LCDC_CLK_D, R9A07G044_CLK_M3,
-+					0x56c, 1),
- 		DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
- 					0x570, 0),
- 		DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
-@@ -349,6 +355,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
- 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
- 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
-+	DEF_RST(R9A07G044_LCDC_RESET_N, 0x86c, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
- 	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
+@@ -127,6 +131,10 @@ static const struct {
+ 		DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
+ 		DEF_MUX(".sel_gpu2", CLK_SEL_GPU2, SEL_GPU2,
+ 			sel_gpu2, ARRAY_SIZE(sel_gpu2), 0, CLK_MUX_READ_ONLY),
++		DEF_PLL5_FOUTPOSTDIV(".pll5_foutpostdiv", CLK_PLL5_FOUTPOSTDIV, CLK_EXTAL),
++		DEF_FIXED(".pll5_fout1ph0", CLK_PLL5_FOUT1PH0, CLK_PLL5_FOUTPOSTDIV, 1, 2),
++		DEF_PLL5_4_MUX(".sel_pll5_4", CLK_SEL_PLL5_4, SEL_PLL5_4,
++			       sel_pll5_4, ARRAY_SIZE(sel_pll5_4)),
+ 
+ 		/* Core output clk */
+ 		DEF_DIV("I", R9A07G044_CLK_I, CLK_PLL1, DIVPL1A, dtable_1_8,
+@@ -154,6 +162,7 @@ static const struct {
+ 		DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
+ 		DEF_DIV("G", R9A07G044_CLK_G, CLK_SEL_GPU2, DIVGPU, dtable_1_8,
+ 			CLK_DIVIDER_HIWORD_MASK),
++		DEF_FIXED("M1", R9A07G044_CLK_M1, CLK_PLL5_FOUTPOSTDIV, 1, 1),
+ 	},
+ #ifdef CONFIG_CLK_R9A07G054
+ 	.drp = {
 -- 
 2.25.1
 
