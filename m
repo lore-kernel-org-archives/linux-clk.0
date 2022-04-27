@@ -2,157 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723BCC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E727C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 11:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232164AbiD0LDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 07:03:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43730 "EHLO
+        id S231917AbiD0LEt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 07:04:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232166AbiD0LCy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 07:02:54 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6849B3E99D8;
-        Wed, 27 Apr 2022 03:41:53 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id b17so743329qvf.12;
-        Wed, 27 Apr 2022 03:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=suJzkUXqPQf4PYb2XhQgEpW3i2lXW5ZFjJbjw6YDCwQ=;
-        b=lU8rgki1uD9UMtWb81rCPzKmXqQKTc1SYK/4Jg4IOXlm9l51RDUyETvWNsPyrQJ5oD
-         NTPG9mu3bcgiMxkdnx2/hrfx47TKhDWW/Y1ynVywJ4kpPU7RjGdibVfTYiJkpR2OqQea
-         Kz+l/deOPIaKMf8Ejftkc9lV/5uKuEddUQHKF9xr02rG5mggH14WtDbZvoW4CZxU76mr
-         /rhC/vX4rVTMcT8Frj0S1uRWpKt28xWSAArRzE9fevX6vPqFhVd1tSB8lHKlXuO8M6te
-         +miMtKU0K8jWuReH9+xpmYPKmT5N6rpri2rVVnLPnKXGkCaFx6C3RmI2ezZtcDiEv+wu
-         Ha1w==
+        with ESMTP id S231922AbiD0LDT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 07:03:19 -0400
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E04C3E010C;
+        Wed, 27 Apr 2022 03:52:53 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id ay11so821583qtb.4;
+        Wed, 27 Apr 2022 03:52:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=suJzkUXqPQf4PYb2XhQgEpW3i2lXW5ZFjJbjw6YDCwQ=;
-        b=mz3ozHTVtvyDjUvZLukVC20WaneqOJVVqOJs1qpzj7CD/5uMyDlfc1wf9LonL3B6MA
-         S2p+n5K7hItMUKC5nyfy8IXj8VXbJYrmkwBsY5wGB5MEEoMJZv7mjjuua73qrwu86Yx1
-         vTrpafTaUqEebdHgQ4Vacn/yXUgG/V/zeWp/OcOLq6WL7DZ+SajFlfH49AB+Ov5NvtUC
-         QHKoIFtHhQCzAx/G3XPE/NtpjnWZgd91BAbcN03GG3HquFzIXqqqR+ByaRU5sjdzL/Lb
-         J7O6cdDKA4sxuSVaTeGGtbpzDA934jv7mCOre6+7kA3Z1roPApwOHb7lE0IQY+dJ29Zp
-         dZaQ==
-X-Gm-Message-State: AOAM531zNsvCX7qpNlAh+LmqPRX3SKFP8/ElkK4+Shpdo1ycPmp5hTO1
-        pft+a2I5ieZkF8OyOD43OuBNg9yNXH1SSQ==
-X-Google-Smtp-Source: ABdhPJwMXZ+bv/j/U49YNgrTCpbhxGZbtDZO4KJmBqL8dV/TqcqnkVRGW5dvPH1fMgHAXjGOmoGPuA==
-X-Received: by 2002:a05:6a00:a8b:b0:4e1:52db:9e5c with SMTP id b11-20020a056a000a8b00b004e152db9e5cmr28922674pfl.38.1651054147588;
-        Wed, 27 Apr 2022 03:09:07 -0700 (PDT)
-Received: from tj10039pcu.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h7-20020aa786c7000000b00505bf336385sm18260649pfo.124.2022.04.27.03.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Apr 2022 03:09:07 -0700 (PDT)
-From:   Cixi Geng <gengcixi@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V4 1/4] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
-Date:   Wed, 27 Apr 2022 18:08:45 +0800
-Message-Id: <20220427100848.3525710-2-gengcixi@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220427100848.3525710-1-gengcixi@gmail.com>
-References: <20220427100848.3525710-1-gengcixi@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EeLCBbdeC0qD/hBxXlqSXJDGwgSvd3X/uaXmAMqW6zk=;
+        b=t0KBTaCSCYha6Hax/gXynQzxub2+ZyzD/X16Jdu0645zIjcUrtWOQMebkAZOdncBU5
+         tQddXF0hLgTugkA+efgPqJozDNIhQsy5yXynj5tT0cItwxdRuH2PyTiuW6VOwYvCGdb0
+         syhQ5RGaDwlsZ3goZSdVfIwbYuf7kysytl0ZYnqWku/QMukig1BeV4hJhCrb7jKkL1tY
+         JRcbMdeD/tFtK7qT7gWJHwbVhkORHBDdZdhAQwrZg7p6nTxsrmwU5zMvwtrVepQX9AEe
+         sx8FROJPF782NEXJ9DqmX76sjstdvka9HqpZkqxx5l88L01eAfY8lyTlOylm+jMDWUbU
+         /LEQ==
+X-Gm-Message-State: AOAM5324AbiKlLHkFdwYMHUfPAwkb3fjlvewjZSuPViwZzjBPqw7HbKe
+        eOBllBlFwI/t0rv8rW5oSLM0U0YSBpqGaw==
+X-Google-Smtp-Source: ABdhPJzGxz8Io1ttjjHGXiVhAChNio+RmmRO1avG8nIsh3BztxQiSgLBgz6CscLT9CLL3DXUDJOVhg==
+X-Received: by 2002:a05:620a:270d:b0:69f:26e4:15f6 with SMTP id b13-20020a05620a270d00b0069f26e415f6mr12974171qkp.362.1651052196478;
+        Wed, 27 Apr 2022 02:36:36 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id s18-20020a05622a1a9200b002f36470c4f1sm6197201qtc.56.2022.04.27.02.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 02:36:35 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id w17so2275068ybh.9;
+        Wed, 27 Apr 2022 02:36:35 -0700 (PDT)
+X-Received: by 2002:a25:d393:0:b0:648:4871:3b91 with SMTP id
+ e141-20020a25d393000000b0064848713b91mr16014133ybf.506.1651052195208; Wed, 27
+ Apr 2022 02:36:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
+ <20220421085112.78858-9-miquel.raynal@bootlin.com> <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
+ <20220427111449.338d9579@xps13>
+In-Reply-To: <20220427111449.338d9579@xps13>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Apr 2022 11:36:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
+Message-ID: <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
+Subject: Re: [PATCH v11 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Cixi Geng <cixi.geng1@unisoc.com>
+Hi Miquel,
 
-Add a new bindings to describe ums512 clock compatible string.
+On Wed, Apr 27, 2022 at 11:14 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:29:58 +0200:
+> > On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
+> > <miquel.raynal@bootlin.com> wrote:
+> > > Describe the two DMA controllers available on this SoC.
+> > >
+> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Still, a few comments below, valid for both instances...
+> >
+> > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> > > @@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
+> > >                         status = "disabled";
+> > >                 };
+> > >
+> > > +               dma0: dma-controller@40104000 {
+> > > +                       compatible = "renesas,r9a06g032-dma", "renesas,rzn1-dma";
+> > > +                       reg = <0x40104000 0x1000>;
+> > > +                       interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> > > +                       clock-names = "hclk";
+> > > +                       clocks = <&sysctrl R9A06G032_HCLK_DMA0>;
+> > > +                       dma-channels = <8>;
+> > > +                       dma-requests = <16>;
+> > > +                       dma-masters = <1>;
+> > > +                       #dma-cells = <3>;
+> > > +                       block_size = <0xfff>;
+> > > +                       data_width = <3>;
+> >
+> > This property is deprecated, in favor of "dma-width".
+>
+> Indeed,
+>         data_width = <3>;
+> is deprecated.
+>
+> However, dma-width does not seem to be described anywhere. Do you mean:
+>         data-width = <8>;
+> instead?
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
----
- .../bindings/clock/sprd,ums512-clk.yaml       | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+Oops, I did mean "data-width".
 
-diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-new file mode 100644
-index 000000000000..5f747b0471cf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright 2022 Unisoc Inc.
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: UMS512 Soc clock controller
-+
-+maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - sprd,ums512-apahb-gate
-+      - sprd,ums512-ap-clk
-+      - sprd,ums512-aonapb-clk
-+      - sprd,ums512-pmu-gate
-+      - sprd,ums512-g0-pll
-+      - sprd,ums512-g2-pll
-+      - sprd,ums512-g3-pll
-+      - sprd,ums512-gc-pll
-+      - sprd,ums512-aon-gate
-+      - sprd,ums512-audcpapb-gate
-+      - sprd,ums512-audcpahb-gate
-+      - sprd,ums512-gpu-clk
-+      - sprd,ums512-mm-clk
-+      - sprd,ums512-mm-gate-clk
-+      - sprd,ums512-apapb-gate
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 4
-+    description: |
-+      The input parent clock(s) phandle for the clock, only list
-+      fixed clocks which are declared in devicetree.
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: ext-26m
-+      - const: ext-32k
-+      - const: ext-4m
-+      - const: rco-100m
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    ap_clk: clock-controller@20200000 {
-+      compatible = "sprd,ums512-ap-clk";
-+      reg = <0x20200000 0x1000>;
-+      clocks = <&ext_26m>;
-+      clock-names = "ext-26m";
-+      #clock-cells = <1>;
-+    };
-+...
--- 
-2.25.1
+> > > +                       status = "disabled";
+> >
+> > Why not keep it enabled?
+>
+> I'm used to always disable all the nodes from the SoC descriptions,
+> but it's true that for a DMA controller it might make sense to keep
+> it enabled.
+>
+> Would dropping the status property be enough or do you prefer a proper
+>         status = "okay";
+> instead?
 
+Please just drop the status property, like is done in other Renesas .dtsi
+files.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
