@@ -2,94 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B83C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723BCC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231758AbiD0LCw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 07:02:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
+        id S232164AbiD0LDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 07:03:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231844AbiD0LCj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 07:02:39 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97ED63F1E3A;
-        Wed, 27 Apr 2022 03:41:09 -0700 (PDT)
-Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 27A69CC462;
-        Wed, 27 Apr 2022 09:57:52 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 02EDB200012;
-        Wed, 27 Apr 2022 09:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651053431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Wvra6RNRuCu2P8jLSDcUUkmJcWIau45cFl07/k1NsZM=;
-        b=X+YkpuI+mjKJDFukyw5iXjHr6x806XvTaDO2Vz0//c3tDV8zkCn1PS14GIHbc5xT+K5bEr
-        Y6ZQLQsoZNqkcP7SxflW0sE3p3KYPDtsVDWB8rqQSOb+J2a6Fa3lUUGdGPzIYYV3dhQlfb
-        IpZ/jtPHrlMbylmz2mRQyEv4n29Q6wWGiIaQn5NVNYOGJGKPJWFnQlZxDtgnzbIXIqExQc
-        nFI6g6Y4ZV1NGPQQWGywppCed+ZdJh58wjuyVfgHkAQLI9GwdI/MGIoPqQXLYsJFrBSMCJ
-        z4UFRmlEsVg+YLlGJdOTCeYrxHFzig+GZemywSXwRAD3xCDi7V3zpQKoEMCHAw==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v12 7/9] dmaengine: dw: Add RZN1 compatible
-Date:   Wed, 27 Apr 2022 11:56:51 +0200
-Message-Id: <20220427095653.91804-8-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
-References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+        with ESMTP id S232166AbiD0LCy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 07:02:54 -0400
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6849B3E99D8;
+        Wed, 27 Apr 2022 03:41:53 -0700 (PDT)
+Received: by mail-qv1-xf29.google.com with SMTP id b17so743329qvf.12;
+        Wed, 27 Apr 2022 03:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=suJzkUXqPQf4PYb2XhQgEpW3i2lXW5ZFjJbjw6YDCwQ=;
+        b=lU8rgki1uD9UMtWb81rCPzKmXqQKTc1SYK/4Jg4IOXlm9l51RDUyETvWNsPyrQJ5oD
+         NTPG9mu3bcgiMxkdnx2/hrfx47TKhDWW/Y1ynVywJ4kpPU7RjGdibVfTYiJkpR2OqQea
+         Kz+l/deOPIaKMf8Ejftkc9lV/5uKuEddUQHKF9xr02rG5mggH14WtDbZvoW4CZxU76mr
+         /rhC/vX4rVTMcT8Frj0S1uRWpKt28xWSAArRzE9fevX6vPqFhVd1tSB8lHKlXuO8M6te
+         +miMtKU0K8jWuReH9+xpmYPKmT5N6rpri2rVVnLPnKXGkCaFx6C3RmI2ezZtcDiEv+wu
+         Ha1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=suJzkUXqPQf4PYb2XhQgEpW3i2lXW5ZFjJbjw6YDCwQ=;
+        b=mz3ozHTVtvyDjUvZLukVC20WaneqOJVVqOJs1qpzj7CD/5uMyDlfc1wf9LonL3B6MA
+         S2p+n5K7hItMUKC5nyfy8IXj8VXbJYrmkwBsY5wGB5MEEoMJZv7mjjuua73qrwu86Yx1
+         vTrpafTaUqEebdHgQ4Vacn/yXUgG/V/zeWp/OcOLq6WL7DZ+SajFlfH49AB+Ov5NvtUC
+         QHKoIFtHhQCzAx/G3XPE/NtpjnWZgd91BAbcN03GG3HquFzIXqqqR+ByaRU5sjdzL/Lb
+         J7O6cdDKA4sxuSVaTeGGtbpzDA934jv7mCOre6+7kA3Z1roPApwOHb7lE0IQY+dJ29Zp
+         dZaQ==
+X-Gm-Message-State: AOAM531zNsvCX7qpNlAh+LmqPRX3SKFP8/ElkK4+Shpdo1ycPmp5hTO1
+        pft+a2I5ieZkF8OyOD43OuBNg9yNXH1SSQ==
+X-Google-Smtp-Source: ABdhPJwMXZ+bv/j/U49YNgrTCpbhxGZbtDZO4KJmBqL8dV/TqcqnkVRGW5dvPH1fMgHAXjGOmoGPuA==
+X-Received: by 2002:a05:6a00:a8b:b0:4e1:52db:9e5c with SMTP id b11-20020a056a000a8b00b004e152db9e5cmr28922674pfl.38.1651054147588;
+        Wed, 27 Apr 2022 03:09:07 -0700 (PDT)
+Received: from tj10039pcu.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id h7-20020aa786c7000000b00505bf336385sm18260649pfo.124.2022.04.27.03.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Apr 2022 03:09:07 -0700 (PDT)
+From:   Cixi Geng <gengcixi@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V4 1/4] dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+Date:   Wed, 27 Apr 2022 18:08:45 +0800
+Message-Id: <20220427100848.3525710-2-gengcixi@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220427100848.3525710-1-gengcixi@gmail.com>
+References: <20220427100848.3525710-1-gengcixi@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Renesas RZN1 DMA IP is very close to the original DW DMA IP, a DMA
-router has been introduced to handle the wiring options that have been
-added.
+From: Cixi Geng <cixi.geng1@unisoc.com>
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-By: Vinod Koul <vkoul@kernel.org>
+Add a new bindings to describe ums512 clock compatible string.
+
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
 ---
- drivers/dma/dw/platform.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/sprd,ums512-clk.yaml       | 71 +++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
 
-diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
-index 246118955877..47f2292dba98 100644
---- a/drivers/dma/dw/platform.c
-+++ b/drivers/dma/dw/platform.c
-@@ -137,6 +137,7 @@ static void dw_shutdown(struct platform_device *pdev)
- #ifdef CONFIG_OF
- static const struct of_device_id dw_dma_of_id_table[] = {
- 	{ .compatible = "snps,dma-spear1340", .data = &dw_dma_chip_pdata },
-+	{ .compatible = "renesas,rzn1-dma", .data = &dw_dma_chip_pdata },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, dw_dma_of_id_table);
+diff --git a/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+new file mode 100644
+index 000000000000..5f747b0471cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2022 Unisoc Inc.
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/sprd,ums512-clk.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: UMS512 Soc clock controller
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - sprd,ums512-apahb-gate
++      - sprd,ums512-ap-clk
++      - sprd,ums512-aonapb-clk
++      - sprd,ums512-pmu-gate
++      - sprd,ums512-g0-pll
++      - sprd,ums512-g2-pll
++      - sprd,ums512-g3-pll
++      - sprd,ums512-gc-pll
++      - sprd,ums512-aon-gate
++      - sprd,ums512-audcpapb-gate
++      - sprd,ums512-audcpahb-gate
++      - sprd,ums512-gpu-clk
++      - sprd,ums512-mm-clk
++      - sprd,ums512-mm-gate-clk
++      - sprd,ums512-apapb-gate
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 4
++    description: |
++      The input parent clock(s) phandle for the clock, only list
++      fixed clocks which are declared in devicetree.
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: ext-26m
++      - const: ext-32k
++      - const: ext-4m
++      - const: rco-100m
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    ap_clk: clock-controller@20200000 {
++      compatible = "sprd,ums512-ap-clk";
++      reg = <0x20200000 0x1000>;
++      clocks = <&ext_26m>;
++      clock-names = "ext-26m";
++      #clock-cells = <1>;
++    };
++...
 -- 
-2.27.0
+2.25.1
 
