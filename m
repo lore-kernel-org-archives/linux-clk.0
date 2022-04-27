@@ -2,155 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C87C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17525C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230075AbiD0KuJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 06:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35058 "EHLO
+        id S231139AbiD0K4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 06:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230143AbiD0KuH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:50:07 -0400
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B40C43AE0C;
-        Wed, 27 Apr 2022 03:20:55 -0700 (PDT)
-Received: by mail-qv1-f43.google.com with SMTP id jt15so707554qvb.13;
-        Wed, 27 Apr 2022 03:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UDR8xO+wwKORB+se6hIjkutRminbXNIR1XrVamWg1PQ=;
-        b=X8H0v4zMcK1PoriBdTRnQM6YUuVfbdF2tw5pJ9qDOS+Vpye2SNjVRl9vnLn+YDjY85
-         8OTn3pCcQ5lBnEhgYR4ZByYeHCJYNrZbe7OCKix61Nej9WgK3S/rrV0b9yQQ8fbQn6Rp
-         J7qmHOLIX/rVmu65rG8pFXm4qXaDTWkbz2saAYZJUlnPp+nFA/u58ZIpa2GQSeYJyDbE
-         ffyXfYNGILkv7eWlEITkyToCnAV5RDIMrzPesSu+c6aMO9TgfRW2Lx8TBi/95M3aHPJ3
-         vBRxkdHejs01RZoBS1FPtFbiHQsjfRbkcSMbHfxLxdfn5CUJa+1Hf2J/+HhOSHLN+vw2
-         CHWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UDR8xO+wwKORB+se6hIjkutRminbXNIR1XrVamWg1PQ=;
-        b=OJmLgJ4oIRFejR2TR0ldb6khjQ8RZWrxRgkGlOyA/+ak8gfh+MXfYDxG4TM+C3jIyV
-         STM/qogyDJbsibv8c9Dmo1X30jZGLAecJWlg+Zef8Al39+C9B+w8NfVyv4RvGdoXKRVd
-         +U8IqBCtDL7aTxtgoXixZ+zQ2CKGB3Urgu6kIGVM6WbZk2rD5ekXrMyy3fDKvU+GdsNX
-         EM5Ny1b2jkC+hRgIk1droHXrewXcakmHCLxCR0TwdSheLeuG4TkXPgdm0eEYbV3ywr39
-         Cs9vQe4uBy5jcIL1JBtTzL2OAKSm1UBNXPATqk4BmNNvovgRcZkj8D6lZf0yIp3PuFyZ
-         sKIg==
-X-Gm-Message-State: AOAM531RiT/9LKpa/VIakTBG387OrV2fjOWzAxDpHILjnjEArdTf03dJ
-        s8EskfSmRArpuQieIPitk3kqqEY1l+gmmw==
-X-Google-Smtp-Source: ABdhPJxmcoTR6+hgM6pmebkEg3XnH8nl6eCvzxQC7kCt917TO0nJom8Io9I7ZGL03pX356ehYSoyfA==
-X-Received: by 2002:a05:6a00:8c8:b0:4fe:ecb:9b8f with SMTP id s8-20020a056a0008c800b004fe0ecb9b8fmr29049183pfu.55.1651054154248;
-        Wed, 27 Apr 2022 03:09:14 -0700 (PDT)
-Received: from tj10039pcu.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h7-20020aa786c7000000b00505bf336385sm18260649pfo.124.2022.04.27.03.09.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Apr 2022 03:09:13 -0700 (PDT)
-From:   Cixi Geng <gengcixi@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512 global registers
-Date:   Wed, 27 Apr 2022 18:08:46 +0800
-Message-Id: <20220427100848.3525710-3-gengcixi@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220427100848.3525710-1-gengcixi@gmail.com>
-References: <20220427100848.3525710-1-gengcixi@gmail.com>
+        with ESMTP id S230518AbiD0K4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:56:46 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFB928CCFE;
+        Wed, 27 Apr 2022 03:32:47 -0700 (PDT)
+Received: from relay12.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::232])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id DA3D1CC428;
+        Wed, 27 Apr 2022 09:57:38 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id A316B200006;
+        Wed, 27 Apr 2022 09:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1651053418;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xGKyCMtEO66T6iVLrz94Fbq22pR8kP+j3m28Y7p/DGQ=;
+        b=R3IGtgpyLTIwZXil/fGcslnztLt0cZc9J+bU9Fm9vZFbm3p9c2w0M1K/ZtHpe9kCsNgy1X
+        GraK5UyMjTD0G+GYOphQ6nFMA/HOj8AhRv5iqY8+C3dQAdXrw5UFD8b1c8fk7Py/67Fqij
+        D5eYTwWoz0n2p2/EPlcOr6cctTvEKCLSpZQsAYWbgXw+zOdyothg+KXeNUSMxlkwJkk3eM
+        G2uPx17LLrUB+NGpcWq25+rzqwoV8GXftDDfE/RXy1v/KO/AGQkjPYTCeSrsPHjInefxfB
+        KUSCw8eYq0hwVV2uQdZPYCGR3ksM4y5VkD6hBBIWiuOvSnK6go74539FeN1kiA==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v12 1/9] dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+Date:   Wed, 27 Apr 2022 11:56:45 +0200
+Message-Id: <20220427095653.91804-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+dmamux register located in the system control area which can take up to
+32 requests (16 per DMA controller). Each DMA channel can be wired to
+two different peripherals.
 
-Add bindings for Unisoc system global register which provide register map
-for clocks.
-
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-By: Vinod Koul <vkoul@kernel.org>
 ---
- .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
- 1 file changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
 
-diff --git a/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
 new file mode 100644
-index 000000000000..3522f3d2d8de
+index 000000000000..d83013b0dd74
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-@@ -0,0 +1,68 @@
++++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+@@ -0,0 +1,51 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/mfd/sprd,ums512-glbreg.yaml#
++$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Unisoc System Global Register Device Tree Bindings
++title: Renesas RZ/N1 DMA mux
 +
 +maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
++  - Miquel Raynal <miquel.raynal@bootlin.com>
 +
-+description:
-+  Unisoc system global registers provide register map
-+  for clocks and some multimedia modules of the SoC.
++allOf:
++  - $ref: "dma-router.yaml#"
 +
 +properties:
-+  "#address-cells": true
-+  "#size-cells": true
-+
 +  compatible:
-+    items:
-+      - const: sprd,ums512-glbregs
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  ranges:
-+    maxItems: 1
++    const: renesas,rzn1-dmamux
 +
 +  reg:
 +    maxItems: 1
++    description: DMA mux first register offset within the system control parent.
 +
-+patternProperties:
-+  "^.*@[0-9a-f]+$":
-+    # Child node
-+    type: object
-+    $ref: "../clock/sprd,ums512-clk.yaml"
++  '#dma-cells':
++    const: 6
 +    description:
-+      Clock controller for the SoC clocks.
++      The first four cells are dedicated to the master DMA controller. The fifth
++      cell gives the DMA mux bit index that must be set starting from 0. The
++      sixth cell gives the binary value that must be written there, ie. 0 or 1.
++
++  dma-masters:
++    minItems: 1
++    maxItems: 2
++
++  dma-requests:
++    const: 32
 +
 +required:
-+  - compatible
 +  - reg
++  - dma-requests
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    ap_apb_regs: syscon@71000000 {
-+      compatible = "sprd,ums512-glbregs", "syscon", "simple-mfd";
-+      reg = <0x71000000 0x3000>;
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      ranges = <0 0x71000000 0x3000>;
-+
-+      clock-controller@0 {
-+        compatible = "sprd,ums512-apahb-gate";
-+        reg = <0x0 0x2000>;
-+        #clock-cells = <1>;
-+      };
++    dma-router@a0 {
++      compatible = "renesas,rzn1-dmamux";
++      reg = <0xa0 4>;
++      #dma-cells = <6>;
++      dma-masters = <&dma0 &dma1>;
++      dma-requests = <32>;
 +    };
-+
-+  - |
-+    ap_intc5_regs: syscon@32360000 {
-+      compatible = "sprd,ums512-glbregs", "syscon", "simple-mfd";
-+      reg = <0x32360000 0x1000>;
-+    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9f495c02da10..9cf74e4eacce 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19036,6 +19036,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
+ M:	Viresh Kumar <vireshk@kernel.org>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+ F:	drivers/dma/dw/
+ F:	include/dt-bindings/dma/dw-dmac.h
 -- 
-2.25.1
+2.27.0
 
