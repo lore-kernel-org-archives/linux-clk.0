@@ -2,101 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AADC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 09:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C9FC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiD0KAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 06:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47764 "EHLO
+        id S229521AbiD0KSR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 06:18:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbiD0KAf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:00:35 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9EF6F404AC9;
-        Wed, 27 Apr 2022 02:53:51 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,292,1643641200"; 
-   d="scan'208";a="119361620"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Apr 2022 18:49:00 +0900
-Received: from localhost.localdomain (unknown [10.226.93.29])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BB9B94265645;
-        Wed, 27 Apr 2022 18:48:57 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 9/9] clk: renesas: r9a07g044: Add DSI clock and reset entries
-Date:   Wed, 27 Apr 2022 10:48:23 +0100
-Message-Id: <20220427094823.3319-10-biju.das.jz@bp.renesas.com>
+        with ESMTP id S229437AbiD0KSP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:18:15 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B1931316E;
+        Wed, 27 Apr 2022 03:13:45 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id q8so1137839plx.3;
+        Wed, 27 Apr 2022 03:13:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1C1O4qQcGaAVxBHfYfmRjgPqtuMUIW3qAkaHngqvDes=;
+        b=NlE9mJ5p7PFfL2h8xzZtuCRTGWvpzPKaA1aFLOoH9Ktft0+MBAqiMLe9WR9zZ+q1tG
+         M2hj910wONU/0LgyvpOkBj/o8KoCenPqXS6p7SMBU17RP92WX27hKFpCFwSQLGf8PO0r
+         UOUp1geb3AK11zri/1W0EYN3Eh9y8RmQyGnaLbdhZ6lNcz+PCKOKA+JsXw14bdPcHMQF
+         w+inUUtuNakbrJ2b7ZsdLSv6PPMuniBSx79OmDdr50Bpn7NDj/b56neoaAlgo/Kn3Fhy
+         YoGnNb/VpokgIRhgWhzRWoScdi1iwTvKj1QZIzlmss146M3Rrl5/ICnnx7RgiA9P79lY
+         SLbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1C1O4qQcGaAVxBHfYfmRjgPqtuMUIW3qAkaHngqvDes=;
+        b=53oW5IyMJbKiMDG02lOD9aMAbR/HwSs9G1mfATFCPwJIFu2Iw1iPvs6wrrWEIW8S5C
+         H6R1uBD2tPil5PoC7E49JF+0MmpdKcrfuRdq7kSNX6FgXJmqqzMB3NQCCPlTzmC1NlV+
+         UVuABzcrnwGv5OuYy568k+H2HrR0KlQtAykh5mkFiZMFrECcr38TC/JEL9Mfd5xOOPDK
+         Hk9DRuzqPWSI5wEAtkMoMwgvsayoM6LsqbBzwkfSl4fKwVwegC4pfg59W5JeRJr7+aCr
+         knI0+W+fjvR8YxfDOMkW8ML5slJLWy8p363+cfqSDGMRCxis0xMDRBhCXeLRqloQH2Fh
+         Lpjw==
+X-Gm-Message-State: AOAM533Ux0CwP/xYm/bd5s5vMd3vBYnsgpeK9+S7Jgj1/giZ2BGtKi+a
+        0f6EmTxg0tmfPb/TGknMzw52BFGf6gQGZg==
+X-Google-Smtp-Source: ABdhPJzz9M4sSrRhLl/SVH2jOIGF0Fae8qCGPAcsCMAJ6QlQWlTDkHN6EP6kfL6MBcOG4iYcm0V59w==
+X-Received: by 2002:a17:90b:164b:b0:1d1:b0b7:9033 with SMTP id il11-20020a17090b164b00b001d1b0b79033mr32105321pjb.164.1651054142386;
+        Wed, 27 Apr 2022 03:09:02 -0700 (PDT)
+Received: from tj10039pcu.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id h7-20020aa786c7000000b00505bf336385sm18260649pfo.124.2022.04.27.03.08.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Apr 2022 03:09:01 -0700 (PDT)
+From:   Cixi Geng <gengcixi@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V4 0/4] Add ums512 clocks and relative bindings file
+Date:   Wed, 27 Apr 2022 18:08:44 +0800
+Message-Id: <20220427100848.3525710-1-gengcixi@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
-References: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DSI clock and reset entries to CPG driver.
+From: Cixi Geng <cixi.geng1@unisoc.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1->V2:
- * No Change
-RFC->V1:
- * Added Rb tag from Geert
----
- drivers/clk/renesas/r9a07g044-cpg.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+This patchset is add the UMS512 clocks support
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index b5ddc5058670..57ec50659bb3 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -194,7 +194,7 @@ static const struct {
- };
- 
- static const struct {
--	struct rzg2l_mod_clk common[65];
-+	struct rzg2l_mod_clk common[71];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
- #endif
-@@ -254,6 +254,18 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
-+		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
-+					0x568, 0),
-+		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
-+					0x568, 1),
-+		DEF_MOD("dsi_aclk",	R9A07G044_MIPI_DSI_ACLK, R9A07G044_CLK_P1,
-+					0x568, 2),
-+		DEF_MOD("dsi_pclk",	R9A07G044_MIPI_DSI_PCLK, R9A07G044_CLK_P2,
-+					0x568, 3),
-+		DEF_MOD("dsi_vclk",	R9A07G044_MIPI_DSI_VCLK, R9A07G044_CLK_M3,
-+					0x568, 4),
-+		DEF_MOD("dsi_lpclk",	R9A07G044_MIPI_DSI_LPCLK, R9A07G044_CLK_M4,
-+					0x568, 5),
- 		DEF_COUPLED("lcdc_a",	R9A07G044_LCDC_CLK_A, R9A07G044_CLK_M0,
- 					0x56c, 0),
- 		DEF_COUPLED("lcdc_p",	R9A07G044_LCDC_CLK_P, R9A07G044_CLK_ZT,
-@@ -355,6 +367,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
- 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
- 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
-+	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
-+	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
-+	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
- 	DEF_RST(R9A07G044_LCDC_RESET_N, 0x86c, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+v2 changes:
+  adjust description and add the "sprd,ums512-glbregs,syscon,simple-mfd"
+  compatibles to fix match failed logs in the dt_binding_check.
+  add the property license and copyright notice.
+
+v3 changes:
+  fix wrong indentation and hint: "maxItems" is not needed with an "items"
+  list when use the latest dtschema.
+
+v4 changes:
+  move the syscon bindins from clk to glbreg yaml file by pickup 
+  chunyan's patch for global registers bindings
+  fix the comments from Krzysztof in v3 patchset
+  add the Acked-by: Krzysztof in patch v4 3/4
+  fix the  warning Prefer "GPL" over "GPL v2"
+
+Chunyan Zhang (1):
+  dt-bindings: mfd: sprd: Add bindings for ums512 global registers
+
+Cixi Geng (3):
+  dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+  clk: sprd: Add dt-bindings include file for UMS512
+  clk: sprd: Add clocks support for UMS512
+
+ .../bindings/clock/sprd,ums512-clk.yaml       |   71 +
+ .../bindings/mfd/sprd,ums512-glbreg.yaml      |   68 +
+ drivers/clk/sprd/Kconfig                      |    6 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/ums512-clk.c                 | 2199 +++++++++++++++++
+ include/dt-bindings/clock/sprd,ums512-clk.h   |  397 +++
+ 6 files changed, 2742 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+ create mode 100644 drivers/clk/sprd/ums512-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,ums512-clk.h
+
 -- 
 2.25.1
 
