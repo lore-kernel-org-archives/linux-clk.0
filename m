@@ -2,85 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0FBC43219
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82087C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357501AbiD0DP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 23:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52984 "EHLO
+        id S1354318AbiD0DYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 23:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357432AbiD0DPo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:15:44 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB3613CD5;
-        Tue, 26 Apr 2022 20:12:30 -0700 (PDT)
-X-UUID: d377541ec60c43f1a3606cb13c7a6263-20220427
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:fb67f833-c5b4-45b8-867a-22d8b6c1787b,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:faefae9,CLOUDID:5bf69bc6-85ee-4ac1-ac05-bd3f1e72e732,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: d377541ec60c43f1a3606cb13c7a6263-20220427
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 249225688; Wed, 27 Apr 2022 11:12:24 +0800
-Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 27 Apr 2022 11:12:23 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb02.mediatek.inc
- (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 27 Apr
- 2022 11:12:21 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 27 Apr 2022 11:12:21 +0800
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH V4 14/15] arm64: dts: mediatek: Add infra #reset-cells property for MT8192
-Date:   Wed, 27 Apr 2022 11:09:49 +0800
-Message-ID: <20220427030950.23395-15-rex-bc.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
-References: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
+        with ESMTP id S1348805AbiD0DYw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:24:52 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82631205E2
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 20:21:41 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id n8so486881plh.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Apr 2022 20:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GM2I1rKciZlMERQtkMZfhLt0vQhC1yhQUebWl8r/Ftc=;
+        b=PAuYwkzn39WhGOmLN+8zMzQ1WBdfutgxwU5iZkZRy+TD2HWYFFW2FaCkD2lZqAkVht
+         B+ykPt4C5gWCFpugnodO1SzYCSLgXM4elWCWzzW6vgtUOHyiszmBjZLqQEvRDEzpgcL0
+         sUXTSQGaPa7wj2/GKBnLpVvCasFT4ZkBX+XsIScf8XgQWmCAEfITPYTHqEUdA1QUeiXT
+         pA8mwPT40ayBdOPzct6AWk1j/6crg5ZPCYiy+H2mWOnt/s3jq4+PSPFUclP2C+A06UxL
+         rI+cp0JuHUCffZupUtv0BJml2NFzUM7GRx2q4wQw5flOg225seTMPo0Sm5KMTFjC5Vn5
+         spSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GM2I1rKciZlMERQtkMZfhLt0vQhC1yhQUebWl8r/Ftc=;
+        b=p893n9pKB4UJyErGbPA6J0ZmX6eOdC5HPEnJHtnHap/cU1m1P9Z3oJjO/W9ktR5QDi
+         tT0OyN51AHR9YRHzfPvwQ21vJqPx5QYiLNFunJGpNPT81lZ18F3dyl9uDqkbUSN+jtHv
+         4tBXhrqIO09uzS44Sl3tss5iINYkMOjmMGTDy3qOw9BWNogF3rlA12mjukiYE0ix7NrE
+         SNshC+bqKU0gmy7lPHMe85VaSYnHuMb3iF+lUudf69n4VoKYIZlQF0qydkIO2m9QwZ8w
+         VlFf4blzFxxiJFUPxfbkOYBaBNTulPFyvunqzhEZEALCybqPK0LMMKhiPs6xKr5a0jkN
+         NfSQ==
+X-Gm-Message-State: AOAM530+PHag2dVIsJqAWDB9GVTDBcLWgjN7FEBLRb1sCfp72N65YbCK
+        HR5FX8ni3plvI4JbYKY5bKm9jQ==
+X-Google-Smtp-Source: ABdhPJzV2vdzAtHjQnsvfI1pw6Xr1L3VKxj4VdlGJPjfxSLca5WKu8NmWu/04ISxvSPeYZ0MTJbAQg==
+X-Received: by 2002:a17:902:6bc4:b0:154:6b3d:a720 with SMTP id m4-20020a1709026bc400b001546b3da720mr26395959plt.104.1651029701054;
+        Tue, 26 Apr 2022 20:21:41 -0700 (PDT)
+Received: from localhost ([122.177.141.190])
+        by smtp.gmail.com with ESMTPSA id y4-20020a056a00190400b004fac0896e35sm17135411pfi.42.2022.04.26.20.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Apr 2022 20:21:40 -0700 (PDT)
+Date:   Wed, 27 Apr 2022 08:51:38 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yassine Oudjana <y.oudjana@protonmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 5/9] dt-bindings: opp: opp-v2-kryo-cpu: Remove SMEM
+Message-ID: <20220427032138.smvcg2nxekz6go7m@vireshk-i7>
+References: <T-ZqipM8xIaRroty0k9MEPCfD31BvtDXY6IaSm8uCD_ffIgJKYAcY-EZ49w0S-uX0w9sn1mUfBALTv0SqOb7OM1Uh6pskewGKxkOFYRJwfM=@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <T-ZqipM8xIaRroty0k9MEPCfD31BvtDXY6IaSm8uCD_ffIgJKYAcY-EZ49w0S-uX0w9sn1mUfBALTv0SqOb7OM1Uh6pskewGKxkOFYRJwfM=@protonmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To support reset of infra, we add the property of #reset-cells.
+On 09-04-22, 04:17, Yassine Oudjana wrote:
+> qcom-cpufreq-nvmem no longer uses SMEM. Remove all references
+> to SMEM and change the description and maximum value of
+> opp-supported-hw to reflect the new set of possible values.
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>  .../bindings/opp/opp-v2-kryo-cpu.yaml         | 56 +++++++++----------
+>  1 file changed, 26 insertions(+), 30 deletions(-)
 
-Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8192.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Applied. Thanks.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-index 411feb294613..79803420d8ef 100644
---- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-@@ -269,6 +269,7 @@
- 			compatible = "mediatek,mt8192-infracfg", "syscon";
- 			reg = <0 0x10001000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		pericfg: syscon@10003000 {
 -- 
-2.18.0
-
+viresh
