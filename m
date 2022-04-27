@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2830C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45588C4167E
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353996AbiD0DP3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 23:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52272 "EHLO
+        id S1357397AbiD0DPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 23:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346423AbiD0DP2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:15:28 -0400
+        with ESMTP id S1357387AbiD0DPf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:15:35 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7145B120B3;
-        Tue, 26 Apr 2022 20:12:18 -0700 (PDT)
-X-UUID: 3be7f0f1650143e2be50c0f2079b59f1-20220427
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1EA12A88;
+        Tue, 26 Apr 2022 20:12:24 -0700 (PDT)
+X-UUID: 193cd1040d0a48caa407b3a3b051e1a9-20220427
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:8bce5474-d1c5-41d6-96ea-e4402a10e93c,OB:0,LO
+X-CID-O-INFO: VERSION:1.1.4,REQID:9d5a5f57-a539-40cc-b7b3-0dbd941a2e25,OB:0,LO
         B:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,AC
         TION:release,TS:-20
-X-CID-META: VersionHash:faefae9,CLOUDID:6e01d42e-6199-437e-8ab4-9920b4bc5b76,C
+X-CID-META: VersionHash:faefae9,CLOUDID:9002d42e-6199-437e-8ab4-9920b4bc5b76,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: 3be7f0f1650143e2be50c0f2079b59f1-20220427
+X-UUID: 193cd1040d0a48caa407b3a3b051e1a9-20220427
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 842767396; Wed, 27 Apr 2022 11:12:13 +0800
+        with ESMTP id 1834052988; Wed, 27 Apr 2022 11:12:19 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
  mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 27 Apr 2022 11:12:13 +0800
+ Wed, 27 Apr 2022 11:12:18 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 27 Apr 2022 11:12:13 +0800
+ Transport; Wed, 27 Apr 2022 11:12:18 +0800
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
@@ -46,9 +46,9 @@ CC:     <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH V4 01/15] clk: mediatek: reset: Add reset.h
-Date:   Wed, 27 Apr 2022 11:09:36 +0800
-Message-ID: <20220427030950.23395-2-rex-bc.chen@mediatek.com>
+Subject: [PATCH V4 08/15] clk: mediatek: reset: Change return type for clock reset register function
+Date:   Wed, 27 Apr 2022 11:09:43 +0800
+Message-ID: <20220427030950.23395-9-rex-bc.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
 References: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
@@ -59,95 +59,90 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a new file "reset.h" to place some definitions for clock reset.
+To deal with error handling, we change the function return type from
+void to int for mtk_clk_register_rst_ctrl().
 
 Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/clk-mtk.h |  8 ++------
- drivers/clk/mediatek/reset.c   |  9 +--------
- drivers/clk/mediatek/reset.h   | 24 ++++++++++++++++++++++++
- 3 files changed, 27 insertions(+), 14 deletions(-)
- create mode 100644 drivers/clk/mediatek/reset.h
+ drivers/clk/mediatek/reset.c | 15 +++++++++------
+ drivers/clk/mediatek/reset.h |  6 ++++--
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index bf6565aa7319..a6d0f24c62fa 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -13,6 +13,8 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
- 
-+#include "reset.h"
-+
- #define MAX_MUX_GATE_BIT	31
- #define INVALID_MUX_GATE_BIT	(MAX_MUX_GATE_BIT + 1)
- 
-@@ -190,12 +192,6 @@ void mtk_free_clk_data(struct clk_onecell_data *clk_data);
- struct clk *mtk_clk_register_ref2usb_tx(const char *name,
- 			const char *parent_name, void __iomem *reg);
- 
--void mtk_register_reset_controller(struct device_node *np,
--			unsigned int num_regs, int regofs);
--
--void mtk_register_reset_controller_set_clr(struct device_node *np,
--	unsigned int num_regs, int regofs);
--
- struct mtk_clk_desc {
- 	const struct mtk_gate *clks;
- 	size_t num_clks;
 diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index bcec4b89f449..9f3cb22aea1b 100644
+index 11b2f74f121d..a1d281d2a2d5 100644
 --- a/drivers/clk/mediatek/reset.c
 +++ b/drivers/clk/mediatek/reset.c
-@@ -8,16 +8,9 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
--#include <linux/reset-controller.h>
- #include <linux/slab.h>
+@@ -98,8 +98,8 @@ static const struct reset_control_ops mtk_reset_ops_set_clr = {
+ 	.reset = mtk_reset_set_clr,
+ };
  
--#include "clk-mtk.h"
--
--struct mtk_reset {
--	struct regmap *regmap;
--	int regofs;
--	struct reset_controller_dev rcdev;
--};
-+#include "reset.h"
+-void mtk_register_reset_controller(struct device_node *np,
+-				   const struct mtk_clk_rst_desc *desc)
++int mtk_register_reset_controller(struct device_node *np,
++				  const struct mtk_clk_rst_desc *desc)
+ {
+ 	struct regmap *regmap;
+ 	const struct reset_control_ops *rcops = NULL;
+@@ -108,7 +108,7 @@ void mtk_register_reset_controller(struct device_node *np,
  
- static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
- 	unsigned long id)
+ 	if (!desc) {
+ 		pr_err("mtk clock reset desc is NULL\n");
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	switch (desc->version) {
+@@ -120,18 +120,18 @@ void mtk_register_reset_controller(struct device_node *np,
+ 		break;
+ 	default:
+ 		pr_err("Unknown reset version %d\n", desc->version);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap)) {
+ 		pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-		return;
++		return -ENOMEM;
+ 
+ 	data->desc = desc;
+ 	data->regmap = regmap;
+@@ -144,7 +144,10 @@ void mtk_register_reset_controller(struct device_node *np,
+ 	if (ret) {
+ 		pr_err("could not register reset controller: %d\n", ret);
+ 		kfree(data);
++		return ret;
+ 	}
++
++	return 0;
+ }
+ 
+ MODULE_LICENSE("GPL");
 diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-new file mode 100644
-index 000000000000..764a8affe206
---- /dev/null
+index 83840ecf8b27..2135da877826 100644
+--- a/drivers/clk/mediatek/reset.h
 +++ b/drivers/clk/mediatek/reset.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2022 MediaTek Inc.
-+ */
-+
-+#ifndef __DRV_CLK_MTK_RESET_H
-+#define __DRV_CLK_MTK_RESET_H
-+
-+#include <linux/reset-controller.h>
-+#include <linux/types.h>
-+
-+struct mtk_reset {
-+	struct regmap *regmap;
-+	int regofs;
-+	struct reset_controller_dev rcdev;
-+};
-+
-+void mtk_register_reset_controller(struct device_node *np,
-+				   unsigned int num_regs, int regofs);
-+
-+void mtk_register_reset_controller_set_clr(struct device_node *np,
-+					   unsigned int num_regs, int regofs);
-+
-+#endif /* __DRV_CLK_MTK_RESET_H */
+@@ -51,8 +51,10 @@ struct mtk_clk_rst_data {
+  * mtk_register_reset_controller - Register MediaTek clock reset controller
+  * @np: Pointer to device node.
+  * @desc: Constant pointer to description of clock reset.
++ *
++ * Return: 0 on success and errorno otherwise.
+  */
+-void mtk_register_reset_controller(struct device_node *np,
+-				   const struct mtk_clk_rst_desc *desc);
++int mtk_register_reset_controller(struct device_node *np,
++				  const struct mtk_clk_rst_desc *desc);
+ 
+ #endif /* __DRV_CLK_MTK_RESET_H */
 -- 
 2.18.0
 
