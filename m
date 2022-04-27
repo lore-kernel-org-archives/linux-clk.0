@@ -2,39 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE16C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 11:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24D6C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 12:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbiD0LHR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 07:07:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
+        id S234909AbiD0MvC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 08:51:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232117AbiD0LHF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 07:07:05 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178633C9D7F;
-        Wed, 27 Apr 2022 03:58:56 -0700 (PDT)
-Received: from relay12.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::232])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id D1355C896E;
-        Wed, 27 Apr 2022 09:15:32 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2CBDF200006;
-        Wed, 27 Apr 2022 09:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651050892;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EF8d+JX3EYB+I0ayIkuUN92XzLSdkI83EhToeObeC3M=;
-        b=LCSXuEipxkS0lJn503o46UXDhki98dwWKBsNGdNECJktwiS05x4fqayWHWzBB9OLRcyrEQ
-        o4LBp03pKI0qumyoTQ18f1U2MQ2YvN0QSuZIfl//ltZJ0ogZlsQEQdJetMzRDTIbI0pRUl
-        D6SJaxADdyTX6+dXmhUhhQLBz7lMpG1KtEp901MDnJduXcJzS93JUtlRMqPgqgLolYxwkS
-        v+sDrgXFBUAlclqJCih2oDzycmr5YH6as7V4kPbF0FdUK2RP6I3WcwJqAA8eqdlhFn+zhn
-        rJoI8dN5O7spFelPcvuyvZUJNXPC0v+nfqJN9n8bdPbZVT37W/mAR4ZMXrgVWw==
-Date:   Wed, 27 Apr 2022 11:14:49 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        with ESMTP id S234905AbiD0Mu7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 08:50:59 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E409726C846;
+        Wed, 27 Apr 2022 05:47:47 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id z126so1171854qkb.2;
+        Wed, 27 Apr 2022 05:47:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TMmGS6c32HL6vZEYBwhI0fq95j7k7//2c1xWGzdtpbM=;
+        b=H7q7vn3dsjrd57W/MJdUWX5gCFUekcXixX7qSzdILsAyraHNoeR4TJsKdvF5ScLqOk
+         3Hknm3FZpIrwpnSGnyEniQqhwef/UYgvSVDfPD8IiRGxge3sDxAQM+sLvlDu9KM9bCbW
+         gonPdRYn+1t29TJDGWb9tjmRWiUZeJbe4OlOX8d61WpqlEcXsdkmZgYGn7RkiWo17NNg
+         E2NSkp8aK8cN8/gWJD0Oj++HImEVoCsJALwZYLCXWAu8fVREMfO3vn0yOPcRC8QseCnB
+         +yrRaOVdZp7HQG6QSrptY1SsXW2E2YeH3a9jsh3YzUsHidsaNQGiBowVr23eZNNvwGbt
+         plhA==
+X-Gm-Message-State: AOAM532BK1ulZZfTfJ0Bh4j7ZWDf9sYfXKAcmieMUoyaMoNw4+C3B23t
+        nuaIaec4OD/QNtYWtfBD1SJ9DxaUEtv/XA==
+X-Google-Smtp-Source: ABdhPJzLwqZ0sa7Lrg2FzGercxa52XKA2EsYGkiDjWVk3jDd8LQvJeBkSqYe2ybgvOMwmL7sjocQAQ==
+X-Received: by 2002:a05:620a:d87:b0:67b:311c:ecbd with SMTP id q7-20020a05620a0d8700b0067b311cecbdmr16158763qkl.146.1651063666816;
+        Wed, 27 Apr 2022 05:47:46 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 2-20020ac84e82000000b002f1f95ce5fbsm9968117qtp.3.2022.04.27.05.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 05:47:46 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-2ef5380669cso17045617b3.9;
+        Wed, 27 Apr 2022 05:47:46 -0700 (PDT)
+X-Received: by 2002:a81:618b:0:b0:2db:d952:8a39 with SMTP id
+ v133-20020a81618b000000b002dbd9528a39mr26953403ywb.132.1651063666063; Wed, 27
+ Apr 2022 05:47:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220427095653.91804-1-miquel.raynal@bootlin.com> <20220427095653.91804-7-miquel.raynal@bootlin.com>
+In-Reply-To: <20220427095653.91804-7-miquel.raynal@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Apr 2022 14:47:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXTHxrFHXbFRKQx-dX4z+0OLSZkV+BFGTBVPB_yCTVm-Q@mail.gmail.com>
+Message-ID: <CAMuHMdXTHxrFHXbFRKQx-dX4z+0OLSZkV+BFGTBVPB_yCTVm-Q@mail.gmail.com>
+Subject: Re: [PATCH v12 6/9] clk: renesas: r9a06g032: Probe possible children
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
@@ -55,80 +70,39 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
         Rob Herring <robh@kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v11 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
-Message-ID: <20220427111449.338d9579@xps13>
-In-Reply-To: <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
-        <20220421085112.78858-9-miquel.raynal@bootlin.com>
-        <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Wed, Apr 27, 2022 at 11:57 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> The clock controller device on r9a06g032 takes all the memory range that
+> is described as being a system controller. This range contains many
+> different (unrelated?) registers besides the ones belonging to the clock
+> controller, that can necessitate to be accessed from other peripherals.
+>
+> For instance, the dmamux registers are there. The dmamux "device" will
+> be described as a child node of the clock/system controller node, which
+> means we need the top device driver (the clock controller driver in this
+> case) to populate its children manually. In case of error when
+> populating the children, we do not fail the probe on purpose to keep the
+> clk driver up and running.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:29:58 +0200:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Hi Miquel,
->=20
-> On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > Describe the two DMA controllers available on this SoC.
-> >
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> =20
->=20
-> Still, a few comments below, valid for both instances...
->=20
-> > --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> > @@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
-> >                         status =3D "disabled";
-> >                 };
-> >
-> > +               dma0: dma-controller@40104000 {
-> > +                       compatible =3D "renesas,r9a06g032-dma", "renesa=
-s,rzn1-dma";
-> > +                       reg =3D <0x40104000 0x1000>;
-> > +                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clock-names =3D "hclk";
-> > +                       clocks =3D <&sysctrl R9A06G032_HCLK_DMA0>;
-> > +                       dma-channels =3D <8>;
-> > +                       dma-requests =3D <16>;
-> > +                       dma-masters =3D <1>;
-> > +                       #dma-cells =3D <3>;
-> > +                       block_size =3D <0xfff>;
-> > +                       data_width =3D <3>; =20
->=20
-> This property is deprecated, in favor of "dma-width".
+Gr{oetje,eeting}s,
 
-Indeed,
-	data_width =3D <3>;
-is deprecated.
+                        Geert
 
-However, dma-width does not seem to be described anywhere. Do you mean:
-	data-width =3D <8>;
-instead?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->=20
-> > +                       status =3D "disabled"; =20
->=20
-> Why not keep it enabled?
-
-I'm used to always disable all the nodes from the SoC descriptions,
-but it's true that for a DMA controller it might make sense to keep
-it enabled.
-
-Would dropping the status property be enough or do you prefer a proper
-	status =3D "okay";
-instead?
-
-Thanks a lot,
-Miqu=C3=A8l
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
