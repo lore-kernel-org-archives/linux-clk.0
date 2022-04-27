@@ -2,37 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45588C4167E
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AD4C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 03:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357397AbiD0DPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Apr 2022 23:15:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
+        id S1346423AbiD0DPc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Apr 2022 23:15:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357387AbiD0DPf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:15:35 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1EA12A88;
-        Tue, 26 Apr 2022 20:12:24 -0700 (PDT)
-X-UUID: 193cd1040d0a48caa407b3a3b051e1a9-20220427
+        with ESMTP id S1357301AbiD0DPb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Apr 2022 23:15:31 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5058F1208E;
+        Tue, 26 Apr 2022 20:12:21 -0700 (PDT)
+X-UUID: 78fd13edaf394cd5b454027b6ec5460b-20220427
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:9d5a5f57-a539-40cc-b7b3-0dbd941a2e25,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,AC
-        TION:release,TS:-20
-X-CID-META: VersionHash:faefae9,CLOUDID:9002d42e-6199-437e-8ab4-9920b4bc5b76,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
-X-UUID: 193cd1040d0a48caa407b3a3b051e1a9-20220427
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+X-CID-O-INFO: VERSION:1.1.4,REQID:6a2e8c5e-37c9-4796-8700-12f31713791a,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
+        CTION:release,TS:75
+X-CID-INFO: VERSION:1.1.4,REQID:6a2e8c5e-37c9-4796-8700-12f31713791a,OB:0,LOB:
+        0,IP:0,URL:0,TC:0,Content:-20,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
+        CTION:quarantine,TS:75
+X-CID-META: VersionHash:faefae9,CLOUDID:f501d42e-6199-437e-8ab4-9920b4bc5b76,C
+        OID:1263bd427694,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,File:nil
+        ,QS:0,BEC:nil
+X-UUID: 78fd13edaf394cd5b454027b6ec5460b-20220427
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1834052988; Wed, 27 Apr 2022 11:12:19 +0800
+        with ESMTP id 907694312; Wed, 27 Apr 2022 11:12:15 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
  mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 27 Apr 2022 11:12:18 +0800
+ Wed, 27 Apr 2022 11:12:14 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 27 Apr 2022 11:12:18 +0800
+ Transport; Wed, 27 Apr 2022 11:12:14 +0800
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
@@ -46,9 +50,9 @@ CC:     <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH V4 08/15] clk: mediatek: reset: Change return type for clock reset register function
-Date:   Wed, 27 Apr 2022 11:09:43 +0800
-Message-ID: <20220427030950.23395-9-rex-bc.chen@mediatek.com>
+Subject: [PATCH V4 03/15] clk: mediatek: reset: Refine and reorder functions in reset.c
+Date:   Wed, 27 Apr 2022 11:09:38 +0800
+Message-ID: <20220427030950.23395-4-rex-bc.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
 References: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
@@ -59,90 +63,139 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To deal with error handling, we change the function return type from
-void to int for mtk_clk_register_rst_ctrl().
+To make drivers more readable, we modify the indentation of the drivers
+and reorder the location of functions.
 
 Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/reset.c | 15 +++++++++------
- drivers/clk/mediatek/reset.h |  6 ++++--
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ drivers/clk/mediatek/reset.c | 68 +++++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index 11b2f74f121d..a1d281d2a2d5 100644
+index 5191becb45dd..5cbbcc22a4fc 100644
 --- a/drivers/clk/mediatek/reset.c
 +++ b/drivers/clk/mediatek/reset.c
-@@ -98,8 +98,8 @@ static const struct reset_control_ops mtk_reset_ops_set_clr = {
- 	.reset = mtk_reset_set_clr,
+@@ -12,56 +12,59 @@
+ 
+ #include "reset.h"
+ 
+-static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++static int mtk_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long id)
+ {
+ 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-	unsigned int reg = data->regofs + ((id / 32) << 4);
+ 
+-	return regmap_write(data->regmap, reg, BIT(id % 32));
++	return regmap_update_bits(data->regmap,
++				  data->regofs + ((id / 32) << 2),
++				  BIT(id % 32), ~0);
+ }
+ 
+-static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
+ {
+ 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-	unsigned int reg = data->regofs + ((id / 32) << 4) + 0x4;
+ 
+-	return regmap_write(data->regmap, reg, BIT(id % 32));
++	return regmap_update_bits(data->regmap,
++				  data->regofs + ((id / 32) << 2),
++				  BIT(id % 32), 0);
+ }
+ 
+-static int mtk_reset_assert(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
++static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ {
+-	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
++	int ret;
++
++	ret = mtk_reset_assert(rcdev, id);
++	if (ret)
++		return ret;
+ 
+-	return regmap_update_bits(data->regmap, data->regofs + ((id / 32) << 2),
+-			BIT(id % 32), ~0);
++	return mtk_reset_deassert(rcdev, id);
+ }
+ 
+-static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
+-				unsigned long id)
++static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
++				    unsigned long id)
+ {
+ 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+ 
+-	return regmap_update_bits(data->regmap, data->regofs + ((id / 32) << 2),
+-			BIT(id % 32), 0);
++	return regmap_write(data->regmap,
++			    data->regofs + ((id / 32) << 4),
++			    BIT(id % 32));
+ }
+ 
+-static int mtk_reset(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
++static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
++				      unsigned long id)
+ {
+-	int ret;
+-
+-	ret = mtk_reset_assert(rcdev, id);
+-	if (ret)
+-		return ret;
++	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+ 
+-	return mtk_reset_deassert(rcdev, id);
++	return regmap_write(data->regmap,
++			    data->regofs + ((id / 32) << 4) + 0x4,
++			    BIT(id % 32));
+ }
+ 
+ static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
+-	unsigned long id)
++			     unsigned long id)
+ {
+ 	int ret;
+ 
+@@ -84,8 +87,9 @@ static const struct reset_control_ops mtk_reset_ops_set_clr = {
  };
  
--void mtk_register_reset_controller(struct device_node *np,
--				   const struct mtk_clk_rst_desc *desc)
-+int mtk_register_reset_controller(struct device_node *np,
-+				  const struct mtk_clk_rst_desc *desc)
+ static void mtk_register_reset_controller_common(struct device_node *np,
+-			unsigned int num_regs, int regofs,
+-			const struct reset_control_ops *reset_ops)
++						 unsigned int num_regs,
++						 int regofs,
++						 const struct reset_control_ops *reset_ops)
  {
- 	struct regmap *regmap;
- 	const struct reset_control_ops *rcops = NULL;
-@@ -108,7 +108,7 @@ void mtk_register_reset_controller(struct device_node *np,
+ 	struct mtk_reset *data;
+ 	int ret;
+@@ -117,17 +121,17 @@ static void mtk_register_reset_controller_common(struct device_node *np,
+ }
  
- 	if (!desc) {
- 		pr_err("mtk clock reset desc is NULL\n");
--		return;
-+		return -EINVAL;
- 	}
+ void mtk_register_reset_controller(struct device_node *np,
+-	unsigned int num_regs, int regofs)
++				   unsigned int num_regs, int regofs)
+ {
+ 	mtk_register_reset_controller_common(np, num_regs, regofs,
+-		&mtk_reset_ops);
++					     &mtk_reset_ops);
+ }
  
- 	switch (desc->version) {
-@@ -120,18 +120,18 @@ void mtk_register_reset_controller(struct device_node *np,
- 		break;
- 	default:
- 		pr_err("Unknown reset version %d\n", desc->version);
--		return;
-+		return -EINVAL;
- 	}
- 
- 	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap)) {
- 		pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
--		return;
-+		return -EINVAL;
- 	}
- 
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
--		return;
-+		return -ENOMEM;
- 
- 	data->desc = desc;
- 	data->regmap = regmap;
-@@ -144,7 +144,10 @@ void mtk_register_reset_controller(struct device_node *np,
- 	if (ret) {
- 		pr_err("could not register reset controller: %d\n", ret);
- 		kfree(data);
-+		return ret;
- 	}
-+
-+	return 0;
+ void mtk_register_reset_controller_set_clr(struct device_node *np,
+-	unsigned int num_regs, int regofs)
++					   unsigned int num_regs, int regofs)
+ {
+ 	mtk_register_reset_controller_common(np, num_regs, regofs,
+-		&mtk_reset_ops_set_clr);
++					     &mtk_reset_ops_set_clr);
  }
  
  MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-index 83840ecf8b27..2135da877826 100644
---- a/drivers/clk/mediatek/reset.h
-+++ b/drivers/clk/mediatek/reset.h
-@@ -51,8 +51,10 @@ struct mtk_clk_rst_data {
-  * mtk_register_reset_controller - Register MediaTek clock reset controller
-  * @np: Pointer to device node.
-  * @desc: Constant pointer to description of clock reset.
-+ *
-+ * Return: 0 on success and errorno otherwise.
-  */
--void mtk_register_reset_controller(struct device_node *np,
--				   const struct mtk_clk_rst_desc *desc);
-+int mtk_register_reset_controller(struct device_node *np,
-+				  const struct mtk_clk_rst_desc *desc);
- 
- #endif /* __DRV_CLK_MTK_RESET_H */
 -- 
 2.18.0
 
