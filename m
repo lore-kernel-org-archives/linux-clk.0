@@ -2,135 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33ED3C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 12:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E86AEC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 12:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235039AbiD0MyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 08:54:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50902 "EHLO
+        id S234850AbiD0My7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 08:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235034AbiD0MyH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 08:54:07 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 974FF2C259B;
-        Wed, 27 Apr 2022 05:50:56 -0700 (PDT)
-Received: by mail-qt1-f170.google.com with SMTP id o11so988246qtp.13;
-        Wed, 27 Apr 2022 05:50:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+FsGG6ML55JyWb07rb2rElQSAfjQo5KUMUNvexzkcfc=;
-        b=BKb032CNfel3jYjjsvtHSaZ/N5MKS4AxClULav9+4w0NXcNAbC+9Ig5jqyVhmeNxB7
-         cN8FNPeY35l4z27Zaqq2TTmQDcluvd6WIMMYsyX3OG18YXNEQjfByjK+s+26JUg8eHHV
-         pjCT05JtDoG5YXZ+xbNqT4hmHMgNvouw2tjPZnXTqkxQhkVOBWTE707vmrkn3iO+/eU5
-         YzkjuFs6KTzN8VYtXCZKwDDaLI4ihcxeN2NrjJCBg2s0ILZmfyJk27a34U2lU7KOi87S
-         K/nuWk1/AJU62U35PloWbydOFTDavkEegUa9S5NqyJxlBIE+335zVmRIGL/vcDead+zG
-         DzMw==
-X-Gm-Message-State: AOAM532vLQSq8fT8KNtS/GzRyNZRMSQ/YA8Sz0Ctk+T5YnDqVOTbiTst
-        prfwImzcyVjVYKNx/mDW0PmxrldK984ntg==
-X-Google-Smtp-Source: ABdhPJyFv5F603bAwFi5VI4ecbk46qlf8/nNDtcedW4E7Qq3+1TCcpw88I3sJD71BGg3gtuxfk1K/A==
-X-Received: by 2002:a05:622a:c3:b0:2f3:66ce:251d with SMTP id p3-20020a05622a00c300b002f366ce251dmr10587121qtw.157.1651063855243;
-        Wed, 27 Apr 2022 05:50:55 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id v23-20020ae9e317000000b0069ea555b54dsm7816680qkf.128.2022.04.27.05.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Apr 2022 05:50:54 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id w187so3198277ybe.2;
-        Wed, 27 Apr 2022 05:50:54 -0700 (PDT)
-X-Received: by 2002:a25:8087:0:b0:641:dd06:577d with SMTP id
- n7-20020a258087000000b00641dd06577dmr25319803ybk.207.1651063854230; Wed, 27
- Apr 2022 05:50:54 -0700 (PDT)
+        with ESMTP id S235054AbiD0My6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 08:54:58 -0400
+Received: from EUR02-HE1-obe.outbound.protection.outlook.com (mail-eopbgr10069.outbound.protection.outlook.com [40.107.1.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D3C2C38D3
+        for <linux-clk@vger.kernel.org>; Wed, 27 Apr 2022 05:51:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SSs74he1PX79AL3BNDj/jV8VZgZMLP4KmiyEsT3EOlUZi0L9kfzeN3AIqhih8mkWfja0LujteNUhEIljdkc3cVFMBhvqdLjTDTXNerS3Z7B471DoIgkNf4PrY8GCKsrYj1zUJXqJ2VGicAEAP7SJzVerDUZ6Ph9qhvMJIR6XVFd0Xuod0pOYavPT7EQzVyHNe3j7cMyoNXohhGDdHTL+DwCyQEZbExw3DeFUAPHQ1QucGmcc1J19U9mdLS/56wmbIXnLiimkCbohYKVXKEeaKxaW0eR8vBdOqbaZA02EACSSeqxDnH1q+TXP73boH5d6paSxZDO4HDD5vFlVtd8UXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x4oCIRMus+LJTX4Qfde+NDqDyrz+5nI8P2962MN2wcM=;
+ b=IoTYBG4vfPE0p1wbBs2sIk5SHDI2bG9RxjUdJOiZ6FCxfhm6Ml/miMgVcaCkknUBo3TeMpCzq3PffnueTeDdySspoat26MlaRDXC3o4RBpbAc6tBKR4PNxx7uP4mKxF2X2seRxdOtVc3/WqznGUvrutD1/F6qESy3h3OFGyiyiImGrXWuSrAIgOJpPrfc5wW0kSm6hm9GpnP0ty7YBpuuPnMrR3Nu2mGJUi/mX2k+ozPqEaOrds+mz5sfNqSDC6n4BE/WhZNWtXEoxTU8xt3uFyI/qcrV4TwCXScQ6/5m+yolKevOmR3W8IWPgaGnKlCNIdf46S3+7nIOUBV0h49dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x4oCIRMus+LJTX4Qfde+NDqDyrz+5nI8P2962MN2wcM=;
+ b=T3ssVrVHom62TpfNUVzdOy9nOIFN7VnS6yuBHRiQ7z/IX69Ykt2VuBxiUdrCRjUOVs+k1ZRZ2X0JmwDCl6+fsQm+7xbxfwy4oDEhLjIvBSNd7LpOmC669iewsw+BDuSMPH4oClNsK3ZA6WdP4dLTZWSjfQvd6d+5INojvzTVLDM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by AM5PR0401MB2563.eurprd04.prod.outlook.com (2603:10a6:203:36::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.13; Wed, 27 Apr
+ 2022 12:51:44 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::78d8:955a:7946:fd78]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::78d8:955a:7946:fd78%6]) with mapi id 15.20.5206.013; Wed, 27 Apr 2022
+ 12:51:43 +0000
+Date:   Wed, 27 Apr 2022 15:51:41 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        David Jander <david@protonic.nl>
+Subject: Re: [PATCH 1/2] clk: imx8mp: Enable no longer handled gates
+Message-ID: <Ymk8XRS/BSCy6byS@abelvesa>
+References: <20220425095249.259406-1-s.hauer@pengutronix.de>
+ <20220425095249.259406-2-s.hauer@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220425095249.259406-2-s.hauer@pengutronix.de>
+X-ClientProxiedBy: VI1PR0102CA0081.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::22) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
 MIME-Version: 1.0
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
- <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com> <20220426093232.350ed9f4@xps13>
-In-Reply-To: <20220426093232.350ed9f4@xps13>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Apr 2022 14:50:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUvD3xsObMJwhUtHVqPpAL-ehW8+sx0Ru8-zm18yWQVKA@mail.gmail.com>
-Message-ID: <CAMuHMdUvD3xsObMJwhUtHVqPpAL-ehW8+sx0Ru8-zm18yWQVKA@mail.gmail.com>
-Subject: Re: [PATCH v11 0/9] RZN1 DMA support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 76a76703-1561-4cd2-c657-08da284cae6d
+X-MS-TrafficTypeDiagnostic: AM5PR0401MB2563:EE_
+X-Microsoft-Antispam-PRVS: <AM5PR0401MB2563AF960FD6BF3BD42A644FF6FA9@AM5PR0401MB2563.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: VtvHtFgapxF9qFh91TM/Dx+Wk9fSkM+hNLKNAlabwWm4OZ3O619efGw7xTp2YDWp0z4vLnIxUbhm4J81oPTJrCWZy47MXoqJByX7f00xBF0zrXeYVyz58pNPCidxXROLhn/7B0qkrjArBAy+mmofJX/UFgfnpwDLcWtBIAhIw2Wc04yyNtfoto6742LEcjOv4v1jmkEleJAEE8T6vJK2Cjj9ctlp2Dba+FySIMyS/wP0UjFFraXSQ7tQoarL72I7bs52Ctbqu5dPthh7L4CTK8PMzTghpsylb1llhDTdaYqJBj5h1e8GWAxoh2UtkibgPEW2Zw88X5akuRLootp2F4KhjIVe/PP0fX2HUFNJmDZhafsDW/jJQItQaIIA6HeWAU5MnI6Nb9a2+rEsmgHtxIqWmcwLvtrQOL8MayB4urJlRDQc5iBDPmecOF8YVBg7rfdtT9TyqQm0unsa4xI1RyLdfnJ7S+hbvMawi8IV/HWlAhvXMxFdDpIeHTc+a8z2YbjIDhLMYiX0YfhaPu2To4nRR/NAmCXTOa1NyzM/Ul4DyWZdk9glkk6RT1Y5kG+D3MxIcQFiGhrfgH5Fr9UePL6cb/n753i1nutXOXERYPeTZYJL83y3sIMkYnQwO0aUxnyrsqZg8KmGTlnE3ZyyKyUKTRV9AAyIQtxz4ZKkrHJ4MDHB/OdGXzjZxsJsxzo9zoXCbhlPFM73lbLZpJxi0pUcZ+h7u7xUNHXrukjA2jQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(6486002)(508600001)(83380400001)(86362001)(6512007)(9686003)(26005)(53546011)(6506007)(38350700002)(38100700002)(186003)(316002)(44832011)(2906002)(66946007)(66556008)(33716001)(5660300002)(8936002)(54906003)(6916009)(66476007)(4326008)(8676002)(52116002)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8f5xtqMuhLablKo1qAD1ucwdirWA5ru3L7UuhTOBqHyt4shdDvcgyxa6MFOM?=
+ =?us-ascii?Q?BvL1Sx4DWxmxR3tsBQ8DnpBZ/lmxBXl5kY3Y9YfJhWxCv5STPfGoWoufWHBw?=
+ =?us-ascii?Q?Cmb18RiBN1RA2e7fhmY8VcaL+OY1zXMJwnwr+8pOdzC7BxWiGtJWv8PAOJOx?=
+ =?us-ascii?Q?MapT9iVqb4kcJhksJDSU179XUovZPah6GMA974Jp3tFiG/ksBqP400YpEQ8Z?=
+ =?us-ascii?Q?ZpibK6xCQJlHSb7Z0hEIuIyG0/CJcPQsAyLkX8aEiiD+K/0uvsia+rs9iBNO?=
+ =?us-ascii?Q?wAs+/XBH02duyKb5Fu9UGG5qjYhoeXCI7snkGFjqldd7uTsj2ow2nFj5q11h?=
+ =?us-ascii?Q?v2pVcSPyXKENWjPj2P0j62n8gjaxt8ZfYVXLbSRE0Pnztw6bKgl2kFQJTFOX?=
+ =?us-ascii?Q?asx+mJ5516zKt+HqteCw+ce8rpNswVWsyM1I2rgkOxYU2C8H/yB8WFNe7hth?=
+ =?us-ascii?Q?kuHmLoYgyGHawvysYlXhaihbqATT4vwKwkyggHVBkuilMJDKFxz1XJ9K7vgH?=
+ =?us-ascii?Q?MhFTm4o3iQffwMf0pNRyN18BNVUUOYplxsbLaH7MDH6soSo4knmIEIlPLL4R?=
+ =?us-ascii?Q?WfDrteT6sU1eWUFpq4MxCNpHaHkG29eTRLWiG5IVF8MdKq9w5hWRmweOL5va?=
+ =?us-ascii?Q?wnpxEJulu9XYnj7UOjYOwgzri3eDUCoEQvTtklvxUWpER/BT76Y/WIhsQykw?=
+ =?us-ascii?Q?itsw2qiW9DSG5jUWC34jeBtkY7K4uvukTlgghi3gVathHicD5svT4o036EpT?=
+ =?us-ascii?Q?bgCG0RctduIntISE+r5zl40qGJiLZDoHckkkHw0ZNmCPGgHauoF6Liret6Er?=
+ =?us-ascii?Q?yXiID4r3CfNr1n9cVmllfMH+KejO4Owfx7tbXoS1jzlhjPIX/Mal9fwr7dcW?=
+ =?us-ascii?Q?dVQEf1a/WOK0aeiNTVEdY4sd9hvsTwLoo3YC0icqE5fcuQvxFBiAbCLXq4M3?=
+ =?us-ascii?Q?5myw8EcCjmh+BV5XGe1oxmpvuZSvmBghwRry7Lz8M7p8zA+wb5dm1CIE66fg?=
+ =?us-ascii?Q?5DV/MVrNYNWh0nkCjB5Vmv7llLBV3ZKYPqV2rxbNDP/cANfLdvRTkLw/iUHg?=
+ =?us-ascii?Q?N/b6SCv9MuH7AZ9En2iuWWdVmS8HxLwXjVG8V0IW/kx3cleuLsn63d+5bjXh?=
+ =?us-ascii?Q?qF82rNQagZwtEoUJNORgnaD5ghCDwY5Y7KTqYxIl0dvuerhxdjV9uLj/Swvp?=
+ =?us-ascii?Q?gDA2fSOq71tS16Vb8AM6ZIh2Ueur//Hc+/K+ujjOco+k237l1fbfeNK/yo/J?=
+ =?us-ascii?Q?BCbaeQihzjyY5MNFwRGlbiY7GoI0G6Hc3RMT8erm0lAxDHnCCtdWfsmRbupJ?=
+ =?us-ascii?Q?4Dnye3VF/IWgoD3wtTIPip9RrLdHcCrpXlNkTPlnfly3ljCVNO99h16t8DWA?=
+ =?us-ascii?Q?VxPGovaettr/eron/El27a06zUhOGqkmraiJZ8Wuz1rCM4ngb/fFj/WqylUW?=
+ =?us-ascii?Q?mjzS0LBN99BW6VkkiU2s3iIjpiS4IhS4W8hWr81WYD+poPcNKzFFi3nHOryx?=
+ =?us-ascii?Q?T+kmgTGV8WnDIxrtMcp8WhQXTVsIhLQMRCTxRi679jd7MKRfZp8EXrmmXdh7?=
+ =?us-ascii?Q?qUNVCDhYB97T7oaW00Dz1m3tL6ltgIT+PhxTkciM8TOGkaSUKXVrFpLtg6M2?=
+ =?us-ascii?Q?LbfVEfYjYwLak7ds4CyoNNXyQyLVbYjAUS2aTvzppa7hfJM10+f4B0yz64iP?=
+ =?us-ascii?Q?+WLH5FaZp5N7eLV4bxEsycK5DH4wJY73cu26CmDX0efIQJb5vLZB40i0gRAH?=
+ =?us-ascii?Q?VYG9Gnyuyw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76a76703-1561-4cd2-c657-08da284cae6d
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2022 12:51:43.8526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ++tTsGn+cKERkZMzzrKCGkS8sc99hhy9lUt/EmzOnzjaioJZQIV6uC51BEXCbGY7vXH22DRy0Yv38ZFVkjnF2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0401MB2563
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
-
-On Tue, Apr 26, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:05:34 +0200:
-> > On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> > <miquel.raynal@bootlin.com> wrote:
-> > > This is the series bringing DMA support to RZN1 platforms.
-> > > Other series follow with eg. UART and RTC support as well.
-> >
-> > Thanks for your series!
-> >
-> > > There is no other conflicting dependency with the other series, so this
-> > > series can now entirely be merged in the dmaengine tree I believe.
-> > >
-> > > Changes in v11:
-> > > * Renamed two defines.
-> > > * Changed the way the bitmap is declared.
-> > > * Updated the cover letter: this series can now go in through the
-> > >   dmaengine tree.
-> >
-> > /me confused
-> >
-> > > Miquel Raynal (9):
-> > >   dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
-> > >   dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
-> > >   dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-> > >   soc: renesas: rzn1-sysc: Export function to set dmamux
-> > >   dmaengine: dw: dmamux: Introduce RZN1 DMA router support
-> > >   clk: renesas: r9a06g032: Probe possible children
-> > >   dmaengine: dw: Add RZN1 compatible
-> > >   ARM: dts: r9a06g032: Add the two DMA nodes
-> > >   ARM: dts: r9a06g032: Describe the DMA router
-> >
-> > The last two DTS parts have to go in through the renesas-arm-dt and
-> > soc trees.
+On 22-04-25 11:52:48, Sascha Hauer wrote:
+> Handling of the divided pll output gates in CCM_ANALOG_SYS_PLL1_GEN_CTRL
+> was removed in d097cc045b649. We shouldn't assume these gates are at
+> their reset-default enabled state. Enable them to let the kernel work
+> when the bootloader has changed the values.
 >
-> Yes, DT usually never go in through subsystem trees anyway, of
-> course they should be taken in through the Renesas tree. For the other
-> patches I think its simpler if everything goes through the dmaengine
-> tree, but I'm fine either way, I'll let you discuss this with the DMA
-> folks if you disagree.
+> Fixes: d097cc045b649 ("clk: imx8mp: remove SYS PLL 1/2 clock gates")
+> Reported-by: David Jander <david@protonic.nl>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 18f5b7c3ca9d8..10446a1b509e7 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -407,6 +407,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np;
+>  	void __iomem *anatop_base, *ccm_base;
+> +	u32 val;
+>
+>  	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
+>  	anatop_base = of_iomap(np, 0);
+> @@ -480,6 +481,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MP_ARM_PLL_OUT] = imx_clk_hw_gate("arm_pll_out", "arm_pll_bypass", anatop_base + 0x84, 11);
+>  	hws[IMX8MP_SYS_PLL3_OUT] = imx_clk_hw_gate("sys_pll3_out", "sys_pll3_bypass", anatop_base + 0x114, 11);
+>
+> +	/*
+> +	 * The gates in CCM_ANALOG_SYS_PLL1_GEN_CTRL are not handled by the
+> +	 * driver, make sure they are all enabled.
+> +	 */
+> +	val = readl(anatop_base + 0x94);
+> +	val |= BIT(13) | BIT(15) | BIT(17) | BIT(19) | BIT(21) | BIT(23) |
+> +	       BIT(25) | BIT(27);
 
-Fine for me.  I've acked the renesas-clk related patches, so they
-can go in through the dmaengine tree.
+The same bits are used for PLL1 and PLL2, so maybe have a single define
+containing all bits and use it in both places. Might look cleaner.
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +	writel(val, anatop_base + 0x94);
+> +
+>  	hws[IMX8MP_SYS_PLL1_OUT] = imx_clk_hw_gate("sys_pll1_out", "sys_pll1_bypass", anatop_base + 0x94, 11);
+>
+>  	hws[IMX8MP_SYS_PLL1_40M] = imx_clk_hw_fixed_factor("sys_pll1_40m", "sys_pll1_out", 1, 20);
+> @@ -494,6 +504,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>
+>  	hws[IMX8MP_SYS_PLL2_OUT] = imx_clk_hw_gate("sys_pll2_out", "sys_pll2_bypass", anatop_base + 0x104, 11);
+>
+> +	/*
+> +	 * The gates in CCM_ANALOG_SYS_PLL2_GEN_CTRL are not handled by the
+> +	 * driver, make sure they are all enabled.
+> +	 */
+> +	val = readl(anatop_base + 0x104);
+> +	val |= BIT(13) | BIT(15) | BIT(17) | BIT(19) | BIT(21) | BIT(23) |
+> +	       BIT(25) | BIT(27);
+> +	writel(val, anatop_base + 0x104);
+> +
+>  	hws[IMX8MP_SYS_PLL2_50M] = imx_clk_hw_fixed_factor("sys_pll2_50m", "sys_pll2_out", 1, 20);
+>  	hws[IMX8MP_SYS_PLL2_100M] = imx_clk_hw_fixed_factor("sys_pll2_100m", "sys_pll2_out", 1, 10);
+>  	hws[IMX8MP_SYS_PLL2_125M] = imx_clk_hw_fixed_factor("sys_pll2_125m", "sys_pll2_out", 1, 8);
+> --
+> 2.30.2
+>
