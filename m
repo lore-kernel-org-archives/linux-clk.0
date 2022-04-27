@@ -2,129 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434FDC43219
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 15:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27041C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 16:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234158AbiD0PtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 11:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39474 "EHLO
+        id S242846AbiD0Q1E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 12:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240589AbiD0PtA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 11:49:00 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA10B506E7;
-        Wed, 27 Apr 2022 08:45:47 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B297AFF805;
-        Wed, 27 Apr 2022 15:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651074346;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yf67sjkgBRr+AiPGp+i3USOvi1jzgEhLnw1xa1QO5Ac=;
-        b=J7hS7Va7WuegUeM1wmG9bDXCdgHs4tQEcTSOh75c1N0Rwqf+pzAsiGsmisCAoOEhkWYCSf
-        vgTh4cjDG0z2a35q224BWwPEPmi5LtEzODNpPd/Fdm6of+4e8GmABsN38xm9fjqIG2V6oI
-        +QYGj9fMDGtdmQpRDRBzC8aoGW2cf/8eBKXDJLZZnhB8AJ7FVXc64FQ7akj+mg8THuya1u
-        jRAsHx32yRWDCxmV/a0tgGy6rHrzV7gPm+L8Fo8kNhQKKYt7ruTM7BcBYhj4lqN3ILdY1c
-        gapJaTpAbqaS/uL4qGpUcEFMPnpyn3bWHD0EjJHda0GDHdlWNfkMapo/vifX1w==
-Date:   Wed, 27 Apr 2022 17:45:41 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
+        with ESMTP id S243291AbiD0Q0s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 12:26:48 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D996E261BC7
+        for <linux-clk@vger.kernel.org>; Wed, 27 Apr 2022 09:21:42 -0700 (PDT)
+Received: from dude03.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::39])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1njkQ1-0007lM-BS; Wed, 27 Apr 2022 18:21:33 +0200
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v11 0/9] RZN1 DMA support
-Message-ID: <20220427174541.17efcd14@xps13>
-In-Reply-To: <CAMuHMdUvD3xsObMJwhUtHVqPpAL-ehW8+sx0Ru8-zm18yWQVKA@mail.gmail.com>
-References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
-        <CAMuHMdU6Mb9k_g7yBCknmL9DMjUSzk=W_5wiMNDMsTN6RpkcLg@mail.gmail.com>
-        <20220426093232.350ed9f4@xps13>
-        <CAMuHMdUvD3xsObMJwhUtHVqPpAL-ehW8+sx0Ru8-zm18yWQVKA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        patchwork-lst@pengutronix.de
+Subject: [PATCH] clk: imx8mp: add clkout1/2 support
+Date:   Wed, 27 Apr 2022 18:21:31 +0200
+Message-Id: <20220427162131.3127303-1-l.stach@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::39
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+clkout1 and clkout2 allow to supply clocks from the SoC to the board,
+which is used by some board designs to provide reference clocks.
 
-geert@linux-m68k.org wrote on Wed, 27 Apr 2022 14:50:43 +0200:
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ drivers/clk/imx/clk-imx8mp.c             | 14 ++++++++++++++
+ include/dt-bindings/clock/imx8mp-clock.h |  9 ++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
-> Hi Miquel,
->=20
-> On Tue, Apr 26, 2022 at 9:32 AM Miquel Raynal <miquel.raynal@bootlin.com>=
- wrote:
-> > geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:05:34 +0200: =20
-> > > On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
-> > > <miquel.raynal@bootlin.com> wrote: =20
-> > > > This is the series bringing DMA support to RZN1 platforms.
-> > > > Other series follow with eg. UART and RTC support as well. =20
-> > >
-> > > Thanks for your series!
-> > > =20
-> > > > There is no other conflicting dependency with the other series, so =
-this
-> > > > series can now entirely be merged in the dmaengine tree I believe.
-> > > >
-> > > > Changes in v11:
-> > > > * Renamed two defines.
-> > > > * Changed the way the bitmap is declared.
-> > > > * Updated the cover letter: this series can now go in through the
-> > > >   dmaengine tree. =20
-> > >
-> > > /me confused
-> > > =20
-> > > > Miquel Raynal (9):
-> > > >   dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
-> > > >   dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subno=
-de
-> > > >   dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-> > > >   soc: renesas: rzn1-sysc: Export function to set dmamux
-> > > >   dmaengine: dw: dmamux: Introduce RZN1 DMA router support
-> > > >   clk: renesas: r9a06g032: Probe possible children
-> > > >   dmaengine: dw: Add RZN1 compatible
-> > > >   ARM: dts: r9a06g032: Add the two DMA nodes
-> > > >   ARM: dts: r9a06g032: Describe the DMA router =20
-> > >
-> > > The last two DTS parts have to go in through the renesas-arm-dt and
-> > > soc trees. =20
-> >
-> > Yes, DT usually never go in through subsystem trees anyway, of
-> > course they should be taken in through the Renesas tree. For the other
-> > patches I think its simpler if everything goes through the dmaengine
-> > tree, but I'm fine either way, I'll let you discuss this with the DMA
-> > folks if you disagree. =20
->=20
-> Fine for me.  I've acked the renesas-clk related patches, so they
-> can go in through the dmaengine tree.
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 18f5b7c3ca9d..48099a2ed6b2 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -399,6 +399,11 @@ static const char * const imx8mp_sai7_sels[] = {"osc_24m", "audio_pll1_out", "au
+ 
+ static const char * const imx8mp_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+ 
++static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_out", "video_pll1_out",
++						  "dummy", "dummy", "gpu_pll_out", "vpu_pll_out",
++						  "arm_pll_out", "sys_pll1", "sys_pll2", "sys_pll3",
++						  "dummy", "dummy", "osc_24m", "dummy", "osc_32k"};
++
+ static struct clk_hw **hws;
+ static struct clk_hw_onecell_data *clk_hw_data;
+ 
+@@ -504,6 +509,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_SYS_PLL2_500M] = imx_clk_hw_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
+ 	hws[IMX8MP_SYS_PLL2_1000M] = imx_clk_hw_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
+ 
++	hws[IMX8MP_CLK_CLKOUT1_SEL] = imx_clk_hw_mux2("clkout1_sel", anatop_base + 0x128, 4, 4,
++						      imx8mp_clkout_sels, ARRAY_SIZE(imx8mp_clkout_sels));
++	hws[IMX8MP_CLK_CLKOUT1_DIV] = imx_clk_hw_divider("clkout1_div", "clkout1_sel", anatop_base + 0x128, 0, 4);
++	hws[IMX8MP_CLK_CLKOUT1] = imx_clk_hw_gate("clkout1", "clkout1_div", anatop_base + 0x128, 8);
++	hws[IMX8MP_CLK_CLKOUT2_SEL] = imx_clk_hw_mux2("clkout2_sel", anatop_base + 0x128, 20, 4,
++						      imx8mp_clkout_sels, ARRAY_SIZE(imx8mp_clkout_sels));
++	hws[IMX8MP_CLK_CLKOUT2_DIV] = imx_clk_hw_divider("clkout2_div", "clkout2_sel", anatop_base + 0x128, 16, 4);
++	hws[IMX8MP_CLK_CLKOUT2] = imx_clk_hw_gate("clkout2", "clkout2_div", anatop_base + 0x128, 24);
++
+ 	hws[IMX8MP_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mp_a53_sels, ccm_base + 0x8000);
+ 	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
+ 	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
+diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+index 235c7a00d379..7a6b45a04c24 100644
+--- a/include/dt-bindings/clock/imx8mp-clock.h
++++ b/include/dt-bindings/clock/imx8mp-clock.h
+@@ -318,7 +318,14 @@
+ #define IMX8MP_CLK_HSIO_AXI			311
+ #define IMX8MP_CLK_MEDIA_ISP			312
+ 
+-#define IMX8MP_CLK_END				313
++#define IMX8MP_CLK_CLKOUT1_SEL			313
++#define IMX8MP_CLK_CLKOUT1_DIV			314
++#define IMX8MP_CLK_CLKOUT1			315
++#define IMX8MP_CLK_CLKOUT2_SEL			316
++#define IMX8MP_CLK_CLKOUT2_DIV			317
++#define IMX8MP_CLK_CLKOUT2			318
++
++#define IMX8MP_CLK_END				319
+ 
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
+-- 
+2.30.2
 
-Perfect. Sounds like v12 is the right one \o/
-
-Thanks for all the feedback you keep providing on all the RZ/N1
-(correctly spelled this time;-) ) series.
-
-Cheers,
-Miqu=C3=A8l
