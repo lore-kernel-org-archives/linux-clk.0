@@ -2,44 +2,45 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC84C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65E6C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Apr 2022 10:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbiD0Khw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Apr 2022 06:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
+        id S229891AbiD0KqN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Apr 2022 06:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiD0Khv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:37:51 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [IPv6:2001:4b98:dc4:8::240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11BC438EE0;
-        Wed, 27 Apr 2022 03:16:06 -0700 (PDT)
-Received: from relay12.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::232])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 5C7B3CC51C;
-        Wed, 27 Apr 2022 09:57:57 +0000 (UTC)
+        with ESMTP id S229954AbiD0KqC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Apr 2022 06:46:02 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5814282B41;
+        Wed, 27 Apr 2022 03:29:36 -0700 (PDT)
+Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 32924C16AE;
+        Wed, 27 Apr 2022 09:39:31 +0000 (UTC)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 13C56200019;
-        Wed, 27 Apr 2022 09:57:14 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 145C6240002;
+        Wed, 27 Apr 2022 09:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1651053437;
+        t=1651052290;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=UxzMEOqhe0N5yp6GmaQi9cglbTWdIMVSkvcspvfYAsA=;
-        b=WtY8Rp/wzqRTZj3Sfbvox6ilJE6pxreJnw4mczmp6V6fZzYr+mZifk+JPUSh4WW+bkGIvx
-        yxeSLhqTZu1k7+Ab52/DGhPZ+EclGHG5pZvOhiuMeo6zFy59ducknxROc/PB5vdzlAApKR
-        uH6RUAYTaZBgy91RDHgGmYM5X/xYSftk9LT0e8HNDG7iQpYyO5mXYSJCUAMFea4S5KUj69
-        C7iHIKlbt5xZOWaoFr9wM8yxAGr6auzqOqlTJBT0vVvRahuaBulRsl30KgXhtGky0LZcuE
-        EO5Pwm/5JDl7A20zghrZPymdSjNuh7UKtQcMR6EwGZXOUXI4YRtGrgJN+AH81A==
+        bh=qRN/OeTEoBAbIZfKfZap1cmQDF6MJtwTJ3zeNwUxoKI=;
+        b=Vci9XarbySArRis0diY3Wj2ybIy1BxKjhRzYzgwauFxRTjLkMQkslZtdTLdCZ8Vhr1cO03
+        lzM2ftL2t6PTk7ms9ucBQfnQTctjKFDxcNcPLpIZjtwEB5Q4rTmCTMWNxzkIyz4GoBkRAz
+        dXTfaiFDBrJkf8CPkjp5W/UJUSi9FMoyLaB8qPrd04N+9n2F4LAOfcsSm1K2cjcGHx3a74
+        ArUt4DOIltWVX7H1FGJ8aabsqAU9j9qy5rNnT3nxsnQbr5FXsExl+PZPwVJ4S6rabidWyL
+        3Qd3cEDLdGC65MtJbxwMF6oGCTiGkr/3Fd53ckiZQP/N+fl8jmPaoJ1FnkiElQ==
+Date:   Wed, 27 Apr 2022 11:38:05 +0200
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Magnus Damm <magnus.damm@gmail.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
@@ -48,54 +49,98 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v12 9/9] ARM: dts: r9a06g032: Describe the DMA router
-Date:   Wed, 27 Apr 2022 11:56:53 +0200
-Message-Id: <20220427095653.91804-10-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
-References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v11 8/9] ARM: dts: r9a06g032: Add the two DMA nodes
+Message-ID: <20220427113805.45717559@xps13>
+In-Reply-To: <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
+References: <20220421085112.78858-1-miquel.raynal@bootlin.com>
+        <20220421085112.78858-9-miquel.raynal@bootlin.com>
+        <CAMuHMdXkrdjETcgN9yruL_J_mL3q7OEMj2DbY36ppwg1eDU5SA@mail.gmail.com>
+        <20220427111449.338d9579@xps13>
+        <CAMuHMdUdJtwOkYT86H5TneMmrVRDrsRqhhaxMp3ruyEkiG+XqA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a dmamux on this SoC which allows picking two different sources
-for a single DMA request.
+Hi Geert,
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+geert@linux-m68k.org wrote on Wed, 27 Apr 2022 11:36:23 +0200:
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 1e90bfc76417..37c2eb7bbb7f 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -91,6 +91,16 @@ sysctrl: system-controller@4000c000 {
- 			clocks = <&ext_mclk>, <&ext_rtc_clk>,
- 					<&ext_jtag_clk>, <&ext_rgmii_ref>;
- 			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			dmamux: dma-router@a0 {
-+				compatible = "renesas,rzn1-dmamux";
-+				reg = <0xa0 4>;
-+				#dma-cells = <6>;
-+				dma-requests = <32>;
-+				dma-masters = <&dma0 &dma1>;
-+			};
- 		};
- 
- 		uart0: serial@40060000 {
--- 
-2.27.0
+> Hi Miquel,
+>=20
+> On Wed, Apr 27, 2022 at 11:14 AM Miquel Raynal
+> <miquel.raynal@bootlin.com> wrote:
+> > geert@linux-m68k.org wrote on Mon, 25 Apr 2022 18:29:58 +0200:
+> > > On Thu, Apr 21, 2022 at 10:51 AM Miquel Raynal
+> > > <miquel.raynal@bootlin.com> wrote:
+> > > > Describe the two DMA controllers available on this SoC.
+> > > >
+> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > Still, a few comments below, valid for both instances...
+> > >
+> > > > --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> > > > +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> > > > @@ -200,6 +200,36 @@ nand_controller: nand-controller@40102000 {
+> > > >                         status =3D "disabled";
+> > > >                 };
+> > > >
+> > > > +               dma0: dma-controller@40104000 {
+> > > > +                       compatible =3D "renesas,r9a06g032-dma", "re=
+nesas,rzn1-dma";
+> > > > +                       reg =3D <0x40104000 0x1000>;
+> > > > +                       interrupts =3D <GIC_SPI 56 IRQ_TYPE_LEVEL_H=
+IGH>;
+> > > > +                       clock-names =3D "hclk";
+> > > > +                       clocks =3D <&sysctrl R9A06G032_HCLK_DMA0>;
+> > > > +                       dma-channels =3D <8>;
+> > > > +                       dma-requests =3D <16>;
+> > > > +                       dma-masters =3D <1>;
+> > > > +                       #dma-cells =3D <3>;
+> > > > +                       block_size =3D <0xfff>;
+> > > > +                       data_width =3D <3>;
+> > >
+> > > This property is deprecated, in favor of "dma-width".
+> >
+> > Indeed,
+> >         data_width =3D <3>;
+> > is deprecated.
+> >
+> > However, dma-width does not seem to be described anywhere. Do you mean:
+> >         data-width =3D <8>;
+> > instead?
+>=20
+> Oops, I did mean "data-width".
+>=20
+> > > > +                       status =3D "disabled";
+> > >
+> > > Why not keep it enabled?
+> >
+> > I'm used to always disable all the nodes from the SoC descriptions,
+> > but it's true that for a DMA controller it might make sense to keep
+> > it enabled.
+> >
+> > Would dropping the status property be enough or do you prefer a proper
+> >         status =3D "okay";
+> > instead?
+>=20
+> Please just drop the status property, like is done in other Renesas .dtsi
+> files.
 
+Sure.
+
+Thanks,
+Miqu=C3=A8l
