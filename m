@@ -2,229 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC17C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 05:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC11C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 06:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbiD1FMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 01:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40212 "EHLO
+        id S243919AbiD1Gbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 02:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbiD1FMB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 01:12:01 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7AD85DA56;
-        Wed, 27 Apr 2022 22:08:46 -0700 (PDT)
-X-UUID: 490704e445534698a66f5c41d3c26818-20220428
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:74385a90-308e-4acc-b87f-915beed3df18,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:45
-X-CID-INFO: VERSION:1.1.4,REQID:74385a90-308e-4acc-b87f-915beed3df18,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:45
-X-CID-META: VersionHash:faefae9,CLOUDID:058ffd2e-6199-437e-8ab4-9920b4bc5b76,C
-        OID:IGNORED,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,File:nil,QS:0
-        ,BEC:nil
-X-UUID: 490704e445534698a66f5c41d3c26818-20220428
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 24281124; Thu, 28 Apr 2022 13:08:40 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 28 Apr 2022 13:08:38 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 28 Apr 2022 13:08:37 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 28 Apr 2022 13:08:37 +0800
-Message-ID: <de775aae07da3ff855d5bf95da996977efadda23.camel@mediatek.com>
-Subject: Re: [PATCH V4 07/15] clk: mediatek: reset: Support nonsequence base
- offsets of reset registers
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <p.zabel@pengutronix.de>, <chun-jie.chen@mediatek.com>,
-        <wenst@chromium.org>, <runyang.chen@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Thu, 28 Apr 2022 13:08:37 +0800
-In-Reply-To: <c643d877-bc0a-a92c-d366-bd27bf580739@collabora.com>
-References: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
-         <20220427030950.23395-8-rex-bc.chen@mediatek.com>
-         <c643d877-bc0a-a92c-d366-bd27bf580739@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S240545AbiD1Gbb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 02:31:31 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F134749F17
+        for <linux-clk@vger.kernel.org>; Wed, 27 Apr 2022 23:28:15 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id z19so4316525edx.9
+        for <linux-clk@vger.kernel.org>; Wed, 27 Apr 2022 23:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Xf+dx9QjYu+pZFxcusNu2q2NMrhvf7rKxX/txAvOgA8=;
+        b=SmGjZc6C2GaYPE1mr+lRp6swuqnB23B7pO1RtWV7G63RcVAtguIaQW3avKvKMGr299
+         dXAmWXFp88Yfih4v23y1HF9lDEjFodDt0fFh8TaL3aFqcR48EMFLtTYkZNOlZGBz/vlq
+         BWP7DC0ht9uzC7fcj0+KgBwUbwPmMJPwzne1hyhNlfKOlIdsdt+mFTbhDg2vFKS3fNFS
+         fRdATMjOJ0jHZccl6YQZulwWZPo7q5k7jG8URtCU+a3BQiO0uMfmJfZHb2wIr0RbCVhO
+         ZB6jSaoUWxjwawIhflU+LRYStPL6YIgdUCztLfV4rtUZ8V9nA/XtV5Aw+C3+KUQkcDOd
+         37Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Xf+dx9QjYu+pZFxcusNu2q2NMrhvf7rKxX/txAvOgA8=;
+        b=C3WbgV7z+EqOOF4Ksa4/BHpzQD6Yrag5DQIt2S5ZvxgoHdoJrqkG2Ns+7UDPT1SVDj
+         bdZpbyW+hPfLiBnWCC0QaJsf21FMuScIMVTgMO5BhIRxneBUOrq93iffevVMDFpdAo8o
+         Jkgw+TAcOQnrGRnThtRHtTARMuPJZohMrHkZo+CpQC7bTqjkI5beKly/gKM6Q25UcShY
+         OU6gfLFsmpPyrP0ulqtDmIVhF8qNV5ruXrHpnf6C2szF1LRrC2HlIWuw4TSsDCFaQ+5O
+         TA1uXAJXna1wqlkEHZT+LHV38q+StYyEW4Tg4aVyYFfLFSRTjWqPk5mbeEJz63p2ZrtO
+         ANig==
+X-Gm-Message-State: AOAM530YdyvN42jKYLC7IZKo86xJ/CKQe8OL3zChdA7gwbn+qpyL+Y46
+        GYhif4UiXWdYfQiiarfp88W/WQ==
+X-Google-Smtp-Source: ABdhPJzhJ78iAFYN62jRZOQ46v7YE/NpmM9iMnwuLOFRVbW/FrLtPIu4pqBes6dv2Zk6PHzYfO78yQ==
+X-Received: by 2002:a05:6402:190a:b0:426:1d8a:55e with SMTP id e10-20020a056402190a00b004261d8a055emr5065981edz.63.1651127294534;
+        Wed, 27 Apr 2022 23:28:14 -0700 (PDT)
+Received: from [192.168.0.159] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id b16-20020a170906709000b006f3a8aac0eesm4351745ejk.0.2022.04.27.23.28.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 23:28:13 -0700 (PDT)
+Message-ID: <ebedcf5f-9b75-253c-f560-5ae5b8175634@linaro.org>
+Date:   Thu, 28 Apr 2022 08:28:13 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC
+ bindings
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220426232444.1761869-1-bjorn.andersson@linaro.org>
+ <20220426232444.1761869-2-bjorn.andersson@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220426232444.1761869-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2022-04-27 at 15:38 +0200, AngeloGioacchino Del Regno wrote:
-> Il 27/04/22 05:09, Rex-BC Chen ha scritto:
-> > The bank offsets are not serial for all reset registers.
-> > For example, there are five infra reset banks for MT8192: 0x120,
-> > 0x130,
-> > 0x140, 0x150 and 0x730.
-> > 
-> > To support this,
-> > - Change reg_ofs to rst_bank_ofs which is a pointer to base offsets
-> > of
-> >    the reset register.
-> > - Add a new define RST_NR_PER_BANK to define reset number for each
-> >    reset bank.
-> > 
-> > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> > ---
-> >   drivers/clk/mediatek/clk-mt2701-eth.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt2701-g3d.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt2701-hif.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt2701.c     | 11 +++++++----
-> >   drivers/clk/mediatek/clk-mt2712.c     | 15 +++++++++------
-> >   drivers/clk/mediatek/clk-mt7622-eth.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt7622-hif.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt7622.c     | 11 +++++++----
-> >   drivers/clk/mediatek/clk-mt7629-eth.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt7629-hif.c |  6 ++++--
-> >   drivers/clk/mediatek/clk-mt8135.c     | 11 +++++++----
-> >   drivers/clk/mediatek/clk-mt8173.c     | 11 +++++++----
-> >   drivers/clk/mediatek/clk-mt8183.c     | 14 ++++++++++++--
-> >   drivers/clk/mediatek/reset.c          | 11 ++++++-----
-> >   drivers/clk/mediatek/reset.h          |  6 ++++--
-> >   15 files changed, 87 insertions(+), 45 deletions(-)
-> > 
+On 27/04/2022 01:24, Bjorn Andersson wrote:
+> Add binding for the Qualcomm SC8280XP Global Clock controller.
 > 
-> ..snip..
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> > diff --git a/drivers/clk/mediatek/clk-mt2701.c
-> > b/drivers/clk/mediatek/clk-mt2701.c
-> > index 70a934faa529..ebb1b9975ab0 100644
-> > --- a/drivers/clk/mediatek/clk-mt2701.c
-> > +++ b/drivers/clk/mediatek/clk-mt2701.c
-> > @@ -735,18 +735,21 @@ static const struct mtk_fixed_factor
-> > infra_fixed_divs[] = {
-> >   	FACTOR(CLK_INFRA_CLK_13M, "clk13m", "clk26m", 1, 2),
-> >   };
-> >   
-> > +static u16 infrasys_rst_ofs[] = { 0x30, 0x34, };
-> > +static u16 perfcfg_rst_ofs[] = { 0x0, 0x4, };
-> 
-> Typo: perfcfg -> pericfg ... here and in some more files :))
-> 
+> Changes since v2:
+> - Dropped clock-names, in favor of forcing implementation to rely on index
+>   based clock matching.
 
-Hello Angelo,
+Implementation does not have to use clock-names, but it's useful for
+humans. You can drop it, but I think it makes life of reviewing DTS more
+difficult.
 
-Thanks for your review!
-
-I will fix them.
-
-> > +
-> >   static const struct mtk_clk_rst_desc clk_rst_desc[] = {
-> >   	/* infrasys */
-> >   	{
-> >   		.version = MTK_RST_SIMPLE,
-> > -		.rst_bank_nr = 2,
-> > -		.reg_ofs = 0x30,
-> > +		.rst_bank_ofs = infrasys_rst_ofs,
-> > +		.rst_bank_nr = ARRAY_SIZE(infrasys_rst_ofs),
-> >   	},
-> >   	/* pericfg */
-> >   	{
-> >   		.version = MTK_RST_SIMPLE,
-> > -		.rst_bank_nr = 2,
-> > -		.reg_ofs = 0x0,
-> > +		.rst_bank_ofs = perfcfg_rst_ofs,
-> > +		.rst_bank_nr = ARRAY_SIZE(perfcfg_rst_ofs),
-> >   	},
-> >   };
-> >   
-> > diff --git a/drivers/clk/mediatek/clk-mt2712.c
-> > b/drivers/clk/mediatek/clk-mt2712.c
-> > index cef7c79788ec..2a9d70dd97d6 100644
-> > --- a/drivers/clk/mediatek/clk-mt2712.c
-> > +++ b/drivers/clk/mediatek/clk-mt2712.c
-> > @@ -1258,18 +1258,21 @@ static const struct mtk_pll_data plls[] = {
-> >   		0, 31, 0x0300, 4, 0, 0, 0, 0x0304, 0),
-> >   };
-> >   
-> > +static u16 infrasys_rst_ofs[] = { 0x30, 0x34, };
-> > +static u16 perfcfg_rst_ofs[] = { 0x0, 0x4, };
-> > +
-> >   static const struct mtk_clk_rst_desc clk_rst_desc[] = {
-> > -	/* infra */
-> > +	/* infrasys */
+> - Updated descriptions for a few clocks that only had their clock names.
 > 
-> Instead of renaming these here, if you really want this renamed, can
-> you please
-> do that in patch [06/15]?
+>  .../bindings/clock/qcom,gcc-sc8280xp.yaml     | 129 +++++
+>  include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 496 ++++++++++++++++++
+>  2 files changed, 625 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> new file mode 100644
+> index 000000000000..bf4f9dd3ec85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+> @@ -0,0 +1,129 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sc8280xp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding for SC8280xp
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description: |
+> +  Qualcomm global clock control module which supports the clocks, resets and
+> +  power domains on SC8280xp.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,gcc-sc8280xp.h
 
-I will remove them.
+Still not a full path. It makes it more difficult to validate whether
+the path exists or not. You can put it in <> if you prefer to skip include.
 
-> >   	{
-> >   		.version = MTK_RST_SIMPLE,
-> > -		.rst_bank_nr = 2,
-> > -		.reg_ofs = 0x30,
-> > +		.rst_bank_ofs = infrasys_rst_ofs,
-> > +		.rst_bank_nr = ARRAY_SIZE(infrasys_rst_ofs),
-> >   	},
-> 
-> ..snip..
-> 
-> > diff --git a/drivers/clk/mediatek/reset.h
-> > b/drivers/clk/mediatek/reset.h
-> > index 91358e8cb851..83840ecf8b27 100644
-> > --- a/drivers/clk/mediatek/reset.h
-> > +++ b/drivers/clk/mediatek/reset.h
-> > @@ -9,6 +9,8 @@
-> >   #include <linux/reset-controller.h>
-> >   #include <linux/types.h>
-> >   
-> > +#define RST_NR_PER_BANK 32
-> > +
-> >   /**
-> >    * enum mtk_reset_version - Version of MediaTek clock reset
-> > controller.
-> >    * @MTK_RST_SIMPLE: Use the same registers for bit set and clear.
-> > @@ -24,12 +26,12 @@ enum mtk_reset_version {
-> >   /**
-> >    * struct mtk_clk_rst_desc - Description of MediaTek clock reset.
-> >    * @version: Reset version which is defined in enum
-> > mtk_reset_version.
-> > - * @reg_ofs: Base offset of the reset register.
-> > + * @rst_bank_ofs: Pointer to base offsets of the reset register.
-> 
-> Instead of generically saying that this is a pointer, it would be
-> more
-> appropriate to say that this is a pointer to an array containing base
-> offsets (etc).
-> 
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sc8280xp
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO reference clock
+> +      - description: Sleep clock
+> +      - description: UFS memory first RX symbol clock
+> +      - description: UFS memory second RX symbol clock
+> +      - description: UFS memory first TX symbol clock
+> +      - description: UFS card first RX symbol clock
+> +      - description: UFS card second RX symbol clock
+> +      - description: UFS card first TX symbol clock
+> +      - description: Primary USB SuperSpeed pipe clock
+> +      - description: USB4 PHY pipegmux clock source
+> +      - description: USB4 PHY DP gmux clock source
+> +      - description: USB4 PHY sys piegmux clock source
+> +      - description: USB4 PHY PCIe pipe clock
+> +      - description: USB4 PHY router max pipe clock
+> +      - description: Primary USB4 RX0 clock
+> +      - description: Primary USB4 RX1 clock
+> +      - description: Secondary USB SuperSpeed pipe clock
+> +      - description: Second USB4 PHY pipegmux clock source
+> +      - description: Second USB4 PHY DP gmux clock source
+> +      - description: Second USB4 PHY sys pipegmux clock source
+> +      - description: Second USB4 PHY PCIe pipe clock
+> +      - description: Second USB4 PHY router max pipe clock
+> +      - description: Secondary USB4 RX0 clock
+> +      - description: Secondary USB4 RX0 clock
 
-ok, I will modify it.
+Duplicated name. RX1?
 
-BRs,
-Rex
+> +      - description: Multiport USB first SupserSpeed pipe clock
+> +      - description: Multiport USB second SuperSpeed pipe clock
+> +      - description: PCIe 2a pipe clock
+> +      - description: PCIe 2b pipe clock
+> +      - description: PCIe 3a pipe clock
+> +      - description: PCIe 3b pipe clock
+> +      - description: PCIe 4 pipe clock
+> +      - description: First EMAC controller reference clock
+> +      - description: Second EMAC controller reference clock
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  protected-clocks:
+> +    description:
+> +      Protected clock specifier list as per common clock binding.
 
-> Thanks,
-> Angelo
-> 
-> >    * @rst_bank_nr: Quantity of reset bank.
-> >    */
-> >   struct mtk_clk_rst_desc {
-> >   	u8 version;
-> > -	u16 reg_ofs;
-> > +	u16 *rst_bank_ofs;
-> >   	u32 rst_bank_nr;
-> >   };
-> >   
+No need for description. You need maxItems, though.
 
+
+Best regards,
+Krzysztof
