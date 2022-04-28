@@ -2,155 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68F1C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E4AC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344818AbiD1I7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 04:59:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        id S239531AbiD1JBc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 05:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344891AbiD1I7C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 04:59:02 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D542A729;
-        Thu, 28 Apr 2022 01:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1651136123;
-        bh=/SVF4atjZnUZPZ6or4RTo2SDRpctHhG+DQ/FLVQqUBg=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=iwGwqXjh5Fbm6UEpQaRmnfup9aDxA8ACV6lpYhKJ+iXp/rSdUXgGUV08nKyAPzO8j
-         Vy112wAE9UObX/iKQ4mf8Tj0Nm8y57gn1rdPK1bhkmkZAtuview18+44xcNLj+kojF
-         aRfLKgeGdGQo+fphwPYy9nAyNHZjvvdpSZNyEbhU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.215.103]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MgvrL-1oMteB48q5-00hNta; Thu, 28
- Apr 2022 10:55:23 +0200
-Date:   Thu, 28 Apr 2022 10:55:20 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1344837AbiD1JBb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 05:01:31 -0400
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F68B694A2;
+        Thu, 28 Apr 2022 01:58:17 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id hh4so2949475qtb.10;
+        Thu, 28 Apr 2022 01:58:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bf6supRnDVkLHSvB4+lTP0i1KpYHN4qgnF9DWCzHSgU=;
+        b=E1kSYhVVbPRBn3jA8jdDoMa0RKmgS8bubugQlPueRA+dxZbyo2FRo3PVJb2gaCYkbJ
+         gusKs1rluv6Egyo82jbN11BjHwEBX/aIZnp97LpQg1DhPRXqprc0TUNqXditFr5Fq2UM
+         o2kZBORiH0BwNoesv5peZumJMQCFY1GPQsIGLNVS0MvKt89rQM1wfEC4GUe8EzUq5cfA
+         AUcBQylenGe5tIP14URQ/hdQ+iOzbqpaL8QGTWwOEGiOSMX6lAmlqM3FdAVEcQDx5oCt
+         Zg6ye8CX025RW4w5fcFQekBTX8KUDp2H342QgJkhL9/2WJxvDwS0JUi5pVeu3V0q+2mi
+         XRUg==
+X-Gm-Message-State: AOAM531qPdQEVAXu/9Sj83EIFyWx9JSeKlve6mocgUVi+QdGp6v8edNU
+        d2XY6JAb3qMVQQz3NLKZuq8fWiYDx84RcQ==
+X-Google-Smtp-Source: ABdhPJzbFDb9PRuwCICsKwnr+lsRn55KTJe9KPwFqFYw5Ky4INoAdinSLRElsc2U7FTf6ladjCuWrA==
+X-Received: by 2002:a05:622a:5:b0:2f3:7dd0:3d13 with SMTP id x5-20020a05622a000500b002f37dd03d13mr8115214qtw.362.1651136296171;
+        Thu, 28 Apr 2022 01:58:16 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id s12-20020a05622a018c00b002f2017d5652sm11559747qtw.40.2022.04.28.01.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 01:58:15 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id y2so7798978ybi.7;
+        Thu, 28 Apr 2022 01:58:15 -0700 (PDT)
+X-Received: by 2002:a25:8087:0:b0:641:dd06:577d with SMTP id
+ n7-20020a258087000000b00641dd06577dmr29428113ybk.207.1651136295438; Thu, 28
+ Apr 2022 01:58:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220421090016.79517-1-miquel.raynal@bootlin.com> <20220421090016.79517-4-miquel.raynal@bootlin.com>
+In-Reply-To: <20220421090016.79517-4-miquel.raynal@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Apr 2022 10:58:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVBxeH=G8Dj0d=vS80c356Z+D2fsxRr6n+bzMxXX=D9+Q@mail.gmail.com>
+Message-ID: <CAMuHMdVBxeH=G8Dj0d=vS80c356Z+D2fsxRr6n+bzMxXX=D9+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] rtc: rzn1: Add new RTC driver
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 4/7] dt-bindings: clock: Add Nuvoton WPCM450 clock/reset
- controller
-Message-ID: <YmpWeOb3oetvqyvl@latitude>
-References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
- <20220422183012.444674-5-j.neuschaefer@gmx.net>
- <31cb9af1-173d-bef5-64da-ccf5a01f2485@linaro.org>
- <CACPK8XdRYvike9Z98JzfO1r0W2jfkESr8xMGSH4kkigwZ_MkyQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GfjnlrXCmbggFVO5"
-Content-Disposition: inline
-In-Reply-To: <CACPK8XdRYvike9Z98JzfO1r0W2jfkESr8xMGSH4kkigwZ_MkyQ@mail.gmail.com>
-X-Provags-ID: V03:K1:vDtCw1Xqk5WwFlslQt86xYSwXrubTIv3D0/ZX8XF0n41y4TsV/g
- vdzerk1EQZUuborMZpzy7oVBQ6hWJwjTkRzK+ITa/ze+Md6ns9/+gTmPLyk9ITEx7XAR+L3
- WsWvnGsjqHoF1as+Uy/rtQQ0yssil32ujMeDmsKBlxmHl6ek8pWVcDHND44cTNRQQomIKrs
- jAYXRVtG5Qxg/6fCWeDCg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BByf02oW4YI=:u4M/RLZzldBz6Nn+6AuIJg
- XFSyqh6DA1pJWizob4aPCGfNK0mzAiDQAXfnSK0MnzE2Fh3+h0TuyopeZD3m/CjfWsqcLmkc4
- S0wKl4YASO5JUNIgdPoqrZulRMGjfrFM5buM84mwOZT3cA68s/4hX6o/kVNBPVDnsWKeUZqki
- sLkXgxisM59qeABrwqpLJ9JS18cwYzmDe5NKJuXPLKLw7aH0Xo3abnxSAjf836c6zeNgpiuLY
- lR4iVUbC23Q5luTONAoWGwpRk++LE0fNozCMFFshxaR2XfESLCpsdd2SBaAuA98LhnIpDb2OT
- /7+LW+mjIJzgxmqgqrHTqggW0cgtSx0RyUBRdY93f40apKuNzQlDmJcqJKDU0E5wlAAVlAqtO
- 0AfVx7ZtiEyvMPun0rVT+Q9a1UD9HmqevComkc3nxB8zAFrqpsRV/cBSw42BPFLLmss0Htloy
- 76r7jLXSH3zsjFjyJWZiin7C7f688Qgnzyw4NluetTLAPZfBy5cb8R5UdjE1wd5UejdKBRgJh
- ZZNqIDXFzko5WAkN7KgpHqBm5GHLvHt6GkPUHUiKH9YBzF8lZ4q4VUkyCAhbx63XVDwB4QTLO
- u6MT8ejEJH8aqOQsbJch7RTAGyKSzCxU2TwARmBQau5oDrfWKTOv/UcGOAyiuq0fwb/+wPPnG
- r/1RkaUFOh06MLuRlQDv0QfKwnhBnzmZ3JECGAVCbj6gJF5YjTnAofKkNxvUEhDEUAkBZCbtN
- s36fjUUI5Jss5OwQTqSdWUaQBxaGsl5TQVsWSszb61+QF4JWF7tavG4De5LCzTZ89gF/zwoOV
- cU/NlEpn+3IDyzmfK1+ntCKu6RmACZar/wCOJqxOWmz7uGFanSaFwUXXW6gIbPOVfjzVCGrMc
- 855EZoF7wFoJlXu06Co3A4eMIDHk+zWyvqT2ec+h4l3Np6l7l1Q1RGtuFlt6aoh64smk1u6Ro
- W/h6v3T4E3MDVhREix+bQTUHYvO456H1ximnFgRuHhHFJu3uTn3zDbpPcR5jf0dqXMa+UcVS4
- TjOTtZG8Cf5Bpik0xJopRuHGQV1WMiBjyym36xdc9wHx+B0opgBHpdONINRw1Z8X9oWuGDPWx
- sCI7F7ptieIBdA=
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Miquel,
 
---GfjnlrXCmbggFVO5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Apr 21, 2022 at 11:00 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> From: Michel Pollet <michel.pollet@bp.renesas.com>
+>
+> Add a basic RTC driver for the RZ/N1.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-On Tue, Apr 26, 2022 at 08:35:43AM +0000, Joel Stanley wrote:
-> On Mon, 25 Apr 2022 at 07:59, Krzysztof Kozlowski <krzysztof.kozlowski@li=
-naro.org> wrote:
-> >
-> > On 22/04/2022 20:30, Jonathan Neusch=C3=A4fer wrote:
-> > > The Nuvoton WPCM450 SoC has a combined clock and reset controller.
-> > > Add a devicetree binding for it, as well as definitions for the bit
-> > > numbers used by it.
-> > >
-> > > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > > ---
-[...]
-> > > +/* Other clocks */
-> > > +#define WPCM450_CLK_USBPHY        32
-> > > +
-> > > +#define WPCM450_NUM_CLKS          33
-> > > +
-> > > +/* Resets based on IPSRST bits */
-> >
-> > All these defines should be in second header in dt-bindings/reset/...
->=20
-> I disagree. It makes more sense to keep the definitions together, and
-> it's all for the same hardware and driver.
+Thanks for your patch!
 
-It's for the same hardware, DT node, and driver.
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -1548,6 +1548,13 @@ config RTC_DRV_RS5C313
+>         help
+>           If you say yes here you get support for the Ricoh RS5C313 RTC chips.
+>
+> +config RTC_DRV_RZN1
+> +       tristate "Renesas RZN1 RTC"
 
-I could imagine splitting it into
+RZ/N1
 
-	include/dt-bindings/clock/nuvoton,wpcm450-clk.h  and
-	include/dt-bindings/reset/nuvoton,wpcm450-clk.h
+> +       depends on ARCH_RZN1 || COMPILE_TEST
+> +       depends on OF && HAS_IOMEM
+> +       help
+> +         If you say yes here you get support for the Renesas RZ/N1 RTC.
+> +
+>  config RTC_DRV_GENERIC
+>         tristate "Generic RTC support"
+>         # Please consider writing a new RTC driver instead of using the generic
 
-if someone insists on it.
+> --- /dev/null
+> +++ b/drivers/rtc/rtc-rzn1.c
 
-For convenience (being able to see all relevant definitions for
-nuvoton,wpcm450-clk at once), I'd prefer to keep the definitions together.
+> +static int rzn1_rtc_probe(struct platform_device *pdev)
+> +{
+> +       struct rzn1_rtc *rtc;
+> +       int ret;
+> +
+> +       rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+> +       if (!rtc)
+> +               return -ENOMEM;
+> +
+> +       platform_set_drvdata(pdev, rtc);
+> +
+> +       rtc->clk = devm_clk_get(&pdev->dev, "hclk");
+> +       if (IS_ERR(rtc->clk))
+> +               return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk), "Missing hclk\n");
 
+As you don't care about the clock rate, only about enabling/disabling
+the clock, I recommend using Runtime PM instead of explicit clock
+handling.
 
-Thanks,
-Jonathan
+That does depend on:
+[PATCH v3 4/8] soc: renesas: rzn1: Select PM and PM_GENERIC_DOMAINS configs[1]
+[PATCH v3 5/8] ARM: dts: r9a06g032: Add missing '#power-domain-cells'[2]
+and on documenting the power-domains property to the RTC DT bindings,
+and on adding a proper power-domains property to the RTC node in DTS.
 
---GfjnlrXCmbggFVO5
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] https://lore.kernel.org/linux-renesas-soc/20220422120850.769480-5-herve.codina@bootlin.com
+[2] https://lore.kernel.org/linux-renesas-soc/20220422120850.769480-6-herve.codina@bootlin.com
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmJqVngACgkQCDBEmo7z
-X9ue9g/+P4ECjYmwtgmxnY8aEuQIf5yQn622vliBjNoRr4EraBUuEfits2QCcitI
-R2Y34KdwIryYwTuA1iTKPY7jxY4pMEXU/OhhnJ92yYz7KspcVyQDrxeGsY01PYgw
-x5YWib5keVy22f76rbuTd0LROzC2tP/ubLBvu9+4hVU3HDp3WsVhAeLEVf3gcavU
-fmS502AAHFtbWgMDHutulyeWwJmmVfYmAvxbC6BoNuitSSzuQZDbNi86hrLh2ytv
-tXmup5bVOmiXx9oakQuoNBE3f50tQPwYTdQLRX1yxzfiRhpY+UvybdRpUZvzGgvn
-qyJEqgWWcpTsbLtHK+65LMbBhO3EwYxzPsrtSDmc/rwPcgrT2A1y7GwNbBQhNvJm
-PRhJtrZ/w4fgzGhkfzidXHlpsMR3BcieWZEUaRx861KDOT6ilzCHf1/7CWDel5u5
-M8aNJggId/aycnjWYSUjdAZjpME090eKku2pbD1HUu9ks5rUZhhTWX+5FYYbufAK
-wi2W5jxUOfroRwHdQF2XQXU97LhcZC3afA3u4UAGR9yWZzfasFDDg/Z0S7sZIJ9q
-evrCyV6VT0WaqlKBPpCLf3Zav7Kic9cdDGbGbKCL7yTBB1kCsD7klQa16/dHCcYE
-ZrzJBoMgpZ8oEuGNBvTUnSr4bL8aKfS141ZhZiZ3xtaTXWZxYYo=
-=lG9e
------END PGP SIGNATURE-----
+                        Geert
 
---GfjnlrXCmbggFVO5--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
