@@ -2,222 +2,180 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266D5C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 16:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAA8C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 16:43:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349962AbiD1Q2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 12:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34940 "EHLO
+        id S1350240AbiD1QrA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 12:47:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349778AbiD1Q2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 12:28:03 -0400
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090146A405
-        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 09:24:45 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-2f863469afbso34745617b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 09:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=npUWFjZqoyfWgZt2xCkox9pqkZNjyzUk3a/rUuplAd4=;
-        b=PuRWaDVuZC8SE2QM0VlAapuk/C1PkVBg/6AcdVUbhyVjCOQRKyT7QpJni6tVQb8o1X
-         QDyXRcNpCl7tel+MmxUHBM0mI1ILYsPWCok3vOdzZWshm3fSMvP+ncKCbpaaUuZbp08m
-         HHhDvy7RgfDN1dfSeefAjzQAFYJo+nOMqn6M0h6etxW9LXygPTVlNnEjd5rBgtVeaqbk
-         iNaQcgh1NuojlC2pndctgEtSj0lorQHmY9Ul5rH2aNjjoAtzWxAhC88uXbImlP5fsA02
-         Uh7j5qG/7E39c8mbjJYn/wIEGHejQloySjoB3rhK5kADHzTgbcv3j15GNpQqP260J5C2
-         ohdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=npUWFjZqoyfWgZt2xCkox9pqkZNjyzUk3a/rUuplAd4=;
-        b=Tg8KHSIs5qACx0x95FOqcY8y1VaUl5HuNkuV5hI+0sPZ2UGBsJzqon5XOIFF3sAKqq
-         MtweC2fXDNz+cJRqV4SeiYF+B8e+K/LtSJIKA37NFaqHYPiFBFqG6SFcDeT+YMMz/fxz
-         XaoWW7k2lTBMq+I9wdhtNum243VJEpq7b/OjbStUH2dkpa0FRHVllm5GYW6Ck74PEovM
-         WJ1LDGmxOurZrSrPm92eGVHd/4KJPxT5LI9bwHAb8FCPCGS2cO3PIQpofdLZB+/uXS6x
-         SGDtRP6bMHWvyhcxHlqkocYhECaJ5ianbvmQUOQ4G9YyVakwSsLU4VkDRtIclO94Vxcy
-         VlFw==
-X-Gm-Message-State: AOAM533DjPy91/ye6+3yu1Y7iZhViltvolI5zvLv+qJTmrXvuY9NGj0X
-        VBFXF15U6Qxw4g7NUnO53ZCOuhXF9GoH4iJBj5zVTA==
-X-Google-Smtp-Source: ABdhPJyUeOR16pP4IRbKe+31+w85vEDUq+38KGFLCPseR8T9vSCpitc2vOc6krsEjiXCJb4kdHhiOrYn3Csw0ZcJu1c=
-X-Received: by 2002:a81:5603:0:b0:2f8:3187:f37a with SMTP id
- k3-20020a815603000000b002f83187f37amr12280902ywb.255.1651163084251; Thu, 28
- Apr 2022 09:24:44 -0700 (PDT)
+        with ESMTP id S1349980AbiD1Qq7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 12:46:59 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C8F6E8DF
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 09:43:43 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2F4265C00F7;
+        Thu, 28 Apr 2022 12:43:43 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 28 Apr 2022 12:43:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1651164223; x=1651250623; bh=znb99JWXfL
+        dMfOBo11AcLOE+mnAAW16LC5Pa7WIodd0=; b=xa3BddL9v8MepFpNufKKGY2FDc
+        UhJngPJTrHKbXYScq+dO5CHjbiTdNDBZtC+PpW/TGkHViF8pYw5nMYDcvnRLWDDN
+        vqeKZ3trScSheZu9eCtLn+eKwtub4MehOdhdMYq4rk4qBChQWh+J6tHOUhtmGnkG
+        If5q6vn4aOh0zyYKle4EAm8IKhll1dJzC2RaSG4YrMo84QCfs7+8HYxaWat/bljz
+        3FMtCPlYHkPInfRWvzZhZTLKqiLa63dlvEOYnge5Rhj/v0jLpIA5gi1ZxshQyo2b
+        f/aRJlK6VJT/xsQ0Tq5Dyvi+yIekZkmf0dKsbNKZsQb5EGFtDZ+zfJSMessA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1651164223; x=1651250623; bh=znb99JWXfLdMfOBo11AcLOE+mnAAW16LC5P
+        a7WIodd0=; b=gqamQS7pcTJP+zFyWxBSEAdw2Z4tHBKI5NjIlc1iTBEdu/bc1Zu
+        FuSGjQVS0UZG5pqGqWvDvazWFJOdQVxZS7scaOqIEOxhDI2ywMumhxHu0PigryhV
+        XNXTh0CSNu64/aXhUksRbWFbFOopK9ZOI+g85rFBIYF7qrxAYGMXXalNle7ANepr
+        aCIY8E+xyKHdWnJd0JttWUI7gwFcAm9cYcqvnvuTVpLzHqI7dK6h9e0QZAUgvzXC
+        rVZpifvbiQOFLQ+af0zIsac6qVstSOVNhgjGnnLGLL4vr2HOeCA2x+xwGeedDK1a
+        OS0/c4Ymumfq/hsT5BlS9ctRzIUZ7kaCB8Q==
+X-ME-Sender: <xms:PcRqYof-lNA0hF1UgeQxj4SkUWTuusgyj8yMMPRceQpcrS5P4zMxnw>
+    <xme:PcRqYqPFh6rl-1O611HUA8qOOjrJf90BB01e8WDhZ0oUJANIMkjbA878Azq06KmMT
+    O1gf-_7qah-zErlWxw>
+X-ME-Received: <xmr:PcRqYpjwAxu-Uf6PnABNQsFu-jXCb2sNbTMwqsc7s2B44yI3Y9ir1FrXDlh5KVnAXN0QjECnBwtzzRl0xNszmL0CU2rpznWMnxleyrA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgtggfgsehtqhertdertdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleehhfegfeeitdeggefgudfftdekfeelkeefvdehiedujefggfevkeduteef
+    ueeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:PcRqYt9s2euv2MW5X9iWmlaUSMXp0ROJWrakwF5T0ngB66Ntj3L80A>
+    <xmx:PcRqYkt5O78arf7N46Io7vfxLXzweP4aCemUbbPwTRmoPFuPhOxAgA>
+    <xmx:PcRqYkGjVjckZksVxJhxzp4i0rf5pyIyrckxq_7OchnV4PDNmQGFNQ>
+    <xmx:P8RqYln0bqs9cj4qpWmnlBGaFGLNBawgY8OusZwYWxjZjRCwE8kvDA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Apr 2022 12:43:41 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v2 00/28] clk: More clock rate fixes and tests
+Date:   Thu, 28 Apr 2022 18:43:10 +0200
+Message-Id: <20220428164338.717443-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220422230013.1332993-1-bjorn.andersson@linaro.org>
- <20220423014824.912ACC385A0@smtp.kernel.org> <YmNsYSxLtwLpw98t@ripper>
- <20220423031350.01299C385A0@smtp.kernel.org> <YmN11qt/PqogYruQ@ripper>
- <20220425223426.BE973C385A4@smtp.kernel.org> <3fb043e6-2748-24f8-0115-b5372c747a12@linaro.org>
- <Ymq6UOjrYgFlzl/W@ripper>
-In-Reply-To: <Ymq6UOjrYgFlzl/W@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 28 Apr 2022 19:24:32 +0300
-Message-ID: <CAA8EJpqBMzTNjTSWN1UMXM61-DmW22RKQJyWoMw3Rds=xEVQaQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_tdas@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 28 Apr 2022 at 18:59, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Thu 28 Apr 08:44 PDT 2022, Dmitry Baryshkov wrote:
->
-> > On 26/04/2022 01:34, Stephen Boyd wrote:
-> > > Quoting Bjorn Andersson (2022-04-22 20:43:18)
-> > > > On Fri 22 Apr 20:13 PDT 2022, Stephen Boyd wrote:
-> > > > >
-> > > > > I'd really rather not have clock-names at all because we spend a bunch
-> > > > > of time comparing strings with them when we could just as easily use
-> > > > > a number.
-> > > >
-> > > > I know that you would like to get rid of the clock-names for the clock
-> > > > controllers. I've looked at it since and while it will be faster to
-> > > > execute I still feel that it's going to be harder to write and maintain.
-> > > >
-> > > > E.g. look at gcc_pcie_4_pipe_clk_src, its parents today are
-> > > > pcie_4_pipe_clk and bi_tcxo. Something I can reason about being correct
-> > > > or not.
-> > > >
-> > > > If we ditch the clock-names I will have:
-> > > >
-> > > > static const struct clk_parent_data gcc_parent_data_14[] = {
-> > > >          { .index = 30 },
-> > > >          { .index = 0 },
-> > >
-> > > Those numbers could have some #define.
-> > >
-> > >     { .index = PCIE_4_PIPE_CLK_DT }
-> > >     { .index = BI_TCXO_DT }
-> > >
-> > > > };
-> > > >
-> > > > Generally we would perhaps use some compile time constant, but that
-> > > > won't work here because we're talking about the index in the clocks
-> > > > array in the yaml.
-> > > >
-> > > >
-> > > > But perhaps I'm missing something that would make this manageable?
-> > >
-> > > I dunno. Maybe a macro in the dt-binding header could be used to specify
-> > > the 'clocks' property of the DT node that is providing the other side?
-> > > The idea is to make a bunch of macros that insert the arguments of the
-> > > macro in the right place for the clocks property and then define the
-> > > order of arguments otherwise. It would be similar to how
-> > > CREATE_TRACE_POINTS is used in include/trace/define_trace.h
-> > >
-> > > In the dt-bindings/qcom,gcc-soc.h file:
-> > >
-> > >     #ifdef IN_DTSI
-> > >
-> > >     #undef GCC_DT_NODE_CLOCKS
-> > >     #define GCC_DT_NODE_CLOCKS
-> > >             clocks = <BI_TCXO_DT>,
-> > >                      <SLEEP_CLK_DT>;
-> > >
-> > >     #endif /* IN_DTSI */
-> > >
-> > >     #define BI_TCXO_DT 0
-> > >     #define SLEEP_CLK_DT 1
->
-> BI_TCXO_DT is not the value, its the index of the entry in the clocks
-> array. And the actual values of the clock controller's clocks
-> property is not a property of the clock controller, but the system
-> definition.
->
-> I.e. that should be clear and explicitly expressed in the dts.
->
-> >
-> > Isn't this being an overkill, to define exact properties in the bindings
-> > header? Also this would mean that we'd have to add dt-binding headers for
-> > all _consumers_ of clocks. And to make things more complex, e.g. for PCIe
-> > devices different instances of the device would use different amount of
-> > clocks. This would mean that we'd have to define SM8250_PCI0_CLOCKS,
-> > SM8250_PCIE1_CLOCKS and SM8250_PCIE2_CLOCKS.
-> >
-> >
-> > If we were to switch to this fragile path of using indices (yes I consider
-> > it to be very fragile), I'd consider something like the following to work in
-> > the platform dtsi file:
-> >
-> > clocks =
-> > BEGIN_CLOCK
-> > CLOCK(BI_TCXO_DT, &bi_tcxo)
-> > CLOCK(SLEEP_CLK_DT, &sleep_clk)
-> > END_CLOCK;
-> >
-> > While the following should give an error:
-> > clocks =
-> > BEGIN_CLOCK
-> > CLOCK(SLEEP_CLK_DT, &sleep_clk)
-> > CLOCK(BI_TCXO_DT, &bi_tcxo)
-> > END_CLOCK;
-> >
-> > I think we can make this error out by using some additional tool (or
-> > additional preprocessor pass over the sources)
-> >
->
-> Let's not invent some magical syntax for describing the clocks in the
-> DT.
->
-> These macros can't expand to sparse arrays anyways, so iiuc this would
-> give a sense that the ordering might not be significant, when it really
-> is.
->
-> > > And then in the SoC.dtsi file have
-> > >
-> > >     #define IN_DTSI
-> > >     #include <dt-bindings/qcom,gcc-soc.h>
-> > >
-> > >     #define BI_TCXO_DT      &xo_board
-> > >     #define SLEEP_CLK_DT    &sleep_clk
-> > >
-> > >     ...
-> > >
-> > >     clock-controller@a000000 {
-> > >             compatible = "qcom,gcc-soc";
-> > >             reg = <0xa000000 0x10000>;
-> > >             GCC_DT_NODE_CLOCKS
-> > >     };
-> > >
-> > >
-> > > and then in drivers/clk/qcom/gcc-soc.c file:
-> > >
-> > >     #include <dt-bindings/qcom,gcc-soc.h>
-> > >
-> > >     static const struct clk_parent_data gcc_parent_data_14[] = {
-> > >             { .index = PCIE_4_PIPE_CLK_DT },
-> > >             { .index = BI_TCXO_DT },
-> > >     };
-> > >
-> > > The benefit I see to this is that the index for each clock is in the
-> > > header file (BI_TCXO_DT is 0) and it's next to the clocks property.
-> > > Someone could still mess up the index based on where the macro is used
-> > > in the clocks property though.
-> >
-> > And actually might I suggest an alternative approach to manually using
-> > indices everywhere? What about spending the time once during the boot to
-> > convert .fw_name and clock_names to parent indices during clock registration
-> > and then using them for all the further operations?
-> >
->
-> I'm pretty sure that's what clk_core_fill_parent_index() already does.
-
-In this case I think we should go for clock-name in the DT and
-auto-flled indices inside. Stephen, WDYT? Would that fix your concern
-for comparing strings each and every time?
-
-
--- 
-With best wishes
-Dmitry
+Hi,=0D
+=0D
+Thanks to the feedback I got on the previous series, I found and fixed a=0D
+number of bugs in the clock framework and how it deals with rates,=0D
+especially when it comes to orphan clocks.=0D
+=0D
+In order to make sure this doesn't pop up again as a regression, I've=0D
+extended the number of tests.=0D
+=0D
+The first patch reintroduces the clk_set_rate_range call on clk_put, but=0D
+this time will only do so if there was a range set on that clock to=0D
+begin with. It should be less intrusive, and reduce the number of=0D
+potential side effects considerably.=0D
+=0D
+We then have a fix for the qcom rcg2 issue that has been reported=0D
+recently, and two patches to address a regression with the RaspberryPi4.=0D
+=0D
+All the other patches should be probably be flagged as fixes, but=0D
+they've never seem to have shown any real-world issues until now, and=0D
+they aren't all really trivial to backport either, so I'm not sure it's=0D
+worth it.=0D
+=0D
+There's also some documentation improvements for recalc_rate and=0D
+clk_get_rate to hopefully make the documentation less ambiguous and=0D
+acknowledge that recalc_rate() returning 0 on error is fine.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+Changes from v1:=0D
+  - Rebased on top of next-20220428=0D
+  - Dropped the patch to prevent non-orphan clocks from registering if=0D
+    their recalc_rate hook returns 0=0D
+  - Added some patches to clarify the clk_get_rate and recalc_rate=0D
+    documentation=0D
+  - Dropped the patch to skip the range setup on an orphan clock that=0D
+    was introducing a regression on RaspberryPi3 when a monitor wasn't=0D
+    connected at boot=0D
+  - Added a patch to skip the rate clamping in clk_round_rate() when=0D
+    min_rate =3D=3D max_rate =3D=3D 0=0D
+  - Added a new set of functions to query the clk boundaries and fix a=0D
+    regression with the RaspberryPi4=0D
+  - Fixed all the drivers hand-crafting their clk_rate_request=0D
+  - Reworded the test suite descriptions=0D
+  - Reordered a few patches to ease the review=0D
+  - Reworded some commit logs to better explain the issues they address=0D
+  - Collected the Tested-by of Alexander and Marek=0D
+  - More tests=0D
+=0D
+Maxime Ripard (28):=0D
+  clk: Drop the rate range on clk_put()=0D
+  clk: Skip clamping when rounding if there's no boundaries=0D
+  clk: Introduce clk_get_rate_range()=0D
+  drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection=0D
+  clk: Mention that .recalc_rate can return 0 on error=0D
+  clk: Clarify clk_get_rate() expectations=0D
+  clk: tests: Add test suites description=0D
+  clk: tests: Add reference to the orphan mux bug report=0D
+  clk: tests: Add tests for uncached clock=0D
+  clk: tests: Add tests for single parent mux=0D
+  clk: tests: Add tests for mux with multiple parents=0D
+  clk: tests: Add some tests for orphan with multiple parents=0D
+  clk: Take into account uncached clocks in clk_set_rate_range()=0D
+  clk: Fix clk_get_parent() documentation=0D
+  clk: Set req_rate on reparenting=0D
+  clk: Change clk_core_init_rate_req prototype=0D
+  clk: Move clk_core_init_rate_req() from clk_core_round_rate_nolock()=0D
+    to its caller=0D
+  clk: Introduce clk_hw_init_rate_request()=0D
+  clk: Add our request boundaries in clk_core_init_rate_req=0D
+  clk: Switch from __clk_determine_rate to clk_core_round_rate_nolock=0D
+  clk: Introduce clk_core_has_parent()=0D
+  clk: Stop forwarding clk_rate_requests to the parent=0D
+  clk: Zero the clk_rate_request structure=0D
+  clk: Test the clock pointer in clk_hw_get_name()=0D
+  clk: Introduce the clk_hw_get_rate_range function=0D
+  clk: qcom: clk-rcg2: Take clock boundaries into consideration for=0D
+    gfx3d=0D
+  clk: tests: Add some tests for clk_get_rate_range()=0D
+  clk: tests: Add missing test case for ranges=0D
+=0D
+ drivers/clk/at91/clk-generated.c  |    4 +-=0D
+ drivers/clk/at91/clk-master.c     |    9 +-=0D
+ drivers/clk/at91/clk-peripheral.c |    4 +-=0D
+ drivers/clk/clk-composite.c       |    6 +-=0D
+ drivers/clk/clk-divider.c         |   20 +-=0D
+ drivers/clk/clk.c                 |  302 ++++--=0D
+ drivers/clk/clk_test.c            | 1465 ++++++++++++++++++++++++++++-=0D
+ drivers/clk/qcom/clk-rcg2.c       |    9 +=0D
+ drivers/gpu/drm/vc4/vc4_hdmi.c    |    2 +-=0D
+ include/linux/clk-provider.h      |   18 +-=0D
+ include/linux/clk.h               |   64 +-=0D
+ 11 files changed, 1812 insertions(+), 91 deletions(-)=0D
+=0D
+-- =0D
+2.35.1=0D
+=0D
