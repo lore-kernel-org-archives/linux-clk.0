@@ -2,115 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21472C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 16:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C671C4321E
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 16:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350275AbiD1Qri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 12:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60920 "EHLO
+        id S1350289AbiD1Qrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 12:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350268AbiD1Qrh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 12:47:37 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF96B1AB0;
-        Thu, 28 Apr 2022 09:44:22 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id q20so3287882wmq.1;
-        Thu, 28 Apr 2022 09:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jo7tWOSsCgtTcP6fE9H4HS3FFxnoGMJ2maOVgOmkHE0=;
-        b=A+Fljyzwqh3DrLonRv/nd+/Y/uw/gWADsGYkS4ovl3z2I+C+xEQm61Mx9p4Lzmgqoc
-         XOB8U4z4+Enx3gYB9+pN90dvB8/A/AWe2FDKR6irzVvYpRoBO1uNX4S2AancqNqHpOe0
-         TSpVGhx2tq7nvbQkir5MnS3y//cuuWt1g7EAxS170vhq7OhZqfa146HSSjtpIZiDxhx4
-         hc9Alpt7SmiHpiHDZGtMz12+CN5t36Uxm3pZ7jDyeuebKoKMF6R8r/xqJk/i0rWm/C3i
-         sdAuwP0LmoYEI6TZeevRTuEls4oYhO5tL5QGsjC8GICW4EAJcuzE+FP7AwUy6o4gUp4H
-         LC9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jo7tWOSsCgtTcP6fE9H4HS3FFxnoGMJ2maOVgOmkHE0=;
-        b=VIcJsj+koqJ0Gp0mVZS70SVWugHidlceLSO7iU0MjEAy2rcL56KK8Bd7+t1h0yMUoI
-         4VEyNowuPAJ5UiKDRe3I8ZBq1iq8x3kyKkGNcACu2avFlxIL6BPnX23O610BuA9IVCc8
-         m/RD7cFZSMBqebYu8hr4x80VYcHxmqzQP6BafbOSzec71jAEnSNH991RzngJl2zJnxlQ
-         nCxhrprJ2iKgn1eyUzKJlic4lpKqoo40i6GTL+XP3wzBxTVwRauO4EvvT2g4VOGtYIos
-         itezATjQfhsu1C19mcIY/DH0xWrhsrNrM3DVLjOhHkKOUdnP/ExqHLXCPg2jjkw7EI/1
-         frbg==
-X-Gm-Message-State: AOAM531Xgl1TPTbedYh3vzwMwnd71DpZuDuLYB3tLOYVRD79zYtLe/Gv
-        1Fs8DjCGhQlxhIPJm49TnOQF60P7wtg=
-X-Google-Smtp-Source: ABdhPJxUYMZqevp8Zfb4hVitKz5HC6RoWvg4OvuYXpeMGOGS33WIGlZIsiJFrF9s5ka2N9tlveXlvQ==
-X-Received: by 2002:a05:600c:3b9c:b0:394:1611:ff1b with SMTP id n28-20020a05600c3b9c00b003941611ff1bmr2751593wms.185.1651164261239;
-        Thu, 28 Apr 2022 09:44:21 -0700 (PDT)
-Received: from localhost (92.40.203.206.threembb.co.uk. [92.40.203.206])
-        by smtp.gmail.com with ESMTPSA id f189-20020a1c38c6000000b0038ff83b9792sm4453035wma.43.2022.04.28.09.44.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 09:44:20 -0700 (PDT)
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     sboyd@kernel.org, mturquette@baylibre.com,
-        tsbogend@alpha.franken.de
-Cc:     paulburton@kernel.org, paul@crapouillou.net,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/3] clk: ingenic: Allow specifying common clock flags
-Date:   Thu, 28 Apr 2022 17:44:52 +0100
-Message-Id: <20220428164454.17908-2-aidanmacdonald.0x0@gmail.com>
-In-Reply-To: <20220428164454.17908-1-aidanmacdonald.0x0@gmail.com>
-References: <20220428164454.17908-1-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S1350282AbiD1Qri (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 12:47:38 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8087B2467
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 09:44:23 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2862F5C015C;
+        Thu, 28 Apr 2022 12:44:23 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 28 Apr 2022 12:44:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1651164263; x=1651250663; bh=qW
+        gkKmeoIkggLD0hoIq8tWZoAIVy2uBGymihrMrbkic=; b=Iy5JED8oo4TYdgM40y
+        9wqhNQB+oA3+dhitPW8LMkCsD37hCQrEPuD+vIxghnYZzkmWE4/DNLRWXoTucRYE
+        Hn8NHaF8izIEQ0W+EIekCpsraP+cgRiq79LON8OCYwrTTYS7uRudhRmGQx3Qji5a
+        7DDWKrGc00GKJn4ukM0+daofrkSm4av7Q5gYrgon07YlngtD5dSG2BpK+WbLvxAq
+        919r+/I9GHrsBJB5BlL88yveVKu8dr5nq3Sl77573ha0rxRfCcbrSXQpwHKzvZ2w
+        a/us0JYs6LZx+RaSr4B/WKuRxgcMJx7yNNNYE/oFxuZZd1r8P58MKOmTxNfRXvX6
+        P3sQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+        1651164263; x=1651250663; bh=qWgkKmeoIkggLD0hoIq8tWZoAIVy2uBGymi
+        hrMrbkic=; b=ftNFq/i59BnpfOcRXAcDD2/9f+vsmSCqPt1PFvXXV/Yy9qJAjgv
+        EWA+XerofdhQweKDIM4ZrzNpLl9qMlAPRG3/6ARXYwrNvwYC5LB4CERxr2U7GF3x
+        64qD97HsKG1lf4uZ15z46CqiHARVPmHbBXlQgjxFS/PeYZrI1o3aStx+OCc03UjT
+        cGplzc9aGF7xvRu0mYerqamLdHPGrBl8nLgZmX3a8MGRiyyE1zeXlGcGIwuo5UxJ
+        q08xObaFNKP3fypvdt/R2BGwLTElkvu/MyWYBOdLlKTJ18DP4Rfb8IQWx0g477oc
+        bTftSxL77GZnXoRJhSPlE6ohtOVXBNt7fRA==
+X-ME-Sender: <xms:ZsRqYjH8cIBdSGICzuC3-WXGRmSd5aYfXat7jpy7GBjc22T7jAbt0A>
+    <xme:ZsRqYgWD0XWh_B05QCggbJ4MMwwlrSvjmGaAUYqLryYiZHAsF0JeR4dL8J5EvvZUa
+    LmEFyyLPc3PBGNVBPk>
+X-ME-Received: <xmr:ZsRqYlKf53sR7jU3QJHMovF3Ny2SvU10pQuGfqvNPgLJWQT4USw88-N1tYHZxqNu_uuH8--z7vpPjqMWz4aOzSDYkn5iS42S9sGQNWQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
+    vdejhfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:Z8RqYhHuPRud0dlWgUSalxvvdYf9yDzR-aQCpDp3jdEnAjusJoWmJQ>
+    <xmx:Z8RqYpVnMa8Eq0ApqUP9YLCzbwgN6ffAcap8tShlK9nydYeAvu1bQA>
+    <xmx:Z8RqYsOUWy8_qSV8gZts6g7cPMtip5QNp1S1R93jqdwzu08-kblX0A>
+    <xmx:Z8RqYiMJRT7CTvLWueD4tRxEyjgNNAkLSoah-ARZEZhz3GZ8RSa60A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Apr 2022 12:44:22 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v2 19/28] clk: Add our request boundaries in clk_core_init_rate_req
+Date:   Thu, 28 Apr 2022 18:43:29 +0200
+Message-Id: <20220428164338.717443-20-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220428164338.717443-1-maxime@cerno.tech>
+References: <20220428164338.717443-1-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Provide a flags field for clocks under the ingenic-cgu driver,
-which can be used to set generic common clock framework flags
-on the created clocks. For example, the CLK_IS_CRITICAL flag
-is needed for some clocks (such as CPU or memory) to stop them
-being automatically disabled.
+The expectation is that a new clk_rate_request is initialized through a
+call to clk_core_init_rate_req().
 
-Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+However, at the moment it only fills the parent rate and clk_hw pointer,
+but omits the other fields such as the clock rate boundaries.
+
+Some users of that function will update them after calling it, but most
+don't.
+
+As we are passed the clk_core pointer, we have access to those
+boundaries in clk_core_init_rate_req() however, so let's just fill it
+there and remove it from the few callers that do it right.
+
+Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/ingenic/cgu.c | 2 +-
- drivers/clk/ingenic/cgu.h | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index af31633a8862..861c50d6cb24 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -660,7 +660,7 @@ static int ingenic_register_clock(struct ingenic_cgu *cgu, unsigned idx)
- 	ingenic_clk->idx = idx;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 39fd0a349003..e079f8b263d0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1389,6 +1389,7 @@ static void clk_core_init_rate_req(struct clk_core * const core,
+ 		return;
  
- 	clk_init.name = clk_info->name;
--	clk_init.flags = 0;
-+	clk_init.flags = clk_info->flags;
- 	clk_init.parent_names = parent_names;
+ 	req->rate = rate;
++	clk_core_get_boundaries(core, &req->min_rate, &req->max_rate);
  
- 	caps = clk_info->type;
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index bfc2b9c38a41..147b7df0d657 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -136,6 +136,7 @@ struct ingenic_cgu_custom_info {
-  * struct ingenic_cgu_clk_info - information about a clock
-  * @name: name of the clock
-  * @type: a bitmask formed from CGU_CLK_* values
-+ * @flags: common clock flags to set on this clock
-  * @parents: an array of the indices of potential parents of this clock
-  *           within the clock_info array of the CGU, or -1 in entries
-  *           which correspond to no valid parent
-@@ -161,6 +162,8 @@ struct ingenic_cgu_clk_info {
- 		CGU_CLK_CUSTOM		= BIT(7),
- 	} type;
+ 	parent = core->parent;
+ 	if (parent) {
+@@ -1483,7 +1484,6 @@ unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
+ 	struct clk_rate_request req;
  
-+	unsigned long flags;
-+
- 	int parents[4];
+ 	clk_core_init_rate_req(hw->core, &req, rate);
+-	clk_core_get_boundaries(hw->core, &req.min_rate, &req.max_rate);
  
- 	union {
+ 	ret = clk_core_round_rate_nolock(hw->core, &req);
+ 	if (ret)
+@@ -1516,7 +1516,6 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
+ 		clk_core_rate_unprotect(clk->core);
+ 
+ 	clk_core_init_rate_req(clk->core, &req, rate);
+-	clk_core_get_boundaries(clk->core, &req.min_rate, &req.max_rate);
+ 
+ 	ret = clk_core_round_rate_nolock(clk->core, &req);
+ 
+@@ -2022,9 +2021,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	if (clk_core_can_round(core)) {
+ 		struct clk_rate_request req;
+ 
+-		req.min_rate = min_rate;
+-		req.max_rate = max_rate;
+-
+ 		clk_core_init_rate_req(core, &req, rate);
+ 
+ 		ret = clk_core_determine_round_nolock(core, &req);
+@@ -2225,7 +2221,6 @@ static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
+ 		return cnt;
+ 
+ 	clk_core_init_rate_req(core, &req, req_rate);
+-	clk_core_get_boundaries(core, &req.min_rate, &req.max_rate);
+ 
+ 	ret = clk_core_round_rate_nolock(core, &req);
+ 
 -- 
 2.35.1
 
