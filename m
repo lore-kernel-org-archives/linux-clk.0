@@ -2,163 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28784C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04211C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344512AbiD1In6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 04:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55166 "EHLO
+        id S1344613AbiD1Iuv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 04:50:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344072AbiD1ImH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 04:42:07 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7FC52B0E;
-        Thu, 28 Apr 2022 01:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1651135011;
-        bh=Q4+3ChFfyhKA+KTPGoIQx0R1D0LMLWXJ6J60qMTKnAc=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=PHaGpcoZ3WPGPl13ST6Zk8WpnU1HwRAWva6B85NnDWN8fUn+CGlkwNQE27vvfLrK0
-         aOIH8AtugWKH2+SxFNHyLGsY5Stf06uOtjX77Zqs2PETm9tOtrShe65I7usUpueheb
-         b5V3i/MnxKlHgVZtrNE841yh2wEMrGzur3bltfsk=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.215.103]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3lc9-1njiWf3chP-000vpD; Thu, 28
- Apr 2022 10:36:50 +0200
-Date:   Thu, 28 Apr 2022 10:36:48 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1344267AbiD1Itr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 04:49:47 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E46A5E773;
+        Thu, 28 Apr 2022 01:45:18 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id j6so3088632qkp.9;
+        Thu, 28 Apr 2022 01:45:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NsvCiErbKX2TatD2CWV4KQZYhmPlqRnfIwZ5STUtAP4=;
+        b=fM/fmt3cxEfUJVPjBPxWgd1Buu4RemT3tQVr7tG5eWq0Y4B/aBdzvJw6QbCKZqX35g
+         j9nRaT7yhAbGPdmy/TinvbpLuwt3w8wKfhN8TUERaLYVW6M2g9VVI6wA2KmmriqZiTzn
+         cTZKUrYsGn1KAMSPvuKbOPNT8aoOkQbPEJmYmmROArCuFWFbwlQXnfNPAwoQjExqP97m
+         8SJh3IZyLkS1/nnJTeRLwBghPFUVQhAha2HUuGKk8VNHWD/S5Cj4gQyZMdi18PLd44D/
+         /Nayeq2pzLm9u6K1kL8aT/gBRZCn3RDvKcbyRZ7hR8DCW8SUHD0j1yKggeDMhkKwhaTG
+         Tnyw==
+X-Gm-Message-State: AOAM532RB338y4Rs9L7hu/Pd/M4beU7J59rrwSYJwdMdlteYxVHzwV8f
+        1sMSLA2V6Ll4gmb7IUqO4w2q8GsENHSxtA==
+X-Google-Smtp-Source: ABdhPJwYfy7NpKtfP2j76shLvkTHXaWgqsI0aqFrm6lJDgrC567ZLuQYfFDKgV551+/gyOMa8M/+Og==
+X-Received: by 2002:a37:750:0:b0:69f:a05d:6d21 with SMTP id 77-20020a370750000000b0069fa05d6d21mr966033qkh.676.1651135516626;
+        Thu, 28 Apr 2022 01:45:16 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id x13-20020a05620a258d00b0069c7468e123sm9663972qko.122.2022.04.28.01.45.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 01:45:16 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-2f7ca2ce255so44931897b3.7;
+        Thu, 28 Apr 2022 01:45:15 -0700 (PDT)
+X-Received: by 2002:a81:4782:0:b0:2eb:1cb1:5441 with SMTP id
+ u124-20020a814782000000b002eb1cb15441mr29794472ywa.479.1651135515554; Thu, 28
+ Apr 2022 01:45:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220421090016.79517-1-miquel.raynal@bootlin.com> <20220421090016.79517-2-miquel.raynal@bootlin.com>
+In-Reply-To: <20220421090016.79517-2-miquel.raynal@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Apr 2022 10:45:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWXimtXT+3YsQd=WqWgQGiM7h=ZT1VZOy3myrMWuPvk5A@mail.gmail.com>
+Message-ID: <CAMuHMdWXimtXT+3YsQd=WqWgQGiM7h=ZT1VZOy3myrMWuPvk5A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: rtc: rzn1: Describe the RZN1 RTC
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH 3/7] watchdog: npcm: Enable clock if provided
-Message-ID: <YmpSIFHTYDsuEm85@latitude>
-References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
- <20220422183012.444674-4-j.neuschaefer@gmx.net>
- <20220422183417.GB2637654@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3JafQPKgiRq88lVT"
-Content-Disposition: inline
-In-Reply-To: <20220422183417.GB2637654@roeck-us.net>
-X-Provags-ID: V03:K1:p7i6FNHfF3FlpnhFKvMhXgLjFljWIjKMJgX4cNG3EwazOtlZlAl
- A9/tr/ov/cUpHkz6Bg5t0ni5NA6BknxyNVNd0m/B4NnYcuwu0Htmg4MLDdwaoCI8648pFVu
- n06WalmbWJ4P5vfDob6h/zirRlfnoXDRXHpm03nRrLFUP6VtjNLPUgcOkdebrLdC7eKaPcf
- ib6FcoTVFY76Fsz2S3fsg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:q6/F/sBWuO0=:DiOMmpBm+d61DOtlcby/Nm
- zuGYlHuDf/HK8+9VYtfu2zKMt6XjZj8gPYnUIkNNgP/whzdTUtOV67Kfclqz3xRg5Pn4WOgmX
- Nw5tbjCeMZWwLM3hRjCJhsbGK4niQHcO8xJwANvNi1AN5xDV6MeA5wUtEzFtKec9bhg2MC7dV
- 6HvTeERhw9fxajcCa0Rysxlf8+hJekY4WlFQjo9L9oFjfHJTs8dchOy6lGGX3WDHISe2B4fBv
- QOSNPUtq/mwGQgX4Np5DXH13xjd5cUvTMzDGY5k0yA9HzT3YESQiJbO2HHFWJGUKpRJ1yWbul
- 3fTi2gwywW53Pu7XKBqmDBsqKOpmftc1xVnk1lYV+wXWme1nQ2aP4KQyceLf07P4Psv6UIAEw
- KG4tQ4dI6/cJ8/+vM2p6rO77aYwYlzVmEa2ePpTKGpByk2WcDPnewmiGtjtQItIFCo/DTNxDB
- rdqA9N0byNxQuKE8dtiGFg76a/Qsg/ce1PUrBWn0DIq8xm/rdJXwM8fbS+GFtTS/OPnNhVnYM
- Lb1JmjB9oi/BbqQKszE8zDsRMmArEdoo5tASXHXb5rroVZ77HDdiTfMqVVrwfiPrK43rfJIR4
- npKB+3T/UvD7kUmC8hWWa/C3DOVtCZ47ub5EVkBobTsQkk3VlU+wZZtfdQd5xLcyjKs0YCk7t
- +kfDXQqLt4CO8zN+eXyPL+OUdvORZuNKWXezwTJ75nkSKKMbQBCmf4WqNqoBa89iHUf3FZvxJ
- EAH6yO7fOvaSMJoobpfUKdyDprQFiJ83OH2pyhEGZAXVLrtJEIAMdMeJ1kTNjPx0Pzvrmhjqf
- VGsCIyvV/bt/xFR5v7hQkQQkwOfkqsvjQzlQGNPev3jWIvNvH/AZTMUv1OhV0V+OMaWm4DV1k
- 6CncbPWocgPLQNv4yAtwBn99a8UDhxZJPl+fTiIQ3Ue9UiXQMeiUhY/yoP9ou+rtWYpfUNYNV
- x7+Ea0t9n/UPKL57VIrJErYEhxADYY3ok+ESPxUKQpjECO7aMhp1ouHf9q5mYGIufhlcV4tTF
- Y/uq3aerx5n8kb6hQHS6RS8P1I0LtQDQhCwwrTygd1cE7uCYKgkjt8tJWjPmSi7JSb8r2nKUV
- 3omH0tDPMUtQro=
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Apr 21, 2022 at 11:00 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> Add new binding file for this RTC.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
---3JafQPKgiRq88lVT
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Apr 22, 2022 at 11:34:17AM -0700, Guenter Roeck wrote:
-> On Fri, Apr 22, 2022 at 08:30:08PM +0200, Jonathan Neusch=C3=A4fer wrote:
-> > On the Nuvoton WPCM450 SoC, with its upcoming clock driver, peripheral
-> > clocks are individually gated and ungated. Therefore, the watchdog
-> > driver must be able to ungate the watchdog clock.
-> >=20
-> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > ---
-> >  drivers/watchdog/npcm_wdt.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >=20
-> > diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-> > index 28a24caa2627c..6d27f0e16188e 100644
-> > --- a/drivers/watchdog/npcm_wdt.c
-> > +++ b/drivers/watchdog/npcm_wdt.c
-> > @@ -3,6 +3,7 @@
-> >  // Copyright (c) 2018 IBM Corp.
-> >=20
-> >  #include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/kernel.h>
-> > @@ -180,6 +181,7 @@ static int npcm_wdt_probe(struct platform_device *p=
-dev)
-> >  {
-> >  	struct device *dev =3D &pdev->dev;
-> >  	struct npcm_wdt *wdt;
-> > +	struct clk *clk;
-> >  	int irq;
-> >  	int ret;
-> >=20
-> > @@ -191,6 +193,13 @@ static int npcm_wdt_probe(struct platform_device *=
-pdev)
-> >  	if (IS_ERR(wdt->reg))
-> >  		return PTR_ERR(wdt->reg);
-> >=20
-> > +	clk =3D devm_clk_get_optional(&pdev->dev, NULL);
-> > +	if (IS_ERR(clk))
-> > +		return PTR_ERR(clk);
-> > +
-> > +	if (clk)
-> > +		clk_prepare_enable(clk);
-> > +
->=20
-> This needs a matching clk_disable_unprepare().
+Gr{oetje,eeting}s,
 
-Good point. It's probably easiest if I move the clk calls to the
-watchdog start/stop callbacks, then.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-Jonathan
-
---3JafQPKgiRq88lVT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmJqUhkACgkQCDBEmo7z
-X9utARAApLMgx0770Ai3h8mEawS8c5e/WFuzL9GGC8DU9yxUmSa6RlQk9H3O8lIf
-hiOfIS4Kxvjtmy+mTcgqJK4R37I5eIFC8BKVmHbwqupZGl4Mdzhoa7mvAD/IytUL
-HtRScJ1zyyb5Rlu9J2IHIIVNAUN8ErlA7oJ+evC0ygr+6JySBgdk/0UIfp3ks6Ke
-QxzvAh/VvWNSmcRk2pg61q6VfKks7xr5DEURrUWPJFMpx7SrhdPbaFQ8d7pIAFI3
-Xy/KTzAFwf5Qnpwr5nUkhkpZVPgkKSmTmVj0Ouknm73dt+cnr0XmQ+8mljtlocYs
-Qa8QybxIXqU3leIx6OqbvxTFgBkj90ll3M15b0+Z2KWTrtjZ/E/ng/hzx3X4V5xv
-ZEBgYVTCnZSzOOlU+okXvWwepzR7/w1Zf96TqrXhn/xhB5L6ME+02EVGREJUvT0b
-/kyUXR7krD2tlute5lUQOPnkhgbc8ZecZ9PSWKQ1E/BojQKRxQ9F9GVojZox+9Hx
-8Pgo1J1czreFcFhrAdYv9SR2fWfv8qggYp+cotvhgwTBPLom7ppUrgTPnUYDuvdj
-srCV/12bGLS65rKL7BN6VpkF9hCyi8VUh7qw8XbaiH/rTilA1hWQch7+1MOTA/wG
-EVuRYrnRbWSBOo5GUMtfCrJc8oOWhmWmADLRvO54oPkfjdlUFe4=
-=Ep5M
------END PGP SIGNATURE-----
-
---3JafQPKgiRq88lVT--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
