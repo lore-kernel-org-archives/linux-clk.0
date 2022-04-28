@@ -2,149 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BF0C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E886C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 08:03:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343716AbiD1IDu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 04:03:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53554 "EHLO
+        id S1343585AbiD1IGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 04:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343731AbiD1IDr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 04:03:47 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7289A9B1
-        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 01:00:29 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id r13so7918915ejd.5
-        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 01:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=hoO0z6ox/0MpErRBciBUS6KXmSs/8Ul8Shji/6D5s6Y=;
-        b=jZR3MnpAJ0mog/qurS4zjfNeTVjwu1R7dSeZynWmrRUlEZfEoirRMAK3v6lTFs5aVR
-         K/IrQ+bSRwQLSvEehuSzvgPTugl+v8t7cVjMD6NekHDNTbNmUGJIjGwK30LFkBdg48I/
-         mFEfqXI64C1SFJMPO3C7VNKI/9Xu8sN7YCfO/8g6Z6qTDHL/JaAXK9BKv+kdpnb5M7CQ
-         4MGS0X/j5eZ17YI1xOUk4alTxSK4qStpr7lX8GXDmhLB+qzov5iAeomdKLn5cFhbu5Pf
-         LIqJV62giHlfnTfPfbUC/Z2SeHwsjm1udPgr43A8zInqYCW2xVtBRqLK23maRIk07asU
-         s4PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=hoO0z6ox/0MpErRBciBUS6KXmSs/8Ul8Shji/6D5s6Y=;
-        b=rHbK9H4LCohkUugUTWo0OepFg9BaFl6ZzsnWqfOQdeUXK8e4inwkjLYNV4QEOyll9W
-         GYlrIgakPg5VNq8u46z4fTcITBEyEAiraldmxuQTOEY0LYv7l+dUjA9gglYEZ0tzgmf4
-         y4crWpbJq0GdbZrp4EGMEGIoitnQL9rXibSUDryiRagDpfUnQd3EE32VJHszdLd+xx7n
-         nSxoVlGvH6u/7Fz6sxTfA+3uIRZ9wSUZD2ggaF6YLFC3zfOPvvT5KChEdAlW03qxPwIt
-         7Kv4jxrLY+vRGjbt2UUazQIef08lso4bf9FZWcw+sgqGjYMzWZT9EENtA+oCzPhGLrbF
-         24cw==
-X-Gm-Message-State: AOAM530A9Fa16rTh+/KtVln1plCOclQ+pZBGTmEnwzXJr6Sacm8+oK69
-        UvJ6cLpMuasptvU3HTyvDPRR0g==
-X-Google-Smtp-Source: ABdhPJxY0l6cGk55GfOnpY/HEIBGRKGps3VQWZY7889JQ0r8sNS6Iig2RknQXv0yzdCXTzT7tNj+Nw==
-X-Received: by 2002:a17:906:2294:b0:6f3:bd02:95a3 with SMTP id p20-20020a170906229400b006f3bd0295a3mr9758882eja.201.1651132827289;
-        Thu, 28 Apr 2022 01:00:27 -0700 (PDT)
-Received: from [192.168.0.161] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h7-20020a1709060f4700b006e8d0746969sm7855860ejj.222.2022.04.28.01.00.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 01:00:26 -0700 (PDT)
-Message-ID: <e41bad2a-3453-e5ce-2f92-b4655a5453f6@linaro.org>
-Date:   Thu, 28 Apr 2022 10:00:25 +0200
+        with ESMTP id S238942AbiD1IG2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 04:06:28 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254BE7E584
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 01:03:13 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 595915C01D9;
+        Thu, 28 Apr 2022 04:03:11 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 28 Apr 2022 04:03:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1651132991; x=1651219391; bh=cFNRvmAWW2
+        txFOxUkA5ueDoxjaCjMFHXn6pIUMby7sk=; b=mlLbl2f8AetnzPq/jnoCwR55ox
+        g8viSgMspcWV9aKZ76jFX2zsBqqSNabC+LfWbnrNrQgqdRp1kwISJfcGCB4TkjzV
+        1pvhIYbpNCP4rfLcQc3SXdJR8zGDeFJyEjesqrYgycKr3mbBTPlsDdKf8OfVgMzz
+        EQkXOr0V/yxXTZXSz5P3U+9KWzeEKWK2CyMOpiYwPDI6Y1FrGzAcp53oR2sEiG8d
+        4oZcbvEORr7r6kYSIsyh3wvrb1UYo9yu8CStFX3/vC9iZcRDWNaRUCAN/YUWjpSP
+        cA1H4cq4YvSgjijNdF/vY8X2/t7afT4QGq3S6V9ieyIpbsqon3pNdKxgc6LQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651132991; x=
+        1651219391; bh=cFNRvmAWW2txFOxUkA5ueDoxjaCjMFHXn6pIUMby7sk=; b=b
+        2bC9orxtKX04I7y0XUin1BsIAehwxAIZoPEbQ8v5jn/CKYVHCMeJK3chLBLIyZ3R
+        ofUx31JDGi8NLpfVB8PtI29WsK3nOZwZ5hU5kZAxDVLoz+Mnjlb0ZJyf3s5qw0xQ
+        q/4sMYfwviaa4doV+1Hg0wpe0BG8AUj7WbrnE2DgrAEMfY4N0XPq2h4F9R2VNg2i
+        egzWivPYpEGm1YdEq2aGlwYEQjTsKp93gmY1mOytnNKD3sXJikgL+wmkd6IjfrRl
+        XdkWTi9i0BMpCf09oaV8Hh0b0IuBPTQ2cYFVNhy24gKfhyTUEPDTfzO3CSOD+s+V
+        LmxHs0PJhRmHOQlO1f60A==
+X-ME-Sender: <xms:PkpqYsfewRsb92AH4uUtM_lHakKOh0VkMzYyQOB_yy3yjxpX7mfnaw>
+    <xme:PkpqYuPAHDkf7ujtumuXARHDV3TmQyBYvU0RR7c0SxAXj1C-J8kHS2lcRtOMAcBc-
+    fXY34y4iv_9FeuFKBc>
+X-ME-Received: <xmr:PkpqYthqLslCM1xnlYWiULg0YQWIX_2nPyY6ISnyd9PcrVzUG3n4zi4ghT9Eu3opgllbEWoFVQDSfVoIOHO2aVpbVwxWw2L4wj6cXOU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeigdduvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:PkpqYh_6xHCIqeJ8vZ3bMi5ELcX1jV4kI_xQPP_LSsh3JL5pFdLyRw>
+    <xmx:PkpqYosdbq_0zIUvRwvQo13hFfVk3X9bmUiEix7qtPO1EdJ-aHpz1Q>
+    <xmx:PkpqYoESeOfayaqgg2HVxxLrupX8Ia1ckdCfruMiJUJRaGDPwL7zKw>
+    <xmx:P0pqYqLgGD_YdXzMqDqqvk74KvayTYcvmfHN9RiUePAuB0fvpcdN_w>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Apr 2022 04:03:10 -0400 (EDT)
+Date:   Thu, 28 Apr 2022 10:03:08 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     "Ivan T. Ivanov" <iivanov@suse.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Guillaume GARDET <guillaume.gardet@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Dom Cobley <popcornmix@gmail.com>
+Subject: Re: [PATCH v4 3/3] clk: bcm: rpi: Add support for VEC clock
+Message-ID: <20220428080308.3dtpjgnpzbupqs44@houat>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <20220428065743.94967-4-iivanov@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v5 3/3] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        quic_tdas@quicinc.com
-References: <20220427125423.3166138-1-dmitry.baryshkov@linaro.org>
- <20220427125423.3166138-4-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220427125423.3166138-4-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n6olxlboqz3mwztn"
+Content-Disposition: inline
+In-Reply-To: <20220428065743.94967-4-iivanov@suse.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/04/2022 14:54, Dmitry Baryshkov wrote:
-> Split tsens properties to the child node of the gcc. This follows the
-> lead of ipq8064 (which also uses a separate node for tsens) and makes
-> device tree closer to other platforms, where tsens is a completely
-> separate device.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../bindings/clock/qcom,gcc-apq8064.yaml      | 49 +++++++++----------
->  1 file changed, 22 insertions(+), 27 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> index bd7b04c75e50..3a8bb5a5b37f 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> @@ -23,47 +23,42 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - qcom,gcc-apq8064
-> -      - qcom,gcc-msm8960
-> -
-> -  nvmem-cells:
-> -    minItems: 1
-> -    maxItems: 2
-> -    description:
-> -      Qualcomm TSENS (thermal sensor device) on some devices can
-> -      be part of GCC and hence the TSENS properties can also be part
-> -      of the GCC/clock-controller node.
-> -      For more details on the TSENS properties please refer
-> -      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> -
-> -  nvmem-cell-names:
 
-All these properties (and old compatible list) should be rather instead
-made deprecated:true. These bindings exists since some time, so it's not
-like refactoring during development.
+--n6olxlboqz3mwztn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -    minItems: 1
->      items:
-> -      - const: calib
-> -      - const: calib_backup
-> +      - enum:
-> +          - qcom,gcc-apq8064
-> +          - qcom,gcc-msm8960
-> +      - const: syscon
-> +
-> +  thermal-sensor:
-> +    type: object
->  
-> -  '#thermal-sensor-cells':
-> -    const: 1
-> +    allOf:
-> +      - $ref: /schemas/thermal/qcom-tsens.yaml#
+On Thu, Apr 28, 2022 at 09:57:43AM +0300, Ivan T. Ivanov wrote:
+> From: Dom Cobley <popcornmix@gmail.com>
+>=20
+> Platform driver clk-bcm2835 gets an inaccurate clock for VEC (107MHz).
+> Export VEC clock trough clk-raspberrypi which uses the right PLL to
+> get an accurate 108MHz.
+>=20
+> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+> [iivanov: Adapted on top of v5.17-rc6]
+> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
 
-No need for allOf and type, just $ref and description.
+Acked-by: Maxime Ripard <maxime@cerno.tech>
 
->  
->  required:
->    - compatible
-> -  - nvmem-cells
-> -  - nvmem-cell-names
-> -  - '#thermal-sensor-cells'
->  
->  unevaluatedProperties: false
+Maxime
 
+--n6olxlboqz3mwztn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Krzysztof
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYmpKPAAKCRDj7w1vZxhR
+xWqEAQDRM1aJ1Natt1F8upr7B/HY8YdYSM76MO71wUuXqZ7AxwD/RaEP4G25d2W+
+eXEiexzSJfP7M9zt9Ohxks5uAp6QdA4=
+=AL+t
+-----END PGP SIGNATURE-----
+
+--n6olxlboqz3mwztn--
