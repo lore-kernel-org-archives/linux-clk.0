@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2B4C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 13:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A85C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 13:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345244AbiD1Nq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 09:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34660 "EHLO
+        id S1347509AbiD1NsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 09:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235229AbiD1NqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 09:46:25 -0400
+        with ESMTP id S233789AbiD1NsH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 09:48:07 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA4A5D1B5;
-        Thu, 28 Apr 2022 06:43:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9262E5C77F;
+        Thu, 28 Apr 2022 06:44:52 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 1FBCA1F4516F
+        with ESMTPSA id 893481F41A71
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651153390;
-        bh=jtU+WO0fmgPPR6L7wrSaeI4hXJDXg/PCMWOcmgAp16Y=;
+        s=mail; t=1651153491;
+        bh=fB7oaBnDq+Pk5dXIeNanIcPDn8WmB6Fwxu0ws9sHRSw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=luzJRjNH0Ru6qWc5wZ7acZPBOtwq3KjC0YAq7TnrkmLPOW+0QB7E1CPDkGUyYTkhu
-         LPqdvgOsn5RmvpdGMOiRFlm/m4Wq0RRFvYvoXgMFW55I6EpQfY4yEWNQXHbKzJo2/S
-         1rPxjg0j2ThfK8UI+a3Q1/Dcl4NSOOPe5fgxERSKZ9ctNuDZQo0FwiJE7hoWibkxiI
-         Yk+vpeIt5pW3wZidIZh+ALZTrf+fB8ovhzQ+FGvC8ON+Kx/2u6WIgl3W61JdGRt9/x
-         /745LKZghT22ah/a62x36yFKkE0JRqdOtNrKPEahvNJxfmJkneHDokwsc+dz+zDalI
-         9Wajofo8lLDaQ==
-Message-ID: <d39d3dd9-cfe8-0a59-6616-a4cd4e393582@collabora.com>
-Date:   Thu, 28 Apr 2022 15:43:06 +0200
+        b=bjk4ghRjSBpf6pJdMGDZ4L3zRpEu7fxmpsiGi/WkeVIKRmw0oXu9LqxJ+5m3PNbEX
+         8OdUYcQS9It+X/1TWAfhbqOXW2GDc74Ho3ORZRDV8q1HXc569ha05VY16TrSure/z5
+         QrOnPcgAopTzm0KtdcfihZkCFIP5naB6EPxEDCEnsvO+tCJrwTK2saalGKNwVFZyJO
+         7jrc+86cJ8grY3sRo10M2pJhKBWhqnJuyvFsniZonUHg8W2IHXRhPbTF+Lukddg82L
+         mfbX2QdmbnjMkNwm+YE0hUClWM38It1b5rz4RM64K1+PFw8l7SNyK9L923C12lz5Bo
+         lIhNawWmyMVaA==
+Message-ID: <28fcda49-5f4e-508c-26cd-b30dc5837e9e@collabora.com>
+Date:   Thu, 28 Apr 2022 15:44:47 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH V5 15/16] arm64: dts: mediatek: Add infra #reset-cells
- property for MT8192
+Subject: Re: [PATCH V5 16/16] arm64: dts: mediatek: Add infra #reset-cells
+ property for MT8195
 Content-Language: en-US
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
         sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
@@ -45,10 +45,10 @@ Cc:     p.zabel@pengutronix.de, chun-jie.chen@mediatek.com,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20220428115620.13512-1-rex-bc.chen@mediatek.com>
- <20220428115620.13512-16-rex-bc.chen@mediatek.com>
+ <20220428115620.13512-17-rex-bc.chen@mediatek.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220428115620.13512-16-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220428115620.13512-17-rex-bc.chen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -56,9 +56,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Il 28/04/22 13:56, Rex-BC Chen ha scritto:
-> To support reset of infra, we add property of #reset-cells.
+> We will use mediatek clock reset as infracfg_ao reset instead of
+> ti-syscon. To support this, remove property of ti reset and add
+> property of #reset-cells for mediatek clock reset.
 > 
+> Fixes: 4c78814a1f46ac0 (arm64: dts: Add mediatek SoC mt8195 and evaluation board)
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+
+Please remove the Fixes tag: the reset commits are not going to be backported, so
+this commit also shall not be backported.
+
+After the removal:
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
