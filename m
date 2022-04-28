@@ -2,171 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3023BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 10:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB792C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 11:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234244AbiD1KMK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 06:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51580 "EHLO
+        id S1345313AbiD1LGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 07:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234396AbiD1KLo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 06:11:44 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B4E2CC8E;
-        Thu, 28 Apr 2022 03:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1651140147;
-        bh=5RkR0AnFX7vQTXrSZOyaEfFUYVNtE06t7X96bNHnpAk=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=EVZb7nTx/v4hqEQf/0UL39mQpzEJu4VuF3dvdrAbo9fT0Iy7igpqwmPyfEMJBQtY+
-         Pn2PmbzUQek4kJ1q1UIKaX7rOPl7Nf+Z9+fZ7S5dVF162uhqw3qb51QsEG+6vdrbcR
-         mhe7sT9dEFYcunjyIuD3Du0g/9QZgJK5vWxpSLEo=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([37.201.215.103]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MZTqW-1nOTRM3hrC-00WUrz; Thu, 28
- Apr 2022 12:02:26 +0200
-Date:   Thu, 28 Apr 2022 12:02:24 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Zev Weiss <zweiss@equinix.com>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Patrick Venture <venture@google.com>,
+        with ESMTP id S1345394AbiD1LGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 07:06:02 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7D8A27C1;
+        Thu, 28 Apr 2022 04:01:32 -0700 (PDT)
+Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id F359280331;
+        Thu, 28 Apr 2022 13:01:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1651143690;
+        bh=jM1KkY4bkFk5mF5H41NcAcbeK1bTxrtKp5mYpIDpesk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WYY3Ua2JTDXg4XWw/jCk4onSy64yMmY6hqV7MUXfPW64LiGtllYeYfaJ/l0lqcfNK
+         nK/30GEraHHJZSpcTgxCqU5wGBKIeGv+Cz4mvOSeJsSK8Vz7Zp0uPyiIeIsHTeTqVV
+         aZs6IWXoj6qUqFWucFJH6/YxfxtuBhBuH0EQOM75+rABGNOy7iiuYYov+1XKcgOoKd
+         7D7Rphso0g/NaGK5tQ6llL5/wPJczQKug9VsGraFHk51XgILj4hu2n2IueDtD8IDzd
+         yJN8SsYuWKHoZPWJBaXg4SAJEy5gu75LWXfqaVVc+IQDFkeBkHDlhOLhICMKhNsddG
+         haZ8P5MbFxB7Q==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: Re: [PATCH 2/7] clocksource: timer-npcm7xx: Enable timer 1 clock
- before use
-Message-ID: <YmpmMGsI2GLrvMg5@latitude>
-References: <20220422183012.444674-1-j.neuschaefer@gmx.net>
- <20220422183012.444674-3-j.neuschaefer@gmx.net>
- <20220428091158.GD11809@packtop>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
+Subject: [RESEND][PATCH v2 1/2] dt-bindings: clk: Introduce 'critical-clocks' property
+Date:   Thu, 28 Apr 2022 13:01:06 +0200
+Message-Id: <20220428110107.149524-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yOapqzkiMt8+dk0+"
-Content-Disposition: inline
-In-Reply-To: <20220428091158.GD11809@packtop>
-X-Provags-ID: V03:K1:z2GOvnE2pOoTKqPS2YNCdWH3PNgLZoY46dfHyKNgxU1cCV0GDMV
- CD5eXdswQsXQqcWJUlISm7/TxvKACGZ4FJS9IDAcStlPoqFOQYnAZI7jcX3dsNtIq+i3Uai
- bV9ZDeHO2mpbW/oJIk5KYUBSGI1btTH9/yVMpNt9Z3sK8JIRqdkp0d4QnB1agCrftN6tB+z
- hl6MQKVaa1728yKtcJiBA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:I6+m8IwNZtM=:6UfzdwNcOAsy6GnUAtfJdl
- 6wW0Ip1MRPMbRrjB6AtLBRlzFqB1TJGg49uanx9G2aDNNU5pL8oveu/t/XhdSZajLVc5avdGp
- NexHpCpVrfm9P39HdsWE+Ys0gF5QOD5VLm3XEWSI5IdTpZsFl7rQ94GZjPGUpWOS5M76yKJQO
- HeWPP47IHdCOxj/g+3/yoa0SYC27v2lijBV9F7FWfqcucbNme9MQT/UxwHB2BLrKQLGcgtP0z
- 5rStsWFJ54Iq9YDnP8b8tVrx/Sc//6o3MXvyIh/OkHoTLP4lYouNjmscUocxJtxtH4CKDs8qB
- cdEK434ilq2GkCAN3j5DoTJi2f2UfvZ9vB5TIiogM1+pA7qjknwRhqo/RIEowtMKxS/PNemy7
- t/aweHpEDnlavP/XMBrSilu1mvq9/MexyqSaj14pLowIvu8DzJCMmo30/9pMkK869u/52W25Q
- ZqZ/AhaY5EgRs+XOFnj08nwmP4HGhxJB8bIkqKo4w40TNY1TIdYEqzuRdH+MlUIulHi6rXNJb
- TGUDj7BY57On5x8ng2FbF2MW5O5fd0dvWacwKvHpXWuzIdm9DIAqi+yxIcVlEvEcKpj+qPxrD
- SBJblxieQUAoPKOQtX8gWNEohdd1rHRawppM1/Z+FI7k/Uon7jxgZC31gGr/Jlqfs6PMHMu+6
- dkAnnrMfloM04cXPGgRYSj2VSeqVByrtPwPz4pk1B7KKU0VCv9a2xIt040qiByoAHM/DaRM58
- 8jzU8vbzjdXK//fpWL3sgAOuwHczM9ehyQmebFImrgk8TS04eqHqLPzFemNgdEFNE4TJSL8Ty
- cPIrK7irweN9tan58XCt1MY5okntg1dfih6GoblOwfDQx15BfNZHr6Wsq7eOWqkBdoCtl71cf
- PmUjzBsd7Biv33otqAby6iBMcSagwzXRKkat4/SDggUsVTbB2j6CM8AGH263eL15nFSXjuLdK
- Qrm32UaVAEYWCUxxY2hQnRutwHuYpvl5gCn65xUAmw3wX7JsNdEk02CsFWSKJ3zVEDIg2pSlj
- 1wEn2oH1yI6FqC7f+fn0la/L81NfleUMxBBcscy6H2UGlh57PD2dm7zmQ7rt/a0GA/1M0avLy
- oo+FpSSyPXgUvQ=
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Some platforms require select clock to be always running, e.g. because
+those clock supply vital devices which are not otherwise attached to
+the system and thus do not have a matching DT node and clock consumer.
 
---yOapqzkiMt8+dk0+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An example is a system where the SoC serves as a crystal oscillator
+replacement for a programmable logic device. The "critical-clocks"
+property of a clock controller allows listing clock which must never
+be turned off.
 
-On Thu, Apr 28, 2022 at 09:11:58AM +0000, Zev Weiss wrote:
-> On Fri, Apr 22, 2022 at 11:30:07AM PDT, Jonathan Neusch=C3=A4fer wrote:
-> >In the WPCM450 SoC, the clocks for each timer can be gated individually.
-> >To prevent the timer 1 clock from being gated, enable it explicitly.
-> >
-> >Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> >---
-> > drivers/clocksource/timer-npcm7xx.c | 14 +++++++++++++-
-> > 1 file changed, 13 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/t=
-imer-npcm7xx.c
-> >index a00520cbb660a..974269b6b0c36 100644
-> >--- a/drivers/clocksource/timer-npcm7xx.c
-> >+++ b/drivers/clocksource/timer-npcm7xx.c
-> >@@ -188,17 +188,29 @@ static void __init npcm7xx_clocksource_init(void)
-> >
-> > static int __init npcm7xx_timer_init(struct device_node *np)
-> > {
-> >+	struct clk *clk;
-> > 	int ret;
-> >
-> > 	ret =3D timer_of_init(np, &npcm7xx_to);
-> >-	if (ret)
-> >+	if (ret) {
-> >+		pr_warn("timer_of_init failed: %d\n", ret);
->=20
-> This seems like a somewhat opaque message to emit, especially given this
-> file's lack of a pr_fmt() definition -- maybe add a %pOF so it's
-> slightly easier to trace back to the device it stems from?
+Clock listed in the "critical-clocks" property may have other consumers
+in DT, listing the clock in "critical-clocks" only assures those clock
+are never turned off, and none of these optional additional consumers
+can turn the clock off either.
 
-Now that I look at this code again, I think I should just drop the
-pr_warn entirely, since I didn't mention it in the description, and it's
-unrelated to enabling the clock.
+The implementation is modeled after "protected-clocks".
 
-> > 		return ret;
-> >+	}
-> >
-> > 	/* Clock input is divided by PRESCALE + 1 before it is fed */
-> > 	/* to the counter */
-> > 	npcm7xx_to.of_clk.rate =3D npcm7xx_to.of_clk.rate /
-> > 		(NPCM7XX_Tx_MIN_PRESCALE + 1);
-> >
-> >+	/* Enable the clock for timer1, if it exists */
-> >+	clk =3D of_clk_get(np, 1);
-> >+	if (clk) {
-> >+		if (!IS_ERR(clk))
-> >+			clk_prepare_enable(clk);
-> >+		else
-> >+			pr_warn("Failed to get clock for timer1: %pe", clk);
->=20
-> Likewise here (though to a slightly lesser extent).
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+To: linux-clk@vger.kernel.org
+---
+V2: Update the commit message to clarify the behavior
+---
+ .../devicetree/bindings/clock/clock-bindings.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I'll add %pOF here.
+diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+index f2ea53832ac6..975230e603d1 100644
+--- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
++++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -169,6 +169,22 @@ a shared clock is forbidden.
+ Configuration of common clocks, which affect multiple consumer devices can
+ be similarly specified in the clock provider node.
+ 
++==Critical clocks==
++
++Some platforms require clock to be always running, e.g. because those clock
++supply devices which are not otherwise attached to the system. One example
++is a system where the SoC serves as a crystal oscillator replacement for a
++programmable logic device. The critical-clocks property of a clock controller
++allows listing clock which must never be turned off.
++
++   clock-controller@a000f000 {
++        compatible = "vendor,clk95;
++        reg = <0xa000f000 0x1000>
++        #clocks-cells = <1>;
++        ...
++        critical-clocks = <UART3_CLK>, <SPI5_CLK>;
++   };
++
+ ==Protected clocks==
+ 
+ Some platforms or firmwares may not fully expose all the clocks to the OS, such
+-- 
+2.35.1
 
-
-Thanks,
-Jonathan
-
---yOapqzkiMt8+dk0+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmJqZg4ACgkQCDBEmo7z
-X9v7UA//XinB73NhiIWuAgNkGTSfPjaFxOvIHuRuFLsnTcJHlorK0w1BmfZHecD+
-ZdHnpqPtkXz3gnReMqx8qJcO/0lHmJTkgvddzHqEu4wcWFROMTNs8Tbrd7TUvaxx
-9jmxWWOE5f9P5EXHCLUlo0c03r6Iq8R7BlMUVSh0wZz6RtPujFoHjw6A8uhE9tbt
-ZzoD4XhdNl4BkUpC/NUNIHSxbb/VYZYy7GxqP4N9yQ0QSYGIJm7ESR3RRGhMFoEO
-BZziQtQiH/zJSj71FbG3q8vnXJF4mVozFqnTk4UHngq5nJrM7ZFmE6tVRBf5EPzY
-aaBOk7Y7gcYdPDFMHszp+TtlxcGk7IuTs3I4lVA1JjCX7YPBfxA6AVt6Haf15YkL
-TmosKy8EOB+QqfwKLwddQafB9FXSkRSWr0fn3WboeAolBa+omi+5NMVfq4X1kbHL
-FNO1MlBA0IdDIuMwgRAm5aVTFiIuDoyYIm7qytMFvve4nSlLS3sL3F7qzT783Dvm
-jbSSOUGrQa4XrQoO/N0HRiYj6FkZGE00Deg7e2qY6mqVi7PT9AIzWakASES0LqSd
-kRiHXIqXlsjp65wuJ6xL/hj0PUg9ziUTurX31k1BXomattaHbz5ZSq+bGBD9vuvI
-muA9b/srdaA7jEkkLs6AqWGSsFl8CXAEwI1Rh5VRZ+MStwIBicg=
-=8ywP
------END PGP SIGNATURE-----
-
---yOapqzkiMt8+dk0+--
