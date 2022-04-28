@@ -2,81 +2,237 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977E0C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 18:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DF2C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 19:11:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbiD1Sem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 14:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
+        id S1351349AbiD1TOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 15:14:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346144AbiD1Sel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 14:34:41 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F510B7C75;
-        Thu, 28 Apr 2022 11:31:25 -0700 (PDT)
-Received: from localhost.localdomain ([37.4.249.94]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MeTHG-1oKIcH3Ufs-00aRvm; Thu, 28 Apr 2022 20:31:05 +0200
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+        with ESMTP id S236855AbiD1TOP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 15:14:15 -0400
+Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77F08A32C
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 12:10:57 -0700 (PDT)
+Received: by mail-oo1-xc2b.google.com with SMTP id y27-20020a4a9c1b000000b0032129651bb0so1052137ooj.2
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 12:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2aXsqerjLXA91XKgmdLKkKAKVBORFuGPtPebXTdU8DQ=;
+        b=R0JEfLOaP4DoFmErPMfFEbjdIK/j5w9Qwzk61+EjAjK9AjUFPngr64Y9NwSK6B9o5z
+         +w0R15px/1QmEpmkiCODYb3/BtPhdR0yxF1jgyCK+ACBHR2LddwOiKo2h8n0uvyhIA3j
+         7Z3bzdXIE3Go0L9hSvwt750vWlyNZPRNGlj8ZHDAKDEqGxevy8wWanRsmTU2FKngaRaU
+         eiTqyY5FgX/sye7F0A84crd7lsi5LwzCqCivl5Z6UD+wHNWrzylum+G2DlBiqwtADZXz
+         nRr8mj18Mw5R/Pu66rTPU+nmus1nyJjbyAzF0HKDrpZ+qVoTLXODhsvDu/Shpiq0JcCU
+         brfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2aXsqerjLXA91XKgmdLKkKAKVBORFuGPtPebXTdU8DQ=;
+        b=veEHmw29p1Wd0+Ak9IB1Wh4SbB1PXm7+Qu3XLmVvoDD7MMto9y3doeW70wVQSwZDZh
+         j7pcXnZXnZ76qRoYqcOKALePJost4DR0Nc2B/703fdlCbqO14hbeOpcy/V81oeR+08hr
+         q3WN/GhYWqSMlunoguOgEQm1egEOqCoa8qfI3haW3yXDVuxCoH48e+7LshJgi6AZKP7k
+         VuksjbHPOFFEo/F9lfH9cse9yD59LRghkH1VUvcxy8kq8ZmU7I2VshnnPMGDelc306+R
+         whTHR2niDsxwP+xhWLR3a6Z9wlCi7BGqJQecJ8Bj1feZhsBP1WM2tMBKMbJ9T/2SQxpj
+         TcpA==
+X-Gm-Message-State: AOAM530gzRkfNseo9I46tPEo57io4r55RaU7O6wAWSvXIIOWd4qMDyCJ
+        117NtY8+e2HCtJCjFu0ZAiNk+A==
+X-Google-Smtp-Source: ABdhPJzKBeopn16KqsmMbcXih08Js7rj7ornldsvddmz5pJjeqIV8lREl+AUtyHtmoRWFGSKZ4Ux3w==
+X-Received: by 2002:a4a:942b:0:b0:33a:39e0:b908 with SMTP id h40-20020a4a942b000000b0033a39e0b908mr12379358ooi.62.1651173056919;
+        Thu, 28 Apr 2022 12:10:56 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id ds10-20020a0568705b0a00b000e686d1387bsm2142927oab.21.2022.04.28.12.10.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 12:10:56 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 12:12:49 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
-Date:   Thu, 28 Apr 2022 20:30:10 +0200
-Message-Id: <20220428183010.1635248-1-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.25.1
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_tdas@quicinc.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC
+ bindings
+Message-ID: <YmrnMQwIR9wOeoKE@ripper>
+References: <20220422230013.1332993-1-bjorn.andersson@linaro.org>
+ <20220423014824.912ACC385A0@smtp.kernel.org>
+ <YmNsYSxLtwLpw98t@ripper>
+ <20220423031350.01299C385A0@smtp.kernel.org>
+ <YmN11qt/PqogYruQ@ripper>
+ <20220425223426.BE973C385A4@smtp.kernel.org>
+ <3fb043e6-2748-24f8-0115-b5372c747a12@linaro.org>
+ <Ymq6UOjrYgFlzl/W@ripper>
+ <CAA8EJpqBMzTNjTSWN1UMXM61-DmW22RKQJyWoMw3Rds=xEVQaQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ROg9fHO+7lB5ftkBrfzS6z5Xqc0WiEHelZu+8KRp+4H7JD2NLNK
- 0CQUdONatjMCTxpBiiNSdY+Nb4nNGVYkG404BvDZnW3+ao8ZjF0eFeq0OE/UiwjPrNQT13m
- rke7opJan1AoEu72mcXIABbNueCdoFdKos/ddLXuCjzvtnOziUzGsbVFt8AS3mGFzcYls1f
- M4umhJIqagTJRsSDSrQfw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1HqqFbLnT3o=:vmhdHLj7PGOk5jSXwMWq32
- rA3esa3S6D43+/pkCwJNboeuBAedAj8OwBQ90339Ccb5n7Z1ymmADUl03cIfMgdMC7t2HmFyI
- bnsYVJE0HI7tVkziGv1ToF7AcMGyymTJ/nEs8yk4rKVPDo2laljt6WNsqwBEW2rmhqZh8W/cC
- 3SUg8k4xB48IiSAbmpvdkfUSsntavkdjpuAspB4jxwXGyNGUoFSsA/wRbYkBnL933NvIQhR7d
- cyaKGvoTMemm0XQ2zB8k4SmGjMO+pwABRaUi4jDhFAhIwulQ+gj1a0ENg9cX5UaE1kjYuR8SN
- Hyk0xwB35GZC5/0L59grXHUkzal2SXrft/NOHgRh1ay7wZdcIiCGstiZsT4RUiRJWM4uulBlH
- mu9YuUzP6DpfYxar5Z9hJTKQj9WuxaUeLHVCiycc4gvDx8THT17PpgTO3jz7vaIk9/qRo8MNq
- imRn0wt4q8bB1B/zaT0c5Dn8oK0VNLUa4GYktVJfmq27tBv83sds476TpXo7alEYIh1jNwu3H
- HNeNH4igDJ746jO0mTiIYbCqyJCSY/oVnITU0dJcLUd4dhNG8dBY0CbDhPyYILYfTp2ue2w3d
- V8apEH6GfgWs/qAXVr9Q9Diqqsx0ppSZUVtpPV2zzCxaORtsqPZ6cG5mBLTG71t3oi4tsEFy+
- 2R9HcPgYsTdeuQujMte6OUmx+dA0nKDqD7o6cRPSbLhBXrxxZLkTZB3lnS/I2SdKZU/AVdGiu
- 2UNKmC4vn11tBsFu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqBMzTNjTSWN1UMXM61-DmW22RKQJyWoMw3Rds=xEVQaQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-accidentially breaks the behavior of bcm2835_clock_choose_div() and
-booting of Raspberry Pi. The removed do_div macro call had side effects,
-so we need to restore it.
+On Thu 28 Apr 09:24 PDT 2022, Dmitry Baryshkov wrote:
 
-Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Thu, 28 Apr 2022 at 18:59, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > On Thu 28 Apr 08:44 PDT 2022, Dmitry Baryshkov wrote:
+> >
+> > > On 26/04/2022 01:34, Stephen Boyd wrote:
+> > > > Quoting Bjorn Andersson (2022-04-22 20:43:18)
+> > > > > On Fri 22 Apr 20:13 PDT 2022, Stephen Boyd wrote:
+> > > > > >
+> > > > > > I'd really rather not have clock-names at all because we spend a bunch
+> > > > > > of time comparing strings with them when we could just as easily use
+> > > > > > a number.
+> > > > >
+> > > > > I know that you would like to get rid of the clock-names for the clock
+> > > > > controllers. I've looked at it since and while it will be faster to
+> > > > > execute I still feel that it's going to be harder to write and maintain.
+> > > > >
+> > > > > E.g. look at gcc_pcie_4_pipe_clk_src, its parents today are
+> > > > > pcie_4_pipe_clk and bi_tcxo. Something I can reason about being correct
+> > > > > or not.
+> > > > >
+> > > > > If we ditch the clock-names I will have:
+> > > > >
+> > > > > static const struct clk_parent_data gcc_parent_data_14[] = {
+> > > > >          { .index = 30 },
+> > > > >          { .index = 0 },
+> > > >
+> > > > Those numbers could have some #define.
+> > > >
+> > > >     { .index = PCIE_4_PIPE_CLK_DT }
+> > > >     { .index = BI_TCXO_DT }
+> > > >
+> > > > > };
+> > > > >
+> > > > > Generally we would perhaps use some compile time constant, but that
+> > > > > won't work here because we're talking about the index in the clocks
+> > > > > array in the yaml.
+> > > > >
+> > > > >
+> > > > > But perhaps I'm missing something that would make this manageable?
+> > > >
+> > > > I dunno. Maybe a macro in the dt-binding header could be used to specify
+> > > > the 'clocks' property of the DT node that is providing the other side?
+> > > > The idea is to make a bunch of macros that insert the arguments of the
+> > > > macro in the right place for the clocks property and then define the
+> > > > order of arguments otherwise. It would be similar to how
+> > > > CREATE_TRACE_POINTS is used in include/trace/define_trace.h
+> > > >
+> > > > In the dt-bindings/qcom,gcc-soc.h file:
+> > > >
+> > > >     #ifdef IN_DTSI
+> > > >
+> > > >     #undef GCC_DT_NODE_CLOCKS
+> > > >     #define GCC_DT_NODE_CLOCKS
+> > > >             clocks = <BI_TCXO_DT>,
+> > > >                      <SLEEP_CLK_DT>;
+> > > >
+> > > >     #endif /* IN_DTSI */
+> > > >
+> > > >     #define BI_TCXO_DT 0
+> > > >     #define SLEEP_CLK_DT 1
+> >
+> > BI_TCXO_DT is not the value, its the index of the entry in the clocks
+> > array. And the actual values of the clock controller's clocks
+> > property is not a property of the clock controller, but the system
+> > definition.
+> >
+> > I.e. that should be clear and explicitly expressed in the dts.
+> >
+> > >
+> > > Isn't this being an overkill, to define exact properties in the bindings
+> > > header? Also this would mean that we'd have to add dt-binding headers for
+> > > all _consumers_ of clocks. And to make things more complex, e.g. for PCIe
+> > > devices different instances of the device would use different amount of
+> > > clocks. This would mean that we'd have to define SM8250_PCI0_CLOCKS,
+> > > SM8250_PCIE1_CLOCKS and SM8250_PCIE2_CLOCKS.
+> > >
+> > >
+> > > If we were to switch to this fragile path of using indices (yes I consider
+> > > it to be very fragile), I'd consider something like the following to work in
+> > > the platform dtsi file:
+> > >
+> > > clocks =
+> > > BEGIN_CLOCK
+> > > CLOCK(BI_TCXO_DT, &bi_tcxo)
+> > > CLOCK(SLEEP_CLK_DT, &sleep_clk)
+> > > END_CLOCK;
+> > >
+> > > While the following should give an error:
+> > > clocks =
+> > > BEGIN_CLOCK
+> > > CLOCK(SLEEP_CLK_DT, &sleep_clk)
+> > > CLOCK(BI_TCXO_DT, &bi_tcxo)
+> > > END_CLOCK;
+> > >
+> > > I think we can make this error out by using some additional tool (or
+> > > additional preprocessor pass over the sources)
+> > >
+> >
+> > Let's not invent some magical syntax for describing the clocks in the
+> > DT.
+> >
+> > These macros can't expand to sparse arrays anyways, so iiuc this would
+> > give a sense that the ordering might not be significant, when it really
+> > is.
+> >
+> > > > And then in the SoC.dtsi file have
+> > > >
+> > > >     #define IN_DTSI
+> > > >     #include <dt-bindings/qcom,gcc-soc.h>
+> > > >
+> > > >     #define BI_TCXO_DT      &xo_board
+> > > >     #define SLEEP_CLK_DT    &sleep_clk
+> > > >
+> > > >     ...
+> > > >
+> > > >     clock-controller@a000000 {
+> > > >             compatible = "qcom,gcc-soc";
+> > > >             reg = <0xa000000 0x10000>;
+> > > >             GCC_DT_NODE_CLOCKS
+> > > >     };
+> > > >
+> > > >
+> > > > and then in drivers/clk/qcom/gcc-soc.c file:
+> > > >
+> > > >     #include <dt-bindings/qcom,gcc-soc.h>
+> > > >
+> > > >     static const struct clk_parent_data gcc_parent_data_14[] = {
+> > > >             { .index = PCIE_4_PIPE_CLK_DT },
+> > > >             { .index = BI_TCXO_DT },
+> > > >     };
+> > > >
+> > > > The benefit I see to this is that the index for each clock is in the
+> > > > header file (BI_TCXO_DT is 0) and it's next to the clocks property.
+> > > > Someone could still mess up the index based on where the macro is used
+> > > > in the clocks property though.
+> > >
+> > > And actually might I suggest an alternative approach to manually using
+> > > indices everywhere? What about spending the time once during the boot to
+> > > convert .fw_name and clock_names to parent indices during clock registration
+> > > and then using them for all the further operations?
+> > >
+> >
+> > I'm pretty sure that's what clk_core_fill_parent_index() already does.
+> 
+> In this case I think we should go for clock-name in the DT and
+> auto-flled indices inside. Stephen, WDYT? Would that fix your concern
+> for comparing strings each and every time?
+> 
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 3ad20e75fd23..48a1eb9f2d55 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -941,6 +941,7 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
- 	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
- 	u32 div, mindiv, maxdiv;
- 
-+	do_div(temp, rate);
- 	div = temp;
- 	div &= ~unused_frac_mask;
- 
--- 
-2.25.1
+You mean, just continue doing what we've been doing lately with fw_name
+etc?
 
+That lookup is the one that Stephen wants to avoid.
+
+Regards,
+Bjorn
