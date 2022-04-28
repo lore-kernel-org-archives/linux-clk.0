@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C80C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 21:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05DFC3527C
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 21:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352520AbiD1VwN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 17:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
+        id S1352562AbiD1VwP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 17:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352485AbiD1VwL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 17:52:11 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11806C3E39;
-        Thu, 28 Apr 2022 14:48:51 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id i2so4624596qke.12;
-        Thu, 28 Apr 2022 14:48:51 -0700 (PDT)
+        with ESMTP id S1352464AbiD1VwO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 17:52:14 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE11DC3E25;
+        Thu, 28 Apr 2022 14:48:56 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id f14so4501553qtq.1;
+        Thu, 28 Apr 2022 14:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qsHLgickfWiQ7IuTrWQL7pBea0q42fG7zHQIYbkEfSM=;
-        b=lEkcK5oty8z+u4W1KpAM6fz6VMksMG3XO7YO8itOxuHUyOU/kChJT+9krku4HThtUK
-         2yTEas5EPk+1UEKNn+Dk/HpUckaQVsGZTXE7bQGKW7MF+3+ZJAZ4CwTBU0uTMglatLYH
-         tY8snzqnsLbnsHVnggk++zlJB0SLM9s3Ut9BuSzyIkOT29leK4sama7L5Uwo4nXSV8Wh
-         vtBfoEdVmTB6iHBsFHnQK/VZgx2y/4CZMDBjtAbwh5XrJX4FlYi+uwJUFIcwo75FJYLv
-         yxLZF+FAQ5zbBaWpIxlkCgZXYm7HEz+H32KPsCeN1wMkmlfj5oY2IObnhulP40TkRj0N
-         Dujg==
+        bh=xxRlAMG5Hgv7VO31n+Y4OOs69sgs7kvDAutG1MZ11mM=;
+        b=PuyVmmFi5ydIfFWVrkLflr+gdDwaGb8767NELliwu5x6PJrbYX/AXliehLu2werqjN
+         C/fa3E2au16YjQUUTxdI2ZD1tDwMd0o+bFtNNjWCwG53/4dyv2uERIhAGKic3ysaX5yr
+         zg1PDsa6CUJbfxfwDIPD58cDnfXlImmovSSYvEVky+HJJAhb5wOMKH7rzICPuwVzfkei
+         EgHKRj1UlksHRf0VC7AYzYbxPmyz/Jlsy+tCeDfpwTvKboPDO34GTrE6hexj+wzkc4VJ
+         4iZM01WK5P7f5UiVohcpo0E5oi20OUMhxbSATg+5ZldFmeqGTUE5isgvy/pWrktNz+Si
+         Kwhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qsHLgickfWiQ7IuTrWQL7pBea0q42fG7zHQIYbkEfSM=;
-        b=JSojjKNftd6XiGcqmjKUs7nEhpV25WVVKB3h9MjTBNTaCokWPbqhjO55+Wq6puNVjc
-         aMK8FooPrxXwDek/Ro26myItAEOKPa6xdfZtLnbXdUD0KHD+3a9aZoxtR3/WQUhXhFJH
-         ekvGB/qd2P9I1CXy6xpWSAc0PyZl3klepD9PYP+XYKQrbcVHcf/y00WXxPIUkF3NTWiv
-         GD5fKGOhP/A2rEAjBUh9IqTzbAEOCQxUSftwx0/G5OGyU4hROVzVEoOgCrDzjHO6e2wX
-         X7S6lIpCg6ebrbmS52aobZZc3F9SlF286JkQU6luSH1fEF460XPA11nGSSnFEbw9ILs0
-         3XSw==
-X-Gm-Message-State: AOAM530tm6TyXRm7BnHj2Z99Dk0WnAzry0TaXuCYwlfHn/xfsjDfEIBa
-        7tnMOyVOIAhVLBroI5ubTCo=
-X-Google-Smtp-Source: ABdhPJw0Pjvg4DmZSvpSkEKHOHv17Qd/78xNeyUxAbwn8J7IFj3T8YEDO+akNRaq1aATIHCHyE3Aug==
-X-Received: by 2002:a05:620a:858:b0:69f:9bc4:1db5 with SMTP id u24-20020a05620a085800b0069f9bc41db5mr5023484qku.206.1651182530865;
-        Thu, 28 Apr 2022 14:48:50 -0700 (PDT)
+        bh=xxRlAMG5Hgv7VO31n+Y4OOs69sgs7kvDAutG1MZ11mM=;
+        b=2yT/GnI77Et2no1Hab0k6E1atv9q3yxrLcvemymQ5cwGrhEi1q1pD3H232t1hFUwEQ
+         xREvBsF92DVsW7rhxLfPprS9CkQQWG5BHUxOM+7UkQeXS0qoXI0HrFA542ztpL6j6vK0
+         8Fnur4j81a+zu15TYMxnPW1RjUDf1Pfv9fE68wRRc7voNxfd9wOT7GjW80Kh38rV/VZx
+         5YyLpvG3F22CatXPZtsrsRXgWKv6DhHSmtBoR7xTC880cRRtNTij8LykP0f0psd10Qxc
+         uTpNT8L7QEZr9+SaxVUMbPs4Bw1CQ+uxJ8eneZYLuXLJYzuqeJadJYOJEmC7Bmz0aXBg
+         /Utw==
+X-Gm-Message-State: AOAM532rbKCgITRR4MHQY69J+q1BJWCBEaEtqrET/3LfKMPwQ3oTaPOV
+        8DgMpCkqaVvI+Y2lSM3ZbR0=
+X-Google-Smtp-Source: ABdhPJzFJsUDCkJKDs6FX385VYStj2Wtl/ZtzzShv4B3L/NtgSI0k4CwEtfJj5FUobUCjaNpzCswsQ==
+X-Received: by 2002:ac8:4e4d:0:b0:2f1:f986:6b62 with SMTP id e13-20020ac84e4d000000b002f1f9866b62mr24780278qtw.585.1651182535713;
+        Thu, 28 Apr 2022 14:48:55 -0700 (PDT)
 Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id bl5-20020a05620a1a8500b0069f51e47c5esm546442qkb.110.2022.04.28.14.48.49
+        by smtp.gmail.com with ESMTPSA id bl5-20020a05620a1a8500b0069f51e47c5esm546442qkb.110.2022.04.28.14.48.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 14:48:50 -0700 (PDT)
+        Thu, 28 Apr 2022 14:48:55 -0700 (PDT)
 From:   Jesse Taube <mr.bossman075@gmail.com>
 X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
 To:     linux-imx@nxp.com
@@ -63,9 +63,9 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org
-Subject: [PATCH v2 06/15] dt-bindings: pinctrl: add i.MXRT1170 pinctrl Documentation
-Date:   Thu, 28 Apr 2022 17:48:29 -0400
-Message-Id: <20220428214838.1040278-7-Mr.Bossman075@gmail.com>
+Subject: [PATCH v2 09/15] ARM: clk: imx: Update pllv3 to support i.MXRT1170
+Date:   Thu, 28 Apr 2022 17:48:32 -0400
+Message-Id: <20220428214838.1040278-10-Mr.Bossman075@gmail.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
 References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
@@ -75,101 +75,165 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add i.MXRT1170 pinctrl binding Documentation
+The i.MXRT1170 has a pll that has the multiplier bits inverted and
+cannot be changed add IMX_PLLV3_GENERICV2.
 
-Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+The i.MXRT1170 also has the lock bit moved as well as the
+power bit inverted the power bit also is in different locations on each
+pll control register.
+
 Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
 ---
 V1 -> V2:
  - Nothing done
 ---
- .../bindings/pinctrl/fsl,imxrt1170.yaml       | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
+ drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++++--
+ drivers/clk/imx/clk.h       |  4 +++
+ 2 files changed, 59 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
-new file mode 100644
-index 000000000000..2e880b3e537c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,imxrt1170.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 20ee9611ba6e..a1dbc3a2e280 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -23,6 +23,7 @@
+ 
+ #define BM_PLL_POWER		(0x1 << 12)
+ #define BM_PLL_LOCK		(0x1 << 31)
++#define BM_PLL_LOCK_V2		(0x1 << 29)
+ #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+ #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+ 
+@@ -34,6 +35,7 @@
+  * @base:	 base address of PLL registers
+  * @power_bit:	 pll power bit mask
+  * @powerup_set: set power_bit to power up the PLL
++ * @lock_bit:	 pll lock bit mask
+  * @div_mask:	 mask of divider bits
+  * @div_shift:	 shift of divider bits
+  * @ref_clock:	reference clock rate
+@@ -48,6 +50,7 @@ struct clk_pllv3 {
+ 	void __iomem	*base;
+ 	u32		power_bit;
+ 	bool		powerup_set;
++	u32		lock_bit;
+ 	u32		div_mask;
+ 	u32		div_shift;
+ 	unsigned long	ref_clock;
+@@ -65,7 +68,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+ 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+ 		return 0;
+ 
+-	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
++	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
+ 					  500, PLL_LOCK_TIMEOUT);
+ }
+ 
+@@ -101,7 +104,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
+ {
+ 	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+ 
+-	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
++	if (readl_relaxed(pll->base) & pll->lock_bit)
+ 		return 1;
+ 
+ 	return 0;
+@@ -155,6 +158,39 @@ static const struct clk_ops clk_pllv3_ops = {
+ 	.set_rate	= clk_pllv3_set_rate,
+ };
+ 
++static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 val, div;
 +
-+title: Freescale i.MXRT1170 IOMUX Controller
++	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
++	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
 +
-+maintainers:
-+  - Giulio Benetti <giulio.benetti@benettiengineering.com>
-+  - Jesse Taube <Mr.Bossman075@gmail.com>
++	if (rate == val)
++		return 0;
 +
-+description:
-+  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+  for common binding part and usage.
++	return -EINVAL;
++}
 +
-+properties:
-+  compatible:
-+    const: fsl,imxrt1170-iomuxc
++static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
 +
-+  reg:
-+    maxItems: 1
++	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
++}
 +
-+# Client device subnode's properties
-+patternProperties:
-+  'grp$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
++static const struct clk_ops clk_pllv3_genericv2_ops = {
++	.prepare	= clk_pllv3_prepare,
++	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
++	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
++	.round_rate	= clk_pllv3_round_rate,
++	.set_rate	= clk_pllv3_genericv2_set_rate,
++};
 +
-+    properties:
-+      fsl,pins:
-+        description:
-+          each entry consists of 6 integers and represents the mux and config
-+          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-+          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-+          be found in <arch/arm/boot/dts/imxrt1170-pinfunc.h>. The last
-+          integer CONFIG is the pad setting value like pull-up on this pin. Please
-+          refer to i.MXRT1170 Reference Manual for detailed CONFIG settings.
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        items:
-+          items:
-+            - description: |
-+                "mux_reg" indicates the offset of mux register.
-+            - description: |
-+                "conf_reg" indicates the offset of pad configuration register.
-+            - description: |
-+                "input_reg" indicates the offset of select input register.
-+            - description: |
-+                "mux_val" indicates the mux value to be applied.
-+            - description: |
-+                "input_val" indicates the select input value to be applied.
-+            - description: |
-+                "pad_setting" indicates the pad configuration value to be applied.
-+    required:
-+      - fsl,pins
+ static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+ 					       unsigned long parent_rate)
+ {
+@@ -407,6 +443,13 @@ static const struct clk_ops clk_pllv3_enet_ops = {
+ 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+ };
+ 
++void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
 +
-+    additionalProperties: false
++	pll->power_bit = shift;
++}
 +
-+required:
-+  - compatible
-+  - reg
+ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+ 			  const char *parent_name, void __iomem *base,
+ 			  u32 div_mask)
+@@ -422,10 +465,20 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	pll->power_bit = BM_PLL_POWER;
++	pll->lock_bit = BM_PLL_LOCK;
+ 	pll->num_offset = PLL_NUM_OFFSET;
+ 	pll->denom_offset = PLL_DENOM_OFFSET;
+ 
+ 	switch (type) {
++	case IMX_PLLV3_GENERICV2:
++		pll->lock_bit = BM_PLL_LOCK_V2;
++		pll->powerup_set = true;
++		ops = &clk_pllv3_genericv2_ops;
++		break;
++	case IMX_PLLV3_SYSV2:
++		pll->lock_bit = BM_PLL_LOCK_V2;
++		pll->powerup_set = true;
++		fallthrough;
+ 	case IMX_PLLV3_SYS:
+ 		ops = &clk_pllv3_sys_ops;
+ 		break;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 7d220a01de1f..e70e985840a4 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -220,6 +220,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+ 
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
++	IMX_PLLV3_GENERICV2,
++	IMX_PLLV3_SYSV2,
+ 	IMX_PLLV3_SYS,
+ 	IMX_PLLV3_USB,
+ 	IMX_PLLV3_USB_VF610,
+@@ -231,6 +233,8 @@ enum imx_pllv3_type {
+ 	IMX_PLLV3_AV_IMX7,
+ };
+ 
++void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift);
 +
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iomuxc: iomuxc@400e8000 {
-+        compatible = "fsl,imxrt1170-iomuxc";
-+        reg = <0x400e8000 0x4000>;
-+        pinctrl_lpuart1: lpuart1grp {
-+            fsl,pins =
-+              <0x16C 0x3B0 0x620 0x0 0x0  0xf1>,
-+              <0x170 0x3B4 0x61C 0x0 0x0	0xf1>;
-+        };
-+    };
+ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+ 		const char *parent_name, void __iomem *base, u32 div_mask);
+ 
 -- 
 2.35.1
 
