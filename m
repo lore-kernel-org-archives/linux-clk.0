@@ -2,119 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BB7C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 07:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E621C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 07:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244696AbiD1HEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 03:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47596 "EHLO
+        id S241640AbiD1HUq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 03:20:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244762AbiD1HEJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 03:04:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49136D1A4
-        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 00:00:55 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 62E961F37F;
-        Thu, 28 Apr 2022 07:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1651129254; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DIGiUnkyxHNS0uD6OrT7smx8n4IaG1rFE68rlCC4b8A=;
-        b=PusB2URtH5dyrVl7zGBybD4Yzf+K3YgN+YdRDHMA/XJN24GiwB2Zt+PxoIXABELk3iSOZf
-        5xOOTJk1sE1JAX8r0a6DfOkIN0WdR8biRSF+2/VPbWV7C6vwJL0Eyf6P2BZJhQwoK1vVKS
-        P/TD0Z7eZ6648iueNJKtm7BR4gc/fsY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1651129254;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DIGiUnkyxHNS0uD6OrT7smx8n4IaG1rFE68rlCC4b8A=;
-        b=r5uIT3hgFRE83pNn3OuVjBGPUzSPZIubBsDvIERo/Bfogn+XQ5J91ijmjIs1YqJteamOoi
-        mreqlSVhgQavr1BQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0828013AFE;
-        Thu, 28 Apr 2022 07:00:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id uP2iAZQ7amJ3XAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Thu, 28 Apr 2022 07:00:36 +0000
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Guillaume GARDET <guillaume.gardet@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dom Cobley <popcornmix@gmail.com>,
-        "Ivan T . Ivanov" <iivanov@suse.de>
-Subject: [PATCH v4 3/3] clk: bcm: rpi: Add support for VEC clock
-Date:   Thu, 28 Apr 2022 09:57:43 +0300
-Message-Id: <20220428065743.94967-4-iivanov@suse.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220428065743.94967-1-iivanov@suse.de>
-References: <20220428065743.94967-1-iivanov@suse.de>
+        with ESMTP id S244941AbiD1HUo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 03:20:44 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E9D89A998
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 00:17:30 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id g6so7744307ejw.1
+        for <linux-clk@vger.kernel.org>; Thu, 28 Apr 2022 00:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=kiotrhzY6mHRDt2MpfojkktIKuOsbK8By3NB4Q/GZSI=;
+        b=MTygZWqPOgvj4zfnDEGO0Dl7fWH8SPW4x5jXZgawyoAHH7BipTSQQY9dE4FYfaarZw
+         Mn/0qJ6JvHHoztgL07j/MuzBEOgoRQRoUfnP+TJEDVfjXbVVje567VawSzeielDgUPT8
+         9BvzFjKc7rZA5+WDHfGFTbBJ91bLc8yhfYW/BK5N8xB7S977ZqVMYCkK5tLMAu4O3HBC
+         hfs3GPgom/wSf0ifKf7AAf7AiZvg46+ctEfdCTwqQYHoNmrr7H5EZikutbWucDRS9Qy8
+         B5TcvJwcwEOg353CPL9N2hHCyCdLe+lKulnu1B3f2FtHc9YCkhBdwnPXu5D0UlDA4gRI
+         esjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kiotrhzY6mHRDt2MpfojkktIKuOsbK8By3NB4Q/GZSI=;
+        b=KZaNNgUt5KXNVb36B2ZzFRYVRbYpRRzIXB51yIU3XDGIwkfKqQ1CpYJzopT9mPZTpc
+         wIGQDEMt0RmXia1nJYTQjw/+5gQW7yHBFSe0CvokP5UZc9qiK8KH+5Px3J5Xum3bjcWi
+         FGZrNym2ouDHalZjKUTbInfCqWyatr1bl72TTkoP208Jwvgs6TXm12mXjoGk74HH9mh8
+         WPNDbS/nzc1Yi0sS4og1ZedaShdD054SNjXmEt5BDNJLagXRgSNs9bwMJelhViFbdkgk
+         Ipda2InRHA4Nomu7zWfFH+3Qdj5B/DAKCu+1Mq+SwxAPAhR1tNG1kO1maYSqoVOX2H49
+         I2tA==
+X-Gm-Message-State: AOAM533Dk9rkuT2AJnB1w/16p9iuv8x5Vu8UHF5AIc1gIqMGexyyxVx/
+        03UPF85t6ucQmYjqDMhJctTUWA==
+X-Google-Smtp-Source: ABdhPJwOzGc2ZqYmxfXfW9M4vuhzdmo/G5xgkjnVOJMaWrYUEVGUceHPm8UXhOi6f0Tq7bUzMH83Jg==
+X-Received: by 2002:a17:907:2d1e:b0:6f3:6717:5f38 with SMTP id gs30-20020a1709072d1e00b006f367175f38mr26762237ejc.732.1651130248876;
+        Thu, 28 Apr 2022 00:17:28 -0700 (PDT)
+Received: from [192.168.0.160] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id g16-20020a170906521000b006d58773e992sm8045716ejm.188.2022.04.28.00.17.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 00:17:28 -0700 (PDT)
+Message-ID: <a37b61fa-f199-0330-d741-ef737635d987@linaro.org>
+Date:   Thu, 28 Apr 2022 09:17:27 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH V4 11/15] dt-bindings: arm: mediatek: Add #reset-cells
+ property for MT8192/MT8195
+Content-Language: en-US
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, wenst@chromium.org,
+        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20220427030950.23395-1-rex-bc.chen@mediatek.com>
+ <20220427030950.23395-12-rex-bc.chen@mediatek.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220427030950.23395-12-rex-bc.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dom Cobley <popcornmix@gmail.com>
+On 27/04/2022 05:09, Rex-BC Chen wrote:
+> We will use the infra_ao reset which is defined in mt8192-sys-clock
+> and mt8195-sys-clock.
+> The value of reset-cells is always equal to 1.
+> 
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 
-Platform driver clk-bcm2835 gets an inaccurate clock for VEC (107MHz).
-Export VEC clock trough clk-raspberrypi which uses the right PLL to
-get an accurate 108MHz.
 
-Signed-off-by: Dom Cobley <popcornmix@gmail.com>
-[iivanov: Adapted on top of v5.17-rc6]
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
- drivers/clk/bcm/clk-raspberrypi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 530820d13104..d1dd01580573 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -33,6 +33,7 @@ enum rpi_firmware_clk_id {
- 	RPI_FIRMWARE_EMMC2_CLK_ID,
- 	RPI_FIRMWARE_M2MC_CLK_ID,
- 	RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
-+	RPI_FIRMWARE_VEC_CLK_ID,
- 	RPI_FIRMWARE_NUM_CLK_ID,
- };
- 
-@@ -51,6 +52,7 @@ static char *rpi_firmware_clk_names[] = {
- 	[RPI_FIRMWARE_EMMC2_CLK_ID]	= "emmc2",
- 	[RPI_FIRMWARE_M2MC_CLK_ID]	= "m2mc",
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	= "pixel-bvb",
-+	[RPI_FIRMWARE_VEC_CLK_ID]	= "vec",
- };
- 
- #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
-@@ -138,6 +140,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
- 		.export = true,
- 	},
-+	[RPI_FIRMWARE_VEC_CLK_ID] = {
-+		.export = true,
-+	},
- };
- 
- /*
--- 
-2.34.1
 
+Best regards,
+Krzysztof
