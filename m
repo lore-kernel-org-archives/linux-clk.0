@@ -2,152 +2,182 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DE7C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 17:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E387C43219
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 18:29:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379809AbiD2Rv7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 13:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34296 "EHLO
+        id S1380009AbiD2Scw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 14:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379808AbiD2Rv6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 13:51:58 -0400
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E046AD3D90;
-        Fri, 29 Apr 2022 10:48:38 -0700 (PDT)
-Received: by mail-oi1-x230.google.com with SMTP id m11so9239827oib.11;
-        Fri, 29 Apr 2022 10:48:38 -0700 (PDT)
+        with ESMTP id S1379999AbiD2Scu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 14:32:50 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB04688782
+        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 11:29:29 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id l7so17018895ejn.2
+        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 11:29:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=m5t7cdt/CWgC/r7ZaFwRZ/Pe0JhVgK8SGggmxnAqq8E=;
-        b=OnQlHi3ErSMC6qSiLPAQK9tsaNNmGUsK/yx8P84vl8ZH25FjCToTTPCP6xYzUtp823
-         nQu8zFOChn7TRclx0bhUluxvWGG31ISy3vYfQGsDQqCS3EjmUrqIVRNyq2psGtG3IDpi
-         1W6Ytq3a5RYAKQBAidu7fUxQYTQpt+5vW3SEkCPANbWWQlmsLBqc9x1cEkbQPaLnW01H
-         /gSIWuD7kQ5j7LODOU/HAxL6B5EQxZzhqJDbdqVUp7cmUle2rokPIwVHwnAzyzTxiKGl
-         riWnsbp5SbzhiGJgU3qP8CBvVkoxV+4fTE0nup4rFZ2hllcAmSpZXHHWttMly/Jd1ESk
-         NA5w==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=1Zn4UF57t4pnfMwkACd31jjeal5RhpHnkwFarZTu/dQ=;
+        b=Yju2gP3H7feQ0jeMIY/hZkOEOoSoa00CEibfna6oVQzF9/eQ5+ytMAsdLe5WX7mHeQ
+         J61qzVV7hJgD2E7DTMm799fD1ExZWC92O5Z5MQJ3Izz75VW5dcvN/q6CSgHUbws9RglY
+         83cEuaWdBuKpqQTXIrafNSDyCsuv2Ew28D74WXz/Ik2eST10Un3FzGmvqMC8O+fYL4PC
+         8JQYD4vG/i4KtH8ZMZH0GPFGUg6Nz8RKmYkXLtDfxBXypISaZi6+WTwWX/9LGj3oj9Ql
+         L8++NV0TVRjT6Iqj0aHMEIgQOGyyJP0xnB5R1z3nGhE9kAKq1TuJQ1gQ5SW7rPZfWhCn
+         o50w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=m5t7cdt/CWgC/r7ZaFwRZ/Pe0JhVgK8SGggmxnAqq8E=;
-        b=udmPLQBOZ0l0YxVOjotvF9nbHe5bj0fFvHlEfo190PuI0Y0u0HSbhBqy8Y3WAFVMmc
-         zU5QqximbdIUopnrej6PQSFEKvupe3fZIgRz1pEjegLnyrqguPoTaoLy0aHChaBFTAcG
-         fWmDV93KiodLGEeM8Ysk7+FcvAI1YRUMlNR6wGFUYT9Kq+4tkLd1TR2eA6gaxXW/XBNN
-         MV3d0//EYER7AzemZWUeWestg/pOil66ViLoX5lrp8b4pyUHswsIGssCQ//TJtPre7mV
-         GR/ELhsXBJAKuWXCY5QELuHRDRmdrbvg4yZCS0uFjZt7XkIq1AuE6pmqkT0SxcDdiu87
-         aVEg==
-X-Gm-Message-State: AOAM533rAFbWNzed8JHj2loMEujnerVvJuj9A2OvVCDkgNcIXgwhoCAZ
-        pzqfnobXL0AntLf1UXJXTXk=
-X-Google-Smtp-Source: ABdhPJxkF8A90UBe5FIUXgDpVBp8codcF4hzbNyKrz59fIRSWDCgfC0jKHUvcyNxHQ5kW9qHkRB58A==
-X-Received: by 2002:a05:6808:11ca:b0:2d4:6861:2a9e with SMTP id p10-20020a05680811ca00b002d468612a9emr282421oiv.114.1651254518245;
-        Fri, 29 Apr 2022 10:48:38 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b7-20020a9d5d07000000b00605e7b6b19dsm1261051oti.39.2022.04.29.10.48.34
+        bh=1Zn4UF57t4pnfMwkACd31jjeal5RhpHnkwFarZTu/dQ=;
+        b=IVCY7sdCQ0EOLk8EMzkNlfbg8lNHaNjqi7ITm5GhoQaOg3G0Cvx76XD5uNuv+D5u2p
+         W/p8I0kapBbbEbNDIWH+Mllkc5OTa9kPhdE/N/hVaHr9zd7QjZ5EcKreCsQcznxwEFkj
+         34qRp4XpZmTIWCy20ylG/zLl+SosMGr2wNlglIbbfEh/UQipVBaW/uVUrxOKwqgom2UI
+         8wCi2SglspmcdKsU2exl1JoXQekefk92WDaXg1H1KCfhPn1id1/0gX1xqDuxKA45dWiO
+         6lnnHYZpy35FNYFwDEiADYDhv+F6moA8ai7ZB156HfzdL2j0uNu2jf4fVZxI2Kz3oaJe
+         rfEQ==
+X-Gm-Message-State: AOAM533WMGKgul1GDLjhixADDs66sQplZzoyPnFb93jSSCbniqvoZhQg
+        1xCp1YqaiSlE6ssvzNv6OjpXqw==
+X-Google-Smtp-Source: ABdhPJxnnexTfm1ciFrnHmiTZVvUaiD85uL4/xEhS6m4C1gFLe/tyvaZCnOhPWZFKjyEpqAej5KZuQ==
+X-Received: by 2002:a17:907:2cc6:b0:6f0:2de3:9446 with SMTP id hg6-20020a1709072cc600b006f02de39446mr581569ejc.690.1651256968301;
+        Fri, 29 Apr 2022 11:29:28 -0700 (PDT)
+Received: from [192.168.0.175] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id h14-20020a1709070b0e00b006f3ef214db9sm858906ejl.31.2022.04.29.11.29.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 10:48:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
-Date:   Fri, 29 Apr 2022 10:48:33 -0700
+        Fri, 29 Apr 2022 11:29:27 -0700 (PDT)
+Message-ID: <cbf9aad1-cbdb-8886-f979-a793b070e2a1@linaro.org>
+Date:   Fri, 29 Apr 2022 20:29:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v7 12/12] rpmsg: Fix kfree() of static memory on setting
+ driver_override
 Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-References: <20220419163810.2118169-1-arnd@kernel.org>
- <20220422170530.GA2338209@roeck-us.net>
- <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
- <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
- <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
- <20220422234150.GA3442771@roeck-us.net>
- <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
- <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
- <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
- <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
- <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
- <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
+ <20220419113435.246203-13-krzysztof.kozlowski@linaro.org>
+ <CGME20220429122942eucas1p1820d0cd17a871d4953bac2b3de1dcdd9@eucas1p1.samsung.com>
+ <870885de-33f3-e0ba-4d56-71c3c993ac87@samsung.com>
+ <75b94ccd-b739-2164-bc4a-20025356cc34@linaro.org>
+ <6e21f7d3-49d0-eda7-7a89-0f8ac69596a4@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <6e21f7d3-49d0-eda7-7a89-0f8ac69596a4@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/28/22 06:44, Arnd Bergmann wrote:
-> On Sun, Apr 24, 2022 at 8:48 PM Arnd Bergmann <arnd@kernel.org> wrote:
->> On Sun, Apr 24, 2022 at 5:28 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>> On 4/24/22 01:52, Arnd Bergmann wrote:
->>>> On Sun, Apr 24, 2022 at 4:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>>> into the defconfig file, otherwise the multiplatform target defaults to
->>>> an ARMv7 instead of ARMv5 build. For an OMAP15xx as in the SX1,
->>>> you also need to enable CONFIG_ARCH_MULTI_V4T.
+On 29/04/2022 16:51, Marek Szyprowski wrote:
+> On 29.04.2022 16:16, Krzysztof Kozlowski wrote:
+>> On 29/04/2022 14:29, Marek Szyprowski wrote:
+>>> On 19.04.2022 13:34, Krzysztof Kozlowski wrote:
+>>>> The driver_override field from platform driver should not be initialized
+>>>> from static memory (string literal) because the core later kfree() it,
+>>>> for example when driver_override is set via sysfs.
 >>>>
->>>> This is slightly unfortunate, but I don't see any way to avoid it, and the
->>>> modified defconfig will still work fine with older kernel trees.
+>>>> Use dedicated helper to set driver_override properly.
 >>>>
+>>>> Fixes: 950a7388f02b ("rpmsg: Turn name service into a stand alone driver")
+>>>> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> This patch landed recently in linux-next as commit 42cd402b8fd4 ("rpmsg:
+>>> Fix kfree() of static memory on setting driver_override"). In my tests I
+>>> found that it triggers the following issue during boot of the
+>>> DragonBoard410c SBC (arch/arm64/boot/dts/qcom/apq8016-sbc.dtb):
 >>>
->>> Yes, that works. I changed it in my configuration.
+>>> ------------[ cut here ]------------
+>>> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+>>> WARNING: CPU: 1 PID: 8 at kernel/locking/mutex.c:582
+>>> __mutex_lock+0x1ec/0x430
+>>> Modules linked in:
+>>> CPU: 1 PID: 8 Comm: kworker/u8:0 Not tainted 5.18.0-rc4-next-20220429 #11815
+>>> Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+>>> Workqueue: events_unbound deferred_probe_work_func
+>>> pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>> pc : __mutex_lock+0x1ec/0x430
+>>> lr : __mutex_lock+0x1ec/0x430
+>>> ..
+>>> Call trace:
+>>>    __mutex_lock+0x1ec/0x430
+>>>    mutex_lock_nested+0x38/0x64
+>>>    driver_set_override+0x124/0x150
+>>>    qcom_smd_register_edge+0x2a8/0x4ec
+>>>    qcom_smd_probe+0x54/0x80
+>>>    platform_probe+0x68/0xe0
+>>>    really_probe.part.0+0x9c/0x29c
+>>>    __driver_probe_device+0x98/0x144
+>>>    driver_probe_device+0xac/0x14c
+>>>    __device_attach_driver+0xb8/0x120
+>>>    bus_for_each_drv+0x78/0xd0
+>>>    __device_attach+0xd8/0x180
+>>>    device_initial_probe+0x14/0x20
+>>>    bus_probe_device+0x9c/0xa4
+>>>    deferred_probe_work_func+0x88/0xc4
+>>>    process_one_work+0x288/0x6bc
+>>>    worker_thread+0x248/0x450
+>>>    kthread+0x118/0x11c
+>>>    ret_from_fork+0x10/0x20
+>>> irq event stamp: 3599
+>>> hardirqs last  enabled at (3599): [<ffff80000919053c>]
+>>> _raw_spin_unlock_irqrestore+0x98/0x9c
+>>> hardirqs last disabled at (3598): [<ffff800009190ba4>]
+>>> _raw_spin_lock_irqsave+0xc0/0xcc
+>>> softirqs last  enabled at (3554): [<ffff800008010470>] _stext+0x470/0x5e8
+>>> softirqs last disabled at (3549): [<ffff8000080a4514>]
+>>> __irq_exit_rcu+0x180/0x1ac
+>>> ---[ end trace 0000000000000000 ]---
+>>>
+>>> I don't see any direct relation between the $subject and the above log,
+>>> but reverting the $subject on top of linux next-20220429 hides/fixes it.
+>>> Maybe there is a kind of memory trashing somewhere there and your change
+>>> only revealed it?
+>> Thanks for the report. I think the error path of my patch is wrong - I
+>> should not kfree(rpdev->driver_override) from the rpmsg code. That's the
+>> only thing I see now...
 >>
->> Ok, great!. I managed to boot the z2 machine with PCMCIA support
->> and it gets around the issue with my patch, correctly detecting the
->> CF card.
+>> Could you test following patch and tell if it helps?
+>> https://pastebin.ubuntu.com/p/rp3q9Z5fXj/
 > 
-> Hi Guenter,
-> 
-> I have now sent out a fix that I'm happy with, and applied it to the
-> pxa-multiplatform-5.18 branch of the soc tree as well as the
-> combined arm/multiplatform tree.
-> 
-> I have not merged this new version into the for-next branch
-> since I would like to see if there are any other regressions first.
-> 
-> Can you run your boot tests on the arm/multiplatform branch
-> and let me know if that fixes everything you found? If that
-> takes a lot of manual steps on your side, I'd just wait for the
-> build bots and merge it after all there are no new compile-time
-> issues.
-> 
+> This doesn't help, the issue is still reported.
 
-I tried the pxa-multiplatform-5.18 branch. Its failures match
-those in v5.18-rc1.
+I think I screwed this part of code. The new helper uses device_lock()
+(the mutexes you see in backtrace) but in rpmsg it is called before
+device_register() which initializes the device.
 
-Should I try soc/arm/multiplatform as well ?
+I don't have a device using qcom-smd rpmsg, so it's a bit tricky to
+reproduce.
 
-Guenter
+Best regards,
+Krzysztof
