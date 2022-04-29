@@ -2,106 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AC6C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 21:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A843C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 22:37:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355569AbiD2WAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 18:00:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41892 "EHLO
+        id S1381529AbiD2Wkk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 18:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349516AbiD2WAE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 18:00:04 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8171DDBD36;
-        Fri, 29 Apr 2022 14:56:45 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id x77so6133419qkb.3;
-        Fri, 29 Apr 2022 14:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2IktU5cP8TErB1eZzzrdy5caCFWOk6wLxe2djT+xI+E=;
-        b=dJVWNiS90V1EftStrt0mAwxui8nKAeifH+Yp7HEV1Q0sIG7lBUrOUmfCBx9zMSGgD8
-         8Ni371s2KYzh6tw445SNe9CLkuuHhudAH3qm2d1JsawE1r+5Rh/Erm49luXVnoGflgzU
-         9nDVO5Gi3aURYAEQPKgyEo6UBpgTVNBW3JPr753/2g6pmyy5SBELD+JJphQAW2Mq8g42
-         tnNiJabRG55VaXVg6GfCX+OP379Zxc2m+1etTWPgc3/5zu6XgM/NaxW4Hsf9BxZloZ01
-         hiKDPIrVZXfb4qAAI2LmzitQnBsxng2bhNEcxjo2wDvklCi9mVp7sJSae8rMn/Yyru11
-         ccNA==
+        with ESMTP id S239462AbiD2Wkj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 18:40:39 -0400
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE401996BB;
+        Fri, 29 Apr 2022 15:37:20 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id c5-20020a9d75c5000000b00605ff3b9997so849939otl.0;
+        Fri, 29 Apr 2022 15:37:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2IktU5cP8TErB1eZzzrdy5caCFWOk6wLxe2djT+xI+E=;
-        b=xRaqRQdB1sHK9n30RwhyiKkRSCjbpCyj6CD0q91bejKBip4iCSCsBfR8YDjMWSDWhW
-         c6xlJGhhQUy/EPNFICaO4dupbZNQGITiHSB8E8wm2FoH0wr4FP0iX/JxlVqYoj5+rIEs
-         VtMKwdb03CqFfVpIRRGXFy8QfU/ygWiO7OzwPJbwgszgRxnoDPLSRnM64d91zh/p2r4T
-         5PcrmRyP3grCF/N9ozxvuvuD2zwbA6SYZvXNbIym+LrOvrufSuLjOdDd3hkBJUUe1xJa
-         ryObI1WjlMVc5loxtQvQNr30EOU7QJbIy1r1FFaR0tRXBqkNYGKa1DWkJx3kne/qQZYW
-         H/ew==
-X-Gm-Message-State: AOAM5324mW7bhS2iTF19S9s/mN0FF0Qb1oF0vyR04QgorzVNc1b8Ow/3
-        iBM8hzhAfYuYyhNMFI5N236O58rxoiKI6WmMm2m5fqbjoGrZ0g==
-X-Google-Smtp-Source: ABdhPJxxTKocEmDRUVcm9VX7Omzv2dfX1hAPvyXANayJ6pDdW2hd3aw1MQyLYwzHXagxbCxLS4+BgOq6f8je5bz6HmQ=
-X-Received: by 2002:a05:620a:1a01:b0:69c:fda:7404 with SMTP id
- bk1-20020a05620a1a0100b0069c0fda7404mr910750qkb.522.1651269404666; Fri, 29
- Apr 2022 14:56:44 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cECeERhvUI5B2Nya2PZFr4hXbWHDmZxUWHyaVMrMdOM=;
+        b=n7zQ6t42q/HLy/I56pd+mslpvPvM4tAT8AvTzewJpBSjffFjlBeU0Y4VCV/vSAEs0T
+         rZgk3BAyRf2C8oxjcIHeobJI/HRwLLOUQU1JhDtpwbc0GB/ou7UGAuw9JGC7ISgQNAzn
+         YfVekApeLcyH90cv95ciy1hpx88nhETO/8u/aF5pcExQvNPCXlFuZe9IxqvDfYYOD144
+         8dkYEH8erashvsriG+V7txMtSzBbz8WnX38+DUav+XcG8bWPiTfnr46STfCG7W6tomHO
+         ldS/8xylZ9N/z0UprEL5geLTIQszi9oAUcv3W5KqrQw8mAzmUuDU8nxMEPXfMgtvE6JO
+         5k9g==
+X-Gm-Message-State: AOAM531Eh2qRDE7x4kLvLKYCxG0958KkKhoP6vgssZS9aSfaW8x/0/c3
+        SEqkzdiEVZ5MrdBokLaiVA==
+X-Google-Smtp-Source: ABdhPJyRAmQ8+XOfTHvj7UZzS2Ges1j2q3irvixYxfrcbLWzrJA+bVtMu1axF6/4PRoI3OhLfPzLBQ==
+X-Received: by 2002:a05:6830:3155:b0:605:57e8:c8de with SMTP id c21-20020a056830315500b0060557e8c8demr577896ots.170.1651271840073;
+        Fri, 29 Apr 2022 15:37:20 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t3-20020a05687044c300b000e686d13892sm3485854oai.44.2022.04.29.15.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Apr 2022 15:37:19 -0700 (PDT)
+Received: (nullmailer pid 3029410 invoked by uid 1000);
+        Fri, 29 Apr 2022 22:37:18 -0000
+Date:   Fri, 29 Apr 2022 17:37:18 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        clin@suse.com, linus.walleij@linaro.org, festevam@gmail.com,
+        mturquette@baylibre.com, marcel.ziswiler@toradex.com,
+        soc@kernel.org, sboyd@kernel.org, shawnguo@kernel.org,
+        Mr.Bossman075@gmail.com, linux-imx@nxp.com,
+        daniel.lezcano@linaro.org, tharvey@gateworks.com,
+        linux-gpio@vger.kernel.org, dev@lynxeye.de,
+        giulio.benetti@benettiengineering.com, stefan@agner.ch,
+        devicetree@vger.kernel.org, tglx@linutronix.de, abel.vesa@nxp.com,
+        s.hauer@pengutronix.de, olof@lixom.net, linux-clk@vger.kernel.org,
+        sebastian.reichel@collabora.com, aisheng.dong@nxp.com,
+        robh+dt@kernel.org, arnd@arndb.de, leoyang.li@nxp.com,
+        cniedermaier@dh-electronics.com
+Subject: Re: [PATCH v2 01/15] dt-bindings: arm: imx: Add i.MXRT compatible
+ Documentation
+Message-ID: <YmxonpKvcmoKVXmT@robh.at.kernel.org>
+References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
+ <20220428214838.1040278-2-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
-References: <20220429114330.59026-1-robimarko@gmail.com> <20220429114330.59026-2-robimarko@gmail.com>
- <1b545fbb-eaca-fb98-f77a-15326a7a2e4e@linaro.org>
-In-Reply-To: <1b545fbb-eaca-fb98-f77a-15326a7a2e4e@linaro.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Fri, 29 Apr 2022 23:56:33 +0200
-Message-ID: <CAOX2RU4KiKxCSMGDu+=FZqkdRia0MSBcz-eMn0kGpJ5ABxdkSg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] clk: qcom: Add DT bindings for IPQ8074 APSS clock controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        jassisinghbrar@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220428214838.1040278-2-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Apr 2022 at 22:46, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 29/04/2022 13:43, Robert Marko wrote:
-> > Add DT-binding for the IPQ8074 APSS clock controller.
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
->
-> These are dt-bindings, so prefix the title matching dt-bindings
-> subsystem and remove "DT bindings" words form the title. Instead "Add
-> clock ID headers for..."
+On Thu, 28 Apr 2022 17:48:24 -0400, Jesse Taube wrote:
+> Recently the imxrt1050 was added but the cpu compatible node wasn't
+> added. Add both i.MXRT1170 and 1050 compatibles to fsl.yaml.
+> 
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> ---
+> V1 -> V2:
+>  - Swap order of soc's
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
 
-Ok, sorry for the mess-up, will fix up v2.
-
->
-> > ---
-> >  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
-> >
-> > diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
-> > new file mode 100644
-> > index 000000000000..df07766b0146
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
->
-> This should be licensed the same as bindings, so GPL|BSD, unless it's a
-> derivative of some other work?
-
-It's derivated from IPQ6018 PLL bindings which are marked GPL-2.0 so I
-decided to keep that.
-
-Regards,
-Robert
->
-> Best regards,
-> Krzysztof
+Acked-by: Rob Herring <robh@kernel.org>
