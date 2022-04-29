@@ -2,141 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC7DC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 21:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B029AC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 21:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234006AbiD2VRc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 17:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
+        id S238338AbiD2VfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 17:35:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233941AbiD2VRa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 17:17:30 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09585D3AFA
-        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 14:14:11 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id kq17so17661340ejb.4
-        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 14:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=5KwQXg3kAfcueRIgWTz8+NJpII/FC8wWWYg6Q9Nthhc=;
-        b=mSmefWgKqpjdEIThnO+p+FrR4IlVHz/aNeVt5V101jsLbtXHw+BYZRl5xTcyqyvWab
-         8aEoiEpPi2yHf/oPuQxhTjAs+GVRsCA37+PiwXGepxyti1yh0+uQG8b+xCfrg3R4QHYt
-         UfMB3qpecwjcCrFylGBsw4ZtR/ZrEP5/DjDmigOc7q9cWfgQ02tqgJFBCsuD7s5sYH86
-         U0MLJXTBJ8I6pCZJ5Rtl7YRdHFiRLK7A6iYSSTX2/P+J++kFRAHDulh626RT+UBUwq3J
-         g+07638sGr11NU+cC4r2BCmznCcOb4BJU2B12C2q7o1zai+a/zoq6w5yJG4ErEOK5Fky
-         CRRg==
+        with ESMTP id S232254AbiD2VfS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 17:35:18 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02359CEE24;
+        Fri, 29 Apr 2022 14:31:59 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id r8so9849932oib.5;
+        Fri, 29 Apr 2022 14:31:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5KwQXg3kAfcueRIgWTz8+NJpII/FC8wWWYg6Q9Nthhc=;
-        b=tq3YXZia79kYCsTy/jCOr3uU8/GrPAzrY+KRj8EPSc6fWnaFcxP4l2nJMrrIVuE1jq
-         DE45PAsFwrqtdj/ogo+iSNi3anX9nBxMKOWUbAGRPbResEgy2PKoOvFPnrzgZblXjJr2
-         sPksPa9sn8RuIhmZVHxjBI7GGj8t8+TgvhWKdwCmcOLTOrltpc+0zql1oukrQGX3VBAv
-         13PMi+Vsf+Yy9UB6/2XfUj2S2pduwn9M2FCkenl8RWahLWBBCymjI+UrhEsTGgWZEIGr
-         MZpK2lfToLW7ipd/ZnyU+/K8gXlFJkKum6e3Kg7QlU3fGx1d6iIp2y1vDAvCvuJTRxGG
-         9F9Q==
-X-Gm-Message-State: AOAM533lsM+twABuhv/39YSpvIlduOim+9/eUfudjWyiQZjE7EAHFVKV
-        txLsuynN0BExP69rOkDkkh6f+Q==
-X-Google-Smtp-Source: ABdhPJxA3AMKRcsX7oz+W7wdrr79LG0j9RCZsK//gaPa8R0aALk15ZUNTze57cPZ6d9bBthB755RpA==
-X-Received: by 2002:a17:906:5d11:b0:6f4:a04:6b44 with SMTP id g17-20020a1709065d1100b006f40a046b44mr1130215ejt.167.1651266849614;
-        Fri, 29 Apr 2022 14:14:09 -0700 (PDT)
-Received: from [192.168.0.176] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id ze12-20020a170906ef8c00b006f3ef214e68sm967751ejb.206.2022.04.29.14.14.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 14:14:09 -0700 (PDT)
-Message-ID: <6f70854f-1b5d-5445-5b63-23d7899f6871@linaro.org>
-Date:   Fri, 29 Apr 2022 23:14:07 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ipYeQfWFLcPKZ7mKRzp5aFzO9fJGsAJq6rg91kdXPzA=;
+        b=xlKrTCaUsbxgnOF6DptXQmqOp4N/svT47lFFGdgjszc/2ZrIvVpvtpQRXAcuuymZxQ
+         cFwxe9JQFq9QpqOwVUQeeR6K9brRjjX0iMLD5G/89zjMDxIzYxsyakPE+QU7sutMbKzY
+         EFUbHqcfbQIrE3BUAHL6MWSH+poZYmwfevu8KVekQaycBz3ic7/dg4T7DG2XH8heCiyi
+         Qttvfbhb5p3C+FSCVeEf9eskW8n4lvs3xY1/HJF9U6ggXYy+XU9vc5RE/dH5PTKgruZc
+         MeccxcoW/elegprdZVxIllhSedHmfzHrX/lPSsqMlictVfimHqZiJkcA0foPUc6R0CdK
+         w0Ug==
+X-Gm-Message-State: AOAM5306Wu8sa4IUMnOv3Cw+OeN0M4vdi3aNBj8fdvFfNPQze2DscCKR
+        Lf6Jl9OrbmaKytik97hlFasPxA3Wiw==
+X-Google-Smtp-Source: ABdhPJya/0Vf9slHqEQZMdiq4bLMSDj4AKWTrwZobUGM5btcbpe/2eQzGgdRlYsVWAAKTcIpHtNWWQ==
+X-Received: by 2002:a05:6808:219f:b0:322:9505:396d with SMTP id be31-20020a056808219f00b003229505396dmr2494199oib.141.1651267918288;
+        Fri, 29 Apr 2022 14:31:58 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id q8-20020a0568080ec800b00325cda1ffa3sm150320oiv.34.2022.04.29.14.31.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Apr 2022 14:31:57 -0700 (PDT)
+Received: (nullmailer pid 2917268 invoked by uid 1000);
+        Fri, 29 Apr 2022 21:31:57 -0000
+Date:   Fri, 29 Apr 2022 16:31:57 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
+ Documentation to yaml
+Message-ID: <YmxZTf7w40xv/Jvs@robh.at.kernel.org>
+References: <20220429121739.28584-1-ansuelsmth@gmail.com>
+ <20220429121739.28584-4-ansuelsmth@gmail.com>
+ <1651247596.124069.2344494.nullmailer@robh.at.kernel.org>
+ <626c0b64.1c69fb81.1b1e9.4fe6@mx.google.com>
+ <5127b3b5-ad27-fd06-42b7-fdf96d0a10ea@linaro.org>
+ <626c4ee8.1c69fb81.74b06.15c4@mx.google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH V5 13/16] dt-bindings: reset: mediatek: Add infra_ao reset
- bit for MT8192
-Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220428115620.13512-1-rex-bc.chen@mediatek.com>
- <20220428115620.13512-14-rex-bc.chen@mediatek.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220428115620.13512-14-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <626c4ee8.1c69fb81.74b06.15c4@mx.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/04/2022 13:56, Rex-BC Chen wrote:
-> To support reset of infra_ao, add the bit definitions for MT8192.
-> There are 5 banks for infra reset and 32 bits for each bank.
+On Fri, Apr 29, 2022 at 10:45:09PM +0200, Ansuel Smith wrote:
+> On Fri, Apr 29, 2022 at 10:43:21PM +0200, Krzysztof Kozlowski wrote:
+> > On 29/04/2022 17:57, Ansuel Smith wrote:
+> > > On Fri, Apr 29, 2022 at 10:53:16AM -0500, Rob Herring wrote:
+> > >> On Fri, 29 Apr 2022 14:17:39 +0200, Ansuel Smith wrote:
+> > >>> Convert kpss-gcc driver Documentation to yaml.
+> > >>>
+> > >>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > >>> ---
+> > >>>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 -------------
+> > >>>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 63 +++++++++++++++++++
+> > >>>  2 files changed, 63 insertions(+), 44 deletions(-)
+> > >>>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+> > >>>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+> > >>>
+> > >>
+> > >> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > >> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > >>
+> > >> yamllint warnings/errors:
+> > >>
+> > >> dtschema/dtc warnings/errors:
+> > >> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml: properties: '#clock-cells' is a dependency of 'clock-output-names'
+> > > 
+> > 
+> > The patches were previously sent (even as v6) and somehow the history,
+> > changelog and references disappeared...
+> > 
 > 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> ---
->  include/dt-bindings/reset/mt8192-resets.h | 163 ++++++++++++++++++++++
->  1 file changed, 163 insertions(+)
+> Mhh with split how this should be handled? Putting the relevant changes
+> in the cover letter?
 > 
-> diff --git a/include/dt-bindings/reset/mt8192-resets.h b/include/dt-bindings/reset/mt8192-resets.h
-> index be9a7ca245b9..5863d138568a 100644
-> --- a/include/dt-bindings/reset/mt8192-resets.h
-> +++ b/include/dt-bindings/reset/mt8192-resets.h
-> @@ -7,6 +7,7 @@
->  #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8192
->  #define _DT_BINDINGS_RESET_CONTROLLER_MT8192
->  
-> +/* TOPRGU resets */
->  #define MT8192_TOPRGU_MM_SW_RST					1
->  #define MT8192_TOPRGU_MFG_SW_RST				2
->  #define MT8192_TOPRGU_VENC_SW_RST				3
-> @@ -27,4 +28,166 @@
->  
->  #define MT8192_TOPRGU_SW_RST_NUM				23
->  
-> +/* INFRA RST0 */
-> +#define MT8192_INFRA_RST0_THERM_CTRL_SWRST	0
-> +#define MT8192_INFRA_RST0_USB_TOP_SWRST		1
-> +#define MT8192_INFRA_RST0_AP_MD_CCIF_4_SWRST	2
-> +#define MT8192_INFRA_RST0_MM_IOMMU_SWRST	3
-> +#define MT8192_INFRA_RST0_MSDC3_SWRST		4
-> +#define MT8192_INFRA_RST0_MSDC2_SWRST		5
-> +#define MT8192_INFRA_RST0_MSDC1_SWRST		6
-> +#define MT8192_INFRA_RST0_MSDC0_SWRST		7
-> +#define MT8192_INFRA_RST0_AP_DMA_SWRST		8
-> +#define MT8192_INFRA_RST0_MIPI_D_SWRST		9
-> +#define MT8192_INFRA_RST0_MIPI_C_SWRST		10
-> +#define MT8192_INFRA_RST0_BTIF_SWRST		11
-> +#define MT8192_INFRA_RST0_SSUSB_TOP_SWRST	12
-> +#define MT8192_INFRA_RST0_DISP_PWM_SWRST	13
-> +#define MT8192_INFRA_RST0_AUXADC_SWRST		14
-> +#define MT8192_INFRA_RST0_RSV0			15
-> +#define MT8192_INFRA_RST0_RSV1			16
-> +#define MT8192_INFRA_RST0_RSV2			17
-> +#define MT8192_INFRA_RST0_RSV3			18
-> +#define MT8192_INFRA_RST0_RSV4			19
-> +#define MT8192_INFRA_RST0_RSV5			20
-> +#define MT8192_INFRA_RST0_RSV6			21
-> +#define MT8192_INFRA_RST0_RSV7			22
-> +#define MT8192_INFRA_RST0_RSV8			23
-> +#define MT8192_INFRA_RST0_RSV9			24
-> +#define MT8192_INFRA_RST0_RSV10			25
-> +#define MT8192_INFRA_RST0_RSV11			26
-> +#define MT8192_INFRA_RST0_RSV12			27
-> +#define MT8192_INFRA_RST0_RSV13			28
-> +#define MT8192_INFRA_RST0_RSV14			29
-> +#define MT8192_INFRA_RST0_RSV15			30
-> +#define MT8192_INFRA_RST0_RSV16			31
+> > > Erm how to fix this? I can't do a 1:1 conversion if the source was
+> > > wrong and also have no bot warning.
+> > > Or I should just push an additional patch to fix this error after the
+> > > conversion?
+> > 
+> > Didn't we agree that original bindings were not in good shape? Yet the
+> > questions raised with your v6 remain actually not answered, till the bot
+> > complains.
+> > 
+> > Please do not send the bindings which do not pass dt_binding_check.
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+> In v6 the last mail were with the idea of sending separate series with
+> minimal changes and it was mention that it was a good idea to send only
+> conversion and then send the changes with the conversion series.
+> 
+> Finally got the message. I should NEVER send patch with warning from
+> dt_binding_check.
 
-Same problem as with previous patch - these are not IDs, but register
-values with gaps.
+It's like sending code changes that don't compile...
 
-Best regards,
-Krzysztof
+But I wouldn't say NEVER. If you have a warning that you think is wrong 
+or don't know how to fix, then send it and say that in the patch.
+
+Rob
