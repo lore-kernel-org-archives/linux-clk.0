@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F0BC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 15:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F72C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 15:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378194AbiD2PQo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 11:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37600 "EHLO
+        id S1378192AbiD2PQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 11:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378192AbiD2PQn (ORCPT
+        with ESMTP id S1378206AbiD2PQn (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 11:16:43 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFB3D4C4D
-        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 08:13:19 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id y3so15993554ejo.12
-        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 08:13:19 -0700 (PDT)
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF2DD4C64
+        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 08:13:22 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id i19so16002073eja.11
+        for <linux-clk@vger.kernel.org>; Fri, 29 Apr 2022 08:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fQi0DOXBFPjAV8nVfsEI5OyAGb7iRPNqL8WA0HHoYYo=;
-        b=lKUPKkowXeHzT0Ta2KasThXbya7EFtctvOWcyGz5iwDiqINSSbxHap2PKm+/B9j3eS
-         Ij7rnYLwrjrqQL5zCcpR/12PhxU6TPsXW9DDKLE+9SJ003FrFSA4tw/jrNsnwFiIvJwT
-         cyHO6mVoc+EocyUXyh5Rs9m+yz3Qc9ZAlhkmfktW5doBHs7Z3GyMVcLE49AYoZdBNUnw
-         xBK0dEbo/0uM0L/OFR5xb9sq2BK1FIP0ihGkY7afSyNF71Rka3c8kLTiLXRifZtJG6iE
-         Pq4emV4PIVcxd1BycfaihyUt0UwWTuH8An7LAEZGgyX98tWkv9GSdBsKw0eG17GajR2Y
-         Tj3Q==
+        bh=t7lOY18RHlZ0BRHPiFyuqSErNh+XH4pnEzjovY987mo=;
+        b=bd4cKg/YJO9uNiXNz2ptctAHSlEMc/8+uk7IpV09iAP/ktqU3v3zz+nlAlPWgUVQlY
+         wfjOmNPpz3Or4aKQNrvzy0zCwGRq2GPs5t9BN9zhZmAC7M2cmQVwEm+lcU/w5RS5J1No
+         TLUl/IXvCS+5ACzn6DouqT+pel95NaBj4PBWrde3gZ+AXUSzhUUYRN0UKTi8SRQQlUMk
+         JqPd8nXzJZGwQEPMGxTXUTiDKXlISc0L8IlNEgq4wdFVBKG/MYdZdjBAk/3X+0NE4wvL
+         c2UacIqwny/K30VZ30tfcc3XVGsAhZX8cw90PAuYG/r6vt7UNQqx5itUBDoteK7j8v+Z
+         ld/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fQi0DOXBFPjAV8nVfsEI5OyAGb7iRPNqL8WA0HHoYYo=;
-        b=WFf92wuqY+36WXmYbPs52ZexJUEOxiKPbQA7M+PhVeogLvY/HMM1KabWs1hGXzCc8f
-         O+m6Yp/nhq3XJJuRqaQJdI96nwodAV20Zm23MUcPpIc6bqkHZAu/P5oevgn5QSsMbu89
-         BqazHsbYQxIbo1MgBQU/7j445ExkwpJ28xDYPi2zubsL6RsHRNU8ps0usFyE5woP/p68
-         Pz+mM6crCODNJNDN9Uwwyt9F9uzRd6t9z7USuDPKvaRzqLwCU1yqqbGyXhRApPywor5u
-         MQwKmPeSXlLim/7iqdTmm9ICIKaMXGcFJziwNxV3SBc5lLEIWnAJRGuClJLItI8WtRTs
-         0RrQ==
-X-Gm-Message-State: AOAM530nVIHKsH0E7toQNkmiSBLnwf8Ca2PzLAr47tNpo3E5qOwCzFMP
-        O69OZ9zMiMMeho8QtgMAcmg2YQ==
-X-Google-Smtp-Source: ABdhPJyiyPakItBCJpcb5vAA9BUIq2lU3LRgIu9Ty3XZQnr+dQcNqoKX4OYcyka0YZu3YtgKamPqZQ==
-X-Received: by 2002:a17:907:6d9d:b0:6da:7d4c:287f with SMTP id sb29-20020a1709076d9d00b006da7d4c287fmr35626405ejc.741.1651245197955;
-        Fri, 29 Apr 2022 08:13:17 -0700 (PDT)
+        bh=t7lOY18RHlZ0BRHPiFyuqSErNh+XH4pnEzjovY987mo=;
+        b=M7Qiwg60ZXV4RLO83XDVSgZPngUvRmeE6BccX6yQukVNHGoIs1ykNLUySinDqimSbP
+         x+ushTlD2Toj2xcr2W0J2RJFIEwxDJDnYO3tYYvF+e1oWq+eX5rDx6ML/lgIC15QroUh
+         qQtwepwqyQF0iAs+NFiwDRwnSSnEUWxFn5uZqQ3jHdUxJtcGrdOsvHTjFhotQDNY/OGa
+         SWLqLD2kyiGfFA554vExV2ti2mW4ajhipB6VG+xnHeyExSqBun6HWJ4b1SL7gmke6KY6
+         ofDoVlu/e6PeMAXkAizzJfiGNEhgv9tGJ4OIWn1VJ6oJrWU76CV/NIlLsmjlft9BTjfM
+         Ovfg==
+X-Gm-Message-State: AOAM533FMTaELBvsAHpcZqeHOfiKuhPx6rLabOwqSo0IqgvyfZAc22xH
+        TOyxhAugL8ClQhJX1XAkP1AfcQ==
+X-Google-Smtp-Source: ABdhPJyiUiFYbed8YEoHLc9yAXU/m+TLLx6s5tqKTIOVWFqJ6vqYGODES6q27KDUUvpBQGdpzBVulA==
+X-Received: by 2002:a17:906:c14a:b0:6e8:76d0:e0eb with SMTP id dp10-20020a170906c14a00b006e876d0e0ebmr35781195ejc.412.1651245200918;
+        Fri, 29 Apr 2022 08:13:20 -0700 (PDT)
 Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
-        by smtp.gmail.com with ESMTPSA id zp15-20020a17090684ef00b006f3ef214e4esm712677ejb.180.2022.04.29.08.13.16
+        by smtp.gmail.com with ESMTPSA id zp15-20020a17090684ef00b006f3ef214e4esm712677ejb.180.2022.04.29.08.13.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 08:13:17 -0700 (PDT)
+        Fri, 29 Apr 2022 08:13:20 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     bjorn.andersson@linaro.org, agross@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -54,10 +54,10 @@ To:     bjorn.andersson@linaro.org, agross@kernel.org,
         anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [PATCH v1 5/9] dt-bindings: clock: Add Qcom SM8350 GPUCC bindings
-Date:   Fri, 29 Apr 2022 17:12:43 +0200
-Message-Id: <20220429151247.388837-5-robert.foss@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>
+Subject: [PATCH v1 7/9] dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
+Date:   Fri, 29 Apr 2022 17:12:45 +0200
+Message-Id: <20220429151247.388837-7-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220429151247.388837-1-robert.foss@linaro.org>
 References: <20220429151247.388837-1-robert.foss@linaro.org>
@@ -67,94 +67,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for graphics clock controller for
-Qualcomm Technology Inc's SM8350 SoCs.
+From: Jonathan Marek <jonathan@marek.ca>
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
+Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
+bindings. Update the documentation with the new compatible.
+
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
- include/dt-bindings/clock/qcom,gpucc-sm8350.h | 52 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8350.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-index 9ebcb1943b0a..4090cc7ea2ae 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-@@ -20,6 +20,7 @@ description: |
-     dt-bindings/clock/qcom,gpucc-sm6350.h
-     dt-bindings/clock/qcom,gpucc-sm8150.h
-     dt-bindings/clock/qcom,gpucc-sm8250.h
-+    dt-bindings/clock/qcom,gpucc-sm8350.h
+Due to qcom,dispcc-sm8350.h being a symlink, checkpatch is not happy
+with this patch. Other than warnings related to this, it should be good.
+
+
+ .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
+ include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+ create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+index 31497677e8de..7a8d375e055e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
+@@ -4,18 +4,19 @@
+ $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
++title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
+ 
+ maintainers:
+   - Jonathan Marek <jonathan@marek.ca>
+ 
+ description: |
+   Qualcomm display clock control module which supports the clocks, resets and
+-  power domains on SM8150 and SM8250.
++  power domains on SM8150/SM8250/SM8350.
+ 
+   See also:
+     dt-bindings/clock/qcom,dispcc-sm8150.h
+     dt-bindings/clock/qcom,dispcc-sm8250.h
++    dt-bindings/clock/qcom,dispcc-sm8350.h
  
  properties:
    compatible:
-@@ -31,6 +32,7 @@ properties:
-       - qcom,sm6350-gpucc
-       - qcom,sm8150-gpucc
-       - qcom,sm8250-gpucc
-+      - qcom,sm8350-gpucc
+@@ -23,6 +24,7 @@ properties:
+       - qcom,sc8180x-dispcc
+       - qcom,sm8150-dispcc
+       - qcom,sm8250-dispcc
++      - qcom,sm8350-dispcc
  
    clocks:
      items:
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sm8350.h b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
-new file mode 100644
-index 000000000000..d2294e0d527e
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+new file mode 120000
+index 000000000000..0312b4544acb
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
-@@ -0,0 +1,52 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
-+#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
-+
-+/* GPU_CC clocks */
-+#define GPU_CC_AHB_CLK			0
-+#define GPU_CC_CB_CLK			1
-+#define GPU_CC_CRC_AHB_CLK		2
-+#define GPU_CC_CX_APB_CLK		3
-+#define GPU_CC_CX_GMU_CLK		4
-+#define GPU_CC_CX_QDSS_AT_CLK		5
-+#define GPU_CC_CX_QDSS_TRIG_CLK		6
-+#define GPU_CC_CX_QDSS_TSCTR_CLK	7
-+#define GPU_CC_CX_SNOC_DVM_CLK		8
-+#define GPU_CC_CXO_AON_CLK		9
-+#define GPU_CC_CXO_CLK			10
-+#define GPU_CC_FREQ_MEASURE_CLK		11
-+#define GPU_CC_GMU_CLK_SRC		12
-+#define GPU_CC_GX_GMU_CLK		13
-+#define GPU_CC_GX_QDSS_TSCTR_CLK	14
-+#define GPU_CC_GX_VSENSE_CLK		15
-+#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK	16
-+#define GPU_CC_HUB_AHB_DIV_CLK_SRC	17
-+#define GPU_CC_HUB_AON_CLK		18
-+#define GPU_CC_HUB_CLK_SRC		19
-+#define GPU_CC_HUB_CX_INT_CLK		20
-+#define GPU_CC_HUB_CX_INT_DIV_CLK_SRC	21
-+#define GPU_CC_MND1X_0_GFX3D_CLK	22
-+#define GPU_CC_MND1X_1_GFX3D_CLK	23
-+#define GPU_CC_PLL0			24
-+#define GPU_CC_PLL1			25
-+#define GPU_CC_SLEEP_CLK		26
-+
-+/* GPU_CC resets */
-+#define GPUCC_GPU_CC_ACD_BCR		0
-+#define GPUCC_GPU_CC_CB_BCR		1
-+#define GPUCC_GPU_CC_CX_BCR		2
-+#define GPUCC_GPU_CC_FAST_HUB_BCR	3
-+#define GPUCC_GPU_CC_GFX3D_AON_BCR	4
-+#define GPUCC_GPU_CC_GMU_BCR		5
-+#define GPUCC_GPU_CC_GX_BCR		6
-+#define GPUCC_GPU_CC_XO_BCR		7
-+
-+/* GPU_CC GDSCRs */
-+#define GPU_CX_GDSC			0
-+#define GPU_GX_GDSC			1
-+
-+#endif
++++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
+@@ -0,0 +1 @@
++qcom,dispcc-sm8250.h
+\ No newline at end of file
 -- 
 2.32.0
 
