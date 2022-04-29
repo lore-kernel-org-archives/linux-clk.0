@@ -2,140 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F433C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 23:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7E1C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 23:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381691AbiD2XMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 19:12:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
+        id S1381735AbiD2Xc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 19:32:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381689AbiD2XMq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 19:12:46 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706C384EC8;
-        Fri, 29 Apr 2022 16:09:26 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id s131so10060528oie.1;
-        Fri, 29 Apr 2022 16:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=43bhXKjvki5l9d/uYFdijwNa1GUErzr1H3q463hR+XU=;
-        b=OUSt6wkRUbg0ovBrwSGrseeTfVqA3atJE26IGGL8DNDKMbVWyzV7fWqixesYb9S/mA
-         rgBp/vgWVmZ/2SlxqdaVKFisC/DX2eo4pEgNEmTUveV61siwDvexnXReKJ4KInzJ+JVf
-         qFRYIk57Zf7KE5IqQd6E9kuwLyNvXqeY18u9sXPldsZHCbpZQ9kw31XwNt/jpYsmggt1
-         3DzogSdIaSMtewj0hqjuAW3EwbG0+z+yCYsMAftASTL8pYSQ3/TIzpEEpEvE1aCdKITD
-         c0o8+XWDHiHzhST5JtA4/c6tGuJLD552k5cdjIV4SeeCvbAOGItN9qS8zGZ2A17U8O+I
-         msTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=43bhXKjvki5l9d/uYFdijwNa1GUErzr1H3q463hR+XU=;
-        b=mT2oX+us+jAjxxNCRAJwVItXzD9LCXnKAwnPlt3aIz/DOTvh4zEJ7csNhtctH1hi3N
-         QaU2rmb3tV1C4TnbhRCsu+FuOB5Y+syVxgRa13zFZZbydkiidaJ1jeAOlqP8rugq+A4o
-         3E7/GcQLpEYkxWRUPddwjYgLvuJaXIWys6nABTZK7592NBLfDysn94vUCV1dHO/q9eIh
-         GyJeTxQNl0BgkbD8rAHINhr+dESERaMYN07cyxzU547ZJGRIfoFZO2ClfRWOEghmPRAe
-         MhPpsaM9OxMzIE6PNVPrg1XTXD6hpDSg6hocSqTPLPMWkDpUTsQTmFMe7VrmiklJS4f6
-         I3Aw==
-X-Gm-Message-State: AOAM532b+VCyaP8EQwBbr+0jiSGuVCIm00hhDNz+IOPB97TXHu8yz44/
-        tT1gdgA7aGoG24sCARBJ99s=
-X-Google-Smtp-Source: ABdhPJwXwAJF7RkFvU52UI/VP0gJxz700pwOLyrX7CYTkoQTpT4bc4rvMjOD84iMZwh8LrG+2Nl3bg==
-X-Received: by 2002:a05:6808:17a7:b0:325:c561:31fb with SMTP id bg39-20020a05680817a700b00325c56131fbmr1544693oib.75.1651273765807;
-        Fri, 29 Apr 2022 16:09:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w1-20020a9d77c1000000b0060603221242sm230484otl.18.2022.04.29.16.09.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Apr 2022 16:09:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <149509dd-f43d-1b27-4395-81eab4ff3455@roeck-us.net>
-Date:   Fri, 29 Apr 2022 16:09:19 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        with ESMTP id S1381789AbiD2Xc5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 19:32:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4551CD335;
+        Fri, 29 Apr 2022 16:29:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7097A623E0;
+        Fri, 29 Apr 2022 23:29:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CE2EBC385AC;
+        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651274977;
+        bh=SOxvHWF/MTb7rLbkQ3GAVki1VB4HwbPvKhMHS+vEjFE=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=tzUYzbv4w3Ll7bQp5Vqp5y+Ck9U9qhFeR3w9xzeOxPDXwZBw1Cgdw2MmkqPj2JmiY
+         1FEQ9SAjwC20TpYjMSHp2YS0Ot3h7rCav5qKfWS94HfjCytp7jDWTrMmdPc11jS1t8
+         GIQkgQ4epgx4TLWiFMdTMSUFDygoe615XWJh2Y2XyP1V/Wq3DJVctRFGpYrCe94pZo
+         nsYZnvoRqOT4SUc/rKmqxc1kdvUVQMIlX9CVOlY5wxtpwm1WURW5S4NYq+H7l32SVP
+         4eUBFdtcekwphRfQRN/lSZYRugSsT7Tg9qcrBxo1Y9Nl83GktKusGhqK8dw9cSDWPO
+         1pUnxmsKwM3vA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BAE91F67CA0;
+        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v5.18-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220429204451.2794649-1-sboyd@kernel.org>
+References: <20220429204451.2794649-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220429204451.2794649-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: a91b05f6b928e8fab750fc953d7df0aa6dc43547
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c0e6265e6c2dd3f1bc37d929194c97079f7ffd3f
+Message-Id: <165127497776.20495.3183521395094456296.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 Apr 2022 23:29:37 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-References: <20220419163810.2118169-1-arnd@kernel.org>
- <20220422170530.GA2338209@roeck-us.net>
- <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
- <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
- <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
- <20220422234150.GA3442771@roeck-us.net>
- <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
- <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
- <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
- <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
- <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
- <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
- <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
- <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
- <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/29/22 14:46, Arnd Bergmann wrote:
-> On Fri, Apr 29, 2022 at 10:23 PM Guenter Roeck <linux@roeck-us.net> wrote:
->> On 4/29/22 10:48, Guenter Roeck wrote:
->>>
->>> I tried the pxa-multiplatform-5.18 branch. Its failures match
->>> those in v5.18-rc1.
->>>
->>
->> Uuh, wait, the build wasn't complete. There are still some
->> failures. I'll report later.
-> 
-> Sorry about the breakage, I got a few more reports about minor build errors
-> and warnings, the newly uploaded branches should address all of the ones
-> I got reports for.
-> 
+The pull request you sent on Fri, 29 Apr 2022 13:44:51 -0700:
 
-Unless I am missing something the failures are the same as before. See
-https://kerneltests.org/builders/qemu-arm-testing/builds/74/steps/qemubuildcommand/logs/stdio
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-This is with v5.18-rc1-49-ge8ab9a9a2745 which is the tip of
-soc/pxa-multiplatform-5.18.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c0e6265e6c2dd3f1bc37d929194c97079f7ffd3f
 
-Should I check a different branch ?
+Thank you!
 
-Thanks,
-Guenter
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
