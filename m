@@ -2,183 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACA8C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 09:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1BEC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 11:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357182AbiD2KCh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 06:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33018 "EHLO
+        id S1358596AbiD2Lqx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 07:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357181AbiD2KCf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 06:02:35 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2127.outbound.protection.outlook.com [40.107.113.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78442C6656;
-        Fri, 29 Apr 2022 02:59:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DGe0XMiLamLIvamkoMQ7PhaYzp5Tw7P1yqB09NE0bfuqI9X2EWMr0y2bZPMpKf16IyyE+/ULSsUlWXZuq2cTMnuG/EVnFpWC4YFExDrcdUPpCYLSawy4dH1vWunRHPCoT1O174ozdutBace8IEU1hdK/gjAqoSEImlytI52SRNz4ZaA02/no2dTKgxb7nU6iO1kRooMjcPmYXnhid/LCrsrI1BRAhCFqaOrkb/TUchhWLkeSp+Ay4OOjqQwUo1zBgnGumLaDy2UT2ZqydTja2o5D0zjcXXtyxPdskyRvVApcdjM+hm4ajJnTeRPzFFZNqyEONNJwLPIvsl4F7Lsu/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b2TdYLNT2yzFRoQyShAh46gtzmQ/uOUpTNAr6WEPKcg=;
- b=RrufQ5MUMwE5JAOtGJct09jDejtRMJrXFa/+C9JmeMNibmphW8xHt3CBQdyPrHNgBD9fWjzOZRItAY4FV3EuDAIjKeJPMSvH+ZhQjrFxHz8wiiqxAiXdTHtupsyT8Zp22k15excmzBP+8NiIiiE1wBiRrvU8B5nE8GIR1D4bXjlkqW9ZObLDqn9oJDz9ryCGvbzPKbGKzNyAtYFNfb2/bjxGQT1yTOvBV5T5SHfAoRrXJnjioyVvjtfV1jUlPLRWkvMj658noxbJ2+HwGicciTXDULHk1K07ajFTlweRIkbd3jtun6ouzp83igdMKvcSPfC86H+bQ47cQjif3uGCeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b2TdYLNT2yzFRoQyShAh46gtzmQ/uOUpTNAr6WEPKcg=;
- b=JrQuqyyOZggjYWT0bK76QyAzj2KQs+Brl1cw38sa5JWID+tEQI116jH2vEkWqhkROdpcXgrzdnGzGEv2ef08weNuBI9aDyDnv0H5n5VivYysLf356uXRJfUYpXbAQnBKl1FwoX3glU2AZdCE1fCoXxN34IutOW/6pIsnHBwFt38=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OSBPR01MB4550.jpnprd01.prod.outlook.com (2603:1096:604:78::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.12; Fri, 29 Apr
- 2022 09:59:15 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3e:970b:c238:f57]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3e:970b:c238:f57%7]) with mapi id 15.20.5206.014; Fri, 29 Apr 2022
- 09:59:15 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 3/9] clk: renesas: rzg2l: Add DSI divider clk support
-Thread-Topic: [PATCH v2 3/9] clk: renesas: rzg2l: Add DSI divider clk support
-Thread-Index: AQHYWhv7A6T+bHumC0eniUT7n79q0q0GpZ6AgAABVgCAAANHgIAAAI7g
-Date:   Fri, 29 Apr 2022 09:59:15 +0000
-Message-ID: <OS0PR01MB5922127A42B6EDF9CB1E135186FC9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20220427094823.3319-1-biju.das.jz@bp.renesas.com>
- <20220427094823.3319-4-biju.das.jz@bp.renesas.com>
- <CAMuHMdUo6J7_hfsoDYprMc7Tk79D4FxQiXJ7hFH8s_6nzptsUw@mail.gmail.com>
- <OS0PR01MB5922F0C5A80F26109A27BC5D86FC9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdW88S+STBvsL45wT1ox0mO=_HUtSd8HqB5037R=XCcGTw@mail.gmail.com>
-In-Reply-To: <CAMuHMdW88S+STBvsL45wT1ox0mO=_HUtSd8HqB5037R=XCcGTw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9160715b-a0e0-47e1-266c-08da29c6eb25
-x-ms-traffictypediagnostic: OSBPR01MB4550:EE_
-x-microsoft-antispam-prvs: <OSBPR01MB4550156CF0F5EE74833BA91D86FC9@OSBPR01MB4550.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: V9cDomuX8U7Su1AKpRhoNUxnUuwa7DP8sUoPqzzpWdZyE3PAfbhVFius3QU8O6r1ZguRvnrFj6Jq5wspBUD5REtUuV/sCk+oIRDc1lDqeNLD1zuyBBIcIvSl73RXGUgs4hI1PzAJMFzDi+wvPfArgYw02qpbDSuKv5tErVCNen6tKBpgp6h/zFRFWnjYXzO/2Ah7j6SuhwjHDgjO9lEL+XqwDkwInnmJ9adu6b1GP2h6p/pPe17QGhm2VNLvsG0mqz9asyN4OvgV5UKPMVJwn/UW4xUbKhbRSCAxneFeIs656kt2c+aeszdnUKR4Oh+6PD0UX0XIxUMN9ZFlgKPvkzrMvoOcUE+/GP9yGwhGrJoMVvn/SMvbkjudtGyA7lG4l8D9Dv+Ef8+L/5ezCxR9BUBW9+AfrhmhokM2aXwXd2BoO/fI+i1DqeUK5onwSLHZtY94tB+LntStqamEnWksN9sLtacq9Io5fIEuo5tq6x6Qi7sDDbt1lGRg5xQ/6Ec+S0mg6O1D4ScDQZU6ATalfgBY/mlxFq6n4T7QGx9EIUuxh4zJaOW0QJ7HKHXGebavcePp3cOB1elKCkWppblWylxM4CYBT+o7Ujtlk8KjdtJCvp+g1zCgDwFsi5NQOk+sXADFQTvEgkGj/MNtDolRBQQRUf47/1OPBoVVXZRrQm8AEZVOVcFkvm9Fr0BdHBbCAsmw8/OgpFqP3TY04/K/Uw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(83380400001)(6916009)(6506007)(53546011)(54906003)(508600001)(26005)(7696005)(71200400001)(33656002)(2906002)(55016003)(122000001)(38100700002)(38070700005)(66946007)(66556008)(66446008)(8676002)(4326008)(76116006)(66476007)(64756008)(316002)(86362001)(5660300002)(8936002)(52536014)(107886003)(9686003)(186003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K3IxM0ZCVGdVZWNSa1J2S216UlZLNUNPZXFkemlxa0NUQmpIRXFLNzhnNTBE?=
- =?utf-8?B?ajFrbnpaUk1KUEFBaHZWZmx1S08vZFZYVllKRUc2UGUvQk5sNkRkSjZGTUJz?=
- =?utf-8?B?YWxISkpuZ2pQTDhnV0FjYnBiZGRPN09zckhxZGMvRzNLSmNZU0dmelBKL0t3?=
- =?utf-8?B?ZVVybzB2TEpTTmhmYWpMbWpOVWxCTGdFK1VwaFJyQ1hDcFBpV2lkN3hqanJu?=
- =?utf-8?B?bmUzVFEwZUJTZENSWmE3a1ErWll2Y0hCaHEySS84SFZZZEV6S0dDYWgxYlU0?=
- =?utf-8?B?b2l2TklLc1Z1Z2VBQVBIMGVWS1lpK2hrZmR2UFBKTVBxRmZWOVZZWm1YcEpK?=
- =?utf-8?B?MkgwTFVFR3FWeTNSbmloZ3p4dThTakJ5RU9uRzZTWWhqbEhIWkZYdUs5clYy?=
- =?utf-8?B?RDVXc3lwY01CV2t1a3E0RXBnSTZMUjE2TEZmUVZDbzFTdXp1M0ZidjBLcW1R?=
- =?utf-8?B?Q0NQZmV4K1FzVTJuM0JFSUpDcDVTYXA3T1BUNG5qUGdZcWlKYmZ1SWI2REVK?=
- =?utf-8?B?bkwwOGZkWFdjQkhJWE84eDNob2g5U21kQnRvbzNtMy9xYjJjSnUzNmd5RjNY?=
- =?utf-8?B?Nkk2R0dRUk9VY3pTMlJHL3dDcEdPV1F6S3hOZ3lCWUttNHFEWTlBM3Jyc3d1?=
- =?utf-8?B?QXk0YkRQSEY5cG1Xbnc3Wk9ISzk2YUJmeVYwZXlJMXpsK0tHNnBwdWhJR3No?=
- =?utf-8?B?R3NjZThDQTN0bUZORjBreE10elVUMWhhSjVXcEVLcTNHc1V4SlNBbjFodkx1?=
- =?utf-8?B?S3IzOU5VSDE0MkZ2UGpUa3haTWpkSFlVakpWaW5Ya2N0SkhmWm5EaHNRUzNO?=
- =?utf-8?B?RDZFYXlGVE54SzZycDRTUFFya0VZZmQyeENTVDVmWUxWVTRVNDcyL1VaY2VZ?=
- =?utf-8?B?ck15bVNRTXFkaUJCaWpFSFhGUTVRN0REWFF6WlYrUklLdmVrS2pTTlJDY05W?=
- =?utf-8?B?dU10THVzYytiUnUzcGQ4WVRiUXc5TkdoakZrVjVzbDVlcFAvc3huUTJpRHZQ?=
- =?utf-8?B?Z0QyV1FhclJ6SlpLOEp6QVdlbTNQcittOXo3TmtvbWNZNVhSbXFOa2dscjVQ?=
- =?utf-8?B?T2djbVlBM1hlVXpWOG9DWTJ0ZGtBV2pha2trNzNKS0NNMGRrSFkwMGxFUXVa?=
- =?utf-8?B?MFA1b0VzTEp2eXJzS1YzMXBSU2lxWHlYT3kwb0NFUGhyYm9TV294SVlLN09a?=
- =?utf-8?B?V2gwSE9LVjQwK3MzNGlWdkd3UHFXd3VURUlIbnp0T1NzZkZxZTFyZzh1aVNs?=
- =?utf-8?B?Qnd2c2YwWjN5WTlCZzhuQlZzQ3J3WlJJY0VFTTcwZGMxUndwOFk5Z1A2L0RJ?=
- =?utf-8?B?OU1DcmhnS2phWG5EOHlWbnJMUytDTDEyOXlwdGU3N3dqWXhFRTRTWnBnbU9t?=
- =?utf-8?B?QUZvc3NMb2JvYm5VaE5qdS81bEM0Uzcrd2VNd2VRNWdzRmorT3NHUEUxZnlY?=
- =?utf-8?B?N3ZidjhJTUNGUWdyVHpOVHR2SnNEUUdBeW5lZzVmS3ZZQzBjYktVbzdwMFNJ?=
- =?utf-8?B?UVRFd0lRU1lnbmhNd1ZlSE5wMTJ1RjJnQ0FuK0F2VnJnQW9zNWZ4K1VvMm1k?=
- =?utf-8?B?VWRhS3BvME1sRTNLMUhzdDQvck1kRldiREh0WHpnWGkySEdlVC9QZUhEdFZ0?=
- =?utf-8?B?K0U3Mzhwb0RPa1dRTDVML1UvQW1GYjNoc2EyYWc4SThxeUVialhHK0REWENx?=
- =?utf-8?B?YS94ZHpOU2pGakJvTi9ZcWFPWUhoQWl6Z1dzdzFGekhzZEJtNjVncUQ4elZt?=
- =?utf-8?B?ZWVLRFFXNHlrcDdCVFc2Znl4SjhyZ3dZbCtLRXpTVDdhS2wyVXYzdFo1bEtB?=
- =?utf-8?B?NzJPRFltK09wdkhwQ0RaV3VEaFhGY0hIR2JPRnllbjZxNzRwYS9SWjJEancy?=
- =?utf-8?B?WEJPUDRoYUJRVjVhcmpYcmR1VHdyaFZEU3FBTmsrWEh2YktTbG1nU3g5NlpX?=
- =?utf-8?B?QWRHb3AvNG15U2d1K2c1M1NnaWtTVUlHb25ocFhUU1ZZU25Vemx2dzU5N1E4?=
- =?utf-8?B?OE5LL0d0S2Y4cHZMVFhGRXlHWG93R2VhLzBpNUQ3VmlOZVBVS3dpQ2ZTejJz?=
- =?utf-8?B?VXpiNkJxMnNQRk02aktkWkI4YlBpNWpsd2NHOVBDelZBUVhWcStxRmErb2JP?=
- =?utf-8?B?S1NnVTJLWlNwZnd2Vy92Z1d6RzRtbTJNYnVBNHc2eWVaTUhuZk42Z2xXUjdt?=
- =?utf-8?B?Ty9NdnhhUVluM2NEWThhaG1iK3Z0dnhYNTh3MFBqMEZBYVJHOVRtemlpVGoz?=
- =?utf-8?B?VWJPRzEvamhDSk12TGwvRDB3RXowcGZoMndBeWJzSFM4RUdtQVB2Mm1Gci9W?=
- =?utf-8?B?RjE1RXdrUXRONGVreXIxZ3lMQ1Z1clJRY2FCdDkzT2pYT3FldWhxUWpRdXQr?=
- =?utf-8?Q?bIFCIrE1Xbf0A4QI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        with ESMTP id S1358073AbiD2Lqw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 07:46:52 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C32AB252AB;
+        Fri, 29 Apr 2022 04:43:34 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id x18so10481340wrc.0;
+        Fri, 29 Apr 2022 04:43:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=noiLEGjS69TNqfsR+PPtmcT72BXbzXlEteGUOjRdti4=;
+        b=VBCT5w1S0mXJE2U2KRraF7W92VzzhpTIuk/ertQoUbVYS6V+zNOL/nC3B4Taz2fGIq
+         3Tc/0cnzp082Zxar3Q/FWb9rgXdmmmT1ipDxYlxmQgKMfRzHTZCh1wzvBRy7lEmL89Wv
+         jthJtdv/9NLhlkTlkCJmP2G/qYS4i7VTGIec0/gipIVHy5JiF53Hmxl4SzmlX33RWnvF
+         SfV1sxWgJa4Hj+cdzESUhBUXblaYGwLWZGKy+32z8PpIfpEjQmvlZO/mxFcwlXr/zlgS
+         a9UztJBAFJSHXfT83Evm3497rnkjzZs32CrHndY9uS0Mez35COZnKz5vUQjXdcUyCc4i
+         +BCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=noiLEGjS69TNqfsR+PPtmcT72BXbzXlEteGUOjRdti4=;
+        b=OdPA5Tk2qxpOepY+p6fEUUZR1pY65SAeu4aGkFwcrG4/Sll3zZ3lNEEpkA7w5RJYVe
+         yEdAvx9+Ja9mwsLGWf/5JS4Pu6ReSbdc180CZ+kggWgLvLkiDaYXMNY0r1fQloN2apGx
+         U4WtRKWpTG+R1ByIjwK8fPPIxIhCK8qxc4OdVZmyNndy6pFHIwBiYJUKN4YI8v5FgVJS
+         46gJqO3LwD4cQRdCQAUqvcXVd1AMFjuK6luHr22lXSDII7e3qRlrW+mXP7M7nGf3Qtm+
+         mEruR2GOIg3ql2143SLIm5uXvedK3cD72jZ0kxO6tV3J04osEsM5zQ+8Oa0cIwRzNpPJ
+         52VA==
+X-Gm-Message-State: AOAM531Lvq3AEOT2ejDqvJakIOzbeFvmTIjzyyXW2ckJfNArAELr8K/Y
+        YKoi13QAynSBms3AvUsVCYo=
+X-Google-Smtp-Source: ABdhPJy8R+fDWCVWIT8z/71l8GYePMC7jBJ8hyQmGdE9wl+d1vgnwHXdLIyUlbQ1WNfE9YmD9FTuVQ==
+X-Received: by 2002:a5d:498d:0:b0:20a:dc6b:35c9 with SMTP id r13-20020a5d498d000000b0020adc6b35c9mr19684389wrq.176.1651232613260;
+        Fri, 29 Apr 2022 04:43:33 -0700 (PDT)
+Received: from fedora.robimarko.hr (dh207-99-183.xnet.hr. [88.207.99.183])
+        by smtp.googlemail.com with ESMTPSA id l6-20020a1c2506000000b0038e6fe8e8d8sm2990900wml.5.2022.04.29.04.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Apr 2022 04:43:32 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        jassisinghbrar@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH 1/6] clk: qcom: clk-alpha-pll: add support for APSS PLL
+Date:   Fri, 29 Apr 2022 13:43:25 +0200
+Message-Id: <20220429114330.59026-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9160715b-a0e0-47e1-266c-08da29c6eb25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2022 09:59:15.1534
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BTsxAwtAdb3t2ckMIqW6X/NfUCxfMJJp2EuYW01aRz+fCn/jgC5X0V1kci6SOxtXdPvYp46GK6HKbU95YfxqywJZebUdCHKzZqpi1ktNMys=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4550
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjIgMy85XSBjbGs6IHJlbmVzYXM6IHJ6ZzJsOiBBZGQgRFNJIGRpdmlkZXIgY2xrDQo+
-IHN1cHBvcnQNCj4gDQo+IEhpIEJpanUsDQo+IA0KPiBPbiBGcmksIEFwciAyOSwgMjAyMiBhdCAx
-MTo1MCBBTSBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0K
-PiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAzLzldIGNsazogcmVuZXNhczogcnpnMmw6IEFk
-ZCBEU0kgZGl2aWRlciBjbGsNCj4gPiA+IHN1cHBvcnQNCj4gDQo+ID4gPiBPbiBXZWQsIEFwciAy
-NywgMjAyMiBhdCAxMTo0OCBBTSBCaWp1IERhcw0KPiA+ID4gPGJpanUuZGFzLmp6QGJwLnJlbmVz
-YXMuY29tPg0KPiA+ID4gd3JvdGU6DQo+ID4gPiA+IE0zIGNsb2NrIGlzIHNvdXJjZWQgZnJvbSBE
-U0kgRGl2aWRlciAoRFNJRElWQSAqIERTSURJVkIpDQo+ID4gPiA+DQo+ID4gPiA+IFRoaXMgcGF0
-Y2ggYWRkIHN1cHBvcnQgZm9yIERTSSBkaXZpZGVyIGNsayBieSBjb21iaW5pbmcgRFNJRElWQQ0K
-PiA+ID4gPiBhbmQgRFNJRElWQiAuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEJp
-anUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gDQo+ID4gPiA+ICsNCj4gPiA+
-ID4gKyAgICAgICBwYXJlbnRfcmF0ZSA9IHJ6ZzJsX2NwZ19nZXRfZm91dHBvc3RkaXZfcmF0ZSgm
-cGFyYW1zLA0KPiA+ID4gPiArIHJhdGUpOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgaWYg
-KHByaXYtPm11eF9kc2lfZGl2X3BhcmFtcy5jbGtzcmMpDQo+ID4gPiA+ICsgICAgICAgICAgICAg
-ICBwYXJlbnRfcmF0ZSAvPSAyOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgcmV0dXJuIHBh
-cmVudF9yYXRlOw0KPiA+ID4gPiArfQ0KPiA+ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgaW50IHJ6
-ZzJsX2NwZ19kc2lfZGl2X2RldGVybWluZV9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LA0KPiA+ID4g
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdA0KPiA+
-ID4gPiArY2xrX3JhdGVfcmVxdWVzdA0KPiA+ID4gPiArKnJlcSkgew0KPiA+ID4gPiArICAgICAg
-IHJlcS0+YmVzdF9wYXJlbnRfcmF0ZSA9IHJ6ZzJsX2NwZ19nZXRfdmNsa19wYXJlbnRfcmF0ZSho
-dywNCj4gPiA+ID4gK3JlcS0+cmF0ZSk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgICAgICByZXR1
-cm4gMDsNCj4gPiA+DQo+ID4gPiBTbyBhbnkgdmFsdWUgb2YgcmVxLT5yYXRlIHBhc3NlZCBpcyBz
-dXBwb3J0ZWQsIGFuZCByZXEtPnJhdGUgbmV2ZXINCj4gPiA+IG5lZWRzIHRvIGJlIHVwZGF0ZWQ/
-DQo+ID4NCj4gPiBZZXMsIFdlIGNhbiBhZGQgYSBjaGVjayBmb3IgZnJlcSBncmVhdGVyIHRoYW4g
-MTQ4LjVNSHogYW5kIGlmIGl0IGlzDQo+ID4gZ3JlYXRlciwgQXNzaWduIHJlcS0+cmF0ZSB0byAx
-NDguNU1Iei4NCj4gPg0KPiA+ID4NCj4gPiA+ID4gK30NCj4gPiA+ID4gKw0KPiA+ID4gPiArc3Rh
-dGljIGludCByemcybF9jcGdfZHNpX2Rpdl9zZXRfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywNCj4g
-PiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBsb25n
-IHJhdGUsDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5z
-aWduZWQgbG9uZyBwYXJlbnRfcmF0ZSkgew0KPiA+ID4gPiArICAgICAgIHN0cnVjdCBkc2lfZGl2
-X2h3X2RhdGEgKmRzaV9kaXYgPSB0b19kc2lfZGl2X2h3X2RhdGEoaHcpOw0KPiA+ID4gPiArICAg
-ICAgIHN0cnVjdCByemcybF9jcGdfcHJpdiAqcHJpdiA9IGRzaV9kaXYtPnByaXY7DQo+ID4gPiA+
-ICsNCj4gPiA+ID4gKyAgICAgICAvKg0KPiA+ID4gPiArICAgICAgICAqIE1VWCAtLT5ESVZfRFNJ
-X3tBLEJ9IC0tPk0zIC0tPlZDTEsNCj4gPiA+ID4gKyAgICAgICAgKg0KPiA+ID4gPiArICAgICAg
-ICAqIEJhc2VkIG9uIHRoZSBkb3QgY2xvY2ssIHRoZSBEU0kgZGl2aWRlciBjbG9jayBzZXRzIHRo
-ZQ0KPiA+ID4gZGl2aWRlciB2YWx1ZSwNCj4gPiA+ID4gKyAgICAgICAgKiBjYWxjdWxhdGVzIHRo
-ZSBwbGwgcGFyYW1ldGVycyBmb3IgZ2VuZXJhdGluZw0KPiA+ID4gPiArIEZPVVRQT1NURElWIGFu
-ZA0KPiA+ID4gdGhlIGNsaw0KPiA+ID4gPiArICAgICAgICAqIHNvdXJjZSBmb3IgdGhlIE1VWCBh
-bmQgcHJvcGFnYXRlcyB0aGF0IGluZm8gdG8gdGhlDQo+IHBhcmVudHMuDQo+ID4gPiA+ICsgICAg
-ICAgICovDQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgICAgICBpZiAoIXJhdGUpDQo+ID4gPiA+ICsg
-ICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAg
-IGRzaV9kaXYtPnJhdGUgPSByYXRlOw0KPiA+ID4NCj4gPiA+IFNvIGFueSBub24temVybyB2YWx1
-ZSBvZiByYXRlIGlzIHN1cHBvcnRlZD8NCj4gPg0KPiA+IEN1cnJlbnRseSB5ZXMsIEJ1dCBJZiB3
-ZSBhZGQgYSBjaGVjayBmb3IgPiAxNDguNU1oeiBpbiBkZXRlcm1pbmVfcmF0ZSwNCj4gaXQgd2ls
-bCBhbGxvdyBvbmx5IHVwdG8gMTQ4LjVNaHouDQo+IA0KPiBZb3Ugc3RpbGwgbmVlZCB0aGF0IGNo
-ZWNrIGhlcmUsIHRvbywgYXMgdGhlcmUgaXMgbm8gZ3VhcmFudGVlIHVzZXJzIHdpbGwNCj4gY2Fs
-bCAuc2V0X3JhdGUoKSB3aXRoIHRoZSByb3VuZGVkIHBhcmFtZXRlcnMgb2J0YWluZWQgZnJvbQ0K
-PiAuZGV0ZXJtaW5lX3JhdGUoKS4NCg0KT0ssIHdpbGwgYWRkIGEgY2hlY2sgYW5kIHJldHVybiAt
-RUlOVkFMIGZvciBmcmVxID4gMTQ4LjUgaGVyZS4NCg0KQ2hlZXJzLA0KQmlqdQ0K
+APSS PLL type will be used by the IPQ8074 APSS driver for providing the
+CPU core clocks and enabling CPU Frequency scaling.
+
+This is ported from the downstream 5.4 kernel.
+
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 4406cf609aae..8270363ff98e 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -154,6 +154,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x30,
+ 		[PLL_OFF_TEST_CTL_U1] = 0x34,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_APSS] = {
++		[PLL_OFF_L_VAL] = 0x08,
++		[PLL_OFF_ALPHA_VAL] = 0x10,
++		[PLL_OFF_ALPHA_VAL_U] = 0xff,
++		[PLL_OFF_USER_CTL] = 0x18,
++		[PLL_OFF_USER_CTL_U] = 0xff,
++		[PLL_OFF_CONFIG_CTL] = 0x20,
++		[PLL_OFF_CONFIG_CTL_U] = 0x24,
++		[PLL_OFF_TEST_CTL] = 0x30,
++		[PLL_OFF_TEST_CTL_U] = 0x34,
++		[PLL_OFF_STATUS] = 0x28,
++	},
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 6e9907deaf30..626fdf80336d 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -18,6 +18,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_AGERA,
+ 	CLK_ALPHA_PLL_TYPE_ZONDA,
+ 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
++	CLK_ALPHA_PLL_TYPE_APSS,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+-- 
+2.35.1
+
