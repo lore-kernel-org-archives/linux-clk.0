@@ -2,79 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13838C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 15:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A670C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 15:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378259AbiD2P4l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 11:56:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58642 "EHLO
+        id S1378649AbiD2P4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 11:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378244AbiD2P4k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 11:56:40 -0400
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EEDC90C5;
-        Fri, 29 Apr 2022 08:53:18 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id l16so1671407oil.6;
-        Fri, 29 Apr 2022 08:53:18 -0700 (PDT)
+        with ESMTP id S1378290AbiD2P4l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 11:56:41 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42705CABBE;
+        Fri, 29 Apr 2022 08:53:20 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id e4so8948643oif.2;
+        Fri, 29 Apr 2022 08:53:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=FFjFGklMesuiQkPh+8rzTAyTXof2tZBqFJs5Jn3OJF4=;
-        b=p0DnbdUbo6W4ci3IqQsyUmAlKcRRbV+1v3kzVr5RaRRqfTuWIjYXyY1fhIoaDzdgn6
-         QPTpXIhFNB1kOqlbOar7vkoRLrrjxxWX12BLOulhTS/WRCmW5Pm4sPRbYsz3dLI8WGJH
-         Pp3HuZE7RgjjTnggckcxhU4FTHSPiyGipNhlwfLYP0GeGHPljdpf8Mv3raMnquRGTean
-         axU/qgFF7U3m/vbSnn7kPEYZw+yCDoc3yAxzdTkoAZr8+Ncph0Gyi0YMfVBTx9zLDGer
-         A9tnvZXsFoZsK2BfnUBkbNgQlWQCKr3g7KTYIQdln0cB4XMXvEdeOex/7aXABGKT62/N
-         kVjQ==
-X-Gm-Message-State: AOAM530LOYSnv6FFG+3cyOU6zTTqozxi/GVJPmgitBO5YDwdM4Q51377
-        kEOHSDhcUmpO1TMUGaWI2A==
-X-Google-Smtp-Source: ABdhPJxBDckK9tQAVZHKd7BiQTS1n/On3l+TQwVLBKxxqANVBsJa67fSMJpCyXx9MaORSsHbqtpJ+w==
-X-Received: by 2002:a05:6808:f8d:b0:325:5728:997b with SMTP id o13-20020a0568080f8d00b003255728997bmr1891780oiw.163.1651247598036;
-        Fri, 29 Apr 2022 08:53:18 -0700 (PDT)
+        bh=8c/8aPQ+INHY9UT15ou0Pj3sFCcZR4zflpgcHdOlHcU=;
+        b=ESHqhbeyzjt7S5d0vZPvl43UmynKJDaQrIIJJRRCg6Kgea7LTJecxeZ51SqpxzrvEE
+         pBYegpBFWrsEL3Dvjlift1tekjHe5AywmToaLUnhLYXPXzfh2ncDUuWFezvZpnhEeeZ9
+         rC1jcW+GYgp7tY2NclZTdTL4z3H8+PNsaE/M3CgECI0S6lZfsH0qrzjHbvAgZlDsh3VA
+         PEeMh5yE0uZtxvBUymIZYrVcWNJJTS/AJOrCDnUOGEc9v/Rlyoj6zbjd1QfY6fjK7jPo
+         9wPU+SFdk29Iw0hlI/kUi7V/8RxEIS8Nn2d0DcZN9o2Pjgz7T4pCqvmA6bExT8bgYPU0
+         6TBQ==
+X-Gm-Message-State: AOAM530giWbKYGGrvNgVzIRioW6RNt3FYH/KLG9hDYgXBdadSYfRKxmG
+        eLGflFQghN5EaAYANZLhlQ==
+X-Google-Smtp-Source: ABdhPJyHk6Vezdq2ZcgOXBezvob14dh5P9RlvoepRdMfGc3VB1Wg+ZVR0YtpfMvXI89g6zvT2louZg==
+X-Received: by 2002:a05:6808:188a:b0:323:47b:2030 with SMTP id bi10-20020a056808188a00b00323047b2030mr23553oib.77.1651247599523;
+        Fri, 29 Apr 2022 08:53:19 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id o24-20020a4ae598000000b0035eb4e5a6d0sm890263oov.38.2022.04.29.08.53.16
+        by smtp.gmail.com with ESMTPSA id b14-20020a056870160e00b000e915a9121csm3362607oae.52.2022.04.29.08.53.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 08:53:17 -0700 (PDT)
-Received: (nullmailer pid 2344490 invoked by uid 1000);
+        Fri, 29 Apr 2022 08:53:18 -0700 (PDT)
+Received: (nullmailer pid 2344495 invoked by uid 1000);
         Fri, 29 Apr 2022 15:53:16 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     shawnguo@kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
-        tglx@linutronix.de, leoyang.li@nxp.com,
-        cniedermaier@dh-electronics.com, aisheng.dong@nxp.com,
-        soc@kernel.org, olof@lixom.net, abel.vesa@nxp.com, clin@suse.com,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        stefan@agner.ch, Mr.Bossman075@gmail.com,
-        daniel.lezcano@linaro.org, sboyd@kernel.org, tharvey@gateworks.com,
-        linus.walleij@linaro.org, sebastian.reichel@collabora.com,
-        giulio.benetti@benettiengineering.com, marcel.ziswiler@toradex.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
-        linux@armlinux.org.uk, linux-gpio@vger.kernel.org, dev@lynxeye.de,
-        kernel@pengutronix.de, linux-imx@nxp.com, arnd@arndb.de
-In-Reply-To: <20220428214838.1040278-8-Mr.Bossman075@gmail.com>
-References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com> <20220428214838.1040278-8-Mr.Bossman075@gmail.com>
-Subject: Re: [PATCH v2 07/15] dt-bindings: clock: imx: Add documentation for i.MXRT1170 clock
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+In-Reply-To: <20220429121739.28584-4-ansuelsmth@gmail.com>
+References: <20220429121739.28584-1-ansuelsmth@gmail.com> <20220429121739.28584-4-ansuelsmth@gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver Documentation to yaml
 Date:   Fri, 29 Apr 2022 10:53:16 -0500
-Message-Id: <1651247596.107110.2344489.nullmailer@robh.at.kernel.org>
+Message-Id: <1651247596.124069.2344494.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 28 Apr 2022 17:48:30 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT1170 clock driver.
+On Fri, 29 Apr 2022 14:17:39 +0200, Ansuel Smith wrote:
+> Convert kpss-gcc driver Documentation to yaml.
 > 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 > ---
-> V1 -> V2:
->  - Change title to Clock Controller
->  - Rename to add fsl
-> ---
->  .../bindings/clock/fsl,imxrt1170-clock.yaml   | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml
+>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 -------------
+>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 63 +++++++++++++++++++
+>  2 files changed, 63 insertions(+), 44 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
 > 
 
 My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
@@ -83,15 +75,13 @@ on your patch (DT_CHECKER_FLAGS is new in v5.13):
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/fsl,imxrt1170-clock.yaml#
-Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.example.dts:20:18: fatal error: dt-bindings/clock/imxrt1170-clock.h: No such file or directory
-   20 |         #include <dt-bindings/clock/imxrt1170-clock.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[1]: *** [scripts/Makefile.lib:364: Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1401: dt_binding_check] Error 2
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml: properties: '#clock-cells' is a dependency of 'clock-output-names'
+	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml: ignoring, error in schema: properties
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.example.dtb: clock-controller@2011000: '#clock-cells' is a dependency of 'clock-output-names'
+	From schema: /usr/local/lib/python3.10/dist-packages/dtschema/schemas/clock/clock.yaml
+Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.example.dtb:0:0: /example-0/clock-controller@2011000: failed to match any schema with compatible: ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc']
+Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.example.dtb:0:0: /example-0/clock-controller@2011000: failed to match any schema with compatible: ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc']
 
 doc reference errors (make refcheckdocs):
 
