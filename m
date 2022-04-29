@@ -2,83 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB742C43217
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 22:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F433C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 23:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381589AbiD2WnY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 18:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
+        id S1381691AbiD2XMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 19:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381584AbiD2WnX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 18:43:23 -0400
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B408FEF;
-        Fri, 29 Apr 2022 15:40:04 -0700 (PDT)
-Received: by mail-oi1-f169.google.com with SMTP id y63so9983970oia.7;
-        Fri, 29 Apr 2022 15:40:04 -0700 (PDT)
+        with ESMTP id S1381689AbiD2XMq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 19:12:46 -0400
+Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706C384EC8;
+        Fri, 29 Apr 2022 16:09:26 -0700 (PDT)
+Received: by mail-oi1-x22a.google.com with SMTP id s131so10060528oie.1;
+        Fri, 29 Apr 2022 16:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=43bhXKjvki5l9d/uYFdijwNa1GUErzr1H3q463hR+XU=;
+        b=OUSt6wkRUbg0ovBrwSGrseeTfVqA3atJE26IGGL8DNDKMbVWyzV7fWqixesYb9S/mA
+         rgBp/vgWVmZ/2SlxqdaVKFisC/DX2eo4pEgNEmTUveV61siwDvexnXReKJ4KInzJ+JVf
+         qFRYIk57Zf7KE5IqQd6E9kuwLyNvXqeY18u9sXPldsZHCbpZQ9kw31XwNt/jpYsmggt1
+         3DzogSdIaSMtewj0hqjuAW3EwbG0+z+yCYsMAftASTL8pYSQ3/TIzpEEpEvE1aCdKITD
+         c0o8+XWDHiHzhST5JtA4/c6tGuJLD552k5cdjIV4SeeCvbAOGItN9qS8zGZ2A17U8O+I
+         msTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=m/Rs86VVXCF4b61KU23mR8u0brfO067mz0n4mQYK8uM=;
-        b=7EPZxGWsQX2RmGvd0oaU/Lu2dKJC9gm3gof7M4U79x8aA3Gk43DM6B+XbUPZhQxgcN
-         dtPxS+iFOXUsAEQJRdBdTVAVZ+WSV5bo+uWsmenLgGNCG/N/jHJrmPsVG+D7tRR/Z/Tz
-         HiM78+8fnUHx+IOTu6j1h104TwhBi7CvPmdckJsa+WnyJBtDnDmvgigWjuchN7E+fijF
-         cvqCy7KncNXGGp+HS4qIABy3BzcdNgD2gYMnl/wgzoDcUa/5mjDCEbyHgXX3wCfj8txC
-         s6fISqwHyn8qvMBMy/YzASgXVkxgSv0H3Qk7nCtXyPw9xf9Ee5YKqqOg/SiZ07XvBL91
-         MmGA==
-X-Gm-Message-State: AOAM530zJCEENmKk5nP41w2ZrmA7Q91MTcOdBL84WHwxuTzea27W6hF0
-        SynXNIFCohf3s5eiOxk25Q==
-X-Google-Smtp-Source: ABdhPJzyPaMeTEhRAE3mMh9OBwh/+3e5SrP7sZvmDtK2Up0lhc3Y5SarSooP70XVdQ41q/n7t5hzmA==
-X-Received: by 2002:a05:6808:148e:b0:325:592f:84a1 with SMTP id e14-20020a056808148e00b00325592f84a1mr2673147oiw.118.1651272003516;
-        Fri, 29 Apr 2022 15:40:03 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r23-20020a4aea97000000b0035eb4e5a6b1sm1289822ooh.7.2022.04.29.15.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 15:40:03 -0700 (PDT)
-Received: (nullmailer pid 3033802 invoked by uid 1000);
-        Fri, 29 Apr 2022 22:40:01 -0000
-Date:   Fri, 29 Apr 2022 17:40:01 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     mturquette@baylibre.com, stefan@agner.ch, tglx@linutronix.de,
-        giulio.benetti@benettiengineering.com,
-        linux-arm-kernel@lists.infradead.org, tharvey@gateworks.com,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        olof@lixom.net, linux@armlinux.org.uk, kernel@pengutronix.de,
-        aisheng.dong@nxp.com, daniel.lezcano@linaro.org,
-        linux-kernel@vger.kernel.org, festevam@gmail.com,
-        linux-imx@nxp.com, s.hauer@pengutronix.de, leoyang.li@nxp.com,
-        dev@lynxeye.de, robh+dt@kernel.org, shawnguo@kernel.org,
-        arnd@arndb.de, Mr.Bossman075@gmail.com, devicetree@vger.kernel.org,
-        cniedermaier@dh-electronics.com, soc@kernel.org,
-        linux-clk@vger.kernel.org, marcel.ziswiler@toradex.com,
-        clin@suse.com, abel.vesa@nxp.com, sebastian.reichel@collabora.com,
-        sboyd@kernel.org
-Subject: Re: [PATCH v2 05/15] dt-bindings: serial: fsl-lpuart: add i.MXRT1170
- compatible
-Message-ID: <YmxpQedWAbaRK/uF@robh.at.kernel.org>
-References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
- <20220428214838.1040278-6-Mr.Bossman075@gmail.com>
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=43bhXKjvki5l9d/uYFdijwNa1GUErzr1H3q463hR+XU=;
+        b=mT2oX+us+jAjxxNCRAJwVItXzD9LCXnKAwnPlt3aIz/DOTvh4zEJ7csNhtctH1hi3N
+         QaU2rmb3tV1C4TnbhRCsu+FuOB5Y+syVxgRa13zFZZbydkiidaJ1jeAOlqP8rugq+A4o
+         3E7/GcQLpEYkxWRUPddwjYgLvuJaXIWys6nABTZK7592NBLfDysn94vUCV1dHO/q9eIh
+         GyJeTxQNl0BgkbD8rAHINhr+dESERaMYN07cyxzU547ZJGRIfoFZO2ClfRWOEghmPRAe
+         MhPpsaM9OxMzIE6PNVPrg1XTXD6hpDSg6hocSqTPLPMWkDpUTsQTmFMe7VrmiklJS4f6
+         I3Aw==
+X-Gm-Message-State: AOAM532b+VCyaP8EQwBbr+0jiSGuVCIm00hhDNz+IOPB97TXHu8yz44/
+        tT1gdgA7aGoG24sCARBJ99s=
+X-Google-Smtp-Source: ABdhPJwXwAJF7RkFvU52UI/VP0gJxz700pwOLyrX7CYTkoQTpT4bc4rvMjOD84iMZwh8LrG+2Nl3bg==
+X-Received: by 2002:a05:6808:17a7:b0:325:c561:31fb with SMTP id bg39-20020a05680817a700b00325c56131fbmr1544693oib.75.1651273765807;
+        Fri, 29 Apr 2022 16:09:25 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w1-20020a9d77c1000000b0060603221242sm230484otl.18.2022.04.29.16.09.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 16:09:24 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <149509dd-f43d-1b27-4395-81eab4ff3455@roeck-us.net>
+Date:   Fri, 29 Apr 2022 16:09:19 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220428214838.1040278-6-Mr.Bossman075@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+References: <20220419163810.2118169-1-arnd@kernel.org>
+ <20220422170530.GA2338209@roeck-us.net>
+ <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
+ <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
+ <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
+ <20220422234150.GA3442771@roeck-us.net>
+ <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
+ <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+ <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
+ <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
+ <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
+ <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
+ <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
+ <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 28 Apr 2022 17:48:28 -0400, Jesse Taube wrote:
-> Add i.MXRT1170 compatible string to Documentation.
+On 4/29/22 14:46, Arnd Bergmann wrote:
+> On Fri, Apr 29, 2022 at 10:23 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 4/29/22 10:48, Guenter Roeck wrote:
+>>>
+>>> I tried the pxa-multiplatform-5.18 branch. Its failures match
+>>> those in v5.18-rc1.
+>>>
+>>
+>> Uuh, wait, the build wasn't complete. There are still some
+>> failures. I'll report later.
 > 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1 -> V2:
->  - New commit to fix dtbs_check
-> ---
->  Documentation/devicetree/bindings/serial/fsl-lpuart.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+> Sorry about the breakage, I got a few more reports about minor build errors
+> and warnings, the newly uploaded branches should address all of the ones
+> I got reports for.
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Unless I am missing something the failures are the same as before. See
+https://kerneltests.org/builders/qemu-arm-testing/builds/74/steps/qemubuildcommand/logs/stdio
+
+This is with v5.18-rc1-49-ge8ab9a9a2745 which is the tip of
+soc/pxa-multiplatform-5.18.
+
+Should I check a different branch ?
+
+Thanks,
+Guenter
