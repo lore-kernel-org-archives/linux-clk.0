@@ -2,165 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA80C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 19:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF35DC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 20:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380305AbiD2Tfz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Apr 2022 15:35:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52212 "EHLO
+        id S1378628AbiD2U1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Apr 2022 16:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238144AbiD2Tfz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 15:35:55 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DED99692AA;
-        Fri, 29 Apr 2022 12:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651260756; x=1682796756;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JndYmvyDHGDJ5FLMtua0mbKv4qhsfh22QdXtZJJmVlQ=;
-  b=m91AYf/kuCNbT9zbjpYqz6+1uEpWL3ieA4Eggo+cmEzG/UeTJPhsZMwa
-   KaAWOqyUXtJTOXa4Z5iCasuON5GPlH+wP+psoOD8upQRpumCMQjmM42oO
-   iub29LBpzKDTK2jeibTFevSen7MYkBRYPU3UTpgNfoiMzL6FwsHvUqE5m
-   1EQQ7mAgUtZXHT2R3rhPPELaBlYI5L8f73dQIpevofLYF8R1lUVTfE5sh
-   Oh5uDZKc8a98VSl2PsF2gAoMFx7zMcp4BnfDGOALl0yWsi5KTLI08MbmU
-   5VgQrLYZhtNL7fBUOq4MrrH50WPATWmckmTnbhswS4PYvytSkidBTWm25
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10332"; a="266294483"
-X-IronPort-AV: E=Sophos;i="5.91,186,1647327600"; 
-   d="scan'208";a="266294483"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2022 12:32:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,186,1647327600"; 
-   d="scan'208";a="566287859"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Apr 2022 12:32:21 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nkWLk-0006a3-Gm;
-        Fri, 29 Apr 2022 19:32:20 +0000
-Date:   Sat, 30 Apr 2022 03:31:43 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     kbuild-all@lists.01.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCHv1 06/19] clk: rockchip: Add clock controller for the
- RK3588
-Message-ID: <202204300329.BL2rwfwr-lkp@intel.com>
-References: <20220422170920.401914-7-sebastian.reichel@collabora.com>
+        with ESMTP id S232546AbiD2U1Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Apr 2022 16:27:16 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66D2D5EB7;
+        Fri, 29 Apr 2022 13:23:57 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-e93bbb54f9so9203734fac.12;
+        Fri, 29 Apr 2022 13:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=SFIOKWJe2JhWRyQ+23tvbYEj6baZGKnP/u3z5kRMOi8=;
+        b=BahK7/YeJ4+uX3TzsNp83MyBHnpLrE/qMu4xIBQ+ZS6zy01DaiHuUoeMxTPloX76K5
+         Ubgax4WkYffJVNJHfHbej2xMadXBqbARWF06vNjo4iI2fpzfmtqnvbFUit+eVhoT1JhV
+         L/oOL5XftssttI+3dl8EE8ip+1SLDGWPYT/KGiBuWq9m2dSZpPqkNlOUQZQhXWucL9yn
+         1fTqb9x/Wr6wFFu0woyAx4hT7nL1jqWbVXQZqXhqHEX6+b6K6K/EYkfUjIg0dufd9cmz
+         QpF+Wag/CjwN6tGuBEbwsUj/v1JxGTP/6FWWqjwteWqgFXZ5FfZeR3y6GbuGNkqHg17F
+         kvWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=SFIOKWJe2JhWRyQ+23tvbYEj6baZGKnP/u3z5kRMOi8=;
+        b=oWbh7m9c6V8g7I4YB1HilOg1/++FP/pUOkyeJ/l++6yFg/muX5DNgxTb+ug/L0rrKX
+         F/ruUuwScjxTV/uxGs2TERHmO2cXd8NUd0BsBccsOxBGLy7LsazOcHQ3wBJhT1gfG5zz
+         ix0t6vLV8gzq7LnL2TtGEK/m7MU8yUNwAAH4dzOigu6Cc28f+9C45h4Um/dYcuHxZ1hU
+         qHtN7iAA7nfcfSq9WHnR6D5fxAKcR4aiuZK0R9KPxzeVrvNrta8Z6etjirwjYlsgk/4o
+         h5FKC/IhGu3Jdowt8u8TqSD7KjCT0OM75rvP1FMlIGyCxv1d1+KeCz0FCw0mjqby5Eeu
+         FzKA==
+X-Gm-Message-State: AOAM533uM/sgk2gvbldMRwRzhDQL7HpBo9IFH7e50VnWMJqNgpdeGgzh
+        D/rkVGn871qH91EZ0RnaJkf9DNHePIm7fw==
+X-Google-Smtp-Source: ABdhPJzws2nk+8IQUdLMQ/UW+L134oqTe0mAkrmJ+izKxrmouBw2DYvgJERUyyz49n7YZEOnnZehOg==
+X-Received: by 2002:a05:6870:60a1:b0:e2:b6b8:3e67 with SMTP id t33-20020a05687060a100b000e2b6b83e67mr2057906oae.137.1651263837158;
+        Fri, 29 Apr 2022 13:23:57 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id k14-20020a4ae28e000000b0035eb4e5a6cfsm1153965oot.37.2022.04.29.13.23.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 13:23:56 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
+Date:   Fri, 29 Apr 2022 13:23:52 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220422170920.401914-7-sebastian.reichel@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+Content-Language: en-US
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+References: <20220419163810.2118169-1-arnd@kernel.org>
+ <20220422170530.GA2338209@roeck-us.net>
+ <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
+ <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net>
+ <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
+ <20220422234150.GA3442771@roeck-us.net>
+ <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
+ <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+ <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
+ <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
+ <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
+ <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
+In-Reply-To: <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sebastian,
+On 4/29/22 10:48, Guenter Roeck wrote:
+> On 4/28/22 06:44, Arnd Bergmann wrote:
+>> On Sun, Apr 24, 2022 at 8:48 PM Arnd Bergmann <arnd@kernel.org> wrote:
+>>> On Sun, Apr 24, 2022 at 5:28 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>> On 4/24/22 01:52, Arnd Bergmann wrote:
+>>>>> On Sun, Apr 24, 2022 at 4:09 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>> into the defconfig file, otherwise the multiplatform target defaults to
+>>>>> an ARMv7 instead of ARMv5 build. For an OMAP15xx as in the SX1,
+>>>>> you also need to enable CONFIG_ARCH_MULTI_V4T.
+>>>>>
+>>>>> This is slightly unfortunate, but I don't see any way to avoid it, and the
+>>>>> modified defconfig will still work fine with older kernel trees.
+>>>>>
+>>>>
+>>>> Yes, that works. I changed it in my configuration.
+>>>
+>>> Ok, great!. I managed to boot the z2 machine with PCMCIA support
+>>> and it gets around the issue with my patch, correctly detecting the
+>>> CF card.
+>>
+>> Hi Guenter,
+>>
+>> I have now sent out a fix that I'm happy with, and applied it to the
+>> pxa-multiplatform-5.18 branch of the soc tree as well as the
+>> combined arm/multiplatform tree.
+>>
+>> I have not merged this new version into the for-next branch
+>> since I would like to see if there are any other regressions first.
+>>
+>> Can you run your boot tests on the arm/multiplatform branch
+>> and let me know if that fixes everything you found? If that
+>> takes a lot of manual steps on your side, I'd just wait for the
+>> build bots and merge it after all there are no new compile-time
+>> issues.
+>>
+> 
+> I tried the pxa-multiplatform-5.18 branch. Its failures match
+> those in v5.18-rc1.
+> 
 
-Thank you for the patch! Perhaps something to improve:
+Uuh, wait, the build wasn't complete. There are still some
+failures. I'll report later.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linusw-pinctrl/devel linus/master v5.18-rc4 next-20220429]
-[cannot apply to rockchip/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Sebastian-Reichel/Basic-RK3588-Support/20220423-013425
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20220430/202204300329.BL2rwfwr-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/6736e6f1e32bb98780b77b5aa64fe5ac5dfaae26
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sebastian-Reichel/Basic-RK3588-Support/20220423-013425
-        git checkout 6736e6f1e32bb98780b77b5aa64fe5ac5dfaae26
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/clk/rockchip/ drivers/media/platform/qcom/venus/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
-   drivers/clk/rockchip/clk-rk3588.c: In function 'rk3588_clk_init':
->> drivers/clk/rockchip/clk-rk3588.c:2408:22: warning: variable 'clks' set but not used [-Wunused-but-set-variable]
-    2408 |         struct clk **clks;
-         |                      ^~~~
-
-
-vim +/clks +2408 drivers/clk/rockchip/clk-rk3588.c
-
-  2403	
-  2404	static void __init rk3588_clk_init(struct device_node *np)
-  2405	{
-  2406		struct rockchip_clk_provider *ctx;
-  2407		void __iomem *reg_base;
-> 2408		struct clk **clks;
-  2409	
-  2410		reg_base = of_iomap(np, 0);
-  2411		if (!reg_base) {
-  2412			pr_err("%s: could not map cru region\n", __func__);
-  2413			return;
-  2414		}
-  2415	
-  2416		ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-  2417		if (IS_ERR(ctx)) {
-  2418			pr_err("%s: rockchip clk init failed\n", __func__);
-  2419			iounmap(reg_base);
-  2420			return;
-  2421		}
-  2422		clks = ctx->clk_data.clks;
-  2423	
-  2424		rockchip_clk_register_plls(ctx, rk3588_pll_clks,
-  2425					   ARRAY_SIZE(rk3588_pll_clks),
-  2426					   RK3588_GRF_SOC_STATUS0);
-  2427	
-  2428		rockchip_clk_register_armclk(ctx, ARMCLK_L, "armclk_l",
-  2429				mux_armclkl_p, ARRAY_SIZE(mux_armclkl_p),
-  2430				&rk3588_cpulclk_data, rk3588_cpulclk_rates,
-  2431				ARRAY_SIZE(rk3588_cpulclk_rates));
-  2432		rockchip_clk_register_armclk(ctx, ARMCLK_B01, "armclk_b01",
-  2433				mux_armclkb01_p, ARRAY_SIZE(mux_armclkb01_p),
-  2434				&rk3588_cpub0clk_data, rk3588_cpub0clk_rates,
-  2435				ARRAY_SIZE(rk3588_cpub0clk_rates));
-  2436		rockchip_clk_register_armclk(ctx, ARMCLK_B23, "armclk_b23",
-  2437				mux_armclkb23_p, ARRAY_SIZE(mux_armclkb23_p),
-  2438				&rk3588_cpub1clk_data, rk3588_cpub1clk_rates,
-  2439				ARRAY_SIZE(rk3588_cpub1clk_rates));
-  2440	
-  2441		rockchip_clk_register_branches(ctx, rk3588_clk_branches,
-  2442					       ARRAY_SIZE(rk3588_clk_branches));
-  2443	
-  2444		rockchip_register_softrst(np, 49158, reg_base + RK3588_SOFTRST_CON(0),
-  2445					  ROCKCHIP_SOFTRST_HIWORD_MASK);
-  2446	
-  2447		rockchip_register_restart_notifier(ctx, RK3588_GLB_SRST_FST, NULL);
-  2448	
-  2449		rockchip_clk_of_add_provider(np, ctx);
-  2450	}
-  2451	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Guenter
