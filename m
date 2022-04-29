@@ -2,117 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14BFC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Apr 2022 23:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89AAC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Apr 2022 01:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353165AbiD1XNH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Apr 2022 19:13:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
+        id S1354079AbiD2CAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Apr 2022 22:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353169AbiD1XNE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 19:13:04 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EAD99C42D8;
-        Thu, 28 Apr 2022 16:09:47 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B475D1477;
-        Thu, 28 Apr 2022 16:09:47 -0700 (PDT)
-Received: from slackpad.fritz.box (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A37B13F5A1;
-        Thu, 28 Apr 2022 16:09:45 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S231824AbiD2CAI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Apr 2022 22:00:08 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BE08723F;
+        Thu, 28 Apr 2022 18:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651197411; x=1682733411;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CPEvDJ3ytBpYATJRkPLi382z+ezVo1awVW8z44TiQNE=;
+  b=SlqPVfjXvnihFrxSnATIn6wus84NmFGNq3FDJRtBjZI1GD60kSfY/sWE
+   ju5iuj2wvFQssqh8mG8y2NQU958Gq2gOkfPDooz4jusXe4cVNPLWdT29m
+   qcz7N78qJv6dxrO3H2LK9CBfTYPNVO7o2nAOVPDqjdlJgU6dwl9gCX7zb
+   h7h7MF0iDtsmfkowlMXSgJCHfrvr6mtVnb0yVnszcBW8aNmO45M/towgj
+   CeHU8SpkMPWFpccZ7SpWsGem1ETVVTgUi7hzPwZ48MsXxYQkVC22Dr3yv
+   brFANqYtbmFuDflmFuCNoqk5+40KW23IaF/z56o9zZO0d4fC6wZHBYwgU
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10331"; a="266652286"
+X-IronPort-AV: E=Sophos;i="5.91,296,1647327600"; 
+   d="scan'208";a="266652286"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 18:56:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,296,1647327600"; 
+   d="scan'208";a="565900073"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Apr 2022 18:56:46 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nkFsD-0005rp-RA;
+        Fri, 29 Apr 2022 01:56:45 +0000
+Date:   Fri, 29 Apr 2022 09:56:36 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     kbuild-all@lists.01.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v11 2/6] clk: sunxi-ng: h616: Add PLL derived 32KHz clock
-Date:   Fri, 29 Apr 2022 00:09:29 +0100
-Message-Id: <20220428230933.15262-3-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220428230933.15262-1-andre.przywara@arm.com>
-References: <20220428230933.15262-1-andre.przywara@arm.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
+        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCHv1 03/19] clk: rockchip: add pll type for RK3588
+Message-ID: <202204290947.GtdwE4Zq-lkp@intel.com>
+References: <20220422170920.401914-4-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220422170920.401914-4-sebastian.reichel@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RTC section of the H616 manual mentions in a half-sentence the
-existence of a clock "32K divided by PLL_PERI(2X)". This is used as
-one of the possible inputs for the mux that selects the clock for the
-32 KHz fanout pad. On the H616 this is routed to pin PG10, and some
-boards use that clock output to compensate for a missing 32KHz crystal.
-On the OrangePi Zero2 this is for instance connected to the LPO pin of
-the WiFi/BT chip.
-The new RTC clock binding requires this clock to be named as one input
-clock, so we need to expose this to the DT. In contrast to the D1 SoC
-there does not seem to be a gate for this clock, so just use a fixed
-divider clock, using a newly assigned clock number.
+Hi Sebastian,
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Samuel Holland <samuel@sholland.org>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c      | 8 ++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h616.h      | 2 +-
- include/dt-bindings/clock/sun50i-h616-ccu.h | 1 +
- 3 files changed, 10 insertions(+), 1 deletion(-)
+Thank you for the patch! Perhaps something to improve:
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index 49a2474cf314..21e918582aa5 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -704,6 +704,13 @@ static CLK_FIXED_FACTOR_HWS(pll_periph0_2x_clk, "pll-periph0-2x",
- 			    pll_periph0_parents,
- 			    1, 2, 0);
- 
-+static const struct clk_hw *pll_periph0_2x_hws[] = {
-+	&pll_periph0_2x_clk.hw
-+};
-+
-+static CLK_FIXED_FACTOR_HWS(pll_system_32k_clk, "pll-system-32k",
-+			    pll_periph0_2x_hws, 36621, 1, 0);
-+
- static const struct clk_hw *pll_periph1_parents[] = {
- 	&pll_periph1_clk.common.hw
- };
-@@ -852,6 +859,7 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
- 		[CLK_PLL_DDR1]		= &pll_ddr1_clk.common.hw,
- 		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
- 		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
-+		[CLK_PLL_SYSTEM_32K]	= &pll_system_32k_clk.hw,
- 		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
- 		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
- 		[CLK_PLL_GPU]		= &pll_gpu_clk.common.hw,
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-index dd671b413f22..fdd2f4d5103f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-@@ -51,6 +51,6 @@
- 
- #define CLK_BUS_DRAM		56
- 
--#define CLK_NUMBER		(CLK_BUS_HDCP + 1)
-+#define CLK_NUMBER		(CLK_PLL_SYSTEM_32K + 1)
- 
- #endif /* _CCU_SUN50I_H616_H_ */
-diff --git a/include/dt-bindings/clock/sun50i-h616-ccu.h b/include/dt-bindings/clock/sun50i-h616-ccu.h
-index 4fc08b0df2f3..1191aca53ac6 100644
---- a/include/dt-bindings/clock/sun50i-h616-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-h616-ccu.h
-@@ -111,5 +111,6 @@
- #define CLK_BUS_TVE0		125
- #define CLK_HDCP		126
- #define CLK_BUS_HDCP		127
-+#define CLK_PLL_SYSTEM_32K	128
- 
- #endif /* _DT_BINDINGS_CLK_SUN50I_H616_H_ */
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linusw-pinctrl/devel linus/master v5.18-rc4 next-20220428]
+[cannot apply to rockchip/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sebastian-Reichel/Basic-RK3588-Support/20220423-013425
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20220429/202204290947.GtdwE4Zq-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/28c7fd4a10867094894809b60b86688817f70744
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sebastian-Reichel/Basic-RK3588-Support/20220423-013425
+        git checkout 28c7fd4a10867094894809b60b86688817f70744
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/clk/rockchip/ drivers/media/platform/qcom/venus/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/rockchip/clk-pll.c:916: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * PLL used in RK3588
+
+
+vim +916 drivers/clk/rockchip/clk-pll.c
+
+   914	
+   915	/**
+ > 916	 * PLL used in RK3588
+   917	 */
+   918	
+
 -- 
-2.35.3
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
