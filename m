@@ -2,162 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0E6C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 13:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADB9C433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 13:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240176AbiD3N26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Apr 2022 09:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39190 "EHLO
+        id S1382762AbiD3Nfw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Apr 2022 09:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240736AbiD3N2x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 09:28:53 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534E433882
-        for <linux-clk@vger.kernel.org>; Sat, 30 Apr 2022 06:25:29 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-2f7ca2ce255so110256397b3.7
-        for <linux-clk@vger.kernel.org>; Sat, 30 Apr 2022 06:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3KdH4A/ZIDn5iuBBsHJpj90JbgUsoauLAn0Cyltu/wo=;
-        b=ZAqsmHWcvQoTKbn3/olPYcBsf4oSR7+H6NzpjY2hOfVYJoxtv4I8ztsVWQzD96C5c4
-         0e5kjEEJ/skZZk3TCb4aPYieTeX7AX2BkcYpefa/WTKkDcoviN+8kgCTBxTpOyl6cA9/
-         +JbZ90+YCM51mBFxlFPPpWIYSGOFxMFkj5k+E3UDy6/4tWQrj1GQZd8j8Gl2xHTijGjy
-         G/I6qClpb2aALae2Jdyb+8oGvwEd5/ioLsgHOKub5vaCnwkOiTGfnSrLj+boA1oOrF9Y
-         ckiXh3fh1UVFsvZptRpSEC2PcqR12sHLK9rjr3zg0AeDDKYZbVyJgjwQjCVSojSfpcSz
-         gPrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3KdH4A/ZIDn5iuBBsHJpj90JbgUsoauLAn0Cyltu/wo=;
-        b=HIz+fs+mdKGxaJgOIjXB9rQ4PwlRvZSrBJLy3PU/T8nNa0tPK8vNKIMeXNPSKJgcv/
-         +9PEihRqWITV/WbUy+BMWEZ0ovpEUGgqVCLpIGFW6FZX8n6gzA5nbaQXdtDa2ifj6fRp
-         P1No/DRSpaf1mRzB2FAD8pJVrdhdhwfgo3UdPzWV3GZHPB2NM8XzPRXYvSbAuo6n9cch
-         1OA9jhIro75kO2HsukziCOtfgt1AxYMVZ+4+HpDkvySdrVF4bFAsVKTg4TG2GJs8QEDh
-         EDBsP+0VmFv7OSrqF3vP3XfUmsTCUimM0dPY9G3PJNbQ18X4oa1RhJcIzl1lrK0cvLdG
-         fPjg==
-X-Gm-Message-State: AOAM530beUHxhf8cnjLLYyf4uS1Qjzs9DL/n0ZRItnUL2Dfcw/j+3ccI
-        zOSOh3huBwaivoTtQWAUkKdjnZ05iJ4wWmM5WwSMvw==
-X-Google-Smtp-Source: ABdhPJztvdu1Zcgh8IaCcX/bj94Ep7ne8TT8XdYs5FK9IQt76Wo/NTxuk7LXWJqqFg4WpLwr2xzmYE5xQkeXiBcNWF0=
-X-Received: by 2002:a81:1d4e:0:b0:2f7:be8b:502e with SMTP id
- d75-20020a811d4e000000b002f7be8b502emr3980575ywd.278.1651325128489; Sat, 30
- Apr 2022 06:25:28 -0700 (PDT)
+        with ESMTP id S1345995AbiD3Nfu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 09:35:50 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D66A94DF;
+        Sat, 30 Apr 2022 06:32:28 -0700 (PDT)
+Received: from mail-yw1-f169.google.com ([209.85.128.169]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M3lLh-1nl4Bt3v99-000pQ0; Sat, 30 Apr 2022 15:32:27 +0200
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-2f83983782fso110504427b3.6;
+        Sat, 30 Apr 2022 06:32:25 -0700 (PDT)
+X-Gm-Message-State: AOAM532+Srrgfiw+FMH9tlUhJmPawAp7fSUOMuowkUD0m+2hzILf+VGA
+        3SX9eAJFkKXpTnIP2py6rcLslPlJiNft3XmNYKw=
+X-Google-Smtp-Source: ABdhPJyQsAuOXuwqNSnE+0RumiMVY+a1YoHyKhCVHMghGQo3frV3I1QOJWPIvakdR8DFKer+m5ZGRHZJ5RFDwaJx/vI=
+X-Received: by 2002:a81:1dd1:0:b0:2ea:c38b:65a8 with SMTP id
+ d200-20020a811dd1000000b002eac38b65a8mr3834670ywd.135.1651325544544; Sat, 30
+ Apr 2022 06:32:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220430054458.31321-1-ansuelsmth@gmail.com> <20220430054458.31321-4-ansuelsmth@gmail.com>
-In-Reply-To: <20220430054458.31321-4-ansuelsmth@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 30 Apr 2022 16:25:17 +0300
-Message-ID: <CAA8EJpowg9u-U3gTjPOU0ae08TeeXFnGmYNK0Mt8j9UQk2WENw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: qcom: clk-krait: add apq/ipq8064 errata workaround
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220422170530.GA2338209@roeck-us.net>
+ <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
+ <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net> <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
+ <20220422234150.GA3442771@roeck-us.net> <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net> <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+ <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net> <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
+ <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
+ <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net> <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
+ <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
+ <149509dd-f43d-1b27-4395-81eab4ff3455@roeck-us.net> <CAK8P3a05vFdBnXXAMPVS82xX29+uinvWPcWxAgvj0TfoOk+1kg@mail.gmail.com>
+ <b13783aa-9225-d52a-3800-c97ad772688b@roeck-us.net>
+In-Reply-To: <b13783aa-9225-d52a-3800-c97ad772688b@roeck-us.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 30 Apr 2022 15:32:08 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3S5OjkKq_u5FpnwzYv+0+typya6Z4MzTez5ZH+do00xQ@mail.gmail.com>
+Message-ID: <CAK8P3a3S5OjkKq_u5FpnwzYv+0+typya6Z4MzTez5ZH+do00xQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:6ozNYDqoMexS7pdW43hedMtqIfcc4hU1ADSq42DWDp+Xgq1NNm2
+ FSEQTiSyd0J98c4LVD7VXFQz1yk3PEhqiSyZtjRAPSFG2O75JYZMaxEiq6NQ0W+f2ozEs8u
+ ovYliqNX06/xtOt91Mr/MQrvYWigJrVoOnR2IQxMG4T/GHpL8lDY9Eo4TtYCC4WcZiN5jDK
+ FJ7BFUPWjwygAAJjoRsXQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nH0TOiOvIm8=:K4+xRin4M7FvWVCctlGgzj
+ tieVqWIZ40XKn48G7IIChifQHzDcJsTFhNOy3acd3dRNGPrU/f9uoxu+c/xUTWHKz1Ttlx7xn
+ 3HB+4HoNTYGE9BCaw383DjD0ZEsPXepdJz6iJMer9KWcXVYfVKJY20m6/pE0vIokXPUJHsMo+
+ fwk4HyQji4KDyMAl0voLVenJnQkYFjW84VZNJrq/BXuaxVF/jyvk4WSQR+rHP3renkmKGivmU
+ cAX8aabd7wiC7KvIe+8w8SjrGyzFbR6KNDFyfiYnAvpTlVQkdsl3ImaVbMY1gvXr1Q0Znm4+v
+ 3C1FTGhqa3RB/ebkPhV8XHcf+n2+aHvCj41AlkyzIq6+Lldm0VVas+92BcWKpU5zQQTi3zhQP
+ bPBt3p4paoWviZ9sQ+I6mpGJss0XR4a3XKh4yZ9AvbdLXQk0gIixsYmsT2jofEwM5wJEEuqIr
+ 9HtxDuhA08c0WzhP5Z4CvD50MKxVeaYQ+PiTTUI+HS2EoZ9Dda84lF6K7pbwhjRxUXOCDI2Nb
+ uahtYWfPKeFEj2el//jJx1JLYW/Fsc8q4DsiTD+vt7CcCdIZ4vVArfKPNP+Z/PCrbw4hwM5qQ
+ IQIsRv56KNOykk+fxppJDSvGXkhYCLa5SpdlfjtA74XREnR4haTnrje2G3CAce4sC4xYrK8mW
+ +OTl9s6A5iciP15nGEdl//QglsVNujFeFQC9VHIDyVuxQrQQG4tnQg/Bv69Bmm3fXnQwMyuCT
+ EMALR1JT9/6m8FRd+mtzNKyILyupr9g6HkAoIlE5gkkCptkuVe51uTWuMnIB5uSbpmIIIuNXA
+ jernuKbbiwnLgYwzABjQNdT9rokW3DOBC6sPuHDFF3jKRzYREQ=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 30 Apr 2022 at 15:53, Ansuel Smith <ansuelsmth@gmail.com> wrote:
+On Sat, Apr 30, 2022 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> On 4/30/22 01:04, Arnd Bergmann wrote:
+> > and concluded that it must have done this for a long time. In my own qemu
+> > instance, I see a crash from iWMMXt, but that works fine on your machine.
+> > OTOH, your failed instances all look like they either time out or
+> > failed to find a
+> > rootfs. I tried passing an MMC device as root, and that works here.
+> >
 >
-> Add apq/ipq8064 errata workaround where the sec_src clock gating needs to
-> be disabled during switching. krait-cc compatible is not enough to
-> handle this and limit this workaround to apq/ipq8064. We check machine
-> compatible to handle this.
->
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> Booting from mmc works for me as well. Booting from pcmcia worked before,
+> so I assume that there must be some regression.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Ok, got it, and managed to reproduce the hang now. My "ARM: pxa/sa1100: move
+I/O space to PCI_IOBASE" patch managed to get it to the point of detecting
+the pcmcia device instead of crashing, so I assumed it was enough when it
+clearly was not. Before that patch, it still works, afterwards it hangs with
+"pata_pcmcia: probe of 0.0 failed with error -12" as mentioned above. I'll
+have another look.
 
-> ---
->  drivers/clk/qcom/clk-krait.c | 16 ++++++++++++++++
->  drivers/clk/qcom/clk-krait.h |  1 +
->  drivers/clk/qcom/krait-cc.c  |  8 ++++++++
->  3 files changed, 25 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-> index 90046428693c..45da736bd5f4 100644
-> --- a/drivers/clk/qcom/clk-krait.c
-> +++ b/drivers/clk/qcom/clk-krait.c
-> @@ -18,13 +18,23 @@
->  static DEFINE_SPINLOCK(krait_clock_reg_lock);
->
->  #define LPL_SHIFT      8
-> +#define SECCLKAGD      BIT(4)
-> +
->  static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
->  {
->         unsigned long flags;
->         u32 regval;
->
->         spin_lock_irqsave(&krait_clock_reg_lock, flags);
-> +
->         regval = krait_get_l2_indirect_reg(mux->offset);
-> +
-> +       /* apq/ipq8064 Errata: disable sec_src clock gating during switch. */
-> +       if (mux->disable_sec_src_gating) {
-> +               regval |= SECCLKAGD;
-> +               krait_set_l2_indirect_reg(mux->offset, regval);
-> +       }
-> +
->         regval &= ~(mux->mask << mux->shift);
->         regval |= (sel & mux->mask) << mux->shift;
->         if (mux->lpl) {
-> @@ -33,6 +43,12 @@ static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
->         }
->         krait_set_l2_indirect_reg(mux->offset, regval);
->
-> +       /* apq/ipq8064 Errata: re-enabled sec_src clock gating. */
-> +       if (mux->disable_sec_src_gating) {
-> +               regval &= ~SECCLKAGD;
-> +               krait_set_l2_indirect_reg(mux->offset, regval);
-> +       }
-> +
->         /* Wait for switch to complete. */
->         mb();
->         udelay(1);
-> diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-> index 9120bd2f5297..f930538c539e 100644
-> --- a/drivers/clk/qcom/clk-krait.h
-> +++ b/drivers/clk/qcom/clk-krait.h
-> @@ -15,6 +15,7 @@ struct krait_mux_clk {
->         u8              safe_sel;
->         u8              old_index;
->         bool            reparent;
-> +       bool            disable_sec_src_gating;
->
->         struct clk_hw   hw;
->         struct notifier_block   clk_nb;
-> diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-> index 4d4b657d33c3..cfd961d5cc45 100644
-> --- a/drivers/clk/qcom/krait-cc.c
-> +++ b/drivers/clk/qcom/krait-cc.c
-> @@ -139,6 +139,14 @@ krait_add_sec_mux(struct device *dev, int id, const char *s,
->         mux->hw.init = &init;
->         mux->safe_sel = 0;
->
-> +       /* Checking for qcom,krait-cc-v1 or qcom,krait-cc-v2 is not
-> +        * enough to limit this to apq/ipq8064. Directly check machine
-> +        * compatible to correctly handle this errata.
-> +        */
-> +       if (of_machine_is_compatible("qcom,ipq8064") ||
-> +           of_machine_is_compatible("qcom,apq8064"))
-> +               mux->disable_sec_src_gating = true;
-> +
->         init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
->         if (!init.name)
->                 return -ENOMEM;
-> --
-> 2.34.1
->
-
-
--- 
-With best wishes
-Dmitry
+       Arnd
