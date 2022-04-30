@@ -2,131 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D88EC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 14:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62976C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 23:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242556AbiD3OyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Apr 2022 10:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37280 "EHLO
+        id S236100AbiD3XRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Apr 2022 19:17:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382878AbiD3OyD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 10:54:03 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 852C213D28;
-        Sat, 30 Apr 2022 07:50:41 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id z19so12051821edx.9;
-        Sat, 30 Apr 2022 07:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=35Z38xa8v30mqUUeSUS3HbNABmBpHeiUXWnZOefNVTM=;
-        b=AR2MkGG+6LI/m1uDVb5qrF6f8++OLChjDqjv9zvDtU0K8sydE53k6ynYldLCk9Uw4w
-         WCvHLH2Bd1oZPk6oYS7zTDOr9lFULgdb0RfyyM786u/NGGZFyzGGUxvLJAsXSXtSQjJp
-         +NqUjG7HrKkL9Otj+U2+VkPAV+ZMkPdpuS9TJrAoQEdqipbnGmEkzbC1/DIxrjk6FA0W
-         aOtxjISyVu+ZzYkhReLkOxZ43PuZzfBnOnMXFIwbY+8ET+b3Z8jdqCmHFLZq6Glk0o0A
-         vrSg/Ptj5oaHklp5WZ5CPjMBI/6obfc+qESRnAqvs6XCDbwOrry99T/taxgcp99Z/hZH
-         ftJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=35Z38xa8v30mqUUeSUS3HbNABmBpHeiUXWnZOefNVTM=;
-        b=2J8SWQk3VV/Jah0txgiTcQa83ammW7Pe8vCKDNh+Iy/DwHs4QH12B87EVtrLsRFP/i
-         Al8ewAtRbzGodqD1CaT6+ESLzXZ0jifW6uddc7KnYYRNf0NrWhsH4+qUzaJJTYk7flMc
-         KWsYVj2qISsa031EZXlnzt898/nYQj7oBY8czlcQh+HxI6dLF93i4EmGeVCOliBDYURu
-         SodKvHI/d64/bi0xRW87Wn363uB1WP+vwtWjHfvFyXKXd3clfg5hWtkNy2IanqC7I3rx
-         bFeAUuM0vBAFRR4jq6kvawcR4zZv27jpddul/U/EpMbnaQhp2RbuPwwoZLWyqNFzZ7XQ
-         hhOQ==
-X-Gm-Message-State: AOAM5332oVBFMqD5GBibsT2qOcx6Qa0817wQO87MMdP4AbKaUD0YJQ6r
-        1Op0K4vJr+ijM7rFrAX6U10=
-X-Google-Smtp-Source: ABdhPJzhsoUpvtx4Z6JBYZ5oCMOo5p1WBt6jwZmgE1ZSbLsuBNCk1iQaRSqqVpYgKD2KqRzyv3qhlA==
-X-Received: by 2002:a05:6402:2547:b0:426:1763:4c5b with SMTP id l7-20020a056402254700b0042617634c5bmr4857413edb.176.1651330239860;
-        Sat, 30 Apr 2022 07:50:39 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id e25-20020a056402149900b0042617ba63d5sm4172358edv.95.2022.04.30.07.50.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Apr 2022 07:50:39 -0700 (PDT)
-Message-ID: <626d4cbf.1c69fb81.e6965.76b4@mx.google.com>
-X-Google-Original-Message-ID: <YmzoYl90+KVdkrPA@Ansuel-xps.>
-Date:   Sat, 30 Apr 2022 09:42:26 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-References: <20220430060125.9124-1-ansuelsmth@gmail.com>
- <20220430060125.9124-4-ansuelsmth@gmail.com>
- <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
+        with ESMTP id S231941AbiD3XRj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 19:17:39 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 129CE517F2;
+        Sat, 30 Apr 2022 16:14:11 -0700 (PDT)
+X-UUID: 65a0f79ec973441ba9cf2e07990c17b2-20220501
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:aedec0f3-be3e-43f0-9053-f6390d329c18,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
+        ION:release,TS:45
+X-CID-INFO: VERSION:1.1.4,REQID:aedec0f3-be3e-43f0-9053-f6390d329c18,OB:0,LOB:
+        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
+        N:release,TS:45
+X-CID-META: VersionHash:faefae9,CLOUDID:2fc94a2f-6199-437e-8ab4-9920b4bc5b76,C
+        OID:IGNORED,Recheck:0,SF:28|17|19|48,TC:nil,Content:-5,EDM:-3,File:nil,QS:
+        0,BEC:nil
+X-UUID: 65a0f79ec973441ba9cf2e07990c17b2-20220501
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 591683792; Sun, 01 May 2022 07:14:06 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Sun, 1 May 2022 07:14:04 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Sun, 1 May 2022 07:14:04 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <matthias.bgg@kernel.org>
+CC:     <allen-kh.cheng@mediatek.com>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <devicetree@vger.kernel.org>,
+        <ikjn@chromium.org>, <krzk+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>, <sboyd@kernel.org>, <weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: ARM: Mediatek: Remove msdc binding of MT8192 clock
+Date:   Sun, 1 May 2022 07:14:04 +0800
+Message-ID: <20220430231404.3078-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220429123133.28869-2-matthias.bgg@kernel.org>
+References: <20220429123133.28869-2-matthias.bgg@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 30, 2022 at 04:40:54PM +0200, Krzysztof Kozlowski wrote:
-> On 30/04/2022 08:01, Ansuel Smith wrote:
-> > Convert kpss-gcc driver Documentation to yaml.
-> > Add #clock-cells additional binding to required bindings and example
-> > as it's a required binding for clock-output-names.
-> > 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> The msdc gate is part of the MMC driver. Delete the binding description
+> of this node.
 > 
-> 
-> (...)
-> 
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - qcom,kpss-gcc-ipq8064
-> > +          - qcom,kpss-gcc-apq8064
-> > +          - qcom,kpss-gcc-msm8974
-> > +          - qcom,kpss-gcc-msm8960
-> > +      - const: qcom,kpss-gcc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: phandle to pll8_vote
-> > +      - description: phandle to pxo_board
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: pll8_vote
-> > +      - const: pxo
-> > +
-> > +  clock-output-names:
-> > +    const: acpu_l2_aux
-> 
-> It does not make sense having a constant output name. What is the
-> meaning this property in such case? The original binding did not enforce it.
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Mh. Should I just drop the const and put a description referring to an
-advised name? The driver with the kpss-gcc hardcode the name to
-acpu_l2_aux that's why I thought it was a correct conversion using a
-const but I assume this is another problem of not making a correct 1:1
-conversion and adding fixes on pure conversion.
-Think I should drop it and put a description to it. (and then later fix
-it when I will push the other series with all the tweaks)
-
-What do you think?
-
--- 
-	Ansuel
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
