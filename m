@@ -2,119 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E834BC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 14:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EB7C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Apr 2022 14:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239090AbiD3OoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Apr 2022 10:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
+        id S233917AbiD3Oqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Apr 2022 10:46:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbiD3OoT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 10:44:19 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E2961295
-        for <linux-clk@vger.kernel.org>; Sat, 30 Apr 2022 07:40:57 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id i27so20355872ejd.9
-        for <linux-clk@vger.kernel.org>; Sat, 30 Apr 2022 07:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=LokzJDa2Xe7TuFMhmFuD4DahOkDLaGkiEOATNl7BNRY=;
-        b=SAIr1Da3H8/px5lgkHUteAvg3wWIR5C1ZP8E41UVrymDvA/1L4ndQ/hLupOphy7M7E
-         pW8QZmVCDnkeHJrIffY5IhnABxkHC4DwBUgr29crPVwCRYC8d9FZkb1H8fkX93t19wQP
-         Yp0PgSiwFkOa0QnKI5dSOIbyffkpPJCet9U8YQ/2xDKTzJ5Ca/MdE7Ls3eAJknOo8I3T
-         JCOEprgLFd3oQyXol40btbAlYMjf2pv98uQXhRAbV5ZcwnTZX96ev0I37xj/FFgSQCGX
-         OGSBBQXXxDl6Q48hle/4n/t1aTHeOp+E1BJWIDubE4ALMg9FUoPKr0QpzIET+K4IRCqE
-         qKQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=LokzJDa2Xe7TuFMhmFuD4DahOkDLaGkiEOATNl7BNRY=;
-        b=V4n5qXEmWDgKnlE2fjkgzzuOKJt8ZfTIZ+NjRun8EQlhoRxVeiv11ZEMW73sQsp8QN
-         +9tIsYfOQiS/rJyM/dguLCBxnCjoIDWWhnI27TJI3Y3AyAdlB3DClJRKFqgoHwuFVrvG
-         DaLwaBA5YndZr0no0Sxyspsz9AiNBNpVB1sL36hf+EYF89cFj0eT5JOBGr7WYR1TD4SU
-         lcxXvvo5MANBppScPRrAWa8Hgo4tIIsGaxLqmrTQj/PaXTstI/Glo3HTEIHZAmBXGmOt
-         Bj2ONmN0/DulAh7UDEvrqOLHwR/TMnMn4Ks0Krg7q4NLzAvbqdNLRhjVs+4dPvH3VrV6
-         MoMw==
-X-Gm-Message-State: AOAM533qg+D6yJWAmU7z7CjwiMUymh6LSWkDTrMZ3QzN5PuedG9WlouS
-        OhGNa8WklRfZFWy7a4aN7lhYww==
-X-Google-Smtp-Source: ABdhPJyiS+KNBRI3C8ryizI2zQv/To0znPNYuAakl7DG82X4EjBVXi7pNBCQhfq0oVkdGuvKoOFGzw==
-X-Received: by 2002:a17:906:9b93:b0:6da:6388:dc57 with SMTP id dd19-20020a1709069b9300b006da6388dc57mr4002977ejc.338.1651329656122;
-        Sat, 30 Apr 2022 07:40:56 -0700 (PDT)
-Received: from [192.168.0.180] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id qs24-20020a170906459800b006f3ef214e19sm1682904ejc.127.2022.04.30.07.40.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 30 Apr 2022 07:40:55 -0700 (PDT)
-Message-ID: <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
-Date:   Sat, 30 Apr 2022 16:40:54 +0200
+        with ESMTP id S231355AbiD3Oqj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Apr 2022 10:46:39 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D85B161295;
+        Sat, 30 Apr 2022 07:43:16 -0700 (PDT)
+Received: from mail-ot1-f42.google.com ([209.85.210.42]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1Mn2eN-1oAYcv3eXX-00kApA; Sat, 30 Apr 2022 16:43:15 +0200
+Received: by mail-ot1-f42.google.com with SMTP id w8-20020a9d5388000000b006060c4a9ee3so483894otg.10;
+        Sat, 30 Apr 2022 07:43:13 -0700 (PDT)
+X-Gm-Message-State: AOAM530lJLjGIGkDDyrzz26RBeTaJulD941ict7DOulu0ByeoygDj/K8
+        6EElQtNwsRwKvdAYHK7cp/6ch1znfnysExWofiY=
+X-Google-Smtp-Source: ABdhPJyu1oLM1IRKTqR+eQdQ1rsYTJoLMnuBV/FFpB8y5vKEh5sII8e/hMlA25PDcp1w4A+thLzVKyWiU6hDO089+bw=
+X-Received: by 2002:a0d:d804:0:b0:2f4:e47d:1c2c with SMTP id
+ a4-20020a0dd804000000b002f4e47d1c2cmr4143200ywe.320.1651328616903; Sat, 30
+ Apr 2022 07:23:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220422170530.GA2338209@roeck-us.net>
+ <CAK8P3a3V=qxUqYT3Yt=dpXVv58-Y+HVi952wO6D4LPN5NNphGA@mail.gmail.com>
+ <8b36d3a4-ec85-2f9f-e4b7-734d8ddd3d8f@roeck-us.net> <CAK8P3a0R9cpEb1d2=e9KnGSbi_uRv48RWfCu_J4DDak_cGZSuw@mail.gmail.com>
+ <20220422234150.GA3442771@roeck-us.net> <CAK8P3a3qZdEqnJ2nTOKwDMossngOgCpEvZq4cQMPQjSsUoU=6g@mail.gmail.com>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net> <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+ <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net> <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
+ <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
+ <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net> <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
+ <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
+ <149509dd-f43d-1b27-4395-81eab4ff3455@roeck-us.net> <CAK8P3a05vFdBnXXAMPVS82xX29+uinvWPcWxAgvj0TfoOk+1kg@mail.gmail.com>
+ <b13783aa-9225-d52a-3800-c97ad772688b@roeck-us.net> <CAK8P3a3S5OjkKq_u5FpnwzYv+0+typya6Z4MzTez5ZH+do00xQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a3S5OjkKq_u5FpnwzYv+0+typya6Z4MzTez5ZH+do00xQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 30 Apr 2022 16:23:20 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3jiqf_zpBsZyvAb5ZtkwDa7KkqExqDAdpY_pYqkr_NgQ@mail.gmail.com>
+Message-ID: <CAK8P3a3jiqf_zpBsZyvAb5ZtkwDa7KkqExqDAdpY_pYqkr_NgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220430060125.9124-1-ansuelsmth@gmail.com>
- <20220430060125.9124-4-ansuelsmth@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220430060125.9124-4-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:H6IJBEz+ZpomKcFiPidyhkUxEF5w0DLXHe/vMZwISX/BHUEDMJn
+ 8j/HagrzkYpHjm2t/x9VBIXKuZQV3AqFInnFiSwWiMPGzFWgqdFaN5rcXKOnBegblTTz6EE
+ uMjlCJwhQjwp4SwKefBkyCGNKMB/lV4MYEcHOR/J4MeULTPINTxBzZPO8P1uDY4R9JHxRtP
+ 0MMFl3XheI0bnuRT/Sk3Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VPedLqT9np0=:7zewjiKp3tbI7dQZ8xe6nI
+ U8UyWjOB5sNHgwM5+P1UxSMkme5dnGMow4JYAXQQ+TyLo6IlRzottshuhG0lTTHDzwK9hQrlY
+ WYvK6HHh957URL/wUs3GqBxThWlKzULBdPhuatwg4rNa6ER5kWaDoomIGdUoaPtFyRGQlv/TI
+ 1THH6UeYG//B659nk9K8vn932sLO3QESSnVOErCi1lAtUnazuP71bmCtdQ9NFdeps5CgcKWd3
+ 1snKB2ECaTsCBZ4myNVW/ycvuSPkDjdAS+0HiSyY6BsCWQcWR3KQXJkVI53uYv8iZvCeYHYWk
+ LAoLR8GYSoqGu0Ogm6H3riBYXyT6TWPbLw3n8s9bF0eA1UeKPSMhmcNhAeP5cHaYDPebkOuMF
+ iAoQ4UQqc5wSQRxeOEbTatJd+YoZzPf1eRftohhpaGfZswgOUEkty3hzYs7Dy2YzMErRkARB0
+ 2t/42VQiWjkml54rDgbucXTDT2nqxnASsJfyCVnBC4r8MYeqQACR8cJpHNXkPEa9rj8iYwsP8
+ azvt6us6rZIC6gpX2nXLnNRBi4FqMELPeKL0pY7lskwIZKw6UnbHe5uOUOeKuUkwNsuxJNodk
+ m+0P6Io3MXrOI3z/mHHUgs52ZL/DSK+5dnEj0ajN29iX2nYVMlV5rsNwhO+YEDK0xm0hl451K
+ QG2G8hAuzwVzXeUY4LHg5uUFifmMYEhKR49z3K60I6J0brkvufGKlMgjl3pfD3/H65u1slhxb
+ xkRJqjsZLimrMAQQM5VL0URHZgEoVMI6lTiza95jjdhehR2zvCmXW7h88TViDEodkWXvCu2PE
+ mtOr5S65VuWBVzrJV26tfgq81fvr+wRRe+GnTvbKD3PrbnwkmQ=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/04/2022 08:01, Ansuel Smith wrote:
-> Convert kpss-gcc driver Documentation to yaml.
-> Add #clock-cells additional binding to required bindings and example
-> as it's a required binding for clock-output-names.
-> 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+On Sat, Apr 30, 2022 at 3:32 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sat, Apr 30, 2022 at 2:41 PM Guenter Roeck <linux@roeck-us.net> wrote:
+> > On 4/30/22 01:04, Arnd Bergmann wrote:
+> > > and concluded that it must have done this for a long time. In my own qemu
+> > > instance, I see a crash from iWMMXt, but that works fine on your machine.
+> > > OTOH, your failed instances all look like they either time out or
+> > > failed to find a
+> > > rootfs. I tried passing an MMC device as root, and that works here.
+> > >
+> >
+> > Booting from mmc works for me as well. Booting from pcmcia worked before,
+> > so I assume that there must be some regression.
+>
+> Ok, got it, and managed to reproduce the hang now. My "ARM: pxa/sa1100: move
+> I/O space to PCI_IOBASE" patch managed to get it to the point of detecting
+> the pcmcia device instead of crashing, so I assumed it was enough when it
+> clearly was not. Before that patch, it still works, afterwards it hangs with
+> "pata_pcmcia: probe of 0.0 failed with error -12" as mentioned above. I'll
+> have another look.
 
+Got it: as the PCMCIA bus on this machine is the only thing with an I/O space,
+I assigned it port number range 0-0x1000, with an io_offset of 0, but this
+was apparently unexpected and triggered this sanity check:
 
-(...)
+static int static_find_io(struct pcmcia_socket *s, unsigned int attr,
+                        unsigned int *base, unsigned int num,
+                        unsigned int align, struct resource **parent)
+{
+      if (!s->io_offset)
+              return -EINVAL;
+      ...
+      return 0;
+}
 
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - qcom,kpss-gcc-ipq8064
-> +          - qcom,kpss-gcc-apq8064
-> +          - qcom,kpss-gcc-msm8974
-> +          - qcom,kpss-gcc-msm8960
-> +      - const: qcom,kpss-gcc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: phandle to pll8_vote
-> +      - description: phandle to pxo_board
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pll8_vote
-> +      - const: pxo
-> +
-> +  clock-output-names:
-> +    const: acpu_l2_aux
+I moved the devices around now, giving zeus/viper I/O space an offset of
+zero, and moving PCMCIA to offset 0x10000 and 0x11000 for the two slots,
+which now works because the io_offset is nonzero. I've regenerated the
+branches again, and confirmed the for-next branch still boots from pcmcia.
 
-It does not make sense having a constant output name. What is the
-meaning this property in such case? The original binding did not enforce it.
-
-
-
-Best regards,
-Krzysztof
+        Arnd
