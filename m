@@ -2,148 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2A9C433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 08:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3074BC433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 10:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344125AbiEAI7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 04:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47516 "EHLO
+        id S244556AbiEAKjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 06:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241474AbiEAI7K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 04:59:10 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763451A39F
-        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 01:55:40 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id d6so13557368ede.8
-        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 01:55:40 -0700 (PDT)
+        with ESMTP id S1345358AbiEAKi5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 06:38:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5164CC4
+        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 03:35:30 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id t5so3064694edw.11
+        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 03:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=9Q4D7i4GL8KP5hpGHA7/56lmG9H5Z77KSqaGV3uZPeM=;
-        b=NRJ3Ud1Z3YxwLrFLtiUGSHKmaQQ/gEWMH1cpmTU5i/RMSE/lYjldRIEJfnx80xzGwF
-         nB76PATx5V0L7aI82BrU+nvAqKp6dzYp6rwMKLigl1qoE1/aXy7GJSSypGa531b5On+N
-         5raduwLXLRuYiPE2pwiFe3kB4NMa2pB1GxJcsPELuxbxAreDlahDphEKPIKGikeAwZ08
-         uQKSsFe/dIr0c6xTCn4up4K1mAAGxLL1P4dJPRWtzAiKMLL/t52qk4yfYuponzXYK3Da
-         nG41j1svssmDZ1WcSHXBsXzmDlC3ihEYTADFOTpAcG901AZmeXkdSkf0JZ+Z3A+vUyj3
-         DH2w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dFahH59BOMsWXM1m1iMuw1dze5pfTvPM54N+hMTC96w=;
+        b=ZsYViszJSPQ0CaaVe7LHbtreWvu+hh6wFyzUgYcImbRO85R79VjddFcvg0DqPTOWkf
+         tvlxfeFeWOkVhyQ5hU0tBNHCTosWfD3K3cFecanf6FULBEbmYpTyTwNDnsRrfogyOTGs
+         mslpIInD4bNHjYhMp/qTuqbsFTklUIk7S00yovxXgH27DrxXKvPpxGktacTFk6o2BveL
+         KJkqJceYOD8EdwZEmVOioAEie2OTWtpuPYu1ChP6jJuKrPS/lmmKwtmZq+/dDXY0O7xG
+         Nx4iDLqpROG9YOlBRrBD9JNbq2g/WzGFmNKwpJO9qIbyf7pK3Zur9res4k2PKyHXCbBI
+         rNlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=9Q4D7i4GL8KP5hpGHA7/56lmG9H5Z77KSqaGV3uZPeM=;
-        b=sxk1fb6HQISbkNTYLXfpL5N4naEqKx1KY3xnycmH+/zzJn4Es2WhcFCm/AcRGW1WSd
-         ufxhqrAoamO7kk9npfEoMbE/HlGsR+qrE15qfeBiV3BkEUK/hMUa4j3+XwyIEIFMTzsZ
-         UkMs1p+cCn7UBWC8UO47MCtIzQtKMFUSKnI0Z/iTW9JX5Tf78T3KGcnOMGPVl7sJzFYA
-         UZU4/TUuxybsAUQX41SSzMXDgA2HH7Hfygc7d8ASdmG5LBxOYPSuY9eavxO+GpA9Dh9P
-         FVd1dmdEvIpOt6lEfb+YqEH0aw84pbqOYsSeOFIIdptazA/u3aFQNNXk5/O6w9jmhHjD
-         RYXw==
-X-Gm-Message-State: AOAM5325TAgwjcUOX3g57Eg6z5R/P550ji9fb9+gVBm6PRYX/73ysd2Z
-        wDQ6ldZwsSuDAv++GeN5LJvsDQ==
-X-Google-Smtp-Source: ABdhPJzRoUbN7p6a+QsrfdXpuNxUvP73pFrp/NOoq9oxKzcPe6GgKQtTMh5zIkfqEiGB5tCEKhuhTQ==
-X-Received: by 2002:a05:6402:288a:b0:425:c5b2:59d9 with SMTP id eg10-20020a056402288a00b00425c5b259d9mr7923496edb.412.1651395338995;
-        Sun, 01 May 2022 01:55:38 -0700 (PDT)
-Received: from [192.168.0.182] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id gv49-20020a1709072bf100b006f3ef214e35sm2374240ejc.155.2022.05.01.01.55.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 May 2022 01:55:38 -0700 (PDT)
-Message-ID: <3c2f2e75-153b-05bf-9878-70fc1c1a81b1@linaro.org>
-Date:   Sun, 1 May 2022 10:55:37 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 4/7] dt-bindings: clock: Add Nuvoton WPCM450
- clock/reset controller
-Content-Language: en-US
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        bh=dFahH59BOMsWXM1m1iMuw1dze5pfTvPM54N+hMTC96w=;
+        b=sUtHAT5ZtDW60Nf/pFOAONf9nLkf9bTcx8WUZTacgAZl1xhYI6sEEWKrErZ051FSBP
+         ngebD3riCMEaZZ9kEfWjarfeptm1bP2YRXIKzEWFsYXxtnOjgvZ4k5RnpZZYtEWdCDDP
+         HdoY3zezDVfAh+My4mh+P/ydfutBlNmCKQ5wYACsK9NKi4jLrBt7AqzRwZEDw8e6zSJS
+         e49OcQgh2pFMAaBpI7vAD8Jrcv3GuehFfrF0IiJts5a/5oK5DYGoZHQKZlKd4/iTya3S
+         f9p9VS9WvzjQBER88GxpzMKTgH4Vqv4rwTs7onBTYjRPC7ewNVYqsSbAIq1q+IpOF8+r
+         5eiA==
+X-Gm-Message-State: AOAM531nmjrMR6BrFU/5wTHC0bnSorzsW1Bb0OJZe7NZ2LFlKXDTveLM
+        EcPFtNx8h7mztXTH1I41A91EbA==
+X-Google-Smtp-Source: ABdhPJwLmaRoTqZst6tN49r43f4yAahFJ0alIb3Z4IVETYNUR5niWASmJ/VJyCHQ859CysoQbtz/JQ==
+X-Received: by 2002:aa7:da4a:0:b0:425:d676:9684 with SMTP id w10-20020aa7da4a000000b00425d6769684mr8236501eds.248.1651401329043;
+        Sun, 01 May 2022 03:35:29 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id zp1-20020a17090684e100b006f3ef214df1sm2464438ejb.87.2022.05.01.03.35.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 May 2022 03:35:28 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-References: <20220429172030.398011-1-j.neuschaefer@gmx.net>
- <20220429172030.398011-5-j.neuschaefer@gmx.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220429172030.398011-5-j.neuschaefer@gmx.net>
-Content-Type: text/plain; charset=UTF-8
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/8] clk: qcom: alpha-pll: correct kerneldoc
+Date:   Sun,  1 May 2022 12:35:13 +0200
+Message-Id: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/04/2022 19:20, Jonathan Neuschäfer wrote:
-> The Nuvoton WPCM450 SoC has a combined clock and reset controller.
-> Add a devicetree binding for it, as well as definitions for the bit
-> numbers used by it.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> v2:
-> - Various improvements, suggested by Krzysztof Kozlowski
-> 
-> v1:
-> - https://lore.kernel.org/lkml/20220422183012.444674-5-j.neuschaefer@gmx.net/
-> ---
->  .../bindings/clock/nuvoton,wpcm450-clk.yaml   | 66 ++++++++++++++++++
->  .../dt-bindings/clock/nuvoton,wpcm450-clk.h   | 67 +++++++++++++++++++
->  2 files changed, 133 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
->  create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
-> new file mode 100644
-> index 0000000000000..3ed3e40e39637
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/nuvoton,wpcm450-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton WPCM450 clock controller
-> +
-> +maintainers:
-> +  - Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> +
-> +description:
-> +  The clock controller of the Nuvoton WPCM450 SoC supplies clocks and resets to
-> +  the rest of the chip.
-> +
-> +properties:
-> +  compatible:
-> +    const: nuvoton,wpcm450-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Reference clock oscillator (should be 48 MHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: refclk
+Correct kerneldoc warning:
 
-Sorry for not bringing it up earlier - this should be just "ref". Names
-in values should not have suffixes (so no "tx-dma", "wake-gpio",
-"ref-clk" etc).
+  drivers/clk/qcom/clk-alpha-pll.c:1450:
+    warning: expecting prototype for clk_lucid_pll_configure(). Prototype was for clk_trion_pll_configure() instead
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 4406cf609aae..969d98fca5df 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -1439,7 +1439,7 @@ const struct clk_ops clk_alpha_pll_postdiv_fabia_ops = {
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
+ 
+ /**
+- * clk_lucid_pll_configure - configure the lucid pll
++ * clk_trion_pll_configure - configure the lucid pll
+  *
+  * @pll: clk alpha pll
+  * @regmap: register map
+-- 
+2.32.0
+
