@@ -2,123 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B3EC433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 19:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41543C43217
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 21:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354175AbiEATqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 15:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47998 "EHLO
+        id S1355129AbiEAVhx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 17:37:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352249AbiEATqp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 15:46:45 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A050010FD9
-        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 12:43:19 -0700 (PDT)
-Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 000593F62D;
-        Sun,  1 May 2022 21:43:14 +0200 (CEST)
-Date:   Sun, 1 May 2022 21:43:13 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Adam Skladowski <a39.skl@gmail.com>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>
-Subject: Re: [PATCH] clk: qcom: smd: Update MSM8976 RPM clocks.
-Message-ID: <20220501194313.zu4dmmlggiksi6ce@SoMainline.org>
-Mail-Followup-To: Marijn Suijten <marijn.suijten@somainline.org>,
-        Adam Skladowski <a39.skl@gmail.com>, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-References: <20220426090226.27293-1-a39.skl@gmail.com>
+        with ESMTP id S1355096AbiEAVhw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 17:37:52 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4865B3C708
+        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 14:34:26 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id d12so23293774ybc.4
+        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 14:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XHDe8NwwI9SjN9yPCfdFZVh4P/kcPQDXEmbvi28Ry+g=;
+        b=UhniDGJRP7jnhKBKyFEU7Wm1oj19NfJgHgLTwiUZocIMzFuZcy6/C6VzBVOL++cBvj
+         LrIdaNUAfF6A3gJNASrFvHnAKvQMpgaI3a+ALVbDTJ8eikxSpYzLlQUmI4nPbtXjDg4D
+         61l+wu6AHbkliq+H0f8Ajl6wMDIrIDWbHXSKpPcelWQXQMMNGkpdczkhdkUi7iNKqqom
+         f4kY22N5GzwsoRBTgxLB4z0sMMH1XkpdSeUqQXDWgVrNldazzOzczD605y1f7K81V1C4
+         4ugAXmyrIfWO1yaViycscWtZgLZGrFY+/HbQHeYpwIpBVHoKMccEQ7oDjW2RE/A2D6ol
+         0zew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XHDe8NwwI9SjN9yPCfdFZVh4P/kcPQDXEmbvi28Ry+g=;
+        b=RpUuiW95QVltujTt5yJMMZKVJGx8PpqpMVFlQkg8yE+e9S7XIXM179PmakFlGylyGY
+         y7dmhnWQfWt0BJ5bH4FlexXL7zAnWp1ta9xRQxS+zLm/GesH9fJbIj7OVdvLXvGqnYGH
+         sNywqEx/+JWoxJeXlgCBlQxv7UW3jwyE9LekYCFmVDw7pjHGKePEqdkdEe1O4dnY/phh
+         VOZZ5C4AA4xC8yhupubH3C6N6+J9vUdVEvtMaFQiv9FMr+o5PTQ2OU1qJD8k7U/Va26m
+         RKDsRr8n8Ce4Xvj7AkcJx5c8k9D3J1SGJlT05FhOuZekCKsXq8jX9iUOVKUQEmDrvLfn
+         0WmQ==
+X-Gm-Message-State: AOAM530b1KRc/9dTh220p4FJ0vur1rFZBwYDg9AScdGcQIHbwokEpbG6
+        Gzdl9HqYbZt45Ew5i1cIn65vF/5SPImh3HbPvLngCg==
+X-Google-Smtp-Source: ABdhPJwyu4GO9ZTopFM1Qtp9g0AYWW/G2gCL2Rkf2k0emOIuL58PKSUnjfCPuXZtMMqa2spe4DyjerPL+kd11/8NfmU=
+X-Received: by 2002:a25:aa94:0:b0:648:62f2:ef4e with SMTP id
+ t20-20020a25aa94000000b0064862f2ef4emr8160978ybi.626.1651440865094; Sun, 01
+ May 2022 14:34:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220426090226.27293-1-a39.skl@gmail.com>
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220419163810.2118169-16-arnd@kernel.org>
+In-Reply-To: <20220419163810.2118169-16-arnd@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 1 May 2022 23:34:13 +0200
+Message-ID: <CACRpkdbdCzeWgLOhQfEPVz6fYMqDeTYtqQ3uunj1MK+RGcZZKA@mail.gmail.com>
+Subject: Re: [PATCH 15/48] ARM: pxa: tosa: use gpio descriptor for audio
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Tomas Cech <sleep_walker@suse.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2022-04-26 11:02:17, Adam Skladowski wrote:
-> MSM8976 does not have rpm clock named mmssnoc,
-> instead it's called sysmmnoc, drop define and reuse.
-> While we are at it add XO clock to list.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+On Tue, Apr 19, 2022 at 6:40 PM Arnd Bergmann <arnd@kernel.org> wrote:
 
-This patch should have had a Fixes: tag, not in the least to allow
-backporting but also to have get_maintainer.pl add the original author
-in CC for additional review and sign-off.
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The audio driver should not use a hardwired gpio number
+> from the header. Change it to use a lookup table.
+>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-In any case the omission of the XO clock here is intentional: the clock
-might be stopped whereas none of the platform is configured to support
-XO shutdown yet, which is why a "fixed-clock" is used in DT for now.
+Looks good to me!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-With that in mind both changes should have been split into separate
-patches, so that the clock rename can be safely annoted with a Fixes:
-tag.  Presuming the application of this patch to `for-next` isn't final,
-Bjorn is this something we can get worked through?  I've validated the
-rename with my downstream sources, and for that:
-
-    Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-
-But for the XO addition I'm wary of platform lockups.
-
-- Marijn
-
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index afc6dc930011..10b4e6d8d10f 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -563,17 +563,19 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
->  	.num_clks = ARRAY_SIZE(msm8974_clks),
->  };
->  
-> -DEFINE_CLK_SMD_RPM(msm8976, mmssnoc_ahb_clk, mmssnoc_ahb_a_clk,
-> -		   QCOM_SMD_RPM_BUS_CLK, 2);
->  DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
->  
->  static struct clk_smd_rpm *msm8976_clks[] = {
-> +	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
-> +	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
->  	[RPM_SMD_PCNOC_CLK] = &msm8916_pcnoc_clk,
->  	[RPM_SMD_PCNOC_A_CLK] = &msm8916_pcnoc_a_clk,
->  	[RPM_SMD_SNOC_CLK] = &msm8916_snoc_clk,
->  	[RPM_SMD_SNOC_A_CLK] = &msm8916_snoc_a_clk,
->  	[RPM_SMD_BIMC_CLK] = &msm8916_bimc_clk,
->  	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
-> +	[RPM_SMD_SYSMMNOC_CLK]	= &msm8936_sysmmnoc_clk,
-> +	[RPM_SMD_SYSMMNOC_A_CLK] = &msm8936_sysmmnoc_a_clk,
->  	[RPM_SMD_QDSS_CLK] = &msm8916_qdss_clk,
->  	[RPM_SMD_QDSS_A_CLK] = &msm8916_qdss_a_clk,
->  	[RPM_SMD_BB_CLK1] = &msm8916_bb_clk1,
-> @@ -586,8 +588,6 @@ static struct clk_smd_rpm *msm8976_clks[] = {
->  	[RPM_SMD_BB_CLK1_A_PIN] = &msm8916_bb_clk1_a_pin,
->  	[RPM_SMD_BB_CLK2_PIN] = &msm8916_bb_clk2_pin,
->  	[RPM_SMD_BB_CLK2_A_PIN] = &msm8916_bb_clk2_a_pin,
-> -	[RPM_SMD_MMSSNOC_AHB_CLK] = &msm8976_mmssnoc_ahb_clk,
-> -	[RPM_SMD_MMSSNOC_AHB_A_CLK] = &msm8976_mmssnoc_ahb_a_clk,
->  	[RPM_SMD_DIV_CLK2] = &msm8974_div_clk2,
->  	[RPM_SMD_DIV_A_CLK2] = &msm8974_div_a_clk2,
->  	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
-> -- 
-> 2.25.1
-> 
+Yours,
+Linus Walleij
