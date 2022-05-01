@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFBAC4332F
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 21:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5F1C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 21:47:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357504AbiEAVtW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 17:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
+        id S1359274AbiEAVuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 17:50:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358324AbiEAVtV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 17:49:21 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D964F18E05
-        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 14:45:49 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-2f7b815ac06so131771547b3.3
-        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 14:45:49 -0700 (PDT)
+        with ESMTP id S234436AbiEAVuX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 17:50:23 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7631225288
+        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 14:46:53 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id g28so23296615ybj.10
+        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 14:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=o3VTjpYc9+BjQELkkDsO6dDpNInM+ADeLzZMH34mpi4=;
-        b=IlP4JxWiKPX4bdEFyXCD3r8ZIjy820mwzPJu5QBfX6JOIDpKbziHZBpvkLwS1biul5
-         Vimbnc6q3YqDRk8Lv5gWl87dhWqMWENdviVtYTsAxbIk9GG8htKIqqRPSBp/+9HtETZK
-         b/t8bZ+U1wIG7y6zWRcffdetv4BAhU7UA2QEHAQwMXONuSvmCO2rY+CtjgbI5/Ma6YlU
-         kWAGtHNrt343kNKsGD+I2Y/6PvJNoiyDTUg4ZMBuoELLk6FST+Q8DrxXYDX/Mansop6f
-         o3Bzc8R/DTDYkzc4Hc1n9ke1F4dA09COrrypaspfm37rYZnvy7T/tJTY1N+SNxQtplpo
-         NoAQ==
+        bh=zq6K9saDLXhP7BxFMvj2X0QgCPUGvX8QgZ62vdX2sZo=;
+        b=b56QSIAKajlp3SMBgHss1IzdehuBQLfOOUe4Tfk2wceg5aZOjhyzaAraZSsRsxoepB
+         T8YTKh87idYcNsip2eky0LkWSFfYqfwW21PmXYM1S2L9+no2J2ueA//PZMIBEo+aPJtN
+         1HuPxtMchjnz1+D/wg35eGRHOIgXhYznfLxLdDusr7/th/+x0czHh2iIS/fDbKmDbc3Q
+         dobiOYYNRhRmCfl2HdzBFzUiAbktvGtKUiWDjWg7LMESnVhrwKPd5lAj0RCS85mNJsLv
+         KuXCagsd5iWRaUpEEL7oM08GkKdfGS32T8WUWK4KU2O3dMa62pyQCJ13DoPOuiHI9xnu
+         Os7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=o3VTjpYc9+BjQELkkDsO6dDpNInM+ADeLzZMH34mpi4=;
-        b=vvcTeqfun3YadbdKgZKE3sW4LqgXTQSXaGCI3Ybjp4TM0K7u0umK296lcbDMvt+NFK
-         EI+ew7Qjs5QAqibyQsdmxdg3Rl0w58kMg+9MfirQMerdvdI7yw9mTSA9Xq7m4U/Y7201
-         nF2TUi7lx6H4h8X2v21WGZTulm2y+o1CLZEpvHg61TEYhEg2Pt08fjebK46zg3VhIkIq
-         QuJX71nA13drG1Iebnmeu16RjADc+mgwyi0WBhHi86wjCSp9SaTvfD+lsFo5AzKO5rbz
-         3CZB6YGk0/wxLb0BT69wLqlmXLxY/YlZsoW05dh1MR786+eVxRRVpoSsrPJ/JT0y91Mq
-         QiUg==
-X-Gm-Message-State: AOAM5322ejKD4Axx7SlzDo2cUieZb6VMt6/hhsBknXggxa7LfrVadJkj
-        c3+oqeJgGn+XVJR9fdPA8aPXiRmBXR7oJ148F/uDIA==
-X-Google-Smtp-Source: ABdhPJwxWmrDPa3pAAvzVAJiLkxc6AUbWqJKUhGlchnr506qlQhemC8j8o9s5HTpW2MMnSqOK1sjRziG/+tL7yd80+w=
-X-Received: by 2002:a0d:e5c6:0:b0:2f8:c866:7af9 with SMTP id
- o189-20020a0de5c6000000b002f8c8667af9mr9171844ywe.268.1651441549128; Sun, 01
- May 2022 14:45:49 -0700 (PDT)
+        bh=zq6K9saDLXhP7BxFMvj2X0QgCPUGvX8QgZ62vdX2sZo=;
+        b=ramwqmGwa2Ob2Jezdyvqy0b1ILgLJMwJ6yfDZ14HrQwgQO+9ElaG//7XSSYHKiE3/5
+         G9YjvJOXSFwwU702tL9GtJeZu3GrTo5BcwgL7AJxMD/H/GZtwhWAC2RDt3e+/K7zFJ7B
+         O5q7GM4hpf/3TeBJ44YUiHrOa36+sMTz5ksEo/xnLvr1Ky5dhlEZIsLMMI7rZIOMfj4R
+         XJdK8HFlXNd3BmY8EsqC6nqOlwbzIRd9XKGsp6HUaFICtMyxlhmHksTbJfJt9A4ap4FR
+         siqcgXdfhhMIfleNzoRG92FxOHu26/tAaCm6jb7jXp3CMhCqjXq19Z6+xdyBxoJx2uiR
+         8iOQ==
+X-Gm-Message-State: AOAM5331C8q76dcb4Fwpm2/gCehybcZjvURqkv0F9obvf45kDEaIkqSo
+        fKXZK5rErY1YnWD+VkIxWtQCqAVdxTKrKBMPxEjHhw==
+X-Google-Smtp-Source: ABdhPJy2G1jdmYo0heXLaVkR+a7vuNFN5u4CZrDYPU1PhfEKz0BCtaze6Mx718uPeKKIvck5ypqKaqItjLfZ41hpEHc=
+X-Received: by 2002:a5b:451:0:b0:648:2a28:973f with SMTP id
+ s17-20020a5b0451000000b006482a28973fmr8652903ybp.291.1651441612710; Sun, 01
+ May 2022 14:46:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220419163810.2118169-1-arnd@kernel.org> <20220419163810.2118169-23-arnd@kernel.org>
-In-Reply-To: <20220419163810.2118169-23-arnd@kernel.org>
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220419163810.2118169-24-arnd@kernel.org>
+In-Reply-To: <20220419163810.2118169-24-arnd@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 1 May 2022 23:45:37 +0200
-Message-ID: <CACRpkdbHyjJ+nbaU0=JSs6yDzFfNnqCJqGiKG_LW4HyAJBw8aw@mail.gmail.com>
-Subject: Re: [PATCH 22/48] ARM: pxa: z2: use gpio lookup for audio device
+Date:   Sun, 1 May 2022 23:46:41 +0200
+Message-ID: <CACRpkdZPgobmsrAggERHw9f0VJV__Q6TL+DdU6sFd-io8feYLQ@mail.gmail.com>
+Subject: Re: [PATCH 23/48] ARM: pxa: magician: use platform driver for audio
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org,
         Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
@@ -87,16 +87,14 @@ On Tue, Apr 19, 2022 at 6:41 PM Arnd Bergmann <arnd@kernel.org> wrote:
 
 > From: Arnd Bergmann <arnd@arndb.de>
 >
-> The audio device is allocated by the audio driver, and it uses a gpio
-> number from the mach/z2.h header file.
->
-> Change it to use a gpio lookup table for the device allocated by the
-> driver to keep the header file local to the machine.
+> The magician audio driver creates a codec device and gets
+> data from a board specific header file, both of which is
+> a bit suspicious. Move these into the board file itself,
+> using a gpio lookup table.
 >
 > Acked-by: Mark Brown <broonie@kernel.org>
-> Cc: alsa-devel@alsa-project.org
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Cc: alsa-devel@alsa-project.org
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Looks good to me!
