@@ -2,91 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F7EC433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 08:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2A9C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 08:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343856AbiEAIjQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 04:39:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51116 "EHLO
+        id S1344125AbiEAI7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 04:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343491AbiEAIjF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 04:39:05 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0530723BFD
-        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 01:35:40 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id a1so13549813edt.3
-        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 01:35:39 -0700 (PDT)
+        with ESMTP id S241474AbiEAI7K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 04:59:10 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763451A39F
+        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 01:55:40 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id d6so13557368ede.8
+        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 01:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=aIqmgxixDtXOUkI/I5OewoiyRqWtHUTBMJ5v/u+HUuY=;
-        b=JfwcoTIFy4WoSFgE2SGOD8GqCu56/D9Xav1uYHP/i6+3cT5qaBALWVkWxjXEFalLRc
-         DVAUpr4gcmJE6SL/ZeC3QsbZbJw4cw7WWSTgIUbhG71BD90S35fcCeiDyDlBGfx42O9A
-         V1OBeMPoUh5xAf3WYTgJHfj6lACSimHk+6j3y+qP9sqgYPXUE2MpVL74jpgQpn4IUuNJ
-         T7PfAr245bcZwiYXPgDgG9rMS9ru5yV+e6pGHhoZAvZdq6j2cgxJCZauzvVp6DhaThPF
-         oFNIQHjcpkYVdIrooY6KKLN/aGpjrbqVM7TDQSKRTUEIvybVtM1MRwdR6pW+oaqcouOD
-         QObQ==
+        bh=9Q4D7i4GL8KP5hpGHA7/56lmG9H5Z77KSqaGV3uZPeM=;
+        b=NRJ3Ud1Z3YxwLrFLtiUGSHKmaQQ/gEWMH1cpmTU5i/RMSE/lYjldRIEJfnx80xzGwF
+         nB76PATx5V0L7aI82BrU+nvAqKp6dzYp6rwMKLigl1qoE1/aXy7GJSSypGa531b5On+N
+         5raduwLXLRuYiPE2pwiFe3kB4NMa2pB1GxJcsPELuxbxAreDlahDphEKPIKGikeAwZ08
+         uQKSsFe/dIr0c6xTCn4up4K1mAAGxLL1P4dJPRWtzAiKMLL/t52qk4yfYuponzXYK3Da
+         nG41j1svssmDZ1WcSHXBsXzmDlC3ihEYTADFOTpAcG901AZmeXkdSkf0JZ+Z3A+vUyj3
+         DH2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=aIqmgxixDtXOUkI/I5OewoiyRqWtHUTBMJ5v/u+HUuY=;
-        b=GglQ8sp38emER6wjYxRo43UPNm6ea72oiZpLYqqmFlbqln66ctPgY4qQaSLeyvcC/u
-         quWn+cBuBCpfvPCyI3XsqbS4tEDCdUTIWuU837ArvRHpdG6JZdnK1GVmX4RTc0PcQatr
-         yPzECKzM+G4k1GQV1B6A/TuZsJpbT2+t7uztqVAJzrBqa+b5+rosQgzobZEy/Ru+9XWJ
-         GoVdkB601tFnLFZmOPbZetodfw8oJUR4gZrb4Isps8jTzsT4Gy5a/5lP5HitupikDQVz
-         NS/DPuF/HEuKNEoa6UVtMvZhujbjFT/vbcv5JJrtqvW+xfVWyDGrrzA9v/kPbljcOwY/
-         m1lw==
-X-Gm-Message-State: AOAM533KIFbgXgWnGiBrQvjkX1Pmc5D6gFynvaOjCDbx3wuL1OnkrtvW
-        CC8p82UVgahhP63cnM/o9nJ4x7K4NiilmA==
-X-Google-Smtp-Source: ABdhPJylfwK0glNKSnIVlYLA4HhIhjbdV2qs4QLOfJ7O9bw3yVd5hG4s5oG3fU6A/OmM6DScT50VWA==
-X-Received: by 2002:a05:6402:ea8:b0:41d:78ca:b929 with SMTP id h40-20020a0564020ea800b0041d78cab929mr7734320eda.289.1651394138628;
-        Sun, 01 May 2022 01:35:38 -0700 (PDT)
+        bh=9Q4D7i4GL8KP5hpGHA7/56lmG9H5Z77KSqaGV3uZPeM=;
+        b=sxk1fb6HQISbkNTYLXfpL5N4naEqKx1KY3xnycmH+/zzJn4Es2WhcFCm/AcRGW1WSd
+         ufxhqrAoamO7kk9npfEoMbE/HlGsR+qrE15qfeBiV3BkEUK/hMUa4j3+XwyIEIFMTzsZ
+         UkMs1p+cCn7UBWC8UO47MCtIzQtKMFUSKnI0Z/iTW9JX5Tf78T3KGcnOMGPVl7sJzFYA
+         UZU4/TUuxybsAUQX41SSzMXDgA2HH7Hfygc7d8ASdmG5LBxOYPSuY9eavxO+GpA9Dh9P
+         FVd1dmdEvIpOt6lEfb+YqEH0aw84pbqOYsSeOFIIdptazA/u3aFQNNXk5/O6w9jmhHjD
+         RYXw==
+X-Gm-Message-State: AOAM5325TAgwjcUOX3g57Eg6z5R/P550ji9fb9+gVBm6PRYX/73ysd2Z
+        wDQ6ldZwsSuDAv++GeN5LJvsDQ==
+X-Google-Smtp-Source: ABdhPJzRoUbN7p6a+QsrfdXpuNxUvP73pFrp/NOoq9oxKzcPe6GgKQtTMh5zIkfqEiGB5tCEKhuhTQ==
+X-Received: by 2002:a05:6402:288a:b0:425:c5b2:59d9 with SMTP id eg10-20020a056402288a00b00425c5b259d9mr7923496edb.412.1651395338995;
+        Sun, 01 May 2022 01:55:38 -0700 (PDT)
 Received: from [192.168.0.182] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id gv8-20020a1709072bc800b006f3ef214e5csm2384774ejc.194.2022.05.01.01.35.37
+        by smtp.gmail.com with ESMTPSA id gv49-20020a1709072bf100b006f3ef214e35sm2374240ejc.155.2022.05.01.01.55.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 May 2022 01:35:38 -0700 (PDT)
-Message-ID: <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
-Date:   Sun, 1 May 2022 10:35:37 +0200
+        Sun, 01 May 2022 01:55:38 -0700 (PDT)
+Message-ID: <3c2f2e75-153b-05bf-9878-70fc1c1a81b1@linaro.org>
+Date:   Sun, 1 May 2022 10:55:37 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: Add Nuvoton WPCM450
+ clock/reset controller
 Content-Language: en-US
-To:     "Marty E. Plummer" <hanetzer@startmail.com>,
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220501051020.2432338-1-hanetzer@startmail.com>
- <20220501051020.2432338-2-hanetzer@startmail.com>
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <20220429172030.398011-1-j.neuschaefer@gmx.net>
+ <20220429172030.398011-5-j.neuschaefer@gmx.net>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220501051020.2432338-2-hanetzer@startmail.com>
+In-Reply-To: <20220429172030.398011-5-j.neuschaefer@gmx.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/05/2022 07:10, Marty E. Plummer wrote:
-> Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
-> generates clock and reset signals used by other module blocks on SoC.
+On 29/04/2022 19:20, Jonathan Neuschäfer wrote:
+> The Nuvoton WPCM450 SoC has a combined clock and reset controller.
+> Add a devicetree binding for it, as well as definitions for the bit
+> numbers used by it.
 > 
->
-(...)
-
-> +		return;
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> ---
+> 
+> v2:
+> - Various improvements, suggested by Krzysztof Kozlowski
+> 
+> v1:
+> - https://lore.kernel.org/lkml/20220422183012.444674-5-j.neuschaefer@gmx.net/
+> ---
+>  .../bindings/clock/nuvoton,wpcm450-clk.yaml   | 66 ++++++++++++++++++
+>  .../dt-bindings/clock/nuvoton,wpcm450-clk.h   | 67 +++++++++++++++++++
+>  2 files changed, 133 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/nuvoton,wpcm450-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
+> new file mode 100644
+> index 0000000000000..3ed3e40e39637
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,wpcm450-clk.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/nuvoton,wpcm450-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	hisi_clk_register_mux(hi3521a_sysctrl_mux_clks,
-> +				ARRAY_SIZE(hi3521a_sysctrl_mux_clks),
-> +				clk_data);
-> +}
-> +CLK_OF_DECLARE(hi3521a_sysctrl, "hisilicon,hi3521a-sysctrl", hi3521a_sysctrl_init);
-Missing bindings.
+> +title: Nuvoton WPCM450 clock controller
+> +
+> +maintainers:
+> +  - Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> +
+> +description:
+> +  The clock controller of the Nuvoton WPCM450 SoC supplies clocks and resets to
+> +  the rest of the chip.
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,wpcm450-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Reference clock oscillator (should be 48 MHz)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: refclk
+
+Sorry for not bringing it up earlier - this should be just "ref". Names
+in values should not have suffixes (so no "tx-dma", "wake-gpio",
+"ref-clk" etc).
 
 Best regards,
 Krzysztof
