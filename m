@@ -2,73 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24742C433F5
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 11:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30472C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 17:34:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237006AbiEALkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 07:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35880 "EHLO
+        id S1353246AbiEARiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 13:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiEALkL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 07:40:11 -0400
+        with ESMTP id S238006AbiEARiF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 13:38:05 -0400
 Received: from mx-out2.startmail.com (mx-out2.startmail.com [145.131.90.155])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3ADB1D0C2;
-        Sun,  1 May 2022 04:36:45 -0700 (PDT)
-Date:   Sun, 1 May 2022 06:36:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
-        s=2020-07; t=1651405003;
-        bh=EJO0qMWBy/NTbXIPnclz3OjTdOhNYK7qnowCOESkQMQ=;
-        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
-         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
-         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
-        b=1GkHYQ+nXQJZ0rOe+wnMncD7WAwPzJoAAy5gW75ZaUQu0gaJKJFvGWOjAABwvJ9V1
-         J5Lg5e64FxO1vLE6ML96bhxf/9+HjEidWnIYpcrq8ZMPjRBGV6abkOvWT8zCVdCH0Z
-         S/Oifi+QYBq3/Mm3jlalB32FyHgyYWz+EUQFaSLkUR9sSHvsGDtsPuc29hGEEw/Cf3
-         bnzorcFCDKqYScuFAa6+rD7OTKgGylAtORFO4pddnjGIuOlB8uCQZk1OO0kXs1rVSj
-         oS54EBJkTWRQWAZV+ZiqrG45AwrkUtBFeRVzQ+jr/6uT5aE0qzV/BOVNUYaIslsxUm
-         GyQ0xxhXL9vrg==
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63009FD29;
+        Sun,  1 May 2022 10:34:39 -0700 (PDT)
 From:   "Marty E. Plummer" <hanetzer@startmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
-Message-ID: <20220501113215.rh6he5344hssziy7@proprietary-killer>
-References: <20220501051020.2432338-1-hanetzer@startmail.com>
- <20220501051020.2432338-2-hanetzer@startmail.com>
- <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
+        s=2020-07; t=1651426477;
+        bh=tPKqcMoeXO7fbOhD7EzqxPB0j0wCmwR22hp6X3JxcpQ=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Transfer-Encoding:From:Subject:To:Date:Sender:
+         Content-Type:Content-Transfer-Encoding:Content-Disposition:
+         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
+        b=XfylJujgPDxhUPj14UR8eI/v2OYDosnRFRlwFgWdUjup1ZjOFs/ek+bOCrJwmDBSv
+         KQo1nZ+aFpCDRHjXi4ayrHD17AAj//FYewB1g9Gn+R6hL8YFeb0yqsRdYfPAsykx7y
+         1Rj2dXbCwllftTpA5WvDxLn5cTvbKxpm5B5X5Gw+o4HqqhKJHKl2aUYNt2hGTxHD85
+         o6ktWQ1eKt4RSdH/H0IkAEsdQRh+0fHXmyfJmNG1qZ+rh+jRJcaceeYDNWV41ZR1Cp
+         ZrrZAV0Ny8xeJg42Jia7CGrT+es+URAKWRSeD+dKzsZ+xzQZj17zBsZaP8HqPv6qiv
+         wJRGcYFCPyKXA==
+To:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
+        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
+        hanetzer@startmail.com, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
+        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
+        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
+        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
+        vigneshr@ti.com, xuwei5@hisilicon.com
+Subject: [RFC v2 0/2] Hi3521a support.
+Date:   Sun,  1 May 2022 12:34:21 -0500
+Message-Id: <20220501173423.2473093-1-hanetzer@startmail.com>
+In-Reply-To: <20220501054440.2434247-1-hanetzer@startmail.com>
+References: <20220501054440.2434247-1-hanetzer@startmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 01, 2022 at 10:35:37AM +0200, Krzysztof Kozlowski wrote:
-> On 01/05/2022 07:10, Marty E. Plummer wrote:
-> > Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
-> > generates clock and reset signals used by other module blocks on SoC.
-> > 
-> >
-> (...)
-> 
-> > +		return;
-> > +
-> > +	hisi_clk_register_mux(hi3521a_sysctrl_mux_clks,
-> > +				ARRAY_SIZE(hi3521a_sysctrl_mux_clks),
-> > +				clk_data);
-> > +}
-> > +CLK_OF_DECLARE(hi3521a_sysctrl, "hisilicon,hi3521a-sysctrl", hi3521a_sysctrl_init);
-> Missing bindings.
-> 
-Assume you mean the Documentation/dt/binding/... file? Will do. I
-probably should have prefixed it with RFC, as I'm mostly hoping to get
-the attention of the hisi people to see what's the deal with the mtd
-reads being borked.
-> Best regards,
-> Krzysztof
+Resend RFC.
+
+Changes in v2:
+- Actually include the dts files.
+- DT Bindings still missing, as the the driver is not quite complete
+  (need to add the reset controller bindings, have't quite figured that
+  out yet.)
+
+Marty E. Plummer (2):
+  clk: hisilicon: add CRG driver Hi3521a SoC
+  arm: hisi: enable Hi3521a soc
+
+ arch/arm/boot/dts/Makefile                |   2 +
+ arch/arm/boot/dts/hi3521a-rs-dm290e.dts   | 134 +++++++
+ arch/arm/boot/dts/hi3521a.dtsi            | 423 ++++++++++++++++++++++
+ arch/arm/mach-hisi/Kconfig                |   9 +
+ drivers/clk/hisilicon/Kconfig             |   8 +
+ drivers/clk/hisilicon/Makefile            |   1 +
+ drivers/clk/hisilicon/crg-hi3521a.c       | 141 ++++++++
+ include/dt-bindings/clock/hi3521a-clock.h |  34 ++
+ 8 files changed, 752 insertions(+)
+ create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+ create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
+ create mode 100644 drivers/clk/hisilicon/crg-hi3521a.c
+ create mode 100644 include/dt-bindings/clock/hi3521a-clock.h
+
+-- 
+2.35.1
+
