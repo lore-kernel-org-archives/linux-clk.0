@@ -2,101 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0685EC35294
-	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 10:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24742C433F5
+	for <linux-clk@archiver.kernel.org>; Sun,  1 May 2022 11:36:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344857AbiEAKkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 May 2022 06:40:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
+        id S237006AbiEALkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 May 2022 07:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345467AbiEAKjC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 06:39:02 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29949B66
-        for <linux-clk@vger.kernel.org>; Sun,  1 May 2022 03:35:36 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id be20so13685613edb.12
-        for <linux-clk@vger.kernel.org>; Sun, 01 May 2022 03:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ar0fHqjgo5tjZGGwiHuVSZF1o7mhrC7JpXZH7xiTZ8Q=;
-        b=HA0YlrQGOcEbrOnQFUL7HkbePL0gXgr9vn8ikLY9xEPfqEzVL9ncrNyXowBON7OUe7
-         3JW8Rp4bvOFAmwROWmqXBAWwOBnRy6kPj/+FJscHUoJOHOpAB7nfmfho0ejlRwxkqBZr
-         p7xWcDl1Btxo2RMjICrcOXCiV+yN6UyCxiZZtNuFglVx6S8U/zGXIswbATzBqyfGlzvC
-         07xujiu2XG00NA7gYasBWpCi/IR+F50X0Ggo7ke4XzkezV8hVDpwt2+twmLFKZfuS4dm
-         RvTTewxRULVZ1SsJsR6wt83PX/v3U0KrRI3hQ6LXWGEHAnmEDPAE1bbyGTZSoTZq5Xs2
-         Bh8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ar0fHqjgo5tjZGGwiHuVSZF1o7mhrC7JpXZH7xiTZ8Q=;
-        b=DAV9tCDMyH2uWlHvQhomLkxSsGiwAhAindFLfcoFfP2jIN5ePc1vI5pCfxDo+4/e0U
-         cEG3XR9jR+sQUWfhKOAVmDGD8pAK2Vup4VwgDZ0LrNPAI6UA6TTBD3UACRxa+whjTwS6
-         wTgveyi+++YQT2AAO5NAtGq5myaW2Npl8Eic0pk97PQguaeYCaqGItaf7DenqrQuXMEh
-         9lHLW4kgWP+nB+yIAtlZUNRFUFj14VUDniFo4Rct8kuHoskahI0Q3daqtPJnYR/delN7
-         DTJsGg0n/rJghPpusUtMVTww+8yVGPSqNmgC1xzbIQhZb8abcb+k+RxdXi3fH4nir89y
-         kcfg==
-X-Gm-Message-State: AOAM532302c1iPEDowA8kl/vEXo+E9hoqgWyvrMmD2Hga+YH0hS1lkY6
-        09J4LPy1lmoArkml2AoiseJLWg==
-X-Google-Smtp-Source: ABdhPJy9iVvaPS8D87fk1AoL09KIG6ZEc5xrgHANt4r9I88xIeHGNAyPFrABB+8y+uGv76PyVuSb3g==
-X-Received: by 2002:a05:6402:34d4:b0:426:3517:ba77 with SMTP id w20-20020a05640234d400b004263517ba77mr8287511edc.260.1651401334751;
-        Sun, 01 May 2022 03:35:34 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id zp1-20020a17090684e100b006f3ef214df1sm2464438ejb.87.2022.05.01.03.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 May 2022 03:35:34 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229988AbiEALkL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 May 2022 07:40:11 -0400
+Received: from mx-out2.startmail.com (mx-out2.startmail.com [145.131.90.155])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3ADB1D0C2;
+        Sun,  1 May 2022 04:36:45 -0700 (PDT)
+Date:   Sun, 1 May 2022 06:36:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
+        s=2020-07; t=1651405003;
+        bh=EJO0qMWBy/NTbXIPnclz3OjTdOhNYK7qnowCOESkQMQ=;
+        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
+         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
+         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
+        b=1GkHYQ+nXQJZ0rOe+wnMncD7WAwPzJoAAy5gW75ZaUQu0gaJKJFvGWOjAABwvJ9V1
+         J5Lg5e64FxO1vLE6ML96bhxf/9+HjEidWnIYpcrq8ZMPjRBGV6abkOvWT8zCVdCH0Z
+         S/Oifi+QYBq3/Mm3jlalB32FyHgyYWz+EUQFaSLkUR9sSHvsGDtsPuc29hGEEw/Cf3
+         bnzorcFCDKqYScuFAa6+rD7OTKgGylAtORFO4pddnjGIuOlB8uCQZk1OO0kXs1rVSj
+         oS54EBJkTWRQWAZV+ZiqrG45AwrkUtBFeRVzQ+jr/6uT5aE0qzV/BOVNUYaIslsxUm
+         GyQ0xxhXL9vrg==
+From:   "Marty E. Plummer" <hanetzer@startmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 7/8] soc: qcom: cmd-db: replace strncpy() with strscpy_pad()
-Date:   Sun,  1 May 2022 12:35:19 +0200
-Message-Id: <20220501103520.111561-7-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
+Message-ID: <20220501113215.rh6he5344hssziy7@proprietary-killer>
+References: <20220501051020.2432338-1-hanetzer@startmail.com>
+ <20220501051020.2432338-2-hanetzer@startmail.com>
+ <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The use of strncpy() is considered deprecated for NUL-terminated
-strings[1].  Replace strncpy() with strscpy_pad(), to keep existing
-pad-behavior of strncpy.  This fixes W=1 warning:
-
-  drivers/soc/qcom/cmd-db.c: In function ‘cmd_db_get_header.part.0’:
-  drivers/soc/qcom/cmd-db.c:151:9: warning: ‘strncpy’ specified bound 8 equals destination size [-Wstringop-truncation]
-    151 |         strncpy(query, id, sizeof(query));
-
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/soc/qcom/cmd-db.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index dd872017f345..c5137c25d819 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -148,7 +148,7 @@ static int cmd_db_get_header(const char *id, const struct entry_header **eh,
- 		return ret;
- 
- 	/* Pad out query string to same length as in DB */
--	strncpy(query, id, sizeof(query));
-+	strscpy_pad(query, id, sizeof(query));
- 
- 	for (i = 0; i < MAX_SLV_ID; i++) {
- 		rsc_hdr = &cmd_db_header->header[i];
--- 
-2.32.0
-
+On Sun, May 01, 2022 at 10:35:37AM +0200, Krzysztof Kozlowski wrote:
+> On 01/05/2022 07:10, Marty E. Plummer wrote:
+> > Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
+> > generates clock and reset signals used by other module blocks on SoC.
+> > 
+> >
+> (...)
+> 
+> > +		return;
+> > +
+> > +	hisi_clk_register_mux(hi3521a_sysctrl_mux_clks,
+> > +				ARRAY_SIZE(hi3521a_sysctrl_mux_clks),
+> > +				clk_data);
+> > +}
+> > +CLK_OF_DECLARE(hi3521a_sysctrl, "hisilicon,hi3521a-sysctrl", hi3521a_sysctrl_init);
+> Missing bindings.
+> 
+Assume you mean the Documentation/dt/binding/... file? Will do. I
+probably should have prefixed it with RFC, as I'm mostly hoping to get
+the attention of the hisi people to see what's the deal with the mtd
+reads being borked.
+> Best regards,
+> Krzysztof
