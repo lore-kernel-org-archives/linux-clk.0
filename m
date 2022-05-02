@@ -2,191 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E00C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 15:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E91AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 15:29:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354492AbiEBP2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 11:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32872 "EHLO
+        id S1385726AbiEBPcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 11:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242541AbiEBP2W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 11:28:22 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0D813D2F
-        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 08:24:53 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id m23so18856866ljc.0
-        for <linux-clk@vger.kernel.org>; Mon, 02 May 2022 08:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=GRaa0IiGsjCYmH9IwV7aIzgjHqX454NWT5gLXScXiHU=;
-        b=CsAv3+Khoia2wgEVvUV/D779w3tRK1DYekDG+/77k7W/MYStUKX0gTl682kNcwi7Ow
-         PNUG3vJ625UTDhjsApZ9NJFbWjSfIHmVsgWcf5zuMxnAF6IbjZZiY4HdRiZ2JakkpXTx
-         evkOGvPCsTlTl8P27h6JF0Asg/tkTdlv7MYyDc5zyIYTcYqwxldakyUWeh8hfs/YM0zd
-         TQe/xkxsbYn0I+zm6SNiwsPM3Z+G1k1vR/0gso6PbAdhM41VbOJbzEQTtm+ydeRgqWf+
-         /wDIEqXAeIPlOS8apErrkM3F/LO1OUwzgWZSZ/yMoAQgzafee4uT+VcD1ig5yhE+eX/V
-         PR3g==
+        with ESMTP id S239467AbiEBPcd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 11:32:33 -0400
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8625F5F;
+        Mon,  2 May 2022 08:29:04 -0700 (PDT)
+Received: by mail-qv1-f49.google.com with SMTP id e17so10409546qvj.11;
+        Mon, 02 May 2022 08:29:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=GRaa0IiGsjCYmH9IwV7aIzgjHqX454NWT5gLXScXiHU=;
-        b=Rv9WO1qhoi7qFX+6IbTFMl2vfEhApi8klgvAiUF8S2lD/U3fKoybGimnYRGbaNQDbn
-         LMNpeSPHheMEo4cVmWpHiz88Q2wHVjYoeC39A3B+ThT/38R41vVZOKZL7Y1UBw8AZxRb
-         +1Zg7+J8RT/PxpBbh5/IP0EFTDsuEGQKvyfQI3hDg0jLSbo0I5fEGrMfaZpRIOB1zBit
-         G07jj3UcGkLldGBhl/T0u18fF9R0TCNyv9XwUSlkX69TWr1rBVLSbMnLBE1ud1UnGphI
-         FTjB8kpWUxMwmIPHK5A3cyuhucKIdB48crRZTvUSRkjW/C/nGrygP7EI9iWpe1pm4atB
-         D3dQ==
-X-Gm-Message-State: AOAM5323Q80Ncg5r0/b+fnd4XGEG8TCLY5jlKiAzeMk3xoyD2MJaUbml
-        tCgL9LPWDjMWPBiFDSoAUtK+eA==
-X-Google-Smtp-Source: ABdhPJwViR/s5Vc8H+a2CdDxIHduCqP768i3THr5TaDpMEBdWpUPn6TM16Fxzt+97n77JvDmHMfpuA==
-X-Received: by 2002:a2e:84d0:0:b0:24f:13ac:e5ed with SMTP id q16-20020a2e84d0000000b0024f13ace5edmr7465890ljh.175.1651505091708;
-        Mon, 02 May 2022 08:24:51 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id f15-20020ac24e4f000000b0047255d2111fsm725236lfr.78.2022.05.02.08.24.50
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zWArnVQeFAr+HIdl/HHIHZVeIFDGQXmxNfCa+51obnw=;
+        b=0AmTeVVo92eqZnHBBD1QQonV4hocsaCwq6lmcTk0Ei0YKEz9t9XmOpqU1vCLPS6uLO
+         oyThztb67gTEzsxqWDYz/tiDi14g4awfNYzOwM4Bstu1oAk/iIEClDAf8pAJvZIIjsSS
+         umsDy8FwbR/7sW3RqGlIlNCRev3m4WWd12rpu92oyIOVeiY7osD8Hf60kJfUS6zUsO7r
+         lcqyFE6Jgb/B5j7wMiIqrP1NxC8i2E/UNlIroHUxFzMQq9m+LWCl8t7ZWu5p/h9lhYXS
+         cDXnh2TSP2EFH8PfoR9p9G5N2/+KhhLzClXgvHI7DZyJBtFNyk9Ejbtvew0njWRUlFbc
+         Jc+Q==
+X-Gm-Message-State: AOAM530XNH8to7rgcjgJJBovlfOm/fZBFCE1aj35JEpEUDjceRNCvXp8
+        V02GhePiI9ga2cZrLWAYNS6W4wyzgCYqlw==
+X-Google-Smtp-Source: ABdhPJx45MP70L6GZYNp6wMOqxGoygA4lf0CDn82bK2jFtvBM2qxNRSB9MHx3uDfRhgDX2cGIHaJrw==
+X-Received: by 2002:a0c:d6ce:0:b0:443:f22e:6dd with SMTP id l14-20020a0cd6ce000000b00443f22e06ddmr10011393qvi.111.1651505343152;
+        Mon, 02 May 2022 08:29:03 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id r6-20020ac87946000000b002f39b99f691sm4359753qtt.43.2022.05.02.08.29.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 May 2022 08:24:51 -0700 (PDT)
-Message-ID: <ce73d203-f40a-e12f-1e1a-7a60c250b68d@linaro.org>
-Date:   Mon, 2 May 2022 18:24:50 +0300
+        Mon, 02 May 2022 08:29:02 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id w187so26647217ybe.2;
+        Mon, 02 May 2022 08:29:02 -0700 (PDT)
+X-Received: by 2002:a25:4506:0:b0:648:cfc2:301d with SMTP id
+ s6-20020a254506000000b00648cfc2301dmr10602910yba.380.1651505342164; Mon, 02
+ May 2022 08:29:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
-Content-Language: en-GB
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
- <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
- <20220502101053.GF5053@thinkpad>
- <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
- <20220502111004.GH5053@thinkpad>
- <29819e6d-9aa1-aca9-0ff6-b81098077f28@linaro.org>
- <20220502150611.GF98313@thinkpad>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220502150611.GF98313@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220501083450.26541-1-biju.das.jz@bp.renesas.com> <20220501083450.26541-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220501083450.26541-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 2 May 2022 17:28:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVDh_0RJux7QimzwE0df7R-5Y9PPKR_G58+p2rpfgFp=w@mail.gmail.com>
+Message-ID: <CAMuHMdVDh_0RJux7QimzwE0df7R-5Y9PPKR_G58+p2rpfgFp=w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: r9a07g043: Add clock and reset entries
+ for SPI Multi I/O Bus Controller
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02/05/2022 18:06, Manivannan Sadhasivam wrote:
-> On Mon, May 02, 2022 at 02:18:26PM +0300, Dmitry Baryshkov wrote:
->> On 02/05/2022 14:10, Manivannan Sadhasivam wrote:
->>> On Mon, May 02, 2022 at 01:35:34PM +0300, Dmitry Baryshkov wrote:
->>>
->>> [...]
->>>
->>>>>> +static int pipe_is_enabled(struct clk_hw *hw)
->>>>>> +{
->>>>>> +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
->>>>>> +	struct clk_regmap *clkr = to_clk_regmap(hw);
->>>>>> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
->>>>>> +	unsigned int val;
->>>>>> +
->>>>>> +	regmap_read(clkr->regmap, pipe->reg, &val);
->>>>>> +	val = (val & mask) >> pipe->shift;
->>>>>> +
->>>>>> +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
->>>>>> +
->>>>>> +	return val == pipe->enable_val;
->>>>>
->>>>> Selecting the clk parents in the enable/disable callback seems fine to me but
->>>>> the way it is implemented doesn't look right.
->>>>>
->>>>> First this "pipe_clksrc" is a mux clk by design, since we can only select the
->>>>> parent. But you are converting it to a gate clk now.
->>>>>
->>>>> Instead of that, my proposal would be to make this clk a composite one i.e,.
->>>>> gate clk + mux clk. So even though the gate clk here would be a hack, we are
->>>>> not changing the definition of mux clk.
->>>>
->>>> This is what I had before, in revisions 1-3. Which proved to work, but is
->>>> problematic a bit.
->>>>
->>>> In the very end, it is not easily possible to make a difference between a
->>>> clock reparented to the bi_tcxo and a disabled clock. E.g. if some user
->>>> reparents the clock to the tcxo, then the driver will consider the clock
->>>> disabled, but the clock framework will think that the clock is still
->>>> enabled.
->>>
->>> I don't understand this. How can you make this clock disabled? It just has 4
->>> parents, right?
->>
->> It has 4 parents. It uses just two of them (pipe and tcxo).
->>
->> And like the clk_rcg2_safe clock we'd like to say that these clocks are
->> disabled by reparenting ("parking") them to the tcxo source. Yes, this makes
->> a lot of code simpler. The clock framework will switch the clock to the
->> "safe" state instead of disabling it during the unused clocks evaporation.
->> The PHY can just disable the gcc_pcie_N_pipe_clock, which will end up in
->> parking this clock to a safe state too, etc.
-> 
-> If I get the logic behind this "parking" thing right, then it is required
-> for producing a stable pipe_clk from GCC when the PHY is about to initialize.
-> Also to make sure that there is no glitch observed on pipe_clk while
-> initializing the PHY. And once it is powered ON properly, the pipe_clksrc
-> should be used as the parent for pipe_clk.
-> 
-> So with that logic, we cannot say that this clk is disabled.
+On Sun, May 1, 2022 at 10:35 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add clock and reset entries for SPI Multi I/O Bus Controller.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Yes. It is not technically disabled. But as I said, it serves a good 
-abstraction, as a clock is a good as being disabled.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.19.
 
-> 
-> Please correct me if my understanding is wrong.
-> 
-> Thanks,
-> Mani
-> 
->>
->>>
->>>>
->>>> Thus we have to remove "safe" clock (bi_tcxo) from the list of parents. In
->>>> case of pipe clocks (and ufs symbol clocks) this will leave us with just a
->>>> single possible parent. Then having the mux part just doesn't make sense. It
->>>> is just a gated clock. And this simplified a lot of things.
->>>>
->>>>>
->>>>> So you can introduce a new ops like "clk_regmap_mux_gate_ops" and implement the
->>>>> parent switching logic in the enable/disable callbacks. Additional benefit of
->>>>> this ops is, in the future we can also support "gate + mux" clks easily.
->>>>
->>>> If the need arises, we can easily resurrect the regmap_mux_safe patchset,
->>>> fix the race pointed out by Johan, remove extra src-val mapping for safe
->>>> value and use it for such clocks. I can post it separately, if you wish. But
->>>> I'm not sure that it makes sense to use it for single-parent clocks.
->>>>
->>>>>
->>>>> Also, please don't use the "enable_val/disable_val" members. It should be
->>>>> something like "mux_sel_pre/mux_sel_post".
->>>>
->>>> Why? Could you please elaborate?
->>>>
->>>
->>> It aligns with my question above. I don't see how this clk can be
->>> enabled/disabled.
->>
->> I see. Let's settle on the first question then.
->>
->> -- 
->> With best wishes
->> Dmitry
+Gr{oetje,eeting}s,
 
+                        Geert
 
--- 
-With best wishes
-Dmitry
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
