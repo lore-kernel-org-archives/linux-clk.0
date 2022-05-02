@@ -2,220 +2,290 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D11C43219
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 09:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9A9C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 09:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384017AbiEBJEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 05:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
+        id S1384065AbiEBJWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 05:22:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384032AbiEBJEr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 05:04:47 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A90258E65
-        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 02:01:17 -0700 (PDT)
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220502090109epoutp03eae63383200c50f08197210f52f177aa~rPjFG6n2_0334603346epoutp034
-        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 09:01:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220502090109epoutp03eae63383200c50f08197210f52f177aa~rPjFG6n2_0334603346epoutp034
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651482069;
-        bh=H0/rBquNmxd/3w2CBO5TxNP/kMpo8lUBX0vKvnFp5DE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VQ6nmE/Z5LZR8HAuh1/J/c82/VROlFQ8PbYfdH/ogf4wqkwz1d4QMxXoht2nfwRKW
-         92O4Sl1FhpJyT1/v1koCQYY2WHmL6Ca6k7jSsqNL0iLeyf7y9udFiaA4tC3fZzfdR2
-         y5mm3iXwSOCeg6eJMAjbFQcJl/AP5sW95F1QBNDY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20220502090109epcas2p3c2bc0e22949e5122219b8934753a0963~rPjEjoYcb1120311203epcas2p3b;
-        Mon,  2 May 2022 09:01:09 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.90]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KsHBR52xpz4x9Q9; Mon,  2 May
-        2022 09:01:03 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AA.F8.09694.DCD9F626; Mon,  2 May 2022 18:01:01 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043~rPi9MqBG70428104281epcas2p2q;
-        Mon,  2 May 2022 09:01:01 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220502090101epsmtrp22f71a634985fcf34ea3917e38427751b~rPi9LocKp3250332503epsmtrp2d;
-        Mon,  2 May 2022 09:01:01 +0000 (GMT)
-X-AuditID: b6c32a48-495ff700000025de-90-626f9dcdb742
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BE.EB.08853.DCD9F626; Mon,  2 May 2022 18:01:01 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220502090101epsmtip268145038a2c08d4b5dde57b695efef5a~rPi9BH7A91727317273epsmtip2s;
-        Mon,  2 May 2022 09:01:01 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH 10/12] arm64: dts: exynosautov9: add initial cmu clock nodes
-Date:   Mon,  2 May 2022 18:02:28 +0900
-Message-Id: <20220502090230.12853-11-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220502090230.12853-1-chanho61.park@samsung.com>
+        with ESMTP id S1349144AbiEBJWo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 05:22:44 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80040.outbound.protection.outlook.com [40.107.8.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0F9F3AA65;
+        Mon,  2 May 2022 02:19:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bU7Akp6UL8LesKRkdwEjhXmD2GeC+gdjuYtCpFyVtTfYqjTgfqSAwLp8KUxS7r6cq2wPq/C3GzHweTabO1WyqGeJ8UVyenq8MaioN3FKHb0+2u0tWx+/ev7ZV53B+kaq0iAP3ZUIJ2zJ4v7QhwpJ6NvUGFzcYxcfF/mo0SrBywRthsFRr4Su5UmKZ7rljMjZjuhcgKmb3OmfmeYPAGGX1W38trPJ/cTXU05VnctcFLFMEObg4cJ0CKB6MPMrRETOraRf6VK6PgRWhEGrkkpUJ2BhcGe6E2sY78C5C6aA3yclGdchEJEpLK0V30aRkgQjbZZwvjikMmXUGiFEkw/+Qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T7clrQBllLTvPJ1bClryM7xcuSlCle9qh5F0w+hSKRs=;
+ b=LhJtO+4fpDkhJ51uiB84Iz6zPKzTsDcXTpGRlN/LPL5cFhtNoFbqJlYyaHo1VweFHqQ0moiSWRf/ZwpG4A2SZhgtuoJjfcuW8xUae16ChyAdROzv6mHIvB4gWZFT99Z9KDR3O1/S4wX0XH2ApzFdykObLZ8AzXipxrgKE8Gv+0wcPEzfjMFv0R/0GxvIBFvD+z/myt22rHfqYCu/GVRzNdH9Vmu69WjTKcav66vxBZA65CZ0GB9heHRai1i93FzP7hhhzltlWwlUAz2CnWS2BVTWMDS7pf6U9DkG8qhVIqlH9qc28+GUH5u2vycpYAxJZ74oG0oAoKTlY/riSDA2Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T7clrQBllLTvPJ1bClryM7xcuSlCle9qh5F0w+hSKRs=;
+ b=lO9wadsUfXac3p3WYcIh/vm2ZYheNkuvw5obaApmzK1TIrco3X9u8j76D89jQ7sWrKWk9keiNlarwKgZDDs/oBITxTHDZUNukHFA49p4gWcewbHcXuUxUzOcepGeFNWG/0e1hUJkfCstnLv9Guj6vWJ8n3ZR9q6G8hRZEBhkpKQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by AM8PR04MB7202.eurprd04.prod.outlook.com (2603:10a6:20b:1da::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.14; Mon, 2 May
+ 2022 09:19:12 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::78d8:955a:7946:fd78]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::78d8:955a:7946:fd78%6]) with mapi id 15.20.5206.013; Mon, 2 May 2022
+ 09:19:12 +0000
+Date:   Mon, 2 May 2022 12:19:10 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
+        dev@lynxeye.de, marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 09/15] ARM: clk: imx: Update pllv3 to support
+ i.MXRT1170
+Message-ID: <Ym+iDvAsrDUlfbXK@abelvesa>
+References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
+ <20220428214838.1040278-10-Mr.Bossman075@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220428214838.1040278-10-Mr.Bossman075@gmail.com>
+X-ClientProxiedBy: VI1PR0102CA0092.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::33) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmqe75uflJBnMOs1k8mLeNzeLyfm2L
-        61+es1rMP3KO1aLvxUNmi72vt7JbfOy5x2ox4/w+JouLp1wtWvceYbc4/Kad1eLftY0sFs/7
-        gOKrdv1hdODzeH+jld1j56y77B6bVnWyedy5tofNo2/LKkaPz5vkAtiism0yUhNTUosUUvOS
-        81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgI5VUihLzCkFCgUkFhcr6dvZ
-        FOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+WlllgZGhgYmQIVJmRnfJrXx1IwVaLi/rV1
-        zA2MF4S7GDk5JARMJH78u8ncxcjFISSwg1Hix5/zLCAJIYFPjBJnDudCJL4xSuy9uogRpuPo
-        2QWsEIm9jBL77rZCOR8ZJbquXAerYhPQldjy/BUjSEJEoItZ4mLfPRYQh1lgK6PE8RuzmECq
-        hAV8JF4cvgHUzsHBIqAqce2XPIjJK2AvMeGuKYgpISAv8W9xKEgxJ1D0zNbnYON5BQQlTs58
-        AnYpM1BJ89bZzBDHLeSQmHaZCaLVRWLzFHuIsLDEq+Nb2CFsKYnP7/ayQdjFEktnfWICOUxC
-        oIFR4vK2X1AJY4lZz9oZQeYwC2hKrN+lDzFSWeLILaitfBIdh/+yQ4R5JTrahCAa1SUObJ/O
-        AmHLSnTP+cwKYXtInOmZAg2oSYwSX6dsZJ/AqDALyTOzkDwzC2HxAkbmVYxiqQXFuempxUYF
-        JvDoTc7P3cQITrlaHjsYZ7/9oHeIkYmD8RCjBAezkghv24acJCHelMTKqtSi/Pii0pzU4kOM
-        psBwnsgsJZqcD0z6eSXxhiaWBiZmZobmRqYG5krivF4pGxKFBNITS1KzU1MLUotg+pg4OKUa
-        mBhTXwmmssgwrHxnM7+kzOnEug1uEV4Z/QtWfgoqufluzweF8y2acip2h0yzm3rfP7Lg2z7J
-        RPioypQM7hi3IpOAk9H2AsUcxaLWmibmr4/patcHb91Ufrh4yxPp6MlCGWrps3OqFT33TKme
-        8D8uhym5Z6rcEZbe6cFHMuPtBAxurGpcNrsx7EBr/trHTFmHZW/NuL/HIerAgVZv+VXPu+8E
-        c0kyulRNUrit0/Lxsa9cSWpG5XN9d/+dauuzs7yC9a85XJ/bd0B1dt0ROcE9YdOKZmn5eez+
-        sdWPZ4e9ySWHB6pFa/59OVjAXD1j2lTH6ltPGuLOerhPOlUx8du7i5YsMil/AyRNtrwwtXyt
-        xFKckWioxVxUnAgA0C8UW0IEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSvO7ZuflJBj+/cFo8mLeNzeLyfm2L
-        61+es1rMP3KO1aLvxUNmi72vt7JbfOy5x2ox4/w+JouLp1wtWvceYbc4/Kad1eLftY0sFs/7
-        gOKrdv1hdODzeH+jld1j56y77B6bVnWyedy5tofNo2/LKkaPz5vkAtiiuGxSUnMyy1KL9O0S
-        uDI+zetjKZgqUXH/2jrmBsYLwl2MnBwSAiYSR88uYO1i5OIQEtjNKHHv5T9GiISsxLN3O9gh
-        bGGJ+y1HoIreM0p03XrDBpJgE9CV2PL8FSNIQkRgArPEmysf2EEcZoGdjBJ3Xp0CqxIW8JF4
-        cfgGUDsHB4uAqsS1X/IgJq+AvcSEu6YgpoSAvMS/xaEgxZxA0TNbn4PdICRgJ/HjxH1mEJtX
-        QFDi5MwnLCA2M1B589bZzBMYBWYhSc1CklrAyLSKUTK1oDg3PbfYsMAwL7Vcrzgxt7g0L10v
-        OT93EyM4QrQ0dzBuX/VB7xAjEwfjIUYJDmYlEd62DTlJQrwpiZVVqUX58UWlOanFhxilOViU
-        xHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTCZbX8XovFayqdHtZdD8M6c0L17fBj3Lis8FOHH
-        9Pu5lNbJnKdz+Wx9zQuVTW+mtm1Zesz1Wuimz48EaxfLpFjLJzyq9HHd6DRLcz6z3IQqV53N
-        6fzVhdfDN2kwmdiKBHpF1XdKvJ91M697xiORD1/cH925/0RzqXHbO3PJtl/sjI/2HJ8dZKW8
-        +IXF7LN5N4N3fxSIlDuVxPZ4G//hUAmPpBVOItmF0mpHj9YsnnhWl4G7fG+lx4feyPMHLizY
-        xXIiRD76S6Gq/ZL3LSuDezh7Lh7V8mWpvqVvYmLwK1rn8vP/vY3G9kr7ZxWd6AgqLzry6Kjw
-        H4alTq67tofLM/yLWxX2QNSu7N9b5SMtUUosxRmJhlrMRcWJALx8p2D/AgAA
-X-CMS-MailID: 20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043
-References: <20220502090230.12853-1-chanho61.park@samsung.com>
-        <CGME20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043@epcas2p2.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4378d383-739e-4718-678c-08da2c1cd238
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7202:EE_
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-Microsoft-Antispam-PRVS: <AM8PR04MB7202A3157C4E36960E0D7A7AF6C19@AM8PR04MB7202.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LzRakLoE4oo12ZWEsB1jupAUcdvUkFNBrtULKXEPbbXwaBEh09DVNajFYg4vU2MKIHWFoxSQenyRctYBVYWkRPnn6MuiaMrsppV3qOVk1TneB38UM0lZq1b6TtYI53s6+3u8J00dvLFqkUrOKEbGduS/2u3E+8NfPIgbbRzM8rN4EbNPfo6LLNrnkomGwjmJCFS4QkC32M1qOmm0uKcgTVXI/oJ1Tm9yEmqcmDndhGopuJun74z9WPPL3dLCPuyWILJdnXef/AU8oKK7QEvI65z3LDYp9F+f0yQ7uwXIVJFOpdNDo2w2puImQQE0tg9EEn0Lrz85kwnk9I+O4Yde6avrnTpHBhoiOeBdCI0r4kj3O11cbIkPSM5HfwHBmM0lHpeFp8cl5dGnAc3gv3fiX5YL/Rm99PTrkyXietlfVHjBusyRli7RXcw0ujX8fiwX1z0EVYBxpUtFL6PIIrj7IiL8W1F96z+xOJJKu9FHVxqmohQesSvVKxkAYGjjxVktd2XvoYUFiZLt3a6pKUpGsepu3dVLLnJCGWdIlBpMDTpFj0dVDQcPsbQSxE8VjRFPYxEANilouLShqiZcp/NRKclfe3avGuvSnVLG64P8d0cHWGd0IMCNGrqsKRyAtWDetlhaJM0oi08NOksZCtICzBqi83V6BBTtFPnzJtMYsx1Zi+qAJAEhRbpBdYHzEMxK786ibIl0bpeG0gONKSCLmSQSlZFq48ad3vEOrWk9W7g=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(44832011)(316002)(33716001)(26005)(9686003)(5660300002)(6486002)(6916009)(7416002)(38100700002)(38350700002)(508600001)(6512007)(8936002)(52116002)(53546011)(4326008)(6506007)(86362001)(186003)(83380400001)(8676002)(66476007)(66946007)(66556008)(2906002)(67856001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Hm4aF9loGKY05jmd/T+0Ljm0IK/v9f0II2Sxa/FUo9yaHL7hV4RcbanXnkzc?=
+ =?us-ascii?Q?MUU4iYD1s9SGn8sAX5rlZkzrMzRZGatvjcvaCAvryLJoTyUMxK+LXYpbQKHU?=
+ =?us-ascii?Q?1B9RNynijh7IOkUFv1kpV/FaMoPCf93gm9vmRssp9kQ3ZgljvzmLbxWrC2RV?=
+ =?us-ascii?Q?1+cjTIcuDxlEuRu6D3YjcvP/myHFrw6U09utuUrk7UCRD5dQoad0Tp3rA3ZR?=
+ =?us-ascii?Q?LSZU+KYv4AqJEI7ELGgYHiJ86Re6SM4EqLXbiA1NyFoUTfT4FkqGoukBqNgs?=
+ =?us-ascii?Q?4D6DJ86sP/pODbZa3IfykwzEYDftBUM2oPtc8jeem3X6qdYX8R+4KqrXgTve?=
+ =?us-ascii?Q?YMWa2lmcmvo0TqmYQ4WoU+ps2fyVVkI4nH7ztF5724XiDt4YKFRB1PFsdeKB?=
+ =?us-ascii?Q?fYDDLUVpou8wf7/45g2h2dO5nN5FvEoZR2zyVzUXXl26+wccsiG5WBxEIgJF?=
+ =?us-ascii?Q?UgnJi3P0DWRVNTZenVGdd+p8W8VQFra3NajvcmiH4lx8DouMpv6/mMK9j9wn?=
+ =?us-ascii?Q?Tdn8WAounkYeFVT8nu/A4Dlu/vDocoZr3n8+h0NDdqgGUzmbpGiLwln+mk45?=
+ =?us-ascii?Q?p5SwGkpBdNfu9vaXG1Phqm8dvBLrrofqivR/AZRUUz6Y2DYDIodXhGkVX6+z?=
+ =?us-ascii?Q?H+KIcGTM7zL/o8NWrtIynazjH5Mg4DK+1HEn0ICn5kv214JvMkRNO+q+ZbEh?=
+ =?us-ascii?Q?AeNybbLoZX/PB4TocCLpdDEUMYUQiuPQbIxVRQYcvx0GET2Iq2zBUFjp7kyr?=
+ =?us-ascii?Q?jUay3VcCYx3uBXphNggM1RrZx7AR60SzSx00X7oAduywoUtu0ntOMvuQcA8N?=
+ =?us-ascii?Q?w7zLczRy/Uz2GGG5l/LDSdcgBZDgi9skuOyNcXAOWNRF6o4M6d1/PCRyl9A2?=
+ =?us-ascii?Q?ffM6bnMez/HKlxxaLMDbKGAfFhfqVL3DI6yQMjKm2P3I8yMwYWp9TX8eQjPc?=
+ =?us-ascii?Q?VCbtM48HjTHHvAFy+5epvIcfaE+c69NRVfla7OByAdKvyjYbgo0S54vWgtXD?=
+ =?us-ascii?Q?XTwP8VuHxxwZNtANL/59xFceWx0Qm1eFUTxs6z1nblp4Dl+oWqCMGs+1xssh?=
+ =?us-ascii?Q?18QwOAZhDnp821q/xGTCWgdLqdftbX4U29BokUr6zojpS5LEYadi5HhxqZUK?=
+ =?us-ascii?Q?Tadc/CTyCXxpjGDJEqgJVZ2esMhefr4dRkdTdVGcFZhpy8W/DbTvToNa/Ht0?=
+ =?us-ascii?Q?l5KqUbrfkLatDZfFu5sEtxRD3dj/BkwtES7/ZQ3FG3hrbDfrAVSLEqtzC0Q6?=
+ =?us-ascii?Q?KrdOHBK2N92aek9YCqvTkHfuUcsQvQquC2A1ux9Wdzmol0RGJr0l9ADeoXLx?=
+ =?us-ascii?Q?4Rws0s4w6j3bZMGHAWmb6PNKIav7PMOo4a9GtxgrZQdX/JJqEjlsmpiTzV87?=
+ =?us-ascii?Q?H4Xxvl98LKrEMpRkRRFvFtUQpNIIgXIpWeS/fBbmahj8Q/qSFvtOIl7oniv4?=
+ =?us-ascii?Q?VLAhQL56maqygeP9+ZKsT/JWqm1uXvfE9swRt4epEgmjQla0WGgbMntfXHHu?=
+ =?us-ascii?Q?wG7SOUWrY+OHlgE4WyOh85uFORXjpgfa21xNNWEHUtWETujxlR+Tzjqm1vLp?=
+ =?us-ascii?Q?rbOLg7NaSPlTfcTDetOMDXAu7ZfB4cLJGMuYcz2X0VR3C7RP40kB9gDcvb65?=
+ =?us-ascii?Q?iu+LhPSWY6h8Ubux2NLOkLSmChsQVnfOvdwa1FgwHStaqQB+ikmZ2CFM+ZfQ?=
+ =?us-ascii?Q?EsY91qhey8oQbiPAKL4v5/q0iA52CzO27d5kSwvnAM3kc+eVVYXZZdDuZUx4?=
+ =?us-ascii?Q?3oGEOFoetQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4378d383-739e-4718-678c-08da2c1cd238
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2022 09:19:12.6464
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BpaChXTi/gER5xx4ui3ROOW9TI7/46HwUJFZsCXdJIZ1DgDhh+ItUOIKN1446UFU2/QM3RVKIdRTJYGulul7hA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7202
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add cmu_top, cmu_busmc, cmu_core, cmu_fsys and peric0/c1/s clock nodes.
+On 22-04-28 17:48:32, Jesse Taube wrote:
+> The i.MXRT1170 has a pll that has the multiplier bits inverted and
+> cannot be changed add IMX_PLLV3_GENERICV2.
+>
 
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 72 ++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+Drop the "ARM:" from the subject line. It is confusing reviewers.
+This is a clocks patch. Has nothing to do with arch/arm subsystem.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-index 807d500d6022..6f181632267b 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
-@@ -6,6 +6,7 @@
-  *
-  */
- 
-+#include <dt-bindings/clock/exynosautov9.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/samsung,exynos-usi.h>
- 
-@@ -190,6 +191,77 @@ chipid@10000000 {
- 			reg = <0x10000000 0x24>;
- 		};
- 
-+		cmu_busmc: clock-controller@1b200000 {
-+			compatible = "samsung,exynosautov9-cmu-busmc";
-+			reg = <0x1b200000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_BUSMC_BUS>;
-+			clock-names = "oscclk", "dout_clkcmu_busmc_bus";
-+		};
-+
-+		cmu_core: clock-controller@1b030000 {
-+			compatible = "samsung,exynosautov9-cmu-core";
-+			reg = <0x1b030000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_CORE_BUS>;
-+			clock-names = "oscclk", "dout_clkcmu_core_bus";
-+		};
-+
-+		cmu_fsys2: clock-controller@17c00000 {
-+			compatible = "samsung,exynosautov9-cmu-fsys2";
-+			reg = <0x17c00000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_FSYS2_BUS>,
-+				 <&cmu_top DOUT_CLKCMU_FSYS2_UFS_EMBD>,
-+				 <&cmu_top DOUT_CLKCMU_FSYS2_ETHERNET>;
-+			clock-names = "oscclk", "dout_clkcmu_fsys2_bus",
-+				      "dout_fsys2_clkcmu_ufs_embd",
-+				      "dout_fsys2_clkcmu_ethernet";
-+		};
-+
-+		cmu_peric0: clock-controller@10200000 {
-+			compatible = "samsung,exynosautov9-cmu-peric0";
-+			reg = <0x10200000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_PERIC0_BUS>,
-+				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
-+			clock-names = "oscclk", "dout_clkcmu_peric0_bus",
-+				      "dout_clkcmu_peric0_ip";
-+		};
-+
-+		cmu_peric1: clock-controller@10800000 {
-+			compatible = "samsung,exynosautov9-cmu-peric1";
-+			reg = <0x10800000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_PERIC1_BUS>,
-+				 <&cmu_top DOUT_CLKCMU_PERIC1_IP>;
-+			clock-names = "oscclk", "dout_clkcmu_peric1_bus",
-+				      "dout_clkcmu_peric1_ip";
-+		};
-+
-+		cmu_peris: clock-controller@10020000 {
-+			compatible = "samsung,exynosautov9-cmu-peris";
-+			reg = <0x10020000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_PERIS_BUS>;
-+			clock-names = "oscclk", "dout_clkcmu_peris_bus";
-+		};
-+
-+		cmu_top: clock-controller@1b240000 {
-+			compatible = "samsung,exynosautov9-cmu-top";
-+			reg = <0x1b240000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&xtcxo>;
-+			clock-names = "oscclk";
-+		};
-+
- 		gic: interrupt-controller@10101000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.36.0
-
+> The i.MXRT1170 also has the lock bit moved as well as the
+> power bit inverted the power bit also is in different locations on each
+> pll control register.
+>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> ---
+> V1 -> V2:
+>  - Nothing done
+> ---
+>  drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++++--
+>  drivers/clk/imx/clk.h       |  4 +++
+>  2 files changed, 59 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> index 20ee9611ba6e..a1dbc3a2e280 100644
+> --- a/drivers/clk/imx/clk-pllv3.c
+> +++ b/drivers/clk/imx/clk-pllv3.c
+> @@ -23,6 +23,7 @@
+>
+>  #define BM_PLL_POWER		(0x1 << 12)
+>  #define BM_PLL_LOCK		(0x1 << 31)
+> +#define BM_PLL_LOCK_V2		(0x1 << 29)
+>  #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+>  #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+>
+> @@ -34,6 +35,7 @@
+>   * @base:	 base address of PLL registers
+>   * @power_bit:	 pll power bit mask
+>   * @powerup_set: set power_bit to power up the PLL
+> + * @lock_bit:	 pll lock bit mask
+>   * @div_mask:	 mask of divider bits
+>   * @div_shift:	 shift of divider bits
+>   * @ref_clock:	reference clock rate
+> @@ -48,6 +50,7 @@ struct clk_pllv3 {
+>  	void __iomem	*base;
+>  	u32		power_bit;
+>  	bool		powerup_set;
+> +	u32		lock_bit;
+>  	u32		div_mask;
+>  	u32		div_shift;
+>  	unsigned long	ref_clock;
+> @@ -65,7 +68,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>  	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+>  		return 0;
+>
+> -	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
+> +	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
+>  					  500, PLL_LOCK_TIMEOUT);
+>  }
+>
+> @@ -101,7 +104,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
+>  {
+>  	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+>
+> -	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
+> +	if (readl_relaxed(pll->base) & pll->lock_bit)
+>  		return 1;
+>
+>  	return 0;
+> @@ -155,6 +158,39 @@ static const struct clk_ops clk_pllv3_ops = {
+>  	.set_rate	= clk_pllv3_set_rate,
+>  };
+>
+> +static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +		unsigned long parent_rate)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +	u32 val, div;
+> +
+> +	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
+> +	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> +
+> +	if (rate == val)
+> +		return 0;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
+> +					   unsigned long parent_rate)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
+> +
+> +	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> +}
+> +
+> +static const struct clk_ops clk_pllv3_genericv2_ops = {
+> +	.prepare	= clk_pllv3_prepare,
+> +	.unprepare	= clk_pllv3_unprepare,
+> +	.is_prepared	= clk_pllv3_is_prepared,
+> +	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
+> +	.round_rate	= clk_pllv3_round_rate,
+> +	.set_rate	= clk_pllv3_genericv2_set_rate,
+> +};
+> +
+>  static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+>  					       unsigned long parent_rate)
+>  {
+> @@ -407,6 +443,13 @@ static const struct clk_ops clk_pllv3_enet_ops = {
+>  	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+>  };
+>
+> +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +
+> +	pll->power_bit = shift;
+> +}
+> +
+>  struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  			  const char *parent_name, void __iomem *base,
+>  			  u32 div_mask)
+> @@ -422,10 +465,20 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  		return ERR_PTR(-ENOMEM);
+>
+>  	pll->power_bit = BM_PLL_POWER;
+> +	pll->lock_bit = BM_PLL_LOCK;
+>  	pll->num_offset = PLL_NUM_OFFSET;
+>  	pll->denom_offset = PLL_DENOM_OFFSET;
+>
+>  	switch (type) {
+> +	case IMX_PLLV3_GENERICV2:
+> +		pll->lock_bit = BM_PLL_LOCK_V2;
+> +		pll->powerup_set = true;
+> +		ops = &clk_pllv3_genericv2_ops;
+> +		break;
+> +	case IMX_PLLV3_SYSV2:
+> +		pll->lock_bit = BM_PLL_LOCK_V2;
+> +		pll->powerup_set = true;
+> +		fallthrough;
+>  	case IMX_PLLV3_SYS:
+>  		ops = &clk_pllv3_sys_ops;
+>  		break;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 7d220a01de1f..e70e985840a4 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -220,6 +220,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+>
+>  enum imx_pllv3_type {
+>  	IMX_PLLV3_GENERIC,
+> +	IMX_PLLV3_GENERICV2,
+> +	IMX_PLLV3_SYSV2,
+>  	IMX_PLLV3_SYS,
+>  	IMX_PLLV3_USB,
+>  	IMX_PLLV3_USB_VF610,
+> @@ -231,6 +233,8 @@ enum imx_pllv3_type {
+>  	IMX_PLLV3_AV_IMX7,
+>  };
+>
+> +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift);
+> +
+>  struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  		const char *parent_name, void __iomem *base, u32 div_mask);
+>
+> --
+> 2.35.1
+>
