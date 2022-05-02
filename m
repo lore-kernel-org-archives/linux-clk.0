@@ -2,183 +2,245 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F8DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 09:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB29C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 10:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384309AbiEBJmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 05:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45112 "EHLO
+        id S1384364AbiEBKOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 06:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384289AbiEBJmi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 05:42:38 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2078.outbound.protection.outlook.com [40.107.21.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A512948313
-        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 02:39:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NyNakuAcdw4pIUzw8hxz7LEnL7RkvhV73po6FsZh2N9N/fjvZNLaQXlggWkFPVz3YEr1RLBU3BOJeApxMylqZgqY76gXYB/bBV07nt0MHMIG2mEqvt75/PrmRoomFjT6wa/ZxnGer3/WJ/JQeeWATS0Lsija+rsg868AM6EViEzFJ5E6RmQj2Fwz3LAqpmutTQzS8U71XnZwzx+1R97c+lvBQzORl5umF+2y6HzSb8/b2tZPWtyQUsgRf0GZ9qpJy6QCGsTlgNUq0kRehCzTb3mMu9C//eSqklJfSgjjTp/SbAHv+EX6YNc+/a1gE8YEe8KaMvzEbxXjZ60oNOPijw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AJNdMZ0d66jyVLZear35wkwtVEO6hdryVjJkUO/Y/sI=;
- b=LzcS320ti0X/ummgl+Vhcy4fU/3EZ2Oe0jCxNNkywevqMzhPoyIahG2dBcAuZyG2OVZQOqcmscheB2wmWzELBQc3cnw1sDHTVLtz7GNEc/Hkcu2cHOTBIrsjlfgCQ8Tr0fedSTLaceNXZ7D52yG1mC4vx4Bez48IWKvCptx9lQAJSiIFRyzTeyhWwEirk13+/8VFzBaF+hthTb+e10MnyCzZx+SlWkGRjzqCOMw2gzrn3l/iVt7cWNTPYgu8vrDuKokTCOSqq4ayX87G8BvIGZd+tGIA679kRFoHfJ1oKlNg1ctv+cgVzN6hK3NqrwiiO5abX9ANTKZ9J8CW7MjZPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AJNdMZ0d66jyVLZear35wkwtVEO6hdryVjJkUO/Y/sI=;
- b=hF5Km21tbcNu1/8JU4fceJJd3tGWGdUsGm7o+nAfOAN6A3bznBqIca5ufkERS0JUtfA0eb0Xni+lgIh00lmxWjUFsIXsnEOrvSZEb+97ltmtpsa09LK7tCAbUbQ7bV7uRLJ/ygSk1Nj1qNGycBBosN2RdfZ+Hg7Mj2uqkui+Myw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by DBBPR04MB6123.eurprd04.prod.outlook.com (2603:10a6:10:c3::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24; Mon, 2 May
- 2022 09:39:06 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::78d8:955a:7946:fd78]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::78d8:955a:7946:fd78%6]) with mapi id 15.20.5206.013; Mon, 2 May 2022
- 09:39:06 +0000
-Date:   Mon, 2 May 2022 12:39:04 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        patchwork-lst@pengutronix.de
-Subject: Re: [PATCH] clk: imx8mp: add clkout1/2 support
-Message-ID: <Ym+muLit76y0AYM1@abelvesa>
-References: <20220427162131.3127303-1-l.stach@pengutronix.de>
+        with ESMTP id S1384389AbiEBKO3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 06:14:29 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BD817065
+        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 03:11:00 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id r9so12271775pjo.5
+        for <linux-clk@vger.kernel.org>; Mon, 02 May 2022 03:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=51p6qZNBJiDNSyR06sFL2MDxuNy9668AYthskXARKF4=;
+        b=bEA9U7BV/mb3zQiT1s76YPHqv6RCcRKwIdeA3+hQi0G7dKWkAZxwskhDN9Egh0O2TF
+         EeYb5cTstgq2E4l/KJwUH0PnhU1fGB3Xw8R1cMk1VlrFhH+yArlaPb+BrAVfPBTCNjn+
+         CGSn2MqG0MGPA9fXwybVrfcggMY950JGLytW+jkZB2TnsH3oGN80bITjWSC8esW476wX
+         2VBiZedZkHTXW17CNWuUR0LcnAUX0ESZmNwbVhn4WQfB3I0wj8jyJqSoJIkFmuuxKwF+
+         nPT3BwooOgKNBbYNjpWxHFdVkBJAq+ZjWuqVz5XrZp2ACcaMW1nL+2njb/IcAIk1HiRc
+         fHiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=51p6qZNBJiDNSyR06sFL2MDxuNy9668AYthskXARKF4=;
+        b=Gj0jZgdOD6OFUlfEE1pQsc1ms2uSQG6fwRFY4fhNnNdyognXFy8e6RUR6Uf2OyIVXo
+         mauQq+cktN3VjS3QdIAYcqHSsl5cSc7/V4/d4Aw+mp6pYVM0x+DVeSTtGGoEvgkVzBPl
+         d4VzYQ6JVvTon7iR3+JcvmMcVQKJx+5+UCi763tdSFz8sJsa6FtxHFSHLD7K95Kftrjx
+         0+0Fx3YeVamfBkSznmD1Hb9qbD0VJ8Z3VxKNzaW4XiYV+6rljySs6v179p9k+J5ipPj2
+         GM/d1yX5PsewqSujymmjJ7eCgfKWI/Urd/Qq+hFCbOdeHFLHldBDY5Je3rC89uGVsZst
+         f1OA==
+X-Gm-Message-State: AOAM531VnvN9KBVUawPxXdiMMmh0G2LLJpiX52cT6hQICdsBwEPY0sJd
+        OtRPRz8poZT8D3qn9GSXa2rE
+X-Google-Smtp-Source: ABdhPJzEtjr+0BChtfyBzyEORpBftBSZP2W/TPoMuupJQBJE6Eo9PXxESeWUchF9F1WziEdRc82pvQ==
+X-Received: by 2002:a17:902:ef45:b0:155:cede:5a9d with SMTP id e5-20020a170902ef4500b00155cede5a9dmr10751503plx.93.1651486260027;
+        Mon, 02 May 2022 03:11:00 -0700 (PDT)
+Received: from thinkpad ([27.111.75.99])
+        by smtp.gmail.com with ESMTPSA id d29-20020a631d1d000000b003c14af50641sm10940497pgd.89.2022.05.02.03.10.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 May 2022 03:10:59 -0700 (PDT)
+Date:   Mon, 2 May 2022 15:40:53 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
+Message-ID: <20220502101053.GF5053@thinkpad>
+References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
+ <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220427162131.3127303-1-l.stach@pengutronix.de>
-X-ClientProxiedBy: VI1P189CA0008.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:802:2a::21) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 497b219e-286e-4c25-33ee-08da2c1f99a4
-X-MS-TrafficTypeDiagnostic: DBBPR04MB6123:EE_
-X-Microsoft-Antispam-PRVS: <DBBPR04MB61232FBC93BD61509F851DDEF6C19@DBBPR04MB6123.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OKN7RfkZBZB++lngTDGJBNpCptpTalfwUPsW3cqG/Kf4zWZFZ4z1zyH0LU1/8YNhV6z4G+/Hkjn4ee93LRSZpoijVM8U8Y0eSz+dYPhXnh0ReFVyS/rWyR3Z3+wqy41o84lXiLRgZXkZ6kIJLueO4nYV8lqj/BvgT+N0iPz2qQxvm4FxCON3XKmQ2bHWo33p0zflx8n7OHtn6n+g1WV6IvJ6KOEXKPbNCmY8v7J2R/bmiKbuzM/eGzBl1y/9qFz6sbrtXDZ1Nk33MWzuZtnTyZkEr+j9aVCJGrjPHzlxVyokBTi24Bz67Te4EceFfae5ztayZtIAGGsjfn6S6ydtLR/Bi4pNW+V6eqsc+pFXQzaFM18N5FkSk5d/BFqwwtEmtUQjLkQTgAZfX9XqDmlqNSVFcPAoN3sohuW4KCx2PihtuYPM4FAk3TBTGncweK4Iwi1an7GJqei5qUGJhNXzrAFWAd/a+az5TN9G/BaxZ9drNbGQTXeTemDugdsa+k2TNms8K04n+eb5XiHQs+2vic9qBGx35YOZcnuV+ECltpq4AjNPzcSxRskS8mwoYJ013qFwbdknnakBgmUY5eHaclp8YbMwvMx+jWuKFyamzdQUR4wWUwjPw2tyPZXwuDn833IIMi7Gg8hWAdDn6B2nkE17WQ+o2sAz4o0sQtME9GHkjbM4JPTSrfM8zspqgOVkk2VFME3fTQMXkcH35PYwOgVuC/ax2HKyl0RUsKWmgU2sI9yV8/dkyTx+wnGkC0BO
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(186003)(52116002)(6916009)(5660300002)(54906003)(44832011)(8936002)(53546011)(6506007)(83380400001)(6512007)(9686003)(26005)(6486002)(2906002)(86362001)(316002)(508600001)(66946007)(8676002)(4326008)(66476007)(38100700002)(38350700002)(33716001)(66556008)(32563001)(67856001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B0uCu7cy4UbdsFpWxNjUzJaMvSrUJQOe5WxcNfaRDXhwvHA93Efqe26kdXyD?=
- =?us-ascii?Q?yN+K2YXIe48CEA/tbqORD2SWJ5RySR7z5gTkkpytaBvJ6yN+RXbA6JhClJj5?=
- =?us-ascii?Q?XVf+ML6mwsDY6wd9UVexaUS6NVV1tEfqTyNOR2N7eCGGDTxgi1/48wAzgwai?=
- =?us-ascii?Q?Ks/1Dx/nW7hp9+rTnq9Uqu06E1IUO9g/Ajcbtp9gN/XlJsNWQ+hgkooyR92E?=
- =?us-ascii?Q?6kIPhV0UtQkGd/MUMeyMIiBV4V3/xbyGW3FU1rjOfzClyIWKeLqAPQSasfpo?=
- =?us-ascii?Q?IrIdx7O/QLa/pwr1cxzDdlC30+MsBmBylt4q7t5sNv2LGQyDkqcZ7KUwGgMw?=
- =?us-ascii?Q?lQIW8jQ4hmTwsM8oBT0oY4hXnNAg4Qr1iBPNkx4jOWyyUTtboTCwao+qH2tL?=
- =?us-ascii?Q?rJD/Tdo87xJDtCzDoQXSuHM1KKiY0B2tKgCySyTMjxnUo3iqpGj7JhggiGau?=
- =?us-ascii?Q?7OEV3UdPojgv9baUcUWe2Noc1m4fQj00WgHLSClR6IW47MLCY1fIQJhc2Bsj?=
- =?us-ascii?Q?i1jzJX08Cqzm9oUihqH3CWkpfO86JCe27ENeLLgMYWKJS3t8HCIkjITyJ5AT?=
- =?us-ascii?Q?pW4ETH+YmqldDQpLYf832Kab6/zEqP17ZwoZ0u4TqUDXb77K2hrInwRcld/6?=
- =?us-ascii?Q?a5J0uloqvrIzWjmzMJnkxqksfwaonZJitUqNRk7MCFfudwWPAcMhqFDTSXs7?=
- =?us-ascii?Q?vz4BB8VRsnSjuURwCiu8TaLetvRUHWZ0rr5i+vzLeUGuPAaE6oDoaktvv4OL?=
- =?us-ascii?Q?L5W5PKTt6gkVDJ721lCIIn3XyinNkU5EetY9V8iU9rqoPzjYLmRKL1dtE+CA?=
- =?us-ascii?Q?2Pe5POtP6uKuJ5j8d7fthyuFiRMuMdm5dM1vEEbGVQQc/XyQexO4SIQX1VZI?=
- =?us-ascii?Q?l5NDwfr2dIVebGqNXxdKInP1WGGnQmHGyGm8chJTG24QGCF5UKRy69+xC0p/?=
- =?us-ascii?Q?PWo2kfQZh9y0t4F5gsBkZXzpi0oenMi2NEx8z3U49IERwOxsclqImu2X7ksT?=
- =?us-ascii?Q?zph/O4UIqEzGmHKviEEoaeAmPwLC0velN2pZo49UH7PAJVA/sYf1hBm8+C66?=
- =?us-ascii?Q?EoiiRvLiYVmolKLLoyojbQ/1fV75+AM31g65plI/UZbCUAI3bMukjHCwydgA?=
- =?us-ascii?Q?OcV03iH/MbAq7KXT5WHZvxLrzVmAg6n1Xoegt+1KFxd83M5qtsS6cNji7Q8f?=
- =?us-ascii?Q?L1lC+FlhpEs5L+C55X+x3FtbT7uhBpIi4Q0066Qe/+gbmQ/pSceLFpmOflrf?=
- =?us-ascii?Q?Ik6Il+KweejmSXRszmZKO+obX/xBevs3ITSnO8JCYJbsLTiSUSpJcv7yc+HV?=
- =?us-ascii?Q?8o8LT8EZKN+11NGNDYhfK2yWgHqbdRNpaTmvP4UsdKvJl5EKRM7JCp7eqdYJ?=
- =?us-ascii?Q?XbtoSAenBg07U5kuJJaeb86MepB9HT6FPiN6ingDAssV2AVpX4WV0M1tMCzF?=
- =?us-ascii?Q?n7i/esPYndJq/sInW2PcvvZ/RZYThYfO6xt5x3UCQh3rFlmqp4R/4RGO7xxK?=
- =?us-ascii?Q?8tjT4L4vA3ah6S6iDEqFa+u7xopLnYbtmU8MF6lG3XI3O1soHd4kR3HW7qIf?=
- =?us-ascii?Q?IYn9QNQHiVD/OWt7orJFyLAR0uy5V5A7TwsFFbAj4W7nWIXNlBta78sbSVD1?=
- =?us-ascii?Q?E59xxOuTzGdVE/ey8rqJ2C4g3LUjrMNMYGo1t62mMqALC35kwgyR0MU0ejLA?=
- =?us-ascii?Q?NcuQocXN2mUbiITRg3gRf1txp6xn6jNmJkg9ev8O1dO6jKrms5UZfGM+ynAT?=
- =?us-ascii?Q?PBuAadaUgQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 497b219e-286e-4c25-33ee-08da2c1f99a4
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2022 09:39:06.1192
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2zqnH0y+sHtCQvZ7dnK9BXUpP6fwA+jQM6mFhBsSVmlCBmpWul4kSLKqMRLONG/4FO1Q+Q457ztEUK0091jhdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB6123
+In-Reply-To: <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-04-27 18:21:31, Lucas Stach wrote:
-> clkout1 and clkout2 allow to supply clocks from the SoC to the board,
-> which is used by some board designs to provide reference clocks.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+On Sun, May 01, 2022 at 10:21:46PM +0300, Dmitry Baryshkov wrote:
+> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> muxes which must be parked to the "safe" source (bi_tcxo) when
+> corresponding GDSC is turned off and on again. Currently this is
+> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> clock. However the same code sequence should be applied in the
+> pcie-qcom endpoint, USB3 and UFS drivers.
+> 
+> Rather than copying this sequence over and over again, follow the
+> example of clk_rcg2_shared_ops and implement this parking in the
+> enable() and disable() clock operations. Suppliement the regmap-mux with
+> the new regmap-pipe implementation, which hides multiplexer behind
+> simple branch-like clock. This is possible since each of this
+> multiplexers has just two clock sources: working (pipe) and safe
+> (bi_tcxo) clock sources. If the clock is running off the external pipe
+> source, report it as enable and report it as disabled otherwise.
+> 
 
-Applied, thanks!
+Sorry for chiming in late and providing comments that might have been addressed
+before. But I have few questions below:
 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/clk/imx/clk-imx8mp.c             | 14 ++++++++++++++
->  include/dt-bindings/clock/imx8mp-clock.h |  9 ++++++++-
->  2 files changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 18f5b7c3ca9d..48099a2ed6b2 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -399,6 +399,11 @@ static const char * const imx8mp_sai7_sels[] = {"osc_24m", "audio_pll1_out", "au
->
->  static const char * const imx8mp_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
->
-> +static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_out", "video_pll1_out",
-> +						  "dummy", "dummy", "gpu_pll_out", "vpu_pll_out",
-> +						  "arm_pll_out", "sys_pll1", "sys_pll2", "sys_pll3",
-> +						  "dummy", "dummy", "osc_24m", "dummy", "osc_32k"};
+>  drivers/clk/qcom/Makefile          |  1 +
+>  drivers/clk/qcom/clk-regmap-pipe.c | 62 ++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-pipe.h | 24 ++++++++++++
+>  3 files changed, 87 insertions(+)
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.c
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.h
+> 
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 671cf5821af1..882c8ecc2e93 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+>  clk-qcom-y += clk-regmap-divider.o
+>  clk-qcom-y += clk-regmap-mux.o
+>  clk-qcom-y += clk-regmap-mux-div.o
+> +clk-qcom-y += clk-regmap-pipe.o
+>  clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+>  clk-qcom-y += clk-hfpll.o
+>  clk-qcom-y += reset.o
+> diff --git a/drivers/clk/qcom/clk-regmap-pipe.c b/drivers/clk/qcom/clk-regmap-pipe.c
+> new file mode 100644
+> index 000000000000..9a7c27cc644b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-pipe.c
+> @@ -0,0 +1,62 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022, Linaro Ltd.
+> + */
 > +
->  static struct clk_hw **hws;
->  static struct clk_hw_onecell_data *clk_hw_data;
->
-> @@ -504,6 +509,15 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_SYS_PLL2_500M] = imx_clk_hw_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
->  	hws[IMX8MP_SYS_PLL2_1000M] = imx_clk_hw_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
->
-> +	hws[IMX8MP_CLK_CLKOUT1_SEL] = imx_clk_hw_mux2("clkout1_sel", anatop_base + 0x128, 4, 4,
-> +						      imx8mp_clkout_sels, ARRAY_SIZE(imx8mp_clkout_sels));
-> +	hws[IMX8MP_CLK_CLKOUT1_DIV] = imx_clk_hw_divider("clkout1_div", "clkout1_sel", anatop_base + 0x128, 0, 4);
-> +	hws[IMX8MP_CLK_CLKOUT1] = imx_clk_hw_gate("clkout1", "clkout1_div", anatop_base + 0x128, 8);
-> +	hws[IMX8MP_CLK_CLKOUT2_SEL] = imx_clk_hw_mux2("clkout2_sel", anatop_base + 0x128, 20, 4,
-> +						      imx8mp_clkout_sels, ARRAY_SIZE(imx8mp_clkout_sels));
-> +	hws[IMX8MP_CLK_CLKOUT2_DIV] = imx_clk_hw_divider("clkout2_div", "clkout2_sel", anatop_base + 0x128, 16, 4);
-> +	hws[IMX8MP_CLK_CLKOUT2] = imx_clk_hw_gate("clkout2", "clkout2_div", anatop_base + 0x128, 24);
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/regmap.h>
+> +#include <linux/export.h>
 > +
->  	hws[IMX8MP_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mp_a53_sels, ccm_base + 0x8000);
->  	hws[IMX8MP_CLK_A53_SRC] = hws[IMX8MP_CLK_A53_DIV];
->  	hws[IMX8MP_CLK_A53_CG] = hws[IMX8MP_CLK_A53_DIV];
-> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-> index 235c7a00d379..7a6b45a04c24 100644
-> --- a/include/dt-bindings/clock/imx8mp-clock.h
-> +++ b/include/dt-bindings/clock/imx8mp-clock.h
-> @@ -318,7 +318,14 @@
->  #define IMX8MP_CLK_HSIO_AXI			311
->  #define IMX8MP_CLK_MEDIA_ISP			312
->
-> -#define IMX8MP_CLK_END				313
-> +#define IMX8MP_CLK_CLKOUT1_SEL			313
-> +#define IMX8MP_CLK_CLKOUT1_DIV			314
-> +#define IMX8MP_CLK_CLKOUT1			315
-> +#define IMX8MP_CLK_CLKOUT2_SEL			316
-> +#define IMX8MP_CLK_CLKOUT2_DIV			317
-> +#define IMX8MP_CLK_CLKOUT2			318
+> +#include "clk-regmap-pipe.h"
 > +
-> +#define IMX8MP_CLK_END				319
->
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
->  #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
-> --
-> 2.30.2
->
+> +static inline struct clk_regmap_pipe *to_clk_regmap_pipe(struct clk_hw *hw)
+> +{
+> +	return container_of(to_clk_regmap(hw), struct clk_regmap_pipe, clkr);
+> +}
+> +
+> +static int pipe_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	regmap_read(clkr->regmap, pipe->reg, &val);
+> +	val = (val & mask) >> pipe->shift;
+> +
+> +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
+> +
+> +	return val == pipe->enable_val;
+
+Selecting the clk parents in the enable/disable callback seems fine to me but
+the way it is implemented doesn't look right.
+
+First this "pipe_clksrc" is a mux clk by design, since we can only select the
+parent. But you are converting it to a gate clk now.
+
+Instead of that, my proposal would be to make this clk a composite one i.e,.
+gate clk + mux clk. So even though the gate clk here would be a hack, we are
+not changing the definition of mux clk.
+
+So you can introduce a new ops like "clk_regmap_mux_gate_ops" and implement the
+parent switching logic in the enable/disable callbacks. Additional benefit of
+this ops is, in the future we can also support "gate + mux" clks easily.
+
+Also, please don't use the "enable_val/disable_val" members. It should be
+something like "mux_sel_pre/mux_sel_post".
+
+> +}
+> +
+> +static int pipe_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	val = pipe->enable_val << pipe->shift;
+> +
+> +	return regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
+> +}
+> +
+> +static void pipe_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	val = pipe->disable_val << pipe->shift;
+> +
+> +	regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
+> +}
+> +
+> +const struct clk_ops clk_regmap_pipe_ops = {
+> +	.enable = pipe_enable,
+> +	.disable = pipe_disable,
+> +	.is_enabled = pipe_is_enabled,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_pipe_ops);
+> diff --git a/drivers/clk/qcom/clk-regmap-pipe.h b/drivers/clk/qcom/clk-regmap-pipe.h
+> new file mode 100644
+> index 000000000000..cfaa792a029b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-pipe.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2022, Linaru Ltd.
+
+Linaro
+
+> + * Author: Dmitry Baryshkov
+
+No email?
+
+Thanks,
+Mani
+
+> + */
+> +
+> +#ifndef __QCOM_CLK_REGMAP_PIPE_H__
+> +#define __QCOM_CLK_REGMAP_PIPE_H__
+> +
+> +#include <linux/clk-provider.h>
+> +#include "clk-regmap.h"
+> +
+> +struct clk_regmap_pipe {
+> +	u32			reg;
+> +	u32			shift;
+> +	u32			width;
+> +	u32			enable_val;
+> +	u32			disable_val;
+> +	struct clk_regmap	clkr;
+> +};
+> +
+> +extern const struct clk_ops clk_regmap_pipe_ops;
+> +
+> +#endif
+> -- 
+> 2.35.1
+> 
