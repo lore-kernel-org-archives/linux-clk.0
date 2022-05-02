@@ -2,90 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B5FC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 11:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E92C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 12:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232877AbiEBL7J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 07:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49886 "EHLO
+        id S1384845AbiEBMik (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 08:38:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233089AbiEBL7I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 07:59:08 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E38A1AF3B;
-        Mon,  2 May 2022 04:55:40 -0700 (PDT)
-Received: by mail-qk1-f179.google.com with SMTP id f186so11131361qke.8;
-        Mon, 02 May 2022 04:55:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CF9RwQrT81WWPNj57Tr31D0ck3a0O17Krj5kfVbkK6Q=;
-        b=7nVEG1hmlfj8kGI/x46n+Z4sNQnhJddZvICvTmdP91GTQPZ6kfxCqNuaZy8KgaVFNL
-         Ob5OatSSfIP1EMvWKm1+9DvjMlvCToWhjzKuO5fO5b9mSUgEQ4D63/N4+qKHmBh0Md8r
-         C4n5y1XF+WmY5vYDlyaGocmsROyhs4B77nbN1oIR+GmCW75f4WgeKOafa7Zqrd74/o/a
-         9USzsY83R4mTFmjSjVtKHeNI7z3Us3+kuuZ8ax7v7O4+OhLTP+e17P2JiWD10eIJEYyH
-         B2MD9/+dJnHe1rGI4iSBFFrCmQojxupfLjdhxUCQDXkLoCJeRzEDU6W3NWFsgJWXA9w8
-         0ksg==
-X-Gm-Message-State: AOAM531RKh5CQ3OyyORqvOfek+bhM1fTvLSD+hMOuXnCDWhRpxwSYDS9
-        ri4wOB88PFw6LfB1zxqYP4eBq/csa9hPrQ==
-X-Google-Smtp-Source: ABdhPJzSpRh4qsxyc1a26myfQLPZd/Lvup3P2ytAlXG79MbDaO3tCP5FFru67bHb/LO7R6J1o8MzfA==
-X-Received: by 2002:a05:620a:284a:b0:67b:637d:5858 with SMTP id h10-20020a05620a284a00b0067b637d5858mr8058177qkp.572.1651492539026;
-        Mon, 02 May 2022 04:55:39 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id r129-20020ae9dd87000000b0069fc13ce243sm2294123qkf.116.2022.05.02.04.55.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 May 2022 04:55:38 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id v59so25533267ybi.12;
-        Mon, 02 May 2022 04:55:38 -0700 (PDT)
-X-Received: by 2002:a25:4506:0:b0:648:cfc2:301d with SMTP id
- s6-20020a254506000000b00648cfc2301dmr9880052yba.380.1651492538324; Mon, 02
- May 2022 04:55:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220430114156.6260-1-biju.das.jz@bp.renesas.com> <20220430114156.6260-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220430114156.6260-4-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 May 2022 13:55:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWNYtY98AAxm787bSHtfjwvRYJGHqFKCFRM97E+GL9DbA@mail.gmail.com>
-Message-ID: <CAMuHMdWNYtY98AAxm787bSHtfjwvRYJGHqFKCFRM97E+GL9DbA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] clk: renesas: rzg2l: Add DSI divider clk support
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S238129AbiEBMij (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 08:38:39 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E6412AA7
+        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 05:35:08 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:194e:5782:c420:7f87])
+        by albert.telenet-ops.be with bizsmtp
+        id Rob52700H28fWK506ob5an; Mon, 02 May 2022 14:35:06 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nlVGb-002mfz-22; Mon, 02 May 2022 14:35:05 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nlVGa-002hgV-2G; Mon, 02 May 2022 14:35:04 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r9a07g044: Fix OSTM1 module clock name.
+Date:   Mon,  2 May 2022 14:35:02 +0200
+Message-Id: <e0eff1f57378ec29d0d3f1a7bdd7e380583f736b.1651494871.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 30, 2022 at 1:42 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> M3 clock is sourced from DSI Divider (DSIDIVA * DSIDIVB)
->
-> This patch add support for DSI divider clk by combining
-> DSIDIVA and DSIDIVB.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-> v2->v3:
->  * Dropped the blank line abd defined variables in
->    reverse Xmas tree order in get_vclk_parent_rate()
->  * Added macro MAX_VCLK_FREQ and rate is checked against
->    this macro in determine_rate and set_rate
+Fix a typo in the name of the "ostm1_pclk" clock.
+This change has no run-time impact.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.19, with the rest of this series.
+Fixes: 161450134ae9bab3 ("clk: renesas: r9a07g044: Add OSTM clock and reset entries")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-clk for v5.19.
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index bdfabb992a20782d..df9d5d91e065fdb8 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -180,7 +180,7 @@ static const struct {
+ 					0x52c, 1),
+ 		DEF_MOD("ostm0_pclk",	R9A07G044_OSTM0_PCLK, R9A07G044_CLK_P0,
+ 					0x534, 0),
+-		DEF_MOD("ostm1_clk",	R9A07G044_OSTM1_PCLK, R9A07G044_CLK_P0,
++		DEF_MOD("ostm1_pclk",	R9A07G044_OSTM1_PCLK, R9A07G044_CLK_P0,
+ 					0x534, 1),
+ 		DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
+ 					0x534, 2),
+-- 
+2.25.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
