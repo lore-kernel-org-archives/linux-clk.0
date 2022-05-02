@@ -2,131 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8977FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 20:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B96CC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 20:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385801AbiEBUan (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 16:30:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57290 "EHLO
+        id S236700AbiEBUix (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 16:38:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382969AbiEBUam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 16:30:42 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842199FE2;
-        Mon,  2 May 2022 13:27:12 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id p18so17844740edr.7;
-        Mon, 02 May 2022 13:27:12 -0700 (PDT)
+        with ESMTP id S234868AbiEBUiq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 16:38:46 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D7021A6;
+        Mon,  2 May 2022 13:35:16 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id y63so16356881oia.7;
+        Mon, 02 May 2022 13:35:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OAT/69wtRvffN89vC/NPyLjFTXggz4+XzDvpqQchKZY=;
-        b=ZcvUi6TuwK26g91Wj+BvOBvLkRS94l9430HQO9Evx23oGlUQUwiM6EAtJ8xNLHowPI
-         mzffkJfkvuli2lMkWMQvt0t2os+zeKmDan94eeKbiMPrd9pkb38RNFZ63UVdP4aGnMNx
-         qJhVD6u6kosJmBSKPQS2Fe0/hhrIR483kNVdAoRII7mzG+Y7MbQ4FTn9+cXOxyhZArbK
-         ZbBtWI1anOlcbRILbG7LW2IEzQoFdzVve4X1P97neVIhR0s99jZlDnUwFbM7mZYeNVJQ
-         +Z93Q4GpFI5wCA9VtGDBg6AZG1qrBbjYA6Zzx92OshkCiJaWyCPk7GFQfY6SB0MfPB0g
-         Aubw==
+        h=sender:message-id:date:mime-version:user-agent:content-language:to
+         :cc:references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=Wbb/YCuXfU00DfHND/DHy2kwUE+lT6TSINXYpJ/qV5I=;
+        b=FLLW/uyff9Ycgsqvr7B/1rKKbYcqxPHcB/Z4Dzkise/sBahurt9MkB5d2Pwdq0mBx6
+         JBZ79EtlI9uPK5x9zPokW236sVzMczhGdVx1gIMZGk636HBXuHx4CTnG4GED7AvGzHUW
+         Thvss09ZX4qJwF85xOtO/5anUeLJUCJLQqE2oTAv7ob7MgOQbZ8FIG2ataSCB11SLPi/
+         zWRPk8cies0VayUBETQZF0ATO7Ph0YxmHCoLhEDbHA/tOq7AD79YUjIKnbLY1pjSmHsB
+         fjVxpaNMsC7JbyjvdifBLlvwCFZr+BZVQ35H0Bzt/dw9KykTjCJryLdhyJ23VfF7JeHa
+         F90Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OAT/69wtRvffN89vC/NPyLjFTXggz4+XzDvpqQchKZY=;
-        b=8FZXwy6fqqTiAdWVojFu79C7EhX5ecMwslFgsPfz1luUf+mREoHTGnDWZiwRiRRkhH
-         A6fORbZbk9JPMemc07dpPc3PAPnZOZAzQYHfGhjsDh4xm165jBxslVST9JDExQ/9aWKF
-         V614HV3Pj56nvj3nXqEDe1ARrJCvDAA00SPihta4fIzKmrBvAQ5yKny3M8xV7XbWhgFK
-         /4iqwkyaHzjyQ49qNdRASQu17xkG6O6uE816HoDFyStZKP031zNjP5zlEpc7pqZYxdG3
-         GSFmqJEpxX/FFog/+PVJoU3uYh+txsONqle+q69GaxiKwZGjtDnamCpv1kdDrSKWIk5G
-         B0xQ==
-X-Gm-Message-State: AOAM532dqvY1ZY3Vc0Fp0p5DcyiIXPMnuc/K6GLlZK6gU/zdXB2+n9xs
-        tkBmFurht6SFnoQMNoiMgTg=
-X-Google-Smtp-Source: ABdhPJxODcFVbGH31VOkUTUnzD2LetaTmezsuSwjzyi7qh/PBLv/FTPz30bmyJeVSg8Xe5f/ZplNfg==
-X-Received: by 2002:a05:6402:335:b0:425:e3e0:5a90 with SMTP id q21-20020a056402033500b00425e3e05a90mr14497509edw.14.1651523230760;
-        Mon, 02 May 2022 13:27:10 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id e19-20020a056402105300b0042617ba6384sm7034024edu.14.2022.05.02.13.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 May 2022 13:27:10 -0700 (PDT)
-Message-ID: <62703e9e.1c69fb81.23bb7.9395@mx.google.com>
-X-Google-Original-Message-ID: <YnA11BpBNqgolvXs@Ansuel-xps.>
-Date:   Mon, 2 May 2022 21:49:40 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-References: <20220430060125.9124-1-ansuelsmth@gmail.com>
- <20220430060125.9124-4-ansuelsmth@gmail.com>
- <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
- <626d4cbf.1c69fb81.e6965.76b4@mx.google.com>
- <0711b822-506b-7b90-6b63-50c5c0ce4f6e@linaro.org>
- <626fb971.1c69fb81.fcab0.5f71@mx.google.com>
- <b3bda9d7-2c50-547d-35ab-510ecab4f7d2@linaro.org>
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=Wbb/YCuXfU00DfHND/DHy2kwUE+lT6TSINXYpJ/qV5I=;
+        b=ozV8FDbO8mlL5w2pcJ57nvVIUa+TRjkC1wVDhF2V35UGVtT9YlED0K4hAGo0Dx3kES
+         rPmKeh6ZzkFvnZGqjmVOJkCGNYassAytxhi7kAnHYVT9no6wsMZ7VK75817MuKTaHDJE
+         6rVhfuPoetwvXXN7Z4XN+SNfgMjb/2u1PuHOG3exg87uqIEqxXv+vF8qU6nif3OW4b4A
+         bS8e7o54rxu+m0znTxeCQXcnqvaaznSkgq2654Dpv1ch+6GSXX8Vp2kCMHzTIPTeqUD4
+         oxTBIWoj8dSXMoVeVu/09PCj8ymRvqd/5R6iM5aVeu/4iR6rBDnQQ13ltFhgBw3get+n
+         a8NQ==
+X-Gm-Message-State: AOAM531kngqZ9obTjKD55+i6DE0ZN6M8zie4DUrFwc93fxP7/x04Rogq
+        D+p3Ou0uelVDh7XHmbokqPE=
+X-Google-Smtp-Source: ABdhPJwiM/GiwIXmL7hyCptsmhhiYotg3kbrvacK9o0+PJRo8UrmYe/PJoRe3aFR7xYQMKwGGCJYVg==
+X-Received: by 2002:a05:6808:1311:b0:325:bb64:ced6 with SMTP id y17-20020a056808131100b00325bb64ced6mr454522oiv.13.1651523716162;
+        Mon, 02 May 2022 13:35:16 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e2-20020a4aa602000000b0035ef3da8387sm1302819oom.4.2022.05.02.13.35.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 May 2022 13:35:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c001d58e-9a78-6338-a533-d0f215b3dfd1@roeck-us.net>
+Date:   Mon, 2 May 2022 13:35:11 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3bda9d7-2c50-547d-35ab-510ecab4f7d2@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+References: <20220419163810.2118169-1-arnd@kernel.org>
+ <3b4046ed-fd75-13ea-fac3-06469172806c@roeck-us.net>
+ <CAK8P3a1LzEG1vo+5nMrnL3TOMcbSKJ3u=StcfY8dajV2raUBjA@mail.gmail.com>
+ <3df135a2-17f5-d6c6-b4a8-e1a60e254297@roeck-us.net>
+ <CAK8P3a2EHMQPN4ny9sXXuReFG0jN0hyRV7h9v_AR_0pqpOU41w@mail.gmail.com>
+ <CAK8P3a09+nFS3g1rgvTW9da3tMiAhHjkjZVs1QOJOj8TJ-9MDg@mail.gmail.com>
+ <6f1b27fa-96d1-4be7-ac6a-762610314f2a@roeck-us.net>
+ <8d6d453a-e6fc-439b-2f34-e60c22fc9e98@roeck-us.net>
+ <CAK8P3a2Ekvis1YcrJZtuga+XQdbeTC98PkOszCpS2DiZri7VMQ@mail.gmail.com>
+ <149509dd-f43d-1b27-4395-81eab4ff3455@roeck-us.net>
+ <CAK8P3a05vFdBnXXAMPVS82xX29+uinvWPcWxAgvj0TfoOk+1kg@mail.gmail.com>
+ <b13783aa-9225-d52a-3800-c97ad772688b@roeck-us.net>
+ <CAK8P3a3S5OjkKq_u5FpnwzYv+0+typya6Z4MzTez5ZH+do00xQ@mail.gmail.com>
+ <CAK8P3a3jiqf_zpBsZyvAb5ZtkwDa7KkqExqDAdpY_pYqkr_NgQ@mail.gmail.com>
+ <4dcdbfe2-9edf-320b-d123-3b62c8b5e28e@roeck-us.net>
+ <CAK8P3a0ogn1wgPBDHkT=Fb8ufA+y8Ax1Qov2-vRXfC08QqnrQA@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 00/48] ARM: PXA multiplatform support
+In-Reply-To: <CAK8P3a0ogn1wgPBDHkT=Fb8ufA+y8Ax1Qov2-vRXfC08QqnrQA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 02, 2022 at 10:18:31PM +0200, Krzysztof Kozlowski wrote:
-> On 02/05/2022 12:40, Ansuel Smith wrote:
-> > 
-> > The idea is that you put the clk name in 'clock-output-names' and the
-> > driver needs to have support for it (and set the clk name based on the
-> > name defined in the dts)
-> > 
-> > This driver doesn't have support for it and is actually hardcoded.
-> > So you are right and I should just drop it.
-> > 
-> > But now another question... Since #clock-cells was added as a
-> > requirement for clock-output-names, should I drop also that?
-> > 
-> > In theory #clock-cells should always be declared for clock providers, is
-> > it right to add it in the conversion commit or I should put this change
-> > in another commit? (since it's now an addition and now something required
-> > to fix a bot warning)
+On 5/2/22 12:21, Arnd Bergmann wrote:
+> On Mon, May 2, 2022 at 6:26 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> With v5.18-rc1-49-gcb813018b5c1, I still get:
+>>
+>> [    0.797668] RAMDISK: Couldn't find valid RAM disk image starting at 0.
+>> [    0.805262] /dev/root: Can't open blockdev
+>> [    0.805487] VFS: Cannot open root device "(null)" or unknown-block(0,0): error -6
+>> [    0.805674] Please append a correct "root=" boot option; here are the available partitions:
+>>
+>> when trying to boot z2 from initrd.
+>>
+>> The other problems are gone.
 > 
-> These are not the best bindings to convert, if you are not into the qcom
-> DTS and drivers. :)
->
-
-As I said some times ago main problem of these thing is that they are
-ancient and they were not in a good state from the start. So it's hard
-to fix this in a sane way. (i'm trying tho so sorry for any mess i'm
-making in the process)
-
-> It looks like the bindings were added to match current Linux
-> implementation and in this implementation the device is not used in DTS
-> as a clock provider (even though it registers a clock) but as a syscon.
-> I am not even sure if it is used as a clock provider outside of DTS
-> (through using a fixed clock name in some clock consumer).
+> Ok, progress!
 > 
-> Probably this should be made either a proper clock controller or
-> something stripped down to the point matching current usage (accepting
-> the fact that bindings are incomplete). Anyway your choice should be
-> made according to how this device and its driver fit to entire system.
-> IOW, it's not a simple binding conversion and you should not just
-> convert it to make dtbs_check happy.
-
-I wonder if I should just drop this patch from the series and push it
-later in another series as a rework directly (with also the other
-relevant changes to fix the current problem we have with all the dts).
-
-The intention of this series was to try to push small changes that could
-be merged in a short time.
-
+> What is your qemu command line? I see that z2 has no pcmcia device, so
+> I tried booting
+> from MMC, but this already fails with 5.18-rc1 without any of my
+> patches, giving me
 > 
-> Best regards,
-> Krzysztof
+> [    0.697481] Creating 3 MTD partitions on "physmap-flash":
+> [    0.698161] 0x000000000000-0x000000040000 : "U-Boot Bootloader"
+> [    0.702815] 0x000000040000-0x000000060000 : "U-Boot Environment"
+> [    0.706541] 0x000000060000-0x000000800000 : "Flash"
+> [    0.718066] pxa2xx-mci pxa2xx-mci.0: incomplete constraints, dummy
+> supplies not allowed
+> [    0.718501] pxa2xx-mci pxa2xx-mci.0: incomplete constraints, dummy
+> supplies not allowed
+> 
 
--- 
-	Ansuel
+To boot from initrd:
+
+qemu-system-arm -M z2 -kernel \
+      arch/arm/boot/zImage -no-reboot -initrd \
+      rootfs-armv5.cpio --append \
+      "panic=-1 slub_debug=FZPUA rdinit=/sbin/init console=ttyS0" -nographic \
+      -monitor null -serial stdio
+
+where rootfs-armv5.cpio is from my repository at github.com.
+
+https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/rootfs-armv5.cpio.gz
+
+> Do  you have MMC or some other rootfs working without my patch series?
+> 
+
+I can boot z2 from mmc and flash, but I have a number of configuration
+flags enabled on top of pxa_defconfig. That also works with your latest patch
+series. See
+https://kerneltests.org/builders/qemu-arm-testing/builds/75/steps/qemubuildcommand/logs/stdio
+
+     # Always enable ...
+     enable_config "${defconfig}" CONFIG_DEVTMPFS CONFIG_DEVTMPFS_MOUNT CONFIG_BLK_DEV_INITRD
+     # Options needed to be built into the kernel for device support
+     # on pxa devices
+     # MTD, squashfs
+     enable_config_cond "${defconfig}" CONFIG_MTD_BLOCK CONFIG_MTD_PXA2XX CONFIG_SQUASHFS
+     # MMC
+     enable_config_cond "${defconfig}" CONFIG_MMC_BLOCK CONFIG_MMC_PXA
+     # PCMCIA
+     enable_config_cond "${defconfig}" CONFIG_ATA CONFIG_BLK_DEV_SD CONFIG_PCCARD
+     enable_config_cond "${defconfig}" CONFIG_PCMCIA CONFIG_PATA_PCMCIA CONFIG_PCMCIA_PXA2XX
+     # USB
+     enable_config_cond "${defconfig}" CONFIG_USB CONFIG_USB_STORAGE CONFIG_USB_OHCI_HCD CONFIG_USB_OHCI_HCD_PXA27X
+
+Hope this helps,
+Guenter
