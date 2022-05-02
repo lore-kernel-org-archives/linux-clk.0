@@ -2,82 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3D3C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 15:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CDFC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 15:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385752AbiEBPeU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 11:34:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38532 "EHLO
+        id S1385837AbiEBPhG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 11:37:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385807AbiEBPd4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 11:33:56 -0400
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F672719;
-        Mon,  2 May 2022 08:30:26 -0700 (PDT)
-Received: by mail-qv1-f52.google.com with SMTP id kj8so4441211qvb.6;
-        Mon, 02 May 2022 08:30:26 -0700 (PDT)
+        with ESMTP id S1351821AbiEBPhF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 11:37:05 -0400
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654EFBC1C;
+        Mon,  2 May 2022 08:33:35 -0700 (PDT)
+Received: by mail-oi1-f177.google.com with SMTP id l16so8291644oil.6;
+        Mon, 02 May 2022 08:33:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M+nnzARipFBLna11ublAO2AvWfDSAMVRqL/BpCrG3GI=;
-        b=sU+IzBDfAZ5Re89wzog4se4C9cxq/4sbe4x7PF9I3BcJ7YGe3NvoGfTcI4nNlUsIvC
-         zZt8+RIQ7jZRvWHMJ8lgAHGIt1DPYVZhG+Wfm8lkR0mt1SNeb2ymAIomhjEFNVKGomcY
-         w5YRoI+MXbLvrdk56EAKFCLT8is8hKxAILDGukhrZ3qU7Xr5E+iq/LvfFEbm0mWYTdUn
-         MMtYiOYH4FQEuLG+QSDtJzWWkCkIZMA+Y7M+KLkatKTHg2mNJaNUqDkXcvKNF5EWlsoc
-         MDgeWCK9PHsdwkURFmAC4T+S+tmCPG8RBPEVB9IXjrqsgy7wt9uIT+d8gm1a8LaQchbU
-         PfCg==
-X-Gm-Message-State: AOAM531YlA/gDoYR67k9uYU7qnqz/QJAyKPLKzMrMMYRL2UYoIWtvI6J
-        Ftn4UR6lFWuaCYoePpktoK4Q8a7mNlv3uQ==
-X-Google-Smtp-Source: ABdhPJywRlyn5SST4Qg9U54AYuk+HMobtY11LbYW5rXe0snjzjV0tngxYuNwSkNpaGrwnbowS7PtXA==
-X-Received: by 2002:a05:6214:f24:b0:45a:8c3d:6911 with SMTP id iw4-20020a0562140f2400b0045a8c3d6911mr4393377qvb.1.1651505425991;
-        Mon, 02 May 2022 08:30:25 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id y24-20020ac85258000000b002f39b99f675sm4515011qtn.15.2022.05.02.08.30.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 May 2022 08:30:25 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id j2so26720606ybu.0;
-        Mon, 02 May 2022 08:30:25 -0700 (PDT)
-X-Received: by 2002:a05:6902:389:b0:633:31c1:d0f7 with SMTP id
- f9-20020a056902038900b0063331c1d0f7mr10337968ybs.543.1651505425433; Mon, 02
- May 2022 08:30:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220501083450.26541-1-biju.das.jz@bp.renesas.com> <20220501083450.26541-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220501083450.26541-5-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 May 2022 17:30:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWqiDOyB_EPLGQZXbZvK0u+YJishKgA-t2Hh4hfSx4M8Q@mail.gmail.com>
-Message-ID: <CAMuHMdWqiDOyB_EPLGQZXbZvK0u+YJishKgA-t2Hh4hfSx4M8Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r9a07g043: Add clock and reset entries
- for ADC
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=JTr8vcwPekKNxgaP35/VIOaNAgxzoIKDrhPTZqxgCxU=;
+        b=7OwkSe5n9Zzsp7Qcx3IA0J518knboVSaMgvoua/YexsWTPcXDKhLFcuTW9b1uP9b0i
+         VEteYfAsWple6fwx0lzULoDfcHlaL+uyGP+CxTiOsXhJBo+vIjlbutoCe8uUBEMpdeMQ
+         qzTWGeIROdM4NaC6VUY7ldWmZvVLkESJ3y1QiZ4NSU7mkbKmG5cxSHyZDjdtEzNObj4z
+         2lF7xO8fUeRDKdCtfmiSHfCM6zOI4bMK69RrnP6ojkkhfwfKsQZcVCqNxgKJMYAt6mJ6
+         JKPn3cmnvoHZvZPTwrHg8SSOZ9ZWKQ0DWiFnHAipHG6JPXeE5OSvlcUcd6PXo/74KYlH
+         Mzqw==
+X-Gm-Message-State: AOAM532oUqSa4W/ibfQ5dSGQ2/RkDYkghwzut01U8F4MFOGPBhGytaJW
+        qW1bQ7v1UrOxxipIlo1zGcrQQxEELg==
+X-Google-Smtp-Source: ABdhPJxa6lKGhgt8BCT4MFbjaP/pVYGPXQU98T1b6xKT0Rz+NpKi1Ij5LNe546qeMFfARWCfjo9rDg==
+X-Received: by 2002:a05:6808:ecc:b0:2fa:7d95:8dec with SMTP id q12-20020a0568080ecc00b002fa7d958decmr7581969oiv.34.1651505613227;
+        Mon, 02 May 2022 08:33:33 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id m9-20020a4ad509000000b0035eb4e5a6dasm3916737oos.48.2022.05.02.08.33.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 May 2022 08:33:32 -0700 (PDT)
+Received: (nullmailer pid 1161777 invoked by uid 1000);
+        Mon, 02 May 2022 15:33:29 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+In-Reply-To: <20220430060125.9124-4-ansuelsmth@gmail.com>
+References: <20220430060125.9124-1-ansuelsmth@gmail.com> <20220430060125.9124-4-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver Documentation to yaml
+Date:   Mon, 02 May 2022 10:33:29 -0500
+Message-Id: <1651505609.498439.1161776.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 1, 2022 at 10:35 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add clock and reset entries for ADC block in CPG driver.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+On Sat, 30 Apr 2022 08:01:25 +0200, Ansuel Smith wrote:
+> Convert kpss-gcc driver Documentation to yaml.
+> Add #clock-cells additional binding to required bindings and example
+> as it's a required binding for clock-output-names.
+> 
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
+>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
+>  2 files changed, 68 insertions(+), 44 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.19.
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-Gr{oetje,eeting}s,
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
 
-                        Geert
+Full log is available here: https://patchwork.ozlabs.org/patch/
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+clock-controller@2011000: '#clock-cells' is a required property
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2011000: 'clock-names' is a required property
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2011000: 'clock-output-names' is a required property
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2011000: 'clocks' is a required property
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960']
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
+	arch/arm/boot/dts/qcom-apq8064-asus-nexus7-flo.dtb
+	arch/arm/boot/dts/qcom-apq8064-cm-qs600.dtb
+	arch/arm/boot/dts/qcom-apq8064-ifc6410.dtb
+	arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dtb
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dtb
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dtb
+	arch/arm/boot/dts/qcom-mdm9615-wp8548-mangoh-green.dtb
+	arch/arm/boot/dts/qcom-msm8960-cdp.dtb
+
+clock-controller@2082000: '#clock-cells' is a required property
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
+clock-controller@2082000: 'clock-names' is a required property
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
+clock-controller@2082000: 'clock-output-names' is a required property
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
+clock-controller@2082000: 'clocks' is a required property
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
+clock-controller@2082000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960']
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
+clock-controller@2082000: compatible:1: 'qcom,kpss-gcc' was expected
+	arch/arm/boot/dts/qcom-apq8060-dragonboard.dtb
+	arch/arm/boot/dts/qcom-msm8660-surf.dtb
+
