@@ -2,160 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC52FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 10:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754FFC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  2 May 2022 11:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbiEBLC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 May 2022 07:02:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        id S231159AbiEBLNm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 May 2022 07:13:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbiEBLC2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 07:02:28 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62F5B39;
-        Mon,  2 May 2022 03:58:59 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id k23so27083873ejd.3;
-        Mon, 02 May 2022 03:58:59 -0700 (PDT)
+        with ESMTP id S231339AbiEBLNl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 May 2022 07:13:41 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 609ADEF
+        for <linux-clk@vger.kernel.org>; Mon,  2 May 2022 04:10:11 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id i62so11452371pgd.6
+        for <linux-clk@vger.kernel.org>; Mon, 02 May 2022 04:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=94vn6QxCatU8SdwHnwlVFIAEM6kk0iWhQcT6gEzd07o=;
-        b=gIBigXRWRP2bwFWuVaRSpDB2XK5tmhst9NbbZAKxjzpxZ57dRDRuhB46XoS4fChnGH
-         AfmhiEWPWkHnIsdl2+uETGhLw+jDKVnZne+9aEhxND5jB3Uf2VEMfhVSxTUb8URewf+R
-         9yak+DM1mxKZ/azkdttalqJS8mezrEiIUsC3XPQZmuUF6rYTAanG/tv3Yf867xzx0f38
-         xZUNaFAqUe2knvK48Xl2Mudjw48BV/xtFyjb19c74borxpX3yoql620dC7rPBgImci9p
-         F9vYZ50KABB5DMsailubtBdEds6kOlwUi1cCSRP9CY3R3e420YM3whMl1xlOfblsCw9m
-         Xacg==
+        bh=KrF+TMnGCTeovFvjPgVgunVgkeXw/MuqtYvkepZGc08=;
+        b=alHG6KJXpdw4d3fBStv6nml/ENg2l9DEd0i9Ma5ATUJhKoJqg6got97jJQmvh9Xy5R
+         7l/zUHZ2pqGfenLg0vTHzQTCwZls0Y7jtYDsW105vhR33fF7SBf27RhwKRFMfrlH4Px8
+         rBJRZYWgDErx1Z3C8OrlG6CpUnRoCH0JaHBAwyK8AGGYUVJZEzFFZBhFly4AEqdkos3y
+         OVCtxGfgo6x9RNG0Lejhl5n1nVrk9/ZW4BqDVxSDRW6oPsnUfHql7UwGExaC9UlXptU0
+         OqP4N+8OhEGH7rhVNSsgCkOMrCR1jzqZuYggzKJB5hxfnicNlh8i7O55WqGIJuD/j70r
+         z29g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=94vn6QxCatU8SdwHnwlVFIAEM6kk0iWhQcT6gEzd07o=;
-        b=GBpnpnyvcxvQrz9hwd5XtGq7dUkpyn621tUI50pKyeYfwcfDCMM1u1WtLCIHPjgDp3
-         6giUiZslQNPnaGgcFB8dT+xnWFR0XKPzGI4hh9bcJwnVsbcaRnZ9QYnrwiGpPr2bjfHx
-         mNx2aDsRysNvKUPdj+WIrCdXDpThaHyvQ7vhYbvC/pR06jjntinMMQsxHArP8eOWB9Fi
-         787FaqCdelmBGI0BXriTqrQGlK9z4TAXIvJcIwrVXMlHbtTTbr4teTGES6ksM/H7igOO
-         EM4ENVD+hp0y5ltjFJ+o119+iMiJ/gVku1k8a56VJoXeoIlnaux/j527e8LqjZQePv9F
-         R3gw==
-X-Gm-Message-State: AOAM530nPcp+kTRMJ07pwPORDPfjcP4hpqcrilGbf3GwZzAoq/W6Phcu
-        1wOH2tsy2VlZUkUH3mtkQgI=
-X-Google-Smtp-Source: ABdhPJxPUVektfI6QlOweHtlDjKawi2DznTY/c8J0WmbTy3aNTOdjpiML6izXDS8jIbBZBWL5NL6BQ==
-X-Received: by 2002:a17:907:d28:b0:6f4:6375:5245 with SMTP id gn40-20020a1709070d2800b006f463755245mr2281563ejc.12.1651489138048;
-        Mon, 02 May 2022 03:58:58 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id n6-20020a056402514600b0042617ba63bcsm6596291edd.70.2022.05.02.03.58.56
+        bh=KrF+TMnGCTeovFvjPgVgunVgkeXw/MuqtYvkepZGc08=;
+        b=JpBnvVz058q4B6ESHBhTqk911JsGcGnXji+7Jq+GNgBlgQ8xSwWE0hnFRCoHoPKlwi
+         o1cNN1yJiHtvdh3BS/25T8c6qd4U/3ktyOcx5X2IaGwMYyZ04hAM0v/QGLdHB/xX++am
+         VdTINiD4wI+43Wdsxwcx5TmGBFhoRjPpuf+wa90uXDYt1vyJJ8sl6w8JUYJsMYHzlLIp
+         7tDuKqDuMvvLzjt7Osv+dPg42BXlxpMS40cJov6d4zNsOMTh/CSh1VVLbnsNR2e2tEkD
+         5Asg7wXFnPVZHZnI4y9d1fG8nckI8RNADZ0g/UN1B4TKaUhS9prVDIkIIMZw1fve0lqe
+         VLAw==
+X-Gm-Message-State: AOAM532HcTV26Vkt45u0N5lSItRH05CNc/MeI4pyyDKsa8Vu7di4W7Yk
+        gXW8bWbR2YKJK9AyjenzEH19
+X-Google-Smtp-Source: ABdhPJxJATpPVf0pr5Mxh9mR3AeVjIQkpjJ+0bwHEfrPTdXP6Fe6nf46rZ2NDPIu/8bs5EIa8MKDTQ==
+X-Received: by 2002:a63:84c3:0:b0:3aa:f229:45c5 with SMTP id k186-20020a6384c3000000b003aaf22945c5mr9272188pgd.415.1651489810845;
+        Mon, 02 May 2022 04:10:10 -0700 (PDT)
+Received: from thinkpad ([27.111.75.99])
+        by smtp.gmail.com with ESMTPSA id r20-20020a170902ea5400b0015e8d4eb22esm4378162plg.120.2022.05.02.04.10.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 May 2022 03:58:57 -0700 (PDT)
-Message-ID: <626fb971.1c69fb81.fcab0.5f71@mx.google.com>
-X-Google-Original-Message-ID: <Ym+1BPrdj2qz/SmT@Ansuel-xps.>
-Date:   Mon, 2 May 2022 12:40:04 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        Mon, 02 May 2022 04:10:10 -0700 (PDT)
+Date:   Mon, 2 May 2022 16:40:04 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-References: <20220430060125.9124-1-ansuelsmth@gmail.com>
- <20220430060125.9124-4-ansuelsmth@gmail.com>
- <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
- <626d4cbf.1c69fb81.e6965.76b4@mx.google.com>
- <0711b822-506b-7b90-6b63-50c5c0ce4f6e@linaro.org>
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
+Message-ID: <20220502111004.GH5053@thinkpad>
+References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
+ <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+ <20220502101053.GF5053@thinkpad>
+ <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0711b822-506b-7b90-6b63-50c5c0ce4f6e@linaro.org>
+In-Reply-To: <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 01, 2022 at 10:26:47AM +0200, Krzysztof Kozlowski wrote:
-> On 30/04/2022 09:42, Ansuel Smith wrote:
-> > On Sat, Apr 30, 2022 at 04:40:54PM +0200, Krzysztof Kozlowski wrote:
-> >> On 30/04/2022 08:01, Ansuel Smith wrote:
-> >>> Convert kpss-gcc driver Documentation to yaml.
-> >>> Add #clock-cells additional binding to required bindings and example
-> >>> as it's a required binding for clock-output-names.
-> >>>
-> >>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> >>
-> >>
-> >> (...)
-> >>
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    items:
-> >>> +      - enum:
-> >>> +          - qcom,kpss-gcc-ipq8064
-> >>> +          - qcom,kpss-gcc-apq8064
-> >>> +          - qcom,kpss-gcc-msm8974
-> >>> +          - qcom,kpss-gcc-msm8960
-> >>> +      - const: qcom,kpss-gcc
-> >>> +
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  clocks:
-> >>> +    items:
-> >>> +      - description: phandle to pll8_vote
-> >>> +      - description: phandle to pxo_board
-> >>> +
-> >>> +  clock-names:
-> >>> +    items:
-> >>> +      - const: pll8_vote
-> >>> +      - const: pxo
-> >>> +
-> >>> +  clock-output-names:
-> >>> +    const: acpu_l2_aux
-> >>
-> >> It does not make sense having a constant output name. What is the
-> >> meaning this property in such case? The original binding did not enforce it.
-> >>
-> >>
-> >>
-> >> Best regards,
-> >> Krzysztof
+On Mon, May 02, 2022 at 01:35:34PM +0300, Dmitry Baryshkov wrote:
+
+[...]
+
+> > > +static int pipe_is_enabled(struct clk_hw *hw)
+> > > +{
+> > > +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
+> > > +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> > > +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> > > +	unsigned int val;
+> > > +
+> > > +	regmap_read(clkr->regmap, pipe->reg, &val);
+> > > +	val = (val & mask) >> pipe->shift;
+> > > +
+> > > +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
+> > > +
+> > > +	return val == pipe->enable_val;
 > > 
-> > Mh. Should I just drop the const and put a description referring to an
-> > advised name? The driver with the kpss-gcc hardcode the name to
-> > acpu_l2_aux that's why I thought it was a correct conversion using a
-> > const but I assume this is another problem of not making a correct 1:1
-> > conversion and adding fixes on pure conversion.
+> > Selecting the clk parents in the enable/disable callback seems fine to me but
+> > the way it is implemented doesn't look right.
+> > 
+> > First this "pipe_clksrc" is a mux clk by design, since we can only select the
+> > parent. But you are converting it to a gate clk now.
+> > 
+> > Instead of that, my proposal would be to make this clk a composite one i.e,.
+> > gate clk + mux clk. So even though the gate clk here would be a hack, we are
+> > not changing the definition of mux clk.
 > 
-> Hard-coding a name by implementation is not a reason to put that name in
-> DTS. DTS is not a place for values stored in the driver.
+> This is what I had before, in revisions 1-3. Which proved to work, but is
+> problematic a bit.
 > 
-> > Think I should drop it and put a description to it. (and then later fix
-> > it when I will push the other series with all the tweaks)
+> In the very end, it is not easily possible to make a difference between a
+> clock reparented to the bi_tcxo and a disabled clock. E.g. if some user
+> reparents the clock to the tcxo, then the driver will consider the clock
+> disabled, but the clock framework will think that the clock is still
+> enabled.
+
+I don't understand this. How can you make this clock disabled? It just has 4
+parents, right?
+
 > 
-> The driver kpss-gcc does not use this property at all, so I am not sure
-> if there is a point to even keep it. Any other user of bindings makes
-> use of the property?
+> Thus we have to remove "safe" clock (bi_tcxo) from the list of parents. In
+> case of pipe clocks (and ufs symbol clocks) this will leave us with just a
+> single possible parent. Then having the mux part just doesn't make sense. It
+> is just a gated clock. And this simplified a lot of things.
 > 
+> > 
+> > So you can introduce a new ops like "clk_regmap_mux_gate_ops" and implement the
+> > parent switching logic in the enable/disable callbacks. Additional benefit of
+> > this ops is, in the future we can also support "gate + mux" clks easily.
 > 
-> Best regards,
-> Krzysztof
+> If the need arises, we can easily resurrect the regmap_mux_safe patchset,
+> fix the race pointed out by Johan, remove extra src-val mapping for safe
+> value and use it for such clocks. I can post it separately, if you wish. But
+> I'm not sure that it makes sense to use it for single-parent clocks.
+> 
+> > 
+> > Also, please don't use the "enable_val/disable_val" members. It should be
+> > something like "mux_sel_pre/mux_sel_post".
+> 
+> Why? Could you please elaborate?
+> 
 
-The idea is that you put the clk name in 'clock-output-names' and the
-driver needs to have support for it (and set the clk name based on the
-name defined in the dts)
+It aligns with my question above. I don't see how this clk can be
+enabled/disabled.
 
-This driver doesn't have support for it and is actually hardcoded.
-So you are right and I should just drop it.
-
-But now another question... Since #clock-cells was added as a
-requirement for clock-output-names, should I drop also that?
-
-In theory #clock-cells should always be declared for clock providers, is
-it right to add it in the conversion commit or I should put this change
-in another commit? (since it's now an addition and now something required
-to fix a bot warning)
-
--- 
-	Ansuel
+Thanks,
+Mani
