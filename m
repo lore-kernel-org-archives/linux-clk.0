@@ -2,121 +2,220 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC930C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 14:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6D1C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 15:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233688AbiECPBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 11:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
+        id S237696AbiECPFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 11:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237568AbiECPBm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 11:01:42 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7C23969C;
-        Tue,  3 May 2022 07:58:09 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id CF5343200984;
-        Tue,  3 May 2022 10:58:07 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 03 May 2022 10:58:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1651589887; x=1651676287; bh=u3/ZTfENb3
-        6qvkDrkbhGccJNHgVBQ0azaIzvNqhQoDA=; b=KMZZ/hu5iJPlXGlgO50mCLMnIx
-        U53mZgwzBD8pSfvPdIkT1Mfhs9gpIPaERDOAw0wwPmkEFV0SexVCJBN+Im8Hq+4D
-        70D/SW3+xEmBG+UaX78M1cQsnsVQK+718vlo4IADXJo1y+hXpQ+vQJ9Lb2nN3PeJ
-        tz4mFBkrO2VI9l67vnccF3fJNNXmWsfDqcpahYLmxMsMFhYiapnwtokwuub2pvdc
-        xJ1W1QRoj5BYnTpMLb9Bx7KKtQx1Q+wBaHEhgsnsLPdX0vpALTNf5c6c0MbHCmhH
-        +x1hOw7qtrmJ4u4iG4KnKuCsTyMsJ1JM4GPwntZmBglRhYa9sjW5W+s2cN7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651589887; x=
-        1651676287; bh=u3/ZTfENb36qvkDrkbhGccJNHgVBQ0azaIzvNqhQoDA=; b=e
-        enu4DqsvhhUXtyYtBmttcSTFhVtllQ/uoqiptQTMDqKxUYwi8ZJ+TA9XgCkWlV4A
-        ECZnF5OBoEqxmoVMu0Imo4jSB7Zx0hQj7sJaJKVCO4Tp2aD/OqSiqopRzcTZkUq5
-        XFTABuZ1kqs7gcOkWKGp8hoYCL5tXMB4SEuAQYxE5W9VDye/Sci5v5hmg6k34Z0N
-        xqg7S+U/YtsVnm7qWhMLF0xb3dkFW9xwGOEnC3ba6LEJoZT52m4MpLY4WNCHF1Ou
-        twYi6P/IUIMi0GUuhOO/XoKZBouca68ckvfz9Kjlu89S+G5ghppfeovRAfRG+0ic
-        z+ZtSWK22Lf3FOga5jZNw==
-X-ME-Sender: <xms:_kJxYs5dnO_HKlqFvCR7WXShBS7EGs14ET_AX0hl9hrt62VLWx11iw>
-    <xme:_kJxYt4gueeje4sAfHtutlhsPseor4VP8aoCWoAinKRditld14wEviqE3CIEjC2i-
-    OWVAPOVtgerS1TX40k>
-X-ME-Received: <xmr:_kJxYrfKYsUw9PZpz2IpPpYaX1HaguTOn0ORicFUXiu9Lz9mg2_andM6u1j57qfrEbX30I1WasfBrKaadSBOngyBdhz_t-qjxtbroi0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdejgdekfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
-    vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:_kJxYhImyKRXJ4ybMxVrDE1lB33gVdQdLKwZRa0vwBc49zIcnrvQMA>
-    <xmx:_kJxYgImSOz-VxG3T8h2XJzCoWc3I89Y4F-Qr7heQd3HAIlkO5KWkg>
-    <xmx:_kJxYiyXnLOUFb1ZvcaEooP_n3eoQtSg0Zq4WKG4-2vEe58gEA8gSA>
-    <xmx:_0JxYlXvWoR-m8CEqEa2zBOZEB_BVnODc5i7IhVk4xtMmOodfNt5fA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 May 2022 10:58:06 -0400 (EDT)
-Date:   Tue, 3 May 2022 16:58:04 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
-Message-ID: <20220503145804.b2xz4etzc6kpr3fk@houat>
-References: <20220428183010.1635248-1-stefan.wahren@i2se.com>
+        with ESMTP id S237685AbiECPE7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 11:04:59 -0400
+Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA3139813
+        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 08:01:26 -0700 (PDT)
+Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-d39f741ba0so17412134fac.13
+        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 08:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UfIE70xQm2YU+6K/Ttf9zAPKZ0PU7B5HIydVLGsmlJ4=;
+        b=l36uMbuQkvZDIyOcKxfb1sUiQtpNr89zAPwIB+/FfSpDvk2QOQj529Ex0mPdSgw7IU
+         rCjzODxW+uxMBPDpc9AgPJLDCTSKoVbUCjiNYeom6XP9kYt4ThUNE3hc8XS8SjbJkDZ+
+         P1qM7f94z3bBMJvftCiayATqDJXFPqhkQsMw3zIflRX/uDB3q1la63xCJZIEdw6UgKx1
+         Ly1XLi1d2PrqnoDAjtSNsarad16am9qhT78Vah99PZJXqhWFw1QPIJZd/MeSHe/MwELq
+         VmqWJEN9mbG0jTK5/YlHCKItVBqDF1DIUl0U7JtKysKQxFfnqZO3xwwc7yx5nfT+Km+i
+         XxWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UfIE70xQm2YU+6K/Ttf9zAPKZ0PU7B5HIydVLGsmlJ4=;
+        b=Vept5CRQMiHDOIkVTe1hMWTvoIM/xAOSCwlO6Ku9SrOOpB6ZeTRPkn/AgzqAOrE0Yh
+         WOVrD+ODYXIXYw/i6PDfjty+E3UILrH33OwumhTk2Bx4XIAFvTAh0J4k2OwvGgxWhxX0
+         pUFOfQFugR03uHJFYH8ILwVkaYEvbo/vuOCZ8fyd0lM/1I9iA28qz+ro56sl2ZnGo/xw
+         ilFVG6BntZDyHIMKCD9ZxuH1vlvyJH1ApX7vGW28fycAgLVMnZBoAKLQ08bmYftjAlTO
+         RdQkYSWWDqEc42OCNxwALPy+S1eB9jpafvI9gG6nAEnq/L1LigYq81esevIOvuJDni1o
+         z52g==
+X-Gm-Message-State: AOAM531r5UtCBJGQa4k0cPKpT21jW0DOHqgVUaW1+isoXKeidu9HHDrm
+        KZuxODGzHnKTpOSrAW6LbW6ajg==
+X-Google-Smtp-Source: ABdhPJx8w+yhm4KptfWPxu2XUQshHWFWOqOuN/CC7q0vNKFoXdHftEkryd18W19JwhYmh96Qw36GmA==
+X-Received: by 2002:a05:6870:581b:b0:e5:9baf:cd2a with SMTP id r27-20020a056870581b00b000e59bafcd2amr1810418oap.233.1651590085861;
+        Tue, 03 May 2022 08:01:25 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id o13-20020a9d404d000000b0060603221271sm3976053oti.65.2022.05.03.08.01.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 08:01:25 -0700 (PDT)
+Date:   Tue, 3 May 2022 10:01:21 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, jonathan@marek.ca,
+        tdas@codeaurora.org, anischal@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Steev Klimaszewski <steev@kali.org>
+Subject: Re: [PATCH v2 1/8] clk: qcom: rcg2: Cache rate changes for parked
+ RCGs
+Message-ID: <YnFDwUvFCgrH12zY@builder.lan>
+References: <20220503130448.520470-1-robert.foss@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="p2wiobkotqpc7edr"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220428183010.1635248-1-stefan.wahren@i2se.com>
+In-Reply-To: <20220503130448.520470-1-robert.foss@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue 03 May 08:04 CDT 2022, Robert Foss wrote:
 
---p2wiobkotqpc7edr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> As GDSCs are turned on and off some associated clocks are momentarily
+> enabled for house keeping purposes. Failure to enable these clocks seems
+> to have been silently ignored in the past, but starting in SM8350 this
+> failure will prevent the GDSC to turn on.
+> 
+> At least on SM8350 this operation will enable the RCG per the
+> configuration in CFG_REG. This means that the current model where the
+> current configuration is written back to CF_REG immediately after
+> parking the RCG doesn't work.
+> 
+> Instead, keep track of the currently requested rate of the clock and
+> upon enabling the clock reapply the configuration per the saved rate.
+> 
+> Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> ---
 
-Hi,
+This patch has been iterated since and the latest incarnation can be
+found on below link. A reference to that in the cover letter would be
+sufficient.
 
-On Thu, Apr 28, 2022 at 08:30:10PM +0200, Stefan Wahren wrote:
-> The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> accidentially breaks the behavior of bcm2835_clock_choose_div() and
-> booting of Raspberry Pi. The removed do_div macro call had side effects,
-> so we need to restore it.
->=20
-> Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+https://lore.kernel.org/linux-arm-msm/20220426212136.1543984-1-bjorn.andersson@linaro.org/
 
-I only found this patch after debugging why the HDMI driver was
-returning -EINVAL at probe on -rc5.
+Thanks,
+Bjorn
 
-Acked-by: Maxime Ripard <maxime@cerno.tech>
-Tested-by: Maxime Ripard <maxime@cerno.tech>
-
-Thanks!
-Maxime
-
---p2wiobkotqpc7edr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYnFC/AAKCRDj7w1vZxhR
-xaGNAP9Y+6Prx+q4EP/YHCQrzXAiTYGIPXHLEHBJRgXpGPAW3AEAp/a2alQMqIpr
-NxKtSYXFfTi1DT0QYYAxidlxOOAqkwc=
-=gbju
------END PGP SIGNATURE-----
-
---p2wiobkotqpc7edr--
+>  drivers/clk/qcom/clk-rcg.h  |  2 ++
+>  drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
+>  2 files changed, 19 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 00cea508d49e..8b41244b8dbf 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -140,6 +140,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+>   * @freq_tbl: frequency table
+>   * @clkr: regmap clock handle
+>   * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
+> + * @current_rate: cached rate for parked RCGs
+>   */
+>  struct clk_rcg2 {
+>  	u32			cmd_rcgr;
+> @@ -150,6 +151,7 @@ struct clk_rcg2 {
+>  	const struct freq_tbl	*freq_tbl;
+>  	struct clk_regmap	clkr;
+>  	u8			cfg_off;
+> +	unsigned long		current_rate;
+>  };
+>  
+>  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index f675fd969c4d..81fd3a2db709 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>  {
+>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>  	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
+> +	unsigned long rate;
+>  
+>  	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+>  
+> @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+>  	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
+>  	hid_div &= mask;
+>  
+> -	return calc_rate(parent_rate, m, n, mode, hid_div);
+> +	rate = calc_rate(parent_rate, m, n, mode, hid_div);
+> +	if (!rcg->current_rate)
+> +		rcg->current_rate = rate;
+> +
+> +	return rate;
+>  }
+>  
+>  static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+> @@ -978,12 +983,14 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (!f)
+>  		return -EINVAL;
+>  
+> +	rcg->current_rate = rate;
+> +
+>  	/*
+> -	 * In case clock is disabled, update the CFG, M, N and D registers
+> -	 * and don't hit the update bit of CMD register.
+> +	 * In the case that the shared RCG is parked, current_rate will be
+> +	 * applied as the clock is unparked again, so just return here.
+>  	 */
+>  	if (!__clk_is_enabled(hw->clk))
+> -		return __clk_rcg2_configure(rcg, f);
+> +		return 0;
+>  
+>  	return clk_rcg2_shared_force_enable_clear(hw, f);
+>  }
+> @@ -997,8 +1004,13 @@ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+>  static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>  {
+>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const struct freq_tbl *f = NULL;
+>  	int ret;
+>  
+> +	f = qcom_find_freq(rcg->freq_tbl, rcg->current_rate);
+> +	if (!f)
+> +		return -EINVAL;
+> +
+>  	/*
+>  	 * Set the update bit because required configuration has already
+>  	 * been written in clk_rcg2_shared_set_rate()
+> @@ -1007,7 +1019,7 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = update_config(rcg);
+> +	ret = clk_rcg2_configure(rcg, f);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1017,13 +1029,6 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>  static void clk_rcg2_shared_disable(struct clk_hw *hw)
+>  {
+>  	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> -	u32 cfg;
+> -
+> -	/*
+> -	 * Store current configuration as switching to safe source would clear
+> -	 * the SRC and DIV of CFG register
+> -	 */
+> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+>  
+>  	/*
+>  	 * Park the RCG at a safe configuration - sourced off of safe source.
+> @@ -1041,9 +1046,6 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+>  	update_config(rcg);
+>  
+>  	clk_rcg2_clear_force_enable(hw);
+> -
+> -	/* Write back the stored configuration corresponding to current rate */
+> -	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
+>  }
+>  
+>  const struct clk_ops clk_rcg2_shared_ops = {
+> -- 
+> 2.34.1
+> 
