@@ -2,222 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC279C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 14:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC930C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 14:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237537AbiECO7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 10:59:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52816 "EHLO
+        id S233688AbiECPBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 11:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237545AbiECO7A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 10:59:00 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056E81EC57
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 07:55:27 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id gh6so34038090ejb.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 07:55:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=59t7vn28D3yzCeD/SWs0WQWMWUokBjgyTL8jtIQ/mZ4=;
-        b=wyYQAm/yL4YCxQZnJSalcQidq4K2VieDxkJ7UUhCt+AngFV8CNSTl1gULdZ8ouWH3a
-         yN39Hd9vLvj5l98q1Q73+qN2XQluRsg/ZIxg1rCCkpBXOfXWyDoUFwsLg7q3raIuPL2M
-         CbuHA1N2i4l5BWNS9Ad6NovhugumU5uXoOKIFAIOOY1EFIZgg8FDoLd+XEPJzjAWqaYK
-         K+AK+4mF6Ew2tYA6877x1QYSEdUlpH6vE63HrDR9H/9KVh5NaUw3GNrC3ae8TkjeCKFn
-         NyJoU946TQfwq1inDJpG7Um3nsvSVO+TVIixUPCsqBUjfbGv/QJbs/E5tk+B2/lsmilw
-         X+Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=59t7vn28D3yzCeD/SWs0WQWMWUokBjgyTL8jtIQ/mZ4=;
-        b=PHF/IfylqVmp5a7KDJsH4VyF4nv/Zu+P+zep/U0H0T/y5j3rJSQZ8gc2q5CLNuwdS2
-         jAdB3cC3w09UIoGtH7Tncg29t3XO2kLCs8U5gpFyMpWITmkBrGVGNNuPhIN5liFT/+5H
-         A/2uM1KGyBrPi2Hi6gUykKdXiWYJjSG/VP9GgQIHhc0H/JAP19QXs9hKvIdtNXeHpp1s
-         hzO0bQUa24T9xewciD6uWgKtzAe7zsZtIJRgrLw8m7O9NXLyqqqLZf+MtuchrVwtuxsV
-         7akD7HnsjRJv3cSNPJZ4mKhg5C1J/ROFpKrs11kgRUWMIroqJumnDalgCNi3652H2COL
-         yRfw==
-X-Gm-Message-State: AOAM530RguvL77a8aMPOYGpPLPrRdZ3ENFE9G0KpZWwz4NqzsB79XkKo
-        MrbTasV+OkrYJXQAqvi0vNlldw==
-X-Google-Smtp-Source: ABdhPJzrfLJwCJ3gQEW0hRsCRD17fpgu4Gejz8nnGLU7xiWLRfposWniK4q9adqoAsaMHEQW9ESexg==
-X-Received: by 2002:a17:907:7209:b0:6da:9781:ae5d with SMTP id dr9-20020a170907720900b006da9781ae5dmr15134105ejc.73.1651589725490;
-        Tue, 03 May 2022 07:55:25 -0700 (PDT)
-Received: from [192.168.0.205] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id s23-20020a056402037700b0042617ba639bsm7956855edw.37.2022.05.03.07.55.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 07:55:24 -0700 (PDT)
-Message-ID: <75a48dfa-6fc9-aed9-b00e-d928bd9f33af@linaro.org>
-Date:   Tue, 3 May 2022 16:55:23 +0200
+        with ESMTP id S237568AbiECPBm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 11:01:42 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7C23969C;
+        Tue,  3 May 2022 07:58:09 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id CF5343200984;
+        Tue,  3 May 2022 10:58:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 03 May 2022 10:58:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1651589887; x=1651676287; bh=u3/ZTfENb3
+        6qvkDrkbhGccJNHgVBQ0azaIzvNqhQoDA=; b=KMZZ/hu5iJPlXGlgO50mCLMnIx
+        U53mZgwzBD8pSfvPdIkT1Mfhs9gpIPaERDOAw0wwPmkEFV0SexVCJBN+Im8Hq+4D
+        70D/SW3+xEmBG+UaX78M1cQsnsVQK+718vlo4IADXJo1y+hXpQ+vQJ9Lb2nN3PeJ
+        tz4mFBkrO2VI9l67vnccF3fJNNXmWsfDqcpahYLmxMsMFhYiapnwtokwuub2pvdc
+        xJ1W1QRoj5BYnTpMLb9Bx7KKtQx1Q+wBaHEhgsnsLPdX0vpALTNf5c6c0MbHCmhH
+        +x1hOw7qtrmJ4u4iG4KnKuCsTyMsJ1JM4GPwntZmBglRhYa9sjW5W+s2cN7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651589887; x=
+        1651676287; bh=u3/ZTfENb36qvkDrkbhGccJNHgVBQ0azaIzvNqhQoDA=; b=e
+        enu4DqsvhhUXtyYtBmttcSTFhVtllQ/uoqiptQTMDqKxUYwi8ZJ+TA9XgCkWlV4A
+        ECZnF5OBoEqxmoVMu0Imo4jSB7Zx0hQj7sJaJKVCO4Tp2aD/OqSiqopRzcTZkUq5
+        XFTABuZ1kqs7gcOkWKGp8hoYCL5tXMB4SEuAQYxE5W9VDye/Sci5v5hmg6k34Z0N
+        xqg7S+U/YtsVnm7qWhMLF0xb3dkFW9xwGOEnC3ba6LEJoZT52m4MpLY4WNCHF1Ou
+        twYi6P/IUIMi0GUuhOO/XoKZBouca68ckvfz9Kjlu89S+G5ghppfeovRAfRG+0ic
+        z+ZtSWK22Lf3FOga5jZNw==
+X-ME-Sender: <xms:_kJxYs5dnO_HKlqFvCR7WXShBS7EGs14ET_AX0hl9hrt62VLWx11iw>
+    <xme:_kJxYt4gueeje4sAfHtutlhsPseor4VP8aoCWoAinKRditld14wEviqE3CIEjC2i-
+    OWVAPOVtgerS1TX40k>
+X-ME-Received: <xmr:_kJxYrfKYsUw9PZpz2IpPpYaX1HaguTOn0ORicFUXiu9Lz9mg2_andM6u1j57qfrEbX30I1WasfBrKaadSBOngyBdhz_t-qjxtbroi0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdejgdekfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
+    vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:_kJxYhImyKRXJ4ybMxVrDE1lB33gVdQdLKwZRa0vwBc49zIcnrvQMA>
+    <xmx:_kJxYgImSOz-VxG3T8h2XJzCoWc3I89Y4F-Qr7heQd3HAIlkO5KWkg>
+    <xmx:_kJxYiyXnLOUFb1ZvcaEooP_n3eoQtSg0Zq4WKG4-2vEe58gEA8gSA>
+    <xmx:_0JxYlXvWoR-m8CEqEa2zBOZEB_BVnODc5i7IhVk4xtMmOodfNt5fA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 May 2022 10:58:06 -0400 (EDT)
+Date:   Tue, 3 May 2022 16:58:04 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
+Message-ID: <20220503145804.b2xz4etzc6kpr3fk@houat>
+References: <20220428183010.1635248-1-stefan.wahren@i2se.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC v2 2/2] arm: hisi: enable Hi3521a soc
-Content-Language: en-US
-To:     "Marty E. Plummer" <hanetzer@startmail.com>
-Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
-        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
-        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
-        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
-        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
-        vigneshr@ti.com, xuwei5@hisilicon.com
-References: <20220501054440.2434247-1-hanetzer@startmail.com>
- <20220501173423.2473093-1-hanetzer@startmail.com>
- <20220501173423.2473093-3-hanetzer@startmail.com>
- <4cda3645-c4e8-1b3c-bd80-891afd56449a@linaro.org>
- <20220503134459.pplgvhcckja4ivcg@proprietary-killer>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220503134459.pplgvhcckja4ivcg@proprietary-killer>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p2wiobkotqpc7edr"
+Content-Disposition: inline
+In-Reply-To: <20220428183010.1635248-1-stefan.wahren@i2se.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/05/2022 15:44, Marty E. Plummer wrote:
-> On Tue, May 03, 2022 at 01:47:01PM +0200, Krzysztof Kozlowski wrote:
->> On 01/05/2022 19:34, Marty E. Plummer wrote:
->>> Enable Hisilicon Hi3521A/Hi3520DCV300 SoC. This SoC series includes
->>> hardware mutlimedia codec cores, commonly used in consumer cctv/dvr
->>> security systems and ipcameras. The arm core is a Cortex A7.
->>>
->>> Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
->>> marketed under the name Samsung SDR-B74301N.
->>
->> Thank you for your patch. There is something to discuss/improve.
->>
->>>
->>> Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
->>> ---
->>>  arch/arm/boot/dts/Makefile              |   2 +
->>>  arch/arm/boot/dts/hi3521a-rs-dm290e.dts | 134 ++++++++
->>>  arch/arm/boot/dts/hi3521a.dtsi          | 423 ++++++++++++++++++++++++
->>
->> DTSes go to separate patches.
-> Do you mean dts and dtsi need to be separate patches?
 
-I mean that any changes to "arch/arm/boot/dts/" have to be separate from
-other changes. These can be still one patch. See other examples on
-mailing lists.
+--p2wiobkotqpc7edr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>
->>>  arch/arm/mach-hisi/Kconfig              |   9 +
->>>  4 files changed, 568 insertions(+)
->>>  create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
->>>  create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
->>>
->>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->>> index 7c16f8a2b738..535cef3b14ab 100644
->>> --- a/arch/arm/boot/dts/Makefile
->>> +++ b/arch/arm/boot/dts/Makefile
->>> @@ -242,6 +242,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
->>>  	gemini-ssi1328.dtb \
->>>  	gemini-wbd111.dtb \
->>>  	gemini-wbd222.dtb
->>> +dtb-$(CONFIG_ARCH_HI3521A) += \
->>> +	hi3521a-rs-dm290e.dtb
->>>  dtb-$(CONFIG_ARCH_HI3xxx) += \
->>>  	hi3620-hi4511.dtb
->>>  dtb-$(CONFIG_ARCH_HIGHBANK) += \
->>> diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
->>> new file mode 100644
->>> index 000000000000..b24fcf2ca85e
->>> --- /dev/null
->>> +++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
->>> @@ -0,0 +1,134 @@
->>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>> +/*
->>> + * Copyright (C) 2017-2022 Marty Plummer <hanetzer@startmail.com>
->>> + */
->>> +
->>> +#include "hi3521a.dtsi"
->>> +
->>> +/ {
->>> +	model = "RaySharp RS-DM-290E DVR Board";
->>> +	compatible = "raysharp,rs-dm-290e", "hisilicon,hi3521a";
->>
->> Please run checkpatch and fix the warnings.
->>
-> sunova. I could have sworn I had my editor setup right for whitespace
-> and such.
+Hi,
 
-It's not about whitespace but:
+On Thu, Apr 28, 2022 at 08:30:10PM +0200, Stefan Wahren wrote:
+> The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
+> accidentially breaks the behavior of bcm2835_clock_choose_div() and
+> booting of Raspberry Pi. The removed do_div macro call had side effects,
+> so we need to restore it.
+>=20
+> Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-WARNING: DT compatible string "raysharp,rs-dm-290e" appears
-un-documented -- check ./Documentation/devicetree/bindings/
+I only found this patch after debugging why the HDMI driver was
+returning -EINVAL at probe on -rc5.
 
+Acked-by: Maxime Ripard <maxime@cerno.tech>
+Tested-by: Maxime Ripard <maxime@cerno.tech>
 
-WARNING: DT compatible string vendor "raysharp" appears un-documented --
-check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
+Thanks!
+Maxime
 
+--p2wiobkotqpc7edr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(...)
+-----BEGIN PGP SIGNATURE-----
 
-> Ah gotcha.
->>> +	};
->>> +
->>> +	xtal24m: xtal24m {
->>
->> Generic node names, so one of: "clock-0" "clock-xtal24m"
->>
-> Will do.
->>> +		compatible = "fixed-clock";
->>> +		#clock-cells = <0>;
->>> +		clock-frequency = <24000000>;
->>
->> This does not look like property of the SoC, so should be defined by boards.
->>
-> SoC requires a 24Mhz osc (and a 32khz one as well), so it'll always be
-> present regardless.
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYnFC/AAKCRDj7w1vZxhR
+xaGNAP9Y+6Prx+q4EP/YHCQrzXAiTYGIPXHLEHBJRgXpGPAW3AEAp/a2alQMqIpr
+NxKtSYXFfTi1DT0QYYAxidlxOOAqkwc=
+=gbju
+-----END PGP SIGNATURE-----
 
-Sure, but DTS/DTSI describes hardware. If the clock is not in the SoC
-but on the board, it should be in the board DTSI. Many times such clocks
-are put partially in DTSI and only their specific parts - frequency - in
-the board DTS, to indicate that implementation is relevant to the board,
-not SoC.
-
->>> +	};
->>> +
->>> +	clk_3m: clk_3m {
->>
->> No underscores in node names, generic node name (see above).
->>
-> early debugging clock, will be removed.
->>> +		compatible = "fixed-clock";
->>> +		#clock-cells = <0>;
->>> +		clock-frequency = <3000000>;
->>
->> This does not look like property of the SoC, so should be defined by boards.
-
-(...)
-
->>
->>> +			status = "disabled";
->>> +		};
->>> +
->>> +		dual_timer0: timer@12000000 {
->>> +			compatible = "arm,sp804", "arm,primecell";
->>> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
->>> +				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
->>
->> A bit weird interrupts... the same?
->>
-> Yes, though I am aware that some sp804 timers do have a separate
-> interrupts per pair.
-
-They have also separate interrupts, one combined interrupt or one sole
-interrupt. However what you described here is one interrupt line
-physically connected to two separate pins on the device yet still not
-being somehow shared (shared as "combined interrupt"). I don't think it
-is your case...
-
-
-
-Best regards,
-Krzysztof
+--p2wiobkotqpc7edr--
