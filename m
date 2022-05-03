@@ -2,96 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FBBC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 16:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D159C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 16:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239444AbiECQb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 12:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        id S239708AbiECQqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 12:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239385AbiECQb5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 12:31:57 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726B93CFC5
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 09:28:24 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id g28so31954579ybj.10
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 09:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OioOkp+daVjcm8WittR1Tk/UQnINHvqB9L6l895CXcU=;
-        b=f1y/Ry6FhhCoj1O6PNJ4u5oIsObhMzvEvN+EpK/DPgP920QWICa8XWxxM25XxlWXdv
-         obO4g6HLcH9ipII7mEKHk9PRypuAKrviNfo558KwuHEF8fBitw+prwaFnLfwUa+1nhIH
-         /P21JCHt8jb7Swm3CCCtQhFK7/V68tTG4IlpU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OioOkp+daVjcm8WittR1Tk/UQnINHvqB9L6l895CXcU=;
-        b=zRlGz1s10cV0LkNeTOxs1fgmIwf5rUgHPIIiaNhzgyMnluxtNiEolkxeNWAS7eSaQn
-         0jpBBUj0qOUrRp+8BaN+flBd1+G0wmCwPdFRtfs0qF2YXInzk8PuyflLYwOfpJVk6q9+
-         xLO3Y+FON4IcgZIwsASH0rXSTqCcAUZK4aydJ3yTBcqw3+CXjLjkDJkMLfpX0H/oUN89
-         IN8fGooKzEDMVPwc2LnyXUu/+fpqVmqKVY962Mj5i6ddFAf3HlBhUTc8kr3NQ7l9yYp5
-         IQSF6Iq4LE5McctbtLVksWEX2SnzOm1sEdsGdBskST8ghhLOnQqYgrBqrsyu6KZRrKo2
-         Wquw==
-X-Gm-Message-State: AOAM533wq2qMNxIto64AJMAgqG5a+42IWjI2xP+B6OSGatO0Z+3J7J+4
-        6hJKTMHRBIoVHHkaM15wV8j+bKx2g8VNVgCtuV8b0A==
-X-Google-Smtp-Source: ABdhPJxFCzQne8oT1CxNLdigS5RxYgArTKd3K7idnnn5ydcbSbJ7D8zB9paqLbN4J1UhMNtOHiclj9HdbDT1+FIkJcs=
-X-Received: by 2002:a25:4c2:0:b0:648:6a77:5da0 with SMTP id
- 185-20020a2504c2000000b006486a775da0mr13553377ybe.203.1651595303696; Tue, 03
- May 2022 09:28:23 -0700 (PDT)
+        with ESMTP id S239702AbiECQqB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 12:46:01 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2E12C10A;
+        Tue,  3 May 2022 09:42:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3EE0CB81EB6;
+        Tue,  3 May 2022 16:42:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDCEFC385AF;
+        Tue,  3 May 2022 16:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651596146;
+        bh=RdmnwE+iucpL+/8qT85xaKQLpnn8IQBlp7A0PPpBkjc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MBuAO2xSVQR0Es2Khy87In4R8Y100/OP9420inSPVtGjNodMGqIXGDeoQHgu0zdtp
+         ZSMtkeQgwnC2B29WSRQCYL/O4jCHnME+f80aw4Fo5XWoHHVCVGx/BOqioVIUben+m7
+         dAMycifIRkxwmDNlXwHi1GwZNR0O1uzfUUGAcwMMFdw8KhKSWf9AkZmD379wvLv9fh
+         Uaih7P0/38fdDXOhFQTx4yM432rKEcsSGfyxP2ivUAyVZhwEsQe0HLwzNoIPwQXGpI
+         dxuPOzqD0QB+YJpXI7AwZY3EEZfQI0H8Fxh83x1xt1dkQXlECEzWDKnz//DiA0KIY/
+         DnUedifNgT+/g==
+Date:   Tue, 3 May 2022 17:42:13 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>, Anson Huang <Anson.Huang@nxp.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Han Xu <han.xu@nxp.com>, Dario Binacchi <dariobin@libero.it>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Drop redundant 'maxItems/minItems' in
+ if/then schemas
+Message-ID: <YnFbZaARRe13BqEU@sirena.org.uk>
+References: <20220503162738.3827041-1-robh@kernel.org>
 MIME-Version: 1.0
-References: <20220419081246.2546159-1-wenst@chromium.org>
-In-Reply-To: <20220419081246.2546159-1-wenst@chromium.org>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 4 May 2022 00:28:12 +0800
-Message-ID: <CAGXv+5FSscb0F2VBMbSOHRneksZi-WSFTeFATDkY_JHoY=my+A@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] clk: mediatek: Move to struct clk_hw provider APIs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        linux-kernel@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Ie5Q9u0aDDvYlHNh"
+Content-Disposition: inline
+In-Reply-To: <20220503162738.3827041-1-robh@kernel.org>
+X-Cookie: Drop that pickle!
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
 
-On Tue, Apr 19, 2022 at 4:12 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
->
-> Hi everyone,
->
-> This is part 2 of my proposed MediaTek clk driver cleanup work [1].
->
-> Part 2 involves moving the whole MediaTek clk driver library from the
-> old `struct clk` provider API to the new `struct clk_hw` provider API.
->
-> Parts of this series were done with coccinelle scripts, while others
-> were done by hand. To facilitate review, these parts are currently split
-> into different patches. As a result however, this series is not fully
-> bisectable. Later on, the related parts should be squashed together.
->
-> Patch 1 and 2 are minor cleanups around code that is touched by later
-> patches.
+--Ie5Q9u0aDDvYlHNh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[...]
+On Tue, May 03, 2022 at 11:27:38AM -0500, Rob Herring wrote:
+> Another round of removing redundant minItems/maxItems when 'items' list is
+> specified. This time it is in if/then schemas as the meta-schema was
+> failing to check this case.
 
-> Chen-Yu Tsai (7):
->   clk: mediatek: Make mtk_clk_register_composite() static
->   clk: mediatek: apmixed: Drop error message from clk_register() failure
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Could you take a quick look at the first two patches and pick them up?
-They are unrelated cleanups that touch the same code sections as the
-other patches in this series, and thus were included.
+--Ie5Q9u0aDDvYlHNh
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
-ChenYu
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmJxW2QACgkQJNaLcl1U
+h9AhOwgAgCQAzTimr9tUAEV2YxMIwidmRC9yH7j14TLxr45y9aG5gyGDcabEWvNT
+1G+vE5DtD9PAsO0tkipn9eZam4zgKttaLGOTql3iSuyYP4IJZLz5B0UQdfH/Rblq
+lwN3vZgGQIDC0Bq4GZFntPO4DgtMJRUjLYBkqZ9VRrAc0BtdLx0s2eLXna86GqsS
+JRPrW4CqJ9evXkLhz4oWrns5IFYbbkZQBRDahnYbYEShXBVarN07FHDyJR7e563l
+wHOqrXEThke2dA9JPWeaBTp7h9SiE6UhFUpzyFAd9YF+0t0k3slgr1oj89o28M6t
+855bZNK3+42p+Ytiewlr25+J4xL31Q==
+=Z4ML
+-----END PGP SIGNATURE-----
+
+--Ie5Q9u0aDDvYlHNh--
