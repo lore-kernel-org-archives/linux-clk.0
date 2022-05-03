@@ -2,92 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BF1C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 12:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EE5C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 12:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235024AbiECMET (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 08:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48944 "EHLO
+        id S235042AbiECMEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 08:04:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235017AbiECMES (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 08:04:18 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CBE332ED49;
-        Tue,  3 May 2022 05:00:44 -0700 (PDT)
+        with ESMTP id S231795AbiECMEw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 08:04:52 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD55E31233;
+        Tue,  3 May 2022 05:01:19 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,195,1647270000"; 
-   d="scan'208";a="119861684"
+   d="scan'208";a="118643131"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 May 2022 21:00:44 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 May 2022 21:01:19 +0900
 Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4BEAB42268E6;
-        Tue,  3 May 2022 21:00:39 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3BA904226915;
+        Tue,  3 May 2022 21:01:15 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/12] Add new Renesas RZ/V2M SoC and Renesas RZ/V2M EVK support
-Date:   Tue,  3 May 2022 12:55:45 +0100
-Message-Id: <20220503115557.53370-1-phil.edworthy@renesas.com>
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 03/12] dt-bindings: clock: renesas,rzg2l: Document RZ/V2M SoC
+Date:   Tue,  3 May 2022 12:55:48 +0100
+Message-Id: <20220503115557.53370-4-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220503115557.53370-1-phil.edworthy@renesas.com>
+References: <20220503115557.53370-1-phil.edworthy@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Document the device tree binding for the Renesas RZ/V2M (r9a09g011) SoC.
 
-RZ/V2M has a dual-core Cortex-A53 (1.0 GHz) CPU and built-in AI
-accelerator "DRP-AI" for vision, which is Renesas' original technology.
-It also has a 32-bit LPDDR4 interface and video codec (H.264).
-
-The RZ/V2M is used with ISP firmware that runs on one of the Cortex-A53
-cores. The firmware is an integral part of the SoC such that the HW
-User's Manual documents which of the peripheral modules are used by the
-firmware.
-
-Initial patches enables minimal peripherals on Renesas RZ/V2M EVK board
-and booted via nfs. Ethernet is broadly compatible with the
-etheravb-rcar-gen3 driver, but interrupts need some work so it's not
-been included in this patch set.
-
-Below blocks are enabled on Renesas RZ/V2M EVK board:
-- memory
-- External input clock
-- CPG
-- UART
-
-Links for SoC and EVK:
-[*] https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-cortex-a-mpus/rzv2m-dual-cortex-a53-lpddr4x32bit-ai-accelerator-isp-4k-video-codec-4k-camera-input-fhd-display-output
-
-
-Sorry for cross posting the patches to multiple subsystems, as these are
-just the dt-binding patches included as part of initial bringup patches.
-
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 v3:
- * Feedback addressed
- * Added patch [0001] for renesas,em-uart dt-bindings RZ/V2M clock for the regs
- * Added patch [0004] for arm,arch_timer dt-bindings optional clock and reset
- * Added patch [0005] for rzg2l clk to move the DEF_MUX array size calc into the macro
- * Added patch [0006] for rzg2l clk to add read-only versions of the macros
+ - Simplify reference to header files.
+---
+ .../bindings/clock/renesas,rzg2l-cpg.yaml           | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-v2:
- * Removed SYS dt-bindings patch and corresponding SoC identification
-   as we only used the LSI version register. This can be dealt with
-   later on.
- * Fixed em-uart dt-bindings.
- * Included reviewed-by tags.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+index 311a93590597..8880b834f264 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+@@ -4,14 +4,15 @@
+ $id: "http://devicetree.org/schemas/clock/renesas,rzg2l-cpg.yaml#"
+ $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+ 
+-title: Renesas RZ/{G2L,V2L} Clock Pulse Generator / Module Standby Mode
++title: Renesas RZ/{G2L,V2L,V2M} Clock Pulse Generator / Module Standby Mode
+ 
+ maintainers:
+   - Geert Uytterhoeven <geert+renesas@glider.be>
+ 
+ description: |
+   On Renesas RZ/{G2L,V2L}-alike SoC's, the CPG (Clock Pulse Generator) and Module
+-  Standby Mode share the same register block.
++  Standby Mode share the same register block. On RZ/V2M, the functionality is
++  similar, but does not have Clock Monitor Registers.
+ 
+   They provide the following functionalities:
+     - The CPG block generates various core clocks,
+@@ -26,6 +27,7 @@ properties:
+       - renesas,r9a07g043-cpg # RZ/G2UL{Type-1,Type-2}
+       - renesas,r9a07g044-cpg # RZ/G2{L,LC}
+       - renesas,r9a07g054-cpg # RZ/V2L
++      - renesas,r9a09g011-cpg # RZ/V2M
+ 
+   reg:
+     maxItems: 1
+@@ -43,9 +45,10 @@ properties:
+     description: |
+       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+         and a core clock reference, as defined in
+-        <dt-bindings/clock/r9a07g*-cpg.h>
++        <dt-bindings/clock/r9a0*-cpg.h>
+       - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+-        a module number, as defined in the <dt-bindings/clock/r9a07g0*-cpg.h>.
++        a module number, as defined in the <dt-bindings/clock/r9a07g0*-cpg.h> or
++        <dt-bindings/clock/r9a09g011-cpg.h>.
+     const: 2
+ 
+   '#power-domain-cells':
+@@ -59,7 +62,7 @@ properties:
+   '#reset-cells':
+     description:
+       The single reset specifier cell must be the module number, as defined in
+-      the <dt-bindings/clock/r9a07g0*-cpg.h>.
++      the <dt-bindings/clock/r9a07g0*-cpg.h> or <dt-bindings/clock/r9a09g011-cpg.h>.
+     const: 1
+ 
+ required:
+-- 
+2.32.0
 
-Thanks
-Phil
