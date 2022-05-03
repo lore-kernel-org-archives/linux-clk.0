@@ -2,126 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5458C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 21:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01E4C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 21:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235746AbiECVUG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 17:20:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
+        id S235027AbiECVqf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 17:46:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiECVUG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 17:20:06 -0400
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A746425E85;
-        Tue,  3 May 2022 14:16:31 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id r8so19505906oib.5;
-        Tue, 03 May 2022 14:16:31 -0700 (PDT)
+        with ESMTP id S230079AbiECVqe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 17:46:34 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C4F24968;
+        Tue,  3 May 2022 14:43:01 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id y14-20020a9d460e000000b00605ee347da1so9960425ote.8;
+        Tue, 03 May 2022 14:43:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=vcrV5cJCL/yAVp+KwhARHe1vfOLSEv6ziIn3lyRIq3M=;
-        b=TC4YPhwwIEU/qH/ftJ3oH4/O7anHXJrDTYM1iFNbGrluSDvuP66qjoKIPwfMbyuQ8X
-         477aQg8pFraLB1r8dG6ak46xR/n2juBTOti8JMgn6IKbiZ2Vz/FZEuGkrcxTKs+xOnjr
-         sAniYwtJD0dYuuWSzCKmm/1xrhqLemooEh4lvwmub1vDCoBwU8KILu+r2j8vYWESls+t
-         bNkyMOwmIVJXpvi8U9328/uJQT4YT/81w6kEUCTw7hgXqdrqklFOSLPa/OBNlKhxQeNw
-         NRaaR6hWpokXudJDoBX3cw3NiWD9u3kb3c4iysEk2QUDB7UV3gaOM98VpkO8sxMVX1NI
-         2w2w==
-X-Gm-Message-State: AOAM5334Sl+zdLKqrAM4kpcj/a5oBeIzsGe+7QFpTZ4CJ5DRx1ZVZFus
-        2UzMxY03YNGIi2C7ZJpJMg==
-X-Google-Smtp-Source: ABdhPJzZ/OyRA/MZSV7Bt7V6rGVYIwZuYmkmsXdLoGoNZRjsAtnSm7oCEho7ztN2hUZDiEi9HBLJNA==
-X-Received: by 2002:a05:6808:120c:b0:325:731e:923 with SMTP id a12-20020a056808120c00b00325731e0923mr2630508oil.155.1651612590975;
-        Tue, 03 May 2022 14:16:30 -0700 (PDT)
+        bh=7Hu0gsr8Y6PWp2FP45L7+RGtOMCVNeN3hbCuvJ2usXo=;
+        b=S1uvi1+HzU2UxJgwdW039AXe8ZKhsF1uBkThEaKk+N+xLyda4IwzUiGo2jDapYR4V/
+         Z9sChaH3+fyFGeqt+ajhSFiGxsdzcWwRvO4Tfk16f16gDoz3+LjqJ1dBstECk7O5RnEZ
+         NL81ZmWih+fRj6GM7ZjC/BVhmCqIizljduaUZ2Leky7H4XiEDbP+gpBLXfCN085Zj3S6
+         rWcZ77tEC7XYYJDDPWRp07bfBUickLoT2WtGmKyKWoueFo3GN7gOywuPA7Vw5m0kv4fQ
+         24FNRUyqSlVet9J2hu4n55jmFn66KNYV3sRUuQVnuQmZ23oxY6nCBxK7P9SIXgr9i9sq
+         M6zg==
+X-Gm-Message-State: AOAM532W01jeXoUGHVNNjH7/cUljsvdwYCVool03vUWrBv1o7oXwweb3
+        eeQtKJqDO0m9aB8JTPPSvQ==
+X-Google-Smtp-Source: ABdhPJz4N4R764kPo+v++/Y+BmcZqqzXF0v6pZHNpMo6V//OxOtU550cg4XA4nzAnBjeZQ2Nv/molw==
+X-Received: by 2002:a9d:1714:0:b0:606:eaf:fa95 with SMTP id i20-20020a9d1714000000b006060eaffa95mr5217807ota.180.1651614180748;
+        Tue, 03 May 2022 14:43:00 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id g14-20020a05683030ae00b0060603221239sm4356388ots.9.2022.05.03.14.16.30
+        by smtp.gmail.com with ESMTPSA id bg1-20020a056808178100b00326414c1bb7sm686470oib.35.2022.05.03.14.42.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 14:16:30 -0700 (PDT)
-Received: (nullmailer pid 46134 invoked by uid 1000);
-        Tue, 03 May 2022 21:16:29 -0000
-Date:   Tue, 3 May 2022 16:16:29 -0500
+        Tue, 03 May 2022 14:43:00 -0700 (PDT)
+Received: (nullmailer pid 82356 invoked by uid 1000);
+        Tue, 03 May 2022 21:42:58 -0000
+Date:   Tue, 3 May 2022 16:42:58 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [RESEND][PATCH v2 1/2] dt-bindings: clk: Introduce
- 'critical-clocks' property
-Message-ID: <YnGbrbtla8YHmKM1@robh.at.kernel.org>
-References: <20220428110107.149524-1-marex@denx.de>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        daniel.lezcano@linaro.org, leoyang.li@nxp.com,
+        giulio.benetti@benettiengineering.com, festevam@gmail.com,
+        clin@suse.com, s.hauer@pengutronix.de, linux-imx@nxp.com,
+        stefan@agner.ch, tharvey@gateworks.com,
+        linux-arm-kernel@lists.infradead.org, aisheng.dong@nxp.com,
+        robh+dt@kernel.org, tglx@linutronix.de, abel.vesa@nxp.com,
+        sebastian.reichel@collabora.com, dev@lynxeye.de,
+        Mr.Bossman075@gmail.com, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de, olof@lixom.net, mturquette@baylibre.com,
+        linux@armlinux.org.uk, linus.walleij@linaro.org,
+        cniedermaier@dh-electronics.com, soc@kernel.org,
+        linux-gpio@vger.kernel.org, shawnguo@kernel.org,
+        marcel.ziswiler@toradex.com, arnd@arndb.de,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/15] dt-bindings: gpio: fsl-imx-gpio: Add i.MXRT
+ compatibles
+Message-ID: <YnGh4oZOm9eHO9z2@robh.at.kernel.org>
+References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
+ <20220428214838.1040278-4-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220428110107.149524-1-marex@denx.de>
+In-Reply-To: <20220428214838.1040278-4-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 01:01:06PM +0200, Marek Vasut wrote:
-> Some platforms require select clock to be always running, e.g. because
-> those clock supply vital devices which are not otherwise attached to
-> the system and thus do not have a matching DT node and clock consumer.
+On Thu, 28 Apr 2022 17:48:26 -0400, Jesse Taube wrote:
+> Both the i.MXRT1170 and 1050 have the same gpio controller as
+> "fsl,imx35-gpio". Add i.MXRT to the compatible list.
 > 
-> An example is a system where the SoC serves as a crystal oscillator
-> replacement for a programmable logic device. The "critical-clocks"
-> property of a clock controller allows listing clock which must never
-> be turned off.
-> 
-> Clock listed in the "critical-clocks" property may have other consumers
-> in DT, listing the clock in "critical-clocks" only assures those clock
-> are never turned off, and none of these optional additional consumers
-> can turn the clock off either.
-> 
-> The implementation is modeled after "protected-clocks".
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> To: linux-clk@vger.kernel.org
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
 > ---
-> V2: Update the commit message to clarify the behavior
+> V1 -> V2:
+>  - New commit to fix dtbs_check
 > ---
->  .../devicetree/bindings/clock/clock-bindings.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-
-As mentioned on IRC, I'm okay with the property, but want Stephen's 
-opinion on it. It also needs to be a schema in dtschema with the rest of 
-the clock binding. I've submitted a patch to redirect this file to the 
-schema.
-
+>  Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> index f2ea53832ac6..975230e603d1 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -169,6 +169,22 @@ a shared clock is forbidden.
->  Configuration of common clocks, which affect multiple consumer devices can
->  be similarly specified in the clock provider node.
->  
-> +==Critical clocks==
-> +
-> +Some platforms require clock to be always running, e.g. because those clock
 
-require some clocks
-
-> +supply devices which are not otherwise attached to the system. One example
-> +is a system where the SoC serves as a crystal oscillator replacement for a
-> +programmable logic device. The critical-clocks property of a clock controller
-> +allows listing clock which must never be turned off.
-> +
-> +   clock-controller@a000f000 {
-> +        compatible = "vendor,clk95;
-> +        reg = <0xa000f000 0x1000>
-> +        #clocks-cells = <1>;
-> +        ...
-> +        critical-clocks = <UART3_CLK>, <SPI5_CLK>;
-> +   };
-> +
->  ==Protected clocks==
->  
->  Some platforms or firmwares may not fully expose all the clocks to the OS, such
-> -- 
-> 2.35.1
-> 
-> 
+Acked-by: Rob Herring <robh@kernel.org>
