@@ -2,91 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723B6C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 20:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 344BBC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 20:57:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236981AbiECUn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 16:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48622 "EHLO
+        id S238449AbiECVBE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 17:01:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234458AbiECUn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 16:43:28 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 657AF33A10
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 13:39:53 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id v9so3972929qkp.11
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 13:39:53 -0700 (PDT)
+        with ESMTP id S231552AbiECVBE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 17:01:04 -0400
+Received: from mail.baikalelectronics.ru (mail.baikalelectronics.com [87.245.175.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 72F991EC7B;
+        Tue,  3 May 2022 13:57:30 -0700 (PDT)
+Received: from mail.baikalelectronics.ru (unknown [192.168.51.25])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id D8D5316A9;
+        Tue,  3 May 2022 23:58:01 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.ru D8D5316A9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CF1rRZMBdGFikP/j43V46JlTy9v9S59RO3PJDooXZCk=;
-        b=s4MMs4b32ZZlqeuY7DthE+KfUczBMMggh5ly/jPZxCKBUh11m+/esR549euW/Q7UY8
-         NVlyl1RSnMXxUjsoElM0SIYxLJexmAeA7Mam8Ofsk/zZJVMK2ulqDKbTAw8USZ1OP00S
-         KSGN3LqcSwpTSBJWQG3sNs5jlms2w6iWNECQ73xaHxG5yMlNdbOOHQ/RPyTKUEQ2Dn+1
-         GXsgLUpy5eHISipD2maX85qvG2d184/ss3Vejuub114MCzJi/N9OPmJqJQ1IokBSuskl
-         kH7k4tU6Aem/mtTobdtDvKpNCEdBwAhPtd2S0hFO7Gdfb2jETPvquu8Qk1ZKJ0B36pk2
-         aNiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CF1rRZMBdGFikP/j43V46JlTy9v9S59RO3PJDooXZCk=;
-        b=mvHBxgIdD5bgZ2kdI/bWSChCc2TzuwTDEhA5VgoczVHmcxzdlf5Un11xEoy73IjqD6
-         ilwu/RwKv+U0ChBZUcF/dbTti6Akt2g76c9xntHNa39WjMBQsnuO0r6NDG/azjh7TA46
-         tgf4qK+bvtXxvuGGK/YJzdwTcC+e5xi0cCtyiCAplG1oPVkp5nIG9bnvC0XnoXKcfLNq
-         70/wHRnvBljFGRJFIbYrTQn1Ov1kvSPxHHVodCdkGAVvkt/FQ1ZhvwOu/nrHppNJRH9q
-         2KRHy0OH/ieH9KAxE2XJARiPXB+50/gCpi3r/av41b253EwXNR9wLNCrG6HsscO1nuuA
-         CXBA==
-X-Gm-Message-State: AOAM532SdgYKpFECiYntgSI1Vrb6aHdoRqRrQUH8LF8rtRfR0xUC/rRU
-        KQA++PWbwHk8jvcsgaTy32Sk+qNyVE3MmL4XufU=
-X-Google-Smtp-Source: ABdhPJxqJm0wwuWGMwBvmBmgvducSLG4QQzA7m59lPsrpRYVx2+ZymLmVLU1Tjr0wZ0b/FZ5UPc6cQ==
-X-Received: by 2002:a05:620a:d87:b0:67b:3105:4f7f with SMTP id q7-20020a05620a0d8700b0067b31054f7fmr13658867qkl.230.1651610392536;
-        Tue, 03 May 2022 13:39:52 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable134.222-177-173.mc.videotron.ca. [173.177.222.134])
-        by smtp.gmail.com with ESMTPSA id y8-20020ae9f408000000b0069fc13ce20fsm6271493qkl.64.2022.05.03.13.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 13:39:51 -0700 (PDT)
-Subject: Re: [PATCH v2 4/8] clk: qcom: add support for SM8350 GPUCC
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robert Foss <robert.foss@linaro.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, tdas@codeaurora.org,
-        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20220503130448.520470-1-robert.foss@linaro.org>
- <20220503130448.520470-4-robert.foss@linaro.org>
- <YnFkn3CMS+VdJ9u7@builder.lan>
-From:   Jonathan Marek <jonathan@marek.ca>
-Message-ID: <e7935b8e-1e4c-a424-7d77-307e346f507f@marek.ca>
-Date:   Tue, 3 May 2022 16:39:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        d=baikalelectronics.ru; s=mail; t=1651611483;
+        bh=9UF9RAJ5A/A23HPF4BnRRw1WEi3wipp0ffStvYxeUdM=;
+        h=From:To:CC:Subject:Date:From;
+        b=K6GNSEFUm8YgaTGfpPhxtNWidBgNu8i7veb0Q5lPxX/RBpU26MKq4Sbf1mSqDl5Ie
+         QA+DFMbYHyYCwoNtIWYKG8l0krbbQFZWAw60bIXg//llTQ6TXlU9y/wQ0CjN403Ie9
+         XVqo6F4NL8uvk75BFwxDwyKTWgJrJVcW08TpDOTo=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 3 May 2022 23:57:27 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
+Date:   Tue, 3 May 2022 23:57:18 +0300
+Message-ID: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-In-Reply-To: <YnFkn3CMS+VdJ9u7@builder.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/3/22 1:21 PM, Bjorn Andersson wrote:
-> On Tue 03 May 08:04 CDT 2022, Robert Foss wrote:
-> 
->> From: Jonathan Marek <jonathan@marek.ca>
->>
->> The GPUCC manages the clocks for the Adreno GPU found on the
->> sm8350 SoCs.
->>
-> 
-> If the patch is authored by Jonathan, we need Jonathan's S-o-b as well.
-> 
+This patchset is an initial one in the series created in the framework
+of my Baikal-T1 PCIe/eDMA-related work:
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+[1: In-progress v3] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
+Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+[2: In-progress v1] PCI: dwc: Various fixes and cleanups
+Link: https://lore.kernel.org/linux-pci/20220324012524.16784-1-Sergey.Semin@baikalelectronics.ru/
+[3: In-progress v1] PCI: dwc: Add dma-ranges/YAML-schema/Baikal-T1 support
+Link: https://lore.kernel.org/linux-pci/20220324013734.18234-1-Sergey.Semin@baikalelectronics.ru/
+[4: In-progress v1] dmaengine: dw-edma: Add RP/EP local DMA controllers support
+Link: https://lore.kernel.org/linux-pci/20220324014836.19149-1-Sergey.Semin@baikalelectronics.ru/
 
-(but I didn't change much from downstream, I never submitted this patch 
-so didn't clean up things like using ARRAY_SIZE, etc.)
+Since some of the patches in the later patchsets depend on the
+modifications introduced here, @Lorenzo could you please merge this series
+through your PCIe subsystem repo? After getting all the required ack'es of
+course.
+
+Short summary regarding this patchset. A few more modifications are
+introduced here to finally finish the Baikal-T1 CCU unit support up and
+prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
+all it turned out I specified wrong DW xGMAC PTP reference clock divider
+in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
+joint xGMAC Ref and PTP clock instead of having them separately defined.
+The SoC manual describes these clocks as separate fixed clock wrappers.
+Finally in order to close the SoC clock/reset support up we need to add
+the DDR and PCIe interfaces reset controls support. It's done in two
+steps. First I've moved the reset-controls-related code into a dedicated
+module. Then the DDR/PCIe reset-control functionality is added.
+
+Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v2:
+- Resubmit the series with adding @Philipp to the list of the recipients.
+
+Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v3:
+- Rebased from v5.17 onto v5.18-rc3.
+- No comments. Just resend the series.
+
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Rob Herring <robh@kernel.org>
+Cc: "Krzysztof Wilczyński" <kw@linux.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (4):
+  clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+  clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
+  clk: baikal-t1: Move reset-controls code into a dedicated module
+  clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+
+ drivers/clk/baikal-t1/Kconfig       |  12 +-
+ drivers/clk/baikal-t1/Makefile      |   1 +
+ drivers/clk/baikal-t1/ccu-div.c     |   1 +
+ drivers/clk/baikal-t1/ccu-div.h     |   6 +
+ drivers/clk/baikal-t1/ccu-rst.c     | 373 ++++++++++++++++++++++++++++
+ drivers/clk/baikal-t1/ccu-rst.h     |  64 +++++
+ drivers/clk/baikal-t1/clk-ccu-div.c | 102 ++------
+ include/dt-bindings/reset/bt1-ccu.h |   9 +
+ 8 files changed, 482 insertions(+), 86 deletions(-)
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+
+-- 
+2.35.1
+
