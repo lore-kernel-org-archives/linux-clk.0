@@ -2,74 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC85C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 19:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38022C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 19:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239078AbiECTba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 15:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56984 "EHLO
+        id S233259AbiECTcV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 15:32:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbiECTb3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 15:31:29 -0400
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439192AE37;
-        Tue,  3 May 2022 12:27:56 -0700 (PDT)
-Received: by mail-ot1-f47.google.com with SMTP id s18-20020a056830149200b006063fef3e17so773187otq.12;
-        Tue, 03 May 2022 12:27:56 -0700 (PDT)
+        with ESMTP id S230245AbiECTcU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 15:32:20 -0400
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB682B184;
+        Tue,  3 May 2022 12:28:47 -0700 (PDT)
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so18151778fac.7;
+        Tue, 03 May 2022 12:28:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=t1DI1S/v8x5uneeqAGDnC3X0//kX6nybz2VF5VcS0xQ=;
-        b=kvCkQXqku1yLbumeSuy/n5/C1HsZMm4inMMPkrCePG+HYSse0k14VlzpJCLYKtcSkv
-         J3CgmCkOD68PYwaVhiUNk3s7iCccsXns/z3o/EFXHNPZkUEoEtybl6u6SO3mIRiOnBVf
-         LFJK5QfK7jJrRp7JdCdfZzbbdMPvpTqNHQRssOnOA+iYboCNUrXfrLR5qH2hEEx5uHGf
-         wzDgHUMV7yGmQpHRUx6S2LUG+bfTpnGoF1FINo+10Hx0Xt/e0a67PANz42xy63l6f/9g
-         a7jXZeWvWp+HOh5HIn6RdXyjLz1O/FHiJKC3ZcViSdiXc/6zaDyBP6Mz7c2Gu5DPS0x9
-         rD6A==
-X-Gm-Message-State: AOAM5319GrXZi7C5eeW0ol/h8R7Adpqh8hHMnG0LR+MQIb+fu0zkSEye
-        Pt1ZKHFwMmqydeJ2G9zdHiyJZL8XAw==
-X-Google-Smtp-Source: ABdhPJwkw8I3jDkzvOLRxpoNBfoWnNUdw9YKkm55Bo6yfaZ9Jb8d/fRbqPQodVHJoHwlFT2tWSaaxg==
-X-Received: by 2002:a05:6830:4027:b0:606:2d9:c0d3 with SMTP id i7-20020a056830402700b0060602d9c0d3mr6441347ots.260.1651606075551;
-        Tue, 03 May 2022 12:27:55 -0700 (PDT)
+        bh=vUf3XQMild+xicK8oDYdfUPAT4BtU1iyM+znB1rhmAo=;
+        b=MBryVXrAXsdjUNdQ6xA7SdMvd4eaVB2GkHbejqnDkB5Dn9s5WjDw6nMT6/8D1oEGOS
+         okac5DSUyLIfZxl0XG6M64OjHkcoyc5aJA/KEz5R9J1cUc2YFeq/2wIOosslvtW88+Rr
+         RoHgk63NQHta5mN5kdnfsdnAh6Lwi7bfex+36E+SmB06ElCf8g7MfkbO6WsEeKOOUTMH
+         97Po4dzqSj46ASoHvJOAMFpuMtU7AwRURGciZ2r4V6xmVD8bwqvdD92aJoBX5Ye2Du/v
+         f+omj3mwd01IfAb1fC/Rh0Yuy9M7GUJrJmgtB2B9BQJiShBPXq/50sg7cVtD0/eZBnp1
+         ifVg==
+X-Gm-Message-State: AOAM532igmOBp9m1k/wDG8FLktTN72De5gc5CQsX73Sr+1WQhdRopRbw
+        9WbQRIRomSxvSA2agrXTDmfGL6qIcg==
+X-Google-Smtp-Source: ABdhPJz1PgQckTT7l4ZN5QqtbtQQNS7Kp0xqMln5B2vdoQhCctXdmOlFhg1JEubgmtL+D/uS7TmHWQ==
+X-Received: by 2002:a05:6870:f6a8:b0:da:cf54:dc14 with SMTP id el40-20020a056870f6a800b000dacf54dc14mr2426092oab.43.1651606126977;
+        Tue, 03 May 2022 12:28:46 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 7-20020a4a0607000000b0035ed382fb5asm4189066ooj.15.2022.05.03.12.27.54
+        by smtp.gmail.com with ESMTPSA id z15-20020a05683020cf00b006060322126esm4264763otq.62.2022.05.03.12.28.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 12:27:55 -0700 (PDT)
-Received: (nullmailer pid 4086471 invoked by uid 1000);
-        Tue, 03 May 2022 19:27:54 -0000
-Date:   Tue, 3 May 2022 14:27:54 -0500
+        Tue, 03 May 2022 12:28:46 -0700 (PDT)
+Received: (nullmailer pid 4087750 invoked by uid 1000);
+        Tue, 03 May 2022 19:28:45 -0000
+Date:   Tue, 3 May 2022 14:28:45 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Cixi Geng <gengcixi@gmail.com>
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, orsonzhai@gmail.com,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-Message-ID: <YnGCOm86jtxBJ6Jo@robh.at.kernel.org>
+Cc:     baolin.wang7@gmail.com, orsonzhai@gmail.com,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        zhang.lyra@gmail.com, lee.jones@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH V4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+Message-ID: <YnGCbWTWmnMzusZY@robh.at.kernel.org>
 References: <20220427100848.3525710-1-gengcixi@gmail.com>
- <20220427100848.3525710-2-gengcixi@gmail.com>
+ <20220427100848.3525710-3-gengcixi@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220427100848.3525710-2-gengcixi@gmail.com>
+In-Reply-To: <20220427100848.3525710-3-gengcixi@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 27 Apr 2022 18:08:45 +0800, Cixi Geng wrote:
-> From: Cixi Geng <cixi.geng1@unisoc.com>
+On Wed, 27 Apr 2022 18:08:46 +0800, Cixi Geng wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > 
-> Add a new bindings to describe ums512 clock compatible string.
+> Add bindings for Unisoc system global register which provide register map
+> for clocks.
 > 
 > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
 > ---
->  .../bindings/clock/sprd,ums512-clk.yaml       | 71 +++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+>  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
