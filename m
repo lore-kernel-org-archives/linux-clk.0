@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C59C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 11:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BE9C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 11:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234734AbiECLkx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 07:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45892 "EHLO
+        id S234785AbiECLlS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 07:41:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234745AbiECLkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 07:40:51 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BB534BB4
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 04:37:19 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id n10so15457282ejk.5
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 04:37:19 -0700 (PDT)
+        with ESMTP id S234781AbiECLlS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 07:41:18 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D310835240
+        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 04:37:45 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id kq17so32883970ejb.4
+        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 04:37:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=X1FUNuB7P3eW2ayDNUqILdNTj2LgjfmvS/GJDjAZwJ8=;
-        b=m1lsa/lUBG13ARmSDKBacb1BxkHOLDYVNgdzx87jaByNzrYBqQjteQH9jkfbbdF0QO
-         gVBjSQDRDw79CP7VbvuDmFkUQHW5Y/2HQOpqKUZd50/mRQE0HrMFgj8B66PmfYRy61kb
-         8mQDe2M8M3SeuqAHv+CkuKeCTRxKJ8py6uI2LM1l0QxqNtLGG3TQ/E1drhj9elaMYM+Z
-         xFA/t/PW27qFlRei0Or6PigQwyezhQQlkaMdEd86vK4ijPxTDPA3k4qBDuVAyd7WmywV
-         UJb9Ji7I8Ftv+i2NiOVJKZ3oCXUG0kPPc9hYXimNdHyqsP34bD3r76D1aIy486doAtNa
-         cl7Q==
+        bh=QVp3RkrsZjknN37lAxJZhaR2zOHWGKJGvjIrozmrcSE=;
+        b=tLQIXAep+KkODb2kR+H3gzQ6jOvCX3R6P+mOUJCrE1CJ6CpXrCtUbTQ0KpW4ygvB20
+         W9go6Cj1n8KEishC2RUv6sjlqCg6Orly2xx3FECOPACCBFqVdsNaud4d71tdKyw7J9B+
+         EAa79rJ4Sntra6vgOkRMew7unZedgmc3lm18k871vDFf8Pl5T4pRmCwTfj/DuRBtPa5f
+         AP9l4RG7FcTQ29MDY0mMFQlzlkCIOt3XG2avd10re0f5jn+jY0aDETvIM6hdYZhW9bUy
+         iHg4ZntHsvderHpMV5R97DTwIj6wIVWwZd6vgelRAFH27QW+GW0pqgmdV036LoBDvA0r
+         SYCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=X1FUNuB7P3eW2ayDNUqILdNTj2LgjfmvS/GJDjAZwJ8=;
-        b=WjFh+guMPlhsH+fSCMSPYqRSSBpHCsRLSb5iIsT26Xd6DyzNGclaZCAEKf0VVKOrxV
-         li7XDvDu4QSifsoTINKSlH+teKGBhWImQEBU8r9yIPHT1rHlVsARw4tiXBw69zaLrf2d
-         yLoION8GUD9qj0HJ+3ya8O0ZGQY5RFTXEaR4JXDHs445Lxri0Qp+fBiDgUpEza6XUf5Q
-         gaoF9mANZs71tF6uU4KAFcUwha/Co7xkJsV4xcSAoz1sMMLwmW2BPmRPabBb5ufL4rov
-         ByfYp4GSqHckUu5iZe2F0zpSAJYWJCTEFOW2zxctxQ1pUNAy8fGs4PiixR2tjkZdmBwo
-         yung==
-X-Gm-Message-State: AOAM53080ngtA0TMDjYUE7Z9W6ja6OPwesTVQKcrcRvG/02DoZufOZOl
-        ewdR386dnzeVN0NsED9RCTP04Q==
-X-Google-Smtp-Source: ABdhPJzQ+6Vtojorbgz03fnGzcETCdUI4hWoJhuVofseBZB8aIdh7DtxCNdBnYFVXj5i+orsRW9lFg==
-X-Received: by 2002:a17:907:1c9c:b0:6f4:2918:5672 with SMTP id nb28-20020a1709071c9c00b006f429185672mr12582950ejc.439.1651577838380;
-        Tue, 03 May 2022 04:37:18 -0700 (PDT)
+        bh=QVp3RkrsZjknN37lAxJZhaR2zOHWGKJGvjIrozmrcSE=;
+        b=nPlGdBv0A59ehDnlTp8dh2e25rq1reyuPzeVilVQoINEgI0bu//Q/AjtpC9QBj7vz2
+         Hk5DAHiTapXIF1mIlx9CHadk0NoQAOsVpA3LS/jKI6eyajoXLFpFE9YJ4IKz+yaN8b8Y
+         mPTitKtiyfHuUZP47XhWmA+EAm623w3uZhxHmVjlhk43rtk7/PuHa5CaTvZdXu66nKAl
+         ZxovAWE1ZHRUzvXXiiYiXtutHeKYZLR6WwKyymn9A9fmba02xDqJRL2L9VEfT/ePC8pN
+         swV2+9JRWuliS+7r1hqUAsfA5u1wNINeDAAhhMyH8QnhvNBaahNOHalvCyHr8qsXv3fr
+         v3AQ==
+X-Gm-Message-State: AOAM53312lrcvMLI3LuFPPhHZC16Zu9VQ04z/7zXKQFEbcOC1aBpgo7K
+        SB66zqvrGDZuziJHwl6MyDMBSA==
+X-Google-Smtp-Source: ABdhPJzxvzxgUY0kSWz6s201m+ymj+wkPW3O8HI9frx8YpxBCkivKl1bsuIkyh+cfHW9VMvSQH2zmw==
+X-Received: by 2002:a17:906:c1d6:b0:6d6:e0a3:bbc7 with SMTP id bw22-20020a170906c1d600b006d6e0a3bbc7mr15490136ejb.484.1651577864342;
+        Tue, 03 May 2022 04:37:44 -0700 (PDT)
 Received: from [192.168.0.202] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id l24-20020a056402029800b0042617ba63a7sm7841464edv.49.2022.05.03.04.37.16
+        by smtp.gmail.com with ESMTPSA id zd7-20020a17090698c700b006f3ef214dfesm4569152ejb.100.2022.05.03.04.37.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 04:37:17 -0700 (PDT)
-Message-ID: <b7bf8ab3-9680-6318-a575-bb1dfaeef405@linaro.org>
-Date:   Tue, 3 May 2022 13:37:16 +0200
+        Tue, 03 May 2022 04:37:43 -0700 (PDT)
+Message-ID: <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
+Date:   Tue, 3 May 2022 13:37:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [RFC v2 0/2] Hi3521a support.
+Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
 Content-Language: en-US
 To:     "Marty E. Plummer" <hanetzer@startmail.com>, arnd@arndb.de,
         cai.huoqing@linux.dev, christian.koenig@amd.com,
@@ -69,8 +69,9 @@ To:     "Marty E. Plummer" <hanetzer@startmail.com>, arnd@arndb.de,
         vigneshr@ti.com, xuwei5@hisilicon.com
 References: <20220501054440.2434247-1-hanetzer@startmail.com>
  <20220501173423.2473093-1-hanetzer@startmail.com>
+ <20220501173423.2473093-2-hanetzer@startmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220501173423.2473093-1-hanetzer@startmail.com>
+In-Reply-To: <20220501173423.2473093-2-hanetzer@startmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,21 +79,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 01/05/2022 19:34, Marty E. Plummer wrote:
-> Resend RFC.
+> Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
+> generates clock and reset signals used by other module blocks on SoC.
 > 
-> Changes in v2:
-> - Actually include the dts files.
-> - DT Bindings still missing, as the the driver is not quite complete
->   (need to add the reset controller bindings, have't quite figured that
->   out yet.)
-> 
-> Marty E. Plummer (2):
->   clk: hisilicon: add CRG driver Hi3521a SoC
->   arm: hisi: enable Hi3521a soc
+> Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+> ---
+>  drivers/clk/hisilicon/Kconfig             |   8 ++
+>  drivers/clk/hisilicon/Makefile            |   1 +
+>  drivers/clk/hisilicon/crg-hi3521a.c       | 141 ++++++++++++++++++++++
+>  include/dt-bindings/clock/hi3521a-clock.h |  34 ++++++
 
-Still no bindings for boards/SoC.
-
-
+Bindings go to separate patch. Your patchset is unmerge'able.
 
 Best regards,
 Krzysztof
