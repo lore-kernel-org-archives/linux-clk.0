@@ -2,120 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BDFC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 15:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9944C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 15:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238380AbiECPmS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 11:42:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55836 "EHLO
+        id S238979AbiECPzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 11:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238361AbiECPmR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 11:42:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 026553054F
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 08:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651592269;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XfATmEmMWAHmUPjRPvqS2NSPYo/AxzzMejax6HO88D4=;
-        b=K1SZLL5Le+sR0uF7ihyS52+zpgLrgy3YlhcR7p7Fh6jgdvMAXG19gUQ5teBRPKdch9t/JR
-        Pgtm1xkqGKEz26vm1xpfxpZ6SZPUVov8A1ijTM/51w+wFCUhQO731t+DPzvUfF15QOuU4o
-        rHhquIFrhJqf2yOLvA7FmKqPBItduXI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-159-2PY9h_MHMsKAJ4Xaska42w-1; Tue, 03 May 2022 11:37:26 -0400
-X-MC-Unique: 2PY9h_MHMsKAJ4Xaska42w-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4C8088FC16A;
-        Tue,  3 May 2022 11:46:18 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.39.194.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E913402182;
-        Tue,  3 May 2022 11:46:17 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 1/1] platform/x86: Drop the PMC_ATOM Kconfig option
-Date:   Tue,  3 May 2022 13:46:07 +0200
-Message-Id: <20220503114607.98844-2-hdegoede@redhat.com>
-In-Reply-To: <20220503114607.98844-1-hdegoede@redhat.com>
-References: <20220503114607.98844-1-hdegoede@redhat.com>
+        with ESMTP id S232627AbiECPzY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 11:55:24 -0400
+Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4C431DF3;
+        Tue,  3 May 2022 08:51:50 -0700 (PDT)
+Date:   Tue, 3 May 2022 10:51:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
+        s=2020-07; t=1651593109;
+        bh=56w8flPoDdgtjGA9GvUtnG3sqpiIHyKUNGbNmd5gImM=;
+        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
+         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
+         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
+        b=FJ/tEpdv1e0AuZ2nIJUUELwcGzM69tunHMFCt/HJJxNPkq0+GLUD7oGrkdQv1N5aR
+         ICOLWOni4cGw7aGWG2xZwEcDa7cjAlB9LLALDEAGMXaOUu/JkTRnU/F9QQTVa7bOd0
+         G4FnPjmo1K+W+bvexKlIWTUOrwfBiDYoBl+3LJecTvSVxHtcWciit4OQG+CO4pl4xx
+         MvyYEOSsDrphfcfamqZiiba2CXoCEn6/uwkqbgStr9bgyRavR0vs6Btag1xitnqWc+
+         GxsXWRPYBMI+Sb4bPX8lbOl1oODzhC36nRyiGkllsZSZ9EIsbDG+BqjPpBJIg/at6N
+         /lUwBdI9uSSMg==
+From:   "Marty E. Plummer" <hanetzer@startmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
+        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
+        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
+        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
+        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
+        vigneshr@ti.com, xuwei5@hisilicon.com
+Subject: Re: [RFC v2 2/2] arm: hisi: enable Hi3521a soc
+Message-ID: <20220503155141.ekbysx6fjom5el2h@proprietary-killer>
+References: <20220501054440.2434247-1-hanetzer@startmail.com>
+ <20220501173423.2473093-1-hanetzer@startmail.com>
+ <20220501173423.2473093-3-hanetzer@startmail.com>
+ <4cda3645-c4e8-1b3c-bd80-891afd56449a@linaro.org>
+ <20220503134459.pplgvhcckja4ivcg@proprietary-killer>
+ <75a48dfa-6fc9-aed9-b00e-d928bd9f33af@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75a48dfa-6fc9-aed9-b00e-d928bd9f33af@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The def_bool y PMC_ATOM Kconfig option provides a couple of symbols used
-by the code enabled by the X86_INTEL_LPSS option and it registers some
-clocks. These clocks are only registered on Bay Trail, Cherry Trail and
-Brasswell Intel SoCs and kernels targeting these SoCs must always have
-the X86_INTEL_LPSS option enabled otherwise many things will not work.
-
-Building the PMC_ATOM code on kernels which are not targeting the
-mentioned SoCs and which do not have the X86_INTEL_LPSS enabled is
-not useful.
-
-This means that we can simplify things by replacing the PMC_ATOM Kconfig
-option in Makefiles with X86_INTEL_LPSS and then drop the option.
-
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/clk/x86/Makefile      | 4 +---
- drivers/platform/x86/Kconfig  | 5 -----
- drivers/platform/x86/Makefile | 2 +-
- 3 files changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-index 1244c4e568ff..c2088b3c4081 100644
---- a/drivers/clk/x86/Makefile
-+++ b/drivers/clk/x86/Makefile
-@@ -1,6 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
- obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-fch.o
--clk-x86-lpss-y			:= clk-lpss-atom.o
--obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
-+obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-lpss-atom.o clk-pmc-atom.o
- obj-$(CONFIG_CLK_LGM_CGU)	+= clk-cgu.o clk-cgu-pll.o clk-lgm.o
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index f08ad85683cb..85c396a43048 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1161,8 +1161,3 @@ config WINMATE_FM07_KEYS
- 	  that delivers key events when these buttons are pressed.
- 
- endif # X86_PLATFORM_DEVICES
--
--config PMC_ATOM
--       def_bool y
--       depends on PCI
--       select COMMON_CLK
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 4a59f47a46e2..cc2a74713313 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -126,7 +126,7 @@ obj-$(CONFIG_INTEL_SCU_PCI)		+= intel_scu_pcidrv.o
- obj-$(CONFIG_INTEL_SCU_PLATFORM)	+= intel_scu_pltdrv.o
- obj-$(CONFIG_INTEL_SCU_WDT)		+= intel_scu_wdt.o
- obj-$(CONFIG_INTEL_SCU_IPC_UTIL)	+= intel_scu_ipcutil.o
--obj-$(CONFIG_PMC_ATOM)			+= pmc_atom.o
-+obj-$(CONFIG_X86_INTEL_LPSS)		+= pmc_atom.o
- 
- # Siemens Simatic Industrial PCs
- obj-$(CONFIG_SIEMENS_SIMATIC_IPC)	+= simatic-ipc.o
--- 
-2.36.0
-
+On Tue, May 03, 2022 at 04:55:23PM +0200, Krzysztof Kozlowski wrote:
+> On 03/05/2022 15:44, Marty E. Plummer wrote:
+> > On Tue, May 03, 2022 at 01:47:01PM +0200, Krzysztof Kozlowski wrote:
+> >> On 01/05/2022 19:34, Marty E. Plummer wrote:
+> >>> Enable Hisilicon Hi3521A/Hi3520DCV300 SoC. This SoC series includes
+> >>> hardware mutlimedia codec cores, commonly used in consumer cctv/dvr
+> >>> security systems and ipcameras. The arm core is a Cortex A7.
+> >>>
+> >>> Add hi3521a.dtsi and hi3521a-rs-dm290e.dts for RaySharp CCTV systems,
+> >>> marketed under the name Samsung SDR-B74301N.
+> >>
+> >> Thank you for your patch. There is something to discuss/improve.
+> >>
+> >>>
+> >>> Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+> >>> ---
+> >>>  arch/arm/boot/dts/Makefile              |   2 +
+> >>>  arch/arm/boot/dts/hi3521a-rs-dm290e.dts | 134 ++++++++
+> >>>  arch/arm/boot/dts/hi3521a.dtsi          | 423 ++++++++++++++++++++++++
+> >>
+> >> DTSes go to separate patches.
+> > Do you mean dts and dtsi need to be separate patches?
+> 
+> I mean that any changes to "arch/arm/boot/dts/" have to be separate from
+> other changes. These can be still one patch. See other examples on
+> mailing lists.
+> 
+> >>
+> >>>  arch/arm/mach-hisi/Kconfig              |   9 +
+> >>>  4 files changed, 568 insertions(+)
+> >>>  create mode 100644 arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+> >>>  create mode 100644 arch/arm/boot/dts/hi3521a.dtsi
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> >>> index 7c16f8a2b738..535cef3b14ab 100644
+> >>> --- a/arch/arm/boot/dts/Makefile
+> >>> +++ b/arch/arm/boot/dts/Makefile
+> >>> @@ -242,6 +242,8 @@ dtb-$(CONFIG_ARCH_GEMINI) += \
+> >>>  	gemini-ssi1328.dtb \
+> >>>  	gemini-wbd111.dtb \
+> >>>  	gemini-wbd222.dtb
+> >>> +dtb-$(CONFIG_ARCH_HI3521A) += \
+> >>> +	hi3521a-rs-dm290e.dtb
+> >>>  dtb-$(CONFIG_ARCH_HI3xxx) += \
+> >>>  	hi3620-hi4511.dtb
+> >>>  dtb-$(CONFIG_ARCH_HIGHBANK) += \
+> >>> diff --git a/arch/arm/boot/dts/hi3521a-rs-dm290e.dts b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+> >>> new file mode 100644
+> >>> index 000000000000..b24fcf2ca85e
+> >>> --- /dev/null
+> >>> +++ b/arch/arm/boot/dts/hi3521a-rs-dm290e.dts
+> >>> @@ -0,0 +1,134 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >>> +/*
+> >>> + * Copyright (C) 2017-2022 Marty Plummer <hanetzer@startmail.com>
+> >>> + */
+> >>> +
+> >>> +#include "hi3521a.dtsi"
+> >>> +
+> >>> +/ {
+> >>> +	model = "RaySharp RS-DM-290E DVR Board";
+> >>> +	compatible = "raysharp,rs-dm-290e", "hisilicon,hi3521a";
+> >>
+> >> Please run checkpatch and fix the warnings.
+> >>
+> > sunova. I could have sworn I had my editor setup right for whitespace
+> > and such.
+> 
+> It's not about whitespace but:
+> 
+ah. Well, I'm not certain what we'll even call the board in the end,
+kind of a placeholder for now. What do you even name devices which are
+generic consumer hardware that they never intended to be tinkered with
+this way? the board is whiteboxed by several different vendors.
+> WARNING: DT compatible string "raysharp,rs-dm-290e" appears
+> un-documented -- check ./Documentation/devicetree/bindings/
+> 
+> 
+> WARNING: DT compatible string vendor "raysharp" appears un-documented --
+> check ./Documentation/devicetree/bindings/vendor-prefixes.yaml
+> 
+> 
+> (...)
+> 
+> > Ah gotcha.
+> >>> +	};
+> >>> +
+> >>> +	xtal24m: xtal24m {
+> >>
+> >> Generic node names, so one of: "clock-0" "clock-xtal24m"
+> >>
+> > Will do.
+> >>> +		compatible = "fixed-clock";
+> >>> +		#clock-cells = <0>;
+> >>> +		clock-frequency = <24000000>;
+> >>
+> >> This does not look like property of the SoC, so should be defined by boards.
+> >>
+> > SoC requires a 24Mhz osc (and a 32khz one as well), so it'll always be
+> > present regardless.
+> 
+> Sure, but DTS/DTSI describes hardware. If the clock is not in the SoC
+> but on the board, it should be in the board DTSI. Many times such clocks
+> are put partially in DTSI and only their specific parts - frequency - in
+> the board DTS, to indicate that implementation is relevant to the board,
+> not SoC.
+> 
+Ah ok, that makes sense I guess.
+> >>> +	};
+> >>> +
+> >>> +	clk_3m: clk_3m {
+> >>
+> >> No underscores in node names, generic node name (see above).
+> >>
+> > early debugging clock, will be removed.
+> >>> +		compatible = "fixed-clock";
+> >>> +		#clock-cells = <0>;
+> >>> +		clock-frequency = <3000000>;
+> >>
+> >> This does not look like property of the SoC, so should be defined by boards.
+> 
+> (...)
+> 
+> >>
+> >>> +			status = "disabled";
+> >>> +		};
+> >>> +
+> >>> +		dual_timer0: timer@12000000 {
+> >>> +			compatible = "arm,sp804", "arm,primecell";
+> >>> +			interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> >>> +				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
+> >>
+> >> A bit weird interrupts... the same?
+> >>
+> > Yes, though I am aware that some sp804 timers do have a separate
+> > interrupts per pair.
+> 
+> They have also separate interrupts, one combined interrupt or one sole
+> interrupt. However what you described here is one interrupt line
+> physically connected to two separate pins on the device yet still not
+> being somehow shared (shared as "combined interrupt"). I don't think it
+> is your case...
+> 
+Unsure. datasheet just says '33 | Timer0/Timer1'. I don't think these
+timers are attached to pins, however.
+> 
+> 
+> Best regards,
+> Krzysztof
