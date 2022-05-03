@@ -2,87 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2FFC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 19:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC85C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 19:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239025AbiECTWq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 15:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50054 "EHLO
+        id S239078AbiECTba (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 15:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238094AbiECTWi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 15:22:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70EE3FBE9;
-        Tue,  3 May 2022 12:19:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8292461948;
-        Tue,  3 May 2022 19:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBE0C385A9;
-        Tue,  3 May 2022 19:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651605543;
-        bh=S8r5AHZucns0I0daOUq3N1CwlE3hsFkxc7yh810nreU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bw7HNipUWvVQAmvSfBp+4cNCpONzg66Mq1gQNQ1prwJNza4BP4VwA3t/aa5GPcgRB
-         sVRPbpX79XPIyPz+bStoZlAd7Sw7PfahlxgrobOEv1p9Jns47R9sq5agA+sl+6JFmr
-         47vTxkOikFB8RorCnPnwDErJhafnBK5RgzY0wozNRFPsZRTetA43tp2aTq8RPDBmh+
-         mZUfFXlxuIvtp5aPGTP114yS1MuAlj+l4XRYURX6Q6iqxF9W2UbYE6g/hQ1//O/mv/
-         fY6o211mifvZ3feH/y5R9c+alyEuJlclmSheeomx16sskw7+5vs+z5VL8VVJgecemo
-         le9lipnnV6bkw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230245AbiECTb3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 15:31:29 -0400
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439192AE37;
+        Tue,  3 May 2022 12:27:56 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id s18-20020a056830149200b006063fef3e17so773187otq.12;
+        Tue, 03 May 2022 12:27:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=t1DI1S/v8x5uneeqAGDnC3X0//kX6nybz2VF5VcS0xQ=;
+        b=kvCkQXqku1yLbumeSuy/n5/C1HsZMm4inMMPkrCePG+HYSse0k14VlzpJCLYKtcSkv
+         J3CgmCkOD68PYwaVhiUNk3s7iCccsXns/z3o/EFXHNPZkUEoEtybl6u6SO3mIRiOnBVf
+         LFJK5QfK7jJrRp7JdCdfZzbbdMPvpTqNHQRssOnOA+iYboCNUrXfrLR5qH2hEEx5uHGf
+         wzDgHUMV7yGmQpHRUx6S2LUG+bfTpnGoF1FINo+10Hx0Xt/e0a67PANz42xy63l6f/9g
+         a7jXZeWvWp+HOh5HIn6RdXyjLz1O/FHiJKC3ZcViSdiXc/6zaDyBP6Mz7c2Gu5DPS0x9
+         rD6A==
+X-Gm-Message-State: AOAM5319GrXZi7C5eeW0ol/h8R7Adpqh8hHMnG0LR+MQIb+fu0zkSEye
+        Pt1ZKHFwMmqydeJ2G9zdHiyJZL8XAw==
+X-Google-Smtp-Source: ABdhPJwkw8I3jDkzvOLRxpoNBfoWnNUdw9YKkm55Bo6yfaZ9Jb8d/fRbqPQodVHJoHwlFT2tWSaaxg==
+X-Received: by 2002:a05:6830:4027:b0:606:2d9:c0d3 with SMTP id i7-20020a056830402700b0060602d9c0d3mr6441347ots.260.1651606075551;
+        Tue, 03 May 2022 12:27:55 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 7-20020a4a0607000000b0035ed382fb5asm4189066ooj.15.2022.05.03.12.27.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 12:27:55 -0700 (PDT)
+Received: (nullmailer pid 4086471 invoked by uid 1000);
+        Tue, 03 May 2022 19:27:54 -0000
+Date:   Tue, 3 May 2022 14:27:54 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Cixi Geng <gengcixi@gmail.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, orsonzhai@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH V4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
+Message-ID: <YnGCOm86jtxBJ6Jo@robh.at.kernel.org>
+References: <20220427100848.3525710-1-gengcixi@gmail.com>
+ <20220427100848.3525710-2-gengcixi@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YmrnMQwIR9wOeoKE@ripper>
-References: <20220422230013.1332993-1-bjorn.andersson@linaro.org> <20220423014824.912ACC385A0@smtp.kernel.org> <YmNsYSxLtwLpw98t@ripper> <20220423031350.01299C385A0@smtp.kernel.org> <YmN11qt/PqogYruQ@ripper> <20220425223426.BE973C385A4@smtp.kernel.org> <3fb043e6-2748-24f8-0115-b5372c747a12@linaro.org> <Ymq6UOjrYgFlzl/W@ripper> <CAA8EJpqBMzTNjTSWN1UMXM61-DmW22RKQJyWoMw3Rds=xEVQaQ@mail.gmail.com> <YmrnMQwIR9wOeoKE@ripper>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_tdas@quicinc.com
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 03 May 2022 12:19:01 -0700
-User-Agent: alot/0.10
-Message-Id: <20220503191903.CEBE0C385A9@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220427100848.3525710-2-gengcixi@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-04-28 12:12:49)
-> On Thu 28 Apr 09:24 PDT 2022, Dmitry Baryshkov wrote:
->=20
-> > > >
-> > > > And actually might I suggest an alternative approach to manually us=
-ing
-> > > > indices everywhere? What about spending the time once during the bo=
-ot to
-> > > > convert .fw_name and clock_names to parent indices during clock reg=
-istration
-> > > > and then using them for all the further operations?
-> > > >
-> > >
-> > > I'm pretty sure that's what clk_core_fill_parent_index() already does.
-> >=20
-> > In this case I think we should go for clock-name in the DT and
-> > auto-flled indices inside. Stephen, WDYT? Would that fix your concern
-> > for comparing strings each and every time?
-> >=20
->=20
-> You mean, just continue doing what we've been doing lately with fw_name
-> etc?
->=20
-> That lookup is the one that Stephen wants to avoid.
->=20
+On Wed, 27 Apr 2022 18:08:45 +0800, Cixi Geng wrote:
+> From: Cixi Geng <cixi.geng1@unisoc.com>
+> 
+> Add a new bindings to describe ums512 clock compatible string.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> ---
+>  .../bindings/clock/sprd,ums512-clk.yaml       | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> 
 
-Right. Translating .fw_name to indices isn't a solution because I want to=20
-
- 1. Reduce the number of string comparisons
-
- 2. Shrink the kernel's data section by removing strings
-
-and having there still be strings works against both points.
+Reviewed-by: Rob Herring <robh@kernel.org>
