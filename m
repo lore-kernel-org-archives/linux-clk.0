@@ -2,106 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861C2C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 09:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 116D6C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 09:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233789AbiECJp4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 05:45:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53130 "EHLO
+        id S233110AbiECJ7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 05:59:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233883AbiECJpq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 05:45:46 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245AE39806
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 02:41:52 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id n10so14946245ejk.5
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 02:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=b566PPGsjaHWkMbL7FSptu6pFhyMnCOUSbKGby8X3Q0=;
-        b=Gkh9UXQVwF65yXWd0IuvhOJPE2joZBCrE654qMIDm7yDmntq/HBsiKJM6B1Dvk6yM/
-         UxAlak39n8KEi8x+y9EDaAdz0pt6ygUE2PhIafxZikJGH0eJ4KmP+fGuFABxg81EG2uu
-         VOu2fVuqy9LRgTJXSuA+3WD/EZxl1UTOOGU0nH8yhVB4jam+XQdnSncg+RIPoYoxS5MV
-         YgzUvtGrKGzx7HuvL0Uuc26n+os8X/Tp7BWryHg5mYN7WHqDOyEWtH7GWlV9cfZOobHe
-         4UZe5xOaVwe8Zngx24UUcyCBZrlSN55iVriTLbqs8Z8kooGqOOACp96tkFfGiZWJXMfS
-         /RAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=b566PPGsjaHWkMbL7FSptu6pFhyMnCOUSbKGby8X3Q0=;
-        b=xabQymsonJbyrc91bLFmArdpOlZo6tmH6Rk8enfQyQLxNClI7Lf06nUI1cfp3/b3w3
-         QehZ4ESy8jg3LZd0HR28nVUZg6Y7EqvJNMPkGNWoRQ3LDzCcus5q8J1OYUJYjQUhS9WD
-         /CSc7z2C89XVNbCZNJBi9IIcqz/l5/Sm0lzGL3KCwOcDczFitulnJ0ZVip4we3DIy/Hv
-         r7WrNlh5WkTza/yD5mynFxOp2EcYx080KlYK2/LVvRnNWaBzWsGTd8s/aSt8peRgwbXe
-         EEfOrnYh7gOhZXGb9g9kmJTeM00Gcbc9ILp+Q4Q1kx+0+G/AQ+uh8/KEzYXAY5jwBUcy
-         z9hA==
-X-Gm-Message-State: AOAM530qtr4qQTWwptvWE9afYkAaFC+AdPVvgqPROm6TL8bZflGXjj4O
-        QtVNLi6vp+Q6myYilu4Utac9Lg==
-X-Google-Smtp-Source: ABdhPJyzst4s7hrEZNpwk9DA5qdrjy5euejkI2joEvaH1c2+lrpv/9TjwCRAJBGmhr2xJVxo0oIkRA==
-X-Received: by 2002:a17:907:3c81:b0:6e6:cf3e:6e14 with SMTP id gl1-20020a1709073c8100b006e6cf3e6e14mr15088988ejc.181.1651570910698;
-        Tue, 03 May 2022 02:41:50 -0700 (PDT)
-Received: from [192.168.0.201] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id g7-20020aa7d1c7000000b0042617ba63b1sm7680835edp.59.2022.05.03.02.41.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 May 2022 02:41:50 -0700 (PDT)
-Message-ID: <bacc123d-bedc-0034-6591-3ef0caf270ae@linaro.org>
-Date:   Tue, 3 May 2022 11:41:49 +0200
+        with ESMTP id S232107AbiECJ7T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 05:59:19 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0173C22521
+        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 02:55:46 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220503095542epoutp020dbe1b1e445ece2b16579d4700a5c84d~rj7-RGpQ_2701927019epoutp02m
+        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 09:55:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220503095542epoutp020dbe1b1e445ece2b16579d4700a5c84d~rj7-RGpQ_2701927019epoutp02m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651571742;
+        bh=r4GqslQDG0tCLLJ7cf6EhBbRbm5rhUHhCVrJNrb/m4c=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=HGGznEP+hSF8OMOj2VBs/QbwAye/O53lNGvpTBgBt51iuyhBQOUGI99UQa9Ni49iA
+         iIpakjqmMghRw4I/GC10bFucGumUC2H82LMeeYXIWEWCUjyry8L8CZR1KFSUHmYzsH
+         eha2KOmprXRWp0F7TXWv8HUx4IVOIbp7L7O0XbFc=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220503095541epcas2p1029727c12ede7bde402375d41e1d1975~rj7_2QAtB3246732467epcas2p1x;
+        Tue,  3 May 2022 09:55:41 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4KswLy0STHz4x9Q0; Tue,  3 May
+        2022 09:55:38 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0B.37.10028.91CF0726; Tue,  3 May 2022 18:55:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220503095537epcas2p48ac02b341952fd4d67488bd61449125b~rj7629jQp0323403234epcas2p4Q;
+        Tue,  3 May 2022 09:55:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220503095537epsmtrp2bd05bcd54c5b8c35d7acd7696915e99d~rj76176s50564005640epsmtrp2P;
+        Tue,  3 May 2022 09:55:37 +0000 (GMT)
+X-AuditID: b6c32a47-573ff7000000272c-ef-6270fc198b39
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        21.CF.08853.91CF0726; Tue,  3 May 2022 18:55:37 +0900 (KST)
+Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220503095537epsmtip15779bc4f734fa788a6ccbc621e439548~rj76ra7YR3273532735epsmtip1C;
+        Tue,  3 May 2022 09:55:37 +0000 (GMT)
+From:   "Chanho Park" <chanho61.park@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
+        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
+        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
+        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
+        "'Michael Turquette'" <mturquette@baylibre.com>,
+        "'Stephen Boyd'" <sboyd@kernel.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
+Cc:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <08e9a67e-42dd-019d-ade8-1d8a53ead4f0@linaro.org>
+Subject: RE: [PATCH 10/12] arm64: dts: exynosautov9: add initial cmu clock
+ nodes
+Date:   Tue, 3 May 2022 18:55:37 +0900
+Message-ID: <02b201d85ed3$f09e3480$d1da9d80$@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
-Content-Language: en-US
-To:     "Marty E. Plummer" <hanetzer@startmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220501051020.2432338-1-hanetzer@startmail.com>
- <20220501051020.2432338-2-hanetzer@startmail.com>
- <0b66148a-c65f-2acf-9751-ae931778ad45@linaro.org>
- <20220501113215.rh6he5344hssziy7@proprietary-killer>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220501113215.rh6he5344hssziy7@proprietary-killer>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKWF+Vk7KC4mE3H7cmUi4B2cVMtRQHp0WQoAjq+1EEC9GB5R6tYq+lQ
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmma7kn4Ikg0ObrS0ezNvGZnH9y3NW
+        i/lHzrFa9L14yGyx9/VWdouPPfdYLWac38dkcfGUq0Xr3iPsFofftLNa/Lu2kcXieR9QfNWu
+        P4wOvB7vb7Sye+ycdZfdY9OqTjaPO9f2sHn0bVnF6PF5k1wAW1S2TUZqYkpqkUJqXnJ+SmZe
+        uq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QoUoKZYk5pUChgMTiYiV9O5ui/NKS
+        VIWM/OISW6XUgpScAvMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Ix5F1ewFczhrmiZ0c3ewNjD
+        2cXIySEhYCIxaf5x1i5GLg4hgR2MEr1/5jJCOJ8YJRbtOcEM4XxjlHh6dz07TMvBaZ/YIRJ7
+        GSXeT7oH1f+CUWLHqgVsIFVsAvoSLzu2gSVEBDYwS2zcdZMNxGEWmMYosXjyF7BZnAJ2Ei2r
+        PjGD2MICQRJNG56DdbMIqEhc23UarIZXwFLi4cFrULagxMmZT1hAbGYBeYntb+cwQ9ykIPHz
+        6TJWEFtEwE3i9OlpTBA1IhKzO9vAnpAQOMMhsWHCe6D3OIAcF4n+G74QvcISr45vgfpNSuLz
+        u71sEHaxxNJZn5ggehsYJS5v+wWVMJaY9awdbA6zgKbE+l36ECOVJY7cgjqNT6Lj8F92iDCv
+        REebEESjusSB7dNZIGxZie45n1knMCrNQvLYLCSPzULywCyEXQsYWVYxiqUWFOempxYbFRjD
+        ozs5P3cTIzgVa7nvYJzx9oPeIUYmDsZDjBIczEoivM5LC5KEeFMSK6tSi/Lji0pzUosPMZoC
+        g3ois5Rocj4wG+SVxBuaWBqYmJkZmhuZGpgrifN6pWxIFBJITyxJzU5NLUgtgulj4uCUamBq
+        uqG6N6rlvMnSpTKrna1KKmdOnnNi4lztnZ9e6sjeO74iqu94w4EKCeG8//G9a5n2z71kcSVl
+        gtO6q7IlvGrnDe54/ZlvkSe+d+0PHfZTaxnzq+dLOPAEOF02XrpYQH1irmzAbyXFDx6v9jKr
+        6+pUNbxbvcJfPDL9g9PmkBzVVd3Bsn6rVqw70fht5ZE/zrIab2YJvHt+4/Gf4qXyQUuepp3X
+        Y1n+r/db/+Ea5eTHqTLByYc8rzz71NlXImMa/nWVV/1m3u171VJ/Pbzmx7TU9rsBv/1GXftn
+        fW+3lITKakxW33KnTLC+34HT8vMi9Tuncsw/dbbefC8i+uH9nQML6x4/XFRyxHm9weyQsyYS
+        SizFGYmGWsxFxYkAv2w1rk4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSnK7kn4Ikg2M9ShYP5m1js7j+5Tmr
+        xfwj51gt+l48ZLbY+3oru8XHnnusFjPO72OyuHjK1aJ17xF2i8Nv2lkt/l3byGLxvA8ovmrX
+        H0YHXo/3N1rZPXbOusvusWlVJ5vHnWt72Dz6tqxi9Pi8SS6ALYrLJiU1J7MstUjfLoErY97F
+        FWwFc7grWmZ0szcw9nB2MXJySAiYSByc9om9i5GLQ0hgN6PE+dtPGCESshLP3u1gh7CFJe63
+        HGGFKHrGKDH/9DlWkASbgL7Ey45tYAkRgS3MEscnfGUCcZgFZjBKHDi1lQ2i5RujxNOld5lA
+        WjgF7CRaVn1iBrGFBQIk+ua+YAOxWQRUJK7tOg22j1fAUuLhwWtQtqDEyZlPWEBsZgFtiac3
+        n0LZ8hLb385hhrhPQeLn02VgJ4kIuEmcPj2NCaJGRGJ2ZxvzBEbhWUhGzUIyahaSUbOQtCxg
+        ZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcmVqaOxi3r/qgd4iRiYPxEKMEB7OS
+        CK/z0oIkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpj0
+        4neVFr5ianXuWHXjmN0E/bO6W/ivnC4+oKeTuWuLUzbzbJez+2e3Z8benfzpkdtU1k+Cy9xT
+        cto/31bNNnm4W9qXW3VWmt/L1Tk6Gt87Tl+acmj/80nTz3HsUxP73T3hJ6NTHaeFkuGLkEVs
+        29cyev3Qf7fUfF52+vqfd05UvWXzc7i13lGrSPvRi9JF0tmXLwgnNP7rY03KPeRX3nFWmdPi
+        a9JTsfT+5F9LL0oEl782+92g8uvxxwKDnRpmjIuyns5O7I0/3v7gm5cY27XAPs9Y0dIjc94l
+        Hudiqs2Y/NvsSlnzfIfE9icSYhEy3seeuv6Wa6+4HVEZJLVX08Ayp3L19Nmzj1XUzncuXKHE
+        UpyRaKjFXFScCABCE7efOwMAAA==
+X-CMS-MailID: 20220503095537epcas2p48ac02b341952fd4d67488bd61449125b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043
+References: <20220502090230.12853-1-chanho61.park@samsung.com>
+        <CGME20220502090101epcas2p205ec302ec371c6bc4d6fd3e0aff38043@epcas2p2.samsung.com>
+        <20220502090230.12853-11-chanho61.park@samsung.com>
+        <08e9a67e-42dd-019d-ade8-1d8a53ead4f0@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/05/2022 13:36, Marty E. Plummer wrote:
-> On Sun, May 01, 2022 at 10:35:37AM +0200, Krzysztof Kozlowski wrote:
->> On 01/05/2022 07:10, Marty E. Plummer wrote:
->>> Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
->>> generates clock and reset signals used by other module blocks on SoC.
->>>
->>>
->> (...)
->>
->>> +		return;
->>> +
->>> +	hisi_clk_register_mux(hi3521a_sysctrl_mux_clks,
->>> +				ARRAY_SIZE(hi3521a_sysctrl_mux_clks),
->>> +				clk_data);
->>> +}
->>> +CLK_OF_DECLARE(hi3521a_sysctrl, "hisilicon,hi3521a-sysctrl", hi3521a_sysctrl_init);
->> Missing bindings.
->>
-> Assume you mean the Documentation/dt/binding/... file? Will do. I
-> probably should have prefixed it with RFC, as I'm mostly hoping to get
-> the attention of the hisi people to see what's the deal with the mtd
-> reads being borked.
+> On 02/05/2022 11:02, Chanho Park wrote:
+> > Add cmu_top, cmu_busmc, cmu_core, cmu_fsys and peric0/c1/s clock nodes.
+> >
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 72 ++++++++++++++++++++
+> >  1 file changed, 72 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > index 807d500d6022..6f181632267b 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+> > @@ -6,6 +6,7 @@
+> >   *
+> >   */
+> >
+> > +#include <dt-bindings/clock/exynosautov9.h>
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >  #include <dt-bindings/soc/samsung,exynos-usi.h>
+> >
+> > @@ -190,6 +191,77 @@ chipid@10000000 {
+> >  			reg = <0x10000000 0x24>;
+> >  		};
+> >
+> > +		cmu_busmc: clock-controller@1b200000 {
+> > +			compatible = "samsung,exynosautov9-cmu-busmc";
+> > +			reg = <0x1b200000 0x8000>;
+> > +			#clock-cells = <1>;
+> > +
+> > +			clocks = <&xtcxo>, <&cmu_top DOUT_CLKCMU_BUSMC_BUS>;
+> > +			clock-names = "oscclk", "dout_clkcmu_busmc_bus";
+> > +		};
+> > +
+> > +		cmu_core: clock-controller@1b030000 {
+> 
+> Let's order all these nodes by unit address.
 
-Then just don't Cc devicetree folks and put in cover letter disclaimer
-that this was intentionally omitted and will be later fixed.
+I assumed they should be lexicographically ordered by label.
+I'll reorder them by unit address.
 
-It is a waste of time of reviewers to look/filter/organize such email,
-if it is intentionally not for us.
+Best Regards,
+Chanho Park
 
-Best regards,
-Krzysztof
