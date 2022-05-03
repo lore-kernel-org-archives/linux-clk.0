@@ -2,82 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709EBC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 17:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DFAC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  3 May 2022 17:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240605AbiECRuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 May 2022 13:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40604 "EHLO
+        id S240656AbiECRvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 May 2022 13:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240597AbiECRup (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 13:50:45 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DEF2716A
-        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 10:47:12 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id s30so32336054ybi.8
-        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 10:47:12 -0700 (PDT)
+        with ESMTP id S240645AbiECRvi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 May 2022 13:51:38 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9289327B14
+        for <linux-clk@vger.kernel.org>; Tue,  3 May 2022 10:48:04 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id i38so32302308ybj.13
+        for <linux-clk@vger.kernel.org>; Tue, 03 May 2022 10:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wH9AqNVAXAx+G8p70VLB9NLbw+BOxltF83VPYgsU5tU=;
-        b=V6/QN94FhhxIxqe8YbyaOCHnphbTgJrBTkf0BsoQbw1QuH//ynFGSx01fnUpHsY+2f
-         AKNPpBEP4ZaHDvIoEYvZUEdYNRB52cLValVbK5drg2y7PycdnKY0paVsWa/QPw+pqUvx
-         y+CKExy99v2cxDrCvoO+IdjXElcDZkAEShcKYMjm6P8sQouiNjSJ/xnnJzSczk59X5vQ
-         QvMmpELOhMPiNv6PmcZbys1gtAzlMXRVHA6YX/PXBivLKMoR0w/49P33V5fR2OBkg+Sz
-         ACpuao1aCaguqwqD77zKnRE8J38NJSbtOTN0D6g5QhleEigk9WTLqcxvPvGwdG+cuxZB
-         CEHA==
+        bh=947aJh+pEr7uhg5BlGb1rh+bcGKYp8loqMrGOoU6w+4=;
+        b=pOThmmz3gT39SJAqdfBILVMTCusmdZvvKsw9+CzaPlDdFRIo2Ft4figC5DBltX3RrB
+         yPKSy8haYbn6qrNUA6/llov9aUz7WTayVoZIfgJePmVMqOjK+O3cW/GojkgJf6zydMeQ
+         0o9kzWF9HFgze8tfygDe9vcXWhTYS6VNJaTVEkhB6y4Cg6FnBDc45OZZ49vSXdLn2u32
+         rSm28eYdGBykW9luNRSiqDg2m1v/i8dF5/sXuuMqaz8fjzfpSxvdWs9AUGDteyOxZriE
+         3/mEoJlldELZj9fS79bosJyDogCKhFE7cmFvZehjRVgiISUlUZoSyMuKX+GCz61UxAdA
+         HW3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wH9AqNVAXAx+G8p70VLB9NLbw+BOxltF83VPYgsU5tU=;
-        b=SaQ+haigHlZwe0YeGzWuoLKHyBfrxbZ1i6nj/CLw31X4q+/emnte/ef0LEgd5oW0Ap
-         DCVjj9wVVfLn2wl48UCdhX5wHsxGsoEKQksIoOu3vpHQBhCEnBELBEnSykoOAaxcEWuI
-         lB+C18J9n45hT0VR3/hL4Vw11WBNkNgGUoAmJY/RH+OYLEZoF3ralpzgbHJmSyRKTDsM
-         jhLel/bSutgJ7B9RIRwi5IZJCcZTe/hoAfeeLobhdNQDa9ImJbqnua6at6492k3g7w/v
-         VXpbgZabBervyOSK4X8O3k0VQ3rpHGOzJkQL5IuzK5V+oMT0MJimhSMLo+ygzIB7xK4f
-         yr3Q==
-X-Gm-Message-State: AOAM530mxAtz8+fEozVWL5DGDK0ILrWcjP9evY5+Wdc6OX7ozHgWifV9
-        fnAbUtrTYh3pFKqPdJLWYwn2AW9AW5Xxf9UCds1fOg==
-X-Google-Smtp-Source: ABdhPJxyfn/UPn8JhbzCElu45EEVIRaxIOY63aN6mUJjop+zXdOGi1to9G+/0FjgUmEdeI2Q9N+4Q/+PJGB3nZtwMMM=
-X-Received: by 2002:a5b:dcc:0:b0:628:d6d9:d4bc with SMTP id
- t12-20020a5b0dcc000000b00628d6d9d4bcmr14393804ybr.178.1651600031693; Tue, 03
- May 2022 10:47:11 -0700 (PDT)
+        bh=947aJh+pEr7uhg5BlGb1rh+bcGKYp8loqMrGOoU6w+4=;
+        b=pbxlghoqcfzBGdxGIPIl0NStHLHQDfvGb3YBESDojlTvz3YSLN+Z9wmNJ1X2f/FsiM
+         v3ccJoSUubDtNDtN2USr/9RAIblOENE70LQI6EXE9rkc7bcVzXdDaEUtD4fwPvSsP1Hj
+         RoEN8kuV23IXfaicnMlfqFIisyEv4q8Du4rmu7QKhntrlmuOGAAENbtJar0ze7R5F/99
+         9SQMY6v535ppsFSjQxDAKF/ZOxpGwLfmoJA5DlS5z476sNyxh85QIjUXpWLySirdFZiH
+         g+9YnHSbquYWNw/JZesHrCQ06iEaCh0oUla3AeOnTygX8CJglWdSWx+/5bCfX6ikBF1m
+         WI4Q==
+X-Gm-Message-State: AOAM532W4yHDmxOj0nIJfrUovMvOwEcuOgwwEOF3ZLWAwnE51OaPwu0d
+        ZpsFJ5PNtLacMq3tNxNUVkeid1Z3S7FWYG4xYWXiuA==
+X-Google-Smtp-Source: ABdhPJzm0YF1sjSAAUj4xHDlO7MHxP4AMo9zj4md3lb8ZyaxQHD1hXlwpadeStLd+hwdUUADfHcnsqYtnekDKXX7NY4=
+X-Received: by 2002:a25:cfd7:0:b0:648:4e70:a98 with SMTP id
+ f206-20020a25cfd7000000b006484e700a98mr15208721ybg.368.1651600083819; Tue, 03
+ May 2022 10:48:03 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220503130448.520470-1-robert.foss@linaro.org>
- <20220503130448.520470-6-robert.foss@linaro.org> <YnFlnbPsf6oBf+A1@builder.lan>
-In-Reply-To: <YnFlnbPsf6oBf+A1@builder.lan>
+ <20220503130448.520470-7-robert.foss@linaro.org> <YnFlzOxrjrfBaaSs@builder.lan>
+In-Reply-To: <YnFlzOxrjrfBaaSs@builder.lan>
 From:   Robert Foss <robert.foss@linaro.org>
-Date:   Tue, 3 May 2022 19:47:00 +0200
-Message-ID: <CAG3jFyuuAxN7OXyN3q8=avvi-5xVBC2Toa2Y_42ssFgHnU3j8A@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] clk: qcom: add support for SM8350 DISPCC
+Date:   Tue, 3 May 2022 19:47:53 +0200
+Message-ID: <CAG3jFytoV=nAzp8YQmHO6ypEYFy02i1nxAxfodaDuFRzX0UnGA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         robh+dt@kernel.org, krzk+dt@kernel.org, jonathan@marek.ca,
         tdas@codeaurora.org, anischal@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 3 May 2022 at 19:25, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+On Tue, 3 May 2022 at 19:26, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
 >
 > On Tue 03 May 08:04 CDT 2022, Robert Foss wrote:
 >
 > > From: Jonathan Marek <jonathan@marek.ca>
 > >
-> > Add support to the SM8350 display clock controller by extending the SM8250
-> > display clock controller, which is almost identical but has some minor
-> > differences.
+> > Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
+> > bindings. Update the documentation with the new compatible.
 > >
 > > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
 > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >
-> You handled this patch, as such your S-o-b should be here as well.
->
+> This is missing your S-o-b as well.
 
 Ack
