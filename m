@@ -2,85 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D2EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 08:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CB8C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 09:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346480AbiEDIso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 04:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        id S1343570AbiEDJhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 05:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235435AbiEDIsn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 04:48:43 -0400
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF0C24BC8;
-        Wed,  4 May 2022 01:45:08 -0700 (PDT)
-Received: by mail-qk1-f180.google.com with SMTP id z126so491511qkb.2;
-        Wed, 04 May 2022 01:45:08 -0700 (PDT)
+        with ESMTP id S1347543AbiEDJgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 05:36:18 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5CA28E09;
+        Wed,  4 May 2022 02:32:28 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id u3so1192578wrg.3;
+        Wed, 04 May 2022 02:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ir8xeuoOsELR7ko5SSdLbLzKuTeoHKooBZefHDAwbhA=;
+        b=U7He6XDuTd1t4ZDuX3r7oNHwW7xOcfaIXQitq+A6+GvtuagSEAb+ZYbs4xxKFSzxhj
+         WA/M4m1po5Cpz8PYHzF5HM9Y5CCplHsZ7qyJnflTreUFGvIGVtrYJ8U92fcfajsWusga
+         xLrqBcz9nr82fRiGZJsMJa96FBfamap++pdpR1J4UEBQT2ywRQLq1vrdT0syl3svAkl4
+         nc+kkdvABDn0tCxEYheygu7TBrJWhbF6Ccxi/LG2T4KvaBHvb5UxBFjG/Cbqn89bF2aH
+         lcDXp4bJnbRsISG0PI8ecdoXw0xYUhqWGnWWD+WvfTvBh/SCuu0LuJZfXpIt0R3EgiFg
+         9/7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jDlaK/9dQIE6XlOv9lehKN4d8WP1wuQ+mUnBUFUoFlQ=;
-        b=BcYUO7GIM379gK/m/LKn+XqeOcGlFRy8NcVkose+gQDz7StfgCaRoJI3K5XGvaAGrD
-         LSm4xgnGfDyze72e7t3Vy5FL0WzxfWETCym8AiWRGagQqM768Jrb1CI2/6/Rm+EiGzhe
-         gHXadQE6yRxvs5BI1JM9HlAI8zE6BdJdMDaKHBCVakvzuUBKcExvPcHpgeoz8km6BW3y
-         VoETHdtpfwNhxE+/C7t5jDHHklkv/J+vXECrmldAlb7Bjn87YzEXzu0opzlof8e7gYxT
-         kMTzpnBLuY18mrDJkbV1R+I0RyodY5VhijzPYMbMSZMLFP9uiqIq8fd68v6Ibf76EGn0
-         kL1A==
-X-Gm-Message-State: AOAM532RlLSfKsh2Ws9HbaYzAx33SQWJJ8DJnpg7giCpIvtDOIFK6Was
-        30n4ChR+P1OsJsUDJhoWSagYMeex0w8uYA==
-X-Google-Smtp-Source: ABdhPJw3oRIgKxdDVt35xIUhs/weNRkRnbu7GWvsCS8HtBRnYnqp4KiEEdKQ4MoNYSUrQXJke0/lMA==
-X-Received: by 2002:a05:620a:240c:b0:6a0:e65:952e with SMTP id d12-20020a05620a240c00b006a00e65952emr3070512qkn.412.1651653906986;
-        Wed, 04 May 2022 01:45:06 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id m190-20020a3758c7000000b0069fe7f77e4bsm4490843qkb.33.2022.05.04.01.45.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 01:45:06 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-2f7c57ee6feso8002657b3.2;
-        Wed, 04 May 2022 01:45:06 -0700 (PDT)
-X-Received: by 2002:a81:9b0c:0:b0:2f4:c522:7d3c with SMTP id
- s12-20020a819b0c000000b002f4c5227d3cmr18450011ywg.316.1651653905847; Wed, 04
- May 2022 01:45:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ir8xeuoOsELR7ko5SSdLbLzKuTeoHKooBZefHDAwbhA=;
+        b=eAUd/j/6xvZ1VkVIR3QOXmHZmDqJTmiC3BC3DOnZooyOzdKHyd5dLoyUbSXT77gtav
+         SJi0bkitjnL4QK2/euapi0APxtDTySayzz146+KrV5s0rzlXYqVNesM64LxFu+1KNjxj
+         6rvvU1VbLV3ilrmpI8DkDYao06Sh5e1QKT2y12SDjEPFee+SiM/gRDesBQCRhrVz0hIG
+         CdA2I/dOIoKao+J71NwBoIl8oaXUgPZmISpoj6immXyJ0Gej9P55+XRkPC2JVe06JKKT
+         RcwQ9+rfW2AV9XiZtUUa+V9duuNJNy7YpRfyLpxSSLM3JhoB9bOjSUG/bvvpXfv95QgY
+         d/9Q==
+X-Gm-Message-State: AOAM53207XZL6Opg7hhW9Mc6U0y2uitEELZE0TlbPgla0l+KPqGQtzGv
+        WwZlfc8LgY2SK23E/N5WhKs=
+X-Google-Smtp-Source: ABdhPJwqAG4vUa+RbWq6QRvPPx/0deI8VbZLfOYg/HIWb5kbgTfDIOqAASSuqB3sjE6ReNDTF39RzQ==
+X-Received: by 2002:a5d:64ad:0:b0:20c:565d:ca19 with SMTP id m13-20020a5d64ad000000b0020c565dca19mr14226773wrp.634.1651656746487;
+        Wed, 04 May 2022 02:32:26 -0700 (PDT)
+Received: from orome ([62.96.65.119])
+        by smtp.gmail.com with ESMTPSA id bi14-20020a05600c3d8e00b003942a244ec9sm28722wmb.14.2022.05.04.02.32.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 02:32:25 -0700 (PDT)
+Date:   Wed, 4 May 2022 11:32:22 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Timo Alho <talho@nvidia.com>
+Subject: Re: [PATCH 1/2] clk: tegra: register clocks from root to leaf
+Message-ID: <YnJIJpHXmyRDYj5q@orome>
+References: <20220406151701.262056-1-jonathanh@nvidia.com>
 MIME-Version: 1.0
-References: <20220503115557.53370-1-phil.edworthy@renesas.com> <20220503115557.53370-11-phil.edworthy@renesas.com>
-In-Reply-To: <20220503115557.53370-11-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 May 2022 10:44:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXO7+7Kt72_0ZzNPKXijok0L87=5OZ7HiTf1Ea7Jtu77A@mail.gmail.com>
-Message-ID: <CAMuHMdXO7+7Kt72_0ZzNPKXijok0L87=5OZ7HiTf1Ea7Jtu77A@mail.gmail.com>
-Subject: Re: [PATCH v3 10/12] clk: renesas: Add RZ/V2M support using the rzg2l driver
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sWjaDvbx0ZWRXID7"
+Content-Disposition: inline
+In-Reply-To: <20220406151701.262056-1-jonathanh@nvidia.com>
+User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 3, 2022 at 2:02 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> The Renesas RZ/V2M SoC is very similar to RZ/G2L, though it doesn't have
-> any CLK_MON registers.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+
+--sWjaDvbx0ZWRXID7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Apr 06, 2022 at 04:17:00PM +0100, Jon Hunter wrote:
+> From: Timo Alho <talho@nvidia.com>
+>=20
+> Current clock initialization causes intermediate registering of orphan
+> clocks (i.e. a clock without a parent registered). CCF keeps track of
+> orphan clocks and any time a new clock is registered, it will loop
+> through the list of orphan and queries if the parent is now
+> available. This operation triggers a clk operation(s), which is an IPC
+> with BPMP-FW. Hence, due to the order of which the clock appear
+> currently, this causes >5000 IPC messages to be sent to BPMP-FW during
+> clock initialization.
+>=20
+> Optimize the clock probing by registering clocks hierarchically from
+> root clock towards leafs.
+>=20
+> Signed-off-by: Timo Alho <talho@nvidia.com>
+> [ Checkpatch warnings fixed by Jon Hunter <jonathanh@nvidia.com> ]
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
-> v3:
->  - Replace DEF_MUX2 with DEF_MUX
->  - Add URT_PCLK, it depends on CLK_SEL_E
+>  drivers/clk/tegra/clk-bpmp.c | 72 ++++++++++++++++++++++++++++--------
+>  1 file changed, 56 insertions(+), 16 deletions(-)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.19.
+Both patches applied, with slight tweaks to the commit message.
 
-Gr{oetje,eeting}s,
+Thanks,
+Thierry
 
-                        Geert
+--sWjaDvbx0ZWRXID7
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJySCYACgkQ3SOs138+
+s6Ea8w/+PcY98t2cYMTz+5+0LAS4u946QKFrWrUmRJc+Y8REmmnLlwxgKb5JRaBI
+XZQwOIf005oqymLp9+kIwmdFUve/cxU7y04fj5rYFS7O6O70siZ7wTwsosEsz7gR
+k2pTWfJFqff4odpjaPiFWspQtQ6BCuioY8v00W1NFHNnaHdIJi7Ts8ddma+PuaMW
+0Go/AlgDtAzIuOuyhPoQnhF1+6E+x9jeEiChblobQfSe55XcxNp3p/9OyDJPl/Fj
+fgrvb2FpHe1NhylMD9SA5bD2UbzaCeIP3vrgnI8vvMNVQrwyRblQXT01b2DmCP0v
+Ub6nIoeebBV2f+yTDwsaDk5iIPQ6pdNPh/XgQunW/Ksi1ooq9RLkfIG9r4+d420q
+8+eZbH6tCek13zVN0sdhbYVnK9aLdwMVV1pK5UvU14znpTPa9NCM3BfRxWBZB0GU
+IdYQdGthTsO75APXvmSifZTXi5dgcNNnn26AbBJRdsQhtbAKRiY1d8dT1Mowmp2B
+07DuiYEVCiHZ3Co4lEQGWdhp2I66G/bDVnzmdrHWm556M+Gm+FwjGgDgQ1FVQcpm
+OrEbYDZogMpppHRbQ90F1irEikGJ3BvjUUWAC2Px0mh3i2fbqQx8IO8eQRrUUkPx
+efRy1BXEGOh3hc+kg1bp0ppfOs6YZIlqzr33ObSUctKUU8TpWi0=
+=Y+Ky
+-----END PGP SIGNATURE-----
+
+--sWjaDvbx0ZWRXID7--
