@@ -2,90 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C72C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 20:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163AEC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 20:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378099AbiEDUhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 16:37:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
+        id S1357141AbiEDUtS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 16:49:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378100AbiEDUhj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 16:37:39 -0400
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3F150056;
-        Wed,  4 May 2022 13:34:02 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-edf3b6b0f2so1997243fac.9;
-        Wed, 04 May 2022 13:34:02 -0700 (PDT)
+        with ESMTP id S1378392AbiEDUtM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 16:49:12 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F94749686;
+        Wed,  4 May 2022 13:45:35 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id p3so190131qvi.7;
+        Wed, 04 May 2022 13:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ek3zlaw/6IaI125lea4IBa7APabeF2bKg/BU8vuMPPc=;
+        b=VZBY3N6v9fJ/HjnjRRCE9q9dOqXvwKTx8kesBgYAMknB93gRcC0zL91xoWNZgXXNxV
+         VMMy1dU7uJPS7D4COtMHVA/I38WH5APC4yQC+9LrtEUoi+WeszHQbhnAF+JiIb7nLkBX
+         czVVN+7BgYEfefvom1gsuw44SxZTVmF2qrWwWbL5ZeJpHu4kOCI1cRTJKgO2VtGvoxpp
+         zbds7Ipg3ODS97KMFqIhnjg5Yd3s9QH/yoWf7uue/QcKYYf58m0Uj1gZoD/pGeLfUU/l
+         HG+AdQSiKGChfvCjtowv6jd0hdPXHMsWY5ZLDZ6MyGU183KL+xflthX3Kjnl1XGMFrKi
+         YLsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=PE0/mr3CK6LI2EW3G3CcGXz8d3sJvD5z1eOffL3SZjk=;
-        b=1SP7q/suYRiCPJ3lc0mmXbgPUaHyuKYGEwfYMMAao+6wa4RIEgJiiPmEzNDfJK1tfd
-         Mg4JFdGtKhChF7DThRmVySvv5Bs+qNEghF/zoPcYdQWWshqOsfurFVCIzcXaOWZTZb7Y
-         BYSzQKGYR+TFlsrV4gpPvVEHXugZKrO8fwb/4asmc57JFtXJXNf/sez5hsO6vyh/ytBB
-         AvBf2rHn7YKs3awUTn3pZ9WhFSvhwsl2xCx9EQPPMTsmyLAGtKwGxPcTjirBEasLyhmY
-         W4YYiDug+wAmaqKgRH7QdZXMsr7+s5lHZza/mD+YCc5Hl/Fx7Wiqq8+oVPGt0iJQFHzo
-         iN6A==
-X-Gm-Message-State: AOAM533depqa0A+FlyrJX2wobkkzN8x1sIH4UuBVi7YmIxOy2NhQlWQo
-        HXebyefROCOQuVTiuhHPVKq4o7VvXg==
-X-Google-Smtp-Source: ABdhPJzaPpzsZu9OKNhkox9cq3OHRCZ9ylrNs5rWf3k1HTRCFemLek1wCkKpOsQ6zTmeEYZ9rFdaHA==
-X-Received: by 2002:a05:6870:8896:b0:ed:a31a:fbf7 with SMTP id m22-20020a056870889600b000eda31afbf7mr656809oam.273.1651696441692;
-        Wed, 04 May 2022 13:34:01 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f11-20020a4ae60b000000b0035eb4e5a6bdsm6217952oot.19.2022.05.04.13.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 13:34:01 -0700 (PDT)
-Received: (nullmailer pid 2180122 invoked by uid 1000);
-        Wed, 04 May 2022 20:34:00 -0000
-Date:   Wed, 4 May 2022 15:34:00 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        openbmc@lists.ozlabs.org, Benjamin Fair <benjaminfair@google.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Nancy Yuen <yuenn@google.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/7] dt-bindings: timer: nuvoton,npcm7xx-timer: Allow
- specifying all clocks
-Message-ID: <YnLjOH+2WMHFV86j@robh.at.kernel.org>
-References: <20220429172030.398011-1-j.neuschaefer@gmx.net>
- <20220429172030.398011-2-j.neuschaefer@gmx.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ek3zlaw/6IaI125lea4IBa7APabeF2bKg/BU8vuMPPc=;
+        b=R4xyigeKWlk2rXKWMJOSDkeAT7YpN5HRWit7eECXIho9JMMZ5UhKa72aZ93CU4Eo7H
+         BjG6/hb2FJeg63CxL+WsxVe/CLHRuYFa6579LXhoGiJMF+dFkfpbPID735s6T6t3R+ZU
+         1B5K+FmRK3Pk+XCZBswic0ZawXq/wQcSoVSz8GzYaL64NHt01f8wkGCg2jKJ+USroK/1
+         Qh4xaEUHZvMS7UrTYww0AKvHRlLxAqQ3a3WfWM2UhBB+4FTv0fgPHjdgMEtPz1yiJAZf
+         d3lvQeuakQ5HzfGUJAf4JGnBApWoM+E8YVaas2QC9NYexuhNJepjjxCgMHsr0B1tsLAv
+         4Yjg==
+X-Gm-Message-State: AOAM530GqrDXTK9NJofCwxj9nMFQjqP6TTHNCINunyklEaQbk+6BbCvN
+        q+GueqLcIjwQhKFXRWyG/MXW+i5VcGBxzz+6cLY=
+X-Google-Smtp-Source: ABdhPJys+oy8Pd0fOi6s08rhaeH/hcRRwbVUSpYYF7kmMN8MF/TTz4oMZrU5eerbqAayeouw5ul2UeJLD7GTpw1YA4E=
+X-Received: by 2002:ad4:4f48:0:b0:458:12bb:1321 with SMTP id
+ eu8-20020ad44f48000000b0045812bb1321mr19435280qvb.50.1651697134000; Wed, 04
+ May 2022 13:45:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220429172030.398011-2-j.neuschaefer@gmx.net>
+References: <20220503195605.4015616-1-robimarko@gmail.com> <20220503195605.4015616-2-robimarko@gmail.com>
+ <YnLdTIKx80wszbj7@robh.at.kernel.org>
+In-Reply-To: <YnLdTIKx80wszbj7@robh.at.kernel.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Wed, 4 May 2022 22:45:22 +0200
+Message-ID: <CAOX2RU5RMra4zj-jWZFH_fev-EavsnLnjob0z4FsaYnn8cs5gg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add support for IPQ8074 APSS
+ clock controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Apr 2022 19:20:24 +0200, Jonathan Neuschäfer wrote:
-> The timer module contains multiple timers. In the WPCM450 SoC, each timer
-> runs off a clock can be gated individually. To model this correctly, the
-> timer node in the devicetree needs to take multiple clock inputs.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> v2:
-> - no changes
-> ---
->  .../devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml  | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
+On Wed, 4 May 2022 at 22:08, Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, May 03, 2022 at 09:56:01PM +0200, Robert Marko wrote:
+> > Add dt-binding for the IPQ8074 APSS clock controller which provides
+> > clocks to the CPU cores.
+> >
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > ---
+> > Changes in v2:
+> > * Correct subject
+> > ---
+> >  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
+> >
+> > diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > new file mode 100644
+> > index 000000000000..df07766b0146
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > @@ -0,0 +1,14 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+>
+> Dual license please.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Rob,
+Krzysztof asked about this in v1, I have derived this off IPQ6018
+binding which is marked GPL-2.0.
+So, I was not sure if it was appropriate to mark it as GPL/BSD dual license.
+If you say that its not an issue to dual-license, I will gladly do it.
+
+Regards,
+Robert
+>
+> > +/*
+> > + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
+> > +#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
+> > +
+> > +#define APSS_PLL_EARLY                               0
+> > +#define APSS_PLL                             1
+> > +#define APCS_ALIAS0_CLK_SRC                  2
+> > +#define APCS_ALIAS0_CORE_CLK                 3
+> > +
+> > +#endif
+> > --
+> > 2.35.1
+> >
+> >
