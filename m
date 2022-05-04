@@ -2,84 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFE5C43217
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E7BC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357581AbiEDSGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 14:06:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48576 "EHLO
+        id S1376560AbiEDSNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 14:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237334AbiEDSGG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:06:06 -0400
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F28E4FC73
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 10:21:20 -0700 (PDT)
-Received: by mail-ot1-x333.google.com with SMTP id h10-20020a056830400a00b00605e92cc450so1304792ots.11
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 10:21:20 -0700 (PDT)
+        with ESMTP id S1376851AbiEDSNY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:13:24 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D86875B3E3;
+        Wed,  4 May 2022 10:32:33 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id j70so1708603pge.1;
+        Wed, 04 May 2022 10:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WCQd0BEkr2350zVHaq5lFX9i48jak99a6vqhtPevMLA=;
-        b=fEKIAgKrPc3/Mqs8Fm9yoZwBQC9zu/F7t2r6+oEyIkgkGwg0jOe5SfeIj3DMsa1Up7
-         AoG/M4xa9coTvnuHJYFlvQ5IAK0RtIqEa23aODajOCTQpz33cjKnwL1n/xLPwXbfd2Tc
-         FH7r/sG/zdt1tSZz6uEZFGDQQnewvhfkeTNXe89i7/Sng2ym25yxlMiLVi7hgWB7g88i
-         6SrQZpvy8JBBd5a3hAVgTOSMmSY4EhPSXgLuXcBaNCFWHRe3qefcLhTCSwGFZxpBT3i6
-         M//ch3+ztRLkltCQQS6j2gkEWWRBj4UrdPi7nSEEmvSingrvRtl1GJ0cVF2XmljbkbTA
-         OGRw==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=khvC0zRUn2wcPSPLy3O9uWd+bcV26djjWwaFNXMuw78=;
+        b=dTQxGlWJ3zHXjED6G5XuNyzMfCgMGQg1JW3Tf/OGgYwDOnJb6KTjERUTxgVfvpbeL/
+         VdLoHyx+uWaJxt+fDp0aN5Ucs4UqL2KG8fOJGdFSMjMZZoCmuM+F5ui0tGrKNOQpQ5zy
+         1iNN7sm5ATe601apZ0exS+MMCyoAw079bdehLD7imAH8cAgdktV1VMD8qoEGFKBwweGS
+         3eSHzo0c2VSCq0cJAhiyL7zg6QUo88cEVZ0zsKRLk126OuuYNROjvUL4TKmbqe01/c3I
+         H6f6tLAAnr6YkCcs+a9yaHiK+aJJO6DW4lpn6BBAMempOP9J9Ie2fMyVSQyRbuEOc7bJ
+         EHpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WCQd0BEkr2350zVHaq5lFX9i48jak99a6vqhtPevMLA=;
-        b=0RA1yOYlkiuL/Gw5o+eMWeqjxngldCqRvpiMSx1agFBiNb38scUo92SLtWZTlCHdQs
-         VlJHcW3LEVHSzE1Ip8ALYdFXhBW7jQiCCq7A6fVYKMT2stmOfPgQaU/5PHNWPKgQkMbA
-         zuCPvAoX+Q3uTZOLRXVpQ2hZdgNBdGYQ4E2XgwyhOS7lugnBQkqbQiSzocqGrRFHxi9E
-         ywGOMUN9w+AEQGd6WIm0e5VDze2sC+VkDgNA2a/anxMIq+axyi5VujeyLMt0EpuJhek+
-         WRjeJr0WkVrkV2FYsTGrasSpovY2kIWE834dTTtq5kyYfXFM1MhSHlAzvttDolM5+f+k
-         q3JA==
-X-Gm-Message-State: AOAM532fm+UH1AQCQHiEhstXhZxiLyyWHda3+a7f1Oxyfoy2S4RRW+qB
-        D47XQnvYLxcYLI657B+EJt0ApA==
-X-Google-Smtp-Source: ABdhPJzYJ0FPCVUpXpj95XbIPDCcfuiWkIiq8GSf0HrRowwPJd5pm70bchb1f7meCo0CrJS5bAyQ0w==
-X-Received: by 2002:a9d:6956:0:b0:605:fcae:3240 with SMTP id p22-20020a9d6956000000b00605fcae3240mr7564614oto.280.1651684879703;
-        Wed, 04 May 2022 10:21:19 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a7-20020a056870b14700b000ead8b89484sm5785452oal.5.2022.05.04.10.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 10:21:19 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Adam Skladowski <a39.skl@gmail.com>, phone-devel@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH] clk: qcom: smd: Update MSM8976 RPM clocks.
-Date:   Wed,  4 May 2022 12:21:05 -0500
-Message-Id: <165168485226.3730817.8622970582930057500.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220426090226.27293-1-a39.skl@gmail.com>
-References: <20220426090226.27293-1-a39.skl@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=khvC0zRUn2wcPSPLy3O9uWd+bcV26djjWwaFNXMuw78=;
+        b=lCT+Dr1aO6YaxFnRdxxrquGma57WrY/DtYjQxqstan0g8l13W3eyMUA4X6B8Jf1duJ
+         fPbXZlggGigfold4TkOdBCCXAIVqp1rzqEWc0nZsu3gHFLYgV/CsyNFGfPYJzfS4U7od
+         9JhiQbVxeehVn5bfpdv66bwvAQq/lYF4aosvIuHQ1peEuoRuN+hxKAmVL9hjXntPS6R6
+         YxWNdIfGcOTYwXWYrhlemNUWAIciSTR0zVcTV7RCRT+IV8TVwfn242iMzU3BseEzGZoe
+         kQ+iLuB6Y+N/zLaucOBEdUKEfjxtDQHSCIkc3Ql/yiwq7tvAVjOevFsR23fJRImM/VpV
+         aaKQ==
+X-Gm-Message-State: AOAM53230gA9q8f71OYZeMHnkAMQId01CL7p1EO7wn55Dn8l8fhFxBGW
+        X/ikyRmmRTFVKHo235ptUAOidLSRZ5Q=
+X-Google-Smtp-Source: ABdhPJxjy/dBkwPO/uhVsZdW+AJmn8H0VJFt/Ax3M+mp3Alz5oeeiflyb/DxVmHqf5ZeSMcH9tGuhg==
+X-Received: by 2002:a05:6a00:1943:b0:4cb:79c9:fa48 with SMTP id s3-20020a056a00194300b004cb79c9fa48mr22047983pfk.47.1651685552933;
+        Wed, 04 May 2022 10:32:32 -0700 (PDT)
+Received: from [172.30.1.41] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id b13-20020aa7810d000000b0050dc76281a5sm8454158pfi.127.2022.05.04.10.32.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 10:32:32 -0700 (PDT)
+Message-ID: <b7dc2b85-ed13-e3fa-738e-ff1a757c141a@gmail.com>
+Date:   Thu, 5 May 2022 02:32:27 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 03/12] clk: samsung: add top clock support for Exynos
+ Auto v9 SoC
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220504075154.58819-1-chanho61.park@samsung.com>
+ <CGME20220504075003epcas2p1247f3e4d42e48f9459f80ad7d3e357ca@epcas2p1.samsung.com>
+ <20220504075154.58819-4-chanho61.park@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20220504075154.58819-4-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Apr 2022 11:02:17 +0200, Adam Skladowski wrote:
-> MSM8976 does not have rpm clock named mmssnoc,
-> instead it's called sysmmnoc, drop define and reuse.
-> While we are at it add XO clock to list.
+On 22. 5. 4. 16:51, Chanho Park wrote:
+> This adds support for CMU_TOP which generates clocks for all the
+> function blocks such as CORE, FSYS0/1/2, PERIC0/1 and so on. For
+> CMU_TOP, PLL_SHARED0,1,2,3 and 4 will be the sources of this block
+> and they will generate bus clocks.
 > 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>   drivers/clk/samsung/Makefile           |   1 +
+>   drivers/clk/samsung/clk-exynosautov9.c | 958 +++++++++++++++++++++++++
+>   2 files changed, 959 insertions(+)
+>   create mode 100644 drivers/clk/samsung/clk-exynosautov9.c
 > 
 
-Applied, thanks!
+(snip)
 
-[1/1] clk: qcom: smd: Update MSM8976 RPM clocks.
-      commit: 665ca429bc4131f9165f119ad3ed81c786bf3262
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Best regards,
+
 -- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
