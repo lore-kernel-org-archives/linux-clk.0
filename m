@@ -2,100 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDDEC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB7AC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345314AbiEDSQa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 14:16:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34750 "EHLO
+        id S1355109AbiEDSrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 14:47:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354674AbiEDSQR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:16:17 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2026FBF4D;
-        Wed,  4 May 2022 10:35:21 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id i62so1705286pgd.6;
-        Wed, 04 May 2022 10:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=MNJT9YzuHEAZEheWVsgmUZA8nQvMITugjqtFZYM9yzI=;
-        b=qcvs0NN+UVLDdqTT/NYRME6WjfWaBW9uy3X41u9k0CfY18BT3f5gCWMNZE4/q4a85Z
-         sKi3aujMmD7fDjjzcsmNqQkcfVEGlJWNRnnplaI6dRB5RvFnZ6J7JoLzizRSPp5CTYec
-         XPDynShDMimsPffdW5eCCobD4HRmGqnQBN9yF1JJgBehshm0NOt+H7JqsrUcKCQGnXgJ
-         P4077BcV0nsL+gDac5n0DRVw7GbFd1uQWaAqe59BUOxtYvt7HFWhyhJ1XLSvRpUxdzs0
-         Uh8+0uytNj71iSqMzLuRpJE8DHD239+uAMRIKhZ0glEQY+BRRPcQtOs78SSYTALpv8c6
-         gsIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=MNJT9YzuHEAZEheWVsgmUZA8nQvMITugjqtFZYM9yzI=;
-        b=8BVFhmnoslpqBO5xrCvkZga6pdOf+OalP7O2xZ6WkNtc0eyy/FbNY62k5yqKY2JDC4
-         KYHOAKjIsHkUrbpq3Ta2d9hDW0kIINL27DEDNpfbOtw5LfBfEhkaCXNKFaH3AIMrDC/n
-         FKstlv68dz46Jf5jU3yjUlWcDomdSONFQcb68ID616xF6OMfwukyS3cDXtM4dcGQybmv
-         2yFynPAif2tltshuBH7jBMuG+1+SADn3picXCp1G/iQeaxYpkbWAmnjgn3a0vNemVLxP
-         97XPv/VJq1whjB4jnWnHlHfrKOI542yGtCBeox0p7IkUznPBZJoA7G4lEMgsqjA4d7Zz
-         vldg==
-X-Gm-Message-State: AOAM530MR5o1T5bilPrnh+a6CTB0c04iX/wgTcROrQPod099YnVpHkPZ
-        OF/xiL2+ujN4VRjc7HwiZM5a75+UiWs=
-X-Google-Smtp-Source: ABdhPJwcUisFPL9uPWplV1T40GpRsHfI54F/UB7Jj6vFaHRLvxruWDuWodqfjBrwJ+3g+vkgrpzIvg==
-X-Received: by 2002:a62:7ccc:0:b0:510:4e07:79f3 with SMTP id x195-20020a627ccc000000b005104e0779f3mr2050271pfc.10.1651685721045;
-        Wed, 04 May 2022 10:35:21 -0700 (PDT)
-Received: from [172.30.1.41] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id n9-20020a170903110900b0015e8d4eb1c1sm8616219plh.11.2022.05.04.10.35.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 10:35:20 -0700 (PDT)
-Message-ID: <df273a5d-793d-0069-2df6-77b05050b2d2@gmail.com>
-Date:   Thu, 5 May 2022 02:35:15 +0900
+        with ESMTP id S1377116AbiEDSrw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:47:52 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 480CD659F;
+        Wed,  4 May 2022 11:44:12 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,198,1647270000"; 
+   d="scan'208";a="119950008"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 05 May 2022 03:44:11 +0900
+Received: from localhost.localdomain (unknown [10.226.92.27])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 148C9400F7B3;
+        Thu,  5 May 2022 03:44:08 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
+Date:   Wed,  4 May 2022 19:44:06 +0100
+Message-Id: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v3 02/12] dt-bindings: clock: add Exynos Auto v9 SoC CMU
- bindings
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-References: <20220504075154.58819-1-chanho61.park@samsung.com>
- <CGME20220504075003epcas2p17f37265b522bb0c26dbdd4ebeec92ab9@epcas2p1.samsung.com>
- <20220504075154.58819-3-chanho61.park@samsung.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <20220504075154.58819-3-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22. 5. 4. 16:51, Chanho Park wrote:
-> Add dt-schema for Exynos Auto v9 SoC clock controller.
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> ---
->   .../clock/samsung,exynosautov9-clock.yaml     | 219 ++++++++++++++++++
->   1 file changed, 219 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
-> 
+After adding reset support to vsp, it needs a delay of 32 microseconds
+after reset operation, otherwise system hangs(due to register read/write).
+This patch fixes the system hang issue by adding delay after deassert
+operation.
 
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+Hi All,
 
-(snip)
+After adding reset/deassert support for vsp based on [1],
+RZ/G1N board hangs. On debugging it found that it needs a delay
+of 35 microseconds after deasserint reset. Wthout delay if
+there is any register read/write will lead to hang.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+This 35 microseconds value is  picked from the reset().
 
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220428065333.3108-3-biju.das.jz@bp.renesas.com/
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 5d2c3edbaa14..025a75a3484c 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -637,6 +637,7 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+ 
+ 	writel(bitmask, priv->base + priv->reset_regs[reg]);
++
+ 	return 0;
+ }
+ 
+@@ -651,6 +652,10 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
+ 	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+ 
+ 	writel(bitmask, priv->base + priv->reset_clear_regs[reg]);
++
++	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
++	udelay(35);
++
+ 	return 0;
+ }
+ 
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.25.1
+
