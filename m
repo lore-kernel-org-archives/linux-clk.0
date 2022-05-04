@@ -2,146 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E754EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 15:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E35C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 15:29:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351991AbiEDPQ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 11:16:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37830 "EHLO
+        id S1352508AbiEDPdN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 11:33:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350363AbiEDPQ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 11:16:27 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18E441F8F
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 08:12:50 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id e24so2454014wrc.9
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 08:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Q8t/4zs15J+WUhbyzSWnk3xMYZcOI1/gRBqoDJhXob4=;
-        b=wi7jEkVHGAPE3FymCXSvLN550cRUAYn+sygWU7mIu1v6VRG1s7mhDZ07dA1iYbxg13
-         R/Rytjl94JyOgat26pA99xa6NJJXkv9o8ASXXJYmqwBgsrHKO3jCpvBch3BMVUTuDO1s
-         q182c5/7F7N1xv3HFPXMc6ERzEdT2cGvJ23dvQsQVG5u2qZcYxQWdOxvuyGnd0wgv1rm
-         jOtd0psyDJ6F3bYSbcUzFT3fyQMQjq6hOacnH0TDmwlF3DbqtXcxLn4134sRyQ0CpcbQ
-         dw3aG43dPDYrPKEsWqb3ILdVMpegh45O6gw08q0NqQjG90e9fZ7T2uG62sX6t8YmbqSY
-         bw/A==
+        with ESMTP id S1352473AbiEDPdG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 11:33:06 -0400
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C82244A38;
+        Wed,  4 May 2022 08:29:30 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id c5-20020a9d75c5000000b00605ff3b9997so1142546otl.0;
+        Wed, 04 May 2022 08:29:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Q8t/4zs15J+WUhbyzSWnk3xMYZcOI1/gRBqoDJhXob4=;
-        b=Y2DZTxAJSSVETYlkFJZcJLWrQyvcAecX1FkOQmGYWoFVs2XYwvcKY4+lwUJYBwgo15
-         Eoq/KIv83p2DFsN3AUuRRWqVFL5XZmmsVlzIeyrHX+019yW90mTlW1jp7LvSY8tmB2nQ
-         lRZPAoEDMlJ6E8kEZP51fKNM6XBssBRvW+Ijd1S3QSzsgHWBLI0tSpwoWl2epYuX8w9r
-         jd3tBlYDcZiebAZBu3TdraztkaEFbVLQx/3W9smow3m+GYyEO1o6qNi9FloZVv0LVLC3
-         jrITWQPtC2vnVR4egzMKu/N62ONEEJifn1lc4FmX8+1I9JQBw+fZJscHcaDVGpL7r/66
-         WqcQ==
-X-Gm-Message-State: AOAM532xvo0e18x/8sjqzONmDrZ1XfUoARpAWpCtefczQA/ltgY/Hb+t
-        j7iejQEdHJNh9jehny4hwbuziw==
-X-Google-Smtp-Source: ABdhPJwfIvkgE9/1fAnUpjs8I+PHo/RnrTFjwqbemJe3+1Lvhwupfj7uVRIPK/HVf99hbq90HZ3bMA==
-X-Received: by 2002:a5d:598f:0:b0:20c:83c9:b05b with SMTP id n15-20020a5d598f000000b0020c83c9b05bmr2172834wri.343.1651677170300;
-        Wed, 04 May 2022 08:12:50 -0700 (PDT)
-Received: from [192.168.0.215] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id v1-20020a05600c15c100b003942a244ecfsm3898263wmf.20.2022.05.04.08.12.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 08:12:49 -0700 (PDT)
-Message-ID: <6b231701-0c76-e7a8-bcd3-8a9c5cdc7a0f@linaro.org>
-Date:   Wed, 4 May 2022 17:12:48 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5NQ3hOnaopgb1u4v6GSL1A1TZUSjB62fOKP/GjKT+74=;
+        b=DAm7MVpSfghPXqvUHjSJoQQfTOXgxwf+bVJASM7Jlh4ObPENY5GuCWxCi0Fcf1H6SL
+         vnKgLWQ3Rd3lQye9UKUkgyY4rvIrTh+Zjd216cmzTu251zksgyub/1BWuUvSyxZCCK2/
+         d+929IK/hEgAwKFaBLcfwAoDypFbNEsgBO5HqGZdSarmnv4t5pTfzAdYZp33wLSnC4H2
+         67Wv5pPylympuClPrLaxq6BmqHo9caqc6aO5b2jeY6iskDHRYYVYgdotkeoqql5plx6i
+         O0bQPnV1s8Ug7o1eaok8IEAKhSI9nRGa0fZ4YnKusBnQtY1Y3EXvV3x+5Pq4+qyx/lIF
+         Svgw==
+X-Gm-Message-State: AOAM530l8KEeBEjGziHCT53LjEwHZpnOe1WNYk7cSqB4IUtISQFd7K8a
+        hFaNAZHCSeKmKZ72+6qrTskKpJjdkA==
+X-Google-Smtp-Source: ABdhPJwwPQTqIDALHv8/q9v5utopx/7unnTSMQlFLOQ11ycLjqa2kC8fkIoKQpZgOm7ijGGfQC+RQw==
+X-Received: by 2002:a9d:634e:0:b0:605:f40a:258f with SMTP id y14-20020a9d634e000000b00605f40a258fmr7472854otk.375.1651678169476;
+        Wed, 04 May 2022 08:29:29 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p6-20020aca4206000000b00325cda1ffbbsm4339035oia.58.2022.05.04.08.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 08:29:28 -0700 (PDT)
+Received: (nullmailer pid 1744191 invoked by uid 1000);
+        Wed, 04 May 2022 15:29:25 -0000
+Date:   Wed, 4 May 2022 10:29:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc:     Sam Shih <sam.shih@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        linux-clk@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Subject: Re: [PATCH 03/13] dt-bindings: arm: mediatek: Add MT6735 clock
+ controller compatibles
+Message-ID: <YnKb1aDgiUKprKSS@robh.at.kernel.org>
+References: <20220504122601.335495-1-y.oudjana@protonmail.com>
+ <20220504122601.335495-4-y.oudjana@protonmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH V4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-Content-Language: en-US
-To:     Cixi Geng <gengcixi@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
-        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220427100848.3525710-1-gengcixi@gmail.com>
- <20220427100848.3525710-3-gengcixi@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220427100848.3525710-3-gengcixi@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220504122601.335495-4-y.oudjana@protonmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/04/2022 12:08, Cixi Geng wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+On Wed, 04 May 2022 16:25:52 +0400, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> Add bindings for Unisoc system global register which provide register map
-> for clocks.
+> Add compatible strings for MT6735 apmixedsys, topckgen, infracfg
+> and pericfg.
 > 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 > ---
->  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+>  .../bindings/arm/mediatek/mediatek,infracfg.yaml          | 8 +++++---
+>  .../bindings/arm/mediatek/mediatek,pericfg.yaml           | 1 +
+>  .../devicetree/bindings/clock/mediatek,apmixedsys.yaml    | 4 +++-
+>  .../devicetree/bindings/clock/mediatek,topckgen.yaml      | 4 +++-
+>  4 files changed, 12 insertions(+), 5 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> new file mode 100644
-> index 000000000000..3522f3d2d8de
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/sprd,ums512-glbreg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Unisoc System Global Register Device Tree Bindings
 
-Thanks for removing "Device Tree Bindings" from first patch, but such
-comment applies everywhere. Please clean up all your patches (also
-future) based on received comments, so we do not have to repeat the same.
-
-
-> +maintainers:
-> +  - Orson Zhai <orsonzhai@gmail.com>
-> +  - Baolin Wang <baolin.wang7@gmail.com>
-> +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> +
-> +description:
-> +  Unisoc system global registers provide register map
-> +  for clocks and some multimedia modules of the SoC.
-> +
-> +properties:
-> +  "#address-cells": true
-> +  "#size-cells": true
-> +
-> +  compatible:
-
-Put the compatible as first in the properties.
-
-> +    items:
-> +      - const: sprd,ums512-glbregs
-> +      - const: syscon
-> +      - const: simple-mfd
-> +
-> +  ranges:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^.*@[0-9a-f]+$":
-
-The name should be specific - "clock-controller" - so this can be in
-"properties".
-
-> +    # Child node
-
-Comment does not help.
-
-
-Best regards,
-Krzysztof
+Reviewed-by: Rob Herring <robh@kernel.org>
