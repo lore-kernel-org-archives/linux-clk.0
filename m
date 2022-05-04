@@ -2,122 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CB8C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 09:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412F1C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 09:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343570AbiEDJhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 05:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43158 "EHLO
+        id S242068AbiEDJqx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 05:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347543AbiEDJgS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 05:36:18 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5CA28E09;
-        Wed,  4 May 2022 02:32:28 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id u3so1192578wrg.3;
-        Wed, 04 May 2022 02:32:27 -0700 (PDT)
+        with ESMTP id S238227AbiEDJqw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 05:46:52 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083E127B0A;
+        Wed,  4 May 2022 02:43:18 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id v11so718937pff.6;
+        Wed, 04 May 2022 02:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ir8xeuoOsELR7ko5SSdLbLzKuTeoHKooBZefHDAwbhA=;
-        b=U7He6XDuTd1t4ZDuX3r7oNHwW7xOcfaIXQitq+A6+GvtuagSEAb+ZYbs4xxKFSzxhj
-         WA/M4m1po5Cpz8PYHzF5HM9Y5CCplHsZ7qyJnflTreUFGvIGVtrYJ8U92fcfajsWusga
-         xLrqBcz9nr82fRiGZJsMJa96FBfamap++pdpR1J4UEBQT2ywRQLq1vrdT0syl3svAkl4
-         nc+kkdvABDn0tCxEYheygu7TBrJWhbF6Ccxi/LG2T4KvaBHvb5UxBFjG/Cbqn89bF2aH
-         lcDXp4bJnbRsISG0PI8ecdoXw0xYUhqWGnWWD+WvfTvBh/SCuu0LuJZfXpIt0R3EgiFg
-         9/7Q==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=t0Vge1DrY6BF9/8b8O1Z41uF1+unK2gO+1o6Ghfw/bQ=;
+        b=KNRaZQU2OV0CbVT5EBeXGwZ2xoH6HF6hD0XqfMHFiI6CaIWpt0T7SePd8vESZ94Q24
+         3aRIB+bd48pYD+as2gtsIEXLhn0pafaJYDPz5lyipy74WmTI7Zml3QpbH5dQjzLSb7cB
+         Wbs50yzWqtv1ASRXX0vCTGSWYzjh08N5nDMUaLqE+4ktAzhzlVTmvFRNEDTGCs7Zti0g
+         SeG1kGKhq4vqalij+JCtYEXa/Mpvghf55M1ohhEA8pXYe5y576JcDAduY5fleoURK8yP
+         zWs2iRQo/I+IfN/2YIh0K/fv3FcOBRL263jTz/iS74MK4WS0FYH80QNG9QenUT/Wxqp9
+         3rJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ir8xeuoOsELR7ko5SSdLbLzKuTeoHKooBZefHDAwbhA=;
-        b=eAUd/j/6xvZ1VkVIR3QOXmHZmDqJTmiC3BC3DOnZooyOzdKHyd5dLoyUbSXT77gtav
-         SJi0bkitjnL4QK2/euapi0APxtDTySayzz146+KrV5s0rzlXYqVNesM64LxFu+1KNjxj
-         6rvvU1VbLV3ilrmpI8DkDYao06Sh5e1QKT2y12SDjEPFee+SiM/gRDesBQCRhrVz0hIG
-         CdA2I/dOIoKao+J71NwBoIl8oaXUgPZmISpoj6immXyJ0Gej9P55+XRkPC2JVe06JKKT
-         RcwQ9+rfW2AV9XiZtUUa+V9duuNJNy7YpRfyLpxSSLM3JhoB9bOjSUG/bvvpXfv95QgY
-         d/9Q==
-X-Gm-Message-State: AOAM53207XZL6Opg7hhW9Mc6U0y2uitEELZE0TlbPgla0l+KPqGQtzGv
-        WwZlfc8LgY2SK23E/N5WhKs=
-X-Google-Smtp-Source: ABdhPJwqAG4vUa+RbWq6QRvPPx/0deI8VbZLfOYg/HIWb5kbgTfDIOqAASSuqB3sjE6ReNDTF39RzQ==
-X-Received: by 2002:a5d:64ad:0:b0:20c:565d:ca19 with SMTP id m13-20020a5d64ad000000b0020c565dca19mr14226773wrp.634.1651656746487;
-        Wed, 04 May 2022 02:32:26 -0700 (PDT)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id bi14-20020a05600c3d8e00b003942a244ec9sm28722wmb.14.2022.05.04.02.32.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 02:32:25 -0700 (PDT)
-Date:   Wed, 4 May 2022 11:32:22 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Timo Alho <talho@nvidia.com>
-Subject: Re: [PATCH 1/2] clk: tegra: register clocks from root to leaf
-Message-ID: <YnJIJpHXmyRDYj5q@orome>
-References: <20220406151701.262056-1-jonathanh@nvidia.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=t0Vge1DrY6BF9/8b8O1Z41uF1+unK2gO+1o6Ghfw/bQ=;
+        b=zvEvro0LrvD9kH8QxbySTXswmcR/ZFRd6DIpx165dT6cmu75OcbIBls1SOTErH4X65
+         fC/xpD6W3aj5qZw0BOOm6YU4k+SsytUuJ7MnKglOsXbJDvxn0F6Xmh6gErqPsLb3FoSL
+         lr4z8PfxLJWer2ERLLFKbPlFE7mj+Pm9rpDCGszhMCUmd2x0BT6cEh1DohaafD6+jkoe
+         QIccCXFJo2RY/TeZe7NCAzw1wg4d4klXLG4gGLdcNKJ34xBHqTVp1d0vMBtSYbo6OZ2x
+         1WNHfsQIoT8LELngT5KPY66bLHeKL9raofSO+lzdlNrkYWlTsscQ4WYklOYBzP27vtDj
+         XyaQ==
+X-Gm-Message-State: AOAM531CsfRBCUYg8MTs9XCjtmAWls2b+cvH5K8D4r+rESJRsMLkxjdR
+        XSysBSRqZiaZeB7RFEpD3MM=
+X-Google-Smtp-Source: ABdhPJzOJkUqXet1D2SSx84hKWV9giEUkv3YpXuvdddpMNmqN7srzVYCzUFtggEeEZ34yt65brcOQA==
+X-Received: by 2002:a63:90c3:0:b0:3ab:24df:fa19 with SMTP id a186-20020a6390c3000000b003ab24dffa19mr16999279pge.608.1651657397488;
+        Wed, 04 May 2022 02:43:17 -0700 (PDT)
+Received: from [172.30.1.41] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id j2-20020a17090a734200b001d0ec9c93fesm2860994pjs.12.2022.05.04.02.43.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 02:43:17 -0700 (PDT)
+Message-ID: <9a84f78e-f54f-dd8e-a3b8-5a43001dd1df@gmail.com>
+Date:   Wed, 4 May 2022 18:43:12 +0900
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sWjaDvbx0ZWRXID7"
-Content-Disposition: inline
-In-Reply-To: <20220406151701.262056-1-jonathanh@nvidia.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 05/12] clk: samsung: exynosautov9: add cmu_peris clock
+ support
+Content-Language: en-US
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+References: <20220504075154.58819-1-chanho61.park@samsung.com>
+ <CGME20220504075004epcas2p218759eec1e29313c879eda085e37f0b7@epcas2p2.samsung.com>
+ <20220504075154.58819-6-chanho61.park@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+In-Reply-To: <20220504075154.58819-6-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Chanho Park,
 
---sWjaDvbx0ZWRXID7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Apr 06, 2022 at 04:17:00PM +0100, Jon Hunter wrote:
-> From: Timo Alho <talho@nvidia.com>
->=20
-> Current clock initialization causes intermediate registering of orphan
-> clocks (i.e. a clock without a parent registered). CCF keeps track of
-> orphan clocks and any time a new clock is registered, it will loop
-> through the list of orphan and queries if the parent is now
-> available. This operation triggers a clk operation(s), which is an IPC
-> with BPMP-FW. Hence, due to the order of which the clock appear
-> currently, this causes >5000 IPC messages to be sent to BPMP-FW during
-> clock initialization.
->=20
-> Optimize the clock probing by registering clocks hierarchically from
-> root clock towards leafs.
->=20
-> Signed-off-by: Timo Alho <talho@nvidia.com>
-> [ Checkpatch warnings fixed by Jon Hunter <jonathanh@nvidia.com> ]
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+On 22. 5. 4. 16:51, Chanho Park wrote:
+> CMU_PERIS is responsible to control clocks of BLK_PERIS which has
+> OPT/MCT/WDT and TMU. This patch only supports WDT gate clocks and all
+> other clocks except WDT will be supported later.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > ---
->  drivers/clk/tegra/clk-bpmp.c | 72 ++++++++++++++++++++++++++++--------
->  1 file changed, 56 insertions(+), 16 deletions(-)
+>   drivers/clk/samsung/clk-exynosautov9.c | 51 ++++++++++++++++++++++++++
+>   1 file changed, 51 insertions(+)
+> 
 
-Both patches applied, with slight tweaks to the commit message.
+(snip)
 
-Thanks,
-Thierry
+Look good to me for all patches. But, some v3 patches has
+not yet arrived into my mail box. So that I checked
+the patches on lore.kernel.org[1].
 
---sWjaDvbx0ZWRXID7
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] 
+https://lore.kernel.org/linux-clk/20220504075154.58819-1-chanho61.park@samsung.com/
 
------BEGIN PGP SIGNATURE-----
+Thanks for your work for latest Exynos SoC.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmJySCYACgkQ3SOs138+
-s6Ea8w/+PcY98t2cYMTz+5+0LAS4u946QKFrWrUmRJc+Y8REmmnLlwxgKb5JRaBI
-XZQwOIf005oqymLp9+kIwmdFUve/cxU7y04fj5rYFS7O6O70siZ7wTwsosEsz7gR
-k2pTWfJFqff4odpjaPiFWspQtQ6BCuioY8v00W1NFHNnaHdIJi7Ts8ddma+PuaMW
-0Go/AlgDtAzIuOuyhPoQnhF1+6E+x9jeEiChblobQfSe55XcxNp3p/9OyDJPl/Fj
-fgrvb2FpHe1NhylMD9SA5bD2UbzaCeIP3vrgnI8vvMNVQrwyRblQXT01b2DmCP0v
-Ub6nIoeebBV2f+yTDwsaDk5iIPQ6pdNPh/XgQunW/Ksi1ooq9RLkfIG9r4+d420q
-8+eZbH6tCek13zVN0sdhbYVnK9aLdwMVV1pK5UvU14znpTPa9NCM3BfRxWBZB0GU
-IdYQdGthTsO75APXvmSifZTXi5dgcNNnn26AbBJRdsQhtbAKRiY1d8dT1Mowmp2B
-07DuiYEVCiHZ3Co4lEQGWdhp2I66G/bDVnzmdrHWm556M+Gm+FwjGgDgQ1FVQcpm
-OrEbYDZogMpppHRbQ90F1irEikGJ3BvjUUWAC2Px0mh3i2fbqQx8IO8eQRrUUkPx
-efRy1BXEGOh3hc+kg1bp0ppfOs6YZIlqzr33ObSUctKUU8TpWi0=
-=Y+Ky
------END PGP SIGNATURE-----
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
---sWjaDvbx0ZWRXID7--
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
