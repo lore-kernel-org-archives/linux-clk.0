@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8060DC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 12:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12686C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 12:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347471AbiEDMbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 08:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
+        id S1349499AbiEDMbQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 08:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349445AbiEDMbK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 08:31:10 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B59626AE1
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 05:27:34 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g23so1487312edy.13
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 05:27:34 -0700 (PDT)
+        with ESMTP id S1349471AbiEDMbN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 08:31:13 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C352626AE1
+        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 05:27:36 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id kq17so2573220ejb.4
+        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 05:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fJgKFMAN9XJcQFXSIBW4zb7s2vD8f3jyjsxvG6sAqRM=;
-        b=aJZprpLOg4Q7URVW5jrhkvvYRKTRJ0WJvFHRSp0e/jKAhS6/clUxjaaM7+B1zgJR8x
-         S17FYIBh7thE163yPel2PMtUA8mQlaEeUMk3/rXEJRSNndkhzQnHafDQroXkbu9ZjJO7
-         VyNmJLUMG0HifB8uIJkPPWDcWbXlBtt6zLr3GOT6NFWlTByaHgmFGUjQM7dzoy0lRgsI
-         2cl+t29f3jA4eQBviaYAzfr5+rdZi8wNtxhK6C8Wl5FX4hUDdnJU6t0ExEG+4r6DZ8OP
-         rl8QuAErnLKE1o2FgWu0mf9TUNVaB1+ZqJ81x0L2J7pwAR34W6x5Xs+LeiBOZbNO2Cyf
-         seiQ==
+        bh=rOsJ9Zrz7rA4F/2ineOAizsi6mknMU/UXeuWBA/JKfA=;
+        b=ex8kem+iMsB7lynxxLS0isrLXRCXn7UElJ9YtAdVWhG3YETj2znfHJNuhd+4PiCQsr
+         YyT+d4ypfWsIN5M0t99Y0TJBf4Zqc2hgxgdutQhftX+om/1pb5h8JH/1+IY7dId+0Kd8
+         tePmbXEEY8/RZqNfUunXLVvSm7Bdq6xc3PsOkOA6580z2UIlnu2QiMAVN9SKMmF2TNNB
+         +eoWeeAWxm+w0D/Nx3d8a6NBzP/r7oN3S1MZduGmD3emxVA+dhbEnkh8v0jDbk3Mmeo9
+         3bj0TeLIoqH89+3QrknGuekC26maQqKMnNdpU4ANqD0Siudc5c/vrCTuhNTToWeh5+ek
+         5ObQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fJgKFMAN9XJcQFXSIBW4zb7s2vD8f3jyjsxvG6sAqRM=;
-        b=10eeFSXYZGe9tZsojSxuOr1BKi5ltWBvYIgNPBGHn/2d6m5IQn86z/+JlbGExCxx9e
-         rL3Jhtq6CxuJRiwkO9O8SWaYW7Jb1EqS3LFWd6ypvgAdsg8+edFbJ+jrSZr4Kg7cHH8d
-         89tCEUfFoytcCTFj8eyfCevCbJQzVl8bdcKVMb75EbinclJ+U9fsHUcEvLEbcZ2XpDQB
-         JNhs9uIy9Fd0TH1WaB3VNU+0NZPa746TjrjvdogrfdNi76ZzDf3QFfikZ0Dj+f90XNCk
-         QBc8f5B/bnnLtKXZ6amk1/GVjm54Fjag/FW5cg+xKvej+lFZzd2nSqW1Nm04GPJB+tXW
-         Y+xA==
-X-Gm-Message-State: AOAM530r5tpZ45trs+W0swBFqC30fGUgxVHo6SD+fg39X6Lc/+BG/df1
-        t1tzMPD0Sfe7u+mcQRfbxboThQ==
-X-Google-Smtp-Source: ABdhPJxTYHD9YTyrH51GmC8O/lzpaoP2eGs3uQ7+LAkDPt9RTm65JWxBa7AG+7/PdLC/nR55FcdDpw==
-X-Received: by 2002:a05:6402:42c8:b0:427:d087:29 with SMTP id i8-20020a05640242c800b00427d0870029mr12569999edc.53.1651667252790;
-        Wed, 04 May 2022 05:27:32 -0700 (PDT)
+        bh=rOsJ9Zrz7rA4F/2ineOAizsi6mknMU/UXeuWBA/JKfA=;
+        b=VBFW8j0OF4GigH4Vj2NSd+kWl4TUGto2hL/3+Unj0/ytUEl7KSf3iTv+mCT2uKvps+
+         YogmDJMObQGnKxlwJ1cAeImzxsH0ItHvhGXRi+W3anC78z7/syvahziejDdT/vSk/eNA
+         AluYyhCFYog3JF2sTlT6ZPgOnZ1Yt58wZ9wU9C2tdGXGmYXhrhq9hqXVHJkifx3sPrdP
+         n6JL+UAUth3kDF+rpvug74ficU5s4PQRIY92JmzEt0m5CSPaJ3kqOWA3l+Ut6QcyNSbB
+         qTp+dopvKbJv8z5TYLPXlG6EkZqTHi1788ndH2ztsjLqiHnFEkDxc7lOuHgTbBGy3k6s
+         FR0w==
+X-Gm-Message-State: AOAM532Cnx00K9HO9NyzLvtE/CKAIXOAj9GzhN2erdw2tpgqpGh4+Uoh
+        v0lZXqVmdfemTSlnCWQxGAJDRQ==
+X-Google-Smtp-Source: ABdhPJzR9Q6YRcydSb7FLp9kMPAUoUqwZlyHvgfmJEbkR7A4tgB30G8VcwD5C2LHXPce4siaW9TVBA==
+X-Received: by 2002:a17:906:2989:b0:6f3:a215:8426 with SMTP id x9-20020a170906298900b006f3a2158426mr20195877eje.725.1651667255328;
+        Wed, 04 May 2022 05:27:35 -0700 (PDT)
 Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
-        by smtp.gmail.com with ESMTPSA id mm30-20020a170906cc5e00b006f3ef214e06sm5675557ejb.108.2022.05.04.05.27.31
+        by smtp.gmail.com with ESMTPSA id mm30-20020a170906cc5e00b006f3ef214e06sm5675557ejb.108.2022.05.04.05.27.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 05:27:32 -0700 (PDT)
+        Wed, 04 May 2022 05:27:34 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -54,10 +54,11 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Robert Foss <robert.foss@linaro.org>
-Subject: [PATCH v3 1/6] arm64: dts: qcom: sm8350: Replace integers with rpmpd defines
-Date:   Wed,  4 May 2022 14:27:20 +0200
-Message-Id: <20220504122725.179262-2-robert.foss@linaro.org>
+Cc:     Robert Foss <robert.foss@linaro.org>,
+        Dmitry Baryshkov <dmityr.baryshkov@linaro.org>
+Subject: [PATCH v3 3/6] dt-bindings: clock: Add Qcom SM8350 GPUCC bindings
+Date:   Wed,  4 May 2022 14:27:22 +0200
+Message-Id: <20220504122725.179262-4-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220504122725.179262-1-robert.foss@linaro.org>
 References: <20220504122725.179262-1-robert.foss@linaro.org>
@@ -67,62 +68,95 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Replace &rpmhpd power domain integers with their respective defines
-in order to improve legibility.
+Add device tree bindings for graphics clock controller for
+Qualcomm Technology Inc's SM8350 SoCs.
 
 Signed-off-by: Robert Foss <robert.foss@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmityr.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8350.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
+ include/dt-bindings/clock/qcom,gpucc-sm8350.h | 52 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8350.h
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index c0137bdcf94b..52428b6df64e 100644
---- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -1656,8 +1656,8 @@ mpss: remoteproc@4080000 {
- 			clocks = <&rpmhcc RPMH_CXO_CLK>;
- 			clock-names = "xo";
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+index 9ebcb1943b0a..4090cc7ea2ae 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+@@ -20,6 +20,7 @@ description: |
+     dt-bindings/clock/qcom,gpucc-sm6350.h
+     dt-bindings/clock/qcom,gpucc-sm8150.h
+     dt-bindings/clock/qcom,gpucc-sm8250.h
++    dt-bindings/clock/qcom,gpucc-sm8350.h
  
--			power-domains = <&rpmhpd 0>,
--					<&rpmhpd 12>;
-+			power-domains = <&rpmhpd SM8350_CX>,
-+					<&rpmhpd SM8350_MSS>;
- 			power-domain-names = "cx", "mss";
+ properties:
+   compatible:
+@@ -31,6 +32,7 @@ properties:
+       - qcom,sm6350-gpucc
+       - qcom,sm8150-gpucc
+       - qcom,sm8250-gpucc
++      - qcom,sm8350-gpucc
  
- 			interconnects = <&mc_virt MASTER_LLCC &mc_virt SLAVE_EBI1>;
-@@ -2167,8 +2167,8 @@ slpi: remoteproc@5c00000 {
- 			clocks = <&rpmhcc RPMH_CXO_CLK>;
- 			clock-names = "xo";
- 
--			power-domains = <&rpmhpd 4>,
--					<&rpmhpd 5>;
-+			power-domains = <&rpmhpd SM8350_LCX>,
-+					<&rpmhpd SM8350_LMX>;
- 			power-domain-names = "lcx", "lmx";
- 
- 			memory-region = <&pil_slpi_mem>;
-@@ -2235,8 +2235,8 @@ cdsp: remoteproc@98900000 {
- 			clocks = <&rpmhcc RPMH_CXO_CLK>;
- 			clock-names = "xo";
- 
--			power-domains = <&rpmhpd 0>,
--					<&rpmhpd 10>;
-+			power-domains = <&rpmhpd SM8350_CX>,
-+					<&rpmhpd SM8350_MXC>;
- 			power-domain-names = "cx", "mxc";
- 
- 			interconnects = <&compute_noc MASTER_CDSP_PROC &mc_virt SLAVE_EBI1>;
-@@ -2540,8 +2540,8 @@ adsp: remoteproc@17300000 {
- 			clocks = <&rpmhcc RPMH_CXO_CLK>;
- 			clock-names = "xo";
- 
--			power-domains = <&rpmhpd 4>,
--					<&rpmhpd 5>;
-+			power-domains = <&rpmhpd SM8350_LCX>,
-+					<&rpmhpd SM8350_LMX>;
- 			power-domain-names = "lcx", "lmx";
- 
- 			memory-region = <&pil_adsp_mem>;
+   clocks:
+     items:
+diff --git a/include/dt-bindings/clock/qcom,gpucc-sm8350.h b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
+new file mode 100644
+index 000000000000..d2294e0d527e
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
++#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
++
++/* GPU_CC clocks */
++#define GPU_CC_AHB_CLK			0
++#define GPU_CC_CB_CLK			1
++#define GPU_CC_CRC_AHB_CLK		2
++#define GPU_CC_CX_APB_CLK		3
++#define GPU_CC_CX_GMU_CLK		4
++#define GPU_CC_CX_QDSS_AT_CLK		5
++#define GPU_CC_CX_QDSS_TRIG_CLK		6
++#define GPU_CC_CX_QDSS_TSCTR_CLK	7
++#define GPU_CC_CX_SNOC_DVM_CLK		8
++#define GPU_CC_CXO_AON_CLK		9
++#define GPU_CC_CXO_CLK			10
++#define GPU_CC_FREQ_MEASURE_CLK		11
++#define GPU_CC_GMU_CLK_SRC		12
++#define GPU_CC_GX_GMU_CLK		13
++#define GPU_CC_GX_QDSS_TSCTR_CLK	14
++#define GPU_CC_GX_VSENSE_CLK		15
++#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK	16
++#define GPU_CC_HUB_AHB_DIV_CLK_SRC	17
++#define GPU_CC_HUB_AON_CLK		18
++#define GPU_CC_HUB_CLK_SRC		19
++#define GPU_CC_HUB_CX_INT_CLK		20
++#define GPU_CC_HUB_CX_INT_DIV_CLK_SRC	21
++#define GPU_CC_MND1X_0_GFX3D_CLK	22
++#define GPU_CC_MND1X_1_GFX3D_CLK	23
++#define GPU_CC_PLL0			24
++#define GPU_CC_PLL1			25
++#define GPU_CC_SLEEP_CLK		26
++
++/* GPU_CC resets */
++#define GPUCC_GPU_CC_ACD_BCR		0
++#define GPUCC_GPU_CC_CB_BCR		1
++#define GPUCC_GPU_CC_CX_BCR		2
++#define GPUCC_GPU_CC_FAST_HUB_BCR	3
++#define GPUCC_GPU_CC_GFX3D_AON_BCR	4
++#define GPUCC_GPU_CC_GMU_BCR		5
++#define GPUCC_GPU_CC_GX_BCR		6
++#define GPUCC_GPU_CC_XO_BCR		7
++
++/* GPU_CC GDSCRs */
++#define GPU_CX_GDSC			0
++#define GPU_GX_GDSC			1
++
++#endif
 -- 
 2.34.1
 
