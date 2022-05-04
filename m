@@ -2,144 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F0DC3527D
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 17:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFE5C43217
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354771AbiEDRFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 13:05:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54972 "EHLO
+        id S1357581AbiEDSGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 14:06:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356222AbiEDRE6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 13:04:58 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF617506F4
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 09:53:58 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so1760318fac.7
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 09:53:58 -0700 (PDT)
+        with ESMTP id S237334AbiEDSGG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:06:06 -0400
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F28E4FC73
+        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 10:21:20 -0700 (PDT)
+Received: by mail-ot1-x333.google.com with SMTP id h10-20020a056830400a00b00605e92cc450so1304792ots.11
+        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 10:21:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2klMetXGa1eUlKZSFzvlKnCFZIMh5g+h156STL277cU=;
-        b=xwSoPZhK4O9KfF0E9rB8njkdJRtTwkZ4NR9LCTG0wMvOKwKndxeRPvixpmBIcXqHdY
-         qnYVcoFOds+xnLyeSRi6JCoJvovK5Ont8ITuL89eG48BDLXzDfbI7+wpAhSS4VqLEciS
-         /ExulmzKoBHM1in91h9JtnFioxJJ+rQ4dOTGBUTyPiyzOCm25ErpRvSq4X/7e5xg6frM
-         hsHarDuHST1RgfinipAKy/JnsW5bKxiotUgLWcM9FS5fR3VZ2LAqpOXfbkI13sUKo+bm
-         O6AUeLw1hRpkjAOw9PYtndBN0mDjRpFPXAzA4IvNiK6aP9CHCbcgb7OCexn1diIWIYGI
-         x2OA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WCQd0BEkr2350zVHaq5lFX9i48jak99a6vqhtPevMLA=;
+        b=fEKIAgKrPc3/Mqs8Fm9yoZwBQC9zu/F7t2r6+oEyIkgkGwg0jOe5SfeIj3DMsa1Up7
+         AoG/M4xa9coTvnuHJYFlvQ5IAK0RtIqEa23aODajOCTQpz33cjKnwL1n/xLPwXbfd2Tc
+         FH7r/sG/zdt1tSZz6uEZFGDQQnewvhfkeTNXe89i7/Sng2ym25yxlMiLVi7hgWB7g88i
+         6SrQZpvy8JBBd5a3hAVgTOSMmSY4EhPSXgLuXcBaNCFWHRe3qefcLhTCSwGFZxpBT3i6
+         M//ch3+ztRLkltCQQS6j2gkEWWRBj4UrdPi7nSEEmvSingrvRtl1GJ0cVF2XmljbkbTA
+         OGRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2klMetXGa1eUlKZSFzvlKnCFZIMh5g+h156STL277cU=;
-        b=Uq+vS2n1XY33fP60X0Fexgcq72RdTkosBB7udxwuvfgExruqP8mp9+8G6FlY5QeVuQ
-         LGBaMWuGlxhh3kx0F7i6LJ0CZeYEMUEhxhvhRz6cfrJSn8Ml81SxXUZa2jMZmftvCmvb
-         mEaTzyx0VToFmpjr/g/HuU+Ge3Tw7D6Z7+CpTGv3cnSEJDzguBz/a5P6iaHno2YfURsw
-         fXHZP+jkCNAnSWIIeEK0T1Ny/bVDV/YpTjcjISQp6O3Em8LrfzUOrS/ABKEGh6phNokI
-         Dx7oDlqymxB/nJPyXsIaIOuAjsCQpuoOlWrsK3Lz+UwaIp5bJv3VskbSiX70kI6v8hyU
-         OTDQ==
-X-Gm-Message-State: AOAM531RKxxY5BfgkYWDhfJWa5up5O6e1zKdHBAWoQeGB9OiwhEy8ZZ3
-        ZLgA0OCh5h8JjQCGJq2MDy/Mmg==
-X-Google-Smtp-Source: ABdhPJyocyOzuasLctGeqNeBJMplgmBUpdNyW29oi9jqBr4TwlqaFgI/BnBfrAb7QdBgNToE3dbmIQ==
-X-Received: by 2002:a05:6870:b6aa:b0:ed:a7de:cc26 with SMTP id cy42-20020a056870b6aa00b000eda7decc26mr169045oab.259.1651683237792;
-        Wed, 04 May 2022 09:53:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WCQd0BEkr2350zVHaq5lFX9i48jak99a6vqhtPevMLA=;
+        b=0RA1yOYlkiuL/Gw5o+eMWeqjxngldCqRvpiMSx1agFBiNb38scUo92SLtWZTlCHdQs
+         VlJHcW3LEVHSzE1Ip8ALYdFXhBW7jQiCCq7A6fVYKMT2stmOfPgQaU/5PHNWPKgQkMbA
+         zuCPvAoX+Q3uTZOLRXVpQ2hZdgNBdGYQ4E2XgwyhOS7lugnBQkqbQiSzocqGrRFHxi9E
+         ywGOMUN9w+AEQGd6WIm0e5VDze2sC+VkDgNA2a/anxMIq+axyi5VujeyLMt0EpuJhek+
+         WRjeJr0WkVrkV2FYsTGrasSpovY2kIWE834dTTtq5kyYfXFM1MhSHlAzvttDolM5+f+k
+         q3JA==
+X-Gm-Message-State: AOAM532fm+UH1AQCQHiEhstXhZxiLyyWHda3+a7f1Oxyfoy2S4RRW+qB
+        D47XQnvYLxcYLI657B+EJt0ApA==
+X-Google-Smtp-Source: ABdhPJzYJ0FPCVUpXpj95XbIPDCcfuiWkIiq8GSf0HrRowwPJd5pm70bchb1f7meCo0CrJS5bAyQ0w==
+X-Received: by 2002:a9d:6956:0:b0:605:fcae:3240 with SMTP id p22-20020a9d6956000000b00605fcae3240mr7564614oto.280.1651684879703;
+        Wed, 04 May 2022 10:21:19 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r42-20020a056808212a00b00325cda1ff85sm4484697oiw.4.2022.05.04.09.53.56
+        by smtp.gmail.com with ESMTPSA id a7-20020a056870b14700b000ead8b89484sm5785452oal.5.2022.05.04.10.21.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 09:53:57 -0700 (PDT)
-Date:   Wed, 4 May 2022 11:53:54 -0500
+        Wed, 04 May 2022 10:21:19 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        patches@lists.linux.dev, Alex Elder <elder@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
-Message-ID: <YnKvoh+h07at8b65@builder.lan>
-References: <20220412194505.614002-1-swboyd@chromium.org>
+To:     Adam Skladowski <a39.skl@gmail.com>, phone-devel@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: (subset) [PATCH] clk: qcom: smd: Update MSM8976 RPM clocks.
+Date:   Wed,  4 May 2022 12:21:05 -0500
+Message-Id: <165168485226.3730817.8622970582930057500.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220426090226.27293-1-a39.skl@gmail.com>
+References: <20220426090226.27293-1-a39.skl@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220412194505.614002-1-swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 12 Apr 14:45 CDT 2022, Stephen Boyd wrote:
-
-> Set the wake and sleep state for BCM clks here, not just the active
-> state, as the active only state is dropped when CPUs go to deep idle.
-> This ensures the clk is always on when the driver thinks it is on.
+On Tue, 26 Apr 2022 11:02:17 +0200, Adam Skladowski wrote:
+> MSM8976 does not have rpm clock named mmssnoc,
+> instead it's called sysmmnoc, drop define and reuse.
+> While we are at it add XO clock to list.
 > 
-> This was found by inspection, and could very well be incorrect if the
-> RPMh hardware copies over the active only state to the sleep and wake
-> states.
 > 
 
-Taking another look at this patch and now it makes perfect sense to me.
-Sorry for not grasping the problem earlier.
+Applied, thanks!
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+[1/1] clk: qcom: smd: Update MSM8976 RPM clocks.
+      commit: 665ca429bc4131f9165f119ad3ed81c786bf3262
 
-
-Will you take this in fixes, or do you want me to pick it for 5.19?
-
-> Cc: Alex Elder <elder@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index aed907982344..29da1ffd10cf 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -260,6 +260,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->  	struct tcs_cmd cmd = { 0 };
->  	u32 cmd_state;
->  	int ret = 0;
-> +	enum rpmh_state state;
->  
->  	mutex_lock(&rpmh_clk_lock);
->  	if (enable) {
-> @@ -274,15 +275,19 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->  		cmd.addr = c->res_addr;
->  		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
->  
-> -		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
-> -		if (ret) {
-> -			dev_err(c->dev, "set active state of %s failed: (%d)\n",
-> -				c->res_name, ret);
-> -		} else {
-> -			c->last_sent_aggr_state = cmd_state;
-> +		for (state = RPMH_SLEEP_STATE; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
-> +			ret = clk_rpmh_send(c, state, &cmd, enable);
-
-Nit. We only need to pass the positive enable on the last iteration here...
-
-Regards,
-Bjorn
-
-> +			if (ret) {
-> +				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
-> +					!state ? "sleep" :
-> +					state == RPMH_WAKE_ONLY_STATE	?
-> +					"wake" : "active", c->res_name, ret);
-> +				goto out;
-> +			}
->  		}
-> +		c->last_sent_aggr_state = cmd_state;
->  	}
-> -
-> +out:
->  	mutex_unlock(&rpmh_clk_lock);
->  
->  	return ret;
-> 
-> base-commit: 3123109284176b1532874591f7c81f3837bbdc17
-> -- 
-> https://chromeos.dev
-> 
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
