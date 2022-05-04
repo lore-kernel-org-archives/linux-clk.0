@@ -2,88 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB7AC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 18:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9670BC4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 20:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355109AbiEDSrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 14:47:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44606 "EHLO
+        id S240868AbiEDUM1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 16:12:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377116AbiEDSrw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 14:47:52 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 480CD659F;
-        Wed,  4 May 2022 11:44:12 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,198,1647270000"; 
-   d="scan'208";a="119950008"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 May 2022 03:44:11 +0900
-Received: from localhost.localdomain (unknown [10.226.92.27])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 148C9400F7B3;
-        Thu,  5 May 2022 03:44:08 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
-Date:   Wed,  4 May 2022 19:44:06 +0100
-Message-Id: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1377861AbiEDUMZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 16:12:25 -0400
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC84F4DF79;
+        Wed,  4 May 2022 13:08:46 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-edeb6c3642so2323381fac.3;
+        Wed, 04 May 2022 13:08:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zGpGSM3JO+2veRFHs1niFNH4/CD/2VyoSg35vRROAu4=;
+        b=fGopPWAtHiLV7gStSX4XRtHLswyOdo3vhAqK7edPvkvY5l+o5PmGZnz/KMiyHopLHG
+         okclwkZF3m0U0kaVlsr6wJ1SZ8EsB/p7Uaq6WOCcfPcfDF89ehWm/hjNMAenvnjx+qBx
+         VCGC/bSW/7/VcyUpnI77VyTUxlLfWUjlvoI5Rg6cOcrjnqYQ1tSzDhTlDb36rtp7BTx8
+         ngH6eU6CkfUuHkPmH09hb/6I/oCI6VCWLSKEGU+L8WngYHSANMoW51lB/pvN8OAsztth
+         7Tjb45jjLRxtPltnA3U//0QS29a42FxP8zS82k3Cxv+BJfMlLtb6iUDEtnEnJpTXmjtP
+         OJ4Q==
+X-Gm-Message-State: AOAM533HD92IXsAmIqDjE/8+ZuIDox93YllpI065mypmuXE8/7Vq6vzp
+        nHVLiU+t4hPTc5d1IB9Ayw==
+X-Google-Smtp-Source: ABdhPJyO+rbTvhFFkPwVnyYpktm0eXBaVjuGB45CdORn8cVCMYDfYrUn5SmcQfX2hJ6YD3tJhqa9sA==
+X-Received: by 2002:a05:6870:c6a8:b0:ed:d3e0:52b3 with SMTP id cv40-20020a056870c6a800b000edd3e052b3mr637039oab.92.1651694925950;
+        Wed, 04 May 2022 13:08:45 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f15-20020a4ada4f000000b0035eb4e5a6b5sm6338487oou.11.2022.05.04.13.08.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 13:08:45 -0700 (PDT)
+Received: (nullmailer pid 2140556 invoked by uid 1000);
+        Wed, 04 May 2022 20:08:44 -0000
+Date:   Wed, 4 May 2022 15:08:44 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Robert Marko <robimarko@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        jassisinghbrar@gmail.com, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmitry.baryshkov@linaro.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add support for IPQ8074 APSS
+ clock controller
+Message-ID: <YnLdTIKx80wszbj7@robh.at.kernel.org>
+References: <20220503195605.4015616-1-robimarko@gmail.com>
+ <20220503195605.4015616-2-robimarko@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220503195605.4015616-2-robimarko@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After adding reset support to vsp, it needs a delay of 32 microseconds
-after reset operation, otherwise system hangs(due to register read/write).
-This patch fixes the system hang issue by adding delay after deassert
-operation.
+On Tue, May 03, 2022 at 09:56:01PM +0200, Robert Marko wrote:
+> Add dt-binding for the IPQ8074 APSS clock controller which provides
+> clocks to the CPU cores.
+> 
+> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> ---
+> Changes in v2:
+> * Correct subject
+> ---
+>  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
+> 
+> diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> new file mode 100644
+> index 000000000000..df07766b0146
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-Hi All,
+Dual license please.
 
-After adding reset/deassert support for vsp based on [1],
-RZ/G1N board hangs. On debugging it found that it needs a delay
-of 35 microseconds after deasserint reset. Wthout delay if
-there is any register read/write will lead to hang.
-
-This 35 microseconds value is  picked from the reset().
-
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220428065333.3108-3-biju.das.jz@bp.renesas.com/
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5d2c3edbaa14..025a75a3484c 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -637,6 +637,7 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
- 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
- 
- 	writel(bitmask, priv->base + priv->reset_regs[reg]);
-+
- 	return 0;
- }
- 
-@@ -651,6 +652,10 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
- 	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
- 
- 	writel(bitmask, priv->base + priv->reset_clear_regs[reg]);
-+
-+	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-+	udelay(35);
-+
- 	return 0;
- }
- 
--- 
-2.25.1
-
+> +/*
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
+> +#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
+> +
+> +#define APSS_PLL_EARLY				0
+> +#define APSS_PLL				1
+> +#define APCS_ALIAS0_CLK_SRC			2
+> +#define APCS_ALIAS0_CORE_CLK			3
+> +
+> +#endif
+> -- 
+> 2.35.1
+> 
+> 
