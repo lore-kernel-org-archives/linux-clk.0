@@ -2,101 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9670BC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 20:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C72C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 20:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240868AbiEDUM1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 16:12:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
+        id S1378099AbiEDUhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 16:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377861AbiEDUMZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 16:12:25 -0400
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC84F4DF79;
-        Wed,  4 May 2022 13:08:46 -0700 (PDT)
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-edeb6c3642so2323381fac.3;
-        Wed, 04 May 2022 13:08:46 -0700 (PDT)
+        with ESMTP id S1378100AbiEDUhj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 16:37:39 -0400
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3F150056;
+        Wed,  4 May 2022 13:34:02 -0700 (PDT)
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-edf3b6b0f2so1997243fac.9;
+        Wed, 04 May 2022 13:34:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zGpGSM3JO+2veRFHs1niFNH4/CD/2VyoSg35vRROAu4=;
-        b=fGopPWAtHiLV7gStSX4XRtHLswyOdo3vhAqK7edPvkvY5l+o5PmGZnz/KMiyHopLHG
-         okclwkZF3m0U0kaVlsr6wJ1SZ8EsB/p7Uaq6WOCcfPcfDF89ehWm/hjNMAenvnjx+qBx
-         VCGC/bSW/7/VcyUpnI77VyTUxlLfWUjlvoI5Rg6cOcrjnqYQ1tSzDhTlDb36rtp7BTx8
-         ngH6eU6CkfUuHkPmH09hb/6I/oCI6VCWLSKEGU+L8WngYHSANMoW51lB/pvN8OAsztth
-         7Tjb45jjLRxtPltnA3U//0QS29a42FxP8zS82k3Cxv+BJfMlLtb6iUDEtnEnJpTXmjtP
-         OJ4Q==
-X-Gm-Message-State: AOAM533HD92IXsAmIqDjE/8+ZuIDox93YllpI065mypmuXE8/7Vq6vzp
-        nHVLiU+t4hPTc5d1IB9Ayw==
-X-Google-Smtp-Source: ABdhPJyO+rbTvhFFkPwVnyYpktm0eXBaVjuGB45CdORn8cVCMYDfYrUn5SmcQfX2hJ6YD3tJhqa9sA==
-X-Received: by 2002:a05:6870:c6a8:b0:ed:d3e0:52b3 with SMTP id cv40-20020a056870c6a800b000edd3e052b3mr637039oab.92.1651694925950;
-        Wed, 04 May 2022 13:08:45 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=PE0/mr3CK6LI2EW3G3CcGXz8d3sJvD5z1eOffL3SZjk=;
+        b=1SP7q/suYRiCPJ3lc0mmXbgPUaHyuKYGEwfYMMAao+6wa4RIEgJiiPmEzNDfJK1tfd
+         Mg4JFdGtKhChF7DThRmVySvv5Bs+qNEghF/zoPcYdQWWshqOsfurFVCIzcXaOWZTZb7Y
+         BYSzQKGYR+TFlsrV4gpPvVEHXugZKrO8fwb/4asmc57JFtXJXNf/sez5hsO6vyh/ytBB
+         AvBf2rHn7YKs3awUTn3pZ9WhFSvhwsl2xCx9EQPPMTsmyLAGtKwGxPcTjirBEasLyhmY
+         W4YYiDug+wAmaqKgRH7QdZXMsr7+s5lHZza/mD+YCc5Hl/Fx7Wiqq8+oVPGt0iJQFHzo
+         iN6A==
+X-Gm-Message-State: AOAM533depqa0A+FlyrJX2wobkkzN8x1sIH4UuBVi7YmIxOy2NhQlWQo
+        HXebyefROCOQuVTiuhHPVKq4o7VvXg==
+X-Google-Smtp-Source: ABdhPJzaPpzsZu9OKNhkox9cq3OHRCZ9ylrNs5rWf3k1HTRCFemLek1wCkKpOsQ6zTmeEYZ9rFdaHA==
+X-Received: by 2002:a05:6870:8896:b0:ed:a31a:fbf7 with SMTP id m22-20020a056870889600b000eda31afbf7mr656809oam.273.1651696441692;
+        Wed, 04 May 2022 13:34:01 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f15-20020a4ada4f000000b0035eb4e5a6b5sm6338487oou.11.2022.05.04.13.08.45
+        by smtp.gmail.com with ESMTPSA id f11-20020a4ae60b000000b0035eb4e5a6bdsm6217952oot.19.2022.05.04.13.34.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 13:08:45 -0700 (PDT)
-Received: (nullmailer pid 2140556 invoked by uid 1000);
-        Wed, 04 May 2022 20:08:44 -0000
-Date:   Wed, 4 May 2022 15:08:44 -0500
+        Wed, 04 May 2022 13:34:01 -0700 (PDT)
+Received: (nullmailer pid 2180122 invoked by uid 1000);
+        Wed, 04 May 2022 20:34:00 -0000
+Date:   Wed, 4 May 2022 15:34:00 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Robert Marko <robimarko@gmail.com>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        jassisinghbrar@gmail.com, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmitry.baryshkov@linaro.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add support for IPQ8074 APSS
- clock controller
-Message-ID: <YnLdTIKx80wszbj7@robh.at.kernel.org>
-References: <20220503195605.4015616-1-robimarko@gmail.com>
- <20220503195605.4015616-2-robimarko@gmail.com>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        openbmc@lists.ozlabs.org, Benjamin Fair <benjaminfair@google.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-clk@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>,
+        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Nancy Yuen <yuenn@google.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 1/7] dt-bindings: timer: nuvoton,npcm7xx-timer: Allow
+ specifying all clocks
+Message-ID: <YnLjOH+2WMHFV86j@robh.at.kernel.org>
+References: <20220429172030.398011-1-j.neuschaefer@gmx.net>
+ <20220429172030.398011-2-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20220503195605.4015616-2-robimarko@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220429172030.398011-2-j.neuschaefer@gmx.net>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 03, 2022 at 09:56:01PM +0200, Robert Marko wrote:
-> Add dt-binding for the IPQ8074 APSS clock controller which provides
-> clocks to the CPU cores.
+On Fri, 29 Apr 2022 19:20:24 +0200, Jonathan Neuschäfer wrote:
+> The timer module contains multiple timers. In the WPCM450 SoC, each timer
+> runs off a clock can be gated individually. To model this correctly, the
+> timer node in the devicetree needs to take multiple clock inputs.
 > 
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 > ---
-> Changes in v2:
-> * Correct subject
+> 
+> v2:
+> - no changes
 > ---
->  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
+>  .../devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml  | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
-> new file mode 100644
-> index 000000000000..df07766b0146
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
 
-Dual license please.
-
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
-> +#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ8074_H
-> +
-> +#define APSS_PLL_EARLY				0
-> +#define APSS_PLL				1
-> +#define APCS_ALIAS0_CLK_SRC			2
-> +#define APCS_ALIAS0_CORE_CLK			3
-> +
-> +#endif
-> -- 
-> 2.35.1
-> 
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
