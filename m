@@ -2,191 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9984AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 16:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 728B5C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 16:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353102AbiEDQee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 12:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39564 "EHLO
+        id S1353533AbiEDQmQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 12:42:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236487AbiEDQec (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 12:34:32 -0400
-X-Greylist: delayed 445 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 May 2022 09:30:56 PDT
-Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD9946B05
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 09:30:56 -0700 (PDT)
-Received: from [10.1.250.9] (riviera.nat.ds.pw.edu.pl [194.29.137.1])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 0EAC43F8C2;
-        Wed,  4 May 2022 18:23:27 +0200 (CEST)
-Message-ID: <600d13cc-962a-bb6c-6e43-c56fd63b9591@somainline.org>
-Date:   Wed, 4 May 2022 18:23:26 +0200
+        with ESMTP id S236727AbiEDQmP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 12:42:15 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6632DA85
+        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 09:38:39 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id v12so2773218wrv.10
+        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 09:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PA2ONwZQ2aNf3XU05hmmrIW1CKcRJL5Vxbk4O9KxM0U=;
+        b=ZVO7iuC3y+8vECZtgXKsSGDXt7vhff57IF29kTm07enoAqdiotnertd/QkXHpyIbIO
+         wmJ7bywYCbo41uf7pK766HfRJ4uikbB5X4vs5ZWTyHHfcfYUsvENQUIX4iri+g+l2+YB
+         vOdrlZN0QEq17EAoLEWU0i51TT7GLDhWn0QqpwpYGnRY76MSmA3L8suIWEZFIev3c56H
+         w1P6z4tpfO1nv3cfqoP3S2xqKDeGMXUn650VWIJyk21h8VjvoM0rSw1JekR6ksgYaVus
+         awPIz6Lp+JgLY5D87DETBvKy4FtUMJyFymybVkrEj6c2ksMDLLAJ3kr5Hk3Jo0ufRPDG
+         KEYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PA2ONwZQ2aNf3XU05hmmrIW1CKcRJL5Vxbk4O9KxM0U=;
+        b=lrOUHd8sf11D2EX2zvV8epJW7HQhYD4Xk9N7bfEeMC9EWqHpE1YMhUeU9mRzLY+KKa
+         qdXBBbelw+qngrJCBv9iDqJPhqTfLTb3xz6/J0bLV8vozCAc9rWgTO23ftS4eXeonOZV
+         y1Wlg7fC5kzWkmefSMatWNPPiF+5NixOuSSwkyHMLgIkx/noS8oxrJMTJtHnc+22kDnF
+         kPNgjWFskYVWZKPZqQzsoZbM1+PydMsRjrOqvi8JczB5d59Br0Em7iU+ccGgdQ/cNA4X
+         ynPXp/9VXNkf+x9as1ZAMM5i6a0BKMZSVi25ZbCiA1DeuS83Z7yRSMT5gWJLXhT7GXaZ
+         5+kA==
+X-Gm-Message-State: AOAM530VJQ8umBTq7/wff/fxun/qKz2hF/sWkzZqEdaysYOBllM75JDG
+        1DptaIQG5xCpbqxw8U3I/et4/A==
+X-Google-Smtp-Source: ABdhPJwiBcGQdxU/eQ8+6BVGeSYguBi2ruvk4NT3NT9jegKSzB2iaHgyNMmRpHNRlNUs1CzE0QRYxw==
+X-Received: by 2002:a05:6000:510:b0:203:e469:f0a3 with SMTP id a16-20020a056000051000b00203e469f0a3mr17276636wrf.710.1651682317410;
+        Wed, 04 May 2022 09:38:37 -0700 (PDT)
+Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id r20-20020adfa154000000b0020c5253d8c7sm11671706wrr.19.2022.05.04.09.38.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 09:38:36 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     bryan.odonoghue@linaro.org
+Subject: [PATCH 0/4] clk: qcom: msm8939: DDR and system_mm clock fixes
+Date:   Wed,  4 May 2022 17:38:31 +0100
+Message-Id: <20220504163835.40130-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v3 4/6] clk: qcom: add support for SM8350 DISPCC
-To:     Robert Foss <robert.foss@linaro.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        jonathan@marek.ca, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20220504122725.179262-1-robert.foss@linaro.org>
- <20220504122725.179262-5-robert.foss@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220504122725.179262-5-robert.foss@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+There a few omissions/bugs I found recently which are worth fixing up.
+The BIMC_DDR_CLK_SRC command RCGR points to a value off in the wilderness
+and should be fixed.
 
-On 04/05/2022 14:27, Robert Foss wrote:
-> From: Jonathan Marek <jonathan@marek.ca>
->
-> Add support to the SM8350 display clock controller by extending the SM8250
-> display clock controller, which is almost identical but has some minor
-> differences.
->
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> Signed-off-by: Robert Foss <robert.foss@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->
-> Changes since v1
->   - Remove comment - Dmitry
->
-> Changes since v2
->   - Add my SoB - Bjorn
->   - Remove CLK_ASSUME_ENABLED_WHEN_UNUSED flag
->
->
->   drivers/clk/qcom/Kconfig         |  4 +--
->   drivers/clk/qcom/dispcc-sm8250.c | 60 +++++++++++++++++++++++++++++++-
->   2 files changed, 61 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 9b1f54e634b9..1752ca0ee405 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -609,11 +609,11 @@ config SM_DISPCC_6125
->   	  splash screen
->   
->   config SM_DISPCC_8250
-> -	tristate "SM8150 and SM8250 Display Clock Controller"
-> +	tristate "SM8150/SM8250/SM8350 Display Clock Controller"
->   	depends on SM_GCC_8150 || SM_GCC_8250
+More interestingly a number of Multi-media peripherals are defined as
+pointing at the system NOC for their clocks, instead of at the System NOC
+MM.
 
-|| SM_GCC_8350?
+This turns out to be not much of a problem so far because we currently
+aren't trying to set any of these clocks and the MM_SNOC clocks are derived
+from the same source as regular SNOC clocks, except they can vote for
+higher rates.
 
-sidenote: also || SC_GCC_8180X in a separate patch?
+Bryan O'Donoghue (4):
+  clk: qcom: Add missing SYSTEM_MM_NOC_BFDCD_CLK_SRC
+  clk: qcom: add gcc-msm8939: Fix bimc_ddr_clk_src rcgr base address
+  clk: qcom: add gcc-msm8939: Add missing system_mm_noc_bfdcd_clk_src
+  clk: qcom: add gcc-msm8939: Point MM peripherals to system_mm_noc
+    clock
 
->   	help
->   	  Support for the display clock controller on Qualcomm Technologies, Inc
-> -	  SM8150 and SM8250 devices.
-> +	  SM8150/SM8250/SM8350 devices.
->   	  Say Y if you want to support display devices and functionality such as
->   	  splash screen.
->   
-> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> index db9379634fb2..8e6cb990e387 100644
-> --- a/drivers/clk/qcom/dispcc-sm8250.c
-> +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> @@ -43,6 +43,10 @@ static struct pll_vco vco_table[] = {
->   	{ 249600000, 2000000000, 0 },
->   };
->   
-> +static struct pll_vco lucid_5lpe_vco[] = {
-> +	{ 249600000, 1750000000, 0 },
-> +};
-> +
->   static struct alpha_pll_config disp_cc_pll0_config = {
->   	.l = 0x47,
->   	.alpha = 0xE000,
-> @@ -1228,6 +1232,7 @@ static const struct of_device_id disp_cc_sm8250_match_table[] = {
->   	{ .compatible = "qcom,sc8180x-dispcc" },
->   	{ .compatible = "qcom,sm8150-dispcc" },
->   	{ .compatible = "qcom,sm8250-dispcc" },
-> +	{ .compatible = "qcom,sm8350-dispcc" },
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, disp_cc_sm8250_match_table);
-> @@ -1258,7 +1263,7 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
->   		return PTR_ERR(regmap);
->   	}
->   
-> -	/* note: trion == lucid, except for the prepare() op */
-> +	/* Apply differences for SM8150 and SM8350 */
->   	BUILD_BUG_ON(CLK_ALPHA_PLL_TYPE_TRION != CLK_ALPHA_PLL_TYPE_LUCID);
->   	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sc8180x-dispcc") ||
->   	    of_device_is_compatible(pdev->dev.of_node, "qcom,sm8150-dispcc")) {
-> @@ -1270,6 +1275,59 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
->   		disp_cc_pll1_config.config_ctl_hi1_val = 0x00000024;
->   		disp_cc_pll1_config.user_ctl_hi1_val = 0x000000D0;
->   		disp_cc_pll1_init.ops = &clk_alpha_pll_trion_ops;
-> +	} else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8350-dispcc")) {
-> +		static struct clk_rcg2 * const rcgs[] = {
-> +			&disp_cc_mdss_byte0_clk_src,
-> +			&disp_cc_mdss_byte1_clk_src,
-> +			&disp_cc_mdss_dp_aux1_clk_src,
-> +			&disp_cc_mdss_dp_aux_clk_src,
-> +			&disp_cc_mdss_dp_link1_clk_src,
-> +			&disp_cc_mdss_dp_link_clk_src,
-> +			&disp_cc_mdss_dp_pixel1_clk_src,
-> +			&disp_cc_mdss_dp_pixel2_clk_src,
-> +			&disp_cc_mdss_dp_pixel_clk_src,
-> +			&disp_cc_mdss_esc0_clk_src,
-> +			&disp_cc_mdss_mdp_clk_src,
-> +			&disp_cc_mdss_pclk0_clk_src,
-> +			&disp_cc_mdss_pclk1_clk_src,
-> +			&disp_cc_mdss_rot_clk_src,
-> +			&disp_cc_mdss_vsync_clk_src,
-> +		};
-> +		static struct clk_regmap_div * const divs[] = {
-> +			&disp_cc_mdss_byte0_div_clk_src,
-> +			&disp_cc_mdss_byte1_div_clk_src,
-> +			&disp_cc_mdss_dp_link1_div_clk_src,
-> +			&disp_cc_mdss_dp_link_div_clk_src,
-> +		};
-> +		unsigned int i;
-> +		static bool offset_applied;
-> +
-> +		/* only apply the offsets once (in case of deferred probe) */
-> +		if (!offset_applied) {
-> +			for (i = 0; i < ARRAY_SIZE(rcgs); i++)
-> +				rcgs[i]->cmd_rcgr -= 4;
-> +
-> +			for (i = 0; i < ARRAY_SIZE(divs); i++) {
-> +				divs[i]->reg -= 4;
-> +				divs[i]->width = 4;
-> +			}
-> +
-> +			disp_cc_mdss_ahb_clk.halt_reg -= 4;
-> +			disp_cc_mdss_ahb_clk.clkr.enable_reg -= 4;
-> +
-> +			offset_applied = true;
-> +		}
-> +
-> +		disp_cc_mdss_ahb_clk_src.cmd_rcgr = 0x22a0;
-> +
-> +		disp_cc_pll0_config.config_ctl_hi1_val = 0x2A9A699C;
+ drivers/clk/qcom/gcc-msm8939.c               | 31 ++++++++++++++------
+ include/dt-bindings/clock/qcom,gcc-msm8939.h |  1 +
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-Lowercase hex, also below.
+-- 
+2.35.1
 
-
-> +		disp_cc_pll0_config.test_ctl_hi1_val = 0x01800000;
-> +		disp_cc_pll0_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
-> +		disp_cc_pll0.vco_table = lucid_5lpe_vco;
-> +		disp_cc_pll1_config.config_ctl_hi1_val = 0x2A9A699C;
-> +		disp_cc_pll1_config.test_ctl_hi1_val = 0x01800000;
-> +		disp_cc_pll1_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
-> +		disp_cc_pll1.vco_table = lucid_5lpe_vco;
->   	}
->   
->   	clk_lucid_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
-Konrad
->
