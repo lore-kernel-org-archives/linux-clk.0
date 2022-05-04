@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAA3C352A8
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 21:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D35FC35295
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 21:33:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378695AbiEDVgp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 17:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48032 "EHLO
+        id S1378712AbiEDVgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 17:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378638AbiEDVgi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 17:36:38 -0400
+        with ESMTP id S1378683AbiEDVgl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 17:36:41 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3322151E6C;
-        Wed,  4 May 2022 14:33:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A30522C4;
+        Wed,  4 May 2022 14:33:01 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id 5A37E1F44C61
+        with ESMTPSA id 993091F44C6A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651699978;
-        bh=JyODDbAkozctO2YF4+4+8QrF0xaiP+MYadCgEeOgwr0=;
+        s=mail; t=1651699979;
+        bh=V89BHx68Wd/tHtnRBykO9dL/JFdCxXb+1blceCN4sMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZVxLjPp0nk7QVAUdBbqzeVOyWnyf3C96JzVREw2VaHYZO4j6U11qxqzBh/iLh6dD
-         uBjrG6Izun+ZQitJpN8On6x1gMJMzDEJ0jEd3aEi3z7VW+Kk6EgZZPlkknY5zyiXU/
-         XEUIuM8nxFudAcakCvKv1KZkHnG2j3w7L+oRpniJC8mZL1hw41csv0jyeWGwvR3JYt
-         /FvJ4xN/qoPEeOMAQRwefuynRMadQI7+65Wg5BM4sAaQgwvoqBiV0zPiicXtzzbbPw
-         de3FwmkSQd0+6D8eX62EiAmjjtBW/8VGkUPrcHWKC/DRd4UqB6vJX7lHK8VMGzbPhN
-         dMptSfJAqNzmg==
+        b=dKWxtYQ1qIqqDNWo9GJ/pVID3HmKjW4piO2zBsdHa413AcNhEcsCKhVLLgQfA5UCV
+         YT0jTVOZ1hN4pUGEWO8CZXd/ysuzUh30/56I7QfTXY9Q8mfPuP1oPzII5gpr+z9AIN
+         AZWIpaGps4eyznoKUSWi/G0I6sGLipnL8lSBN4//+G5kfOWVCjfeDtu7qRjDjpxnL/
+         Gz9/on9whZiR/72+TSFaGwBede9i+n4g0xCu3FZyl3dWB2/G6ykOwX+JU9a43xJMXK
+         YLda58w70BB6K4OvPNXY7pNN0/k8kxdq+kCWXri/1WxLeA1AubcCT8vGMDVhkGGReN
+         YUy6IG3f9oNbA==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id 3AA3F4819CB; Wed,  4 May 2022 23:32:53 +0200 (CEST)
+        id 488164819D0; Wed,  4 May 2022 23:32:53 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -44,138 +44,267 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
-        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
+        Yifeng Zhao <yifeng.zhao@rock-chips.com>, kernel@collabora.com,
         Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCHv2 06/21] clk: rockchip: clk-cpu: add mux setting for cpu change frequency
-Date:   Wed,  4 May 2022 23:32:36 +0200
-Message-Id: <20220504213251.264819-7-sebastian.reichel@collabora.com>
+Subject: [PATCHv2 11/21] mmc: sdhci-of-dwcmshc: add support for rk3588
+Date:   Wed,  4 May 2022 23:32:41 +0200
+Message-Id: <20220504213251.264819-12-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+From: Yifeng Zhao <yifeng.zhao@rock-chips.com>
 
-In order to improve the main frequency of CPU, the clock path of CPU is
-simplified as follows:
-                         |--\
-                         |   \            |--\
- --apll--|\              |    \           |   \
-         | |--apll_core--|     \          |    \
- --24M---|/              |mux1 |--[gate]--|mux2|---clk_core
-                         |     /          |    /
- --gpll--|\              |    /    |------|   /
-         | |--gpll_core--|   /     |      |--/
- --24M---|/              |--/      |
-                                   |
- -------apll_directly--------------|
+Add support for RK3588's DWCMSHC controller, which is used for
+providing the rootfs on the RK3588 evaluation board.
 
-When the CPU requests high frequency, we want to use MUX2 select the
-"apll_directly".
-At low frequencies use MUX1 to select “apll_core" and then MUX2 to
-select "apll_core_gate".
-
-However, in this way, the CPU frequency conversion needs to be
-in the following order:
-1. MUX2 select to "apll_core_gate", MUX1 select "gpll_core"
-2. Apll sets slow_mode, sets APLL parameters, locks APLL, and then APLL
-sets normal_mode
-3. MUX1 select "apll_core", MUX2 select "apll_directly"
-
-So add pre_muxs and post_muxs to cover this special requirements.
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-[rebase]
+Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+[port from vendor BSP]
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 ---
- drivers/clk/rockchip/clk-cpu.c | 41 ++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h     |  2 ++
- 2 files changed, 43 insertions(+)
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 121 +++++++++++++++++++++++-----
+ 1 file changed, 103 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 11aa2259b532..6ea7fba9f9e5 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -113,6 +113,42 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 	}
- }
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index f5fd88c7adef..4e904850973c 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -31,6 +31,7 @@
+ /* Offset inside the  vendor area 1 */
+ #define DWCMSHC_HOST_CTRL3		0x8
+ #define DWCMSHC_EMMC_CONTROL		0x2c
++#define DWCMSHC_CARD_IS_EMMC		BIT(0)
+ #define DWCMSHC_ENHANCED_STROBE		BIT(8)
+ #define DWCMSHC_EMMC_ATCTRL		0x40
  
-+static void rockchip_cpuclk_set_pre_muxs(struct rockchip_cpuclk *cpuclk,
-+					 const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
+@@ -39,7 +40,7 @@
+ #define DWCMSHC_EMMC_DLL_RXCLK		0x804
+ #define DWCMSHC_EMMC_DLL_TXCLK		0x808
+ #define DWCMSHC_EMMC_DLL_STRBIN		0x80c
+-#define DLL_STRBIN_TAPNUM_FROM_SW	BIT(24)
++#define DECMSHC_EMMC_DLL_CMDOUT		0x810
+ #define DWCMSHC_EMMC_DLL_STATUS0	0x840
+ #define DWCMSHC_EMMC_DLL_START		BIT(0)
+ #define DWCMSHC_EMMC_DLL_LOCKED		BIT(8)
+@@ -48,11 +49,21 @@
+ #define DWCMSHC_EMMC_DLL_START_POINT	16
+ #define DWCMSHC_EMMC_DLL_INC		8
+ #define DWCMSHC_EMMC_DLL_DLYENA		BIT(27)
+-#define DLL_TXCLK_TAPNUM_DEFAULT	0x8
+-#define DLL_STRBIN_TAPNUM_DEFAULT	0x8
++#define DLL_TXCLK_TAPNUM_DEFAULT	0x10
++#define DLL_TXCLK_TAPNUM_90_DEGREES	0xA
+ #define DLL_TXCLK_TAPNUM_FROM_SW	BIT(24)
++#define DLL_STRBIN_TAPNUM_DEFAULT	0x8
++#define DLL_STRBIN_TAPNUM_FROM_SW	BIT(24)
++#define DLL_STRBIN_DELAY_NUM_SEL	BIT(26)
++#define DLL_STRBIN_DELAY_NUM_OFFSET	16
++#define DLL_STRBIN_DELAY_NUM_DEFAULT	0x16
+ #define DLL_RXCLK_NO_INVERTER		1
+ #define DLL_RXCLK_INVERTER		0
++#define DLL_CMDOUT_TAPNUM_90_DEGREES	0x8
++#define DLL_CMDOUT_TAPNUM_FROM_SW	BIT(24)
++#define DLL_CMDOUT_SRC_CLK_NEG		BIT(28)
++#define DLL_CMDOUT_EN_SRC_CLK_NEG	BIT(29)
 +
-+	/* alternate parent is active now. set the pre_muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->pre_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->pre_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
-+static void rockchip_cpuclk_set_post_muxs(struct rockchip_cpuclk *cpuclk,
-+					  const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->post_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->post_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
- static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 					   struct clk_notifier_data *ndata)
- {
-@@ -165,6 +201,9 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 			       cpuclk->reg_base + reg_data->core_reg[i]);
- 		}
- 	}
-+
-+	rockchip_cpuclk_set_pre_muxs(cpuclk, rate);
-+
- 	/* select alternate parent */
- 	if (reg_data->mux_core_reg)
- 		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
-@@ -219,6 +258,8 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
- 				     reg_data->mux_core_shift),
- 		       cpuclk->reg_base + reg_data->core_reg[0]);
+ #define DLL_LOCK_WO_TMOUT(x) \
+ 	((((x) & DWCMSHC_EMMC_DLL_LOCKED) == DWCMSHC_EMMC_DLL_LOCKED) && \
+ 	(((x) & DWCMSHC_EMMC_DLL_TIMEOUT) == 0))
+@@ -61,10 +72,16 @@
+ #define BOUNDARY_OK(addr, len) \
+ 	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
  
-+	rockchip_cpuclk_set_post_muxs(cpuclk, rate);
++enum dwcmshc_rk_type {
++	DWCMSHC_RK3568,
++	DWCMSHC_RK3588,
++};
 +
- 	/* remove dividers */
- 	for (i = 0; i < reg_data->num_cores; i++) {
- 		writel(HIWORD_UPDATE(0, reg_data->div_core_mask[i],
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index bf7c8d082fde..2bd1863a7418 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -380,6 +380,8 @@ struct rockchip_cpuclk_clksel {
- struct rockchip_cpuclk_rate_table {
- 	unsigned long prate;
- 	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel pre_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel post_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
+ struct rk35xx_priv {
+ 	/* Rockchip specified optional clocks */
+ 	struct clk_bulk_data rockchip_clks[RK35xx_MAX_CLKS];
+ 	struct reset_control *reset;
++	enum dwcmshc_rk_type devtype;
+ 	u8 txclk_tapnum;
  };
  
- /**
+@@ -133,7 +150,9 @@ static void dwcmshc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ static void dwcmshc_set_uhs_signaling(struct sdhci_host *host,
+ 				      unsigned int timing)
+ {
+-	u16 ctrl_2;
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
++	u16 ctrl, ctrl_2;
+ 
+ 	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+ 	/* Select Bus Speed Mode for host */
+@@ -151,8 +170,15 @@ static void dwcmshc_set_uhs_signaling(struct sdhci_host *host,
+ 	else if ((timing == MMC_TIMING_UHS_DDR50) ||
+ 		 (timing == MMC_TIMING_MMC_DDR52))
+ 		ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
+-	else if (timing == MMC_TIMING_MMC_HS400)
++	else if (timing == MMC_TIMING_MMC_HS400) {
++		/* set CARD_IS_EMMC bit to enable Data Strobe for HS400 */
++		ctrl = sdhci_readw(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
++		ctrl |= DWCMSHC_CARD_IS_EMMC;
++		sdhci_writew(host, ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
++
+ 		ctrl_2 |= DWCMSHC_CTRL_HS400;
++	}
++
+ 	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+ }
+ 
+@@ -185,17 +211,11 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+ 
+ 	host->mmc->actual_clock = 0;
+ 
+-	/*
+-	 * DO NOT TOUCH THIS SETTING. RX clk inverter unit is enabled
+-	 * by default, but it shouldn't be enabled. We should anyway
+-	 * disable it before issuing any cmds.
+-	 */
+-	extra = DWCMSHC_EMMC_DLL_DLYENA |
+-		DLL_RXCLK_NO_INVERTER << DWCMSHC_EMMC_DLL_RXCLK_SRCSEL;
+-	sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_RXCLK);
+-
+-	if (clock == 0)
++	if (clock == 0) {
++		/* Disable interface clock at initial state. */
++		sdhci_set_clock(host, clock);
+ 		return;
++	}
+ 
+ 	/* Rockchip platform only support 375KHz for identify mode */
+ 	if (clock <= 400000)
+@@ -213,9 +233,21 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+ 	extra &= ~BIT(0);
+ 	sdhci_writel(host, extra, reg);
+ 
+-	if (clock <= 400000) {
+-		/* Disable DLL to reset sample clock */
++	if (clock <= 52000000) {
++		/* Disable DLL and reset both of sample and drive clock */
+ 		sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_CTRL);
++		sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_RXCLK);
++		sdhci_writel(host, 0, DWCMSHC_EMMC_DLL_TXCLK);
++		sdhci_writel(host, 0, DECMSHC_EMMC_DLL_CMDOUT);
++		/*
++		 * Before switching to hs400es mode, the driver will enable
++		 * enhanced strobe first. PHY needs to configure the parameters
++		 * of enhanced strobe first.
++		 */
++		extra = DWCMSHC_EMMC_DLL_DLYENA |
++			DLL_STRBIN_DELAY_NUM_SEL |
++			DLL_STRBIN_DELAY_NUM_DEFAULT << DLL_STRBIN_DELAY_NUM_OFFSET;
++		sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_STRBIN);
+ 		return;
+ 	}
+ 
+@@ -224,6 +256,15 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+ 	udelay(1);
+ 	sdhci_writel(host, 0x0, DWCMSHC_EMMC_DLL_CTRL);
+ 
++	/*
++	 * We shouldn't set DLL_RXCLK_NO_INVERTER for identify mode but
++	 * we must set it in higher speed mode.
++	 */
++	extra = DWCMSHC_EMMC_DLL_DLYENA;
++	if (priv->devtype == DWCMSHC_RK3568)
++		extra |= DLL_RXCLK_NO_INVERTER << DWCMSHC_EMMC_DLL_RXCLK_SRCSEL;
++	sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_RXCLK);
++
+ 	/* Init DLL settings */
+ 	extra = 0x5 << DWCMSHC_EMMC_DLL_START_POINT |
+ 		0x2 << DWCMSHC_EMMC_DLL_INC |
+@@ -246,8 +287,20 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+ 	    host->mmc->ios.timing == MMC_TIMING_MMC_HS400)
+ 		txclk_tapnum = priv->txclk_tapnum;
+ 
++	if ((priv->devtype == DWCMSHC_RK3588) && host->mmc->ios.timing == MMC_TIMING_MMC_HS400) {
++		txclk_tapnum = DLL_TXCLK_TAPNUM_90_DEGREES;
++
++		extra = DLL_CMDOUT_SRC_CLK_NEG |
++			DLL_CMDOUT_EN_SRC_CLK_NEG |
++			DWCMSHC_EMMC_DLL_DLYENA |
++			DLL_CMDOUT_TAPNUM_90_DEGREES |
++			DLL_CMDOUT_TAPNUM_FROM_SW;
++		sdhci_writel(host, extra, DECMSHC_EMMC_DLL_CMDOUT);
++	}
++
+ 	extra = DWCMSHC_EMMC_DLL_DLYENA |
+ 		DLL_TXCLK_TAPNUM_FROM_SW |
++		DLL_RXCLK_NO_INVERTER << DWCMSHC_EMMC_DLL_RXCLK_SRCSEL |
+ 		txclk_tapnum;
+ 	sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_TXCLK);
+ 
+@@ -345,7 +398,25 @@ static int dwcmshc_rk35xx_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
+ 	return 0;
+ }
+ 
++static void dwcmshc_rk35xx_postinit(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv)
++{
++	/*
++	 * Don't support highspeed bus mode with low clk speed as we
++	 * cannot use DLL for this condition.
++	 */
++	if (host->mmc->f_max <= 52000000) {
++		dev_info(mmc_dev(host->mmc), "Disabling HS200/HS400, frequency too low (%d)\n",
++			 host->mmc->f_max);
++		host->mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
++		host->mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR);
++	}
++}
++
+ static const struct of_device_id sdhci_dwcmshc_dt_ids[] = {
++	{
++		.compatible = "rockchip,rk3588-dwcmshc",
++		.data = &sdhci_dwcmshc_rk35xx_pdata,
++	},
+ 	{
+ 		.compatible = "rockchip,rk3568-dwcmshc",
+ 		.data = &sdhci_dwcmshc_rk35xx_pdata,
+@@ -433,6 +504,11 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ 			goto err_clk;
+ 		}
+ 
++		if (of_device_is_compatible(pdev->dev.of_node, "rockchip,rk3588-dwcmshc"))
++			rk_priv->devtype = DWCMSHC_RK3588;
++		else
++			rk_priv->devtype = DWCMSHC_RK3568;
++
+ 		priv->priv = rk_priv;
+ 
+ 		err = dwcmshc_rk35xx_init(host, priv);
+@@ -442,12 +518,21 @@ static int dwcmshc_probe(struct platform_device *pdev)
+ 
+ 	host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
+ 
+-	err = sdhci_add_host(host);
++	err = sdhci_setup_host(host);
+ 	if (err)
+ 		goto err_clk;
+ 
++	if (rk_priv)
++		dwcmshc_rk35xx_postinit(host, priv);
++
++	err = __sdhci_add_host(host);
++	if (err)
++		goto err_setup_host;
++
+ 	return 0;
+ 
++err_setup_host:
++	sdhci_cleanup_host(host);
+ err_clk:
+ 	clk_disable_unprepare(pltfm_host->clk);
+ 	clk_disable_unprepare(priv->bus_clk);
 -- 
 2.35.1
 
