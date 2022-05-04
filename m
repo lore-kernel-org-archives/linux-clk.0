@@ -2,133 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF39EC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 12:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1225C4332F
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 12:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349523AbiEDMbY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 08:31:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40528 "EHLO
+        id S242171AbiEDMcQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 08:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349497AbiEDMbQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 08:31:16 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B56FA31203
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 05:27:39 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id bv19so2560556ejb.6
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 05:27:39 -0700 (PDT)
+        with ESMTP id S1349591AbiEDMcF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 08:32:05 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1614B30576;
+        Wed,  4 May 2022 05:28:27 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id be20so1489353edb.12;
+        Wed, 04 May 2022 05:28:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=H2qfFZN2tCgIDN03JaLwKupUYJB4a9Vy4hlFglpucfc=;
-        b=qmNBjzLWxn/FaOppFTsUlNInVHhDH+G7IDJZhA0f/PlZYD8ScHr1DXG+qowifHjmsN
-         qDX4Nym8VzaXEfBpRqBrTQvE+Uqv5ZW0OKmyZ6ofe2EkxLJGjjDMcFW8mWSPMkm4gHVk
-         UyoOlZG4/VkEiJ1ag9DkZlY84M3qLZ0043TovmccE0ZsWka+Xmwa591oEShWj0upNQ+1
-         J1AjIKn32BRNjXztaCOxQHtPrktC1aWQjNtLeljVww1Hlosm+J9aGcWdBZkigfF6CLhg
-         vr3FvfpwQCGPdlCQCDVZ1Jsha6iAn0QzowhaRAqVDomGaKg9WWe6smOmaDyWxjwtYkmM
-         spJw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v8deg2KLDPfn0MYLkDdTzpE851zZE5QzG2ocaiOOkBo=;
+        b=CLTbKxWNFX6edptI+ZvYTsXKN81abpGJmTLXmBFKatFJax0iYOADG2PnCoD+/l2VwA
+         UTy4Ng6y6ptMNezJx/4XMUPYUJJAgvMWuzzmTwKFUkUFIv0epgIVsL5U70nxYIz5LwV8
+         9vLpv8YKG7TBGlUdUrHoQepDCvzZ5DUa/+BDwy47FwDS3i51ok/Tt02EAJqjMRZNaENm
+         ShehKHGJTI+EyGYgS18O4GjAc5u5IupRKsMIKrUQrkAB4wPzCW9lNk7iRpUpUH5Wfcfb
+         9yS/5g40xIJ3BzqRgHvgaMZizwhDizJR7u/JqyDu7rPhRUDbK3hdCWguH9WRf5NZc98J
+         aTKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=H2qfFZN2tCgIDN03JaLwKupUYJB4a9Vy4hlFglpucfc=;
-        b=cnVG/jhvElDqE1NFjIHK4DP1MDClQSButOHudCUchQCPFtVq3ZhJMqSnzd0/45ht1D
-         cJ/ylu8QS01KKtxiVVigXxRoqEBfZq0ehpF1XXd5sF+kN7Wbs5IxCn7q8Nfx8nZNuXxR
-         83ApvVcM9jWpNbFBpdsgHVM3E0Yo5wQvePwcJfvqJ2L8EjPF5rSexgJp1YskZMe6ZLKw
-         jR3Ava14afMNJntmwp5smCN+XA9c7HnOnenrA7Tt0Y2k7Q4NWJentjnOTkYb3mA9joNR
-         hmW7o4WIXw1dwPX8M6lG5kyGAo76b2jQE8aiNz+pbsH6I5bMlGrp7GiQq2fDW4MG/Jlq
-         ac4w==
-X-Gm-Message-State: AOAM530iLtiStnihxMqut8DBx5l1R62aRAW6LOsL0CH0APblG68xOVqC
-        ReKMVb89C72mWT9OQ9TP7+f70w==
-X-Google-Smtp-Source: ABdhPJww9C5vYIZ6G9qj30ymWqYoCBVmAzC8gODT3nVu5g2jqCKHSngzU7GGIm457Nc/jtF5zR/sdQ==
-X-Received: by 2002:a17:906:3082:b0:6e0:111f:8986 with SMTP id 2-20020a170906308200b006e0111f8986mr19551734ejv.677.1651667258070;
-        Wed, 04 May 2022 05:27:38 -0700 (PDT)
-Received: from prec5560.. (freifunk-gw.bsa1-cpe1.syseleven.net. [176.74.57.43])
-        by smtp.gmail.com with ESMTPSA id mm30-20020a170906cc5e00b006f3ef214e06sm5675557ejb.108.2022.05.04.05.27.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v8deg2KLDPfn0MYLkDdTzpE851zZE5QzG2ocaiOOkBo=;
+        b=PysMEXJWWHjDUD95vJyF6QHbkd3RAc9aVEsaW7Vuo7b1dy01NHA/tpkEjVhaMnn1Cj
+         32y2IHUTJMA2rB9ZF6FaejCti8+XJO0p3kL/rYsV7Vg2Ov5TFDlw6Pv5fxWB4s9kDJn3
+         4o92VrIOdQ1wOI12/S7sz2ZVKi6aPplcl/q5I95HXFHmBh8C49uuyo7W+UsWVLxZVmLe
+         0NvIAxz31orGHINTD4kIWaJ+gupBpq18VFGMraZotwTNofQETK5pjQJHxlc6fhOaC62Q
+         +2oqvAY3Wfnp93PdwIq9bA3qNThWBFXLnMqbl01thTPr/Y3uIgVVnoNim99vWHqDr9ab
+         W07A==
+X-Gm-Message-State: AOAM531CJW38L8Fie+kXIiI0hqWqqr9KKgC2PedHv2RZsyE32gdRU+gA
+        Knq2e4mc9b8O2lDaAhZs96s=
+X-Google-Smtp-Source: ABdhPJx78kwFzBXfvJvi8YwuMRvR0iUjeHn1QZnqQXHsSFpeV5QrHysEmB7yI8b1v+iASOqFaO2LQA==
+X-Received: by 2002:aa7:d459:0:b0:427:bd8f:61f8 with SMTP id q25-20020aa7d459000000b00427bd8f61f8mr16374482edr.157.1651667305522;
+        Wed, 04 May 2022 05:28:25 -0700 (PDT)
+Received: from localhost.localdomain (185-177-124-12.hosted-by-worldstream.net. [185.177.124.12])
+        by smtp.gmail.com with ESMTPSA id ig1-20020a1709072e0100b006f3ef214e7asm5688693ejc.224.2022.05.04.05.28.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 05:27:37 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzk+dt@kernel.org, jonathan@marek.ca, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Wed, 04 May 2022 05:28:25 -0700 (PDT)
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Robert Foss <robert.foss@linaro.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 5/6] dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
-Date:   Wed,  4 May 2022 14:27:24 +0200
-Message-Id: <20220504122725.179262-6-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220504122725.179262-1-robert.foss@linaro.org>
-References: <20220504122725.179262-1-robert.foss@linaro.org>
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/13] Mediatek MT6735 main clock and reset drivers
+Date:   Wed,  4 May 2022 16:25:48 +0400
+Message-Id: <20220504122601.335495-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
-bindings. Update the documentation with the new compatible.
+This series adds support for the main clock and reset controllers on the
+Mediatek MT6735 SoC:
+- apmixedsys (global PLLs)
+- topckgen (global divisors and muxes)
+- infracfg (gates and resets for internal components)
+- pericfg (gates and resets for peripherals)
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
+MT6735 has other more specialized clock controllers, support for which is
+not included in this series:
+- imgsys (camera)
+- mmsys (display)
+- vdecsys (video decoder)
+- audsys (audio)
 
-Changes since v2
- - Add my SoB - Bjorn
+Some symbols in common objects are exported to get the drivers to compile
+as modules, and mtk_unregister_reset_controller() is implemented to allow
+for unregistering reset controllers in the infracfg and pericfg drivers
+when unloading them.
 
+Yassine Oudjana (13):
+  dt-bindings: clock: Add Mediatek MT6735 clock bindings
+  dt-bindings: reset: Add MT6735 reset bindings
+  dt-bindings: arm: mediatek: Add MT6735 clock controller compatibles
+  clk: composite: Export clk_unregister_composite
+  clk: mediatek: Export mtk_free_clk_data
+  clk: mediatek: Add driver for MT6735 apmixedsys
+  clk: mediatek: Add driver for MT6735 topckgen
+  clk: mediatek: gate: Export mtk_clk_register_gates_with_dev
+  clk: mediatek: reset: Export mtk_register_reset_controller symbols
+  clk: mediatek: reset: Return mtk_reset pointer on register
+  clk: mediatek: reset: Implement mtk_unregister_reset_controller() API
+  clk: mediatek: Add driver for MT6735 infracfg
+  clk: mediatek: Add driver for MT6735 pericfg
 
- .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
- include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
- create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+ .../arm/mediatek/mediatek,infracfg.yaml       |    8 +-
+ .../arm/mediatek/mediatek,pericfg.yaml        |    1 +
+ .../bindings/clock/mediatek,apmixedsys.yaml   |    4 +-
+ .../bindings/clock/mediatek,topckgen.yaml     |    4 +-
+ MAINTAINERS                                   |   16 +
+ drivers/clk/clk-composite.c                   |    1 +
+ drivers/clk/mediatek/Kconfig                  |   28 +
+ drivers/clk/mediatek/Makefile                 |    4 +
+ drivers/clk/mediatek/clk-gate.c               |    1 +
+ drivers/clk/mediatek/clk-mt6735-apmixed.c     |  274 ++++
+ drivers/clk/mediatek/clk-mt6735-infracfg.c    |  265 ++++
+ drivers/clk/mediatek/clk-mt6735-pericfg.c     |  360 +++++
+ drivers/clk/mediatek/clk-mt6735-topckgen.c    | 1159 +++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                |    1 +
+ drivers/clk/mediatek/clk-mtk.h                |    8 +-
+ drivers/clk/mediatek/reset.c                  |   31 +-
+ .../clock/mediatek,mt6735-apmixedsys.h        |   16 +
+ .../clock/mediatek,mt6735-infracfg.h          |   25 +
+ .../clock/mediatek,mt6735-pericfg.h           |   37 +
+ .../clock/mediatek,mt6735-topckgen.h          |   79 ++
+ .../reset/mediatek,mt6735-infracfg.h          |   31 +
+ .../reset/mediatek,mt6735-pericfg.h           |   31 +
+ 22 files changed, 2366 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixed.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-index 31497677e8de..7a8d375e055e 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-@@ -4,18 +4,19 @@
- $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
- 
- maintainers:
-   - Jonathan Marek <jonathan@marek.ca>
- 
- description: |
-   Qualcomm display clock control module which supports the clocks, resets and
--  power domains on SM8150 and SM8250.
-+  power domains on SM8150/SM8250/SM8350.
- 
-   See also:
-     dt-bindings/clock/qcom,dispcc-sm8150.h
-     dt-bindings/clock/qcom,dispcc-sm8250.h
-+    dt-bindings/clock/qcom,dispcc-sm8350.h
- 
- properties:
-   compatible:
-@@ -23,6 +24,7 @@ properties:
-       - qcom,sc8180x-dispcc
-       - qcom,sm8150-dispcc
-       - qcom,sm8250-dispcc
-+      - qcom,sm8350-dispcc
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-new file mode 120000
-index 000000000000..0312b4544acb
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-@@ -0,0 +1 @@
-+qcom,dispcc-sm8250.h
-\ No newline at end of file
 -- 
-2.34.1
+2.36.0
 
