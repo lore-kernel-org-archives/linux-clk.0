@@ -2,148 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D817DC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 15:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E754EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  4 May 2022 15:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351969AbiEDPPk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 11:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37248 "EHLO
+        id S1351991AbiEDPQ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 11:16:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243521AbiEDPPj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 11:15:39 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5291B2898D
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 08:12:02 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220504151159euoutp02c6523cffea34472c92a981e5217742a2~r75bJdkVm1024010240euoutp02J
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 15:11:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220504151159euoutp02c6523cffea34472c92a981e5217742a2~r75bJdkVm1024010240euoutp02J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651677119;
-        bh=WZmdiOz6cyOlp8fR9Cd7zaPBMN021SRIXeNQW5M5fxg=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=efQWmMNy5eACb4UddIjXLJYCNPDBYGWfXHObw48VfJZKTYdVO75g+31Vo8bedrha3
-         +r2msXZ7OsVttUwK1RyZSQEU8/V7mtvwwy1hloEX1tOCpe08FgvafvjWKCHGtETg2u
-         /M3eJ+0qQzAyeuEkrkJCBFDRKO06dID6vEE7FSlg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220504151158eucas1p1a9a0efcac45743ff0286366d5eaadca9~r75avAliW0467604676eucas1p1A;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2B.76.10260.EB792726; Wed,  4
-        May 2022 16:11:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220504151158eucas1p196f4dfb465303df21957418819173512~r75aNOfyz1915819158eucas1p1s;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220504151158eusmtrp105e6fe5961d8c3f4e4551d23bf2f3ad8~r75aMKmo62594725947eusmtrp1e;
-        Wed,  4 May 2022 15:11:58 +0000 (GMT)
-X-AuditID: cbfec7f5-bf3ff70000002814-29-627297be5c9b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 21.98.09522.EB792726; Wed,  4
-        May 2022 16:11:58 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220504151157eusmtip1b8537a5ae700fe9e7ee941d792e0f190~r75ZgnjtN1845318453eusmtip1Q;
-        Wed,  4 May 2022 15:11:57 +0000 (GMT)
-Message-ID: <9d3c838c-4cc1-dfc0-4d3d-2387a3f33828@samsung.com>
-Date:   Wed, 4 May 2022 17:11:57 +0200
+        with ESMTP id S1350363AbiEDPQ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 11:16:27 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B18E441F8F
+        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 08:12:50 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id e24so2454014wrc.9
+        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 08:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Q8t/4zs15J+WUhbyzSWnk3xMYZcOI1/gRBqoDJhXob4=;
+        b=wi7jEkVHGAPE3FymCXSvLN550cRUAYn+sygWU7mIu1v6VRG1s7mhDZ07dA1iYbxg13
+         R/Rytjl94JyOgat26pA99xa6NJJXkv9o8ASXXJYmqwBgsrHKO3jCpvBch3BMVUTuDO1s
+         q182c5/7F7N1xv3HFPXMc6ERzEdT2cGvJ23dvQsQVG5u2qZcYxQWdOxvuyGnd0wgv1rm
+         jOtd0psyDJ6F3bYSbcUzFT3fyQMQjq6hOacnH0TDmwlF3DbqtXcxLn4134sRyQ0CpcbQ
+         dw3aG43dPDYrPKEsWqb3ILdVMpegh45O6gw08q0NqQjG90e9fZ7T2uG62sX6t8YmbqSY
+         bw/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Q8t/4zs15J+WUhbyzSWnk3xMYZcOI1/gRBqoDJhXob4=;
+        b=Y2DZTxAJSSVETYlkFJZcJLWrQyvcAecX1FkOQmGYWoFVs2XYwvcKY4+lwUJYBwgo15
+         Eoq/KIv83p2DFsN3AUuRRWqVFL5XZmmsVlzIeyrHX+019yW90mTlW1jp7LvSY8tmB2nQ
+         lRZPAoEDMlJ6E8kEZP51fKNM6XBssBRvW+Ijd1S3QSzsgHWBLI0tSpwoWl2epYuX8w9r
+         jd3tBlYDcZiebAZBu3TdraztkaEFbVLQx/3W9smow3m+GYyEO1o6qNi9FloZVv0LVLC3
+         jrITWQPtC2vnVR4egzMKu/N62ONEEJifn1lc4FmX8+1I9JQBw+fZJscHcaDVGpL7r/66
+         WqcQ==
+X-Gm-Message-State: AOAM532xvo0e18x/8sjqzONmDrZ1XfUoARpAWpCtefczQA/ltgY/Hb+t
+        j7iejQEdHJNh9jehny4hwbuziw==
+X-Google-Smtp-Source: ABdhPJwfIvkgE9/1fAnUpjs8I+PHo/RnrTFjwqbemJe3+1Lvhwupfj7uVRIPK/HVf99hbq90HZ3bMA==
+X-Received: by 2002:a5d:598f:0:b0:20c:83c9:b05b with SMTP id n15-20020a5d598f000000b0020c83c9b05bmr2172834wri.343.1651677170300;
+        Wed, 04 May 2022 08:12:50 -0700 (PDT)
+Received: from [192.168.0.215] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id v1-20020a05600c15c100b003942a244ecfsm3898263wmf.20.2022.05.04.08.12.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 08:12:49 -0700 (PDT)
+Message-ID: <6b231701-0c76-e7a8-bcd3-8a9c5cdc7a0f@linaro.org>
+Date:   Wed, 4 May 2022 17:12:48 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v3 01/12] dt-bindings: clock: add clock binding
- definitions for Exynos Auto v9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH V4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Chanho Park <chanho61.park@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <4f6bfca2-4591-af7c-4a65-f8b0b59d8076@linaro.org>
+To:     Cixi Geng <gengcixi@gmail.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, orsonzhai@gmail.com,
+        baolin.wang7@gmail.com, zhang.lyra@gmail.com, lee.jones@linaro.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220427100848.3525710-1-gengcixi@gmail.com>
+ <20220427100848.3525710-3-gengcixi@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220427100848.3525710-3-gengcixi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djPc7r7phclGVx/oGXxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgyrnYn
-        FzxkrZh1eiNbA+Npli5GTg4JAROJ+UdmAdlcHEICKxglXq/cwQjhfGGU+N02nR3C+cwoMX3i
-        WyaYliNLuqFaljNKHPnYCVX1kVFi9/RrYIN5Bewkls/+D2azCKhILF03nQkiLihxcuYTsLio
-        QJLEr6tzGEFsYYEUiaN7noDVMAuIS9x6Mh/MFhEolujeeJgJZAGzwFxmiafb/oEl2AQMJXqP
-        9oE1cwIt65jXB9UsL7H97RxmkAYJgXZOiXsvvjFC3O0iserQf2YIW1ji1fEt7BC2jMTpyT3Q
-        4KiXmDzlChuE3cEo8XWvGYRtLTFh0wmgOAfQAk2J9bv0IcKOElcnz2UHCUsI8EnceCsIcQKf
-        xKRt05khwrwSHW1CENUqEr9XTYcGopRE95P/LBMYlWYhhcosJN/PQvLMLIS9CxhZVjGKp5YW
-        56anFhvnpZbrFSfmFpfmpesl5+duYgQmsdP/jn/dwbji1Ue9Q4xMHIyHGCU4mJVEeJ2XFiQJ
-        8aYkVlalFuXHF5XmpBYfYpTmYFES503O3JAoJJCeWJKanZpakFoEk2Xi4JRqYEoxWKS2dMrX
-        bbxhV71lCkL5Fk3d7b9bVHyqXt7FsJ3P1yz5ljihpPfhskWGT7boGP9NdPu99qxC8AJL60fr
-        lFykGr8tDrxeN2fWqfvLotZcsFObZzj5d2JL7N4FvC5/XmlOP3dI+SBLCFfJwcY3RRL7a6ym
-        RxW+FJmld1ZNxu/vj/fMmU89puxibo7xmZI5ZRVX+L/rlZU69z8lvJlRcnh/4aq/QkYXrLf3
-        Tu5wMFM+v/uS9tpd86QS77FvK9jxfa6czJlP5xf1Bv5aLXVwl41neeayTykCD1iDrhUcn6do
-        dGLu6l0zxeJ3P5p8dOKrc+012+z1Exd5Fxtn8UW0SfHGmovkd5Sc3rTn1VqWqQV9SizFGYmG
-        WsxFxYkA/rLpw9EDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xu7r7phclGfy7wW7xYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0t
-        jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyrnYnFzxkrZh1eiNbA+Npli5GTg4J
-        AROJI0u6wWwhgaWMElOblboYOYDiUhLzW5QgSoQl/lzrYoMoec8o8XMWWDmvgJ3E8tn/wWwW
-        ARWJpeumM0HEBSVOznwCFhcVSJLYc78RLC4skCJxdM8TMJtZQFzi1pP5YLaIQLHEoW0NzF2M
-        XEDx+cwSp5u6mSCW/WaUuPSgBMRmEzCU6D3axwhicwIt7pjXxwRyJ7OAusT6eUIQM+Ultr+d
-        wzyBUWgWkjNmIVk3C6FjFpKOBYwsqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQKjdduxn5t3
-        MM579VHvECMTB+MhRgkOZiURXuelBUlCvCmJlVWpRfnxRaU5qcWHGE2BQTGRWUo0OR+YLvJK
-        4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpiW7E9///QYx7o3tY7N
-        fpbB3c/fN+lJ7Fvw6VPc0Z07mE+0sbF8PMIsr7jCvWTKm+MBK9e/K9uUk6jMZO4cP2O/xHyd
-        p+pHnmTPj7/0frnVxh96Eme9yzUu3dmyZIPspRduO1/bXuFTZ9l5/rxT5M5a46veanJG6tt/
-        2QnvvnFVeafbx8k8VawNAcfCFrmfO9cTfuPOPZtd3ytfbtnkF33iUcaOzp92GqWf2zyTGpde
-        MZq0PmVV1blznRKdp7lu/RUOcr28QDXEnotPyGx/jKyvqHCQxmNOuztPpJ+u5XtnXHY/YM3+
-        Oo3ls3v+TrysIscy0ef4s6XGIS6Zv/lnvq5QTW1bFyTLc3B+7lTlPHkPJZbijERDLeai4kQA
-        r5wvrl8DAAA=
-X-CMS-MailID: 20220504151158eucas1p196f4dfb465303df21957418819173512
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d
-References: <20220504075154.58819-1-chanho61.park@samsung.com>
-        <CGME20220504075003epcas2p3708d1853dae290bc42cfacd318767c8d@epcas2p3.samsung.com>
-        <20220504075154.58819-2-chanho61.park@samsung.com>
-        <4f6bfca2-4591-af7c-4a65-f8b0b59d8076@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 04.05.2022 16:36, Krzysztof Kozlowski wrote:
-> On 04/05/2022 09:51, Chanho Park wrote:
->> Add device tree clock binding definitions for below CMU blocks.
->>
->> - CMU_TOP
->> - CMU_BUSMC
->> - CMU_CORE
->> - CMU_FYS2
->> - CMU_PERIC0 / C1
->> - CMU_PERIS
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->> ---
->>  .../dt-bindings/clock/samsung,exynosautov9.h  | 299 ++++++++++++++++++
+On 27/04/2022 12:08, Cixi Geng wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > 
-> Hi Sylwester,
+> Add bindings for Unisoc system global register which provide register map
+> for clocks.
 > 
-> If I am to apply the DTS, which uses this header, I would need to take
-> it via my tree and send you a pull request with it.
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> ---
+>  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> new file mode 100644
+> index 000000000000..3522f3d2d8de
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/sprd,ums512-glbreg.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Unisoc System Global Register Device Tree Bindings
 
-Let's do it that way, please provide a pull request with the header.
+Thanks for removing "Device Tree Bindings" from first patch, but such
+comment applies everywhere. Please clean up all your patches (also
+future) based on received comments, so we do not have to repeat the same.
 
 
-Regards,
-Sylwester
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +description:
+> +  Unisoc system global registers provide register map
+> +  for clocks and some multimedia modules of the SoC.
+> +
+> +properties:
+> +  "#address-cells": true
+> +  "#size-cells": true
+> +
+> +  compatible:
+
+Put the compatible as first in the properties.
+
+> +    items:
+> +      - const: sprd,ums512-glbregs
+> +      - const: syscon
+> +      - const: simple-mfd
+> +
+> +  ranges:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^.*@[0-9a-f]+$":
+
+The name should be specific - "clock-controller" - so this can be in
+"properties".
+
+> +    # Child node
+
+Comment does not help.
+
+
+Best regards,
+Krzysztof
