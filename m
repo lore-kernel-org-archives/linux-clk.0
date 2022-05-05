@@ -2,93 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3BFC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 00:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A6CC4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 02:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233494AbiEEBBj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 May 2022 21:01:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45670 "EHLO
+        id S240099AbiEEC4z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 May 2022 22:56:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232501AbiEEBBi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 21:01:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22F0422287;
-        Wed,  4 May 2022 17:58:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D13D61D72;
-        Thu,  5 May 2022 00:58:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE9C6C385A5;
-        Thu,  5 May 2022 00:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651712279;
-        bh=PNhBXOPnVpmHDlq1hrRy+qlY1DmxGj2kaPbLINje80Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TFohAHCcDsAtmbs/giK1b2ijhjJCSMJntoZo+KtAppYdiz/Bm0wjs5jCrtQ1qAO9W
-         BtaI2njyCFM4lfmUgoiwv0RV33+yIqIJAbPWEoFxl+4GQUtLDpGM4ZZ8k5l/8Uy9Bh
-         aBONPgsNwYzzxNqG0bDVOptOhfD6hJxDPECbLPYaWo//8x8DwTil8BuXM3F1Hehd24
-         XjdQ+cRpqM/oA00fQPKSpwhQSIMKcaBIaPXSfIZ4xKOSwUNUWADPh9YJelGPn+qYlF
-         nNEBJYz4q1X9GL5ZqBamT6ptYCJuCgpm+DXyJH9AGW/xuPaRAOdc5VggboYxzElMRO
-         EHR91wOM11s2g==
-Date:   Wed, 4 May 2022 17:57:57 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S237104AbiEEC4y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 May 2022 22:56:54 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513EA4DF44
+        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 19:53:15 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id v66so3113202oib.3
+        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 19:53:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5JtMcRY+9JipAU8C1bkMSmvF0PCdAKtGbjYynT12iIQ=;
+        b=s/7YYm+ykBqWwHsrdfzUnctOAAIiD3SMSXkA5/lNxfZqFYKJnzyeuwCq4vXUdN1MA1
+         hScfyde5HQZDEe9qcmDEyqMr+l0PTrsXmTnzahIoQzDcN+uXZleuWB+C+KRc4sBHtkjZ
+         D63o+e94E4iV/kRbgx/Y6n3mCBqBXwAPbkKcs9fbq+VPacbTageksLm54LucC+k7egry
+         eq10zmOlBy/XDA3wk9K+1mPx3CM1tDOGee5ZfipVtj5MlQPXzqc0+Oc2lGOgMXoOqdHj
+         7lmD/TKbcoYxcGMGuIQIiQ3j4JFDJKF+S65M385CpZKMi255Wi+xJ68jN1MHYDvv1KHT
+         B0RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5JtMcRY+9JipAU8C1bkMSmvF0PCdAKtGbjYynT12iIQ=;
+        b=7KLhVHK/adYyPmw0IRGjg+0zC7vkN8r341AXDV/i527nYDnrlOLNywIWCQ7NawRk6q
+         LURC+Mvd2OYlN0xG0Cdb1e85vu/KiJu+8UCnflZaD5bwdoTVEwQcZziw5U9HH7Gfmax+
+         //NxFRZ6/cymlhS0dbqvLKYJuQiPx303PRihMCBCOTZwzF7SVhAyLpXX/pBxl2tqTTXM
+         Gra6cnevoPAIvN5RfPJmvtMDJ2ACYLaS1wcVM1cjLgKxRIRg8HGQrklTYsGzLeDD3J1q
+         udDbikOj+YJv0CFLC3RxacvIPk5slplnagMqNxW84MPyRbOutTuqRLFyttndCBf/KUjC
+         YpGQ==
+X-Gm-Message-State: AOAM531AoSb6bBnANzS1hWNNFPjgl4Pi6fax3ye6fThVFojjsfPHT2np
+        8udOikehvaPIih5cl/jM9w2BxE3fIFOnQIFR
+X-Google-Smtp-Source: ABdhPJxdPv1yS48+PtUC0XC2ujBEDklgGUJAlp2EVPL/sKrWpGR5jQTUNF2lsFYfn4x5wW42fwqKvA==
+X-Received: by 2002:a05:6808:20a0:b0:326:5283:7614 with SMTP id s32-20020a05680820a000b0032652837614mr1344376oiw.55.1651719194711;
+        Wed, 04 May 2022 19:53:14 -0700 (PDT)
+Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 1-20020aca2801000000b00325cda1ff95sm242572oix.20.2022.05.04.19.53.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 19:53:13 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/9] Add Renesas RZ/V2M Ethernet support
-Message-ID: <20220504175757.0a3c1a6a@kernel.org>
-In-Reply-To: <20220504145454.71287-1-phil.edworthy@renesas.com>
-References: <20220504145454.71287-1-phil.edworthy@renesas.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] clk: qcom: SC8280XP GCC
+Date:   Wed,  4 May 2022 19:54:55 -0700
+Message-Id: <20220505025457.1693716-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed,  4 May 2022 15:54:45 +0100 Phil Edworthy wrote:
-> The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
-> some small parts are the same as R-Car Gen2.
-> Other differences are:
-> * It has separate data (DI), error (Line 1) and management (Line 2) irqs
->   rather than one irq for all three.
-> * Instead of using the High-speed peripheral bus clock for gPTP, it has
->   a separate gPTP reference clock.
-> 
-> The dts patches depend on v4 of the following patch set:
-> "Add new Renesas RZ/V2M SoC and Renesas RZ/V2M EVK support"
-> 
-> Phil Edworthy (9):
->   clk: renesas: r9a09g011: Add eth clock and reset entries
->   dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
->   ravb: Separate use of GIC reg for PTME from multi_irqs
->   ravb: Separate handling of irq enable/disable regs into feature
->   ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
->   ravb: Use separate clock for gPTP
->   ravb: Add support for RZ/V2M
->   arm64: dts: renesas: r9a09g011: Add ethernet nodes
->   arm64: dts: renesas: rzv2m evk: Enable ethernet
+This adds binding and driver for the Global Clock Controller (GCC) found in the
+Qualcomm SC8280XP platform.
 
-How are you expecting this to be merged?
+Bjorn Andersson (2):
+  dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
+  clk: qcom: add sc8280xp GCC driver
 
-I think you should drop the first (clk) patch from this series 
-so we can apply the series to net-next. And route the clk patch 
-thru Geert's tree separately? 
+ .../bindings/clock/qcom,gcc-sc8280xp.yaml     |  128 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-sc8280xp.c               | 7488 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc8280xp.h |  496 ++
+ 5 files changed, 8122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sc8280xp.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
 
-Right now patchwork thinks the series is incomplete because it 
-hasn't received patch 1.
+-- 
+2.35.1
+
