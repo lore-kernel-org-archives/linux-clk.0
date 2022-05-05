@@ -2,103 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8B3C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 11:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C4CC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 12:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243946AbiEEL1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 07:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56956 "EHLO
+        id S1359777AbiEEMP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 08:15:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236651AbiEEL13 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 07:27:29 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D60953B7C;
-        Thu,  5 May 2022 04:23:48 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id js14so2741210qvb.12;
-        Thu, 05 May 2022 04:23:48 -0700 (PDT)
+        with ESMTP id S1359769AbiEEMP7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 08:15:59 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F2C6412
+        for <linux-clk@vger.kernel.org>; Thu,  5 May 2022 05:12:19 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id x17so7122939lfa.10
+        for <linux-clk@vger.kernel.org>; Thu, 05 May 2022 05:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=6U81F3J95/rsKZwfBRMct5IzTiEVBNMXd4/8yYgv1pY=;
-        b=h3ZZbjzjpSuW7/PZ8tQDPty8Qynf+MDjS6JNjHEtstVUzL+0nGy2id5rG8A+oivq1L
-         9Ond9wLsMUEHqHxInPeFL21Go62hJg3//jT9oAydMsWZpgfr1JQZZSvlOZjMcHj9SN/o
-         4GoBJf16VZhWzr6xJJekScoDVgrm8jdRFSRTlCNwVMkj9noWh6bGg57JdkNxtlHiq+OV
-         X8LUsHEK2YM7xnhlXJmoGwamHfX2QsUfjoGmmVgcCPLKKSmLEddVTBYL1jQFxNS4NC+U
-         TNVD7JjQzpSLlxyGfVXA1TAKJfW43i+rIYd5de/mpgvw23dS6HH4/0PXSFpEnZZmtxrL
-         JHAQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FCmEORJ79JaFBJp01cOo66V/j5K6NsPzrCaoVLHV8uM=;
+        b=mJwZZijSjo3iT07/6cFx7QtkDcTqNxobCxeeoAljZn3mFKRY8TpF+fF5Ow2R+tHw7Y
+         JXgqwrQATPW+NYq77BopXhpFDUdXofruEVve2BxKpPXE5FJYfBZNHBj96j8DeksZSAn0
+         AKQBquFA20Cq+fwQq1iGEnQwfngrwcoHJYfbm8RG1Nidn7asHl8eLVUxsrXi0/pv+EuT
+         87ZbQ18PufajTxySNoIGzfCWQGzFaAOJrLrrR45jpUbO2eV8+4S3DLNFR2C3Ou3LmZhd
+         RxsbImTHZI+uKk1nDq4U7PuelnnsFpAU5pF3xAEY6AkyQwdbdr8z6f/0M0AnpowWIu3c
+         Rthg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6U81F3J95/rsKZwfBRMct5IzTiEVBNMXd4/8yYgv1pY=;
-        b=NTzI2Pnbw1DQ0eMjHlioiOuTOs0zn46p2LkfAsJrZ4NOM19/QY3ioamzOFmFL28CAt
-         6EZg/faQ+5DIvObPCDwZssd44F5S8C897gjGBUqrktlGTjWoQUnek+eOJ6iUP0u5Mh+y
-         B5txaEz/F/vdbb2hfCB/0/6jO2dQqXfUT9jGNxtHMkyGEnvT8wG0Z6RybvvUVjwFKLZN
-         tNf9fNCKclGc2OmE7i0Zzc+qaP+Z641WRrXiuURzuMZk+ZvqOeqkVsF51rf2bybv8q0l
-         3peSMNvIKfEvRwHCMWQA9X/7dtHWYVcMNFjckN6Skwm5WWf5YAfNtCPH64B1MH1Jjdu5
-         SH1Q==
-X-Gm-Message-State: AOAM532itMLgyuenyhlmIo5DeJzaB4Ol02zymzYw5GBIA2jizWkLoCkU
-        MWCbNa3l57nR480vha+HaWo=
-X-Google-Smtp-Source: ABdhPJwGpx1RTwxpJjGtF0OKzKQcTGoX1QKpDZJVF/fVCD8pLGCgp5rXHRMGH50s7Yvjz4lFgtgGjQ==
-X-Received: by 2002:a05:6214:2461:b0:45a:bcbd:bcf7 with SMTP id im1-20020a056214246100b0045abcbdbcf7mr4526808qvb.79.1651749827778;
-        Thu, 05 May 2022 04:23:47 -0700 (PDT)
-Received: from [10.4.10.4] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id i21-20020a05620a27d500b0069fdbe43a5asm652449qkp.41.2022.05.05.04.23.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 04:23:47 -0700 (PDT)
-Message-ID: <5b8a7e58-1b84-6a6b-cc9e-b4224392b5ef@gmail.com>
-Date:   Thu, 5 May 2022 07:23:45 -0400
+        bh=FCmEORJ79JaFBJp01cOo66V/j5K6NsPzrCaoVLHV8uM=;
+        b=yteVsOYeoBopxNSWP/IHKA2/gl46DlmG+qnQB7HLt2J6wFgIDDFNLXfvQQo9ddHG6v
+         hehy67vdxIVjnjAX9rMaMMi5I3kgn1mCSBHRofz06ijOuw3omu9HLZczW2nb2o5D0YAV
+         Al+DthSlKle/BdCj+jnvofzgVFWojbYXGNNALfMIinNbPBVi26XHA7EGMJ81d0qkXusk
+         i797bcNbxY63MUWX/NFe8ihWNFMru0IY6LIn58SQgGjAPSEzEB+ecHJiAi1H0tDFlO2k
+         kPR1P4AbNWUZHuHF3wD7k0GUw4i14K6Zun2fJhaDexVjwAs0FwdvbyDfYS/vS1tFkTIs
+         R01g==
+X-Gm-Message-State: AOAM530L6QQg0/P1/P9wIckig6uS/KqIXX57CdSOy9cnQf005c81bCbb
+        rU6P/MTxsU7u24wQiUvktiLKCg==
+X-Google-Smtp-Source: ABdhPJwnalSgWGgapjxaS0gv7BNmLdZZv6SNBYzEWRArgTbl/EVYgSdineOR+WJFHpJ+X8DmZzOw5Q==
+X-Received: by 2002:a05:6512:158e:b0:472:5a6a:446c with SMTP id bp14-20020a056512158e00b004725a6a446cmr15335220lfb.408.1651752737334;
+        Thu, 05 May 2022 05:12:17 -0700 (PDT)
+Received: from localhost.localdomain (mobile-access-5672eb-224.dhcp.inet.fi. [86.114.235.224])
+        by smtp.gmail.com with ESMTPSA id g20-20020a056512119400b0047255d211fesm187454lfr.301.2022.05.05.05.12.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 May 2022 05:12:16 -0700 (PDT)
+From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/7] clk: qcom: add camera clock controller driver for SM8450 SoC
+Date:   Thu,  5 May 2022 15:12:11 +0300
+Message-Id: <20220505121213.4121802-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v2 12/15] pinctrl: freescale: Add i.MXRT1170 pinctrl
- driver support
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20220428214838.1040278-1-Mr.Bossman075@gmail.com>
- <20220428214838.1040278-13-Mr.Bossman075@gmail.com>
- <CACRpkdY2MNkAKhVOQ_Eyq0AwOtEW-seSrxgsJ2D8E78u636A8A@mail.gmail.com>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <CACRpkdY2MNkAKhVOQ_Eyq0AwOtEW-seSrxgsJ2D8E78u636A8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The patchset adds support of a camera clock controller found on
+QCOM SM8450 SoC, noticeably a camcc pll2 is a new "rivian evo"
+type of pll, its generic support is added in the series.
 
+Note that SM8450 ES variant has a slightly different configurtion,
+the published version is intended to support SM8450 CS SoC.
 
-On 5/4/22 17:38, Linus Walleij wrote:
-> On Thu, Apr 28, 2022 at 11:49 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> 
->> Add the pinctrl driver support for i.MXRT1170.
->>
->> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
->> ---
->> V1 -> V2:
->>   - Nothing done
-> 
-> If I get a review from a Freescale maintainer on this driver and the bindings
-> I can merge it separately, correct?
-That's fine with me.
-I cant speak for Abel or Freescale/NXP maintainers though.
+Changes from v2 to v3:
+* fixed a typo in a usage example found in yaml file,
+* renamed dt related files to match the compatible "qcom,sm8450-camcc",
+* minor fixes in the driver per review requests from Bjorn,
+* added Bjorn's tag to a change of exported symbols namespace.
 
-Thanks,
-Jesse Taube
-> Yours,
-> Linus Walleij
+Changes from v1 to v2:
+* updated qcom,camcc-sm8450.yaml according to review comments from Rob,
+* changed qcom,camcc-sm8450.h licence to dual one,
+* disabled camcc device tree node by default,
+* added Stephen's tag,
+* rebased the series on top of clk-for-5.18
+
+Vladimir Zapolskiy (7):
+  dt-bindings: clock: add QCOM SM8450 camera clock bindings
+  arm64: dts: qcom: sm8450: Add description of camera clock controller
+  clk: qcom: clk-alpha-pll: fix clk_trion_pll_configure description
+  clk: qcom: clk-alpha-pll: limit exported symbols to GPL licensed code
+  clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces
+  clk: qcom: clk-alpha-pll: add Rivian EVO PLL configuration interfaces
+  clk: qcom: add camera clock controller driver for SM8450 SoC
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |   89 +
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |   20 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8450.c               | 2859 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |  145 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |   11 +-
+ include/dt-bindings/clock/qcom,sm8450-camcc.h |  159 +
+ 8 files changed, 3285 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm8450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
+
+-- 
+2.33.0
+
