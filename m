@@ -2,90 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1075EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 06:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D461EC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 06:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245025AbiEEGrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 02:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56640 "EHLO
+        id S232816AbiEEG5g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 02:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238051AbiEEGrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 02:47:20 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D0C4738F
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 23:43:42 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id g6so6880061ejw.1
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 23:43:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=bH7rFSF+We/2mnXLcn53luQ4Akdv5qu3lfE6jp8gE/8=;
-        b=Yr0jLubCHtfulcNbMkxwleGAke80IGOnltMwks+/qCHreCBW3l2u+tOTPDOuwzpN5I
-         a6tMOtmunqHoa8rfpF6JsZT2Mb0MmbDJMnEHW+qxrv1YQXvG5Pg/KZA25eP+UoneNfyf
-         54ZoejeyMUIHVQOn6jQX73YfA6XKLKNJVhcbIxZZLJZBqvq9DxWHGkKtufaGVbtJy+G6
-         rVMa/hSCvLrWID7H2bir82xcR/O50i5p8TevJbaOD6AJ8dqmkZwRE0Jk9nxDtDtrFXU9
-         l1AK3hS4Sv2hUVA38xkCtkm2BpIfuhR+Xa0ZNx/EHnH9/xaYgmBIAcbpjQaOZV9frEfl
-         3ywQ==
+        with ESMTP id S240646AbiEEGzw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 02:55:52 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7171547045;
+        Wed,  4 May 2022 23:52:14 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id x22so2544641qto.2;
+        Wed, 04 May 2022 23:52:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=bH7rFSF+We/2mnXLcn53luQ4Akdv5qu3lfE6jp8gE/8=;
-        b=lCUctZMDe2ovrWq9yBZ6669nP0LZioMHTwSkM/Kfg+3G641mgQtovwFHSL/WfhiWu7
-         QS5m9zeY2vZaefS1qEudVP2pbfyOHwZDLjXj1N/XfLk62xWqvnSFGx/pERUsxw1t2ln9
-         S0XGuDdGJJkGyiFwDWzx5AdnLTRlHBB+KzSEhJPRoSm8HLJGBi3lobVW4S8ZDQfENY9g
-         fbDCzvzc1ECW7+dZZL4b5eYhfWPNFmVDzrfHh9a5r07KZmW2qPKMQJgbHbGZdKx0VwFE
-         mRk/TnhzpyydEWO5IsCEe0OLuqJS+pexwt4/LiXAROWMwjEI1/GFYyIIWNxO/xzZpHYK
-         JiiQ==
-X-Gm-Message-State: AOAM533Q8LkrjM2mCA0t8OLAUsb4vvrAheN5FsCBnzTtY8o5lsweU4LD
-        hx8QqqS2WZxdaSJ+22bnT+Z0uA==
-X-Google-Smtp-Source: ABdhPJx9wbj78bnEEIbM4N0MBhUmg5+Ga8HJBRLXBipQiB60SNjcWVo4ls5sJpU44Vk54EnNTYEwEg==
-X-Received: by 2002:a17:907:72ca:b0:6f3:f6e5:9085 with SMTP id du10-20020a17090772ca00b006f3f6e59085mr24034258ejc.628.1651733020859;
-        Wed, 04 May 2022 23:43:40 -0700 (PDT)
-Received: from [192.168.0.215] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id a12-20020a50f0cc000000b00425d6c76494sm402560edm.1.2022.05.04.23.43.39
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QGcj3wvDLBvz1Kbr4GVQBUSS7NWwZ5P79yidz10v/bo=;
+        b=ZeO0k5UeQE8maxbeBLKN7hDUdqJ0aKSJIcZdkpkiEi30MPAVz3OWprfbbrQYE6zYoE
+         Swf8i9IhODBoOqq0KX6N4VJcsVxwnbzogQw6/7lHKcMTRYhF7G3yNi0TKRpiJgOhMJlp
+         C2sw0wL8uDCx8gBkmxlHsh2sGgBXzLxaj7kfLof1kMVvozVt71gkzMkYR6EfEvP5Soaa
+         TA/gLHBGX5jKsLbimITI8iEnFjLWwDvpHofcvRs1XgvN6C5KT/P8N12vPSXz0u1mbTDq
+         ueYo4mX1kFOq3ffY98vnZBzbHYAu06tohr2IVSmTcagXAzV5m7eueBvIbBEBrGt3CTra
+         i3iw==
+X-Gm-Message-State: AOAM531I5IN/rnVruuUGxg3gfy3WhITimBAZQikrv3wDF/0meqIH+u6U
+        697a5nFKT73rlBoVPQNwbebiMSG5tt47gQ==
+X-Google-Smtp-Source: ABdhPJy7oZ7r8vYP284fktErF3MGwUYv4pMQ6rbI7MWzcZJi8n3Fja02FUsZD6gOXUF25JzZbDV05g==
+X-Received: by 2002:a05:622a:6205:b0:2f1:e9d9:df34 with SMTP id hj5-20020a05622a620500b002f1e9d9df34mr22337612qtb.86.1651733533183;
+        Wed, 04 May 2022 23:52:13 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id q21-20020a05620a0c9500b006a0098f029fsm408183qki.13.2022.05.04.23.52.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 May 2022 23:43:40 -0700 (PDT)
-Message-ID: <b638e25a-8547-1f4b-8a21-65d0ae771a6c@linaro.org>
-Date:   Thu, 5 May 2022 08:43:39 +0200
+        Wed, 04 May 2022 23:52:12 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id e12so6074277ybc.11;
+        Wed, 04 May 2022 23:52:12 -0700 (PDT)
+X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
+ s14-20020a056902120e00b006346f296b84mr21041538ybu.604.1651733532336; Wed, 04
+ May 2022 23:52:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 1/4] clk: qcom: Add missing SYSTEM_MM_NOC_BFDCD_CLK_SRC
-Content-Language: en-US
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org
-References: <20220504163835.40130-1-bryan.odonoghue@linaro.org>
- <20220504163835.40130-2-bryan.odonoghue@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220504163835.40130-2-bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220504142058.18704-1-wanjiabing@vivo.com>
+In-Reply-To: <20220504142058.18704-1-wanjiabing@vivo.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 May 2022 08:52:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX57C0o65AY=9H=_mge=ee0nwYtiZ6q5JVa3SHB1VnVeg@mail.gmail.com>
+Message-ID: <CAMuHMdX57C0o65AY=9H=_mge=ee0nwYtiZ6q5JVa3SHB1VnVeg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Fix duplicate argument in rzg2l-cpg
+To:     Wan Jiabing <wanjiabing@vivo.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kael_w@yeah.net
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/05/2022 18:38, Bryan O'Donoghue wrote:
-> When adding in the indexes for this clock-controller we missed
-> SYSTEM_MM_NOC_BFDCD_CLK_SRC.
-> 
-> Add it in now.
-> 
-> Fixes: 4c71d6abc4fc ("clk: qcom: Add DT bindings for MSM8939 GCC")
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Hi Wan,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Wed, May 4, 2022 at 4:21 PM Wan Jiabing <wanjiabing@vivo.com> wrote:
+> Fix following coccicheck warning:
+> ./drivers/clk/renesas/rzg2l-cpg.c:603:39-65: duplicated argument to & or |
+>
+> The CPG_SIPLL5_CLK1_REFDIV_WEN here is duplicated.
+> Here should be CPG_SIPLL5_CLK1_POSTDIV2_WEN.
 
+Thanks, nice catch!
 
-Best regards,
-Krzysztof
+> Fixes: a16ed737e62b ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
+> Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+As I haven't sent a pull request yet, I will fix up the original commit in
+renesas-clk-for-v5.19.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
