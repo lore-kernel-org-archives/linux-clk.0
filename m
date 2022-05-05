@@ -2,144 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC93C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 15:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275F3C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 16:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381013AbiEEPIM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 11:08:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
+        id S245104AbiEEQvR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 12:51:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380998AbiEEPIC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 11:08:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5D056430;
-        Thu,  5 May 2022 08:04:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 045ED61A69;
-        Thu,  5 May 2022 15:04:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F33FC385A8;
-        Thu,  5 May 2022 15:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651763061;
-        bh=ndNt7BUf9dTGF9Boc0sHL0QvCjcViApZ2+jdoiRYFyE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qsTwJOAmbU9NAcodvY8Up4PoNuEDRZy5qxSFcdI0VmbgNmn3/5x71X8ojXxDFeNvv
-         wY4qvOjbwdrz7Yr75u2sbhbjskoI/sZWGz4PEQP/S+I8xtRFCkH1Moav6HaNLEeEMO
-         WD9CFgJXtdTh9DLKCtyGpxZcPAVjEnkCl68AjKWpRBt4xYlkTr26FWjmXq6vdFHjfo
-         1JagmTiGO1QdyMD0R232U+yffpnEC/3hGsGQpybLdnELbR+ZACe8+oOYvvWsaDz2qx
-         oHX9cN4PzhibRt823eQYXukpGaPOEOOiwDBSuJUdGm0u9JKoMHgHhPlLEhO0XHJKCM
-         raFIKJWwjP1BA==
-Date:   Thu, 5 May 2022 16:04:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Tomas Cech <sleep_walker@suse.com>,
-        Sergey Lapin <slapin@ossfans.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Helge Deller <deller@gmx.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 18/48] ARM: pxa: hx4700: use gpio descriptors for audio
-Message-ID: <YnPna0pW9csiFkHK@sirena.org.uk>
-References: <20220419163810.2118169-1-arnd@kernel.org>
- <20220419163810.2118169-19-arnd@kernel.org>
- <CACRpkdac8dGKSEmc-HpgooJefrDtiKK+_A1Mv7AJM8yQV9UY-w@mail.gmail.com>
- <CAK8P3a0w3gFzZoBzyRsi1Ta4prESf8Fp0=quAPSKMnaXvbXNTQ@mail.gmail.com>
- <CACRpkdZNryYkidvdKuT57RM3fz6_X+3oOzF5xaOZd+TyScfUsw@mail.gmail.com>
- <CAK8P3a0y0tVZODpp+GSf0EkMPWbbvMqA-4kNf0NJMc0M2=2WHw@mail.gmail.com>
- <CACRpkdaNRX0RDYJd_uaGo5jtiXu_qGHmEDGniaCmR=TZvcHH8A@mail.gmail.com>
- <YnPhna5h1+kQGFLa@sirena.org.uk>
- <CAK8P3a2cYUYMKSMo3VOLVTO0=LWc0sHf72Eph8t_es9axo_eeA@mail.gmail.com>
+        with ESMTP id S244828AbiEEQvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 12:51:16 -0400
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573EB443E0;
+        Thu,  5 May 2022 09:47:36 -0700 (PDT)
+Received: by mail-oo1-xc33.google.com with SMTP id m3-20020a4ac683000000b0035f13dde9ccso810942ooq.6;
+        Thu, 05 May 2022 09:47:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=mZ1v1Dle2stU/b+5xs8mW34KpIG2CizYWSGqBNU2Bz8=;
+        b=kIU1IzWI2h67CczNZjDrAqOu+7amMiU9BNzBUsm9+8eUorQIgmZj8BUaj81G12rNlE
+         68e+vrj64mqY2psH6XqJCnztqqa0PQYdUiFVwlZFCUdnB10Eq3yPNuX2et/Qb7IiyrBz
+         y4P4CTgj9qHdFctipJQQLZooa5lZ6p9+t/FJlW5OsvmErxS/8SHDugMU5U/PNC8J3vyD
+         1HBZIl3MmaWUixyDAUco2zkiEwyySzadAX4fbQwpaHfhPJt5wbSxkV0ayhNZoX6n7e5a
+         HyZWZIVKJQiHg1IN3LnTM/Yup1dPA9d0emXF3/6nbwpE3BNPdT1+QaKsJavswdrAetPZ
+         rYkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mZ1v1Dle2stU/b+5xs8mW34KpIG2CizYWSGqBNU2Bz8=;
+        b=aAnACA9isyJLX2Xg2uQJh+TDgOWpBcQTTM5m7EeXLU1Cz+FHBjBs93CdvKzaFiv3pW
+         wYfy1mrate6Ht3hKXfo2zKklHVNILRrCXxPhB2M6bdL4upqZZIaCjwyW6xlT+mFY2eeS
+         2jbufSTseuioo+IPYotC3UtkgXtp+4RTmnTgLpgrpXYTk1PWg+7hSZDMpmmOv6bZjpcF
+         KwarQ3noOkmk6JHyUzqw9BUSg5aMCxukn/eAMmVD3Oepx2I9eNqD3dgV4eWzavjO0fo/
+         o6uP8GnIWVWRzl6AngM8knNDxTaGMNwa1JKw8p0iPraNAOiLsreK5UH8/amlJBTV8D79
+         Vasw==
+X-Gm-Message-State: AOAM531KlSFacRHsNiiUgUaIywXcIpDxVxFOd2gJNOZu8ubqflCPm+cS
+        wZGryqDlYgDA5GDCNUKg8Dg=
+X-Google-Smtp-Source: ABdhPJx/mBD6xFVnxfzAwXo9hN2FbyZEsHhGERFB1m4oe7WTeGkz/+OsH6gYEs3iDqleRPT+1WANlg==
+X-Received: by 2002:a4a:b289:0:b0:35e:7d6e:97eb with SMTP id k9-20020a4ab289000000b0035e7d6e97ebmr9583599ooo.57.1651769255626;
+        Thu, 05 May 2022 09:47:35 -0700 (PDT)
+Received: from [192.168.1.145] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id t28-20020a05683019fc00b0060603221260sm799519ott.48.2022.05.05.09.47.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 May 2022 09:47:35 -0700 (PDT)
+Message-ID: <26c2fb0c-e58a-5864-4256-f60f948ca634@gmail.com>
+Date:   Thu, 5 May 2022 18:47:30 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZLP2bC8awi6xddl+"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2cYUYMKSMo3VOLVTO0=LWc0sHf72Eph8t_es9axo_eeA@mail.gmail.com>
-X-Cookie: Real programs don't eat cache.
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 1/2] dt-bindings: ARM: Mediatek: Remove msdc binding of
+ MT8192 clock
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>, matthias.bgg@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        allen-kh.cheng@mediatek.com, weiyi.lu@mediatek.com,
+        chun-jie.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        ikjn@chromium.org, miles.chen@mediatek.com,
+        linux-mediatek@lists.infradead.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        angelogioacchino.delregno@collabora.com,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        devicetree@vger.kernel.org
+References: <20220429123133.28869-1-matthias.bgg@kernel.org>
+ <20220429123133.28869-2-matthias.bgg@kernel.org>
+ <YnGjScfQA9axBYBO@robh.at.kernel.org>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <YnGjScfQA9axBYBO@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ZLP2bC8awi6xddl+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, May 05, 2022 at 04:59:35PM +0200, Arnd Bergmann wrote:
-> On Thu, May 5, 2022 at 4:39 PM Mark Brown <broonie@kernel.org> wrote:
-> > On Thu, May 05, 2022 at 04:33:06PM +0200, Linus Walleij wrote:
-> > > On Thu, May 5, 2022 at 8:04 AM Arnd Bergmann <arnd@kernel.org> wrote:
+On 03/05/2022 23:48, Rob Herring wrote:
+> On Fri, Apr 29, 2022 at 02:31:31PM +0200, matthias.bgg@kernel.org wrote:
+>> From: Matthias Brugger <matthias.bgg@gmail.com>
+>>
+>> The msdc gate is part of the MMC driver. Delete the binding description
+>> of this node.
+> 
+> An ABI break is okay because ...?
+> 
 
-> > > > static struct snd_soc_jack_pin hs_jack_pin[] = {
-> > > >         {
-> > > >                 .pin    = "Headphone Jack",
-> > > >                 .mask   = SND_JACK_HEADPHONE,
-> > > >         },
-> > > >         {
-> > > >                 .pin    = "Speaker",
-> > > >                 /* disable speaker when hp jack is inserted */
-> > > >                 .mask   = SND_JACK_HEADPHONE,
-> > > >                 .invert = 1,
-> > > >         },
+Because the code controlling the clock gate was moved to the consumer. This node 
+did never ever represent any working implementation of a peripheral. Just a 
+lonely clock gate that wasn't used.
 
-> > > Hm some ASoC thingie. No idea what that is, but I suppose another
-> > > place where a subsystem for legacy reasons try to do the gpiolib
-> > > inversion on it's own accord. That one isn't flagged as active low in the
-> > > descriptor so it's fine I guess.
+Regards,
+Matthias
 
-> > It's saying that when the headphone is inserted the headphone output
-> > should be enabled and the speaker output should be disabled, and vice
-> > versa.
-
-> Ok, that sounds like I should remove the flag here if I declare the
-> GPIO line as GPIO_ACTIVE_LOW instead of GPIO_ACTIVE_HIGH, right?
-
-If you change the sense of the GPIO you'll need to flip the invert to
-the headphone instead of the speaker - whichever way round the GPIO
-sense is each of the pins should be taking the opposite sense from the
-GPIO state to the other.
-
---ZLP2bC8awi6xddl+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmJz52oACgkQJNaLcl1U
-h9CbVgf+IcoNpQ7Zg0fdYkNEqwa7HwKX/Qt0QGkD2AOfzxG/HwCNSJGjXbLRoDSG
-LZDrxzKVzeoyjgCVaof252MDqttrmcheVCIAEBBJloJwRZ09bHBdKRPPZhbkgcTz
-jtkkGnEzXjRjYMDG6uc2pcooFw43TvoeGlypGRIHfw7iuVsLV9p49OqDnjO4jGer
-JBdqJjiSsBVptiZvzaVRbk7kjilcUyKIlQWL83na306uUWq3kMe8gOEw2S5VTvqd
-iQ7h7SpGvhyYN6hKCklertmWbnGLlgzT0PXgO8R3thr5L4UiST7AH2vQijgqPoJx
-UGG0jN4gSGc0pHUx7zh4kY6kWXN/Sg==
-=5RUB
------END PGP SIGNATURE-----
-
---ZLP2bC8awi6xddl+--
+>> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> - Delete compatible in binding descprition as well
+>>
+>>   .../bindings/arm/mediatek/mediatek,mt8192-clock.yaml      | 8 --------
+>>   1 file changed, 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+>> index c8c67c033f8c..b57cc2e69efb 100644
+>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8192-clock.yaml
+>> @@ -24,7 +24,6 @@ properties:
+>>             - mediatek,mt8192-imp_iic_wrap_w
+>>             - mediatek,mt8192-imp_iic_wrap_n
+>>             - mediatek,mt8192-msdc_top
+>> -          - mediatek,mt8192-msdc
+>>             - mediatek,mt8192-mfgcfg
+>>             - mediatek,mt8192-imgsys
+>>             - mediatek,mt8192-imgsys2
+>> @@ -107,13 +106,6 @@ examples:
+>>           #clock-cells = <1>;
+>>       };
+>>   
+>> -  - |
+>> -    msdc: clock-controller@11f60000 {
+>> -        compatible = "mediatek,mt8192-msdc";
+>> -        reg = <0x11f60000 0x1000>;
+>> -        #clock-cells = <1>;
+>> -    };
+>> -
+>>     - |
+>>       mfgcfg: clock-controller@13fbf000 {
+>>           compatible = "mediatek,mt8192-mfgcfg";
+>> -- 
+>> 2.34.1
+>>
+>>
