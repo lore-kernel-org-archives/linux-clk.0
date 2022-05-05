@@ -2,318 +2,348 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9026C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 19:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA43FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 20:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbiEETwI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 15:52:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37540 "EHLO
+        id S1385639AbiEEUMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 16:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiEETwG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 15:52:06 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2107.outbound.protection.outlook.com [40.107.113.107])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F605E741;
-        Thu,  5 May 2022 12:48:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FyOZKAJ4aRsKAuC5TN5rhHqVLR6o9fG29nPk2GTZoGXI2cenfYQ5QlSSwkprSDhhLYeKS1eWFILdR2gL2eqp9aL4H0cQarVptTXVCMhpmJ9pAF2wHor5IPuT+uf4ZlMWD2+378XvtJnYi8B/Ekxe2DExrKHQukDjUFGiHZWeVvPz+e/c3XBWq5vAjri4bwZ62rNYdldT8dBzIGxzE0otsxBqySNSztRqyti7UzE3YpSX5dwbnEsrS6kW7PKU2raYR5EBzokkweLpehGRqiCa3GBI5KHp0Erb3iNKpoC8MSf3lIr8t9fjwhrQU5qEulHG8I5mXyYTSiypnfNMUxRN8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k/KQ4nLXjtE6tjrRC642A7EKzyH9fbyTx/VH3dcSrrM=;
- b=Dkpcr1wmzlkI6e6dC5czOMjbF3Pgdyk1LKdyl/5JcxeWBiNBm/LviuBRUzDI279fWbaXUMI/WC0ZxHSJh1wV+xcFns6ZLifGLxES/bfz5/n3C/W674O9ollnneuA4+0pxBLHiEPEmJzns+BrtnDVuoAsp3qCIgWiqWqdfpxul3cjftRTJ9bv2cVtUXCaPJY++YlQiYwN6MSWfBv/uWxH7v7Dvjtvp6pU/7J4nWq5ForjBRx/QtHwSYcklDtbetJ6SUfPlm6/KIbfO9T6VQtZcLJGF0JTast+R+CWBEYjI9f3iwSNZMoNUJYBUDUYF4YHtp3OAE9+7tvO5JXO0a8vyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k/KQ4nLXjtE6tjrRC642A7EKzyH9fbyTx/VH3dcSrrM=;
- b=HLI1bN92wA9sEqrgC4ggzakq5nPILZkWnMOOk88BCb0qBOn/8aQFN6cEpvxQbpeNWtzoFJ0ljdhiXU1XqcW7B7+ns6GUuoSlbD1813Atn7F3ZIqqKcrE8hzwLMXVfGg7bQbbw2osrWp4vzpQs8FoL4osbhnkAKhNSkqUp9bQoak=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYCPR01MB5807.jpnprd01.prod.outlook.com (2603:1096:400:45::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.14; Thu, 5 May
- 2022 19:48:19 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3e:970b:c238:f57]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3e:970b:c238:f57%7]) with mapi id 15.20.5206.027; Thu, 5 May 2022
- 19:48:18 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S231878AbiEEUL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 16:11:59 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36BE5F247;
+        Thu,  5 May 2022 13:08:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3F323B82C4C;
+        Thu,  5 May 2022 20:08:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB6CCC385B7;
+        Thu,  5 May 2022 20:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651781295;
+        bh=2J3A2nVP5j1kW5YxuBOcohrcVqh9eJh7hKJ6qkG2IxE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pGVOA+nlWAv4zF+ej+HpjpYGvH6HjzHeDv3lOmq24s8T0eibj88c7+gk93eI+fRaF
+         Kp3zzYaat/CbzzeB/V10tF09ZsR67AAUtR+0z9cOSKhBAXHUYoO7IQ5BYFKRFGUGr+
+         YQSWOz0N05szaT98gHaOM7xggH2PBGVuuDKZrnw5XyGzmaBHK5ntiBZrWs5sgDoCf+
+         VJ82aib+w3vhPWVcDQ3Cyz6DsJYkC0OKx/WsBcycpc0eIx3+jSu/t+3NgLso6VuUmc
+         neUMO9CWLMcBBYqSO5qbFSr1ATtFaJSrsz3OV9cXjqosJAGpCw/0090GDMQMGxvE6x
+         krOpMKF815ykQ==
+Received: by mail-wm1-f46.google.com with SMTP id o12-20020a1c4d0c000000b00393fbe2973dso5738750wmh.2;
+        Thu, 05 May 2022 13:08:15 -0700 (PDT)
+X-Gm-Message-State: AOAM532d7WSYD7ZC2iW9BXuXRVxpH+486Gmzo/JjBoj5Ob96aKFMRFy6
+        VR3b4Yv8vC1J3thoNkErF0/kAa3eB6IjMRtST0Q=
+X-Google-Smtp-Source: ABdhPJwwObn/UaqT30q1FbiaZHyI1hmOOl8iNniR0W2zAZ7y8tPUXLBWeVll6mQz87F2JUMC3yVO95QaB6biNASW3WU=
+X-Received: by 2002:a05:600c:4144:b0:394:1972:1a73 with SMTP id
+ h4-20020a05600c414400b0039419721a73mr27085wmm.71.1651781293834; Thu, 05 May
+ 2022 13:08:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220419163810.2118169-19-arnd@kernel.org>
+ <CACRpkdac8dGKSEmc-HpgooJefrDtiKK+_A1Mv7AJM8yQV9UY-w@mail.gmail.com>
+ <CAK8P3a0w3gFzZoBzyRsi1Ta4prESf8Fp0=quAPSKMnaXvbXNTQ@mail.gmail.com>
+ <CACRpkdZNryYkidvdKuT57RM3fz6_X+3oOzF5xaOZd+TyScfUsw@mail.gmail.com>
+ <CAK8P3a0y0tVZODpp+GSf0EkMPWbbvMqA-4kNf0NJMc0M2=2WHw@mail.gmail.com>
+ <CACRpkdaNRX0RDYJd_uaGo5jtiXu_qGHmEDGniaCmR=TZvcHH8A@mail.gmail.com>
+ <YnPhna5h1+kQGFLa@sirena.org.uk> <CAK8P3a2cYUYMKSMo3VOLVTO0=LWc0sHf72Eph8t_es9axo_eeA@mail.gmail.com>
+ <YnPna0pW9csiFkHK@sirena.org.uk>
+In-Reply-To: <YnPna0pW9csiFkHK@sirena.org.uk>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Thu, 5 May 2022 22:07:56 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1H-74Q1CzqW_Q=7g0KGkcd+TY3HTBbbE27XhXmfJhrRA@mail.gmail.com>
+Message-ID: <CAK8P3a1H-74Q1CzqW_Q=7g0KGkcd+TY3HTBbbE27XhXmfJhrRA@mail.gmail.com>
+Subject: Re: [PATCH 18/48] ARM: pxa: hx4700: use gpio descriptors for audio
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Tomas Cech <sleep_walker@suse.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [RFC PATCH 2/4] clk: renesas: rzg2l-cpg: Add support to stack the
- resets instead of indexing
-Thread-Topic: [RFC PATCH 2/4] clk: renesas: rzg2l-cpg: Add support to stack
- the resets instead of indexing
-Thread-Index: AQHYYLbVZusSN6uyHkGFU4WhZ5VwLK0QryBg
-Date:   Thu, 5 May 2022 19:48:18 +0000
-Message-ID: <OS0PR01MB592225B5A5E1BA7D250C466786C29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220505193143.31826-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220505193143.31826-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 348c11c5-7b2d-4256-4ca7-08da2ed033d8
-x-ms-traffictypediagnostic: TYCPR01MB5807:EE_
-x-microsoft-antispam-prvs: <TYCPR01MB580770171ED359C96ACA510A86C29@TYCPR01MB5807.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4NftL0ZMcO510ETo1mUTErWkMSdtHtRZfQ9sEIEWeFyiqed5cGAG5ykadaphbWrMijWAIaaDK92BY4UVOWGI8npTsv9jyjKECLm9RXo42kNFrNJHCm0n2YkXWq+VVWDlmlUXAhK2Qpika31cmHboFHfNqafPd6MyyaTOc5l9a2DecoE3JQOtYEINhjkEO42bF3oj1o6aKBFFzDlVrvwAkMq4Hg6OrpFiNY5OuRod6TFr/Vam8ulEG4rwoF9M6BRE5VvzmY2zIit/L4SlFryX70VV97iJEvZeH3bgyq/cETIVq+87eTVL3iLzldjd1JPr7Nd4CqYhcGVi/Y3r9NIEAvew7vvDvQrJT7BVb5Rks6YigL7nYb4bqy60bUtTwlUHBkFAG2F2LN9zLsSEYczeOHzKxfm9znpXATqioIn5XE4wdksfwDKTZnLEs3FFkACSTvaXYkhf2x/hot1d2ye5/gTV/yehfDeceval4f4bC3L0tayqOWLHPHHp3nJDHFj58r/1//fA70nlUdinXaRBcGQmPSvuxIfVQwKxZskaDs1fd9NrnFyECWgaerKW9owASjZWKYMFkqJgWKb+hKQXR1DHNGIjWuLxyfkkI6UcQuBd8zVHtQYrzgDePjGBOsf2NfylEobRZTGKxag692SzywjzbJnWWz3QS7r9H+F6fQ3UCqzvmd4IR0Gcy4GghJlH05yM9cJ/YBJu1Eut9AbLTw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(38100700002)(38070700005)(33656002)(8936002)(54906003)(7416002)(71200400001)(9686003)(26005)(5660300002)(110136005)(55016003)(122000001)(7696005)(6506007)(86362001)(8676002)(64756008)(66946007)(66446008)(186003)(4326008)(66476007)(52536014)(2906002)(66556008)(107886003)(508600001)(76116006)(83380400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?N6DeRM8I9Bt/NNTf9qkVPuSc5iM8yOcyTB/FaJ192gNThclBBE0aF8GwouVb?=
- =?us-ascii?Q?syO4VRReldHXa5lI3LCu/TMY8I5G2r+r8EGwrIcPYYd7EtN4/LLxgqNiS7DJ?=
- =?us-ascii?Q?RaIoMSK25m6ycHcWVfwcvKrevx5Dp8HTsa/4ziiegNjto4BIufSwdGAL+oj/?=
- =?us-ascii?Q?GwUZ6oRJQueIiTTqdyGrR6t4yGYlIdGnFOXdpH6DnSiNsfeJ/knQYftXBzpa?=
- =?us-ascii?Q?uReRBiO0fmM8OcststT9aOQW3dSDdlbpUZKHzkaq6mRvHPenwmLlbxUXaEoq?=
- =?us-ascii?Q?Tn1FAqN2EqTENRENwXgrt1H+ts+7os5cN9Cs0w2hfJJP5hJByyormXgteGDX?=
- =?us-ascii?Q?Wq3YWIQk72IVCrneKKQxENfnTjE90RPKdjVjmFiDWrmw6BhMF2sZorap2ySs?=
- =?us-ascii?Q?nALIxNVL5DfVmQUCj35wY9X1nfF7irbZb7kvD8N5r59qD2MGdJYoOACRSZd/?=
- =?us-ascii?Q?sTIHSqxlKzmSZnQzYIBHMWpF/LhFBYBoN8irpwfPBERjBopWAyYuSQ+phHvy?=
- =?us-ascii?Q?5DYISA3Gh/7HbyYFPKmoq+Gj700QFptwu3yKINKJUPtbQhRl7ykMTnNwplt5?=
- =?us-ascii?Q?greZeQQfi9l1xBkYgD4xUalbtc79W9oC78sd5BaO7cf7IWgirJDkU0sfpAKZ?=
- =?us-ascii?Q?s1nDdW1ToT7N/K220/jjh3aMCrinMPr5GQYGEFsqdPE0KXtiu/ntHeBnj+/7?=
- =?us-ascii?Q?1pkpMgyrM+n5iP4cGuYeWl2yaz88QYXWrpP31uEbdNx5eX8TjXBzfjvVuCc4?=
- =?us-ascii?Q?mSBiJI+CJDmPV0khDYTNliwqRFxtFdK9dRD+GyJJt83QG/BRdgdLRFATAPMc?=
- =?us-ascii?Q?C2BS0Ugzx9yb8J5rjM1fUcTcWyhO9DM5BXm5XHOO658rS0bVLqbUumrsqOfr?=
- =?us-ascii?Q?RHwtsUjRPQpmpxBhFmtq6R5jtdeD3K9XFQKtKpBQi8vrvg5TtLkPzrqAwtXQ?=
- =?us-ascii?Q?wnwVj/uPHOf0WQduLAoD/7Arm/k8OJeIl+Oh4pJMQw0vo5GoC6kEtAua7iYn?=
- =?us-ascii?Q?UAeqzTQyEj7n988QK/99UGcNsr2w0Wuhxgc9T9cwQzDa/ESeLc8q/1ytm/3G?=
- =?us-ascii?Q?0NUJQacZheLLCxbsvn45Ka8FxH3nZ4KAzh3lMaN3Invpafd4M6UaLG5hBawJ?=
- =?us-ascii?Q?cxT+A6hyBjyfCzaa2RZ5PRXRxPFcyxZNLtjAGA4z8d6KBKWIWqIdAzP3PDZy?=
- =?us-ascii?Q?oIvrsB+Ru2uJq+rh93DrcJOD9+K2X+49ATZqnWCJrd3tR4lICjKcoO/U6oSj?=
- =?us-ascii?Q?ctEipSqBEwuruurEtzYVeFzjNY2EV4kBOCQXSXnvaF6JyPQ7K8woSq6qqHuA?=
- =?us-ascii?Q?gGvBSbS0MTBSvFRC9ObMyWI10cktwBgjMG6XR/D7eBIYu4Qp8QJoCR6UjZhG?=
- =?us-ascii?Q?nyBO+JwApOh9REQMAK8tzIhosqtGl+rRTFAoG19ME1+SDLBRqgTicQ0by47J?=
- =?us-ascii?Q?sUZiyLCwbW2j2vPWJU3xKaTBYyv+ZWPD4o6qlXMVv8CgtlWFFJuJhnfcuzTV?=
- =?us-ascii?Q?KKJkMkMiGUCXCLzuClbsmHLsVybOLDGhAJQf5H99CKHHE1ZQmv3o8OYaNEqx?=
- =?us-ascii?Q?np5xQ7V6RflTFQgHuTFsObDxcOxGu0WH4yzTece+7DPWTr/2wFFyMzfmohZK?=
- =?us-ascii?Q?IB7dlZVedOsAhMQ1manAzSEODMJZurSfvubtg9swDRJ8yQoFb1lcRWIlNQGg?=
- =?us-ascii?Q?9EQrwlYwunB6EB2eD998IHVW4PH3pGUK6xq20WdHhSQMt4vhggELIY1K8aoQ?=
- =?us-ascii?Q?KpYigtrG997INjzDGgl531e39KOliaU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 348c11c5-7b2d-4256-4ca7-08da2ed033d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 May 2022 19:48:18.4079
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Y96Xy3kTpLPZCUr1WN8DQnqk0YCyF/M6wjWgLY5LCIap8USJCFhjY56i8n1xOZgGSmXoYXi4r/cf+w3TyHzyY2V5CuRhXkrOgTbKZ2EWmmc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB5807
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        IDE-ML <linux-ide@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lad Prabhakar,
+On Thu, May 5, 2022 at 5:04 PM Mark Brown <broonie@kernel.org> wrote:
+> On Thu, May 05, 2022 at 04:59:35PM +0200, Arnd Bergmann wrote:
+> > On Thu, May 5, 2022 at 4:39 PM Mark Brown <broonie@kernel.org> wrote:
+> > > On Thu, May 05, 2022 at 04:33:06PM +0200, Linus Walleij wrote:
+> > > > On Thu, May 5, 2022 at 8:04 AM Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> > > > > static struct snd_soc_jack_pin hs_jack_pin[] = {
+> > > > >         {
+> > > > >                 .pin    = "Headphone Jack",
+> > > > >                 .mask   = SND_JACK_HEADPHONE,
+> > > > >         },
+> > > > >         {
+> > > > >                 .pin    = "Speaker",
+> > > > >                 /* disable speaker when hp jack is inserted */
+> > > > >                 .mask   = SND_JACK_HEADPHONE,
+> > > > >                 .invert = 1,
+> > > > >         },
+>
+> > > > Hm some ASoC thingie. No idea what that is, but I suppose another
+> > > > place where a subsystem for legacy reasons try to do the gpiolib
+> > > > inversion on it's own accord. That one isn't flagged as active low in the
+> > > > descriptor so it's fine I guess.
+>
+> > > It's saying that when the headphone is inserted the headphone output
+> > > should be enabled and the speaker output should be disabled, and vice
+> > > versa.
+>
+> > Ok, that sounds like I should remove the flag here if I declare the
+> > GPIO line as GPIO_ACTIVE_LOW instead of GPIO_ACTIVE_HIGH, right?
+>
+> If you change the sense of the GPIO you'll need to flip the invert to
+> the headphone instead of the speaker - whichever way round the GPIO
+> sense is each of the pins should be taking the opposite sense from the
+> GPIO state to the other.
 
-Thanks for the patch.
+Ok, I hope I got it this time:
 
-> Subject: [RFC PATCH 2/4] clk: renesas: rzg2l-cpg: Add support to stack th=
-e
-> resets instead of indexing
->=20
-> Instead of indexing the resets, stack them and instead create an id membe=
-r
-> in struct rzg2l_reset to store the index. With this approach for every id
-> we will have to loop through the resets array to match the id.
->=20
-> This in preparation to add support for Renesas RZ/Five CPG in r9a07g043-
-> cpg.c file where the resets array will be split up into three i.e. common
-> and two SoC specific.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  drivers/clk/renesas/rzg2l-cpg.c | 76 ++++++++++++++++++++++++++-------
-> drivers/clk/renesas/rzg2l-cpg.h |  4 +-
->  2 files changed, 63 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-
-> cpg.c index 1ce35f65682b..94fe307ec4c5 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -681,14 +681,37 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_c=
-lk
-> *mod,
->=20
->  #define rcdev_to_priv(x)	container_of(x, struct rzg2l_cpg_priv,
-> rcdev)
->=20
-> +static const struct rzg2l_reset
-> +*rzg2l_get_reset_ptr(struct rzg2l_cpg_priv *priv,
-> +		     unsigned long id)
-> +
-> +{
-> +	const struct rzg2l_cpg_info *info =3D priv->info;
-> +	unsigned int i;
-> +
-> +	for (i =3D 0; i < priv->num_resets; i++) {
-> +		if (info->resets[i].id =3D=3D id)
-> +			return &info->resets[i];
-> +	}
+- The hs_jack_gpio/"earphone-det" is declared as GPIO_ACTIVE_LOW,
+    with the ".invert" dropped in the snd_soc_jack_gpio definition to match
 
-Is it not possible to use shared reset like RZ/G2L and RZ/V2L?, which
-has optimal memory and performance wise we can avoid bigger loop.
+- "spk-sd" is declared as GPIO_ACTIVE_LOW, so both
+  this and  "hp-driver" are enabled by setting the gpio to active, rather than
+  the two being opposites
 
-Like adding Last index of RZ/Five as last reset index and
-Handle RZ/G2UL specific as invalid reset index in xlate??
+- snd_soc_jack_pin flips the 'invert' flag from speaker to headphone, since
+  the "earphone-det" is now  reversed
 
+- hx4700_spk_power() flips polarity when setting the output to match the
+  GPIO_ACTIVE_LOW setting, but hx4700_hp_power() does not change.
 
-> +
-> +	return NULL;
-> +}
-> +
->  static int rzg2l_cpg_reset(struct reset_controller_dev *rcdev,
->  			   unsigned long id)
->  {
->  	struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> -	const struct rzg2l_cpg_info *info =3D priv->info;
-> -	unsigned int reg =3D info->resets[id].off;
-> -	u32 dis =3D BIT(info->resets[id].bit);
-> -	u32 we =3D dis << 16;
-> +	const struct rzg2l_reset *reset;
-> +	unsigned int reg;
-> +	u32 dis, we;
-> +
-> +	reset =3D rzg2l_get_reset_ptr(priv, id);
-> +	if (!reset)
-> +		return -EINVAL;
-> +
-> +	reg =3D reset->off;
-> +	dis =3D BIT(reset->bit);
-> +	we =3D dis << 16;
->=20
->  	dev_dbg(rcdev->dev, "reset id:%ld offset:0x%x\n", id,
-> CLK_RST_R(reg));
->=20
-> @@ -708,9 +731,16 @@ static int rzg2l_cpg_assert(struct
-> reset_controller_dev *rcdev,
->  			    unsigned long id)
->  {
->  	struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> -	const struct rzg2l_cpg_info *info =3D priv->info;
-> -	unsigned int reg =3D info->resets[id].off;
-> -	u32 value =3D BIT(info->resets[id].bit) << 16;
-> +	const struct rzg2l_reset *reset;
-> +	unsigned int reg;
-> +	u32 value;
-> +
-> +	reset =3D rzg2l_get_reset_ptr(priv, id);
-> +	if (!reset)
-> +		return -EINVAL;
-> +
-> +	reg =3D reset->off;
-> +	value =3D BIT(reset->bit) << 16;
->=20
->  	dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id,
-> CLK_RST_R(reg));
->=20
-> @@ -722,11 +752,17 @@ static int rzg2l_cpg_deassert(struct
-> reset_controller_dev *rcdev,
->  			      unsigned long id)
->  {
->  	struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> -	const struct rzg2l_cpg_info *info =3D priv->info;
-> -	unsigned int reg =3D info->resets[id].off;
-> -	u32 dis =3D BIT(info->resets[id].bit);
-> -	u32 value =3D (dis << 16) | dis;
-> +	const struct rzg2l_reset *reset;
-> +	unsigned int reg;
-> +	u32 dis, value;
-> +
-> +	reset =3D rzg2l_get_reset_ptr(priv, id);
-> +	if (!reset)
-> +		return -EINVAL;
->=20
-> +	reg =3D reset->off;
-> +	dis =3D BIT(reset->bit);
-> +	value =3D (dis << 16) | dis;
->  	dev_dbg(rcdev->dev, "deassert id:%ld offset:0x%x\n", id,
->  		CLK_RST_R(reg));
->=20
-> @@ -738,9 +774,16 @@ static int rzg2l_cpg_status(struct
-> reset_controller_dev *rcdev,
->  			    unsigned long id)
->  {
->  	struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> -	const struct rzg2l_cpg_info *info =3D priv->info;
-> -	unsigned int reg =3D info->resets[id].off;
-> -	u32 bitmask =3D BIT(info->resets[id].bit);
-> +	const struct rzg2l_reset *reset;
-> +	unsigned int reg;
-> +	u32 bitmask;
-> +
-> +	reset =3D rzg2l_get_reset_ptr(priv, id);
-> +	if (!reset)
-> +		return -EINVAL;
-> +
-> +	reg =3D reset->off;
-> +	bitmask =3D BIT(reset->bit);
->=20
->  	return !(readl(priv->base + CLK_MRST_R(reg)) & bitmask);  } @@ -
-> 756,10 +799,11 @@ static int rzg2l_cpg_reset_xlate(struct
-> reset_controller_dev *rcdev,
->  				 const struct of_phandle_args *reset_spec)  {
->  	struct rzg2l_cpg_priv *priv =3D rcdev_to_priv(rcdev);
-> -	const struct rzg2l_cpg_info *info =3D priv->info;
->  	unsigned int id =3D reset_spec->args[0];
-> +	const struct rzg2l_reset *reset;
->=20
-> -	if (id >=3D rcdev->nr_resets || !info->resets[id].off) {
-> +	reset =3D rzg2l_get_reset_ptr(priv, id);
-> +	if (!reset) {
->  		dev_err(rcdev->dev, "Invalid reset index %u\n", id);
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-
-> cpg.h index 92c88f42ca7f..a99f2ba7868f 100644
-> --- a/drivers/clk/renesas/rzg2l-cpg.h
-> +++ b/drivers/clk/renesas/rzg2l-cpg.h
-> @@ -152,12 +152,14 @@ struct rzg2l_mod_clk {
->   * @bit: reset bit
->   */
->  struct rzg2l_reset {
-> +	unsigned int id;
+        Arnd
 
-Now you are adding 4 bytes to each reset entry in the LUT.
+commit 20a9b05eff0488b78aa02c07f58654daa294069a
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Wed Sep 11 14:27:13 2019 +0200
 
-Cheers,
-Biju
+    ARM: pxa: hx4700: use gpio descriptors for audio
 
->  	u16 off;
->  	u8 bit;
->  };
+    The audio driver should not use a hardwired gpio number
+    from the header. Change it to use a lookup table.
 
->=20
->  #define DEF_RST(_id, _off, _bit)	\
-> -	[_id] =3D { \
-> +	{ \
-> +		.id =3D (_id), \
->  		.off =3D (_off), \
->  		.bit =3D (_bit) \
->  	}
-> --
-> 2.25.1
+    Cc: Philipp Zabel <philipp.zabel@gmail.com>
+    Cc: Paul Parsons <lost.distance@yahoo.com>
+    Acked-by: Mark Brown <broonie@kernel.org>
+    Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+    Cc: alsa-devel@alsa-project.org
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+diff --git a/arch/arm/mach-pxa/hx4700-pcmcia.c
+b/arch/arm/mach-pxa/hx4700-pcmcia.c
+index e8acbfc9ef6c..e2331dfe427d 100644
+--- a/arch/arm/mach-pxa/hx4700-pcmcia.c
++++ b/arch/arm/mach-pxa/hx4700-pcmcia.c
+@@ -10,7 +10,7 @@
+ #include <linux/irq.h>
+
+ #include <asm/mach-types.h>
+-#include <mach/hx4700.h>
++#include "hx4700.h"
+
+ #include <pcmcia/soc_common.h>
+
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index 140a44cb2989..2ae06edf413c 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -41,7 +41,7 @@
+
+ #include "pxa27x.h"
+ #include "addr-map.h"
+-#include <mach/hx4700.h>
++#include "hx4700.h"
+ #include <linux/platform_data/irda-pxaficp.h>
+
+ #include <sound/ak4641.h>
+@@ -834,6 +834,19 @@ static struct i2c_board_info i2c_board_info[]
+__initdata = {
+        },
+ };
+
++static struct gpiod_lookup_table hx4700_audio_gpio_table = {
++       .dev_id = "hx4700-audio",
++       .table = {
++               GPIO_LOOKUP("gpio-pxa", GPIO75_HX4700_EARPHONE_nDET,
++                           "earphone-det", GPIO_ACTIVE_LOW),
++               GPIO_LOOKUP("gpio-pxa", GPIO92_HX4700_HP_DRIVER,
++                           "hp-driver", GPIO_ACTIVE_HIGH),
++               GPIO_LOOKUP("gpio-pxa", GPIO107_HX4700_SPK_nSD,
++                           "spk-sd", GPIO_ACTIVE_LOW),
++               { },
++       },
++};
++
+ static struct platform_device audio = {
+        .name   = "hx4700-audio",
+        .id     = -1,
+@@ -895,6 +908,7 @@ static void __init hx4700_init(void)
+
+        gpiod_add_lookup_table(&bq24022_gpiod_table);
+        gpiod_add_lookup_table(&gpio_vbus_gpiod_table);
++       gpiod_add_lookup_table(&hx4700_audio_gpio_table);
+        platform_add_devices(devices, ARRAY_SIZE(devices));
+        pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+
+diff --git a/arch/arm/mach-pxa/include/mach/hx4700.h
+b/arch/arm/mach-pxa/hx4700.h
+similarity index 99%
+rename from arch/arm/mach-pxa/include/mach/hx4700.h
+rename to arch/arm/mach-pxa/hx4700.h
+index 0c30e6d9c660..ce2db33989e1 100644
+--- a/arch/arm/mach-pxa/include/mach/hx4700.h
++++ b/arch/arm/mach-pxa/hx4700.h
+@@ -10,7 +10,7 @@
+
+ #include <linux/gpio.h>
+ #include <linux/mfd/asic3.h>
+-#include "irqs.h" /* PXA_NR_BUILTIN_GPIO */
++#include <mach/irqs.h> /* PXA_NR_BUILTIN_GPIO */
+
+ #define HX4700_ASIC3_GPIO_BASE PXA_NR_BUILTIN_GPIO
+ #define HX4700_EGPIO_BASE      (HX4700_ASIC3_GPIO_BASE + ASIC3_NUM_GPIOS)
+diff --git a/sound/soc/pxa/hx4700.c b/sound/soc/pxa/hx4700.c
+index 7334fac758de..e6473c50e512 100644
+--- a/sound/soc/pxa/hx4700.c
++++ b/sound/soc/pxa/hx4700.c
+@@ -10,7 +10,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+
+ #include <sound/core.h>
+ #include <sound/jack.h>
+@@ -18,10 +18,10 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+
+-#include <mach/hx4700.h>
+ #include <asm/mach-types.h>
+ #include "pxa2xx-i2s.h"
+
++static struct gpio_desc *gpiod_hp_driver, *gpiod_spk_sd;
+ static struct snd_soc_jack hs_jack;
+
+ /* Headphones jack detection DAPM pin */
+@@ -29,20 +29,18 @@ static struct snd_soc_jack_pin hs_jack_pin[] = {
+        {
+                .pin    = "Headphone Jack",
+                .mask   = SND_JACK_HEADPHONE,
++               .invert = 1,
+        },
+        {
+                .pin    = "Speaker",
+                /* disable speaker when hp jack is inserted */
+                .mask   = SND_JACK_HEADPHONE,
+-               .invert = 1,
+        },
+ };
+
+ /* Headphones jack detection GPIO */
+ static struct snd_soc_jack_gpio hs_jack_gpio = {
+-       .gpio           = GPIO75_HX4700_EARPHONE_nDET,
+-       .invert         = true,
+-       .name           = "hp-gpio",
++       .name           = "earphone-det",
+        .report         = SND_JACK_HEADPHONE,
+        .debounce_time  = 200,
+ };
+@@ -81,14 +79,14 @@ static const struct snd_soc_ops hx4700_ops = {
+ static int hx4700_spk_power(struct snd_soc_dapm_widget *w,
+                            struct snd_kcontrol *k, int event)
+ {
+-       gpio_set_value(GPIO107_HX4700_SPK_nSD, !!SND_SOC_DAPM_EVENT_ON(event));
++       gpiod_set_value(gpiod_spk_sd, !SND_SOC_DAPM_EVENT_ON(event));
+        return 0;
+ }
+
+ static int hx4700_hp_power(struct snd_soc_dapm_widget *w,
+                           struct snd_kcontrol *k, int event)
+ {
+-       gpio_set_value(GPIO92_HX4700_HP_DRIVER, !!SND_SOC_DAPM_EVENT_ON(event));
++       gpiod_set_value(gpiod_hp_driver, !!SND_SOC_DAPM_EVENT_ON(event));
+        return 0;
+ }
+
+@@ -162,11 +160,6 @@ static struct snd_soc_card snd_soc_card_hx4700 = {
+        .fully_routed           = true,
+ };
+
+-static struct gpio hx4700_audio_gpios[] = {
+-       { GPIO107_HX4700_SPK_nSD, GPIOF_OUT_INIT_HIGH, "SPK_POWER" },
+-       { GPIO92_HX4700_HP_DRIVER, GPIOF_OUT_INIT_LOW, "EP_POWER" },
+-};
+-
+ static int hx4700_audio_probe(struct platform_device *pdev)
+ {
+        int ret;
+@@ -174,26 +167,26 @@ static int hx4700_audio_probe(struct
+platform_device *pdev)
+        if (!machine_is_h4700())
+                return -ENODEV;
+
+-       ret = gpio_request_array(hx4700_audio_gpios,
+-                               ARRAY_SIZE(hx4700_audio_gpios));
++       gpiod_hp_driver = devm_gpiod_get(&pdev->dev, "hp-driver", GPIOD_ASIS);
++       ret = PTR_ERR_OR_ZERO(gpiod_hp_driver);
++       if (ret)
++               return ret;
++       gpiod_spk_sd = devm_gpiod_get(&pdev->dev, "spk-sd", GPIOD_ASIS);
++       ret = PTR_ERR_OR_ZERO(gpiod_spk_sd);
+        if (ret)
+                return ret;
+
++       hs_jack_gpio.gpiod_dev = &pdev->dev;
+        snd_soc_card_hx4700.dev = &pdev->dev;
+        ret = devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_hx4700);
+-       if (ret)
+-               gpio_free_array(hx4700_audio_gpios,
+-                               ARRAY_SIZE(hx4700_audio_gpios));
+
+        return ret;
+ }
+
+ static int hx4700_audio_remove(struct platform_device *pdev)
+ {
+-       gpio_set_value(GPIO92_HX4700_HP_DRIVER, 0);
+-       gpio_set_value(GPIO107_HX4700_SPK_nSD, 0);
+-
+-       gpio_free_array(hx4700_audio_gpios, ARRAY_SIZE(hx4700_audio_gpios));
++       gpiod_set_value(gpiod_hp_driver, 0);
++       gpiod_set_value(gpiod_spk_sd, 0);
+        return 0;
+ }
