@@ -2,125 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2EAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 07:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0127C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 07:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234477AbiEEHKJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 03:10:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49002 "EHLO
+        id S245583AbiEEHM3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 03:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbiEEHKI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 03:10:08 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D27439B93;
-        Thu,  5 May 2022 00:06:30 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id c1so2570323qkf.13;
-        Thu, 05 May 2022 00:06:30 -0700 (PDT)
+        with ESMTP id S232300AbiEEHM2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 03:12:28 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479E54704A
+        for <linux-clk@vger.kernel.org>; Thu,  5 May 2022 00:08:49 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id be20so4112458edb.12
+        for <linux-clk@vger.kernel.org>; Thu, 05 May 2022 00:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=duYWT/Kl8tiyZtY/aESu/b4/GiVt1L4PnTvoWa73yYM=;
+        b=OMIT8mlwarcjmie4694HkB4wpke5YY8WBP2MY8g4bLOhmHgVSsCOJdfQhpfyE6iRDU
+         +73LfA2ddxMyesirBykiRBtgBuPzUOxclMbRQZ7Bvl6t+gTtInjsOYUhPUBFYbU6sFD/
+         8/cTZJnvxHjoosOHQanxNdidtKFkdILDJqnSUBsZCDL4VPcxkSuvMh+udrY6XoW9ZezI
+         2I7f+6XCs+I1N81i15+RMD7o+J0GlpAAwbjfo1vP0NY9i+yDOFRp3EZNhzxcmFqKgb5l
+         UomDj4aeEPWS0Nqd+OXyIsO9QG6uOGXJboJIFpVKQQeFLue9vOZywAcamtVjNLXeOr4h
+         bA4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wBJgXIebq1XDRWkw80M/tbsVjkVWmBwVz9lA2w4lvmA=;
-        b=scuJ3ni+Gy0zNHNDcEWmnCSpZ5lad4BvojwOKQ69QiaUVwRyk4Dksi3ha/B70Ch8Gk
-         hMbnWrltI2wgl8XEx70yynlsx/iHKRrb1DX7+wx64KXdHtMWvYh5PcCVyf7mcENZkZlK
-         ebS+TeVuXjT8KAd21o788THnHDTdUzs1Jis3xv1Jl4tryff+RM0cp3CFqOOECx3l+hh5
-         /XE21pMPC/x6tRpFNSqd14gE3tdfONfv9gKI3IuWW5m06Xv+4M2Xexy4fFpv8d4kQsBq
-         FH5wX5YqFJqNmnkW85G4RdERpoyKJpyCYS1+LVsijtZjdViRzrrgGnv88BgJu9LSRao1
-         hlNQ==
-X-Gm-Message-State: AOAM531vYhRrtg04vOTxTeOPsCXQm2nxAisqdNQCKxEgJHeLXmXR9uLK
-        3vyqIDtBNGoQfT/K5snQgutyF1qFsrdlaw==
-X-Google-Smtp-Source: ABdhPJzMiTq3LGn/fYLRqUjVY5ihYShQwUW02xBAjIs4kqYzFJqjTwWz3Q56dAC7UakmD6Vngk6/sw==
-X-Received: by 2002:a05:620a:3ca:b0:69e:88ef:5c75 with SMTP id r10-20020a05620a03ca00b0069e88ef5c75mr18775105qkm.255.1651734389390;
-        Thu, 05 May 2022 00:06:29 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id b20-20020a05620a271400b0069fc13ce1d5sm426285qkp.6.2022.05.05.00.06.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 May 2022 00:06:29 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id h10so6143800ybc.4;
-        Thu, 05 May 2022 00:06:28 -0700 (PDT)
-X-Received: by 2002:a25:6157:0:b0:645:8d0e:f782 with SMTP id
- v84-20020a256157000000b006458d0ef782mr21780076ybb.36.1651734388574; Thu, 05
- May 2022 00:06:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 5 May 2022 09:06:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUh69grzYVsMwdZLgv=KLy5-_FVjeMWx37qGsqCxz9Y6g@mail.gmail.com>
-Message-ID: <CAMuHMdUh69grzYVsMwdZLgv=KLy5-_FVjeMWx37qGsqCxz9Y6g@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=duYWT/Kl8tiyZtY/aESu/b4/GiVt1L4PnTvoWa73yYM=;
+        b=xBtkxLVCuhfkxrRcFkKPClNSb2djmPjH78v+YhsETALDk/NqCc92odhtZaAAPE75Ji
+         llgihOGnsvJR7Lj4di00GfUI/PD3v7eCT640rp5fYYE32/vqaHwH7m3toNK7GhtPYLwh
+         8RC2efpMEkHU93dMIUzUzANKXuKZqY8qYlSRZRv6Kvu2uEhLfe+mYRAlrT0J2x54nIwR
+         JO/Q6oZN3WIjPs/7gTNQUrQDTKb/gtGVRRcSpvXhtm7scjFeVfwx1qRf0saeU/JcaevI
+         iCHEiUu9j1dUfzqtjuj1kNMoXLRU5HTCIRpT5fkt7H3n7rh3YioBz7+CCWz8b0+Ic9UD
+         ERCA==
+X-Gm-Message-State: AOAM532HM+dFS7ez4R6oxbhJbWneRkktDHw/4Mc0X0+u5ifsKWLdNvo7
+        unUaXdnLMi/MnAJMYKAhXuKHSA==
+X-Google-Smtp-Source: ABdhPJxXjwWDCwEVFJTt30OZtNvS3vZ90x+EBahDGCjmESxtkKHS4Jd1qRjgA1LECWkX1FLjJKarjw==
+X-Received: by 2002:a05:6402:2932:b0:425:d7b3:e0d1 with SMTP id ee50-20020a056402293200b00425d7b3e0d1mr28203271edb.141.1651734527881;
+        Thu, 05 May 2022 00:08:47 -0700 (PDT)
+Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id b4-20020a0564021f0400b0042617ba63ccsm394386edb.86.2022.05.05.00.08.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 May 2022 00:08:47 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Subject: Re: (subset) [PATCH v3 10/12] arm64: dts: exynosautov9: add initial cmu clock nodes
+Date:   Thu,  5 May 2022 09:08:43 +0200
+Message-Id: <165173452272.31721.8927188974111368088.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220504075154.58819-11-chanho61.park@samsung.com>
+References: <20220504075154.58819-1-chanho61.park@samsung.com> <CGME20220504075004epcas2p44c3c0246988d133a5da1fdfd2f17d0b9@epcas2p4.samsung.com> <20220504075154.58819-11-chanho61.park@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+On Wed, 4 May 2022 16:51:52 +0900, Chanho Park wrote:
+> Add cmu_top, cmu_busmc, cmu_core, cmu_fsys and peric0/c1/s clock nodes.
+> 
+> 
 
-On Wed, May 4, 2022 at 8:44 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> After adding reset support to vsp, it needs a delay of 32 microseconds
-> after reset operation, otherwise system hangs(due to register read/write).
-> This patch fixes the system hang issue by adding delay after deassert
-> operation.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Applied, thanks!
 
-Thanks for your patch!
+[10/12] arm64: dts: exynosautov9: add initial cmu clock nodes
+        commit: 5394461a31c9d1c6a0452a0312f941e0b4d08d74
 
-> After adding reset/deassert support for vsp based on [1],
-> RZ/G1N board hangs. On debugging it found that it needs a delay
-> of 35 microseconds after deasserint reset. Wthout delay if
-> there is any register read/write will lead to hang.
->
-> This 35 microseconds value is  picked from the reset().
-
-The 35 µs comes from the Hardware User's Manual: there should be
-at least 1 RCLK cycle _in between_ asserting and deasserting reset.
-The manual doesn't say anything about delays _after_ deasserting reset.
-
-Could it be that the VSP1 driver is actually deasserting reset
-too early?
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -637,6 +637,7 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
->         dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
->
->         writel(bitmask, priv->base + priv->reset_regs[reg]);
-> +
-
-Unrelated change.
-
->         return 0;
->  }
->
-> @@ -651,6 +652,10 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
->         dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
->
->         writel(bitmask, priv->base + priv->reset_clear_regs[reg]);
-> +
-> +       /* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
-> +       udelay(35);
-> +
->         return 0;
->  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
