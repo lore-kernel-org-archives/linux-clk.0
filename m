@@ -2,355 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24DFC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 18:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E3BC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 19:32:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383046AbiEESRZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 14:17:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34384 "EHLO
+        id S1384690AbiEETfw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 15:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383057AbiEESRY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 14:17:24 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED6225C668
-        for <linux-clk@vger.kernel.org>; Thu,  5 May 2022 11:13:39 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id w1so8806876lfa.4
-        for <linux-clk@vger.kernel.org>; Thu, 05 May 2022 11:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=54HlQahs7v/blRgjoGh4iXCzqR9zYxLOvL2RN5Pe+60=;
-        b=kYG/mGl9/Y9QAuGEzTJEo0DgHj8x1Je+8X4Cdgaz7wG774fHGAeoNR+chumLZ0RLKX
-         cMTneap/WCcZ6JP6igNc5gSjOkZ/BWD4WmKku1ntFv1cRCUsUmTm9vD0Jk+Sm9FRtulz
-         QmjVkMfTfdrUhlVmxS1MMr8RSUum/cYJhQmngwms32lS48bzi2K2eAdmUmO9uopB7zbk
-         tlU7LxmuPPfBXJ48xvrAIW1nYaLobVlBpNDgsoZC/2zRb2IvsSc8hCxLBnslgSHJgnPA
-         K72YsENonxNqHrHstUPC3nERPRBd8ST153I+a7M4fYiuAX9onOQzAzBoiOhZgrsNnc5p
-         ad0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=54HlQahs7v/blRgjoGh4iXCzqR9zYxLOvL2RN5Pe+60=;
-        b=6rYEKGYRTVMCD0c5MM+9GfLe67Oh/ou3Eay9+MzB5BDOQ5NkkL7CHI9PZ4F26mzwSH
-         BJmfCNyTHI1lPsotti5XWU+xuI2VdHGaTvRHQO2oyNAOGD/uh6NyiAThJN1R51UbfuEv
-         cvnwogVPxyo449hjeoJypY9/XK15/VStgqzAd+mO8X+8be6M97t/hFfvsyGh27u9H+5G
-         gl0yCsSw3v88jwR32KLT9V48SoG8fv+gfglSHXsaKJzkZSNTgEVZQaWFOGhtYFiKlAaI
-         uFY7J//ItQQrAktrUOpKZcZKSc/UZcedFH8kfmh6Riw+eJmfASrQFQU0opkqGQgdKgQr
-         jeGQ==
-X-Gm-Message-State: AOAM5321DhEzVyMs/qXIO8K0k5cZstc+gqffuO3Kn8phlkBqzYYngBX/
-        zWhD5+R/qofEmq3KmeK4/x9H4ZnMYo0+SQ==
-X-Google-Smtp-Source: ABdhPJxUg2ZSy1cRzJOfRT7wMt5lROj2OHro7gDzF/BNqlsnxaiay1aMKZCuQ1ey77k0Iw2IuNnSIQ==
-X-Received: by 2002:a05:6512:3301:b0:472:2373:eda9 with SMTP id k1-20020a056512330100b004722373eda9mr18490476lfe.455.1651774418201;
-        Thu, 05 May 2022 11:13:38 -0700 (PDT)
-Received: from localhost.localdomain (mobile-access-5672eb-224.dhcp.inet.fi. [86.114.235.224])
-        by smtp.gmail.com with ESMTPSA id o15-20020ac24bcf000000b0047255d210f6sm315087lfq.37.2022.05.05.11.13.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 May 2022 11:13:37 -0700 (PDT)
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S236532AbiEETft (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 15:35:49 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 618DB5B3D5;
+        Thu,  5 May 2022 12:32:08 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,203,1647270000"; 
+   d="scan'208";a="120034524"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 06 May 2022 04:32:07 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 395D740E1669;
+        Fri,  6 May 2022 04:32:02 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v5 1/7] dt-bindings: clock: add QCOM SM8450 camera clock bindings
-Date:   Thu,  5 May 2022 21:13:17 +0300
-Message-Id: <20220505181317.4125934-1-vladimir.zapolskiy@linaro.org>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20220505121213.4121802-2-vladimir.zapolskiy@linaro.org>
-References: <20220505121213.4121802-2-vladimir.zapolskiy@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 0/4] Add CPG wrapper for Renesas RZ/Five SoC
+Date:   Thu,  5 May 2022 20:31:39 +0100
+Message-Id: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The change adds device tree bindings for camera clock controller
-found on SM8450 SoC.
+Hi All,
 
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
-Changes from v4 to v5:
-* fixed a typo in a usage example found in the yaml file.
+This patch series adds CPG wrapper for Renesas RZ/Five SoC. RZ/Five SoC
+has almost identical clock structure compared to RZ/G2UL, so
+r9a07g043-cpg.c file is re-used to add support for Renesas RZ/Five SoC.
 
-Changes from v3 to v4:
-* renamed a filename in $id value after the rename of the file itself.
+Sending this as RFC in case there is a better approach for patch#2 to
+avoid looping. This patch has been tested on Renesas RZ/Five SMARC EVK.
+Below is the clock structure reported by Linux with this patch series:
 
-Changes from v2 to v3:
-* renamed files to match the compatible value "qcom,sm8450-camcc",
-* fixed a typo in a usage example found in the yaml file.
+/ # cat /sys/devices/soc0/family 
+RZ/Five
+/ # cat /sys/devices/soc0/machine 
+Renesas SMARC EVK based on r9a07g043
+/ # cat /sys/devices/soc0/revision 
+0
+/ # cat /sys/devices/soc0/soc_id 
+r9a07g043
+/ # cat /sys/kernel/debug/clk/clk_summary 
+                                 enable  prepare  protect                                duty  hardware
+   clock                          count    count    count        rate   accuracy phase  cycle    enable
+-------------------------------------------------------------------------------------------------------
+ extal                                3        3        0    24000000          0     0  50000         Y
+    .pll6                             0        0        0   500000000          0     0  50000         Y
+       .pll6_250                      0        0        0   250000000          0     0  50000         Y
+          HP                          0        0        0   250000000          0     0  50000         Y
+    .pll3                             1        1        0  1600000000          0     0  50000         Y
+       .pll3_533                      0        0        0   533333333          0     0  50000         Y
+          .sel_pll3_3                 0        0        0   533333333          0     0  50000         Y
+             divpl3c                  0        0        0   266666667          0     0  50000         Y
+                SPI1                  0        0        0    66666666          0     0  50000         Y
+                   spi_clk2           0        0        0    66666666          0     0  50000         N
+                SPI0                  0        0        0   133333333          0     0  50000         Y
+                   spi_clk            0        0        0   133333333          0     0  50000         N
+       .pll3_400                      0        0        0   400000000          0     0  50000         Y
+       .pll3_div2                     1        1        0   800000000          0     0  50000         Y
+          .pll3_div2_4                1        1        0   200000000          0     0  50000         Y
+             M0                       0        0        0   200000000          0     0  50000         Y
+                eth1_axi              0        0        0   200000000          0     0  50000         N
+                eth0_axi              0        0        0   200000000          0     0  50000         N
+             P1                       2        2        0   200000000          0     0  50000         Y
+                iax45_clk             1        1        0   200000000          0     0  50000         Y
+                usb_pclk              0        0        0   200000000          0     0  50000         N
+                usb0_func             0        0        0   200000000          0     0  50000         N
+                usb1_host             0        0        0   200000000          0     0  50000         N
+                usb0_host             0        0        0   200000000          0     0  50000         N
+                sdhi1_aclk            0        0        0   200000000          0     0  50000         N
+                sdhi0_aclk            0        0        0   200000000          0     0  50000         N
+                dmac_aclk             1        1        0   200000000          0     0  50000         Y
+                P1_DIV2               0        0        0   100000000          0     0  50000         Y
+                   dmac_pclk          0        0        0   100000000          0     0  50000         N
+             .pll3_div2_4_2           0        0        0   100000000          0     0  50000         Y
+                ZT                    0        0        0   100000000          0     0  50000         Y
+                   eth1_chi           0        0        0   100000000          0     0  50000         N
+                   eth0_chi           0        0        0   100000000          0     0  50000         N
+                P2                    0        0        0   100000000          0     0  50000         Y
+                   iax45_pclk         0        0        0   100000000          0     0  50000         N
+    .pll2                             1        1        0  1600000000          0     0  50000         Y
+       .clk_533                       0        0        0   533333333          0     0  50000         Y
+          sd1                         0        0        0   533333333          0     0  50000         Y
+             sdhi1_clk_hs             0        0        0   533333333          0     0  50000         N
+             SD1_DIV4                 0        0        0   133333333          0     0  50000         Y
+                sdhi1_imclk2          0        0        0   133333333          0     0  50000         N
+                sdhi1_imclk           0        0        0   133333333          0     0  50000         N
+          sd0                         0        0        0   533333333          0     0  50000         Y
+             sdhi0_clk_hs             0        0        0   533333333          0     0  50000         N
+             SD0_DIV4                 0        0        0   133333333          0     0  50000         Y
+                sdhi0_imclk2          0        0        0   133333333          0     0  50000         N
+                sdhi0_imclk           0        0        0   133333333          0     0  50000         N
+          .clk_266                    0        0        0   266666666          0     0  50000         Y
+       .clk_800                       0        0        0   800000000          0     0  50000         Y
+          .clk_400                    0        0        0   400000000          0     0  50000         Y
+       .pll2_div2                     1        1        0   800000000          0     0  50000         Y
+          .pll2_div2_10               0        0        0    80000000          0     0  50000         Y
+             TSU                      0        0        0    80000000          0     0  50000         Y
+                tsu_pclk              0        0        0    80000000          0     0  50000         N
+                adc_adclk             0        0        0    80000000          0     0  50000         N
+          .pll2_div2_8                1        1        0   100000000          0     0  50000         Y
+             P0                       1        1        0   100000000          0     0  50000         Y
+                adc_pclk              0        0        0   100000000          0     0  50000         N
+                canfd                 0        0        0   100000000          0     0  50000         N
+                rspi2                 0        0        0   100000000          0     0  50000         N
+                rspi1                 0        0        0   100000000          0     0  50000         N
+                rspi0                 0        0        0   100000000          0     0  50000         N
+                sci1                  0        0        0   100000000          0     0  50000         N
+                sci0                  0        0        0   100000000          0     0  50000         N
+                scif4                 0        0        0   100000000          0     0  50000         N
+                scif3                 0        0        0   100000000          0     0  50000         N
+                scif2                 0        0        0   100000000          0     0  50000         N
+                scif1                 0        0        0   100000000          0     0  50000         N
+                scif0                 2        2        0   100000000          0     0  50000         Y
+                i2c3                  0        0        0   100000000          0     0  50000         N
+                i2c2                  0        0        0   100000000          0     0  50000         N
+                i2c1                  0        0        0   100000000          0     0  50000         N
+                i2c0                  0        0        0   100000000          0     0  50000         N
+                ssi3_sfr              0        0        0   100000000          0     0  50000         N
+                ssi3_pclk             0        0        0   100000000          0     0  50000         N
+                ssi2_sfr              0        0        0   100000000          0     0  50000         N
+                ssi2_pclk             0        0        0   100000000          0     0  50000         N
+                ssi1_sfr              0        0        0   100000000          0     0  50000         N
+                ssi1_pclk             0        0        0   100000000          0     0  50000         N
+                ssi0_sfr              0        0        0   100000000          0     0  50000         N
+                ssi0_pclk             0        0        0   100000000          0     0  50000         N
+                wdt2_pclk             0        0        0   100000000          0     0  50000         N
+                wdt0_pclk             0        0        0   100000000          0     0  50000         N
+                ostm2                 0        0        0   100000000          0     0  50000         N
+                ostm1                 0        0        0   100000000          0     0  50000         N
+                ostm0                 0        0        0   100000000          0     0  50000         N
+                P0_DIV2               0        0        0    50000000          0     0  50000         Y
+    .pll1                             0        0        0  1000000000          0     0  50000         Y
+       I                              0        0        0  1000000000          0     0  50000         Y
+    .osc_div1000                      0        0        0       24000          0     0  50000         Y
+    .osc                              1        1        0    24000000          0     0  50000         Y
+       gpio                           1        2        0    24000000          0     0  50000         Y
+       wdt2_clk                       0        0        0    24000000          0     0  50000         N
+       wdt0_clk                       0        0        0    24000000          0     0  50000         N
+/ # 
+/ # 
 
-Changes from v1 to v2:
-* updated qcom,camcc-sm8450.yaml according to review comments from Rob,
-* changed qcom,camcc-sm8450.h license to dual one.
+This patch series depends on branch [0].
 
- .../bindings/clock/qcom,sm8450-camcc.yaml     |  89 ++++++++++
- include/dt-bindings/clock/qcom,sm8450-camcc.h | 159 ++++++++++++++++++
- 2 files changed, 248 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+renesas-drivers.git/log/?h=renesas-clk-for-v5.19
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-new file mode 100644
-index 000000000000..49a2781df60c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Camera Clock & Reset Controller Binding for SM8450
-+
-+maintainers:
-+  - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-+
-+description: |
-+  Qualcomm camera clock control module which supports the clocks, resets and
-+  power domains on SM8450.
-+
-+  See also dt-bindings/clock/qcom,camcc-sm8450.h
-+
-+properties:
-+  compatible:
-+    const: qcom,sm8450-camcc
-+
-+  clocks:
-+    items:
-+      - description: Camera AHB clock from GCC
-+      - description: Board XO source
-+      - description: Board active XO source
-+      - description: Sleep clock source
-+
-+  clock-names:
-+    items:
-+      - const: iface
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: sleep_clk
-+
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - required-opps
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    clock-controller@ade0000 {
-+      compatible = "qcom,sm8450-camcc";
-+      reg = <0 0xade0000 0 0x20000>;
-+      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&sleep_clk>;
-+      clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-+      power-domains = <&rpmhpd SM8450_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm8450-camcc.h b/include/dt-bindings/clock/qcom,sm8450-camcc.h
-new file mode 100644
-index 000000000000..7ff67acf301a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8450-camcc.h
-@@ -0,0 +1,159 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8450_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8450_H
-+
-+/* CAM_CC clocks */
-+#define CAM_CC_BPS_AHB_CLK					0
-+#define CAM_CC_BPS_CLK						1
-+#define CAM_CC_BPS_CLK_SRC					2
-+#define CAM_CC_BPS_FAST_AHB_CLK					3
-+#define CAM_CC_CAMNOC_AXI_CLK					4
-+#define CAM_CC_CAMNOC_AXI_CLK_SRC				5
-+#define CAM_CC_CAMNOC_DCD_XO_CLK				6
-+#define CAM_CC_CCI_0_CLK					7
-+#define CAM_CC_CCI_0_CLK_SRC					8
-+#define CAM_CC_CCI_1_CLK					9
-+#define CAM_CC_CCI_1_CLK_SRC					10
-+#define CAM_CC_CORE_AHB_CLK					11
-+#define CAM_CC_CPAS_AHB_CLK					12
-+#define CAM_CC_CPAS_BPS_CLK					13
-+#define CAM_CC_CPAS_FAST_AHB_CLK				14
-+#define CAM_CC_CPAS_IFE_0_CLK					15
-+#define CAM_CC_CPAS_IFE_1_CLK					16
-+#define CAM_CC_CPAS_IFE_2_CLK					17
-+#define CAM_CC_CPAS_IFE_LITE_CLK				18
-+#define CAM_CC_CPAS_IPE_NPS_CLK					19
-+#define CAM_CC_CPAS_SBI_CLK					20
-+#define CAM_CC_CPAS_SFE_0_CLK					21
-+#define CAM_CC_CPAS_SFE_1_CLK					22
-+#define CAM_CC_CPHY_RX_CLK_SRC					23
-+#define CAM_CC_CSI0PHYTIMER_CLK					24
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				25
-+#define CAM_CC_CSI1PHYTIMER_CLK					26
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				27
-+#define CAM_CC_CSI2PHYTIMER_CLK					28
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				29
-+#define CAM_CC_CSI3PHYTIMER_CLK					30
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC				31
-+#define CAM_CC_CSI4PHYTIMER_CLK					32
-+#define CAM_CC_CSI4PHYTIMER_CLK_SRC				33
-+#define CAM_CC_CSI5PHYTIMER_CLK					34
-+#define CAM_CC_CSI5PHYTIMER_CLK_SRC				35
-+#define CAM_CC_CSID_CLK						36
-+#define CAM_CC_CSID_CLK_SRC					37
-+#define CAM_CC_CSID_CSIPHY_RX_CLK				38
-+#define CAM_CC_CSIPHY0_CLK					39
-+#define CAM_CC_CSIPHY1_CLK					40
-+#define CAM_CC_CSIPHY2_CLK					41
-+#define CAM_CC_CSIPHY3_CLK					42
-+#define CAM_CC_CSIPHY4_CLK					43
-+#define CAM_CC_CSIPHY5_CLK					44
-+#define CAM_CC_FAST_AHB_CLK_SRC					45
-+#define CAM_CC_GDSC_CLK						46
-+#define CAM_CC_ICP_AHB_CLK					47
-+#define CAM_CC_ICP_CLK						48
-+#define CAM_CC_ICP_CLK_SRC					49
-+#define CAM_CC_IFE_0_CLK					50
-+#define CAM_CC_IFE_0_CLK_SRC					51
-+#define CAM_CC_IFE_0_DSP_CLK					52
-+#define CAM_CC_IFE_0_FAST_AHB_CLK				53
-+#define CAM_CC_IFE_1_CLK					54
-+#define CAM_CC_IFE_1_CLK_SRC					55
-+#define CAM_CC_IFE_1_DSP_CLK					56
-+#define CAM_CC_IFE_1_FAST_AHB_CLK				57
-+#define CAM_CC_IFE_2_CLK					58
-+#define CAM_CC_IFE_2_CLK_SRC					59
-+#define CAM_CC_IFE_2_DSP_CLK					60
-+#define CAM_CC_IFE_2_FAST_AHB_CLK				61
-+#define CAM_CC_IFE_LITE_AHB_CLK					62
-+#define CAM_CC_IFE_LITE_CLK					63
-+#define CAM_CC_IFE_LITE_CLK_SRC					64
-+#define CAM_CC_IFE_LITE_CPHY_RX_CLK				65
-+#define CAM_CC_IFE_LITE_CSID_CLK				66
-+#define CAM_CC_IFE_LITE_CSID_CLK_SRC				67
-+#define CAM_CC_IPE_NPS_AHB_CLK					68
-+#define CAM_CC_IPE_NPS_CLK					69
-+#define CAM_CC_IPE_NPS_CLK_SRC					70
-+#define CAM_CC_IPE_NPS_FAST_AHB_CLK				71
-+#define CAM_CC_IPE_PPS_CLK					72
-+#define CAM_CC_IPE_PPS_FAST_AHB_CLK				73
-+#define CAM_CC_JPEG_CLK						74
-+#define CAM_CC_JPEG_CLK_SRC					75
-+#define CAM_CC_MCLK0_CLK					76
-+#define CAM_CC_MCLK0_CLK_SRC					77
-+#define CAM_CC_MCLK1_CLK					78
-+#define CAM_CC_MCLK1_CLK_SRC					79
-+#define CAM_CC_MCLK2_CLK					80
-+#define CAM_CC_MCLK2_CLK_SRC					81
-+#define CAM_CC_MCLK3_CLK					82
-+#define CAM_CC_MCLK3_CLK_SRC					83
-+#define CAM_CC_MCLK4_CLK					84
-+#define CAM_CC_MCLK4_CLK_SRC					85
-+#define CAM_CC_MCLK5_CLK					86
-+#define CAM_CC_MCLK5_CLK_SRC					87
-+#define CAM_CC_MCLK6_CLK					88
-+#define CAM_CC_MCLK6_CLK_SRC					89
-+#define CAM_CC_MCLK7_CLK					90
-+#define CAM_CC_MCLK7_CLK_SRC					91
-+#define CAM_CC_PLL0						92
-+#define CAM_CC_PLL0_OUT_EVEN					93
-+#define CAM_CC_PLL0_OUT_ODD					94
-+#define CAM_CC_PLL1						95
-+#define CAM_CC_PLL1_OUT_EVEN					96
-+#define CAM_CC_PLL2						97
-+#define CAM_CC_PLL3						98
-+#define CAM_CC_PLL3_OUT_EVEN					99
-+#define CAM_CC_PLL4						100
-+#define CAM_CC_PLL4_OUT_EVEN					101
-+#define CAM_CC_PLL5						102
-+#define CAM_CC_PLL5_OUT_EVEN					103
-+#define CAM_CC_PLL6						104
-+#define CAM_CC_PLL6_OUT_EVEN					105
-+#define CAM_CC_PLL7						106
-+#define CAM_CC_PLL7_OUT_EVEN					107
-+#define CAM_CC_PLL8						108
-+#define CAM_CC_PLL8_OUT_EVEN					109
-+#define CAM_CC_QDSS_DEBUG_CLK					110
-+#define CAM_CC_QDSS_DEBUG_CLK_SRC				111
-+#define CAM_CC_QDSS_DEBUG_XO_CLK				112
-+#define CAM_CC_SBI_AHB_CLK					113
-+#define CAM_CC_SBI_CLK						114
-+#define CAM_CC_SFE_0_CLK					115
-+#define CAM_CC_SFE_0_CLK_SRC					116
-+#define CAM_CC_SFE_0_FAST_AHB_CLK				117
-+#define CAM_CC_SFE_1_CLK					118
-+#define CAM_CC_SFE_1_CLK_SRC					119
-+#define CAM_CC_SFE_1_FAST_AHB_CLK				120
-+#define CAM_CC_SLEEP_CLK					121
-+#define CAM_CC_SLEEP_CLK_SRC					122
-+#define CAM_CC_SLOW_AHB_CLK_SRC					123
-+#define CAM_CC_XO_CLK_SRC					124
-+
-+/* CAM_CC resets */
-+#define CAM_CC_BPS_BCR						0
-+#define CAM_CC_ICP_BCR						1
-+#define CAM_CC_IFE_0_BCR					2
-+#define CAM_CC_IFE_1_BCR					3
-+#define CAM_CC_IFE_2_BCR					4
-+#define CAM_CC_IPE_0_BCR					5
-+#define CAM_CC_QDSS_DEBUG_BCR					6
-+#define CAM_CC_SBI_BCR						7
-+#define CAM_CC_SFE_0_BCR					8
-+#define CAM_CC_SFE_1_BCR					9
-+
-+/* CAM_CC GDSCRs */
-+#define BPS_GDSC		0
-+#define IPE_0_GDSC		1
-+#define SBI_GDSC		2
-+#define IFE_0_GDSC		3
-+#define IFE_1_GDSC		4
-+#define IFE_2_GDSC		5
-+#define SFE_0_GDSC		6
-+#define SFE_1_GDSC		7
-+#define TITAN_TOP_GDSC		8
-+
-+#endif
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  dt-bindings: clock: r9a07g043-cpg: Add Renesas RZ/Five CPG Clock and
+    Reset Definitions
+  clk: renesas: rzg2l-cpg: Add support to stack the resets instead of
+    indexing
+  clk: renesas: r9a07g043: Split up core, module and resets array
+  clk: renesas: r9a07g043: Add support for RZ/Five SoC
+
+ drivers/clk/renesas/r9a07g043-cpg.c       | 514 ++++++++++++----------
+ drivers/clk/renesas/rzg2l-cpg.c           |  76 +++-
+ drivers/clk/renesas/rzg2l-cpg.h           |   4 +-
+ include/dt-bindings/clock/r9a07g043-cpg.h |  20 +
+ 4 files changed, 376 insertions(+), 238 deletions(-)
+
 -- 
-2.33.0
+2.25.1
 
