@@ -2,88 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEB8C43217
-	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 06:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DCDC433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  5 May 2022 06:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241252AbiEEHCx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 03:02:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40270 "EHLO
+        id S241559AbiEEHDL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 03:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236957AbiEEHCw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 03:02:52 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661664754C
-        for <linux-clk@vger.kernel.org>; Wed,  4 May 2022 23:59:14 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso4535121wma.0
-        for <linux-clk@vger.kernel.org>; Wed, 04 May 2022 23:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gG5ddXZSy1wKmOUQ6uBSLbcGTeipbmw8JGCrHp7VO3o=;
-        b=IidFc3QITpakXVpjbjlX8PxSSGvYjWE2ldWmIV6nDpBZNv9U6ycKmbmxY4HGtjY+bE
-         eZTlJKFNzLiUrUexd/tvQnwrQxJ0EFmUIb35xqa4WrK3qh7VM57xU0IR1tg/GH6jWbH5
-         TF0E6bsTojZliRtJqvyPGjiuz0KvmVTWqyD7/5O8JuQrmOMGSOU6d47+CpldQkyYofZk
-         iH1h8rwJCvoK7/fMFEPSDzINSpqzSbAeiJywx9p5U5BbHi+jEDQ4Zr4aUZ9BGKKUDhe1
-         Lyh6OT6f1nVVVngwj99+fnMcYtxpnNuHDa4IU2pVdGoJNY2UWa5qmqDvVCBV4aBVGszy
-         ZR1Q==
+        with ESMTP id S235166AbiEEHDL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 03:03:11 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C6B147542;
+        Wed,  4 May 2022 23:59:33 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id fu47so2550439qtb.5;
+        Wed, 04 May 2022 23:59:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gG5ddXZSy1wKmOUQ6uBSLbcGTeipbmw8JGCrHp7VO3o=;
-        b=XAwvWZteo5tbZla/NIRp67lEUKjaVFXhl3PxI+7k0DXdwTd+aIp19N73RPSeMB51C5
-         9EYU69tt4P2fdzptVbOnWVO6+HZFE/ZwQPENjdRi+Piu/ws7agW0bkbMDWepdQpXvPm4
-         ausPR+l0aRfQb+ENPEol+BVfVd7inngqLXbnpeEAQtXMleez7CbAO6v2j/DRDGKgqVPn
-         ldaCdSwNWc255Vh20X5inwksb7dBx2UaOik7aXo5tqJA3bvy3L6s2sxkOw85+dtXiryU
-         PZ949bX3zCcNvsXwWwmtEyoJIUrNZqzhuglYsTuhZvle6Hv3k8y6u+F4VJ/UdvJ7PtrN
-         CNOg==
-X-Gm-Message-State: AOAM5305gccxIZRSRSsqrcCUX0VGz8HBfRKl+njFwvgjd8gSqRfTmIhD
-        lARzmMv8LmtiiD0sLEXHmofNgg==
-X-Google-Smtp-Source: ABdhPJy5lIk1LOt1rt4j0pHvZjxyqDeFde7RLZHukV3nnsvhEe9CJNh5W27AATNlZynas6P68c11IA==
-X-Received: by 2002:a05:600c:4e87:b0:394:4992:ab8a with SMTP id f7-20020a05600c4e8700b003944992ab8amr3157192wmq.97.1651733952869;
-        Wed, 04 May 2022 23:59:12 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id o9-20020a5d6709000000b0020c5253d8c1sm511198wru.13.2022.05.04.23.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 May 2022 23:59:12 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chanho Park <chanho61.park@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 02/12] dt-bindings: clock: add Exynos Auto v9 SoC CMU bindings
-Date:   Thu,  5 May 2022 08:59:08 +0200
-Message-Id: <165173394468.29323.6199648804566991709.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220504075154.58819-3-chanho61.park@samsung.com>
-References: <20220504075154.58819-1-chanho61.park@samsung.com> <CGME20220504075003epcas2p17f37265b522bb0c26dbdd4ebeec92ab9@epcas2p1.samsung.com> <20220504075154.58819-3-chanho61.park@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1kyfcH624YObu9U2EDyv5UgsEw2pZgVLfORpPmEDwV0=;
+        b=nWWUsf1bTJ+CMZZR5AU2u+FV/aybBvUyJCs+xDgnGh2TzZlfUParIuyftqeoDAok/b
+         RT8Lhl9o014I77zuR8NenXQeojLARxbXAn/OQPE/kQDaF9YZpglfGfINRC8AoLpD7ctX
+         UClm4ry34tJBAZABMAF10YjIYw7k2aRdMNFNFv9GW/U1RtKraEodAM2rSp47qHZDqEiV
+         0wsps8xVODiMZJp4SDShCbYblS4wWMardvB0b7Kih9SfEzSYVdtr5rL+jdCWaP6tORAP
+         qsY3NhZK+cqfQm7N2k94EhP5IfC/ORkdvLRPfMikIZ+5/WPgDXswu35MQJRZwCkmaPQl
+         PdfQ==
+X-Gm-Message-State: AOAM532/yJVEWlfp1l/QmtTWu+u2cUEV9zSAxzjs/l6wa5LyhvoJxn7l
+        FyGBQV6jwwKpn0nekQ1blkbAeMTSJdazQg==
+X-Google-Smtp-Source: ABdhPJw3MVPc9LHMVwPOhabxZSORgomuFxm6Jt5ZC7fVqXJn/7fBzffvKV3zHZL95VgCt2Amnn0lBA==
+X-Received: by 2002:a05:622a:1649:b0:2f3:a6bc:73ea with SMTP id y9-20020a05622a164900b002f3a6bc73eamr16029240qtj.506.1651733971970;
+        Wed, 04 May 2022 23:59:31 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id x74-20020a37634d000000b0069ff51425a2sm392481qkb.120.2022.05.04.23.59.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 23:59:31 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id y76so6146666ybe.1;
+        Wed, 04 May 2022 23:59:31 -0700 (PDT)
+X-Received: by 2002:a05:6902:389:b0:633:31c1:d0f7 with SMTP id
+ f9-20020a056902038900b0063331c1d0f7mr19881851ybs.543.1651733970778; Wed, 04
+ May 2022 23:59:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220504145454.71287-1-phil.edworthy@renesas.com> <20220504175757.0a3c1a6a@kernel.org>
+In-Reply-To: <20220504175757.0a3c1a6a@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 May 2022 08:59:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXKUpHa0SGGQUbepAHoS3evEBSzF4RYqA8B09eq1CtBUw@mail.gmail.com>
+Message-ID: <CAMuHMdXKUpHa0SGGQUbepAHoS3evEBSzF4RYqA8B09eq1CtBUw@mail.gmail.com>
+Subject: Re: [PATCH 0/9] Add Renesas RZ/V2M Ethernet support
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 4 May 2022 16:51:44 +0900, Chanho Park wrote:
-> Add dt-schema for Exynos Auto v9 SoC clock controller.
-> 
-> 
+Hi Jakub,
 
-Applied, thanks!
+On Thu, May 5, 2022 at 2:58 AM Jakub Kicinski <kuba@kernel.org> wrote:
+> On Wed,  4 May 2022 15:54:45 +0100 Phil Edworthy wrote:
+> > The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
+> > some small parts are the same as R-Car Gen2.
+> > Other differences are:
+> > * It has separate data (DI), error (Line 1) and management (Line 2) irqs
+> >   rather than one irq for all three.
+> > * Instead of using the High-speed peripheral bus clock for gPTP, it has
+> >   a separate gPTP reference clock.
+> >
+> > The dts patches depend on v4 of the following patch set:
+> > "Add new Renesas RZ/V2M SoC and Renesas RZ/V2M EVK support"
+> >
+> > Phil Edworthy (9):
+> >   clk: renesas: r9a09g011: Add eth clock and reset entries
+> >   dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
+> >   ravb: Separate use of GIC reg for PTME from multi_irqs
+> >   ravb: Separate handling of irq enable/disable regs into feature
+> >   ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
+> >   ravb: Use separate clock for gPTP
+> >   ravb: Add support for RZ/V2M
+> >   arm64: dts: renesas: r9a09g011: Add ethernet nodes
+> >   arm64: dts: renesas: rzv2m evk: Enable ethernet
+>
+> How are you expecting this to be merged?
+>
+> I think you should drop the first (clk) patch from this series
+> so we can apply the series to net-next. And route the clk patch
+> thru Geert's tree separately?
 
-[02/12] dt-bindings: clock: add Exynos Auto v9 SoC CMU bindings
-        commit: e61492e47838f4d99a3ffcc591ba57d1d5d0896f
+Same for the last two DTS patches, they should go through the
+renesas-devel and SoC trees.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Right now patchwork thinks the series is incomplete because it
+> hasn't received patch 1.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
