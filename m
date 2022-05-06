@@ -2,180 +2,192 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B05C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 12:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B774DC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 12:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379997AbiEFMev (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 08:34:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36790 "EHLO
+        id S1392080AbiEFMmR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 08:42:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233559AbiEFMeu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 08:34:50 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B3316571;
-        Fri,  6 May 2022 05:31:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4471FB835A7;
-        Fri,  6 May 2022 12:31:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B40C385A8;
-        Fri,  6 May 2022 12:31:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651840265;
-        bh=VUkc4x5co6VINK47Df8xTVJtnK5r1B3tZxhcXs1qt+E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S/kIT51r74siNrheaEI+xbkmHIPnhAb0FXAwC34wY2yxgI1ZKHT2arEQMuKjFzkV0
-         KkFFeFumJIiEsWK3CJY7JN3c4ZWv7xH/PqgxrR7UweFDIwQixt8ZE/qLC1OGbWcAEi
-         7+T451Y+u86fsrt5O7MMuR2j0s5hMG0LxfKsO9JlCC1rvYlvixY1DFZTAm2wgEvEPW
-         UTJAdYHB7I8aatGONXX3eDHkOdf+N4OYrp2czmnr/QQxbPmR4OTU+6LAEBo91+Y+Wn
-         LHIWTq16u0yesV3xcjduGCiYXACG9TWSiMowoiaUifezjozNB7qCd7FAezkinSzK4J
-         LCEuAdHuAyLZg==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1nmx6u-0007O0-Ul; Fri, 06 May 2022 14:31:05 +0200
-Date:   Fri, 6 May 2022 14:31:04 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
-Message-ID: <YnUVCCXybHUSAYx2@hovoldconsulting.com>
-References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
- <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+        with ESMTP id S1392072AbiEFMmN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 08:42:13 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E42069489
+        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 05:38:30 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id w19so12347005lfu.11
+        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 05:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+oJnfCTdPWSag7AGc8jPKi4ghzl83dJN2OES5/aYaT4=;
+        b=K0LgiS5p/Fz0/dtEboraGPOSwQFdkSth+xonysTtThr4NDxYGzK/K3nu0zsyiFDZT4
+         wH+vkseShFMadY6qbBA9VCYSxJStYbmQ12RP1M1PK2Dr7oMpncHl+awCQ0xKY/4Seud3
+         Qxuw8La5C2Sn7s2ktVCoBLaHLGPw4DaeJBm8Zuj5grwPxwJKD4sVKvP3WaHErXlx+zHB
+         4Qv36qrKnEV1Hn0BAZ424T8LhFExbDFMkBmMfW+3IdQCEwjRtOpPt9epMgHm6ruwSFs1
+         5uzjKg1q05qwpNrTVJwkvRJGgqgbAs+/Us6yj6QhLGbYGCAZM5gYHSST06ZtkmTtrqrU
+         hvHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+oJnfCTdPWSag7AGc8jPKi4ghzl83dJN2OES5/aYaT4=;
+        b=I8hf1QaGkrWG15wBbV7uwmHu2d7TEGAeDKqc5rymKwglHWrtpomhY3/tnrT3PQMs5u
+         nB0jg34mNt+U59eE2MC4PLIE9GJZUyomHPO2WJv+vGCfW6pe1ifggBMKm61nll+w7gFz
+         yHwNWES5RPAEeQWf/157T24ke0cyuSRcl3QOSTNXVU2BwVAXJdB9GvHWVCpHgYKeYIFC
+         U22aIwe/Y4iL1KjyaeLX8gRx2GF8O4ulEz7Xhaze3movLwBnJdejKHjTfyCd8cTxlktp
+         6Z65ur4wrp1w3FNRHvsmdENTxr3a5oKWT8WiWVTwCAD3RW7NxxxUddg5yGQ/OmtOBgmf
+         sW0w==
+X-Gm-Message-State: AOAM530W1tv2UMF4COtRsJtDSRIfzYZlUJDsSLyLqBjafheql2y9GAYS
+        FmjuN8B8OeWgNmI15AnXQMZ6UVg2tWhpgSHcqUWsKA==
+X-Google-Smtp-Source: ABdhPJz/OG8nf/9MLik6vYRgPr2lDfjBYFJEYvIXAjy7Uu3UKsDMG/VrjItMgN2nY1YHO2G+QCSuzBVNZ4F4342VvEw=
+X-Received: by 2002:a05:6512:5cb:b0:472:f7e:a5f5 with SMTP id
+ o11-20020a05651205cb00b004720f7ea5f5mr2255189lfo.358.1651840708488; Fri, 06
+ May 2022 05:38:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+References: <20220504213251.264819-1-sebastian.reichel@collabora.com>
+ <20220504213251.264819-10-sebastian.reichel@collabora.com>
+ <CAPDyKFqLn4LfPRbhoWw_9BF26Lgmzq_1j=RB31NDGn9YvMnB5w@mail.gmail.com> <20220506091837.bbwupigb4f3hwgp4@mercury.elektranox.org>
+In-Reply-To: <20220506091837.bbwupigb4f3hwgp4@mercury.elektranox.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 6 May 2022 14:37:52 +0200
+Message-ID: <CAPDyKFoiDunWM28fHKDc6q_c3fwUQGxPGurF0tChMJKwvDdhtQ@mail.gmail.com>
+Subject: Re: [PATCHv2 09/21] mmc: sdhci-of-dwcmshc: add reset call back for
+ rockchip Socs
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Yifeng Zhao <yifeng.zhao@rock-chips.com>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 01, 2022 at 10:21:46PM +0300, Dmitry Baryshkov wrote:
-> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
-> muxes which must be parked to the "safe" source (bi_tcxo) when
-> corresponding GDSC is turned off and on again. Currently this is
-> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
-> clock. However the same code sequence should be applied in the
-> pcie-qcom endpoint, USB3 and UFS drivers.
-> 
-> Rather than copying this sequence over and over again, follow the
-> example of clk_rcg2_shared_ops and implement this parking in the
-> enable() and disable() clock operations. Suppliement the regmap-mux with
-> the new regmap-pipe implementation, which hides multiplexer behind
-> simple branch-like clock. This is possible since each of this
-> multiplexers has just two clock sources: working (pipe) and safe
-> (bi_tcxo) clock sources. If the clock is running off the external pipe
-> source, report it as enable and report it as disabled otherwise.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Fri, 6 May 2022 at 11:18, Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Hi,
+>
+> On Fri, May 06, 2022 at 10:52:42AM +0200, Ulf Hansson wrote:
+> > On Wed, 4 May 2022 at 23:33, Sebastian Reichel
+> > <sebastian.reichel@collabora.com> wrote:
+> > >
+> > > From: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> > >
+> > > The reset function build in the SDHCI will not reset the logic
+> > > circuit related to the tuning function, which may cause data
+> > > reading errors. Resetting the complete SDHCI controller through
+> > > the reset controller fixes the issue.
+> > >
+> > > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
+> > > [rebase, use optional variant of reset getter]
+> > > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> >
+> > I think this needs a corresponding update of the DT docs. Otherwise
+> > this looks good to me.
+>
+> I do have 'resets' and 'reset-names' properties in the rk3588s.dtsi
+> for the sdhci interface and 'make dtbs_check' did not complain about
+> anything but missing 'arm,sdei-1.0' compatible for the rk3588 EVB
+> (sdei binding has not yet been converted to yaml). Thus I assume the
+> resets property is inferred from somewhere?
 
-I think this is much better and it addresses most of my concerns with
-the previous approach by keeping things simple and using a dedicated
-implementation (i.e. separate from regmap-mux).
+I don't think it should, but I may be wrong.
 
-The purpose of the clock implementation can be documented in the source
-and is reflected in the naming. It avoids the issues related to the
-caching (locking and deferred muxing) which wasn't really needed in the
-first place as these muxes are binary.
+How about if you extend the example in the DT doc with a reset
+property, will that cause the DT tools to complain?
 
-By implementing is_enabled() you also allow for inspecting the state
-that the boot firmware left the mux in.
+Kind regards
+Uffe
 
-The only thing that comes to mind that wouldn't be possible is to
-set the mux state using an assigned clock parent in devicetree to make
-sure that XO is always selected before toggling the GDSC at probe.
-
-But since that doesn't seem to work anyway when the boot firmware has
-set things up (e.g. causes a modem here to reset) that would probably
-need to be handled in the GDSC driver anyway (i.e. make sure the source
-is XO before enabling the GDSC but only when it was actually disabled).
-
-Taking that one step further would be to implement all this in the GDSC
-driver from the start so that the PHY PLL is always muxed in while the
-power domain is enabled (and only then)...
-
-> ---
->  drivers/clk/qcom/Makefile          |  1 +
->  drivers/clk/qcom/clk-regmap-pipe.c | 62 ++++++++++++++++++++++++++++++
->  drivers/clk/qcom/clk-regmap-pipe.h | 24 ++++++++++++
->  3 files changed, 87 insertions(+)
->  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.c
->  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.h
-> 
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 671cf5821af1..882c8ecc2e93 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
->  clk-qcom-y += clk-regmap-divider.o
->  clk-qcom-y += clk-regmap-mux.o
->  clk-qcom-y += clk-regmap-mux-div.o
-> +clk-qcom-y += clk-regmap-pipe.o
->  clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
->  clk-qcom-y += clk-hfpll.o
->  clk-qcom-y += reset.o
-> diff --git a/drivers/clk/qcom/clk-regmap-pipe.c b/drivers/clk/qcom/clk-regmap-pipe.c
-> new file mode 100644
-> index 000000000000..9a7c27cc644b
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-regmap-pipe.c
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022, Linaro Ltd.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/bitops.h>
-> +#include <linux/regmap.h>
-> +#include <linux/export.h>
-> +
-> +#include "clk-regmap-pipe.h"
-> +
-> +static inline struct clk_regmap_pipe *to_clk_regmap_pipe(struct clk_hw *hw)
-> +{
-> +	return container_of(to_clk_regmap(hw), struct clk_regmap_pipe, clkr);
-> +}
-> +
-> +static int pipe_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
-
-Since pipe is so overloaded already can we call this "pipe_mux" or
-"pipe_src" instead of just "pipe"?
-
-And similarly for
-
-	pipe_mux_is_enabled()
-	struct clk_regmap_pipe_mux
-	struct clk_regmap_pipe_mux_ops
-
-etc.
-
-> +	struct clk_regmap *clkr = to_clk_regmap(hw);
-> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
-> +	unsigned int val;
-> +
-> +	regmap_read(clkr->regmap, pipe->reg, &val);
-> +	val = (val & mask) >> pipe->shift;
-> +
-> +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
-
-This is not a hot path and there's rarely a need for unlikely().
-
-> +
-> +	return val == pipe->enable_val;
-> +}
-
-Johan
+>
+> -- Sebastian
+>
+> >
+> > Kind regards
+> > Uffe
+> >
+> > > ---
+> > >  drivers/mmc/host/sdhci-of-dwcmshc.c | 26 +++++++++++++++++++++++++-
+> > >  1 file changed, 25 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > index bac874ab0b33..3a1b5ba36405 100644
+> > > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > > @@ -15,6 +15,7 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/of.h>
+> > >  #include <linux/of_device.h>
+> > > +#include <linux/reset.h>
+> > >  #include <linux/sizes.h>
+> > >
+> > >  #include "sdhci-pltfm.h"
+> > > @@ -63,6 +64,7 @@
+> > >  struct rk3568_priv {
+> > >         /* Rockchip specified optional clocks */
+> > >         struct clk_bulk_data rockchip_clks[RK3568_MAX_CLKS];
+> > > +       struct reset_control *reset;
+> > >         u8 txclk_tapnum;
+> > >  };
+> > >
+> > > @@ -255,6 +257,21 @@ static void dwcmshc_rk3568_set_clock(struct sdhci_host *host, unsigned int clock
+> > >         sdhci_writel(host, extra, DWCMSHC_EMMC_DLL_STRBIN);
+> > >  }
+> > >
+> > > +static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+> > > +{
+> > > +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > > +       struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
+> > > +       struct rk35xx_priv *priv = dwc_priv->priv;
+> > > +
+> > > +       if (mask & SDHCI_RESET_ALL && priv->reset) {
+> > > +               reset_control_assert(priv->reset);
+> > > +               udelay(1);
+> > > +               reset_control_deassert(priv->reset);
+> > > +       }
+> > > +
+> > > +       sdhci_reset(host, mask);
+> > > +}
+> > > +
+> > >  static const struct sdhci_ops sdhci_dwcmshc_ops = {
+> > >         .set_clock              = sdhci_set_clock,
+> > >         .set_bus_width          = sdhci_set_bus_width,
+> > > @@ -269,7 +286,7 @@ static const struct sdhci_ops sdhci_dwcmshc_rk3568_ops = {
+> > >         .set_bus_width          = sdhci_set_bus_width,
+> > >         .set_uhs_signaling      = dwcmshc_set_uhs_signaling,
+> > >         .get_max_clock          = sdhci_pltfm_clk_get_max_clock,
+> > > -       .reset                  = sdhci_reset,
+> > > +       .reset                  = rk35xx_sdhci_reset,
+> > >         .adma_write_desc        = dwcmshc_adma_write_desc,
+> > >  };
+> > >
+> > > @@ -292,6 +309,13 @@ static int dwcmshc_rk3568_init(struct sdhci_host *host, struct dwcmshc_priv *dwc
+> > >         int err;
+> > >         struct rk3568_priv *priv = dwc_priv->priv;
+> > >
+> > > +       priv->reset = devm_reset_control_array_get_optional_exclusive(mmc_dev(host->mmc));
+> > > +       if (IS_ERR(priv->reset)) {
+> > > +               err = PTR_ERR(priv->reset);
+> > > +               dev_err(mmc_dev(host->mmc), "failed to get reset control %d\n", err);
+> > > +               return err;
+> > > +       }
+> > > +
+> > >         priv->rockchip_clks[0].id = "axi";
+> > >         priv->rockchip_clks[1].id = "block";
+> > >         priv->rockchip_clks[2].id = "timer";
+> > > --
+> > > 2.35.1
+> > >
