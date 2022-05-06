@@ -2,101 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D91FC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 07:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75097C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 07:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389467AbiEFHTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 03:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
+        id S245449AbiEFHfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 03:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355142AbiEFHT1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 03:19:27 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20DEA66FA3
-        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 00:15:43 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id n10so12762631ejk.5
-        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 00:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7g9JO/Ybw9irKMb1RLnb7HIkga3Dv3dwhtzTDOGzIqI=;
-        b=eunXz/jJ22emEnm9j1ZKkdizjud+RpDosbQw03+WYs/zT4ezzVjJmgyCbF8K9QaChP
-         q8/4A2wtC96OPJuvFDq0ersh77V8L5R7gM8k9azwtSHn9JPcjCrjzAk2LCGO31OT0Z4y
-         PDXCBm/w/BVDih3HHieKmt5so84yoEw1kx2v8SPLu5VEcOlN24qhcFTBh8yKXbVyLbEU
-         PHxv4bAg77gVeDU1RA7bToXYfmRdd5RulyxGNCBTn6FmIVG5hiGX33DHA+Zs3JWDzR/L
-         T6u9XL4pozWRZXW264WrXSVsdHqjp2f7kku5ow7B1eQTp3JJB7TbIIAVpJMtfbnKFXcJ
-         LIwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=7g9JO/Ybw9irKMb1RLnb7HIkga3Dv3dwhtzTDOGzIqI=;
-        b=GSSMqmsMSyir5C1uLxHw6JjmK/Ax7vq7mgqbB2NET0EZZXYsWK861ieCjTtZaJw8Qz
-         0uxINfvhUyOzDF5Yi8zcCDTxWRdAvLIBKqnOIYmg7ETHLM1+J1L4IezxU/TcHIn6AESy
-         b9afOs2lhSEbFUyXL4U1Rsc81ScFLAveXpVdB+aWtWx1Q+w2JQVTLpWwhwTXM6JDiNdY
-         FP2+2eDzRgdwb4FEeAulU44Mcn6E9VaIzVh+sWUjIfJrlCXo4z0c6wmO75NrWAQUjgl7
-         X8eKLBVrGy7GMJhpqtisqTKE63y6XmgnMyrZChWjXM8bbmE5xk1XSxdPVsWCdPaIZqKI
-         Ekpg==
-X-Gm-Message-State: AOAM531EJUG0Q2OslBpLCtApeMiIYlKYclMMTW1c0FQO6bPkBBbRnH/D
-        JQFYiECkOKSGWQk45F0z3Pn8pg==
-X-Google-Smtp-Source: ABdhPJxgd3hK/qt9qIuLszkmZtLv2HjclvaSrS1ez9rOxs8wZ1arV9Hioosh6sfq5Fg2Oc7d0T6qxA==
-X-Received: by 2002:a17:907:6e8b:b0:6f4:7147:a6ac with SMTP id sh11-20020a1709076e8b00b006f47147a6acmr1782778ejc.187.1651821342232;
-        Fri, 06 May 2022 00:15:42 -0700 (PDT)
-Received: from [192.168.0.223] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id qz24-20020a170907681800b006f3ef214de6sm1605225ejc.76.2022.05.06.00.15.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 May 2022 00:15:41 -0700 (PDT)
-Message-ID: <7c4b51a9-6340-ef27-708d-2ad96830edcb@linaro.org>
-Date:   Fri, 6 May 2022 09:15:40 +0200
+        with ESMTP id S231643AbiEFHfE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 03:35:04 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5EB62ADC;
+        Fri,  6 May 2022 00:31:21 -0700 (PDT)
+Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MlfCm-1oDifl3jvu-00ijHY; Fri, 06 May 2022 09:31:19 +0200
+Received: by mail-wr1-f47.google.com with SMTP id j15so8866084wrb.2;
+        Fri, 06 May 2022 00:31:19 -0700 (PDT)
+X-Gm-Message-State: AOAM53027olsIfusuF9JqixzwazVMz+N19EknKk3MlZUEJ1Eejx6f5q8
+        vdVn9LN0B2L25MeEIGV8riAadZAeb6uekQtVpYM=
+X-Google-Smtp-Source: ABdhPJyl6B+Yi3fxE4xYEmk7s5ew/zzP2lC0ZNV1xGO5Lxor38jlzAsOmsx8UdBKNigE8R5SnwqPF7txxIHsenYD3Hk=
+X-Received: by 2002:a5d:6da4:0:b0:20c:6d76:cc54 with SMTP id
+ u4-20020a5d6da4000000b0020c6d76cc54mr1442466wrs.317.1651822279542; Fri, 06
+ May 2022 00:31:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v14 6/9] dt-bindings: interrupt-controller: Add bindings
- for SP7021 interrupt controller
-Content-Language: en-US
-To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
 References: <cover.1651805790.git.qinjian@cqplus1.com>
- <56fb5e9a35a901f15d8e9721385c7e916c181377.1651805790.git.qinjian@cqplus1.com>
- <550cd907-be2a-4e90-350c-fbc3bdc03728@linaro.org>
- <d4ec03ed722349dda9fa3357449ac612@cqplus1.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <d4ec03ed722349dda9fa3357449ac612@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1651805790.git.qinjian@cqplus1.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 6 May 2022 09:31:03 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0W4wpVwDmCXDkm_u9W=JozrnCnxW7zK3h2XD8f_ODy6w@mail.gmail.com>
+Message-ID: <CAK8P3a0W4wpVwDmCXDkm_u9W=JozrnCnxW7zK3h2XD8f_ODy6w@mail.gmail.com>
+Subject: Re: [PATCH v14 0/9] Add Sunplus SP7021 SoC Support
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:NQJFiB5aaAr1QxCc6CwwI/7WQQAm7AUc/Evgzf6oHg0rxpc9Yv0
+ mNJrl2eWgwUoiGDYH9Rw2wRKnmYPPp701bj4b0KpNN2n24OUAEFFJs/yoFYM+u0fiFQ3Ckx
+ +bY3pPP0tVasSXlzV85KGbFiCdASWZbUGJ7Y//DtcARcrVWmX6cYGTvtzQhem7X0DAxRNi7
+ yHhAWN4IIU6+geR4wLkmw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:z8dN+VPP6q0=:12rMX5qXV6n0RGYINhZsK+
+ 6wBfnDRr9aNZsb+dzhRZygl56Zew1C5jBlS3rrZQ9LQRwwzYJ6AmMiAuxMILbcqCKT+6rRzoA
+ xtFv3eVQmhgI2VwdsbFxTTP4ekvlnWpr4XDKVy6tu5NqPRSQp2J4pMkBZFKQFuudS6sN1tffF
+ KjAPTi7vIRre/WenLAdOMnavbmVikI2GJBrUPnNAk7Tuw+nNds/UGVe2sl8iyHs24cSLCgzJ+
+ CcLzTIi+4jKoMHGRPslimN8TjsZ2AOVWKmwqQf19RN6REpSwek1lf/Z79FLczQf7XJuobwz7c
+ kcfX2sMoM1kw6mci1vhT/VuU2Hv6Wdye9c+0IWOskAreKWTKSyJCM5KJeHtqVPnId8mZ/4v4O
+ JEB7R8sEjQopuEWW2aLQTSSZS+lj3/3NnAOx/sdBgFY4xzAzDEB03m5feKzv/+EYTT1KhAmU+
+ D/koRw9+MKNSmpuZnYbmlwINl9UvhjoolK8QCyw1DlHjGVrPDLDcDmotPwVLi+HaWcaqspeAk
+ nmEVnrF1WrPcFyQyp3i24f91E3zNYP3CzdfooJAm+377DUt+vMq5BBrdzJr3tlngmJXuFfGO2
+ VAKICwMa5ruUNqO9LC5/556ACRfkQ2z9IJeoPGIW3CXZEqJvxa03m/7taiy2BX9HB480m0QIk
+ XlXcEF1/JMgCrWRQPZZSIkYPL1r9LY7YY+zXnadmsnQwaxrBadOaD+Gt+pLR0HrtMfig1ELXL
+ cTT3sMHhAmXPZWEBOjkX2xklSqgstnrztqvyu+3uKq3y8xbpOnlSHUZN3JJyL4/3zkkFvp36r
+ PXw/0AgUlCVV4wjX0OECVNaSiXluujgw5yvLlgBQeTS8L6sH0o=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/05/2022 09:01, qinjian[覃健] wrote:
->>> +title: Sunplus SP7021 SoC Interrupt Controller Device Tree Bindings
->>
->> Remove "Device Tree Bindings". This applies to all bindings patches, not
->> only to one.
->>
-> 
-> Did you means change
-> "title: Sunplus SP7021 SoC Interrupt Controller Device Tree Bindings"
-> to 
-> "title: Sunplus SP7021 SoC Interrupt Controller"?
+On Fri, May 6, 2022 at 5:23 AM Qin Jian <qinjian@cqplus1.com> wrote:
+>
+> This patch series add Sunplus SP7021 SoC support.
+>
+> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
+> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
+> single chip. It is designed for industrial control.
+>
+> SP7021 consists of two chips (dies) in a package. One is called C-chip
+> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
+> process (22 nm) for high performance computing. The other is called P-
+> chip (peripheral chip). It has many peripherals and an ARM A926 added
+> especially for real-time control. P-chip is made for customers. It adopts
+> low-level process (ex: 0.11 um) to reduce cost.
 
-Yes, thank you.
+Just an update from my side about merging the platform code: the
+submission looks mostly sensible to me, but as long as the clk and irqchip
+drivers have not finished the review, I cannot take this through the soc
+tree. We could consider merging the platform code without those two
+drivers, but that seems pointless because it will not boot.
 
+What is the reason you don't include a .dtsi file in this series? Usually
+there should be at least one board and the description of the SoC itself.
+Again, without those I'm not sure it's worth merging.
 
-Best regards,
-Krzysztof
+For the timing, we are getting close to the 5.19 merge window that
+starts once v5.18 is out, and I don't expect that all the above will
+be resolved in time, so it looks we will have to defer it by one more
+release to 5.20.
+
+          Arnd
