@@ -2,137 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D7BC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 21:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C2FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 23:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444584AbiEFV6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 17:58:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45996 "EHLO
+        id S1444980AbiEFX2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 19:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234286AbiEFV6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 17:58:21 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C98A6FA15;
-        Fri,  6 May 2022 14:54:37 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id hf18so7030857qtb.0;
-        Fri, 06 May 2022 14:54:37 -0700 (PDT)
+        with ESMTP id S236547AbiEFX2A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 19:28:00 -0400
+Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81920712D1
+        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 16:24:16 -0700 (PDT)
+Received: by mail-oo1-xc2f.google.com with SMTP id e7-20020a4aaac7000000b00330e3ddfd4bso1498518oon.8
+        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 16:24:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RwE9cq9p0Nlb5WXcx6miQbDi/yCUsV/mHE4B3DAunEQ=;
-        b=XBjKjnmoAxI4U0zjITutiDy4hvb6gAkXbGpivr33VkTd3yXk046a9ztdGeEmoM8xmq
-         viKWdYYQfgz/9kE4Yg3VViyBRWrngMQ+CYisgxaF7Yy07Hm3KEs0CMQ3wAgV0y/jgMbw
-         hl0m2eg+knwyjh8UOWlDRShpxjXdFrw/zwBADtcDL51HoarIoYBNvfrvg6Fvq8owwl6I
-         03Kj+u1smm7ys8OGB+uymtUOQOY/zU6Oy7idBZl5LsucdrsafoofLKL4QmvpNdPjAYMG
-         a+M81ZX3QL10EVljZXaEtEP2ngXk0DRgDvME1Qrmr88QSHjs23rooxoYa+cgE7svNIBx
-         4pew==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=/ElELV4+QaCmbQivuCO+s3nmw20xVvpsLHj2VQCOczQ=;
+        b=Q/mL5LmBEmb9tU2w0cn5NhXVWbyWIiPZkShqLXDDa+rVYo+1WH5J6y4cbFsJ/GHnIC
+         cRQnPAAT2Uuv1KT9qQMyQhEBwSwfFhY1cgAJT+RawLfPkt8k09bvKbPuhGRMAXoU9bmo
+         oaM+z+Z1SZgTAZFMlrKYNiQUFUqDmFkNmJnYU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RwE9cq9p0Nlb5WXcx6miQbDi/yCUsV/mHE4B3DAunEQ=;
-        b=mcJVlRBXAKTqbmyGm/FppKgicHopPS7wVy9p15czdTYVpBtyGyQ2Jkj1dO9qFFSGbP
-         e+beocbA6ExEMBHufts2tv6sa/1ooQXxoMCB2LX5GfAdd3agaYzACxhd4m2Uud8Mo/WJ
-         x5GOOOdOu7ElAoBW+cPgYVWfLNdXXuxwqwSQw1z2v+wJVYfvqQr1wf09q3I6sirGhCaw
-         nf6l6RttoN+/CNnW0CCEZ1fX3ecq4ERLHUkcNZZj4EF/rThVkU9VuRRuv6ob2NyTShJE
-         fRyqf7giJe+MukCGtd+fAmM4MfdVKUBJULH2aO+fYiGf8UQwl/6WhtUtVB+pyVFsBVMI
-         LhUA==
-X-Gm-Message-State: AOAM533NFRpzSJC5lkCAkA52b4GNpK03/b2lvYgQFB/uJxgl6gZ7/1mk
-        I41PKmtun2n2HD3Gz3pvOHH5wGAVLOi4hZnq/II=
-X-Google-Smtp-Source: ABdhPJwxY/50SN1+xVwy4AdOMSL/WvUMQPV+2K5V61Yi3kCKeGyqxkZqly9+WDBG/E9q8eqf/qN7lNQrTbZltStTOzE=
-X-Received: by 2002:a05:622a:155:b0:2f3:9484:c38e with SMTP id
- v21-20020a05622a015500b002f39484c38emr4801986qtw.494.1651874076599; Fri, 06
- May 2022 14:54:36 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=/ElELV4+QaCmbQivuCO+s3nmw20xVvpsLHj2VQCOczQ=;
+        b=6GybVbqDCgFMIZDua0SajHgts8Cx18QUd13cmJzfIvKkC49RwUdwxSHuaK0ki086QZ
+         lJgafS03jF7B66izcZlN+zJwhk5/hX9pUPx9npL+aHBDPjsHZFvI7onnWi50CG1y9ICq
+         fxLM0YWeyojre62VyF0HRyXh4sr99t5yWN5/Uky+BJBee6xBpfP55lbP9QBgpl/kYr/y
+         esFJguAqKqhhiuYtFAVCjKFJkBVFjBi71zHt0uHIJ5U4/CKDDvwqGVCMHyz+KIiJzsVM
+         UCSArK+7p+OD+flKdAJYdaU/qrx6yMbxmiNpIBe8UhdcEajAM4lMLWYfyYi6/BVuUXTV
+         dIiQ==
+X-Gm-Message-State: AOAM53269RJyCKVhJCPlJ/h1+OSItWNj1qCt4s52d3eHKFQ2nEHGVaai
+        rVcALknnKcwOZgimc2hpMU1VjU+Lsn00JNh2Sy0Kmg==
+X-Google-Smtp-Source: ABdhPJyUJ6tVOobOozeBnxyxa8RgSY9d+Hm2+Rmx0y+yjUzUjdvUB/hoshBRw+G0Dpmcp5sPU11pJETcqoz8VXu5aq0=
+X-Received: by 2002:a4a:6b49:0:b0:329:99cd:4fb8 with SMTP id
+ h9-20020a4a6b49000000b0032999cd4fb8mr1917932oof.25.1651879455825; Fri, 06 May
+ 2022 16:24:15 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 6 May 2022 19:24:15 -0400
 MIME-Version: 1.0
-References: <20220425182249.2753690-1-robimarko@gmail.com> <20220425182249.2753690-2-robimarko@gmail.com>
- <YnSW+mNgAp17e/YE@builder.lan>
-In-Reply-To: <YnSW+mNgAp17e/YE@builder.lan>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Fri, 6 May 2022 23:54:25 +0200
-Message-ID: <CAOX2RU4B6hqQtJCW3ifXfxd9dMCGE+FygDimGQOP49PRjp_y3g@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: qcom: ipq8074: disable USB GDSC-s SW_COLLAPSE
+In-Reply-To: <YnKvoh+h07at8b65@builder.lan>
+References: <20220412194505.614002-1-swboyd@chromium.org> <YnKvoh+h07at8b65@builder.lan>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Fri, 6 May 2022 19:24:15 -0400
+Message-ID: <CAE-0n517iAS9KSdunMX18LpqDrQ4ac-yRCZq82j-XdExaGjCXA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        patches@lists.linux.dev, Alex Elder <elder@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 6 May 2022 at 05:33, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+Quoting Bjorn Andersson (2022-05-04 09:53:54)
+> On Tue 12 Apr 14:45 CDT 2022, Stephen Boyd wrote:
 >
-> On Mon 25 Apr 13:22 CDT 2022, Robert Marko wrote:
->
-> > Like in IPQ6018 Qualcomm intentionally disables the SW_COLLAPSE on the USB
-> > GDSC-s in the downstream 5.4 kernel.
+> > Set the wake and sleep state for BCM clks here, not just the active
+> > state, as the active only state is dropped when CPUs go to deep idle.
+> > This ensures the clk is always on when the driver thinks it is on.
 > >
-> > This could potentially be better handled by utilizing the GDSC driver, but
-> > I am not familiar with it nor do I have datasheets.
+> > This was found by inspection, and could very well be incorrect if the
+> > RPMh hardware copies over the active only state to the sleep and wake
+> > states.
+> >
 >
-> Could you please give it a try before we pick this up?
-> Look at e.g. drivers/clk/qcom/gcc-sdm845.c how usb30_prim_gdsc and
-> usb30_sec_gdsc are defined, the offsets in specified in .gdscr should be
-> the same offsets you give below.
+> Taking another look at this patch and now it makes perfect sense to me.
+> Sorry for not grasping the problem earlier.
 >
-> Then you specify an array of struct gdsc *, associating the two gdscs
-> you have specified to some identifier (USB30_PRIM_GDSC and
-> USB30_SEC_GDSC is used in sdm845) and reference this list as .gdscs and
-> num_gdscs in the gcc_ipq8074_desc.
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 >
-> The last part is to tie the USB controllers to the two GDSCs, this is
-> done by simply specifying:
 >
->         power-domains = <&gcc USB30_PRIM_GDSC>;
+> Will you take this in fixes, or do you want me to pick it for 5.19?
 >
-> and USB30_SEC_GDSC, in the two USB nodes in DeviceTree. SW_COLLAPSE will
-> be toggled by the PM state of the USB driver, like it's done on e.g.
-> sdm845.
 
-Hi Bjorn, thanks for the tips, it makes more sense now.
-The only thing I am not sure about are the feature flags for these GDSCs,
-how to figure out which ones are correct as I dont have datasheets and QCA
-does not use GDSCs in the downstream kernel?
-POLL_CFG_GDSCR will cause the GDSC not to get enabled, while VOTABLE
-seems to work.
-
-Regards,
-Robert
-
->
-> Regards,
-> Bjorn
->
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> >  drivers/clk/qcom/gcc-ipq8074.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> > index 2ebd1462db78..65249a03a672 100644
-> > --- a/drivers/clk/qcom/gcc-ipq8074.c
-> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> > @@ -4806,6 +4806,11 @@ static int gcc_ipq8074_probe(struct platform_device *pdev)
-> >       if (IS_ERR(regmap))
-> >               return PTR_ERR(regmap);
-> >
-> > +     /* Disable SW_COLLAPSE for USB0 GDSCR */
-> > +     regmap_update_bits(regmap, 0x3e078, BIT(0), 0x0);
-> > +     /* Disable SW_COLLAPSE for USB1 GDSCR */
-> > +     regmap_update_bits(regmap, 0x3f078, BIT(0), 0x0);
-> > +
-> >       clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
-> >       clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
-> >                               &nss_crypto_pll_config);
-> > --
-> > 2.35.1
-> >
+I'm waiting for Taniya to reply. For all I know this has no effect
+because there's some sort of copy/paste from one state to another. Until
+then it doesn't seem like we should do anything.
