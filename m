@@ -2,167 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF0DC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 19:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D7BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 21:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390153AbiEFTbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 15:31:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39936 "EHLO
+        id S1444584AbiEFV6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 17:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236285AbiEFTbA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 15:31:00 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD6B6A071;
-        Fri,  6 May 2022 12:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651865236; x=1683401236;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AW906yaOruqYoLxGe4BkeNY7iQOHYqZeONTXC8+tXQs=;
-  b=Yhf5rPi2R7+jgFG71/+bgThISjVgAL3nsVyVw0np9Uc7468BZvObfy/x
-   JgyJOfliO/UtfYauC513Jd+uKdSh8gMAUnLYRQ9WgFsrmlm1m/iqUnVeF
-   QooJGnYKE8xITLP/Bfl5oV5SaDK73WeBHI2JXmrYFKz7zw2a9YfZp/Q5y
-   bkr2kutmrDQouZGSia8lydTDhXVz3OqmjEXyeUnwav4p3qumx5aEG9XKJ
-   JFQlLx+H4mxHvyl1/ixNUZK232KvAJWXjYnQHuHZZWl8g1KfgpUVjKqVw
-   V5JLRWodAZKafrRkSmtiLwY832IBOFpV7Z1ecFnMk3kTjyHP8OtxdKfRu
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10339"; a="266148817"
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="266148817"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 12:27:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="586155393"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 06 May 2022 12:27:01 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nn3bQ-000Dnw-GL;
-        Fri, 06 May 2022 19:27:00 +0000
-Date:   Sat, 7 May 2022 03:26:08 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Qin Jian <qinjian@cqplus1.com>, krzysztof.kozlowski@linaro.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>
-Subject: Re: [PATCH v14 7/9] irqchip: Add Sunplus SP7021 interrupt controller
- driver
-Message-ID: <202205070356.RRuPT69d-lkp@intel.com>
-References: <7e469fb049959f88cf2b37649e6f3eb1d0fd3440.1651805790.git.qinjian@cqplus1.com>
+        with ESMTP id S234286AbiEFV6V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 17:58:21 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C98A6FA15;
+        Fri,  6 May 2022 14:54:37 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id hf18so7030857qtb.0;
+        Fri, 06 May 2022 14:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RwE9cq9p0Nlb5WXcx6miQbDi/yCUsV/mHE4B3DAunEQ=;
+        b=XBjKjnmoAxI4U0zjITutiDy4hvb6gAkXbGpivr33VkTd3yXk046a9ztdGeEmoM8xmq
+         viKWdYYQfgz/9kE4Yg3VViyBRWrngMQ+CYisgxaF7Yy07Hm3KEs0CMQ3wAgV0y/jgMbw
+         hl0m2eg+knwyjh8UOWlDRShpxjXdFrw/zwBADtcDL51HoarIoYBNvfrvg6Fvq8owwl6I
+         03Kj+u1smm7ys8OGB+uymtUOQOY/zU6Oy7idBZl5LsucdrsafoofLKL4QmvpNdPjAYMG
+         a+M81ZX3QL10EVljZXaEtEP2ngXk0DRgDvME1Qrmr88QSHjs23rooxoYa+cgE7svNIBx
+         4pew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RwE9cq9p0Nlb5WXcx6miQbDi/yCUsV/mHE4B3DAunEQ=;
+        b=mcJVlRBXAKTqbmyGm/FppKgicHopPS7wVy9p15czdTYVpBtyGyQ2Jkj1dO9qFFSGbP
+         e+beocbA6ExEMBHufts2tv6sa/1ooQXxoMCB2LX5GfAdd3agaYzACxhd4m2Uud8Mo/WJ
+         x5GOOOdOu7ElAoBW+cPgYVWfLNdXXuxwqwSQw1z2v+wJVYfvqQr1wf09q3I6sirGhCaw
+         nf6l6RttoN+/CNnW0CCEZ1fX3ecq4ERLHUkcNZZj4EF/rThVkU9VuRRuv6ob2NyTShJE
+         fRyqf7giJe+MukCGtd+fAmM4MfdVKUBJULH2aO+fYiGf8UQwl/6WhtUtVB+pyVFsBVMI
+         LhUA==
+X-Gm-Message-State: AOAM533NFRpzSJC5lkCAkA52b4GNpK03/b2lvYgQFB/uJxgl6gZ7/1mk
+        I41PKmtun2n2HD3Gz3pvOHH5wGAVLOi4hZnq/II=
+X-Google-Smtp-Source: ABdhPJwxY/50SN1+xVwy4AdOMSL/WvUMQPV+2K5V61Yi3kCKeGyqxkZqly9+WDBG/E9q8eqf/qN7lNQrTbZltStTOzE=
+X-Received: by 2002:a05:622a:155:b0:2f3:9484:c38e with SMTP id
+ v21-20020a05622a015500b002f39484c38emr4801986qtw.494.1651874076599; Fri, 06
+ May 2022 14:54:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e469fb049959f88cf2b37649e6f3eb1d0fd3440.1651805790.git.qinjian@cqplus1.com>
+References: <20220425182249.2753690-1-robimarko@gmail.com> <20220425182249.2753690-2-robimarko@gmail.com>
+ <YnSW+mNgAp17e/YE@builder.lan>
+In-Reply-To: <YnSW+mNgAp17e/YE@builder.lan>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Fri, 6 May 2022 23:54:25 +0200
+Message-ID: <CAOX2RU4B6hqQtJCW3ifXfxd9dMCGE+FygDimGQOP49PRjp_y3g@mail.gmail.com>
+Subject: Re: [PATCH 2/7] clk: qcom: ipq8074: disable USB GDSC-s SW_COLLAPSE
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Qin,
+On Fri, 6 May 2022 at 05:33, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 25 Apr 13:22 CDT 2022, Robert Marko wrote:
+>
+> > Like in IPQ6018 Qualcomm intentionally disables the SW_COLLAPSE on the USB
+> > GDSC-s in the downstream 5.4 kernel.
+> >
+> > This could potentially be better handled by utilizing the GDSC driver, but
+> > I am not familiar with it nor do I have datasheets.
+>
+> Could you please give it a try before we pick this up?
+> Look at e.g. drivers/clk/qcom/gcc-sdm845.c how usb30_prim_gdsc and
+> usb30_sec_gdsc are defined, the offsets in specified in .gdscr should be
+> the same offsets you give below.
+>
+> Then you specify an array of struct gdsc *, associating the two gdscs
+> you have specified to some identifier (USB30_PRIM_GDSC and
+> USB30_SEC_GDSC is used in sdm845) and reference this list as .gdscs and
+> num_gdscs in the gcc_ipq8074_desc.
+>
+> The last part is to tie the USB controllers to the two GDSCs, this is
+> done by simply specifying:
+>
+>         power-domains = <&gcc USB30_PRIM_GDSC>;
+>
+> and USB30_SEC_GDSC, in the two USB nodes in DeviceTree. SW_COLLAPSE will
+> be toggled by the PM state of the USB driver, like it's done on e.g.
+> sdm845.
 
-I love your patch! Perhaps something to improve:
+Hi Bjorn, thanks for the tips, it makes more sense now.
+The only thing I am not sure about are the feature flags for these GDSCs,
+how to figure out which ones are correct as I dont have datasheets and QCA
+does not use GDSCs in the downstream kernel?
+POLL_CFG_GDSCR will cause the GDSC not to get enabled, while VOTABLE
+seems to work.
 
-[auto build test WARNING on pza/reset/next]
-[also build test WARNING on clk/clk-next tip/irq/core linus/master v5.18-rc5 next-20220506]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Regards,
+Robert
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220506-113239
-base:   https://git.pengutronix.de/git/pza/linux reset/next
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20220507/202205070356.RRuPT69d-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 5e004fb787698440a387750db7f8028e7cb14cfc)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/e4d57016693163887d81dfa4c0b0db3e4437cf2b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220506-113239
-        git checkout e4d57016693163887d81dfa4c0b0db3e4437cf2b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/irqchip/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> drivers/irqchip/irq-sp7021-intc.c:170:16: warning: cast to smaller integer type 'int' from 'void *' [-Wvoid-pointer-to-int-cast]
-           int ext_num = (int)irq_desc_get_handler_data(desc);
-                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/irqchip/irq-sp7021-intc.c:218:69: warning: cast to 'void *' from smaller integer type 'int' [-Wint-to-void-pointer-cast]
-           irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
-                                                                              ^~~~~~~~~
-   2 warnings generated.
-
-
-vim +170 drivers/irqchip/irq-sp7021-intc.c
-
-   166	
-   167	static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
-   168	{
-   169		struct irq_chip *chip = irq_desc_get_chip(desc);
- > 170		int ext_num = (int)irq_desc_get_handler_data(desc);
-   171		int hwirq;
-   172	
-   173		chained_irq_enter(chip, desc);
-   174	
-   175		while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
-   176			if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_ACTIVE))) { // WORKAROUND
-   177				ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
-   178				sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, TEST_STATE(hwirq, _IS_LOW));
-   179			} else {
-   180				generic_handle_domain_irq(sp_intc.domain, hwirq);
-   181			}
-   182		}
-   183	
-   184		chained_irq_exit(chip, desc);
-   185	}
-   186	
-   187	static struct irq_chip sp_intc_chip = {
-   188		.name = "sp_intc",
-   189		.irq_ack = sp_intc_ack_irq,
-   190		.irq_mask = sp_intc_mask_irq,
-   191		.irq_unmask = sp_intc_unmask_irq,
-   192		.irq_set_type = sp_intc_set_type,
-   193	};
-   194	
-   195	static int sp_intc_irq_domain_map(struct irq_domain *domain,
-   196					  unsigned int irq, irq_hw_number_t hwirq)
-   197	{
-   198		irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
-   199		irq_set_chip_data(irq, &sp_intc_chip);
-   200		irq_set_noprobe(irq);
-   201	
-   202		return 0;
-   203	}
-   204	
-   205	static const struct irq_domain_ops sp_intc_dm_ops = {
-   206		.xlate = irq_domain_xlate_twocell,
-   207		.map = sp_intc_irq_domain_map,
-   208	};
-   209	
-   210	static int sp_intc_irq_map(struct device_node *node, int i)
-   211	{
-   212		unsigned int irq;
-   213	
-   214		irq = irq_of_parse_and_map(node, i);
-   215		if (!irq)
-   216			return -ENOENT;
-   217	
- > 218		irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
-   219	
-   220		return 0;
-   221	}
-   222	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+>
+> Regards,
+> Bjorn
+>
+> >
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > ---
+> >  drivers/clk/qcom/gcc-ipq8074.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+> > index 2ebd1462db78..65249a03a672 100644
+> > --- a/drivers/clk/qcom/gcc-ipq8074.c
+> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
+> > @@ -4806,6 +4806,11 @@ static int gcc_ipq8074_probe(struct platform_device *pdev)
+> >       if (IS_ERR(regmap))
+> >               return PTR_ERR(regmap);
+> >
+> > +     /* Disable SW_COLLAPSE for USB0 GDSCR */
+> > +     regmap_update_bits(regmap, 0x3e078, BIT(0), 0x0);
+> > +     /* Disable SW_COLLAPSE for USB1 GDSCR */
+> > +     regmap_update_bits(regmap, 0x3f078, BIT(0), 0x0);
+> > +
+> >       clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
+> >       clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
+> >                               &nss_crypto_pll_config);
+> > --
+> > 2.35.1
+> >
