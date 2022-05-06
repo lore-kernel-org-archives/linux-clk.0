@@ -2,199 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8EFC433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 15:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A71C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 16:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442821AbiEFP3s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 11:29:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51340 "EHLO
+        id S1351737AbiEFQPp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 12:15:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390522AbiEFP3s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 11:29:48 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98D0689A2
-        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 08:26:04 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id p6so7321927pjm.1
-        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 08:26:04 -0700 (PDT)
+        with ESMTP id S1443971AbiEFQOv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 12:14:51 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C83BD83;
+        Fri,  6 May 2022 09:11:07 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id ba17so9247884edb.5;
+        Fri, 06 May 2022 09:11:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=iGapkGE60Ffp9Dn3FwYexU8rjobxhlsX80rf5yE5Vjs=;
-        b=f9uM7cC/GaS4cQVSQZojtKIz32bLjFaJ+lWtzkVLxkOgtdFA4e/M/SeEAGW1tssIgV
-         Goou3HGyVtCULN13GwNh6eTc+ck/MwsDYOtHMUZXyR/jaJXPGBkagH2dQQ5jc83AjYWR
-         5meOU1IpoTnlb/AcHQk4sqWPsKqxWBoir2yh1HggD4pNbhyDolRqkAWKTYSz2bBwy1xO
-         pVqFW8+aCJwf6G+GgBZgaDDTRhdLdEcfSMowidixPZRzjIuDIu6/PDHBxtlAb9nRPPmO
-         9ml+NxB9FCdMqV3tl7JRGUoXHD1Iqwt35i+3ziDurwGGK3NVrAhUAOhzNyGk/prgsobG
-         TUWg==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3tVCRctusR50NsJqvwU9ayy4TOZg/tJq1P3xPHYXtsk=;
+        b=i1diYqUiflUn78SzAR+JrxbLULT9uZMaQSTddCm1jzoW63mWs9o/6wUCZCkPpxzSmo
+         KcoTpc0j+8g6QFq54SoaRdLe0avqJ+Sl5W6MS1qkr1BnWf0Y85jq/ajYjP0l0cMQ53aD
+         37fTe/MYOAilcDfsrCXwhGLp5+5U+dTPWX3xKnZr/pI12HA5VJ1J2Ny7vOuGQNpBaJZh
+         iXEqX+Pq6PJq50V2ZnFgbU7Q71vjZyQeYyiQOfcGP+jEe/rSNqb2G+j2qAh8YHlbqkFy
+         wzfPuETIcT9/lCIIrUFAcuC0n99X8oxK2sfUgwBb0qVr6UvIU9BMaP2VGa21SkTiR2VR
+         Ziug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=iGapkGE60Ffp9Dn3FwYexU8rjobxhlsX80rf5yE5Vjs=;
-        b=SyPTly6ad/xcLlxDIKp/zBX4wCA01gjSERSfU5VC61BOrF2RXY6Gq9uVV8HUz4KHRx
-         tFY6Z5Jw7Y7m9lwT51ZIsOG67xnXMK0BY++k1qLRbEFx3AAZzR71srpcOxJskT3El2GJ
-         AAY/A1o+cQXE4D3jDS7tgx+btejEmL5I4jhTv4lbYcrVvv5KW72YIW7L1s5xbwFYEDqU
-         H4apRi1pkMK+ACs3yj1q33M5ejwIWGH1slInNY6p+EiIgLneDebtaH3lsmAyDetNSinG
-         CfS1GG7jevFVp2X/P++X6kLPRSBTlZnrzQwwYDiRvZt91AgM6x+42rYF6jkaKb0kexdS
-         esLg==
-X-Gm-Message-State: AOAM530WcSOxpdp/4PX2QgdeDCB18jxWUuEm+NV5PxlzmPih6K6iFlOO
-        09971PDvffaajclc4dj6ScL5
-X-Google-Smtp-Source: ABdhPJxRHQ1fSI73te9IorgJaSG7Tug/yMs0bB1EYetO1etF/9nUgYGFqgHAyTidzPAwZSI/J7S+UQ==
-X-Received: by 2002:a17:902:ef45:b0:156:1858:71fc with SMTP id e5-20020a170902ef4500b00156185871fcmr4071899plx.23.1651850764099;
-        Fri, 06 May 2022 08:26:04 -0700 (PDT)
-Received: from thinkpad ([27.111.75.233])
-        by smtp.gmail.com with ESMTPSA id t11-20020a170902b20b00b0015ea9aabd19sm1858160plr.241.2022.05.06.08.25.59
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3tVCRctusR50NsJqvwU9ayy4TOZg/tJq1P3xPHYXtsk=;
+        b=RTgGkYbNQ6alckWeZhzAQc4m6yfrcZJEqvxG2j2cM3+/U7rWHfDCT3O1DBBjjaOKjg
+         F6ZSPKQ3zmA4ZaTdVRPMe5BczYXxx7Cs0sbgwMjkMHO9aFQo977WaE0wwlkcXzC03/VO
+         M6nu8c1//x0qZP8w5VOjEyWpQcmI7naM+gXrQU2A33z+PhPOB84cdhOKJyyFpxxj1SJk
+         UMXuvh9J2wBsIgGuS68pLgjcm1CbQsn4UkG9uAKudo/w+w3aTrmUccr1eLkqlGt7tYEL
+         tBMpGYZd7YxGyxGBjoU80lcLF33rXIj5XFKF0b/V8Y+a+6nQnVdvsJiUCOkckSYL52Ou
+         zgjg==
+X-Gm-Message-State: AOAM531Z+82Xij5feVGsAWj8Jfo5Iy+UOWf89AXlAMW8c/qOeOjP8dse
+        ZsqRIHTO8YpYK7V2McCEfDk=
+X-Google-Smtp-Source: ABdhPJz6k0eo2Uhvh2qOblVPcJzuQ5qSlxygttmHjSaUEbOY57FCjq8PIQAgtt3jlGaXjKhpf9kmdg==
+X-Received: by 2002:a05:6402:520e:b0:428:22d0:e996 with SMTP id s14-20020a056402520e00b0042822d0e996mr4135931edd.250.1651853465786;
+        Fri, 06 May 2022 09:11:05 -0700 (PDT)
+Received: from kista.localnet (cpe1-3-76.cable.triera.net. [213.161.3.76])
+        by smtp.gmail.com with ESMTPSA id qs24-20020a170906459800b006f3ef214e1bsm2027255ejc.129.2022.05.06.09.11.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 08:26:03 -0700 (PDT)
-Date:   Fri, 6 May 2022 20:55:58 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+        Fri, 06 May 2022 09:11:05 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        Andre Przywara <andre.przywara@arm.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
-Message-ID: <20220506152558.GA5907@thinkpad>
-References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
- <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
- <20220502101053.GF5053@thinkpad>
- <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
- <20220502111004.GH5053@thinkpad>
- <29819e6d-9aa1-aca9-0ff6-b81098077f28@linaro.org>
- <20220502150611.GF98313@thinkpad>
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v11 2/6] clk: sunxi-ng: h616: Add PLL derived 32KHz clock
+Date:   Fri, 06 May 2022 18:11:04 +0200
+Message-ID: <3607837.MHq7AAxBmi@kista>
+In-Reply-To: <20220428230933.15262-3-andre.przywara@arm.com>
+References: <20220428230933.15262-1-andre.przywara@arm.com> <20220428230933.15262-3-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220502150611.GF98313@thinkpad>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 02, 2022 at 08:36:19PM +0530, Manivannan Sadhasivam wrote:
-> On Mon, May 02, 2022 at 02:18:26PM +0300, Dmitry Baryshkov wrote:
-> > On 02/05/2022 14:10, Manivannan Sadhasivam wrote:
-> > > On Mon, May 02, 2022 at 01:35:34PM +0300, Dmitry Baryshkov wrote:
-> > > 
-> > > [...]
-> > > 
-> > > > > > +static int pipe_is_enabled(struct clk_hw *hw)
-> > > > > > +{
-> > > > > > +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
-> > > > > > +	struct clk_regmap *clkr = to_clk_regmap(hw);
-> > > > > > +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
-> > > > > > +	unsigned int val;
-> > > > > > +
-> > > > > > +	regmap_read(clkr->regmap, pipe->reg, &val);
-> > > > > > +	val = (val & mask) >> pipe->shift;
-> > > > > > +
-> > > > > > +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
-> > > > > > +
-> > > > > > +	return val == pipe->enable_val;
-> > > > > 
-> > > > > Selecting the clk parents in the enable/disable callback seems fine to me but
-> > > > > the way it is implemented doesn't look right.
-> > > > > 
-> > > > > First this "pipe_clksrc" is a mux clk by design, since we can only select the
-> > > > > parent. But you are converting it to a gate clk now.
-> > > > > 
-> > > > > Instead of that, my proposal would be to make this clk a composite one i.e,.
-> > > > > gate clk + mux clk. So even though the gate clk here would be a hack, we are
-> > > > > not changing the definition of mux clk.
-> > > > 
-> > > > This is what I had before, in revisions 1-3. Which proved to work, but is
-> > > > problematic a bit.
-> > > > 
-> > > > In the very end, it is not easily possible to make a difference between a
-> > > > clock reparented to the bi_tcxo and a disabled clock. E.g. if some user
-> > > > reparents the clock to the tcxo, then the driver will consider the clock
-> > > > disabled, but the clock framework will think that the clock is still
-> > > > enabled.
-> > > 
-> > > I don't understand this. How can you make this clock disabled? It just has 4
-> > > parents, right?
-> > 
-> > It has 4 parents. It uses just two of them (pipe and tcxo).
-> > 
-> > And like the clk_rcg2_safe clock we'd like to say that these clocks are
-> > disabled by reparenting ("parking") them to the tcxo source. Yes, this makes
-> > a lot of code simpler. The clock framework will switch the clock to the
-> > "safe" state instead of disabling it during the unused clocks evaporation.
-> > The PHY can just disable the gcc_pcie_N_pipe_clock, which will end up in
-> > parking this clock to a safe state too, etc.
+Dne petek, 29. april 2022 ob 01:09:29 CEST je Andre Przywara napisal(a):
+> The RTC section of the H616 manual mentions in a half-sentence the
+> existence of a clock "32K divided by PLL_PERI(2X)". This is used as
+> one of the possible inputs for the mux that selects the clock for the
+> 32 KHz fanout pad. On the H616 this is routed to pin PG10, and some
+> boards use that clock output to compensate for a missing 32KHz crystal.
+> On the OrangePi Zero2 this is for instance connected to the LPO pin of
+> the WiFi/BT chip.
+> The new RTC clock binding requires this clock to be named as one input
+> clock, so we need to expose this to the DT. In contrast to the D1 SoC
+> there does not seem to be a gate for this clock, so just use a fixed
+> divider clock, using a newly assigned clock number.
 > 
-> If I get the logic behind this "parking" thing right, then it is required
-> for producing a stable pipe_clk from GCC when the PHY is about to initialize.
-> Also to make sure that there is no glitch observed on pipe_clk while
-> initializing the PHY. And once it is powered ON properly, the pipe_clksrc
-> should be used as the parent for pipe_clk.
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Reviewed-by: Samuel Holland <samuel@sholland.org>
+
+Applied to sunxi/clk-for-5.19, thanks!
+
+Best regards,
+Jernej
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c      | 8 ++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.h      | 2 +-
+>  include/dt-bindings/clock/sun50i-h616-ccu.h | 1 +
+>  3 files changed, 10 insertions(+), 1 deletion(-)
 > 
-> So with that logic, we cannot say that this clk is disabled.
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/
+ccu-sun50i-h616.c
+> index 49a2474cf314..21e918582aa5 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> @@ -704,6 +704,13 @@ static CLK_FIXED_FACTOR_HWS(pll_periph0_2x_clk, "pll-
+periph0-2x",
+>  			    pll_periph0_parents,
+>  			    1, 2, 0);
+>  
+> +static const struct clk_hw *pll_periph0_2x_hws[] = {
+> +	&pll_periph0_2x_clk.hw
+> +};
+> +
+> +static CLK_FIXED_FACTOR_HWS(pll_system_32k_clk, "pll-system-32k",
+> +			    pll_periph0_2x_hws, 36621, 1, 0);
+> +
+>  static const struct clk_hw *pll_periph1_parents[] = {
+>  	&pll_periph1_clk.common.hw
+>  };
+> @@ -852,6 +859,7 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = 
+{
+>  		[CLK_PLL_DDR1]		= 
+&pll_ddr1_clk.common.hw,
+>  		[CLK_PLL_PERIPH0]	= &pll_periph0_clk.common.hw,
+>  		[CLK_PLL_PERIPH0_2X]	= &pll_periph0_2x_clk.hw,
+> +		[CLK_PLL_SYSTEM_32K]	= &pll_system_32k_clk.hw,
+>  		[CLK_PLL_PERIPH1]	= &pll_periph1_clk.common.hw,
+>  		[CLK_PLL_PERIPH1_2X]	= &pll_periph1_2x_clk.hw,
+>  		[CLK_PLL_GPU]		= 
+&pll_gpu_clk.common.hw,
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h b/drivers/clk/sunxi-ng/
+ccu-sun50i-h616.h
+> index dd671b413f22..fdd2f4d5103f 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+> @@ -51,6 +51,6 @@
+>  
+>  #define CLK_BUS_DRAM		56
+>  
+> -#define CLK_NUMBER		(CLK_BUS_HDCP + 1)
+> +#define CLK_NUMBER		(CLK_PLL_SYSTEM_32K + 1)
+>  
+>  #endif /* _CCU_SUN50I_H616_H_ */
+> diff --git a/include/dt-bindings/clock/sun50i-h616-ccu.h b/include/dt-
+bindings/clock/sun50i-h616-ccu.h
+> index 4fc08b0df2f3..1191aca53ac6 100644
+> --- a/include/dt-bindings/clock/sun50i-h616-ccu.h
+> +++ b/include/dt-bindings/clock/sun50i-h616-ccu.h
+> @@ -111,5 +111,6 @@
+>  #define CLK_BUS_TVE0		125
+>  #define CLK_HDCP		126
+>  #define CLK_BUS_HDCP		127
+> +#define CLK_PLL_SYSTEM_32K	128
+>  
+>  #endif /* _DT_BINDINGS_CLK_SUN50I_H616_H_ */
+> -- 
+> 2.35.3
 > 
-> Please correct me if my understanding is wrong.
 > 
 
-After going through the previous iterations and PHY patches, this
-implementation makes sense to me now (modelling this pipe_clk_src as gate clk
-alone).
 
-But as Johan said, you should change the "pipe_clk" to "pipe_clk_src" or
-something similar. As this clk is defined as "pipe_clk_src" in GCC.
-
-Regarding the {enable/disable}_val variables, I'm not fully convinced about the
-naming but I don't object it strongly. But irrespective of that, please add a
-brief comment in the driver about its purpose and what it does enable/disable
-callbacks.
-
-Thanks,
-Mani
-
-> Thanks,
-> Mani
-> 
-> > 
-> > > 
-> > > > 
-> > > > Thus we have to remove "safe" clock (bi_tcxo) from the list of parents. In
-> > > > case of pipe clocks (and ufs symbol clocks) this will leave us with just a
-> > > > single possible parent. Then having the mux part just doesn't make sense. It
-> > > > is just a gated clock. And this simplified a lot of things.
-> > > > 
-> > > > > 
-> > > > > So you can introduce a new ops like "clk_regmap_mux_gate_ops" and implement the
-> > > > > parent switching logic in the enable/disable callbacks. Additional benefit of
-> > > > > this ops is, in the future we can also support "gate + mux" clks easily.
-> > > > 
-> > > > If the need arises, we can easily resurrect the regmap_mux_safe patchset,
-> > > > fix the race pointed out by Johan, remove extra src-val mapping for safe
-> > > > value and use it for such clocks. I can post it separately, if you wish. But
-> > > > I'm not sure that it makes sense to use it for single-parent clocks.
-> > > > 
-> > > > > 
-> > > > > Also, please don't use the "enable_val/disable_val" members. It should be
-> > > > > something like "mux_sel_pre/mux_sel_post".
-> > > > 
-> > > > Why? Could you please elaborate?
-> > > > 
-> > > 
-> > > It aligns with my question above. I don't see how this clk can be
-> > > enabled/disabled.
-> > 
-> > I see. Let's settle on the first question then.
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
-
--- 
-மணிவண்ணன் சதாசிவம்
