@@ -2,23 +2,23 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C278DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 03:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AB2C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 03:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1388590AbiEFDeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 May 2022 23:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
+        id S1388587AbiEFDec (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 May 2022 23:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1388592AbiEFDeT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 23:34:19 -0400
+        with ESMTP id S1388612AbiEFDe1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 May 2022 23:34:27 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8FA0F48325
-        for <linux-clk@vger.kernel.org>; Thu,  5 May 2022 20:30:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E36F963533
+        for <linux-clk@vger.kernel.org>; Thu,  5 May 2022 20:30:36 -0700 (PDT)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
 Received: from 172.28.114.216
         by mx1.cqplus1.com with MailGates ESMTP Server V5.0(24048:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 06 May 2022 11:23:28 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 06 May 2022 11:23:29 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     krzysztof.kozlowski@linaro.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -26,10 +26,10 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux@armlinux.org.uk, arnd@arndb.de,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v14 4/9] dt-bindings: clock: Add bindings for SP7021 clock driver
-Date:   Fri,  6 May 2022 11:23:18 +0800
-Message-Id: <96fb8d38c891ee0716375a9194b4870c43946122.1651805790.git.qinjian@cqplus1.com>
+        Qin Jian <qinjian@cqplus1.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v14 6/9] dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt controller
+Date:   Fri,  6 May 2022 11:23:20 +0800
+Message-Id: <56fb5e9a35a901f15d8e9721385c7e916c181377.1651805790.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1651805790.git.qinjian@cqplus1.com>
 References: <cover.1651805790.git.qinjian@cqplus1.com>
@@ -39,185 +39,96 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation to describe Sunplus SP7021 clock driver bindings.
+Add documentation to describe Sunplus SP7021 interrupt controller bindings.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
-fix the comments from Krzysztof & Rob.
----
- .../bindings/clock/sunplus,sp7021-clkc.yaml   | 51 +++++++++++
- MAINTAINERS                                   |  2 +
- include/dt-bindings/clock/sp-sp7021.h         | 88 +++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- create mode 100644 include/dt-bindings/clock/sp-sp7021.h
+ .../sunplus,sp7021-intc.yaml                  | 62 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
 new file mode 100644
-index 000000000..859b2cca5
+index 000000000..f26d8b213
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
-@@ -0,0 +1,51 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+@@ -0,0 +1,62 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +# Copyright (C) Sunplus Co., Ltd. 2021
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
++$id: http://devicetree.org/schemas/interrupt-controller/sunplus,sp7021-intc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Sunplus SP7021 SoC Clock Controller Binding
++title: Sunplus SP7021 SoC Interrupt Controller Device Tree Bindings
 +
 +maintainers:
 +  - Qin Jian <qinjian@cqplus1.com>
 +
 +properties:
 +  compatible:
-+    const: sunplus,sp7021-clkc
++    items:
++      - const: sunplus,sp7021-intc
 +
 +  reg:
-+    maxItems: 1
++    maxItems: 2
++    description:
++      Specifies base physical address(s) and size of the controller regs.
++      The 1st region include type/polarity/priority/mask regs.
++      The 2nd region include clear/masked_ext0/masked_ext1/group regs.
 +
-+  clocks:
-+    maxItems: 1
++  interrupt-controller: true
 +
-+  "#clock-cells":
-+    const: 1
++  "#interrupt-cells":
++    const: 2
++    description:
++      The first cell is the IRQ number, the second cell is the trigger
++      type as defined in interrupt.txt in this directory.
++
++  interrupts:
++    maxItems: 2
++    description:
++      EXT_INT0 & EXT_INT1, 2 interrupts references to primary interrupt
++      controller.
 +
 +required:
 +  - compatible
 +  - reg
-+  - clocks
-+  - "#clock-cells"
++  - interrupt-controller
++  - "#interrupt-cells"
++  - interrupts
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+    extclk: osc0 {
-+      compatible = "fixed-clock";
-+      #clock-cells = <0>;
-+      clock-frequency = <27000000>;
-+      clock-output-names = "extclk";
-+    };
-+
-+    clkc: clock-controller@9c000000 {
-+      compatible = "sunplus,sp7021-clkc";
-+      reg = <0x9c000000 0x280>;
-+      clocks = <&extclk>;
-+      #clock-cells = <1>;
++    intc: interrupt-controller@9c000780 {
++        compatible = "sunplus,sp7021-intc";
++        reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        interrupt-parent = <&gic>;
++        interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>, /* EXT_INT0 */
++                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>; /* EXT_INT1 */
 +    };
 +
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 26066f199..5d8b420d0 100644
+index 8b77f7ae4..9fba67159 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2744,8 +2744,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
- S:	Maintained
+@@ -2745,6 +2745,7 @@ S:	Maintained
  W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
  F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-+F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
++F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ F:	drivers/clk/clk-sp7021.c
  F:	drivers/reset/reset-sunplus.c
-+F:	include/dt-bindings/clock/sp-sp7021.h
- F:	include/dt-bindings/reset/sp-sp7021.h
- 
- ARM/Synaptics SoC support
-diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
-new file mode 100644
-index 000000000..cd84321eb
---- /dev/null
-+++ b/include/dt-bindings/clock/sp-sp7021.h
-@@ -0,0 +1,88 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) Sunplus Technology Co., Ltd.
-+ *       All rights reserved.
-+ */
-+#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-+#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-+
-+/* gates */
-+#define CLK_RTC         0
-+#define CLK_OTPRX       1
-+#define CLK_NOC         2
-+#define CLK_BR          3
-+#define CLK_SPIFL       4
-+#define CLK_PERI0       5
-+#define CLK_PERI1       6
-+#define CLK_STC0        7
-+#define CLK_STC_AV0     8
-+#define CLK_STC_AV1     9
-+#define CLK_STC_AV2     10
-+#define CLK_UA0         11
-+#define CLK_UA1         12
-+#define CLK_UA2         13
-+#define CLK_UA3         14
-+#define CLK_UA4         15
-+#define CLK_HWUA        16
-+#define CLK_DDC0        17
-+#define CLK_UADMA       18
-+#define CLK_CBDMA0      19
-+#define CLK_CBDMA1      20
-+#define CLK_SPI_COMBO_0 21
-+#define CLK_SPI_COMBO_1 22
-+#define CLK_SPI_COMBO_2 23
-+#define CLK_SPI_COMBO_3 24
-+#define CLK_AUD         25
-+#define CLK_USBC0       26
-+#define CLK_USBC1       27
-+#define CLK_UPHY0       28
-+#define CLK_UPHY1       29
-+#define CLK_I2CM0       30
-+#define CLK_I2CM1       31
-+#define CLK_I2CM2       32
-+#define CLK_I2CM3       33
-+#define CLK_PMC         34
-+#define CLK_CARD_CTL0   35
-+#define CLK_CARD_CTL1   36
-+#define CLK_CARD_CTL4   37
-+#define CLK_BCH         38
-+#define CLK_DDFCH       39
-+#define CLK_CSIIW0      40
-+#define CLK_CSIIW1      41
-+#define CLK_MIPICSI0    42
-+#define CLK_MIPICSI1    43
-+#define CLK_HDMI_TX     44
-+#define CLK_VPOST       45
-+#define CLK_TGEN        46
-+#define CLK_DMIX        47
-+#define CLK_TCON        48
-+#define CLK_GPIO        49
-+#define CLK_MAILBOX     50
-+#define CLK_SPIND       51
-+#define CLK_I2C2CBUS    52
-+#define CLK_SEC         53
-+#define CLK_DVE         54
-+#define CLK_GPOST0      55
-+#define CLK_OSD0        56
-+#define CLK_DISP_PWM    57
-+#define CLK_UADBG       58
-+#define CLK_FIO_CTL     59
-+#define CLK_FPGA        60
-+#define CLK_L2SW        61
-+#define CLK_ICM         62
-+#define CLK_AXI_GLOBAL  63
-+
-+/* plls */
-+#define PLL_A           64
-+#define PLL_E           65
-+#define PLL_E_2P5       66
-+#define PLL_E_25        67
-+#define PLL_E_112P5     68
-+#define PLL_F           69
-+#define PLL_TV          70
-+#define PLL_TV_A        71
-+#define PLL_SYS         72
-+
-+#define CLK_MAX         73
-+
-+#endif
 -- 
 2.33.1
 
