@@ -2,106 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1207C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 14:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83F5C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 15:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442183AbiEFO2d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 10:28:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
+        id S1442584AbiEFPG7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 11:06:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238749AbiEFO2c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 10:28:32 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D784F5A2C5;
-        Fri,  6 May 2022 07:24:49 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 129so4544021wmz.0;
-        Fri, 06 May 2022 07:24:49 -0700 (PDT)
+        with ESMTP id S237627AbiEFPG6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 11:06:58 -0400
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44ADC396B6
+        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 08:03:15 -0700 (PDT)
+Received: by mail-oi1-x22d.google.com with SMTP id v66so7762804oib.3
+        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 08:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v9QFW8lEAcAc37/kSGN+IO3Rwvec+cKN6keocfAmI4U=;
-        b=AM6Z6yzv5nlnPFtE1bs+Ov9mOHM0Yts7qIa2xb3HhzIPnvTAzFiBG3FlPQCB3n0ko7
-         J70mp+5ko9rWI96F/c8hyfAeYGhl/yJFI0RKYxeCkCKLfDF7a5NgQybT6t/gPqx43LS+
-         5iCV9bAQ7Do1Th73/jaxgDB3eKDV+3nwV232ADRGNN/x9rhv8AtoYE20CYzTc1zYwoi3
-         JWugHRkSWINhKQA/9UhUZY5Yu+KnA7F84z+pDVFxz24SjHVEL4QXWAe7j6nQVS7Q23pE
-         wdoX6knitzklFaaZFo6a8W8+aAsNDjZCX8w/e50Hsk6Z6WUuMnN21tKd6FO3hqZZt9XL
-         SSqA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gvoH8ZCcnfut2q0yddyy+EI61mB9kTHgif1bkR8UyTE=;
+        b=MlGDGfV1Cn1Ta1i0dFcaMEd5xxCvPuVIF8txFh+e1Tnbx/zW0SGPjSpZODIxOWvOlg
+         5EWCWj9Xyy3Ru4nGTFi6t/IXZf4c2AQaH2pRBHdbmXP0gK8EbPBhHtPqjjnoNxaTOxzo
+         +MzBIMYiApit1Y/bGe+vfgC0wkSHpEmz/4gdL69paMhTGvabK2awbesBaN0fg9mUAoBX
+         0lJEttKWwieu4/6PNURbCaUwPNeD8eAv+vRf6JjcUq2xFNMNuMv1gJkGVKdLAgI5xSOC
+         ovqwQFK2oiTWHGl4Xr6HSovKKJWXJofG+A6idIY3vWi7UJVF8PxWqQNSPdZF+gSkZVMo
+         2KDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v9QFW8lEAcAc37/kSGN+IO3Rwvec+cKN6keocfAmI4U=;
-        b=QJwrLgn8AEIOulAx5ambbnN9OBLjR5+Wtr0RCtB0WGYJguf2zZt4PxdpLA9HqaKr7O
-         krjAlLHscsFX3mt7XohFe6BLZn15SwSQQjR7V7zRV75jT4FVltk1fd7DH5IiYR9v5WlI
-         ois+ARg73frbURSsx3Q8T2x93Xctn+9zKHoYEiUyt8Ho80cET78cyEskRSSU6q9Spasm
-         kdPIkKu6ejTEEZ4A2GBY+KYjp9zY2qSMZK+XwtOcEDLcuERHlmeTOA/DYZP3F2IDIU+k
-         KI/fldC8m6C1mzLLwHRrWfOXVw1jUbU4s8xu75Q2Qae2bb5/6BzT+Q/+/cp3NHAbPj7b
-         4eOQ==
-X-Gm-Message-State: AOAM533WxE9/NFznEX7b3IJ8DsaQKzNGlobIuyyM5KwZ2PvziRfujSPU
-        eDbeIWmw87LRoBthVltPeow=
-X-Google-Smtp-Source: ABdhPJwq0amedt6KUoh+1+gyIBIBnF+9/rLFxuWXcPIQXpq67UcIl50WDCxGIuut1R5O5IrjtxBrPw==
-X-Received: by 2002:a05:600c:1908:b0:393:e7f1:855f with SMTP id j8-20020a05600c190800b00393e7f1855fmr3591850wmq.125.1651847088220;
-        Fri, 06 May 2022 07:24:48 -0700 (PDT)
-Received: from localhost ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id p11-20020a1c544b000000b003942a244f30sm10190063wmi.9.2022.05.06.07.24.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gvoH8ZCcnfut2q0yddyy+EI61mB9kTHgif1bkR8UyTE=;
+        b=AfgT0crZBnDPdXoHXeYlGlh29fCiOy8FNCTcQUcYnuPEYNbUmpHpKzTvqfBgfl/kDd
+         GtlcYbKYM1iNXlFGtRhKE8RTseiqI4rfi5RGp67xebgIPr5OuGCabg4qj9y68XUcs3fy
+         T5rFV5EndUpLlD5HJGd097uIu3ipR72qn9hdO3zom2GI1GobzX+FIEHp5vwC/NZYegPa
+         2Y3b+94LVa+VxIIisRJME/sLscVmlFli7ymAAYtrEX2K1CM4QaPueJYKueEnfN5COmiM
+         HgfB8yDXiojopCIu7TcCK5+9N8sOSHLVnPov8H0XCojBUISekmuauRuwX6M38GI7WX8A
+         6D5g==
+X-Gm-Message-State: AOAM532MouCptgdbM0EPDF8z4vuEZj1T7ANm1DnPZe6GhioDeZMMgKzQ
+        2JGn14LbWJw2ImjDCjyOgjcXhQ==
+X-Google-Smtp-Source: ABdhPJw7KRjo7fodRuHUv4feQJ+ELLzrnyXZYloFvWJRv3HLo1gcm1VfqMi88r9DENwA42UCtJIiRQ==
+X-Received: by 2002:aca:add0:0:b0:326:72d:fd64 with SMTP id w199-20020acaadd0000000b00326072dfd64mr5009820oie.294.1651849394558;
+        Fri, 06 May 2022 08:03:14 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id e21-20020a056808111500b00325cda1ffb9sm1665311oih.56.2022.05.06.08.03.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 07:24:47 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v5.19-rc1
-Date:   Fri,  6 May 2022 16:24:46 +0200
-Message-Id: <20220506142446.3916142-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.35.1
-Content-Type: text/plain; charset="utf-8"
+        Fri, 06 May 2022 08:03:13 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     phone-devel@vger.kernel.org, Adam Skladowski <a39.skl@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 0/3] MSM8976 GCC updates
+Date:   Fri,  6 May 2022 10:03:03 -0500
+Message-Id: <165184936433.73465.10846500957961033721.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220426073048.11509-1-a39.skl@gmail.com>
+References: <20220426073048.11509-1-a39.skl@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+On Tue, 26 Apr 2022 09:30:45 +0200, Adam Skladowski wrote:
+> This patch series brings small fixes for SDCC clocks
+> and adds reset for modem.
+> 
+> Changes since v1
+> ================
+> 1. Adjusted comment line length for SDCC patch.
+> 2. Added Acked-by to dt-bindings patch.
+> 
+> [...]
 
-The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+Applied, thanks!
 
-  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+[1/3] clk: qcom: gcc-msm8976: Set floor ops for SDCC
+      commit: 24a8ed12aa00af135fe698061017042532aac5e5
+[2/3] dt-bindings: clk: qcom: gcc-msm8976: Add modem reset
+      commit: 7e555e9975698924d7f3ead154847bcf8f5cd40c
+[3/3] clk: qcom: gcc-msm8976: Add modem reset
+      commit: cadf16c9469e58ba74806f76b3d0f9f553a41b2c
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.19-clk
-
-for you to fetch changes up to 6f6baf690c3b8c41083d7443ab6a5645b96ff91b:
-
-  clk: tegra: Update kerneldoc to match prototypes (2022-05-06 10:56:00 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-clk: tegra: Changes for v5.19-rc1
-
-This contains a boot time optimization for Tegra chips with BPMP and a
-switch from .round_rate() to .determine_rate() to take into account any
-maximum rate that might have been set.
-
-Other than that this contains a fix for a DFLL regression on Tegra210
-and kerneldoc fixups to avoid build warnings.
-
-----------------------------------------------------------------
-Diogo Ivo (1):
-      clk: tegra: Add missing reset deassertion
-
-Rajkumar Kasirajan (1):
-      clk: tegra: Replace .round_rate() with .determine_rate()
-
-Thierry Reding (1):
-      clk: tegra: Update kerneldoc to match prototypes
-
-Timo Alho (1):
-      clk: tegra: Register clocks from root to leaf
-
- drivers/clk/tegra/clk-bpmp.c | 87 +++++++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk-dfll.c | 20 ++++++++--
- 2 files changed, 82 insertions(+), 25 deletions(-)
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
