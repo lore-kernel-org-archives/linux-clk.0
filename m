@@ -2,87 +2,199 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A1FC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 15:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8EFC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  6 May 2022 15:26:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442633AbiEFPHL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 May 2022 11:07:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59882 "EHLO
+        id S1442821AbiEFP3s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 May 2022 11:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442609AbiEFPHC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 11:07:02 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B346B097
-        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 08:03:19 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id w194so6529966oie.9
-        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 08:03:19 -0700 (PDT)
+        with ESMTP id S1390522AbiEFP3s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 May 2022 11:29:48 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98D0689A2
+        for <linux-clk@vger.kernel.org>; Fri,  6 May 2022 08:26:04 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id p6so7321927pjm.1
+        for <linux-clk@vger.kernel.org>; Fri, 06 May 2022 08:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fGGst/5sLo/Mtz8gaaNmR6S/WriZ7WP7g///+OHqwzk=;
-        b=SHhPPKRU8sU0J8uCvrjzujcKeLbQBe1lmFerx7oZ7PYFHt4JwQ6OFFEAK9da4PK6P7
-         0nV2qHmOCgx6yPwbnTjQblvibLhClyyvgiUiBCeCXCzRsO53ksyMBSuqWUg5aHlNkpH0
-         7t5eka73PAdRPHUTLeRfFkPVTBu6jCilNZh28PONzitOoBuvSHLlALKPBqbN5KY3MW74
-         95c2cb77ZFGm2mHwttjuXNuAbUwRuojeIJjxoPaR6c8aP70OwZ9I3KSzRMkC3hYgRSKK
-         WmLOM9fAFbEbNn2F9Qjp/ehjfK5MOdCGsY4dye1tga0ao/3pCYMAVO6BXeqlhBdNmfGo
-         rb8Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=iGapkGE60Ffp9Dn3FwYexU8rjobxhlsX80rf5yE5Vjs=;
+        b=f9uM7cC/GaS4cQVSQZojtKIz32bLjFaJ+lWtzkVLxkOgtdFA4e/M/SeEAGW1tssIgV
+         Goou3HGyVtCULN13GwNh6eTc+ck/MwsDYOtHMUZXyR/jaJXPGBkagH2dQQ5jc83AjYWR
+         5meOU1IpoTnlb/AcHQk4sqWPsKqxWBoir2yh1HggD4pNbhyDolRqkAWKTYSz2bBwy1xO
+         pVqFW8+aCJwf6G+GgBZgaDDTRhdLdEcfSMowidixPZRzjIuDIu6/PDHBxtlAb9nRPPmO
+         9ml+NxB9FCdMqV3tl7JRGUoXHD1Iqwt35i+3ziDurwGGK3NVrAhUAOhzNyGk/prgsobG
+         TUWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=fGGst/5sLo/Mtz8gaaNmR6S/WriZ7WP7g///+OHqwzk=;
-        b=2bkVm0h9PLc+Y8iAdqpHl16xpJUx5bM3Vat/4jv/ZsRiuBu/ejwTzZ5ssZv89jy6u/
-         adTsUw3rmvJC/w0zgsXY4Bl4iuqZ61R5de0qzHEmfWM2bfgtxH6tn6YQW2JOcgX5jYEf
-         yH9b49jqDJJU3Mxej1y1ADHSIq9RAW5nXlXL/6APh4paVeBfmmhHE3qq7+jXpwCRXStN
-         +jAKhZlbx1pon1fhze1GF80KY7kpOLPqY3X3O5C0j/nIE9bwadS2RwfMrZDPYIKNwU63
-         YE2l2q7mMMKH8CZ47HtZ8Vd7cOtsNNox/nJ1RTncaFZgl6CXjLFQwfcWjWLh35ZXNV/s
-         DBxA==
-X-Gm-Message-State: AOAM533hLKIMg1u3v2VO2I1okTpnW1xa7DnTyMBxQ2Vc9HGeCj8LTedR
-        7zfNwKqjj+b4zuqlo8YGaWY1+Q==
-X-Google-Smtp-Source: ABdhPJxkaaYSe7OlnRD8O0rwZcj4/X87+eYvhuoIX7qy1/IZXS9BlEGU+IKjuMiZQL7GoM5ssQ8PYw==
-X-Received: by 2002:a05:6808:300f:b0:2fa:6fd5:9723 with SMTP id ay15-20020a056808300f00b002fa6fd59723mr1615284oib.202.1651849399425;
-        Fri, 06 May 2022 08:03:19 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id e21-20020a056808111500b00325cda1ffb9sm1665311oih.56.2022.05.06.08.03.18
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=iGapkGE60Ffp9Dn3FwYexU8rjobxhlsX80rf5yE5Vjs=;
+        b=SyPTly6ad/xcLlxDIKp/zBX4wCA01gjSERSfU5VC61BOrF2RXY6Gq9uVV8HUz4KHRx
+         tFY6Z5Jw7Y7m9lwT51ZIsOG67xnXMK0BY++k1qLRbEFx3AAZzR71srpcOxJskT3El2GJ
+         AAY/A1o+cQXE4D3jDS7tgx+btejEmL5I4jhTv4lbYcrVvv5KW72YIW7L1s5xbwFYEDqU
+         H4apRi1pkMK+ACs3yj1q33M5ejwIWGH1slInNY6p+EiIgLneDebtaH3lsmAyDetNSinG
+         CfS1GG7jevFVp2X/P++X6kLPRSBTlZnrzQwwYDiRvZt91AgM6x+42rYF6jkaKb0kexdS
+         esLg==
+X-Gm-Message-State: AOAM530WcSOxpdp/4PX2QgdeDCB18jxWUuEm+NV5PxlzmPih6K6iFlOO
+        09971PDvffaajclc4dj6ScL5
+X-Google-Smtp-Source: ABdhPJxRHQ1fSI73te9IorgJaSG7Tug/yMs0bB1EYetO1etF/9nUgYGFqgHAyTidzPAwZSI/J7S+UQ==
+X-Received: by 2002:a17:902:ef45:b0:156:1858:71fc with SMTP id e5-20020a170902ef4500b00156185871fcmr4071899plx.23.1651850764099;
+        Fri, 06 May 2022 08:26:04 -0700 (PDT)
+Received: from thinkpad ([27.111.75.233])
+        by smtp.gmail.com with ESMTPSA id t11-20020a170902b20b00b0015ea9aabd19sm1858160plr.241.2022.05.06.08.25.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 08:03:18 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, Ansuel Smith <ansuelsmth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
+        Fri, 06 May 2022 08:26:03 -0700 (PDT)
+Date:   Fri, 6 May 2022 20:55:58 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>
-Subject: Re: (subset) [PATCH v2] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
-Date:   Fri,  6 May 2022 10:03:07 -0500
-Message-Id: <165184936433.73465.8918776302755169232.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220426064241.6379-1-krzysztof.kozlowski@linaro.org>
-References: <20220426064241.6379-1-krzysztof.kozlowski@linaro.org>
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
+Message-ID: <20220506152558.GA5907@thinkpad>
+References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
+ <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+ <20220502101053.GF5053@thinkpad>
+ <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
+ <20220502111004.GH5053@thinkpad>
+ <29819e6d-9aa1-aca9-0ff6-b81098077f28@linaro.org>
+ <20220502150611.GF98313@thinkpad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220502150611.GF98313@thinkpad>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Apr 2022 08:42:41 +0200, Krzysztof Kozlowski wrote:
-> The qcom,gcc-apq8064.yaml was meant to describe only APQ8064 and APQ8084
-> should have slightly different bindings (without Qualcomm thermal sensor
-> device).  Add new bindings for APQ8084.
+On Mon, May 02, 2022 at 08:36:19PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, May 02, 2022 at 02:18:26PM +0300, Dmitry Baryshkov wrote:
+> > On 02/05/2022 14:10, Manivannan Sadhasivam wrote:
+> > > On Mon, May 02, 2022 at 01:35:34PM +0300, Dmitry Baryshkov wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > > > +static int pipe_is_enabled(struct clk_hw *hw)
+> > > > > > +{
+> > > > > > +	struct clk_regmap_pipe *pipe = to_clk_regmap_pipe(hw);
+> > > > > > +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> > > > > > +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> > > > > > +	unsigned int val;
+> > > > > > +
+> > > > > > +	regmap_read(clkr->regmap, pipe->reg, &val);
+> > > > > > +	val = (val & mask) >> pipe->shift;
+> > > > > > +
+> > > > > > +	WARN_ON(unlikely(val != pipe->enable_val && val != pipe->disable_val));
+> > > > > > +
+> > > > > > +	return val == pipe->enable_val;
+> > > > > 
+> > > > > Selecting the clk parents in the enable/disable callback seems fine to me but
+> > > > > the way it is implemented doesn't look right.
+> > > > > 
+> > > > > First this "pipe_clksrc" is a mux clk by design, since we can only select the
+> > > > > parent. But you are converting it to a gate clk now.
+> > > > > 
+> > > > > Instead of that, my proposal would be to make this clk a composite one i.e,.
+> > > > > gate clk + mux clk. So even though the gate clk here would be a hack, we are
+> > > > > not changing the definition of mux clk.
+> > > > 
+> > > > This is what I had before, in revisions 1-3. Which proved to work, but is
+> > > > problematic a bit.
+> > > > 
+> > > > In the very end, it is not easily possible to make a difference between a
+> > > > clock reparented to the bi_tcxo and a disabled clock. E.g. if some user
+> > > > reparents the clock to the tcxo, then the driver will consider the clock
+> > > > disabled, but the clock framework will think that the clock is still
+> > > > enabled.
+> > > 
+> > > I don't understand this. How can you make this clock disabled? It just has 4
+> > > parents, right?
+> > 
+> > It has 4 parents. It uses just two of them (pipe and tcxo).
+> > 
+> > And like the clk_rcg2_safe clock we'd like to say that these clocks are
+> > disabled by reparenting ("parking") them to the tcxo source. Yes, this makes
+> > a lot of code simpler. The clock framework will switch the clock to the
+> > "safe" state instead of disabling it during the unused clocks evaporation.
+> > The PHY can just disable the gcc_pcie_N_pipe_clock, which will end up in
+> > parking this clock to a safe state too, etc.
 > 
+> If I get the logic behind this "parking" thing right, then it is required
+> for producing a stable pipe_clk from GCC when the PHY is about to initialize.
+> Also to make sure that there is no glitch observed on pipe_clk while
+> initializing the PHY. And once it is powered ON properly, the pipe_clksrc
+> should be used as the parent for pipe_clk.
+> 
+> So with that logic, we cannot say that this clk is disabled.
+> 
+> Please correct me if my understanding is wrong.
 > 
 
-Applied, thanks!
+After going through the previous iterations and PHY patches, this
+implementation makes sense to me now (modelling this pipe_clk_src as gate clk
+alone).
 
-[1/1] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
-      commit: 4ac7e878c15781286c043cff19ec88d82b8e2014
+But as Johan said, you should change the "pipe_clk" to "pipe_clk_src" or
+something similar. As this clk is defined as "pipe_clk_src" in GCC.
 
-Best regards,
+Regarding the {enable/disable}_val variables, I'm not fully convinced about the
+naming but I don't object it strongly. But irrespective of that, please add a
+brief comment in the driver about its purpose and what it does enable/disable
+callbacks.
+
+Thanks,
+Mani
+
+> Thanks,
+> Mani
+> 
+> > 
+> > > 
+> > > > 
+> > > > Thus we have to remove "safe" clock (bi_tcxo) from the list of parents. In
+> > > > case of pipe clocks (and ufs symbol clocks) this will leave us with just a
+> > > > single possible parent. Then having the mux part just doesn't make sense. It
+> > > > is just a gated clock. And this simplified a lot of things.
+> > > > 
+> > > > > 
+> > > > > So you can introduce a new ops like "clk_regmap_mux_gate_ops" and implement the
+> > > > > parent switching logic in the enable/disable callbacks. Additional benefit of
+> > > > > this ops is, in the future we can also support "gate + mux" clks easily.
+> > > > 
+> > > > If the need arises, we can easily resurrect the regmap_mux_safe patchset,
+> > > > fix the race pointed out by Johan, remove extra src-val mapping for safe
+> > > > value and use it for such clocks. I can post it separately, if you wish. But
+> > > > I'm not sure that it makes sense to use it for single-parent clocks.
+> > > > 
+> > > > > 
+> > > > > Also, please don't use the "enable_val/disable_val" members. It should be
+> > > > > something like "mux_sel_pre/mux_sel_post".
+> > > > 
+> > > > Why? Could you please elaborate?
+> > > > 
+> > > 
+> > > It aligns with my question above. I don't see how this clk can be
+> > > enabled/disabled.
+> > 
+> > I see. Let's settle on the first question then.
+> > 
+> > -- 
+> > With best wishes
+> > Dmitry
+
 -- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+மணிவண்ணன் சதாசிவம்
