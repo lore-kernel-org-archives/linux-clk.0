@@ -2,99 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AEBC433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  7 May 2022 12:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCEEC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  7 May 2022 12:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442217AbiEGMNc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 May 2022 08:13:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
+        id S233394AbiEGMlW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 May 2022 08:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446344AbiEGMNY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 May 2022 08:13:24 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6613A49FB5
-        for <linux-clk@vger.kernel.org>; Sat,  7 May 2022 05:09:36 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id b18so16553722lfv.9
-        for <linux-clk@vger.kernel.org>; Sat, 07 May 2022 05:09:36 -0700 (PDT)
+        with ESMTP id S1384788AbiEGMlU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 May 2022 08:41:20 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7D546147
+        for <linux-clk@vger.kernel.org>; Sat,  7 May 2022 05:37:32 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id y76so17240015ybe.1
+        for <linux-clk@vger.kernel.org>; Sat, 07 May 2022 05:37:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dwPQGwYOX78/2Wl83+8z+fnO4MGJ5mQqUGO35CgVNpY=;
-        b=IVKPqEQb2InKCXHTHFRvsgnShsBhmaehU5E+ny4szQY410SM3vPzgCiwwUf+zepS15
-         TdpxN4ZYPqUfxi9q0R4t5Rw16taZ/LsuYSHe9RwbFxFijjO2SnwvMzLh3xjRXORZLq24
-         rXhVWQ0IKkKD39LSOYkmF8ldJZOAQOFnlJ3PNZs6KyY5dIjQ4O9PJ/DiJs9k/oS4j+qB
-         jP6HZVpyGbLJGqVLaXKAvYZ0zSHbyXjtBEagIoRravsJFnR/jL/8dt0tzq4Yv8otfp5X
-         nTdlbHR71rGM86C+TCV3MgmXZRJ6/txyyAz4XPpYdighnZL5RZ0oM4e0IswG0Lq22+7U
-         BMlQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JUhgclDR3XBkbKooh+LIAZ5rgGQDmCxwnx2kPnqoYMA=;
+        b=KCyiITVKgMi69PaUxMUe8kgt1g0I/YT1BNqXQ8g8jDYzoI10RIuW4XJdIAw+WABgPz
+         sIoqAXB0wg2Fv4K4xa+UIk01I93aMUAh5zwWez9Y9woJgUGlFSInLIx46fZ5Gg1s601e
+         a5i4HOw7TQkJg5Maw+WvNt0vTtgrsC6dMYDUfidiIqwE2Susa4bkzpuGE1IWxOsZTINs
+         CB1T7vFcyxbamcJuoqj4cYj6aPJPj79FjZ60m16yN0qOI1to8EcKMqSlW8ohYQOIT3XX
+         Y47JhHbhAM6byKlmpEHLlDWi3VANQBbeKYdvgbjI2HE4GR8wATeJNEQhXZFHSEQQgNal
+         1RtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dwPQGwYOX78/2Wl83+8z+fnO4MGJ5mQqUGO35CgVNpY=;
-        b=z4I6/EsffQuEy5qEWDWt+yeUiyK7aBTVI/4RksoKipUGhWuOODwU6QYKZwu1CNBcOp
-         DFvT1TYfnKMERTtoRHfPrmWqB095SFI6FcDXcARd1g9wgsTP30sPI1lHyl76bYKPf2Jy
-         biLhZeVLq2eOENyEt/ZX+X4xWxRIRrh1V18JpIt4ytQ/j4meiXDFvCGFT8hJZAS0DM+8
-         0sKriPd5/y2YwS8Xcl/99Jw3wySffri4HzvbWCwrYW4B0JL7eHm9QS10uA/JDLn8DU3B
-         /D0XrDmFqW3aiUUv1beQ2sZyxZYBa/gIdQ+B/pPCXMwvsqZODqrEVrPtqayx66je/jGX
-         aUDg==
-X-Gm-Message-State: AOAM533KA5lbuGcUVCD8TRMINH8Ogp1A1OhP78tGtdtMq6zma0YZ5ra/
-        6KSqsAichzYA9FTFXOO4f8J7UQ==
-X-Google-Smtp-Source: ABdhPJzzbkDhvl8bNtspXcuzOi4bRZ3x37FxH3e90OFZxBBQIyh2Iz6ka1k7KoYniuM1SUbAtRDEeg==
-X-Received: by 2002:a19:5f51:0:b0:471:f43a:d830 with SMTP id a17-20020a195f51000000b00471f43ad830mr6273070lfj.348.1651925374751;
-        Sat, 07 May 2022 05:09:34 -0700 (PDT)
-Received: from [192.168.43.7] ([94.25.229.149])
-        by smtp.gmail.com with ESMTPSA id 14-20020ac24d4e000000b0047255d21117sm1086527lfp.70.2022.05.07.05.09.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 May 2022 05:09:34 -0700 (PDT)
-Message-ID: <c2a9f0c4-1d77-acca-c319-c74ef51d9ed3@linaro.org>
-Date:   Sat, 7 May 2022 15:09:32 +0300
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JUhgclDR3XBkbKooh+LIAZ5rgGQDmCxwnx2kPnqoYMA=;
+        b=p9BE4Tar0q9DrSEhDqpvtkJZdlT/VPouq4l17gr2EEH+i8BCdnQWhChrtF2I0dPzUA
+         EVzYqhLtAzlNYX1tIcmYcqfXNblb3X+cKURKn/HpwIHeF9ykikbnF8YjmC/b8sWZSoEM
+         18Oq6LnVsnXFReKPo5l7E5z5Ct5LfGJ7+KzPzHeNjv3U80Nbc+MkjMKix6tJLoofwAKE
+         0d6X57GL0dQK/zJjIBhHZQTZXfaD4SNoH/tUA3Y857gXbPXa1Rl+noJHAV1tSdhlRnXh
+         42/fK6iIbaYTB29wDLW8m2sebdvbW1zLnnyigdm6fm0O2YxIyNWxkboGc79KiTo95t0G
+         kcCw==
+X-Gm-Message-State: AOAM533bjoykKMk9JX9heDt5vnG+2E9ka+g7E0O8E6A91x0NhyJuvRnS
+        sFcpahZBCJTzfh7j6sZJqloNVs4FlB71eCu2bPp8Cg==
+X-Google-Smtp-Source: ABdhPJzwJpXEUtAZEUc6bZUPoenoZ5sebSG72if0MOZ/TMe4dt5l953VkaeLr4GysoaOw6EpMxKFJUOEIy1GTdxXArc=
+X-Received: by 2002:a25:e684:0:b0:645:d429:78e9 with SMTP id
+ d126-20020a25e684000000b00645d42978e9mr6256768ybh.369.1651927052069; Sat, 07
+ May 2022 05:37:32 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: (subset) [PATCH v2] dt-bindings: clock: qcom,gcc-apq8064: Fix
- typo in compatible and split apq8084
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-kernel@vger.kernel.org, Ansuel Smith <ansuelsmth@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
+References: <20220419163810.2118169-1-arnd@kernel.org> <20220419163810.2118169-41-arnd@kernel.org>
+In-Reply-To: <20220419163810.2118169-41-arnd@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 7 May 2022 14:37:20 +0200
+Message-ID: <CACRpkdbHGXfAKiN1sNTrLzRd5Qk-jerhcfvDo8FG=Zq94Dv19g@mail.gmail.com>
+Subject: Re: [PATCH 40/48] ARM: pxa: tosa: use gpio lookup for battery
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     robert.jarzmik@free.fr, linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Tomas Cech <sleep_walker@suse.com>,
+        Sergey Lapin <slapin@ossfans.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>
-References: <20220426064241.6379-1-krzysztof.kozlowski@linaro.org>
- <165184936433.73465.8918776302755169232.b4-ty@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <165184936433.73465.8918776302755169232.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Helge Deller <deller@gmx.de>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-leds@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        alsa-devel@alsa-project.org, Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/05/2022 18:03, Bjorn Andersson wrote:
-> On Tue, 26 Apr 2022 08:42:41 +0200, Krzysztof Kozlowski wrote:
->> The qcom,gcc-apq8064.yaml was meant to describe only APQ8064 and APQ8084
->> should have slightly different bindings (without Qualcomm thermal sensor
->> device).  Add new bindings for APQ8084.
->>
->>
-> 
-> Applied, thanks!
-> 
-> [1/1] dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
->        commit: 4ac7e878c15781286c043cff19ec88d82b8e2014
+On Tue, Apr 19, 2022 at 6:44 PM Arnd Bergmann <arnd@kernel.org> wrote:
 
-I supposed that 
-https://lore.kernel.org/linux-arm-msm/20220426093608.2957210-1-dmitry.baryshkov@linaro.org/ 
-is a slightly better version.
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The battery driver uses a lot of GPIO lines, hardcoded from a
+> machine header file.
+>
+> Change it to use a gpiod lookup table instead.
+>
+> Reviewed-by: Sebastian Reichel <sre@kernel.org>
+> Acked-by: Sebastian Reichel <sre@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Oh, I've been iterating a patch for the Tosa charging code
+going down in MFD ans ASoC and all:
+https://lore.kernel.org/linux-arm-kernel/20220125003741.492954-1-linus.walleij@linaro.org/
 
--- 
-With best wishes
-Dmitry
+I just rebased this on v5.18-rc1 and resent with collected ACKs.
+
+Please take a look at it, and see if you rather take that patch,
+at some point I realized I had to go pretty deep around the
+legacy code in different subsystems because the MFD device
+us spawning a GPIO chip...
+
+Yours,
+Linus Walleij
