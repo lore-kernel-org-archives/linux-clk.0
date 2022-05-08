@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54811C433FE
-	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A666C43217
+	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbiEHKxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S232103AbiEHKxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sun, 8 May 2022 06:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58678 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231756AbiEHKxD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:53:03 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC2CE0CF;
-        Sun,  8 May 2022 03:49:13 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id j6so21837962ejc.13;
-        Sun, 08 May 2022 03:49:13 -0700 (PDT)
+        with ESMTP id S231610AbiEHKw5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:52:57 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F92DEE3;
+        Sun,  8 May 2022 03:49:07 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gh6so21929369ejb.0;
+        Sun, 08 May 2022 03:49:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LhdyFUF6lZ0ZAM234mZVD3RqGmEW+gwWcf23USU26BQ=;
-        b=Lamwd2r87pQHyK9oPjh6gAmpP7nLMeVNiIHKL2taohQDlJOfnFCATD00O4R4FTLWkw
-         RdtMJz4vdiGIaX9ihC0MelO3Tt1rUKktxHr51B9G0A/0FwnCIVGXvd4IfMNDa8+XF3/7
-         YCkHZppgAi0LFSFCpyMPcI+2wVG0Yfclb4WFlN+f3uG/aLFcVtAbnE0O979lJVJhI57U
-         fJLMUb/UQFo3plXKxfCWurLvLs0PxuZJU70BhTfomfry6Q6ipx6JiBwikm5VK3eVpbFT
-         5RGy2nT5w/ZmC8qFSjf5YaUL8SyN+Xv/xaDQg1KThp8SGfAjPtjOzbrMe5Id9la+bJsa
-         Sd2A==
+        bh=jRvjrwoDTG2vGn1+XsgjmHuelkhoFakkhEz4+edI7ZE=;
+        b=Qap5WEO7IaF080iuoxxkrpgNLpgEgiF9PhIpfdOyCRkKd0qMoJtiNc9DyVToQ0FNYS
+         hz+gEay8DGfmqmG8dMexZswzr+FPWUGeLSvZwp0bqnJ7bPr5ztUFeuwOrROoLCyxGptV
+         kOksvV1NacDXm36CfZxzKcGO6RZrnl+NqxtNhaysWRj5JM6RL01ENXdPFOyf5MqStd3p
+         h+iHNEpcSrPfo4eeE+BAMY7rAZM91D2n5g78WX2+Q8kRqa1nOhwD9QaR4Iu27/RTnmBP
+         MI3Ytn999waSZ92nMW2nlfKsj/BvaN8oDV95tjqfxm/q+E+grVh0vW3V0DWQokmXEG9M
+         PDyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LhdyFUF6lZ0ZAM234mZVD3RqGmEW+gwWcf23USU26BQ=;
-        b=pCQJiTQvOl1stRP/SDJrjQ12xCtDWQAnPn+fJyDDirQKjfnqJhGoRaqPbyoaeHa42h
-         Z69V4r4M1DhxsAQKv4JRh6y+BKMM8ShAxdZ0QWIMmdup43jlBy+9B7c1zFwM2dTXUutg
-         MI0CfikpfFsteyGJ6DXgSBKOF8p9jsG95ov9A1tiMZuPWj6ORDdiRgueRJeySdkh5J+B
-         8off0LdqYa70GFxlc51oyGcxf45hoTCY6KqTEUXCW2ybck3DU6ssWTeJ4H9wIwJJqDwP
-         j42GD00qMnpDj0McnH1HhMtOvUAeX+CzVd6Ek4rWnUAzXFmQDcLxOwSbaM2iNTd31Cw5
-         EWxg==
-X-Gm-Message-State: AOAM533pqefx+RidP61BiL+qI0FOXPEoOfEj8hGvtCKCID809gO4NwDk
-        BH0ODrhpVBUohVsImqBStgc=
-X-Google-Smtp-Source: ABdhPJxaK1R8JK60+GOYGt4Pk+XE/lRbVgZ3mOIsnkicE3rPNXymgeYtsOvLdXpN11a7+0fXNLnCFg==
-X-Received: by 2002:a17:907:1c82:b0:6f4:60e5:1ddd with SMTP id nb2-20020a1709071c8200b006f460e51dddmr10116004ejc.274.1652006951691;
-        Sun, 08 May 2022 03:49:11 -0700 (PDT)
+        bh=jRvjrwoDTG2vGn1+XsgjmHuelkhoFakkhEz4+edI7ZE=;
+        b=UlsmVnQcHCzr8RHLcNmwNqEFtzFbXRQ7EiHg02j/Kdd94j/rNQdf7j+SxMsHSs0EyV
+         zDsxk+mJ0lVQvYVLIFCxSNgJusiYb85TPe/8DXXVy4tKvSaD7tXQFA3HEPA1u6LBEb/e
+         j8+O49Ki0pG3Czle6deMRMRiMFpKVXSPHg68m8z0il6xOki7M0pLqnCQaCdF/3lDzsIh
+         SDpT3zQ7UERMsPtM0VBvFjIMYga78yYHAMLNq6UexfPCTAgsifJnHMdYBLfm+YC12VKs
+         lm6C8+CNxtVbJeWR5MQ7+fTqjh7boRmHB6B8WIgipl+ED6+sRP+jTbj8R7OUb+7bDfxp
+         NvAA==
+X-Gm-Message-State: AOAM533aR8/xsMy212d0JdD4RARuXB9OLwQXGy3cboEItHqItCQD43fa
+        +ohAmSXxJyZ+/rbT8lZIMMjZT8twe8fDMg==
+X-Google-Smtp-Source: ABdhPJxklFBtaaBdJ1PDtdKt/h7+g9cXSipxIzeW3Vr2CBrluL7R1Wzr7l5XdcXtL+EnJ0gBbV65Sg==
+X-Received: by 2002:a17:906:2294:b0:6f3:bd02:95a3 with SMTP id p20-20020a170906229400b006f3bd0295a3mr10244746eja.201.1652006947279;
+        Sun, 08 May 2022 03:49:07 -0700 (PDT)
 Received: from fedora.robimarko.hr (cpezg-94-253-144-244-cbl.xnet.hr. [94.253.144.244])
-        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.10
+        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 03:49:11 -0700 (PDT)
+        Sun, 08 May 2022 03:49:06 -0700 (PDT)
 From:   Robert Marko <robimarko@gmail.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -54,9 +54,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
 Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v3 09/11] clk: qcom: ipq8074: add USB GDSCs
-Date:   Sun,  8 May 2022 12:48:53 +0200
-Message-Id: <20220508104855.78804-9-robimarko@gmail.com>
+Subject: [PATCH v3 06/11] clk: qcom: ipq8074: set BRANCH_HALT_DELAY flag for UBI clocks
+Date:   Sun,  8 May 2022 12:48:50 +0200
+Message-Id: <20220508104855.78804-6-robimarko@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220508104855.78804-1-robimarko@gmail.com>
 References: <20220508104855.78804-1-robimarko@gmail.com>
@@ -66,85 +66,104 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add GDSC-s for each of the two USB controllers built-in the IPQ8074.
+Currently, attempting to enable the UBI clocks will cause the stuck at
+off warning to be printed and clk_enable will fail.
 
+[   14.936694] gcc_ubi1_ahb_clk status stuck at 'off'
+
+Downstream 5.4 QCA kernel has fixed this by seting the BRANCH_HALT_DELAY
+flag on UBI clocks, so lets do the same.
+
+Fixes: 5736294aef83 ("clk: qcom: ipq8074: add NSS clocks")
 Signed-off-by: Robert Marko <robimarko@gmail.com>
 ---
-Changes in v2:
-* Use proper GSDCs instead of raw regmap writes.
----
- drivers/clk/qcom/Kconfig       |  1 +
- drivers/clk/qcom/gcc-ipq8074.c | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ drivers/clk/qcom/gcc-ipq8074.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d01436be6d7a..00fe5f066de5 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -166,6 +166,7 @@ config IPQ_LCC_806X
- 
- config IPQ_GCC_8074
- 	tristate "IPQ8074 Global Clock Controller"
-+	select QCOM_GDSC
- 	help
- 	  Support for global clock controller on ipq8074 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
 diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 85076c1383c7..3204d550ff76 100644
+index c964e43ba68a..85076c1383c7 100644
 --- a/drivers/clk/qcom/gcc-ipq8074.c
 +++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -22,6 +22,7 @@
- #include "clk-alpha-pll.h"
- #include "clk-regmap-divider.h"
- #include "clk-regmap-mux.h"
-+#include "gdsc.h"
- #include "reset.h"
+@@ -3372,6 +3372,7 @@ static struct clk_branch gcc_nssnoc_ubi1_ahb_clk = {
  
- enum {
-@@ -4407,6 +4408,22 @@ static struct clk_branch gcc_pcie0_axi_s_bridge_clk = {
- 	},
- };
+ static struct clk_branch gcc_ubi0_ahb_clk = {
+ 	.halt_reg = 0x6820c,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x6820c,
+ 		.enable_mask = BIT(0),
+@@ -3389,6 +3390,7 @@ static struct clk_branch gcc_ubi0_ahb_clk = {
  
-+static struct gdsc usb0_gdsc = {
-+	.gdscr = 0x3e078,
-+	.pd = {
-+		.name = "usb0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc usb1_gdsc = {
-+	.gdscr = 0x3f078,
-+	.pd = {
-+		.name = "usb1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
- static const struct alpha_pll_config ubi32_pll_config = {
- 	.l = 0x4e,
- 	.config_ctl_val = 0x200d4aa8,
-@@ -4810,6 +4827,11 @@ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
- 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
- };
+ static struct clk_branch gcc_ubi0_axi_clk = {
+ 	.halt_reg = 0x68200,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68200,
+ 		.enable_mask = BIT(0),
+@@ -3406,6 +3408,7 @@ static struct clk_branch gcc_ubi0_axi_clk = {
  
-+static struct gdsc *gcc_ipq8074_gdscs[] = {
-+	[USB0_GDSC] = &usb0_gdsc,
-+	[USB1_GDSC] = &usb1_gdsc,
-+};
-+
- static const struct of_device_id gcc_ipq8074_match_table[] = {
- 	{ .compatible = "qcom,gcc-ipq8074" },
- 	{ }
-@@ -4832,6 +4854,8 @@ static const struct qcom_cc_desc gcc_ipq8074_desc = {
- 	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
- 	.clk_hws = gcc_ipq8074_hws,
- 	.num_clk_hws = ARRAY_SIZE(gcc_ipq8074_hws),
-+	.gdscs = gcc_ipq8074_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_ipq8074_gdscs),
- };
+ static struct clk_branch gcc_ubi0_nc_axi_clk = {
+ 	.halt_reg = 0x68204,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68204,
+ 		.enable_mask = BIT(0),
+@@ -3423,6 +3426,7 @@ static struct clk_branch gcc_ubi0_nc_axi_clk = {
  
- static int gcc_ipq8074_probe(struct platform_device *pdev)
+ static struct clk_branch gcc_ubi0_core_clk = {
+ 	.halt_reg = 0x68210,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68210,
+ 		.enable_mask = BIT(0),
+@@ -3440,6 +3444,7 @@ static struct clk_branch gcc_ubi0_core_clk = {
+ 
+ static struct clk_branch gcc_ubi0_mpt_clk = {
+ 	.halt_reg = 0x68208,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68208,
+ 		.enable_mask = BIT(0),
+@@ -3457,6 +3462,7 @@ static struct clk_branch gcc_ubi0_mpt_clk = {
+ 
+ static struct clk_branch gcc_ubi1_ahb_clk = {
+ 	.halt_reg = 0x6822c,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x6822c,
+ 		.enable_mask = BIT(0),
+@@ -3474,6 +3480,7 @@ static struct clk_branch gcc_ubi1_ahb_clk = {
+ 
+ static struct clk_branch gcc_ubi1_axi_clk = {
+ 	.halt_reg = 0x68220,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68220,
+ 		.enable_mask = BIT(0),
+@@ -3491,6 +3498,7 @@ static struct clk_branch gcc_ubi1_axi_clk = {
+ 
+ static struct clk_branch gcc_ubi1_nc_axi_clk = {
+ 	.halt_reg = 0x68224,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68224,
+ 		.enable_mask = BIT(0),
+@@ -3508,6 +3516,7 @@ static struct clk_branch gcc_ubi1_nc_axi_clk = {
+ 
+ static struct clk_branch gcc_ubi1_core_clk = {
+ 	.halt_reg = 0x68230,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68230,
+ 		.enable_mask = BIT(0),
+@@ -3525,6 +3534,7 @@ static struct clk_branch gcc_ubi1_core_clk = {
+ 
+ static struct clk_branch gcc_ubi1_mpt_clk = {
+ 	.halt_reg = 0x68228,
++	.halt_check = BRANCH_HALT_DELAY,
+ 	.clkr = {
+ 		.enable_reg = 0x68228,
+ 		.enable_mask = BIT(0),
 -- 
 2.36.0
 
