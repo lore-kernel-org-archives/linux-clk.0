@@ -2,108 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D98EC433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F378C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 19:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231978AbiEHKxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 May 2022 06:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
+        id S229979AbiEHTsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 May 2022 15:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231935AbiEHKxK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:53:10 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C51DECA;
-        Sun,  8 May 2022 03:49:16 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id dk23so21875522ejb.8;
-        Sun, 08 May 2022 03:49:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7p1Ky747M6b7mZG1S1tHMWxma441ZRmxJs8dLDJ9L1E=;
-        b=AJ4N3IqUrdRc0rQ4YUPrVJo2vf4IqnY7XGyLPV0+q5v+vy3/TXyWcH1A5iWPat+eQK
-         HNqTnAquj7KTJc4D3W9mPjChTsjQ3yMfknYy3hG0SktFp4lDWUqLoF3oDnOPnaHb58rG
-         PnXuC58S72Ge2p5kmD3JAYeoK8EJ3OGP4IngaILlZ8fCl3Sm/3Rp/ZkT4UjRNWhajOJc
-         My9w4D7phNHzwQs2RKOF+LEskW5TEb7GqRp6WcAb6eb6XRGMi9Kam5ja0wTMvxG8G/c1
-         8fNGeKqOVL/h1aDOA/Cr44tB6G2i+gylXp+VkbwAZAm4dU0eQfpHwSgMujQ3pzYuW+oW
-         xtaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7p1Ky747M6b7mZG1S1tHMWxma441ZRmxJs8dLDJ9L1E=;
-        b=nE32qanna1ODC1jLT/YAzU7kzOc1zXFy7PcvcVwf+U8CiOCkBnsUNw1CYFQUzIk5o3
-         yUZv0jbRNB9gMAoU67O720xvwsvpjgreVksJDtZqlud0z6wGG68avh8pJLI4Pb4vvRDU
-         AcoVeYu70d9UZIPzOlMO1MVrEtsL5DH44Jvzm27iNtXnpfilBapHPkzewpLmC0MmB5bS
-         D5yQI+YUkixSvaT766zSuwphAduG1M54d4X2Q85lSQ8RnBYxhzPqyBHlsobUZCBji3t5
-         FCrwpSSGsSthI8qhOMNa1y+zwK3oMrPNKs/9xpcDdo0DLc/2I+HEBV6AfThA/IZsz3WW
-         UBsw==
-X-Gm-Message-State: AOAM531xBy2zkKcA2bUuLT1AEq5EohDGFR20F441CApKZY3yn9SxSuRP
-        lkejoqHHEbfnME8YZ80eJtk=
-X-Google-Smtp-Source: ABdhPJwSIYliEMNd5yuIHSMUvUw8LUMnPmhuUrimOKGtP7mvXX6S5/PY4uamiZMMv3jcgtAczMvG1A==
-X-Received: by 2002:a17:906:5616:b0:6f3:8fe2:a8e8 with SMTP id f22-20020a170906561600b006f38fe2a8e8mr10099685ejq.465.1652006954619;
-        Sun, 08 May 2022 03:49:14 -0700 (PDT)
-Received: from fedora.robimarko.hr (cpezg-94-253-144-244-cbl.xnet.hr. [94.253.144.244])
-        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 03:49:14 -0700 (PDT)
-From:   Robert Marko <robimarko@gmail.com>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
-Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v3 11/11] arm64: dts: ipq8074: add USB power domains
-Date:   Sun,  8 May 2022 12:48:55 +0200
-Message-Id: <20220508104855.78804-11-robimarko@gmail.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220508104855.78804-1-robimarko@gmail.com>
-References: <20220508104855.78804-1-robimarko@gmail.com>
+        with ESMTP id S229445AbiEHTsK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 15:48:10 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED98B849;
+        Sun,  8 May 2022 12:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1652039024;
+        bh=mGjWYLEwtu+ry5GXvt2ravbif89/+OFp+v9Ndwokqdo=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=KPG+FxkKQDZ5nsfn9b/rDbyRj/EIqKAafJrmd0UKHk3sF7F0EpIr9E0HuW+sj9MmE
+         F6jSp87+YhIrpWvSy/70KQZZgiUasjqmT3gk+bqpdehgm0Tu1LSAxs+xcWauIFHWJO
+         LN0zyxBJ2Q90EaNevt4+QnKnN3sWHZxrhChH4Y5M=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([37.201.215.103]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M59C8-1noskF3cxw-001D9L; Sun, 08
+ May 2022 21:43:43 +0200
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 1/7] dt-bindings: timer: nuvoton,npcm7xx-timer: Allow specifying all clocks
+Date:   Sun,  8 May 2022 21:43:26 +0200
+Message-Id: <20220508194333.2170161-2-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220508194333.2170161-1-j.neuschaefer@gmx.net>
+References: <20220508194333.2170161-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+B8D9NNv1GquKXyh+yewe8u/YXwDSp0omRF9EcPdcedfR2AXylE
+ J1AAfDCtk1qY+HAxFunLVRrV18OJHIvc7EDyOOtcTwouPCChp/DNsHnUQHZDqgWERyuPagV
+ X3P1BvR4gdkav6U/K/2NPsrhWLngw/NR5mURmKEnd+ZzDRYHM7q7F0VB6IL7wxqCkulSdi9
+ N3W8ciYjZX4nRwIkhXYvg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3V62gOaobJc=:u7MPmttD/cbQagij6o+M6e
+ A1ZgpIfOP04t2VpF2yls4Fr1yKyPFRpoJAVOsfVK3lip+W4IH6N1atgx+OYVetTttNeE6sJe8
+ UFvKAKZ7rIDLPMnxXkzCQ1HTarfQ8W+Zdsks+9dSjg25zN1RbNF+wUUfeS1qBa4yj21neK38i
+ +FsmfZSiHWlv9dIa14fF+lceiHFEElLdVfZK1uj+YZbqPveniamE8ccpQIK0/U1xuFaFgCKsU
+ 6CsIy0FsbEE9DdBDpwL0FDsfkAUHJ8CLvvIVEtmHIAf8Xo3YId+07sCAZLFKCPH12bvRQPqSx
+ AtdPOYd+4htYu86XBjRSkKiHSkG9w2hG/XtTEGea32xKLScSm7Mue2rPzc1PhK8FyelEb3Fhk
+ kfB65E7zXM3FTwmUcSkZKQsMSHpsobQpHu7t3+mYvYFt0E3iVe3ld0dsWUGL7l8/0veOTPTdk
+ Hfl89lyE9m/kuTbw2DycNFTu08GAlP3+8hfpCdI8Qbp0GvmYlYqyGDOlAJ3sZCqZor6+x1OkE
+ fks595DFnq3ROcqdSVcSqvtx5Gp5WLVrAwAp+pC0MyzboFr/0erS1Wosk6O6QCSrc+xrGw4Du
+ s9ZnU7q9PXs6aiR06M8ckI4AZuIUlxggw8Aa1lGiOh69MokAfR3mnxSZ83zwopw0Np1eYRneb
+ 5mkm5b3cok+GZ8QLShpqXTBICOXyzxW9/d1gXsL7PY7QfCvjA6y8IvFt/8n60BT+Jxj6YMfsl
+ EvTPmKJSW3pcYtthQu5mPTaR9BL3KvcHzROGLEFbAszRf6BhamQJx8zWC7oGL9NAzEowy/ZIE
+ 39fepLWo06hJoD64GqoCZmf6uQ6gK/wV8Y8EcIGhBe5yRniHbRo43EzVlwppfdWCjwYASYEca
+ QQRS3fC1+C71MdUIpJdvuRq9k85w7VejOD/Oj5bLgM1/5EihGiA0CsjHWs/m5Sjw3633cTci2
+ tdmO2yicl189R7qgV92XYLkvyVi2TL/C+WASWvEkZ8F4VwBKk289fpCssVSTDQRCud5PwkTpU
+ AGVvu1qOjbkaFI/DRQsk+P2ODF8N6DLo9cKituwDI3IwO8qU7ifhLkfAnKzWfMAIcD64b30/8
+ 6v6fStfcg2PBro=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add USB power domains provided by GCC GDSCs.
-Add the required #power-domain-cells to the GCC as well.
+The timer module contains multiple timers. In the WPCM450 SoC, each timer
+runs off a clock can be gated individually. To model this correctly, the
+timer node in the devicetree needs to take multiple clock inputs.
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+=2D--
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index ba81c510dd39..0bc21b0c177f 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -383,6 +383,7 @@ gcc: gcc@1800000 {
- 			reg = <0x01800000 0x80000>;
- 			#clock-cells = <0x1>;
- 			#reset-cells = <0x1>;
-+			#power-domain-cells = <1>;
- 		};
- 
- 		tcsr_mutex: hwlock@1905000 {
-@@ -610,6 +611,8 @@ usb_0: usb@8af8800 {
- 						<133330000>,
- 						<19200000>;
- 
-+			power-domains = <&gcc USB0_GDSC>;
-+
- 			resets = <&gcc GCC_USB0_BCR>;
- 			status = "disabled";
- 
-@@ -650,6 +653,8 @@ usb_1: usb@8cf8800 {
- 						<133330000>,
- 						<19200000>;
- 
-+			power-domains = <&gcc USB1_GDSC>;
-+
- 			resets = <&gcc GCC_USB1_BCR>;
- 			status = "disabled";
- 
--- 
-2.36.0
+v3:
+- Add R-b tag
+
+v2:
+- no changes
+=2D--
+ .../devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml  | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer=
+.yaml b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml
+index 0cbc26a721514..023c999113c38 100644
+=2D-- a/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml
++++ b/Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.yaml
+@@ -23,7 +23,13 @@ properties:
+       - description: The timer interrupt of timer 0
+
+   clocks:
+-    maxItems: 1
++    items:
++      - description: The reference clock for timer 0
++      - description: The reference clock for timer 1
++      - description: The reference clock for timer 2
++      - description: The reference clock for timer 3
++      - description: The reference clock for timer 4
++    minItems: 1
+
+ required:
+   - compatible
+=2D-
+2.35.1
 
