@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF1C433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D98EC433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbiEHKxR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 May 2022 06:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58550 "EHLO
+        id S231978AbiEHKxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 May 2022 06:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbiEHKw5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:52:57 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37AC8DED7;
-        Sun,  8 May 2022 03:49:07 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id kq17so21883319ejb.4;
-        Sun, 08 May 2022 03:49:07 -0700 (PDT)
+        with ESMTP id S231935AbiEHKxK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:53:10 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C51DECA;
+        Sun,  8 May 2022 03:49:16 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id dk23so21875522ejb.8;
+        Sun, 08 May 2022 03:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KNJHJYCxxfdyu7+KWLs4v3umHsmxXP/GIzj4jmPOymA=;
-        b=CxjELPOVikgcjVOxG7YyyykGu9UvsfEDv54V2QwQeq/wT/HSE7mKv+ZhMBK1VQSsdP
-         39FIM4DBRka467X4y1NeEqmLwL17awfYMJjNjgTerUQeG602OLFA4G8/cgBshFXjRZEe
-         4tH8nRb4n2kHgGBci+njBD30siRECHKzYAlMFHTV0crAlPkh1x2QUUOnmU3ZL+Z2E9wT
-         GBNgudcKTVHO50vf+3sDB4T1A0glvuqSoksbZuUWY40ffhRssb4D/d4HpzfuxYoPLGdp
-         y4U+khzJP0KWGazJK5uU+46Se7zGV1y+vZ6V84ivFJwHUk1bYltyg472dnYtGq+mKlRg
-         apHQ==
+        bh=7p1Ky747M6b7mZG1S1tHMWxma441ZRmxJs8dLDJ9L1E=;
+        b=AJ4N3IqUrdRc0rQ4YUPrVJo2vf4IqnY7XGyLPV0+q5v+vy3/TXyWcH1A5iWPat+eQK
+         HNqTnAquj7KTJc4D3W9mPjChTsjQ3yMfknYy3hG0SktFp4lDWUqLoF3oDnOPnaHb58rG
+         PnXuC58S72Ge2p5kmD3JAYeoK8EJ3OGP4IngaILlZ8fCl3Sm/3Rp/ZkT4UjRNWhajOJc
+         My9w4D7phNHzwQs2RKOF+LEskW5TEb7GqRp6WcAb6eb6XRGMi9Kam5ja0wTMvxG8G/c1
+         8fNGeKqOVL/h1aDOA/Cr44tB6G2i+gylXp+VkbwAZAm4dU0eQfpHwSgMujQ3pzYuW+oW
+         xtaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KNJHJYCxxfdyu7+KWLs4v3umHsmxXP/GIzj4jmPOymA=;
-        b=RIKCumN7jgAURCFt8+xhEakkCmekLVEkfMxDkSocV5aZ/DfZjuXPJNiuXCwxhaHM89
-         djOiLJgbVXOLomrWIx2qCyIaH9z3mkRPpQsyxhSSpTx4Whk07yeK23DlzWFiWOX0tbzp
-         WpyJaeEABn4Lp5h+OOUTFUstczCqBngKvLhCQPcOI77sW9uH6WLhZhZLSJoqEHM+o4TN
-         LfMrPq+rCjfzMZdjAIMKv+onqUrE46FFngQaohrFR7LrZGdxLCG+40zImcyfqwroinVd
-         qw9TqdxUymmvdWK4kwvX/n1gbPDdNHg3Z7y1P1P+w1JAomMEk/vRa9+Qs7ckQhMvWuM4
-         SG8Q==
-X-Gm-Message-State: AOAM531sHb9IudUDru4B2ByC4qN0vMMfUBa3ZTaUFepP6lmp+jRZacth
-        KNE6P7BtY0ornprqmkpF4JZNrIMBGk1E0Q==
-X-Google-Smtp-Source: ABdhPJx4bFCFRoz0wS2CeD69sikc10lLJ83QKVyR0kP7wAwynFMYO5H4p4u9DqfhCTh8XK8RZKRX+A==
-X-Received: by 2002:a17:906:a08b:b0:6cf:65bc:e7de with SMTP id q11-20020a170906a08b00b006cf65bce7demr10564954ejy.220.1652006945769;
-        Sun, 08 May 2022 03:49:05 -0700 (PDT)
+        bh=7p1Ky747M6b7mZG1S1tHMWxma441ZRmxJs8dLDJ9L1E=;
+        b=nE32qanna1ODC1jLT/YAzU7kzOc1zXFy7PcvcVwf+U8CiOCkBnsUNw1CYFQUzIk5o3
+         yUZv0jbRNB9gMAoU67O720xvwsvpjgreVksJDtZqlud0z6wGG68avh8pJLI4Pb4vvRDU
+         AcoVeYu70d9UZIPzOlMO1MVrEtsL5DH44Jvzm27iNtXnpfilBapHPkzewpLmC0MmB5bS
+         D5yQI+YUkixSvaT766zSuwphAduG1M54d4X2Q85lSQ8RnBYxhzPqyBHlsobUZCBji3t5
+         FCrwpSSGsSthI8qhOMNa1y+zwK3oMrPNKs/9xpcDdo0DLc/2I+HEBV6AfThA/IZsz3WW
+         UBsw==
+X-Gm-Message-State: AOAM531xBy2zkKcA2bUuLT1AEq5EohDGFR20F441CApKZY3yn9SxSuRP
+        lkejoqHHEbfnME8YZ80eJtk=
+X-Google-Smtp-Source: ABdhPJwSIYliEMNd5yuIHSMUvUw8LUMnPmhuUrimOKGtP7mvXX6S5/PY4uamiZMMv3jcgtAczMvG1A==
+X-Received: by 2002:a17:906:5616:b0:6f3:8fe2:a8e8 with SMTP id f22-20020a170906561600b006f38fe2a8e8mr10099685ejq.465.1652006954619;
+        Sun, 08 May 2022 03:49:14 -0700 (PDT)
 Received: from fedora.robimarko.hr (cpezg-94-253-144-244-cbl.xnet.hr. [94.253.144.244])
-        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.04
+        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 03:49:05 -0700 (PDT)
+        Sun, 08 May 2022 03:49:14 -0700 (PDT)
 From:   Robert Marko <robimarko@gmail.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -54,9 +54,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
 Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v3 05/11] clk: qcom: ipq8074: add PPE crypto clock
-Date:   Sun,  8 May 2022 12:48:49 +0200
-Message-Id: <20220508104855.78804-5-robimarko@gmail.com>
+Subject: [PATCH v3 11/11] arm64: dts: ipq8074: add USB power domains
+Date:   Sun,  8 May 2022 12:48:55 +0200
+Message-Id: <20220508104855.78804-11-robimarko@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220508104855.78804-1-robimarko@gmail.com>
 References: <20220508104855.78804-1-robimarko@gmail.com>
@@ -66,53 +66,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The built-in PPE engine has a dedicated clock for the EIP-197 crypto
-engine.
-
-So, since the required clock currently missing add support for it.
+Add USB power domains provided by GCC GDSCs.
+Add the required #power-domain-cells to the GCC as well.
 
 Signed-off-by: Robert Marko <robimarko@gmail.com>
 ---
- drivers/clk/qcom/gcc-ipq8074.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index f1017f2e61bd..c964e43ba68a 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -3182,6 +3182,24 @@ static struct clk_branch gcc_nss_ptp_ref_clk = {
- 	},
- };
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index ba81c510dd39..0bc21b0c177f 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -383,6 +383,7 @@ gcc: gcc@1800000 {
+ 			reg = <0x01800000 0x80000>;
+ 			#clock-cells = <0x1>;
+ 			#reset-cells = <0x1>;
++			#power-domain-cells = <1>;
+ 		};
  
-+static struct clk_branch gcc_crypto_ppe_clk = {
-+	.halt_reg = 0x68310,
-+	.halt_bit = 31,
-+	.clkr = {
-+		.enable_reg = 0x68310,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_crypto_ppe_clk",
-+			.parent_names = (const char *[]){
-+				"nss_ppe_clk_src"
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
+ 		tcsr_mutex: hwlock@1905000 {
+@@ -610,6 +611,8 @@ usb_0: usb@8af8800 {
+ 						<133330000>,
+ 						<19200000>;
+ 
++			power-domains = <&gcc USB0_GDSC>;
 +
- static struct clk_branch gcc_nssnoc_ce_apb_clk = {
- 	.halt_reg = 0x6830c,
- 	.clkr = {
-@@ -4644,6 +4662,7 @@ static struct clk_regmap *gcc_ipq8074_clks[] = {
- 	[GCC_PCIE0_RCHNG_CLK_SRC] = &pcie0_rchng_clk_src.clkr,
- 	[GCC_PCIE0_RCHNG_CLK] = &gcc_pcie0_rchng_clk.clkr,
- 	[GCC_PCIE0_AXI_S_BRIDGE_CLK] = &gcc_pcie0_axi_s_bridge_clk.clkr,
-+	[GCC_CRYPTO_PPE_CLK] = &gcc_crypto_ppe_clk.clkr,
- };
+ 			resets = <&gcc GCC_USB0_BCR>;
+ 			status = "disabled";
  
- static const struct qcom_reset_map gcc_ipq8074_resets[] = {
+@@ -650,6 +653,8 @@ usb_1: usb@8cf8800 {
+ 						<133330000>,
+ 						<19200000>;
+ 
++			power-domains = <&gcc USB1_GDSC>;
++
+ 			resets = <&gcc GCC_USB1_BCR>;
+ 			status = "disabled";
+ 
 -- 
 2.36.0
 
