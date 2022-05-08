@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C256EC4332F
-	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA75AC433F5
+	for <linux-clk@archiver.kernel.org>; Sun,  8 May 2022 10:49:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbiEHKxJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 May 2022 06:53:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
+        id S231983AbiEHKxK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 May 2022 06:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231674AbiEHKxB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:53:01 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EFB0B86F;
-        Sun,  8 May 2022 03:49:11 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id n10so21888607ejk.5;
-        Sun, 08 May 2022 03:49:11 -0700 (PDT)
+        with ESMTP id S231566AbiEHKwx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 May 2022 06:52:53 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E45B7DD;
+        Sun,  8 May 2022 03:49:03 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id p18so13233188edr.7;
+        Sun, 08 May 2022 03:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iddYG1Rb4tvpla03/UsMyBFX9rB+DvQUSfmApZMvI9E=;
-        b=IkijBn+aso3oEEmXipspRhtd94LYOI62nlHAc8Qt8OXvtmM+Hpo7cINcOO4I/zpeG0
-         6i1vHt3bJ3Gvs7P92YNRNWl+0MQZmQd6Pa080Bdry0iWETSIuu9OtgvgjHNLdOabas2r
-         XcWi/3tl8JlXhxWRWXDBc8pKplAP1qBauWvTChL4kpnfrAvq0Zky0ib+V8STFBhQKz5E
-         vgKzROdvBVdm3Z7qAAqPOx+vyrPgCFUoUGywc7I/Y896Bvufc33EEtEFLKVEocNzbhZL
-         O+R4U8mT1BRVaGSbiYMumGzoKunoX0vTc7jg4Ew18Pi/NIpvti35GI4U/QWPQUVAJ3kO
-         gfKg==
+        bh=wj10WxHIbo6UUCAP9oJqNfD8dGhuPiu7BAPjORdqN3c=;
+        b=W2scJrPH7Y546YfSLyYIyMgXfyQHp2qyMXq8whSjj8j2+xJkkVDj3EWjOVBnCGc91m
+         HEZVf/DxkWYCzI6J5PUcIHQik+fnLHch0xdnciFl3VSwO80wYrtFEfZlYHdT7e7+GZR7
+         2ftoJC4s/oHB31264G4FdV/4cbNfhG5PTjxISAOub0yZW6lUgM0xgnib3teSeMhogvNL
+         CQb1gTLl8My01k/05vxI+PuMgfc84zy4jzFedUOYg1Q6soI8zb6ov8n9UmK4wRwWHi96
+         7TZtShogZZHk8ItUCm1l1FzXo3cq3zT+WumG4Gfio1jmIyR/4z1JxkGrHAAQygd7wxGn
+         peag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iddYG1Rb4tvpla03/UsMyBFX9rB+DvQUSfmApZMvI9E=;
-        b=elovzcj86+FyD3oZqLxnNVPMqeH4Wxxk62QFB3GvnDtWRNwX6LLp3QQwpmjIO9xgFw
-         iYJPr21/xb2q+S7RcJh96r9oorRnmcqrzLd+/zqqZ1UjFnyHhw8RUsR0vsSEq8FqF8t2
-         svqet/t/+wvhi0yuWOAKuzG2APS4Ldm0N1yfbmBuSlehWW0EMcVFnRXERTeUVjFs+BLF
-         M9+pvtzkqO6h4q4QdbajgYiW7vSEsS0JE38kM+EJ6kzP7oJTol0WEN+5JOUrdkwGloD6
-         DfBRBeXnrVIOFv97b2ngPEjFwzwkjpmaZ4pjrKrvfawNfgUeO5v2zkIv5oa67XQTwMG8
-         /gWQ==
-X-Gm-Message-State: AOAM531FpfAIOLBJW6Jn5HQUrobnUB3GPiEsG3ew0Idmq2cnWJoOXDri
-        fdyImGp3CBgWXFguLaonln8=
-X-Google-Smtp-Source: ABdhPJwPqM11DpkoohC1S8GN7nYKsErm30mvSyKKdKohNWosCthVywZpnwdbSdvgmoLNgOOevaLVyg==
-X-Received: by 2002:a17:907:6d84:b0:6f4:94e2:e708 with SMTP id sb4-20020a1709076d8400b006f494e2e708mr10331759ejc.199.1652006950192;
-        Sun, 08 May 2022 03:49:10 -0700 (PDT)
+        bh=wj10WxHIbo6UUCAP9oJqNfD8dGhuPiu7BAPjORdqN3c=;
+        b=MTeVFu06uzNYTUun+9G9YsXXvIlDEULgB3MektBQdnAz11iOu30ndgPvwnHqN9dMhT
+         j6YA8q+yODJ5OZBqR15zziuV9nWi40vpUUxR6ZaNZc+iAdjkd1ISbkyJ6HbZJm5SVEI0
+         f4n43m4UIZPpfIlswhkNZaU2ShBJ/wv5Ibci9JS4jMLlZb1GPVrv370SQwMDtmW/2YEx
+         DJmFsTm7pSTeNkkz1+AHQh9HH8ZCF2iVnDbeMDMu9JNftpeX+TbRbovhmaG6NAIweonA
+         TryGAZsoLTXwsgNkyQAbRhN3GOdcJsii+WLnyu/vQIPXaVTvRQhu6Q1vnArqqWCdZ7aI
+         1Wsg==
+X-Gm-Message-State: AOAM532aX8fg3SPe18oK2dkq0bBGNeJwIZTdMFoSErjHk6wtxsw04dF0
+        m1KnvV7qiFsQZYSPY8w2/r4=
+X-Google-Smtp-Source: ABdhPJy9rTN6jNl0tQIuVSuMp8SiY0yYVYp/7QTdUOBAhtt7BjLHKocyvI7uhj5eqwN+BARk6sDVqA==
+X-Received: by 2002:a50:eb87:0:b0:425:c3e2:17a9 with SMTP id y7-20020a50eb87000000b00425c3e217a9mr12311085edr.109.1652006942072;
+        Sun, 08 May 2022 03:49:02 -0700 (PDT)
 Received: from fedora.robimarko.hr (cpezg-94-253-144-244-cbl.xnet.hr. [94.253.144.244])
-        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.09
+        by smtp.googlemail.com with ESMTPSA id hg12-20020a1709072ccc00b006f3ef214e0csm3917471ejc.114.2022.05.08.03.49.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 03:49:09 -0700 (PDT)
+        Sun, 08 May 2022 03:49:01 -0700 (PDT)
 From:   Robert Marko <robimarko@gmail.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -54,9 +54,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org
 Cc:     Robert Marko <robimarko@gmail.com>
-Subject: [PATCH v3 08/11] dt-bindings: clock: qcom: ipq8074: add USB GDSCs
-Date:   Sun,  8 May 2022 12:48:52 +0200
-Message-Id: <20220508104855.78804-8-robimarko@gmail.com>
+Subject: [PATCH v3 03/11] clk: qcom: ipq8074: fix NSS port frequency tables
+Date:   Sun,  8 May 2022 12:48:47 +0200
+Message-Id: <20220508104855.78804-3-robimarko@gmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220508104855.78804-1-robimarko@gmail.com>
 References: <20220508104855.78804-1-robimarko@gmail.com>
@@ -66,25 +66,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the USB GDSCs found in IPQ8074 GCC.
+NSS port 5 and 6 frequency tables are currently broken and are causing a
+wide ranges of issue like 1G not working at all on port 6 or port 5 being
+clocked with 312 instead of 125 MHz as UNIPHY1 gets selected.
 
+So, update the frequency tables with the ones from the downstream QCA 5.4
+based kernel which has already fixed this.
+
+Fixes: 7117a51ed303 ("clk: qcom: ipq8074: add NSS ethernet port clocks")
 Signed-off-by: Robert Marko <robimarko@gmail.com>
 ---
- include/dt-bindings/clock/qcom,gcc-ipq8074.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/qcom/gcc-ipq8074.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-index 5f0928785d7a..e4991d303708 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -368,4 +368,7 @@
- #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
- #define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index b4291ba53c78..f1017f2e61bd 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -1788,8 +1788,10 @@ static struct clk_regmap_div nss_port4_tx_div_clk_src = {
+ static const struct freq_tbl ftbl_nss_port5_rx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+ 	F(25000000, P_UNIPHY1_RX, 12.5, 0, 0),
++	F(25000000, P_UNIPHY0_RX, 5, 0, 0),
+ 	F(78125000, P_UNIPHY1_RX, 4, 0, 0),
+ 	F(125000000, P_UNIPHY1_RX, 2.5, 0, 0),
++	F(125000000, P_UNIPHY0_RX, 1, 0, 0),
+ 	F(156250000, P_UNIPHY1_RX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY1_RX, 1, 0, 0),
+ 	{ }
+@@ -1828,8 +1830,10 @@ static struct clk_regmap_div nss_port5_rx_div_clk_src = {
+ static const struct freq_tbl ftbl_nss_port5_tx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
+ 	F(25000000, P_UNIPHY1_TX, 12.5, 0, 0),
++	F(25000000, P_UNIPHY0_TX, 5, 0, 0),
+ 	F(78125000, P_UNIPHY1_TX, 4, 0, 0),
+ 	F(125000000, P_UNIPHY1_TX, 2.5, 0, 0),
++	F(125000000, P_UNIPHY0_TX, 1, 0, 0),
+ 	F(156250000, P_UNIPHY1_TX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY1_TX, 1, 0, 0),
+ 	{ }
+@@ -1867,8 +1871,10 @@ static struct clk_regmap_div nss_port5_tx_div_clk_src = {
  
-+#define USB0_GDSC				0
-+#define USB1_GDSC				1
-+
- #endif
+ static const struct freq_tbl ftbl_nss_port6_rx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
++	F(25000000, P_UNIPHY2_RX, 5, 0, 0),
+ 	F(25000000, P_UNIPHY2_RX, 12.5, 0, 0),
+ 	F(78125000, P_UNIPHY2_RX, 4, 0, 0),
++	F(125000000, P_UNIPHY2_RX, 1, 0, 0),
+ 	F(125000000, P_UNIPHY2_RX, 2.5, 0, 0),
+ 	F(156250000, P_UNIPHY2_RX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY2_RX, 1, 0, 0),
+@@ -1907,8 +1913,10 @@ static struct clk_regmap_div nss_port6_rx_div_clk_src = {
+ 
+ static const struct freq_tbl ftbl_nss_port6_tx_clk_src[] = {
+ 	F(19200000, P_XO, 1, 0, 0),
++	F(25000000, P_UNIPHY2_TX, 5, 0, 0),
+ 	F(25000000, P_UNIPHY2_TX, 12.5, 0, 0),
+ 	F(78125000, P_UNIPHY2_TX, 4, 0, 0),
++	F(125000000, P_UNIPHY2_TX, 1, 0, 0),
+ 	F(125000000, P_UNIPHY2_TX, 2.5, 0, 0),
+ 	F(156250000, P_UNIPHY2_TX, 2, 0, 0),
+ 	F(312500000, P_UNIPHY2_TX, 1, 0, 0),
 -- 
 2.36.0
 
