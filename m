@@ -2,84 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDE3C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 May 2022 14:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B885DC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  9 May 2022 21:12:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237137AbiEIO2k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 May 2022 10:28:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53462 "EHLO
+        id S229510AbiEIVQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 May 2022 17:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237124AbiEIO2j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 May 2022 10:28:39 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9DCB11E3EDA;
-        Mon,  9 May 2022 07:24:45 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,211,1647270000"; 
-   d="scan'208";a="119126743"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 09 May 2022 23:24:44 +0900
-Received: from localhost.localdomain (unknown [10.226.93.110])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E654C40078D5;
-        Mon,  9 May 2022 23:24:38 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229635AbiEIVQh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 May 2022 17:16:37 -0400
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02E91F7E24;
+        Mon,  9 May 2022 14:12:42 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id g11-20020a9d648b000000b00605e4278793so10967738otl.7;
+        Mon, 09 May 2022 14:12:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tttFrTXiMauh2WUBpEtvCsG9fSFl8CjliHwByuAO7M0=;
+        b=RHFjjNyOWZydGl4ZVXyUc7oH+63li+Ylat/1gIFwk27vRsy66qR6WGbWE/zX1XOePQ
+         i6ZOQABn/2tLd+Rn9q3D1tJSpwX4Y4rJbpFlwcXan8KwTn6SXyPp6PENrFhlyz3AglOw
+         vjEYBLX37qYZYMAC8YOLhyfzdi7w0cVMc7TU21D/3TqQZzEIYkiWGH4IyvZu/asZj516
+         6Cfig5XoUKJBT5yPrRB91H2rPyoal7dFfPA90JjIKNlQdOSwt7UN26I+m1DXHC/TV6PZ
+         UPlX4KszArUjG/vn+Wk0WJNOZH3/i7ASckKFT1bfu98sSfVJ1POw+RuKiZTZU+N2Vker
+         bdGA==
+X-Gm-Message-State: AOAM530JUmsmY5/ROkLyaM5+En97ws7XlhvNi5hfWjUaHqBAVSxj0w7J
+        gFYgwlftZEVniGNWu1UN4uhCWzYbIw==
+X-Google-Smtp-Source: ABdhPJzanZ6Seoj3B35XKcpPYGzW45CD+vaaHWklkwTwIlKv3kUStgSqE0Vi+IlvcbtW/rqsQChTNw==
+X-Received: by 2002:a9d:4f0d:0:b0:606:1c0b:a21e with SMTP id d13-20020a9d4f0d000000b006061c0ba21emr6798761otl.371.1652130761902;
+        Mon, 09 May 2022 14:12:41 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 2-20020aca2102000000b003264a325ecdsm4720293oiz.5.2022.05.09.14.12.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 May 2022 14:12:41 -0700 (PDT)
+Received: (nullmailer pid 184905 invoked by uid 1000);
+        Mon, 09 May 2022 21:12:40 -0000
+Date:   Mon, 9 May 2022 16:12:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Robert Marko <robimarko@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/5] Add Renesas RZ/V2M Ethernet support
-Date:   Mon,  9 May 2022 15:24:26 +0100
-Message-Id: <20220509142431.24898-1-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.32.0
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add support for IPQ8074 APSS
+ clock controller
+Message-ID: <YnmDyDKhMlUkwJJY@robh.at.kernel.org>
+References: <20220503195605.4015616-1-robimarko@gmail.com>
+ <20220503195605.4015616-2-robimarko@gmail.com>
+ <YnLdTIKx80wszbj7@robh.at.kernel.org>
+ <CAOX2RU5RMra4zj-jWZFH_fev-EavsnLnjob0z4FsaYnn8cs5gg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOX2RU5RMra4zj-jWZFH_fev-EavsnLnjob0z4FsaYnn8cs5gg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
-some small parts are the same as R-Car Gen2.
-Other differences are:
-* It has separate data (DI), error (Line 1) and management (Line 2) irqs
-  rather than one irq for all three.
-* Instead of using the High-speed peripheral bus clock for gPTP, it has
-  a separate gPTP reference clock.
+On Wed, May 04, 2022 at 10:45:22PM +0200, Robert Marko wrote:
+> On Wed, 4 May 2022 at 22:08, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Tue, May 03, 2022 at 09:56:01PM +0200, Robert Marko wrote:
+> > > Add dt-binding for the IPQ8074 APSS clock controller which provides
+> > > clocks to the CPU cores.
+> > >
+> > > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > > ---
+> > > Changes in v2:
+> > > * Correct subject
+> > > ---
+> > >  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
+> > >  1 file changed, 14 insertions(+)
+> > >  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > >
+> > > diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > > new file mode 100644
+> > > index 000000000000..df07766b0146
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > > @@ -0,0 +1,14 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> >
+> > Dual license please.
+> 
+> Hi Rob,
+> Krzysztof asked about this in v1, I have derived this off IPQ6018
+> binding which is marked GPL-2.0.
+> So, I was not sure if it was appropriate to mark it as GPL/BSD dual license.
+> If you say that its not an issue to dual-license, I will gladly do it.
 
-v2:
- * Just net patches in this series
- * Instead of reusing ch22 and ch24 interrupt names, use the proper names
- * Renamed irq_en_dis_regs to irq_en_dis
- * Squashed use of GIC reg versus GIE/GID and got rid of separate gptp_ptm_gic feature.
- * Move err_mgmt_irqs code under multi_irqs
- * Minor editing of the commit msgs
+Technically, you should maintain it, but I don't think 2 defines is 
+really enough to represent copyrightable work (but IANAL). I also know 
+that QCom prefers the DT stuff to be dual licensed because they've 
+raised the issue with me. 
 
-
-Phil Edworthy (5):
-  dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
-  ravb: Separate handling of irq enable/disable regs into feature
-  ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
-  ravb: Use separate clock for gPTP
-  ravb: Add support for RZ/V2M
-
- .../bindings/net/renesas,etheravb.yaml        |  82 ++++++++++----
- drivers/net/ethernet/renesas/ravb.h           |   6 ++
- drivers/net/ethernet/renesas/ravb_main.c      | 102 ++++++++++++++++--
- drivers/net/ethernet/renesas/ravb_ptp.c       |   4 +-
- 4 files changed, 162 insertions(+), 32 deletions(-)
-
--- 
-2.32.0
-
+Rob
