@@ -2,102 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AF5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 May 2022 11:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDE3C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  9 May 2022 14:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232360AbiEILlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 May 2022 07:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
+        id S237137AbiEIO2k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 May 2022 10:28:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232820AbiEILli (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 May 2022 07:41:38 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F9220CA67
-        for <linux-clk@vger.kernel.org>; Mon,  9 May 2022 04:37:44 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id e24so19029200wrc.9
-        for <linux-clk@vger.kernel.org>; Mon, 09 May 2022 04:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=gAzu2oiPvwqDB6ep9R1plS1D4PVcvCYJK3SA9c2e6ws=;
-        b=qqvp+rBczXImCRA7dY3ksVgcIYOoCRNkhZh8dUkwnUaE6zBq3kosz6kzlRPsVtkrVh
-         fi89vQWHfCtzTFSSPcI4qGrHmmqQqZp3Y1xdSPOMzj/XttPjPsSdT0uMiurDKkT+CKry
-         wcmLg42/Gp4QeLb8uSZ980jvJ6fytVkf3554JhzfyR76MceEHrfSLWis3M/RMqpr7zbT
-         8ooy880qikdpMxCfg+89iBm9iawogCICZCIrAGzXcX+f0lxXtb0uW6+4QdhcE3dXLViO
-         Svcwj7x7To+03kEZVSxEIE6W1481+u4l9/e4xJG4TsSrKwMCy8G5JaW2OhZg5A1qRjUA
-         TuLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=gAzu2oiPvwqDB6ep9R1plS1D4PVcvCYJK3SA9c2e6ws=;
-        b=z04EnUBKsVUdziXWYWBJ6hvevpfzAcBzT+nKq36nJlj0Q6U7DXoRLl+zOJ+ar/ZrKI
-         Sz1ei3dIKqezqpQrvK76FIuPS2fbWibg9RPOnEUamOfKPwSYnwWmr4tvFyh5msaCb76y
-         atllXa1uV8AAJwDXJgsyPjMtx1YJX8T/coKVC/r6jTUz6Mi5qvSu3wB/iXKPYYRQX4+i
-         QU9/IQopzv8Qx6t0ezvWFRpfAc1gpIsW9h20h/1gmFyKLzLFWaDsdNnAY9deTBMdHq1M
-         he252Jqc1qJhJR3K6kv3IxqwCO9Xr7/R5xoNGtRKc4bTIz8gawnpQGJ6hspvM1agGBzh
-         HnyA==
-X-Gm-Message-State: AOAM533UQAaIslZ7w7ZodSDg2RDniEmQx5HvRSZXXYchpaqfFG9IVA8v
-        yPXkS7Kz5wIOaJeB35ISDHp9Qg==
-X-Google-Smtp-Source: ABdhPJxC9fqJgM9+wwtN9ii5TWwn07S+AweGvci74XJz8sCoa7YTp5luuS887vQ/F30mfWkuVpSA9Q==
-X-Received: by 2002:a05:6000:1681:b0:20c:5aa2:ae14 with SMTP id y1-20020a056000168100b0020c5aa2ae14mr13246647wrd.443.1652096262849;
-        Mon, 09 May 2022 04:37:42 -0700 (PDT)
-Received: from [192.168.1.41] (176-182-171-101.abo.bbox.fr. [176.182.171.101])
-        by smtp.googlemail.com with ESMTPSA id az11-20020a05600c600b00b003942a244f3asm15270053wmb.19.2022.05.09.04.37.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 04:37:42 -0700 (PDT)
-Message-ID: <0972c833-432d-a850-958f-0d4f482e25a4@linaro.org>
-Date:   Mon, 9 May 2022 13:37:40 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 2/7] clocksource: timer-npcm7xx: Enable timer 1 clock
- before use
-Content-Language: en-US
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S237124AbiEIO2j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 May 2022 10:28:39 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9DCB11E3EDA;
+        Mon,  9 May 2022 07:24:45 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.91,211,1647270000"; 
+   d="scan'208";a="119126743"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 09 May 2022 23:24:44 +0900
+Received: from localhost.localdomain (unknown [10.226.93.110])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E654C40078D5;
+        Mon,  9 May 2022 23:24:38 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-References: <20220508194333.2170161-1-j.neuschaefer@gmx.net>
- <20220508194333.2170161-3-j.neuschaefer@gmx.net>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20220508194333.2170161-3-j.neuschaefer@gmx.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/5] Add Renesas RZ/V2M Ethernet support
+Date:   Mon,  9 May 2022 15:24:26 +0100
+Message-Id: <20220509142431.24898-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/05/2022 21:43, Jonathan Neuschäfer wrote:
-> In the WPCM450 SoC, the clocks for each timer can be gated individually.
-> To prevent the timer 1 clock from being gated, enable it explicitly.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
+The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
+some small parts are the same as R-Car Gen2.
+Other differences are:
+* It has separate data (DI), error (Line 1) and management (Line 2) irqs
+  rather than one irq for all three.
+* Instead of using the High-speed peripheral bus clock for gPTP, it has
+  a separate gPTP reference clock.
+
+v2:
+ * Just net patches in this series
+ * Instead of reusing ch22 and ch24 interrupt names, use the proper names
+ * Renamed irq_en_dis_regs to irq_en_dis
+ * Squashed use of GIC reg versus GIE/GID and got rid of separate gptp_ptm_gic feature.
+ * Move err_mgmt_irqs code under multi_irqs
+ * Minor editing of the commit msgs
 
 
-Applied, thanks
+Phil Edworthy (5):
+  dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
+  ravb: Separate handling of irq enable/disable regs into feature
+  ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
+  ravb: Use separate clock for gPTP
+  ravb: Add support for RZ/V2M
 
+ .../bindings/net/renesas,etheravb.yaml        |  82 ++++++++++----
+ drivers/net/ethernet/renesas/ravb.h           |   6 ++
+ drivers/net/ethernet/renesas/ravb_main.c      | 102 ++++++++++++++++--
+ drivers/net/ethernet/renesas/ravb_ptp.c       |   4 +-
+ 4 files changed, 162 insertions(+), 32 deletions(-)
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.32.0
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
