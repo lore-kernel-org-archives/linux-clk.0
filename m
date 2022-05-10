@@ -2,54 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEFAC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 15:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65EEC43219
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 15:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345643AbiEJPWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 11:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38662 "EHLO
+        id S243447AbiEJP2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 11:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346304AbiEJPW0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 11:22:26 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9412615801;
-        Tue, 10 May 2022 08:05:57 -0700 (PDT)
-Received: by mail-qk1-f179.google.com with SMTP id a22so13410405qkl.5;
-        Tue, 10 May 2022 08:05:57 -0700 (PDT)
+        with ESMTP id S1346065AbiEJP07 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 11:26:59 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648802016C6;
+        Tue, 10 May 2022 08:14:32 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id x9so13749681qts.6;
+        Tue, 10 May 2022 08:14:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3buBIN+IyWy8jl5QP9VpwtQkm+plR/re5/e7qWc+5iU=;
-        b=AWJKXpxp+wGGwAMKWY6y+evKTJCoZVs3h+VIwVPJfwKLd4pLNbtfdr0xx7+z1uTTEk
-         JKBUHNgF+WQ+0+qjrENwv76LG5+6VLptTWDBSxbkjwi8gWec0JrpVqyXbNqsnmS5KPhN
-         +CDihUjQZvmoqO57kS16Sj8KmMt9oqqlYsh+hhFN/7NI+BiEo1HvQ+3NoGdkXm2s4he3
-         vRqIIZKbU1OKdZ9pjirov8x6dgae33VGIjeKCRdxmJJm0tKaNuFWTIcarOe0+6rsASx+
-         QZ6AF5lXmtXkuStqKjxfmxPbeXSzoUSB9maW68zztRVQ973dfjNu8V7Wgct4rrpJ7B1p
-         gRIw==
-X-Gm-Message-State: AOAM532uuyksx/gjRDZWZ1Yy7KL9FBNUgkOZ7SfhvmG3OFN7z7kauVYl
-        LpSZ8fOBbpewL9kPJbmC33mOrPFtseit0A==
-X-Google-Smtp-Source: ABdhPJx1fX/9AbUOi27gMb3WUjt+0JWFPd2nJ3l+tMGlLObEzedH1sNGWZGzTsSoTN47UzFiPYbomg==
-X-Received: by 2002:a37:a351:0:b0:69f:cebf:5a7c with SMTP id m78-20020a37a351000000b0069fcebf5a7cmr15047972qke.740.1652195155971;
-        Tue, 10 May 2022 08:05:55 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id az35-20020a05620a172300b0069fc13ce20bsm9138500qkb.60.2022.05.10.08.05.55
+        bh=Vz1eJzNwX0qqlgjKghzI8UdnpqFW4v/yeEdgJ7aBooc=;
+        b=d9g9CtWKsOGR7z5n/x33vnbuP8nImZ5VYEHaN+wmNX+xmzA0AG2Lj17Hhzmp9v/r4e
+         kxWsxCd5aYsDBrvrtYcbR+h177R5jZ5eutBwK5x9W069WlEDrT41+UMymuBWmDRrHZ4n
+         jufFg8l+Mi0QydGUJQev5YUn+CPnXkUBuQXCPh6qklp4s4NAndRDzRRRHQuxgP8j0If4
+         2hlVlyocbw+OjjnQPLEbGR2Sc13/kRheMBasfRZykqLljY6WTyM1vFcBS6DaY4sEypcT
+         wL1PV79eAiJY8va8OUlarZXKbY4H5R6nbtrEdHDhua/aO4g9KczjbFnGbLxjmVAZVDS8
+         ISTA==
+X-Gm-Message-State: AOAM533anAxpbCuPpkPilS7mwGw/khHj0B8sPG6fxG9xGXJcAXt0fG1r
+        CEC6zp6Iu3Xx4ImJB4k234xIzpIuU75Z6w==
+X-Google-Smtp-Source: ABdhPJzVNRRGRMkmw0kwAOgsedCsn5kkgcEeQ+MUFnOmBdpkRZfK+cpnisqt1Z+Az080srveVc8RTQ==
+X-Received: by 2002:ac8:5bd5:0:b0:2f3:b654:694d with SMTP id b21-20020ac85bd5000000b002f3b654694dmr19934873qtb.435.1652195671013;
+        Tue, 10 May 2022 08:14:31 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id h191-20020a379ec8000000b0069fc347ef5dsm8536086qke.74.2022.05.10.08.14.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 May 2022 08:05:55 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id x17so10700173ybj.3;
-        Tue, 10 May 2022 08:05:55 -0700 (PDT)
-X-Received: by 2002:a25:6157:0:b0:645:8d0e:f782 with SMTP id
- v84-20020a256157000000b006458d0ef782mr20010518ybb.36.1652195155051; Tue, 10
- May 2022 08:05:55 -0700 (PDT)
+        Tue, 10 May 2022 08:14:30 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id v59so31246334ybi.12;
+        Tue, 10 May 2022 08:14:30 -0700 (PDT)
+X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
+ s14-20020a056902120e00b006346f296b84mr19243837ybu.604.1652195669937; Tue, 10
+ May 2022 08:14:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220505193143.31826-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220505193143.31826-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220505193143.31826-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20220505193143.31826-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 10 May 2022 17:05:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVtPRgWJXDAGRh8rm4TiH4XMNmp_+V2Vu0rShjzBdaykw@mail.gmail.com>
-Message-ID: <CAMuHMdVtPRgWJXDAGRh8rm4TiH4XMNmp_+V2Vu0rShjzBdaykw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] clk: renesas: rzg2l-cpg: Add support to stack the
- resets instead of indexing
+Date:   Tue, 10 May 2022 17:14:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVajeFy++etApUrZC4_sgFCPH76xOOb93rQWsz42i3EVg@mail.gmail.com>
+Message-ID: <CAMuHMdVajeFy++etApUrZC4_sgFCPH76xOOb93rQWsz42i3EVg@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] clk: renesas: r9a07g043: Add support for RZ/Five SoC
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -72,24 +71,87 @@ Hi Prabhakar,
 
 On Thu, May 5, 2022 at 9:32 PM Lad Prabhakar
 <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Instead of indexing the resets, stack them and instead create an id member
-> in struct rzg2l_reset to store the index. With this approach for every id
-> we will have to loop through the resets array to match the id.
->
-> This in preparation to add support for Renesas RZ/Five CPG in
-> r9a07g043-cpg.c file where the resets array will be split up into three
-> i.e. common and two SoC specific.
+> Add minimal clock and resets entries required to boot RZ/Five SoC.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Thanks for your patch!
 
-An obvious alternative would be to allocate an array with pointers to
-the individual resets, like is done for clocks.
+I'm only commenting on the actual clock/reset definitions, as I expect
+the structure of this file to change...
 
-Please see the suggestion in my reply to "[RFC PATCH 3/4] clk: renesas:
-r9a07g043: Split up core, module and resets array", which would make
-this patch unnecessary.
+> --- a/drivers/clk/renesas/r9a07g043-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
+> @@ -151,7 +151,7 @@ static const struct {
+>  static const struct {
+>         struct rzg2l_mod_clk common[54];
+>  #ifdef CONFIG_RISCV
+> -       struct rzg2l_mod_clk rzfive[0];
+> +       struct rzg2l_mod_clk rzfive[2];
+>  #else
+>         struct rzg2l_mod_clk rzg2ul[3];
+>  #endif
+> @@ -268,6 +268,10 @@ static const struct {
+>         },
+>  #ifdef CONFIG_RISCV
+>         .rzfive = {
+> +               DEF_MOD("iax45_pclk",   R9A07G043_IAX45_PCLK, R9A07G043_CLK_P2,
+> +                                       0x518, 0),
+> +               DEF_MOD("iax45_clk",    R9A07G043_IAX45_CLK, R9A07G043_CLK_P1,
+> +                                       0x518, 1),
+
+OK.
+
+Note that the register offset and bits for the IAX45 block on riscv
+are exactly the same as for the IA55 block on arm64.  Hence it
+would be an option to use the exact same values in the DT binding
+definitions for R9A07G043_IAX45_(P)CLK and R9A07G043_IA55_(P)CLK,
+and avoid the #ifdefs and duplicated DEF_MOD() entries here.
+
+I'm undecided what's the best option...
+
+>         },
+>  #else
+>         .rzg2ul = {
+> @@ -284,7 +288,7 @@ static const struct {
+>  static const struct {
+>         struct rzg2l_reset common[42];
+>  #ifdef CONFIG_RISCV
+> -       struct rzg2l_reset rzfive[0];
+> +       struct rzg2l_reset rzfive[1];
+>  #else
+>         struct rzg2l_reset rzg2ul[3];
+>  #endif
+> @@ -335,6 +339,7 @@ static const struct {
+>         },
+>  #ifdef CONFIG_RISCV
+>         .rzfive = {
+> +               DEF_RST(R9A07G043_IAX45_RESETN, 0x818, 0),
+
+Same for R9A07G043_IAX45_RESETN and R9A07G043_IAA55_RESETN.
+
+>         },
+>  #else
+>         .rzg2ul = {
+> @@ -345,16 +350,27 @@ static const struct {
+>  #endif
+>  };
+>
+> +#ifdef CONFIG_RISCV
+> +static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
+> +       MOD_CLK_BASE + R9A07G043_IAX45_CLK,
+> +       MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
+> +};
+> +#else
+>  static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
+>         MOD_CLK_BASE + R9A07G043_GIC600_GICCLK,
+>         MOD_CLK_BASE + R9A07G043_IA55_CLK,
+>         MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
+>  };
+> +#endif
+
+Please keep a single r9a07g043_crit_mod_clks[] array, and protect the
+entries inside by #ifdef CONFIG_ARM64 or CONFIG_RISCV.
 
 Gr{oetje,eeting}s,
 
