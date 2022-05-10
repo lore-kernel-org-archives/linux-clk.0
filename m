@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B87FC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 13:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549B8C47081
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 13:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242213AbiEJNjj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 09:39:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
+        id S242237AbiEJNn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 09:43:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245174AbiEJNig (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 09:38:36 -0400
+        with ESMTP id S244847AbiEJNmL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 09:42:11 -0400
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ED7E266CA4;
-        Tue, 10 May 2022 06:28:01 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4626C5C010F;
-        Tue, 10 May 2022 09:27:59 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763691573B
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 06:30:39 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id EFB875C01D9;
+        Tue, 10 May 2022 09:30:21 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 10 May 2022 09:27:59 -0400
+  by compute5.internal (MEProxy); Tue, 10 May 2022 09:30:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; t=1652189279; x=1652275679; bh=V6n23Qh6v/
-        2jyzSVv1tn7FsIF7VHsBZB/caUq+pIMMg=; b=nYnGnjTuTItTYE14cgml9pWfyF
-        BSZTajAxncG0KbjQcTvr2rQTOdPLen7jZ40XG6+e2af0TMsDqzG+5xQ7GRTh2uzj
-        JFMSUEieXdFynepr4KUdUn6p2KRfMaVUap7a/MNzycoqYyZs9zHgdngdPJl8yE6x
-        RhyzsnCxy3ys3ANvQ3Q733+V1zKgVsei7xcM+XRzYvfB/XiShYFunKlXAo1tPneO
-        ofy0OX4kkB9w0s7wGYXAM0vTC+ot5kwd/lF+dRmRp2ZA11RArdO+i1w6CAXVjjNM
-        mbDi9PHQq0FCaRzGiLIlL+rNHCXhYkrFJnQIX/6HWTTGOj8QJNf5VgVpErpA==
+        :subject:to:to; s=fm3; t=1652189421; x=1652275821; bh=QrppD833yF
+        AZQnysPpFBErbFBlVjw73rXp7B7+VJB5A=; b=L2tlMhdrTqlLn9cf44yEPTsU5G
+        1Gp/R/0fxnzxCyUo/uIc6oUGUGgXTgu6dKzv6mbeOF6oTw/Cvz5CaO44UXqq8hF9
+        ix4Ch/C5VFhw6uQ543H5KTq/7J5Gg7/O7hnjdL9YmTEvrUJbgsSaTRxtOuKUQRC4
+        LgaFdweHtfpov+Sz2ihu3jitSHfEzWnZ6BSyZhM7JC0IKGeGtEgP/3pfS55tpOH4
+        /PyeTKUpoJDfYbJE4nCkhIEtIqq8qoEexJH1/6g800GhUBFW8VIkamdEc7rkwDbT
+        SjlhdwZrqYGeJVOdBjdlbQA9w0g4Di0ODZMx2NuSTJbpw4veu93dNkquikKg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1652189279; x=
-        1652275679; bh=V6n23Qh6v/2jyzSVv1tn7FsIF7VHsBZB/caUq+pIMMg=; b=u
-        /51tmdFk5+4+4ukJvcpU7nAQP1AEn1m7Gg0Mws2lO3DsABt8RaoXLjSrkdTHrEXb
-        dut+J996Mn7gOqGUm9utPZ3LdVGhn0ZZs8PUnShhf77l+ETsqZBxjpAIZNlhC6tE
-        m6GxBiyGcK0RE09Ld/8rxtXwPlk3sYDWfYk1Au//ylFMTs1lid7aGz/3qK1g79MN
-        8e881/VH04RJcRnc5ucLPh1qXzOsf/9GuJvwYXxa0fHWV4U3/DK7JSRwBic4gLlJ
-        24MTTNGxzw1s/PwOueY3LUpB9REi1pPPt1HSoLxmOyfOJsFNUzypMjfkwQ004xPD
-        VvhQDPeX974SGUjJ686XQ==
-X-ME-Sender: <xms:Xmh6Yqr_BMNg0-l-chG3sXXrMIfgqy_4iXzBtz9KGJivQSPYUCijKw>
-    <xme:Xmh6YoqzgesNwJN_GFqrQbywJhrno4rIMjwvdeS2mO7UIUpEA8bxps5pxnDS9cCTa
-    -TVE2Fi_cdpjkiBMp4>
-X-ME-Received: <xmr:Xmh6YvPFH_S64W__4GZUMoDXFt2ERekiBzVG29-KRF2zbMYv7yRwDOJNzh4dETm9F7FL0GzPLqeLgN3dJRldF-eLvglGxElPKNykQss>
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1652189421; x=
+        1652275821; bh=QrppD833yFAZQnysPpFBErbFBlVjw73rXp7B7+VJB5A=; b=x
+        W3dUCPqCwXRIz5aDXYA1Vd5pWTOJlEAe6ysyi9NOgs+VwJFyCzEb84HMVDw915uQ
+        mx9NRB//mzmoGzOC1UIQbVDTrzitqvLsCLtkEumjtT53Zt5X5k/zuIHzxyTRHvaC
+        1MTjFFKhenGjXHKqxe80oPIGJLMbRIGwBueCkwyaaRQ4GFFZGqpDKuhkihB/hgHd
+        WOYsuX4+zKNtwznV9UrVf+7aXamQqGeN3LN+D3avVRM3y1LelyJIb0XK5VMuE88g
+        MRF0BRDyZziBN+mayudy1KeR0exl6aqHQ7bUE8Dqyzjm+YwJKY++DVBWNXXsYhLv
+        JJiuZUYO8OtwJkdAXcHbQ==
+X-ME-Sender: <xms:7Wh6YhDqUBGYHHuK9U9jObw9XaKWb0AIuUnrda5fBJtJ5fX49Zy7eA>
+    <xme:7Wh6YvgkdAAKPAso7SzoxA2FWJRisNOG_2uvYwEPk3qkQvu9UJcA9n_X1itO-1uUd
+    RUADMStilFkM7Fye3k>
+X-ME-Received: <xmr:7Wh6YsnlqqY11EPJcW8wrHzU1kn0eHg3rQwu53CiMaZIq59yJxTbpkIw-Qs2r3j3q0fkVHK4rfl5Zp3uSwh7iNNI5V2fz42qfgmoLI4>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedugdeitdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -53,81 +53,74 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedugdeitdcutefuodetggdote
     htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
     vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:Xmh6Yp4GR_jxquWbiZnqiYycMDnCL7XR4R8tHrC-jyTvQqI-A_LGrw>
-    <xmx:Xmh6Yp6JG-C-QUHGCywYJ3iZuAWEqsi2Sr9pLNIxFNzoUFZ_7VuaNA>
-    <xmx:Xmh6Ypgo7IscSJYi-xK6fi138IjgYH2CGQ6TJc8vIfQCE_Ld9tMmmw>
-    <xmx:X2h6YuEKw_S7tOfqzAZawgqvAkrGR5R4pGegipRmF-jwbzZToaSXZA>
+X-ME-Proxy: <xmx:7Wh6YrzYZelGKHRN3-wKPVPTL35RiJPVR8ErJe3DJoFiRKe5CQofaA>
+    <xmx:7Wh6YmT0qfJHHoAfoDK5Od0Xd7HO66VTsc5GPotpnkw3TmB_FVHOMg>
+    <xmx:7Wh6YuaCBYnPqL6mIIDSg-Q2bKomUiz_Sb7QjJd26Bq0jpcMyf2Orw>
+    <xmx:7Wh6Yn-g0uCTDK7SuxFBu4mcnkWkuoZYUEXoWBUo47TIhFx2KDQuSA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 May 2022 09:27:58 -0400 (EDT)
-Date:   Tue, 10 May 2022 15:27:56 +0200
+ 10 May 2022 09:30:21 -0400 (EDT)
+Date:   Tue, 10 May 2022 15:30:19 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+To:     Guillaume Gardet <Guillaume.Gardet@arm.com>
+Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
-Message-ID: <20220510132756.qmyjca53xu44iwn7@houat>
-References: <20220428183010.1635248-1-stefan.wahren@i2se.com>
- <20220503145804.b2xz4etzc6kpr3fk@houat>
- <ee39ddd1-bfce-012d-5e04-448d779ed995@i2se.com>
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Message-ID: <20220510133019.h2urxj3feponfuku@houat>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="iiuqzltjsvoixdta"
+        protocol="application/pgp-signature"; boundary="l3r2s4pzbz2a6nsn"
 Content-Disposition: inline
-In-Reply-To: <ee39ddd1-bfce-012d-5e04-448d779ed995@i2se.com>
+In-Reply-To: <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---iiuqzltjsvoixdta
+--l3r2s4pzbz2a6nsn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 07, 2022 at 11:26:28AM +0200, Stefan Wahren wrote:
-> Am 03.05.22 um 16:58 schrieb Maxime Ripard:
-> > Hi,
-> >=20
-> > On Thu, Apr 28, 2022 at 08:30:10PM +0200, Stefan Wahren wrote:
-> > > The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> > > accidentially breaks the behavior of bcm2835_clock_choose_div() and
-> > > booting of Raspberry Pi. The removed do_div macro call had side effec=
-ts,
-> > > so we need to restore it.
-> > >=20
-> > > Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> > > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> > I only found this patch after debugging why the HDMI driver was
-> > returning -EINVAL at probe on -rc5.
-> >=20
-> > Acked-by: Maxime Ripard <maxime@cerno.tech>
-> > Tested-by: Maxime Ripard <maxime@cerno.tech>
->=20
-> Thanks,
->=20
-> does this go via clk-fixes?
+Hi,
 
-Yep, it should.
+On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
+> May I ask what's the status/plan of  this patch series?
 
-Stephen, could we merge this?
+As far as I know it hasn't been merged yet.
 
-Maxime
+> It seems it has not been merged yet, and I know we are a bit late in
+> the 5.18 schedule, but I think this is a good fix for 5.18.
 
---iiuqzltjsvoixdta
+Fix for what? I don't think this series fix any bug?
+
+> And, this looks like to be a good candidate for a backport to stable
+> kernels.
+
+This is not going to be trivial to backmerge, it depends on 12c90f3f27bb
+that isn't marked for stable
+
+maxime
+
+--l3r2s4pzbz2a6nsn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYnpoRgAKCRDj7w1vZxhR
-xXXWAP4unHPnJJ+pfUOyHlW0LlgxC5dGW9PKPQF5+/AGot2oNAEAgBckc8lfPpYH
-RQ67UzgFYAKV6AlepFjtnRlbxpQRJg8=
-=yS+i
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYnpo6wAKCRDj7w1vZxhR
+xb83AQDTO9oUjINvODOCi4t1kRbFpgIjMvT4i/6eG9pNAwEY3gEAgIzvnC92+gf9
+ht6P4tX6AijZ1uwa/NYgrOl95o+weQ0=
+=lk8a
 -----END PGP SIGNATURE-----
 
---iiuqzltjsvoixdta--
+--l3r2s4pzbz2a6nsn--
