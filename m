@@ -2,119 +2,215 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079DCC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 12:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1EEC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 13:09:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241451AbiEJMtW convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 08:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
+        id S242248AbiEJNN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 09:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234124AbiEJMtV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 08:49:21 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E239954F87;
-        Tue, 10 May 2022 05:45:23 -0700 (PDT)
-Received: from mail-yw1-f174.google.com ([209.85.128.174]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1M89XH-1njiHR09nH-005KE0; Tue, 10 May 2022 14:45:22 +0200
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-2f7d7e3b5bfso177959347b3.5;
-        Tue, 10 May 2022 05:45:21 -0700 (PDT)
-X-Gm-Message-State: AOAM5338C3Ge2AUp7+U50RmkC+gXi4PeMs60xRa2ido+KGU4J8YnREez
-        X0kypQicSq4v+3u/0Us0Wr8CsZjzRRXP4xE4GKA=
-X-Google-Smtp-Source: ABdhPJzMox01vuxEQtUfWllU9AWz/4JUx/kxnCj32RwNPwee8B5gGa7g4UyyJzXx+NUdFazIw85dXRebzWgEGBqQmRs=
-X-Received: by 2002:a81:ad7:0:b0:2e6:84de:3223 with SMTP id
- 206-20020a810ad7000000b002e684de3223mr19895862ywk.209.1652186720629; Tue, 10
- May 2022 05:45:20 -0700 (PDT)
+        with ESMTP id S232399AbiEJNNZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 09:13:25 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6AC955220
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 06:09:26 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id n10so32840275ejk.5
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 06:09:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=GY+8CojCMdOqBSOFBIYghZE3p4uLJiwb7g8ImRgX/dU=;
+        b=qLsqWbFt7LCQx0MaLfgYA2s8hsAyOOpVW5rh9DzwWbCQLNbIGdXf+F5JAY+grnNJgF
+         sBb+zqwdE6bmq3okeUZuIzZcXNrdkJXOXN+krDKNhSROug7uv2bkRgdVwR8cANiD9kk9
+         BLfNHSChZRjoUi6DlTO96a5lvuqCRTd36KWMWg3SESso0kbRMIFxUgPqiB3VTABTkQwW
+         137KeyzjeGxXgJh1BBCMMJxYMNpzVQT5QI8bPIWcGLxEv6TjCxvjpmjZcxB6sZU+2Rsu
+         HVwaN8RSnozbhzp3UBfq4nG6jZLC8bbH4yImCfFr6ChuFmcx5MUDpvqyVKF1VYgZGdLl
+         7uvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=GY+8CojCMdOqBSOFBIYghZE3p4uLJiwb7g8ImRgX/dU=;
+        b=p1wndwbE4rTW/WYpR00oM2LTjeuFvgcSkWCbdWz0D3xd8O8yuSBLCRyimVO9lW5GU5
+         DxHeAk7NT9z5U396Pctn98Q6fpjDKywPGJ42WhMOWRmCQdvPesrTAwK4MgkwcupVITr0
+         Zb1ovdcfOHCCpq0wJB1QTKrjIkcgNDgG2+8/pltujGq9DylFae6I8qHpW4C87OPO4b5M
+         F3lvpqFVzwrf9U3aVm3SZC3oHLlGbJabBcb8RUCjhpbJiOhCmuG/FHImn6+OmmABpY/E
+         b3To6QXfvm68gnpTHOnJvQYo4o/rrkn1sy9VuirUrfzC7mHo66a9z+kGBZSIApFGIbWZ
+         WGtA==
+X-Gm-Message-State: AOAM5319piItcufZ4U380JDWsOGIAMIedtfJK50HpOQQMJ3O4n+VmAer
+        78aDZanaUV/YMhb+sea+ach1IA==
+X-Google-Smtp-Source: ABdhPJyeV9V1iJhHLhwfC6K1BZ5EadKgzzBkTD1pVb1eEmEusgki6rRs5oqhoRfmG7wEJ9obJwywHg==
+X-Received: by 2002:a17:907:7d92:b0:6fd:bd33:f00f with SMTP id oz18-20020a1709077d9200b006fdbd33f00fmr1956321ejc.467.1652188165022;
+        Tue, 10 May 2022 06:09:25 -0700 (PDT)
+Received: from [192.168.0.252] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id jy15-20020a170907762f00b006f3ef214e54sm6055980ejc.186.2022.05.10.06.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 May 2022 06:09:23 -0700 (PDT)
+Message-ID: <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
+Date:   Tue, 10 May 2022 15:09:20 +0200
 MIME-Version: 1.0
-References: <20220510032558.10304-1-ychuang3@nuvoton.com> <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
- <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
-In-Reply-To: <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 May 2022 14:45:04 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
-Message-ID: <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
-Subject: Re: [PATCH V4 0/5] Add initial support for MA35D1 SoC
-To:     Jacky Huang <ychuang3@nuvoton.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        ychuang570808@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
-        cfli0@nuvoton.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:+XIeksmw5e2s0UWYrNzHMGgJ4tLqDH7geT0rzv8XgIckqj+rRkw
- HhNfYbvSyteExSSTeUJKTOaUCQJxhcHoB94MxMcHgydMXiDqG+/uCf/gXqtSQ17XF+Rd9gZ
- crUbHkWfSEBPJZP0dm/lkzNt0eGoRdhX6L0z5uuvzq8WOSc0K0rpnzRuA3JqOTSFxV0wlj2
- /NppZW8A9CytApq5ZFGNA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bPX1W1qHsbY=:VSePpeoZseoTzfT7MYBbVc
- lhPZg3bnHkNSGkn2MW0FGEQSXma/kNNFWiX4c0ryigEhNmnvY064iWYtQLRhsEn8B3HdU4TPG
- R3kg9P/X2Lt8g3vr2LQAETzhtA/GTJ7fxxRp6uooo9zN3ESRYYHXSvAkNYdOdG75q8Vf1rVoL
- w/+129PfxO4h5qW/ux6bZXYxVHK5hteCKWv7qJkm8JldZchB9v2xtIkOwTPa4DuLAU9cbL9/1
- Fo4HjqViIejewa/ejur5XWR3MqDaBrCvdojJ6pWDGF+d95CU5XcmJT0u4dhvD/2S/naahxaGx
- pcFLz5sB6/dZoRU3Li8lzOj/lan8140BCUJ0BI550divgNG00BPW7v7dKXEJ8+DRhkdArUUP/
- yTOm9/2AIK0mgOc/riWGm4v2ZBZvPwUx/oO9xpkkfVy6r5IWo4dtq2RciNZ5qR2TYwQCwIIsN
- Ylfo7aZHF4ahM1JHlB0JGE2ZmrL0wMi99nIoRjvyEdeM+3GGYjwea69KaqfIJL71q8JJJGacO
- SgZ9QFJSBiuNNCLAvf9HGFTymDhW9501QevcmVfBFaRQ52aH0Anym/arWq8zamCMYcL0ACdaH
- faycYkjriNg63Cuqdplk8+wXZe+1r4GhzhEePssc/9ev2vbBSjx5ISEx1BWNt65eIHixbNqke
- h/YBese/6EZDxPwRaEgqTElXv3qomjS6GlRqgpN1DCsHUV73Hj/qXPJgPOXwHtcwb/uo=
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Content-Language: en-US
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
+ <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
+ <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
+ <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 10, 2022 at 10:40 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
-> On 2022/5/10 下午 03:07, Arnd Bergmann wrote:
->
-> MA35D1 is target at consumer application, while NPCM is for BMC.
-> MA35D1 is equipped with ARM Coretx-A35 dual-core with the M4 co-processor.
->
-> Our team has developed Linux application on MA35D1 test chip in the last
-> year, and
-> the mass production version is wafer-out in last month. It will be
-> announced soon.
->
-> We have ported TF-A, U-Boot, OP-TEE, and Linux 5.4.y to MA35D1 platform, and
-> have provided Yocto and Buildroot distribution for beta site evaluation.
-> All the source
-> code can be found at https://github.com/OpenNuvoton/MPU-Family, include the
-> Linux 5.4.y porting on MA35D1 platform.
+On 10/05/2022 06:40, Viresh Kumar wrote:
+> On 09-05-22, 12:38, Krzysztof Kozlowski wrote:
+>> On 25/04/2022 09:27, Viresh Kumar wrote:
+>>> This is tricky as the OPP core can't really assume the order in which the clocks
+>>> needs to be programmed. We had the same problem with multiple regulators and the
+>>> same is left for drivers to do via the custom-api.
+>>>
+>>> Either we can take the same route here, and let platforms add their own OPP
+>>> drivers which can handle this, Or hide this all behind a basic device clock's
+>>> driver, which you get with clk_get(dev, NULL).
+>>
+>> For my use case, the order of scaling will be the same as in previous
+>> implementation, because UFS drivers just got bunch of clocks with
+>> freq-table-hz property and were scaling in DT order.
+>>
+>> If drivers need something better, they can always provide custom-opp
+>> thus replacing my method. My implementation here does not restrict them.
+>>
+>> For the drivers where the order does not matter, why forcing each driver
+>> to provide its own implementation of clock scaling? Isn't shared generic
+>> PM OPP code a way to remove code duplication?
+> 
+> Code duplication is a good argument and I am in favor of avoiding it,
+> but nevertheless this shouldn't be something which platforms can pick
+> by mistake, just because they didn't go through core code. In other
+> words, this shouldn't be the default behavior of the core.
+> 
+> If we want, core can provide a helper to get rid of the duplication
+> though, but the user explicitly needs to use it.
 
-Ok, thanks for the information, this is exactly what we need in the
-changelog text for the platform, and (if you send a pull request)
-in the tag description.
+OK, that sounds like a solution.
 
-> Yes, we have console device driver ready. Please refer to
-> https://github.com/OpenNuvoton/MA35D1_linux-5.4.y/blob/master/drivers/tty/serial/ma35d1_serial.c.
-> But I think we have to fix coding style and have more review on it. Is
-> the console driver must for the initial support submit, or can we submit it later?
+> 
+>>>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>>>
+>>>> +static int _generic_set_opp_clks_only(struct device *dev,
+>>>> +				      struct opp_table *opp_table,
+>>>> +				      struct dev_pm_opp *opp)
+>>>> +{
+>>>> +	int i, ret;
+>>>> +
+>>>> +	if (!opp_table->clks)
+>>>> +		return 0;
+>>>> +
+>>>> +	for (i = 0; i < opp_table->clk_count; i++) {
+>>>> +		if (opp->rates[i]) {
+>>>
+>>> This should mean that we can disable that clock and it isn't required.
+>>
+>> No, it does not mean that. The DT might provide several clocks which
+>> only some are important for frequency scaling. All others just need to
+>> be enabled.
+>>
+>> Maybe you prefer to skip getting such clocks in PM OPP?
+> 
+> They shouldn't reach the OPP core then. What will the OPP core do if a
+> clock has a value for one OPP and not the other ?
 
-I would prefer to have it included, but it looks like this has never been
-reviewed, and I can immediately see a few things that need changes
-before it can get included, so I suppose we could merge the platform
-without it.
+That would be the same mistake as providing one voltage as 0 or with
+something outside of a spec (but still within regulators min/max).
+Mistakes in DTS create undesirable behavior and this part is no different.
 
-The reason I'd like to have it included is that without any I/O devices
-it is obvious that the code you are sending has never been tested
-on the kernel version you are sending it against, and that makes it
-more likely that there are bugs.
+However I understand your point - since the driver provides the list of
+clocks to OPP, it should not provide ones which are irrelevant.
 
-If the platform for some reason does not make it into v5.19, I would
-ask you to include the serial driver in the series so we can merge
-a working initial branch for v5.20.
+> 
+>>>> @@ -969,8 +1008,8 @@ static void _find_current_opp(struct device *dev, struct opp_table *opp_table)
+>>>
+>>> I think this routine breaks as soon as we add support for multiple clocks.
+>>> clks[0]'s frequency can be same for multiple OPPs and this won't get you the
+>>> right OPP then.
+>>
+>> I don't think so and this was raised also by Stephen - only the first
+>> clock is considered the one used for all PM OPP frequency operations,
+>> like get ceil/floor.
+> 
+> IMHO, this is broken by design. I can easily see that someone wants to
+> have few variants of all other frequencies for the same frequency of
+> the so called "main" clock, i.e. multiple OPPs with same "main" freq
+> value.  I don't think we can mark the clocks "main" or otherwise as
+> easily for every platform.
+> 
+> Stephen, any inputs on this ?
 
-In the meantime, please post the driver for review to the linux-kernel
-and linux-serial lists by itself, and keep me on Cc.
+In such case, matching opps by frequency would be a quite different API.
+The drivers can use now:
+https://github.com/krzk/linux/commit/ebc31798494fcc66389ae409dce6d9489c16156a#diff-b6370444c32afa2e55d9b6150f355ba6f4d20c5ed5da5399ea8295d323de8267R1200
 
-> And thank you to remind us to create an entry in MAINTAINERS file. I
-> will add the patch in the next version.
+If you assume that this frequency can be used for multiple OPPs, then
+the API should be different. Something like:
+int dev_pm_opp_set_rate(struct device *dev, unsigned long *target_freqs,
+                        size_t num_freqs);
 
-Ok.
+Finding right opp for given frequencies would be also quite much more
+complicated task. Not a simple ceil/floor search by one frequency.
 
-       Arnd
+I don't need that use-case and my implementation does not prevent anyone
+from implementing it in the future. IOW, why developing now complex
+solution which no one currently needs? If anyone needs such scaling by
+multiple-frequencies, the PM OPP can be reworked/extended/improved again.
+
+Additionally let me point also that my implementation targets not a
+specific one driver, but actually entire subsystem of drivers - all UFS
+drivers.
+
+> 
+>> The assumption (which might need better documentation) is that first
+>> clock frequency is the main one:
+>> 1. It is still in opp->rate field, so it is used everywhere when OPPs
+>> are compared/checked for rates.
+>> 1. Usually is used also in opp-table nodes names.
+>>
+>> The logical explanation is that devices has some main operating
+>> frequency, e.g. the core clock, and this determines the performance. In
+>> the same time such device might not be able to scale this one core clock
+>> independently from others, therefore this set of patches.
+> 
+> I understand what you are saying, but I can feel that it will break or
+> will force bad bug-fixes into the core at a later point of time.
+> 
+> I think it would be better to take it slowly and see how it goes. Lets
+> first add support for the OPP core to parse and store this data and
+> then we can add support to use it, or at least do all this in separate
+> patches so they are easier to review/apply.
+
+Sure, I'll split the patch to smaller chunks.
+
+Best regards,
+Krzysztof
