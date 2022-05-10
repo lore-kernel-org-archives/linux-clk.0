@@ -2,87 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC0CC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 11:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079DCC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 12:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240821AbiEJLSj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 07:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54752 "EHLO
+        id S241451AbiEJMtW convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 08:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240781AbiEJLSi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 07:18:38 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C14222A9748
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 04:14:33 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id g20so19561296edw.6
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 04:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=4JwYfzCW0d3vVHs2chH50RoPcTXl+p2rYFHpKu+IVW4=;
-        b=AXNP3L1jlNNld+AfYDE4rCUd4CBTBuwdr0eZulRHjY3x0ZZZ3yXH/4Br+OYLJpueaF
-         E7KDyugsHlh4UZMxiMPlvzIhDCejBq4R2lfver50RZoZi9yD7tD3IQSoFCaUB81czw4Y
-         mhJkH8EtXvaOJWcrfqTwxQc4yXs5wvhqCf0QKdvURRn2bGXCi274HJKlEp8RPLcUvQVS
-         DrinH5hNknIK4NOwoVeef7GuWvtRRMvzAgMiDowny8xzM1RDDDty5NBtiL1XplmJtBQc
-         eeaJiG2zvEYyOagJg3P1pA3hCe8eHVCFYItSKsqIM1Rzmebr+avNEyYM6OSqOac44pQj
-         YatA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4JwYfzCW0d3vVHs2chH50RoPcTXl+p2rYFHpKu+IVW4=;
-        b=JRK8iJ37+3EoLr7TuiZ4sJJFiLst+QD8i/+ti4khQKv3ncSdCsH39QrX2CBsvAH9kk
-         VT6CnVxK1Ad56kiePkcxLQK78E9ewHyZJTl+BQ0A1XYvokWa+bG1s5/MvuHdNhs9Epqu
-         845K8d7WtwsxlXblTTnOEPnjSEDQ+b9SCQGX0t+zWEMxlxuEpJzssT9Sw274rRvRQapT
-         1m9GJ9ZAnMlxdaTQRElDVXWYKSvwLsnuYnkc68QQthJQH4DEU70TupuQMzTYGa+XNTOL
-         M76K9eoU6+2eaNME1KxNZN2gGZ/DSGCHpbrUhtx3gHlop77CUSJZUhF6SsDIYWSFAdjO
-         YFZw==
-X-Gm-Message-State: AOAM533UyHqSzBUWYY+VqOcIGOsjW2dFfbBo7QGg4xlYiSTlRRB8VhL1
-        HabOadH/oEG84NA5EvDrgVqhsg==
-X-Google-Smtp-Source: ABdhPJw2may85niAU8fFjZaNm8TxPW3OvlRCJXDNHwFd2/GdAFbmFc7XZO+vX1kHq7qUlyG9Cwm0Ug==
-X-Received: by 2002:aa7:dcc1:0:b0:427:e1ae:d822 with SMTP id w1-20020aa7dcc1000000b00427e1aed822mr22254333edu.353.1652181272297;
-        Tue, 10 May 2022 04:14:32 -0700 (PDT)
-Received: from [192.168.0.251] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id mm27-20020a170906cc5b00b006f3ef214e1csm6020744ejb.130.2022.05.10.04.14.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 May 2022 04:14:31 -0700 (PDT)
-Message-ID: <ea361487-60fa-f4ec-2d26-e8a2ad5590bc@linaro.org>
-Date:   Tue, 10 May 2022 13:14:30 +0200
+        with ESMTP id S234124AbiEJMtV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 08:49:21 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E239954F87;
+        Tue, 10 May 2022 05:45:23 -0700 (PDT)
+Received: from mail-yw1-f174.google.com ([209.85.128.174]) by
+ mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1M89XH-1njiHR09nH-005KE0; Tue, 10 May 2022 14:45:22 +0200
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-2f7d7e3b5bfso177959347b3.5;
+        Tue, 10 May 2022 05:45:21 -0700 (PDT)
+X-Gm-Message-State: AOAM5338C3Ge2AUp7+U50RmkC+gXi4PeMs60xRa2ido+KGU4J8YnREez
+        X0kypQicSq4v+3u/0Us0Wr8CsZjzRRXP4xE4GKA=
+X-Google-Smtp-Source: ABdhPJzMox01vuxEQtUfWllU9AWz/4JUx/kxnCj32RwNPwee8B5gGa7g4UyyJzXx+NUdFazIw85dXRebzWgEGBqQmRs=
+X-Received: by 2002:a81:ad7:0:b0:2e6:84de:3223 with SMTP id
+ 206-20020a810ad7000000b002e684de3223mr19895862ywk.209.1652186720629; Tue, 10
+ May 2022 05:45:20 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] clk: vc5: Add support for IDT/Renesas VersaClock
- 5P49V6975
-Content-Language: en-US
-To:     Matthias Fend <matthias.fend@emfend.at>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220510032558.10304-1-ychuang3@nuvoton.com> <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
+ <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
+In-Reply-To: <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 10 May 2022 14:45:04 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
+Message-ID: <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
+Subject: Re: [PATCH V4 0/5] Add initial support for MA35D1 SoC
+To:     Jacky Huang <ychuang3@nuvoton.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        ychuang570808@gmail.com, Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20220510065150.278349-1-matthias.fend@emfend.at>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220510065150.278349-1-matthias.fend@emfend.at>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
+        cfli0@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:+XIeksmw5e2s0UWYrNzHMGgJ4tLqDH7geT0rzv8XgIckqj+rRkw
+ HhNfYbvSyteExSSTeUJKTOaUCQJxhcHoB94MxMcHgydMXiDqG+/uCf/gXqtSQ17XF+Rd9gZ
+ crUbHkWfSEBPJZP0dm/lkzNt0eGoRdhX6L0z5uuvzq8WOSc0K0rpnzRuA3JqOTSFxV0wlj2
+ /NppZW8A9CytApq5ZFGNA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bPX1W1qHsbY=:VSePpeoZseoTzfT7MYBbVc
+ lhPZg3bnHkNSGkn2MW0FGEQSXma/kNNFWiX4c0ryigEhNmnvY064iWYtQLRhsEn8B3HdU4TPG
+ R3kg9P/X2Lt8g3vr2LQAETzhtA/GTJ7fxxRp6uooo9zN3ESRYYHXSvAkNYdOdG75q8Vf1rVoL
+ w/+129PfxO4h5qW/ux6bZXYxVHK5hteCKWv7qJkm8JldZchB9v2xtIkOwTPa4DuLAU9cbL9/1
+ Fo4HjqViIejewa/ejur5XWR3MqDaBrCvdojJ6pWDGF+d95CU5XcmJT0u4dhvD/2S/naahxaGx
+ pcFLz5sB6/dZoRU3Li8lzOj/lan8140BCUJ0BI550divgNG00BPW7v7dKXEJ8+DRhkdArUUP/
+ yTOm9/2AIK0mgOc/riWGm4v2ZBZvPwUx/oO9xpkkfVy6r5IWo4dtq2RciNZ5qR2TYwQCwIIsN
+ Ylfo7aZHF4ahM1JHlB0JGE2ZmrL0wMi99nIoRjvyEdeM+3GGYjwea69KaqfIJL71q8JJJGacO
+ SgZ9QFJSBiuNNCLAvf9HGFTymDhW9501QevcmVfBFaRQ52aH0Anym/arWq8zamCMYcL0ACdaH
+ faycYkjriNg63Cuqdplk8+wXZe+1r4GhzhEePssc/9ev2vbBSjx5ISEx1BWNt65eIHixbNqke
+ h/YBese/6EZDxPwRaEgqTElXv3qomjS6GlRqgpN1DCsHUV73Hj/qXPJgPOXwHtcwb/uo=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/05/2022 08:51, Matthias Fend wrote:
-> Update IDT VersaClock 5 driver to support 5P49V6975. The 5P49V6975 is a
-> member of the VersaClock 6E family and supports four fractional dividers
-> (FODs), five clock outputs and an internal oscillator.
-> 
-> Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
-> ---
->  .../devicetree/bindings/clock/idt,versaclock5.yaml    |  2 ++
+On Tue, May 10, 2022 at 10:40 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
+> On 2022/5/10 下午 03:07, Arnd Bergmann wrote:
+>
+> MA35D1 is target at consumer application, while NPCM is for BMC.
+> MA35D1 is equipped with ARM Coretx-A35 dual-core with the M4 co-processor.
+>
+> Our team has developed Linux application on MA35D1 test chip in the last
+> year, and
+> the mass production version is wafer-out in last month. It will be
+> announced soon.
+>
+> We have ported TF-A, U-Boot, OP-TEE, and Linux 5.4.y to MA35D1 platform, and
+> have provided Yocto and Buildroot distribution for beta site evaluation.
+> All the source
+> code can be found at https://github.com/OpenNuvoton/MPU-Family, include the
+> Linux 5.4.y porting on MA35D1 platform.
 
-Bindings are a separate patch, please.
+Ok, thanks for the information, this is exactly what we need in the
+changelog text for the platform, and (if you send a pull request)
+in the tag description.
 
+> Yes, we have console device driver ready. Please refer to
+> https://github.com/OpenNuvoton/MA35D1_linux-5.4.y/blob/master/drivers/tty/serial/ma35d1_serial.c.
+> But I think we have to fix coding style and have more review on it. Is
+> the console driver must for the initial support submit, or can we submit it later?
 
-Best regards,
-Krzysztof
+I would prefer to have it included, but it looks like this has never been
+reviewed, and I can immediately see a few things that need changes
+before it can get included, so I suppose we could merge the platform
+without it.
+
+The reason I'd like to have it included is that without any I/O devices
+it is obvious that the code you are sending has never been tested
+on the kernel version you are sending it against, and that makes it
+more likely that there are bugs.
+
+If the platform for some reason does not make it into v5.19, I would
+ask you to include the serial driver in the series so we can merge
+a working initial branch for v5.20.
+
+In the meantime, please post the driver for review to the linux-kernel
+and linux-serial lists by itself, and keep me on Cc.
+
+> And thank you to remind us to create an entry in MAINTAINERS file. I
+> will add the patch in the next version.
+
+Ok.
+
+       Arnd
