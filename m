@@ -2,115 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10979C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 08:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D11C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 08:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236464AbiEJIof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 04:44:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47568 "EHLO
+        id S238212AbiEJIrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 04:47:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232706AbiEJIoe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 04:44:34 -0400
-Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B5F02A1509;
-        Tue, 10 May 2022 01:40:37 -0700 (PDT)
-Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 9532E1C805AF;
-        Tue, 10 May 2022 16:40:36 +0800 (CST)
-Received: from NTHCCAS02.nuvoton.com (10.1.9.121) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Tue, 10 May
- 2022 16:40:36 +0800
-Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS02.nuvoton.com
- (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Tue, 10 May
- 2022 16:40:36 +0800
-Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
- (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
- Transport; Tue, 10 May 2022 16:40:36 +0800
-Message-ID: <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
-Date:   Tue, 10 May 2022 16:40:36 +0800
+        with ESMTP id S238172AbiEJIrg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 04:47:36 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB88F2A2F7E;
+        Tue, 10 May 2022 01:43:32 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id p8so14363991pfh.8;
+        Tue, 10 May 2022 01:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tJe6pgxZ+gDU+8TgeNG6K3G9p+pmLX8CiaYNABT14ok=;
+        b=TedREOUfNyXrWCkWsDDLkyIkxPjXKbiQIkQ1PKTrKThn+hMK5nsINWJ+EFZDslRto7
+         tHfO5GVJdxd3qo50FwUObz+/oAfA9PZrQBB/QgB+T9wYfJ3kRbg4cjAhJhnnkZWdv/Uk
+         /4Nx5z1nlpBIKQdPKn0DXXA7tqcwy4QKU7QiSGjd0cnChXRvoF1fk5/L46EsrYlMDjWS
+         r8uFJNAHgu2LDEwAwkFxjUaetRe3O0wgUUzjtt+AVL9exKHuegZLXESfGJDZzTmmaVaQ
+         Qfn9F1kG1lASqGBfyPFTM9v2nK9Dl0uQxuRjUE+cdPD+p/lmx6B5fpH/dRai65mIEm17
+         I7pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tJe6pgxZ+gDU+8TgeNG6K3G9p+pmLX8CiaYNABT14ok=;
+        b=uI9qnspr4UMC2TyRtyxoV3t9VlKgSX1uNHRGPk/Jkr7WvW45JBoaJy2tpT0VpXSe6T
+         fUTOTycvbAmib4ZZND4yqjEgpioe5xynd3qtWKFSfaiVSR+VtGAqnaqbloNgb119Qb6s
+         w5V3LlVHydzmFQqOhVrNC46yBYqY5+m7cEa1ApvOFzAqtMcZQUJgM9ehuDbIobI1XUEs
+         1ldlHtvLxus/CjzPbe7yDixKRSXML0zdCngmHfdTSRuj2YWSDNu/Pxt2jifmE0GUjDtN
+         VZ80F7/KfBWjE/bUKi7nhlnsIOm/IpS0CsO9FJiLwWrTcmDO1UNbxksjinHLAsaAX1Pv
+         0ESA==
+X-Gm-Message-State: AOAM531nFv7pmofZ48TcFbV1mVa3sZTQqe9GKS8x7jo8zwTYQ9lKncrz
+        Gli2S21xGTr4sA50UpFse/zbdOLMvD6XeTM=
+X-Google-Smtp-Source: ABdhPJy4LZ2wBmFcVLxCVuiPRPA04pxkaJK+9X0zESpKqxOMrDYn1c0omnr/27Cf2a4loSaApcij2w==
+X-Received: by 2002:a05:6a02:113:b0:3c6:4389:cd6e with SMTP id bg19-20020a056a02011300b003c64389cd6emr15731681pgb.414.1652172212151;
+        Tue, 10 May 2022 01:43:32 -0700 (PDT)
+Received: from localhost.localdomain ([144.202.91.207])
+        by smtp.gmail.com with ESMTPSA id i130-20020a628788000000b0051082ab4de0sm7935048pfe.44.2022.05.10.01.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 May 2022 01:43:31 -0700 (PDT)
+From:   Zheyu Ma <zheyuma97@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zheyu Ma <zheyuma97@gmail.com>
+Subject: [PATCH] clk: max9485: Register a callback to disable the regulator
+Date:   Tue, 10 May 2022 16:43:15 +0800
+Message-Id: <20220510084315.1706978-1-zheyuma97@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH V4 0/5] Add initial support for MA35D1 SoC
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        <ychuang570808@gmail.com>, "Rob Herring" <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
-        <cfli0@nuvoton.com>
-References: <20220510032558.10304-1-ychuang3@nuvoton.com>
- <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
-From:   Jacky Huang <ychuang3@nuvoton.com>
-In-Reply-To: <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The driver should register a callback which can disable the regulator
+when it fails to probe.
 
+Signed-off-by: Zheyu Ma <zheyuma97@gmail.com>
+---
+ drivers/clk/clk-max9485.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-On 2022/5/10 下午 03:07, Arnd Bergmann wrote:
-> On Tue, May 10, 2022 at 5:25 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
->> This patch series adds initial support for Nuvoton MA35D1 SoC,
->> include initial dts and clock controller binding.
->>
-> This looks fine in principle, but we are getting close to the merge window and
-> should finalize this quickly to make it into v5.19. I see that you don't have a
-> console device, as commented in the .dts patch. Normally I prefer merging
-> platforms only when there is at least rudimentary support for booting into
-> an initramfs with a serial console, but this is a flexible rule.
->
-> As with the changelog text for the .dts file, please explain in the [PATCH 0/5]
-> cover letter what the status is.
->
-> Regarding continued maintainership, we should discuss how you plan to
-> maintain this platform. In particular, there should be an entry in the
-> MAINTAINERS
-> file for the platform, either pointing to yourself, or adding it to the  NPCM or
-> WPCM450 entries if this chip is in the same family. Is this also a BMC
-> implementation, or is it something different?
->
->         Arnd
-
-Hi Arnd,
-
-Thanks for your review.
-
-MA35D1 is target at consumer application, while NPCM is for BMC.
-MA35D1 is equipped with ARM Coretx-A35 dual-core with the M4 co-processor.
-
-Our team has developed Linux application on MA35D1 test chip in the last 
-year, and
-the mass production version is wafer-out in last month. It will be 
-announced soon.
-
-We have ported TF-A, U-Boot, OP-TEE, and Linux 5.4.y to MA35D1 platform, and
-have provided Yocto and Buildroot distribution for beta site evaluation. 
-All the source
-code can be found at https://github.com/OpenNuvoton/MPU-Family, include the
-Linux 5.4.y porting on MA35D1 platform.
-
-Yes, we have console device driver ready. Please refer to 
-https://github.com/OpenNuvoton/MA35D1_linux-5.4.y/blob/master/drivers/tty/serial/ma35d1_serial.c.
-But I think we have to fix coding style and have more review on it. Is 
-the console driver
-must for the initial support submit, or can we submit it later?
-
-And thank you to remind us to create an entry in MAINTAINERS file. I 
-will add
-the patch in the next version.
-
-Sincerely,
-Jacky Huang
-
+diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
+index 5f85b0a32872..7f521205fd7b 100644
+--- a/drivers/clk/clk-max9485.c
++++ b/drivers/clk/clk-max9485.c
+@@ -254,6 +254,13 @@ max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
+ 	return &drvdata->hw[idx].hw;
+ }
+ 
++static void max9485_disable_regulator(void *arg)
++{
++	struct max9485_driver_data *drvdata = arg;
++
++	regulator_disable(drvdata->supply);
++}
++
+ static int max9485_i2c_probe(struct i2c_client *client)
+ {
+ 	struct max9485_driver_data *drvdata;
+@@ -279,6 +286,10 @@ static int max9485_i2c_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = devm_add_action_or_reset(dev, max9485_disable_regulator, drvdata->supply);
++	if (ret)
++		return ret;
++
+ 	drvdata->reset_gpio =
+ 		devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(drvdata->reset_gpio))
+-- 
+2.25.1
 
