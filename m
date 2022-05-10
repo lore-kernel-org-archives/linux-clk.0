@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6881FC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 10:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF1AC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 10:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240054AbiEJKwN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 06:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34740 "EHLO
+        id S240060AbiEJKwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 06:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240046AbiEJKwL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 06:52:11 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1DDE1D866C
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 03:48:14 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id iq10so15556391pjb.0
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 03:48:14 -0700 (PDT)
+        with ESMTP id S240066AbiEJKwU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 06:52:20 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632AC2689C3
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 03:48:19 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id e24so15543034pjt.2
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 03:48:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XcXvrzCKRkvMjoTglIwrmd9YHvm7gFOZru7ILwv4qWo=;
-        b=JCPl8sz3WKzAF/6JbVXUgUBrYQqRTrMd41klY8IAoo/7IqReq+ljf9XEyGlrmxQxRr
-         dwezcauH02UwkUZ3jZ58Cp9SCAWLh1sgmQhlBzymcy75BNEmjIL1VC2Nfi6679oyobk8
-         DET2xt6zupRMgcL70N/i1rms1dWfzR8l72kkA=
+        bh=BgslsEogXlKVS6YgmGBau7rB/PozAnQ9JbNWL5WvtzQ=;
+        b=eeegiiDyg8zBjp+38Ak4S2h+TENIgN+Wg1Ah92NtPSt0rViIon6zR1UebJEsrRsADM
+         HfuuLtPXcMZ2L0ggIUZqyRVeiAQcyLUBZVP778kiDr0O07iJEp3aLviSLwffxd+ddLL3
+         l5EhZeuxz/BxsbOAyGC/n5hoY4aK15q8NFlkI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XcXvrzCKRkvMjoTglIwrmd9YHvm7gFOZru7ILwv4qWo=;
-        b=4+Cnr+WE6M2iy0/UxBz+EtsUiHkk3aVTF7WXdF2Gj1bAtK91I050n/Xj7n3gI1IQJa
-         BX6wTLAH4KQv6QbClPf9FW8aGvdWq681bjbC3vwLjjAw627qsxJNcQIGt0BgdQa6soyO
-         BdZasTvQH3nNB+vBYG56uo08ImNnjy1TYvN/S6gMcW/+t5euJoV+EOv9dHy1DcsogNub
-         ZMAYTE3nGKDAKs0QoPWgin/IfFlL5tQ4Bil8rvdBgjhIsme5luZB2CLUT79/hBvhE5Vf
-         U7FS2bSriWPFd98fSNY/K89RUtbSNrpEj2fm6w66DdRF1uMyjnWxBX5KFcJ1oAda2DjU
-         HpjQ==
-X-Gm-Message-State: AOAM5300NQwGdTcqfj89QMPmB5zNay51LcB3Lw62jr7QhvImwRpzBVGu
-        cXU+yp3IFfgfyWcnh6p1sXq3Jw==
-X-Google-Smtp-Source: ABdhPJySPtnzkVDxD+u43Oe6Tq0fYqhqnm5ETuFJ0osUM/JKHVhbOY16yRdV8PxEiTwXS4avc6lRPw==
-X-Received: by 2002:a17:90b:1811:b0:1dc:8d37:b4cb with SMTP id lw17-20020a17090b181100b001dc8d37b4cbmr31065435pjb.101.1652179694256;
-        Tue, 10 May 2022 03:48:14 -0700 (PDT)
+        bh=BgslsEogXlKVS6YgmGBau7rB/PozAnQ9JbNWL5WvtzQ=;
+        b=tdtACZtpa6qlnMLaBDnKKoQFEhASFuOv1EZYgjzyHUEyaQ6OASAXYdXrdzVpfJl3lX
+         Bls1gDTHxoarLI+/++tVW5myjUgXJC832spQ4YQ0u76eg7Xf0yd7bK7zXaLYRxmp8KNp
+         8qwgV8QAd+qkAgtYUG/T9ykOssyPLSJwZdSLU49OrabFiB2CD5xNLx69t4cAr9+mM1Ap
+         I4g2OlozLgJTH08+Qf/XJT2pRwrJ2SiMevLM4MMZCTjpGUVqX9zOneblNN3xRKi60gM5
+         3mPdxJRqRBVSKqhLVPQpfgD72dWtFsthjkIpe9lrBT5EaWoZOflhrnsO9au3kc8AqvR4
+         2Y9g==
+X-Gm-Message-State: AOAM532tMyN9pTgUpmzRKXhuGold5f1Oy+Jj5AGXDpRDE/Syu0V3Yfdm
+        hcd5dztz/iGG3nb/GpCcfw6lCw==
+X-Google-Smtp-Source: ABdhPJw10UwOLp67CjDtkNkfRua2MKhIRejC2gaM1vRRb/MptjwBoEt6lU0qbuOUEwpl9bnJ0cubyw==
+X-Received: by 2002:a17:902:d896:b0:15e:fb07:ba92 with SMTP id b22-20020a170902d89600b0015efb07ba92mr14461409plz.148.1652179698922;
+        Tue, 10 May 2022 03:48:18 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:6dcd:8578:55cf:2b12])
-        by smtp.gmail.com with ESMTPSA id q9-20020a170902e30900b0015e8d4eb21esm1659691plc.104.2022.05.10.03.48.12
+        by smtp.gmail.com with ESMTPSA id q9-20020a170902e30900b0015e8d4eb21esm1659691plc.104.2022.05.10.03.48.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 03:48:14 -0700 (PDT)
+        Tue, 10 May 2022 03:48:18 -0700 (PDT)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -56,9 +56,9 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         <angelogioacchino.delregno@collabora.com>,
         linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/11] clk: mediatek: Make mtk_clk_register_composite() static
-Date:   Tue, 10 May 2022 18:47:54 +0800
-Message-Id: <20220510104804.544597-2-wenst@chromium.org>
+Subject: [PATCH v2 03/11] clk: mediatek: Convert mtk_{alloc,free}_clk_data to struct clk_hw
+Date:   Tue, 10 May 2022 18:47:56 +0800
+Message-Id: <20220510104804.544597-4-wenst@chromium.org>
 X-Mailer: git-send-email 2.36.0.512.ge40c2bad7a-goog
 In-Reply-To: <20220510104804.544597-1-wenst@chromium.org>
 References: <20220510104804.544597-1-wenst@chromium.org>
@@ -68,45 +68,95 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-mtk_clk_register_composite() is not used anywhere outside of the file it
-is defined.
+As part of the effort to improve the MediaTek clk drivers, the next step
+is to switch from the old 'struct clk' clk prodivder APIs to the new
+'struct clk_hw' ones.
 
-Make it static.
+Instead of adding new APIs to the MediaTek clk driver library mirroring
+the existing ones, moving all drivers to the new APIs, and then removing
+the old ones, just migrate everything at the same time. This involves
+replacing 'struct clk' with 'struct clk_hw', and 'struct clk_onecell_data'
+with 'struct clk_hw_onecell_data', and fixing up all usages.
 
-Fixes: 9741b1a68035 ("clk: mediatek: Add initial common clock support for Mediatek SoCs.")
+For now, the clk_register() and co. usage is retained, with __clk_get_hw()
+and (struct clk_hw *)->clk used to bridge the difference between the APIs.
+These will be replaced in subsequent patches.
+
+Fix up mtk_{alloc,free}_clk_data to use 'struct clk_hw' by hand. Fix up
+all other affected call sites with coccinelle scripts in the next patch.
+
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/clk/mediatek/clk-mtk.c | 2 +-
- drivers/clk/mediatek/clk-mtk.h | 3 ---
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-mtk.c | 23 ++++++-----------------
+ drivers/clk/mediatek/clk-mtk.h |  4 ++--
+ 2 files changed, 8 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index b4063261cf56..52bacce5dadd 100644
+index 52bacce5dadd..554c6a128460 100644
 --- a/drivers/clk/mediatek/clk-mtk.c
 +++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -183,7 +183,7 @@ void mtk_clk_unregister_factors(const struct mtk_fixed_factor *clks, int num,
- }
- EXPORT_SYMBOL_GPL(mtk_clk_unregister_factors);
+@@ -18,40 +18,29 @@
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
  
--struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
-+static struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
- 		void __iomem *base, spinlock_t *lock)
+-struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
++struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
  {
- 	struct clk *clk;
+ 	int i;
+ 	struct clk_onecell_data *clk_data;
+ 
+-	clk_data = kzalloc(sizeof(*clk_data), GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, clk_num), GFP_KERNEL);
+ 	if (!clk_data)
+ 		return NULL;
+ 
+-	clk_data->clks = kcalloc(clk_num, sizeof(*clk_data->clks), GFP_KERNEL);
+-	if (!clk_data->clks)
+-		goto err_out;
+-
+-	clk_data->clk_num = clk_num;
++	clk_data->num = clk_num;
+ 
+ 	for (i = 0; i < clk_num; i++)
+-		clk_data->clks[i] = ERR_PTR(-ENOENT);
++		clk_data->hws[i] = ERR_PTR(-ENOENT);
+ 
+ 	return clk_data;
+-err_out:
+-	kfree(clk_data);
+-
+-	return NULL;
+ }
+ EXPORT_SYMBOL_GPL(mtk_alloc_clk_data);
+ 
+-void mtk_free_clk_data(struct clk_onecell_data *clk_data)
++void mtk_free_clk_data(struct clk_hw_onecell_data *clk_data)
+ {
+-	if (!clk_data)
+-		return;
+-
+-	kfree(clk_data->clks);
+ 	kfree(clk_data);
+ }
++EXPORT_SYMBOL_GPL(mtk_free_clk_data);
+ 
+ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
+ 				struct clk_onecell_data *clk_data)
 diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index bf6565aa7319..9577084790dc 100644
+index 9577084790dc..787fdeb1bd93 100644
 --- a/drivers/clk/mediatek/clk-mtk.h
 +++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -147,9 +147,6 @@ struct mtk_composite {
- 		.flags = 0,						\
- 	}
+@@ -181,8 +181,8 @@ int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
+ void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds, int num,
+ 				 struct clk_onecell_data *clk_data);
  
--struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
--		void __iomem *base, spinlock_t *lock);
--
- int mtk_clk_register_composites(const struct mtk_composite *mcs, int num,
- 				void __iomem *base, spinlock_t *lock,
- 				struct clk_onecell_data *clk_data);
+-struct clk_onecell_data *mtk_alloc_clk_data(unsigned int clk_num);
+-void mtk_free_clk_data(struct clk_onecell_data *clk_data);
++struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num);
++void mtk_free_clk_data(struct clk_hw_onecell_data *clk_data);
+ 
+ struct clk *mtk_clk_register_ref2usb_tx(const char *name,
+ 			const char *parent_name, void __iomem *reg);
 -- 
 2.36.0.512.ge40c2bad7a-goog
 
