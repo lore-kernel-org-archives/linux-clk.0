@@ -2,164 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65EEC43219
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 15:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1504C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 16:05:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243447AbiEJP2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 11:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56546 "EHLO
+        id S244621AbiEJQI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 12:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346065AbiEJP07 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 11:26:59 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648802016C6;
-        Tue, 10 May 2022 08:14:32 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id x9so13749681qts.6;
-        Tue, 10 May 2022 08:14:32 -0700 (PDT)
+        with ESMTP id S1347092AbiEJQF5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 12:05:57 -0400
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F0AE60DBE;
+        Tue, 10 May 2022 08:58:27 -0700 (PDT)
+Received: by mail-qv1-xf2d.google.com with SMTP id f3so8584360qvi.2;
+        Tue, 10 May 2022 08:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zYeXIFwGiTGro2v4wofWCP3x3yzwe1mbrvTcoIvl73I=;
+        b=Y0UK2ZT1mss57lmKDIxKL9SOGd3b5Eo9D4CMwvWBhqJyBfYNkcPA3ujTBXvuxrNbMt
+         OHpZgN7qjIJAkRWDp2Sx2hBLVentL669y4N/u7Ozs/6DVFRpJzok3LkAEtVvi8Zt3ecX
+         f0YIWuiAGOf9fnwQOKKt/FWxyZPrRqXHWXpGEQWU0niapvFMjOxI+lApp/ePgT+txVme
+         2pktdWLQjJhBIkshQKowjn5xEb+IzT83jGrYzoPu+kV5z0kFu6loiTWemlmXrln3+ccp
+         Ka+M7x3RunfTrqOVSkosoTLZj8gnOOPhSDdAFrIwUiGFQgmZis9v4ZUP99gqR9lbbmnx
+         jbHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Vz1eJzNwX0qqlgjKghzI8UdnpqFW4v/yeEdgJ7aBooc=;
-        b=d9g9CtWKsOGR7z5n/x33vnbuP8nImZ5VYEHaN+wmNX+xmzA0AG2Lj17Hhzmp9v/r4e
-         kxWsxCd5aYsDBrvrtYcbR+h177R5jZ5eutBwK5x9W069WlEDrT41+UMymuBWmDRrHZ4n
-         jufFg8l+Mi0QydGUJQev5YUn+CPnXkUBuQXCPh6qklp4s4NAndRDzRRRHQuxgP8j0If4
-         2hlVlyocbw+OjjnQPLEbGR2Sc13/kRheMBasfRZykqLljY6WTyM1vFcBS6DaY4sEypcT
-         wL1PV79eAiJY8va8OUlarZXKbY4H5R6nbtrEdHDhua/aO4g9KczjbFnGbLxjmVAZVDS8
-         ISTA==
-X-Gm-Message-State: AOAM533anAxpbCuPpkPilS7mwGw/khHj0B8sPG6fxG9xGXJcAXt0fG1r
-        CEC6zp6Iu3Xx4ImJB4k234xIzpIuU75Z6w==
-X-Google-Smtp-Source: ABdhPJzVNRRGRMkmw0kwAOgsedCsn5kkgcEeQ+MUFnOmBdpkRZfK+cpnisqt1Z+Az080srveVc8RTQ==
-X-Received: by 2002:ac8:5bd5:0:b0:2f3:b654:694d with SMTP id b21-20020ac85bd5000000b002f3b654694dmr19934873qtb.435.1652195671013;
-        Tue, 10 May 2022 08:14:31 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id h191-20020a379ec8000000b0069fc347ef5dsm8536086qke.74.2022.05.10.08.14.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 May 2022 08:14:30 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id v59so31246334ybi.12;
-        Tue, 10 May 2022 08:14:30 -0700 (PDT)
-X-Received: by 2002:a05:6902:120e:b0:634:6f29:6b84 with SMTP id
- s14-20020a056902120e00b006346f296b84mr19243837ybu.604.1652195669937; Tue, 10
- May 2022 08:14:29 -0700 (PDT)
+        bh=zYeXIFwGiTGro2v4wofWCP3x3yzwe1mbrvTcoIvl73I=;
+        b=01Y8wor2iQ0DxolUqY0/nBbBm8n/DPn2y+Nt4p481FGj50FMsI8LnRCWWsK6ZLaJBX
+         zIFV3pUXbjcu+Uwjf3aTWO+PPZqAXx5ptwCkJd1DNbAa9cRTPd6Hw7+53XWF7aNq4FhW
+         v7rlcdR0x2APHMlBeT6zo6+6b50dD0CB0njjHVlutVDyNdjdQdJ9fB7CnK/s25qNuxPD
+         ZJtQ2zS5QywB3p1+mmk88jeUCmYI4PDdxj69IRwu3xbb1uIwipPYXYL8CJFCZ5d4Senq
+         4A27SBaMuBZw6IqBp3mE+OFw4cYi77zG8AFBArYOgxDY9Al7Fu2qp1PkW+JNOHQ5Q6Ul
+         j4pw==
+X-Gm-Message-State: AOAM5330Ho70KDHLWziaEwOYgzOj4JQ+TrOIRKHtzErQq8GtZYhAcrjw
+        nvMQj0ZFqlmSQJpFtewUbh4ooJ2KLpzYPn/ivNg=
+X-Google-Smtp-Source: ABdhPJxk+ozZLx9K+xUPrC/224lGhrrXO3Lwd9Dnf/AVoIFQ8a9K7dsFoSV3sXUhBKLlMnpf3UDsav4JXMrcfI3UtyY=
+X-Received: by 2002:a05:6214:d8d:b0:45a:fbe2:e7c with SMTP id
+ e13-20020a0562140d8d00b0045afbe20e7cmr13813421qve.48.1652198306484; Tue, 10
+ May 2022 08:58:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20220505193143.31826-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20220505193143.31826-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 10 May 2022 17:14:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVajeFy++etApUrZC4_sgFCPH76xOOb93rQWsz42i3EVg@mail.gmail.com>
-Message-ID: <CAMuHMdVajeFy++etApUrZC4_sgFCPH76xOOb93rQWsz42i3EVg@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] clk: renesas: r9a07g043: Add support for RZ/Five SoC
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+References: <20220503195605.4015616-1-robimarko@gmail.com> <20220503195605.4015616-2-robimarko@gmail.com>
+ <YnLdTIKx80wszbj7@robh.at.kernel.org> <CAOX2RU5RMra4zj-jWZFH_fev-EavsnLnjob0z4FsaYnn8cs5gg@mail.gmail.com>
+ <YnmDyDKhMlUkwJJY@robh.at.kernel.org>
+In-Reply-To: <YnmDyDKhMlUkwJJY@robh.at.kernel.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Tue, 10 May 2022 17:58:15 +0200
+Message-ID: <CAOX2RU5ZGPcH+3LspX=CPNXO+SEAHS+QqQY_+0Jh-MEzsjD4Xw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add support for IPQ8074 APSS
+ clock controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
-
-On Thu, May 5, 2022 at 9:32 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add minimal clock and resets entries required to boot RZ/Five SoC.
+On Mon, 9 May 2022 at 23:12, Rob Herring <robh@kernel.org> wrote:
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-I'm only commenting on the actual clock/reset definitions, as I expect
-the structure of this file to change...
-
-> --- a/drivers/clk/renesas/r9a07g043-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
-> @@ -151,7 +151,7 @@ static const struct {
->  static const struct {
->         struct rzg2l_mod_clk common[54];
->  #ifdef CONFIG_RISCV
-> -       struct rzg2l_mod_clk rzfive[0];
-> +       struct rzg2l_mod_clk rzfive[2];
->  #else
->         struct rzg2l_mod_clk rzg2ul[3];
->  #endif
-> @@ -268,6 +268,10 @@ static const struct {
->         },
->  #ifdef CONFIG_RISCV
->         .rzfive = {
-> +               DEF_MOD("iax45_pclk",   R9A07G043_IAX45_PCLK, R9A07G043_CLK_P2,
-> +                                       0x518, 0),
-> +               DEF_MOD("iax45_clk",    R9A07G043_IAX45_CLK, R9A07G043_CLK_P1,
-> +                                       0x518, 1),
-
-OK.
-
-Note that the register offset and bits for the IAX45 block on riscv
-are exactly the same as for the IA55 block on arm64.  Hence it
-would be an option to use the exact same values in the DT binding
-definitions for R9A07G043_IAX45_(P)CLK and R9A07G043_IA55_(P)CLK,
-and avoid the #ifdefs and duplicated DEF_MOD() entries here.
-
-I'm undecided what's the best option...
-
->         },
->  #else
->         .rzg2ul = {
-> @@ -284,7 +288,7 @@ static const struct {
->  static const struct {
->         struct rzg2l_reset common[42];
->  #ifdef CONFIG_RISCV
-> -       struct rzg2l_reset rzfive[0];
-> +       struct rzg2l_reset rzfive[1];
->  #else
->         struct rzg2l_reset rzg2ul[3];
->  #endif
-> @@ -335,6 +339,7 @@ static const struct {
->         },
->  #ifdef CONFIG_RISCV
->         .rzfive = {
-> +               DEF_RST(R9A07G043_IAX45_RESETN, 0x818, 0),
-
-Same for R9A07G043_IAX45_RESETN and R9A07G043_IAA55_RESETN.
-
->         },
->  #else
->         .rzg2ul = {
-> @@ -345,16 +350,27 @@ static const struct {
->  #endif
->  };
+> On Wed, May 04, 2022 at 10:45:22PM +0200, Robert Marko wrote:
+> > On Wed, 4 May 2022 at 22:08, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Tue, May 03, 2022 at 09:56:01PM +0200, Robert Marko wrote:
+> > > > Add dt-binding for the IPQ8074 APSS clock controller which provides
+> > > > clocks to the CPU cores.
+> > > >
+> > > > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > > > ---
+> > > > Changes in v2:
+> > > > * Correct subject
+> > > > ---
+> > > >  include/dt-bindings/clock/qcom,apss-ipq8074.h | 14 ++++++++++++++
+> > > >  1 file changed, 14 insertions(+)
+> > > >  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > > >
+> > > > diff --git a/include/dt-bindings/clock/qcom,apss-ipq8074.h b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > > > new file mode 100644
+> > > > index 000000000000..df07766b0146
+> > > > --- /dev/null
+> > > > +++ b/include/dt-bindings/clock/qcom,apss-ipq8074.h
+> > > > @@ -0,0 +1,14 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > >
+> > > Dual license please.
+> >
+> > Hi Rob,
+> > Krzysztof asked about this in v1, I have derived this off IPQ6018
+> > binding which is marked GPL-2.0.
+> > So, I was not sure if it was appropriate to mark it as GPL/BSD dual license.
+> > If you say that its not an issue to dual-license, I will gladly do it.
 >
-> +#ifdef CONFIG_RISCV
-> +static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
-> +       MOD_CLK_BASE + R9A07G043_IAX45_CLK,
-> +       MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
-> +};
-> +#else
->  static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
->         MOD_CLK_BASE + R9A07G043_GIC600_GICCLK,
->         MOD_CLK_BASE + R9A07G043_IA55_CLK,
->         MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
->  };
-> +#endif
+> Technically, you should maintain it, but I don't think 2 defines is
+> really enough to represent copyrightable work (but IANAL). I also know
+> that QCom prefers the DT stuff to be dual licensed because they've
+> raised the issue with me.
 
-Please keep a single r9a07g043_crit_mod_clks[] array, and protect the
-entries inside by #ifdef CONFIG_ARM64 or CONFIG_RISCV.
+If that is the case, then I will dual-license it and send in v4 as I
+am waiting for
+the code portion to get some comments before resending.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Robert
+>
+> Rob
