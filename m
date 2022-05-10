@@ -2,93 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4506C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 07:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6535C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 07:32:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235784AbiEJHgG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 03:36:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40320 "EHLO
+        id S237780AbiEJHgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 03:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238223AbiEJHGR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 03:06:17 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B26E89CDE;
-        Tue, 10 May 2022 00:02:19 -0700 (PDT)
-Received: from mail-yb1-f171.google.com ([209.85.219.171]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1M7s1M-1njOCR3gdG-004yY2; Tue, 10 May 2022 09:02:18 +0200
-Received: by mail-yb1-f171.google.com with SMTP id y76so29055581ybe.1;
-        Tue, 10 May 2022 00:02:17 -0700 (PDT)
-X-Gm-Message-State: AOAM533ETVQqOGd98mKKn5I3jsOydLd8pfc9K4zQhooUGt9dJm4p1/8b
-        3UeFHFMLwIhMPqCtbms+ZAofTta2br3qPE7El+M=
-X-Google-Smtp-Source: ABdhPJzCoErVlOlWP+3agvpOC/u6kgO4/gR8EykNKzu19PrW0u0Z98t99jOPlEpsD8ttySzd6YiVB2UWW4A083+k8U4=
-X-Received: by 2002:a25:cbc9:0:b0:645:879a:cdd3 with SMTP id
- b192-20020a25cbc9000000b00645879acdd3mr15923423ybg.550.1652166136461; Tue, 10
- May 2022 00:02:16 -0700 (PDT)
+        with ESMTP id S238176AbiEJHGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 03:06:02 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56ED0590B9
+        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 00:02:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mLCHvHuckQlwXW4ZWwwHw3Nk9dOLOAKMc0icziv6nOpL3d0QKRpXP1PC/8bX3M9nqWI95b1oSGVGMsC2H9Fav5wKv939z6AicKa1Nr37p62baFK1HW/eRqcFVZDA7TvCT6zQX+8yDL6SnvcE/bdWZufA40eQFyXMrnCgJs8m71pkQpCHX3zzqmBWF5yHa3c4/oHv+a0Yf4JNibxqr9QSAiYFuOB3bBH/5eTUXdGp7qfnte/fvOdboxCrVSknVq7cXEau7MuFGKyIzm7xGVDgWO9zaiNFNajG34TVmraCjapPFfPSGaOVbtbUZMMu3cvRI1Y9dAA+DCtuhs9pzyd8eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J1wlojjTEWxaYmjhqyEM0KfupfMHMwQsnjCTnAV8WgY=;
+ b=a7srzVl1oLfC97TYMmcwg1r6RX7a86G2YN74wHqvSQGpMwP6fMv8cEEfblkjIH6o/yIiL2qwsax9SNnpvbwM2s8797KosYxJo+KQ1KE/aaE0d+cjQMB9gK8maYA8npu1j9YCJVkW0lM53RzC4BPJHk47wS5VM+rc3L5u1RIiUM7VmCGXSANG6EjvCK5kb10ZMXT/rv0vgwSIQkbrieBWXUiV2n5VxorYDAMrcd6qFczsR4HedQc5eiS51wIdmntyDZAdBzU9j5H9KjYRCDG3/RQIs5L6G+aAA7AE31b4fKSprjqEfCmZdrqUGKpRUlZAvW+nCE9XEkZuvNsdHfBPhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J1wlojjTEWxaYmjhqyEM0KfupfMHMwQsnjCTnAV8WgY=;
+ b=NNPTS9SAtmTjMbkqulroNvIQOxK0woJYJSWWOtekY/4Msu5i55X3WspT9LkZb7Go6TXp6bHcLsWjcwAEj+9SyuYDkJYrU33AiQfkLKcgUE4OL80HItYm0GdvwR+XlDRzBhD+X/lL6zvPVTtuNxqaRs4wPlJQKqhdNFmIFl0LCLg=
+Received: from DM6PR07CA0080.namprd07.prod.outlook.com (2603:10b6:5:337::13)
+ by SN6PR02MB4446.namprd02.prod.outlook.com (2603:10b6:805:ab::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.22; Tue, 10 May
+ 2022 07:02:02 +0000
+Received: from DM3NAM02FT054.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:337:cafe::d3) by DM6PR07CA0080.outlook.office365.com
+ (2603:10b6:5:337::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.20 via Frontend
+ Transport; Tue, 10 May 2022 07:02:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT054.mail.protection.outlook.com (10.13.5.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5227.15 via Frontend Transport; Tue, 10 May 2022 07:02:02 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 10 May 2022 00:01:58 -0700
+Received: from smtp.xilinx.com (172.19.127.95) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Tue, 10 May 2022 00:01:58 -0700
+Envelope-to: git@xilinx.com,
+ linux-clk@vger.kernel.org,
+ sboyd@kernel.org,
+ mturquette@baylibre.com
+Received: from [10.140.6.59] (port=57472 helo=xhdshubhraj40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <shubhrajyoti.datta@xilinx.com>)
+        id 1noJsc-00083z-6e; Tue, 10 May 2022 00:01:58 -0700
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <sboyd@kernel.org>, <mturquette@baylibre.com>, <git@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 0/2] clk: zynqmp: clock fixes
+Date:   Tue, 10 May 2022 12:31:52 +0530
+Message-ID: <20220510070154.29528-1-shubhrajyoti.datta@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20220510032558.10304-1-ychuang3@nuvoton.com> <20220510032558.10304-4-ychuang3@nuvoton.com>
-In-Reply-To: <20220510032558.10304-4-ychuang3@nuvoton.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 May 2022 09:01:59 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1tbvE+PTB-qy2y7o3_i3VP0zkgMueDy3zBd64BsGKssw@mail.gmail.com>
-Message-ID: <CAK8P3a1tbvE+PTB-qy2y7o3_i3VP0zkgMueDy3zBd64BsGKssw@mail.gmail.com>
-Subject: Re: [PATCH V4 3/5] arm64: dts: nuvoton: Add initial support for MA35D1
-To:     Jacky Huang <ychuang3@nuvoton.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        ychuang570808@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
-        cfli0@nuvoton.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:41uXJV8ZDI63xzuVbY8paB13ziPpltqOnktwNglwfUmNJw9cwCd
- 5P5mu20L/Nj1xc8WlYqCwvAtU+g/vFs7tbrlxZxKacQTrJIa434jFkbAQTSRxmbOa8wx3qA
- PTGOpcRLTwidHUrxL/WFup/F9NkJjUsJ1A79nwzzRNgynnIp3dB3zvvkyjGmL+sk0Jbe66W
- JorYpPblV4AbPGXK6o7YA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EywyeRWjnAM=:tgppNxSMe33OniewTBHltP
- sdTFdQQeI4ME11si5cRlTj8pqdF21LRzNVODnHZJTYonX/jKI4dt3kV1l5pGSfPgDcg4Yi5pm
- F4yngPZPg55zwDBCOAyFgcqTtidatGFt98rNZMfUOiy7U5IxFcmrbl4dfTf3R9pGyBHmuTjco
- ZF2p9tmplFKS37hwWL2zChcEExR9UkXrSJY8IkGoOozZHL2CUjNp9QLBBSqcFdDEKdnLGVKO0
- pmu2ZCvbbM2IYYX+UwoRM0Kad/77LkRDNWJCpFtZO7/SeahAwg7K5JyhuJ0xi9VQMiusB9n6C
- fNjCog6hWmmqmtLph55AGx0aBcPJxZzLMmotvyLmedU15Eo7b+VT/o87qEjVFWqc+IzX4/Y+S
- Ul5uVdzNhaiLsrjRheSC5cvJYmuNzOrGqGLSyV3g8zA1lo9SItndZnex4CSmr4BI+FjCZmKJl
- wSdIF2o83cmogKKZxdihAJCGGEmqNGLc5SMoME7T10fg+6emYUSAB7sXWMLErSCbol5A8P0d/
- M/PVqAnlTrWHwpZFe8bEvEw01YJPaberRT4nHnLnS7xwwT8Rff+jBn+Tn01NbtleAdK54+pS1
- qwJw6sBbbpZQoGa5DqvzFR4l7iQHSwVZlsyfj1rCTwgPsS7aSIwZ1PC93Us17D/mxS0+sDvrt
- ufOzQNe30mZ7+zv2f506yzooqzxSB30NuK+Kp8DhYHrLH6QL17L1H9+ZgMBpeiEtl+nC0DLvy
- xOvkVHyJoRHuxBgal47FNPOVMogUx4oBdVw7yNw1YAORqXVHnKfddA+9jq/cU6Ikoly7uexoA
- 0bn3ObIxyt1W4I2uDU3dsn2H+9hQmzXk/Bmj/8AApXSfu+1/Uk=
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fd83564c-0bbc-4bbc-2c22-08da3252fc01
+X-MS-TrafficTypeDiagnostic: SN6PR02MB4446:EE_
+X-Microsoft-Antispam-PRVS: <SN6PR02MB4446BBACA154410624385D38AAC99@SN6PR02MB4446.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cZdmIfsvcgLtt5sSoMM/+L/bwxnUPE1dbVsEBMJPrZhOg8lnM4NGlFVLaLjdKfj0YeuptA5idAD9YBYC18v/JZbrQLkN8Av6CCvYBQXfyrxALn0jxMs/2z1mrF0Fehuhu8C7Cer6N/OPW7BktWM2rmf2PlqFndGBKQcB/iLP7Ts6cc8LRvTiksimRs/SGSDcmwLABOH+RBODotKPjHypR3L6F6KPfSaNr63nWjFq6rVmf+xQS2Q8jjxxdLVYodDg/YmgVxA8Pv1rQ3r6IB8phQa+jRbi+ztaU2H1ZwvXvCYnQ3wKlMbyZdzgGEyVeo7Wv1JpjcmgJZKQyRj3VxX82qu5e5NV7q+viM19uGyj/Ootq0hjo/9sA4qBynBrh8RDXiyoS6ka0aT/F259Yzo6ICa+K5YiAdlCOqkc6MIfTjE7ThBpg8g6df1KMH4iUFVggcAvNgMgSMoPe2tjj82GTk19Q6i3N6R+QV2Y61tT8PsANNAUuCgn2YENGRyazDheXJsALdDDLNz+0j8yXMTnVgzClAtop4LDyuMFbXnsPM4BjBNUY8YD+hArUXISCQlnHfn3Dd8jjD5lq6i2DWRu1WGiLlwTEU/S19wrkGQdRF19fujTeu59LAJJsREfVqdn+heOYmM6GPZC0rznl7MJ9Urujk0X7/EElB6pi8BHjDlPoDOIKCNM0KeI0kbDL5gGs/NUyEl0Qw6UMM7pDLPQLQpEnmraAcy6D9ntP2dFfHjwqt5aztf7tmGlvFvYKROQzzoJ4ZzUSaQ5arCdIboVgiH5CbVYpN5splktWHMOSu342ty+5oYe2DQTyQeJQ3mD73EXwqzlb5Czsm1VAtdGmQ==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(356005)(54906003)(966005)(6916009)(7636003)(36756003)(4326008)(45080400002)(6666004)(7696005)(316002)(508600001)(9786002)(2906002)(40460700003)(82310400005)(186003)(8936002)(44832011)(4744005)(26005)(1076003)(70586007)(70206006)(5660300002)(107886003)(2616005)(36860700001)(8676002)(336012)(83380400001)(426003)(47076005)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2022 07:02:02.2051
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd83564c-0bbc-4bbc-2c22-08da3252fc01
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT054.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4446
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 10, 2022 at 5:25 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
->
-> Add the initial device tree files for Nuvoton MA35D1 Soc.
->
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
-> +
-> +/ {
-> +       model = "Nuvoton MA35D1-EVB";
-> +       compatible = "nuvoton,ma35d1-evb", "nuvoton,ma35d1";
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
+Below are the 
+As part of discurssions on [1] there was a suggestion to use
+strscpy. Which is implemented in [2] and [1] null terminates
+the string.
 
-Something seems to be missing here: you set the console to the serial0
-alias, but that is not defined anywhere, and the ma35d1.dtsi file does not
-appear to define any UART at all. Are you still missing the driver for this?
+[1] https://www.spinics.net/lists/linux-clk/msg60795.html
+[2] https://lore.kernel.org/all/DM6PR02MB6635E9F94E9A5FFC06188EF2AAAF9@DM6PR02MB6635.namprd02.prod.outlook.com/T/
 
-Please add a more detailed description in the changelog text above that
-explains what kind of SoC this is (maybe a link to the product web page,
-if there is one), and a status of how complete the support is: which drivers
-are already merged, and which ones are still being worked on?
+Ian Nam (1):
+  clk: zynqmp: Fix stack-out-of-bounds in strncpy`
 
-        Arnd
+Shubhrajyoti Datta (1):
+  clk: zynqmp: Replaced strncpy() with strscpy()
+
+ drivers/clk/zynqmp/clkc.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
