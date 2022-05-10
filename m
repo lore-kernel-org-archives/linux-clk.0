@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9AEC4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 16:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BC5C4167E
+	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 16:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346903AbiEJQI7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 12:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37474 "EHLO
+        id S1346941AbiEJQJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 12:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348603AbiEJQIf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 12:08:35 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5312B13D161;
-        Tue, 10 May 2022 09:01:50 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id l18so33861678ejc.7;
-        Tue, 10 May 2022 09:01:50 -0700 (PDT)
+        with ESMTP id S1348705AbiEJQIo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 12:08:44 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410F2C5E74;
+        Tue, 10 May 2022 09:04:46 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id g23so20579005edy.13;
+        Tue, 10 May 2022 09:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EqfTDC353GLsDvNcrZgvTiZW+2lUoz+eRprH8eNFPA8=;
-        b=dpVuWwcgUcM5zqnDtFUaCCoFjMVcV3oHaZDBTrk6EUwWMspJolvJQleW+H19wZNcjq
-         2W5Cho1zSzuc3E9yT/AoCLYWj82CAOEBmG2ifxaythmJcBlaJBV8LetFGAWZIokbXQaE
-         bTUEbfY1kjZcj+o0tRylrvQTvzUYPH6BxM0EyeCE6XDiPzYdZLN8zLyBT+ElKYpXj4zh
-         jbUM7AD8NH2c9X4r54DK3W1QimWMHnUsSSHiIFrjDzmDPq1AQ0sCee9a2Gb/vR0BgZDV
-         ZA47XGnFOsxdYR5AzgG5RHB/LzlJ3oAOXzY2NKcE2stDycGeDUS4iT/+wuCg1ZLcjqjt
-         wzoQ==
+        bh=NHtZM18t8DQNsNApHyAs0/7e3iISzkrkeTn6Pi0Mn0o=;
+        b=BXwAnvdFPsC4hny0qi1pNI1khkfE+C3JlNrJR4CxOlZf3wRiqJo5+WQifmmkuPgXzI
+         ZYRZ7nh9HFeiE6vCKsQvA57CmmXQ4HV893XMTNfBGxFU/HCnNm6gYcGG4jUIEqGTe/dg
+         7C/wfM31sZxYbavGx8UtjaaXqsMAMVEBGNAfSfpdvPPo+/O5GenlOulyEw++6YVWr/w6
+         XAeeDVj/1rgFdGGVodi9pJ18wjAuFP/6DDIqukjVtaDY+Y3RjubRAs2vp2zcwoZm6h6N
+         mISoU9g0wEh4xFvVpWNqZQRrRgsheT6tqLIUy+bKn9zMbSgyy7leQRkrLHcuojp3Pv7n
+         OhpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EqfTDC353GLsDvNcrZgvTiZW+2lUoz+eRprH8eNFPA8=;
-        b=8AXE8yeSIjNWRT5IfVANjK8uq+sPmXEuhHXo/ggwSDWy/UjmrU55N0RtbJUdYcgHZf
-         kRnjP18xyVWh3mYA8ZNHTjGuOlKDJZ1Xp2wvjTaZe/kbdonFMJYdsvqTFZTmJDsFFDIr
-         XyFac+wfNE/90zuL23TgKLoyD1RFFL4I04hb/j1GWSA+CID7Lni4MILRu8/vReoZr+g0
-         868ZeyL8Kig2p9U4paASagqZHYcVc4ppA6+Bc+U+Zr1S6ei0IbtNbLnLQ8l/j/3Sh7R+
-         GIfQjKAzMY2kESZP5p89yzNgHM6Mc5YtxlhNWC8KC4csLDYh4qSB8zsRdMO0JVVAC1VZ
-         8PHw==
-X-Gm-Message-State: AOAM532xlu89lmsw7rEeBGtM97EQzV9aSCxAp+RQ/WOTx0LDk7kKxslU
-        wD6j8+9/vGA5JBD3McPe86c=
-X-Google-Smtp-Source: ABdhPJwsis+9enK178aIGFG/FWBnbyF5jUpAiVf85TOAowkkBbTHtW9k1yTSHI+/ZEHBvlR3A1NONg==
-X-Received: by 2002:a17:907:a40d:b0:6f3:d1e4:9d7b with SMTP id sg13-20020a170907a40d00b006f3d1e49d7bmr20416189ejc.69.1652198506318;
-        Tue, 10 May 2022 09:01:46 -0700 (PDT)
+        bh=NHtZM18t8DQNsNApHyAs0/7e3iISzkrkeTn6Pi0Mn0o=;
+        b=KyAUd3EFxXk1uZwReYkcsDKxWXSdhOugmzcM728huar3Q2wy6OX5R//WJP8E1NcVSm
+         7k+ivXtjwh57cQf7tONb0x7dEO5zuAkg/RQsjTFlzUZ3nidesVbbn10vfp7y7hnCtY5B
+         yprv3K5wkfelrXQsdgzrZEG3sd6ZTSuJhk9hvFl4K3NkHZeT54fUB5zErROfPSNOD3J2
+         UGF4ScyfGW/71bQWc+hdvk1ZccymbtlRy4zQZbT8G+K5Oc1QfaWa2VcdPk11VMWvsM+3
+         ucL0fMtPN9FKRnzmMNfH42xmH7TJ7DcLhWJBVEu0UhoyZpYBy3xQL38ohc1+DZ4OayvV
+         xSQA==
+X-Gm-Message-State: AOAM532cV9XciFYXCGhBuIACySQyeZyeQk4RZI4100zESfiqZRX5KsyX
+        esTMMXtQRecc7TBoQsNfbPg=
+X-Google-Smtp-Source: ABdhPJykNMZNjzYKtX/dEYFt3Qt4Q3WG5F+Xgk9V2ZLgrQhURA3fIgTfuUpvx5C7D1kLq+dOh6EQMA==
+X-Received: by 2002:aa7:ca0d:0:b0:428:90ee:322c with SMTP id y13-20020aa7ca0d000000b0042890ee322cmr14647593eds.100.1652198684791;
+        Tue, 10 May 2022 09:04:44 -0700 (PDT)
 Received: from localhost.localdomain (89-38-99-188.hosted-by-worldstream.net. [89.38.99.188])
-        by smtp.gmail.com with ESMTPSA id hg8-20020a1709072cc800b006f3ef214e24sm6256290ejc.138.2022.05.10.09.01.41
+        by smtp.gmail.com with ESMTPSA id l21-20020a1709062a9500b006f506ed0b42sm5772791eje.48.2022.05.10.09.04.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 09:01:45 -0700 (PDT)
+        Tue, 10 May 2022 09:04:44 -0700 (PDT)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Andy Gross <agross@kernel.org>,
@@ -56,8 +56,7 @@ To:     Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Loic Poulain <loic.poulain@linaro.org>
-Cc:     Yassine Oudjana <yassine.oudjana@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
         Martin Botka <martin.botka@somainline.org>,
@@ -66,10 +65,10 @@ Cc:     Yassine Oudjana <yassine.oudjana@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/3] dt-bindings: clk: qcom: msm8996-apcc: Add CBF
-Date:   Tue, 10 May 2022 19:58:56 +0400
-Message-Id: <20220510155855.812518-1-y.oudjana@protonmail.com>
+        Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: msm8996: Add support for the CBF clock
+Date:   Tue, 10 May 2022 20:02:12 +0400
+Message-Id: <20220510160212.812696-1-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220510155744.812471-1-y.oudjana@protonmail.com>
 References: <20220510155744.812471-1-y.oudjana@protonmail.com>
@@ -79,51 +78,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yassine Oudjana <yassine.oudjana@gmail.com>
+From: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-Add CBF clock and reg. This breaks the ABI and requires existing
-device trees to be updated, which will be done in a later patch.
+Add the CBF PLL register to the kryocc node and assign a frequency
+to the clock.
 
+This makes sure the core cluster interconnect is running at a decent
+speed, so that it's no longer a pain to use the device with all cores
+enabled.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 Signed-off-by: Yassine Oudjana <yassine.oudjana@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/qcom,msm8996-apcc.yaml   | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
-index a20cb10636dd..325f8aef53b2 100644
---- a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
-@@ -10,8 +10,8 @@ maintainers:
-   - Loic Poulain <loic.poulain@linaro.org>
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 205af7b479a8..51ae3cbe75d3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -2698,7 +2698,10 @@ apss_merge_funnel_out: endpoint {
  
- description: |
--  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for Power cluster
--  and clock 1 is for Perf cluster.
-+  Qualcomm CPU clock controller for MSM8996 CPUs, clock 0 is for Power cluster,
-+  clock 1 is for Perf cluster, and clock 2 is for Coherent bus fabric (CBF).
+ 		kryocc: clock-controller@6400000 {
+ 			compatible = "qcom,msm8996-apcc";
+-			reg = <0x06400000 0x90000>;
++			reg = <0x06400000 0x90000>, <0x09a11000 0x10000>;
++
++			assigned-clocks = <&kryocc 2>;
++			assigned-clock-rates = <1382400000>;
  
- properties:
-   compatible:
-@@ -19,7 +19,9 @@ properties:
-       - qcom,msm8996-apcc
- 
-   reg:
--    maxItems: 1
-+    items:
-+      - description: Cluster clock registers
-+      - description: CBF clock registers
- 
-   '#clock-cells':
-     const: 1
-@@ -49,6 +51,6 @@ examples:
-   - |
-     kryocc: clock-controller@6400000 {
-         compatible = "qcom,msm8996-apcc";
--        reg = <0x6400000 0x90000>;
-+        reg = <0x6400000 0x90000>, <0x09a11000 0x10000>;
-         #clock-cells = <1>;
-     };
+ 			clock-names = "xo";
+ 			clocks = <&rpmcc RPM_SMD_BB_CLK1>;
 -- 
 2.36.0
 
