@@ -2,65 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B05C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88347C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245351AbiEKPBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 11:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
+        id S245370AbiEKPBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 11:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245504AbiEKPBX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:23 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4E931DFF;
-        Wed, 11 May 2022 08:01:21 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id n10so2271298qvi.5;
-        Wed, 11 May 2022 08:01:21 -0700 (PDT)
+        with ESMTP id S245513AbiEKPB1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:27 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF8824967;
+        Wed, 11 May 2022 08:01:25 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id k2so2189268qtp.1;
+        Wed, 11 May 2022 08:01:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Ocj5V1R4ifR3GEVhPfDRyP1I/Y6r02zd9DJpazO+vcc=;
-        b=R3AnWGneJSrwRojHEzs+rDub3VWTmhlKRgjZficmVLIVjzQrmIXOyhMlSA+RNkfVtM
-         AFW9hSLnb+T66FyTWg8v533eZkUGl/XH0w6gneWnUsucvG5zk2CqVEVNfr0lRURfzdsb
-         LGpZx2XkXoNFzTldtCOGeQ61n1LPeUUf0a22l1+U0vlXrXBaJMw9SWyHj5AM1eCs3vfv
-         ANxIdADtTwaMlojsAhWstTW1L0FQsfPh4T71/CD4quaVz20bMe4K94QC9/dKb1m6a3oI
-         LDwUjcRwd4U+CFSGop/sA96X10J5PEpC7GAqKtIp7GtsoSMNWGbDnJ2QKIfMgzZ6CluO
-         3yZA==
+        bh=ipDuBEhFw2DyeLXG/FGMhARGVjkT9bgP/MDyzET/qKc=;
+        b=VqceqPLS+1htYwbnkdB1KBG2uG8SPVKbSfknbCr7putJwxx2cf4O1v6nSo207w8Kfk
+         mRwrH00M1xaanbcOw8aB6vSJfgrOybPgim2cr4NaasjycYeaOsZy/RM3naCj5jy8hl44
+         UHIJ8TFs9MghONZDytS/GtSeZYibpyRbzeXrzHHeCbqCAK6ThohEfj6Fyw7tPU49UKs3
+         Md+mXvivlDeSsQkXR7b1yuJskVs7+nMz9LUOoBQ8gkX0lcOHu8nO1joX3gtpEfhg+0/O
+         9FKWuMrl78hOvqVRXoLP6dPaeZWs53md1YdoqzeYomqSXNMBnNLu7CkkGiagycu9Or43
+         FZ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Ocj5V1R4ifR3GEVhPfDRyP1I/Y6r02zd9DJpazO+vcc=;
-        b=Wqbrgp2lOhYUUFwGFjnqWpEWsVwgZtmkJScL4wF7gvvlNh6AL1TLXmqQo5Y15BL35h
-         BtA46gzv+ABJhDvQZwEctBMnCv0zO1zsrmGgmwZd803BxRCf3ZofHeFctgTS2AmlFvC/
-         vovSRNjV/4MHtD3/kqmWI5MYdkfdaDgr6/f4P+HjXamA28NkbyDGhYfOg1rB+v/eGTAh
-         k5W2AjJ1ClODmqgXksGwW5M9IS7Btq+Ur2YvU7HY7VrTCi56++z27BqR6nId6WDKcy2u
-         R5sZsoaFGecg0SI2B06JTYEINsEr+qhk0JvbCG2+uVjFOuhatyBQtsn1k4K+z0H6wEft
-         xU5w==
-X-Gm-Message-State: AOAM532nPo4b0rXY67eYiOxIP6vt5NSCXvxVn7v+uENPHZeV8Stq8oTA
-        HqJvw77ZmWAcPI+JGreZn6k=
-X-Google-Smtp-Source: ABdhPJwRTBO6xSgCqxxLRIYnj5Gs2ENLGS7w8UvQ3g43LWvgE7ieEfSxxAsHPNP68tqkvCipMvshww==
-X-Received: by 2002:a05:6214:2503:b0:45a:a294:510e with SMTP id gf3-20020a056214250300b0045aa294510emr22162937qvb.49.1652281281039;
-        Wed, 11 May 2022 08:01:21 -0700 (PDT)
+        bh=ipDuBEhFw2DyeLXG/FGMhARGVjkT9bgP/MDyzET/qKc=;
+        b=B7ByMtKvKmzjH5khOwlX/JEUYwy3QjoEtVTurYZrODUfIVAlkIoYkl3YdzyONizno3
+         FmHJrgKU+ztOs0y0c4++S+ZNtH4D4rQHlG8yqt/3SIxdFaXiCzlOgei6qMLWuB7D6O8s
+         FksRc9C0WbCOGOjuU2f4I7ehZoZbO5eQryhmAsrBfh6JMLFwp0zScD6VEHA81sTZAAO+
+         9OOPjeW+ihiOXkwzAXkRKMxXmp6G1pZn7hlxmc0E9zxJvpNsYBa02DbsLb6LZFM8RWx7
+         QuhPM6Xa4sPuJGg1tIn2OTAp75uCVVmvS2loiYo3eMcUYw+GWlTeeFwg0RmwBBIU9hfR
+         DPSQ==
+X-Gm-Message-State: AOAM530l1OCSEKI2iuuY3zPpppK3yWXTcc4mTjn4ciUeZglAh++u2W1L
+        0SG/AuD7pgnGUzzWHLh5bm8=
+X-Google-Smtp-Source: ABdhPJxQDBcvlYHhaql84573qZ07O8V9rUoBzOAlGDd772zbH2KQTV4gZdCmubxlDvAK9RPHKFpbtA==
+X-Received: by 2002:ac8:5fc9:0:b0:2f3:9bc9:e174 with SMTP id k9-20020ac85fc9000000b002f39bc9e174mr24002632qta.51.1652281285192;
+        Wed, 11 May 2022 08:01:25 -0700 (PDT)
 Received: from master-x64.sparksnet ([2601:153:980:85b1::10])
-        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.20
+        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 08:01:20 -0700 (PDT)
+        Wed, 11 May 2022 08:01:24 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>
+        Heiko Stuebner <heiko@sntech.de>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH v1 1/6] dt-binding: clock: Add missing rk3568 cru bindings
-Date:   Wed, 11 May 2022 11:01:12 -0400
-Message-Id: <20220511150117.113070-2-pgwipeout@gmail.com>
+Subject: [PATCH v1 5/6] arm64: dts: rockchip: enable sdr-104 on sdmmc
+Date:   Wed, 11 May 2022 11:01:16 -0400
+Message-Id: <20220511150117.113070-6-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220511150117.113070-1-pgwipeout@gmail.com>
 References: <20220511150117.113070-1-pgwipeout@gmail.com>
@@ -70,38 +67,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The rk3568 cru requires a clock input and a phandle to the grf node. Add
-these bindings to clear some dtbs_check warnings.
+Now that we have working io-domain support, we can enable higher date
+rates on the sdmmc card.
+
+Before:
+Timing buffered disk reads:  68 MB in  3.08 seconds =  22.07 MB/sec
+
+After:
+Timing buffered disk reads: 188 MB in  3.02 seconds =  62.29 MB/sec
 
 Signed-off-by: Peter Geis <pgwipeout@gmail.com>
 ---
- .../bindings/clock/rockchip,rk3568-cru.yaml         | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-index b2c26097827f..fc7546f521c5 100644
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3568-cru.yaml
-@@ -34,6 +34,19 @@ properties:
-   "#reset-cells":
-     const: 1
- 
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: xin24m
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to the syscon managing the "general register files" (GRF),
-+      if missing pll rates are not changeable, due to the missing pll
-+      lock status.
-+
- required:
-   - compatible
-   - reg
+diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+index 991b7b1b8443..71df64655de5 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+@@ -582,6 +582,7 @@ &sdmmc0 {
+ 	disable-wp;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
++	sd-uhs-sdr104;
+ 	vmmc-supply = <&vcc3v3_sd>;
+ 	vqmmc-supply = <&vccio_sd>;
+ 	status = "okay";
 -- 
 2.25.1
 
