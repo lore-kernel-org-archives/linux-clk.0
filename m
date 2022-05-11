@@ -2,97 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88347C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7060AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245370AbiEKPBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 11:01:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51742 "EHLO
+        id S245264AbiEKPBr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 11:01:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245513AbiEKPB1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:27 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EF8824967;
-        Wed, 11 May 2022 08:01:25 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id k2so2189268qtp.1;
-        Wed, 11 May 2022 08:01:25 -0700 (PDT)
+        with ESMTP id S245506AbiEKPBX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:23 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED73032061;
+        Wed, 11 May 2022 08:01:21 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id c8so2255491qvh.10;
+        Wed, 11 May 2022 08:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ipDuBEhFw2DyeLXG/FGMhARGVjkT9bgP/MDyzET/qKc=;
-        b=VqceqPLS+1htYwbnkdB1KBG2uG8SPVKbSfknbCr7putJwxx2cf4O1v6nSo207w8Kfk
-         mRwrH00M1xaanbcOw8aB6vSJfgrOybPgim2cr4NaasjycYeaOsZy/RM3naCj5jy8hl44
-         UHIJ8TFs9MghONZDytS/GtSeZYibpyRbzeXrzHHeCbqCAK6ThohEfj6Fyw7tPU49UKs3
-         Md+mXvivlDeSsQkXR7b1yuJskVs7+nMz9LUOoBQ8gkX0lcOHu8nO1joX3gtpEfhg+0/O
-         9FKWuMrl78hOvqVRXoLP6dPaeZWs53md1YdoqzeYomqSXNMBnNLu7CkkGiagycu9Or43
-         FZ9w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BpLpbA3cEdZdB5NVHaxdX/JjV/xBP+7WcQWXCx8dzmk=;
+        b=dfkMKQIkw1w9JLBk+Cr9V+7ivJKDpHfFtDTkU6lDsIntJczt3c5Xz5BafK1gXJTWpz
+         TyTzxFQjmXdpFvjA/VHnhH44E/xZD70Iy19Iv2NzZMhOpjefhYxyk544Wk+KSjkee1Hw
+         LAz/R00EkZVzbntXyEvPycJCSuc8vx0vGwgep51yVYHlNdLzmbhePKhUmTC9wTIZ7PdY
+         VZzaInuDI66tSv1I4g6gub1uYBQjYorE9s2AE6z5c8qVDGhe7zz8P4SpWcOBKZuFyVbd
+         Myopgc8sGJj00qUA/IZtilWM6AHrTbOMNGAQqls5aMn0ZYMaiiLrfYOkNveLEhRljUNh
+         AeLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ipDuBEhFw2DyeLXG/FGMhARGVjkT9bgP/MDyzET/qKc=;
-        b=B7ByMtKvKmzjH5khOwlX/JEUYwy3QjoEtVTurYZrODUfIVAlkIoYkl3YdzyONizno3
-         FmHJrgKU+ztOs0y0c4++S+ZNtH4D4rQHlG8yqt/3SIxdFaXiCzlOgei6qMLWuB7D6O8s
-         FksRc9C0WbCOGOjuU2f4I7ehZoZbO5eQryhmAsrBfh6JMLFwp0zScD6VEHA81sTZAAO+
-         9OOPjeW+ihiOXkwzAXkRKMxXmp6G1pZn7hlxmc0E9zxJvpNsYBa02DbsLb6LZFM8RWx7
-         QuhPM6Xa4sPuJGg1tIn2OTAp75uCVVmvS2loiYo3eMcUYw+GWlTeeFwg0RmwBBIU9hfR
-         DPSQ==
-X-Gm-Message-State: AOAM530l1OCSEKI2iuuY3zPpppK3yWXTcc4mTjn4ciUeZglAh++u2W1L
-        0SG/AuD7pgnGUzzWHLh5bm8=
-X-Google-Smtp-Source: ABdhPJxQDBcvlYHhaql84573qZ07O8V9rUoBzOAlGDd772zbH2KQTV4gZdCmubxlDvAK9RPHKFpbtA==
-X-Received: by 2002:ac8:5fc9:0:b0:2f3:9bc9:e174 with SMTP id k9-20020ac85fc9000000b002f39bc9e174mr24002632qta.51.1652281285192;
-        Wed, 11 May 2022 08:01:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BpLpbA3cEdZdB5NVHaxdX/JjV/xBP+7WcQWXCx8dzmk=;
+        b=PQiZ6/QU431N+AqSIkasYbMlSHppL1Loty7Hl8vfKQ3A11xztrjaefMscT0s0CJgbZ
+         +ZUDC/NnNbK3WzkfeR1lGvKQ+Ea6ph+aONnXRoLHYWHtXo31qA0m7NHKj3EXr8FWLIBF
+         u43ryUQA+RoSTBMCmo0Kbgp/YyhNrPomg7cPgp7C+QrHY/Ilrs4dGaP1ow/3te/xwna6
+         szE4aW7x9tqQlFy9hY0wzBB4zBkUp+6gz1Kxa99pcU/kNL5X9Pu7DxetFllfnOnmGqrW
+         Zh/QvgLsLsAFUAbr0CLw4DEEPTVDaxc/JPdFyvl2RDwYMRtdwyEL9jNta/cmzqcPg0uj
+         G1ZQ==
+X-Gm-Message-State: AOAM533jCoBEl50Qn04AZvl00tkA5ddW6kohcai13DNHXH+SZ2w2NxJX
+        gy8Xk8QdSfxAQ2a0c/hp4CqZTpAh9nfvxA==
+X-Google-Smtp-Source: ABdhPJx/cQGDrjrK51ktGYIyT1LOfezAIwxXLFpQqnqz5Dd76YXXs+eGPAvYc8cCr3FI5YI5X+yk6A==
+X-Received: by 2002:a05:6214:1bcb:b0:45a:afd7:6f72 with SMTP id m11-20020a0562141bcb00b0045aafd76f72mr22702167qvc.20.1652281279783;
+        Wed, 11 May 2022 08:01:19 -0700 (PDT)
 Received: from master-x64.sparksnet ([2601:153:980:85b1::10])
-        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.24
+        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 08:01:24 -0700 (PDT)
+        Wed, 11 May 2022 08:01:19 -0700 (PDT)
 From:   Peter Geis <pgwipeout@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH v1 5/6] arm64: dts: rockchip: enable sdr-104 on sdmmc
-Date:   Wed, 11 May 2022 11:01:16 -0400
-Message-Id: <20220511150117.113070-6-pgwipeout@gmail.com>
+To:     linux-rockchip@lists.infradead.org
+Cc:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH v1 0/6] Cleanups and enablement for Quartz64-A
+Date:   Wed, 11 May 2022 11:01:11 -0400
+Message-Id: <20220511150117.113070-1-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220511150117.113070-1-pgwipeout@gmail.com>
-References: <20220511150117.113070-1-pgwipeout@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that we have working io-domain support, we can enable higher date
-rates on the sdmmc card.
+Good Morning,
 
-Before:
-Timing buffered disk reads:  68 MB in  3.08 seconds =  22.07 MB/sec
+The following patches clean up some dtbs_check warnings, fixup the
+Quartz64-A dts, and enable some additional functionality on the
+Quartz64-A.
 
-After:
-Timing buffered disk reads: 188 MB in  3.02 seconds =  62.29 MB/sec
+With this series the only remaining dtbs_check warnings are due to
+unconverted bindings.
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts | 1 +
- 1 file changed, 1 insertion(+)
+Patch 6 is dependent on:
+13e0ee34f39c arm64: dts: rockchip: add rk356x sfc support
+currently in linux-next.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
-index 991b7b1b8443..71df64655de5 100644
---- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
-@@ -582,6 +582,7 @@ &sdmmc0 {
- 	disable-wp;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-+	sd-uhs-sdr104;
- 	vmmc-supply = <&vcc3v3_sd>;
- 	vqmmc-supply = <&vccio_sd>;
- 	status = "okay";
+
+Patches 1 and 2 add some missing bindings to the rk3568 cru.
+Patch 3 renames the bluetooth gpios on Quartz64-A.
+Patch 4 adds the fan gpio pinctrl on Quartz64-A.
+Patch 5 enables sdr-104 on Quartz64-A.
+Patch 6 adds the disabled by default sfc controller to Quartz64-A.
+
+Peter Geis (6):
+  dt-binding: clock: Add missing rk3568 cru bindings
+  arm64: dts: rockchip: add clocks to rk356x cru
+  arm64: dts: rockchip: rename Quartz64-A bluetooth gpios
+  arm64: dts: rockchip: add Quartz64-A fan pinctrl
+  arm64: dts: rockchip: enable sdr-104 on sdmmc
+  arm64: dts: rockchip: enable sfc controller on Quartz64 Model A
+
+ .../bindings/clock/rockchip,rk3568-cru.yaml   | 13 +++++++++
+ .../boot/dts/rockchip/rk3566-quartz64-a.dts   | 29 +++++++++++++++++--
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi      |  2 ++
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+
 -- 
 2.25.1
 
