@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1459EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 14:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2943BC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 14:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244928AbiEKOnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 10:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34492 "EHLO
+        id S241596AbiEKOnV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 10:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244919AbiEKOnQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 10:43:16 -0400
+        with ESMTP id S232218AbiEKOnU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 10:43:20 -0400
 Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA5B370932
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:43:15 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id DA7A3320076F;
-        Wed, 11 May 2022 10:43:13 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E2537A452
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:43:19 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id AECF23200994;
+        Wed, 11 May 2022 10:43:17 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 11 May 2022 10:43:14 -0400
+  by compute3.internal (MEProxy); Wed, 11 May 2022 10:43:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1652280193; x=1652366593; bh=ja
-        BTRgDVXHPrIehW7S2urwJixXuyalII1rgt7AU1Pu4=; b=l6kAeiQlcUtx+u8ppN
-        I2oFs30NMMo5dXSDvzvbfhRw/wtKj67sNZZ/7SdyPReXFE1mSS+CuDGyvgiWx+aK
-        wOt2PsW5D8fmwz46ZAOlYMnPUIYXbco8TUl/SFCT9L/02xTUFB4mYZJGJOhTYsYp
-        R55Zxsl/wOpCZkSeeNVqVZ6w2b2wRB2xbpbamldvXM0IibMzaOm9MT8Phw5pLFLM
-        qOJEATHrU0uPwF4k1xK8UR0nVJ3vT90gmP7OeudXSe+fZb0DQOTmtuaPlVM5KcyZ
-        Z1dbS8/fYgaDiOy1vauhH9cHkPrl81J0p5f0OEq/jsbxoIWoGeA10/O76OoPUvqk
-        gb9g==
+        :subject:subject:to:to; s=fm3; t=1652280197; x=1652366597; bh=+C
+        /8GQFuo8NKij8Lyze69bvaX5PuqgSGVWjUhaseyHk=; b=WRPv0hfMAlaka7pV0o
+        9VWQ4crXxg9IyTU8GX+HZOqxCVnPiv2HxssN7Euj15If9rHD86hNemmvAkiFb3gj
+        5F0IK81WGNCEBo0S/Nwik6G0lpbo1vQHjklhSzqfMbCFHO+wLpCG+8KDb/Aku3ME
+        A865x1MFldCmC1flgV3QK0wDmEcfMPIy3wReeK5vcrSWHMTmpNPeoAIfUfvoyfwe
+        Gb+kaiApJzupwvzrirCClpzwGhCZS4yrqcuhucI8MHDe7yC3OLhhwcoAQcUjHG71
+        62Ze5xrH0C8KUUrNPXk8l35xfVvdKg3Lq+z9hpLclDAaBGbJEwvbUQXcVqCH2r2N
+        5Vww==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1652280193; x=1652366593; bh=jaBTRgDVXHPrIehW7S2urwJixXuyalII1rg
-        t7AU1Pu4=; b=cVqaRxaYIlX0j5gBE4tZkArbvNlSLx38VA7xsWi+6dU87p8tigI
-        wsiUJ4Di7Cu4llyHq1PnXsl59110mcs8EeT+2HAHYGOm41+t7HKyXCe9MT5K89UO
-        T1ovVE+GXsSjFuImiOohTms5uCdznoCeVWblmzrcNm4zY3y7kdvhBjVlNCqzrnOK
-        hoB7QpmRwM41Nk2cswZGSGpLVi3PhwE2d5fO7HzqFQzXxX+lJBBsrYcWsMtm41/V
-        yDNXwufccxMDRl9ikFuOHRxUao8H4iR4hkY2Udql4ELBpGAo77qoFVPAuk/u72rZ
-        SemMr8XR5ae24rlfZLV+2VlfpFYDhTFmnCg==
-X-ME-Sender: <xms:gct7YpKxVkuPIkR0rfMFw1AVF6INaxQQEh1rhuwouM24ofFOfCsX_w>
-    <xme:gct7YlLjAI4RJPJX8mTip7n6XPrL_8JOf9q91TQUG_3aDWCV3D3jUWRWkeDYhTh5-
-    wYWt9J_FBGnKAn3UBQ>
-X-ME-Received: <xmr:gct7YhvOlOX9WF_S_Be0HbJZpwLtTZSCIrqCgwfVSHGGrG8EcY6moou3gElwE3RJfEh2mEm8mIS8W9G9H9-atRaBABqElszBgFVU1U0>
+        1652280197; x=1652366597; bh=+C/8GQFuo8NKij8Lyze69bvaX5PuqgSGVWj
+        UhaseyHk=; b=p1/7gMeicpdxBFWrfTzKqDFdPUuRb3pBnW5TCQ253A0b2PuHVmO
+        P709KMoV7pO1Ar7jMpRlHyEfto2W9zgjg/aHSKe36079kwCzjVnxEFJgpBOA3wWP
+        euRLcP45W4k5Yh3/2qkEBAMW9GpvUKgPHNehq8mR3UM7o4sUyd2kRJRvnnQw8wi2
+        qGJimuVENVfVrUImSngnkh+X+DId13r3QyNpcDlDJJpUMvO60SRjoSAM2y+YO2Au
+        uHdU7eN1cSueeyqZH2Xm9wpXL8WUmxRJdmPMf1SzMQCPl0WHUEWTvvMOZRGQc7Bd
+        k5j9aPDiRlvi3RtuzlsaVAdv0PfpMXp9+FQ==
+X-ME-Sender: <xms:hct7Yieo9ReKr3gco131fyBNoinXoj5im9Yy6mObnIE2nzlceo-5Pg>
+    <xme:hct7YsO-lQZKYoSRGEAcUb7HvSNVvuW-mpHxNXBFyQtt-XzXVLc51vBbO03F2pLb-
+    xe5xT1MxlePQOIbbd0>
+X-ME-Received: <xmr:hct7YjjDSURzJBbC4to1UDyOQ2uY_6cszy236q_iFkBs78pXpwwdj3o-9gsVxIGshsxnI9coDcNqrX1mGZ3raZZ83HAE1EYgTtQtC2Q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgdejjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -54,12 +54,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgdejjecutefuodetggdote
     htvghrnhepleekfeetudfhkeejiefhtedugfeuvdevkeekteetkefhkefhtdelgfefuddv
     jefhnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:gct7YqZvTyFtX3mfSATCHCXTim23NQchlxTWyT_Ata1GtTUDGa2wtA>
-    <xmx:gct7YgZybaoHxLX8Qd4pvuBsSzuV0IhH2X7VYHxpWXfl4M-fvxBAWA>
-    <xmx:gct7YuCMebewE9yK76o7oxayEQLDLw3_YTLu5tOS3J4-E3Axy8E08w>
-    <xmx:gct7YtSRzJuWQX8Iv4kyW14TssMhkRbKNA8rZsExQdvPFEkmV2NUFg>
+X-ME-Proxy: <xmx:hct7Yv_aTyW4uGo9qHiDsoQMs_x6Mn-VLvsBfuCUC1pwhilXN5DH5A>
+    <xmx:hct7YuscGeN-YnhYa-JY-T6zUS_CPFmZ7FxaVaK5HrUeJz1eSfHAew>
+    <xmx:hct7YmEONzUoSJUbEKSdjSiaOoqkTpH7521fgyCKI9pR4P8SvRtRZg>
+    <xmx:hct7Yvm_fKasMhFLpSjvDU3_SrwBmTweyIFPJp28QmLt2jnNsuySnA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 May 2022 10:43:12 -0400 (EDT)
+ 11 May 2022 10:43:16 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -72,9 +72,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Tony Lindgren <tony@atomide.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v3 05/28] clk: Mention that .recalc_rate can return 0 on error
-Date:   Wed, 11 May 2022 16:42:26 +0200
-Message-Id: <20220511144249.354775-6-maxime@cerno.tech>
+Subject: [PATCH v3 06/28] clk: Clarify clk_get_rate() expectations
+Date:   Wed, 11 May 2022 16:42:27 +0200
+Message-Id: <20220511144249.354775-7-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220511144249.354775-1-maxime@cerno.tech>
 References: <20220511144249.354775-1-maxime@cerno.tech>
@@ -84,31 +84,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Multiple platforms (amlogic, imx8) return 0 when the clock rate cannot
-be determined properly by the recalc_rate hook. Mention in the
-documentation that the framework is ok with that.
+As shown by a number of clock users already, clk_get_rate() can be
+called whether or not the clock is enabled.
+
+Similarly, a number of clock drivers will return a rate of 0 whenever
+the rate cannot be figured out.
+
+Since it was a bit ambiguous before, let's make it clear in the
+clk_get_rate() documentation.
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- include/linux/clk-provider.h | 5 +++--
+ drivers/clk/clk.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c10dc4c659e2..58e5baa49db0 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -118,8 +118,9 @@ struct clk_duty {
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c9d7016550a2..95be72f9373e 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1672,8 +1672,9 @@ static unsigned long clk_core_get_rate_recalc(struct clk_core *core)
+  * @clk: the clk whose rate is being returned
   *
-  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-- *		ensure that the prepare_mutex is held across this call.
-- *		Returns the calculated rate.  Optional, but recommended - if
-+ *		ensure that the prepare_mutex is held across this call. If the
-+ *		driver cannot figure out a rate for this clock, it must return
-+ *		0. Returns the calculated rate. Optional, but recommended - if
-  *		this op is not set then clock rate will be initialized to 0.
-  *
-  * @round_rate:	Given a target rate as input, returns the closest rate actually
+  * Simply returns the cached rate of the clk, unless CLK_GET_RATE_NOCACHE flag
+- * is set, which means a recalc_rate will be issued.
+- * If clk is NULL then returns 0.
++ * is set, which means a recalc_rate will be issued. Can be called regardless of
++ * the clock enabledness. If clk is NULL, or if an error occurred, then returns
++ * 0.
+  */
+ unsigned long clk_get_rate(struct clk *clk)
+ {
 -- 
 2.36.1
 
