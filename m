@@ -2,151 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E73DC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 20:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03052C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 20:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347508AbiEKUCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 16:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60006 "EHLO
+        id S241594AbiEKUXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 16:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347496AbiEKUCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 16:02:18 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B821D48C7;
-        Wed, 11 May 2022 13:02:16 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id w24so3836647edx.3;
-        Wed, 11 May 2022 13:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Kjm5oS3T2QJVIaXZ5HMZbY1xpEdNpJDDRAUvlhwNL3U=;
-        b=fWLBtbzzyS2l1AlhhPCQYPbP0/60RK4VuD7QGsdqBsun6IeBZ6VTM5h24bDkrGOSlr
-         lJrBNXdfN4rJXa0yKhXjdEDaWxrDgdI+4G6soL2J+jOZwz5Lt4asExh7ji6syOUh5fWD
-         P0ir99Ci4OoyAGJJMxErxke1NVt3tUuzD3aebDWaj+AvgZ/K3vWFcd/hx9riGmx5F9B9
-         ufNribfsGhluK6DJsCdb6FE9NZ0Er3WFJ24uFmDoZspty1JQS0h8vT3l8gfltWEbh43v
-         hQfndi/TW5GFxdS1q0BmyH7oXU7DR++pXUHbOd2HGgYgqLMfgYdph9MCybFMPiD5Oys/
-         YMhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Kjm5oS3T2QJVIaXZ5HMZbY1xpEdNpJDDRAUvlhwNL3U=;
-        b=ssgOTGYqLjtS9ooR6mr6cV+hR5MGmwuRHLNzZqfIh6KRKp7vOxPT0Sada0o9et2t2v
-         SbUjEEARBENwt8b/3rtk6ZpqlJKUxfPQ7QL3WZJ+BrXw8KEQl/VEAnYoy1dd0KOVEWYs
-         leBJB6Enbau5CYd19xDzTRYKmWa19ghy0b3L2ryZKGXqhnEqQc4QVIIPEqDrRkg0zwoA
-         jkF/ykx+JW2TfTN6UPjOkgycDeOo0GbLftoMN6XVheTdtWkqxYC7UEJiVMsdiyUUPtQT
-         ZRxhpZY5uidnXR1bpwyZlxo/l9wrrZ6cREuLBGYv15OyrpuI8yPYP81zLB8m6bmXm1At
-         OKpw==
-X-Gm-Message-State: AOAM533xV/sq7izbeSIcD5QP4eg5lJuaAYS9UwIKu6bNihEZ/Vv1Fr93
-        ie4JTgDetVSP6h0LKs+qd54=
-X-Google-Smtp-Source: ABdhPJwuzCry90j1P+q2DVpYYiCsCxEejAfdbC7nAd7VZk2GginTD4rVQkbU+m7YqZcYCq5h35e5fg==
-X-Received: by 2002:a05:6402:d0e:b0:413:3d99:f2d6 with SMTP id eb14-20020a0564020d0e00b004133d99f2d6mr31504260edb.189.1652299335444;
-        Wed, 11 May 2022 13:02:15 -0700 (PDT)
-Received: from kista.localdomain (cpe1-3-76.cable.triera.net. [213.161.3.76])
-        by smtp.gmail.com with ESMTPSA id s8-20020a170906060800b006f3ef214e0esm1347602ejb.116.2022.05.11.13.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 13:02:14 -0700 (PDT)
-From:   Jernej Skrabec <jernej.skrabec@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] Revert "clk: sunxi-ng: sun6i-rtc: Add support for H6"
-Date:   Wed, 11 May 2022 22:02:06 +0200
-Message-Id: <20220511200206.2458274-1-jernej.skrabec@gmail.com>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S238984AbiEKUXX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 16:23:23 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0B372E01
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 13:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652300602; x=1683836602;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g6AswqkWmXU5dYcrkV9n8nA2qHRT+5PvyPN57aXvTIU=;
+  b=CbxRkgg13trWyOZkLE6CdmtEk1HogWZkdnTIkRMDqUORdwOWvRtv1pHs
+   Fo9ceI9MGeTtp7EpAWH2/rx9dG6MdnhssjpQclE8iDu4EkRUfY21Df8lN
+   yKDgYltLpkGEP5sugNAGRKAJ5/E3QL3LqBGaYpxOgi9LkpZREuiQcyD9Y
+   6elFObP6n8G591HbWx0J3fgCn5mBwC78adJUmTPQD+1V4X+sWetJFWls9
+   pJ3CYx6VNCjd3Y5qukq7Zq8G+JYMx2eEOvmPtqAXZAsubaPATOPtWU1Yk
+   4j6sKTG2wQCiOqK2ZhKxvBF+k4ad/1PfxcDiuHiKVRL3ogb/HcW1JtXWy
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10344"; a="267392092"
+X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
+   d="scan'208";a="267392092"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 13:23:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
+   d="scan'208";a="572236452"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 11 May 2022 13:23:18 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nosrd-000JXS-W6;
+        Wed, 11 May 2022 20:23:17 +0000
+Date:   Thu, 12 May 2022 04:23:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v3 22/28] clk: Stop forwarding clk_rate_requests to the
+ parent
+Message-ID: <202205120459.Wey9QKrW-lkp@intel.com>
+References: <20220511144249.354775-23-maxime@cerno.tech>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220511144249.354775-23-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This reverts commit 1738890a3165ccd0da98ebd3e2d5f9b230d5afa8.
+Hi Maxime,
 
-Commit 1738890a3165 ("clk: sunxi-ng: sun6i-rtc: Add support for H6")
-breaks HDMI output on Tanix TX6 mini board. Exact reason isn't known,
-but because that commit doesn't actually improve anything, let's just
-revert it.
+I love your patch! Perhaps something to improve:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
----
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 15 ---------------
- drivers/rtc/rtc-sun6i.c              | 17 +++++++++++++++++
- 2 files changed, 17 insertions(+), 15 deletions(-)
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v5.18-rc6 next-20220511]
+[cannot apply to anholt/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index 2f3ddc908ebd..d65398497d5f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -298,10 +298,6 @@ static const struct sunxi_ccu_desc sun6i_rtc_ccu_desc = {
- 	.hw_clks	= &sun6i_rtc_ccu_hw_clks,
- };
- 
--static const struct clk_parent_data sun50i_h6_osc32k_fanout_parents[] = {
--	{ .hw = &osc32k_clk.common.hw },
--};
--
- static const struct clk_parent_data sun50i_h616_osc32k_fanout_parents[] = {
- 	{ .hw = &osc32k_clk.common.hw },
- 	{ .fw_name = "pll-32k" },
-@@ -314,13 +310,6 @@ static const struct clk_parent_data sun50i_r329_osc32k_fanout_parents[] = {
- 	{ .hw = &osc24M_32k_clk.common.hw }
- };
- 
--static const struct sun6i_rtc_match_data sun50i_h6_rtc_ccu_data = {
--	.have_ext_osc32k	= true,
--	.have_iosc_calibration	= true,
--	.osc32k_fanout_parents	= sun50i_h6_osc32k_fanout_parents,
--	.osc32k_fanout_nparents	= ARRAY_SIZE(sun50i_h6_osc32k_fanout_parents),
--};
--
- static const struct sun6i_rtc_match_data sun50i_h616_rtc_ccu_data = {
- 	.have_iosc_calibration	= true,
- 	.rtc_32k_single_parent	= true,
-@@ -335,10 +324,6 @@ static const struct sun6i_rtc_match_data sun50i_r329_rtc_ccu_data = {
- };
- 
- static const struct of_device_id sun6i_rtc_ccu_match[] = {
--	{
--		.compatible	= "allwinner,sun50i-h6-rtc",
--		.data		= &sun50i_h6_rtc_ccu_data,
--	},
- 	{
- 		.compatible	= "allwinner,sun50i-h616-rtc",
- 		.data		= &sun50i_h616_rtc_ccu_data,
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 5b3e4da63406..5252ce4cbda4 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -370,6 +370,23 @@ CLK_OF_DECLARE_DRIVER(sun8i_h3_rtc_clk, "allwinner,sun8i-h3-rtc",
- CLK_OF_DECLARE_DRIVER(sun50i_h5_rtc_clk, "allwinner,sun50i-h5-rtc",
- 		      sun8i_h3_rtc_clk_init);
- 
-+static const struct sun6i_rtc_clk_data sun50i_h6_rtc_data = {
-+	.rc_osc_rate = 16000000,
-+	.fixed_prescaler = 32,
-+	.has_prescaler = 1,
-+	.has_out_clk = 1,
-+	.export_iosc = 1,
-+	.has_losc_en = 1,
-+	.has_auto_swt = 1,
-+};
-+
-+static void __init sun50i_h6_rtc_clk_init(struct device_node *node)
-+{
-+	sun6i_rtc_clk_init(node, &sun50i_h6_rtc_data);
-+}
-+CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_clk, "allwinner,sun50i-h6-rtc",
-+		      sun50i_h6_rtc_clk_init);
-+
- /*
-  * The R40 user manual is self-conflicting on whether the prescaler is
-  * fixed or configurable. The clock diagram shows it as fixed, but there
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220511-224533
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: x86_64-randconfig-s021-20220509 (https://download.01.org/0day-ci/archive/20220512/202205120459.Wey9QKrW-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/32af2a918274a92da86089672d5d7adba63dc0cf
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220511-224533
+        git checkout 32af2a918274a92da86089672d5d7adba63dc0cf
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/clk/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/clk.c:1502:45: sparse: sparse: incorrect type in argument 2 (different modifiers) @@     expected struct clk_rate_request *const old_req @@     got struct clk_rate_request const *old_req @@
+   drivers/clk/clk.c:1502:45: sparse:     expected struct clk_rate_request *const old_req
+   drivers/clk/clk.c:1502:45: sparse:     got struct clk_rate_request const *old_req
+
+vim +1502 drivers/clk/clk.c
+
+  1481	
+  1482	/**
+  1483	 * clk_hw_forward_rate_request - Forwards a clk_rate_request to a clock's parent
+  1484	 * @hw: the original clock that got the rate request
+  1485	 * @old_req: the original clk_rate_request structure we want to forward
+  1486	 * @parent: the clk we want to forward @old_req to
+  1487	 * @req: the clk_rate_request structure we want to initialise
+  1488	 * @parent_rate: The rate which is to be requested to @parent
+  1489	 *
+  1490	 * Initializes a clk_rate_request structure to submit to a clock parent
+  1491	 * in __clk_determine_rate() or similar functions.
+  1492	 */
+  1493	void clk_hw_forward_rate_request(const struct clk_hw *hw,
+  1494					 const struct clk_rate_request *old_req,
+  1495					 const struct clk_hw *parent,
+  1496					 struct clk_rate_request *req,
+  1497					 unsigned long parent_rate)
+  1498	{
+  1499		if (WARN_ON(!hw || !old_req || !parent || !req))
+  1500			return;
+  1501	
+> 1502		clk_core_forward_rate_req(hw->core, old_req,
+  1503					  parent->core, req,
+  1504					  parent_rate);
+  1505	}
+  1506	
+
 -- 
-2.36.1
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
