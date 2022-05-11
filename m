@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795FEC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 14:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCA1C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 14:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244912AbiEKOnG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 10:43:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33732 "EHLO
+        id S238891AbiEKOnL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 10:43:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244919AbiEKOnF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 10:43:05 -0400
+        with ESMTP id S244928AbiEKOnJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 10:43:09 -0400
 Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4827966AD8
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:43:04 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 7729A32003D3;
-        Wed, 11 May 2022 10:43:02 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 11 May 2022 10:43:03 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09FBC67D01
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:43:08 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 37FE032009BE;
+        Wed, 11 May 2022 10:43:06 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Wed, 11 May 2022 10:43:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1652280181; x=1652366581; bh=g4
-        P5DobGsF8A4M+d4ZrXtJWtd8orIRbjRbWtjuqAtRo=; b=u1royvM50U7bQYgItz
-        H2dq4tceKrsj6X2FuAWRLJQiwTdLgE1ultP6QXwgCs9toxR5ZlZby49JRRyknyoP
-        qjWoMIYngnJsJcucnfGcSTCsnxf8GNdFBLKhXQQnIswvIw4hAbK6rJ5JzHlpWDdU
-        soo04Zvm2J+AVvw9TT5HeLDjo8TU+w5SymzKNPL6J4z6KrGlfA2SV7QNG2qc3J88
-        /fr0rXntMoY4uHgvh0Eo7HSJbR+Nxgx7y/p9nsHw6zdC6tCt756L4c/0jNmIeljY
-        E8qUwk0OOauoOugvzRZGLpk1tDYVwomJuDjeI8nGtr1BjtMt3+F5ISYCR8mhWf+X
-        LJdg==
+        :subject:subject:to:to; s=fm3; t=1652280185; x=1652366585; bh=Fn
+        INeXDpqfZQvnpUMeGwCH8/C3Q8pUUmHAC9Sd1qMJg=; b=Smja7y1GhKKmZ/rbFb
+        7iQsbTQT1tLx79cM3+nCSQVNm8Wt5gvzqQ1S6BezrLZ89SAr4qYoGegbfGP62/cz
+        fSl6dYGB28DVU8y+q6zlk5gI2OIuRrccBL7EAqgntcO9XFdEgAnVD/7ANWMk+bbQ
+        PmLL3DoNj7hoEAYddVijf+BQ4zvQ5LzOLKaEuH+QKY7NwRnOOOQd49oqSNuBjpDv
+        YKY8bm2IFdR8UX3q7nIEUIk4vc+tUWno9iws+hfHmA+c/P566URbgP+Ng4tEEJwo
+        c9OeXTUhKU5L41YOJlVC5iygcfYyL87gRnetkJx030vl6tdlJGVcVP9uL6PDKt9c
+        zyVw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1652280181; x=1652366581; bh=g4P5DobGsF8A4M+d4ZrXtJWtd8orIRbjRbW
-        tjuqAtRo=; b=yg+dt550hlRiIzgtOPP6VziUzcF/OFvt6caaXFEJEE1iyaKKAwq
-        quah9Y8Gz5TdwRNDSPyCM1g1GsQW3M3ad5+g+zCvFekT4OY2tEivqhbjD1E6omDW
-        DGPop3BAqcX0GrZJOjKxEmNuQ9xi8tth5xEf4/IEQ7ANEGVcIrFAh+PbpNHoXMWA
-        5Pm/pHQRShLna3CSBnyuVJiniy38eEtlA5mQHgqOSfXHCRZxlnWb66ZKnCja+0A4
-        MCJ5k4w+eMTB4ml+/SFwQiigdZkJYgMCgErl/2npA+UTL1XS4tIeOU8QI09tTO0g
-        /y1n2WMZOpRaP3yAQ+0gd8FfUMJ+TMGtkUA==
-X-ME-Sender: <xms:dct7YkQFhDM1PMpSL3f-ITJWS2npYphlp246ydFpwT28BdyaHED0Pg>
-    <xme:dct7Yhxyl6bhRuQv3rNEWKd4nEGYw7GoFlwPEAY_I-yzou0t3Xb8dqG5HWZx1hEGa
-    8MrTz5WN2hb5HvDDOg>
-X-ME-Received: <xmr:dct7Yh0WMXCRWo7sBo4UorQ2KeCgChPcy-WU_4qVsGbhojBN5U7TG36TQZXi2JjjgvHppZha36yxQNsOMfTQ56bvE7701JCatF3S_eQ>
+        1652280185; x=1652366585; bh=FnINeXDpqfZQvnpUMeGwCH8/C3Q8pUUmHAC
+        9Sd1qMJg=; b=BDz090bLr+c0D2HcBeBBs2cpHyNa9wZL68iS1KDzYlLdU68D8rf
+        zOaJx4tM4i0tV8/RjVXPLTpHTV4Hl1JrpF7034XUCgmPEB94NKfmQqZq63LGyFpk
+        llYedfQ1CygSq76LZ9PUoEE+0u9ibitsbgwSeEATZPaGN/UQpHoyVduF02f+dWJw
+        KUdgtBUIFpAiyyJTPXpQ9SeB/h6f9CpQ8d+NFimQFcaIRYYmU1v6g0asBQgYo28I
+        dIbEsB2fnE3CYM3mvr7pJhtqcPEfXmQeoXW+qFyMjBOyYnpQieYLsFNhoPsljize
+        DwW0z8BJFV/E2OXboZyynhYp6qe90l+Lefw==
+X-ME-Sender: <xms:ect7YkXMFBUapFU56fD1az8pWqUxzId-tYz2kRq3XBxNcW_t_zSbqA>
+    <xme:ect7YokT8xYKixKii2zCgISVPvriem3sZWdMGMwt21uYJVJAOUllw8S5Yz5b1Q-_x
+    cmWtWcV7YnCZLRBw1E>
+X-ME-Received: <xmr:ect7Yoa_uPCtEDxHonTm6ukEgkO_z-I6QhMGLbq6bhqFgxTzVy4oAELJuJRqsHYyW3cthmqvKGe1pSHk-rnzMCiH021Zb3OnXRvI-lk>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgdejjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -54,12 +54,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgdejjecutefuodetggdote
     htvghrnhepleekfeetudfhkeejiefhtedugfeuvdevkeekteetkefhkefhtdelgfefuddv
     jefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:dct7YoDkY6w7mUYz15sUXJRiLNN4irOtwKnevo8ZxQ8QmDi1hqr8dw>
-    <xmx:dct7YtgOFwi5eq3N_k9DxZYkHyXCMgk8Xi3qohZpsuSoA3my52GCMA>
-    <xmx:dct7Ykr-LalRPIYz8t2NwWpfBV4egGrO8a-23yhKpqhaUkvsfoW1XA>
-    <xmx:dct7YiYHP4bSc3F-Qc4NSXJOoO_vl0cHzWdPQ_Rp9fZIMsNU30hHsA>
+X-ME-Proxy: <xmx:ect7YjVcJ4OM9kL2trdbv4Mh57N10TH9N2o4yWPtz_pUkKpofIWmvQ>
+    <xmx:ect7YumkuWeF-FbaN7VhRGHroqQ2TGsckgfZAdpl92nmBWG_vUMHcA>
+    <xmx:ect7Yocp54mCcYAhQIESqt1E1RJkCjVZz-n0B1O60rC7MNEP2KPbpw>
+    <xmx:ect7YndDZ3PKwgIeg0DV4OZg-v9IVN12bTeoriOZggWO0ZtptP2Zcw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 May 2022 10:43:01 -0400 (EDT)
+ 11 May 2022 10:43:05 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -72,9 +72,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Tony Lindgren <tony@atomide.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v3 02/28] clk: Skip clamping when rounding if there's no boundaries
-Date:   Wed, 11 May 2022 16:42:23 +0200
-Message-Id: <20220511144249.354775-3-maxime@cerno.tech>
+Subject: [PATCH v3 03/28] clk: Introduce clk_get_rate_range()
+Date:   Wed, 11 May 2022 16:42:24 +0200
+Message-Id: <20220511144249.354775-4-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220511144249.354775-1-maxime@cerno.tech>
 References: <20220511144249.354775-1-maxime@cerno.tech>
@@ -84,52 +84,144 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 948fb0969eae ("clk: Always clamp the rounded rate") recently
-started to clamp the request rate in the clk_rate_request passed as an
-argument of clk_core_determine_round_nolock() with the min_rate and
-max_rate fields of that same request.
+With the recent introduction of clock drivers that will force their
+clock rate to either the minimum or maximum boundaries, it becomes
+harder for clock users to discover either boundary of their clock.
 
-While the clk_rate_requests created by the framework itself always have
-those fields set, some drivers will create it themselves and don't
-always fill min_rate and max_rate.
+Indeed, the best way to do that previously was to call clk_round_rate()
+on either 0 or ULONG_MAX and count on the driver to clamp the rate to
+the current boundary, but that won't work anymore.
 
-In such a case, we end up clamping the rate with a minimum and maximum
-of 0, thus always rounding the rate to 0.
+Since any other alternative (calling clk_set_rate_range() and looking at
+the returned value, calling clk_round_rate() still, or just doing
+nothing) depends on how the driver will behaves, we actually are
+punching a hole through the abstraction provided by the clock framework.
 
-Let's skip the clamping if both min_rate and max_rate are set to 0 and
-complain so that it gets fixed.
+In order to avoid any abstraction violation, let's create a bunch of
+accessors that will return the current minimum and maximum for a given
+clock.
 
-Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c   | 20 +++++++++++++++
+ include/linux/clk.h | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2a32fa9f7618..d46c00bbedea 100644
+index d46c00bbedea..c9d7016550a2 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -1341,7 +1341,19 @@ static int clk_core_determine_round_nolock(struct clk_core *core,
- 	if (!core)
- 		return 0;
+@@ -2465,6 +2465,26 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+ }
+ EXPORT_SYMBOL_GPL(clk_set_max_rate);
  
--	req->rate = clamp(req->rate, req->min_rate, req->max_rate);
-+	/*
-+	 * Some clock providers hand-craft their clk_rate_requests and
-+	 * might not fill min_rate and max_rate.
-+	 *
-+	 * If it's the case, clamping the rate is equivalent to setting
-+	 * the rate to 0 which is bad. Skip the clamping but complain so
-+	 * that it gets fixed, hopefully.
-+	 */
-+	if (!req->min_rate && !req->max_rate)
-+		pr_warn("%s: %s: clk_rate_request has initialized min or max rate.\n",
-+			__func__, core->name);
-+	else
-+		req->rate = clamp(req->rate, req->min_rate, req->max_rate);
++/**
++ * clk_get_rate_range - returns the clock rate range for a clock source
++ * @clk: clock source
++ * @min: Pointer to the variable that will hold the minimum
++ * @max: Pointer to the variable that will hold the maximum
++ *
++ * Fills the @min and @max variables with the minimum and maximum that
++ * the clock source can reach.
++ */
++void clk_get_rate_range(struct clk *clk, unsigned long *min, unsigned long *max)
++{
++	if (!clk || !min || !max)
++		return;
++
++	clk_prepare_lock();
++	clk_core_get_boundaries(clk->core, min, max);
++	clk_prepare_unlock();
++}
++EXPORT_SYMBOL_GPL(clk_get_rate_range);
++
+ /**
+  * clk_get_parent - return the parent of a clk
+  * @clk: the clk whose parent gets returned
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 39faa54efe88..1507d5147898 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -713,6 +713,17 @@ bool clk_has_parent(struct clk *clk, struct clk *parent);
+  */
+ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max);
  
- 	/*
- 	 * At this point, core protection will be disabled
++/**
++ * clk_get_rate_range - returns the clock rate range for a clock source
++ * @clk: clock source
++ * @min: Pointer to the variable that will hold the minimum
++ * @max: Pointer to the variable that will hold the maximum
++ *
++ * Fills the @min and @max variables with the minimum and maximum that
++ * the clock source can reach.
++ */
++void clk_get_rate_range(struct clk *clk, unsigned long *min, unsigned long *max);
++
+ /**
+  * clk_set_min_rate - set a minimum clock rate for a clock source
+  * @clk: clock source
+@@ -908,6 +919,16 @@ static inline int clk_set_rate_range(struct clk *clk, unsigned long min,
+ 	return 0;
+ }
+ 
++static inline void clk_get_rate_range(struct clk *clk, unsigned long *min,
++				      unsigned long *max)
++{
++	if (!min || !max)
++		return;
++
++	*min = 0;
++	*max = ULONG_MAX;
++}
++
+ static inline int clk_set_min_rate(struct clk *clk, unsigned long rate)
+ {
+ 	return 0;
+@@ -997,6 +1018,44 @@ static inline int clk_drop_range(struct clk *clk)
+ 	return clk_set_rate_range(clk, 0, ULONG_MAX);
+ }
+ 
++/**
++ * clk_get_min_rate - returns the minimum clock rate for a clock source
++ * @clk: clock source
++ *
++ * Returns either the minimum clock rate in Hz that clock source can
++ * reach, or 0 on error.
++ */
++static inline unsigned long clk_get_min_rate(struct clk *clk)
++{
++	unsigned long min, max;
++
++	if (!clk)
++		return 0;
++
++	clk_get_rate_range(clk, &min, &max);
++
++	return min;
++}
++
++/**
++ * clk_get_max_rate - returns the maximum clock rate for a clock source
++ * @clk: clock source
++ *
++ * Returns either the maximum clock rate in Hz that clock source can
++ * reach, or 0 on error.
++ */
++static inline unsigned long clk_get_max_rate(struct clk *clk)
++{
++	unsigned long min, max;
++
++	if (!clk)
++		return 0;
++
++	clk_get_rate_range(clk, &min, &max);
++
++	return max;
++}
++
+ /**
+  * clk_get_optional - lookup and obtain a reference to an optional clock
+  *		      producer.
 -- 
 2.36.1
 
