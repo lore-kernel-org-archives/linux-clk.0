@@ -2,104 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37986C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 13:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79706C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 14:17:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243773AbiEKNUA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 09:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
+        id S244494AbiEKORz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 10:17:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243689AbiEKNTd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 09:19:33 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 63631239D84;
-        Wed, 11 May 2022 06:19:32 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F7F8ED1;
-        Wed, 11 May 2022 06:19:32 -0700 (PDT)
-Received: from lpieralisi (unknown [10.57.1.148])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA13E3F66F;
-        Wed, 11 May 2022 06:19:29 -0700 (PDT)
-Date:   Wed, 11 May 2022 14:19:24 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S244507AbiEKORy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 10:17:54 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4045D64BF6
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:17:53 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id o22so1901347ljp.8
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 07:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=QLkbrAx06+jvkVbtS5UYxGjlvrJ2cVCpHdFbsnt3f1U=;
+        b=u43ByTzx7iKWhV50eafdFjOrBSaRhWuimLKTWBD/yTbAHxN4B27jcMer6s7deUGffz
+         9K+1Hg1tcuG2mLmV4jvZL1IEanauvBEzl6ySkPmyJDquyaJeowHznU9D/FK2zhJZXda+
+         gGhU9m6lH3f1QycKZUF7IOzCZXNqH7syIWFDAOOyAX2Duv5/26S96j9e56vFoimHIkji
+         dS3Q9uORf7k650JXb4vhnRCwrkb9nN+ElNWfCQq6cxsGFv21RmB/JL23r3/r9RfkSL6j
+         zdCFFmgoca8cA+SE9sJiHIR+ZEuwM5PpcjC/++pSLfQ6ca3PmtHtd0UbJXhvjfYNPvUz
+         boYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=QLkbrAx06+jvkVbtS5UYxGjlvrJ2cVCpHdFbsnt3f1U=;
+        b=qfJSXGqNeOwIPlttSmVozWWcrkzlT+uPbfKB9jHEQ5pMP/01bwlSnQ/QeFL3doaX1T
+         X9e9/KNdq9mlsxwkzvqDTBS29EPgzC1RgqFq72nVDp5lHjHSA9YTM5tE3sOfVIAteRT1
+         xhC0hjgj1rhu3hw5tIdbKr4r0XROaZmtxx5kNUmZl7qKv52SPU92jQ3dnuJtjUbYT5ie
+         WygSzljXmG99jd2WHjsP7pFDlY+je2Gml4k2Z0F+TBVP5sg1ZQpqds6OHtfa0PCrz37a
+         8xVRyXTPkFTpsb8YKXNVgKuRszZrOaV2L9z3WpbUDGiMneObINos5QVKTqo7AGbBnjMv
+         mDvA==
+X-Gm-Message-State: AOAM533kifEq+GPRIeT6m5tT/hMUl+36aAnnBPwHw/RNG8Acf+wQYwrk
+        EFif82kEUaQcAmZH2QjYJFgRBg==
+X-Google-Smtp-Source: ABdhPJzoyFVAl1bBz/QL7Beejn3aK/Zh1vaiwiytDr2hDiaBX5iWpm1kqeUcTcTAJdgBwZAdlPKgBw==
+X-Received: by 2002:a2e:f12:0:b0:250:bf9c:3d2d with SMTP id 18-20020a2e0f12000000b00250bf9c3d2dmr11400977ljp.452.1652278670472;
+        Wed, 11 May 2022 07:17:50 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id u25-20020ac25199000000b0047255d210dfsm308742lfi.14.2022.05.11.07.17.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 May 2022 07:17:50 -0700 (PDT)
+Message-ID: <adb49293-ea59-0a40-27de-4a654a02d456@linaro.org>
+Date:   Wed, 11 May 2022 17:17:48 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
+Content-Language: en-GB
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Prasad Malisetty <quic_pmaliset@quicinc.com>,
         Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
-Message-ID: <Ynu33PC19JIKinC+@lpieralisi>
 References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
+ <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
+ <20220502101053.GF5053@thinkpad>
+ <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
+ <20220502111004.GH5053@thinkpad>
+ <29819e6d-9aa1-aca9-0ff6-b81098077f28@linaro.org>
+ <YnUXOYxk47NRG2VD@hovoldconsulting.com>
+ <30846cb5-a22e-0102-9700-a1417de69952@linaro.org>
+ <YnjtJuR7ShSsF+mz@hovoldconsulting.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <YnjtJuR7ShSsF+mz@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 01, 2022 at 10:21:44PM +0300, Dmitry Baryshkov wrote:
-> PCIe pipe clk (and some other clocks) must be parked to the "safe"
-> source (bi_tcxo) when corresponding GDSC is turned off and on again.
-> Currently this is handcoded in the PCIe driver by reparenting the
-> gcc_pipe_N_clk_src clock.
+On 09/05/2022 13:29, Johan Hovold wrote:
+> On Fri, May 06, 2022 at 04:00:38PM +0300, Dmitry Baryshkov wrote:
+>> On 06/05/2022 15:40, Johan Hovold wrote:
+>>> On Mon, May 02, 2022 at 02:18:26PM +0300, Dmitry Baryshkov wrote:
+>>>> On 02/05/2022 14:10, Manivannan Sadhasivam wrote:
+>>>
+>>>>> I don't understand this. How can you make this clock disabled? It just has 4
+>>>>> parents, right?
+>>>>
+>>>> It has 4 parents. It uses just two of them (pipe and tcxo).
+>>>
+>>> Really? I did not know that. Which are the other two parents and what
+>>> would they be used for?
+>>
+>> This is described neither in the downstream tree nor in any sources I
+>> have at possession.
 > 
-> Instead of doing it manually, follow the approach used by
-> clk_rcg2_shared_ops and implement this parking in the enable() and
-> disable() clock operations for respective pipe clocks.
-> 
-> PCIe part depends on [1].
-> 
-> Changes since v3:
->  - Replaced the clock multiplexer implementation with branch-like clock.
-> 
-> Changes since v2:
->  - Added is_enabled() callback
->  - Added default parent to the pipe clock configuration
-> 
-> Changes since v1:
->  - Rebased on top of [1].
->  - Removed erroneous Fixes tag from the patch 4.
-> 
-> Changes since RFC:
->  - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
->    than specifying the register value directly
->  - Expand commit message to the first patch to specially mention that
->    it is required only on newer generations of Qualcomm chipsets.
-> 
-> [1]: https://lore.kernel.org/all/20220401133351.10113-1-johan+linaro@kernel.org/
-> 
-> Dmitry Baryshkov (5):
->   PCI: qcom: Remove unnecessary pipe_clk handling
->   clk: qcom: regmap: add pipe clk implementation
->   clk: qcom: gcc-sm8450: use new clk_regmap_pipe_ops for PCIe pipe
->     clocks
->   clk: qcom: gcc-sc7280: use new clk_regmap_pipe_ops for PCIe pipe
->     clocks
->   PCI: qcom: Drop manual pipe_clk_src handling
-> 
->  drivers/clk/qcom/Makefile              |  1 +
->  drivers/clk/qcom/clk-regmap-pipe.c     | 62 ++++++++++++++++++++
->  drivers/clk/qcom/clk-regmap-pipe.h     | 24 ++++++++
->  drivers/clk/qcom/gcc-sc7280.c          | 49 ++++++----------
->  drivers/clk/qcom/gcc-sm8450.c          | 51 ++++++----------
->  drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
->  6 files changed, 128 insertions(+), 140 deletions(-)
->  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.c
->  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.h
+> Yeah, I don't see anything downstream either, but how do you know that
+> it has four parents then?
 
-Hi guys,
+4 possible parents (judging from bitfield).
 
-where are we with this series ? I have noticed there is an ongoing
-review so if you don't disagree I'd mark it as "Changes Requested" and
-wait for a v5.
-
-Thanks,
-Lorenzo
+-- 
+With best wishes
+Dmitry
