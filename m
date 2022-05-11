@@ -2,94 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E887C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 06:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14D6C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 08:04:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbiEKGL2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 02:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37600 "EHLO
+        id S237320AbiEKIEG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 04:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242138AbiEKGLQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 02:11:16 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAAA36E0F
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 23:11:14 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1Mae7u-1oLGHm19Ug-00cBHb; Wed, 11 May 2022 08:10:52 +0200
-Message-ID: <6066bd9d-b53b-0a91-7440-98244c2d55c2@i2se.com>
-Date:   Wed, 11 May 2022 08:10:50 +0200
+        with ESMTP id S243399AbiEKIEC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 04:04:02 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168BA8F195;
+        Wed, 11 May 2022 01:03:59 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id D83611F44C79
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652256237;
+        bh=rHxWTERdNk4Yn2qQ3l99Wkt4OciBw5SAAHBYUVwgMjI=;
+        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+        b=F8dtqKHodXJaflkn78tiHZVUD3rdaQHxtgZaG11wQt6u9lXnnnEXsW1FcnkrNez7g
+         yyruKMsi5Jeixps/EDL7jIZLhVUPodcqzRfAhmbeXD2mkQNalL6oYQw5XcyjWYJ+KP
+         a2/jcHMj00BFUsuGa/v0+C/1jNm3w4vwKiAJagwKwNLSJ9r/w4yOMnm3aoYY7P5WP0
+         nfuuB0z+Quzmv/fTisag1HhlkeEpdi5HJX/dbV0m/gW7d6boelyxOuYMuZmrCofdQs
+         ut4rB/8Ijm2QcxEfyKYPQrjBQpU3mssRe5meJKXZRglxShhvoBAPiU5g/6PSfflkNZ
+         x8FZnPhf910CQ==
+Message-ID: <18fee6fe-2378-391e-993d-425c887ba40a@collabora.com>
+Date:   Wed, 11 May 2022 10:03:54 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>
-Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
+ Thunderbird/91.9.0
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 00/11] clk: mediatek: Move to struct clk_hw provider
+ APIs
+To:     Chen-Yu Tsai <wenst@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
-References: <20220428065743.94967-1-iivanov@suse.de>
- <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
- <20220510133019.h2urxj3feponfuku@houat>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220510133019.h2urxj3feponfuku@houat>
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220510104804.544597-1-wenst@chromium.org>
+Content-Language: en-US
+In-Reply-To: <20220510104804.544597-1-wenst@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:KK6qQjZxEf2yu4WbWOviK9H+jsfQl4NoJN7IKrLTkAWiHf+xPrH
- tM4D9Jnr5AO54RKXDN7n+XhXDuaxBPXd5sR6dNyZya7L7zZZ59Lf9yW2lSOdLpC6ZvnnXwN
- pJD7jEPPc+9n6J3DLsKvzbyk6sBLIueSNoi9TrLIzvG6Td9mhT06E5Alt0r6GUywYv4nYaL
- znRyIjf1dhMvq+HW10LjA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TeGFQnCG5EQ=:x4kEUdz6ANWuoGhTPaIVqO
- 9yfXB4sp7JI/ACf69z8vF3LetPXtyeN7XxLh+0uZFl1C6SX7ra3I83l7HXTX3czd5nXS8hDTg
- lz6/r3WG8X4pRIlrY1cPXpSmNZCNv2/4ytFyH9zTfhNSKD/5sESEagu5Fh4gf4XzjoOsfXmnb
- 2AcgEnR5vMXGrmsNLjd4zE9+zQLDIOAdM7nmBEbY1Aq/HYVhZmksuR8AZny7s8R5sqF9WETU+
- rrr00aRZnMvvneMRArgKMfqhWw9YFTkxKS7AzYjioDoTv5VdBj2LO6W4khB/8D4gTRy16DwIR
- WDxVHBAtewy+myCJ2GLFplXFycq65+jQWrJ8p5xFYfKgFlo+qkeOss7a6mdcg6gFWRTvndHKf
- wwM5f6UtDEn5pdTfsOb805yeKSXjt7AYnFFqkDhpoNTi7UIgZIfQzf3F4AKCNlnH4yDicOCQ1
- dQ1jJQ0SD0+TUHmRjNlD8P40G0lIq/wXU7rOPU0LE6vsDz+Pf9I+h1uR9ENr26pPDDZ45p+vK
- qMf1wiJOL3kL4A2zKsRx7sRLuXP1W64tG8HZ1n9ML9JEGF7Y2EOqlCd85bmtQ22sMW+kTYq9w
- dj7JRBSKEUuNCHrrohRUhBqM1kk17hMr3/noNcQ97naETrZ29suesPwqk/FET25HM73dCyYh9
- o6oKx958yiBQxBC4xGNnJFyOSuidEjq5gG95dd100tqIqU3Xopv/oPHkg4PLjrdYbW+1yFobY
- z23UrPTtpjzy0w5J
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 10.05.22 um 15:30 schrieb Maxime Ripard:
-> Hi,
+Il 10/05/22 12:47, Chen-Yu Tsai ha scritto:
+> Hi everyone,
+> 
+> This is v2 of part 2 of my proposed MediaTek clk driver cleanup work [1].
+> 
+> Changes since v1:
+> - Rebased and added coverage of new MT8186 clk drivers
+> - Split patch "clk: mediatek: Replace 'struct clk' with 'struct clk_hw'"
+>    into arbitrary pieces so that they don't bounce from the mailing lists
+> 
+> This was tested on MT8183 Juniper. Apppreciate any help testing on non-
+> ChromeOS devices.
 >
-> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
->> May I ask what's the status/plan of  this patch series?
-> As far as I know it hasn't been merged yet.
->
->> It seems it has not been merged yet, and I know we are a bit late in
->> the 5.18 schedule, but I think this is a good fix for 5.18.
-> Fix for what? I don't think this series fix any bug?
-This seems to be a "fix" for the Frankenstone scenario: mainline kernel 
-+ vendor DT
->> And, this looks like to be a good candidate for a backport to stable
->> kernels.
-> This is not going to be trivial to backmerge, it depends on 12c90f3f27bb
-> that isn't marked for stable
 
-I don't think this is a good idea to backmerge these changes.
+For the entire series:
 
-Best regards
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
->
-> maxime
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+...and this entire series was tested on:
+MT8173/92/95 and MT6795 (Sony Xperia M5 smartphone, clock drivers not sent
+upstream yet), so you also get my:
+
+Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+...and last, but not least:
+
+Thank you! :-)
