@@ -2,124 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC95C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 10 May 2022 18:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A04C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 02:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348514AbiEJSMH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 May 2022 14:12:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52606 "EHLO
+        id S241365AbiEKCcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 May 2022 22:32:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348510AbiEJSMG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 14:12:06 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7995A29CB8
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 11:08:00 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220510180754euoutp025742760711ed4a08cd75fdd91664baac~t0KvHZTbr2944029440euoutp02G
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 18:07:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220510180754euoutp025742760711ed4a08cd75fdd91664baac~t0KvHZTbr2944029440euoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1652206074;
-        bh=EIxhLP+tIlQHP4st26qWqlxBxjq78NkAByLwLQ8nxTo=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=TpPxOu+wV/Odg3Vg/pUb2MQoq1GRlmorBZ9I9t/eVnQXdGejcaJyJsAmvhswfJgmR
-         I/kpXqTmjlq3In6YEDpdBtbXmcvm/4oX6QHY6hsFEnrzcxrSYyKJ/Q3P/FD/QYFhAJ
-         DlVTbL+XMLYf5ZAW//LXfAJE1zdCvMEAiHL9Nkds=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220510180753eucas1p157579d265b6fcc9ef89ce3f830906a88~t0KuG-GpE3030430304eucas1p1v;
-        Tue, 10 May 2022 18:07:53 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 27.19.10009.9F9AA726; Tue, 10
-        May 2022 19:07:53 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220510180752eucas1p26e120d9c4026d6a2d7a24744460bea25~t0KtdRC3h2520125201eucas1p2K;
-        Tue, 10 May 2022 18:07:52 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220510180752eusmtrp279ccfe98192aa84ca9815c709573d277~t0KtcgMlS1333413334eusmtrp2g;
-        Tue, 10 May 2022 18:07:52 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-e6-627aa9f9be4f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id B9.60.09522.8F9AA726; Tue, 10
-        May 2022 19:07:52 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220510180751eusmtip2a03a4b379a0f677a5c7b35171686f09a~t0KswbWxT1510215102eusmtip2k;
-        Tue, 10 May 2022 18:07:51 +0000 (GMT)
-Message-ID: <1f2b528d-4b2e-1ba7-5f90-7a0bf78a1869@samsung.com>
-Date:   Tue, 10 May 2022 20:07:51 +0200
+        with ESMTP id S242382AbiEKCcJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 May 2022 22:32:09 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E81E960BAA;
+        Tue, 10 May 2022 19:31:41 -0700 (PDT)
+Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 222F31C80D1F;
+        Wed, 11 May 2022 10:31:41 +0800 (CST)
+Received: from NTHCCAS02.nuvoton.com (10.1.9.121) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Wed, 11 May
+ 2022 10:31:40 +0800
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS02.nuvoton.com
+ (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2176.2; Wed, 11 May
+ 2022 10:31:40 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS04.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Wed, 11 May 2022 10:31:40 +0800
+Message-ID: <f4d77335-262e-479f-3fec-b68ec19a51c4@nuvoton.com>
+Date:   Wed, 11 May 2022 10:31:40 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH v3 00/12] initial clock support for exynosauto v9 SoC
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH V4 0/5] Add initial support for MA35D1 SoC
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+        <ychuang570808@gmail.com>, "Rob Herring" <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20220504075154.58819-1-chanho61.park@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRmVeSWpSXmKPExsWy7djP87o/V1YlGew+K2TxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYorhsUlJzMstSi/TtErgyGr93
-        MhbsZKyY3dLK3MA4lbGLkZNDQsBE4vONNcxdjFwcQgIrGCU23XrMCOF8YZRobljIBuF8ZpSY
-        9GUxM0zLsQdHoFqWM0rc+PCeHcL5yCgxd9YbsCpeATuJW/Na2UFsFgFViQOn9rFAxAUlTs58
-        AmaLCiRJvHlzFaxeWMBT4v2HTrB6ZgFxiVtP5jOB2CICbcwS29/xQcS7GCUaPhuA2GwChhK9
-        R/uAbuXg4BSwl3i8wQKiRF5i+9s5YMdJCEzmlJg+bzvUoy4SLze0s0DYwhKvjm9hh7BlJP7v
-        hNglIVAvMXnKFTYIu4NR4uteMwjbWmLCphNsILuYBTQl1u/Shwg7Sry/sgssLCHAJ3HjrSDE
-        CXwSk7ZNZ4YI80p0tAlBVKtI/F41HWqRlET3k/8sExiVZiGFySwkv89C8swshL0LGFlWMYqn
-        lhbnpqcWG+allusVJ+YWl+al6yXn525iBKaw0/+Of9rBOPfVR71DjEwcjIcYJTiYlUR49/dV
-        JAnxpiRWVqUW5ccXleakFh9ilOZgURLnTc7ckCgkkJ5YkpqdmlqQWgSTZeLglGpgsjxyLcur
-        YuNFLVb3RWyqdzJ1meuilWQW/Tgw39bpcnIPd2uNotn95KuMmrrt/1+eeBN0fJk+n7TbX4+4
-        i1f+m0hwlS68Yc/DrBJzd5ax4sqWCZOPvI+cFx62+eJOsZba2iiTeXrmEXdma6hXXl6wm3Nl
-        Mzv72kjFU05rP+4X1fo4Y8JhT9a4oPSr39Wcnjodtou6b3eAv/CPkvAFjaakliLNXfnrttQa
-        WPPG/gs213r5zfb6x9/TuPzt/n3jXZw71/xlxNssK71ZvXrZv9QuPjv67VL/Jl+N5g4LB5G9
-        rD3pr2Mcl384bSRd5HYvPiBgdXvjl7MibQ9EzTrnlS/7u7BltlZNxT+LI0G1TV5KLMUZiYZa
-        zEXFiQBs+ExP0AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsVy+t/xe7o/VlYlGfw7pmLxYN42NovL+7Ut
-        rn95zmox/8g5Vou+Fw+ZLfa+3spu8bHnHqvFjPP7mCwunnK1aN17hN3i37WNLBbP+4BCq3b9
-        YXTg9Xh/o5XdY+esu+wem1Z1snncubaHzaNvyypGj8+b5ALYovRsivJLS1IVMvKLS2yVog0t
-        jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyGr93MhbsZKyY3dLK3MA4lbGLkZND
-        QsBE4tiDI8xdjFwcQgJLGSWmPr3B0sXIAZSQkpjfogRRIyzx51oXG0TNe0aJa9t7WEASvAJ2
-        ErfmtbKD2CwCqhIHTu2DigtKnJz5BGyOqECSxJHD/CBhYQFPifcfOsHKmQXEJW49mc8EMlNE
-        oINZ4uPMZ2ALmAW6GCU2/n7CBlIlJDCJUeLfM7ChbAKGEr1H+xhBhnIK2Es83mABYjILqEus
-        nycEMVNeYvvbOcwTGIVmIbliFpJ1sxA6ZiHpWMDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93
-        EyMwYrcd+7l5B+O8Vx/1DjEycTAeYpTgYFYS4d3fV5EkxJuSWFmVWpQfX1Sak1p8iNEUGBIT
-        maVEk/OBKSOvJN7QzMDU0MTM0sDU0sxYSZzXs6AjUUggPbEkNTs1tSC1CKaPiYNTqoGJ/aSD
-        8tQdd5MOiM/TMrlQZvWriLFTtfnB+5+7C/XfVAnvm3tyajCfU4OBeVPyOpu9G15d9/R6adfw
-        MO+WwJsr36w5TyuzvHnItGDWDf2ImiyhxOAZV+5d1/CvNm0M9BMot3hrGPKtTLri3yv3R4vL
-        NKycT8pL/9VscOSYbM1qYvmyfhHj4lOT5s5ycY0T9D+zbOnZvZ+D/ip35iysXxArx7Pq82Im
-        YfvzZzR5eloK3ub3f/XMWpS8LvFi0ZIE+R63V99ZxL2uTOn3kIw6sJllWiHrTJn/8i4/ONPL
-        YiJNxRcWf47IfHb4/tzqft2ju26GP64LW9uY5m7c3FniUij4IOuw0Wy3N+JfHbq2bVZiKc5I
-        NNRiLipOBADC94CwYQMAAA==
-X-CMS-MailID: 20220510180752eucas1p26e120d9c4026d6a2d7a24744460bea25
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80
-References: <CGME20220504075003epcas2p3f6f002e444cab4e39c025b169cba1b80@epcas2p3.samsung.com>
-        <20220504075154.58819-1-chanho61.park@samsung.com>
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
+        <cfli0@nuvoton.com>
+References: <20220510032558.10304-1-ychuang3@nuvoton.com>
+ <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
+ <d64f260d-8ee6-808a-5725-e1181f104dfe@nuvoton.com>
+ <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <CAK8P3a3UZ_thp=CVeXYwJ57MXxsurr+Y9Ad0bv0EOi4Jn=S+eg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04.05.2022 09:51, Chanho Park wrote:
-> This patchset adds initial clock driver support for Exynos Auto v9 SoC.
 
-Thanks, I have applied patches 04...09/12.
 
-Regards,
-Sylwester
+On 2022/5/10 下午 08:45, Arnd Bergmann wrote:
+> On Tue, May 10, 2022 at 10:40 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
+>> On 2022/5/10 下午 03:07, Arnd Bergmann wrote:
+>>
+>> MA35D1 is target at consumer application, while NPCM is for BMC.
+>> MA35D1 is equipped with ARM Coretx-A35 dual-core with the M4 co-processor.
+>>
+>> Our team has developed Linux application on MA35D1 test chip in the last
+>> year, and
+>> the mass production version is wafer-out in last month. It will be
+>> announced soon.
+>>
+>> We have ported TF-A, U-Boot, OP-TEE, and Linux 5.4.y to MA35D1 platform, and
+>> have provided Yocto and Buildroot distribution for beta site evaluation.
+>> All the source
+>> code can be found at https://apc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOpenNuvoton%2FMPU-Family&amp;data=05%7C01%7Cychuang3%40nuvoton.com%7Cf65d464391574dcf60af08da3282f453%7Ca3f24931d4034b4a94f17d83ac638e07%7C0%7C0%7C637877835284415849%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=b6sopMTwT8XT%2FR76qASvOtqw7zs9Kcp7lIxDw4O9%2FT8%3D&amp;reserved=0, include the
+>> Linux 5.4.y porting on MA35D1 platform.
+> Ok, thanks for the information, this is exactly what we need in the
+> changelog text for the platform, and (if you send a pull request)
+> in the tag description.
+>
+>> Yes, we have console device driver ready. Please refer to
+>> https://apc01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOpenNuvoton%2FMA35D1_linux-5.4.y%2Fblob%2Fmaster%2Fdrivers%2Ftty%2Fserial%2Fma35d1_serial.c&amp;data=05%7C01%7Cychuang3%40nuvoton.com%7Cf65d464391574dcf60af08da3282f453%7Ca3f24931d4034b4a94f17d83ac638e07%7C0%7C0%7C637877835284415849%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=ULfLkju2X98pXn%2BeCWGrvEgRchIAlv%2FSECx%2BoJzSdWI%3D&amp;reserved=0.
+>> But I think we have to fix coding style and have more review on it. Is
+>> the console driver must for the initial support submit, or can we submit it later?
+> I would prefer to have it included, but it looks like this has never been
+> reviewed, and I can immediately see a few things that need changes
+> before it can get included, so I suppose we could merge the platform
+> without it.
+>
+> The reason I'd like to have it included is that without any I/O devices
+> it is obvious that the code you are sending has never been tested
+> on the kernel version you are sending it against, and that makes it
+> more likely that there are bugs.
+>
+> If the platform for some reason does not make it into v5.19, I would
+> ask you to include the serial driver in the series so we can merge
+> a working initial branch for v5.20.
+>
+> In the meantime, please post the driver for review to the linux-kernel
+> and linux-serial lists by itself, and keep me on Cc.
+>
+>> And thank you to remind us to create an entry in MAINTAINERS file. I
+>> will add the patch in the next version.
+> Ok.
+>
+>         Arnd
+
+Hi Anrd,
+
+Thanks for your kind help.
+Sure, we will have review on the serial driver and include the serial 
+driver in the next submit.
+
+
+Best Regards,
+Jacky Huang
+
+
