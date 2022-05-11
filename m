@@ -2,92 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7996C43217
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3423C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239973AbiEKPBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 11:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
+        id S1343554AbiEKPXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 11:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245507AbiEKPBX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:23 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FD833A2D;
-        Wed, 11 May 2022 08:01:23 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id k2so2189268qtp.1;
-        Wed, 11 May 2022 08:01:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oIuqiJ1KMfrOcWNf9PXlKzJzt4BdNRB8d9UpwdKjhTg=;
-        b=NCzkQwFBqTgjN2haflpZFtU9ln1qti58wlBmjyabCDEnIDABpqWN8KKc7Yk2dl5r9b
-         G93UPkCXT+ez1IHFaJc+8wWsjnhKlFLJeHrI95UcMYb1nyYOZiobATYkSSehWO3vCLPM
-         WXL3tQA3nAYzkTD5Hb0uJLv6oQYtF0IeAUd7iMX1nKkAzBBCKnogIQR/tPiTbkCprLGD
-         bgdHz4IxIx+czXjSNaEoRLcw6b3ZLNrYpLKvzV63rTRA+w4R6NAHqop5JsMq/hIjG3ph
-         ViX94MBP4Fc+DPjGDZAZcCS/2eaRDXpfPdn7uYMlraELnbTwnW0pUYN4yxy4tz9MnWCj
-         F4aA==
+        with ESMTP id S242665AbiEKPXU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:23:20 -0400
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93ED54EDE2;
+        Wed, 11 May 2022 08:23:19 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-edf9ddb312so3190331fac.8;
+        Wed, 11 May 2022 08:23:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oIuqiJ1KMfrOcWNf9PXlKzJzt4BdNRB8d9UpwdKjhTg=;
-        b=pYS77Om+QvZv6dcSyMOMfwLWy8tSduE3dxNlt+GF6Z3nciDb3UsZFjuVmejWOLLSjb
-         zykOq4poCmQJ4swiFRW/t4ryWhUi/05kwOLrMwGmFRbGEQUxG2HRJVVaR3RmryPdffmN
-         fqtASuy4tAJNh3u20VzmdlNZfJdGxsXQQMLPWMqEBbWE8upxgBL07RZdkJCkgmhK11JH
-         f6uTEIqrYBKCrDJmy/zVaiHziCxecO/7y8h6uPWz2hp+EEtj8iX48lV/fgwwHRMFl2ao
-         GWc7qLdq2SRnihvyIjggiiv9vozxNQYJU7EwzCsgp3wOJIIUm/8ykHExcm8jVc+G44aH
-         VDKQ==
-X-Gm-Message-State: AOAM531g78UgzjDqYYXDa1ltXYJJ5b8DY2DUenSbyu+BOMR6alzODWms
-        X3+qi1jSKQQuZWTTh+MI4Jo=
-X-Google-Smtp-Source: ABdhPJyVrJE9bBpSUy3Gw712E094ZqLK5sBcNBbpE1kENODFBSPxCFrfFyw5qfMfgH/qBnxn71/cog==
-X-Received: by 2002:a05:622a:4ca:b0:2f1:f386:4377 with SMTP id q10-20020a05622a04ca00b002f1f3864377mr24510020qtx.156.1652281281906;
-        Wed, 11 May 2022 08:01:21 -0700 (PDT)
-Received: from master-x64.sparksnet ([2601:153:980:85b1::10])
-        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5zNISZaXlYvmRc3tMtVlWkswi785e/B+9/uY5oE6YAQ=;
+        b=qeMnAmAJokulvB1pYIRpLATzJ+WX2Pr91CYsHYvGhLzKlJG6NdkQ7ukU+DQjRgpv6D
+         VzEZlap5B8+B8WzYVvHGE6hHeHZmc+OvQPxhGKTlU0DKrM+6BgoVchGJwyu6ylx9voth
+         aCGeMaLEXqddnN9Bi8lQ5Oz1Jy3QvEdO1wYvgjtsffAI0ThmZUBcr2YFxJqKggqJo+Zg
+         HAbR7wdHXSBItvK4ZR+XBbvT7Kfh9gKBEjyjqCR2XsN6bBlfLrq9eGpiqBNcOBidvPfp
+         7qfepk4foWiJMzpb1W74JUEkbScUHbltHQbPo+faDQrdFNpuQjPM8gnzod9Z3lsEOYwN
+         EO9A==
+X-Gm-Message-State: AOAM530R2ADdSXA2Cap5lYwhsXKyREpR8+vthQ/sH0E9XxYYlsTUMxI3
+        1Rk+xKQhhfRYJMhAaXAAog==
+X-Google-Smtp-Source: ABdhPJz8rVBN06gIFVAn3YY+UTbDRGhzGs7/A3hZxVp8AZpNRgriF0sbM0SVBw8RFbySvGxuvEdMuQ==
+X-Received: by 2002:a05:6870:61cd:b0:e9:8de7:9c51 with SMTP id b13-20020a05687061cd00b000e98de79c51mr2953718oah.50.1652282598896;
+        Wed, 11 May 2022 08:23:18 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id bk14-20020a056820190e00b0035ec65ac944sm1036801oob.16.2022.05.11.08.23.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 08:01:21 -0700 (PDT)
-From:   Peter Geis <pgwipeout@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH v1 2/6] arm64: dts: rockchip: add clocks to rk356x cru
-Date:   Wed, 11 May 2022 11:01:13 -0400
-Message-Id: <20220511150117.113070-3-pgwipeout@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220511150117.113070-1-pgwipeout@gmail.com>
-References: <20220511150117.113070-1-pgwipeout@gmail.com>
+        Wed, 11 May 2022 08:23:18 -0700 (PDT)
+Received: (nullmailer pid 337784 invoked by uid 1000);
+        Wed, 11 May 2022 15:23:17 -0000
+Date:   Wed, 11 May 2022 10:23:17 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jacky Huang <ychuang3@nuvoton.com>
+Cc:     linux-kernel@vger.kernel.org, ychuang570808@gmail.com,
+        cfli0@nuvoton.com, devicetree@vger.kernel.org, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        catalin.marinas@arm.com, sboyd@kernel.org, robh+dt@kernel.org,
+        arnd@arndb.de, krzk+dt@kernel.org, will@kernel.org, olof@lixom.net
+Subject: Re: [PATCH V4 5/5] dt-bindings: arm: Add initial bindings for
+ Nuvoton Platform
+Message-ID: <20220511152317.GA337729-robh@kernel.org>
+References: <20220510032558.10304-1-ychuang3@nuvoton.com>
+ <20220510032558.10304-6-ychuang3@nuvoton.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220510032558.10304-6-ychuang3@nuvoton.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The rk356x cru requires a 24m clock input to function. Add the clocks
-properties to the cru to clear some dtbs_check warnings.
+On Tue, 10 May 2022 11:25:58 +0800, Jacky Huang wrote:
+> Add binding for ARMv8 based Nuvotn SoCs and platform boards.
+> Add initial bindings for MA35D1 series development boards.
+> 
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> ---
+>  .../devicetree/bindings/arm/nuvoton.yaml      | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/nuvoton.yaml
+> 
 
-Signed-off-by: Peter Geis <pgwipeout@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk356x.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-index 7cdef800cb3c..fd9e8a854328 100644
---- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-@@ -336,6 +336,8 @@ pmucru: clock-controller@fdd00000 {
- 	cru: clock-controller@fdd20000 {
- 		compatible = "rockchip,rk3568-cru";
- 		reg = <0x0 0xfdd20000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
- 		assigned-clocks = <&cru PLL_GPLL>, <&pmucru PLL_PPLL>;
--- 
-2.25.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
