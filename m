@@ -2,360 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BD6C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 10:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37986C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 13:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241240AbiEKKRy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 06:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49040 "EHLO
+        id S243773AbiEKNUA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 09:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiEKKRv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 06:17:51 -0400
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1B226AD3
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 03:17:49 -0700 (PDT)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2ef5380669cso14939507b3.9
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 03:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y0yk23I1nDnNSowekKcj7K4w/pPnlPvOTvgMIkY+JzY=;
-        b=FqMrW5EntG3ipuoiwVfOM67aT5Gm1MK/Dj1UfRMNCyHfNATyiSW3ZrDxrwwGBSGwX2
-         uRYIGTz6w1YHw1we3DmY4r74fBIcLk/JZZGJmJR3zIoIZ4ZvQeyRD5hwjFODucoaulyB
-         sBZ/ogDveNZh7mMCrLcTz/3qEMkdywakcMfSQX2j+j0Dr0aZc+Yfh2AuRTWnTxRKZ5My
-         ynKDHOBMfqzpfnIr288h41cfsJmxw1zaWJoSs/BA8tVOJHSVFGKvOs7xR8n5MwqnPdqT
-         Dc9CZ9Rf0XHLG2p1e6MJ+KLI68DYjCyEFyMhFePNlgiG+e326oKWPlqv0uckDZ3UuVh6
-         CS0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y0yk23I1nDnNSowekKcj7K4w/pPnlPvOTvgMIkY+JzY=;
-        b=4QSTual76JnCNWm2VPuep+PmTwAOZ/QiSMidRqhLwHechb27VR+6dnp7Vv8azgFGfO
-         IrAWu39g91o+KxqXzeZtYBXMRA/VUppAZBWeR8tG5/t9GDOBtV5JhwsVf+TqXlKXV0J4
-         7g9xsutLonT45JKq5tTGlrBkY+GDvQgc7sRhFbmCevvVEwm6q+55t7sdd9lP5+9QN3BX
-         Y3kSRHL3KZMq0d4JKBEWLpBExEj+wB1vFvkFV651T9eQsVkvafaLA5H2ktmplHBaQ906
-         mV3/QKEeZpfxApgRlMpA/PUpLNZjrCaq6ask4Gaml0Qc2hWHHDimS4ewYD+7SB+ykj07
-         UL7w==
-X-Gm-Message-State: AOAM532XtSCYxVHaD0zg7khzeXdtE8pP49aLC9smn2qVXmZaIZCqZZJr
-        mf0PVeKgCfPq3IQ7y65W4mvAaWic1HdRr0cvrOZuJQ==
-X-Google-Smtp-Source: ABdhPJz4aj17AwoY38RDYc+QLTaQW0WnUvtR/e0tNCPlOO+Qtzk0GrHuH0MhHzWeNLwkVtFwq3xsT3GaGDExEy0dRyc=
-X-Received: by 2002:a81:1985:0:b0:2f7:c16b:3afd with SMTP id
- 127-20020a811985000000b002f7c16b3afdmr23752186ywz.113.1652264269024; Wed, 11
- May 2022 03:17:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220510155744.812471-1-y.oudjana@protonmail.com> <20220510155940.812565-1-y.oudjana@protonmail.com>
-In-Reply-To: <20220510155940.812565-1-y.oudjana@protonmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 11 May 2022 13:17:38 +0300
-Message-ID: <CAA8EJprE-p6m4iAWuo=881=T25AekhsueUxU0LazRMVKBZ26zA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: qcom: msm8996-cpu: Add CBF support
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
+        with ESMTP id S243689AbiEKNTd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 09:19:33 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 63631239D84;
+        Wed, 11 May 2022 06:19:32 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F7F8ED1;
+        Wed, 11 May 2022 06:19:32 -0700 (PDT)
+Received: from lpieralisi (unknown [10.57.1.148])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA13E3F66F;
+        Wed, 11 May 2022 06:19:29 -0700 (PDT)
+Date:   Wed, 11 May 2022 14:19:24 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+Message-ID: <Ynu33PC19JIKinC+@lpieralisi>
+References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Sun, May 01, 2022 at 10:21:44PM +0300, Dmitry Baryshkov wrote:
+> PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> Currently this is handcoded in the PCIe driver by reparenting the
+> gcc_pipe_N_clk_src clock.
+> 
+> Instead of doing it manually, follow the approach used by
+> clk_rcg2_shared_ops and implement this parking in the enable() and
+> disable() clock operations for respective pipe clocks.
+> 
+> PCIe part depends on [1].
+> 
+> Changes since v3:
+>  - Replaced the clock multiplexer implementation with branch-like clock.
+> 
+> Changes since v2:
+>  - Added is_enabled() callback
+>  - Added default parent to the pipe clock configuration
+> 
+> Changes since v1:
+>  - Rebased on top of [1].
+>  - Removed erroneous Fixes tag from the patch 4.
+> 
+> Changes since RFC:
+>  - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
+>    than specifying the register value directly
+>  - Expand commit message to the first patch to specially mention that
+>    it is required only on newer generations of Qualcomm chipsets.
+> 
+> [1]: https://lore.kernel.org/all/20220401133351.10113-1-johan+linaro@kernel.org/
+> 
+> Dmitry Baryshkov (5):
+>   PCI: qcom: Remove unnecessary pipe_clk handling
+>   clk: qcom: regmap: add pipe clk implementation
+>   clk: qcom: gcc-sm8450: use new clk_regmap_pipe_ops for PCIe pipe
+>     clocks
+>   clk: qcom: gcc-sc7280: use new clk_regmap_pipe_ops for PCIe pipe
+>     clocks
+>   PCI: qcom: Drop manual pipe_clk_src handling
+> 
+>  drivers/clk/qcom/Makefile              |  1 +
+>  drivers/clk/qcom/clk-regmap-pipe.c     | 62 ++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-pipe.h     | 24 ++++++++
+>  drivers/clk/qcom/gcc-sc7280.c          | 49 ++++++----------
+>  drivers/clk/qcom/gcc-sm8450.c          | 51 ++++++----------
+>  drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
+>  6 files changed, 128 insertions(+), 140 deletions(-)
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.c
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe.h
 
-On Tue, 10 May 2022 at 19:05, Yassine Oudjana <yassine.oudjana@gmail.com> wrote:
->
-> From: Konrad Dybcio <konrad.dybcio@somainline.org>
->
-> Add the required code to support the CBF clock, which is responsible for
-> core cluster interconnect frequency on msm8996.
->
-> Somewhat based on AngeloGioacchino del Regno's work at:
-> https://github.com/sonyxperiadev/kernel/blob/aosp/LE.UM.2.3.2.r1.4/drivers/clk/qcom/clk-cpu-8996.c
->
-> This fixes the issue with booting with all 4 cores enabled.
->
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> Signed-off-by: Yassine Oudjana <yassine.oudjana@gmail.com>
-> ---
->  drivers/clk/qcom/clk-cpu-8996.c | 162 +++++++++++++++++++++++++++++++-
->  1 file changed, 159 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-> index 4a4fde8dd12d..8afc271f92d0 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -68,10 +68,19 @@ enum _pmux_input {
->         NUM_OF_PMUX_INPUTS
->  };
->
-> +enum {
-> +       CBF_PLL_INDEX = 1,
-> +       CBF_DIV_2_INDEX,
-> +       CBF_SAFE_INDEX
-> +};
-> +
->  #define DIV_2_THRESHOLD                600000000
->  #define PWRCL_REG_OFFSET 0x0
->  #define PERFCL_REG_OFFSET 0x80000
->  #define MUX_OFFSET     0x40
-> +#define CBF_REG_OFFSET 0x0
-> +#define CBF_PLL_OFFSET 0xf000
-> +#define CBF_MUX_OFFSET 0x18
->  #define ALT_PLL_OFFSET 0x100
->  #define SSSCTL_OFFSET 0x160
->
-> @@ -98,6 +107,17 @@ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
->         [PLL_OFF_STATUS] = 0x28,
->  };
->
-> +static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
-> +       [PLL_OFF_L_VAL] = 0x08,
-> +       [PLL_OFF_ALPHA_VAL] = 0x10,
-> +       [PLL_OFF_USER_CTL] = 0x18,
-> +       [PLL_OFF_CONFIG_CTL] = 0x20,
-> +       [PLL_OFF_CONFIG_CTL_U] = 0x24,
-> +       [PLL_OFF_TEST_CTL] = 0x30,
-> +       [PLL_OFF_TEST_CTL_U] = 0x34,
-> +       [PLL_OFF_STATUS] = 0x28,
-> +};
-> +
->  /* PLLs */
->
->  static const struct alpha_pll_config hfpll_config = {
-> @@ -111,6 +131,17 @@ static const struct alpha_pll_config hfpll_config = {
->         .early_output_mask = BIT(3),
->  };
->
-> +static const struct alpha_pll_config cbfpll_config = {
-> +       .l = 72,
-> +       .config_ctl_val = 0x200d4aa8,
-> +       .config_ctl_hi_val = 0x006,
-> +       .pre_div_mask = BIT(12),
-> +       .post_div_mask = 0x3 << 8,
-> +       .post_div_val = 0x1 << 8,
-> +       .main_output_mask = BIT(0),
-> +       .early_output_mask = BIT(3),
-> +};
-> +
->  static struct clk_alpha_pll perfcl_pll = {
->         .offset = PERFCL_REG_OFFSET,
->         .regs = prim_pll_regs,
-> @@ -135,6 +166,18 @@ static struct clk_alpha_pll pwrcl_pll = {
->         },
->  };
->
-> +static struct clk_alpha_pll cbf_pll = {
-> +       .offset = CBF_PLL_OFFSET,
-> +       .regs = cbf_pll_regs,
-> +       .flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-> +       .clkr.hw.init = &(struct clk_init_data){
-> +               .name = "cbf_pll",
-> +               .parent_names = (const char *[]){ "xo" },
-> +               .num_parents = 1,
-> +               .ops = &clk_alpha_pll_huayra_ops,
-> +       },
-> +};
-> +
->  static const struct pll_vco alt_pll_vco_modes[] = {
->         VCO(3,  250000000,  500000000),
->         VCO(2,  500000000,  750000000),
-> @@ -194,6 +237,9 @@ struct clk_cpu_8996_mux {
->  static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
->                                void *data);
->
-> +static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-> +                              void *data);
-> +
->  #define to_clk_cpu_8996_mux_nb(_nb) \
->         container_of(_nb, struct clk_cpu_8996_mux, nb)
->
-> @@ -329,6 +375,35 @@ static struct clk_cpu_8996_mux perfcl_pmux = {
->         },
->  };
->
-> +static struct clk_cpu_8996_mux cbf_mux = {
-> +       .reg = CBF_REG_OFFSET + CBF_MUX_OFFSET,
-> +       .shift = 0,
-> +       .width = 2,
-> +       .pll = &cbf_pll.clkr.hw,
-> +       .nb.notifier_call = cbf_clk_notifier_cb,
-> +       .clkr.hw.init = &(struct clk_init_data) {
-> +               .name = "cbf_mux",
-> +               .parent_names = (const char *[]){
-> +                       "xo",
-> +                       "cbf_pll",
-> +                       "cbf_pll_main",
-> +               },
+Hi guys,
 
-parent_data please.
+where are we with this series ? I have noticed there is an ongoing
+review so if you don't disagree I'd mark it as "Changes Requested" and
+wait for a v5.
 
-> +               .num_parents = 3,
-> +               .ops = &clk_cpu_8996_mux_ops,
-> +               /* CPU clock is critical and should never be gated */
-> +               .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> +       },
-> +};
-> +
-> +static const struct regmap_config cbf_msm8996_regmap_config = {
-> +       .reg_bits               = 32,
-> +       .reg_stride             = 4,
-> +       .val_bits               = 32,
-> +       .max_register           = 0x10000,
-> +       .fast_io                = true,
-> +       .val_format_endian      = REGMAP_ENDIAN_LITTLE,
-> +};
-> +
->  static const struct regmap_config cpu_msm8996_regmap_config = {
->         .reg_bits               = 32,
->         .reg_stride             = 4,
-> @@ -397,6 +472,35 @@ static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
->         return ret;
->  }
->
-> +static struct clk_regmap *cbf_msm8996_clks[] = {
-> +       &cbf_pll.clkr,
-> +       &cbf_mux.clkr,
-> +};
-> +
-> +static int qcom_cbf_clk_msm8996_register_clks(struct device *dev,
-> +                                             struct regmap *regmap)
-> +{
-> +       int ret;
-> +
-> +       cbf_mux.pll_div_2 = clk_hw_register_fixed_factor(dev, "cbf_pll_main",
-> +                                                     "cbf_pll", CLK_SET_RATE_PARENT,
-> +                                                     1, 2);
-> +       if (IS_ERR(cbf_mux.pll_div_2)) {
-> +               dev_err(dev, "Failed to initialize cbf_pll_main\n");
-> +               return PTR_ERR(cbf_mux.pll_div_2);
-> +       }
-> +
-> +       ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[0]);
-> +       ret = devm_clk_register_regmap(dev, cbf_msm8996_clks[1]);
-> +
-> +       clk_alpha_pll_configure(&cbf_pll, regmap, &cbfpll_config);
-> +       clk_set_rate(cbf_pll.clkr.hw.clk, 614400000);
-> +       clk_prepare_enable(cbf_pll.clkr.hw.clk);
-> +       clk_notifier_register(cbf_mux.clkr.hw.clk, &cbf_mux.nb);
-> +
-> +       return ret;
-> +}
-> +
->  static int qcom_cpu_clk_msm8996_unregister_clks(void)
->  {
->         int ret = 0;
-> @@ -409,8 +513,13 @@ static int qcom_cpu_clk_msm8996_unregister_clks(void)
->         if (ret)
->                 return ret;
->
-> +       ret = clk_notifier_unregister(cbf_mux.clkr.hw.clk, &cbf_mux.nb);
-> +       if (ret)
-> +               return ret;
-> +
->         clk_hw_unregister(perfcl_smux.pll);
->         clk_hw_unregister(pwrcl_smux.pll);
-> +       clk_hw_unregister(cbf_mux.pll);
->
->         return 0;
->  }
-> @@ -481,14 +590,48 @@ static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
->         return notifier_from_errno(ret);
->  };
->
-> +static int cbf_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-> +                              void *data)
-> +{
-> +       struct clk_cpu_8996_mux *cbfclk = to_clk_cpu_8996_mux_nb(nb);
-> +       struct clk_notifier_data *cnd = data;
-> +       struct clk_hw *parent;
-> +       int ret;
-> +
-> +       switch (event) {
-> +       case PRE_RATE_CHANGE:
-> +               parent = clk_hw_get_parent_by_index(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
-> +               ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
-> +
-> +               if (cnd->old_rate > DIV_2_THRESHOLD && cnd->new_rate < DIV_2_THRESHOLD)
-> +                       ret = clk_set_rate(parent->clk, cnd->old_rate / 2);
-> +               break;
-> +       case POST_RATE_CHANGE:
-> +               if (cnd->new_rate < DIV_2_THRESHOLD)
-> +                       ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_DIV_2_INDEX);
-> +               else {
-> +                       parent = clk_hw_get_parent_by_index(&cbfclk->clkr.hw, CBF_PLL_INDEX);
-> +                       ret = clk_set_rate(parent->clk, cnd->new_rate);
-> +                       ret = clk_cpu_8996_mux_set_parent(&cbfclk->clkr.hw, CBF_PLL_INDEX);
-> +               }
-> +               break;
-> +       default:
-> +               ret = 0;
-> +               break;
-> +       }
-> +
-> +       return notifier_from_errno(ret);
-> +};
-> +
->  static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
->  {
-> -       struct regmap *regmap;
-> +       struct regmap *regmap, *regmap_cbf;
->         struct clk_hw_onecell_data *data;
->         struct device *dev = &pdev->dev;
-> +       static void __iomem *cbf_base;
->         int ret;
->
-> -       data = devm_kzalloc(dev, struct_size(data, hws, 2), GFP_KERNEL);
-> +       data = devm_kzalloc(dev, struct_size(data, hws, 3), GFP_KERNEL);
->         if (!data)
->                 return -ENOMEM;
->
-> @@ -506,9 +649,22 @@ static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
->
->         qcom_cpu_clk_msm8996_acd_init(base);
->
-> +       cbf_base = devm_platform_ioremap_resource(pdev, 1);
-> +       if (IS_ERR(cbf_base))
-> +               return PTR_ERR(cbf_base);
-
-So, if the reg1 is not provided, thr driver will error out, breaking
-the compatibility with existing dts files.
-I'd suggest making reg1 optional (you can add a warning printk
-demanding the dts to be updated).
-
-> +       regmap_cbf = devm_regmap_init_mmio(dev, cbf_base, &cbf_msm8996_regmap_config);
-> +       if (IS_ERR(regmap_cbf))
-> +               return PTR_ERR(regmap_cbf);
-> +
-> +       ret = qcom_cbf_clk_msm8996_register_clks(dev, regmap_cbf);
-> +       if (ret)
-> +               return ret;
-> +
->         data->hws[0] = &pwrcl_pmux.clkr.hw;
->         data->hws[1] = &perfcl_pmux.clkr.hw;
-> -       data->num = 2;
-> +       data->hws[2] = &cbf_mux.clkr.hw;
-> +       data->num = 3;
->
->         return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
->  }
-> --
-> 2.36.0
->
-
-
--- 
-With best wishes
-Dmitry
+Thanks,
+Lorenzo
