@@ -2,135 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A41EAC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 05:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA09C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 05:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235336AbiEKFGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 01:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
+        id S241433AbiEKFfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 01:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236720AbiEKFGs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 01:06:48 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8001D4EDFF
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 22:06:46 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id x23so986820pff.9
-        for <linux-clk@vger.kernel.org>; Tue, 10 May 2022 22:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AUEIkeNWULTqIuIT1TZeXx+IdneqcLu7BzWDktuhfnk=;
-        b=F8jn7i4bbQ95N7G7p4DIUqUUwb8R45Ly5JB7TyyhJiHYhrGNc7SkaFJWOMLSwQiz6B
-         mLVffC7ztUhB4aMrEx9YveKtguy8R5xI87IrhfPmry6wYuvrkwwXZhpMXR2S/FF3paXF
-         4vR4IChTGPB+fepRra4S8AToZBNXV2Un6pyThhngFfNZ12B4XRupcgr9ykO+zGnLooZe
-         WEypzao1fonjiP3LL3Df9bvaMieh8T3HC9Lp2fDodmttzz5+CZTXnRYZn2ANc1NCvkus
-         AfLV9HnZVpARsF8gv35ufAIkT1BXKQoDK835N2MrukdhICpE6kgp8lRM8SUu7m7KiNPy
-         GOaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AUEIkeNWULTqIuIT1TZeXx+IdneqcLu7BzWDktuhfnk=;
-        b=vc0atFnuntcjeJBanPxyoCyiG/7Tv4xma7tSIzqbQUjqL7Guo8FpvlvH4rMBJqZLe5
-         KORTY6KsOO0zEYHRo3Q5Go6Sd9YmTs2uZ66kSj4Z+ExA3DqRBDVtBshik9zVL4gJxaKU
-         rC/Kktevfi4/6eyFsUuSwCwEC/Hhn3kIdz1SZKIJiB8+1GE6lHojXswi1N6l180w7nw6
-         7i1CVmaJpQniUmF79iAIV3AtML9Z01sFLsTsC5MeFIKk4LJk71lfSlAJU78tGvM7THt7
-         YwF2d3GHOCux7fnWiuLPTvjG40bDsCf7p2LKDpXMnkwX4xDnRQBfxsPko/BEqcPeDkHY
-         Cbww==
-X-Gm-Message-State: AOAM532zNj919vqOrV3t+qjdJ9fmmWrB531FWdNOJBwpVACnVpEjsPiY
-        HWYGSikzlCKilKDtYTuovLI/gg==
-X-Google-Smtp-Source: ABdhPJw19bwjjubf5ZE0oIAmRAefBe7FNecIitByBceQ0V+zCTh9c6/8TSu7+c0yFISh4fD8ZvKs3w==
-X-Received: by 2002:a05:6a00:18a9:b0:50d:d41b:7240 with SMTP id x41-20020a056a0018a900b0050dd41b7240mr23119315pfh.66.1652245606028;
-        Tue, 10 May 2022 22:06:46 -0700 (PDT)
-Received: from localhost ([122.162.234.2])
-        by smtp.gmail.com with ESMTPSA id 13-20020a62190d000000b0050dc7628161sm496573pfz.59.2022.05.10.22.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 22:06:45 -0700 (PDT)
-Date:   Wed, 11 May 2022 10:36:43 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        with ESMTP id S237924AbiEKFfM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 01:35:12 -0400
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8EC9244F05;
+        Tue, 10 May 2022 22:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+         s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:To:
+        From:Sender:Reply-To:Cc:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=mNgW2vafzT3PmGQNSFNtHjivvzfraVcWWb2Uopdw+sk=; b=AFGn1xidR1qpdPi7CsHQO10TKm
+        03YlIII6Lamn46ZnATOVceUzNphbeMO/dOl/bpbZCNa5gjmyxDutw8EZ4D6APheAhTN68pxG7VaqN
+        gSWikmbkVG9Jgl2vY6X57oBZDCiOQy2wjToYC03Wv6zjTGG7U3rhnpp501PSRVKHqovI=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:62614 helo=localhost.localdomain)
+        by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <matthias.fend@emfend.at>)
+        id 1nof02-00Ch9T-FR; Wed, 11 May 2022 07:35:02 +0200
+From:   Matthias Fend <matthias.fend@emfend.at>
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
-Message-ID: <20220511050643.hd5tcrojb3wkbg7t@vireshk-i7>
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
- <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
- <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
- <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
- <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        matthias.fend@emfend.at
+Subject: [PATCH v2 1/2] dt-bindings: clock: vc5: Add 5P49V6975
+Date:   Wed, 11 May 2022 07:34:54 +0200
+Message-Id: <20220511053455.360335-1-matthias.fend@emfend.at>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10-05-22, 15:09, Krzysztof Kozlowski wrote:
-> On 10/05/2022 06:40, Viresh Kumar wrote:
-> > They shouldn't reach the OPP core then. What will the OPP core do if a
-> > clock has a value for one OPP and not the other ?
-> 
-> That would be the same mistake as providing one voltage as 0 or with
-> something outside of a spec (but still within regulators min/max).
-> Mistakes in DTS create undesirable behavior and this part is no different.
+The 5P49V6975 is a member of the VersaClock 6E family and supports four
+fractional dividers (FODs), five clock outputs and an internal oscillator.
 
-Right, I agree and so it shouldn't be allowed in principle.
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
+---
+ Documentation/devicetree/bindings/clock/idt,versaclock5.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> However I understand your point - since the driver provides the list of
-> clocks to OPP, it should not provide ones which are irrelevant.
-
-Right.
-
-> > IMHO, this is broken by design. I can easily see that someone wants to
-> > have few variants of all other frequencies for the same frequency of
-> > the so called "main" clock, i.e. multiple OPPs with same "main" freq
-> > value.  I don't think we can mark the clocks "main" or otherwise as
-> > easily for every platform.
-> > 
-> > Stephen, any inputs on this ?
-> 
-> In such case, matching opps by frequency would be a quite different API.
-> The drivers can use now:
-> https://github.com/krzk/linux/commit/ebc31798494fcc66389ae409dce6d9489c16156a#diff-b6370444c32afa2e55d9b6150f355ba6f4d20c5ed5da5399ea8295d323de8267R1200
-> 
-> If you assume that this frequency can be used for multiple OPPs, then
-> the API should be different. Something like:
-> int dev_pm_opp_set_rate(struct device *dev, unsigned long *target_freqs,
->                         size_t num_freqs);
-
-At this point I am not looking for a new API, but just continuing the discussion
-to understand what different hardwares want or look like.
-
-> Finding right opp for given frequencies would be also quite much more
-> complicated task. Not a simple ceil/floor search by one frequency.
-
-Right.
-
-> I don't need that use-case and my implementation does not prevent anyone
-> from implementing it in the future. IOW, why developing now complex
-> solution which no one currently needs? If anyone needs such scaling by
-> multiple-frequencies, the PM OPP can be reworked/extended/improved again.
-
-It isn't about being complex or simple for me, but the design needs to be
-robust. Either we can have a guaranteed "main" frequency or not and that would
-decide how we need to proceed here.
-
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+index be66f1e8b547..2476ce265f84 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -56,6 +56,7 @@ properties:
+       - idt,5p49v5935
+       - idt,5p49v6901
+       - idt,5p49v6965
++      - idt,5p49v6975
+ 
+   reg:
+     description: I2C device address
+@@ -134,6 +135,7 @@ allOf:
+           enum:
+             - idt,5p49v5933
+             - idt,5p49v5935
++            - idt,5p49v6975
+     then:
+       # Devices with builtin crystal + optional external input
+       properties:
 -- 
-viresh
+2.25.1
+
