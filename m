@@ -2,51 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03052C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 20:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CEDC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 21:25:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241594AbiEKUXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 16:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56088 "EHLO
+        id S244920AbiEKVZ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 17:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238984AbiEKUXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 16:23:23 -0400
+        with ESMTP id S231319AbiEKVZZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 17:25:25 -0400
 Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C0B372E01
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 13:23:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1889769289
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 14:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652300602; x=1683836602;
+  t=1652304325; x=1683840325;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=g6AswqkWmXU5dYcrkV9n8nA2qHRT+5PvyPN57aXvTIU=;
-  b=CbxRkgg13trWyOZkLE6CdmtEk1HogWZkdnTIkRMDqUORdwOWvRtv1pHs
-   Fo9ceI9MGeTtp7EpAWH2/rx9dG6MdnhssjpQclE8iDu4EkRUfY21Df8lN
-   yKDgYltLpkGEP5sugNAGRKAJ5/E3QL3LqBGaYpxOgi9LkpZREuiQcyD9Y
-   6elFObP6n8G591HbWx0J3fgCn5mBwC78adJUmTPQD+1V4X+sWetJFWls9
-   pJ3CYx6VNCjd3Y5qukq7Zq8G+JYMx2eEOvmPtqAXZAsubaPATOPtWU1Yk
-   4j6sKTG2wQCiOqK2ZhKxvBF+k4ad/1PfxcDiuHiKVRL3ogb/HcW1JtXWy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10344"; a="267392092"
+  bh=1+a7DNiywUmPaaNlwD3yArXgVS80s2+Fd3PmJ/XuGic=;
+  b=k+nLWTNeBiZcergohTAR4qqjTLaKrA5tAyQ2fo5BOlqb7uwhCsfn2V8a
+   6XMTzhRhYTggMl/X3n9oGvsDKXd4nwM2RH+P5sj7UIO39nmw+4zjicgeU
+   9mtAuCO//hDHo4auJ70pA/yQe9/cpvFC/sniYgUK3zt5o+bjXw7TP9cO+
+   c9TwfXB4r7uxdoe3XPN1qqCKY2Oe0JAvn6an364TLG5Q68ZiWICHAJwwE
+   e/Mb6b7cyS7PG1v2s97aGWvecLfQwEWUjncZrRqPnWTHAE+DmDY4fgEyk
+   s+sRUcYiL+wqMnKED7Yrm4IQrZXX7WAnF18zdbpoY0iN+Jo4adoMmQTYL
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10344"; a="267405467"
 X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
-   d="scan'208";a="267392092"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 13:23:22 -0700
+   d="scan'208";a="267405467"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 14:25:24 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,218,1647327600"; 
-   d="scan'208";a="572236452"
+   d="scan'208";a="636580599"
 Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 11 May 2022 13:23:18 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 11 May 2022 14:25:21 -0700
 Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1nosrd-000JXS-W6;
-        Wed, 11 May 2022 20:23:17 +0000
-Date:   Thu, 12 May 2022 04:23:11 +0800
+        id 1notph-000JbL-7D;
+        Wed, 11 May 2022 21:25:21 +0000
+Date:   Thu, 12 May 2022 05:25:03 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Maxime Ripard <maxime@cerno.tech>,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Jerome Brunet <jbrunet@baylibre.com>,
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Alexander Stein <alexander.stein@ew.tq-group.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
         Yassine Oudjana <y.oudjana@protonmail.com>,
@@ -57,7 +58,7 @@ Cc:     kbuild-all@lists.01.org, Jerome Brunet <jbrunet@baylibre.com>,
         Maxime Ripard <maxime@cerno.tech>
 Subject: Re: [PATCH v3 22/28] clk: Stop forwarding clk_rate_requests to the
  parent
-Message-ID: <202205120459.Wey9QKrW-lkp@intel.com>
+Message-ID: <202205120547.M8CYJHbN-lkp@intel.com>
 References: <20220511144249.354775-23-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -69,38 +70,42 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Maxime,
 
-I love your patch! Perhaps something to improve:
+I love your patch! Yet something to improve:
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v5.18-rc6 next-20220511]
-[cannot apply to anholt/for-next]
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v5.18-rc6 next-20220511]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220511-224533
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: x86_64-randconfig-s021-20220509 (https://download.01.org/0day-ci/archive/20220512/202205120459.Wey9QKrW-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
+config: i386-randconfig-r006-20220509 (https://download.01.org/0day-ci/archive/20220512/202205120547.M8CYJHbN-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 18dd123c56754edf62c7042dcf23185c3727610f)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
         # https://github.com/intel-lab-lkp/linux/commit/32af2a918274a92da86089672d5d7adba63dc0cf
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220511-224533
         git checkout 32af2a918274a92da86089672d5d7adba63dc0cf
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 SHELL=/bin/bash drivers/clk/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
+All errors (new ones prefixed by >>):
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/clk.c:1502:45: sparse: sparse: incorrect type in argument 2 (different modifiers) @@     expected struct clk_rate_request *const old_req @@     got struct clk_rate_request const *old_req @@
-   drivers/clk/clk.c:1502:45: sparse:     expected struct clk_rate_request *const old_req
-   drivers/clk/clk.c:1502:45: sparse:     got struct clk_rate_request const *old_req
+>> drivers/clk/clk.c:1502:38: error: passing 'const struct clk_rate_request *' to parameter of type 'struct clk_rate_request *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+           clk_core_forward_rate_req(hw->core, old_req,
+                                               ^~~~~~~
+   drivers/clk/clk.c:568:38: note: passing argument to parameter 'old_req' here
+                             struct clk_rate_request * const old_req,
+                                                             ^
+   1 error generated.
+
 
 vim +1502 drivers/clk/clk.c
 
