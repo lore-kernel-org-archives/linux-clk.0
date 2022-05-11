@@ -2,89 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF01CC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7996C43217
 	for <linux-clk@archiver.kernel.org>; Wed, 11 May 2022 15:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245423AbiEKPBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 May 2022 11:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50400 "EHLO
+        id S239973AbiEKPBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 May 2022 11:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245305AbiEKPA7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:00:59 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98DB25F83;
-        Wed, 11 May 2022 08:00:57 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-ed9a75c453so3088574fac.11;
-        Wed, 11 May 2022 08:00:57 -0700 (PDT)
+        with ESMTP id S245507AbiEKPBX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 May 2022 11:01:23 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FD833A2D;
+        Wed, 11 May 2022 08:01:23 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id k2so2189268qtp.1;
+        Wed, 11 May 2022 08:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oIuqiJ1KMfrOcWNf9PXlKzJzt4BdNRB8d9UpwdKjhTg=;
+        b=NCzkQwFBqTgjN2haflpZFtU9ln1qti58wlBmjyabCDEnIDABpqWN8KKc7Yk2dl5r9b
+         G93UPkCXT+ez1IHFaJc+8wWsjnhKlFLJeHrI95UcMYb1nyYOZiobATYkSSehWO3vCLPM
+         WXL3tQA3nAYzkTD5Hb0uJLv6oQYtF0IeAUd7iMX1nKkAzBBCKnogIQR/tPiTbkCprLGD
+         bgdHz4IxIx+czXjSNaEoRLcw6b3ZLNrYpLKvzV63rTRA+w4R6NAHqop5JsMq/hIjG3ph
+         ViX94MBP4Fc+DPjGDZAZcCS/2eaRDXpfPdn7uYMlraELnbTwnW0pUYN4yxy4tz9MnWCj
+         F4aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vBTrUV1JVs542plxfiXyvT5BXPWLoJzHzGRMGx1WPJY=;
-        b=6JYTgOIP0hsnrI8FXQYty/BhzJtk9S5uKu5zWs30TCZ9bt3OGZrkTYSy1K7NQAPND+
-         6ze1KOz+SXTC/sA8J59AO/dd3PVBSVnXc4gVeDxgn4t3uBsNc9Zamq+ERYnYinAHH42h
-         Z9SWCTAmFuzi8mwjN/gfZ43kLi3KNsRwr29AKzomZQ1bGJM2Z56vBwKol8d+3CQcRx2K
-         eFjYjheCD5/Ep1x/RD5jX0Cvw2UJqQiYyOa0Y9w9tqEGO4w4DhyzfBVD3BcLHbg7gOST
-         Sgsr4SLaL3Ia9f9AmL/0fRPYTang4PxNMug6CZixBcl7Qgsy1Pzy+Qj5VzuekfV5g/NK
-         wOWA==
-X-Gm-Message-State: AOAM532qpz1J0gQYxaxe08pLa8badXseNbQIfWPGiWZfhCRJQ657pi0u
-        CiT8RPX3Ig+InLsYUdLo6Q==
-X-Google-Smtp-Source: ABdhPJxUMkdBpn8c5m5HjGueLUxw+LXyBeQTusye1isd9tLanUxiMmZsorwNzC3AQJcEgc6ftiQEhA==
-X-Received: by 2002:a05:6870:4284:b0:e6:26d2:9fdf with SMTP id y4-20020a056870428400b000e626d29fdfmr2864914oah.107.1652281256708;
-        Wed, 11 May 2022 08:00:56 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id n84-20020acaef57000000b00326a7d33635sm812208oih.27.2022.05.11.08.00.55
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oIuqiJ1KMfrOcWNf9PXlKzJzt4BdNRB8d9UpwdKjhTg=;
+        b=pYS77Om+QvZv6dcSyMOMfwLWy8tSduE3dxNlt+GF6Z3nciDb3UsZFjuVmejWOLLSjb
+         zykOq4poCmQJ4swiFRW/t4ryWhUi/05kwOLrMwGmFRbGEQUxG2HRJVVaR3RmryPdffmN
+         fqtASuy4tAJNh3u20VzmdlNZfJdGxsXQQMLPWMqEBbWE8upxgBL07RZdkJCkgmhK11JH
+         f6uTEIqrYBKCrDJmy/zVaiHziCxecO/7y8h6uPWz2hp+EEtj8iX48lV/fgwwHRMFl2ao
+         GWc7qLdq2SRnihvyIjggiiv9vozxNQYJU7EwzCsgp3wOJIIUm/8ykHExcm8jVc+G44aH
+         VDKQ==
+X-Gm-Message-State: AOAM531g78UgzjDqYYXDa1ltXYJJ5b8DY2DUenSbyu+BOMR6alzODWms
+        X3+qi1jSKQQuZWTTh+MI4Jo=
+X-Google-Smtp-Source: ABdhPJyVrJE9bBpSUy3Gw712E094ZqLK5sBcNBbpE1kENODFBSPxCFrfFyw5qfMfgH/qBnxn71/cog==
+X-Received: by 2002:a05:622a:4ca:b0:2f1:f386:4377 with SMTP id q10-20020a05622a04ca00b002f1f3864377mr24510020qtx.156.1652281281906;
+        Wed, 11 May 2022 08:01:21 -0700 (PDT)
+Received: from master-x64.sparksnet ([2601:153:980:85b1::10])
+        by smtp.gmail.com with ESMTPSA id h1-20020a05620a244100b0069fc6484c06sm1487134qkn.23.2022.05.11.08.01.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 08:00:56 -0700 (PDT)
-Received: (nullmailer pid 305854 invoked by uid 1000);
-        Wed, 11 May 2022 15:00:55 -0000
-Date:   Wed, 11 May 2022 10:00:55 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 1/7] dt-bindings: clock: add QCOM SM8450 camera clock
- bindings
-Message-ID: <20220511150055.GA305799-robh@kernel.org>
-References: <20220509090059.4140941-1-vladimir.zapolskiy@linaro.org>
- <20220509090059.4140941-2-vladimir.zapolskiy@linaro.org>
+        Wed, 11 May 2022 08:01:21 -0700 (PDT)
+From:   Peter Geis <pgwipeout@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peter Geis <pgwipeout@gmail.com>
+Subject: [PATCH v1 2/6] arm64: dts: rockchip: add clocks to rk356x cru
+Date:   Wed, 11 May 2022 11:01:13 -0400
+Message-Id: <20220511150117.113070-3-pgwipeout@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220511150117.113070-1-pgwipeout@gmail.com>
+References: <20220511150117.113070-1-pgwipeout@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220509090059.4140941-2-vladimir.zapolskiy@linaro.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 09 May 2022 12:00:58 +0300, Vladimir Zapolskiy wrote:
-> The change adds device tree bindings for camera clock controller
-> found on SM8450 SoC.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
-> Changes from v4 to v5:
-> * fixed a typo in a usage example found in the yaml file.
-> 
-> Changes from v3 to v4:
-> * renamed a filename in $id value after the rename of the file itself.
-> 
-> Changes from v2 to v3:
-> * renamed files to match the compatible value "qcom,sm8450-camcc",
-> * fixed a typo in a usage example found in the yaml file.
-> 
-> Changes from v1 to v2:
-> * updated qcom,camcc-sm8450.yaml according to review comments from Rob,
-> * changed qcom,camcc-sm8450.h license to dual one.
-> 
->  .../bindings/clock/qcom,sm8450-camcc.yaml     |  89 ++++++++++
->  include/dt-bindings/clock/qcom,sm8450-camcc.h | 159 ++++++++++++++++++
->  2 files changed, 248 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
-> 
+The rk356x cru requires a 24m clock input to function. Add the clocks
+properties to the cru to clear some dtbs_check warnings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+---
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+index 7cdef800cb3c..fd9e8a854328 100644
+--- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+@@ -336,6 +336,8 @@ pmucru: clock-controller@fdd00000 {
+ 	cru: clock-controller@fdd20000 {
+ 		compatible = "rockchip,rk3568-cru";
+ 		reg = <0x0 0xfdd20000 0x0 0x1000>;
++		clocks = <&xin24m>;
++		clock-names = "xin24m";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 		assigned-clocks = <&cru PLL_GPLL>, <&pmucru PLL_PPLL>;
+-- 
+2.25.1
+
