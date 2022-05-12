@@ -2,72 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75298C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 13:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C251C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 14:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344409AbiELNy0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 09:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44644 "EHLO
+        id S1354967AbiELOET (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 10:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354548AbiELNyY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 09:54:24 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E09D71A72BF;
-        Thu, 12 May 2022 06:54:22 -0700 (PDT)
-X-UUID: 3deb567847184581bf803389edc31ea8-20220512
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:c2229863-19f2-4524-9f1a-722db91ab9dc,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:faefae9,CLOUDID:42e4fdf1-ab23-4aed-a67b-f96514452486,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,File:nil,QS:0,BEC:ni
-        l
-X-UUID: 3deb567847184581bf803389edc31ea8-20220512
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1740765071; Thu, 12 May 2022 21:54:17 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 12 May 2022 21:54:17 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 12 May 2022 21:54:16 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
-        <rex-bc.chen@mediatek.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH v2 02/11] clk: mediatek: apmixed: Drop error message from clk_register() failure
-Date:   Thu, 12 May 2022 21:54:17 +0800
-Message-ID: <20220512135417.4399-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220510104804.544597-3-wenst@chromium.org>
-References: <20220510104804.544597-3-wenst@chromium.org>
+        with ESMTP id S1354959AbiELOES (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 10:04:18 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B41557B10
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 07:04:17 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id t5so6331713edw.11
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 07:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ObfwnmtrxkKT50YzmCvliwo/dT5DMiUQiO0PH0LTMx0=;
+        b=PQYeTpEbK+tYHe872qmLftAqI/d4BlbDIDFQkTYjTxrBTRNjTmDJ1qyGjiB2HlDqGQ
+         9xauAiYkkluMogshl7JwT76akt+9lCQyiq7k9ZN39Mu+eVSBGvX7Sn6hkPEyMdu76izm
+         wyOvXOhrZ9lEzFlAztS4dKVJ8bDywjg0D9FGFCC3kiHDpyx2kLAcD60elGv8jateClaN
+         jw5WlU4lTHCq2K2YK4364eAdCpSVVA4YjiBJCJYHFiqTp9DzeQMa2j+rHTGzwBm/23oi
+         syJHx5eyczEpaX31duAOMQdfUm8XNHp163ZsIhJ0SkBe82I4N+8ZLekjfg3+6kgd5lA7
+         FbXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ObfwnmtrxkKT50YzmCvliwo/dT5DMiUQiO0PH0LTMx0=;
+        b=Vj3LoLARbywFQ5W+oEMO9GfMhZLBVpWoi4hYyxpXud8AY4UD2rk9+mDxoPyQKY+P3g
+         ucZZ3C6HW0Z26NWoLE6ygDHACTpur0O9kXgyBsHzmnSrnN9reKPSthAD+u1P9ieADQx2
+         s+LfW23sy5VBJ5UIk0i+SVQI83i1VNO4sbuAOUizd+IZpj3J66oLxxJRzBiYX+IYg96t
+         q+jRvzobmOvR3iY+NN+YxZ9PtgFVlynrXWwt3gLOz6CVCugC+pxcIyBNguUsEhdYjGUl
+         t4O7oOMcUU1qnLeQzxb9s0z7u4cYSnsCt0qLjLag4KhEFQ7vcBv3cHT99XXjRJqFaMz7
+         7HVQ==
+X-Gm-Message-State: AOAM532uyLTGRC9fJnI+sRyP/vP4dxrjIlrSKHVK+8XtR4sd6RTaRbr+
+        J6nM9QrxOgL3dxmxzQUhPd5hjw==
+X-Google-Smtp-Source: ABdhPJyTJw8+7v3GXv2bh38/HEmQHaY6esp5J8bzfqvccK20LUmGMVe7oaS7gE+migdw2SOqftSY1A==
+X-Received: by 2002:a50:ea8b:0:b0:428:7d05:eb7e with SMTP id d11-20020a50ea8b000000b004287d05eb7emr29484883edo.185.1652364255711;
+        Thu, 12 May 2022 07:04:15 -0700 (PDT)
+Received: from [192.168.0.160] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id rv21-20020a17090710d500b006f3ef214e06sm2133546ejb.108.2022.05.12.07.04.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 May 2022 07:04:15 -0700 (PDT)
+Message-ID: <f0969769-9f24-7e48-6a60-adeea94404e1@linaro.org>
+Date:   Thu, 12 May 2022 16:04:14 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH V4 2/5] dt-bindings: clock: Document MA35D1 clock
+ controller bindings
+Content-Language: en-US
+To:     Jacky Huang <ychuang3@nuvoton.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, ychuang570808@gmail.com
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
+        arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com,
+        will@kernel.org, soc@kernel.org, cfli0@nuvoton.com
+References: <20220510032558.10304-1-ychuang3@nuvoton.com>
+ <20220510032558.10304-3-ychuang3@nuvoton.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220510032558.10304-3-ychuang3@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> mtk_clk_register_ref2usb_tx() prints an error message if clk_register()
-> fails. It doesn't if kzalloc() fails though. The caller would then tack
-> on its own error message to handle this.
+On 10/05/2022 05:25, Jacky Huang wrote:
+> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
 > 
-> Also, All other clk registration functions in the MediaTek clk library
-> leave the error message printing to the bulk registration functions,
-> while the helpers that register individual clks just return error codes.
-> 
-> Drop the error message that is printed when clk_register() fails in
-> mtk_clk_register_ref2usb_tx() to make its behavior consistent both
-> across its failure modes, and with the rest of the driver library.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+> +
+> +    clk: clock-controller@40460200 {
+> +        compatible = "nuvoton,ma35d1-clk";
+> +        reg = <0x0 0x40460200 0x0 0x100>;
+
+I don't think you tested your bindings. This fails.
+
+clock-names below as well. Please do not send untested code.
+
+Testing is explained here:
+https://elixir.bootlin.com/linux/v5.18-rc6/source/Documentation/devicetree/bindings/writing-schema.rst#L111
+
+Best regards,
+Krzysztof
