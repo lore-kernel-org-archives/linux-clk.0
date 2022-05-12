@@ -2,242 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD026C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 10:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F15EAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 10:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239143AbiELK2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 06:28:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39226 "EHLO
+        id S232208AbiELKsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 06:48:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351565AbiELK2F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 06:28:05 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 077CC3CFD9
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:28:03 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id j6so9228484ejc.13
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=GPIjrgvs4BQNA9eCtoSaAMxO4nClRBlQSuiV6w2t7iw=;
-        b=u7QsPViOON0my/3Vld/mwSoBJb7PZwySeGRnOJ3yY24HRVfpYdp7uLLQxmI3PtDrhr
-         udw+fHERr5nBaDWToCkIOcvYPBrd5Rz08CCqtBhNePRwdkbzaFDt+YXqySK15s2BYJ38
-         /sOud++DWMkozAm1jJ3hyXQeU9ZwJVZfm0iBNH02h/TmTDE59fJ1rMhyAwM5wnNijwHD
-         sb+n/ofSHeEezWiLWrmTPUH7hm1Ou7DBFkgEFWwVVN/s68UZx6BP6vut/3e+E5HandL6
-         Dl3Q7pDovpFzmqQxwz8IAe7G07GS0YfatOAkvHq3uJVgau5Y2YEVQokCGDkvm3Gf+efb
-         XIHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=GPIjrgvs4BQNA9eCtoSaAMxO4nClRBlQSuiV6w2t7iw=;
-        b=Vz+4YtvTNiTRMpBGkqouxBWjjJT5sGGiqszASvm6TNvYBe6TXNX8WXtB/rawOQ+MAG
-         nYWfJxQHPfWM1rqVrsHGnAMevq1XXVsGGeP2lGTW8rbpJM3kV+hIyPpta8XJujFmih4D
-         SJdVKsHFA3/Lz9ZvWWtvj4vqxLdjEQad2WfvRUNGPE2Dp+tFQ6zJXGQ6uB4X9+4CtmdN
-         1XIPjPfVnIR66WMs3OdhI2/YxY33TSa5FrLKqI6CyCph+JwXwhNEwoi4lBi44DayStUF
-         KZgIHsrPn9LJaPAQ/5S1ipItovNr7/rhI1lsJOcUikXuAhbmsyAAsvGGLZZl5+o9fe4N
-         19ug==
-X-Gm-Message-State: AOAM533iB5c/Y4WBm5FGJ5AHXyKKKCeoFWWDiHdvuTU9mrsEWngQ/dWd
-        +ZZA43gT6kicELrS4VtIikjdLw==
-X-Google-Smtp-Source: ABdhPJz6C1/W+PiAfKbM9TB2mSR6hgAMj4ZX8G5/UhG7wrslGlftRqkvDmWlYsTJem5hepeesEMzQA==
-X-Received: by 2002:a17:906:a188:b0:6f4:f5cd:27bd with SMTP id s8-20020a170906a18800b006f4f5cd27bdmr29318356ejy.406.1652351281599;
-        Thu, 12 May 2022 03:28:01 -0700 (PDT)
-Received: from [192.168.0.158] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id q18-20020a1709064cd200b006f3ef214e23sm1911302ejt.137.2022.05.12.03.28.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 03:28:01 -0700 (PDT)
-Message-ID: <32c80a79-abd5-3fd2-cbb4-e2ae93c539da@linaro.org>
-Date:   Thu, 12 May 2022 12:28:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
- device tree
-Content-Language: en-US
-To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
+        with ESMTP id S230245AbiELKsP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 06:48:15 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4138286E12
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:47:52 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26396:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 12 May 2022 18:45:58 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.6; Thu, 12 May 2022 18:45:55 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2507.006; Thu, 12 May 2022 18:45:55 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
+ clock driver
+Thread-Topic: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
+ clock driver
+Thread-Index: AQHYZcsP5QfLdHxDWUuwmqTXvmezs60ag04AgACLAGA=
+Date:   Thu, 12 May 2022 10:45:54 +0000
+Message-ID: <8a9fa13f66ce4ef9a8f8c9200e1fac5f@cqplus1.com>
 References: <cover.1652329411.git.qinjian@cqplus1.com>
- <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <b5ca5d417be079a2a40a6e79ac1b246b6359a49e.1652329411.git.qinjian@cqplus1.com>
+ <e9a39eb6-d8e2-bac6-27e2-f63ef8519917@linaro.org>
+In-Reply-To: <e9a39eb6-d8e2-bac6-27e2-f63ef8519917@linaro.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/05/2022 08:31, Qin Jian wrote:
-> Add the basic support for Sunplus SP7021-Demo-V3 board.
-> 
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> ---
->  MAINTAINERS                                  |   1 +
->  arch/arm/boot/dts/sunplus-sp7021-achip.dtsi  |  85 +++++
->  arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts |  27 ++
->  arch/arm/boot/dts/sunplus-sp7021.dtsi        | 369 +++++++++++++++++++
->  4 files changed, 482 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
->  create mode 100644 arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
->  create mode 100644 arch/arm/boot/dts/sunplus-sp7021.dtsi
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9cf30e776..b55ec0768 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2747,6 +2747,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
->  F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
->  F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
->  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-> +F:	arch/arm/boot/dts/sunplus-sp7021*.dts*
->  F:	arch/arm/configs/sp7021_*defconfig
->  F:	arch/arm/mach-sunplus/
->  F:	drivers/clk/clk-sp7021.c
-> diff --git a/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
-> new file mode 100644
-> index 000000000..1560c95d9
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
-> @@ -0,0 +1,85 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for Sunplus SP7021
-> + *
-> + * Copyright (C) 2021 Sunplus Technology Co.
-> + */
-> +
-> +#include "sunplus-sp7021.dtsi"
-> +
-> +/ {
-> +	compatible = "sunplus,sp7021-achip";
-
-This does not match your bindings.
-
-> +	model = "Sunplus SP7021 (CA7)";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +	interrupt-parent = <&gic>;
-> +
-> +	clocks {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		extclk: clk@osc0 {
-
-This is not a valid device tree. Please run make dtbs_check and compile
-dtbs with W=1.
-
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <27000000>;
-> +			clock-output-names = "extclk";
-> +		};
-> +
-> +		divextclk: clk@0 {
-
-How is it suppose to pass any automated checks if there is no unit address?
-
-> +			compatible = "fixed-factor-clock";
-> +			#clock-cells = <0>;
-> +			clocks  = <&extclk>;
-> +			clock-mult = <1>;
-> +			clock-div = <2>;
-> +			clock-output-names = "extdivclk";
-> +		};
-> +
-> +		A_pll0: clk@A_pll0 {
-
-This is not a valid device tree.
-
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <2000000000>;
-> +			clock-output-names = "A_pll0";
-> +		};
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +			clock-frequency = <931000000>;
-> +		};
-> +		cpu1: cpu@1 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <1>;
-> +			clock-frequency = <931000000>;
-> +		};
-> +		cpu2: cpu@2 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <2>;
-> +			clock-frequency = <931000000>;
-> +		};
-> +		cpu3: cpu@3 {
-> +			compatible = "arm,cortex-a7";
-> +			device_type = "cpu";
-> +			reg = <3>;
-> +			clock-frequency = <931000000>;
-> +		};
-> +	};
-> +
-> +	arm-pmu {
-> +		compatible = "arm,cortex-a7-pmu";
-> +		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-> +	};
-> +
-> +};
-> diff --git a/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-> new file mode 100644
-> index 000000000..05e164115
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree Source for Sunplus SP7021 Demo V3 SBC board
-> + *
-> + * Copyright (C) Sunplus Technology Co.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sunplus-sp7021-achip.dtsi"
-> +
-> +/ {
-> +	compatible = "sunplus,sp7021-demo-v3";
-
-This does not match your bindings.
-
-Please run make dtbs_check.
-
-> +	model = "SP7021/CA7/Demo_V3";
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS0,115200 loglevel=8 earlycon";
-
-No bootargs.
-
-I'll stop reviewing. This either does not compile, does not work or does
-not pass automated checks. There is no point to use reviewers time if
-the tools are doing the same job, so use the tools and then submit DTS.
-
-Best regards,
-Krzysztof
+PiBPbiAxMi8wNS8yMDIyIDA4OjMwLCBRaW4gSmlhbiB3cm90ZToNCj4gPiBBZGQgZG9jdW1lbnRh
+dGlvbiB0byBkZXNjcmliZSBTdW5wbHVzIFNQNzAyMSBjbG9jayBkcml2ZXIgYmluZGluZ3MuDQo+
+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBRaW4gSmlhbiA8cWluamlhbkBjcXBsdXMxLmNvbT4NCj4g
+PiAtLS0NCj4gPiBSZW1vdmUgIkJpbmRpbmciIGZyb20geWFtbCB0aXRsZQ0KPiA+IFJlbmFtZSBz
+cC1zcDcwMjEuaCB0byBzdW5wbHVzLHNwNzAyMS1jbGtjLmgNCj4gDQo+IFRoYW5rcy4NCj4gDQo+
+ID4gLS0tDQo+ID4gIC4uLi9iaW5kaW5ncy9jbG9jay9zdW5wbHVzLHNwNzAyMS1jbGtjLnlhbWwg
+ICB8IDUxICsrKysrKysrKysrDQo+ID4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAyICsNCj4gPiAgLi4uL2R0LWJpbmRpbmdzL2Nsb2NrL3N1bnBsdXMs
+c3A3MDIxLWNsa2MuaCAgIHwgODggKysrKysrKysrKysrKysrKysrKw0KPiA+ICAzIGZpbGVzIGNo
+YW5nZWQsIDE0MSBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55YW1s
+DQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N1bnBs
+dXMsc3A3MDIxLWNsa2MuaA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdW5wbHVzLHNwNzAyMS1jbGtjLnlhbWwNCj4gYi9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55
+YW1sDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAuLjExOTk2
+MWExNw0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55YW1sDQo+ID4gQEAgLTAsMCAr
+MSw1MSBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9S
+IEJTRC0yLUNsYXVzZSkNCj4gPiArIyBDb3B5cmlnaHQgKEMpIFN1bnBsdXMgQ28uLCBMdGQuIDIw
+MjENCj4gPiArJVlBTUwgMS4yDQo+ID4gKy0tLQ0KPiA+ICskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVl
+Lm9yZy9zY2hlbWFzL2Nsb2NrL3N1bnBsdXMsc3A3MDIxLWNsa2MueWFtbCMNCj4gPiArJHNjaGVt
+YTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQo+ID4gKw0K
+PiA+ICt0aXRsZTogU3VucGx1cyBTUDcwMjEgU29DIENsb2NrIENvbnRyb2xsZXINCj4gPiArDQo+
+ID4gK21haW50YWluZXJzOg0KPiA+ICsgIC0gUWluIEppYW4gPHFpbmppYW5AY3FwbHVzMS5jb20+
+DQo+ID4gKw0KPiA+ICtwcm9wZXJ0aWVzOg0KPiA+ICsgIGNvbXBhdGlibGU6DQo+ID4gKyAgICBj
+b25zdDogc3VucGx1cyxzcDcwMjEtY2xrYw0KPiA+ICsNCj4gPiArICByZWc6DQo+ID4gKyAgICBt
+YXhJdGVtczogMQ0KPiA+ICsNCj4gPiArICBjbG9ja3M6DQo+ID4gKyAgICBtYXhJdGVtczogMQ0K
+PiA+ICsNCj4gPiArICAiI2Nsb2NrLWNlbGxzIjoNCj4gPiArICAgIGNvbnN0OiAxDQo+ID4gKw0K
+PiA+ICtyZXF1aXJlZDoNCj4gPiArICAtIGNvbXBhdGlibGUNCj4gPiArICAtIHJlZw0KPiA+ICsg
+IC0gY2xvY2tzDQo+ID4gKyAgLSAiI2Nsb2NrLWNlbGxzIg0KPiA+ICsNCj4gPiArYWRkaXRpb25h
+bFByb3BlcnRpZXM6IGZhbHNlDQo+ID4gKw0KPiA+ICtleGFtcGxlczoNCj4gPiArICAtIHwNCj4g
+PiArDQo+IA0KPiBTYW1lIGFzIGluIHYxNC4gUGxlYXNlIGdvIHRocm91Z2ggdGhlIGNvbW1lbnRz
+IHRob3JvdWdobHkgc28gcmV2aWV3ZXJzDQo+IHdpbGwgbm90IHdhc3RlIHRpbWUgcmVwZWF0aW5n
+IHRoZSBzYW1lIHR3aWNlLg0KPiANCg0KU29ycnksIEkgZG9u4oCZdCB1bmRlcnN0YW5kIHlvdXIg
+bWVhbmluZy4NCkNvdWxkIHlvdSBleHBsYWluIG1vcmUsIHRoYW5rcy4NCg0KDQo=
