@@ -2,92 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F2BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 14:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83EAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 14:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344588AbiELOVW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 10:21:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33632 "EHLO
+        id S1346718AbiELOfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 10:35:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355230AbiELOVH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 10:21:07 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C7528988
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 07:21:06 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id gh6so10655429ejb.0
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 07:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=gwwa4KEdZsBSVIiZ/u69uGht/OG8CUxR+7OXw5afM9A=;
-        b=kKpsHtTMFWb7QKuSduAjkuTKGuBKLnVZAlGB9pHwkmj6zu0GHNa1piAzog2sZfXWVq
-         SsykJv5I7rqCnx2C5Vu+umu7lKGRXsEEwkCZL/JpNSj4vKZqhHYvD+GCPOpT7Gz+O9s3
-         q4fuVJINtOwaBuGubVBqax1UabAvSVWiKKzHEC8/DAxcE/UURqPoKahqVCtEETIT8bIC
-         ihn0OOTZ0ZjHgcIdy48yrBvSKR47PW/NMP/fMPcqiTDqbdGlO51GtijSmARDMsuhyuwN
-         00ADURgTXmcFTpeqM56tT/7R/tGxRxrjRLwpe59SIX+gbavbR9GvxVGJ534dhRomN8wR
-         fy/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=gwwa4KEdZsBSVIiZ/u69uGht/OG8CUxR+7OXw5afM9A=;
-        b=NkDjM0hg/kwTu/dYyTvZ4jneV+JPEhnPM8yZbrKwexlis83OLAWoE32CQmzZ00AWQV
-         MoifwAS6x1pUwCIL3PpshdbcvXL+d/8SarxDaXMzpWVBIPPGdHB7Y1ync4hc/PPHs4C0
-         hshq/TbpwECJ/b22IJU1KGQB6IyyeLwhuhXOHPIqrrVuTRRAifSt/LvqwDRSjlaxAsUZ
-         ip2wBAHR8KzuQkLbe5RtMnO5gcZeiuAeTySzOaEI9hCRH2YFGbIbcE5MZVmkeF5/lmHH
-         90liwVdQlRcBf4NHy0nRSVhKV5FyzDpht1Rvb5j+a5Wi2IBKPgwxd4d1oQW9PY6xsfKH
-         KYqQ==
-X-Gm-Message-State: AOAM5323+wySedyNeIw4FjxxDj4u3DohFz+bxvRyI0/OwfZ6mTGD6+y4
-        xx0KJ9tTqf/svYgDqXXq77FEeg==
-X-Google-Smtp-Source: ABdhPJy6oM6zHB6ogbyacVZojXHJSVoOXoEbk7yyqF8wbuQPWR8uijnU02sDtFjZFSsAMWEdcDB8xQ==
-X-Received: by 2002:a17:906:58d2:b0:6fd:daa7:3a6e with SMTP id e18-20020a17090658d200b006fddaa73a6emr176871ejs.0.1652365265105;
-        Thu, 12 May 2022 07:21:05 -0700 (PDT)
-Received: from [192.168.0.161] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id ws20-20020a170907705400b006f3ef214e5bsm2150543ejb.193.2022.05.12.07.21.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 07:21:04 -0700 (PDT)
-Message-ID: <82a89be7-ea69-992b-ec66-3fba0c0103e1@linaro.org>
-Date:   Thu, 12 May 2022 16:21:03 +0200
+        with ESMTP id S1354452AbiELOfW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 10:35:22 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E9225D130;
+        Thu, 12 May 2022 07:35:20 -0700 (PDT)
+Received: from mail-yw1-f171.google.com ([209.85.128.171]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MJn8J-1nV91L1dyj-00K7ib; Thu, 12 May 2022 16:35:18 +0200
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2f16645872fso58979727b3.4;
+        Thu, 12 May 2022 07:35:17 -0700 (PDT)
+X-Gm-Message-State: AOAM531uf/IF/eWxzCferfvFQ6nIMHB2lfFsJRRwsc+S2dpF7nYzmX0X
+        XxBk2ONLjbID075LmHgnLUw4L2odBO2eNk5CZp8=
+X-Google-Smtp-Source: ABdhPJzfbhwoFr1q9juMntgIfHM+m3U1nWpSEbsdjudirAmgYnzjhj8eMLGYhy6XgarB5vhSiUly3q7lBnc1N2pSqgQ=
+X-Received: by 2002:a81:ad7:0:b0:2e6:84de:3223 with SMTP id
+ 206-20020a810ad7000000b002e684de3223mr331249ywk.209.1652366117032; Thu, 12
+ May 2022 07:35:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v1 1/6] dt-binding: clock: Add missing rk3568 cru bindings
-Content-Language: en-US
-To:     Peter Geis <pgwipeout@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220510032558.10304-1-ychuang3@nuvoton.com> <CAK8P3a1k8y8U99bBmqBYE1vYAc0q-UeaM0oLP4tTHZCpyYNOgA@mail.gmail.com>
+ <8be62b40-077a-7634-7d34-7776909a2abe@linaro.org>
+In-Reply-To: <8be62b40-077a-7634-7d34-7776909a2abe@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 May 2022 16:35:00 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3=YD7WV+Www8pf+JTv14DwcnSjD+f=YFCNMxXYT9FAZA@mail.gmail.com>
+Message-ID: <CAK8P3a3=YD7WV+Www8pf+JTv14DwcnSjD+f=YFCNMxXYT9FAZA@mail.gmail.com>
+Subject: Re: [PATCH V4 0/5] Add initial support for MA35D1 SoC
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jacky Huang <ychuang3@nuvoton.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        ychuang570808@gmail.com, Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220511150117.113070-1-pgwipeout@gmail.com>
- <20220511150117.113070-2-pgwipeout@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220511150117.113070-2-pgwipeout@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Olof Johansson <olof@lixom.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, SoC Team <soc@kernel.org>,
+        cfli0@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:f35I4VQN5HrjLu+f35ruvI1eR5T9g+bS8hIxq67YP8hU7et8GXq
+ 6/ga5BEAuNysl5lffjUoLFn5i77YASqLm+x0rtNCuyggX++caLY3Lbm2HsCugCp3hMCY4pQ
+ GzzJ+3KwbzZaF4Mjb5Rzfx5AtpBzCIZUdIBhT+5xL2soYf++YgqAUeGSxv91EoCtsvutHh6
+ Nm+mInPbNTW1RvP4obUXQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fkt0tv7tA1I=:UI38Qzf7Hgmuu3pdwo8Sza
+ FIDnSMv87Ew1LeBfkAnGiv96fAvynAjx7G455b/zjgpTOBoAzfHzoWrPpTWD35lL5mjfyVQ2V
+ 3mtXsArw+VU4KZQkllqM+NjGPy06D1Nxc4pcD3EgvrnQVV9G3/1VtFHcjcZRraf1/X1txz+RJ
+ 2cFvvs/zLtqNfHx/z2lmHriraxorAeZipIjhu7s52OgNer4igR3/RZZsUn4N5MKYghbYXbsgN
+ ffCcCy/YR4TOVPT8SRSju9xHnuzSIUxW7P0yfgyfPGo5b2G9PQDC/A5wZ4teKOy0wjXKhbBJm
+ t9zMJJbEz7heT7jMAFuc6p5moRal+sYfFDsvxNIPrjYEA/zLd0mdNoKdhWlE6hPZNkw8B+9wI
+ HIw4cO3rundVs9CHfm3Aq3uSGxT1KvIF6sfEP99SrKjsHf71WIcC3Eka4nhoXi+2S80GbCKPH
+ lvgNvShwFowIcNXg6Qug4Z2bWYVmp0Q67Bg9h1v+JsiGrNt0S+II/l1kUtq3BYP8RplgjJhfj
+ 6rYZVFfKh+7v561mukU2a6Y7gAoD1xDSeDrrDZYiuz6yE/F5zZZQn345YpIAUP03nxjcA6NJR
+ R5BXdcFbeQbQzx+UbeolBUk7+IpjUSZsOGXncmK3sSaenEgUmbLvO/4qkYGp9Fxg7UuRtCOcI
+ u+iMksTTQH++kmbPHfTQKLBEfIc2Tsfn423KoptDxCWPna+ibMYT/5BN+g91V/dR+Hq1NlsMY
+ aF1wrvqsm4xICty0OOHSaRE9MrsaSJYeASF8OA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/05/2022 17:01, Peter Geis wrote:
-> The rk3568 cru requires a clock input and a phandle to the grf node. Add
-> these bindings to clear some dtbs_check warnings.
-> 
-> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
-> ---
->  .../bindings/clock/rockchip,rk3568-cru.yaml         | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
+On Thu, May 12, 2022 at 4:11 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 10/05/2022 09:07, Arnd Bergmann wrote:
+> > On Tue, May 10, 2022 at 5:25 AM Jacky Huang <ychuang3@nuvoton.com> wrote:
+> >>
+> >> This patch series adds initial support for Nuvoton MA35D1 SoC,
+> >> include initial dts and clock controller binding.
+> >>
+> >
+> > This looks fine in principle, but we are getting close to the merge window and
+> > should finalize this quickly to make it into v5.19. I see that you don't have a
+> > console device, as commented in the .dts patch. Normally I prefer merging
+> > platforms only when there is at least rudimentary support for booting into
+> > an initramfs with a serial console, but this is a flexible rule.
+>
+> I disagree. It does not look fine - does not pass `make dtbs_check` even
+> with Nuvoton bindings...
 
+Ok, thanks for taking a look. It was already late for 5.19 and missing the uart
+driver, so it was clear it had not seen actual runtime testing. Let's try
+aiming for 5.20 then.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+        Arnd
