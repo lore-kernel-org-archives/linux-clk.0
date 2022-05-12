@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBDFC4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5395BC4321E
 	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 17:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357047AbiELR3U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 13:29:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+        id S1357049AbiELR3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 13:29:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357054AbiELR3Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 13:29:16 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81DC26BC9C
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:14 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id bu29so10409946lfb.0
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:14 -0700 (PDT)
+        with ESMTP id S1357047AbiELR3P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 13:29:15 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B729826BC98
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:13 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id i10so10268237lfg.13
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=98VvuWwg/UxrQVt2tP9Y2pnp9hUtu4rLQ2/MrJ26H6s=;
-        b=etikO/vHTkOjGYNJ6sZrk78vnq3Fz7c2zQbOnCAfk8rKO8a9LKg7/eTED3ZGiN17rs
-         MhZcYZDZzU4gcoEuGCze82d2IOmtCP+D9MLhVBYfWyFeAkX8dT2S/BaUecScyb/UrhjH
-         vigWaZArSRZpnuUq+Qb6QGHI6DajBVpRfd9wiJRdYmCzK0K2kxuMRYx+7dR9KuTJ4rIQ
-         PQBCg427/FV8uNAMR1c655LkJcKzVmIL6aYn7KQ1mecATgvHInViF8jA4XeJerNv7bsF
-         etLhG7k3YtCAJVCk4tI1xTBcxalEUkfzaj+P+6vW1dvDShoD0r9vHtPZjBjkLCwtp/MG
-         5TLA==
+        bh=DN8fx1hfNVFS4Z0luAgkQ8WPp9oKgLsI13oOEr/g8qw=;
+        b=CWHs/BhtnxlcnRUsurFNaZ9J2AG2Lq0FxWMAn3XzdPw6vjjmlNQFB+cYheT6yjrXSS
+         lw0uvFxn+ulCNzSFi7nOmwM6iQc/s+HR6GbYLs2Izi44HBJFFh5jhcy+RnPuNxui8OHF
+         DmtA9T7AAIAa0x81xgiXuZadOLx/du2K8TciRIuHJ4bjcG2nlTtT9kDLgPjOJtOjxGfD
+         2Wo9iPqkzi0GcLuflGcbcrpoczovg+YxwFPdR139kdwd3tSZ36cWWCmHNGZfIwUp4GNI
+         FW2m2UoCh+rDRI2Qsc/mqU80r8kLOVVd0vaJGlj3lfCCoQlQ0nt5xU84VHz2YHlqfmCY
+         MvCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=98VvuWwg/UxrQVt2tP9Y2pnp9hUtu4rLQ2/MrJ26H6s=;
-        b=UJRrEf18NXzxtLGMG74LzUyzZ7o8yfrd6xRq5XL41kdWuYr60RPgorUlls3K8clX9A
-         ZKMjInGHNnEQW+QU4oLV5l0JZHVPfzZ5T6jhwDvNdpYqu5wmUQ/dgSUl4hCs7/XVSv3V
-         yPLLEj1x89l5Wvfqb9vWEZ/jLAPNcZMkEE0RRgOBkIi4pSN8UyuaIUfKVXYmyzF0i/OK
-         sF0LK6+ay4q7HbBm1km7XqE0c2yA7rupjeH3XQ+jrzXakN0+of4b1D0J6ANT0rBsDZzc
-         EbF9GzpNvWsWCWToDIIubYFoPElz2KooxBjKo3sqtDie1OvqHXTSUxE+/0c8FrYhi35K
-         Gc0w==
-X-Gm-Message-State: AOAM530HRrEBs8RCtesEfEgUKxutofMqoq2LCaAE3U8pfwy32x84M7e9
-        WRVG4yv4EqqO2G3HsscchvwXkA==
-X-Google-Smtp-Source: ABdhPJwr5pCZazlGCwTGY5QlVE/vL8NCRFlEF9LjDXqvRgpFJUF8qdh9qOZxhEwG708cY5+WRjpxwg==
-X-Received: by 2002:a05:6512:3091:b0:473:bfb1:8da0 with SMTP id z17-20020a056512309100b00473bfb18da0mr624457lfd.154.1652376554273;
-        Thu, 12 May 2022 10:29:14 -0700 (PDT)
+        bh=DN8fx1hfNVFS4Z0luAgkQ8WPp9oKgLsI13oOEr/g8qw=;
+        b=Xxu7OoTfmT4M/JUPgwYIqoXmdxrvQIxseydw55eL53byPiHdGY0UkHeKFCCcc4A2G8
+         uJtzVRS0WRCLuL07ApyJI+zsOAshC13pAfeGHokqS8ZHHF3+VO0Fm/Q+k80vtsTNzJbZ
+         Ii804R3lwiEz99reZop57PpinXFNJ8utdINJwu8oWk63lKQ4n48EVYrzLQNSf4JZEE/F
+         hlBgOAs1rXFOs5sQqqvooYLGYGZW4Zm58Mpg2QmyK7KY57qYUyxQuWNIjtVts4XQ9+tH
+         7I5PZHWYS68V45jKry5XBCWKK3sT74y18EiFQ6klslVzZ62dP5/ediF/JDVPxT52bcOZ
+         6OcQ==
+X-Gm-Message-State: AOAM533Jkel8CF/rAh1/cjzBWd/pXNyf35QBbdV5LQIYGLM0u30gVAbG
+        8YqqmLskOkEeljKr8GsMWnflbg==
+X-Google-Smtp-Source: ABdhPJy9IlxdUuvCdiy9297ttn1SE6fTbIU6lja3kelgDKY4SwyMfZyavHa3jj3H/MbVIvHrz2deaA==
+X-Received: by 2002:a05:6512:b96:b0:473:a0d7:d203 with SMTP id b22-20020a0565120b9600b00473a0d7d203mr604998lfv.179.1652376552056;
+        Thu, 12 May 2022 10:29:12 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y10-20020a2e95ca000000b0024f3d1dae9asm11520ljh.34.2022.05.12.10.29.13
+        by smtp.gmail.com with ESMTPSA id y10-20020a2e95ca000000b0024f3d1dae9asm11520ljh.34.2022.05.12.10.29.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 10:29:13 -0700 (PDT)
+        Thu, 12 May 2022 10:29:11 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -61,11 +61,10 @@ To:     Andy Gross <agross@kernel.org>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     Prasad Malisetty <pmaliset@codeaurora.org>,
         Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>
-Subject: [PATCH v5 5/5] PCI: qcom: Drop manual pipe_clk_src handling
-Date:   Thu, 12 May 2022 20:29:09 +0300
-Message-Id: <20220512172909.2436302-6-dmitry.baryshkov@linaro.org>
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v5 2/5] clk: qcom: regmap: add PHY clock source implementation
+Date:   Thu, 12 May 2022 20:29:06 +0300
+Message-Id: <20220512172909.2436302-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
 References: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
@@ -75,131 +74,149 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Manual reparenting of pipe_clk_src is being replaced with the parking of
-the clock with clk_disable()/clk_enable(). Drop redundant code letting
-the pipe clock driver park the clock to the safe bi_tcxo parent
-automatically.
+On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+muxes which must be parked to the "safe" source (bi_tcxo) when
+corresponding GDSC is turned off and on again. Currently this is
+handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+clock. However the same code sequence should be applied in the
+pcie-qcom endpoint, USB3 and UFS drivers.
 
-Cc: Prasad Malisetty <quic_pmaliset@quicinc.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Rather than copying this sequence over and over again, follow the
+example of clk_rcg2_shared_ops and implement this parking in the
+enable() and disable() clock operations. Supplement the regmap-mux with
+the new clk_regmap_pipe_src type, which implements such multiplexers
+as a simple gate clocks.
+
+This is possible since each of these multiplexers has just two clock
+sources: working (pipe) and safe/park (bi_tcxo) clock sources. If the
+clock is running off the external pipe source, report it as enabled and
+report it as disabled otherwise.
+
+This way the PHY will disable the pipe clock before turning off the
+GDSC, which in turn would lead to disabling corresponding pipe_clk_src
+(and thus parked to a safe clock srouce). And vice versa, after enabling
+the GDSC the PHY will enable the pipe clock, which would cause
+pipe_clk_src to be switched from a safe source to the working one.
+
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 39 +-------------------------
- 1 file changed, 1 insertion(+), 38 deletions(-)
+ drivers/clk/qcom/Makefile              |  1 +
+ drivers/clk/qcom/clk-regmap-pipe-src.c | 62 ++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-pipe-src.h | 24 ++++++++++
+ 3 files changed, 87 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-regmap-pipe-src.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-pipe-src.h
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index a6becafb6a77..b48c899bcc97 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -164,9 +164,6 @@ struct qcom_pcie_resources_2_7_0 {
- 	int num_clks;
- 	struct regulator_bulk_data supplies[2];
- 	struct reset_control *pci_reset;
--	struct clk *pipe_clk_src;
--	struct clk *phy_pipe_clk;
--	struct clk *ref_clk_src;
- };
- 
- union qcom_pcie_resources {
-@@ -192,7 +189,6 @@ struct qcom_pcie_ops {
- 
- struct qcom_pcie_cfg {
- 	const struct qcom_pcie_ops *ops;
--	unsigned int pipe_clk_need_muxing:1;
- 	unsigned int has_tbu_clk:1;
- 	unsigned int has_ddrss_sf_tbu_clk:1;
- 	unsigned int has_aggre0_clk:1;
-@@ -1158,20 +1154,6 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
- 	if (ret < 0)
- 		return ret;
- 
--	if (pcie->cfg->pipe_clk_need_muxing) {
--		res->pipe_clk_src = devm_clk_get(dev, "pipe_mux");
--		if (IS_ERR(res->pipe_clk_src))
--			return PTR_ERR(res->pipe_clk_src);
--
--		res->phy_pipe_clk = devm_clk_get(dev, "phy_pipe");
--		if (IS_ERR(res->phy_pipe_clk))
--			return PTR_ERR(res->phy_pipe_clk);
--
--		res->ref_clk_src = devm_clk_get(dev, "ref");
--		if (IS_ERR(res->ref_clk_src))
--			return PTR_ERR(res->ref_clk_src);
--	}
--
- 	return 0;
- }
- 
-@@ -1189,10 +1171,6 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
- 		return ret;
- 	}
- 
--	/* Set TCXO as clock source for pcie_pipe_clk_src */
--	if (pcie->cfg->pipe_clk_need_muxing)
--		clk_set_parent(res->pipe_clk_src, res->ref_clk_src);
--
- 	ret = clk_bulk_prepare_enable(res->num_clks, res->clks);
- 	if (ret < 0)
- 		goto err_disable_regulators;
-@@ -1254,18 +1232,8 @@ static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
- 	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
- 
- 	clk_bulk_disable_unprepare(res->num_clks, res->clks);
--	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
--}
- 
--static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
--
--	/* Set pipe clock as clock source for pcie_pipe_clk_src */
--	if (pcie->cfg->pipe_clk_need_muxing)
--		clk_set_parent(res->pipe_clk_src, res->phy_pipe_clk);
--
--	return 0;
-+	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
- }
- 
- static int qcom_pcie_link_up(struct dw_pcie *pci)
-@@ -1441,7 +1409,6 @@ static const struct qcom_pcie_ops ops_2_7_0 = {
- 	.init = qcom_pcie_init_2_7_0,
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
--	.post_init = qcom_pcie_post_init_2_7_0,
- };
- 
- /* Qcom IP rev.: 1.9.0 */
-@@ -1450,7 +1417,6 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
- 	.init = qcom_pcie_init_2_7_0,
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
--	.post_init = qcom_pcie_post_init_2_7_0,
- 	.config_sid = qcom_pcie_config_sid_sm8250,
- };
- 
-@@ -1488,7 +1454,6 @@ static const struct qcom_pcie_cfg sm8250_cfg = {
- static const struct qcom_pcie_cfg sm8450_pcie0_cfg = {
- 	.ops = &ops_1_9_0,
- 	.has_ddrss_sf_tbu_clk = true,
--	.pipe_clk_need_muxing = true,
- 	.has_aggre0_clk = true,
- 	.has_aggre1_clk = true,
- };
-@@ -1496,14 +1461,12 @@ static const struct qcom_pcie_cfg sm8450_pcie0_cfg = {
- static const struct qcom_pcie_cfg sm8450_pcie1_cfg = {
- 	.ops = &ops_1_9_0,
- 	.has_ddrss_sf_tbu_clk = true,
--	.pipe_clk_need_muxing = true,
- 	.has_aggre1_clk = true,
- };
- 
- static const struct qcom_pcie_cfg sc7280_cfg = {
- 	.ops = &ops_1_9_0,
- 	.has_tbu_clk = true,
--	.pipe_clk_need_muxing = true,
- };
- 
- static const struct dw_pcie_ops dw_pcie_ops = {
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 671cf5821af1..03b945535e49 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-y += clk-regmap-pipe-src.o
+ clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+diff --git a/drivers/clk/qcom/clk-regmap-pipe-src.c b/drivers/clk/qcom/clk-regmap-pipe-src.c
+new file mode 100644
+index 000000000000..02047987ab5f
+--- /dev/null
++++ b/drivers/clk/qcom/clk-regmap-pipe-src.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022, Linaro Ltd.
++ */
++
++#include <linux/kernel.h>
++#include <linux/bitops.h>
++#include <linux/regmap.h>
++#include <linux/export.h>
++
++#include "clk-regmap-pipe-src.h"
++
++static inline struct clk_regmap_pipe_src *to_clk_regmap_pipe_src(struct clk_hw *hw)
++{
++	return container_of(to_clk_regmap(hw), struct clk_regmap_pipe_src, clkr);
++}
++
++static int pipe_src_is_enabled(struct clk_hw *hw)
++{
++	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
++	unsigned int val;
++
++	regmap_read(clkr->regmap, pipe->reg, &val);
++	val = (val & mask) >> pipe->shift;
++
++	WARN_ON(unlikely(val != pipe->working_val && val != pipe->park_val));
++
++	return val == pipe->working_val;
++}
++
++static int pipe_src_enable(struct clk_hw *hw)
++{
++	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
++	unsigned int val;
++
++	val = pipe->working_val << pipe->shift;
++
++	return regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
++}
++
++static void pipe_src_disable(struct clk_hw *hw)
++{
++	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
++	unsigned int val;
++
++	val = pipe->park_val << pipe->shift;
++
++	regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
++}
++
++const struct clk_ops clk_regmap_pipe_src_ops = {
++	.enable = pipe_src_enable,
++	.disable = pipe_src_disable,
++	.is_enabled = pipe_src_is_enabled,
++};
++EXPORT_SYMBOL_GPL(clk_regmap_pipe_src_ops);
+diff --git a/drivers/clk/qcom/clk-regmap-pipe-src.h b/drivers/clk/qcom/clk-regmap-pipe-src.h
+new file mode 100644
+index 000000000000..3aa4a9f402cd
+--- /dev/null
++++ b/drivers/clk/qcom/clk-regmap-pipe-src.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2022, Linaro Ltd.
++ * Author: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
++ */
++
++#ifndef __QCOM_CLK_REGMAP_PIPE_SRC_H__
++#define __QCOM_CLK_REGMAP_PIPE_SRC_H__
++
++#include <linux/clk-provider.h>
++#include "clk-regmap.h"
++
++struct clk_regmap_pipe_src {
++	u32			reg;
++	u32			shift;
++	u32			width;
++	u32			working_val;
++	u32			park_val;
++	struct clk_regmap	clkr;
++};
++
++extern const struct clk_ops clk_regmap_pipe_src_ops;
++
++#endif
 -- 
 2.35.1
 
