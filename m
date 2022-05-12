@@ -2,209 +2,215 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9ED1C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 17:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37E8C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 21:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347624AbiELR3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 13:29:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35912 "EHLO
+        id S1358555AbiELVOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 17:14:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357040AbiELR3O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 13:29:14 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE1D626BC90
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:12 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id u23so10339961lfc.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 10:29:12 -0700 (PDT)
+        with ESMTP id S235641AbiELVOi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 17:14:38 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E985B5DD1F;
+        Thu, 12 May 2022 14:14:36 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id bq30so11289122lfb.3;
+        Thu, 12 May 2022 14:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/RjHcoAJqYq4F8/tr8yoLa5s8/y3uHGzocs96Zx+btQ=;
-        b=xusnHu6ESMmqZXnAdgoffB7Hk6KtNd9Hk3yP1Cqj6XR26DnruUyxx4idvw7d4AYCku
-         YQiwNAdxW9qOIqiFwPovx26Ut79/jfzXz+MDw5+8/jopbFD2s3Y6PXMMbY7J/OEdH7t+
-         5El6fX1cMVBANfwnsoBFreL9CGSvFm/DmmXnjI5yrfQTYqjvXoK2EGqRgaOBrHR8Aizz
-         TbTXWghzQ2dbRscv1T1YsO/+b1eVNWab8CcmEXENVvHMussRu9h2pvw6lgfeBCRmdzIL
-         mKutngHdjpnjMj6wuseNkC9iZty8GDIxhzn+TqdzuzZ6QpBZ/ZywnK5LrTv7k9f50POl
-         15jg==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=2fvUun18Y3H3meaphIs95kvs9TKAJnuvpJthSALeEsM=;
+        b=SYgDrGbNWezxlXhEFlbnKE3qsxKpg88XcLFqsc7qV+AJzja8nq9Uexp4VpOOl+mC3e
+         jhMnlzK2uojPDcPOqs6NTPtCQJGBFRhg5A5ZuPF27RmZsEndI34lxxxzNyqfcbdLO9Fv
+         Q5xxhUUGW0kMcMd2HeXixR9aWsR0HFAbrwkMYJH8KpZk7stUNhRtvbmr1Y1ESAj25ZPo
+         MEt46XQG+ql7Wrp74OArn7vvK2YjM8kel2xsR0aj98UqlxpFZUqYVi2J5J4Fa89HvEJG
+         WUuhfKWD5wvAfD2ENIv2dnY1BGFaSnUJCucHcsHBBkvPV8CzWY5lrXXsIAYZRcudHRfv
+         UAwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/RjHcoAJqYq4F8/tr8yoLa5s8/y3uHGzocs96Zx+btQ=;
-        b=1tjrbLTr/ltDLSPM0r2g8J46KoFFtePJjv0T1jmAClYdc81ZanUQI7K48fjPPbl2XH
-         4zJaUe8B9wpYOXelfPcw2Y3JHNJ62wUaQCPJ1M9FkSjtR2TbwtDFtNqOpfbaUMk9qrpf
-         oSj62s+Efii76qJ1sflL4i3+7c/JE9uBWNW5Jtsg0ZxfpZB3ZQFKlDOvmjcs7GQ2ZfoI
-         r49cfJYmEPU5nPE2d+EogsArO1SJ/KYYys2aw5NBt6yL4cyADfMUekSVZ9CkZsgVFPtJ
-         /uEPFtOyIXKLAVX3qZZnWN1eOfrGeLptZA5EAdVv+H8SAqcUIF87CbaBe5xM156Y5Zxi
-         9CZQ==
-X-Gm-Message-State: AOAM531fCEaj8OIg8Qmyo2vBS3HDAm1rdoL6bLgP9F3nSf5Ch3tvB17J
-        gc4ntDLhyHExsqzjXa06/XtSvA==
-X-Google-Smtp-Source: ABdhPJxRFjNHuycXFm9sY/HPxSnvUIWBe6cD+D2bSk08qZYY1CVWEgQwPgXUqPicmzYATgsQ8F9Yww==
-X-Received: by 2002:a05:6512:3a86:b0:472:6287:6994 with SMTP id q6-20020a0565123a8600b0047262876994mr623683lfu.16.1652376551256;
-        Thu, 12 May 2022 10:29:11 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y10-20020a2e95ca000000b0024f3d1dae9asm11520ljh.34.2022.05.12.10.29.10
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=2fvUun18Y3H3meaphIs95kvs9TKAJnuvpJthSALeEsM=;
+        b=sozquFOcTMDkfjCrmF+X4AjoaCSS/u4hpxdgEUo9r2WJBwp61YM7C7hXfHYjgZbmqZ
+         i973Lh/jY8+kIhmEdAqgqTDWpaMFODf2NBOdVokiXRm8bZi3jgsfyOJmxbv97CAJm7+U
+         RDoxd63tzHWAFN8M24P2h5W6AP2RGor4HvhDaxmFkkJUMmOE7imy4kAcS23cX/pZ7Uot
+         buQm2yYZHp0XGhgze5zL7P2I3aAVtjd6Pe7VL5vrAqDoaGYUZCGQ5/0zgeqVxjOwUeX1
+         oSHZ/lKf7HT80O2B8cka8gr/E5Au415F7TDeeNMGn8sEpUoCUonfsswSbQzhqqfi7XUm
+         R0Nw==
+X-Gm-Message-State: AOAM531jMzlgbkcaG+/BwYSeOyKwMUUH4YNYQsdXA2m3cIcT0ear3yyr
+        xjxPLl8JUOfDhzXTEKdoasnTwU48oOMogA==
+X-Google-Smtp-Source: ABdhPJw0FfTmusT3d920y6m5KoaaHCk+Tsb3Q08jENhNjHIibospIHJ569V43l4Bjqcs7Ohp7XYiIg==
+X-Received: by 2002:ac2:5cc7:0:b0:472:5be:eb7b with SMTP id f7-20020ac25cc7000000b0047205beeb7bmr1081981lfq.663.1652390075108;
+        Thu, 12 May 2022 14:14:35 -0700 (PDT)
+Received: from mobilestation ([95.79.189.214])
+        by smtp.gmail.com with ESMTPSA id p23-20020a2e8057000000b0024f3d1dae7csm104867ljg.4.2022.05.12.14.14.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 10:29:10 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Thu, 12 May 2022 14:14:33 -0700 (PDT)
+Date:   Fri, 13 May 2022 00:14:31 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 1/5] PCI: qcom: Remove unnecessary pipe_clk handling
-Date:   Thu, 12 May 2022 20:29:05 +0300
-Message-Id: <20220512172909.2436302-2-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
-References: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC
+ fixes
+Message-ID: <20220512211431.r23r6daua36lty7d@mobilestation>
+References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+ <20220512001156.x6kqyhi3vjjpqch6@mobilestation>
+ <20220512152705.GA2506@lpieralisi>
+ <20220512171150.GA164627@thinkpad>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220512171150.GA164627@thinkpad>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PCIe PHY drivers (both QMP and PCIe2) already do clk_prepare_enable() /
-clk_prepare_disable() pipe_clk. Remove extra calls to enable/disable
-this clock from the PCIe driver, so that the PHY driver can manage the
-clock on its own.
+On Thu, May 12, 2022 at 10:41:50PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, May 12, 2022 at 04:27:05PM +0100, Lorenzo Pieralisi wrote:
+> > On Thu, May 12, 2022 at 03:11:56AM +0300, Serge Semin wrote:
+> > > On Tue, May 03, 2022 at 11:57:18PM +0300, Serge Semin wrote:
+> > > > This patchset is an initial one in the series created in the framework
+> > > > of my Baikal-T1 PCIe/eDMA-related work:
+> > > > 
+> > > > [1: In-progress v3] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
+> > > > Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+> > > > [2: In-progress v1] PCI: dwc: Various fixes and cleanups
+> > > > Link: https://lore.kernel.org/linux-pci/20220324012524.16784-1-Sergey.Semin@baikalelectronics.ru/
+> > > > [3: In-progress v1] PCI: dwc: Add dma-ranges/YAML-schema/Baikal-T1 support
+> > > > Link: https://lore.kernel.org/linux-pci/20220324013734.18234-1-Sergey.Semin@baikalelectronics.ru/
+> > > > [4: In-progress v1] dmaengine: dw-edma: Add RP/EP local DMA controllers support
+> > > > Link: https://lore.kernel.org/linux-pci/20220324014836.19149-1-Sergey.Semin@baikalelectronics.ru/
+> > > > 
+> > > > Since some of the patches in the later patchsets depend on the
+> > > > modifications introduced here, @Lorenzo could you please merge this series
+> > > > through your PCIe subsystem repo? After getting all the required ack'es of
+> > > > course.
+> > > > 
+> > > > Short summary regarding this patchset. A few more modifications are
+> > > > introduced here to finally finish the Baikal-T1 CCU unit support up and
+> > > > prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
+> > > > all it turned out I specified wrong DW xGMAC PTP reference clock divider
+> > > > in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
+> > > > joint xGMAC Ref and PTP clock instead of having them separately defined.
+> > > > The SoC manual describes these clocks as separate fixed clock wrappers.
+> > > > Finally in order to close the SoC clock/reset support up we need to add
+> > > > the DDR and PCIe interfaces reset controls support. It's done in two
+> > > > steps. First I've moved the reset-controls-related code into a dedicated
+> > > > module. Then the DDR/PCIe reset-control functionality is added.
+> > > > 
+> > > > Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
+> > > > Changelog v2:
+> > > > - Resubmit the series with adding @Philipp to the list of the recipients.
+> > > > 
+> > > > Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+> > > > Changelog v3:
+> > > > - Rebased from v5.17 onto v5.18-rc3.
+> > > > - No comments. Just resend the series.
+> > > 
+> > > No comments for more than a week. There were no comments in v1 and v2
+> > > either. Please at least ack or merge in the series. It would be very
+> > > appreciated to merge it in through one repo with the rest of the
+> > > patchsets before the next merge window. @Bjorn, @Lorenzo, @Michael?
+> > 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 44 ++------------------------
- 1 file changed, 3 insertions(+), 41 deletions(-)
+Hello Lorenzo, Manivannan
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 57636246cecc..a6becafb6a77 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -128,7 +128,6 @@ struct qcom_pcie_resources_2_3_2 {
- 	struct clk *master_clk;
- 	struct clk *slave_clk;
- 	struct clk *cfg_clk;
--	struct clk *pipe_clk;
- 	struct regulator_bulk_data supplies[QCOM_PCIE_2_3_2_MAX_SUPPLY];
- };
- 
-@@ -165,7 +164,6 @@ struct qcom_pcie_resources_2_7_0 {
- 	int num_clks;
- 	struct regulator_bulk_data supplies[2];
- 	struct reset_control *pci_reset;
--	struct clk *pipe_clk;
- 	struct clk *pipe_clk_src;
- 	struct clk *phy_pipe_clk;
- 	struct clk *ref_clk_src;
-@@ -597,8 +595,7 @@ static int qcom_pcie_get_resources_2_3_2(struct qcom_pcie *pcie)
- 	if (IS_ERR(res->slave_clk))
- 		return PTR_ERR(res->slave_clk);
- 
--	res->pipe_clk = devm_clk_get(dev, "pipe");
--	return PTR_ERR_OR_ZERO(res->pipe_clk);
-+	return 0;
- }
- 
- static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
-@@ -613,13 +610,6 @@ static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
- 	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
- }
- 
--static void qcom_pcie_post_deinit_2_3_2(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
--
--	clk_disable_unprepare(res->pipe_clk);
--}
--
- static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
-@@ -694,22 +684,6 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
- 	return ret;
- }
- 
--static int qcom_pcie_post_init_2_3_2(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
--	struct dw_pcie *pci = pcie->pci;
--	struct device *dev = pci->dev;
--	int ret;
--
--	ret = clk_prepare_enable(res->pipe_clk);
--	if (ret) {
--		dev_err(dev, "cannot prepare/enable pipe clock\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
-@@ -1198,8 +1172,7 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
- 			return PTR_ERR(res->ref_clk_src);
- 	}
- 
--	res->pipe_clk = devm_clk_get(dev, "pipe");
--	return PTR_ERR_OR_ZERO(res->pipe_clk);
-+	return 0;
- }
- 
- static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
-@@ -1292,14 +1265,7 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
- 	if (pcie->cfg->pipe_clk_need_muxing)
- 		clk_set_parent(res->pipe_clk_src, res->phy_pipe_clk);
- 
--	return clk_prepare_enable(res->pipe_clk);
--}
--
--static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
--
--	clk_disable_unprepare(res->pipe_clk);
-+	return 0;
- }
- 
- static int qcom_pcie_link_up(struct dw_pcie *pci)
-@@ -1449,9 +1415,7 @@ static const struct qcom_pcie_ops ops_1_0_0 = {
- static const struct qcom_pcie_ops ops_2_3_2 = {
- 	.get_resources = qcom_pcie_get_resources_2_3_2,
- 	.init = qcom_pcie_init_2_3_2,
--	.post_init = qcom_pcie_post_init_2_3_2,
- 	.deinit = qcom_pcie_deinit_2_3_2,
--	.post_deinit = qcom_pcie_post_deinit_2_3_2,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
- 
-@@ -1478,7 +1442,6 @@ static const struct qcom_pcie_ops ops_2_7_0 = {
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- 	.post_init = qcom_pcie_post_init_2_7_0,
--	.post_deinit = qcom_pcie_post_deinit_2_7_0,
- };
- 
- /* Qcom IP rev.: 1.9.0 */
-@@ -1488,7 +1451,6 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- 	.post_init = qcom_pcie_post_init_2_7_0,
--	.post_deinit = qcom_pcie_post_deinit_2_7_0,
- 	.config_sid = qcom_pcie_config_sid_sm8250,
- };
- 
--- 
-2.35.1
+> > Hi Sergey,
+> > 
+> > these changes affect the clock tree and have to be reviewed and merged
+> > by the respective maintainers if they think the changes can be accepted.
+> > 
+> > I don't see any reason why we should, if ACK'ed, take them in the PCI
+> > tree, this series does not apply changes to the PCI tree at all and you
+> > don't need it as a base for future to-be-merged PCI patches either.
+> > 
+> > So in short, this series has to go through the usual clock tree review
+> > process.
+> > 
 
+I do know the normal procedure. But if patches concern different
+subsystems but for some reason inter-depended somehow it's ok to merge
+them in via a single repo. In my case the platform clock driver has
+been updated in a way so to support the reset-controls utilized in the
+PCIe driver altered in another patchset. So I didn't want to leave the
+kernel not working in the framework of my platform on any git hash
+state. That's why I asked to merge the patchsets in via the same repo.
+The kernel would be still buildable though.
+
+> 
+> Yes, Stephen should be the one taking these patches through the clk tree. Also,
+> there is no need to club both pci and clk patches in a single tree. That's
+> usually done for patches with build dependencies, but here there are none.
+
+Well, I didn't expect to have my patchsets review to be that delayed.
+Now seeing Lorenzo is going to review only DW PCIe fixes and cleanups
+after which will be gone for two more months I have to admit that my
+plan of getting the changes accepted in 5.19 won't come true. Really
+I thought of any subsystem but not of PCIe/DMA that review procedure
+would last that long.
+
+-Sergey
+
+> 
+> Thanks,
+> Mani
+> 
+> > Thanks,
+> > Lorenzo
+> > 
+> > > -Sergey
+> > > 
+> > > > 
+> > > > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > > > Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> > > > Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+> > > > Cc: Rob Herring <robh@kernel.org>
+> > > > Cc: "Krzysztof Wilczyński" <kw@linux.com>
+> > > > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > > > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> > > > Cc: linux-clk@vger.kernel.org
+> > > > Cc: linux-pci@vger.kernel.org
+> > > > Cc: linux-mips@vger.kernel.org
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > 
+> > > > Serge Semin (4):
+> > > >   clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+> > > >   clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
+> > > >   clk: baikal-t1: Move reset-controls code into a dedicated module
+> > > >   clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+> > > > 
+> > > >  drivers/clk/baikal-t1/Kconfig       |  12 +-
+> > > >  drivers/clk/baikal-t1/Makefile      |   1 +
+> > > >  drivers/clk/baikal-t1/ccu-div.c     |   1 +
+> > > >  drivers/clk/baikal-t1/ccu-div.h     |   6 +
+> > > >  drivers/clk/baikal-t1/ccu-rst.c     | 373 ++++++++++++++++++++++++++++
+> > > >  drivers/clk/baikal-t1/ccu-rst.h     |  64 +++++
+> > > >  drivers/clk/baikal-t1/clk-ccu-div.c | 102 ++------
+> > > >  include/dt-bindings/reset/bt1-ccu.h |   9 +
+> > > >  8 files changed, 482 insertions(+), 86 deletions(-)
+> > > >  create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+> > > >  create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+> > > > 
+> > > > -- 
+> > > > 2.35.1
+> > > > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
