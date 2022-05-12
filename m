@@ -2,91 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DDEC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 15:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12836C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 15:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238070AbiELPPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 11:15:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        id S1355926AbiELP1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 11:27:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355485AbiELPPf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 11:15:35 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83C026272A
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 08:15:34 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id e3so5647668ios.6
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 08:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dAccpwSlABENXdFG9sL3n5Vq8ZaFU7f/P797lgrtYLc=;
-        b=S6/2IQdesgT7HD9HzOnm2VtvcaZChiNAeweXM9MRnpGSoeJxyqrG2uyzxTE9VF35kn
-         CfwoG+pozkRvmrdRIPmld7pzyRISLl08j+Ed53rzAPycM0ZquKI4kg9zbUv+BnU1iXWv
-         KerHH4ulMvljguFLUk3jrUUS5Wio2AYd5pZ20oHoLh0HgZscdXc5NaKmMoXOxpV2TJR8
-         D1yP9hYsk8xDqU3YtnEntDCWjQ7Yfdex9shx5IE0xqKV3hv4CVftPCUA+Lj7ScUe9aXk
-         aVV8kfkOx1e/XocEY9ZL7yCEVvNU1W7YjzXpqFSXJh1j7bt3T1qjMS+HrgWTYtj54mHC
-         8Blg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dAccpwSlABENXdFG9sL3n5Vq8ZaFU7f/P797lgrtYLc=;
-        b=Gog6QrC8JIPDP5QbPewY0zPGB8bDDpVyNpUD4sTnzEgMMcXwlYVHJ25biRdip5s7KL
-         DPsQc7yNzMj/QBpKkivn8XuMA304N6IHeyt2IeQKch5YV+5yBIRTJEM5kfe7w+w1aSxT
-         zlVrbjZ+uL1POkV8UgnkeJuQm2wbYqy7L6jUe3FAvqkXDI60rnIYfosz4mIwvGO9p+/2
-         nITeND5olrCmqtL9RyCPFCokYwjrpD3oWLXCDrwp2W/o52Jz8hSrp+2+HiU2UYJLxgEW
-         NfrJYrWIUO5EKbUtfdiODOtda/ZiyDPoOOwe/YOoRVJ6/N1B/t1WJXH7CZNPQDaUaWjJ
-         VrKA==
-X-Gm-Message-State: AOAM5328Q41bz4nXJmTSXfTfDlXPq/SIC7cfKsLpDiVIYrpbdBNAlzVV
-        +BHyjtKPPpZ7wnl2Paa3cRy2KQ==
-X-Google-Smtp-Source: ABdhPJxwIeyEF1HtBBqviDCiriuSC5OHYCqL7VMDLuu3vGIGNw93U8fo5359mgxNfCVPk7MMDEIgfw==
-X-Received: by 2002:a02:900d:0:b0:32a:ec66:4fa7 with SMTP id w13-20020a02900d000000b0032aec664fa7mr217333jaf.271.1652368532653;
-        Thu, 12 May 2022 08:15:32 -0700 (PDT)
-Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id h3-20020a022b03000000b0032b3a781766sm1452036jaa.42.2022.05.12.08.15.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 08:15:32 -0700 (PDT)
-Message-ID: <4e14f1d5-2abc-8c30-d54d-7e542ca4eccf@linaro.org>
-Date:   Thu, 12 May 2022 10:15:31 -0500
+        with ESMTP id S1350445AbiELP1R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 11:27:17 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5BAEE69707;
+        Thu, 12 May 2022 08:27:16 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F05C5106F;
+        Thu, 12 May 2022 08:27:15 -0700 (PDT)
+Received: from lpieralisi (unknown [10.57.2.156])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A8093F73D;
+        Thu, 12 May 2022 08:27:12 -0700 (PDT)
+Date:   Thu, 12 May 2022 16:27:05 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC
+ fixes
+Message-ID: <20220512152705.GA2506@lpieralisi>
+References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+ <20220512001156.x6kqyhi3vjjpqch6@mobilestation>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] clk: qcom: rpmh: Set wake/sleep state for BCM clks
-Content-Language: en-US
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        patches@lists.linux.dev, Taniya Das <quic_tdas@quicinc.com>
-References: <20220412194505.614002-1-swboyd@chromium.org>
- <YnKvoh+h07at8b65@builder.lan>
- <CAE-0n517iAS9KSdunMX18LpqDrQ4ac-yRCZq82j-XdExaGjCXA@mail.gmail.com>
- <CAE-0n53eXiz74iCHHQaC-eDFkuui9Y1xXvuqd2g0UnrwbYhZTg@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-In-Reply-To: <CAE-0n53eXiz74iCHHQaC-eDFkuui9Y1xXvuqd2g0UnrwbYhZTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220512001156.x6kqyhi3vjjpqch6@mobilestation>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/11/22 5:04 PM, Stephen Boyd wrote:
->>> Will you take this in fixes, or do you want me to pick it for 5.19?
->>>
->> I'm waiting for Taniya to reply. For all I know this has no effect
->> because there's some sort of copy/paste from one state to another. Until
->> then it doesn't seem like we should do anything.
-> Taniya told me that if there's no sleep or wake state set then active
-> state remains even when the subsystem is in sleep. Not exactly
-> copy/paste but at least it is consistent. We need a comment here so this
-> doesn't come up again.
+On Thu, May 12, 2022 at 03:11:56AM +0300, Serge Semin wrote:
+> On Tue, May 03, 2022 at 11:57:18PM +0300, Serge Semin wrote:
+> > This patchset is an initial one in the series created in the framework
+> > of my Baikal-T1 PCIe/eDMA-related work:
+> > 
+> > [1: In-progress v3] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
+> > Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+> > [2: In-progress v1] PCI: dwc: Various fixes and cleanups
+> > Link: https://lore.kernel.org/linux-pci/20220324012524.16784-1-Sergey.Semin@baikalelectronics.ru/
+> > [3: In-progress v1] PCI: dwc: Add dma-ranges/YAML-schema/Baikal-T1 support
+> > Link: https://lore.kernel.org/linux-pci/20220324013734.18234-1-Sergey.Semin@baikalelectronics.ru/
+> > [4: In-progress v1] dmaengine: dw-edma: Add RP/EP local DMA controllers support
+> > Link: https://lore.kernel.org/linux-pci/20220324014836.19149-1-Sergey.Semin@baikalelectronics.ru/
+> > 
+> > Since some of the patches in the later patchsets depend on the
+> > modifications introduced here, @Lorenzo could you please merge this series
+> > through your PCIe subsystem repo? After getting all the required ack'es of
+> > course.
+> > 
+> > Short summary regarding this patchset. A few more modifications are
+> > introduced here to finally finish the Baikal-T1 CCU unit support up and
+> > prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
+> > all it turned out I specified wrong DW xGMAC PTP reference clock divider
+> > in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
+> > joint xGMAC Ref and PTP clock instead of having them separately defined.
+> > The SoC manual describes these clocks as separate fixed clock wrappers.
+> > Finally in order to close the SoC clock/reset support up we need to add
+> > the DDR and PCIe interfaces reset controls support. It's done in two
+> > steps. First I've moved the reset-controls-related code into a dedicated
+> > module. Then the DDR/PCIe reset-control functionality is added.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
+> > Changelog v2:
+> > - Resubmit the series with adding @Philipp to the list of the recipients.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+> > Changelog v3:
+> > - Rebased from v5.17 onto v5.18-rc3.
+> > - No comments. Just resend the series.
+> 
+> No comments for more than a week. There were no comments in v1 and v2
+> either. Please at least ack or merge in the series. It would be very
+> appreciated to merge it in through one repo with the rest of the
+> patchsets before the next merge window. @Bjorn, @Lorenzo, @Michael?
 
-If I understand what you're saying here, your original patch is not
-necessary, but there should be a comment in the code that explains
-why that is the case.  Is that right?  And am I right to assume you
-will be sending out a patch with such a comment?
+Hi Sergey,
 
-					-Alex
+these changes affect the clock tree and have to be reviewed and merged
+by the respective maintainers if they think the changes can be accepted.
+
+I don't see any reason why we should, if ACK'ed, take them in the PCI
+tree, this series does not apply changes to the PCI tree at all and you
+don't need it as a base for future to-be-merged PCI patches either.
+
+So in short, this series has to go through the usual clock tree review
+process.
+
+Thanks,
+Lorenzo
+
+> -Sergey
+> 
+> > 
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> > Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: "Krzysztof Wilczyński" <kw@linux.com>
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: linux-pci@vger.kernel.org
+> > Cc: linux-mips@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > 
+> > Serge Semin (4):
+> >   clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+> >   clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
+> >   clk: baikal-t1: Move reset-controls code into a dedicated module
+> >   clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+> > 
+> >  drivers/clk/baikal-t1/Kconfig       |  12 +-
+> >  drivers/clk/baikal-t1/Makefile      |   1 +
+> >  drivers/clk/baikal-t1/ccu-div.c     |   1 +
+> >  drivers/clk/baikal-t1/ccu-div.h     |   6 +
+> >  drivers/clk/baikal-t1/ccu-rst.c     | 373 ++++++++++++++++++++++++++++
+> >  drivers/clk/baikal-t1/ccu-rst.h     |  64 +++++
+> >  drivers/clk/baikal-t1/clk-ccu-div.c | 102 ++------
+> >  include/dt-bindings/reset/bt1-ccu.h |   9 +
+> >  8 files changed, 482 insertions(+), 86 deletions(-)
+> >  create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+> >  create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+> > 
+> > -- 
+> > 2.35.1
+> > 
