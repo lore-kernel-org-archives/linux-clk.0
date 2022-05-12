@@ -2,23 +2,23 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C139BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 06:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82586C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 06:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350573AbiELGkx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 02:40:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46254 "EHLO
+        id S240766AbiELGlk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 02:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350571AbiELGkS (ORCPT
+        with ESMTP id S1350570AbiELGkS (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 02:40:18 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5FD51819A9
-        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 23:39:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D679271D8A
+        for <linux-clk@vger.kernel.org>; Wed, 11 May 2022 23:39:45 -0700 (PDT)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
 Received: from 172.28.114.216
         by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26385:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Thu, 12 May 2022 14:32:14 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 12 May 2022 14:32:13 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     sboyd@kernel.org
 Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
@@ -27,9 +27,9 @@ Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board device tree
-Date:   Thu, 12 May 2022 14:31:05 +0800
-Message-Id: <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
+Subject: [PATCH v15 07/10] irqchip: Add Sunplus SP7021 interrupt controller driver
+Date:   Thu, 12 May 2022 14:31:02 +0800
+Message-Id: <0bd7d365431346d61192c8e9bd3461792ff8be1b.1652329411.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1652329411.git.qinjian@cqplus1.com>
 References: <cover.1652329411.git.qinjian@cqplus1.com>
@@ -39,530 +39,345 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the basic support for Sunplus SP7021-Demo-V3 board.
+Add interrupt controller driver for Sunplus SP7021 SoC.
 
+This is the interrupt controller in P-chip which collects all interrupt
+sources in P-chip and routes them to parent interrupt controller in C-chip.
+
+Acked-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- MAINTAINERS                                  |   1 +
- arch/arm/boot/dts/sunplus-sp7021-achip.dtsi  |  85 +++++
- arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts |  27 ++
- arch/arm/boot/dts/sunplus-sp7021.dtsi        | 369 +++++++++++++++++++
- 4 files changed, 482 insertions(+)
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021.dtsi
+ MAINTAINERS                       |   1 +
+ drivers/irqchip/Kconfig           |   9 +
+ drivers/irqchip/Makefile          |   2 +
+ drivers/irqchip/irq-sp7021-intc.c | 278 ++++++++++++++++++++++++++++++
+ 4 files changed, 290 insertions(+)
+ create mode 100644 drivers/irqchip/irq-sp7021-intc.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 9cf30e776..b55ec0768 100644
+index 8dfab70f0..762beec05 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2747,6 +2747,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+@@ -2748,6 +2748,7 @@ F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
  F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	arch/arm/boot/dts/sunplus-sp7021*.dts*
- F:	arch/arm/configs/sp7021_*defconfig
- F:	arch/arm/mach-sunplus/
  F:	drivers/clk/clk-sp7021.c
-diff --git a/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
++F:	drivers/irqchip/irq-sp7021-intc.c
+ F:	drivers/reset/reset-sunplus.c
+ F:	include/dt-bindings/clock/sunplus,sp7021-clkc.h
+ F:	include/dt-bindings/reset/sunplus,sp7021-reset.h
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 7038957f4..f5c2596bc 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -617,4 +617,13 @@ config MCHP_EIC
+ 	help
+ 	  Support for Microchip External Interrupt Controller.
+ 
++config SUNPLUS_SP7021_INTC
++	bool "Sunplus SP7021 interrupt controller" if COMPILE_TEST
++	default SOC_SP7021
++	help
++	  Support for the Sunplus SP7021 Interrupt Controller IP core.
++	  SP7021 SoC has 2 Chips: C-Chip & P-Chip. This is used as a
++	  chained controller, routing all interrupt source in P-Chip to
++	  the primary controller on C-Chip.
++
+ endmenu
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index c1f611cbf..eb0ac83ff 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -117,3 +117,5 @@ obj-$(CONFIG_WPCM450_AIC)		+= irq-wpcm450-aic.o
+ obj-$(CONFIG_IRQ_IDT3243X)		+= irq-idt3243x.o
+ obj-$(CONFIG_APPLE_AIC)			+= irq-apple-aic.o
+ obj-$(CONFIG_MCHP_EIC)			+= irq-mchp-eic.o
++obj-$(CONFIG_SUNPLUS_SP7021_INTC)	+= irq-sp7021-intc.o
++
+diff --git a/drivers/irqchip/irq-sp7021-intc.c b/drivers/irqchip/irq-sp7021-intc.c
 new file mode 100644
-index 000000000..1560c95d9
+index 000000000..b45c1a601
 --- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/irqchip/irq-sp7021-intc.c
+@@ -0,0 +1,278 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Device Tree Source for Sunplus SP7021
-+ *
-+ * Copyright (C) 2021 Sunplus Technology Co.
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
 + */
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/io.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
 +
-+#include "sunplus-sp7021.dtsi"
++#define SP_INTC_HWIRQ_MIN	0
++#define SP_INTC_HWIRQ_MAX	223
 +
-+/ {
-+	compatible = "sunplus,sp7021-achip";
-+	model = "Sunplus SP7021 (CA7)";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
++#define SP_INTC_NR_IRQS		(SP_INTC_HWIRQ_MAX - SP_INTC_HWIRQ_MIN + 1)
++#define SP_INTC_NR_GROUPS	DIV_ROUND_UP(SP_INTC_NR_IRQS, 32)
++#define SP_INTC_REG_SIZE	(SP_INTC_NR_GROUPS * 4)
 +
-+	clocks {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++/* REG_GROUP_0 regs */
++#define REG_INTR_TYPE		(sp_intc.g0)
++#define REG_INTR_POLARITY	(REG_INTR_TYPE     + SP_INTC_REG_SIZE)
++#define REG_INTR_PRIORITY	(REG_INTR_POLARITY + SP_INTC_REG_SIZE)
++#define REG_INTR_MASK		(REG_INTR_PRIORITY + SP_INTC_REG_SIZE)
 +
-+		extclk: clk@osc0 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <27000000>;
-+			clock-output-names = "extclk";
-+		};
++/* REG_GROUP_1 regs */
++#define REG_INTR_CLEAR		(sp_intc.g1)
++#define REG_MASKED_EXT1		(REG_INTR_CLEAR    + SP_INTC_REG_SIZE)
++#define REG_MASKED_EXT0		(REG_MASKED_EXT1   + SP_INTC_REG_SIZE)
++#define REG_INTR_GROUP		(REG_INTR_CLEAR    + 31 * 4)
 +
-+		divextclk: clk@0 {
-+			compatible = "fixed-factor-clock";
-+			#clock-cells = <0>;
-+			clocks  = <&extclk>;
-+			clock-mult = <1>;
-+			clock-div = <2>;
-+			clock-output-names = "extdivclk";
-+		};
++#define GROUP_MASK		(BIT(SP_INTC_NR_GROUPS) - 1)
++#define GROUP_SHIFT_EXT1	(0)
++#define GROUP_SHIFT_EXT0	(8)
 +
-+		A_pll0: clk@A_pll0 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <2000000000>;
-+			clock-output-names = "A_pll0";
-+		};
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <0>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <1>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <2>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <3>;
-+			clock-frequency = <931000000>;
-+		};
-+	};
-+
-+	arm-pmu {
-+		compatible = "arm,cortex-a7-pmu";
-+		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-+	};
-+
-+};
-diff --git a/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-new file mode 100644
-index 000000000..05e164115
---- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-@@ -0,0 +1,27 @@
-+// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree Source for Sunplus SP7021 Demo V3 SBC board
-+ *
-+ * Copyright (C) Sunplus Technology Co.
++ * When GPIO_INT0~7 set to edge trigger, doesn't work properly.
++ * WORKAROUND: change it to level trigger, and toggle the polarity
++ * at ACK/Handler to make the HW work.
 + */
++#define GPIO_INT0_HWIRQ		120
++#define GPIO_INT7_HWIRQ		127
++#define IS_GPIO_INT(irq)					\
++({								\
++	u32 i = irq;						\
++	(i >= GPIO_INT0_HWIRQ) && (i <= GPIO_INT7_HWIRQ);	\
++})
 +
-+/dts-v1/;
-+
-+#include "sunplus-sp7021-achip.dtsi"
-+
-+/ {
-+	compatible = "sunplus,sp7021-demo-v3";
-+	model = "SP7021/CA7/Demo_V3";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	chosen {
-+		bootargs = "console=ttyS0,115200 loglevel=8 earlycon";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x00000000 0x20000000>;
-+	};
++/* index of states */
++enum {
++	_IS_EDGE = 0,
++	_IS_LOW,
++	_IS_ACTIVE
 +};
-diff --git a/arch/arm/boot/dts/sunplus-sp7021.dtsi b/arch/arm/boot/dts/sunplus-sp7021.dtsi
-new file mode 100644
-index 000000000..4777abdce
---- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021.dtsi
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for Sunplus SP7021
-+ *
-+ * Copyright (C) 2021 Sunplus Technology Co.
-+ */
 +
-+#include <dt-bindings/clock/sunplus,sp7021-clkc.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/reset/sunplus,sp7021-reset.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/sppctl-sp7021.h>
++#define STATE_BIT(irq, idx)		(((irq) - GPIO_INT0_HWIRQ) * 3 + (idx))
++#define ASSIGN_STATE(irq, idx, v)	assign_bit(STATE_BIT(irq, idx), sp_intc.states, v)
++#define TEST_STATE(irq, idx)		test_bit(STATE_BIT(irq, idx), sp_intc.states)
 +
-+/ {
-+	compatible = "sunplus,sp7021";
-+	model = "Sunplus SP7021";
++static struct sp_intctl {
++	/*
++	 * REG_GROUP_0: include type/polarity/priority/mask regs.
++	 * REG_GROUP_1: include clear/masked_ext0/masked_ext1/group regs.
++	 */
++	void __iomem *g0; // REG_GROUP_0 base
++	void __iomem *g1; // REG_GROUP_1 base
 +
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+		serial4 = &uart4;
-+	};
++	struct irq_domain *domain;
++	raw_spinlock_t lock;
 +
-+	soc@A {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		interrupt-parent = <&gic>;
++	/*
++	 * store GPIO_INT states
++	 * each interrupt has 3 states: is_edge, is_low, is_active
++	 */
++	DECLARE_BITMAP(states, (GPIO_INT7_HWIRQ - GPIO_INT0_HWIRQ + 1) * 3);
++} sp_intc;
 +
-+		gic: interrupt-controller@CPU {
-+			compatible = "arm,cortex-a7-gic";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x9f101000 0x1000>,
-+			      <0x9f102000 0x2000>,
-+			      <0x9f104000 0x2000>,
-+			      <0x9f106000 0x2000>;
-+		};
++static struct irq_chip sp_intc_chip;
 +
-+		timer: timer@CPU {
-+			compatible = "arm,armv7-timer";
-+			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+				     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+			clock-frequency = <27000000>;
-+			arm,cpu-registers-not-fw-configured;
-+		};
-+	};
++static void sp_intc_assign_bit(u32 hwirq, void __iomem *base, bool value)
++{
++	u32 offset, mask;
++	unsigned long flags;
++	void __iomem *reg;
 +
-+	soc@B {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		interrupt-parent = <&intc>;
++	offset = (hwirq / 32) * 4;
++	reg = base + offset;
 +
-+		intc: interrupt-controller@9c000780 {
-+			compatible = "sunplus,sp7021-intc";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+			reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>, /* EXT_INT0 */
-+				     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>; /* EXT_INT1 */
-+		};
++	raw_spin_lock_irqsave(&sp_intc.lock, flags);
++	mask = readl_relaxed(reg);
++	if (value)
++		mask |= BIT(hwirq % 32);
++	else
++		mask &= ~BIT(hwirq % 32);
++	writel_relaxed(mask, reg);
++	raw_spin_unlock_irqrestore(&sp_intc.lock, flags);
++}
 +
-+		clkc: clock-controller@9c000000 {
-+			compatible = "sunplus,sp7021-clkc";
-+			reg = <0x9c000000 0x280>;
-+			#clock-cells = <1>;
-+			clocks = <&extclk>;
-+		};
++static void sp_intc_ack_irq(struct irq_data *d)
++{
++	u32 hwirq = d->hwirq;
 +
-+		rstc: reset@9c000054 {
-+			compatible = "sunplus,sp7021-reset";
-+			reg = <0x9c000054 0x28>;
-+			#reset-cells = <1>;
-+		};
++	if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_EDGE))) { // WORKAROUND
++		sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, !TEST_STATE(hwirq, _IS_LOW));
++		ASSIGN_STATE(hwirq, _IS_ACTIVE, true);
++	}
 +
-+		rtc: serial@9c003a00 {
-+			compatible = "sunplus,sp7021-rtc";
-+			reg = <0x9c003a00 0x80>;
-+			reg-names = "rtc";
-+			clocks = <&clkc CLK_RTC>;
-+			resets = <&rstc RST_RTC>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <163 IRQ_TYPE_EDGE_RISING>;
-+		};
++	sp_intc_assign_bit(hwirq, REG_INTR_CLEAR, 1);
++}
 +
-+		otp: otp@9c00af00 {
-+			compatible = "sunplus,sp7021-ocotp";
-+			reg = <0x9c00af00 0x34>, <0x9c00af80 0x58>;
-+			reg-names = "hb_gpio", "otprx";
-+			clocks = <&clkc CLK_OTPRX>;
-+			resets = <&rstc RST_OTPRX>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
++static void sp_intc_mask_irq(struct irq_data *d)
++{
++	sp_intc_assign_bit(d->hwirq, REG_INTR_MASK, 0);
++}
 +
-+			therm_calib: thermal-calibration@14 {
-+				reg = <0x14 0x3>;
-+			};
-+			disc_vol: disconnect-voltage@18 {
-+				reg = <0x18 0x2>;
-+			};
-+			mac_addr0: mac-address0@34 {
-+				reg = <0x34 0x6>;
-+			};
-+			mac_addr1: mac-address1@3a {
-+				reg = <0x3a 0x6>;
-+			};
-+		};
++static void sp_intc_unmask_irq(struct irq_data *d)
++{
++	sp_intc_assign_bit(d->hwirq, REG_INTR_MASK, 1);
++}
 +
-+		led {
-+			compatible = "gpio-leds";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&leds_pins>;
-+			system-led {
-+				label = "system-led";
-+				gpios = <&pctl 0 GPIO_ACTIVE_HIGH>;
-+				default-state = "off";
-+				linux,default-trigger = "heartbeat";
-+			};
-+		};
++static int sp_intc_set_type(struct irq_data *d, unsigned int type)
++{
++	u32 hwirq = d->hwirq;
++	bool is_edge = !(type & IRQ_TYPE_LEVEL_MASK);
++	bool is_low = (type == IRQ_TYPE_LEVEL_LOW || type == IRQ_TYPE_EDGE_FALLING);
 +
-+		uart0: serial@9c000900 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000900 0x80>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <53 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA0>;
-+			resets = <&rstc RST_UA0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
-+		};
++	irq_set_handler_locked(d, is_edge ? handle_edge_irq : handle_level_irq);
 +
-+		uart1: serial@9c000980 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000980 0x80>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA1>;
-+			resets = <&rstc RST_UA1>;
-+			status = "disabled";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
-+		};
++	if (unlikely(IS_GPIO_INT(hwirq) && is_edge)) { // WORKAROUND
++		/* store states */
++		ASSIGN_STATE(hwirq, _IS_EDGE, is_edge);
++		ASSIGN_STATE(hwirq, _IS_LOW, is_low);
++		ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
++		/* change to level */
++		is_edge = false;
++	}
 +
-+		uart2: serial@9c000800 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000800 0x80>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <55 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA2>;
-+			resets = <&rstc RST_UA2>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
-+			status = "disabled";
-+		};
++	sp_intc_assign_bit(hwirq, REG_INTR_TYPE, is_edge);
++	sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, is_low);
 +
-+		uart3: serial@9c000880 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000880 0x80>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <56 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA3>;
-+			resets = <&rstc RST_UA3>;
-+			status = "disabled";
-+		};
++	return 0;
++}
 +
-+		uart4: serial@9c008780 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c008780 0x80>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <134 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA4>;
-+			resets = <&rstc RST_UA4>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart4_pins>;
-+			status = "disabled";
-+		};
++static int sp_intc_get_ext_irq(int ext_num)
++{
++	void __iomem *base = ext_num ? REG_MASKED_EXT1 : REG_MASKED_EXT0;
++	u32 shift = ext_num ? GROUP_SHIFT_EXT1 : GROUP_SHIFT_EXT0;
++	u32 groups;
++	u32 pending_group;
++	u32 group;
++	u32 pending_irq;
 +
-+		spi_controller0: spi@9c002d80 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c002d80 0x80>, <0x9c002e00 0x80>;
-+			reg-names = "master", "slave";
-+			interrupt-parent = <&intc>;
-+			interrupt-names = "dma_w",
-+					  "master_risc",
-+					  "slave_risc";
-+			interrupts = <144 IRQ_TYPE_LEVEL_HIGH>,
-+				     <146 IRQ_TYPE_LEVEL_HIGH>,
-+				     <145 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_SPI_COMBO_0>;
-+			resets = <&rstc RST_SPI_COMBO_0>;
++	groups = readl_relaxed(REG_INTR_GROUP);
++	pending_group = (groups >> shift) & GROUP_MASK;
++	if (!pending_group)
++		return -1;
 +
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi0_pins>;
-+			cs-gpios = <&pctl 26 GPIO_ACTIVE_LOW>, <&pctl 28 GPIO_ACTIVE_LOW>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			spi@0 {
-+				compatible = "rohm,dh2228fv";
-+				spi-max-frequency = <5000000>;
-+				reg = <0x0>;
-+				status = "okay";
-+			};
-+			spi@1 {
-+				compatible = "rohm,dh2228fv";
-+				spi-max-frequency = <5000000>;
-+				reg = <0x1>;
-+				status = "okay";
-+			};
-+		};
++	group = fls(pending_group) - 1;
++	pending_irq = readl_relaxed(base + group * 4);
++	if (!pending_irq)
++		return -1;
 +
-+		spi_controller1: spi@9c00f480 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f480 0x80>, <0x9c00f500 0x80>;
-+			reg-names = "master", "slave";
-+			interrupt-parent = <&intc>;
-+			interrupt-names = "dma_w",
-+					  "master_risc",
-+					  "slave_risc";
-+			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <69 IRQ_TYPE_LEVEL_HIGH>,
-+				     <68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_SPI_COMBO_1>;
-+			resets = <&rstc RST_SPI_COMBO_1>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
++	return (group * 32) + fls(pending_irq) - 1;
++}
 +
-+		spi_controller2: spi@9c00f600 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f600 0x80>, <0x9c00f680 0x80>;
-+			reg-names = "master", "slave";
-+			interrupt-parent = <&intc>;
-+			interrupt-names = "dma_w",
-+					  "master_risc",
-+					  "slave_risc";
-+			interrupts = <70 IRQ_TYPE_LEVEL_HIGH>,
-+				     <72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_SPI_COMBO_2>;
-+			resets = <&rstc RST_SPI_COMBO_2>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
++static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	int ext_num = (int)irq_desc_get_handler_data(desc);
++	int hwirq;
 +
-+		spi_controller3: spi@9c00f780 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f780 0x80>, <0x9c00f800 0x80>;
-+			reg-names = "master", "slave";
-+			interrupt-parent = <&intc>;
-+			interrupt-names = "dma_w",
-+					  "master_risc",
-+					  "slave_risc";
-+			interrupts = <73 IRQ_TYPE_LEVEL_HIGH>,
-+				     <75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <74 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_SPI_COMBO_3>;
-+			resets = <&rstc RST_SPI_COMBO_3>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
++	chained_irq_enter(chip, desc);
 +
-+		pctl: pinctl@9c000100 {
-+			compatible = "sunplus,sp7021-pctl";
-+			reg = <0x9C000100 0x100>,
-+			      <0x9C000300 0x100>,
-+			      <0x9C0032e4 0x1C>,
-+			      <0x9C000080 0x20>;
-+			reg-names = "moon2", "gpioxt", "first", "moon1";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			clocks = <&clkc CLK_GPIO>;
-+			resets = <&rstc RST_GPIO>;
-+			pinctrl-names = "default";
++	while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
++		if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_ACTIVE))) { // WORKAROUND
++			ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
++			sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, TEST_STATE(hwirq, _IS_LOW));
++		} else {
++			generic_handle_domain_irq(sp_intc.domain, hwirq);
++		}
++	}
 +
-+			leds_pins: pinmux_gpio_leds-pins {
-+				sunplus,pins = < SPPCTL_IOPAD(0,SPPCTL_PCTL_G_GPIO,0,SPPCTL_PCTL_L_OUT) >;
-+			};
++	chained_irq_exit(chip, desc);
++}
 +
-+			emmc_pins: emmc-pins {
-+				function = "CARD0_EMMC";
-+				groups = "CARD0_EMMC";
-+			};
-+
-+			sdcard-pins {
-+				function = "SD_CARD";
-+				groups = "SD_CARD";
-+				sunplus,pins = < SPPCTL_IOPAD(91, SPPCTL_PCTL_G_GPIO, 0, 0) >;
-+			};
-+
-+			emac_pins: pinmux_emac_demo_board_v3-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(49,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_CLK_OUT,0)
-+					SPPCTL_IOPAD(44,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_MAC_SMI_MDC,0)
-+					SPPCTL_IOPAD(43,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_MAC_SMI_MDIO,0)
-+					SPPCTL_IOPAD(52,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXEN,0)
-+					SPPCTL_IOPAD(50,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXD0,0)
-+					SPPCTL_IOPAD(51,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXD1,0)
-+					SPPCTL_IOPAD(46,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_CRSDV,0)
-+					SPPCTL_IOPAD(47,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXD0,0)
-+					SPPCTL_IOPAD(48,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXD1,0)
-+					SPPCTL_IOPAD(45,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXER,0)
-+					SPPCTL_IOPAD(59,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXEN,0)
-+					SPPCTL_IOPAD(57,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXD0,0)
-+					SPPCTL_IOPAD(58,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXD1,0)
-+					SPPCTL_IOPAD(54,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_CRSDV,0)
-+					SPPCTL_IOPAD(55,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXD0,0)
-+					SPPCTL_IOPAD(56,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXD1,0)
-+					SPPCTL_IOPAD(53,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXER,0)
-+				>;
-+				sunplus,zerofunc = <
-+					MUXF_L2SW_LED_FLASH0
-+					MUXF_L2SW_LED_FLASH1
-+					MUXF_L2SW_LED_ON0
-+					MUXF_L2SW_LED_ON1
-+					MUXF_DAISY_MODE
-+				>;
-+			};
-+
-+			uart0_pins: pinmux_uart0-pins {
-+				function = "UA0";
-+				groups = "UA0";
-+			};
-+
-+			uart1_pins: pinmux_uart1-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(14,SPPCTL_PCTL_G_PMUX,MUXF_UA4_TX,0)
-+					SPPCTL_IOPAD(16,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RX,0)
-+				>;
-+			};
-+
-+			uart2_pins: pinmux_uart2-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(16,SPPCTL_PCTL_G_PMUX,MUXF_UA2_TX,0)
-+					SPPCTL_IOPAD(17,SPPCTL_PCTL_G_PMUX,MUXF_UA2_RX,0)
-+					SPPCTL_IOPAD(18,SPPCTL_PCTL_G_PMUX,MUXF_UA2_RTS,0)
-+					SPPCTL_IOPAD(19,SPPCTL_PCTL_G_PMUX,MUXF_UA2_CTS,0)
-+				>;
-+			};
-+
-+			uart4_pins: pinmux_uart4-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(22,SPPCTL_PCTL_G_PMUX,MUXF_UA4_TX,0)
-+					SPPCTL_IOPAD(20,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RX,0)
-+					SPPCTL_IOPAD(23,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RTS,0)
-+					SPPCTL_IOPAD(21,SPPCTL_PCTL_G_PMUX,MUXF_UA4_CTS,0)
-+				>;
-+			};
-+
-+			spi0_pins: pinmux_spi0-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(26,SPPCTL_PCTL_G_GPIO,0,0)
-+					SPPCTL_IOPAD(28,SPPCTL_PCTL_G_GPIO,0,0)
-+					SPPCTL_IOPAD(23,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_DO,0)
-+					SPPCTL_IOPAD(25,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_DI,0)
-+					SPPCTL_IOPAD(27,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_CLK,0)
-+				>;
-+			};
-+		};
-+	};
++static struct irq_chip sp_intc_chip = {
++	.name = "sp_intc",
++	.irq_ack = sp_intc_ack_irq,
++	.irq_mask = sp_intc_mask_irq,
++	.irq_unmask = sp_intc_unmask_irq,
++	.irq_set_type = sp_intc_set_type,
 +};
++
++static int sp_intc_irq_domain_map(struct irq_domain *domain,
++				  unsigned int irq, irq_hw_number_t hwirq)
++{
++	irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
++	irq_set_chip_data(irq, &sp_intc_chip);
++	irq_set_noprobe(irq);
++
++	return 0;
++}
++
++static const struct irq_domain_ops sp_intc_dm_ops = {
++	.xlate = irq_domain_xlate_twocell,
++	.map = sp_intc_irq_domain_map,
++};
++
++static int sp_intc_irq_map(struct device_node *node, int i)
++{
++	unsigned int irq;
++
++	irq = irq_of_parse_and_map(node, i);
++	if (!irq)
++		return -ENOENT;
++
++	irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
++
++	return 0;
++}
++
++static int __init sp_intc_init_dt(struct device_node *node, struct device_node *parent)
++{
++	int i, ret;
++
++	sp_intc.g0 = of_iomap(node, 0);
++	if (!sp_intc.g0)
++		return -ENXIO;
++
++	sp_intc.g1 = of_iomap(node, 1);
++	if (!sp_intc.g1) {
++		ret = -ENXIO;
++		goto out_unmap0;
++	}
++
++	ret = sp_intc_irq_map(node, 0); // EXT_INT0
++	if (ret)
++		goto out_unmap1;
++
++	ret = sp_intc_irq_map(node, 1); // EXT_INT1
++	if (ret)
++		goto out_unmap1;
++
++	/* initial regs */
++	for (i = 0; i < SP_INTC_NR_GROUPS; i++) {
++		/* all mask */
++		writel_relaxed(0, REG_INTR_MASK + i * 4);
++		/* all edge */
++		writel_relaxed(~0, REG_INTR_TYPE + i * 4);
++		/* all high-active */
++		writel_relaxed(0, REG_INTR_POLARITY + i * 4);
++		/* all EXT_INT0 */
++		writel_relaxed(~0, REG_INTR_PRIORITY + i * 4);
++		/* all clear */
++		writel_relaxed(~0, REG_INTR_CLEAR + i * 4);
++	}
++
++	sp_intc.domain = irq_domain_add_linear(node, SP_INTC_NR_IRQS,
++					       &sp_intc_dm_ops, &sp_intc);
++	if (!sp_intc.domain) {
++		ret = -ENOMEM;
++		goto out_unmap1;
++	}
++
++	raw_spin_lock_init(&sp_intc.lock);
++
++	return 0;
++
++out_unmap1:
++	iounmap(sp_intc.g1);
++out_unmap0:
++	iounmap(sp_intc.g0);
++
++	return ret;
++}
++
++IRQCHIP_DECLARE(sp_intc, "sunplus,sp7021-intc", sp_intc_init_dt);
 -- 
 2.33.1
 
