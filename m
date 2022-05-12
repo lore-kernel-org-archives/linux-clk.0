@@ -2,115 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44203C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 08:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9809C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 08:14:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238289AbiELIKF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 04:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48644 "EHLO
+        id S1351351AbiELIOl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 04:14:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbiELIKE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 04:10:04 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD11A6B086
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 01:10:03 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E7FF31F91F;
-        Thu, 12 May 2022 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1652343001; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WipsG8yIF3QWnRmHCRIlzEnPn7m0KOEw6EN0C4dEFug=;
-        b=STAwpWIpaYsLMBMuGXQhvZh5rZZ1Ec/gPpSqTm1GvJ3RXFz18eI9lMpyGYOrUzjw6+pKTp
-        4JE+Yx9ygWmNCYCSREsqUm0l8QFm4Gn2QMB5p/KWTDKcInusJGArS5/MjmZ3GTORgjHqhV
-        Pr+HzRbRLjy4wFGuqMLSsWBKbEIacqs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1652343001;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WipsG8yIF3QWnRmHCRIlzEnPn7m0KOEw6EN0C4dEFug=;
-        b=kkU6FBexd4Z3t3ZSuBeuALithW+sT5ley28GT285C0DUeXyNRTAyD5ybTRImfn/UmVNknu
-        g8ZQFzkk+M3O2ZAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 60CC013ABE;
-        Thu, 12 May 2022 08:10:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id yfhDFdnAfGLrDgAAMHmgww
-        (envelope-from <iianov@suse.de>); Thu, 12 May 2022 08:10:01 +0000
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
-From:   Ivan Ivanov <iianov@suse.de>
-In-Reply-To: <20220512075737.mpipy7rmixwfwpyl@houat>
-Date:   Thu, 12 May 2022 11:10:00 +0300
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1351350AbiELIOk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 04:14:40 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909265DBE3;
+        Thu, 12 May 2022 01:14:37 -0700 (PDT)
+Received: from mail-yb1-f170.google.com ([209.85.219.170]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1Md66H-1oOwsi2EM7-00aAd1; Thu, 12 May 2022 10:14:35 +0200
+Received: by mail-yb1-f170.google.com with SMTP id x17so8398710ybj.3;
+        Thu, 12 May 2022 01:14:35 -0700 (PDT)
+X-Gm-Message-State: AOAM530083DOA3IplrTxU3lL5IsjzdG9UIuwOta3au/y3OjoXJ3eNl7c
+        zmyLH+uatgDUPQQ/LZND2umTAw+exdRYNvjy65E=
+X-Google-Smtp-Source: ABdhPJxYlfZ6T04YTUrbGyvWzZ6qQVJVV0d+mwFo1uTISdfe00UIvNMgHa6nvI/sYpRan8quVF/h+BCmUz790udHgHg=
+X-Received: by 2002:a25:d3c2:0:b0:645:74df:f43d with SMTP id
+ e185-20020a25d3c2000000b0064574dff43dmr27028464ybf.394.1652343274227; Thu, 12
+ May 2022 01:14:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
+ <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com>
+In-Reply-To: <Ynyd9HeFNmGQiovY@atomide.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 May 2022 10:14:15 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3817c8JMd=vqCjmY_kvBshhzSetgMfEihZ-NdcVZgJpQ@mail.gmail.com>
+Message-ID: <CAK8P3a3817c8JMd=vqCjmY_kvBshhzSetgMfEihZ-NdcVZgJpQ@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <EA46E084-07A4-4BC9-B9FB-A64102F03867@suse.de>
-References: <20220428065743.94967-1-iivanov@suse.de>
- <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
- <20220510133019.h2urxj3feponfuku@houat>
- <6066bd9d-b53b-0a91-7440-98244c2d55c2@i2se.com>
- <20220512075737.mpipy7rmixwfwpyl@houat>
-To:     Maxime Ripard <maxime@cerno.tech>
-X-Mailer: Apple Mail (2.3608.120.23.2.7)
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Lub9ZsxvV1zrOBc1Ujo83uZNaGaWl6GFILH3qo1y0/gpChdnfCO
+ wsKxOPZ7H1V80G3yY+dLP7WvEtir0ov+3rJ54jSmokCqKrIuVSvJk0rvpCacaamo5VOGjS2
+ +Y2L9maTnyOfqeEfGj1mp2sbmzOgLeZg9EG1Wi7GhXeiXRCTfWsGCS1gCvkKMc9jHQ2xnlz
+ U4X8/U7xA7mCotjXF8CPA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:SiCC8J+dTz0=:AOTX/qndo/uAbz52Ei7oCy
+ rTC2wmqnbYJOzudEQKJgPv/5J//Dx9O9hM4gYBILgdpPTKxsMB27B17WsTwgMYF87Tao54kZI
+ jCv9ek3PAJTMKB1+gnrIXDeuCuk1EPs7ivGokRLbDcQxuifyWUBo+k8Wi0274U6YDTIgkZIMQ
+ UchQ+SNC/Z68Rrk1KCVKyWIlvh+ODOslf2zts6XBXaRsMu4vyqqvs0uno6KvF3+d8zNFwBGmW
+ 43pqHhCSCwYtCFx/WTj13lm5WhdMXPqLqXty4ARPzW3GvbmidaB02+AWbs3oVZ9tOuMgKsQWO
+ C225D0PQCRIxn5lxw7cMdtyySZe4XwJuLzQb9Slhy4dMMFJQ8+xsGk8dNOJZky7ld7FCcyQxa
+ kaQkpWjpMaTIGzZYa+vLCBYOPRT2CKW98sLhMxGWhz81w0MZ0wOW53+K14fAWkJ/vbQ6w8GxS
+ i2JDbGFwFmooYUj5MzNXJMzXgoMdxSbVqeH3a3sK2AAoEJGD5VD7CUDgC5f6uBJe0FPwA+riX
+ qOsZuxWcrPP4AA4AU43aYovndJad3SasacDwY8eRayovARtGtR+EzdjeTQbSBKZzos89IC6aK
+ qdg87qF3IWyDRtkA0/yutxkUo8VvkhZlL8hA9LWguInRGg8/ElN2m38akEVusm257F0U0HH/8
+ /8IInN00hv4kDVzZalc3Mib8VV1V8J0hWpf4s1aqdbllQ4Hn0YSTqWSZ3O/M6zGdEPM/By4df
+ A450LVuW6MxYYqmcz5OHIKGwrj1jV0xw+06nHba6dPKpTWS+mC/h23R4TIyGrWxGWOUTk5kn/
+ oy1/JPNNaiH8hiN1LmTRk3KI7x92ACVTcwCo/p+WQ8oiQGfoz8=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
+> Adding Ard and Arnd for vmap stack.
 
-> On 12 May 2022, at 10:57, Maxime Ripard <maxime@cerno.tech> wrote:
-> 
-> On Wed, May 11, 2022 at 08:10:50AM +0200, Stefan Wahren wrote:
->> Am 10.05.22 um 15:30 schrieb Maxime Ripard:
->>> Hi,
->>> 
->>> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
->>>> May I ask what's the status/plan of  this patch series?
->>> As far as I know it hasn't been merged yet.
->>> 
->>>> It seems it has not been merged yet, and I know we are a bit late in
->>>> the 5.18 schedule, but I think this is a good fix for 5.18.
->>> Fix for what? I don't think this series fix any bug?
->> 
->> This seems to be a "fix" for the Frankenstone scenario: mainline kernel +
->> vendor DT
-> 
-> Did we ever support this?
-> 
-> I don't think we did, so even though it can be nice to improve that
-> situation, I don't think it's worth sending this to stable
+Thanks!
 
-Yes, maybe not stable material, but considering support for devices
-which are shipped with upstream Linux and vendor device tree blobs,
-saved somewhere on them, should be pretty normal to expect, right?
+> * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
+> > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
 
-Regards,
-Ivan
+>
+> Maybe Ard and Arnd have some ideas what might be going wrong here.
+> Basically anything trying to use a physical address on stack will
+> fail in weird ways like we've seen for smc and wl1251.
 
+For this, the first step should be to enable CONFIG_DMA_API_DEBUG.
+If any device is getting the wrong DMA address for a stack variable,
+this should print a helpful debug message to the console.
 
+> > > > [   88.408578] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+> > > > [   88.415777]  (detected by 0, t=2602 jiffies, g=2529, q=17)
+> > > > [   88.422026] rcu: All QSes seen, last rcu_sched kthread activity
+> > > > 2602 (-21160--23762), jiffies_till_next_fqs=1, root ->qsmask 0x0
+> > > > [   88.434445] rcu: rcu_sched kthread starved for 2602 jiffies! g2529
+> > > > f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+> > > > [   88.445274] rcu:     Unless rcu_sched kthread gets sufficient CPU
+> > > > time, OOM is now expected behavior.
+> > > > [   88.454859] rcu: RCU grace-period kthread stack dump:
+
+I looked for a smoking gun in the backtrace, didn't really find anything,
+so I'm guessing the problem is something that happened between the
+last timer timer and the time it actually ran the rcu_gp_kthread, maybe
+some DMA timeout in a device driver running with interrupts disabled.
+
+> > > > [   88.807588]  omap3_noncore_dpll_program from clk_change_rate+0x23c/0x4f8
+> > > > [   88.815375]  clk_change_rate from clk_core_set_rate_nolock+0x1b0/0x29c
+> > > > [   88.822936]  clk_core_set_rate_nolock from clk_set_rate+0x30/0x64
+> > > > [   88.830056]  clk_set_rate from _set_opp+0x254/0x51c
+> > > > [   88.835835]  _set_opp from dev_pm_opp_set_rate+0xec/0x228
+> > > > [   88.842073]  dev_pm_opp_set_rate from __cpufreq_driver_target+0x584/0x700
+> > > > [   88.849792]  __cpufreq_driver_target from od_dbs_update+0xb4/0x168
+> > > > [   88.856953]  od_dbs_update from dbs_work_handler+0x2c/0x60
+> > > > [   88.863441]  dbs_work_handler from process_one_work+0x284/0x72c
+> > > > [   88.870411]  process_one_work from worker_thread+0x28/0x4b0
+> > > > [   88.876973]  worker_thread from kthread+0xe4/0x104
+> > > > [   88.882692]  kthread from ret_from_fork+0x14/0x28
+
+The only thing I see that is slightly unusual here is that the timer
+tick happened
+exactly during the cpufreq transition. Is this always the same backtrace when
+you run into the bug? What happens when you disable the omap3 cpufreq
+driver or set it to run at a fixed frequency?
+
+          Arnd
