@@ -2,87 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CEAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 08:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A625EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 08:54:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351651AbiELInc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 04:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44872 "EHLO
+        id S1351784AbiELIyb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 04:54:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351670AbiELInO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 04:43:14 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1420424BE;
-        Thu, 12 May 2022 01:43:08 -0700 (PDT)
-Received: from mail-yb1-f173.google.com ([209.85.219.173]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MBE3k-1ndYMW3duQ-00Cgtd; Thu, 12 May 2022 10:43:07 +0200
-Received: by mail-yb1-f173.google.com with SMTP id m128so8480210ybm.5;
-        Thu, 12 May 2022 01:43:06 -0700 (PDT)
-X-Gm-Message-State: AOAM532vlCUMivbweFHDj622IOVUFCHL7jduKXG3sHfCQ/5gyijsQdbj
-        xv+4ejJl92wC/LAIwglx9Ydyzp/TEYSetrYnCqI=
-X-Google-Smtp-Source: ABdhPJwQWU271A4uV7muFmZnyaNXspg1t2Fw2ue6eoaqYqg6nSa8idSoj/juf2P8ktidmam2uzcBkFwU8S0+zZdwFgM=
-X-Received: by 2002:a25:cdc7:0:b0:648:f57d:c0ed with SMTP id
- d190-20020a25cdc7000000b00648f57dc0edmr26794225ybf.480.1652344985551; Thu, 12
- May 2022 01:43:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
- <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
- <Ynyd9HeFNmGQiovY@atomide.com>
-In-Reply-To: <Ynyd9HeFNmGQiovY@atomide.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 May 2022 10:42:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
-Message-ID: <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        with ESMTP id S1351696AbiELIxw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 04:53:52 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC8162134
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 01:53:50 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 26C305C0174;
+        Thu, 12 May 2022 04:53:50 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 12 May 2022 04:53:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; t=1652345630; x=1652432030; bh=jRRueRTseH
+        IEoYyor53AFbsdWKwjwDqqSyrG4DRd5R8=; b=QW46sflIOBvpg8w8pxzjzEy2k3
+        ZGvq3mwZgKdjWKw6dxicwF+8n+WjDgLOq02g3ps5ZBWvHVsJ+Z3p5GhPlX1T6JZu
+        SR/yS7BbNzZAvRd5gt8pNM+lWLgD1MXXL4J4+xslInpfX6f4YtVHqN6JuvwaPTs2
+        25Kh3dB0GEjZXMB+/y0J8yrM8i7wrh4RNpArB+FeAHTZj4am/plkFfyK2Aldjn/f
+        /rRX++jBHNtDIa9eFpVsqCC+llhuJrZPv84JxjesP+YIxukyxa4r9xLVJkHh3qqp
+        C84dEziz1/yZ9TzeNdikF1d3C9VRGWm/2hRxssbEOhJ86ZX+Lq25WEfEJgwg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1652345630; x=
+        1652432030; bh=jRRueRTseHIEoYyor53AFbsdWKwjwDqqSyrG4DRd5R8=; b=e
+        aRtfsFRXmqBC4ahsoEJyeDg8T3hggyVtYm0P2orhrTHLisXo5amXiEWfi1UqY0dT
+        moanI4+KYTGnxdL0hpTjqChfyjr0j2cNfz/9/ZA+emfAhpmdgQjCoCVn+GHHnGTi
+        BCLJF7Qv6eP41YGsVTE3UiYgLlFRZizUgJFGsNg8MJxUvS9lusK6k/hPmWrr4/W5
+        gW7kGWA7f+Rtlh1RQLMFu1UySY3s+gTbjvCnUy77Jv7uORFma6FdxAszrH601tb+
+        BxGv0pb9tLUv8T4jTotTpCkWtUDzrf7gpBRpnAi6z279x0B2NHRKbYDbI8nelsBQ
+        +bUDEmByVem14j3to8Tgw==
+X-ME-Sender: <xms:Hct8YhQVhxiroC9i1MXCexGwmj3BAv91HvQGSjGqVG-mbqDwVyEjsQ>
+    <xme:Hct8YqwN2tyT8VWseXTAfTfsxJRcgi5WMV1eML1P3eBCq3auMQzIwLPjD0p6poPqO
+    o9OzsPffJh8g1bCL7U>
+X-ME-Received: <xmr:Hct8Ym2yEKvzlwaniKHfdhzm2luPWOvXob3haRkujdYxsV1uHI3MXU5gc3sVqIKVAYHGeAZAaHmcYmehwgMWIwA_1xfuuEoVca3wfu0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeejgddtjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepteefffefgfektdefgfeludfgtdejfeejvddttdekteeiffejvdfgheehfffh
+    vedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:Hct8YpBSyR0ZDmaFl6yplz4N84K0ZZMFi0Viq5SEFKILaMbPkIVd_Q>
+    <xmx:Hct8YqhL6cerIEKJsDd1OlUYpdGAzJ_2F9r2htDtQy7oaNarWgv7vA>
+    <xmx:Hct8YtrCFKiOt9c6TBhKxPWtTQ2xi8K33ocTH45KSwpzORWIudOR3Q>
+    <xmx:Hst8YhpAKSAxDOt_cha9-I3eezVuKu-m8dgy1aWpo1y_s65xZsFHQQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 May 2022 04:53:48 -0400 (EDT)
+Date:   Thu, 12 May 2022 10:53:47 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Ivan Ivanov <iianov@suse.de>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        "Ivan T. Ivanov" <iivanov@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:X4IVjpj/Ln1A0LzUXXWFxvqrCAh6GrDdfuYNntcPuKH08AOvjly
- 1QnC+ffaAqGgy+zfYSOdcEtwVqQA2jmPfv1otEQdzJRqVr6zUhtQQXJAJj2B8gK89GkPBcX
- /wEiNfP+T51kdCUTmTFyo0kWmRP1SNmHyJfxPHtA7vXdlorDZ9x1ffGpyUrp4e3yO/GVYRe
- kOIayi9AcM7tSxugXX8og==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ujj9k/E2yck=:+mujHgvBmPSBanfqWmpifC
- Uzf//q2jg9V+tMwb+vun5mQtfLDBONjCgk7kUXHlhEt+0gwfBoqKFHyRaybFtVvtQONi4ZpKm
- 8V5mDG80+GOZQy5MPilKr7jc6AbDrCkR50RY0m6yz+kBYuOjN9GRc3GEaz8FA1vPJogrlC89K
- 49RXEslm/XpJKn81cuM+0CPyOyRSkAbG6vNtsk73d3Cce3BvpIPQeOpSiA6vCu8tvJy7Dw9uc
- 6lDgZ7zm4jUHKtmwIcigzJMxj6el4Aq27cmhTo6haaevN0lojlv7l08tg4CJrj2M17a/Fl7Lq
- 68es9Bda+9f+xE4ylH2teEgmr3C+HcVN11xZDKYy0xZG+L5GUKKeuQZ03jzCS8zhPa2OugT45
- JT/cWE6CS+PxWVfeJwVoLETXNDJlSTF6kjtcnbMLtJv3xk2KDB/5ZQShq6liFJlaaQ1LbOZC4
- 3i1Z6fA3huEHh4ekcS8IvALwvknXrMyIw4TyfgW6aQEX2tOcckvlE9B/5G8xBiqQQXukGFlKz
- uXyKjLwfHvQpVreijxCtZkw/7q8tD7vwfJ4kyBBBpHQ4SWT9VFQB6zokKipKzL+tFW1xnATHN
- 6mm8n8qdwbTR50+pEkJEQMmI1pwJhRN09UFZbIlBNw8wIxW/A2RHXEsN03vydY0rLe1NZ2rgI
- lsxxZbIhqTldM6H//FMy/U4VGXfqZHOlFiUV5zolAY+wphu8q/h5fBtypJgct3JtzqUMYRoyC
- v5dUZ4YeutgW6Apj9x69GdxOK+jX/ijY/g6yeUv219jWMBFglQ6A5Yb6eQkOr8rAWP0zzR0x6
- ETGR3IJ0k7airwE8/m2LUjDxUP+OfpgC/uv7AxcZqvk3x3/FL4=
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Message-ID: <20220512085347.lu3cyeiitfsgaljn@houat>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
+ <20220510133019.h2urxj3feponfuku@houat>
+ <6066bd9d-b53b-0a91-7440-98244c2d55c2@i2se.com>
+ <20220512075737.mpipy7rmixwfwpyl@houat>
+ <EA46E084-07A4-4BC9-B9FB-A64102F03867@suse.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xw6evx5hsu6dr6c2"
+Content-Disposition: inline
+In-Reply-To: <EA46E084-07A4-4BC9-B9FB-A64102F03867@suse.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
-> * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
-> > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
-> > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
-> > > > Hi Tony, all,
-> > > >
-> > > > since kernel 5.18.x (5.17.x doesn't show this behavior), the system
-> > > > stalls as soon as I invoke the following commands (initializing
-> > > > USB-to-CAN converter):
-> > > >
-> > > > slcand -o -s8 -t hw -S 3000000 /dev/ttyUSB0
-> > > > ip link set slcan0 up
 
-Oh, I missed this part at first and only looked at the backtrace.
-Which CAN driver
-are you using? It's likely a problem in the kernel driver.
+--xw6evx5hsu6dr6c2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-CONFIG_DMA_API_DEBUG is still likely to pinpoint the bug, but I might also
-just see it by looking at the right source file.
+On Thu, May 12, 2022 at 11:10:00AM +0300, Ivan Ivanov wrote:
+> Hi,
+>=20
+> > On 12 May 2022, at 10:57, Maxime Ripard <maxime@cerno.tech> wrote:
+> >=20
+> > On Wed, May 11, 2022 at 08:10:50AM +0200, Stefan Wahren wrote:
+> >> Am 10.05.22 um 15:30 schrieb Maxime Ripard:
+> >>> Hi,
+> >>>=20
+> >>> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
+> >>>> May I ask what's the status/plan of  this patch series?
+> >>> As far as I know it hasn't been merged yet.
+> >>>=20
+> >>>> It seems it has not been merged yet, and I know we are a bit late in
+> >>>> the 5.18 schedule, but I think this is a good fix for 5.18.
+> >>> Fix for what? I don't think this series fix any bug?
+> >>=20
+> >> This seems to be a "fix" for the Frankenstone scenario: mainline kerne=
+l +
+> >> vendor DT
+> >=20
+> > Did we ever support this?
+> >=20
+> > I don't think we did, so even though it can be nice to improve that
+> > situation, I don't think it's worth sending this to stable
+>=20
+> Yes, maybe not stable material, but considering support for devices
+> which are shipped with upstream Linux and vendor device tree blobs,
+> saved somewhere on them, should be pretty normal to expect, right?
 
-       Arnd
+Not really?
+
+If the vendor in question uses a binding that has never been reviewed,
+accepted, and supported by upstream, then I don't see what upstream
+should be doing to accommodate for that situation?
+
+Maxime
+
+--xw6evx5hsu6dr6c2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYnzLGwAKCRDj7w1vZxhR
+xchRAPwMuapKuWMfzPeS0Wn02MmuMUaUPT+AaH3Gr0R+lcOmkwEArqnFnVqQOW69
+NWUAtYhUSv7emVzbHJ2unk8vqCJVtQI=
+=busC
+-----END PGP SIGNATURE-----
+
+--xw6evx5hsu6dr6c2--
