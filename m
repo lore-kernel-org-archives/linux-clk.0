@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922FFC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 16:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44660C43217
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 16:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356233AbiELQFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 12:05:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56700 "EHLO
+        id S1356241AbiELQFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 12:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356241AbiELQFL (ORCPT
+        with ESMTP id S1356214AbiELQFL (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 12:05:11 -0400
 Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38AA62BF4
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 09:05:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F224462BC1
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 09:05:06 -0700 (PDT)
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 430005C01E5;
-        Thu, 12 May 2022 12:05:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 12 May 2022 12:05:08 -0400
+        by mailout.nyi.internal (Postfix) with ESMTP id 629185C01D7;
+        Thu, 12 May 2022 12:05:06 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 12 May 2022 12:05:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1652371508; x=1652457908; bh=MX
-        qC38DcKa37Vd75cbNyJjb6wJVeHddhwpvwyzO4EFo=; b=p7b68L7FSV5B3kkBEM
-        57gE+7N19MWbQ514qOZ1SNObfE8uzuKGFDo4Di77kqgcXwChnOXxC3VL4BkAzF7J
-        cD0FVyR3FslaPBQuMiQ2N/Mjpxz1Bey3AiaCX2KYiRshGhDQC2PRnKKd2yq8V6GP
-        ZGze9r42vwC4UegFWGRoaYjzVuJEHc3luzF2KdEfvI3KVVIMBig6QN38bIhVrg7b
-        DCxRkVd8icmb7WnJCUWOrun5JrTkYkQTb9JpPxT1tpkEEumnvxmCBeM4inr5e4UX
-        I9rzwRA1uagLZXhojcSVAfoJ8iaiaRD/yKL1rrLQVgkCL22PqETcoiY12YTG2td3
-        Evuw==
+        :subject:subject:to:to; s=fm3; t=1652371506; x=1652457906; bh=HB
+        GtpOtyfJD1V629op1Nqk5n94YAhqClHVk7ezAf8jg=; b=h289S9rcrFPJybOi6c
+        1RAciJ3ASHQfjFVN/CUuRiT+/DneWUVzXM13aKQBfTqQSnkuSaGoxPL2ovo2M5zs
+        S2k7wzGa5MxCnEGz7Uq5fZ91xLZr57eeSaNncWCBpDc2yewjIH8TgAizLQ3y+FSX
+        SsrbNV7Cnx/sLOW7p0Rf6frVJMQSn/yW0XYx09GJC/HlMvTyenoeRFzM13XUYr4j
+        1xTiVrwfbU1o1/j0hfboyMfeVkdzTy6fYh9eMe0NhYmP6NmoPTZlZy8OXRFpto/J
+        WqYGOqGwTeerpMJ72XQDVM/nrhMkOnYGKz31bbgCT4GK3fMMBCxWWLPh3S0Sc6K4
+        Onjg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1652371508; x=1652457908; bh=MXqC38DcKa37Vd75cbNyJjb6wJVeHddhwpv
-        wyzO4EFo=; b=qqAq1utUHBLEZrIf+NsLt7dEmxV+DM+B3hyvNG+CJAlSWaoJMhz
-        ypQ3EDh4wfLXLLTdrd1fkKENn8hnehnFvNeMwHwZ1osKrjUDLfnSR7s8wOlaSHwZ
-        tL9Pqw2VJXODjQyUCu2egkfZMwqEowjMPYpogk5cSZYEoS7GxDTh/9fhnSfvdBMG
-        OydScXEkqkRelp4SFVrzqj+M8BrVuMx8Rd9oIxuBhM9TlIn8aZe9lmwty27vNqDM
-        dC1NH+hKTxFMdsGCqaNo34cyED7sLDC1kAk7zEuwTyMFx74Ydq3n8ka/PmRXSowu
-        mQLTnAE3kKrvlC0i2yHm21dlE9srFL+33zQ==
-X-ME-Sender: <xms:NDB9YiTTnHWDegxCtM34Vvr9erOFOYTvXyY8R_Wd1MsI6UkL1tbXoQ>
-    <xme:NDB9Ynxanh5DVw5whMxEVewjE2UFs3plbMkSrS68SUDCft12W0g2FVX3hh4wCeUH0
-    TQs1-VzLM-3Gij4ZG8>
-X-ME-Received: <xmr:NDB9Yv1GaDgiSzwvhbhnzEOtYzG1_p8EcwSNcTU4q1xbK9B514WkojcPrrXH3RlrdH93NQIWoZrae68UJIaXAf9eprAboleuBC9xpp4>
+        1652371506; x=1652457906; bh=HBGtpOtyfJD1V629op1Nqk5n94YAhqClHVk
+        7ezAf8jg=; b=iF1p82CddZ6J5Jbp/sTPDYId9TrDxyrTpP0Qm/6XKu2cJjljcvf
+        /IR2oltJizioCb+EFExYxSbqX4YNyF+2gQLceojttHYkACod4dMLT9qbKRBLBN81
+        zlp+SjEL5sxnTSZZ3Z28+wrNed7vDVJvn/1MMmGUGiXWSyODzEGJeeAEczn+KgNQ
+        2tCP4HoUcoc6nRu/NLzfxCMq1Kdmuw/q89eyfYlwaYc7zq7nbOhrvRCLw+bLhO1A
+        fLGcBUWc+Oy8tPbJd0B2Q7nbVr/BzLnjolJWfLmk0yWECo7QQzMBJhr4htdhOcoj
+        B3Sghtb2vZlfo1Whi3HXOBM4ZiJxVyTdj8Q==
+X-ME-Sender: <xms:MjB9Yo0PPsnbMTOgTLzaVc2D0yz1aR_HnRkWz4MYW4hIvfsaGOoYGg>
+    <xme:MjB9YjFpV1VW-OUI5R7qU_KTNkatMUmUmeQNk-E709-F1BbZkWumi3PN7g5pCrJRk
+    Jpptkn_hoG-993bHII>
+X-ME-Received: <xmr:MjB9Yg4oRk0OZ-8KEzExCUNJBf7zW5HOgBOFzfp9SlO-sL9B860zOo5x5ZFPmngPYdXzHP_s8hsX4VKDHrOLGmEm1xV7TuEOVBDl3rU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeejgdelfecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -54,12 +54,12 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeejgdelfecutefuodetggdote
     htvghrnhepleekfeetudfhkeejiefhtedugfeuvdevkeekteetkefhkefhtdelgfefuddv
     jefhnecuvehluhhsthgvrhfuihiivgepgeenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:NDB9YuDzTNC4026nOvlrmYneLL7JJrDjWvckGn7qjfC-QdlDc_PNvA>
-    <xmx:NDB9YrjaoiIf2XfU3F-JUHZd-YyIZvgM8SWW_oVlqZCiP3lM2uyu9g>
-    <xmx:NDB9YqoMX8IU_qRoruLSF56P0NZfpQndyfynlH_EBh5UM7Lw78NIUQ>
-    <xmx:NDB9YgaL1bxrks7ry0UJu4mXou-IqY7gkAKr5dhh5br3qACf5dDkZA>
+X-ME-Proxy: <xmx:MjB9Yh0Op0QiwLLwY_jj5_vB64uor9dVc4-_L7Q7e61WTK1sAhTyPw>
+    <xmx:MjB9YrHUzrZNO1Xk3tp6uIMST3Vv6DSeb8KXSUwFDPFin5R4dYuHsQ>
+    <xmx:MjB9Yq8xOrt2AWTcqxgyP17t18K5ife5iLYMkrKMCLhIGmjjk_SqYA>
+    <xmx:MjB9Yj_1x1jVWUfjvpvTmFthi667u2IgjWFMjlpbV5tI13aasMk4FA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 May 2022 12:05:07 -0400 (EDT)
+ 12 May 2022 12:05:05 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -72,9 +72,9 @@ Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
         Tony Lindgren <tony@atomide.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v4 24/28] clk: Test the clock pointer in clk_hw_get_name()
-Date:   Thu, 12 May 2022 18:04:08 +0200
-Message-Id: <20220512160412.1317123-25-maxime@cerno.tech>
+Subject: [PATCH v4 23/28] clk: Zero the clk_rate_request structure
+Date:   Thu, 12 May 2022 18:04:07 +0200
+Message-Id: <20220512160412.1317123-24-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220512160412.1317123-1-maxime@cerno.tech>
 References: <20220512160412.1317123-1-maxime@cerno.tech>
@@ -84,31 +84,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unlike __clk_get_name(), clk_hw_get_name() doesn't test wether passed
-clk_hw pointer is NULL or not and dereferences it directly. This can
-then lead to NULL pointer dereference.
-
-Let's make sure the pointer isn't NULL before dereferencing it.
+In order to make sure we don't carry anything over from an already
+existing clk_rate_request pointer we would pass to
+clk_core_init_rate_req(), let's zero the entire structure before
+initializing it.
 
 Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d953ca61ea38..364e6baa3d1c 100644
+index df9fca8415a8..d953ca61ea38 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -262,7 +262,7 @@ EXPORT_SYMBOL_GPL(__clk_get_name);
+@@ -1446,6 +1446,8 @@ static void clk_core_init_rate_req(struct clk_core * const core,
+ 	if (WARN_ON(!core || !req))
+ 		return;
  
- const char *clk_hw_get_name(const struct clk_hw *hw)
- {
--	return hw->core->name;
-+	return !hw ? NULL : hw->core->name;
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_name);
++	memset(req, 0, sizeof(*req));
++
+ 	req->rate = rate;
+ 	clk_core_get_boundaries(core, &req->min_rate, &req->max_rate);
  
 -- 
 2.36.1
