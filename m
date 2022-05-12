@@ -2,142 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 214EDC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 09:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3570FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 10:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344066AbiELJDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 05:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57848 "EHLO
+        id S1352586AbiELKVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 06:21:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235555AbiELJDy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 05:03:54 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9324537AB5
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 02:03:53 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2718C21C7F;
-        Thu, 12 May 2022 09:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1652346232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=auevF0gkb/iOSAxsAtuFPx/dUacPMjXObJBDok2REpI=;
-        b=Bz0QXqkm3AT4GduUhB0v9SdgX5rQzMK9anyRlAmMfL+LGYLMMSbpvojCeJIoIfzJhn6qX6
-        UELYs33CtPRjzC2XphTUVXibCHf5oUqsMb03ltimKFmShdFdH4SbCQjMOrZRF+VlnytO3t
-        1sYL3wI7oB4J1tsy2VNjs7aTx46P3vQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1652346232;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=auevF0gkb/iOSAxsAtuFPx/dUacPMjXObJBDok2REpI=;
-        b=vV40Xl8iHQYkQX0fzdosiilrJH6TihjbzFZvE886sLyWI8CLuuaeOF1jd7wZjjVLaUfVTW
-        u/6Q5I9x0bAtroAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A352413ABE;
-        Thu, 12 May 2022 09:03:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 2IzkJXfNfGKNKQAAMHmgww
-        (envelope-from <iianov@suse.de>); Thu, 12 May 2022 09:03:51 +0000
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
-From:   Ivan Ivanov <iianov@suse.de>
-In-Reply-To: <20220512085347.lu3cyeiitfsgaljn@houat>
-Date:   Thu, 12 May 2022 12:03:50 +0300
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1352572AbiELKVE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 06:21:04 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975DB2CE0D;
+        Thu, 12 May 2022 03:21:02 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id e3so4783345ios.6;
+        Thu, 12 May 2022 03:21:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FXp069BhAhaqu9+rnJ0bPsp9cWfgDzKQDHjc5fhjNoY=;
+        b=PMJFawy6Pcud0h53JYQ6dkgAxtDKyks70dw+oJ362P4FzJ22KrVIE8NF+/LwqcBUrw
+         K4WIN/7WBHdO9/EChDubQkoIvh53PmQ7DTrZjJx15QCMxUNaEQ9QUibXRUeIl2mctyns
+         dYhhsVb9c6fAfhcZ+k7t3ON6VX+hliEtDgq6aGBFCsV3AleamfM8P6ovgOEWHT82n2eJ
+         VcIo3QR0mSW6ryjNP9WkhthlDBhmDK8EtXtIT33ymFHDxb+RHrY4M/iUp1s7VSYxaL0R
+         eOGgKEaz2F0IEJCeB2aK4RNgSRWqZGVrbThjWt5D2Jv4zoZJf9LRryoiQmSO/8Na2eGR
+         hdKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FXp069BhAhaqu9+rnJ0bPsp9cWfgDzKQDHjc5fhjNoY=;
+        b=mH8qC2joUPYmMnr5ImDRILZN9/w4SZvU9/+mgqOh6Ca/UBjn/7US65H7zdPsZHTFza
+         Js4X1PYSXQfLMkVaivsI9LfcIRwHnB3DD4RJ1i03swUmP+4FVRU1XXrlNphXVslsRRbs
+         IH3t4Y6/GRjB5NpiywaS/pyIvw+oICP52dQZzyBmzaO9zKuL3pS+KGNw9Rc78cvNb31M
+         Pnfws41Ljj+ghKTzxhKK+UpqI8lIrP9qPT1qrZRFupu2DJzspuP9i8pInrSSEXoiTUYs
+         pAKJegcRB1WsbE/ZGJ02WXMvQCiU2WGr6/0V8x3ltw05rQQqH9d2h0yR7F6ynH7CWcIR
+         RRjg==
+X-Gm-Message-State: AOAM532TF2h0bJrZBxf5IWWSXeBl9vQ74babC9PUr4ffEmmy9Po2kTQt
+        fVaUtteXPwxBbb8uwb/sEyYk6fop40PkNvSFJv0=
+X-Google-Smtp-Source: ABdhPJx+ZC9Ocd0QOwPxWtN+gib4b3QQY/gcHZCB5uo0ioGQZSGik5W42eagd2fuSjktwqlukVOUy4sT3f/4WlexuTU=
+X-Received: by 2002:a02:94e6:0:b0:32b:2c45:61d with SMTP id
+ x93-20020a0294e6000000b0032b2c45061dmr15537595jah.74.1652350861851; Thu, 12
+ May 2022 03:21:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
+ <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Thu, 12 May 2022 12:20:51 +0200
+Message-ID: <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Tony Lindgren <tony@atomide.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <80D9F737-AA89-4D05-A764-933437A6EA9B@suse.de>
-References: <20220428065743.94967-1-iivanov@suse.de>
- <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
- <20220510133019.h2urxj3feponfuku@houat>
- <6066bd9d-b53b-0a91-7440-98244c2d55c2@i2se.com>
- <20220512075737.mpipy7rmixwfwpyl@houat>
- <EA46E084-07A4-4BC9-B9FB-A64102F03867@suse.de>
- <20220512085347.lu3cyeiitfsgaljn@houat>
-To:     Maxime Ripard <maxime@cerno.tech>
-X-Mailer: Apple Mail (2.3608.120.23.2.7)
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Arnd,
 
-> On 12 May 2022, at 11:53, Maxime Ripard <maxime@cerno.tech> wrote:
->=20
-> On Thu, May 12, 2022 at 11:10:00AM +0300, Ivan Ivanov wrote:
->> Hi,
->>=20
->>> On 12 May 2022, at 10:57, Maxime Ripard <maxime@cerno.tech> wrote:
->>>=20
->>> On Wed, May 11, 2022 at 08:10:50AM +0200, Stefan Wahren wrote:
->>>> Am 10.05.22 um 15:30 schrieb Maxime Ripard:
->>>>> Hi,
->>>>>=20
->>>>> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
->>>>>> May I ask what's the status/plan of  this patch series?
->>>>> As far as I know it hasn't been merged yet.
->>>>>=20
->>>>>> It seems it has not been merged yet, and I know we are a bit late =
-in
->>>>>> the 5.18 schedule, but I think this is a good fix for 5.18.
->>>>> Fix for what? I don't think this series fix any bug?
->>>>=20
->>>> This seems to be a "fix" for the Frankenstone scenario: mainline =
-kernel +
->>>> vendor DT
->>>=20
->>> Did we ever support this?
->>>=20
->>> I don't think we did, so even though it can be nice to improve that
->>> situation, I don't think it's worth sending this to stable
->>=20
->> Yes, maybe not stable material, but considering support for devices
->> which are shipped with upstream Linux and vendor device tree blobs,
->> saved somewhere on them, should be pretty normal to expect, right?
->=20
-> Not really?
->=20
-> If the vendor in question uses a binding that has never been reviewed,
-> accepted, and supported by upstream, then I don't see what upstream
-> should be doing to accommodate for that situation?
+On Thu, May 12, 2022 at 10:43 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
+> > * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
+> > > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
+> > > > > Hi Tony, all,
+> > > > >
+> > > > > since kernel 5.18.x (5.17.x doesn't show this behavior), the system
+> > > > > stalls as soon as I invoke the following commands (initializing
+> > > > > USB-to-CAN converter):
+> > > > >
+> > > > > slcand -o -s8 -t hw -S 3000000 /dev/ttyUSB0
+> > > > > ip link set slcan0 up
+>
+> Oh, I missed this part at first and only looked at the backtrace.
+> Which CAN driver
+> are you using? It's likely a problem in the kernel driver.
 
+I am using the slcan driver [1].
 
-Ok, let do not generalise this discussion too much :-)
+> CONFIG_DMA_API_DEBUG is still likely to pinpoint the bug, but I might also
+> just see it by looking at the right source file.
 
-I bringed above as example that some times device tree could not
-be changed and it is provided by board supplier, not by Linux OS
-supplier.
+I'll try to get more debug info with CONFIG_DMA_API_DEBUG.
 
-In this particular case vendor device tree blob is using standard=20
-clock bindings. Just upstream Linux clock driver don=E2=80=99t have =
-support
-for some of the clocks. This is what these patches fix.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/can/slcan.c?h=v5.18-rc6
 
-Regards,
-Ivan=20
-
-
+Yegor
+>        Arnd
