@@ -2,92 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB351C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 11:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754E5C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 13:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353408AbiELLrj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 07:47:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
+        id S1354302AbiELNVg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 09:21:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353404AbiELLri (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 07:47:38 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 95F734A3EE;
-        Thu, 12 May 2022 04:47:36 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,219,1647270000"; 
-   d="scan'208";a="120774498"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 May 2022 20:47:36 +0900
-Received: from localhost.localdomain (unknown [10.226.93.50])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 16BFC4006191;
-        Thu, 12 May 2022 20:47:29 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 0/5] Add Renesas RZ/V2M Ethernet support
-Date:   Thu, 12 May 2022 12:47:17 +0100
-Message-Id: <20220512114722.35965-1-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S1354192AbiELNVf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 09:21:35 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C423750E09
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 06:21:33 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id 7so4562544pga.12
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 06:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4aQRSxerZIfxG75Us/8UUQ0iqFXnrxh04bqlSeNWSLY=;
+        b=IW2hTvHv1ornPaWs/asOavYfPGh3aS+PUX88/ZdhRZDMLMqshfnOIRyKUvRCCDs1XM
+         qXCMMVCR59IvJbT8ZjbP0dxO4VlwnEi8t77fh/0oMrbW/5UfGDDRTzvgvV1prWK1iuNE
+         qbngcanQky/AMov43+2ze9brDGfUUgW1OXOZFvSvKMod4jPOzz3Mpa0jAIdA0sfZgLS8
+         /NQ0YGyYLv1N5YR6qQoz9OvPNMZKrxjkn8mROXnQYa79P+e/c9m9AIyhHCK8jvojCcgR
+         VWtEyQvZE673bHkSeTXWPv05X+f6IbP1V7CnhnSZM66AxXItpKgcoTkmZDbD9Rzo4xi7
+         sRbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4aQRSxerZIfxG75Us/8UUQ0iqFXnrxh04bqlSeNWSLY=;
+        b=lrfByXW3cTzUFaQoeBFPzLbNc0cmfxQyAqjHRSkNT66O+P2WAhqHK2tnOiESY0Sl7Y
+         3BxjuavOdrf+T9nFt0G/YWy4GPH67zYzXQMESrz2WRGGTxhIxTXzOnZS0Z3MgwxST0IC
+         dhc+GCbmItAI1Z3x6BndwZp/hIqr6SfpjytUYr5Mr3Wo9Kno7SnhoQR7eIA+2F+1WvRe
+         ax6kjE1kFAardwYtZ+Qhu/VmyorMxg+1xfQK0diCv5pwa4Y95gEsQoPNw4qbOQekbYxT
+         N2mkT23Y6qht/tmdNKEzUb+Tra4VglbnP0jjUbyPJJsx8S9BXFsTxxUzcFJbJ1hESVAU
+         ggbQ==
+X-Gm-Message-State: AOAM532tM7gbHn9dNPx1Vdkv4Dy9K33MabZZAtS03xuVegNh3THDA8ZS
+        yL0eXgMQHSVOdVh1OhMgH33wX6F0MWdHi4J9dkk/MQ==
+X-Google-Smtp-Source: ABdhPJyZOET1EER9C9AZQaqJy8BQlI2AbD8N1VzLJbA77Z/dnnf5unDxOdy+QeXxPtAgZWu9NdemKM/OpYLVX4OA/B8=
+X-Received: by 2002:aa7:9110:0:b0:4fa:e388:af57 with SMTP id
+ 16-20020aa79110000000b004fae388af57mr29932676pfh.1.1652361693176; Thu, 12 May
+ 2022 06:21:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220504122725.179262-1-robert.foss@linaro.org>
+ <20220504122725.179262-5-robert.foss@linaro.org> <600d13cc-962a-bb6c-6e43-c56fd63b9591@somainline.org>
+In-Reply-To: <600d13cc-962a-bb6c-6e43-c56fd63b9591@somainline.org>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Thu, 12 May 2022 15:21:22 +0200
+Message-ID: <CAG3jFysb-ZVr+9jroGs3ibjs9ysOChEz6HqR5NqHj3LvEiFN9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] clk: qcom: add support for SM8350 DISPCC
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzk+dt@kernel.org, jonathan@marek.ca, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
-some small parts are the same as R-Car Gen2.
-Other differences are:
-* It has separate data (DI), error (Line 1) and management (Line 2) irqs
-  rather than one irq for all three.
-* Instead of using the High-speed peripheral bus clock for gPTP, it has
-  a separate gPTP reference clock.
+On Wed, 4 May 2022 at 18:23, Konrad Dybcio <konrad.dybcio@somainline.org> wrote:
+>
+>
+> On 04/05/2022 14:27, Robert Foss wrote:
+> > From: Jonathan Marek <jonathan@marek.ca>
+> >
+> > Add support to the SM8350 display clock controller by extending the SM8250
+> > display clock controller, which is almost identical but has some minor
+> > differences.
+> >
+> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> > Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >
+> > Changes since v1
+> >   - Remove comment - Dmitry
+> >
+> > Changes since v2
+> >   - Add my SoB - Bjorn
+> >   - Remove CLK_ASSUME_ENABLED_WHEN_UNUSED flag
+> >
+> >
+> >   drivers/clk/qcom/Kconfig         |  4 +--
+> >   drivers/clk/qcom/dispcc-sm8250.c | 60 +++++++++++++++++++++++++++++++-
+> >   2 files changed, 61 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> > index 9b1f54e634b9..1752ca0ee405 100644
+> > --- a/drivers/clk/qcom/Kconfig
+> > +++ b/drivers/clk/qcom/Kconfig
+> > @@ -609,11 +609,11 @@ config SM_DISPCC_6125
+> >         splash screen
+> >
+> >   config SM_DISPCC_8250
+> > -     tristate "SM8150 and SM8250 Display Clock Controller"
+> > +     tristate "SM8150/SM8250/SM8350 Display Clock Controller"
+> >       depends on SM_GCC_8150 || SM_GCC_8250
+>
+> || SM_GCC_8350?
 
-v4:
- * Add clk_disable_unprepare() for gptp ref clk
+Will fix in v4.
 
-v3:
- * Really renamed irq_en_dis_regs to irq_en_dis this time
- * Modified ravb_ptp_extts() to use irq_en_dis
- * Added Reviewed-by tags
+>
+> sidenote: also || SC_GCC_8180X in a separate patch?
 
-v2:
- * Just net patches in this series
- * Instead of reusing ch22 and ch24 interrupt names, use the proper names
- * Renamed irq_en_dis_regs to irq_en_dis
- * Squashed use of GIC reg versus GIE/GID and got rid of separate gptp_ptm_gic feature.
- * Move err_mgmt_irqs code under multi_irqs
- * Minor editing of the commit msgs
+I haven't been involved in the 8180X work, and am a little bit
+hesitant to include any changes related to it in this series.
 
+>
+> >       help
+> >         Support for the display clock controller on Qualcomm Technologies, Inc
+> > -       SM8150 and SM8250 devices.
+> > +       SM8150/SM8250/SM8350 devices.
+> >         Say Y if you want to support display devices and functionality such as
+> >         splash screen.
+> >
+> > diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
+> > index db9379634fb2..8e6cb990e387 100644
+> > --- a/drivers/clk/qcom/dispcc-sm8250.c
+> > +++ b/drivers/clk/qcom/dispcc-sm8250.c
+> > @@ -43,6 +43,10 @@ static struct pll_vco vco_table[] = {
+> >       { 249600000, 2000000000, 0 },
+> >   };
+> >
+> > +static struct pll_vco lucid_5lpe_vco[] = {
+> > +     { 249600000, 1750000000, 0 },
+> > +};
+> > +
+> >   static struct alpha_pll_config disp_cc_pll0_config = {
+> >       .l = 0x47,
+> >       .alpha = 0xE000,
+> > @@ -1228,6 +1232,7 @@ static const struct of_device_id disp_cc_sm8250_match_table[] = {
+> >       { .compatible = "qcom,sc8180x-dispcc" },
+> >       { .compatible = "qcom,sm8150-dispcc" },
+> >       { .compatible = "qcom,sm8250-dispcc" },
+> > +     { .compatible = "qcom,sm8350-dispcc" },
+> >       { }
+> >   };
+> >   MODULE_DEVICE_TABLE(of, disp_cc_sm8250_match_table);
+> > @@ -1258,7 +1263,7 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+> >               return PTR_ERR(regmap);
+> >       }
+> >
+> > -     /* note: trion == lucid, except for the prepare() op */
+> > +     /* Apply differences for SM8150 and SM8350 */
+> >       BUILD_BUG_ON(CLK_ALPHA_PLL_TYPE_TRION != CLK_ALPHA_PLL_TYPE_LUCID);
+> >       if (of_device_is_compatible(pdev->dev.of_node, "qcom,sc8180x-dispcc") ||
+> >           of_device_is_compatible(pdev->dev.of_node, "qcom,sm8150-dispcc")) {
+> > @@ -1270,6 +1275,59 @@ static int disp_cc_sm8250_probe(struct platform_device *pdev)
+> >               disp_cc_pll1_config.config_ctl_hi1_val = 0x00000024;
+> >               disp_cc_pll1_config.user_ctl_hi1_val = 0x000000D0;
+> >               disp_cc_pll1_init.ops = &clk_alpha_pll_trion_ops;
+> > +     } else if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8350-dispcc")) {
+> > +             static struct clk_rcg2 * const rcgs[] = {
+> > +                     &disp_cc_mdss_byte0_clk_src,
+> > +                     &disp_cc_mdss_byte1_clk_src,
+> > +                     &disp_cc_mdss_dp_aux1_clk_src,
+> > +                     &disp_cc_mdss_dp_aux_clk_src,
+> > +                     &disp_cc_mdss_dp_link1_clk_src,
+> > +                     &disp_cc_mdss_dp_link_clk_src,
+> > +                     &disp_cc_mdss_dp_pixel1_clk_src,
+> > +                     &disp_cc_mdss_dp_pixel2_clk_src,
+> > +                     &disp_cc_mdss_dp_pixel_clk_src,
+> > +                     &disp_cc_mdss_esc0_clk_src,
+> > +                     &disp_cc_mdss_mdp_clk_src,
+> > +                     &disp_cc_mdss_pclk0_clk_src,
+> > +                     &disp_cc_mdss_pclk1_clk_src,
+> > +                     &disp_cc_mdss_rot_clk_src,
+> > +                     &disp_cc_mdss_vsync_clk_src,
+> > +             };
+> > +             static struct clk_regmap_div * const divs[] = {
+> > +                     &disp_cc_mdss_byte0_div_clk_src,
+> > +                     &disp_cc_mdss_byte1_div_clk_src,
+> > +                     &disp_cc_mdss_dp_link1_div_clk_src,
+> > +                     &disp_cc_mdss_dp_link_div_clk_src,
+> > +             };
+> > +             unsigned int i;
+> > +             static bool offset_applied;
+> > +
+> > +             /* only apply the offsets once (in case of deferred probe) */
+> > +             if (!offset_applied) {
+> > +                     for (i = 0; i < ARRAY_SIZE(rcgs); i++)
+> > +                             rcgs[i]->cmd_rcgr -= 4;
+> > +
+> > +                     for (i = 0; i < ARRAY_SIZE(divs); i++) {
+> > +                             divs[i]->reg -= 4;
+> > +                             divs[i]->width = 4;
+> > +                     }
+> > +
+> > +                     disp_cc_mdss_ahb_clk.halt_reg -= 4;
+> > +                     disp_cc_mdss_ahb_clk.clkr.enable_reg -= 4;
+> > +
+> > +                     offset_applied = true;
+> > +             }
+> > +
+> > +             disp_cc_mdss_ahb_clk_src.cmd_rcgr = 0x22a0;
+> > +
+> > +             disp_cc_pll0_config.config_ctl_hi1_val = 0x2A9A699C;
+>
+> Lowercase hex, also below.
 
-Phil Edworthy (5):
-  dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
-  ravb: Separate handling of irq enable/disable regs into feature
-  ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
-  ravb: Use separate clock for gPTP
-  ravb: Add support for RZ/V2M
+Ack.
 
- .../bindings/net/renesas,etheravb.yaml        |  82 +++++++++----
- drivers/net/ethernet/renesas/ravb.h           |   6 +
- drivers/net/ethernet/renesas/ravb_main.c      | 109 ++++++++++++++++--
- drivers/net/ethernet/renesas/ravb_ptp.c       |   6 +-
- 4 files changed, 168 insertions(+), 35 deletions(-)
-
--- 
-2.34.1
-
+>
+>
+> > +             disp_cc_pll0_config.test_ctl_hi1_val = 0x01800000;
+> > +             disp_cc_pll0_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
+> > +             disp_cc_pll0.vco_table = lucid_5lpe_vco;
+> > +             disp_cc_pll1_config.config_ctl_hi1_val = 0x2A9A699C;
+> > +             disp_cc_pll1_config.test_ctl_hi1_val = 0x01800000;
+> > +             disp_cc_pll1_init.ops = &clk_alpha_pll_lucid_5lpe_ops;
+> > +             disp_cc_pll1.vco_table = lucid_5lpe_vco;
+> >       }
+> >
+> >       clk_lucid_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+> Konrad
+> >
