@@ -2,33 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F15EAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 10:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA52C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 May 2022 10:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbiELKsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 May 2022 06:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50682 "EHLO
+        id S1352871AbiELKyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 May 2022 06:54:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbiELKsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 06:48:15 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4138286E12
-        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:47:52 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26396:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Thu, 12 May 2022 18:45:58 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.6; Thu, 12 May 2022 18:45:55 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2507.006; Thu, 12 May 2022 18:45:55 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S1352862AbiELKyI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 May 2022 06:54:08 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250986D4FF
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:54:07 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id ba17so5761457edb.5
+        for <linux-clk@vger.kernel.org>; Thu, 12 May 2022 03:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=jGdKfFqAtrS1gqNbHfbXY/tQwLbLfSQD8UHbxsN3ezg=;
+        b=srA6iFtAgIpOUr2eG3F2XMl9mLYgLpPosDFcbhEUA0rTh2XVoUwwg3LRKMF+5T8qYg
+         fDbTkTqcO8ydPJ3HOsfEke/zTViOj8+gxPxFO0Zn7zmtrq9efdBY7dPXBw4hoMab7MZC
+         +MoG0uc5fusMkOaY1oSGyITx5seVrvJXc1yzPDDg6bPsQhHE9lABBA6/L5Ejpc+wTtXK
+         eG6PRK5UGn4Fjy2aH+Tdu0IixeCwSFc+Krton0MNL03wNabI23gX7tvE14ah6DLBAzNU
+         YwmXE8Yr+Sy+oWnxOk4aQfXLaWAFjhNEexzbf1LBDED2JKtLat087WSjMNQSfeslrEz2
+         1Y8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=jGdKfFqAtrS1gqNbHfbXY/tQwLbLfSQD8UHbxsN3ezg=;
+        b=TImVWMIJiv9DSDrOGNEEiV8TQ5VrriOjrzEd5R9H/9HEmWDYXy9/RLAoysjyW3oG7L
+         h6VkZHZs4D1NJj6ZRpGRQs3RvA/dW9QD9nPxmFU9TAdYwUVYdFOWURHkShDl7hC/9RjQ
+         BOseGSrzPpWGgEmw0kO4WRwUD+ms67HqtvoavrmaoIfAEIbRJjWemc1SjNMnmyHaPk4S
+         z4NuIr63SsbAGNLKnGTrh6YA8qN/XeX8KHYDnVu5iHqHlorcp/LjBkDpy86JvvCvw2ZG
+         o7aP9eEVu3eqb2GVpOR1imSK3fXgyNtMTVqgMm/eKwu5Dc1n6NFkSMdVYTbBHOOgcpU3
+         l5gA==
+X-Gm-Message-State: AOAM531GQHBCq90OdW8NpXEjDRMCCw324Wyy25uK/KOv/4LZOFQMP3mu
+        Z+2qmj8cjrwc+JxEmKQfTRj/UQ==
+X-Google-Smtp-Source: ABdhPJy858LVoVMPz+mUZhXi0JydYasRlBRoI/V9Jpro8MUTujKDDlY60ugIiM/WrNy7bI8JAT5xcQ==
+X-Received: by 2002:a05:6402:1113:b0:428:679e:f73f with SMTP id u19-20020a056402111300b00428679ef73fmr32538713edv.378.1652352845735;
+        Thu, 12 May 2022 03:54:05 -0700 (PDT)
+Received: from [192.168.0.158] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id j15-20020a170906474f00b006f3ef214dbcsm2000898ejs.34.2022.05.12.03.54.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 May 2022 03:54:05 -0700 (PDT)
+Message-ID: <c385961d-7290-bad6-a1d7-be9738a1d842@linaro.org>
+Date:   Thu, 12 May 2022 12:54:04 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
+ clock driver
+Content-Language: en-US
+To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "maz@kernel.org" <maz@kernel.org>,
@@ -40,62 +70,33 @@ CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Topic: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Index: AQHYZcsP5QfLdHxDWUuwmqTXvmezs60ag04AgACLAGA=
-Date:   Thu, 12 May 2022 10:45:54 +0000
-Message-ID: <8a9fa13f66ce4ef9a8f8c9200e1fac5f@cqplus1.com>
 References: <cover.1652329411.git.qinjian@cqplus1.com>
  <b5ca5d417be079a2a40a6e79ac1b246b6359a49e.1652329411.git.qinjian@cqplus1.com>
  <e9a39eb6-d8e2-bac6-27e2-f63ef8519917@linaro.org>
-In-Reply-To: <e9a39eb6-d8e2-bac6-27e2-f63ef8519917@linaro.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <8a9fa13f66ce4ef9a8f8c9200e1fac5f@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <8a9fa13f66ce4ef9a8f8c9200e1fac5f@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBPbiAxMi8wNS8yMDIyIDA4OjMwLCBRaW4gSmlhbiB3cm90ZToNCj4gPiBBZGQgZG9jdW1lbnRh
-dGlvbiB0byBkZXNjcmliZSBTdW5wbHVzIFNQNzAyMSBjbG9jayBkcml2ZXIgYmluZGluZ3MuDQo+
-ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBRaW4gSmlhbiA8cWluamlhbkBjcXBsdXMxLmNvbT4NCj4g
-PiAtLS0NCj4gPiBSZW1vdmUgIkJpbmRpbmciIGZyb20geWFtbCB0aXRsZQ0KPiA+IFJlbmFtZSBz
-cC1zcDcwMjEuaCB0byBzdW5wbHVzLHNwNzAyMS1jbGtjLmgNCj4gDQo+IFRoYW5rcy4NCj4gDQo+
-ID4gLS0tDQo+ID4gIC4uLi9iaW5kaW5ncy9jbG9jay9zdW5wbHVzLHNwNzAyMS1jbGtjLnlhbWwg
-ICB8IDUxICsrKysrKysrKysrDQo+ID4gIE1BSU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAyICsNCj4gPiAgLi4uL2R0LWJpbmRpbmdzL2Nsb2NrL3N1bnBsdXMs
-c3A3MDIxLWNsa2MuaCAgIHwgODggKysrKysrKysrKysrKysrKysrKw0KPiA+ICAzIGZpbGVzIGNo
-YW5nZWQsIDE0MSBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55YW1s
-DQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3N1bnBs
-dXMsc3A3MDIxLWNsa2MuaA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9jbG9jay9zdW5wbHVzLHNwNzAyMS1jbGtjLnlhbWwNCj4gYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55
-YW1sDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAuLjExOTk2
-MWExNw0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvY2xvY2svc3VucGx1cyxzcDcwMjEtY2xrYy55YW1sDQo+ID4gQEAgLTAsMCAr
-MSw1MSBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9S
-IEJTRC0yLUNsYXVzZSkNCj4gPiArIyBDb3B5cmlnaHQgKEMpIFN1bnBsdXMgQ28uLCBMdGQuIDIw
-MjENCj4gPiArJVlBTUwgMS4yDQo+ID4gKy0tLQ0KPiA+ICskaWQ6IGh0dHA6Ly9kZXZpY2V0cmVl
-Lm9yZy9zY2hlbWFzL2Nsb2NrL3N1bnBsdXMsc3A3MDIxLWNsa2MueWFtbCMNCj4gPiArJHNjaGVt
-YTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQo+ID4gKw0K
-PiA+ICt0aXRsZTogU3VucGx1cyBTUDcwMjEgU29DIENsb2NrIENvbnRyb2xsZXINCj4gPiArDQo+
-ID4gK21haW50YWluZXJzOg0KPiA+ICsgIC0gUWluIEppYW4gPHFpbmppYW5AY3FwbHVzMS5jb20+
-DQo+ID4gKw0KPiA+ICtwcm9wZXJ0aWVzOg0KPiA+ICsgIGNvbXBhdGlibGU6DQo+ID4gKyAgICBj
-b25zdDogc3VucGx1cyxzcDcwMjEtY2xrYw0KPiA+ICsNCj4gPiArICByZWc6DQo+ID4gKyAgICBt
-YXhJdGVtczogMQ0KPiA+ICsNCj4gPiArICBjbG9ja3M6DQo+ID4gKyAgICBtYXhJdGVtczogMQ0K
-PiA+ICsNCj4gPiArICAiI2Nsb2NrLWNlbGxzIjoNCj4gPiArICAgIGNvbnN0OiAxDQo+ID4gKw0K
-PiA+ICtyZXF1aXJlZDoNCj4gPiArICAtIGNvbXBhdGlibGUNCj4gPiArICAtIHJlZw0KPiA+ICsg
-IC0gY2xvY2tzDQo+ID4gKyAgLSAiI2Nsb2NrLWNlbGxzIg0KPiA+ICsNCj4gPiArYWRkaXRpb25h
-bFByb3BlcnRpZXM6IGZhbHNlDQo+ID4gKw0KPiA+ICtleGFtcGxlczoNCj4gPiArICAtIHwNCj4g
-PiArDQo+IA0KPiBTYW1lIGFzIGluIHYxNC4gUGxlYXNlIGdvIHRocm91Z2ggdGhlIGNvbW1lbnRz
-IHRob3JvdWdobHkgc28gcmV2aWV3ZXJzDQo+IHdpbGwgbm90IHdhc3RlIHRpbWUgcmVwZWF0aW5n
-IHRoZSBzYW1lIHR3aWNlLg0KPiANCg0KU29ycnksIEkgZG9u4oCZdCB1bmRlcnN0YW5kIHlvdXIg
-bWVhbmluZy4NCkNvdWxkIHlvdSBleHBsYWluIG1vcmUsIHRoYW5rcy4NCg0KDQo=
+On 12/05/2022 12:45, qinjian[覃健] wrote:
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +
+>>
+>> Same as in v14. Please go through the comments thoroughly so reviewers
+>> will not waste time repeating the same twice.
+>>
+> 
+> Sorry, I don’t understand your meaning.
+> Could you explain more, thanks.
+
+I commented in your v14. Please apply the comment or keep discussion
+running. Don't ignore my comment.
+
+Best regards,
+Krzysztof
