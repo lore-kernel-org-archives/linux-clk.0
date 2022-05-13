@@ -2,93 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 844D5C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 08:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F979C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 09:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349928AbiEMIWY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 04:22:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60130 "EHLO
+        id S1379077AbiEMJbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 05:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243538AbiEMIWX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 04:22:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FA4625B076;
-        Fri, 13 May 2022 01:22:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1FFE62038;
-        Fri, 13 May 2022 08:22:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A69C34100;
-        Fri, 13 May 2022 08:22:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652430141;
-        bh=YVebMdoUgeH+IdcQdM7MMGmb1fsUdeCywNHPrxi4/SI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q/zEuugIkIrNOhcC4JOlU+YETJRuF7fmI8ohyGZ3VpAtFyZaHW4yfZGhUYRJaDxvT
-         Pn2r/gXF44OK3CR8pWwh1Aftj+zI7NGyzFrtSZv6j7/rYsQO0h5of5M5H1JrpD5vcz
-         2PGQOJsIXaSYhKD58ZxQK5is9Oi5JL9Xk60qTqgizkLK+LpyLLwIqdf7eRdrcSvSlR
-         U4i/k/ilhHbNdP7nw9ssn14qBtisE/Lo4mS9WDWJ8DeBHVRKrlAr+JK7GiT97suPfK
-         CAe7NR3EOvuEJAWWE/zo20T5m6iUlJVxnr8XxLyoIZ7c4TiL24v+SWKtG01rGwWv5Z
-         Fn0xNO8ACisFw==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1npQYz-0007Dy-Tj; Fri, 13 May 2022 10:22:17 +0200
-Date:   Fri, 13 May 2022 10:22:17 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] clk: qcom: regmap: add pipe clk implementation
-Message-ID: <Yn4VOS3T7nXo1CwT@hovoldconsulting.com>
-References: <20220501192149.4128158-1-dmitry.baryshkov@linaro.org>
- <20220501192149.4128158-3-dmitry.baryshkov@linaro.org>
- <20220502101053.GF5053@thinkpad>
- <c47616bf-a0c3-3ad5-c3e2-ba2ae33110d0@linaro.org>
- <20220502111004.GH5053@thinkpad>
- <29819e6d-9aa1-aca9-0ff6-b81098077f28@linaro.org>
- <YnUXOYxk47NRG2VD@hovoldconsulting.com>
- <30846cb5-a22e-0102-9700-a1417de69952@linaro.org>
- <YnjtJuR7ShSsF+mz@hovoldconsulting.com>
- <adb49293-ea59-0a40-27de-4a654a02d456@linaro.org>
+        with ESMTP id S231747AbiEMJbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 05:31:40 -0400
+Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D36B30568
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 02:31:39 -0700 (PDT)
+Received: by mail-qv1-xf36.google.com with SMTP id n10so6269741qvi.5
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 02:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w4MIFUv90x0E+F2j8zQZL3qxhXK4eI32Zwmran4JGDc=;
+        b=hTS6dCEpWrDPK0UejiOo004dwpgaYnO8y4o0KLQL+Fid79/PUnzCUpFY1R13iBK3kr
+         zedTGedtEPeRY5LatdeofOQ/85qxMkI1ZZkdycgNt600JFtJDDZ7ciZOLWPOxFCVSE8A
+         oaSON8Y1KdYh5zBJjc834UMjl5RY8lmM8EYrPQVxWn4ZavuAwOc/Sul3sbOZ7Hbyw1K8
+         MfXtHdu7maRUFzzksnMt2zpq5QL3IlqtmRgv13jdKbqPlyVs2VBpcw5ip9wtBdnKPj2L
+         O+ciK3uhmuxtltFQ88OXILz7jYugbfkAba/E1dIjQTaIpFCotO6nlAJEwamVlsrWI1vW
+         gOnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w4MIFUv90x0E+F2j8zQZL3qxhXK4eI32Zwmran4JGDc=;
+        b=sZIvZE5IbQ8+Q38S7Nz2U5K8bgCjCdvZevGM67fouavwg9eOjD6ffdQA37eSAjTIqb
+         0tazj2I1Nw3ZnMbQyuJxu48SJMfDrTjCYgIf5QAaaJmGM9vlfcujC7nhz6yIaN49BgQF
+         cVfiWmxa42HmohExYPsVXo3E3+IiN17Zm0Rx+Um3+vsw2HzkzqcrH/CR0Luzj0UKsENi
+         YN21qAZogQOWt7e9OoCrAWVWHMerW1XujUOXe+jv33I1BUiWygAwYSgS5LSnyurFse4Q
+         bQb5u6TvcWa7M1fWk1UMIRt6q81EUo0qiw3lkSdmb6Ywb5fbypjNwwUwvFUGI8W7A3Te
+         Nlvg==
+X-Gm-Message-State: AOAM53042AeafFWdgnMhVpkeCNobk69ZiPf8gzCgXTKQ1x7i3nGXWUAg
+        /YkiAPnBwUAkMSx1+/Gx9E8x6dJyJqqRvWRnCqGWwg==
+X-Google-Smtp-Source: ABdhPJwGPoK9BT0rxRhr4uuoUx1JaRL+s3QX95bUfyvLWSUYgvYzME3GmtTzAgVf5neSQm0HZEOUWxe+vCkf/EbYtBs=
+X-Received: by 2002:ad4:5f4e:0:b0:45a:b97d:14de with SMTP id
+ p14-20020ad45f4e000000b0045ab97d14demr3392283qvg.73.1652434298391; Fri, 13
+ May 2022 02:31:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adb49293-ea59-0a40-27de-4a654a02d456@linaro.org>
+References: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org> <Yn4LsB/dkwjdslQs@hovoldconsulting.com>
+In-Reply-To: <Yn4LsB/dkwjdslQs@hovoldconsulting.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 13 May 2022 12:31:27 +0300
+Message-ID: <CAA8EJpqCFAxNuK4B25hZUQa4DWqc3M4FXvJq7Cob752OWUmYcg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Prasad Malisetty <pmaliset@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 11, 2022 at 05:17:48PM +0300, Dmitry Baryshkov wrote:
-> On 09/05/2022 13:29, Johan Hovold wrote:
-> > On Fri, May 06, 2022 at 04:00:38PM +0300, Dmitry Baryshkov wrote:
-> >> On 06/05/2022 15:40, Johan Hovold wrote:
-> >>> On Mon, May 02, 2022 at 02:18:26PM +0300, Dmitry Baryshkov wrote:
+On Fri, 13 May 2022 at 10:41, Johan Hovold <johan@kernel.org> wrote:
+>
+> On Thu, May 12, 2022 at 08:29:04PM +0300, Dmitry Baryshkov wrote:
+> > PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> > source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> > Currently this is handcoded in the PCIe driver by reparenting the
+> > gcc_pipe_N_clk_src clock.
+> >
+> > Instead of doing it manually, follow the approach used by
+> > clk_rcg2_shared_ops and implement this parking in the enable() and
+> > disable() clock operations for respective pipe clocks.
+> >
+> > PCIe part depends on [1].
+>
+> This one was merged a month ago.
 
-> >>>> It has 4 parents. It uses just two of them (pipe and tcxo).
-> >>>
-> >>> Really? I did not know that. Which are the other two parents and what
-> >>> would they be used for?
-> >>
-> >> This is described neither in the downstream tree nor in any sources I
-> >> have at possession.
-> > 
-> > Yeah, I don't see anything downstream either, but how do you know that
-> > it has four parents then?
-> 
-> 4 possible parents (judging from bitfield).
+It is not in Linus's tree (only in Lorenzo's one). So anybody wishing
+to test the series would still have to pick it up manually.
 
-Ah, ok, so just an assumption based on the configuration field width.
+>
+> > Changes since v4:
+> >  - Renamed the clock to clk-regmap-pipe-src,
+> >  - Added mention of PCIe2 PHY to the commit message,
+> >  - Expanded commit messages to mention additional pipe clock details.
+> >
+> > Changes since v3:
+> >  - Replaced the clock multiplexer implementation with branch-like clock.
+> >
+> > Changes since v2:
+> >  - Added is_enabled() callback
+> >  - Added default parent to the pipe clock configuration
+> >
+> > Changes since v1:
+> >  - Rebased on top of [1].
+> >  - Removed erroneous Fixes tag from the patch 4.
+> >
+> > Changes since RFC:
+> >  - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
+> >    than specifying the register value directly
+> >  - Expand commit message to the first patch to specially mention that
+> >    it is required only on newer generations of Qualcomm chipsets.
+> >
+> > [1]: https://lore.kernel.org/all/20220401133351.10113-1-johan+linaro@kernel.org/
+>
+> Johan
 
-Johan
+
+
+-- 
+With best wishes
+Dmitry
