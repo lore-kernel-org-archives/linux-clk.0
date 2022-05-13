@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F070C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 11:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F92C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 11:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379899AbiEML1j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 07:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43680 "EHLO
+        id S1379743AbiEMLaN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 07:30:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379837AbiEML1i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 07:27:38 -0400
+        with ESMTP id S1358821AbiEMLaM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 07:30:12 -0400
 Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55637252BB;
-        Fri, 13 May 2022 04:27:36 -0700 (PDT)
-Received: from mail-yb1-f182.google.com ([209.85.219.182]) by
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A102B4CB2;
+        Fri, 13 May 2022 04:30:11 -0700 (PDT)
+Received: from mail-yb1-f169.google.com ([209.85.219.169]) by
  mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MiuGK-1oJKZ11AhA-00evgc; Fri, 13 May 2022 13:27:35 +0200
-Received: by mail-yb1-f182.google.com with SMTP id i11so14741178ybq.9;
-        Fri, 13 May 2022 04:27:34 -0700 (PDT)
-X-Gm-Message-State: AOAM533zP2idDhaZn+v94o2ilLZQvMZaCKPRivoYvDpjy2rK/RyPo6XF
-        o1DqRuUBSj/+O4I4TFfrYBx3sGRqlrgSHcGyUWM=
-X-Google-Smtp-Source: ABdhPJxXFB9FpCCJu9rHfB5HZ8J5KAizPMq2Oenp5z10//H3q8W/5et0hZRDpZgIV9WMtO0+mGArv752hS4eYW/sDn8=
-X-Received: by 2002:a25:cbc9:0:b0:645:879a:cdd3 with SMTP id
- b192-20020a25cbc9000000b00645879acdd3mr4164061ybg.550.1652441253935; Fri, 13
- May 2022 04:27:33 -0700 (PDT)
+ 1MMH2M-1nWAC72E4c-00JGAI; Fri, 13 May 2022 13:30:09 +0200
+Received: by mail-yb1-f169.google.com with SMTP id s30so14760376ybi.8;
+        Fri, 13 May 2022 04:30:09 -0700 (PDT)
+X-Gm-Message-State: AOAM530/X3yxdCgm/B6dzrHlAompw7PJ0SdS4HvM7hknTzFtfdBOpsq9
+        GlJG9aB6+sJEL72h9Pa3/1Uj3L+Tlc5QFrUzNM4=
+X-Google-Smtp-Source: ABdhPJysbP9caH0brZ2V+y5dn6JadZrsxosGfVAkjTJrk0Zyj9/I1i6bXuEYM+5TKCjnUR/tmE+Fnueu4QwqsbYjlmg=
+X-Received: by 2002:a25:75c5:0:b0:648:dccd:e1c with SMTP id
+ q188-20020a2575c5000000b00648dccd0e1cmr4249474ybc.452.1652441408145; Fri, 13
+ May 2022 04:30:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1652329411.git.qinjian@cqplus1.com> <36f0703f1b484563b678d8126aa3076683c4681a.1652329411.git.qinjian@cqplus1.com>
-In-Reply-To: <36f0703f1b484563b678d8126aa3076683c4681a.1652329411.git.qinjian@cqplus1.com>
+References: <cover.1652329411.git.qinjian@cqplus1.com>
+In-Reply-To: <cover.1652329411.git.qinjian@cqplus1.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 13 May 2022 13:27:17 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2oSKbAraWUOQB32Tz_s4LUPzx8_VyiR5qoUw2d9GoXtw@mail.gmail.com>
-Message-ID: <CAK8P3a2oSKbAraWUOQB32Tz_s4LUPzx8_VyiR5qoUw2d9GoXtw@mail.gmail.com>
-Subject: Re: [PATCH v15 09/10] ARM: sp7021_defconfig: Add Sunplus SP7021 defconfig
+Date:   Fri, 13 May 2022 13:29:51 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a37G0++hwsxXbMun-r9XKCBvkH3BF4c1f21eFxGPdCdMw@mail.gmail.com>
+Message-ID: <CAK8P3a37G0++hwsxXbMun-r9XKCBvkH3BF4c1f21eFxGPdCdMw@mail.gmail.com>
+Subject: Re: [PATCH v15 00/10] Add Sunplus SP7021 SoC Support
 To:     Qin Jian <qinjian@cqplus1.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -48,29 +48,49 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:K/M0jmKX+15vShxJP+2ZzKZVIS8MVshR5QF4MufJ9tO1QIpDj3A
- B3FfuC4ZlH/ToBPbqaqO2AyKBTTs1xd6XA2XJEuqvkvs0RbDfzqrAgerx9E6DEDT+Jzh1KL
- jxT2HqIQ9FNH4gDBGsX7Hx41D2lX4Pz8HgAoGjnhyWFhL//aT4Ucdgvlk3jlADpSJYb5yrm
- N3UvKkoxBIfQr7x/yEvOA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vI/7Ek3EiTw=:R1wHfQ6H0CiOmVgwjLTsYB
- jzGrMaNL66+eqm6CdYma5rUBYlcIdu8ObsfJP2mbRBwJ8m1SMQ7myehBm/EZRBTiRgBzONsmx
- Ctw1RGE2H1tF4m8SVWUs1gnzfR3hExxMotGKbZeCIid38s4M061NLmtecRukdVWTOcWeLeK0Y
- IpGAN8KZMVnVfH0uCnPna7l2NFSNWSHnTPdGDKVtgFZaMeaMU+RxBOYcQHUP0wgOcb2gedowh
- 7fVTznrqfqZiPMKCxMb+Mdp/fVb2U9r/IgXtZWh/3I24eIFwIiK4we6Eqe9nEfW3Vy+1q2EYB
- 3nQa7Tder1DNju/dNhXyCR6fePo3qfKTwYsknS0dMh5mBb4i0KCuAGvfbsD+sbiP76Z4OxyRO
- TSdFmLxwzOD+Skc2fBwEeC6lfoQjJaIW3jMS3oSPgEgSOhI4w8jgDXoherZ6GLC/2lX+5V4qq
- lq42dxBynlpmdFl3wPkgHdI85yVowHHRTdJ66pSa4jOmVkG0cWRzAiWjuZyqi/3oVxSHPgQvx
- cvHD1sJxCnpJ9O9utTvWa6kPViCQvjtdvsG2/co6hjS0f08362Jq3MdKToo77GREW/gI2Dne3
- e/7qA8Zl/QzmOdHPS44RI54oxHzbnN+erkJfM5oz1ld95H1wfHoq01jdMv0MU9mZBGDlkQxa1
- xr8826lD5LIq9KVOmSdbC3ZokKjpmvJutc6QoUUiCxZLfXgusJqGwoAaqLU++rGEbrJo=
+X-Provags-ID: V03:K1:oAfpTfZjFuTprj0WwrUlyPRugNb2/x6jStD8W+dLEuVch4K2NZ1
+ 7QG97pO2JPrABb9NeVrdlTNgtceI47FOf+2Cz+1NimqFOy+drgpYd3ghc/BA6h9cAkW7KBN
+ ww9LACzLh1j6JAsRzXCACuPUmTXnzVObCrxpcxAbVwP65L/i5FYOo7XoPAlGNp4atYEMHCT
+ WZKcCpzUMAb7QEgOJUgjg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5kPDjH97w0s=:0eWgAwZvvTsw614xcyI5Fe
+ u7911TD4ivrDzEeM5yEmUbKja4Gh5HzuIpUx3rv3D2uHHysDU5dl1N6gUs0xETdplDGB92kNZ
+ 0lmPKtuJc1rxHpxcNZ2LLQ5vauR1j0PnBxa1q1fexEV8HcWxC+3TKfPIoQ4mIyXaHlbBZOeR9
+ dRsLxHQkvLIIV2j/zq2kVE5m6G1gRKL19bttYqYXOpVCAPGv5bpbtWDGsS3bU674GC2QYhhsc
+ arP/s9SMh3612DwFAL4Oe8o/lJM1ykwAzXzCwiLPsOgU1WKQdyhrbHGI/0LFwjJbvAh7cu+UA
+ WdVkPBcnCTGNOlL3W6VjdrU4ISHX8uLF6dTRqAE8swcC+vFVXV5Vm7cZkNPGuE8NuR9md6EK7
+ hwnKPW+fPcIa5mm4dTv2kK1P7Yk5oVnvaw/LPNIxxrcHlD5NhFfTl1fpFbU0eqN1NBN1+I0O6
+ 8n6zY5VBm91+vRAUxBPYkutOzbumneygiJSFnP1HoVAzIDsGvnnin6TtcKqvzZdcVlWhxGRwA
+ ZCrz+Kw5PqpM72MOvs6MBClkhaNuSwS4gWNrlcv/nOjykXHxwAPuAHxSs62Xbk5opnHWsgPKC
+ uAebZpx/02IKnAryZxeEeAPgEQrjMmqVIJailWZw7VfPAwp+x2FigRNaxtxjyGiYYiMaxEItv
+ eIK23kPKaWrEkElQzVQR6oPLkmZEzWIDZ8rwz+PlPQTH8iIYIKEsYNjXSrJYeY//ZWd0QrS9c
+ NOQh7PyL1mihwJFUc9OK01tl8tW/Qnw6ZGns/FHM854PHMol9J6XMUg2xA0OyTqiCn8ORToTn
+ xr5pWmEee5UKAXxOYMpKke5sqUScBTWbgxIjWiBhqNCloLfzQ0=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 12, 2022 at 8:31 AM Qin Jian <qinjian@cqplus1.com> wrote:
+On Thu, May 12, 2022 at 8:30 AM Qin Jian <qinjian@cqplus1.com> wrote:
 >
-> Add generic Sunplus SP7021 based board defconfig
+> This patch series add Sunplus SP7021 SoC support.
 >
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
+> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
+> single chip. It is designed for industrial control.
+>
+> SP7021 consists of two chips (dies) in a package. One is called C-chip
+> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
+> process (22 nm) for high performance computing. The other is called P-
+> chip (peripheral chip). It has many peripherals and an ARM A926 added
+> especially for real-time control. P-chip is made for customers. It adopts
+> low-level process (ex: 0.11 um) to reduce cost.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+It looks like there are still some remaining review comments, and the clk
+driver is missing a review. Since we are close to 5.18-rc7, I think it's
+too late for the coming merge window, and you should target 5.20,
+with a rebase on top of v5.19-rc1 once that is out.
+
+If you get no replies on the clk driver, maybe try splitting that out and
+post it separately to the clk maintainers. I know they are rather
+backlogged on review time.
+
+       Arnd
