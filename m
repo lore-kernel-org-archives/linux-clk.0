@@ -2,156 +2,240 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4747EC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 08:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738ABC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 08:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378112AbiEMIKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 04:10:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
+        id S1378136AbiEMIQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 04:16:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378118AbiEMIKt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 04:10:49 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE37E0EC
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 01:10:46 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id be20so8965724edb.12
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 01:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=91LK4yFc8ncVigJgf60wMV9BYzBPqKD6JcDXCqA6AKs=;
-        b=tLpRxIm5qU+OfHD+5T0hJcfSaEeBrt10JVDh2rpQVRzEeXgQR40/J5Yrx+xg2b1VAH
-         ruXcsFHHpgjj0CGH8N8VE5l0G02et6/RFY2siVJwqEOqFQFvPkFo1RrbThDJwPfdVVfO
-         F6E0kJwX5NtLb5QqBV0qXcBD0pHH9WYK5kpZCrzmN9D46YbU9+maQMZuDMuchfxTr6ic
-         rLN7DiXImOJ8hw5YeA6yO30DnHi8F+WzVhhxxUh+p9Pv2ogMEFgV1+U2zwTwtotH27Yx
-         P32o1zNJIkY+pxZNyuXWm71FVZ9XQQdgBcrl5FJx8xtk/RekTsavNS65e8vBcC7aQq5a
-         0D0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=91LK4yFc8ncVigJgf60wMV9BYzBPqKD6JcDXCqA6AKs=;
-        b=vpn+oRGGgLb6QohO3h2hDxes5LJZOYOVFEvqI+HRm7vZeZY00Gfbc5y03PH3DQRY2b
-         70tWqGwJn12bhBH2dfdgQVq4MbDjbKrb2WYj3UHdgVTNliAbNX5kf6B7YyAloxy9pjyP
-         tJRfSYBe68d75VfDQ2Ck3G6vf2yBGKbTrM1emZGYoyw5R5WqKsW3z/k/Eh9EVZ/cIIom
-         mrkzhgV9ek8umgwXBTvISQWWrRLEcShh7rjf4B2flRQeGkmODhgpIZkJutecZdxIonID
-         j9m3I5eCS48RzoNDrRT70s0kaSuHHtNqATLgNCjksWpUXDH6Z6QHvYnZXLQBLN5QYK0I
-         ImWA==
-X-Gm-Message-State: AOAM530V0g7MZbUX/kjEepZvECIPh1XfRwbJpXwXf7lDL6D5TMJR+qw2
-        xddTvMS5IhvKGdMDxAPRm1l1ag==
-X-Google-Smtp-Source: ABdhPJzCev1jn/thCLLRYL0b61TfsPq3kPVxBQaex4UEh+PCTXDNNirSX5/y85RABqnuVSTp4pRJSg==
-X-Received: by 2002:a05:6402:3485:b0:427:cde4:2097 with SMTP id v5-20020a056402348500b00427cde42097mr38105422edc.264.1652429444815;
-        Fri, 13 May 2022 01:10:44 -0700 (PDT)
-Received: from [192.168.0.168] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id hz15-20020a1709072cef00b006f3ef214e11sm508471ejc.119.2022.05.13.01.10.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 May 2022 01:10:44 -0700 (PDT)
-Message-ID: <85c40d22-afaa-0f7b-01bd-6de9e592079f@linaro.org>
-Date:   Fri, 13 May 2022 10:10:43 +0200
+        with ESMTP id S1378157AbiEMIQ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 04:16:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E306C1FE3CF;
+        Fri, 13 May 2022 01:16:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F50E62013;
+        Fri, 13 May 2022 08:16:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2E1C34100;
+        Fri, 13 May 2022 08:16:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652429811;
+        bh=guXp+XBSL9KDmpRUO5UOJREr+LfK1jT4s0wHUCFWfGU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BveVSIgwUYfVMy1tNkHhF++xveumq+o872WnflvtHFS0BmZeW8CoBifVI9ujgHfZ7
+         nPOqcFVW4Qg9np2vXSVO57TI1BJTZnCWx9iL61XcHozypJQiKFHK6HqERoZaR4sLg0
+         4i8MuKs/rA3XumMypR8fsGKNgpYJB3b05E8YAWOMCSJz9p9dtj3AKJUJkZh3Ks0V1m
+         FQEEjM3f3+A3oaAoFc0/wl7rhT5vLeVaUdeoSQ5R4/xkNo9RRM64nfBZ3FdW6IljHG
+         YTHiJRSZT9ngN14EDwRXAdao+SQe1lAqzG//utFFHHFwY/qxeDHXf8TFVlJiLKG8Cy
+         VwrPBVW/BKQTA==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1npQTf-0007BK-Pq; Fri, 13 May 2022 10:16:47 +0200
+Date:   Fri, 13 May 2022 10:16:47 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Prasad Malisetty <pmaliset@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] clk: qcom: regmap: add PHY clock source
+ implementation
+Message-ID: <Yn4T72U8GxwvIBBu@hovoldconsulting.com>
+References: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
+ <20220512172909.2436302-3-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
- device tree
-Content-Language: en-US
-To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <cover.1652329411.git.qinjian@cqplus1.com>
- <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
- <32c80a79-abd5-3fd2-cbb4-e2ae93c539da@linaro.org>
- <3a01fe9aa860407694ee77133459a9ab@cqplus1.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <3a01fe9aa860407694ee77133459a9ab@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220512172909.2436302-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/05/2022 09:44, qinjian[覃健] wrote:
->>> diff --git a/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
->>> new file mode 100644
->>> index 000000000..1560c95d9
->>> --- /dev/null
->>> +++ b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
->>> @@ -0,0 +1,85 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Device Tree Source for Sunplus SP7021
->>> + *
->>> + * Copyright (C) 2021 Sunplus Technology Co.
->>> + */
->>> +
->>> +#include "sunplus-sp7021.dtsi"
->>> +
->>> +/ {
->>> +	compatible = "sunplus,sp7021-achip";
->>
->> This does not match your bindings.
->>
+On Thu, May 12, 2022 at 08:29:06PM +0300, Dmitry Baryshkov wrote:
+> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> muxes which must be parked to the "safe" source (bi_tcxo) when
+> corresponding GDSC is turned off and on again. Currently this is
+> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> clock. However the same code sequence should be applied in the
+> pcie-qcom endpoint, USB3 and UFS drivers.
+
+You seem to have ignored my comment regarding UFS and naming except for
+the updated Subject.
+
+For UFS the corresponding clocks would be named symbol clocks, which
+seems to suggest that a more generic name is warranted. I mentioned
+phy_mux as a possible alternative name for for pipe_mux (or pipe_src).
+
+> Rather than copying this sequence over and over again, follow the
+> example of clk_rcg2_shared_ops and implement this parking in the
+> enable() and disable() clock operations. Supplement the regmap-mux with
+> the new clk_regmap_pipe_src type, which implements such multiplexers
+> as a simple gate clocks.
 > 
->>> +++ b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
->>> @@ -0,0 +1,27 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Device Tree Source for Sunplus SP7021 Demo V3 SBC board
->>> + *
->>> + * Copyright (C) Sunplus Technology Co.
->>> + */
->>> +
->>> +/dts-v1/;
->>> +
->>> +#include "sunplus-sp7021-achip.dtsi"
->>> +
->>> +/ {
->>> +	compatible = "sunplus,sp7021-demo-v3";
->>
->> This does not match your bindings.
->>
->> Please run make dtbs_check.
+> This is possible since each of these multiplexers has just two clock
+> sources: working (pipe) and safe/park (bi_tcxo) clock sources. If the
+> clock is running off the external pipe source, report it as enabled and
+> report it as disabled otherwise.
 > 
-> I did passed the make dtbs_check.
-> compatible string: "sunplus,sp7021", "sunplus,sp7021-achip", "sunplus,sp7021-demo-v3"
-> all defined @ Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml [1]
+> This way the PHY will disable the pipe clock before turning off the
+> GDSC, which in turn would lead to disabling corresponding pipe_clk_src
+> (and thus parked to a safe clock srouce). And vice versa, after enabling
 
-How this can pass the check if it is entirely different compatible and
-does not match schema? The code is not correct. If you test your DTS
-with dtbs_check you will see:
+typo: source
 
-	sunplus-sp7021-demo-v3.dtb: /: compatible: ['sunplus,sp7021-demo-v3']
-is too short
+> the GDSC the PHY will enable the pipe clock, which would cause
+> pipe_clk_src to be switched from a safe source to the working one.
 
+Explaining how this fits together with the PHY power sequencing is good
+but it needs to be reflected in the implementation too. Preferably using
+good naming, but possibly also with a comment.
 
-Additionally:
-1. Your DTBs do not compile, missing Makefile entry.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/Makefile              |  1 +
+>  drivers/clk/qcom/clk-regmap-pipe-src.c | 62 ++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-pipe-src.h | 24 ++++++++++
+>  3 files changed, 87 insertions(+)
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe-src.c
+>  create mode 100644 drivers/clk/qcom/clk-regmap-pipe-src.h
+> 
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 671cf5821af1..03b945535e49 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+>  clk-qcom-y += clk-regmap-divider.o
+>  clk-qcom-y += clk-regmap-mux.o
+>  clk-qcom-y += clk-regmap-mux-div.o
+> +clk-qcom-y += clk-regmap-pipe-src.o
+>  clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+>  clk-qcom-y += clk-hfpll.o
+>  clk-qcom-y += reset.o
+> diff --git a/drivers/clk/qcom/clk-regmap-pipe-src.c b/drivers/clk/qcom/clk-regmap-pipe-src.c
+> new file mode 100644
+> index 000000000000..02047987ab5f
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-pipe-src.c
+> @@ -0,0 +1,62 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022, Linaro Ltd.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/bitops.h>
+> +#include <linux/regmap.h>
+> +#include <linux/export.h>
+> +
+> +#include "clk-regmap-pipe-src.h"
+> +
+> +static inline struct clk_regmap_pipe_src *to_clk_regmap_pipe_src(struct clk_hw *hw)
+> +{
+> +	return container_of(to_clk_regmap(hw), struct clk_regmap_pipe_src, clkr);
+> +}
+> +
+> +static int pipe_src_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
 
-2. You have to fix whitespace issues in your patches:
+Again, "pipe" is so overloaded and using "mux" (or possibly "src")
+throughout would make the code easier to understand.
 
-.git/rebase-apply/patch:48: new blank line at EOF.
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	regmap_read(clkr->regmap, pipe->reg, &val);
+> +	val = (val & mask) >> pipe->shift;
+> +
+> +	WARN_ON(unlikely(val != pipe->working_val && val != pipe->park_val));
 
-+
+Again, please drop unlikely() here.
 
-warning: 1 line adds whitespace errors.
+> +
+> +	return val == pipe->working_val;
+> +}
+> +
+> +static int pipe_src_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	val = pipe->working_val << pipe->shift;
+> +
+> +	return regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
+> +}
+> +
+> +static void pipe_src_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap_pipe_src *pipe = to_clk_regmap_pipe_src(hw);
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int mask = GENMASK(pipe->width + pipe->shift - 1, pipe->shift);
+> +	unsigned int val;
+> +
+> +	val = pipe->park_val << pipe->shift;
+> +
+> +	regmap_update_bits(clkr->regmap, pipe->reg, mask, val);
+> +}
+> +
+> +const struct clk_ops clk_regmap_pipe_src_ops = {
+> +	.enable = pipe_src_enable,
+> +	.disable = pipe_src_disable,
+> +	.is_enabled = pipe_src_is_enabled,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_pipe_src_ops);
+> diff --git a/drivers/clk/qcom/clk-regmap-pipe-src.h b/drivers/clk/qcom/clk-regmap-pipe-src.h
+> new file mode 100644
+> index 000000000000..3aa4a9f402cd
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-pipe-src.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2022, Linaro Ltd.
+> + * Author: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> + */
+> +
+> +#ifndef __QCOM_CLK_REGMAP_PIPE_SRC_H__
+> +#define __QCOM_CLK_REGMAP_PIPE_SRC_H__
+> +
+> +#include <linux/clk-provider.h>
+> +#include "clk-regmap.h"
+> +
+> +struct clk_regmap_pipe_src {
+> +	u32			reg;
+> +	u32			shift;
+> +	u32			width;
+> +	u32			working_val;
+> +	u32			park_val;
 
-.git/rebase-apply/patch:97: new blank line at EOF.
+Naming is hard, but I believe something like ext_src_val (or
+phy_src_val) and ref_src_val (or xo_src_val) would allow the code to be
+more self-explanatory and not rely on looking up the commit message to
+understand where "working" and "park" came from.
 
-+
+You probably need to add a comment in the implementation either way.
 
-warning: 1
+> +	struct clk_regmap	clkr;
+> +};
+> +
+> +extern const struct clk_ops clk_regmap_pipe_src_ops;
+> +
+> +#endif
 
-Best regards,
-Krzysztof
+Johan
