@@ -2,80 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0AF3C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 07:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD74C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 07:51:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352918AbiEMHpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 03:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49626 "EHLO
+        id S1377910AbiEMHvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 03:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351043AbiEMHpM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 03:45:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44392992FA;
-        Fri, 13 May 2022 00:45:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3DCC7B82C69;
-        Fri, 13 May 2022 07:45:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A3DC34100;
-        Fri, 13 May 2022 07:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652427908;
-        bh=Fo/s2Zqwh4HukCpQjx2NKIpqTo8WeGytWKIBT8sKfbY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jwXipwcOuqx0S7klC4FVoFR82fnE3Yun4+xMiATjllNCezuQDJbn5GBO7AuosntMM
-         sORVklFfxkzbkQfkRV5utL+bipBg/ijswkqHhsb76XaHUUdq2yWyE2u0S2FtRdHYz/
-         F3clL6khgUsE13Fc5EzuTxK7TQLIDegNGxvTiUlSFcFi883fjnsSRIGLsn+xigPy0H
-         2kziqp20t5Rc5/9zlpJhcdPNirMtPiIHMEwkg9mVQKXlJTCu97ndrwrqP15Ri+6dQk
-         03PVSG/vZUUM63tW8kAQ7ShTGHuzRsv1JY0qPqlqIaOyc0sqmUm8WBTs7XsPr5Fon6
-         6lm/11qLxJrog==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1npPyz-0006yT-A4; Fri, 13 May 2022 09:45:05 +0200
-Date:   Fri, 13 May 2022 09:45:05 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] PCI: qcom: Remove unnecessary pipe_clk handling
-Message-ID: <Yn4MgdV5/RiX5XgM@hovoldconsulting.com>
-References: <20220512172909.2436302-1-dmitry.baryshkov@linaro.org>
- <20220512172909.2436302-2-dmitry.baryshkov@linaro.org>
+        with ESMTP id S1377925AbiEMHvN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 03:51:13 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE8DE2655E
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 00:51:01 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7682:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 13 May 2022 15:44:27 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.6; Fri, 13 May 2022 15:44:24 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2507.006; Fri, 13 May 2022 15:44:24 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Thread-Topic: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Thread-Index: AQHYZcsUOdNmnhD0gkKqn75ry15Nq60ahDUAgAHng+A=
+Date:   Fri, 13 May 2022 07:44:24 +0000
+Message-ID: <3a01fe9aa860407694ee77133459a9ab@cqplus1.com>
+References: <cover.1652329411.git.qinjian@cqplus1.com>
+ <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
+ <32c80a79-abd5-3fd2-cbb4-e2ae93c539da@linaro.org>
+In-Reply-To: <32c80a79-abd5-3fd2-cbb4-e2ae93c539da@linaro.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220512172909.2436302-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 12, 2022 at 08:29:05PM +0300, Dmitry Baryshkov wrote:
-> PCIe PHY drivers (both QMP and PCIe2) already do clk_prepare_enable() /
-> clk_prepare_disable() pipe_clk. Remove extra calls to enable/disable
-> this clock from the PCIe driver, so that the PHY driver can manage the
-> clock on its own.
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-I assume you checked that there are no further PHY drivers used with
-pcie-qcom by any in-kernel dts?
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+PiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9zdW5wbHVzLXNwNzAyMS1hY2hpcC5k
+dHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3VucGx1cy1zcDcwMjEtYWNoaXAuZHRzaQ0KPiA+IG5l
+dyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwLi4xNTYwYzk1ZDkNCj4gPiAt
+LS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3VucGx1cy1zcDcwMjEt
+YWNoaXAuZHRzaQ0KPiA+IEBAIC0wLDAgKzEsODUgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlk
+ZW50aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogRGV2aWNlIFRyZWUgU291cmNlIGZv
+ciBTdW5wbHVzIFNQNzAyMQ0KPiA+ICsgKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMjEgU3Vu
+cGx1cyBUZWNobm9sb2d5IENvLg0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlICJzdW5w
+bHVzLXNwNzAyMS5kdHNpIg0KPiA+ICsNCj4gPiArLyB7DQo+ID4gKwljb21wYXRpYmxlID0gInN1
+bnBsdXMsc3A3MDIxLWFjaGlwIjsNCj4gDQo+IFRoaXMgZG9lcyBub3QgbWF0Y2ggeW91ciBiaW5k
+aW5ncy4NCj4gDQoNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9zdW5wbHVzLXNwNzAyMS1k
+ZW1vLXYzLmR0cw0KPiA+IEBAIC0wLDAgKzEsMjcgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlk
+ZW50aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogRGV2aWNlIFRyZWUgU291cmNlIGZv
+ciBTdW5wbHVzIFNQNzAyMSBEZW1vIFYzIFNCQyBib2FyZA0KPiA+ICsgKg0KPiA+ICsgKiBDb3B5
+cmlnaHQgKEMpIFN1bnBsdXMgVGVjaG5vbG9neSBDby4NCj4gPiArICovDQo+ID4gKw0KPiA+ICsv
+ZHRzLXYxLzsNCj4gPiArDQo+ID4gKyNpbmNsdWRlICJzdW5wbHVzLXNwNzAyMS1hY2hpcC5kdHNp
+Ig0KPiA+ICsNCj4gPiArLyB7DQo+ID4gKwljb21wYXRpYmxlID0gInN1bnBsdXMsc3A3MDIxLWRl
+bW8tdjMiOw0KPiANCj4gVGhpcyBkb2VzIG5vdCBtYXRjaCB5b3VyIGJpbmRpbmdzLg0KPiANCj4g
+UGxlYXNlIHJ1biBtYWtlIGR0YnNfY2hlY2suDQoNCkkgZGlkIHBhc3NlZCB0aGUgbWFrZSBkdGJz
+X2NoZWNrLg0KY29tcGF0aWJsZSBzdHJpbmc6ICJzdW5wbHVzLHNwNzAyMSIsICJzdW5wbHVzLHNw
+NzAyMS1hY2hpcCIsICJzdW5wbHVzLHNwNzAyMS1kZW1vLXYzIg0KYWxsIGRlZmluZWQgQCBEb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL3N1bnBsdXMsc3A3MDIxLnlhbWwgWzFd
+DQoNClsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzYxMDdhNjgwMDhmMmQ3MWQyYzc4
+NjhkNGQ5NGNiNjZjNWI1ZmMxMzQuMTY1MjMyOTQxMS5naXQucWluamlhbkBjcXBsdXMxLmNvbS8N
+CiANCg0K
