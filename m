@@ -2,186 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90569C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 18:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 623CAC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 20:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383329AbiEMSck (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 14:32:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
+        id S1384523AbiEMUsj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 16:48:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383328AbiEMScg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 14:32:36 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 970A95716F
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 11:32:31 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id v11so8388056pff.6
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 11:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=sBXZggPIeFE45mSIaAs+XlJPZfqUA8g7V5EbUv19a6I=;
-        b=FdhQLbGMzrtet6rWLr2yhwnCCjSRNSg5RMFKzUlTuFfb8/Np7/z4up0ZjA/Boedi52
-         yvxkZg0zhjByGMBOnHaWzzR9E1/8BFeABbvirCBxBgGckZPrRxHmmIzcWGDr2+NJgJkP
-         Igx4JbIaMg+BozYmahifc+SHD5KcAMUk6xTrgBI87GSm6GntLYSX9T1+nwAHvsFzhpmb
-         0Mm226kOima3Vi4F/8KR8EsKa8X3VFQLBMsl6zQtB3kSraxBespdP38872r2AAKQbrmR
-         XHp+e4yNgaiuxou99+vwqUvrxqEVKyhJJwAhgkpxpVdzT0kCjrLgcZw/UmK1v4YeKKRu
-         YEwQ==
+        with ESMTP id S1384521AbiEMUsi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 16:48:38 -0400
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BB15FE5;
+        Fri, 13 May 2022 13:48:36 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id y63so11526616oia.7;
+        Fri, 13 May 2022 13:48:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=sBXZggPIeFE45mSIaAs+XlJPZfqUA8g7V5EbUv19a6I=;
-        b=dkbetjMHQ72+UH427b1yokmq9ttcqXM8KZwF4pyyBGTz5WkYx+BeLTCpH+1rFCsIIU
-         PjAl4weCwuBw9vmFJsVSDtpthH0EAU4yNI15SbOhUR8o2KCtYcwXpdx6VeSFY0S8pkY0
-         xpZCSc4qq+IyX+5sLb/WF7ang/ZV0jEXvboSQG55mMzTkJVxLjck/LfkFJ8IRqQGjPzN
-         5eOGKQ1nXHLh3rWDo3v7t5rSKRWbxjEkBYJwqAQGmPY3WqRZviW/wb9btdeC8WoQb5UC
-         UBLVD8W7oEA3Y8dutoG5O6kkF5dU52ZvDedpjhjQ3STMwTxZ/yznCxe6FhiwBn5yxpzc
-         WV0g==
-X-Gm-Message-State: AOAM531lkqxWYsGskWEwctUOCIMqfvz2cFgOMkJ8Tbd5FcacVZfApX6b
-        QmG0eFXKaxNbGCCwluIJNVz/
-X-Google-Smtp-Source: ABdhPJwuq0zcK3Hc4T5h8rbQb6irOcrHsm+erFrKDBWCHPXymaYagQzO43xLcSJJmwEN+bWirywLSA==
-X-Received: by 2002:a65:4188:0:b0:39d:2197:13b5 with SMTP id a8-20020a654188000000b0039d219713b5mr5083946pgq.368.1652466751033;
-        Fri, 13 May 2022 11:32:31 -0700 (PDT)
-Received: from thinkpad ([117.202.184.246])
-        by smtp.gmail.com with ESMTPSA id y9-20020a17090322c900b0015e8d4eb2c6sm2144582plg.272.2022.05.13.11.32.22
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=X3TQnSjdMn1h88B2hKWq4Vtc4t9dgcXCcu4yQAA388I=;
+        b=Nf6uWUMSC1Assz+k+DNJzTOWooI3GAVf03/KuJ4oYxD4kdNk9rz643Rkl+5XMzAq97
+         Yi6kC4oPvuMbCN4UQ27AClPoDrIoO+T4miEgputgi4tBx2dQJQ5y5DV0WOLIkQQX0Ms5
+         dYVE1Ckxw6j/w9KwC9OvqoeMG/QjwoiYbEUThtj7j/hmmoYWMtG5HSqOVJi3y3bx1WZJ
+         kLmsnmXhiM5x+VMsNXVSR/hYOHea5GBhHdFoYEyK24a/RzPou5cRt/W7bNYJbzt6KVaK
+         DRjGboe9oqy4hq+4UXkY2K1kAMDUGLj0Cvm0vWqmGntm0ZeUXW51kyDtzb2Gz71xUth7
+         4Q2g==
+X-Gm-Message-State: AOAM530z+jAB+bY1ykwY7uQN4Od8u/zic27WqHSUwNydjLXSu4fYBZMn
+        4oYl3Vkjzam+feGgYNe1od37+LrOtw==
+X-Google-Smtp-Source: ABdhPJwP+9t58/HsOC+vMOmnRUgE5YnXus5JIhh/6Mv2y+iU8XBnzrtKM2mxN6osLdIL8Ofj/qN0yw==
+X-Received: by 2002:aca:aa42:0:b0:325:61e3:1726 with SMTP id t63-20020acaaa42000000b0032561e31726mr8474090oie.57.1652474915995;
+        Fri, 13 May 2022 13:48:35 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id e2-20020a056870a60200b000e99b1909d4sm1426285oam.25.2022.05.13.13.48.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 May 2022 11:32:30 -0700 (PDT)
-Date:   Sat, 14 May 2022 00:02:20 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 3/7] dt-bindings: ufs: common: add OPP table
-Message-ID: <20220513183220.GE1922@thinkpad>
-References: <20220513061347.46480-1-krzysztof.kozlowski@linaro.org>
- <20220513061347.46480-4-krzysztof.kozlowski@linaro.org>
- <20220513174010.GC1922@thinkpad>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220513174010.GC1922@thinkpad>
+        Fri, 13 May 2022 13:48:35 -0700 (PDT)
+Received: (nullmailer pid 894559 invoked by uid 1000);
+        Fri, 13 May 2022 20:48:33 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-clk@vger.kernel.org, kernel@collabora.com, ikjn@chromium.org,
+        krzysztof.kozlowski+dt@linaro.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, fparent@baylibre.com, wenst@chromium.org,
+        robh+dt@kernel.org, ck.hu@mediatek.com, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        martin.botka@somainline.org, linux-mediatek@lists.infradead.org,
+        marijn.suijten@somainline.org, weiyi.lu@mediatek.com,
+        rex-bc.chen@mediatek.com, jason-jh.lin@mediatek.com,
+        y.oudjana@protonmail.com, phone-devel@vger.kernel.org,
+        bgolaszewski@baylibre.com, sboyd@kernel.org,
+        konrad.dybcio@somainline.org, tinghan.shen@mediatek.com,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        paul.bouchara@somainline.org, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org, chun-jie.chen@mediatek.com,
+        devicetree@vger.kernel.org
+In-Reply-To: <20220513165050.500831-5-angelogioacchino.delregno@collabora.com>
+References: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com> <20220513165050.500831-5-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 4/5] dt-bindings: arm: mediatek: Add clock driver bindings for MT6795
+Date:   Fri, 13 May 2022 15:48:33 -0500
+Message-Id: <1652474913.760163.894558.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 13, 2022 at 11:10:20PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, May 13, 2022 at 08:13:43AM +0200, Krzysztof Kozlowski wrote:
-> > Except scaling UFS and bus clocks, it's necessary to scale also the
-> > voltages of regulators or power domain performance state levels.  Adding
-> > Operating Performance Points table allows to adjust power domain
-> > performance state, depending on the UFS clock speed.
-> > 
-> > OPPv2 deprecates previous property limited to clock scaling:
-> > freq-table-hz.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > 
-> > ---
-> > 
-> > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../devicetree/bindings/ufs/ufs-common.yaml   | 34 +++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/ufs/ufs-common.yaml b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> > index 47a4e9e1a775..d7d2c8a136bb 100644
-> > --- a/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> > +++ b/Documentation/devicetree/bindings/ufs/ufs-common.yaml
-> > @@ -20,11 +20,24 @@ properties:
-> >        items:
-> >          - description: Minimum frequency for given clock in Hz
-> >          - description: Maximum frequency for given clock in Hz
-> > +    deprecated: true
-> >      description: |
-> > +      Preferred is operating-points-v2.
-> > +
-> >        Array of <min max> operating frequencies in Hz stored in the same order
-> > -      as the clocks property. If this property is not defined or a value in the
-> > -      array is "0" then it is assumed that the frequency is set by the parent
-> > -      clock or a fixed rate clock source.
-> > +      as the clocks property. If either this property or operating-points-v2 is
-> > +      not defined or a value in the array is "0" then it is assumed that the
-> > +      frequency is set by the parent clock or a fixed rate clock source.
-> > +
-> > +  operating-points-v2:
-> > +    description:
-> > +      Preferred over freq-table-hz.
-> > +      If present, each OPP must contain array of frequencies stored in the same
-> > +      order for each clock.  If clock frequency in the array is "0" then it is
-> > +      assumed that the frequency is set by the parent clock or a fixed rate
-> > +      clock source.
+On Fri, 13 May 2022 18:50:49 +0200, AngeloGioacchino Del Regno wrote:
+> Add the bindings for the clock drivers of the MediaTek Helio X10
+> MT6795 SoC.
 > 
-> This description mentions only the clocks and not voltages. But in theory, the
-> OPP table can contain other parameters like current, bandwidth, etc,... So to
-> avoid confusion, I'd suggest to get rid of the description.
-> 
-> > +
-> > +  opp-table: true
-> >  
-> >    interrupts:
-> >      maxItems: 1
-> > @@ -75,8 +88,23 @@ properties:
-> >  
-> >  dependencies:
-> >    freq-table-hz: [ 'clocks' ]
-> > +  operating-points-v2: [ 'clocks', 'clock-names' ]
-> 
-> What about voltage regulators if relevant opp property is present?
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../arm/mediatek/mediatek,mt6795-clock.yaml   | 67 +++++++++++++++++
+>  .../mediatek/mediatek,mt6795-sys-clock.yaml   | 73 +++++++++++++++++++
+>  2 files changed, 140 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.yaml
 > 
 
-Current UFS driver model won't allow us to change both voltage supplies and clks
-using OPP implementation. So please ignore my above comment.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thanks,
-Mani
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml:67:1: [warning] too many blank lines (2 > 1) (empty-lines)
 
-> Thanks,
-> Mani
-> 
-> >  
-> >  required:
-> >    - interrupts
-> >  
-> > +allOf:
-> > +  - if:
-> > +      required:
-> > +        - freq-table-hz
-> > +    then:
-> > +      properties:
-> > +        operating-points-v2: false
-> > +  - if:
-> > +      required:
-> > +        - operating-points-v2
-> > +    then:
-> > +      properties:
-> > +        freq-table-hz: false
-> > +
-> >  additionalProperties: true
-> > -- 
-> > 2.32.0
-> > 
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.example.dts:35.13-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:364: Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.example.dtb] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1401: dt_binding_check] Error 2
 
--- 
-மணிவண்ணன் சதாசிவம்
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
