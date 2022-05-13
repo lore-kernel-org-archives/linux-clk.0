@@ -2,31 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9242C4167D
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 16:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D27C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 16:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382748AbiEMQvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 12:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
+        id S1382714AbiEMQvn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 12:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382711AbiEMQvD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 12:51:03 -0400
+        with ESMTP id S1382722AbiEMQvJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 12:51:09 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7F3532EA;
-        Fri, 13 May 2022 09:51:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6BD54018;
+        Fri, 13 May 2022 09:51:06 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 839611F4228A
+        with ESMTPSA id 5D16F1F4228B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652460661;
-        bh=GKsA2sowh5zETh3IdEBedNaUz2n5kLBfuDV0nmxxWQE=;
+        s=mail; t=1652460657;
+        bh=71uG7PAcLUDV/b9HnxX+1uY8eqEWrWAzMJjvR2OBRg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aeL7OVfEvhWLmjMbONAiIToLFDFt5Hmg74Ht394BSCOvh94VGeiR/he3JIajK3MaO
-         MgGgiNUv1JAskna2SmGva8vs/8ZsoG5gK++jw3YsufdKN9R82newg/COZ3yzWf3049
-         Vjnyh+SZipv39QuvMOmGhoOrQZ+g0OWBQnZ1X1s5I8BmcnqOhvzSHSVGgFAL9dn5pA
-         NHq9nnU4uSwSCzzKVrckMlgSHLfaLRsCus0Fqqyd19VADs7uvwxCq+yHtcJX2K2T3O
-         5vd+H1tNdIU9sCsyRmAiMahGze5kaJbVJ4mEPfMTYl6xMSA7WMGzbmUt5zhKXbtZ7J
-         iC45qE1/t+bSw==
+        b=Vuxx8MFgndwlpFBNZfLDj8LYMpMHaWgwGK5YvhpDMFqwA/LieF0mk4DJn2QYNJ+en
+         IT7qup4jY35qlrWnH1kRHOdxXRK3cHm9a3q3LGcZB6yum0hpDmNnFNuAJwaAg1ujZj
+         jya92zN8O+tSomb4kbXNciBvqyac46uq48TctfrS0vn+viesFyNYgFyclyvAAvfAKw
+         SmEHPaMqnnQ1SzpZh7Jmog/ySfx7st54YQFVZR7meHnTG8D2qYG0qFTENRY3aDlt/t
+         zxsoNkW/Rw0Jf0e8NCF98/d4jej3R6qiYxYz89WdG8wTKAavUDoY6rhwBfm662gb75
+         0epHrKU3au0yA==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     robh+dt@kernel.org
@@ -45,9 +45,9 @@ Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
         phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
         kernel@collabora.com
-Subject: [PATCH 3/5] dt-bindings: reset: Add bindings for MT6795 Helio X10 reset controllers
-Date:   Fri, 13 May 2022 18:50:48 +0200
-Message-Id: <20220513165050.500831-4-angelogioacchino.delregno@collabora.com>
+Subject: [PATCH 1/5] dt-bindings: mediatek: Document MT6795 system controllers bindings
+Date:   Fri, 13 May 2022 18:50:46 +0200
+Message-Id: <20220513165050.500831-2-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com>
 References: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com>
@@ -57,70 +57,86 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the reset controller bindings for MT6795.
+Document the MediaTek Helio X10 (MT6795) bindings for the apmixedsys,
+infracfg, topckgen, pericfg and mmsys system controllers.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- include/dt-bindings/reset/mt6795-resets.h | 50 +++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 include/dt-bindings/reset/mt6795-resets.h
+ .../devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml     | 2 ++
+ .../devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml        | 1 +
+ .../devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml      | 1 +
+ .../devicetree/bindings/clock/mediatek,apmixedsys.yaml          | 1 +
+ Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml  | 1 +
+ 5 files changed, 6 insertions(+)
 
-diff --git a/include/dt-bindings/reset/mt6795-resets.h b/include/dt-bindings/reset/mt6795-resets.h
-new file mode 100644
-index 000000000000..0a6514884eae
---- /dev/null
-+++ b/include/dt-bindings/reset/mt6795-resets.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022 Collabora Ltd.
-+ * Author: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_CONTROLLER_MT6795
-+#define _DT_BINDINGS_RESET_CONTROLLER_MT6795
-+
-+/* INFRACFG resets */
-+#define MT6795_INFRA_SCPSYS_RST			0
-+#define MT6795_INFRA_PMIC_WRAP_RST		1
-+
-+/* MMSYS resets */
-+#define MT6795_MMSYS_SW0_RST_B_SMI_COMMON	0
-+#define MT6795_MMSYS_SW0_RST_B_SMI_LARB		1
-+#define MT6795_MMSYS_SW0_RST_B_CAM_MDP		2
-+#define MT6795_MMSYS_SW0_RST_B_MDP_RDMA0	3
-+#define MT6795_MMSYS_SW0_RST_B_MDP_RDMA1	4
-+#define MT6795_MMSYS_SW0_RST_B_MDP_RSZ0		5
-+#define MT6795_MMSYS_SW0_RST_B_MDP_RSZ1		6
-+#define MT6795_MMSYS_SW0_RST_B_MDP_RSZ2		7
-+#define MT6795_MMSYS_SW0_RST_B_MDP_TDSHP0	8
-+#define MT6795_MMSYS_SW0_RST_B_MDP_TDSHP1	9
-+#define MT6795_MMSYS_SW0_RST_B_MDP_WDMA		10
-+#define MT6795_MMSYS_SW0_RST_B_MDP_WROT0	11
-+#define MT6795_MMSYS_SW0_RST_B_MDP_WROT1	12
-+#define MT6795_MMSYS_SW0_RST_B_MDP_CROP		13
-+
-+/*  PERICFG resets */
-+#define MT6795_PERI_NFI_SW_RST			0
-+#define MT6795_PERI_THERM_SW_RST		1
-+#define MT6795_PERI_MSDC1_SW_RST		2
-+
-+/* TOPRGU resets */
-+#define MT6795_TOPRGU_INFRA_SW_RST		0
-+#define MT6795_TOPRGU_MM_SW_RST			1
-+#define MT6795_TOPRGU_MFG_SW_RST		2
-+#define MT6795_TOPRGU_VENC_SW_RST		3
-+#define MT6795_TOPRGU_VDEC_SW_RST		4
-+#define MT6795_TOPRGU_IMG_SW_RST		5
-+#define MT6795_TOPRGU_DDRPHY_SW_RST		6
-+#define MT6795_TOPRGU_MD_SW_RST			7
-+#define MT6795_TOPRGU_INFRA_AO_SW_RST		8
-+#define MT6795_TOPRGU_MD_LITE_SW_RST		9
-+#define MT6795_TOPRGU_APMIXED_SW_RST		10
-+#define MT6795_TOPRGU_PWRAP_SPI_CTL_RST		11
-+#define MT6795_TOPRGU_SW_RST_NUM		12
-+
-+#endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT6795 */
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+index 8681b785ed6d..1d7c837d9378 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.yaml
+@@ -23,6 +23,7 @@ properties:
+               - mediatek,mt2701-infracfg
+               - mediatek,mt2712-infracfg
+               - mediatek,mt6765-infracfg
++              - mediatek,mt6795-infracfg
+               - mediatek,mt6779-infracfg_ao
+               - mediatek,mt6797-infracfg
+               - mediatek,mt7622-infracfg
+@@ -60,6 +61,7 @@ if:
+         enum:
+           - mediatek,mt2701-infracfg
+           - mediatek,mt2712-infracfg
++          - mediatek,mt6795-infracfg
+           - mediatek,mt7622-infracfg
+           - mediatek,mt7986-infracfg
+           - mediatek,mt8135-infracfg
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+index 6ad023eec193..597ef18f3c5f 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.yaml
+@@ -25,6 +25,7 @@ properties:
+               - mediatek,mt2712-mmsys
+               - mediatek,mt6765-mmsys
+               - mediatek,mt6779-mmsys
++              - mediatek,mt6795-mmsys
+               - mediatek,mt6797-mmsys
+               - mediatek,mt8167-mmsys
+               - mediatek,mt8173-mmsys
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+index 611f666f359d..c518ed3c4153 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.yaml
+@@ -21,6 +21,7 @@ properties:
+               - mediatek,mt2701-pericfg
+               - mediatek,mt2712-pericfg
+               - mediatek,mt6765-pericfg
++              - mediatek,mt6795-pericfg
+               - mediatek,mt7622-pericfg
+               - mediatek,mt7629-pericfg
+               - mediatek,mt8135-pericfg
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
+index 770546195fb5..731bfe0408c2 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,apmixedsys.yaml
+@@ -34,6 +34,7 @@ properties:
+               - mediatek,mt2712-apmixedsys
+               - mediatek,mt6765-apmixedsys
+               - mediatek,mt6779-apmixedsys
++              - mediatek,mt6795-apmixedsys
+               - mediatek,mt7629-apmixedsys
+               - mediatek,mt8167-apmixedsys
+               - mediatek,mt8183-apmixedsys
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml b/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
+index 5b8b37a2e594..81531b5b0db7 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,topckgen.yaml
+@@ -33,6 +33,7 @@ properties:
+               - mediatek,mt2712-topckgen
+               - mediatek,mt6765-topckgen
+               - mediatek,mt6779-topckgen
++              - mediatek,mt6795-topckgen
+               - mediatek,mt7629-topckgen
+               - mediatek,mt7986-topckgen
+               - mediatek,mt8167-topckgen
 -- 
 2.35.1
 
