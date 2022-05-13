@@ -2,107 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623CAC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 20:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C726C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 22:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384523AbiEMUsj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 16:48:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46906 "EHLO
+        id S1384799AbiEMWBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 18:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384521AbiEMUsi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 16:48:38 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BB15FE5;
-        Fri, 13 May 2022 13:48:36 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id y63so11526616oia.7;
-        Fri, 13 May 2022 13:48:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=X3TQnSjdMn1h88B2hKWq4Vtc4t9dgcXCcu4yQAA388I=;
-        b=Nf6uWUMSC1Assz+k+DNJzTOWooI3GAVf03/KuJ4oYxD4kdNk9rz643Rkl+5XMzAq97
-         Yi6kC4oPvuMbCN4UQ27AClPoDrIoO+T4miEgputgi4tBx2dQJQ5y5DV0WOLIkQQX0Ms5
-         dYVE1Ckxw6j/w9KwC9OvqoeMG/QjwoiYbEUThtj7j/hmmoYWMtG5HSqOVJi3y3bx1WZJ
-         kLmsnmXhiM5x+VMsNXVSR/hYOHea5GBhHdFoYEyK24a/RzPou5cRt/W7bNYJbzt6KVaK
-         DRjGboe9oqy4hq+4UXkY2K1kAMDUGLj0Cvm0vWqmGntm0ZeUXW51kyDtzb2Gz71xUth7
-         4Q2g==
-X-Gm-Message-State: AOAM530z+jAB+bY1ykwY7uQN4Od8u/zic27WqHSUwNydjLXSu4fYBZMn
-        4oYl3Vkjzam+feGgYNe1od37+LrOtw==
-X-Google-Smtp-Source: ABdhPJwP+9t58/HsOC+vMOmnRUgE5YnXus5JIhh/6Mv2y+iU8XBnzrtKM2mxN6osLdIL8Ofj/qN0yw==
-X-Received: by 2002:aca:aa42:0:b0:325:61e3:1726 with SMTP id t63-20020acaaa42000000b0032561e31726mr8474090oie.57.1652474915995;
-        Fri, 13 May 2022 13:48:35 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e2-20020a056870a60200b000e99b1909d4sm1426285oam.25.2022.05.13.13.48.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 May 2022 13:48:35 -0700 (PDT)
-Received: (nullmailer pid 894559 invoked by uid 1000);
-        Fri, 13 May 2022 20:48:33 -0000
-From:   Rob Herring <robh@kernel.org>
+        with ESMTP id S1384812AbiEMWBT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 18:01:19 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9335A2DA;
+        Fri, 13 May 2022 15:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652479278; x=1684015278;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6W9kIUxVEytkIlePIUvHWEfOUUtB7d0gmWYOO/wGDro=;
+  b=aP2t8BWuwkeAcPC7AcyyWSJRv87h0bYuTsPbdZ7klNzaL/th89pvjCc6
+   2aGOUGVSHmjvoTQZ2QohpS+0QHQFTXGhy+8v0BysRYV1IgZ9OHuig3qP2
+   ZF8S/lrQ0wo3Juxb6FMApSd8+7wiHuLd9Kga79tD7KM1BP7KuDXSuxD9m
+   UC31ioGh++HqSmOJpyT1cUmgj2jnr0nl8+qubYcTz/G2FOop3jDGlEbtE
+   EvYjahQGAlOLDhQ0vNJF3oJnrNB0d6YJhBXMB3ErxJxv2GQ5apdIudQrp
+   o0cEDTxcDEAJqZ4tv4Kso9eLBb70fyd4QmQyclDq7gQCjBCXrBIjfGFLe
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10346"; a="270355995"
+X-IronPort-AV: E=Sophos;i="5.91,223,1647327600"; 
+   d="scan'208";a="270355995"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2022 15:01:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,223,1647327600"; 
+   d="scan'208";a="625042653"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 13 May 2022 15:01:10 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1npdLS-000M9U-0W;
+        Fri, 13 May 2022 22:01:10 +0000
+Date:   Sat, 14 May 2022 06:00:43 +0800
+From:   kernel test robot <lkp@intel.com>
 To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-clk@vger.kernel.org, kernel@collabora.com, ikjn@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org, miles.chen@mediatek.com,
-        sam.shih@mediatek.com, fparent@baylibre.com, wenst@chromium.org,
-        robh+dt@kernel.org, ck.hu@mediatek.com, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-        martin.botka@somainline.org, linux-mediatek@lists.infradead.org,
-        marijn.suijten@somainline.org, weiyi.lu@mediatek.com,
-        rex-bc.chen@mediatek.com, jason-jh.lin@mediatek.com,
-        y.oudjana@protonmail.com, phone-devel@vger.kernel.org,
-        bgolaszewski@baylibre.com, sboyd@kernel.org,
-        konrad.dybcio@somainline.org, tinghan.shen@mediatek.com,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        paul.bouchara@somainline.org, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org, chun-jie.chen@mediatek.com,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220513165050.500831-5-angelogioacchino.delregno@collabora.com>
-References: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com> <20220513165050.500831-5-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 4/5] dt-bindings: arm: mediatek: Add clock driver bindings for MT6795
-Date:   Fri, 13 May 2022 15:48:33 -0500
-Message-Id: <1652474913.760163.894558.nullmailer@robh.at.kernel.org>
+        <angelogioacchino.delregno@collabora.com>, robh+dt@kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, angelogioacchino.delregno@collabora.com,
+        jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
+        fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH 5/5] clk: mediatek: Add MediaTek Helio X10 MT6795 clock
+ drivers
+Message-ID: <202205140535.hQjmJtwR-lkp@intel.com>
+References: <20220513165050.500831-6-angelogioacchino.delregno@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220513165050.500831-6-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 13 May 2022 18:50:49 +0200, AngeloGioacchino Del Regno wrote:
-> Add the bindings for the clock drivers of the MediaTek Helio X10
-> MT6795 SoC.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../arm/mediatek/mediatek,mt6795-clock.yaml   | 67 +++++++++++++++++
->  .../mediatek/mediatek,mt6795-sys-clock.yaml   | 73 +++++++++++++++++++
->  2 files changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.yaml
-> 
+Hi AngeloGioacchino,
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Thank you for the patch! Yet something to improve:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml:67:1: [warning] too many blank lines (2 > 1) (empty-lines)
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on next-20220513]
+[cannot apply to clk/clk-next pza/reset/next mbgg-mediatek/for-next v5.18-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.example.dts:35.13-21 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:364: Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.example.dtb] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1401: dt_binding_check] Error 2
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/MediaTek-Helio-X10-MT6795-Clock-drivers/20220514-005314
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: arm64-buildonly-randconfig-r004-20220512 (https://download.01.org/0day-ci/archive/20220514/202205140535.hQjmJtwR-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 38189438b69ca27b4c6ce707c52dbd217583d046)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm64 cross compiling tool for clang build
+        # apt-get install binutils-aarch64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/991f92f26cc545a1836a3120408ce27ba7ddadab
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review AngeloGioacchino-Del-Regno/MediaTek-Helio-X10-MT6795-Clock-drivers/20220514-005314
+        git checkout 991f92f26cc545a1836a3120408ce27ba7ddadab
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/clk/mediatek/
 
-doc reference errors (make refcheckdocs):
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-See https://patchwork.ozlabs.org/patch/
+All errors (new ones prefixed by >>):
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+>> drivers/clk/mediatek/clk-mt6795-infracfg.c:14:10: fatal error: 'reset.h' file not found
+   #include "reset.h"
+            ^~~~~~~~~
+   1 error generated.
+--
+>> drivers/clk/mediatek/clk-mt6795-pericfg.c:13:10: fatal error: 'reset.h' file not found
+   #include "reset.h"
+            ^~~~~~~~~
+   1 error generated.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
 
-pip3 install dtschema --upgrade
+vim +14 drivers/clk/mediatek/clk-mt6795-infracfg.c
 
-Please check and re-submit.
+  > 14	#include "reset.h"
+    15	
 
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
