@@ -2,109 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34F1C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 12:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433B3C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 15:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353711AbiEMM6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 08:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46666 "EHLO
+        id S1382245AbiEMPv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 11:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233058AbiEMM57 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 08:57:59 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86FD198590
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 05:57:58 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id t6so11362555wra.4
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 05:57:58 -0700 (PDT)
+        with ESMTP id S1381382AbiEMPvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 11:51:54 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720F11D7356
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 08:51:52 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id l7-20020a17090aaa8700b001dd1a5b9965so8151460pjq.2
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 08:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cU4ZtNl2vEtEVH/Lak30VWKkW5zSu+7jhI7ooziHVxo=;
-        b=hY7RshcVZtZ0WoJs33dta6NDd8NbGGJgoY7ZVCt1MeX0kX/Xj3Lur613Or1JybyFNm
-         1HZ68gzAyuZJ8HOhwzUYP2bCfyxQ3UjhIhkwG50UoTionya9gp2Lp4+3JXKF5s9OXTad
-         rtkkhgzPeqz0KXuiSklUoKWKV7iFh885UjegJnXpUGHMq0GfXN1SzZwNVOCpUZQvmUAl
-         wZVv/mwulIFZpoVx+IaJq/yTsvsiD6UHDTj6qw8PTVLML5IPn0FdBM9nRLhQC9e2aKAB
-         /u01OAXzCFlE6Lf25zxbalQ7Q0ZuFUrf1H9RfwLN2zlEoQ/ShPfPWcIgEmgvSF9B8Pws
-         Vwrw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=sHac6RyxoRhpwtJ0Nv8blO/l0ElL7UnX1I1rlRcy1vQ=;
+        b=zTSUXmk1gaktLcL7EoedGUZZ3+JuYei0KGwja5b8AMmZ23bufw5yZApn9Gjfo+Ever
+         J/qKEPGT6vntYYa9Ny3H4is70qinItRekWQMLryWRDqePKK6HlMy6kzDC3vDLSAlXSJd
+         FG1NUIBoX2H/rnokj2frqlehsfMHpfxnUH/cFp7AEXCXx+5WoGLovHDfxiNEaE0WI4H2
+         cyX0tkoE7y4JEbdcD5VAdW9i9jXDewoYFjx5P3Oax3FynTL/caSxlzlSM7dtHQh+Rl4v
+         51N3XnmYbV5w0Od00fC5CkIugP7+NT0HQUAufn0+O3hha+SsaopvxyRRCEJRpKEFcKRP
+         Ksbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=cU4ZtNl2vEtEVH/Lak30VWKkW5zSu+7jhI7ooziHVxo=;
-        b=XExYoXGhZNbK+9czRI6q5DMzPk7V+HN/bmBqGxSaXS/YsPV49zVdXY5lGu5Vqz3Ssi
-         XAXBHUoG6XNJdZPxc/UfNHeJ3df08qBURUQ0YeR//Qp5oSHUkAGpVln4brg8ihI25dck
-         8QfBXQCbZeb3UAiSegxmJutqkTKW+YkBPYDA0pZYzEu0S145FRzDLjsTfT4fIckGg9yY
-         a3Zbo4NfWe31MM311p7+wPWpv2iOp/TmAPAIKii4tN/ssfd4hEgx9xMCzU6JP2n9/SDe
-         MHSpXl51+McLbZnvbQ2Q6CeMnsFYoGg82w13u6lOxCxUWg0WTJG3IRghLu5GzFhrE/27
-         fhOQ==
-X-Gm-Message-State: AOAM533bpTRbNCXYNkEjqhqsl1XczaxZId7V90mUHaEoNsmvp96y/fcT
-        zZlHkFEj3MrHelMOOph9wzszCA==
-X-Google-Smtp-Source: ABdhPJzDRMdFOUy5RI8IXI6VfHQuWSfZtMpfsZMkCc8yuVYUOfKov2JEFDGTvRzp8Wcd+aX5lCvZjQ==
-X-Received: by 2002:a5d:5012:0:b0:20a:d9a9:44dc with SMTP id e18-20020a5d5012000000b0020ad9a944dcmr3858584wrt.627.1652446677102;
-        Fri, 13 May 2022 05:57:57 -0700 (PDT)
-Received: from [192.168.0.172] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d11-20020adfa34b000000b0020c86a9f33bsm2731239wrb.18.2022.05.13.05.57.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 May 2022 05:57:56 -0700 (PDT)
-Message-ID: <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
-Date:   Fri, 13 May 2022 14:57:55 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
- compatible string
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=sHac6RyxoRhpwtJ0Nv8blO/l0ElL7UnX1I1rlRcy1vQ=;
+        b=aEviu0jv80QP0BrLdtM/GuiPy5RAGfkmHfMheJF50JW78YhgjtmH69m/pK/sLA1Aue
+         oy0Pgw46VbZaq6j099O9Y91D8UW9h/M19g/Z5Dl4dR7advNu2SYUM0j6A2hhNWb1ZAMf
+         MwkoXIbqHPWW5NmQoCLFD9+7gJAlU/xLwArQ2m6/v0/XTXtGKcLr03Hi+asHPYXahTxQ
+         5oSZkUek4bUOjzbSM/HKwMk1oeLoeEXxNEw9lYVln1ZWZ/xpOr98ZdibfLZt3qW0dpjj
+         /IrL/sRaBuLcmfYgziAcJzQgob3MZOPauR+qW+U3pdj0YkMYCG1kUm+r6LXGD+KUJSpI
+         HJag==
+X-Gm-Message-State: AOAM533qAQs4926SZXa11icbnmQAy1Wjr8ETGJ3+qGkzFOVitFPxfJlA
+        WMn6kg4FTJzzPJWMABrM8Nw+
+X-Google-Smtp-Source: ABdhPJyDdQzIGvs4jHC7YF16jpurc8reFvPJpDAA2Dxk5FqB+bw3piPmlVvxXWei4B2olyNnYodHtw==
+X-Received: by 2002:a17:902:dac2:b0:15e:90b0:d35b with SMTP id q2-20020a170902dac200b0015e90b0d35bmr5374851plx.169.1652457111494;
+        Fri, 13 May 2022 08:51:51 -0700 (PDT)
+Received: from thinkpad ([117.202.184.246])
+        by smtp.gmail.com with ESMTPSA id q11-20020a056a00150b00b0050dc76281d9sm1314551pfu.179.2022.05.13.08.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 May 2022 08:51:50 -0700 (PDT)
+Date:   Fri, 13 May 2022 21:21:41 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20220513105850.310375-1-herve.codina@bootlin.com>
- <20220513105850.310375-3-herve.codina@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220513105850.310375-3-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: clock: qcom,gcc-sdm845: add parent
+ power domain
+Message-ID: <20220513155141.GA1922@thinkpad>
+References: <20220513061347.46480-1-krzysztof.kozlowski@linaro.org>
+ <20220513061347.46480-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220513061347.46480-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/05/2022 12:58, Herve Codina wrote:
-> The USB device controller available in the Microchip LAN966x SOC
-> is the same IP as the one present in the SAMA5D3 SOC.
+On Fri, May 13, 2022 at 08:13:41AM +0200, Krzysztof Kozlowski wrote:
+> Allow Qualcomm GCC to register its parent power domain (e.g. RPMHPD) to
+> properly pass performance state from children.
 > 
-> Add the LAN966x compatible string and set the SAMA5D3 compatible
-> string as a fallback for the LAN966x.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks,
+Mani
+
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Acked-by: Rob Herring <robh@kernel.org>
 > 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > ---
->  Documentation/devicetree/bindings/usb/atmel-usb.txt | 3 +++
+> 
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml | 3 +++
 >  1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/atmel-usb.txt b/Documentation/devicetree/bindings/usb/atmel-usb.txt
-> index f512f0290728..a6fab7d63f37 100644
-> --- a/Documentation/devicetree/bindings/usb/atmel-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/atmel-usb.txt
-> @@ -87,6 +87,9 @@ Required properties:
->  	       "atmel,at91sam9g45-udc"
->  	       "atmel,sama5d3-udc"
->  	       "microchip,sam9x60-udc"
-> +	       "microchip,lan996x-udc"
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> index d902f137ab17..daf7906ebc40 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+> @@ -43,6 +43,9 @@ properties:
+>    '#reset-cells':
+>      const: 1
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    '#power-domain-cells':
+>      const: 1
+>  
+> -- 
+> 2.32.0
+> 
 
-No wildcards please, especially that it closely fits previous wildcard
-(lan996x includes lan9960 which looks a lot like sam9x60...)
-
-
-Best regards,
-Krzysztof
+-- 
+மணிவண்ணன் சதாசிவம்
