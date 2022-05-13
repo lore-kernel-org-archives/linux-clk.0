@@ -2,66 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3183C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 08:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4747EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 08:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378114AbiEMIKj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 04:10:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54464 "EHLO
+        id S1378112AbiEMIKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 04:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378107AbiEMIKe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 04:10:34 -0400
-Received: from mail.coredeal.pl (mail.coredeal.pl [51.75.73.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864882A5E97
-        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 01:10:32 -0700 (PDT)
-Received: by mail.coredeal.pl (Postfix, from userid 1002)
-        id 36DC1A4FEE; Fri, 13 May 2022 08:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=coredeal.pl; s=mail;
-        t=1652429244; bh=9KGuIG62LgzC9aYmjKxzocuYLRCVghXg6v9Q1q2LHec=;
-        h=Date:From:To:Subject:From;
-        b=FinfvesQbDSlAO5td5CS92AdnKEsSxJBMECwO8oFYjUF5Eq2a0okvk6P5wWgsLow/
-         gXR9OVaFjhZqZjDrxdp1jPth6r5jtXaz/hkF6xUa+HmWuTX0CvLpjZ4aLkQZqk1h1F
-         e2lotjKPaITGsR3SSwu7w7F9RMisePBFmbbFIX07lZSX2leadF393Bk6sJeVOeXqcd
-         Pam8xkBL+LycjuOlBuOG5zrsz5WgLK7vqwzbAKTmSTDtEj+guT+GGqrSAmCs50qfyi
-         UAOT/JF2KBJNfhkMV3WzuTGMVXPSkp0ncU4iBvC2c91imgoagsjg45FAT55rGlofz3
-         FX0ZI13nC+hgg==
-Received: by mail.coredeal.pl for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 08:05:55 GMT
-Message-ID: <20220513064500-0.1.33.o0nw.0.xbbn04fr4y@coredeal.pl>
-Date:   Fri, 13 May 2022 08:05:55 GMT
-From:   "Krzysztof Maj" <krzysztof.maj@coredeal.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Biznesowy angielski
-X-Mailer: mail.coredeal.pl
+        with ESMTP id S1378118AbiEMIKt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 04:10:49 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AE37E0EC
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 01:10:46 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id be20so8965724edb.12
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 01:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=91LK4yFc8ncVigJgf60wMV9BYzBPqKD6JcDXCqA6AKs=;
+        b=tLpRxIm5qU+OfHD+5T0hJcfSaEeBrt10JVDh2rpQVRzEeXgQR40/J5Yrx+xg2b1VAH
+         ruXcsFHHpgjj0CGH8N8VE5l0G02et6/RFY2siVJwqEOqFQFvPkFo1RrbThDJwPfdVVfO
+         F6E0kJwX5NtLb5QqBV0qXcBD0pHH9WYK5kpZCrzmN9D46YbU9+maQMZuDMuchfxTr6ic
+         rLN7DiXImOJ8hw5YeA6yO30DnHi8F+WzVhhxxUh+p9Pv2ogMEFgV1+U2zwTwtotH27Yx
+         P32o1zNJIkY+pxZNyuXWm71FVZ9XQQdgBcrl5FJx8xtk/RekTsavNS65e8vBcC7aQq5a
+         0D0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=91LK4yFc8ncVigJgf60wMV9BYzBPqKD6JcDXCqA6AKs=;
+        b=vpn+oRGGgLb6QohO3h2hDxes5LJZOYOVFEvqI+HRm7vZeZY00Gfbc5y03PH3DQRY2b
+         70tWqGwJn12bhBH2dfdgQVq4MbDjbKrb2WYj3UHdgVTNliAbNX5kf6B7YyAloxy9pjyP
+         tJRfSYBe68d75VfDQ2Ck3G6vf2yBGKbTrM1emZGYoyw5R5WqKsW3z/k/Eh9EVZ/cIIom
+         mrkzhgV9ek8umgwXBTvISQWWrRLEcShh7rjf4B2flRQeGkmODhgpIZkJutecZdxIonID
+         j9m3I5eCS48RzoNDrRT70s0kaSuHHtNqATLgNCjksWpUXDH6Z6QHvYnZXLQBLN5QYK0I
+         ImWA==
+X-Gm-Message-State: AOAM530V0g7MZbUX/kjEepZvECIPh1XfRwbJpXwXf7lDL6D5TMJR+qw2
+        xddTvMS5IhvKGdMDxAPRm1l1ag==
+X-Google-Smtp-Source: ABdhPJzCev1jn/thCLLRYL0b61TfsPq3kPVxBQaex4UEh+PCTXDNNirSX5/y85RABqnuVSTp4pRJSg==
+X-Received: by 2002:a05:6402:3485:b0:427:cde4:2097 with SMTP id v5-20020a056402348500b00427cde42097mr38105422edc.264.1652429444815;
+        Fri, 13 May 2022 01:10:44 -0700 (PDT)
+Received: from [192.168.0.168] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id hz15-20020a1709072cef00b006f3ef214e11sm508471ejc.119.2022.05.13.01.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 May 2022 01:10:44 -0700 (PDT)
+Message-ID: <85c40d22-afaa-0f7b-01bd-6de9e592079f@linaro.org>
+Date:   Fri, 13 May 2022 10:10:43 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v15 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Content-Language: en-US
+To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <cover.1652329411.git.qinjian@cqplus1.com>
+ <daeccdfb9655e549656af0af955a4697871e3ab0.1652329411.git.qinjian@cqplus1.com>
+ <32c80a79-abd5-3fd2-cbb4-e2ae93c539da@linaro.org>
+ <3a01fe9aa860407694ee77133459a9ab@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <3a01fe9aa860407694ee77133459a9ab@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+On 13/05/2022 09:44, qinjian[覃健] wrote:
+>>> diff --git a/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
+>>> new file mode 100644
+>>> index 000000000..1560c95d9
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
+>>> @@ -0,0 +1,85 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Device Tree Source for Sunplus SP7021
+>>> + *
+>>> + * Copyright (C) 2021 Sunplus Technology Co.
+>>> + */
+>>> +
+>>> +#include "sunplus-sp7021.dtsi"
+>>> +
+>>> +/ {
+>>> +	compatible = "sunplus,sp7021-achip";
+>>
+>> This does not match your bindings.
+>>
+> 
+>>> +++ b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
+>>> @@ -0,0 +1,27 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Device Tree Source for Sunplus SP7021 Demo V3 SBC board
+>>> + *
+>>> + * Copyright (C) Sunplus Technology Co.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include "sunplus-sp7021-achip.dtsi"
+>>> +
+>>> +/ {
+>>> +	compatible = "sunplus,sp7021-demo-v3";
+>>
+>> This does not match your bindings.
+>>
+>> Please run make dtbs_check.
+> 
+> I did passed the make dtbs_check.
+> compatible string: "sunplus,sp7021", "sunplus,sp7021-achip", "sunplus,sp7021-demo-v3"
+> all defined @ Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml [1]
 
-czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
-swoich pracownik=C3=B3w?
+How this can pass the check if it is entirely different compatible and
+does not match schema? The code is not correct. If you test your DTS
+with dtbs_check you will see:
 
-Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
-w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
-ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
-=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
-
-Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
-=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
-re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
-o=C5=BCliwo=C5=9Bci biznesowe.=20
-
-Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
- kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
-za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
-=2E
-
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
-w i opowiedzie=C4=87 jak dzia=C5=82amy?=20
+	sunplus-sp7021-demo-v3.dtb: /: compatible: ['sunplus,sp7021-demo-v3']
+is too short
 
 
-Pozdrawiam
-Krzysztof Maj
+Additionally:
+1. Your DTBs do not compile, missing Makefile entry.
+
+2. You have to fix whitespace issues in your patches:
+
+.git/rebase-apply/patch:48: new blank line at EOF.
+
++
+
+warning: 1 line adds whitespace errors.
+
+.git/rebase-apply/patch:97: new blank line at EOF.
+
++
+
+warning: 1
+
+Best regards,
+Krzysztof
