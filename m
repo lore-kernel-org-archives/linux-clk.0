@@ -2,161 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DA8C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 11:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F7DC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 13 May 2022 12:54:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380000AbiEMLpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 May 2022 07:45:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52290 "EHLO
+        id S229695AbiEMMyc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 May 2022 08:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379988AbiEMLpF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 07:45:05 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D9F66AE8;
-        Fri, 13 May 2022 04:45:04 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id d19so14050150lfj.4;
-        Fri, 13 May 2022 04:45:03 -0700 (PDT)
+        with ESMTP id S1380461AbiEMMyb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 May 2022 08:54:31 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C99EF5E168
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 05:54:29 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id n10so16118611ejk.5
+        for <linux-clk@vger.kernel.org>; Fri, 13 May 2022 05:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lrkOSYGyb2W5e8iUM5z5KtK2vG4OpEu1byRK8zMbpr4=;
-        b=hdk5ctyCFq20dAvLLQVvmATc9nh/gLK5FRKmtF0qJxZZtXibHJw9r45AlNa1rsEV7T
-         zwbd6akbuu2CharSzyM8gIkxHOZFeLfKMrdX0FIoh7XicFhmd2BX2I+g9AoKqZ4tmsmE
-         ndwmf0WYoer/+z+pK5HWQ2H5z2eTXC1jErOzjaVTHDFU/zfpwjS+KPtvqzMyv1WDPhbv
-         +PIkmHHiuZoRkhoa7JMi0LKsc4a0aMZR9rK8jjd2ZPi8G2xFXHKalylXNCUlCHaZwmo5
-         +WG5sfF/fm0dd85Be6STYv083tuIWFyV4reLUscOg82z/Q2jhL34aESg8Dt+OOYE0bAj
-         SpDg==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ASi203XoSXI2WoxDZNe0Qai/SexALG49//LisxCGVdM=;
+        b=J/sb7EGCARrbZtDsH0GegRE4qukaA8jUlF26cOKChhU+9hYeea9nNLbY+2rzeVLcTR
+         wWCM/ctVxh69s12hn/8eAevRtA6Hx86Tyw8PObMtglV7HelwHrnD6+dY5gqL0i7ZiqFa
+         MYPr8DrrMTPMuXQtoOwdbIKHTityXO3p1wEcLc7qsraOG0oLvwzjHOlnareS/pFQlfby
+         5asVwOV+dEdnY3ln4TRawGjtOLHynEKwIZZkpxg0tLO++jDyJFis0WOzJs4+WWzyoJkp
+         +R+3LiyioL5RHODv6Qa8adaSEWGdqagP/5kGsZopxQmUU8GXBqo7rq9HA5HuawNLKJ2H
+         1Iug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lrkOSYGyb2W5e8iUM5z5KtK2vG4OpEu1byRK8zMbpr4=;
-        b=REcxcvEdy2dDaCmlzY0JPIrYOxA7kukC9F+LMc3BeWJUbCmUMRo2MRUctKp6kNRs6p
-         ud1X0XdhqNQI0YYNoUWIN2PZPZL4jkLsdxs+wf/jVDvBivKq/VtWZU8OAHgAyLwkgTgx
-         XJeAiXcVkGbyCuBYgNKUqH2NZ9xzD5Q2VcOUmo0dzA7LtXD5tNtm2huYNWMtfwiyWSK4
-         JWjfdRXC123P0j631ymHgDQAmb4FwgKCFSz8vETeoE1NwJIsWE3JpELm80IyVlw6UgqV
-         Utpztte0cu1EIzfdfz7ntR+chCBGHGTay9MXWj6g7yJ8Razb/DD1024PS7ANCJ+Rc5o5
-         66uA==
-X-Gm-Message-State: AOAM531JxuL2lEJbc8f3njXh1Wq5XTuZX5UTj0dXGjHNGcfQea6b99Jk
-        OsfiFWsgYMv7jB1F9Y4lrPw=
-X-Google-Smtp-Source: ABdhPJxChqikX4BilmRZa0+BBqRiME9trRNKbm4ZJLV3xG0dsMbRFGTdEGanqLwyuWZv1OWz16FShA==
-X-Received: by 2002:a05:6512:3045:b0:473:d457:1541 with SMTP id b5-20020a056512304500b00473d4571541mr3230896lfb.308.1652442302168;
-        Fri, 13 May 2022 04:45:02 -0700 (PDT)
-Received: from mobilestation ([95.79.189.214])
-        by smtp.gmail.com with ESMTPSA id f19-20020a19ae13000000b0047255d211b4sm346402lfc.227.2022.05.13.04.45.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 May 2022 04:45:01 -0700 (PDT)
-Date:   Fri, 13 May 2022 14:44:58 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC
- fixes
-Message-ID: <20220513114458.lgnrrejnwolak5sj@mobilestation>
-References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ASi203XoSXI2WoxDZNe0Qai/SexALG49//LisxCGVdM=;
+        b=jQMgDvXm5Y0cuXSyACOtV0M43wrwqmRPcBFfJV0qRY7sthzyJgLQj1aXqIs1ubRqyR
+         pUXrEfaDiSIR2fwEpCjMGt49K8nkz7mGTktJKDhRKHFTFGeMKogg4+gKOFiLsYNo+jiw
+         or+ugmyPdTNmqmeeEFRdhhyv5h8KxfQCY+Gw4QAEffm+wvl6Js87jvG6UIjrOthaqiw+
+         BHwmR8bXNwoEumm5ZanxHky42puZSO5Yw6eHRFbFhgyOi4EcrRHWbjqKl1NGOxES7Rwy
+         cz65+4L5/K3haOTBXa4T+fDWwBm6VfAo8ruL66Godzt/S/ADp1+zzQ/aY4ytckhq1cV9
+         lDqQ==
+X-Gm-Message-State: AOAM5302c6BF8vfKH8rIuEVZAplCZAW0gONMLy8ObVdvVRQpJ73mfRCC
+        T4wNvKSiU6+Wzi5tSLWCPHYgCw==
+X-Google-Smtp-Source: ABdhPJxyJyjY5Mrgzb2B3oErKV0isHjNlbF/FWsm92BXl1E5W4ZiPVhgoPApq6bPdBu/1Eo6aCwvDg==
+X-Received: by 2002:a17:907:1c8e:b0:6f4:e24f:20e0 with SMTP id nb14-20020a1709071c8e00b006f4e24f20e0mr4054580ejc.227.1652446468349;
+        Fri, 13 May 2022 05:54:28 -0700 (PDT)
+Received: from [192.168.0.172] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id qx16-20020a170907b59000b006f3ef214e36sm734838ejc.156.2022.05.13.05.54.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 May 2022 05:54:27 -0700 (PDT)
+Message-ID: <2945e445-3453-a45f-7d3d-3b07bf350b47@linaro.org>
+Date:   Fri, 13 May 2022 14:54:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 3/3] ARM: dts: lan966x: Add UDPHS support
+Content-Language: en-US
+To:     Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20220513105850.310375-1-herve.codina@bootlin.com>
+ <20220513105850.310375-4-herve.codina@bootlin.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220513105850.310375-4-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen, Michael
+On 13/05/2022 12:58, Herve Codina wrote:
+> Add UDPHS (the USB High Speed Device Port controller) support.
+> The UDPHS IP present in the lan966x SOC is the same as the one
+> present in the SAMA5D3 SOC
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  arch/arm/boot/dts/lan966x.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/lan966x.dtsi b/arch/arm/boot/dts/lan966x.dtsi
+> index 7d2869648050..4c09f3166d27 100644
+> --- a/arch/arm/boot/dts/lan966x.dtsi
+> +++ b/arch/arm/boot/dts/lan966x.dtsi
+> @@ -211,6 +211,17 @@ can0: can@e081c000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		udc: udphs@e0808000 {
 
-The series has been here for about two months with no comments. Seeing
-the dependent patches won't be merged in before the next merge window,
-could you please merge this series in through your repo?
+Generic node names, so it looks like usb. For example HCD schema
+requires it. I am not sure which bindings are used here, but anyway once
+they might require usb...
 
--Sergey
 
-On Tue, May 03, 2022 at 11:57:18PM +0300, Serge Semin wrote:
-> This patchset is an initial one in the series created in the framework
-> of my Baikal-T1 PCIe/eDMA-related work:
-> 
-> [1: In-progress v3] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
-> Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
-> [2: In-progress v1] PCI: dwc: Various fixes and cleanups
-> Link: https://lore.kernel.org/linux-pci/20220324012524.16784-1-Sergey.Semin@baikalelectronics.ru/
-> [3: In-progress v1] PCI: dwc: Add dma-ranges/YAML-schema/Baikal-T1 support
-> Link: https://lore.kernel.org/linux-pci/20220324013734.18234-1-Sergey.Semin@baikalelectronics.ru/
-> [4: In-progress v1] dmaengine: dw-edma: Add RP/EP local DMA controllers support
-> Link: https://lore.kernel.org/linux-pci/20220324014836.19149-1-Sergey.Semin@baikalelectronics.ru/
-> 
-> Since some of the patches in the later patchsets depend on the
-> modifications introduced here, @Lorenzo could you please merge this series
-> through your PCIe subsystem repo? After getting all the required ack'es of
-> course.
-> 
-> Short summary regarding this patchset. A few more modifications are
-> introduced here to finally finish the Baikal-T1 CCU unit support up and
-> prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
-> all it turned out I specified wrong DW xGMAC PTP reference clock divider
-> in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
-> joint xGMAC Ref and PTP clock instead of having them separately defined.
-> The SoC manual describes these clocks as separate fixed clock wrappers.
-> Finally in order to close the SoC clock/reset support up we need to add
-> the DDR and PCIe interfaces reset controls support. It's done in two
-> steps. First I've moved the reset-controls-related code into a dedicated
-> module. Then the DDR/PCIe reset-control functionality is added.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v2:
-> - Resubmit the series with adding @Philipp to the list of the recipients.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v3:
-> - Rebased from v5.17 onto v5.18-rc3.
-> - No comments. Just resend the series.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: "Krzysztof Wilczyński" <kw@linux.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Serge Semin (4):
->   clk: baikal-t1: Fix invalid xGMAC PTP clock divider
->   clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
->   clk: baikal-t1: Move reset-controls code into a dedicated module
->   clk: baikal-t1: Add DDR/PCIe directly controlled resets support
-> 
->  drivers/clk/baikal-t1/Kconfig       |  12 +-
->  drivers/clk/baikal-t1/Makefile      |   1 +
->  drivers/clk/baikal-t1/ccu-div.c     |   1 +
->  drivers/clk/baikal-t1/ccu-div.h     |   6 +
->  drivers/clk/baikal-t1/ccu-rst.c     | 373 ++++++++++++++++++++++++++++
->  drivers/clk/baikal-t1/ccu-rst.h     |  64 +++++
->  drivers/clk/baikal-t1/clk-ccu-div.c | 102 ++------
->  include/dt-bindings/reset/bt1-ccu.h |   9 +
->  8 files changed, 482 insertions(+), 86 deletions(-)
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
-> 
-> -- 
-> 2.35.1
-> 
+Best regards,
+Krzysztof
