@@ -2,93 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38501C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 14 May 2022 08:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C150C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 14 May 2022 09:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiENIRq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 May 2022 04:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
+        id S229779AbiENJgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 May 2022 05:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiENIRp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 May 2022 04:17:45 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291BED8;
-        Sat, 14 May 2022 01:17:41 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.94]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1Mbj3e-1oLHQZ0uJK-00dFtL; Sat, 14 May 2022 10:17:09 +0200
-Message-ID: <d130ce59-1a4b-901c-d038-07515db746ec@i2se.com>
-Date:   Sat, 14 May 2022 10:17:07 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
-Content-Language: en-US
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S231454AbiENJf4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 May 2022 05:35:56 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA72E90;
+        Sat, 14 May 2022 02:35:55 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id u23so18238652lfc.1;
+        Sat, 14 May 2022 02:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9bON5I8dBLTli09gYDVRZAOvbSHuOcYBnAT6sWpt8v0=;
+        b=KEkFaNttl7V7FEihDHHSSuU636QWKiLfXshYdyn8lq3aLqum/xm8JVHSrRKzlldw+R
+         o1rc5KRqfjJmzpQ2qBSVLqiSS+GqOPBRZbkSQxgxj05gQ9IarKQ9Mxq2ZYXs1+ZWrTcw
+         dpTqeVpKBTEoaV8pGCb4wcDUpMSmZ6lZW99/KANy++8jxAIOZYLhw0it/iS0HyhIpQ++
+         my6QM9lPKl4QjQHj3/w3Kz00KfMnrqFwSd41CqYQR0K5ZUYijiX5hZ4gPjJ7zWu+O1we
+         kxm+cqzQjSAyoqZo43ZzSRa3hQfHN4m1EAsGD7rKtYx3saxCQLXsKlSDnF/MjHuvSEl5
+         u16A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9bON5I8dBLTli09gYDVRZAOvbSHuOcYBnAT6sWpt8v0=;
+        b=vUSuOUv60FTX3fPNao1p7oqL1DkBRKbcgfm6yiV6+IAH4jEcBTp2JNoulMZjJO64db
+         BqC2AsBXsXMQNasDHXRcus9CgOFkOYdcYQB1DP89+3afZyg4Jr789rXDd9JccalJJz+Z
+         1WNlE0UvbHjOdjuHHFRYxBty9Va4cZXcoU8BrhySHPhBd8ozWJDTrezTfI28mgnfCSUS
+         bSf74qWVGWP9KJaPZbZ19MWQSdaPDOgx1fST29FFcSEq5O0HnqGyAC4CsxREZAa4NxPt
+         eV889Ma7JnLaapQWtszF94zj3vSkJ3W8/Rb8Gc4MvEHNwpUUzSYIpCixO2LNjLzSy9kH
+         +VXA==
+X-Gm-Message-State: AOAM533UfHL9cM+P3oWmcxmUzl9c3JqJzaCRaPyviUFsGhXZtnM/u1DJ
+        4GTIYEM7EfflVfxxhir1f5znSLfIvbvzpw==
+X-Google-Smtp-Source: ABdhPJzu4j4jzb+I5ffVkHkC1IPaeSod8S923nLoNM+nFx0WOGl7Zp1ZdW9e7Xi3pO/Vc2LsRQ9uNg==
+X-Received: by 2002:ac2:48a4:0:b0:471:fc7f:b54d with SMTP id u4-20020ac248a4000000b00471fc7fb54dmr6376200lfg.538.1652520953758;
+        Sat, 14 May 2022 02:35:53 -0700 (PDT)
+Received: from [192.168.1.103] ([31.173.80.11])
+        by smtp.gmail.com with ESMTPSA id d7-20020a05651221c700b0047255d210f0sm660466lft.31.2022.05.14.02.35.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 May 2022 02:35:52 -0700 (PDT)
+Subject: Re: [PATCH 3/3] ARM: dts: lan966x: Add UDPHS support
+To:     Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>, regressions@lists.linux.dev
-References: <20220428183010.1635248-1-stefan.wahren@i2se.com>
- <20220503145804.b2xz4etzc6kpr3fk@houat>
- <ee39ddd1-bfce-012d-5e04-448d779ed995@i2se.com>
- <20220510132756.qmyjca53xu44iwn7@houat>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220510132756.qmyjca53xu44iwn7@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20220513105850.310375-1-herve.codina@bootlin.com>
+ <20220513105850.310375-4-herve.codina@bootlin.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <4436479e-c0ef-4962-7ad3-2b8b80e1643a@gmail.com>
+Date:   Sat, 14 May 2022 12:35:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20220513105850.310375-4-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:r2U+3GHILFBJRwdN1QPH4ahI0ZnQAgBHx5ON/pp7+M6xKkOOU7B
- cDh3ez2wjRJDVkrRmJyZwqRX20qLK1h0odGOKQA2gTvVdOIshrolMPvO+ltIotrDkCOtZNv
- LiY7PFDCv4rd6871n6rH6mVZPgjfoFEW85IhYK6dJd44NRceaaeueFrXBEdw6B6E6ArK/SB
- c4xfRAYikG3kU9drmxyug==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OBUcdSwGzvA=:7kGSMmYVHvANedwOjmE35m
- SzdqVBJwDVp9wf95BaSpp3sfWCU4L4eNupi1Kk+MfxmfgsDIrCEsZ8raEt2qcUZGVa2pHV7yy
- fcGYyYA4dRRVjNLSDjx0rEAjq5hba/B6WdJsEoy/lsnaRzUgHjg0gU0lrvxFUM2D+3yNRVABR
- ZGGHtQVu7SGQm1nUgScsxQVFVur89dyT/bSSSzvHqNmocn/6s2wu9NPPcTIz//6DMs4+4avjz
- 3hbnW1KFFA8F1VbVMWDbLBzD38/cQCB37EFv/lODaFi74u2JYDq5vs6Gy8Adqc4Kz0EE9ywBI
- 4pobsDdp7eu/Oe5iT6P0KZaT47dzaNJVGSoYOZcRSKEftQ17Ph/wxaTz6Iajk7/fT2XtgFNLV
- IhFQEjRwHG9jlmgLQ+zz3HJ/piqnqMl092hVk/UB99bmp+mIdkhZDOEOWkdxK88lyFpIblB67
- ui15rI9kZThCBe34+KZVA3KtDdKBLGlYKee2Cxh0NCcShParsWRB6rYWhLKBtOy4YJuqacbeM
- Tceoun7RySowctJv9QYJST8OitRLcbuQwKamXV4gTVABcVCKs6zhfEmzELI82lWPnWufgHtCm
- plNtvNzjQNlMhylKibpNSMsedV+uPonc7BCxL/Rdr490wpCQmc1fc/bpdlyWoSsg+JDKl5dRi
- RP7Oaj0/h3aBtA0HDsX13QMCt6v97jUf7tzCVVySjnRasWRhCNIYnh3NwHdgMqdEc7i14er5N
- RX6jO9XoycglYTeatOVWytW1rkDApoI3Lrn/A1e+QF1eDQAedtgUdJd+ogk=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hello!
 
-Am 10.05.22 um 15:27 schrieb Maxime Ripard:
-> On Sat, May 07, 2022 at 11:26:28AM +0200, Stefan Wahren wrote:
->> Am 03.05.22 um 16:58 schrieb Maxime Ripard:
->>> Hi,
->>>
->>> On Thu, Apr 28, 2022 at 08:30:10PM +0200, Stefan Wahren wrote:
->>>> The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
->>>> accidentially breaks the behavior of bcm2835_clock_choose_div() and
->>>> booting of Raspberry Pi. The removed do_div macro call had side effects,
->>>> so we need to restore it.
->>>>
->>>> Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
->>>> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
->>> I only found this patch after debugging why the HDMI driver was
->>> returning -EINVAL at probe on -rc5.
->>>
->>> Acked-by: Maxime Ripard <maxime@cerno.tech>
->>> Tested-by: Maxime Ripard <maxime@cerno.tech>
->> Thanks,
->>
->> does this go via clk-fixes?
-> Yep, it should.
->
-> Stephen, could we merge this?
-Is there any chance to get this regression fix into mainline before 5.18 
-is released?
->
-> Maxime
+On 5/13/22 1:58 PM, Herve Codina wrote:
+
+> Add UDPHS (the USB High Speed Device Port controller) support.
+> The UDPHS IP present in the lan966x SOC is the same as the one
+> present in the SAMA5D3 SOC
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  arch/arm/boot/dts/lan966x.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/lan966x.dtsi b/arch/arm/boot/dts/lan966x.dtsi
+> index 7d2869648050..4c09f3166d27 100644
+> --- a/arch/arm/boot/dts/lan966x.dtsi
+> +++ b/arch/arm/boot/dts/lan966x.dtsi
+> @@ -211,6 +211,17 @@ can0: can@e081c000 {
+>  			status = "disabled";
+>  		};
+>  
+> +		udc: udphs@e0808000 {
+
+   Shouldn't it be:
+
+		udphs: udc@e0808000 {
+
+(as the node names should be generic)?
+
+[...]
+
+MBR, Sergey
