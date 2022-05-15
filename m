@@ -2,114 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025D8C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 09:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6652C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 12:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236184AbiEOJyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 May 2022 05:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33776 "EHLO
+        id S234046AbiEOMYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 May 2022 08:24:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236172AbiEOJyn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 05:54:43 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339CC3153E
-        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 02:54:42 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id f4so8464351lfu.12
-        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 02:54:42 -0700 (PDT)
+        with ESMTP id S232000AbiEOMYO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 08:24:14 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7771C1FA71;
+        Sun, 15 May 2022 05:24:12 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id t25so21590334lfg.7;
+        Sun, 15 May 2022 05:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=gQEfQ5vJQL6jpC1Tvs1WzVX7/mZ31DOC5y2HUnjzALI=;
-        b=xS7pUV/3EkrxlycX0L6/FEA6iJPGxOoiDzuzWU3a1KmAOMiEyAhmSQGQRXrb35Yzt9
-         zqTlWpN3qcThnhAFGsRCEPaN5aF7968EHYnTZaiIpmzmbuAjHUXpsHyF7lfYTl6V2i50
-         rVhOXY2NzeI0vMCPQZWMBC/s5aEkH7pes1lAmxtw5aW9jGWK1pfS3qYXrjyf1Gsq40Q0
-         fJvozTUM1W2RvfsErXyZEdMPvGhRvx+Ad3d9f4152J5VJL94ks4Weyn0miOBARtKis5u
-         xuKbum/TRUKnk+0+YCDWObPH1VvS24mPFOKN1uKB1oSL6oMiuXXRxCwx9Ai3erRqJIIy
-         NWqw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SUYig9sC8leaYOCWOdsNI+HlvuAaX37oi9lRYpsx+P8=;
+        b=iiOULWswBYpK90JecBC9nc/knvuCpa1b6yQplA2pSGWDfTpf6U33KTLWFFk1ormmAM
+         mgn3612DFjZpvY3q8R9gcQxuHrK6gQcSTZxKCqI+2JrWANkh23v0omtIQjutDebbEpHB
+         iCD7cQQ6PHQ07YdTj7LxnlqDvxFfEd8BUC5IMwI0ytw9ZaeMZ5BnNZRj3eFKJOTHkwAD
+         VyPciobVHOg4BY4jtVfmZEyUGnO/V+EDVUlzvb4UC6gvop2/aBvkQGFBuBnmNunI6d/1
+         kIGeRcjPbrcU1xPyiRLB4EWs+2HzcW/23263gYNeIvnRVLfGerfzVMDRtmGfL8UeNiJE
+         ku+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=gQEfQ5vJQL6jpC1Tvs1WzVX7/mZ31DOC5y2HUnjzALI=;
-        b=tck/Rkh3IGWoFXzB6062qvK63sGee+GLgkDtE/XWKLVocdv0mym9Yes304vE8WTaY3
-         ogXT0BuSbNGF9zdJMB5h/bq85FdwkwBL6/hVpae1B6LBGW+uuZuooiPXAq/Osl04TDIh
-         wzMZsxWcDUmbP8e+HFj17CMSDGl8ITs4wtLi9HIWlVY0Z+XUq+uz3nGwnWo0c4gP6G04
-         RIYpp4vtH+K4H4D1d9NHtzwHcmAh+v7mU49ciFMQjal059WyCnujrpVwfyM+dSlgsote
-         lIUtMNI4SwbFgR7Ta58WomNdoz7rpwuNwMJeEEWOhgwi/oXAJhap5VTFUXUPaPOzr9H+
-         0m7A==
-X-Gm-Message-State: AOAM530+k5tcCcLM76YsK1+bRG+qmwYTmaAaPGF3I8Hw3H4XYFAVKJx4
-        raglxzk/wHWd/moykB4a8CtvGg==
-X-Google-Smtp-Source: ABdhPJxcWukAIjcjb8gEHeipeH5rLBbB9Ymlx5x3k+a5VGCaBreyrDbuRJ5b5csmpQ8av1yz5XbC3Q==
-X-Received: by 2002:a05:6512:3048:b0:473:a3d4:5252 with SMTP id b8-20020a056512304800b00473a3d45252mr9274506lfb.50.1652608480591;
-        Sun, 15 May 2022 02:54:40 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y4-20020a2e9d44000000b0024f3d1dae9fsm1133677ljj.39.2022.05.15.02.54.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 May 2022 02:54:40 -0700 (PDT)
-Message-ID: <c3b8a28d-087f-f973-17db-da9c0fed10dd@linaro.org>
-Date:   Sun, 15 May 2022 11:54:38 +0200
+        bh=SUYig9sC8leaYOCWOdsNI+HlvuAaX37oi9lRYpsx+P8=;
+        b=uIeGVe19x9QvNSPFJEKowN3sscERmzxSEWi4kNzGSGnJITJvHTy6v4m0Pbn9vrPDlL
+         xHE3TzY84tcti+ZJOvR4rHodxBIxrZql+bXaVeeZPLeiFYx15DWmG+UqhozjklKNo7xk
+         TPZfL2lQIFX4pksTh6UJa8Rbz+xcI3nKYpKbpzo88hICk58LxvQU7MP1pMAG0WMPG9Ni
+         Y/B5mb0BJL9xhGivCzviNOTa9HXqh8P3QB6hGQFUC6RcuWAnytUuVazSJWyGBoENA8Pi
+         FnWIna5XvHZBnxhOL4doZQfKg2gaha6plqPg1SHnUnb5i4GuOKGRgKmbhusFByJ2IDgN
+         xB0Q==
+X-Gm-Message-State: AOAM5336+4fWGSeCC0skuo2x+Hg4q4vqC6rPnk2FU/zQ3bPK66E4JN6m
+        zWPpLPvJjHK77/pKxW2EUno=
+X-Google-Smtp-Source: ABdhPJxueo7UdkBUCiG7xkIxGrbVht2IPsYta1UK+q2vDQr9FAab+n0M0AQ2er67IN7IQerFev5Htw==
+X-Received: by 2002:a05:6512:3042:b0:473:b1e0:5667 with SMTP id b2-20020a056512304200b00473b1e05667mr9843775lfb.516.1652617450856;
+        Sun, 15 May 2022 05:24:10 -0700 (PDT)
+Received: from localhost.localdomain ([104.28.198.246])
+        by smtp.gmail.com with ESMTPSA id 1-20020a2e0f01000000b0024f3d1daea2sm1172501ljp.42.2022.05.15.05.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 May 2022 05:24:10 -0700 (PDT)
+From:   Boris Lysov <arz65xx@gmail.com>
+X-Google-Original-From: Boris Lysov <arzamas-16@mail.ee>
+To:     arzamas-16@mail.ee, mturquette@baylibre.com, sboyd@kernel.org,
+        matthias.bgg@gmail.com, wenst@chromium.org,
+        miles.chen@mediatek.com, angelogioacchino.delregno@collabora.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: Fix unused 'ops' field in mtk_pll_data
+Date:   Sun, 15 May 2022 15:24:09 +0300
+Message-Id: <20220515122409.13423-1-arzamas-16@mail.ee>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH V4 3/5] arm64: dts: nuvoton: Add initial support for
- MA35D1
-Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>,
-        Jacky Huang <ychuang3@nuvoton.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
-        arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com,
-        will@kernel.org, soc@kernel.org, cfli0@nuvoton.com
-References: <20220510032558.10304-1-ychuang3@nuvoton.com>
- <20220510032558.10304-4-ychuang3@nuvoton.com>
- <03ac0a67-bd1f-12ca-74f7-8d5b05857ea7@linaro.org>
- <46a55b01-ee9f-604f-72c9-916bc2f02a09@nuvoton.com>
- <0e72e176-d7b0-ed10-08f3-ba7d4729a931@linaro.org>
- <db333ce4-6b21-7807-15fa-384619cde6f8@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <db333ce4-6b21-7807-15fa-384619cde6f8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/05/2022 07:53, Jacky Huang wrote:
-> 
-> On 2022/5/13 下午 02:57, Krzysztof Kozlowski wrote:
->> On 13/05/2022 08:48, Jacky Huang wrote:
->>>>> +
->>>>> +	hxt_24m: hxt_24mhz {
->>>> No underscores in node name. Generic node names, so "clock-X" or
->>>> "clock-some-suffix"
->>> OK, I will modify it as
->>>    hxt-24m: hxt-24mhz
->> No, it is not a generic node name. Please read my reply again.
-> 
-> I  would modify it as
-> 
->     clock-hxt: clock-hspd-ext-crystal
-> 
-> 
->>
->>>>> +		compatible = "fixed-clock";
->>>>> +		#clock-cells = <0>;
->>>>> +		clock-frequency = <24000000>;
->>>> This does not look like property of SoC. Where is this clock defined? In
->>>> the SoC or on the board?
->>> It's an external crystal on the board.
->>> I add this node, because it's the clock source of clock controller.
->>> It always present on all ma35d1 boards.
->>>
+From: Boris Lysov <arzamas-16@mail.ee>
 
-Then such clock is not a property of a SoC, but a board. Feel free to
-simplify DTS by storing most of the clock node in DTSI, but frequency
-should be defined by each board.
+Allow to specify optional clk_ops in mtk_pll_data which will be picked up in
+mtk_clk_register_pll. So far no already supported Mediatek SoC needs
+non-default clk_ops for PLLs but instead of removing this field it will be
+actually used in the future for supporting older SoCs (see [1] for details)
+with quirky PLLs.
 
+This patch depends on series "clk: mediatek: Move to struct clk_hw provider
+APIs" [2] by Chen-Yu Tsai.
 
+[1] https://lists.infradead.org/pipermail/linux-mediatek/2022-February/035093.html
+[2] https://lists.infradead.org/pipermail/linux-mediatek/2022-May/040921.html
 
-Best regards,
-Krzysztof
+Signed-off-by: Boris Lysov <arzamas-16@mail.ee>
+---
+ drivers/clk/mediatek/clk-pll.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index cabdf25a27f3..509959a325f0 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -347,7 +347,10 @@ static struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
+ 
+ 	init.name = data->name;
+ 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
+-	init.ops = &mtk_pll_ops;
++	if (data->ops)
++		init.ops = data->ops;
++	else
++		init.ops = &mtk_pll_ops;
+ 	if (data->parent_name)
+ 		init.parent_names = &data->parent_name;
+ 	else
+-- 
+2.20.1
+
