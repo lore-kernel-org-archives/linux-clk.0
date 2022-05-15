@@ -2,104 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6652C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 12:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7090C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 20:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234046AbiEOMYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 May 2022 08:24:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
+        id S238659AbiEOUkU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 May 2022 16:40:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232000AbiEOMYO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 08:24:14 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7771C1FA71;
-        Sun, 15 May 2022 05:24:12 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id t25so21590334lfg.7;
-        Sun, 15 May 2022 05:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SUYig9sC8leaYOCWOdsNI+HlvuAaX37oi9lRYpsx+P8=;
-        b=iiOULWswBYpK90JecBC9nc/knvuCpa1b6yQplA2pSGWDfTpf6U33KTLWFFk1ormmAM
-         mgn3612DFjZpvY3q8R9gcQxuHrK6gQcSTZxKCqI+2JrWANkh23v0omtIQjutDebbEpHB
-         iCD7cQQ6PHQ07YdTj7LxnlqDvxFfEd8BUC5IMwI0ytw9ZaeMZ5BnNZRj3eFKJOTHkwAD
-         VyPciobVHOg4BY4jtVfmZEyUGnO/V+EDVUlzvb4UC6gvop2/aBvkQGFBuBnmNunI6d/1
-         kIGeRcjPbrcU1xPyiRLB4EWs+2HzcW/23263gYNeIvnRVLfGerfzVMDRtmGfL8UeNiJE
-         ku+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SUYig9sC8leaYOCWOdsNI+HlvuAaX37oi9lRYpsx+P8=;
-        b=uIeGVe19x9QvNSPFJEKowN3sscERmzxSEWi4kNzGSGnJITJvHTy6v4m0Pbn9vrPDlL
-         xHE3TzY84tcti+ZJOvR4rHodxBIxrZql+bXaVeeZPLeiFYx15DWmG+UqhozjklKNo7xk
-         TPZfL2lQIFX4pksTh6UJa8Rbz+xcI3nKYpKbpzo88hICk58LxvQU7MP1pMAG0WMPG9Ni
-         Y/B5mb0BJL9xhGivCzviNOTa9HXqh8P3QB6hGQFUC6RcuWAnytUuVazSJWyGBoENA8Pi
-         FnWIna5XvHZBnxhOL4doZQfKg2gaha6plqPg1SHnUnb5i4GuOKGRgKmbhusFByJ2IDgN
-         xB0Q==
-X-Gm-Message-State: AOAM5336+4fWGSeCC0skuo2x+Hg4q4vqC6rPnk2FU/zQ3bPK66E4JN6m
-        zWPpLPvJjHK77/pKxW2EUno=
-X-Google-Smtp-Source: ABdhPJxueo7UdkBUCiG7xkIxGrbVht2IPsYta1UK+q2vDQr9FAab+n0M0AQ2er67IN7IQerFev5Htw==
-X-Received: by 2002:a05:6512:3042:b0:473:b1e0:5667 with SMTP id b2-20020a056512304200b00473b1e05667mr9843775lfb.516.1652617450856;
-        Sun, 15 May 2022 05:24:10 -0700 (PDT)
-Received: from localhost.localdomain ([104.28.198.246])
-        by smtp.gmail.com with ESMTPSA id 1-20020a2e0f01000000b0024f3d1daea2sm1172501ljp.42.2022.05.15.05.24.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 May 2022 05:24:10 -0700 (PDT)
-From:   Boris Lysov <arz65xx@gmail.com>
-X-Google-Original-From: Boris Lysov <arzamas-16@mail.ee>
-To:     arzamas-16@mail.ee, mturquette@baylibre.com, sboyd@kernel.org,
-        matthias.bgg@gmail.com, wenst@chromium.org,
-        miles.chen@mediatek.com, angelogioacchino.delregno@collabora.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: Fix unused 'ops' field in mtk_pll_data
-Date:   Sun, 15 May 2022 15:24:09 +0300
-Message-Id: <20220515122409.13423-1-arzamas-16@mail.ee>
-X-Mailer: git-send-email 2.20.1
+        with ESMTP id S230463AbiEOUkS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 16:40:18 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B9318B18;
+        Sun, 15 May 2022 13:40:14 -0700 (PDT)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=phil.lan)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nqL26-0006KS-GD; Sun, 15 May 2022 22:40:06 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     zhangqing@rock-chips.com, Johan Jonker <jbx6244@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: convert rockchip,rv1108-cru.txt to YAML
+Date:   Sun, 15 May 2022 22:40:04 +0200
+Message-Id: <165264719504.2587306.15719505641957259296.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220330131608.30040-1-jbx6244@gmail.com>
+References: <20220330131608.30040-1-jbx6244@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Boris Lysov <arzamas-16@mail.ee>
+On Wed, 30 Mar 2022 15:16:06 +0200, Johan Jonker wrote:
+> Convert rockchip,rv1108-cru.txt to YAML.
+> 
+> Changes against original bindings:
+>   Add clocks and clock-names because the device has to have
+>   at least one input clock.
 
-Allow to specify optional clk_ops in mtk_pll_data which will be picked up in
-mtk_clk_register_pll. So far no already supported Mediatek SoC needs
-non-default clk_ops for PLLs but instead of removing this field it will be
-actually used in the future for supporting older SoCs (see [1] for details)
-with quirky PLLs.
+Applied, thanks!
 
-This patch depends on series "clk: mediatek: Move to struct clk_hw provider
-APIs" [2] by Chen-Yu Tsai.
+[1/3] dt-bindings: clock: convert rockchip,rv1108-cru.txt to YAML
+      commit: 5eb60b7bff3233d07e6a9e3328d2ba415209691e
+[2/3] ARM: dts: rockchip: add clocks property to cru node rv1108
+      commit: f36fed209444efe8ac6621900f407c6569c92dc9
+[3/3] ARM: dts: rockchip: Remove bogus "amba" bus nodes part 2
+      commit: 191800d40222ee920dab2e7a774ea2ae4f28c1c9
 
-[1] https://lists.infradead.org/pipermail/linux-mediatek/2022-February/035093.html
-[2] https://lists.infradead.org/pipermail/linux-mediatek/2022-May/040921.html
-
-Signed-off-by: Boris Lysov <arzamas-16@mail.ee>
----
- drivers/clk/mediatek/clk-pll.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index cabdf25a27f3..509959a325f0 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -347,7 +347,10 @@ static struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 
- 	init.name = data->name;
- 	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
--	init.ops = &mtk_pll_ops;
-+	if (data->ops)
-+		init.ops = data->ops;
-+	else
-+		init.ops = &mtk_pll_ops;
- 	if (data->parent_name)
- 		init.parent_names = &data->parent_name;
- 	else
+Best regards,
 -- 
-2.20.1
-
+Heiko Stuebner <heiko@sntech.de>
