@@ -2,90 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F476C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 07:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025D8C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 15 May 2022 09:54:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235124AbiEOHe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 May 2022 03:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
+        id S236184AbiEOJyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 May 2022 05:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbiEOHeZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 03:34:25 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B6614035;
-        Sun, 15 May 2022 00:34:23 -0700 (PDT)
-Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1nq8lg-00007j-EW; Sun, 15 May 2022 09:34:20 +0200
-Message-ID: <2bee6f89-ff32-68a8-c2e6-957254b1b4d6@leemhuis.info>
-Date:   Sun, 15 May 2022 09:34:18 +0200
+        with ESMTP id S236172AbiEOJyn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 May 2022 05:54:43 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 339CC3153E
+        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 02:54:42 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id f4so8464351lfu.12
+        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 02:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=gQEfQ5vJQL6jpC1Tvs1WzVX7/mZ31DOC5y2HUnjzALI=;
+        b=xS7pUV/3EkrxlycX0L6/FEA6iJPGxOoiDzuzWU3a1KmAOMiEyAhmSQGQRXrb35Yzt9
+         zqTlWpN3qcThnhAFGsRCEPaN5aF7968EHYnTZaiIpmzmbuAjHUXpsHyF7lfYTl6V2i50
+         rVhOXY2NzeI0vMCPQZWMBC/s5aEkH7pes1lAmxtw5aW9jGWK1pfS3qYXrjyf1Gsq40Q0
+         fJvozTUM1W2RvfsErXyZEdMPvGhRvx+Ad3d9f4152J5VJL94ks4Weyn0miOBARtKis5u
+         xuKbum/TRUKnk+0+YCDWObPH1VvS24mPFOKN1uKB1oSL6oMiuXXRxCwx9Ai3erRqJIIy
+         NWqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=gQEfQ5vJQL6jpC1Tvs1WzVX7/mZ31DOC5y2HUnjzALI=;
+        b=tck/Rkh3IGWoFXzB6062qvK63sGee+GLgkDtE/XWKLVocdv0mym9Yes304vE8WTaY3
+         ogXT0BuSbNGF9zdJMB5h/bq85FdwkwBL6/hVpae1B6LBGW+uuZuooiPXAq/Osl04TDIh
+         wzMZsxWcDUmbP8e+HFj17CMSDGl8ITs4wtLi9HIWlVY0Z+XUq+uz3nGwnWo0c4gP6G04
+         RIYpp4vtH+K4H4D1d9NHtzwHcmAh+v7mU49ciFMQjal059WyCnujrpVwfyM+dSlgsote
+         lIUtMNI4SwbFgR7Ta58WomNdoz7rpwuNwMJeEEWOhgwi/oXAJhap5VTFUXUPaPOzr9H+
+         0m7A==
+X-Gm-Message-State: AOAM530+k5tcCcLM76YsK1+bRG+qmwYTmaAaPGF3I8Hw3H4XYFAVKJx4
+        raglxzk/wHWd/moykB4a8CtvGg==
+X-Google-Smtp-Source: ABdhPJxcWukAIjcjb8gEHeipeH5rLBbB9Ymlx5x3k+a5VGCaBreyrDbuRJ5b5csmpQ8av1yz5XbC3Q==
+X-Received: by 2002:a05:6512:3048:b0:473:a3d4:5252 with SMTP id b8-20020a056512304800b00473a3d45252mr9274506lfb.50.1652608480591;
+        Sun, 15 May 2022 02:54:40 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id y4-20020a2e9d44000000b0024f3d1dae9fsm1133677ljj.39.2022.05.15.02.54.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 May 2022 02:54:40 -0700 (PDT)
+Message-ID: <c3b8a28d-087f-f973-17db-da9c0fed10dd@linaro.org>
+Date:   Sun, 15 May 2022 11:54:38 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: bcm2835: fix bcm2835_clock_choose_div
+ Thunderbird/91.8.1
+Subject: Re: [PATCH V4 3/5] arm64: dts: nuvoton: Add initial support for
+ MA35D1
 Content-Language: en-US
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220428183010.1635248-1-stefan.wahren@i2se.com>
-From:   Thorsten Leemhuis <regressions@leemhuis.info>
-In-Reply-To: <20220428183010.1635248-1-stefan.wahren@i2se.com>
+To:     Jacky Huang <ychuang570808@gmail.com>,
+        Jacky Huang <ychuang3@nuvoton.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     robh+dt@kernel.org, sboyd@kernel.org, krzk+dt@kernel.org,
+        arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com,
+        will@kernel.org, soc@kernel.org, cfli0@nuvoton.com
+References: <20220510032558.10304-1-ychuang3@nuvoton.com>
+ <20220510032558.10304-4-ychuang3@nuvoton.com>
+ <03ac0a67-bd1f-12ca-74f7-8d5b05857ea7@linaro.org>
+ <46a55b01-ee9f-604f-72c9-916bc2f02a09@nuvoton.com>
+ <0e72e176-d7b0-ed10-08f3-ba7d4729a931@linaro.org>
+ <db333ce4-6b21-7807-15fa-384619cde6f8@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <db333ce4-6b21-7807-15fa-384619cde6f8@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1652600063;e4c26344;
-X-HE-SMSGID: 1nq8lg-00007j-EW
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[TLDR: I'm adding this regression report to the list of tracked
-regressions; all text from me you find below is based on a few templates
-paragraphs you might have encountered already already in similar form.]
-
-Hi, this is your Linux kernel regression tracker. Thx for CCing the
-regression list in a later mail.
-
-On 28.04.22 20:30, Stefan Wahren wrote:
-> The commit 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> accidentially breaks the behavior of bcm2835_clock_choose_div() and
-> booting of Raspberry Pi. The removed do_div macro call had side effects,
-> so we need to restore it.
+On 15/05/2022 07:53, Jacky Huang wrote:
 > 
-> Fixes: 09e3b18ca5de ("clk: bcm2835: Remove unused variable")
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-
-To be sure the issue doesn't fall through the cracks unnoticed as it
-mentioned in the weekly reports, I'm adding it to regzbot, my Linux
-kernel regression tracking bot:
-
-#regzbot ^introduced 09e3b18ca5de
-#regzbot title clk: bcm2835: 09e3b18ca5de broke the behavior of
-bcm2835_clock_choose_div() and booting of Raspberry Pi booting of
-Raspberry Pi
-#regzbot ignore-activity
-
-
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 1 +
->  1 file changed, 1 insertion(+)
+> On 2022/5/13 下午 02:57, Krzysztof Kozlowski wrote:
+>> On 13/05/2022 08:48, Jacky Huang wrote:
+>>>>> +
+>>>>> +	hxt_24m: hxt_24mhz {
+>>>> No underscores in node name. Generic node names, so "clock-X" or
+>>>> "clock-some-suffix"
+>>> OK, I will modify it as
+>>>    hxt-24m: hxt-24mhz
+>> No, it is not a generic node name. Please read my reply again.
 > 
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 3ad20e75fd23..48a1eb9f2d55 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -941,6 +941,7 @@ static u32 bcm2835_clock_choose_div(struct clk_hw *hw,
->  	u64 temp = (u64)parent_rate << CM_DIV_FRAC_BITS;
->  	u32 div, mindiv, maxdiv;
->  
-> +	do_div(temp, rate);
->  	div = temp;
->  	div &= ~unused_frac_mask;
->  
+> I  would modify it as
+> 
+>     clock-hxt: clock-hspd-ext-crystal
+> 
+> 
+>>
+>>>>> +		compatible = "fixed-clock";
+>>>>> +		#clock-cells = <0>;
+>>>>> +		clock-frequency = <24000000>;
+>>>> This does not look like property of SoC. Where is this clock defined? In
+>>>> the SoC or on the board?
+>>> It's an external crystal on the board.
+>>> I add this node, because it's the clock source of clock controller.
+>>> It always present on all ma35d1 boards.
+>>>
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+Then such clock is not a property of a SoC, but a board. Feel free to
+simplify DTS by storing most of the clock node in DTSI, but frequency
+should be defined by each board.
 
-P.S.: As the Linux kernel's regression tracker I deal with a lot of
-reports and sometimes miss something important when writing mails like
-this. If that's the case here, don't hesitate to tell me in a public
-reply, it's in everyone's interest to set the public record straight.
+
+
+Best regards,
+Krzysztof
