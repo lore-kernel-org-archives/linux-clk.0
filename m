@@ -2,141 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073E0C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 13:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31939C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 15:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242705AbiEPN2F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 09:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
+        id S245280AbiEPP1F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 11:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243529AbiEPN1J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 09:27:09 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E84D7289A0
-        for <linux-clk@vger.kernel.org>; Mon, 16 May 2022 06:27:02 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 8057532009A1;
-        Mon, 16 May 2022 09:27:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 16 May 2022 09:27:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1652707620; x=1652794020; bh=PI
-        uzbyO7A+ufIai1lujejQXo1UeRPgHN207KWVIj91w=; b=P7A/WQO/BVx/5R8D7V
-        UNW/u1kAFybouJiohx7fXEWEpNDrycr51YMh5idltbiRw/T7qHeaMlj4fhFK7TM0
-        nAlbhj2/d2Rcr6aRCHBT6cQhvcmRu+oV2eV5SxxgYU53BcWYU186sd22VRa6BVDu
-        ZBhJZvS5XmPQ2SmJqhmeFlaiNT59x9NcG5RSeTdtU/KuMNb4EPjWt5ZdaPAcnhYf
-        BAh4KIubCBrAU7y9SmdzXtsr5Ge2z1FF52U+TXSXrYR/VQKaYn07RTsl+SGTB7WT
-        Ex+GUwwgEQng2ckCsPGq0aw7GXnJtFpWWh1orlxCcL8HA6xbT7J6CItTJUQ8fVV3
-        uRUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1652707620; x=1652794020; bh=PIuzbyO7A+ufIai1lujejQXo1UeRPgHN207
-        KWVIj91w=; b=lkeFHaso4zpkDFzzmXDN02iVhQ1IJVyxKIQIyKEtmKJMgJbjmlp
-        TLmZSpxId01dmC4CaBZJA8SYrlVyd3Xvi4yaWILlSMEC9u4dt99sI5z0XuSey/Sb
-        mV5GFgkef/yTOdZbozfzyOz1FHkGclh9uFKVJYgfMwnjD1+5mUmFIllPAcM3QHK5
-        lwvgUFhxZ7skX58veJai9wa3Zwa1tXPTMd2Z9KoMpUSu6z/1k6WpvJG7cKm2k35G
-        8y7bbACXLqavr2iYa3KMwnojseHwm+hbsnrQwMkr5OB8sGgyMNHY223qkbLvIjfo
-        /w+BPEKF0YNiKgteA4cgn5F9dwPtlq1AvsQ==
-X-ME-Sender: <xms:I1GCYrP_qSmAEQO9PlRUj-iuzePkNekms2-S5zOGCwLjxqnuLCqVBw>
-    <xme:I1GCYl_NFrQcayvTud7iWpDx1pOmv9a9uE4aWcBqhXgp5oF4f8sTDvjFQu71Ph1Wm
-    5ImVc8t_H2GP675jG4>
-X-ME-Received: <xmr:I1GCYqQjLdcVWkWCpTvftaq7qsXsxdluZtSK2iv6eRS-MYTPpisHfjVyV7qll_f31y-c0aS6ZPuOqX9iOM-uL5zU4GxBNgT0JDsSwow>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrheehgdeivdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekfeetudfhkeejiefhtedugfeuvdevkeekteetkefhkefhtdelgfefuddv
-    jefhnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:I1GCYvvwUIRXVqo_MWJN1Pp9FEZGNrWuMtCKabIZrbIB3-h6Q9tGEQ>
-    <xmx:I1GCYjfhnxxIS5uROCWl3rP1ZpXfZaLqXzvyj_4yNcmbQmywBPvcbA>
-    <xmx:I1GCYr3qBKYGk2eGQ0rc7Mu6iHanFR2WNIpbbOPFauA89NP67LpF5A>
-    <xmx:JFGCYkUvrcH4ctXDkL7aVjOQ8chp4SDQWUztxHVnLjE9J1QCwe-2jQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 May 2022 09:26:59 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     linux-clk@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v5 25/28] clk: Introduce the clk_hw_get_rate_range function
-Date:   Mon, 16 May 2022 15:25:24 +0200
-Message-Id: <20220516132527.328190-26-maxime@cerno.tech>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220516132527.328190-1-maxime@cerno.tech>
-References: <20220516132527.328190-1-maxime@cerno.tech>
+        with ESMTP id S229688AbiEPP1C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 11:27:02 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DDE12754;
+        Mon, 16 May 2022 08:26:55 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-edf9ddb312so20530436fac.8;
+        Mon, 16 May 2022 08:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KHyeVKxqxatLeY3gDq4jdVF9Tt519Zk/h+VHXOLojzc=;
+        b=KewvRBMJACjGiAlIKD93nIY5CDbfu7LGLi5U9OT3JumiPFbrpxe/9hLyeFkc/lrj9W
+         nyGDOJdITBAxQzLjMsAtN3oVx6acR1EWDeCWuS5Bd76MnSfwqtGsu1op6ye4kfO5CSEg
+         kyAvSbwiXB2Wctjrp7/yIbHPfXU8bo/c/Na8FsNDrd2IewsEeOUHsrgrbCChJFtxq4Xg
+         IbIjbK0xHOfAtds8bB6vnnsS1hu/Zv0xIdI/oEbKwWOt7kdKS6i1efSkkS1/Yh+RkHIv
+         AcFdJQl6YijSS3Vzpn7tqldQsxM+mtnHyKfaPlcsPcTq3aYi7vFD5B1VH2e5WXC3ddxO
+         Mftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KHyeVKxqxatLeY3gDq4jdVF9Tt519Zk/h+VHXOLojzc=;
+        b=tJChQStwvwqF2VBreDpMlHcHk2fInDb+4XutpKFhIzIaNBQn1y+dcfwiy2TnWSvmTF
+         Aza7Md5bST8lepRWHm83VAZA89tXGbxDXPlmoYTKcdbGr6Jni1jJcojh9cwGigr8rtmS
+         al6Zjp42rYcMG59gYG+tBe6d6HTOVJqdUYkCHXq6xe5efpw47XgnKHPpHea6x3RO9jQn
+         3V+GtACDVx9FNm6u7Je0JOSLtod3ezEnbYEyX/lKFBM0OzbSkPC63Yco0bOGVt81eRCY
+         mTtdRYOXq7gXWVmZ1mIyesTPzEzNbT7qbkihg4+wCptTRFCgrSBgtVV6d/GRANz9A0jM
+         3Stw==
+X-Gm-Message-State: AOAM532FG9XcG058P247KiVrPeyRuP07jYZynK+cyGOYyun4IBcN706t
+        2iRwPnkw4CxiPBC1zfQMtj4=
+X-Google-Smtp-Source: ABdhPJzIjGJ8YJEvupAXFxrzzx+fCG8rregIbh6jLEAET5ITg4EypP6IKnXddR5n4Rh0gU+G8PeHrw==
+X-Received: by 2002:a05:6870:c692:b0:e9:5368:10df with SMTP id cv18-20020a056870c69200b000e9536810dfmr9767194oab.182.1652714814852;
+        Mon, 16 May 2022 08:26:54 -0700 (PDT)
+Received: from wintermute.localdomain (cpe-76-183-134-35.tx.res.rr.com. [76.183.134.35])
+        by smtp.gmail.com with ESMTPSA id z30-20020a056870461e00b000e686d1389fsm5475774oao.57.2022.05.16.08.26.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 08:26:54 -0700 (PDT)
+Date:   Mon, 16 May 2022 10:26:51 -0500
+From:   Chris Morgan <macroalpha82@gmail.com>
+To:     Peter Geis <pgwipeout@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 6/6] arm64: dts: rockchip: enable sfc controller on
+ Quartz64 Model A
+Message-ID: <20220516152651.GA18461@wintermute.localdomain>
+References: <20220511150117.113070-1-pgwipeout@gmail.com>
+ <20220511150117.113070-7-pgwipeout@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220511150117.113070-7-pgwipeout@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some clock providers are hand-crafting their clk_rate_request, and need
-to figure out the current boundaries of their clk_hw to fill it
-properly.
+On Wed, May 11, 2022 at 11:01:17AM -0400, Peter Geis wrote:
+> Add the sfc controller binding for the Quartz64 Model A. This is not
+> populated by default, so leave it disabled.
+> 
+> Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> ---
+>  .../boot/dts/rockchip/rk3566-quartz64-a.dts      | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> index 71df64655de5..6ec349e7e521 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> @@ -603,6 +603,22 @@ &sdmmc1 {
+>  	status = "okay";
+>  };
+>  
+> +&sfc {
+> +	pinctrl-0 = <&fspi_pins>;
+> +	pinctrl-names = "default";
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	status = "disabled";
+> +
+> +	flash@0 {
+> +		compatible = "jedec,spi-nor";
+> +		reg = <0>;
+> +		spi-max-frequency = <24000000>;
+> +		spi-rx-bus-width = <4>;
+> +		spi-tx-bus-width = <1>;
 
-Let's create such a function for clock providers.
+This isn't really a concern, just a comment. Did you test this with the
+spi-tx-bus-width of 4 by chance? While I did have to use 1 for my
+implementation (the Odroid Go Advance) the Rockchip engineer I worked
+with couldn't replicate the issue on his end and we ended up chalking
+my issues up to an implementation specific problem. I'm only commenting
+here because I don't want you to think that for this device the tx
+always has to be 1, of course if your implementation does have issues
+with a tx of 2 or 4 that's different...
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c            | 16 ++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 18 insertions(+)
+Thank you.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 364e6baa3d1c..54fbc6894e3d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -683,6 +683,22 @@ static void clk_core_get_boundaries(struct clk_core *core,
- 		*max_rate = min(*max_rate, clk_user->max_rate);
- }
- 
-+/*
-+ * clk_hw_get_rate_range() - returns the clock rate range for a hw clk
-+ * @hw: the hw clk we want to get the range from
-+ * @min_rate: pointer to the variable that will hold the minimum
-+ * @max_rate: pointer to the variable that will hold the maximum
-+ *
-+ * Fills the @min_rate and @max_rate variables with the minimum and
-+ * maximum that clock can reach.
-+ */
-+void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
-+			   unsigned long *max_rate)
-+{
-+	clk_core_get_boundaries(hw->core, min_rate, max_rate);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_rate_range);
-+
- static bool clk_core_check_boundaries(struct clk_core *core,
- 				      unsigned long min_rate,
- 				      unsigned long max_rate)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7f4f34ff2b83..c0bcf72d5ecd 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1235,6 +1235,8 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
-+void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
-+			   unsigned long *max_rate);
- void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- 			   unsigned long max_rate);
- 
--- 
-2.36.1
-
+> +	};
+> +};
+> +
+>  /* spdif is exposed on con40 pin 18 */
+>  &spdif {
+>  	status = "okay";
+> -- 
+> 2.25.1
+> 
