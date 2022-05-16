@@ -2,74 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A09AC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 18:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D868BC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 21:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345054AbiEPSuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 14:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40722 "EHLO
+        id S1346784AbiEPVwO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 17:52:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234954AbiEPSuC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 14:50:02 -0400
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F94B3EAB9;
-        Mon, 16 May 2022 11:50:01 -0700 (PDT)
-Received: by mail-oi1-f172.google.com with SMTP id y63so19697358oia.7;
-        Mon, 16 May 2022 11:50:01 -0700 (PDT)
+        with ESMTP id S239699AbiEPVwN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 17:52:13 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8729FFC;
+        Mon, 16 May 2022 14:52:12 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id o80so9582333ybg.1;
+        Mon, 16 May 2022 14:52:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zzZisX84Vg2OWr0cWG9QgT8yxrNRlR4Nsje6UKglFgA=;
+        b=Y/5zvGzWwE7UJ7NOoRGm/nPFyByfyN1daTqIdAMl0+7R5JrwX1iIbjsbhPnV7b6o3j
+         slAv+enGD9g/EirCalum1+tvL8frWpiDRcFJ037oXn3Ux1QZOg0hXAXRQ4GBo4D6BLdQ
+         94NJ2aHsLDfuobSgx+g/j+0tdagU54bJqTnV/rWNGK9a3/1W/uiAn4UsMO5ciu4GI0Rq
+         3OuwXeFqFXvzcIOeiN6Gfksmj3BvcAgQ6g/CdO3mz7zDK6TpGEc3sblyGmH35YaqtUSR
+         7iJAL6Nv8WWzwI7A6m1u8mpD014wmNoEVGXYkgQGgpUrxidtpB8fYN6tKJy2DkVR8GcI
+         vgXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NJd87yuD1pj9LvycAEhEJrAh+QDD24w77tyGNFmAUac=;
-        b=W3bYZ7g8Ny6j6oB/REGsK3+MIgK+vorrbofovmGVOrfow/FqrThJES2MpfJeC82oeQ
-         uAKNt35FLC7rCd0bwtxetfUTzAp0WC71ZMz/8rseihvQXLcHjx2ng6bUdTl1pAxEUruS
-         0o+U1R0sFrTFOz6uxA7JPkYsRV7NHW7MTuuiRNduDjJFArXqCdCwo+DxG3/6Wuct8+9b
-         GYcGTh2SMhdwOMXYQMgY6RbXsRTpEf4ePiPn7boq1r3uyGLZi02hlDRbFJ/H2DWjD8aS
-         Y0e5cIg6jIzBwr1A/aGqVX5N2yR9nCnBc2W+UNoMVXXSw817HuSSld+Y6WvpUDaYlfWp
-         ZJEA==
-X-Gm-Message-State: AOAM533o757wiIVS8AWQgihkIUq+sCjdMKhziscoEqiZyTFDNhllXPep
-        NK5XFNbooLF2FrvrIVfkMA==
-X-Google-Smtp-Source: ABdhPJyCgwgytE1j1rmFgNxcFGnnP0JWCOTaEHZQvJ3m78nnVLvWvImK5sOPYKBVRyHSdLgb3+CiDw==
-X-Received: by 2002:a05:6808:e8d:b0:322:4fbe:8c5f with SMTP id k13-20020a0568080e8d00b003224fbe8c5fmr14009563oil.284.1652727000791;
-        Mon, 16 May 2022 11:50:00 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r9-20020a0568301ac900b0060603d8be2dsm4232444otc.67.2022.05.16.11.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 11:49:59 -0700 (PDT)
-Received: (nullmailer pid 3069340 invoked by uid 1000);
-        Mon, 16 May 2022 18:49:59 -0000
-Date:   Mon, 16 May 2022 13:49:59 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Alex Helms <alexander.helms.jy@renesas.com>
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        michal.simek@xilinx.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Renesas versaclock7 device tree bindings
-Message-ID: <20220516184959.GA3069296-robh@kernel.org>
-References: <20220503194201.25714-1-alexander.helms.jy@renesas.com>
- <20220503194201.25714-2-alexander.helms.jy@renesas.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zzZisX84Vg2OWr0cWG9QgT8yxrNRlR4Nsje6UKglFgA=;
+        b=1QhKVUJVhEckbmFoeflUsdtSfMxSaY7sYcjZoioheNZLSwJi56MzdQDcfJXUrzhVCa
+         x1QmhFfhYtFpWzL1faioxuMMBFgtfrza0oFSQBUhj7h9l0aCYr0IUb7RSMdOK8RSPTOD
+         gojxY9bmfcgq/mshkYAm6HtnlVMc6ryOlJR5feSBl3G0mbuQA8pAJERKkOgT93QeMoLW
+         SgCxPzUfGDSq7TKdwPACbtKanaN9bdMDUTlmAx37BWKJTBgsoFYhe5OHqdqUa3PFMtHr
+         S5srYWlJKiuQgR8qachSldXIC9h74H7Gu7mQbwtPXdYC+7kwPil9+d6BKn3ASLfxky0X
+         LqBQ==
+X-Gm-Message-State: AOAM532LS9AbNcQJqDXigU4H4lIpWKwac6CitqryiAo/OLTwd4iFp19L
+        R1Enxum25uE6JFt21cNaNeVSl+GsO8ZlryBVqItoraVF
+X-Google-Smtp-Source: ABdhPJzBo5/L9as/VSBWGQya1UD1+Dv9u82vrWD++mHF1+JUNvRZ7+25dViWmzipmM8qTXMmZtX4D2cB/nK9EmfmPm8=
+X-Received: by 2002:a25:600b:0:b0:648:ef9b:172d with SMTP id
+ u11-20020a25600b000000b00648ef9b172dmr19976789ybb.585.1652737931494; Mon, 16
+ May 2022 14:52:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220503194201.25714-2-alexander.helms.jy@renesas.com>
+References: <20220511150117.113070-1-pgwipeout@gmail.com> <20220511150117.113070-7-pgwipeout@gmail.com>
+ <20220516152651.GA18461@wintermute.localdomain>
+In-Reply-To: <20220516152651.GA18461@wintermute.localdomain>
+From:   Peter Geis <pgwipeout@gmail.com>
+Date:   Mon, 16 May 2022 17:51:59 -0400
+Message-ID: <CAMdYzYp9Yn7VGS3phj+QOP=Bh8+OH3i5oP81Ur_R_egXWYcyig@mail.gmail.com>
+Subject: Re: [PATCH v1 6/6] arm64: dts: rockchip: enable sfc controller on
+ Quartz64 Model A
+To:     Chris Morgan <macroalpha82@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 03 May 2022 12:42:00 -0700, Alex Helms wrote:
-> Renesas Versaclock7 is a family of configurable clock generator ICs
-> with fractional and integer dividers. This driver has basic support
-> for the RC21008A device, a clock synthesizer with a crystal input and
-> 8 outputs. The supports changing the FOD and IOD rates, and each
-> output can be gated.
-> 
-> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
-> ---
->  .../bindings/clock/renesas,versaclock7.yaml   | 64 +++++++++++++++++++
->  MAINTAINERS                                   |  5 ++
->  2 files changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,versaclock7.yaml
-> 
+On Mon, May 16, 2022 at 11:26 AM Chris Morgan <macroalpha82@gmail.com> wrote:
+>
+> On Wed, May 11, 2022 at 11:01:17AM -0400, Peter Geis wrote:
+> > Add the sfc controller binding for the Quartz64 Model A. This is not
+> > populated by default, so leave it disabled.
+> >
+> > Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+> > ---
+> >  .../boot/dts/rockchip/rk3566-quartz64-a.dts      | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> > index 71df64655de5..6ec349e7e521 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dts
+> > @@ -603,6 +603,22 @@ &sdmmc1 {
+> >       status = "okay";
+> >  };
+> >
+> > +&sfc {
+> > +     pinctrl-0 = <&fspi_pins>;
+> > +     pinctrl-names = "default";
+> > +     #address-cells = <1>;
+> > +     #size-cells = <0>;
+> > +     status = "disabled";
+> > +
+> > +     flash@0 {
+> > +             compatible = "jedec,spi-nor";
+> > +             reg = <0>;
+> > +             spi-max-frequency = <24000000>;
+> > +             spi-rx-bus-width = <4>;
+> > +             spi-tx-bus-width = <1>;
+>
+> This isn't really a concern, just a comment. Did you test this with the
+> spi-tx-bus-width of 4 by chance? While I did have to use 1 for my
+> implementation (the Odroid Go Advance) the Rockchip engineer I worked
+> with couldn't replicate the issue on his end and we ended up chalking
+> my issues up to an implementation specific problem. I'm only commenting
+> here because I don't want you to think that for this device the tx
+> always has to be 1, of course if your implementation does have issues
+> with a tx of 2 or 4 that's different...
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yes, and it was a data disaster. Looking into it I found all of the
+flash chips that I could find only support 4x RX 1x TX. Some didn't
+handle 4x RX terribly well either.
+
+>
+> Thank you.
+>
+> > +     };
+> > +};
+> > +
+> >  /* spdif is exposed on con40 pin 18 */
+> >  &spdif {
+> >       status = "okay";
+> > --
+> > 2.25.1
+> >
