@@ -2,233 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05DCC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 06:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCA5C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 07:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240212AbiEPGKh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 02:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
+        id S240671AbiEPHGf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 03:06:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240220AbiEPGKf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 02:10:35 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0893020F7E
-        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 23:10:31 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id o22so15956107ljp.8
-        for <linux-clk@vger.kernel.org>; Sun, 15 May 2022 23:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zib3uaRuFHQp5m+3/8oVVWs2fT/RhjrDBvhpgKAcf3A=;
-        b=T8a68Wcn4gY9NFXddamoH+rRrUy8g81C6ugx+hQrWs90thVEoFpfoW5rfePda8J8Ti
-         KhYLE5GeSNkseGhg6lt7Uw3CFsrabahfUTN6w49xWFaBgVGI0x9XP77w7igMPyaJ68Cq
-         qg8vUoA0kBuM1wr5DCpHhE3FpkgNX+KKJZK6qCoalPD/rQiLoRs9/bYs/l0ErwlkoH0P
-         1viy/5jm8JiHRHEICvrFZ3mP4KXxz85YQeOIAL0QqJ1J/jLc0LdzwVX5OH8SXaqpQEH3
-         cNP78pu268Ud97vfkkEiS4RW+MJ/RzJICDEG0kc8MdHqBzJU5DPGyHb+S8K2sDRzFhMV
-         K1KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=zib3uaRuFHQp5m+3/8oVVWs2fT/RhjrDBvhpgKAcf3A=;
-        b=1XmjteLQDNVkwuZZlW1AXq2INyAVkn+aSoMcBtSTkorxtpDE2dnDega2NiSfveQCjM
-         UUSud30ueoKtuG4FzmK6Q7Pi6x++5uBeb4InwgA/DjEY3FTHJpL77bnkRl6IvvK1GUFc
-         lWxEUsI+NuR/2vflB08W4I4tXmkvqz637tdKs6PUCwQpZLRU/yHa7kw2jOSJwhBM1OE3
-         RQXclKIoAQDtkOHYI5ybsGx1jyJJB2EX1iUViRSNVrRwhMLvBZkMNFor+KL36uQYpZnv
-         e3v7QfzII0IdIUNNB0QYKV1ybNjha0/lBFjToZ5286Mwy0tdJynP3U8DPpvb7EaHZUjc
-         5EhA==
-X-Gm-Message-State: AOAM530OhcCfudcWjv7XzL45/alZJVJQPRNBUhibiJ8uceolO4U62jkU
-        rx+iCoDvbq8qdlN8ToxBlWIiNA==
-X-Google-Smtp-Source: ABdhPJyrZUQf7WD5zZ0nqfhRfXzM6EGNE+a7PhnPAP8HR3cuJ7y91FoKEpx/vEUszqhSySkNWYqKKw==
-X-Received: by 2002:a05:651c:399:b0:24f:18d:5bbd with SMTP id e25-20020a05651c039900b0024f018d5bbdmr10166934ljp.481.1652681429224;
-        Sun, 15 May 2022 23:10:29 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id j9-20020a19f509000000b0047255d210f2sm1208147lfb.33.2022.05.15.23.10.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 May 2022 23:10:28 -0700 (PDT)
-Message-ID: <eecf3117-772a-f50a-5d09-4d729dea7561@linaro.org>
-Date:   Mon, 16 May 2022 08:10:27 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v3 7/7] ufs: use PM OPP when scaling gears
-Content-Language: en-US
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S238075AbiEPHGe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 03:06:34 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10CEDFD4;
+        Mon, 16 May 2022 00:06:32 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24FMsEUP022160;
+        Mon, 16 May 2022 09:06:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=IolJtT2ryCjPmaN5VNl5R2UNokUQzXRUwkZ1MBuzsUw=;
+ b=7ivhMK6g8s9+MycclAr9g+yJJQAEBaPUiBkfcLPcfaHY/6I68C03vCQ5NgMqArEIkpzq
+ Zwhih8rBDJ3oZ0t8vSjn5cH+T2HASzXASXVkhFK+qWsglq8DVVFIHoVsVckfKaH3MLAh
+ +Rt5lV9jv5yWu3YQSMTTQ1/4YC4lthBQNyZsL41rooImvtA+mQKGNd9KWNB+J19dkOF8
+ EfJDBEmJs0ISB7lmmMzdK6Lqpg6ZkcnByiSNDCXiET7TpKTPWwBP7hd7IuoqS2nanaHK
+ JmPzDM42LleMK0lU96qoMEg7EWsDejSqOKSupPzZh8uxT2o5DI6Gep4y/UtwPbYLwJYt jA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23ah8qcy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 May 2022 09:06:04 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 03C69100034;
+        Mon, 16 May 2022 09:06:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E38992122FE;
+        Mon, 16 May 2022 09:06:02 +0200 (CEST)
+Received: from localhost (10.75.127.50) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 16 May 2022 09:06:02
+ +0200
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20220513061347.46480-1-krzysztof.kozlowski@linaro.org>
- <20220513061347.46480-8-krzysztof.kozlowski@linaro.org>
- <20220513182546.GD1922@thinkpad>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220513182546.GD1922@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 00/14] Introduction of STM32MP13 RCC driver (Reset Clock Controller)
+Date:   Mon, 16 May 2022 09:05:46 +0200
+Message-ID: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-16_03,2022-05-13_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/05/2022 20:25, Manivannan Sadhasivam wrote:
-> On Fri, May 13, 2022 at 08:13:47AM +0200, Krzysztof Kozlowski wrote:
->> Scaling gears requires not only scaling clocks, but also voltage levels,
->> e.g. via performance states.
->>
->> Use the provided OPP table, to set proper OPP frequency which through
->> required-opps will trigger performance state change.  This deprecates
->> the old freq-table-hz Devicetree property and old clock scaling method
->> in favor of PM core code.
->>
-> 
-> To be clear, you are not changing the voltages (UFS supplies) through OPP. But
-> rather handle only clks and leave the power domain handling to parent OPP
-> device.
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Correct, the patchset itself does not introduce itself regulator
-control. For Qualcomm (and maybe others) these will be scaled via OPP
-performance states.
+v4: (rebased on next-20220512)
+  - rename scmi_shm@0 node into scmi-sram@0
+  - move sram node
+  - add reserved memory for optee
 
-> 
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
->> ---
->>
->> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->> ---
->>  drivers/scsi/ufs/ufshcd-pltfrm.c |  73 +++++++++++++++
->>  drivers/scsi/ufs/ufshcd.c        | 150 ++++++++++++++++++++++++-------
->>  drivers/scsi/ufs/ufshcd.h        |   6 ++
->>  3 files changed, 195 insertions(+), 34 deletions(-)
->>
->> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> index 3ab555f6e66e..a603ca8e383b 100644
->> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
->> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
->> @@ -10,6 +10,7 @@
->>  
->>  #include <linux/module.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/pm_opp.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/of.h>
->>  
->> @@ -108,6 +109,72 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
->>  	return ret;
->>  }
->>  
->> +static int ufshcd_parse_operating_points(struct ufs_hba *hba)
->> +{
->> +	struct device *dev = hba->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct ufs_clk_info *clki;
->> +	const char *names[16];
->> +	int cnt, i, ret;
->> +
->> +	if (!of_find_property(dev->of_node, "operating-points-v2", NULL))
->> +		return 0;
->> +
->> +	cnt = of_property_count_strings(np, "clock-names");
->> +	if (cnt <= 0) {
->> +		dev_warn(dev, "%s: Missing clock-names\n",
->> +			 __func__);
-> 
-> This is a hard error, right? So why not dev_err()?
+v3:
+  - cosmetic change from Stephen Boyd
+  - rename some functions in clk-stm32-core
+  - add missing static for variables or functions
 
-Good point, but actually this (and following cases) should be return 0,
-because clocks/freq-table/opp-points are not required properties. The
-original code (parsing it for freq-table-hz) also does not treat it as
-error.
+v2:
+  - Resend because patch 9,10,12,13 has not been sent
+  - add Reviewed by Krzysztof Kozlowski for patch 1
 
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (cnt > ARRAY_SIZE(names)) {
->> +		dev_info(dev, "%s: Too many clock-names\n",  __func__);
-> 
-> dev_err()?
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (of_find_property(np, "freq-table-hz", NULL)) {
->> +		dev_info(dev, "%s: operating-points and freq-table-hz are incompatible\n",
->> +			 __func__);
-> 
-> dev_err()?
-> 
->> +		return -EINVAL;
->> +	}
->> +
->> +	for (i = 0; i < cnt; i++) {
->> +		ret = of_property_read_string_index(np, "clock-names", i,
->> +						    &names[i]);
->> +		if (ret)
->> +			return ret;
->> +
->> +		clki = devm_kzalloc(dev, sizeof(*clki), GFP_KERNEL);
->> +		if (!clki)
->> +			return -ENOMEM;
->> +
->> +		clki->name = devm_kstrdup(dev, names[i], GFP_KERNEL);
->> +		if (!clki->name)
->> +			return -ENOMEM;
->> +
->> +		if (!strcmp(names[i], "ref_clk"))
->> +			clki->keep_link_active = true;
->> +
->> +		list_add_tail(&clki->list, &hba->clk_list_head);
->> +	}
->> +
->> +	ret = devm_pm_opp_set_clknames(dev, names, i);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_pm_opp_register_set_opp_helper(dev, ufshcd_set_opp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_pm_opp_of_add_table(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	hba->use_pm_opp = true;
->> +
-> 
-> Since you are only handling the clks in UFS driver's OPP implementation, it
-> warrants atleast a comment. Otherwise, someone will add voltage to the OPP
-> table and complain that it is not getting changed. Eventhough the UFS driver
-> won't allow doing it, it is safer to mention it explicitly.
+Gabriel Fernandez (14):
+  dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
+  clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
+  clk: stm32mp13: add stm32_mux clock management
+  clk: stm32mp13: add stm32_gate management
+  clk: stm32mp13: add stm32 divider clock
+  clk: stm32mp13: add composite clock
+  clk: stm32mp13: manage secured clocks
+  clk: stm32mp13: add all STM32MP13 peripheral clocks
+  clk: stm32mp13: add all STM32MP13 kernel clocks
+  clk: stm32mp13: add multi mux function
+  clk: stm32mp13: add safe mux management
+  ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
+  ARM: dts: stm32: add RCC on STM32MP13x SoC family
+  ARM: dts: stm32: add optee reserved memory on stm32mp135f-dk
 
-Sure.
+ .../bindings/clock/st,stm32mp1-rcc.yaml       |    2 +
+ arch/arm/boot/dts/stm32mp131.dtsi             |  142 +-
+ arch/arm/boot/dts/stm32mp133.dtsi             |    4 +-
+ arch/arm/boot/dts/stm32mp135f-dk.dts          |   16 +
+ arch/arm/boot/dts/stm32mp13xf.dtsi            |    3 +-
+ drivers/clk/Kconfig                           |    5 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/stm32/Makefile                    |    1 +
+ drivers/clk/stm32/clk-stm32-core.c            |  695 +++++++
+ drivers/clk/stm32/clk-stm32-core.h            |  188 ++
+ drivers/clk/stm32/clk-stm32mp13.c             | 1620 +++++++++++++++
+ drivers/clk/stm32/reset-stm32.c               |  122 ++
+ drivers/clk/stm32/reset-stm32.h               |    8 +
+ drivers/clk/stm32/stm32mp13_rcc.h             | 1748 +++++++++++++++++
+ include/dt-bindings/clock/stm32mp13-clks.h    |  229 +++
+ include/dt-bindings/reset/stm32mp13-resets.h  |  100 +
+ 16 files changed, 4813 insertions(+), 71 deletions(-)
+ create mode 100644 drivers/clk/stm32/Makefile
+ create mode 100644 drivers/clk/stm32/clk-stm32-core.c
+ create mode 100644 drivers/clk/stm32/clk-stm32-core.h
+ create mode 100644 drivers/clk/stm32/clk-stm32mp13.c
+ create mode 100644 drivers/clk/stm32/reset-stm32.c
+ create mode 100644 drivers/clk/stm32/reset-stm32.h
+ create mode 100644 drivers/clk/stm32/stm32mp13_rcc.h
+ create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
+ create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
 
-> 
-> Also I'm worried about the implementation specific to Qcom platforms. Like we
-> rely on RPMHPD to handle the power domains, but that may not be true for other
-> platforms. I know that we cannot support all possible implementations but
-> atleast we should document this limitation.
-> 
-> Rest looks fine to me. I'll take one more look after testing this series on
-> SM8450.
+-- 
+2.25.1
 
-Using OPPs is quite generic, so other platform could implement also
-regulator scaling. The changes are indeed targetting Qcom platforms, but
-they are not restricting any other usage.
-
-Best regards,
-Krzysztof
