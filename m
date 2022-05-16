@@ -2,139 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D40C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 07:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D944C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 09:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240862AbiEPHJj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 03:09:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60668 "EHLO
+        id S240626AbiEPJUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 05:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240967AbiEPHJX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 03:09:23 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2947DFFF;
-        Mon, 16 May 2022 00:09:21 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24G6JF7A021302;
-        Mon, 16 May 2022 09:09:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=ETRdQGCjQiJtQ+pqQWj/m90zuCJnm71Cziu5Zv07LA4=;
- b=LvhHp864m5SEuDcDUo7sH/cpa4WqFcxJaEiIsdOmETbcf3eOfpWXlS6FVtvZNUvlGZov
- hUWCUfo/lvwNK4Ldd+RJQ3/OZoj/kK3yAdAmNUUbh3PB6dBujK1ncIloS9fIHUeyCiwO
- 9x1AHRzKbiafvqXyMUDaRvjpqZLJnlH7a5iS1VeY3ONqMNHU2r/SLJMurMOJTdaOCZDJ
- +5OqWm9lSwbegIHRwQOQgXYqBK/xNvYT5JjLicjbyTgLWPMVbR0lgNVsBz07A5FM5T1C
- Q6jBnESDzSC0l6zca++4rHR8sHlE2de/mm1YaHMOuD6o6Ri5406G6JY8l4kyvMzNplmx sw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23ah8qx5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 May 2022 09:09:11 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DBB2110002A;
-        Mon, 16 May 2022 09:09:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D3A7721230D;
-        Mon, 16 May 2022 09:09:10 +0200 (CEST)
-Received: from localhost (10.75.127.49) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 16 May 2022 09:09:10
- +0200
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 12/14] ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
-Date:   Mon, 16 May 2022 09:05:58 +0200
-Message-ID: <20220516070600.7692-13-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
-References: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
+        with ESMTP id S235024AbiEPJUW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 05:20:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 756BF25EAC;
+        Mon, 16 May 2022 02:20:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9CB08B80F62;
+        Mon, 16 May 2022 09:20:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 40979C34100;
+        Mon, 16 May 2022 09:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652692818;
+        bh=wRK3W4kkTL91oUEb7BaY00QOBPsJRzSa8p8mNImhh+8=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=Gl+KBgvDdwmZN09ENrMC9KrP//i0Q1iM9NiqGDKgJWmlaNXAZlO+MaAWnjlKpTi4F
+         00qmAa6jDo/M/SguVgt4xI6Oce6mKD8pJxL5IpFkxGMRW2ruRrtCXmFS6HdSQIa3gt
+         Rtr5HBOQ7okYWmUjC8tScguwUY14+ZYgQTf3sW055C5OhE32Zesv8sFJgBD1Fi90kZ
+         ZrBzfJwpimRh97RasKdBheSGmHWiCTnQyD8fWkkLEC8WyefzJTdfOudHxwjKWpZyEj
+         xbk1M4EoCt2Rp1eUaJoKFZKbSKWoZKJP1Jz2jQ2sYWWQyOM7LdNuNUJ+vwtHchg1R7
+         a7bso+S699GDw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 18280F03935;
+        Mon, 16 May 2022 09:20:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-16_03,2022-05-13_01,2022-02-23_01
+Subject: Re: [PATCH v4 0/5] Add Renesas RZ/V2M Ethernet support
+From:   patchwork-bot+netdevbpf@kernel.org
+Message-Id: <165269281808.1627.2981856718769988919.git-patchwork-notify@kernel.org>
+Date:   Mon, 16 May 2022 09:20:18 +0000
+References: <20220512114722.35965-1-phil.edworthy@renesas.com>
+In-Reply-To: <20220512114722.35965-1-phil.edworthy@renesas.com>
+To:     Phil Edworthy <Phil.Edworthy@renesas.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        phil.edworthy@renesas.com, geert+renesas@glider.be,
+        s.shtylyov@omp.ru, sergei.shtylyov@gmail.com,
+        biju.das.jz@bp.renesas.com,
+        prabhakar.mahadev-lad.rj@bp.renesas.com,
+        Chris.Paterson2@renesas.com, magnus.damm@gmail.com,
+        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Hello:
 
-Enable optee and SCMI clocks support.
+This series was applied to netdev/net-next.git (master)
+by David S. Miller <davem@davemloft.net>:
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- arch/arm/boot/dts/stm32mp131.dtsi | 37 +++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+On Thu, 12 May 2022 12:47:17 +0100 you wrote:
+> The RZ/V2M Ethernet is very similar to R-Car Gen3 Ethernet-AVB, though
+> some small parts are the same as R-Car Gen2.
+> Other differences are:
+> * It has separate data (DI), error (Line 1) and management (Line 2) irqs
+>   rather than one irq for all three.
+> * Instead of using the High-speed peripheral bus clock for gPTP, it has
+>   a separate gPTP reference clock.
+> 
+> [...]
 
-diff --git a/arch/arm/boot/dts/stm32mp131.dtsi b/arch/arm/boot/dts/stm32mp131.dtsi
-index f9ebc47e6421..8f73a308116d 100644
---- a/arch/arm/boot/dts/stm32mp131.dtsi
-+++ b/arch/arm/boot/dts/stm32mp131.dtsi
-@@ -27,6 +27,30 @@ arm-pmu {
- 		interrupt-parent = <&intc>;
- 	};
- 
-+	firmware {
-+		optee {
-+			method = "smc";
-+			compatible = "linaro,optee-tz";
-+		};
-+
-+		scmi: scmi {
-+			compatible = "linaro,scmi-optee";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			linaro,optee-channel-id = <0>;
-+			shmem = <&scmi_shm>;
-+
-+			scmi_clk: protocol@14 {
-+				reg = <0x14>;
-+				#clock-cells = <1>;
-+			};
-+
-+			scmi_reset: protocol@16 {
-+				reg = <0x16>;
-+				#reset-cells = <1>;
-+			};
-+		};
-+	};
- 	clocks {
- 		clk_axi: clk-axi {
- 			#clock-cells = <0>;
-@@ -113,6 +137,19 @@ soc {
- 		interrupt-parent = <&intc>;
- 		ranges;
- 
-+		scmi_sram: sram@2ffff000 {
-+			compatible = "mmio-sram";
-+			reg = <0x2ffff000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x2ffff000 0x1000>;
-+
-+			scmi_shm: scmi-sram@0 {
-+				compatible = "arm,scmi-shmem";
-+				reg = <0 0x80>;
-+			};
-+		};
-+
- 		uart4: serial@40010000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x40010000 0x400>;
+Here is the summary with links:
+  - [v4,1/5] dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
+    https://git.kernel.org/netdev/net-next/c/a7931ac16128
+  - [v4,2/5] ravb: Separate handling of irq enable/disable regs into feature
+    https://git.kernel.org/netdev/net-next/c/cb99badde146
+  - [v4,3/5] ravb: Support separate Line0 (Desc), Line1 (Err) and Line2 (Mgmt) irqs
+    https://git.kernel.org/netdev/net-next/c/b0265dcba3d6
+  - [v4,4/5] ravb: Use separate clock for gPTP
+    https://git.kernel.org/netdev/net-next/c/72069a7b2821
+  - [v4,5/5] ravb: Add support for RZ/V2M
+    https://git.kernel.org/netdev/net-next/c/e1154be73153
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
