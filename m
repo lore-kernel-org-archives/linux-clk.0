@@ -2,77 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8158C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 18:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A09AC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 18:50:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344930AbiEPSaD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 14:30:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53800 "EHLO
+        id S1345054AbiEPSuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 14:50:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344916AbiEPS3x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 14:29:53 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D10FB3E5C2;
-        Mon, 16 May 2022 11:29:52 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id y20-20020a056830071400b00606a2ebd91bso10620239ots.5;
-        Mon, 16 May 2022 11:29:52 -0700 (PDT)
+        with ESMTP id S234954AbiEPSuC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 14:50:02 -0400
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F94B3EAB9;
+        Mon, 16 May 2022 11:50:01 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id y63so19697358oia.7;
+        Mon, 16 May 2022 11:50:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=OaecUFiUxZibI7py873WPjMBAa6EmidW+to0s/EQuUk=;
-        b=unpCVrGSImyUmImqgsAv/10vLd1wYBuAzASl7J21m1nWWnmEM3Roxttmcfl8kLHXsz
-         9RPF5uydxH5I1BrYQXPzH+YiX6gHoEE6Sr3HIk3C88Hmt726YR4bmfF30tvIWiY21jZ1
-         2H15kLOageQ+cqCEW5/WGiCFt6gOdCpDNJ/uesU784kT/xYNWfByTrjV1GohUYxbtrSs
-         5P5qRDestTS8MGEeb1OQLcvQn3k5+ZzEtVdORx1xxpercq2mb34uPxGktMauljL9DNEM
-         nK8uoLx9g90VCxldwVliXS6fWSBRsDnnAbdgEHmQ0o/NdN3mGHIgbf8OZRSC4MH+Y3pg
-         /LtQ==
-X-Gm-Message-State: AOAM530Wsq0RYxSE2C4VBac7+s5LVrvUl/5TVv0NirWRgEHblyOINjpG
-        TLAas43h9wt953oDPd2cuw==
-X-Google-Smtp-Source: ABdhPJwRtrohJ5GMQJDP1rcsA+kU6YqCTCII37RSfo3NP7KEsy6ZIP7CqE8AKoeBBac5Rd8hGkjG9g==
-X-Received: by 2002:a9d:6552:0:b0:605:e866:1b58 with SMTP id q18-20020a9d6552000000b00605e8661b58mr6408042otl.224.1652725792031;
-        Mon, 16 May 2022 11:29:52 -0700 (PDT)
+        bh=NJd87yuD1pj9LvycAEhEJrAh+QDD24w77tyGNFmAUac=;
+        b=W3bYZ7g8Ny6j6oB/REGsK3+MIgK+vorrbofovmGVOrfow/FqrThJES2MpfJeC82oeQ
+         uAKNt35FLC7rCd0bwtxetfUTzAp0WC71ZMz/8rseihvQXLcHjx2ng6bUdTl1pAxEUruS
+         0o+U1R0sFrTFOz6uxA7JPkYsRV7NHW7MTuuiRNduDjJFArXqCdCwo+DxG3/6Wuct8+9b
+         GYcGTh2SMhdwOMXYQMgY6RbXsRTpEf4ePiPn7boq1r3uyGLZi02hlDRbFJ/H2DWjD8aS
+         Y0e5cIg6jIzBwr1A/aGqVX5N2yR9nCnBc2W+UNoMVXXSw817HuSSld+Y6WvpUDaYlfWp
+         ZJEA==
+X-Gm-Message-State: AOAM533o757wiIVS8AWQgihkIUq+sCjdMKhziscoEqiZyTFDNhllXPep
+        NK5XFNbooLF2FrvrIVfkMA==
+X-Google-Smtp-Source: ABdhPJyCgwgytE1j1rmFgNxcFGnnP0JWCOTaEHZQvJ3m78nnVLvWvImK5sOPYKBVRyHSdLgb3+CiDw==
+X-Received: by 2002:a05:6808:e8d:b0:322:4fbe:8c5f with SMTP id k13-20020a0568080e8d00b003224fbe8c5fmr14009563oil.284.1652727000791;
+        Mon, 16 May 2022 11:50:00 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w63-20020a9d3645000000b006060322127fsm4161211otb.79.2022.05.16.11.29.50
+        by smtp.gmail.com with ESMTPSA id r9-20020a0568301ac900b0060603d8be2dsm4232444otc.67.2022.05.16.11.49.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 11:29:51 -0700 (PDT)
-Received: (nullmailer pid 3035804 invoked by uid 1000);
-        Mon, 16 May 2022 18:29:50 -0000
-Date:   Mon, 16 May 2022 13:29:50 -0500
+        Mon, 16 May 2022 11:49:59 -0700 (PDT)
+Received: (nullmailer pid 3069340 invoked by uid 1000);
+        Mon, 16 May 2022 18:49:59 -0000
+Date:   Mon, 16 May 2022 13:49:59 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     p.zabel@pengutronix.de, sboyd@kernel.org, arnd@arndb.de,
-        devicetree@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-        linux-clk@vger.kernel.org, tglx@linutronix.de,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        maz@kernel.org, linux@armlinux.org.uk
-Subject: Re: [PATCH v15 01/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
-Message-ID: <20220516182950.GA3035747-robh@kernel.org>
-References: <cover.1652329411.git.qinjian@cqplus1.com>
- <6107a68008f2d71d2c7868d4d94cb66c5b5fc134.1652329411.git.qinjian@cqplus1.com>
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        michal.simek@xilinx.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Renesas versaclock7 device tree bindings
+Message-ID: <20220516184959.GA3069296-robh@kernel.org>
+References: <20220503194201.25714-1-alexander.helms.jy@renesas.com>
+ <20220503194201.25714-2-alexander.helms.jy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6107a68008f2d71d2c7868d4d94cb66c5b5fc134.1652329411.git.qinjian@cqplus1.com>
+In-Reply-To: <20220503194201.25714-2-alexander.helms.jy@renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 12 May 2022 14:30:56 +0800, Qin Jian wrote:
-> This introduces bindings for boards based Sunplus SP7021 SoC.
+On Tue, 03 May 2022 12:42:00 -0700, Alex Helms wrote:
+> Renesas Versaclock7 is a family of configurable clock generator ICs
+> with fractional and integer dividers. This driver has basic support
+> for the RC21008A device, a clock synthesizer with a crystal input and
+> 8 outputs. The supports changing the FOD and IOD rates, and each
+> output can be gated.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
 > ---
-> Remove "Device Tree Bindings" from title
-> Add board compatible "sunplus,sp7021-demo-v3"
-> ---
->  .../bindings/arm/sunplus,sp7021.yaml          | 29 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++++
->  2 files changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+>  .../bindings/clock/renesas,versaclock7.yaml   | 64 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,versaclock7.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
