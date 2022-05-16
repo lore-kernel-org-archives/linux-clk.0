@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0984C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 07:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC41DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 16 May 2022 07:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240784AbiEPHIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 03:08:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57770 "EHLO
+        id S230516AbiEPHJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 03:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240780AbiEPHI0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 03:08:26 -0400
+        with ESMTP id S240862AbiEPHJ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 03:09:28 -0400
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB8C2E00E;
-        Mon, 16 May 2022 00:08:23 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24FKOBf5014061;
-        Mon, 16 May 2022 09:08:10 +0200
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F193E011;
+        Mon, 16 May 2022 00:09:24 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24FMvk8I008866;
+        Mon, 16 May 2022 09:09:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=81AC0tKKyrs0sUbd7KAH5uXIk4yAJL1tAjAFsMtkmFI=;
- b=DQKsxpQMmTnoIjOJqQAIuVrS3AcGr/wOJRgVTgZjpVL1ATr7w7fA+3kdCKGUDmzy+Kaa
- 0wDjs65SW3OliiRmIB8sTHbspaaordro+LvzMoM8kEIZzS6pxchDjqSXwKopMt/QiBo9
- 7HCOnBiUv8SG55R2QVIJ3eMsz/cK8+GsqR0t4Jw33vT4XVRpJe+hFscaq9cJexkLcxPr
- zXFJuVi6OwkIxzAScKkpqVwYgdeny9c0tqBZColRNt12XRckgSQYUw0q1W9WWCigMgyI
- WJDTLovlOxX/+tF4EQQ51U9TXEeKq84jvxy/iGCAC6JjargP2menO3ALoAB5b65oAe4U IQ== 
+ bh=uMamLNj5EKxEnDIDCpvvDWC4KvQie3wCsrhwTZMTMHc=;
+ b=S+ZsdrLey5ckmjAuGhjderH+248PSGMWejwlgzVy1F+qtTF0qYIxvrrvEpykl3uP7fIF
+ IBbJGGkFGqWl4JuAeCExH/EMov9aZhTG2zYCV2UEw2sk923mU3WSMnE57fr1quJo6XQD
+ vesdkBR55/7W3KVwcRBYe6fJNizrtiMIKvu96Z5IZeo2PkgNJvvFzfsCm5TTU2Yren/8
+ nNtvuekivqoJPvVlezj7Y4OLGzJRaxMnVIrr9ZI4KBPdiEWemws1wjagJhJ0Mgdjy+ro
+ 05H8KZRrHBPX5GsDMbygqgm/PKMsXnrCblDMbPgQ2KN+9jOLdOzAWf9E9GqLDMf6CaTV Rw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23ah8qrc-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21j8h3jh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 May 2022 09:08:09 +0200
+        Mon, 16 May 2022 09:09:12 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 390A710002A;
-        Mon, 16 May 2022 09:08:09 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76324100034;
+        Mon, 16 May 2022 09:09:11 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2FCFB2122F6;
-        Mon, 16 May 2022 09:08:09 +0200 (CEST)
-Received: from localhost (10.75.127.49) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 16 May 2022 09:08:08
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6DF5021230D;
+        Mon, 16 May 2022 09:09:11 +0200 (CEST)
+Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 16 May 2022 09:09:10
  +0200
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -52,16 +52,16 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 09/14] clk: stm32mp13: add all STM32MP13 kernel clocks
-Date:   Mon, 16 May 2022 09:05:55 +0200
-Message-ID: <20220516070600.7692-10-gabriel.fernandez@foss.st.com>
+Subject: [PATCH v4 13/14] ARM: dts: stm32: add RCC on STM32MP13x SoC family
+Date:   Mon, 16 May 2022 09:05:59 +0200
+Message-ID: <20220516070600.7692-14-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
 References: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
+X-Originating-IP: [10.75.127.48]
 X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -73,579 +73,326 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Complete all kernel clocks of stm32mp13.
+Enables Reset and Clocks Controller on STM32MP13
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/stm32/clk-stm32mp13.c | 513 ++++++++++++++++++++++++++++++
- 1 file changed, 513 insertions(+)
+ arch/arm/boot/dts/stm32mp131.dtsi  | 117 +++++++++++------------------
+ arch/arm/boot/dts/stm32mp133.dtsi  |   4 +-
+ arch/arm/boot/dts/stm32mp13xf.dtsi |   3 +-
+ 3 files changed, 47 insertions(+), 77 deletions(-)
 
-diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
-index b543474d5074..9edd32018f8f 100644
---- a/drivers/clk/stm32/clk-stm32mp13.c
-+++ b/drivers/clk/stm32/clk-stm32mp13.c
-@@ -525,10 +525,46 @@ static const struct clk_stm32_securiy stm32mp13_security[] = {
- 	SECF(SECF_MCO2, RCC_SECCFGR, RCC_SECCFGR_MCO2SEC),
- };
+diff --git a/arch/arm/boot/dts/stm32mp131.dtsi b/arch/arm/boot/dts/stm32mp131.dtsi
+index 8f73a308116d..9ad50d18d289 100644
+--- a/arch/arm/boot/dts/stm32mp131.dtsi
++++ b/arch/arm/boot/dts/stm32mp131.dtsi
+@@ -4,6 +4,8 @@
+  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
+  */
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/stm32mp13-clks.h>
++#include <dt-bindings/reset/stm32mp13-resets.h>
  
-+static const char * const adc12_src[] = {
-+	"pll4_r", "ck_per", "pll3_q"
-+};
-+
-+static const char * const dcmipp_src[] = {
-+	"ck_axi", "pll2_q", "pll4_p", "ck_per",
-+};
-+
- static const char * const eth12_src[] = {
- 	"pll4_p", "pll3_q"
- };
+ / {
+ 	#address-cells = <1>;
+@@ -51,61 +53,6 @@ scmi_reset: protocol@16 {
+ 			};
+ 		};
+ 	};
+-	clocks {
+-		clk_axi: clk-axi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <266500000>;
+-		};
+-
+-		clk_hse: clk-hse {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <24000000>;
+-		};
+-
+-		clk_hsi: clk-hsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <64000000>;
+-		};
+-
+-		clk_lsi: clk-lsi {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32000>;
+-		};
+-
+-		clk_pclk3: clk-pclk3 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <104438965>;
+-		};
+-
+-		clk_pclk4: clk-pclk4 {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <133250000>;
+-		};
+-
+-		clk_pll4_p: clk-pll4_p {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <50000000>;
+-		};
+-
+-		clk_pll4_r: clk-pll4_r {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <99000000>;
+-		};
+-
+-		clk_rtc_k: clk-rtc-k {
+-			#clock-cells = <0>;
+-			compatible = "fixed-clock";
+-			clock-frequency = <32768>;
+-		};
+-	};
  
-+static const char * const fdcan_src[] = {
-+	"ck_hse", "pll3_q", "pll4_q", "pll4_r"
-+};
-+
-+static const char * const fmc_src[] = {
-+	"ck_axi", "pll3_r", "pll4_p", "ck_per"
-+};
-+
-+static const char * const i2c12_src[] = {
-+	"pclk1", "pll4_r", "ck_hsi", "ck_csi"
-+};
-+
-+static const char * const i2c345_src[] = {
-+	"pclk6", "pll4_r", "ck_hsi", "ck_csi"
-+};
-+
-+static const char * const lptim1_src[] = {
-+	"pclk1", "pll4_p", "pll3_q", "ck_lse", "ck_lsi", "ck_per"
-+};
-+
-+static const char * const lptim23_src[] = {
-+	"pclk3", "pll4_q", "ck_per", "ck_lse", "ck_lsi"
-+};
-+
-+static const char * const lptim45_src[] = {
-+	"pclk3", "pll4_p", "pll3_q", "ck_lse", "ck_lsi", "ck_per"
-+};
-+
- static const char * const mco1_src[] = {
- 	"ck_hsi", "ck_hse", "ck_csi", "ck_lsi", "ck_lse"
- };
-@@ -537,6 +573,70 @@ static const char * const mco2_src[] = {
- 	"ck_mpu", "ck_axi", "ck_mlahb", "pll4_p", "ck_hse", "ck_hsi"
- };
+ 	intc: interrupt-controller@a0021000 {
+ 		compatible = "arm,cortex-a7-gic";
+@@ -154,7 +101,8 @@ uart4: serial@40010000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x40010000 0x400>;
+ 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_hsi>;
++			clocks = <&rcc UART4_K>;
++			resets = <&rcc UART4_R>;
+ 			status = "disabled";
+ 		};
  
-+static const char * const qspi_src[] = {
-+	"ck_axi", "pll3_r", "pll4_p", "ck_per"
-+};
-+
-+static const char * const rng1_src[] = {
-+	"ck_csi", "pll4_r", "ck_lse", "ck_lsi"
-+};
-+
-+static const char * const saes_src[] = {
-+	"ck_axi", "ck_per", "pll4_r", "ck_lsi"
-+};
-+
-+static const char * const sai1_src[] = {
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "pll3_r"
-+};
-+
-+static const char * const sai2_src[] = {
-+	"pll4_q", "pll3_q", "i2s_ckin", "ck_per", "spdif_ck_symb", "pll3_r"
-+};
-+
-+static const char * const sdmmc12_src[] = {
-+	"ck_axi", "pll3_r", "pll4_p", "ck_hsi"
-+};
-+
-+static const char * const spdif_src[] = {
-+	"pll4_p", "pll3_q", "ck_hsi"
-+};
-+
-+static const char * const spi123_src[] = {
-+	"pll4_p", "pll3_q", "i2s_ckin", "ck_per", "pll3_r"
-+};
-+
-+static const char * const spi4_src[] = {
-+	"pclk6", "pll4_q", "ck_hsi", "ck_csi", "ck_hse", "i2s_ckin"
-+};
-+
-+static const char * const spi5_src[] = {
-+	"pclk6", "pll4_q", "ck_hsi", "ck_csi", "ck_hse"
-+};
-+
-+static const char * const stgen_src[] = {
-+	"ck_hsi", "ck_hse"
-+};
-+
-+static const char * const usart12_src[] = {
-+	"pclk6", "pll3_q", "ck_hsi", "ck_csi", "pll4_q", "ck_hse"
-+};
-+
-+static const char * const usart34578_src[] = {
-+	"pclk1", "pll4_q", "ck_hsi", "ck_csi", "ck_hse"
-+};
-+
-+static const char * const usart6_src[] = {
-+	"pclk2", "pll4_q", "ck_hsi", "ck_csi", "ck_hse"
-+};
-+
-+static const char * const usbo_src[] = {
-+	"pll4_r", "ck_usbo_48m"
-+};
-+
-+static const char * const usbphy_src[] = {
-+	"ck_hse", "pll4_r", "clk-hse-div2"
-+};
-+
- /* Timer clocks */
- static struct clk_stm32_gate tim2_k = {
- 	.gate_id = GATE_TIM2,
-@@ -834,6 +934,337 @@ static struct clk_stm32_gate eth2stp = {
- 	.hw.init = CLK_HW_INIT("eth2stp", "ck_axi", &clk_stm32_gate_ops, 0),
- };
+@@ -169,7 +117,8 @@ dma1: dma-controller@48000000 {
+ 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_pclk4>;
++			clocks = <&rcc DMA1>;
++			resets = <&rcc DMA1_R>;
+ 			#dma-cells = <4>;
+ 			st,mem2mem;
+ 			dma-requests = <8>;
+@@ -186,7 +135,8 @@ dma2: dma-controller@48001000 {
+ 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_pclk4>;
++			clocks = <&rcc DMA2>;
++			resets = <&rcc DMA2_R>;
+ 			#dma-cells = <4>;
+ 			st,mem2mem;
+ 			dma-requests = <8>;
+@@ -195,13 +145,29 @@ dma2: dma-controller@48001000 {
+ 		dmamux1: dma-router@48002000 {
+ 			compatible = "st,stm32h7-dmamux";
+ 			reg = <0x48002000 0x40>;
+-			clocks = <&clk_pclk4>;
++			clocks = <&rcc DMAMUX1>;
++			resets = <&rcc DMAMUX1_R>;
+ 			#dma-cells = <3>;
+ 			dma-masters = <&dma1 &dma2>;
+ 			dma-requests = <128>;
+ 			dma-channels = <16>;
+ 		};
  
-+/* Kernel clocks */
-+static struct clk_stm32_composite sdmmc1_k = {
-+	.gate_id = GATE_SDMMC1,
-+	.mux_id = MUX_SDMMC1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("sdmmc1_k", sdmmc12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
++		rcc: rcc@50000000 {
++			compatible = "st,stm32mp13-rcc", "syscon";
++			reg = <0x50000000 0x1000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
 +
-+static struct clk_stm32_composite sdmmc2_k = {
-+	.gate_id = GATE_SDMMC2,
-+	.mux_id = MUX_SDMMC2,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("sdmmc2_k", sdmmc12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
++			clock-names = "hse", "hsi", "csi", "lse", "lsi";
 +
-+static struct clk_stm32_composite fmc_k = {
-+	.gate_id = GATE_FMC,
-+	.mux_id = MUX_FMC,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("fmc_k", fmc_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
++			clocks = <&scmi_clk CK_SCMI_HSE>,
++				 <&scmi_clk CK_SCMI_HSI>,
++				 <&scmi_clk CK_SCMI_CSI>,
++				 <&scmi_clk CK_SCMI_LSE>,
++				 <&scmi_clk CK_SCMI_LSI>;
++		};
 +
-+static struct clk_stm32_composite qspi_k = {
-+	.gate_id = GATE_QSPI,
-+	.mux_id = MUX_QSPI,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("qspi_k", qspi_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spi2_k = {
-+	.gate_id = GATE_SPI2,
-+	.mux_id = MUX_SPI23,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spi2_k", spi123_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spi3_k = {
-+	.gate_id = GATE_SPI3,
-+	.mux_id = MUX_SPI23,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spi3_k", spi123_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite i2c1_k = {
-+	.gate_id = GATE_I2C1,
-+	.mux_id = MUX_I2C12,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("i2c1_k", i2c12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite i2c2_k = {
-+	.gate_id = GATE_I2C2,
-+	.mux_id = MUX_I2C12,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("i2c2_k", i2c12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite lptim4_k = {
-+	.gate_id = GATE_LPTIM4,
-+	.mux_id = MUX_LPTIM45,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("lptim4_k", lptim45_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite lptim5_k = {
-+	.gate_id = GATE_LPTIM5,
-+	.mux_id = MUX_LPTIM45,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("lptim5_k", lptim45_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite usart3_k = {
-+	.gate_id = GATE_USART3,
-+	.mux_id = MUX_UART35,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("usart3_k", usart34578_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite uart5_k = {
-+	.gate_id = GATE_UART5,
-+	.mux_id = MUX_UART35,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("uart5_k", usart34578_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite uart7_k = {
-+	.gate_id = GATE_UART7,
-+	.mux_id = MUX_UART78,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("uart7_k", usart34578_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite uart8_k = {
-+	.gate_id = GATE_UART8,
-+	.mux_id = MUX_UART78,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("uart8_k", usart34578_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite sai1_k = {
-+	.gate_id = GATE_SAI1,
-+	.mux_id = MUX_SAI1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("sai1_k", sai1_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite adfsdm_k = {
-+	.gate_id = GATE_ADFSDM,
-+	.mux_id = MUX_SAI1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("adfsdm_k", sai1_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite sai2_k = {
-+	.gate_id = GATE_SAI2,
-+	.mux_id = MUX_SAI2,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("sai2_k", sai2_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite adc1_k = {
-+	.gate_id = GATE_ADC1,
-+	.mux_id = MUX_ADC1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("adc1_k", adc12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite adc2_k = {
-+	.gate_id = GATE_ADC2,
-+	.mux_id = MUX_ADC2,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("adc2_k", adc12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite rng1_k = {
-+	.gate_id = GATE_RNG1,
-+	.mux_id = MUX_RNG1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("rng1_k", rng1_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite usbphy_k = {
-+	.gate_id = GATE_USBPHY,
-+	.mux_id = MUX_USBPHY,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("usbphy_k", usbphy_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite stgen_k = {
-+	.gate_id = GATE_STGENC,
-+	.mux_id = MUX_STGEN,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("stgen_k", stgen_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spdif_k = {
-+	.gate_id = GATE_SPDIF,
-+	.mux_id = MUX_SPDIF,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spdif_k", spdif_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spi1_k = {
-+	.gate_id = GATE_SPI1,
-+	.mux_id = MUX_SPI1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spi1_k", spi123_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spi4_k = {
-+	.gate_id = GATE_SPI4,
-+	.mux_id = MUX_SPI4,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spi4_k", spi4_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite spi5_k = {
-+	.gate_id = GATE_SPI5,
-+	.mux_id = MUX_SPI5,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("spi5_k", spi5_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite i2c3_k = {
-+	.gate_id = GATE_I2C3,
-+	.mux_id = MUX_I2C3,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("i2c3_k", i2c345_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite i2c4_k = {
-+	.gate_id = GATE_I2C4,
-+	.mux_id = MUX_I2C4,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("i2c4_k", i2c345_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite i2c5_k = {
-+	.gate_id = GATE_I2C5,
-+	.mux_id = MUX_I2C5,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("i2c5_k", i2c345_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite lptim1_k = {
-+	.gate_id = GATE_LPTIM1,
-+	.mux_id = MUX_LPTIM1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("lptim1_k", lptim1_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite lptim2_k = {
-+	.gate_id = GATE_LPTIM2,
-+	.mux_id = MUX_LPTIM2,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("lptim2_k", lptim23_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite lptim3_k = {
-+	.gate_id = GATE_LPTIM3,
-+	.mux_id = MUX_LPTIM3,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("lptim3_k", lptim23_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite usart1_k = {
-+	.gate_id = GATE_USART1,
-+	.mux_id = MUX_UART1,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("usart1_k", usart12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite usart2_k = {
-+	.gate_id = GATE_USART2,
-+	.mux_id = MUX_UART2,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("usart2_k", usart12_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite uart4_k = {
-+	.gate_id = GATE_UART4,
-+	.mux_id = MUX_UART4,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("uart4_k", usart34578_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite uart6_k = {
-+	.gate_id = GATE_USART6,
-+	.mux_id = MUX_UART6,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("uart6_k", usart6_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite fdcan_k = {
-+	.gate_id = GATE_FDCAN,
-+	.mux_id = MUX_FDCAN,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("fdcan_k", fdcan_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite dcmipp_k = {
-+	.gate_id = GATE_DCMIPP,
-+	.mux_id = MUX_DCMIPP,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("dcmipp_k", dcmipp_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite usbo_k = {
-+	.gate_id = GATE_USBO,
-+	.mux_id = MUX_USBO,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("usbo_k", usbo_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_composite saes_k = {
-+	.gate_id = GATE_SAES,
-+	.mux_id = MUX_SAES,
-+	.div_id = NO_STM32_DIV,
-+	.hw.init = CLK_HW_INIT_PARENTS("saes_k", saes_src, &clk_stm32_composite_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_gate dfsdm_k = {
-+	.gate_id = GATE_DFSDM,
-+	.hw.init = CLK_HW_INIT("dfsdm_k", "ck_mlahb", &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_gate ltdc_px = {
-+	.gate_id = GATE_LTDC,
-+	.hw.init = CLK_HW_INIT("ltdc_px", "pll4_q", &clk_stm32_gate_ops, CLK_SET_RATE_PARENT),
-+};
-+
- static struct clk_stm32_mux ck_ker_eth1 = {
- 	.mux_id = MUX_ETH1,
- 	.hw.init = CLK_HW_INIT_PARENTS("ck_ker_eth1", eth12_src, &clk_stm32_mux_ops,
-@@ -851,6 +1282,23 @@ static struct clk_stm32_div eth1ptp_k = {
- 				  CLK_SET_RATE_NO_REPARENT),
- };
+ 		exti: interrupt-controller@5000d000 {
+ 			compatible = "st,stm32mp13-exti", "syscon";
+ 			interrupt-controller;
+@@ -212,14 +178,14 @@ exti: interrupt-controller@5000d000 {
+ 		syscfg: syscon@50020000 {
+ 			compatible = "st,stm32mp157-syscfg", "syscon";
+ 			reg = <0x50020000 0x400>;
+-			clocks = <&clk_pclk3>;
++			clocks = <&rcc SYSCFG>;
+ 		};
  
-+static struct clk_stm32_mux ck_ker_eth2 = {
-+	.mux_id = MUX_ETH2,
-+	.hw.init = CLK_HW_INIT_PARENTS("ck_ker_eth2", eth12_src, &clk_stm32_mux_ops,
-+					    CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
-+static struct clk_stm32_gate eth2ck_k = {
-+	.gate_id = GATE_ETH2CK,
-+	.hw.init = CLK_HW_INIT_HW("eth2ck_k", &ck_ker_eth2.hw, &clk_stm32_gate_ops, 0),
-+};
-+
-+static struct clk_stm32_div eth2ptp_k = {
-+	.div_id = DIV_ETH2PTP,
-+	.hw.init = CLK_HW_INIT_HW("eth2ptp_k", &ck_ker_eth2.hw, &clk_stm32_divider_ops,
-+				  CLK_SET_RATE_NO_REPARENT),
-+};
-+
- static struct clk_stm32_composite ck_mco1 = {
- 	.gate_id = GATE_MCO1,
- 	.mux_id = MUX_MCO1,
-@@ -869,6 +1317,19 @@ static struct clk_stm32_composite ck_mco2 = {
- 				       CLK_IGNORE_UNUSED),
- };
- 
-+/* Debug clocks */
-+static struct clk_stm32_gate ck_sys_dbg = {
-+	.gate_id = GATE_DBGCK,
-+	.hw.init = CLK_HW_INIT("ck_sys_dbg", "ck_axi", &clk_stm32_gate_ops, CLK_IS_CRITICAL),
-+};
-+
-+static struct clk_stm32_composite ck_trace = {
-+	.gate_id = GATE_TRACECK,
-+	.mux_id = NO_STM32_MUX,
-+	.div_id = DIV_TRACE,
-+	.hw.init = CLK_HW_INIT("ck_trace", "ck_axi", &clk_stm32_composite_ops, CLK_IGNORE_UNUSED),
-+};
-+
- static const struct clock_config stm32mp13_clock_cfg[] = {
- 	/* Timer clocks */
- 	STM32_GATE_CFG(TIM2_K, tim2_k, SECF_NONE),
-@@ -933,9 +1394,61 @@ static const struct clock_config stm32mp13_clock_cfg[] = {
- 	STM32_GATE_CFG(ETH1STP, eth1stp, SECF_ETH1STP),
- 	STM32_GATE_CFG(ETH2STP, eth2stp, SECF_ETH2STP),
- 
-+	/* Kernel clocks */
-+	STM32_COMPOSITE_CFG(SDMMC1_K, sdmmc1_k, SECF_SDMMC1),
-+	STM32_COMPOSITE_CFG(SDMMC2_K, sdmmc2_k, SECF_SDMMC2),
-+	STM32_COMPOSITE_CFG(FMC_K, fmc_k, SECF_FMC),
-+	STM32_COMPOSITE_CFG(QSPI_K, qspi_k, SECF_QSPI),
-+	STM32_COMPOSITE_CFG(SPI2_K, spi2_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(SPI3_K, spi3_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(I2C1_K, i2c1_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(I2C2_K, i2c2_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(LPTIM4_K, lptim4_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(LPTIM5_K, lptim5_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(USART3_K, usart3_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(UART5_K, uart5_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(UART7_K, uart7_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(UART8_K, uart8_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(SAI1_K, sai1_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(SAI2_K, sai2_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(ADFSDM_K, adfsdm_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(ADC1_K, adc1_k, SECF_ADC1),
-+	STM32_COMPOSITE_CFG(ADC2_K, adc2_k, SECF_ADC2),
-+	STM32_COMPOSITE_CFG(RNG1_K, rng1_k, SECF_RNG1),
-+	STM32_COMPOSITE_CFG(USBPHY_K, usbphy_k, SECF_USBPHY),
-+	STM32_COMPOSITE_CFG(STGEN_K, stgen_k, SECF_STGENC),
-+	STM32_COMPOSITE_CFG(SPDIF_K, spdif_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(SPI1_K, spi1_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(SPI4_K, spi4_k, SECF_SPI4),
-+	STM32_COMPOSITE_CFG(SPI5_K, spi5_k, SECF_SPI5),
-+	STM32_COMPOSITE_CFG(I2C3_K, i2c3_k, SECF_I2C3),
-+	STM32_COMPOSITE_CFG(I2C4_K, i2c4_k, SECF_I2C4),
-+	STM32_COMPOSITE_CFG(I2C5_K, i2c5_k, SECF_I2C5),
-+	STM32_COMPOSITE_CFG(LPTIM1_K, lptim1_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(LPTIM2_K, lptim2_k, SECF_LPTIM2),
-+	STM32_COMPOSITE_CFG(LPTIM3_K, lptim3_k, SECF_LPTIM3),
-+	STM32_COMPOSITE_CFG(USART1_K, usart1_k, SECF_USART1),
-+	STM32_COMPOSITE_CFG(USART2_K, usart2_k, SECF_USART2),
-+	STM32_COMPOSITE_CFG(UART4_K, uart4_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(USART6_K, uart6_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(FDCAN_K, fdcan_k, SECF_NONE),
-+	STM32_COMPOSITE_CFG(DCMIPP_K, dcmipp_k, SECF_DCMIPP),
-+	STM32_COMPOSITE_CFG(USBO_K, usbo_k, SECF_USBO),
-+	STM32_COMPOSITE_CFG(SAES_K, saes_k, SECF_SAES),
-+	STM32_GATE_CFG(DFSDM_K, dfsdm_k, SECF_NONE),
-+	STM32_GATE_CFG(LTDC_PX, ltdc_px, SECF_NONE),
-+
- 	STM32_MUX_CFG(NO_ID, ck_ker_eth1, SECF_ETH1CK),
- 	STM32_GATE_CFG(ETH1CK_K, eth1ck_k, SECF_ETH1CK),
- 	STM32_DIV_CFG(ETH1PTP_K, eth1ptp_k, SECF_ETH1CK),
-+
-+	STM32_MUX_CFG(NO_ID, ck_ker_eth2, SECF_ETH2CK),
-+	STM32_GATE_CFG(ETH2CK_K, eth2ck_k, SECF_ETH2CK),
-+	STM32_DIV_CFG(ETH2PTP_K, eth2ptp_k, SECF_ETH2CK),
-+
-+	STM32_GATE_CFG(CK_DBG, ck_sys_dbg, SECF_NONE),
-+	STM32_COMPOSITE_CFG(CK_TRACE, ck_trace, SECF_NONE),
-+
- 	STM32_COMPOSITE_CFG(CK_MCO1, ck_mco1, SECF_MCO1),
- 	STM32_COMPOSITE_CFG(CK_MCO2, ck_mco2, SECF_MCO2),
- };
+ 		mdma: dma-controller@58000000 {
+ 			compatible = "st,stm32h7-mdma";
+ 			reg = <0x58000000 0x1000>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_pclk4>;
++			clocks = <&rcc MDMA>;
+ 			#dma-cells = <5>;
+ 			dma-channels = <32>;
+ 			dma-requests = <48>;
+@@ -231,8 +197,9 @@ sdmmc1: mmc@58005000 {
+ 			reg = <0x58005000 0x1000>, <0x58006000 0x1000>;
+ 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "cmd_irq";
+-			clocks = <&clk_pll4_p>;
++			clocks = <&rcc SDMMC1_K>;
+ 			clock-names = "apb_pclk";
++			resets = <&rcc SDMMC1_R>;
+ 			cap-sd-highspeed;
+ 			cap-mmc-highspeed;
+ 			max-frequency = <130000000>;
+@@ -245,8 +212,9 @@ sdmmc2: mmc@58007000 {
+ 			reg = <0x58007000 0x1000>, <0x58008000 0x1000>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "cmd_irq";
+-			clocks = <&clk_pll4_p>;
++			clocks = <&rcc SDMMC2_K>;
+ 			clock-names = "apb_pclk";
++			resets = <&rcc SDMMC2_R>;
+ 			cap-sd-highspeed;
+ 			cap-mmc-highspeed;
+ 			max-frequency = <130000000>;
+@@ -256,7 +224,7 @@ sdmmc2: mmc@58007000 {
+ 		iwdg2: watchdog@5a002000 {
+ 			compatible = "st,stm32mp1-iwdg";
+ 			reg = <0x5a002000 0x400>;
+-			clocks = <&clk_pclk4>, <&clk_lsi>;
++			clocks = <&rcc IWDG2>, <&scmi_clk CK_SCMI_LSI>;
+ 			clock-names = "pclk", "lsi";
+ 			status = "disabled";
+ 		};
+@@ -265,7 +233,8 @@ rtc: rtc@5c004000 {
+ 			compatible = "st,stm32mp1-rtc";
+ 			reg = <0x5c004000 0x400>;
+ 			interrupts-extended = <&exti 19 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_pclk4>, <&clk_rtc_k>;
++			clocks = <&scmi_clk CK_SCMI_RTCAPB>,
++				 <&scmi_clk CK_SCMI_RTC>;
+ 			clock-names = "pclk", "rtc_ck";
+ 			status = "disabled";
+ 		};
+@@ -306,7 +275,7 @@ gpioa: gpio@50002000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x0 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOA>;
+ 				st,bank-name = "GPIOA";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 0 16>;
+@@ -318,7 +287,7 @@ gpiob: gpio@50003000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x1000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOB>;
+ 				st,bank-name = "GPIOB";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 16 16>;
+@@ -330,7 +299,7 @@ gpioc: gpio@50004000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x2000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOC>;
+ 				st,bank-name = "GPIOC";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 32 16>;
+@@ -342,7 +311,7 @@ gpiod: gpio@50005000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x3000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOD>;
+ 				st,bank-name = "GPIOD";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 48 16>;
+@@ -354,7 +323,7 @@ gpioe: gpio@50006000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x4000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOE>;
+ 				st,bank-name = "GPIOE";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 64 16>;
+@@ -366,7 +335,7 @@ gpiof: gpio@50007000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x5000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOF>;
+ 				st,bank-name = "GPIOF";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 80 16>;
+@@ -378,7 +347,7 @@ gpiog: gpio@50008000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x6000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOG>;
+ 				st,bank-name = "GPIOG";
+ 				ngpios = <16>;
+ 				gpio-ranges = <&pinctrl 0 96 16>;
+@@ -390,7 +359,7 @@ gpioh: gpio@50009000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x7000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOH>;
+ 				st,bank-name = "GPIOH";
+ 				ngpios = <15>;
+ 				gpio-ranges = <&pinctrl 0 112 15>;
+@@ -402,7 +371,7 @@ gpioi: gpio@5000a000 {
+ 				interrupt-controller;
+ 				#interrupt-cells = <2>;
+ 				reg = <0x8000 0x400>;
+-				clocks = <&clk_pclk4>;
++				clocks = <&rcc GPIOI>;
+ 				st,bank-name = "GPIOI";
+ 				ngpios = <8>;
+ 				gpio-ranges = <&pinctrl 0 128 8>;
+diff --git a/arch/arm/boot/dts/stm32mp133.dtsi b/arch/arm/boot/dts/stm32mp133.dtsi
+index 0fb1386257cf..531c263c9f46 100644
+--- a/arch/arm/boot/dts/stm32mp133.dtsi
++++ b/arch/arm/boot/dts/stm32mp133.dtsi
+@@ -15,7 +15,7 @@ m_can1: can@4400e000 {
+ 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&clk_hse>, <&clk_pll4_r>;
++			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+@@ -28,7 +28,7 @@ m_can2: can@4400f000 {
+ 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "int0", "int1";
+-			clocks = <&clk_hse>, <&clk_pll4_r>;
++			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+ 			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+diff --git a/arch/arm/boot/dts/stm32mp13xf.dtsi b/arch/arm/boot/dts/stm32mp13xf.dtsi
+index fa6889e30591..4d00e7592882 100644
+--- a/arch/arm/boot/dts/stm32mp13xf.dtsi
++++ b/arch/arm/boot/dts/stm32mp13xf.dtsi
+@@ -10,7 +10,8 @@ cryp: crypto@54002000 {
+ 			compatible = "st,stm32mp1-cryp";
+ 			reg = <0x54002000 0x400>;
+ 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clk_axi>;
++			clocks = <&rcc CRYP1>;
++			resets = <&rcc CRYP1_R>;
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.25.1
 
