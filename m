@@ -2,106 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A29C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 12:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E257C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 13:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344931AbiEQMlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 08:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S1346394AbiEQNQy convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 09:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346225AbiEQMlF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 08:41:05 -0400
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B94D15A3E;
-        Tue, 17 May 2022 05:41:04 -0700 (PDT)
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-edf9ddb312so23978532fac.8;
-        Tue, 17 May 2022 05:41:04 -0700 (PDT)
+        with ESMTP id S1347453AbiEQNQw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 09:16:52 -0400
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8155C41FAA;
+        Tue, 17 May 2022 06:16:47 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id l1so14338654qvh.1;
+        Tue, 17 May 2022 06:16:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=dmRe+wb3qB33LoKWee22zj7uRY4UjJW/ZlvarK0xJ4I=;
-        b=McgQOwCtPchEgymXSFKwAV+buRxA7hrizEVgq99sHU0MUzjZfvPrbVhsSkPOkFuGqn
-         WDKVmIIR5a03YtJkbasWg43FGPjQVn8iN+E5oy1UYqBhwc8p4cV2d8Xz4b9kOsx/0vLh
-         8+BCGzaCEuDA/Gdlu8uzgGosbGUfUeLzcIiqO02UhIbFhzWUl8ZFMvIPKU1cjDiyK0PI
-         LE0+74KgApMILpa3X/wVja7idNtxfrssmp46fMTNi65vL5kYxmqQ8yiFDfCC6L5FFB6l
-         /amjU48L0wwBZjrcpunRbOvGXa2L+uzMAh7QsjA5hjVBsCCBPW/bYbLtlg/zHcGOkixS
-         v5Hw==
-X-Gm-Message-State: AOAM531beHJUgsZloqMx2zyvprNiVGragzsq1lndQSfx6EqHqeU3Crc9
-        BzdGh342PztJhA89LLYjaFE0McLWQQ==
-X-Google-Smtp-Source: ABdhPJwnnXeDtNIrD9oMGMg+yVK7oZSnR6U4Y5GhHjmScQw8t3Gp/MJckdluI0FDFeWymxO+NodkOw==
-X-Received: by 2002:a05:6870:b61d:b0:f1:9674:f095 with SMTP id cm29-20020a056870b61d00b000f19674f095mr5886409oab.187.1652791263511;
-        Tue, 17 May 2022 05:41:03 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d6-20020a056870d28600b000f1ca01a7besm265451oae.24.2022.05.17.05.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 05:41:02 -0700 (PDT)
-Received: (nullmailer pid 785396 invoked by uid 1000);
-        Tue, 17 May 2022 12:40:59 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     daniel.lezcano@linaro.org, clin@suse.com,
-        linux-kernel@vger.kernel.org,
-        giulio.benetti@benettiengineering.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        cniedermaier@dh-electronics.com, dev@lynxeye.de,
-        mturquette@baylibre.com, arnd@arndb.de, s.hauer@pengutronix.de,
-        Mr.Bossman075@gmail.com, festevam@gmail.com, olof@lixom.net,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        marcel.ziswiler@toradex.com, aisheng.dong@nxp.com,
-        tglx@linutronix.de, kernel@pengutronix.de, linux@armlinux.org.uk,
-        stefan@agner.ch, abel.vesa@nxp.com,
-        sebastian.reichel@collabora.com, soc@kernel.org,
-        shawnguo@kernel.org, leoyang.li@nxp.com, sboyd@kernel.org,
-        linux-gpio@vger.kernel.org, tharvey@gateworks.com
-In-Reply-To: <20220517032802.451743-6-Mr.Bossman075@gmail.com>
-References: <20220517032802.451743-1-Mr.Bossman075@gmail.com> <20220517032802.451743-6-Mr.Bossman075@gmail.com>
-Subject: Re: [PATCH v3 07/15] dt-bindings: clock: imx: Add documentation for i.MXRT1170 clock
-Date:   Tue, 17 May 2022 07:40:59 -0500
-Message-Id: <1652791259.484121.785395.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=72BItrONoo13B+XZUBS7ShowYY5fuE/yH1rhlY56Dls=;
+        b=jjxzPnszt/tQgMF72XSQqEJB6V+o7anEQQpwtYejlzd9ZwkISQ/i4m2Yq9n4o6C61Q
+         jQxEHLTmRn6kN27ogdn9b3bn+Wxf4/lyEO9iNm1BO/Dz4gy7OmhR18tDSntSwIUVcUQR
+         FRLWGx7AYiBu0QTp6XEFWV/zuVrOA1gcCp/hTgohlYfL4ejM4oX2gHgREDI6KEN9jkkx
+         53TAeoU74I4Sw5JPLAuh8XpGEraviQVHKe6IkL0zFJqX7HkY/vC62kArTtSPRbHmCqs0
+         x9JUv+Cjxz9U1DIBBXj2ZHo3Fhd4Sudc9V/FpL7zB0wsMFJ6sIXTeC+waYSokuHEP8q3
+         sntw==
+X-Gm-Message-State: AOAM530Yc3U+Hi/p5EdZ6waKoeqgU5qI/TnSbDk9WoQcP0aJEhUkgzdt
+        sZLsCPOTR1PbNqJ4i3AFWgmmJOQx8hJueA==
+X-Google-Smtp-Source: ABdhPJyoGfcAMtQmPAa8oLWt2hinipfHFI82ZxVZGh+3Wd65Ajq6Qq7gcEc+KNtatrS8ja6KN3wmug==
+X-Received: by 2002:a05:6214:e4c:b0:45a:fb3d:74bd with SMTP id o12-20020a0562140e4c00b0045afb3d74bdmr19626848qvc.11.1652793406461;
+        Tue, 17 May 2022 06:16:46 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id d196-20020ae9efcd000000b006a09515d012sm7593313qkg.50.2022.05.17.06.16.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 May 2022 06:16:46 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id q135so13142396ybg.10;
+        Tue, 17 May 2022 06:16:46 -0700 (PDT)
+X-Received: by 2002:a05:6902:905:b0:64a:2089:f487 with SMTP id
+ bu5-20020a056902090500b0064a2089f487mr23072467ybb.202.1652793405866; Tue, 17
+ May 2022 06:16:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdUh69grzYVsMwdZLgv=KLy5-_FVjeMWx37qGsqCxz9Y6g@mail.gmail.com> <OS0PR01MB59224D1908A7DBB08DAF444986C29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB59224D1908A7DBB08DAF444986C29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 17 May 2022 15:16:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVqj6nr5h5G9w3wTDHCDbDK_9fJW4d7cvc1c1LC9D2roA@mail.gmail.com>
+Message-ID: <CAMuHMdVqj6nr5h5G9w3wTDHCDbDK_9fJW4d7cvc1c1LC9D2roA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 16 May 2022 23:27:54 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT1170 clock driver.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1 -> V2:
->  - Change title to Clock Controller
->  - Rename to add fsl
-> V2 -> V3:
->  - Remove unused include causing error
-> ---
->  .../bindings/clock/fsl,imxrt1170-clock.yaml   | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml
-> 
+Hi Biju,
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+On Thu, May 5, 2022 at 12:01 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
+> > On Wed, May 4, 2022 at 8:44 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > > After adding reset support to vsp, it needs a delay of 32 microseconds
+> > > after reset operation, otherwise system hangs(due to register
+> > read/write).
+> > > This patch fixes the system hang issue by adding delay after deassert
+> > > operation.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > > After adding reset/deassert support for vsp based on [1], RZ/G1N board
+> > > hangs. On debugging it found that it needs a delay of 35 microseconds
+> > > after deasserint reset. Wthout delay if there is any register
+> > > read/write will lead to hang.
+> > >
+> > > This 35 microseconds value is  picked from the reset().
+> >
+> > The 35 µs comes from the Hardware User's Manual: there should be at least 1
+> > RCLK cycle _in between_ asserting and deasserting reset.
+> > The manual doesn't say anything about delays _after_ deasserting reset.
+> >
+> > Could it be that the VSP1 driver is actually deasserting reset too early?
+>
+> My test results on RZ/G1N shows, it needs 35 micro seconds after deasserting reset.
 
-yamllint warnings/errors:
+I can confirm that accessing the VSP registers without the delay
+causes a lock-up on R-Car M2-W, too.
+I see no such lock-up on R-Car Gen3, but I cannot rule out that it
+is mitigated by a handler in secure mode, and that VSP initialization
+may actually fail (accessing registers of non-clocked modules usually
+causes an imprecise external abort, which is caught by Linux on R-Car
+Gen2, but turned into a no-op by secure firmware on R-Car Gen3).
 
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/fsl,imxrt1170-clock.yaml#
+Instead of adding the explicit delay, I tried added a polling loop
+after the call to reset_control_deassert() in the vsp1 driver, to
+wait until the reset is cleared, like is done in the i2c-rcar driver:
 
-doc reference errors (make refcheckdocs):
+        ret = read_poll_timeout_atomic(reset_control_status, ret, ret == 0, 1,
+                                       100, false, vsp1->rstc);
+        if (ret < 0) {
+                ...
+        }
 
-See https://patchwork.ozlabs.org/patch/
+This also fixes the issue for me.
+Adding more debug code shows that reset_control_status() is called
+only once (both for i2c and vsp1), so the polling completes before
+any call to udelay().
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Note that at that time[1], we added the delay to the i2c-rcar driver
+instead of the CPG/MSSR driver, as we were told that i2c reset was
+special, and other modules do not need this.
+Perhaps vsp reset is special, too?
+Or perhaps it is time to revisit this, and add the polling to both
+cpg_mssr_reset() and cpg_mssr_deassert(), so it can be removed from
+the drivers?
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+[1] Commit 3b770017b03a4cdf ("i2c: rcar: handle RXDMA HW behaviour on Gen3").
 
-pip3 install dtschema --upgrade
+Gr{oetje,eeting}s,
 
-Please check and re-submit.
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
