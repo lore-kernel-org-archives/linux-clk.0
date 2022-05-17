@@ -2,109 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D53C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 10:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADF6C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 12:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241611AbiEQKap (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 06:30:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37872 "EHLO
+        id S239586AbiEQMCZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 08:02:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241853AbiEQKak (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 06:30:40 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E6621B0;
-        Tue, 17 May 2022 03:30:38 -0700 (PDT)
-X-UUID: c66ce7917cd44ea3ab9552e558e0b8a6-20220517
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:2e6b7c57-7ac6-442f-a68f-d7521cb297c3,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:65367de2-edbf-4bd4-8a34-dfc5f7bb086d,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,QS:0,BEC:nil
-X-UUID: c66ce7917cd44ea3ab9552e558e0b8a6-20220517
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1398611353; Tue, 17 May 2022 18:30:34 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 17 May 2022 18:30:33 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 17 May 2022 18:30:32 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 17 May 2022 18:30:32 +0800
-Message-ID: <b7c080dfcdc3488b5b58badbff8396a8604b5969.camel@mediatek.com>
-Subject: Re: [PATCH v6 00/16] Cleanup MediaTek clk reset drivers and support
- MT8192/MT8195
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>,
-        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
-        <Runyang.Chen@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 17 May 2022 18:30:31 +0800
-In-Reply-To: <20220517072329.D367AC385B8@smtp.kernel.org>
-References: <20220503093856.22250-1-rex-bc.chen@mediatek.com>
-         <445ef1e3ef9d62934e1b84d4fb207705a90d4f34.camel@mediatek.com>
-         <20220517072329.D367AC385B8@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S1345715AbiEQMCD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 08:02:03 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521542A709;
+        Tue, 17 May 2022 05:01:42 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id d15so30885934lfk.5;
+        Tue, 17 May 2022 05:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1XEfcTfh5IBE4Hjq7tgRfCnyVEzUbgopQ2XduZTHdoY=;
+        b=JsoIPfQZlAqsSaswROdKslKyG/uZD3znk3WFv+pc2Cjlwgs8av4+twevvWm9xqngtE
+         qBhT3LmHzN93yhSzjBckOWuSoOj162DzbXzGdHMCi/7byVkjMITOwZmsw6YVsTOzErB9
+         9EuPWUL9A9mpwqNpFhrPEA54Ptp+D4/cNopmpOQ8FTtxb6+s1HC0s7l216032h2qixBK
+         sb8mtRG0V/p8VmT09slzOqk5HZqLRy5QSAY4MYtZnNFTKcH3Ji0Q/+BXg/7gzrnJffWe
+         NVYUDdSkUj5q97JDjff9uT2Rcu3hNEuao+cEWu1KzvAm/tmUGjQLndkq4v4+yNrCKisU
+         EnOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1XEfcTfh5IBE4Hjq7tgRfCnyVEzUbgopQ2XduZTHdoY=;
+        b=FEDV0CCHg7TFvP7STxFHLuQk0p8x9CRoVR3o3qoGsW4fcH3XLG4vfdzDjTKJ6WSURq
+         jJFe4xlbj7jIg3aLwJMwWPUQXlD+FaHOcFvfl/aCqz79yWFp4BfkBTmv2GVeK14CF2mR
+         30s5wt53yrAAiNqmEcuUQsVAx6ZdfR7jBuMTso/8ZPSdR/LcAA+a70TEbx0hRTIvncI7
+         yx884dmeG6n/43pPyiBnTBZXWZO6ZthkIA6qGgJA+8bmckLSHDM1jIYVxG2u1LV9Tg9S
+         jX2MZHT9jnSejIH2kg4ZDXjzFVtHhr66mk02cvxHHw1R1yUAGp0f4OAlrbChVgLsFwdS
+         LHIQ==
+X-Gm-Message-State: AOAM5307vUiZzyM1EBZ1IK0U2mbI7rcRSmyH2YCtziMduJzpKh50ocDl
+        7L2eq/06j7NIx3940M6+kas=
+X-Google-Smtp-Source: ABdhPJyw6crfKTxgnFRCnsGY6+gLCyX9jN1UKVLmG7EouLUk9AG2WbNzvsc1rSStulGPSfMQci/JcA==
+X-Received: by 2002:a05:6512:b10:b0:477:a556:4ab6 with SMTP id w16-20020a0565120b1000b00477a5564ab6mr1938339lfu.385.1652788898914;
+        Tue, 17 May 2022 05:01:38 -0700 (PDT)
+Received: from mobilestation ([95.79.189.214])
+        by smtp.gmail.com with ESMTPSA id p17-20020a2eb7d1000000b0024f3d1dae8csm1869603ljo.20.2022.05.17.05.01.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 05:01:38 -0700 (PDT)
+Date:   Tue, 17 May 2022 15:01:36 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: baikal-t1: Move reset-controls code into a
+ dedicated module
+Message-ID: <20220517120136.mg6ihyzjb6rme6lc@mobilestation>
+References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+ <20220503205722.24755-4-Sergey.Semin@baikalelectronics.ru>
+ <20220517073729.2FAE2C385B8@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517073729.2FAE2C385B8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2022-05-17 at 15:23 +0800, Stephen Boyd wrote:
-> Quoting Rex-BC Chen (2022-05-08 22:35:55)
+On Tue, May 17, 2022 at 12:37:26AM -0700, Stephen Boyd wrote:
+> Quoting Serge Semin (2022-05-03 13:57:21)
+> > Before adding the directly controlled resets support it's reasonable to
+> > move the existing resets control functionality into a dedicated object for
+> > the sake of the CCU dividers clock driver simplification. After the new
+> > functionality is added clk-ccu-div.c would have got to a mixture of the
+> > weakly dependent clocks and resets methods. Splitting the methods up into
+> > the two objects will make code easier to read especially seeing it isn't
+> > that hard to do.
 > > 
-> > The drivers of this series are reviewed.
-> > The binding of this series are also acked.
-> > Could you spare some time and give us some suggestion?
+> > As before the CCU reset module will support the trigger-like CCU resets
+> > only, which are responsible for the AXI-bus, APB-bus and SATA-ref blocks
+> > reset. The assert/de-assert-capable reset controls support will be added
+> > in the next commit.
+> > 
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > ---
+> >  drivers/clk/baikal-t1/Kconfig       |  12 +-
+> >  drivers/clk/baikal-t1/Makefile      |   1 +
+> >  drivers/clk/baikal-t1/ccu-rst.c     | 258 ++++++++++++++++++++++++++++
+> >  drivers/clk/baikal-t1/ccu-rst.h     |  60 +++++++
+> >  drivers/clk/baikal-t1/clk-ccu-div.c |  94 ++--------
 > 
-> Have you considered using the auxiliary bus to split the Mediatek clk
-> and reset device up into a clk device and a reset device? The idea
-> would
-> be to move the reset related code into drivers/reset and have the clk
-> code in drivers/clk. It's purely an organizational thing and it can
-> certainly be done later but it may be a good idea to do this to
-> clearly split out the two different functionalities.
 
-Hello Stephen,
+> Perhaps this should be done via the auxiliary bus by having the clk
+> driver register the reset driver and have some private API to pass any
+> data to the reset driver? Then the whole file could be in
+> drivers/reset/, reviewed and maintained by the reset maintainer.
 
-Thanks for your advice.
-The purpose of this series is to clean up the drivers and we can apply
-new socs for it.
+I'd rather stick to the current design in the same way as the most of
+the OF-based platform clock drivers. Completely splitting the reset
+and clock parts isn't that easy is it seems like (though the main part
+has been done in the framework of this patchset). AXI/APB-interface
+reset controls are tightly coupled with the AXI/APB-clock domains at
+least by having the same CSRs. Due to that the corresponding AXI-clock
+domains reset functionality will need to be left in the
+drivers/clk/baikal-t1/clk-ccu* module. It makes the movement isn't
+that justified and will result in needless code complications and the
+code coherency worsening.
 
-I didn't use the auxiliary bus before. However, I can study to the
-implementation of auxiliary bus for this reset drivers in another
-series. Is this ok for you?
-
-Thanks!
-
-BRs,
-Rex
-
+-Sergey
