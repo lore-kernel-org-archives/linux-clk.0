@@ -2,302 +2,220 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFBCC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 08:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7BAC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 08:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243364AbiEQIQt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 04:16:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45268 "EHLO
+        id S242502AbiEQIbP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 04:31:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243269AbiEQIQi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 04:16:38 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526D24B1CE
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 01:14:08 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id n23so6409267edy.0
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 01:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=8Ecq0Ku2beTjpdYuC7n32WxuB6qItwFuWOoIkbynN/o=;
-        b=Ca15DO6EL/upHeqZOCzDDQnBFXZeQWIelA6fxfQpXCyt8tiyaCCdM/Uu2QCO2pIyHN
-         mg/r0bcEAFj9I8vZb5CEuLTsUEyfd/9gNJVgi1P+1EXkZDzFyYvsv7ljbTYy4QQq33VS
-         mw1536pHPBaIXgj7xRWZ42sHKnIPfFfG8uUBZnZr159Mkq85lSu6liwEWrBTqVxZ9Sr3
-         2L7SBOm9tVg8Pv6VssDHH2SBcfQKPnd0r10fGYK2SCKuSPomHs1d5LJpWe01ebiPRKl1
-         lnTnf5ss3TMPt9KWrkVKabj8nbVPRSwmFWvIAzn7j6jv8mMKI+xtRBxWddKmZkMieI8z
-         xK/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=8Ecq0Ku2beTjpdYuC7n32WxuB6qItwFuWOoIkbynN/o=;
-        b=m19Bf76IHSvrM1vhBhEbY1qWqSrEVRgeWQZSNHALW2FKK6PNYxghKYZaejHN9XF3ma
-         qosiEPXvNoMUBdNNDKIvtOiuLDvycJxKo71zvQ8OFYFagJw7IUtvCYJv5wqllWtfUVQw
-         3NOmyoNDwFtmI4V4z8RTZtxFXRqJE4kKJ1fUuAzoarVgU/zaGu5KffCfzxqfQCLOxI20
-         qQw6KuD5aI5GkH7BnMGlBkx479Kh5ua9/9r9S8wGnXRqUGkT3YVc3JPuaGTBntt+8dqA
-         O94SVUOIGrTQynG+BBif/aQR45zp0Vf+abjhR+dWQQWTFU5YBBpTz4cRsqfoPzHdQFYW
-         bdiQ==
-X-Gm-Message-State: AOAM531kjanQGrRT3D26JrJUYw4qwAicEVF90hrfXG4RhCGpzDQGzuAh
-        TW2iYkDvhZcmRuJwFd7s/tdk4vR56fV317jq
-X-Google-Smtp-Source: ABdhPJxL3w7M2CT0m0b/rGCiLOWpURaIM18EY0VF9FVJv5Cdce8TN1NErRx/ifFnG4dKms4UGCrNiw==
-X-Received: by 2002:a05:6402:1cc1:b0:428:a06e:a30f with SMTP id ds1-20020a0564021cc100b00428a06ea30fmr17264315edb.377.1652775246933;
-        Tue, 17 May 2022 01:14:06 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id j12-20020aa7de8c000000b0042ab4e20543sm2575111edv.48.2022.05.17.01.14.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 01:14:06 -0700 (PDT)
-Message-ID: <703e2b25-00ff-9b69-d7d9-212a60ea76e1@linaro.org>
-Date:   Tue, 17 May 2022 10:14:05 +0200
+        with ESMTP id S242020AbiEQIbN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 04:31:13 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17F863DA68;
+        Tue, 17 May 2022 01:31:05 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E4DB840002;
+        Tue, 17 May 2022 08:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1652776264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i1z3x9hbx4kB/pMTiRJFrLwHXIkoX1zu3HrlembJ5x8=;
+        b=TyeDRQ2lIX5B3f8sM/z1ikAhOjf29Ggqj6AmwWNXDtHI5qVIkGgNT1I0cNOgQojRJUxRu+
+        rYU4r24Ud6cAMdYWwVrxIqPnToc88eBtWbhL9xwguekqqgmxJtBJl0OQBvlWN5+tC/MXrj
+        F+nuik+Bx3C24RZVTyE+dExGS8b5eH9Q6/XxPjsSeXPsE+LluIPUnw8by/+iC/QwRr3HGu
+        5YT2ODzz4sAAdN2o+nHUbIewzfvK8Ve+m43NGdfXhHQQPU/NzYDIbHMXNlj2QOEFKkPTKc
+        wIJE/fSUsapnvIDGcmptiDwOLZJH/vsKs2TY5pu/cGkIt3Fu5qMPPZ3J6Rm2cw==
+Date:   Tue, 17 May 2022 10:31:00 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v12 0/9] RZN1 DMA support
+Message-ID: <20220517103100.4da9ebe5@xps-13>
+In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 3/6] clk: qcom: Add IPQ8074 APSS clock controller
-Content-Language: en-US
-To:     Robert Marko <robimarko@gmail.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, jassisinghbrar@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>
-References: <20220515204540.477711-1-robimarko@gmail.com>
- <20220515204540.477711-3-robimarko@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220515204540.477711-3-robimarko@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/05/2022 22:45, Robert Marko wrote:
-> IPQ8074 APSS clock controller provides the clock for the IPQ8074 CPU
-> cores, thus also providing support for CPU frequency scaling.
-> 
-> It looks like they are clocked by the XO and a custom APSS type PLL.
-> 
-> Co-developed-by: Ansuel Smith <ansuelsmth@gmail.com>
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> Signed-off-by: Robert Marko <robimarko@gmail.com>
-> ---
+Hi folks,
+
+miquel.raynal@bootlin.com wrote on Wed, 27 Apr 2022 11:56:44 +0200:
+
+> Hello,
+>=20
+> This is the series bringing DMA support to RZN1 platforms.
+> The UART changes regarding DMA support has been merged into tty-next
+> already.
+>=20
+> There is no other conflicting dependency with the other series, so these
+> patches (all but DTS) can go though the dmaengine tree I believe.
+
+As all patches the patches in this series have received a fairly good
+amount of reviews, as well as all the necessary tags since a few weeks
+already, I was hoping to see it applied for the next merge window. Is
+there something still blocking its acceptance? Let me know if it is
+the case and I will do the necessary to make them fit.
+
+Cheers,
+Miqu=C3=A8l
+>=20
+> Cheers,
+> Miqu=C3=A8l
+>=20
+> Changes in v12:
+> * Collected more tags.
+> * Updated the prefix of the patch introducing the dmamux helper.
+> * Avoid failing to probe the clock driver entirely when a clock subnode
+>   fails to probe. Just print an error message on purpose and mention it
+>   int the commit log.
+> * Enabled the DMA nodes by default in the DTSI.
+> * Used the data-width property instead of the deprecated data_width.
+>=20
+> Changes in v11:
+> * Renamed two defines.
+> * Changed the way the bitmap is declared.
+> * Updated the cover letter: this series can now go in through the
+>   dmaengine tree.
+>=20
+> Changes in v10:
+> * Collected more tags.
+> * Dropped the mutex from the dmamux driver.
+> * Added missing includes in the dmamux driver.
+> * Replaced set_bit() by test_and_set_bit() in order to check if the chan
+>   is already used or not in the dmamux driver.
+> * Corrected the misuse of the set_bit() macro in the dmamux driver.
+>=20
+> Changes in v9:
+> * Collected more tags.
+> * Changed a u32 into a regular bitmap and used the bitmap API.
+> * Reordered two function calls to save one extra line.
+> * Added a define to avoid a magic value.
+>=20
+> Changes in v8:
+> * Collected more tags.
+> * Moved the Makefile line adding the dmamux driver to the bottom of the
+>   file.
+> * Reversed the logic in a ternary operation as suggested by Andy.
+> * Changed a bit the naming of a #define as suggested by Andy.
+>=20
+> Changes in v7:
+> * This time, really added Stephen's Acks (sorry for the error).
+> * Moved an error check to get rid of one mutex_unlock/lock call as
+>   suggested by Ilpo.
+> * Split the patch adding the dmamux driver as advised by Vinod. One
+>   patch introduces the dmamux driver, the other populates the children
+>   of the system controller. As the original patch got acked by Stephen
+>   Boyd, I moved his tag to the patch touching the clock controller only.
+>=20
+> Changes in v6:
+> * Added Stephen's acks.
+> * Fixed an extra newline added in the middle of nowhere.
+> * Rebased on top of v5.18-rc1.
+>=20
+> Changes in v5:
+> * Used gotos in rzn1_dmamux_route_allocate().
+> * Changed the prefix to "dmaengine:".
+> * Dropped the partial transfers fix.
+> * Added Rob's acks.
+>=20
+> Changes in v4:
+> * Freed "map" in the error path of the dmamux driver.
+> * Improved a bit the style as requested by Prabhakar.
+> * Dropped a __maybe_unused.
+> * Reorder the includes.
+> * Added a dependency on ARCH_RZN1.
+> * Added Rob's Ack.
+> * Added a reg property to the dmamux binding file.
+> * Referenced the dmamux binding from the system controller file.
+> * Called of_platform_populate from the end of the system controller
+>   (clock) driver probe in order to probe the dmamux if it was
+>   populated.
+> * Added DMA properties to all the relevant UARTs.
+>=20
+> Changes in v3:
+> * Added Reviewed-by tags.
+> * Exported the set_dmamux* symbol properly.
+> * Dropped a useless check in the probe and moved the sysctrl_priv
+>   assignation to the end of the probe.
+> * Renamed the dmamux driver
+> * Added a couple of missing MODULE_ macros in the dmamux driver.
+> * Decided to use a regular platform init call instead of the
+>   arch_initcall() initially proposed.
+> * s/%d/%u/ in printk's when appropriate.
+> * Used a hardcoded value instead of dmamux->dmac_requests when
+>   appropriate.
+> * Changed the variable name "master" to "dmac_idx" to be more
+>   descriptive.
+> * Dropped most of the of_* calls in favor of #define's.
+> * Fixed a typo.
+> * Exported two symbols from 8250_dma.c.
+>=20
 > Changes in v2:
-> * Convert to using parent-data instead of parent-names
-> ---
->  drivers/clk/qcom/Kconfig        |  11 +++
->  drivers/clk/qcom/Makefile       |   1 +
->  drivers/clk/qcom/apss-ipq8074.c | 170 ++++++++++++++++++++++++++++++++
->  3 files changed, 182 insertions(+)
->  create mode 100644 drivers/clk/qcom/apss-ipq8074.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 00fe5f066de5..9494eb74374a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -134,6 +134,17 @@ config IPQ_APSS_6018
->  	  Say Y if you want to support CPU frequency scaling on
->  	  ipq based devices.
->  
-> +config IPQ_APSS_8074
-> +	tristate "IPQ8074 APSS Clock Controller"
-> +	select IPQ_GCC_8074
-> +	depends on QCOM_APCS_IPC || COMPILE_TEST
-> +	help
-> +	  Support for APSS clock controller on IPQ8074 platforms. The
-> +	  APSS clock controller manages the Mux and enable block that feeds the
-> +	  CPUs.
-> +	  Say Y if you want to support CPU frequency scaling on
-> +	  IPQ8074 based devices.
-> +
->  config IPQ_GCC_4019
->  	tristate "IPQ4019 Global Clock Controller"
->  	help
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 671cf5821af1..7b2da6dd570c 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -22,6 +22,7 @@ obj-$(CONFIG_APQ_MMCC_8084) += mmcc-apq8084.o
->  obj-$(CONFIG_CLK_GFM_LPASS_SM8250) += lpass-gfm-sm8250.o
->  obj-$(CONFIG_IPQ_APSS_PLL) += apss-ipq-pll.o
->  obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
-> +obj-$(CONFIG_IPQ_APSS_8074) += apss-ipq8074.o
->  obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->  obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->  obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
-> diff --git a/drivers/clk/qcom/apss-ipq8074.c b/drivers/clk/qcom/apss-ipq8074.c
-> new file mode 100644
-> index 000000000000..38d03cd0ff76
-> --- /dev/null
-> +++ b/drivers/clk/qcom/apss-ipq8074.c
-> @@ -0,0 +1,170 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,apss-ipq8074.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> +
-> +enum {
-> +	P_XO,
-> +	P_GPLL0,
-> +	P_GPLL2,
-> +	P_GPLL4,
-> +	P_APSS_PLL_EARLY,
-> +	P_APSS_PLL
-> +};
-> +
-> +static struct clk_alpha_pll apss_pll_early = {
-> +	.offset = 0x5000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_APSS],
-> +	.clkr = {
-> +		.enable_reg = 0x5000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "apss_pll_early",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.fw_name = "xo", .name = "xo"
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_huayra_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_alpha_pll_postdiv apss_pll = {
-> +	.offset = 0x5000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_APSS],
-> +	.width = 2,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "apss_pll",
-> +		.parent_hws = (const struct clk_hw *[]){
-> +			&apss_pll_early.clkr.hw },
-> +		.num_parents = 1,
-> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] = {
-> +	{ .fw_name = "xo", .name = "xo" },
-> +	{ .fw_name = "gpll0", .name = "gpll0" },
-> +	{ .fw_name = "gpll2", .name = "gpll2" },
-> +	{ .fw_name = "gpll4", .name = "gpll4" },
-> +	{ .hw = &apss_pll.clkr.hw },
-> +	{ .hw = &apss_pll_early.clkr.hw },
-> +};
-> +
-> +static const struct parent_map parents_apcs_alias0_clk_src_map[] = {
-> +	{ P_XO, 0 },
-> +	{ P_GPLL0, 4 },
-> +	{ P_GPLL2, 2 },
-> +	{ P_GPLL4, 1 },
-> +	{ P_APSS_PLL, 3 },
-> +	{ P_APSS_PLL_EARLY, 5 },
-> +};
-> +
-> +struct freq_tbl ftbl_apcs_alias0_clk_src[] = {
-> +	F(19200000, P_XO, 1, 0, 0),
-> +	F(403200000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(806400000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(1017600000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(1382400000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(1651200000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(1843200000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(1920000000, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	F(2208000000UL, P_APSS_PLL_EARLY, 1, 0, 0),
-> +	{ }
-> +};
-> +
-> +struct clk_rcg2 apcs_alias0_clk_src = {
-> +	.cmd_rcgr = 0x0050,
-> +	.freq_tbl = ftbl_apcs_alias0_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = parents_apcs_alias0_clk_src_map,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "apcs_alias0_clk_src",
-> +		.parent_data = parents_apcs_alias0_clk_src,
-> +		.num_parents = ARRAY_SIZE(parents_apcs_alias0_clk_src),
-> +		.ops = &clk_rcg2_ops,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
-> +static struct clk_branch apcs_alias0_core_clk = {
-> +	.halt_reg = 0x0058,
-> +	.halt_bit = 31,
-> +	.clkr = {
-> +		.enable_reg = 0x0058,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "apcs_alias0_core_clk",
-> +			.parent_hws = (const struct clk_hw *[]){
-> +				&apcs_alias0_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT |
-> +				CLK_IS_CRITICAL,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_regmap *apss_ipq8074_clks[] = {
-> +	[APSS_PLL_EARLY] = &apss_pll_early.clkr,
-> +	[APSS_PLL] = &apss_pll.clkr,
-> +	[APCS_ALIAS0_CLK_SRC] = &apcs_alias0_clk_src.clkr,
-> +	[APCS_ALIAS0_CORE_CLK] = &apcs_alias0_core_clk.clkr,
-> +};
-> +
-> +static const struct regmap_config apss_ipq8074_regmap_config = {
-> +	.reg_bits       = 32,
-> +	.reg_stride     = 4,
-> +	.val_bits       = 32,
-> +	.max_register   = 0x5ffc,
-> +	.fast_io	= true,
-> +};
-> +
-> +static const struct qcom_cc_desc apss_ipq8074_desc = {
-> +	.config = &apss_ipq8074_regmap_config,
-> +	.clks = apss_ipq8074_clks,
-> +	.num_clks = ARRAY_SIZE(apss_ipq8074_clks),
-> +};
-> +
-> +static int apss_ipq8074_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +
-> +	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!regmap)
-> +		return -ENODEV;
-> +
-> +	return qcom_cc_really_probe(pdev, &apss_ipq8074_desc, regmap);
-> +}
-> +
-> +static struct platform_driver apss_ipq8074_driver = {
-> +	.probe = apss_ipq8074_probe,
-> +	.driver = {
-> +		.name   = "qcom,apss-ipq8074-clk",
-
-That's not the correct name of a driver - commas should not be there.
-You need of_device_id instead.
-
-
-Best regards,
-Krzysztof
+> * Clarified that the 'fix' regarding non aligned reads would only apply
+>   to the DEV_TO_MEM case.
+> * Fix the DMA controller compatible string (copy-paste error).
+> * s/syscon/sysctrl/ as advised by Geert.
+> * Disabled irqs when taking the spinlock from the clocks driver.
+> * Moved the DMAMUX offset inside the driver.
+> * Removed extra commas.
+> * Improved the style as suggested by Andy.
+> * Removed a dupplicated check against the device node presence.
+> * Reduced the number of lines of code by using dev_err_probe().
+> * Created a Kconfig symbol for DMAMUX to fix the two robot reports
+>   received and be sure there was no useless overhead with other
+>   platforms.
+> * Exported the serial8250_{tx,rx}_dma() symbols.
+>=20
+> Miquel Raynal (9):
+>   dt-bindings: dmaengine: Introduce RZN1 dmamux bindings
+>   dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
+>   dt-bindings: dmaengine: Introduce RZN1 DMA compatible
+>   clk: renesas: r9a06g032: Export function to set dmamux
+>   dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+>   clk: renesas: r9a06g032: Probe possible children
+>   dmaengine: dw: Add RZN1 compatible
+>   ARM: dts: r9a06g032: Add the two DMA nodes
+>   ARM: dts: r9a06g032: Describe the DMA router
+>=20
+>  .../clock/renesas,r9a06g032-sysctrl.yaml      |  11 ++
+>  .../bindings/dma/renesas,rzn1-dmamux.yaml     |  51 ++++++
+>  .../bindings/dma/snps,dma-spear1340.yaml      |   8 +-
+>  MAINTAINERS                                   |   1 +
+>  arch/arm/boot/dts/r9a06g032.dtsi              |  38 +++++
+>  drivers/clk/renesas/r9a06g032-clocks.c        |  40 ++++-
+>  drivers/dma/dw/Kconfig                        |   9 +
+>  drivers/dma/dw/Makefile                       |   2 +
+>  drivers/dma/dw/platform.c                     |   1 +
+>  drivers/dma/dw/rzn1-dmamux.c                  | 155 ++++++++++++++++++
+>  include/linux/soc/renesas/r9a06g032-sysctrl.h |  11 ++
+>  11 files changed, 325 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dm=
+amux.yaml
+>  create mode 100644 drivers/dma/dw/rzn1-dmamux.c
+>  create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
+>=20
