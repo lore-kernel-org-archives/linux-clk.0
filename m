@@ -2,57 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496CBC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 06:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F18C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 06:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240150AbiEQGqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 02:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54438 "EHLO
+        id S229571AbiEQGuM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 02:50:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239238AbiEQGqE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 02:46:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65684205C7;
-        Mon, 16 May 2022 23:46:00 -0700 (PDT)
+        with ESMTP id S240474AbiEQGuD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 02:50:03 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB12F47044;
+        Mon, 16 May 2022 23:49:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1BD76147F;
-        Tue, 17 May 2022 06:45:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53613C385B8;
-        Tue, 17 May 2022 06:45:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 57E29B80E81;
+        Tue, 17 May 2022 06:49:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C985FC34100;
+        Tue, 17 May 2022 06:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652769959;
-        bh=005Cq1wFvYS3aEWbca+TxQNtYui1BArspQR2qt7J64I=;
+        s=k20201202; t=1652770186;
+        bh=CpWulmZSDl1zLLPbxdVBecEkO+AICzB50qAS3ianLD4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mLWNjEdrU4oTHgBJBK7baKTFX8Kt5UkODV1Cf3lqIuACyULiVt/xhA17MwMUWF87N
-         9zSL3rOuDttFBHlqiGlM2SmpGxjEtQF/b2Sb8qMEKUqnzJ3D4EfuEWUpGbf0QiVeOV
-         pokEknhi5Aq65O/xw/1VnD/0jFy9ziccj0paDEyHPSeY6bISXbAYHMwC3eygRs7cMj
-         YmYLBTEzb89QXz7mQAlyTu+tIzjOQwJduEUJbDEBVwkGASM4EYam6AtUbuF6e3jvg7
-         gj0avql0fElJo6BLDiBcZjkpRQ9zY9Bv/epOTsY/FI1pW6Wq5CYPiCgtoNAFi/BpW1
-         Jun/6D8tpFuDA==
+        b=WzdDxiAhxGWBwB3ATM2dApnR2NyrXG3gANE3+xEt1peE8fH7dSg9h1p5Nf44pfVEb
+         2FWArY4+PDxRq79AmKhm7y/XlSrRUuYwUY6vKX5iBC8/4EIMb3DazfStUeV0wLDhDl
+         5aXQiFMy9Va6Dr3n9M4fJpCKxyOWOfx0W4zdXy9V2KUi6Q4svkROtBdE9AvVvm/bSu
+         2W1KbKwg87LXydSUHrshx0ZirPIkKBszmxDmOGm8M9z5a8MyqP8aj2OJrZ1r2AAVLC
+         L02/yFzVnefTu6+nPW0tOMKMFsI/W9QzbioH+q3/uHHvO1JLBa6dnH2b1hRjUx8nMQ
+         PRMpO3sba24Ug==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220509092102.140520-1-lizhengyu3@huawei.com>
-References: <20220509092102.140520-1-lizhengyu3@huawei.com>
-Subject: Re: [PATCH] clk: fixed-rate: Remove redundant if statement
+In-Reply-To: <cover.1651829136.git.geert+renesas@glider.be>
+References: <cover.1651829136.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.19 (take two)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        manivannan.sadhasivam@linaro.org, mturquette@baylibre.com
-To:     Li Zhengyu <lizhengyu3@huawei.com>
-Date:   Mon, 16 May 2022 23:45:57 -0700
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 16 May 2022 23:49:44 -0700
 User-Agent: alot/0.10
-Message-Id: <20220517064559.53613C385B8@smtp.kernel.org>
+Message-Id: <20220517064946.C985FC34100@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Li Zhengyu (2022-05-09 02:21:02)
-> (np) is always true when (dev || !np) is false, so just remove
-> the check.
+Quoting Geert Uytterhoeven (2022-05-06 02:32:29)
+>         Hi Mike, Stephen,
 >=20
-> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
-> ---
+> The following changes since commit 59086e4193f4fc920a23d2045a473f62450b42=
+69:
+>=20
+>   clk: renesas: r9a07g043: Add SDHI clock and reset entries (2022-04-13 1=
+2:30:19 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.19-tag2
+>=20
+> for you to fetch changes up to 23426d1be3c20907b4f3d72bf95234d4ee254393:
+>=20
+>   clk: renesas: r9a09g011: Add eth clock and reset entries (2022-05-06 09=
+:38:40 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into clk-next
