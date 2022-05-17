@@ -2,73 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DFAC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 09:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146BBC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 10:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234627AbiEQJkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 05:40:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60438 "EHLO
+        id S233877AbiEQKHv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 06:07:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244957AbiEQJjx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 05:39:53 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 06F7544A0C
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 02:39:32 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(11175:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Tue, 17 May 2022 17:37:45 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.6; Tue, 17 May 2022 17:37:37 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2507.006; Tue, 17 May 2022 17:37:37 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+        with ESMTP id S245760AbiEQKFl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 06:05:41 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02E949C9F;
+        Tue, 17 May 2022 03:05:11 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id y32so30390182lfa.6;
+        Tue, 17 May 2022 03:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=25GtIoitw+ZTlzSdukQ7WOPmbkJJHbA+G1F2JqOUPCg=;
+        b=OD/oBRJQvC09yFulvynVFmg5bIQgbGkZh5k15Ylg2dYQR/LVFqVH5v2UBGviF1S2+R
+         1Gj0BSqWsra1NjlBMun1RetI2YgmIGm5zHF8TnRwNCgU6gPc1WvPPErI6Z/cfo7MOlo5
+         I2hVY0N9fVt9Ui62nZpice02zg83O1TIdgO5+upw1IPyNFH47kZYsLAc2pB09nE2zF0W
+         jnrklqqpBsdK0sqFkFNpCXllL2zUhMzfZ9D9La76wohjWLHSECu/1cI46IbRyBSl26bG
+         LrjhqS6ZC4IBQ+p74Czp5xdFmDS7K5XeBBFzubUbI/TkfZM6MvS/My6TFFIPSYu0N7o6
+         tCuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=25GtIoitw+ZTlzSdukQ7WOPmbkJJHbA+G1F2JqOUPCg=;
+        b=by7k7hXWtmA4zDTa7k9RdYNI7i+WnxJRa6Jt4x61aSa27ImHr8Z4HfNNhqcxhDlFgm
+         bUtvns6d2DVAYsUi3J7gTbx07zBE2kftzMIfZvX9KdaRMSuppUOzMMSLquJzZlsljOYe
+         4qIvkj14OZ5QU5yUDJO5YMXrMlEWwBeZb5vkh3UgAACPX4jN83lU7GwDqrp3Ogj6RcYe
+         vVzKFmAZAFby4J+aFTd0FnQNJwfYCq1mOxneSnUV6VKmKyvyUIrbvj9JR/+g0e28tMdT
+         BeCnaOJH6zqm4kWvZ2EBAq/snBhSBpNrL4hXC/Sv+uxJeP3khxEm34QwOOGPqmmAcRqi
+         V3GA==
+X-Gm-Message-State: AOAM5338ctLcFDoIXI06pC+J143k9deMdDrwx0IFVPE+K1dt1jp8bR7E
+        lgC3I1REggWO/c6Z1Ncmgcc=
+X-Google-Smtp-Source: ABdhPJxLVyTObUX+R4E5Tn6dZ4YNA2w3W0p4AvbybfDxgisgorYGKfA4XMH8NTFJdPuV3IVe2suFiA==
+X-Received: by 2002:a05:6512:3090:b0:473:a636:dbee with SMTP id z16-20020a056512309000b00473a636dbeemr16124368lfd.119.1652781909895;
+        Tue, 17 May 2022 03:05:09 -0700 (PDT)
+Received: from mobilestation ([95.79.189.214])
+        by smtp.gmail.com with ESMTPSA id a3-20020ac25e63000000b0047255d211acsm1541267lfr.219.2022.05.17.03.05.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 03:05:09 -0700 (PDT)
+Date:   Tue, 17 May 2022 13:05:07 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Stephen Boyd <sboyd@kernel.org>
-CC:     "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Topic: [PATCH v15 04/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Index: AQHYZcsP5QfLdHxDWUuwmqTXvmezs60h11EAgAD/DuA=
-Date:   Tue, 17 May 2022 09:37:37 +0000
-Message-ID: <79e5886ab80840d6b4b6bc48be01d29e@cqplus1.com>
-References: <cover.1652329411.git.qinjian@cqplus1.com>
- <b5ca5d417be079a2a40a6e79ac1b246b6359a49e.1652329411.git.qinjian@cqplus1.com>
- <20220517021918.7190EC385AA@smtp.kernel.org>
-In-Reply-To: <20220517021918.7190EC385AA@smtp.kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC
+ fixes
+Message-ID: <20220517100507.2ng3se7bbl2eqbz3@mobilestation>
+References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru>
+ <20220512001156.x6kqyhi3vjjpqch6@mobilestation>
+ <20220512152705.GA2506@lpieralisi>
+ <20220512171150.GA164627@thinkpad>
+ <20220512211431.r23r6daua36lty7d@mobilestation>
+ <20220517074020.56093C34100@smtp.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517074020.56093C34100@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICsgICAgY2xrYzogY2xvY2stY29udHJvbGxlckA5YzAwMDAwMCB7DQo+ID4gKyAgICAgIGNv
-bXBhdGlibGUgPSAic3VucGx1cyxzcDcwMjEtY2xrYyI7DQo+ID4gKyAgICAgIHJlZyA9IDwweDlj
-MDAwMDAwIDB4MjgwPjsNCj4gDQo+IFRoZSBxdWVzdGlvbiBpcyB3aGF0IG90aGVyIGRldmljZSBj
-b21wYXRpYmxlIGlzIGluIGhlcmU/IFRoZSByZXNldA0KPiBjb250cm9sbGVyPw0KPiANCg0KVGhp
-cyByZWcgcmVnaW9uIGNvbmZsaWN0IHdpdGggcmVzZXQvcGlubXV4L3VzYmMvdXBoeSBkcml2ZXJz
-Lg0KVG8gdXNlIGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZSwNCkkgbXVzdCBzcGxpdCB1
-cCB0aGUgb3JpZ2luIDEgcmVnaW9uIGludG8gNCBzbWFsbCBwaWVjZXMsDQphbmQgY2FsbCBkZXZt
-X3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UoKSA0IHRpbWVzLg0KRGlkIEkgc2hvdWxkIGZvbGxv
-dyB0aGlzIHdheT8NCg0K
+On Tue, May 17, 2022 at 12:40:18AM -0700, Stephen Boyd wrote:
+> Quoting Serge Semin (2022-05-12 14:14:31)
+> > On Thu, May 12, 2022 at 10:41:50PM +0530, Manivannan Sadhasivam wrote:
+> > > On Thu, May 12, 2022 at 04:27:05PM +0100, Lorenzo Pieralisi wrote:
+> > > > So in short, this series has to go through the usual clock tree review
+> > > > process.
+> > > > 
+> > 
+> > I do know the normal procedure. But if patches concern different
+> > subsystems but for some reason inter-depended somehow it's ok to merge
+> > them in via a single repo. In my case the platform clock driver has
+> > been updated in a way so to support the reset-controls utilized in the
+> > PCIe driver altered in another patchset. So I didn't want to leave the
+> > kernel not working in the framework of my platform on any git hash
+> > state. That's why I asked to merge the patchsets in via the same repo.
+> > The kernel would be still buildable though.
+> > 
+> 
+
+> Is it going to be broken if I merge the clk patches through clk tree?
+
+No. It won't be broken.
+
+> Has it ever worked?
+
+It has and is working well except some minor fixes provided in this
+petchset:
+[PATCH v3 1/4] clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+[PATCH v3 2/4] clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
+
+> Does the kernel still boot, just PCIe fails if the
+> patches are applied?
+
+Yes, the kernel will be bootable. There won't be any problem if the patches
+in this series are applied because it is self-consistent. As I
+said in the cover letter there is an implicit dependency of another series
+"[PATCH v2 00/17] PCI: dwc: Add dma-ranges/YAML-schema/Baikal-T1 support"
+(https://lore.kernel.org/linux-pci/20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru/T/#me3c5c248adad9760702b545bd4bacd89d5f8a2bd)
+from this one. In particular the functionality implemented in the
+patch
+"[PATCH v2 17/17] PCI: dwc: Add Baikal-T1 PCIe controller support"
+(https://lore.kernel.org/linux-pci/20220503214638.1895-1-Sergey.Semin@baikalelectronics.ru/T/#m219e11c38c4ab8db0c2520c4050366d641598600)
+depends on the patches 3 and 4 of this patchset. But the
+dependency is implicit hidden under the DT clock/reset bindings layer.
+The Baikal-T1 PCIe platform driver will just fail to probe the host
+controller device if this series isn't applied. So the clock/reset
+patchset can be freely merged in via the clk tree especially seeing
+the PCIe Host/EP subsystem maintainer is going to be AFK from
+Wednesday and my series will sadly but likely hang up in limbo for a
+while.
+
+-Sergey
+
