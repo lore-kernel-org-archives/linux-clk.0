@@ -2,117 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DACC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 19:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B249C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 19:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352700AbiEQTbV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 15:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40292 "EHLO
+        id S240210AbiEQTl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 15:41:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344775AbiEQTbU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 15:31:20 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7D901581F
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 12:31:17 -0700 (PDT)
-Received: from wf0416.dip.tu-dresden.de ([141.76.181.160] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1nr2ua-0004C1-3u; Tue, 17 May 2022 21:31:16 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 5.19 #2
-Date:   Tue, 17 May 2022 21:31:15 +0200
-Message-ID: <5781991.QJadu78ljV@phil>
+        with ESMTP id S1352854AbiEQTlj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 15:41:39 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1F4522FC;
+        Tue, 17 May 2022 12:41:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0BE6BB81C09;
+        Tue, 17 May 2022 19:41:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E207C34117;
+        Tue, 17 May 2022 19:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652816481;
+        bh=FgdSjd/rFw8jiuUv2YH2aiwegMDQriMKJOQcbbSUmh4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=eGZMJb+sn2IT28xBtiBLoxYYblIkuPwmKaiL/PoLYuHyqdgryUkAjg9AsXvN8uuXV
+         dKsI3xlnM1k6MxuLj43tc5JGhwauraf3OQlNMD93ZKBJDQ5WFHknx2xfWQ5zdfx/em
+         gjwyUpnrQLNJmrWyLMPn4WsMUJDX1a827f+9C5yu+TBc22ez2DoFM7gyxiFy2OFqoS
+         id9iqaterX7+vTlEg/xEorIW671sOcyMUXtUX48WdUO9p6mt5i7AbVEOo1KF20RpNE
+         Dx5cocvbrb6DXRI6/HzQ3BQMtWj5n/hO/PjrQMikNnBjj6URXaA/4NX/L/nuh3F0wY
+         Kjn+eYqXYKQeQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220413071318.244912-1-codrin.ciubotariu@microchip.com>
+References: <20220413071318.244912-1-codrin.ciubotariu@microchip.com>
+Subject: Re: [PATCH] clk: at91: generated: consider range when calculating best rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 17 May 2022 12:41:19 -0700
+User-Agent: alot/0.10
+Message-Id: <20220517194121.9E207C34117@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+Quoting Codrin Ciubotariu (2022-04-13 00:13:18)
+> clk_generated_best_diff() helps in finding the parent and the divisor to
+> compute a rate closest to the required one. However, it doesn't take into
+> account the request's range for the new rate. Make sure the new rate
+> is within the required range.
+>=20
+> Fixes: 8a8f4bf0c480 ("clk: at91: clk-generated: create function to find b=
+est_diff")
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> ---
 
-please find below a pull-request converting a number of Rockchip
-clock controllers to yaml, which shound go on top of the previous
-pull request.
-
-In the discussion Stephen had comments about the optional clocks, that
-have a circular dependency (xin24m -> cru -> i2c -> rtc -> xin32k -> cru) .
-After everyone put in their argument, the discussion itself just stopped.
-
-I've picked up the conversion patches anyway, as this is the status-quo
-in terms of modelling clocks on Rockchip, so the yaml conversion doesn't
-change anything in either direction and just transforms what is in the
-kernel right now into the yaml format which will improve devicetree checks
-a lot and also reduce the number of warnings emitted by the checker.
-
-So hopefully please pull :-)
-Thanks
-Heiko
-
-
-The following changes since commit b21445db9818ccb9fa1c0ba81fd3705eb8d347e3:
-
-  dt-binding: clock: Add missing rk3568 cru bindings (2022-05-14 12:40:41 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.19-rockchip-clk2
-
-for you to fetch changes up to 32a214cd8ccbc361319bcd00b0b1b05a6b53bc61:
-
-  dt-bindings: clock: convert rockchip,rk3368-cru.txt to YAML (2022-05-17 21:05:43 +0200)
-
-----------------------------------------------------------------
-Conversion from txt to Yaml for a number of Rockchip
-clock bindings.
-
-----------------------------------------------------------------
-Johan Jonker (8):
-      dt-bindings: clock: convert rockchip,rv1108-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3288-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,px30-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3308-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3036-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3228-cru.txt to YAML
-      dt-bindings: clock: convert rockchip,rk3368-cru.txt to YAML
-
- .../bindings/clock/rockchip,px30-cru.txt           |  70 ------------
- .../bindings/clock/rockchip,px30-cru.yaml          | 119 +++++++++++++++++++++
- .../bindings/clock/rockchip,rk3036-cru.txt         |  56 ----------
- .../bindings/clock/rockchip,rk3036-cru.yaml        |  72 +++++++++++++
- .../bindings/clock/rockchip,rk3188-cru.txt         |  61 -----------
- .../bindings/clock/rockchip,rk3188-cru.yaml        |  78 ++++++++++++++
- .../bindings/clock/rockchip,rk3228-cru.txt         |  58 ----------
- .../bindings/clock/rockchip,rk3228-cru.yaml        |  74 +++++++++++++
- .../bindings/clock/rockchip,rk3288-cru.txt         |  67 ------------
- .../bindings/clock/rockchip,rk3288-cru.yaml        |  85 +++++++++++++++
- .../bindings/clock/rockchip,rk3308-cru.txt         |  60 -----------
- .../bindings/clock/rockchip,rk3308-cru.yaml        |  76 +++++++++++++
- .../bindings/clock/rockchip,rk3368-cru.txt         |  61 -----------
- .../bindings/clock/rockchip,rk3368-cru.yaml        |  78 ++++++++++++++
- .../bindings/clock/rockchip,rv1108-cru.txt         |  59 ----------
- .../bindings/clock/rockchip,rv1108-cru.yaml        |  75 +++++++++++++
- 16 files changed, 657 insertions(+), 492 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-
-
-
+Applied to clk-fixes
