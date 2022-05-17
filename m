@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF232C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 03:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D565AC4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 03:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235078AbiEQD2H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 May 2022 23:28:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33270 "EHLO
+        id S239676AbiEQD2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 May 2022 23:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234550AbiEQD2G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 23:28:06 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93AB23FBE4;
-        Mon, 16 May 2022 20:28:05 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id k2so13534977qtp.1;
-        Mon, 16 May 2022 20:28:05 -0700 (PDT)
+        with ESMTP id S239404AbiEQD2K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 May 2022 23:28:10 -0400
+Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AD73FBF3;
+        Mon, 16 May 2022 20:28:09 -0700 (PDT)
+Received: by mail-qk1-x72d.google.com with SMTP id v11so13754711qkf.1;
+        Mon, 16 May 2022 20:28:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZiOS/vicLJE9WEdrThn5lA73QwzwDarAXYYuEpv/t38=;
-        b=GuMx0QJi/BbGxrLNR4hmBCktzb41Mq+TaJIoAywcw04Q4n9DsyqDcJCiSaLMBdI98H
-         6DjzvmHWxl7qEmkNyWUt1rvXi1+i63u8yhwhHpjQ9om1sYwhhvrrlBVOOdkHZGuBlGZG
-         zBB6fh+ABSl8gI9mrBLGWaNbXMipgLjTRJQdTYUZECJnE5BodealkZ6gW/Cpei38/70c
-         wQfgl/3rkIy4+2ftCi0O0QYqDLKb8jChQ1CcrFsh8PP0F9wRW+n/7tt7Ndn0/Y+et3Ah
-         opDDNyi221eKuD1zTtE3n3BmODVzN1EZLqinUn0r3MpZuUIikrW77Dwadu4o2GWjCUpM
-         1G4A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xuQULfnMRIZxwNK+Ml9um+QR+n0TJ9GdbQgbpfprxdg=;
+        b=EZIbojQOe6IM7QSVAW67HEFr7KFhfQ1zmRZrVlI+OKgfAW9XK3UFpVVVBZTSaajWEX
+         LE48v1uNVoVF8+WTsmi/Y3n+fyNJKcUSn2w8kzi39YYt06b0v+Cr5+6gB/p1t5bc4wiw
+         BYiFgTRdk0RvuqrqQ9SAv6jB/97Z2MDqzI/AJ389B1S7UlqFBOrM8qXJx3QID0/o62nr
+         bvqOEsCrLLynpZSURV5PYz1C69/RZjgTNLvlcOTdK3u1azXiToM+G8cDL8nNR3/8W3hc
+         V4mnCR6U6/k6iVhoenudoVzT7BMO2biVy4aUAsgi1MUXuSj+Cq1TuNHgxLueM2jaxwKQ
+         GJ0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZiOS/vicLJE9WEdrThn5lA73QwzwDarAXYYuEpv/t38=;
-        b=Vsyj87qFrbrU1gypWITxUpg1uMZPqeY33bc+FSx92O9gk0rdTHhcpBHcnNh9wLtkH5
-         X/NMG19iFLg5XTRfj93dYcEbDIUBi6CFUZjWTvMXNeL74iePYYIwGwljyaiVH04TB8jj
-         NUyE1xXf1WWoYOcVV9ULBwUz9V+yRxOBDROkhHpa8VBwo7owhK8DpI1C3YMF9lU4fQPG
-         frGrbc7gp+jp+yaT7v+V6z9tAVmYCxZRwCNlUvS4+HM1fdDOLNFzFEP2LyFYQ68WGvNI
-         AsM8SmFQFna9S9iHHb/LyVWpt/Bfi+a+0TZAMQIZ59DVix3UeoXqr0XV3FyorEqp4xWl
-         Fy0w==
-X-Gm-Message-State: AOAM532X0OdtYnZC2TVQvVJLdbZ9PFFBdozrBOuGhlDeCyPrFjZ4s/7U
-        473kCKeqyamHVwnFiDpmMlY=
-X-Google-Smtp-Source: ABdhPJxR3c5z0LY1qU0bR9Pa1M/8Q1xSFiaiCoy7+ewpfV1USVKihC8anAZHWlBMI4XrlWc5bZdCWQ==
-X-Received: by 2002:a05:622a:1982:b0:2f3:b7c1:4426 with SMTP id u2-20020a05622a198200b002f3b7c14426mr18008779qtc.347.1652758084760;
-        Mon, 16 May 2022 20:28:04 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xuQULfnMRIZxwNK+Ml9um+QR+n0TJ9GdbQgbpfprxdg=;
+        b=fpC9yfK6tEolXpFCkyTtD9xgUAkcVbadlnZ6aDwR2ecWIGiu3WT6OIj3gYkMalhHSd
+         d2XtrwpozP1ObpAMzqO28OUlhorFyAGaZiVjA0R+oGltHeTBGZbR9Y3U25PjddEnr3HP
+         dNcVoVQBVtrvojdD7oLb2+Mnw/NGgo7c69fQtTllMIR88jNBaSrOgNLPpAPMD19VZMFZ
+         x0puXPV/9LCoonFCJZhtuyMGL/BJx12wFJ/cBW993qTEuqP5NXtltfHAcssi7OX1V2QF
+         QC+V5TKXILDElPGLw/qpEXASOd4iGtlFu0PZ+4alg9aOFgSXY+zeQoRmBqxkds4r7DrP
+         Lebw==
+X-Gm-Message-State: AOAM531usNq1m99ycs0mwckTxud+9PEBkbbH04c77E6CqO0vyZzr/xzo
+        AvYzO9PU+EF+8yhEGoeqJr8=
+X-Google-Smtp-Source: ABdhPJx8HQ7DoYvRCYmnm1vmwPHbRIvWR8oSqYO6NSkvLcSbEhBTsGN0Dq43lzY/lr0YfwSFVM8sVQ==
+X-Received: by 2002:a05:620a:40cb:b0:6a0:922b:2d67 with SMTP id g11-20020a05620a40cb00b006a0922b2d67mr14834359qko.20.1652758088180;
+        Mon, 16 May 2022 20:28:08 -0700 (PDT)
 Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id a19-20020a376613000000b006a098381abcsm7079535qkc.114.2022.05.16.20.28.02
+        by smtp.gmail.com with ESMTPSA id a19-20020a376613000000b006a098381abcsm7079535qkc.114.2022.05.16.20.28.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 20:28:04 -0700 (PDT)
+        Mon, 16 May 2022 20:28:07 -0700 (PDT)
 From:   Jesse Taube <mr.bossman075@gmail.com>
 X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
 To:     linux-imx@nxp.com
@@ -62,44 +62,48 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         clin@suse.com, giulio.benetti@benettiengineering.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 02/15] dt-bindings: timer: gpt: Add i.MXRT compatible Documentation
-Date:   Mon, 16 May 2022 23:27:49 -0400
-Message-Id: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v3 04/15] dt-bindings: mmc: fsl-imx-esdhc: add i.MXRT1170 compatible
+Date:   Mon, 16 May 2022 23:27:51 -0400
+Message-Id: <20220517032802.451743-3-Mr.Bossman075@gmail.com>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
+References: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both the i.MXRT1170 and 1050 have the same GPT timer as "fsl,imx6dl-gpt"
-Add i.MXRT to the compatible list.
+Add i.MXRT1170 compatible string to Documentation.
 
+Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
 Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 V1 -> V2:
- - Nothing done
+ - New commit to fix dtbs_check
 V2 -> V3:
- - Nothing done
+ - Fix typo
+ - Remove unused const
 ---
- Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml b/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-index a4f51f46b7a1..716c6afcca1f 100644
---- a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-+++ b/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-@@ -31,6 +31,8 @@ properties:
-           - enum:
-               - fsl,imx6sl-gpt
-               - fsl,imx6sx-gpt
-+              - fsl,imxrt1050-gpt
-+              - fsl,imxrt1170-gpt
-           - const: fsl,imx6dl-gpt
+diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+index 29339d0196ec..0e7833478869 100644
+--- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
++++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+@@ -75,6 +75,10 @@ properties:
+           - const: fsl,imx8qxp-usdhc
+           - const: fsl,imx7d-usdhc
+         deprecated: true
++      - items:
++          - enum:
++              - fsl,imxrt1170-usdhc
++          - const: fsl,imxrt1050-usdhc
  
    reg:
+     maxItems: 1
 -- 
 2.36.1
 
