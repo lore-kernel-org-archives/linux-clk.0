@@ -2,75 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CD0C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C801C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiEQHOo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 03:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46800 "EHLO
+        id S241091AbiEQH15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 03:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231211AbiEQHOo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:14:44 -0400
+        with ESMTP id S240969AbiEQH0G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:26:06 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6560647AE3;
-        Tue, 17 May 2022 00:14:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85D665D5;
+        Tue, 17 May 2022 00:26:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 28387B816BB;
-        Tue, 17 May 2022 07:14:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC76C385B8;
-        Tue, 17 May 2022 07:14:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 84360B816BC;
+        Tue, 17 May 2022 07:26:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A26C385B8;
+        Tue, 17 May 2022 07:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652771680;
-        bh=KHDlTZzn0+DsUMIZOmXkXySbntEfsxVaMQGokybuLVA=;
+        s=k20201202; t=1652772363;
+        bh=e8dB8oDjlXZshFziU7mg5/YVotBJgiM7Y3R11mue6ng=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jsl0zGaqmFmNIruk70W1rsKoK+cK4R+HKlwCdhj9lyx3TBLSjIjgTcK/XA1mj2fWg
-         XrVbPhm8jVdoPgb9nHE/2Faz/zScwZc9AECuJkiA+NKyL2XGKxw+QkrYd2Uxmj/Twg
-         le36wfpRTVX7QJkBfItoGb8nOU4uVfDVY1YoPvXwkbG7IDDOSHlL/4MKe+i7/jrGRW
-         9O/FyInAO5LC8ddeOVRTWMTGRSXwQyHKT6vGbLzcUtCB3hW8rxAZjYih7talVfxBBG
-         XWJvIbATtwxHeIyLoWp6Ivi46svALr4FnWkfnIrrt3gfqozCRWDMn8MkRERHqmCurZ
-         0y199aqM3QSSQ==
+        b=kJqctlKYqneUbfzJtm1UnZc5Akz5kdUaXVHoKu5QJA+itkCv3eBNmM8bB9PwIzeri
+         9PDB1RaZk4ejs5kc97tHLAL1u4B1TTFrlgJ+6lXTv4MQMjotbWQ45y77YXilLcUMLZ
+         KdZ5rbTeEKrJkFX7PUgsec6BpFvTz4/YB58SCp4LWppPfbF/271Xwt80tvnZKnpntH
+         NYR7GDNG7dZKjwNjJKMi5Q0ovizlAWr2+Dn28RYNP9JqnstOjmd0kVbcSOGouaitti
+         eAKfKcefKCpzSohnC7LhlrioWUlOCVSE7ciOdBDEOWVAlXi+E1ST2V3q8iJ/ZgeE2f
+         q+TvFiydtsm4w==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e18eb810-e437-6a19-26ec-1f0daedaaf5f@microchip.com>
-References: <20220413071318.244912-1-codrin.ciubotariu@microchip.com> <20220422011216.A4A23C385A5@smtp.kernel.org> <e18eb810-e437-6a19-26ec-1f0daedaaf5f@microchip.com>
-Subject: Re: [PATCH] clk: at91: generated: consider range when calculating best rate
+In-Reply-To: <20220511200206.2458274-1-jernej.skrabec@gmail.com>
+References: <20220511200206.2458274-1-jernej.skrabec@gmail.com>
+Subject: Re: [PATCH] Revert "clk: sunxi-ng: sun6i-rtc: Add support for H6"
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, Nicolas.Ferre@microchip.com,
-        alexandre.belloni@bootlin.com, Claudiu.Beznea@microchip.com
-To:     Codrin.Ciubotariu@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 17 May 2022 00:14:38 -0700
+Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        stable@vger.kernel.org
+To:     Jernej Skrabec <jernej.skrabec@gmail.com>, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, mturquette@baylibre.com
+Date:   Tue, 17 May 2022 00:26:01 -0700
 User-Agent: alot/0.10
-Message-Id: <20220517071440.DAC76C385B8@smtp.kernel.org>
+Message-Id: <20220517072603.33A26C385B8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Codrin.Ciubotariu@microchip.com (2022-04-26 00:24:15)
-> On 22.04.2022 04:12, Stephen Boyd wrote:
-> > Quoting Codrin Ciubotariu (2022-04-13 00:13:18)
-> >> clk_generated_best_diff() helps in finding the parent and the divisor =
-to
-> >> compute a rate closest to the required one. However, it doesn't take i=
-nto
-> >> account the request's range for the new rate. Make sure the new rate
-> >> is within the required range.
-> >>
-> >> Fixes: 8a8f4bf0c480 ("clk: at91: clk-generated: create function to fin=
-d best_diff")
-> >> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> >> ---
-> >=20
-> > Is this fixing anything real or it's just a thing that you noticed and
-> > sent a patch to fix?
+Quoting Jernej Skrabec (2022-05-11 13:02:06)
+> This reverts commit 1738890a3165ccd0da98ebd3e2d5f9b230d5afa8.
 >=20
-> It fixes the clk_set_min/max_rate() calls to a generated clock. Do you=20
-> want me to add this fact in the commit description?
+> Commit 1738890a3165 ("clk: sunxi-ng: sun6i-rtc: Add support for H6")
+> breaks HDMI output on Tanix TX6 mini board. Exact reason isn't known,
+> but because that commit doesn't actually improve anything, let's just
+> revert it.
 >=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> ---
 
-I wanted to know if there are clk_set_min/max_rate() calls on this clk.
-Are there?
+Applied to clk-fixes
