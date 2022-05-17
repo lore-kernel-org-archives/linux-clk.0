@@ -2,82 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3996C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC11C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241835AbiEQHmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 03:42:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
+        id S241889AbiEQHsk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 03:48:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238993AbiEQHk4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:40:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963774991E;
-        Tue, 17 May 2022 00:40:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 076FC60F9A;
-        Tue, 17 May 2022 07:40:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56093C34100;
-        Tue, 17 May 2022 07:40:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652773220;
-        bh=1GMphxsy6bjIVoh6DDdhoMypOAa7uTUskHeD6nHAIPE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Cch60QK8tAM5c/5Iy4d62l3BI0i33ugZf01GCElZ/fCQt+cpLoBlCECy7annnP7ie
-         JZ4qm1WMhig5wLBn/NJU4Miv2WhsNKaRUAxfyAt03vxAJNn1YXKaiz72X/t0nQ8Qp2
-         7CXoROJMcovsWMtuMIxpBtGd32RCnbjAiDf2HNPdC0r2c0wFoFqdSXD6idmvx9j0O1
-         1VALm0VpJPhykgWCo16l8uBFN7hXQWxD3k+cVDSFliLBEggIxyMaio4PDQWVsfrt1v
-         ksPEWRQcA3izP2JC3PBPO8flmtd3hzd1zvMEnkmmVgblz26kV4TleoUl7Y8gy0SABJ
-         AZzzeWbvjA/7A==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S241486AbiEQHsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:48:36 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D6A47393;
+        Tue, 17 May 2022 00:48:30 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 8ADA31F441AA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652773709;
+        bh=ExwtYhF6lW41/VV+VosOgNIh/aIBIehqgDlrAU2wlqI=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=llZKudObnwhLoG7831KnTVNHUlFkO6VQxYU9MnYi/2Tjfen3kZxHbcg1jUNBXi4pj
+         ZvSVeei11j1tJRXPCE+7+OiaXsX6oJltMp9hOe7+IdhXSq5wEMNyqXZ9n27mUGVdt/
+         bc9qtEwgeUDzl25M0osEVwNOPGNMWKqCHgLq8bWLrXHAArODExKHdDGEfqSrj2ww49
+         8+6KF54m8/pVVdmMj6qrGSQ4vr9r3bMqUYe9AKeM+knvnoVz2hKlmDY4/Fd3TRIZR4
+         t3wfLguv3KsdglOl37QL0PxAZLh5OTajsNe9q61Zr4mxkF4SceWzvo6ZZNjt6bywSm
+         c2GwOyoe+yIWg==
+Message-ID: <b3e34db8-4e79-f6e3-35b8-e32891f2c85b@collabora.com>
+Date:   Tue, 17 May 2022 09:48:25 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220512211431.r23r6daua36lty7d@mobilestation>
-References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru> <20220512001156.x6kqyhi3vjjpqch6@mobilestation> <20220512152705.GA2506@lpieralisi> <20220512171150.GA164627@thinkpad> <20220512211431.r23r6daua36lty7d@mobilestation>
-Subject: Re: [PATCH v3 0/4] clk: Baikal-T1 DDR/PCIe resets and some xGMAC fixes
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Serge Semin <fancer.lancer@gmail.com>
-Date:   Tue, 17 May 2022 00:40:18 -0700
-User-Agent: alot/0.10
-Message-Id: <20220517074020.56093C34100@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 4/5] dt-bindings: arm: mediatek: Add clock driver bindings
+ for MT6795
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
+        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
+        kernel@collabora.com
+References: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com>
+ <20220513165050.500831-5-angelogioacchino.delregno@collabora.com>
+ <20220516172819.GA2938099-robh@kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220516172819.GA2938099-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Serge Semin (2022-05-12 14:14:31)
-> On Thu, May 12, 2022 at 10:41:50PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, May 12, 2022 at 04:27:05PM +0100, Lorenzo Pieralisi wrote:
-> > > So in short, this series has to go through the usual clock tree review
-> > > process.
-> > >=20
->=20
-> I do know the normal procedure. But if patches concern different
-> subsystems but for some reason inter-depended somehow it's ok to merge
-> them in via a single repo. In my case the platform clock driver has
-> been updated in a way so to support the reset-controls utilized in the
-> PCIe driver altered in another patchset. So I didn't want to leave the
-> kernel not working in the framework of my platform on any git hash
-> state. That's why I asked to merge the patchsets in via the same repo.
-> The kernel would be still buildable though.
->=20
+Il 16/05/22 19:28, Rob Herring ha scritto:
+> On Fri, May 13, 2022 at 06:50:49PM +0200, AngeloGioacchino Del Regno wrote:
+>> Add the bindings for the clock drivers of the MediaTek Helio X10
+>> MT6795 SoC.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../arm/mediatek/mediatek,mt6795-clock.yaml   | 67 +++++++++++++++++
+>>   .../mediatek/mediatek,mt6795-sys-clock.yaml   | 73 +++++++++++++++++++
+>>   2 files changed, 140 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-sys-clock.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml
+>> new file mode 100644
+>> index 000000000000..b7d96d0ed867
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt6795-clock.yaml
+>> @@ -0,0 +1,67 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt6795-clock.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: MediaTek Functional Clock Controller for MT6795
+>> +
+>> +maintainers:
+>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>> +
+>> +description: |
+>> +  The clock architecture in MediaTek like below
+>> +  PLLs -->
+>> +          dividers -->
+>> +                      muxes
+>> +                           -->
+>> +                              clock gate
+>> +
+>> +  The devices provide clock gate control in different IP blocks.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+> 
+> Don't need 'items' if only 1 item.
+> 
+>> +      - enum:
+>> +          - mediatek,mt6795-mfgcfg
+>> +          - mediatek,mt6795-vdecsys
+>> +          - mediatek,mt6795-vencsys
+> 
+> blank line.
+> 
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+> 
+> Why is #clock-cells optional?
+> 
 
-Is it going to be broken if I merge the clk patches through clk tree?
-Has it ever worked? Does the kernel still boot, just PCIe fails if the
-patches are applied?
+I've used one of the other mediatek,mt(something)-(sys-)clock.yaml as a base
+for these ones, giving for granted that they were correct, but now that you're
+pointing that out... effectively, I should've checked if the ones that are
+already merged in were correct *before* using these as a base for mine.
+
+Thanks for your review: I'll send a v2 soon... and I will also separately
+send some fixes for the existing ones, as your review comments also apply
+to these ones.
+
+Regards,
+Angelo
+
