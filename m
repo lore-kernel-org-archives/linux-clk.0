@@ -2,139 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E257C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 13:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608B9C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 13:18:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346394AbiEQNQy convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 09:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
+        id S1346329AbiEQNSr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 09:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347453AbiEQNQw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 09:16:52 -0400
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8155C41FAA;
-        Tue, 17 May 2022 06:16:47 -0700 (PDT)
-Received: by mail-qv1-f52.google.com with SMTP id l1so14338654qvh.1;
-        Tue, 17 May 2022 06:16:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=72BItrONoo13B+XZUBS7ShowYY5fuE/yH1rhlY56Dls=;
-        b=jjxzPnszt/tQgMF72XSQqEJB6V+o7anEQQpwtYejlzd9ZwkISQ/i4m2Yq9n4o6C61Q
-         jQxEHLTmRn6kN27ogdn9b3bn+Wxf4/lyEO9iNm1BO/Dz4gy7OmhR18tDSntSwIUVcUQR
-         FRLWGx7AYiBu0QTp6XEFWV/zuVrOA1gcCp/hTgohlYfL4ejM4oX2gHgREDI6KEN9jkkx
-         53TAeoU74I4Sw5JPLAuh8XpGEraviQVHKe6IkL0zFJqX7HkY/vC62kArTtSPRbHmCqs0
-         x9JUv+Cjxz9U1DIBBXj2ZHo3Fhd4Sudc9V/FpL7zB0wsMFJ6sIXTeC+waYSokuHEP8q3
-         sntw==
-X-Gm-Message-State: AOAM530Yc3U+Hi/p5EdZ6waKoeqgU5qI/TnSbDk9WoQcP0aJEhUkgzdt
-        sZLsCPOTR1PbNqJ4i3AFWgmmJOQx8hJueA==
-X-Google-Smtp-Source: ABdhPJyoGfcAMtQmPAa8oLWt2hinipfHFI82ZxVZGh+3Wd65Ajq6Qq7gcEc+KNtatrS8ja6KN3wmug==
-X-Received: by 2002:a05:6214:e4c:b0:45a:fb3d:74bd with SMTP id o12-20020a0562140e4c00b0045afb3d74bdmr19626848qvc.11.1652793406461;
-        Tue, 17 May 2022 06:16:46 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id d196-20020ae9efcd000000b006a09515d012sm7593313qkg.50.2022.05.17.06.16.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 06:16:46 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id q135so13142396ybg.10;
-        Tue, 17 May 2022 06:16:46 -0700 (PDT)
-X-Received: by 2002:a05:6902:905:b0:64a:2089:f487 with SMTP id
- bu5-20020a056902090500b0064a2089f487mr23072467ybb.202.1652793405866; Tue, 17
- May 2022 06:16:45 -0700 (PDT)
+        with ESMTP id S240389AbiEQNSp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 09:18:45 -0400
+X-Greylist: delayed 60 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 06:18:44 PDT
+Received: from smtpcmd10101.aruba.it (smtpcmd10101.aruba.it [62.149.156.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5CCA341F94
+        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 06:18:43 -0700 (PDT)
+Received: from [192.168.50.220] ([146.241.66.179])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id qx4zn3r0zcKJdqx50nLnQ1; Tue, 17 May 2022 15:17:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1652793461; bh=Im7bn8a6g50JK3DLRhOYV+yX/muSvMy/n6AfP0SgSe4=;
+        h=Date:MIME-Version:Subject:To:From:Content-Type;
+        b=OVztRY5e+Vo5wgr9R2CB53OXd7RMc+lqZ63p8dXb7vn42RVpWUbZxi/LCyGqI1Rli
+         I32xy8js5rYtmVCwnqcS1/Aiebq2Mqmrf1j8y9FuwY+Kj4eGa93PlRMaFK/EZSzezH
+         ppP3Kf74YsLBgdKoxPLcSHoX7hjZYnyApUcuudOxto316yvmBzBD7WFz4bAUxj+wZY
+         nawiMBUinSxt/DomGEoB+TNWOrSdAnufRmBsXn5fB0BnwMw7rMZCROazheFY61UCdX
+         RDpGMh8JAsYFebpsKiyax+Aif7H5RxnQm7D3PfTJgtto/17IIA5dkIeLefwc3RzOvk
+         3VHKCrHTVNbvA==
+Message-ID: <5a01ca81-f49a-a6f5-c80c-4bb8ac5bead8@benettiengineering.com>
+Date:   Tue, 17 May 2022 15:17:37 +0200
 MIME-Version: 1.0
-References: <20220504184406.93788-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdUh69grzYVsMwdZLgv=KLy5-_FVjeMWx37qGsqCxz9Y6g@mail.gmail.com> <OS0PR01MB59224D1908A7DBB08DAF444986C29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB59224D1908A7DBB08DAF444986C29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 May 2022 15:16:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVqj6nr5h5G9w3wTDHCDbDK_9fJW4d7cvc1c1LC9D2roA@mail.gmail.com>
-Message-ID: <CAMuHMdVqj6nr5h5G9w3wTDHCDbDK_9fJW4d7cvc1c1LC9D2roA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v3 05/15] dt-bindings: serial: fsl-lpuart: add i.MXRT1170
+ compatible
+Content-Language: en-US
+To:     Jesse Taube <mr.bossman075@gmail.com>, linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, Rob Herring <robh@kernel.org>
+References: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
+ <20220517032802.451743-4-Mr.Bossman075@gmail.com>
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+In-Reply-To: <20220517032802.451743-4-Mr.Bossman075@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfJoC1DnIsmkpTb3OFMpYCrF2/0Umj6FeZvAjR9UVESNbar/h4sXktlDGKjA68llpEIhr8dv49CFeWUt1wXCB+UndhB9vvyX4ui1NQ7ZNcjTNhx/SRryN
+ UiKVsbY8NjUC3PayD/agYb3dNN1eeWRK6mwnGwg2+uDvr4V9bd0PLNqNw+FhxwspAIcDq1uSapJC9GdTic0eXKg6bJ+IFaI9cmcqzuY76K2i6SSRQLa0IVz7
+ zUtC4zQ6z/162ORDu0B2Lm5vq12JQyM/NXwwYCmj8XofSqbeNzvudmceTlmZUqwu1cJX+xuYgupDXkB4JwKykQK9KMCiZg3gHVDcsR5krp8x9eFxIZYJ8LBO
+ j/zzH2GDz4i6upuJxJrZEjKv8dK44Y4fg8+freEhPRaGsM/23fmo9MwK3ESqihBf2SHE9PyQM1g7GnWJptxuvgTk4zOxQuPVTaCcSqtzS/FK0vmbAge0m5dP
+ 94gREfP5ufET4qmbX9EeR7Nt0zglEAgyRxNjid9ZMAt7nItoWoDOgoQI7sMysWFVRzyEnbfnlQZkbu1QfvhhpFoUmXRNHsuxFEO48Bzjl1KUoCevReKUjUDO
+ Ogznm483V8u+/rxSNWtbgBDuBpw14GAMKmsxJBVK1uAccrOv9UHsHboPebA6tdq+XVmtzgfTI1i/HRjEmBahbVJNfd48/OeVT2mX8hhXEd8l8L+oTUvRtytR
+ G6tA4w3wW/lZFbE2e1BdmHg03ROsWCRcD1kymrnIBbSw/uf8BYE0b0vr2lpTYrrYQo3mbI27iGXFnbY7YW0GCPLlMOhwUkL5A/PuyYYtDM+8WajnHU3d7nAr
+ h0rejpEE4lHTpmGU9wxBNdUWip8ETBoo139oiMRi0O7WE+NIxXq18gpL64zeureA1HVNuhdzyZ90W0R7GRqIlQJS9Lb83/MB81uQA2gofK/LHdLYWSECChaf
+ G8KLH/X4Big95DopvE/AL185nNQOZq5bLogfPVnirfFj/M7/YuSdFXARFkBfiPa1tGXoX3ZwoZ2pMcmkoxCgU/+zKHcVpRnfvL4gYDlZKq/S11fLkWlJoAtH
+ zzllnhCy7Z6zrIjSJnSV9fPuwUT4DNcySdDEOa3rPsuQpiiT4w6kfqfFTEFtPuMCUiQj6OXOFPGdeoeoxZ0No6Fq6wpBamCPvaNVgi/Of1anm316qOvpSFDE
+ qNZpn2hIiXNm4w5anAJCkS4hqdkawiLYm26UbXKmecOMhgnB6JUG/GYQzJyY0lB/
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+Hi Jesse,
 
-On Thu, May 5, 2022 at 12:01 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add a delay after deassert
-> > On Wed, May 4, 2022 at 8:44 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > > After adding reset support to vsp, it needs a delay of 32 microseconds
-> > > after reset operation, otherwise system hangs(due to register
-> > read/write).
-> > > This patch fixes the system hang issue by adding delay after deassert
-> > > operation.
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > > After adding reset/deassert support for vsp based on [1], RZ/G1N board
-> > > hangs. On debugging it found that it needs a delay of 35 microseconds
-> > > after deasserint reset. Wthout delay if there is any register
-> > > read/write will lead to hang.
-> > >
-> > > This 35 microseconds value is  picked from the reset().
-> >
-> > The 35 µs comes from the Hardware User's Manual: there should be at least 1
-> > RCLK cycle _in between_ asserting and deasserting reset.
-> > The manual doesn't say anything about delays _after_ deasserting reset.
-> >
-> > Could it be that the VSP1 driver is actually deasserting reset too early?
->
-> My test results on RZ/G1N shows, it needs 35 micro seconds after deasserting reset.
+On 17/05/22 05:27, Jesse Taube wrote:
+> Add i.MXRT1170 compatible string to Documentation.
+> 
+> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> V1 -> V2:
+>   - New commit to fix dtbs_check
+> V2 -> V3:
+>   - Nothing done
+> ---
+>   Documentation/devicetree/bindings/serial/fsl-lpuart.yaml | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> index 30eaa62e1aed..d988d93eb5e6 100644
+> --- a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
+> @@ -21,6 +21,7 @@ properties:
+>             - fsl,ls1028a-lpuart
+>             - fsl,imx7ulp-lpuart
+>             - fsl,imx8qxp-lpuart
+> +          - fsl,imx8qm-lpuart
 
-I can confirm that accessing the VSP registers without the delay
-causes a lock-up on R-Car M2-W, too.
-I see no such lock-up on R-Car Gen3, but I cannot rule out that it
-is mitigated by a handler in secure mode, and that VSP initialization
-may actually fail (accessing registers of non-clocked modules usually
-causes an imprecise external abort, which is caught by Linux on R-Car
-Gen2, but turned into a no-op by secure firmware on R-Car Gen3).
+this ^^^ looks like a rebase left-over
 
-Instead of adding the explicit delay, I tried added a polling loop
-after the call to reset_control_deassert() in the vsp1 driver, to
-wait until the reset is cleared, like is done in the i2c-rcar driver:
+Kind regards
+-- 
+Giulio Benetti
+Benetti Engineering sas
 
-        ret = read_poll_timeout_atomic(reset_control_status, ret, ret == 0, 1,
-                                       100, false, vsp1->rstc);
-        if (ret < 0) {
-                ...
-        }
+>             - fsl,imxrt1050-lpuart
+>         - items:
+>             - enum:
+> @@ -32,6 +33,9 @@ properties:
+>                 - fsl,imx8qm-lpuart
+>                 - fsl,imx8dxl-lpuart
+>             - const: fsl,imx8qxp-lpuart
+> +      - items:
+> +          - const: fsl,imxrt1170-lpuart
+> +          - const: fsl,imxrt1050-lpuart
+>   
+>     reg:
+>       maxItems: 1
 
-This also fixes the issue for me.
-Adding more debug code shows that reset_control_status() is called
-only once (both for i2c and vsp1), so the polling completes before
-any call to udelay().
-
-Note that at that time[1], we added the delay to the i2c-rcar driver
-instead of the CPG/MSSR driver, as we were told that i2c reset was
-special, and other modules do not need this.
-Perhaps vsp reset is special, too?
-Or perhaps it is time to revisit this, and add the polling to both
-cpg_mssr_reset() and cpg_mssr_deassert(), so it can be removed from
-the drivers?
-
-[1] Commit 3b770017b03a4cdf ("i2c: rcar: handle RXDMA HW behaviour on Gen3").
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
