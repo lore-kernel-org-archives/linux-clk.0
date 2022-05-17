@@ -2,99 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0284DC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 19:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9D0C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 19:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352515AbiEQTJz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 15:09:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
+        id S1352628AbiEQTLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 15:11:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231967AbiEQTJx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 15:09:53 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70C9B1E1
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 12:09:51 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id pq9-20020a17090b3d8900b001df622bf81dso3118141pjb.3
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 12:09:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WX9lP7cN1XhMLxAyp1fuinpNzyHjtW9iix4zXAbknMw=;
-        b=Z8ufLbQ+4mZKJyLdDDFC62aZ5/hDqWVFsdPEZUe33bzH3AdGyPj61awGDS5cNbbHDg
-         W0naIEoFAgkHlY99tWGdn5v6aLiFChtOCWg8sJMnXMl7EZ0442nl51aORC6xH7dmy/JF
-         XiGHxnjy8cCUW0mftFfTsk9zgCOzTxU4pzhd0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WX9lP7cN1XhMLxAyp1fuinpNzyHjtW9iix4zXAbknMw=;
-        b=t9zDlES6KP9bOgrtTvKtv35FsmlRfKb6N+JsPJQX3CkQQ8yEo3Zw39sRXq78v9jvdq
-         UCewHxYQrf1YBwASHXge2cyHfMn4i60v+cj3vdsNdFFmgM7BmTK/O5/df3siP3Xxx6vm
-         W+bZ/TCLgzkaJaHZInfPzxNjs6iz7R0ZjvyLYipngYpcDdkIc4aQLQDsz7gQDMnZoNcl
-         4baCPfRbNHLdzK75HApB6kWhUOCuIwDsUrCr6vU6Zrx8s4C/Y9P9oY6NwWYsAtLLVU7C
-         SLgZYjFBvOEC3lnXyCzFedcTUn82BNY5SccpEgUGwDjLjzQC1+hOHbBNKlk0QMF+kaS/
-         GIzw==
-X-Gm-Message-State: AOAM532TdOvHh8e+wHvJdVsnTvHkQOjLlBDptEIz3pVrMgoNc0aEhHMq
-        QgRoWaihGrto2aj/J7/BM9T8Sg==
-X-Google-Smtp-Source: ABdhPJx+Bj9KO0Av1JRLZUrA6agVbkgI6FASmev7Quni+bS7dw7sIuv6+UWHsrp4bEZdBmdbt5QrIA==
-X-Received: by 2002:a17:903:1211:b0:15e:8208:8cc0 with SMTP id l17-20020a170903121100b0015e82088cc0mr23524064plh.52.1652814591197;
-        Tue, 17 May 2022 12:09:51 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:201:be81:6c26:5643:b3d9])
-        by smtp.gmail.com with ESMTPSA id f16-20020a170902ab9000b0015e8d4eb246sm9498265plr.144.2022.05.17.12.09.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 12:09:50 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-        Alex Elder <elder@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH] clk: qcom: rpmh: Add note about sleep/wake state for BCMs
-Date:   Tue, 17 May 2022 12:09:49 -0700
-Message-Id: <20220517190949.2922197-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
+        with ESMTP id S1352600AbiEQTL2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 15:11:28 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2667B3584C;
+        Tue, 17 May 2022 12:11:26 -0700 (PDT)
+Received: from wf0416.dip.tu-dresden.de ([141.76.181.160] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nr2bL-00043L-Pp; Tue, 17 May 2022 21:11:23 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     zhangqing@rock-chips.com, Johan Jonker <jbx6244@gmail.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+        linux-rockchip@lists.infradead.org, sboyd@kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: convert rockchip,rk3368-cru.txt to YAML
+Date:   Tue, 17 May 2022 21:11:18 +0200
+Message-Id: <165281458742.3119039.12700615403743089370.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220329180550.31043-1-jbx6244@gmail.com>
+References: <20220329180550.31043-1-jbx6244@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The sleep/wake state doesn't need to be set here because of specific
-RPMh behavior that carries over the active state when sleep/wake state
-hasn't been modified. Add a note to the code so we aren't tempted to set
-the sleep/wake states.
+On Tue, 29 Mar 2022 20:05:49 +0200, Johan Jonker wrote:
+> Convert rockchip,rk3368-cru.txt to YAML.
+> 
+> Changes against original bindings:
+>  - Add clocks and clock-names because the device has to have
+>    at least one input clock.
 
-Cc: Alex Elder <elder@linaro.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
+Applied, thanks!
 
-This superseedes a previous patch[1] I sent that tried to fix this.
+[1/2] dt-bindings: clock: convert rockchip,rk3368-cru.txt to YAML
+      commit: 32a214cd8ccbc361319bcd00b0b1b05a6b53bc61
+[2/2] arm64: rockchip: add clocks property to cru node rk3368
+      commit: 17c0c5b67353b26a46611cffffd80aadd7215cfa
 
- drivers/clk/qcom/clk-rpmh.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index aed907982344..c07cab6905cb 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -274,6 +274,11 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 		cmd.addr = c->res_addr;
- 		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
-+		/*
-+		 * Send only an active only state request. RPMh continues to
-+		 * use the active state when we're in sleep/wake state as long
-+		 * as the sleep/wake state has never been set.
-+		 */
- 		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
- 		if (ret) {
- 			dev_err(c->dev, "set active state of %s failed: (%d)\n",
-
-base-commit: 42226c989789d8da4af1de0c31070c96726d990c
+Best regards,
 -- 
-https://chromeos.dev
-[1] https://lore.kernel.org/r/20220412194505.614002-1-swboyd@chromium.org
+Heiko Stuebner <heiko@sntech.de>
