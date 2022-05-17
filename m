@@ -2,88 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A741C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 16:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0284DC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 19:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351173AbiEQQq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 12:46:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39542 "EHLO
+        id S1352515AbiEQTJz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 15:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232954AbiEQQqy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 12:46:54 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 909E04EA1D
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 09:46:52 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id w14so1876923lfl.13
-        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 09:46:52 -0700 (PDT)
+        with ESMTP id S231967AbiEQTJx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 15:09:53 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C70C9B1E1
+        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 12:09:51 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id pq9-20020a17090b3d8900b001df622bf81dso3118141pjb.3
+        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 12:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=vA9MGHALbB+9Q0y2UR7t42fhnR0UrTgvfqZrIveu9Cc=;
-        b=EzHX8ExAL8o58vKiK6bTJ43XQZFYb6q0hkTBQTBcf7ktUCuIbVOz0oA9oYHfbrssCf
-         8UG5ExsXHxRAIn7KPjfdsn5+oOflZfxxnjMC4hs25Tf07x5CkCMlStLq8mo5KkFHsMuz
-         68nPVJN5oejQ90/naxoCgjKWODstSdzvy7tOgo1nlECkLCXMaiY1B1JCKufRsFyhWIMo
-         6Dvi2MPLe8wdkTGiZfSdJcSGdN+R32OnkNxwYU59fMuALFo6teNrQpzXka8LLARqJ/Ik
-         XbjD2OqFLQaj45CYavxHRXnzbbQUu4jP/wW9CvyqGtazsXts0S2VMn1uTTP7nkepvmQV
-         tgOA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WX9lP7cN1XhMLxAyp1fuinpNzyHjtW9iix4zXAbknMw=;
+        b=Z8ufLbQ+4mZKJyLdDDFC62aZ5/hDqWVFsdPEZUe33bzH3AdGyPj61awGDS5cNbbHDg
+         W0naIEoFAgkHlY99tWGdn5v6aLiFChtOCWg8sJMnXMl7EZ0442nl51aORC6xH7dmy/JF
+         XiGHxnjy8cCUW0mftFfTsk9zgCOzTxU4pzhd0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=vA9MGHALbB+9Q0y2UR7t42fhnR0UrTgvfqZrIveu9Cc=;
-        b=cJHMvRrlIFmAR4oYHlPQtuVv31nnLBdeAOH/Mk44oqAX6p4q3VOLpiHbTn2ZdBriGH
-         jLV0Jpwma432akyDZWetnjye+vpm3JgpULrScSKKeAPcSlyycvqOYminaGNWdfqVmfUD
-         poUyAQ4Ukzhs++lQ2xbsWDNqc7xrNq/oLDnP5D1emhi/iE+9nN/KYc9DfYXwSNytOxLR
-         WHRu9GMO4nFYjn0Yyn/EYHp9a0+VTstD9QXucoSdFVJvNvcTfVq2XhrZZsMqG0QfElBr
-         CnHQ8tGI5nV6l7UivIQRi9bpp/nbLWNC7I7EOfXHEgjms0umxZqy/u9y7lnMQ/UXIyRC
-         B6nQ==
-X-Gm-Message-State: AOAM532ji6+og9eA5oyXVnfEWKGgeP4gTSjUF9NOwP3tJSJJPwD8fGyu
-        9+Qc8OEp4c3aWBVzpAiLKmNkWw==
-X-Google-Smtp-Source: ABdhPJwVr5ZpgKS7rdjqmUnTL/3jYg8wNCfJlf1QbuGXld3L872UyhJjEwyTp9pewtHINjQcj0GP1g==
-X-Received: by 2002:ac2:5b1e:0:b0:472:2c9f:5891 with SMTP id v30-20020ac25b1e000000b004722c9f5891mr17227499lfn.534.1652806010956;
-        Tue, 17 May 2022 09:46:50 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h14-20020ac25d6e000000b00477a8c6b08dsm7331lft.100.2022.05.17.09.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 09:46:50 -0700 (PDT)
-Message-ID: <2f73874b-430a-48d2-4739-b06eebed1ea8@linaro.org>
-Date:   Tue, 17 May 2022 18:46:49 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 1/8] clk: qcom: alpha-pll: correct kerneldoc
-Content-Language: en-US
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        bh=WX9lP7cN1XhMLxAyp1fuinpNzyHjtW9iix4zXAbknMw=;
+        b=t9zDlES6KP9bOgrtTvKtv35FsmlRfKb6N+JsPJQX3CkQQ8yEo3Zw39sRXq78v9jvdq
+         UCewHxYQrf1YBwASHXge2cyHfMn4i60v+cj3vdsNdFFmgM7BmTK/O5/df3siP3Xxx6vm
+         W+bZ/TCLgzkaJaHZInfPzxNjs6iz7R0ZjvyLYipngYpcDdkIc4aQLQDsz7gQDMnZoNcl
+         4baCPfRbNHLdzK75HApB6kWhUOCuIwDsUrCr6vU6Zrx8s4C/Y9P9oY6NwWYsAtLLVU7C
+         SLgZYjFBvOEC3lnXyCzFedcTUn82BNY5SccpEgUGwDjLjzQC1+hOHbBNKlk0QMF+kaS/
+         GIzw==
+X-Gm-Message-State: AOAM532TdOvHh8e+wHvJdVsnTvHkQOjLlBDptEIz3pVrMgoNc0aEhHMq
+        QgRoWaihGrto2aj/J7/BM9T8Sg==
+X-Google-Smtp-Source: ABdhPJx+Bj9KO0Av1JRLZUrA6agVbkgI6FASmev7Quni+bS7dw7sIuv6+UWHsrp4bEZdBmdbt5QrIA==
+X-Received: by 2002:a17:903:1211:b0:15e:8208:8cc0 with SMTP id l17-20020a170903121100b0015e82088cc0mr23524064plh.52.1652814591197;
+        Tue, 17 May 2022 12:09:51 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:201:be81:6c26:5643:b3d9])
+        by smtp.gmail.com with ESMTPSA id f16-20020a170902ab9000b0015e8d4eb246sm9498265plr.144.2022.05.17.12.09.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 12:09:50 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        Alex Elder <elder@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH] clk: qcom: rpmh: Add note about sleep/wake state for BCMs
+Date:   Tue, 17 May 2022 12:09:49 -0700
+Message-Id: <20220517190949.2922197-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/05/2022 12:35, Krzysztof Kozlowski wrote:
-> Correct kerneldoc warning:
-> 
->   drivers/clk/qcom/clk-alpha-pll.c:1450:
->     warning: expecting prototype for clk_lucid_pll_configure(). Prototype was for clk_trion_pll_configure() instead
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The sleep/wake state doesn't need to be set here because of specific
+RPMh behavior that carries over the active state when sleep/wake state
+hasn't been modified. Add a note to the code so we aren't tempted to set
+the sleep/wake states.
 
-Any comments on entire set?
+Cc: Alex Elder <elder@linaro.org>
+Cc: Taniya Das <quic_tdas@quicinc.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
 
-They are on the lists for more than two weeks and it's getting late to
-apply it before merge window.
+This superseedes a previous patch[1] I sent that tried to fix this.
 
+ drivers/clk/qcom/clk-rpmh.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index aed907982344..c07cab6905cb 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -274,6 +274,11 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 		cmd.addr = c->res_addr;
+ 		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+ 
++		/*
++		 * Send only an active only state request. RPMh continues to
++		 * use the active state when we're in sleep/wake state as long
++		 * as the sleep/wake state has never been set.
++		 */
+ 		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
+ 		if (ret) {
+ 			dev_err(c->dev, "set active state of %s failed: (%d)\n",
+
+base-commit: 42226c989789d8da4af1de0c31070c96726d990c
+-- 
+https://chromeos.dev
+[1] https://lore.kernel.org/r/20220412194505.614002-1-swboyd@chromium.org
