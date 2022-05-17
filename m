@@ -2,66 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C801C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB69C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 07:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241091AbiEQH15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 03:27:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45212 "EHLO
+        id S235834AbiEQHjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 03:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240969AbiEQH0G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:26:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85D665D5;
-        Tue, 17 May 2022 00:26:05 -0700 (PDT)
+        with ESMTP id S241951AbiEQHjL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 03:39:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4AA49CAC;
+        Tue, 17 May 2022 00:37:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 84360B816BC;
-        Tue, 17 May 2022 07:26:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A26C385B8;
-        Tue, 17 May 2022 07:26:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 77DFBB8173A;
+        Tue, 17 May 2022 07:37:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FAE2C385B8;
+        Tue, 17 May 2022 07:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652772363;
-        bh=e8dB8oDjlXZshFziU7mg5/YVotBJgiM7Y3R11mue6ng=;
+        s=k20201202; t=1652773049;
+        bh=g7kgBkyM4zj9yW1DzflJG2l9JzxOE2iIeZ0vQz0Vo84=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kJqctlKYqneUbfzJtm1UnZc5Akz5kdUaXVHoKu5QJA+itkCv3eBNmM8bB9PwIzeri
-         9PDB1RaZk4ejs5kc97tHLAL1u4B1TTFrlgJ+6lXTv4MQMjotbWQ45y77YXilLcUMLZ
-         KdZ5rbTeEKrJkFX7PUgsec6BpFvTz4/YB58SCp4LWppPfbF/271Xwt80tvnZKnpntH
-         NYR7GDNG7dZKjwNjJKMi5Q0ovizlAWr2+Dn28RYNP9JqnstOjmd0kVbcSOGouaitti
-         eAKfKcefKCpzSohnC7LhlrioWUlOCVSE7ciOdBDEOWVAlXi+E1ST2V3q8iJ/ZgeE2f
-         q+TvFiydtsm4w==
+        b=guY8bfkDmz9XnbIUdyAiOoxdSGMIwVRZQW+TWRBSHGXVldeIPilXmUTjdxJLqgBdz
+         y76cA62Q7P7J16m0bPZGE+XnbxuVaqhWBAuSCrrwf+gO5TUDMnp8aBlqEtTf6QPf6V
+         DLBlOOYD/KdmiV8N890gnX0VS4opNuU43Wy9zxl1ipRPx2TtbHyUdWDWFy7qY+rMdA
+         83XnM/y/aLToW/5EWoFT/St4p7RMlfXFGCsdAIRRTAyxXk4UgYZqOeJUC74g2lIoiX
+         qGafMTHj1sRVpDN0BzjOt78zsXMPazIq41YQGhLcW1JaLw+0MqyMYz0t//uxhdgoDq
+         Uo/YTg5vjDxRg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220511200206.2458274-1-jernej.skrabec@gmail.com>
-References: <20220511200206.2458274-1-jernej.skrabec@gmail.com>
-Subject: Re: [PATCH] Revert "clk: sunxi-ng: sun6i-rtc: Add support for H6"
+In-Reply-To: <20220503205722.24755-4-Sergey.Semin@baikalelectronics.ru>
+References: <20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru> <20220503205722.24755-4-Sergey.Semin@baikalelectronics.ru>
+Subject: Re: [PATCH v3 3/4] clk: baikal-t1: Move reset-controls code into a dedicated module
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        stable@vger.kernel.org
-To:     Jernej Skrabec <jernej.skrabec@gmail.com>, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, mturquette@baylibre.com
-Date:   Tue, 17 May 2022 00:26:01 -0700
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Date:   Tue, 17 May 2022 00:37:26 -0700
 User-Agent: alot/0.10
-Message-Id: <20220517072603.33A26C385B8@smtp.kernel.org>
+Message-Id: <20220517073729.2FAE2C385B8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-05-11 13:02:06)
-> This reverts commit 1738890a3165ccd0da98ebd3e2d5f9b230d5afa8.
+Quoting Serge Semin (2022-05-03 13:57:21)
+> Before adding the directly controlled resets support it's reasonable to
+> move the existing resets control functionality into a dedicated object for
+> the sake of the CCU dividers clock driver simplification. After the new
+> functionality is added clk-ccu-div.c would have got to a mixture of the
+> weakly dependent clocks and resets methods. Splitting the methods up into
+> the two objects will make code easier to read especially seeing it isn't
+> that hard to do.
 >=20
-> Commit 1738890a3165 ("clk: sunxi-ng: sun6i-rtc: Add support for H6")
-> breaks HDMI output on Tanix TX6 mini board. Exact reason isn't known,
-> but because that commit doesn't actually improve anything, let's just
-> revert it.
+> As before the CCU reset module will support the trigger-like CCU resets
+> only, which are responsible for the AXI-bus, APB-bus and SATA-ref blocks
+> reset. The assert/de-assert-capable reset controls support will be added
+> in the next commit.
 >=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 > ---
+>  drivers/clk/baikal-t1/Kconfig       |  12 +-
+>  drivers/clk/baikal-t1/Makefile      |   1 +
+>  drivers/clk/baikal-t1/ccu-rst.c     | 258 ++++++++++++++++++++++++++++
+>  drivers/clk/baikal-t1/ccu-rst.h     |  60 +++++++
+>  drivers/clk/baikal-t1/clk-ccu-div.c |  94 ++--------
 
-Applied to clk-fixes
+Perhaps this should be done via the auxiliary bus by having the clk
+driver register the reset driver and have some private API to pass any
+data to the reset driver? Then the whole file could be in
+drivers/reset/, reviewed and maintained by the reset maintainer.
