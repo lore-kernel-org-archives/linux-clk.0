@@ -2,86 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE0BC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 20:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739EEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 22:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235278AbiEQUPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 16:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53872 "EHLO
+        id S229861AbiEQWTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 18:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231774AbiEQUPv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 16:15:51 -0400
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B0450033;
-        Tue, 17 May 2022 13:15:50 -0700 (PDT)
-Received: by mail-oi1-f177.google.com with SMTP id n24so146061oie.12;
-        Tue, 17 May 2022 13:15:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zLuq8/jIrJucgBFEatj0kqdfIbuB917FOxPZ2pJhVlM=;
-        b=8GRNQ/LA6n4Z0BMzIOviL8tb8iXGSnZViQvasKBnZWPHqL4xKeKBB83Qyxf57fsjd4
-         Kaf8H3cwNhmtezI3votpMwcxzUZxKLM9BJwV9+dADXbVK4GUfJGNNmwieEvnu9OO3wyD
-         s+I/oLZWD+ZzaLzzo/F3REXHZeYLM2WTYOxPC21Eb+Drvrnna3MXw0RPncm9byuVTshG
-         DOfpMbWm1s70fhA9kVGYnm761jxFCs+3Yu5J7PPE0aKj0P0FVVyjhU89IY3WrdEb+EpS
-         ktWgoqBBR8QF1uzBxgclSel0sxPfuR1QHHgaUtXlme53LIH4p/WEjoFTzkqD8P0yTRNB
-         3MeA==
-X-Gm-Message-State: AOAM531RUF4pZS5G1VPOdYWs8sE6LJDuhNp9q9aTF4gmwFopQr/vq1Ci
-        8a/wYVjrTD8U09KjZM3P+Q==
-X-Google-Smtp-Source: ABdhPJy4qhjcEoJ8bmJKtyo5sNfuFbkzX3w7OdbKNgT7Td6iqrnA+pCkTtn7SSqdKvy9VsyLUfshzg==
-X-Received: by 2002:aca:7c1:0:b0:324:fe9a:9856 with SMTP id 184-20020aca07c1000000b00324fe9a9856mr16536836oih.293.1652818549940;
-        Tue, 17 May 2022 13:15:49 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k12-20020a4a2a0c000000b0035eb4e5a6bbsm186513oof.17.2022.05.17.13.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 13:15:49 -0700 (PDT)
-Received: (nullmailer pid 1554564 invoked by uid 1000);
-        Tue, 17 May 2022 20:15:47 -0000
-Date:   Tue, 17 May 2022 15:15:47 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     Mr.Bossman075@gmail.com, dev@lynxeye.de,
-        giulio.benetti@benettiengineering.com, mturquette@baylibre.com,
-        clin@suse.com, daniel.lezcano@linaro.org, tharvey@gateworks.com,
-        tglx@linutronix.de, devicetree@vger.kernel.org, abel.vesa@nxp.com,
-        cniedermaier@dh-electronics.com, arnd@arndb.de, linux-imx@nxp.com,
-        linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-        shawnguo@kernel.org, linus.walleij@linaro.org, olof@lixom.net,
-        robh+dt@kernel.org, leoyang.li@nxp.com,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        stefan@agner.ch, sebastian.reichel@collabora.com,
-        festevam@gmail.com, linux-arm-kernel@lists.infradead.org,
-        soc@kernel.org, sboyd@kernel.org, linux@armlinux.org.uk,
-        s.hauer@pengutronix.de, marcel.ziswiler@toradex.com,
-        aisheng.dong@nxp.com
-Subject: Re: [PATCH v3 13/15] ARM: dts: imxrt1170-pinfunc: Add pinctrl
- binding header
-Message-ID: <20220517201547.GA1554500-robh@kernel.org>
-References: <20220517032802.451743-1-Mr.Bossman075@gmail.com>
- <20220517032802.451743-12-Mr.Bossman075@gmail.com>
+        with ESMTP id S229527AbiEQWTa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 18:19:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52FF43C719
+        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 15:19:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D661D60FB0
+        for <linux-clk@vger.kernel.org>; Tue, 17 May 2022 22:19:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5B7C34118;
+        Tue, 17 May 2022 22:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652825968;
+        bh=mFLGnAFNfhDLPFt9oeV7FYWUbLbyyvFH3zlUGOjfHTA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=LsAYhuWnAE492gwWLqYiH8Jhn3K1W+EzQ0PIk58eD2KsBTnliRDQrDrMH2dmOL4pN
+         TFMxVxYeqJEIH+WA2/8zmNALR1MjO6P88l2wYbXUUs91CfFcGrsk5G+C3zBAJmYWh9
+         nvgbH7mqzMTE9mDagb6vRQxPtLMhPYP8HYFGWQobSfzWR7h7SnuZhy9GGIKMXV73CG
+         IykPUG8/KrjErokgSpLZkbmZ3Eb19IZFeTr6wvXz8zdsvA1ejNWUn1DBrXqifxlVVv
+         MA01OQDj/JBpZ7sJ4h4IfuVFPpnzqf1di6F06t9sH183naDmnLlBI9ayoADPtw8L7p
+         40vUIXP9Er6lg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220517032802.451743-12-Mr.Bossman075@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8148508.MhkbZ0Pkbq@phil>
+References: <8148508.MhkbZ0Pkbq@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 5.19
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date:   Tue, 17 May 2022 15:19:26 -0700
+User-Agent: alot/0.10
+Message-Id: <20220517221928.2E5B7C34118@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 16 May 2022 23:28:00 -0400, Jesse Taube wrote:
-> Add binding header for i.MXRT1170 pinctrl device tree.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1 -> V2:
->  - Nothing done
-> V2 -> V3:
->  - Change to (GPL-2.0-only OR BSD-2-Clause)
-> ---
->  arch/arm/boot/dts/imxrt1170-pinfunc.h | 1561 +++++++++++++++++++++++++
->  1 file changed, 1561 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imxrt1170-pinfunc.h
-> 
+Quoting Heiko Stuebner (2022-05-17 12:25:19)
+> Hi Mike, Stephen,
+>=20
+> please find below some Rockchip clock changes for 5.19.
+>=20
+> I've split out the conversion from txt to yaml into a separate tag
+> which'll follow shortly.
+>=20
+> Please pull, thanks
+> Heiko
+>=20
+> The following changes since commit 3123109284176b1532874591f7c81f3837bbdc=
+17:
+>=20
+>   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v5.19-rockchip-clk1
+>=20
+> for you to fetch changes up to b21445db9818ccb9fa1c0ba81fd3705eb8d347e3:
+>=20
+>   dt-binding: clock: Add missing rk3568 cru bindings (2022-05-14 12:40:41=
+ +0200)
+>=20
+> ----------------------------------------------------------------
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
