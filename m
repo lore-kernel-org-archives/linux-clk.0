@@ -2,69 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5C1C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 15:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF81C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 16:47:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238980AbiERPBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 11:01:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42510 "EHLO
+        id S240472AbiERQrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 12:47:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238862AbiERPBQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 11:01:16 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC6F75047F;
-        Wed, 18 May 2022 08:01:13 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.91,235,1647270000"; 
-   d="scan'208";a="121393483"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 May 2022 00:01:12 +0900
-Received: from localhost.localdomain (unknown [10.226.92.148])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1DC3243E1E15;
-        Thu, 19 May 2022 00:01:09 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: renesas: r9a09g011: Add WDT clock and reset entries
-Date:   Wed, 18 May 2022 16:01:05 +0100
-Message-Id: <20220518150105.48167-1-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S240512AbiERQro (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 12:47:44 -0400
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF4B49F84
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 09:47:27 -0700 (PDT)
+Received: from [10.1.250.9] (riviera.nat.ds.pw.edu.pl [194.29.137.1])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 7F2A320537;
+        Wed, 18 May 2022 18:47:25 +0200 (CEST)
+Message-ID: <6cb75a3e-49fd-bbe0-4e81-d6aec33b70a5@somainline.org>
+Date:   Wed, 18 May 2022 18:47:24 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Fix halt on boot by reducing
+ driver's init level
+To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add WDT0 clock and reset entries to CPG driver.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/clk/renesas/r9a09g011-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 18/05/2022 12:35, Vladimir Zapolskiy wrote:
+> Access to I/O of SM8250 camera clock controller IP depends on enabled
+> GCC_CAMERA_AHB_CLK clock supplied by global clock controller, the latter
+> one is inited on subsys level, so, to satisfy the dependency, it would
+> make sense to deprive the init level of camcc-sm8250 driver.
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index b01d79a73dd8..b21915cf6648 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -132,6 +132,8 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
- 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
- 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
-+	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
-+	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
- 	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
- 	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	 CLK_SEL_W0,   0x438, 5),
- 	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	 CLK_DIV_A,    0x448, 0),
-@@ -141,6 +143,7 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
- 	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
-+	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
- };
- 
- static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
--- 
-2.34.1
+Hi,
 
+
+I believe this is due to the fact that this clock is falsely advertised 
+by the header and Linux does not know anything about it, because it is 
+handled by a magic write [1] (as I once said in a similar case, this was 
+going bite eventually..) instead and the index corresponding to the 
+define symbol is not initialized, hence it points to NULL. Adding the 
+clock properly in GCC would let the OF clock stuff handle it gracefully. 
+If that is the case, your patch disabling the clock controller block 
+(which I'm against unless there's abosolute need, as having the hw block 
+initialized properly should be possible regardless of the board, as it's 
+a generic SoC components) should not be necessary.
+
+That said, I can not test my theory right now.
+
+
+[1] 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/qcom/gcc-sm8250.c?h=next-20220518#n3647
+
+Konrad
+
+>
+> If both drivers are compiled as built-in, there is a change that a board
+> won't boot up due to a race, which happens on the same init level.
+>
+> Fixes: 5d66ca79b58c ("clk: qcom: Add camera clock controller driver for SM8250")
+> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/camcc-sm8250.c | 12 +-----------
+>   1 file changed, 1 insertion(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
+> index 439eaafdcc86..ae4e9774f36e 100644
+> --- a/drivers/clk/qcom/camcc-sm8250.c
+> +++ b/drivers/clk/qcom/camcc-sm8250.c
+> @@ -2440,17 +2440,7 @@ static struct platform_driver cam_cc_sm8250_driver = {
+>   	},
+>   };
+>   
+> -static int __init cam_cc_sm8250_init(void)
+> -{
+> -	return platform_driver_register(&cam_cc_sm8250_driver);
+> -}
+> -subsys_initcall(cam_cc_sm8250_init);
+> -
+> -static void __exit cam_cc_sm8250_exit(void)
+> -{
+> -	platform_driver_unregister(&cam_cc_sm8250_driver);
+> -}
+> -module_exit(cam_cc_sm8250_exit);
+> +module_platform_driver(cam_cc_sm8250_driver);
+>   
+>   MODULE_DESCRIPTION("QTI CAMCC SM8250 Driver");
+>   MODULE_LICENSE("GPL v2");
+>
