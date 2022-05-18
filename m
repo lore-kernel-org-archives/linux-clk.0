@@ -2,72 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67019C4167E
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 21:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 030F5C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 21:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243010AbiERVAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 17:00:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        id S229718AbiERV4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 17:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242898AbiERVAR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 17:00:17 -0400
+        with ESMTP id S229727AbiERV4U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 17:56:20 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EDCB2550AA;
-        Wed, 18 May 2022 14:00:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA8365B7;
+        Wed, 18 May 2022 14:45:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B7D960B82;
-        Wed, 18 May 2022 21:00:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BDCC34118;
-        Wed, 18 May 2022 21:00:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 511916130C;
+        Wed, 18 May 2022 21:45:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30FEC385A5;
+        Wed, 18 May 2022 21:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652907608;
-        bh=KcS5GI4xf1k64PlWdqRXj976hlEmI3j8PQlC7U+Rs4U=;
+        s=k20201202; t=1652910346;
+        bh=8ycTWVvX6puDTwUNj5c6I9dNAAzsSHDh5Ka/xeEnI9E=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eVuCqyttWm3s81U5rgu5NjkkkKPWZdWATppI6afGf+VTj6TXIZN9Hwnl/7xhQky6Q
-         mjYUJOcu6em4FApsXOHKPue2KsHmWzhc+HWL5AYO0uxdz+sr/bx7ykV7moJSeMLoMr
-         rOLc7YHGgiapwNmZl3rk0/C6AdMPa3LrH0SZoZhG7ZjADck/eh7GTNp/3qOuk2kR55
-         BGiboC/7kjN57A5+CH4VGeMVA8SANjbXWcjQ+AKS67mGzbq0kVi9m+mzdTdkYy9bbQ
-         P/zbU3GCXC2OR2j9nOxsHu5mKM1e0EQNn31ZCjmTvi0Z0YRsfFy4nu7kTTZl2qJe+m
-         bDMBDeYlT1nGA==
+        b=hWuW8UDwTfv0LOlg3CyRoDs8RmNiVuXq0WUcLqmXOUror4WQhUTbUN5tSE/pRSC/O
+         k3T17CqC9B4sCpL0Ct/PDfImMKDXmfJNtzTUG2nM34k/JsudmBEjW4KDFtQFoFilmj
+         WtiFub+zvVC3bvI0hY2cmgZDmtk3w3YBmn+N1lVm2ddBzcQ0ayfUOTVTN8WGpLafKF
+         KknqABLM1ejmCaSlojhWPC+3tn3sKTV5QLRcqOG0WNPO+UuLUIsUXyoIoVo95DcnIH
+         BvYfSPh1pGmw/22W3nl6D7KW2mrs+HRKbl7qoI1N4cqljxy7e6DQ3Cd42xnWSIyhaY
+         dXnLbmrARS9hg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220503114607.98844-2-hdegoede@redhat.com>
-References: <20220503114607.98844-1-hdegoede@redhat.com> <20220503114607.98844-2-hdegoede@redhat.com>
-Subject: Re: [PATCH 1/1] platform/x86: Drop the PMC_ATOM Kconfig option
+In-Reply-To: <20220510104804.544597-1-wenst@chromium.org>
+References: <20220510104804.544597-1-wenst@chromium.org>
+Subject: Re: [PATCH v2 00/11] clk: mediatek: Move to struct clk_hw provider APIs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Shevchenko <andy@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Date:   Wed, 18 May 2022 14:00:06 -0700
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Date:   Wed, 18 May 2022 14:45:44 -0700
 User-Agent: alot/0.10
-Message-Id: <20220518210007.E4BDCC34118@smtp.kernel.org>
+Message-Id: <20220518214546.A30FEC385A5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hans de Goede (2022-05-03 04:46:07)
-> The def_bool y PMC_ATOM Kconfig option provides a couple of symbols used
-> by the code enabled by the X86_INTEL_LPSS option and it registers some
-> clocks. These clocks are only registered on Bay Trail, Cherry Trail and
-> Brasswell Intel SoCs and kernels targeting these SoCs must always have
-> the X86_INTEL_LPSS option enabled otherwise many things will not work.
+Quoting Chen-Yu Tsai (2022-05-10 03:47:53)
 >=20
-> Building the PMC_ATOM code on kernels which are not targeting the
-> mentioned SoCs and which do not have the X86_INTEL_LPSS enabled is
-> not useful.
+> Patch 10 fixes, by hand, a build error from a call site that was not cove=
+red
+> by the previous patch.
 >=20
-> This means that we can simplify things by replacing the PMC_ATOM Kconfig
-> option in Makefiles with X86_INTEL_LPSS and then drop the option.
+> Patch 11 converts the last usage of clk_register*() in the MediaTek clk
+> drivers.
 >=20
-> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
+> As mentioned above, this series includes parts that don't build, but are
+> split out for clarity. These are patches 3~8 and 9+10. Once the patches
+> are reviewed, they can be squashed together.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Sounds ok to me. Please resend with the squash and I'll apply them.
