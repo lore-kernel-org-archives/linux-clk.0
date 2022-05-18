@@ -2,73 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9E8C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 13:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48868C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 13:46:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238050AbiERNjc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 09:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51518 "EHLO
+        id S238183AbiERNq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 09:46:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238031AbiERNja (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 09:39:30 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D6D1A90EB
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 06:39:27 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id f16so3734900ybk.2
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 06:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BhJrvJLn+TzZ+Q8hiTJgSRsblqOxOpTfmvIr/hnkxcU=;
-        b=Fr1wEjHLVhbeaVjSnAq2+SspRoi/e2nHtCbxH9sSXmM6/3QABuwEX0A/Bsv0tflvx7
-         FeGLTj9FD2gkRu3GbCWe+exRmItXfmUcb0sSDSRZD4+ElF7Rf4cjjxqwhIJimVNkCdOk
-         G7KCBSkOvXlptSJIcRhHWmc11F2GcHXFR8+qTkIwKJt/USalM5VXcDoAQc4okcJGsMmX
-         F5Pa+wE7uyY0nr89lorDyjvaYa071njtprkgH39qA936CcpcVGNJZnYzLFsDlr8OMsAs
-         J7/lUHeHwu2zSymb7v1cPfmgnmY1K97t0ftjofja2ovNQL1w63T81Iy1+EXOY2o6HKTK
-         rwtQ==
+        with ESMTP id S238226AbiERNqP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 09:46:15 -0400
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43524178545;
+        Wed, 18 May 2022 06:46:14 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id m25so2703243oih.2;
+        Wed, 18 May 2022 06:46:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BhJrvJLn+TzZ+Q8hiTJgSRsblqOxOpTfmvIr/hnkxcU=;
-        b=SHHg6w6Of98Cezw//sY+CaHx5PtExzeD6Sxsw2c4Vu/La7SHRSNa7Of+MpmdpVHcTI
-         3vXyLH0v3UG6EtWogU6mZr8IEietsMVBDQpqR3Ka7UHH7F0ByDQPCpzgy7Xzflb8Q1EG
-         nFJoOnwnLtQ3IcsBKF6rQv4FCwDHvQR7KVOiaKOxj547Ra5KefwcM5iuZdCFBGzGBpDl
-         LFm3zafAnEtIJ/SYatAP67szEFyQzSta8Fn/GyHNInTIDgygMY4AMz44JL198m/XyeiE
-         C2AwL+LxcP53vb9XdFFJqdvf5JzLh6MfKHBzmtudr6cnW6xTrAc1eiHTvnAgGadSorXv
-         wZ2w==
-X-Gm-Message-State: AOAM530vrjSqzBtQceWDg7N5asZvDV2yyV2zNYDgRXdaqJsDuwmP8+u6
-        ypukC12ty2IMkWzyHI2+okfafFQstiWC9Nd8QoubBQ==
-X-Google-Smtp-Source: ABdhPJw0ggPGBcwzy17FZdJk/9wHr1iVA0SjK4e5DeP3olkHLrIVoDC/fZ1dAMLEu7Vv5xwFM8k/Dan+CV+eeyELPlE=
-X-Received: by 2002:a05:6902:526:b0:64d:b6ab:f91d with SMTP id
- y6-20020a056902052600b0064db6abf91dmr14325832ybs.295.1652881167023; Wed, 18
- May 2022 06:39:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220518062537.17933-1-hbh25y@gmail.com>
-In-Reply-To: <20220518062537.17933-1-hbh25y@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 18 May 2022 15:39:14 +0200
-Message-ID: <CACRpkdY4Ynox3qYu_8=ToH_nkXFpC3xOOuN7D4EM5vszDgKMdw@mail.gmail.com>
-Subject: Re: [PATCH] clk: ux500: fix a possible off-by-one in u8500_prcc_reset_base()
-To:     Hangyu Hua <hbh25y@gmail.com>
-Cc:     ulf.hansson@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=8zKhwIJo0gXsAIWGyUaFPT+x1Z1JcWrSNyRipuSmgqs=;
+        b=XAYaYQo0XENnCRuTqedzjgHnvmrnMP3qHTiIfD3MQXm9Zw0tPMj7IPP2mSoGz88C4m
+         OvyAk9oeNtR0YfisR9SMXbBoUUCrGvRUVhpRVrI4uS+JaiDuy0hEpP7xWKSBj8teY8ah
+         PYb+LzdfZ35BZ7eZJuYRrnv1FB57fVTGeMKsyiQclYcZNN2MjMHnm6nIrPXJYv71BTiu
+         B6S6h0Z8kK+8MQc11xg+OEDcTG3GzsAdq+CziqaRh3JGAutLuM/NFQqPuxhpnoy0rcTu
+         rQ014a4usHBPlDEHawN+CQAq/YZ+CIOWlKTUB8UwM9hm2KzPEHp7Z7GXwLkbDZLqI4WU
+         dpCQ==
+X-Gm-Message-State: AOAM533BWhFC6xf3l4U/lbVz5nckYD/hp4OuX0q7eCofNGVh9MBho1dq
+        QBwRiRIqCiRGWVEK8bwYqw==
+X-Google-Smtp-Source: ABdhPJyDA0UeGAJChEEw2/YIUdPOq9UuLN/6prgGz2LmxT7diCMuhTs+SznglSjuWfgpvESbht/lYg==
+X-Received: by 2002:a05:6808:1287:b0:326:d23f:f251 with SMTP id a7-20020a056808128700b00326d23ff251mr16746oiw.155.1652881573534;
+        Wed, 18 May 2022 06:46:13 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id i3-20020a9d53c3000000b0060603221239sm776619oth.9.2022.05.18.06.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 May 2022 06:46:12 -0700 (PDT)
+Received: (nullmailer pid 3186179 invoked by uid 1000);
+        Wed, 18 May 2022 13:46:11 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     marijn.suijten@somainline.org, jason-jh.lin@mediatek.com,
+        konrad.dybcio@somainline.org, linux-kernel@vger.kernel.org,
+        paul.bouchara@somainline.org, krzysztof.kozlowski+dt@linaro.org,
+        phone-devel@vger.kernel.org, y.oudjana@protonmail.com,
+        chun-jie.chen@mediatek.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, ~postmarketos/upstreaming@lists.sr.ht,
+        matthias.bgg@gmail.com, rex-bc.chen@mediatek.com,
+        mturquette@baylibre.com, kernel@collabora.com,
+        linux-clk@vger.kernel.org, tinghan.shen@mediatek.com,
+        sam.shih@mediatek.com, robh+dt@kernel.org, fparent@baylibre.com,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        miles.chen@mediatek.com, ck.hu@mediatek.com, ikjn@chromium.org,
+        wenst@chromium.org, linux-arm-kernel@lists.infradead.org,
+        martin.botka@somainline.org, weiyi.lu@mediatek.com,
+        bgolaszewski@baylibre.com
+In-Reply-To: <20220518111652.223727-5-angelogioacchino.delregno@collabora.com>
+References: <20220518111652.223727-1-angelogioacchino.delregno@collabora.com> <20220518111652.223727-5-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
+Date:   Wed, 18 May 2022 08:46:11 -0500
+Message-Id: <1652881571.539429.3186178.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 18, 2022 at 8:25 AM Hangyu Hua <hbh25y@gmail.com> wrote:
+On Wed, 18 May 2022 13:16:49 +0200, AngeloGioacchino Del Regno wrote:
+> Add the bindings for the clock drivers of the MediaTek Helio X10
+> MT6795 SoC.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++
+>  .../clock/mediatek,mt6795-sys-clock.yaml      | 74 +++++++++++++++++++
+>  2 files changed, 140 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+> 
 
-> Off-by-one will happen when index == ARRAY_SIZE(ur->base).
->
-> Fixes: b14cbdfd467d ("clk: ux500: Add driver for the reset portions of PRCC")
-> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Good catch!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+yamllint warnings/errors:
 
-Yours,
-Linus Walleij
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.example.dts:35.13-21 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:364: Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.example.dtb] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1401: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
