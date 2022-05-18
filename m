@@ -2,242 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8444AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 19:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E79C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 19:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241803AbiERTTO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 15:19:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41130 "EHLO
+        id S242152AbiERTq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 15:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236202AbiERTTO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 15:19:14 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 019461B0920
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 12:19:11 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id u30so5304855lfm.9
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 12:19:10 -0700 (PDT)
+        with ESMTP id S242144AbiERTq5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 15:46:57 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E2B1A6AE5
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 12:46:55 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id v11so2315843qkf.1
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 12:46:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wvaWzADdM7DSnsBh4ZAoxyMLzUUhSncSX5FP71iYjVw=;
-        b=Z8gML/o1hRUDPMKBQF3J+hxlHRQjbgRezUGsNFhzYshnHrDtnN5CKiMLS3+AeoK8MQ
-         6+ZAMO62DkxqCgpCwMm/HfF+1CqhAYnlze04dZwLj1HaD7ezxwUhKxkr9op9bv/wyBrG
-         HkfamvtTe1GpixzfiT6KDMUlbnyZoaFw4rUb3iCYXgIpLxAX62+sfwLflSN9OEN+EWQM
-         FgAMLvzvVyj5dAFmlLkFBE3SQSxAfMlZ8Bxn3a1ie8/ocBbBxXc+0EfHpB6+mLKdiQub
-         uDeFTk8EBNqqtosaqpIQ0su8Ey2wFyf3uIOgn7kc0FhX+ULZDRKKXU66bcRAWQMc/x41
-         TRDg==
+        d=marek-ca.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lknfdui0Jkld21xyQxZKW/2k8Qh0EDK1oNvMjjFcPb8=;
+        b=r8xniljnQ5xLCJGNADSb7eocGuy4bV996ee55GTs/IfAI2mGLOa4+WpmLaF5tOi0Q3
+         fE4eGBB/asploPiE0/kbJaAflM+aA0hLXdSl2oTt43hbbkPL5i3ZNTAaspwHI6YvYYgF
+         7P9/wFYB9Jmo3G/I50Jfr1ZELQarBU4nvbqTGW92IeHokrM1NqmXcaa8p0Gq0+PkW08O
+         TbdMD7FHNVzECU2nejniep+jnIUieScvnLKYJX4gW/v6GrPpqhJp9xFR011iPMrY2Lv9
+         5jWRGw9XxwdLbB0xGFCoqXlZXAehZcMhd/mUfN4Hut92b1Cyym2vudJUTrvNsNl6zd2m
+         4ysg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wvaWzADdM7DSnsBh4ZAoxyMLzUUhSncSX5FP71iYjVw=;
-        b=r1zHBHA4ILrW+Es8dleq45V/mdpo/q66b3PDxQqoWNrX2g7B2LI6mJQV4Ss1YlQ4cQ
-         0ZAFOEAekWtQ8F9FrWWOa95YG2ao6Qc0MoobKPuTqd7kbtVI1ZxWaQTwhbXcxxRHI1Xg
-         bbgyf/Y9kWAScvUCEkUwQZfQUYMWl/1V90AngVBX0hDPQeh+sTe5wXiP3h1dhWKnE+cB
-         LYzA4CU1+ykteSzDMv5xZKXW8oznHI/75NpNq/T2rpSAZu3+QOz1yxTvmQmiAN1t1G7n
-         nRXZGN2gJIzrTlHDcuIbCLiU62PxpL6k69AWwraIjf1Qq7fQf2EEtwqp8kVdBFjbv+t9
-         7qPA==
-X-Gm-Message-State: AOAM533wcS/tmg+tJdejfDhBfpZLFQ+Xg+z0OuXcx5KdQ14ag8c5cY4m
-        OBr8duyE05d+IJDsuGIevBZqIw==
-X-Google-Smtp-Source: ABdhPJzJSLZnoa2/JlL2grPwpJnM3CN6awJYDRZFGpqtIdAaPJYFgMmAcWEBTZQPDbHr+XCSzjji6g==
-X-Received: by 2002:ac2:4ac9:0:b0:471:f6da:640d with SMTP id m9-20020ac24ac9000000b00471f6da640dmr665727lfp.286.1652901549250;
-        Wed, 18 May 2022 12:19:09 -0700 (PDT)
-Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
-        by smtp.gmail.com with ESMTPSA id d25-20020ac24c99000000b00477b624c0a8sm31111lfl.180.2022.05.18.12.19.07
+        bh=lknfdui0Jkld21xyQxZKW/2k8Qh0EDK1oNvMjjFcPb8=;
+        b=KGmQGWZrYrlZYQrEfWyV1O1DQExJdH2NP5rEhKX71gw1e5V70f2Le+G492JDgl/AtT
+         pv/dyMCN6b+uHB7sSOfYKgn+nGXKIQA3pTnBsR1EHL9PiDAt6fIb5ynBO+RhbN4QSy7P
+         hK2qTAlTSe/veQgzl5+67a6Lo9p5pyvWRxnnwVbk2RNsAf2GJc3aIa4uuRhTZTrNarNC
+         mIfbbhWqGtmbMq6wjQl6Mh5k709PvrQhSTNJdioDDiZLVsTxsk2Kj+UJQyQ/KOqE6hWT
+         zCndqgvb9L3k4DxuYw1SBRHHoCeYRoiNIN9UzmuHsX8sh86bKbAnlBktBJwbnfj2Fmsk
+         91jg==
+X-Gm-Message-State: AOAM532Q/7B6UQY+vqr8zPTQmll/b9/g608Wm+kWbFkUdtijdTq0ieCw
+        xc0+eeeQy3nUXXSGVyH+93T61CoQUsQrbLSxUPg=
+X-Google-Smtp-Source: ABdhPJx4LT9jmpxkokpBvF9ZdaMNZYPp3LhALhfeXcOaM1WWlLIjYqlPDryzV/DFogxJG7Wnt6xfdA==
+X-Received: by 2002:a05:620a:c4b:b0:67e:11a2:7cfb with SMTP id u11-20020a05620a0c4b00b0067e11a27cfbmr807277qki.9.1652903214594;
+        Wed, 18 May 2022 12:46:54 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable134.222-177-173.mc.videotron.ca. [173.177.222.134])
+        by smtp.gmail.com with ESMTPSA id i125-20020a375483000000b0069fc13ce1f2sm88779qkb.35.2022.05.18.12.46.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 May 2022 12:19:08 -0700 (PDT)
-Message-ID: <23cb9c6e-129f-df79-b734-aac1a92264a9@linaro.org>
-Date:   Wed, 18 May 2022 22:19:07 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v6 2/5] clk: qcom: regmap: add PHY clock source
- implementation
-Content-Language: en-GB
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Wed, 18 May 2022 12:46:53 -0700 (PDT)
+Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Fix halt on boot by reducing
+ driver's init level
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>
-Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220513175339.2981959-1-dmitry.baryshkov@linaro.org>
- <20220513175339.2981959-3-dmitry.baryshkov@linaro.org>
- <20220518175808.EC29AC385A5@smtp.kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220518175808.EC29AC385A5@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
+ <f645fe49-8adf-c1b2-89be-e8ab8f620f16@linaro.org>
+From:   Jonathan Marek <jonathan@marek.ca>
+Message-ID: <034f3156-289d-caab-695d-28a9a0e5a9d9@marek.ca>
+Date:   Wed, 18 May 2022 15:46:38 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <f645fe49-8adf-c1b2-89be-e8ab8f620f16@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/05/2022 20:58, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2022-05-13 10:53:36)
->> diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.c b/drivers/clk/qcom/clk-regmap-phy-mux.c
->> new file mode 100644
->> index 000000000000..d7a45f7fa1aa
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-regmap-phy-mux.c
->> @@ -0,0 +1,62 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2022, Linaro Ltd.
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/bitops.h>
->> +#include <linux/regmap.h>
->> +#include <linux/export.h>
+On 5/18/22 8:48 AM, Bryan O'Donoghue wrote:
+> On 18/05/2022 11:35, Vladimir Zapolskiy wrote:
+>> Access to I/O of SM8250 camera clock controller IP depends on enabled
+>> GCC_CAMERA_AHB_CLK clock supplied by global clock controller, the latter
+>> one is inited on subsys level, so, to satisfy the dependency, it would
+>> make sense to deprive the init level of camcc-sm8250 driver.
+>>
+>> If both drivers are compiled as built-in, there is a change that a board
+>> won't boot up due to a race, which happens on the same init level.
+>>
+>> Fixes: 5d66ca79b58c ("clk: qcom: Add camera clock controller driver 
+>> for SM8250")
+>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   drivers/clk/qcom/camcc-sm8250.c | 12 +-----------
+>>   1 file changed, 1 insertion(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/camcc-sm8250.c 
+>> b/drivers/clk/qcom/camcc-sm8250.c
+>> index 439eaafdcc86..ae4e9774f36e 100644
+>> --- a/drivers/clk/qcom/camcc-sm8250.c
+>> +++ b/drivers/clk/qcom/camcc-sm8250.c
+>> @@ -2440,17 +2440,7 @@ static struct platform_driver 
+>> cam_cc_sm8250_driver = {
+>>       },
+>>   };
+>> -static int __init cam_cc_sm8250_init(void)
+>> -{
+>> -    return platform_driver_register(&cam_cc_sm8250_driver);
+>> -}
+>> -subsys_initcall(cam_cc_sm8250_init);
+>> -
+>> -static void __exit cam_cc_sm8250_exit(void)
+>> -{
+>> -    platform_driver_unregister(&cam_cc_sm8250_driver);
+>> -}
+>> -module_exit(cam_cc_sm8250_exit);
+>> +module_platform_driver(cam_cc_sm8250_driver);
+>>   MODULE_DESCRIPTION("QTI CAMCC SM8250 Driver");
+>>   MODULE_LICENSE("GPL v2");
 > 
-> clk-provider.h for clk_hw/clk_ops usage. It helps with grep to identify
-> clk providers.
+> So I tried this
 > 
->> +
->> +#include "clk-regmap-phy-mux.h"
+> -                       clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> -                                <&rpmhcc RPMH_CXO_CLK>,
+> +                       clocks = <&rpmhcc RPMH_CXO_CLK>,
+>                                   <&rpmhcc RPMH_CXO_CLK_A>,
+>                                   <&sleep_clk>;
+> -                       clock-names = "iface", "bi_tcxo", "bi_tcxo_ao", 
+> "sleep_clk";
+> +                       clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
 > 
-> Same for clk-regmap.h, avoid include hell.
+> and the system wouldn't boot @ * 736ee37e2e8e - (tag: next-20220518, 
+> linux-next/master) Add linux-next specific files for 20220518 (2 hours ago)
 > 
->> +
->> +static inline struct clk_regmap_phy_mux *to_clk_regmap_phy_mux(struct clk_hw *hw)
->> +{
->> +       return container_of(to_clk_regmap(hw), struct clk_regmap_phy_mux, clkr);
->> +}
->> +
->> +static int phy_mux_is_enabled(struct clk_hw *hw)
->> +{
->> +       struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(hw);
->> +       struct clk_regmap *clkr = to_clk_regmap(hw);
->> +       unsigned int mask = GENMASK(phy_mux->width + phy_mux->shift - 1, phy_mux->shift);
->> +       unsigned int val;
->> +
->> +       regmap_read(clkr->regmap, phy_mux->reg, &val);
->> +       val = (val & mask) >> phy_mux->shift;
-> 
-> Can this use FIELD_GET?
-> 
->> +
->> +       WARN_ON(val != phy_mux->phy_src_val && val != phy_mux->ref_src_val);
->> +
->> +       return val == phy_mux->phy_src_val;
->> +}
->> +
->> +static int phy_mux_enable(struct clk_hw *hw)
->> +{
->> +       struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(hw);
->> +       struct clk_regmap *clkr = to_clk_regmap(hw);
->> +       unsigned int mask = GENMASK(phy_mux->width + phy_mux->shift - 1, phy_mux->shift);
->> +       unsigned int val;
->> +
->> +       val = phy_mux->phy_src_val << phy_mux->shift;
-> 
-> Can this use FIELD_PREP?
-> 
->> +
->> +       return regmap_update_bits(clkr->regmap, phy_mux->reg, mask, val);
->> +}
->> +
->> +static void phy_mux_disable(struct clk_hw *hw)
->> +{
->> +       struct clk_regmap_phy_mux *phy_mux = to_clk_regmap_phy_mux(hw);
->> +       struct clk_regmap *clkr = to_clk_regmap(hw);
->> +       unsigned int mask = GENMASK(phy_mux->width + phy_mux->shift - 1, phy_mux->shift);
->> +       unsigned int val;
->> +
->> +       val = phy_mux->ref_src_val << phy_mux->shift;
->> +
->> +       regmap_update_bits(clkr->regmap, phy_mux->reg, mask, val);
->> +}
->> +
->> +const struct clk_ops clk_regmap_phy_mux_ops = {
->> +       .enable = phy_mux_enable,
->> +       .disable = phy_mux_disable,
->> +       .is_enabled = phy_mux_is_enabled,
->> +};
->> +EXPORT_SYMBOL_GPL(clk_regmap_phy_mux_ops);
->> diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.h b/drivers/clk/qcom/clk-regmap-phy-mux.h
->> new file mode 100644
->> index 000000000000..6260912191c5
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-regmap-phy-mux.h
->> @@ -0,0 +1,37 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2022, Linaro Ltd.
->> + * Author: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> + */
->> +
->> +#ifndef __QCOM_CLK_REGMAP_PHY_MUX_H__
->> +#define __QCOM_CLK_REGMAP_PHY_MUX_H__
->> +
->> +#include <linux/clk-provider.h>
->> +#include "clk-regmap.h"
->> +
->> +/*
->> + * A special clock implementation for PHY pipe and symbols clock sources.
-> 
-> Remove "special" please. Everything is special :)
 
-ack for the docs changes, will send shortly.
+GCC_CAMERA_AHB_CLK is defined but it isn't actually implemented by the 
+upstream gcc driver, and the camcc driver doesn't do anything with it 
+either (I didn't include it in the camcc driver because the gcc driver 
+didn't implement it, but I have a patch to do things like downstream, 
+dispcc/gpucc/videocc drivers all have this problem too). Does having it 
+in the dts like this cause the gcc driver to probe first somehow, even 
+though the clock isn't used by the camcc driver?
 
-> 
->> + *
->> + * If the clock is running off the from-PHY source, report it as enabled.
-> 
-> from-PHY is @phy_src_val? Maybe add that information like "from-PHY
-> source (@phy_src_val)"
-> 
->> + * Report it as disabled otherwise (if it uses reference source).
-> 
-> Same for @ref_src_val
-> 
->> + *
->> + * This way the PHY will disable the pipe clock before turning off the GDSC,
->> + * which in turn would lead to disabling corresponding pipe_clk_src (and thus
->> + * it being parked to a safe, reference clock source). And vice versa, after
->> + * enabling the GDSC the PHY will enable the pipe clock, which would cause
->> + * pipe_clk_src to be switched from a safe source to the working one.
-> 
-> Might as well make it into real kernel-doc at the same time.
-> 
->> + */
->> +
->> +struct clk_regmap_phy_mux {
->> +       u32                     reg;
->> +       u32                     shift;
->> +       u32                     width;
-> 
-> Technically neither of these need to be u32 and could be u8 to save a
-> byte or two. The other thing is that possibly the width and shift never
-> changes? The RCG layout is pretty well fixed. Does hardcoding it work?
+(The sc7180 camcc driver does do something with the "iface" clock, but 
+the sc7180 gcc driver also doesn't implement GCC_CAMERA_AHB_CLK either.. 
+I guess you get a dummy clock for the unimplemented clocks?)
 
-It seems, I can hardcode shift=0 and width=2.
-
+> If we do a grep
 > 
->> +       u32                     phy_src_val;
->> +       u32                     ref_src_val;
+> grep subsys_init drivers/clk/qcom/camcc-*
+> drivers/clk/qcom/camcc-sc7180.c:subsys_initcall(cam_cc_sc7180_init);
+> drivers/clk/qcom/camcc-sc7280.c:subsys_initcall(cam_cc_sc7280_init);
+> drivers/clk/qcom/camcc-sdm845.c:subsys_initcall(cam_cc_sdm845_init);
+> drivers/clk/qcom/camcc-sm8250.c:subsys_initcall(cam_cc_sm8250_init);
 > 
-> I feel like "_val" is redundant. Just "ref_src" and "phy_src"? Shorter
-> is nice.
-
-I had this since I wanted to point that these are 'values', not the 
-enum-ed sources. But I can drop this now.
-
+> and
 > 
->> +       struct clk_regmap       clkr;
->> +};
->> +
->> +extern const struct clk_ops clk_regmap_phy_mux_ops;
-
-
--- 
-With best wishes
-Dmitry
+> arch/arm64/boot/dts/qcom/sc7180.dtsi:                   <&gcc 
+> GCC_CAMERA_AHB_CLK>,
+> arch/arm64/boot/dts/qcom/sm8250.dtsi:            clocks = <&gcc 
+> GCC_CAMERA_AHB_CLK>,
+> 
+> I think the sc7180 has this same dependency loop. Probably needs the 
+> same fix.
+> 
+> Also not sure why sdm845 camcc doesn't declare a depends on 
+> GCC_CAMERA_AHB_CLK - should it ?
+> 
+> Recommend applying this same fix to sc718x
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> ---
+> bod
