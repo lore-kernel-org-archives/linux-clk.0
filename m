@@ -2,106 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30930C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 10:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFAEC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 11:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235105AbiERKgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 06:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34802 "EHLO
+        id S235400AbiERLRE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 07:17:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235187AbiERKgJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 06:36:09 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B921102
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 03:35:59 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id y32so2846347lfa.6
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 03:35:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/OPZaa8O8nK6v81/n/W6XSRLaD0EMUHd0/YyP/r4uTE=;
-        b=Xr+N2L8ytMOPljbWrdRGsgthSUXEgPaGCcJaMJOupz7NasJgFDHsid4EfinnrtGjkc
-         GIIeSF1G7yFICTnTw5iuX+yJv7mr9F/1SfWMn3VnXGPoE4TeYXt6Tu78p2s92TKIiiWK
-         XCgzhZckc1mf5BGyaFMpBLKORfk+x3bA9iSzV3kF36earJNCyAYnTzpzbeyh/74unnI7
-         CFXo6i0TsjlM3/WT03C3iHwG2GsJqGsLMxHKJQxQYJBcTkYj0eEaTMveHSn80dJnymwV
-         P4TeavcDaty8JrmsUM6lPOwsX2A4RPBRVmONh3Xq3ph/Cr5FxlnjC/oY0aF/JuzMUi7Q
-         xxiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/OPZaa8O8nK6v81/n/W6XSRLaD0EMUHd0/YyP/r4uTE=;
-        b=dV8R1BVvogcLtOrVP9OwPPdtVxHZ0TKpySvR170bWA5PzrvI2bGolY6UpBre5s+9m+
-         M0Y5iXDz2lN+nK5wKPLGdH6JenyXY8ArvxJca4A9Xz8O8CV4Qv3+Nq1s4IG+RzVzUnnW
-         YfNPJ30XfS6adVxh4JgkNAgF1NOavTR3UmPXYayygKQ0Y/0PG8GMXPszpBe2EPw55WoI
-         R2a1Z9FufVNuyTiuxiQYOMisrCFR3lIpzJXc5sh8VWUtxIEORpY1zthJzaMTbV5YWzzk
-         FnW2kZNx2ReRSGFvQOdhjwqD/B4wrn4+C6QIibvrt3zkZ/0s3xeoGmqFswIBkHEsjJqF
-         XJjg==
-X-Gm-Message-State: AOAM531bCn5sbaUAbyb6lm2x2MnybX1MRTTMl53CS52yUUMqhjGDeAMP
-        b9BLIFt5xUVQ3j5MdNmilkRDPQ==
-X-Google-Smtp-Source: ABdhPJzJB3QjrssIFShXSHHsIPfuN0JZhHmQ03dlU2SMWxKIwygisaGxtL8YPE30Fng9DbBPF8TEQg==
-X-Received: by 2002:a19:a402:0:b0:477:baf1:1983 with SMTP id q2-20020a19a402000000b00477baf11983mr1277725lfc.222.1652870157999;
-        Wed, 18 May 2022 03:35:57 -0700 (PDT)
-Received: from localhost.localdomain (mobile-access-b04822-211.dhcp.inet.fi. [176.72.34.211])
-        by smtp.gmail.com with ESMTPSA id v16-20020a056512097000b0047255d210f8sm171629lft.39.2022.05.18.03.35.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 03:35:57 -0700 (PDT)
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: camcc-sm8250: Fix halt on boot by reducing driver's init level
-Date:   Wed, 18 May 2022 13:35:54 +0300
-Message-Id: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S235372AbiERLRD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 07:17:03 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F8D16D4E8;
+        Wed, 18 May 2022 04:17:01 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 6CFD71F44F12
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652872620;
+        bh=apn6ShGZEG3D6yLEFdVVyWQiT/UfA8DY+IFGQiBvVVc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kvD+UbyNikRWKEkhsNaUzIDlDfiMwgZgBJ3rEGieDNllPkYWc4+aDpPWs6IazHxsx
+         hr4c8PWOcKuezXW/1mFy464M2JA0rprnyZNf7ALVRfFyPn6D+LsvOxu4uw8duDHEWl
+         0oGWCcl2AVrbAcxhOb9EEpiLS3w8PAn033E+Yf7OMhgjyC0uHevkaavZMqk9u3ZeF3
+         jG7EpDEE/4BChvUank65XMFjJ48pSHq2gXWeF6F3EZq+sKRd93jILnbA9fqcKsKI+P
+         NThRwoxm+1O8mTwxIJRoORtyW4d9iVS7+A/4NUrAJ7buTkOVTyTSsuAxrjxdWP3Jwk
+         0TQg4lEB5DBBg==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     robh+dt@kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, angelogioacchino.delregno@collabora.com,
+        jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
+        fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
+        kernel@collabora.com
+Subject: [PATCH v2 0/7] MediaTek Helio X10 MT6795 - Clock drivers
+Date:   Wed, 18 May 2022 13:16:45 +0200
+Message-Id: <20220518111652.223727-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Access to I/O of SM8250 camera clock controller IP depends on enabled
-GCC_CAMERA_AHB_CLK clock supplied by global clock controller, the latter
-one is inited on subsys level, so, to satisfy the dependency, it would
-make sense to deprive the init level of camcc-sm8250 driver.
+In an effort to give some love to the apparently forgotten MT6795 SoC,
+I am upstreaming more components that are necessary to support platforms
+powered by this one apart from a simple boot to serial console.
 
-If both drivers are compiled as built-in, there is a change that a board
-won't boot up due to a race, which happens on the same init level.
+This (very big) series introduces system clock, multimedia clock drivers
+(including resets) for this SoC.
 
-Fixes: 5d66ca79b58c ("clk: qcom: Add camera clock controller driver for SM8250")
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- drivers/clk/qcom/camcc-sm8250.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Tested on a MT6795 Sony Xperia M5 (codename "Holly") smartphone.
 
-diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-index 439eaafdcc86..ae4e9774f36e 100644
---- a/drivers/clk/qcom/camcc-sm8250.c
-+++ b/drivers/clk/qcom/camcc-sm8250.c
-@@ -2440,17 +2440,7 @@ static struct platform_driver cam_cc_sm8250_driver = {
- 	},
- };
- 
--static int __init cam_cc_sm8250_init(void)
--{
--	return platform_driver_register(&cam_cc_sm8250_driver);
--}
--subsys_initcall(cam_cc_sm8250_init);
--
--static void __exit cam_cc_sm8250_exit(void)
--{
--	platform_driver_unregister(&cam_cc_sm8250_driver);
--}
--module_exit(cam_cc_sm8250_exit);
-+module_platform_driver(cam_cc_sm8250_driver);
- 
- MODULE_DESCRIPTION("QTI CAMCC SM8250 Driver");
- MODULE_LICENSE("GPL v2");
+This series depends on, and can be merged on top of:
+[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=640122
+[2]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=637849
+
+Changes in v2:
+ - Fixed yaml clock bindings as per Rob's review
+ - Added ability to compile all MT6795 clock drivers as modules
+ - Added commits to export some symbols, required to compile as module
+
+AngeloGioacchino Del Regno (7):
+  dt-bindings: mediatek: Document MT6795 system controllers bindings
+  dt-bindings: clock: Add MediaTek Helio X10 MT6795 clock bindings
+  dt-bindings: reset: Add bindings for MT6795 Helio X10 reset
+    controllers
+  dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
+  clk: mediatek: clk-apmixed: Remove unneeded __init annotation
+  clk: mediatek: Export required symbols to compile clk drivers as
+    module
+  clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers
+
+ .../arm/mediatek/mediatek,infracfg.yaml       |   2 +
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |   1 +
+ .../arm/mediatek/mediatek,pericfg.yaml        |   1 +
+ .../bindings/clock/mediatek,apmixedsys.yaml   |   1 +
+ .../bindings/clock/mediatek,mt6795-clock.yaml |  66 ++
+ .../clock/mediatek,mt6795-sys-clock.yaml      |  74 +++
+ .../bindings/clock/mediatek,topckgen.yaml     |   1 +
+ drivers/clk/mediatek/Kconfig                  |  37 ++
+ drivers/clk/mediatek/Makefile                 |   6 +
+ drivers/clk/mediatek/clk-apmixed.c            |   3 +-
+ drivers/clk/mediatek/clk-cpumux.c             |   2 +
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 157 +++++
+ drivers/clk/mediatek/clk-mt6795-infracfg.c    | 148 +++++
+ drivers/clk/mediatek/clk-mt6795-mfg.c         |  50 ++
+ drivers/clk/mediatek/clk-mt6795-mm.c          | 106 +++
+ drivers/clk/mediatek/clk-mt6795-pericfg.c     | 160 +++++
+ drivers/clk/mediatek/clk-mt6795-topckgen.c    | 611 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6795-vdecsys.c     |  55 ++
+ drivers/clk/mediatek/clk-mt6795-vencsys.c     |  50 ++
+ drivers/clk/mediatek/clk-mtk.c                |   2 +
+ drivers/clk/mediatek/reset.c                  |   1 +
+ include/dt-bindings/clock/mt6795-clk.h        | 275 ++++++++
+ include/dt-bindings/reset/mt6795-resets.h     |  50 ++
+ 23 files changed, 1858 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
+ create mode 100644 include/dt-bindings/clock/mt6795-clk.h
+ create mode 100644 include/dt-bindings/reset/mt6795-resets.h
+
 -- 
-2.33.0
+2.35.1
 
