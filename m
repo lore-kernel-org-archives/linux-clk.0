@@ -2,108 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CB3C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 18:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BEAC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 18:26:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236213AbiERSZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 14:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57090 "EHLO
+        id S241462AbiERS0b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 14:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235558AbiERSZk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 14:25:40 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A1A1CA34B
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 11:25:39 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id eq14so2154606qvb.4
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 11:25:39 -0700 (PDT)
+        with ESMTP id S241484AbiERS0Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 14:26:25 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64431912C6
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 11:26:23 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id m6so3546668ljb.2
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 11:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CVGtSDjxtUlLWvvetgGRiUZg3RmuWi7A88eHZqwiyZg=;
-        b=lRGutispnHq6m+luptKyIFq685ZKFMADIpH5jZddkQznt0UdqhHyIicw28abv63fL+
-         X36rzDVceNC2YnyXX12UHCqFjT5uvMEC5fFqPZKvxObixtH5u1lTnxLq8/f7NWXR+Cu9
-         BES8iz6Hq7D0xkKjXhHVLV+aMqR45v9aHv9kkcoppxLXU2bChp9jyeu8FYKTI+sxFuzG
-         g8zCo1lOZWv7fMv3gwf/qr0EhW2yVbpCLc3jD6eL8bp2v+eun33JqfrAoNGr4+an8e5T
-         44xuhLxqbfXbzFOBtXbFj2H9P9r5297eYP9RUHvxUYtPeDztY6WLRiclqW/r3260kVVY
-         WbrA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=od5uWvVsPOq4I2jfpLO/cfL7S5BDWB+6iI2HjhmFDi8=;
+        b=YFi7YoiK2sCoELwEdEVKRfjqdXWbA905k1dvjTeVLCplX6bNiQP/OQNji20m5/I8PT
+         5/bpQ3GAVS1nt9PKEIIiGeJIu5HxotShLdncl6eM1JtDb8bnHdRi3r4u7Zia5EevqpcY
+         KAaHQDZGdTRrlIflRuhVU2RCL9TeDjGnSNelx9v+ffLnYHtc0/NXegxhtdNdCh8wRu6K
+         E+OmwCQezZG4k2VQMex1HglxK1OLmX8SYInqAkOKU2dD/JyCZNjo2mmAzTyjwwAhQtyr
+         giX6MbX+FhuP2LNH38gojAT/2wComJtGQiP/qcPFNp/xi0cQ0fn06ntCIqNOYEyUu83p
+         7Zjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CVGtSDjxtUlLWvvetgGRiUZg3RmuWi7A88eHZqwiyZg=;
-        b=cN2vG9O/COChxivXA9BUm2v3UxRL9Mfy1PkgQoLFYylrpBymB/4lbQ4rLVy/Eg1ynU
-         eE4PYgK/fi7GjobhvORF0QEkhIJ2ng1f8Zm2L4NhIJMOsTGQVbdLphM1Wm7v/hpJe8uq
-         Qtm0a02MduTogZfu+e+0FefYUQWkjl43ghLWdE7vIyJJXp040MT/BvlGHgwQKXMjJm9i
-         hFxr2nRZT8Oeux7EB59K91lcvBSu9RWaZiiVjeVUZduSYkSNnb+GAz2A/T8Uv79KYvav
-         qTXZZ/rOvo6FVxiiGhGrGmtHLHkppoyfEJmIVuzhFz/u8DHizs4h+IKUeE/j5YocY1jL
-         cDsg==
-X-Gm-Message-State: AOAM531zR2bGPqMjRBcCJ7qBC8pm9hUy5+i1lB6FD3mmAcmVvMUB3mBM
-        9bgeTsi/yLEdI0X3ZR9+hja50Q==
-X-Google-Smtp-Source: ABdhPJz8bZUpOLUyws4VEIBREZFYVwJBoIDnKP1B3V4SGYcehuOp3jsAxnXGo8uZo5tK59GkuTRzeQ==
-X-Received: by 2002:a05:6214:c66:b0:45c:538f:21b2 with SMTP id t6-20020a0562140c6600b0045c538f21b2mr850277qvj.90.1652898338283;
-        Wed, 18 May 2022 11:25:38 -0700 (PDT)
-Received: from maple.netwinder.org (rfs.netwinder.org. [206.248.184.2])
-        by smtp.gmail.com with ESMTPSA id l19-20020a05622a175300b002f39b99f670sm1798361qtk.10.2022.05.18.11.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 11:25:37 -0700 (PDT)
-From:   Ralph Siemsen <ralph.siemsen@linaro.org>
-To:     ralph.siemsen@linaro.org
-Cc:     geert+renesas@glider.be, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com
-Subject: [PATCH v2 1/3] clk: renesas: r9a06g032: Fix UART clkgrp bitsel
-Date:   Wed, 18 May 2022 14:25:27 -0400
-Message-Id: <20220518182527.1693156-1-ralph.siemsen@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220518172808.1691450-1-ralph.siemsen@linaro.org>
-References: <20220518172808.1691450-1-ralph.siemsen@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=od5uWvVsPOq4I2jfpLO/cfL7S5BDWB+6iI2HjhmFDi8=;
+        b=zzCEuQeA3FzxvHFywWfjCiV8KfMMT1SgbKbZMNP52bk95aro/LPXMpGEljy7KTQPCI
+         AapDB8abdc7UZmO+b/ScfVPcdttfJnq1clZJe2YRHc3ywaEd1Qgfl9y+Rs+4tN8zLFXJ
+         nJ/jvdcJcRildQx5TC7YlGSFYvhO8wYJSbVaYznbdXxy5i91i7Qd4ZXdURFDq//IfYIk
+         ImmWXPJbGASlTfxYaf2ZLffnz0emPhTTeKg47Kp7BHSok9eIUPlBBr4J5x/PS/ZjOUGk
+         HMosI4/wmGdpCzCWiA2kCo7Fn/j2im0u26E4Rr1RwbPJCvT3mWP01GsZ+cktz4PLJiMK
+         L0Ag==
+X-Gm-Message-State: AOAM530t0qUM/TLWzmsYpyqFGUOxdbd78B/GKMTiIPLjuQhVOpRmdoSZ
+        tPbK5g/Prac0nusdW0qRWy3Ufw==
+X-Google-Smtp-Source: ABdhPJxENUsQBLAa4UkhjQW3jk2j4PMM065g3mgcmn31EqwZri4gX76qk8umBhxThR46lEc7Pnx8FQ==
+X-Received: by 2002:a2e:91cf:0:b0:24f:11ea:d493 with SMTP id u15-20020a2e91cf000000b0024f11ead493mr385182ljg.408.1652898381751;
+        Wed, 18 May 2022 11:26:21 -0700 (PDT)
+Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id h12-20020a19700c000000b00477baba9504sm22360lfc.40.2022.05.18.11.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 11:26:21 -0700 (PDT)
+Message-ID: <783bbf39-779d-3ac8-a965-9d98ec1993ec@linaro.org>
+Date:   Wed, 18 May 2022 21:26:16 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v6 3/5] clk: qcom: gcc-sm8450: use new
+ clk_regmap_pipe_src_ops for PCIe pipe clocks
+Content-Language: en-GB
+To:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220513175339.2981959-1-dmitry.baryshkov@linaro.org>
+ <20220513175339.2981959-4-dmitry.baryshkov@linaro.org>
+ <CAE-0n53wjtJpUeMswrkQq1mAQEEfXiUhuvq4W4t=7gMpkbsiNQ@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <CAE-0n53wjtJpUeMswrkQq1mAQEEfXiUhuvq4W4t=7gMpkbsiNQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are two UART clock groups, each having a mux to select its
-upstream clock source. The register/bit definitions for accessing these
-two muxes appear to have been reversed since introduction. Correct them
-so as to match the hardware manual.
+On 18/05/2022 20:59, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2022-05-13 10:53:37)
+>> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+>> index 593a195467ff..a140a89b73b4 100644
+>> --- a/drivers/clk/qcom/gcc-sm8450.c
+>> +++ b/drivers/clk/qcom/gcc-sm8450.c
+>> @@ -239,17 +218,21 @@ static const struct clk_parent_data gcc_parent_data_11[] = {
+>>          { .fw_name = "bi_tcxo" },
+>>   };
+>>
+>> -static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
+>> +static struct clk_regmap_phy_mux gcc_pcie_0_pipe_clk_src = {
+>>          .reg = 0x7b060,
+>>          .shift = 0,
+>>          .width = 2,
+>> -       .parent_map = gcc_parent_map_4,
+>> +       .phy_src_val = 0, /* pipe_clk */
+> 
+> Make a define? PCIE0_PIPE_CLK_SRC_VAL and drop the comment?
 
-Fixes: 4c3d88526eba ("clk: renesas: Renesas R9A06G032 clock driver")
+This value can change between the muxes. Thus I'd prefer not to do this.
+Compare it with the parent_maps, where we do not use defines for the 
+'val' part.
 
-Signed-off-by: Ralph Siemsen <ralph.siemsen@linaro.org>
----
-v2 changes:
-- reverse the comments as well
+> 
+>> +       .ref_src_val = 2, /* bi_tcxo */
+>>          .clkr = {
+>>                  .hw.init = &(struct clk_init_data){
+>>                          .name = "gcc_pcie_0_pipe_clk_src",
+>> -                       .parent_data = gcc_parent_data_4,
+>> -                       .num_parents = ARRAY_SIZE(gcc_parent_data_4),
+>> -                       .ops = &clk_regmap_mux_closest_ops,
+>> +                       .parent_data = &(const struct clk_parent_data){
+>> +                               .fw_name = "pcie_0_pipe_clk",
+>> +                       },
+>> +                       .num_parents = 1,
+>> +                       .flags = CLK_SET_RATE_PARENT,
+>> +                       .ops = &clk_regmap_phy_mux_ops,
+>>                  },
+>>          },
+>>   };
 
- drivers/clk/renesas/r9a06g032-clocks.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c99942f0e4d4..abc0891fd96d 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -286,8 +286,8 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 		.name = "uart_group_012",
- 		.type = K_BITSEL,
- 		.source = 1 + R9A06G032_DIV_UART,
--		/* R9A06G032_SYSCTRL_REG_PWRCTRL_PG1_PR2 */
--		.dual.sel = ((0xec / 4) << 5) | 24,
-+		/* R9A06G032_SYSCTRL_REG_PWRCTRL_PG0_0 */
-+		.dual.sel = ((0x34 / 4) << 5) | 30,
- 		.dual.group = 0,
- 	},
- 	{
-@@ -295,8 +295,8 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 		.name = "uart_group_34567",
- 		.type = K_BITSEL,
- 		.source = 1 + R9A06G032_DIV_P2_PG,
--		/* R9A06G032_SYSCTRL_REG_PWRCTRL_PG0_0 */
--		.dual.sel = ((0x34 / 4) << 5) | 30,
-+		/* R9A06G032_SYSCTRL_REG_PWRCTRL_PG1_PR2 */
-+		.dual.sel = ((0xec / 4) << 5) | 24,
- 		.dual.group = 1,
- 	},
- 	D_UGATE(CLK_UART0, "clk_uart0", UART_GROUP_012, 0, 0, 0x1b2, 0x1b3, 0x1b4, 0x1b5),
 -- 
-2.25.1
-
+With best wishes
+Dmitry
