@@ -2,122 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACC7C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 12:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B85ECC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 12:18:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236224AbiERMPV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 08:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35604 "EHLO
+        id S232400AbiERMSh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 08:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236253AbiERMPT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 08:15:19 -0400
+        with ESMTP id S236300AbiERMSf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 08:18:35 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C637D188E77;
-        Wed, 18 May 2022 05:15:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7251F51329;
+        Wed, 18 May 2022 05:18:33 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id C929E1F45027
+        with ESMTPSA id A7A801F45034
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652876116;
-        bh=FtVu2AuXw/AthOSnF4m9ZOeWkCS8FD3CfCIxTGildz4=;
+        s=mail; t=1652876312;
+        bh=PFgx984+FuMCxbDdd6hqK/nxYtdSH9hLGtbOymoK8NY=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aW57lKMy568QDyibKHFp8KIuYtoEcTU9ZlysDg7TgOISJeQkR21ZzG6i6rm7EdkXp
-         imamVhyO/QUhVa/GJhgXyfjHbhKOAWr7n0NB13CmQGEkiW6E8fmUXOy3Rl0Mc7A01I
-         dUeRGME6DL6YM55g6xEdzyawSTicaFE99npv3YmHrfNlSDiqE32AIrR2uu6uO8ZE1C
-         sC1bgLitM8tZY4IOPt1yeCXAtgs6YIG6WBneFohHm2TH9xUuQPXOsUbjE+qARBVU4l
-         5tHC/JSN11roernrhQW2ggVmJnnDtWG3KVXUhO9RhmT+9G1lN04eNRIvS0EUkNSUo9
-         pAkVqgogKF3jw==
-Message-ID: <ead37cb0-c841-df1a-ca10-a396b5e9951c@collabora.com>
-Date:   Wed, 18 May 2022 14:15:13 +0200
+        b=RasqO0zP3KyeUtT66qDWuwaCJ1/Y0wy30WtrFygZfkptrGsCjxo7ZTOwFDi9KTBda
+         L67uEr5HdlT7PKBIodRG8JgKanA/4TGhOd9Yrti50h3rTn7MKfFuZ0KSfTKwnB7q1k
+         o5ZcddUKS334nPgssh/io9SNq8EVB4dPXZ2WABovKbt1yvHQJjxG7xGz1ZVPkdfp9f
+         2tPf7CnBM2qinxKhUhg5EGbXnS+XCOmBsAJXGPAPsZIKICHWpTgoaDPhdmWGyvoR3o
+         okLr5Cb97N8hOQHuXO3IiJg2txppFYC6Yi4ybz/c3zLYRzMo8ryyhKTfutowbWh0Q2
+         bB+tPbsVK4uCw==
+Message-ID: <e06b9256-3fb3-6ac4-9362-b23574f4da6e@collabora.com>
+Date:   Wed, 18 May 2022 14:18:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: mediatek: Fix unused 'ops' field in mtk_pll_data
+Subject: Re: [PATCH v2] clk: mediatek: use en_mask as a pure div_en_mask
 Content-Language: en-US
-To:     Boris Lysov <arz65xx@gmail.com>, arzamas-16@mail.ee,
-        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        wenst@chromium.org, miles.chen@mediatek.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20220515122409.13423-1-arzamas-16@mail.ee>
+To:     Mandy Liu <mandyjh.liu@mediatek.com>, mturquette@baylibre.co,
+        sboyd@kernel.org
+Cc:     miles.chen@mediatek.com, wenst@chromium.org,
+        chun-jie.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20220513073621.12923-1-mandyjh.liu@mediatek.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220515122409.13423-1-arzamas-16@mail.ee>
+In-Reply-To: <20220513073621.12923-1-mandyjh.liu@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 15/05/22 14:24, Boris Lysov ha scritto:
-> From: Boris Lysov <arzamas-16@mail.ee>
+Il 13/05/22 09:36, Mandy Liu ha scritto:
+> From: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > 
-> Allow to specify optional clk_ops in mtk_pll_data which will be picked up in
-> mtk_clk_register_pll. So far no already supported Mediatek SoC needs
-> non-default clk_ops for PLLs but instead of removing this field it will be
-> actually used in the future for supporting older SoCs (see [1] for details)
-> with quirky PLLs.
+> We no longer allow en_mask to be a combination of
+> pll_en_bit and div_en_mask, so remove pll_en_bit(bit0)
+> from en_mask to make en_mask a pure en_mask that only
+> used for pll dividers.
 > 
-
-Hello Boris,
-
-I disagree about this change and would rather see the ops pointer removed
-with fire.
-
-I got that you're trying to do something about "quirky PLLs", but is it
-really about the PLLs that you're mentioning being "quirky", or are they
-simply a different IP?
-
-Also, if it's just about a bit inversion and a bigger delay:
-1. Bigger delay: Depending on how bigger, we may simply delay more by default
-    for all PLLs, even the ones that aren't requiring us to wait for longer...
-    ...after all, if it's about waiting for 10/20 *microseconds* more, that's
-    really not going to affect anyone's UX, nor make things slower for real,
-    as the .prepare() ops for MediaTek PLLs are seldom called.. and even if
-    that wasn't true, I don't think that a total of 30uS would be that much
-    detrimental to the system's overall operation latency.
-    Besides, if you see a case of a PLL not just switching on and off, but
-    preparing and unpreparing continuously, there must be some big issue in
-    some driver, or in the clock framework somewhere (and that ain't the case);
-
-2. Bit inversion: that can be solved simply with a flag in the prepare/unprepare
-    ops for this driver... and if you want something that performs even better,
-    sparing you a nanosecond or two, you can always assign an "inverted" callback
-    for managing that single bit;
-
-3. Different IP: mtk_clk_register_(name-of-the-new-ip)_pll() - I don't think that
-    there's anything to explain to that one.
-
-Regards,
-Angelo
-
-> This patch depends on series "clk: mediatek: Move to struct clk_hw provider
-> APIs" [2] by Chen-Yu Tsai.
+> This commit continues the work done in commit 7cc4e1bbe300
+> ("clk: mediatek: Fix asymmetrical PLL enable and disable
+> control") and commit f384c44754b7 ("clk: mediatek:
+> Add configurable enable control to mtk_pll_data") to
+> clean up en_mask(bit0) default setting.
 > 
-> [1] https://lists.infradead.org/pipermail/linux-mediatek/2022-February/035093.html
-> [2] https://lists.infradead.org/pipermail/linux-mediatek/2022-May/040921.html
-> 
-> Signed-off-by: Boris Lysov <arzamas-16@mail.ee>
-> ---
->   drivers/clk/mediatek/clk-pll.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index cabdf25a27f3..509959a325f0 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -347,7 +347,10 @@ static struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
->   
->   	init.name = data->name;
->   	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
-> -	init.ops = &mtk_pll_ops;
-> +	if (data->ops)
-> +		init.ops = data->ops;
-> +	else
-> +		init.ops = &mtk_pll_ops;
->   	if (data->parent_name)
->   		init.parent_names = &data->parent_name;
->   	else
-> 
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Mandy Liu <mandyjh.liu@mediatek.com>
+
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
