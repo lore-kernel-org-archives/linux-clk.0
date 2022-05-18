@@ -2,188 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1C1C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 May 2022 23:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43ADC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 00:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232199AbiEQX7j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 May 2022 19:59:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53880 "EHLO
+        id S230289AbiERArL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 May 2022 20:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232226AbiEQX7g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 19:59:36 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3420353B6E;
-        Tue, 17 May 2022 16:59:34 -0700 (PDT)
-Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id E8EFB84253;
-        Wed, 18 May 2022 01:59:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1652831972;
-        bh=3IXanpwxKJqg6DbP8AshOQri6FpiAaXyP74Si8i9PB4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=web7YqY1FQMWRMPsCz3wFml5yyu8urXAdfRPuq0Lyev9kD7RhsyO3Odj1DPgv1Sil
-         4liZ4bx8pvRdgfjVQvAY5CpTXdo8kpTI2BPczaYV8kNs56llS2NVjbsVI5QXcypVXu
-         zSxcRA5Ov5pTDgw93IK5Q8qIHVLVzu5P8aiBEt1b6fJXCn3diraeVrcWyVVz4OsGdH
-         SnMVf1B0+Vf9pXsEePy80QhO/2VNtUyzzf9A1VdxU39M1qO6q4yXtgTnBpUrSqvQNv
-         RtVf8TAX/25E86JGMivQMhNczXnreIs1y4XIMl63lqN7adaKCiivE71vWKQj59FVr0
-         8aQTAHGby+hEw==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v3 2/2] clk: Introduce 'critical-clocks' property
-Date:   Wed, 18 May 2022 01:59:19 +0200
-Message-Id: <20220517235919.200375-2-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220517235919.200375-1-marex@denx.de>
-References: <20220517235919.200375-1-marex@denx.de>
+        with ESMTP id S230250AbiERArK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 May 2022 20:47:10 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F57439BB0;
+        Tue, 17 May 2022 17:47:09 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id j12so942668oie.1;
+        Tue, 17 May 2022 17:47:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0ivlprhS2h/cMofiRva12AAeDajNBcseyKIWCyP6GFM=;
+        b=2TOC8YnmtUvBEg6BhN+HHW2IohzYYc2px0w3JHYL8P/gvRgy5H1WP/xJBbI7xyzJKG
+         nYytWXoIMXQHqKtnyBSGMPz4bd6A+z0rcud1+K0KJrAGZHdTpsc9ILOJNEPJb/Wt4u4v
+         zQP9wmo/R+EpCWM3cjySTnomNfGaAUfCA7lilo4XV1+D5cXrp55lbA7I0gY6dfcnvSQx
+         XsGTcAydGfpPE3LgTtV0BQ3VJNS78ctad/ufVXgr3UfaLHELqKlD46jVu1BKDn/hkjGD
+         npt/Xn2ofnXp2R05qkkkKXmm3ShvimeUbsWnwkfdy7LxSjSW0HlD62MkQ5Fjtot+cxAM
+         9QJQ==
+X-Gm-Message-State: AOAM530AKgXBXC1+UzqGtkE3IFnlNd1jZMsKPGW8hKMfqpBZhj7kTCoa
+        sRPmqrs12JxUbYavnSY5yA==
+X-Google-Smtp-Source: ABdhPJxK2fsakt9+qAEinnu8Nr0SM6/F4v16Hx09go8CdR87lPDVyRjaWRPTxV3yCRv0iS+00W8Uvw==
+X-Received: by 2002:a05:6808:1525:b0:326:c179:1b1 with SMTP id u37-20020a056808152500b00326c17901b1mr11887569oiw.69.1652834828532;
+        Tue, 17 May 2022 17:47:08 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id w10-20020aca620a000000b00325cda1ffb9sm290734oib.56.2022.05.17.17.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 May 2022 17:47:07 -0700 (PDT)
+Received: (nullmailer pid 1965783 invoked by uid 1000);
+        Wed, 18 May 2022 00:47:06 -0000
+Date:   Tue, 17 May 2022 19:47:06 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
+        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 0/5] MediaTek Helio X10 MT6795 - Clock drivers
+Message-ID: <20220518004706.GA1950724-robh@kernel.org>
+References: <20220513165050.500831-1-angelogioacchino.delregno@collabora.com>
+ <7ed1b785-389f-9730-4686-bc6b85cc8f6d@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ed1b785-389f-9730-4686-bc6b85cc8f6d@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some platforms require select clock to be always running, e.g. because
-those clock supply vital devices which are not otherwise attached to
-the system and thus do not have a matching DT node and clock consumer.
+On Fri, May 13, 2022 at 06:54:49PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 13/05/22 18:50, AngeloGioacchino Del Regno ha scritto:
+> > In an effort to give some love to the apparently forgotten MT6795 SoC,
+> > I am upstreaming more components that are necessary to support platforms
+> > powered by this one apart from a simple boot to serial console.
+> > 
+> > This (very big) series introduces system clock, multimedia clock drivers
+> > (including resets) for this SoC.
+> > 
+> > Tested on a MT6795 Sony Xperia M5 (codename "Holly") smartphone.
+> > 
+> 
+> I forgot to add context to the cover letter for this series, so I'm adding that
+> in reply to myself.
+> 
+> This series depends on Chen-Yu's clocks cleanup series (clk_hw) [1] *and* on
+> Rex-BC's MTK reset binding-cleanup series [2].
+> 
+> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=640122
+> [2] https://patchwork.kernel.org/project/linux-mediatek/list/?series=637849
 
-An example is a system where the SoC serves as a crystal oscillator
-replacement for a programmable logic device. The "critical-clocks"
-property of a clock controller allows listing clock which must never
-be turned off.
+As well as the schema conversions in my tree. So I need to apply some of 
+this? Provide maintainers with details on how exactly a series should 
+be applied if there's a mixture of subsystems, dependencies already 
+applied, and dependencies not yet applied. I'm just going to wait for 
+explicit requests of what I need to apply as there's already too much 
+Mediatek stuff floating around. Last merge window was a mess too.
 
-Clock listed in the "critical-clocks" property may have other consumers
-in DT, listing the clock in "critical-clocks" only assures those clock
-are never turned off, and none of these optional additional consumers
-can turn the clock off either. This is achieved by adding CLK_IS_CRITICAL
-flag to these critical clock.
-
-This flag has thus far been added to select clock by hard-coding it in
-various clock drivers, this patch provides generic DT interface to add
-the flag to arbitrary clock that may be critical.
-
-The implementation is modeled after "protected-clocks", except the protected
-clock property is currently driver specific. This patch attempts to provide
-a generic implementation of "critical-clocks" instead.
-
-Unlike "assigned-clocks", the "critical-clocks" must be parsed much earlier
-in __clk_register() to assign CLK_IS_CRITICAL flag to clk_init_data .flags
-field.
-
-The new match_clkspec() callback is used to determine whether struct clk_hw
-that is currently being registered matches the clock specifier in the DT
-"critical-clocks" property, and if so, then the CLK_IS_CRITICAL is added to
-these newly registered clock. This callback can only be driver specific.
-
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-To: linux-clk@vger.kernel.org
----
-V2: - Warn in case critical-clock field cannot be parsed and skip those clock
-    - Use match_clkspec() only for non-zero clock-cells controllers
-    - Pull the critical-clock code into __clk_register_critical_clock()
-    - Update commit message
-V3: - Pick np from clk_core->of_node
----
- drivers/clk/clk.c            | 44 ++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  3 +++
- 2 files changed, 47 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f00d4c1158d72..e04bca5e1ff30 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3902,6 +3902,48 @@ static void clk_core_free_parent_map(struct clk_core *core)
- 	kfree(core->parents);
- }
- 
-+static void
-+__clk_register_critical_clock(struct clk_core *core, struct clk_hw *hw)
-+{
-+	struct device_node *np = core->of_node;
-+	struct of_phandle_args clkspec;
-+	u32 clksize, clktotal;
-+	int ret, i, index;
-+
-+	if (!np)
-+		return;
-+
-+	if (of_property_read_u32(np, "#clock-cells", &clksize))
-+		return;
-+
-+	/* Clock node with #clock-cells = <0> uses critical-clocks; */
-+	if (clksize == 0) {
-+		if (of_property_read_bool(np, "critical-clocks"))
-+			core->flags |= CLK_IS_CRITICAL;
-+		return;
-+	}
-+
-+	if (!core->ops->match_clkspec)
-+		return;
-+
-+	clkspec.np = np;
-+	clktotal = of_property_count_u32_elems(np, "critical-clocks");
-+	clktotal /= clksize;
-+	for (index = 0; index < clktotal; index++) {
-+		for (i = 0; i < clksize; i++) {
-+			ret = of_property_read_u32_index(np, "critical-clocks",
-+							 (index * clksize) + i,
-+							 &(clkspec.args[i]));
-+			if (ret) {
-+				pr_warn("Skipping critical-clocks index %d (ret=%d)\n",
-+					i, ret);
-+			}
-+		}
-+		if (!core->ops->match_clkspec(hw, &clkspec))
-+			core->flags |= CLK_IS_CRITICAL;
-+	}
-+}
-+
- static struct clk *
- __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- {
-@@ -3946,6 +3988,8 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
- 
-+	__clk_register_critical_clock(core, hw);
-+
- 	ret = clk_core_populate_parent_map(core, init);
- 	if (ret)
- 		goto fail_parents;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c10dc4c659e23..f65f6ef4e9985 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -205,6 +205,8 @@ struct clk_duty {
-  *		directory is provided as an argument.  Called with
-  *		prepare_lock held.  Returns 0 on success, -EERROR otherwise.
-  *
-+ * @match_clkspec: Check whether clk_hw matches DT clock specifier.
-+ *		Returns 0 on success, -EERROR otherwise.
-  *
-  * The clk_enable/clk_disable and clk_prepare/clk_unprepare pairs allow
-  * implementations to split any work between atomic (enable) and sleepable
-@@ -252,6 +254,7 @@ struct clk_ops {
- 	int		(*init)(struct clk_hw *hw);
- 	void		(*terminate)(struct clk_hw *hw);
- 	void		(*debug_init)(struct clk_hw *hw, struct dentry *dentry);
-+	int		(*match_clkspec)(struct clk_hw *hw, struct of_phandle_args *clkspec);
- };
- 
- /**
--- 
-2.35.1
-
+Rob
