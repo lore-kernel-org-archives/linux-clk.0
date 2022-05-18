@@ -2,35 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8F4C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 13:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5C1C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 May 2022 15:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238214AbiERNwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 09:52:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
+        id S238980AbiERPBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 11:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238245AbiERNwU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 09:52:20 -0400
+        with ESMTP id S238862AbiERPBQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 11:01:16 -0400
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EF3691A8E3B;
-        Wed, 18 May 2022 06:52:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC6F75047F;
+        Wed, 18 May 2022 08:01:13 -0700 (PDT)
 X-IronPort-AV: E=Sophos;i="5.91,235,1647270000"; 
-   d="scan'208";a="121389377"
+   d="scan'208";a="121393483"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 18 May 2022 22:52:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 May 2022 00:01:12 +0900
 Received: from localhost.localdomain (unknown [10.226.92.148])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B9DAE436E6EA;
-        Wed, 18 May 2022 22:52:14 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1DC3243E1E15;
+        Thu, 19 May 2022 00:01:09 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: r9a09g011: Add PFC clock and reset entries
-Date:   Wed, 18 May 2022 14:52:08 +0100
-Message-Id: <20220518135208.39885-1-phil.edworthy@renesas.com>
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: renesas: r9a09g011: Add WDT clock and reset entries
+Date:   Wed, 18 May 2022 16:01:05 +0100
+Message-Id: <20220518150105.48167-1-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -38,34 +37,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add PFC clock/reset entries to CPG driver.
+Add WDT0 clock and reset entries to CPG driver.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g011-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/renesas/r9a09g011-cpg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index 40693bb85b80..b01d79a73dd8 100644
+index b01d79a73dd8..b21915cf6648 100644
 --- a/drivers/clk/renesas/r9a09g011-cpg.c
 +++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -126,6 +126,7 @@ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
- };
- 
- static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
-+	DEF_MOD("pfc",		R9A09G011_PFC_PCLK,	 CLK_MAIN,     0x400, 2),
- 	DEF_MOD("gic",		R9A09G011_GIC_CLK,	 CLK_SEL_B_D2, 0x400, 5),
- 	DEF_COUPLED("eth_axi",	R9A09G011_ETH0_CLK_AXI,	 CLK_PLL2_200, 0x40c, 8),
+@@ -132,6 +132,8 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
  	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
-@@ -137,6 +138,7 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- };
- 
- static const struct rzg2l_reset r9a09g011_resets[] = {
-+	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
+ 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
+ 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
++	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
++	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
+ 	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
+ 	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	 CLK_SEL_W0,   0x438, 5),
+ 	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	 CLK_DIV_A,    0x448, 0),
+@@ -141,6 +143,7 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
+ 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
  	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
  	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
++	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
  };
+ 
+ static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
 -- 
 2.34.1
 
