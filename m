@@ -2,44 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A295C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 12:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5231C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 12:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238216AbiESMzr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 08:55:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34500 "EHLO
+        id S238285AbiESMzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 08:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238226AbiESMzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 08:55:42 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9909CA7E36;
-        Thu, 19 May 2022 05:55:37 -0700 (PDT)
-X-UUID: 83ba9f9a9db14b7db4519f2c7b3cbdef-20220519
+        with ESMTP id S238221AbiESMzi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 08:55:38 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA85FA889B;
+        Thu, 19 May 2022 05:55:36 -0700 (PDT)
+X-UUID: 59c2aabd86074cb3bc2b35b21c0af5ba-20220519
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:d17f1b2b-c979-4393-aab0-bbb000f27c0f,OB:0,LO
-        B:10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
-        CTION:release,TS:90
-X-CID-INFO: VERSION:1.1.5,REQID:d17f1b2b-c979-4393-aab0-bbb000f27c0f,OB:0,LOB:
-        10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
-        CTION:quarantine,TS:90
-X-CID-META: VersionHash:2a19b09,CLOUDID:d78bcfe2-edbf-4bd4-8a34-dfc5f7bb086d,C
-        OID:e3e218c296de,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
+X-CID-O-INFO: VERSION:1.1.5,REQID:047f56b0-595a-461d-986e-069a7809a09d,OB:20,L
+        OB:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,AC
+        TION:release,TS:95
+X-CID-INFO: VERSION:1.1.5,REQID:047f56b0-595a-461d-986e-069a7809a09d,OB:20,LOB
+        :0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,AC
+        TION:quarantine,TS:95
+X-CID-META: VersionHash:2a19b09,CLOUDID:2e8ccfe2-edbf-4bd4-8a34-dfc5f7bb086d,C
+        OID:63ae97993cc8,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,QS:0,BEC:nil
-X-UUID: 83ba9f9a9db14b7db4519f2c7b3cbdef-20220519
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+X-UUID: 59c2aabd86074cb3bc2b35b21c0af5ba-20220519
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1098747909; Thu, 19 May 2022 20:55:29 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 19 May 2022 20:55:29 +0800
+        with ESMTP id 27516275; Thu, 19 May 2022 20:55:32 +0800
 Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 19 May 2022 20:55:29 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Thu, 19 May 2022 20:55:31 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 19 May 2022 20:55:28 +0800
+ Transport; Thu, 19 May 2022 20:55:31 +0800
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
@@ -53,9 +50,9 @@ CC:     <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH v7 03/19] clk: mediatek: reset: Refine and reorder functions in reset.c
-Date:   Thu, 19 May 2022 20:55:11 +0800
-Message-ID: <20220519125527.18544-4-rex-bc.chen@mediatek.com>
+Subject: [PATCH v7 17/19] dt-bindings: reset: mediatek: Add infra_ao reset index for MT8186
+Date:   Thu, 19 May 2022 20:55:25 +0800
+Message-ID: <20220519125527.18544-18-rex-bc.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
 References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
@@ -66,139 +63,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To make drivers more readable, we modify the indentation of the drivers
-and reorder the location of functions.
+To support reset of infra_ao, add the index of infra_ao reset of
+thermal/svs for MT8186.
 
 Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/clk/mediatek/reset.c | 68 +++++++++++++++++++-----------------
- 1 file changed, 36 insertions(+), 32 deletions(-)
+ include/dt-bindings/reset/mt8186-resets.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-index 5191becb45dd..5cbbcc22a4fc 100644
---- a/drivers/clk/mediatek/reset.c
-+++ b/drivers/clk/mediatek/reset.c
-@@ -12,56 +12,59 @@
+diff --git a/include/dt-bindings/reset/mt8186-resets.h b/include/dt-bindings/reset/mt8186-resets.h
+index 5f850370c42c..2e9029c22f38 100644
+--- a/include/dt-bindings/reset/mt8186-resets.h
++++ b/include/dt-bindings/reset/mt8186-resets.h
+@@ -7,6 +7,7 @@
+ #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8186
+ #define _DT_BINDINGS_RESET_CONTROLLER_MT8186
  
- #include "reset.h"
++/* TOPRGU resets */
+ #define MT8186_TOPRGU_INFRA_SW_RST				0
+ #define MT8186_TOPRGU_MM_SW_RST					1
+ #define MT8186_TOPRGU_MFG_SW_RST				2
+@@ -33,4 +34,8 @@
+ /* MMSYS resets */
+ #define MT8186_MMSYS_SW0_RST_B_DISP_DSI0			19
  
--static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
--	unsigned long id)
-+static int mtk_reset_assert(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
- {
- 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
--	unsigned int reg = data->regofs + ((id / 32) << 4);
- 
--	return regmap_write(data->regmap, reg, BIT(id % 32));
-+	return regmap_update_bits(data->regmap,
-+				  data->regofs + ((id / 32) << 2),
-+				  BIT(id % 32), ~0);
- }
- 
--static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
--	unsigned long id)
-+static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
- {
- 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
--	unsigned int reg = data->regofs + ((id / 32) << 4) + 0x4;
- 
--	return regmap_write(data->regmap, reg, BIT(id % 32));
-+	return regmap_update_bits(data->regmap,
-+				  data->regofs + ((id / 32) << 2),
-+				  BIT(id % 32), 0);
- }
- 
--static int mtk_reset_assert(struct reset_controller_dev *rcdev,
--			      unsigned long id)
-+static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
- {
--	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
-+	int ret;
++/* INFRA resets */
++#define MT8186_INFRA_THERMAL_CTRL_RST			0
++#define MT8186_INFRA_PTP_CTRL_RST				1
 +
-+	ret = mtk_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
- 
--	return regmap_update_bits(data->regmap, data->regofs + ((id / 32) << 2),
--			BIT(id % 32), ~0);
-+	return mtk_reset_deassert(rcdev, id);
- }
- 
--static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
--				unsigned long id)
-+static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
- {
- 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
- 
--	return regmap_update_bits(data->regmap, data->regofs + ((id / 32) << 2),
--			BIT(id % 32), 0);
-+	return regmap_write(data->regmap,
-+			    data->regofs + ((id / 32) << 4),
-+			    BIT(id % 32));
- }
- 
--static int mtk_reset(struct reset_controller_dev *rcdev,
--			      unsigned long id)
-+static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
- {
--	int ret;
--
--	ret = mtk_reset_assert(rcdev, id);
--	if (ret)
--		return ret;
-+	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
- 
--	return mtk_reset_deassert(rcdev, id);
-+	return regmap_write(data->regmap,
-+			    data->regofs + ((id / 32) << 4) + 0x4,
-+			    BIT(id % 32));
- }
- 
- static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
--	unsigned long id)
-+			     unsigned long id)
- {
- 	int ret;
- 
-@@ -84,8 +87,9 @@ static const struct reset_control_ops mtk_reset_ops_set_clr = {
- };
- 
- static void mtk_register_reset_controller_common(struct device_node *np,
--			unsigned int num_regs, int regofs,
--			const struct reset_control_ops *reset_ops)
-+						 unsigned int num_regs,
-+						 int regofs,
-+						 const struct reset_control_ops *reset_ops)
- {
- 	struct mtk_reset *data;
- 	int ret;
-@@ -117,17 +121,17 @@ static void mtk_register_reset_controller_common(struct device_node *np,
- }
- 
- void mtk_register_reset_controller(struct device_node *np,
--	unsigned int num_regs, int regofs)
-+				   unsigned int num_regs, int regofs)
- {
- 	mtk_register_reset_controller_common(np, num_regs, regofs,
--		&mtk_reset_ops);
-+					     &mtk_reset_ops);
- }
- 
- void mtk_register_reset_controller_set_clr(struct device_node *np,
--	unsigned int num_regs, int regofs)
-+					   unsigned int num_regs, int regofs)
- {
- 	mtk_register_reset_controller_common(np, num_regs, regofs,
--		&mtk_reset_ops_set_clr);
-+					     &mtk_reset_ops_set_clr);
- }
- 
- MODULE_LICENSE("GPL");
+ #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8186 */
 -- 
 2.18.0
 
