@@ -2,141 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202A1C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 14:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143A2C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 14:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238922AbiESODl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 10:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
+        id S233609AbiESOYC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 10:24:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238688AbiESODk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 10:03:40 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1571C2673;
-        Thu, 19 May 2022 07:03:39 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id f9so10270269ejc.0;
-        Thu, 19 May 2022 07:03:39 -0700 (PDT)
+        with ESMTP id S232250AbiESOYA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 10:24:00 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD505B82C9;
+        Thu, 19 May 2022 07:23:59 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id t2so599967qkb.12;
+        Thu, 19 May 2022 07:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:subject:to:cc:message-id:in-reply-to:references
-         :mime-version;
-        bh=qWNcKlbHWt+buYUPc86j5JlNPnGvKXkUMAum0oQSfJ0=;
-        b=LcE9bEgfBwTo+FP+bLoachNEfeucJ1OepYalzxu7uc6jEmRley8APjmdkai6m/XVAc
-         Ya75wYu2NMpfUANb1K7kUDHYWCcXkmTEbT8b7eC6obk6nmJdBqKhFhrN0XlEGUOS38va
-         4ldMm/u49lHcF+2IBH75a8sAghe0xurqgbWccyAqO4mLCKlrctVwIpqpzjLDyGQzcirk
-         n7m5dGw5dWTOgBJbZYpl3B7KJMFjTe8NedjJ7o/o2Y1HzA1yOOepTTvUkxg1N4L8fNYZ
-         ifLUQ4h2MYsaO+czOwRsRl85AqrCFL8vjJcLLAtxcS5VB2E6d1Yw/qOO6W6fRmbYAr3h
-         YCgw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qa+RmjWGq636GZ/8xymXuJ2O/Y4ZrpNYQ00uYeEnnps=;
+        b=GtwDUuXWMikoAdpZO5iESljNOMEVwaut9jSbx04nSn/WsKu8Xkw384UfcB5+2X6scR
+         PJBqMPwQCmFLfHBUd54VAq8Y2PcKY83iffpbQFedSLtz7zAk6BxMPVkIxQ6GWvPKqbPr
+         BKjuTH/Qrd7iN9Pb1CdNBG+q8aTXnzFMwSWvsSjAl7vo4kCvhLwYrXb0hT5VtVBFQqm3
+         l7A7BpXBaCGM5y6sVYf/ydOD/xiczCPksHyvaTbg/7tmD+pzW0mABofHjXEGv3/F8BAR
+         TnD2/A6/iSwYBDqbnhGHGD/1fcZGP6VrTw9CG2DV8UrrRYHTJvzaLH1MCSALg261+XXu
+         EcLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
-         :references:mime-version;
-        bh=qWNcKlbHWt+buYUPc86j5JlNPnGvKXkUMAum0oQSfJ0=;
-        b=hXvo/VbUtzxSL6sVLt76fyjkVbZxLiIulA3mRfno9nEuiEFXOKK04zNlv/7DNw02ce
-         XhTS1FVSIlmkHytydT9ZGFbr2HKbEqWqkcz7YAbbuhK8rsqFdao3Pkzq9W2M4TSH2vns
-         +B0RGAE/JzEfwXj8WPFyXvhJj00vIV3MAUlOucLOWngAdL32tfMcI3/ZnWFenvQgTjYX
-         MMeljGh8vutU0zxTUAv3leE83Tj8bkC04HR5lfKM+W0+/Y4eGDAV9wl1leTTY0Q4hVY9
-         VG3+mkhZGgd+R8QjUylJH4EFmT/Uesn5KyAeoUZba/6NSCmwh/c8tKrcASyXHrtVFreg
-         GA7Q==
-X-Gm-Message-State: AOAM530Xpm9u/3N+O66JQl9RBabWWBjGxGjfWLoKXKyUwb6U4+x6TGGw
-        t0YrGBhjpBgr+L52hchNa4k=
-X-Google-Smtp-Source: ABdhPJyhieqoXKbfvsM8fh2dawCAGVx37vJQhD8YjDO0OoeyTXCFh58t3tmMrLP80r47m9bY8FV3oQ==
-X-Received: by 2002:a17:907:7b85:b0:6fd:d799:ef4e with SMTP id ne5-20020a1709077b8500b006fdd799ef4emr4492401ejc.319.1652969017544;
-        Thu, 19 May 2022 07:03:37 -0700 (PDT)
-Received: from [192.168.52.247] ([217.138.206.82])
-        by smtp.gmail.com with ESMTPSA id m13-20020a17090672cd00b006f3ef214e3esm2097890ejl.164.2022.05.19.07.03.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qa+RmjWGq636GZ/8xymXuJ2O/Y4ZrpNYQ00uYeEnnps=;
+        b=Gf20gElKXG0UX1JGs/PWZ+LZ0HHA/ZuFPHct294lsIJq5Gkh27dxZGMMV/5MTZU3pp
+         4/USsWSP2nWGufyyr+xlo3lJIz3UfKF2dMPAqQMEBD59v+h5lNZhsXDVR++cWj2+CfBk
+         e3qmG5O77Lp52sCyx0KVt6kRJrWssxSqjWY2abll34k4jWPDBMTs+R5Fzfuml5MJHYHp
+         YQ9utfcdjzoKa2LEpCXIAPWsFcmEy7KI6LLMwP3Rl7HMacvidDwD1Rti6WJATpGKa/ZW
+         Wog56F9Bcy70+cx/mrUs2QOnI0Weu90MZvOwy7M/xgzacrLm2AmePnFxFJZWgfCX+gsR
+         0wKQ==
+X-Gm-Message-State: AOAM530/qQnnKp+e2htpPAyn5X30MidZGrgJZGiMuN1mDp41+exrnHzJ
+        czYH7veTqg2qVhg+KGe4IBs=
+X-Google-Smtp-Source: ABdhPJzTGJKtnF2Jao6mYEzO1MdxqaX7B7cQMJFc5dHa8sZmNVz1kZcmFh865P78KZqTjAs5O9p4Cw==
+X-Received: by 2002:a05:620a:46a1:b0:6a0:465e:ccca with SMTP id bq33-20020a05620a46a100b006a0465ecccamr3116751qkb.631.1652970238949;
+        Thu, 19 May 2022 07:23:58 -0700 (PDT)
+Received: from localhost.localdomain ([217.138.206.82])
+        by smtp.gmail.com with ESMTPSA id c15-20020ac85a8f000000b002f39b99f697sm1539342qtc.49.2022.05.19.07.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 07:03:37 -0700 (PDT)
-Date:   Thu, 19 May 2022 18:03:14 +0400
+        Thu, 19 May 2022 07:23:58 -0700 (PDT)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
-Subject: Re: [PATCH 0/6] clk: mediatek: Improvements to simple probe/remove
- and reset controller unregistration
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Miles Chen <miles.chen@mediatek.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        =?iso-8859-1?q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Message-Id: <E1V4CR.LC9T17R2IY1M2@gmail.com>
-In-Reply-To: <20220519134728.456643-1-y.oudjana@protonmail.com>
-References: <20220519134728.456643-1-y.oudjana@protonmail.com>
-X-Mailer: geary/40.0
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Yassine Oudjana <yassine.oudjana@gmail.com>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH v2 0/4] Mediatek MT6735 main clock and reset drivers
+Date:   Thu, 19 May 2022 18:22:07 +0400
+Message-Id: <20220519142211.458336-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series adds support for the main clock and reset controllers on the
+Mediatek MT6735 SoC:
+- apmixedsys (global PLLs)
+- topckgen (global divisors and muxes)
+- infracfg (gates and resets for internal components)
+- pericfg (gates and resets for peripherals)
 
-On Thu, May 19 2022 at 17:47:22 +0400, Yassine Oudjana 
-<yassine.oudjana@gmail.com> wrote:
-> This series started as part of an earlier series adding support for 
-> the main
-> clock controllers on MediaTek MT6735[1]. It has since been split off 
-> and
-> expanded. It adds a new function to unregister a reset controller and 
-> expands
-> the mtk_clk_simple_probe/remove functions to support the main 5 types 
-> of clocks:
-> - PLLs		(new)
-> - Fixed clocks	(new)
-> - Fixed factors	(new)
-> - Muxes		(new)
-> - Gates		(supported previously)
-> This should allow it to be used in most clock drivers, resulting in 
-> reduced
-> code duplication. It will be used in MT6735 clock drivers in the 
-> upcoming v2
-> of the MT6735 main clock controller series.
-> 
-> Dependencies:
-> - clk: mediatek: Move to struct clk_hw provider APIs (series)
->   
-> https://patchwork.kernel.org/project/linux-mediatek/cover/20220510104804.544597-1-wenst@chromium.org/
-> - Cleanup MediaTek clk reset drivers and support MT8192/MT8195 
-> (series)
->   
-> https://patchwork.kernel.org/project/linux-mediatek/cover/20220503093856.22250-1-rex-bc.chen@mediatek.com/
-> - Export required symbols to compile clk drivers as module (single 
-> patch)
->   
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
-> 
-> Yassine Oudjana (6):
->   clk: mediatek: gate: Export mtk_clk_register_gates_with_dev
->   clk: mediatek: Use mtk_clk_register_gates_with_dev in simple probe
->   clk: mediatek: reset: Return reset data pointer on register
->   clk: mediatek: reset: Implement mtk_unregister_reset_controller() 
-> API
->   clk: mediatek: Unregister reset controller on simple remove
->   clk: mediatek: Add support for other clock types in simple
->     probe/remove
-> 
->  drivers/clk/mediatek/clk-gate.c   |   1 +
->  drivers/clk/mediatek/clk-mt8192.c |   7 +-
->  drivers/clk/mediatek/clk-mtk.c    | 123 
-> +++++++++++++++++++++++++-----
->  drivers/clk/mediatek/clk-mtk.h    |  22 +++++-
->  drivers/clk/mediatek/reset.c      |  41 ++++++----
->  drivers/clk/mediatek/reset.h      |  20 +++--
->  6 files changed, 167 insertions(+), 47 deletions(-)
-> 
-> --
-> 2.36.1
-> 
+MT6735 has other more specialized clock controllers, support for which is
+not included in this series:
+- imgsys (camera)
+- mmsys (display)
+- vdecsys (video decoder)
+- audsys (audio)
 
-Replying since there is a missing reference:
+Tested on a Samsung Galaxy Grand Prime+ "grandpplte" with MT6737T, a slight
+variant of MT6735 with no known differences in the clock controllers. 
 
-[1] 
-https://patchwork.kernel.org/project/linux-clk/cover/20220504122601.335495-1-y.oudjana@protonmail.com/
+Dependencies:
+- clk: mediatek: Move to struct clk_hw provider APIs (series)
+  https://patchwork.kernel.org/project/linux-mediatek/cover/20220510104804.544597-1-wenst@chromium.org/ 
+- Cleanup MediaTek clk reset drivers and support MT8192/MT8195 (series)
+  https://patchwork.kernel.org/project/linux-mediatek/cover/20220503093856.22250-1-rex-bc.chen@mediatek.com/
+- Export required symbols to compile clk drivers as module (single patch)
+  https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
+- clk: mediatek: Improvements to simple probe/remove and reset controller unregistration
+  https://patchwork.kernel.org/project/linux-clk/cover/20220519134728.456643-1-y.oudjana@protonmail.com/
 
+Above are dependencies for patch 4/4 only; DT bindings don't need them.
+
+Changes since v1:
+- Rebase on some pending patches (listed as dependencies above).
+- Move common clock improvemenets to a separate series (last dependency
+  listed above).
+- Use mtk_clk_simple_probe/remove after making them support several clock types
+  in said series.
+- Combine all 4 drivers into one patch, and use one Kconfig symbol for all
+  following a conversation seen on a different series[1].
+- Correct APLL2 registers in apmixedsys driver (were offset backwards by 0x4).
+- Make irtx clock name lower case to match the other clocks.
+
+[1] https://lore.kernel.org/linux-mediatek/CAGXv+5H4gF5GXzfk8mjkG4Kry8uCs1CQbKoViBuc9LC+XdHH=A@mail.gmail.com/
+
+Yassine Oudjana (4):
+  dt-bindings: clock: Add Mediatek MT6735 clock bindings
+  dt-bindings: reset: Add MT6735 reset bindings
+  dt-bindings: arm: mediatek: Add MT6735 clock controller compatibles
+  clk: mediatek: Add drivers for MediaTek MT6735 main clock drivers
+
+ .../arm/mediatek/mediatek,infracfg.yaml       |    8 +-
+ .../arm/mediatek/mediatek,pericfg.yaml        |    1 +
+ .../bindings/clock/mediatek,apmixedsys.yaml   |    4 +-
+ .../bindings/clock/mediatek,topckgen.yaml     |    4 +-
+ MAINTAINERS                                   |   16 +
+ drivers/clk/mediatek/Kconfig                  |    9 +
+ drivers/clk/mediatek/Makefile                 |    1 +
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c  |  235 ++++
+ drivers/clk/mediatek/clk-mt6735-infracfg.c    |  205 ++++
+ drivers/clk/mediatek/clk-mt6735-pericfg.c     |  301 +++++
+ drivers/clk/mediatek/clk-mt6735-topckgen.c    | 1087 +++++++++++++++++
+ .../clock/mediatek,mt6735-apmixedsys.h        |   16 +
+ .../clock/mediatek,mt6735-infracfg.h          |   25 +
+ .../clock/mediatek,mt6735-pericfg.h           |   37 +
+ .../clock/mediatek,mt6735-topckgen.h          |   79 ++
+ .../reset/mediatek,mt6735-infracfg.h          |   31 +
+ .../reset/mediatek,mt6735-pericfg.h           |   31 +
+ 17 files changed, 2085 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6735-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+ create mode 100644 include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+ create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+
+-- 
+2.36.1
 
