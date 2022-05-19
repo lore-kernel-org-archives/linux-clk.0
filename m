@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AD6C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 08:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A94C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 08:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235423AbiESIt3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 04:49:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49508 "EHLO
+        id S234934AbiESIxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 04:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbiESIt2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 04:49:28 -0400
+        with ESMTP id S230124AbiESIxg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 04:53:36 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD989C2E7;
-        Thu, 19 May 2022 01:49:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0183C9CF51;
+        Thu, 19 May 2022 01:53:34 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id 2D2E71F457DA
+        with ESMTPSA id DA2951F4581E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652950165;
-        bh=LIEE/DC/g0SkHl+EFOTJ13O6qGxGzI1hYQZDDR7zMDM=;
+        s=mail; t=1652950413;
+        bh=pXYO/JUu84qXpcGnHGzcLC9avotZHwX2ZHKuRJqCO4k=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TUYPhKQytOflfHPzajhaBGNY1IwPJBUdEVigdX+ahYs0xUJ23UwS0YMy9VpeSYcAQ
-         W/C3F9Rwg8tapasSwQChQ2giLkiK3c2EbTHgvWdcbV145Vs5EsVlbtBHcjvhD85o6u
-         8NP20JplXkGE4vxfrOAvujfc9daEmzfmba86ISQSXaB0BQUUlnPNv9VNzu7Hc2E2oq
-         LJmmUwyAOaDV01JP2vwcsRtccSkSnK+n0PE1yvjcKPiqQBLGkSngrBJ1b/W3107SM+
-         bcRsTGGSf1NzHfiLaLi7EUs3/+xo68zw55mTFaFDb0+uTrDrh8GBjAzbKvkgF2FN02
-         KT47s4uNzi03Q==
-Message-ID: <a253f338-c162-17b8-f412-95cd63195151@collabora.com>
-Date:   Thu, 19 May 2022 10:49:21 +0200
+        b=cGDtHUQ3m9zfrkF2XgejG2YVt17eVFnRcUfcbnnohf0M5QxVuIApZ4msi6pYSNmJn
+         3ko2Rf/5qw8SBMyJEVfLQ3h7khZGb8lxlmyHeILsD3Cn8wfHW+gSY03EmYnY4kPg++
+         gkBvecEzGu/FurE23QHMctNi1Vk8j5yTWNrgHL98dgAZNwhaC5zDtVR2GtXj4rLt0a
+         sa9uBsEXO/6dkGTKwRxvlHMvMiQXT9zDl46nJUfLcO0d9HQZaSQuFnPJlnTnIcEGOc
+         3eNVytoFR/IUdgNPdo2AtH/WKOj0QoVbXQE+vcqJu9zYzUJVjqNDoY+BkCMj52/Y8T
+         XpzpqXUw8PgKg==
+Message-ID: <4fccf1ef-5dd2-5159-7f89-7c60fd281197@collabora.com>
+Date:   Thu, 19 May 2022 10:53:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: Re: [PATCH v2 7/7] clk: mediatek: Add MediaTek Helio X10 MT6795 clock
- drivers
+Subject: Re: [PATCH v2 6/7] clk: mediatek: Export required symbols to compile
+ clk drivers as module
 Content-Language: en-US
 To:     Chen-Yu Tsai <wenst@chromium.org>
 Cc:     Miles Chen <miles.chen@mediatek.com>, bgolaszewski@baylibre.com,
@@ -50,155 +50,148 @@ Cc:     Miles Chen <miles.chen@mediatek.com>, bgolaszewski@baylibre.com,
         robh+dt@kernel.org, sam.shih@mediatek.com, sboyd@kernel.org,
         tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
         y.oudjana@protonmail.com, ~postmarketos/upstreaming@lists.sr.ht
-References: <20220518111652.223727-8-angelogioacchino.delregno@collabora.com>
- <20220519045340.11198-1-miles.chen@mediatek.com>
- <11bf21cd-85c4-f64c-2af7-7695e71aee07@collabora.com>
- <CAGXv+5H4gF5GXzfk8mjkG4Kry8uCs1CQbKoViBuc9LC+XdHH=A@mail.gmail.com>
+References: <20220518111652.223727-7-angelogioacchino.delregno@collabora.com>
+ <20220519044153.11078-1-miles.chen@mediatek.com>
+ <7e60b63c-2bf7-a77e-fe0f-a891efa77a47@collabora.com>
+ <CAGXv+5FiteAu7in-CnmVUkDKy=ub1X6etyK1--PHPYKO3FPa=w@mail.gmail.com>
+ <3981552b-2153-1b87-f345-2b1f9be6c56f@collabora.com>
+ <CAGXv+5GwqLKvM3yReZMW92ZC3nDwdbD+_x8ROBOjppgnsgGkyw@mail.gmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5H4gF5GXzfk8mjkG4Kry8uCs1CQbKoViBuc9LC+XdHH=A@mail.gmail.com>
+In-Reply-To: <CAGXv+5GwqLKvM3yReZMW92ZC3nDwdbD+_x8ROBOjppgnsgGkyw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/05/22 10:37, Chen-Yu Tsai ha scritto:
-> On Thu, May 19, 2022 at 4:17 PM AngeloGioacchino Del Regno
+Il 19/05/22 10:45, Chen-Yu Tsai ha scritto:
+> On Thu, May 19, 2022 at 4:26 PM AngeloGioacchino Del Regno
 > <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 19/05/22 06:53, Miles Chen ha scritto:
->>>
->>> Hi Angelo,
->>>
->>>> Add the clock drivers for the entire clock tree of MediaTek Helio X10
->>>> MT6795, including system clocks (apmixedsys, infracfg, pericfg, topckgen)
->>>> and multimedia clocks (mmsys, mfg, vdecsys, vencsys).
+>> Il 19/05/22 10:15, Chen-Yu Tsai ha scritto:
+>>> On Thu, May 19, 2022 at 4:05 PM AngeloGioacchino Del Regno
+>>> <angelogioacchino.delregno@collabora.com> wrote:
 >>>>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>> drivers/clk/mediatek/Kconfig                 |  37 ++
->>>> drivers/clk/mediatek/Makefile                |   6 +
->>>> drivers/clk/mediatek/clk-mt6795-apmixedsys.c | 157 +++++
->>>> drivers/clk/mediatek/clk-mt6795-infracfg.c   | 148 +++++
->>>> drivers/clk/mediatek/clk-mt6795-mfg.c        |  50 ++
->>>> drivers/clk/mediatek/clk-mt6795-mm.c         | 106 ++++
->>>> drivers/clk/mediatek/clk-mt6795-pericfg.c    | 160 +++++
->>>> drivers/clk/mediatek/clk-mt6795-topckgen.c   | 611 +++++++++++++++++++
->>>> drivers/clk/mediatek/clk-mt6795-vdecsys.c    |  55 ++
->>>> drivers/clk/mediatek/clk-mt6795-vencsys.c    |  50 ++
->>>> 10 files changed, 1380 insertions(+)
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
->>>> create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
+>>>> Il 19/05/22 06:41, Miles Chen ha scritto:
+>>>>>
+>>>>> Hi Angelo,
+>>>>>
+>>>>>> In order to compile the clock drivers for various MediaTek SoCs as
+>>>>>> modules, it is necessary to export a few functions from the MediaTek
+>>>>>> specific clocks (and reset) libraries.
+>>>>>>
+>>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>>>> ---
+>>>>>> drivers/clk/mediatek/clk-apmixed.c | 1 +
+>>>>>> drivers/clk/mediatek/clk-cpumux.c  | 2 ++
+>>>>>> drivers/clk/mediatek/clk-mtk.c     | 2 ++
+>>>>>> drivers/clk/mediatek/reset.c       | 1 +
+>>>>>> 4 files changed, 6 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/mediatek/clk-apmixed.c b/drivers/clk/mediatek/clk-apmixed.c
+>>>>>> index 6b0ab0a346e8..f126da693a7f 100644
+>>>>>> --- a/drivers/clk/mediatek/clk-apmixed.c
+>>>>>> +++ b/drivers/clk/mediatek/clk-apmixed.c
+>>>>>> @@ -98,5 +98,6 @@ struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
+>>>>>>
+>>>>>>        return &tx->hw;
+>>>>>> }
+>>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_register_ref2usb_tx);
+>>>>>>
+>>>>>> MODULE_LICENSE("GPL");
+>>>>>> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+>>>>>> index 2b5d48591738..25618eff6f2a 100644
+>>>>>> --- a/drivers/clk/mediatek/clk-cpumux.c
+>>>>>> +++ b/drivers/clk/mediatek/clk-cpumux.c
+>>>>>> @@ -150,6 +150,7 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
+>>>>>>
+>>>>>>        return PTR_ERR(hw);
+>>>>>> }
+>>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_register_cpumuxes);
+>>>>>>
+>>>>>> void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
+>>>>>>                                 struct clk_hw_onecell_data *clk_data)
+>>>>>> @@ -166,5 +167,6 @@ void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
+>>>>>>                clk_data->hws[mux->id] = ERR_PTR(-ENOENT);
+>>>>>>        }
+>>>>>> }
+>>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_unregister_cpumuxes);
+>>>>>>
+>>>>>> MODULE_LICENSE("GPL");
+>>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+>>>>>> index 05a188c62119..41e60a7e8ff9 100644
+>>>>>> --- a/drivers/clk/mediatek/clk-mtk.c
+>>>>>> +++ b/drivers/clk/mediatek/clk-mtk.c
+>>>>>> @@ -459,6 +459,7 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+>>>>>>        mtk_free_clk_data(clk_data);
+>>>>>>        return r;
+>>>>>> }
+>>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_simple_probe);
+>>>>>>
+>>>>>> int mtk_clk_simple_remove(struct platform_device *pdev)
+>>>>>> {
+>>>>>> @@ -472,5 +473,6 @@ int mtk_clk_simple_remove(struct platform_device *pdev)
+>>>>>>
+>>>>>>        return 0;
+>>>>>> }
+>>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_simple_remove);
+>>>>>
+>>>>> Thanks, I need this too. I am preparing a patch to use mtk_clk_simple_remove/mtk_clk_simple_probe
+>>>>> for MT6779 clks first and maybe I can apply this to all MediaTek clk drivers.
+>>>>>
+>>>>> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 >>>>
->>>> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->>>> index d5936cfb3bee..da8142dff3c3 100644
->>>> --- a/drivers/clk/mediatek/Kconfig
->>>> +++ b/drivers/clk/mediatek/Kconfig
->>>> @@ -259,6 +259,43 @@ config COMMON_CLK_MT6779_AUDSYS
->>>>       help
->>>>         This driver supports Mediatek MT6779 audsys clocks.
+>>>> Hello Miles,
 >>>>
->>>> +config COMMON_CLK_MT6795
->>>> +    tristate "Clock driver for MediaTek MT6795"
->>>> +    depends on ARCH_MEDIATEK || COMPILE_TEST
->>>> +    select COMMON_CLK_MEDIATEK
->>>> +    default ARCH_MEDIATEK
->>>> +    help
->>>> +      This driver supports MediaTek MT6795 basic clocks and clocks
->>>> +      required for various peripherals found on MediaTek.
+>>>> thanks for telling me, because my next step would have been exactly what
+>>>> you're doing, for all MediaTek clk drivers... otherwise we'd be doing
+>>>> redundant work going afterwards.
 >>>
->>> Thanks for doing this, I was wondering if we can use only COMMON_CLK_MT6795 to build all
->>> clk-mt6795-*? like CONFIG_COMMON_CLK_MT8195 style:
->>>
->>> obj-$(CONFIG_COMMON_CLK_MT8195) += clk-mt8195-apmixedsys.o clk-mt8195-topckgen.o \
->>>                                   clk-mt8195-peri_ao.o clk-mt8195-infra_ao.o \
->>>                                   clk-mt8195-cam.o clk-mt8195-ccu.o clk-mt8195-img.o \
->>>                                   clk-mt8195-ipe.o clk-mt8195-mfg.o clk-mt8195-scp_adsp.o \
->>>                                   clk-mt8195-vdec.o clk-mt8195-vdo0.o clk-mt8195-vdo1.o \
->>>                                   clk-mt8195-venc.o clk-mt8195-vpp0.o clk-mt8195-vpp1.o \
->>>                                   clk-mt8195-wpe.o clk-mt8195-imp_iic_wrap.o \
->>>                                   clk-mt8195-apusys_pll.o
->>>
->>> So we do not have to keep other COMMON_CLK_MT6795_* configs.
+>>> Should we consider using symbol namespaces (EXPORT_SYMBOL_NS)?
 >>>
 >>
->> I don't think that this would bring any benefit - it's the opposite, if anything!
+>> I don't think we should... I don't know if any module in the common clock
+>> framework is doing that, but if we want some symbol namespace separation,
+>> we would want that "at least" on the entire MediaTek framework, right? :-)
+> 
+> The sunxi-ng clk driver recently started doing this. See:
+> 
+>      http://git.kernel.org/torvalds/c/551b62b1e4cb64d3b42da0fbfdcd26a5fcd684be
+
+That's good. And...that's one of the examples for which using "a trick" is
+shorter and enhances maintainability!
+
+> 
+> And it's being done for all kinds of common driver libraries.
+> 
+> I agree that it would be done for the entire MediaTek framework.
+> 
+>> In that case, we can simply keep using EXPORT_SYMBOL_GPL() and change the
+>> Makefile in this directory to add:
 >>
->> Think about platforms that don't need any ISP functionality, or are headless (hence
->> not requiring anything for dsi/hdmi/dp and display and/or media generally): what
->> I've done is splitting the clock drivers that are critical for any functionality
->> of the SoC to the ones that are enabling "facultative" functionality.
+>>          ccflags-y += -DDEFAULT_SYMBOL_NAMESPACE=COMMON_CLK_MEDIATEK
+> 
+> Oh, I didn't know of this trick. Nice. :D
+> 
+> I think we still need to add MODULE_IMPORT_NS() statements, right?
+> 
+
+I haven't experimented with the IMPORT, but I believe if that's relative to
+files in the same Makefile, we won't need to add that... let's make some
+experiments :-)
+
+>> ...but that's surely out of scope for this specific patch series.
 >>
->> Hence, the usecases for this kind of splitting are:
->> 1. Somewhat rare (corner) cases: someone may not want to compile in any of the
->>      mm/venc/vdec/mfg clock drivers because they don't need the functionality at
->>      all (probably, including the other related drivers), or;
->> 2. It would be possible to compile as built-in only the "main" drivers (apmixed,
->>      infra, peri, topck) to achieve a boot (ex.: you need eMMC to boot, at least)
->>      and then compile the mm/venc/vdec/mfg as modules to be loaded after mounting
->>      a rootfs (where you probably also have mediatek-drm, vcodec, etc as modules).
+>> What do you think?
 > 
-> I assume you mean split them into two groups:
-> 
->    - essential for booting to a state capable of loading modules from storage
->      So apmixedsys + topckgen + infra_ao + peri_ao + imp_iic_wrap (maybe?)
->    - everything else
-> 
-> The whole MT8195 clock driver suite is roughly 70KB, with half of that for
-> the four essential clock drivers.
-> 
-> If the system is really that limited in storage, you probably are already
-> running a highly customized config and build system. And kind of doesn't
-> make sense that that is a real limitation for the larger chips like the
-> MT8195.
-> 
-> IMO having two Kconfig symbols for one chip is still much better than
-> having ten though.
+> It's definitely out of scope, but nice to have, to reduce the size of the
+> default symbol table, and limit the usage of the symbols the driver exports.
 > 
 
-For MT8195... and 92, 83, 73... and others from the same era, being them for
-chromebooks, iot, smartphones and whatever else... yeah you're totally right.
+Agreed.
 
-The issue starts raising when looking at older SoCs featuring an older bootloader
-that does have a kernel size limitation; for example, to make the loader happy on
-MT6795, I had to strip the defconfig a lot and keep the Android-style boot.img
-smaller than 10MB (that's Image.gz-dtb + ramdisk).
+> Regards
+> ChenYu
 
-As for everything else, including newer platforms like MT8195...
-I'm nitpicking now, but being able to have a smaller kernel image means less time
-spent on loading from storage and less decompression time: but that specific one
-would be a broad discussion with too many variables to consider, so... again,
-read that as something very nitpicking and nothing else :-)
-
->> For this reason, I would propose to actually split the MT8195 clocks as well
->> and the ones for other models to achieve what I explained so that, in the future,
->> when this entire framework will fully support (read: fully tested) modularity,
->> we will be able to set these to compile as module by default, which would greatly
->> reduce the kernel size.
->> That's important, not only for MediaTek SoCs, but also for others (nxp, qcom, etc)
->> that don't need MediaTek clock drivers at all, since upstream we build one kernel
->> image for all, and not specialized images.
-> 
-> AFAIK the upstream defconfig was never intended for end users to directly
-> consume. It is only there for all the automated testing. End users should
-> either generate their own config, or have their distros come up with
-> something sane, like building everything as modules. The soc maintainers
-> (if not Linus) were quite clear about this.
-> 
-
-I appreciate the reminder, but I think that CIs are already able to ship modules
-during testing, and for compile-test purposes, it would probably even make more
-sense to compile as module (as that's where things sometimes start failing: see
-what we're doing here...), but I'm not arguing anyway.
-
-Cheers,
-Angelo
 
 
