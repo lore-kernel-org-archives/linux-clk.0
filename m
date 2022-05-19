@@ -2,77 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5661C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 17:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18542C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 18:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233210AbiESRFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 13:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46188 "EHLO
+        id S242385AbiESSDL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 14:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233921AbiESRFK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 13:05:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643F262A20;
-        Thu, 19 May 2022 10:05:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0169D60FEF;
-        Thu, 19 May 2022 17:05:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A327CC34100;
-        Thu, 19 May 2022 17:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652979908;
-        bh=j9qmBV0eEQKTQ7zizSQEVzqT008ay3RQiyJibiJAyck=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DDWWrNPw+qBVrcDqcKVcXJC3HNf3pClu9iT6Cnyvi7ak07eyJ+zc4O5J2Ko6da8ZZ
-         AxSRaoIPwIvqef1jss2aVYwMGA3t0lWuYlnjcxbDaRTMtNM+onqE/0ylma3KlVuR35
-         cxcrFi9387h7e2sq278ZSCsmagysRlkbKXhlaNcHDnr+azXetIOdwbnysx0yAqj686
-         kW/7pNwhyCjj8NKxiAjp5xVauxRZGDEurOGIEEHFOQx4KbmAWtnaNKwQy69BCPmMea
-         toPTqTLp5uha+BKOmQt2dS1Gf8IX4c9yzagTN3pmFZTBw1PRz1Idrzl65hkulRRqRr
-         b+DMYzoUwOYPw==
-Date:   Thu, 19 May 2022 22:35:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v12 0/9] RZN1 DMA support
-Message-ID: <YoZ4wNCxdJ6REp13@matsya>
-References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+        with ESMTP id S243588AbiESSDK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 14:03:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8AD8D6339C
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 11:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652983387;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2frcxiV78p78ZYkCzsqmMpjOuw+695LnW4R6FejMjC0=;
+        b=htaM4oNyJ8YoTX/tC81EfgeqhPsV79akre7YuWSpNPE7ICnKC0SAfgD9Lg7rTxZKAv37PI
+        guoj8NcU/i599ZbiIUkqFdEERnOaQBOAAljAsMEqNL21kolXh8FDG6wI4Ig3bvEBpuH4xE
+        Z9KGYW63/mWc40KbkXp5HV3/fa+NMVo=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-638-zYp8OiJAOfCZ_L7Mzy38EQ-1; Thu, 19 May 2022 14:03:06 -0400
+X-MC-Unique: zYp8OiJAOfCZ_L7Mzy38EQ-1
+Received: by mail-ed1-f69.google.com with SMTP id q12-20020a056402040c00b0042a84f9939dso4077900edv.7
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 11:03:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=2frcxiV78p78ZYkCzsqmMpjOuw+695LnW4R6FejMjC0=;
+        b=AIueYSPcd6/XIO2kzGAm9LvWckzQ7HzPL1MQoch5dG5T/70JYs7uI25fY++YP0b1bl
+         3gAOQv/NHZQIMTIc4haG22jw6yEtkNKFIy+LoD6E/x74t7c6YZ0Cmw7HVP3PPZLMoDRY
+         hDi0hKsu7yZWm8GH44Q3Awb/1ahpc7TyYZOcB/8hySS4Jya5uLZqewE2lBbY10VR+K04
+         HQAGIeRVz+eugEth3TqpoMT1FmPhDo5cMrzYbWIVkPiXts48dhsgCyhbLrvnkFrzagmZ
+         SBv1kQjFX62P+e2tft7zm5CNvgJZacXyrKoCtWVmJfpuZ9cA6BzcHigB3HcJkgbeBRaZ
+         vMZw==
+X-Gm-Message-State: AOAM532ErqGOQwxmT9c76Yi8T16o0VF4sj/x8bP4knZkWibJRV4FAyUM
+        1rrcLKC3+PVZEswbXNioCK9GVMi+Nnks3LPo2Lq3udRrn6udEXjuac47MzcXerPmK4kOyB571i5
+        jeKp+o+sVn0/xz5XvJWHx
+X-Received: by 2002:a05:6402:3787:b0:42a:ea83:ad25 with SMTP id et7-20020a056402378700b0042aea83ad25mr6676483edb.233.1652983385156;
+        Thu, 19 May 2022 11:03:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxmaUwxIOd3vD4MCYTe2nN/S76LE1Vg0HIXf3vwpkrreSs0DSeFRRdl7H9Mq2cMF7iD4GvBeA==
+X-Received: by 2002:a05:6402:3787:b0:42a:ea83:ad25 with SMTP id et7-20020a056402378700b0042aea83ad25mr6676472edb.233.1652983385005;
+        Thu, 19 May 2022 11:03:05 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id d29-20020a1709067a1d00b006f3ef214e39sm2323740ejo.159.2022.05.19.11.03.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 May 2022 11:03:04 -0700 (PDT)
+Message-ID: <5c591b27-8524-2589-d7af-97cee9e5cf3b@redhat.com>
+Date:   Thu, 19 May 2022 20:03:03 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 1/1] platform/x86: Drop the PMC_ATOM Kconfig option
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+        Mark Gross <markgross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     platform-driver-x86@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220503114607.98844-1-hdegoede@redhat.com>
+ <20220503114607.98844-2-hdegoede@redhat.com>
+ <20220518210007.E4BDCC34118@smtp.kernel.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220518210007.E4BDCC34118@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27-04-22, 11:56, Miquel Raynal wrote:
-> Hello,
-> 
-> This is the series bringing DMA support to RZN1 platforms.
-> The UART changes regarding DMA support has been merged into tty-next
-> already.
-> 
-> There is no other conflicting dependency with the other series, so these
-> patches (all but DTS) can go though the dmaengine tree I believe.
+Hi,
 
-Applied 1-7, thanks
+On 5/18/22 23:00, Stephen Boyd wrote:
+> Quoting Hans de Goede (2022-05-03 04:46:07)
+>> The def_bool y PMC_ATOM Kconfig option provides a couple of symbols used
+>> by the code enabled by the X86_INTEL_LPSS option and it registers some
+>> clocks. These clocks are only registered on Bay Trail, Cherry Trail and
+>> Brasswell Intel SoCs and kernels targeting these SoCs must always have
+>> the X86_INTEL_LPSS option enabled otherwise many things will not work.
+>>
+>> Building the PMC_ATOM code on kernels which are not targeting the
+>> mentioned SoCs and which do not have the X86_INTEL_LPSS enabled is
+>> not useful.
+>>
+>> This means that we can simplify things by replacing the PMC_ATOM Kconfig
+>> option in Makefiles with X86_INTEL_LPSS and then drop the option.
+>>
+>> Cc: Paul Gortmaker <paul.gortmaker@windriver.com>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
--- 
-~Vinod
+Thanks.
+
+I've added this to my review-hans (soon to be for-next) branch now.
+
+Regards,
+
+Hans
+
