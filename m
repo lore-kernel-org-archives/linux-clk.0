@@ -2,87 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E880C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 12:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E49C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 13:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238409AbiESM4I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 08:56:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34492 "EHLO
+        id S238355AbiESNFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 09:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238232AbiESMzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 08:55:42 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09058BC6C5;
-        Thu, 19 May 2022 05:55:38 -0700 (PDT)
-X-UUID: 2ec78f8077fb4d6fa0ed3b697d5d90bb-20220519
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:88a60218-f4e2-4e72-be88-f98363903990,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:238ccfe2-edbf-4bd4-8a34-dfc5f7bb086d,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,QS:0,BEC:nil
-X-UUID: 2ec78f8077fb4d6fa0ed3b697d5d90bb-20220519
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 916554189; Thu, 19 May 2022 20:55:32 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 19 May 2022 20:55:31 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 19 May 2022 20:55:31 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 19 May 2022 20:55:30 +0800
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <p.zabel@pengutronix.de>,
-        <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
-        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH v7 15/19] arm64: dts: mediatek: Add infra #reset-cells property for MT8192
-Date:   Thu, 19 May 2022 20:55:23 +0800
-Message-ID: <20220519125527.18544-16-rex-bc.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
-References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
+        with ESMTP id S238161AbiESNFL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 09:05:11 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCF067D2D
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 06:05:10 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-2fee9fe48c2so56163247b3.3
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 06:05:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FvS6oIYuJD+X/Sl5GyHKX9reZ4E6zgz4WuUSfpo4I1I=;
+        b=cuUOVJMltrI7hB/SFs6chT4HOwwy3oA61jegFQS3eMZwuTE+w1145KZDnb8oyR6Tel
+         QgauXxUvZ36jV/zTD3D7xyjpzpc8h/ztzct0mhcAnNACKMODQfg7Ymse3S7OsjhJQ3So
+         Lsu1g4HGPEk955ldtzo/ZZgcprFUvW/9gsDpeAH7TtYK+0agHPo6Mhmo6IS/p59W6Mqo
+         SItSjTv6JmhbnmqXgSbmSi/R9mCOCKAKvo+9lt8V/HzbaSCmmuMX5iXJqR67MluglWjx
+         dhgi1CpRcdxgS803lPXtYUALykAzcFfh7ha/NcKJmOXatxLKmrsZmei8JKCv/eK+k0r3
+         4O5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FvS6oIYuJD+X/Sl5GyHKX9reZ4E6zgz4WuUSfpo4I1I=;
+        b=uSl0G8G2KuQRqho0mzFUa0DaTOc7vaq3laY1Zpu6/cWDkpYt2xyJXEHVjsxKoFDxQb
+         pis5DzIv1ZyL2+2TxV/IAyLFFcsyjk4S30/crxzySbjYtzZZ+BvIxBdgoKfwcbRGBK8i
+         Phy+rbOfJvF+SrAEspMCGHwBTI2WMIo95m1rK73kwKD3EL7y5jQ6vp5RkNdY20I8LrqE
+         ymELpipOAQ2Te2bpdiiCQ22adujLYroFhDkPbZ/LsrvE9xvk2T+agKziW/rjdj/LWItk
+         BcH/jaVwS9AUPHlrxZGkKXk+v/VIrCpOIJj8UL2KCIifC8BYW4UvZ/HBBEhMGYGRhI13
+         NhqQ==
+X-Gm-Message-State: AOAM531V0wfYT09b5SxkLWr5HnWqH/Zo+WcQg6/J+YgJCUVd3bhtzPRe
+        3PGMsqXAGJFMD+VULbxDZ29HcQz76vo+qMstEo33YA==
+X-Google-Smtp-Source: ABdhPJzCqwZlIRlav0EjPiuT+GEqGML2V538fx0hb3/tK+CgfQDqc/5gWM2/UHdZ3ADOOwISs7cS0bmmxHbqgXmtybc=
+X-Received: by 2002:a0d:c4c2:0:b0:2f1:6c00:9eb4 with SMTP id
+ g185-20020a0dc4c2000000b002f16c009eb4mr4769667ywd.448.1652965508286; Thu, 19
+ May 2022 06:05:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20220504213251.264819-1-sebastian.reichel@collabora.com> <20220504213251.264819-19-sebastian.reichel@collabora.com>
+In-Reply-To: <20220504213251.264819-19-sebastian.reichel@collabora.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 19 May 2022 15:04:57 +0200
+Message-ID: <CACRpkdY4Db1jV55HUeLzOjqWs3cfjSCpcKX2Q7Zs-+rB9UkEsg@mail.gmail.com>
+Subject: Re: [PATCHv2 18/21] dt-bindings: pinctrl: rockchip: increase max
+ amount of device functions
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@lists.collabora.co.uk,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To support reset of infra, we add property of #reset-cells.
+On Wed, May 4, 2022 at 11:38 PM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
 
-Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8192.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> RK3588 can have 10 different device functions, so increase the maximum
+> amount appropriately. Considering rockchip uses auto-generated pinmux
+> files, adding a quite complex if construct to increase the limit just
+> for rk3588 does not seem to be worth the effort.
+>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-index 733aec2e7f77..13ba5fee4afa 100644
---- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-@@ -271,6 +271,7 @@
- 			compatible = "mediatek,mt8192-infracfg", "syscon";
- 			reg = <0 0x10001000 0 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		pericfg: syscon@10003000 {
--- 
-2.18.0
+This patch applied to the pinctrl tree.
 
+Yours,
+Linus Walleij
