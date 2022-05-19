@@ -2,179 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70256C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 19:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F7AC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 20:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239709AbiEST2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 15:28:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56006 "EHLO
+        id S234563AbiESU3g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 16:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237637AbiEST2P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 15:28:15 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA06996BC;
-        Thu, 19 May 2022 12:28:13 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id m6so7406198ljb.2;
-        Thu, 19 May 2022 12:28:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PvLDd8wcJFaP4wZyvv4PEwUuTP3SB9YVSkYVMPVbzng=;
-        b=Uc22x0NuV1MkOVz0+q7VLbrtNVzEVaPlEPu3pEhpU7LqfUx9jvflGzbiYKOBjQ75Nl
-         7VAnBHEm9RfJk2ExH9HbaYlWGEgdnBspOXY+CoAJWgn32j6WiY8Ew2A532ksAWLZtyqD
-         C50PQ3WXXMw0cvivqkROWDW7F9rQ3XY2qX/vWWOIdxVOWyVtXaKusQvl3o6PNJaEXCLI
-         rd1zSWev0Wmj8W9tZ1TSAOrrEs5lmyHFhQla6ikf2Am/fiLO2iE3KTCLbtskuetpLExV
-         3h6x2d/pb13i+Pn3M6gp+UxtGq73frFVbuPWITK8sUoY3hdl4Gistpkzlb2YgXKKfD+O
-         fLZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PvLDd8wcJFaP4wZyvv4PEwUuTP3SB9YVSkYVMPVbzng=;
-        b=3/oxbt/YuM1JWbLnhQ7COxiGDf8xPoF7oXCFjPlYiI16LRLgyF320223Vcv5uVVchJ
-         /1uR2YJnRX0IxThlGcGj7JLBMMsCmb2qc42zcEcrUuNnPyhoGvYPHElhyGr112GaUXhP
-         P+MrtR/r4fAytTrTxci33B0Nvj+PenC55yHuyJBu0l+aSozBIrKVJ+dJ5oW4uLhqj16w
-         8xxk1JLUY8CQvfR/ioQnbFjLDdk6fitEZP9ZcDCJ2KE5n13ygrGqcBFOk363ooMNBuyP
-         G/fe0FmP8zBBRJnCMqw/xVpBZaY6HJX6ihWHk/y13gaXvxDWKsrEhOdLzWw1BjCd0PiD
-         HWVg==
-X-Gm-Message-State: AOAM530CCNRueBAJr64uN2secWFNbzKSdrbfcpthU67S8lsNSDdkgCcS
-        JC10nJ1Bc063iH/XORIpL50=
-X-Google-Smtp-Source: ABdhPJxuxey6xeuyOaq/PdkiNBWjHJmK9mtssV6mSSRvv0EZysXovJkSn7t3gEN0fYV8lzwSLqrJdQ==
-X-Received: by 2002:a05:651c:102c:b0:253:d15e:dd12 with SMTP id w12-20020a05651c102c00b00253d15edd12mr3392798ljm.220.1652988492002;
-        Thu, 19 May 2022 12:28:12 -0700 (PDT)
-Received: from pc ([104.28.198.246])
-        by smtp.gmail.com with ESMTPSA id y27-20020ac255bb000000b0047255d21132sm378876lfg.97.2022.05.19.12.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 12:28:11 -0700 (PDT)
-Date:   Thu, 19 May 2022 22:27:55 +0300
-From:   Boris Lysov <arz65xx@gmail.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     arzamas-16@mail.ee, mturquette@baylibre.com, sboyd@kernel.org,
-        matthias.bgg@gmail.com, wenst@chromium.org,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: Fix unused 'ops' field in mtk_pll_data
-Message-ID: <20220519222755.127ebbb8@pc>
-In-Reply-To: <ead37cb0-c841-df1a-ca10-a396b5e9951c@collabora.com>
-References: <20220515122409.13423-1-arzamas-16@mail.ee>
-        <ead37cb0-c841-df1a-ca10-a396b5e9951c@collabora.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S229503AbiESU3f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 16:29:35 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B776939FD
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 13:29:32 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220519202926euoutp012168b371a7c11378597693f7f134294f~wm54k_KX82072820728euoutp011
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 20:29:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220519202926euoutp012168b371a7c11378597693f7f134294f~wm54k_KX82072820728euoutp011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1652992166;
+        bh=XLdPVraJZN/C3FIXuCBnjKrg2IGMs+dSxgZUxNcMEmM=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=k13ks/9jSl9hQM7toMEFd7xg522wXsBe/NxFpA9DueX24cHvjsWeQ9ep2buyhE/jV
+         Evkqd2DuoWK62mPB7umyIL/rEWjSmWX/5bDQJKsvAL4fXO/Mf5+nZUv6W9fxzKpXCC
+         8sB8nXORUduxqdB/CLKcGBHCL66xMyCk5EHr/zDk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220519202926eucas1p16d088301a5c5e48371192a7a896153bd~wm54Zp1JF2464924649eucas1p1k;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F0.12.09887.6A8A6826; Thu, 19
+        May 2022 21:29:26 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220519202926eucas1p1ab3648bd21ece18d694850ae19266a23~wm54G33U11313513135eucas1p1W;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220519202926eusmtrp2a59a04bca4150004e748bd50dd559d96~wm54GOXmk2746327463eusmtrp2b;
+        Thu, 19 May 2022 20:29:26 +0000 (GMT)
+X-AuditID: cbfec7f4-471ff7000000269f-d5-6286a8a66d32
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4A.E8.09522.6A8A6826; Thu, 19
+        May 2022 21:29:26 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220519202925eusmtip28e10a02d3e5894d85cb28dd533001f1b~wm53qu7nW0459104591eusmtip2F;
+        Thu, 19 May 2022 20:29:25 +0000 (GMT)
+Message-ID: <e8548156-e9cb-c0b7-8c23-fc3e08a31dfc@samsung.com>
+Date:   Thu, 19 May 2022 22:29:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.9.0
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk: samsung: Updates for v5.19
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Language: en-US
+In-Reply-To: <CGME20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8@eucas1p2.samsung.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djP87rLVrQlGWx5I2dx/ctzVovz5zew
+        W3zsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZa
+        pG+XwJXxvecdS8F8voonf3uYGhiPcHcxcnJICJhIvO1sYOli5OIQEljBKLGlZwKU84VR4sTN
+        N0wQzmdGiVNvu4EcDrCWpk5GiPhyRolX7Yuhij4ySkx70MoGMpdXwE7i1J/3bCANLAKqEkdW
+        uUOEBSVOznzCAmKLCiRJvHlzlRnEZhMwlOg92scIYgsLGEtMbVjPBGKLCPhLLDu1ng1kPrPA
+        YUaJDRsfsYMkmAXEJW49mQ9WxCkQJzFnywSouLzE9rdzmEEaJATOcEjsn7eHFeJRF4k/n05C
+        2cISr45vYYewZST+74QYJCFQLzF5yhU2CLuDUeLrXjMI21piwqYTYM8wC2hKrN+lDxF2lLh6
+        eT80UPgkbrwVhDiBT2LStunMEGFeiY42IYhqFYnfq6ZDLZKS6H7yn2UCo9IspFCZheSxWUie
+        mYWwdwEjyypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAVHP63/EvOxiXv/qod4iRiYPx
+        EKMEB7OSCC9jbkuSEG9KYmVValF+fFFpTmrxIUZpDhYlcd7kzA2JQgLpiSWp2ampBalFMFkm
+        Dk6pBiZ+VS5Zx65nDx6wJAtv7Hac8ErtwVKtv69+6xRXLznKvqRczf5o5FYeC7W2xWd5req/
+        i32/ZntLbrVk+GumTw9kbCwFUnSTLWP0Z83i3WIW4PZY/FEaz/rdsYtOfumyffjf7/EF4dtv
+        T2Ssq2uOffxlyr8ks8lKrJsnXZJ7c3duxn8n89dfz1UZ/v7EH6/6f//cax+5lrGVuZws3Ly0
+        cvLp556nYq/GhrclrTlcd0n8AFvM0ZTXgckqJa05+RYGRTtXfXq+6l3Y7dpDBvdn+P9enTaj
+        2uWc/IIJdw/krVa7eN60uKHA9oPP0mVXU/+t/ynS3huQ1HBnjteJEu6MXa+7fRKu8Ktyuz66
+        N/cGW5epEktxRqKhFnNRcSIABMtcR6QDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsVy+t/xe7rLVrQlGbTf5ra4/uU5q8X58xvY
+        LT723GO1mHF+H5PFxVOuFv+ubWRxYPN4f6OV3WPTqk42j74tqxg9Pm+SC2CJ0rMpyi8tSVXI
+        yC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv43vOOpWA+X8WTvz1M
+        DYxHuLsYOTgkBEwkmjoZuxi5OIQEljJKHH/+kQ0iLiUxv0Wpi5ETyBSW+HOtiw2i5j2jxN4J
+        FxhBErwCdhKn/rwHq2cRUJU4ssodIiwocXLmExaQsKhAksSRw/wgYTYBQ4neo31gncICxhJT
+        G9YzgdgiAr4SXQdfgo1nFjjKKHFzykGwhJBArMTat49ZQGxmAXGJW0/mg8U5BeIk5myZwA4y
+        n1lAXWL9PCGIEnmJ7W/nME9gFJqF5IpZSLpnIXTMQtKxgJFlFaNIamlxbnpusaFecWJucWle
+        ul5yfu4mRmBUbTv2c/MOxnmvPuodYmTiYDzEKMHBrCTCy5jbkiTEm5JYWZValB9fVJqTWnyI
+        0RQYEBOZpUST84FxnVcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnV
+        wJQffz1lyqGZsxxDSmusuXQ/OfIq13BMdkriXOldG1cd3DyFdeMa4bIUIaUJqmHV+35qOvc9
+        mbngUewX1vSAsicfuJYfnFXi8WvNPMY9ka+v/1D0fqf+OnfvteL82W88X2gwTw6zuXE/6ark
+        /3jFVc6qNx6kid+SyeIWE9yu+6SLPdZ/64Gy13vWyR1eFvrM+vD0Xu3oFfksu/MimZWSS46b
+        KdkuMgmoEbiRbSA89WC3weFHvxy63Y2Luw3VeGUOO8loumtUrk3Z+jfz0+NHE+Yt59ad4Gg0
+        42Hnp6DuVY19Pya/bphxaubxPZz//fxtX0yfOuEDZ3FI75I4fxav5lbFpDWm8+45PLu+1iv2
+        lBJLcUaioRZzUXEiAOq+spozAwAA
+X-CMS-MailID: 20220519202926eucas1p1ab3648bd21ece18d694850ae19266a23
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8
+References: <CGME20211224203309eucas1p20936b7b0f180707781eacc5fe90a64f8@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello, Angelo! 
 
-On Wed, 18 May 2022 14:15:13 +0200
-AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+Hi Stephen, Mike,
 
-> Il 15/05/22 14:24, Boris Lysov ha scritto:
-> > From: Boris Lysov <arzamas-16@mail.ee>
-> > 
-> > Allow to specify optional clk_ops in mtk_pll_data which will be picked up in
-> > mtk_clk_register_pll. So far no already supported Mediatek SoC needs
-> > non-default clk_ops for PLLs but instead of removing this field it will be
-> > actually used in the future for supporting older SoCs (see [1] for details)
-> > with quirky PLLs.
-> > 
-> 
-> Hello Boris,
-> 
-> I disagree about this change and would rather see the ops pointer removed
-> with fire.
-> 
-> I got that you're trying to do something about "quirky PLLs", but is it
-> really about the PLLs that you're mentioning being "quirky", or are they
-> simply a different IP?
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-To be honest I don't know exactly. mt6577 seems to share some common IP
-patterns such as splitting the entire clock system into few smaller subsystems
-such as apmixed (PLLs), topckgen (mux control), infra- and pericfg (internal
-and peripheral gate control). On the other hand, mt6577 is quite an old SoC
-(more on that in the end) and there are some differences about its operation
-compared to modern SoCs and their drivers.
+   Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
 
-> Also, if it's just about a bit inversion and a bigger delay:
-> 1. Bigger delay: Depending on how bigger, we may simply delay more by default
->     for all PLLs, even the ones that aren't requiring us to wait for longer...
->     ...after all, if it's about waiting for 10/20 *microseconds* more
-> { snip }
+are available in the Git repository at:
 
-According to the mt6577 datasheet the largest settling time is 10
-*milli*seconds for AUDPLL [1]. In my opinion this is way too much to be set as
-default for all mediatek devices.
+   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.19-samsung
 
-> 2. Bit inversion: that can be solved simply with a flag in the
-> prepare/unprepare ops for this driver... and if you want something that
-> performs even better, sparing you a nanosecond or two, you can always assign
-> an "inverted" callback for managing that single bit;
+for you to fetch changes up to b35f27fe73d8c86fe40125e063b28007e961b862:
 
-Not all mt6577 PLLs need bit inversion. 2 PLLs follow the common flow (set a
-CON0_PWR_ON bit to start). 6 PLLs set this bit to 0 to start. And 1 PLL (which
-is actually a DDS) needs to write a magic value to specific register (in
-apmixed region) to start.
-Is very unfortunate that I can't directly link the vomit-inducing downstream
-code to prove the PLL situation due to its licensing but it's publicly
-available on the internet [2] as a part of device manufacturers' obligations to
-publish source code.
+   clk: samsung: exynosautov9: add cmu_peric1 clock support (2022-05-10 19:19:34 +0200)
 
-> 3. Different IP: mtk_clk_register_(name-of-the-new-ip)_pll() - I don't think
-> that there's anything to explain to that one.
-In my opinion this would introduce more duplicate code than just letting a
-developer set custom clk_ops for a specific platform.
+----------------------------------------------------------------
+clk/samsung updates for v5.19
 
-Huge thanks for your feedback!
+  - clock driver for exynosautov9 SoC
 
-P.S As I said above, mt6577 is old and in its current state [3] it's closer to
-being a personal project than a serious mainlining attempt. I share and agree
-with your opinion [4] on e-waste and is why I'm trying to put an effort into it.
-What I don't have enough of is time and, sadly, expertise. Maybe it'd be better
-for me to stay on github.
+----------------------------------------------------------------
+Chanho Park (9):
+       dt-bindings: clock: add clock binding definitions for Exynos Auto v9
+       dt-bindings: clock: add Exynos Auto v9 SoC CMU bindings
+       clk: samsung: add top clock support for Exynos Auto v9 SoC
+       clk: samsung: exynosautov9: add cmu_core clock support
+       clk: samsung: exynosautov9: add cmu_peris clock support
+       clk: samsung: exynosautov9: add cmu_busmc clock support
+       clk: samsung: exynosautov9: add cmu_fsys2 clock support
+       clk: samsung: exynosautov9: add cmu_peric0 clock support
+       clk: samsung: exynosautov9: add cmu_peric1 clock support
 
-[1] MT6577 HSPA Smartphone Application Processor Datasheet v0.94, page 1200
-[2] any linux v3.4 mt6577 kernel on github, see the 'enable_pll_op' function in
-mediatek/platform/mt6577/kernel/core/mt6577_clock_manager.c 
-[3] https://github.com/arzam16/linux-mt6577
-[4] https://lists.infradead.org/pipermail/linux-mediatek/2022-May/041498.html
+  .../clock/samsung,exynosautov9-clock.yaml      |  219 +++
+  drivers/clk/samsung/Makefile                   |    1 +
+  drivers/clk/samsung/clk-exynosautov9.c         | 1733 +++++++++++++++++
+  .../dt-bindings/clock/samsung,exynosautov9.h   |  299 +++
+  4 files changed, 2252 insertions(+)
+  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov9-clock.yaml
+  create mode 100644 drivers/clk/samsung/clk-exynosautov9.c
+  create mode 100644 include/dt-bindings/clock/samsung,exynosautov9.h
 
-> Regards,
-> Angelo
-> 
-> > This patch depends on series "clk: mediatek: Move to struct clk_hw provider
-> > APIs" [2] by Chen-Yu Tsai.
-> > 
-> > [1]
-> > https://lists.infradead.org/pipermail/linux-mediatek/2022-February/035093.html
-> > [2]
-> > https://lists.infradead.org/pipermail/linux-mediatek/2022-May/040921.html
-> > 
-> > Signed-off-by: Boris Lysov <arzamas-16@mail.ee>
-> > ---
-> >   drivers/clk/mediatek/clk-pll.c | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > index cabdf25a27f3..509959a325f0 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -347,7 +347,10 @@ static struct clk_hw *mtk_clk_register_pll(const
-> > struct mtk_pll_data *data, 
-> >   	init.name = data->name;
-> >   	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
-> > -	init.ops = &mtk_pll_ops;
-> > +	if (data->ops)
-> > +		init.ops = data->ops;
-> > +	else
-> > +		init.ops = &mtk_pll_ops;
-> >   	if (data->parent_name)
-> >   		init.parent_names = &data->parent_name;
-> >   	else
-> > 
-> 
-
+-- 
+Regards,
+Sylwester
