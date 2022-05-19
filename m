@@ -2,88 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610DDC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 13:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB67C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 13:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238462AbiESNIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 09:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
+        id S239283AbiESNul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 09:50:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233781AbiESNIM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 09:08:12 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D01B82EE
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 06:08:11 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-2fed823dd32so55676047b3.12
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 06:08:11 -0700 (PDT)
+        with ESMTP id S239203AbiESNu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 09:50:27 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27E422F3A9;
+        Thu, 19 May 2022 06:50:04 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id a22so4753482qkl.5;
+        Thu, 19 May 2022 06:50:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=La/7OOALhauUEG5Ji2oO8YvO8VOzXhhzoK6CQFuGens=;
-        b=Mc01J4Jmev0FOw6h6XJqZkIQNwLAXIZdmviiHFc4dS0SXngMNt4uVOaGj3sQE+/AjG
-         iHVJtLxz0SRFtzC6KZYGso767mBxZ0YMoWEKrI7sHpnTFU1GKZB5x4FT+6l2iD4pSFEU
-         TK/IfXww27HTOb/Kd3t2LMc2606sodqY9RPc2jYCO39lTbk2OoWLDBBks1MollfDd9JR
-         6CDvrRNyslLM/+JKHLfknToZJXU87WXzxjUn8DFRZxC2orM1AQSKre+uvW2SO+Y/mspm
-         Q7lV5BmKPsaiawxHFXDNhHZiDGHjki0iHzM1FgKHhRjoSO660JbHtVqDs/JDdIbLySAR
-         Ho0A==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vBqh7Tk2z2K1YwGYzAH4brkfEyxgFWvHmBvnWHs1Zp4=;
+        b=flFbqmZxx9iM5vRGY/4eQBnTHrzZe9ShyTGtUfoI5IhkuVrEkViYFtkY0ApjDpQSma
+         NKGWwmHhnQwHti46okHFeiW/Vtm17DAPZJx4zvDOTHmG7cBoWd2e0yPyDTGquH+Qw0d6
+         PIZzIC09nejA7WeWV0LroOLgNA0Hl2CcBLAa6vurXGShpfQxd3EoHmP9jF3cK9bC7Gnb
+         //ytY6uTxONFx3cQLZKrymmAgwdIYRK9wXCtm+RqcY2rS1IXl+TQa9gpzDfLsvfIOamZ
+         RM+kXX+Eb/JQ8cqxn9PD7HkJ80bnOMwV5J44IX4C0C/z80B65gpi5bxua3DxtdUtrUV5
+         484g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=La/7OOALhauUEG5Ji2oO8YvO8VOzXhhzoK6CQFuGens=;
-        b=ij/6u8JAi/aCBPsBUv+tLruuSp4OhhGLQ3c6aa3kSDkpyPVQT1tAGvTv0UbXACIZFp
-         F0zBhfpSa6yfgnHwDkTzeaLfywIwXXJRJNzGjsS1KnzH5ev0Lubysg8Dw+ekmu1hFXdD
-         hSBBc8xAVZobUjWCgxNbmDGuZP20jdb8zqOyiFY4QfTpI1uFaRgM/a6CPZvoSfATE5mU
-         3G4f3CvShYc94IjSvw+vnx877xPlZd+0lprf39iPn8zDZx+s2IggdAaYzS/iQb9/5+dh
-         MwZ1taETLGnxBnvnwTCWAMZUNnncJCAs0GCAtwD16zo+OlymDim3HE3XvAd1195sT+RI
-         nutw==
-X-Gm-Message-State: AOAM531cbCpDXQwOBJXr/iWvGf9iZAtDlk/23fP6Rw6PYUUE1Q5QRENx
-        FUXmE3sgeCYUaIOgqMOj/ZxuB3TxF79CHwMhCSkW8w==
-X-Google-Smtp-Source: ABdhPJzjXaM6yDiZGQ6JFS2PFd8kAqU9kyb5veZ5kmD7lX3tGNCp8MwcAxKVbfGmkiMRw+pGuRJzDHAhcSYdhHAWbZg=
-X-Received: by 2002:a0d:f0c3:0:b0:2f4:d291:9dde with SMTP id
- z186-20020a0df0c3000000b002f4d2919ddemr4419526ywe.437.1652965691192; Thu, 19
- May 2022 06:08:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vBqh7Tk2z2K1YwGYzAH4brkfEyxgFWvHmBvnWHs1Zp4=;
+        b=TOzCxCuho+E8krO26p0HqpA5XzO2eNDD+ROZMrYAxm4z5vw/70kYX+5bpAOp9YZFaz
+         FdAjEjC+TwEvxo9w0GPIxReTwDGVhPHbxQS2dqxA+I7juifrKRTDoFZUZhRXVU9y/cwA
+         p4TatSOx5uZyFvLN/OFLnEJ+VKwFGHE8DE5BfPdgI5l5XHwG2PraqW8QzEtOOn9ElET5
+         ADSEpDCjS/KsplcnrwO/pkk9Quv2vFNhycuh/6HL20WEdB3lZMOBNNqKbwPaiMdxsMky
+         3xcfh8Q6VLafcTCWkGYLgzH7XRaLUEOGKjHrTSQVL2deaeAsO4QkI4lkmrf7fo5TdP7b
+         MiJA==
+X-Gm-Message-State: AOAM530xGYV/FGVX/Wn5S284M8bYL9W+y4cR9lyf+XwauGu6p1p1agMG
+        qaDhX3RzlNFsQWBYRQbj9TY=
+X-Google-Smtp-Source: ABdhPJy0wt0R0C+qdbicIKHg86HWjUDyYZscDjDdlgPI+3OgR1c1hrYBu5g+wbK5WOVdKMQ9Sqfrpw==
+X-Received: by 2002:a37:8641:0:b0:67e:85d1:f5e9 with SMTP id i62-20020a378641000000b0067e85d1f5e9mr3195651qkd.128.1652968155429;
+        Thu, 19 May 2022 06:49:15 -0700 (PDT)
+Received: from localhost.localdomain ([217.138.206.82])
+        by smtp.gmail.com with ESMTPSA id i186-20020a3754c3000000b0069fc13ce23dsm1315024qkb.110.2022.05.19.06.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 May 2022 06:49:15 -0700 (PDT)
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Yassine Oudjana <yassine.oudjana@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH 0/6] clk: mediatek: Improvements to simple probe/remove and reset controller unregistration
+Date:   Thu, 19 May 2022 17:47:22 +0400
+Message-Id: <20220519134728.456643-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220517032802.451743-1-Mr.Bossman075@gmail.com> <20220517032802.451743-11-Mr.Bossman075@gmail.com>
-In-Reply-To: <20220517032802.451743-11-Mr.Bossman075@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 May 2022 15:08:00 +0200
-Message-ID: <CACRpkdbjLiF=ZU1tjPQ+=eKd24aEOi+tZ4wZYamuKyC0B=DisA@mail.gmail.com>
-Subject: Re: [PATCH v3 12/15] pinctrl: freescale: Add i.MXRT1170 pinctrl
- driver support
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 17, 2022 at 5:28 AM Jesse Taube <mr.bossman075@gmail.com> wrote:
+This series started as part of an earlier series adding support for the main
+clock controllers on MediaTek MT6735[1]. It has since been split off and
+expanded. It adds a new function to unregister a reset controller and expands
+the mtk_clk_simple_probe/remove functions to support the main 5 types of clocks:
+- PLLs		(new)
+- Fixed clocks	(new)
+- Fixed factors	(new)
+- Muxes		(new)
+- Gates		(supported previously)
+This should allow it to be used in most clock drivers, resulting in reduced
+code duplication. It will be used in MT6735 clock drivers in the upcoming v2
+of the MT6735 main clock controller series.
 
-> Add the pinctrl driver support for i.MXRT1170.
->
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> V1 -> V2:
->  - Nothing done
-> V2 -> V3:
->  - Nothing done
+Dependencies:
+- clk: mediatek: Move to struct clk_hw provider APIs (series)
+  https://patchwork.kernel.org/project/linux-mediatek/cover/20220510104804.544597-1-wenst@chromium.org/ 
+- Cleanup MediaTek clk reset drivers and support MT8192/MT8195 (series)
+  https://patchwork.kernel.org/project/linux-mediatek/cover/20220503093856.22250-1-rex-bc.chen@mediatek.com/
+- Export required symbols to compile clk drivers as module (single patch)
+  https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
 
-This patch applied to the pinctrl tree.
+Yassine Oudjana (6):
+  clk: mediatek: gate: Export mtk_clk_register_gates_with_dev
+  clk: mediatek: Use mtk_clk_register_gates_with_dev in simple probe
+  clk: mediatek: reset: Return reset data pointer on register
+  clk: mediatek: reset: Implement mtk_unregister_reset_controller() API
+  clk: mediatek: Unregister reset controller on simple remove
+  clk: mediatek: Add support for other clock types in simple
+    probe/remove
 
-Yours,
-Linus Walleij
+ drivers/clk/mediatek/clk-gate.c   |   1 +
+ drivers/clk/mediatek/clk-mt8192.c |   7 +-
+ drivers/clk/mediatek/clk-mtk.c    | 123 +++++++++++++++++++++++++-----
+ drivers/clk/mediatek/clk-mtk.h    |  22 +++++-
+ drivers/clk/mediatek/reset.c      |  41 ++++++----
+ drivers/clk/mediatek/reset.h      |  20 +++--
+ 6 files changed, 167 insertions(+), 47 deletions(-)
+
+-- 
+2.36.1
+
