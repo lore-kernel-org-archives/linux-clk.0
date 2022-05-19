@@ -2,107 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672DBC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 04:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF67C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 04:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233630AbiESEb0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 00:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        id S233192AbiESEmI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 00:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbiESEbZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 00:31:25 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C42051E56
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 21:31:23 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id w14so6968234lfl.13
-        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 21:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=ykAUPANu4B9XJJmg2pnplY4MjTnWZ9pJsCZp3uk7/eg=;
-        b=BgAPtJzkRnc0lxQambdyfxszWLewO5SRkQq0gFA51AIiKnINcJdV5bJlMEpnKA/mZF
-         JBV7cSqiEYCbRc5x9ZpraSMGolT1JUAVATze0FdxoGUqR/7UeAKKR4W8QSmemH40bcuT
-         2xkblaSeWCapxTb3LB0hzWzf56ROr6QaSx0XPaZkzaSCn5nFxwyTsoONA1sdNpZYSIni
-         MDVSzfn6U5SaPFmCqcIs54jyKxaa8MZ97J1fdXRDR2p9jWDav4Egk0ZKrx5owF52lyUF
-         9eSul1A5fGSIOvarKpzahDN8mJfi+9+OE7nNP2cPlSMTfMIAdWfF51QDvKBw9QPnGUzZ
-         3oZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ykAUPANu4B9XJJmg2pnplY4MjTnWZ9pJsCZp3uk7/eg=;
-        b=aHNyusbmiPkuntfKThJZIJg71aOC0R/bGHvDtWIYDZKeojiHGYnbTcNXLjJiCMbuRD
-         Lg1t6O5ytDSIFs+wXfWuMrpDYGEYPhgK2XVJj3wGnAYcDjLoIGF1SFkSLUQRwoW5SDEi
-         T9J5jKA7VVFZKnzSt0UxCwVgRVrqNsGnWIGchDuRu44DLNzuHvKZtFjSvq+yOw33/zwA
-         QskF141TkH46+h7UTf1x+6K3sGcvXMr1kTmN2wRErMxHprdRrhj19tWPsKEE2Pmo4I1i
-         aiFL/PnpW15WiMujWrhZaAd11G/DXwnBVKNXRlvluti8xrz6DEfBptMuIXYa4S+dnbZu
-         voKw==
-X-Gm-Message-State: AOAM532ywX/5dTUCZC33sv8s49EMjtS/XJ/b/OcEwFDlmHHKemSGIly2
-        EABXbQdfZZiETTXl2/oaXNCI+g==
-X-Google-Smtp-Source: ABdhPJzBLhtYkn9iLfgHnLIimZi8ZrrcTKRdSm09/QdmXeugoK2IHQD5ZdleTymVilW5AMPFl3eNPQ==
-X-Received: by 2002:ac2:46e8:0:b0:477:ba2c:a68b with SMTP id q8-20020ac246e8000000b00477ba2ca68bmr2011664lfo.55.1652934681773;
-        Wed, 18 May 2022 21:31:21 -0700 (PDT)
-Received: from [192.168.1.102] (mobile-access-b04822-211.dhcp.inet.fi. [176.72.34.211])
-        by smtp.gmail.com with ESMTPSA id w12-20020a05651204cc00b0047255d2119fsm138383lfq.206.2022.05.18.21.31.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 May 2022 21:31:21 -0700 (PDT)
-Message-ID: <cce59517-e9f0-2e29-038b-ba2f0faa075f@linaro.org>
-Date:   Thu, 19 May 2022 07:30:58 +0300
+        with ESMTP id S233732AbiESEmH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 00:42:07 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BDE5DA33;
+        Wed, 18 May 2022 21:42:00 -0700 (PDT)
+X-UUID: 3967da3e039a4802882ebc34d4da6908-20220519
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:c8d2e367-71e9-4c45-809a-d77cf2b321d0,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:2a19b09,CLOUDID:ad93bde2-edbf-4bd4-8a34-dfc5f7bb086d,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:0,BEC:nil
+X-UUID: 3967da3e039a4802882ebc34d4da6908-20220519
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 286526095; Thu, 19 May 2022 12:41:55 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Thu, 19 May 2022 12:41:53 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 19 May 2022 12:41:53 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <bgolaszewski@baylibre.com>, <chun-jie.chen@mediatek.com>,
+        <ck.hu@mediatek.com>, <devicetree@vger.kernel.org>,
+        <fparent@baylibre.com>, <ikjn@chromium.org>,
+        <jason-jh.lin@mediatek.com>, <kernel@collabora.com>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <marijn.suijten@somainline.org>, <martin.botka@somainline.org>,
+        <matthias.bgg@gmail.com>, <miles.chen@mediatek.com>,
+        <mturquette@baylibre.com>, <p.zabel@pengutronix.de>,
+        <paul.bouchara@somainline.org>, <phone-devel@vger.kernel.org>,
+        <rex-bc.chen@mediatek.com>, <robh+dt@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <tinghan.shen@mediatek.com>, <weiyi.lu@mediatek.com>,
+        <wenst@chromium.org>, <y.oudjana@protonmail.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+Subject: Re: [PATCH v2 6/7] clk: mediatek: Export required symbols to compile clk drivers as module
+Date:   Thu, 19 May 2022 12:41:53 +0800
+Message-ID: <20220519044153.11078-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220518111652.223727-7-angelogioacchino.delregno@collabora.com>
+References: <20220518111652.223727-7-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/8] clk: qcom: alpha-pll: correct kerneldoc
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
 
-On 5/1/22 13:35, Krzysztof Kozlowski wrote:
-> Correct kerneldoc warning:
+Hi Angelo,
+
+>In order to compile the clock drivers for various MediaTek SoCs as
+>modules, it is necessary to export a few functions from the MediaTek
+>specific clocks (and reset) libraries.
+>
+>Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>---
+> drivers/clk/mediatek/clk-apmixed.c | 1 +
+> drivers/clk/mediatek/clk-cpumux.c  | 2 ++
+> drivers/clk/mediatek/clk-mtk.c     | 2 ++
+> drivers/clk/mediatek/reset.c       | 1 +
+> 4 files changed, 6 insertions(+)
+>
+>diff --git a/drivers/clk/mediatek/clk-apmixed.c b/drivers/clk/mediatek/clk-apmixed.c
+>index 6b0ab0a346e8..f126da693a7f 100644
+>--- a/drivers/clk/mediatek/clk-apmixed.c
+>+++ b/drivers/clk/mediatek/clk-apmixed.c
+>@@ -98,5 +98,6 @@ struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
 > 
->    drivers/clk/qcom/clk-alpha-pll.c:1450:
->      warning: expecting prototype for clk_lucid_pll_configure(). Prototype was for clk_trion_pll_configure() instead
+> 	return &tx->hw;
+> }
+>+EXPORT_SYMBOL_GPL(mtk_clk_register_ref2usb_tx);
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> MODULE_LICENSE("GPL");
+>diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+>index 2b5d48591738..25618eff6f2a 100644
+>--- a/drivers/clk/mediatek/clk-cpumux.c
+>+++ b/drivers/clk/mediatek/clk-cpumux.c
+>@@ -150,6 +150,7 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
 > 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 4406cf609aae..969d98fca5df 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -1439,7 +1439,7 @@ const struct clk_ops clk_alpha_pll_postdiv_fabia_ops = {
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
->   
->   /**
-> - * clk_lucid_pll_configure - configure the lucid pll
-> + * clk_trion_pll_configure - configure the lucid pll
->    *
->    * @pll: clk alpha pll
->    * @regmap: register map
+> 	return PTR_ERR(hw);
+> }
+>+EXPORT_SYMBOL_GPL(mtk_clk_register_cpumuxes);
+> 
+> void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
+> 				 struct clk_hw_onecell_data *clk_data)
+>@@ -166,5 +167,6 @@ void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
+> 		clk_data->hws[mux->id] = ERR_PTR(-ENOENT);
+> 	}
+> }
+>+EXPORT_SYMBOL_GPL(mtk_clk_unregister_cpumuxes);
+> 
+> MODULE_LICENSE("GPL");
+>diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+>index 05a188c62119..41e60a7e8ff9 100644
+>--- a/drivers/clk/mediatek/clk-mtk.c
+>+++ b/drivers/clk/mediatek/clk-mtk.c
+>@@ -459,6 +459,7 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+> 	mtk_free_clk_data(clk_data);
+> 	return r;
+> }
+>+EXPORT_SYMBOL_GPL(mtk_clk_simple_probe);
+> 
+> int mtk_clk_simple_remove(struct platform_device *pdev)
+> {
+>@@ -472,5 +473,6 @@ int mtk_clk_simple_remove(struct platform_device *pdev)
+> 
+> 	return 0;
+> }
+>+EXPORT_SYMBOL_GPL(mtk_clk_simple_remove);
 
-this fix is done earlier, unfortunately the inclusion is still pending, in v5 series:
+Thanks, I need this too. I am preparing a patch to use mtk_clk_simple_remove/mtk_clk_simple_probe
+for MT6779 clks first and maybe I can apply this to all MediaTek clk drivers.
 
-https://lore.kernel.org/linux-clk/20220509090143.4140999-1-vladimir.zapolskiy@linaro.org/
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
 
---
-Best wishes,
-Vladimir
+thanks,
+Miles
+> 
+> MODULE_LICENSE("GPL");
+>diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+>index 179505549a7c..290ceda84ce4 100644
+>--- a/drivers/clk/mediatek/reset.c
+>+++ b/drivers/clk/mediatek/reset.c
+>@@ -228,5 +228,6 @@ int mtk_register_reset_controller_with_dev(struct device *dev,
+> 
+> 	return 0;
+> }
+>+EXPORT_SYMBOL_GPL(mtk_register_reset_controller_with_dev);
+> 
+> MODULE_LICENSE("GPL");
+>-- 
+>2.35.1
+>
+>
