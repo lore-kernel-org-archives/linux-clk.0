@@ -2,60 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D6EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 00:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B708AC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 02:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbiESAoj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 May 2022 20:44:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
+        id S232891AbiESC3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 May 2022 22:29:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231633AbiESAoi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 20:44:38 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AEB760AB1;
-        Wed, 18 May 2022 17:44:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0804A61760;
-        Thu, 19 May 2022 00:44:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634DEC385A5;
-        Thu, 19 May 2022 00:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652921077;
-        bh=MKtFYBiTymoYBzIoCiaTc+DKg1Jpthbmtursi+ecuO4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WVUZpx/aLqjyt8aC5ct2cA+7R7Z6H3hzT8m5f/Oh7tXEmJlXtN1Lsi9Tisn4gNqTB
-         F6pun+/tYhkYJXHQ+vJeqKB7fpXPSsB1Cmm28tnktXRg5zu9OVNkA6wLG5kgTA65la
-         hDMJGf59qAMJKeb+SwyKNuuWaTd3WHNvV7F6pFuZwgdh2Wv4TLnZmluwLIq9abjcRP
-         thZH9k3xmgxpgyikz/4dvuP+qIEhSGIPOTOzcvun/OYtsHgAFlqgDiykUcxkEPl9di
-         ARmP+9bub1zueDaaqbpnTLS4cO2s4jhUwKIraFuyhQ+z4kGXJPWWhpuzmWqILSIHb7
-         AEEgxWCjnrvyQ==
+        with ESMTP id S232893AbiESC3q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 May 2022 22:29:46 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1F891C6E74
+        for <linux-clk@vger.kernel.org>; Wed, 18 May 2022 19:29:36 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(12590:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 19 May 2022 10:16:53 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.6; Thu, 19 May 2022 10:16:50 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2507.006; Thu, 19 May 2022 10:16:50 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     "krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v15 05/10] clk: Add Sunplus SP7021 clock driver
+Thread-Topic: [PATCH v15 05/10] clk: Add Sunplus SP7021 clock driver
+Thread-Index: AQHYZcsXCsTwSBsje0a2OPS1GfS78a0h1u8AgADuCPCAAdLagIAA6WiQ
+Date:   Thu, 19 May 2022 02:16:50 +0000
+Message-ID: <7fcb969a0d0740459a9ebc403aeb556f@cqplus1.com>
+References: <cover.1652329411.git.qinjian@cqplus1.com>
+ <9a71d17e9c70051db44c5545453ae8320ed8e0f8.1652329411.git.qinjian@cqplus1.com>
+ <20220517021755.F1D05C385B8@smtp.kernel.org>
+ <7febed72ae2747abb953a6f44a51102c@cqplus1.com>
+ <20220518202049.6055BC385A9@smtp.kernel.org>
+In-Reply-To: <20220518202049.6055BC385A9@smtp.kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220505025457.1693716-3-bjorn.andersson@linaro.org>
-References: <20220505025457.1693716-1-bjorn.andersson@linaro.org> <20220505025457.1693716-3-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 2/2] clk: qcom: add sc8280xp GCC driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 18 May 2022 17:44:35 -0700
-User-Agent: alot/0.10
-Message-Id: <20220519004437.634DEC385A5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-05-04 19:54:57)
-> Add support for the Global Clock Controller found in the Qualcomm
-> SC8280XP platform.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+PiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGZfcXVv
+dGllbnQgID0gZGYgLyBtOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGRmX3JlbWFpbmRlciA9ICgoZGYgJSBtKSAqIDEwMDApIC8gbTsNCj4gPiA+ID4gKw0KPiA+ID4g
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChmcmVxID4gZGZfcXVvdGllbnQp
+IHsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRmX3F1
+b3RpZW50ICA9IGZyZXEgLSBkZl9xdW90aWVudCAtIDE7DQo+ID4gPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBkZl9yZW1haW5kZXIgPSAxMDAwIC0gZGZfcmVtYWlu
+ZGVyOw0KPiA+ID4NCj4gPiA+IFdoZXJlIGRvZXMgMTAwMCBjb21lIGZyb20/DQo+ID4NCj4gPiAx
+MDAwIGlzIGNvbWUgZnJvbSAiYm9ycm93IDEiIGluIGxhc3Qgb3BlcmF0aW9uLg0KPiANCj4gSXQn
+cyBzY2FsaW5nIHRoZSB2YWx1ZSByaWdodD8gV2hhdCBpcyBiZWluZyBzY2FsZWQ/IEFyZSB3ZSBj
+b252ZXJ0aW5nDQo+IHVuaXRzIHRvIEh6IGZyb20ga0h6Pw0KDQpIZXJlIGp1c3QgdXNpbmcgaW50
+ZWdlciByZXBsYWNlbWVudCBmbG9hdGluZyBwb2ludCBvcGVyYXRpb24sIGZvciBleGFtcGxlOg0K
+ZGYgPSAxMywgbSA9IDMNCjEzIC8gMyA9IDQuMzMzMzMzMzMNCmRmX3F1b3RpZW50ID0gNA0KZGZf
+cmVtYWluZGVyID0gMC4zMzMzMzMzICogMTAwMCAoYWNjdXJhdGUgdG8gMyBkZWNpbWFsIHBsYWNl
+cykgPSAzMzMNCg0K
