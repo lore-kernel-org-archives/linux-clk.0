@@ -2,115 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54686C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 16:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5661C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 17:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238662AbiESQwT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 12:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47606 "EHLO
+        id S233210AbiESRFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 13:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235521AbiESQwS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 12:52:18 -0400
-Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79715AEC8;
-        Thu, 19 May 2022 09:52:16 -0700 (PDT)
-Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-2fefb051547so63017427b3.5;
-        Thu, 19 May 2022 09:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lHCXvfU913UZzWwkWLW8PuUF55J+NqN7GNP5EdosEmA=;
-        b=PmWqJxxifKIoOgHFXmefLeMf5SNVsk8hDjVTNrBVEGLYoDc1OflT/W/t6tCoRq3bFS
-         Zsj+hHaUHB2vloNW/GMQTopmCmwq5+ADqPsH1BRegbriHDTsEN5pys++wP0kQFgLuKLW
-         BnMAtgGNO3ZV1yLp8Ga+O5Nvcyr/UwaVYNpguYa0dx4bnw2nq7XfK1v1xgEI9PDWxqG9
-         jCQ6bqv9RiFFlOdtMKB1IavNGfFxL9U1LEsr0v4bGra3LlphCkUArMKOk5Kjx0ss0y/7
-         5bgXb9fm6VpyMM3pK7iWkZI340+ZVySJUatMphxu/PMqm6l2a7zVJc3HWyKMnfxNfMIT
-         boOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lHCXvfU913UZzWwkWLW8PuUF55J+NqN7GNP5EdosEmA=;
-        b=OCWMz6gX1ln9BO93B0dBcK69YtMErq/D4rwl34lLcPz0GUGFTXtXik29YfSH2c0f5M
-         xPauNUzyWMRHldUB1+15TfMXkReRwG9x9m/tTCbm394uYBUFynXnMzefvcrVa3jFXZek
-         JW1aS9Q2IJMrpMjNrJFPaBwXtWmEukZCgjoWsCNAEO10/0iAdhYQdq9bdJWpRgkvTYfQ
-         e7Zj9LeQPYGUtrRaxnUChOwDKTnH4zM0HhwTIdwvF2NaUJuoUck4kv952DfxBoc6dPoY
-         KdhnNQZG5QBXDsn7mykc0nJ3JYk5qSxEGq9okO8cMdI3lYnGkh22I6xFa6qYbNgAnIhv
-         7LgQ==
-X-Gm-Message-State: AOAM531z5JXNkf8/tjlyqjdyCbkkiRbFxWl6fk7FjnAaLDtQgyXMAcvM
-        qLVSRqxX8d/MvSFtQgp3wuSxhAQnJvAff9v6Azg=
-X-Google-Smtp-Source: ABdhPJxgwqortp6LMKQqdJfzXMmfQSE/OcnF3FErWG8XOevuRbeXOgq6I2WrPKba3Od1VBXy6oyEfNaFprdUyPboKIk=
-X-Received: by 2002:a0d:cd06:0:b0:2f8:f39c:4cfc with SMTP id
- p6-20020a0dcd06000000b002f8f39c4cfcmr5740233ywd.495.1652979135944; Thu, 19
- May 2022 09:52:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
- <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
- <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
- <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
-In-Reply-To: <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
-From:   Yegor Yefremov <yegorslists@googlemail.com>
-Date:   Thu, 19 May 2022 18:52:04 +0200
-Message-ID: <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Tony Lindgren <tony@atomide.com>, Ard Biesheuvel <ardb@kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        with ESMTP id S233921AbiESRFK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 13:05:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643F262A20;
+        Thu, 19 May 2022 10:05:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0169D60FEF;
+        Thu, 19 May 2022 17:05:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A327CC34100;
+        Thu, 19 May 2022 17:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652979908;
+        bh=j9qmBV0eEQKTQ7zizSQEVzqT008ay3RQiyJibiJAyck=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DDWWrNPw+qBVrcDqcKVcXJC3HNf3pClu9iT6Cnyvi7ak07eyJ+zc4O5J2Ko6da8ZZ
+         AxSRaoIPwIvqef1jss2aVYwMGA3t0lWuYlnjcxbDaRTMtNM+onqE/0ylma3KlVuR35
+         cxcrFi9387h7e2sq278ZSCsmagysRlkbKXhlaNcHDnr+azXetIOdwbnysx0yAqj686
+         kW/7pNwhyCjj8NKxiAjp5xVauxRZGDEurOGIEEHFOQx4KbmAWtnaNKwQy69BCPmMea
+         toPTqTLp5uha+BKOmQt2dS1Gf8IX4c9yzagTN3pmFZTBw1PRz1Idrzl65hkulRRqRr
+         b+DMYzoUwOYPw==
+Date:   Thu, 19 May 2022 22:35:04 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v12 0/9] RZN1 DMA support
+Message-ID: <YoZ4wNCxdJ6REp13@matsya>
+References: <20220427095653.91804-1-miquel.raynal@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220427095653.91804-1-miquel.raynal@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Arnd,
+On 27-04-22, 11:56, Miquel Raynal wrote:
+> Hello,
+> 
+> This is the series bringing DMA support to RZN1 platforms.
+> The UART changes regarding DMA support has been merged into tty-next
+> already.
+> 
+> There is no other conflicting dependency with the other series, so these
+> patches (all but DTS) can go though the dmaengine tree I believe.
 
-On Thu, May 12, 2022 at 12:20 PM Yegor Yefremov
-<yegorslists@googlemail.com> wrote:
->
-> Hi Arnd,
->
-> On Thu, May 12, 2022 at 10:43 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
-> > > * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
-> > > > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
-> > > > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
-> > > > > > Hi Tony, all,
-> > > > > >
-> > > > > > since kernel 5.18.x (5.17.x doesn't show this behavior), the system
-> > > > > > stalls as soon as I invoke the following commands (initializing
-> > > > > > USB-to-CAN converter):
-> > > > > >
-> > > > > > slcand -o -s8 -t hw -S 3000000 /dev/ttyUSB0
-> > > > > > ip link set slcan0 up
-> >
-> > Oh, I missed this part at first and only looked at the backtrace.
-> > Which CAN driver
-> > are you using? It's likely a problem in the kernel driver.
->
-> I am using the slcan driver [1].
->
-> > CONFIG_DMA_API_DEBUG is still likely to pinpoint the bug, but I might also
-> > just see it by looking at the right source file.
->
-> I'll try to get more debug info with CONFIG_DMA_API_DEBUG.
+Applied 1-7, thanks
 
-DMA_API_DEBUG showed nothing new. But disabling the CPUfreq driver
-"solved" the problem. I have tried different governors and got these
-two groups:
-
-ondemand, schedutil - cause the problem
-conservative, powersave, performance and userspace - don't cause the problem
-
-So far, I have only seen the same debug output that I've initially
-sent and in most cases, the system stalls without the output.
-
-Yegor
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/can/slcan.c?h=v5.18-rc6
->
-> Yegor
-> >        Arnd
+-- 
+~Vinod
