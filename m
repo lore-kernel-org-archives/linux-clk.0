@@ -2,196 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A94C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 08:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FA6C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 09:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234934AbiESIxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 04:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33770 "EHLO
+        id S231806AbiESJCy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 05:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbiESIxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 04:53:36 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0183C9CF51;
-        Thu, 19 May 2022 01:53:34 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id DA2951F4581E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652950413;
-        bh=pXYO/JUu84qXpcGnHGzcLC9avotZHwX2ZHKuRJqCO4k=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=cGDtHUQ3m9zfrkF2XgejG2YVt17eVFnRcUfcbnnohf0M5QxVuIApZ4msi6pYSNmJn
-         3ko2Rf/5qw8SBMyJEVfLQ3h7khZGb8lxlmyHeILsD3Cn8wfHW+gSY03EmYnY4kPg++
-         gkBvecEzGu/FurE23QHMctNi1Vk8j5yTWNrgHL98dgAZNwhaC5zDtVR2GtXj4rLt0a
-         sa9uBsEXO/6dkGTKwRxvlHMvMiQXT9zDl46nJUfLcO0d9HQZaSQuFnPJlnTnIcEGOc
-         3eNVytoFR/IUdgNPdo2AtH/WKOj0QoVbXQE+vcqJu9zYzUJVjqNDoY+BkCMj52/Y8T
-         XpzpqXUw8PgKg==
-Message-ID: <4fccf1ef-5dd2-5159-7f89-7c60fd281197@collabora.com>
-Date:   Thu, 19 May 2022 10:53:29 +0200
+        with ESMTP id S235764AbiESJCx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 05:02:53 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0B7A76CA
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 02:02:51 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id h14so6186586wrc.6
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 02:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=J72plItwh5D/t6xIPn8HcQuEnNctyGoC5be+z3SX+7I=;
+        b=xj+WZ2CBSneiv+ele99v7MU4Y8WlF8mDloFXiZXXrWsgNl7yx78ZFDR+/RgwcuB7Cq
+         LPVEM+nlGL7GbdHwe4YLOjW4iGrUVbpnbZD0ad9O2MeMdAuy/NaAlT9SRYe/VRp9YLVt
+         M1raYJxELA/GIQYfAcwEov621usstI5xNVpuPE0a+sQ8OC+qunpfwuXOzPYvvq486moc
+         1m3rjqwQ1eCvqAURhUhp+CS0zwmAJcupJPMOY1kzT8jeYM4SJThFQtVLYry7Km321TQO
+         OIanTUqvu8THlM1MuuKEMPJaMEK/DG6UzrKwHHJ9MPgc2ZwKycJDMwhi72LBZbuJVvaP
+         OZiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=J72plItwh5D/t6xIPn8HcQuEnNctyGoC5be+z3SX+7I=;
+        b=u4om3VKN2NqcI+ZJS6DOKnxkWYZGoKuz579QHpQhN1CCAF0Bb5F5yZJPnmxtVe32TV
+         k+a5CTF3aDm8sCxVHC16D5NvBsfjqgBoqahgD3OB073/b5MSpgIXjARsEVG4Yzv4nCGb
+         ppNwEY/8rwmKiLsScucR93RwwpOz2g20CwFfLENs+SZCRaWTII9Ea/CblKVtQupP/u0E
+         f8Hcjg2uwOxnMDqr9FfilHUsIM7YBJ+pH9XO/tRXOwzj5dOL2onOT8NQKQzn5OmMCd+e
+         w3VuGyxqoZ0474TpNRpdvjRzB3LNn9oetHqQmDsNworgXCI3Gr/lX3vjQWD9KAtbLlHz
+         YVqw==
+X-Gm-Message-State: AOAM530FMsnUcx5Sep/OUTDTzb0UyCi0w79Un8YsC4fBD7kLugKzJbSn
+        UQcxoIDOmONxWguc/G2mQobSZQ==
+X-Google-Smtp-Source: ABdhPJzvRNl50cVlz5aOBQc8msgUjI51WQ2a79TPaGtVF2OXKVTmIRVtD1NS7cpEkoWdiIBPWvaORg==
+X-Received: by 2002:a05:6000:1ac8:b0:20c:6ed8:403 with SMTP id i8-20020a0560001ac800b0020c6ed80403mr3055826wry.247.1652950970230;
+        Thu, 19 May 2022 02:02:50 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id r3-20020a1c2b03000000b003942a244f39sm7566245wmr.18.2022.05.19.02.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 May 2022 02:02:49 -0700 (PDT)
+Message-ID: <7a017c13-774c-c33f-642c-386b1e3c3e69@linaro.org>
+Date:   Thu, 19 May 2022 10:02:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 6/7] clk: mediatek: Export required symbols to compile
- clk drivers as module
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Fix halt on boot by reducing
+ driver's init level
 Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Miles Chen <miles.chen@mediatek.com>, bgolaszewski@baylibre.com,
-        chun-jie.chen@mediatek.com, ck.hu@mediatek.com,
-        devicetree@vger.kernel.org, fparent@baylibre.com,
-        ikjn@chromium.org, jason-jh.lin@mediatek.com, kernel@collabora.com,
-        konrad.dybcio@somainline.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        marijn.suijten@somainline.org, martin.botka@somainline.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, paul.bouchara@somainline.org,
-        phone-devel@vger.kernel.org, rex-bc.chen@mediatek.com,
-        robh+dt@kernel.org, sam.shih@mediatek.com, sboyd@kernel.org,
-        tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
-        y.oudjana@protonmail.com, ~postmarketos/upstreaming@lists.sr.ht
-References: <20220518111652.223727-7-angelogioacchino.delregno@collabora.com>
- <20220519044153.11078-1-miles.chen@mediatek.com>
- <7e60b63c-2bf7-a77e-fe0f-a891efa77a47@collabora.com>
- <CAGXv+5FiteAu7in-CnmVUkDKy=ub1X6etyK1--PHPYKO3FPa=w@mail.gmail.com>
- <3981552b-2153-1b87-f345-2b1f9be6c56f@collabora.com>
- <CAGXv+5GwqLKvM3yReZMW92ZC3nDwdbD+_x8ROBOjppgnsgGkyw@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5GwqLKvM3yReZMW92ZC3nDwdbD+_x8ROBOjppgnsgGkyw@mail.gmail.com>
+To:     Jonathan Marek <jonathan@marek.ca>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
+ <f645fe49-8adf-c1b2-89be-e8ab8f620f16@linaro.org>
+ <034f3156-289d-caab-695d-28a9a0e5a9d9@marek.ca>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <034f3156-289d-caab-695d-28a9a0e5a9d9@marek.ca>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/05/22 10:45, Chen-Yu Tsai ha scritto:
-> On Thu, May 19, 2022 at 4:26 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->> Il 19/05/22 10:15, Chen-Yu Tsai ha scritto:
->>> On Thu, May 19, 2022 at 4:05 PM AngeloGioacchino Del Regno
->>> <angelogioacchino.delregno@collabora.com> wrote:
->>>>
->>>> Il 19/05/22 06:41, Miles Chen ha scritto:
->>>>>
->>>>> Hi Angelo,
->>>>>
->>>>>> In order to compile the clock drivers for various MediaTek SoCs as
->>>>>> modules, it is necessary to export a few functions from the MediaTek
->>>>>> specific clocks (and reset) libraries.
->>>>>>
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>>> ---
->>>>>> drivers/clk/mediatek/clk-apmixed.c | 1 +
->>>>>> drivers/clk/mediatek/clk-cpumux.c  | 2 ++
->>>>>> drivers/clk/mediatek/clk-mtk.c     | 2 ++
->>>>>> drivers/clk/mediatek/reset.c       | 1 +
->>>>>> 4 files changed, 6 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/clk/mediatek/clk-apmixed.c b/drivers/clk/mediatek/clk-apmixed.c
->>>>>> index 6b0ab0a346e8..f126da693a7f 100644
->>>>>> --- a/drivers/clk/mediatek/clk-apmixed.c
->>>>>> +++ b/drivers/clk/mediatek/clk-apmixed.c
->>>>>> @@ -98,5 +98,6 @@ struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
->>>>>>
->>>>>>        return &tx->hw;
->>>>>> }
->>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_register_ref2usb_tx);
->>>>>>
->>>>>> MODULE_LICENSE("GPL");
->>>>>> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
->>>>>> index 2b5d48591738..25618eff6f2a 100644
->>>>>> --- a/drivers/clk/mediatek/clk-cpumux.c
->>>>>> +++ b/drivers/clk/mediatek/clk-cpumux.c
->>>>>> @@ -150,6 +150,7 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
->>>>>>
->>>>>>        return PTR_ERR(hw);
->>>>>> }
->>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_register_cpumuxes);
->>>>>>
->>>>>> void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
->>>>>>                                 struct clk_hw_onecell_data *clk_data)
->>>>>> @@ -166,5 +167,6 @@ void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
->>>>>>                clk_data->hws[mux->id] = ERR_PTR(-ENOENT);
->>>>>>        }
->>>>>> }
->>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_unregister_cpumuxes);
->>>>>>
->>>>>> MODULE_LICENSE("GPL");
->>>>>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
->>>>>> index 05a188c62119..41e60a7e8ff9 100644
->>>>>> --- a/drivers/clk/mediatek/clk-mtk.c
->>>>>> +++ b/drivers/clk/mediatek/clk-mtk.c
->>>>>> @@ -459,6 +459,7 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
->>>>>>        mtk_free_clk_data(clk_data);
->>>>>>        return r;
->>>>>> }
->>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_simple_probe);
->>>>>>
->>>>>> int mtk_clk_simple_remove(struct platform_device *pdev)
->>>>>> {
->>>>>> @@ -472,5 +473,6 @@ int mtk_clk_simple_remove(struct platform_device *pdev)
->>>>>>
->>>>>>        return 0;
->>>>>> }
->>>>>> +EXPORT_SYMBOL_GPL(mtk_clk_simple_remove);
->>>>>
->>>>> Thanks, I need this too. I am preparing a patch to use mtk_clk_simple_remove/mtk_clk_simple_probe
->>>>> for MT6779 clks first and maybe I can apply this to all MediaTek clk drivers.
->>>>>
->>>>> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
->>>>
->>>> Hello Miles,
->>>>
->>>> thanks for telling me, because my next step would have been exactly what
->>>> you're doing, for all MediaTek clk drivers... otherwise we'd be doing
->>>> redundant work going afterwards.
->>>
->>> Should we consider using symbol namespaces (EXPORT_SYMBOL_NS)?
->>>
->>
->> I don't think we should... I don't know if any module in the common clock
->> framework is doing that, but if we want some symbol namespace separation,
->> we would want that "at least" on the entire MediaTek framework, right? :-)
+On 18/05/2022 20:46, Jonathan Marek wrote:
 > 
-> The sunxi-ng clk driver recently started doing this. See:
-> 
->      http://git.kernel.org/torvalds/c/551b62b1e4cb64d3b42da0fbfdcd26a5fcd684be
+> GCC_CAMERA_AHB_CLK is defined but it isn't actually implemented by the 
+> upstream gcc driver
 
-That's good. And...that's one of the examples for which using "a trick" is
-shorter and enhances maintainability!
+*facepalm*
 
-> 
-> And it's being done for all kinds of common driver libraries.
-> 
-> I agree that it would be done for the entire MediaTek framework.
-> 
->> In that case, we can simply keep using EXPORT_SYMBOL_GPL() and change the
->> Makefile in this directory to add:
->>
->>          ccflags-y += -DDEFAULT_SYMBOL_NAMESPACE=COMMON_CLK_MEDIATEK
-> 
-> Oh, I didn't know of this trick. Nice. :D
-> 
-> I think we still need to add MODULE_IMPORT_NS() statements, right?
-> 
+drivers/clk/qcom/gcc-sc8180x.c:	 * GCC_VIDEO_AHB_CLK, 
+GCC_CAMERA_AHB_CLK, GCC_DISP_AHB_CLK,
+drivers/clk/qcom/gcc-sm8250.c:	 * GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK, 
+GCC_DISP_AHB_CLK,
+drivers/clk/qcom/gcc-sm6350.c:	[GCC_CAMERA_AHB_CLK] = 
+&gcc_camera_ahb_clk.clkr,
 
-I haven't experimented with the IMPORT, but I believe if that's relative to
-files in the same Makefile, we won't need to add that... let's make some
-experiments :-)
+you're right - and we have this too don't we
 
->> ...but that's surely out of scope for this specific patch series.
->>
->> What do you think?
+         /*
+          * Keep the clocks always-ON
+          * GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK, GCC_DISP_AHB_CLK,
+          * GCC_CPUSS_DVM_BUS_CLK, GCC_GPU_CFG_AHB_CLK,
+          * GCC_SYS_NOC_CPUSS_AHB_CLK
+          */
+         regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x4818c, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x52000, BIT(0), BIT(0));
+
+drivers/clk/qcom/gcc-sm8250.c - so defining or not defining 
+GCC_CAMERA_AHB_CLK should be a nop.
+
+And yep we have this on sc7280
+
+         /*
+          * Keep the clocks always-ON
+          * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK,
+          * GCC_DISP_AHB_CLK, GCC_GPU_CFG_AHB_CLK
+          */
+         regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b02c, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b028, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x0b030, BIT(0), BIT(0));
+         regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+
+at least the bug is consistent :)
+
+>, and the camcc driver doesn't do anything with it 
+
+yep - it has an interconnect with a hopeful name "cam_ahb" we don't have 
+an obvious clock on the AP side for that, perhaps the rpmh is doing 
+something with the AHB clock because of an interconnect call.
+
+We will have to do a deep dive to find out.
+
+> either (I didn't include it in the camcc driver because the gcc driver 
+> didn't implement it, but I have a patch to do things like downstream, 
+> dispcc/gpucc/videocc drivers all have this problem too). Does having it 
+> in the dts like this cause the gcc driver to probe first somehow, even 
+> though the clock isn't used by the camcc driver?
 > 
-> It's definitely out of scope, but nice to have, to reduce the size of the
-> default symbol table, and limit the usage of the symbols the driver exports.
-> 
+> (The sc7180 camcc driver does do something with the "iface" clock, but 
+> the sc7180 gcc driver also doesn't implement GCC_CAMERA_AHB_CLK either.. 
+> I guess you get a dummy clock for the unimplemented clocks?)
 
-Agreed.
+Yep, I missed that.
 
-> Regards
-> ChenYu
+Meh. Ok we know we have a bug, we know its replicated on sm8250 and 
+sc7280 and we know it doesn't make sense.
 
+My guess is rpmh is switching on the clock. In any case we clearly 
+haven't captured the clock dependency right upstream.
 
-
+---
+bod
