@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0277EC43219
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 13:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66092C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 13:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236247AbiESNwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 09:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39110 "EHLO
+        id S230293AbiESNwj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 09:52:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239342AbiESNvA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 09:51:00 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959B1DE32C;
-        Thu, 19 May 2022 06:50:28 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id 135so2214234qkm.4;
-        Thu, 19 May 2022 06:50:28 -0700 (PDT)
+        with ESMTP id S239277AbiESNuk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 09:50:40 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D5949F0D;
+        Thu, 19 May 2022 06:50:16 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id e20so4622980qvr.6;
+        Thu, 19 May 2022 06:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qy/P0mZ00noEySeWC/Vtvod18+b1z4lRDAbgjrxSrfI=;
-        b=a5OHjJtkOOGvIu6jZg5QA09ruZ+iHD24h5fVYngt/TjqtTTtS84PiyZlRz3xbOX+eD
-         WYaR6T3dx8+SI+vY3m21XylsDLqE1I0gH8Pcmu8+tg/Y2HcWzlCGZIBFV+Pnv2R1G7Yg
-         TzcmYw8ckLZEgzeEibAId7f8tdQP3TlAXUV1/8OU629u7HDhspdgFjBfpSxfgcXzgMl7
-         WnJ+CrTotBnBDsyW/Ne5SAeFkzmMaSfZiFcE8tigc83LAWw25lST6C/ZblpyJ8en1x10
-         Teb65uwJy1pCJlj+0W6WLZDLdTK6DKkwyg0eOWo6dxTwAIOf6NmdTaBw3QcZGJOsIcky
-         O9WQ==
+        bh=nnrO70dUCs/Oc7OMcEIdWH7iLvsjXCWCC72jYa5eYxw=;
+        b=SMcf/ud4YzavnLXbEf3CLeilcehXyS/OikAfy4rBZBLa5uelJq/tEgXZHnI7OwxeVS
+         I+VWoCGqXEF15nq6quDNPYqHR+Eqhu9/tKhMtrKtnMRi4/9H1/ReeETZPq1e+1hbCV6x
+         hWB1OlPoBt5R/Dc6u6HEU7Wtq3cl0H/CLqxaNiwUG35t4z28zREp1Ld0rU4WxpirR3be
+         /HVvawrmuxwImQomxCZ9a/gqzseTT/0h74/weXPJU3RlrAkVI6w22kNZ7PfIhn6MwznG
+         WjIdIz3IQOuvnlp+r+n05kMXn7b2R/0OrCEK1CuZFJOqUSfJ33JmcdLU/dpYZVL5p+JK
+         y6iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qy/P0mZ00noEySeWC/Vtvod18+b1z4lRDAbgjrxSrfI=;
-        b=oXqsZU+JjiOVtR4/TSEg8LdFLK28eFj9b36Tns6O0NRtHjW7L4kiYVEPCS9bYAIK9O
-         Li5Bihm141DR3fedXmQjnC1skQLZJ8X964rMTPAFKOd+ZGdJHL1Jz67222HFmPghroBa
-         nUNsOO80IiNRw4fKdwyZqP3JmzE6BK+03sA8HsHQVlsMtjzGHTy29HXeTHgD4A5VFD5b
-         OCRDIjKWTTcim8Gct1Of3mUONhlFueBLmpel/dKYNpVK1fETJs6VL7aayd8IzHoBFbWk
-         kKhZGSprcGGfupTfkN6IWwNMd0ji+bbakiZGdWcJf+RBPQlaDX0y7XOz3A70/SjioZlc
-         +Q5g==
-X-Gm-Message-State: AOAM530gwi0vTLBdJVqOtWXnwAiLrguK+nV2ViLINSUhV0IRpheYbNbY
-        1t2CvUhsIhAzpOE3JoLWXjA=
-X-Google-Smtp-Source: ABdhPJwtEj+JJRio5QYmwvU2cAJtTQu5mDAibXeOd2Nt2uRks/gnWgo29yFyhbRaE2j2y8DH8STX7w==
-X-Received: by 2002:a05:620a:29ce:b0:6a0:2338:2fbe with SMTP id s14-20020a05620a29ce00b006a023382fbemr3115971qkp.315.1652968201971;
-        Thu, 19 May 2022 06:50:01 -0700 (PDT)
+        bh=nnrO70dUCs/Oc7OMcEIdWH7iLvsjXCWCC72jYa5eYxw=;
+        b=hLrsWQl4iJSOjeiFD++z87epPNSChXdRRy2cl0iCGaUCHOmmUdM/t7u4CTFUuLZdzO
+         5LA/0XPTNelAZOlVVzvgrTP/pdN6c5rW2nitJ8BgMMgVBLdTkvZdCh57Dq+jB36sPxg9
+         HEvbDIm3Znc/CS+gUO/rCoOI6O+7siU+LKnu4MGREzUlyx3zN8HjoN2hPuMjP3PatK6d
+         F9wv2XlxKJFmHOcxJsvFoGM9dTXQgucmLvTBe07Y4S948d/q8XBdyj220kevmD4DMZkz
+         fgVBH2ggBgjMVBTygdHk6RS79m6NKPlTpUUv7nZLVj6Peuclnq6qUolynmoy5pzU9EkP
+         jmMA==
+X-Gm-Message-State: AOAM531hi4NsFij3YwwpY7c034O1vT6yr3rzrv90jjZl0H0T3xnEyYI+
+        Eb/BLhmFdNY2pemMgtsm5jU=
+X-Google-Smtp-Source: ABdhPJx0lMc/1idQ+eV6SdLAcY2CtRWRLioxh54EEVtEWCHH+rVBJcqEEESx886eNWkxmjkSKy4v0g==
+X-Received: by 2002:a05:6214:529e:b0:461:d40a:37d9 with SMTP id kj30-20020a056214529e00b00461d40a37d9mr4022050qvb.50.1652968178744;
+        Thu, 19 May 2022 06:49:38 -0700 (PDT)
 Received: from localhost.localdomain ([217.138.206.82])
-        by smtp.gmail.com with ESMTPSA id i186-20020a3754c3000000b0069fc13ce23dsm1315024qkb.110.2022.05.19.06.49.55
+        by smtp.gmail.com with ESMTPSA id i186-20020a3754c3000000b0069fc13ce23dsm1315024qkb.110.2022.05.19.06.49.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 06:50:01 -0700 (PDT)
+        Thu, 19 May 2022 06:49:38 -0700 (PDT)
 From:   Yassine Oudjana <yassine.oudjana@gmail.com>
 X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -65,9 +65,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH 6/6] clk: mediatek: Add support for other clock types in simple probe/remove
-Date:   Thu, 19 May 2022 17:47:28 +0400
-Message-Id: <20220519134728.456643-7-y.oudjana@protonmail.com>
+Subject: [PATCH 3/6] clk: mediatek: reset: Return reset data pointer on register
+Date:   Thu, 19 May 2022 17:47:25 +0400
+Message-Id: <20220519134728.456643-4-y.oudjana@protonmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220519134728.456643-1-y.oudjana@protonmail.com>
 References: <20220519134728.456643-1-y.oudjana@protonmail.com>
@@ -79,12 +79,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Simple probe/remove functions currently support gates only. Add
-PLLs, fixed clocks, fixed factors and muxes to support most
-clock controllers. struct mtk_clk_desc now takes descriptions
-for all of these clocks, and only the ones set will be registered.
-Most clock controllers will only use a subset of the types
-supported.
+Return a struct mtk_clk_rst_data * when registering a reset
+controller in preparation for adding an unregister helper
+that will take it as an argument. Make the necessary changes
+in drivers that do not currently discard the return value
+of register functions.
 
 Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 ---
@@ -96,185 +95,209 @@ Dependencies:
 - Export required symbols to compile clk drivers as module (single patch)
   https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
 
- drivers/clk/mediatek/clk-mtk.c | 88 +++++++++++++++++++++++++++++-----
- drivers/clk/mediatek/clk-mtk.h | 17 ++++++-
- 2 files changed, 92 insertions(+), 13 deletions(-)
+ drivers/clk/mediatek/clk-mt8192.c |  7 +++++--
+ drivers/clk/mediatek/clk-mtk.c    |  9 +++++---
+ drivers/clk/mediatek/reset.c      | 34 ++++++++++++++++---------------
+ drivers/clk/mediatek/reset.h      | 14 +++++++------
+ 4 files changed, 37 insertions(+), 27 deletions(-)
 
+diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+index ebbd2798d9a3..a658a74644de 100644
+--- a/drivers/clk/mediatek/clk-mt8192.c
++++ b/drivers/clk/mediatek/clk-mt8192.c
+@@ -1255,6 +1255,7 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+ {
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct mtk_clk_rst_data *rst_data;
+ 	int r;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
+@@ -1265,9 +1266,11 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto free_clk_data;
+ 
+-	r = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
+-	if (r)
++	rst_data = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
++	if (IS_ERR(rst_data)) {
++		r = PTR_ERR(rst_data);
+ 		goto free_clk_data;
++	}
+ 
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	if (r)
 diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 3382802663f4..df1209d5b6fb 100644
+index 3a8875b6c37f..1b5591733e2b 100644
 --- a/drivers/clk/mediatek/clk-mtk.c
 +++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -15,8 +15,10 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
+@@ -424,6 +424,7 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 	const struct mtk_clk_desc *mcd;
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct device_node *node = pdev->dev.of_node;
++	struct mtk_clk_rst_data *rst_data;
+ 	int r;
  
--#include "clk-mtk.h"
- #include "clk-gate.h"
-+#include "clk-mtk.h"
-+#include "clk-mux.h"
-+#include "clk-pll.h"
+ 	mcd = of_device_get_match_data(&pdev->dev);
+@@ -446,10 +447,12 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, clk_data);
  
- struct clk_hw_onecell_data *mtk_alloc_clk_data(unsigned int clk_num)
- {
-@@ -434,20 +436,55 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 	if (!clk_ctrl)
- 		return -ENOMEM;
- 
--	clk_ctrl->clk_data = mtk_alloc_clk_data(mcd->num_clks);
-+	clk_ctrl->clk_data = mtk_alloc_clk_data(mcd->num_plls
-+					      + mcd->num_fixed_clks
-+					      + mcd->num_factors
-+					      + mcd->num_muxes
-+					      + mcd->num_gates);
- 	if (!clk_ctrl->clk_data) {
- 		r = -ENOMEM;
- 		goto free_clk_ctrl;
- 	}
- 
--	r = mtk_clk_register_gates_with_dev(node, mcd->clks, mcd->num_clks,
--					    clk_ctrl->clk_data, &pdev->dev);
--	if (r)
--		goto free_clk_data;
-+	if (mcd->plls) {
-+		r = mtk_clk_register_plls(node, mcd->plls, mcd->num_plls,
-+					  clk_ctrl->clk_data);
-+		if (r)
-+			goto free_clk_data;
-+	}
-+
-+	if (mcd->fixed_clks) {
-+		r = mtk_clk_register_fixed_clks(mcd->fixed_clks, mcd->num_fixed_clks,
-+						clk_ctrl->clk_data);
-+		if (r)
-+			goto unregister_plls;
-+	}
-+
-+	if (mcd->factors) {
-+		r = mtk_clk_register_factors(mcd->factors, mcd->num_factors,
-+					     clk_ctrl->clk_data);
-+		if (r)
-+			goto unregister_fixed_clks;
-+	}
-+
-+	if (mcd->muxes) {
-+		spin_lock_init(&clk_ctrl->mux_lock);
-+		r = mtk_clk_register_muxes(mcd->muxes, mcd->num_muxes, node,
-+					   &clk_ctrl->mux_lock, clk_ctrl->clk_data);
-+		if (r)
-+			goto unregister_factors;
-+	}
-+
-+	if (mcd->gates) {
-+		r = mtk_clk_register_gates_with_dev(node, mcd->gates, mcd->num_gates,
-+						    clk_ctrl->clk_data, &pdev->dev);
-+		if (r)
-+			goto unregister_muxes;
-+	}
- 
- 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_ctrl->clk_data);
- 	if (r)
--		goto unregister_clks;
-+		goto unregister_gates;
- 
- 	platform_set_drvdata(pdev, clk_ctrl);
- 
-@@ -457,14 +494,30 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 							       mcd->rst_desc);
- 		if (IS_ERR(clk_ctrl->rst_data)) {
- 			r = PTR_ERR(clk_ctrl->rst_data);
--			goto unregister_clks;
-+			goto unregister_clk_provider;
- 		}
+ 	if (mcd->rst_desc) {
+-		r = mtk_register_reset_controller_with_dev(&pdev->dev,
+-							   mcd->rst_desc);
+-		if (r)
++		rst_data = mtk_register_reset_controller_with_dev(&pdev->dev,
++							   	  mcd->rst_desc);
++		if (IS_ERR(rst_data)) {
++			r = PTR_ERR(rst_data);
+ 			goto unregister_clks;
++		}
  	}
  
  	return r;
+diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+index 290ceda84ce4..09862baf1d57 100644
+--- a/drivers/clk/mediatek/reset.c
++++ b/drivers/clk/mediatek/reset.c
+@@ -110,8 +110,9 @@ static int reset_xlate(struct reset_controller_dev *rcdev,
+ 	return data->desc->rst_idx_map[reset_spec->args[0]];
+ }
  
--unregister_clks:
--	mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_ctrl->clk_data);
-+unregister_clk_provider:
-+	of_clk_del_provider(node);
-+unregister_gates:
-+	if (mcd->gates)
-+		mtk_clk_unregister_gates(mcd->gates, mcd->num_gates, clk_ctrl->clk_data);
-+unregister_muxes:
-+	if (mcd->muxes)
-+		mtk_clk_unregister_muxes(mcd->muxes, mcd->num_muxes, clk_ctrl->clk_data);
-+unregister_factors:
-+	if (mcd->factors)
-+		mtk_clk_unregister_factors(mcd->factors, mcd->num_factors, clk_ctrl->clk_data);
-+unregister_fixed_clks:
-+	if (mcd->fixed_clks)
-+		mtk_clk_unregister_fixed_clks(mcd->fixed_clks, mcd->num_fixed_clks,
-+					      clk_ctrl->clk_data);
-+unregister_plls:
-+	if (mcd->plls)
-+		mtk_clk_unregister_plls(mcd->plls, mcd->num_plls, clk_ctrl->clk_data);
- free_clk_data:
- 	mtk_free_clk_data(clk_ctrl->clk_data);
- free_clk_ctrl:
-@@ -480,9 +533,22 @@ int mtk_clk_simple_remove(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
+-int mtk_register_reset_controller(struct device_node *np,
+-				  const struct mtk_clk_rst_desc *desc)
++struct mtk_clk_rst_data
++*mtk_register_reset_controller(struct device_node *np,
++			       const struct mtk_clk_rst_desc *desc)
+ {
+ 	struct regmap *regmap;
+ 	const struct reset_control_ops *rcops = NULL;
+@@ -120,7 +121,7 @@ int mtk_register_reset_controller(struct device_node *np,
  
- 	of_clk_del_provider(node);
-+
- 	if (clk_ctrl->rst_data)
- 		mtk_unregister_reset_controller(clk_ctrl->rst_data);
--	mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_ctrl->clk_data);
-+
-+	if (mcd->gates)
-+		mtk_clk_unregister_gates(mcd->gates, mcd->num_gates, clk_ctrl->clk_data);
-+	if (mcd->muxes)
-+		mtk_clk_unregister_muxes(mcd->muxes, mcd->num_muxes, clk_ctrl->clk_data);
-+	if (mcd->factors)
-+		mtk_clk_unregister_factors(mcd->factors, mcd->num_factors, clk_ctrl->clk_data);
-+	if (mcd->fixed_clks)
-+		mtk_clk_unregister_fixed_clks(mcd->fixed_clks, mcd->num_fixed_clks,
-+					      clk_ctrl->clk_data);
-+	if (mcd->plls)
-+		mtk_clk_unregister_plls(mcd->plls, mcd->num_plls, clk_ctrl->clk_data);
-+
- 	mtk_free_clk_data(clk_ctrl->clk_data);
- 	kfree(clk_ctrl);
+ 	if (!desc) {
+ 		pr_err("mtk clock reset desc is NULL\n");
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
  
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index fa092bca97c8..23bce98bca20 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -13,6 +13,9 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
+ 	switch (desc->version) {
+@@ -132,18 +133,18 @@ int mtk_register_reset_controller(struct device_node *np,
+ 		break;
+ 	default:
+ 		pr_err("Unknown reset version %d\n", desc->version);
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
  
-+#include "clk-gate.h"
-+#include "clk-mux.h"
-+#include "clk-pll.h"
- #include "reset.h"
+ 	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap)) {
+ 		pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
  
- #define MAX_MUX_GATE_BIT	31
-@@ -191,12 +194,22 @@ struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
  
- struct mtk_simple_clk_controller {
- 	struct clk_hw_onecell_data *clk_data;
-+	spinlock_t mux_lock;
- 	struct mtk_clk_rst_data *rst_data;
- };
+ 	data->desc = desc;
+ 	data->regmap = regmap;
+@@ -163,14 +164,15 @@ int mtk_register_reset_controller(struct device_node *np,
+ 	if (ret) {
+ 		pr_err("could not register reset controller: %d\n", ret);
+ 		kfree(data);
+-		return ret;
++		return ERR_PTR(ret);
+ 	}
  
- struct mtk_clk_desc {
--	const struct mtk_gate *clks;
--	size_t num_clks;
-+	const struct mtk_pll_data *plls;
-+	size_t num_plls;
-+	const struct mtk_fixed_clk *fixed_clks;
-+	size_t num_fixed_clks;
-+	const struct mtk_fixed_factor *factors;
-+	size_t num_factors;
-+	const struct mtk_mux *muxes;
-+	size_t num_muxes;
-+	const struct mtk_gate *gates;
-+	size_t num_gates;
-+
- 	const struct mtk_clk_rst_desc *rst_desc;
- };
+-	return 0;
++	return data;
+ }
  
+-int mtk_register_reset_controller_with_dev(struct device *dev,
+-					   const struct mtk_clk_rst_desc *desc)
++struct mtk_clk_rst_data
++*mtk_register_reset_controller_with_dev(struct device *dev,
++					const struct mtk_clk_rst_desc *desc)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct regmap *regmap;
+@@ -180,7 +182,7 @@ int mtk_register_reset_controller_with_dev(struct device *dev,
+ 
+ 	if (!desc) {
+ 		dev_err(dev, "mtk clock reset desc is NULL\n");
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	switch (desc->version) {
+@@ -192,18 +194,18 @@ int mtk_register_reset_controller_with_dev(struct device *dev,
+ 		break;
+ 	default:
+ 		dev_err(dev, "Unknown reset version %d\n", desc->version);
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(dev, "Cannot find regmap %pe\n", regmap);
+-		return -EINVAL;
++		return ERR_PTR(-EINVAL);
+ 	}
+ 
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	data->desc = desc;
+ 	data->regmap = regmap;
+@@ -223,10 +225,10 @@ int mtk_register_reset_controller_with_dev(struct device *dev,
+ 	ret = devm_reset_controller_register(dev, &data->rcdev);
+ 	if (ret) {
+ 		dev_err(dev, "could not register reset controller: %d\n", ret);
+-		return ret;
++		return ERR_PTR(ret);
+ 	}
+ 
+-	return 0;
++	return data;
+ }
+ EXPORT_SYMBOL_GPL(mtk_register_reset_controller_with_dev);
+ 
+diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
+index 913fe676cba7..7418dd0d046f 100644
+--- a/drivers/clk/mediatek/reset.h
++++ b/drivers/clk/mediatek/reset.h
+@@ -64,19 +64,21 @@ struct mtk_clk_rst_data {
+  * @np: Pointer to device node.
+  * @desc: Constant pointer to description of clock reset.
+  *
+- * Return: 0 on success and errorno otherwise.
++ * Return: Pointer to struct mtk_clk_rst_data on success and error pointer otherwise.
+  */
+-int mtk_register_reset_controller(struct device_node *np,
+-				  const struct mtk_clk_rst_desc *desc);
++struct mtk_clk_rst_data
++*mtk_register_reset_controller(struct device_node *np,
++			       const struct mtk_clk_rst_desc *desc);
+ 
+ /**
+  * mtk_register_reset_controller - Register mediatek clock reset controller with device
+  * @np: Pointer to device.
+  * @desc: Constant pointer to description of clock reset.
+  *
+- * Return: 0 on success and errorno otherwise.
++ * Return: Pointer to struct mtk_clk_rst_data on success and error pointer otherwise.
+  */
+-int mtk_register_reset_controller_with_dev(struct device *dev,
+-					   const struct mtk_clk_rst_desc *desc);
++struct mtk_clk_rst_data
++*mtk_register_reset_controller_with_dev(struct device *dev,
++					const struct mtk_clk_rst_desc *desc);
+ 
+ #endif /* __DRV_CLK_MTK_RESET_H */
 -- 
 2.36.1
 
