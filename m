@@ -2,131 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2CFC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 11:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28589C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 12:55:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237488AbiESLoL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 07:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
+        id S238263AbiESMzn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 08:55:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237505AbiESLoI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 07:44:08 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D7FB41DD
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 04:44:06 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id u7so5191005ljd.11
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 04:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=IYmL6dQH/QpkV/dg7FbG8d6+fzH8Ngy5GLGM2DwQbvY=;
-        b=nCf/woJ3G3cja5kfD1C2aOtthsXTRdetx2BypJr0AdoP1+EOvoeT9iigd7dc30Aq1+
-         VGss7SiBjlFGHih+///eZBMdAeUyo+muNJOR7rxglxZ/Nela2Rh047IRK6+aUe/cPsHt
-         mO279Kia1cxrjFw+69JrCiHwy3U4y6D6UGeAJ8ry3pAHFEV1K0uV9+ETeCIA4jEYAyb/
-         JwV4p9CFuzDLL16wkXlCSAAelj4/vlwUxmmSJWY1L5OkMI8q9qgnQI1wFDDDt3jl7YXC
-         a0soUO1X8XPJL4PUo+r4aivMy57yZJuFzkcjCBtFmwEhmV4Ga2jmm/9tBEyyKCM2Ocen
-         H12A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=IYmL6dQH/QpkV/dg7FbG8d6+fzH8Ngy5GLGM2DwQbvY=;
-        b=JYboaEc8v/TmasJfE5rjDtMNUS9d/cNMzYnA15NcibgM5HQKj8/xSeUIVT6EAioGy+
-         5vi5ggxyPNBTAwXJct5LMy1KrvreuzoGES9y5W+y2ZwzjKcW7VBmWBcZlEi46MImiuKu
-         SZBgEXUX3kYTvdrak2C3J5fCKY8veqJe9RDGiiUuaTEn8c2Q4CtvtTjJiDRegvc5VcLW
-         UGQ785gakZpdKWIgZEjeVsLxjGoBKoLZR0tCQPCX6eGWIJo63EI4CIEgwzj/vph0M6it
-         Pnnp4zcd11Wg14bxRi05Jaig2YI8y3DG12oepLdJmxdcyqfVE4N3FRKAOpAo5lNq60pQ
-         bywA==
-X-Gm-Message-State: AOAM531cX/B3sZVMR9H+z+1DO39U4x07QoHG/xiKAx0vnAz/3TC2jfi5
-        7bDhw8lOFWOLLVeGSXkbX3EszA==
-X-Google-Smtp-Source: ABdhPJyswJAQj7bSsDiRxhVta7mphaBUwYrWcW/mlylni/THFVGZEPnzja834BWmYxSnpaPDHLxvow==
-X-Received: by 2002:a2e:9097:0:b0:253:c84e:e4a6 with SMTP id l23-20020a2e9097000000b00253c84ee4a6mr2369051ljg.529.1652960644667;
-        Thu, 19 May 2022 04:44:04 -0700 (PDT)
-Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
-        by smtp.gmail.com with ESMTPSA id n22-20020a05651203f600b00477b223ab3fsm264171lfq.167.2022.05.19.04.44.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 May 2022 04:44:04 -0700 (PDT)
-Message-ID: <b0742ac1-f04a-8594-0662-e4cc194c72a3@linaro.org>
-Date:   Thu, 19 May 2022 14:44:02 +0300
+        with ESMTP id S238216AbiESMzf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 08:55:35 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD3EA7E28;
+        Thu, 19 May 2022 05:55:33 -0700 (PDT)
+X-UUID: 8202cfeb095e4ff58a4ade731d116dae-20220519
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:4335a90b-ea10-470c-9c87-8dcb580a43f0,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACT
+        ION:release,TS:-5
+X-CID-META: VersionHash:2a19b09,CLOUDID:ee8fdf79-5ef6-470b-96c9-bdb8ced32786,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:0,BEC:nil
+X-UUID: 8202cfeb095e4ff58a4ade731d116dae-20220519
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1539566960; Thu, 19 May 2022 20:55:30 +0800
+Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Thu, 19 May 2022 20:55:29 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 19 May 2022 20:55:29 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 19 May 2022 20:55:29 +0800
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     <p.zabel@pengutronix.de>,
+        <angelogioacchino.delregno@collabora.com>,
+        <chun-jie.chen@mediatek.com>, <wenst@chromium.org>,
+        <runyang.chen@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Subject: [PATCH v7 04/19] clk: mediatek: reset: Extract common drivers to update function
+Date:   Thu, 19 May 2022 20:55:12 +0800
+Message-ID: <20220519125527.18544-5-rex-bc.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
+References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v6 2/5] clk: qcom: regmap: add PHY clock source
- implementation
-Content-Language: en-GB
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220513175339.2981959-1-dmitry.baryshkov@linaro.org>
- <20220513175339.2981959-3-dmitry.baryshkov@linaro.org>
- <YoShe/rWXVq78+As@hovoldconsulting.com>
- <YoSk3i00b02bRThU@hovoldconsulting.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YoSk3i00b02bRThU@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/05/2022 10:48, Johan Hovold wrote:
-> On Wed, May 18, 2022 at 09:34:19AM +0200, Johan Hovold wrote:
->> On Fri, May 13, 2022 at 08:53:36PM +0300, Dmitry Baryshkov wrote:
-> 
->>> +/*
->>> + * A special clock implementation for PHY pipe and symbols clock sources.
->>
->> s/sources/muxes/
->>
->>> + *
->>> + * If the clock is running off the from-PHY source, report it as enabled.
->>> + * Report it as disabled otherwise (if it uses reference source).
->>> + *
->>> + * This way the PHY will disable the pipe clock before turning off the GDSC,
->>
->> s|pipe|pipe/symbol|
->>
->>> + * which in turn would lead to disabling corresponding pipe_clk_src (and thus
->>> + * it being parked to a safe, reference clock source). And vice versa, after
->>> + * enabling the GDSC the PHY will enable the pipe clock, which would cause
->>
->> s|pipe|pipe/symbol|
->>
->>> + * pipe_clk_src to be switched from a safe source to the working one.
->>> + */
->>
->> You're still referring to the old pipe_clk_src name in two places in
->> this comment.
-> 
-> Just remembered that the PCIe/USB mux is also referred to as
-> pipe_clk_src and that your not referring to the clock implementation.
-> 
-> I guess the comment works as-is even if the example refers to just
-> USB/PCIe.
+To make drivers more clear and readable, we extract common code
+within assert and deassert to mtk_reset_update_set_clr() and
+mtk_reset_update().
 
-I will add a phrase mentioning UFS symbol clocks.
+Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/reset.c | 38 +++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-> 
->> Should this be reflected in Subject as well (e.g. "PHY mux
->> implementation")?
-> 
-> Johan
-
-
+diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+index 5cbbcc22a4fc..22fa9f09752c 100644
+--- a/drivers/clk/mediatek/reset.c
++++ b/drivers/clk/mediatek/reset.c
+@@ -12,24 +12,27 @@
+ 
+ #include "reset.h"
+ 
+-static int mtk_reset_assert(struct reset_controller_dev *rcdev,
+-			    unsigned long id)
++static int mtk_reset_update(struct reset_controller_dev *rcdev,
++			    unsigned long id, bool deassert)
+ {
+ 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
++	unsigned int val = deassert ? 0 : ~0;
+ 
+ 	return regmap_update_bits(data->regmap,
+ 				  data->regofs + ((id / 32) << 2),
+-				  BIT(id % 32), ~0);
++				  BIT(id % 32), val);
++}
++
++static int mtk_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	return mtk_reset_update(rcdev, id, false);
+ }
+ 
+ static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
+ 			      unsigned long id)
+ {
+-	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-
+-	return regmap_update_bits(data->regmap,
+-				  data->regofs + ((id / 32) << 2),
+-				  BIT(id % 32), 0);
++	return mtk_reset_update(rcdev, id, true);
+ }
+ 
+ static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
+@@ -43,24 +46,27 @@ static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ 	return mtk_reset_deassert(rcdev, id);
+ }
+ 
+-static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
+-				    unsigned long id)
++static int mtk_reset_update_set_clr(struct reset_controller_dev *rcdev,
++				    unsigned long id, bool deassert)
+ {
+ 	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
++	unsigned int deassert_ofs = deassert ? 0x4 : 0;
+ 
+ 	return regmap_write(data->regmap,
+-			    data->regofs + ((id / 32) << 4),
++			    data->regofs + ((id / 32) << 4) + deassert_ofs,
+ 			    BIT(id % 32));
+ }
+ 
++static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
++				    unsigned long id)
++{
++	return mtk_reset_update_set_clr(rcdev, id, false);
++}
++
+ static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
+ 				      unsigned long id)
+ {
+-	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+-
+-	return regmap_write(data->regmap,
+-			    data->regofs + ((id / 32) << 4) + 0x4,
+-			    BIT(id % 32));
++	return mtk_reset_update_set_clr(rcdev, id, true);
+ }
+ 
+ static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
 -- 
-With best wishes
-Dmitry
+2.18.0
+
