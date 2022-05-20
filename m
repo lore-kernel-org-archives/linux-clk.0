@@ -2,140 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A939BC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 14:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0305C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 14:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241237AbiETOM3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 10:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
+        id S1350567AbiETO4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 10:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234377AbiETOM2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 10:12:28 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76381271A5;
-        Fri, 20 May 2022 07:12:26 -0700 (PDT)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 176FD100008;
-        Fri, 20 May 2022 14:12:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1653055945;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MaQV0rcRl9yju3BQiEVjVqUfjR6zffQamWBXh+IHtho=;
-        b=T1I9QydTzzgBi3C/MLXC5ctI80aDQxh39c7tD4yw7kBo1kQgcR8zFJOs4rO5TmLCDkoVrl
-        BeYlBXUXcDFOY/DSA6KnjZH/3v7aFq+O4ryT8AOU6kCFDk48+qKtIZh5vDNZCFbMydakf7
-        g8HFzQ9c9eQQ+xIdLcj6IHmOmObocR3OeHO+Nk59Y7H156wJjPefrwQsYypFHvB9uLohuG
-        49G0r5hUELpkt6P2LuJSGFxtUy3HtYn2Lg+KVEU2fiZkdIXfDlrDSQhJWJqjya1luTXEdv
-        RWvYOkBrduLtm1JmPtHMgBCKTqEHb5EwqWlXPr69NjpHB/OdYbQV6+1DJv/txg==
-Date:   Fri, 20 May 2022 16:12:22 +0200
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
- compatible string
-Message-ID: <20220520161222.71fc3a75@bootlin.com>
-In-Reply-To: <YoedFkAsTdoOn/3Y@mail.local>
-References: <20220513105850.310375-1-herve.codina@bootlin.com>
-        <20220513105850.310375-3-herve.codina@bootlin.com>
-        <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
-        <20220520133426.3b4728ae@bootlin.com>
-        <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
-        <20220520142109.57b84da2@bootlin.com>
-        <01b31a02-523e-10bf-3b46-5b830e456522@linaro.org>
-        <20220520150243.625723fa@bootlin.com>
-        <d26c7ebd-fc1a-391e-39e4-5ec41bf4fbfa@linaro.org>
-        <YoedFkAsTdoOn/3Y@mail.local>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-redhat-linux-gnu)
+        with ESMTP id S1350525AbiETO4B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 10:56:01 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F0115814;
+        Fri, 20 May 2022 07:55:58 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: nfraprado)
+        with ESMTPSA id AACB51F46542
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1653058557;
+        bh=jxX878QWawgfvMOXk/YfULJcGJes7LLWJjg8hH9kCTI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qp+eGoXC12xS0US+up3AlAeSEDKDGEXAPjch3KWyCwzTClULych8zz0ibHqnTODRR
+         G4rG2kxigej4l/KJ0XIgq5nph59Dym7LEXSDLoqZ7WdA9BJL2jAdofZS+0UiB7P7GK
+         UQ8hg2zb7DWeq0g/pElSQw1ktp2ekGitloZsfJ0Xzznf7LsGa9zimN5TcwVFR/C7ib
+         TI9pOyWzqApc7fhRwNSI815uGNqXDLnXsWajfm93QhDnkksdfKGXkAQtKmGdQ5cvWg
+         w8tB+P+d2GF10vgVOHyflekvmgd9D60EqKj1xMxVE7lQjZMcr0rZwYZSJbmUicXt0W
+         T5nUb3G2ru02w==
+Date:   Fri, 20 May 2022 10:55:51 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, wenst@chromium.org,
+        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v7 04/19] clk: mediatek: reset: Extract common drivers to
+ update function
+Message-ID: <20220520145551.b2sqheaizkegna3n@notapiano>
+References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
+ <20220519125527.18544-5-rex-bc.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220519125527.18544-5-rex-bc.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Alexandre,
+On Thu, May 19, 2022 at 08:55:12PM +0800, Rex-BC Chen wrote:
+> To make drivers more clear and readable, we extract common code
+> within assert and deassert to mtk_reset_update_set_clr() and
+> mtk_reset_update().
+> 
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/clk/mediatek/reset.c | 38 +++++++++++++++++++++---------------
+>  1 file changed, 22 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
+> index 5cbbcc22a4fc..22fa9f09752c 100644
+> --- a/drivers/clk/mediatek/reset.c
+> +++ b/drivers/clk/mediatek/reset.c
+> @@ -12,24 +12,27 @@
+>  
+>  #include "reset.h"
+>  
+> -static int mtk_reset_assert(struct reset_controller_dev *rcdev,
+> -			    unsigned long id)
+> +static int mtk_reset_update(struct reset_controller_dev *rcdev,
+> +			    unsigned long id, bool deassert)
 
-On Fri, 20 May 2022 15:52:22 +0200
-Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
-
-> Hello,
->=20
-> On 20/05/2022 15:38:36+0200, Krzysztof Kozlowski wrote:
-> > On 20/05/2022 15:02, Herve Codina wrote: =20
-> > > On Fri, 20 May 2022 14:50:24 +0200
-> > > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> > >  =20
-> > >> On 20/05/2022 14:21, Herve Codina wrote: =20
-> > >>>>> I think it makes sense to keep 'microchip,lan966x-udc' for the USB
-> > >>>>> device controller (same controller on LAN9662 and LAN9668) and so
-> > >>>>> keeping the same rules as for other common parts.     =20
-> > >>>>
-> > >>>> Having wildcard was rather a mistake and we already started correc=
-ting
-> > >>>> it, so keeping the "mistake" neither gives you consistency, nor
-> > >>>> correctness...
-> > >>>>   =20
-> > >>>
-> > >>> I think that the "family" compatible should be present.
-> > >>> This one allows to define the common parts in the common
-> > >>> .dtsi file (lan966x.dtsi in our case).
-> > >>>
-> > >>> What do you think about:
-> > >>> - microchip,lan9662-udc
-> > >>> - microchip,lan9668-udc
-> > >>> - microchip,lan966-udc  <-- Family
-> > >>>
-> > >>> lan966 is defined as the family compatible string since (1) in
-> > >>> bindings/arm/atmel-at91.yaml and in Documentation/arm/microchip.rst
-> > >>>    =20
-> > >>
-> > >> You can add some family compatible, if it makes sense. I don't get w=
-hy
-> > >> do you mention it - we did not discuss family names, but using
-> > >> wildcards... Just please do not add wildcards. =20
-> > >=20
-> > > Well, I mentioned it as I will only use the family compatible string
-> > > and not the SOC (lan9662 or lan9668) compatible string in lan966x.dts=
-i.
-> > > In this case, the family compatible string can be seen as a kind of
-> > > "wildcard". =20
-> >=20
-> > I understood as "the "family" compatible should be present" as you want
-> > to add it as a fallback. It would be okay (assuming devices indeed share
-> > family design). If you want to use it as the only one, then it is again
-> > not a recommended approach. Please use specific compatibles.
-> >=20
-> > I mean, why do we have this discussion? What is the benefit for you to
-> > implement something not-recommended by Devicetree spec and style?
-> >  =20
->=20
-> Honestly, I would just go for microchip,lan9662-udc. There is no
-> difference between lan9662 and lan9668 apart from the number of switch
-> ports.
->=20
-
-Sounds good.
-I will do that.
+I'd have called the bool 'assert', and then passed true on assert and false on
+deassert, as I think that's slightly more intuitive, but that's just personal
+preference. It's fine like this as well.
 
 Thanks,
-Herv=C3=A9
+Nícolas
 
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  {
+>  	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+> +	unsigned int val = deassert ? 0 : ~0;
+>  
+>  	return regmap_update_bits(data->regmap,
+>  				  data->regofs + ((id / 32) << 2),
+> -				  BIT(id % 32), ~0);
+> +				  BIT(id % 32), val);
+> +}
+> +
+> +static int mtk_reset_assert(struct reset_controller_dev *rcdev,
+> +			    unsigned long id)
+> +{
+> +	return mtk_reset_update(rcdev, id, false);
+>  }
+>  
+>  static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
+>  			      unsigned long id)
+>  {
+> -	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+> -
+> -	return regmap_update_bits(data->regmap,
+> -				  data->regofs + ((id / 32) << 2),
+> -				  BIT(id % 32), 0);
+> +	return mtk_reset_update(rcdev, id, true);
+>  }
+>  
+>  static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
+> @@ -43,24 +46,27 @@ static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
+>  	return mtk_reset_deassert(rcdev, id);
+>  }
+>  
+> -static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
+> -				    unsigned long id)
+> +static int mtk_reset_update_set_clr(struct reset_controller_dev *rcdev,
+> +				    unsigned long id, bool deassert)
+>  {
+>  	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+> +	unsigned int deassert_ofs = deassert ? 0x4 : 0;
+>  
+>  	return regmap_write(data->regmap,
+> -			    data->regofs + ((id / 32) << 4),
+> +			    data->regofs + ((id / 32) << 4) + deassert_ofs,
+>  			    BIT(id % 32));
+>  }
+>  
+> +static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
+> +				    unsigned long id)
+> +{
+> +	return mtk_reset_update_set_clr(rcdev, id, false);
+> +}
+> +
+>  static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
+>  				      unsigned long id)
+>  {
+> -	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
+> -
+> -	return regmap_write(data->regmap,
+> -			    data->regofs + ((id / 32) << 4) + 0x4,
+> -			    BIT(id % 32));
+> +	return mtk_reset_update_set_clr(rcdev, id, true);
+>  }
+>  
+>  static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
+> -- 
+> 2.18.0
+> 
+> 
