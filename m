@@ -2,23 +2,23 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10CFC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 07:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A118C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 07:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244352AbiETHC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 03:02:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38664 "EHLO
+        id S1346272AbiETHDD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 03:03:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346220AbiETHCd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 03:02:33 -0400
+        with ESMTP id S1346269AbiETHCZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 03:02:25 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2C8F95622F
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 00:02:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3F0B5DBF4
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 00:02:15 -0700 (PDT)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
 Received: from 172.28.114.216
         by mx1.cqplus1.com with MailGates ESMTP Server V5.0(13837:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 20 May 2022 14:51:17 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 20 May 2022 14:51:15 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     sboyd@kernel.org
 Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
@@ -27,9 +27,9 @@ Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v16 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board device tree
-Date:   Fri, 20 May 2022 14:50:44 +0800
-Message-Id: <8975c7d3b95b1f2de5b9eda9872f9dc18f1b123e.1653027644.git.qinjian@cqplus1.com>
+Subject: [PATCH v16 03/10] reset: Add Sunplus SP7021 reset driver
+Date:   Fri, 20 May 2022 14:50:37 +0800
+Message-Id: <d6722b504efa7859f9fbe031907d4dc1202b9abe.1653027644.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1653027644.git.qinjian@cqplus1.com>
 References: <cover.1653027644.git.qinjian@cqplus1.com>
@@ -39,493 +39,280 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the basic support for Sunplus SP7021-Demo-V3 board.
+Add reset driver for Sunplus SP7021 SoC.
 
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
-Fix the comments from Krzysztof.
----
- MAINTAINERS                                  |   1 +
- arch/arm/boot/dts/Makefile                   |   2 +
- arch/arm/boot/dts/sunplus-sp7021-achip.dtsi  |  84 +++++
- arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts |  26 ++
- arch/arm/boot/dts/sunplus-sp7021.dtsi        | 318 +++++++++++++++++++
- 5 files changed, 431 insertions(+)
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021.dtsi
+ MAINTAINERS                   |   1 +
+ drivers/reset/Kconfig         |   9 ++
+ drivers/reset/Makefile        |   1 +
+ drivers/reset/reset-sunplus.c | 212 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 223 insertions(+)
+ create mode 100644 drivers/reset/reset-sunplus.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 17f43065f..d8ba5aace 100644
+index 172a8d329..257e514cb 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2814,6 +2814,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+@@ -2812,6 +2812,7 @@ S:	Maintained
+ W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	arch/arm/boot/dts/sunplus-sp7021*.dts*
- F:	arch/arm/configs/sp7021_*defconfig
- F:	arch/arm/mach-sunplus/
- F:	drivers/clk/clk-sp7021.c
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7c16f8a2b..2862dac61 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -79,6 +79,8 @@ dtb-$(CONFIG_SOC_SAM_V7) += \
- 	at91-vinco.dtb
- dtb-$(CONFIG_SOC_SAMA7G5) += \
- 	at91-sama7g5ek.dtb
-+dtb-$(CONFIG_SOC_SP7021) += \
-+	sunplus-sp7021-demo-v3.dtb
- dtb-$(CONFIG_ARCH_AXXIA) += \
- 	axm5516-amarillo.dtb
- dtb-$(CONFIG_ARCH_BCM2835) += \
-diff --git a/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
++F:	drivers/reset/reset-sunplus.c
+ F:	include/dt-bindings/reset/sunplus,sp7021-reset.h
+ 
+ ARM/Synaptics SoC support
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index b496028b6..e6540036b 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -231,6 +231,15 @@ config RESET_STARFIVE_JH7100
+ 	help
+ 	  This enables the reset controller driver for the StarFive JH7100 SoC.
+ 
++config RESET_SUNPLUS
++	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
++	default ARCH_SUNPLUS
++	help
++	  This enables the reset driver support for Sunplus SoCs.
++	  The reset lines that can be asserted and deasserted by toggling bits
++	  in a contiguous, exclusive register space. The register is HIWORD_MASKED,
++	  which means each register hold 16 reset lines.
++
+ config RESET_SUNXI
+ 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+ 	default ARCH_SUNXI
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index a80a9c400..3ff378f43 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+ obj-$(CONFIG_RESET_STARFIVE_JH7100) += reset-starfive-jh7100.o
++obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
 new file mode 100644
-index 000000000..67274a49e
+index 000000000..2f23ecaa7
 --- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/reset/reset-sunplus.c
+@@ -0,0 +1,212 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Device Tree Source for Sunplus SP7021
++ * SP7021 reset driver
 + *
-+ * Copyright (C) 2021 Sunplus Technology Co.
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
 + */
 +
-+#include "sunplus-sp7021.dtsi"
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/mod_devicetable.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/reboot.h>
 +
-+/ {
-+	compatible = "sunplus,sp7021-achip", "sunplus,sp7021";
-+	model = "Sunplus SP7021 (CA7)";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
++/* HIWORD_MASK_REG BITS */
++#define BITS_PER_HWM_REG	16
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <0>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <1>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu2: cpu@2 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <2>;
-+			clock-frequency = <931000000>;
-+		};
-+		cpu3: cpu@3 {
-+			compatible = "arm,cortex-a7";
-+			device_type = "cpu";
-+			reg = <3>;
-+			clock-frequency = <931000000>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@9f101000 {
-+		compatible = "arm,cortex-a7-gic";
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		reg = <0x9f101000 0x1000>,
-+		      <0x9f102000 0x2000>,
-+		      <0x9f104000 0x2000>,
-+		      <0x9f106000 0x2000>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		clock-frequency = <XTAL>;
-+		arm,cpu-registers-not-fw-configured;
-+	};
-+
-+	arm-pmu {
-+		compatible = "arm,cortex-a7-pmu";
-+		interrupts = <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-+	};
-+
-+	soc {
-+		intc: interrupt-controller@9c000780 {
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>, /* EXT_INT0 */
-+				<GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>; /* EXT_INT1 */
-+		};
-+	};
++/* resets HW info: reg_index_shift */
++static const u32 sp_resets[] = {
++/* SP7021: mo_reset0 ~ mo_reset9 */
++	0x00,
++	0x02,
++	0x03,
++	0x04,
++	0x05,
++	0x06,
++	0x07,
++	0x08,
++	0x09,
++	0x0a,
++	0x0b,
++	0x0d,
++	0x0e,
++	0x0f,
++	0x10,
++	0x12,
++	0x14,
++	0x15,
++	0x16,
++	0x17,
++	0x18,
++	0x19,
++	0x1a,
++	0x1b,
++	0x1c,
++	0x1d,
++	0x1e,
++	0x1f,
++	0x20,
++	0x21,
++	0x22,
++	0x23,
++	0x24,
++	0x25,
++	0x26,
++	0x2a,
++	0x2b,
++	0x2d,
++	0x2e,
++	0x30,
++	0x31,
++	0x32,
++	0x33,
++	0x3d,
++	0x3e,
++	0x3f,
++	0x42,
++	0x44,
++	0x4b,
++	0x4c,
++	0x4d,
++	0x4e,
++	0x4f,
++	0x50,
++	0x55,
++	0x60,
++	0x61,
++	0x6a,
++	0x6f,
++	0x70,
++	0x73,
++	0x74,
++	0x86,
++	0x8a,
++	0x8b,
++	0x8d,
++	0x8e,
++	0x8f,
++	0x90,
++	0x92,
++	0x93,
++	0x94,
++	0x95,
++	0x96,
++	0x97,
++	0x98,
++	0x99,
 +};
-diff --git a/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-new file mode 100644
-index 000000000..bfac954bb
---- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for Sunplus SP7021 Demo V3 SBC board
-+ *
-+ * Copyright (C) Sunplus Technology Co.
-+ */
 +
-+/dts-v1/;
-+
-+#include "sunplus-sp7021-achip.dtsi"
-+
-+/ {
-+	compatible = "sunplus,sp7021-demo-v3", "sunplus,sp7021";
-+	model = "Sunplus SP7021/CA7/Demo_V3";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x20000000>;
-+	};
++struct sp_reset {
++	struct reset_controller_dev rcdev;
++	struct notifier_block notifier;
++	void __iomem *base;
 +};
-diff --git a/arch/arm/boot/dts/sunplus-sp7021.dtsi b/arch/arm/boot/dts/sunplus-sp7021.dtsi
-new file mode 100644
-index 000000000..3c1f4d106
---- /dev/null
-+++ b/arch/arm/boot/dts/sunplus-sp7021.dtsi
-@@ -0,0 +1,318 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for Sunplus SP7021
-+ *
-+ * Copyright (C) 2021 Sunplus Technology Co.
-+ */
 +
-+#include <dt-bindings/clock/sunplus,sp7021-clkc.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/reset/sunplus,sp7021-reset.h>
-+#include <dt-bindings/pinctrl/sppctl-sp7021.h>
-+#include <dt-bindings/gpio/gpio.h>
++static inline struct sp_reset *to_sp_reset(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct sp_reset, rcdev);
++}
 +
-+#define XTAL	27000000
++static int sp_reset_update(struct reset_controller_dev *rcdev,
++			   unsigned long id, bool assert)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = sp_resets[id] / BITS_PER_HWM_REG;
++	int shift = sp_resets[id] % BITS_PER_HWM_REG;
++	u32 val;
 +
-+/ {
-+	compatible = "sunplus,sp7021";
-+	model = "Sunplus SP7021";
++	val = (1 << (16 + shift)) | (assert << shift);
++	writel(val, reset->base + (index * 4));
 +
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+		serial4 = &uart4;
-+	};
++	return 0;
++}
 +
-+	clocks {
-+		extclk: osc0 {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <XTAL>;
-+			clock-output-names = "extclk";
-+		};
-+	};
++static int sp_reset_assert(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	return sp_reset_update(rcdev, id, true);
++}
 +
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+		interrupt-parent = <&intc>;
++static int sp_reset_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	return sp_reset_update(rcdev, id, false);
++}
 +
-+		intc: interrupt-controller@9c000780 {
-+			compatible = "sunplus,sp7021-intc";
-+			reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
++static int sp_reset_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = sp_resets[id] / BITS_PER_HWM_REG;
++	int shift = sp_resets[id] % BITS_PER_HWM_REG;
++	u32 reg;
 +
-+		clkc: clock-controller@9c000004 {
-+			compatible = "sunplus,sp7021-clkc";
-+			reg = <0x9c000004 0x28>,
-+			      <0x9c000200 0x44>,
-+			      <0x9c000268 0x04>;
-+			clocks = <&extclk>;
-+			#clock-cells = <1>;
-+		};
++	reg = readl(reset->base + (index * 4));
 +
-+		rstc: reset@9c000054 {
-+			compatible = "sunplus,sp7021-reset";
-+			reg = <0x9c000054 0x28>;
-+			#reset-cells = <1>;
-+		};
++	return !!(reg & BIT(shift));
++}
 +
-+		rtc: serial@9c003a00 {
-+			compatible = "sunplus,sp7021-rtc";
-+			reg = <0x9c003a00 0x80>;
-+			reg-names = "rtc";
-+			clocks = <&clkc CLK_RTC>;
-+			resets = <&rstc RST_RTC>;
-+			interrupts = <163 IRQ_TYPE_EDGE_RISING>;
-+		};
-+
-+		otp: otp@9c00af00 {
-+			compatible = "sunplus,sp7021-ocotp";
-+			reg = <0x9c00af00 0x34>, <0x9c00af80 0x58>;
-+			reg-names = "hb_gpio", "otprx";
-+			clocks = <&clkc CLK_OTPRX>;
-+			resets = <&rstc RST_OTPRX>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			therm_calib: thermal-calibration@14 {
-+				reg = <0x14 0x3>;
-+			};
-+			disc_vol: disconnect-voltage@18 {
-+				reg = <0x18 0x2>;
-+			};
-+			mac_addr0: mac-address0@34 {
-+				reg = <0x34 0x6>;
-+			};
-+			mac_addr1: mac-address1@3a {
-+				reg = <0x3a 0x6>;
-+			};
-+		};
-+
-+		uart0: serial@9c000900 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000900 0x80>;
-+			interrupts = <53 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA0>;
-+			resets = <&rstc RST_UA0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart0_pins>;
-+		};
-+
-+		uart1: serial@9c000980 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000980 0x80>;
-+			interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA1>;
-+			resets = <&rstc RST_UA1>;
-+			status = "disabled";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart1_pins>;
-+		};
-+
-+		uart2: serial@9c000800 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000800 0x80>;
-+			interrupts = <55 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA2>;
-+			resets = <&rstc RST_UA2>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart2_pins>;
-+			status = "disabled";
-+		};
-+
-+		uart3: serial@9c000880 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c000880 0x80>;
-+			interrupts = <56 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA3>;
-+			resets = <&rstc RST_UA3>;
-+			status = "disabled";
-+		};
-+
-+		uart4: serial@9c008780 {
-+			compatible = "sunplus,sp7021-uart";
-+			reg = <0x9c008780 0x80>;
-+			interrupts = <134 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkc CLK_UA4>;
-+			resets = <&rstc RST_UA4>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&uart4_pins>;
-+			status = "disabled";
-+		};
-+
-+		spi_controller0: spi@9c002d80 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c002d80 0x80>, <0x9c002e00 0x80>;
-+			reg-names = "master", "slave";
-+			interrupts = <144 IRQ_TYPE_LEVEL_HIGH>,
-+				     <146 IRQ_TYPE_LEVEL_HIGH>,
-+				     <145 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "dma_w", "master_risc", "slave_risc";
-+			clocks = <&clkc CLK_SPI_COMBO_0>;
-+			resets = <&rstc RST_SPI_COMBO_0>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&spi0_pins>;
-+			cs-gpios = <&pctl 26 GPIO_ACTIVE_LOW>,
-+				   <&pctl 28 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		spi_controller1: spi@9c00f480 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f480 0x80>, <0x9c00f500 0x80>;
-+			reg-names = "master", "slave";
-+			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <69 IRQ_TYPE_LEVEL_HIGH>,
-+				     <68 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "dma_w", "master_risc", "slave_risc";
-+			clocks = <&clkc CLK_SPI_COMBO_1>;
-+			resets = <&rstc RST_SPI_COMBO_1>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
-+
-+		spi_controller2: spi@9c00f600 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f600 0x80>, <0x9c00f680 0x80>;
-+			reg-names = "master", "slave";
-+			interrupts = <70 IRQ_TYPE_LEVEL_HIGH>,
-+				     <72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <71 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "dma_w", "master_risc", "slave_risc";
-+			clocks = <&clkc CLK_SPI_COMBO_2>;
-+			resets = <&rstc RST_SPI_COMBO_2>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
-+
-+		spi_controller3: spi@9c00f780 {
-+			compatible = "sunplus,sp7021-spi";
-+			reg = <0x9c00f780 0x80>, <0x9c00f800 0x80>;
-+			reg-names = "master", "slave";
-+			interrupts = <73 IRQ_TYPE_LEVEL_HIGH>,
-+				     <75 IRQ_TYPE_LEVEL_HIGH>,
-+				     <74 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "dma_w", "master_risc", "slave_risc";
-+			clocks = <&clkc CLK_SPI_COMBO_3>;
-+			resets = <&rstc RST_SPI_COMBO_3>;
-+			spi-max-frequency = <25000000>;
-+			status = "disabled";
-+		};
-+
-+		pctl: pinctl@9c000100 {
-+			compatible = "sunplus,sp7021-pctl";
-+			reg = <0x9C000100 0x100>,
-+			      <0x9C000300 0x100>,
-+			      <0x9C0032e4 0x1C>,
-+			      <0x9C000080 0x20>;
-+			reg-names = "moon2", "gpioxt", "first", "moon1";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			clocks = <&clkc CLK_GPIO>;
-+			resets = <&rstc RST_GPIO>;
-+
-+			leds_pins: pinmux_gpio_leds-pins {
-+				sunplus,pins = < SPPCTL_IOPAD(0,SPPCTL_PCTL_G_GPIO,0,SPPCTL_PCTL_L_OUT) >;
-+			};
-+
-+			emmc_pins: emmc-pins {
-+				function = "CARD0_EMMC";
-+				groups = "CARD0_EMMC";
-+			};
-+
-+			sdcard-pins {
-+				function = "SD_CARD";
-+				groups = "SD_CARD";
-+				sunplus,pins = < SPPCTL_IOPAD(91, SPPCTL_PCTL_G_GPIO, 0, 0) >;
-+			};
-+
-+			emac_pins: pinmux_emac_demo_board_v3-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(49,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_CLK_OUT,0)
-+					SPPCTL_IOPAD(44,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_MAC_SMI_MDC,0)
-+					SPPCTL_IOPAD(43,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_MAC_SMI_MDIO,0)
-+					SPPCTL_IOPAD(52,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXEN,0)
-+					SPPCTL_IOPAD(50,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXD0,0)
-+					SPPCTL_IOPAD(51,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_TXD1,0)
-+					SPPCTL_IOPAD(46,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_CRSDV,0)
-+					SPPCTL_IOPAD(47,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXD0,0)
-+					SPPCTL_IOPAD(48,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXD1,0)
-+					SPPCTL_IOPAD(45,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P0_MAC_RMII_RXER,0)
-+					SPPCTL_IOPAD(59,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXEN,0)
-+					SPPCTL_IOPAD(57,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXD0,0)
-+					SPPCTL_IOPAD(58,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_TXD1,0)
-+					SPPCTL_IOPAD(54,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_CRSDV,0)
-+					SPPCTL_IOPAD(55,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXD0,0)
-+					SPPCTL_IOPAD(56,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXD1,0)
-+					SPPCTL_IOPAD(53,SPPCTL_PCTL_G_PMUX,MUXF_L2SW_P1_MAC_RMII_RXER,0)
-+				>;
-+				sunplus,zerofunc = <
-+					MUXF_L2SW_LED_FLASH0
-+					MUXF_L2SW_LED_FLASH1
-+					MUXF_L2SW_LED_ON0
-+					MUXF_L2SW_LED_ON1
-+					MUXF_DAISY_MODE
-+				>;
-+			};
-+
-+			uart0_pins: pinmux_uart0-pins {
-+				function = "UA0";
-+				groups = "UA0";
-+			};
-+
-+			uart1_pins: pinmux_uart1-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(14,SPPCTL_PCTL_G_PMUX,MUXF_UA4_TX,0)
-+					SPPCTL_IOPAD(16,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RX,0)
-+				>;
-+			};
-+
-+			uart2_pins: pinmux_uart2-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(16,SPPCTL_PCTL_G_PMUX,MUXF_UA2_TX,0)
-+					SPPCTL_IOPAD(17,SPPCTL_PCTL_G_PMUX,MUXF_UA2_RX,0)
-+					SPPCTL_IOPAD(18,SPPCTL_PCTL_G_PMUX,MUXF_UA2_RTS,0)
-+					SPPCTL_IOPAD(19,SPPCTL_PCTL_G_PMUX,MUXF_UA2_CTS,0)
-+				>;
-+			};
-+
-+			uart4_pins: pinmux_uart4-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(22,SPPCTL_PCTL_G_PMUX,MUXF_UA4_TX,0)
-+					SPPCTL_IOPAD(20,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RX,0)
-+					SPPCTL_IOPAD(23,SPPCTL_PCTL_G_PMUX,MUXF_UA4_RTS,0)
-+					SPPCTL_IOPAD(21,SPPCTL_PCTL_G_PMUX,MUXF_UA4_CTS,0)
-+				>;
-+			};
-+
-+			spi0_pins: pinmux_spi0-pins {
-+				sunplus,pins = <
-+					SPPCTL_IOPAD(26,SPPCTL_PCTL_G_GPIO,0,0)
-+					SPPCTL_IOPAD(28,SPPCTL_PCTL_G_GPIO,0,0)
-+					SPPCTL_IOPAD(23,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_DO,0)
-+					SPPCTL_IOPAD(25,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_DI,0)
-+					SPPCTL_IOPAD(27,SPPCTL_PCTL_G_PMUX,MUXF_SPI0S_CLK,0)
-+				>;
-+			};
-+		};
-+	};
-+
-+	led {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&leds_pins>;
-+		system-led {
-+			label = "system-led";
-+			gpios = <&pctl 0 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
++static const struct reset_control_ops sp_reset_ops = {
++	.assert   = sp_reset_assert,
++	.deassert = sp_reset_deassert,
++	.status   = sp_reset_status,
 +};
++
++static int sp_restart(struct notifier_block *nb, unsigned long mode,
++		      void *cmd)
++{
++	struct sp_reset *reset = container_of(nb, struct sp_reset, notifier);
++
++	sp_reset_assert(&reset->rcdev, 0);
++	sp_reset_deassert(&reset->rcdev, 0);
++
++	return NOTIFY_DONE;
++}
++
++static int sp_reset_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct sp_reset *reset;
++	struct resource *res;
++	int ret;
++
++	reset = devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reset->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(reset->base))
++		return PTR_ERR(reset->base);
++
++	reset->rcdev.ops = &sp_reset_ops;
++	reset->rcdev.owner = THIS_MODULE;
++	reset->rcdev.of_node = dev->of_node;
++	reset->rcdev.nr_resets = resource_size(res) / 4 * BITS_PER_HWM_REG;
++
++	ret = devm_reset_controller_register(dev, &reset->rcdev);
++	if (ret)
++		return ret;
++
++	reset->notifier.notifier_call = sp_restart;
++	reset->notifier.priority = 192;
++
++	return register_restart_handler(&reset->notifier);
++}
++
++static const struct of_device_id sp_reset_dt_ids[] = {
++	{.compatible = "sunplus,sp7021-reset",},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver sp_reset_driver = {
++	.probe = sp_reset_probe,
++	.driver = {
++		.name			= "sunplus-reset",
++		.of_match_table		= sp_reset_dt_ids,
++		.suppress_bind_attrs	= true,
++	},
++};
++builtin_platform_driver(sp_reset_driver);
 -- 
 2.33.1
 
