@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0305C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 14:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52107C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 15:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350567AbiETO4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 10:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59302 "EHLO
+        id S238626AbiETPMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 11:12:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350525AbiETO4B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 10:56:01 -0400
+        with ESMTP id S1347602AbiETPMU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 11:12:20 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F0115814;
-        Fri, 20 May 2022 07:55:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC50D8AE52;
+        Fri, 20 May 2022 08:12:18 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: nfraprado)
-        with ESMTPSA id AACB51F46542
+        with ESMTPSA id D6FFA1F46045
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653058557;
-        bh=jxX878QWawgfvMOXk/YfULJcGJes7LLWJjg8hH9kCTI=;
+        s=mail; t=1653059537;
+        bh=dM+dtww2MjUV3EO6VLGR/tvde0qsMUnXBPbKpDoQ3xs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qp+eGoXC12xS0US+up3AlAeSEDKDGEXAPjch3KWyCwzTClULych8zz0ibHqnTODRR
-         G4rG2kxigej4l/KJ0XIgq5nph59Dym7LEXSDLoqZ7WdA9BJL2jAdofZS+0UiB7P7GK
-         UQ8hg2zb7DWeq0g/pElSQw1ktp2ekGitloZsfJ0Xzznf7LsGa9zimN5TcwVFR/C7ib
-         TI9pOyWzqApc7fhRwNSI815uGNqXDLnXsWajfm93QhDnkksdfKGXkAQtKmGdQ5cvWg
-         w8tB+P+d2GF10vgVOHyflekvmgd9D60EqKj1xMxVE7lQjZMcr0rZwYZSJbmUicXt0W
-         T5nUb3G2ru02w==
-Date:   Fri, 20 May 2022 10:55:51 -0400
+        b=Qb5Bkom9rqi1bHDGk7du6o4c58uBM1hqdlfe6uY6M8LUyEPi0b0iRFKmGxRuFys2K
+         3Y08v7welt57mQDEjS39tiRdSCgWKjg6fyJ5/zCAqmQOX5PPdadT3M1kKC0hJsV0QM
+         w+b/obwU3zIlURh1ygNWq8N5vFknX5CbNXEHXmRBXK3ukBEEjCIIw0gb5pblqxRamw
+         3pFxM4XT7j8NJcslhc7NVxqLw2NAlwQ2y7KS5L2+WUSssjEb7lSgNb7X55gY+H4bkE
+         GIVPivKRFAudr52IE85Wf/gyHaAdljblNbtuUmtWbrIGe/r8KmIlo5zDWv1nlJZRmR
+         10X6f+xMkcmUQ==
+Date:   Fri, 20 May 2022 11:12:12 -0400
 From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
         <nfraprado@collabora.com>
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
@@ -40,116 +40,89 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v7 04/19] clk: mediatek: reset: Extract common drivers to
- update function
-Message-ID: <20220520145551.b2sqheaizkegna3n@notapiano>
+Subject: Re: [PATCH v7 05/19] clk: mediatek: reset: Merge and revise reset
+ register function
+Message-ID: <20220520151212.rrrtekst7uhnojds@notapiano>
 References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
- <20220519125527.18544-5-rex-bc.chen@mediatek.com>
+ <20220519125527.18544-6-rex-bc.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220519125527.18544-5-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220519125527.18544-6-rex-bc.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 19, 2022 at 08:55:12PM +0800, Rex-BC Chen wrote:
-> To make drivers more clear and readable, we extract common code
-> within assert and deassert to mtk_reset_update_set_clr() and
-> mtk_reset_update().
+Hi Rex,
+
+On Thu, May 19, 2022 at 08:55:13PM +0800, Rex-BC Chen wrote:
+> There are two versions for clock reset register control for MediaTek
+> SoCs. The old hardware is one bit per reset control, and does not
+> have separate registers for bit set, clear and read-back operations.
+> This matches the scheme supported by the simple reset driver.
+> 
+> However, because we need to use different data structure from
+> reset_simple_data, we can not use the operation of simple reset
+> driver.
+> For this reason, we keep the original functions and name this version
+> as "MTK_RST_SIMPLE".
+> 
+> In this patch:
+> - Add a version enumeration to separate different reset hardware.
+> - Merge the reset register function of simple and set_clr into one
+>   function "mtk_register_reset_controller".
+> - Rename input variable "num_regs" to "rst_bank_nr" to avoid
+>   confusion. This variable is used to define the quantity of reset bank.
+> - Document mtk_reset_version and mtk_register_reset_controller.
 > 
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  drivers/clk/mediatek/reset.c | 38 +++++++++++++++++++++---------------
->  1 file changed, 22 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> index 5cbbcc22a4fc..22fa9f09752c 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -12,24 +12,27 @@
->  
->  #include "reset.h"
->  
-> -static int mtk_reset_assert(struct reset_controller_dev *rcdev,
-> -			    unsigned long id)
-> +static int mtk_reset_update(struct reset_controller_dev *rcdev,
-> +			    unsigned long id, bool deassert)
 
-I'd have called the bool 'assert', and then passed true on assert and false on
-deassert, as I think that's slightly more intuitive, but that's just personal
-preference. It's fine like this as well.
+<snip>
+
+> index 764a8affe206..2a39eec9cff7 100644
+> --- a/drivers/clk/mediatek/reset.h
+> +++ b/drivers/clk/mediatek/reset.h
+> @@ -9,16 +9,32 @@
+>  #include <linux/reset-controller.h>
+>  #include <linux/types.h>
+>  
+> +/**
+> + * enum mtk_reset_version - Version of MediaTek clock reset controller.
+> + * @MTK_RST_SIMPLE: Use the same registers for bit set and clear.
+> + * @MTK_RST_SET_CLR: Use separate registers for bit set and clear.
+> + * @MTK_RST_MAX: Total quantity of version for MediaTek clock reset controller.
+> + */
+> +enum mtk_reset_version {
+> +	MTK_RST_SIMPLE = 0,
+> +	MTK_RST_SET_CLR,
+> +	MTK_RST_MAX,
+> +};
+> +
+>  struct mtk_reset {
+>  	struct regmap *regmap;
+>  	int regofs;
+>  	struct reset_controller_dev rcdev;
+>  };
+>  
+> +/**
+> + * mtk_register_reset_controller - Register MediaTek clock reset controller
+> + * @np: Pointer to device node.
+> + * @rst_bank_nr: Quantity of reset bank.
+> + * @reg_ofs: Base offset of the reset register.
+> + * @version: Version of MediaTek clock reset controller.
+> + */
+>  void mtk_register_reset_controller(struct device_node *np,
+> -				   unsigned int num_regs, int regofs);
+> -
+> -void mtk_register_reset_controller_set_clr(struct device_node *np,
+> -					   unsigned int num_regs, int regofs);
+> +				   u32 rst_bank_nr, u16 reg_ofs, u8 version);
+
+Why not use 'enum mtk_reset_version' instead of a generic u8? Same thing when
+you move it to a struct in patch 6.
 
 Thanks,
 Nícolas
-
->  {
->  	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
-> +	unsigned int val = deassert ? 0 : ~0;
->  
->  	return regmap_update_bits(data->regmap,
->  				  data->regofs + ((id / 32) << 2),
-> -				  BIT(id % 32), ~0);
-> +				  BIT(id % 32), val);
-> +}
-> +
-> +static int mtk_reset_assert(struct reset_controller_dev *rcdev,
-> +			    unsigned long id)
-> +{
-> +	return mtk_reset_update(rcdev, id, false);
->  }
->  
->  static int mtk_reset_deassert(struct reset_controller_dev *rcdev,
->  			      unsigned long id)
->  {
-> -	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
-> -
-> -	return regmap_update_bits(data->regmap,
-> -				  data->regofs + ((id / 32) << 2),
-> -				  BIT(id % 32), 0);
-> +	return mtk_reset_update(rcdev, id, true);
->  }
->  
->  static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
-> @@ -43,24 +46,27 @@ static int mtk_reset(struct reset_controller_dev *rcdev, unsigned long id)
->  	return mtk_reset_deassert(rcdev, id);
->  }
->  
-> -static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
-> -				    unsigned long id)
-> +static int mtk_reset_update_set_clr(struct reset_controller_dev *rcdev,
-> +				    unsigned long id, bool deassert)
->  {
->  	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
-> +	unsigned int deassert_ofs = deassert ? 0x4 : 0;
->  
->  	return regmap_write(data->regmap,
-> -			    data->regofs + ((id / 32) << 4),
-> +			    data->regofs + ((id / 32) << 4) + deassert_ofs,
->  			    BIT(id % 32));
->  }
->  
-> +static int mtk_reset_assert_set_clr(struct reset_controller_dev *rcdev,
-> +				    unsigned long id)
-> +{
-> +	return mtk_reset_update_set_clr(rcdev, id, false);
-> +}
-> +
->  static int mtk_reset_deassert_set_clr(struct reset_controller_dev *rcdev,
->  				      unsigned long id)
->  {
-> -	struct mtk_reset *data = container_of(rcdev, struct mtk_reset, rcdev);
-> -
-> -	return regmap_write(data->regmap,
-> -			    data->regofs + ((id / 32) << 4) + 0x4,
-> -			    BIT(id % 32));
-> +	return mtk_reset_update_set_clr(rcdev, id, true);
->  }
->  
->  static int mtk_reset_set_clr(struct reset_controller_dev *rcdev,
-> -- 
-> 2.18.0
-> 
-> 
