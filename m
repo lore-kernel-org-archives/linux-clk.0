@@ -2,141 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FADCC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 11:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFEEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 11:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244906AbiETLke (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 07:40:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37122 "EHLO
+        id S1348701AbiETLuc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 07:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348672AbiETLkS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 07:40:18 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C79B15BAFC
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:40:17 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id t25so13841244lfg.7
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:40:16 -0700 (PDT)
+        with ESMTP id S1348537AbiETLua (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 07:50:30 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5547215AB0B
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:50:29 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id v14so6723533qtc.3
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:50:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=QjR0cp2E5WyeJeKKWqWkDDhLDsPyWHtfSubP9NbP2ok=;
-        b=z7lXIzJipVL1DFjw5V22zxLyciQIqvoAMmbg7hOziOU/QJtn/Nn4BjAJy9G7UPMOIf
-         D7AWXzPpElU4KE2dkNShGr9iIvKaCppr/JYmr0r/qikXKmYBakV0eJnI1GKEF7g2kzX+
-         b0LItq6ahMXGbM0j2IVXIz3+apmqY58odUSjsuL5re7vuegzZtE+EQx6i54tzzbW5QFa
-         z3j4kGhZc3PBLXDk8ksG8NfkqkMdoNGtZkSE7CQOegiIaPLpqVT7R8kSwooxKFS3mfMO
-         etHmBxh7C7+TisQCkjLaUb9MvkdyI/LDulCohSLfDIdjvBUNSNCiAqhg76F+vVrNGgO8
-         5wTw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iZEBHi6WzsLrPiLUokXbaSvp5d1QJNTLQ47lEV5k7Z0=;
+        b=yOon8bz1OOMxbEixXt3P5VbNIXBlEcbwOkaEZeoGByvTd+KkM36CKDnBMvO+I+UtyO
+         aUkT7jd5fZy/R+s3xA+6I6/fG4W9ToGMO885GMGEYAcGnsSCYAdq+e/7vyjQG0wlUydN
+         K76BOnC1Rd7Ytv/rOgs0I3GZSIvDIh9JYimQ5uUFtp75H8cFosvOBbGRvKyakNys6Qm1
+         qEgKBBQhx5o/AQJCOgAY8dRTeZ/1ao8BxTYflcqW3v+VEPMLCeLmUC1h2n+od+8fQDle
+         eG3p90Dwz9RAyYoJQU6wZCB9dEcN+TK0oiLRvw8/vlDOYJS2Q27J8oVEwdAWrgeWrSn7
+         s5pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=QjR0cp2E5WyeJeKKWqWkDDhLDsPyWHtfSubP9NbP2ok=;
-        b=McmZlCHM8ZbE2WyquSrdY4LzRJIY0hmI7EjeVHI4Y9kOAbq+enHD5VNkmW4ypWlE2z
-         Xyyw2eIwDWKBAAbLvR//kKah1aOeydUFPrC2z0NubAzwA6bhLmPbbz8ZRxrJ8q54wnec
-         nJXU/v0EPbto/vk5A62Tda+GwgbCrShcjxQfyHDTbMQrLhuTy3ObkY8vsFRmqyzS8M6M
-         amNZKFWprcmqMGrrvrpztM+pG7QO92AMQNJAPSxxvipTyPd0XgcRpXPuWFv/+OWW2Rk6
-         +DofBKy2KwsjhS1novCWlxz/Utr4ZOqz6+XLO3X+CqK/mXOOQfH7s/8de3WsBsm5PNXK
-         y2IA==
-X-Gm-Message-State: AOAM5306DRc3B/p0S9/bqH5g3MOyHwMvmmfb+FtEKFWk5BZbdtsm4W87
-        vUF/NZsPMh4o0d1R6u/iPvQnPhHYGaHXGbrW
-X-Google-Smtp-Source: ABdhPJxd6iblFhYvucmLequOAvrsZJv7bQpp9hEpKuhaf8ii9yoAX9DyoEh/rGP+ykc/8mrj7AJ9DA==
-X-Received: by 2002:a05:6512:1287:b0:473:b904:b27c with SMTP id u7-20020a056512128700b00473b904b27cmr6729249lfs.361.1653046815359;
-        Fri, 20 May 2022 04:40:15 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q1-20020ac25fc1000000b0047255d210eesm630756lfg.29.2022.05.20.04.40.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 May 2022 04:40:14 -0700 (PDT)
-Message-ID: <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
-Date:   Fri, 20 May 2022 13:40:13 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iZEBHi6WzsLrPiLUokXbaSvp5d1QJNTLQ47lEV5k7Z0=;
+        b=eckauH2jtMZDSGXIsmb8J0riqzHYiXHqLy7nnTP2vTiFGTnO4mkIO3vnWZ9edavqqG
+         xOTIQRyYLfYHUVPVDRgMGGsDQmWxJcKCOpljhX4tPmqs9qyM3cFCDwh8Sh6fPqfbbaNM
+         mdORltNRhJGKUecCaki0bjmMld7W2TNTzJ+/BkfRq2unDuHQFxPVwG3iuvrmOYE4v4n6
+         fGVYCsyFmzF5ZoVFAdNNxCORM6Dcz19cL/UbTnvfZQHRdzjWSsQPqFHVDlSvXxXjPXdE
+         RzHe5N4GWGTxUJuy5f+AttD2nSzFp54PNUx/knyXg4L8I9iHPyj0aRlAZk5/J+RIvTFn
+         X2pw==
+X-Gm-Message-State: AOAM531635P/JyL4Sc1A/j+41SEcA3GwwfbYpSBrU+aP9G//6SafynCd
+        cc+BqlDyn3XvFoQAfo7KIB5VQdR73tH8hbwevOg5OL3pzlo=
+X-Google-Smtp-Source: ABdhPJwIol1CXrm1YTqhC7kWPjSb0EgtqanlpqQ/2DRk0sShD2Vjaedtz42xmIcmD9Outn3iio+5v/AdPgPNvIHSl5A=
+X-Received: by 2002:a05:622a:4f:b0:2f3:e77c:2c7e with SMTP id
+ y15-20020a05622a004f00b002f3e77c2c7emr7131500qtw.62.1653047428466; Fri, 20
+ May 2022 04:50:28 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
- compatible string
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+References: <20220520100948.19622-1-johan+linaro@kernel.org> <20220520100948.19622-2-johan+linaro@kernel.org>
+In-Reply-To: <20220520100948.19622-2-johan+linaro@kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 20 May 2022 14:50:17 +0300
+Message-ID: <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20220513105850.310375-1-herve.codina@bootlin.com>
- <20220513105850.310375-3-herve.codina@bootlin.com>
- <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
- <20220520133426.3b4728ae@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220520133426.3b4728ae@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/05/2022 13:34, Herve Codina wrote:
-> On Fri, 13 May 2022 14:57:55 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->> On 13/05/2022 12:58, Herve Codina wrote:
->>> The USB device controller available in the Microchip LAN966x SOC
->>> is the same IP as the one present in the SAMA5D3 SOC.
->>>
->>> Add the LAN966x compatible string and set the SAMA5D3 compatible
->>> string as a fallback for the LAN966x.
->>>
->>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->>> ---
->>>  Documentation/devicetree/bindings/usb/atmel-usb.txt | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/atmel-usb.txt b/Documentation/devicetree/bindings/usb/atmel-usb.txt
->>> index f512f0290728..a6fab7d63f37 100644
->>> --- a/Documentation/devicetree/bindings/usb/atmel-usb.txt
->>> +++ b/Documentation/devicetree/bindings/usb/atmel-usb.txt
->>> @@ -87,6 +87,9 @@ Required properties:
->>>  	       "atmel,at91sam9g45-udc"
->>>  	       "atmel,sama5d3-udc"
->>>  	       "microchip,sam9x60-udc"
->>> +	       "microchip,lan996x-udc"  
->>
->> No wildcards please, especially that it closely fits previous wildcard
->> (lan996x includes lan9960 which looks a lot like sam9x60...)
->>
-> 
-> Well, first, I made a mistake. It should be lan966x instead of lan996x.
-> 
-> This family is composed of the LAN9662 and the LAN9668 SOCs.
-> 
-> Related to the wilcard, lan966x is used in several bindings for common
-> parts used by both SOCs:
-> - microchip,lan966x-gck
-> - microchip,lan966x-cpu-syscon
-> - microchip,lan966x-switch
-> - microchip,lan966x-miim
-> - microchip,lan966x-serdes
-> - microchip,lan966x-pinctrl
-
-And for new bindings I pointed that it is not preferred, so already few
-other started using specific compatible.
-
-> 
-> I think it makes sense to keep 'microchip,lan966x-udc' for the USB
-> device controller (same controller on LAN9662 and LAN9668) and so
-> keeping the same rules as for other common parts.
-
-Having wildcard was rather a mistake and we already started correcting
-it, so keeping the "mistake" neither gives you consistency, nor
-correctness...
+On Fri, 20 May 2022 at 13:10, Johan Hovold <johan+linaro@kernel.org> wrote:
+>
+> Add a helper for updating the SW_COLLAPSE bit during initialisation and
+> state updates.
+>
 
 
-Best regards,
-Krzysztof
+> Note that the update during initialisation was relying on the
+> SW_COLLAPSE bit not having been set earlier rather than passing in zero
+> explicitly to clear the collapse vote.
+
+I think this part deserves a separate commit with proper Fixes: tag.
+
+>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 44520efc6c72..c676416e685f 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -132,10 +132,24 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+>         return -ETIMEDOUT;
+>  }
+>
+> +static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+> +{
+> +       u32 reg, mask;
+> +       int ret;
+> +
+> +       reg = sc->gdscr;
+> +       mask = SW_COLLAPSE_MASK;
+> +
+> +       ret = regmap_update_bits(sc->regmap, reg, mask, val ? mask : 0);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+> +}
+> +
+>  static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>  {
+>         int ret;
+> -       u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+>
+>         if (status == GDSC_ON && sc->rsupply) {
+>                 ret = regulator_enable(sc->rsupply);
+> @@ -143,9 +157,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>                         return ret;
+>         }
+>
+> -       ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+> -       if (ret)
+> -               return ret;
+> +       ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
+>
+>         /* If disabling votable gdscs, don't poll on status */
+>         if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
+> @@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
+>                  * If a Votable GDSC is ON, make sure we have a Vote.
+>                  */
+>                 if (sc->flags & VOTABLE) {
+> -                       ret = regmap_update_bits(sc->regmap, sc->gdscr,
+> -                                                SW_COLLAPSE_MASK, val);
+> +                       ret = gdsc_update_collapse_bit(sc, false);
+>                         if (ret)
+>                                 return ret;
+>                 }
+> --
+> 2.35.1
+>
+
+
+-- 
+With best wishes
+Dmitry
