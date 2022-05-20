@@ -2,66 +2,40 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C34C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 13:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01B3C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 13:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349869AbiETNio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 09:38:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
+        id S238673AbiETNwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 09:52:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349823AbiETNim (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 09:38:42 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 598C416ABC4
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 06:38:40 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id b32so9741186ljf.1
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 06:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=BJ6cahNcHV64dckbcdagFZ3sXXRYfeYn07qe+/rH0Js=;
-        b=Swsr4EYUUhBGy78gK70OvbbFgbl+xy4A36NGHggg9MIrLAwzJ3L8g3yIQ9pJiZcHPg
-         5Z4AjQmI8LhFAkWKs1ms85fN0rwO2dGcB0PkM3c3Q4Mp5uIz+pxLR0FI+u/YiXj3PnjT
-         xEfvLERea7XgQ27+5UU7YDdcRvLRe7KZYXOw/kzR7YpmI+WPjHYHicrGkoIpCSwixvEF
-         qX2B9OqRIDzWJEChsL8RoJG7AkW0ohMp4f9j9uxYBDLdctrCwEbp4cg9bWR+ILHo2lj4
-         gELpWVXkRWAkzYZWD98W4c8v3VVw3H2s8R1CMwWGfB+7L6geo0EvtMEjMNVBE4VJukVy
-         +Yfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BJ6cahNcHV64dckbcdagFZ3sXXRYfeYn07qe+/rH0Js=;
-        b=Ak1wDY82kERV7W78JcyFg7o7NeXzcG5DIoB00N4Ge+RkNHvgMZkMK2f137h/xcAmb4
-         nGmE2IPbSvXcrc/7e5XjUnDH1ohoRiZRhGUPJ4ReplA69uGXo49iTtWZilJjaTusKc/q
-         0z9wFx8leKYlaowSMtnBhkco/rXcJslplO9U/qng9WonLVExVQD/zRtSvAjKyrd0y+X1
-         e5b/BUiyrymsrPTXpR8ldBLtVZwyB14o3hlRNHnkTkLwQW8antr8CmbVhrHe6MU0eeyC
-         kW0/ciDSQaPf7NHeDenvXku/zPyzlG3CPqLun9GWc8v+I4IiWpMsPLVv7UqkLVYLeHzq
-         YO3g==
-X-Gm-Message-State: AOAM5316u/D3OLJcbjGChLnPzt0kPSLlbPcrnSPl5LcaD3gP5/qWfME5
-        l+YOZpz0d3rBepaMXnBHIZzhuw==
-X-Google-Smtp-Source: ABdhPJz7+4KDKaqz3IBBXBx/FkONS5BgchZ7fWWMZ6ZrP5bc3A9c1J212pfOKC8DCyjp/llbwrwJOA==
-X-Received: by 2002:a2e:b8d0:0:b0:253:ca3b:f0ad with SMTP id s16-20020a2eb8d0000000b00253ca3bf0admr5740825ljp.334.1653053918597;
-        Fri, 20 May 2022 06:38:38 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id o14-20020ac25e2e000000b0047255d210e3sm667857lfg.18.2022.05.20.06.38.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 May 2022 06:38:37 -0700 (PDT)
-Message-ID: <d26c7ebd-fc1a-391e-39e4-5ec41bf4fbfa@linaro.org>
-Date:   Fri, 20 May 2022 15:38:36 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
- compatible string
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        with ESMTP id S236798AbiETNwe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 09:52:34 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38615E745;
+        Fri, 20 May 2022 06:52:31 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id BC9EF240014;
+        Fri, 20 May 2022 13:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653054744;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+bOjW1b8w++QSKTTjEeZgfbqJDg2u0gptb5iXkZEb88=;
+        b=BVxr94oPQhfAiYxwDjhe2bG3Z6/SMBrYYEZafMACzM4CcLha3a5UMnIu3Pmtq9A49uz52A
+        R8m4JdTcaTi8kigUhs8WqAGLuyKj0D9T/aEzSqOWxLmNdkBsGAbehvMglVYuMDxkIC4ffc
+        SF6gSivmwl3gYM1VmYln49skYbOEK2h0x3KEKgFSqDAmIrYwbEfK88ZZeh9T+Fl7SptLza
+        lbyt4Vs1hWGvXbW0Wgsx786klXuPMiMBFMOS3Yd+nZ6Ev3WnrPlk5U5qIlvpRvfshsWCDB
+        sc0pGkUiGTTyH5spF0BPxFwFH60xBZyatTS+u9lB+Xr8Qqb1RTueDGc9ltgUSw==
+Date:   Fri, 20 May 2022 15:52:22 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Herve Codina <herve.codina@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Claudiu Beznea <claudiu.beznea@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -70,6 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
+ compatible string
+Message-ID: <YoedFkAsTdoOn/3Y@mail.local>
 References: <20220513105850.310375-1-herve.codina@bootlin.com>
  <20220513105850.310375-3-herve.codina@bootlin.com>
  <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
@@ -78,57 +55,69 @@ References: <20220513105850.310375-1-herve.codina@bootlin.com>
  <20220520142109.57b84da2@bootlin.com>
  <01b31a02-523e-10bf-3b46-5b830e456522@linaro.org>
  <20220520150243.625723fa@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220520150243.625723fa@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <d26c7ebd-fc1a-391e-39e4-5ec41bf4fbfa@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d26c7ebd-fc1a-391e-39e4-5ec41bf4fbfa@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/05/2022 15:02, Herve Codina wrote:
-> On Fri, 20 May 2022 14:50:24 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hello,
+
+On 20/05/2022 15:38:36+0200, Krzysztof Kozlowski wrote:
+> On 20/05/2022 15:02, Herve Codina wrote:
+> > On Fri, 20 May 2022 14:50:24 +0200
+> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> > 
+> >> On 20/05/2022 14:21, Herve Codina wrote:
+> >>>>> I think it makes sense to keep 'microchip,lan966x-udc' for the USB
+> >>>>> device controller (same controller on LAN9662 and LAN9668) and so
+> >>>>> keeping the same rules as for other common parts.    
+> >>>>
+> >>>> Having wildcard was rather a mistake and we already started correcting
+> >>>> it, so keeping the "mistake" neither gives you consistency, nor
+> >>>> correctness...
+> >>>>  
+> >>>
+> >>> I think that the "family" compatible should be present.
+> >>> This one allows to define the common parts in the common
+> >>> .dtsi file (lan966x.dtsi in our case).
+> >>>
+> >>> What do you think about:
+> >>> - microchip,lan9662-udc
+> >>> - microchip,lan9668-udc
+> >>> - microchip,lan966-udc  <-- Family
+> >>>
+> >>> lan966 is defined as the family compatible string since (1) in
+> >>> bindings/arm/atmel-at91.yaml and in Documentation/arm/microchip.rst
+> >>>   
+> >>
+> >> You can add some family compatible, if it makes sense. I don't get why
+> >> do you mention it - we did not discuss family names, but using
+> >> wildcards... Just please do not add wildcards.
+> > 
+> > Well, I mentioned it as I will only use the family compatible string
+> > and not the SOC (lan9662 or lan9668) compatible string in lan966x.dtsi.
+> > In this case, the family compatible string can be seen as a kind of
+> > "wildcard".
 > 
->> On 20/05/2022 14:21, Herve Codina wrote:
->>>>> I think it makes sense to keep 'microchip,lan966x-udc' for the USB
->>>>> device controller (same controller on LAN9662 and LAN9668) and so
->>>>> keeping the same rules as for other common parts.    
->>>>
->>>> Having wildcard was rather a mistake and we already started correcting
->>>> it, so keeping the "mistake" neither gives you consistency, nor
->>>> correctness...
->>>>  
->>>
->>> I think that the "family" compatible should be present.
->>> This one allows to define the common parts in the common
->>> .dtsi file (lan966x.dtsi in our case).
->>>
->>> What do you think about:
->>> - microchip,lan9662-udc
->>> - microchip,lan9668-udc
->>> - microchip,lan966-udc  <-- Family
->>>
->>> lan966 is defined as the family compatible string since (1) in
->>> bindings/arm/atmel-at91.yaml and in Documentation/arm/microchip.rst
->>>   
->>
->> You can add some family compatible, if it makes sense. I don't get why
->> do you mention it - we did not discuss family names, but using
->> wildcards... Just please do not add wildcards.
+> I understood as "the "family" compatible should be present" as you want
+> to add it as a fallback. It would be okay (assuming devices indeed share
+> family design). If you want to use it as the only one, then it is again
+> not a recommended approach. Please use specific compatibles.
 > 
-> Well, I mentioned it as I will only use the family compatible string
-> and not the SOC (lan9662 or lan9668) compatible string in lan966x.dtsi.
-> In this case, the family compatible string can be seen as a kind of
-> "wildcard".
+> I mean, why do we have this discussion? What is the benefit for you to
+> implement something not-recommended by Devicetree spec and style?
+> 
 
-I understood as "the "family" compatible should be present" as you want
-to add it as a fallback. It would be okay (assuming devices indeed share
-family design). If you want to use it as the only one, then it is again
-not a recommended approach. Please use specific compatibles.
+Honestly, I would just go for microchip,lan9662-udc. There is no
+difference between lan9662 and lan9668 apart from the number of switch
+ports.
 
-I mean, why do we have this discussion? What is the benefit for you to
-implement something not-recommended by Devicetree spec and style?
 
-Best regards,
-Krzysztof
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
