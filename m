@@ -2,111 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2305DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 09:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3BEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 09:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347571AbiETJIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 05:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52994 "EHLO
+        id S236022AbiETJN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 05:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347452AbiETJIo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 05:08:44 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C37C13C1D5;
-        Fri, 20 May 2022 02:08:43 -0700 (PDT)
-X-UUID: fa57006af4d64a719e7146ce2c2c3ca2-20220520
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:4add1bdb-e9bd-4862-baff-fa1712f6496c,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:6946ff79-5ef6-470b-96c9-bdb8ced32786,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,IP:nil,URL:0,File:ni
-        l,QS:0,BEC:nil
-X-UUID: fa57006af4d64a719e7146ce2c2c3ca2-20220520
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1345200159; Fri, 20 May 2022 17:08:35 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Fri, 20 May 2022 17:08:34 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.3 via Frontend Transport; Fri, 20 May 2022 17:08:34 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <angelogioacchino.delregno@collabora.com>
-CC:     <chun-jie.chen@mediatek.com>, <jose.exposito89@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
-        <p.zabel@pengutronix.de>, <rex-bc.chen@mediatek.com>,
-        <sboyd@kernel.org>, <wenst@chromium.org>,
-        <y.oudjana@protonmail.com>, <yassine.oudjana@gmail.com>,
-        <~postmarketos/upstreaming@lists.sr.ht>
-Subject: Re: [PATCH 3/6] clk: mediatek: reset: Return reset data pointer on register
-Date:   Fri, 20 May 2022 17:08:34 +0800
-Message-ID: <20220520090834.28515-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <5b5f6656-8694-dc78-ef42-7ce301849aa4@collabora.com>
-References: <5b5f6656-8694-dc78-ef42-7ce301849aa4@collabora.com>
+        with ESMTP id S234035AbiETJN1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 05:13:27 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD98118030;
+        Fri, 20 May 2022 02:13:22 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id kq17so14466104ejb.4;
+        Fri, 20 May 2022 02:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=iyT30uEszkCa+aZ/40TmGWuqHZ6hjBWjF8lNdivRYyU=;
+        b=j1eEm5wAAhrGavm6iYgNIUuBrWMqSrHfuYo8a+CV5AlZZjzPg617WjsleXaZfH7SMy
+         xhZkeDF0n/HN8yMLKgPJPAzxik46vpDPMDjpf7erwURC5cNlFyqxVxdGQDvaAK/mot/+
+         ba+HlzZYXXqzn5LycNlZwiMSCLgLH4P8+nFGHJcfaiJ1cG25dOcjlWus/4+k9bliau2D
+         q3ByGbPCKfzBo9s15M4O+R2AxgWwUodWRti94ETgo1bMyrEAyOy6c/lG3rkjNISPPQz0
+         MgqnDhoEHDscENkcreEw9cIvIH4SB10d+zCs3CsK3zW9YtjFKdfXSGYhoeMIpFIRQzNq
+         W9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=iyT30uEszkCa+aZ/40TmGWuqHZ6hjBWjF8lNdivRYyU=;
+        b=3fW9WC1Ss5TzRqngzVnBtUvh1qKTfyvmhvWp0hIGNDtrW3nm9ImzAG6dVIZP984hJH
+         Ia4yLOt/vn9b1IMdOcKja4HQ0Wf753J0icgzDcFbgQMCGqaj7nUbNHgJAaaw/NTT3nCq
+         awBgvi4MjHBy8TK+FIWlvhXfpWbeCQHz0Tkm9VdjgMIwIVCF9LbbCzN2Qa2p46EqTeCV
+         pjqECeaa3tx10NNtc8Kv4RCVODzdSIwtZdPtQGu/JV8mm9yak4WH21FZOvIHFaDW8stY
+         TTa8QFkVv5uUDpdiJbBMXIFaZVq1webaUv1fEJOs9TIfV4LUM5r+uA7fPIPcjD9RbpZh
+         8nug==
+X-Gm-Message-State: AOAM533/HvfMg/a2KwFtSeHsmV84TGMf/A7mK9E4faFd/Bb48EUT++WQ
+        ci6Up3FOk81/h4DrRgBYBGA=
+X-Google-Smtp-Source: ABdhPJzCxtK3/GDoGEo87WoOjtFl4CjJllOA3nui2brjs9JDd5jLcwgf560M6dUvKBhp4qeVfEjvzw==
+X-Received: by 2002:a17:906:49d4:b0:6d6:e5ec:9a23 with SMTP id w20-20020a17090649d400b006d6e5ec9a23mr8030721ejv.79.1653038001094;
+        Fri, 20 May 2022 02:13:21 -0700 (PDT)
+Received: from [192.168.151.247] ([138.199.7.159])
+        by smtp.gmail.com with ESMTPSA id eb22-20020a170907281600b006f4c557b7d2sm697876ejc.203.2022.05.20.02.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 May 2022 02:13:20 -0700 (PDT)
+Date:   Fri, 20 May 2022 13:13:05 +0400
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: reset: Add MT6735 reset bindings
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Sam Shih <sam.shih@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Rob Herring <robh@kernel.org>
+Message-Id: <T9C6CR.ZDXJ22Q377EZ1@gmail.com>
+In-Reply-To: <d54ea1d3-903f-0b2a-3db4-99f1adfadce0@collabora.com>
+References: <20220519142211.458336-1-y.oudjana@protonmail.com>
+        <20220519142211.458336-3-y.oudjana@protonmail.com>
+        <d54ea1d3-903f-0b2a-3db4-99f1adfadce0@collabora.com>
+X-Mailer: geary/40.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Il 19/05/22 15:47, Yassine Oudjana ha scritto:
-> > From: Yassine Oudjana <y.oudjana@protonmail.com>
-> > 
-> > Return a struct mtk_clk_rst_data * when registering a reset
-> > controller in preparation for adding an unregister helper
-> > that will take it as an argument. Make the necessary changes
-> > in drivers that do not currently discard the return value
-> > of register functions.
-> > 
-> > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Hello Yassine,
-> 
-> Thanks for your efforts on helping to make the MediaTek clocks better - I agree
-> (and I'm not the only one..) that there's a lot of work to do on this side.
-> 
-> Though... I don't think that this is the right direction: you're right about
-> properly unregistering (in patch 4/6) the reset controllers on rmmod/failure
-> but I'm not sure that this kind of noise brings any benefit.
-> 
-> Explaining:
-> You definitely saw that there's a new register _with_dev, which uses devm ops
-> and that's going to automatically cleanup in case of removal/failure.
-> This is what we should do.
-> 
-> Hence, my proposal is to drop patch 3/6, 4/6, 5/6 and (slowly, steadily) migrate
-> all of the MediaTek clocks from CLK_OF_DECLARE() to platform drivers (which also
-> means that we can eventually change them to tristate!), so that we slowly remove
-> all users of all functions that are not "_with_dev", and that we finally remove
-> all of these then-unused functions as well.
-> 
-> Making sure that I don't get misunderstood:
->       I'm not implying that this huge migration work is on your shoulders!
-> 
-> P.S.: Chen-Yu, Miles: do you also agree? :-)
 
-Agreed. 3/6, 4/6, 5/6 introduce mtk_simple_clk_controller, but we just got
-ChenYu's patch merged to clk-next to switch to clk_hw_onecell_data, and
-hoplefully we can test them in v5.18 or v5.19.
-So I think we should wait for ChenYu's cleanup.
-
--	struct clk_hw_onecell_data *clk_data;
-+	struct mtk_simple_clk_controller *clk_ctrl;
-
-thanks,
-Miles
-
+On Fri, May 20 2022 at 10:55:24 +0200, AngeloGioacchino Del Regno 
+<angelogioacchino.delregno@collabora.com> wrote:
+> Il 19/05/22 16:22, Yassine Oudjana ha scritto:
+>> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>> 
+>> Add reset definitions for Mediatek MT6735 resets provided by
+>> infracfg and pericfg.
+>> 
+>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   MAINTAINERS                                   |  2 ++
+>>   .../reset/mediatek,mt6735-infracfg.h          | 31 
+>> +++++++++++++++++++
+>>   .../reset/mediatek,mt6735-pericfg.h           | 31 
+>> +++++++++++++++++++
+>>   3 files changed, 64 insertions(+)
+>>   create mode 100644 
+>> include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+>>   create mode 100644 
+>> include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index a59069263cfb..1c0af554a7b6 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -12503,6 +12503,8 @@ 
+>> F:	include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+>>   F:	include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+>>   F:	include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+>>   F:	include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+>> +F:	include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+>> +F:	include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+>>     MEDIATEK MT76 WIRELESS LAN DRIVER
+>>   M:	Felix Fietkau <nbd@nbd.name>
 > 
-> Cheers,
-> Angelo
+> ..snip..
 > 
+>> diff --git a/include/dt-bindings/reset/mediatek,mt6735-pericfg.h 
+>> b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+>> new file mode 100644
+>> index 000000000000..6cdfaa7ddadf
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+>> @@ -0,0 +1,31 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +
+>> +#ifndef _DT_BINDINGS_RST_MT6735_PERICFG_H
+>> +#define _DT_BINDINGS_RST_MT6735_PERICFG_H
+>> +
+>> +#define UART0_SW_RST			0
+>> +#define UART1_SW_RST			1
+>> +#define UART2_SW_RST			2
+>> +#define UART3_SW_RST			3
+>> +#define UART4_SW_RST			4
 > 
+> where's number 5?
+> 
+>> +#define BTIF_SW_RST			6
+>> +#define DISP_PWM_SW_RST			7
+>> +#define PWM_SW_RST			8
+> 
+> ...and where's 9?
+> 
+>> +#define AUXADC_SW_RST			10
+>> +#define DMA_SW_RST			11
+>> +#define IRDA_SW_RST			12
+>> +#define IRTX_SW_RST			13
+> 
+> and 14, 15?
+> 
+>> +#define THERM_SW_RST			16
+>> +#define MSDC2_SW_RST			17
+>> +#define MSDC3_SW_RST			17
+> 
+> MSDC 2 and 3 are both 17?! :-)
+> 
+>> +#define MSDC0_SW_RST			19
+>> +#define MSDC1_SW_RST			20
+> 
+> 21?
+> 
+>> +#define I2C0_SW_RST			22
+>> +#define I2C1_SW_RST			23
+>> +#define I2C2_SW_RST			24
+>> +#define I2C3_SW_RST			25
+>> +#define USB_SW_RST			28
+>> +
+> 
+> and 29-32?
+> 
+>> +#define SPI0_SW_RST			33
+>> +
+>> +#endif
+> 
+> I have a hunch that you've misunderstood the changes in the resets...
+> 
+> What Rex-BC has done in his reset cleanup is exactly to stop directly
+> mapping these to the actual bits that we're using... so the 
+> definitions
+> in there will simply be sequential, and the actual mapping is done in
+> your clk-mt6735-pericfg.c driver.
+
+I did notice that, but reading the documentation in reset.h:
+
+ * @rst_idx_map:Pointer to an array containing ids if input argument is 
+index.
+ *		This array is not necessary if our input argument does not mean 
+index.
+
+I thought that it wasn't necessary to use it. Thinking
+about it now however, I guess that was to maintain compatibility
+with old device trees. I'll change it next time.
+Maybe a note should be put there to avoid confusion
+in the future.
+
+Thanks,
+Yassine
+
+
+
