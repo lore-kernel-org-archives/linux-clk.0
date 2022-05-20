@@ -2,89 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C33C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 12:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1DEC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 12:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237943AbiETMDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 08:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
+        id S232424AbiETMV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 08:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348966AbiETMDU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 08:03:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982ED1498C3;
-        Fri, 20 May 2022 05:03:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C24161DFA;
-        Fri, 20 May 2022 12:03:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A87DC385A9;
-        Fri, 20 May 2022 12:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653048198;
-        bh=387K16xk7F07P+mVdomJn7VVO3JUePVAb1FehJf0grw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pWXK27ij1Y5VZ732mGSwahDUXfniztdn3J0KVqAlHnkGLAcyA9wBVpOy6fQb1nBG1
-         YkGbRDDCWYteE3/r1E4dDZ5wGckxtj89PGm0Fy5Hi05swie5t3XCH5mlNi0sV3kqI5
-         ASAPPCvENsVvF7TDYl7WlVnoGaH7JKYFsPauJWSwq8voFzDByrsDtN1E8HeHY94o37
-         S96JwGiBItKQ8erAfGAhXXXzcAWd/oEaSfPKJCz7CCUyIqdj/+AGXHISgmiha+AIHa
-         T3RKj8aShzUYXckY9TbuEtGAcGh3pDTGMzhz486ikm6GjzaZaqmMZT6FNi2drRnBJk
-         qtMmXytMDOvPg==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1ns1Li-0005yv-8Z; Fri, 20 May 2022 14:03:18 +0200
-Date:   Fri, 20 May 2022 14:03:18 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S1349291AbiETMVt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 08:21:49 -0400
+X-Greylist: delayed 2803 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 May 2022 05:21:16 PDT
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E2724C406;
+        Fri, 20 May 2022 05:21:13 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 89441FF810;
+        Fri, 20 May 2022 12:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653049272;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=P9/j3N/5Wrep8nEVTKpfSVpG01w0RrIsJwIuJSpfUqk=;
+        b=RfW0rjzcmmERfR5djFuVWqGNNOXEXZH64WSz4zF6bNV8PZOupWqEnejx3YHzGPR+ANVyqf
+        u1X+8G40M4FtwDyht1zoabB49i3jwiatJroTJKQsi8taz+RmQUh7KOjlv3g7H4mwsBkOEX
+        E/2xcdCNRM5z9JO4Qlm5sMWl3Px7hdyoPqweUk79/uJg6x8eq86WoxsWxi9VL98gUDG6wv
+        wt0+qMRqFXeArB91COg4rAgJAMcC6yoywoHCtjeNU8H2BTfoF1zFcuBdcf1kk46rzz6dOu
+        K1/VdbzH87ALHDx9nJLW3gvFjxdEVBf1JMUA+bWEM3Kl7OnBLa1FtUBEnu2L1A==
+Date:   Fri, 20 May 2022 14:21:09 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
-Message-ID: <YoeDhpCzV2sR7+Y1@hovoldconsulting.com>
-References: <20220520100948.19622-1-johan+linaro@kernel.org>
- <20220520100948.19622-2-johan+linaro@kernel.org>
- <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
+ compatible string
+Message-ID: <20220520142109.57b84da2@bootlin.com>
+In-Reply-To: <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
+References: <20220513105850.310375-1-herve.codina@bootlin.com>
+        <20220513105850.310375-3-herve.codina@bootlin.com>
+        <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
+        <20220520133426.3b4728ae@bootlin.com>
+        <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 20, 2022 at 02:50:17PM +0300, Dmitry Baryshkov wrote:
-> On Fri, 20 May 2022 at 13:10, Johan Hovold <johan+linaro@kernel.org> wrote:
-> >
-> > Add a helper for updating the SW_COLLAPSE bit during initialisation and
-> > state updates.
-> >
-> 
-> 
-> > Note that the update during initialisation was relying on the
-> > SW_COLLAPSE bit not having been set earlier rather than passing in zero
-> > explicitly to clear the collapse vote.
-> 
-> I think this part deserves a separate commit with proper Fixes: tag.
+Hi Krzysztof,
 
-No, it's not a bug. The value passed in is explicitly set a bit higher
-up in the same function so that the SW_COLLAPSE bit is (currently) never
-set.
+On Fri, 20 May 2022 13:40:13 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-It mostly just looks weird and probably wasn't intentional.
+> On 20/05/2022 13:34, Herve Codina wrote:
+> > On Fri, 13 May 2022 14:57:55 +0200
+> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> >  =20
+> >> On 13/05/2022 12:58, Herve Codina wrote: =20
+> >>> The USB device controller available in the Microchip LAN966x SOC
+> >>> is the same IP as the one present in the SAMA5D3 SOC.
+> >>>
+> >>> Add the LAN966x compatible string and set the SAMA5D3 compatible
+> >>> string as a fallback for the LAN966x.
+> >>>
+> >>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> >>> ---
+> >>>  Documentation/devicetree/bindings/usb/atmel-usb.txt | 3 +++
+> >>>  1 file changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/usb/atmel-usb.txt b/Do=
+cumentation/devicetree/bindings/usb/atmel-usb.txt
+> >>> index f512f0290728..a6fab7d63f37 100644
+> >>> --- a/Documentation/devicetree/bindings/usb/atmel-usb.txt
+> >>> +++ b/Documentation/devicetree/bindings/usb/atmel-usb.txt
+> >>> @@ -87,6 +87,9 @@ Required properties:
+> >>>  	       "atmel,at91sam9g45-udc"
+> >>>  	       "atmel,sama5d3-udc"
+> >>>  	       "microchip,sam9x60-udc"
+> >>> +	       "microchip,lan996x-udc"   =20
+> >>
+> >> No wildcards please, especially that it closely fits previous wildcard
+> >> (lan996x includes lan9960 which looks a lot like sam9x60...)
+> >> =20
+> >=20
+> > Well, first, I made a mistake. It should be lan966x instead of lan996x.
+> >=20
+> > This family is composed of the LAN9662 and the LAN9668 SOCs.
+> >=20
+> > Related to the wilcard, lan966x is used in several bindings for common
+> > parts used by both SOCs:
+> > - microchip,lan966x-gck
+> > - microchip,lan966x-cpu-syscon
+> > - microchip,lan966x-switch
+> > - microchip,lan966x-miim
+> > - microchip,lan966x-serdes
+> > - microchip,lan966x-pinctrl =20
+>=20
+> And for new bindings I pointed that it is not preferred, so already few
+> other started using specific compatible.
+>=20
+> >=20
+> > I think it makes sense to keep 'microchip,lan966x-udc' for the USB
+> > device controller (same controller on LAN9662 and LAN9668) and so
+> > keeping the same rules as for other common parts. =20
+>=20
+> Having wildcard was rather a mistake and we already started correcting
+> it, so keeping the "mistake" neither gives you consistency, nor
+> correctness...
+>=20
 
-> > @@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
-> >                  * If a Votable GDSC is ON, make sure we have a Vote.
-> >                  */
-> >                 if (sc->flags & VOTABLE) {
-> > -                       ret = regmap_update_bits(sc->regmap, sc->gdscr,
-> > -                                                SW_COLLAPSE_MASK, val);
-> > +                       ret = gdsc_update_collapse_bit(sc, false);
-> >                         if (ret)
-> >                                 return ret;
-> >                 }
+I think that the "family" compatible should be present.
+This one allows to define the common parts in the common
+.dtsi file (lan966x.dtsi in our case).
 
-Johan
+What do you think about:
+- microchip,lan9662-udc
+- microchip,lan9668-udc
+- microchip,lan966-udc  <-- Family
+
+lan966 is defined as the family compatible string since (1) in
+bindings/arm/atmel-at91.yaml and in Documentation/arm/microchip.rst
+
+(1) https://lore.kernel.org/all/20211004105926.5696-1-kavyasree.kotagiri@mi=
+crochip.com/
+
+Regards,
+Herve
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
