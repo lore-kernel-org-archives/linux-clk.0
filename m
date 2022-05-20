@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6811C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 10:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C051BC43217
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 10:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348038AbiETKKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 06:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51316 "EHLO
+        id S1348049AbiETKK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 06:10:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234933AbiETKKW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 06:10:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8100DFF6A;
-        Fri, 20 May 2022 03:10:21 -0700 (PDT)
+        with ESMTP id S1348025AbiETKKY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 06:10:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3795FDE30B;
+        Fri, 20 May 2022 03:10:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 44B2861CFE;
+        by ams.source.kernel.org (Postfix) with ESMTPS id E0F1BB82A9B;
         Fri, 20 May 2022 10:10:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92626C36AE3;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE44C385AA;
         Fri, 20 May 2022 10:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1653041420;
-        bh=b5B3dWn6n9Wxng7nBg4KPCY57stZm2SUMOlxnd/cJt8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDeht8FOFq8hO8w1PZZUlFAGMZjBPOubMjKDjmKbHJu6IkiTaaRuPx98Tg+mqAMUP
-         szPmag55Qof2XpivZOcAujXs0Inu/jN7h3+BwGEU7VKHxNSVcrpK9QEOWGNzQiu94H
-         Vj25DWKdDUHKc9s+DjdGPCqsabrvPZZ4z7fJzmOg8qV+Od0DxH79gTzPnYsEWleupI
-         etyJ+AxawS3VPkAry7uclzUndFIDeHV+fixCkLSaPRKcmFTFbw9jDZ3j/NKfGPkzYU
-         YJpO/GG5H1PlxNjRjed0vJiMqQRUiRPqcauJ25p3fkaq3fnfvf8p43nOI1qgoDr3B2
-         XxfR34OqYcVYQ==
+        bh=CUMRaFpSPQsGGTUY5dQB0cjmuiT3DOYu/+5/nWnfIC8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dwY/xH/YIgScadFiE0VQ+FH4oMMWNt6dh+KkUmDm0vz79CR8HagGf7EJ2mtlw3Bag
+         wYCN7bIDor44zskmOfZ9vVk96nbJIYymlFgqBfDZySRdNLYZlAeYJKC0DqmAWdUvru
+         cByn1e/pGH8SuTaVaaT85HyCIF411e2H8uFQESeox8wyyAr9PJfpkJ5xwlsq/IHQmx
+         rRMuWdBkevMGErvi4oO7LE2JzNzc5KmpDTDNWHKhC1oZ8UFD7VOlOphZMj+esBVPk3
+         ZX0yEuOpUZ77ULK6pXthkvDyP1EeiNg0wOMMlV2pgDbvrqUH8E6CXvmM87IG5dgGyu
+         r73lttmFAALig==
 Received: from johan by xi.lan with local (Exim 4.94.2)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1nrzaO-00056w-Bg; Fri, 20 May 2022 12:10:20 +0200
+        id 1nrzaO-00056u-8E; Fri, 20 May 2022 12:10:20 +0200
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -41,81 +41,40 @@ Cc:     Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
-Date:   Fri, 20 May 2022 12:09:46 +0200
-Message-Id: <20220520100948.19622-2-johan+linaro@kernel.org>
+Subject: [PATCH 0/3] clk: qcom: gdsc: add support for collapse-vote registers
+Date:   Fri, 20 May 2022 12:09:45 +0200
+Message-Id: <20220520100948.19622-1-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220520100948.19622-1-johan+linaro@kernel.org>
-References: <20220520100948.19622-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a helper for updating the SW_COLLAPSE bit during initialisation and
-state updates.
+Recent Qualcomm platforms have APCS collapse-vote registers that allow
+for sharing GDSCs with other masters (e.g. LPASS).
+    
+Add support for using such vote registers instead of the control
+register when updating the GDSC power state.
 
-Note that the update during initialisation was relying on the
-SW_COLLAPSE bit not having been set earlier rather than passing in zero
-explicitly to clear the collapse vote.
+Note that the gcc-sc8280xp driver has not yet been merged. [1]
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+Johan
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 44520efc6c72..c676416e685f 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -132,10 +132,24 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
- 	return -ETIMEDOUT;
- }
- 
-+static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
-+{
-+	u32 reg, mask;
-+	int ret;
-+
-+	reg = sc->gdscr;
-+	mask = SW_COLLAPSE_MASK;
-+
-+	ret = regmap_update_bits(sc->regmap, reg, mask, val ? mask : 0);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
- {
- 	int ret;
--	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
- 
- 	if (status == GDSC_ON && sc->rsupply) {
- 		ret = regulator_enable(sc->rsupply);
-@@ -143,9 +157,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
- 			return ret;
- 	}
- 
--	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
--	if (ret)
--		return ret;
-+	ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
- 
- 	/* If disabling votable gdscs, don't poll on status */
- 	if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
-@@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
- 		 * If a Votable GDSC is ON, make sure we have a Vote.
- 		 */
- 		if (sc->flags & VOTABLE) {
--			ret = regmap_update_bits(sc->regmap, sc->gdscr,
--						 SW_COLLAPSE_MASK, val);
-+			ret = gdsc_update_collapse_bit(sc, false);
- 			if (ret)
- 				return ret;
- 		}
+
+[1] https://lore.kernel.org/all/20220505025457.1693716-1-bjorn.andersson@linaro.org/
+
+
+Johan Hovold (3):
+  clk: qcom: gdsc: add collapse-bit helper
+  clk: qcom: gdsc: add support for collapse-vote registers
+  clk: qcom: gcc-sc8280xp: use collapse-voting for PCIe GDSCs
+
+ drivers/clk/qcom/gcc-sc8280xp.c | 21 +++++++++++++++++++++
+ drivers/clk/qcom/gdsc.c         | 28 ++++++++++++++++++++++------
+ drivers/clk/qcom/gdsc.h         |  4 ++++
+ 3 files changed, 47 insertions(+), 6 deletions(-)
+
 -- 
 2.35.1
 
