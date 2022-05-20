@@ -2,110 +2,175 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74289C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 07:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC61C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 08:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346739AbiETH6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 03:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57620 "EHLO
+        id S1346964AbiETI1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 04:27:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346730AbiETH6C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 03:58:02 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25DE415AB3D
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 00:58:00 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nrxWI-0006bH-3M; Fri, 20 May 2022 09:57:58 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nrxWH-003ROu-O1; Fri, 20 May 2022 09:57:56 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nrxWF-00AveO-69; Fri, 20 May 2022 09:57:55 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Russell King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Michael Turquette <mturquette@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH v9 0/4] clk: provide new devm helpers for prepared and enabled clocks
-Date:   Fri, 20 May 2022 09:57:33 +0200
-Message-Id: <20220520075737.758761-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S239123AbiETI1w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 04:27:52 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C8F1CFC6;
+        Fri, 20 May 2022 01:27:49 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id BEEBD1F460E6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1653035268;
+        bh=dz33bLK81tDx68GO0e3Igt9ot4jToawO0qhzv26u9x0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=SiCuENmyBtMOhZ3WnQCd6TbHHwr8v9Ghet/cZgL5zzy61AwNFg3q46Vd3fFb3Hoj7
+         uQHrClCDeaOtd9ESeItb/40eROqK/lHExkxX77EVHiIiBT+Q9JrH+aCN3zPx+pIhWO
+         mh6rFUfpf2VXr31vLHGwWErD6IVlUbj2OPFHpjF6BVBT0OggTbqDE72LGox3PlC/Hl
+         8S0QsZQOffulnBZdLznibQWK6TEyLm5OZNJ/GsGMoMfNTkMC3bNIn3QTel5OM5qrZQ
+         D3BJuv5JtL4CUY4DRytIhD+7opF48qkm+CP7nizwIFM7/z/UOO1v3+O3STbU3RdzK9
+         Z6jWXwoin7vrQ==
+Message-ID: <c2f347cb-b887-d67f-d7be-569fbd2660d8@collabora.com>
+Date:   Fri, 20 May 2022 10:27:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1942; h=from:subject; bh=sEhuMmJW8l03//A/Pq9UCpgGc389v3t6wXwl4AtmbV0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBih0nW4RmK5Skbk1HhqzFWTduO8ASNdMPskUzcaNyF DKDG/iyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYodJ1gAKCRDB/BR4rcrsCTC9B/ 9J9jmZqoBS7CZI8eRtCxLpm5BhzRPL8uY4LD07XNagLaYHx9kNRbQKyNr/W3e6TTxQDlSO29xUogcn NetIM7xPbD4dLe/4Z65dxaziw0a/j9YxEFOacX4DrnA3bvaVA6ML47qngWs9ss70L/sIOzwQGhhNzy KG1KT03FW4cANfcgaD+rmyCH7q+Fob/Les4PVhNKOY6O2O9kA2Ayf5bRoAdWs7U09x76iLuO2IqEmt /u0JKbEoFLHbzSy3rNvsb4Sz2qYFH5PzLvP0u0oHGSJ4P2Jqdi6qenBzdslpOHD/d6WVXYw+A/P1CX fHyHLW9F+naC/qAWydNC3FC18Z51R/
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: mediatek: Fix unused 'ops' field in mtk_pll_data
+Content-Language: en-US
+To:     Boris Lysov <arz65xx@gmail.com>
+Cc:     arzamas-16@mail.ee, mturquette@baylibre.com, sboyd@kernel.org,
+        matthias.bgg@gmail.com, wenst@chromium.org,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20220515122409.13423-1-arzamas-16@mail.ee>
+ <ead37cb0-c841-df1a-ca10-a396b5e9951c@collabora.com>
+ <20220519222755.127ebbb8@pc>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220519222755.127ebbb8@pc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Il 19/05/22 21:27, Boris Lysov ha scritto:
+> Hello, Angelo!
+> 
+> On Wed, 18 May 2022 14:15:13 +0200
+> AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+> 
+>> Il 15/05/22 14:24, Boris Lysov ha scritto:
+>>> From: Boris Lysov <arzamas-16@mail.ee>
+>>>
+>>> Allow to specify optional clk_ops in mtk_pll_data which will be picked up in
+>>> mtk_clk_register_pll. So far no already supported Mediatek SoC needs
+>>> non-default clk_ops for PLLs but instead of removing this field it will be
+>>> actually used in the future for supporting older SoCs (see [1] for details)
+>>> with quirky PLLs.
+>>>
+>>
+>> Hello Boris,
+>>
+>> I disagree about this change and would rather see the ops pointer removed
+>> with fire.
+>>
+>> I got that you're trying to do something about "quirky PLLs", but is it
+>> really about the PLLs that you're mentioning being "quirky", or are they
+>> simply a different IP?
+> 
+> To be honest I don't know exactly. mt6577 seems to share some common IP
+> patterns such as splitting the entire clock system into few smaller subsystems
+> such as apmixed (PLLs), topckgen (mux control), infra- and pericfg (internal
+> and peripheral gate control). On the other hand, mt6577 is quite an old SoC
+> (more on that in the end) and there are some differences about its operation
+> compared to modern SoCs and their drivers.
+> 
+>> Also, if it's just about a bit inversion and a bigger delay:
+>> 1. Bigger delay: Depending on how bigger, we may simply delay more by default
+>>      for all PLLs, even the ones that aren't requiring us to wait for longer...
+>>      ...after all, if it's about waiting for 10/20 *microseconds* more
+>> { snip }
+> 
+> According to the mt6577 datasheet the largest settling time is 10
+> *milli*seconds for AUDPLL [1]. In my opinion this is way too much to be set as
+> default for all mediatek devices.
+> 
 
-after Stephen signaled to accept the idea, this is a rework of v8[1] with
-the following changes:
+Wow. 10ms is a huge wait! That doesn't *feel* right, but if that's what it is...
+Perhaps we should look into that AUDPLL matter later, as audio is one kind of
+functionality that you want to enable in the immediate term - I agree it's a
+nice to have, but bringing up the platform comes first, and this means the top
+clock controllers and eventually multimedia (to get a display up!).
 
- - Drop the follow up conversions. I will resend them individually per
-   subsystem once the preconditions from this v9 are in. I only kept one
-   clk patch that will go in via the clk tree anyhow. I trimmed the Cc:
-   list accordingly.
+>> 2. Bit inversion: that can be solved simply with a flag in the
+>> prepare/unprepare ops for this driver... and if you want something that
+>> performs even better, sparing you a nanosecond or two, you can always assign
+>> an "inverted" callback for managing that single bit;
+> 
+> Not all mt6577 PLLs need bit inversion. 2 PLLs follow the common flow (set a
+> CON0_PWR_ON bit to start). 6 PLLs set this bit to 0 to start. And 1 PLL (which
+> is actually a DDS) needs to write a magic value to specific register (in
+> apmixed region) to start.
 
- - (trivially) rebased to v5.18-rc1
+That's interesting.
 
- - Introduce a new commit that first improves the documention of
-   devm_clk_get() and devm_clk_get_optional() before (mostly)
-   duplicating these for the new functions.
+> Is very unfortunate that I can't directly link the vomit-inducing downstream
+> code to prove the PLL situation due to its licensing but it's publicly
+> available on the internet [2] as a part of device manufacturers' obligations to
+> publish source code.
+> 
+>> 3. Different IP: mtk_clk_register_(name-of-the-new-ip)_pll() - I don't think
+>> that there's anything to explain to that one.
+> In my opinion this would introduce more duplicate code than just letting a
+> developer set custom clk_ops for a specific platform.
+> 
+> Huge thanks for your feedback!
+> 
+> P.S As I said above, mt6577 is old and in its current state [3] it's closer to
+> being a personal project than a serious mainlining attempt. I share and agree
+> with your opinion [4] on e-waste and is why I'm trying to put an effort into it.
+> What I don't have enough of is time and, sadly, expertise. Maybe it'd be better
+> for me to stay on github.
+> 
 
- - Make the new functions use a GPL export. (Note the existing functions
-   use a plain export, I didn't change that.)
+Your contribution is definitely welcome and you shouldn't worry about having
+a relatively low amount of time to spend on these things - that's a very common
+(non)issue among contributors.
 
- - Drop a bogus empty line that was cut-n-pasted into several functions.
+A community works like a community: it's not everything on your shoulders!
+That's why the maintainers are here, that's why I'm here and that's also why
+other people are here. Everyone of us gives some little bit and, at the end of
+the day, all these little bits come together to form an entire kernel :-)
 
-Thanks for feedback by Stephen and Jonathan.
-
-@Russell: Stephen wrote in v8: "I'm largely waiting for Russell to ack
-the clk.h change [...]". Would be great if you looked at the series and
-tell us your thoughts.
-
-@Stephen: You asked to add the acks from v8. There were however only
-acks for the followup conversions. So no changes here.
-(Andy Shevchenko replied to patch 0, but his Reviewed-by: only affected
-the patch "iio: Make use of devm_clk_get_enabled()".)
-
-Best regards
-Uwe
-
-[1] https://lore.kernel.org/linux-clk/20220314141643.22184-1-u.kleine-koenig@pengutronix.de
-
-Uwe Kleine-König (4):
-  clk: Improve documentation for devm_clk_get() and its optional variant
-  clk: generalize devm_clk_get() a bit
-  clk: Provide new devm_clk helpers for prepared and enabled clocks
-  clk: meson: axg-audio: Don't duplicate devm_clk_get_enabled()
-
- drivers/clk/clk-devres.c      |  91 +++++++++++++++++++----
- drivers/clk/meson/axg-audio.c |  36 +--------
- include/linux/clk.h           | 134 ++++++++++++++++++++++++++++++++--
- 3 files changed, 207 insertions(+), 54 deletions(-)
+Therefore, I encourage you (and anyone else reading this) to keep sharing your
+valuable contributions to the mailing lists as much as you want to.
 
 
-base-commit: 3123109284176b1532874591f7c81f3837bbdc17
--- 
-2.35.1
+That said, let's get back in topic, shall we?
+I feel the various concerns that you've raised relative to this PLL matter, I
+know that older MediaTek SoCs look a bit strange in regard to some clocks and
+other things, but that obviously doesn't mean that there's no way to do things
+properly or anyway in a way better manner.
+
+Here's my proposal:
+Try upstreaming the top, very necessary, clocks to achieve a full console boot,
+as this gives you a good chance to start landing some solid and critical base
+for your platform.
+
+The top clocks should have most of the PLLs, but you can avoid adding some that
+are a bit problematic, such as that AUDPLL that you were talking about... in my
+opinion, at least, it's not a big deal if we add these PLLs later when enabling
+more functionality: that will give you the chance to add the PLLs that are in
+need of that "enable bit inversion" logic which, from what I understand from
+your words, covers 6 to 8 PLLs. That's a lot, because that makes you able to
+add all of the clocks that are in infra, top, mfg, apmixed: like that, you're
+also getting most of the IP up (timers, i2c, spi, mtk-sd for your eMMC/uSD).
+
+Do it step by step - me and other developers will give you reviews and probably
+make you go through some iterations of your driver, and that's to make sure that
+your contribution will be valuable for a long time (and will not get broken, and
+will not be useless after few months).
+
+
+Cheers,
+Angelo
 
