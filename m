@@ -2,88 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D03C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 15:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC68C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 15:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350688AbiETPTC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 11:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50122 "EHLO
+        id S229864AbiETPXp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 11:23:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343812AbiETPTB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 11:19:01 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DF417788A;
-        Fri, 20 May 2022 08:19:01 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: nfraprado)
-        with ESMTPSA id 5B1971F46586
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653059940;
-        bh=YQ31OR4ZEDVzd2CcVyEsIJ0oD9usN7dRjGllBd1TqMc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I9k2T7C3tWF2Q3ecHJRuck5leEQwLkSwMo5DGMerg1mS8Fr1EogfPo6jonnSsp4g7
-         Xw/fpwTKwWh1esgVSCvVPbiZTYPUKvdEDFGGTZ6wvbSRWULRyV9d6KMSqc5vhK7GUZ
-         URBfBdk9fvBJiiMUTml9XZzIW+It09ZGGGev+NcCA6uVo5/B10pF6kU3JA8nIoZPNQ
-         R5aQ98ClKg4IaWUZHu8WvxcXjOWN3SPxm942NPVV1Gh6ynm+Xc1T+iytkEIiMtyT6G
-         ml7WR6OSxIvUhUcjkWkYci1HAMrMp6UHqOJRwIcj3BWXnEbBfC9UCMo1DIwqkQhF17
-         HkK472iVQYwtQ==
-Date:   Fri, 20 May 2022 11:18:54 -0400
-From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
-        <nfraprado@collabora.com>
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v7 07/19] clk: mediatek: reset: Support nonsequence base
- offsets of reset registers
-Message-ID: <20220520151854.kkr2tezmrfniks4j@notapiano>
-References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
- <20220519125527.18544-8-rex-bc.chen@mediatek.com>
+        with ESMTP id S1350764AbiETPXn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 11:23:43 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFC361778BD;
+        Fri, 20 May 2022 08:23:41 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id B1C6D40002;
+        Fri, 20 May 2022 15:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653060220;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=vV05Ae2wXWoOh3lcUOps/wlA6rJMqGUyhxwDB5ig5KE=;
+        b=kndlrVfJL880TKddg9H9kjgcbbaFl2VZORnOwrzDErOvQk5umiUh3wTBbEOTvYwc23Fa63
+        DjH9T/F3+EjSbWZA2Kive9AVDFrkEdOGQu80+5sKvwgB9HAy6qmkdsMZOtc9m/Ymlfks9L
+        wRYG8XXjh4SbHh3NsTMqBPsBdt341LNjfSXo/1egAkplqPQBGgOzf0B9ocOsfjkLN5vMRs
+        yoa91Z94dktfasZDFNR/Y5q46TBh+D3rFTWsCOk54MeZa4jGFjWkT1kiLxmZ1wIFQeSJwm
+        63ATHisY/PZfholk9gtCDUazmPsG8PEgtyQmQ8H91rBUXyavpKK9VHndTBGpig==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH 0/3] Microchip LAN966x USB device support
+Date:   Fri, 20 May 2022 17:23:32 +0200
+Message-Id: <20220520152335.352537-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220519125527.18544-8-rex-bc.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rex,
+Hi,
 
-On Thu, May 19, 2022 at 08:55:15PM +0800, Rex-BC Chen wrote:
-> The bank offsets are not serial for all reset registers.
-> For example, there are five infra reset banks for MT8192: 0x120, 0x130,
-> 0x140, 0x150 and 0x730.
-> 
-> To support this,
-> - Change reg_ofs to rst_bank_ofs which is a pointer to base offsets of
->   the reset register.
-> - Add a new define RST_NR_PER_BANK to define reset number for each
->   reset bank.
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
+This series add support for the USB device controller available on
+the Microchip LAN966x SOCs (LAN9662 and LAN9668).
 
-<snip>
+Both SOCs have the same controller and this controller is also the
+same as the one present on the SAMAD3 SOC.
 
-> diff --git a/drivers/clk/mediatek/clk-mt2701-g3d.c b/drivers/clk/mediatek/clk-mt2701-g3d.c
-> index 9cfd589939e5..5cbc5c42204d 100644
-> --- a/drivers/clk/mediatek/clk-mt2701-g3d.c
-> +++ b/drivers/clk/mediatek/clk-mt2701-g3d.c
-> @@ -35,10 +35,12 @@ static const struct mtk_gate g3d_clks[] = {
->  	GATE_G3D(CLK_G3DSYS_CORE, "g3d_core", "mfg_sel", 0),
->  };
->  
-> +static u16 rst_ofs[] = { 0xC, };
+Regards,
+Herve
 
-Very nitpicky, but you could have left the hex lowercase '0xc'.
+Changes v2:
+- Avoid wildcards in the DT compatible string
+- Rename the DT node
 
-Thanks,
-Nícolas
+Herve Codina (3):
+  clk: lan966x: Fix the lan966x clock gate register address
+  dt-bindings: usb: atmel: Add Microchip LAN9662 compatible string
+  ARM: dts: lan966x: Add UDPHS support
+
+ Documentation/devicetree/bindings/usb/atmel-usb.txt |  3 +++
+ arch/arm/boot/dts/lan966x.dtsi                      | 11 +++++++++++
+ drivers/clk/clk-lan966x.c                           |  2 +-
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+-- 
+2.35.1
+
