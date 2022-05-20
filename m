@@ -2,75 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9565C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 22:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1BDC4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 22:49:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346053AbiETWdd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 18:33:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36804 "EHLO
+        id S231520AbiETWtW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 18:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233176AbiETWdc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 18:33:32 -0400
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A12C16329E;
-        Fri, 20 May 2022 15:33:31 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id i66so11485291oia.11;
-        Fri, 20 May 2022 15:33:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PXDaYfdouwA97Dyh3xFZZ2BaIW2LzW4Se1PNa8S3D9Q=;
-        b=OAGwjAfKT45ZI/iYqIRtke9+AZnPnclq8yYtrACiJ1be4Y9maAU73+tGK6U7e4ZGJ3
-         EdZxgykMtg73akUMxhfbugE13LOf3SHGdBS7L2GnTAlK15aw8/+Oz5wNOvTf9ypBx3Ka
-         jz2SgIaSEbcKpZxIPt6OiIqneLlIi/3kJtvfCfoHsxEQ9DzTfUifqRcMjfaMisGpaHHf
-         YG5ULDdvST3ZpGQkw1vdnVkN1t/EtTCPH5RcUEQR4t+aLj1pSulhdXQGLKFeMbo5N9Hu
-         Y/0sqb31hDGLHct2VHI0cWqpNbh7ZoLcxxnjo+pp27y5Bq7FR7qHCzy+QdPukWAEkWGS
-         qUig==
-X-Gm-Message-State: AOAM5310iBug4amcwL9skVFmssApvmvHYMJSm7HSqTEAsclihDgDAzvh
-        D4PoQarxvXp34dFYZrsCyA==
-X-Google-Smtp-Source: ABdhPJxEqOGnOf4NSH7Hk1LJ68LHOPidjNw1JrZtODYMxN39z+e4TAoUh6dDrjhozXcA7G6zekSwbg==
-X-Received: by 2002:a05:6808:11c2:b0:2f9:b58f:5ac7 with SMTP id p2-20020a05680811c200b002f9b58f5ac7mr7100268oiv.132.1653086010592;
-        Fri, 20 May 2022 15:33:30 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id b7-20020a4aac87000000b0035eb4e5a6d6sm1636202oon.44.2022.05.20.15.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 15:33:29 -0700 (PDT)
-Received: (nullmailer pid 374265 invoked by uid 1000);
-        Fri, 20 May 2022 22:33:15 -0000
-Date:   Fri, 20 May 2022 17:33:15 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>
-Cc:     mturquette@baylibre.com, chun-jie.chen@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        runyang.chen@mediatek.com, sboyd@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, p.zabel@pengutronix.de,
-        wenst@chromium.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        angelogioacchino.delregno@collabora.com, robh+dt@kernel.org
-Subject: Re: [PATCH v7 18/19] dt-bindings: arm: mediatek: Add #reset-cells
- property for MT8186
-Message-ID: <20220520223315.GA374204-robh@kernel.org>
-References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
- <20220519125527.18544-19-rex-bc.chen@mediatek.com>
+        with ESMTP id S230504AbiETWtU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 18:49:20 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C31D1179C1A;
+        Fri, 20 May 2022 15:49:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 3374BCE2B14;
+        Fri, 20 May 2022 22:49:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56AA5C385A9;
+        Fri, 20 May 2022 22:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653086956;
+        bh=QUSuhqBatMv8a5rfEeAnWy70VQgOK4AIq2PZHng3jEo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hnN5/2oY8U65cCyKnn/alQ9Tsc5vqCKaACJJVs6QupvrwF7Lb2r/78IBzIFN8Rm2s
+         j0R7HfW6Di/h4KZNeyN5J6SdKklckpd4pbO86hPNcVUS/I4yLIjNLwZReDtK9/MIWI
+         2X1D60VXtd/WzylqG03HYtx9tGQTro9ZXuPhp2Md5LFb1mEMT87PHMWmTwKOnQT/nE
+         EFcXophlTAocIBVwGqTnjMsKRX2awH9skaIdk50vG18BsN3KSeZ/ngO9xNKYrl2UUi
+         qWxjp7KqXUrT4rnkzcKOw5bBl1INz7iVqSUz2PsQV7uyyCT8bNC9bDqIPKRoGPdYLK
+         rmmCjrm3vzpXg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220519125527.18544-19-rex-bc.chen@mediatek.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <fa94b8f3-a88d-5d9c-9d8a-7c0316f15cfa@linaro.org>
+References: <20220513175339.2981959-1-dmitry.baryshkov@linaro.org> <20220513175339.2981959-3-dmitry.baryshkov@linaro.org> <20220518175808.EC29AC385A5@smtp.kernel.org> <fa94b8f3-a88d-5d9c-9d8a-7c0316f15cfa@linaro.org>
+Subject: Re: [PATCH v6 2/5] clk: qcom: regmap: add PHY clock source implementation
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+Date:   Fri, 20 May 2022 15:49:14 -0700
+User-Agent: alot/0.10
+Message-Id: <20220520224916.56AA5C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 19 May 2022 20:55:26 +0800, Rex-BC Chen wrote:
-> We will use the infra_ao reset which is defined in mt8186-sys-clock.
-> The value of reset-cells is 1.
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml       | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Quoting Dmitry Baryshkov (2022-05-19 04:16:19)
+> On 18/05/2022 20:58, Stephen Boyd wrote:
+> > Quoting Dmitry Baryshkov (2022-05-13 10:53:36)
+> >> diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.c b/drivers/clk/qcom/=
+clk-regmap-phy-mux.c
+> >> new file mode 100644
+> >> index 000000000000..d7a45f7fa1aa
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/clk-regmap-phy-mux.c
+[...]
+> >> +
+> >> +#include "clk-regmap-phy-mux.h"
+> >=20
+> > Same for clk-regmap.h, avoid include hell.
+>=20
+> I couldn't catch this comment. I think we need clk-regmap.h in=20
+> clk-regmap-phy-mux.h as clk_regmap is a part of defined structure.
+>=20
 
-Acked-by: Rob Herring <robh@kernel.org>
+Don't rely on implicit includes. It makes changing header files error
+prone. Also, please trim replies.
