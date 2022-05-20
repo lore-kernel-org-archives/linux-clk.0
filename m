@@ -2,189 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C27C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 11:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CBDC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 11:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348382AbiETLIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 07:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40386 "EHLO
+        id S1348630AbiETLkB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 07:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348381AbiETLIn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 07:08:43 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B01945E158;
-        Fri, 20 May 2022 04:08:42 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id h11so9192792eda.8;
-        Fri, 20 May 2022 04:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:subject:to:cc:message-id:in-reply-to:references
-         :mime-version;
-        bh=wlQFcAca27d557iyLHKZteGlwX1770hELz16/xPa+8Q=;
-        b=bklKJ6UXW0xCPulf0dQx92suPVOMuz5yaRi7JTRNFJ7r4rIggcoMihm4zRWqbP8F5x
-         9m3fANlOUQwSl7ioBZzNZBTs5jfsrLLwTTR96TwMQr1Mcat07nhwNMTja/igVl+wL/kQ
-         PH03npVCT599dBx5BJe6bOQmfUACCoPKRfWG/44qMo+V3RAXVEl4WjxJdT17n67vwB7k
-         ojWj8SNTvlWzIw/suxss3I4oPViyocM9sBbm3OaQKx8qi6TKMHOf9l5rPiUJYrwwcfsF
-         x0G5lNy5dV17oAX2BbBEdNMK0PNrzNiR3amGgoRqnc8V78uLRpdziYwemlzLMi1w78cT
-         703w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
-         :references:mime-version;
-        bh=wlQFcAca27d557iyLHKZteGlwX1770hELz16/xPa+8Q=;
-        b=5xi5RGOTyk3rFoUncNC9yx7x11QFtrS+9Ym8KY7X1BXKg6kRaU3+eSZxPkv1Q6lDzx
-         r03oUWw/JlRNxaN5II3HoP0RHldwtyZmDwnypqmbyLH8rLCqnWPkThcHVTu0b7/g2cx8
-         bElBUC1/scZZGng4ogZtIuNso53XQDHxZay102Au9ICMAvbgfmK5Ol9TjiBYZ7yXY9x8
-         obc0lYXW90Jv7G8G00Io66bgL1GVdc1H0GZukYSFiLxoONbepD2trmM6yUBdENvsh34V
-         CTTYiqPt603z9mE6gtNDqOtUcP0ShFl7Rus8ptSnvl7pDufG9t0EvbsEp6o7pYe1nodr
-         8Szg==
-X-Gm-Message-State: AOAM531HXPgFXs5569sTzFmP+N6OA4lTb7HxT4AvhGTuhGuPyOCT6Aon
-        NyMpsPA3YcgUkmBH5IRcbneGUoWGQl3FoTFN
-X-Google-Smtp-Source: ABdhPJxf/pqeax60rE9s5Nx9mijIV86CCyBP/x+MpqXmCQE5BL3CUFZiZs7lK9NHw5gJl382GO8pjA==
-X-Received: by 2002:aa7:d911:0:b0:42a:af69:e167 with SMTP id a17-20020aa7d911000000b0042aaf69e167mr10106367edr.54.1653044921181;
-        Fri, 20 May 2022 04:08:41 -0700 (PDT)
-Received: from yassine-HP ([2001:1670:c:db50:2f51:85b4:f668:c64f])
-        by smtp.gmail.com with ESMTPSA id eo20-20020a1709069b1400b006f3ef214e58sm3038018ejc.190.2022.05.20.04.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 04:08:40 -0700 (PDT)
-Date:   Fri, 20 May 2022 15:08:26 +0400
-From:   Yassine Oudjana <yassine.oudjana@gmail.com>
-Subject: Re: [PATCH v2 4/4] clk: mediatek: Add drivers for MediaTek MT6735
- main clock drivers
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     Miles Chen <miles.chen@mediatek.com>, bgolaszewski@baylibre.com,
-        chun-jie.chen@mediatek.com, devicetree@vger.kernel.org,
-        ikjn@chromium.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sam.shih@mediatek.com,
-        sboyd@kernel.org, tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
-        wenst@chromium.org, y.oudjana@protonmail.com,
-        ~postmarketos/upstreaming@lists.sr.ht
-Message-Id: <2MH6CR.16DFWCVHBCV@gmail.com>
-In-Reply-To: <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
-References: <NJC6CR.M4CF312LSXXV1@gmail.com>
-        <20220520093501.28758-1-miles.chen@mediatek.com>
-        <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
-X-Mailer: geary/40.0
+        with ESMTP id S1348759AbiETLjk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 07:39:40 -0400
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2224315E629;
+        Fri, 20 May 2022 04:39:31 -0700 (PDT)
+Received: from relay5-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::225])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 7AAF6CABA7;
+        Fri, 20 May 2022 11:34:36 +0000 (UTC)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 3974B1C0009;
+        Fri, 20 May 2022 11:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653046468;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=t1RpCyOt9vJRwKKZzMrNpG1QDdfyBUk2YTX9dVi8KKY=;
+        b=Wcv2GBx4h6bBjBzJJdSS+4fp72OcI+2Tee3mT8kqifTa+CgH64T0l9F1N+HCSwYgXMt/XU
+        1mQlR4x6eCs8CGmkef2yNz1vxLNhgclH9+fi8MhIqSPG52me/Del76AttyXF4bP5dhf82U
+        ulvNLRDEKpq4REfbrBk2opMcYhS5/FQh6XmjT/D+bBpfNrYMupvHDoS5xXULqRGyHnsCn7
+        FVybCaG+3VjOJmI7w0VGs6BJaAiEYXwn0qhIGp856pbl9ri6eLgTFsivh6RcM5yTgv2qA7
+        WP1p0YkRiSYNi9BhReSFhQazp9AuMkfrzD8ZSsC701ZJ0He/bNeXZMORIDhcag==
+Date:   Fri, 20 May 2022 13:34:26 +0200
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
+ compatible string
+Message-ID: <20220520133426.3b4728ae@bootlin.com>
+In-Reply-To: <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
+References: <20220513105850.310375-1-herve.codina@bootlin.com>
+        <20220513105850.310375-3-herve.codina@bootlin.com>
+        <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 13 May 2022 14:57:55 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-On Fri, May 20 2022 at 12:26:25 +0200, AngeloGioacchino Del Regno 
-<angelogioacchino.delregno@collabora.com> wrote:
-> Il 20/05/22 11:35, Miles Chen ha scritto:
->> 
->>>> 
->>>> Thanks for submitting this patch.
->>>> 
->>>> I compare this with drivers/clk/mediatek/clk-mt7986-apmixed.c,
->>>> and other clk files are using macros to make the mtk_pll_data array
->>>> more readable.
->>> 
->>> I'd actually argue that macros make it less readable. While reading
->>> other drivers I had a lot of trouble figuring out which argument
->>> is which field of the struct, and had to constantly go back to the
->>> macro definitions and count arguments to find it. Having it this
->>> way, each value is labeled clearly with the field it's in. I think
->>> the tradeoff between line count and readability here is worth it.
->> 
->> It is easier for multiple developers to work together if we have a 
->> common style.
->> 
->> How do you think?
->> 
-> 
-> In my opinion, Yassine is definitely right about this one: unrolling 
-> these macros
-> will make the code more readable, even though this has the side 
-> effect of making
-> it bigger in the source code form (obviously, when compiled, it's 
-> going to be the
-> exact same size).
-> 
-> I wouldn't mind getting this clock driver in without the usage of 
-> macros, as much
-> as I wouldn't mind converting all of the existing drivers to 
-> open-code everything
-> instead of using macros that you have to find in various headers... 
-> this practice
-> was done in multiple drivers (clock or elsewhere), so I don't think 
-> that it would
-> actually be a bad idea to do it here on MediaTek too, even though I'm 
-> not aware of
-> any *rule* that may want us to do that: if you check across 
-> drivers/clk/*, there's
-> a big split in how drivers are made, where some are using macros 
-> (davinci, renesas,
-> samsung, sprd, etc), and some are not (bcm, sunxi-ng, qcom, tegra, 
-> versatile, etc),
-> so it's really "do it as you wish"...
-> 
-> ... *but:*
-> 
-> Apart from that, I also don't think that it is a good idea to convert 
-> the other
-> MTK clock drivers right now, as this would make the upstreaming of 
-> MediaTek clock
-> drivers harder for some of the community in this moment... especially 
-> when we look
-> at how many MTK SoCs are out there in the wild, and how many we have 
-> upstream:
-> something like 10% of them, or less.
-> 
-> I see the huge benefit of having a bigger community around MediaTek 
-> platforms as
-> that's beneficial to get a way better support and solidity for all 
-> SoCs as they
-> are sharing the same drivers and same framework, and expanding the 
-> support to more
-> of them will only make it better with highly valuable community 
-> contributions.
-> 
-> 
-> That said, Yassine, you should've understood that you have my full 
-> support on
-> unrolling these macros - but it's not time to do that yet: you 
-> definitely know
-> that MediaTek clock drivers are going through a big cleanup phase 
-> which is, at
-> this point, unavoidable... if we are able to get the aid of scripts 
-> (cocci and
-> others), that will make our life easier in this cleanup, and will 
-> also make us
-> able to perform the entire cleanup with less effort and in less 
-> overall time.
-> 
-> With that, I'm sad but I have to support Miles' decision on this one, 
-> and I also
-> have to ask you to use macros in this driver.
-> 
-> 
-> I am sure - and it is my wish - to see MediaTek clock drivers 
-> open-coding stuff
-> instead of using macros, but that's something for the future - which 
-> will happen
-> after the more important cleanups.
-> 
-> After all, it will be just about running "gcc -E xxxx.c" and 
-> copy-pasting the
-> unrolled macros to the clock drivers, which will be pretty fast and 
-> straightforward.
-> 
-> Sorry for the wall of text, by the way.
-> 
-> Cheers,
-> Angelo
+> On 13/05/2022 12:58, Herve Codina wrote:
+> > The USB device controller available in the Microchip LAN966x SOC
+> > is the same IP as the one present in the SAMA5D3 SOC.
+> >=20
+> > Add the LAN966x compatible string and set the SAMA5D3 compatible
+> > string as a fallback for the LAN966x.
+> >=20
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/atmel-usb.txt | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/usb/atmel-usb.txt b/Docu=
+mentation/devicetree/bindings/usb/atmel-usb.txt
+> > index f512f0290728..a6fab7d63f37 100644
+> > --- a/Documentation/devicetree/bindings/usb/atmel-usb.txt
+> > +++ b/Documentation/devicetree/bindings/usb/atmel-usb.txt
+> > @@ -87,6 +87,9 @@ Required properties:
+> >  	       "atmel,at91sam9g45-udc"
+> >  	       "atmel,sama5d3-udc"
+> >  	       "microchip,sam9x60-udc"
+> > +	       "microchip,lan996x-udc" =20
+>=20
+> No wildcards please, especially that it closely fits previous wildcard
+> (lan996x includes lan9960 which looks a lot like sam9x60...)
+>=20
 
-Fair enough. I'll switch to macros in the next version.
+Well, first, I made a mistake. It should be lan966x instead of lan996x.
 
-Thanks,
-Yassine
+This family is composed of the LAN9662 and the LAN9668 SOCs.
+
+Related to the wilcard, lan966x is used in several bindings for common
+parts used by both SOCs:
+- microchip,lan966x-gck
+- microchip,lan966x-cpu-syscon
+- microchip,lan966x-switch
+- microchip,lan966x-miim
+- microchip,lan966x-serdes
+- microchip,lan966x-pinctrl
+
+I think it makes sense to keep 'microchip,lan966x-udc' for the USB
+device controller (same controller on LAN9662 and LAN9668) and so
+keeping the same rules as for other common parts.
+
+Regards,
+Herv=C3=A9
+
+>=20
+> Best regards,
+> Krzysztof
 
 
+
+--=20
+Herv=C3=A9 Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
