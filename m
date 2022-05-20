@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BB9C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 09:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC975C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 09:44:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231609AbiETJn4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 05:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35612 "EHLO
+        id S244446AbiETJn7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 05:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234186AbiETJny (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 05:43:54 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3060914AA64
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:43:53 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id 10so3498111plj.0
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:43:53 -0700 (PDT)
+        with ESMTP id S1347780AbiETJn4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 05:43:56 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB913149AAF
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:43:55 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id bh5so6928374plb.6
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ISg/8xMPMfr1lZg9uez8+LcDvNEZDPUAQ4cjw7mzFfk=;
-        b=GwV6FZzfJb4ectmQh1Tv2YE7JL/cAmzGrnb7G6ggB2qJ06d7/Cx4fOAm6tnhSfzCc5
-         fLGymIpxWMM5AWSPgfMGH3YVPyPRoJAYsFvW94d0nDzmbO/Mmdtals0dE5ABxSVAFvXP
-         f8CIF/z2jE/MOX+9Wf7LLVB3ztYV56Z8aDP6Q=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=N537kmXnIFF/B5MPYA58NfVjnsyjLkZ7UggoyVApuvw=;
+        b=KC3c/8wyL3TWVMhL+5tSUJIk8jM4TdkimQNEt+YUcV/P3D4O9WrDmYeovQCEcsR1r5
+         XWSNKSVZ0WFawguQMabuNh3CoUu73KSTIFVsEoNKpo4D3eBbpFm0c9d9ubGLXmEXW5GW
+         lQhnaIvUaUXAm8W1h0p1CQJLswQ7ZYLzUoC5w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ISg/8xMPMfr1lZg9uez8+LcDvNEZDPUAQ4cjw7mzFfk=;
-        b=FaOYCOeH8RUE9dgcZfOzsSbj9LeclA80RErnBKWVM7RdFli9Ev6AnnCC/24e3s5rq+
-         izI1iEPMZPDovwUVphBYKCKhI5KMg5vqsV+Yiz+nUi+w+KTbTpl1cSmEfFrT/sfqqHfv
-         Oe7s440btZGbfzff70edGIMdB7zCFNVH8XoFKlVcQ4rJefNnrMagOU5KCrE9pfur61zN
-         yNRjNHXixzFHzPFPkRI2C6R2AmNhoI4zAZQFn3uu/RJ1yL23m/JzppNJTpB0uYkAZELv
-         reWTQkk5C02p5fRW5J5svPuorYWn8jyFZmECUbE36/Xwu1eq6Lz6/QWccTAF/1EqMFFT
-         u/OQ==
-X-Gm-Message-State: AOAM5307yl+F9uajokfO05eh7eTck+h4PAfTzeIsivVv3tzX4OE/cpge
-        ULBAYf06PtEhonaGz9qukwvQV13UQkcfaQ==
-X-Google-Smtp-Source: ABdhPJy43LUtdN+xEWvgtRwLWdIsN389lpZaprg3R4KGqXqmkxm/vSRHdq0C/UG39gRhRdKmr/CD6w==
-X-Received: by 2002:a17:90b:3649:b0:1db:a201:5373 with SMTP id nh9-20020a17090b364900b001dba2015373mr10116081pjb.175.1653039832597;
-        Fri, 20 May 2022 02:43:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=N537kmXnIFF/B5MPYA58NfVjnsyjLkZ7UggoyVApuvw=;
+        b=DmAFhWnclpsgSw/qyZwYoWZlTfgNB0ZadpVIbHRJJ1jqXXdcrjeb6xpzTdG2mFtagN
+         PEOgG7z/J26WNNiNgehYW1vLp2ui6ufTiMiTuwEikMQU9CqRu7u85cH7FCuxDxZuJSqv
+         FBHNj9KjXdaNDsYAFY18QCzo2lPoShoQMZUxgjbCYxStkPDPVzYwQ6Ctq418DzeqAlPc
+         U3HE4BAQNDPoFUioxEJsmcYz47Kh0KQY3Cv0fJlTgcox/GREWUA3cbeFLYpmVXC8tnlM
+         194vWxecINc7mg4gb0isSfSIjVB0LqrchPqZKgyy1b5Tax9cUrRE/8Q40E21sVBdDRiM
+         d3+w==
+X-Gm-Message-State: AOAM530PbNkhBosrHjxmIyKpyMq3qm9fnezc7mLZEyHzXH15BBm7iKzE
+        SVbvI6SHUOISmKb4kyCTO69GHA==
+X-Google-Smtp-Source: ABdhPJx3Qh3cpJC+oik5Y71LHH8R8PjCzSbTcq79RW9UtXYQoOStcvHrjZaDjBr8UJjUlGm3KiM5lg==
+X-Received: by 2002:a17:90b:1e04:b0:1dc:9252:efbc with SMTP id pg4-20020a17090b1e0400b001dc9252efbcmr10148535pjb.39.1653039835451;
+        Fri, 20 May 2022 02:43:55 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ec49:9912:894:222d])
-        by smtp.gmail.com with ESMTPSA id 23-20020aa79217000000b0050dc76281bfsm1290597pfo.153.2022.05.20.02.43.50
+        by smtp.gmail.com with ESMTPSA id 23-20020aa79217000000b0050dc76281bfsm1290597pfo.153.2022.05.20.02.43.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 02:43:52 -0700 (PDT)
+        Fri, 20 May 2022 02:43:55 -0700 (PDT)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -58,63 +58,44 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] clk: mediatek: mt8183: Fix GPU/MFG clock rate changing
-Date:   Fri, 20 May 2022 17:43:19 +0800
-Message-Id: <20220520094323.754971-1-wenst@chromium.org>
+Subject: [PATCH 1/4] arm64: dts: mt8183: Fix Mali GPU clock
+Date:   Fri, 20 May 2022 17:43:20 +0800
+Message-Id: <20220520094323.754971-2-wenst@chromium.org>
 X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
+In-Reply-To: <20220520094323.754971-1-wenst@chromium.org>
+References: <20220520094323.754971-1-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+The actual clock feeding into the Mali GPU on the MT8183 is from the
+clock gate in the MFGCFG block, not CLK_TOP_MFGPLL_CK from the TOPCKGEN
+block, which itself is simply a pass-through placeholder for the MFGPLL
+in the APMIXEDSYS block.
 
-This series fixes the clock rate changing for the GPU. This work came
-about as part of adding DVFS support for the Mali GPU on MT8183, to
-support efforts in testing the SVS patches [1] on MT8183.
+Fix the hardware description with the correct clock reference.
 
-This series fixes a couple things:
+Fixes: a8168cebf1bc ("arm64: dts: mt8183: Add node for the Mali GPU")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. Fix the clock reference for the GPU. The device tree incorrectly
-   references the top level PLL, when in fact it is fed from the clock
-   gate in the MFGCFG block. Fixed in patch 1.
-
-2. Clock rate requests on the MFG clock gate aren't propagated up the
-   tree. Fixed in patch 2 by adding CLK_SET_RATE_PARENT.
-
-3. MFG clock needs to be temporarily muxed away from MFG PLL during PLL
-   reconfiguration, to avoid glitches. This is done using a notifier.
-   The framework is added in patch 3, and added to the driver in patch 4.
-
-This is based on my "clk: mediatek: Move to struct clk_hw provider APIs"
-series version 3 [2], which was just merged.
-
-Please have a look.
-
-The GPU DVFS stuff will be sent separately, as that part is a bit more
-contentious, and the changes span more subsystems.
-
-
-Regards
-ChenYu
-
-[1] https://lore.kernel.org/linux-mediatek/20220516004311.18358-1-roger.lu@mediatek.com/
-[2] https://lore.kernel.org/linux-mediatek/20220519071610.423372-1-wenst@chromium.org/
-
-Chen-Yu Tsai (4):
-  arm64: dts: mt8183: Fix Mali GPU clock
-  clk: mediatek: mt8183: mfgcfg: Propagate rate changes to parent
-  clk: mediatek: mux: add clk notifier functions
-  clk: mediatek: mt8183: Add clk mux notifier for MFG mux
-
- arch/arm64/boot/dts/mediatek/mt8183.dtsi |  2 +-
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c |  6 ++--
- drivers/clk/mediatek/clk-mt8183.c        | 21 ++++++++++++
- drivers/clk/mediatek/clk-mux.c           | 42 ++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mux.h           | 15 +++++++++
- 5 files changed, 82 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 01e650251928..6ced76a60aab 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -1368,7 +1368,7 @@ gpu: gpu@13040000 {
+ 				<GIC_SPI 278 IRQ_TYPE_LEVEL_LOW>;
+ 			interrupt-names = "job", "mmu", "gpu";
+ 
+-			clocks = <&topckgen CLK_TOP_MFGPLL_CK>;
++			clocks = <&mfgcfg CLK_MFG_BG3D>;
+ 
+ 			power-domains =
+ 				<&spm MT8183_POWER_DOMAIN_MFG_CORE0>,
 -- 
 2.36.1.124.g0e6072fb45-goog
 
