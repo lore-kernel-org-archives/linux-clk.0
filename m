@@ -2,129 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D48C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 09:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6811C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 10:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245511AbiETJo0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 05:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36108 "EHLO
+        id S1348038AbiETKKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 06:10:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347912AbiETJoQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 05:44:16 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDF114AF53
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:44:04 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id x12so7289557pgj.7
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 02:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AvNGESyxRhAV7gvo9X+ZKpVxV8kV0aTUV2T2AAUUwSE=;
-        b=BkRPFP15NL4IDnXh3hlvK+h4PzJxWcyRSC5t3p3BGGZMBbn5p2tRT10c7yXnEjZ7qv
-         TjwumJSNJCbWyz+S7Oq4+ikTRxyYmgHbP6LlHqFnYLRs4Wtl7jh81BBsLNinRfjORf5Q
-         QReafMfp7lU1rHeO82t6+rUtgUpjsM6xenPjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AvNGESyxRhAV7gvo9X+ZKpVxV8kV0aTUV2T2AAUUwSE=;
-        b=vvxZcnMy1sLhXS+0l3B1abSL3XdvK02q+ucB3S8phvg6J08ELGAT3KEYuBH48JV41f
-         pqlAlZ71kMJLGVEuARYQVZLkUcm7k8zi6bJjeIjJXHpukHjcm7mVwFd72pZxgynlGKy2
-         iUK0JXoK28K2Q2rUEZb9MM1LTKlPaB7A6ualoY+ohSCfsxYm/PQxK/fy6UuOWgA0SnaS
-         3Hb+VJeMnSYd8kZuLw0oott08EDbYcNBQNK4s+Q2BAQRBbTGCo7NUyFmadljDVrKUuiG
-         hgr2g1GZHEEdT46ZzVdybeo67SbUb6rbLPypMlzeGfaDz/pWxU2EHHq41gBPAgSMX6zQ
-         bY0A==
-X-Gm-Message-State: AOAM530uMk/Mqnp6rRyHkRmnWR7VnvKTCesLc9wBH5QD3frkr3y/U5dW
-        4QJlDYcco+ymyUiVTLIZIqOpuQ==
-X-Google-Smtp-Source: ABdhPJzv5s6fjmTY7cGc4/IdOJw7m4BY9pIbTwRNzDnU08TqxlxAF8ZR6ZdjHyvyfxHFlJwT2Cytnw==
-X-Received: by 2002:a63:6802:0:b0:3f6:7295:7c3e with SMTP id d2-20020a636802000000b003f672957c3emr2804558pgc.308.1653039843763;
-        Fri, 20 May 2022 02:44:03 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ec49:9912:894:222d])
-        by smtp.gmail.com with ESMTPSA id 23-20020aa79217000000b0050dc76281bfsm1290597pfo.153.2022.05.20.02.44.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 May 2022 02:44:03 -0700 (PDT)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: mediatek: mt8183: Add clk mux notifier for MFG mux
-Date:   Fri, 20 May 2022 17:43:23 +0800
-Message-Id: <20220520094323.754971-5-wenst@chromium.org>
-X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
-In-Reply-To: <20220520094323.754971-1-wenst@chromium.org>
-References: <20220520094323.754971-1-wenst@chromium.org>
+        with ESMTP id S234933AbiETKKW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 06:10:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8100DFF6A;
+        Fri, 20 May 2022 03:10:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 44B2861CFE;
+        Fri, 20 May 2022 10:10:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92626C36AE3;
+        Fri, 20 May 2022 10:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653041420;
+        bh=b5B3dWn6n9Wxng7nBg4KPCY57stZm2SUMOlxnd/cJt8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DDeht8FOFq8hO8w1PZZUlFAGMZjBPOubMjKDjmKbHJu6IkiTaaRuPx98Tg+mqAMUP
+         szPmag55Qof2XpivZOcAujXs0Inu/jN7h3+BwGEU7VKHxNSVcrpK9QEOWGNzQiu94H
+         Vj25DWKdDUHKc9s+DjdGPCqsabrvPZZ4z7fJzmOg8qV+Od0DxH79gTzPnYsEWleupI
+         etyJ+AxawS3VPkAry7uclzUndFIDeHV+fixCkLSaPRKcmFTFbw9jDZ3j/NKfGPkzYU
+         YJpO/GG5H1PlxNjRjed0vJiMqQRUiRPqcauJ25p3fkaq3fnfvf8p43nOI1qgoDr3B2
+         XxfR34OqYcVYQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1nrzaO-00056w-Bg; Fri, 20 May 2022 12:10:20 +0200
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
+Date:   Fri, 20 May 2022 12:09:46 +0200
+Message-Id: <20220520100948.19622-2-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220520100948.19622-1-johan+linaro@kernel.org>
+References: <20220520100948.19622-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When the MFG PLL clock, which is upstream of the MFG clock, is changed,
-the downstream clock and consumers need to be switched away from the PLL
-over to a stable clock to avoid glitches.
+Add a helper for updating the SW_COLLAPSE bit during initialisation and
+state updates.
 
-This is done through the use of the newly added clk mux notifier. The
-notifier is set on the mux itself instead of the upstream PLL, but in
-practice this works, as the rate change notifitcations are propogated
-throughout the sub-tree hanging off the PLL. Just before rate changes,
-the MFG mux is temporarily and transparently switched to the 26 MHz
-main crystal. After the rate change, the mux is switched back.
+Note that the update during initialisation was relying on the
+SW_COLLAPSE bit not having been set earlier rather than passing in zero
+explicitly to clear the collapse vote.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/clk/mediatek/clk-mt8183.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 8a755fadebb5..afef3738396e 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -1192,6 +1192,8 @@ static int clk_mt8183_top_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
- 	struct device_node *node = pdev->dev.of_node;
-+	struct mtk_mux_nb *mfg_mux_nb;
-+	int i, ret;
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 44520efc6c72..c676416e685f 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -132,10 +132,24 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
+ 	return -ETIMEDOUT;
+ }
  
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
-@@ -1217,6 +1219,25 @@ static int clk_mt8183_top_probe(struct platform_device *pdev)
- 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
- 		top_clk_data);
- 
-+	/* Register mux notifier for MFG mux */
-+	mfg_mux_nb = devm_kzalloc(&pdev->dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
-+	if (!mfg_mux_nb)
-+		return -ENOMEM;
++static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
++{
++	u32 reg, mask;
++	int ret;
 +
-+	for (i = 0; i < ARRAY_SIZE(top_muxes); i++)
-+		if (top_muxes[i].id == CLK_TOP_MUX_MFG)
-+			break;
-+	if (i == ARRAY_SIZE(top_muxes))
-+		return -EINVAL;
++	reg = sc->gdscr;
++	mask = SW_COLLAPSE_MASK;
 +
-+	mfg_mux_nb->mux = &top_muxes[i];
-+	mfg_mux_nb->bypass_index = 0; // Bypass to 26M crystal
-+	ret = devm_mtk_clk_mux_notifier_register(&pdev->dev,
-+						 top_clk_data->hws[CLK_TOP_MUX_MFG]->clk,
-+						 mfg_mux_nb);
++	ret = regmap_update_bits(sc->regmap, reg, mask, val ? mask : 0);
 +	if (ret)
 +		return ret;
 +
- 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
- 				      top_clk_data);
- }
++	return 0;
++}
++
+ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ {
+ 	int ret;
+-	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+ 
+ 	if (status == GDSC_ON && sc->rsupply) {
+ 		ret = regulator_enable(sc->rsupply);
+@@ -143,9 +157,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+ 			return ret;
+ 	}
+ 
+-	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+-	if (ret)
+-		return ret;
++	ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
+ 
+ 	/* If disabling votable gdscs, don't poll on status */
+ 	if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
+@@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
+ 		 * If a Votable GDSC is ON, make sure we have a Vote.
+ 		 */
+ 		if (sc->flags & VOTABLE) {
+-			ret = regmap_update_bits(sc->regmap, sc->gdscr,
+-						 SW_COLLAPSE_MASK, val);
++			ret = gdsc_update_collapse_bit(sc, false);
+ 			if (ret)
+ 				return ret;
+ 		}
 -- 
-2.36.1.124.g0e6072fb45-goog
+2.35.1
 
