@@ -2,72 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A202C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 19 May 2022 23:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9857DC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 00:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245021AbiESXQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 19:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56332 "EHLO
+        id S1344032AbiETAhF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 20:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237386AbiESXQQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 19:16:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23642590A9;
-        Thu, 19 May 2022 16:16:14 -0700 (PDT)
+        with ESMTP id S237421AbiETAhE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 20:37:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0C112FECF;
+        Thu, 19 May 2022 17:37:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A83766187F;
-        Thu, 19 May 2022 23:16:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083A1C385AA;
-        Thu, 19 May 2022 23:16:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5F4E1B82953;
+        Fri, 20 May 2022 00:37:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5182C385AA;
+        Fri, 20 May 2022 00:37:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653002173;
-        bh=4RcOsbOkSH2T6G+z2bll0695ifRPLbDDEza7W0mHcq4=;
+        s=k20201202; t=1653007021;
+        bh=gvgyiR4nm40hdy8JYiEAaMyY8X8o/o9DlmkPBGAkQUU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=A0us1n3t0rCnFXtfd/1Gs0VKNNwEHOoEeF8dRVZCCBEEaX42us69vpmVCyUlrVD/c
-         2RmdHKmySO/GZirxNjQusIwRpDnpvv469UP8gBPbDQkkWRyIogLKHGwiWGeTMj8g8i
-         2WNOp7bM3MfVvmzGLYrvi29RVJDvjn/cpN90znkj7pEs8Dgw9+FzET/EB8X7ldhieG
-         GNLnngMiT7nZprvnEMpUUXGrWUAal2jpjJW2kfxVdmlb01s9fcTgESsNHNiWxR8r7e
-         zn468IsI3OUn2xfPCaMZj5i7VIUQX/LGC78PfvukTLSmfMftU7aJLsDU3KINjbIVGf
-         sQZGUI1asCcFA==
+        b=WudWJUfXP+mktm9kZee6vsDLSvX5C1a5PoJCzx2p/xCfk27AqCC9Ay/qZU/6sTHk3
+         Cmyje746N9XWWFpxjVbRPERDRCAhDIu0TDTbHyhjI1g1FjealQZ/170sPl0JpHokwL
+         x/S98/tyrueVqzyT5cseyROcdRZ7DSEWWypejkQazOBVQQowQfW0GliUMZwTvzxem3
+         jQF6t3xm6z6iebvvreCki2OY+PzazDYHEqXadJtkMCIWSEBe9O5Pt9sOeS/cdqvXcb
+         cgUtCHizBZr9TZR3wK92CjCV0/fstJEeeI/4mmrrFSfJFX4OcmCBkwMaa6X7BpJiDH
+         tn1wdx7RepjNg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220428154154.2284317-1-robh@kernel.org>
-References: <20220428154154.2284317-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: Replace common binding with link to schema
+In-Reply-To: <20220519071610.423372-2-wenst@chromium.org>
+References: <20220519071610.423372-1-wenst@chromium.org> <20220519071610.423372-2-wenst@chromium.org>
+Subject: Re: [PATCH v3 1/5] clk: mediatek: Make mtk_clk_register_composite() static
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-Date:   Thu, 19 May 2022 16:16:11 -0700
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Chen-Yu Tsai <wenst@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 19 May 2022 17:36:58 -0700
 User-Agent: alot/0.10
-Message-Id: <20220519231613.083A1C385AA@smtp.kernel.org>
+Message-Id: <20220520003700.E5182C385AA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2022-04-28 08:41:54)
-> The contents of the clock binding have been moved to the clock binding
-> schema in the dtschema repository. The desire is for common bindings to
-> be hosted in the dtschema repository.
+Quoting Chen-Yu Tsai (2022-05-19 00:16:06)
+> mtk_clk_register_composite() is not used anywhere outside of the file it
+> is defined.
 >=20
-> Replace the contents with a link to the clock binding schema as there
-> are still many references to clock-bindings.txt in the tree. This will
-> prevent additions without a schema.
+> Make it static.
 >=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Fixes: 9741b1a68035 ("clk: mediatek: Add initial common clock support for=
+ Mediatek SoCs.")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabor=
+a.com>
+> Tested-by: Miles Chen <miles.chen@mediatek.com>
 > ---
 
 Applied to clk-next
-
-> Most of the clock binding doc was already moved. 2 more sections are
-> pending:
->=20
-> https://lore.kernel.org/all/20220428152633.2261979-1-robh@kernel.org/
-> https://lore.kernel.org/all/20220428152719.2263164-1-robh@kernel.org/
-
-I missed this one!
