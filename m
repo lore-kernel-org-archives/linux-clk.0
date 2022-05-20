@@ -2,195 +2,211 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C1EC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 16:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87DEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 16:04:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351251AbiETQBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 12:01:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46872 "EHLO
+        id S1351285AbiETQEG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 12:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351300AbiETQBO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 12:01:14 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2118.outbound.protection.outlook.com [40.107.114.118])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23AE43465C
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 09:01:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=npkMDmYuSB8+GCzpckv+dp3l8JRcrWHMj/2G0ge6ZZi/6lMwVxl6JWGkxj+90jJi4TzeoS6HVkq1TjboXjqFTpBZ5i+aG3lTR3VLhPDIszXecUK48WsR56EWRC5YpEviz6AvY9liaisWtQEZ2QWwh2tYCYv/sH7J9D/PfEg71ANU0RmyStyULBmFLpFp+ZlnALECnxlMaLqVggImhM0AYXBCfthnYmQyPKO3MNqStTesVyEeeTaz+iRij/+OoyAhNGkNJlnrqvnM7xueRfp7mUo24g4jQOYjUfW6aiSaEo3o2UCb13+bzNRQbtw6bUCYf4sxBVQbs5uI4tDwRpDZcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zx1wq5HLCcx0qyOnRoM9OPXeQVv7kOdTqTU8cnKyLlM=;
- b=hoK+7Vjmr87HCb/WFg8rwcnWwJbkCia1XUeK/YmDv1a8Stud4hb/8muwXEe6rQjOt5KPavkKooWqk0QRApOhQNWOc2jrNBEgmyVP6vOsCCY2XdnqLEN68zuxXJHyBDQPqIRz65wSZiWWaZDms4VZL0nHs3dWn23slxMUqf6m1pwA9m1glz3rxYq+rFDIhBD4xeaoO2yRfGYaDatlbIV0qc3AYUVT8GDI9KJJRs/Fy25dUPNVtayE29gAECEdhu9gtclqiIFlGPtOppTb6etZX+vmPVOYDy93YGylcZI3zEBK+k0V2e+MmOi8YOo9KogIO8GeYWYiO77EphHOESQeAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zx1wq5HLCcx0qyOnRoM9OPXeQVv7kOdTqTU8cnKyLlM=;
- b=gYP13joCBkha8y4K0yp9hVPIi1Nt1nN8SGX78pHJ5/d0pVPjM3dE8EVJ5rvchk+ESQVd2X/uyJg5DVXF6JTZOVBo/+YAkgkIJjThCl3AIzRhLzxW56OwrTnJbIL/ctxy7Yvbu5ZLAgAw6ea69U+WBJDO+D84p5I3jnS/3m1qmo0=
-Received: from TYYPR01MB7086.jpnprd01.prod.outlook.com (2603:1096:400:de::11)
- by OS0PR01MB5842.jpnprd01.prod.outlook.com (2603:1096:604:bb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.14; Fri, 20 May
- 2022 16:01:10 +0000
-Received: from TYYPR01MB7086.jpnprd01.prod.outlook.com
- ([fe80::e180:5c8b:8ddf:7244]) by TYYPR01MB7086.jpnprd01.prod.outlook.com
- ([fe80::e180:5c8b:8ddf:7244%8]) with mapi id 15.20.5273.017; Fri, 20 May 2022
- 16:01:10 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "cocci@inria.fr" <cocci@inria.fr>
-CC:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
+        with ESMTP id S242089AbiETQEF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 12:04:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ADDE17CE46;
+        Fri, 20 May 2022 09:04:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 44BFAB82C4E;
+        Fri, 20 May 2022 16:04:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F4171C34100;
+        Fri, 20 May 2022 16:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653062642;
+        bh=YeGJKPJHDvFCGBv8yruGYmLxXgiUwVSyw6y7dTSAUI0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m0j9iT85np1fFZ5QWV09+pUu0gNYGIVcWBJwLhVAsebcsCPuDH+JnhAtwrYW688Iu
+         6EeiG5xxks8XZ5IDDLwXeSKOJkzIl5tLiTRN0ReyzSTUqjHTWoeD75CqUWeShSzqFp
+         a2t3R1eM9di5CIVhcb4MUVM9qg6r/m8VYqZ5eF5TqxlcB4Ae52kWz/tYoLcN6pQVfv
+         i5afkKafkeu3F9hMtIL3UVV4y16qj5oSIDJX66OQmalwV4eJfy+HWWaDD0jdqpKvua
+         p8TGatdpiERqFkbtUvmB5DDe5B4segNjkQFLBFV2O/011GhElbR+U+p9xAiRKzndyo
+         0syphMemdWX0w==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1ns56g-00085Y-4Q; Fri, 20 May 2022 18:04:02 +0200
+Date:   Fri, 20 May 2022 18:04:02 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [cocci] [RFC] coccinelle: Add test for unnecessary check before
- calling clk_disable_unprepare()
-Thread-Topic: [cocci] [RFC] coccinelle: Add test for unnecessary check before
- calling clk_disable_unprepare()
-Thread-Index: AQHYafMQ1GqDaGPIYUKMw5zLbxeQC60mn8+AgAEtr7CAACLhgIAAANuA
-Date:   Fri, 20 May 2022 16:01:10 +0000
-Message-ID: <TYYPR01MB70862DC60F78A1F38F8CAA48F5D39@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-References: <20220517133556.6934-1-phil.edworthy@renesas.com>
- <c1d5d00d-d770-530b-abfa-0c1f462e5f22@web.de>
- <TYYPR01MB7086773272C8B95C344E663FF5D39@TYYPR01MB7086.jpnprd01.prod.outlook.com>
- <46c9b89a-a97f-1955-e231-de42be1d8e35@web.de>
-In-Reply-To: <46c9b89a-a97f-1955-e231-de42be1d8e35@web.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b4a2828e-a724-4a27-1fbb-08da3a79f503
-x-ms-traffictypediagnostic: OS0PR01MB5842:EE_
-x-microsoft-antispam-prvs: <OS0PR01MB58429C43D5BEF96296C7F9BAF5D39@OS0PR01MB5842.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lbKxqkzlzmuFzTlM4ak9hBX9Zr4eMLZ5Gsh6eDAh7cORtcvkwnmgTdK9r1elNr3OKLczW33sajjCc9nt94NVeGWi40J9CwHDWddPir40x7eIbuL3igvo0DIL8bEhytK8Jbz8Uz8gBhHZGQcRQLQrqVPxNux/IxV+gLuGH9hk9IJyFQ90UYN58QF5s6k5zWo1deJVkRnpiRkdRobH8aXTzOr65515FnfIR8akApymhDgVbeA3Bb7V+BcwVoU319RCGNblYZtwvCxgnTlf0NTnHz+FbiS/ZVWlpi8IRT/sF19eWXMFXgdOpZroeyf0EWXu+W2utMpwH21QIRaT1lqFfxhN6LwV59U5GXd0+yIiRoNPiCxN4c4BVn0IfeMcErZRkM6yDzfi50tuuxHyQUDP5u1h7E1v2Vz45DczfSBgXN9qLY1F30uar3qAIKjnDJh+M6HUPz4GebMr9udnv9fIVq7H9NqHLb0WNXlyxP3VQlihGqVBVyR2jRKgI8w7+VfaHBeZuKT/9UWnuHvEO+dTJRzyks5VPv5DU4Yy7GuxQBJ/9y9W0XJh2cLBgpIrp2NUGu38Tl+zR2vVL7TtqAfgZhU3/8urPyf/Mgm0DawZfKZ1WVreVwSO9wANj/i7FJrDbADm069iv5h2h86BUhNY2YE6d2dD7HnsJuEdBQpnRffKGgwqq9jzYhlGeWjAF6zEslUBJi2TNFKSYLuBHAuPmH6OTulD2ug7TldPC2W7zq1xCAG5vLNwhk54XqxHzF11IShCsffsvU/loI2W93OHNZ7UIODx7WSzAEGpOvceeVE=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB7086.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(54906003)(6506007)(66446008)(55016003)(122000001)(53546011)(83380400001)(8676002)(186003)(64756008)(76116006)(110136005)(508600001)(4326008)(66946007)(66556008)(66476007)(44832011)(38100700002)(316002)(38070700005)(26005)(71200400001)(966005)(5660300002)(9686003)(86362001)(8936002)(2906002)(7696005)(33656002)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?2fdR8UJDpfIp1isYTaIJ7sD4Iq+A73IqwO7rU3AOK4K7q+cyNPR2qrqtQ0?=
- =?iso-8859-1?Q?cX0DZaz+UWWIaSyOpqpUXxb+w9LVvwiGnEBAkVZeRL+F4a8lPCm9QlaYwE?=
- =?iso-8859-1?Q?M9cs3ILWHwAo8SZKm7+ukusWAv1vaQfpJf6MGwllcIM/lPzTAFx/ekea5Q?=
- =?iso-8859-1?Q?GtxsSoB4S+689DnTzPM8i8d7/DRTyxu2pdulswed3M9Dju0qMNspYpxsNC?=
- =?iso-8859-1?Q?GwpDAXZYd6AytvhGH2xkGpKA5RcV3FGirt++LyrruZHSYCjQGUPjdiGnmL?=
- =?iso-8859-1?Q?iBPI2bZW1QNALJtF4ioyT5g7gufebqcraDriOZOpG9t3DIKCSoD0Hqyiyv?=
- =?iso-8859-1?Q?XJoM4yWAE8bPN3sET3eDDiwDOvnHPyv+LEgwI3NgDbTqh5n9UKiSGdSb7F?=
- =?iso-8859-1?Q?tm51yd9qyM3FYYA62Iuy7Vmk2Uet3SvxqAbn6c02/8dmoeUcLWmfDwLh7v?=
- =?iso-8859-1?Q?QfbL49W7xCFyArw4CWDl5RpcWWlt+IOKKM/04kv8xaOs4yAvuDm/gG0Liw?=
- =?iso-8859-1?Q?nhaNx10YK0zYaHn0IGH/6qpWJJ/UHnFBdBy+RNnHP0o29QecaWWTXMjIOA?=
- =?iso-8859-1?Q?AMJZFYCAN/m2ib/X/JIGBxbMliCqnbzx5KbMujQsCfzhatT/Yj+KM+vQAi?=
- =?iso-8859-1?Q?kWXg4hklLtrHs9ec96ta3tCi7c8NV6cLRsdyY8iFR6TihnwDq3OVKWP0Ce?=
- =?iso-8859-1?Q?j7vm7lI9Ja2CnrYC3k/toxZaS1cjTJr2Iv8e2AQr7saICGVQd+ESiPQTmx?=
- =?iso-8859-1?Q?FmJ0K2aFn0my8epeKBlwCjA1u2qyytuBTFvLPdbcUVqlZdxSW1yVmC8Jnf?=
- =?iso-8859-1?Q?q7LGsZek7oOPHKNr9FY4lHeEqdYEV8a1EaglsEYI2hnlxtCY6P2HgtPh0b?=
- =?iso-8859-1?Q?jc3tf8U30xL2VdJjpAD5K89+KiZA5sIARZPLpmASffMfW8YesnNI8IpW4T?=
- =?iso-8859-1?Q?kZjeUWPB6OyM6yURBKHzqKYC6lfq45vohVbv7BnP/UF66z07nqGpskk45M?=
- =?iso-8859-1?Q?MhnhrYFhnAX+De5pO1Op7bsRphl+hW1FkUlxlYPYiHk+HlWPYryYSggNqk?=
- =?iso-8859-1?Q?lYlFqP+a33Y47Ecmev6M4tGhSGvD3ujHVj1bq1dOw3whbeqNVbwqq9UUWY?=
- =?iso-8859-1?Q?vhkQXvc3+0HJBCsASQvhPMsj7SJbhZdZORXGtNPQkOf4yPAyi6KTHgyWoP?=
- =?iso-8859-1?Q?bAgawZPGTpjmRt3rT95qNMlrAUH8MSaOZinvZZqE/xBW8B5kYxEOwP1ZDV?=
- =?iso-8859-1?Q?85BSV2hHMsSqh2RTz416OTG+hH1ze4Jbcu2TVcGOr5o49aceifMXmV0ufb?=
- =?iso-8859-1?Q?SLn2et8+ywfHD5PdFAVRSSrV4Y0OKjhICb/FBbR1Y3kRAxV6nLIO9Rm6w6?=
- =?iso-8859-1?Q?oTsSWPg9I1F4tZjov/oVTozpIg0zhfH0ZPhi8FofNOM0Lw+380qfXbchIo?=
- =?iso-8859-1?Q?sRpPkjYjUkVizhsyaxBy66Wu5XFVfgKKSFmUEZrEsXWcNuvuoDylKl3Q/b?=
- =?iso-8859-1?Q?ByFcxPkxH1UvCVyRYGUH/dDv9s3a4r3fLtOQfPOZH0SiJGS0m2dc6eMfYL?=
- =?iso-8859-1?Q?LQVgMNdgj07rFnw3EhvzkW/VU0S6Keo/xxwIoDW7t9DOg0nEQdy/+vbGDx?=
- =?iso-8859-1?Q?1n+zBuYCcEUBMg9rOTQEHA1QwEqgSMAYn9fQRHMwDueTxcluRB/IMtQIaR?=
- =?iso-8859-1?Q?dchukvCrC0owDP3NTp0T4gWXDouk94KYXIw04y6du7uO+Bq5jJL+uxz+AD?=
- =?iso-8859-1?Q?tnTLBxD9Z/ghRYRdO/AQp6nLGQZj4hLPTMpQ1uciYf+OSyKWW386xXSmwd?=
- =?iso-8859-1?Q?ED2JXFBgROwOMh0pUtm6IZVglZzxj/4=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 2/6] clk: qcom: regmap: add PHY clock source
+ implementation
+Message-ID: <Yoe78gvFkSB+UF7w@hovoldconsulting.com>
+References: <20220520015844.1190511-1-dmitry.baryshkov@linaro.org>
+ <20220520015844.1190511-3-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB7086.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4a2828e-a724-4a27-1fbb-08da3a79f503
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2022 16:01:10.2110
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vfofW0XWIzN9X5VJYlcMvW4YwHaiS6yB2SaCIYrSOXTZ/o6/rjwEBWC3nC6LXpW9ysPAfbHq5M08c1Nyyfar7zvKPuF1Bq3Mt9shPEHZxVo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5842
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220520015844.1190511-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Markus
+On Fri, May 20, 2022 at 04:58:40AM +0300, Dmitry Baryshkov wrote:
+> On recent Qualcomm platforms the QMP PIPE clocks feed into a set of
+> muxes which must be parked to the "safe" source (bi_tcxo) when
+> corresponding GDSC is turned off and on again. Currently this is
+> handcoded in the PCIe driver by reparenting the gcc_pipe_N_clk_src
+> clock. However the same code sequence should be applied in the
+> pcie-qcom endpoint, USB3 and UFS drivers.
+> 
+> Rather than copying this sequence over and over again, follow the
+> example of clk_rcg2_shared_ops and implement this parking in the
+> enable() and disable() clock operations. Supplement the regmap-mux with
+> the new clk_regmap_phy_mux type, which implements such multiplexers
+> as a simple gate clocks.
+> 
+> This is possible since each of these multiplexers has just two clock
+> sources: one coming from the PHY and a reference (XO) one.  If the clock
+> is running off the from-PHY source, report it as enabled. Report it as
+> disabled otherwise (if it uses reference source).
+> 
+> This way the PHY will disable the pipe clock before turning off the
+> GDSC, which in turn would lead to disabling corresponding pipe_clk_src
+> (and thus it being parked to a safe, reference clock source). And vice
+> versa, after enabling the GDSC the PHY will enable the pipe clock, which
+> would cause pipe_clk_src to be switched from a safe source to the
+> working one.
+> 
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-On 20 May 2022 16:56 Markus Elfring wrote:
-> >> I guess that you would like to mark the curly brackets also for
-> deletion.
-> >>
-> >> How do you think about to handle simple and compound statements with
-> your
-> >> source code transformation approach?
-> > Since we only want to transform code that just calls
-> clk_disable_unprepare
-> > and nothing else, we tend not to have much code like that, but point
-> taken!
-> > Sorry, but my coccinelle skills are only a few days old so I'll need to
-> > work out how to do that.
->=20
->=20
-> I suggest to become more familiar with applications of disjunctions also
-> together with the semantic patch language.
-> https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/82e87d4b0a9c978b0015=
-11270c652a93e72fe64d/docs/manual/cocci_syntax.tex#L1039
->=20
-> Example of SmPL code:
-> (
-> -if ( \( !clk \| clk !=3D NULL \| !IS_ERR(clk)=A0 \| !IS_ERR_OR_NULL(clk)=
- \) )
-> =A0clk_disable_unprepare(clk);
-> |
-> -if ( \( !clk \| clk !=3D NULL \| !IS_ERR(clk)=A0 \| !IS_ERR_OR_NULL(clk)=
- \) )
-> -{
-> =A0clk_disable_unprepare(clk);
-> -}
-> )
-Thanks, I'll have a read.
+I haven't reviewed or tested this version yet...
 
-> By the way:
-> Would you like to add a SmPL rule for the operation mode "context"?
-Right.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/Makefile             |  1 +
+>  drivers/clk/qcom/clk-regmap-phy-mux.c | 53 +++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap.h         | 17 +++++++++
+>  3 files changed, 71 insertions(+)
+>  create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.c
+> 
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index dff6aeb980e6..6d242f46bd1d 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+>  clk-qcom-y += clk-regmap-divider.o
+>  clk-qcom-y += clk-regmap-mux.o
+>  clk-qcom-y += clk-regmap-mux-div.o
+> +clk-qcom-y += clk-regmap-phy-mux.o
+>  clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+>  clk-qcom-y += clk-hfpll.o
+>  clk-qcom-y += reset.o
+> diff --git a/drivers/clk/qcom/clk-regmap-phy-mux.c b/drivers/clk/qcom/clk-regmap-phy-mux.c
+> new file mode 100644
+> index 000000000000..dc96714a6175
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-regmap-phy-mux.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022, Linaro Ltd.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/bitops.h>
+> +#include <linux/regmap.h>
+> +#include <linux/export.h>
+> +
+> +#include "clk-regmap.h"
+> +
+> +#define PHY_MUX_MASK		GENMASK(1, 0)
+> +#define PHY_MUX_PHY_SRC		0
+> +#define PHY_MUX_REF_SRC		2
+> +
+> +static int phy_mux_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +	unsigned int val;
+> +
+> +	regmap_read(clkr->regmap, clkr->enable_reg, &val);
+> +	val = FIELD_GET(PHY_MUX_MASK, val);
+> +
+> +	WARN_ON(val != PHY_MUX_PHY_SRC && val != PHY_MUX_REF_SRC);
+> +
+> +	return val == PHY_MUX_PHY_SRC;
+> +}
+> +
+> +static int phy_mux_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +
+> +	return regmap_update_bits(clkr->regmap, clkr->enable_reg,
+> +				  PHY_MUX_MASK,
+> +				  FIELD_PREP(PHY_MUX_MASK, PHY_MUX_PHY_SRC));
+> +}
+> +
+> +static void phy_mux_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clkr = to_clk_regmap(hw);
+> +
+> +	regmap_update_bits(clkr->regmap, clkr->enable_reg,
+> +			   PHY_MUX_MASK,
+> +			   FIELD_PREP(PHY_MUX_MASK, PHY_MUX_REF_SRC));
+> +}
 
+I prefer the implementation where you had a dedicated struct
+clk_regmap_phy_mux to match the ops rather than repurpose the clk_regmap
+and its enable_reg.
 
-> >>> +@script:python depends on report@
-> >>> +p1 << r.p1;
-> >>> +p2 << r.p2;
-> >>> +@@
-> >>> +
-> >>> +msg =3D "ERROR: clk_disable_unprepare already checks for valid ptr s=
-o
-> >>> +check on line %s is not needed" % (p1[0].line)
-> >> I imagine that it can be a bit clearer to split the message into two
-> >> sentences.
-> >>
-> >> Can a line break help here?
-> > Sorry, I don't follow you. Perhaps you could make a suggestion for what
-> > you want?
->=20
->=20
-> The support might be unclear for multi-line messages.
->=20
-> How do you think about the following code variant?
->=20
->=20
-> coccilib.report.print_report(p2[0],
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0 "ERROR: clk_disable_unprepare() already
-> checks for valid pointer. Thus the repeated check is not needed on line
-> %s." % (p1[0].line))
-Looks ok to me
+This is a mux and that should be reflected in the implementation (even if
+it's modelled as a gate).
 
-Thanks
-Phil
+This will also make it easier to add further fields which there are
+indications that we may need to do pretty soon.
+
+> +
+> +const struct clk_ops clk_regmap_phy_mux_ops = {
+> +	.enable = phy_mux_enable,
+> +	.disable = phy_mux_disable,
+> +	.is_enabled = phy_mux_is_enabled,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_phy_mux_ops);
+> diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+> index 14ec659a3a77..a58cd1d790fe 100644
+> --- a/drivers/clk/qcom/clk-regmap.h
+> +++ b/drivers/clk/qcom/clk-regmap.h
+> @@ -35,4 +35,21 @@ int clk_enable_regmap(struct clk_hw *hw);
+>  void clk_disable_regmap(struct clk_hw *hw);
+>  int devm_clk_register_regmap(struct device *dev, struct clk_regmap *rclk);
+>  
+> +/*
+> + * A clock implementation for PHY pipe and symbols clock muxes.
+> + *
+> + * If the clock is running off the from-PHY source, report it as enabled.
+> + * Report it as disabled otherwise (if it uses reference source).
+> + *
+> + * This way the PHY will disable the pipe clock before turning off the GDSC,
+> + * which in turn would lead to disabling corresponding pipe_clk_src (and thus
+> + * it being parked to a safe, reference clock source). And vice versa, after
+> + * enabling the GDSC the PHY will enable the pipe clock, which would cause
+> + * pipe_clk_src to be switched from a safe source to the working one.
+> + *
+> + * For some platforms this should be used for the UFS symbol_clk_src clocks
+> + * too.
+> + */
+> +extern const struct clk_ops clk_regmap_phy_mux_ops;
+> +
+>  #endif
+
+Johan
