@@ -2,35 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1DEC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 12:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D83EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 12:37:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232424AbiETMV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 08:21:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55876 "EHLO
+        id S238804AbiETMhe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 08:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349291AbiETMVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 08:21:49 -0400
-X-Greylist: delayed 2803 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 20 May 2022 05:21:16 PDT
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E2724C406;
-        Fri, 20 May 2022 05:21:13 -0700 (PDT)
+        with ESMTP id S231533AbiETMhc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 08:37:32 -0400
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C0655F8C5;
+        Fri, 20 May 2022 05:37:31 -0700 (PDT)
 Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 89441FF810;
-        Fri, 20 May 2022 12:21:10 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9BF98FF802;
+        Fri, 20 May 2022 12:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1653049272;
+        t=1653050249;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P9/j3N/5Wrep8nEVTKpfSVpG01w0RrIsJwIuJSpfUqk=;
-        b=RfW0rjzcmmERfR5djFuVWqGNNOXEXZH64WSz4zF6bNV8PZOupWqEnejx3YHzGPR+ANVyqf
-        u1X+8G40M4FtwDyht1zoabB49i3jwiatJroTJKQsi8taz+RmQUh7KOjlv3g7H4mwsBkOEX
-        E/2xcdCNRM5z9JO4Qlm5sMWl3Px7hdyoPqweUk79/uJg6x8eq86WoxsWxi9VL98gUDG6wv
-        wt0+qMRqFXeArB91COg4rAgJAMcC6yoywoHCtjeNU8H2BTfoF1zFcuBdcf1kk46rzz6dOu
-        K1/VdbzH87ALHDx9nJLW3gvFjxdEVBf1JMUA+bWEM3Kl7OnBLa1FtUBEnu2L1A==
-Date:   Fri, 20 May 2022 14:21:09 +0200
+        bh=WKwb1xLxCKHxo8kAUv0MtGuwurU5vlydm6P3+DNROh4=;
+        b=l1f6zb6+GSbPTbWj42ElyYGLAOZKQx2M9xqWd+ieBlHSzmFo3aXx/ZqXctiDFGskM+Ez1H
+        xMTSUcOwgdMAuos1ERIEoYjZM1SQOPXUIIvLX/aj9mBM7HnK2fAWTnW1o/H64SKZm2ss9p
+        nSJEQLe/EZafTHiTY4mtYE/7AD988/9Pq2WqCS+JCsAZ6/+cHA90jLevilumLWZ2eIO2k5
+        YNtg7YfcjKbkn+TI4+b5vl/aXFW1VieMOVMPXO2EoAfR0vQYBqLNoNgEfhEKuXGuevdC3Q
+        hHRHJ+/DEkh3h/2aMzgtW4wty+JV2YHauQvA6S4ZgF3WH8OWUITMpxm79SyTCQ==
+Date:   Fri, 20 May 2022 14:37:26 +0200
 From:   Herve Codina <herve.codina@bootlin.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,15 +45,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN966x
- compatible string
-Message-ID: <20220520142109.57b84da2@bootlin.com>
-In-Reply-To: <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
+Subject: Re: [PATCH 3/3] ARM: dts: lan966x: Add UDPHS support
+Message-ID: <20220520143726.6dd324fb@bootlin.com>
+In-Reply-To: <2945e445-3453-a45f-7d3d-3b07bf350b47@linaro.org>
 References: <20220513105850.310375-1-herve.codina@bootlin.com>
-        <20220513105850.310375-3-herve.codina@bootlin.com>
-        <8f0d4127-7e66-cf50-21c9-99680f737e30@linaro.org>
-        <20220520133426.3b4728ae@bootlin.com>
-        <b087c34f-0e2f-edd0-a738-3ffc2853a41b@linaro.org>
+        <20220513105850.310375-4-herve.codina@bootlin.com>
+        <2945e445-3453-a45f-7d3d-3b07bf350b47@linaro.org>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
@@ -64,82 +60,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+Hi Krzysztof, Sergei
 
-On Fri, 20 May 2022 13:40:13 +0200
+On Fri, 13 May 2022 14:54:26 +0200
 Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-> On 20/05/2022 13:34, Herve Codina wrote:
-> > On Fri, 13 May 2022 14:57:55 +0200
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> >  =20
-> >> On 13/05/2022 12:58, Herve Codina wrote: =20
-> >>> The USB device controller available in the Microchip LAN966x SOC
-> >>> is the same IP as the one present in the SAMA5D3 SOC.
-> >>>
-> >>> Add the LAN966x compatible string and set the SAMA5D3 compatible
-> >>> string as a fallback for the LAN966x.
-> >>>
-> >>> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/usb/atmel-usb.txt | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/usb/atmel-usb.txt b/Do=
-cumentation/devicetree/bindings/usb/atmel-usb.txt
-> >>> index f512f0290728..a6fab7d63f37 100644
-> >>> --- a/Documentation/devicetree/bindings/usb/atmel-usb.txt
-> >>> +++ b/Documentation/devicetree/bindings/usb/atmel-usb.txt
-> >>> @@ -87,6 +87,9 @@ Required properties:
-> >>>  	       "atmel,at91sam9g45-udc"
-> >>>  	       "atmel,sama5d3-udc"
-> >>>  	       "microchip,sam9x60-udc"
-> >>> +	       "microchip,lan996x-udc"   =20
-> >>
-> >> No wildcards please, especially that it closely fits previous wildcard
-> >> (lan996x includes lan9960 which looks a lot like sam9x60...)
-> >> =20
+> On 13/05/2022 12:58, Herve Codina wrote:
+> > Add UDPHS (the USB High Speed Device Port controller) support.
+> > The UDPHS IP present in the lan966x SOC is the same as the one
+> > present in the SAMA5D3 SOC
 > >=20
-> > Well, first, I made a mistake. It should be lan966x instead of lan996x.
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  arch/arm/boot/dts/lan966x.dtsi | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
 > >=20
-> > This family is composed of the LAN9662 and the LAN9668 SOCs.
-> >=20
-> > Related to the wilcard, lan966x is used in several bindings for common
-> > parts used by both SOCs:
-> > - microchip,lan966x-gck
-> > - microchip,lan966x-cpu-syscon
-> > - microchip,lan966x-switch
-> > - microchip,lan966x-miim
-> > - microchip,lan966x-serdes
-> > - microchip,lan966x-pinctrl =20
+> > diff --git a/arch/arm/boot/dts/lan966x.dtsi b/arch/arm/boot/dts/lan966x=
+.dtsi
+> > index 7d2869648050..4c09f3166d27 100644
+> > --- a/arch/arm/boot/dts/lan966x.dtsi
+> > +++ b/arch/arm/boot/dts/lan966x.dtsi
+> > @@ -211,6 +211,17 @@ can0: can@e081c000 {
+> >  			status =3D "disabled";
+> >  		};
+> > =20
+> > +		udc: udphs@e0808000 { =20
 >=20
-> And for new bindings I pointed that it is not preferred, so already few
-> other started using specific compatible.
->=20
-> >=20
-> > I think it makes sense to keep 'microchip,lan966x-udc' for the USB
-> > device controller (same controller on LAN9662 and LAN9668) and so
-> > keeping the same rules as for other common parts. =20
->=20
-> Having wildcard was rather a mistake and we already started correcting
-> it, so keeping the "mistake" neither gives you consistency, nor
-> correctness...
+> Generic node names, so it looks like usb. For example HCD schema
+> requires it. I am not sure which bindings are used here, but anyway once
+> they might require usb...
 >=20
 
-I think that the "family" compatible should be present.
-This one allows to define the common parts in the common
-.dtsi file (lan966x.dtsi in our case).
+HCD are related to the Host controller.
+Here we are talking about a device.
 
-What do you think about:
-- microchip,lan9662-udc
-- microchip,lan9668-udc
-- microchip,lan966-udc  <-- Family
+In existing bindings related to USB device (or OTG as an OTG can be a
+host or a device) on several SOCs, we can find:
+- usb1: gadget@fffa4000
+- usb_otg: usb@1c13000
+- usb: usb@47400000
+- udc: usb@13040000
+- usb_otg_hs: usb_otg_hs@4a0ab000
 
-lan966 is defined as the family compatible string since (1) in
-bindings/arm/atmel-at91.yaml and in Documentation/arm/microchip.rst
 
-(1) https://lore.kernel.org/all/20211004105926.5696-1-kavyasree.kotagiri@mi=
-crochip.com/
+So I will change to
+  udc: usb@e0808000
+
+Is that ok for you ?
 
 Regards,
 Herve
