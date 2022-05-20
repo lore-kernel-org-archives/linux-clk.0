@@ -2,170 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 269A7C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 03:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDF1C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 03:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239839AbiETDKu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 May 2022 23:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40532 "EHLO
+        id S1345141AbiETDON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 May 2022 23:14:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234406AbiETDKt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 23:10:49 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14B0E4B
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 20:10:47 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id i27so13207745ejd.9
-        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 20:10:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VzSjf+UlkdmPK52vS7yOaoMagJCGv/wcSOSyKIbiwH8=;
-        b=Lywk4LXhXPJIPKesDr6LiwUJDzAgYYKOyYyRTyyNrlwAJLGu+VAlmZPBTcbryvDetE
-         LLET3VW3TbL0MlXH7V5vhi3X3qGdEoEpa3qumIWFp5M5f8566Dj/OTxkToFsyAl5TqhH
-         Xaa8QmHWA8hVYy8ndnue6sC88sMUgFvMQ4PZE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VzSjf+UlkdmPK52vS7yOaoMagJCGv/wcSOSyKIbiwH8=;
-        b=fgt5czfewTi5fojPj6zzCU5RiRlP0n15eDJPQs5N5z4XzuBDwCffg0tzk+DuqtfRXR
-         VKQlJweu160leUYPyymbRAtbWaHq1vrA5olpiaqHX0PYMgOzH1bwgx2+QlfssHzEeA3A
-         Ou70NznqMYuBG94f0S1nD/cvJ7eW0/t/g34M+g08VlnjYCy+j0gS8XaQ0nc/n8s93Ibo
-         fT7O3oP2Ai0b2NDaBYwM+nn4J+a/0ZMf6XQ2Y3L2uKDBHmakq1IGyHMpYwTjxpQ4AQll
-         So414KHGLH2ETeDxrbj0qxzcsuSJwlcwV8aOC3yilgIGy82hQdQZ0tciwrUEpeXzVHjn
-         OVxg==
-X-Gm-Message-State: AOAM532ifuIyD8rOSVbpaRf87un4EQ9uoU6/OxdlIpS4ZAWQXYbC1EoI
-        S1ZHxirfpkULx1aBKn3w6lGg7tKCbEoE5B9TGXJa+pispg2IJA==
-X-Google-Smtp-Source: ABdhPJxkwfvvFqGzx0Rjd3TwAAV9uPperVy6YXPVSMZ2LDoibXy6/wsJm53sl4Y7MYj/0N6I4f1/tS3Mih7BMNTIsic=
-X-Received: by 2002:a17:907:3f8e:b0:6f4:4723:4185 with SMTP id
- hr14-20020a1709073f8e00b006f447234185mr6913293ejc.359.1653016246258; Thu, 19
- May 2022 20:10:46 -0700 (PDT)
+        with ESMTP id S1345109AbiETDOK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 May 2022 23:14:10 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C56149DA3
+        for <linux-clk@vger.kernel.org>; Thu, 19 May 2022 20:13:59 -0700 (PDT)
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220520031357epoutp039a1c773b203db5fd2316b343bd50e419~wsbELIAUm2330823308epoutp03e
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 03:13:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220520031357epoutp039a1c773b203db5fd2316b343bd50e419~wsbELIAUm2330823308epoutp03e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1653016437;
+        bh=qYM0UTxJNeaJrHpm5Xdc9Da5RIb/dbJklFYHKmNgef4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=bDkBP3/ZdLBgVwo+hNsbviz9Ld+fDJocMVzCsBsjAku6nbdlP5iTG7KMbTpXLZ8sr
+         J1gdztpO1D05wKnapDRoTAhsNjfBsebwcHNeuvq1Z5UBM1OH0M/dezcduzfsBMJ/wy
+         XD7o9SFLcVw0kMhjLI4qtj9W1ZDTk2aGCtE/Af/Q=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220520031356epcas1p209464a65c809a581511fa06e096f115c~wsbDv0m8_1395213952epcas1p2I;
+        Fri, 20 May 2022 03:13:56 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.236]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4L4Bdb1lCJz4x9Px; Fri, 20 May
+        2022 03:13:55 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        56.06.10063.37707826; Fri, 20 May 2022 12:13:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220520031354epcas1p4553a0a66ee74ccf9fdd9551fc682896c~wsbBpjoEW2056020560epcas1p4h;
+        Fri, 20 May 2022 03:13:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220520031354epsmtrp139e8fd4b517e66fa77d1874bd913a77f~wsbBotNle0505205052epsmtrp1k;
+        Fri, 20 May 2022 03:13:54 +0000 (GMT)
+X-AuditID: b6c32a35-1dbff7000000274f-1b-62870773d98f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A1.5C.11276.27707826; Fri, 20 May 2022 12:13:54 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220520031354epsmtip106cc04f23d2587ce0f8d6fea984d1bb9~wsbBaVVwg3033330333epsmtip1V;
+        Fri, 20 May 2022 03:13:54 +0000 (GMT)
+Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: correct count of
+ NR_CLK
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <a114746d-9f7a-acce-c9eb-7af6dd8eae89@samsung.com>
+Date:   Fri, 20 May 2022 12:40:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
- <20220519125527.18544-14-rex-bc.chen@mediatek.com> <3f39777a225fac66f01858262defcc11c6135bb2.camel@mediatek.com>
-In-Reply-To: <3f39777a225fac66f01858262defcc11c6135bb2.camel@mediatek.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 20 May 2022 11:10:35 +0800
-Message-ID: <CAGXv+5Ee3QvpHqWeSOFJYmq+P3POFSTB45JM42UNF8pn4b4T9A@mail.gmail.com>
-Subject: Re: [PATCH v7 13/19] dt-bindings: reset: mediatek: Add infra_ao reset
- index for MT8192/MT8195
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?B?Q2h1bi1KaWUgQ2hlbiAo6Zmz5rWa5qGAKQ==?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        =?UTF-8?B?UnVueWFuZyBDaGVuICjpmYjmtqbmtIsp?= 
-        <Runyang.Chen@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20220520030625.145324-1-chanho61.park@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmnm4xe3uSwbSz3BYP5m1js7i8X9ti
+        /pFzrBZ9Lx4yW3zsucdqMeP8PiaLi6dcLVr3HmG3OPymndXi37WNLBardv1hdOD2eH+jld1j
+        56y77B6bVnWyedy5tofNo2/LKkaPz5vkAtiism0yUhNTUosUUvOS81My89JtlbyD453jTc0M
+        DHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak
+        5BSYFugVJ+YWl+al6+WlllgZGhgYmQIVJmRnXNp2jangoHDFoTf8DYwn+bsYOTkkBEwkdv06
+        z9jFyMUhJLCDUeL6rmNMEM4nRokF65ewQTjfGCXWPG9hgWm5u2EuC0RiL6PE2SOfoKreM0rM
+        ePaTFaRKWCBA4uf/2+wgCRGBdUwS+3fPYAVxmAXaGSXufp/CDlLFJqAlsf/FDTYQm19AUeLq
+        j8eMIDavgJ1Ey4XNzCA2i4CqxNwDT8DiogJhEie3tUDVCEqcnPkE7CZOAQeJJV3TweLMAuIS
+        t57MZ4Kw5SW2v53DDLJYQuAIh8TvSZ2sEE+4SJy/3sEMYQtLvDq+hR3ClpJ42d/GDtHQzCjR
+        8OI2I4TTwyhx9FkfNAiMJfYvnQy0ggNohabE+l36EGFFiZ2/50JdwSfx7msPK0iJhACvREeb
+        EESJssTlB3eZIGxJicXtnWwTGJVmIflnFpIfZiH5YRbCsgWMLKsYxVILinPTU4sNCwzhEZ6c
+        n7uJEZx4tUx3ME58+0HvECMTB+MhRgkOZiURXsbcliQh3pTEyqrUovz4otKc1OJDjKbAEJ7I
+        LCWanA9M/Xkl8YYmlgYmZkbGJhaGZoZK4ryrpp1OFBJITyxJzU5NLUgtgulj4uCUamA6lfDU
+        +Nv6W8f57V9tZlHd0rl31a+AyfxTdgVfUbIJszv9+9DngL6oG75Kk+cdWBO9mv9C1I+ZB5lZ
+        t5yVrpjZGpbjY6/Cqvq+2M/qm9mydW1/LArOtnd0pD+8Uye1pntjVEPpXllzue3HglUWdgpP
+        zlDkj+686F/Yen5y5s36Eo6lbo8Wfr2xJY9rS3iPWgDD2oyl60/qrd3Gz7Fxzbs/norf/2w4
+        EN0rXey5IEvm0PNdVSzfkp0OPI47b3gin6FY+J/bt7kF1pPfCK+8d3hu9Ly4Nof4wKw/m99x
+        /S3Tuj4pVKr2keqd7kyBABn3g2s2n1v7f6Fk4Y953o+XiJgeTtb7veD+sYJ9MgYNjXM4lFiK
+        MxINtZiLihMBPO2EikUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnG4Re3uSwdJ+CYsH87axWVzer20x
+        /8g5Vou+Fw+ZLT723GO1mHF+H5PFxVOuFq17j7BbHH7Tzmrx79pGFotVu/4wOnB7vL/Ryu6x
+        c9Zddo9NqzrZPO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBmXtl1jKjgoXHHoDX8D
+        40n+LkZODgkBE4m7G+aydDFycQgJ7GaUOLV2DhtEQlJi2sWjzF2MHEC2sMThw8UQNW8ZJdYd
+        aWYEqREW8JO4/OYCE4gtIrCBSWLLviSQImaBVkaJOys+sEN0TGaU2DWnjRmkik1AS2L/ixtg
+        G/gFFCWu/ngMNolXwE6i5cJmsBoWAVWJuQeegMVFBcIkdi55zARRIyhxcuYTFhCbU8BBYknX
+        dLAaZgF1iT/zLjFD2OISt57MZ4Kw5SW2v53DPIFReBaS9llIWmYhaZmFpGUBI8sqRsnUguLc
+        9NxiwwLDvNRyveLE3OLSvHS95PzcTYzg6NPS3MG4fdUHvUOMTByMhxglOJiVRHgZc1uShHhT
+        EiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamDa+3176H5JTjn7
+        E+f8ih4lb0/uURUq5T4Qs/YDo82nIOmA4sWL3u1fxpzCP7/5/PyQALbXegfuzLNf65H+jeWC
+        xa+t2XZLZwsHiaxmX3BD9vj2pOcTr+gaB+h7q37k+cs54WniFL67l7z/zf+h+nGCf8LL8Hdb
+        JUtbnetv3X40YWWh5Svpcp7dCx5cNV2SszsreEXETF5zf5G0dX6dDxaVXl2mqyb7SvKH5sF5
+        +zVvnLI7NGeW8748z3un5l5k2ck+4XPX/4NLP7KvChA4tNFqnZ2Q4fewsHULFggYCpmv+q5v
+        e+Pz6+UWJgs2101WW3y66jJHvtXpg85nF3pm/WfxEyr9tdZs3fTrAftyF/VYVSixFGckGmox
+        FxUnAgCLHwoFLQMAAA==
+X-CMS-MailID: 20220520031354epcas1p4553a0a66ee74ccf9fdd9551fc682896c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220520030551epcas2p1a67b9f026ce2ec56b0a167026ef96baf
+References: <CGME20220520030551epcas2p1a67b9f026ce2ec56b0a167026ef96baf@epcas2p1.samsung.com>
+        <20220520030625.145324-1-chanho61.park@samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 20, 2022 at 10:58 AM Rex-BC Chen <rex-bc.chen@mediatek.com> wrote:
->
-> On Thu, 2022-05-19 at 20:55 +0800, Rex-BC Chen wrote:
-> > To support reset of infra_ao, add the index of infra_ao reset of
-> > thermal/svs/pcei for MT8192 and thermal/svs for MT8195.
-> >
-> > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Reviewed-by: AngeloGioacchino Del Regno <
-> > angelogioacchino.delregno@collabora.com>
-> > ---
-> >  include/dt-bindings/reset/mt8192-resets.h | 8 ++++++++
-> >  include/dt-bindings/reset/mt8195-resets.h | 6 ++++++
-> >  2 files changed, 14 insertions(+)
-> >
-> > diff --git a/include/dt-bindings/reset/mt8192-resets.h b/include/dt-
-> > bindings/reset/mt8192-resets.h
-> > index 764ca9910fa9..12e2087c90a3 100644
-> > --- a/include/dt-bindings/reset/mt8192-resets.h
-> > +++ b/include/dt-bindings/reset/mt8192-resets.h
-> > @@ -7,6 +7,7 @@
-> >  #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8192
-> >  #define _DT_BINDINGS_RESET_CONTROLLER_MT8192
-> >
-> > +/* TOPRGU resets */
-> >  #define MT8192_TOPRGU_MM_SW_RST
-> > 1
-> >  #define MT8192_TOPRGU_MFG_SW_RST                             2
-> >  #define MT8192_TOPRGU_VENC_SW_RST                            3
-> > @@ -30,4 +31,11 @@
-> >  /* MMSYS resets */
-> >  #define MT8192_MMSYS_SW0_RST_B_DISP_DSI0                     15
-> >
-> > +/* INFRA resets */
-> > +#define MT8192_INFRA_RST0_THERM_CTRL_SWRST           0
-> > +#define MT8192_INFRA_RST2_PEXTP_PHY_SWRST            1
-> > +#define MT8192_INFRA_RST3_THERM_CTRL_PTP_SWRST       2
-> > +#define MT8192_INFRA_RST4_PCIE_TOP_SWRST             3
-> > +#define MT8192_INFRA_RST4_THERM_CTRL_MCU_SWRST       4
-> > +
-> >  #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8192 */
-> > diff --git a/include/dt-bindings/reset/mt8195-resets.h b/include/dt-
-> > bindings/reset/mt8195-resets.h
-> > index a26bccc8b957..0b1937f14b36 100644
-> > --- a/include/dt-bindings/reset/mt8195-resets.h
-> > +++ b/include/dt-bindings/reset/mt8195-resets.h
-> > @@ -7,6 +7,7 @@
-> >  #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8195
-> >  #define _DT_BINDINGS_RESET_CONTROLLER_MT8195
-> >
-> > +/* TOPRGU resets */
-> >  #define MT8195_TOPRGU_CONN_MCU_SW_RST          0
-> >  #define MT8195_TOPRGU_INFRA_GRST_SW_RST        1
-> >  #define MT8195_TOPRGU_APU_SW_RST               2
-> > @@ -26,4 +27,9 @@
-> >
-> >  #define MT8195_TOPRGU_SW_RST_NUM               16
-> >
-> > +/* INFRA resets */
-> > +#define MT8195_INFRA_RST0_THERM_CTRL_SWRST     0
-> > +#define MT8195_INFRA_RST3_THERM_CTRL_PTP_SWRST 1
-> > +#define MT8195_INFRA_RST4_THERM_CTRL_MCU_SWRST 2
-> > +
-> >  #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8195 */
-> > --
-> > 2.18.0
-> >
->
-> Hello Stephen,
->
-> this patch will have conflict with Matthias's commit branch for
-> include/dt-bindings/reset/mt8192-resets.h.
->
-> It's on linux-next.
->
-> I have fix it in this version, but I think there will be a merge
-> conflict if you pick my series in this run.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/include/dt-bindings/reset/mt8192-resets.h?h=next-20220519&id=19c66219e4d5b813ebbd28621cfe9c450659ded7
+On 5/20/22 12:06 PM, Chanho Park wrote:
+> _NR_CLKS which can be used to register clocks via nr_clk_ids. The clock
+> IDs are started from 1. So, _NR_CLKS should be defined to "the last
+> clock id + 1"
+> 
+> Fixes: 680e1c8370a2 ("dt-bindings: clock: add clock binding definitions for Exynos Auto v9")
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
+>  include/dt-bindings/clock/samsung,exynosautov9.h | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/samsung,exynosautov9.h b/include/dt-bindings/clock/samsung,exynosautov9.h
+> index 71ec0a955364..ea9f91b4eb1a 100644
+> --- a/include/dt-bindings/clock/samsung,exynosautov9.h
+> +++ b/include/dt-bindings/clock/samsung,exynosautov9.h
+> @@ -166,7 +166,7 @@
+>  #define GOUT_CLKCMU_PERIC1_IP		248
+>  #define GOUT_CLKCMU_PERIS_BUS		249
+>  
+> -#define TOP_NR_CLK			249
+> +#define TOP_NR_CLK			250
+>  
+>  /* CMU_BUSMC */
+>  #define CLK_MOUT_BUSMC_BUS_USER		1
+> @@ -174,7 +174,7 @@
+>  #define CLK_GOUT_BUSMC_PDMA0_PCLK	3
+>  #define CLK_GOUT_BUSMC_SPDMA_PCLK	4
+>  
+> -#define BUSMC_NR_CLK			4
+> +#define BUSMC_NR_CLK			5
+>  
+>  /* CMU_CORE */
+>  #define CLK_MOUT_CORE_BUS_USER		1
+> @@ -183,7 +183,7 @@
+>  #define CLK_GOUT_CORE_CCI_PCLK		4
+>  #define CLK_GOUT_CORE_CMU_CORE_PCLK	5
+>  
+> -#define CORE_NR_CLK			5
+> +#define CORE_NR_CLK			6
+>  
+>  /* CMU_FSYS2 */
+>  #define CLK_MOUT_FSYS2_BUS_USER		1
+> @@ -194,7 +194,7 @@
+>  #define CLK_GOUT_FSYS2_UFS_EMBD1_ACLK	6
+>  #define CLK_GOUT_FSYS2_UFS_EMBD1_UNIPRO	7
+>  
+> -#define FSYS2_NR_CLK			7
+> +#define FSYS2_NR_CLK			8
+>  
+>  /* CMU_PERIC0 */
+>  #define CLK_MOUT_PERIC0_BUS_USER	1
+> @@ -240,7 +240,7 @@
+>  #define CLK_GOUT_PERIC0_PCLK_10		41
+>  #define CLK_GOUT_PERIC0_PCLK_11		42
+>  
+> -#define PERIC0_NR_CLK			42
+> +#define PERIC0_NR_CLK			43
+>  
+>  /* CMU_PERIC1 */
+>  #define CLK_MOUT_PERIC1_BUS_USER	1
+> @@ -286,7 +286,7 @@
+>  #define CLK_GOUT_PERIC1_PCLK_10		41
+>  #define CLK_GOUT_PERIC1_PCLK_11		42
+>  
+> -#define PERIC1_NR_CLK			42
+> +#define PERIC1_NR_CLK			43
+>  
+>  /* CMU_PERIS */
+>  #define CLK_MOUT_PERIS_BUS_USER		1
+> @@ -294,6 +294,6 @@
+>  #define CLK_GOUT_WDT_CLUSTER0		3
+>  #define CLK_GOUT_WDT_CLUSTER1		4
+>  
+> -#define PERIS_NR_CLK			4
+> +#define PERIS_NR_CLK			5
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_EXYNOSAUTOV9_H */
+> 
 
-The commit in question is in Matthias's v5.18-next/dts64 branch, which also
-has the v5.18-next-dts64 tag. The PR for this tag was already picked up
-by the soc maintainers, so I guess we could consider it stable.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Matthias, what do you think? Give an ack for the patch to go through the
-clk tree with the tag merged in as dependency? There's a compile time
-dependency between this and the next patch so we can't just split them
-into different trees.
-
-
-ChenYu
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
