@@ -2,141 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFEEC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 11:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C33C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 12:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348701AbiETLuc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 07:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56712 "EHLO
+        id S237943AbiETMDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 08:03:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348537AbiETLua (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 07:50:30 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5547215AB0B
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:50:29 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id v14so6723533qtc.3
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 04:50:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iZEBHi6WzsLrPiLUokXbaSvp5d1QJNTLQ47lEV5k7Z0=;
-        b=yOon8bz1OOMxbEixXt3P5VbNIXBlEcbwOkaEZeoGByvTd+KkM36CKDnBMvO+I+UtyO
-         aUkT7jd5fZy/R+s3xA+6I6/fG4W9ToGMO885GMGEYAcGnsSCYAdq+e/7vyjQG0wlUydN
-         K76BOnC1Rd7Ytv/rOgs0I3GZSIvDIh9JYimQ5uUFtp75H8cFosvOBbGRvKyakNys6Qm1
-         qEgKBBQhx5o/AQJCOgAY8dRTeZ/1ao8BxTYflcqW3v+VEPMLCeLmUC1h2n+od+8fQDle
-         eG3p90Dwz9RAyYoJQU6wZCB9dEcN+TK0oiLRvw8/vlDOYJS2Q27J8oVEwdAWrgeWrSn7
-         s5pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iZEBHi6WzsLrPiLUokXbaSvp5d1QJNTLQ47lEV5k7Z0=;
-        b=eckauH2jtMZDSGXIsmb8J0riqzHYiXHqLy7nnTP2vTiFGTnO4mkIO3vnWZ9edavqqG
-         xOTIQRyYLfYHUVPVDRgMGGsDQmWxJcKCOpljhX4tPmqs9qyM3cFCDwh8Sh6fPqfbbaNM
-         mdORltNRhJGKUecCaki0bjmMld7W2TNTzJ+/BkfRq2unDuHQFxPVwG3iuvrmOYE4v4n6
-         fGVYCsyFmzF5ZoVFAdNNxCORM6Dcz19cL/UbTnvfZQHRdzjWSsQPqFHVDlSvXxXjPXdE
-         RzHe5N4GWGTxUJuy5f+AttD2nSzFp54PNUx/knyXg4L8I9iHPyj0aRlAZk5/J+RIvTFn
-         X2pw==
-X-Gm-Message-State: AOAM531635P/JyL4Sc1A/j+41SEcA3GwwfbYpSBrU+aP9G//6SafynCd
-        cc+BqlDyn3XvFoQAfo7KIB5VQdR73tH8hbwevOg5OL3pzlo=
-X-Google-Smtp-Source: ABdhPJwIol1CXrm1YTqhC7kWPjSb0EgtqanlpqQ/2DRk0sShD2Vjaedtz42xmIcmD9Outn3iio+5v/AdPgPNvIHSl5A=
-X-Received: by 2002:a05:622a:4f:b0:2f3:e77c:2c7e with SMTP id
- y15-20020a05622a004f00b002f3e77c2c7emr7131500qtw.62.1653047428466; Fri, 20
- May 2022 04:50:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220520100948.19622-1-johan+linaro@kernel.org> <20220520100948.19622-2-johan+linaro@kernel.org>
-In-Reply-To: <20220520100948.19622-2-johan+linaro@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 20 May 2022 14:50:17 +0300
-Message-ID: <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        with ESMTP id S1348966AbiETMDU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 08:03:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982ED1498C3;
+        Fri, 20 May 2022 05:03:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C24161DFA;
+        Fri, 20 May 2022 12:03:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A87DC385A9;
+        Fri, 20 May 2022 12:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653048198;
+        bh=387K16xk7F07P+mVdomJn7VVO3JUePVAb1FehJf0grw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pWXK27ij1Y5VZ732mGSwahDUXfniztdn3J0KVqAlHnkGLAcyA9wBVpOy6fQb1nBG1
+         YkGbRDDCWYteE3/r1E4dDZ5wGckxtj89PGm0Fy5Hi05swie5t3XCH5mlNi0sV3kqI5
+         ASAPPCvENsVvF7TDYl7WlVnoGaH7JKYFsPauJWSwq8voFzDByrsDtN1E8HeHY94o37
+         S96JwGiBItKQ8erAfGAhXXXzcAWd/oEaSfPKJCz7CCUyIqdj/+AGXHISgmiha+AIHa
+         T3RKj8aShzUYXckY9TbuEtGAcGh3pDTGMzhz486ikm6GjzaZaqmMZT6FNi2drRnBJk
+         qtMmXytMDOvPg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1ns1Li-0005yv-8Z; Fri, 20 May 2022 14:03:18 +0200
+Date:   Fri, 20 May 2022 14:03:18 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 1/3] clk: qcom: gdsc: add collapse-bit helper
+Message-ID: <YoeDhpCzV2sR7+Y1@hovoldconsulting.com>
+References: <20220520100948.19622-1-johan+linaro@kernel.org>
+ <20220520100948.19622-2-johan+linaro@kernel.org>
+ <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpr3_+iS_ntG0pgfG647Ou4Q60sk+-Roc9GJ-0qM5W710g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 20 May 2022 at 13:10, Johan Hovold <johan+linaro@kernel.org> wrote:
->
-> Add a helper for updating the SW_COLLAPSE bit during initialisation and
-> state updates.
->
+On Fri, May 20, 2022 at 02:50:17PM +0300, Dmitry Baryshkov wrote:
+> On Fri, 20 May 2022 at 13:10, Johan Hovold <johan+linaro@kernel.org> wrote:
+> >
+> > Add a helper for updating the SW_COLLAPSE bit during initialisation and
+> > state updates.
+> >
+> 
+> 
+> > Note that the update during initialisation was relying on the
+> > SW_COLLAPSE bit not having been set earlier rather than passing in zero
+> > explicitly to clear the collapse vote.
+> 
+> I think this part deserves a separate commit with proper Fixes: tag.
 
+No, it's not a bug. The value passed in is explicitly set a bit higher
+up in the same function so that the SW_COLLAPSE bit is (currently) never
+set.
 
-> Note that the update during initialisation was relying on the
-> SW_COLLAPSE bit not having been set earlier rather than passing in zero
-> explicitly to clear the collapse vote.
+It mostly just looks weird and probably wasn't intentional.
 
-I think this part deserves a separate commit with proper Fixes: tag.
+> > @@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
+> >                  * If a Votable GDSC is ON, make sure we have a Vote.
+> >                  */
+> >                 if (sc->flags & VOTABLE) {
+> > -                       ret = regmap_update_bits(sc->regmap, sc->gdscr,
+> > -                                                SW_COLLAPSE_MASK, val);
+> > +                       ret = gdsc_update_collapse_bit(sc, false);
+> >                         if (ret)
+> >                                 return ret;
+> >                 }
 
->
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 44520efc6c72..c676416e685f 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -132,10 +132,24 @@ static int gdsc_poll_status(struct gdsc *sc, enum gdsc_status status)
->         return -ETIMEDOUT;
->  }
->
-> +static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
-> +{
-> +       u32 reg, mask;
-> +       int ret;
-> +
-> +       reg = sc->gdscr;
-> +       mask = SW_COLLAPSE_MASK;
-> +
-> +       ret = regmap_update_bits(sc->regmap, reg, mask, val ? mask : 0);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +
->  static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->  {
->         int ret;
-> -       u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
->
->         if (status == GDSC_ON && sc->rsupply) {
->                 ret = regulator_enable(sc->rsupply);
-> @@ -143,9 +157,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->                         return ret;
->         }
->
-> -       ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
-> -       if (ret)
-> -               return ret;
-> +       ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
->
->         /* If disabling votable gdscs, don't poll on status */
->         if ((sc->flags & VOTABLE) && status == GDSC_OFF) {
-> @@ -425,8 +437,7 @@ static int gdsc_init(struct gdsc *sc)
->                  * If a Votable GDSC is ON, make sure we have a Vote.
->                  */
->                 if (sc->flags & VOTABLE) {
-> -                       ret = regmap_update_bits(sc->regmap, sc->gdscr,
-> -                                                SW_COLLAPSE_MASK, val);
-> +                       ret = gdsc_update_collapse_bit(sc, false);
->                         if (ret)
->                                 return ret;
->                 }
-> --
-> 2.35.1
->
-
-
--- 
-With best wishes
-Dmitry
+Johan
