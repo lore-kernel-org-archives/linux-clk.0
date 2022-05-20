@@ -2,23 +2,23 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF11C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431F7C4321E
 	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 07:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346142AbiETHBd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 03:01:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34330 "EHLO
+        id S1346141AbiETHBc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 03:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346215AbiETHB2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 03:01:28 -0400
+        with ESMTP id S1346180AbiETHBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 03:01:15 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0DC915A58E
-        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 00:01:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36379AE52
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 00:00:51 -0700 (PDT)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
 Received: from 172.28.114.216
         by mx1.cqplus1.com with MailGates ESMTP Server V5.0(13837:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 20 May 2022 14:51:14 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 20 May 2022 14:51:15 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     sboyd@kernel.org
 Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
@@ -27,181 +27,199 @@ Cc:     krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v16 00/10] Add Sunplus SP7021 SoC Support
-Date:   Fri, 20 May 2022 14:50:34 +0800
-Message-Id: <cover.1653027644.git.qinjian@cqplus1.com>
+Subject: [PATCH v16 04/10] dt-bindings: clock: Add bindings for SP7021 clock driver
+Date:   Fri, 20 May 2022 14:50:38 +0800
+Message-Id: <3e65fb889dc99ca91f1b583b058267b396bfecc7.1653027644.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1653027644.git.qinjian@cqplus1.com>
+References: <cover.1653027644.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series add Sunplus SP7021 SoC support.
+Add documentation to describe Sunplus SP7021 clock driver bindings.
 
-Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
-peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
-single chip. It is designed for industrial control.
-
-SP7021 consists of two chips (dies) in a package. One is called C-chip
-(computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
-process (22 nm) for high performance computing. The other is called P-
-chip (peripheral chip). It has many peripherals and an ARM A926 added
-especially for real-time control. P-chip is made for customers. It adopts
-low-level process (ex: 0.11 um) to reduce cost.
-
-Refer to (for documentations):
-https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
-
-Refer to (applications):
-https://tibbo.com/store/plus1.html
-
-Refer to (applications):
-http://www.sinovoip.com.cn/ecp_view.asp?id=586
-
-Changes in v16:
-- clk-sp7021.c: Fix the comments from Stephen Boyd
-- board dts: Fix the comments from Krzysztof
-
-Changes in v15:
-- Add Sunplus SP7021-demo-v3 board dts
-- Refine yaml title
-- Rename dt-binding header filename to match compatible string
-
-Changes in v14:
-- clock/sp-sp7021.h: Fix the comments from Krzysztof
-- sunplus,sp7021-clkc.yaml: Fix the comments from Rob
-
-Changes in v13:
-- reset/sp-sp7021.h: Move HW mapping from dt-binding header to driver
-- reset-sunplus.c: Move HW mapping from dt-binding header to driver
-- clock/sp-sp7021.h: Move HW mapping from dt-binding header to driver
-- clk-sp7021.c: Fix the comments from Arnd
-- irq-sp7021-intc.c: Remove empty set_affinity callback function
-- sp7021_defconfig: Fix the comments from Arnd
-
-Changes in v12:
-- sunplus,sp7021-clkc.yaml: Move 'reg' after 'compatible'
-- sunplus,sp7021-intc.yaml: Move 'reg' after 'compatible'
-- sunplus,reset.yaml: Move 'reg' after 'compatible'
-- Remove wrong reviewed-tags
-
-Changes in v11:
-- clk-sp7021.c: Remove the dead code
-
-Changes in v10:
-- arm/sunplus,sp7021.yaml: Add SoC compatible: "sunplus,sp7021"
-- clock/sunplus,sp7021-clkc.yaml: Remove the internal clock parent from DTS
-- clk-sp7021.c: Refine the macro DBG_CLK
-- clk-sp7021.c: Refine the clock_parent_data
-
-Changes in v9:
-- clk/Kconfig: fix the comments form Stephen Boyd
-- clk-sp7021.c: fix the comments form Stephen Boyd
-
-Changes in v8:
-- clk-sp7021.c: fix the comments form Stephen Boyd
-
-Changes in v7:
-- sunplus,sp7021-clkc.yaml: Add clocks & clock-names
-- clk-sp7021.c: fix the comments form Stephen Boyd
-- irq-sp7021-intc.c: fix the comments from Marc
-
-Changes in v6:
-- reset-sunplus.c: fix the comments from Philipp
-- irq-sp7021-intc.c: fix the comments from Marc
-- mach-sunplus: fix the comments from Arnd
-
-Changes in v5:
-- reset-sunplus.c: fix strict checks
-- clk/Kconfig: fix spell
-- clk-sp7021.c: using bitfield ops, fix strict checks
-- irqchip/Kconfig: fix spell
-- irq-sp7021-intc.c: cleanup error path in probe, fix strict checks
-- arm/Kconfig: fix spell & typo, remove CONFIG_SERIAL_SUNPLUS
-- mach-sunplus/Kconfig: fix typo
-- sp7021_defconfig: add CONFIG_SERIAL_SUNPLUS
-
-Changes in v4:
-- mach-sunplus: add initial support for SP7021
-- sp7021_defconfig: add generic SP7021 defconfig
-- reset-sunplus: remove Q645 support
-- reset-sunplus.c: refine code based on Philipp's review
-- clk-sp7021: clock defines add prefix, more clean up
-
-Changes in v3:
-- sp7021-intc: remove primary controller mode due to P-chip running Linux
-  not supported any more.
-- sp7021-intc.h: removed, not set ext through the DT but sp_intc_set_ext()
-- sunplus,sp7021-intc.yaml: update descriptions for above changes
-- irq-sp7021-intc.c: more cleanup based on Marc's review
-- all driver's Kconfig removed default, it's selected by platform config
-
-Changes in v2:
-- sunplus,sp7021-intc.yaml: add descrption for "#interrupt-cells", interrupts
-- sunplus,sp7021-intc.yaml: drop "ext0-mask"/"ext1-mask" from DT
-- sunplus,sp7021-intc.yaml: fix example.dt too long error
-- irq-sp7021-intc.c: major rewrite
-- all files with dual license
-
-Qin Jian (10):
-  dt-bindings: arm: sunplus: Add bindings for Sunplus SP7021 SoC boards
-  dt-bindings: reset: Add bindings for SP7021 reset driver
-  reset: Add Sunplus SP7021 reset driver
-  dt-bindings: clock: Add bindings for SP7021 clock driver
-  clk: Add Sunplus SP7021 clock driver
-  dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt
-    controller
-  irqchip: Add Sunplus SP7021 interrupt controller driver
-  ARM: sunplus: Add initial support for Sunplus SP7021 SoC
-  ARM: sp7021_defconfig: Add Sunplus SP7021 defconfig
-  ARM: dts: Add Sunplus SP7021-Demo-V3 board device tree
-
- .../bindings/arm/sunplus,sp7021.yaml          |  29 +
- .../bindings/clock/sunplus,sp7021-clkc.yaml   |  52 ++
- .../sunplus,sp7021-intc.yaml                  |  62 ++
- .../bindings/reset/sunplus,reset.yaml         |  38 +
- MAINTAINERS                                   |  18 +
- arch/arm/Kconfig                              |   2 +
- arch/arm/Makefile                             |   1 +
- arch/arm/boot/dts/Makefile                    |   2 +
- arch/arm/boot/dts/sunplus-sp7021-achip.dtsi   |  84 ++
- arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts  |  26 +
- arch/arm/boot/dts/sunplus-sp7021.dtsi         | 318 ++++++++
- arch/arm/configs/multi_v7_defconfig           |   1 +
- arch/arm/configs/sp7021_defconfig             |  59 ++
- arch/arm/mach-sunplus/Kconfig                 |  27 +
- arch/arm/mach-sunplus/Makefile                |   8 +
- arch/arm/mach-sunplus/sp7021.c                |  16 +
- drivers/clk/Kconfig                           |  10 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-sp7021.c                      | 727 ++++++++++++++++++
- drivers/irqchip/Kconfig                       |   9 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-sp7021-intc.c             | 278 +++++++
- drivers/reset/Kconfig                         |   9 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-sunplus.c                 | 212 +++++
- .../dt-bindings/clock/sunplus,sp7021-clkc.h   |  88 +++
- .../dt-bindings/reset/sunplus,sp7021-reset.h  |  87 +++
- 27 files changed, 2166 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+---
+Remove unneeded blank line.
+Split reg into 3 small regions.
+---
+ .../bindings/clock/sunplus,sp7021-clkc.yaml   | 52 +++++++++++
+ MAINTAINERS                                   |  2 +
+ .../dt-bindings/clock/sunplus,sp7021-clkc.h   | 88 +++++++++++++++++++
+ 3 files changed, 142 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
- create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
- create mode 100644 arch/arm/boot/dts/sunplus-sp7021.dtsi
- create mode 100644 arch/arm/configs/sp7021_defconfig
- create mode 100644 arch/arm/mach-sunplus/Kconfig
- create mode 100644 arch/arm/mach-sunplus/Makefile
- create mode 100644 arch/arm/mach-sunplus/sp7021.c
- create mode 100644 drivers/clk/clk-sp7021.c
- create mode 100644 drivers/irqchip/irq-sp7021-intc.c
- create mode 100644 drivers/reset/reset-sunplus.c
  create mode 100644 include/dt-bindings/clock/sunplus,sp7021-clkc.h
- create mode 100644 include/dt-bindings/reset/sunplus,sp7021-reset.h
 
+diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+new file mode 100644
+index 000000000..bcc140882
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) Sunplus Co., Ltd. 2021
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sunplus SP7021 SoC Clock Controller
++
++maintainers:
++  - Qin Jian <qinjian@cqplus1.com>
++
++properties:
++  compatible:
++    const: sunplus,sp7021-clkc
++
++  reg:
++    maxItems: 3
++
++  clocks:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    extclk: osc0 {
++      compatible = "fixed-clock";
++      #clock-cells = <0>;
++      clock-frequency = <27000000>;
++      clock-output-names = "extclk";
++    };
++
++    clkc: clock-controller@9c000004 {
++      compatible = "sunplus,sp7021-clkc";
++      reg = <0x9c000004 0x28>,
++            <0x9c000200 0x44>,
++            <0x9c000268 0x08>;
++      clocks = <&extclk>;
++      #clock-cells = <1>;
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 257e514cb..11786da84 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2811,8 +2811,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
+ S:	Maintained
+ W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
++F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ F:	drivers/reset/reset-sunplus.c
++F:	include/dt-bindings/clock/sunplus,sp7021-clkc.h
+ F:	include/dt-bindings/reset/sunplus,sp7021-reset.h
+ 
+ ARM/Synaptics SoC support
+diff --git a/include/dt-bindings/clock/sunplus,sp7021-clkc.h b/include/dt-bindings/clock/sunplus,sp7021-clkc.h
+new file mode 100644
+index 000000000..cd84321eb
+--- /dev/null
++++ b/include/dt-bindings/clock/sunplus,sp7021-clkc.h
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
++ */
++#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
++#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
++
++/* gates */
++#define CLK_RTC         0
++#define CLK_OTPRX       1
++#define CLK_NOC         2
++#define CLK_BR          3
++#define CLK_SPIFL       4
++#define CLK_PERI0       5
++#define CLK_PERI1       6
++#define CLK_STC0        7
++#define CLK_STC_AV0     8
++#define CLK_STC_AV1     9
++#define CLK_STC_AV2     10
++#define CLK_UA0         11
++#define CLK_UA1         12
++#define CLK_UA2         13
++#define CLK_UA3         14
++#define CLK_UA4         15
++#define CLK_HWUA        16
++#define CLK_DDC0        17
++#define CLK_UADMA       18
++#define CLK_CBDMA0      19
++#define CLK_CBDMA1      20
++#define CLK_SPI_COMBO_0 21
++#define CLK_SPI_COMBO_1 22
++#define CLK_SPI_COMBO_2 23
++#define CLK_SPI_COMBO_3 24
++#define CLK_AUD         25
++#define CLK_USBC0       26
++#define CLK_USBC1       27
++#define CLK_UPHY0       28
++#define CLK_UPHY1       29
++#define CLK_I2CM0       30
++#define CLK_I2CM1       31
++#define CLK_I2CM2       32
++#define CLK_I2CM3       33
++#define CLK_PMC         34
++#define CLK_CARD_CTL0   35
++#define CLK_CARD_CTL1   36
++#define CLK_CARD_CTL4   37
++#define CLK_BCH         38
++#define CLK_DDFCH       39
++#define CLK_CSIIW0      40
++#define CLK_CSIIW1      41
++#define CLK_MIPICSI0    42
++#define CLK_MIPICSI1    43
++#define CLK_HDMI_TX     44
++#define CLK_VPOST       45
++#define CLK_TGEN        46
++#define CLK_DMIX        47
++#define CLK_TCON        48
++#define CLK_GPIO        49
++#define CLK_MAILBOX     50
++#define CLK_SPIND       51
++#define CLK_I2C2CBUS    52
++#define CLK_SEC         53
++#define CLK_DVE         54
++#define CLK_GPOST0      55
++#define CLK_OSD0        56
++#define CLK_DISP_PWM    57
++#define CLK_UADBG       58
++#define CLK_FIO_CTL     59
++#define CLK_FPGA        60
++#define CLK_L2SW        61
++#define CLK_ICM         62
++#define CLK_AXI_GLOBAL  63
++
++/* plls */
++#define PLL_A           64
++#define PLL_E           65
++#define PLL_E_2P5       66
++#define PLL_E_25        67
++#define PLL_E_112P5     68
++#define PLL_F           69
++#define PLL_TV          70
++#define PLL_TV_A        71
++#define PLL_SYS         72
++
++#define CLK_MAX         73
++
++#endif
 -- 
 2.33.1
 
