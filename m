@@ -2,130 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04845C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 10:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821BBC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 May 2022 10:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236241AbiETK0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 May 2022 06:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48194 "EHLO
+        id S1348154AbiETKrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 May 2022 06:47:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233724AbiETK0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 06:26:33 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10D759B89;
-        Fri, 20 May 2022 03:26:30 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 321991F46241
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653042389;
-        bh=HDf0MWYOCR8r+DZXQalTBiAOnmPm5YoK5f5O0omhcKw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mdAaBJ/ldoxoFkOrLMDVKqWZzcLoxCeB7GE3uaRVXxTozO8Y5+Hp6X5lUigIWNr7J
-         Ktc7zWDmESvVXtv2Iad6ze8Kgxdg2WAsPRxKwZN+IPNJjbKZInkZDd2mV5ih49Z67M
-         XGN+NHSZr59Q4aDq3Zytr23c5wpGqtrewmWFxkoqJ2UkmvdNHFw7qnVk9yUd+BKAHc
-         /oT1lON2DU9i2X04vG27EVMGu2kvfSCyrhA2Eo/Ij66jU4RO4TRI1h3sFvHlRB1j6A
-         33qLkIzS/BpuXD0hf1mRa5PSa1hrhF4FCjI51q6AQKa9lzIUyAHlQSyQ8xjT2cT/uG
-         sv+GathARu3Mw==
-Message-ID: <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
-Date:   Fri, 20 May 2022 12:26:25 +0200
+        with ESMTP id S231633AbiETKro (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 May 2022 06:47:44 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CE13D1CA
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 03:47:42 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id v8so11701730lfd.8
+        for <linux-clk@vger.kernel.org>; Fri, 20 May 2022 03:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=+V2iz2tpQK2VKoncM7tkrBv1RkUo/3iqip/6pL9NBT0=;
+        b=SKmRAZSXq6NcW5nvMbo+k7TZRg6TyPM5f2AjErTZEBcrBgOgabUGKwc8xAokfk2tuh
+         L+joztkQ3ieF24XRT8dlfHbSLX7tiImMFgLoCdnTJ/naAyPzS+iBPtQeAJIdLnF0+hPr
+         Gi9zavVwcM/VY8p9WEDyu4TnOI4EtWafOePyADGDB8axC+ARvyyYUrwB8m/LOWc0hiJx
+         9z3C3wcYiF4gXBjNcEvQGAUimLhtTmFMQ2PlRFzqc3Gazi2nNEDYu5mi70tlt0KkaT5V
+         6kUPoI4lPgqQB5gmOMVpPHO7KWnPfgBqHNwymV/9sOkal23GRlHzZMN3YY7ZnlwCcotK
+         6GlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=+V2iz2tpQK2VKoncM7tkrBv1RkUo/3iqip/6pL9NBT0=;
+        b=RGc7xmEGmbC3rPocihcRX+4ehELf71l6peX1LmE0q6+F0PLY7VInkmUsdFN8f4K4XZ
+         qi1ZfUUFf79S/BrUEBKNUATMOn/S5Pmo++/PiezMA84gJO2NxTy848/pkUsMmnwpGkzb
+         ZiXm4USopbK2lcbNm92xMt6CXQctN+O8aYhEkW9hMhx2SH598uO7mXp6z0CF23jvom3R
+         ScWv0CVTJuhFeIhDL2Q9k9p4LGLN4Agpl3+0/nBFxxDLxZ1D9laqmlaa0hssb4yDgj+q
+         /7eR8H4TbxcwCAKZIqPUOTPvHTJ0ZoEI6fMnax9ZB92N4Pwt0Mpwb/BhSQ2DfbEKadDj
+         Aolg==
+X-Gm-Message-State: AOAM531WgX2oIK9x6wYUWSL3mJrCBUbYo4iB7obqbUv7s5VD5jgMIr7f
+        gGiLdEeKiCa1U/9Gdq0bAIZm+Q==
+X-Google-Smtp-Source: ABdhPJzntRsz8vlnhJmvVEsolPIB/+0IL2XNDAx06SGJOFAXhwrA5h6ElrgsomuzRBpoBB9guHpRNg==
+X-Received: by 2002:a05:6512:3f94:b0:474:68e:46c3 with SMTP id x20-20020a0565123f9400b00474068e46c3mr6786689lfa.431.1653043660624;
+        Fri, 20 May 2022 03:47:40 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id y20-20020a2eb014000000b00253ceefb668sm259262ljk.60.2022.05.20.03.47.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 May 2022 03:47:40 -0700 (PDT)
+Message-ID: <a2b67f62-b000-5ba3-6989-32221c26f7f0@linaro.org>
+Date:   Fri, 20 May 2022 12:47:38 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 4/4] clk: mediatek: Add drivers for MediaTek MT6735
- main clock drivers
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] dt-bindings: clock: exynosautov9: correct count of NR_CLK
 Content-Language: en-US
-To:     Miles Chen <miles.chen@mediatek.com>, yassine.oudjana@gmail.com
-Cc:     bgolaszewski@baylibre.com, chun-jie.chen@mediatek.com,
-        devicetree@vger.kernel.org, ikjn@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sam.shih@mediatek.com,
-        sboyd@kernel.org, tinghan.shen@mediatek.com, weiyi.lu@mediatek.com,
-        wenst@chromium.org, y.oudjana@protonmail.com,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <NJC6CR.M4CF312LSXXV1@gmail.com>
- <20220520093501.28758-1-miles.chen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220520093501.28758-1-miles.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <CGME20220520030551epcas2p1a67b9f026ce2ec56b0a167026ef96baf@epcas2p1.samsung.com>
+ <20220520030625.145324-1-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220520030625.145324-1-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/05/22 11:35, Miles Chen ha scritto:
+On 20/05/2022 05:06, Chanho Park wrote:
+> _NR_CLKS which can be used to register clocks via nr_clk_ids. The clock
+> IDs are started from 1. So, _NR_CLKS should be defined to "the last
+> clock id + 1"
 > 
->>>
->>> Thanks for submitting this patch.
->>>
->>> I compare this with drivers/clk/mediatek/clk-mt7986-apmixed.c,
->>> and other clk files are using macros to make the mtk_pll_data array
->>> more readable.
->>
->> I'd actually argue that macros make it less readable. While reading
->> other drivers I had a lot of trouble figuring out which argument
->> is which field of the struct, and had to constantly go back to the
->> macro definitions and count arguments to find it. Having it this
->> way, each value is labeled clearly with the field it's in. I think
->> the tradeoff between line count and readability here is worth it.
-> 
-> It is easier for multiple developers to work together if we have a common style.
-> 
-> How do you think?
-> 
-
-In my opinion, Yassine is definitely right about this one: unrolling these macros
-will make the code more readable, even though this has the side effect of making
-it bigger in the source code form (obviously, when compiled, it's going to be the
-exact same size).
-
-I wouldn't mind getting this clock driver in without the usage of macros, as much
-as I wouldn't mind converting all of the existing drivers to open-code everything
-instead of using macros that you have to find in various headers... this practice
-was done in multiple drivers (clock or elsewhere), so I don't think that it would
-actually be a bad idea to do it here on MediaTek too, even though I'm not aware of
-any *rule* that may want us to do that: if you check across drivers/clk/*, there's
-a big split in how drivers are made, where some are using macros (davinci, renesas,
-samsung, sprd, etc), and some are not (bcm, sunxi-ng, qcom, tegra, versatile, etc),
-so it's really "do it as you wish"...
-
-... *but:*
-
-Apart from that, I also don't think that it is a good idea to convert the other
-MTK clock drivers right now, as this would make the upstreaming of MediaTek clock
-drivers harder for some of the community in this moment... especially when we look
-at how many MTK SoCs are out there in the wild, and how many we have upstream:
-something like 10% of them, or less.
-
-I see the huge benefit of having a bigger community around MediaTek platforms as
-that's beneficial to get a way better support and solidity for all SoCs as they
-are sharing the same drivers and same framework, and expanding the support to more
-of them will only make it better with highly valuable community contributions.
+> Fixes: 680e1c8370a2 ("dt-bindings: clock: add clock binding definitions for Exynos Auto v9")
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 
 
-That said, Yassine, you should've understood that you have my full support on
-unrolling these macros - but it's not time to do that yet: you definitely know
-that MediaTek clock drivers are going through a big cleanup phase which is, at
-this point, unavoidable... if we are able to get the aid of scripts (cocci and
-others), that will make our life easier in this cleanup, and will also make us
-able to perform the entire cleanup with less effort and in less overall time.
-
-With that, I'm sad but I have to support Miles' decision on this one, and I also
-have to ask you to use macros in this driver.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
-I am sure - and it is my wish - to see MediaTek clock drivers open-coding stuff
-instead of using macros, but that's something for the future - which will happen
-after the more important cleanups.
-
-After all, it will be just about running "gcc -E xxxx.c" and copy-pasting the
-unrolled macros to the clock drivers, which will be pretty fast and straightforward.
-
-Sorry for the wall of text, by the way.
-
-Cheers,
-Angelo
+Best regards,
+Krzysztof
