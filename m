@@ -2,68 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5E5C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 05:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB9AC4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 07:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347576AbiEUFJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 May 2022 01:09:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42134 "EHLO
+        id S241065AbiEUHcl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 May 2022 03:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354582AbiEUFJ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 01:09:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625A5179C27;
-        Fri, 20 May 2022 22:09:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 25D35B82F37;
-        Sat, 21 May 2022 05:09:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DFA5DC385A9;
-        Sat, 21 May 2022 05:09:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653109763;
-        bh=2SScdXP8vu/I8x4nA+EC2ihryA5p7GDEZmBGr1vZigI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=KxsjUkls3+98H0VdSSrVtKh4rMS2AWxlmL245oh0iZ53Szfs5gKarSxu7NG3cUvDt
-         fPMfeAMEIKa4eYJ4ZrQkSTyv3k1M1LFj9RTUbXrDxp1QgX40E6Csrj73u2iXATf5JG
-         M3cHN5hG89T2ZYaMlBwcKVMJ0HMC96U5vX1Sm5Fmv/NERmUYptj0yFVPAyQNmBFrQf
-         W01vveLVP6H528ukCI86zTM5PEOpwv4i/SfyenTQ31JYtxI/SgQK+S9f9lPeB/S365
-         zsFJKRgndsm7wy43uv15nnS2nUa6+uix3LqOhu/cLRphn3UHfEDzB65DDabKfRhQDX
-         PknAM5kkB5AQw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CE17DF0383D;
-        Sat, 21 May 2022 05:09:23 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v5.18-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220521050026.2534728-1-sboyd@kernel.org>
-References: <20220521050026.2534728-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220521050026.2534728-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: d0031e6fbed955ff8d5f5bbc8fe7382482559cec
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3454ce0b2c8a56e760e6baa88ed10278585072b
-Message-Id: <165310976384.23518.2815679631591571587.pr-tracker-bot@kernel.org>
-Date:   Sat, 21 May 2022 05:09:23 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S235342AbiEUHcj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 03:32:39 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 868C517064A;
+        Sat, 21 May 2022 00:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653118358; x=1684654358;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hoOOM5CAOzlhTkn74IGlT9QSDPamrwRXxRrc9NAlZrY=;
+  b=Fl93PkkOglGtRPBOVFD08/Y9W3BlZxLs74nQRzPi6oXDqQYeBzzNt64Z
+   kROOr3tLFyvl6BB0Ts0a6esuIHu0OhwxO44A/9K9P3mktUFX5/3/Hmi+T
+   KB/fk+B9VCIrkvYLGIcVAdzC15Uri4p2kXU+9pANKxvSqMq/LB5EJmTGa
+   d0MvmZQb+uv3AR2qob19h+jLCh41x1M2lLRdHVTXJNjJzxYcqteyUsnXb
+   y0RQzbhMrZgZPsy2IY1sVOihM8ufehPCr3bFp0VJxj/dWJM7UB6nYn7qa
+   DZ6c/ymKjoRr5Mg6LGiAFqQe28lEJm6pY8MFu0PtGZTUY/LHBimmEAyQU
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10353"; a="359225709"
+X-IronPort-AV: E=Sophos;i="5.91,240,1647327600"; 
+   d="scan'208";a="359225709"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2022 00:32:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,240,1647327600"; 
+   d="scan'208";a="702123548"
+Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 21 May 2022 00:32:33 -0700
+Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nsJbE-00064p-N4;
+        Sat, 21 May 2022 07:32:32 +0000
+Date:   Sat, 21 May 2022 15:32:27 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
+Cc:     Paul Gazzillo <paul@pgazz.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        kbuild-all@lists.01.org, krzysztof.kozlowski@linaro.org,
+        robh+dt@kernel.org, mturquette@baylibre.com, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>
+Subject: Re: [PATCH v16 08/10] ARM: sunplus: Add initial support for Sunplus
+ SP7021 SoC
+Message-ID: <202205211551.WXBmoQuh-lkp@intel.com>
+References: <5b8f48113ddea6a1e8cdd6b1b6e5c9999dbe7332.1653027644.git.qinjian@cqplus1.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b8f48113ddea6a1e8cdd6b1b6e5c9999dbe7332.1653027644.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 20 May 2022 22:00:26 -0700:
+Hi Qin,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+I love your patch! Perhaps something to improve:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3454ce0b2c8a56e760e6baa88ed10278585072b
+[auto build test WARNING on pza/reset/next]
+[also build test WARNING on robh/for-next clk/clk-next tip/irq/core linus/master v5.18-rc7 next-20220520]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Thank you!
+url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220520-150501
+base:   https://git.pengutronix.de/git/pza/linux reset/next
+config: (https://download.01.org/0day-ci/archive/20220521/202205211551.WXBmoQuh-lkp@intel.com/config)
+reproduce:
+        # https://github.com/intel-lab-lkp/linux/commit/a18534d0375224dcbfbd6d313ec16c9042212661
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220520-150501
+        git checkout a18534d0375224dcbfbd6d313ec16c9042212661
+        # 1. reproduce by kismet
+           # install kmax per https://github.com/paulgazz/kmax/blob/master/README.md
+           kismet --linux-ksrc=linux --selectees CONFIG_SERIAL_SUNPLUS_CONSOLE --selectors CONFIG_SOC_SP7021 -a=arm
+        # 2. reproduce by make
+           # save the config file to linux source tree
+           cd linux
+           make ARCH=arm olddefconfig
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for SERIAL_SUNPLUS_CONSOLE when selected by SOC_SP7021
+   
+   WARNING: unmet direct dependencies detected for SERIAL_SUNPLUS
+     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && (ARCH_SUNPLUS [=y] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - SOC_SP7021 [=y] && ARCH_SUNPLUS [=y]
+   
+   WARNING: unmet direct dependencies detected for SERIAL_SUNPLUS_CONSOLE
+     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && SERIAL_SUNPLUS [=y]
+     Selected by [y]:
+     - SOC_SP7021 [=y] && ARCH_SUNPLUS [=y]
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+0-DAY CI Kernel Test Service
+https://01.org/lkp
