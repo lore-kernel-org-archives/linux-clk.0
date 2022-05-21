@@ -2,87 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FDCC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 15:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D355C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 19:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355387AbiEUPYZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 May 2022 11:24:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54082 "EHLO
+        id S231462AbiEUTl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 May 2022 15:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355221AbiEUPYY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 11:24:24 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE6F9346F
-        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 08:24:23 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id u30so18797856lfm.9
-        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 08:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=CJkhEfssZ1BBajH4a78QgJeIvXv9tPvvFZTXYZYK5WA=;
-        b=stcDvw2efBjXUVD+LgS821+CqRfQqT5CIwCHlvwXIgvxDFOxyPdb0vfHChx4Iso8qT
-         jQgfHwnPu5xPntjsS0qvKcywrnKieu+XGQbSAtsIzIQGJAgh+NcfhrBOqGIUI5jbhw6t
-         e46V9mm19CfrjSkXJ3xUTbyOsdZK2LcAKdAYdPTZuHnmBUOXQelnqZFa+DZyZRXbAkCO
-         GfCiG4dtu2B2UGBWIQYurv38N3ALT+OBwz+v+WBknIPGZEUzH057srPCmxbf+nKnf0uA
-         +YLjjPAfjEnkdMt7YHBbnDwmFEafobdPnGdptRDRsK/3OaJoB1af4ZeYnhm35n5vmVU8
-         FOqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CJkhEfssZ1BBajH4a78QgJeIvXv9tPvvFZTXYZYK5WA=;
-        b=e7F4SqQut0QgqZ5hlagSIZYEl8npNo+Tg/PT26cUdCTYK5UnfJk3knSdHsSW6zJXq1
-         apZbXx7ZForWqDh0540DWYWfwjg0mwZout6UfcBE9It8X6SDG6JGNBssiVduUEtEW9gh
-         tlplxspKlYPAceCRjA4M6Lvita5siPPIT2bvXnLDEK/TgivlU/mZU1f5O86ZGQYTBoA2
-         NZaUsHFb9mTbxoMreUJJF6YeVETZX2HZdDdm1HBLne8T7s9res52Ta0EE6D1lbwyp7q7
-         F8vTHckDn1pJx9DaRNZFOUNFKWnORn2N2qKMAOuYtbLkPjegwiqDakhZLDWeG3WxjkqK
-         EUbA==
-X-Gm-Message-State: AOAM531B7t+JGWnwrf/jOI8v8lofbyg4brM646AROU1CNxWAfqZyWC3E
-        CziDJpkW4EeXAZe17GB98NT6UQ==
-X-Google-Smtp-Source: ABdhPJyhLUZEE3ixw5JcnXmxUBJ7o134ZD/XU/hdbbznOJv0u/6InKS51qqX+SPPunJINfiLc1sSVQ==
-X-Received: by 2002:a05:6512:1691:b0:46f:1e0:d0 with SMTP id bu17-20020a056512169100b0046f01e000d0mr10114108lfb.91.1653146662107;
-        Sat, 21 May 2022 08:24:22 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id r18-20020a2e80d2000000b0024f3d1dae83sm753086ljg.11.2022.05.21.08.24.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 08:24:21 -0700 (PDT)
-Message-ID: <dfb17f12-3d12-6959-5067-978809392938@linaro.org>
-Date:   Sat, 21 May 2022 17:24:20 +0200
+        with ESMTP id S230127AbiEUTl4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 15:41:56 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9C83E5D3;
+        Sat, 21 May 2022 12:41:51 -0700 (PDT)
+Received: from mail-yw1-f171.google.com ([209.85.128.171]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MatZt-1nHWfW1MXz-00cRs9; Sat, 21 May 2022 21:41:49 +0200
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2ef5380669cso115100417b3.9;
+        Sat, 21 May 2022 12:41:49 -0700 (PDT)
+X-Gm-Message-State: AOAM530ykxv1M15oI+egNT+tLlRgaZBeu/E9w5DLFbFm0Ty9GhkZJey5
+        PADyDQkVR+3zi0cRtAphxEDBm9gg1AOB7RBgPYs=
+X-Google-Smtp-Source: ABdhPJwrgsMN7Ijgz9GAFGljoJxtQGD9GNwQNTcNuNXHJ2ZAL6jmu8b+7bNBJ5lr3aVVb/VrAwQ23AcpRu82ecv6gFg=
+X-Received: by 2002:a0d:fc83:0:b0:2e5:b0f4:c125 with SMTP id
+ m125-20020a0dfc83000000b002e5b0f4c125mr16588097ywf.347.1653162107872; Sat, 21
+ May 2022 12:41:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v6 2/4] dt-bindings: clock: qcom,gcc-apq8064: split tsens
- to the child node
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220521151437.1489111-1-dmitry.baryshkov@linaro.org>
- <20220521151437.1489111-3-dmitry.baryshkov@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220521151437.1489111-3-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
+ <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+ <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com> <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+In-Reply-To: <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 21 May 2022 21:41:30 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+Message-ID: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Yegor Yefremov <yegorslists@googlemail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:VY39/sLenORkliBZhWfb1XSBeuUrcAgHekxdbPepEkMFg03GT7W
+ FQexP6oyNRDDaoHEoippoRiGKAYh7lbj230uZKhsE02EByGC7fUKR5MGFVAQZSn6UAc85p+
+ Kin+lmZxeGoi73/au40UptoGTkgNedht+ooXFp/Qk13q4kcrC3eEUNkJQ5vB/hcwU/ylfxx
+ Kd1pl4+oXYgXPzKwNe6pw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:0gSwTFOLAm8=:eV7mRooO51PZX5gBs/v/0D
+ 3auoSn3HHl+Uoc69FfdIq28I8YKETDd9C2vibFaERd5B8Ud9fzY6wzciGqfzqdDlNQUjqkkMX
+ qgXSfyAFhzgzp4cTKcBF4XgE6BylXwX7Xtc0qi6Uw8nU6j2v6gQ1sJVdex3gm+X0Mbc8LhNRd
+ uxN6M/eZfogppYlny1Zv5AQrXyYDkRQErX53rZDgodbKeFHkX6VpYQf31b79i5ESJZFr7Or4M
+ IxMkIDKuVaTLEclE9aJ4qZAAhFGPDWu6Rk2OD7LJBUVb7vEg8NUA1p+P4W9B87qc6/25Fvbrd
+ 7mUEAYNig423WCx1ZV4Skjz8/M/UTwh5XVHuQKUu0FK/5c2W44MwqLOzYXSru+g1i9cn8nmaK
+ VkrAh6IYJnYfIsAbYbUDboFHPQclOgLHOiurZs81sxK6K/hDWfB/lbt621qpA8PEX8CeOSbhz
+ ihrr56WInxxWA81zgx9XzYmQ9DPTJlul/Lrjs+Nb2RHWDkluLYNWnYsfSfVp1kOSOzAlJleiU
+ yzy95PecbIMR1aDRoFLwRucJM+auUev5sasMdKTcia3nLTtLRjC+/z9yBnlzRI1m5IL7v2aUA
+ HkuVo3s3/8yRNl7aLdHdRQdjbbx1nWEx4qPjRYaB3u9R42KwvQ24ldiu+O2HJMQnoK6ujK/6a
+ Hn99z0j8ogJbrtXdvJPDDT+3PZYHdcyXqc/IWZf2+w0WpaXlhIYlhJy4YD7ig5zbRnfm4vbIq
+ gvFgJWXhx4lHNhIZAlUbqop+5l/S0obKuFHUEg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/05/2022 17:14, Dmitry Baryshkov wrote:
-> Split tsens properties to the child node of the gcc. This follows the
-> lead of ipq8064 (which also uses a separate node for tsens) and makes
-> device tree closer to other platforms, where tsens is a completely
-> separate device.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, May 19, 2022 at 5:52 PM Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+> On Thu, May 12, 2022 at 12:20 PM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> > On Thu, May 12, 2022 at 10:43 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
+> > > > > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
+> > > > > > > Hi Tony, all,
+> > > > > > >
+> > > > > > > since kernel 5.18.x (5.17.x doesn't show this behavior), the system
+> > > > > > > stalls as soon as I invoke the following commands (initializing
+> > > > > > > USB-to-CAN converter):
+> > > > > > >
+> > > > > > > slcand -o -s8 -t hw -S 3000000 /dev/ttyUSB0
+> > > > > > > ip link set slcan0 up
+> > >
+> > > Oh, I missed this part at first and only looked at the backtrace.
+> > > Which CAN driver
+> > > are you using? It's likely a problem in the kernel driver.
+> >
+> > I am using the slcan driver [1].
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ok, so this is just a serial port based driver, which means the
+follow-up question
+is what you use for your uart. Is this one of the USB-serial ones or an on-chip
+uart? Which driver?
 
-Best regards,
-Krzysztof
+> > > CONFIG_DMA_API_DEBUG is still likely to pinpoint the bug, but I might also
+> > > just see it by looking at the right source file.
+> >
+> > I'll try to get more debug info with CONFIG_DMA_API_DEBUG.
+>
+> DMA_API_DEBUG showed nothing new. But disabling the CPUfreq driver
+> "solved" the problem. I have tried different governors and got these
+> two groups:
+>
+> ondemand, schedutil - cause the problem
+> conservative, powersave, performance and userspace - don't cause the problem
+>
+> So far, I have only seen the same debug output that I've initially
+> sent and in most cases, the system stalls without the output.
+
+Ok, so that sounds like it happens when you change the frequency.
+I assume this means you are using drivers/cpufreq/omap-cpufreq.c?
+
+When using the usersapce governor, do you see problems when you
+manually change the frequency from sysfs?
+
+          Arnd
