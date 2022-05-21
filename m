@@ -2,96 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84218C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 14:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2478EC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 21 May 2022 15:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355268AbiEUOhf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 May 2022 10:37:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
+        id S244893AbiEUPOo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 May 2022 11:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355263AbiEUOhd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 10:37:33 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6E168324
-        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 07:37:32 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id y32so18678202lfa.6
-        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 07:37:32 -0700 (PDT)
+        with ESMTP id S241662AbiEUPOn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 May 2022 11:14:43 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5842554AB
+        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 08:14:41 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id bq30so18825625lfb.3
+        for <linux-clk@vger.kernel.org>; Sat, 21 May 2022 08:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=HghIPP/c/aNOhyZD5DNeCeHaqeDM1vYhEBVF/dCUtJg=;
-        b=oOY/fR+Tg45kSSTWNzGLslHiFzBjURbO53hujaFIrpEgLFCAvIpJnp5BoQq5PIMRhf
-         OY9GPgX/PKaap9Ln9tq2mXRabiwBKmP7DOIwg9+gzXwRnOXKp5U4/TMxoYWHWL3ELWHn
-         h0qsL03lBRz3QqmfshuCJBDCKAKhKNz4dTasz6/b5XQzFZfzi1ArJAZotoprBzncCnmO
-         z3gudk2yJUtNm6wd4gGj1FYYj6jST3WHm7PiFIcrdLC8D+DQKaYlGlCvCet478IksISc
-         8AWSZLKpccr4teHCrqEW8S6Q0aIS2spAv3fm9lNetDuwoU+W64QSiC3aCqFzXAPGoN2A
-         BVfA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IVrVm4lSXqU5biEI9mdh0jre39IASlXjjmo6QOig9Tg=;
+        b=SwTmFKXT+/5fPsDfWxS6xOsleNDsDZUYcGxqWB5+m2IiMPPvVJSxl8+NeJeue960sT
+         7fusG/WujXGe5l3qNTROQu+D5AaPYqrzxEyRbl9NEj52/BIGjbiO5JGjOGDttT5qpQnL
+         eUiVj1w+gbv7wWzhCE7aEnCz35y2OPYvcSRauHMv0OOTttkVbHo/JQ9WxH+/XjcF2hsU
+         sBma0pWirzLqONUe23yxMNpMR8JP4NeftMuXC+UfC7NGUKamwClp1DJoko2J1fhxyy6m
+         HEqqIBEvkAWyLEUckCIz+P0ohCYQCb24WpWDsvUDA0vmiXYMtYmp7i5Hd915cKVerxbz
+         kvUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=HghIPP/c/aNOhyZD5DNeCeHaqeDM1vYhEBVF/dCUtJg=;
-        b=GEukikQI/qaZGWg+APeJgm3jZ0rwAtj03HnYRODBJSm3JfO+1cz5rDTcAMoo66bErh
-         PPB6A91f7G3IR/uvZn3p/OPbeaSr9jR7uj3oNAr3qns3Neafz0znApd68Na4jgA3EtMc
-         dZVmfvie1KR/AW/Q+r0TRt4OTV6ieA+DcvF1es6jq9OEjRLKzUhnKubqliFLQTF++O5m
-         6yqOEQGbVRtO+eYtdkxlRpBU+HV1M9L9q6MmpTXSBN8+1rvKkqhrJVp4w099WjiOobGy
-         bAChMkoREl/DC3suwV2TtTLSJnf/eu61LahV76vBfErsCAJp2QWpnhAOI60XPAqGt0WJ
-         YwtA==
-X-Gm-Message-State: AOAM533DsUUydjuyItljIWJzHCtOxBqP9NB/e9+adhs7tOD/SG8WPIQL
-        /AK/tWwRE9/jLFKK32pn0H9sfQ==
-X-Google-Smtp-Source: ABdhPJw+1Sc2rMKqGmba/fJgsYKnwtgpoYhIctxY2xn2jtIRw+LPGvUXaOxbXQ82y6OLLszeHRUBRQ==
-X-Received: by 2002:ac2:4a6c:0:b0:478:51fd:f8ee with SMTP id q12-20020ac24a6c000000b0047851fdf8eemr5607074lfp.208.1653143852027;
-        Sat, 21 May 2022 07:37:32 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id d25-20020ac244d9000000b0047255d21165sm1079376lfm.148.2022.05.21.07.37.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 May 2022 07:37:31 -0700 (PDT)
-Message-ID: <27dbb8c4-834e-2c2a-431f-05558fe56561@linaro.org>
-Date:   Sat, 21 May 2022 16:37:30 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 2/3] dt-bindings: usb: atmel: Add Microchip LAN9662
- compatible string
-Content-Language: en-US
-To:     Herve Codina <herve.codina@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        bh=IVrVm4lSXqU5biEI9mdh0jre39IASlXjjmo6QOig9Tg=;
+        b=2ZcaWHdBt+vHWGQ0/9Mk0bE6I62/nxqNdgfsTvpMSgqox4oD6/xPYp/kJ/irVPcpDN
+         o2s4Zt6dbRgGM9H5xtqjAi7QHFxt/dNw7R99Q/x6o6wY3c/3rxNANIyCSAjwV96E+HXV
+         siiGrDMJ0/W5NFXgUsbcf+vj/P673100fUtXhLMfaAXGw0h7URDCgjSevYPHnVP4p0he
+         VYLfLqqMQ2g5qiOUyxB0ki98u5S4LbqI5bo2L+qAWjo9eGH3vwiIoDwXRPy7vhWjgwVo
+         TKJ0LoojHgBkuLz6zArKehAcA82wFaqMfJnAHtx92YwjzB0R7SCHhGVtBAJY9triyCFN
+         OwYA==
+X-Gm-Message-State: AOAM533xS8WFQl2dzb/mNs4dZ0X7OW+dOtyf40ybwuP2MbznquM9Enko
+        ZO9r2upl357RcKtQtykx1FAsQQ==
+X-Google-Smtp-Source: ABdhPJyxroTl2iSpRmG+DIWc3EEE2wlSHABfRDwZDTTP7JwHUOuhvZnNzsDi1ATHf4/MvY7fLFLv+w==
+X-Received: by 2002:a05:6512:1321:b0:477:9f1a:a5dd with SMTP id x33-20020a056512132100b004779f1aa5ddmr10623558lfu.443.1653146080255;
+        Sat, 21 May 2022 08:14:40 -0700 (PDT)
+Received: from eriador.lumag.spb.ru ([94.25.229.156])
+        by smtp.gmail.com with ESMTPSA id v22-20020a2e7a16000000b0024f3d1daedfsm716849ljc.103.2022.05.21.08.14.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 May 2022 08:14:39 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20220520152335.352537-1-herve.codina@bootlin.com>
- <20220520152335.352537-3-herve.codina@bootlin.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220520152335.352537-3-herve.codina@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v6 0/4] arm: qcom: qcom-apq8064: add separate device node for tsens
+Date:   Sat, 21 May 2022 18:14:33 +0300
+Message-Id: <20220521151437.1489111-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/05/2022 17:23, Herve Codina wrote:
-> The USB device controller available in the Microchip LAN9662 SOC
-> is the same IP as the one present in the SAMA5D3 SOC.
-> 
-> Add the LAN9662 compatible string and set the SAMA5D3 compatible
-> string as a fallback for the LAN9662.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Currently gcc-msm8960 driver manually creates tsens device. Instantiate
+the device using DT node instead. This makes the APQ8064 follow the
+IPQ8064 device tree schema (which is also closer to the way tsens
+devices are described on newer Qualcomm platforms).
 
+Compatibility with the previous devices trees is kept intact.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Changes since v5:
+- Inherited the gcc-msm8960 patch from another patchseries.
+- Marked old nvmem/thermal sensor properties as deprecated (Krzyshtof).
 
+Changes since v4:
+- Added thermal-sensor description to the qcom,gcc-apq8064 schema
 
-Best regards,
-Krzysztof
+Changes since v3:
+- Fix a typo qcom,gcc-msm8060 -> qcom,gcc-msm8960 (noted by Krzyshtof)
+- Fixed indentation in the example (also noted by Krzyshtof)
+
+Changes since v2:
+- Remove patches merged by Daniel
+- Rephrase commit messages to emphasize that these changes make apq8064
+  follow ipq8064
+
+Changes since v1:
+- populate child devices in gcc-msm8960
+- add syscon to the gcc device tree node
+
+Dmitry Baryshkov (4):
+  dt-bindings: clock: qcom,gcc-apq8064: move msm8960 compat from
+    gcc-other.yaml
+  dt-bindings: clock: qcom,gcc-apq8064: split tsens to the child node
+  clk: qcom: gcc-msm8960: create tsens device if there are no child
+    nodes
+  arm: dts: qcom-apq8064: create tsens device node
+
+ .../bindings/clock/qcom,gcc-apq8064.yaml      | 40 ++++++++++++++-----
+ .../bindings/clock/qcom,gcc-other.yaml        |  5 +--
+ arch/arm/boot/dts/qcom-apq8064.dtsi           | 25 ++++++++----
+ drivers/clk/qcom/gcc-msm8960.c                |  6 ++-
+ 4 files changed, 55 insertions(+), 21 deletions(-)
+
+-- 
+2.35.1
+
