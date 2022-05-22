@@ -2,108 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA371C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 22 May 2022 16:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8D5C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 22 May 2022 17:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242236AbiEVQqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 May 2022 12:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33612 "EHLO
+        id S1349234AbiEVRC5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 May 2022 13:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235505AbiEVQqA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 May 2022 12:46:00 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98342C3F;
-        Sun, 22 May 2022 09:45:56 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id g13-20020a9d6b0d000000b0060b13026e0dso627337otp.8;
-        Sun, 22 May 2022 09:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=A3MW2E4hPy/aQENWXOJ2JWZ+xI8KBMasjdB1XQlQXhk=;
-        b=fKUUM7yY2M3lYi3DacllA37dpumIb+5hsm4dGf862dt912aTwJh8O+JEDrr8XE4/Ao
-         /O+xEx8SUbw2Z+V0qTdJmLn/1+t41l7ol0S7LAxefEQMBwC1XJhqQOtfCtIB73JgXOR3
-         OvjT1vbQbn93hcd2cAQdnZVGk8QLX4BxAh2XE/2kB3vu5Gun01Sq2aL6hCWl19gFDqS+
-         lXWmOGGP8f4NAEyrFbYAffWuz9qh/9lkvljoE2Tk7ZAPBhSnGZIGz36rtY1x1R/nCoRr
-         KMy1HxbOp1tN4zmy2vN1V9LnSn1Tz1sizrk7jMXsGuDrFlZBLzLp+P6BMJ3xlz9i09Q4
-         zZ8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=A3MW2E4hPy/aQENWXOJ2JWZ+xI8KBMasjdB1XQlQXhk=;
-        b=PsV6Dl6fWHWkcpYhMc6q8FdySKWwq3RV9w6/8IK0SIX6uI7v/20RQf6atR3OjfVy3k
-         xBnlmcmUr/aFHAEbYDAYHBY61G8VQ2ErPneOP1QsK6UQUbpQlraOHApvgy1tP6Zy8a4S
-         4CizkQODhv6OSnvOF8sKvSr0C0zG8Nj3Yt7eOesyLPOhqkpHXeW8xT4RlEp/Af9LpDGa
-         2KmxknrNRAaeu8bqYj9e0FiEMJufvn/VuB0bnCO0UkHQgmb6AXfcpvcWW7cPVL/vW5iV
-         SypR7jHGfCZs+4Xr5kL1/sv86EoDXXshPI5w85RbS+xvGVRPlhsomkwQC8P4c6ubJM+R
-         tVzw==
-X-Gm-Message-State: AOAM533MBEXeGN/fuLr9rOi77m2dBqixXL2YOjsifoIKRBslam3JP245
-        JU6DvbDkmtPiOVg0Hu3UiPc=
-X-Google-Smtp-Source: ABdhPJwF7V+fwRvOwZOSp3lwb6vsxQ0qSZ6aw4g7kZDyU1NwNpYq17KF/k0k72MH8MxbQ3y6RscDVw==
-X-Received: by 2002:a05:6830:124e:b0:60a:fff3:c05b with SMTP id s14-20020a056830124e00b0060afff3c05bmr2616441otp.264.1653237955725;
-        Sun, 22 May 2022 09:45:55 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m12-20020a4a390c000000b0035eb4e5a6cbsm3423043ooa.33.2022.05.22.09.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 May 2022 09:45:54 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6d691a7d-7601-a077-fc8e-67e0c4917615@roeck-us.net>
-Date:   Sun, 22 May 2022 09:45:50 -0700
+        with ESMTP id S235505AbiEVRC4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 May 2022 13:02:56 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752233A19B;
+        Sun, 22 May 2022 10:02:48 -0700 (PDT)
+X-UUID: ed3bc3c69b0a480887db130046441547-20220523
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:1ddde99e-4e9c-490d-938c-8c5c580471b1,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:2a19b09,CLOUDID:cbc11be3-edbf-4bd4-8a34-dfc5f7bb086d,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:0,BEC:nil
+X-UUID: ed3bc3c69b0a480887db130046441547-20220523
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1835310507; Mon, 23 May 2022 01:02:41 +0800
+Received: from MTKMBS07N2.mediatek.inc (172.21.101.141) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Mon, 23 May 2022 01:02:40 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 23 May 2022 01:02:39 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.3 via Frontend Transport; Mon, 23 May 2022 01:02:39 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <bgolaszewski@baylibre.com>, <chun-jie.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>, <ikjn@chromium.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
+        <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <tinghan.shen@mediatek.com>, <weiyi.lu@mediatek.com>,
+        <wenst@chromium.org>, <y.oudjana@protonmail.com>,
+        <yassine.oudjana@gmail.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+Subject: Re: [PATCH v2 4/4] clk: mediatek: Add drivers for MediaTek MT6735 main clock drivers
+Date:   Mon, 23 May 2022 01:02:39 +0800
+Message-ID: <20220522170239.18519-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
+References: <c7b98ee4-cd4f-d7b7-726d-1acd4fafd50a@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v1 06/19] watchdog: npcm_wdt: Add NPCM845 watchdog support
-Content-Language: en-US
-To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
-        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, wim@linux-watchdog.org,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
-        bjorn.andersson@linaro.org, geert+renesas@glider.be,
-        marcel.ziswiler@toradex.com, vkoul@kernel.org,
-        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
-Cc:     soc@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-7-tmaimon77@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20220522155046.260146-7-tmaimon77@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/22/22 08:50, Tomer Maimon wrote:
-> Add Nuvoton BMC NPCM845 watchdog support.
-> The NPCM845 uses the same watchdog as the NPCM750.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->   drivers/watchdog/npcm_wdt.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/watchdog/npcm_wdt.c b/drivers/watchdog/npcm_wdt.c
-> index 28a24caa2627..0b91a3fbec09 100644
-> --- a/drivers/watchdog/npcm_wdt.c
-> +++ b/drivers/watchdog/npcm_wdt.c
-> @@ -231,6 +231,7 @@ static int npcm_wdt_probe(struct platform_device *pdev)
->   static const struct of_device_id npcm_wdt_match[] = {
->   	{.compatible = "nuvoton,wpcm450-wdt"},
->   	{.compatible = "nuvoton,npcm750-wdt"},
-> +	{.compatible = "nuvoton,npcm845-wdt"},
->   	{},
->   };
->   MODULE_DEVICE_TABLE(of, npcm_wdt_match);
+Hi Angelo, Yassine,
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+>>>
+>>> I'd actually argue that macros make it less readable. While reading
+>>> other drivers I had a lot of trouble figuring out which argument
+>>> is which field of the struct, and had to constantly go back to the
+>>> macro definitions and count arguments to find it. Having it this
+>>> way, each value is labeled clearly with the field it's in. I think
+>>> the tradeoff between line count and readability here is worth it.
+>> 
+>> It is easier for multiple developers to work together if we have a common style.
+>> 
+>> How do you think?
+>> 
+>
+>In my opinion, Yassine is definitely right about this one: unrolling these macros
+>will make the code more readable, even though this has the side effect of making
+>it bigger in the source code form (obviously, when compiled, it's going to be the
+>exact same size).
+>
+>I wouldn't mind getting this clock driver in without the usage of macros, as much
+>as I wouldn't mind converting all of the existing drivers to open-code everything
+>instead of using macros that you have to find in various headers... this practice
+>was done in multiple drivers (clock or elsewhere), so I don't think that it would
+>actually be a bad idea to do it here on MediaTek too, even though I'm not aware of
+>any *rule* that may want us to do that: if you check across drivers/clk/*, there's
+>a big split in how drivers are made, where some are using macros (davinci, renesas,
+>samsung, sprd, etc), and some are not (bcm, sunxi-ng, qcom, tegra, versatile, etc),
+>so it's really "do it as you wish"...
+>
+
+Thanks for the explanation and guide. I think we can do that for all MediaTek
+clock driver in the future, not having two styles in MediaTek clock driver now.
+
+>
+>... *but:*
+>
+>Apart from that, I also don't think that it is a good idea to convert the other
+>MTK clock drivers right now, as this would make the upstreaming of MediaTek clock
+>drivers harder for some of the community in this moment... especially when we look
+>at how many MTK SoCs are out there in the wild, and how many we have upstream:
+>something like 10% of them, or less.
+
+and thanks for considering this too.
+
+>
+>I see the huge benefit of having a bigger community around MediaTek platforms as
+>that's beneficial to get a way better support and solidity for all SoCs as they
+>are sharing the same drivers and same framework, and expanding the support to more
+>of them will only make it better with highly valuable community contributions.
+>
+>
+>That said, Yassine, you should've understood that you have my full support on
+>unrolling these macros - but it's not time to do that yet: you definitely know
+>that MediaTek clock drivers are going through a big cleanup phase which is, at
+>this point, unavoidable... if we are able to get the aid of scripts (cocci and
+>others), that will make our life easier in this cleanup, and will also make us
+>able to perform the entire cleanup with less effort and in less overall time.
+>
+>With that, I'm sad but I have to support Miles' decision on this one, and I also
+>have to ask you to use macros in this driver.
+>
+>
+>I am sure - and it is my wish - to see MediaTek clock drivers open-coding stuff
+>instead of using macros, but that's something for the future - which will happen
+>after the more important cleanups.
+>
+>After all, it will be just about running "gcc -E xxxx.c" and copy-pasting the
+>unrolled macros to the clock drivers, which will be pretty fast and straightforward.
+>
+>
+>Sorry for the wall of text, by the way.
+
+Sounds good and I want to say thank you again, I learned a lot from your post
+and patches you submitted.
+
+and I also want to say thank you to Yassine for the patch.
+
+thanks,
+Miles
+>
+>Cheers,
+>Angelo
+>
