@@ -2,24 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A250C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78989C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiEWVtC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 17:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
+        id S230003AbiEWVtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 17:49:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230003AbiEWVs4 (ORCPT
+        with ESMTP id S230154AbiEWVs4 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:56 -0400
 Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7033813D19
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746155838C
         for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:55 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id E4C3A1F6E1;
-        Mon, 23 May 2022 23:38:54 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 2810B2051D;
+        Mon, 23 May 2022 23:38:48 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -41,9 +41,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 6/9] drm/msm/dsi_phy_28nm_8960: Use stack memory for temporary clock names
-Date:   Mon, 23 May 2022 23:38:34 +0200
-Message-Id: <20220523213837.1016542-7-marijn.suijten@somainline.org>
+Subject: [PATCH 1/9] clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
+Date:   Mon, 23 May 2022 23:38:29 +0200
+Message-Id: <20220523213837.1016542-2-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
@@ -53,47 +53,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock names formatted into the hw_clk's init structure are only used
-for the duration of the registration function where they are kstrdup'ed,
-making it unnecessary to keep the allocations alive for the duration of
-the device (through devm).
-
-Just like the other DSI PHY PLL clock trees, use a stack-local char
-array and save on memory outside of the pll_28nm_register function.
+Add the devres variant of clk_hw_register_divider_parent_hw() for
+registering a divider clock with clk_hw parent pointer instead of parent
+name.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ include/linux/clk-provider.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-index 943a7e847c90..554978fc434d 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
-@@ -383,7 +383,7 @@ static int dsi_28nm_pll_restore_state(struct msm_dsi_phy *phy)
- 
- static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **provided_clocks)
- {
--	char *clk_name, *vco_name;
-+	char clk_name[32], vco_name[32];
- 	struct clk_init_data vco_init = {
- 		.parent_data = &(const struct clk_parent_data) {
- 			.fw_name = "ref",
-@@ -404,14 +404,6 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
- 	if (!bytediv)
- 		return -ENOMEM;
- 
--	vco_name = devm_kzalloc(dev, 32, GFP_KERNEL);
--	if (!vco_name)
--		return -ENOMEM;
--
--	clk_name = devm_kzalloc(dev, 32, GFP_KERNEL);
--	if (!clk_name)
--		return -ENOMEM;
--
- 	snprintf(vco_name, 32, "dsi%dvco_clk", pll_28nm->phy->id);
- 	vco_init.name = vco_name;
- 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c10dc4c659e2..4e07621849e6 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -831,6 +831,25 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ 	__devm_clk_hw_register_divider((dev), NULL, (name), (parent_name), NULL,   \
+ 				  NULL, (flags), (reg), (shift), (width),     \
+ 				  (clk_divider_flags), NULL, (lock))
++/**
++ * devm_clk_hw_register_divider_parent_hw - register a divider clock with the clock framework
++ * @dev: device registering this clock
++ * @name: name of this clock
++ * @parent_hw: pointer to parent clk
++ * @flags: framework-specific flags
++ * @reg: register address to adjust divider
++ * @shift: number of bits to shift the bitfield
++ * @width: width of the bitfield
++ * @clk_divider_flags: divider-specific flags for this clock
++ * @lock: shared register lock for this clock
++ */
++#define devm_clk_hw_register_divider_parent_hw(dev, name, parent_hw, flags,   \
++					       reg, shift, width,	      \
++					       clk_divider_flags, lock)       \
++	__devm_clk_hw_register_divider((dev), NULL, (name), NULL,	      \
++				       (parent_hw), NULL, (flags), (reg),     \
++				       (shift), (width), (clk_divider_flags), \
++				       NULL, (lock))
+ /**
+  * devm_clk_hw_register_divider_table - register a table based divider clock
+  * with the clock framework (devres variant)
 -- 
 2.36.1
 
