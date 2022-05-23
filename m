@@ -2,125 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F5BC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 08:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1C2C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 08:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232120AbiEWIyx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 04:54:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46174 "EHLO
+        id S232090AbiEWIzE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 04:55:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232102AbiEWIyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 04:54:52 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A6383DDF6
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 01:54:50 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id u7so15667552ljd.11
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 01:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=CfF5/pWdcRI2Sg4Sp9q18Ut3NdSMP2mrbNrUOH4tHpQ=;
-        b=H04E3Qh+zTkrhDtqT1Pf+lm+z90Q1IJDUjrpShL1b6RHtN5BCmOhFU45XgaLzruEAQ
-         A5fMl9wwVZqcALIuVrSlMDFOms32cB0Kh8A9Dra7P1u/TWSRNmJvGaaa9r+W1KiP59QN
-         6Kv4z77ZaR1HOWXOpL9Yy1bVRhACpLfGfO1/ICZdQ8NRjyTunjfH0E3IMxe+YquB8YFL
-         +rblqL3SZACB4oYbDVhmJJ7xeZ5Gcmmw4LsDMfKpzy8RxbLDszX4lGi0PN7CJqeV0wPZ
-         9bDoBwCrs+sFL1Nr/ZQ/kconVYs8bt0QHOyInH/VY0r+0UHAAKzY5Nv10bvgkCO/NOgC
-         gaFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CfF5/pWdcRI2Sg4Sp9q18Ut3NdSMP2mrbNrUOH4tHpQ=;
-        b=sdpyfymTBwv3LeYe59KhJSVLkJVAI6py47C+QyKO3ctPXoDTjPGp0naR6gYryPUeEq
-         Rd/yUmibFsGSaTPhHiPrbCC00A2co/6uv2zCDTKfYluJF+Kc4WOZB82BWaf3yU9+Smk5
-         zQ5vEh61OFK3c58Mo7/xLnMMv7/zvt2v0RQ8cbFaWBvhtGIt6SdBLinQRNIIJHeSasaO
-         jlH+HClRTsR+lv3bhiCSLqrlZ9wwoYcWi+EnIlcVr/hdmuHzN4fDu8I4uAiMrWD0Whvv
-         Ju0Jf9rvxDPyAHbmo7c4NZqMpx9ttLMmWBDH95Mu+bYjusTONkmKA4vJmMm8iJ1NnMjl
-         X9IA==
-X-Gm-Message-State: AOAM532o9hQkqbHArKeomePBpZPfcT0EzBb4bVEgnpM0APVEgz8gjX+I
-        NHYITy8Fh7yV0Eu9a3J5MkJ/LA==
-X-Google-Smtp-Source: ABdhPJz8ech4AXIZ3Td603lBQrNaXVjP05GbdjiHzoi9KYn0N5iOo6J7vHouIJSze1sRkg0E6MIyRw==
-X-Received: by 2002:a2e:9797:0:b0:253:ccb1:5868 with SMTP id y23-20020a2e9797000000b00253ccb15868mr12838410lji.162.1653296088444;
-        Mon, 23 May 2022 01:54:48 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y11-20020a2e7d0b000000b00253d95eebe4sm1692364ljc.21.2022.05.23.01.54.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 01:54:48 -0700 (PDT)
-Message-ID: <973d75b8-0eb6-ff5b-6cd2-9b7d7c5cbcaa@linaro.org>
-Date:   Mon, 23 May 2022 10:54:46 +0200
+        with ESMTP id S232102AbiEWIy6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 04:54:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4C3DEE0;
+        Mon, 23 May 2022 01:54:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 41C9DB80FA6;
+        Mon, 23 May 2022 08:54:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C22ADC385AA;
+        Mon, 23 May 2022 08:54:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653296093;
+        bh=V04WMePLj2QW2a3wfchN9AcGZ5qHObdYKcyrhHylPuI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jFpXQlzhCc5snOsJ9VHpKG1ulz457MS5qaXmd83zFh81oslSB3cL3Ve+qBhFjL1EA
+         xjtZyHyWS4JfTXp1yY1+N2s5LZD7l4E9fzLNLpro8RNnr/rps0jNrrGnyvZtCAUpHc
+         Z2BYNHBixNfkekh/mHgo/mJfDhdMG3dCskqsLwrFOYRPnAJnFBIv05FLgDT0Ip+8Fa
+         vs2hbt4BkRCBB6YRyMawo+MwN1YNdZlOsyHUaMZDeFc0t36n38Nrumij+PZPNjiK+l
+         mmIa0fx5TLWBALv7zfxTcP2L4Sq5bdlUNFQPOtb+9rUcVblTDs6r/g/6bBEQfgS4Wt
+         dzlENDZQPL7aw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1nt3py-0000g4-SC; Mon, 23 May 2022 10:54:50 +0200
+Date:   Mon, 23 May 2022 10:54:50 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v7 0/8] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+Message-ID: <YotL2rqv8N9+jmpV@hovoldconsulting.com>
+References: <20220521005343.1429642-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 10/19] reset: npcm: using syscon instead of device data
-Content-Language: en-US
-To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
-        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
-        bjorn.andersson@linaro.org, geert+renesas@glider.be,
-        marcel.ziswiler@toradex.com, vkoul@kernel.org,
-        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
-Cc:     soc@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-11-tmaimon77@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220522155046.260146-11-tmaimon77@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220521005343.1429642-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/05/2022 17:50, Tomer Maimon wrote:
-> Using syscon device tree property instead of
-> device data to handle the NPCM GCR registers.
-
-https://elixir.bootlin.com/linux/v5.18-rc4/source/Documentation/process/submitting-patches.rst#L586
-
+On Sat, May 21, 2022 at 03:53:35AM +0300, Dmitry Baryshkov wrote:
+> PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> Currently this is handcoded in the PCIe driver by reparenting the
+> gcc_pipe_N_clk_src clock.
 > 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  drivers/reset/reset-npcm.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
+> Instead of doing it manually, follow the approach used by
+> clk_rcg2_shared_ops and implement this parking in the enable() and
+> disable() clock operations for respective pipe clocks.
 > 
-> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
-> index 2ea4d3136e15..0c963b21eddc 100644
-> --- a/drivers/reset/reset-npcm.c
-> +++ b/drivers/reset/reset-npcm.c
-> @@ -138,8 +138,7 @@ static int npcm_reset_xlate(struct reset_controller_dev *rcdev,
->  }
->  
->  static const struct of_device_id npcm_rc_match[] = {
-> -	{ .compatible = "nuvoton,npcm750-reset",
-> -		.data = (void *)"nuvoton,npcm750-gcr" },
-> +	{ .compatible = "nuvoton,npcm750-reset"},
->  	{ }
->  };
->  
-> @@ -155,14 +154,10 @@ static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
->  	u32 ipsrst1_bits = 0;
->  	u32 ipsrst2_bits = NPCM_IPSRST2_USB_HOST;
->  	u32 ipsrst3_bits = 0;
-> -	const char *gcr_dt;
->  
-> -	gcr_dt = (const char *)
-> -	of_match_device(dev->driver->of_match_table, dev)->data;
-> -
-> -	gcr_regmap = syscon_regmap_lookup_by_compatible(gcr_dt);
-> +	gcr_regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
+> Changes since v7:
+>  - Brought back the struct clk_regmap_phy_mux (Johan)
+>  - Fixed includes (Stephen)
 
-I think this just broke all existing boards...
+So this is v8, but Subject still reads v7.
 
-Best regards,
-Krzysztof
+It looks like you also dropped the CLK_SET_RATE_PARENT flags in this
+version.
+
+For the series:
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
