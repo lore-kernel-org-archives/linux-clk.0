@@ -2,24 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C75C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B526DC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229473AbiEWVtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230033AbiEWVtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 23 May 2022 17:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbiEWVs5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:57 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80543AFAC7
+        with ESMTP id S229473AbiEWVs4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:56 -0400
+X-Greylist: delayed 606 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 May 2022 14:48:55 PDT
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F07B26C1
         for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:55 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id F35032051B;
-        Mon, 23 May 2022 23:38:46 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 64B5320536;
+        Mon, 23 May 2022 23:38:53 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -41,82 +42,82 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 0/9] drm/msm/dsi_phy: Replace parent names with clk_hw pointers
-Date:   Mon, 23 May 2022 23:38:28 +0200
-Message-Id: <20220523213837.1016542-1-marijn.suijten@somainline.org>
+Subject: [PATCH 5/9] drm/msm/dsi_phy_28nm_8960: Replace parent names with clk_hw pointers
+Date:   Mon, 23 May 2022 23:38:33 +0200
+Message-Id: <20220523213837.1016542-6-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
+References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As stated in [1] I promised to tackle and send this series.
-
 parent_hw pointers are easier to manage and cheaper to use than
 repeatedly formatting the parent name and subsequently leaving the clk
 framework to perform lookups based on that name.
 
-This series starts out by adding extra constructors for divider, mux and
-fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
-of some DT index or name.  Followed by individual patches performing the
-conversion, one DSI PHY at a time.
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+---
+ .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c    | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
-devm_kzalloc allocations (for the lifetime of the device) with
-stack-local char arrays, like all the other DSI PHY drivers.
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+index fc56cdcc9ad6..943a7e847c90 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+@@ -383,7 +383,7 @@ static int dsi_28nm_pll_restore_state(struct msm_dsi_phy *phy)
 
-I couldn't help but notice that clock names are wildly varying:
+ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **provided_clocks)
+ {
+-	char *clk_name, *parent_name, *vco_name;
++	char *clk_name, *vco_name;
+ 	struct clk_init_data vco_init = {
+ 		.parent_data = &(const struct clk_parent_data) {
+ 			.fw_name = "ref",
+@@ -408,10 +408,6 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 	if (!vco_name)
+ 		return -ENOMEM;
 
-- Some use underscores in the _clk suffix where others have nothing;
-- Some have an _ after the %d, others have not;
-- Some use a _pll suffix after dsi%d or even _phy_pll suffix.
+-	parent_name = devm_kzalloc(dev, 32, GFP_KERNEL);
+-	if (!parent_name)
+-		return -ENOMEM;
+-
+ 	clk_name = devm_kzalloc(dev, 32, GFP_KERNEL);
+ 	if (!clk_name)
+ 		return -ENOMEM;
+@@ -429,13 +425,14 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+ 	bytediv->hw.init = &bytediv_init;
+ 	bytediv->reg = pll_28nm->phy->pll_base + REG_DSI_28nm_8960_PHY_PLL_CTRL_9;
 
-Are there any thoughts or feelings towards unifying these?
-Theoretically no clock names are used anywhere in the kernel, and
-everything is based on a phandle + index in DT (I have yet to validate
-this).  Obviously no .name/.fw_name will be updated to not break DT.
+-	snprintf(parent_name, 32, "dsi%dvco_clk", pll_28nm->phy->id);
+ 	snprintf(clk_name, 32, "dsi%dpllbyte", pll_28nm->phy->id + 1);
 
-Which, by the way, is there a particular reason for:
+ 	bytediv_init.name = clk_name;
+ 	bytediv_init.ops = &clk_bytediv_ops;
+ 	bytediv_init.flags = CLK_SET_RATE_PARENT;
+-	bytediv_init.parent_names = (const char * const *) &parent_name;
++	bytediv_init.parent_hws = (const struct clk_hw*[]){
++		&pll_28nm->clk_hw,
++	};
+ 	bytediv_init.num_parents = 1;
 
-  #define DSI_BYTE_PLL_CLK		0
-  #define DSI_PIXEL_PLL_CLK		1
+ 	/* DIV2 */
+@@ -446,10 +443,9 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
 
-To not be in the dt-bindings and used in the DT?
-
-And with enough future improvements out of the way, let's round out this
-patch-series by stating that it has been successfully tested on:
-
-- Sony Nile Discovery (Xperia XA2 Ultra): 14nm;
-- Sony Seine PDX201 (Xperia 10II): 14nm;
-- Sony Loire Suzu (Xperia X): 28nm.
-
-And no diff is observed in debugfs's clk_summary.
-
-Unfortunately all other devices in my collection with a 7/10nm DSI PHY
-have a DSC panel which we have yet to get working.
-
-[1]: https://lore.kernel.org/linux-arm-msm/20220502214235.s5plebunh4ttjhge@SoMainline.org/
-
-Marijn Suijten (9):
-  clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
-  clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
-  clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
-  drm/msm/dsi_phy_28nm: Replace parent names with clk_hw pointers
-  drm/msm/dsi_phy_28nm_8960: Replace parent names with clk_hw pointers
-  drm/msm/dsi_phy_28nm_8960: Use stack memory for temporary clock names
-  drm/msm/dsi_phy_14nm: Replace parent names with clk_hw pointers
-  drm/msm/dsi_phy_10nm: Replace parent names with clk_hw pointers
-  drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
-
- drivers/clk/clk-fixed-factor.c                | 57 ++++++++++--
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 92 ++++++++-----------
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    | 36 ++++----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 52 +++++------
- .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 26 ++----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 92 +++++++++----------
- include/linux/clk-provider.h                  | 34 +++++++
- 7 files changed, 209 insertions(+), 180 deletions(-)
-
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_28nm->phy->id + 1);
+ 	/* DIV3 */
+-	hw = devm_clk_hw_register_divider(dev, clk_name,
+-				parent_name, 0, pll_28nm->phy->pll_base +
+-				REG_DSI_28nm_8960_PHY_PLL_CTRL_10,
+-				0, 8, 0, NULL);
++	hw = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
++			&pll_28nm->clk_hw, 0, pll_28nm->phy->pll_base +
++			REG_DSI_28nm_8960_PHY_PLL_CTRL_10, 0, 8, 0, NULL);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+ 	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
 --
 2.36.1
+
