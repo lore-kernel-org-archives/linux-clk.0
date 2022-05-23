@@ -2,144 +2,250 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C62C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A30DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:01:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232428AbiEWI74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 04:59:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54420 "EHLO
+        id S232300AbiEWJBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 05:01:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232398AbiEWI7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 04:59:51 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86BEA40A14
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 01:59:49 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id l7-20020a17090aaa8700b001dd1a5b9965so13081296pjq.2
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 01:59:49 -0700 (PDT)
+        with ESMTP id S232360AbiEWJBp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 05:01:45 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983B843EFD
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 02:01:41 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id j10so936126lfe.12
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 02:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RQjXK1tyA9xOYFhndd4nNr3xd4VXsIavQtRl5jsGh4c=;
-        b=meNdqL84O1gmdVv6NUiIDJn815273OPePWQVlLCtG6TSyOYKE4v2G4PfxBLToFL8pO
-         nUY0VM4BReYj05yWLnF2LyruQWkhcyhZ+XwNXzJeHEKBIZLPeU59T/CuMl7NZixuFi09
-         KXxlHmNQ/PJrF206symEyu+7Zq97H8GYXkS+k=
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=fYCNzd5DZy9e/CqtLhmUm9AQGXVd0bR6NXYTSVtz10Q=;
+        b=tcOPeifid63AxtGOEwUuOCh3+d9GSGk3wioI874kER3GgGNBqrV3zfBI7ONuNNfbo8
+         Q73mPLV0mpOokTTYaYs54OZ9LcS3wULB9HEbQaTP6LN6I/P7pX5moARyVOwijRX/FE+L
+         G2Q4c7lSkcAUSsQEU7lopuTEenP/1oRjNBMP0oXHI8uW7/Ux+5w8jq5qI7G7nQvxS8ZI
+         H88FjxD/65ysDCp6c9KmwguVTtayn/JRxHTDiXLPksBNWTE/sn4M1FQR8FOlgxpCoJNT
+         CcyYuXhSB38KIyJC+24EDDwviFl+mp0sCxkJvSKwndzLb6GQA3cDtbdHehMINZQfnG9l
+         DOZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RQjXK1tyA9xOYFhndd4nNr3xd4VXsIavQtRl5jsGh4c=;
-        b=NptuokLzi3/bCHo2FnPmLbQp/JEsjTcP9ZFWQxO5jpWmDW609WY1SPLMUk0jT5/Uw1
-         9N85kEtGG5JQVFdco1wgBvKhd4TAfUEtDlkCO7csQBChbH7cfLivwT6PBvTm7PDw7ihB
-         k+P4TXWz7FwV3MQrCEuEqUsr31bZV5bjsYX9yGS+VLjgjxJpeJw32ALKf0/sc2ytK77t
-         fv1l9hpfiTh1x6zaHCxoWTm8K5NidiFsDoJIhfVxHqattGASgWN1UFQFTsXSXSFGs3UY
-         4bsS6omqKcoZp+z2VpxkL2V6mWy2ONiy8LJhV3wnE5RHYLaWA2n8xaDOAgZa9o5fzeKA
-         cyEQ==
-X-Gm-Message-State: AOAM531qe9OQGhtsQp6/d7Yur1UTIlNb5u4tv/gP3pp5dWLR7mNmlx1Z
-        QQ9X5GgtOCMiDMsZMVz/7iTRzw==
-X-Google-Smtp-Source: ABdhPJw7GzZaO7+1ExzM7fCYO6HG981ADv0zp7IOz83yeRMp6UwL1C+HSBrvI/3v7TVTfgTNPEgxRw==
-X-Received: by 2002:a17:90b:4a90:b0:1df:e3af:c6ad with SMTP id lp16-20020a17090b4a9000b001dfe3afc6admr21190655pjb.41.1653296388958;
-        Mon, 23 May 2022 01:59:48 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:1b8:7eae:9793:ff95])
-        by smtp.gmail.com with ESMTPSA id e11-20020a170902cf4b00b0015e8d4eb22csm4524719plg.118.2022.05.23.01.59.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 01:59:48 -0700 (PDT)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] clk: mediatek: mt8183: Add clk mux notifier for MFG mux
-Date:   Mon, 23 May 2022 16:59:23 +0800
-Message-Id: <20220523085923.1430470-5-wenst@chromium.org>
-X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
-In-Reply-To: <20220523085923.1430470-1-wenst@chromium.org>
-References: <20220523085923.1430470-1-wenst@chromium.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=fYCNzd5DZy9e/CqtLhmUm9AQGXVd0bR6NXYTSVtz10Q=;
+        b=c/k0pvcOkw1DSR78vIhWWyqpAUuzWdzN4BIhvCn1nIjh1/Sx80u7gDV3gdFGxt6Aqt
+         L5VwL5glepMdmOZcU1KVPc9y8/rxgPfXVhNC646U9XKpmUjanwFgV0spxWXkPZWom300
+         7kgZpNx9PFUeP4wdZRy0gtgHK0nFQobj5rzZnCa8XiZCO9vDSSBiTjKoUPPplOSZYawU
+         yOZhbSyoh9CiVoUFFA1uz8s3xWHv76SBspDvdgslV5hCyT63+jaf7jpbk+k6vQNg4rXv
+         C74UZxLtzWQ1zy7v/eruArBS56AXq8MmsfK9+G6oLs+8Ee669AKzJOZABw46tQCNSb79
+         /9OQ==
+X-Gm-Message-State: AOAM531dbT6npk/VDasTcYI86DhGK/Eh5Fn/N00XYR8FKedIjdUHYdRi
+        iLoXZE7f0ytHA94/4y9Ty1Ob0w==
+X-Google-Smtp-Source: ABdhPJzHHP/+WcFU3Js4/bOYcbZttzRgNemubLuXS7gmbHa8Ppa37s0pp4mI7+q4phqBf5ol2YkDfg==
+X-Received: by 2002:a05:6512:3c84:b0:478:19f2:bc2e with SMTP id h4-20020a0565123c8400b0047819f2bc2emr12055162lfv.324.1653296499290;
+        Mon, 23 May 2022 02:01:39 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id q1-20020ac25fc1000000b0047255d210eesm1863280lfg.29.2022.05.23.02.01.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 02:01:38 -0700 (PDT)
+Message-ID: <86cd6a37-70ad-3a90-bc8a-dcd8b41f1175@linaro.org>
+Date:   Mon, 23 May 2022 11:01:36 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 11/19] dt-bindings: reset: npcm: Add support for
+ NPCM8XX
+Content-Language: en-US
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     soc@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220522155046.260146-1-tmaimon77@gmail.com>
+ <20220522155046.260146-12-tmaimon77@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220522155046.260146-12-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When the MFG PLL clock, which is upstream of the MFG clock, is changed,
-the downstream clock and consumers need to be switched away from the PLL
-over to a stable clock to avoid glitches.
+On 22/05/2022 17:50, Tomer Maimon wrote:
+> Add binding document and device tree binding
+> constants for Nuvoton BMC NPCM8XX reset controller.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../bindings/reset/nuvoton,npcm-reset.txt     |  17 ++-
+>  .../dt-bindings/reset/nuvoton,npcm8xx-reset.h | 124 ++++++++++++++++++
+>  2 files changed, 139 insertions(+), 2 deletions(-)
+>  create mode 100644 include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+> index cb1613092ee7..b7eb8615b68b 100644
+> --- a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+> +++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
+> @@ -1,14 +1,15 @@
+>  Nuvoton NPCM Reset controller
+>  
+>  Required properties:
+> -- compatible : "nuvoton,npcm750-reset" for NPCM7XX BMC
+> +- compatible : "nuvoton,npcm750-reset" for Poleg NPCM7XX BMC.
+> +               "nuvoton,npcm845-reset" for Arbel NPCM8XX BMC.
+>  - reg : specifies physical base address and size of the register.
+>  - #reset-cells: must be set to 2
+>  - syscon: a phandle to access GCR registers.
+>  
+>  Optional property:
+>  - nuvoton,sw-reset-number - Contains the software reset number to restart the SoC.
+> -  NPCM7xx contain four software reset that represent numbers 1 to 4.
+> +  NPCM7xx and NPCM8xx contain four software reset that represent numbers 1 to 4.
+>  
+>    If 'nuvoton,sw-reset-number' is not specified software reset is disabled.
+>  
+> @@ -32,3 +33,15 @@ example:
+>          };
+>  
+>  The index could be found in <dt-bindings/reset/nuvoton,npcm7xx-reset.h>.
+> +
+> +Specifying reset lines connected to IP NPCM8XX modules
+> +======================================================
 
-This is done through the use of the newly added clk mux notifier. The
-notifier is set on the mux itself instead of the upstream PLL, but in
-practice this works, as the rate change notifitcations are propogated
-throughout the sub-tree hanging off the PLL. Just before rate changes,
-the MFG mux is temporarily and transparently switched to the 26 MHz
-main crystal. After the rate change, the mux is switched back.
+No need to document consumers. Just mention the header.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v1;
-- Moved clk notifier registration into separate function
-- Fixed comment style
+> +example:
+> +
+> +        spi0: spi@..... {
+> +                ...
+> +                resets = <&rstc NPCM8XX_RESET_IPSRST2 NPCM8XX_RESET_PSPI1>;
+> +                ...
+> +        };
+> +
+> +The index could be found in <dt-bindings/reset/nuvoton,npcm8xx-reset.h>.
+> diff --git a/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
+> new file mode 100644
+> index 000000000000..4b832a0fd1dd
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
+> @@ -0,0 +1,124 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
- drivers/clk/mediatek/clk-mt8183.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Dual license.
 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index b5c17988c337..d66acf2e5e19 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -1188,10 +1188,33 @@ static void clk_mt8183_top_init_early(struct device_node *node)
- CLK_OF_DECLARE_DRIVER(mt8183_topckgen, "mediatek,mt8183-topckgen",
- 			clk_mt8183_top_init_early);
- 
-+/* Register mux notifier for MFG mux */
-+static int clk_mt8183_reg_mfg_mux_notifier(struct device *dev, struct clk *clk)
-+{
-+	struct mtk_mux_nb *mfg_mux_nb;
-+	int i;
-+
-+	mfg_mux_nb = devm_kzalloc(dev, sizeof(*mfg_mux_nb), GFP_KERNEL);
-+	if (!mfg_mux_nb)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(top_muxes); i++)
-+		if (top_muxes[i].id == CLK_TOP_MUX_MFG)
-+			break;
-+	if (i == ARRAY_SIZE(top_muxes))
-+		return -EINVAL;
-+
-+	mfg_mux_nb->mux = &top_muxes[i];
-+	mfg_mux_nb->bypass_index = 0; /* Bypass to 26M crystal */
-+
-+	return devm_mtk_clk_mux_notifier_register(dev, clk, mfg_mux_nb);
-+}
-+
- static int clk_mt8183_top_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
- 	struct device_node *node = pdev->dev.of_node;
-+	int ret;
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
-@@ -1217,6 +1240,11 @@ static int clk_mt8183_top_probe(struct platform_device *pdev)
- 	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
- 		top_clk_data);
- 
-+	ret = clk_mt8183_reg_mfg_mux_notifier(&pdev->dev,
-+					      top_clk_data->hws[CLK_TOP_MUX_MFG]->clk);
-+	if (ret)
-+		return ret;
-+
- 	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
- 				      top_clk_data);
- }
--- 
-2.36.1.124.g0e6072fb45-goog
+> +// Copyright (c) 2022 Nuvoton Technology corporation.
+> +
+> +#ifndef _DT_BINDINGS_NPCM8XX_RESET_H
+> +#define _DT_BINDINGS_NPCM8XX_RESET_H
+> +
+> +#define NPCM8XX_RESET_IPSRST1		0x20
+> +#define NPCM8XX_RESET_IPSRST2		0x24
+> +#define NPCM8XX_RESET_IPSRST3		0x34
+> +#define NPCM8XX_RESET_IPSRST4		0x74
 
+What are these? All IDs should be incremental, decimal and start from 0.
+
+> +
+> +/* Reset lines on IP1 reset module (NPCM8XX_RESET_IPSRST1) */
+> +#define NPCM8XX_RESET_GDMA0		3
+
+IDs start from 0 and do not have holes.
+
+
+> +#define NPCM8XX_RESET_UDC1		5
+> +#define NPCM8XX_RESET_GMAC3		6
+> +#define NPCM8XX_RESET_UART_2_3		7
+> +#define NPCM8XX_RESET_UDC2		8
+> +#define NPCM8XX_RESET_PECI		9
+> +#define NPCM8XX_RESET_AES		10
+> +#define NPCM8XX_RESET_UART_0_1		11
+> +#define NPCM8XX_RESET_MC		12
+> +#define NPCM8XX_RESET_SMB2		13
+> +#define NPCM8XX_RESET_SMB3		14
+> +#define NPCM8XX_RESET_SMB4		15
+> +#define NPCM8XX_RESET_SMB5		16
+> +#define NPCM8XX_RESET_PWM_M0		18
+> +#define NPCM8XX_RESET_TIMER_0_4		19
+> +#define NPCM8XX_RESET_TIMER_5_9		20
+> +#define NPCM8XX_RESET_GMAC4		21
+> +#define NPCM8XX_RESET_UDC4		22
+> +#define NPCM8XX_RESET_UDC5		23
+> +#define NPCM8XX_RESET_UDC6		24
+> +#define NPCM8XX_RESET_UDC3		25
+> +#define NPCM8XX_RESET_ADC		27
+> +#define NPCM8XX_RESET_SMB6		28
+> +#define NPCM8XX_RESET_SMB7		29
+> +#define NPCM8XX_RESET_SMB0		30
+> +#define NPCM8XX_RESET_SMB1		31
+> +
+> +/* Reset lines on IP2 reset module (NPCM8XX_RESET_IPSRST2) */
+> +#define NPCM8XX_RESET_MFT0		0
+> +#define NPCM8XX_RESET_MFT1		1
+> +#define NPCM8XX_RESET_MFT2		2
+> +#define NPCM8XX_RESET_MFT3		3
+> +#define NPCM8XX_RESET_MFT4		4
+> +#define NPCM8XX_RESET_MFT5		5
+> +#define NPCM8XX_RESET_MFT6		6
+> +#define NPCM8XX_RESET_MFT7		7
+> +#define NPCM8XX_RESET_MMC		8
+> +#define NPCM8XX_RESET_GFX_SYS		10
+> +#define NPCM8XX_RESET_AHB_PCIBRG	11
+> +#define NPCM8XX_RESET_VDMA		12
+> +#define NPCM8XX_RESET_ECE		13
+> +#define NPCM8XX_RESET_VCD		14
+> +#define NPCM8XX_RESET_VIRUART1		16
+> +#define NPCM8XX_RESET_VIRUART2		17
+> +#define NPCM8XX_RESET_SIOX1		18
+> +#define NPCM8XX_RESET_SIOX2		19
+> +#define NPCM8XX_RESET_BT		20
+> +#define NPCM8XX_RESET_3DES		21
+> +#define NPCM8XX_RESET_PSPI2		23
+> +#define NPCM8XX_RESET_GMAC2		25
+> +#define NPCM8XX_RESET_USBH1		26
+> +#define NPCM8XX_RESET_GMAC1		28
+> +#define NPCM8XX_RESET_CP1		31
+> +
+> +/* Reset lines on IP3 reset module (NPCM8XX_RESET_IPSRST3) */
+> +#define NPCM8XX_RESET_PWM_M1		0
+> +#define NPCM8XX_RESET_SMB12		1
+> +#define NPCM8XX_RESET_SPIX		2
+> +#define NPCM8XX_RESET_SMB13		3
+> +#define NPCM8XX_RESET_UDC0		4
+> +#define NPCM8XX_RESET_UDC7		5
+> +#define NPCM8XX_RESET_UDC8		6
+> +#define NPCM8XX_RESET_UDC9		7
+> +#define NPCM8XX_RESET_USBHUB		8
+> +#define NPCM8XX_RESET_PCI_MAILBOX	9
+> +#define NPCM8XX_RESET_GDMA1		10
+> +#define NPCM8XX_RESET_GDMA2		11
+> +#define NPCM8XX_RESET_SMB14		12
+> +#define NPCM8XX_RESET_SHA		13
+> +#define NPCM8XX_RESET_SEC_ECC		14
+> +#define NPCM8XX_RESET_PCIE_RC		15
+> +#define NPCM8XX_RESET_TIMER_10_14	16
+> +#define NPCM8XX_RESET_RNG		17
+> +#define NPCM8XX_RESET_SMB15		18
+> +#define NPCM8XX_RESET_SMB8		19
+> +#define NPCM8XX_RESET_SMB9		20
+> +#define NPCM8XX_RESET_SMB10		21
+> +#define NPCM8XX_RESET_SMB11		22
+> +#define NPCM8XX_RESET_ESPI		23
+> +#define NPCM8XX_RESET_USB_PHY_1		24
+> +#define NPCM8XX_RESET_USB_PHY_2		25
+> +
+
+
+Best regards,
+Krzysztof
