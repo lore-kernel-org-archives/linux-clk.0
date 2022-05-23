@@ -2,237 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D831C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EED5C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237006AbiEWOXt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 10:23:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60246 "EHLO
+        id S237123AbiEWO0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 10:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236991AbiEWOXr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:23:47 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3ED626F7
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:23:45 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id q1so7734813ljb.5
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:23:45 -0700 (PDT)
+        with ESMTP id S237137AbiEWO0S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:26:18 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE134BC07;
+        Mon, 23 May 2022 07:26:17 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id a23-20020a17090acb9700b001df4e9f4870so13886724pju.1;
+        Mon, 23 May 2022 07:26:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OyHM0isO5wTAezh/ODRy2XOY7z3TjUO73U16dlah2Lg=;
-        b=D+KH/MbaKM1Om37PloyJ8FEP0G0r8HIIgD1a9k9OJsHUHaBc52/jowGD5pw4CYYN8h
-         oIWc704WFK7X3+KVKTS1IAGeWcURqmYZKUcDkHuV4mP1DWL6bb04ECgHFPfIeCBw8CJX
-         iZMDqlRMytJ7AkpEn0hcqSyvj+5fLmxWDEXPRkGBkVsPkGrcDwMJieeJxl/47Xktpi3E
-         rQPyyVvtPzNpE6w0ZIIahgxyc+DrCYm8LKL9UfxvD3hwOKByGv0Tq35FHfKxnxM1ReXJ
-         ieCsXLForVSIkGc4vUYq7iQp7IctkU6bNYVy8TKA4H/TkDRENjsRNyMrAb6ErPakBDAu
-         Uexw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Dm4TT13KSiuL77Kurdzbxn3sj9oOXf/UIrA5coHXgag=;
+        b=GaXl6eNDe8XGNmdTgpiGEZJ/TizJeO/k6QmaNcIbAa7uasdJZ+okio0BBCaKh6xvDE
+         zfhQQe+1tuK0Tdk6Q1CVL7M5syyKZBdWS/iMXNFEvtYLv1gp1SsSCWGQPh0hAXPJ9pGo
+         yap+LsSDvpd/PGJs54OJYqEU2UPH+8vnF0WsFQMIy/rbERBHM4vG5TPl3POptfqfgjOJ
+         8lxP+NjUHoOnRdPqu8AealGxAqMBH0oCoOqh0q3uOLX29AktfMl/5H1B/8a7/NlApG+d
+         al0xUIr87Zc/qXHkRdiKoHw96Xt5yDDDyaonR9dINE1bB3cHkE5VwEHA20NI8hU2jPNb
+         epag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=OyHM0isO5wTAezh/ODRy2XOY7z3TjUO73U16dlah2Lg=;
-        b=HwP1Ev88f/1PXGqs9deH4tQwbwZX2SUMrblQlSYR1WddjgGa6CuRaIEyaph6c99JkZ
-         J67eRp7A13ZISkDWfunIklISBX/J8ndMA3b5kXKK7j+0xSDVybwEcIq9uht+OQtcu8y9
-         whkwmzBL9nR2FfW4YvyQ5jmEC0ZjHdUEX1Ftg02Z/Zoqk+4zLeckbF4MJYVqKOT3rpes
-         VgT3BrQ7gXc8qiXeC6xLkl96QONOJIlpwlmd4rWuuWVxulJDRX9pF5c6yhNsZ08dTm0q
-         hXJpWTQB9T7MZSqpE9DuLAH6KAOIax1GiljgM35dZns0Xou18rjbeN6RHvyTt3ExJIKF
-         HsJQ==
-X-Gm-Message-State: AOAM5328ewq9hL5m1zSWHpa5++nMKKydBRdx9qjYxmgmCh3BlSmG3GuJ
-        7yEGIBJnb5YTsa3T+tuJ6HkiqA==
-X-Google-Smtp-Source: ABdhPJzfE9KcPqVU5FLAVn8vclloK7K7k3tlIOfGkMLVado59PwidM8O718jmHMHm8H4Z2C7TU4JXQ==
-X-Received: by 2002:a05:651c:1792:b0:235:1df3:7b8e with SMTP id bn18-20020a05651c179200b002351df37b8emr13338743ljb.464.1653315824311;
-        Mon, 23 May 2022 07:23:44 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id s9-20020ac25fa9000000b0047255d211ffsm1996118lfe.302.2022.05.23.07.23.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 07:23:43 -0700 (PDT)
-Message-ID: <96ab5563-ea03-806b-f38e-39ef1ed04093@linaro.org>
-Date:   Mon, 23 May 2022 16:23:41 +0200
+        bh=Dm4TT13KSiuL77Kurdzbxn3sj9oOXf/UIrA5coHXgag=;
+        b=MXMYi+ggU9BJhf+Mo3PqRwDifmSG/FUuXnNdEaR301ocrRXfJDIRKXLncXxAi0ofQJ
+         Sx82/kOVIeUlGnvzHACNAmwP876QAfuYEBoDzT18j39M4sTBoJn/ppynCNS2RH5QqHU9
+         0aaxxZPYK5nnrEva2rP8TJ1YoufEaFxa8vdoJwNeNIXbxQTIUKR7s4ShkdJDsK4fPuBe
+         uOMDFrYao1/gOFzgJzdthPGWxdO9yggaktXHfaNVZsxnEMHyaR7EEemy6UJkFkYjcKp3
+         +RNrrBwBTytV464J7DvHqQLsuooPs/+1oRv8WgQzDF9Cb5O0O4oHUfUBm6p4LfR6vvBe
+         eh7w==
+X-Gm-Message-State: AOAM532FRYuhk+PDaP1nR9rGAPGM1miTIlJqucaTc9uiqd0x0BNw5LlR
+        O29YbjQeYVgwG1DdXLcujnnITJBkk4L5Ng==
+X-Google-Smtp-Source: ABdhPJyk9R7HqnqlxT8Cl7Ehi0YFLbFT2OX5ASTMtbuRUAmxERv9h5wOwqK/TkMQjIdrXJSKrTl9pg==
+X-Received: by 2002:a17:90b:1e0f:b0:1df:e6b4:1fa7 with SMTP id pg15-20020a17090b1e0f00b001dfe6b41fa7mr22360831pjb.29.1653315977392;
+        Mon, 23 May 2022 07:26:17 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id u2-20020aa78382000000b0050dc762818asm7266438pfm.100.2022.05.23.07.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 07:26:17 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] clk: tegra: Fix refcount leak in tegra210_clock_init
+Date:   Mon, 23 May 2022 18:26:08 +0400
+Message-Id: <20220523142608.65074-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 11/19] dt-bindings: reset: npcm: Add support for
- NPCM8XX
-Content-Language: en-US
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, catalin.marinas@arm.com,
-        will@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, jirislaby@kernel.org,
-        shawnguo@kernel.org, bjorn.andersson@linaro.org,
-        geert+renesas@glider.be, marcel.ziswiler@toradex.com,
-        Vinod Koul <vkoul@kernel.org>, biju.das.jz@bp.renesas.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, robert.hancock@calian.com,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        lkundrak@v3.sk, soc@kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-12-tmaimon77@gmail.com>
- <86cd6a37-70ad-3a90-bc8a-dcd8b41f1175@linaro.org>
- <CAP6Zq1i2Wj4FCA4-eseVoJyMof5=ocFCUcitVquJqYJ4Z3JTYQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAP6Zq1i2Wj4FCA4-eseVoJyMof5=ocFCUcitVquJqYJ4Z3JTYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/05/2022 16:03, Tomer Maimon wrote:
-> Hi Krzysztof,
-> 
-> Thanks for your comments.
+of_find_matching_node() returns a node pointer with refcount
+incremented, we should use of_node_put() on it when not need anymore.
+Add missing of_node_put() to avoid refcount leak.
 
-Please stop replying in HTML. It's not the format of emails used in the
-Linux. It makes very difficult to read your replies.
+Fixes: 6b301a059eb2 ("clk: tegra: Add support for Tegra210 clocks")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> 
-> On Mon, 23 May 2022 at 12:01, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org <mailto:krzysztof.kozlowski@linaro.org>>
-> wrote:
-> 
->     On 22/05/2022 17:50, Tomer Maimon wrote:
->     > Add binding document and device tree binding
->     > constants for Nuvoton BMC NPCM8XX reset controller.
->     >
->     > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com
->     <mailto:tmaimon77@gmail.com>>
->     > ---
->     >  .../bindings/reset/nuvoton,npcm-reset.txt     |  17 ++-
->     >  .../dt-bindings/reset/nuvoton,npcm8xx-reset.h | 124
->     ++++++++++++++++++
->     >  2 files changed, 139 insertions(+), 2 deletions(-)
->     >  create mode 100644 include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
->     >
->     > diff --git
->     a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
->     b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
->     > index cb1613092ee7..b7eb8615b68b 100644
->     > --- a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
->     > +++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
->     > @@ -1,14 +1,15 @@
->     >  Nuvoton NPCM Reset controller
->     > 
->     >  Required properties:
->     > -- compatible : "nuvoton,npcm750-reset" for NPCM7XX BMC
->     > +- compatible : "nuvoton,npcm750-reset" for Poleg NPCM7XX BMC.
->     > +               "nuvoton,npcm845-reset" for Arbel NPCM8XX BMC.
->     >  - reg : specifies physical base address and size of the register.
->     >  - #reset-cells: must be set to 2
->     >  - syscon: a phandle to access GCR registers.
->     > 
->     >  Optional property:
->     >  - nuvoton,sw-reset-number - Contains the software reset number to
->     restart the SoC.
->     > -  NPCM7xx contain four software reset that represent numbers 1 to 4.
->     > +  NPCM7xx and NPCM8xx contain four software reset that represent
->     numbers 1 to 4.
->     > 
->     >    If 'nuvoton,sw-reset-number' is not specified software reset is
->     disabled.
->     > 
->     > @@ -32,3 +33,15 @@ example:
->     >          };
->     > 
->     >  The index could be found in
->     <dt-bindings/reset/nuvoton,npcm7xx-reset.h>.
->     > +
->     > +Specifying reset lines connected to IP NPCM8XX modules
->     > +======================================================
-> 
-> we prefer to use the same explanation as the NPCM7XX reset explanation
-> in the reset binding document.
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b9099012dc7b..499f999e91e1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3748,6 +3748,7 @@ static void __init tegra210_clock_init(struct device_node *np)
+ 	}
+ 
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		WARN_ON(1);
+-- 
+2.25.1
 
-??
-
-> 
->     No need to document consumers. Just mention the header.
-
-What explanation? Consumers are trivial. Once you convert it to DT
-schema there should be no such code at all.
-
-> 
->     > +example:
->     > +
->     > +        spi0: spi@..... {
->     > +                ...
->     > +                resets = <&rstc NPCM8XX_RESET_IPSRST2
->     NPCM8XX_RESET_PSPI1>;
->     > +                ...
->     > +        };
->     > +
->     > +The index could be found in
->     <dt-bindings/reset/nuvoton,npcm8xx-reset.h>.
->     > diff --git a/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
->     b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
->     > new file mode 100644
->     > index 000000000000..4b832a0fd1dd
->     > --- /dev/null
->     > +++ b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
->     > @@ -0,0 +1,124 @@
->     > +/* SPDX-License-Identifier: GPL-2.0 */
-> 
->     Dual license.
-> 
-> O.K. 
-> 
-> 
->     > +// Copyright (c) 2022 Nuvoton Technology corporation.
->     > +
->     > +#ifndef _DT_BINDINGS_NPCM8XX_RESET_H
->     > +#define _DT_BINDINGS_NPCM8XX_RESET_H
->     > +
->     > +#define NPCM8XX_RESET_IPSRST1                0x20
->     > +#define NPCM8XX_RESET_IPSRST2                0x24
->     > +#define NPCM8XX_RESET_IPSRST3                0x34
->     > +#define NPCM8XX_RESET_IPSRST4                0x74
-> 
->     What are these? All IDs should be incremental, decimal and start from 0.
-> 
-> Register offset, we use the same method in NPCM7xx. please refer
-> https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/reset/nuvoton,npcm7xx-reset.h
-> <https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/reset/nuvoton,npcm7xx-reset.h>
-> 
-> and the driver asserts the reset according to the reset include definitions 
-
-Register offsets, a device programming model, are not part of bindings.
- Bindings should be independent of programming model, so only IDs are
-allowed.
-
-Why did you add register offsets to bindings at the first place?
-
-> 
-> 
->     > +
->     > +/* Reset lines on IP1 reset module (NPCM8XX_RESET_IPSRST1) */
->     > +#define NPCM8XX_RESET_GDMA0          3
-> 
->     IDs start from 0 and do not have holes.
-> 
-> This represents the reset BIT in the reset register. 
-
-Again, not programming model in the bindings. No bits, not register
-values, no register offsets.
-
-
-Best regards,
-Krzysztof
