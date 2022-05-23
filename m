@@ -2,57 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967F8C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 22:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF586C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 22:45:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbiEWWpE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 18:45:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46558 "EHLO
+        id S231652AbiEWWpn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 18:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230103AbiEWWpD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 18:45:03 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A426BABF53
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 15:45:01 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id y20so13096547qvx.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 15:45:01 -0700 (PDT)
+        with ESMTP id S230309AbiEWWpm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 18:45:42 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A826ABF7D
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 15:45:41 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id m13so7650930qtx.0
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 15:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rypfduMofq52o9Cw4bRVJ4YmnkHY5oYB2ohQA+ESkAI=;
-        b=k21oHGm0XlDpBA85Iv8KLMxGl747dSSdXE/EQyrLw9mufTBWj0M6QTD5xziStZGSax
-         rsRSKgHWBLMlhZ92G8QYix9zssd7roGkDcKcOVZ78tx2ubdiDauy3Vbkx008q6bxygJ4
-         DUmQ26ZXi3O2lWLDlZDoUFt85gOIQ6f1dlS2AhQ9k28X+yfGX3ow6kOvQNJgZHpnnzvF
-         FWbQfK8KuSu9LWM1QZyd6uCIrhja4Y/y3XPc/g+P4FxJwERhcMptBoMl3Xb/l+rYfkJh
-         8rebEvtWe+YSg431tnavm1SWe+NxnNWr/h9TNjHOIcf+Fj+ppVEv6ttuw9iIYwaoBIu5
-         4SKQ==
+        bh=Nopxt4XwsFRcjRroEc1RpomTVU9NSywZXrOA9daUnOA=;
+        b=o0zCSPCGjVwpCsbTDL8/HcIaeqS8fYCO4SL570ZBv9w78NFCvfRuSAAw6rMbj5cqQO
+         Nh1J9vi7v8MDYmGaNBJo0mjvOmzaVF88daDfNDjXbuqckC//C6SgYs2eyiZfI01fQMGV
+         jC1QmRuLQkcDb+291niZCSZqNmyOEryfkkCZLQkswVkH/Qp7J1a5c7XAsuYRQn55myFq
+         f//oxnuGT6Oox/KRkOPchhD3n8WFJmdlTdmHsY0WMQqVJz7qoH+QsLyVkBHZP9FLSXGd
+         L5MBPAsKUo7NDrEOvt/iknFwpb4MvF4vBF/G54drN0u4j4j3UnZIGF+/GaWjS/y1AStK
+         iLEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rypfduMofq52o9Cw4bRVJ4YmnkHY5oYB2ohQA+ESkAI=;
-        b=vz2SCrHiWWtYGqnkJuEJYa5ps8v/skSLO9dPOZGZin5KXJexbwZkWYBGAQfQrNJjFz
-         mEzDT8s7WDGpTtKzM5EdxtMxLP/zSiFVSkuywjq3L+FKv1ntWI5IwC7VEt7wBNLhSx76
-         KvTQv/ZDaNF/7TqW6IOabKwevKyuFn+93J3y8MyAra09ds8ENDUwcJWMz5BH7MA96s/D
-         qgLKHcCUyEhi/C+7YU8WIITw5wZL6EsJazxDdjol/P0p7wOiZ+e7sodvM76d2HPWKgsg
-         c4arTOfLnjvR1aNVET6pNgUEegSMj5aorYh2U91HIJerkB6xyVWWcY8oTjpR+j+/NhOg
-         4nMw==
-X-Gm-Message-State: AOAM5312xcXwS8L5wRwjyz110yvkjM5hIA9ck9CnGrQ+aMR5W+/aWPPI
-        MJPGX5S0nWlDzs4LJndPDaJPDKvg/xJ3gyL7hO4o1Q==
-X-Google-Smtp-Source: ABdhPJzz71U22o77PPLCWll4LOjtW5ov17NvyPyylFN9GoUFs7JpXdQIQhFptHaspJJWWce0ytJssabLtNao3p4Y8No=
-X-Received: by 2002:a05:6214:3e1:b0:461:f0b1:6b12 with SMTP id
- cf1-20020a05621403e100b00461f0b16b12mr18964358qvb.122.1653345900868; Mon, 23
- May 2022 15:45:00 -0700 (PDT)
+        bh=Nopxt4XwsFRcjRroEc1RpomTVU9NSywZXrOA9daUnOA=;
+        b=3t3jOPex9YP5xc7llD2QICDmtEWcZiR1lk3XKZs5iUFOmJdOHQ1kcSvCmgoGjMYCqe
+         /FF4dPMRxZkooqkLUgN3ozxOs7rXPLdCe9nuDWwYdhehd0NQVQ2CjktsgHcWOdRm4heO
+         8MwRoX0xpl6nuFUM0D5fkjEtvS23sAIAns3EcztR6Y4Al678Dt3q8VZN+fDxd3KpsNIV
+         tH+x4KSqCR9LIwVoJfDTEf+CGccbUAp/FD+doxvLvWOwvTP1PUxb5SmEtEeoEHetHHXZ
+         BXAJfFe7I2WgFpdTQvMtRTh+MbeURQ6pY+1ZVm2+epBNFfUnyfy0k/ufLmDYBjqkOQ0W
+         ge7w==
+X-Gm-Message-State: AOAM5325bpOpSCaXUZAPIC7s7MSuM8Jf8bE6mGoQ11iv9LOqHQpZmJP5
+        r4UAPxtaCmcBw5T5weFPYULZ9L1EKHL22jSD+2OKSQ==
+X-Google-Smtp-Source: ABdhPJxviAgpH40GcN8RqQXsVDkwFlmeEiohAphnoVRJGd8mfAwe+K5VvwHS3Qg4VCOkTu1PQXrEEcD2nTGC84T5HCs=
+X-Received: by 2002:ac8:5e54:0:b0:2f3:f4ee:efbd with SMTP id
+ i20-20020ac85e54000000b002f3f4eeefbdmr17736764qtx.295.1653345940458; Mon, 23
+ May 2022 15:45:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
- <20220523213837.1016542-6-marijn.suijten@somainline.org> <CAA8EJprN833M+KOZXOyuaL_KqzEV61P69VXw7mfWo5OiXjE2FA@mail.gmail.com>
-In-Reply-To: <CAA8EJprN833M+KOZXOyuaL_KqzEV61P69VXw7mfWo5OiXjE2FA@mail.gmail.com>
+References: <20220523213837.1016542-1-marijn.suijten@somainline.org> <20220523213837.1016542-7-marijn.suijten@somainline.org>
+In-Reply-To: <20220523213837.1016542-7-marijn.suijten@somainline.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 24 May 2022 01:44:49 +0300
-Message-ID: <CAA8EJpqB4wAZo_EVX9dgTvAyX7yqTUUPNeEUsG58nckdDKxr-A@mail.gmail.com>
-Subject: Re: [PATCH 5/9] drm/msm/dsi_phy_28nm_8960: Replace parent names with
- clk_hw pointers
+Date:   Tue, 24 May 2022 01:45:29 +0300
+Message-ID: <CAA8EJpqhqtc1A0SJqAhOveZcdsBEjPNZLpR3tTM2L3+p3QtiWA@mail.gmail.com>
+Subject: Re: [PATCH 6/9] drm/msm/dsi_phy_28nm_8960: Use stack memory for
+ temporary clock names
 To:     Marijn Suijten <marijn.suijten@somainline.org>
 Cc:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         ~postmarketos/upstreaming@lists.sr.ht,
@@ -77,23 +76,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 24 May 2022 at 01:44, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Tue, 24 May 2022 at 00:38, Marijn Suijten
+<marijn.suijten@somainline.org> wrote:
 >
-> On Tue, 24 May 2022 at 00:38, Marijn Suijten
-> <marijn.suijten@somainline.org> wrote:
-> >
-> > parent_hw pointers are easier to manage and cheaper to use than
-> > repeatedly formatting the parent name and subsequently leaving the clk
-> > framework to perform lookups based on that name.
+> The clock names formatted into the hw_clk's init structure are only used
+> for the duration of the registration function where they are kstrdup'ed,
+> making it unnecessary to keep the allocations alive for the duration of
+> the device (through devm).
 >
-> Can you please add a followup patch (or a preface one) removing the
-> rest of devm_kzalloc()'ed clock names.
+> Just like the other DSI PHY PLL clock trees, use a stack-local char
+> array and save on memory outside of the pll_28nm_register function.
+>
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 
-Argh, stupid me, you did that in the next patch. Please ignore this.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
+Nit: we can use clk_name instead of vco_name too.
+
+> ---
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 >
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> index 943a7e847c90..554978fc434d 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+> @@ -383,7 +383,7 @@ static int dsi_28nm_pll_restore_state(struct msm_dsi_phy *phy)
+>
+>  static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **provided_clocks)
+>  {
+> -       char *clk_name, *vco_name;
+> +       char clk_name[32], vco_name[32];
+>         struct clk_init_data vco_init = {
+>                 .parent_data = &(const struct clk_parent_data) {
+>                         .fw_name = "ref",
+> @@ -404,14 +404,6 @@ static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm, struct clk_hw **prov
+>         if (!bytediv)
+>                 return -ENOMEM;
+>
+> -       vco_name = devm_kzalloc(dev, 32, GFP_KERNEL);
+> -       if (!vco_name)
+> -               return -ENOMEM;
+> -
+> -       clk_name = devm_kzalloc(dev, 32, GFP_KERNEL);
+> -       if (!clk_name)
+> -               return -ENOMEM;
+> -
+>         snprintf(vco_name, 32, "dsi%dvco_clk", pll_28nm->phy->id);
+>         vco_init.name = vco_name;
+>
+> --
+> 2.36.1
+>
+
 
 -- 
 With best wishes
