@@ -2,183 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4DDC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F32EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:27:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233022AbiEWJXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 05:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48844 "EHLO
+        id S233188AbiEWJ1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 05:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232958AbiEWJXq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 05:23:46 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D6948322;
-        Mon, 23 May 2022 02:23:45 -0700 (PDT)
+        with ESMTP id S232905AbiEWJ1O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 05:27:14 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE98948889
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 02:26:31 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id p4so23098809lfg.4
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 02:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653297825; x=1684833825;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=Pe6Wi8DVqmHt8ekxuGJOkmaUnohWx9M/ugvxsS8fsas=;
-  b=iNYbFRbzYY1C2VWjgW1l3saqtjjYigVJaIPkWEatFeOd9EY2rVvyBB8g
-   UoKLUHClEGIoB7mazKKam2VgUE001nuH0eMTe2GHm+r0/WRDw3F+1jFL2
-   7y77GRN8zYMA634XggimvGphIXRmBBXmSOnEAZaFHqiaYE1hCyf9sx3zE
-   k=;
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 23 May 2022 02:23:45 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 02:23:44 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 23 May 2022 02:23:43 -0700
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 23 May 2022 02:23:39 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh@kernel.org>,
-        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH v2 3/3] clk: qcom: lpass: Add support for resets & external mclk for SC7280
-Date:   Mon, 23 May 2022 14:53:14 +0530
-Message-ID: <20220523092314.14252-4-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220523092314.14252-1-quic_tdas@quicinc.com>
-References: <20220523092314.14252-1-quic_tdas@quicinc.com>
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Rall/J8MbFkSCpGGCaytH6f+MPOlebnjwNlb4WkgynY=;
+        b=PaQ05G23J+igp19tyJ0HeXIV2fAILu8L3PMe0F59HpAyJqM3VmyUa+wVPNg3qMMUnv
+         sWAb+WepiWB1EAqlKOT2fDXu131odcFLpJhGd+tVaRzKX0qsrlKUrayRSpvsjRcnUJV3
+         MwSz9l5zWe2sfiwKOqzJqCZiC8Kb9dxQPkbaBVU+ecXvI99qBrpLNu/zNzrufzgMWTQg
+         ueAQIA1QN+jEA4WJK5upxYV7g2InSbnEqtpyIixS6PLOitd8zzBMjSmC1nePJUAXTbSq
+         vww1m3PEvShdykhfB1XL2C+fz8FxDa3zYJuOBF3AlrRtu05Obcfv4NTL2tUaIxdIKc1o
+         QdDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Rall/J8MbFkSCpGGCaytH6f+MPOlebnjwNlb4WkgynY=;
+        b=ak9doCgiWzs+1GADv7plEKju7nlQjg5E7hgHueVTHSjYSNN7C0x2hhAPvlhT/aYkfE
+         g/L4NckFhwYTXMwIDbpiZmMqQVJGvlN77yEsNBdC2yuyc5rpb8wDmYT78cGkSeBIJsqd
+         WmdmMkXefqG9uopFYikDr825gjVQ6a5H0EEmzh+AK+GDspgtYibM/WUArHaUJv7vf8EE
+         lQwqNJzG+XDaNoFtMLJlmqfDq05N+8SARdQZTXg1+O3aSD8GfiP7ajxWFOOsSQJY1ZXl
+         GpL1xigIZNH4IUTRcl0xLjpLPgGqBGEteKHiXe9LR8wd2JqNC8UGdMEOkLozu4YxovKb
+         LI6g==
+X-Gm-Message-State: AOAM531LGAf0B2EcPJJjmsYN0VLYpuLneLTick35rUhFVCuPWaEaaAx+
+        iOxxehNDxOomHJnf+2OfWD1i4w==
+X-Google-Smtp-Source: ABdhPJzJFQjxkp3Wd+qVBwevcO6f0Rflfc4HMB1wNhOBEHg8kVAZSPqPiDDcL3E2aJC2mKHs8fBatQ==
+X-Received: by 2002:a05:6512:2307:b0:478:6ab0:c22f with SMTP id o7-20020a056512230700b004786ab0c22fmr4557286lfu.232.1653297989927;
+        Mon, 23 May 2022 02:26:29 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id p1-20020ac246c1000000b0047255d211fasm1870435lfo.297.2022.05.23.02.26.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 02:26:29 -0700 (PDT)
+Message-ID: <25aae69e-fed8-bf69-a110-8e134db1eda1@linaro.org>
+Date:   Mon, 23 May 2022 11:26:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 18/19] arm64: dts: nuvoton: Add initial NPCM845 EVB
+ device tree
+Content-Language: en-US
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     soc@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220522155046.260146-1-tmaimon77@gmail.com>
+ <20220522155046.260146-19-tmaimon77@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220522155046.260146-19-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock gating control for TX/RX/WSA core bus clocks would be required
-to be reset(moved from hardware control) from audio core driver. Thus
-add the support for the reset clocks.
+On 22/05/2022 17:50, Tomer Maimon wrote:
+> Add initial Nuvoton NPCM845 evaluation board device tree.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  arch/arm64/boot/dts/nuvoton/Makefile          |  2 +
+>  .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  | 50 +++++++++++++++++++
+>  2 files changed, 52 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/nuvoton/Makefile
+>  create mode 100644 arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> 
+> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
+> new file mode 100644
+> index 000000000000..a99dab90472a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_NPCM) += nuvoton-npcm845-evb.dtb
+> diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> new file mode 100644
+> index 000000000000..d7a9a85f8075
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+> @@ -0,0 +1,50 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2021 Nuvoton Technology tomer.maimon@nuvoton.com
+> +
+> +/dts-v1/;
+> +#include "nuvoton-npcm845.dtsi"
+> +
+> +/ {
+> +	model = "Nuvoton npcm845 Development Board (Device Tree)";
 
-Also add the external mclk to interface external MI2S.
+s/ (Device Tree)//
 
-Fixes: 2b75e142523e ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280").
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 17 ++++++++++++-
- drivers/clk/qcom/lpasscorecc-sc7280.c  | 33 ++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 1 deletion(-)
+> +	compatible = "nuvoton,npcm845";
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 6ab6e5a34c72..536509b78341 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -22,6 +22,7 @@
- #include "clk-regmap-mux.h"
- #include "common.h"
- #include "gdsc.h"
-+#include "reset.h"
+This does not match your bindings. Please test your DTS with `make
+dtbs_check`.
 
- enum {
- 	P_BI_TCXO,
-@@ -221,7 +222,7 @@ static struct clk_rcg2 lpass_aon_cc_main_rcg_clk_src = {
- 		.parent_data = lpass_aon_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(lpass_aon_cc_parent_data_0),
- 		.flags = CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
+> +
+> +	aliases {
+> +		serial0 = &serial0;
+> +		serial1 = &serial1;
+> +		serial2 = &serial2;
+> +		serial3 = &serial3;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = &serial0;
+> +	};
+> +
+> +	memory {
+> +		reg = <0x0 0x0 0x0 0x40000000>;
+> +	};
+> +
+> +	ahb {
+> +
 
-@@ -665,6 +666,18 @@ static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
- 	.num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
- };
+No need for blank line.
 
-+static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-+	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-+	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-+};
-+
-+static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-+	.config = &lpass_audio_cc_sc7280_regmap_config,
-+	.resets = lpass_audio_cc_sc7280_resets,
-+	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-+};
-+
- static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
- 	{ .compatible = "qcom,sc7280-lpassaudiocc" },
- 	{ }
-@@ -741,6 +754,8 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+> +		apb {
+> +			serial0: serial@0 {
+> +				status = "okay";
 
-+	ret = qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7280_desc);
-+
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 	pm_runtime_put_sync(&pdev->dev);
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
-index 1f1f1bd1b68e..6ad19b06b1ce 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
-@@ -190,6 +190,19 @@ static struct clk_rcg2 lpass_core_cc_ext_if1_clk_src = {
- 	},
- };
+No, override by labels. Here and in places below.
 
-+static struct clk_rcg2 lpass_core_cc_ext_mclk0_clk_src = {
-+	.cmd_rcgr = 0x20000,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = lpass_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_lpass_core_cc_ext_if0_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data){
-+		.name = "lpass_core_cc_ext_mclk0_clk_src",
-+		.parent_data = lpass_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(lpass_core_cc_parent_data_0),
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
+> +			};
+> +
+> +			serial1: serial@1000 {
+> +				status = "disabled";
+> +			};
+> +
+> +			serial2: serial@2000 {
+> +				status = "disabled";
+> +			};
+> +
+> +			serial3: serial@3000 {
+> +				status = "disabled";
+> +			};
+> +
+> +			watchdog1: watchdog@901c {
+> +				status = "okay";
+> +			};
+> +		};
+> +	};
+> +};
 
- static struct clk_branch lpass_core_cc_core_clk = {
- 	.halt_reg = 0x1f000,
-@@ -283,6 +296,24 @@ static struct clk_branch lpass_core_cc_lpm_mem0_core_clk = {
- 	},
- };
 
-+static struct clk_branch lpass_core_cc_ext_mclk0_clk = {
-+	.halt_reg = 0x20014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x20014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data){
-+			.name = "lpass_core_cc_ext_mclk0_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&lpass_core_cc_ext_mclk0_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch lpass_core_cc_sysnoc_mport_core_clk = {
- 	.halt_reg = 0x23000,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -326,6 +357,8 @@ static struct clk_regmap *lpass_core_cc_sc7280_clocks[] = {
- 	[LPASS_CORE_CC_LPM_CORE_CLK] = &lpass_core_cc_lpm_core_clk.clkr,
- 	[LPASS_CORE_CC_LPM_MEM0_CORE_CLK] = &lpass_core_cc_lpm_mem0_core_clk.clkr,
- 	[LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK] = &lpass_core_cc_sysnoc_mport_core_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK] = &lpass_core_cc_ext_mclk0_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK_SRC] = &lpass_core_cc_ext_mclk0_clk_src.clkr,
- };
-
- static struct regmap_config lpass_core_cc_sc7280_regmap_config = {
---
-2.17.1
-
+Best regards,
+Krzysztof
