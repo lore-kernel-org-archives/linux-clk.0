@@ -2,24 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F523C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C75C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbiEWVs7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 17:48:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38102 "EHLO
+        id S229473AbiEWVtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 17:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbiEWVs5 (ORCPT
+        with ESMTP id S230230AbiEWVs5 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:57 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704BA57B17
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80543AFAC7
         for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:55 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 277DB20139;
-        Mon, 23 May 2022 23:39:00 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id F35032051B;
+        Mon, 23 May 2022 23:38:46 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -40,193 +40,83 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Arnd Bergmann <arnd@arndb.de>,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH 9/9] drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
-Date:   Mon, 23 May 2022 23:38:37 +0200
-Message-Id: <20220523213837.1016542-10-marijn.suijten@somainline.org>
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH 0/9] drm/msm/dsi_phy: Replace parent names with clk_hw pointers
+Date:   Mon, 23 May 2022 23:38:28 +0200
+Message-Id: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
-References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+As stated in [1] I promised to tackle and send this series.
+
 parent_hw pointers are easier to manage and cheaper to use than
 repeatedly formatting the parent name and subsequently leaving the clk
 framework to perform lookups based on that name.
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 92 +++++++++++------------
- 1 file changed, 42 insertions(+), 50 deletions(-)
+This series starts out by adding extra constructors for divider, mux and
+fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
+of some DT index or name.  Followed by individual patches performing the
+conversion, one DSI PHY at a time.
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 66ed1919a1db..76a9d5094e1b 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -585,8 +585,7 @@ static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
-  */
- static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provided_clocks)
- {
--	char clk_name[32], parent[32], vco_name[32];
--	char parent2[32];
-+	char clk_name[32], vco_name[32];
- 	struct clk_init_data vco_init = {
- 		.parent_data = &(const struct clk_parent_data) {
- 			.fw_name = "ref",
-@@ -597,7 +596,8 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		.ops = &clk_ops_dsi_pll_7nm_vco,
- 	};
- 	struct device *dev = &pll_7nm->phy->pdev->dev;
--	struct clk_hw *hw;
-+	struct clk_hw *hw, *pll_out_div, *pll_bit, *pll_by_2_bit;
-+	struct clk_hw *pll_post_out_div, *phy_pll_out_dsi_parent;
- 	int ret;
+dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
+devm_kzalloc allocations (for the lifetime of the device) with
+stack-local char arrays, like all the other DSI PHY drivers.
 
- 	DBG("DSI%d", pll_7nm->phy->id);
-@@ -610,40 +610,35 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		return ret;
+I couldn't help but notice that clock names are wildly varying:
 
- 	snprintf(clk_name, 32, "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, 32, "dsi%dvco_clk", pll_7nm->phy->id);
+- Some use underscores in the _clk suffix where others have nothing;
+- Some have an _ after the %d, others have not;
+- Some use a _pll suffix after dsi%d or even _phy_pll suffix.
 
--	hw = devm_clk_hw_register_divider(dev, clk_name,
--				     parent, CLK_SET_RATE_PARENT,
--				     pll_7nm->phy->pll_base +
--				     REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
--				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	pll_out_div = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			&pll_7nm->clk_hw, CLK_SET_RATE_PARENT,
-+			pll_7nm->phy->pll_base +
-+			REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
-+			0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
-+	if (IS_ERR(pll_out_div)) {
-+		ret = PTR_ERR(pll_out_div);
- 		goto fail;
- 	}
+Are there any thoughts or feelings towards unifying these?
+Theoretically no clock names are used anywhere in the kernel, and
+everything is based on a phandle + index in DT (I have yet to validate
+this).  Obviously no .name/.fw_name will be updated to not break DT.
 
- 	snprintf(clk_name, 32, "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
+Which, by the way, is there a particular reason for:
 
- 	/* BIT CLK: DIV_CTRL_3_0 */
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--				     CLK_SET_RATE_PARENT,
--				     pll_7nm->phy->base +
--				     REG_DSI_7nm_PHY_CMN_CLK_CFG0,
--				     0, 4, CLK_DIVIDER_ONE_BASED,
--				     &pll_7nm->postdiv_lock);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	pll_bit = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			pll_out_div, CLK_SET_RATE_PARENT,
-+			pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
-+			0, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
-+	if (IS_ERR(pll_bit)) {
-+		ret = PTR_ERR(pll_bit);
- 		goto fail;
- 	}
+  #define DSI_BYTE_PLL_CLK		0
+  #define DSI_PIXEL_PLL_CLK		1
 
- 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_7nm->phy->id);
--	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->phy->id);
+To not be in the dt-bindings and used in the DT?
 
- 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--					  CLK_SET_RATE_PARENT, 1,
--					  pll_7nm->phy->cphy_mode ? 7 : 8);
-+	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, clk_name,
-+			pll_bit, CLK_SET_RATE_PARENT, 1,
-+			pll_7nm->phy->cphy_mode ? 7 : 8);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
- 		goto fail;
-@@ -652,24 +647,24 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+And with enough future improvements out of the way, let's round out this
+patch-series by stating that it has been successfully tested on:
 
- 	snprintf(clk_name, 32, "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->phy->id);
+- Sony Nile Discovery (Xperia XA2 Ultra): 14nm;
+- Sony Seine PDX201 (Xperia 10II): 14nm;
+- Sony Loire Suzu (Xperia X): 28nm.
 
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--					  0, 1, 2);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	pll_by_2_bit = devm_clk_hw_register_fixed_factor_parent_hw(dev,
-+			clk_name, pll_bit, 0, 1, 2);
-+	if (IS_ERR(pll_by_2_bit)) {
-+		ret = PTR_ERR(pll_by_2_bit);
- 		goto fail;
- 	}
+And no diff is observed in debugfs's clk_summary.
 
- 	snprintf(clk_name, 32, "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
+Unfortunately all other devices in my collection with a 7/10nm DSI PHY
+have a DSC panel which we have yet to get working.
 
- 	if (pll_7nm->phy->cphy_mode)
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 2, 7);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 2, 7);
- 	else
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 4);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 1, 4);
-+	if (IS_ERR(pll_post_out_div)) {
-+		ret = PTR_ERR(pll_post_out_div);
- 		goto fail;
- 	}
+[1]: https://lore.kernel.org/linux-arm-msm/20220502214235.s5plebunh4ttjhge@SoMainline.org/
 
-@@ -682,34 +677,31 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		data = dsi_phy_read(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
- 		dsi_phy_write(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1, data | 3);
+Marijn Suijten (9):
+  clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
+  clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
+  clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
+  drm/msm/dsi_phy_28nm: Replace parent names with clk_hw pointers
+  drm/msm/dsi_phy_28nm_8960: Replace parent names with clk_hw pointers
+  drm/msm/dsi_phy_28nm_8960: Use stack memory for temporary clock names
+  drm/msm/dsi_phy_14nm: Replace parent names with clk_hw pointers
+  drm/msm/dsi_phy_10nm: Replace parent names with clk_hw pointers
+  drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
 
--		snprintf(parent, 32, "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = pll_post_out_div;
- 	} else {
- 		snprintf(clk_name, 32, "dsi%d_pclk_mux", pll_7nm->phy->id);
--		snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--		snprintf(parent2, 32, "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
--
--		hw = devm_clk_hw_register_mux(dev, clk_name,
--					((const char *[]){
--					parent, parent2,
--					}), 2, 0, pll_7nm->phy->base +
--					REG_DSI_7nm_PHY_CMN_CLK_CFG1,
--					0, 1, 0, NULL);
-+
-+		hw = devm_clk_hw_register_mux_parent_hws(dev, clk_name,
-+				((const struct clk_hw *[]){
-+					pll_bit,
-+					pll_by_2_bit,
-+				}), 2, 0, pll_7nm->phy->base +
-+				REG_DSI_7nm_PHY_CMN_CLK_CFG1, 0, 1, 0, NULL);
- 		if (IS_ERR(hw)) {
- 			ret = PTR_ERR(hw);
- 			goto fail;
- 		}
+ drivers/clk/clk-fixed-factor.c                | 57 ++++++++++--
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 92 ++++++++-----------
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    | 36 ++++----
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 52 +++++------
+ .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 26 ++----
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 92 +++++++++----------
+ include/linux/clk-provider.h                  | 34 +++++++
+ 7 files changed, 209 insertions(+), 180 deletions(-)
 
--		snprintf(parent, 32, "dsi%d_pclk_mux", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = hw;
- 	}
-
- 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_7nm->phy->id);
-
- 	/* PIX CLK DIV : DIV_CTRL_7_4*/
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--				     0, pll_7nm->phy->base +
--					REG_DSI_7nm_PHY_CMN_CLK_CFG0,
--				     4, 4, CLK_DIVIDER_ONE_BASED,
--				     &pll_7nm->postdiv_lock);
-+	hw = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			phy_pll_out_dsi_parent,
-+			0, pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
-+			4, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
- 		goto fail;
 --
 2.36.1
-
