@@ -2,70 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CAFC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121C8C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 09:23:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbiEWJR1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 05:17:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37346 "EHLO
+        id S232987AbiEWJXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 05:23:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232816AbiEWJR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 05:17:26 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C350B1C915;
-        Mon, 23 May 2022 02:17:25 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 9BD4C1F42CC0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653297444;
-        bh=REzwy2jbEfxDlRNJ3gYCepX00BBtXmnPigKqEo22lqY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=D9FDcKpm/V6yRmd3FNGHKKAzj+bP6sI/RUvJnUGA/L9Q6NnMjaWZiLg17f8OgDGs6
-         /kqGAl1ZRQJr/1ejHXORNPOvXyy0OcCizWKPiZ1gymqf6/d7cQwbxcfku2jJUrYuH0
-         BUWQ68P3a9lWBYW6+n3G8Hsb909xRgIF1gnftepXT0yyZjPRTgCDoMXtJScnBdDeRf
-         Mfb/mKZ/CsAltCPWmyxDZ1zpIZ4gJijxWsfI4sdSkZKUqmfvsuyRBLMhmFN/qTzzQf
-         m62m4JEBtGiXw/bPkfhRDGdCrtBZMVZDhpPwe5d4uDzhVSLw+E+tI8uxxB7726VuWm
-         kkKvbGsDoNX4g==
-Message-ID: <fed16322-1ffb-7744-38c5-4854882778e0@collabora.com>
-Date:   Mon, 23 May 2022 11:17:21 +0200
+        with ESMTP id S232976AbiEWJXd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 05:23:33 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8CD1AF3F;
+        Mon, 23 May 2022 02:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1653297812; x=1684833812;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=NOm3tT8s+FVeZbLypi9zDeQ4MzTBMaDvwi44c+6B/9U=;
+  b=SXx5ZBjJkZ/O0v/TuR9Ry55B9stDLkh1blUlh5j6IoY7MlFSwSz2loAh
+   R3WJXNc5x5kpr5YlZ2S12ExkECCXdMMB4sBNj4GuCcxBi/LuRLmJ2f9ik
+   OJrT5g2hrF9Q0axjd6KLrQDsowCZy6KzlUgvwG/vWBtip04j5/qY/+wsX
+   Q=;
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 23 May 2022 02:23:31 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 02:23:30 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 23 May 2022 02:23:29 -0700
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 23 May 2022 02:23:26 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>,
+        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v2 0/3] Add support for audio clock gating resets for SC7280
+Date:   Mon, 23 May 2022 14:53:11 +0530
+Message-ID: <20220523092314.14252-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v8 19/19] clk: mediatek: reset: Add infra_ao reset support
- for MT8186
-Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     p.zabel@pengutronix.de, nfraprado@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220523060056.24396-1-rex-bc.chen@mediatek.com>
- <20220523060056.24396-20-rex-bc.chen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220523060056.24396-20-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 23/05/22 08:00, Rex-BC Chen ha scritto:
-> The infra_ao reset is needed for MT8186.
-> - Add mtk_clk_rst_desc for MT8186.
-> - Add register reset controller function for MT8186 infra_ao.
-> - Add infra_ao_idx_map for MT8186.
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Add support for clock gating resets for lpass audio clock controller and
+also add support for external MCLKs for I2S.
 
-For the code:
+[v2]
+  * Update/fix the YAML for reg property against each compatible.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+[v1]
+  * Add support for clock gating resets for lpass audio clock
+    controller & MCLKs.
+
+Taniya Das (3):
+  dt-bindings: clock: Add resets for LPASS audio clock controller for
+    SC7280
+  dt-bindings: clock: Add support for external MCLKs for LPASS on SC7280
+  clk: qcom: lpass: Add support for resets & external mclk for SC7280
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 20 +++++++++--
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 17 +++++++++-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         | 33 +++++++++++++++++++
+ .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++
+ .../clock/qcom,lpasscorecc-sc7280.h           |  2 ++
+ 5 files changed, 73 insertions(+), 4 deletions(-)
+
+--
+2.17.1
+
