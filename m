@@ -2,95 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD61C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49699C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237144AbiEWOiq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 10:38:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
+        id S237469AbiEWO4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 10:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237143AbiEWOip (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:38:45 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D16517E1F;
-        Mon, 23 May 2022 07:38:44 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id gg20so14267768pjb.1;
-        Mon, 23 May 2022 07:38:44 -0700 (PDT)
+        with ESMTP id S237417AbiEWO4g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:56:36 -0400
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8483B41602
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:56:34 -0700 (PDT)
+Received: by mail-oo1-xc31.google.com with SMTP id f5-20020a4aa685000000b0040e7e819183so868887oom.3
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VsAAAqoiWJYzT060x2OOnd/EtlLZzAOosAhFcrN/2Zk=;
-        b=bIrL0ljJ2ar84oH/3npslA/NhLklqWI/M3QLvrYEuyTZLsvI7bcbd4KLAfCR6pIwJg
-         eCQzxsKiOV5bfD3E3Mt5MvWZ3AtY3SRbhkW8d05YIq2/QE2Eeeth16o6EziC7tF2eL2S
-         CDXTqlNVFypyYv2qy7v1tUYa5CgzaI5tPWspSG0FuzfpitLuDkXy9yWu9YCTpQ9HbY3m
-         L5eov2Snw8Ebg0eQaKOZyGTlHoF4w1Kb5+p2koQIDd/RiOGqO73nQnpoSADUQoPRIb5G
-         Bf3r0/8sO4wSkc7mSSs/IYNOKFTHG2ts9iX4TPyheZgPahvh34aCIrxC3Qcvrlu15xMU
-         p02g==
+        bh=5p71BIdSffyci9oS1GEBoO6Hvvh+FQt15GEReLDlDuc=;
+        b=HqfxLV20FvSqJr63yG0bHzAT+iKcqaxSZeP5pJkxSqMMRaO8OBcs5nsBUA02Sr9M/X
+         WdEkY12N67JeBUcsIDZk7oeDMAOU9v7JlCoHlHIfIR3XUsDl+ykcmn/XfbEAP+G2IWtA
+         666wtccbdmCpa+mGnUD209unqTO6n+wqWpTGyJ3ozVlfSHFwqTUlsE8ynoj+OWMOGkde
+         QLZLU8GKx3ompPydmL5jCeHg3Khh/jxPwkvFDm5RQNDxZJe/XZPPO+m7eg1tap4ZmS8Q
+         LrQZpn8y3kPZdJM2oHZpGlbdb9jSNcLJUCy1EKgHIgqHxxHgTd6RtXYilnekRfWmX495
+         rDJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=VsAAAqoiWJYzT060x2OOnd/EtlLZzAOosAhFcrN/2Zk=;
-        b=f0K57csno82Un5ZbNDi2yQCA2U4/PNxIfZpinongr5JpqzSRg5B5qwvSaz6jy2L4DZ
-         ElS5u79UzsXILIQPJBkVTdB+e/4qm9GSWIL9j24n2TEKGCe5qob/TuLOf3hLldG48Ufv
-         uflocejgzSoOBVtEDMTCdgEg6Oed0UzNPoJtit5tfceWJxkYi63omiebvoPDX4ez8RvR
-         +r6qROlg4IPqR8t3XBjufhrMCIe2DGtiQ6fBQkliQCzBEFdahIlPCCe5egNl/oFMt/TF
-         XdAK7Ol09CJSq/wYROFf6cBWkwar7V+2Mf1Qv5g47K3k+XR1bXAMTLZ2yfKwvwj9Y1ME
-         9S6A==
-X-Gm-Message-State: AOAM530zyKoYMexL5EJS8XUz2laU7MJe38JQvb+EXUkneOBNOeuIne2A
-        a+tbK5BVaGCvEV4GRSwz3SerZHa/Sn7YWNVp
-X-Google-Smtp-Source: ABdhPJw73APqKEgTYdp3THPVllOx5I+H5e2taUgQZ0ht38Wqr+kbCW3uYL7d0L6K8+rft5bn/apxeg==
-X-Received: by 2002:a17:90a:bb16:b0:1de:fd98:94c5 with SMTP id u22-20020a17090abb1600b001defd9894c5mr27400110pjr.48.1653316724163;
-        Mon, 23 May 2022 07:38:44 -0700 (PDT)
-Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id s67-20020a637746000000b003c6a71b2ab7sm4857972pgc.46.2022.05.23.07.38.39
+        bh=5p71BIdSffyci9oS1GEBoO6Hvvh+FQt15GEReLDlDuc=;
+        b=fr1PM39PHEcezO9E9ZZc7FmmGJD4/KgPKaG+nif+nblJKtbcGfPHzeUyZxdAvE9a9o
+         0dNsumxbJoXFVz2h/HqUJc32/oIjqzNiSI5UXJESNVplCbdXEh3LF+uGsLgtFfKH0zq0
+         PGCb0LWRJ9w52LcGLuKz6qy9pymOoCf1F475UXi41HmVnNtY2z9R4+kX038uzm9UBGw5
+         hucEUtnAbjHZCGwAXPXGV9dDnKbbTOYsjjtcm2K0NZUdJizzoQGmSELN/aH9UiP8XVkp
+         dfUCWX/RUcRPvObvWZDenLtk5Q8/4qHuz7jVIifr7zr4UdQqkKBt1ie35d83rFjU8V9z
+         eD5Q==
+X-Gm-Message-State: AOAM531ng2fh8TiMViujkrjqqYu/n1CypkvPjFrj5yoUxGgp0nNlYHWH
+        bcDMyteW/mJp49GHvR1CafnmaQ==
+X-Google-Smtp-Source: ABdhPJyoOJ1HH8gLzOg+3tKjfNaWX5Ch00ycxsgFJGgBHkfWH1QUCCazWXeJXaZG/aTeofZ8y+pXHA==
+X-Received: by 2002:a4a:b687:0:b0:40e:7950:e52 with SMTP id v7-20020a4ab687000000b0040e79500e52mr3629986ooo.74.1653317793818;
+        Mon, 23 May 2022 07:56:33 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id l6-20020a056871068600b000e686d1389esm3978422oao.56.2022.05.23.07.56.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 07:38:43 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Mike Turquette <mturquette@linaro.org>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] clk: tegra: Fix refcount leak in tegra114_clock_init
-Date:   Mon, 23 May 2022 18:38:34 +0400
-Message-Id: <20220523143834.7587-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 23 May 2022 07:56:33 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, Adam Skladowski <a39.skl@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Michael Srba <Michael.Srba@seznam.cz>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [GIT PULL] Qualcomm clock updates for v5.19
+Date:   Mon, 23 May 2022 09:56:32 -0500
+Message-Id: <20220523145632.42086-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-of_find_matching_node() returns a node pointer with refcount
-incremented, we should use of_node_put() on it when not need anymore.
-Add missing of_node_put() to avoid refcount leak.
+The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
 
-Fixes: 2cb5efefd6f7 ("clk: tegra: Implement clocks for Tegra114")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/clk/tegra/clk-tegra114.c | 1 +
- 1 file changed, 1 insertion(+)
+  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index ef718c4b3826..f7405a58877e 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1317,6 +1317,7 @@ static void __init tegra114_clock_init(struct device_node *np)
- 	}
- 
- 	pmc_base = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!pmc_base) {
- 		pr_err("Can't map pmc registers\n");
- 		WARN_ON(1);
--- 
-2.25.1
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-5.19
+
+for you to fetch changes up to 703db1f5da1e3a62b84356a29c150efa24a2377d:
+
+  clk: qcom: rcg2: Cache CFG register updates for parked RCGs (2022-05-19 16:42:30 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock updates for v5.19
+
+This introduces the LPASS clock controller driver for sc7280 and the
+global clock controller for SC8280XP.
+
+It adds modem reset, corrects RPM clocks and moves to floor ops for SDCC
+on MSM8976. It introduces clocks needed to operate the Sensor Subsystem
+in MSM8998.
+
+It enhances the logic for parked shared RCG2s, to avoid problems on
+recent platforms. And lastly it introduces a new mechanism for handling
+the PCIe pipe_clk, which also needs to be parked on a safe source when
+the PHY is turned off.
+
+----------------------------------------------------------------
+Adam Skladowski (4):
+      clk: qcom: smd: Update MSM8976 RPM clocks.
+      clk: qcom: gcc-msm8976: Set floor ops for SDCC
+      dt-bindings: clk: qcom: gcc-msm8976: Add modem reset
+      clk: qcom: gcc-msm8976: Add modem reset
+
+Bjorn Andersson (6):
+      Merge tag '20220323085010.1753493-4-dmitry.baryshkov@linaro.org' into clk-for-5.19
+      Merge branch '20220223172248.18877-1-tdas@codeaurora.org' into clk-for-5.19
+      Merge branch '20220411072156.24451-2-michael.srba@seznam.cz' into clk-for-5.19
+      dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
+      clk: qcom: add sc8280xp GCC driver
+      clk: qcom: rcg2: Cache CFG register updates for parked RCGs
+
+Dmitry Baryshkov (3):
+      clk: qcom: regmap-mux: add pipe clk implementation
+      clk: qcom: gcc-sm8450: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
+      clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
+
+Krzysztof Kozlowski (3):
+      dt-bindings: clock: qcom,rpmcc: convert to dtschema
+      dt-bindings: clock: qcom,rpmcc: add clocks property
+      dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
+
+Michael Srba (2):
+      dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
+      clk: qcom: gcc-msm8998: add SSC-related clocks
+
+Taniya Das (2):
+      dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
+      clk: qcom: lpass: Add support for LPASS clock controller for SC7280
+
+ .../bindings/clock/qcom,gcc-apq8064.yaml           |    4 +-
+ .../bindings/clock/qcom,gcc-apq8084.yaml           |   42 +
+ .../bindings/clock/qcom,gcc-sc8280xp.yaml          |  128 +
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |   63 -
+ .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   75 +
+ .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    |  172 +
+ .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |    4 +
+ drivers/clk/qcom/Kconfig                           |   19 +
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rcg.h                         |    2 +
+ drivers/clk/qcom/clk-rcg2.c                        |  126 +-
+ drivers/clk/qcom/clk-regmap-mux.c                  |   78 +
+ drivers/clk/qcom/clk-regmap-mux.h                  |    3 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |    8 +-
+ drivers/clk/qcom/gcc-msm8976.c                     |    7 +-
+ drivers/clk/qcom/gcc-msm8998.c                     |   56 +
+ drivers/clk/qcom/gcc-sc7280.c                      |    6 +-
+ drivers/clk/qcom/gcc-sc8280xp.c                    | 7488 ++++++++++++++++++++
+ drivers/clk/qcom/gcc-sm8450.c                      |    6 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c             |  838 +++
+ drivers/clk/qcom/lpasscorecc-sc7280.c              |  431 ++
+ include/dt-bindings/clock/qcom,gcc-msm8976.h       |    1 +
+ include/dt-bindings/clock/qcom,gcc-msm8998.h       |    4 +
+ include/dt-bindings/clock/qcom,gcc-sc8280xp.h      |  496 ++
+ .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h   |   43 +
+ .../dt-bindings/clock/qcom,lpasscorecc-sc7280.h    |   26 +
+ 26 files changed, 10024 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sc8280xp.c
+ create mode 100644 drivers/clk/qcom/lpassaudiocc-sc7280.c
+ create mode 100644 drivers/clk/qcom/lpasscorecc-sc7280.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
+ create mode 100644 include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h
