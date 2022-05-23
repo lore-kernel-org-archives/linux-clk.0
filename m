@@ -2,24 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78989C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD96C433FE
 	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbiEWVtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230230AbiEWVtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 23 May 2022 17:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbiEWVs4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:56 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746155838C
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:55 -0700 (PDT)
+        with ESMTP id S230040AbiEWVs7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:59 -0400
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2CC926C1
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:57 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 2810B2051D;
-        Mon, 23 May 2022 23:38:48 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id B57431FBC6;
+        Mon, 23 May 2022 23:38:56 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -41,9 +41,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 1/9] clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
-Date:   Mon, 23 May 2022 23:38:29 +0200
-Message-Id: <20220523213837.1016542-2-marijn.suijten@somainline.org>
+Subject: [PATCH 7/9] drm/msm/dsi_phy_14nm: Replace parent names with clk_hw pointers
+Date:   Mon, 23 May 2022 23:38:35 +0200
+Message-Id: <20220523213837.1016542-8-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
@@ -53,45 +53,116 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the devres variant of clk_hw_register_divider_parent_hw() for
-registering a divider clock with clk_hw parent pointer instead of parent
-name.
+parent_hw pointers are easier to manage and cheaper to use than
+repeatedly formatting the parent name and subsequently leaving the clk
+framework to perform lookups based on that name.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- include/linux/clk-provider.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 36 ++++++++++------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index c10dc4c659e2..4e07621849e6 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -831,6 +831,25 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
- 	__devm_clk_hw_register_divider((dev), NULL, (name), (parent_name), NULL,   \
- 				  NULL, (flags), (reg), (shift), (width),     \
- 				  (clk_divider_flags), NULL, (lock))
-+/**
-+ * devm_clk_hw_register_divider_parent_hw - register a divider clock with the clock framework
-+ * @dev: device registering this clock
-+ * @name: name of this clock
-+ * @parent_hw: pointer to parent clk
-+ * @flags: framework-specific flags
-+ * @reg: register address to adjust divider
-+ * @shift: number of bits to shift the bitfield
-+ * @width: width of the bitfield
-+ * @clk_divider_flags: divider-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define devm_clk_hw_register_divider_parent_hw(dev, name, parent_hw, flags,   \
-+					       reg, shift, width,	      \
-+					       clk_divider_flags, lock)       \
-+	__devm_clk_hw_register_divider((dev), NULL, (name), NULL,	      \
-+				       (parent_hw), NULL, (flags), (reg),     \
-+				       (shift), (width), (clk_divider_flags), \
-+				       NULL, (lock))
- /**
-  * devm_clk_hw_register_divider_table - register a table based divider clock
-  * with the clock framework (devres variant)
--- 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+index 8199c53567f4..574f95ab2f22 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+@@ -764,14 +764,14 @@ static int dsi_14nm_set_usecase(struct msm_dsi_phy *phy)
+
+ static struct clk_hw *pll_14nm_postdiv_register(struct dsi_pll_14nm *pll_14nm,
+ 						const char *name,
+-						const char *parent_name,
++						const struct clk_hw *parent_hw,
+ 						unsigned long flags,
+ 						u8 shift)
+ {
+ 	struct dsi_pll_14nm_postdiv *pll_postdiv;
+ 	struct device *dev = &pll_14nm->phy->pdev->dev;
+ 	struct clk_init_data postdiv_init = {
+-		.parent_names = (const char *[]) { parent_name },
++		.parent_hws = (const struct clk_hw *[]) { parent_hw },
+ 		.num_parents = 1,
+ 		.name = name,
+ 		.flags = flags,
+@@ -800,7 +800,7 @@ static struct clk_hw *pll_14nm_postdiv_register(struct dsi_pll_14nm *pll_14nm,
+
+ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **provided_clocks)
+ {
+-	char clk_name[32], parent[32], vco_name[32];
++	char clk_name[32], vco_name[32];
+ 	struct clk_init_data vco_init = {
+ 		.parent_data = &(const struct clk_parent_data) {
+ 			.fw_name = "ref",
+@@ -811,7 +811,7 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 		.ops = &clk_ops_dsi_pll_14nm_vco,
+ 	};
+ 	struct device *dev = &pll_14nm->phy->pdev->dev;
+-	struct clk_hw *hw;
++	struct clk_hw *hw, *n1_postdiv, *n1_postdivby2;
+ 	int ret;
+
+ 	DBG("DSI%d", pll_14nm->phy->id);
+@@ -824,48 +824,46 @@ static int pll_14nm_register(struct dsi_pll_14nm *pll_14nm, struct clk_hw **prov
+ 		return ret;
+
+ 	snprintf(clk_name, 32, "dsi%dn1_postdiv_clk", pll_14nm->phy->id);
+-	snprintf(parent, 32, "dsi%dvco_clk", pll_14nm->phy->id);
+
+ 	/* N1 postdiv, bits 0-3 in REG_DSI_14nm_PHY_CMN_CLK_CFG0 */
+-	hw = pll_14nm_postdiv_register(pll_14nm, clk_name, parent,
+-				       CLK_SET_RATE_PARENT, 0);
+-	if (IS_ERR(hw))
+-		return PTR_ERR(hw);
++	n1_postdiv = pll_14nm_postdiv_register(pll_14nm, clk_name,
++			&pll_14nm->clk_hw, CLK_SET_RATE_PARENT, 0);
++	if (IS_ERR(n1_postdiv))
++		return PTR_ERR(n1_postdiv);
+
+ 	snprintf(clk_name, 32, "dsi%dpllbyte", pll_14nm->phy->id);
+-	snprintf(parent, 32, "dsi%dn1_postdiv_clk", pll_14nm->phy->id);
+
+ 	/* DSI Byte clock = VCO_CLK / N1 / 8 */
+-	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+-					  CLK_SET_RATE_PARENT, 1, 8);
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, clk_name,
++			n1_postdiv, CLK_SET_RATE_PARENT, 1, 8);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+
+ 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+
+ 	snprintf(clk_name, 32, "dsi%dn1_postdivby2_clk", pll_14nm->phy->id);
+-	snprintf(parent, 32, "dsi%dn1_postdiv_clk", pll_14nm->phy->id);
+
+ 	/*
+ 	 * Skip the mux for now, force DSICLK_SEL to 1, Add a /2 divider
+ 	 * on the way. Don't let it set parent.
+ 	 */
+-	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 2);
+-	if (IS_ERR(hw))
+-		return PTR_ERR(hw);
++	n1_postdivby2 = devm_clk_hw_register_fixed_factor_parent_hw(dev,
++			clk_name, n1_postdiv, 0, 1, 2);
++	if (IS_ERR(n1_postdivby2))
++		return PTR_ERR(n1_postdivby2);
+
+ 	snprintf(clk_name, 32, "dsi%dpll", pll_14nm->phy->id);
+-	snprintf(parent, 32, "dsi%dn1_postdivby2_clk", pll_14nm->phy->id);
+
+ 	/* DSI pixel clock = VCO_CLK / N1 / 2 / N2
+ 	 * This is the output of N2 post-divider, bits 4-7 in
+ 	 * REG_DSI_14nm_PHY_CMN_CLK_CFG0. Don't let it set parent.
+ 	 */
+-	hw = pll_14nm_postdiv_register(pll_14nm, clk_name, parent, 0, 4);
++	hw = pll_14nm_postdiv_register(pll_14nm, clk_name, n1_postdivby2,
++			0, 4);
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
+
+-	provided_clocks[DSI_PIXEL_PLL_CLK]	= hw;
++	provided_clocks[DSI_PIXEL_PLL_CLK] = hw;
+
+ 	return 0;
+ }
+--
 2.36.1
 
