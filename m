@@ -2,147 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A57C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 10:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74BBC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 10:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234058AbiEWK2M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 06:28:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53266 "EHLO
+        id S234283AbiEWKtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 06:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234056AbiEWK2I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 06:28:08 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647BE45528;
-        Mon, 23 May 2022 03:28:07 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 3656A1F42DFA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653301686;
-        bh=6HOFmXMLuuQlR2jthI0qX4qDnJpUAY/sE6Yz7Hnf0l4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=WlmWP4e76yMRW1BxHDLUlEvX+rVSvbWr/A4p7/SYEN3IfxnO1PoycBHDevi6Y1spP
-         K9VJHb7MNaW/Vl+TEFb6SjDIGuTP3gL4cZk4qKCuZ/i4W7c44ek5QGMUIfBh94m832
-         42oDY1dWeTETHAuXtnDv2PXRxcQ2Ku+8qonoL1Up0af+wWG7fSaLl3Drol4Ov0w1uB
-         t6bQUdHbsQCVxJ/6v1HZfz7Igs4Xptu+7bbCECrFbRy4DXAOKIuDoeImuAACT8m5D8
-         o20nG/x/FCuNdXSkByGDYMWbz35nHVj2rfN+vl5NYfRnPBDyMJDfgZLPvsObEiJr2o
-         TaH27MV3WREUA==
-Message-ID: <5067ec46-7a82-6b7b-5b07-3102cfaefbf6@collabora.com>
-Date:   Mon, 23 May 2022 12:28:02 +0200
+        with ESMTP id S234300AbiEWKtp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 06:49:45 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1392E4CD55
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 03:49:43 -0700 (PDT)
+Received: from mail-yb1-f172.google.com ([209.85.219.172]) by
+ mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1M2gt5-1nrAXl1qU3-004EAy; Mon, 23 May 2022 12:44:34 +0200
+Received: by mail-yb1-f172.google.com with SMTP id v71so24625779ybi.4;
+        Mon, 23 May 2022 03:44:33 -0700 (PDT)
+X-Gm-Message-State: AOAM530qeCxaHCmTmie4hv7Wx8oD2I4W6nmutjXgFkxho8NzdLnMdAjk
+        LrMYbxgRZCF4bwL8p6q5muFE7gCnVGMfCCzTnEk=
+X-Google-Smtp-Source: ABdhPJzbbTU7bxyEy+V6QZ7ro2Wti/wri258NXrp2iXt1Owp7jIbpPdzCSwsk8vjZl8l7XWvxC1S+1Cf8oUw+fAt8d0=
+X-Received: by 2002:a81:6283:0:b0:2ff:2443:6f3c with SMTP id
+ w125-20020a816283000000b002ff24436f3cmr22577090ywb.135.1653302662526; Mon, 23
+ May 2022 03:44:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [RESEND v8 00/19] Cleanup MediaTek clk reset drivers and support
- SoCs
-Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, matthias.bgg@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     p.zabel@pengutronix.de, nfraprado@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220523093346.28493-1-rex-bc.chen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220523093346.28493-1-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220522155046.260146-1-tmaimon77@gmail.com> <20220522155046.260146-13-tmaimon77@gmail.com>
+In-Reply-To: <20220522155046.260146-13-tmaimon77@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 23 May 2022 12:44:06 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0PKvqpTjNeKUm6EnxpmJAtmk1jv+b4YXxr+fXFpsWXtw@mail.gmail.com>
+Message-ID: <CAK8P3a0PKvqpTjNeKUm6EnxpmJAtmk1jv+b4YXxr+fXFpsWXtw@mail.gmail.com>
+Subject: Re: [PATCH v1 12/19] reset: npcm: Add NPCM8XX support
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        robert.hancock@calian.com,
+        "nathan=20Neusch=C3=A4fer?=" <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>, SoC Team <soc@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:YHq8xzHHHcsfvYjSzSq+E07jIVbAebTZh9CDYUzTJWXfz/CNC4d
+ DH5SoIfeUq+NJ0Nc8rFHY/R3FL/QCnVF1C9T2g2LIt3h7UY5J4dV1QADFb/h19lg4+G/mrl
+ ru20c2th0IR3ckojIyJXvf17QEBdoGmeSS9umxMJsalQdaVTJpPNusRaXfENjA+29+RBrAc
+ A/eMxpOhu6DPI5EC1lONg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:N0iuJGFrog4=:/VRLoTq7PxAYLeOfhO5SI4
+ oDU/qxUk2vsA3lxYxlgCT9f3z2Y/OJR6iDM56BKPJeN+0mYwL/c9aq1uur+h877kqsucyP0tu
+ n0al99BaM4jti/zVedWJX08Ih1M+EBisrk8A03idRCRVdjpvd65DL11kG46OJ/poljDS/onY/
+ R8xlF9nUG46suwuyTPSOJPtVtV8FZ/fjMJJUoadWCcfGHUIKPr6C+PbE9+MoCQefZ5+Zq/hZo
+ n7TvRrrIfIpk7RKix32HOvk1bfqnZX5rPwsJwmhZtaG35+PRUTVJmfoh75HcqcG0mu3kVJo2I
+ 40SBgOso8PbVJaGPRY5OFCLkeuL/5S+/l+A1AlrMl+KSwYHDB8yK5DqMLjHyskSH+6JxtoqcH
+ /SV6BfCt2NBhwqZsJhS4JmneduUTmT2MOFzbfUJa5pUPXFSTTvfIVZqFZIramZwVI1BO9gHkE
+ Ry7EztR0dwplV6MAyDAS0/TdLGZzFWIfihbKgX+1r8PVR7VqVrJ9BoLbKvfm03wx7Ja5MGDLO
+ 2SeD2pwHLENnSzcr4BGnoBliwZNxbtF4kMjYnhKQhrxsaLb8HjYuYcbkpjgHwKciRZtWLnK+d
+ kC5DF3NGPHZw/8+fC/u6tii9KWweS6FbFotQsJAqA40Oo07oRAlWasozY7GIt3TCSpb8VnU8w
+ fBlAxFI6DToPcvlHFJacdgN+b60tKBnVsUGj3OB2sC/PEtoQp+48yuMnhAnBbieR0te/aDQ5A
+ va2lNCWJ7mipRdLnxhaSQFKAUioDinfo4b1lzU4cJDk117x2KLnNJBAUIIxjUt6P6naF4gaOc
+ gH4gKoSb2rg5AUscVQ2LFUD3SvBEKuwjADk/gvgPuwIN5yVP9e47HhU00fahFyE06HIM/OmbT
+ D5zHMS92vtuEByPU29R6XVKH/yrhNQuvLgKx225uc=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 23/05/22 11:33, Rex-BC Chen ha scritto:
-> In this series, we cleanup MediaTek clock reset drivers in clk/mediatek
-> folder. MediaTek clock reset driver is used to provide reset control
-> of modules controlled in clk, like infra_ao.
+On Sun, May 22, 2022 at 5:50 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
 
-Thanks for this very fast resend for the T-b tag fixes (and don't worry,
-it happens).
+>  static const struct of_device_id npcm_rc_match[] = {
+>         { .compatible = "nuvoton,npcm750-reset"},
+> +       { .compatible = "nuvoton,npcm845-reset"},
+>         { }
+>  };
+> +/*
+> + *  The following procedure should be observed in USB PHY, USB device and
+> + *  USB host initialization at BMC boot
+> + */
+> +static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
+> +{
+> +       struct device_node *np = pdev->dev.of_node;
+> +       struct device *dev = &pdev->dev;
+> +
+> +       rc->gcr_regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
+> +       if (IS_ERR(rc->gcr_regmap)) {
+> +               dev_err(&pdev->dev, "Failed to find gcr syscon");
+> +               return PTR_ERR(rc->gcr_regmap);
+> +       }
+> +
+> +       if (of_device_is_compatible(np, "nuvoton,npcm750-reset"))
+> +               npcm_usb_reset_npcm7xx(rc);
+> +       else if (of_device_is_compatible(np, "nuvoton,npcm845-reset"))
+> +               npcm_usb_reset_npcm8xx(rc);
+> +       else
+> +               return -ENODEV;
+>
 
-Btw, in my opinion, this series is good to go.
+In place of the string comparison in of_device_is_compatible(), maybe just use
+the .data field of the of_device_id structure to point to the actual
+reset function.
 
-Cheers,
-Angelo
+Alternatively, register two separate platform_driver instances here and
+use separate probe functions that do the soc specific bits and call into
+shared functions for the bits that are the same.
 
-> 
-> Changes for v8 resend:
-> 1. Remove tested-by tag from Nícolas for MT8195/MT8186 patches.
-> 2. Add reviewed-by tag from AngeloGioacchino.
-> 
-> Changes for v8:
-> 1. Use 'enum mtk_reset_version' to replace u8 in patch 5 and 6.
-> 2. Use lowercase '0xc' in patch 7.
-> 3. Drop "simple-mfd" in patch 16 because it's for original reset controller.
-> 4. v8 is based on linux-next next-20220520 and Chen-Yu's series[1].
-> 
-> Changes for v7:
-> 1. v7 is based on linux-next next-20220519 and Chen-Yu's series[1].
-> 2. Add support for MT8186.
-> 
-> [1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=643003
-> 
-> Changes for v6:
-> 1. Add a new patch to support inuput argument index mode.
-> 2. Revise definition in reset.h to index.
-> 
-> Rex-BC Chen (19):
->    clk: mediatek: reset: Add reset.h
->    clk: mediatek: reset: Fix written reset bit offset
->    clk: mediatek: reset: Refine and reorder functions in reset.c
->    clk: mediatek: reset: Extract common drivers to update function
->    clk: mediatek: reset: Merge and revise reset register function
->    clk: mediatek: reset: Revise structure to control reset register
->    clk: mediatek: reset: Support nonsequence base offsets of reset
->      registers
->    clk: mediatek: reset: Support inuput argument index mode
->    clk: mediatek: reset: Change return type for clock reset register
->      function
->    clk: mediatek: reset: Add new register reset function with device
->    clk: mediatek: reset: Add reset support for simple probe
->    dt-bindings: arm: mediatek: Add #reset-cells property for
->      MT8192/MT8195
->    dt-bindings: reset: mediatek: Add infra_ao reset index for
->      MT8192/MT8195
->    clk: mediatek: reset: Add infra_ao reset support for MT8192/MT8195
->    arm64: dts: mediatek: Add infra #reset-cells property for MT8192
->    arm64: dts: mediatek: Add infra #reset-cells property for MT8195
->    dt-bindings: reset: mediatek: Add infra_ao reset index for MT8186
->    dt-bindings: arm: mediatek: Add #reset-cells property for MT8186
->    clk: mediatek: reset: Add infra_ao reset support for MT8186
-> 
->   .../mediatek/mediatek,mt8186-sys-clock.yaml   |   3 +
->   .../mediatek/mediatek,mt8192-sys-clock.yaml   |   3 +
->   .../mediatek/mediatek,mt8195-sys-clock.yaml   |   3 +
->   arch/arm64/boot/dts/mediatek/mt8192.dtsi      |   1 +
->   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  15 +-
->   drivers/clk/mediatek/clk-mt2701-eth.c         |  10 +-
->   drivers/clk/mediatek/clk-mt2701-g3d.c         |  10 +-
->   drivers/clk/mediatek/clk-mt2701-hif.c         |  10 +-
->   drivers/clk/mediatek/clk-mt2701.c             |  22 +-
->   drivers/clk/mediatek/clk-mt2712.c             |  22 +-
->   drivers/clk/mediatek/clk-mt7622-eth.c         |  10 +-
->   drivers/clk/mediatek/clk-mt7622-hif.c         |  12 +-
->   drivers/clk/mediatek/clk-mt7622.c             |  22 +-
->   drivers/clk/mediatek/clk-mt7629-eth.c         |  10 +-
->   drivers/clk/mediatek/clk-mt7629-hif.c         |  12 +-
->   drivers/clk/mediatek/clk-mt8135.c             |  22 +-
->   drivers/clk/mediatek/clk-mt8173.c             |  22 +-
->   drivers/clk/mediatek/clk-mt8183.c             |  18 +-
->   drivers/clk/mediatek/clk-mt8186-infra_ao.c    |  23 ++
->   drivers/clk/mediatek/clk-mt8192.c             |  29 +++
->   drivers/clk/mediatek/clk-mt8195-infra_ao.c    |  24 +++
->   drivers/clk/mediatek/clk-mtk.c                |   7 +
->   drivers/clk/mediatek/clk-mtk.h                |   9 +-
->   drivers/clk/mediatek/reset.c                  | 198 +++++++++++++-----
->   drivers/clk/mediatek/reset.h                  |  82 ++++++++
->   include/dt-bindings/reset/mt8186-resets.h     |   5 +
->   include/dt-bindings/reset/mt8192-resets.h     |   8 +
->   include/dt-bindings/reset/mt8195-resets.h     |   6 +
->   28 files changed, 523 insertions(+), 95 deletions(-)
->   create mode 100644 drivers/clk/mediatek/reset.h
-> 
-
+       Arnd
