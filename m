@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74BBC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 10:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B921C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 11:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234283AbiEWKtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 06:49:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34068 "EHLO
+        id S235078AbiEWLng (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 07:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234300AbiEWKtp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 06:49:45 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1392E4CD55
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 03:49:43 -0700 (PDT)
-Received: from mail-yb1-f172.google.com ([209.85.219.172]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1M2gt5-1nrAXl1qU3-004EAy; Mon, 23 May 2022 12:44:34 +0200
-Received: by mail-yb1-f172.google.com with SMTP id v71so24625779ybi.4;
-        Mon, 23 May 2022 03:44:33 -0700 (PDT)
-X-Gm-Message-State: AOAM530qeCxaHCmTmie4hv7Wx8oD2I4W6nmutjXgFkxho8NzdLnMdAjk
-        LrMYbxgRZCF4bwL8p6q5muFE7gCnVGMfCCzTnEk=
-X-Google-Smtp-Source: ABdhPJzbbTU7bxyEy+V6QZ7ro2Wti/wri258NXrp2iXt1Owp7jIbpPdzCSwsk8vjZl8l7XWvxC1S+1Cf8oUw+fAt8d0=
-X-Received: by 2002:a81:6283:0:b0:2ff:2443:6f3c with SMTP id
- w125-20020a816283000000b002ff24436f3cmr22577090ywb.135.1653302662526; Mon, 23
- May 2022 03:44:22 -0700 (PDT)
+        with ESMTP id S235074AbiEWLnf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 07:43:35 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06F31506DA;
+        Mon, 23 May 2022 04:43:33 -0700 (PDT)
+Received: from mail-ot1-f42.google.com ([209.85.210.42]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1M8yPu-1ny2QH3nh0-0066ng; Mon, 23 May 2022 13:43:32 +0200
+Received: by mail-ot1-f42.google.com with SMTP id e11-20020a9d6e0b000000b0060afcbafa80so4418465otr.3;
+        Mon, 23 May 2022 04:43:31 -0700 (PDT)
+X-Gm-Message-State: AOAM530VEDwel10v6P42dzQ6EV0W/ImJ2lYBPfS2Ob6jT5cD6s9b3rRk
+        rep+Z18t15/VrxXwa2LB9oh6NBm7p3HONc7O7mM=
+X-Google-Smtp-Source: ABdhPJxpUCa94Kh6HQKuK56biKlb3vDJKuICvFZFBgpVEpCuri5EfGLbRA6cBhu22Na5oqGEdTcIEn9+H34udGZY6o0=
+X-Received: by 2002:a25:75c5:0:b0:648:dccd:e1c with SMTP id
+ q188-20020a2575c5000000b00648dccd0e1cmr21094709ybc.452.1653299785602; Mon, 23
+ May 2022 02:56:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220522155046.260146-1-tmaimon77@gmail.com> <20220522155046.260146-13-tmaimon77@gmail.com>
-In-Reply-To: <20220522155046.260146-13-tmaimon77@gmail.com>
+References: <20220522155046.260146-1-tmaimon77@gmail.com> <20220522155046.260146-5-tmaimon77@gmail.com>
+In-Reply-To: <20220522155046.260146-5-tmaimon77@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 23 May 2022 12:44:06 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0PKvqpTjNeKUm6EnxpmJAtmk1jv+b4YXxr+fXFpsWXtw@mail.gmail.com>
-Message-ID: <CAK8P3a0PKvqpTjNeKUm6EnxpmJAtmk1jv+b4YXxr+fXFpsWXtw@mail.gmail.com>
-Subject: Re: [PATCH v1 12/19] reset: npcm: Add NPCM8XX support
+Date:   Mon, 23 May 2022 11:56:09 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0Nh4m7O_WPe1DTWqwWU32C5khOPH0ir7r_=s106mLv5A@mail.gmail.com>
+Message-ID: <CAK8P3a0Nh4m7O_WPe1DTWqwWU32C5khOPH0ir7r_=s106mLv5A@mail.gmail.com>
+Subject: Re: [PATCH v1 04/19] tty: serial: 8250: Add NPCM845 UART support
 To:     Tomer Maimon <tmaimon77@gmail.com>
 Cc:     Avi Fishman <avifishman70@gmail.com>,
         Tali Perry <tali.perry1@gmail.com>,
@@ -71,64 +71,40 @@ Cc:     Avi Fishman <avifishman70@gmail.com>,
         LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:YHq8xzHHHcsfvYjSzSq+E07jIVbAebTZh9CDYUzTJWXfz/CNC4d
- DH5SoIfeUq+NJ0Nc8rFHY/R3FL/QCnVF1C9T2g2LIt3h7UY5J4dV1QADFb/h19lg4+G/mrl
- ru20c2th0IR3ckojIyJXvf17QEBdoGmeSS9umxMJsalQdaVTJpPNusRaXfENjA+29+RBrAc
- A/eMxpOhu6DPI5EC1lONg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:N0iuJGFrog4=:/VRLoTq7PxAYLeOfhO5SI4
- oDU/qxUk2vsA3lxYxlgCT9f3z2Y/OJR6iDM56BKPJeN+0mYwL/c9aq1uur+h877kqsucyP0tu
- n0al99BaM4jti/zVedWJX08Ih1M+EBisrk8A03idRCRVdjpvd65DL11kG46OJ/poljDS/onY/
- R8xlF9nUG46suwuyTPSOJPtVtV8FZ/fjMJJUoadWCcfGHUIKPr6C+PbE9+MoCQefZ5+Zq/hZo
- n7TvRrrIfIpk7RKix32HOvk1bfqnZX5rPwsJwmhZtaG35+PRUTVJmfoh75HcqcG0mu3kVJo2I
- 40SBgOso8PbVJaGPRY5OFCLkeuL/5S+/l+A1AlrMl+KSwYHDB8yK5DqMLjHyskSH+6JxtoqcH
- /SV6BfCt2NBhwqZsJhS4JmneduUTmT2MOFzbfUJa5pUPXFSTTvfIVZqFZIramZwVI1BO9gHkE
- Ry7EztR0dwplV6MAyDAS0/TdLGZzFWIfihbKgX+1r8PVR7VqVrJ9BoLbKvfm03wx7Ja5MGDLO
- 2SeD2pwHLENnSzcr4BGnoBliwZNxbtF4kMjYnhKQhrxsaLb8HjYuYcbkpjgHwKciRZtWLnK+d
- kC5DF3NGPHZw/8+fC/u6tii9KWweS6FbFotQsJAqA40Oo07oRAlWasozY7GIt3TCSpb8VnU8w
- fBlAxFI6DToPcvlHFJacdgN+b60tKBnVsUGj3OB2sC/PEtoQp+48yuMnhAnBbieR0te/aDQ5A
- va2lNCWJ7mipRdLnxhaSQFKAUioDinfo4b1lzU4cJDk117x2KLnNJBAUIIxjUt6P6naF4gaOc
- gH4gKoSb2rg5AUscVQ2LFUD3SvBEKuwjADk/gvgPuwIN5yVP9e47HhU00fahFyE06HIM/OmbT
- D5zHMS92vtuEByPU29R6XVKH/yrhNQuvLgKx225uc=
+X-Provags-ID: V03:K1:Eh/qW2KznBfSE/OEBWqMPrKe6wGQVBqS5SXsFUcXmZEqSSuDHwT
+ 72VMZAhZPMIqmh+H6lMwP5qwnaEjve33ZMwxkio1HwuhLe3vPgbpqAog7NGZVs3/TT2oIMr
+ eLUmXk8B4w648y9F7Bu1gvCHI+0N3M/eyZ0k53KwRmUDovnzg2msAvsumZTmJi6s5Ya1U3b
+ XfeBYBqjpRFHOFSgvC5YQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MX/kDM8qFJQ=:CvgCpZv4G2zKoUj2z9ehBD
+ q317uwNL18N9Picka94IqPCTYd3CmtXvDVrZ9rwdHuwNOfOByunvQOyYEl5G8UQfzgImVWQBY
+ D2Yk6dIUB06pWAOExUyI9NYclahQzC4GJDaRKjYHAZu+iYEzlL52xKUvBX6ZZGlmZHTPGN8YX
+ Y/5RUBanuZtJvJ3iqaVWmUtMVIHC1WfhHtvERDNttfphhBU/c3itCrYebF2hY4d41zw4KBDkT
+ VwFMXAaE1xna2GBc+ty/P+JeIl+zwKF3spkzznm8v3zF0gKEkK96NRflU70ymEbIXkMlosfa4
+ /L7WeQkkTK3JvD6BDaeGnZMFBbTCwZHTtAefhAKghRvOBIPwyn+k5Xf+ohYGEMt6HOWRLJoLV
+ sMYIWGyABqjBjoF2fu8Bhd4Z/GzoffvZlG5hEUyOiOaXt+LbNNxrFHXrn2ac34cWnfFoQKO7b
+ G/j4oZ1S89kseAeIDBc3zq2pjCdnmeh2aT5VBDIO9EqV7QQNBsGLqHCq6Br+bSWTqOgNqFRiI
+ GYuJRIitstsn3UA3Mg3fSmvVvA5S8zK34xsP4Ig9SNK1InEcSdsHPntJvV0R5CDVYUFHVzpLW
+ 5TL6tb0Qt79u4jxBCx/txPyQ4vCoPHVuj6/UyE13epLYHMwsTW/lbdmg6GxFOoVpPNtKTs2Dt
+ rCVhULYuwi2udYEMOPaNzoEEUAAzZp2AgFWVYAXgWuddQ5uBtMvy3DbQEtX8YYqNOwskHC9Tu
+ ZESP5no+BZ2x6s/vpQD5d2oZmYZ4wWiTMydWlWTqt8UDE1ugbhNkqcKztxF/zTHf/0BIFZrRp
+ 6kpLar02NBXVZfofCQH0YywcWqyCSP+dynb/W3vwBXGDi7cXGOCLkfF8ak/RImCcA+meyBaWP
+ epvJo17x6SJ9CA+eTjtQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sun, May 22, 2022 at 5:50 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
+> +++ b/drivers/tty/serial/8250/8250_of.c
+> @@ -333,6 +333,7 @@ static const struct of_device_id of_platform_serial_table[] = {
+>         { .compatible = "ti,da830-uart", .data = (void *)PORT_DA830, },
+>         { .compatible = "nuvoton,wpcm450-uart", .data = (void *)PORT_NPCM, },
+>         { .compatible = "nuvoton,npcm750-uart", .data = (void *)PORT_NPCM, },
+> +       { .compatible = "nuvoton,npcm845-uart", .data = (void *)PORT_NPCM, },
+>         { /* end of list */ },
 
->  static const struct of_device_id npcm_rc_match[] = {
->         { .compatible = "nuvoton,npcm750-reset"},
-> +       { .compatible = "nuvoton,npcm845-reset"},
->         { }
->  };
-> +/*
-> + *  The following procedure should be observed in USB PHY, USB device and
-> + *  USB host initialization at BMC boot
-> + */
-> +static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
-> +{
-> +       struct device_node *np = pdev->dev.of_node;
-> +       struct device *dev = &pdev->dev;
-> +
-> +       rc->gcr_regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
-> +       if (IS_ERR(rc->gcr_regmap)) {
-> +               dev_err(&pdev->dev, "Failed to find gcr syscon");
-> +               return PTR_ERR(rc->gcr_regmap);
-> +       }
-> +
-> +       if (of_device_is_compatible(np, "nuvoton,npcm750-reset"))
-> +               npcm_usb_reset_npcm7xx(rc);
-> +       else if (of_device_is_compatible(np, "nuvoton,npcm845-reset"))
-> +               npcm_usb_reset_npcm8xx(rc);
-> +       else
-> +               return -ENODEV;
->
-
-In place of the string comparison in of_device_is_compatible(), maybe just use
-the .data field of the of_device_id structure to point to the actual
-reset function.
-
-Alternatively, register two separate platform_driver instances here and
-use separate probe functions that do the soc specific bits and call into
-shared functions for the bits that are the same.
+If these are compatible devices, it's usually easier to claim
+compatibility with both the specific chip and the older model
+as a fallback, to avoid driver changes. This seems to apply to
+the timer and watchdog devices as well.
 
        Arnd
