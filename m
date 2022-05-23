@@ -2,38 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3F2C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 06:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FDBC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 06:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234560AbiEWGBm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 02:01:42 -0400
+        id S234658AbiEWGBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 02:01:45 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233368AbiEWGBR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 02:01:17 -0400
+        with ESMTP id S233697AbiEWGBX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 02:01:23 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BAD610D7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA5010B9;
         Sun, 22 May 2022 23:01:12 -0700 (PDT)
-X-UUID: 6ff25349832f4420a738e4e4b54e4655-20220523
+X-UUID: 1688533dba304c2b89d3599322c26e71-20220523
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:b56a0063-0a58-4960-a2d3-67b2964ae5f7,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:93773e7a-5ef6-470b-96c9-bdb8ced32786,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,QS:0,BEC:nil
-X-UUID: 6ff25349832f4420a738e4e4b54e4655-20220523
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+X-CID-O-INFO: VERSION:1.1.5,REQID:3bf6cfe6-0919-4e39-9de3-3be01dde9cb8,OB:40,L
+        OB:70,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
+        CTION:release,TS:95
+X-CID-INFO: VERSION:1.1.5,REQID:3bf6cfe6-0919-4e39-9de3-3be01dde9cb8,OB:40,LOB
+        :70,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
+        CTION:quarantine,TS:95
+X-CID-META: VersionHash:2a19b09,CLOUDID:8b7b2ee3-edbf-4bd4-8a34-dfc5f7bb086d,C
+        OID:f98e2ab6fcf5,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,QS:0,BEC:nil
+X-UUID: 1688533dba304c2b89d3599322c26e71-20220523
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1383997768; Mon, 23 May 2022 14:01:00 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1749492682; Mon, 23 May 2022 14:01:00 +0800
 Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Mon, 23 May 2022 14:01:00 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Mon, 23 May 2022 14:01:00 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
  mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 23 May 2022 14:00:59 +0800
+ 15.0.1497.2; Mon, 23 May 2022 14:01:00 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
  Transport; Mon, 23 May 2022 14:00:59 +0800
@@ -51,9 +54,9 @@ CC:     <p.zabel@pengutronix.de>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Rex-BC Chen <rex-bc.chen@mediatek.com>
-Subject: [PATCH v8 13/19] dt-bindings: reset: mediatek: Add infra_ao reset index for MT8192/MT8195
-Date:   Mon, 23 May 2022 14:00:50 +0800
-Message-ID: <20220523060056.24396-14-rex-bc.chen@mediatek.com>
+Subject: [PATCH v8 17/19] dt-bindings: reset: mediatek: Add infra_ao reset index for MT8186
+Date:   Mon, 23 May 2022 14:00:54 +0800
+Message-ID: <20220523060056.24396-18-rex-bc.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220523060056.24396-1-rex-bc.chen@mediatek.com>
 References: <20220523060056.24396-1-rex-bc.chen@mediatek.com>
@@ -66,64 +69,37 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 To support reset of infra_ao, add the index of infra_ao reset of
-thermal/svs/pcei for MT8192 and thermal/svs for MT8195.
+thermal/svs for MT8186.
 
 Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
- include/dt-bindings/reset/mt8192-resets.h | 8 ++++++++
- include/dt-bindings/reset/mt8195-resets.h | 6 ++++++
- 2 files changed, 14 insertions(+)
+ include/dt-bindings/reset/mt8186-resets.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/dt-bindings/reset/mt8192-resets.h b/include/dt-bindings/reset/mt8192-resets.h
-index 764ca9910fa9..12e2087c90a3 100644
---- a/include/dt-bindings/reset/mt8192-resets.h
-+++ b/include/dt-bindings/reset/mt8192-resets.h
+diff --git a/include/dt-bindings/reset/mt8186-resets.h b/include/dt-bindings/reset/mt8186-resets.h
+index 5f850370c42c..2e9029c22f38 100644
+--- a/include/dt-bindings/reset/mt8186-resets.h
++++ b/include/dt-bindings/reset/mt8186-resets.h
 @@ -7,6 +7,7 @@
- #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8192
- #define _DT_BINDINGS_RESET_CONTROLLER_MT8192
+ #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8186
+ #define _DT_BINDINGS_RESET_CONTROLLER_MT8186
  
 +/* TOPRGU resets */
- #define MT8192_TOPRGU_MM_SW_RST					1
- #define MT8192_TOPRGU_MFG_SW_RST				2
- #define MT8192_TOPRGU_VENC_SW_RST				3
-@@ -30,4 +31,11 @@
+ #define MT8186_TOPRGU_INFRA_SW_RST				0
+ #define MT8186_TOPRGU_MM_SW_RST					1
+ #define MT8186_TOPRGU_MFG_SW_RST				2
+@@ -33,4 +34,8 @@
  /* MMSYS resets */
- #define MT8192_MMSYS_SW0_RST_B_DISP_DSI0			15
+ #define MT8186_MMSYS_SW0_RST_B_DISP_DSI0			19
  
 +/* INFRA resets */
-+#define MT8192_INFRA_RST0_THERM_CTRL_SWRST		0
-+#define MT8192_INFRA_RST2_PEXTP_PHY_SWRST		1
-+#define MT8192_INFRA_RST3_THERM_CTRL_PTP_SWRST	2
-+#define MT8192_INFRA_RST4_PCIE_TOP_SWRST		3
-+#define MT8192_INFRA_RST4_THERM_CTRL_MCU_SWRST	4
++#define MT8186_INFRA_THERMAL_CTRL_RST			0
++#define MT8186_INFRA_PTP_CTRL_RST				1
 +
- #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8192 */
-diff --git a/include/dt-bindings/reset/mt8195-resets.h b/include/dt-bindings/reset/mt8195-resets.h
-index a26bccc8b957..0b1937f14b36 100644
---- a/include/dt-bindings/reset/mt8195-resets.h
-+++ b/include/dt-bindings/reset/mt8195-resets.h
-@@ -7,6 +7,7 @@
- #ifndef _DT_BINDINGS_RESET_CONTROLLER_MT8195
- #define _DT_BINDINGS_RESET_CONTROLLER_MT8195
- 
-+/* TOPRGU resets */
- #define MT8195_TOPRGU_CONN_MCU_SW_RST          0
- #define MT8195_TOPRGU_INFRA_GRST_SW_RST        1
- #define MT8195_TOPRGU_APU_SW_RST               2
-@@ -26,4 +27,9 @@
- 
- #define MT8195_TOPRGU_SW_RST_NUM               16
- 
-+/* INFRA resets */
-+#define MT8195_INFRA_RST0_THERM_CTRL_SWRST     0
-+#define MT8195_INFRA_RST3_THERM_CTRL_PTP_SWRST 1
-+#define MT8195_INFRA_RST4_THERM_CTRL_MCU_SWRST 2
-+
- #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8195 */
+ #endif  /* _DT_BINDINGS_RESET_CONTROLLER_MT8186 */
 -- 
 2.18.0
 
