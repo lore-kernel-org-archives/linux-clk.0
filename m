@@ -2,113 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA33AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 18:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E02C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243686AbiEWSUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 14:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58892 "EHLO
+        id S229555AbiEWVXA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 17:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243887AbiEWSSr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 14:18:47 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B840A0058
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 10:57:30 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id bu29so26968573lfb.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 10:57:30 -0700 (PDT)
+        with ESMTP id S229605AbiEWVW7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:22:59 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A11DE9969C
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:22:58 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id j137so8378073oih.6
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=3JUxPxSVnYumG4wMpN+SiUT7prCdQ8x6bZcRTYUwMTw=;
-        b=tT4JXu3U2N5URrBf7XXpDgcDRX6QwnwnGsM+FJYMVrugAn/0ck50LC3Ck7f2WUG+b3
-         UdAuio8E4dbFsYHRzMIGnxcdwMDc3zPMNIqIFp4vmTKKJcCdS2XelNJiyduKfqKFOtey
-         OdifCeoBGIWr1JVXay928xA6/rHPdCXVpIfDdO6bN2eMsw8zUlQ5bikeBjTAemuM47z7
-         rINIIjiw2cqBLXkSjwotSBhrVlCQ6fYlbNAQZolbb2xyi34eioyAjEAJ2vHfWeBjToeq
-         NGN00Ps+8W6qR/f7S6Fj3yMemCKVr5XWJeDWzBLex7aXwm1zQkMWFnmWHnyEuOHuDMXt
-         zf+g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s84ouXHmk7fiVJEq5GR+aYMEWGBN/ptWHt1c7KVnWA4=;
+        b=jDLz5fHRUI8LRqP2vuulFPmR72iYqNW8ZDA0FrKv6CzjUEBOZcmU4KiV8XaQQRxx6+
+         h64sQB46EoIUjfiu/PDLrc5Khe5xZ3PGjMkyRSZitVoUgYfvwUm6B1lMtms+3hDTZuED
+         ZqpSTa5mXD533floXMcRASAEsdsqu6zpt681mJuWdT2yM59N1oBE2tILA4ZN+SjNj001
+         aZ86yWpsBoWXL/hRF7l/W+BV7C65GwlctH2GtdzK/no40xTGSCk46JyMHHBYU6y4ELob
+         agkjkxObl4jqCkkhyNUd7el+XAdYqHYSdMYar+2F/LWVw5+FhQlLE/CxqLXLiwyl4BJq
+         0nKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=3JUxPxSVnYumG4wMpN+SiUT7prCdQ8x6bZcRTYUwMTw=;
-        b=mSCDRG4h82MmSVgPZX8i/xlwuCA8zXN752ipuawvN1AKXdQfqNCT+tVPjlWX+xNlGA
-         m0ljgoK2Ma+0WMYlZSXE2ptXz3Lo9Rt8VkTVRsa4GJ08rOcj7JqaemuDIsH/ZddD9nzq
-         CPHQv+mOPsgWTrgMGNw9j+0ZZy5btxsXtmx4oXZMt4nXnwwBP5Fbhl0fyaK+TMLNv6Ya
-         U5o8HPREQjgRhCrxsinzSxK+piijXLKykyGEK1FaGt+PInaNX7ApM6JIa2tmaFSt2Whd
-         EKw65+8IJ2JxQQ5JPzPFHCUZTfaUaXqAm2inH7ocm6rOEm6e/TOjYuviRvEyUfH8IF0Y
-         kofA==
-X-Gm-Message-State: AOAM532Y/ZlCHbYCXpwc7gjAHy+IeX2gerWNjkXyTx8P6tl5QLq9CTMP
-        iQpVCNNAK1zo6ismC0dhHDp4xw==
-X-Google-Smtp-Source: ABdhPJyb1n/Iwdio+i6AZEAt1gAFenNdwifbYFK0I53gke8ob0YjzFXoB+g2ameOvrxDPWTp6quhOA==
-X-Received: by 2002:a05:6512:1188:b0:473:a4b3:8479 with SMTP id g8-20020a056512118800b00473a4b38479mr17300845lfr.247.1653328575928;
-        Mon, 23 May 2022 10:56:15 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id j14-20020ac2454e000000b00477cab3374asm1982977lfm.303.2022.05.23.10.56.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 10:56:14 -0700 (PDT)
-Message-ID: <2270763e-78f7-9537-c6f3-31c1341f98dc@linaro.org>
-Date:   Mon, 23 May 2022 20:56:13 +0300
+        bh=s84ouXHmk7fiVJEq5GR+aYMEWGBN/ptWHt1c7KVnWA4=;
+        b=VtYBAx8qPtksoz3v8jyHheY1ndXp6IwOOuvNtkdjNOchqfZhvg5yAnkSwBPrNI2VBI
+         VP68EhAj7IXYt9bG5G+2XcMN9PITAwfmmuqImARyNunaAwpnMbFFPrdaDe0FsVeTbGhI
+         IJeGelPZAstrdym58Tjua2sVV2VlER7HHOatMQmdDeEZzPpYYlXTmfUP+1HvgVa2aznl
+         naG1YQBdd0s1QwaFQxbN8SHGIkwpwwqo3FYKCaEFtRfrhjWmd9v7w5GJy363hBRm3BZX
+         S+kgc83ZxOmfDLA+pH2eWledibDg70oAuEnIDIE4oyfz0dnbYErYgEOBig5656hsDq/L
+         2fKQ==
+X-Gm-Message-State: AOAM531VSd1V6j2t08SBSEBWUWoJSgBdwDVlwvzan7Dxspwi+6OXNWI6
+        rOJvjHp82BbIo1SmD17yKUhuf7kUWpqqHQ==
+X-Google-Smtp-Source: ABdhPJzdRptAS73TmdRt1Jt94isZQ0KxtaDBKrlx/b/vrDf7aagBdRjoVStRW0IaZZU3v+OXaIMDsA==
+X-Received: by 2002:aca:de84:0:b0:2f9:c97c:421c with SMTP id v126-20020acade84000000b002f9c97c421cmr581104oig.46.1653340977669;
+        Mon, 23 May 2022 14:22:57 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t16-20020acaaa10000000b00325cf57766bsm4465412oie.1.2022.05.23.14.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 14:22:56 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [GIT PULL] Qualcomm clock fixes for v5.19
+Date:   Mon, 23 May 2022 16:22:55 -0500
+Message-Id: <20220523212255.64355-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v7 0/8] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
-Content-Language: en-GB
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20220521005343.1429642-1-dmitry.baryshkov@linaro.org>
- <YotL2rqv8N9+jmpV@hovoldconsulting.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YotL2rqv8N9+jmpV@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/05/2022 11:54, Johan Hovold wrote:
-> On Sat, May 21, 2022 at 03:53:35AM +0300, Dmitry Baryshkov wrote:
->> PCIe pipe clk (and some other clocks) must be parked to the "safe"
->> source (bi_tcxo) when corresponding GDSC is turned off and on again.
->> Currently this is handcoded in the PCIe driver by reparenting the
->> gcc_pipe_N_clk_src clock.
->>
->> Instead of doing it manually, follow the approach used by
->> clk_rcg2_shared_ops and implement this parking in the enable() and
->> disable() clock operations for respective pipe clocks.
->>
->> Changes since v7:
->>   - Brought back the struct clk_regmap_phy_mux (Johan)
->>   - Fixed includes (Stephen)
-> 
-> So this is v8, but Subject still reads v7.
-> 
-> It looks like you also dropped the CLK_SET_RATE_PARENT flags in this
-> version.
+Stephen, I sent this as a follow up rather than creating a new tag. Let me know
+if you prefer it in a different way.
 
-Yes. It was not there originally. And I don't think we really set the 
-rate for the pipe clock (and support setting it for the phy's pipe output).
+Regards,
+Bjorn
 
-> 
-> For the series:
-> 
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> Tested-by: Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> 
-> Johan
+The following changes since commit 703db1f5da1e3a62b84356a29c150efa24a2377d:
 
+  clk: qcom: rcg2: Cache CFG register updates for parked RCGs (2022-05-19 16:42:30 -0500)
 
--- 
-With best wishes
-Dmitry
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-5.19-2
+
+for you to fetch changes up to 03e053b4f717c0d893881fe8e4ca8d9ae2f035f2:
+
+  Revert "clk: qcom: regmap-mux: add pipe clk implementation" (2022-05-23 12:26:13 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock fixes for v5.19
+
+After concerns were raised about the new PCIe pipe_clk mux
+implementation an updated implementation has evolved, but has not yet
+been accepted.
+
+This reverts the merged changes to avoid these concerns in the current
+release.
+
+----------------------------------------------------------------
+Dmitry Baryshkov (3):
+      Revert "clk: qcom: gcc-sm8450: use new clk_regmap_mux_safe_ops for PCIe pipe clocks"
+      Revert "clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe clocks"
+      Revert "clk: qcom: regmap-mux: add pipe clk implementation"
+
+ drivers/clk/qcom/clk-regmap-mux.c | 78 ---------------------------------------
+ drivers/clk/qcom/clk-regmap-mux.h |  3 --
+ drivers/clk/qcom/gcc-sc7280.c     |  6 +--
+ drivers/clk/qcom/gcc-sm8450.c     |  6 +--
+ 4 files changed, 4 insertions(+), 89 deletions(-)
