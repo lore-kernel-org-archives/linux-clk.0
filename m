@@ -2,25 +2,24 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CA1C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2931DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 21:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbiEWVn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 17:43:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
+        id S230038AbiEWVs7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 17:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbiEWVn4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:43:56 -0400
-X-Greylist: delayed 305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 May 2022 14:43:55 PDT
-Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [5.144.164.164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727561034
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:43:55 -0700 (PDT)
+        with ESMTP id S230207AbiEWVs5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 17:48:57 -0400
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789A258E42
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 14:48:55 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 169F620521;
-        Mon, 23 May 2022 23:38:49 +0200 (CEST)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 869DC1FCB4;
+        Mon, 23 May 2022 23:38:58 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -41,10 +40,11 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Arnd Bergmann <arnd@arndb.de>,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH 2/9] clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
-Date:   Mon, 23 May 2022 23:38:30 +0200
-Message-Id: <20220523213837.1016542-3-marijn.suijten@somainline.org>
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Stephen Boyd <swboyd@chromium.org>
+Subject: [PATCH 8/9] drm/msm/dsi_phy_10nm: Replace parent names with clk_hw pointers
+Date:   Mon, 23 May 2022 23:38:36 +0200
+Message-Id: <20220523213837.1016542-9-marijn.suijten@somainline.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
 References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
@@ -54,32 +54,168 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the devres variant of clk_hw_register_mux_hws() for registering a
-mux clock with clk_hw parent pointers instead of parent names.
+parent_hw pointers are easier to manage and cheaper to use than
+repeatedly formatting the parent name and subsequently leaving the clk
+framework to perform lookups based on that name.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- include/linux/clk-provider.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c | 92 ++++++++++------------
+ 1 file changed, 40 insertions(+), 52 deletions(-)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 4e07621849e6..316c7e082934 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -980,6 +980,13 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 			      (parent_names), NULL, NULL, (flags), (reg),     \
- 			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
- 			      NULL, (lock))
-+#define devm_clk_hw_register_mux_parent_hws(dev, name, parent_hws,	      \
-+					    num_parents, flags, reg, shift,   \
-+					    width, clk_mux_flags, lock)       \
-+	__devm_clk_hw_register_mux((dev), NULL, (name), (num_parents), NULL,  \
-+				   (parent_hws), NULL, (flags), (reg),        \
-+				   (shift), BIT((width)) - 1,		      \
-+				   (clk_mux_flags), NULL, (lock))
- 
- int clk_mux_val_to_index(struct clk_hw *hw, const u32 *table, unsigned int flags,
- 			 unsigned int val);
--- 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+index 08b015ea1b1e..178c3f70a7b2 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+@@ -571,8 +571,7 @@ static int dsi_10nm_set_usecase(struct msm_dsi_phy *phy)
+  */
+ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **provided_clocks)
+ {
+-	char clk_name[32], parent[32], vco_name[32];
+-	char parent2[32], parent3[32], parent4[32];
++	char clk_name[32], vco_name[32];
+ 	struct clk_init_data vco_init = {
+ 		.parent_data = &(const struct clk_parent_data) {
+ 			.fw_name = "ref",
+@@ -583,7 +582,8 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 		.ops = &clk_ops_dsi_pll_10nm_vco,
+ 	};
+ 	struct device *dev = &pll_10nm->phy->pdev->dev;
+-	struct clk_hw *hw;
++	struct clk_hw *hw, *pll_out_div, *pll_bit, *pll_by_2_bit;
++	struct clk_hw *pll_post_out_div, *pclk_mux;
+ 	int ret;
+
+ 	DBG("DSI%d", pll_10nm->phy->id);
+@@ -596,39 +596,34 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 		return ret;
+
+ 	snprintf(clk_name, 32, "dsi%d_pll_out_div_clk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%dvco_clk", pll_10nm->phy->id);
+
+-	hw = devm_clk_hw_register_divider(dev, clk_name,
+-				     parent, CLK_SET_RATE_PARENT,
+-				     pll_10nm->phy->pll_base +
+-				     REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE,
+-				     0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
+-	if (IS_ERR(hw)) {
+-		ret = PTR_ERR(hw);
++	pll_out_div = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
++			&pll_10nm->clk_hw, CLK_SET_RATE_PARENT,
++			pll_10nm->phy->pll_base +
++			REG_DSI_10nm_PHY_PLL_PLL_OUTDIV_RATE,
++			0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
++	if (IS_ERR(pll_out_div)) {
++		ret = PTR_ERR(pll_out_div);
+ 		goto fail;
+ 	}
+
+ 	snprintf(clk_name, 32, "dsi%d_pll_bit_clk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_10nm->phy->id);
+
+ 	/* BIT CLK: DIV_CTRL_3_0 */
+-	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+-				     CLK_SET_RATE_PARENT,
+-				     pll_10nm->phy->base +
+-				     REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+-				     0, 4, CLK_DIVIDER_ONE_BASED,
+-				     &pll_10nm->postdiv_lock);
+-	if (IS_ERR(hw)) {
+-		ret = PTR_ERR(hw);
++	pll_bit = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
++			pll_out_div, CLK_SET_RATE_PARENT,
++			pll_10nm->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG0,
++			0, 4, CLK_DIVIDER_ONE_BASED, &pll_10nm->postdiv_lock);
++	if (IS_ERR(pll_bit)) {
++		ret = PTR_ERR(pll_bit);
+ 		goto fail;
+ 	}
+
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->phy->id);
+
+ 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
+-	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+-					  CLK_SET_RATE_PARENT, 1, 8);
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, clk_name,
++			pll_bit, CLK_SET_RATE_PARENT, 1, 8);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+ 		goto fail;
+@@ -637,51 +632,44 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm, struct clk_hw **prov
+ 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
+
+ 	snprintf(clk_name, 32, "dsi%d_pll_by_2_bit_clk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->phy->id);
+
+-	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+-					  0, 1, 2);
+-	if (IS_ERR(hw)) {
+-		ret = PTR_ERR(hw);
++	pll_by_2_bit = devm_clk_hw_register_fixed_factor_parent_hw(dev,
++			clk_name, pll_bit, 0, 1, 2);
++	if (IS_ERR(pll_by_2_bit)) {
++		ret = PTR_ERR(pll_by_2_bit);
+ 		goto fail;
+ 	}
+
+ 	snprintf(clk_name, 32, "dsi%d_pll_post_out_div_clk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pll_out_div_clk", pll_10nm->phy->id);
+
+-	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
+-					  0, 1, 4);
+-	if (IS_ERR(hw)) {
+-		ret = PTR_ERR(hw);
++	pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(dev,
++			clk_name, pll_out_div, 0, 1, 4);
++	if (IS_ERR(pll_post_out_div)) {
++		ret = PTR_ERR(pll_post_out_div);
+ 		goto fail;
+ 	}
+
+ 	snprintf(clk_name, 32, "dsi%d_pclk_mux", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->phy->id);
+-	snprintf(parent2, 32, "dsi%d_pll_by_2_bit_clk", pll_10nm->phy->id);
+-	snprintf(parent3, 32, "dsi%d_pll_out_div_clk", pll_10nm->phy->id);
+-	snprintf(parent4, 32, "dsi%d_pll_post_out_div_clk", pll_10nm->phy->id);
+-
+-	hw = devm_clk_hw_register_mux(dev, clk_name,
+-				 ((const char *[]){
+-				 parent, parent2, parent3, parent4
+-				 }), 4, 0, pll_10nm->phy->base +
+-				 REG_DSI_10nm_PHY_CMN_CLK_CFG1,
+-				 0, 2, 0, NULL);
+-	if (IS_ERR(hw)) {
+-		ret = PTR_ERR(hw);
++
++	pclk_mux = devm_clk_hw_register_mux_parent_hws(dev, clk_name,
++			((const struct clk_hw *[]){
++				pll_bit,
++				pll_by_2_bit,
++				pll_out_div,
++				pll_post_out_div,
++			}), 4, 0, pll_10nm->phy->base +
++			REG_DSI_10nm_PHY_CMN_CLK_CFG1, 0, 2, 0, NULL);
++	if (IS_ERR(pclk_mux)) {
++		ret = PTR_ERR(pclk_mux);
+ 		goto fail;
+ 	}
+
+ 	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_10nm->phy->id);
+-	snprintf(parent, 32, "dsi%d_pclk_mux", pll_10nm->phy->id);
+
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
+-	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
+-				     0, pll_10nm->phy->base +
+-					REG_DSI_10nm_PHY_CMN_CLK_CFG0,
+-				     4, 4, CLK_DIVIDER_ONE_BASED,
+-				     &pll_10nm->postdiv_lock);
++	hw = devm_clk_hw_register_divider_parent_hw(dev, clk_name, pclk_mux,
++			0, pll_10nm->phy->base + REG_DSI_10nm_PHY_CMN_CLK_CFG0,
++			4, 4, CLK_DIVIDER_ONE_BASED, &pll_10nm->postdiv_lock);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+ 		goto fail;
+--
 2.36.1
 
