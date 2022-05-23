@@ -2,128 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D489C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 05:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CFEC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 06:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiEWFON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 01:14:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34318 "EHLO
+        id S231765AbiEWGBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 02:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbiEWFOM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 01:14:12 -0400
+        with ESMTP id S231721AbiEWGBI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 02:01:08 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D39BF15833;
-        Sun, 22 May 2022 22:14:10 -0700 (PDT)
-X-UUID: 1e72670177804820a993c9184072fe96-20220523
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338A0389D;
+        Sun, 22 May 2022 23:01:05 -0700 (PDT)
+X-UUID: 9bdd047790c641d884b9d4202a7736ca-20220523
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:62a28043-4333-4519-9c0a-d4e1df92f655,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:2a953c7a-5ef6-470b-96c9-bdb8ced32786,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:1,File:nil
-        ,QS:0,BEC:nil
-X-UUID: 1e72670177804820a993c9184072fe96-20220523
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+X-CID-O-INFO: VERSION:1.1.5,REQID:02171810-ac98-49d5-a8e1-9efe00544e29,OB:10,L
+        OB:10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,
+        ACTION:release,TS:90
+X-CID-INFO: VERSION:1.1.5,REQID:02171810-ac98-49d5-a8e1-9efe00544e29,OB:10,LOB
+        :10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,
+        ACTION:quarantine,TS:90
+X-CID-META: VersionHash:2a19b09,CLOUDID:b77a2ee3-edbf-4bd4-8a34-dfc5f7bb086d,C
+        OID:f98e2ab6fcf5,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:1,File:nil,QS:0,BEC:nil
+X-UUID: 9bdd047790c641d884b9d4202a7736ca-20220523
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 503088311; Mon, 23 May 2022 13:14:07 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Mon, 23 May 2022 13:14:06 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 23 May 2022 13:14:06 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+        with ESMTP id 810586857; Mon, 23 May 2022 14:00:57 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Mon, 23 May 2022 14:00:57 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 23 May 2022 13:14:06 +0800
-Message-ID: <93464881d214501851eafd55fdb25b69b6bf77e9.camel@mediatek.com>
-Subject: Re: [PATCH v7 13/19] dt-bindings: reset: mediatek: Add infra_ao
- reset index for MT8192/MT8195
+ Transport; Mon, 23 May 2022 14:00:57 +0800
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "angelogioacchino.delregno@collabora.com" 
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>
+CC:     <p.zabel@pengutronix.de>,
         <angelogioacchino.delregno@collabora.com>,
-        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
-        <Runyang.Chen@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        <nfraprado@collabora.com>, <chun-jie.chen@mediatek.com>,
+        <wenst@chromium.org>, <runyang.chen@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
         <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Mon, 23 May 2022 13:14:06 +0800
-In-Reply-To: <20220521042323.BA60AC385A5@smtp.kernel.org>
-References: <20220519125527.18544-1-rex-bc.chen@mediatek.com>
-         <20220519125527.18544-14-rex-bc.chen@mediatek.com>
-         <3f39777a225fac66f01858262defcc11c6135bb2.camel@mediatek.com>
-         <CAGXv+5Ee3QvpHqWeSOFJYmq+P3POFSTB45JM42UNF8pn4b4T9A@mail.gmail.com>
-         <20220521042323.BA60AC385A5@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>
+Subject: [PATCH v8 00/19] Cleanup MediaTek clk reset drivers and support SoCs
+Date:   Mon, 23 May 2022 14:00:37 +0800
+Message-ID: <20220523060056.24396-1-rex-bc.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2022-05-21 at 12:23 +0800, Stephen Boyd wrote:
-> Quoting Chen-Yu Tsai (2022-05-19 20:10:35)
-> > On Fri, May 20, 2022 at 10:58 AM Rex-BC Chen <
-> > rex-bc.chen@mediatek.com> wrote:
-> > > 
-> > > 
-> > > Hello Stephen,
-> > > 
-> > > this patch will have conflict with Matthias's commit branch for
-> > > include/dt-bindings/reset/mt8192-resets.h.
-> > > 
-> > > It's on linux-next.
-> > > 
-> > > I have fix it in this version, but I think there will be a merge
-> > > conflict if you pick my series in this run.
-> > > 
-> > > 
-https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/include/dt-bindings/reset/mt8192-resets.h?h=next-20220519&id=19c66219e4d5b813ebbd28621cfe9c450659ded7__;!!CTRNKA9wMg0ARbw!xFfRxOWRAvhQMzoKxqRu8xFsMZLpVZEoK0WZBKeMOoeRGBjKphSL2tox-8zWlRwytjtEImTo1VB1f38wwj8XSlyKIw$
-> > >  
-> > 
-> > The commit in question is in Matthias's v5.18-next/dts64 branch,
-> > which also
-> > has the v5.18-next-dts64 tag. The PR for this tag was already
-> > picked up
-> > by the soc maintainers, so I guess we could consider it stable.
-> > 
-> > Matthias, what do you think? Give an ack for the patch to go
-> > through the
-> > clk tree with the tag merged in as dependency? There's a compile
-> > time
-> > dependency between this and the next patch so we can't just split
-> > them
-> > into different trees.
-> > 
-> 
-> It's pretty late to land something that has cross tree dependencies
-> like
-> that so I guess we'll just take up this patch series after the merge
-> window closes.
+In this series, we cleanup MediaTek clock reset drivers in clk/mediatek
+folder. MediaTek clock reset driver is used to provide reset control
+of modules controlled in clk, like infra_ao.
 
-Hello Stephen,
+Changes for v8:
+1. Use 'enum mtk_reset_version' to replace u8 in patch 5 and 6.
+2. Use lowercase '0xc' in patch 7.
+3. Drop "simple-mfd" in patch 16 because it's for original reset controller.
+4. v8 is based on linux-next next-20220520 and Chen-Yu's series[1].
 
-Thanks for your big help!
-I will send v8 to modify comments from Nícolas.
+Changes for v7:
+1. v7 is based on linux-next next-20220519 and Chen-Yu's series[1].
+2. Add support for MT8186.
 
-BRs,
-Rex
+[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=643003
+
+Changes for v6:
+1. Add a new patch to support inuput argument index mode.
+2. Revise definition in reset.h to index.
+
+Rex-BC Chen (19):
+  clk: mediatek: reset: Add reset.h
+  clk: mediatek: reset: Fix written reset bit offset
+  clk: mediatek: reset: Refine and reorder functions in reset.c
+  clk: mediatek: reset: Extract common drivers to update function
+  clk: mediatek: reset: Merge and revise reset register function
+  clk: mediatek: reset: Revise structure to control reset register
+  clk: mediatek: reset: Support nonsequence base offsets of reset
+    registers
+  clk: mediatek: reset: Support inuput argument index mode
+  clk: mediatek: reset: Change return type for clock reset register
+    function
+  clk: mediatek: reset: Add new register reset function with device
+  clk: mediatek: reset: Add reset support for simple probe
+  dt-bindings: arm: mediatek: Add #reset-cells property for
+    MT8192/MT8195
+  dt-bindings: reset: mediatek: Add infra_ao reset index for
+    MT8192/MT8195
+  clk: mediatek: reset: Add infra_ao reset support for MT8192/MT8195
+  arm64: dts: mediatek: Add infra #reset-cells property for MT8192
+  arm64: dts: mediatek: Add infra #reset-cells property for MT8195
+  dt-bindings: reset: mediatek: Add infra_ao reset index for MT8186
+  dt-bindings: arm: mediatek: Add #reset-cells property for MT8186
+  clk: mediatek: reset: Add infra_ao reset support for MT8186
+
+ .../mediatek/mediatek,mt8186-sys-clock.yaml   |   3 +
+ .../mediatek/mediatek,mt8192-sys-clock.yaml   |   3 +
+ .../mediatek/mediatek,mt8195-sys-clock.yaml   |   3 +
+ arch/arm64/boot/dts/mediatek/mt8192.dtsi      |   1 +
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  15 +-
+ drivers/clk/mediatek/clk-mt2701-eth.c         |  10 +-
+ drivers/clk/mediatek/clk-mt2701-g3d.c         |  10 +-
+ drivers/clk/mediatek/clk-mt2701-hif.c         |  10 +-
+ drivers/clk/mediatek/clk-mt2701.c             |  22 +-
+ drivers/clk/mediatek/clk-mt2712.c             |  22 +-
+ drivers/clk/mediatek/clk-mt7622-eth.c         |  10 +-
+ drivers/clk/mediatek/clk-mt7622-hif.c         |  12 +-
+ drivers/clk/mediatek/clk-mt7622.c             |  22 +-
+ drivers/clk/mediatek/clk-mt7629-eth.c         |  10 +-
+ drivers/clk/mediatek/clk-mt7629-hif.c         |  12 +-
+ drivers/clk/mediatek/clk-mt8135.c             |  22 +-
+ drivers/clk/mediatek/clk-mt8173.c             |  22 +-
+ drivers/clk/mediatek/clk-mt8183.c             |  18 +-
+ drivers/clk/mediatek/clk-mt8186-infra_ao.c    |  23 ++
+ drivers/clk/mediatek/clk-mt8192.c             |  29 +++
+ drivers/clk/mediatek/clk-mt8195-infra_ao.c    |  24 +++
+ drivers/clk/mediatek/clk-mtk.c                |   7 +
+ drivers/clk/mediatek/clk-mtk.h                |   9 +-
+ drivers/clk/mediatek/reset.c                  | 198 +++++++++++++-----
+ drivers/clk/mediatek/reset.h                  |  82 ++++++++
+ include/dt-bindings/reset/mt8186-resets.h     |   5 +
+ include/dt-bindings/reset/mt8192-resets.h     |   8 +
+ include/dt-bindings/reset/mt8195-resets.h     |   6 +
+ 28 files changed, 523 insertions(+), 95 deletions(-)
+ create mode 100644 drivers/clk/mediatek/reset.h
+
+-- 
+2.18.0
 
