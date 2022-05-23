@@ -2,167 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3340BC4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD61C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237137AbiEWO0q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 10:26:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38048 "EHLO
+        id S237144AbiEWOiq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 10:38:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237149AbiEWO0p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:26:45 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F32F2B271
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:26:43 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id l13so19218805lfp.11
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:26:43 -0700 (PDT)
+        with ESMTP id S237143AbiEWOip (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:38:45 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D16517E1F;
+        Mon, 23 May 2022 07:38:44 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id gg20so14267768pjb.1;
+        Mon, 23 May 2022 07:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=G8pSkplAhfSaVtqePqq8XjdcWWlymy9x8EhPSya+xcQ=;
-        b=lyhx55/zAIKWU6MNtflmwMRqCG3WK3SvnlXBXjiHgsLYWJSvlsGHURt2CfjXGw+w5Z
-         9T/POO0IfWlxnm4ldWUCRi3apjNO415HWjuc39OoXNAAwX4IGXl8DNXTlHR+XFeoSJ9p
-         ANhgfgJGy6QNR135WdYD6NGcQ6YwEPM2b22/HGCJoWDokpUm/cpTJdqUsFkRKzI83br0
-         lHzoZTZdQLhPjghrdM9RLgmXELx7Y0Hp5ahgfmltIRWRh0vIOfL6daJIuXxC4l3vqGpQ
-         MvPNaDEINtn11/AdRN7lye2gTDxYFv0orSrAwwsS1jgDwvlJjV1ZgVVNrOdTlpgFMDw2
-         P81A==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VsAAAqoiWJYzT060x2OOnd/EtlLZzAOosAhFcrN/2Zk=;
+        b=bIrL0ljJ2ar84oH/3npslA/NhLklqWI/M3QLvrYEuyTZLsvI7bcbd4KLAfCR6pIwJg
+         eCQzxsKiOV5bfD3E3Mt5MvWZ3AtY3SRbhkW8d05YIq2/QE2Eeeth16o6EziC7tF2eL2S
+         CDXTqlNVFypyYv2qy7v1tUYa5CgzaI5tPWspSG0FuzfpitLuDkXy9yWu9YCTpQ9HbY3m
+         L5eov2Snw8Ebg0eQaKOZyGTlHoF4w1Kb5+p2koQIDd/RiOGqO73nQnpoSADUQoPRIb5G
+         Bf3r0/8sO4wSkc7mSSs/IYNOKFTHG2ts9iX4TPyheZgPahvh34aCIrxC3Qcvrlu15xMU
+         p02g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=G8pSkplAhfSaVtqePqq8XjdcWWlymy9x8EhPSya+xcQ=;
-        b=LNHsgURwXGLCs0P1qktp1+vSIduRnUc+zI4oH5JoXySuWe/ZtdR4YPkCmqFXCHiCU3
-         KCXzIR/rMBe3hBc3Um/Z+q5ekWO7XlIOooUYjlrb5nrW101zi7HOY0/JJU0SRm8eIgsJ
-         JlsxC68aOGPxjKr7Ouyn7j9+ndceLHv1hK3hzSee7ouOqnX+zWgiPiTJavDNkLkVxL97
-         TJm5lddS5uK0uHDgW484o8Z9eziCyt8fvslNluzI7c7pAqcAG8KzGiT4zamYjuQQSP81
-         OMTyf9MQETMIA05fwq8NDHKFHsJqKJDVe/Ml95X84QV8nLVOfdSQPs7qITh55YPo2odG
-         LaDw==
-X-Gm-Message-State: AOAM532wyn+mnkUzDfClLJKjHRT7WXX0l7HpS9/3TO/0ZThhJi7binRr
-        RGk7p2YuB6kkXhJLEorwR7r+Cw==
-X-Google-Smtp-Source: ABdhPJz+utSxZTs2n/fqh1e5tT8yA+mZZbm0vbet8rrFRC+nV5H+flGflipWNlxlkpty5umsiRR7UQ==
-X-Received: by 2002:a05:6512:33ce:b0:478:83ea:9e61 with SMTP id d14-20020a05651233ce00b0047883ea9e61mr433374lfg.264.1653316001764;
-        Mon, 23 May 2022 07:26:41 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id h16-20020a0565123c9000b00477a0eb9ab8sm1056497lfv.133.2022.05.23.07.26.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 07:26:41 -0700 (PDT)
-Message-ID: <62562cdf-93e3-f642-5bbd-48329eff33ea@linaro.org>
-Date:   Mon, 23 May 2022 16:26:39 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 11/19] dt-bindings: reset: npcm: Add support for
- NPCM8XX
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        bh=VsAAAqoiWJYzT060x2OOnd/EtlLZzAOosAhFcrN/2Zk=;
+        b=f0K57csno82Un5ZbNDi2yQCA2U4/PNxIfZpinongr5JpqzSRg5B5qwvSaz6jy2L4DZ
+         ElS5u79UzsXILIQPJBkVTdB+e/4qm9GSWIL9j24n2TEKGCe5qob/TuLOf3hLldG48Ufv
+         uflocejgzSoOBVtEDMTCdgEg6Oed0UzNPoJtit5tfceWJxkYi63omiebvoPDX4ez8RvR
+         +r6qROlg4IPqR8t3XBjufhrMCIe2DGtiQ6fBQkliQCzBEFdahIlPCCe5egNl/oFMt/TF
+         XdAK7Ol09CJSq/wYROFf6cBWkwar7V+2Mf1Qv5g47K3k+XR1bXAMTLZ2yfKwvwj9Y1ME
+         9S6A==
+X-Gm-Message-State: AOAM530zyKoYMexL5EJS8XUz2laU7MJe38JQvb+EXUkneOBNOeuIne2A
+        a+tbK5BVaGCvEV4GRSwz3SerZHa/Sn7YWNVp
+X-Google-Smtp-Source: ABdhPJw73APqKEgTYdp3THPVllOx5I+H5e2taUgQZ0ht38Wqr+kbCW3uYL7d0L6K8+rft5bn/apxeg==
+X-Received: by 2002:a17:90a:bb16:b0:1de:fd98:94c5 with SMTP id u22-20020a17090abb1600b001defd9894c5mr27400110pjr.48.1653316724163;
+        Mon, 23 May 2022 07:38:44 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id s67-20020a637746000000b003c6a71b2ab7sm4857972pgc.46.2022.05.23.07.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 07:38:43 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        =?UTF-8?Q?Bj=c3=b6rn_Andersson?= <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>, arm-soc <soc@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-12-tmaimon77@gmail.com>
- <86cd6a37-70ad-3a90-bc8a-dcd8b41f1175@linaro.org>
- <CAP6Zq1i2Wj4FCA4-eseVoJyMof5=ocFCUcitVquJqYJ4Z3JTYQ@mail.gmail.com>
- <CAMuHMdVCCrKTpNHng2_kKGViuEXf=O3MsfpjjzMusuUcKE6HiA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAMuHMdVCCrKTpNHng2_kKGViuEXf=O3MsfpjjzMusuUcKE6HiA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Mike Turquette <mturquette@linaro.org>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] clk: tegra: Fix refcount leak in tegra114_clock_init
+Date:   Mon, 23 May 2022 18:38:34 +0400
+Message-Id: <20220523143834.7587-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/05/2022 16:22, Geert Uytterhoeven wrote:
-> Hi Tomer,
-> 
-> On Mon, May 23, 2022 at 4:03 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
->> On Mon, 23 May 2022 at 12:01, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->>> On 22/05/2022 17:50, Tomer Maimon wrote:
->>>> Add binding document and device tree binding
->>>> constants for Nuvoton BMC NPCM8XX reset controller.
->>>>
->>>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> 
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
->>>> @@ -0,0 +1,124 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>> +// Copyright (c) 2022 Nuvoton Technology corporation.
->>>> +
->>>> +#ifndef _DT_BINDINGS_NPCM8XX_RESET_H
->>>> +#define _DT_BINDINGS_NPCM8XX_RESET_H
->>>> +
->>>> +#define NPCM8XX_RESET_IPSRST1                0x20
->>>> +#define NPCM8XX_RESET_IPSRST2                0x24
->>>> +#define NPCM8XX_RESET_IPSRST3                0x34
->>>> +#define NPCM8XX_RESET_IPSRST4                0x74
->>>
->>> What are these? All IDs should be incremental, decimal and start from 0.
->>
->> Register offset, we use the same method in NPCM7xx. please refer
->> https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/reset/nuvoton,npcm7xx-reset.h
->>
->> and the driver asserts the reset according to the reset include definitions
-> 
-> So if they're easy to look up the values, you could do without the
-> definitions? Cfr. the interrupts properties in .dtsi files, where we
-> typically just use the hardcoded numbers.
-> 
-> If you do decide to keep them, a comment explaining their origins
-> would be useful.
-> 
->>>> +
->>>> +/* Reset lines on IP1 reset module (NPCM8XX_RESET_IPSRST1) */
->>>> +#define NPCM8XX_RESET_GDMA0          3
->>>
->>> IDs start from 0 and do not have holes.
->>
->> This represents the reset BIT in the reset register.
-> 
-> Likewise, I think it's a good idea to document that in a comment, cfr.
-> https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/power/r8a7795-sysc.h#L8
+of_find_matching_node() returns a node pointer with refcount
+incremented, we should use of_node_put() on it when not need anymore.
+Add missing of_node_put() to avoid refcount leak.
 
-Renesas is also doing it not correct (just like many others). The
-bindings are not for register bits or offsets. Such data can be DTS but
-not part of bindings. Imagine now you made mistake in this register
-offset and hardware uses slightly different value. What now? Change
-bindings? No. Bindings hold here ID, the abstraction, and ID stays fixed.
+Fixes: 2cb5efefd6f7 ("clk: tegra: Implement clocks for Tegra114")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra114.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index ef718c4b3826..f7405a58877e 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1317,6 +1317,7 @@ static void __init tegra114_clock_init(struct device_node *np)
+ 	}
+ 
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		WARN_ON(1);
+-- 
+2.25.1
 
-Best regards,
-Krzysztof
