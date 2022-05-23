@@ -2,124 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356BFC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 07:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9F7C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 07:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbiEWHja (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 03:39:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39584 "EHLO
+        id S231400AbiEWH44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 03:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbiEWHjT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 03:39:19 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DECD13DF9
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 00:39:13 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id u7so15462871ljd.11
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 00:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2o0hO8VxGZyOj9xdhEYgL8kZWVgpy5fzSg0aJgogftY=;
-        b=oTlafLq1Et1sqIk16m6DA+jCJFRlO1codjbSN1yIOqPNsC/hH97jn05NIguWsQsgDv
-         MWeWoI2vv9UbV3FkkFH8LRfKOud/5OOHhGZzSyiaRoZ4yq9pf4d9XglXpLwtFhbwxx3h
-         l/MntMA7PuEhdGnWm9xpPY0CELq4x2ndZJmpM6TyRaFCPZ/8baO/9gBuYiHVSGFPS1jm
-         b3KtJKIKCIsC+aHkFf8PcAu100fKNg2B8/yOoC4Ot+GFOGJuZroHrRLSGC770sv8mRIp
-         QTGJT7iEIsDef/Fmtvyt1PfVDHLqAtEk7gs9OuxZND4nvEsGXsjKCbb7lWb0Matyrg/4
-         l6Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=2o0hO8VxGZyOj9xdhEYgL8kZWVgpy5fzSg0aJgogftY=;
-        b=YNFSW8rL7gzXlQV1ihC4ozjh+doXBK95hEDAq/gsWtQkyr6413869S9zwUVDrHstEu
-         YerkKUaDA/Kcx9J8JnC3zonGstV4eoiJ4N6L/zRMHtGw3m9STXaEcLNr20CPCkJo7zOS
-         lmA4rJgflrM6UOKFAOirsIrKuSaPJtcBKC3cuW0rXnbHUX3Kp/mhg9//8QJ3HVuFGMM8
-         BUYJrk7Y0GxLjYc2TN54qCjLIfH058aEkH2eueAxgpjnw/ISyXnGjeKz4sSLJW0BrjfE
-         SwRM9qM9ScuoLPvSXIL9qA0SLw2jj5fOICsTopIoxlb81q3Qyzjgg0oKr1cUsz2A6XPg
-         +ceg==
-X-Gm-Message-State: AOAM530oHzas+XreFB4TSFa6ikZfQK0Ho2iGX/bXbZjyJEXxkIwMJmRt
-        7DnJYmOsZHeLX2ov3pX6YVGvjg==
-X-Google-Smtp-Source: ABdhPJwtbBM2Rwibao4fT7vqqa0BZadmJT0isYqGRbFlzHrWoKbx1K2YaXeJwobANdpRy17mjiYuzA==
-X-Received: by 2002:a2e:9e41:0:b0:253:c37c:378b with SMTP id g1-20020a2e9e41000000b00253c37c378bmr12383846ljk.202.1653291551361;
-        Mon, 23 May 2022 00:39:11 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id u5-20020a2e8545000000b0024f3d1dae7csm1656531ljj.4.2022.05.23.00.39.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 00:39:10 -0700 (PDT)
-Message-ID: <d02b042c-7f6e-8d2b-a5eb-c7ac4a0eea7d@linaro.org>
-Date:   Mon, 23 May 2022 09:39:08 +0200
+        with ESMTP id S231360AbiEWH4z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 03:56:55 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3719D63D6;
+        Mon, 23 May 2022 00:56:50 -0700 (PDT)
+Received: from mail-yw1-f179.google.com ([209.85.128.179]) by
+ mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MNwXA-1oCt6f109o-00OF7f; Mon, 23 May 2022 09:56:49 +0200
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2ff90e0937aso63921027b3.4;
+        Mon, 23 May 2022 00:56:48 -0700 (PDT)
+X-Gm-Message-State: AOAM533Y62GrmqaiDndOYhBi01Hclk8LmXDmzwBvebKeknX+mb0RprIn
+        PSahQrxOqjnW8SaOMfg/W7UGMF7rRbKxLI5eQHU=
+X-Google-Smtp-Source: ABdhPJw2LHiHqq0/Y/VzFvweK5WuNCUQUczMcSAr5ygjJFwwWwAtTaZ+A1Uu9aWWOiGiwQN+ltRnCtbf6WnrGsZfDuY=
+X-Received: by 2002:a0d:e64b:0:b0:2ff:8745:8a75 with SMTP id
+ p72-20020a0de64b000000b002ff87458a75mr14867694ywe.495.1653292607699; Mon, 23
+ May 2022 00:56:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v1 09/19] dt-bindings: reset: add syscon property
-Content-Language: en-US
-To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
-        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
-        bjorn.andersson@linaro.org, geert+renesas@glider.be,
-        marcel.ziswiler@toradex.com, vkoul@kernel.org,
-        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
-Cc:     soc@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-10-tmaimon77@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220522155046.260146-10-tmaimon77@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220517032710.451537-1-Mr.Bossman075@gmail.com>
+In-Reply-To: <20220517032710.451537-1-Mr.Bossman075@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 23 May 2022 09:56:31 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0OKQYq-LPxjtRCNoD+coEcEcJD0eL_SV3aQ01BpyQVKA@mail.gmail.com>
+Message-ID: <CAK8P3a0OKQYq-LPxjtRCNoD+coEcEcJD0eL_SV3aQ01BpyQVKA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/15] Add support for the i.MXRT1170-evk
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        SoC Team <soc@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Abel Vesa <abel.vesa@nxp.com>, dev@lynxeye.de,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+        clin@suse.com,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:/3lm2tyMCrqyIBUbjN1ELnaTuqSU2rlf93Z2B9sKQ8qXUNHw14I
+ 9mlt94OMk/N8pmuvdnAr0xCnSfd/HQm8HWbczKlRG+wur8EAc5nO3cPCuZcE4vxo2u8DU7t
+ 1Vmc1HIXEqmN7X14/bwWm5Z+IG5q5b2ycww7kBvXpuXiKIDI22I4qD3V1rrx7Z2NM3sDkY1
+ mk8pI6cWCn0F7PA5VLMFw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TgmQeTMQ71s=:5meSiiP1er72SQ+7NxR7Hb
+ 9PyBQspNrPit0h334iUaGgdkp7c0Nbzlytyd+wKITSWopE07r5MjbyZvgfxTsjl4OgFlYJqM/
+ fVYIBLRSicVJefdRkbN7Wr0HyxE7mQens/xGTp181L4T8GDBcg+wMxMXBbnW6DyNbxI0gPuV4
+ dxHdGeCS1+lSIv5x56IpBsmQCAwY5/6ehv45CR269GQkUY81beYsP3ugPRyeR8DH7Bi2+YH+E
+ uxUg1rDCwalAGVva9SffAP0D8yJvHwsJcLnOxMlyGjdV5Rh/sw0jxzNO2n+9zTByXGDPRReTw
+ TJhl5HwAEGr5zwTzJGmMpA8CNoImNKVd0CwyiUryYCPlNSY+QSGFhP1xGpaL3fMQ67Gz28wwy
+ mL77ufHDF3K59TRy/B8N/mU6wHhBw4tbGCedWZEl8fKxaPmyjBDQ5lt8b9j13r30PF7UE8P5K
+ k83IS6e3xUzNenPadPYDaxrAoSuu8702aNbO0cMCCE5Ph2L4kEzDlIUuDtc23vB6ohlgKZCEU
+ 0rynYZctG0ffU28cn4HDLtPAuhrfWhYzSw5glBHc9VI6yI7lKk05mDIXcBrVhGm/MWbNVDBxt
+ i4N9b62WqM3jKx5aU2kfFhtAXZ9lEk96V/4ypxg389GlMKXmt4XQIz/G7dOWdG+hvHLujOvXS
+ C5UYdarOVHNnt72pUHJYpbs3rAqhNTK9zCUWVKi38nnEd6TLYemsVA2P6ZovbJxSbL4OCe+gC
+ rOChFYox60U/6t7uV3C9t+DF1ur8i0Tw4ZNaAYei2NA9OucM9B1UvFU5JfbOBRhPT3pjO203R
+ GxunHtowWJ9XB/LWaHszkiWQW2zJPG15oltnVxbLCMUhHhsVHgyLzbJvRXzBy1Rxf9EG2au/i
+ +HG0PcLLU1lfdEpt/mAg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/05/2022 17:50, Tomer Maimon wrote:
-> Describe syscon property that handles GCR registers
-> in Nuvoton BMC NPCM reset driver.
+On Tue, May 17, 2022 at 5:26 AM Jesse Taube <mr.bossman075@gmail.com> wrote:
+>
+> This patch continues support for the imxrt series now with the imxrt1170
+>
+> This patch contains:
+> - Update to imxrt_defconfig
+> - Devicetree
+> - Clock driver
+> - Pinctrl driver
+> - New pll
+>
+> This patch also updates some documentation for both imxrt1170 an 1050.
+>
+> The i.MXRT1170 has a vast array of features including two cores. 2 Ethernet, 2 USB phy, and a 2d gpu.
+>
+> It also is featured in a new google coral board
+> https://coral.ai/products/dev-board-micro
+> Not affiliated unfortunately.
 
-Please wrap according to Linux standards:
-https://elixir.bootlin.com/linux/v5.18-rc4/source/Documentation/process/submitting-patches.rst#L586
+Hi Jesse,
 
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
-> index 17b7a6a43a29..cb1613092ee7 100644
-> --- a/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
-> +++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm-reset.txt
-> @@ -4,6 +4,7 @@ Required properties:
->  - compatible : "nuvoton,npcm750-reset" for NPCM7XX BMC
->  - reg : specifies physical base address and size of the register.
->  - #reset-cells: must be set to 2
-> +- syscon: a phandle to access GCR registers.
+As you have added soc@kernel.org to Cc in this series, it made it into our
+patchwork instance at https://patchwork.kernel.org/project/linux-soc/list/
+and I'll at least reply.
 
-syscon is not a generic property, so vendor prefix and some descriptive
-name of property.
+I expect the i.MX maintainers to pick up the patches into the individual
+branches in the future, and not keep them as a single branch for your
+platform, with the pinctrl and clock patches going through the respective
+subsystem trees.
 
->  
->  Optional property:
->  - nuvoton,sw-reset-number - Contains the software reset number to restart the SoC.
-> @@ -16,6 +17,7 @@ Example:
->  		compatible = "nuvoton,npcm750-reset";
->  		reg = <0xf0801000 0x70>;
->  		#reset-cells = <2>;
-> +		syscon = <&gcr>;
->  		nuvoton,sw-reset-number = <2>;
->  	};
->  
+I have marked the patches as "Not applicable" in patchwork because
+I don't plan to apply them, but they otherwise seem fine. Please drop
+the Cc:soc@kernel.org in the future.
 
-
-Best regards,
-Krzysztof
+      Arnd
