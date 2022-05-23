@@ -2,163 +2,192 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49699C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 14:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1864C43219
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 15:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237469AbiEWO4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 10:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60196 "EHLO
+        id S237619AbiEWPL7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 11:11:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237417AbiEWO4g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 10:56:36 -0400
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8483B41602
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:56:34 -0700 (PDT)
-Received: by mail-oo1-xc31.google.com with SMTP id f5-20020a4aa685000000b0040e7e819183so868887oom.3
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 07:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5p71BIdSffyci9oS1GEBoO6Hvvh+FQt15GEReLDlDuc=;
-        b=HqfxLV20FvSqJr63yG0bHzAT+iKcqaxSZeP5pJkxSqMMRaO8OBcs5nsBUA02Sr9M/X
-         WdEkY12N67JeBUcsIDZk7oeDMAOU9v7JlCoHlHIfIR3XUsDl+ykcmn/XfbEAP+G2IWtA
-         666wtccbdmCpa+mGnUD209unqTO6n+wqWpTGyJ3ozVlfSHFwqTUlsE8ynoj+OWMOGkde
-         QLZLU8GKx3ompPydmL5jCeHg3Khh/jxPwkvFDm5RQNDxZJe/XZPPO+m7eg1tap4ZmS8Q
-         LrQZpn8y3kPZdJM2oHZpGlbdb9jSNcLJUCy1EKgHIgqHxxHgTd6RtXYilnekRfWmX495
-         rDJA==
+        with ESMTP id S237587AbiEWPL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 11:11:59 -0400
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDAC47AEC;
+        Mon, 23 May 2022 08:11:57 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id c10so19567049edr.2;
+        Mon, 23 May 2022 08:11:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5p71BIdSffyci9oS1GEBoO6Hvvh+FQt15GEReLDlDuc=;
-        b=fr1PM39PHEcezO9E9ZZc7FmmGJD4/KgPKaG+nif+nblJKtbcGfPHzeUyZxdAvE9a9o
-         0dNsumxbJoXFVz2h/HqUJc32/oIjqzNiSI5UXJESNVplCbdXEh3LF+uGsLgtFfKH0zq0
-         PGCb0LWRJ9w52LcGLuKz6qy9pymOoCf1F475UXi41HmVnNtY2z9R4+kX038uzm9UBGw5
-         hucEUtnAbjHZCGwAXPXGV9dDnKbbTOYsjjtcm2K0NZUdJizzoQGmSELN/aH9UiP8XVkp
-         dfUCWX/RUcRPvObvWZDenLtk5Q8/4qHuz7jVIifr7zr4UdQqkKBt1ie35d83rFjU8V9z
-         eD5Q==
-X-Gm-Message-State: AOAM531ng2fh8TiMViujkrjqqYu/n1CypkvPjFrj5yoUxGgp0nNlYHWH
-        bcDMyteW/mJp49GHvR1CafnmaQ==
-X-Google-Smtp-Source: ABdhPJyoOJ1HH8gLzOg+3tKjfNaWX5Ch00ycxsgFJGgBHkfWH1QUCCazWXeJXaZG/aTeofZ8y+pXHA==
-X-Received: by 2002:a4a:b687:0:b0:40e:7950:e52 with SMTP id v7-20020a4ab687000000b0040e79500e52mr3629986ooo.74.1653317793818;
-        Mon, 23 May 2022 07:56:33 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id l6-20020a056871068600b000e686d1389esm3978422oao.56.2022.05.23.07.56.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 07:56:33 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, Adam Skladowski <a39.skl@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Srba <Michael.Srba@seznam.cz>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [GIT PULL] Qualcomm clock updates for v5.19
-Date:   Mon, 23 May 2022 09:56:32 -0500
-Message-Id: <20220523145632.42086-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0QPzY5dv4g1MBNtDQB96ePR1IDzyzraTlb4TcmcBYLI=;
+        b=drb7p5u1yRpP455qf5piYTpoXrza+dHWO3cX6HwTu/Cp9ZtutdaTNwvhMHrxngkXA2
+         z2a/m6JoN/+dNwk7NTKEiJ4RFyAiZhaTC6XPLqucHQmrxyA95AvumfbRqoVBvOrrhipH
+         67QIdfCuixdD/0khTRXF2Gt3iAuYvT9XTOFpnNOjF9Ab46zRfeuT4OGktMkIgyO52HYE
+         qL6IVp7GFU36/AxJeM/UK2V7TuZA720sG/KEzF0HmI2G0tcZ+RdxOz2lbX3qD72dZejE
+         AJLu6c1qnXvgIuVQt93KGbuUxE3oHKO+NQFpPYc7j8RJVZPQolvuxZXwhrrf1XY8D8Ot
+         mwrQ==
+X-Gm-Message-State: AOAM531303ivmkc6X5ETqX2Qgtp8OEwR0qT2sNYfjOxjMDUe1o6l8/VS
+        lDtNphR1y80nm6jp35OyDp7vE7OUxK66fbon
+X-Google-Smtp-Source: ABdhPJyzJtYNQF9FW8ZDSNAhOVugSa25KhyQNGZ8/xGycXW0STeEPhPlSRI9XDapoAu/NQaJ1Y1c4A==
+X-Received: by 2002:a50:fe8d:0:b0:42a:b3a4:6ac2 with SMTP id d13-20020a50fe8d000000b0042ab3a46ac2mr24108454edt.131.1653318714696;
+        Mon, 23 May 2022 08:11:54 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id ci18-20020a170907267200b006fe8c831632sm5794165ejc.73.2022.05.23.08.11.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 08:11:54 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id f2so21873480wrc.0;
+        Mon, 23 May 2022 08:11:54 -0700 (PDT)
+X-Received: by 2002:a05:6512:1520:b0:443:ec43:5fe8 with SMTP id
+ bq32-20020a056512152000b00443ec435fe8mr16745443lfb.589.1653318703688; Mon, 23
+ May 2022 08:11:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220522155046.260146-1-tmaimon77@gmail.com> <20220522155046.260146-12-tmaimon77@gmail.com>
+ <86cd6a37-70ad-3a90-bc8a-dcd8b41f1175@linaro.org> <CAP6Zq1i2Wj4FCA4-eseVoJyMof5=ocFCUcitVquJqYJ4Z3JTYQ@mail.gmail.com>
+ <CAMuHMdVCCrKTpNHng2_kKGViuEXf=O3MsfpjjzMusuUcKE6HiA@mail.gmail.com> <62562cdf-93e3-f642-5bbd-48329eff33ea@linaro.org>
+In-Reply-To: <62562cdf-93e3-f642-5bbd-48329eff33ea@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 May 2022 17:11:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVFV02t+vbwzEpNbpkSP4M3sGnJpzFMPBw7RkrJ9YvyKw@mail.gmail.com>
+Message-ID: <CAMuHMdVFV02t+vbwzEpNbpkSP4M3sGnJpzFMPBw7RkrJ9YvyKw@mail.gmail.com>
+Subject: Re: [PATCH v1 11/19] dt-bindings: reset: npcm: Add support for NPCM8XX
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Robert Hancock <robert.hancock@calian.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>, arm-soc <soc@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 3123109284176b1532874591f7c81f3837bbdc17:
+Hi Krzysztof,
 
-  Linux 5.18-rc1 (2022-04-03 14:08:21 -0700)
+On Mon, May 23, 2022 at 4:26 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> On 23/05/2022 16:22, Geert Uytterhoeven wrote:
+> > On Mon, May 23, 2022 at 4:03 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
+> >> On Mon, 23 May 2022 at 12:01, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> >>> On 22/05/2022 17:50, Tomer Maimon wrote:
+> >>>> Add binding document and device tree binding
+> >>>> constants for Nuvoton BMC NPCM8XX reset controller.
+> >>>>
+> >>>> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> >
+> >>>> --- /dev/null
+> >>>> +++ b/include/dt-bindings/reset/nuvoton,npcm8xx-reset.h
+> >>>> @@ -0,0 +1,124 @@
+> >>>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>>> +// Copyright (c) 2022 Nuvoton Technology corporation.
+> >>>> +
+> >>>> +#ifndef _DT_BINDINGS_NPCM8XX_RESET_H
+> >>>> +#define _DT_BINDINGS_NPCM8XX_RESET_H
+> >>>> +
+> >>>> +#define NPCM8XX_RESET_IPSRST1                0x20
+> >>>> +#define NPCM8XX_RESET_IPSRST2                0x24
+> >>>> +#define NPCM8XX_RESET_IPSRST3                0x34
+> >>>> +#define NPCM8XX_RESET_IPSRST4                0x74
+> >>>
+> >>> What are these? All IDs should be incremental, decimal and start from 0.
+> >>
+> >> Register offset, we use the same method in NPCM7xx. please refer
+> >> https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/reset/nuvoton,npcm7xx-reset.h
+> >>
+> >> and the driver asserts the reset according to the reset include definitions
+> >
+> > So if they're easy to look up the values, you could do without the
+> > definitions? Cfr. the interrupts properties in .dtsi files, where we
+> > typically just use the hardcoded numbers.
+> >
+> > If you do decide to keep them, a comment explaining their origins
+> > would be useful.
+> >
+> >>>> +
+> >>>> +/* Reset lines on IP1 reset module (NPCM8XX_RESET_IPSRST1) */
+> >>>> +#define NPCM8XX_RESET_GDMA0          3
+> >>>
+> >>> IDs start from 0 and do not have holes.
+> >>
+> >> This represents the reset BIT in the reset register.
+> >
+> > Likewise, I think it's a good idea to document that in a comment, cfr.
+> > https://elixir.bootlin.com/linux/v5.18/source/include/dt-bindings/power/r8a7795-sysc.h#L8
+>
+> Renesas is also doing it not correct (just like many others). The
+> bindings are not for register bits or offsets. Such data can be DTS but
+> not part of bindings.
 
-are available in the Git repository at:
+I think you are taking a too-extremist standpoint.
+The two extremes are:
+  1. Numbers correspond to hardware numbers, and are easy to look up
+    in the hardware documentation (e.g. GIC SPI interrupt numbers).
+     => Use the hardcoded numbers in DTS.
+  2. Numbers do not correspond to hardware numbers, so we had to
+     invent our own definitions and numbers, usually loosely
+     based on some table in the hardware documentation.
+     The driver will have to look up the numbers in a data
+     structure, to know how to program the hardware.
+     The numbers become part of the DT ABI, and cannot be changed
+     (header file is append-only).
+     => Use the binding definitions in DTS.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-5.19
+We are taking the middle ground: there is a one-to-one relation between
+numbers and hardware numbers that can be looked up in or derived from
+the hardware documentation, but the conversion is non-trivial (for the
+casual human reviewer), or the documentation refers to names instead
+of numbers in most sections (e.g. named power domains). Then why not
+let the numbers match some feature in the hardware (e.g. register
+offset or register bit)?
 
-for you to fetch changes up to 703db1f5da1e3a62b84356a29c150efa24a2377d:
+> Imagine now you made mistake in this register
+> offset and hardware uses slightly different value. What now? Change
+> bindings? No. Bindings hold here ID, the abstraction, and ID stays fixed.
 
-  clk: qcom: rcg2: Cache CFG register updates for parked RCGs (2022-05-19 16:42:30 -0500)
+I see no difference here with using the wrong interrupt number in an
+interrupts property in DTS.  What do we do in that case? Fix the DTS.
 
-----------------------------------------------------------------
-Qualcomm clock updates for v5.19
+BTW, are you aware of any driver that transforms interrupt numbers
+obtained from DTS, because the DTS used the wrong number?
 
-This introduces the LPASS clock controller driver for sc7280 and the
-global clock controller for SC8280XP.
+Gr{oetje,eeting}s,
 
-It adds modem reset, corrects RPM clocks and moves to floor ops for SDCC
-on MSM8976. It introduces clocks needed to operate the Sensor Subsystem
-in MSM8998.
+                        Geert
 
-It enhances the logic for parked shared RCG2s, to avoid problems on
-recent platforms. And lastly it introduces a new mechanism for handling
-the PCIe pipe_clk, which also needs to be parked on a safe source when
-the PHY is turned off.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-----------------------------------------------------------------
-Adam Skladowski (4):
-      clk: qcom: smd: Update MSM8976 RPM clocks.
-      clk: qcom: gcc-msm8976: Set floor ops for SDCC
-      dt-bindings: clk: qcom: gcc-msm8976: Add modem reset
-      clk: qcom: gcc-msm8976: Add modem reset
-
-Bjorn Andersson (6):
-      Merge tag '20220323085010.1753493-4-dmitry.baryshkov@linaro.org' into clk-for-5.19
-      Merge branch '20220223172248.18877-1-tdas@codeaurora.org' into clk-for-5.19
-      Merge branch '20220411072156.24451-2-michael.srba@seznam.cz' into clk-for-5.19
-      dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings
-      clk: qcom: add sc8280xp GCC driver
-      clk: qcom: rcg2: Cache CFG register updates for parked RCGs
-
-Dmitry Baryshkov (3):
-      clk: qcom: regmap-mux: add pipe clk implementation
-      clk: qcom: gcc-sm8450: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
-      clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
-
-Krzysztof Kozlowski (3):
-      dt-bindings: clock: qcom,rpmcc: convert to dtschema
-      dt-bindings: clock: qcom,rpmcc: add clocks property
-      dt-bindings: clock: qcom,gcc-apq8064: Fix typo in compatible and split apq8084
-
-Michael Srba (2):
-      dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
-      clk: qcom: gcc-msm8998: add SSC-related clocks
-
-Taniya Das (2):
-      dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
-      clk: qcom: lpass: Add support for LPASS clock controller for SC7280
-
- .../bindings/clock/qcom,gcc-apq8064.yaml           |    4 +-
- .../bindings/clock/qcom,gcc-apq8084.yaml           |   42 +
- .../bindings/clock/qcom,gcc-sc8280xp.yaml          |  128 +
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |   63 -
- .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   75 +
- .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    |  172 +
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |    4 +
- drivers/clk/qcom/Kconfig                           |   19 +
- drivers/clk/qcom/Makefile                          |    2 +
- drivers/clk/qcom/clk-rcg.h                         |    2 +
- drivers/clk/qcom/clk-rcg2.c                        |  126 +-
- drivers/clk/qcom/clk-regmap-mux.c                  |   78 +
- drivers/clk/qcom/clk-regmap-mux.h                  |    3 +
- drivers/clk/qcom/clk-smd-rpm.c                     |    8 +-
- drivers/clk/qcom/gcc-msm8976.c                     |    7 +-
- drivers/clk/qcom/gcc-msm8998.c                     |   56 +
- drivers/clk/qcom/gcc-sc7280.c                      |    6 +-
- drivers/clk/qcom/gcc-sc8280xp.c                    | 7488 ++++++++++++++++++++
- drivers/clk/qcom/gcc-sm8450.c                      |    6 +-
- drivers/clk/qcom/lpassaudiocc-sc7280.c             |  838 +++
- drivers/clk/qcom/lpasscorecc-sc7280.c              |  431 ++
- include/dt-bindings/clock/qcom,gcc-msm8976.h       |    1 +
- include/dt-bindings/clock/qcom,gcc-msm8998.h       |    4 +
- include/dt-bindings/clock/qcom,gcc-sc8280xp.h      |  496 ++
- .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h   |   43 +
- .../dt-bindings/clock/qcom,lpasscorecc-sc7280.h    |   26 +
- 26 files changed, 10024 insertions(+), 104 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8084.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
- create mode 100644 drivers/clk/qcom/gcc-sc8280xp.c
- create mode 100644 drivers/clk/qcom/lpassaudiocc-sc7280.c
- create mode 100644 drivers/clk/qcom/lpasscorecc-sc7280.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sc8280xp.h
- create mode 100644 include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
- create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
