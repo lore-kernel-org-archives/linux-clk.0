@@ -2,187 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C15C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 12:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E560C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 13:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235263AbiEWMP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 08:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
+        id S235990AbiEWNHF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 09:07:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235354AbiEWMPz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 08:15:55 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709AD11C18;
-        Mon, 23 May 2022 05:15:54 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 106EB1F430CF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1653308153;
-        bh=OWdjhw1YAsTUorGsOR2BtjPFSahtCs7HpdU+uvF1qak=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ci4hDwZcJOJWbusqGkj9L1NaiEoJwkfa8tYgNkhpOIH3UQqOYQWGsFAXX0b8UdO9O
-         u6LWRo+4sLf6jYxV6lCtFZG66ObvT5TnLRLJ/OrL/NbmbSTKU3P1kTwA2T2FyHQ2Ot
-         hjGsBKFML9JmOFwrCiMiLpK7PkebZq3scBvAk6HOQfTzBb7rG2MAF0u0nOAbtdMOXJ
-         EK3o7ij10s4pkaiarPjFwgO7cGRfV27yee5bcT4QIxzJbJrZLB671g5iEH31328qBi
-         ZihHOv0MTOhoX8ZE2VEiNGEXju3mFAtoyMFt1BFQP7NxFanKZeA2GAYRMSM1GihSOJ
-         NWb6ZZXRLihcg==
-Message-ID: <9639208e-1afc-30ef-d0ea-5eaaa6316af3@collabora.com>
-Date:   Mon, 23 May 2022 14:15:49 +0200
+        with ESMTP id S236048AbiEWNHA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 09:07:00 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A23E49CBA
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 06:06:57 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id m11so5684099ljc.1
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 06:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=50wuqx97QXZx2zbLRPpUZaCAf982O497zw+lzOUq1k4=;
+        b=SDuGMgEXCGQ1TJ0fNHdXQPIRrrbTcF5QRnV15Th8wlnm6ALDsCXQkDhSc30CAXl9Kp
+         lUcwwo8YPG+ToK1ghL+xsLwZPbKsU3Xs5fTm4yRb1VvjTdISvp+ik2qXsRARg60MQYWC
+         GzqnvLsPLHQQ9m8qRk3NoJy44Um8tv0iazTe+dReBMGQpIWhXgY7sW+X5Q92sAdYY4Up
+         yPMCEKh8i9Ozg5XgOdN0UxNO4J+QgBEZh3/Z8fVZf4cnzrU5tlx9D2h6JrtHwCIXtkCT
+         BYpUW9KmlugPMvChcIWuNOw5mvQnQfIPUm4rq/I+cIqgIavTpZd0JMU/RlcgqLJUgwvk
+         OYWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=50wuqx97QXZx2zbLRPpUZaCAf982O497zw+lzOUq1k4=;
+        b=SAzA0Xt7GQgeQkY8pIQXAWmOqzN5lKSN5eRgiHCKIMxpKHYeNALCMa2UvAocsO6VWl
+         U7ovTtM9EWACHfzJ+iyfJaDbnmz2GfaRk6PgU6yoF17Mnp60C+5TvaCUxefgtBxsB7cc
+         rEO16of0AmvZbrcm983/hnbgFPAblRYNdmeoUGp3clVzC3Df9BKOm1WpUL5xRH9Xjamd
+         3Yfaa0fT/UY+8EUMOuoxEW6V9OKk2x8pfJvk2HJuUfqVid7ED0aM7c+xrFDr+mLzOsHr
+         k0LoUI76p+QQ1GNWnjvez0GGbOt/R4sd6Mbtt+HCXe7GP4lIRKVbz1nW0MLO5kO8vr9n
+         2F7g==
+X-Gm-Message-State: AOAM531M6d6rX2P/nZ8K309DzbBZGPgBLS9pkw1ZAMIIEe2hPj80F8nO
+        bYH9csu2yGrdxaeqoVCC28ivtA==
+X-Google-Smtp-Source: ABdhPJxW/DBrlG7TEnvWEUg0Nipmvi6wS+g8Y+NMEBmjLhpKfeu4xjRK3q520VX+9jaURA7ei9otVw==
+X-Received: by 2002:a2e:a26d:0:b0:253:d7b4:1d9a with SMTP id k13-20020a2ea26d000000b00253d7b41d9amr11639775ljm.203.1653311215543;
+        Mon, 23 May 2022 06:06:55 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id c6-20020ac24146000000b00477b0cfc990sm1968975lfi.30.2022.05.23.06.06.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 06:06:55 -0700 (PDT)
+Message-ID: <2ccfbfa8-be11-50ed-66ca-3476cbddb320@linaro.org>
+Date:   Mon, 23 May 2022 15:06:52 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 2/4] dt-bindings: reset: Add MT6735 reset bindings
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v1 04/19] tty: serial: 8250: Add NPCM845 UART support
 Content-Language: en-US
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+To:     Tomer Maimon <tmaimon77@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Sam Shih <sam.shih@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Rob Herring <robh@kernel.org>
-References: <20220519142211.458336-1-y.oudjana@protonmail.com>
- <20220519142211.458336-3-y.oudjana@protonmail.com>
- <d54ea1d3-903f-0b2a-3db4-99f1adfadce0@collabora.com>
- <T9C6CR.ZDXJ22Q377EZ1@gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <T9C6CR.ZDXJ22Q377EZ1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        robert.hancock@calian.com,
+        nathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>, SoC Team <soc@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20220522155046.260146-1-tmaimon77@gmail.com>
+ <20220522155046.260146-5-tmaimon77@gmail.com>
+ <CAK8P3a0Nh4m7O_WPe1DTWqwWU32C5khOPH0ir7r_=s106mLv5A@mail.gmail.com>
+ <CAP6Zq1jk=wf3VbxttrHZwS-wywMoO4upgMQH4yr2AeKwYV8G4Q@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAP6Zq1jk=wf3VbxttrHZwS-wywMoO4upgMQH4yr2AeKwYV8G4Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/05/22 11:13, Yassine Oudjana ha scritto:
+On 23/05/2022 14:58, Tomer Maimon wrote:
+> Hi Arnd,
 > 
-> On Fri, May 20 2022 at 10:55:24 +0200, AngeloGioacchino Del Regno 
-> <angelogioacchino.delregno@collabora.com> wrote:
->> Il 19/05/22 16:22, Yassine Oudjana ha scritto:
->>> From: Yassine Oudjana <y.oudjana@protonmail.com>
->>>
->>> Add reset definitions for Mediatek MT6735 resets provided by
->>> infracfg and pericfg.
->>>
->>> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->>> Acked-by: Rob Herring <robh@kernel.org>
->>> ---
->>>   MAINTAINERS                                   |  2 ++
->>>   .../reset/mediatek,mt6735-infracfg.h          | 31 +++++++++++++++++++
->>>   .../reset/mediatek,mt6735-pericfg.h           | 31 +++++++++++++++++++
->>>   3 files changed, 64 insertions(+)
->>>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
->>>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index a59069263cfb..1c0af554a7b6 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -12503,6 +12503,8 @@ F:    
->>> include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
->>>   F:    include/dt-bindings/clock/mediatek,mt6735-infracfg.h
->>>   F:    include/dt-bindings/clock/mediatek,mt6735-pericfg.h
->>>   F:    include/dt-bindings/clock/mediatek,mt6735-topckgen.h
->>> +F:    include/dt-bindings/reset/mediatek,mt6735-infracfg.h
->>> +F:    include/dt-bindings/reset/mediatek,mt6735-pericfg.h
->>>     MEDIATEK MT76 WIRELESS LAN DRIVER
->>>   M:    Felix Fietkau <nbd@nbd.name>
->>
->> ..snip..
->>
->>> diff --git a/include/dt-bindings/reset/mediatek,mt6735-pericfg.h 
->>> b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
->>> new file mode 100644
->>> index 000000000000..6cdfaa7ddadf
->>> --- /dev/null
->>> +++ b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
->>> @@ -0,0 +1,31 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->>> +
->>> +#ifndef _DT_BINDINGS_RST_MT6735_PERICFG_H
->>> +#define _DT_BINDINGS_RST_MT6735_PERICFG_H
->>> +
->>> +#define UART0_SW_RST            0
->>> +#define UART1_SW_RST            1
->>> +#define UART2_SW_RST            2
->>> +#define UART3_SW_RST            3
->>> +#define UART4_SW_RST            4
->>
->> where's number 5?
->>
->>> +#define BTIF_SW_RST            6
->>> +#define DISP_PWM_SW_RST            7
->>> +#define PWM_SW_RST            8
->>
->> ...and where's 9?
->>
->>> +#define AUXADC_SW_RST            10
->>> +#define DMA_SW_RST            11
->>> +#define IRDA_SW_RST            12
->>> +#define IRTX_SW_RST            13
->>
->> and 14, 15?
->>
->>> +#define THERM_SW_RST            16
->>> +#define MSDC2_SW_RST            17
->>> +#define MSDC3_SW_RST            17
->>
->> MSDC 2 and 3 are both 17?! :-)
->>
->>> +#define MSDC0_SW_RST            19
->>> +#define MSDC1_SW_RST            20
->>
->> 21?
->>
->>> +#define I2C0_SW_RST            22
->>> +#define I2C1_SW_RST            23
->>> +#define I2C2_SW_RST            24
->>> +#define I2C3_SW_RST            25
->>> +#define USB_SW_RST            28
->>> +
->>
->> and 29-32?
->>
->>> +#define SPI0_SW_RST            33
->>> +
->>> +#endif
->>
->> I have a hunch that you've misunderstood the changes in the resets...
->>
->> What Rex-BC has done in his reset cleanup is exactly to stop directly
->> mapping these to the actual bits that we're using... so the definitions
->> in there will simply be sequential, and the actual mapping is done in
->> your clk-mt6735-pericfg.c driver.
+> Thanks for your comment.
 > 
-> I did notice that, but reading the documentation in reset.h:
+> On Mon, 23 May 2022 at 14:48, Arnd Bergmann <arnd@arndb.de
+> <mailto:arnd@arndb.de>> wrote:
 > 
-> * @rst_idx_map:Pointer to an array containing ids if input argument is index.
-> *        This array is not necessary if our input argument does not mean index.
+>     On Sun, May 22, 2022 at 5:50 PM Tomer Maimon <tmaimon77@gmail.com
+>     <mailto:tmaimon77@gmail.com>> wrote:
+>     > +++ b/drivers/tty/serial/8250/8250_of.c
+>     > @@ -333,6 +333,7 @@ static const struct of_device_id
+>     of_platform_serial_table[] = {
+>     >         { .compatible = "ti,da830-uart", .data = (void
+>     *)PORT_DA830, },
+>     >         { .compatible = "nuvoton,wpcm450-uart", .data = (void
+>     *)PORT_NPCM, },
+>     >         { .compatible = "nuvoton,npcm750-uart", .data = (void
+>     *)PORT_NPCM, },
+>     > +       { .compatible = "nuvoton,npcm845-uart", .data = (void
+>     *)PORT_NPCM, },
+>     >         { /* end of list */ },
 > 
-> I thought that it wasn't necessary to use it. Thinking
-> about it now however, I guess that was to maintain compatibility
-> with old device trees. I'll change it next time.
-> Maybe a note should be put there to avoid confusion
-> in the future.
+>     If these are compatible devices, it's usually easier to claim
+>     compatibility with both the specific chip and the older model
+>     as a fallback, to avoid driver changes. This seems to apply to
+>     the timer and watchdog devices as well.
+> 
+> Just to make sure, Do you mean claim in the device tree?
+> like
+> 
+> compatible = "nuvoton,npcm845-timer", "nuvoton,npcm-timer";
 
-I agree this comment should be clarified.
-
-Thanks,
-Angelo
+compatible = "nuvoton,npcm845-timer", "nuvoton,npcm750-timer"";
 
 
-
+Best regards,
+Krzysztof
