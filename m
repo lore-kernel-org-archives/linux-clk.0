@@ -2,476 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA51C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 08:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC2DC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 09:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233046AbiEXIjM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 May 2022 04:39:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
+        id S235487AbiEXJZv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 May 2022 05:25:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232915AbiEXIjG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 04:39:06 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0127284A14;
-        Tue, 24 May 2022 01:39:03 -0700 (PDT)
-X-UUID: 1fc62866a0f14d48a08fdd1a2e8564d1-20220524
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:57ec1f73-a9d0-4da8-b6f6-e7cbbbeceb5f,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:-5
-X-CID-META: VersionHash:2a19b09,CLOUDID:087f6e7a-5ef6-470b-96c9-bdb8ced32786,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,QS:0,BEC:nil
-X-UUID: 1fc62866a0f14d48a08fdd1a2e8564d1-20220524
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2121820680; Tue, 24 May 2022 16:38:59 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 24 May 2022 16:38:57 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 24 May 2022 16:38:57 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.3 via Frontend Transport; Tue, 24 May 2022 16:38:57 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/7] clk: mediatek: mt8183: use mtk_clk_simple_probe to simplify driver
-Date:   Tue, 24 May 2022 16:38:39 +0800
-Message-ID: <20220524083843.9994-7-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220524083843.9994-1-miles.chen@mediatek.com>
-References: <20220524083843.9994-1-miles.chen@mediatek.com>
+        with ESMTP id S233917AbiEXJZs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 05:25:48 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AE074DC6;
+        Tue, 24 May 2022 02:25:47 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id e28so24198313wra.10;
+        Tue, 24 May 2022 02:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YziY1Q+V5DNxZb3YLwFQ1UrWpeAm6I+532vLrlfJyNg=;
+        b=B7PTtOyrL3ttaTsYZy+ZKqBMvDmHCirI35RhvErFXx4vGNveqkojVtUZU43kAkjPjc
+         uz2lN8afY+iKBHejc5PA00kdVp3L0CEG9i20Y7foFzD36Kyy3La3GRScHTKYsvH/g9kb
+         hyhqGvvonSYF2/hMpr9+xCZ+vn6pUOWIN8MoXy0GhCKJIoPE+EYf/fNa8ymj/cfFQwB5
+         0Sy8aeboscwYUa46tVHLKut6mZkk314SxiH2L1nrVUJafHXRbdHFAeN7HNfvitL0+7ql
+         arn2RdZCibwaTSAbffw56ZzU4KEigK1Anb4QGW40rxxLARZ26tO7HehO7+5Iv+VL9soY
+         Irdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YziY1Q+V5DNxZb3YLwFQ1UrWpeAm6I+532vLrlfJyNg=;
+        b=fjRPBD1al8N3vhB7Xckbz75wL7v2V1sl/s5gAIfs958yfikiyvmk2OfllskpZAX2aL
+         RAvJlqvZ4QSrRMBKqUWLfkPcqJdfz90eZRrEb3qZunRBIdslcAlwmd+eb2XGdV+tbhsN
+         9uDlatI68rqcAyDhhR0qIeoQzHk9fVLRFo0xkxwncNn/W6cTqW1jNp5EgqQ54Bqg+6hE
+         OkXTvUhRdBn105veuCWSdc7tT/ccsrR1UmuOcFWo3LCS0ycNZlbKnLKXAhp2a8EZsaQg
+         tzXe6Z3TwB8LRKhnYnfdy4RjU8C6m7Sl8//uL83eA89SFE3sUlVP4Ido3yIvnVGLt3ej
+         ZSFw==
+X-Gm-Message-State: AOAM532whWYhNTb3RzRg4EDkD66P8ZjPiMTznPJu7xyDqrmRW9k46dou
+        RlGqz4tZaTWghQ1+QGsRz6toZ/qTfI36/S17Wn8=
+X-Google-Smtp-Source: ABdhPJzHiYjluBD4AYDA+/LfIUOKdEveBjfeVVTC5dm4Prdt71cD1NbaaJrtZsTM3h2G5RvUSdjJCHE9G4rh1XYR/Dg=
+X-Received: by 2002:a05:6000:362:b0:20f:f8f5:ef7d with SMTP id
+ f2-20020a056000036200b0020ff8f5ef7dmr607263wrf.468.1653384345616; Tue, 24 May
+ 2022 02:25:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20220505101433.1575096-1-gengcixi@gmail.com>
+In-Reply-To: <20220505101433.1575096-1-gengcixi@gmail.com>
+From:   Cixi Geng <gengcixi@gmail.com>
+Date:   Tue, 24 May 2022 17:25:09 +0800
+Message-ID: <CAF12kFvQsz-EKD-VdVkJVCUwNj1FL=4=uVarwnTyYTb_dRNZbQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] Add ums512 clocks and relative bindings file
+To:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-mtk_clk_simple_probe was added by Chun-Jie to simply common flow
-of MediaTek clock drivers and ChenYu enhanced the error path of
-mtk_clk_simple_probe and added mtk_clk_simple_remove.
+Cixi Geng <gengcixi@gmail.com> =E4=BA=8E2022=E5=B9=B45=E6=9C=885=E6=97=A5=
+=E5=91=A8=E5=9B=9B 18:14=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: Cixi Geng <cixi.geng1@unisoc.com>
+>
+> This patchset is add the UMS512 clocks support
+>
+> v2 changes:
+>   adjust description and add the "sprd,ums512-glbregs,syscon,simple-mfd"
+>   compatibles to fix match failed logs in the dt_binding_check.
+>   add the property license and copyright notice.
+>
+> v3 changes:
+>   fix wrong indentation and hint: "maxItems" is not needed with an "items=
+"
+>   list when use the latest dtschema.
+>
+> v4 changes:
+>   move the syscon bindins from clk to glbreg yaml file by pickup
+>   chunyan's patch for global registers bindings
+>   fix the comments from Krzysztof in v3 patchset
+>   add the Acked-by: Krzysztof in patch v4 3/4
+>   fix the  warning Prefer "GPL" over "GPL v2"
+>
+> v5 changes:
+>   Add review tags.
+>   fix the comments in ums512-glbreg.yaml.
+Dear maintainers:
+I have not received any new comments so far
+Is this patch ready to be merged?
+I'd appreciate any information of your reviews.
+Thanks
 
-Let's use mtk_clk_simple_probe and mtk_clk_simple_probe in other
-MediaTek clock drivers as well.
-
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8183-cam.c      | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-img.c      | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-ipu0.c     | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-ipu1.c     | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-ipu_adl.c  | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-ipu_conn.c | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c   | 29 +++++++++-------------
- drivers/clk/mediatek/clk-mt8183-vdec.c     | 27 +++++++++-----------
- drivers/clk/mediatek/clk-mt8183-venc.c     | 27 +++++++++-----------
- 9 files changed, 108 insertions(+), 137 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183-cam.c b/drivers/clk/mediatek/clk-mt8183-cam.c
-index fcc598a45165..6907b1a6a824 100644
---- a/drivers/clk/mediatek/clk-mt8183-cam.c
-+++ b/drivers/clk/mediatek/clk-mt8183-cam.c
-@@ -34,26 +34,23 @@ static const struct mtk_gate cam_clks[] = {
- 	GATE_CAM(CLK_CAM_CCU, "cam_ccu", "cam_sel", 12),
- };
- 
--static int clk_mt8183_cam_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_CAM_NR_CLK);
--
--	mtk_clk_register_gates(node, cam_clks, ARRAY_SIZE(cam_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc cam_desc = {
-+	.clks = cam_clks,
-+	.num_clks = ARRAY_SIZE(cam_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_cam[] = {
--	{ .compatible = "mediatek,mt8183-camsys", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-camsys",
-+		.data = &cam_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_cam_drv = {
--	.probe = clk_mt8183_cam_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-cam",
- 		.of_match_table = of_match_clk_mt8183_cam,
-diff --git a/drivers/clk/mediatek/clk-mt8183-img.c b/drivers/clk/mediatek/clk-mt8183-img.c
-index eb2def2cf0ae..8d884425d79f 100644
---- a/drivers/clk/mediatek/clk-mt8183-img.c
-+++ b/drivers/clk/mediatek/clk-mt8183-img.c
-@@ -34,26 +34,23 @@ static const struct mtk_gate img_clks[] = {
- 	GATE_IMG(CLK_IMG_OWE, "img_owe", "img_sel", 9),
- };
- 
--static int clk_mt8183_img_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_IMG_NR_CLK);
--
--	mtk_clk_register_gates(node, img_clks, ARRAY_SIZE(img_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc img_desc = {
-+	.clks = img_clks,
-+	.num_clks = ARRAY_SIZE(img_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_img[] = {
--	{ .compatible = "mediatek,mt8183-imgsys", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-imgsys",
-+		.data = &img_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_img_drv = {
--	.probe = clk_mt8183_img_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-img",
- 		.of_match_table = of_match_clk_mt8183_img,
-diff --git a/drivers/clk/mediatek/clk-mt8183-ipu0.c b/drivers/clk/mediatek/clk-mt8183-ipu0.c
-index b30fc9f47518..953a8a33d048 100644
---- a/drivers/clk/mediatek/clk-mt8183-ipu0.c
-+++ b/drivers/clk/mediatek/clk-mt8183-ipu0.c
-@@ -27,26 +27,23 @@ static const struct mtk_gate ipu_core0_clks[] = {
- 	GATE_IPU_CORE0(CLK_IPU_CORE0_IPU, "ipu_core0_ipu", "dsp_sel", 2),
- };
- 
--static int clk_mt8183_ipu_core0_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_IPU_CORE0_NR_CLK);
--
--	mtk_clk_register_gates(node, ipu_core0_clks, ARRAY_SIZE(ipu_core0_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc ipu_core0_desc = {
-+	.clks = ipu_core0_clks,
-+	.num_clks = ARRAY_SIZE(ipu_core0_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_ipu_core0[] = {
--	{ .compatible = "mediatek,mt8183-ipu_core0", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-ipu_core0",
-+		.data = &ipu_core0_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_ipu_core0_drv = {
--	.probe = clk_mt8183_ipu_core0_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-ipu_core0",
- 		.of_match_table = of_match_clk_mt8183_ipu_core0,
-diff --git a/drivers/clk/mediatek/clk-mt8183-ipu1.c b/drivers/clk/mediatek/clk-mt8183-ipu1.c
-index b378957e11d0..221d12265974 100644
---- a/drivers/clk/mediatek/clk-mt8183-ipu1.c
-+++ b/drivers/clk/mediatek/clk-mt8183-ipu1.c
-@@ -27,26 +27,23 @@ static const struct mtk_gate ipu_core1_clks[] = {
- 	GATE_IPU_CORE1(CLK_IPU_CORE1_IPU, "ipu_core1_ipu", "dsp_sel", 2),
- };
- 
--static int clk_mt8183_ipu_core1_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_IPU_CORE1_NR_CLK);
--
--	mtk_clk_register_gates(node, ipu_core1_clks, ARRAY_SIZE(ipu_core1_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc ipu_core1_desc = {
-+	.clks = ipu_core1_clks,
-+	.num_clks = ARRAY_SIZE(ipu_core1_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_ipu_core1[] = {
--	{ .compatible = "mediatek,mt8183-ipu_core1", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-ipu_core1",
-+		.data = &ipu_core1_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_ipu_core1_drv = {
--	.probe = clk_mt8183_ipu_core1_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-ipu_core1",
- 		.of_match_table = of_match_clk_mt8183_ipu_core1,
-diff --git a/drivers/clk/mediatek/clk-mt8183-ipu_adl.c b/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
-index 941b43ac8bec..8c4fd96df821 100644
---- a/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
-+++ b/drivers/clk/mediatek/clk-mt8183-ipu_adl.c
-@@ -25,26 +25,23 @@ static const struct mtk_gate ipu_adl_clks[] = {
- 	GATE_IPU_ADL_I(CLK_IPU_ADL_CABGEN, "ipu_adl_cabgen", "dsp_sel", 24),
- };
- 
--static int clk_mt8183_ipu_adl_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_IPU_ADL_NR_CLK);
--
--	mtk_clk_register_gates(node, ipu_adl_clks, ARRAY_SIZE(ipu_adl_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc ipu_adl_desc = {
-+	.clks = ipu_adl_clks,
-+	.num_clks = ARRAY_SIZE(ipu_adl_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_ipu_adl[] = {
--	{ .compatible = "mediatek,mt8183-ipu_adl", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-ipu_adl",
-+		.data = &ipu_adl_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_ipu_adl_drv = {
--	.probe = clk_mt8183_ipu_adl_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-ipu_adl",
- 		.of_match_table = of_match_clk_mt8183_ipu_adl,
-diff --git a/drivers/clk/mediatek/clk-mt8183-ipu_conn.c b/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
-index ae82c2e17110..14a4c3ff82a1 100644
---- a/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
-+++ b/drivers/clk/mediatek/clk-mt8183-ipu_conn.c
-@@ -94,26 +94,23 @@ static const struct mtk_gate ipu_conn_clks[] = {
- 		"ipu_conn_cab3to1_slice", "dsp1_sel", 17),
- };
- 
--static int clk_mt8183_ipu_conn_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_IPU_CONN_NR_CLK);
--
--	mtk_clk_register_gates(node, ipu_conn_clks, ARRAY_SIZE(ipu_conn_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc ipu_conn_desc = {
-+	.clks = ipu_conn_clks,
-+	.num_clks = ARRAY_SIZE(ipu_conn_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_ipu_conn[] = {
--	{ .compatible = "mediatek,mt8183-ipu_conn", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-ipu_conn",
-+		.data = &ipu_conn_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_ipu_conn_drv = {
--	.probe = clk_mt8183_ipu_conn_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-ipu_conn",
- 		.of_match_table = of_match_clk_mt8183_ipu_conn,
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index d774edaf760b..f578b393f41e 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -26,28 +26,23 @@ static const struct mtk_gate mfg_clks[] = {
- 	GATE_MFG(CLK_MFG_BG3D, "mfg_bg3d", "mfg_sel", 0)
- };
- 
--static int clk_mt8183_mfg_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	pm_runtime_enable(&pdev->dev);
--
--	clk_data = mtk_alloc_clk_data(CLK_MFG_NR_CLK);
--
--	mtk_clk_register_gates_with_dev(node, mfg_clks, ARRAY_SIZE(mfg_clks),
--			clk_data, &pdev->dev);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc mfg_desc = {
-+	.clks = mfg_clks,
-+	.num_clks = ARRAY_SIZE(mfg_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_mfg[] = {
--	{ .compatible = "mediatek,mt8183-mfgcfg", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-mfgcfg",
-+		.data = &mfg_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_mfg_drv = {
--	.probe = clk_mt8183_mfg_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-mfg",
- 		.of_match_table = of_match_clk_mt8183_mfg,
-diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
-index 0548cde159d0..c294e50b96b7 100644
---- a/drivers/clk/mediatek/clk-mt8183-vdec.c
-+++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
-@@ -38,26 +38,23 @@ static const struct mtk_gate vdec_clks[] = {
- 	GATE_VDEC1_I(CLK_VDEC_LARB1, "vdec_larb1", "mm_sel", 0),
- };
- 
--static int clk_mt8183_vdec_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_VDEC_NR_CLK);
--
--	mtk_clk_register_gates(node, vdec_clks, ARRAY_SIZE(vdec_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc vdec_desc = {
-+	.clks = vdec_clks,
-+	.num_clks = ARRAY_SIZE(vdec_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_vdec[] = {
--	{ .compatible = "mediatek,mt8183-vdecsys", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-vdecsys",
-+		.data = &vdec_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_vdec_drv = {
--	.probe = clk_mt8183_vdec_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-vdec",
- 		.of_match_table = of_match_clk_mt8183_vdec,
-diff --git a/drivers/clk/mediatek/clk-mt8183-venc.c b/drivers/clk/mediatek/clk-mt8183-venc.c
-index f86ec607d87a..0051c5d92fc5 100644
---- a/drivers/clk/mediatek/clk-mt8183-venc.c
-+++ b/drivers/clk/mediatek/clk-mt8183-venc.c
-@@ -30,26 +30,23 @@ static const struct mtk_gate venc_clks[] = {
- 		"mm_sel", 8),
- };
- 
--static int clk_mt8183_venc_probe(struct platform_device *pdev)
--{
--	struct clk_hw_onecell_data *clk_data;
--	struct device_node *node = pdev->dev.of_node;
--
--	clk_data = mtk_alloc_clk_data(CLK_VENC_NR_CLK);
--
--	mtk_clk_register_gates(node, venc_clks, ARRAY_SIZE(venc_clks),
--			clk_data);
--
--	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
--}
-+static const struct mtk_clk_desc venc_desc = {
-+	.clks = venc_clks,
-+	.num_clks = ARRAY_SIZE(venc_clks),
-+};
- 
- static const struct of_device_id of_match_clk_mt8183_venc[] = {
--	{ .compatible = "mediatek,mt8183-vencsys", },
--	{}
-+	{
-+		.compatible = "mediatek,mt8183-vencsys",
-+		.data = &venc_desc,
-+	}, {
-+		/* sentinel */
-+	}
- };
- 
- static struct platform_driver clk_mt8183_venc_drv = {
--	.probe = clk_mt8183_venc_probe,
-+	.probe = mtk_clk_simple_probe,
-+	.remove = mtk_clk_simple_remove,
- 	.driver = {
- 		.name = "clk-mt8183-venc",
- 		.of_match_table = of_match_clk_mt8183_venc,
--- 
-2.18.0
-
+Best regards
+Cixi
+>
+> Chunyan Zhang (1):
+>   dt-bindings: mfd: sprd: Add bindings for ums512 global registers
+>
+> Cixi Geng (3):
+>   dt-bindings: clk: sprd: Add bindings for ums512 clock controller
+>   clk: sprd: Add dt-bindings include file for UMS512
+>   clk: sprd: Add clocks support for UMS512
+>
+>  .../bindings/clock/sprd,ums512-clk.yaml       |   71 +
+>  .../bindings/mfd/sprd,ums512-glbreg.yaml      |   68 +
+>  drivers/clk/sprd/Kconfig                      |    6 +
+>  drivers/clk/sprd/Makefile                     |    1 +
+>  drivers/clk/sprd/ums512-clk.c                 | 2199 +++++++++++++++++
+>  include/dt-bindings/clock/sprd,ums512-clk.h   |  397 +++
+>  6 files changed, 2742 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-c=
+lk.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glb=
+reg.yaml
+>  create mode 100644 drivers/clk/sprd/ums512-clk.c
+>  create mode 100644 include/dt-bindings/clock/sprd,ums512-clk.h
+>
+> --
+> 2.25.1
+>
