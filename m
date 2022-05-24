@@ -2,73 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C251C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 06:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A374C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 06:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234894AbiEXGZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 May 2022 02:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41422 "EHLO
+        id S234203AbiEXG2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 May 2022 02:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbiEXGZw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 02:25:52 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE186CABA
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 23:25:51 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id f21so19534473ejh.11
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 23:25:51 -0700 (PDT)
+        with ESMTP id S235047AbiEXG2N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 02:28:13 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537E172209
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 23:28:09 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id j28so21684461eda.13
+        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 23:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=D6CrZTvd23rvlgUVmBlktvH0Lw16RsXxIKRFjL+U34c=;
-        b=QXnt/DwtsuMT9HJBssgL3VJNo9GWJaQqQaVDMl+s0Hm2bPiuqcNnZn5lqx/D2ev8x1
-         0nb13D8QWy4GI9MsPHyK3mU6aaMU8vWqc5TO1yb9nZahDepktJeY87rv784dh5+WqCmK
-         lsJiDsyIY3gmrrz2qzfxCih9mP5ndvlImauw4=
+        bh=N3jdbvgtlnw8zIaSv0DQqGc3caOnAXLJMAe+8f0UCS0=;
+        b=O5lAcyn/cym/3OrYhOLamVEgFGcZ2RXZc2FY/HnELt4FLoY5cU6Qzd1dh/CbLJMwNP
+         qKUgSM+Muoz1BLCPqw4YgLhVdAV7cvJn8lsQADC+YX0odK5WcxdVUpSqQIpNLI+vWSVR
+         bGYPWSffJOcjIzQxvLSsgg4r+doFWCFL4Ke0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=D6CrZTvd23rvlgUVmBlktvH0Lw16RsXxIKRFjL+U34c=;
-        b=sgF9obvmIXGNps530GAtkLHPLpMVEL/oV2QmR6Y32z4zTNOiH64hUl5aqkptNQjqC7
-         mbh4LFakZeUPzxTA3mDAqDzOs0MKkoSymIMaIM2Xbbuky+iMufcZd37gNP1ogoLODTtp
-         OfUi3zZkzToIFUamUaIyPWwJhJ7DZ3O8DEdbuGVVUmBoh8GLj8LbzS1hTQJzsbaBvtq4
-         ks3fUOqWK2+S3udL/gqEkwRecfx7ajLR385F3zpVyP1+bNyg9mT4F8qF30tznjJfwN7H
-         8XALnBPz9z1NagpaG3zLD+J0km6txQB+6dM+3pP6ig8FyU34IAfIxofVFerY9AYSWBkg
-         08Dw==
-X-Gm-Message-State: AOAM531SDPVopiVGsqGxsUhxIlkomXOGShSYAhkIxzTbNYN58aXRtzG3
-        /XreEnmBN8/9eo1CtDLXRb30Bad7hYdDLX3QQ2sAfw==
-X-Google-Smtp-Source: ABdhPJyJ4eZQIwLnHC81UPge6C/F40nOdAKPI+hfZ0h+dhfs8oDDZ0QMG8iJQXX0hFsf5XrQuRjqGuQCwPKXFrhXFIA=
-X-Received: by 2002:a17:907:9717:b0:6fe:b4cd:e0a with SMTP id
- jg23-20020a170907971700b006feb4cd0e0amr16054099ejc.152.1653373549810; Mon, 23
- May 2022 23:25:49 -0700 (PDT)
+        bh=N3jdbvgtlnw8zIaSv0DQqGc3caOnAXLJMAe+8f0UCS0=;
+        b=L0lOGQLxs9Dpd2ES7pHDvDaVhG+u1OBSgSqtPkGTJTe8qwT/7ltkPCEnezj3SlKfFW
+         IB/j1mbYw5ZGcz8odfOUHmRhfPSGw0KkmH/o3SosYzKcFJ55vBreUZ71QrmHCtz14OP3
+         QeFnSPnq5jZoesL4t9BRgPmBqWe74IkyynQx54YJ/ibxIlkpcjFzeyNtBTXAvXJn9mP4
+         qFqG6H9rNAjDfdu+IKY4rkAhMeTh7ScxhrDmei90wg9e6JFzhNrPAKqtS9ZxqV3B+qX4
+         E5wiMU5Gm/CX5FT8rJOrgXK96ErQwWwyRXrzMP7GaoaY/bYl3IlXQwoDZovSID/frzir
+         hmnQ==
+X-Gm-Message-State: AOAM530VF5n5Uf6QDjvgsp+UzJNnKRP0VkgH8TMbBucY+Sz/M+sv1cJU
+        sEbZb0shxkfRNPfR7/NHV1gF1rdT/XR3FGZvD06o/g==
+X-Google-Smtp-Source: ABdhPJzBItlY43uGQ1di/pvyiuI5cG2uV8pK8/a3MYLK073piDHgVWBSg8bsrQX2VghdcQWs8SvYrgrhAjczS+pKxbA=
+X-Received: by 2002:a05:6402:d51:b0:42a:b2cc:33b2 with SMTP id
+ ec17-20020a0564020d5100b0042ab2cc33b2mr27392564edb.248.1653373687924; Mon, 23
+ May 2022 23:28:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220523160053.1922-1-miles.chen@mediatek.com> <20220523160053.1922-9-miles.chen@mediatek.com>
-In-Reply-To: <20220523160053.1922-9-miles.chen@mediatek.com>
+References: <20220523102339.21927-1-matthias.bgg@kernel.org>
+In-Reply-To: <20220523102339.21927-1-matthias.bgg@kernel.org>
 From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Tue, 24 May 2022 14:25:38 +0800
-Message-ID: <CAGXv+5Gswa7UWD-P3SwMFOHpRbZ+d10z3Aerh=zMbNXzfyA0tg@mail.gmail.com>
-Subject: Re: [PATCH 8/8] clk: mediatek: mt8192: add mtk_clk_simple_remove
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Date:   Tue, 24 May 2022 14:27:56 +0800
+Message-ID: <CAGXv+5Gx6oGvvL1aSWfZC8cpE7mFyr5g66c=AHm3jkNCuXzakg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Delete MT8192 msdc gate (was "clk: mediatek:
+ Delete MT8192 msdc gate")
+To:     matthias.bgg@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        allen-kh.cheng@mediatek.com, weiyi.lu@mediatek.com,
+        chun-jie.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        ikjn@chromium.org, miles.chen@mediatek.com, robh+dt@kernel.org,
+        linux-mediatek@lists.infradead.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        angelogioacchino.delregno@collabora.com,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 24, 2022 at 12:01 AM Miles Chen <miles.chen@mediatek.com> wrote:
+On Mon, May 23, 2022 at 7:19 PM <matthias.bgg@kernel.org> wrote:
 >
-> mt8192 is already using mtk_clk_simple_probe,
-> but not mtk_clk_simple_remove.
+> From: Matthias Brugger <matthias.bgg@gmail.com>
 >
-> Let's add mtk_clk_simple_remove for mt8192.
 >
-> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+> The mt8192-msdc clock is only a single clock gate. This gate is accessed
+> from the mmc driver directly. With
+> 4a1d1379ebf6 ("arm64: dts: mt8192: Add mmc device nodes")
+> the only consumer of this binding was deleted. Delete the binding
+> decription and the clock driver bound to it.
+>
+> Changes in v3:
+> - Update commit message to explain better why we do ABI breakage here
+> - add Reviewed-by tag
+>
+> Changes in v2:
+> - Delete compatible in binding descprition as well
+> - Add RvB tags
+> - add Reviewed-by tag
+>
+> Matthias Brugger (2):
+>   dt-bindings: ARM: Mediatek: Remove msdc binding of MT8192 clock
+>   clk: mediatek: Delete MT8192 msdc gate
+
+Whole series is
 
 Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
