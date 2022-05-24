@@ -2,163 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E308C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 17:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BACC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 18:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232878AbiEXRlm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 May 2022 13:41:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60870 "EHLO
+        id S240357AbiEXScn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 May 2022 14:32:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240005AbiEXRlj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 13:41:39 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2104031213
-        for <linux-clk@vger.kernel.org>; Tue, 24 May 2022 10:41:37 -0700 (PDT)
-Received: from [10.1.250.9] (riviera.nat.ds.pw.edu.pl [194.29.137.1])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E53323F685;
-        Tue, 24 May 2022 20:03:46 +0200 (CEST)
-Message-ID: <c240075d-55d1-28f6-18ad-3897e55f8e59@somainline.org>
-Date:   Tue, 24 May 2022 19:41:30 +0200
+        with ESMTP id S240350AbiEXScm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 14:32:42 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799AF5401F
+        for <linux-clk@vger.kernel.org>; Tue, 24 May 2022 11:32:41 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-f1eafa567cso19904295fac.8
+        for <linux-clk@vger.kernel.org>; Tue, 24 May 2022 11:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pKzj0lZePskW6OoiN0CWerTUmBfV4sGD8tc5MRd0ltM=;
+        b=ZdynbkCOqgeqfvEWKowIU1iPJSiTVbwHyUSXnXlcj5llvHYLLTg1fph9Zj7mAQ9te/
+         iMkKuj9n+ma8rAbxmXfh/gmS/nx4roaDsfU1CwceLGtm9bf0710GTaVEonLg444uKe1n
+         hPhzO9mj0ygYdjePtvdN4jHHj+UjoPb+lkMtCG3xt1FOTNLGdhGC058Oj/Ug1BpbUnwI
+         pO4Y/OytDz21v6E6thf4NAQWfoFSw7fy+7fyByI8mIXimH7LBeo0E4/QmGwMFVR0mTPE
+         e0hlw+Ld4SxJPZx98CbarnPHkLOjomVqNCGcrlmqbiUFrr28YSU72hF0CsYAq2oNMd+Q
+         7kfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pKzj0lZePskW6OoiN0CWerTUmBfV4sGD8tc5MRd0ltM=;
+        b=ZVrQu/9ovbWC5zyvNzs/q56edv+BBg8L22V6ewJlWby00FotBGcr7tnmbJ7s8yFlhH
+         Solz5lBNmH7R3WR3IY7mAvb3vcKZ05AxJifRmtSHFEeGXaOziurPTAU5Im9OJIt4w3pJ
+         J+ABf0WP2g/K3Pc0FYjIC1bumCYFrs1OgdTmHKbEV5alHXHXWdsl+lJiipQ3Jd/QscGc
+         NSMAMv1YZP6TZMnqVwqClmnJtOJCgEEDLiVMoU8tq3oO1UfsEYeSEJdsmYaloCbdxcOP
+         azJcQBCizH9PcKqy6rVJgZL/esOm2iBA6EBTdU8VrpGmBJKyyHk9fsV9POXh9XCGg1hz
+         K4Vw==
+X-Gm-Message-State: AOAM533DtpaXiMQU5SP3vs8JTwlirqe6v4gJuTw9EpB5QiBAun9e8cw9
+        0r99BpR9n+VRFZ6wNsRF5wdZjQq7BYDIcNrlBYo=
+X-Google-Smtp-Source: ABdhPJwai5oIk6Y48/PTg6ZAFiQAXEZeSYwYE2O4kAn1I7trHj4fLV/QFk3ABHYq52TCandGU4+dEAzJOB0lyz0XXCE=
+X-Received: by 2002:a05:6870:b3a4:b0:e9:2370:5e9 with SMTP id
+ w36-20020a056870b3a400b000e9237005e9mr3264645oap.73.1653417160793; Tue, 24
+ May 2022 11:32:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Fix halt on boot by reducing
- driver's init level
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Robert Foss <robert.foss@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220518103554.949511-1-vladimir.zapolskiy@linaro.org>
- <6cb75a3e-49fd-bbe0-4e81-d6aec33b70a5@somainline.org>
- <c1f4cfa7-f7f3-a72a-b48b-97071906398c@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <c1f4cfa7-f7f3-a72a-b48b-97071906398c@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20220512160412.1317123-1-maxime@cerno.tech> <20220512160412.1317123-14-maxime@cerno.tech>
+In-Reply-To: <20220512160412.1317123-14-maxime@cerno.tech>
+From:   Jim Quinlan <jim2101024@gmail.com>
+Date:   Tue, 24 May 2022 14:32:29 -0400
+Message-ID: <CANCKTBuWkkXNdK5eLJr=KzykDt+dbjfOiNGhxga4oEU5COyiUg@mail.gmail.com>
+Subject: Re: [PATCH v4 13/28] clk: Take into account uncached clocks in clk_set_rate_range()
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, May 13, 2022 at 3:56 AM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> clk_set_rate_range() will use the last requested rate for the clock when
+> it calls into the driver set_rate hook.
+>
+> However, if CLK_GET_RATE_NOCACHE is set on that clock, the last
+> requested rate might not be matching the current rate of the clock. In
+> such a case, let's read out the rate from the hardware and use that in
+> our set_rate instead.
+Hello Maxime & MikeT,
 
-On 18/05/2022 19:24, Vladimir Zapolskiy wrote:
-> Hi Konrad,
->
-> On 5/18/22 19:47, Konrad Dybcio wrote:
->>
->> On 18/05/2022 12:35, Vladimir Zapolskiy wrote:
->>> Access to I/O of SM8250 camera clock controller IP depends on enabled
->>> GCC_CAMERA_AHB_CLK clock supplied by global clock controller, the 
->>> latter
->>> one is inited on subsys level, so, to satisfy the dependency, it would
->>> make sense to deprive the init level of camcc-sm8250 driver.
->>
->> Hi,
->>
->> I believe this is due to the fact that this clock is falsely advertised
->> by the header and Linux does not know anything about it, because it is
->> handled by a magic write [1] (as I once said in a similar case, this was
->> going bite eventually..) instead and the index corresponding to the
->> define symbol is not initialized, hence it points to NULL. Adding the
->
-> your observation is correct in my opinion, however it does not change the
-> identified root cause of the problem, and my rationale remains the same,
-> the camera clock controller should be initialized after the GCC, thus
-> this change, and currently the critical fix, remains valid.
->
->> clock properly in GCC would let the OF clock stuff handle it gracefully.
->
-> If/when the clock is properly added in the GCC, then it will open an
-> option to clk_prepare_enable() it in the CAMCC driver, so at least it's
-> a point to keep it described in a dts as it's done right from the 
-> beginning,
-> especially because the platform dtsi describes the hardware properly.
-> To add a real CCF clock would be my preference, but, as I've said above,
-> even if it happens, it does not belittle the presented change.
->
->> If that is the case, your patch disabling the clock controller block
->> (which I'm against unless there's abosolute need, as having the hw block
->> initialized properly should be possible regardless of the board, as it's
->> a generic SoC components) should not be necessary.
->
-> Here I do oppose, I believe board dts files should explicitly describe
-> enabled IPs in accordance to actual board peripherals. For instance it's
-> unclear why CAMCC or e.g. CAMSS should be enabled by default on a board
-> without camera sensors at all. I understand that there is an option to
-> explicitly disable some particular device tree nodes in board files, but
-> it is against common practicalities.
->
-> Also above I do neglect the fact that the GCC clock is always enabled,
-> irrelatively of its actual usage by probably disabled CAMCC.
+I'm probably out of the loop on this but I am wondering why we don't also apply
+this  same reasoning to
 
-I think there's an opportunity to save some power here by keeping the 
-camss ahb disabled by default.. That would include removing the magic 
-write from gcc probe, adding the gcc ahb as a proper clock and adding a 
-camss consumer to it (possibly with both fw_name and name fields in 
-parent_data to keep backwards compat, even though i don't think any 
-board uses camera hw upstream, so we may break it here with a good 
-justification). Then we could keep camcc enabled by default on all 
-boards, and if there are no users, the clocks would just be parked to xo 
-or disabled entirely, instead of inheriting an unknown configuration.
+        clk_core_set_rate_nolock()
 
+which may usea stale clock rate and skip the actual setting of the rate:
 
-Konrad
+static int clk_core_set_rate_nolock(core, req_rate)
+{
+        /* ... */
+        rate = clk_core_req_round_rate_nolock(core, req_rate);
+
+        /* bail early if nothing to do */
+        if (rate == clk_core_get_rate_nolock(core))    /* [JQ] Does
+not check for CLK_GET_RATE_NOCACHE */
+                return 0;
+
+I can see that 9-10 years ago someone submitted a pullreq to fix above
+but I cannot
+locate the response and it obviously never made it upstream.
+
+Kind regards,
+Jim Quinlan
+Broadcom STB
 
 >
-> -- 
-> Best wishes,
-> Vladimir
+> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/clk.c      |  6 +++++-
+>  drivers/clk/clk_test.c | 28 ++++++++++++++++++++++++++++
+>  2 files changed, 33 insertions(+), 1 deletion(-)
 >
->> That said, I can not test my theory right now.
->>
->>
->> [1]
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/clk/qcom/gcc-sm8250.c?h=next-20220518#n3647 
->>
->>
->> Konrad
->>
->>>
->>> If both drivers are compiled as built-in, there is a change that a 
->>> board
->>> won't boot up due to a race, which happens on the same init level.
->>>
->>> Fixes: 5d66ca79b58c ("clk: qcom: Add camera clock controller driver 
->>> for SM8250")
->>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>    drivers/clk/qcom/camcc-sm8250.c | 12 +-----------
->>>    1 file changed, 1 insertion(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/clk/qcom/camcc-sm8250.c 
->>> b/drivers/clk/qcom/camcc-sm8250.c
->>> index 439eaafdcc86..ae4e9774f36e 100644
->>> --- a/drivers/clk/qcom/camcc-sm8250.c
->>> +++ b/drivers/clk/qcom/camcc-sm8250.c
->>> @@ -2440,17 +2440,7 @@ static struct platform_driver 
->>> cam_cc_sm8250_driver = {
->>>        },
->>>    };
->>>    -static int __init cam_cc_sm8250_init(void)
->>> -{
->>> -    return platform_driver_register(&cam_cc_sm8250_driver);
->>> -}
->>> -subsys_initcall(cam_cc_sm8250_init);
->>> -
->>> -static void __exit cam_cc_sm8250_exit(void)
->>> -{
->>> -    platform_driver_unregister(&cam_cc_sm8250_driver);
->>> -}
->>> -module_exit(cam_cc_sm8250_exit);
->>> +module_platform_driver(cam_cc_sm8250_driver);
->>>       MODULE_DESCRIPTION("QTI CAMCC SM8250 Driver");
->>>    MODULE_LICENSE("GPL v2");
->>>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 95be72f9373e..09849453047c 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2373,6 +2373,10 @@ static int clk_set_rate_range_nolock(struct clk *clk,    /* bail early if nothing to do */
+    if (rate == clk_core_get_rate_nolock(core))
+        return 0;
+
+>                 goto out;
+>         }
+>
+> +       rate = clk->core->req_rate;
+> +       if (clk->core->flags & CLK_GET_RATE_NOCACHE)
+> +               rate = clk_core_get_rate_recalc(clk->core);
+> +
+>         /*
+>          * Since the boundaries have been changed, let's give the
+>          * opportunity to the provider to adjust the clock rate based on
+> @@ -2390,7 +2394,7 @@ static int clk_set_rate_range_nolock(struct clk *clk,
+>          * - the determine_rate() callback does not really check for
+>          *   this corner case when determining the rate
+>          */
+> -       rate = clamp(clk->core->req_rate, min, max);
+> +       rate = clamp(rate, min, max);
+>         ret = clk_core_set_rate_nolock(clk->core, rate);
+>         if (ret) {
+>                 /* rollback the changes */
+> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> index 8de6339f4f8d..9aa5b946f324 100644
+> --- a/drivers/clk/clk_test.c
+> +++ b/drivers/clk/clk_test.c
+> @@ -362,9 +362,37 @@ static void clk_test_uncached_set_range(struct kunit *test)
+>         KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
+>  }
+>
+> +/*
+> + * Test that for an uncached clock, clk_set_rate_range() will work
+> + * properly if the rate has changed in hardware.
+> + *
+> + * In this case, it means that if the rate wasn't initially in the range
+> + * we're trying to set, but got changed at some point into the range
+> + * without the kernel knowing about it, its rate shouldn't be affected.
+> + */
+> +static void clk_test_uncached_updated_rate_set_range(struct kunit *test)
+> +{
+> +       struct clk_dummy_context *ctx = test->priv;
+> +       struct clk_hw *hw = &ctx->hw;
+> +       struct clk *clk = hw->clk;
+> +       unsigned long rate;
+> +
+> +       ctx->rate = DUMMY_CLOCK_RATE_1 + 1000;
+> +       KUNIT_ASSERT_EQ(test,
+> +                       clk_set_rate_range(clk,
+> +                                          DUMMY_CLOCK_RATE_1,
+> +                                          DUMMY_CLOCK_RATE_2),
+> +                       0);
+> +
+> +       rate = clk_get_rate(clk);
+> +       KUNIT_ASSERT_GT(test, rate, 0);
+> +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
+> +}
+> +
+>  static struct kunit_case clk_uncached_test_cases[] = {
+>         KUNIT_CASE(clk_test_uncached_get_rate),
+>         KUNIT_CASE(clk_test_uncached_set_range),
+> +       KUNIT_CASE(clk_test_uncached_updated_rate_set_range),
+>         {}
+>  };
+>
+> --
+> 2.36.1
+>
