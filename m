@@ -2,129 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC2DC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 09:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9475EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 09:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235487AbiEXJZv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 May 2022 05:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
+        id S234309AbiEXJhv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 May 2022 05:37:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233917AbiEXJZs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 05:25:48 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AE074DC6;
-        Tue, 24 May 2022 02:25:47 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id e28so24198313wra.10;
-        Tue, 24 May 2022 02:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YziY1Q+V5DNxZb3YLwFQ1UrWpeAm6I+532vLrlfJyNg=;
-        b=B7PTtOyrL3ttaTsYZy+ZKqBMvDmHCirI35RhvErFXx4vGNveqkojVtUZU43kAkjPjc
-         uz2lN8afY+iKBHejc5PA00kdVp3L0CEG9i20Y7foFzD36Kyy3La3GRScHTKYsvH/g9kb
-         hyhqGvvonSYF2/hMpr9+xCZ+vn6pUOWIN8MoXy0GhCKJIoPE+EYf/fNa8ymj/cfFQwB5
-         0Sy8aeboscwYUa46tVHLKut6mZkk314SxiH2L1nrVUJafHXRbdHFAeN7HNfvitL0+7ql
-         arn2RdZCibwaTSAbffw56ZzU4KEigK1Anb4QGW40rxxLARZ26tO7HehO7+5Iv+VL9soY
-         Irdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YziY1Q+V5DNxZb3YLwFQ1UrWpeAm6I+532vLrlfJyNg=;
-        b=fjRPBD1al8N3vhB7Xckbz75wL7v2V1sl/s5gAIfs958yfikiyvmk2OfllskpZAX2aL
-         RAvJlqvZ4QSrRMBKqUWLfkPcqJdfz90eZRrEb3qZunRBIdslcAlwmd+eb2XGdV+tbhsN
-         9uDlatI68rqcAyDhhR0qIeoQzHk9fVLRFo0xkxwncNn/W6cTqW1jNp5EgqQ54Bqg+6hE
-         OkXTvUhRdBn105veuCWSdc7tT/ccsrR1UmuOcFWo3LCS0ycNZlbKnLKXAhp2a8EZsaQg
-         tzXe6Z3TwB8LRKhnYnfdy4RjU8C6m7Sl8//uL83eA89SFE3sUlVP4Ido3yIvnVGLt3ej
-         ZSFw==
-X-Gm-Message-State: AOAM532whWYhNTb3RzRg4EDkD66P8ZjPiMTznPJu7xyDqrmRW9k46dou
-        RlGqz4tZaTWghQ1+QGsRz6toZ/qTfI36/S17Wn8=
-X-Google-Smtp-Source: ABdhPJzHiYjluBD4AYDA+/LfIUOKdEveBjfeVVTC5dm4Prdt71cD1NbaaJrtZsTM3h2G5RvUSdjJCHE9G4rh1XYR/Dg=
-X-Received: by 2002:a05:6000:362:b0:20f:f8f5:ef7d with SMTP id
- f2-20020a056000036200b0020ff8f5ef7dmr607263wrf.468.1653384345616; Tue, 24 May
- 2022 02:25:45 -0700 (PDT)
+        with ESMTP id S233250AbiEXJhu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 05:37:50 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FEDE64703;
+        Tue, 24 May 2022 02:37:50 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id B48671F42BE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1653385069;
+        bh=qHa34R8f2dgn0S0aTujwYgvn8k0a6Ednt5C8zaOJtHE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Rbi97nHhxIbIYR01ryXjkpEsOOYmYxRBjOpv8gBgFlqcAJNu0iYeUXjUlBgvOSBDz
+         JMUDqtYfaufxibthmP3yLbdrJzcVBz42ptkJQlmcHoAKRmT36SKicme1prIYCDawEw
+         +QUBsNagovSXHlgBBScMriv3mnO1BNY7Dpll16KhY6L4L+knJtiNfgQ7MxkyGLKYhZ
+         5aazG1w7cSwCbc5MQg/FCrM2LorBLSe5BSW4z7ifVn3nxJh0wXzTyuLsU0FUwO9In7
+         qm6zVx/6yuc5vbhDtOatD2QmT36VRa3JXjYXVTNimA6oRtFjpIE7A1QxoHr3gDjyjP
+         lubz0MjIud3Og==
+Message-ID: <911c729a-b9dc-056a-7c83-718ddb52db95@collabora.com>
+Date:   Tue, 24 May 2022 11:37:46 +0200
 MIME-Version: 1.0
-References: <20220505101433.1575096-1-gengcixi@gmail.com>
-In-Reply-To: <20220505101433.1575096-1-gengcixi@gmail.com>
-From:   Cixi Geng <gengcixi@gmail.com>
-Date:   Tue, 24 May 2022 17:25:09 +0800
-Message-ID: <CAF12kFvQsz-EKD-VdVkJVCUwNj1FL=4=uVarwnTyYTb_dRNZbQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] Add ums512 clocks and relative bindings file
-To:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        "baolin.wang7@gmail.com" <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 7/7] clk: mediatek: mt8192: add mtk_clk_simple_remove
+Content-Language: en-US
+To:     Miles Chen <miles.chen@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220524083843.9994-1-miles.chen@mediatek.com>
+ <20220524083843.9994-8-miles.chen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220524083843.9994-8-miles.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Cixi Geng <gengcixi@gmail.com> =E4=BA=8E2022=E5=B9=B45=E6=9C=885=E6=97=A5=
-=E5=91=A8=E5=9B=9B 18:14=E5=86=99=E9=81=93=EF=BC=9A
->
-> From: Cixi Geng <cixi.geng1@unisoc.com>
->
-> This patchset is add the UMS512 clocks support
->
-> v2 changes:
->   adjust description and add the "sprd,ums512-glbregs,syscon,simple-mfd"
->   compatibles to fix match failed logs in the dt_binding_check.
->   add the property license and copyright notice.
->
-> v3 changes:
->   fix wrong indentation and hint: "maxItems" is not needed with an "items=
-"
->   list when use the latest dtschema.
->
-> v4 changes:
->   move the syscon bindins from clk to glbreg yaml file by pickup
->   chunyan's patch for global registers bindings
->   fix the comments from Krzysztof in v3 patchset
->   add the Acked-by: Krzysztof in patch v4 3/4
->   fix the  warning Prefer "GPL" over "GPL v2"
->
-> v5 changes:
->   Add review tags.
->   fix the comments in ums512-glbreg.yaml.
-Dear maintainers:
-I have not received any new comments so far
-Is this patch ready to be merged?
-I'd appreciate any information of your reviews.
-Thanks
+Il 24/05/22 10:38, Miles Chen ha scritto:
+> mt8192 is already using mtk_clk_simple_probe,
+> but not mtk_clk_simple_remove.
+> 
+> Let's add mtk_clk_simple_remove for mt8192.
+> 
+> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Best regards
-Cixi
->
-> Chunyan Zhang (1):
->   dt-bindings: mfd: sprd: Add bindings for ums512 global registers
->
-> Cixi Geng (3):
->   dt-bindings: clk: sprd: Add bindings for ums512 clock controller
->   clk: sprd: Add dt-bindings include file for UMS512
->   clk: sprd: Add clocks support for UMS512
->
->  .../bindings/clock/sprd,ums512-clk.yaml       |   71 +
->  .../bindings/mfd/sprd,ums512-glbreg.yaml      |   68 +
->  drivers/clk/sprd/Kconfig                      |    6 +
->  drivers/clk/sprd/Makefile                     |    1 +
->  drivers/clk/sprd/ums512-clk.c                 | 2199 +++++++++++++++++
->  include/dt-bindings/clock/sprd,ums512-clk.h   |  397 +++
->  6 files changed, 2742 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,ums512-c=
-lk.yaml
->  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glb=
-reg.yaml
->  create mode 100644 drivers/clk/sprd/ums512-clk.c
->  create mode 100644 include/dt-bindings/clock/sprd,ums512-clk.h
->
-> --
-> 2.25.1
->
+[For test on MT8192 Asurada Spherion]
+Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
