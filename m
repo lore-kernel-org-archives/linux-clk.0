@@ -2,71 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E62C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 02:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04CFC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 05:28:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232770AbiEXCHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 22:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
+        id S233760AbiEXF2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 May 2022 01:28:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233191AbiEXCHR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 22:07:17 -0400
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 303C97C173;
-        Mon, 23 May 2022 19:07:13 -0700 (PDT)
-Received: by mail-ot1-f42.google.com with SMTP id c15-20020a9d684f000000b0060b097c71ecso4394022oto.10;
-        Mon, 23 May 2022 19:07:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=avW4K7LcQhKBy63mDTEwp3yorTkoVIJO+916OJZVwwM=;
-        b=zUg3eeKpzpF6XOFjlK/0HGG3I1NWZuwrgD8j4y4YE20X/W8iiZaT9vGlSXtJP2tooi
-         Qr+61ai7ahk724vc94Ts67nkrRcBiJ7gcWkOZZFQbNj2WzvWETsN5CfDScgLUMBmnuci
-         EaI5Biif68rigxP2ZXZKA1zHUjVS9WrYNN6V3UZxqXnswt1lPfM0LIO/g7c81KuvDuAD
-         5BsB7ez7TYnc3gkjbOzs+M+7Yf8S94FTrEhd0kjOg3MX2v948WW4iD9mIF6rP3jisnCQ
-         ft5Xargs4C3P8n7kjUjeQrFfiLOzYG8c8qpRogh8WyOSLLmiIxi6v/ga6mc2TUZhvdUV
-         QtSQ==
-X-Gm-Message-State: AOAM533QBeAjZdhfCq0nDJAOqCoLXvfI5d/o26ZGcpmbU/mXHaq1BEHG
-        2SRKLERuABjfFWDFhTPoMFJgtwdbFQ==
-X-Google-Smtp-Source: ABdhPJznrLWgCsmGMJ6jUb47IejHe4ZA03bJM03kOnz6E2td6t6bAdxfAMXXb7V7rn4u4RRUaO1h/A==
-X-Received: by 2002:a9d:4c09:0:b0:60b:1bec:89ba with SMTP id l9-20020a9d4c09000000b0060b1bec89bamr2033343otf.281.1653358032320;
-        Mon, 23 May 2022 19:07:12 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v132-20020aca618a000000b00325cda1ffabsm4565426oib.42.2022.05.23.19.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 19:07:11 -0700 (PDT)
-Received: (nullmailer pid 2607989 invoked by uid 1000);
-        Tue, 24 May 2022 02:07:10 -0000
-Date:   Mon, 23 May 2022 21:07:10 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: Add support for external
- MCLKs for LPASS on SC7280
-Message-ID: <20220524020710.GA2607925-robh@kernel.org>
-References: <20220523092314.14252-1-quic_tdas@quicinc.com>
- <20220523092314.14252-3-quic_tdas@quicinc.com>
+        with ESMTP id S230014AbiEXF2X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 01:28:23 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0D97A827;
+        Mon, 23 May 2022 22:28:13 -0700 (PDT)
+X-UUID: e1611a0dace443329cec0b00e9d29bd8-20220524
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:33b611c9-6de0-48a9-9daa-3e1597b904cd,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:2a19b09,CLOUDID:f9e0657a-5ef6-470b-96c9-bdb8ced32786,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,IP:nil,URL:1,File:ni
+        l,QS:0,BEC:nil
+X-UUID: e1611a0dace443329cec0b00e9d29bd8-20220524
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1192286197; Tue, 24 May 2022 13:28:09 +0800
+Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Tue, 24 May 2022 13:28:08 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 24 May 2022 13:28:08 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 24 May 2022 13:28:08 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <chun-jie.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <wenst@chromium.org>
+Subject: Re: [PATCH 1/8] clk: mediatek export mtk_clk_simple_probe and mtk_clk_simple_remove
+Date:   Tue, 24 May 2022 13:28:08 +0800
+Message-ID: <20220524052808.7073-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <9bb62269-986b-180e-ce5f-ac8cf7d667ff@collabora.com>
+References: <9bb62269-986b-180e-ce5f-ac8cf7d667ff@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220523092314.14252-3-quic_tdas@quicinc.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 23 May 2022 14:53:13 +0530, Taniya Das wrote:
-> Support external mclk to interface external MI2S clocks for SC7280.
-> 
-> Fixes: 57405b795504 ("dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280").
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+>> Export mtk_clk_simple_probe and mtk_clk_simple_remove because we need
+>> them for MediaTek tristate clk drivers.
+>> 
+>> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+>
+>Hello Miles,
+>
+>the changes in this patch are exactly the same as what I've pushed in my
+>MT6795 clocks series, so you should simply advertise a dependency on my
+>patch [6/7] for this series.
 
-Acked-by: Rob Herring <robh@kernel.org>
+hi Angelo,
+
+No problem, I will add this to the coverletter and drop patch 1/8 in v2.
+
+cheers,
+Miles
+>
+>https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
+>
+>Regards,
+>Angelo
+>
