@@ -2,180 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB6A4C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 23 May 2022 23:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423FEC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 24 May 2022 02:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230158AbiEWXnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 May 2022 19:43:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
+        id S233128AbiEXCGz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 May 2022 22:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbiEWXnO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 19:43:14 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE56880F4
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 16:43:13 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id m13so7728371qtx.0
-        for <linux-clk@vger.kernel.org>; Mon, 23 May 2022 16:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vo71c+n/wCWfUYChsCch/TOZTAc6RqS7hic8WUvcoIw=;
-        b=b1HZCTlc0FaASasHRCD5Y4kmWzTiLs2LaQl7/CXAt9GX3aDYUTR+mEWyBmw6QyDjt0
-         kqoqMhMB7Pb3sbK/HKSgcZG0lKxupwMeKXRmTekoG+0tSkivdjQZ4FQVz23bKT9fKurd
-         gFH178OzpkErKGL+s0tqPjvX6Q/YMAxaQ0BoEB5n8E3Z34ZOQsdTCMGjsAQxXESXvteq
-         vNVOIS9eoKRtkaVRQ4oz4jZMWxwJHYLdIuxnM3g2JKYoP8Yr+Gx2yzwrrrYIOiQe99ET
-         7UXJKrS42Tnbe12+4yhg0jflTmXsJbahMHsA1CgFxMKNVA/2xzXV1sWrEPEVqWdPse5m
-         iRVQ==
+        with ESMTP id S233144AbiEXCGy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 May 2022 22:06:54 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA9706D3AB;
+        Mon, 23 May 2022 19:06:52 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id i66so19891385oia.11;
+        Mon, 23 May 2022 19:06:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vo71c+n/wCWfUYChsCch/TOZTAc6RqS7hic8WUvcoIw=;
-        b=MDT/rV9isvRVjrCLsgBdWdTQetbOaX8yd2J0SGrr8gGd5HB66ufHKZwYsXS6wnItQ4
-         uaLo/J3PNMi9RC/lBSKOWVPobJQT7BNRKsGa/W7Bwspz/y8VCn9T+XvBZ7m7ElRmxM9b
-         uy7zFDOmWE4g3A34rywmK0s+mlFOta+it79xzFjo3YDNi+I/fRo1NoTwd+kvCQrRJOHi
-         FNDCoGbXfexcooRiaGAaAjyPMv8m30n7mpItccmyhDM3VwqGWOIhgEtbrgATK6LYoHsY
-         fJBJtw5lHe6tNYzMij909DUOJJoPdcEWrFOhlN5Mw/vvT0z/MhKZRF+KuITvq56OiHrd
-         oIiA==
-X-Gm-Message-State: AOAM531AJuOrH5n4gUww0GXMnyZUm4wf9q6vTPp05cDhWePmyqud6css
-        IsRw2ZmSV26PQTRT6zxvk+lPXMvqo0/QVMKOG5d+Lw==
-X-Google-Smtp-Source: ABdhPJzUW9RhiGAZVdELoGYpBS6ZpU1N20WruTBeXfIZLJ+KEXjedEvFNxLgd/OJk3jzcNbkBvu6dH9ebgySiUvx914=
-X-Received: by 2002:ac8:5e54:0:b0:2f3:f4ee:efbd with SMTP id
- i20-20020ac85e54000000b002f3f4eeefbdmr17894617qtx.295.1653349392378; Mon, 23
- May 2022 16:43:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Q2EDROOSrbqPNpsPn0fwyesh9TCqxhLM25BxpcKmgGQ=;
+        b=x1h6oPwcf2KA3pe9aUK/WXrB9ZetDTdIAlUt41ya9tHKCNjfALs7MLcGi0Us91uCwB
+         ZON7f564fALFtOUnf7A8eqxFFfKKrU5e/FMC6P/26LNHthA6KsdKWyuNaKXPjvZn38HH
+         lXqR8yYFDeBIwEJ8TQ82yvbUne4zdxGhuGkgXhzKfg6KXs3V0BKVZTwzCnVS3bMMnbQu
+         9xSfgYQvC+5/DQtD0I3IMExHpDtNc4HTUFnoRATebqTwcHTiHL+WK+zfi7JaEfXgF99O
+         XmrDcxpJ5iZKzYkVnvWrJtPrXSd9FOI7Ea775EJoTFKwoaAZfbdnOHp2npXVyspEiXX/
+         4aFA==
+X-Gm-Message-State: AOAM5312Y9pEncKCnH3PWKtbJ6SwEkUsKrJXpjiItM75LK05y9kbtyi4
+        DuQxw28n2IMx8BJ+WmSm1A==
+X-Google-Smtp-Source: ABdhPJy7VbkC9VvK40Cbz/x+9ObPFhVCPmQWe7VwrKRoxHQuCk6GKzWpIqLyO85vo/39KvA3WInvhA==
+X-Received: by 2002:a05:6808:2125:b0:32b:1ba0:8b05 with SMTP id r37-20020a056808212500b0032b1ba08b05mr1101250oiw.20.1653358012155;
+        Mon, 23 May 2022 19:06:52 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id u190-20020acaabc7000000b00325cda1ffb8sm4606078oie.55.2022.05.23.19.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 May 2022 19:06:51 -0700 (PDT)
+Received: (nullmailer pid 2607411 invoked by uid 1000);
+        Tue, 24 May 2022 02:06:50 -0000
+Date:   Mon, 23 May 2022 21:06:50 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <quic_tdas@quicinc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add resets for LPASS audio
+ clock controller for SC7280
+Message-ID: <20220524020650.GA2605976-robh@kernel.org>
+References: <20220523092314.14252-1-quic_tdas@quicinc.com>
+ <20220523092314.14252-2-quic_tdas@quicinc.com>
 MIME-Version: 1.0
-References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
-In-Reply-To: <20220523213837.1016542-1-marijn.suijten@somainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 24 May 2022 02:43:01 +0300
-Message-ID: <CAA8EJprEjOWRh98V3sprjXZJZMeR25Bz1U3a_uX_KhRbU48srQ@mail.gmail.com>
-Subject: Re: [PATCH 0/9] drm/msm/dsi_phy: Replace parent names with clk_hw pointers
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rajeev Nandan <quic_rajeevny@quicinc.com>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220523092314.14252-2-quic_tdas@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Mon, May 23, 2022 at 02:53:12PM +0530, Taniya Das wrote:
+> Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
+> for SC7280. Update reg property min/max items in YAML schema.
+> 
+> Fixes: 57405b795504 ("dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280").
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  .../clock/qcom,sc7280-lpasscorecc.yaml        | 20 ++++++++++++++++---
+>  .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++++
+>  2 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> index bad9135489de..f066e8c57bbf 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> @@ -22,6 +22,8 @@ properties:
+> 
+>    clock-names: true
+> 
+> +  reg: true
+> +
+>    compatible:
+>      enum:
+>        - qcom,sc7280-lpassaoncc
+> @@ -38,8 +40,8 @@ properties:
+>    '#power-domain-cells':
+>      const: 1
+> 
+> -  reg:
+> -    maxItems: 1
+> +  '#reset-cells':
+> +    const: 1
+> 
+>  required:
+>    - compatible
+> @@ -69,6 +71,12 @@ allOf:
+>            items:
+>              - const: bi_tcxo
+>              - const: lpass_aon_cc_main_rcg_clk_src
+> +
+> +        reg:
+> +          maxItems: 2
 
-On Tue, 24 May 2022 at 00:38, Marijn Suijten
-<marijn.suijten@somainline.org> wrote:
->
-> As stated in [1] I promised to tackle and send this series.
->
-> parent_hw pointers are easier to manage and cheaper to use than
-> repeatedly formatting the parent name and subsequently leaving the clk
-> framework to perform lookups based on that name.
->
-> This series starts out by adding extra constructors for divider, mux and
-> fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
-> of some DT index or name.  Followed by individual patches performing the
-> conversion, one DSI PHY at a time.
->
-> dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
-> devm_kzalloc allocations (for the lifetime of the device) with
-> stack-local char arrays, like all the other DSI PHY drivers.
->
-> I couldn't help but notice that clock names are wildly varying:
->
-> - Some use underscores in the _clk suffix where others have nothing;
-> - Some have an _ after the %d, others have not;
-> - Some use a _pll suffix after dsi%d or even _phy_pll suffix.
->
-> Are there any thoughts or feelings towards unifying these?
-> Theoretically no clock names are used anywhere in the kernel, and
-> everything is based on a phandle + index in DT (I have yet to validate
-> this).  Obviously no .name/.fw_name will be updated to not break DT.
+Don't need maxItems. 2 is implied from 'items' length.
 
-I'd say, leave them as is. Even if they are historical, we don't have
-a strong pressure to change them.
-
-Significant number of older platforms still use names to identify the
-clock. And moreover apq8096/msm8960 uses dsi1/dsi2 instead of
-dsi0/dsi1.
-
-Probably we should call the next cycle "The Cycle of clocks cleaning".
-I can volunteer to take care of 8960/8064/8016/8996, as at least I can
-test them. But if you wish, you (or anybody else of course) can take
-any of these platforms too, just ping me, so that I won't spend time
-duplicating somebody's efforts.
-
-> Which, by the way, is there a particular reason for:
->
->   #define DSI_BYTE_PLL_CLK              0
->   #define DSI_PIXEL_PLL_CLK             1
->
-> To not be in the dt-bindings and used in the DT?
-
-Before my restructure of the DSI PHY subsys, each driver defined them
-separately. And the idea of moving them to a dt-bindings header didn't
-come to my mind. Feel free to do so, it looks like a good idea.
-Just as a note, DP PHY also uses 0 for the link clock and 1 for the
-pixel clock. What do you think about having a single header for these
-names?
-
->
-> And with enough future improvements out of the way, let's round out this
-> patch-series by stating that it has been successfully tested on:
->
-> - Sony Nile Discovery (Xperia XA2 Ultra): 14nm;
-> - Sony Seine PDX201 (Xperia 10II): 14nm;
-> - Sony Loire Suzu (Xperia X): 28nm.
->
-> And no diff is observed in debugfs's clk_summary.
->
-> Unfortunately all other devices in my collection with a 7/10nm DSI PHY
-> have a DSC panel which we have yet to get working.
-
-I will test it on RB3 (10nm) and RB5 (7nm) during one of the next few days.
-
->
-> [1]: https://lore.kernel.org/linux-arm-msm/20220502214235.s5plebunh4ttjhge@SoMainline.org/
->
-> Marijn Suijten (9):
->   clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
->   clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
->   clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
->   drm/msm/dsi_phy_28nm: Replace parent names with clk_hw pointers
->   drm/msm/dsi_phy_28nm_8960: Replace parent names with clk_hw pointers
->   drm/msm/dsi_phy_28nm_8960: Use stack memory for temporary clock names
->   drm/msm/dsi_phy_14nm: Replace parent names with clk_hw pointers
->   drm/msm/dsi_phy_10nm: Replace parent names with clk_hw pointers
->   drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
->
->  drivers/clk/clk-fixed-factor.c                | 57 ++++++++++--
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 92 ++++++++-----------
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    | 36 ++++----
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 52 +++++------
->  .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   | 26 ++----
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 92 +++++++++----------
->  include/linux/clk-provider.h                  | 34 +++++++
->  7 files changed, 209 insertions(+), 180 deletions(-)
->
+> +          items:
+> +            - description: lpass core cc register
+> +            - description: lpass audio csr register
+>    - if:
+>        properties:
+>          compatible:
+> @@ -90,6 +98,8 @@ allOf:
+>              - const: bi_tcxo_ao
+>              - const: iface
+> 
+> +        reg:
+> +          maxItems: 1
+>    - if:
+>        properties:
+>          compatible:
+> @@ -108,6 +118,8 @@ allOf:
+>            items:
+>              - const: bi_tcxo
+> 
+> +        reg:
+> +          maxItems: 1
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/qcom,rpmh.h>
+> @@ -116,13 +128,15 @@ examples:
+>      #include <dt-bindings/clock/qcom,lpasscorecc-sc7280.h>
+>      lpass_audiocc: clock-controller@3300000 {
+>        compatible = "qcom,sc7280-lpassaudiocc";
+> -      reg = <0x3300000 0x30000>;
+> +      reg = <0x3300000 0x30000>,
+> +            <0x32a9000 0x1000>;
+>        clocks = <&rpmhcc RPMH_CXO_CLK>,
+>                 <&lpass_aon LPASS_AON_CC_MAIN_RCG_CLK_SRC>;
+>        clock-names = "bi_tcxo", "lpass_aon_cc_main_rcg_clk_src";
+>        power-domains = <&lpass_aon LPASS_AON_CC_LPASS_AUDIO_HM_GDSC>;
+>        #clock-cells = <1>;
+>        #power-domain-cells = <1>;
+> +      #reset-cells = <1>;
+>      };
+> 
+>    - |
+> diff --git a/include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h b/include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+> index 20ef2ea673f3..22dcd47d4513 100644
+> --- a/include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+> +++ b/include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+> @@ -24,6 +24,11 @@
+>  #define LPASS_AUDIO_CC_RX_MCLK_CLK			14
+>  #define LPASS_AUDIO_CC_RX_MCLK_CLK_SRC			15
+> 
+> +/* LPASS AUDIO CC CSR */
+> +#define LPASS_AUDIO_SWR_RX_CGCR				0
+> +#define LPASS_AUDIO_SWR_TX_CGCR				1
+> +#define LPASS_AUDIO_SWR_WSA_CGCR			2
+> +
+>  /* LPASS_AON_CC clocks */
+>  #define LPASS_AON_CC_PLL				0
+>  #define LPASS_AON_CC_PLL_OUT_EVEN			1
 > --
-> 2.36.1
-
-
-
--- 
-With best wishes
-Dmitry
+> 2.17.1
+> 
+> 
