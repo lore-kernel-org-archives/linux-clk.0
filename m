@@ -2,101 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2BCC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 01:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37E2C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 07:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233737AbiEYBp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 May 2022 21:45:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        id S244169AbiEYHKv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 May 2022 03:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbiEYBp5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 May 2022 21:45:57 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB26F57121;
-        Tue, 24 May 2022 18:45:55 -0700 (PDT)
-X-UUID: 6e0202bcfdb0488caeadcff564587789-20220525
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:a803b031-3b7c-4e37-974f-71e58a4947d6,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:45
-X-CID-INFO: VERSION:1.1.5,REQID:a803b031-3b7c-4e37-974f-71e58a4947d6,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:45
-X-CID-META: VersionHash:2a19b09,CLOUDID:7f2e5747-4fb1-496b-8f1d-39e733fed1ea,C
-        OID:22b6bf49322e,Recheck:0,SF:28|17|19|48,TC:nil,Content:-5,EDM:-3,IP:nil,
-        URL:1,File:nil,QS:0,BEC:nil
-X-UUID: 6e0202bcfdb0488caeadcff564587789-20220525
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1558149621; Wed, 25 May 2022 09:45:49 +0800
-Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 25 May 2022 09:45:48 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 25 May 2022 09:45:47 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.3 via Frontend Transport; Wed, 25 May 2022 09:45:48 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <lkp@intel.com>
-CC:     <angelogioacchino.delregno@collabora.com>,
-        <chun-jie.chen@mediatek.com>, <kbuild-all@lists.01.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <llvm@lists.linux.dev>,
-        <matthias.bgg@gmail.com>, <miles.chen@mediatek.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <wenst@chromium.org>
-Subject: Re: [PATCH v2 4/7] clk: mediatek: mt6779: use mtk_clk_simple_probe to simplify driver
-Date:   Wed, 25 May 2022 09:45:48 +0800
-Message-ID: <20220525014548.19749-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <202205242129.DezL7Tp0-lkp@intel.com>
-References: <202205242129.DezL7Tp0-lkp@intel.com>
+        with ESMTP id S243985AbiEYHKs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 03:10:48 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A294E9;
+        Wed, 25 May 2022 00:10:46 -0700 (PDT)
+Received: (Authenticated sender: herve.codina@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPA id 34E00100004;
+        Wed, 25 May 2022 07:10:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1653462644;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QaLA+/fmAKnmAH5cylenwfL37+xRZpiIvhjB9RDhW1A=;
+        b=oOXemAV0wkCHsRuDmqhLSoWnLjpKDaGFYjgsUgfAlEwN52eNVKz+yH1MQwFc1NIpvzciCS
+        Dk7cyXr6ys6CQ4kt6P8K07C6J6MKPYE3MIFPxIkQ7XsVou6hGtsl0H+bJHn/BkKGbvMd16
+        Bc8px1G3XZl0OBWvSMCOqG3ka63p3vHc1H6qjS3gIjiQxAAPcVJgklFatOZ5qivfrz6E8e
+        C9M3WzzXX4irTaihy2odB2tpTVwc8hFTFigeD8LydNBTxsRIAodY13N+qpVVOLrAPj4afd
+        zp98WVmRi/JKG/64b6wuA6nIet9PUiLswPteG/SRrAVRPf53Gs+0ma8gvzH3dQ==
+From:   Herve Codina <herve.codina@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>
+Subject: [PATCH v3 0/3] Microchip LAN966x USB device support
+Date:   Wed, 25 May 2022 09:10:33 +0200
+Message-Id: <20220525071036.223396-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> 
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/imx/clk-imxrt1050.o
-> ERROR: modpost: "vmf_insert_pfn" [drivers/gpu/drm/drm_shmem_helper.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_remove" [drivers/clk/mediatek/clk-mt6779-aud.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_probe" [drivers/clk/mediatek/clk-mt6779-aud.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_remove" [drivers/clk/mediatek/clk-mt6779-vdec.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_probe" [drivers/clk/mediatek/clk-mt6779-vdec.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_remove" [drivers/clk/mediatek/clk-mt6779-cam.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_probe" [drivers/clk/mediatek/clk-mt6779-cam.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_remove" [drivers/clk/mediatek/clk-mt6779-ipe.ko] undefined!
-> >> ERROR: modpost: "mtk_clk_simple_probe" [drivers/clk/mediatek/clk-mt6779-ipe.ko] undefined!
-> ERROR: modpost: "imx_clk_hw_pfd" [drivers/clk/imx/clk-imxrt1050.ko] undefined!
-> WARNING: modpost: suppressed 1 unresolved symbol warnings because there were too many)
+Hi,
 
-Thanks for the testing.
-This patch depends on another patch [1], so I will just ignore this report.
+This series add support for the USB device controller available on
+the Microchip LAN966x SOCs (LAN9662 and LAN9668).
 
-thanks,
-Miles
+Both SOCs have the same controller and this controller is also the
+same as the one present on the SAMAD3 SOC.
 
-[1] https://patchwork.kernel.org/project/linux-mediatek/patch/20220518111652.223727-7-angelogioacchino.delregno@collabora.com/
+Regards,
+Herve
 
-> 
-> Kconfig warnings: (for reference only)
->    WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER
->    Depends on HAS_IOMEM && DRM && MMU
->    Selected by
->    - DRM_SSD130X && HAS_IOMEM && DRM
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://01.org/lkp
+Changes v2:
+- Avoid wildcards in the DT compatible string
+- Rename the DT node
+
+Changes v3:
+- Add Krzysztof's 'Acked-by' on patch 2/3
+- Change node insertion point (sort nodes by base addresses) on patch 3/3
+
+Herve Codina (3):
+  clk: lan966x: Fix the lan966x clock gate register address
+  dt-bindings: usb: atmel: Add Microchip LAN9662 compatible string
+  ARM: dts: lan966x: Add UDPHS support
+
+ Documentation/devicetree/bindings/usb/atmel-usb.txt |  3 +++
+ arch/arm/boot/dts/lan966x.dtsi                      | 11 +++++++++++
+ drivers/clk/clk-lan966x.c                           |  2 +-
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+
+-- 
+2.35.3
 
