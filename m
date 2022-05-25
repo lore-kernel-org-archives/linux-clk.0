@@ -2,108 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A426C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 07:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D3DC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 08:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244302AbiEYHQh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 May 2022 03:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39362 "EHLO
+        id S231894AbiEYIBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 May 2022 04:01:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244251AbiEYHQf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 03:16:35 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD4AD5A
-        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 00:16:33 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id i1so17836200plg.7
-        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 00:16:33 -0700 (PDT)
+        with ESMTP id S230132AbiEYIBr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 04:01:47 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849F67CB6D
+        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 01:01:45 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id x65so12516945qke.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 01:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IHGVHIb5ANXtn4ibS4SthwwVSV0T3tFl9yqFg+S5efQ=;
-        b=F7XE3r+vWerFvL4IXruqMH7czf8srjKfekGeCkpCgYTKzlooHsqHwKG6eAQeSpbsTK
-         Uf4K2N3hxe7+X6UV9YGrWqY/EPVQam/GtrkmUTMCAfFQ4A4As7MZR7YjqKhfNnoje0Xk
-         r/F7NXGY1a3ldVn64RMKLKyjeIWlAlhJPFdyWNVWgtcN3df+zMeZtgIdr3PsUL4dnr/M
-         B7Q8i/PmDfv2ZC6myDdKv4BYbYWUEb4gQguW1APqZGGk/g7WKeVJwsa1dcTc3JmfTU+E
-         C22uFvNIgbbAOZVW34zTQerXzsyz0MrYdaxvC0wKHw40nkEawGuFDjK2DFeD94FuEGSk
-         a1sQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=5llnQ0HkqBxFbZt5az1NecvFrmyi/1RVbD73twHaCqM=;
+        b=zZwgi2desRjXdWtXNwoEvX6wsB2Qhsj85lZVg/nLI8ghYM7OjRBlJ9Pi4V/DxPJ1Bb
+         WZX+2l4VDbos162+9LTh3lTgITVULB14ootMx8ZWnHPxrGJl2hSY1UiFq7OVYQweoBuf
+         qLOsguArxFrn6puv/z2Fc8rEjxR89d2kRFl2uwfq2nLOr2Q9fmjIB22aheH10RuXhgoY
+         6WODq69uvHhKl7jHwDQ+87jmzfLIflNyEp6/gCudMQhdFsI2Gj2Ztk6y9qG+CLJgxYb0
+         QOn/cB9uBnLShJowJr7E7LNRBNZ1wicPBHkaF0wf+jwMbmIYLpWF6Kaw2b0mBrZXddfy
+         pgLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IHGVHIb5ANXtn4ibS4SthwwVSV0T3tFl9yqFg+S5efQ=;
-        b=3UzT/dDwZS8z6Xagklymexk5vCuRTglrDu5EYPr36KKK8efbYwZwHzjSydTRVr4WGu
-         kuoQ2L/ebBA7cMqxgbny8s2Mz1cwrYYBotSxo4h6Ex/0m2gY9j+MWEsy/uwbR1UXDn74
-         G/eGnGn1dhjTGhkK6PU3vfqK/ovN1o0iLMyHLn7dSjhh+tQzWsbgXKr9RSVM26BMbFws
-         lutAnVqt8iask0XxzFUayp8VcMJjHtnvRRTyFQMHIslB/3qdNuaL7EBVSQQpa+oBILNd
-         33g3ZP89htx4+zgp7iY04NXrjZREtAzS/zSB2UT+C4gDxEeLUsCIVL/5znPLUoqYGqjn
-         hhQA==
-X-Gm-Message-State: AOAM532pqD14CLxDQ4nsRsih9aPUoKFgexvqxzbpKoqcmIu01quqvjlF
-        IeYfm+lGhlLUy6q13IJhXRa4fw==
-X-Google-Smtp-Source: ABdhPJwOAlJnUaVM2rZHBFQG+/801GI+S/nUYZG7yHAVTLpi/shQAbFkHxuT+ks8sbo1NIkSrnuLzg==
-X-Received: by 2002:a17:902:aa87:b0:162:39b5:3ba3 with SMTP id d7-20020a170902aa8700b0016239b53ba3mr8801134plr.158.1653462993113;
-        Wed, 25 May 2022 00:16:33 -0700 (PDT)
-Received: from localhost ([122.162.234.2])
-        by smtp.gmail.com with ESMTPSA id r9-20020a170903020900b0015e8d4eb276sm8454954plh.192.2022.05.25.00.16.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 May 2022 00:16:32 -0700 (PDT)
-Date:   Wed, 25 May 2022 12:46:30 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v3 4/7] arm64: dts: qcom: sdm845: control RPMHPD
- performance states with UFS
-Message-ID: <20220525071630.irrz24rs73l3ke4o@vireshk-i7>
-References: <20220513061347.46480-1-krzysztof.kozlowski@linaro.org>
- <20220513061347.46480-5-krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=5llnQ0HkqBxFbZt5az1NecvFrmyi/1RVbD73twHaCqM=;
+        b=SuXQmqnbWPwv1U1SIIxGkZncXfgkG9y6l6ayHGe2Dl0gw/JdT4shXmpx3w1OmqOCpk
+         16t1RRQdJNCfBGnZj8qTqO4e6s5iPPf/v48EKkStYJD+ZIcu6sXa7PfZ2QV1yzSsP0KH
+         X+j26KSGS57HovQVySfy+9Knjns1o+9vkNnfYeEoheFT1RP/ZurWDkrcdvvdP0MfWfkr
+         cq8L6ZVty9tM4nxluyczKM3JwK4wkYzHACEwEekcjmuaYN/t/jy+SQ7L3/W/Fp1XUv11
+         ygwgdOYhDcrxXDAadUou/vvheQvxoPX769ZI130PkFTdvEWKDX4pK40xJljV3eZjbzgK
+         vkWw==
+X-Gm-Message-State: AOAM532xMc02YguNLSE63OyaKffUh+7B/1r8RkIVVlHE5yXt4cixt0Hz
+        5aNS8/4PIwIrJcsjrotqaWVIBHxM1Wq+oQIOe1a/lQ==
+X-Google-Smtp-Source: ABdhPJyLzdihFq5P1mvTRP2MzB7lIfIvefw77o57mf6LyputxZqyr2pOmunz6FAsXzFu9/HvX3f2WImcrWg1neFlU9Y=
+X-Received: by 2002:a05:620a:414e:b0:6a5:8dec:57bb with SMTP id
+ k14-20020a05620a414e00b006a58dec57bbmr1765575qko.30.1653465704537; Wed, 25
+ May 2022 01:01:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220513061347.46480-5-krzysztof.kozlowski@linaro.org>
+References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
+ <CAA8EJprEjOWRh98V3sprjXZJZMeR25Bz1U3a_uX_KhRbU48srQ@mail.gmail.com> <20220524220312.jrdkolu7eoxtcyju@SoMainline.org>
+In-Reply-To: <20220524220312.jrdkolu7eoxtcyju@SoMainline.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 25 May 2022 11:01:33 +0300
+Message-ID: <CAA8EJpofvyxH22qWs5HLqG-EkKkecbFySXd36YDmK8cdeNaGUg@mail.gmail.com>
+Subject: Re: [PATCH 0/9] drm/msm/dsi_phy: Replace parent names with clk_hw pointers
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13-05-22, 08:13, Krzysztof Kozlowski wrote:
-> +			ufs_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-50000000 {
-> +					opp-hz = /bits/ 64 <50000000
-> +						 0
-> +						 0
-> +						 37500000
-> +						 0
-> +						 0
-> +						 0
-> +						 0
-> +						 // FIXME: value 0 copied from freq-table-hz
-> +						 0>;
+On Wed, 25 May 2022 at 01:03, Marijn Suijten
+<marijn.suijten@somainline.org> wrote:
+>
+> On 2022-05-24 02:43:01, Dmitry Baryshkov wrote:
+> > Hi,
+> >
+> > On Tue, 24 May 2022 at 00:38, Marijn Suijten
+> > <marijn.suijten@somainline.org> wrote:
+> > >
+> > > As stated in [1] I promised to tackle and send this series.
+> > >
+> > > parent_hw pointers are easier to manage and cheaper to use than
+> > > repeatedly formatting the parent name and subsequently leaving the clk
+> > > framework to perform lookups based on that name.
+> > >
+> > > This series starts out by adding extra constructors for divider, mux and
+> > > fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
+> > > of some DT index or name.  Followed by individual patches performing the
+> > > conversion, one DSI PHY at a time.
+> > >
+> > > dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
+> > > devm_kzalloc allocations (for the lifetime of the device) with
+> > > stack-local char arrays, like all the other DSI PHY drivers.
+> > >
+> > > I couldn't help but notice that clock names are wildly varying:
+> > >
+> > > - Some use underscores in the _clk suffix where others have nothing;
+> > > - Some have an _ after the %d, others have not;
+> > > - Some use a _pll suffix after dsi%d or even _phy_pll suffix.
+> > >
+> > > Are there any thoughts or feelings towards unifying these?
+> > > Theoretically no clock names are used anywhere in the kernel, and
+> > > everything is based on a phandle + index in DT (I have yet to validate
+> > > this).  Obviously no .name/.fw_name will be updated to not break DT.
+> >
+> > I'd say, leave them as is. Even if they are historical, we don't have
+> > a strong pressure to change them.
+>
+> Leave them as it is, or - as suggested below - clean them up?
 
-One general comment, I think this should follow how we specify
-multiple voltages or other fields and so each frequency should be part
-of a different < > braces. Like: opp-hz = /bits/ 64 <5000000>, <0>, ....
+Let's leave the names as is for now, convert all clock drivers to
+fetch clocks from DT and decide how to continue with clock names
+afterwards.
 
-Whatever is there between < > seems to be connected, like
-min/max/target for voltage.
+> > Significant number of older platforms still use names to identify the
+> > clock. And moreover apq8096/msm8960 uses dsi1/dsi2 instead of
+> > dsi0/dsi1.
+> >
+> > Probably we should call the next cycle "The Cycle of clocks cleaning".
+> > I can volunteer to take care of 8960/8064/8016/8996, as at least I can
+> > test them. But if you wish, you (or anybody else of course) can take
+> > any of these platforms too, just ping me, so that I won't spend time
+> > duplicating somebody's efforts.
+>
+> We can at least clean up the names of clocks that are not "exported" by
+> the drivers.  However, we should also convert all other clk drivers to
+> utilize DT to define clk dependencies instead of depending on global
+> names, and already got quite some platforms tackled.  At that point we
+> can just convert all names (give or take the often discussed "backwards
+> compatbility" between the kernel and some ancient DT someone may still
+> be running on their device).
+>
+> I don't own any device for the SoCs you mentioned, all good from my
+> side if you take them.  We should probably note down all clock drivers
+> that still need conversion and split them across devs with physical
+> access, then I can check what I still have lying around here as well.
 
-The code will process both in a similar way though eventually.
+Can you please make a google spreadsheet? Then anybody can take a look
+and volunteer (or check that the platform is being taken care of).
+I have 8064 (and thus I can cover 8960 too), 8016, 8096 on my desk and
+qcs404 and 8998 in the remote lab (but I can leave them to somebody
+else).
+
+> > > Which, by the way, is there a particular reason for:
+> > >
+> > >   #define DSI_BYTE_PLL_CLK              0
+> > >   #define DSI_PIXEL_PLL_CLK             1
+> > >
+> > > To not be in the dt-bindings and used in the DT?
+> >
+> > Before my restructure of the DSI PHY subsys, each driver defined them
+> > separately. And the idea of moving them to a dt-bindings header didn't
+> > come to my mind. Feel free to do so, it looks like a good idea.
+> > Just as a note, DP PHY also uses 0 for the link clock and 1 for the
+> > pixel clock. What do you think about having a single header for these
+> > names?
+>
+> No worries, it's already much better to have them defined once :), now
+> we can just go one step further and move it to dt-bindings.  Great to
+> clean up the "magic constant indices" for the DP PHY as well
+> (phy-qcom-qmp.c is the only one defining these clocks, right?)
+
+No, phy-qcom-edp.c also uses these magic numbers.
+
+> and I
+> think we're fine having them in one header, pending someone suggesting a
+> name as I have no idea what to call it nor where to put it.  Under
+> dt-bindings/clock most likely, but what common name would we choose?
+> Something including qcom and mdss?
+
+dt-bindings/phy/phy-qcom-dsi.h and dt-bindings/phy/phy-qcom-dp.h?
+
 
 -- 
-viresh
+With best wishes
+Dmitry
