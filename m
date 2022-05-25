@@ -2,183 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D3DC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 08:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F26FC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 08:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231894AbiEYIBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 May 2022 04:01:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
+        id S230473AbiEYISE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 May 2022 04:18:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230132AbiEYIBr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 04:01:47 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 849F67CB6D
-        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 01:01:45 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id x65so12516945qke.2
-        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 01:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=5llnQ0HkqBxFbZt5az1NecvFrmyi/1RVbD73twHaCqM=;
-        b=zZwgi2desRjXdWtXNwoEvX6wsB2Qhsj85lZVg/nLI8ghYM7OjRBlJ9Pi4V/DxPJ1Bb
-         WZX+2l4VDbos162+9LTh3lTgITVULB14ootMx8ZWnHPxrGJl2hSY1UiFq7OVYQweoBuf
-         qLOsguArxFrn6puv/z2Fc8rEjxR89d2kRFl2uwfq2nLOr2Q9fmjIB22aheH10RuXhgoY
-         6WODq69uvHhKl7jHwDQ+87jmzfLIflNyEp6/gCudMQhdFsI2Gj2Ztk6y9qG+CLJgxYb0
-         QOn/cB9uBnLShJowJr7E7LNRBNZ1wicPBHkaF0wf+jwMbmIYLpWF6Kaw2b0mBrZXddfy
-         pgLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=5llnQ0HkqBxFbZt5az1NecvFrmyi/1RVbD73twHaCqM=;
-        b=SuXQmqnbWPwv1U1SIIxGkZncXfgkG9y6l6ayHGe2Dl0gw/JdT4shXmpx3w1OmqOCpk
-         16t1RRQdJNCfBGnZj8qTqO4e6s5iPPf/v48EKkStYJD+ZIcu6sXa7PfZ2QV1yzSsP0KH
-         X+j26KSGS57HovQVySfy+9Knjns1o+9vkNnfYeEoheFT1RP/ZurWDkrcdvvdP0MfWfkr
-         cq8L6ZVty9tM4nxluyczKM3JwK4wkYzHACEwEekcjmuaYN/t/jy+SQ7L3/W/Fp1XUv11
-         ygwgdOYhDcrxXDAadUou/vvheQvxoPX769ZI130PkFTdvEWKDX4pK40xJljV3eZjbzgK
-         vkWw==
-X-Gm-Message-State: AOAM532xMc02YguNLSE63OyaKffUh+7B/1r8RkIVVlHE5yXt4cixt0Hz
-        5aNS8/4PIwIrJcsjrotqaWVIBHxM1Wq+oQIOe1a/lQ==
-X-Google-Smtp-Source: ABdhPJyLzdihFq5P1mvTRP2MzB7lIfIvefw77o57mf6LyputxZqyr2pOmunz6FAsXzFu9/HvX3f2WImcrWg1neFlU9Y=
-X-Received: by 2002:a05:620a:414e:b0:6a5:8dec:57bb with SMTP id
- k14-20020a05620a414e00b006a58dec57bbmr1765575qko.30.1653465704537; Wed, 25
- May 2022 01:01:44 -0700 (PDT)
+        with ESMTP id S229469AbiEYISD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 04:18:03 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABEF5F67
+        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 01:18:02 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ntmDN-0003yz-PR; Wed, 25 May 2022 10:17:57 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ntmDN-004QdI-JR; Wed, 25 May 2022 10:17:56 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ntmDL-00BzPy-Kv; Wed, 25 May 2022 10:17:55 +0200
+Date:   Wed, 25 May 2022 10:17:54 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2] clk: expand clk_ignore_unused mechanism to keep only
+ a few clks on
+Message-ID: <20220525081754.5uj5fpwloq4gdi6o@pengutronix.de>
+References: <20210819121403.337833-1-u.kleine-koenig@pengutronix.de>
+ <20210922081549.kit3lsek7lh6w6ji@pengutronix.de>
+ <20211014154307.eb3y3sh5lca4426t@pengutronix.de>
 MIME-Version: 1.0
-References: <20220523213837.1016542-1-marijn.suijten@somainline.org>
- <CAA8EJprEjOWRh98V3sprjXZJZMeR25Bz1U3a_uX_KhRbU48srQ@mail.gmail.com> <20220524220312.jrdkolu7eoxtcyju@SoMainline.org>
-In-Reply-To: <20220524220312.jrdkolu7eoxtcyju@SoMainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 25 May 2022 11:01:33 +0300
-Message-ID: <CAA8EJpofvyxH22qWs5HLqG-EkKkecbFySXd36YDmK8cdeNaGUg@mail.gmail.com>
-Subject: Re: [PATCH 0/9] drm/msm/dsi_phy: Replace parent names with clk_hw pointers
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rajeev Nandan <quic_rajeevny@quicinc.com>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n6ctod4vy3mwlh6p"
+Content-Disposition: inline
+In-Reply-To: <20211014154307.eb3y3sh5lca4426t@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 25 May 2022 at 01:03, Marijn Suijten
-<marijn.suijten@somainline.org> wrote:
->
-> On 2022-05-24 02:43:01, Dmitry Baryshkov wrote:
-> > Hi,
-> >
-> > On Tue, 24 May 2022 at 00:38, Marijn Suijten
-> > <marijn.suijten@somainline.org> wrote:
-> > >
-> > > As stated in [1] I promised to tackle and send this series.
-> > >
-> > > parent_hw pointers are easier to manage and cheaper to use than
-> > > repeatedly formatting the parent name and subsequently leaving the clk
-> > > framework to perform lookups based on that name.
-> > >
-> > > This series starts out by adding extra constructors for divider, mux and
-> > > fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
-> > > of some DT index or name.  Followed by individual patches performing the
-> > > conversion, one DSI PHY at a time.
-> > >
-> > > dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
-> > > devm_kzalloc allocations (for the lifetime of the device) with
-> > > stack-local char arrays, like all the other DSI PHY drivers.
-> > >
-> > > I couldn't help but notice that clock names are wildly varying:
-> > >
-> > > - Some use underscores in the _clk suffix where others have nothing;
-> > > - Some have an _ after the %d, others have not;
-> > > - Some use a _pll suffix after dsi%d or even _phy_pll suffix.
-> > >
-> > > Are there any thoughts or feelings towards unifying these?
-> > > Theoretically no clock names are used anywhere in the kernel, and
-> > > everything is based on a phandle + index in DT (I have yet to validate
-> > > this).  Obviously no .name/.fw_name will be updated to not break DT.
-> >
-> > I'd say, leave them as is. Even if they are historical, we don't have
-> > a strong pressure to change them.
->
-> Leave them as it is, or - as suggested below - clean them up?
 
-Let's leave the names as is for now, convert all clock drivers to
-fetch clocks from DT and decide how to continue with clock names
-afterwards.
+--n6ctod4vy3mwlh6p
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Significant number of older platforms still use names to identify the
-> > clock. And moreover apq8096/msm8960 uses dsi1/dsi2 instead of
-> > dsi0/dsi1.
-> >
-> > Probably we should call the next cycle "The Cycle of clocks cleaning".
-> > I can volunteer to take care of 8960/8064/8016/8996, as at least I can
-> > test them. But if you wish, you (or anybody else of course) can take
-> > any of these platforms too, just ping me, so that I won't spend time
-> > duplicating somebody's efforts.
->
-> We can at least clean up the names of clocks that are not "exported" by
-> the drivers.  However, we should also convert all other clk drivers to
-> utilize DT to define clk dependencies instead of depending on global
-> names, and already got quite some platforms tackled.  At that point we
-> can just convert all names (give or take the often discussed "backwards
-> compatbility" between the kernel and some ancient DT someone may still
-> be running on their device).
->
-> I don't own any device for the SoCs you mentioned, all good from my
-> side if you take them.  We should probably note down all clock drivers
-> that still need conversion and split them across devs with physical
-> access, then I can check what I still have lying around here as well.
+On Thu, Oct 14, 2021 at 05:43:07PM +0200, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> On Wed, Sep 22, 2021 at 10:15:49AM +0200, Uwe Kleine-K=F6nig wrote:
+> > On Thu, Aug 19, 2021 at 02:14:03PM +0200, Uwe Kleine-K=F6nig wrote:
+> > > Allow to pass an integer n that results in only keeping n unused cloc=
+ks
+> > > enabled.
+> > >=20
+> > > This helps to debug the problem if you only know that clk_ignore_unus=
+ed
+> > > helps but you have no clue yet which clock is the culprit.
+> > >=20
+> > > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> >=20
+> > I consider this patch really helpful, it helped me to debug a clk issue
+> > without having to recompile the kernel for each bisection step.
+> >=20
+> > On #kernelnewbies I got some positive feedback for it (1629304050 < j_e=
+y>
+> > ukleinek: nice clk_ignore_unused patch, I added a pr_err there recently
+> > to print the clocks that were being disabled).
+>=20
+> Any thoughts on this patch? Would be great if it makes it into the next
+> merge window.
 
-Can you please make a google spreadsheet? Then anybody can take a look
-and volunteer (or check that the platform is being taken care of).
-I have 8064 (and thus I can cover 8960 too), 8016, 8096 on my desk and
-qcs404 and 8998 in the remote lab (but I can leave them to somebody
-else).
+Back then I thought this patch could make it into 5.16, now 5.18 is
+released and i didn't get any feedback on this patch :-\
 
-> > > Which, by the way, is there a particular reason for:
-> > >
-> > >   #define DSI_BYTE_PLL_CLK              0
-> > >   #define DSI_PIXEL_PLL_CLK             1
-> > >
-> > > To not be in the dt-bindings and used in the DT?
-> >
-> > Before my restructure of the DSI PHY subsys, each driver defined them
-> > separately. And the idea of moving them to a dt-bindings header didn't
-> > come to my mind. Feel free to do so, it looks like a good idea.
-> > Just as a note, DP PHY also uses 0 for the link clock and 1 for the
-> > pixel clock. What do you think about having a single header for these
-> > names?
->
-> No worries, it's already much better to have them defined once :), now
-> we can just go one step further and move it to dt-bindings.  Great to
-> clean up the "magic constant indices" for the DP PHY as well
-> (phy-qcom-qmp.c is the only one defining these clocks, right?)
+Best regards
+Uwe
 
-No, phy-qcom-edp.c also uses these magic numbers.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-> and I
-> think we're fine having them in one header, pending someone suggesting a
-> name as I have no idea what to call it nor where to put it.  Under
-> dt-bindings/clock most likely, but what common name would we choose?
-> Something including qcom and mdss?
+--n6ctod4vy3mwlh6p
+Content-Type: application/pgp-signature; name="signature.asc"
 
-dt-bindings/phy/phy-qcom-dsi.h and dt-bindings/phy/phy-qcom-dp.h?
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKN5i8ACgkQwfwUeK3K
+7AljkQgAkPxmkCdzTrx38aQWmo1FA+3qUcUz8DlV8cCwaFxuSht+xuJfE0b7PSVQ
+7su58e+3KOCnsieaz49PnIK4+fa4PyW/If478cipJ043z7/u/GWz/ec1R1eDNl6u
+HWXlQlfRZX2v5QfDjwGkrSUsCLIVUw+m3vGBh1plrbzdMwselcj75J1xYx9fEUvU
+bpNEU3oAygvw6EzZFcNaCQugPrENtXtFCNgeezs86PCqwiIH7PbjGa/y/HXn4ZLe
+8X+Xm0QYTDG+JfVXjSf4Rssz9r5Xfo9pz3/f/dT1HSG33c9vG4sk9XgxfrK8yfE8
+uT8U678+a/zjYYMt6v++Lj3FwT10bg==
+=NN6A
+-----END PGP SIGNATURE-----
 
--- 
-With best wishes
-Dmitry
+--n6ctod4vy3mwlh6p--
