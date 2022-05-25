@@ -2,93 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CEBC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 07:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285FCC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 07:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235193AbiEYHLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 May 2022 03:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53442 "EHLO
+        id S244323AbiEYHL4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 May 2022 03:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244305AbiEYHLZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 03:11:25 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4678F5FBF;
-        Wed, 25 May 2022 00:11:01 -0700 (PDT)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPA id A7C45100012;
-        Wed, 25 May 2022 07:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1653462660;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+Vo9108VQlTnpt+qV7O1ggI75pFbssp26cf+E/xUTKg=;
-        b=FjUAn8+dQt/kDdFahEAzg/CHBhBfIL/FL7rOOula+OHBO7DDDk8309LvHN8Fh5weJ5ddR5
-        ey2lZnuEXRRUvZ/c67ZUu3PfY5kYNoyFpkJ7QE11867+xYBoip7bE9Fk7IBdsXNhKPlGL5
-        C6i5rlvg2sBiy3BUjbadAkbJf7s+JpHdQ6jCAVPG/P9vyVJHhdytawukN1UzHzrN1plRof
-        SrjFzcMSXEMSCPwLSlOzB4R3WdqQtcv9nS9Ia0+roEqXHjNa2p7v/GKf93uj12TcenZJYl
-        klfIyY5/6HDZhMYFvJvPjzC8diWBRUMG3O4xDod7eXUOu0Vn/4LwvLddH4vwEw==
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        with ESMTP id S244340AbiEYHLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 03:11:44 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D6762F9
+        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 00:05:55 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id ds11so18928133pjb.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 00:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GQOgQwVQ/waUJffCDtcivwSbqH5M+zW3KVOXOzVg+3I=;
+        b=hfxeN4TuHwZ+F26aVi1nDnyqqj9hzVXzKQLyUTyyseJ1iA2d76wNddPr+Rs8dRaw8U
+         6g2vsfECGDI/zklJP00Pvjz5teG9nmAJS5uNj3rHFuswYrxKgIoBmlWZoWXCgNjj86Nw
+         Vkffw8Z9LaoNwuAhLW48PfDj+fbdlnQyCDUcNUnhZPqLLqxucNyPXCbFCdNp7qMzjthM
+         mymx77ceQo5I2XfTuxYjsKmFpGcIReYXyG8UMB03cIeWtS+6g/6It1c3bKwQKOmb7bt/
+         dSvKqMiBn0YuUFNtMVFi8MhtNg134bEF2gpV9ILEW7JMJzgsd+aafYU9xoXS2GUdN3qU
+         /ARQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GQOgQwVQ/waUJffCDtcivwSbqH5M+zW3KVOXOzVg+3I=;
+        b=P5/RPZdebwyZ2HZx3pSiOXDrmAdP0MNCO6LBScWLwENup9D3O/k++EpOpq62ibAyz+
+         gLSEU+R1ZBpLsenZOL4kTpPPgouVUSrV9YYqreyGytw8SJSgnArhxB+hloZTbxn+Yyh5
+         A3Ncqvp/FEkPMpMP69+lN/nfXzuxofNYZEkAfrCTJXoqhiEI22PcE+X4bQ48B+TygtR7
+         F1w+sJLSVgQlwpAKQfMdOzs6kKHhbqBUCBhDhirMLq0YgylOofhQ4+ECb/QE0gE0CKgg
+         twcBz1YCu/xIBzFN/SwZ0L7+BiVo7JQBm3PVLJ7u3uwBURUkz03O82pLhnuwNEVMU6UV
+         sJGw==
+X-Gm-Message-State: AOAM5305rZJTOzu8RZ33TIXtPqNSMfQ1xbI1xXFgcBnuF/ZElGKoL5dB
+        orghUF0NM2+h2stVZJJDY91bUw==
+X-Google-Smtp-Source: ABdhPJxXwWFCbgZ5LyQsmogKN6LaNXPGnyZsOSm+FR1qUQynXNNGcC3+iJkueuoaM9Wz9sT5XQO9IQ==
+X-Received: by 2002:a17:902:cf05:b0:156:9d:ca01 with SMTP id i5-20020a170902cf0500b00156009dca01mr30978527plg.111.1653462354436;
+        Wed, 25 May 2022 00:05:54 -0700 (PDT)
+Received: from localhost ([122.162.234.2])
+        by smtp.gmail.com with ESMTPSA id b14-20020a170902650e00b001624f2b71b4sm2310001plk.152.2022.05.25.00.05.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 May 2022 00:05:53 -0700 (PDT)
+Date:   Wed, 25 May 2022 12:35:51 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH v3 3/3] ARM: dts: lan966x: Add UDPHS support
-Date:   Wed, 25 May 2022 09:10:36 +0200
-Message-Id: <20220525071036.223396-4-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20220525071036.223396-1-herve.codina@bootlin.com>
-References: <20220525071036.223396-1-herve.codina@bootlin.com>
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Message-ID: <20220525070551.guv3csxi5kkqfr4f@vireshk-i7>
+References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
+ <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
+ <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
+ <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
+ <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
+ <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
+ <20220511050643.hd5tcrojb3wkbg7t@vireshk-i7>
+ <20220518235708.1A04CC385A9@smtp.kernel.org>
+ <65a4c28d-6702-3a9f-f837-1ea69a428777@linaro.org>
+ <20220520005934.8AB1DC385AA@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220520005934.8AB1DC385AA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add UDPHS (the USB High Speed Device Port controller) support.
+On 19-05-22, 17:59, Stephen Boyd wrote:
+> This is a general problem with OPP. It is single clk frequency centric,
+> which works well for CPU/GPU devices that work with cpufreq/devfreq.
+> When it comes to other devices though we have to fit OPP into what those
+> devices want, which is something like gears for UFS, or "4k@60" (a
+> resolution) for display hardware.
+> 
+> Would adding string labels and/or using an index based API work better
+> for these devices? I think we'd want to extend OPP for display devices
+> to have whatever set of use-cases the device driver wants to handle with
+> string labels. That naturally follows how some SoC manufacturers setup
+> their OPP tables anyway. They may want to bump only the bus bandwidth
+> for different display resolutions while maxing out the clk frequency.
+> Then we could let drivers either construct a string at probe time to get
+> a handle to those OPP entries or index directly. The frequency APIs
+> would stick around for OPP tables that have frequencies and for drivers
+> that want to do cpufreq/devfreq stuff.
+> 
+> UFS may want to use an index based API that matches the gears per the
+> spec. I think it could do that with dev_pm_opp_find_level_exact(),
+> right?
 
-The both lan966x SOCs (LAN9662 and LAN9668) have the same UDPHS
-IP. This IP is also the same as the one present in the SAMA5D3
-SOC.
+I think we can use "level" for all these use cases to find the OPP, if
+it aligns well with the requirements of all these frameworks.
 
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- arch/arm/boot/dts/lan966x.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+FWIW, we already have three ways to find the OPP currently, via
+frequency, level and bandwidth.
 
-diff --git a/arch/arm/boot/dts/lan966x.dtsi b/arch/arm/boot/dts/lan966x.dtsi
-index 7d2869648050..e086df741f99 100644
---- a/arch/arm/boot/dts/lan966x.dtsi
-+++ b/arch/arm/boot/dts/lan966x.dtsi
-@@ -196,6 +196,17 @@ watchdog: watchdog@e0090000 {
- 			status = "disabled";
- 		};
- 
-+		udc: usb@e0808000 {
-+			compatible = "microchip,lan9662-udc",
-+				     "atmel,sama5d3-udc";
-+			reg = <0x00200000 0x80000>,
-+			      <0xe0808000 0x400>;
-+			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clks GCK_GATE_UDPHS>, <&nic_clk>;
-+			clock-names = "pclk", "hclk";
-+			status = "disabled";
-+		};
-+
- 		can0: can@e081c000 {
- 			compatible = "bosch,m_can";
- 			reg = <0xe081c000 0xfc>, <0x00100000 0x4000>;
+> Then the primary problem is the subject of this patch,
+> controlling multiple clks per OPP table. Could that be done by linking
+> one OPP table (for the gears) to an OPP table for each clk? Maybe
+> through 'required-opps'?
+
+Even in that case we will have an OPP table which will have multiple
+clocks. So it may not matter much which OPP table contains all the
+clocks.
+
 -- 
-2.35.3
-
+viresh
