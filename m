@@ -2,62 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3743C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 15:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B7AC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 25 May 2022 17:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245019AbiEYPMX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 May 2022 11:12:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
+        id S1343605AbiEYRy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 May 2022 13:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245065AbiEYPLu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 11:11:50 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2399AFAE6
-        for <linux-clk@vger.kernel.org>; Wed, 25 May 2022 08:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=IxNuk27AOBJI8YqPCZRwZ+KdvyF
-        sVujNqAFYumeASkc=; b=DHmofkLbcNshOGlzIeXSba5GKBiXzRFkSRHo2kbqnYE
-        0n5BSzM3rjpFQcyBNhILbFpPEO2hvmMOd7DXaTJrAFgQxpTEGYKbKbOCT5GYNKyA
-        rJF7J/UiZ5dZhtZDAz1XGH9JNvtH8WmSYMF2HchLtmRFCLTKAUkJIdWjwv1o84po
-        =
-Received: (qmail 1644403 invoked from network); 25 May 2022 17:11:37 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 May 2022 17:11:37 +0200
-X-UD-Smtp-Session: l3s3148p1@gZlMfdffvVVZD++C
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: r8a779f0: Add thermal clock
-Date:   Wed, 25 May 2022 17:11:30 +0200
-Message-Id: <20220525151130.24103-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S1343596AbiEYRy4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 13:54:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38627E0D2;
+        Wed, 25 May 2022 10:54:55 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BEBD8B81E9A;
+        Wed, 25 May 2022 17:54:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC9FC34113;
+        Wed, 25 May 2022 17:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653501292;
+        bh=Bxsx51A3dmaidPe4kzMODy2iXwDJWMqWkVu5YRnrJb0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=dBUSKX3HrKas7TAzQjjMqNQ8LMFDnGDOAUO4teJZSxa4r9UvZJLCG5fuyBx+/A6Iz
+         RR51L9WFxasClytEgEwHhgpWxmHilQqYUwOJx1rsXenZeTUsottvNQ+lgcY6qFu0lh
+         8TI1a6hNLk3h76BxfBzOyb64v8JPBXFSCtJRVPuxYzdZ8TdEn/UVMtUuV3zJ176sqw
+         jxH3cHOg4mJAZFhgTLQ2QdKOoWBOiu06bAqv0THovEeFaywdBdmk1MPsMzZHklcT4a
+         yoFR7euO1cvBCtz78wOdhAVGu5PBMkRBe+Mtiuitqkp4Qd0ZpJVLONz4xx/ySjuhCi
+         IteKaPyq7JO9g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220523092314.14252-4-quic_tdas@quicinc.com>
+References: <20220523092314.14252-1-quic_tdas@quicinc.com> <20220523092314.14252-4-quic_tdas@quicinc.com>
+Subject: Re: [PATCH v2 3/3] clk: qcom: lpass: Add support for resets & external mclk for SC7280
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Date:   Wed, 25 May 2022 10:54:50 -0700
+User-Agent: alot/0.10
+Message-Id: <20220525175452.5FC9FC34113@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Quoting Taniya Das (2022-05-23 02:23:14)
+> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lp=
+assaudiocc-sc7280.c
+> index 6ab6e5a34c72..536509b78341 100644
+> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] =3D=
+ {
+>         { .compatible =3D "qcom,sc7280-lpassaudiocc" },
+>         { }
+> @@ -741,6 +754,8 @@ static int lpass_audio_cc_sc7280_probe(struct platfor=
+m_device *pdev)
+>                 return ret;
+>         }
+>=20
+> +       ret =3D qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7=
+280_desc);
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index c17ebe6b5992..0aec5e8ffd96 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -132,6 +132,7 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
- 	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
-+	DEF_MOD("tsc",		919,	R8A779F0_CLK_CL16M),
- 	DEF_MOD("ufs",		1514,	R8A779F0_CLK_S0D4_HSC),
- };
- 
--- 
-2.35.1
+What if it fails? Shouldn't we pm_runtime_disable()?
 
+> +
+>         pm_runtime_mark_last_busy(&pdev->dev);
+>         pm_runtime_put_autosuspend(&pdev->dev);
+>         pm_runtime_put_sync(&pdev->dev);
