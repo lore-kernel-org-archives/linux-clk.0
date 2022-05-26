@@ -2,86 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C68C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 08:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79759C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 10:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234483AbiEZITp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 04:19:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
+        id S1347051AbiEZKUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 06:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236159AbiEZITo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 04:19:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35069663CF;
-        Thu, 26 May 2022 01:19:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BF503B81ECC;
-        Thu, 26 May 2022 08:19:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86389C34113;
-        Thu, 26 May 2022 08:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653553181;
-        bh=ZwmnwNW+ZrV5xS0G9MrfnlHCJv4ENLS1DbNYEam8XCA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WfPt3D4gVE1h+GVm1v4bJEp9wuNVMs0ZyCjHLc64auY5oiaNe91bvJfVNUWjnaOiD
-         UkwgZElwiDKvYuDbvq9OofQWBifUXIVrdVEFXEtlEP5oKwPT0kPiCCSohl6LT1PiaF
-         hXoaJpabB3LsPb5cLO2YB2stiL2Jvr9/CDHwUrHjwBrM8Dbaa6YyVkLEEW5m07/X5h
-         iuahFv1AJ1gREFWbC5vImGxJ+K89s8E8BA2fSpySjwJoDS7coW4Rj0uS2DweSNdLJm
-         X/fhYEJwUsSYfnqR1UTcUwBttaKeaXu1rTjl1k1iZbooZyfzXlAQAAfV6WnD83En6i
-         1U9tA+HpQuyMQ==
-Received: by mail-ot1-f54.google.com with SMTP id l9-20020a056830268900b006054381dd35so541543otu.4;
-        Thu, 26 May 2022 01:19:41 -0700 (PDT)
-X-Gm-Message-State: AOAM532nlEzsKyqj+SKb4RWe9htu5V7SNay+8NwUTLr/X/WRV7UdsoQa
-        lYjkFqtF7TkaWWNhGh+v2cMU5x+VslQwFQ+WlgQ=
-X-Google-Smtp-Source: ABdhPJwipZoDhxiRgs7RvsnsCdYNuTKKPK79u0HoDv3k4BrOqK8zoM6DbxncwB/UumoYM2QbhOuqNgWY6T7SxtVhhAM=
-X-Received: by 2002:a05:6830:9c2:b0:606:1e0a:cc8d with SMTP id
- y2-20020a05683009c200b006061e0acc8dmr14017603ott.265.1653553180686; Thu, 26
- May 2022 01:19:40 -0700 (PDT)
+        with ESMTP id S1344467AbiEZKUB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 06:20:01 -0400
+X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 May 2022 03:19:59 PDT
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80494CC154;
+        Thu, 26 May 2022 03:19:58 -0700 (PDT)
+Received: from localhost.localdomain (unknown [124.16.138.126])
+        by APP-05 (Coremail) with SMTP id zQCowAAnxxiBUo9iwleiCg--.21840S2;
+        Thu, 26 May 2022 18:12:18 +0800 (CST)
+From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
+To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, alim.akhtar@samsung.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski@linaro.org
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Subject: [PATCH] clk: samsung: Add check for platform_driver_register
+Date:   Thu, 26 May 2022 18:12:15 +0800
+Message-Id: <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
- <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
- <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
- <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
- <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
- <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
- <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
- <Yo8cLxktTytqAEV3@atomide.com>
-In-Reply-To: <Yo8cLxktTytqAEV3@atomide.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Thu, 26 May 2022 10:19:29 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
-Message-ID: <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowAAnxxiBUo9iwleiCg--.21840S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtw18uF43GF1rCr1xWw4xXrb_yoW8Jr4kpF
+        47GrWfZr1rtFW0ka12yFn8Za98u3W2gFy09ryxuw13Zwn8Cr9rC348Ga40y3ZrXw48XFyq
+        yr1UCa15uF45ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v2
+        6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+        UdHUDUUUUU=
+X-Originating-IP: [124.16.138.126]
+X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 26 May 2022 at 08:20, Tony Lindgren <tony@atomide.com> wrote:
->
-> * Yegor Yefremov <yegorslists@googlemail.com> [220526 05:45]:
-> > On Tue, May 24, 2022 at 4:19 PM Tony Lindgren <tony@atomide.com> wrote:
-> > > Maybe also try with CONFIG_MUSB_PIO_ONLY=y to see if it makes things
-> > > better or worse :)
-> >
-> > PIO is always the last resort :-) And now it proves it again. With
-> > PIO_ONLY the system doesn't stall.
->
-> OK great :) So it has something to do with drivers/dma/ti/cppi41.c, or
-> with drivers/usb/musb/cppi_dma.c or whatever the dma for am335x here
-> is. Or maybe there's something using stack for buffers being passed to
-> dma again that breaks with vmap stack.
->
+As platform_driver_register() could fail, it should be better
+to deal with the return value in order to maintain the code
+consisitency.
 
-In order to confirm this theory, could you please try rebuilding your
-kernel with CONFIG_VMAP_STACK disabled, and leave everything else as
-before?
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
+---
+ drivers/clk/samsung/clk-exynos5-subcmu.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
+index 65c82d922b05..8b090481a9dc 100644
+--- a/drivers/clk/samsung/clk-exynos5-subcmu.c
++++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
+@@ -188,8 +188,18 @@ static struct platform_driver exynos5_clk_driver __refdata = {
+ 
+ static int __init exynos5_clk_drv_init(void)
+ {
+-	platform_driver_register(&exynos5_clk_driver);
+-	platform_driver_register(&exynos5_subcmu_driver);
++	int ret;
++
++	ret = platform_driver_register(&exynos5_clk_driver);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&exynos5_subcmu_driver);
++	if (ret) {
++		platform_driver_unregister(&exynos5_clk_driver);
++		return ret;
++	}
++
+ 	return 0;
+ }
+ core_initcall(exynos5_clk_drv_init);
+-- 
+2.25.1
+
