@@ -2,184 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41754C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 04:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8212C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 05:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345320AbiEZE0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 00:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47974 "EHLO
+        id S1345679AbiEZFtR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 01:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239088AbiEZE0m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 00:26:42 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8337EE1D;
-        Wed, 25 May 2022 21:26:36 -0700 (PDT)
+        with ESMTP id S231845AbiEZFtQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 01:49:16 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BF08A325;
+        Wed, 25 May 2022 22:49:14 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-2ef5380669cso4729297b3.9;
+        Wed, 25 May 2022 22:49:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653539196; x=1685075196;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=Pe6Wi8DVqmHt8ekxuGJOkmaUnohWx9M/ugvxsS8fsas=;
-  b=sR2DjEuIp6Io9qFkeHs1zbedD0agkfxKFin1cZfaQJYYa45At8jW2MFb
-   V+3Hes0YfpMaY0AYiJb7o0VxNO2VE8WFXoxV4dxV7ipfHwrQll3uJXpDH
-   DIFwDJ3notLajymGwXiNB50fOmyjyeum/oSaAM26Mm/0WQCuTojXxMIuA
-   4=;
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 25 May 2022 21:26:36 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2022 21:26:35 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 25 May 2022 21:26:35 -0700
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 25 May 2022 21:26:31 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh@kernel.org>,
-        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH v3 3/3] clk: qcom: lpass: Add support for resets & external mclk for SC7280
-Date:   Thu, 26 May 2022 09:56:01 +0530
-Message-ID: <20220526042601.32064-4-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220526042601.32064-1-quic_tdas@quicinc.com>
-References: <20220526042601.32064-1-quic_tdas@quicinc.com>
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UoSj+yY+ppeYCV5P505hsxj98Wvu+XMJ/tJbseI22DQ=;
+        b=IidrXtJJfDYrIL9gE3q5IzQT56V/uhGjcp907lwHAW3Pnt2gkRDMs/D77C7ZC2YQmy
+         iT7TrNqZ/C2mTqqOendKqNM3Vj4/wvznAzSns1GjeIf80Fzkzx3v7nyPVfYE+Xq1fKxl
+         3DfFzmOyehwBhV+6IUP2eYJ8eLC3QXMyW/D5g3wRq5i2p18BMWBVIxb8KB/OjNqkfpv+
+         N+FV4YfgRRtJydXo0ukFCTC+QDZD7X7IEEsLpj1X0GeuHr5Bl2agzYRLWuoND9NkWFdx
+         +n3hrHEQZx7G1lctiCKQQRce7MYdbBod5rJIbrj4UbWJHWimXAzHK3e1EivoXOZQJ5FK
+         R+IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UoSj+yY+ppeYCV5P505hsxj98Wvu+XMJ/tJbseI22DQ=;
+        b=zkWdOswo4PcHfYF1dgwVa1gGS/2sz2CRB3JTRVFevmLQrprjoUt2jdiJspauaxAjtR
+         SZBkYbrE5sv2Hpv/Sjgp17QugJ8s3SISQdVILa9uDUTzcZLsvyk5n9+GCA4bDlnNAk0Z
+         btIes0iEG8/OUNjeTtqigbMgUjPXcHZMVtUw7noqxx4YSzw0o2hlUV8Ko8v6zi4j7pRI
+         KAfNwuquHkmuk2Xt4DBMPFkyaK9KCpKsuzpSlPFu1GuD6drFN7IQ9p/XBXo5XpR7fZNV
+         qbCxeXk1Sa8YY+end4tfSIgrtWHgOF/09m0SDtYwFMLiuMfaJ5X0OWxE44Xk3TVwJrJK
+         G/pw==
+X-Gm-Message-State: AOAM533j3dXByHYloaj20eg8G166Bnh1S4xRCt5aObOL9tXGwNKrLGkm
+        KOUHErQae62CB2Sb+p7MTxruDT1L9dBnE+Q7eHU=
+X-Google-Smtp-Source: ABdhPJwUx7/eiV7wQoB0RRAtjkrOB7Y/F7mIp3iuzy1MShtSwwvyYK+HF6ieZUWtrzTX10CvhK87e2ewJzl3Qksg7t0=
+X-Received: by 2002:a81:5593:0:b0:2ff:2663:ea7f with SMTP id
+ j141-20020a815593000000b002ff2663ea7fmr37716682ywb.224.1653544153943; Wed, 25
+ May 2022 22:49:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+References: <CAGm1_kvEcvzKBb2O7NEa1SDt8MuOQfnN8LQ+voNGUBDR8JpKSg@mail.gmail.com>
+ <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+ <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
+ <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+ <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com> <Yozpa3DlLLEzBR8W@atomide.com>
+In-Reply-To: <Yozpa3DlLLEzBR8W@atomide.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Thu, 26 May 2022 07:49:02 +0200
+Message-ID: <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock gating control for TX/RX/WSA core bus clocks would be required
-to be reset(moved from hardware control) from audio core driver. Thus
-add the support for the reset clocks.
+Hi Tony,
 
-Also add the external mclk to interface external MI2S.
+On Tue, May 24, 2022 at 4:19 PM Tony Lindgren <tony@atomide.com> wrote:
+>
+> * Yegor Yefremov <yegorslists@googlemail.com> [220524 13:34]:
+> > Hi Arnd,
+> >
+> > On Sat, May 21, 2022 at 9:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Thu, May 19, 2022 at 5:52 PM Yegor Yefremov
+> > > <yegorslists@googlemail.com> wrote:
+> > > > On Thu, May 12, 2022 at 12:20 PM Yegor Yefremov
+> > > > <yegorslists@googlemail.com> wrote:
+> > > > > On Thu, May 12, 2022 at 10:43 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > > >
+> > > > > > On Thu, May 12, 2022 at 7:41 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > > > > * Yegor Yefremov <yegorslists@googlemail.com> [220511 14:16]:
+> > > > > > > > On Thu, May 5, 2022 at 7:08 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > > > > > > * Yegor Yefremov <yegorslists@googlemail.com> [220504 10:35]:
+> > > > > > > > > > Hi Tony, all,
+> > > > > > > > > >
+> > > > > > > > > > since kernel 5.18.x (5.17.x doesn't show this behavior), the system
+> > > > > > > > > > stalls as soon as I invoke the following commands (initializing
+> > > > > > > > > > USB-to-CAN converter):
+> > > > > > > > > >
+> > > > > > > > > > slcand -o -s8 -t hw -S 3000000 /dev/ttyUSB0
+> > > > > > > > > > ip link set slcan0 up
+> > > > > >
+> > > > > > Oh, I missed this part at first and only looked at the backtrace.
+> > > > > > Which CAN driver
+> > > > > > are you using? It's likely a problem in the kernel driver.
+> > > > >
+> > > > > I am using the slcan driver [1].
+> > >
+> > > Ok, so this is just a serial port based driver, which means the
+> > > follow-up question
+> > > is what you use for your uart. Is this one of the USB-serial ones or an on-chip
+> > > uart? Which driver?
+> >
+> > This is the following chain: am335x -> musb-> ftdi_sio (FT-X flavor).
+> >
+> > I have also tried another system with two FT4232 chips (RS232 devices)
+> > and performed transmission tests. This had no effect, the system
+> > didn't stall.
+>
+> Maybe also try with CONFIG_MUSB_PIO_ONLY=y to see if it makes things
+> better or worse :)
 
-Fixes: 2b75e142523e ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280").
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 17 ++++++++++++-
- drivers/clk/qcom/lpasscorecc-sc7280.c  | 33 ++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 1 deletion(-)
+PIO is always the last resort :-) And now it proves it again. With
+PIO_ONLY the system doesn't stall.
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 6ab6e5a34c72..536509b78341 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -22,6 +22,7 @@
- #include "clk-regmap-mux.h"
- #include "common.h"
- #include "gdsc.h"
-+#include "reset.h"
+Regards,
+Yegor
 
- enum {
- 	P_BI_TCXO,
-@@ -221,7 +222,7 @@ static struct clk_rcg2 lpass_aon_cc_main_rcg_clk_src = {
- 		.parent_data = lpass_aon_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(lpass_aon_cc_parent_data_0),
- 		.flags = CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-
-@@ -665,6 +666,18 @@ static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
- 	.num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
- };
-
-+static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-+	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-+	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-+};
-+
-+static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-+	.config = &lpass_audio_cc_sc7280_regmap_config,
-+	.resets = lpass_audio_cc_sc7280_resets,
-+	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-+};
-+
- static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
- 	{ .compatible = "qcom,sc7280-lpassaudiocc" },
- 	{ }
-@@ -741,6 +754,8 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 		return ret;
- 	}
-
-+	ret = qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7280_desc);
-+
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 	pm_runtime_put_sync(&pdev->dev);
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
-index 1f1f1bd1b68e..6ad19b06b1ce 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
-@@ -190,6 +190,19 @@ static struct clk_rcg2 lpass_core_cc_ext_if1_clk_src = {
- 	},
- };
-
-+static struct clk_rcg2 lpass_core_cc_ext_mclk0_clk_src = {
-+	.cmd_rcgr = 0x20000,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = lpass_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_lpass_core_cc_ext_if0_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data){
-+		.name = "lpass_core_cc_ext_mclk0_clk_src",
-+		.parent_data = lpass_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(lpass_core_cc_parent_data_0),
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-
- static struct clk_branch lpass_core_cc_core_clk = {
- 	.halt_reg = 0x1f000,
-@@ -283,6 +296,24 @@ static struct clk_branch lpass_core_cc_lpm_mem0_core_clk = {
- 	},
- };
-
-+static struct clk_branch lpass_core_cc_ext_mclk0_clk = {
-+	.halt_reg = 0x20014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x20014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data){
-+			.name = "lpass_core_cc_ext_mclk0_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&lpass_core_cc_ext_mclk0_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch lpass_core_cc_sysnoc_mport_core_clk = {
- 	.halt_reg = 0x23000,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -326,6 +357,8 @@ static struct clk_regmap *lpass_core_cc_sc7280_clocks[] = {
- 	[LPASS_CORE_CC_LPM_CORE_CLK] = &lpass_core_cc_lpm_core_clk.clkr,
- 	[LPASS_CORE_CC_LPM_MEM0_CORE_CLK] = &lpass_core_cc_lpm_mem0_core_clk.clkr,
- 	[LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK] = &lpass_core_cc_sysnoc_mport_core_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK] = &lpass_core_cc_ext_mclk0_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK_SRC] = &lpass_core_cc_ext_mclk0_clk_src.clkr,
- };
-
- static struct regmap_config lpass_core_cc_sc7280_regmap_config = {
---
-2.17.1
-
+> > > > > > CONFIG_DMA_API_DEBUG is still likely to pinpoint the bug, but I might also
+> > > > > > just see it by looking at the right source file.
+> > > > >
+> > > > > I'll try to get more debug info with CONFIG_DMA_API_DEBUG.
+> > > >
+> > > > DMA_API_DEBUG showed nothing new. But disabling the CPUfreq driver
+> > > > "solved" the problem. I have tried different governors and got these
+> > > > two groups:
+> > > >
+> > > > ondemand, schedutil - cause the problem
+> > > > conservative, powersave, performance and userspace - don't cause the problem
+> > > >
+> > > > So far, I have only seen the same debug output that I've initially
+> > > > sent and in most cases, the system stalls without the output.
+> > >
+> > > Ok, so that sounds like it happens when you change the frequency.
+> > > I assume this means you are using drivers/cpufreq/omap-cpufreq.c?
+> >
+> > Yes.
+> >
+> > > When using the usersapce governor, do you see problems when you
+> > > manually change the frequency from sysfs?
+> >
+> > No, I can switch between 300MHz and 600MHz and perform CAN tests.
+> > Everything goes well.
+>
+> OK so not cpufreq related.
+>
+> Regards,
+>
+> Tony
