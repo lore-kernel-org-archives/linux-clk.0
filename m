@@ -2,113 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D7DC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 10:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD3DC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 11:36:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344875AbiEZK1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 06:27:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58082 "EHLO
+        id S232235AbiEZLgV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 07:36:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbiEZK1x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 06:27:53 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C9BC6E48
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 03:27:51 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id p8so1341303pfh.8
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 03:27:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oUe5qjHE746YsZEG88fvj0C8TBLZdImHAFuEEdYBkXw=;
-        b=Stw9e/v85gPO2N1vgvwURGj/CxdNR6Azaiv97JK6NQnC940NOP+Clev15pCSWT4xyT
-         3JzT+Y/NldWIOhGkH1iJqwkzCdGZULf3Jy1FLhuYQz6ZmBZhplHx+175DIwVM9mU1baw
-         LnVRP0b4ZQkGQjpGggN05t64QoKodEh7UMgifBA1ciK8hvfP/aYqxHkeHiUpIF64qYNs
-         uDrdr7Wu9tKkzkP8TShGWX+QWTLRZKGKq3tKCENZMoL9b6QfXXvSfDwk+EexkJFASX+V
-         laexhG2eygNOfgCYl+xvNJRcnpj7IqUSrx5mam9sPOeapbpMZQAi3yJELV9xFAjLOyG3
-         kEyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oUe5qjHE746YsZEG88fvj0C8TBLZdImHAFuEEdYBkXw=;
-        b=rXHh/b3vzQIp+MePh6KQlTZmcHjPwNraIiXyDH27i0+8oaEcm0TR3sX7v6vZhyAs/+
-         qvDkvm63hIK7GQs6X8J56o6nZrtyeDjg/AdDEOFrfKk3N1Hh3qQbgJZrXPd6EQrCOW8y
-         BHAetwSlmTkcQdyKLrFuvJl+kVd7PF/6aFsdlSmSK4gr6d0nBtPMpGIYmurA7H1KVwa5
-         OwdEC4c/lp8G1Ps+QiI9QstCHzTyCELeTRYEk7Uv1hjFe1P5IDRyzB/LViu2DugLhFYp
-         KPvHUnmttFHWpE95yeVN0/aRKxvuVXp9lTQQDEDtdGWUMWyHo5182uTOwHXoEj4KK7is
-         andQ==
-X-Gm-Message-State: AOAM5304BCYi39X1mH5RYCgWtLa8naWAoU7MLCT7S8QC7lSZCTD32ZGo
-        B2LR1a/79NgOzxQ1eYlmpeWsHg==
-X-Google-Smtp-Source: ABdhPJzk/4qznsz2eXu4MQ8+yKPx64W3doEbD81UmTDqITtBAoa74V+NV5H6kgRfZ3+aohJyYyt5sw==
-X-Received: by 2002:a63:488:0:b0:3f5:e6da:4619 with SMTP id 130-20020a630488000000b003f5e6da4619mr32218957pge.6.1653560871342;
-        Thu, 26 May 2022 03:27:51 -0700 (PDT)
-Received: from localhost ([122.162.234.2])
-        by smtp.gmail.com with ESMTPSA id k2-20020a170902f28200b0015e8d4eb1dcsm1134696plc.38.2022.05.26.03.27.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 May 2022 03:27:50 -0700 (PDT)
-Date:   Thu, 26 May 2022 15:57:49 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
-Message-ID: <20220526102749.5tj5ttr5wxwfdrhh@vireshk-i7>
-References: <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
- <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
- <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
- <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
- <20220511050643.hd5tcrojb3wkbg7t@vireshk-i7>
- <20220518235708.1A04CC385A9@smtp.kernel.org>
- <65a4c28d-6702-3a9f-f837-1ea69a428777@linaro.org>
- <20220520005934.8AB1DC385AA@smtp.kernel.org>
- <20220525070551.guv3csxi5kkqfr4f@vireshk-i7>
- <20220525160455.67E2BC385B8@smtp.kernel.org>
+        with ESMTP id S229549AbiEZLgT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 07:36:19 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD40140E6
+        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 04:36:18 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7DFDF21A4F;
+        Thu, 26 May 2022 11:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653564977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ns+wnQxEawLT8A3DMpgDcFnqs12/2ed0iZ+HVkNrC+s=;
+        b=Vmv09bpwfl2V0Ig6JR3GpHFJtPkgWEETJAerrUWxdf69c61IxjhW5cZCLRcv0Z7fA9MXJl
+        ZOQDEsrlagtqYP4eC7JfTyPvOgzI3AZekVoSR+43Fo0NNTzJCuWveQQaPR4sp0sHPleNhh
+        QS+0/Th/kA4hYUVV9PiBjezutqQuNW8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653564977;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ns+wnQxEawLT8A3DMpgDcFnqs12/2ed0iZ+HVkNrC+s=;
+        b=n4JRjLIPvsFBLa/o6Nma8SAgPLEsyPrUKr3rUUNcFxHtlrYScgeNrhtqGvxSJsCkjpZoAN
+        UIFm3anhw5lrNACQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 63E5013B05;
+        Thu, 26 May 2022 11:36:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id dWI6GDFmj2KpPwAAMHmgww
+        (envelope-from <iivanov@suse.de>); Thu, 26 May 2022 11:36:17 +0000
+Date:   Thu, 26 May 2022 14:36:16 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Guillaume GARDET <guillaume.gardet@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Message-ID: <20220526113616.aqpzj4ojseeropjz@suse>
+References: <20220428065743.94967-1-iivanov@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220525160455.67E2BC385B8@smtp.kernel.org>
+In-Reply-To: <20220428065743.94967-1-iivanov@suse.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25-05-22, 09:04, Stephen Boyd wrote:
-> I'm saying that each OPP table would be for a single clk, but they would
-> be connected through required-opps for the device's OPP table.
+On 04-28 09:57, Ivan T. Ivanov wrote:
+> Date: Thu, 28 Apr 2022 09:57:40 +0300
+> From: "Ivan T. Ivanov" <iivanov@suse.de>
+> To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+>  <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>
+> Cc: Maxime Ripard <maxime@cerno.tech>, Dave Stevenson
+>  <dave.stevenson@raspberrypi.com>, Guillaume GARDET
+>  <guillaume.gardet@arm.com>, bcm-kernel-feedback-list@broadcom.com,
+>  linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+>  linux-arm-kernel@lists.infradead.org, "Ivan T. Ivanov" <iivanov@suse.de>
+> Subject: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+> Message-Id: <20220428065743.94967-1-iivanov@suse.de>
+> 
+> Add missing clock required by RPiVid video decoder and provide more
+> reliable and accurate source for HDMI pixel and video encoder clocks.
+> 
 
-Ahh, okay.
+Hi Stephen, Michael. What is the plan for this series of patches?
 
-> It would
-> mean that dev_pm_opp_set_clkname() would need extension to let a driver
-> indicate which clk is associated with an OPP table.
+Regards,
+Ivan
 
-Hmm, just that it complicates simple cases. Lets see.
-
-> From your other
-> reply on v3 it seems that you're leaning towards having an array of
-> frequency values in the OPP table instead of doing table linking?
-
-I am not against that to be honest, we have done that for voltages and
-current already. I am just not fine with having any one of them as the
-primary clock. I liked your idea of reusing "level" for that.
-
-I have started some rewriting of the core, to simplify things and
-reduce the number of ever increasing APIs (which you suggested earlier
-once). Lets see where we land eventually.
-
--- 
-viresh
+> Changes since v3
+> - Put back support for VEC clock, which was actually one of
+>   reasons for this patch-set [1]. I mixed "HEVC" vs. "VEC", sorry.
+> 
+>   [1] https://bugzilla.suse.com/show_bug.cgi?id=1198942
+> 
+> Changes since v2
+> - Added Acks from Maxime Ripard and Dave Stevenson
+> 
+> Changes since v1
+> - Drop RPI_FIRMWARE_VEC_CLK_ID clock it doesn't seems to be used.
+> - Rework downstream changes on top of recent Maxime changes.
+> 
+> Dom Cobley (1):
+>   clk: bcm: rpi: Add support for VEC clock
+> 
+> Ivan T. Ivanov (2):
+>   clk: bcm: rpi: Add support HEVC clock
+>   clk: bcm: rpi: Handle pixel clock in firmware
+> 
+>  drivers/clk/bcm/clk-raspberrypi.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> -- 
+> 2.34.1
+> 
