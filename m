@@ -2,127 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B876C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 03:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8242BC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 04:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345108AbiEZD7J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 May 2022 23:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59324 "EHLO
+        id S234364AbiEZE0b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 00:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345080AbiEZD7I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 May 2022 23:59:08 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9E9C0384;
-        Wed, 25 May 2022 20:58:51 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id f9so831812ejc.0;
-        Wed, 25 May 2022 20:58:51 -0700 (PDT)
+        with ESMTP id S244256AbiEZE03 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 00:26:29 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 767F9E0FD;
+        Wed, 25 May 2022 21:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6vcz1woS/V8hYjYMNg45U+o+J4HSC2868vY4RO60vMw=;
-        b=epLA2b0suo+9uDpnG//IXikdMn+Wyxee36k2aA3Kht82S/NLozPxTbhueaH7NO0u29
-         a1b1JvkV4pBMjxaLe8sqmLApCvPmjEp0oU/2AMC1mGmmcjThxVGnXOCk/Lejs1lMcejf
-         ZhhrqKlBJwf0GdRxkrHmfvzL+JG/bSxzIx6/MoqYmGySrSt7mT8sAxtGh+OKTkqD2ice
-         4LcvKvb/azDJH5e8agOWhMT6C1bCUT0CUxt8Gg545XuRKpOMUFsnAUm+BDyHziwnQ0qF
-         2wOmY1W+DpEHcY2OdBu61OGRacNUqCzXMSbdMgSx0+V1NaCg3E9tFL4NVrVQssYS0XyA
-         o7uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6vcz1woS/V8hYjYMNg45U+o+J4HSC2868vY4RO60vMw=;
-        b=Rh2/j2ed5wixAw7g9dQSpWxZukPnklgJ+kUIEQxaP7cCG66Rat8S1cIunXN37FktR0
-         kwl0M8Fn5GpNqAwvwljSGKN4wLdue49tvZsY/Scl9NvARcq5SUtzcXrVl0z4ok1Cciqq
-         di9dnq0h4Y3ogaHrWXdAFZiP7Jcf89dAnF5lwxssrvYzMEqJsy/XN3szUiuR/yEICkzo
-         ZbSY2o8PgVUSSPxf2sWSiR7jalOs/V85oq8UoRhCf0wOmsBrz/tCi4Ep1qjDVI1Mtxvc
-         jnS4nRQO6+QhYy6s0w/7My7VozigeeY+Ze2/17US6JEV2ICdgh5GkQ44eGxsYvGbVZnU
-         JcyQ==
-X-Gm-Message-State: AOAM531uw97tmv+wbysr3jJGkW8GxRxbNkOWQ3k9J4DzxMC4zPF3GzUv
-        Gvd6DlHNBONfw2SXVDu+zgA=
-X-Google-Smtp-Source: ABdhPJwqI3vxE35oM5U/7pwVXuajutkWHh5MVFWEkVXgaatShLQx+FQFQRruVUOC49DhkNL5AelnSw==
-X-Received: by 2002:a17:907:a420:b0:6ff:2706:592e with SMTP id sg32-20020a170907a42000b006ff2706592emr495520ejc.192.1653537530244;
-        Wed, 25 May 2022 20:58:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:368f:2080:5d6e:322:57b6:5f03])
-        by smtp.googlemail.com with ESMTPSA id c13-20020a50d64d000000b0042617ba63cfsm206621edj.89.2022.05.25.20.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 May 2022 20:58:49 -0700 (PDT)
-From:   David Virag <virag.david003@gmail.com>
-Cc:     David Virag <virag.david003@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: exynos: Correct UART clocks on Exynos7885
-Date:   Thu, 26 May 2022 07:58:40 +0200
-Message-Id: <20220526055840.45209-3-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220526055840.45209-1-virag.david003@gmail.com>
-References: <20220526055840.45209-1-virag.david003@gmail.com>
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1653539186; x=1685075186;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=CjsrzBZBOst/LRnCBDG8tISmJlZxebSI7DvbXBiWbEM=;
+  b=xI3uSkzb0PJpvu1miqIe7SYnF8dgYrLwr+2+n/Bo5ZJXa7BCM24Ijp80
+   lxlx2Szxbz9Lz2SDd+OvRaKjBjKH0iCQLB6ixwEWeicJIHOCJm5GghFS6
+   DfHI+j1JLkpMZlTvlnlcFqTIqxk4oekOtoaHh8J4NdObVykWbQ/W+g49S
+   Q=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 25 May 2022 21:26:24 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2022 21:26:24 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 25 May 2022 21:26:22 -0700
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 25 May 2022 21:26:18 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>,
+        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v3 0/3] Add support for audio clock gating resets for SC7280
+Date:   Thu, 26 May 2022 09:55:58 +0530
+Message-ID: <20220526042601.32064-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clocks in the serial UART nodes were swapped by mistake on
-Exynos7885. This only worked correctly because of a mistake in the clock
-driver which has been fixed. With the fixed clock driver in place, the
-baudrate of the UARTs get miscalculated. Fix this by correcting the
-clocks in the dtsi.
+Add support for clock gating resets for lpass audio clock controller and
+also add support for external MCLKs for I2S.
 
-Fixes: 06874015327b ("arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC")
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos7885.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+[v3]
+  * Remove the maxItems from reg property.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-index 3170661f5b67..9c233c56558c 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
-@@ -280,8 +280,8 @@ serial_0: serial@13800000 {
- 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&uart0_bus>;
--			clocks = <&cmu_peri CLK_GOUT_UART0_EXT_UCLK>,
--				 <&cmu_peri CLK_GOUT_UART0_PCLK>;
-+			clocks = <&cmu_peri CLK_GOUT_UART0_PCLK>,
-+				 <&cmu_peri CLK_GOUT_UART0_EXT_UCLK>;
- 			clock-names = "uart", "clk_uart_baud0";
- 			samsung,uart-fifosize = <64>;
- 			status = "disabled";
-@@ -293,8 +293,8 @@ serial_1: serial@13810000 {
- 			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&uart1_bus>;
--			clocks = <&cmu_peri CLK_GOUT_UART1_EXT_UCLK>,
--				 <&cmu_peri CLK_GOUT_UART1_PCLK>;
-+			clocks = <&cmu_peri CLK_GOUT_UART1_PCLK>,
-+				 <&cmu_peri CLK_GOUT_UART1_EXT_UCLK>;
- 			clock-names = "uart", "clk_uart_baud0";
- 			samsung,uart-fifosize = <256>;
- 			status = "disabled";
-@@ -306,8 +306,8 @@ serial_2: serial@13820000 {
- 			interrupts = <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&uart2_bus>;
--			clocks = <&cmu_peri CLK_GOUT_UART2_EXT_UCLK>,
--				 <&cmu_peri CLK_GOUT_UART2_PCLK>;
-+			clocks = <&cmu_peri CLK_GOUT_UART2_PCLK>,
-+				 <&cmu_peri CLK_GOUT_UART2_EXT_UCLK>;
- 			clock-names = "uart", "clk_uart_baud0";
- 			samsung,uart-fifosize = <256>;
- 			status = "disabled";
--- 
-2.35.1
+[v2]
+  * Update/fix the YAML for reg property against each compatible.
+
+[v1]
+  * Add support for clock gating resets for lpass audio clock
+    controller & MCLKs.
+
+
+Taniya Das (3):
+  dt-bindings: clock: Add resets for LPASS audio clock controller for
+    SC7280
+  dt-bindings: clock: Add support for external MCLKs for LPASS on SC7280
+  clk: qcom: lpass: Add support for resets & external mclk for SC7280
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 19 +++++++++--
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 17 +++++++++-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         | 33 +++++++++++++++++++
+ .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++
+ .../clock/qcom,lpasscorecc-sc7280.h           |  2 ++
+ 5 files changed, 72 insertions(+), 4 deletions(-)
+
+--
+2.17.1
 
