@@ -2,99 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6F4C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 07:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C68C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 08:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233900AbiEZHVc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 03:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36712 "EHLO
+        id S234483AbiEZITp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 04:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236594AbiEZHVc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 03:21:32 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9B625C5B
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 00:21:30 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id wh22so1374181ejb.7
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 00:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=hc5WJxpCJDyVBDEvY69Dh9h8QnuVZ+60jKtLKAF2hwA=;
-        b=NY5j1qQZ3zuQBRuvXBwy3T9uIZGJL4d8Rkl/5QM6aWBuym9SQBTCtvDlmbVhzkohv4
-         i3tm4naS6sehS+t4500dvC7cVuqK7UroqrRb/nELHpJDgttNXVWjFIoAvmPUZ/kYkqh5
-         hqVh5AaM1CM82qmtM4mnF5w3iK88pPIhSPCn3DiSPR8bcnUbYMr1KgO2sEYQaB4TVdgq
-         yfnmb58z8XZblOHEMP7rPTBEQDXKUFl5Hoqa9b9Oo0g3FvVZI8n7UYID6jRhs2k+8IOw
-         RNOOapYsDOqm2Bz3eoG4dKMcZXTfvkTfYt8iSdbpXiiTlfahVFSdRnCclye7prVpIljX
-         GOTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=hc5WJxpCJDyVBDEvY69Dh9h8QnuVZ+60jKtLKAF2hwA=;
-        b=TpkKllNivfDMTynvU6m1dAMzi4iV0BRjaX/x0X6eHonkI1v9BsJ6JIqSDLSwFT1UR0
-         fz5hPqEz4fqF+EB/IawoB1qo2yxE1jY2n4rSgPHLerJzRM/2aUx5RwR12/oQbNCBmcK/
-         n9UUbQX5Oq+Vp9puyJ0J2yVsS64yFR822rCZWJtiduLtFnXxLgJR2tcgz72ocUScrTCc
-         aUWVVJ/dXJmJTP+B12f8EywYPx7n62m0q8hihC4PQ2qlhnj5aO2pzWiIH1kjGPPJUUMI
-         74+TgrTtiKF0A+VGQ3JU9OBQn/k9q7LHtYFzbMmH+OI3hUwRn4uON1NVVFmHU4E4lYZC
-         MLzg==
-X-Gm-Message-State: AOAM530ipD7X8UVYcZCTX8lh3uxQsX2kvynWMHLL7jv+1f+A2y3MzP3b
-        YMxvc//+AiRKqZjkYd19LG2w+g==
-X-Google-Smtp-Source: ABdhPJxzN00DjmF4ZI4mQycshnN5aJuXx97ZwlJCev/twfdd8ygK3/+eZU2fZQbnzmVyrh0uAy5D0A==
-X-Received: by 2002:a17:907:6d99:b0:6fe:c1c3:feea with SMTP id sb25-20020a1709076d9900b006fec1c3feeamr21831935ejc.89.1653549688973;
-        Thu, 26 May 2022 00:21:28 -0700 (PDT)
-Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id o19-20020a170906775300b006f3ef214e24sm243866ejn.138.2022.05.26.00.21.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 May 2022 00:21:28 -0700 (PDT)
-Message-ID: <2eda61c1-a076-3467-91bc-8c2e14f4f516@linaro.org>
-Date:   Thu, 26 May 2022 09:21:27 +0200
+        with ESMTP id S236159AbiEZITo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 04:19:44 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35069663CF;
+        Thu, 26 May 2022 01:19:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BF503B81ECC;
+        Thu, 26 May 2022 08:19:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86389C34113;
+        Thu, 26 May 2022 08:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653553181;
+        bh=ZwmnwNW+ZrV5xS0G9MrfnlHCJv4ENLS1DbNYEam8XCA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WfPt3D4gVE1h+GVm1v4bJEp9wuNVMs0ZyCjHLc64auY5oiaNe91bvJfVNUWjnaOiD
+         UkwgZElwiDKvYuDbvq9OofQWBifUXIVrdVEFXEtlEP5oKwPT0kPiCCSohl6LT1PiaF
+         hXoaJpabB3LsPb5cLO2YB2stiL2Jvr9/CDHwUrHjwBrM8Dbaa6YyVkLEEW5m07/X5h
+         iuahFv1AJ1gREFWbC5vImGxJ+K89s8E8BA2fSpySjwJoDS7coW4Rj0uS2DweSNdLJm
+         X/fhYEJwUsSYfnqR1UTcUwBttaKeaXu1rTjl1k1iZbooZyfzXlAQAAfV6WnD83En6i
+         1U9tA+HpQuyMQ==
+Received: by mail-ot1-f54.google.com with SMTP id l9-20020a056830268900b006054381dd35so541543otu.4;
+        Thu, 26 May 2022 01:19:41 -0700 (PDT)
+X-Gm-Message-State: AOAM532nlEzsKyqj+SKb4RWe9htu5V7SNay+8NwUTLr/X/WRV7UdsoQa
+        lYjkFqtF7TkaWWNhGh+v2cMU5x+VslQwFQ+WlgQ=
+X-Google-Smtp-Source: ABdhPJwipZoDhxiRgs7RvsnsCdYNuTKKPK79u0HoDv3k4BrOqK8zoM6DbxncwB/UumoYM2QbhOuqNgWY6T7SxtVhhAM=
+X-Received: by 2002:a05:6830:9c2:b0:606:1e0a:cc8d with SMTP id
+ y2-20020a05683009c200b006061e0acc8dmr14017603ott.265.1653553180686; Thu, 26
+ May 2022 01:19:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 1/2] clk: samsung: exynos7885: Correct "div4" clock
- parents
-Content-Language: en-US
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+ <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
+ <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+ <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com>
+In-Reply-To: <Yo8cLxktTytqAEV3@atomide.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 26 May 2022 10:19:29 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+Message-ID: <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220526055840.45209-1-virag.david003@gmail.com>
- <20220526055840.45209-2-virag.david003@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220526055840.45209-2-virag.david003@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/05/2022 07:58, David Virag wrote:
-> "div4" DIVs which divide PLLs by 4 are actually dividing "div2" DIVs by
-> 2 to achieve a by 4 division, thus their parents are the respective
-> "div2" DIVs. These DIVs were mistakenly set to have the PLLs as parents.
-> This leads to the kernel thinking "div4"s and everything under them run
-> at 2x the clock speed. Fix this.
-> 
-> Fixes: 45bd8166a1d8 ("clk: samsung: Add initial Exynos7885 clock driver")
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
->  drivers/clk/samsung/clk-exynos7885.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 26 May 2022 at 08:20, Tony Lindgren <tony@atomide.com> wrote:
+>
+> * Yegor Yefremov <yegorslists@googlemail.com> [220526 05:45]:
+> > On Tue, May 24, 2022 at 4:19 PM Tony Lindgren <tony@atomide.com> wrote:
+> > > Maybe also try with CONFIG_MUSB_PIO_ONLY=y to see if it makes things
+> > > better or worse :)
+> >
+> > PIO is always the last resort :-) And now it proves it again. With
+> > PIO_ONLY the system doesn't stall.
+>
+> OK great :) So it has something to do with drivers/dma/ti/cppi41.c, or
+> with drivers/usb/musb/cppi_dma.c or whatever the dma for am335x here
+> is. Or maybe there's something using stack for buffers being passed to
+> dma again that breaks with vmap stack.
+>
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+In order to confirm this theory, could you please try rebuilding your
+kernel with CONFIG_VMAP_STACK disabled, and leave everything else as
+before?
