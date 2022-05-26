@@ -2,117 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD3DC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 11:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D72C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 12:38:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232235AbiEZLgV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 07:36:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54862 "EHLO
+        id S239553AbiEZMiI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 08:38:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbiEZLgT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 07:36:19 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD40140E6
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 04:36:18 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7DFDF21A4F;
-        Thu, 26 May 2022 11:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1653564977; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ns+wnQxEawLT8A3DMpgDcFnqs12/2ed0iZ+HVkNrC+s=;
-        b=Vmv09bpwfl2V0Ig6JR3GpHFJtPkgWEETJAerrUWxdf69c61IxjhW5cZCLRcv0Z7fA9MXJl
-        ZOQDEsrlagtqYP4eC7JfTyPvOgzI3AZekVoSR+43Fo0NNTzJCuWveQQaPR4sp0sHPleNhh
-        QS+0/Th/kA4hYUVV9PiBjezutqQuNW8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1653564977;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ns+wnQxEawLT8A3DMpgDcFnqs12/2ed0iZ+HVkNrC+s=;
-        b=n4JRjLIPvsFBLa/o6Nma8SAgPLEsyPrUKr3rUUNcFxHtlrYScgeNrhtqGvxSJsCkjpZoAN
-        UIFm3anhw5lrNACQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 63E5013B05;
-        Thu, 26 May 2022 11:36:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id dWI6GDFmj2KpPwAAMHmgww
-        (envelope-from <iivanov@suse.de>); Thu, 26 May 2022 11:36:17 +0000
-Date:   Thu, 26 May 2022 14:36:16 +0300
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Guillaume GARDET <guillaume.gardet@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
-Message-ID: <20220526113616.aqpzj4ojseeropjz@suse>
-References: <20220428065743.94967-1-iivanov@suse.de>
+        with ESMTP id S233899AbiEZMiH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 08:38:07 -0400
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B2A15FCA;
+        Thu, 26 May 2022 05:38:06 -0700 (PDT)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-3003cb4e064so13792067b3.3;
+        Thu, 26 May 2022 05:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9IPhcmMGrDmqz68ElM8PH2pAWE1VUpwJtm/jAj5a35M=;
+        b=gGayeH81IsTayP7BQBCodWcrNR9zVdhxgKZiS6L3vdF9gzYopP1IVAAwYkTSt2/uud
+         xAp+yxbFQMWuBX+yPvfhQugfW3CiK+PWI0cbSeNNQUesHVvWJcofsRq/YwK4gs0wP3Pp
+         2NLd86vgfTu5pl5UZV4wWFy/lqOPG5WQd79rqgHvIDD0FLV/URcEPDQPnVXgU6y8VMhP
+         Z08TFMxlOjW9+p6fGWLk1te2Fr8VgGOU40eaM6YqX+omvzMqbRdadI4vO9cLCp6puwma
+         L9zdmA7jK4mUadL0BFq5IFoCmqNK2g455bCylcD5Z7SoxYOSDFitw91PkEqaSvZPC5DS
+         7wog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9IPhcmMGrDmqz68ElM8PH2pAWE1VUpwJtm/jAj5a35M=;
+        b=XEXBYEL9O8U4wHqXmQCoXUdy6lxWWfEMZ7Arj+tXIZTsLCdc06cyfrrGyaBYxqUN9d
+         1qSccZGTO9C0i7iVXsNIEF7GqFn7X+7cKyikZ5iHAsR7aZZVGYk95anWgkb0FxUj6qX2
+         ul6gMjLZIOoyRoK0JtS0lBMkQJEIry8jWB2//M4CgRJtYkxwORLAFsGvWZKtM/pEE4YA
+         VHa5DfdCV9uRc/If3RHNSEqWvmK4zF/MjuKkQX4gYdeb+UYDPXinh2Acm/IhADkfi/Ir
+         tyfvObnzv457fL0L66YH9U2sXgFoUinrzRz8tLx2g03c0JGgxfeDH0leFJlofcxhaW3M
+         hoBQ==
+X-Gm-Message-State: AOAM530tafVHvJSDEGgDpKIYBcFVfZYnkcqPQCwOetwMBn5vWj4UPepJ
+        tNmbdmMUjDkuZX+OED8XGU5OubEFPAQ0SKKhpi0=
+X-Google-Smtp-Source: ABdhPJyXiLkZovCl8sv28FDSct+tUa+OHbvd6/3Mq4sjU8gdVF0dJdI3TvdfiiModeAqOa+zx+K9pO2k7Ggpa4uKGNc=
+X-Received: by 2002:a81:488c:0:b0:302:549f:ffbc with SMTP id
+ v134-20020a81488c000000b00302549fffbcmr1991131ywa.495.1653568686083; Thu, 26
+ May 2022 05:38:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220428065743.94967-1-iivanov@suse.de>
+References: <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+ <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
+ <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+ <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+In-Reply-To: <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Thu, 26 May 2022 14:37:55 +0200
+Message-ID: <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>, Arnd Bergmann <arnd@arndb.de>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04-28 09:57, Ivan T. Ivanov wrote:
-> Date: Thu, 28 Apr 2022 09:57:40 +0300
-> From: "Ivan T. Ivanov" <iivanov@suse.de>
-> To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
->  <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>
-> Cc: Maxime Ripard <maxime@cerno.tech>, Dave Stevenson
->  <dave.stevenson@raspberrypi.com>, Guillaume GARDET
->  <guillaume.gardet@arm.com>, bcm-kernel-feedback-list@broadcom.com,
->  linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
->  linux-arm-kernel@lists.infradead.org, "Ivan T. Ivanov" <iivanov@suse.de>
-> Subject: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
-> Message-Id: <20220428065743.94967-1-iivanov@suse.de>
-> 
-> Add missing clock required by RPiVid video decoder and provide more
-> reliable and accurate source for HDMI pixel and video encoder clocks.
-> 
+Hi Ard,
 
-Hi Stephen, Michael. What is the plan for this series of patches?
+On Thu, May 26, 2022 at 10:19 AM Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Thu, 26 May 2022 at 08:20, Tony Lindgren <tony@atomide.com> wrote:
+> >
+> > * Yegor Yefremov <yegorslists@googlemail.com> [220526 05:45]:
+> > > On Tue, May 24, 2022 at 4:19 PM Tony Lindgren <tony@atomide.com> wrote:
+> > > > Maybe also try with CONFIG_MUSB_PIO_ONLY=y to see if it makes things
+> > > > better or worse :)
+> > >
+> > > PIO is always the last resort :-) And now it proves it again. With
+> > > PIO_ONLY the system doesn't stall.
+> >
+> > OK great :) So it has something to do with drivers/dma/ti/cppi41.c, or
+> > with drivers/usb/musb/cppi_dma.c or whatever the dma for am335x here
+> > is. Or maybe there's something using stack for buffers being passed to
+> > dma again that breaks with vmap stack.
+> >
+>
+> In order to confirm this theory, could you please try rebuilding your
+> kernel with CONFIG_VMAP_STACK disabled, and leave everything else as
+> before?
 
-Regards,
-Ivan
+I have disabled the CONFIG_VMAP_STACK option:
 
-> Changes since v3
-> - Put back support for VEC clock, which was actually one of
->   reasons for this patch-set [1]. I mixed "HEVC" vs. "VEC", sorry.
-> 
->   [1] https://bugzilla.suse.com/show_bug.cgi?id=1198942
-> 
-> Changes since v2
-> - Added Acks from Maxime Ripard and Dave Stevenson
-> 
-> Changes since v1
-> - Drop RPI_FIRMWARE_VEC_CLK_ID clock it doesn't seems to be used.
-> - Rework downstream changes on top of recent Maxime changes.
-> 
-> Dom Cobley (1):
->   clk: bcm: rpi: Add support for VEC clock
-> 
-> Ivan T. Ivanov (2):
->   clk: bcm: rpi: Add support HEVC clock
->   clk: bcm: rpi: Handle pixel clock in firmware
-> 
->  drivers/clk/bcm/clk-raspberrypi.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> -- 
-> 2.34.1
-> 
+# zcat /proc/config.gz | grep VMAP_STACK
+CONFIG_HAVE_ARCH_VMAP_STACK=y
+# CONFIG_VMAP_STACK is not set
+
+The system stalls.
