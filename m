@@ -2,94 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79759C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 10:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D7DC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 26 May 2022 10:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347051AbiEZKUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 06:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
+        id S1344875AbiEZK1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 May 2022 06:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344467AbiEZKUB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 06:20:01 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 May 2022 03:19:59 PDT
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 80494CC154;
-        Thu, 26 May 2022 03:19:58 -0700 (PDT)
-Received: from localhost.localdomain (unknown [124.16.138.126])
-        by APP-05 (Coremail) with SMTP id zQCowAAnxxiBUo9iwleiCg--.21840S2;
-        Thu, 26 May 2022 18:12:18 +0800 (CST)
-From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, alim.akhtar@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski@linaro.org
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH] clk: samsung: Add check for platform_driver_register
-Date:   Thu, 26 May 2022 18:12:15 +0800
-Message-Id: <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S230117AbiEZK1x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 06:27:53 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C9BC6E48
+        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 03:27:51 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id p8so1341303pfh.8
+        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 03:27:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=oUe5qjHE746YsZEG88fvj0C8TBLZdImHAFuEEdYBkXw=;
+        b=Stw9e/v85gPO2N1vgvwURGj/CxdNR6Azaiv97JK6NQnC940NOP+Clev15pCSWT4xyT
+         3JzT+Y/NldWIOhGkH1iJqwkzCdGZULf3Jy1FLhuYQz6ZmBZhplHx+175DIwVM9mU1baw
+         LnVRP0b4ZQkGQjpGggN05t64QoKodEh7UMgifBA1ciK8hvfP/aYqxHkeHiUpIF64qYNs
+         uDrdr7Wu9tKkzkP8TShGWX+QWTLRZKGKq3tKCENZMoL9b6QfXXvSfDwk+EexkJFASX+V
+         laexhG2eygNOfgCYl+xvNJRcnpj7IqUSrx5mam9sPOeapbpMZQAi3yJELV9xFAjLOyG3
+         kEyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=oUe5qjHE746YsZEG88fvj0C8TBLZdImHAFuEEdYBkXw=;
+        b=rXHh/b3vzQIp+MePh6KQlTZmcHjPwNraIiXyDH27i0+8oaEcm0TR3sX7v6vZhyAs/+
+         qvDkvm63hIK7GQs6X8J56o6nZrtyeDjg/AdDEOFrfKk3N1Hh3qQbgJZrXPd6EQrCOW8y
+         BHAetwSlmTkcQdyKLrFuvJl+kVd7PF/6aFsdlSmSK4gr6d0nBtPMpGIYmurA7H1KVwa5
+         OwdEC4c/lp8G1Ps+QiI9QstCHzTyCELeTRYEk7Uv1hjFe1P5IDRyzB/LViu2DugLhFYp
+         KPvHUnmttFHWpE95yeVN0/aRKxvuVXp9lTQQDEDtdGWUMWyHo5182uTOwHXoEj4KK7is
+         andQ==
+X-Gm-Message-State: AOAM5304BCYi39X1mH5RYCgWtLa8naWAoU7MLCT7S8QC7lSZCTD32ZGo
+        B2LR1a/79NgOzxQ1eYlmpeWsHg==
+X-Google-Smtp-Source: ABdhPJzk/4qznsz2eXu4MQ8+yKPx64W3doEbD81UmTDqITtBAoa74V+NV5H6kgRfZ3+aohJyYyt5sw==
+X-Received: by 2002:a63:488:0:b0:3f5:e6da:4619 with SMTP id 130-20020a630488000000b003f5e6da4619mr32218957pge.6.1653560871342;
+        Thu, 26 May 2022 03:27:51 -0700 (PDT)
+Received: from localhost ([122.162.234.2])
+        by smtp.gmail.com with ESMTPSA id k2-20020a170902f28200b0015e8d4eb1dcsm1134696plc.38.2022.05.26.03.27.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 May 2022 03:27:50 -0700 (PDT)
+Date:   Thu, 26 May 2022 15:57:49 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
+Message-ID: <20220526102749.5tj5ttr5wxwfdrhh@vireshk-i7>
+References: <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
+ <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
+ <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
+ <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
+ <20220511050643.hd5tcrojb3wkbg7t@vireshk-i7>
+ <20220518235708.1A04CC385A9@smtp.kernel.org>
+ <65a4c28d-6702-3a9f-f837-1ea69a428777@linaro.org>
+ <20220520005934.8AB1DC385AA@smtp.kernel.org>
+ <20220525070551.guv3csxi5kkqfr4f@vireshk-i7>
+ <20220525160455.67E2BC385B8@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAnxxiBUo9iwleiCg--.21840S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrtw18uF43GF1rCr1xWw4xXrb_yoW8Jr4kpF
-        47GrWfZr1rtFW0ka12yFn8Za98u3W2gFy09ryxuw13Zwn8Cr9rC348Ga40y3ZrXw48XFyq
-        yr1UCa15uF45ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-        AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v2
-        6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
-        UdHUDUUUUU=
-X-Originating-IP: [124.16.138.126]
-X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220525160455.67E2BC385B8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As platform_driver_register() could fail, it should be better
-to deal with the return value in order to maintain the code
-consisitency.
+On 25-05-22, 09:04, Stephen Boyd wrote:
+> I'm saying that each OPP table would be for a single clk, but they would
+> be connected through required-opps for the device's OPP table.
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
----
- drivers/clk/samsung/clk-exynos5-subcmu.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Ahh, okay.
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 65c82d922b05..8b090481a9dc 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -188,8 +188,18 @@ static struct platform_driver exynos5_clk_driver __refdata = {
- 
- static int __init exynos5_clk_drv_init(void)
- {
--	platform_driver_register(&exynos5_clk_driver);
--	platform_driver_register(&exynos5_subcmu_driver);
-+	int ret;
-+
-+	ret = platform_driver_register(&exynos5_clk_driver);
-+	if (ret)
-+		return ret;
-+
-+	ret = platform_driver_register(&exynos5_subcmu_driver);
-+	if (ret) {
-+		platform_driver_unregister(&exynos5_clk_driver);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- core_initcall(exynos5_clk_drv_init);
+> It would
+> mean that dev_pm_opp_set_clkname() would need extension to let a driver
+> indicate which clk is associated with an OPP table.
+
+Hmm, just that it complicates simple cases. Lets see.
+
+> From your other
+> reply on v3 it seems that you're leaning towards having an array of
+> frequency values in the OPP table instead of doing table linking?
+
+I am not against that to be honest, we have done that for voltages and
+current already. I am just not fine with having any one of them as the
+primary clock. I liked your idea of reusing "level" for that.
+
+I have started some rewriting of the core, to simplify things and
+reduce the number of ever increasing APIs (which you suggested earlier
+once). Lets see where we land eventually.
+
 -- 
-2.25.1
-
+viresh
