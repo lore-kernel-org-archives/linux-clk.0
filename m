@@ -2,163 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC09C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 09:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F04AC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 09:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350529AbiE0JMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 May 2022 05:12:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59002 "EHLO
+        id S1349440AbiE0Juz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 May 2022 05:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350537AbiE0JMS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2022 05:12:18 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5129E1356B9
-        for <linux-clk@vger.kernel.org>; Fri, 27 May 2022 02:09:30 -0700 (PDT)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220527090924epoutp02d0cae73bc6f9faf1a43288379abd74c7~y6yaW0HY-0903509035epoutp02Z
-        for <linux-clk@vger.kernel.org>; Fri, 27 May 2022 09:09:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220527090924epoutp02d0cae73bc6f9faf1a43288379abd74c7~y6yaW0HY-0903509035epoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653642564;
-        bh=l/TZsav0OszkbX764K4zWsorfxudmDeJ7M6HuzVL3oQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ZWvV7lxx5ycMxkg6WTBuXyGTYpHV6caaAlYYvgfzyQSV4KMOuglEi4nNIpgdgpK5F
-         o9zuA7dSuMc5CHbRvTVy9z6b7If6migeusOno2lYmn3Vv17owzIVCuo8/OFXaxPTsK
-         aSIuhn1R6PbO4HSnFPi4HrO5dh4m5JusTAf81hmQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20220527090923epcas1p3865e3f2c73ee29423a1146695c297c18~y6yZdWwVu2103421034epcas1p3J;
-        Fri, 27 May 2022 09:09:23 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.233]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4L8fBV0dSSz4x9Pw; Fri, 27 May
-        2022 09:09:22 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.A5.10354.14590926; Fri, 27 May 2022 18:09:22 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220527090921epcas1p483e785670e3458f9abc9d40bb2e33d84~y6yX5zC8E1883118831epcas1p4V;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220527090921epsmtrp1f0b324853bffd2b2bfd5e00e3d1835fb~y6yX4-KmN0585905859epsmtrp11;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-X-AuditID: b6c32a38-49fff70000002872-a9-62909541c29f
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.BC.11276.14590926; Fri, 27 May 2022 18:09:21 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220527090921epsmtip13ef99f09c9d58a1972b5028c4c5f3121~y6yXqTvqS0727307273epsmtip19;
-        Fri, 27 May 2022 09:09:21 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: Add check for platform_driver_register
-To:     Jiasheng Jiang <jiasheng@iscas.ac.cn>, s.nawrocki@samsung.com,
-        tomasz.figa@gmail.com, alim.akhtar@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        krzysztof.kozlowski@linaro.org
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <377a917b-96b1-14ff-ee57-f841e12c3b41@samsung.com>
-Date:   Fri, 27 May 2022 18:09:23 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        with ESMTP id S1350691AbiE0Juy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2022 05:50:54 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C6F106572;
+        Fri, 27 May 2022 02:50:52 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id v26so7104738ybd.2;
+        Fri, 27 May 2022 02:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TrHpRv64c+YoK1HzOlrj1Q63oDbBkz6zw8zaaBGCR1k=;
+        b=PZXsgFa+uHGoFqbkla1Fz2CNNzBPa1A2c8IO59HnUNeOUgZvG4ETvXJlXAkCKN+L/d
+         9Uda1N8PjUxI/Xe9KktOJvYvUMaW/QvYsuiAKSySxIFFNyoAQRYuaw15ronQp2rMecoY
+         IIXrDFwRPZWqF+r9TQEl3NgpTLL90Tj6eyWjMM8xI4bosHWiU37t7qv0NDc/HBZOOMMg
+         SLvzGHQn0Tb0DNpYVu0nL59cOQWypn+bgnsvk3U9tQV9ySY2WAW4uBcNUm8ono04qOk+
+         tBontVujuWGzexNUPEBDPg8W1zj6Oa6vpd4yZm5Of5d/G7gQSN6J07X3ctsD+kDZTeuC
+         3ZvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TrHpRv64c+YoK1HzOlrj1Q63oDbBkz6zw8zaaBGCR1k=;
+        b=jQdQEy9PZ8yEDqMFn576VKhGFiTMZ60zdanvcCk314wPiZhZQVMvo234JWnOW50XU/
+         mD+vw784WXKoyCNBDQHfZKi61iJaVddL8Tr91TGzXZ5DAyK2cjzUH300w3RWuXUBnXx+
+         H4pnaFJR9z4XdBSt8kH1tjNblaceqK8lAOcpAF5K2pF3YHMN9IaEpRWtC6EAn5XPDXE6
+         tYOIJ3f1ixjcDqh/9z4xuppkIO/HlOMQ0BX8KOuBWg1VMNGqVwHD9/l1yI3/H92CnBuS
+         DZI3WBJ4tHL+5fxQt94JWVOtRIKWHoQhrysmDPUBuaDv7JTC3sbpJtL3BQM/no1QTTb+
+         /RDA==
+X-Gm-Message-State: AOAM530gHg26rJb2zB8QgvzcVUmZAqzsfqAmPZG5R7KFKN/yW3+YImTV
+        oTrXFEUR7sbO2xcOKv5rQfEhSCRybeoOgvCwzEh1PTES
+X-Google-Smtp-Source: ABdhPJzqL9ND6IPUcs+accWbxqFltjmOUNQB478M6BZsPPyV0GWJU3nx5NkHM9RjxbvbR6/Vb4sHdJfj4nqnLAhQT3A=
+X-Received: by 2002:a25:1c84:0:b0:64f:6ecc:8fa7 with SMTP id
+ c126-20020a251c84000000b0064f6ecc8fa7mr32131205ybc.432.1653645051230; Fri, 27
+ May 2022 02:50:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmrq7T1AlJBv82MVo8mLeNzWLJ0aOM
-        Fntfb2W32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhaH37SzWvy7tpHFYtWuP4wO3B7vb7Sy
-        e+ycdZfdY9+OzYwem1Z1snncubaHzWPzknqPvi2rGD0+b5IL4IjKtslITUxJLVJIzUvOT8nM
-        S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBulNJoSwxpxQoFJBYXKykb2dTlF9a
-        kqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ3xa9ct1oIG7oqO054NjNM5
-        uxg5OSQETCRu7TzI3MXIxSEksINR4sKGS0wQzidGiSNn5rBBON8YJY4tmssM03K16ShUy15G
-        iQOdi6Ba3jNKvF15mLGLkYNDWMBTorM7CiQuInCAUeJB4zGwUcwCbYwST3euYAEZxSagJbH/
-        xQ02EJtfQFHi6o/HjCA2r4CdxMbrV9hBbBYBVYld5w6DxUUFwiRObmuBqhGUODnzCdgcTgEb
-        iX/7foCdxywgLnHryXwmCFteYvvbOWCnSghc4JD4cvAUE8QPLhIbD7xjhbCFJV4d38IOYUtJ
-        vOxvY4doaGaUaHhxmxHC6WGUOPqsjwWiylhi/9LJTCB/MgtoSqzfpQ8RVpTY+XsuI8RmPol3
-        X3tYQUokBHglOtqEIEqUJS4/uAt1g6TE4vZOtgmMSrOQ/DMLyQ+zkPwwC2HZAkaWVYxiqQXF
-        uempxYYFJvD4Ts7P3cQITsVaFjsY5779oHeIkYmD8RCjBAezkgjvhae9SUK8KYmVValF+fFF
-        pTmpxYcYTYEhPJFZSjQ5H5gN8kriDU0sDUzMjIxNLAzNDJXEeXunnk4UEkhPLEnNTk0tSC2C
-        6WPi4JRqYHJ4qVU9+duPctuFYsoPS6UYpcOnNdtdmnha0ulpxallk5h/+3EeCXRecbJ+os3m
-        2xuDVgj4TNL/0rVnRvD2+LpLm143p/789f5xsO2vjvX/hG11U3p/qDx5s/MD0xzrNGaNtHoT
-        w9OJFgsCpevldeLucpSc12c8tEs+O9DWXzRteozG7pxJZVu5uucpiRyU0C26Y/3UhCda2lRO
-        nPd/g1Gs4QnziI+T0xni9tl18pwzjGp6zPvRYq7P9qfdrUGLe3xUdS7tO206eUEO17F3rYui
-        DYKezIr9tdW02/Ss7QFT/RvZdRN1g2LV24u1tpzw1PqYwXTx0WmloLiONBEP4wPbFztPn2yf
-        dvDbydmHlViKMxINtZiLihMBxQYIjk4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRmVeSWpSXmKPExsWy7bCSnK7j1AlJBhdnyFg8mLeNzWLJ0aOM
-        Fntfb2W32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhaH37SzWvy7tpHFYtWuP4wO3B7vb7Sy
-        e+ycdZfdY9+OzYwem1Z1snncubaHzWPzknqPvi2rGD0+b5IL4IjisklJzcksSy3St0vgyvi1
-        6xZrQQN3RcdpzwbG6ZxdjJwcEgImElebjjJ3MXJxCAnsZpQ409bGCpGQlJh2ESTBAWQLSxw+
-        XAwSFhJ4yyjxbqIgSFhYwFOiszsKpFVE4ACjxLOv2xhBHGaBNkaJ251PoIb2M0r8e9vDAtLN
-        JqAlsf/FDTYQm19AUeLqj8eMIDavgJ3ExutX2EFsFgFViV3nDoPFRQXCJHYuecwEUSMocXLm
-        E7A5nAI2Ev/2/WAGsZkF1CX+zLsEZYtL3HoynwnClpfY/nYO8wRG4VlI2mchaZmFpGUWkpYF
-        jCyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGC41FLcwfj9lUf9A4xMnEwHmKU4GBW
-        EuG98LQ3SYg3JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQam
-        gGsv5hr61cS3bf3/48OM6fvPTXgZuffrJbE6FXmHR3NN1VZpfvjbfyboV41p/Dyx8kXlizfv
-        UX9ks+BiimH92oavHWsNponObHU9cN59TvB9hbNl637IT9nBF3As+jKrO/va9cn7DvH/Pc1S
-        JFV0/3B53KXsy9rxcUWWXCG7apRn/H5osZHjp35tWn7W/0/Tr7l6zpgbwXupdv6/8lWez+ed
-        y3L46H19a6rRlqfzzgqkTtgwJfjVl02ni4RPvfm0cO3MR2/4op/M73AJLvy+86FidOveKyUy
-        uzh2v5325GzIR8Hwu7Ebs9J83udWpIhoPPRx2H5ONdulqpUx6/2DH5PvZjIEvgoPZ70llGWx
-        KEyJpTgj0VCLuag4EQDtxTu+NgMAAA==
-X-CMS-MailID: 20220527090921epcas1p483e785670e3458f9abc9d40bb2e33d84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220526101239epcas1p33aec5e8e0386d6b986ffb16bc3f68bab
-References: <CGME20220526101239epcas1p33aec5e8e0386d6b986ffb16bc3f68bab@epcas1p3.samsung.com>
-        <20220526101215.1519155-1-jiasheng@iscas.ac.cn>
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com> <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+In-Reply-To: <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Fri, 27 May 2022 11:50:40 +0200
+Message-ID: <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Tony Lindgren <tony@atomide.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/26/22 7:12 PM, Jiasheng Jiang wrote:
-> As platform_driver_register() could fail, it should be better
-> to deal with the return value in order to maintain the code
-> consisitency.
-> 
-> Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-> Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
-> ---
->  drivers/clk/samsung/clk-exynos5-subcmu.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-> index 65c82d922b05..8b090481a9dc 100644
-> --- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-> +++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-> @@ -188,8 +188,18 @@ static struct platform_driver exynos5_clk_driver __refdata = {
->  
->  static int __init exynos5_clk_drv_init(void)
->  {
-> -	platform_driver_register(&exynos5_clk_driver);
-> -	platform_driver_register(&exynos5_subcmu_driver);
-> +	int ret;
-> +
-> +	ret = platform_driver_register(&exynos5_clk_driver);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = platform_driver_register(&exynos5_subcmu_driver);
-> +	if (ret) {
-> +		platform_driver_unregister(&exynos5_clk_driver);
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  core_initcall(exynos5_clk_drv_init);
-> 
+On Fri, May 27, 2022 at 10:39 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, May 27, 2022 at 10:17 AM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> > On Fri, May 27, 2022 at 8:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Fri, May 27, 2022 at 8:50 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > > * Arnd Bergmann <arnd@arndb.de> [220527 06:35]:
+> > > > > On Fri, May 27, 2022 at 6:44 AM Yegor Yefremov <yegorslists@googlemail.com> wrote:
+> > > > > > On Thu, May 26, 2022 at 4:16 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > > Based on what we just discussed on #armlinux, testing before and after
+> > > > commit 9c46929e7989 ("ARM: implement THREAD_INFO_IN_TASK for uniprocessor
+> > > > systems") might be a good idea as it enables some config options that
+> > > > did not get enabled earlier.
+> > > >
+> > > > Another thing that might help is to bisect again and ensure vmap stack
+> > > > config option stays disabled so issues related to vmap stack are kept
+> > > > out of the way.
+> > >
+> > > Unfortunately the commits around 9c46929e7989 are the ones that failed
+> > > to build according to the original report. But it's possible that the
+> > > problem has something to do with
+> > > CONFIG_CURRENT_POINTER_IN_TPIDRURO, which is disabled
+> > > in the V6+SMP config, and which in turn is required for
+> > > THREAD_INFO_IN_TASK, IRQSTACKS and STACKPROTECTOR_PER_TASK.
+> > >
+> > > If any of the four are the cause of the stall, then turning off ARCH_OMAP2 and
+> > > CONFIG_CPU_V6 should show the same bug in older commits as well.
+> >
+> > Both config options disabled:
+> >
+> > # zcat /proc/config.gz | grep 'CONFIG_ARCH_MULTI_V6\|CONFIG_SMP'
+> > # CONFIG_ARCH_MULTI_V6 is not set
+> > CONFIG_ARCH_MULTI_V6_V7=y
+> > # CONFIG_SMP is not set
+> >
+> > This helped - no stalls.
+>
+> Ok, that does point back to a recent regression then, rather than something
+> that was already broken and just uncovered by the changed behavior.
+>
+> Can you try the other combinations as well? OMAP2=y with SMP=n
+> and OMAP2=n with SMP=y? Hopefully that narrows it down enough that
+> we can look at which code paths actually changed.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+# zcat /proc/config.gz | grep 'CONFIG_ARCH_MULTI_V6\|CONFIG_SMP'
+# CONFIG_ARCH_MULTI_V6 is not set
+CONFIG_ARCH_MULTI_V6_V7=y
+CONFIG_SMP=y
+CONFIG_SMP_ON_UP=y
 
-Thanks.
+No stalls.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+# zcat /proc/config.gz | grep 'CONFIG_ARCH_MULTI_V6\|CONFIG_SMP\|ARCH_OMAP2'
+CONFIG_ARCH_MULTI_V6=y
+CONFIG_ARCH_MULTI_V6_V7=y
+CONFIG_ARCH_OMAP2=y
+CONFIG_ARCH_OMAP2PLUS=y
+CONFIG_ARCH_OMAP2PLUS_TYPICAL=y
+
+No stalls.
+
+As soon as I enable both SMP and OMAP2 options the system stalls.
+
+Yegor
+
+
+# CONFIG_SMP is not set
