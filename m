@@ -2,75 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D2BC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 02:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A7CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 04:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234284AbiE0CVT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 May 2022 22:21:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48338 "EHLO
+        id S231848AbiE0Eo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 May 2022 00:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233975AbiE0CVT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 May 2022 22:21:19 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D672F6F494
-        for <linux-clk@vger.kernel.org>; Thu, 26 May 2022 19:21:16 -0700 (PDT)
-Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4L8T5n5TPqzgYP5;
-        Fri, 27 May 2022 10:19:41 +0800 (CST)
-Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 27 May 2022 10:21:14 +0800
-Received: from huawei.com (10.90.53.225) by dggpemm500006.china.huawei.com
- (7.185.36.236) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 27 May
- 2022 10:21:14 +0800
-From:   fengyubo <fengyubo3@huawei.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <weiyongjun1@huawei.com>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2] clk: add missing iounmap in mmp2_clk_init
-Date:   Fri, 27 May 2022 10:23:12 +0800
-Message-ID: <1653618192-125044-1-git-send-email-fengyubo3@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S231515AbiE0Eo0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2022 00:44:26 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1232FEC3C6;
+        Thu, 26 May 2022 21:44:25 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id x137so6079730ybg.5;
+        Thu, 26 May 2022 21:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nvAGkKD1gOM6e41tJjvccNZKnPhzZ8zGOh90qnbWj28=;
+        b=Xfubo1SX6CsyXh159Dvu9x+zqeihX1+XYpvymNRJ/O84uGnstgCwc1r/Z9sq6DWQcu
+         l6BIKDPNkDtZbvrfUGJ/kTFk/3IhReZktX1f2kYhwJmRzbz3Jz+C73vG/ewUg0IncrY0
+         IgtxOG6bhO7sNixcbRlnscQ6jp0XQHZXEKu6HivYnxE6Vdz2kSqGrcgRe9cUUYLtK1v/
+         a2JDrnbCDkURwl3pYLa5K48uQhqTaTBh0lvHjJLj0fDiIT/WQJUs2Hi/OrXfPzZtxq6j
+         sYRhFd0k+yTyafcLJ/6qOYSXfajfarPHt9OZAUJNt7qFEXiKwPQStrohcSpUvcOBk6jX
+         Z4KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nvAGkKD1gOM6e41tJjvccNZKnPhzZ8zGOh90qnbWj28=;
+        b=tdZ2WAApGEDkDvBA16rTkKxIxvwMj23xbTLZGcjXcdRjTMJKID6ddT20zrln0dQBJg
+         5XGlOUWFaN0+vNHzaBG1AhfoIJS+9jYNCVeyemLu5NzzZNMvu70S5ObX8I5g9Sl+MrUB
+         YPkJpoIUj6a3jOP7gTRlWPk7CR7+LXOHHYrQSRyIphzkbQb4VyG7ErZQxNdFEneChOxM
+         S0vqxWuMy1EQ+PVbHa3q8ElFHR/3NLslU9LSoPHn8KY2fcaFzimVML5Z3mB0NhEG3hK8
+         mAPu1K1RjMsaKzPSNSr6LAuFv0xAynEEBMY9Nk1JSBr3EVTKz4GzGwv5U/jcG5NNZUb1
+         fhDA==
+X-Gm-Message-State: AOAM531wm/76VmDnm4QHqrFQczd2yIm0VfElfQzBWPyKoicYBbPUuxdI
+        oUTbOqiiEGeEgxp4QQd3xBridqECAU+8cKPSnBDV5hvP9LE=
+X-Google-Smtp-Source: ABdhPJw6RRXsOiSCviMJO6S3smay8v8XHLNC3p5pkm286H3uCNygKa2oS2r1EMFh3CgzjavkY9MwMksmAKAQBaBLAPE=
+X-Received: by 2002:a25:2c81:0:b0:64d:f21d:1fab with SMTP id
+ s123-20020a252c81000000b0064df21d1fabmr38633400ybs.355.1653626664092; Thu, 26
+ May 2022 21:44:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500006.china.huawei.com (7.185.36.236)
-X-CFilter-Loop: Reflected
+References: <YnNb5M+gHI4hIaPG@atomide.com> <CAGm1_kstAbEZXBYwoK4GrFxMmPi=kpmdfJd1WAB8XSE_vNTTNg@mail.gmail.com>
+ <Ynyd9HeFNmGQiovY@atomide.com> <CAK8P3a2wrH9XxGF6uBeQ6J0+KhehxsFO63R6qcwZ1DexH4N=2Q@mail.gmail.com>
+ <CAGm1_ku85dL_zn4=9=OVkS3S3eBH-eqrc-c1UZyvnERbMrW98Q@mail.gmail.com>
+ <CAGm1_kvKxe+RFNSxzZq+hy9594ek-s8owneXQqBMy8PxwdHP8Q@mail.gmail.com>
+ <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com> <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Fri, 27 May 2022 06:44:13 +0200
+Message-ID: <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yubo Feng <fengyubo3@huawei.com>
+Hi Arnd,
 
-the apmu_base and mpmu_base need to be unmapped when meet error
+On Thu, May 26, 2022 at 4:16 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Thu, May 26, 2022 at 2:37 PM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> > On Thu, May 26, 2022 at 10:19 AM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > >
+> > > On Thu, 26 May 2022 at 08:20, Tony Lindgren <tony@atomide.com> wrote:
+> > > >
+> > > > * Yegor Yefremov <yegorslists@googlemail.com> [220526 05:45]:
+> > > > > On Tue, May 24, 2022 at 4:19 PM Tony Lindgren <tony@atomide.com> wrote:
+> > > > > > Maybe also try with CONFIG_MUSB_PIO_ONLY=y to see if it makes things
+> > > > > > better or worse :)
+> > > > >
+> > > > > PIO is always the last resort :-) And now it proves it again. With
+> > > > > PIO_ONLY the system doesn't stall.
+> > > >
+> > > > OK great :) So it has something to do with drivers/dma/ti/cppi41.c, or
+> > > > with drivers/usb/musb/cppi_dma.c or whatever the dma for am335x here
+> > > > is. Or maybe there's something using stack for buffers being passed to
+> > > > dma again that breaks with vmap stack.
+> > > >
+> > >
+> > > In order to confirm this theory, could you please try rebuilding your
+> > > kernel with CONFIG_VMAP_STACK disabled, and leave everything else as
+> > > before?
+> >
+> > I have disabled the CONFIG_VMAP_STACK option:
+> >
+> > # zcat /proc/config.gz | grep VMAP_STACK
+> > CONFIG_HAVE_ARCH_VMAP_STACK=y
+> > # CONFIG_VMAP_STACK is not set
+> >
+> > The system stalls.
+>
+> Ok, I guess that means we can stop looking for invalid DMA buffers
+> on stacks. Out of the original commits you listed as possible causes,
+> we can also rule out 23d9a9280efe ("ARM: 9177/1: disable vmap'ed
+> stacks on suspend-capable SMP configs") and cafc0eab1689
+> ("ARM: v7m: enable support for IRQ stacks"). It could still be
+> 9c46929e7989 ("ARM: implement THREAD_INFO_IN_TASK for
+> uniprocessor systems") and 5fe41793bc78 ("ARM: 9176/1: avoid
+> literal references in inline assembly") or possibly the merge.
+>
+> Can you post the whole .config file somewhere for reference?
+> In particular, do you have CONFIG_SMP, CONFIG_LD_IS_LLD
+> or CURRENT_POINTER_IN_TPIDRURO set?
 
-Signed-off-by: Yubo Feng <fengyubo3@huawei.com>
----
- drivers/clk/mmp/clk-mmp2.c | 3 +++
- 1 file changed, 3 insertions(+)
+This is my config [1] and this is the system in question [2].
 
-diff --git a/drivers/clk/mmp/clk-mmp2.c b/drivers/clk/mmp/clk-mmp2.c
-index 7460031714da..7ed6cae532f0 100644
---- a/drivers/clk/mmp/clk-mmp2.c
-+++ b/drivers/clk/mmp/clk-mmp2.c
-@@ -91,12 +91,15 @@ void __init mmp2_clk_init(phys_addr_t mpmu_phys, phys_addr_t apmu_phys,
- 	apmu_base = ioremap(apmu_phys, SZ_4K);
- 	if (!apmu_base) {
- 		pr_err("error to ioremap APMU base\n");
-+		iounmap(mpmu_base);
- 		return;
- 	}
- 
- 	apbc_base = ioremap(apbc_phys, SZ_4K);
- 	if (!apbc_base) {
- 		pr_err("error to ioremap APBC base\n");
-+		iounmap(apmu_base);
-+		iounmap(mpmu_base);
- 		return;
- 	}
- 
--- 
-2.25.1
+[1] https://github.com/visionsystemsgmbh/onrisc_br_bsp/blob/master/board/vscom/baltos/linux-experimental-config
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/am335x-baltos-ir5221.dts?h=v5.18
 
+Regards,
+Yegor
