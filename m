@@ -2,194 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AC7C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 10:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C9CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 27 May 2022 12:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239366AbiE0Kfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 May 2022 06:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35388 "EHLO
+        id S234247AbiE0MyL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 May 2022 08:54:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbiE0Kf3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2022 06:35:29 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACBA21078BA;
-        Fri, 27 May 2022 03:35:28 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5CD621F8B5;
-        Fri, 27 May 2022 10:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1653647727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=5FSJoV8fyODoIeus7C+ZOqbM6V+rdyM5MW/EB0jGZhg=;
-        b=lZ4R+09BI7oCUROykElkZtExU3MC2o5/GA4qjwqbfJRif0pw+SFgCoaFWOMplVJRTW1ZId
-        /PKDZY87B/Xa6gqeHA1h6GjAvgcOdDndJcjO+sGvX+7eQs9KgrhIP83w6rWD37t+6+HSq4
-        18R21vZzmYyc2mMtDRp+sLU1pXdhqIc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1653647727;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=5FSJoV8fyODoIeus7C+ZOqbM6V+rdyM5MW/EB0jGZhg=;
-        b=m0AVBa177TUk1M+dEEB3xnUQW0JFaICGQzEjpFN0I3LCXaYi39kc4XS3Q3Z2CnrD3h9xeR
-        rkdV/zmWQ0P7J3AA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3448A13A84;
-        Fri, 27 May 2022 10:35:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id g0zaC2+pkGKOcAAAMHmgww
-        (envelope-from <iivanov@suse.de>); Fri, 27 May 2022 10:35:27 +0000
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Phil Elwell <phil@raspberrypi.org>,
-        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH v3] clk: bcm2835: Round UART input clock up
-Date:   Fri, 27 May 2022 13:29:00 +0300
-Message-Id: <20220527102900.144894-1-iivanov@suse.de>
-X-Mailer: git-send-email 2.35.3
+        with ESMTP id S229627AbiE0MyL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 May 2022 08:54:11 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E687F19FBC;
+        Fri, 27 May 2022 05:54:09 -0700 (PDT)
+Received: from mail-yw1-f175.google.com ([209.85.128.175]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MtOSu-1ngc4E09i2-00uoLr; Fri, 27 May 2022 14:54:08 +0200
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-300312ba5e2so46709527b3.0;
+        Fri, 27 May 2022 05:54:07 -0700 (PDT)
+X-Gm-Message-State: AOAM533SwZ5+A8WYthm5FiGIrdv7h7IONwXrFxJhUIGqU8BTsjnMwyN5
+        6KyRFqSpGsfBUQwSlMTMv4fEIBZmZOLlVyFj4B4=
+X-Google-Smtp-Source: ABdhPJwps2pOL8pz/t48Ul9mcKwJz3NqwtY4uP6vESFT7XU/lsoHJwvUtFL3rZ9eKNSBSa0B/PGUpo6rFFnMmbYwbnI=
+X-Received: by 2002:a81:488c:0:b0:302:549f:ffbc with SMTP id
+ v134-20020a81488c000000b00302549fffbcmr7378718ywa.495.1653656046751; Fri, 27
+ May 2022 05:54:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
+ <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com> <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+In-Reply-To: <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 27 May 2022 14:53:50 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+Message-ID: <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Yegor Yefremov <yegorslists@googlemail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:XEshiZagnPhtcKyx6dm/HntoBV9nm+rbUuNr1cKbgChRnybdTb9
+ MV4cgSXAo1Pl1NIXM7ppjVDie1nX+a8P1nrx/Hv2K71rgVNDtint/Af/CnwMU90ofz9TZ3b
+ H+Io+gZ7vpEYkymXgRGP4G9bewUJBIveL7zFM9x5LVTZ/CfdGe9yyrSr/MWrrothy52Uv33
+ +euZn20OJ8E3mA0cfKq0w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FLGsz8ooLvU=:uhX9SDrL1nT/w0wyXkk8m8
+ 9oSsrbJq2hQ/Q+iKk3Y/0JTytoKWu0LQBIh49S1PlbH0mC+4/eCr1j3FC87Xug5cuImgFCmJv
+ 6EPWKWK5mKMQ4F6NDhSO6dyrIa7JwKZ9Bn9TQgt4HOppsH1AGjsvPhUZf44h8A1ISVO7RVg8/
+ FMkKZVkVGUuBvxCTYaOPvMEwb8t7qV0hLFti49KCqTf8HmjDIUY9Getf4PQaBXNYHQbA2S1A5
+ NOw7CTF3L1LTxJ0Reh4HmHcpZKSq/aZogsCsfSRlephUUijVOERLdXZM1CZACb+IPdIUChUiI
+ nDf7pMat3kET5oEsqQd22pMdYrIR/GsnjuuIP222Ggeul17i6Z34VT41MmgeRoUNhc23vVejx
+ Usdn3x4bNahyU10WVwlOagLizAI3sPkYtnud4oQVN94Rjp2IIvjGfQGteRaFRMMjvAjHdoQXV
+ ne30ttazmYW4ecThbT52rS6gJcUp7vmnEG9hn2ZZ9qLSEbIWq6spDrFlTF0ixTsV663lP2m0m
+ M4JKZgNRoC74laIYuqgmDnQ804VwMgTGLNn7ykRmqHypu+nQ0QX4GXeJbPgMSvmVFo++o6G6B
+ wAPEMjLsyHjLw46fHGuL0iwP7+92ikAcQe2l3Zyl9EXK+CgdGpXc+xhg3WgtCi2gpKafBwrMj
+ pq6OY1XAFl2EYBWMDAU+476CYy2Q4Ln/5foxwR6Ji/GCYGMG923xr7tSHlS0lJfNk7+s/TpaP
+ JM1nVGoTZ+Y/g2bgsVVOUnnxJ/eqVe2x482fNQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It was reported that RPi3[1] and RPi Zero 2W boards have issues with
-the Bluetooth. It turns out that when switching from initial to
-operation speed host and device no longer can talk each other because
-host uses incorrect UART baud rate.
+On Fri, May 27, 2022 at 11:50 AM Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+>
+> # zcat /proc/config.gz | grep 'CONFIG_ARCH_MULTI_V6\|CONFIG_SMP'
+> # CONFIG_ARCH_MULTI_V6 is not set
+> CONFIG_ARCH_MULTI_V6_V7=y
+> CONFIG_SMP=y
+> CONFIG_SMP_ON_UP=y
+>
+> No stalls.
+>
+> # zcat /proc/config.gz | grep 'CONFIG_ARCH_MULTI_V6\|CONFIG_SMP\|ARCH_OMAP2'
+> CONFIG_ARCH_MULTI_V6=y
+> CONFIG_ARCH_MULTI_V6_V7=y
+> CONFIG_ARCH_OMAP2=y
+> CONFIG_ARCH_OMAP2PLUS=y
+> CONFIG_ARCH_OMAP2PLUS_TYPICAL=y
+>
+> No stalls.
+>
+> As soon as I enable both SMP and OMAP2 options the system stalls.
 
-The UART driver used in this case is amba-pl011. Original fix, see
-below Github link[2], was inside pl011 module, but somehow it didn't
-look as the right place to fix. Beside that this original rounding
-function is not exactly perfect for all possible clock values. So I
-deiced to move the hack to the platform which actually need it.
+Ok, that points to the SMP patching for percpu data, which doesn't happen
+before the patch, and which is different between loadable modules and
+the normal code.
 
-The UART clock is initialised to be as close to the requested
-frequency as possible without exceeding it. Now that there is a
-clock manager that returns the actual frequencies, an expected
-48MHz clock is reported as 47999625. If the requested baud rate
-== requested clock/16, there is no headroom and the slight
-reduction in actual clock rate results in failure.
+Can you try out this patch to short-circuit the logic and always return
+the offset for CPU 0? This is obviously broken on SMP machines but
+would get around the bit of code that is V6+SMP specific.
 
-If increasing a clock by less than 0.1% changes it from ..999..
-to ..000.., round it up.
+        Arnd
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1188238
-[2] https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
-
-Cc: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
-
-Changes since v2
-* Added more information in commit message
-* Changed hand crafted round function with the one form math.h
-
-Changes since v1
-Make bcm2835_clock_round() static to fix following warning
-when compiling for riscv:
-drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
-Reported-by: kernel test robot <lkp@intel.com>
-
- drivers/clk/bcm/clk-bcm2835.c | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 48a1eb9f2d55..cee59990a57b 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -30,6 +30,7 @@
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-@@ -502,6 +503,8 @@ struct bcm2835_clock_data {
- 	bool low_jitter;
- 
- 	u32 tcnt_mux;
-+
-+	bool round_up;
- };
- 
- struct bcm2835_gate_data {
-@@ -993,12 +996,31 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
- 	return temp;
+diff --git a/arch/arm/include/asm/percpu.h b/arch/arm/include/asm/percpu.h
+index 7545c87c251f..3057c5fef970 100644
+--- a/arch/arm/include/asm/percpu.h
++++ b/arch/arm/include/asm/percpu.h
+@@ -25,10 +25,13 @@ static inline void set_my_cpu_offset(unsigned long off)
+        asm volatile("mcr p15, 0, %0, c13, c0, 4" : : "r" (off) : "memory");
  }
- 
-+static unsigned long bcm2835_clock_round(unsigned long clk)
-+{
-+	unsigned long scaler;
-+
-+	scaler = 1;
-+	while (scaler * 100000 < clk)
-+		scaler *= 10;
-+
-+	/*
-+	 * If increasing a clock by less than 0.1% changes it
-+	 * from ..999.. to ..000.., round up.
-+	 */
-+	if ((clk + scaler - 1) / scaler % 1000 == 0)
-+		clk = roundup(clk, scaler);
-+
-+	return clk;
-+}
-+
- static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 					    unsigned long parent_rate)
+
++extern unsigned long __per_cpu_offset[];
+ static __always_inline unsigned long __my_cpu_offset(void)
  {
- 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
- 	struct bcm2835_cprman *cprman = clock->cprman;
- 	const struct bcm2835_clock_data *data = clock->data;
-+	unsigned long rate;
- 	u32 div;
- 
- 	if (data->int_bits == 0 && data->frac_bits == 0)
-@@ -1006,7 +1028,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
- 
- 	div = cprman_read(cprman, data->div_reg);
- 
--	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
-+
-+	if (data->round_up)
-+		rate = bcm2835_clock_round(rate);
-+
-+	return rate;
- }
- 
- static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
-@@ -2143,7 +2170,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 		.div_reg = CM_UARTDIV,
- 		.int_bits = 10,
- 		.frac_bits = 12,
--		.tcnt_mux = 28),
-+		.tcnt_mux = 28,
-+		.round_up = true),
- 
- 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
- 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
--- 
-2.35.3
+        unsigned long off;
 
++       return __per_cpu_offset[0];
++
+        /*
+         * Read TPIDRPRW.
+         * We want to allow caching the value, so avoid using volatile and
