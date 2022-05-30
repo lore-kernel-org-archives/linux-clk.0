@@ -2,97 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EF6C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 30 May 2022 15:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA0AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 30 May 2022 15:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234110AbiE3Prl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 May 2022 11:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55286 "EHLO
+        id S236808AbiE3Puz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 May 2022 11:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242853AbiE3Pqr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2022 11:46:47 -0400
-X-Greylist: delayed 862 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 30 May 2022 07:58:38 PDT
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 826A21649B8;
-        Mon, 30 May 2022 07:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-        t=1653921250; bh=idjzIs6nM/GzEGxcBT5U9Zvmwvs1WbeN6ytiAFKcA/M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qkrj84hcUoYR17888l+IifmTZFDvK4R7zKao/29k7PHMWnpCu9vaUfiQrmwkWOl1y
-         J/YgyDDK27WXn2lBC7DGmXHnFaMK6k/T2vlDIQIdk+y7QTc4m8e5LMnvTiN8BA83WE
-         T2IpUls4AbmmUkP+8siXcj26vS9kmnJdzB5kTmy6n46485N72bZ0AAXEJPLpgxRECF
-         ZtFgGu3xy3rXpEicA2tYLwr8rkH6OWRrHgmNUrVkbci5d9BzDicFN/3j2tu9Gs2hbz
-         mrU81t2SiQccsxcpFgS9TS5HIjJ1iH2YFwNGUhlDbfrJa4C6Xh/lSaCX0fEtCV4uNd
-         KcJ/TvunmhEPg==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 03A5B3B7DED;
-        Mon, 30 May 2022 14:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-        t=1653921249; bh=idjzIs6nM/GzEGxcBT5U9Zvmwvs1WbeN6ytiAFKcA/M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=GmWNllcbKIoAUVIxhCH5rQiQpya4rETl28xsA8jdTEkntFAr6kBFjUmW4UrO9Ij/P
-         wYCAPYMrPp4MDsff+RVjSUkONQKYMi2vVsSvNO1FSTCrPxafM3gtSp7t+kTDxv9p1y
-         O8QnSt5vc5SlVxlbA9vypjujLo86N7qCq8GLUPeC9lwL0qy16xJ2xa3drhaEI0W9JT
-         fpJtwULyFvxYyXzNucUVV3I4isREqQ/iY7EZ+OkctOZtRop1bjpcQUzIFawYgpymeL
-         se+Dv00LH7Z93Nj87qQESli+MXq6CGxdMKvixsJ/t1qGba5h8hQuw0DMxMBalGZHFp
-         P4wn1+pH+kJiw==
-Received: from [192.168.1.102] (88-112-131-206.elisa-laajakaista.fi [88.112.131.206])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S242845AbiE3PuW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2022 11:50:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311AC6EC55;
+        Mon, 30 May 2022 08:15:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.mleia.com (Postfix) with ESMTPSA id 8B8F93B7DE9;
-        Mon, 30 May 2022 14:34:09 +0000 (UTC)
-Message-ID: <148d6f7b-3973-0b58-c777-7a3f889d5032@mleia.com>
-Date:   Mon, 30 May 2022 17:34:08 +0300
+        by ams.source.kernel.org (Postfix) with ESMTPS id BBBA1B80DC0;
+        Mon, 30 May 2022 15:15:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBC0C385B8;
+        Mon, 30 May 2022 15:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653923710;
+        bh=u4DYqQJQ6TujLt3iM3oWJlaeTZ+o4bqF2UhuCCFWBfU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qDyR2jgQvHr6DG4IXqF+A4ba/CX9aYy/L3ZZ+HMMbjBgxB/q9XHf8U+5gW5pfDoIl
+         Kv6FaoFki72kySATnUD1+cV1VJULsRbgGQF0DMROuvqaP3NGNpGX+OvNk1R+gLbWMz
+         G6XOLmDZkoAFnQlarx3OuXkItvX86V/5sD7Rp8JFSuVORIsrobAxkP1kMTAMDO7wT5
+         gt/JShLDcJRGUBSu5MJawUDyhsmbXVCD9eMTC9XyfWLjL44Fd+el3HksTo1t7O3T2r
+         QOg18iwNfUAJwSUw+LmwkinjPBtq3HgdjNCro4QE0r0Db7w7mazp1jSl3oEGb6Ioeb
+         cHXtKatGuSOlA==
+Received: by mail-oi1-f173.google.com with SMTP id r206so7106090oib.8;
+        Mon, 30 May 2022 08:15:10 -0700 (PDT)
+X-Gm-Message-State: AOAM532ybMqNxJyaRLSu9rLAa/pHcvVFw7n/vj7XBOyI0W15EeZELaaj
+        1uUBv2FTGkBDqTLWZdRvWHeavs4291y3wgoYAbo=
+X-Google-Smtp-Source: ABdhPJy8j1h8bMsLWsG+twABoqm+pDH1jUsw+VGzI7BTRp6Hznm894S54Lu/05c4tEgn9C2gPzWpV32tHvz4iO/UR/c=
+X-Received: by 2002:a05:6808:f88:b0:32b:d10f:cc6b with SMTP id
+ o8-20020a0568080f8800b0032bd10fcc6bmr8265762oiw.228.1653923709641; Mon, 30
+ May 2022 08:15:09 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] clk: nxp: fix typo in comment
-Content-Language: en-US
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20220521111145.81697-42-Julia.Lawall@inria.fr>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20220521111145.81697-42-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20220530_143410_035189_0CCDEF31 
-X-CRM114-Status: GOOD (  12.89  )
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
+ <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+ <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+ <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+ <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
+ <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
+ <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
+ <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
+ <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
+ <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
+ <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
+ <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
+ <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com> <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
+In-Reply-To: <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Mon, 30 May 2022 17:14:58 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
+Message-ID: <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/21/22 14:10, Julia Lawall wrote:
-> Spelling mistake (triple letters) in comment.
-> Detected with the help of Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->   drivers/clk/nxp/clk-lpc18xx-cgu.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/nxp/clk-lpc18xx-cgu.c b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-> index c23ac463ab0f..1bb18dc0a80a 100644
-> --- a/drivers/clk/nxp/clk-lpc18xx-cgu.c
-> +++ b/drivers/clk/nxp/clk-lpc18xx-cgu.c
-> @@ -609,7 +609,7 @@ static void __init lpc18xx_cgu_register_source_clks(struct device_node *np,
->   	if (IS_ERR(clk))
->   		pr_warn("%s: failed to register irc clk\n", __func__);
->   
-> -	/* Register crystal oscillator controlller */
-> +	/* Register crystal oscillator controller */
->   	parents[0] = of_clk_get_parent_name(np, 0);
->   	clk = clk_register_gate(NULL, clk_src_names[CLK_SRC_OSC], parents[0],
->   				0, base + LPC18XX_CGU_XTAL_OSC_CTRL,
-> 
+On Mon, 30 May 2022 at 15:54, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Sat, May 28, 2022 at 9:28 PM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> >
+> > On Sat, May 28, 2022 at 3:14 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Sat, May 28, 2022 at 3:01 PM Yegor Yefremov
+> > > <yegorslists@googlemail.com> wrote:
+> > > > On Sat, May 28, 2022 at 11:07 AM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+> > > > In file included from ./include/linux/irqflags.h:17,
+> > > >                  from ./arch/arm/include/asm/bitops.h:28,
+> > > >                  from ./include/linux/bitops.h:33,
+> > > >                  from ./include/linux/log2.h:12,
+> > > >                  from kernel/bounds.c:13:
+> > > > ./arch/arm/include/asm/percpu.h: In function =E2=80=98__my_cpu_offs=
+et=E2=80=99:
+> > > > ./arch/arm/include/asm/percpu.h:32:9: error: =E2=80=98__per_cpu_off=
+set=E2=80=99
+> > > > undeclared (first use in this function); did you mean
+> > > > =E2=80=98__my_cpu_offset=E2=80=99?
+> > > >    32 |  return __per_cpu_offset[0];
+> > > >       |         ^~~~~~~~~~~~~~~~
+> > > >       |         __my_cpu_offset
+> > > > ./arch/arm/include/asm/percpu.h:32:9: note: each undeclared identif=
+ier
+> > > > is reported only once for each function it appears in
+> > >
+> > > I think you just missed the line in my patch that adds the
+> > > "extern unsigned long __per_cpu_offset[];" variable declaration.
+> >
+> > So, I tried both variants and both led to stalls.
+>
+> I'm running out of ideas here.  Going to back to the original bisection,
+> I rebased Ard's patches in a way that you should be able to build the
+> config for each patch, and I split up the "ARM: implement
+> THREAD_INFO_IN_TASK for uniprocessor systems" commit in yet
+> another way, hoping to get something left over that points to the
+> bug. Can you try bisecting through the top commits of
+>
+> https://kernel.org/pub/scm/linux/kernel/git/soc/soc.git am335x-stall-test
+>
+> starting maybe with "52d240871760 irqchip: nvic: Use
+> GENERIC_IRQ_MULTI_HANDLER" as the patch that is almost certainly
+> going to be ok?
+>
+> At some point I fear we may have to give up and just mark the v6+SMP
+> configuration as broken, which is something we have considered in the
+> past but ended up always keeping around for the purpose of testing
+> omap2plus_defconfig and imx_v6_v7_defconfig. Note that on production
+> systems you probably don't want to use that config anway, and should
+> either stick to a uniprocessor build, or disable the ARMv6 support.
+>
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
-
---
-Best wishes,
-Vladimir
+Yeah, I am also running out of ideas. One question, though: does the
+RCU detected stall always occur in the same place? I.e., how similar
+are the backtraces of the stalls between different occurrences?
+Perhaps we could narrow down where in the code we are stalling, and
+gain some more understanding of the root cause.
