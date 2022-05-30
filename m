@@ -2,154 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD191C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 30 May 2022 12:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A49BC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 30 May 2022 12:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbiE3MJs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 May 2022 08:09:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
+        id S236115AbiE3MYl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 May 2022 08:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbiE3MJq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2022 08:09:46 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B530A5DA3F;
-        Mon, 30 May 2022 05:09:45 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id f34so5653498ybj.6;
-        Mon, 30 May 2022 05:09:45 -0700 (PDT)
+        with ESMTP id S236119AbiE3MYj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 May 2022 08:24:39 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03737CDDB;
+        Mon, 30 May 2022 05:24:37 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id w27so6615918edl.7;
+        Mon, 30 May 2022 05:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bgFme+cXggcwQqDYmmhvMUMyHH6j4QKDzoDiRHUb9NU=;
-        b=baG2IpjM6/w9TbEL7SPFWuDwuWXgnVuNKcYXgfzYr51zX1dmVXL0H+PsEqtFPtMRXO
-         p1bIY8+Mtf8RfhBe9X6qSS7SbNrCdp0Tge3ooky/zJXX+IpihYKRVCXPY+0R4+wu9LHo
-         JSynPB3WLbhuDmCwUnGCPL+RiHgO8jXUb5Ql1a2V66uYKQ8RhQeyJ4bflksGpjAkf5uL
-         YfN8QSlELW+udUYWSL5xw2z1JW+CzgTeIa9uNymFZJIzai19Qx/MHyx7GnzPY0+x5ULj
-         aVEmpy2KOpQMJ5C1eYVx4GIsg+Q+y6T6wtoUZXAyGqa+/h1SeZho0K+/hV/IwQAIi0Gr
-         g31w==
+         :cc;
+        bh=Gf3IvEnikRvp3Oa8O4SMunFc6fuhRnS1KPonMS+jQ+I=;
+        b=NyQ+kCGK3kg3v6Adv/XUYZAJCjEWhflsEmpIwgkeTZw0Ni7YgQNimIJ2MWBNV1J314
+         nFrO3LoILzRYfe9Uxh7YsjXWZd2OPNcp8ToAqOOe0jCLJgXnz/o5vCjc42nMfojO7kCj
+         QAgjC16cVioo2a0vkXIolNnbvAvJQXhm23uI9P611ez5yYfOfS+13Mj3Ko5Y3eSd8nqu
+         04KBpo7UkSbNUsWgDO4pPc/PjbB3R5O+rJ4J80+Wq+oPF1Ds2ccn9Jw9JfMx9b+VGSBj
+         RdU8wZe8Yc+5yxCCchki9DZpn+1NmjBczSEkDXrqxz61zhVt9K2emiU88ADzGKrJNWRU
+         bnag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bgFme+cXggcwQqDYmmhvMUMyHH6j4QKDzoDiRHUb9NU=;
-        b=hEIcF8xpFD24QWp/fjaFga1nhcJstU2GjMsLDaComiQxkEV2JQq1qq1RTq8W3C6Wm5
-         rmYE3AP+Fyu2soDQuA97aGFOeUwUlIPV5qMoua1jUPfZEtvJ9lxtyp5q2cSSInG5lf8D
-         6keouv7rKRwFswys8CS8SfaagIrPx8pE4cC1gywJ379romqYOIrd1n8UjnZ1fKknXroQ
-         b8LX5mGLj7TfxZG80Aq/xAgN8rjpoNvBGtpjvP4+SWKKrs9vYNXnDm6NHlR9Q1Wywzw2
-         RGNlT3JxzIEwwee5DT/a/V4ZUchKh0tMYZ0cl+UwOqhKy1aAV5qHCkBnXfpcpl8kaOgP
-         CrhA==
-X-Gm-Message-State: AOAM530/wQP+BHoTjWoDJWNA8rAp1PR+MzR2WPSkQKVEtmxH2CAIbjQY
-        g338DkYA1xq5KKw7PIsI+pQg5GQWVJ7VCEgOQ7o=
-X-Google-Smtp-Source: ABdhPJy27oBTusOTcZUwgjLOggHeobmH/RshzReCwIzQgNRhzznei6vEhpOVRz1JKr6QCjdn+3ufcY+LzAi/kSTkhTs=
-X-Received: by 2002:a25:814a:0:b0:64f:f06c:cf6d with SMTP id
- j10-20020a25814a000000b0064ff06ccf6dmr33377676ybm.88.1653912584825; Mon, 30
- May 2022 05:09:44 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=Gf3IvEnikRvp3Oa8O4SMunFc6fuhRnS1KPonMS+jQ+I=;
+        b=KNGwRgAMLmeFE709/ScNI0S0eOlAVPL2H6+DUBTmfREg5Z2XhMZ8h6QKV/QsQhK/Jq
+         DurzMYS7XPnSbfAcSnaJNVycp8gAZhcgZEWv7HCKsm5cn4TtNWDJG9ioy3Q+Fk6w8gaD
+         fAts/qBVsczUhedTktuLYZOeuvTMamDTzFCfwq0gUoo84BGC1LkWZ5gNnQqzO4EEcu5t
+         jutyAy4vJlQkz0seMTch0IyV/hp82afvKccXcZn6wc4sMHe5z6cU8zHMxSN8ZmpKw3ot
+         L1POJ/qPgu6ILtRSenrjoD3nC0pJI/lKkajsStNhgPQToKN5emms4mX0WU1+fl18U7Vt
+         UHbQ==
+X-Gm-Message-State: AOAM533+/0TJO1fNOmSf8q6E4m4LzjcMx/Kzowd99zithjiu6s4PiRVk
+        Owy0dkvgsArDsTP+vBbIXkE4Cx0C7ZkL8Amp+Lk=
+X-Google-Smtp-Source: ABdhPJyByk+8pCmJj05rtEymQhMckw/8QiNYSuteRwbfSGq4YiABghOAxycfRHnt7uQgycGiWNHw22Dc1Nbyr02Cx7o=
+X-Received: by 2002:a05:6402:2382:b0:42b:7fec:1abf with SMTP id
+ j2-20020a056402238200b0042b7fec1abfmr33516209eda.111.1653913476233; Mon, 30
+ May 2022 05:24:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
- <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
- <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
- <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
- <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
- <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
- <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
- <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
- <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
- <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
- <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
- <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
- <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
- <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
- <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
- <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
- <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
- <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
- <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
- <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
- <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
- <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com> <CAMj1kXGrBDkPgux0gOxO1i_1qNTXGKGHOVGZ61jn7oKBLYc-Vg@mail.gmail.com>
-In-Reply-To: <CAMj1kXGrBDkPgux0gOxO1i_1qNTXGKGHOVGZ61jn7oKBLYc-Vg@mail.gmail.com>
-From:   Yegor Yefremov <yegorslists@googlemail.com>
-Date:   Mon, 30 May 2022 14:09:33 +0200
-Message-ID: <CAGm1_kua8LZzWiiZ+8zL-ZxRgPK7L_b_zAVtSUjCu3q4_69d2Q@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+References: <20220522155046.260146-1-tmaimon77@gmail.com> <CAK8P3a2CUy17vbd5Go523894vcF_oLz=dAR7JNLsUuR1Gsc9sA@mail.gmail.com>
+In-Reply-To: <CAK8P3a2CUy17vbd5Go523894vcF_oLz=dAR7JNLsUuR1Gsc9sA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 30 May 2022 14:24:00 +0200
+Message-ID: <CAHp75Vc3i6bWOo_ZHD25rtn0o1pjzHtdfRQg4RkAfrmMs77eOw@mail.gmail.com>
+Subject: Re: [PATCH v1 00/19] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Robert Hancock <robert.hancock@calian.com>,
+        "nathan=20Neusch=C3=A4fer?=" <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>, SoC Team <soc@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 30, 2022 at 12:16 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+On Mon, May 23, 2022 at 1:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Sat, 28 May 2022 at 21:28, Yegor Yefremov <yegorslists@googlemail.com>=
- wrote:
+> On Sun, May 22, 2022 at 5:50 PM Tomer Maimon <tmaimon77@gmail.com> wrote:
 > >
-> > On Sat, May 28, 2022 at 3:14 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Sat, May 28, 2022 at 3:01 PM Yegor Yefremov
-> > > <yegorslists@googlemail.com> wrote:
-> > > > On Sat, May 28, 2022 at 11:07 AM Ard Biesheuvel <ardb@kernel.org> w=
-rote:
-> > > > In file included from ./include/linux/irqflags.h:17,
-> > > >                  from ./arch/arm/include/asm/bitops.h:28,
-> > > >                  from ./include/linux/bitops.h:33,
-> > > >                  from ./include/linux/log2.h:12,
-> > > >                  from kernel/bounds.c:13:
-> > > > ./arch/arm/include/asm/percpu.h: In function =E2=80=98__my_cpu_offs=
-et=E2=80=99:
-> > > > ./arch/arm/include/asm/percpu.h:32:9: error: =E2=80=98__per_cpu_off=
-set=E2=80=99
-> > > > undeclared (first use in this function); did you mean
-> > > > =E2=80=98__my_cpu_offset=E2=80=99?
-> > > >    32 |  return __per_cpu_offset[0];
-> > > >       |         ^~~~~~~~~~~~~~~~
-> > > >       |         __my_cpu_offset
-> > > > ./arch/arm/include/asm/percpu.h:32:9: note: each undeclared identif=
-ier
-> > > > is reported only once for each function it appears in
-> > >
-> > > I think you just missed the line in my patch that adds the
-> > > "extern unsigned long __per_cpu_offset[];" variable declaration.
+> > This patchset  adds initial support for the Nuvoton
+> > Arbel NPCM8XX Board Management controller (BMC) SoC family.
 > >
-> > My bad.
+> > The Nuvoton Arbel NPCM8XX SoC is a fourth-generation BMC.
+> > The NPCM8XX computing subsystem comprises a quadcore ARM
+> > Cortex A35 ARM-V8 architecture.
 > >
-> > So, I tried both variants and both led to stalls.
+> > This patchset adds minimal architecture and drivers such as:
+> > Clocksource, Clock, Reset, and WD.
 > >
+> > Some of the Arbel NPCM8XX peripherals are based on Poleg NPCM7XX.
+> >
+> > This patchset was tested on the Arbel NPCM8XX evaluation board.
 >
-> Could you please try running slcand under strace (and use the -F
-> option on slcand), and bring up the link from another terminal
-> session? That way, we may be able to narrow down the cause of the
-> stall from the strace output.
+> Thanks for your submission. Please note a few things about the process here:
 >
-> On my BB white, it never gets past
->
-> openat(AT_FDCWD, "/dev/ttyUSB0", O_RDWR|O_NOCTTY|O_NONBLOCK|O_LARGEFILE) =
-=3D 3
-> ioctl(3, TCGETS, {B3000000 -opost -isig -icanon -echo ...}) =3D 0
-> ioctl(3, TIOCGSERIAL, 0xbec564fc)       =3D 0
-> ioctl(3, TIOCSSERIAL)                   =3D 0
-> ioctl(3, TCGETS, {B3000000 -opost -isig -icanon -echo ...}) =3D 0
-> ioctl(3, SNDCTL_TMR_STOP or TCSETSW, {B3000000 -opost -isig -icanon
-> -echo ...}) =3D 0
-> ioctl(3, TCGETS, {B3000000 -opost -isig -icanon -echo ...}) =3D 0
-> write(3, "C\rS8\r", 5)                  =3D 5
-> write(3, "O\r", 2)                      =3D 2
-> ioctl(3, TIOCSETD, [17]
->
-> but I don't have any actual CAN-to-USB-serial hardware so I'm not sure
-> if I'm even able to reproduce this.
+> - The merge window is currently open, which means a lo
 
-Triggering the stall is not that straight forward. slcand just loads
-the slcan driver and creates an slcan0 network device. This alone
-doesn't lead to a stall. First when I send some CAN frames, the system
-stalls after some seconds.
+Something wrong with the script?
 
-My CAN test script can also work directly with /dev/ttyUSB0 omitting
-the slcan driver. In this case, the system stays stable.
+> Some of the Arbel NPCM8XX peripherals are based on Poleg NPCM7XX.
+>
+> This patchset was tested on the Arbel NPCM8XX evaluation board.
+>
+> Tomer Maimon (19):
+>   dt-bindings: timer: npcm: Add npcm845 compatible string
+>   clocksource: timer-npcm7xx: Add NPCM845 timer support
+>   dt-bindings: serial: 8250: Add npcm845 compatible string
+>   tty: serial: 8250: Add NPCM845 UART support
+>   dt-bindings: watchdog: npcm: Add npcm845 compatible string
+>   watchdog: npcm_wdt: Add NPCM845 watchdog support
+>   dt-binding: clk: npcm845: Add binding for Nuvoton NPCM8XX Clock
+>   clk: npcm8xx: add clock controller
+>   dt-bindings: reset: add syscon property
+>   reset: npcm: using syscon instead of device data
+>   dt-bindings: reset: npcm: Add support for NPCM8XX
+>   reset: npcm: Add NPCM8XX support
+>   dt-bindings: arm: npcm: Add maintainer
+>   dt-bindings: arm: npcm: Add nuvoton,npcm845 compatible string
+>   dt-bindings: arm: npcm: Add nuvoton,npcm845 GCR compatible string
+>   arm64: npcm: Add support for Nuvoton NPCM8XX BMC SoC
+>   arm64: dts: nuvoton: Add initial NPCM8XX device tree
+>   arm64: dts: nuvoton: Add initial NPCM845 EVB device tree
+>   arm64: defconfig: Add Nuvoton NPCM family supportt of maintainers
+>   won't be reviewing your patches at the moment. It may be better to wait
+>   for the -rc1 to be out before sending out v2
+>
+> - don't send your patches to soc@kernel.org unless you want me to pick
+>   them up into the soc tree and they have been reviewed already. The series
+>   is clearly still under review at the moment, and I expect it to go through
+>   a few revisions first.
+>
+> - gmail marked your emails as possible spam for me. I don't know what
+>   happened here, but you may want to look into this to ensure that
+>   everybody receives it.
+>
+> Some of the Arbel NPCM8XX peripherals are based on Poleg NPCM7XX.
+>
+> This patchset was tested on the Arbel NPCM8XX evaluation board.
+>
+> Tomer Maimon (19):
+>   dt-bindings: timer: npcm: Add npcm845 compatible string
+>   clocksource: timer-npcm7xx: Add NPCM845 timer support
+>   dt-bindings: serial: 8250: Add npcm845 compatible string
+>   tty: serial: 8250: Add NPCM845 UART support
+>   dt-bindings: watchdog: npcm: Add npcm845 compatible string
+>   watchdog: npcm_wdt: Add NPCM845 watchdog support
+>   dt-binding: clk: npcm845: Add binding for Nuvoton NPCM8XX Clock
+>   clk: npcm8xx: add clock controller
+>   dt-bindings: reset: add syscon property
+>   reset: npcm: using syscon instead of device data
+>   dt-bindings: reset: npcm: Add support for NPCM8XX
+>   reset: npcm: Add NPCM8XX support
+>   dt-bindings: arm: npcm: Add maintainer
+>   dt-bindings: arm: npcm: Add nuvoton,npcm845 compatible string
+>   dt-bindings: arm: npcm: Add nuvoton,npcm845 GCR compatible string
+>   arm64: npcm: Add support for Nuvoton NPCM8XX BMC SoC
+>   arm64: dts: nuvoton: Add initial NPCM8XX device tree
+>   arm64: dts: nuvoton: Add initial NPCM845 EVB device tree
+>   arm64: defconfig: Add Nuvoton NPCM family support
+>
+> - For an initial platform submission, I can merge the
+>   clk/clocksource/serial/reset drivers along with the platform if they
+>   have an Ack from the subsystem maintainers. I would normally
+>   not include the watchdog patch in this as it's not essential, but
+>   I suppose that it's fine if you only do a oneline change and it
+>   has an Ack. If you have other nonessential drivers that need changes,
+>   best submit them separately though.
+>
+>          Arnd
 
-Yegor
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
