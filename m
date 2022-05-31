@@ -2,131 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9189C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 31 May 2022 15:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2C7C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 31 May 2022 22:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345625AbiEaPXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 May 2022 11:23:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
+        id S1348501AbiEaWpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 May 2022 18:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345619AbiEaPXG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 May 2022 11:23:06 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CB62613B;
-        Tue, 31 May 2022 08:23:02 -0700 (PDT)
-Received: from mail-yw1-f181.google.com ([209.85.128.181]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1N8GIa-1nj0uC22jI-0149M2; Tue, 31 May 2022 17:23:00 +0200
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-30c1b401711so79986327b3.2;
-        Tue, 31 May 2022 08:23:00 -0700 (PDT)
-X-Gm-Message-State: AOAM533d2zESMMie3wO5RjfCtVoMj31eGcelH9lWUFliUHTo/7aezq9I
-        8wzBZxQIIxWIqR7fkTnAeD8Nrrdke30GmVACerM=
-X-Google-Smtp-Source: ABdhPJybYFAQO9wCO1snmeV7ymS9Wwx8g0pNV6T8iuBn6qDWDMD8u5F2Ryzk1a4ZnFzrScPgFOwE0OI0cF0Os69/WdU=
-X-Received: by 2002:a81:488c:0:b0:302:549f:ffbc with SMTP id
- v134-20020a81488c000000b00302549fffbcmr29434661ywa.495.1654010579234; Tue, 31
- May 2022 08:22:59 -0700 (PDT)
+        with ESMTP id S1346421AbiEaWpX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 May 2022 18:45:23 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE224EDE6
+        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:45:22 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id v11-20020a17090a4ecb00b001e2c5b837ccso4298614pjl.3
+        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=soARJzRFwOfhwTqrBSydFb3eTupZIjHh8aanzENDqGo=;
+        b=DaKQfesYBWgMZS7l6hauTnBkeXrAsQpWA/SrcfUqCE0Jk4qdRiF75ZMTR83iBzuuYb
+         fZRaI6d6CGmjdZvTf1XfnpxRg6+9uxbyuYj8W212jJKJwO0H5Q8JCZsEUXaTgbnncO8e
+         68/DQDnpbAPHgVI4YRXeZEkkotc9NHonbRnCU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=soARJzRFwOfhwTqrBSydFb3eTupZIjHh8aanzENDqGo=;
+        b=gXnJsiCJilHKDywpd86/z08yeJFIVTTkaX6erzQNXGqa8pvy9vO0lBiAaMOmztjZ5e
+         NQ7DCImTYLsvtJ9MgCnhlSnei15+Tu/ekuR/JOdP0MLk/yXrz1eIt/kF2bTxHXgKiphK
+         yDXTYcXsuZV8f4MU1HqlHKbcc16leVjOiWkLGoFASNqo1NeasSQL5FrdvZ+qfvESIXVI
+         +3JRLR46ogKjPgSgx7BuFsGyiqxmodkRo/090uRDQP4a4Tjs/2FCBpYRwEizUG6K/kY0
+         jeNl1lHCNed0R2jKDV6NnD8vBY6zQrkv1VZ1+4V94ws91WZCt27IxPM/Cmzu8amiMdWK
+         YS7g==
+X-Gm-Message-State: AOAM532nxmVqawCu2rKoN+DOztCVWUe++tiVYRJff5Lu4zt6EcOnly8B
+        dFf8SxAz3J9DS6iV/FzgJaNHxAPtsbVBiQ==
+X-Google-Smtp-Source: ABdhPJyTCi9SCIMWA8MxQeCs0arVYqIWniU4YSwlTCDLay/lcWhIyE3cl9uw5pVBbFSzBMIbvLLvjg==
+X-Received: by 2002:a17:902:f70a:b0:153:88c7:774 with SMTP id h10-20020a170902f70a00b0015388c70774mr62719133plo.166.1654037121967;
+        Tue, 31 May 2022 15:45:21 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:e69e:f483:e751:7c7c])
+        by smtp.gmail.com with UTF8SMTPSA id 19-20020a170902e9d300b0015e8d4eb1b6sm87043plk.0.2022.05.31.15.45.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 May 2022 15:45:21 -0700 (PDT)
+Date:   Tue, 31 May 2022 15:45:20 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <quic_tdas@quicinc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: Add resets for LPASS audio
+ clock controller for SC7280
+Message-ID: <YpaagHNk38FLWLVO@google.com>
+References: <20220526042601.32064-1-quic_tdas@quicinc.com>
+ <20220526042601.32064-2-quic_tdas@quicinc.com>
 MIME-Version: 1.0
-References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
- <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
- <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
- <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
- <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
- <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
- <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
- <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
- <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
- <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
- <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
- <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
- <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
- <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
- <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
- <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
- <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
- <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
- <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
- <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
- <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
- <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
- <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
- <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
- <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com> <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
-In-Reply-To: <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 31 May 2022 17:22:42 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
-Message-ID: <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Yegor Yefremov <yegorslists@googlemail.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:K+Q6cFdO+Cx2p9qQ+Dtv1MqUK0XZ4i58ODQ6mHi4pqmrgszw1Tq
- 3LS/6U2G9Xy2756hZQA1R2UeK1m+A/1SA//2Cvg2kueqFNl1Fug28TWiMsC3LGMR8HlX3F+
- B7nGmZ3iVh2g1YrOjwq/DCVK5CqUbtug3dDlAqpjWJpnpmsaHTQIqAAGGJ8w7WoovEIkQHn
- qfMQ1ByI5x1s555wZIL2A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:duki9vA3KCg=:YEZBY2/x0UI3RfWJYKy6y1
- R29drqE6EDEJ02eVryWPGWTBfaSe15ryd9wj0OoPVHEQIfR/RhbcIiF6S7u/e5T6Arss8GxEu
- v1PBZ+ssy5itKuFpQOwZ5JLFvRMw21QaXT5EYDqFJMwjwb+HEW6qPKLgqQPVirGN+7sfXfEPb
- VhTXdAaD27sC5x41u4wvnSt8N16ghZ7ecu29wURpmDmmeerOhABbLOKvLmkUwfbwck7Z9dLHn
- fC/fEhuL+/5iHteOXVlgJl9RMWTRmjiZXYinDcGGqB3vF89h8vhTI9MTOo8vHfxCko4sjzerb
- Qq4gAnDGfJxeKSrPIH92keODTS6zNR+4TEAuq4Ocq/NPfaEwv4jewtJFcvhIB4abypkToY+dl
- V3b7ezgjDO0QVqqFGR/1jvEbqSV8Er89SOp7yVCtLz5X5bZcK1Kymo6YkglrfgS7rZZHYDAo0
- K0MzjqC+uep6JbTneqIUsRmHShgVZAzOQ2CCGqOtrVJjXHd5J7CvCAlEg6q1hnOMaRQKmh7MT
- 6HyB2Fpx2wsIooJb8xgnoTS0IJ/wqRyX0UvI+e3YWdVK8UifmmY6zc1Ru+lOKsbZwC8NS2EkR
- ExBh/dcY6Fv1SagkAyA2EpS0YhuTdgAmc6fWx1roEn0mjO8inyaZxUS0TGgPBuIrbdYTbPjii
- CcoEJDTy76QvJA5vCMV3ledxp9yNanIovly9GBJdjVrTAfUFXDsWa4alI9vMf5KtvEQOH8z3Q
- xr9jYVxGF6V7q5Lg9tWjqk/6v7MSZ2nmYdapIg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220526042601.32064-2-quic_tdas@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 31, 2022 at 4:16 PM Yegor Yefremov
-<yegorslists@googlemail.com> wrote:
-> On Tue, May 31, 2022 at 10:36 AM Yegor Yefremov <yegorslists@googlemail.com> wrote:
-> # bad: [b6b3b4814e77d2f5a7517297e9ac1d1aa1cda103] [PART 1] ARM:
-> implement THREAD_INFO_IN_TASK for uniprocessor systems
-> git bisect bad b6b3b4814e77d2f5a7517297e9ac1d1aa1cda103
-> # good: [dccfc18999cf4b4e518f01d5c7c578426166e5f2] ARM: v7m: enable
-> support for IRQ stacks
-> git bisect good dccfc18999cf4b4e518f01d5c7c578426166e5f2
-> # first bad commit: [b6b3b4814e77d2f5a7517297e9ac1d1aa1cda103] [PART
-> 1] ARM: implement THREAD_INFO_IN_TASK for uniprocessor systems
->
-> Though commit b6b3b4814e77d2f5a7517297e9ac1d1aa1cda103 led to a broken
-> kernel that didn't even show any output after the bootloader had
-> started it.
->
-> Commit 2d3456213319c0277ee6082946c43c3afacca9b4 showed the expected stalling.
+On Thu, May 26, 2022 at 09:55:59AM +0530, Taniya Das wrote:
+> Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
+> for SC7280. Update reg property min/max items in YAML schema.
+> 
+> Fixes: 57405b795504 ("dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280").
 
-Ok, good, so we know that the "ARM: implement THREAD_INFO_IN_TASK for
-uniprocessor system" commit caused the problem then. This is what we had
-already assumed, but now it's confirmed.
+git show 57405b795504
+fatal: ambiguous argument '57405b795504': unknown revision or path not in the working tree.
 
-Too bad I screwed up that "this_cpu_offset" macro, I think it should
-have been
+I suppose you mean:
 
-@@ -286,7 +286,7 @@ THUMB(      fpreg   .req    r7      )
-         *                   register 'rd'
-         */
-        .macro          this_cpu_offset, rd:req
--       mov             \rd, #0
-+       ldr_va          \rd, __per_cpu_offset
-        .endm
-
-        /*
-
-I've pushed a modified branch now, with that fix on the broken commit,
-and another change to make CONFIG_IRQSTACKS user-selectable rather
-than always enabled. That should tell us if the problem is in the SMP
-patching or in the irqstacks.
-
-Can you test the top of this branch with CONFIG_IRQSTACKS disabled,
-and (if that still stalls) retest the fixed commit f0191ea5c2e5 ("[PART 1]
-ARM: implement THREAD_INFO_IN_TASK for uniprocessor systems")?
-
-      Arnd
+4185b27b3bef dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
