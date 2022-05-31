@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2C7C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 31 May 2022 22:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7582DC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 31 May 2022 22:51:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348501AbiEaWpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 May 2022 18:45:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
+        id S1347649AbiEaWvX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 May 2022 18:51:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346421AbiEaWpX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 May 2022 18:45:23 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE224EDE6
-        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:45:22 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id v11-20020a17090a4ecb00b001e2c5b837ccso4298614pjl.3
-        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:45:22 -0700 (PDT)
+        with ESMTP id S1345178AbiEaWvW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 May 2022 18:51:22 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3916CA006D
+        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:51:21 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id s68so138336pgs.10
+        for <linux-clk@vger.kernel.org>; Tue, 31 May 2022 15:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=soARJzRFwOfhwTqrBSydFb3eTupZIjHh8aanzENDqGo=;
-        b=DaKQfesYBWgMZS7l6hauTnBkeXrAsQpWA/SrcfUqCE0Jk4qdRiF75ZMTR83iBzuuYb
-         fZRaI6d6CGmjdZvTf1XfnpxRg6+9uxbyuYj8W212jJKJwO0H5Q8JCZsEUXaTgbnncO8e
-         68/DQDnpbAPHgVI4YRXeZEkkotc9NHonbRnCU=
+        bh=ObltlVOkUE2OJx3EUGLxpwIeNHmLofE/Hbbs9yC2dVI=;
+        b=Srv1f/KQO53oV2Tdw4Dlb/nPN3mc/93OBmsbGIWKG20D9iH/qqIWPLhb2EuaUZtJRi
+         e8CKPb8b7fsheC3U2bWW3MVBsov/GIJalDF/qPgYQOu7L9A8yrYZpfWVA3mNwS7wl6cn
+         PfWQykclGNYr8vAYQ1yIvaYi5YwBVJJQvU8qo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=soARJzRFwOfhwTqrBSydFb3eTupZIjHh8aanzENDqGo=;
-        b=gXnJsiCJilHKDywpd86/z08yeJFIVTTkaX6erzQNXGqa8pvy9vO0lBiAaMOmztjZ5e
-         NQ7DCImTYLsvtJ9MgCnhlSnei15+Tu/ekuR/JOdP0MLk/yXrz1eIt/kF2bTxHXgKiphK
-         yDXTYcXsuZV8f4MU1HqlHKbcc16leVjOiWkLGoFASNqo1NeasSQL5FrdvZ+qfvESIXVI
-         +3JRLR46ogKjPgSgx7BuFsGyiqxmodkRo/090uRDQP4a4Tjs/2FCBpYRwEizUG6K/kY0
-         jeNl1lHCNed0R2jKDV6NnD8vBY6zQrkv1VZ1+4V94ws91WZCt27IxPM/Cmzu8amiMdWK
-         YS7g==
-X-Gm-Message-State: AOAM532nxmVqawCu2rKoN+DOztCVWUe++tiVYRJff5Lu4zt6EcOnly8B
-        dFf8SxAz3J9DS6iV/FzgJaNHxAPtsbVBiQ==
-X-Google-Smtp-Source: ABdhPJyTCi9SCIMWA8MxQeCs0arVYqIWniU4YSwlTCDLay/lcWhIyE3cl9uw5pVBbFSzBMIbvLLvjg==
-X-Received: by 2002:a17:902:f70a:b0:153:88c7:774 with SMTP id h10-20020a170902f70a00b0015388c70774mr62719133plo.166.1654037121967;
-        Tue, 31 May 2022 15:45:21 -0700 (PDT)
+        bh=ObltlVOkUE2OJx3EUGLxpwIeNHmLofE/Hbbs9yC2dVI=;
+        b=gOms6R1pjOko1u1T8a2ieWgIzEKY0wieBe22HG9EPoPm8ggL1byTzH2qMzAx3pwS9M
+         7qLaihQwtPN0U/fdO1V6mYzZ5Z0UV30W5IWiL+amYQY58JrSWskwb4TXVO62BEcH5NC4
+         PRdkW9Oma8MbGKumglsL0fmtbRKGQRRZ2Z/aKwCVDo2D7x99zmPYfZWcAjqjnC2kLvOc
+         1c3WW77mU6yqaOMQcFYzQZApsG9jeq7PC4xG+rB5oMVtf2Vmon0JbCVNjus2FRKHsAqW
+         JRVOaSw7WIr4JfJQV/YJLQ238lb9l4fdeqJaPrlg21FkpKozSZzwoG0vy/wEiPDaL0mr
+         bF0g==
+X-Gm-Message-State: AOAM530AH8ypRo9xp+uXYA+TqqBCsYU6hw4EIRl/UHTqFUS3fzXHG1VA
+        rI1eI1S9K3rg4VNCUEIyzSy4Fw==
+X-Google-Smtp-Source: ABdhPJxsuSwLjSCmKCwHbwK6CS4COgLya/whNqnIb0LrGO6Da9iL3ujpmNVaCDeyUb3R7xd8Vt67QQ==
+X-Received: by 2002:a05:6a02:19b:b0:3fa:3e63:15fb with SMTP id bj27-20020a056a02019b00b003fa3e6315fbmr40523358pgb.129.1654037480826;
+        Tue, 31 May 2022 15:51:20 -0700 (PDT)
 Received: from localhost ([2620:15c:11a:202:e69e:f483:e751:7c7c])
-        by smtp.gmail.com with UTF8SMTPSA id 19-20020a170902e9d300b0015e8d4eb1b6sm87043plk.0.2022.05.31.15.45.21
+        by smtp.gmail.com with UTF8SMTPSA id i33-20020a632221000000b003fc5b1db26fsm2040797pgi.52.2022.05.31.15.51.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 May 2022 15:45:21 -0700 (PDT)
-Date:   Tue, 31 May 2022 15:45:20 -0700
+        Tue, 31 May 2022 15:51:20 -0700 (PDT)
+Date:   Tue, 31 May 2022 15:51:19 -0700
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Taniya Das <quic_tdas@quicinc.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -53,28 +53,36 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: Add resets for LPASS audio
- clock controller for SC7280
-Message-ID: <YpaagHNk38FLWLVO@google.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: lpass: Add support for resets &
+ external mclk for SC7280
+Message-ID: <Ypab50H+Y9W9XnnU@google.com>
 References: <20220526042601.32064-1-quic_tdas@quicinc.com>
- <20220526042601.32064-2-quic_tdas@quicinc.com>
+ <20220526042601.32064-4-quic_tdas@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220526042601.32064-2-quic_tdas@quicinc.com>
+In-Reply-To: <20220526042601.32064-4-quic_tdas@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 26, 2022 at 09:55:59AM +0530, Taniya Das wrote:
-> Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
-> for SC7280. Update reg property min/max items in YAML schema.
+On Thu, May 26, 2022 at 09:56:01AM +0530, Taniya Das wrote:
+> The clock gating control for TX/RX/WSA core bus clocks would be required
+> to be reset(moved from hardware control) from audio core driver. Thus
+> add the support for the reset clocks.
 > 
-> Fixes: 57405b795504 ("dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280").
+> Also add the external mclk to interface external MI2S.
+> 
+> Fixes: 2b75e142523e ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280").
 
-git show 57405b795504
-fatal: ambiguous argument '57405b795504': unknown revision or path not in the working tree.
+This commit doesn't exist either:
 
-I suppose you mean:
+git show 2b75e142523e
+fatal: ambiguous argument '2b75e142523e': unknown revision or path not in the working tree.
 
-4185b27b3bef dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
+You probably mean:
+
+a9dd26639d05 clk: qcom: lpass: Add support for LPASS clock controller for SC7280
+
+It seems you got these commit ids from a downstream branch, instead of an
+upstream/maintainer branch.
