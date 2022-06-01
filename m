@@ -2,161 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2157C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 10:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4675EC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 10:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352359AbiFAKu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 06:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34164 "EHLO
+        id S1349075AbiFAK65 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 06:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352458AbiFAKuQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 06:50:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F6F633D;
-        Wed,  1 Jun 2022 03:50:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 98AB3B81977;
-        Wed,  1 Jun 2022 10:50:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F9F8C385B8;
-        Wed,  1 Jun 2022 10:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654080611;
-        bh=z/J74CZ3/BSNe+S0MIQ+I0zuNCCKqJO8tJxAyK3/SCg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Q8BoWlJZknF1+TFxgZXHi7fHr4TH/AL+56o8Nzs6G4GCH3UW6teOuy6toUW/CfRDb
-         ViHS8nfgOl00IVcS+LwiXLrrAsgaGRIDOAST3XhfjGDsvlP3hw7as0vikUamvF/12Q
-         SmY8FfhAJzXiiPFU6Wi9szX4cCN4VB+DYCX5aL9DPPOjxEbKnNs6KRbSTt/n8EOt4q
-         r6pVVQVai2l69F95gQBt7/gF3U5dtC2riMX8FGeXrGmEwI8dFerYVg75iFlK0kM5Sr
-         34BH5BISXgosEzLGjdf9ljLYDnD6WpYZSPV/bpzTrtTzDQQ7+iveVV2RLF0JUT3wjL
-         BN65OwgmugqAw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-f2bb84f9edso2133060fac.10;
-        Wed, 01 Jun 2022 03:50:11 -0700 (PDT)
-X-Gm-Message-State: AOAM532qIXvFJ4mMIIr5ZRU8DHPu/9S9RZD50SE515n6b+I5P0YLuHJn
-        KyNtvRIHX5LxfSHcpQlKp60eEUFJQmFQBvjrqN4=
-X-Google-Smtp-Source: ABdhPJyfvcrfF1t2F1lT4AQMTQltAfb29GqdrFHeJRQoZAF8a8meZS5QncjxIv1u3nI3R1EnbF4BS/ZBXR2gXL2faFk=
-X-Received: by 2002:a05:6870:eaa5:b0:da:b3f:2b45 with SMTP id
- s37-20020a056870eaa500b000da0b3f2b45mr16847571oap.228.1654080610269; Wed, 01
- Jun 2022 03:50:10 -0700 (PDT)
+        with ESMTP id S232401AbiFAK64 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 06:58:56 -0400
+Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109C963BCF;
+        Wed,  1 Jun 2022 03:58:55 -0700 (PDT)
+Date:   Wed, 1 Jun 2022 05:58:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
+        s=2020-07; t=1654081133;
+        bh=xLfn3Y0/yusqS6Eog6u344rvDpPcQgkFd+Nc9svjBZc=;
+        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
+         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
+         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
+        b=yKR1FSWQZKbmWEJq56tQ7+c8inCVHzc/rmVKOXmTvPxNJFpV+LWFw5BanJCRftdiH
+         P+xcq4HwEtf6xrHoas36nm9U5blUYUV4dPHXZUb4LkZruJoC4SFEk+l9CwXLLl+H08
+         gi+Fr0mfxIsDMCNJr3YBNv2FCMJDM89OfpnOQrpny8JU0kgxu5nYrooYNWsRSY4pAK
+         nLE7939OCvlXlFWiVLi/w2+7QBptE2o1wAgcBzfwHXyzgVLJ0UE7PjcrtyG7iIs0Nq
+         Llsezfhj7YOheX1YykDGie3p5GrkY8a4UQ/SyAhc+uzxNVQORsQlEa+2HHM728LeDe
+         pr+gnnUvXrpDQ==
+From:   "Marty E. Plummer" <hanetzer@startmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
+        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
+        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
+        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
+        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
+        vigneshr@ti.com, xuwei5@hisilicon.com
+Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
+Message-ID: <20220601105846.7hriawg3stxb657f@proprietary-killer>
+References: <20220501054440.2434247-1-hanetzer@startmail.com>
+ <20220501173423.2473093-1-hanetzer@startmail.com>
+ <20220501173423.2473093-2-hanetzer@startmail.com>
+ <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
 MIME-Version: 1.0
-References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
- <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
- <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
- <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
- <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
- <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
- <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
- <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
- <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
- <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
- <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
- <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
- <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
- <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
- <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
- <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
- <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
- <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
- <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
- <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
- <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
- <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
- <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
- <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
- <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com>
- <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
- <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
- <CAGm1_kswMZkoV9_DnB71ugVTF_rh5SV2NazkHROwXiFqhxTWYA@mail.gmail.com>
- <CAK8P3a0Qdav2JaF8yLydxr9amQp30gnY67CVx+ubowUHeG1VeA@mail.gmail.com>
- <CAMj1kXEL48=w08A2t7522y1visAUcnkkq4LA6ERRP_FbCbEgiw@mail.gmail.com>
- <CAMj1kXFmFfQ1oZ-CUcwe+ojSkk+9KBH1azhGrEJ4=-pZgMXX-Q@mail.gmail.com>
- <CAGm1_ku-tygQJrgvHnvJd0xzb6Vw3t_qdz_VKHJx4YWSxCEryA@mail.gmail.com>
- <CAMj1kXHUoDQ0xZ4yBx9uT6D9=6xfOsJoWLoOKho_-=Z9uYS30w@mail.gmail.com> <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
-In-Reply-To: <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Wed, 1 Jun 2022 12:49:58 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
-Message-ID: <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Yegor Yefremov <yegorslists@googlemail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 1 Jun 2022 at 12:46, Yegor Yefremov <yegorslists@googlemail.com> wrote:
->
-> On Wed, Jun 1, 2022 at 12:06 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > On Wed, 1 Jun 2022 at 12:04, Yegor Yefremov <yegorslists@googlemail.com> wrote:
-> > >
-> > > On Wed, Jun 1, 2022 at 11:28 AM Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > >
-> > > > On Wed, 1 Jun 2022 at 10:08, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > >
-> > > > > On Wed, 1 Jun 2022 at 09:59, Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > >
-> > > > > > On Wed, Jun 1, 2022 at 9:36 AM Yegor Yefremov
-> > > > > > <yegorslists@googlemail.com> wrote:
-> > > > > > > On Tue, May 31, 2022 at 5:23 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > > > > > I've pushed a modified branch now, with that fix on the broken commit,
-> > > > > > > > and another change to make CONFIG_IRQSTACKS user-selectable rather
-> > > > > > > > than always enabled. That should tell us if the problem is in the SMP
-> > > > > > > > patching or in the irqstacks.
-> > > > > > > >
-> > > > > > > > Can you test the top of this branch with CONFIG_IRQSTACKS disabled,
-> > > > > > > > and (if that still stalls) retest the fixed commit f0191ea5c2e5 ("[PART 1]
-> > > > > > > > ARM: implement THREAD_INFO_IN_TASK for uniprocessor systems")?
-> > > > > > >
-> > > > > > > 1. the top of this branch with CONFIG_IRQSTACKS disabled stalls
-> > > > > > > 2. f0191ea5c2e5 with the same config - not
-> > > > > >
-> > > > > > Ok, perfect, that does narrow down the problem quite a bit: The final
-> > > > > > patch has seven changes, all of which can be done individually because
-> > > > > > in each case the simplified version in f0191ea5c2e5 is meant to run
-> > > > > > the exact same instructions as the version after the change, when running
-> > > > > > on a uniprocessor machine such as your am335x.
-> > > > > >
-> > > > > > You have already shown earlier that the get_current() and
-> > > > > > __my_cpu_offset() functions are not to blame here, as reverting
-> > > > > > only those does not change the behavior.
-> > > > > >
-> > > > > > This leaves the is_smp() check in set_current(), and the
-> > > > > > four macros in <asm/assembler.h>. I don't see anything obviously
-> > > > > > wrong with any of those five, but I would bet on the macros
-> > > > > > here. Can you try bisecting into this commit, maybe reverting
-> > > > > > the changes to set_current and get_current first, and then
-> > > > > > narrowing it down to (hopefully) a single macro that causes the
-> > > > > > problem?
-> > > > > >
-> > > > >
-> > > > > set_current() is never called by the primary CPU, which is why the
-> > > > > is_smp() check was removed from there in 57a420435edcb0b94 ("ARM: drop
-> > > > > pointless SMP check on secondary startup path").
-> > > > >
-> > > > > So that leaves only the four macros in asm/assembler.h, but I don't
-> > > > > see anything obviously wrong with those either.
-> > > >
-> > > > I pushed a patch on top of Arnd's branch at the link below that gets
-> > > > rid of the subsections, and uses normal branches (and code patching)
-> > > > to switch between the thread ID register and the LDR to retrieve the
-> > > > CPU offset and the current pointer. I have no explanation whether or
-> > > > why it could make a difference, but I think it's worth a try.
-> > >
-> > > The link to your repo is missing.
-> > >
-> >
-> > Oops, sorry :-)
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=am335x-stall-test
->
-> I have tested your branch and it stalls:
->
+On Tue, May 03, 2022 at 01:37:42PM +0200, Krzysztof Kozlowski wrote:
+> On 01/05/2022 19:34, Marty E. Plummer wrote:
+> > Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
+> > generates clock and reset signals used by other module blocks on SoC.
+> > 
+> > Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
+> > ---
+> >  drivers/clk/hisilicon/Kconfig             |   8 ++
+> >  drivers/clk/hisilicon/Makefile            |   1 +
+> >  drivers/clk/hisilicon/crg-hi3521a.c       | 141 ++++++++++++++++++++++
+> >  include/dt-bindings/clock/hi3521a-clock.h |  34 ++++++
+> 
+> Bindings go to separate patch. Your patchset is unmerge'able.
+> 
+So, assuming I have the following patches:
+1: +include/dt-bindings/clock/hi3521a-clock.h
+2: +drivers/clk/hisilicon/crg-hi3521a.c
+3: +Documentation/devicetree/bindings/whatever
 
-OK, thanks for verifying.
+In what order should they be applied?
+> Best regards,
+> Krzysztof
