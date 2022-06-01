@@ -2,103 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6ACAC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 18:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE89C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 18:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbiFASYa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 14:24:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44760 "EHLO
+        id S231564AbiFASv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 14:51:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiFASY3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 14:24:29 -0400
-Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEE6AA5030;
-        Wed,  1 Jun 2022 11:24:27 -0700 (PDT)
-Date:   Wed, 1 Jun 2022 13:24:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
-        s=2020-07; t=1654107865;
-        bh=6QDUqmhuM8l1tVdeJi5firhjmNHPasPFCys26Iie+VU=;
-        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
-         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
-         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
-        b=P1EAv5a9i3kopW4ykn8OWCntXzA5gWdkPwbERsEnYcy/tjRQveyLYsTwQphYppYkg
-         vY/DjjN/zYCSSGli2wMbqrr16cYWnTVI3aZENthlFVht1jr/vUBu68fEHxPsS18HWe
-         kuKcS1obKaJqlvVPh8fYsb0VD0w/AmUz6Ms/DirGW2NAnw15+/ydJPKJi6rfcsuLVP
-         ZY/F4blN3h7f0Cwev/KOyE1FVIaH8s2PXlmxB6LQTeW4ovz+LVcCLGYSVZYuCRVJJg
-         DM+p+GmiybFO0t1oXTpAX4PYIYLTufWrHsai6V6Mac7D7rCvWF7XFfcYkwlSjuCLPO
-         LCDpcIHp5et0A==
-From:   "Marty E. Plummer" <hanetzer@startmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
-        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
-        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
-        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
-        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
-        vigneshr@ti.com, xuwei5@hisilicon.com
-Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
-Message-ID: <20220601182418.okoofgannw6vbcxo@proprietary-killer>
-References: <20220501054440.2434247-1-hanetzer@startmail.com>
- <20220501173423.2473093-1-hanetzer@startmail.com>
- <20220501173423.2473093-2-hanetzer@startmail.com>
- <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
- <20220601105846.7hriawg3stxb657f@proprietary-killer>
- <630b0d13-6778-2508-6a34-9daa0358047d@linaro.org>
- <20220601110616.xmxih663kxgupszv@proprietary-killer>
- <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
+        with ESMTP id S229497AbiFASv2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 14:51:28 -0400
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7351B13275E;
+        Wed,  1 Jun 2022 11:51:27 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id h188so3830015oia.2;
+        Wed, 01 Jun 2022 11:51:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=M2ZNwqKjItGDpeZxDzTcGrjLej9RBlHgjiNO+wPf9u0=;
+        b=15yKPCx6b/81D4UyxkRv3vXyFI/CDsU7luQH9HUH7uY8b6i3ubb7nbbanWcAftcyGL
+         BTCMhXvvl5g5eBKRkDIZu7T3IpErw0rtEi4C3VthVt8TDIMNceTzuDTtZ+epi8B42dy5
+         xeHV0ZSoiF4iXFdrMj6G6MSAmPVut/5luy3+7x49kkmbFdY4kPc4jdMXZhVcc4j8FM1r
+         n7Azx9GkRV2lRFnHyadS2++In7/KOug/G32p973lNYQgZRBy0MlsT5LLvEjTGe3AXI4B
+         SykESyD2ilk80WzqrhKgsS9L9B6i7u+aCj3QeZXaOlZGxbiJgnNkOwxCGJgijpvVpOR8
+         1QDQ==
+X-Gm-Message-State: AOAM532FcRo4gWwLx6yqm7SrI8wjQhgI+lwfptZFPlgXbEy9xkZxObam
+        +QhBOdvYODvNzpkoKpVYOg==
+X-Google-Smtp-Source: ABdhPJwQFmyslgS5FHA+5KgsaoiseVIbZoReYgt/VB1UM4o0OIKiCyq+xA7b97+mzLJmmb3w5CRzLw==
+X-Received: by 2002:a05:6808:10d4:b0:32b:1230:5cbd with SMTP id s20-20020a05680810d400b0032b12305cbdmr15489565ois.70.1654109486200;
+        Wed, 01 Jun 2022 11:51:26 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id lv21-20020a056871439500b000f28a948dd2sm981576oab.21.2022.06.01.11.51.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 11:51:25 -0700 (PDT)
+Received: (nullmailer pid 215762 invoked by uid 1000);
+        Wed, 01 Jun 2022 18:51:25 -0000
+Date:   Wed, 1 Jun 2022 13:51:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     agross@kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, jonathan@marek.ca,
+        linux-arm-msm@vger.kernel.org, krzk+dt@kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        robh+dt@kernel.org, bjorn.andersson@linaro.org
+Subject: Re: [PATCH v4 5/6] dt-bindings: clock: Add Qcom SM8350 DISPCC
+ bindings
+Message-ID: <20220601185125.GA215573-robh@kernel.org>
+References: <20220601124250.60968-1-robert.foss@linaro.org>
+ <20220601124250.60968-6-robert.foss@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
+In-Reply-To: <20220601124250.60968-6-robert.foss@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 01, 2022 at 01:09:28PM +0200, Krzysztof Kozlowski wrote:
-> On 01/06/2022 13:06, Marty E. Plummer wrote:
-> > On Wed, Jun 01, 2022 at 01:00:38PM +0200, Krzysztof Kozlowski wrote:
-> >> On 01/06/2022 12:58, Marty E. Plummer wrote:
-> >>> On Tue, May 03, 2022 at 01:37:42PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 01/05/2022 19:34, Marty E. Plummer wrote:
-> >>>>> Add CRG driver for Hi3521A SoC. CRG (Clock and Reset Generator) module
-> >>>>> generates clock and reset signals used by other module blocks on SoC.
-> >>>>>
-> >>>>> Signed-off-by: Marty E. Plummer <hanetzer@startmail.com>
-> >>>>> ---
-> >>>>>  drivers/clk/hisilicon/Kconfig             |   8 ++
-> >>>>>  drivers/clk/hisilicon/Makefile            |   1 +
-> >>>>>  drivers/clk/hisilicon/crg-hi3521a.c       | 141 ++++++++++++++++++++++
-> >>>>>  include/dt-bindings/clock/hi3521a-clock.h |  34 ++++++
-> >>>>
-> >>>> Bindings go to separate patch. Your patchset is unmerge'able.
-> >>>>
-> >>> So, assuming I have the following patches:
-> >>> 1: +include/dt-bindings/clock/hi3521a-clock.h
-> >>> 2: +drivers/clk/hisilicon/crg-hi3521a.c
-> >>> 3: +Documentation/devicetree/bindings/whatever
-> >>>
-> >>> In what order should they be applied?
-> >>
-> >> Applied or sent? The maintainer will apply them in proper order, this is
-> >> bisectable.
-> >>
-> >>
-> > Either or. Whatever makes the workload easier is what I'm looking for.
+On Wed, 01 Jun 2022 14:42:49 +0200, Robert Foss wrote:
+> Add sm8350 DISPCC bindings, while these bindings are similar
+> to the sm8x50 bindings, the way clocks are represented has changed
+> in ABI incompatible ways.
 > 
-> Sorry, you need to be more specific. Apply is not a job for you, for the
-> patch submitter.
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> ---
 > 
-> Then you miss here important piece - which is the first patch. DTS goes
-> always via separate branch (or even tree) from driver changes. That's
-> why bindings are always separate first patches.
+> hanges since v2
+>  - Add my SoB - Bjorn
 > 
-So, add a 4: arch/arm/boot/dts/soc.dtsi and 5: arch/arm/boot/dts/board.dts
-to the above list, or should those be the same patch as well?
+> Changes since v3
+>  - Separate from qcom,dispcc-sm8x50
+>  - Remove clock-names
+>  - Make example sm8350 based
+>  - Changed author to me due to size of changes
+> 
+> 
+>  .../bindings/clock/qcom,dispcc-sm8350.yaml    | 104 ++++++++++++++++++
+>  .../bindings/clock/qcom,dispcc-sm8x50.yaml    |   4 +-
+>  .../dt-bindings/clock/qcom,dispcc-sm8350.h    |   1 +
+>  3 files changed, 107 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml
+>  create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+> 
 
-> Best regards,
-> Krzysztof
+Reviewed-by: Rob Herring <robh@kernel.org>
