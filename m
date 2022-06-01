@@ -2,83 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260ECC43334
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 20:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63449C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 21:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbiFAUr4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 16:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39272 "EHLO
+        id S231551AbiFAVa1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 17:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230008AbiFAUrF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 16:47:05 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809666F4B1;
-        Wed,  1 Jun 2022 13:38:48 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id k11so4113108oia.12;
-        Wed, 01 Jun 2022 13:38:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xRz8WTc++E/Jydb7FMNOLlt8oZQ5VXJmtj71a3RfnaY=;
-        b=dE/Ds7dqsbj65pHGUjo3EZVYxqf4qMCi6+Upwb38VuZemlwfsxzkDUcdqhA+Nwd0Pl
-         fMAiI5oeQnx0pras+CXjGvzlel7CudiKdouVaJU3hf4ise4Au3dEVddMg4GsqaXV2Bdu
-         Y+KdX6sLiShHlX/h1+du31GxwNFdRvzLQVng0fYzWBHlajqzu3EqNVkg6FzJr64i4Tzs
-         4gAkcyvApKq2LDUbnUjMfcgaUABxx2TvgL/WD5D/CPNsvluxpPjuqPk+t1SWpgz+0aM6
-         j5V3vB684xnkAGQWop3sVVZCkkwkKToCGrNZ5qKlC0GmPw6hpJxjYfJXhWzWm+akC9ia
-         epRg==
-X-Gm-Message-State: AOAM533hX0SbiDYSH958YTgxDc07GAWfHZJ81jrAzWOTgvs/R9/YG6Jp
-        vaMH7v7KY5UScHeNYuAFiK/C0Q3WCg==
-X-Google-Smtp-Source: ABdhPJxcJb/XqsmIRQMb2lYc01pOYbvBfafkRH51jgoAfdrhlG47KxqXZcw3D1gUMxkbvYi213aErA==
-X-Received: by 2002:a05:6808:1599:b0:32b:18e3:3e04 with SMTP id t25-20020a056808159900b0032b18e33e04mr15943062oiw.227.1654113754778;
-        Wed, 01 Jun 2022 13:02:34 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i15-20020a056871028f00b000f342119f41sm1064127oae.42.2022.06.01.13.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 13:02:34 -0700 (PDT)
-Received: (nullmailer pid 340030 invoked by uid 1000);
-        Wed, 01 Jun 2022 20:02:33 -0000
-Date:   Wed, 1 Jun 2022 15:02:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     y.oudjana@protonmail.com, miles.chen@mediatek.com,
-        matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
-        kernel@collabora.com, wenst@chromium.org,
-        devicetree@vger.kernel.org, rex-bc.chen@mediatek.com,
-        martin.botka@somainline.org, chun-jie.chen@mediatek.com,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        weiyi.lu@mediatek.com, konrad.dybcio@somainline.org,
-        linux-mediatek@lists.infradead.org, p.zabel@pengutronix.de,
-        ikjn@chromium.org, paul.bouchara@somainline.org,
-        fparent@baylibre.com, sam.shih@mediatek.com,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        marijn.suijten@somainline.org, sboyd@kernel.org,
-        ck.hu@mediatek.com, mturquette@baylibre.com,
-        linux-arm-kernel@lists.infradead.org, tinghan.shen@mediatek.com,
-        jason-jh.lin@mediatek.com, bgolaszewski@baylibre.com
-Subject: Re: [PATCH v2 3/7] dt-bindings: reset: Add bindings for MT6795 Helio
- X10 reset controllers
-Message-ID: <20220601200233.GA339992-robh@kernel.org>
-References: <20220518111652.223727-1-angelogioacchino.delregno@collabora.com>
- <20220518111652.223727-4-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S231658AbiFAVaL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 17:30:11 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6E419763A;
+        Wed,  1 Jun 2022 14:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1654119009; x=1685655009;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Str7KeH+r6nyrUAIjWfWst4SqE0XpDuWFsPp/efkpBE=;
+  b=nsH4yeZGQIsfWRoLvqaqilOskoJpt1HnIOUQO3dOV2/CmBvPhD9zpN2m
+   cw/yQToWIvmM20ec890apMgHyMcDC4klZ7VqaWMOco3f5u8uE37NX+Hjz
+   mcuR4279E0mJ4sicYFwLRJsA/GFX+I1Nak4ewx/zuvW74fnuFnw0AYuSK
+   M=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 01 Jun 2022 14:30:09 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2022 14:30:08 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 1 Jun 2022 14:30:08 -0700
+Received: from jhugo-lnx.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 1 Jun 2022 14:30:07 -0700
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <agross@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>
+Subject: [PATCH] dt-bindings: clock: Update my email address
+Date:   Wed, 1 Jun 2022 15:29:52 -0600
+Message-ID: <1654118992-4026-1-git-send-email-quic_jhugo@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220518111652.223727-4-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 18 May 2022 13:16:48 +0200, AngeloGioacchino Del Regno wrote:
-> Add the reset controller bindings for MT6795.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  include/dt-bindings/reset/mt6795-resets.h | 50 +++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 include/dt-bindings/reset/mt6795-resets.h
-> 
+Update my email address from the defunct codeaurora.org domain to the
+current quicinc.com domain.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index 4b79e89..32e8701 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Multimedia Clock & Reset Controller Binding
+ 
+ maintainers:
+-  - Jeffrey Hugo <jhugo@codeaurora.org>
++  - Jeffrey Hugo <quic_jhugo@quicinc.com>
+   - Taniya Das <tdas@codeaurora.org>
+ 
+ description: |
+-- 
+2.7.4
+
