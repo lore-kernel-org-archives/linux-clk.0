@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ADEC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 12:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CEAC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 12:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352976AbiFAMoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 08:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
+        id S1353097AbiFAMog (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 08:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353051AbiFAMoS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 08:44:18 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC1F846655
-        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 05:44:16 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id b8so1986452edf.11
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 05:44:16 -0700 (PDT)
+        with ESMTP id S1353068AbiFAMof (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 08:44:35 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470AF43EC4
+        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 05:44:25 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id q1so3489261ejz.9
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 05:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=NmrsNTC7U91tg8YsVhHhgXCDiOGXL6aN8PsJdwtecxo=;
-        b=EO+94TNUS90lHTob+AzkHTeeAsGZcsN5zZMorptL8RgqLoUVkAARnBcEgpU5FXMfCI
-         /3ZqUv7sxt5TCdOAkUmEuwqK4LiKNCTx0W47t8qnkvKD/iDfxxKtUZYdOpszMOKE87x9
-         2HgO8anSDPEOODFfDzyzuxjcqPeUvJ5JwVd/OtHBNPMYbI4YkrIzU4LIGfZpBxhu8U0P
-         MjWUoKsj0wYGy84XUZu/yhqeIPMzYOO60FIqRfcBoJ1Vjm/dpDOtxDsalqWJE+E1IXJ5
-         w8cLtNKTUbekC1VrPDmaRfCu41kXEwVR7SBhcF+7spT9zpUwH5j1STrp1kHNnxWcyDIS
-         ZQXg==
+        bh=JeSI4uQxR2QJYLMBJ1DqLjl1fY9poS8Q+KM6xI9FOz4=;
+        b=whJ2LInpsfW99ZDLn3m+Dy9M8JouyCJLhDt0YhwGRTPVaak0kyIfkTLVY/BBRqa3RF
+         ZXbAA0n5J5BA/9IWNrQTvBX0kV/pV+MlKOKBc8d8uA+8CpRPqCvwbl+Qpp0Cqc7xSTM0
+         4YtQ9m9ZRgmrlLJeAlWEvmrpUuiG4xKXUk51CMiU8aBQecEORzPctNgLpR6PGPwCk02D
+         ktOAfDgZesbUjCXo5G2gUDWdNV/LLNuq1vl4WrnXLx3+yvVlpNP1AV8+sTm0KS/CBv9r
+         wBH9ABa2beMZkgSiI54oRkRFGe1HHLjQmkvyhbQZOcIqLVTRUL/KrdiucvUhz38r1MQR
+         H0aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NmrsNTC7U91tg8YsVhHhgXCDiOGXL6aN8PsJdwtecxo=;
-        b=T/IZ51M7p78wdFQQBK2YsoTYeFe23bXLwHBRDWSE/eF0SrZdxu+JFTiCQ04KIFSSh+
-         dHPSorRMInbF0bCX/bIW+E4+hBoXyJKzcGBAPCiyb2KQW05Th2im7Nv7s3WZnwrg4Wvp
-         MLzmjNVDr+OHXtGcoHS59O+fpo68b3iEgIBIHPxDSEZYs2xbCaGqWZfM5uwQrwr5cFck
-         6Nasd5YrrmqV2C74sTYQSWS3T+TXw4gYNo4Yd7jXw1eGTuRCvaTU6I+kMyETjWV5wJxs
-         aEO54skI88L2BDqO99XtNOUtCZVvfoCEPF8cPUjvftUoDbukCM5d9LBgRljheyr2p9zr
-         cl0g==
-X-Gm-Message-State: AOAM531dSYP+mKaYQ54Pwx2N/C6qJ3aQasHwkwCOb4cfrIqdaHFbn3+w
-        m/nLCLCcvjh3U/fvjtytRGWe8w==
-X-Google-Smtp-Source: ABdhPJwaCweUu5jrm6eOCYIhs9upUUwSOtGI5bUWI4ShD8mRi06VAfR10j1ntSKF5a1Tv4fdJr5mqg==
-X-Received: by 2002:a05:6402:3812:b0:42a:a0dc:562c with SMTP id es18-20020a056402381200b0042aa0dc562cmr70062602edb.205.1654087456525;
-        Wed, 01 Jun 2022 05:44:16 -0700 (PDT)
+        bh=JeSI4uQxR2QJYLMBJ1DqLjl1fY9poS8Q+KM6xI9FOz4=;
+        b=ZdWGxf53aSSa79D9R0Wj4XYgbharhzgaTSUHm61Z5EXd3h4Xc+KAQNuBRMJ2aNvh53
+         YWOrosnSRNyOe4pLYY0/dzghEqSM5eGd2nhBM24hovt+9SpRQszkJiujmBF5NJgbJYxP
+         KdsxxRwcH59MZxXlD54HwyuEClj9sM+04nNI3zZXmZu52SW+LskXCynu1n2OBlWQnDcJ
+         KrtAGUw3nWMyk8I1SY9LVZ41xL2gl2EE+YP2oba5R172XFnlaA/H2+5zkJV6x0JzmU2E
+         Jr9lYUg9pb9jIikoeEB8u8puSOcNI/EbXC1MR0pJswbB51T58w9igJFH0RC1NPHKt80F
+         QSfw==
+X-Gm-Message-State: AOAM531/uX2vbpenAOpwhJgWQe8mi91DzFDYlQhnp/WbWg5aI5rZIU7C
+        0QE8bK+e13zS2qjn6aMnBfoT0vpTL+hopw==
+X-Google-Smtp-Source: ABdhPJxvXRS4kVxzbQ09uBJ+jQPMMkzD3EsuPOg/u8HkzuJoP5NP2piSzB7RfCX28DjXEr56FtW7zA==
+X-Received: by 2002:a17:907:9810:b0:6fe:90ca:e730 with SMTP id ji16-20020a170907981000b006fe90cae730mr56531133ejc.549.1654087463739;
+        Wed, 01 Jun 2022 05:44:23 -0700 (PDT)
 Received: from prec5560.. ([176.74.57.19])
-        by smtp.gmail.com with ESMTPSA id j10-20020a170906830a00b006f3ef214dc0sm682055ejx.38.2022.06.01.05.44.11
+        by smtp.gmail.com with ESMTPSA id j10-20020a170906830a00b006f3ef214dc0sm682055ejx.38.2022.06.01.05.44.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 05:44:16 -0700 (PDT)
+        Wed, 01 Jun 2022 05:44:23 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     bjorn.andersson@linaro.org, agross@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -55,9 +55,9 @@ To:     bjorn.andersson@linaro.org, agross@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH v4 5/6] dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
-Date:   Wed,  1 Jun 2022 14:42:49 +0200
-Message-Id: <20220601124250.60968-6-robert.foss@linaro.org>
+Subject: [PATCH v4 6/6] arm64: dts: qcom: sm8350: Add DISPCC node
+Date:   Wed,  1 Jun 2022 14:42:50 +0200
+Message-Id: <20220601124250.60968-7-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220601124250.60968-1-robert.foss@linaro.org>
 References: <20220601124250.60968-1-robert.foss@linaro.org>
@@ -67,169 +67,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add sm8350 DISPCC bindings, while these bindings are similar
-to the sm8x50 bindings, the way clocks are represented has changed
-in ABI incompatible ways.
+Add the dispcc clock-controller DT node for sm8350.
 
 Signed-off-by: Robert Foss <robert.foss@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
 
-hanges since v2
- - Add my SoB - Bjorn
+Changes since v2
+ - Remove interconnect include - Bjorn
 
 Changes since v3
- - Separate from qcom,dispcc-sm8x50
- - Remove clock-names
- - Make example sm8350 based
- - Changed author to me due to size of changes
+ - Switch from .fw_name to .index
 
 
- .../bindings/clock/qcom,dispcc-sm8350.yaml    | 104 ++++++++++++++++++
- .../bindings/clock/qcom,dispcc-sm8x50.yaml    |   4 +-
- .../dt-bindings/clock/qcom,dispcc-sm8350.h    |   1 +
- 3 files changed, 107 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml
- create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml
-new file mode 100644
-index 000000000000..d7e8739cab32
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8350.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8350
-+
-+maintainers:
-+  - Robert Foss <robert.foss@linaro.org>
-+
-+description: |
-+  Qualcomm display clock control module which supports the clocks, resets and
-+  power domains on SM8350.
-+
-+  See also:
-+    dt-bindings/clock/qcom,dispcc-sm8350.h
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sm8350-dispcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Link clock from DP PHY
-+      - description: VCO DIV clock from DP PHY
-+      - description: Link clock from DPTX1 PHY
-+      - description: VCO DIV clock from DPTX1 PHY
-+      - description: Link clock from DPTX2 PHY
-+      - description: VCO DIV clock from DPTX2 PHY
-+      - description: Byte clock from DSI PHY0
-+      - description: Pixel clock from DSI PHY0
-+      - description: Byte clock from DSI PHY1
-+      - description: Pixel clock from DSI PHY1
-+      - description: Link clock from EDP PHY
-+      - description: VCO DIV clock from EDP PHY
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      clock-controller@af00000 {
-+          compatible = "qcom,sm8350-dispcc";
-+          reg = <0 0x0af00000 0 0x10000>;
-+          clocks = <&rpmhcc RPMH_CXO_CLK>,
-+                   <&dp_phy 0>,
-+                   <&dp_phy 1>,
-+                   <&dptx1_phy 0>,
-+                   <&dptx1_phy 1>,
-+                   <&dptx2_phy 0>,
-+                   <&dptx2_phy 1>,
-+                   <&dsi0_phy 0>,
-+                   <&dsi0_phy 1>,
-+                   <&dsi1_phy 0>,
-+                   <&dsi1_phy 1>,
-+                   <&edp_phy 0>,
-+                   <&edp_phy 1>;
-+
-+          #clock-cells = <1>;
-+          #reset-cells = <1>;
-+          #power-domain-cells = <1>;
-+          power-domains = <&rpmhpd SM8350_MMCX>;
-+          required-opps = <&rpmhpd_opp_low_svs>;
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-index 31497677e8de..951fe2ecb7a6 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-@@ -4,14 +4,14 @@
- $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+index 52428b6df64e..df0f3dd38f0f 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+@@ -4,6 +4,7 @@
+  */
  
--title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,dispcc-sm8350.h>
+ #include <dt-bindings/clock/qcom,gcc-sm8350.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/dma/qcom-gpi.h>
+@@ -2525,6 +2526,30 @@ usb_2_dwc3: usb@a800000 {
+ 			};
+ 		};
  
- maintainers:
-   - Jonathan Marek <jonathan@marek.ca>
- 
- description: |
-   Qualcomm display clock control module which supports the clocks, resets and
--  power domains on SM8150 and SM8250.
-+  power domains on SM8150/SM8250.
- 
-   See also:
-     dt-bindings/clock/qcom,dispcc-sm8150.h
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-new file mode 120000
-index 000000000000..0312b4544acb
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-@@ -0,0 +1 @@
-+qcom,dispcc-sm8250.h
-\ No newline at end of file
++		dispcc: clock-controller@af00000 {
++			compatible = "qcom,sm8350-dispcc";
++			reg = <0 0x0af00000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++
++			power-domains = <&rpmhpd SM8350_MMCX>;
++			power-domain-names = "mmcx";
++		};
++
+ 		adsp: remoteproc@17300000 {
+ 			compatible = "qcom,sm8350-adsp-pas";
+ 			reg = <0 0x17300000 0 0x100>;
 -- 
 2.34.1
 
