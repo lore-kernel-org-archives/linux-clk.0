@@ -2,95 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F53CCA479
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 20:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC2FC43334
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 20:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229827AbiFAUpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 16:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43954 "EHLO
+        id S229633AbiFAUqN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 16:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiFAUnw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 16:43:52 -0400
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D26C1CF912;
-        Wed,  1 Jun 2022 13:28:33 -0700 (PDT)
-Received: by mail-oi1-f173.google.com with SMTP id t144so4110895oie.7;
-        Wed, 01 Jun 2022 13:28:33 -0700 (PDT)
+        with ESMTP id S230121AbiFAUpz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 16:45:55 -0400
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806EF1E717E;
+        Wed,  1 Jun 2022 13:35:59 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id z15so950945uad.7;
+        Wed, 01 Jun 2022 13:35:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=X2ooahDs8/MVRzFKap0q/0WAIoyQkWLgd3PeK7IUOjw=;
-        b=DymliDtKGmRB9JpcjK+BnIOPVi4LqX0rUWwRKYlowjYm9s3vNu6T4I5l/mZuGpjh73
-         Q+/OmZ+/j32eLuYp1t77fZeT48/f9Q2liNqFZ3skoXQjnremg2HZSduB4fa41HJNLNhT
-         XahRWFCbtzjYdaBqSYrGr7pNKYYMyXnM2LHVPWsceOMsLc/tl/1pJ32Dim5DzcFsjzgH
-         Ru3CiJP8AHCVytUzr0d9FTPgvSr+4evwkGlg0AMhM+d1HDoSX8rD+9GoBY6jHq7nvFTR
-         Yt2iKOWdffA0oqEw80viowR0tYuSm3ktgsuG4rhQ61Pd/bfsF6A1BRopGHZndHUkWtzZ
-         /Lkg==
-X-Gm-Message-State: AOAM531j7bd7SgbzlYrWKxiMAL3Frdbjan9VE/Za7BpzvEWBndWa22YT
-        yGI84quXDhZeyfRs6eGOWaTM4ZywbA==
-X-Google-Smtp-Source: ABdhPJz5a5iAslhZOqDv+VH/4OubZYx7aKW4jPUsIFCTCawCJJKxuEBmtxj3CPj2vN54oLaXy3qf9A==
-X-Received: by 2002:a05:6870:350:b0:e2:6f65:b91f with SMTP id n16-20020a056870035000b000e26f65b91fmr18126545oaf.192.1654113540656;
-        Wed, 01 Jun 2022 12:59:00 -0700 (PDT)
+        bh=FARR/+JDA3TOjsR9cI1PcwObDHIe0n2fcG4uD8FuHbA=;
+        b=XK3ZYYPEH/XCBOdzMdMknMBSe/Tt8WB2hv+EyfiMvki+1h+U/QinIb0UqqN5+PFKLC
+         LcIYk1dNBzZP5kCJ8SArJk0282rJfM3L34LHUgkb1yAOL2ReYdO8VO81we5fQ6oHLpa/
+         iH/49vt4krcASGWTJo1mbc0i9GNWCL6fVpiTsyMCMA8OC1nYt9zUimyU+PyrpnYgQLFF
+         b11iBgmJNLOFwTnnI7k7VIZM72haMpgC+FWmxtjLG/+EBcLDUwR8Xea3B0gbjPL3rkci
+         Q/gLqofPqZIRX0oq6qSrJb0+damKlhiE/Lz5WAS14YPuY0ZncboThXjLn7mr0K+9bNgm
+         PK+w==
+X-Gm-Message-State: AOAM532x4gHd7kJC5PlDeA55Z16SVl+g3tGfF7AwtpNEzvWA2r3gLBJP
+        hFpL4n4z4GixTbjIJP8VNQtsZL/VNA==
+X-Google-Smtp-Source: ABdhPJwnPjn5idt9cnZlhcCc/FKbJJnAr8Saufr1/SL3DempIkGREfg8uqcEeSJtWvqQDbhLvv5ujQ==
+X-Received: by 2002:a9d:6154:0:b0:60a:f566:a450 with SMTP id c20-20020a9d6154000000b0060af566a450mr673945otk.70.1654113744200;
+        Wed, 01 Jun 2022 13:02:24 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id h14-20020a4ad74e000000b00419b69c667dsm1312487oot.32.2022.06.01.12.59.00
+        by smtp.gmail.com with ESMTPSA id w16-20020a4aded0000000b0035eb4e5a6c0sm1333894oou.22.2022.06.01.13.02.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 12:59:00 -0700 (PDT)
-Received: (nullmailer pid 334128 invoked by uid 1000);
-        Wed, 01 Jun 2022 19:58:59 -0000
-Date:   Wed, 1 Jun 2022 14:58:59 -0500
+        Wed, 01 Jun 2022 13:02:23 -0700 (PDT)
+Received: (nullmailer pid 339590 invoked by uid 1000);
+        Wed, 01 Jun 2022 20:02:22 -0000
+Date:   Wed, 1 Jun 2022 15:02:22 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-clk@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clk: Introduce 'critical-clocks'
- property
-Message-ID: <20220601195859.GA328329-robh@kernel.org>
-References: <20220517235919.200375-1-marex@denx.de>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        linux-mediatek@lists.infradead.org, marijn.suijten@somainline.org,
+        wenst@chromium.org, miles.chen@mediatek.com,
+        tinghan.shen@mediatek.com, jason-jh.lin@mediatek.com,
+        rex-bc.chen@mediatek.com, robh+dt@kernel.org,
+        mturquette@baylibre.com, fparent@baylibre.com,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        krzysztof.kozlowski+dt@linaro.org, chun-jie.chen@mediatek.com,
+        phone-devel@vger.kernel.org, sam.shih@mediatek.com,
+        ck.hu@mediatek.com, martin.botka@somainline.org, ikjn@chromium.org,
+        devicetree@vger.kernel.org, weiyi.lu@mediatek.com,
+        paul.bouchara@somainline.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, bgolaszewski@baylibre.com,
+        matthias.bgg@gmail.com, kernel@collabora.com,
+        konrad.dybcio@somainline.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: Add MediaTek Helio X10 MT6795
+ clock bindings
+Message-ID: <20220601200222.GA339557-robh@kernel.org>
+References: <20220518111652.223727-1-angelogioacchino.delregno@collabora.com>
+ <20220518111652.223727-3-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220517235919.200375-1-marex@denx.de>
+In-Reply-To: <20220518111652.223727-3-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 18, 2022 at 01:59:18AM +0200, Marek Vasut wrote:
-> Some platforms require select clock to be always running, e.g. because
-> those clock supply vital devices which are not otherwise attached to
-> the system and thus do not have a matching DT node and clock consumer.
+On Wed, 18 May 2022 13:16:47 +0200, AngeloGioacchino Del Regno wrote:
+> Add the bindings for MT6795's clock controller.
 > 
-> An example is a system where the SoC serves as a crystal oscillator
-> replacement for a programmable logic device. The "critical-clocks"
-> property of a clock controller allows listing clock which must never
-> be turned off.
-> 
-> Clock listed in the "critical-clocks" property may have other consumers
-> in DT, listing the clock in "critical-clocks" only assures those clock
-> are never turned off, and none of these optional additional consumers
-> can turn the clock off either.
-> 
-> The implementation is modeled after "protected-clocks".
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> To: linux-clk@vger.kernel.org
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
-> V2: Update the commit message to clarify the behavior
-> V3: s@Some platforms require clock@Some platforms require some clocks@
-> ---
->  .../devicetree/bindings/clock/clock-bindings.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  include/dt-bindings/clock/mt6795-clk.h | 275 +++++++++++++++++++++++++
+>  1 file changed, 275 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mt6795-clk.h
+> 
 
-This file is removed upstream as it is replaced by the schema in 
-dtschema. 
-
-But I'd wait to see what Stephen says. I'm fine with the addition.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
