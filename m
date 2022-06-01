@@ -2,127 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2043C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 11:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295C1C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 12:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352804AbiFALYO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 07:24:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33522 "EHLO
+        id S1352579AbiFAMn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 08:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352819AbiFALX7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 07:23:59 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FD65EBC1
-        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 04:23:11 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id n28so1705518edb.9
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 04:23:11 -0700 (PDT)
+        with ESMTP id S241431AbiFAMn0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 08:43:26 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C50643ED8
+        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 05:43:25 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id c2so2006099edf.5
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 05:43:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=EmX78kZDbpi7zDJcl5NRBNnxEqWkEcLfuWB3zLytvQ4=;
-        b=r55wWxDb8gLLLDShPuOiJjmUz1D5Xgin/ldr6b/Tnulo5/FyaoiTrGCFmJK10iRxpl
-         /b5twD1DES3+6TJftiXJLlEH5MTxw6tzyqTXWS49/e4fUXACwFeWmyPUdl79bB1ZMm28
-         1EQZtIGbcpDoxuCn3othqQWKg+D6efafEyLZYTIBuSeyngpnqUPZSWp0zb/eRJWQMD+4
-         W6q5xcRyZJBNbHcwT564fW1iOCfBexrbxseQQNfQI9zG+QVQGtdYMM8Iugx4ALnbLNtu
-         EfIQzbvmIUrpisGyxuU8pS95ihIaVEMR2VjCfh69jDHQWuXdYfHfC7+QL1vDtMre9YvW
-         WOjA==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aOr1mc2wtnN7xTcQeWM7ExQn22NUQL8aCOuv/gBNDzY=;
+        b=BZPS9jdNO8M29ZrszYb1KwuSxTKKM2sD4iSdOVG2rDiqP/QLxg1LUwv41H6mmlzh7x
+         eDsdeWI5JizqB7I9B4HmUDU+b7yuirPQ5mgeOjT7PfiFFGOTRj1d/+0DXjSAJmpHvcvA
+         r3HIiFQBvlOmobA+Qu8/ts0sEnYjmRL/zrraLBiM2iYfY/qRFdxWPA57YZAP1FH7halc
+         95syLGFBZsGih1rGfTLYpR3leVuofMqPITM54Lrsmh7E24JS1jk3CdYNZdq3MdhpM5c2
+         RXwYDrJrNp8GG8l6VS+Qoxa4yp6o7Tw44Bgor7RUnZCimbHasHxLr6M1RXJTwp+WJtXC
+         hsUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=EmX78kZDbpi7zDJcl5NRBNnxEqWkEcLfuWB3zLytvQ4=;
-        b=srDPFBxxgJs89LRIxkrY39KU5oxZ/M43w9DBbasT0n7Wj5J0QHhA2AqDPxvhBp7kNe
-         j/+/dJrGf83W+TR7/NvdI7+4Fh8nwPczNfizrjrz8oHKlJ3IfeaJg2DpeY15vm/Qb4+7
-         58o5CNKOcOsTyPrwmOfJdCMdN1ZB9kuxedIbr76dlVvo3LHudDT1G3wNO4eZhQ/VQEDn
-         GE5NeYxpjjyN7bUV+bCiOChAidNNwBv4UMKIceyjo9mS1P2G9HKw9ddlhgxfg3BQ0enq
-         fsqtTb+bnBzXuIhiGw+79hSxGpqmK/Zn0XB94nG2/SJEtSKYBTe2oVjZLm2iUcNqCB/7
-         i64w==
-X-Gm-Message-State: AOAM530zp4J6NAAz4QbPrEGqyhA2y2EgHm1lNlKiYXtHWrJ8QfUVoU9T
-        5ND1aXGJl6UrUro+6LyUffaUig==
-X-Google-Smtp-Source: ABdhPJzOJxGalCbiJf1Q2Q8zI2vrTUHr2z0fwXYzl5tTyez6dQrB/mI0xzVPeI2IOWLC/p/Lwqsvsw==
-X-Received: by 2002:a05:6402:1907:b0:42d:e90e:337 with SMTP id e7-20020a056402190700b0042de90e0337mr7327648edz.405.1654082589971;
-        Wed, 01 Jun 2022 04:23:09 -0700 (PDT)
-Received: from [192.168.0.179] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id p19-20020a056402155300b0042617ba638esm823008edx.24.2022.06.01.04.23.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jun 2022 04:23:09 -0700 (PDT)
-Message-ID: <7a66f2e2-1a2a-a262-138c-f535499984ae@linaro.org>
-Date:   Wed, 1 Jun 2022 13:23:08 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [RFC PATCH v2 4/6] PM: opp: allow control of multiple clocks
-Content-Language: en-US
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
+        bh=aOr1mc2wtnN7xTcQeWM7ExQn22NUQL8aCOuv/gBNDzY=;
+        b=jgDPADQ5i5K1dkA7cQqxQJ3Owl6w/5Xgie1nF3YkXD24CTNkd6ZDlriwnyCsL/nNWJ
+         F849cpalpXb32HsiibowA40FBfEuq+9jShTY+lRh1HilN25v8hg4FuAQDINzWIiYW8qj
+         LqWqgOlxI6mNnUUWoamFlpC4Vv8BwtpWc0CYF+i80JxDcQhyY+SsJRhuRGwT5ZxOHjzK
+         hr2D1UbVGZ/F5oZ4XSBycls0J4xv0S9cFNjwNdHn/THN8axc9D8EGhMjdyAbRyL94aNt
+         RtucmqkhfJmuf1PQ4wVQ7TDaZE3M4D1wq+L+KbdPh/d6bI9ehqXc9fMXeEdu9nUEwK+L
+         9Fqg==
+X-Gm-Message-State: AOAM530d8XYKliATF1x0tPttOMoVaUvC44jYHgGFG4i/jOC4tTYNZeHC
+        GG50Ev8axdl19G0vkutjQe05Ww==
+X-Google-Smtp-Source: ABdhPJwzx4cJldFhYWNuo3cOmkLABCgmLrpvyBMowYw/LuPz33RVK818VGwAyrX3kCJThSWAyOsUMw==
+X-Received: by 2002:a05:6402:400b:b0:42d:c902:6c75 with SMTP id d11-20020a056402400b00b0042dc9026c75mr20725079eda.32.1654087404136;
+        Wed, 01 Jun 2022 05:43:24 -0700 (PDT)
+Received: from prec5560.. ([176.74.57.19])
+        by smtp.gmail.com with ESMTPSA id j10-20020a170906830a00b006f3ef214dc0sm682055ejx.38.2022.06.01.05.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 05:43:23 -0700 (PDT)
+From:   Robert Foss <robert.foss@linaro.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzk+dt@kernel.org, robert.foss@linaro.org, jonathan@marek.ca,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20220411154347.491396-1-krzysztof.kozlowski@linaro.org>
- <20220411154347.491396-5-krzysztof.kozlowski@linaro.org>
- <20220425072710.v6gwo4gu3aouezg4@vireshk-i7>
- <dea39b1f-0091-2690-7f07-108d07ef9f3c@linaro.org>
- <20220510044053.ykn6ygnbeokhzrsa@vireshk-i7>
- <1e533194-7047-8342-b426-f607fddbfaa3@linaro.org>
- <20220511050643.hd5tcrojb3wkbg7t@vireshk-i7>
- <20220518235708.1A04CC385A9@smtp.kernel.org>
- <65a4c28d-6702-3a9f-f837-1ea69a428777@linaro.org>
- <20220531103029.ntoypaafnd6447ag@vireshk-i7>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220531103029.ntoypaafnd6447ag@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: [PATCH v4 0/6] SM8350 Display/GPU clock enablement
+Date:   Wed,  1 Jun 2022 14:42:44 +0200
+Message-Id: <20220601124250.60968-1-robert.foss@linaro.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31/05/2022 12:30, Viresh Kumar wrote:
-> On 19-05-22, 10:03, Krzysztof Kozlowski wrote:
->> Yes, true. The clock frequencies are still changed with each gear, but
->> in general the UFS indeed operates on gear concept.
-> 
-> Hi Krzysztof,
-> 
-> I have redesigned the OPP core a bit (two patchsets until now) to make
-> it easier to add multiple clock support going forward. I need some
-> inputs from you before moving forward with it now. Will this work for
-> your use case:
-> 
-> - Add support for multiple clocks, where none of them is primary.
-> 
-> - Which means you won't be able to use dev_pm_opp_set_rate() but will
->   need something like dev_pm_opp_set_level(), will add it.
-> 
-> - That is, your OPP table will need to implement levels (I think of
->   them as UFS gears) and then call dev_pm_opp_set_level() instead.
-> 
-> - This new API will work just like dev_pm_opp_set_rate(), except that
->   it will find the target OPP based on level instead of freq and
->   support configuration of multiple clock frequencies.
-> 
-> - Of course both these APIs will share most of the code.
+Changes since v2
+ - Dropped "clk: Introduce CLK_ASSUME_ENABLED_WHEN_UNUSED"
+ - Dropped "clk: qcom: sm8250-dispcc: Flag shared RCGs as assumed enable"
+ - Dropped "clk: qcom: rcg2: Cache rate changes for parked RCGs"
 
-Hi Viresh,
+Changes sinsce v3:
+ - Dropped RBs & SoBs for bigger changes
+ - Changed author to me for patches with big changes
 
-In general this looks reasonable and matches how the UFS gears should be
-modeled. It does not match how UFS drivers implemented the clock
-scaling, but that's the internal problem of UFS drivers. They scale the
-clocks only max or min, even though there are multiple gears in between.
-The new approach looks therefore appropriate.
 
-Best regards,
-Krzysztof
+Robert Foss (6):
+  arm64: dts: qcom: sm8350: Replace integers with rpmpd defines
+  clk: qcom: add support for SM8350 GPUCC
+  dt-bindings: clock: Add Qcom SM8350 GPUCC bindings
+  clk: qcom: add support for SM8350 DISPCC
+  dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
+  arm64: dts: qcom: sm8350: Add DISPCC node
+
+ .../bindings/clock/qcom,dispcc-sm8350.yaml    |  104 ++
+ .../bindings/clock/qcom,dispcc-sm8x50.yaml    |    4 +-
+ .../bindings/clock/qcom,gpucc-sm8350.yaml     |   72 +
+ arch/arm64/boot/dts/qcom/sm8350.dtsi          |   41 +-
+ drivers/clk/qcom/Kconfig                      |   17 +
+ drivers/clk/qcom/Makefile                     |    2 +
+ drivers/clk/qcom/dispcc-sm8350.c              | 1330 +++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8350.c               |  637 ++++++++
+ .../dt-bindings/clock/qcom,dispcc-sm8350.h    |    1 +
+ include/dt-bindings/clock/qcom,gpucc-sm8350.h |   52 +
+ 10 files changed, 2250 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8350.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm8350.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm8350.c
+ create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8350.h
+
+-- 
+2.34.1
+
