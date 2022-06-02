@@ -2,82 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B23BCCA478
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 12:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00ABCCA47B
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 13:05:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235092AbiFBM6w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jun 2022 08:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
+        id S233648AbiFBNFt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jun 2022 09:05:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231722AbiFBM6v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 08:58:51 -0400
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF666267CD9;
-        Thu,  2 Jun 2022 05:58:48 -0700 (PDT)
-Received: by mail-oi1-f181.google.com with SMTP id k11so6369216oia.12;
-        Thu, 02 Jun 2022 05:58:48 -0700 (PDT)
+        with ESMTP id S235185AbiFBNFt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 09:05:49 -0400
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D01914084B;
+        Thu,  2 Jun 2022 06:05:47 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id i66so6406353oia.11;
+        Thu, 02 Jun 2022 06:05:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9Sl40eTqdPmzEKppcJA4FQwmfcLIIy0ie+JY3OH9t8Y=;
-        b=1Kgs5Vr4Qhz/YHIeBZiOW5mBeQ9cwjp8wd+G5DpNxr7cZJMM8JQvM47O2KqnpL/OHX
-         rl6oAp4RQYr73PQPBHs8PVcQDG5FAi9bqn8uuaeO8Cxky1DxrEgYEddRuvnualyHlpcw
-         yhyM/z9hskI2QkgA+O0fMfRO3ZyRQeTYcff+m47UR+iYmbp4oEPTh+fQHwzopqM7JIbh
-         dH00bfST1NCQTitMfNRrPX4ce2rd+rgJpc5SdaqIJilzao15Uluf+B8liJJst27QzJEg
-         MHY+YV911KNZn/vSAUwzBOwPBNUVll1WL8I6sgmVDRdWYpK+bzlVloxw0WG0SKnXRifm
-         Zp4Q==
-X-Gm-Message-State: AOAM532gc15+1k/IMn8TX9rpwNaZ3Dmxo1vnhgc0COzuK9ZNfcegYF+0
-        buAYYNirpuWP2UJVkOFgM00b9QD10w==
-X-Google-Smtp-Source: ABdhPJwH6fy65rUHt6Lx51K//7iArjhtsHzTFqg2VRAtu11CoBlEcwO2/HjeRWn2atnzqNt3dkCjhg==
-X-Received: by 2002:a05:6808:1584:b0:32b:314a:54ef with SMTP id t4-20020a056808158400b0032b314a54efmr17995256oiw.41.1654174727364;
-        Thu, 02 Jun 2022 05:58:47 -0700 (PDT)
+        bh=LNaq7sEztiDWF2FCJpJbFxTE7mAwKmgj75OQYyNv2Lw=;
+        b=7xTVTcc+SQO0vzNkR3GX3ZszqZHU5pxzNJxZ8lk4Tk59OALDEjf0zGVHivLFvVFGaV
+         BEwl4OM2CAxSzKYGmQP2sWhoZ2BPE9xvUn2Av/+xQ/PaZ8ig/sfxHHaLtd/VvDLS4M0l
+         ZGb/kvfUC4NOpnOTlnjk9k0aA1vpdiuX3Uuw/txyLMYU03hG/xQLuysbnV8yPWxObvEp
+         p3/kI046Orzf27xfY4VCBTwhfBKpzD781liCCKwXN+ufk11DRtvffWahQWfoNZXhzAg1
+         ELh7g2K6pQcCkMV5mWk/oM5/YZhtmVbSHeJuk261E1qkG+N0/ZRHqUQtp3eZ1RLd80gG
+         pJpQ==
+X-Gm-Message-State: AOAM532dvS++pHPBTL1xUAdgtIa+m0PK7R8MjQfiilgR84X+uXtsDMol
+        DPgIPbGihi90K/zveHA20g==
+X-Google-Smtp-Source: ABdhPJxs1Y0i7VKbCMntycxl5hizJm7Nq2kWqQ8bHM1Bplx9d/kQA7s8uN6OuQaO4Y0+hxy1mvQMNQ==
+X-Received: by 2002:aca:2408:0:b0:32b:ef3:67c5 with SMTP id n8-20020aca2408000000b0032b0ef367c5mr2539773oic.189.1654175146719;
+        Thu, 02 Jun 2022 06:05:46 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 63-20020aca0542000000b00325643bce40sm2314868oif.0.2022.06.02.05.58.45
+        by smtp.gmail.com with ESMTPSA id r2-20020a05683002e200b0060603221247sm2159020ote.23.2022.06.02.06.05.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 05:58:46 -0700 (PDT)
-Received: (nullmailer pid 2095464 invoked by uid 1000);
-        Thu, 02 Jun 2022 12:58:45 -0000
-Date:   Thu, 2 Jun 2022 07:58:45 -0500
+        Thu, 02 Jun 2022 06:05:46 -0700 (PDT)
+Received: (nullmailer pid 2108487 invoked by uid 1000);
+        Thu, 02 Jun 2022 13:05:45 -0000
+Date:   Thu, 2 Jun 2022 08:05:45 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, olof@lixom.net, venture@google.com,
-        vkoul@kernel.org, jirislaby@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp, arnd@arndb.de,
-        daniel.lezcano@linaro.org, joel@jms.id.au, soc@kernel.org,
-        devicetree@vger.kernel.org, tali.perry1@gmail.com, will@kernel.org,
-        catalin.marinas@arm.com, linux@roeck-us.net,
-        linux-serial@vger.kernel.org, bjorn.andersson@linaro.org,
-        linux-watchdog@vger.kernel.org, shawnguo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, j.neuschaefer@gmx.net,
-        wim@linux-watchdog.org, krzysztof.kozlowski+dt@linaro.org,
-        benjaminfair@google.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-        avifishman70@gmail.com, geert+renesas@glider.be, yuenn@google.com,
-        tglx@linutronix.de, robh+dt@kernel.org,
-        marcel.ziswiler@toradex.com, biju.das.jz@bp.renesas.com,
-        robert.hancock@calian.com, lkundrak@v3.sk
-Subject: Re: [PATCH v1 13/19] dt-bindings: arm: npcm: Add maintainer
-Message-ID: <20220602125845.GA2095431-robh@kernel.org>
-References: <20220522155046.260146-1-tmaimon77@gmail.com>
- <20220522155046.260146-14-tmaimon77@gmail.com>
+To:     matthias.bgg@kernel.org
+Cc:     mturquette@baylibre.com, ikjn@chromium.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        weiyi.lu@mediatek.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, miles.chen@mediatek.com,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, robh+dt@kernel.org,
+        allen-kh.cheng@mediatek.com,
+        angelogioacchino.delregno@collabora.com, sboyd@kernel.org,
+        chun-jie.chen@mediatek.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: ARM: Mediatek: Remove msdc binding
+ of MT8192 clock
+Message-ID: <20220602130545.GA2108433-robh@kernel.org>
+References: <20220523102339.21927-1-matthias.bgg@kernel.org>
+ <20220523102339.21927-2-matthias.bgg@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220522155046.260146-14-tmaimon77@gmail.com>
+In-Reply-To: <20220523102339.21927-2-matthias.bgg@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 22 May 2022 18:50:40 +0300, Tomer Maimon wrote:
-> Add Tomer Maimon to the maintainers list.
+On Mon, 23 May 2022 12:23:38 +0200, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <matthias.bgg@gmail.com>
 > 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> The code controlling msdc clock gate was moved inthe the consumer, the MMC
+> driver. This node did never represent a working implementation of any
+> peripheral. It was just a lonely clock gate that wasn't used. Delete the
+> binding description of this node.
+> 
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+> 
 > ---
->  Documentation/devicetree/bindings/arm/npcm/npcm.yaml        | 1 +
->  Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml | 1 +
->  2 files changed, 2 insertions(+)
+> 
+> Changes in v3:
+> - Update commit message to explain better why we do ABI breakage here
+> 
+> Changes in v2:
+> - Delete compatible in binding descprition as well
+> - Add RvB tags
+> 
+>  .../bindings/arm/mediatek/mediatek,mt8192-clock.yaml      | 8 --------
+>  1 file changed, 8 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
