@@ -2,91 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00ABCCA47B
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 13:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1E6CCA47A
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 14:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233648AbiFBNFt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jun 2022 09:05:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S236188AbiFBOk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jun 2022 10:40:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235185AbiFBNFt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 09:05:49 -0400
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D01914084B;
-        Thu,  2 Jun 2022 06:05:47 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id i66so6406353oia.11;
-        Thu, 02 Jun 2022 06:05:47 -0700 (PDT)
+        with ESMTP id S236242AbiFBOkI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 10:40:08 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC4E2853B5;
+        Thu,  2 Jun 2022 07:39:56 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id r65so6734885oia.9;
+        Thu, 02 Jun 2022 07:39:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=LNaq7sEztiDWF2FCJpJbFxTE7mAwKmgj75OQYyNv2Lw=;
-        b=7xTVTcc+SQO0vzNkR3GX3ZszqZHU5pxzNJxZ8lk4Tk59OALDEjf0zGVHivLFvVFGaV
-         BEwl4OM2CAxSzKYGmQP2sWhoZ2BPE9xvUn2Av/+xQ/PaZ8ig/sfxHHaLtd/VvDLS4M0l
-         ZGb/kvfUC4NOpnOTlnjk9k0aA1vpdiuX3Uuw/txyLMYU03hG/xQLuysbnV8yPWxObvEp
-         p3/kI046Orzf27xfY4VCBTwhfBKpzD781liCCKwXN+ufk11DRtvffWahQWfoNZXhzAg1
-         ELh7g2K6pQcCkMV5mWk/oM5/YZhtmVbSHeJuk261E1qkG+N0/ZRHqUQtp3eZ1RLd80gG
-         pJpQ==
-X-Gm-Message-State: AOAM532dvS++pHPBTL1xUAdgtIa+m0PK7R8MjQfiilgR84X+uXtsDMol
-        DPgIPbGihi90K/zveHA20g==
-X-Google-Smtp-Source: ABdhPJxs1Y0i7VKbCMntycxl5hizJm7Nq2kWqQ8bHM1Bplx9d/kQA7s8uN6OuQaO4Y0+hxy1mvQMNQ==
-X-Received: by 2002:aca:2408:0:b0:32b:ef3:67c5 with SMTP id n8-20020aca2408000000b0032b0ef367c5mr2539773oic.189.1654175146719;
-        Thu, 02 Jun 2022 06:05:46 -0700 (PDT)
+        bh=qQafOfh6w1zgJTmzD2zQY13Qf3DW1fvEsip3dg2JStY=;
+        b=k99fCZMkmZORBxEaQTgJo+eZlXg11mAcpnApWw3eHTYDNPzwI3EOxcOfbdJz3vzNL1
+         T+U1hjSgg5tg1QfWsQBCEgXhoeUh+sSIVznXDa4UPfE9gQJIZQqWjaIBe+1W0N/IXFpi
+         xprZLPfC+32a0XURUtD/JlmzjyiPQmNxMrYSZ3wRNkdeiaApnXYOtK3qERCWIuTX8+b3
+         GrqeNhBH4Z1syY12y/+KAWcHg5TCreJ4ad6k1KRruMcd/hU5Bl9ZS+enB9SJL6fdC8yO
+         B98NVL1KWhePxVC57QFoDiVQOLUxx2dXOwTH3xg935BjX+tZQTE0Ip+Ta5Au8IJkINoT
+         Ygyg==
+X-Gm-Message-State: AOAM532uxRewmxvUoM409NSufUZPTvBn3WlzZ+jgu9OnEmbe9u3YzUvO
+        uzeKUcwkhM01sLtwglQSaISV0gfUxA==
+X-Google-Smtp-Source: ABdhPJz9ABWeYunYGC8P6oMorLnRa1Wqwh+S+NSe3YLquZiEo3N6mncOaKkPwcL4sEwBEn9F67hu2g==
+X-Received: by 2002:a05:6808:1381:b0:32b:2afb:bf93 with SMTP id c1-20020a056808138100b0032b2afbbf93mr2756432oiw.192.1654180796058;
+        Thu, 02 Jun 2022 07:39:56 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r2-20020a05683002e200b0060603221247sm2159020ote.23.2022.06.02.06.05.45
+        by smtp.gmail.com with ESMTPSA id 1-20020aca0701000000b00328e70cae5csm2453396oih.43.2022.06.02.07.39.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 06:05:46 -0700 (PDT)
-Received: (nullmailer pid 2108487 invoked by uid 1000);
-        Thu, 02 Jun 2022 13:05:45 -0000
-Date:   Thu, 2 Jun 2022 08:05:45 -0500
+        Thu, 02 Jun 2022 07:39:55 -0700 (PDT)
+Received: (nullmailer pid 2277443 invoked by uid 1000);
+        Thu, 02 Jun 2022 14:39:55 -0000
+Date:   Thu, 2 Jun 2022 09:39:55 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     matthias.bgg@kernel.org
-Cc:     mturquette@baylibre.com, ikjn@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
-        weiyi.lu@mediatek.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, miles.chen@mediatek.com,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, robh+dt@kernel.org,
-        allen-kh.cheng@mediatek.com,
-        angelogioacchino.delregno@collabora.com, sboyd@kernel.org,
-        chun-jie.chen@mediatek.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: ARM: Mediatek: Remove msdc binding
- of MT8192 clock
-Message-ID: <20220602130545.GA2108433-robh@kernel.org>
-References: <20220523102339.21927-1-matthias.bgg@kernel.org>
- <20220523102339.21927-2-matthias.bgg@kernel.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        agross@kernel.org, bjorn.andersson@linaro.org, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: Update my email address
+Message-ID: <20220602143955.GA2277333-robh@kernel.org>
+References: <1654118992-4026-1-git-send-email-quic_jhugo@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220523102339.21927-2-matthias.bgg@kernel.org>
+In-Reply-To: <1654118992-4026-1-git-send-email-quic_jhugo@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 23 May 2022 12:23:38 +0200, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <matthias.bgg@gmail.com>
+On Wed, 01 Jun 2022 15:29:52 -0600, Jeffrey Hugo wrote:
+> Update my email address from the defunct codeaurora.org domain to the
+> current quicinc.com domain.
 > 
-> The code controlling msdc clock gate was moved inthe the consumer, the MMC
-> driver. This node did never represent a working implementation of any
-> peripheral. It was just a lonely clock gate that wasn't used. Delete the
-> binding description of this node.
-> 
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-> 
+> Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 > ---
-> 
-> Changes in v3:
-> - Update commit message to explain better why we do ABI breakage here
-> 
-> Changes in v2:
-> - Delete compatible in binding descprition as well
-> - Add RvB tags
-> 
->  .../bindings/arm/mediatek/mediatek,mt8192-clock.yaml      | 8 --------
->  1 file changed, 8 deletions(-)
+>  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied, thanks!
