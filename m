@@ -2,223 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B893CCA473
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jun 2022 22:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F3FCCA477
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 01:55:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232145AbiFAWIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 18:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40206 "EHLO
+        id S233170AbiFBBzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 21:55:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232156AbiFAWIP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 18:08:15 -0400
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD61228735;
-        Wed,  1 Jun 2022 15:08:13 -0700 (PDT)
-Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 9B3D0206AE;
-        Thu,  2 Jun 2022 00:08:11 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rajeev Nandan <quic_rajeevny@quicinc.com>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v2 11/11] drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
-Date:   Thu,  2 Jun 2022 00:07:47 +0200
-Message-Id: <20220601220747.1145095-12-marijn.suijten@somainline.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220601220747.1145095-1-marijn.suijten@somainline.org>
-References: <20220601220747.1145095-1-marijn.suijten@somainline.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S233167AbiFBBzn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 21:55:43 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E08129565A
+        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 18:55:41 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id w3so3278882plp.13
+        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 18:55:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=date:subject:in-reply-to:cc:from:to:message-id;
+        bh=KOVDOxCVI4vVBCH6b+W62sk58si7BFfHeJ7dzn6m1vc=;
+        b=s5yKFAmmriDWLb9h6EkYjcAfxSCrlFCB35p1b62Cj6EhSyMkO0a2ehkmVZTqrdGeQM
+         vZBKwmCQN52iGZ1q0NcueIW2C3yI4Wv8/lw3qm/VWUwwvkcNslirtCRrNXGgtt9/cArz
+         PzWx2JaMcKxDceYpg8ybaD+ZEqxXu50PQIkrSQLdvxYPjd2U2m+5U41nHzh7CoUCET1u
+         r+BjZNF0TdnAsc8gJbJSfHA3SfdkR/2CCuGX48L88U4BaSzdghoJpkoxySrgG2ombI+3
+         8OwzNEGaguj4dRBXfrgx0C8ReqAbMj/qzq04FUx9OirSe0NpdDFwxU1jB1R11orJiQVK
+         aB2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id;
+        bh=KOVDOxCVI4vVBCH6b+W62sk58si7BFfHeJ7dzn6m1vc=;
+        b=e34EaaJIrXrXd3np151VrsJMhE/K6fwuMANxwTJc+DCpLFeQbadbZTzEUINopDWR0z
+         4ZbOaeTYdJefH2cCo25YUEo3V4bGesTKQV19ovcLhe1X7Msk3NSEo/TjQhUe/7pE49RH
+         fQEBkm5SGq7r1GYSgsmrWVigC0oNkPkIRVi7ZegQsVH8vuZAbv3GjoDy8Nplb8kLFfy3
+         gy4P+OU0BK6dbm9tS7Dr9CR+pdNwS0nByhNa5/7T/efA2vITh+MxGkT4tTp5OIDSe029
+         o0uQ8+dwhTWzvkPfLN51N53b5UGZBuVfBkceGw3jmF1B+sa+kzphiLUt2UHgXr4LNjdO
+         40Pw==
+X-Gm-Message-State: AOAM530J6sYzm2BbLQdy58f0ie/5fNM5rgBKJ/vIY+p3o9e7pXAoTxUU
+        xm5pGSxbnr1eGg5c+PDv4CsO6A==
+X-Google-Smtp-Source: ABdhPJw9CKiAFJKDrfs2v3vrViEDs0+jyFmtV+AptTS5FG62SVVtIE8OyHHDCh8XJ7scvP8oNp3r1A==
+X-Received: by 2002:a17:90a:6941:b0:1e2:f37a:f889 with SMTP id j1-20020a17090a694100b001e2f37af889mr21009905pjm.160.1654134940921;
+        Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id w1-20020a1709027b8100b0015e8d4eb1c1sm2182005pll.11.2022.06.01.18.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
+Date:   Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
+X-Google-Original-Date: Wed, 01 Jun 2022 18:55:30 PDT (-0700)
+Subject:     Re: [PATCH v4 1/1] MAINTAINERS: add polarfire rng, pci and clock drivers
+In-Reply-To: <d50f506c-92fd-39c2-d5d9-5eb9c60b1de6@microchip.com>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Daire.McNamara@microchip.com,
+        Lewis.Hanly@microchip.com, Cyril.Jean@microchip.com
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     Conor.Dooley@microchip.com, Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
+        linux-pci@vger.kernel.org
+Message-ID: <mhng-5c57560e-a00b-4fd8-95ee-5e2fc0dcd34c@palmer-ri-x1c9>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-parent_hw pointers are easier to manage and cheaper to use than
-repeatedly formatting the parent name and subsequently leaving the clk
-framework to perform lookups based on that name.
+On Mon, 23 May 2022 13:00:01 PDT (-0700), Conor.Dooley@microchip.com wrote:
+> On 23/05/2022 20:52, Palmer Dabbelt wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>> 
+>> On Mon, 23 May 2022 04:42:53 PDT (-0700), Conor.Dooley@microchip.com wrote:
+>>> On 05/05/2022 11:55, Conor Dooley wrote:
+>>>> Hardware random, PCI and clock drivers for the PolarFire SoC have been
+>>>> upstreamed but are not covered by the MAINTAINERS entry, so add them.
+>>>> Daire is the author of the clock & PCI drivers, so add him as a
+>>>> maintainer in place of Lewis.
+>>>>
+>>>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>>>
+>>> Hey Palmer,
+>>> I know youre busy etc but just a reminder :)
+>> 
+>> Sorry, I didn't realize this was aimed at the RISC-V tree.  I'm fine
+>> taking it, but it seems like these should have gone in along with the
+>> drivers.
+> 
+> Yeah, sorry. In hindsight it should've but that ship has sailed. I sent
+> the rng bundled this way b/c I didn't want to end up a conflict.
+> Obv. there's not a rush so I can always split it back out if needs be.
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 70 +++++++++++------------
- 1 file changed, 34 insertions(+), 36 deletions(-)
+I'm adding a bunch of subsystem maintainers just to check again.  I 
+don't have any problem with it, just not really a RISC-V thing and don't 
+wan to make a mess.  I've stashed it over at palmer/pcsoc-maintainers 
+for now.
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 6a58dd62bac5..c1710a8824e7 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -588,24 +588,24 @@ static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
-  */
- static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provided_clocks)
- {
--	char clk_name[32], parent[32], vco_name[32];
--	char parent2[32];
-+	char clk_name[32];
- 	struct clk_init_data vco_init = {
- 		.parent_data = &(const struct clk_parent_data) {
- 			.fw_name = "ref",
- 		},
- 		.num_parents = 1,
--		.name = vco_name,
-+		.name = clk_name,
- 		.flags = CLK_IGNORE_UNUSED,
- 		.ops = &clk_ops_dsi_pll_7nm_vco,
- 	};
- 	struct device *dev = &pll_7nm->phy->pdev->dev;
--	struct clk_hw *hw;
-+	struct clk_hw *hw, *pll_out_div, *pll_bit, *pll_by_2_bit;
-+	struct clk_hw *pll_post_out_div, *phy_pll_out_dsi_parent;
- 	int ret;
- 
- 	DBG("DSI%d", pll_7nm->phy->id);
- 
--	snprintf(vco_name, sizeof(vco_name), "dsi%dvco_clk", pll_7nm->phy->id);
-+	snprintf(clk_name, sizeof(clk_name), "dsi%dvco_clk", pll_7nm->phy->id);
- 	pll_7nm->clk_hw.init = &vco_init;
- 
- 	ret = devm_clk_hw_register(dev, &pll_7nm->clk_hw);
-@@ -613,36 +613,34 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		return ret;
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%dvco_clk", pll_7nm->phy->id);
- 
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT, pll_7nm->phy->pll_base +
-+	pll_out_div = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			&pll_7nm->clk_hw, CLK_SET_RATE_PARENT,
-+			pll_7nm->phy->pll_base +
- 				REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
- 			0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	if (IS_ERR(pll_out_div)) {
-+		ret = PTR_ERR(pll_out_div);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
- 
- 	/* BIT CLK: DIV_CTRL_3_0 */
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT,
-+	pll_bit = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			pll_out_div, CLK_SET_RATE_PARENT,
- 			pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
- 			0, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	if (IS_ERR(pll_bit)) {
-+		ret = PTR_ERR(pll_bit);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_phy_pll_out_byteclk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
- 
- 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT, 1,
-+	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, clk_name,
-+			pll_bit, CLK_SET_RATE_PARENT, 1,
- 			pll_7nm->phy->cphy_mode ? 7 : 8);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -652,24 +650,24 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
- 
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--					       0, 1, 2);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	pll_by_2_bit = devm_clk_hw_register_fixed_factor_parent_hw(dev,
-+			clk_name, pll_bit, 0, 1, 2);
-+	if (IS_ERR(pll_by_2_bit)) {
-+		ret = PTR_ERR(pll_by_2_bit);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
- 
- 	if (pll_7nm->phy->cphy_mode)
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 2, 7);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 2, 7);
- 	else
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 4);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 1, 4);
-+	if (IS_ERR(pll_post_out_div)) {
-+		ret = PTR_ERR(pll_post_out_div);
- 		goto fail;
- 	}
- 
-@@ -682,15 +680,14 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		data = dsi_phy_read(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
- 		dsi_phy_write(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1, data | 3);
- 
--		snprintf(parent, sizeof(parent), "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = pll_post_out_div;
- 	} else {
- 		snprintf(clk_name, sizeof(clk_name), "dsi%d_pclk_mux", pll_7nm->phy->id);
--		snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--		snprintf(parent2, sizeof(parent2), "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
- 
--		hw = devm_clk_hw_register_mux(dev, clk_name,
--				((const char *[]){
--					parent, parent2,
-+		hw = devm_clk_hw_register_mux_parent_hws(dev, clk_name,
-+				((const struct clk_hw *[]){
-+					pll_bit,
-+					pll_by_2_bit,
- 				}), 2, 0, pll_7nm->phy->base +
- 					REG_DSI_7nm_PHY_CMN_CLK_CFG1,
- 				0, 1, 0, NULL);
-@@ -699,13 +696,14 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 			goto fail;
- 		}
- 
--		snprintf(parent, sizeof(parent), "dsi%d_pclk_mux", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = hw;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_phy_pll_out_dsiclk", pll_7nm->phy->id);
- 
- 	/* PIX CLK DIV : DIV_CTRL_7_4*/
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent, 0,
-+	hw = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			phy_pll_out_dsi_parent, 0,
- 			pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
- 			4, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
- 	if (IS_ERR(hw)) {
--- 
-2.36.1
+Sorry if I'm being overly pedantic about this one...
 
+> 
+>> 
+>> Arnd: maybe this is really an SOC tree sort of thing?  No big deal
+>> either way on my end, just let me know.
+>> 
+>>> Thanks,
+>>> Conor.
+>>>
+>>>> ---
+>>>>   MAINTAINERS | 5 ++++-
+>>>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index fd768d43e048..d7602658b0a5 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -16939,12 +16939,15 @@ N: riscv
+>>>>   K: riscv
+>>>>
+>>>>   RISC-V/MICROCHIP POLARFIRE SOC SUPPORT
+>>>> -M:  Lewis Hanly <lewis.hanly@microchip.com>
+>>>>   M: Conor Dooley <conor.dooley@microchip.com>
+>>>> +M:  Daire McNamara <daire.mcnamara@microchip.com>
+>>>>   L: linux-riscv@lists.infradead.org
+>>>>   S: Supported
+>>>>   F: arch/riscv/boot/dts/microchip/
+>>>> +F:  drivers/char/hw_random/mpfs-rng.c
+>>>> +F:  drivers/clk/microchip/clk-mpfs.c
+>>>>   F: drivers/mailbox/mailbox-mpfs.c
+>>>> +F:  drivers/pci/controller/pcie-microchip-host.c
+>>>>   F: drivers/soc/microchip/
+>>>>   F: include/soc/microchip/mpfs.h
+>>>>
+>>>
+> 
