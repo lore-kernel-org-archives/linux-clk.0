@@ -2,103 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349A3CCA479
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 06:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB1DC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 08:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbiFBGhu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jun 2022 02:37:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48416 "EHLO
+        id S232259AbiFBI0T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jun 2022 04:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230328AbiFBGht (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 02:37:49 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DB921F98E
-        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 23:37:46 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id o10so4994205edi.1
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 23:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=P+SVKsijP6JkUgNOco2XQmqekWV6FYkMFTb8nxQO5ww=;
-        b=m8c+W7QgyV419RzrHTmnU1lGVvxFj1lycM/jla3m2HZRFzackfP82Ocf0pcBBhq+nc
-         gw9FxoQoK4g83ngSbEQQ2dSjZD9nBv50f3M1Cq2aB5EiTclnSK9QiiggPVOwrOMacXwq
-         IfqcWeNqsfL8UZMkux6dbflF9hQSJ4d3TzSOvQuRTH9IELyTcxmUTd6Z8lXcwgQhK9r5
-         EAsHXEJSJDgqKmaYa2k6fBEj+8/+d+mEWdo4dtl3c4/4SknIcB5pKxqJ+uUxKty45m7m
-         Ujy4U1b/ghF1wXJkHTvanrg/Qqb4BjMJyuRoLR02xnluLPoeToDgj2iOChQ1/XSyusXD
-         MBQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=P+SVKsijP6JkUgNOco2XQmqekWV6FYkMFTb8nxQO5ww=;
-        b=oat2TvECcHpASJjl6jCFArLmkJAgant1HxfbD26dIYheih9KR+NrRhI3YwFI7EqhGF
-         C9MQab1uY5jj0k0MIF2U9a2xsu21vgAuEzF6NwzWNqfs7/pAEpJgurR3F/tStUZTEOLr
-         sbJXqfxaRy1FyNN5AQD3/ESvueYLKmkXasPQd2fTIIbPrt8oPjCqgwNz4JxLzTHFQf8z
-         xLb3QA2lbPeumeF36SDke1+1vZFcORLqALEqEpNkxHA7P6sQ3TgzzOiSqdB23nrLBCch
-         FqsZv1les2Tw3CwpE9iQPPWnZ7vhl0hclItddfOVvdO2UNQwCT0QHtjjduRAcBjDpylj
-         5ZUw==
-X-Gm-Message-State: AOAM5311F0KA2gfGI33iuWry/Iog6+IYO7PZQU1fdThcp1Jey8BHTrMK
-        slSEWrvDQwTg960DaGsJnFZMZw==
-X-Google-Smtp-Source: ABdhPJzvPQWmTxwqNMXeu7trZCjNJkphaQbsMtBiWxqHxuG0WA17vaqx3Y07SBGsaskn4cdpMdEDKw==
-X-Received: by 2002:aa7:cb4a:0:b0:42d:d232:34d7 with SMTP id w10-20020aa7cb4a000000b0042dd23234d7mr3679077edt.201.1654151865385;
-        Wed, 01 Jun 2022 23:37:45 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id x25-20020a170906b09900b006f52dbc192bsm1432623ejy.37.2022.06.01.23.37.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jun 2022 23:37:44 -0700 (PDT)
-Message-ID: <b1b87be5-a048-b713-c9f2-84b948aa6718@linaro.org>
-Date:   Thu, 2 Jun 2022 08:37:43 +0200
+        with ESMTP id S231551AbiFBI0T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 04:26:19 -0400
+X-Greylist: delayed 1327 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 02 Jun 2022 01:26:17 PDT
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70DE26D36D
+        for <linux-clk@vger.kernel.org>; Thu,  2 Jun 2022 01:26:15 -0700 (PDT)
+Received: from ipservice-092-217-081-045.092.217.pools.vodafone-ip.de ([92.217.81.45] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1nwfoB-0006H9-5h; Thu, 02 Jun 2022 10:03:55 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH 0/3] ARM: imx25: print silicon revision, support 1.2
+Date:   Thu,  2 Jun 2022 10:03:41 +0200
+Message-Id: <20220602080344.208702-1-martin@kaiser.cx>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
-Content-Language: en-US
-To:     "Marty E. Plummer" <hanetzer@startmail.com>
-Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
-        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
-        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
-        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
-        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
-        vigneshr@ti.com, xuwei5@hisilicon.com
-References: <20220501054440.2434247-1-hanetzer@startmail.com>
- <20220501173423.2473093-1-hanetzer@startmail.com>
- <20220501173423.2473093-2-hanetzer@startmail.com>
- <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
- <20220601105846.7hriawg3stxb657f@proprietary-killer>
- <630b0d13-6778-2508-6a34-9daa0358047d@linaro.org>
- <20220601110616.xmxih663kxgupszv@proprietary-killer>
- <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
- <20220601182418.okoofgannw6vbcxo@proprietary-killer>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220601182418.okoofgannw6vbcxo@proprietary-killer>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/06/2022 20:24, Marty E. Plummer wrote:
+Resurrect the unused function to print the imx25 silicon revision at
+startup. Add support for revision 1.2.
 
->>> Either or. Whatever makes the workload easier is what I'm looking for.
->>
->> Sorry, you need to be more specific. Apply is not a job for you, for the
->> patch submitter.
->>
->> Then you miss here important piece - which is the first patch. DTS goes
->> always via separate branch (or even tree) from driver changes. That's
->> why bindings are always separate first patches.
->>
-> So, add a 4: arch/arm/boot/dts/soc.dtsi and 5: arch/arm/boot/dts/board.dts
-> to the above list, or should those be the same patch as well?
+Martin Kaiser (3):
+  ARM: imx25: support silicon revision 1.2
+  clk: imx25: print silicon revision during init
+  clk: imx25: make __mx25_clocks_init return void
 
-For me does not matter, sub architecture maintainer might have preference.
+ arch/arm/mach-imx/cpu-imx25.c | 2 ++
+ drivers/clk/imx/clk-imx25.c   | 5 +++--
+ include/soc/imx/revision.h    | 1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+-- 
+2.30.2
+
