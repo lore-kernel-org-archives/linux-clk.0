@@ -2,132 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F3FCCA477
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 01:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9391C43334
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 03:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbiFBBzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jun 2022 21:55:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52414 "EHLO
+        id S233399AbiFBDIv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jun 2022 23:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233167AbiFBBzn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 21:55:43 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E08129565A
-        for <linux-clk@vger.kernel.org>; Wed,  1 Jun 2022 18:55:41 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id w3so3278882plp.13
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jun 2022 18:55:41 -0700 (PDT)
+        with ESMTP id S230042AbiFBDIu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jun 2022 23:08:50 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DA023DDE9;
+        Wed,  1 Jun 2022 20:08:48 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id s14so3412521plk.8;
+        Wed, 01 Jun 2022 20:08:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
-        h=date:subject:in-reply-to:cc:from:to:message-id;
-        bh=KOVDOxCVI4vVBCH6b+W62sk58si7BFfHeJ7dzn6m1vc=;
-        b=s5yKFAmmriDWLb9h6EkYjcAfxSCrlFCB35p1b62Cj6EhSyMkO0a2ehkmVZTqrdGeQM
-         vZBKwmCQN52iGZ1q0NcueIW2C3yI4Wv8/lw3qm/VWUwwvkcNslirtCRrNXGgtt9/cArz
-         PzWx2JaMcKxDceYpg8ybaD+ZEqxXu50PQIkrSQLdvxYPjd2U2m+5U41nHzh7CoUCET1u
-         r+BjZNF0TdnAsc8gJbJSfHA3SfdkR/2CCuGX48L88U4BaSzdghoJpkoxySrgG2ombI+3
-         8OwzNEGaguj4dRBXfrgx0C8ReqAbMj/qzq04FUx9OirSe0NpdDFwxU1jB1R11orJiQVK
-         aB2A==
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J2cdsfsG0mpf92WrWuIuHSZ0x1jXPLBhoImykLvIqzA=;
+        b=pSb/+V/Y/7pccZ7WlsxWvJdyPY0ZpgBrsBVRM8K0EDEFPn8E6KDNuj/+Vj06xGNlpK
+         o7Oj19uOgWXo44bNs+7TtwLhSGy756IsK1FIELD06fXsmnd0spueWX4yvLpDfUruJ8tl
+         KcRsISb6SVbN3sFl6tA46xEJgT9qlKfet6AambiuXjWCjcuVMQi0KoDqzL/qntzJWAyx
+         NfpW+YFAf+WFj0PtR3ZizDhWchpZZTNYQ04om0WH8eJF8ZcqL48GO878P5cYciskPhKV
+         XuVA1hrq+/4G2wPiB1c2sfdF6iB9NN82bsU+DIM+j00XkopjIkDBR+pgirumFwrpfZmf
+         QrKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id;
-        bh=KOVDOxCVI4vVBCH6b+W62sk58si7BFfHeJ7dzn6m1vc=;
-        b=e34EaaJIrXrXd3np151VrsJMhE/K6fwuMANxwTJc+DCpLFeQbadbZTzEUINopDWR0z
-         4ZbOaeTYdJefH2cCo25YUEo3V4bGesTKQV19ovcLhe1X7Msk3NSEo/TjQhUe/7pE49RH
-         fQEBkm5SGq7r1GYSgsmrWVigC0oNkPkIRVi7ZegQsVH8vuZAbv3GjoDy8Nplb8kLFfy3
-         gy4P+OU0BK6dbm9tS7Dr9CR+pdNwS0nByhNa5/7T/efA2vITh+MxGkT4tTp5OIDSe029
-         o0uQ8+dwhTWzvkPfLN51N53b5UGZBuVfBkceGw3jmF1B+sa+kzphiLUt2UHgXr4LNjdO
-         40Pw==
-X-Gm-Message-State: AOAM530J6sYzm2BbLQdy58f0ie/5fNM5rgBKJ/vIY+p3o9e7pXAoTxUU
-        xm5pGSxbnr1eGg5c+PDv4CsO6A==
-X-Google-Smtp-Source: ABdhPJw9CKiAFJKDrfs2v3vrViEDs0+jyFmtV+AptTS5FG62SVVtIE8OyHHDCh8XJ7scvP8oNp3r1A==
-X-Received: by 2002:a17:90a:6941:b0:1e2:f37a:f889 with SMTP id j1-20020a17090a694100b001e2f37af889mr21009905pjm.160.1654134940921;
-        Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
-Received: from localhost ([12.3.194.138])
-        by smtp.gmail.com with ESMTPSA id w1-20020a1709027b8100b0015e8d4eb1c1sm2182005pll.11.2022.06.01.18.55.40
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J2cdsfsG0mpf92WrWuIuHSZ0x1jXPLBhoImykLvIqzA=;
+        b=GPak3IDfaVL+GZqz+FZizYxCe+JnNl7PH5aZQnvvprc78K1wC83+iD5NasjTuwR15K
+         qIenl7yeJEvJ2AsyPL5FDDtNzflPNvGSJwfasa4GXNigQcR4Sg3KJ7qkeuGb7e6NHpYJ
+         FtPt9cjCMfGhCirGe2zkxdMDgb0NfydHxvxKzraLjaUfx+//1f7ZhRRsuDOSdhZZByvN
+         QCYV11xUIF9LEM2DCOw24I9hFnajW8dwg8svVGpfqlXr7PyCwW+kqJTAOHaOdwJrFq3V
+         wcBs8eYesRQg9Yfc1YicnAs5GMVg8iSwrUSImPHg+aNn8+4lHN6W2CUxn3NgLl75rWyM
+         qGtg==
+X-Gm-Message-State: AOAM530kJ+wvA6S+TIPwDz4SMJjfiBYIE0fOjYnsSYM7uVSbQd/v+X/f
+        +9T+5TzhuwkzkW8QDDkPeok=
+X-Google-Smtp-Source: ABdhPJwmr7yCGlGsGBxiF2TATphq27GajOli/euKSMx07hdul5BkpqZyebCmLrnNWmPNbwuD0Pzuig==
+X-Received: by 2002:a17:902:ebca:b0:15f:4cc5:f40f with SMTP id p10-20020a170902ebca00b0015f4cc5f40fmr2643383plg.96.1654139327765;
+        Wed, 01 Jun 2022 20:08:47 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id e22-20020a17090a4a1600b001e345c579d5sm2056326pjh.26.2022.06.01.20.08.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
-Date:   Wed, 01 Jun 2022 18:55:40 -0700 (PDT)
-X-Google-Original-Date: Wed, 01 Jun 2022 18:55:30 PDT (-0700)
-Subject:     Re: [PATCH v4 1/1] MAINTAINERS: add polarfire rng, pci and clock drivers
-In-Reply-To: <d50f506c-92fd-39c2-d5d9-5eb9c60b1de6@microchip.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, Daire.McNamara@microchip.com,
-        Lewis.Hanly@microchip.com, Cyril.Jean@microchip.com
-From:   Palmer Dabbelt <palmer@rivosinc.com>
-To:     Conor.Dooley@microchip.com, Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
-        linux-pci@vger.kernel.org
-Message-ID: <mhng-5c57560e-a00b-4fd8-95ee-5e2fc0dcd34c@palmer-ri-x1c9>
+        Wed, 01 Jun 2022 20:08:47 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
+To:     Tero Kristo <kristo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Miaoqian Lin <linmq006@gmail.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: ti: dra7-atl: Fix reference leak in of_dra7_atl_clk_probe
+Date:   Thu,  2 Jun 2022 07:08:36 +0400
+Message-Id: <20220602030838.52057-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 23 May 2022 13:00:01 PDT (-0700), Conor.Dooley@microchip.com wrote:
-> On 23/05/2022 20:52, Palmer Dabbelt wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->> 
->> On Mon, 23 May 2022 04:42:53 PDT (-0700), Conor.Dooley@microchip.com wrote:
->>> On 05/05/2022 11:55, Conor Dooley wrote:
->>>> Hardware random, PCI and clock drivers for the PolarFire SoC have been
->>>> upstreamed but are not covered by the MAINTAINERS entry, so add them.
->>>> Daire is the author of the clock & PCI drivers, so add him as a
->>>> maintainer in place of Lewis.
->>>>
->>>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->>>
->>> Hey Palmer,
->>> I know youre busy etc but just a reminder :)
->> 
->> Sorry, I didn't realize this was aimed at the RISC-V tree.  I'm fine
->> taking it, but it seems like these should have gone in along with the
->> drivers.
-> 
-> Yeah, sorry. In hindsight it should've but that ship has sailed. I sent
-> the rng bundled this way b/c I didn't want to end up a conflict.
-> Obv. there's not a rush so I can always split it back out if needs be.
+pm_runtime_get_sync() will increment pm usage counter.
+Forgetting to putting operation will result in reference leak.
+Add missing pm_runtime_put_sync in some error paths.
 
-I'm adding a bunch of subsystem maintainers just to check again.  I 
-don't have any problem with it, just not really a RISC-V thing and don't 
-wan to make a mess.  I've stashed it over at palmer/pcsoc-maintainers 
-for now.
+Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/ti/clk-dra7-atl.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Sorry if I'm being overly pedantic about this one...
+diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+index aa0950c4f498..5c278d6c985e 100644
+--- a/drivers/clk/ti/clk-dra7-atl.c
++++ b/drivers/clk/ti/clk-dra7-atl.c
+@@ -253,14 +253,16 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+ 		if (rc) {
+ 			pr_err("%s: failed to lookup atl clock %d\n", __func__,
+ 			       i);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto pm_put;
+ 		}
+ 
+ 		clk = of_clk_get_from_provider(&clkspec);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to get atl clock %d from provider\n",
+ 			       __func__, i);
+-			return PTR_ERR(clk);
++			ret = PTR_ERR(clk);
++			goto pm_put;
+ 		}
+ 
+ 		cdesc = to_atl_desc(__clk_get_hw(clk));
+@@ -293,8 +295,9 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
+ 		if (cdesc->enabled)
+ 			atl_clk_enable(__clk_get_hw(clk));
+ 	}
+-	pm_runtime_put_sync(cinfo->dev);
+ 
++pm_put:
++	pm_runtime_put_sync(cinfo->dev);
+ 	return ret;
+ }
+ 
+-- 
+2.25.1
 
-> 
->> 
->> Arnd: maybe this is really an SOC tree sort of thing?  No big deal
->> either way on my end, just let me know.
->> 
->>> Thanks,
->>> Conor.
->>>
->>>> ---
->>>>   MAINTAINERS | 5 ++++-
->>>>   1 file changed, 4 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index fd768d43e048..d7602658b0a5 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -16939,12 +16939,15 @@ N: riscv
->>>>   K: riscv
->>>>
->>>>   RISC-V/MICROCHIP POLARFIRE SOC SUPPORT
->>>> -M:  Lewis Hanly <lewis.hanly@microchip.com>
->>>>   M: Conor Dooley <conor.dooley@microchip.com>
->>>> +M:  Daire McNamara <daire.mcnamara@microchip.com>
->>>>   L: linux-riscv@lists.infradead.org
->>>>   S: Supported
->>>>   F: arch/riscv/boot/dts/microchip/
->>>> +F:  drivers/char/hw_random/mpfs-rng.c
->>>> +F:  drivers/clk/microchip/clk-mpfs.c
->>>>   F: drivers/mailbox/mailbox-mpfs.c
->>>> +F:  drivers/pci/controller/pcie-microchip-host.c
->>>>   F: drivers/soc/microchip/
->>>>   F: include/soc/microchip/mpfs.h
->>>>
->>>
-> 
