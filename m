@@ -2,226 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A1EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 14:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F3FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 16:03:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236243AbiFBOwd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jun 2022 10:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
+        id S236726AbiFBQDc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jun 2022 12:03:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233105AbiFBOwb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 10:52:31 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7672C20C24E;
-        Thu,  2 Jun 2022 07:52:30 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id l9-20020a056830268900b006054381dd35so3569770otu.4;
-        Thu, 02 Jun 2022 07:52:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xvvfawWm5X1twO4EnB/xWzAQ4yEKRuDN2cLLmmv1+fU=;
-        b=Ew2M+BUEnDaq3CdachfsNQoB3rUEQbtS2FIVYGZ0un8Y/WN6YcN9I6Q3MsKqnp7Zj9
-         uXVAMZfeb74j6u79uaCGfkXtwvVEz5Puu2SPP+843SFkpqlz9/ykWT4M9MqmobJwSrCB
-         PUHy3So1ejN+ljf+ZFNOYccxpnX1wYkTvaBp1oLx+AmGUImvhJfLUT7X1BrlSrHsosoy
-         GUCtL/RnwKmhDBOS7G5T1QDhxJAF2WeJBkPQH1XpC7mfRoyNT0bD42hlqLyxrKdipd6G
-         izbcYo2RdVA03+/n12Xfs4Kp2cY2tF7WsSTyrQbdeW53M7AUc2wa+K/l0cyQS/7NIZdC
-         OX4g==
-X-Gm-Message-State: AOAM531A7gET2TKDBqD/1lPyd14/lsffxOFjXCpa8UN+///SmqV3N0jX
-        qIxcLIvzdNQx1P34GOJkHA==
-X-Google-Smtp-Source: ABdhPJzHheYS5doODCbTZIpyfvT9xN3ZXsg6csctxCmLI8AtyteXUO3GqJ+daAiy8HGrs+5YliHazA==
-X-Received: by 2002:a9d:694d:0:b0:60b:1efd:bd60 with SMTP id p13-20020a9d694d000000b0060b1efdbd60mr2271309oto.380.1654181549716;
-        Thu, 02 Jun 2022 07:52:29 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id p14-20020a54460e000000b003289f51c2d7sm2345890oip.34.2022.06.02.07.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 07:52:29 -0700 (PDT)
-Received: (nullmailer pid 2301579 invoked by uid 1000);
-        Thu, 02 Jun 2022 14:52:28 -0000
-Date:   Thu, 2 Jun 2022 09:52:28 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Robert Foss <robert.foss@linaro.org>
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
-        jonathan@marek.ca, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Dmitry Baryshkov <dmityr.baryshkov@linaro.org>
-Subject: Re: [PATCH v4 3/6] dt-bindings: clock: Add Qcom SM8350 GPUCC bindings
-Message-ID: <20220602145228.GA2299532-robh@kernel.org>
-References: <20220601124250.60968-1-robert.foss@linaro.org>
- <20220601124250.60968-4-robert.foss@linaro.org>
+        with ESMTP id S230011AbiFBQDa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 12:03:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6225212CBE;
+        Thu,  2 Jun 2022 09:03:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 618E3614BA;
+        Thu,  2 Jun 2022 16:03:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C3BC385A5;
+        Thu,  2 Jun 2022 16:03:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654185807;
+        bh=Vc3eAUMjMU8tORu4+YbRV1KqF0w9KECltFREEa/MG7Y=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=SOUJ9Sa4h8L9vwt8poGEI/YG0hUBQYbHQH2BFCt3a9mlgtpGlou3/7BPBbi09EDqT
+         vIYjtoyqtH7ByGmYUCrMNvVooTmBpfHIM83teW0F91R8GDRf2CvJa89VO2WOPSSd+f
+         bHsvEzkx1/v4Dlwbm+rSVHnE+FNZw8bnGE4lw8E5mY2p/Ep9d4nULcyLlP2JAVuvBi
+         9u8gFJNfA2pToiDTkw4/Z/WMRTvkcgiarq5+k53xMnBj1s1WqUsoJAIQlfw8b/yD4E
+         y2ASSS90imr5/ca0qsIq0nS5Rm8GZMojxvpj9o9SnSptqpfHyz+k/++HZryuEii+tL
+         qr1PhPsy4tRPw==
+Date:   Thu, 2 Jun 2022 11:03:25 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Palmer Dabbelt <palmer@rivosinc.com>
+Cc:     Conor.Dooley@microchip.com, Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        lorenzo.pieralisi@arm.com, robh@kernel.org, kw@linux.com,
+        linux-pci@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Daire.McNamara@microchip.com,
+        Lewis.Hanly@microchip.com, Cyril.Jean@microchip.com
+Subject: Re: [PATCH v4 1/1] MAINTAINERS: add polarfire rng, pci and clock
+ drivers
+Message-ID: <20220602160325.GA20054@bhelgaas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20220601124250.60968-4-robert.foss@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mhng-5c57560e-a00b-4fd8-95ee-5e2fc0dcd34c@palmer-ri-x1c9>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 01, 2022 at 02:42:47PM +0200, Robert Foss wrote:
-> Add device tree bindings for graphics clock controller for
-> Qualcomm Technology Inc's SM8350 SoCs.
+On Wed, Jun 01, 2022 at 06:55:40PM -0700, Palmer Dabbelt wrote:
+> On Mon, 23 May 2022 13:00:01 PDT (-0700), Conor.Dooley@microchip.com wrote:
+> > On 23/05/2022 20:52, Palmer Dabbelt wrote:
+> >> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> >> 
+> >> On Mon, 23 May 2022 04:42:53 PDT (-0700), Conor.Dooley@microchip.com wrote:
+> >>> On 05/05/2022 11:55, Conor Dooley wrote:
+> >>>> Hardware random, PCI and clock drivers for the PolarFire SoC have been
+> >>>> upstreamed but are not covered by the MAINTAINERS entry, so add them.
+> >>>> Daire is the author of the clock & PCI drivers, so add him as a
+> >>>> maintainer in place of Lewis.
+> >>>>
+> >>>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> >>>
+> >>> Hey Palmer,
+> >>> I know youre busy etc but just a reminder :)
+> >> 
+> >> Sorry, I didn't realize this was aimed at the RISC-V tree.  I'm fine
+> >> taking it, but it seems like these should have gone in along with the
+> >> drivers.
+> > 
+> > Yeah, sorry. In hindsight it should've but that ship has sailed. I sent
+> > the rng bundled this way b/c I didn't want to end up a conflict.
+> > Obv. there's not a rush so I can always split it back out if needs be.
 > 
-> Signed-off-by: Robert Foss <robert.foss@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmityr.baryshkov@linaro.org>
-> ---
-> 
-> Changes since v3
->  - Separate from qcom,gpucc
->  - Remove clock-names
->  - Make example sm8350 based
->  - Changed author to me due to size of changes
-> 
-> 
->  .../bindings/clock/qcom,gpucc-sm8350.yaml     | 72 +++++++++++++++++++
->  include/dt-bindings/clock/qcom,gpucc-sm8350.h | 52 ++++++++++++++
->  2 files changed, 124 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8350.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
-> new file mode 100644
-> index 000000000000..0a0546c079a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gpucc-sm8350.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller Binding
-> +
-> +maintainers:
-> +  - Robert Foss <robert.foss@linaro.org>
-> +
-> +description: |
-> +  Qualcomm graphics clock control module which supports the clocks, resets and
-> +  power domains on Qualcomm SoCs.
-> +
-> +  See also:
-> +    dt-bindings/clock/qcom,gpucc-sm8350.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm8350-gpucc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 main branch source
-> +      - description: GPLL0 div branch source
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,gcc-sm8350.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@3d90000 {
-> +            compatible = "qcom,sm8350-gpucc";
-> +            reg = <0 0x03d90000 0 0x9000>;
-> +            clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +                     <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-> +                     <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-> +            #clock-cells = <1>;
-> +            #reset-cells = <1>;
-> +            #power-domain-cells = <1>;
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,gpucc-sm8350.h b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
-> new file mode 100644
-> index 000000000000..d2294e0d527e
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,gpucc-sm8350.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+> I'm adding a bunch of subsystem maintainers just to check again.  I 
+> don't have any problem with it, just not really a RISC-V thing and don't 
+> wan to make a mess.  I've stashed it over at palmer/pcsoc-maintainers 
+> for now.
 
-Dual license.
+Fine with me, if you want it:
 
-> +/*
-> + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
-> +#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8350_H
-> +
-> +/* GPU_CC clocks */
-> +#define GPU_CC_AHB_CLK			0
-> +#define GPU_CC_CB_CLK			1
-> +#define GPU_CC_CRC_AHB_CLK		2
-> +#define GPU_CC_CX_APB_CLK		3
-> +#define GPU_CC_CX_GMU_CLK		4
-> +#define GPU_CC_CX_QDSS_AT_CLK		5
-> +#define GPU_CC_CX_QDSS_TRIG_CLK		6
-> +#define GPU_CC_CX_QDSS_TSCTR_CLK	7
-> +#define GPU_CC_CX_SNOC_DVM_CLK		8
-> +#define GPU_CC_CXO_AON_CLK		9
-> +#define GPU_CC_CXO_CLK			10
-> +#define GPU_CC_FREQ_MEASURE_CLK		11
-> +#define GPU_CC_GMU_CLK_SRC		12
-> +#define GPU_CC_GX_GMU_CLK		13
-> +#define GPU_CC_GX_QDSS_TSCTR_CLK	14
-> +#define GPU_CC_GX_VSENSE_CLK		15
-> +#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK	16
-> +#define GPU_CC_HUB_AHB_DIV_CLK_SRC	17
-> +#define GPU_CC_HUB_AON_CLK		18
-> +#define GPU_CC_HUB_CLK_SRC		19
-> +#define GPU_CC_HUB_CX_INT_CLK		20
-> +#define GPU_CC_HUB_CX_INT_DIV_CLK_SRC	21
-> +#define GPU_CC_MND1X_0_GFX3D_CLK	22
-> +#define GPU_CC_MND1X_1_GFX3D_CLK	23
-> +#define GPU_CC_PLL0			24
-> +#define GPU_CC_PLL1			25
-> +#define GPU_CC_SLEEP_CLK		26
-> +
-> +/* GPU_CC resets */
-> +#define GPUCC_GPU_CC_ACD_BCR		0
-> +#define GPUCC_GPU_CC_CB_BCR		1
-> +#define GPUCC_GPU_CC_CX_BCR		2
-> +#define GPUCC_GPU_CC_FAST_HUB_BCR	3
-> +#define GPUCC_GPU_CC_GFX3D_AON_BCR	4
-> +#define GPUCC_GPU_CC_GMU_BCR		5
-> +#define GPUCC_GPU_CC_GX_BCR		6
-> +#define GPUCC_GPU_CC_XO_BCR		7
-> +
-> +/* GPU_CC GDSCRs */
-> +#define GPU_CX_GDSC			0
-> +#define GPU_GX_GDSC			1
-> +
-> +#endif
-> -- 
-> 2.34.1
-> 
-> 
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> >> Arnd: maybe this is really an SOC tree sort of thing?  No big deal
+> >> either way on my end, just let me know.
+> >> 
+> >>> Thanks,
+> >>> Conor.
+> >>>
+> >>>> ---
+> >>>>   MAINTAINERS | 5 ++++-
+> >>>>   1 file changed, 4 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/MAINTAINERS b/MAINTAINERS
+> >>>> index fd768d43e048..d7602658b0a5 100644
+> >>>> --- a/MAINTAINERS
+> >>>> +++ b/MAINTAINERS
+> >>>> @@ -16939,12 +16939,15 @@ N: riscv
+> >>>>   K: riscv
+> >>>>
+> >>>>   RISC-V/MICROCHIP POLARFIRE SOC SUPPORT
+> >>>> -M:  Lewis Hanly <lewis.hanly@microchip.com>
+> >>>>   M: Conor Dooley <conor.dooley@microchip.com>
+> >>>> +M:  Daire McNamara <daire.mcnamara@microchip.com>
+> >>>>   L: linux-riscv@lists.infradead.org
+> >>>>   S: Supported
+> >>>>   F: arch/riscv/boot/dts/microchip/
+> >>>> +F:  drivers/char/hw_random/mpfs-rng.c
+> >>>> +F:  drivers/clk/microchip/clk-mpfs.c
+> >>>>   F: drivers/mailbox/mailbox-mpfs.c
+> >>>> +F:  drivers/pci/controller/pcie-microchip-host.c
+> >>>>   F: drivers/soc/microchip/
+> >>>>   F: include/soc/microchip/mpfs.h
+> >>>>
+> >>>
+> > 
