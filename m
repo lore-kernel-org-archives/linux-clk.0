@@ -2,136 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02380CCA473
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 07:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBBBC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 07:59:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242607AbiFCHiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 03:38:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38632 "EHLO
+        id S242673AbiFCH7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 03:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242568AbiFCHiJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 03:38:09 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B219922525
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 00:38:07 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id gl15so451675ejb.4
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 00:38:07 -0700 (PDT)
+        with ESMTP id S237453AbiFCH7R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 03:59:17 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A963F35DCC
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 00:59:15 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id u26so10677381lfd.8
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 00:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NozlW8gxt+DxbkdUBPQ7v+hGLg98dYyflLdq2vKGNNQ=;
-        b=MBwq8iQT08gOCa9rJ8qFqI4BdOqhD9gxgoHyItuiBDjc80GOV0n/0Hvh5h9ccoL8XF
-         xXfwjrnjyWzaZ+2Cij/QNwGFjC976k0n2j6+2Qi+WpzIcdXcxw5dO6QrYsKv0N04qOwf
-         FiNjb652e0Sz+XA1NbcH2bbuvdW+oNrJttxI4dj/jo5uK2smwDutaZFG1n+EZIjxCIei
-         Q9A0TfF42ZXLGFbThtMyAXR5mK7+7FriG/+bgpXU65UpD4vdqxNAk96DMonmFn9TjnVv
-         sOeKcfFcFl/gFahHFD+Q5SBYtq3cz0QoCDEoL8mXm1EoazbRvGnVPMnaCq930hlfTLAx
-         pyqw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=trapM3KIYQ0IQi6DX47BuIAgKDllMEKOabAF1mkHxFs=;
+        b=Z/79kozT2/6g1BV/WFgdxXwt8knEgJUn1YHloYgrMGePc0XddwMPOwqRLGo2ewgkcN
+         8h/Y+y2zcCn3+UfG+fjFEReDAvwSqljc3u5zbXemK+yUEnsTHAFqjREhe1W5JWtJQ2oY
+         RzWopWZdCRJtBNF7ogpLJo/lcuN3fXc/ghImVfr1xM03VGRMIkk0PIxGhajj5QQHDr16
+         pBg0XAcQ1jARl0WQoMXGnGmP+RQLGnct6ZmWlTDuNBLdjyyRY7YW/PpkJubg+8MVDg6A
+         h4lf+NiCUr8cbs3NrcXqbD9yc2UGEE81MW8SU+dUmfVlB/qpA+mMDWPfkPv0fFAXG5DU
+         cmCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=NozlW8gxt+DxbkdUBPQ7v+hGLg98dYyflLdq2vKGNNQ=;
-        b=odgpUQIdJcc66sbV0cWE0sM6vLIgEuuWbLj8hEyKRWceq5vS6iknuo1w1gyXJQdWWY
-         0MGiRgeokutZXeEQVGxuOoltFvC0jMx4ATwVuuzA/z9M6k2E1UmLHVS+ij5ngKs6bRPp
-         YdQy1jYEf5Xem7esukZr/PpabXCOGf96ZD6JfIX8vUveVaA1S3ymEfQukomdF/G2t32g
-         ks77zH4beru+zt0SJ87Agu1Jwh/A5A9Nnz/ok9AUOyyFbvfKGE2W2OwhJ6bLajsSC5pQ
-         D2CYc8yDSvrupJhHwyQJGOkuxPK7JDr0qfEtbU2OvQBrXUTgokqj0sED9bfxOfBuE07w
-         aG8w==
-X-Gm-Message-State: AOAM5331H1dEKC9pKl1sXW1wHeQ0g7Q3uhty/zVpoxucVb+lTCklfM8q
-        o9eenOUVHj0vMX911hHO5QmLvg==
-X-Google-Smtp-Source: ABdhPJwmUVILxx3fkvi4+hqA/dlgtcQ1M8rziX6YVtWAy/aURal3rjhnY6VgUCnsqW4bsZbXS+ErRw==
-X-Received: by 2002:a17:907:7b95:b0:6f4:ff03:981a with SMTP id ne21-20020a1709077b9500b006f4ff03981amr7455667ejc.653.1654241886274;
-        Fri, 03 Jun 2022 00:38:06 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id bs13-20020a056402304d00b0042bd6f745fasm3562059edb.92.2022.06.03.00.38.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jun 2022 00:38:05 -0700 (PDT)
-Message-ID: <78714614-bb6a-761d-3a36-cbd758dcec4c@linaro.org>
-Date:   Fri, 3 Jun 2022 09:38:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 5/5] arm64: dts: exynos: Add internal eMMC support to
- jackpotlte
-Content-Language: en-US
-To:     David Virag <virag.david003@gmail.com>
-Cc:     phone-devel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        bh=trapM3KIYQ0IQi6DX47BuIAgKDllMEKOabAF1mkHxFs=;
+        b=GiAJobINNP9PAT62QLzeBwIqRNV4t5t8S+oskzVCT43kNX79ngUeWgyrd9hi+sXY6X
+         Bx6tcdvS1HJuRQpLX64V1kAQLOMAP3lVdlWXKowEYFcn7Uphn6SRnrG5EgFJ3/efhNqa
+         MuJNLXLde70dXvIIaIc64kSoEYj7BSIb/vOMAqGvDpOc/NBSghasLpK45ASGb5dPwDTT
+         zwhze+TSmSA864em4ZrHcFgOo1LAI35xCfgXo9fJmpTNOo19gw0LY7RzGXO01naD3jdT
+         dow3Lt6teV5AFrkpGgfuQw41qnKtHzG+luvkHVlR2pe0/gZMbhczITk79NOfK3mR6rCf
+         lXdQ==
+X-Gm-Message-State: AOAM530AgYye3aPNew8XTOW21ca+6o7CVSwcmMX0x68CYTs1vKc5nTXK
+        2eM/BnjWYtjH7OFhTQetAMlIBg==
+X-Google-Smtp-Source: ABdhPJwhi04aaFzgO2Njb02gkEU/pJws3GqS/mwstjhtP7iGSfZ+ggStYY5XcLU99jn0WTBZFAQv0Q==
+X-Received: by 2002:a05:6512:1041:b0:478:afc6:5846 with SMTP id c1-20020a056512104100b00478afc65846mr5927012lfb.132.1654243154045;
+        Fri, 03 Jun 2022 00:59:14 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id bp2-20020a056512158200b00477c5940bbasm1438428lfb.265.2022.06.03.00.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jun 2022 00:59:13 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20220601233743.56317-1-virag.david003@gmail.com>
- <20220601233743.56317-6-virag.david003@gmail.com>
- <b3681990-e358-8e1d-93fe-b72c099902e3@linaro.org>
- <f40aca00a4418c889395d2dab65f85d24e8662c6.camel@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <f40aca00a4418c889395d2dab65f85d24e8662c6.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v9 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+Date:   Fri,  3 Jun 2022 10:59:03 +0300
+Message-Id: <20220603075908.1853011-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/06/2022 00:18, David Virag wrote:
-> On Thu, 2022-06-02 at 14:01 +0200, Krzysztof Kozlowski wrote:
->> On 02/06/2022 01:37, David Virag wrote:
->>> Add the nodes relevant to provide clocks for Exynos7885 eMMC and to
->>> support eMMC. eMMC is the internal storage used in the Samsung
->>> Galaxy A8
->>> (2018) (jackpotlte), and all other known devices using the
->>> Exynos7885
->>> SoC.
->>>
->>> Signed-off-by: David Virag <virag.david003@gmail.com>
->>> ---
->>>  .../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 ++++++++++++
->>>  arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 32
->>> +++++++++++++++++++
->>>  2 files changed, 52 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
->>> b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
->>> index 4cf9aa25f618..5db9a81ac7bb 100644
->>> --- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
->>> +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
->>> @@ -60,6 +60,26 @@ power-key {
->>>         };
->>>  };
->>>  
->>> +&mmc_0 {
->>> +       status = "okay";
->>> +       mmc-hs200-1_8v;
->>> +       mmc-hs400-1_8v;
->>> +       cap-mmc-highspeed;
->>> +       non-removable;
->>> +       mmc-hs400-enhanced-strobe;
->>> +       card-detect-delay = <200>;
->>> +       clock-frequency = <800000000>;
->>
->> Is this real property for MMC? Neither mmc nor DW MSHC bindings
->> mention it.
-> 
-> It is, but I don't remember trying without it. Seems like it is not
-> documented then. It is used in dw_mmc.c in the following places:
-> 
-> https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L3242-L3243
-> 
-> https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L3306-L3325
-> 
-> The Exynos850 device tree has the same property in it's mmc node. 
+PCIe pipe clk (and some other clocks) must be parked to the "safe"
+source (bi_tcxo) when corresponding GDSC is turned off and on again.
+Currently this is handcoded in the PCIe driver by reparenting the
+gcc_pipe_N_clk_src clock.
 
-Indeed, it's fine then. I'll check the bindings and convert them to DT
-schema.
+Instead of doing it manually, follow the approach used by
+clk_rcg2_shared_ops and implement this parking in the enable() and
+disable() clock operations for respective pipe clocks.
+
+Changes since v8:
+ - Readded .name to changed entries in gcc-sc7280 driver to restore
+   compatibility with older DTS,
+ - Rebased on top of linux-next, dropping reverts,
+ - Verified to include all R-b tags (excuse me, Johan, I missed them
+   in the previous iteration).
+
+Changes since v7:
+ - Brought back the struct clk_regmap_phy_mux (Johan)
+ - Fixed includes (Stephen)
+ - Dropped CLK_SET_RATE_PARENT flags from changed pipe clocks, they are
+   not set in the current code and they are useless as the PHY's clock
+   has fixed rate.
+
+Changes since v6:
+ - Switched the ops to use GENMASK/FIELD_GET/FIELD_PUT (Stephen),
+ - As all pipe/symbol clock source clocks have the same register (and
+   parents) layout, hardcode all the values. If the need arises, this
+   can be changed later (Stephen),
+ - Fixed commit messages and comments (suggested by Johan),
+ - Added revert for the clk_regmap_mux_safe that have been already
+   picked up by Bjorn.
+
+Changes since v5:
+ - Rename the clock to clk-regmap-phy-mux and the enable/disable values
+   to phy_src_val and ref_src_val respectively (as recommended by
+   Johan).
+
+Changes since v4:
+ - Renamed the clock to clk-regmap-pipe-src,
+ - Added mention of PCIe2 PHY to the commit message,
+ - Expanded commit messages to mention additional pipe clock details.
+
+Changes since v3:
+ - Replaced the clock multiplexer implementation with branch-like clock.
+
+Changes since v2:
+ - Added is_enabled() callback
+ - Added default parent to the pipe clock configuration
+
+Changes since v1:
+ - Rebased on top of [1].
+ - Removed erroneous Fixes tag from the patch 4.
+
+Changes since RFC:
+ - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
+   than specifying the register value directly
+ - Expand commit message to the first patch to specially mention that
+   it is required only on newer generations of Qualcomm chipsets.
+
+Dmitry Baryshkov (5):
+  clk: qcom: regmap: add PHY clock source implementation
+  clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
+    clocks
+  clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
+    clocks
+  PCI: qcom: Remove unnecessary pipe_clk handling
+  PCI: qcom: Drop manual pipe_clk_src handling
+
+ drivers/clk/qcom/Makefile              |  1 +
+ drivers/clk/qcom/clk-regmap-phy-mux.c  | 62 ++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-phy-mux.h  | 33 +++++++++++
+ drivers/clk/qcom/gcc-sc7280.c          | 47 +++++----------
+ drivers/clk/qcom/gcc-sm8450.c          | 49 +++++-----------
+ drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
+ 6 files changed, 125 insertions(+), 148 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.h
+
+-- 
+2.35.1
 
 
-Best regards,
-Krzysztof
+Dmitry Baryshkov (5):
+  clk: qcom: regmap: add PHY clock source implementation
+  clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
+    clocks
+  clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
+    clocks
+  PCI: qcom: Remove unnecessary pipe_clk handling
+  PCI: qcom: Drop manual pipe_clk_src handling
+
+ drivers/clk/qcom/Makefile              |  1 +
+ drivers/clk/qcom/clk-regmap-phy-mux.c  | 62 ++++++++++++++++++++
+ drivers/clk/qcom/clk-regmap-phy-mux.h  | 33 +++++++++++
+ drivers/clk/qcom/gcc-sc7280.c          | 47 +++++----------
+ drivers/clk/qcom/gcc-sm8450.c          | 49 +++++-----------
+ drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
+ 6 files changed, 125 insertions(+), 148 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.c
+ create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.h
+
+-- 
+2.35.1
+
