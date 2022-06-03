@@ -2,56 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B38C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jun 2022 22:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02380CCA473
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 07:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239621AbiFBWTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jun 2022 18:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49666 "EHLO
+        id S242607AbiFCHiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 03:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234670AbiFBWTV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jun 2022 18:19:21 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2D734679;
-        Thu,  2 Jun 2022 15:19:20 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id c2so7978570edf.5;
-        Thu, 02 Jun 2022 15:19:19 -0700 (PDT)
+        with ESMTP id S242568AbiFCHiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 03:38:09 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B219922525
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 00:38:07 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id gl15so451675ejb.4
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 00:38:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :content-transfer-encoding:user-agent:mime-version;
-        bh=tbowqamXYYuuGAdFBr0ycte2n7isELmCXUpS72DXPYA=;
-        b=Cfn9ZrjJiuyTgQEDoNcqfvdJSLpGNZk3ZIvxheCNDuJKdAZ7/R0LfKUCb6JqSD3l9V
-         5r25+e3QoN3avlvliguJWFaximEHBbqMDW1vNP+yD4lCQPNmTqNiIxrvS0QZcMjXPXlX
-         7XZlixPHgxssR2wJVbkZSSEYV5nwEsamgxA2dnD9UfYWMS4aAlDpm7rxRStHQoHUKE3c
-         3XFgBIVrydZcp9sMwUro+iFBQqvdn8exH66hJiL0Is3zfcqToU58YLVPDLSYpiGr2YDw
-         SxJDGBsf67UaIc46xeZo0fuUSHobZ8y0Ti46WMplznIqvpUkVHnHFAAaCQjodhoAq7Di
-         hX0Q==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=NozlW8gxt+DxbkdUBPQ7v+hGLg98dYyflLdq2vKGNNQ=;
+        b=MBwq8iQT08gOCa9rJ8qFqI4BdOqhD9gxgoHyItuiBDjc80GOV0n/0Hvh5h9ccoL8XF
+         xXfwjrnjyWzaZ+2Cij/QNwGFjC976k0n2j6+2Qi+WpzIcdXcxw5dO6QrYsKv0N04qOwf
+         FiNjb652e0Sz+XA1NbcH2bbuvdW+oNrJttxI4dj/jo5uK2smwDutaZFG1n+EZIjxCIei
+         Q9A0TfF42ZXLGFbThtMyAXR5mK7+7FriG/+bgpXU65UpD4vdqxNAk96DMonmFn9TjnVv
+         sOeKcfFcFl/gFahHFD+Q5SBYtq3cz0QoCDEoL8mXm1EoazbRvGnVPMnaCq930hlfTLAx
+         pyqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:content-transfer-encoding:user-agent:mime-version;
-        bh=tbowqamXYYuuGAdFBr0ycte2n7isELmCXUpS72DXPYA=;
-        b=uexjQL9NqnPtZWq4DzAtOL6S15ZnCNapSfHDMjEDH0DDh3O7VeVXyBjo83wBmx99Ni
-         CD07pqLGkLk8UIIlKSHLT9QXzlYrWvcysxcPl4p1K1WAt3xZoGGkbH63ACATsIBCd26i
-         m0Q0lVndwMcFOD9TdvahpfWu+lHA63PxCDqGW9gsSwfjvG1cCqr4SzJ0ze4w4SL7TYAI
-         GU1vPqg+aDsQibt+z5PQxq0qxFJ8EyGuA2p0KsEsNEgRCCQbaryVtTPeXU3fnL/Vp2nd
-         n9HDC5dnqU1k9BmehJnu7BCKncS7b4/Z7uy6uxssuJcA/OhtalyF/+HUhshW4D5zYGlD
-         D70A==
-X-Gm-Message-State: AOAM532LXJBT342r88mydN+V3lg/1vPak2PgN9zMPfHa9k6CAGjy4CG1
-        vtzWh7zTZMssbhHfLYlVFDrcgavZ64dcMCl8q+g=
-X-Google-Smtp-Source: ABdhPJz1a65SOU6C73Ybt3zJBBGpUK5rx1jMp6pFTiIUucWL/ne9gp0OsWFNXQFD/Zwp0ttUaDtOpA==
-X-Received: by 2002:a05:6402:1f0e:b0:42d:e38a:51f7 with SMTP id b14-20020a0564021f0e00b0042de38a51f7mr7825293edb.68.1654208358484;
-        Thu, 02 Jun 2022 15:19:18 -0700 (PDT)
-Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.gmail.com with ESMTPSA id fg16-20020a1709069c5000b006fe8d8c54a7sm2150850ejc.87.2022.06.02.15.19.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jun 2022 15:19:17 -0700 (PDT)
-Message-ID: <f40aca00a4418c889395d2dab65f85d24e8662c6.camel@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=NozlW8gxt+DxbkdUBPQ7v+hGLg98dYyflLdq2vKGNNQ=;
+        b=odgpUQIdJcc66sbV0cWE0sM6vLIgEuuWbLj8hEyKRWceq5vS6iknuo1w1gyXJQdWWY
+         0MGiRgeokutZXeEQVGxuOoltFvC0jMx4ATwVuuzA/z9M6k2E1UmLHVS+ij5ngKs6bRPp
+         YdQy1jYEf5Xem7esukZr/PpabXCOGf96ZD6JfIX8vUveVaA1S3ymEfQukomdF/G2t32g
+         ks77zH4beru+zt0SJ87Agu1Jwh/A5A9Nnz/ok9AUOyyFbvfKGE2W2OwhJ6bLajsSC5pQ
+         D2CYc8yDSvrupJhHwyQJGOkuxPK7JDr0qfEtbU2OvQBrXUTgokqj0sED9bfxOfBuE07w
+         aG8w==
+X-Gm-Message-State: AOAM5331H1dEKC9pKl1sXW1wHeQ0g7Q3uhty/zVpoxucVb+lTCklfM8q
+        o9eenOUVHj0vMX911hHO5QmLvg==
+X-Google-Smtp-Source: ABdhPJwmUVILxx3fkvi4+hqA/dlgtcQ1M8rziX6YVtWAy/aURal3rjhnY6VgUCnsqW4bsZbXS+ErRw==
+X-Received: by 2002:a17:907:7b95:b0:6f4:ff03:981a with SMTP id ne21-20020a1709077b9500b006f4ff03981amr7455667ejc.653.1654241886274;
+        Fri, 03 Jun 2022 00:38:06 -0700 (PDT)
+Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id bs13-20020a056402304d00b0042bd6f745fasm3562059edb.92.2022.06.03.00.38.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jun 2022 00:38:05 -0700 (PDT)
+Message-ID: <78714614-bb6a-761d-3a36-cbd758dcec4c@linaro.org>
+Date:   Fri, 3 Jun 2022 09:38:03 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
 Subject: Re: [PATCH 5/5] arm64: dts: exynos: Add internal eMMC support to
  jackpotlte
-From:   David Virag <virag.david003@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+To:     David Virag <virag.david003@gmail.com>
 Cc:     phone-devel@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
@@ -64,72 +69,69 @@ Cc:     phone-devel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 03 Jun 2022 00:18:51 +0200
-In-Reply-To: <b3681990-e358-8e1d-93fe-b72c099902e3@linaro.org>
 References: <20220601233743.56317-1-virag.david003@gmail.com>
-         <20220601233743.56317-6-virag.david003@gmail.com>
-         <b3681990-e358-8e1d-93fe-b72c099902e3@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 
-MIME-Version: 1.0
+ <20220601233743.56317-6-virag.david003@gmail.com>
+ <b3681990-e358-8e1d-93fe-b72c099902e3@linaro.org>
+ <f40aca00a4418c889395d2dab65f85d24e8662c6.camel@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <f40aca00a4418c889395d2dab65f85d24e8662c6.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2022-06-02 at 14:01 +0200, Krzysztof Kozlowski wrote:
-> On 02/06/2022 01:37, David Virag wrote:
-> > Add the nodes relevant to provide clocks for Exynos7885 eMMC and to
-> > support eMMC. eMMC is the internal storage used in the Samsung
-> > Galaxy A8
-> > (2018) (jackpotlte), and all other known devices using the
-> > Exynos7885
-> > SoC.
-> >=20
-> > Signed-off-by: David Virag <virag.david003@gmail.com>
-> > ---
-> > =C2=A0.../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 ++++++++++++
-> > =C2=A0arch/arm64/boot/dts/exynos/exynos7885.dtsi=C2=A0=C2=A0=C2=A0 | 32
-> > +++++++++++++++++++
-> > =C2=A02 files changed, 52 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> > b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> > index 4cf9aa25f618..5db9a81ac7bb 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> > +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-> > @@ -60,6 +60,26 @@ power-key {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0};
-> > =C2=A0};
-> > =C2=A0
-> > +&mmc_0 {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D "okay";
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mmc-hs200-1_8v;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mmc-hs400-1_8v;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0cap-mmc-highspeed;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0non-removable;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mmc-hs400-enhanced-strobe;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0card-detect-delay =3D <200>;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0clock-frequency =3D <8000000=
-00>;
->=20
-> Is this real property for MMC? Neither mmc nor DW MSHC bindings
-> mention it.
+On 03/06/2022 00:18, David Virag wrote:
+> On Thu, 2022-06-02 at 14:01 +0200, Krzysztof Kozlowski wrote:
+>> On 02/06/2022 01:37, David Virag wrote:
+>>> Add the nodes relevant to provide clocks for Exynos7885 eMMC and to
+>>> support eMMC. eMMC is the internal storage used in the Samsung
+>>> Galaxy A8
+>>> (2018) (jackpotlte), and all other known devices using the
+>>> Exynos7885
+>>> SoC.
+>>>
+>>> Signed-off-by: David Virag <virag.david003@gmail.com>
+>>> ---
+>>>  .../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 ++++++++++++
+>>>  arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 32
+>>> +++++++++++++++++++
+>>>  2 files changed, 52 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+>>> b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+>>> index 4cf9aa25f618..5db9a81ac7bb 100644
+>>> --- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+>>> +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+>>> @@ -60,6 +60,26 @@ power-key {
+>>>         };
+>>>  };
+>>>  
+>>> +&mmc_0 {
+>>> +       status = "okay";
+>>> +       mmc-hs200-1_8v;
+>>> +       mmc-hs400-1_8v;
+>>> +       cap-mmc-highspeed;
+>>> +       non-removable;
+>>> +       mmc-hs400-enhanced-strobe;
+>>> +       card-detect-delay = <200>;
+>>> +       clock-frequency = <800000000>;
+>>
+>> Is this real property for MMC? Neither mmc nor DW MSHC bindings
+>> mention it.
+> 
+> It is, but I don't remember trying without it. Seems like it is not
+> documented then. It is used in dw_mmc.c in the following places:
+> 
+> https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L3242-L3243
+> 
+> https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L3306-L3325
+> 
+> The Exynos850 device tree has the same property in it's mmc node. 
 
-It is, but I don't remember trying without it. Seems like it is not
-documented then. It is used in dw_mmc.c in the following places:
+Indeed, it's fine then. I'll check the bindings and convert them to DT
+schema.
 
-https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L32=
-42-L3243
-
-https://github.com/torvalds/linux/blob/master/drivers/mmc/host/dw_mmc.c#L33=
-06-L3325
-
-The Exynos850 device tree has the same property in it's mmc node.=20
-
->=20
-> Best regards,
-> Krzysztof
 
 Best regards,
-David
+Krzysztof
