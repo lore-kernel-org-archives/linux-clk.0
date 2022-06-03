@@ -2,119 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06804C43334
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 13:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAF7C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 14:30:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238609AbiFCNqd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 09:46:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
+        id S241371AbiFCOar (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 10:30:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236623AbiFCNqc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 09:46:32 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235FDF6E;
-        Fri,  3 Jun 2022 06:46:31 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id q15so2433647wrc.11;
-        Fri, 03 Jun 2022 06:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=90pEoDN9oy+4O7tdS4pW3PQdGgDfNW6XB8YNiEK6tMw=;
-        b=VuqrsEXLyCASAJP79//3p/DSqIrbW2a2pkUzmcyyW7o643KTpYM9vyfzS17iWDvUdl
-         T7IX/Ppr7kAxXyEVC4L5q4EPn6QSbNu0uFxwiQfFWmuNa7mj3ZAOSUtGyNxF1/2Ev9Hd
-         ijWPfewUzfWG+We0E6oh5BsQO8bn9dJuooLCNnzUdjs3nPSVqWUmocbG25IzlPnooxGM
-         xlNQ5NFocwfmqswYfPbiWDeWuOTtjOgpVvJ02gc8vYDygNylRGBP3b/VOe7Tcylorowi
-         qHEGeIAvwzczF5QbhHcOwsS8LzwpB+q7up61NYb17yLeeTunisL2bvh7fMQO1QT7horM
-         6bWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=90pEoDN9oy+4O7tdS4pW3PQdGgDfNW6XB8YNiEK6tMw=;
-        b=nFkHSAePeIs6TCheR4cog7b1EtSl9OU9q+S8hC4VN6CA3gyv17X7a3oXIP0yqqVtmx
-         rBVSCa18ltqhocFgIbLke5WbcY8FPqfTj7tuPyfpyKDVzKHU5VJzvtufELMztG2jgT2o
-         QAcRIQ68R/j7L6yg6/9YrINcEETtEHVv9w4OK7D0MpLegUCTdxBnmLhpq0gAaQ57cI03
-         GTyu+LO51rUA4hcto3kV1LQbmnKdtKGqecDOvqpNk7TXpzJEgdezlF8VmMWXdG+hNjBg
-         5qgokHi8vrOnCJwvq8uJlFaRIoeKfBKNrpVLw+/QDhiwbx5sNSOuPmHow/M2XtkPaZW3
-         WP8g==
-X-Gm-Message-State: AOAM530gkM2hy0bOyjWB6YaoFh30WVAXuYNlysUfX7APEWKfqNnGvSmC
-        y85nncsCBeqP6YvcahybL7M=
-X-Google-Smtp-Source: ABdhPJxWFmAyWeVpbhFYWpT5Pmljv2+cgZgPMAqDQ/Bi4FDGILAuOzYdJiYcnXpj0Lx2Q4HDj18EUw==
-X-Received: by 2002:adf:f842:0:b0:213:5c4b:981d with SMTP id d2-20020adff842000000b002135c4b981dmr6634761wrq.694.1654263989667;
-        Fri, 03 Jun 2022 06:46:29 -0700 (PDT)
-Received: from localhost (92.40.203.126.threembb.co.uk. [92.40.203.126])
-        by smtp.gmail.com with ESMTPSA id o22-20020a1c7516000000b003942a244ed1sm8280345wmc.22.2022.06.03.06.46.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 06:46:28 -0700 (PDT)
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     paul@crapouillou.net, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: ingenic-tcu: Properly enable registers before accessing timers
-Date:   Fri,  3 Jun 2022 14:47:05 +0100
-Message-Id: <20220603134705.11156-1-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S230293AbiFCOaq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 10:30:46 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B64494C42B
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 07:30:45 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 44F2A320095A;
+        Fri,  3 Jun 2022 10:30:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Fri, 03 Jun 2022 10:30:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1654266643; x=
+        1654353043; bh=753duY4OnL3/TpcxGjLLye2hLjK+YCDC5lUrR2n6d4s=; b=T
+        7wb1aPVYHKEMv1R/V93csCKGvYgLjXM1C3CXWqZHWa5kd0dDbPEkSbNO3inHqtgN
+        sFDq+0vc/HOKZTKLXDAbc5C6vn8J0cwd8IGBvn7up54Q1Acfh/+9LkJ9f+iq5N+J
+        YhFvFsC7tc6tevrH0MUNoX99heqXENlvewG5yvi+VakhU42Qcpk+ProhPEHKEoH9
+        Tvqi2fTAO6R9cv9xm6HJPqlzTy7UYZWcnuk59s+f+lra4c+YXEVULlvmfQUIlCqS
+        2CFZ6YR/qbBAGmeS0QNFVRW5AzfRam845IrXEzoiJkJvI2XKVrjPvtm08YYvzVsF
+        90jPIRxPq8Kws6VecP9kA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1654266643; x=
+        1654353043; bh=753duY4OnL3/TpcxGjLLye2hLjK+YCDC5lUrR2n6d4s=; b=Y
+        yY0BUuyw0LcMVlZcp3XKDnSOQPiIQVd6TJwjWLV2bh+PpCOTjcBSL9lIFg1nlHUt
+        2PZrin+rjykcOzLsOuG5u4LFbS2Oges330HStDon4tkiZSnJbHsT/IBirKvZQY4p
+        uF4e5oCLfNHzP4lEF52vqx8eCZC4N4dGtUuTKGP5awXsajkw5iixrmzoQ2BJrzQ2
+        6/eAbiS3qycca5R4N/FGiJH8hweI7d88xXxwhqXpBN0GYi5tU/QX2PTKfdkeM/c0
+        UnJMLwq3m9paOdx1T7VLXyoFmIK1gkNJeKll637y/LG5W3IYHurYuBqCB4LC29XV
+        Fc5+WWW16wEMAFtxaTOpg==
+X-ME-Sender: <xms:EhuaYuEOrue2OGfWWp0_ygYFOQpnLYxtLwkWJpmQUZRk_XixiPqU9A>
+    <xme:EhuaYvWX3CM7AtaRI2D_FTMq8dp-cp4rnBothOs7qNkplT0xy99nFqfJ9a7so10Ks
+    ACFuGeGCR12SWXScbg>
+X-ME-Received: <xmr:EhuaYoIpr_jDkn5VRuwSyl6uouHPm0vDDm66yYcnS2ETkUs0ejZU-YkVJB84>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrleeigdejhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthhqredttddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetgfelgefggeekkefggfeludeiudffjeffgeevveekjedukedtudeuteef
+    teefgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:EhuaYoHkmoYhHfmrUnEgonU3ht5HczYXOk-4h-ksgVBEYzI-7ByZfw>
+    <xmx:EhuaYkX1bjoES5DZ8P0xOgNH6vXWP2F9UCDsrQDgU-cC02z6mF5Q5w>
+    <xmx:EhuaYrMIHQRE1FsK4ygoynnbhb1Klwqu0u9I0AxKjVqWOE9VQhuGtQ>
+    <xmx:ExuaYoQnpmrDlSZURsBJsC9oGKqgQTRVDdIANRsvgqSKYt_zbx7BRg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Jun 2022 10:30:42 -0400 (EDT)
+Date:   Fri, 3 Jun 2022 16:30:40 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v3 00/28] clk: More clock rate fixes and tests
+Message-ID: <20220603143040.pjcelo6a5packoaj@penduick>
+References: <20220511144249.354775-1-maxime@cerno.tech>
+ <20220511144830.wgs6zt27gzckbzng@houat>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220511144830.wgs6zt27gzckbzng@houat>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Access to registers is guarded by ingenic_tcu_{enable,disable}_regs()
-so the stop bit can be cleared before accessing a timer channel, but
-those functions did not clear the stop bit on SoCs with a global TCU
-clock gate.
+Hi Stephen, Mike,
 
-Testing on the X1000 has revealed that the stop bits must be cleared
-_and_ the global TCU clock must be ungated to access timer registers.
-Programming manuals for the X1000, JZ4740, and JZ4725B specify this
-behavior. If the stop bit isn't cleared, then writes to registers do
-not take effect, which can leave clocks with no defined parent when
-registered and leave clock tree state out of sync with the hardware,
-triggering bugs in downstream drivers relying on TCU clocks.
+On Wed, May 11, 2022 at 04:48:30PM +0200, Maxime Ripard wrote:
+> On Wed, May 11, 2022 at 04:42:21PM +0200, Maxime Ripard wrote:
+> > Thanks to the feedback I got on the previous series, I found and fixed a
+> > number of bugs in the clock framework and how it deals with rates,
+> > especially when it comes to orphan clocks.
+> >=20
+> > In order to make sure this doesn't pop up again as a regression, I've
+> > extended the number of tests.
+> >=20
+> > The first patch reintroduces the clk_set_rate_range call on clk_put, but
+> > this time will only do so if there was a range set on that clock to
+> > begin with. It should be less intrusive, and reduce the number of
+> > potential side effects considerably.
+> >=20
+> > We then have a fix for the qcom rcg2 issue that has been reported
+> > recently, and two patches to address a regression with the RaspberryPi4.
+>=20
+> Those four patches are fixing regressions in 5.18. Even though the later
+> patches are also fixing some issues, the first four should have your
+> priority over the rest.
 
-Fixing this is easy: have ingenic_tcu_{enable,disable}_regs() always
-clear the stop bit, regardless of the presence of a global TCU gate.
+Could we please move forward on this?
 
-Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
----
- drivers/clk/ingenic/tcu.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index 201bf6e6b6e0..d5544cbc5c48 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -101,15 +101,11 @@ static bool ingenic_tcu_enable_regs(struct clk_hw *hw)
- 	bool enabled = false;
- 
- 	/*
--	 * If the SoC has no global TCU clock, we must ungate the channel's
--	 * clock to be able to access its registers.
--	 * If we have a TCU clock, it will be enabled automatically as it has
--	 * been attached to the regmap.
-+	 * According to the programming manual, a timer channel's registers can
-+	 * only be accessed when the channel's stop bit is clear.
- 	 */
--	if (!tcu->clk) {
--		enabled = !!ingenic_tcu_is_enabled(hw);
--		regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
--	}
-+	enabled = !!ingenic_tcu_is_enabled(hw);
-+	regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
- 
- 	return enabled;
- }
-@@ -120,8 +116,7 @@ static void ingenic_tcu_disable_regs(struct clk_hw *hw)
- 	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
- 	struct ingenic_tcu *tcu = tcu_clk->tcu;
- 
--	if (!tcu->clk)
--		regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
-+	regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
- }
- 
- static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
--- 
-2.35.1
-
+Maxime
