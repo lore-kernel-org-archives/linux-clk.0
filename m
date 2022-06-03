@@ -2,112 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33440C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 12:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06804C43334
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 13:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244400AbiFCMZP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 08:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
+        id S238609AbiFCNqd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 09:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244395AbiFCMZO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 08:25:14 -0400
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5FB3A5C9;
-        Fri,  3 Jun 2022 05:25:13 -0700 (PDT)
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-f2e0a41009so10392159fac.6;
-        Fri, 03 Jun 2022 05:25:13 -0700 (PDT)
+        with ESMTP id S236623AbiFCNqc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 09:46:32 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235FDF6E;
+        Fri,  3 Jun 2022 06:46:31 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id q15so2433647wrc.11;
+        Fri, 03 Jun 2022 06:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=90pEoDN9oy+4O7tdS4pW3PQdGgDfNW6XB8YNiEK6tMw=;
+        b=VuqrsEXLyCASAJP79//3p/DSqIrbW2a2pkUzmcyyW7o643KTpYM9vyfzS17iWDvUdl
+         T7IX/Ppr7kAxXyEVC4L5q4EPn6QSbNu0uFxwiQfFWmuNa7mj3ZAOSUtGyNxF1/2Ev9Hd
+         ijWPfewUzfWG+We0E6oh5BsQO8bn9dJuooLCNnzUdjs3nPSVqWUmocbG25IzlPnooxGM
+         xlNQ5NFocwfmqswYfPbiWDeWuOTtjOgpVvJ02gc8vYDygNylRGBP3b/VOe7Tcylorowi
+         qHEGeIAvwzczF5QbhHcOwsS8LzwpB+q7up61NYb17yLeeTunisL2bvh7fMQO1QT7horM
+         6bWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=YZtN1F0Qk9NbbCUaUPvkdQ1eLPQxxxaqqx36o3Sni5k=;
-        b=7D8I6vv8Lo2I6NelwLtAOPQvVz+QUj67zjUst5AWEwAjBZhZ6ppJNW15jyRFnxXbj1
-         69AmvfKnxuM070OpaRPYw6KHvqdSnGVVLLdSrEA4+2CW8XZOjwiHVrAKohcH6pAAQTVm
-         olAp+E1eJf9+zMuLWp21LXyEsHyYVS+3AqljQbYva9/1dco3nBZECYebl31bbS5aculQ
-         Cp2KANOsWsgXp/NsuQRy5/SQTD9UzmgJ+Yoay4VT0Pw6vcH3gFAsmmBlawnwQuc/qD7P
-         KosZAwRvBimaKplPudsSocXZXdaoMX6YD4CZ6CGSVBWu0annCYbW9ztx4xaMk070CcUg
-         WG8g==
-X-Gm-Message-State: AOAM531Bv5DXP8AMCmlkwlms0hnImrxViL4ERFA1dwl5PlgAr9FSAT8d
-        u7/WxPQSdrxdFEXFw0G36q2XAhoN2w==
-X-Google-Smtp-Source: ABdhPJxSVrqRYKsD/zB7jTBr5ppoHfux9/u9Rnk3J/ggqOIFhHqD+yh/Q/u1OQq9Kf6x2ZnC3jgxgQ==
-X-Received: by 2002:a05:6870:c6a0:b0:f5:cf37:63a3 with SMTP id cv32-20020a056870c6a000b000f5cf3763a3mr5338923oab.288.1654259112858;
-        Fri, 03 Jun 2022 05:25:12 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id c30-20020a056830349e00b00605da994088sm3531447otu.2.2022.06.03.05.25.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=90pEoDN9oy+4O7tdS4pW3PQdGgDfNW6XB8YNiEK6tMw=;
+        b=nFkHSAePeIs6TCheR4cog7b1EtSl9OU9q+S8hC4VN6CA3gyv17X7a3oXIP0yqqVtmx
+         rBVSCa18ltqhocFgIbLke5WbcY8FPqfTj7tuPyfpyKDVzKHU5VJzvtufELMztG2jgT2o
+         QAcRIQ68R/j7L6yg6/9YrINcEETtEHVv9w4OK7D0MpLegUCTdxBnmLhpq0gAaQ57cI03
+         GTyu+LO51rUA4hcto3kV1LQbmnKdtKGqecDOvqpNk7TXpzJEgdezlF8VmMWXdG+hNjBg
+         5qgokHi8vrOnCJwvq8uJlFaRIoeKfBKNrpVLw+/QDhiwbx5sNSOuPmHow/M2XtkPaZW3
+         WP8g==
+X-Gm-Message-State: AOAM530gkM2hy0bOyjWB6YaoFh30WVAXuYNlysUfX7APEWKfqNnGvSmC
+        y85nncsCBeqP6YvcahybL7M=
+X-Google-Smtp-Source: ABdhPJxWFmAyWeVpbhFYWpT5Pmljv2+cgZgPMAqDQ/Bi4FDGILAuOzYdJiYcnXpj0Lx2Q4HDj18EUw==
+X-Received: by 2002:adf:f842:0:b0:213:5c4b:981d with SMTP id d2-20020adff842000000b002135c4b981dmr6634761wrq.694.1654263989667;
+        Fri, 03 Jun 2022 06:46:29 -0700 (PDT)
+Received: from localhost (92.40.203.126.threembb.co.uk. [92.40.203.126])
+        by smtp.gmail.com with ESMTPSA id o22-20020a1c7516000000b003942a244ed1sm8280345wmc.22.2022.06.03.06.46.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 05:25:12 -0700 (PDT)
-Received: (nullmailer pid 136419 invoked by uid 1000);
-        Fri, 03 Jun 2022 12:25:11 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20220603080019.2251764-2-vladimir.zapolskiy@linaro.org>
-References: <20220603080019.2251764-1-vladimir.zapolskiy@linaro.org> <20220603080019.2251764-2-vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v6 1/7] dt-bindings: clock: add QCOM SM8450 camera clock bindings
-Date:   Fri, 03 Jun 2022 07:25:11 -0500
-Message-Id: <1654259111.699187.136418.nullmailer@robh.at.kernel.org>
+        Fri, 03 Jun 2022 06:46:28 -0700 (PDT)
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     paul@crapouillou.net, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: ingenic-tcu: Properly enable registers before accessing timers
+Date:   Fri,  3 Jun 2022 14:47:05 +0100
+Message-Id: <20220603134705.11156-1-aidanmacdonald.0x0@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 03 Jun 2022 11:00:18 +0300, Vladimir Zapolskiy wrote:
-> The change adds device tree bindings for camera clock controller
-> found on SM8450 SoC.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
-> Changes from v5 to v6:
-> * added Rob's tag.
-> 
-> Changes from v4 to v5:
-> * fixed a typo in a usage example found in the yaml file.
-> 
-> Changes from v3 to v4:
-> * renamed a filename in $id value after the rename of the file itself.
-> 
-> Changes from v2 to v3:
-> * renamed files to match the compatible value "qcom,sm8450-camcc",
-> * fixed a typo in a usage example found in the yaml file.
-> 
-> Changes from v1 to v2:
-> * updated qcom,camcc-sm8450.yaml according to review comments from Rob,
-> * changed qcom,camcc-sm8450.h license to dual one.
-> 
->  .../bindings/clock/qcom,sm8450-camcc.yaml     |  89 ++++++++++
->  include/dt-bindings/clock/qcom,sm8450-camcc.h | 159 ++++++++++++++++++
->  2 files changed, 248 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
-> 
+Access to registers is guarded by ingenic_tcu_{enable,disable}_regs()
+so the stop bit can be cleared before accessing a timer channel, but
+those functions did not clear the stop bit on SoCs with a global TCU
+clock gate.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Testing on the X1000 has revealed that the stop bits must be cleared
+_and_ the global TCU clock must be ungated to access timer registers.
+Programming manuals for the X1000, JZ4740, and JZ4725B specify this
+behavior. If the stop bit isn't cleared, then writes to registers do
+not take effect, which can leave clocks with no defined parent when
+registered and leave clock tree state out of sync with the hardware,
+triggering bugs in downstream drivers relying on TCU clocks.
 
-yamllint warnings/errors:
+Fixing this is easy: have ingenic_tcu_{enable,disable}_regs() always
+clear the stop bit, regardless of the presence of a global TCU gate.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.example.dtb: clock-controller@ade0000: reg: [[0, 182321152], [0, 131072]] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+---
+ drivers/clk/ingenic/tcu.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+index 201bf6e6b6e0..d5544cbc5c48 100644
+--- a/drivers/clk/ingenic/tcu.c
++++ b/drivers/clk/ingenic/tcu.c
+@@ -101,15 +101,11 @@ static bool ingenic_tcu_enable_regs(struct clk_hw *hw)
+ 	bool enabled = false;
+ 
+ 	/*
+-	 * If the SoC has no global TCU clock, we must ungate the channel's
+-	 * clock to be able to access its registers.
+-	 * If we have a TCU clock, it will be enabled automatically as it has
+-	 * been attached to the regmap.
++	 * According to the programming manual, a timer channel's registers can
++	 * only be accessed when the channel's stop bit is clear.
+ 	 */
+-	if (!tcu->clk) {
+-		enabled = !!ingenic_tcu_is_enabled(hw);
+-		regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
+-	}
++	enabled = !!ingenic_tcu_is_enabled(hw);
++	regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
+ 
+ 	return enabled;
+ }
+@@ -120,8 +116,7 @@ static void ingenic_tcu_disable_regs(struct clk_hw *hw)
+ 	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
+ 	struct ingenic_tcu *tcu = tcu_clk->tcu;
+ 
+-	if (!tcu->clk)
+-		regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
++	regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
+ }
+ 
+ static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
+-- 
+2.35.1
 
