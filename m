@@ -2,61 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEC9C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 08:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7734BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 08:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242676AbiFCIAj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 04:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33670 "EHLO
+        id S242694AbiFCIBJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 04:01:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242693AbiFCIAg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 04:00:36 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C9536B4B
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 01:00:34 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id u26so10682161lfd.8
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 01:00:34 -0700 (PDT)
+        with ESMTP id S242200AbiFCIBI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 04:01:08 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADDBC36B4B
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 01:01:03 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id l30so11408973lfj.3
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 01:01:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OeCYqj1sETnV1TkCzUKXxUpL01AtczNgPuNEI88HkKc=;
-        b=MZdzt5C7qaRtkCwwnjTZiniSdsKNl6FDgEtu98mzD777YavO0v3/gOOqhirTuYcdX6
-         ZeSoeXrF/En6RlJHrDKpYfSdiaqhYgYrbQWQT1anpe2AtWGLVZQU6PuI4XdWOsD7sZHU
-         qIyY241Dasi5XDGV8pPuM2fdOJvlUG4ewVmJKlIxO6Sh6WfYdPQphjaqv+OCaXBH5X1C
-         2huRKd+r+CCnaptf5vdnsIe6m6OhWVbEUrWv+CyzAO158T/9e+0eUfGyn6sRS6h5VH09
-         kC1+iBJ4gaABfQMufWCxKN5YyRh8RDWZn0L3VitWksbwnFZxI9wjpc8yoc1CKedLNfD2
-         0wCg==
+        bh=92h+xS0S7U/GCtJqbNeL9psANLQOdO1D44wv+Muryeg=;
+        b=n5rO0+cA24MQdayWipnfIoooXRy67sqMp9htPwhQL6puMrJtkBR99yUe2ekmO4swWy
+         7P7cbIXVWROWHTnEJt15ctIJp13vEMotKFzyabGmSD3azl3X+v2Dmz1nezJWV7e173HD
+         V02fJ/A7Z46FtZ+snSop4o93WEMFl20/xgAzoKOlgKUIQWqT5aH71Ka2SjNogg8ndEDL
+         Scmbfhjoj2sbyV6b5k2Vt41jpldICc9RQl7pzqNOv9TeqRJerrCi02WUPIO4CQVE3i+D
+         2IHovrTvtmdq1h8JcsAxMCXR1cHy45inmk4GzYUHUE6mLXQuTzZ8hJcmpTzqP2J320x/
+         T4Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OeCYqj1sETnV1TkCzUKXxUpL01AtczNgPuNEI88HkKc=;
-        b=HsJOf2Czuw1q5EnZs5V7mdLWu4EZA+6gFfecPWQ6aJzsV3bGDTwKCeUbB9sNHm5ZTy
-         RWUhrA26zhGp++HX74ZUIqC9e8gfmOE5PgWi3p5yty2npKbHHfwoPCYrzpBxkkyfdl75
-         HzsgA8kSiJ84QacMkyFy2UlgtcuMkmlDwX4p59MG2mdG+Br5zmpoi0/9ILtN4R3Pup1C
-         HVMgsNDhIRtdgBpp13GoLHPApbXnA5q5+9v4y5KNVrQHOVR36xsH5cBVCEqhu/mY8d2J
-         B0f4iuxnPEHv47XVg7aTVtxLSttKZR5Pkp+et3m8yAiqEOhhYWlWl/NqsXtBerpTe7Am
-         RVlw==
-X-Gm-Message-State: AOAM533DcJieZVeM9APV5tBJ81b5ES5+8OSF78qAH8YWBUpTPte50JEC
-        ThzqhdH6S7wnxApxkYvSRHoLcg==
-X-Google-Smtp-Source: ABdhPJwHVqBWP24Bn5+K65KlwlkLv4eGH0osoEFRfeIw9uIqpRd/rXZdioEfNb8Fs36E8dQkAghGkQ==
-X-Received: by 2002:a05:6512:29b:b0:479:2ac:84ae with SMTP id j27-20020a056512029b00b0047902ac84aemr5975551lfp.624.1654243232450;
-        Fri, 03 Jun 2022 01:00:32 -0700 (PDT)
+        bh=92h+xS0S7U/GCtJqbNeL9psANLQOdO1D44wv+Muryeg=;
+        b=Pyst6A3E3OEA78a97i6pZS1GMKDnqlQ6h483GdPtuO7Y9B7shuAa/dGf8ziVljP6WU
+         ve94VxLLHNo21lHaRANT+Bl046deA9Ru1KKkpSctjG33dYHQkUv/5KYJXuM4o0IhLgWB
+         haDR3hRsvyAe5NkToWMqkeW+yZuM4+15EVUPOgoUHiYA6lDrU1vyb6xbCTJaMO1XZ1/S
+         vmRZNUQaB2fVS9a+twXjAYveIMStaB7y4n+9mf4qw9pxAlr6tjJa9XinQzUeCLTQoLP/
+         6VWrawBTp7y0G7r2WKjJqFtwI8uLl1vR7TaZFURABYnN+2wig85Pipeq7+DHJkhZ7ueL
+         WTKQ==
+X-Gm-Message-State: AOAM532j10/5w6SegzsjSxdIS31nr9kEzwqm2Gtnm1CjxynzrbKZgdp/
+        gWdmtdMZOIc2fswaubxqNzSmsw==
+X-Google-Smtp-Source: ABdhPJwQ47yFKb8+4vTrT/DyFt307+4IjfD6BDGHeYIXt2kQ7DZX3hHeQZ4IuHKqRKlyC7XQ+UuemQ==
+X-Received: by 2002:ac2:5d22:0:b0:478:9e46:ae85 with SMTP id i2-20020ac25d22000000b004789e46ae85mr6127811lfb.126.1654243263231;
+        Fri, 03 Jun 2022 01:01:03 -0700 (PDT)
 Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id l13-20020a2e868d000000b0025582d66aebsm50356lji.70.2022.06.03.01.00.31
+        by smtp.gmail.com with ESMTPSA id d10-20020a19e60a000000b0047255d21205sm1434462lfh.308.2022.06.03.01.01.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 01:00:32 -0700 (PDT)
+        Fri, 03 Jun 2022 01:01:02 -0700 (PDT)
 From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v6 2/7] arm64: dts: qcom: sm8450: Add description of camera clock controller
-Date:   Fri,  3 Jun 2022 11:00:19 +0300
-Message-Id: <20220603080019.2251764-3-vladimir.zapolskiy@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v6 5/7] clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces
+Date:   Fri,  3 Jun 2022 11:01:01 +0300
+Message-Id: <20220603080101.2251828-1-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20220603080019.2251764-1-vladimir.zapolskiy@linaro.org>
 References: <20220603080019.2251764-1-vladimir.zapolskiy@linaro.org>
@@ -66,63 +64,139 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The change adds description of QCOm SM8450 camera clock controller.
+The change adds controls for Lucid EVO PLL configuration and exports
+control functions to clock controller drivers.
 
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
-Changes from v5 to v6:
-* rebased on top of linux-next.
-
-Changes from v3 to v5:
+Changes from v3 to v6:
 * none.
 
 Changes from v2 to v3:
-* account a renamed header file.
+* improved commit subject and description per ask from Bjorn.
 
-Changes from v1 to v2:
-* disabled camcc device tree node by default.
+ drivers/clk/qcom/clk-alpha-pll.c | 65 ++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  5 ++-
+ 2 files changed, 69 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 7d08fad76371..fad813a21df5 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-sm8450.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm8450-camcc.h>
- #include <dt-bindings/dma/qcom-gpi.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/mailbox/qcom-ipcc.h>
-@@ -2288,6 +2289,25 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
- 			};
- 		};
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 47879ee5a677..54bad5277802 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -191,8 +191,10 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ #define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
  
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,sm8450-camcc";
-+			reg = <0 0x0ade0000 0 0x20000>;
-+			status = "disabled";
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK_A>,
-+				 <&sleep_clk>;
-+			clock-names = "iface",
-+				      "bi_tcxo",
-+				      "bi_tcxo_ao",
-+				      "sleep_clk";
-+			power-domains = <&rpmhpd SM8450_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
+ /* LUCID EVO PLL specific settings and offsets */
++#define LUCID_EVO_PCAL_NOT_DONE		BIT(8)
+ #define LUCID_EVO_ENABLE_VOTE_RUN       BIT(25)
+ #define LUCID_EVO_PLL_L_VAL_MASK        GENMASK(15, 0)
++#define LUCID_EVO_PLL_CAL_L_VAL_SHIFT	16
+ 
+ /* ZONDA PLL specific */
+ #define ZONDA_PLL_OUT_MASK	0xf
+@@ -1994,6 +1996,33 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
+ 
++void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++				 const struct alpha_pll_config *config)
++{
++	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l |
++			(TRION_PLL_CAL_VAL << LUCID_EVO_PLL_CAL_L_VAL_SHIFT));
 +
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sm8450-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>, <0 0x174000f0 0 0x64>;
++	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
++	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll), config->user_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
++
++	/* Disable PLL output */
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
++
++	/* Set operation mode to STANDBY */
++	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
++
++	/* Place the PLL in STANDBY mode */
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
++}
++EXPORT_SYMBOL_GPL(clk_lucid_evo_pll_configure);
++
+ static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+@@ -2079,6 +2108,31 @@ static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
+ 	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+ }
+ 
++static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	struct clk_hw *p;
++	u32 val = 0;
++	int ret;
++
++	/* Return early if calibration is not needed. */
++	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (!(val & LUCID_EVO_PCAL_NOT_DONE))
++		return 0;
++
++	p = clk_hw_get_parent(hw);
++	if (!p)
++		return -EINVAL;
++
++	ret = alpha_pll_lucid_evo_enable(hw);
++	if (ret)
++		return ret;
++
++	alpha_pll_lucid_evo_disable(hw);
++
++	return 0;
++}
++
+ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
+ 						     unsigned long parent_rate)
+ {
+@@ -2114,3 +2168,14 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops = {
+ 	.set_rate = clk_lucid_evo_pll_postdiv_set_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_evo_ops);
++
++const struct clk_ops clk_alpha_pll_lucid_evo_ops = {
++	.prepare = alpha_pll_lucid_evo_prepare,
++	.enable = alpha_pll_lucid_evo_enable,
++	.disable = alpha_pll_lucid_evo_disable,
++	.is_enabled = clk_trion_pll_is_enabled,
++	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++	.set_rate = alpha_pll_lucid_5lpe_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_evo_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 6e9907deaf30..0b7a6859ca2c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -152,6 +152,8 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
+ 
+ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+ #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
++
++extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+ 
+@@ -168,6 +170,7 @@ void clk_agera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 
+ void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config);
+-
++void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++				 const struct alpha_pll_config *config);
+ 
+ #endif
 -- 
 2.33.0
 
