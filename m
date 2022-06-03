@@ -2,209 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D42C43334
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 08:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA53AC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 08:50:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242870AbiFCIpF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 04:45:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34384 "EHLO
+        id S242897AbiFCIuQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 04:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242878AbiFCIpC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 04:45:02 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B16436E30
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 01:45:01 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id a23so7739697ljd.9
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 01:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z6yrtmOBco3WyChFHwByIszU0CSTBNUIahumUa0EHAM=;
-        b=QGEJUJGIv2eg16PHXkbvgFiFT9o/crl9umEagYAuXAAqBcYH7tYj21Mh7etl6/qucT
-         ZovAab0gaYB2tC4dlK6PoTLlYV9nl1+qycE/0t9WIkaT1bI4UIaMQKfSEVwQzyOAZvU2
-         7WawP6CcxsiQGDpKZ02rm6avXyj73lwlaWbKAgjHKwHGhPCUx7sR5YFCo+pyF+XsLhnm
-         42TfmRBIyUH7eO1Fr93ypWhQ/D/acJnpv14RmBAOf2uiU8WAmatNfzN++yTonxneoBsk
-         eeRVblU5WDhvmpNXhR2RcwuOtPCHze9eKQtBMsADVQRHJ4c9duzLCFVBgyWhAUjk0ePZ
-         5aeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z6yrtmOBco3WyChFHwByIszU0CSTBNUIahumUa0EHAM=;
-        b=uwK/6b2n1+LIyvwGfNCLVzamPX6IoIAjSTQrbekiiCbocdIqYAlJbib/AdSs8SPYDn
-         UDES6RJHKcV0hwH56Sn+hrP1zZknT1E2y5M3ERxK+U5+souxAMBhYCiK5fBG5pThpJGw
-         sAXSZ08FqKZT3gd5Qk3w4mkwwjYhd0leW8V91B0d5uvrqXsF1T12OCc9cN6DVEC0g+2m
-         BGqL8DaIzt2VlxBWIQltuo02JHW/4q2OtCg/Buxd7kuc6wK/kW3EBx73uzfxdp5QlZ+8
-         3jg+tPwMxdZdOU4afA7d4A6S7uunW+wTxZLvXbaE7dzeFQ0a7MKHfCuScIsDqYJ6dPE/
-         gIGg==
-X-Gm-Message-State: AOAM532PUQ7ImvVQKXQMJpGLrjssXsQcP/6UrDdoDZ6jQpOPWJBFNlzO
-        6hHMhuWXVQBkuKhmBc2+TYth0w==
-X-Google-Smtp-Source: ABdhPJzszBd6fwgwWsgvkFXIK2msnfYMUugrE8HMxiDqLdGt3lVssHOV0BFgQWXPYymVqxQ34/+onw==
-X-Received: by 2002:a2e:8749:0:b0:255:81b8:163e with SMTP id q9-20020a2e8749000000b0025581b8163emr603504ljj.463.1654245899450;
-        Fri, 03 Jun 2022 01:44:59 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b7-20020a0565120b8700b00478f8c9d402sm1474817lfv.20.2022.06.03.01.44.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jun 2022 01:44:59 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S242633AbiFCIuO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 04:50:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3815636E37;
+        Fri,  3 Jun 2022 01:50:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C835D61968;
+        Fri,  3 Jun 2022 08:50:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 391C9C385A9;
+        Fri,  3 Jun 2022 08:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654246213;
+        bh=FgmVJXhalC335VPUtSI7MAoBJqF9Pa8+zowjA83DZt4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X/bZbae2zg3L7mDbQEGb8RkHJW9ScfK8VFXdCqLVfwYtjSBMPSnckF1fSTCgiHHR2
+         uS5gfgvWpEND3zuxivjnW6PLkGTsWdGNDa0Ty6UmfTeLDPT6tUc9fq8m3iCL8nEtbC
+         mW0M4myj8r3a759zGxDklDEsniQhgVNMveOps3pnSsvrKxJ30HppfxngGNukglbnwk
+         OWHzTF38z/Jk17yV9dfP3Gp/6HPrbq9xZB+3eUNfDmAvCcVlDMtJTSi/Lqdk8LHM5B
+         v5jMTI/J55LFz7m2sVn5IaSp9oN3uYZqa8JUphxRUnl7sWZdaWILtL79lPauITEbTr
+         ZJ8L1CIBFYREw==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1nx30T-0007UH-QC; Fri, 03 Jun 2022 10:50:09 +0200
+Date:   Fri, 3 Jun 2022 10:50:09 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v10 4/5] PCI: qcom: Remove unnecessary pipe_clk handling
-Date:   Fri,  3 Jun 2022 11:44:53 +0300
-Message-Id: <20220603084454.1861142-5-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220603084454.1861142-1-dmitry.baryshkov@linaro.org>
-References: <20220603084454.1861142-1-dmitry.baryshkov@linaro.org>
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v9 2/5] clk: qcom: gcc-sm8450: use new
+ clk_regmap_phy_mux_ops for PCIe pipe clocks
+Message-ID: <YpnLQS5lvMbxpUVj@hovoldconsulting.com>
+References: <20220603075908.1853011-1-dmitry.baryshkov@linaro.org>
+ <20220603075908.1853011-3-dmitry.baryshkov@linaro.org>
+ <YpnDkbuZO3jCbxdF@hovoldconsulting.com>
+ <bec5ec2a-b749-21ba-e406-fb5799a3df57@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bec5ec2a-b749-21ba-e406-fb5799a3df57@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PCIe PHY drivers (both QMP and PCIe2) already do clk_prepare_enable() /
-clk_prepare_disable() pipe_clk. Remove extra calls to enable/disable
-this clock from the PCIe driver, so that the PHY driver can manage the
-clock on its own.
+On Fri, Jun 03, 2022 at 11:42:47AM +0300, Dmitry Baryshkov wrote:
+> On 03/06/2022 11:17, Johan Hovold wrote:
+> > On Fri, Jun 03, 2022 at 10:59:05AM +0300, Dmitry Baryshkov wrote:
+> >> Use newly defined clk_regmap_phy_mux_ops for PCIe pipe clocks to let
+> >> the clock framework automatically park the clock when the clock is
+> >> switched off and restore the parent when the clock is switched on.
+> >>
+> >> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> >> Tested-by: Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> > 
+> > The Tested-by tags you added are malformed throughout the series, please
+> > review and respin (there should be two separate tags for R and T).
+> 
+> Hmm, I wonder how did that happen. Probably they came from your message 
+> and I didn't notice that they were broken.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 44 ++------------------------
- 1 file changed, 3 insertions(+), 41 deletions(-)
+You're right, I messed up when I replied to the v7 cover letter. Sorry
+about that and thanks for fixing it up.
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 2ea13750b492..8c1073452196 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -128,7 +128,6 @@ struct qcom_pcie_resources_2_3_2 {
- 	struct clk *master_clk;
- 	struct clk *slave_clk;
- 	struct clk *cfg_clk;
--	struct clk *pipe_clk;
- 	struct regulator_bulk_data supplies[QCOM_PCIE_2_3_2_MAX_SUPPLY];
- };
- 
-@@ -165,7 +164,6 @@ struct qcom_pcie_resources_2_7_0 {
- 	int num_clks;
- 	struct regulator_bulk_data supplies[2];
- 	struct reset_control *pci_reset;
--	struct clk *pipe_clk;
- 	struct clk *pipe_clk_src;
- 	struct clk *phy_pipe_clk;
- 	struct clk *ref_clk_src;
-@@ -597,8 +595,7 @@ static int qcom_pcie_get_resources_2_3_2(struct qcom_pcie *pcie)
- 	if (IS_ERR(res->slave_clk))
- 		return PTR_ERR(res->slave_clk);
- 
--	res->pipe_clk = devm_clk_get(dev, "pipe");
--	return PTR_ERR_OR_ZERO(res->pipe_clk);
-+	return 0;
- }
- 
- static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
-@@ -613,13 +610,6 @@ static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
- 	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
- }
- 
--static void qcom_pcie_post_deinit_2_3_2(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
--
--	clk_disable_unprepare(res->pipe_clk);
--}
--
- static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
-@@ -694,22 +684,6 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
- 	return ret;
- }
- 
--static int qcom_pcie_post_init_2_3_2(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
--	struct dw_pcie *pci = pcie->pci;
--	struct device *dev = pci->dev;
--	int ret;
--
--	ret = clk_prepare_enable(res->pipe_clk);
--	if (ret) {
--		dev_err(dev, "cannot prepare/enable pipe clock\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
-@@ -1198,8 +1172,7 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
- 			return PTR_ERR(res->ref_clk_src);
- 	}
- 
--	res->pipe_clk = devm_clk_get(dev, "pipe");
--	return PTR_ERR_OR_ZERO(res->pipe_clk);
-+	return 0;
- }
- 
- static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
-@@ -1292,14 +1265,7 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
- 	if (pcie->cfg->pipe_clk_need_muxing)
- 		clk_set_parent(res->pipe_clk_src, res->phy_pipe_clk);
- 
--	return clk_prepare_enable(res->pipe_clk);
--}
--
--static void qcom_pcie_post_deinit_2_7_0(struct qcom_pcie *pcie)
--{
--	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
--
--	clk_disable_unprepare(res->pipe_clk);
-+	return 0;
- }
- 
- static int qcom_pcie_link_up(struct dw_pcie *pci)
-@@ -1449,9 +1415,7 @@ static const struct qcom_pcie_ops ops_1_0_0 = {
- static const struct qcom_pcie_ops ops_2_3_2 = {
- 	.get_resources = qcom_pcie_get_resources_2_3_2,
- 	.init = qcom_pcie_init_2_3_2,
--	.post_init = qcom_pcie_post_init_2_3_2,
- 	.deinit = qcom_pcie_deinit_2_3_2,
--	.post_deinit = qcom_pcie_post_deinit_2_3_2,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
- 
-@@ -1478,7 +1442,6 @@ static const struct qcom_pcie_ops ops_2_7_0 = {
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- 	.post_init = qcom_pcie_post_init_2_7_0,
--	.post_deinit = qcom_pcie_post_deinit_2_7_0,
- };
- 
- /* Qcom IP rev.: 1.9.0 */
-@@ -1488,7 +1451,6 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
- 	.deinit = qcom_pcie_deinit_2_7_0,
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- 	.post_init = qcom_pcie_post_init_2_7_0,
--	.post_deinit = qcom_pcie_post_deinit_2_7_0,
- 	.config_sid = qcom_pcie_config_sid_sm8250,
- };
- 
--- 
-2.35.1
-
+Johan
