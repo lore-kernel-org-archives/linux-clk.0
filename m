@@ -2,107 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9C3CCA47F
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 09:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0757CC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 09:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242997AbiFCJVh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 05:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58300 "EHLO
+        id S243101AbiFCJh3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jun 2022 05:37:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242939AbiFCJVg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 05:21:36 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A9F3A180
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 02:21:34 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id a2so5569017lfg.5
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jun 2022 02:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=znBdlMbfX1GAYndIxEL6L68ey32IXbsATO8ijdQ1BKE=;
-        b=QWKb0MgLpF7c9f4d0itaacfFynpTJfZfeuQuQWXxQqzmhuJOuAMJohhYx1adJuNpqP
-         tazaCix09UILs6vpCcwRCB+4aEezVw1omzI4U/a81sga1U3DvX0ZmsaBEe31Xt3YLGgB
-         7sU9OHqclSw8e1SVMXsSd8C07hzKO1qKlCHZ1peJ41DXE6B8HhKVCurIcIziqSYjGVSC
-         RPYlktOWTUgQCDg6qjmMOI9Tq5puknAuu/q1UprW2WrKwtc8IIeNl775zcff2wUMYOXq
-         nDSwSB2sMCVnM1s7LTnqLzUKq/vJ03+s3D7VfUAUQWzUOqO4+oWyhHAI0NRPcEvRY//j
-         z3ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=znBdlMbfX1GAYndIxEL6L68ey32IXbsATO8ijdQ1BKE=;
-        b=h0/8ktod2QFFriB/C1Ub/9+b5dyhWPO4Rs2EtAt/X6KdHpSf8WfyqLFqw6uyvoiiX4
-         dUeNFDC2S0Gbm88VwFNwk+TnW77gBUj6TSN9fdNRFk6GUm9P9skesJKnt6tB9CHQRWcC
-         4smfbzDEVf3Mu0eR2WKyWDyuGqdp1uE+EuuUkqCvHDwLgebAT0g6nUgEG+l3utTBC0XT
-         vVRIs4DOpPaReyCO8NcZVyE5Dz3wx//rXnRvD9wig8xpfO+xz2r1uci97kil/r9+ru6f
-         eIqYjm0nFWQmJlYsEZnTs4VjkEwxaYnuYwkDtGe9nMDmj2HQk093HJYNUOKYXIoslm8c
-         l9ag==
-X-Gm-Message-State: AOAM5316IpkJcNhOoReF+F20c+61cXvM8vC0XHYBgPXFqAgxrMe6ogy0
-        8tsktA/z1oDI0mKdAottYf1mdw==
-X-Google-Smtp-Source: ABdhPJxlJqvV5ZadKNB3+UERyT6y2fMzECASgz6J9AcjzN9d5fOeoogHBTEgC6v3SzhXgiO2OOpUJw==
-X-Received: by 2002:a05:6512:3b28:b0:478:8355:2c88 with SMTP id f40-20020a0565123b2800b0047883552c88mr37602534lfv.395.1654248092473;
-        Fri, 03 Jun 2022 02:21:32 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id o20-20020ac24c54000000b0047917faa676sm353033lfk.33.2022.06.03.02.21.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jun 2022 02:21:31 -0700 (PDT)
-Message-ID: <af3212f7-c068-33fe-9c00-707028349ca0@linaro.org>
-Date:   Fri, 3 Jun 2022 12:21:31 +0300
+        with ESMTP id S241746AbiFCJh2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 05:37:28 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3CF313E0B;
+        Fri,  3 Jun 2022 02:37:25 -0700 (PDT)
+Received: from mail-yb1-f174.google.com ([209.85.219.174]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1McH1Q-1nMczA1Qbs-00civJ; Fri, 03 Jun 2022 11:32:20 +0200
+Received: by mail-yb1-f174.google.com with SMTP id i11so12730033ybq.9;
+        Fri, 03 Jun 2022 02:32:20 -0700 (PDT)
+X-Gm-Message-State: AOAM531GfgrrF8+0IjKKt7tcun5Z52fchlvEuedqfyrCeDa9CXunwuZB
+        uT5KaToEUJT9ChrXrH5vWZglFC7ocPl6xc5Q4j8=
+X-Google-Smtp-Source: ABdhPJyl01FFNiOxfFn5n+0e+bXa/tkLiTvE+mzEwQhGa7WM3f6YEbKF9lylH2naA751u11i5Lt3IcBdEVY/A+Lq9xU=
+X-Received: by 2002:a25:db8a:0:b0:65c:b04a:f612 with SMTP id
+ g132-20020a25db8a000000b0065cb04af612mr9750275ybf.106.1654248739041; Fri, 03
+ Jun 2022 02:32:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v9 2/5] clk: qcom: gcc-sm8450: use new
- clk_regmap_phy_mux_ops for PCIe pipe clocks
-Content-Language: en-GB
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-References: <20220603075908.1853011-1-dmitry.baryshkov@linaro.org>
- <20220603075908.1853011-3-dmitry.baryshkov@linaro.org>
- <YpnDkbuZO3jCbxdF@hovoldconsulting.com>
- <bec5ec2a-b749-21ba-e406-fb5799a3df57@linaro.org>
- <YpnLQS5lvMbxpUVj@hovoldconsulting.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YpnLQS5lvMbxpUVj@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
+ <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+ <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+ <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+ <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
+ <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
+ <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
+ <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
+ <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
+ <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
+ <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
+ <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
+ <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
+ <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
+ <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
+ <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com>
+ <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
+ <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
+ <CAGm1_kswMZkoV9_DnB71ugVTF_rh5SV2NazkHROwXiFqhxTWYA@mail.gmail.com>
+ <CAK8P3a0Qdav2JaF8yLydxr9amQp30gnY67CVx+ubowUHeG1VeA@mail.gmail.com>
+ <CAMj1kXEL48=w08A2t7522y1visAUcnkkq4LA6ERRP_FbCbEgiw@mail.gmail.com>
+ <CAMj1kXFmFfQ1oZ-CUcwe+ojSkk+9KBH1azhGrEJ4=-pZgMXX-Q@mail.gmail.com>
+ <CAGm1_ku-tygQJrgvHnvJd0xzb6Vw3t_qdz_VKHJx4YWSxCEryA@mail.gmail.com>
+ <CAMj1kXHUoDQ0xZ4yBx9uT6D9=6xfOsJoWLoOKho_-=Z9uYS30w@mail.gmail.com>
+ <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
+ <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
+ <CAGm1_kvZ_6tPgfrTc3pH+6TedoU+mvuEXb+7aEp5mXfx516fmA@mail.gmail.com>
+ <CAMj1kXEfKLYYxt9imEO155oxWTzXtWPpF8txGZ-xCs_6vez-WA@mail.gmail.com>
+ <CAGm1_kvJpoDk=G3xYKT5UD5QnjRGr9Npft-8OCgtB9+qCjRtqQ@mail.gmail.com> <CAGm1_kvrivJLsFJaZtr6ojryDZFu3Xmpum8FURoFT9vMr54LUA@mail.gmail.com>
+In-Reply-To: <CAGm1_kvrivJLsFJaZtr6ojryDZFu3Xmpum8FURoFT9vMr54LUA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 3 Jun 2022 11:32:01 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2113EnZw9BNjCYYmKuNqEk4CtZCC0ydBNNQXetvzTSEg@mail.gmail.com>
+Message-ID: <CAK8P3a2113EnZw9BNjCYYmKuNqEk4CtZCC0ydBNNQXetvzTSEg@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Yegor Yefremov <yegorslists@googlemail.com>
+Cc:     Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Op2iUl1kxM+CQlg/d9Qq0cQDdHGiuq8r8UmKrIccAksxJsRobrm
+ aV+W4Ugpjfi2BTgVAJwp0Di+HB/pNGZ8y0YbtPCFFUAlL+fvjUPOBel1jiETW6BoVyr8hll
+ wFVbJkyaNM6cfAMVXNGSziquMOOIig0WGxcrhYyF4v7Mi4G/56PdgL9LnhKw2j4ycouKoY8
+ FamfAJ1cCygUpEuxyfIdw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Y01DiLEFcNY=:YLWYYRvhzQnSwduzeRJofJ
+ ZlZPt6GXkzE0LX1A/LUTRIZk89MHjQ3kerz9pl9lORG3vW4wSaOTf4GQe9dNkwGgyev1d2mWa
+ mIDubnGY7oCbSIkdFgwv7Ht8CElGKQ2crzr5t9QTaFO37BVAc7A/HttIMuWOdgOVz5tt3VJz4
+ wQDhUSJEmXmnNyzYiLWSSaOECAFLpRg2mFKyelhbVeAqMmEHuWu5JGjRmx9Fx9Qx1ikFdRgsq
+ PJ8FlaCpoU6in8GA5nOzy/4kC/zZJnobk9ha8oNlcyVkVC/JqOizwAyVmkdGXQJPO3im8PlhT
+ xsf5bgocEi9fOIs3Kq5+LjJWsrQV0DDkebaQMX63EX1U/HtXJu8L+SdJ2aJzR9cFdd9R7992i
+ xSjLWfGfVz36ESxnfbL/+8yXc5dCVS+70VTkLJic8XnvFSZjZZAOfe+P2rOgmJcmLx3Ga/alX
+ sbG35hxFF/Af1IsCTk8m9xsrEP3ehcx2H8LOyTo5ha1TgBxSqyp4dApaRsx44ZQFwdyIySQ5l
+ DHl9o80MjbbNlr1EQ5YCe++q8f0A3vnK6xLebnFrq0yO9l65LGpz3BzRzJO6tXk6E4Hp/G+Sg
+ vAPnAK/4f1+iGJzCAU4gL8Cgnl51YhcZ2Yuz2S5n4VDHWn1TU6AqREATD7XNSORUccMjYKo8O
+ UFMBvRvlTkmlI2d4/5U8Pf++h/2hx/3oVr+2lzpb5u2kolAWL7Mm/56ICntItXIfPPjsDVd69
+ a7cesYJi9IrvyLkqhE01AuxdulY8wTqiBVbJbOriwoAgt8o51/8iE4RxYr9kcV/sRuEzl/M4w
+ PQau18BDtfljSIORiKM3E5q7UkWQDWU0izvRfg0OSYnrB5pxG89V3USubwnd0+rlqZveVYdeZ
+ WLtnmTp61sSFTjiX1XqA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/06/2022 11:50, Johan Hovold wrote:
-> On Fri, Jun 03, 2022 at 11:42:47AM +0300, Dmitry Baryshkov wrote:
->> On 03/06/2022 11:17, Johan Hovold wrote:
->>> On Fri, Jun 03, 2022 at 10:59:05AM +0300, Dmitry Baryshkov wrote:
->>>> Use newly defined clk_regmap_phy_mux_ops for PCIe pipe clocks to let
->>>> the clock framework automatically park the clock when the clock is
->>>> switched off and restore the parent when the clock is switched on.
->>>>
->>>> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
->>>> Tested-by: Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
->>>
->>> The Tested-by tags you added are malformed throughout the series, please
->>> review and respin (there should be two separate tags for R and T).
->>
->> Hmm, I wonder how did that happen. Probably they came from your message
->> and I didn't notice that they were broken.
-> 
-> You're right, I messed up when I replied to the v7 cover letter. Sorry
-> about that and thanks for fixing it up.
+On Fri, Jun 3, 2022 at 10:54 AM Yegor Yefremov
+<yegorslists@googlemail.com> wrote:
+> On Thu, Jun 2, 2022 at 2:27 PM Yegor Yefremov <yegorslists@googlemail.com> wrote:
+> > On Thu, Jun 2, 2022 at 12:37 PM Ard Biesheuvel <ardb@kernel.org> wrote:
 
-No problem. Thanks a lot for your continuous review and testing!
+> > > That confirms my statement that smp.c cannot be the culprit, and
+> > > appears to exonerate the pure asm pieces. I wonder if this is related
+> > > to insufficient asm constraints on the C helpers, or just the cost
+> > > model taking different decisions because the inline asm string is much
+> > > longer. In any case, this opens up a couple of avenues we could
+> > > explore to narrow this down further.
+> > >
+> > > As a quick check, can you try the below snippet applied onto the
+> > > broken current.h build?
+> > >
+> > > --- a/arch/arm/include/asm/current.h
+> > > +++ b/arch/arm/include/asm/current.h
+> > > @@ -53,7 +53,8 @@ static __always_inline __attribute_const__ struct
+> > > task_struct *get_current(void)
+> > >             "   b       . + (2b - 0b)                           \n\t"
+> > >             "   .popsection                                     \n\t"
+> > >  #endif
+> > > -           : "=r"(cur));
+> > > +           : "=r"(cur)
+> > > +           : "Q" (*(const unsigned long *)current_stack_pointer));
+> >
+> > Where is the current_stack_pointer defined?
+> >
+> > >  #elif __LINUX_ARM_ARCH__>= 7 || \
+> > >        !defined(CONFIG_ARM_HAS_GROUP_RELOCS) || \
+> > >        (defined(MODULE) && defined(CONFIG_ARM_MODULE_PLTS))
+> > >
+> > > Given that the problematic sequence appears to be in C code, could you
+> > > please confirm whether or not the stall is reproducible when all the
+> > > pieces that are used by the CAN stack (musb, slcan, ftdio-sio, etc)
+> > > are built into the kernel rather than built as modules? Also, which
+> > > GCC version are you using?
+> >
+> > For now, the CAN stack parts are built as modules. I'll try to compile them in.
+> >
+> > I'm using GCC 10.x
+>
+> I have tried your patch (see the attachment) and the system stalls.
 
--- 
-With best wishes
-Dmitry
+This is with only get_current() patched on top of the working
+f0191ea5c2e5 ("[PART 1] ARM: implement THREAD_INFO_IN_TASK for
+uniprocessor systems"), right?
+
+My best theory right now is that something in get_currnent() is wrong that
+causes it to return the wrong task pointer, which in turn leads to
+current->preempt_count to get out of sync. This may be related to the cppi41
+dmaengine tasklet and effectively disables further softirqs including the timer
+that triggers the RCU grace period.
+
+When we finally switch tasks to the cpufreq worker thread, softirqs
+can happen again because of the task switch, and at the next IRQ
+the timer detects the stall.
+
+> Will try GCC 11.x and also compiled-in drivers.
+
+Ok. Maybe make sure all drivers are built-in here. I see both the CAN
+layer and the cppi41 driver use softirqs, so to be on the safe side,
+try to get to a running kernel that has no modules loaded at all at
+the time you expect the stall.
+
+
+One thing that could possibly go wrong with get_current() would be that
+it fails to get patched for some reason, or it gets patched only after
+it was already called. Since you run on an ARMv7 CPU as opposed to
+an actual OMAP2410/ARM1136r0, it would then try to load the
+variable from the uninitialized TPIDRURO register. If that happens,
+the one-liner below should tell you exactly where, by triggering an
+Oops. You can apply the patch on top for testing, it should have no
+other effects if the patching part works correctly.
+
+        Anrd
+
+8<---
+
+diff --git a/arch/arm/include/asm/current.h b/arch/arm/include/asm/current.h
+index 2f9d79214b25..2a15832793c4 100644
+--- a/arch/arm/include/asm/current.h
++++ b/arch/arm/include/asm/current.h
+@@ -33,7 +33,7 @@ static inline __attribute_const__ struct task_struct
+*get_current(void)
+         */
+        cur = __builtin_thread_pointer();
+ #elif defined(CONFIG_CURRENT_POINTER_IN_TPIDRURO) || defined(CONFIG_SMP)
+-       asm("0: mrc p15, 0, %0, c13, c0, 3                      \n\t"
++       asm("0: .long 0xe7f001f2                        \n\t" // BUG() trap
+ #ifdef CONFIG_CPU_V6
+            "1:                                                 \n\t"
+            "   .subsection 1                                   \n\t"
