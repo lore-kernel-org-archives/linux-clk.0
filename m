@@ -2,63 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D259C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jun 2022 23:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BE0C433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Jun 2022 06:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347708AbiFCXeq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jun 2022 19:34:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
+        id S232607AbiFDGWd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Jun 2022 02:22:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239755AbiFCXep (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jun 2022 19:34:45 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CB5286F3
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jun 2022 16:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=UFpMWJ3uLlmXGY2WT0PspbdEQyK
-        4DcrRj7Xnf+HDyJ0=; b=WSBc8rAhNp43aQcL3dtTbR9qpj4t34azLHE1f1l8AQP
-        euuGOIZdpHqYriQDIJEqtc5dgS5wPwAKk/12a9aC5przK0ZibFrqxicQh6Un1eDH
-        Kzo0/Ng8SQMwMJpRzcB/PB53xAE/kj8x8J9uEwy/Cn07ODIWs7jTn/HOdwqyVS48
-        =
-Received: (qmail 1098475 invoked from network); 4 Jun 2022 01:34:42 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2022 01:34:42 +0200
-X-UD-Smtp-Session: l3s3148p1@dMkSkZPgimJZzIm6
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] clk: renesas: r8a779f0: Add SDHI0 clock
-Date:   Sat,  4 Jun 2022 01:34:37 +0200
-Message-Id: <20220603233437.21819-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S231807AbiFDGWc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Jun 2022 02:22:32 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 873EC13DD9;
+        Fri,  3 Jun 2022 23:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1654323750; x=1685859750;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=PoOzUbltyK5mXTq3GBpeLN3VnWxS+B+PnMYGl5BFT54=;
+  b=Ama3mJnDLyT4Ph4ax6ig4yHHIwYK/94DVDceFztz5FFxULKXVjU0NcEL
+   PwChXbbAzx+bKPN6gd0G7FeSwSuevhGfceDpmF41PSkhQ0nFLVfUyq3sZ
+   7R1HVdpC+iPFtMYP8ygi3BaP6LisW27AEK/jQIqa6ESX9uQCjsV71iw3y
+   E=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 03 Jun 2022 23:22:30 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 23:22:29 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 3 Jun 2022 23:22:29 -0700
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 3 Jun 2022 23:22:25 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>,
+        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v4 0/3] Add support for audio clock gating resets for SC7280
+Date:   Sat, 4 Jun 2022 11:51:34 +0530
+Message-ID: <20220604062137.14584-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Add support for clock gating resets for lpass audio clock controller and
+also add support for external MCLKs for I2S.
 
-DTS patches will come soon. eMMC works fine, SD still needs to be
-tested.
+[v4]
+  * Fix the "fixes" tag.
 
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+[v3]
+  * Remove the maxItems from reg property.
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 0aec5e8ffd96..e6f41b9f765a 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("scif1",	703,	R8A779F0_CLK_S0D12_PER),
- 	DEF_MOD("scif3",	704,	R8A779F0_CLK_S0D12_PER),
- 	DEF_MOD("scif4",	705,	R8A779F0_CLK_S0D12_PER),
-+	DEF_MOD("sdhi0",        706,    R8A779F0_CLK_SD0),
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
--- 
-2.35.1
+[v2]
+  * Update/fix the YAML for reg property against each compatible.
+
+[v1]
+  * Add support for clock gating resets for lpass audio clock
+    controller & MCLKs.
+
+Taniya Das (3):
+  dt-bindings: clock: Add resets for LPASS audio clock controller for
+    SC7280
+  dt-bindings: clock: Add support for external MCLKs for LPASS on SC7280
+  clk: qcom: lpass: Add support for resets & external mclk for SC7280
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 19 +++++++++--
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 17 +++++++++-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         | 33 +++++++++++++++++++
+ .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++
+ .../clock/qcom,lpasscorecc-sc7280.h           |  2 ++
+ 5 files changed, 72 insertions(+), 4 deletions(-)
+
+--
+2.17.1
 
