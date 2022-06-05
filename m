@@ -2,112 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3106C433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jun 2022 16:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4351BC433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jun 2022 17:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbiFEQ5Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jun 2022 12:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35048 "EHLO
+        id S240583AbiFERDH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jun 2022 13:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351326AbiFEQ5O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2022 12:57:14 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7BD92607
-        for <linux-clk@vger.kernel.org>; Sun,  5 Jun 2022 09:57:12 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id fu3so23357265ejc.7
-        for <linux-clk@vger.kernel.org>; Sun, 05 Jun 2022 09:57:12 -0700 (PDT)
+        with ESMTP id S236455AbiFERDH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2022 13:03:07 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4A0D36B65
+        for <linux-clk@vger.kernel.org>; Sun,  5 Jun 2022 10:03:05 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id s12so17655988ejx.3
+        for <linux-clk@vger.kernel.org>; Sun, 05 Jun 2022 10:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uqI55ErVc07HSIivOX7AXS9kfYIm1rBhZwSqgaXUh40=;
-        b=VIbhzFl/bTjxpaT0eAACnezKnRbICldZ9hYrKiZSu8aZCsyIkvl+8ItvppwWMaM4cy
-         vX2bu2dfheiQ1Y7jfYkNbnp08WFWGXzWDrijCAU8ZK2neE8ilIIQ7fFDBcpcoTFpfTzg
-         so8qbCau2wxK0Lg3SPKxyi/ywoSq5tOmi5U2Q=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N5b25hqu/oE4geFfetpQJ/jX/t8e9orYohIiTzR/6iw=;
+        b=VxlXBXJjqQHn1Fbpgcto9a0Mxhp6Yn8ZBIuuBEInS/ODX1BE5qJbw97CjE6yI3osnA
+         frIQSMZ0qRiVr4xaEBoTPbGkhHhO3JbcVMiBMD4SfPxKxhTDc5Q7k4GJ7aVB/bYwtGrR
+         rqsCP8mZIYjT55X0Ip37pPgpsSK0ZIq1zv8WU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uqI55ErVc07HSIivOX7AXS9kfYIm1rBhZwSqgaXUh40=;
-        b=Q+1r6E9EQSXli9FQbVCMn13g3pbw2zhVgLy5F+aX3mztBeRy9NOmt/6MZwHn/SBNr3
-         Wvk+PO/gii1twpAjvlWus9XKZls8F1GCsKk8dn0nL/nDi1/XnT4MbXGCB85LqZLqPq8a
-         Jfbsz5mPmYQLj9XKaRwaLHyAuio6VACZrAspPoRMsmxCU2Pxb9Qd5u6n9pf8BipsyHCT
-         JOT88RbO0EuuxUYwsbfcmtHyY4Y/Lw93xHb9C1msuFP2TgDH5XDKULlfh1X59mfFZpZT
-         1O7pu5wRfNaSfAc/2IKCvXEPeF5JF3kfYym06eb/naFieV4vtB94Dv+eNsLahP/xCicB
-         b4oA==
-X-Gm-Message-State: AOAM531/z4N6qmg7JRXcCZH0RzIsznReKiV5RbPA3yL47XNwO03xjpWr
-        GAy5pHdN9r1SyGjwqN0K1i0Aig==
-X-Google-Smtp-Source: ABdhPJxGFBkk0/mTq0YRR9HHsIxQAOOFxD2SkOe81uKOGO5XMMxqU0A+LvckNQefcbuJLeKgkpBRYg==
-X-Received: by 2002:a17:906:1492:b0:70e:294c:c37e with SMTP id x18-20020a170906149200b0070e294cc37emr12007185ejc.574.1654448231288;
-        Sun, 05 Jun 2022 09:57:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N5b25hqu/oE4geFfetpQJ/jX/t8e9orYohIiTzR/6iw=;
+        b=0Ygjpr5YEKDzO+rtlJ4fjWbsk29Nw2r6FrTMuKEgb6Eq9GNNUjeiyNKlRLPvln8yK6
+         b8Lg/yzBY0ii1BWyWWT1umPF7xzZi03614gdAi/OrC0csxesP4XY0vmoTA0bqReNLxzG
+         iKWlB74DHECMwHJu/SVAluKCVs3M4VBkGeUKnfRqSn3g5H9XEHQArQjR9Y5utNA9IrEw
+         CBFBRKdYzpUXNLavZa8kqi7GlI3BZXBcwVmbMu7JXjxHg0LNQ4l7LtYPIKGW3PSkjv5i
+         YfHGd52XVvLQ1pfw/OSJivPOOTxM6WZ0DBPm7MSc4quiwAkS/qOCbkVa/AyLY/yBt04n
+         3v3Q==
+X-Gm-Message-State: AOAM531cuKFU8LGAWNGlV8dUPA6WSX93DWBXy666nzA/ZACAjzZ8kd3u
+        h2kDLo2ziqEu7e0p1SyAOdfAPA==
+X-Google-Smtp-Source: ABdhPJxQmBnXBPiPE2vOpdCYH20kp4YSwXcbJcRi5YwGvKE7otoXWpFgoCCemnx0wc86ZDPK4mTc3w==
+X-Received: by 2002:a17:907:1689:b0:6fe:fcf4:128e with SMTP id hc9-20020a170907168900b006fefcf4128emr18390079ejc.446.1654448584176;
+        Sun, 05 Jun 2022 10:03:04 -0700 (PDT)
 Received: from localhost.localdomain (mob-83-225-9-201.net.vodafone.it. [83.225.9.201])
-        by smtp.gmail.com with ESMTPSA id b12-20020a170906660c00b0070e3f58ed5csm3260761ejp.48.2022.06.05.09.57.09
+        by smtp.gmail.com with ESMTPSA id h22-20020aa7c616000000b0042ab2127051sm6948204edq.64.2022.06.05.10.03.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jun 2022 09:57:10 -0700 (PDT)
+        Sun, 05 Jun 2022 10:03:03 -0700 (PDT)
 From:   Michael Trimarchi <michael@amarulasolutions.com>
 To:     Matti Vaittinen <mazziesaccount@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the clock as critical
-Date:   Sun,  5 Jun 2022 18:57:02 +0200
-Message-Id: <20220605165703.1565234-3-michael@amarulasolutions.com>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: [RFC PATCH 0/3] Enable clk-critical to bd718x7
+Date:   Sun,  5 Jun 2022 19:02:59 +0200
+Message-Id: <20220605170300.1565632-1-michael@amarulasolutions.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220605165703.1565234-1-michael@amarulasolutions.com>
-References: <20220605165703.1565234-1-michael@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the clock is used to generate the osc_32k, we need to mark
-as critical. clock-critical has no binding description at the moment
-but it's defined in linux kernel
+The imx8mn cpu smms2 module is clocked by the pmic that provides
+clk32K. If the pmic clk driver is loaded the device can not boot. This
+series try to make this configuration possible. We mark the
+pmic clock as critical.
 
-bd71847: pmic@4b {
-...
-	rohm,reset-snvs-powered;
+Open question:
+clock-critical is not documentated as dts properties and could be
+clock-critical can be changed as no-int one.
+This is a follow up of [1]
 
-	#clock-cells = <0>;
-	clock-critical = <1>;
-	clocks = <&osc_32k 0>;
-	clock-output-names = "clk-32k-out";
-...
-}
+[1] https://lore.kernel.org/linux-devicetree/20220604183905.1025201-1-michael@amarulasolutions.com/T/#u
 
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
----
- drivers/clk/clk-bd718x7.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Michael Trimarchi (3):
+  clk: bd718x7: Clean up the code, no functional changes
+  clk: bd718x7: Enable the possibility to mark the clock as critical
+  arm64: dts: imx8mn-bsh-smm-s2/pro: Add pmic clock connection
 
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index 04cc0beb67df..5088379ec2b7 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -83,6 +83,7 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 	const char *parent_clk;
- 	struct device *dev = &pdev->dev;
- 	struct device *parent = pdev->dev.parent;
-+	unsigned long flags;
- 	struct clk_init_data init = {
- 		.name = "bd718xx-32k-out",
- 		.ops = &bd71837_clk_ops,
-@@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 
- 	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
- 
-+	of_clk_detect_critical(dev->of_node, 0, &flags);
-+	init.flags = flags;
-+
- 	init.parent_names = &parent_clk;
- 	if (!parent_clk) {
- 		dev_err(dev, "No parent clk found\n");
+ .../freescale/imx8mn-bsh-smm-s2-common.dtsi   |  5 ++++
+ drivers/clk/clk-bd718x7.c                     | 23 +++++++++++--------
+ 2 files changed, 19 insertions(+), 9 deletions(-)
+
 -- 
 2.25.1
 
