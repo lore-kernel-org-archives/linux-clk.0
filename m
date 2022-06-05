@@ -2,119 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5D0C43334
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jun 2022 14:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0190AC43334
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jun 2022 14:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345302AbiFEOyu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jun 2022 10:54:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51626 "EHLO
+        id S245476AbiFEO7d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jun 2022 10:59:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234211AbiFEOyt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2022 10:54:49 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286942BCC
-        for <linux-clk@vger.kernel.org>; Sun,  5 Jun 2022 07:54:47 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id v1so13839579ejg.13
-        for <linux-clk@vger.kernel.org>; Sun, 05 Jun 2022 07:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=nr9goO6JCR6ynsOrkzdJyNSIrUg9yZwLsbH12VXCnv0=;
-        b=nrithu8KVe+0Ef6h0ePei9GiCMv2WDKM8GSaIfn0Ar6bNX8ASc1AN2K35a49/JrU3Y
-         j7k1YP5G4ugVlQjqD7hAuCd2aeuhbtK5rX6bFyzvxtHlkP8M/y5F145phmQbiR4J3Jvl
-         R85UOsOC9MPCyuuEjTYVXzl71SqvDMby/ip4U7POqd0Bra5XOdQ20YGXgH53LrsGPh59
-         gaeHsgWIzTUjQj+iouDOtdS6cR7/jwTbqvSsWJPR03Wh9u0yKHTDO7v4BwhVD5myoo4K
-         i17inQ2rz0Q/j8o8eagXaXgmEB/kFnFtQJ2FfBE+qb1ojXv8ba+1MEVFeWTTPR7YewC8
-         d02g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=nr9goO6JCR6ynsOrkzdJyNSIrUg9yZwLsbH12VXCnv0=;
-        b=18ZPf9GWY6TS3hKNQHpGsAGaJqjpDLQA1Xc+yFZ8O/JDf672KWASe7qEMa0BUzYJir
-         u9BGZyZebxtRwdEsIVADOOuMb//jx6fvZNV1LLyfFJPa1YFciqsBvxfGUQUBue50l9d0
-         twZycj7d9AG/fc3owj4VMFbF+ROEfSW5TI6YWRyDpfV5kkrix26a5nE/bQTVwuqjONbM
-         cucMFILXCoBT5xA3lyMW9NwITIq0UAtJnH6tnVlQ7zHnhqWWglgWi6b9YwFtu7AXbUrF
-         IrmRseUj9kL3dTOvSFqY5EThC6YTR8FSO1yxee6zh4nVq0D2SYahVpGgFdeA8rvEder8
-         BdNg==
-X-Gm-Message-State: AOAM530BMPhn4yR1GDXHtISSupzMocLcywWY+x3VboXaFw8ypB+9NkqQ
-        wGUsral1dvGqIl+ZAxiltiLCAQ==
-X-Google-Smtp-Source: ABdhPJzJldMnVHXS3QDl/dM42X4k0XAaCUYXOZ4XIGmGG7wyaMi/VlfLe5nM4rkal6LkB6xfrPpcNQ==
-X-Received: by 2002:a17:907:3f9f:b0:6fe:f9e2:9c6a with SMTP id hr31-20020a1709073f9f00b006fef9e29c6amr18158922ejc.479.1654440885697;
-        Sun, 05 Jun 2022 07:54:45 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id a23-20020aa7cf17000000b0042dc882c823sm7009190edy.70.2022.06.05.07.54.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jun 2022 07:54:45 -0700 (PDT)
-Message-ID: <34e6715e-795c-3d64-1341-31da9bd27563@linaro.org>
-Date:   Sun, 5 Jun 2022 16:54:43 +0200
+        with ESMTP id S237838AbiFEO7b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2022 10:59:31 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5561FCE4;
+        Sun,  5 Jun 2022 07:59:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 14EF2B80DAD;
+        Sun,  5 Jun 2022 14:59:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25B3C34115;
+        Sun,  5 Jun 2022 14:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654441166;
+        bh=yO8sK4GA4oi2wE61QwnwNeFEL4N9bZFVguHqyvO1Mzg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Rpx0QtvP3OAEnVJTixTh8HY6tbax6mGj7K9c6NngTFlHmc6FTGio7ehu8ftzLojXd
+         jHaDSsX8FnBaLQmHcpHRcLMQuCEWABulcvKVGCBK2MkkTjEPRk6whdEwpogpJPVDpl
+         WtcrQOMi69NEw3mh8dznD94xqkqa9JHwUlUWLdMiHSHUIyNKFK3xvU4PGnYxDNCl4r
+         j2avMjRYrKugCOM5YR1iv8DwLOHOkTT9o1tSv73SRQCw9SxB03htrDU78PFd2fOfoj
+         sU/s8Y5M3kRWkp6mF4I9bIrhWfYsCTIhySfny/dSUmjhvpUdD81STpUhbTe/9z9aS5
+         9s5fkjLZD0kFw==
+Received: by mail-ot1-f47.google.com with SMTP id r14-20020a056830418e00b0060b8da9ff75so9061444otu.11;
+        Sun, 05 Jun 2022 07:59:26 -0700 (PDT)
+X-Gm-Message-State: AOAM5325qOpkiVXoWEkvNDCFXquh2XiqZecBhhxCuIiIe6nbJcqaEyR/
+        B7bmek/PuYQFQxPuHUx7QecEM3QEFVRoS/OoBi4=
+X-Google-Smtp-Source: ABdhPJyCWqBoqXwsEu9hOeuWUnIcpP2DSHl1ydlpagstI1NVmseMrv7ch9qdqJ9amFY2RQLE5GxctR+FAhM0jfEi8Hc=
+X-Received: by 2002:a9d:76d5:0:b0:60b:1882:78bd with SMTP id
+ p21-20020a9d76d5000000b0060b188278bdmr8393936otl.71.1654441165799; Sun, 05
+ Jun 2022 07:59:25 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
-Content-Language: en-US
-To:     "Marty E. Plummer" <hanetzer@startmail.com>
-Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
-        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
-        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
-        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
-        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
-        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
-        vigneshr@ti.com, xuwei5@hisilicon.com
-References: <20220501054440.2434247-1-hanetzer@startmail.com>
- <20220501173423.2473093-1-hanetzer@startmail.com>
- <20220501173423.2473093-2-hanetzer@startmail.com>
- <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
- <20220601105846.7hriawg3stxb657f@proprietary-killer>
- <630b0d13-6778-2508-6a34-9daa0358047d@linaro.org>
- <20220601110616.xmxih663kxgupszv@proprietary-killer>
- <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
- <20220601182418.okoofgannw6vbcxo@proprietary-killer>
- <b1b87be5-a048-b713-c9f2-84b948aa6718@linaro.org>
- <20220603112227.hmzwy7xxl6ddezqh@proprietary-killer>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220603112227.hmzwy7xxl6ddezqh@proprietary-killer>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
+ <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
+ <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
+ <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
+ <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
+ <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
+ <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
+ <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
+ <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
+ <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
+ <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
+ <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
+ <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
+ <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
+ <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
+ <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
+ <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
+ <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
+ <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
+ <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
+ <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
+ <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
+ <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
+ <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
+ <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com>
+ <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
+ <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
+ <CAGm1_kswMZkoV9_DnB71ugVTF_rh5SV2NazkHROwXiFqhxTWYA@mail.gmail.com>
+ <CAK8P3a0Qdav2JaF8yLydxr9amQp30gnY67CVx+ubowUHeG1VeA@mail.gmail.com>
+ <CAMj1kXEL48=w08A2t7522y1visAUcnkkq4LA6ERRP_FbCbEgiw@mail.gmail.com>
+ <CAMj1kXFmFfQ1oZ-CUcwe+ojSkk+9KBH1azhGrEJ4=-pZgMXX-Q@mail.gmail.com>
+ <CAGm1_ku-tygQJrgvHnvJd0xzb6Vw3t_qdz_VKHJx4YWSxCEryA@mail.gmail.com>
+ <CAMj1kXHUoDQ0xZ4yBx9uT6D9=6xfOsJoWLoOKho_-=Z9uYS30w@mail.gmail.com>
+ <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
+ <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
+ <CAGm1_kvZ_6tPgfrTc3pH+6TedoU+mvuEXb+7aEp5mXfx516fmA@mail.gmail.com>
+ <CAMj1kXEfKLYYxt9imEO155oxWTzXtWPpF8txGZ-xCs_6vez-WA@mail.gmail.com>
+ <CAGm1_kvJpoDk=G3xYKT5UD5QnjRGr9Npft-8OCgtB9+qCjRtqQ@mail.gmail.com>
+ <CAGm1_kvrivJLsFJaZtr6ojryDZFu3Xmpum8FURoFT9vMr54LUA@mail.gmail.com>
+ <CAK8P3a2113EnZw9BNjCYYmKuNqEk4CtZCC0ydBNNQXetvzTSEg@mail.gmail.com>
+ <CAGm1_kuUVKAxcxENnvsq5AGzeXAeXP6yLmjt1MQSpfjdcvZjng@mail.gmail.com> <CAK8P3a1VeP6YMYV6hh13K1Q3epuO5wRUmTByY7YVVT86J1giqg@mail.gmail.com>
+In-Reply-To: <CAK8P3a1VeP6YMYV6hh13K1Q3epuO5wRUmTByY7YVVT86J1giqg@mail.gmail.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Sun, 5 Jun 2022 16:59:14 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEzK2eEXLHP2OH6APpw+yC66XQafFWs6kMni1i+bDC4uA@mail.gmail.com>
+Message-ID: <CAMj1kXEzK2eEXLHP2OH6APpw+yC66XQafFWs6kMni1i+bDC4uA@mail.gmail.com>
+Subject: Re: am335x: 5.18.x: system stalling
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Yegor Yefremov <yegorslists@googlemail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/06/2022 13:22, Marty E. Plummer wrote:
-> On Thu, Jun 02, 2022 at 08:37:43AM +0200, Krzysztof Kozlowski wrote:
->> On 01/06/2022 20:24, Marty E. Plummer wrote:
->>
->>>>> Either or. Whatever makes the workload easier is what I'm looking for.
->>>>
->>>> Sorry, you need to be more specific. Apply is not a job for you, for the
->>>> patch submitter.
->>>>
->>>> Then you miss here important piece - which is the first patch. DTS goes
->>>> always via separate branch (or even tree) from driver changes. That's
->>>> why bindings are always separate first patches.
->>>>
->>> So, add a 4: arch/arm/boot/dts/soc.dtsi and 5: arch/arm/boot/dts/board.dts
->>> to the above list, or should those be the same patch as well?
->>
->> For me does not matter, sub architecture maintainer might have preference.
->>
-> Fair enough. That being said, for the dt-bindings patch, is it
-> permissible to include #define CLOCK_FOO 1337 and so on for clocks which
-> haven't been wired up in the driver yet? As in, you know they're there,
-> and are important enough to model, but you haven't gotten to that point
-> yet?
+On Fri, 3 Jun 2022 at 22:47, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, Jun 3, 2022 at 9:11 PM Yegor Yefremov
+> <yegorslists@googlemail.com> wrote:
+> >
+> > With compiled-in drivers the system doesn't stall. All other tests and
+> > related outputs will come next week.
+>
+> Ah, nice!
+>
+> It's probably a reasonable assumption that the smp-patched get_current()
+> is (at least sometimes) broken in modules but working in the kernel itself.
+> I suppose that means in the worst case we can hot-fix the issue by
+> having an 'extern' version of get_current() for the case of
+> armv6+smp+module ;-)
+>
 
-What would be the benefit to include them now? I imagine that if you
-plan to add such clocks to the driver in next week or something, and you
-need to use them in DTS, then it's fine. If that's not the case,
-probably there is little sense in defining them upfront...
+I've coded something up along those lines, and pushed it to my
+am335x-stall-test branch.
 
+> Maybe start with the ".long 0xe7f001f2" hack I suggested in my last
+> mail. If that gives you an oops for the module case, then we know
+> that the patching doesn't work at all and you don't have to try anything
+> else, otherwise it's more likely that an incorrect instruction sequence
+> is patched in.
+>
 
-Best regards,
-Krzysztof
+Yeah, I'd be really surprised if the patching misses some occurrences,
+so I have no clue what is going on here.
+
+Yegor, can you please try my branch with the original config (i.e.,
+slcan and ftdio as modules)
+
+https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=am335x-stall-test
