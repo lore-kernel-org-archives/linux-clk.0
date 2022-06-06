@@ -2,96 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC06C43334
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 09:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE8FC43334
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 11:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233244AbiFFJz1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 05:55:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37156 "EHLO
+        id S235535AbiFFLfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 07:35:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233102AbiFFJz0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 05:55:26 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C277F113A1E
-        for <linux-clk@vger.kernel.org>; Mon,  6 Jun 2022 02:55:22 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id x17so19123099wrg.6
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jun 2022 02:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/HGBwVcm94G6hJzxxoyTgU9jvYkuG8KyARLPoR4g984=;
-        b=sSIY/sq3tJH+ruvIsuQApXH81UhkfbHOfABcA9lRdOXBMbUsWyeFwDFrglxz8GfoFY
-         QmStVG7kQyI/Q+/6pzQ1jyZY82gcQ94oe3qAb4fzAxkirKGmyAUaoqUUXub2FoGcDeKV
-         S/Wm7MMIB0Gh1CQX3FHGnak7oG6MzRuQNup0KHkoXlknAeFpQTqPF8kWakz2k1lHJoxZ
-         dthp0Z3elQaJG1D3TE/Vs4VI3xS7Hn4Pu8rhIoTTWWgEf0GTiaogaHkE4OCPgIBPe8BV
-         1InWXF/vn+LEpsxPD/Vb9arMdS+o9J/eS52eFzf2SzeGhMRIomxC+4FZ1I5qKCu7/UsL
-         xuAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=/HGBwVcm94G6hJzxxoyTgU9jvYkuG8KyARLPoR4g984=;
-        b=mYHOLoH9/jpXUi14l+mb83ofH52KVL0b8B+lLr6/nHtkBBPYR8DMG/Ce6XZJST9A7I
-         xwpq3XQY9BXYUnVrffxfu/b4thtxaTlYIUxMo9GPvP6X3e1v1sTHkK60eniuHawPrvwx
-         yhw9xco/mB+6J+hzYsM6MU+U3MD/q7isGMEb6xToweUOw4mni2m1SPcagQ6YbrmRMNVE
-         m7rvqE4bRed49EqBpR9ZFHYql943HMw48lhQYqCKy1Gpta9a/bWPmvP8s0JymPMppbnw
-         ffB1Ky333wkcsNahiNzYPj2YHy4Nmq3irdk/n0X7F+rKB7/HcKvsyIvizIb9Gx0WyUOS
-         M9iw==
-X-Gm-Message-State: AOAM530bO8DWVf7N1goJ3TIgKtcNRu8bRND9Ys5J9hjKFz6dcOlQNluC
-        V0TxXTa06/1RrfREwAQ8Oc9esQ==
-X-Google-Smtp-Source: ABdhPJxFMRPPs4LSY3Kcwnsvn2fgmQxO/3GAT/dfFczxe2I21JguLlXbCT27NpSSDOKSGZaQZm8pJA==
-X-Received: by 2002:a05:6000:2a9:b0:210:2530:be32 with SMTP id l9-20020a05600002a900b002102530be32mr21432918wry.153.1654509321248;
-        Mon, 06 Jun 2022 02:55:21 -0700 (PDT)
-Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
-        by smtp.gmail.com with ESMTPSA id o10-20020adfeaca000000b0020c5253d8c2sm14659609wrn.14.2022.06.06.02.55.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 02:55:20 -0700 (PDT)
-Date:   Mon, 6 Jun 2022 10:55:03 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 4/6] mfd: max77714: update Luca Ceresoli's e-mail address
-Message-ID: <Yp3O92gg9LiIzQTX@google.com>
-References: <20220603155727.1232061-1-luca@lucaceresoli.net>
- <20220603155727.1232061-4-luca@lucaceresoli.net>
+        with ESMTP id S235528AbiFFLfI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 07:35:08 -0400
+Received: from mx-out2.startmail.com (mx-out2.startmail.com [145.131.90.155])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 586AE1B79D;
+        Mon,  6 Jun 2022 04:35:06 -0700 (PDT)
+Date:   Mon, 6 Jun 2022 06:34:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=startmail.com;
+        s=2020-07; t=1654515303;
+        bh=mpbBAztguTTQhW8kMhRiNpwOFt1Qp+y0cn4YlTLDqU8=;
+        h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+         Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
+         Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
+         Mime-Version:Reply-To:In-Reply-To:References:Message-Id:Autocrypt;
+        b=QIRX6sLoDs7XzIES1QbkQlBAdvLFB3+wHstX4KHaYKoYZGM7W0jLDNOuiPtKin7eK
+         XWs9DZQenKc4on+0PYYYNEo61rQtGTgm4zAyTn/cF90hcppkMWPNSz+YLpYf2QP9e6
+         aVpldliyDEUeeSNx7Khu7Zmu3h7Jzht5DiAEVy3if3t/wfPOON8eiruiU+WzHjkc1y
+         Wqp2CP4OLCsH8WqdWj65VflnPSLSfREfTCXLbuC2yJYbBdzIj72wE3NkjZs3ufNNtg
+         zRkUVrec5B9d19oaODMXL94ARZ7107f7ZgUw4gfU/oLJgbF7Ej1oXVdzjyi75zXAn3
+         l3cu65Qs0MNgA==
+From:   "Marty E. Plummer" <hanetzer@startmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
+        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
+        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
+        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
+        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
+        vigneshr@ti.com, xuwei5@hisilicon.com
+Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
+Message-ID: <20220606113455.7dv6bnk25ki6tau7@proprietary-killer>
+References: <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
+ <20220601105846.7hriawg3stxb657f@proprietary-killer>
+ <630b0d13-6778-2508-6a34-9daa0358047d@linaro.org>
+ <20220601110616.xmxih663kxgupszv@proprietary-killer>
+ <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
+ <20220601182418.okoofgannw6vbcxo@proprietary-killer>
+ <b1b87be5-a048-b713-c9f2-84b948aa6718@linaro.org>
+ <20220603112227.hmzwy7xxl6ddezqh@proprietary-killer>
+ <34e6715e-795c-3d64-1341-31da9bd27563@linaro.org>
+ <8e81de5f-dfb7-e34f-ff5f-44b52421fa24@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220603155727.1232061-4-luca@lucaceresoli.net>
+In-Reply-To: <8e81de5f-dfb7-e34f-ff5f-44b52421fa24@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 03 Jun 2022, Luca Ceresoli wrote:
-
-> My Bootlin address is preferred from now on.
+On Mon, Jun 06, 2022 at 09:29:59AM +0200, Krzysztof Kozlowski wrote:
+> On 05/06/2022 16:54, Krzysztof Kozlowski wrote:
+> > On 03/06/2022 13:22, Marty E. Plummer wrote:
+> >> On Thu, Jun 02, 2022 at 08:37:43AM +0200, Krzysztof Kozlowski wrote:
+> >>> On 01/06/2022 20:24, Marty E. Plummer wrote:
+> >>>
+> >>>>>> Either or. Whatever makes the workload easier is what I'm looking for.
+> >>>>>
+> >>>>> Sorry, you need to be more specific. Apply is not a job for you, for the
+> >>>>> patch submitter.
+> >>>>>
+> >>>>> Then you miss here important piece - which is the first patch. DTS goes
+> >>>>> always via separate branch (or even tree) from driver changes. That's
+> >>>>> why bindings are always separate first patches.
+> >>>>>
+> >>>> So, add a 4: arch/arm/boot/dts/soc.dtsi and 5: arch/arm/boot/dts/board.dts
+> >>>> to the above list, or should those be the same patch as well?
+> >>>
+> >>> For me does not matter, sub architecture maintainer might have preference.
+> >>>
+> >> Fair enough. That being said, for the dt-bindings patch, is it
+> >> permissible to include #define CLOCK_FOO 1337 and so on for clocks which
+> >> haven't been wired up in the driver yet? As in, you know they're there,
+> >> and are important enough to model, but you haven't gotten to that point
+> >> yet?
+> > 
+> > What would be the benefit to include them now? I imagine that if you
+> > plan to add such clocks to the driver in next week or something, and you
+> > need to use them in DTS, then it's fine. If that's not the case,
+> > probably there is little sense in defining them upfront...
 > 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  drivers/mfd/max77714.c       | 4 ++--
->  include/linux/mfd/max77714.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-
-Applied, thanks.
-
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> Actually I see one more benefit - since IDs should be incremented by
+> one, you can define all of them upfront thus having some
+> logical/alphabetical order/grouping. If you extend the bindings header
+> with new IDs later, they must go to the end of the list, thus maybe
+> ordering will not be that nice.
+> 
+> If you want, go ahead with all IDs. Just remeber that these must be IDs,
+> not register values or some programming offsets.
+> 
+Yeah, this was my intent. There are a number of non-standard,
+proprietary IP blocks on this soc who's 'organized clock number' come
+'in between' the more standard bits, depending on how you decide to
+organize them (based on their parent clocks, based on the order they
+appear in the crg register block, whatever). I *do* intend on hopefully
+putting together drivers for these as well, though that's a long-term
+stretch goal.
+> Best regards,
+> Krzysztof
