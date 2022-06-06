@@ -2,82 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C86C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 21:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447F6C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 21:18:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230385AbiFFVOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 17:14:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
+        id S230504AbiFFVSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 17:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230500AbiFFVOg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 17:14:36 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871DAAF308;
-        Mon,  6 Jun 2022 14:14:35 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id d14so12460325wra.10;
-        Mon, 06 Jun 2022 14:14:35 -0700 (PDT)
+        with ESMTP id S230363AbiFFVSu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 17:18:50 -0400
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49228BA99C
+        for <linux-clk@vger.kernel.org>; Mon,  6 Jun 2022 14:18:47 -0700 (PDT)
+Received: by mail-oi1-x22c.google.com with SMTP id q184so4472056oia.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jun 2022 14:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YmrPNNtOBq+9JzdsAI7pGeIetIT35ohZzZpKBjsR0sM=;
-        b=krnByREAlieaT/YieoQECd4AESlhGieDlD5VNa9heTv6fjEanrPCWBcR+u4euLtQbj
-         LuYXEY9Dpv69Hr6QTbVreWrpAdNltTlp9Of4yRyqBj6Rv0Sb4zFp+voF/a+xlGXAHdf6
-         sg5+60HlBdY4i9otXqkuerTIDt2ZOTKnP5Krnx+Y6/ZXp4M7OecTfGei0lMETTm7DN+a
-         cNtq5zySTLp1IY6NJNBL+hMFu8m5J6LZRlLZyST0BY7g4dcZK4RfiNGmmQ+5HdXRly2w
-         fNSSEu2/AZHVEeVhw7f9VR8fVUN11TWnznxTVl0N1B1XUM3+yqy2i3K/x2EROGp1xMx1
-         fa9g==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YCcSuhuQ1vWwVJ0SW2RVYIVh/aSNB0orFLVM+U8ftCM=;
+        b=aX4csWQi3E97IZVp7kfPFWT4t/uQQ91msNCIDdET7namQno4hrb4pgmbFaFuMwHnuv
+         cXGC0QOHEtB0M57d4JOcViNU0H7E26JpSpsGUfaWgPOOG4ZdEzVhVrkzb7keqvhywz07
+         sNcXZ7jGIGSgw0YBGR5yF33qWulsfzMkje4N/Dzc3GthV6QgHzW6dTLj1UvCKURBEuN1
+         Ftl8yWjme7AaNT+w8CvIIna4/la7QBc1oZbqdgXn8RsUzfBTOtUSvlvBEAyQXL5kWxFL
+         e6VCROspeDsXUiIYU56QKDUcYYE6x9kLNhFe/qybielxQS/UxXZIA+twBUSCirrNoiYh
+         mMVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YmrPNNtOBq+9JzdsAI7pGeIetIT35ohZzZpKBjsR0sM=;
-        b=J3TW/DHKZdgVRW3aZ9BMny+mBGks1tHITr8GiCafHY6qLNTjwldiWev3PVEC9ncoBR
-         B3ZQ5kLGjMAHmJ4LWBWjPejPJUzv4w52/xfmf5z2PB3W/dAxOO1jHmvy/tytMoqiSpX4
-         eAPFs3QrabqMVvVTCbdsbfnoqi19iPBQ919ZqBLOUAzAUCO8c/bRB4kJxFxQ+fQQQYGq
-         VVcB9KtXfS88DEP+f0k2jpbVRaZ6YKbhhlLAa7N6FDNxIqZRwIbuUFnXyZGhuN0B10IB
-         t8WEUJ8pRH0lnFTfLdwt37AR641SC49iQWllBkLVJrcIiwcAvyP5euFiJkFt2S4tpI2G
-         dENQ==
-X-Gm-Message-State: AOAM532ikaT5uBXM00L2IgUSu8h08zyhf03f+SyKgF9Hwn6t98n6yrlE
-        VEyWwW7IYq56mzrg5FQ3EnA=
-X-Google-Smtp-Source: ABdhPJwBEcE8NFT3BuH35Zqpn31zKlX00spaa4ApKSwBvyTlcFgmf6+Q/FqUd+aq41o0g6YwS3TmZA==
-X-Received: by 2002:a5d:54cc:0:b0:210:3d9f:4770 with SMTP id x12-20020a5d54cc000000b002103d9f4770mr23322826wrv.122.1654550074012;
-        Mon, 06 Jun 2022 14:14:34 -0700 (PDT)
-Received: from kista.localnet (213-161-3-76.dynamic.telemach.net. [213.161.3.76])
-        by smtp.gmail.com with ESMTPSA id ay1-20020a5d6f01000000b0020fee88d0f2sm21145210wrb.0.2022.06.06.14.14.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YCcSuhuQ1vWwVJ0SW2RVYIVh/aSNB0orFLVM+U8ftCM=;
+        b=kJk9dYbpWOhmTVrCr8JnmptPH8C6JsXqAKcuFsbDU6Cd1S8XDQAL1ZpmxezEmzhDBL
+         j0nHUuzHQ/pbVvYOcGMHm5KmRSMislkwWKd9uYzopUiZI9+RaFm6H3A0EtILzjvTCLLG
+         3N4ERQ5Ka9ZBSHp+v54CQQa4VnptZGUAYzOVMLQlPdp/g7q1t/nalxNGE48qs1Cyu0lG
+         gu3t1Bmv4fEa3xR8HJ11fImsvu0X225XJH6vQsG58X2Tu5TR+xBKBPK+yjkXjwYX0yBK
+         QNgGq/91xbg/NCIzhQ+7tHHhfia/ywKH5icOyh0FiXP566BcWfSBN9K3L10hfposRTYW
+         1S8A==
+X-Gm-Message-State: AOAM530BkaL7PA8TOECD4tXge2Qlr6Kqgjbhg9Fx6DY0zWGCeoHgW4Ls
+        sD7E6krRsy6IKeAVnXKduo/c8Q==
+X-Google-Smtp-Source: ABdhPJzO7TM8BK3G8gYvkXfPhVHXVafWnK1DvN0BUm2+eoHuppcoSnE9n+Wv7V4l1pdwHAEcaSAg9w==
+X-Received: by 2002:aca:304f:0:b0:32e:8381:fa69 with SMTP id w76-20020aca304f000000b0032e8381fa69mr5698715oiw.289.1654550326658;
+        Mon, 06 Jun 2022 14:18:46 -0700 (PDT)
+Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id e28-20020a544f1c000000b0032c18f04800sm9126744oiy.1.2022.06.06.14.18.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 14:14:33 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
+        Mon, 06 Jun 2022 14:18:46 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] clk: sunxi-ng: Deduplicate ccu_clks arrays
-Date:   Mon, 06 Jun 2022 23:14:31 +0200
-Message-ID: <2631629.mvXUDI8C0e@kista>
-In-Reply-To: <20220531043539.41549-1-samuel@sholland.org>
-References: <20220531043539.41549-1-samuel@sholland.org>
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+Date:   Mon,  6 Jun 2022 14:21:12 -0700
+Message-Id: <20220606212112.3617731-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne torek, 31. maj 2022 ob 06:35:39 CEST je Samuel Holland napisal(a):
-> The ccu_clks arrays are used to link ccu_common objects to a platform
-> device during probe. There is no requirement that the clk_hw inside the
-> ccu_common object ever gets registered with the clock framework. So the
-> drivers do not need a separate ccu_clks array for each CCU variant.
-> A single array per driver, containing the union of the CCU clocks from
-> all variants, is sufficient.
-> 
-> Let's save some space by combining the ccu_clks arrays in each driver.
-> 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+When a GDSC is found to be enabled at boot the pm_runtime state will
+be unbalanced as the GDSC is later turned off. Fix this by increasing
+the usage counter on the power-domain, in line with how we handled the
+regulator state.
 
-Applied, thanks!
+Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/clk/qcom/gdsc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 44520efc6c72..a1fa7c4cff60 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -420,6 +420,9 @@ static int gdsc_init(struct gdsc *sc)
+ 				return ret;
+ 		}
+ 
++		/* ...and the power-domain */
++		gdsc_pm_runtime_get(sc);
++
+ 		/*
+ 		 * Votable GDSCs can be ON due to Vote from other masters.
+ 		 * If a Votable GDSC is ON, make sure we have a Vote.
+-- 
+2.35.1
 
