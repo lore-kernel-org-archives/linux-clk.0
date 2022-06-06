@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AB8C43334
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 05:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E24C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 05:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiFFF3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 01:29:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51768 "EHLO
+        id S229720AbiFFFtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 01:49:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbiFFF2k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 01:28:40 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 348FB15894B;
-        Sun,  5 Jun 2022 22:26:04 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id m25so11289048lji.11;
-        Sun, 05 Jun 2022 22:26:04 -0700 (PDT)
+        with ESMTP id S229703AbiFFFtN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 01:49:13 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FED2CE26;
+        Sun,  5 Jun 2022 22:49:10 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id h23so21642415lfe.4;
+        Sun, 05 Jun 2022 22:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:content-language:to:cc
          :references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=zc/BM4GS1deZPOseA9eQ1lDUVrP10O3L44lbLiYjtN4=;
-        b=WfMUkiB++a8lTicSUCIf6khGYZnXKmpITWncoBuKUvCNDiDR4bNDkMOHWeBp69Xht4
-         6ergkuIGvga7ERsmBmLbvp7OwbeWIrj5MQL+5l7qwUQXjGHhbv/Q6EPndg/H40Q84HtQ
-         wpkUGlwxhC05PnMoJ8KQrUouNIYHo5q2PUmlYq7Gz2xsV9EbymrNtcYm4fU1rpTEDzQ1
-         BP8lKRj960a8H+1bCFyymYtEqZOqXEuv7dusbLDdFRtLZOqahhFJc52csPKNbHT8xBao
-         MD61EqRE/0HqhQ/gPbEoj2tLjJiuR53F9ae58C4xgkbCwXcwuPzjzP1IFIQQeTig490s
-         ibkQ==
+        bh=QsPSmnoDQSspdeB5NQpv+gur6fIi4kTRao6eLgRuaaM=;
+        b=dn8k0YfOtWS3vkhH2Zz5wYis8IFRK0/6wNFKdBIVwfp6QGSMtlIqQVS+0FhLVWIJfs
+         Eq3eiAtpYAgoH+mR0SyhC68qsuvZi7ISj+y9OfTY0dggQbdZCnHWSsf+859U31upP7sQ
+         xifla9pTa6rrk4ALid/lUD4JvEREUODVnEG4soV82LuaDqt8wvicuTSYyoBhLzRTnZqS
+         /AHvwaXRiFQr/zB+ngqYA75pXb9WGpAzTLpUfK092NpbvEOmYidFAQVjgFg9CjRrKjjf
+         921v8M59wRVFfzaERjaMEMuVswVWqug4Q1gwL+GV6nQTSVd44jNRaO/w7jxctITj8WQT
+         N69w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent
          :content-language:to:cc:references:from:subject:in-reply-to
          :content-transfer-encoding;
-        bh=zc/BM4GS1deZPOseA9eQ1lDUVrP10O3L44lbLiYjtN4=;
-        b=Gb6DHOr92v2uOhLhMV8yu5cVXIvtN8KFLVsiDXAR57qZ751mj8EDx8WKk1OjH3Y1Rv
-         nB/6opsxvcH5Klq4qrbihFMQOt8wuVCASYt4Ce2zuD9wJYyP49WA72hZBAQjeGP+hbti
-         jmIAp7Ek/8oocRLqsjuaH8/uLwZ70lY8/rLgyVwvbFAitzcFZWXkNHV0RbjZNU58uGCx
-         4hFw7R9SAEoleCBWapDFbURCBrVu6s6a4tQpK1kwBJ41Iup88r5vPdUZNvx5kFmjM/KF
-         CzRmxtrg4/i//ssL8ABsQ+kyxAAZerqfUOyB8uztZ8tXpqmYaRlw1j2TmaWX+jiRHZ5e
-         dvXw==
-X-Gm-Message-State: AOAM530ENXbImK6hw6s25/X9B45lVIm9SzYZixWRjrDO1QsFxFdlU9MD
-        JxYzBYYThUE2CG3bQImJ1MhrDb2lTI4=
-X-Google-Smtp-Source: ABdhPJwOcEoJ5m94o5VmovTTeks+T0EJ/vH213RpahokS5OtgCLMD9LmeICRSw3AEr3Jd5A24Kn1cg==
-X-Received: by 2002:a2e:8752:0:b0:255:6df7:7ad5 with SMTP id q18-20020a2e8752000000b002556df77ad5mr13523255ljj.73.1654493162053;
-        Sun, 05 Jun 2022 22:26:02 -0700 (PDT)
+        bh=QsPSmnoDQSspdeB5NQpv+gur6fIi4kTRao6eLgRuaaM=;
+        b=Bd8epFJe964FvrtN0z+hfF8pMq0oNr4VK29Ne+zmzEHO6+ED/SRIGdEVn2sf6QxF00
+         4+m14LHHUc0okMwrzy98XARvKrRIPDCoWCe5R82U+Ti5aX2a5O0dOQxYMuU/Q+rY7zDb
+         H3icW+PBUUhssu+8OhA0D8YOzzTqodwSmRPRdl2y8jyO5E4kkxmSZe+gGRfPITV0GDlu
+         uH/8wodZsKtRxyVNdyQoxfw1xh9CBPV4vAoohSpD8Y/Fr33L20w/8EvIzYxjqOVQ/HWB
+         cvKi5fjKorfCl+5gW6a1occw7k+JePN2l1yKI9ChuSiK6fizHn5RMqkXNsJaKk0N1V3O
+         /HRA==
+X-Gm-Message-State: AOAM532fJ/9D+JgH/HmP/nxwKDVZrtb0DoOzkA8+h4MQQ1b0aPIQAEAW
+        QN2/cqMVJP6NFU6YdPzBx1w=
+X-Google-Smtp-Source: ABdhPJzXPSXO1UB1Ofk63k65l3w0RiwRbD1x75/Fp4Lp9MKzCeFuUD3lINE4c84EolwoJo/MPhIpZg==
+X-Received: by 2002:a05:6512:2242:b0:478:ee3a:460d with SMTP id i2-20020a056512224200b00478ee3a460dmr21937913lfu.493.1654494548633;
+        Sun, 05 Jun 2022 22:49:08 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:16ee:fa00::1? (dc73szyyyyyyyyyyyyyyt-3.rev.dnainternet.fi. [2001:14ba:16ee:fa00::1])
-        by smtp.gmail.com with ESMTPSA id x2-20020a05651c024200b002556fd0c336sm2164571ljn.78.2022.06.05.22.26.00
+        by smtp.gmail.com with ESMTPSA id v18-20020a05651203b200b0047255d211adsm2724456lfp.220.2022.06.05.22.49.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jun 2022 22:26:00 -0700 (PDT)
-Message-ID: <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
-Date:   Mon, 6 Jun 2022 08:25:58 +0300
+        Sun, 05 Jun 2022 22:49:07 -0700 (PDT)
+Message-ID: <96a66eab-cb20-71a4-baec-aff80f4cd93e@gmail.com>
+Date:   Mon, 6 Jun 2022 08:49:05 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
@@ -60,56 +60,53 @@ To:     Michael Trimarchi <michael@amarulasolutions.com>,
         "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
 Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
+        linux-amarula@amarulasolutions.com
 References: <20220605165703.1565234-1-michael@amarulasolutions.com>
- <20220605165703.1565234-3-michael@amarulasolutions.com>
+ <20220605165703.1565234-2-michael@amarulasolutions.com>
 From:   Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
- clock as critical
-In-Reply-To: <20220605165703.1565234-3-michael@amarulasolutions.com>
+Subject: Re: [RFC PATCH 1/3] clk: bd718x7: Clean up the code, no functional
+ changes
+In-Reply-To: <20220605165703.1565234-2-michael@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Michael,
-
 On 6/5/22 19:57, Michael Trimarchi wrote:
-> If the clock is used to generate the osc_32k, we need to mark
-> as critical. clock-critical has no binding description at the moment
-> but it's defined in linux kernel
-> 
-> bd71847: pmic@4b {
-> ...
-> 	rohm,reset-snvs-powered;
-> 
-> 	#clock-cells = <0>;
-> 	clock-critical = <1>;
-> 	clocks = <&osc_32k 0>;
-> 	clock-output-names = "clk-32k-out";
-> ...
-> }
-> 
 > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
 > ---
->   drivers/clk/clk-bd718x7.c | 4 ++++
+>   drivers/clk/clk-bd718x7.c | 19 ++++++++++---------
+>   1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+> index ac40b669d60b..04cc0beb67df 100644
+> --- a/drivers/clk/clk-bd718x7.c
+> +++ b/drivers/clk/clk-bd718x7.c
+> @@ -81,27 +81,28 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+>   	struct bd718xx_clk *c;
+>   	int rval = -ENOMEM;
+>   	const char *parent_clk;
+> +	struct device *dev = &pdev->dev;
 
-//snip
+I am not a fan of assigning pointers to struct members to local 
+variables unless they're shortening lines to fit on one row instead of 
+using two. Whenever we add such a variable we hide information. After 
+that being said - in this particular case the device 'dev' points to is 
+quite obvious so I am not completely against the change if other see the 
+value.
 
-> @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
->   
->   	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
->   
-> +	of_clk_detect_critical(dev->of_node, 0, &flags);
+>   	struct device *parent = pdev->dev.parent;
+>   	struct clk_init_data init = {
+>   		.name = "bd718xx-32k-out",
+>   		.ops = &bd71837_clk_ops,
+> +		.num_parents = 1,
 
-Purely judging the kerneldoc for of_clk_detect_critical - you may have 
-hard time getting this accepted.
+I like this. Thanks.
 
-I think you're working on a very valid problem though. Maybe you could 
-see if you could align your effort with Marek?
+>   	};
 
-https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 Best Regards
 	-- Matti
