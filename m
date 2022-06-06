@@ -2,94 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E36CCA473
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 09:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC06C43334
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 09:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232798AbiFFJWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 05:22:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45416 "EHLO
+        id S233244AbiFFJz1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 05:55:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232785AbiFFJWw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 05:22:52 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F8AB87B
-        for <linux-clk@vger.kernel.org>; Mon,  6 Jun 2022 02:22:47 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id fu3so26220001ejc.7
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jun 2022 02:22:46 -0700 (PDT)
+        with ESMTP id S233102AbiFFJz0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 05:55:26 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C277F113A1E
+        for <linux-clk@vger.kernel.org>; Mon,  6 Jun 2022 02:55:22 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id x17so19123099wrg.6
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jun 2022 02:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=E4ZcLOSWxK+rHyXMfXMzvjD+ScWULFvbW/YKSseNd0o=;
-        b=iqSxGuT0zbMSXTWCbKc9S/PpFRxvt9BtQtdpMZ5ns3VtW+KyRpo6YpE9Umv8BfkcGh
-         ZIthpJqvD7pC6PhNlybLjSjYm3F0tzEr6g2rwrfhPuWW39m970WXKQi9XEZ402Z0hLAy
-         y4jyI5Fklc4ZEiW2QkH1aSdnjgF9fNwObgXhyPFxdCXuDJFEwUs0nEsNqVxMY6HQE4eJ
-         7kqilWtoyVWNLNQdVJo32Rk0BMvPw/i0THlwYXyGltY06wtmYEgoRlYu+4efpRNxhQgo
-         fQ7Z8bECXEXUpxQvHmnf/2ieQ9w6kqumpuvKv0j658YTkhNaAGPR38cpVoZfvoN56kkj
-         2gOg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/HGBwVcm94G6hJzxxoyTgU9jvYkuG8KyARLPoR4g984=;
+        b=sSIY/sq3tJH+ruvIsuQApXH81UhkfbHOfABcA9lRdOXBMbUsWyeFwDFrglxz8GfoFY
+         QmStVG7kQyI/Q+/6pzQ1jyZY82gcQ94oe3qAb4fzAxkirKGmyAUaoqUUXub2FoGcDeKV
+         S/Wm7MMIB0Gh1CQX3FHGnak7oG6MzRuQNup0KHkoXlknAeFpQTqPF8kWakz2k1lHJoxZ
+         dthp0Z3elQaJG1D3TE/Vs4VI3xS7Hn4Pu8rhIoTTWWgEf0GTiaogaHkE4OCPgIBPe8BV
+         1InWXF/vn+LEpsxPD/Vb9arMdS+o9J/eS52eFzf2SzeGhMRIomxC+4FZ1I5qKCu7/UsL
+         xuAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=E4ZcLOSWxK+rHyXMfXMzvjD+ScWULFvbW/YKSseNd0o=;
-        b=DOifxVwwwBZhfJTrjgq0SJPu0S9UwlgDi0MzX2L/DYR7nwfuYcpU0I+NZ3SZEOjrTJ
-         UTOfH4D4Y4mEDGsKR/G+tU69wS5HrG4xZRUOHyDHu+iZG/7Pywb/lCVYRHKxdolzBH7V
-         PPDb54U2cYYhAgQbFL0IoE8kMcqL7V9FFoE7dkmxwK4coK76NpX1Nv4ijGmOtnydIak0
-         9y30KFIa4XOzR85NpC8Lb/CKIltC5t4TRUI11GMcvYZq7EFEDlPJvXM8GC2kpBqVBvTF
-         cRskuiV6vnGLk0B3eNzSlYMlLW2pZzQuV2F+9ABLG5U8QaUoioom/A9IOdsJo9PV5Aqd
-         KpIQ==
-X-Gm-Message-State: AOAM530qD4TRnADbDeAkdQ4Vvxy307cpNlWBLgF/Qkg96MWPju0EtnF4
-        wERJ1+gVnVu+qaHJNTeu3QutnA==
-X-Google-Smtp-Source: ABdhPJwXuzf4Ezx+ISzM3Eck2TLLVbePEC6V42utJkwRyYokw9c6UA4yBwLRej4c/S3TK8mNgmPkyA==
-X-Received: by 2002:a17:906:1256:b0:711:9b13:553 with SMTP id u22-20020a170906125600b007119b130553mr7240072eja.45.1654507365269;
-        Mon, 06 Jun 2022 02:22:45 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id u21-20020a1709064ad500b006f3ef214e14sm5956397ejt.122.2022.06.06.02.22.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/HGBwVcm94G6hJzxxoyTgU9jvYkuG8KyARLPoR4g984=;
+        b=mYHOLoH9/jpXUi14l+mb83ofH52KVL0b8B+lLr6/nHtkBBPYR8DMG/Ce6XZJST9A7I
+         xwpq3XQY9BXYUnVrffxfu/b4thtxaTlYIUxMo9GPvP6X3e1v1sTHkK60eniuHawPrvwx
+         yhw9xco/mB+6J+hzYsM6MU+U3MD/q7isGMEb6xToweUOw4mni2m1SPcagQ6YbrmRMNVE
+         m7rvqE4bRed49EqBpR9ZFHYql943HMw48lhQYqCKy1Gpta9a/bWPmvP8s0JymPMppbnw
+         ffB1Ky333wkcsNahiNzYPj2YHy4Nmq3irdk/n0X7F+rKB7/HcKvsyIvizIb9Gx0WyUOS
+         M9iw==
+X-Gm-Message-State: AOAM530bO8DWVf7N1goJ3TIgKtcNRu8bRND9Ys5J9hjKFz6dcOlQNluC
+        V0TxXTa06/1RrfREwAQ8Oc9esQ==
+X-Google-Smtp-Source: ABdhPJxFMRPPs4LSY3Kcwnsvn2fgmQxO/3GAT/dfFczxe2I21JguLlXbCT27NpSSDOKSGZaQZm8pJA==
+X-Received: by 2002:a05:6000:2a9:b0:210:2530:be32 with SMTP id l9-20020a05600002a900b002102530be32mr21432918wry.153.1654509321248;
+        Mon, 06 Jun 2022 02:55:21 -0700 (PDT)
+Received: from google.com (cpc155339-bagu17-2-0-cust87.1-3.cable.virginm.net. [86.27.177.88])
+        by smtp.gmail.com with ESMTPSA id o10-20020adfeaca000000b0020c5253d8c2sm14659609wrn.14.2022.06.06.02.55.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jun 2022 02:22:44 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 06 Jun 2022 02:55:20 -0700 (PDT)
+Date:   Mon, 6 Jun 2022 10:55:03 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: (subset) [PATCH 2/2] arm64: dts: exynos: Correct UART clocks on Exynos7885
-Date:   Mon,  6 Jun 2022 11:22:36 +0200
-Message-Id: <165450734050.62970.14533261660609424322.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220526055840.45209-3-virag.david003@gmail.com>
-References: <20220526055840.45209-1-virag.david003@gmail.com> <20220526055840.45209-3-virag.david003@gmail.com>
+        Sebastian Reichel <sre@kernel.org>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH 4/6] mfd: max77714: update Luca Ceresoli's e-mail address
+Message-ID: <Yp3O92gg9LiIzQTX@google.com>
+References: <20220603155727.1232061-1-luca@lucaceresoli.net>
+ <20220603155727.1232061-4-luca@lucaceresoli.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220603155727.1232061-4-luca@lucaceresoli.net>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 26 May 2022 07:58:40 +0200, David Virag wrote:
-> The clocks in the serial UART nodes were swapped by mistake on
-> Exynos7885. This only worked correctly because of a mistake in the clock
-> driver which has been fixed. With the fixed clock driver in place, the
-> baudrate of the UARTs get miscalculated. Fix this by correcting the
-> clocks in the dtsi.
+On Fri, 03 Jun 2022, Luca Ceresoli wrote:
+
+> My Bootlin address is preferred from now on.
 > 
-> 
-> [...]
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/mfd/max77714.c       | 4 ++--
+>  include/linux/mfd/max77714.h | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Applied, thanks!
+Applied, thanks.
 
-[2/2] arm64: dts: exynos: Correct UART clocks on Exynos7885
-      https://git.kernel.org/krzk/linux/c/f84d83d8165570380f55f4ce578bfb131a9266c5
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Lee Jones [李琼斯]
+Principal Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
