@@ -2,80 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF44AC433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jun 2022 23:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AB8C43334
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 05:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351793AbiFEXEL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jun 2022 19:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
+        id S229830AbiFFF3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 01:29:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231932AbiFEXEK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jun 2022 19:04:10 -0400
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BDE37BCC;
-        Sun,  5 Jun 2022 16:04:10 -0700 (PDT)
-Received: by mail-qv1-f48.google.com with SMTP id s10so6132876qvt.8;
-        Sun, 05 Jun 2022 16:04:10 -0700 (PDT)
+        with ESMTP id S230021AbiFFF2k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 01:28:40 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 348FB15894B;
+        Sun,  5 Jun 2022 22:26:04 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id m25so11289048lji.11;
+        Sun, 05 Jun 2022 22:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc
+         :references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=zc/BM4GS1deZPOseA9eQ1lDUVrP10O3L44lbLiYjtN4=;
+        b=WfMUkiB++a8lTicSUCIf6khGYZnXKmpITWncoBuKUvCNDiDR4bNDkMOHWeBp69Xht4
+         6ergkuIGvga7ERsmBmLbvp7OwbeWIrj5MQL+5l7qwUQXjGHhbv/Q6EPndg/H40Q84HtQ
+         wpkUGlwxhC05PnMoJ8KQrUouNIYHo5q2PUmlYq7Gz2xsV9EbymrNtcYm4fU1rpTEDzQ1
+         BP8lKRj960a8H+1bCFyymYtEqZOqXEuv7dusbLDdFRtLZOqahhFJc52csPKNbHT8xBao
+         MD61EqRE/0HqhQ/gPbEoj2tLjJiuR53F9ae58C4xgkbCwXcwuPzjzP1IFIQQeTig490s
+         ibkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PQ86WMtQWZtiSCCUV0t2mZwhMOZMEYWoxSVQTAw8avI=;
-        b=AmRluNomWSrH8h9MrGT3LA4kPVPUGE0frL/6r66BxjjKMiquWjS3IuONJhCcnwUFGF
-         tU3n/C5jZ/5tIYZQ1QaWR+3pet2oZUhP+h7ZDxodxvvR+qwh+y83Q1evk1BVRU40IevH
-         Iqxn1XRxV84iIUOzeGsk7nMfv2UZqBiGPZ9YFPMcqIwSo1g76PgMBTbJAMN1wYPCiFpx
-         jnMS7Ehb0xqphef0W8XBFuGuOe/w8ZZEMh6fvTxwtTvcx5CK9A2lvVSi0ce9EqIZfzXM
-         41K2TTVirM/afUE4cGr2l8nCHlO/BMjkT5MS+RpdM40MyM9xWK2woU5Y+JEy/GaiDE0V
-         pdPA==
-X-Gm-Message-State: AOAM531xbOdoX7UrD/K7LgDvJ51Fqh1WAmcLoJwYe9qEN4Z60WUefwT0
-        OPju4peITtq77e6Lk7OV1Wh3xBQFaw==
-X-Google-Smtp-Source: ABdhPJw8o4qYBHW4CaM8n7loO8vPejDTZL9r68n+Z50Xa/JCRCy726BVnoeF1wKhs0xUySvy2IwPyw==
-X-Received: by 2002:a05:6214:29c6:b0:466:fda7:8279 with SMTP id gh6-20020a05621429c600b00466fda78279mr15387044qvb.32.1654470249321;
-        Sun, 05 Jun 2022 16:04:09 -0700 (PDT)
-Received: from robh.at.kernel.org ([2607:fb90:1bdb:2e61:f12:452:5315:9c7e])
-        by smtp.gmail.com with ESMTPSA id q19-20020a05620a0d9300b006a68fdc2d18sm7459600qkl.130.2022.06.05.16.04.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jun 2022 16:04:09 -0700 (PDT)
-Received: (nullmailer pid 3694907 invoked by uid 1000);
-        Sun, 05 Jun 2022 23:04:04 -0000
-Date:   Sun, 5 Jun 2022 18:04:04 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=zc/BM4GS1deZPOseA9eQ1lDUVrP10O3L44lbLiYjtN4=;
+        b=Gb6DHOr92v2uOhLhMV8yu5cVXIvtN8KFLVsiDXAR57qZ751mj8EDx8WKk1OjH3Y1Rv
+         nB/6opsxvcH5Klq4qrbihFMQOt8wuVCASYt4Ce2zuD9wJYyP49WA72hZBAQjeGP+hbti
+         jmIAp7Ek/8oocRLqsjuaH8/uLwZ70lY8/rLgyVwvbFAitzcFZWXkNHV0RbjZNU58uGCx
+         4hFw7R9SAEoleCBWapDFbURCBrVu6s6a4tQpK1kwBJ41Iup88r5vPdUZNvx5kFmjM/KF
+         CzRmxtrg4/i//ssL8ABsQ+kyxAAZerqfUOyB8uztZ8tXpqmYaRlw1j2TmaWX+jiRHZ5e
+         dvXw==
+X-Gm-Message-State: AOAM530ENXbImK6hw6s25/X9B45lVIm9SzYZixWRjrDO1QsFxFdlU9MD
+        JxYzBYYThUE2CG3bQImJ1MhrDb2lTI4=
+X-Google-Smtp-Source: ABdhPJwOcEoJ5m94o5VmovTTeks+T0EJ/vH213RpahokS5OtgCLMD9LmeICRSw3AEr3Jd5A24Kn1cg==
+X-Received: by 2002:a2e:8752:0:b0:255:6df7:7ad5 with SMTP id q18-20020a2e8752000000b002556df77ad5mr13523255ljj.73.1654493162053;
+        Sun, 05 Jun 2022 22:26:02 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:16ee:fa00::1? (dc73szyyyyyyyyyyyyyyt-3.rev.dnainternet.fi. [2001:14ba:16ee:fa00::1])
+        by smtp.gmail.com with ESMTPSA id x2-20020a05651c024200b002556fd0c336sm2164571ljn.78.2022.06.05.22.26.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Jun 2022 22:26:00 -0700 (PDT)
+Message-ID: <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
+Date:   Mon, 6 Jun 2022 08:25:58 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: en-US
+To:     Michael Trimarchi <michael@amarulasolutions.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-pm@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        linux-clk@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH 2/6] dt-bindings: update Luca Ceresoli's e-mail address
-Message-ID: <20220605230404.GA3694857-robh@kernel.org>
-References: <20220603155727.1232061-1-luca@lucaceresoli.net>
- <20220603155727.1232061-2-luca@lucaceresoli.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220603155727.1232061-2-luca@lucaceresoli.net>
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
+References: <20220605165703.1565234-1-michael@amarulasolutions.com>
+ <20220605165703.1565234-3-michael@amarulasolutions.com>
+From:   Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
+ clock as critical
+In-Reply-To: <20220605165703.1565234-3-michael@amarulasolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 03 Jun 2022 17:57:23 +0200, Luca Ceresoli wrote:
-> My Bootlin address is preferred from now on.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/clock/idt,versaclock5.yaml    | 2 +-
->  Documentation/devicetree/bindings/mfd/maxim,max77714.yaml       | 2 +-
->  .../devicetree/bindings/power/supply/maxim,max77976.yaml        | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
+Hi Michael,
 
-Applied, thanks!
+On 6/5/22 19:57, Michael Trimarchi wrote:
+> If the clock is used to generate the osc_32k, we need to mark
+> as critical. clock-critical has no binding description at the moment
+> but it's defined in linux kernel
+> 
+> bd71847: pmic@4b {
+> ...
+> 	rohm,reset-snvs-powered;
+> 
+> 	#clock-cells = <0>;
+> 	clock-critical = <1>;
+> 	clocks = <&osc_32k 0>;
+> 	clock-output-names = "clk-32k-out";
+> ...
+> }
+> 
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> ---
+>   drivers/clk/clk-bd718x7.c | 4 ++++
+
+//snip
+
+> @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+>   
+>   	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+>   
+> +	of_clk_detect_critical(dev->of_node, 0, &flags);
+
+Purely judging the kerneldoc for of_clk_detect_critical - you may have 
+hard time getting this accepted.
+
+I think you're working on a very valid problem though. Maybe you could 
+see if you could align your effort with Marek?
+
+https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
+
+Best Regards
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
+Discuss - Estimate - Plan - Report and finally accomplish this:
+void do_work(int time) __attribute__ ((const));
