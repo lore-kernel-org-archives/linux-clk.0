@@ -2,121 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E24C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 05:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1EBC43334
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 06:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbiFFFtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 01:49:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
+        id S229757AbiFFGJE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 02:09:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbiFFFtN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 01:49:13 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FED2CE26;
-        Sun,  5 Jun 2022 22:49:10 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id h23so21642415lfe.4;
-        Sun, 05 Jun 2022 22:49:10 -0700 (PDT)
+        with ESMTP id S229674AbiFFGJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 02:09:01 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B3D13F7D
+        for <linux-clk@vger.kernel.org>; Sun,  5 Jun 2022 23:08:56 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id j6so11893738pfe.13
+        for <linux-clk@vger.kernel.org>; Sun, 05 Jun 2022 23:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc
-         :references:from:subject:in-reply-to:content-transfer-encoding;
-        bh=QsPSmnoDQSspdeB5NQpv+gur6fIi4kTRao6eLgRuaaM=;
-        b=dn8k0YfOtWS3vkhH2Zz5wYis8IFRK0/6wNFKdBIVwfp6QGSMtlIqQVS+0FhLVWIJfs
-         Eq3eiAtpYAgoH+mR0SyhC68qsuvZi7ISj+y9OfTY0dggQbdZCnHWSsf+859U31upP7sQ
-         xifla9pTa6rrk4ALid/lUD4JvEREUODVnEG4soV82LuaDqt8wvicuTSYyoBhLzRTnZqS
-         /AHvwaXRiFQr/zB+ngqYA75pXb9WGpAzTLpUfK092NpbvEOmYidFAQVjgFg9CjRrKjjf
-         921v8M59wRVFfzaERjaMEMuVswVWqug4Q1gwL+GV6nQTSVd44jNRaO/w7jxctITj8WQT
-         N69w==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6k+dFc6Nvtrf/Msfd6+QxAADjHPGiS46041UYSZkIZk=;
+        b=dxW5cCP1FrLBb9/TgPfH8DwjCuNLncZFxzqKunOy/zK6kbVHN4A3mkOf8Jck6fIwQk
+         8t8q/V1iaQDYb6KqSKt1cCF8j4ZMBkeuJDkayx5qMQQgZyY6u2GhSuj/7NLjn5aUsGuf
+         V4MA5v6r3orwM03Ru0u7BkMfS3b0InBPeYdxM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:subject:in-reply-to
-         :content-transfer-encoding;
-        bh=QsPSmnoDQSspdeB5NQpv+gur6fIi4kTRao6eLgRuaaM=;
-        b=Bd8epFJe964FvrtN0z+hfF8pMq0oNr4VK29Ne+zmzEHO6+ED/SRIGdEVn2sf6QxF00
-         4+m14LHHUc0okMwrzy98XARvKrRIPDCoWCe5R82U+Ti5aX2a5O0dOQxYMuU/Q+rY7zDb
-         H3icW+PBUUhssu+8OhA0D8YOzzTqodwSmRPRdl2y8jyO5E4kkxmSZe+gGRfPITV0GDlu
-         uH/8wodZsKtRxyVNdyQoxfw1xh9CBPV4vAoohSpD8Y/Fr33L20w/8EvIzYxjqOVQ/HWB
-         cvKi5fjKorfCl+5gW6a1occw7k+JePN2l1yKI9ChuSiK6fizHn5RMqkXNsJaKk0N1V3O
-         /HRA==
-X-Gm-Message-State: AOAM532fJ/9D+JgH/HmP/nxwKDVZrtb0DoOzkA8+h4MQQ1b0aPIQAEAW
-        QN2/cqMVJP6NFU6YdPzBx1w=
-X-Google-Smtp-Source: ABdhPJzXPSXO1UB1Ofk63k65l3w0RiwRbD1x75/Fp4Lp9MKzCeFuUD3lINE4c84EolwoJo/MPhIpZg==
-X-Received: by 2002:a05:6512:2242:b0:478:ee3a:460d with SMTP id i2-20020a056512224200b00478ee3a460dmr21937913lfu.493.1654494548633;
-        Sun, 05 Jun 2022 22:49:08 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:16ee:fa00::1? (dc73szyyyyyyyyyyyyyyt-3.rev.dnainternet.fi. [2001:14ba:16ee:fa00::1])
-        by smtp.gmail.com with ESMTPSA id v18-20020a05651203b200b0047255d211adsm2724456lfp.220.2022.06.05.22.49.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jun 2022 22:49:07 -0700 (PDT)
-Message-ID: <96a66eab-cb20-71a4-baec-aff80f4cd93e@gmail.com>
-Date:   Mon, 6 Jun 2022 08:49:05 +0300
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6k+dFc6Nvtrf/Msfd6+QxAADjHPGiS46041UYSZkIZk=;
+        b=lkHlqAaBdftsvViaf3AuSin4KkubHXInI8G2h8iLPMNbQYYr2/DVwxFkM2nqcCoXIl
+         rFRI8JeYArcYJtbd1Teo6oykHiDXDwkqGMK0lh/UyAH90p2OWfesZizlS1uGgDTiDGgl
+         ll/Hb/aN+Rsil6lGlRhRIQoCZ8UjBIe/eNFC+qeSlsGLK9QzWI6xjIdm2FIIb/6rL4TT
+         gok5efzRgWHtEEDzEiQIyR+rQxcOJagj7ENJ1O0plTfq5rAwl0VEP9uao/LpufSYWboh
+         xIkchEodLnvk+PomzL2HKqBC3eF6FTAW+1awmyh4a86kpq0HXzXCWf/qot6qJDhaYMeu
+         qtXg==
+X-Gm-Message-State: AOAM532IbnjAphIIyg0SslAAuIdZIfg3gDiAh1xE0e7GYo4D5RNbzkU2
+        GCoFGELPNaVzBSTjjGGLZ7iFyYcBdakpOjpQKfWdlg==
+X-Google-Smtp-Source: ABdhPJw9xSkNh+h+Vtbm/VSYma4/+gWmuvUVLv/xA+IhtOU0VNhBKtivOv4H2UfyOonUTfJfE/mvTCwzQk8h7UkWgPc=
+X-Received: by 2002:a63:5610:0:b0:3f2:7e19:1697 with SMTP id
+ k16-20020a635610000000b003f27e191697mr19540118pgb.74.1654495736443; Sun, 05
+ Jun 2022 23:08:56 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     Michael Trimarchi <michael@amarulasolutions.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220605165703.1565234-1-michael@amarulasolutions.com>
+ <20220605165703.1565234-3-michael@amarulasolutions.com> <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
+In-Reply-To: <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
+From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date:   Mon, 6 Jun 2022 08:08:45 +0200
+Message-ID: <CAOf5uwn6_Tuh-r+8HpthMRDYYc50OnXp4m5TQi49heknfV5yWQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
+ clock as critical
+To:     Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-References: <20220605165703.1565234-1-michael@amarulasolutions.com>
- <20220605165703.1565234-2-michael@amarulasolutions.com>
-From:   Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [RFC PATCH 1/3] clk: bd718x7: Clean up the code, no functional
- changes
-In-Reply-To: <20220605165703.1565234-2-michael@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        open list <linux-kernel@vger.kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/5/22 19:57, Michael Trimarchi wrote:
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> ---
->   drivers/clk/clk-bd718x7.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-> index ac40b669d60b..04cc0beb67df 100644
-> --- a/drivers/clk/clk-bd718x7.c
-> +++ b/drivers/clk/clk-bd718x7.c
-> @@ -81,27 +81,28 @@ static int bd71837_clk_probe(struct platform_device *pdev)
->   	struct bd718xx_clk *c;
->   	int rval = -ENOMEM;
->   	const char *parent_clk;
-> +	struct device *dev = &pdev->dev;
+Hi
 
-I am not a fan of assigning pointers to struct members to local 
-variables unless they're shortening lines to fit on one row instead of 
-using two. Whenever we add such a variable we hide information. After 
-that being said - in this particular case the device 'dev' points to is 
-quite obvious so I am not completely against the change if other see the 
-value.
+On Mon, Jun 6, 2022 at 7:26 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+>
+> Hi Michael,
+>
+> On 6/5/22 19:57, Michael Trimarchi wrote:
+> > If the clock is used to generate the osc_32k, we need to mark
+> > as critical. clock-critical has no binding description at the moment
+> > but it's defined in linux kernel
+> >
+> > bd71847: pmic@4b {
+> > ...
+> >       rohm,reset-snvs-powered;
+> >
+> >       #clock-cells = <0>;
+> >       clock-critical = <1>;
+> >       clocks = <&osc_32k 0>;
+> >       clock-output-names = "clk-32k-out";
+> > ...
+> > }
+> >
+> > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> > ---
+> >   drivers/clk/clk-bd718x7.c | 4 ++++
+>
+> //snip
+>
+> > @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+> >
+> >       parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+> >
+> > +     of_clk_detect_critical(dev->of_node, 0, &flags);
+>
+> Purely judging the kerneldoc for of_clk_detect_critical - you may have
+> hard time getting this accepted.
+>
 
->   	struct device *parent = pdev->dev.parent;
->   	struct clk_init_data init = {
->   		.name = "bd718xx-32k-out",
->   		.ops = &bd71837_clk_ops,
-> +		.num_parents = 1,
+This is the reason for RFC. I have already seen the usage of this in
 
-I like this. Thanks.
+ainline/master:drivers/clk/st/clk-flexgen.c:
+of_clk_detect_critical(np, i, &flex_flags);
+mainline/master:drivers/clk/st/clkgen-fsyn.c:
+of_clk_detect_critical(np, fschan, &flags);
+mainline/master:drivers/clk/st/clkgen-pll.c:
+of_clk_detect_critical(np, 0, &pll_flags);
+mainline/master:drivers/clk/st/clkgen-pll.c:
+of_clk_detect_critical(np, odf, &odf_flags);
 
->   	};
+> I think you're working on a very valid problem though. Maybe you could
+> see if you could align your effort with Marek?
+>
+> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
+>
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+I have seen the Marek patcheset now. I don't know if they works anyway
+for a clock that is a part of MFD controller
 
-Best Regards
-	-- Matti
+Michael
+
+> Best Regards
+>         -- Matti
+>
+> --
+> Matti Vaittinen
+> Linux kernel developer at ROHM Semiconductors
+> Oulu Finland
+>
+> ~~ When things go utterly wrong vim users can always type :help! ~~
+>
+> Discuss - Estimate - Plan - Report and finally accomplish this:
+> void do_work(int time) __attribute__ ((const));
+
+
 
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
 
-~~ When things go utterly wrong vim users can always type :help! ~~
-
-Discuss - Estimate - Plan - Report and finally accomplish this:
-void do_work(int time) __attribute__ ((const));
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
