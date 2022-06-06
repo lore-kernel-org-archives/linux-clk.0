@@ -2,150 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1EBC43334
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 06:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56892C43334
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jun 2022 07:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbiFFGJE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jun 2022 02:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60492 "EHLO
+        id S231241AbiFFHaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jun 2022 03:30:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbiFFGJB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 02:09:01 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B3D13F7D
-        for <linux-clk@vger.kernel.org>; Sun,  5 Jun 2022 23:08:56 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id j6so11893738pfe.13
-        for <linux-clk@vger.kernel.org>; Sun, 05 Jun 2022 23:08:56 -0700 (PDT)
+        with ESMTP id S231217AbiFFHaE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jun 2022 03:30:04 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6D318FA50
+        for <linux-clk@vger.kernel.org>; Mon,  6 Jun 2022 00:30:03 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id me5so26678390ejb.2
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jun 2022 00:30:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6k+dFc6Nvtrf/Msfd6+QxAADjHPGiS46041UYSZkIZk=;
-        b=dxW5cCP1FrLBb9/TgPfH8DwjCuNLncZFxzqKunOy/zK6kbVHN4A3mkOf8Jck6fIwQk
-         8t8q/V1iaQDYb6KqSKt1cCF8j4ZMBkeuJDkayx5qMQQgZyY6u2GhSuj/7NLjn5aUsGuf
-         V4MA5v6r3orwM03Ru0u7BkMfS3b0InBPeYdxM=
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=C20vxMWdqTwD6Z42rEEVzIJpyd097nkNjpEAy8hCZfk=;
+        b=FT0hiO/wt9Ln26hReszWV7kve6WAQ7SHRAXHuM3oRcyMcf62QkOMqSeKO7K5Q78tV5
+         jqZbs/pnJHNkKXfFb5szKb/IknvxYaw6NxhOfSQMJu39Orgpud1c0nHJEYhlJwBSG3g4
+         MmGf34twiFLhdqro9wTstyDge0JufEnO8kpC6eFUvoJMSFadTBbyjOMQe0j2P8JJ0S/D
+         iWAc3DOU0+HSvwVqGySRPfQDMJMQ+d9ne1njR2H81Dx76MXiTUbI3BF2QydGU6s0Z4OR
+         2sLoyhzZDAB6++fqC4WXdwKsoNeRFox4yH28AxiIaBKfcq7eroLmoOeZx8H74tM6VFRp
+         BpAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6k+dFc6Nvtrf/Msfd6+QxAADjHPGiS46041UYSZkIZk=;
-        b=lkHlqAaBdftsvViaf3AuSin4KkubHXInI8G2h8iLPMNbQYYr2/DVwxFkM2nqcCoXIl
-         rFRI8JeYArcYJtbd1Teo6oykHiDXDwkqGMK0lh/UyAH90p2OWfesZizlS1uGgDTiDGgl
-         ll/Hb/aN+Rsil6lGlRhRIQoCZ8UjBIe/eNFC+qeSlsGLK9QzWI6xjIdm2FIIb/6rL4TT
-         gok5efzRgWHtEEDzEiQIyR+rQxcOJagj7ENJ1O0plTfq5rAwl0VEP9uao/LpufSYWboh
-         xIkchEodLnvk+PomzL2HKqBC3eF6FTAW+1awmyh4a86kpq0HXzXCWf/qot6qJDhaYMeu
-         qtXg==
-X-Gm-Message-State: AOAM532IbnjAphIIyg0SslAAuIdZIfg3gDiAh1xE0e7GYo4D5RNbzkU2
-        GCoFGELPNaVzBSTjjGGLZ7iFyYcBdakpOjpQKfWdlg==
-X-Google-Smtp-Source: ABdhPJw9xSkNh+h+Vtbm/VSYma4/+gWmuvUVLv/xA+IhtOU0VNhBKtivOv4H2UfyOonUTfJfE/mvTCwzQk8h7UkWgPc=
-X-Received: by 2002:a63:5610:0:b0:3f2:7e19:1697 with SMTP id
- k16-20020a635610000000b003f27e191697mr19540118pgb.74.1654495736443; Sun, 05
- Jun 2022 23:08:56 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=C20vxMWdqTwD6Z42rEEVzIJpyd097nkNjpEAy8hCZfk=;
+        b=DSWXgqi1SwQ2Wj9YuS88H2B9X+kq9NBcsvpY+ucyQl0K3R8p/5bqf3YRJxWSc+AXXW
+         8XIF5rO8gMpQteJmHDpP56+Fi8mEHpIIXGU7nIl/Ptu7stp7NjvbxbQLIqCnTgGPb0vA
+         VLPZHCCBvBdIkG0HA0/k/hSEjVqTDalK4b/lyOkejNC59y3DTvwZg+Lnzwz+xoi3p1Mn
+         CahBxpZZYEanB6A26V6P33uoMy1uwxzqJz6fdQUvE9iDXpPmnj4O+mYQdfKsUXxoaSFP
+         Juz8m22yoLxRF7NMM8S9GEqlcjpyy/koNH+gM9THtho4UdarvFMMeorGkmE6kdObF633
+         girg==
+X-Gm-Message-State: AOAM53051BRgS9RBA3W8RYNjjbjIpJEIku8/YOp8+AaoMOo04Ux7o6I8
+        4wlJ/mNOvmUr24ZGiMQ7o7bmeR5CQmLxGg==
+X-Google-Smtp-Source: ABdhPJwDrG9m7vAQS+VF/GQXXz1IT+Mgco25TxBuVlJNzEy+22mr0JP9+ZK6aVbHXdWQQHWMrTExsA==
+X-Received: by 2002:a17:907:3daa:b0:6fe:88ab:fe8c with SMTP id he42-20020a1709073daa00b006fe88abfe8cmr20075363ejc.575.1654500601591;
+        Mon, 06 Jun 2022 00:30:01 -0700 (PDT)
+Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id t11-20020a17090605cb00b00706c1327f4bsm5994755ejt.23.2022.06.06.00.30.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Jun 2022 00:30:01 -0700 (PDT)
+Message-ID: <8e81de5f-dfb7-e34f-ff5f-44b52421fa24@linaro.org>
+Date:   Mon, 6 Jun 2022 09:29:59 +0200
 MIME-Version: 1.0
-References: <20220605165703.1565234-1-michael@amarulasolutions.com>
- <20220605165703.1565234-3-michael@amarulasolutions.com> <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
-In-Reply-To: <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Mon, 6 Jun 2022 08:08:45 +0200
-Message-ID: <CAOf5uwn6_Tuh-r+8HpthMRDYYc50OnXp4m5TQi49heknfV5yWQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
- clock as critical
-To:     Matti Vaittinen <mazziesaccount@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [RFC v2 1/2] clk: hisilicon: add CRG driver Hi3521a SoC
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     "Marty E. Plummer" <hanetzer@startmail.com>
+Cc:     arnd@arndb.de, cai.huoqing@linux.dev, christian.koenig@amd.com,
+        devicetree@vger.kernel.org, gengdongjiu@huawei.com,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux@armlinux.org.uk, michael@walle.cc, miquel.raynal@bootlin.com,
+        mturquette@baylibre.com, novikov@ispras.ru, olof@lixom.net,
+        p.yadav@ti.com, rdunlap@infradead.org, richard@nod.at,
+        robh+dt@kernel.org, sboyd@kernel.org, soc@kernel.org,
+        sumit.semwal@linaro.org, tudor.ambarus@microchip.com,
+        vigneshr@ti.com, xuwei5@hisilicon.com
+References: <20220501054440.2434247-1-hanetzer@startmail.com>
+ <20220501173423.2473093-1-hanetzer@startmail.com>
+ <20220501173423.2473093-2-hanetzer@startmail.com>
+ <f42cb4d0-7133-eea5-b456-b5169bebfad1@linaro.org>
+ <20220601105846.7hriawg3stxb657f@proprietary-killer>
+ <630b0d13-6778-2508-6a34-9daa0358047d@linaro.org>
+ <20220601110616.xmxih663kxgupszv@proprietary-killer>
+ <a2a98c6d-2ff7-89f6-0711-c8f8b99e85c2@linaro.org>
+ <20220601182418.okoofgannw6vbcxo@proprietary-killer>
+ <b1b87be5-a048-b713-c9f2-84b948aa6718@linaro.org>
+ <20220603112227.hmzwy7xxl6ddezqh@proprietary-killer>
+ <34e6715e-795c-3d64-1341-31da9bd27563@linaro.org>
+In-Reply-To: <34e6715e-795c-3d64-1341-31da9bd27563@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi
+On 05/06/2022 16:54, Krzysztof Kozlowski wrote:
+> On 03/06/2022 13:22, Marty E. Plummer wrote:
+>> On Thu, Jun 02, 2022 at 08:37:43AM +0200, Krzysztof Kozlowski wrote:
+>>> On 01/06/2022 20:24, Marty E. Plummer wrote:
+>>>
+>>>>>> Either or. Whatever makes the workload easier is what I'm looking for.
+>>>>>
+>>>>> Sorry, you need to be more specific. Apply is not a job for you, for the
+>>>>> patch submitter.
+>>>>>
+>>>>> Then you miss here important piece - which is the first patch. DTS goes
+>>>>> always via separate branch (or even tree) from driver changes. That's
+>>>>> why bindings are always separate first patches.
+>>>>>
+>>>> So, add a 4: arch/arm/boot/dts/soc.dtsi and 5: arch/arm/boot/dts/board.dts
+>>>> to the above list, or should those be the same patch as well?
+>>>
+>>> For me does not matter, sub architecture maintainer might have preference.
+>>>
+>> Fair enough. That being said, for the dt-bindings patch, is it
+>> permissible to include #define CLOCK_FOO 1337 and so on for clocks which
+>> haven't been wired up in the driver yet? As in, you know they're there,
+>> and are important enough to model, but you haven't gotten to that point
+>> yet?
+> 
+> What would be the benefit to include them now? I imagine that if you
+> plan to add such clocks to the driver in next week or something, and you
+> need to use them in DTS, then it's fine. If that's not the case,
+> probably there is little sense in defining them upfront...
 
-On Mon, Jun 6, 2022 at 7:26 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->
-> Hi Michael,
->
-> On 6/5/22 19:57, Michael Trimarchi wrote:
-> > If the clock is used to generate the osc_32k, we need to mark
-> > as critical. clock-critical has no binding description at the moment
-> > but it's defined in linux kernel
-> >
-> > bd71847: pmic@4b {
-> > ...
-> >       rohm,reset-snvs-powered;
-> >
-> >       #clock-cells = <0>;
-> >       clock-critical = <1>;
-> >       clocks = <&osc_32k 0>;
-> >       clock-output-names = "clk-32k-out";
-> > ...
-> > }
-> >
-> > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> > ---
-> >   drivers/clk/clk-bd718x7.c | 4 ++++
->
-> //snip
->
-> > @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
-> >
-> >       parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-> >
-> > +     of_clk_detect_critical(dev->of_node, 0, &flags);
->
-> Purely judging the kerneldoc for of_clk_detect_critical - you may have
-> hard time getting this accepted.
->
+Actually I see one more benefit - since IDs should be incremented by
+one, you can define all of them upfront thus having some
+logical/alphabetical order/grouping. If you extend the bindings header
+with new IDs later, they must go to the end of the list, thus maybe
+ordering will not be that nice.
 
-This is the reason for RFC. I have already seen the usage of this in
+If you want, go ahead with all IDs. Just remeber that these must be IDs,
+not register values or some programming offsets.
 
-ainline/master:drivers/clk/st/clk-flexgen.c:
-of_clk_detect_critical(np, i, &flex_flags);
-mainline/master:drivers/clk/st/clkgen-fsyn.c:
-of_clk_detect_critical(np, fschan, &flags);
-mainline/master:drivers/clk/st/clkgen-pll.c:
-of_clk_detect_critical(np, 0, &pll_flags);
-mainline/master:drivers/clk/st/clkgen-pll.c:
-of_clk_detect_critical(np, odf, &odf_flags);
-
-> I think you're working on a very valid problem though. Maybe you could
-> see if you could align your effort with Marek?
->
-> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
->
-
-I have seen the Marek patcheset now. I don't know if they works anyway
-for a clock that is a part of MFD controller
-
-Michael
-
-> Best Regards
->         -- Matti
->
-> --
-> Matti Vaittinen
-> Linux kernel developer at ROHM Semiconductors
-> Oulu Finland
->
-> ~~ When things go utterly wrong vim users can always type :help! ~~
->
-> Discuss - Estimate - Plan - Report and finally accomplish this:
-> void do_work(int time) __attribute__ ((const));
-
-
-
--- 
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
+Best regards,
+Krzysztof
