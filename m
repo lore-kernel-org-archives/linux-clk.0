@@ -2,192 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76ECFCCA47C
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jun 2022 08:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2629ACCA485
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jun 2022 11:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238753AbiFGIzq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jun 2022 04:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38592 "EHLO
+        id S242516AbiFGLL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jun 2022 07:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238752AbiFGIzp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jun 2022 04:55:45 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16FDF95A04;
-        Tue,  7 Jun 2022 01:55:43 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-300628e76f3so167714757b3.12;
-        Tue, 07 Jun 2022 01:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DCFzqf63qTXvY8vrDH8nEkvB0ZzP3LV9vfnLAnBhtZ0=;
-        b=OXAAsSsqWJi+ZmAnZHwZ3Ov4KAt9dijXM7JEfwDpKzXyfryCFwOzxbC3QZhnFXHp9L
-         LFuoi9R8HCIN42XSmqaOQu/XHZqAplNELcuxGGf2VoLBfO3pDcPH93CRMlOVPp8GvbeK
-         qJMmXW0vrt5fobyjEU9WsB+TnJ+ocqasY9EneC+gsH6xNA+vf/ufJDaJr6y94B0CeBBU
-         gaidajhkoKxsVf6D19cMn5pyY4AhQzoUquMv7X3d6hp4zAVC+3zU+lCaMZfz7I+9F4e6
-         pvfblRek8KAGF6ibobsIKH/5/5T74ofRtv2DmzOZI7um4Vz2stoHiTvErbBBkwqUdyil
-         nYEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DCFzqf63qTXvY8vrDH8nEkvB0ZzP3LV9vfnLAnBhtZ0=;
-        b=JFNUP0lvf94KlctMs7wkDXBdNqSouFEgFBsa5SNK3qqWsnojKcLSwTVOCEQ2rq9xYd
-         vEfezFTQkxP76UUO1wErXbHMmq9a818QxxRHwVfnKdciKLdnlAPAOg5NIUeIkzSr0ofw
-         xx/ZoYcthmsuaavUE97IyPwDck/DnO0XMcCG+8jUDGqIBPqwShr+i3mxlaa4Aj1UZmlw
-         TSQ2woviz1s0biMWsKj8kDy3zdmbu7guSx+360ieboWvgtCPgcoiMmg2MP/xU1wSq+Sh
-         javDicJdFyx5M17ljRO9/xDz50fLsk05Ve1XIyuufoZEL5tXNCPotiG0Cp+S5WWAESL4
-         iV7g==
-X-Gm-Message-State: AOAM532aKKBwMGvdevSi2tqptjy8PlFe0UPyqYoPH+0/a/46p3QBzWcu
-        m30O3OiSgaJxXVmH6fB4vMsaSuQFRhgSm6xHo0TGFTahMWs=
-X-Google-Smtp-Source: ABdhPJyGq9SkLesbmhzSr0UuAwuQTtqxxJDorC0eVc6BFNqsVApafYC11XsGlvmyENwQQcTAjo58orj6ynKJSPaNcr8=
-X-Received: by 2002:a81:190f:0:b0:313:43b8:155c with SMTP id
- 15-20020a81190f000000b0031343b8155cmr1295247ywz.495.1654592142166; Tue, 07
- Jun 2022 01:55:42 -0700 (PDT)
+        with ESMTP id S242895AbiFGLKS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jun 2022 07:10:18 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E610D5002B
+        for <linux-clk@vger.kernel.org>; Tue,  7 Jun 2022 04:08:25 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nyX4M-0000Nc-D8; Tue, 07 Jun 2022 13:08:18 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nyX4M-006ySL-DU; Tue, 07 Jun 2022 13:08:17 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nyX4K-00EkYc-Ai; Tue, 07 Jun 2022 13:08:16 +0200
+Date:   Tue, 7 Jun 2022 13:08:16 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Russell King <linux@armlinux.org.uk>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        kernel@pengutronix.de, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v9 0/4] clk: provide new devm helpers for prepared and
+ enabled clocks
+Message-ID: <20220607110816.hjacgojgmf2p7xdq@pengutronix.de>
+References: <20220520075737.758761-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-References: <CAK8P3a1YTBRO_pRZLqbNHwG4DaYA56tn1_E0g3c1VW0B-jz-qg@mail.gmail.com>
- <CAGm1_kuaRr3BFWSq-2v4vT0VbVvMX=kMHQsQ1KZnKe9UEff3MA@mail.gmail.com>
- <Yozpa3DlLLEzBR8W@atomide.com> <CAGm1_ku5EusuSJ9zhYZBRGdRUr8_NYsx3=BZQkuYtNJpq3Tn_w@mail.gmail.com>
- <Yo8cLxktTytqAEV3@atomide.com> <CAMj1kXEr848Jaxfk64wDgFHMmq-CLvgXtH_sfqVC-4DRLwCDqA@mail.gmail.com>
- <CAGm1_ksuNbMvg5tVOHswMRWQyX8ZA_U-49Ge6uoG0xV7x5viHA@mail.gmail.com>
- <CAK8P3a04Qc3Qkb2s1OmCFVKi=yrLReL4Np0JJYjskMWozBDr7Q@mail.gmail.com>
- <CAGm1_kvnqOz68UDL=n80kZd1UoUaPGJG10YvkxUnezg1rSf6Lg@mail.gmail.com>
- <CAK8P3a2qat95d14QDp7HfKmqm8Kw0s0WVeLH=GkgBwH2c7nJ8A@mail.gmail.com>
- <YpB0tdMHh/aBlfyk@atomide.com> <CAK8P3a3ocZDD9odfDe_WBeovHXCNU4CSScrmE4HVtLKef_z+EQ@mail.gmail.com>
- <CAGm1_ktOPgUSVjPP44Y49GgFLpDMrECu7eqQu7d2ZvJiOftWAQ@mail.gmail.com>
- <CAK8P3a36s6S2B8PTixxEkmaKXL88NAydTm4abdeC+roGtrUTsw@mail.gmail.com>
- <CAGm1_kvdhqrptEYy8WMfqZqG6gaWoBtAojSW5uXYnyXMVfV=Fw@mail.gmail.com>
- <CAK8P3a22hmSnS4X93ETLpF7vPtK_F1TD51SK5VvhEz9L9H4i3g@mail.gmail.com>
- <CAMj1kXF2NFxiNm=9ixOncN_wkgg2NrNNm9vE-CGUvpJuThj3JA@mail.gmail.com>
- <CAK8P3a1DnyNvBqdRGHAnHcXBfoNPn4GfUmf_SBGRRU3q3iwwvg@mail.gmail.com>
- <CAGm1_kta63UM8um5BB5jOh+r9uFMiGwAiYsrNDOwG3dN-Oo47Q@mail.gmail.com>
- <CAK8P3a2yaKcEiO-LvH5z5azTEX1XTh=9U2MChRS92dtatceY5g@mail.gmail.com>
- <CAGm1_kvXaH19nOmP_Dy3nxWpG0UiX7eyauTLB+9Cd2rBovDcEQ@mail.gmail.com>
- <CAMj1kXFfc-e0+dpLJHj9W+=YS=3i0t1+wxF+4qJ5K-g7pTd+YQ@mail.gmail.com>
- <CAGm1_ksndacPPpyZknvHip=7Fv+3NxXjyfCm_DDMm4EbcBuBig@mail.gmail.com>
- <CAK8P3a2VV26MhWz95OwfKz+2k35ee8V876iqdJdZ4o1HuNba8A@mail.gmail.com>
- <CAGm1_ktyCchFwVWhFtrgR621s_fPZJ3u8UmgOPbg7OCOq0h6ZA@mail.gmail.com>
- <CAK8P3a02uFq4edc_VzPaNQXp_cuLXUMbF4c=k6KATApS9hNHkw@mail.gmail.com>
- <CAMj1kXEvxP8ULqy7ajT_cSxMzYLJuCjEZGfYBb=F9qOwz-AFaQ@mail.gmail.com>
- <CAGm1_ksF1UPpdeiTnADiQK8MFbvP8-eDhc=yaCL75EsE_pG=-g@mail.gmail.com>
- <CAGm1_ksmXTnEo_Mxk7+S4vs_CQAs5ZHoEOpq9Tq3ZFf7sruX7A@mail.gmail.com>
- <CAK8P3a1nhBnbbocBNkKUKYhw14OYE0WPEyQcJJXzbpW4uASu_Q@mail.gmail.com>
- <CAGm1_kswMZkoV9_DnB71ugVTF_rh5SV2NazkHROwXiFqhxTWYA@mail.gmail.com>
- <CAK8P3a0Qdav2JaF8yLydxr9amQp30gnY67CVx+ubowUHeG1VeA@mail.gmail.com>
- <CAMj1kXEL48=w08A2t7522y1visAUcnkkq4LA6ERRP_FbCbEgiw@mail.gmail.com>
- <CAMj1kXFmFfQ1oZ-CUcwe+ojSkk+9KBH1azhGrEJ4=-pZgMXX-Q@mail.gmail.com>
- <CAGm1_ku-tygQJrgvHnvJd0xzb6Vw3t_qdz_VKHJx4YWSxCEryA@mail.gmail.com>
- <CAMj1kXHUoDQ0xZ4yBx9uT6D9=6xfOsJoWLoOKho_-=Z9uYS30w@mail.gmail.com>
- <CAGm1_ks8g3RNwOkC8C_B2eYz56cEA7L-6CRdmqmNwSvAg-JP_g@mail.gmail.com>
- <CAMj1kXH+WR03MX94rd1p7Yz60mfrkOvOx=NYoZ9FCSnqMP4nTw@mail.gmail.com>
- <CAGm1_kvZ_6tPgfrTc3pH+6TedoU+mvuEXb+7aEp5mXfx516fmA@mail.gmail.com>
- <CAMj1kXEfKLYYxt9imEO155oxWTzXtWPpF8txGZ-xCs_6vez-WA@mail.gmail.com>
- <CAGm1_kvJpoDk=G3xYKT5UD5QnjRGr9Npft-8OCgtB9+qCjRtqQ@mail.gmail.com>
- <CAGm1_kvrivJLsFJaZtr6ojryDZFu3Xmpum8FURoFT9vMr54LUA@mail.gmail.com>
- <CAK8P3a2113EnZw9BNjCYYmKuNqEk4CtZCC0ydBNNQXetvzTSEg@mail.gmail.com>
- <CAGm1_kuUVKAxcxENnvsq5AGzeXAeXP6yLmjt1MQSpfjdcvZjng@mail.gmail.com>
- <CAK8P3a1VeP6YMYV6hh13K1Q3epuO5wRUmTByY7YVVT86J1giqg@mail.gmail.com> <CAMj1kXEzK2eEXLHP2OH6APpw+yC66XQafFWs6kMni1i+bDC4uA@mail.gmail.com>
-In-Reply-To: <CAMj1kXEzK2eEXLHP2OH6APpw+yC66XQafFWs6kMni1i+bDC4uA@mail.gmail.com>
-From:   Yegor Yefremov <yegorslists@googlemail.com>
-Date:   Tue, 7 Jun 2022 10:55:30 +0200
-Message-ID: <CAGm1_kvutEPNXSVLD6PJ+ND8urrTksKHtELwCLd7sboBUyoz+w@mail.gmail.com>
-Subject: Re: am335x: 5.18.x: system stalling
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="khx3ydxphtqwbrvl"
+Content-Disposition: inline
+In-Reply-To: <20220520075737.758761-1-u.kleine-koenig@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jun 5, 2022 at 4:59 PM Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Fri, 3 Jun 2022 at 22:47, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Fri, Jun 3, 2022 at 9:11 PM Yegor Yefremov
-> > <yegorslists@googlemail.com> wrote:
-> > >
-> > > With compiled-in drivers the system doesn't stall. All other tests and
-> > > related outputs will come next week.
-> >
-> > Ah, nice!
-> >
-> > It's probably a reasonable assumption that the smp-patched get_current()
-> > is (at least sometimes) broken in modules but working in the kernel itself.
-> > I suppose that means in the worst case we can hot-fix the issue by
-> > having an 'extern' version of get_current() for the case of
-> > armv6+smp+module ;-)
-> >
->
-> I've coded something up along those lines, and pushed it to my
-> am335x-stall-test branch.
->
-> > Maybe start with the ".long 0xe7f001f2" hack I suggested in my last
-> > mail. If that gives you an oops for the module case, then we know
-> > that the patching doesn't work at all and you don't have to try anything
-> > else, otherwise it's more likely that an incorrect instruction sequence
-> > is patched in.
-> >
->
-> Yeah, I'd be really surprised if the patching misses some occurrences,
-> so I have no clue what is going on here.
->
-> Yegor, can you please try my branch with the original config (i.e.,
-> slcan and ftdio as modules)
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=am335x-stall-test
 
-@Arnd: I have applied your patch with this change:
+--khx3ydxphtqwbrvl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-asm("0: .long 0xe7f001f2                        \n\t" // BUG() trap
+Hello,
 
-But it revealed nothing new:
+On Fri, May 20, 2022 at 09:57:33AM +0200, Uwe Kleine-K=F6nig wrote:
+> after Stephen signaled to accept the idea, this is a rework of v8[1] with
+> the following changes:
+>=20
+>  - Drop the follow up conversions. I will resend them individually per
+>    subsystem once the preconditions from this v9 are in. I only kept one
+>    clk patch that will go in via the clk tree anyhow. I trimmed the Cc:
+>    list accordingly.
+>=20
+>  - (trivially) rebased to v5.18-rc1
+>=20
+>  - Introduce a new commit that first improves the documention of
+>    devm_clk_get() and devm_clk_get_optional() before (mostly)
+>    duplicating these for the new functions.
+>=20
+>  - Make the new functions use a GPL export. (Note the existing functions
+>    use a plain export, I didn't change that.)
+>=20
+>  - Drop a bogus empty line that was cut-n-pasted into several functions.
+>=20
+> Thanks for feedback by Stephen and Jonathan.
+>=20
+> @Russell: Stephen wrote in v8: "I'm largely waiting for Russell to ack
+> the clk.h change [...]". Would be great if you looked at the series and
+> tell us your thoughts.
 
-[   50.754130] rcu: INFO: rcu_sched self-detected stall on CPU
-[   50.760834] rcu:     0-...!: (2600 ticks this GP)
-idle=ec9/1/0x40000004 softirq=1852/1852 fqs=0
-[   50.770407]  (t=2600 jiffies g=2577 q=17)
-[   50.775046] rcu: rcu_sched kthread timer wakeup didn't happen for
-2599 jiffies! g2577 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
-[   50.786961] rcu:     Possible timer handling issue on cpu=0 timer-softirq=872
-[   50.794429] rcu: rcu_sched kthread starved for 2600 jiffies! g2577
-f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
-[   50.805403] rcu:     Unless rcu_sched kthread gets sufficient CPU
-time, OOM is now expected behavior.
-[   50.814927] rcu: RCU grace-period kthread stack dump:
-[   50.820464] task:rcu_sched       state:I stack:    0 pid:   10
-ppid:     2 flags:0x00000000
-[   50.830019] [<c0b683d4>] (__schedule) from [<c0b68d18>] (schedule+0x54/0xe8)
-[   50.838470] [<c0b68d18>] (schedule) from [<c0b6f51c>]
-(schedule_timeout+0xa8/0x210)
-[   50.847208] [<c0b6f51c>] (schedule_timeout) from [<c01d85b4>]
-(rcu_gp_fqs_loop+0x118/0x6b4)
-[   50.856631] [<c01d85b4>] (rcu_gp_fqs_loop) from [<c01dc4e4>]
-(rcu_gp_kthread+0x138/0x30c)
-[   50.865832] [<c01dc4e4>] (rcu_gp_kthread) from [<c0164df8>]
-(kthread+0x13c/0x164)
-[   50.874315] [<c0164df8>] (kthread) from [<c0100140>]
-(ret_from_fork+0x14/0x34)
-[   50.882477] rcu: Stack dump where RCU GP kthread last ran:
-[   50.888512] NMI backtrace for cpu 0
-[   50.892575] CPU: 0 PID: 62 Comm: kworker/0:12 Not tainted 5.16.0-rc1 #1
-[   50.899912] Hardware name: Generic AM33XX (Flattened Device Tree)
-[   50.906610] Workqueue: events dbs_work_handler
-[   50.912202] [<c0111600>] (unwind_backtrace) from [<c010bff4>]
-(show_stack+0x10/0x14)
-[   50.921035] [<c010bff4>] (show_stack) from [<d03919f0>] (0xd03919f0)
-[   50.928943] NMI backtrace for cpu 0
-[   50.933084] CPU: 0 PID: 62 Comm: kworker/0:12 Not tainted 5.16.0-rc1 #1
-[   50.940419] Hardware name: Generic AM33XX (Flattened Device Tree)
-[   50.947083] Workqueue: events dbs_work_handler
-[   50.952574] [<c0111600>] (unwind_backtrace) from [<c010bff4>]
-(show_stack+0x10/0x14)
-[   50.961334] [<c010bff4>] (show_stack) from [<d03919f0>] (0xd03919f0)
+That didn't happen :-\
 
-@Ard: I have tried your branch
-(21b6671c82d4df52ea0c7837705331acb375c5c8). The system still stalls.
+> @Stephen: You asked to add the acks from v8. There were however only
+> acks for the followup conversions. So no changes here.
+> (Andy Shevchenko replied to patch 0, but his Reviewed-by: only affected
+> the patch "iio: Make use of devm_clk_get_enabled()".)
 
-Yegor
+Hmm, I somehow expected this series to go into v5.19-rc1, but it didn't
+:-\. Is there anything still needed from my side?
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--khx3ydxphtqwbrvl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKfMZ0ACgkQwfwUeK3K
+7AmI7Qf7BpHyH7NQYdAbsyxMDtr5lbVKJvPPCve9JQxjjfil9E/JZWGZ+IHDCfXR
+ajjVz+wK22Oby5H4YY7lRqqz7X8bB+lQampjulr/UhdN2jSfVC3HQ7Faregv3ZBb
+vahwcrMYutKKsgFN4SzHUvTvfsoaIZVx9MvcmBgoO7nnPlKhuJdbxKWhzHZwwk8F
+czMDQh6KUmPMurtPK0R+5dEJNXBGQi+XqYCgTYQhiRaxJ4eGY/Z6gXXq1Y80FYj+
+JxkoVOb9rPbT5zWUNL9E8cssKgL4aS725+sRxmwIuYhhoIV66xtkS5xTV5vGr2Gi
+4WR8JNY8bELBna5K0ZXi3hie9QQv2A==
+=ooR/
+-----END PGP SIGNATURE-----
+
+--khx3ydxphtqwbrvl--
