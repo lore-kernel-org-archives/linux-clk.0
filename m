@@ -2,74 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAA9C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jun 2022 11:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92225C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jun 2022 11:57:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242178AbiFGLrD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jun 2022 07:47:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53730 "EHLO
+        id S243262AbiFGL5C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jun 2022 07:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237015AbiFGLrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jun 2022 07:47:01 -0400
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 523B17C155
-        for <linux-clk@vger.kernel.org>; Tue,  7 Jun 2022 04:46:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ru+AWndABYCCJiSHLvh18kLiPXnVewSrqSoG21D3HlI=; b=yW9J9YGBEXEIccSuf6yLq4Dif/
-        /sHwVZWZbLZb88GjJj0OqzKwqN6F50TCc7/+C1r1j/gaB6kut5F2v1PRU+zOoi0sJTmmesZzCnssV
-        NaDamW+Mi3KFfIwWIw2g9TrHpK3K0ZaN0cqRXu8fpWGeJUT3ms6+DXp8paOKOtQAIZqL6x37+j7sB
-        +PPFCUBdhz8/sNG2KOwEJgNtJ4mHCwCy8dMwWxSami0UnnBhsTpPLFvxrkUqyIhESW/tBtfbwhSER
-        BdBKjbJsEedatXfwzSF2ElugEmk7ALiQGcN4bIE4VC67bfR+zcwBjsshRqIf82Le0lrqI9pyiIl0P
-        P/KzLL/w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60996)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1nyXfl-0003Lp-BZ; Tue, 07 Jun 2022 12:46:57 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1nyXfk-0000ln-K3; Tue, 07 Jun 2022 12:46:56 +0100
-Date:   Tue, 7 Jun 2022 12:46:56 +0100
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, Michael Turquette <mturquette@baylibre.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Alexandru Ardelean <aardelean@deviqon.com>
-Subject: Re: [PATCH v9 1/4] clk: Improve documentation for devm_clk_get() and
- its optional variant
-Message-ID: <Yp86sBjM2G7/pcQr@shell.armlinux.org.uk>
-References: <20220520075737.758761-1-u.kleine-koenig@pengutronix.de>
- <20220520075737.758761-2-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S242292AbiFGL5A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jun 2022 07:57:00 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C24BCB5265
+        for <linux-clk@vger.kernel.org>; Tue,  7 Jun 2022 04:56:58 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id fd25so22681679edb.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jun 2022 04:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=9yUA6xZ+TgF7E05GHOHfVerF3dIUaRPmpzkb0SqFslg=;
+        b=yZF938OJ/O7+VlTfOCAPvgavpyjTL2l5Dn0Tn2nIwpSe55xG1IS+57nq5ALnIDLec5
+         79x4zkTiEbOgwCtHLa2fhZ6iEu7D/lMorP76inFutqBeQJldod8/6UKADExabiSlqIZq
+         7rJDPGd5+1ninnZI67YT6mdGZGLaV7/tQ/7ZzIF7BwPODSUOM1S9QaAQK6gUDp23lTd9
+         gKGU3+5H5GU/ValDpNcmAVHC/SiNrjA+eDInhSLCfU/8aPrUi7hryXGpr/h7BVjHK6AI
+         Chjo1f2a4t4ZOsYIOaYc+aElJ5n6uhyYpsQWQsYJQ2JhdcqiYa6bvS4vcxEwwON3K/Nu
+         euzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=9yUA6xZ+TgF7E05GHOHfVerF3dIUaRPmpzkb0SqFslg=;
+        b=YrGMvehA7N+/u83hiHRkQmCeub0PE0e98BvgVTlqwdkg22V7L/6A1+uE5d4spoTksI
+         pEXfkKlgY1RLvDomdOKTnYus70Qfwj3K4YstOgwns4Pz4nxNXbHJIgr/fJNNt4k43YBi
+         J9RuFwpgy7XA7UKaci6klx+dMlsZYU7BEbOP8m6lz5LKYEZ3mvMGSlWYqAepgMTDyz7p
+         1tKsC2XV5wleczNQY0la9+p58ihagfNunDuecfIFPyszozUqLsL+x5WE7uqwBVf9EwR3
+         CDdjqHTqdS5cL7fMzjxp5bWE345XNPmLb+bg3flftTHTNZ7nPi09fGrd66B4pqZWFVsB
+         uOLQ==
+X-Gm-Message-State: AOAM533CIJQUCeTSunRAkFZdzx+bHKch/eSpG/F/P4Dv7KMwAgIjRcPY
+        x1PPxIhxuCI1J7nJ7YFpFrYaWw==
+X-Google-Smtp-Source: ABdhPJyDyZBQOke271JtAgNt1hSBlmSVUkFbj2ZmbW/2KkYdQf3mrTIq3KxTSW9YKCe45nHpZbAZ1A==
+X-Received: by 2002:a05:6402:438a:b0:42e:985:4944 with SMTP id o10-20020a056402438a00b0042e09854944mr31974058edc.283.1654603017338;
+        Tue, 07 Jun 2022 04:56:57 -0700 (PDT)
+Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id o22-20020a170906601600b006fe8b456672sm7680363ejj.3.2022.06.07.04.56.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jun 2022 04:56:56 -0700 (PDT)
+Message-ID: <5a604d43-92f3-2709-bf3e-098a9d2dfa54@linaro.org>
+Date:   Tue, 7 Jun 2022 13:56:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220520075737.758761-2-u.kleine-koenig@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v17 01/10] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Content-Language: en-US
+To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1654565776.git.qinjian@cqplus1.com>
+ <2b3d1c0f7b83f9e317ecd68965b6cbf7d7f3d13b.1654565776.git.qinjian@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <2b3d1c0f7b83f9e317ecd68965b6cbf7d7f3d13b.1654565776.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 20, 2022 at 09:57:34AM +0200, Uwe Kleine-König wrote:
-> Make use of "Context:" and "Return:". Mention that the clk is not to be
-> expected to be prepared, previously only not being enabled was mentioned
-> which probably dates from the times when the concept of clk preparation
-> wasn't invented yet.
+On 07/06/2022 03:58, Qin Jian wrote:
+> This introduces bindings for boards based Sunplus SP7021 SoC.
 > 
-> Also describe devm_clk_get_optional() fully instead of just referencing
-> devm_clk_get().
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Acked-by: Rob Herring <robh+dt@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+This is not a correct address in the tag. I never used such. Please fix
+all reviewed and acked-by tags (mine and Rob) to what you received.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+Mine was:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
