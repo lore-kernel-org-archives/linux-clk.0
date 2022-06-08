@@ -2,88 +2,219 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A66CCA48B
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 10:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F1FC43334
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 10:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237303AbiFHKYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 06:24:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36636 "EHLO
+        id S237260AbiFHKap (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jun 2022 06:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236646AbiFHKXC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 06:23:02 -0400
-Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 600391F5C5D;
-        Wed,  8 Jun 2022 03:12:10 -0700 (PDT)
-Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 8EE0C1C811B7;
-        Wed,  8 Jun 2022 17:56:35 +0800 (CST)
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS04.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 8 Jun
- 2022 17:56:35 +0800
-Received: from taln60.nuvoton.com (10.191.1.180) by NTHCCAS01.nuvoton.com
- (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
- Transport; Wed, 8 Jun 2022 17:56:35 +0800
-Received: by taln60.nuvoton.com (Postfix, from userid 10070)
-        id 9D8BE63A4E; Wed,  8 Jun 2022 12:56:33 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
-        <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-        <gregkh@linuxfoundation.org>, <daniel.lezcano@linaro.org>,
-        <tglx@linutronix.de>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <arnd@arndb.de>, <olof@lixom.net>, <jirislaby@kernel.org>,
-        <shawnguo@kernel.org>, <bjorn.andersson@linaro.org>,
-        <geert+renesas@glider.be>, <marcel.ziswiler@toradex.com>,
-        <vkoul@kernel.org>, <biju.das.jz@bp.renesas.com>,
-        <nobuhiro1.iwamatsu@toshiba.co.jp>, <robert.hancock@calian.com>,
-        <j.neuschaefer@gmx.net>, <lkundrak@v3.sk>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 15/20] dt-bindings: arm: npcm: Add nuvoton,npcm845 compatible string
-Date:   Wed, 8 Jun 2022 12:56:18 +0300
-Message-ID: <20220608095623.22327-16-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20220608095623.22327-1-tmaimon77@gmail.com>
-References: <20220608095623.22327-1-tmaimon77@gmail.com>
+        with ESMTP id S238137AbiFHK3x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 06:29:53 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E3C1915F5
+        for <linux-clk@vger.kernel.org>; Wed,  8 Jun 2022 03:21:58 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id h23so29442343ejj.12
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jun 2022 03:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=+bPvkCIqs6A3Lw8cRRemx4/EkW0G1asPn8kHboHtVJY=;
+        b=wDIlVKTWdiWhZ8wBWJY6cKiaQFw8rDj207bvbTp/h11ey3tP6nET1Ax/CdHjZfLIEV
+         bWnJx67yUwmZnAjjjd5Pnmh8VhMfnKk9ZGg+xoCyY9GLA3nn7mGO8lVMAqq0oiDn/3Gb
+         RdEmlcoDLk/NATza/gALLbwlAadFQrZRy9MfXKJk8j2q4AuOEEZ+zY7bealsPyXM8b4Y
+         ih+WRBDp4jQzRDyApQ0uO+L54w+TGVWPyUYM9CH3Ot8Y/Q0bHkVx4jxyiDXFnpuvcBiT
+         7waY/rXX63WmY9xsunaYaDRWKXRiJMMbWedZPkAKAn6m/lwDnhiKftwSsfbgmiXgBvuN
+         pGIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=+bPvkCIqs6A3Lw8cRRemx4/EkW0G1asPn8kHboHtVJY=;
+        b=j8jZCm8tZAiAdDgpC8PBrls/lz5SnmffvxoC67yWzJK9YC6piftQqmss4JvjXtmv5l
+         17t5NDiRf0K+ao0n2LJL7CrVXzAwGDyASyYFVglfiYPvruqtGc5kxky31UNt7js1wlGS
+         L5irNPamt6bxgW1Xf0+P1rHKboKUxFk5zlibuFD3atgxp2peHn1R3I5COsf39CDEnmbq
+         KxV24UpftlsY92DNVUgACST2mLkz7QzfnPSzgLaWxNOlylqRw4P6DSAqZuIBbmH8MLzH
+         WgH3/621kRR7mma0Zsqab+Pqvc8PIS2zR/6Xk2fXEp/gK0QdbEf7exoY1JMgAH1CrNst
+         lRwg==
+X-Gm-Message-State: AOAM530IJQd95AlIpwxQh5mch57uEG9TIqSyw981kRREamBVh1gHTQop
+        QSFftFsI8nzxh2CtiSe/auvURQ==
+X-Google-Smtp-Source: ABdhPJw4saSPhMUohzNzjdscZN0KDbM9WKgE0UI3Y2mk91NtDGFQsXLJsTcltgv6Da2VMwekYNeMFA==
+X-Received: by 2002:a17:906:8416:b0:705:6a1b:e8ef with SMTP id n22-20020a170906841600b007056a1be8efmr30244309ejx.614.1654683716491;
+        Wed, 08 Jun 2022 03:21:56 -0700 (PDT)
+Received: from [192.168.0.191] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id g3-20020aa7dd83000000b0042bc5a536edsm11883683edv.28.2022.06.08.03.21.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jun 2022 03:21:55 -0700 (PDT)
+Message-ID: <24ad8ba0-4244-1159-328d-12d0e67951e1@linaro.org>
+Date:   Wed, 8 Jun 2022 12:21:54 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 18/20] arm64: dts: nuvoton: Add initial NPCM8XX device
+ tree
+Content-Language: en-US
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220608095623.22327-1-tmaimon77@gmail.com>
+ <20220608095623.22327-19-tmaimon77@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220608095623.22327-19-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a compatible string for Nuvoton BMC NPCM845 SoC and a board
-specific device tree for the NPCM845 (Arbel) evaluation board.
+On 08/06/2022 11:56, Tomer Maimon wrote:
+> This adds initial device tree support for the
+> Nuvoton NPCM845 Board Management controller (BMC) SoC family.
+> 
+> The NPCM845 based quad-core Cortex-A35 ARMv8 architecture and
+> have various peripheral IPs.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  arch/arm64/boot/dts/Makefile                  |   1 +
+>  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 197 ++++++++++++++++++
+>  .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |  76 +++++++
+>  3 files changed, 274 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+>  create mode 100644 arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 1ba04e31a438..7b107fa7414b 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -19,6 +19,7 @@ subdir-y += lg
+>  subdir-y += marvell
+>  subdir-y += mediatek
+>  subdir-y += microchip
+> +subdir-y += nuvoton
+>  subdir-y += nvidia
+>  subdir-y += qcom
+>  subdir-y += realtek
+> diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> new file mode 100644
+> index 000000000000..97e108c50760
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> @@ -0,0 +1,197 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2021 Nuvoton Technology tomer.maimon@nuvoton.com
+> +
+> +#include <dt-bindings/clock/nuvoton,npcm8xx-clock.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +	interrupt-parent = <&gic>;
+> +
+> +	/* external reference clock */
+> +	clk_refclk: clk-refclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <25000000>;
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/arm/npcm/npcm.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Ignored comment.
 
-diff --git a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml b/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
-index ea9c3103761d..43409e5721d5 100644
---- a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
-+++ b/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
-@@ -27,4 +27,10 @@ properties:
-               - nuvoton,npcm750-evb         # NPCM750 evaluation board
-           - const: nuvoton,npcm750
- 
-+      - description: NPCM845 based boards
-+        items:
-+          - enum:
-+              - nuvoton,npcm845-evb         # NPCM845 evaluation board
-+          - const: nuvoton,npcm845
-+
- additionalProperties: true
--- 
-2.33.0
+> +		clock-output-names = "refclk";
+> +	};
+> +
+> +	/* external reference clock for cpu. float in normal operation */
+> +	clk_sysbypck: clk-sysbypck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <1000000000>;
 
+Ignored comment.
+
+> +		clock-output-names = "sysbypck";
+> +	};
+> +
+> +	/* external reference clock for MC. float in normal operation */
+> +	clk_mcbypck: clk-mcbypck {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <1050000000>;
+> +		clock-output-names = "mcbypck";
+> +	};
+> +
+> +	soc {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+> +
+> +		gcr: gcr@f0800000 {
+
+Ignored comment.
+
+> +			compatible = "nuvoton,npcm845-gcr", "syscon",
+> +				"simple-mfd";
+
+This is not a simple-mfd... I see original bindings defined it that way,
+but why? I think they should be corrected - remove simple-mfd from the
+bindings and DTS.
+
+
+> +			reg = <0x0 0xf0800000 0x0 0x1000>;
+> +		};
+> +
+> +		gic: interrupt-controller@dfff9000 {
+> +			compatible = "arm,gic-400";
+> +			reg = <0x0 0xdfff9000 0x0 0x1000>,
+> +			      <0x0 0xdfffa000 0x0 0x2000>,
+> +			      <0x0 0xdfffc000 0x0 0x2000>,
+> +			      <0x0 0xdfffe000 0x0 0x2000>;
+> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			#address-cells = <0>;
+> +			ppi-partitions {
+> +				ppi_cluster0: interrupt-partition-0 {
+> +					affinity = <&cpu0 &cpu1 &cpu2 &cpu3>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	ahb {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		compatible = "simple-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+> +
+> +		rstc: rstc@f0801000 {
+
+Ignored comment.
+
+Four comments from v1 ignored in this patch alone.
+
+I'll stop reviewing, it is a waste of my time.
+
+NAK for this change.
+
+Best regards,
+Krzysztof
