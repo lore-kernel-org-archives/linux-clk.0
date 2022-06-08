@@ -2,111 +2,273 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23F4C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 17:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE472C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 18:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231129AbiFHRSK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 13:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
+        id S234121AbiFHSNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jun 2022 14:13:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbiFHRRW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 13:17:22 -0400
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [217.70.178.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D039417CED;
-        Wed,  8 Jun 2022 10:04:58 -0700 (PDT)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id E30C6100003;
-        Wed,  8 Jun 2022 17:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1654707897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XAPYcyRqiKyOI9m5kT9zO45hbfPySQ29+pZokJ8GgDw=;
-        b=I8yKmz2hHWLep0Zm5s3+d/Vj81S34rhDfyDBXkszTb+quiLESF4Ai5D+Wk1RjaRdtAB5ir
-        y2Q5uq1G3t/dRZsw4W2W9zgbNcXqKJGMpGN2Udy0Z/ip8s2LSdf+Syw/+0Pn8Zg5br7fYb
-        3q7AZR2KNMGe+q6tcgHYhuppsgGivaEwh3KvHQPZAkfUi73ZEq3Wcx9yqjoBdNyoE6j8XK
-        zR78TSR7CozcaE0LNqel83G93LVmdnrqtw8N89WMqlA7GuaAwClgM4hNb6u31fZyZX3Trf
-        in20qXIMX5En380N3GrdTa+bsL+g1AZNuj9Rume7qH85kaFJKBodfdMPP9EWdg==
-Date:   Wed, 8 Jun 2022 19:04:55 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] dt-bindings: rtc: Add fsl,scu-rtc yaml file
-Message-ID: <YqDWt0w8/9bwz5OL@mail.local>
-References: <20220608164928.2706697-1-abel.vesa@nxp.com>
- <20220608164928.2706697-8-abel.vesa@nxp.com>
+        with ESMTP id S234055AbiFHSNU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 14:13:20 -0400
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C812515BC;
+        Wed,  8 Jun 2022 11:13:19 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id g201so10024238ybf.12;
+        Wed, 08 Jun 2022 11:13:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZQePx5uIM1fUidMEiJVM5nuB6ZzPVeEu38qEpc1UrpE=;
+        b=Y/oeeMQrCREMAWANBtrC3FoGXp50sFBMnvCLxNPWQwAAPNWWQOkGGgixDidmNA78qT
+         clugwm9GcFMfOiHKMFqmPr4YFjITcvy/m+W7TJjdwWIUt0b61YYnS5a5Ja6XU1sgIpKB
+         Pm/Mm9CmG1gnlgOJpnVbJbX07BFJRtxidTRQz2J5crD0Rj39JU06MjPOmWSd+PQegvqs
+         2NEZnU9t4ZKpAuKBBfq063e/AZvZDsnvsSTKKhA1xtMm69DZdg470FMZT3BMx/iUZMFC
+         fRn+Kh0ynK56XfSD4mP29RmHGjBnrTah7cayY4bS13J74zv/qIlZpzjdh9+r70yRAwFk
+         k7TA==
+X-Gm-Message-State: AOAM532H0P+P0gEeBUMURTlrmxKFI3cgqxKlR3kTeYkp0afaOZ5IrLRC
+        4oJnJvc0sE0hIltjXsKSr7cofCI1puZ0V6AEq0A=
+X-Google-Smtp-Source: ABdhPJyd1CrHem+vVK3IGyX/t5xH0MretwaFF4fsfRB0Td7tNKI/Gb3F1VH58WOF1ULS3yEBVcV2AFovGma6uhuJi5U=
+X-Received: by 2002:a5b:4a:0:b0:663:7c5b:a5ba with SMTP id e10-20020a5b004a000000b006637c5ba5bamr17352131ybp.81.1654711998678;
+ Wed, 08 Jun 2022 11:13:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220608164928.2706697-8-abel.vesa@nxp.com>
+References: <20220608142723.103523089@infradead.org> <20220608144516.047149313@infradead.org>
+In-Reply-To: <20220608144516.047149313@infradead.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 8 Jun 2022 20:13:07 +0200
+Message-ID: <CAJZ5v0g=jcRkMhVoNkZzSaM0viK0C7WN6T5C1_3VQ5GGGQkSzQ@mail.gmail.com>
+Subject: Re: [PATCH 02/36] x86/idle: Replace x86_idle with a static_call
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        vgupta@kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        ulli.kroll@googlemail.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        bcain@quicinc.com, Huacai Chen <chenhuacai@kernel.org>,
+        kernel@xen0n.name, Geert Uytterhoeven <geert@linux-m68k.org>,
+        sammy@sammy.net, Michal Simek <monstr@monstr.eu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi,
+        Stafford Horne <shorne@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Richard Weinberger <richard@nod.at>,
+        anton.ivanov@cambridgegreys.com,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@kernel.org, namhyung@kernel.org,
+        Juergen Gross <jgross@suse.com>, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>, chris@zankel.net,
+        jcmvbkbc@gmail.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        lpieralisi@kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Anup Patel <anup@brainfault.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Yury Norov <yury.norov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>, senozhatsky@chromium.org,
+        John Ogness <john.ogness@linutronix.de>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        quic_neeraju@quicinc.com, Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Benjamin Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        openrisc@lists.librecores.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-s390@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/06/2022 19:49:25+0300, Abel Vesa wrote:
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch documents
-> separately the 'rtc' child node of the SCU main node.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+On Wed, Jun 8, 2022 at 4:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Typical boot time setup; no need to suffer an indirect call for that.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
 > ---
->  .../devicetree/bindings/rtc/fsl,scu-rtc.yaml  | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/fsl,scu-rtc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/fsl,scu-rtc.yaml b/Documentation/devicetree/bindings/rtc/fsl,scu-rtc.yaml
-> new file mode 100644
-> index 000000000000..bd8c3cf365ff
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/fsl,scu-rtc.yaml
-> @@ -0,0 +1,22 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/fsl,scu-rtc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  arch/x86/kernel/process.c |   50 +++++++++++++++++++++++++---------------------
+>  1 file changed, 28 insertions(+), 22 deletions(-)
+>
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/cpuidle.h>
+>  #include <linux/acpi.h>
+>  #include <linux/elf-randomize.h>
+> +#include <linux/static_call.h>
+>  #include <trace/events/power.h>
+>  #include <linux/hw_breakpoint.h>
+>  #include <asm/cpu.h>
+> @@ -692,7 +693,23 @@ void __switch_to_xtra(struct task_struct
+>  unsigned long boot_option_idle_override = IDLE_NO_OVERRIDE;
+>  EXPORT_SYMBOL(boot_option_idle_override);
+>
+> -static void (*x86_idle)(void);
+> +/*
+> + * We use this if we don't have any better idle routine..
+> + */
+> +void __cpuidle default_idle(void)
+> +{
+> +       raw_safe_halt();
+> +}
+> +#if defined(CONFIG_APM_MODULE) || defined(CONFIG_HALTPOLL_CPUIDLE_MODULE)
+> +EXPORT_SYMBOL(default_idle);
+> +#endif
 > +
-> +title: i.MX SCU Client Device Node - RTC bindings based on SCU Message Protocol
+> +DEFINE_STATIC_CALL_NULL(x86_idle, default_idle);
 > +
-> +maintainers:
-> +  - Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Isn't NXP going to maintain their binding?
-
-> +
-> +description: i.MX SCU Client Device Node
-> +  Client nodes are maintained as children of the relevant IMX-SCU device node.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,imx8qxp-sc-rtc
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> -- 
-> 2.34.3
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +static bool x86_idle_set(void)
+> +{
+> +       return !!static_call_query(x86_idle);
+> +}
+>
+>  #ifndef CONFIG_SMP
+>  static inline void play_dead(void)
+> @@ -715,28 +732,17 @@ void arch_cpu_idle_dead(void)
+>  /*
+>   * Called from the generic idle code.
+>   */
+> -void arch_cpu_idle(void)
+> -{
+> -       x86_idle();
+> -}
+> -
+> -/*
+> - * We use this if we don't have any better idle routine..
+> - */
+> -void __cpuidle default_idle(void)
+> +void __cpuidle arch_cpu_idle(void)
+>  {
+> -       raw_safe_halt();
+> +       static_call(x86_idle)();
+>  }
+> -#if defined(CONFIG_APM_MODULE) || defined(CONFIG_HALTPOLL_CPUIDLE_MODULE)
+> -EXPORT_SYMBOL(default_idle);
+> -#endif
+>
+>  #ifdef CONFIG_XEN
+>  bool xen_set_default_idle(void)
+>  {
+> -       bool ret = !!x86_idle;
+> +       bool ret = x86_idle_set();
+>
+> -       x86_idle = default_idle;
+> +       static_call_update(x86_idle, default_idle);
+>
+>         return ret;
+>  }
+> @@ -859,20 +865,20 @@ void select_idle_routine(const struct cp
+>         if (boot_option_idle_override == IDLE_POLL && smp_num_siblings > 1)
+>                 pr_warn_once("WARNING: polling idle and HT enabled, performance may degrade\n");
+>  #endif
+> -       if (x86_idle || boot_option_idle_override == IDLE_POLL)
+> +       if (x86_idle_set() || boot_option_idle_override == IDLE_POLL)
+>                 return;
+>
+>         if (boot_cpu_has_bug(X86_BUG_AMD_E400)) {
+>                 pr_info("using AMD E400 aware idle routine\n");
+> -               x86_idle = amd_e400_idle;
+> +               static_call_update(x86_idle, amd_e400_idle);
+>         } else if (prefer_mwait_c1_over_halt(c)) {
+>                 pr_info("using mwait in idle threads\n");
+> -               x86_idle = mwait_idle;
+> +               static_call_update(x86_idle, mwait_idle);
+>         } else if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST)) {
+>                 pr_info("using TDX aware idle routine\n");
+> -               x86_idle = tdx_safe_halt;
+> +               static_call_update(x86_idle, tdx_safe_halt);
+>         } else
+> -               x86_idle = default_idle;
+> +               static_call_update(x86_idle, default_idle);
+>  }
+>
+>  void amd_e400_c1e_apic_setup(void)
+> @@ -925,7 +931,7 @@ static int __init idle_setup(char *str)
+>                  * To continue to load the CPU idle driver, don't touch
+>                  * the boot_option_idle_override.
+>                  */
+> -               x86_idle = default_idle;
+> +               static_call_update(x86_idle, default_idle);
+>                 boot_option_idle_override = IDLE_HALT;
+>         } else if (!strcmp(str, "nomwait")) {
+>                 /*
+>
+>
