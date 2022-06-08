@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14D4CCA483
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 10:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9F6CCA47B
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 10:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236542AbiFHKX7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 06:23:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37270 "EHLO
+        id S236619AbiFHKYB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jun 2022 06:24:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236741AbiFHKXE (ORCPT
+        with ESMTP id S236745AbiFHKXE (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 06:23:04 -0400
 Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD73E1F62E9;
-        Wed,  8 Jun 2022 03:12:22 -0700 (PDT)
-Received: from NTHCCAS01.nuvoton.com (NTHCCAS01.nuvoton.com [10.1.8.28])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 5D8D31C811C2;
-        Wed,  8 Jun 2022 17:56:36 +0800 (CST)
-Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.7; Wed, 8 Jun 2022
- 17:56:36 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01B.nuvoton.com
- (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36F1F1F66E3;
+        Wed,  8 Jun 2022 03:12:24 -0700 (PDT)
+Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 9DAD11C811B0;
+        Wed,  8 Jun 2022 17:56:34 +0800 (CST)
+Received: from NTHCCAS02.nuvoton.com (10.1.9.121) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 8 Jun
+ 2022 17:56:34 +0800
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS02.nuvoton.com
+ (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 8 Jun 2022
- 17:56:35 +0800
+ 17:56:34 +0800
 Received: from taln60.nuvoton.com (10.191.1.180) by NTHCCAS01.nuvoton.com
  (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
- Transport; Wed, 8 Jun 2022 17:56:35 +0800
+ Transport; Wed, 8 Jun 2022 17:56:33 +0800
 Received: by taln60.nuvoton.com (Postfix, from userid 10070)
-        id C645963A51; Wed,  8 Jun 2022 12:56:33 +0300 (IDT)
+        id 210FD62EFF; Wed,  8 Jun 2022 12:56:33 +0300 (IDT)
 From:   Tomer Maimon <tmaimon77@gmail.com>
 To:     <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
         <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
@@ -50,9 +50,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-watchdog@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v2 18/20] arm64: dts: nuvoton: Add initial NPCM8XX device tree
-Date:   Wed, 8 Jun 2022 12:56:21 +0300
-Message-ID: <20220608095623.22327-19-tmaimon77@gmail.com>
+Subject: [PATCH v2 06/20] dt-binding: clk: npcm845: Add binding for Nuvoton NPCM8XX Clock
+Date:   Wed, 8 Jun 2022 12:56:09 +0300
+Message-ID: <20220608095623.22327-7-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20220608095623.22327-1-tmaimon77@gmail.com>
 References: <20220608095623.22327-1-tmaimon77@gmail.com>
@@ -63,318 +63,141 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds initial device tree support for the
-Nuvoton NPCM845 Board Management controller (BMC) SoC family.
-
-The NPCM845 based quad-core Cortex-A35 ARMv8 architecture and
-have various peripheral IPs.
+Add binding for the Arbel BMC NPCM8XX Clock controller.
 
 Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- arch/arm64/boot/dts/Makefile                  |   1 +
- .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 197 ++++++++++++++++++
- .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |  76 +++++++
- 3 files changed, 274 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
- create mode 100644 arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi
+ .../bindings/clock/nuvoton,npcm845-clk.yaml   | 63 +++++++++++++++++++
+ .../dt-bindings/clock/nuvoton,npcm8xx-clock.h | 50 +++++++++++++++
+ 2 files changed, 113 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index 1ba04e31a438..7b107fa7414b 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -19,6 +19,7 @@ subdir-y += lg
- subdir-y += marvell
- subdir-y += mediatek
- subdir-y += microchip
-+subdir-y += nuvoton
- subdir-y += nvidia
- subdir-y += qcom
- subdir-y += realtek
-diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
 new file mode 100644
-index 000000000000..97e108c50760
+index 000000000000..e1f375716bc5
 --- /dev/null
-+++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-@@ -0,0 +1,197 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2021 Nuvoton Technology tomer.maimon@nuvoton.com
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <dt-bindings/clock/nuvoton,npcm8xx-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++title: Nuvoton NPCM8XX Clock Controller Binding
 +
-+/ {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic>;
++maintainers:
++  - Tomer Maimon <tmaimon77@gmail.com>
 +
-+	/* external reference clock */
-+	clk_refclk: clk-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
-+		clock-output-names = "refclk";
-+	};
++description: |
++  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
++  generates and supplies clocks to all modules within the BMC.
 +
-+	/* external reference clock for cpu. float in normal operation */
-+	clk_sysbypck: clk-sysbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <1000000000>;
-+		clock-output-names = "sysbypck";
-+	};
++properties:
++  compatible:
++    enum:
++      - nuvoton,npcm845-clk
 +
-+	/* external reference clock for MC. float in normal operation */
-+	clk_mcbypck: clk-mcbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <1050000000>;
-+		clock-output-names = "mcbypck";
-+	};
++  reg:
++    maxItems: 1
 +
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
++  clocks:
++    items:
++      - description: 25M reference clock
++      - description: CPU reference clock
++      - description: MC reference clock
 +
-+		gcr: gcr@f0800000 {
-+			compatible = "nuvoton,npcm845-gcr", "syscon",
-+				"simple-mfd";
-+			reg = <0x0 0xf0800000 0x0 0x1000>;
-+		};
++  clock-names:
++    items:
++      - const: refclk
++      - const: sysbypck
++      - const: mcbypck
 +
-+		gic: interrupt-controller@dfff9000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x0 0xdfff9000 0x0 0x1000>,
-+			      <0x0 0xdfffa000 0x0 0x2000>,
-+			      <0x0 0xdfffc000 0x0 0x2000>,
-+			      <0x0 0xdfffe000 0x0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			#address-cells = <0>;
-+			ppi-partitions {
-+				ppi_cluster0: interrupt-partition-0 {
-+					affinity = <&cpu0 &cpu1 &cpu2 &cpu3>;
-+				};
-+			};
-+		};
-+	};
++  '#clock-cells':
++    const: 1
++    description:
++      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
++      list of NPCM8XX clock IDs.
 +
-+	ahb {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
 +
-+		rstc: rstc@f0801000 {
-+			compatible = "nuvoton,npcm845-reset";
-+			reg = <0x0 0xf0801000 0x0 0x78>;
-+			#reset-cells = <2>;
-+			nuvoton,sysgcr = <&gcr>;
-+		};
++additionalProperties: false
 +
-+		clk: clock-controller@f0801000 {
-+			compatible = "nuvoton,npcm845-clk";
-+			#clock-cells = <1>;
-+			reg = <0x0 0xf0801000 0x0 0x1000>;
-+			clock-names = "refclk", "sysbypck", "mcbypck";
-+			clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
-+		};
++examples:
++  - |
++    ahb {
++        #address-cells = <2>;
++        #size-cells = <2>;
 +
-+		apb {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			compatible = "simple-bus";
-+			interrupt-parent = <&gic>;
-+			ranges = <0x0 0x0 0xf0000000 0x00300000>,
-+				<0xfff00000 0x0 0xfff00000 0x00016000>;
-+
-+			timer0: timer@8000 {
-+				compatible = "nuvoton,npcm845-timer";
-+				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x8000 0x1C>;
-+				clocks	= <&clk_refclk>;
-+				clock-names = "refclk";
-+			};
-+
-+			serial0: serial@0 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x0 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial1: serial@1000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x1000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial2: serial@2000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x2000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial3: serial@3000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x3000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial4: serial@4000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x4000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial5: serial@5000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x5000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial6: serial@6000 {
-+				compatible = "nuvoton,npcm845-uart", "nuvoton,npcm750-uart";
-+				reg = <0x6000 0x1000>;
-+				clocks = <&clk NPCM8XX_CLK_UART>;
-+				interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			watchdog0: watchdog@801c {
-+				compatible = "nuvoton,npcm845-wdt", "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x801c 0x4>;
-+				status = "disabled";
-+				clocks = <&clk_refclk>;
-+				syscon = <&gcr>;
-+			};
-+
-+			watchdog1: watchdog@901c {
-+				compatible = "nuvoton,npcm845-wdt", "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x901c 0x4>;
-+				status = "disabled";
-+				clocks = <&clk_refclk>;
-+				syscon = <&gcr>;
-+			};
-+
-+			watchdog2: watchdog@a01c {
-+				compatible = "nuvoton,npcm845-wdt", "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xa01c 0x4>;
-+				status = "disabled";
-+				clocks = <&clk_refclk>;
-+				syscon = <&gcr>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi
++        clock-controller@f0801000 {
++            compatible = "nuvoton,npcm845-clk";
++            reg = <0x0 0xf0801000 0x0 0x1000>;
++            clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
++            #clock-cells = <1>;
++        };
++    };
++...
+diff --git a/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
 new file mode 100644
-index 000000000000..12118b75c0e6
+index 000000000000..229915a254a5
 --- /dev/null
-+++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845.dtsi
-@@ -0,0 +1,76 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2021 Nuvoton Technology tomer.maimon@nuvoton.com
++++ b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Nuvoton NPCM8xx Clock Generator binding
++ * clock binding number for all clocks supportted by nuvoton,npcm8xx-clk
++ *
++ * Copyright (C) 2021 Nuvoton Technologies.
++ * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
++ */
 +
-+#include "nuvoton-common-npcm8xx.dtsi"
++#ifndef __DT_BINDINGS_CLOCK_NPCM8XX_H
++#define __DT_BINDINGS_CLOCK_NPCM8XX_H
 +
-+/ {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++#define NPCM8XX_CLK_CPU		0
++#define NPCM8XX_CLK_GFX_PIXEL	1
++#define NPCM8XX_CLK_MC		2
++#define NPCM8XX_CLK_ADC		3
++#define NPCM8XX_CLK_AHB		4
++#define NPCM8XX_CLK_TIMER	5
++#define NPCM8XX_CLK_UART	6
++#define NPCM8XX_CLK_UART2	7
++#define NPCM8XX_CLK_MMC		8
++#define NPCM8XX_CLK_SPI3	9
++#define NPCM8XX_CLK_PCI		10
++#define NPCM8XX_CLK_AXI		11
++#define NPCM8XX_CLK_APB4	12
++#define NPCM8XX_CLK_APB3	13
++#define NPCM8XX_CLK_APB2	14
++#define NPCM8XX_CLK_APB1	15
++#define NPCM8XX_CLK_APB5	16
++#define NPCM8XX_CLK_CLKOUT	17
++#define NPCM8XX_CLK_GFX		18
++#define NPCM8XX_CLK_SU		19
++#define NPCM8XX_CLK_SU48	20
++#define NPCM8XX_CLK_SDHC	21
++#define NPCM8XX_CLK_SPI0	22
++#define NPCM8XX_CLK_SPI1	23
++#define NPCM8XX_CLK_SPIX	24
++#define NPCM8XX_CLK_RG		25
++#define NPCM8XX_CLK_RCP		26
++#define NPCM8XX_CLK_PRE_ADC	27
++#define NPCM8XX_CLK_ATB		28
++#define NPCM8XX_CLK_PRE_CLK	29
++#define NPCM8XX_CLK_TH		30
++#define NPCM8XX_CLK_REFCLK	31
++#define NPCM8XX_CLK_SYSBYPCK	32
++#define NPCM8XX_CLK_MCBYPCK	33
 +
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
++#define NPCM8XX_NUM_CLOCKS	(NPCM8XX_CLK_MCBYPCK + 1)
 +
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			clocks = <&clk NPCM8XX_CLK_CPU>;
-+			reg = <0x0 0x0>;
-+			next-level-cache = <&l2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			clocks = <&clk NPCM8XX_CLK_CPU>;
-+			reg = <0x0 0x1>;
-+			next-level-cache = <&l2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			clocks = <&clk NPCM8XX_CLK_CPU>;
-+			reg = <0x0 0x2>;
-+			next-level-cache = <&l2>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			clocks = <&clk NPCM8XX_CLK_CPU>;
-+			reg = <0x0 0x3>;
-+			next-level-cache = <&l2>;
-+			enable-method = "psci";
-+		};
-+
-+		l2: l2-cache {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	arm-pmu {
-+		compatible = "arm,cortex-a35-pmu";
-+		interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-+	};
-+
-+	psci {
-+		compatible      = "arm,psci-1.0";
-+		method          = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
++#endif
 -- 
 2.33.0
 
