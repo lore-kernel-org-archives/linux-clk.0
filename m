@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9506DCCA47E
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 14:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D212AC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 14:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243565AbiFHOuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 10:50:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57998 "EHLO
+        id S243637AbiFHOuX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jun 2022 10:50:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242353AbiFHOrI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 10:47:08 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DFFC49F00;
-        Wed,  8 Jun 2022 07:46:57 -0700 (PDT)
+        with ESMTP id S242319AbiFHOrG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 10:47:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45114253FE4;
+        Wed,  8 Jun 2022 07:46:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To;
-        bh=Gj+eSw46X5SDCGNw8cDv0ubviLBcGEVy5VW0lj+ATKg=; b=N77RkI+QTaxDMs240pQaEKT6dP
-        4VgjixhsERFCAhqks8uUKYnPmgaasveu2D0er8qSsZ8usH68kBhYOFIT2yrd9wsE9EnUYwKD6vJFn
-        YrCqldOcFxaXkSm4md4Vmu8hIzcIEOupQGBDlSNznBz2Y5P+odjiBnErl61uy2dx6q+UOqet17BYz
-        YRYnLabyMm8DrqBCCxXS/evp2i38LSWPNGIlCoCVIiahKLBEt4buZJSAugJ95CGT+rwrcjJrgfDvy
-        7iWP6pqixLlyQSDUsBLus3ti7xSHLVPaECcwxD3le6NZmXfGe4TsQ4UGNm/smN8NdfrNJt3gzGoLJ
-        2l4659PA==;
+        bh=OtG2eksypqTPnibPh4fnaffiD2hY+EVznlbJ2kHLrow=; b=s4lrDypR2PUIwq5DKCGjh+oz4W
+        NuxeruzrXNHTK2BcKEnwkioprVWjfJLPkgfJl49NvBc1ScRGAbi6IHwVe76KIbMnxjdkcpmvn5wet
+        3eYWI/FImC55FL2x6Yx/qYueheCP2qt3qSdNl9P9N0LlknHKQ0jWpiRgO/bj5oEcu6Hwa7YVQSbPC
+        22GQFhLji5K7+xrCckZ3sZixDyB/oZzz1dgkIdvOicqFDdspFZ3U79bMwNdWP31xZZ5aSXr9UzD8S
+        K41BG1cgoZT9kf1wqRrFYYr6FX1r+dLgPTuXf4ixipRFDyavYNPibE598o+3OGh6R5+E+6ZEIgdiB
+        GOcGvWHQ==;
 Received: from dhcp-077-249-017-003.chello.nl ([77.249.17.3] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nywx6-0066Dl-Fu; Wed, 08 Jun 2022 14:46:33 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nywwy-00ChW3-Vf; Wed, 08 Jun 2022 14:46:25 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E20D8302F49;
-        Wed,  8 Jun 2022 16:46:23 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AAD6C302D99;
+        Wed,  8 Jun 2022 16:46:22 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id BC41C20C119B1; Wed,  8 Jun 2022 16:46:18 +0200 (CEST)
-Message-ID: <20220608144517.948600553@infradead.org>
+        id 5313720C0F9B9; Wed,  8 Jun 2022 16:46:18 +0200 (CEST)
+Message-ID: <20220608144516.362668063@infradead.org>
 User-Agent: quilt/0.66
-Date:   Wed, 08 Jun 2022 16:27:55 +0200
+Date:   Wed, 08 Jun 2022 16:27:30 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     peterz@infradead.org
 Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
@@ -98,7 +98,7 @@ Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
         linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
         rcu@vger.kernel.org
-Subject: [PATCH 32/36] ftrace: WARN on rcuidle
+Subject: [PATCH 07/36] cpuidle,tegra: Push RCU-idle into driver
 References: <20220608142723.103523089@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -106,59 +106,82 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CONFIG_GENERIC_ENTRY disallows any and all tracing when RCU isn't
-enabled.
-
-XXX if s390 (the only other GENERIC_ENTRY user as of this writing)
-isn't comfortable with this, we could switch to
-HAVE_NOINSTR_VALIDATION which is x86_64 only atm.
+Doing RCU-idle outside the driver, only to then temporarily enable it
+again, at least twice, before going idle is daft.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/tracepoint.h |   13 ++++++++++++-
- kernel/trace/trace.c       |    3 +++
- 2 files changed, 15 insertions(+), 1 deletion(-)
+ drivers/cpuidle/cpuidle-tegra.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -178,6 +178,16 @@ static inline struct tracepoint *tracepo
- #endif /* CONFIG_HAVE_STATIC_CALL */
- 
- /*
-+ * CONFIG_GENERIC_ENTRY archs are expected to have sanitized entry and idle
-+ * code that disallow any/all tracing/instrumentation when RCU isn't watching.
-+ */
-+#ifdef CONFIG_GENERIC_ENTRY
-+#define RCUIDLE_COND(rcuidle)	(rcuidle)
-+#else
-+#define RCUIDLE_COND(rcuidle)	(rcuidle && in_nmi())
-+#endif
-+
-+/*
-  * it_func[0] is never NULL because there is at least one element in the array
-  * when the array itself is non NULL.
-  */
-@@ -189,7 +199,8 @@ static inline struct tracepoint *tracepo
- 			return;						\
- 									\
- 		/* srcu can't be used from NMI */			\
--		WARN_ON_ONCE(rcuidle && in_nmi());			\
-+		if (WARN_ON_ONCE(RCUIDLE_COND(rcuidle)))		\
-+			return;						\
- 									\
- 		/* keep srcu and sched-rcu usage consistent */		\
- 		preempt_disable_notrace();				\
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3104,6 +3104,9 @@ void __trace_stack(struct trace_array *t
- 		return;
+--- a/drivers/cpuidle/cpuidle-tegra.c
++++ b/drivers/cpuidle/cpuidle-tegra.c
+@@ -180,9 +180,11 @@ static int tegra_cpuidle_state_enter(str
  	}
  
-+	if (WARN_ON_ONCE(IS_ENABLED(CONFIG_GENERIC_ENTRY)))
-+		return;
+ 	local_fiq_disable();
+-	RCU_NONIDLE(tegra_pm_set_cpu_in_lp2());
++	tegra_pm_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
++	rcu_idle_enter();
 +
- 	/*
- 	 * When an NMI triggers, RCU is enabled via rcu_nmi_enter(),
- 	 * but if the above rcu_is_watching() failed, then the NMI
+ 	switch (index) {
+ 	case TEGRA_C7:
+ 		err = tegra_cpuidle_c7_enter();
+@@ -197,8 +199,10 @@ static int tegra_cpuidle_state_enter(str
+ 		break;
+ 	}
+ 
++	rcu_idle_exit();
++
+ 	cpu_pm_exit();
+-	RCU_NONIDLE(tegra_pm_clear_cpu_in_lp2());
++	tegra_pm_clear_cpu_in_lp2();
+ 	local_fiq_enable();
+ 
+ 	return err ?: index;
+@@ -226,6 +230,7 @@ static int tegra_cpuidle_enter(struct cp
+ 			       struct cpuidle_driver *drv,
+ 			       int index)
+ {
++	bool do_rcu = drv->states[index].flags & CPUIDLE_FLAG_RCU_IDLE;
+ 	unsigned int cpu = cpu_logical_map(dev->cpu);
+ 	int ret;
+ 
+@@ -233,9 +238,13 @@ static int tegra_cpuidle_enter(struct cp
+ 	if (dev->states_usage[index].disable)
+ 		return -1;
+ 
+-	if (index == TEGRA_C1)
++	if (index == TEGRA_C1) {
++		if (do_rcu)
++			rcu_idle_enter();
+ 		ret = arm_cpuidle_simple_enter(dev, drv, index);
+-	else
++		if (do_rcu)
++			rcu_idle_exit();
++	} else
+ 		ret = tegra_cpuidle_state_enter(dev, index, cpu);
+ 
+ 	if (ret < 0) {
+@@ -285,7 +294,8 @@ static struct cpuidle_driver tegra_idle_
+ 			.exit_latency		= 2000,
+ 			.target_residency	= 2200,
+ 			.power_usage		= 100,
+-			.flags			= CPUIDLE_FLAG_TIMER_STOP,
++			.flags			= CPUIDLE_FLAG_TIMER_STOP |
++						  CPUIDLE_FLAG_RCU_IDLE,
+ 			.name			= "C7",
+ 			.desc			= "CPU core powered off",
+ 		},
+@@ -295,6 +305,7 @@ static struct cpuidle_driver tegra_idle_
+ 			.target_residency	= 10000,
+ 			.power_usage		= 0,
+ 			.flags			= CPUIDLE_FLAG_TIMER_STOP |
++						  CPUIDLE_FLAG_RCU_IDLE   |
+ 						  CPUIDLE_FLAG_COUPLED,
+ 			.name			= "CC6",
+ 			.desc			= "CPU cluster powered off",
 
 
