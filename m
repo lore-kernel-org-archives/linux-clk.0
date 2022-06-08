@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFCAC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 13:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C42CCA47E
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 13:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240483AbiFHNs7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 09:48:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52686 "EHLO
+        id S240563AbiFHNtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jun 2022 09:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240816AbiFHNst (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 09:48:49 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04378285AAC
-        for <linux-clk@vger.kernel.org>; Wed,  8 Jun 2022 06:48:47 -0700 (PDT)
+        with ESMTP id S240883AbiFHNtk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 09:49:40 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3C1287F4D
+        for <linux-clk@vger.kernel.org>; Wed,  8 Jun 2022 06:49:37 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:243a:e14b:d107:1f56])
-        by michel.telenet-ops.be with bizsmtp
-        id gdol2700K1qF9lr06dol04; Wed, 08 Jun 2022 15:48:46 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id gdpb2700B1qF9lr01dpbFn; Wed, 08 Jun 2022 15:49:35 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyw3B-003DAi-3L; Wed, 08 Jun 2022 15:48:45 +0200
+        id 1nyw3y-003DB9-Qt; Wed, 08 Jun 2022 15:49:34 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nyw39-008L1Y-NN; Wed, 08 Jun 2022 15:48:43 +0200
+        id 1nyw3y-008L36-C1; Wed, 08 Jun 2022 15:49:34 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -36,14 +36,15 @@ Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] dt-bindings: clock: renesas,rzg2l: Simplify header file references
-Date:   Wed,  8 Jun 2022 15:48:34 +0200
-Message-Id: <f274ad16010798dd4a45d2dca5f870da8acbb470.1654696009.git.geert+renesas@glider.be>
+Date:   Wed,  8 Jun 2022 15:49:33 +0200
+Message-ID: <f274ad16010798dd4a45d2dca5f870da8acbb470.1654696009.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
+Message-ID: <20220608134933.9uL_mun1wF4EeNod4WfXS2H6xgg3gsTNnbNEsmTAPvw@z>
 
 The bindings already uses <dt-bindings/clock/r9a0*-cpg.h> to refer to
 the header files with DT binding definitions for core clocks.
@@ -51,6 +52,8 @@ Use more wildcards to simplify more references to these files.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+To be queued in renesas-clk-for-v5.20.
+
  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml       | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
