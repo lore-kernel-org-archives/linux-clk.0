@@ -2,133 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB43AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 19:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9DAC43334
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 21:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239272AbiFITVz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jun 2022 15:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45990 "EHLO
+        id S1344304AbiFIVI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jun 2022 17:08:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiFITVy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 15:21:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E321F0A7F;
-        Thu,  9 Jun 2022 12:21:52 -0700 (PDT)
-Received: from mercury (unknown [185.209.196.172])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4E417660177B;
-        Thu,  9 Jun 2022 20:21:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1654802511;
-        bh=pJnUgqB06r+c4j6TArHnOqEGUTLYzWOpX1/yKBfNaQo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k3EC0HgpflKPRYfrN6WjjOpBJh95/7bnuOhtTJ1hrvJXvQxx9ljTweF+WHfqw0xlk
-         yWShz8GZGbNUlpoZ2ibQiNU77S7dyAOonbQW2ZDbZoac6Ww2wl5mu+xDOSoKONo/20
-         QBi6P/hBcHbiBrOpkpuawqLvVWyxnynQpH+5B4+qSgFDfcrV4sgF9CCdK4kENPABNk
-         SidWpRKEXm070X4CTIbGdPPE3TwC1ONMVKk9uqKPmbXbRQ3hSUwTvX+mPvfWHJBot+
-         oqxTjTDWYok7kUEThBRc9ZyC46Pwo8kbvkHNr2lc9ZqS2rGGKUHNzDIQI08JkRBuSd
-         oh+aa9bNv2HWQ==
-Received: by mercury (Postfix, from userid 1000)
-        id DA84B10605B9; Thu,  9 Jun 2022 21:21:48 +0200 (CEST)
-Date:   Thu, 9 Jun 2022 21:21:48 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1345347AbiFIVIW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 17:08:22 -0400
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7F1265618;
+        Thu,  9 Jun 2022 14:08:21 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id 19so4115769iou.12;
+        Thu, 09 Jun 2022 14:08:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HBb+5G3MZcLZ9Eu0p/SYuyebihah9e/OkQYxjtH+MYA=;
+        b=C2B8CCrtqvp0jFfuMlRAc6noDs/71WXlPGLKKT54tUjHK6UuDbPUz+5HudD1CfmIJz
+         xpeJ7S/VcaW9WjR1g5Vu+cyNJzDCkwcwOdF+/nF7kvy67ZY5ew8Fe4t7+D24Qn2SZipY
+         k7HA8TPx1zJZvUtaFXpvIJdi2bNUfP6UxSVaufF0j1agUpoVeEdHcWe9onjDia84XwnD
+         6txRmaXmONGsOzGsredcZ4P0XYpdGP/h3/wObM0M1jGICd3CjRnSx3V6hqwmYInpQQhz
+         yM2962lKDF2PNlLLALtXDDUlR0kzmwBFdunSvevzTmkpDYxu6zv+uKJ8d8zQByGi9Zy2
+         inJQ==
+X-Gm-Message-State: AOAM532L5RFVdOt0ueMQkMs8apJXhiaCkurhgeUxE2cdYtnV9azKB7eM
+        qJfYRZAIYHdA++06at70vg==
+X-Google-Smtp-Source: ABdhPJw5RWS3nIPBqHy85e1pnWSGRZzHEln3TTeQSjEEJPSUY3KcNrvPxHu3/qMKOhZU0fixvwD9Xg==
+X-Received: by 2002:a05:6602:1508:b0:669:5f3b:fcbe with SMTP id g8-20020a056602150800b006695f3bfcbemr9458341iow.29.1654808900893;
+        Thu, 09 Jun 2022 14:08:20 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id w4-20020a029004000000b00331fbd37178sm1806036jaf.96.2022.06.09.14.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jun 2022 14:08:20 -0700 (PDT)
+Received: (nullmailer pid 101857 invoked by uid 1000);
+        Thu, 09 Jun 2022 21:08:18 -0000
+Date:   Thu, 9 Jun 2022 15:08:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 5/6] power: supply: max77976: update Luca Ceresoli's
- e-mail address
-Message-ID: <20220609192148.vifrjbggixbn7mvi@mercury.elektranox.org>
-References: <20220603155727.1232061-1-luca@lucaceresoli.net>
- <20220603155727.1232061-5-luca@lucaceresoli.net>
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: renesas,rzg2l: Simplify header file
+ references
+Message-ID: <20220609210818.GA101806-robh@kernel.org>
+References: <f274ad16010798dd4a45d2dca5f870da8acbb470.1654696009.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jgfr724zbzdzymbh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220603155727.1232061-5-luca@lucaceresoli.net>
+In-Reply-To: <f274ad16010798dd4a45d2dca5f870da8acbb470.1654696009.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---jgfr724zbzdzymbh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Jun 03, 2022 at 05:57:26PM +0200, Luca Ceresoli wrote:
-> My Bootlin address is preferred from now on.
->=20
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On Wed, 08 Jun 2022 15:49:33 +0200, Geert Uytterhoeven wrote:
+> The bindings already uses <dt-bindings/clock/r9a0*-cpg.h> to refer to
+> the header files with DT binding definitions for core clocks.
+> Use more wildcards to simplify more references to these files.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
+> To be queued in renesas-clk-for-v5.20.
+> 
+>  .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml       | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
 
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/max77976_charger.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/power/supply/max77976_charger.c b/drivers/power/supp=
-ly/max77976_charger.c
-> index 8b6c8cfa7503..4fed74511931 100644
-> --- a/drivers/power/supply/max77976_charger.c
-> +++ b/drivers/power/supply/max77976_charger.c
-> @@ -3,7 +3,7 @@
->   * max77976_charger.c - Driver for the Maxim MAX77976 battery charger
->   *
->   * Copyright (C) 2021 Luca Ceresoli
-> - * Author: Luca Ceresoli <luca@lucaceresoli.net>
-> + * Author: Luca Ceresoli <luca.ceresoli@bootlin.com>
->   */
-> =20
->  #include <linux/i2c.h>
-> @@ -504,6 +504,6 @@ static struct i2c_driver max77976_driver =3D {
->  };
->  module_i2c_driver(max77976_driver);
-> =20
-> -MODULE_AUTHOR("Luca Ceresoli <luca@lucaceresoli.net>");
-> +MODULE_AUTHOR("Luca Ceresoli <luca.ceresoli@bootlin.com>");
->  MODULE_DESCRIPTION("Maxim MAX77976 charger driver");
->  MODULE_LICENSE("GPL v2");
-> --=20
-> 2.25.1
->=20
-
---jgfr724zbzdzymbh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmKiSEwACgkQ2O7X88g7
-+ppDpxAAjfpEDQfoYU0OfefOmIvmjURQvtNv7YBLr4ogCOf8qHqGGFLzfySKH+eE
-4ZVCjXYbmOXKy3eJHRDNCQD/84Fbc+1jq+AWg8BAjC9s1Dmrt7ik2IQcghQi2dqs
-8u24+mPus+cds5TBhk+UgoNqp90s9ZUhXxBgTpVa0fdghT9hG/EY2Xo+mKHXXx/z
-Vg1VsNgk+1+AlT9ScEZT0dsDVECEGQ6+7nWFGXQa+6fWmckdaBoN9m4ijm8yN1FI
-6FwKLJ7yuQliUV40uPgN6TQ2Pd9gz2LZahJFLIHO4I0MpjTOcoBZ3vDLVbqq+MiJ
-UXgTXsb9ATqC7HceqyYMKsAQCY4YL7SVDeq/K7ZGOv5R4mouNy0YLRgy2sdx1EPV
-v592Lj8KU/+93V+jTNXwwof9cbIVdMJq48tJBnXv8pyh3AX68Xwe/FRU5/WequH/
-ErQIv4wFnyJiwpBPbjP/45aoM54NQxt08b+NFGD07xLMTWWIj1XpHTbBPrb/HZ+Z
-puAFUk4cIyUjPb8gOuoD33oP714fxZem3l6XpAiXarm2prV1EN96PuiwYyEbCVxQ
-i38sRY2epqUpIWnDGWG16sfW9obOwIvJKzHF79EaW2v07j+/2TKp5OGRsLm0MOSA
-oI446aN/UILXE8CGiEKRoy3hzlARoT2jdM7Q1wdCPrdg/MNhnU0=
-=SZ2i
------END PGP SIGNATURE-----
-
---jgfr724zbzdzymbh--
+Acked-by: Rob Herring <robh@kernel.org>
