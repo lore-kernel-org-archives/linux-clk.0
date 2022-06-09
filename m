@@ -2,95 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B1AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jun 2022 21:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23589C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 06:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235621AbiFHVs3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jun 2022 17:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41928 "EHLO
+        id S231754AbiFIGgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jun 2022 02:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236502AbiFHVsT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jun 2022 17:48:19 -0400
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F5C525CA;
-        Wed,  8 Jun 2022 14:48:18 -0700 (PDT)
-Received: by mail-il1-f169.google.com with SMTP id u2so16628017iln.2;
-        Wed, 08 Jun 2022 14:48:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=DSD6n7SqIRrkJflyY9v16h++03DHbVndZ5fsmVluVpY=;
-        b=cwi3sgJVbGK5/a5yofj5IsJ0chGPUaZLjhDM9HLBsEAhYnt1ndpzS+0o7+wsETEDN8
-         oaVtaa4KJP99yw/CIs5x/suLSHclZDmyGBqol1FTgXtS38VKiZkcdLFdkh+5mpQCU1Jd
-         xY6Qn3W9yu+IAUM3k9ADqCpyPNRdPAHOf0ISxzN3UbMdI/FkBZT4uD3cBj5Wi4a1eGMX
-         CI0S4tHkkELzjmE86VE/cnqPDOb7R7W7r4K5C/6YAOHsbVhs6Xey+jSApsV45boTRVyq
-         kd18McEtcDogVhLONQQXLFSMag3DBKFzr7dT/YCZE+Bpq0xZa/muRvoS8aPwSOnT509T
-         W04A==
-X-Gm-Message-State: AOAM5333j6Rbz6E7rciuTDZgOzPkprql6GMRWvOzNEACvA9dMbagyaYP
-        opmmhPDwGvAQJVRVCWnz4w==
-X-Google-Smtp-Source: ABdhPJy/TjtIFK2XNa8YJamLmJFJcs1T73KDNKNmv3NgKRZb8+6pL7BKf2zfXN3uean8c2Mkm38reQ==
-X-Received: by 2002:a05:6e02:1c22:b0:2d1:abab:8806 with SMTP id m2-20020a056e021c2200b002d1abab8806mr19448897ilh.300.1654724897688;
-        Wed, 08 Jun 2022 14:48:17 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id k29-20020a02661d000000b0032ead96ee5csm8452867jac.165.2022.06.08.14.48.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 14:48:17 -0700 (PDT)
-Received: (nullmailer pid 2134383 invoked by uid 1000);
-        Wed, 08 Jun 2022 21:48:06 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        linux@roeck-us.net, linux-kernel@vger.kernel.org,
-        venture@google.com, marcel.ziswiler@toradex.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, p.zabel@pengutronix.de,
-        bjorn.andersson@linaro.org, olof@lixom.net,
-        benjaminfair@google.com, biju.das.jz@bp.renesas.com,
-        linux-serial@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        j.neuschaefer@gmx.net, will@kernel.org, lkundrak@v3.sk,
-        yuenn@google.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, shawnguo@kernel.org,
-        geert+renesas@glider.be, linux-watchdog@vger.kernel.org,
-        gregkh@linuxfoundation.org, sboyd@kernel.org, jirislaby@kernel.org,
-        vkoul@kernel.org, robert.hancock@calian.com,
-        daniel.lezcano@linaro.org, robh+dt@kernel.org, arnd@arndb.de,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        avifishman70@gmail.com, joel@jms.id.au, tali.perry1@gmail.com,
-        tglx@linutronix.de
-In-Reply-To: <20220608095623.22327-10-tmaimon77@gmail.com>
-References: <20220608095623.22327-1-tmaimon77@gmail.com> <20220608095623.22327-10-tmaimon77@gmail.com>
-Subject: Re: [PATCH v2 09/20] dt-bindings: reset: npcm: add GCR syscon property
-Date:   Wed, 08 Jun 2022 15:48:06 -0600
-Message-Id: <1654724886.806854.2134382.nullmailer@robh.at.kernel.org>
+        with ESMTP id S230391AbiFIGgy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 02:36:54 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1802622BE45;
+        Wed,  8 Jun 2022 23:36:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 4821ECE2D47;
+        Thu,  9 Jun 2022 06:36:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB2FC34114;
+        Thu,  9 Jun 2022 06:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654756610;
+        bh=eghX5GucV/60K7txN5/pa0Nt+7HRURSUJRWuzvUb9M0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QPc+In8/Nt4C71MMCUk8XDn6BwfIW0ytAIbyQ9cjwN/Fs4QmbbAkonUdYO6d2d7tn
+         YSsKaG+PxMjPb+xhYyxrXtZ7z0PG6Kk7DcDLCiW81cmzPk0anFwGde9ASC0qKtgGTv
+         Wrmj4Y3jRMz1w9MvOV+SAO9LzdWlYMA9fkGCiNBeCUULlF6srSMcbxgHNdfxY2hp8V
+         ZhV/Iv5sQCrDZoIRkqlxULecT+wTL/o4VLg5e9KKp1LVBDasHtaMqcSRO1UpP7uIwp
+         vYbrWkkbSf/NTJbDg1u0+sHS9Dq8jFyGDRxiqB0NK9MwnUI2ZNativSflKoeqMLSep
+         gh2J2WiB3y/FA==
+Date:   Thu, 9 Jun 2022 08:36:46 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/6] clk: renesas: r8a73a4: Remove r8a73a4_cpg.reg
+Message-ID: <YqGU/h/lva+TG66J@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1654694831.git.geert+renesas@glider.be>
+ <f835f3dfcf3bf754065e5002663952cc6341caac.1654694831.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vmvETeEwTCAqDwvd"
+Content-Disposition: inline
+In-Reply-To: <f835f3dfcf3bf754065e5002663952cc6341caac.1654694831.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 08 Jun 2022 12:56:12 +0300, Tomer Maimon wrote:
-> Describe syscon property that handles general
-> control registers(GCR) in Nuvoton BMC NPCM
-> reset driver.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../devicetree/bindings/reset/nuvoton,npcm-reset.yaml       | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+--vmvETeEwTCAqDwvd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+On Wed, Jun 08, 2022 at 03:41:10PM +0200, Geert Uytterhoeven wrote:
+> The register block base pointer as stored in the reg member of the
+> r8a73a4_cpg structure is only used during initialization.  Hence move
+> it to a local variable, and pass it as a parameter to
+> r8a73a4_cpg_register_clock().
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
-rstc@f0801000: 'nuvoton,sysgcr' is a required property
-	arch/arm/boot/dts/nuvoton-npcm730-gbs.dtb
-	arch/arm/boot/dts/nuvoton-npcm730-gsj.dtb
-	arch/arm/boot/dts/nuvoton-npcm730-kudo.dtb
-	arch/arm/boot/dts/nuvoton-npcm750-evb.dtb
-	arch/arm/boot/dts/nuvoton-npcm750-runbmc-olympus.dtb
+--vmvETeEwTCAqDwvd
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmKhlPoACgkQFA3kzBSg
+KbYBew/5AceNZu3pJyCA8cJeWJNPamLefUSYEW6BORfQnp3SWtMqquukNMgnlab/
+Q3cLNqEPF2cjRnoj8B4rau/JutXVg4ov8nlzmvgqrjTa606GnQXc4g4V8DtAA4FA
+njlctT8OtXDLJGbxvrlHAtq+rAIZcoIyPydrEwhAGZn/YDVhR3cjyLnkkE9EspBk
+FHifpGh7fZQ2Jo7n8TIwRdnmU4qco8gsvySlSJ7kO17H6sq4Q4OBpq44RC0wjjO1
+vhy6f1X5X/f3QmPenqtTVIKZjGTmWEZ0jdsUOU870RzVyDe+JMhPFDVIqord0rdh
+Fd5+NvYhlMwkJ0/LnJttQeYTFYaRqD5mY9hzPpS3QOegSLsH9F57uIb31asi20fO
+1z/V1CSoed/A3nEc9Rz4yrpaXmW/0Rs525xdsq+aoUCATYhZyyUDuMtWXpxse/4H
+cYXzsuqv/m4FseolUY5lWibPq1DkjyFeNDR4772qhdNUfCpSKPoy2wHN1SmMh8jx
+CVQoXHz1spuvHSD1sfBcMv2yro38og5xxcSRUryNsnHurkJ44iQltBJG9CIDEFQj
+YjXsrB9iVQ4pjKrk+nemFCoNTnDpthlSkJPIxwDj7t47229AdGPdncZ1hznmT5hX
+vhwfRi0Psrey5a4ikt1WgGgxmeNoOC5zVUGoSlEC0TfYGYpM2Ts=
+=Ziry
+-----END PGP SIGNATURE-----
+
+--vmvETeEwTCAqDwvd--
