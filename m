@@ -2,136 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3F6CCA47D
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 09:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24595C43334
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 10:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239398AbiFIJ4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jun 2022 05:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60256 "EHLO
+        id S234844AbiFIKCO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jun 2022 06:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230164AbiFIJ4s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 05:56:48 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084773A780A;
-        Thu,  9 Jun 2022 02:56:47 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id s39so13323973ybi.0;
-        Thu, 09 Jun 2022 02:56:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=trU76HfpJ1kVO7VlsUAYRiM1gRVI7EygRQZUmQ7VGqo=;
-        b=fgKM2m+rhk/HGRenipS8Qk3+m9xu5wfr47e9uF7eE1YRJ0ybfQejhpfXLQChff+XYv
-         hafih0d855i3MrUhMB2sGhxM9w2JmLEH9tiJZNdGufcB0lrtJEIjQ2SIAw0JO7YYutDQ
-         Xv+uK+WlC5o9hlCyfk43tb0wBV0AsDfy863XUjzH6HNO4sFwN3t4i1SAb2BuU+z6n+XH
-         kvzJyEFiBzfNsQXOsByiXIoe1vLrWoLmvlzrZTSyOj2JfcPrrYb9Y0YjYsV/i4XmA0mN
-         h732l4AK8a0K2QVLtpMqmWZnCfoqvT18IUxfP5xWulq0rpRiIdhkYa3U3h8RWxgbEc9g
-         JgOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=trU76HfpJ1kVO7VlsUAYRiM1gRVI7EygRQZUmQ7VGqo=;
-        b=Yz1oJtwJB5SxzppO5o7e6XshCfJv6x6R9prr0m0S9CNuHVjypTLMLZ+QHpPKGWMzoo
-         r/rs8bo1kvoDdVuumVttOzDfmhKWEG3qVgKUGoBq5GQ1xNDhnNLG0TvVRPb3j9xOmMdf
-         CSR4AGfLYvwnN+aA5AZxTDRU2RgtAkLbCGMAhfoIfpWeq0A2NsIYPyuHCcHgG3SnMs+5
-         EWMNDvdqZrbghKBFLLoPiMe1a+hWPDVxvb6n5ygn/aoZkyBb+jQgeUodk9NoZLL9n0mq
-         aq53Xv6JAvtN4q+MYifV+nlbXMU5TvwzxN8Yk1zC1rW4mIMV0j/XbQo/VlsIWOJWZJij
-         gxrg==
-X-Gm-Message-State: AOAM5313VHESguNN1i+QRfIpjABZD1Xpec43zcViLLvucLg/Jr/0D9Mp
-        K8SBMMvSv6vIyIfJ57vK/vXCSwRS4GvVtReth7k=
-X-Google-Smtp-Source: ABdhPJxhy2kL9Nq1aL2YQVFH7TdE2ydKeKC87G9lJV827pmes5MPSF3+nz+aCbGUsxsZ9EA+TZcoqpeUR27tr8/ClLA=
-X-Received: by 2002:a25:cc4c:0:b0:65c:8e83:fd5e with SMTP id
- l73-20020a25cc4c000000b0065c8e83fd5emr41469747ybf.563.1654768606253; Thu, 09
- Jun 2022 02:56:46 -0700 (PDT)
+        with ESMTP id S232691AbiFIKCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 06:02:13 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5921714E94C;
+        Thu,  9 Jun 2022 03:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UbbDgBiwip0YBZOTZVQugfugvsZnYOECFEm/sChB2KE=; b=pk5LmI1A6aszGw6bJBfBOEp2aD
+        U1h+ZFFSSnK8VqAlyB4JuyYAdX13KUgLZiqkzxfwMXZ9rLcXV72vPGCzoT5Nh/jWgfuAo9rvsnY2d
+        uR5AV7hvfyPjralHm1TpJmT+OCcad3LiNA+fq5wN7wYCWN4JhRiwUwGBAslMEHFWQWn5ULi2Lub4P
+        i+EEJRnbfwtH5eutwugIAwcmhtxvbG1a5W2y8SzA+C4Ts7dxbLHpQKmAmovezzT8tR42G7Z3XpfnO
+        yc0zC9lSe7OtjlT7qvzvuP3LXJVZDKeRWF3xOE4FMAliLG0o07t6jIPvQ35THQypS5lZSRykYm4f6
+        U90A/TjQ==;
+Received: from dhcp-077-249-017-003.chello.nl ([77.249.17.3] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nzEzM-00DRgJ-Mk; Thu, 09 Jun 2022 10:02:04 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2E614981287; Thu,  9 Jun 2022 12:02:04 +0200 (CEST)
+Date:   Thu, 9 Jun 2022 12:02:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
+        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org
+Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
+Message-ID: <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net>
+References: <20220608142723.103523089@infradead.org>
+ <20220608144517.444659212@infradead.org>
+ <YqG6URbihTNCk9YR@alley>
 MIME-Version: 1.0
-References: <20220505193143.31826-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20220505193143.31826-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdX0egGvyu94-=tJdvW0=q6Y==ZNkexCJpnmrNJezuiqDw@mail.gmail.com>
- <CA+V-a8sxZOZRXG_gsCnQGJdNDw-uVLmuTZ-dOsmUfhS9KL0Esg@mail.gmail.com> <CAMuHMdW0hbVnCcbcC5E8J7Jc_UZPVSpHkmtPd3Haio-WnhhbpQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdW0hbVnCcbcC5E8J7Jc_UZPVSpHkmtPd3Haio-WnhhbpQ@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 9 Jun 2022 10:56:20 +0100
-Message-ID: <CA+V-a8tD5E7J5pG7yFZ7aiJ58Zt5MMRiC8o3VRFhudkqW1y5XQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: clock: r9a07g043-cpg: Add Renesas
- RZ/Five CPG Clock and Reset Definitions
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqG6URbihTNCk9YR@alley>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Thu, Jun 09, 2022 at 11:16:46AM +0200, Petr Mladek wrote:
+> On Wed 2022-06-08 16:27:47, Peter Zijlstra wrote:
+> > The problem, per commit fc98c3c8c9dc ("printk: use rcuidle console
+> > tracepoint"), was printk usage from the cpuidle path where RCU was
+> > already disabled.
+> > 
+> > Per the patches earlier in this series, this is no longer the case.
+> 
+> My understanding is that this series reduces a lot the amount
+> of code called with RCU disabled. As a result the particular printk()
+> call mentioned by commit fc98c3c8c9dc ("printk: use rcuidle console
+> tracepoint") is called with RCU enabled now. Hence this particular
+> problem is fixed better way now.
+> 
+> But is this true in general?
+> Does this "prevent" calling printk() a safe way in code with
+> RCU disabled?
 
-Sorry for the late reply.
+On x86_64, yes. Other architectures, less so.
 
-On Thu, May 19, 2022 at 7:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, May 19, 2022 at 7:45 AM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Tue, May 10, 2022 at 3:02 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Thu, May 5, 2022 at 9:32 PM Lad Prabhakar
-> > > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > > Renesas RZ/Five SoC has almost the same clock structure compared to the
-> > > > Renesas RZ/G2UL SoC, re-use the r9a07g043-cpg.h header file and just
-> > > > ammend the RZ/Five CPG clock and reset definitions.
-> > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > > --- a/include/dt-bindings/clock/r9a07g043-cpg.h
-> > > > +++ b/include/dt-bindings/clock/r9a07g043-cpg.h
-> > > > @@ -108,6 +108,15 @@
-> > > >  #define R9A07G043_ADC_ADCLK            76
-> > > >  #define R9A07G043_ADC_PCLK             77
-> > > >  #define R9A07G043_TSU_PCLK             78
-> > > > +#define R9A07G043_NCEPLDM_DM_CLK       79      /* RZ/Five Only */
-> > >
-> > > While NCEPLDM_DM_CLK is listed in the clock list spreadsheet, its
-> > > control bit is not documented.
-> > >
-> > > > +#define R9A07G043_NCEPLDM_ACLK         80      /* RZ/Five Only */
-> > > > +#define R9A07G043_NCEPLDM_TCK          81      /* RZ/Five Only */
-> > >
-> > > While NCEPLDM_TCK is listed in the clock list spreadsheet, its
-> > > control bit is not documented.
-> > >
-> > I have got the feedback for the above, NCEPLDM_DM_CLK and NCEPLDM_TCK
-> > clocks cannot be stopped as a result there are no register bits for it
-> > in the HW manual (clock spreadsheet will be updated). I will drop this
-> > and send a v2 including your RB.
->
-> The question is not if the clocks can be stopped or not, but if there
-> is any need to refer to them from a DT node.
-As per DT rule we have to add ;)
+Specifically, the objtool noinstr validation pass will warn at build
+time (DEBUG_ENTRY=y) if any noinstr/cpuidle code does a call to
+non-vetted code like printk().
 
-> What's the nature of the future update to the clock spreadsheet?
->
-I have got confirmation from HW team, the UM and clock list will not be updated,
+At the same time; there's a few hacks that allow WARN to work, but
+mostly if you hit WARN in entry/noinstr you get to keep the pieces in
+any case.
 
-* NCEPLDM_DM_CLK, NCEPLDM_TCK and NCEPLDM_ACLK actually exist, and
-should be listed on the clock list. Only NCEPLDM_ACLK has a mechanism
-to stop.
-* Therefore, only NCEPLDM_ACLK should appear on the Clock Control
-register on the UM.
+On other architecture we'll need to rely on runtime coverage with
+PROVE_RCU. That is, if a splat like in the above mentioned commit
+happens again, we'll need to fix it by adjusting the callchain, not by
+mucking about with RCU state.
 
-> Of course, if we don't add these clock definitions now, they can
-> still be added later. DT binding definitions are append-only.
->
-For now I will keep them.
+> I am not sure if anyone cares. printk() is the best effort
+> functionality because of the consoles code anyway. Also I wonder
+> if anyone uses this trace_console().
 
-Cheers,
-Prabhakar
+This is the tracepoint used to spool all of printk into ftrace, I
+suspect there's users, but I haven't used it myself.
+
+> Therefore if this patch allows to remove some tricky tracing
+> code then it might be worth it. But if trace_console_rcuidle()
+> variant is still going to be available then I would keep using it.
+
+My ultimate goal is to delete trace_.*_rcuidle() and RCU_NONIDLE()
+entirely. We're close, but not quite there yet.
