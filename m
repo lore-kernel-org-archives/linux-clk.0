@@ -2,123 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2344CCA47B
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 11:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660D7C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 11:50:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243933AbiFILbp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jun 2022 07:31:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54448 "EHLO
+        id S243228AbiFILun (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jun 2022 07:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243689AbiFILbU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 07:31:20 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F213C3A482B
-        for <linux-clk@vger.kernel.org>; Thu,  9 Jun 2022 04:31:11 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id o7so13563405eja.1
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jun 2022 04:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+XewJc/p+7yp1re11t6BfmEtfp27WPbXPnywgusXXTc=;
-        b=dD0Bz9eW32MHk+TeRLS+QqFpXQSyJG1PFuM0sFc2oIQiPmRbBKI4wiAjUnrY0TOPB3
-         vmLpoVIxPESYT9ISrrirk39KtLhSpCgEKtG3yrDCpv/Gh6ZWSamp4kS8RJg23gIGNIEa
-         lDd2yagv7BcuRvFzrWxMhthjwknH7br96szys=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+XewJc/p+7yp1re11t6BfmEtfp27WPbXPnywgusXXTc=;
-        b=csGWPzsy369i7EznkZ0T1xItifBd6E5EGXimXIdN9wY7o1Xv9vlT8iiBy6IGq/yZow
-         tKFHVR4gUSdHweww0Ob2WkfdIj4ZH2Di6108GpVx5BCncly/XSipOnyrwd1CjxMmOJ3B
-         BoB68nltCSBhIAEOdNz4AmZKLucUuJD87zt0lG4L4QUEbmSgCMBmp4Rq3BME4KlBXo6Y
-         +OJ34b5+NPd3/2xyLYmkdKHAc7c9hQ9F1n+Bnc8bjYN2eC+aZ8SKMHPSo0FBrsW7uVE5
-         n5zDcjiUltKVyI5XZBapp+Y5bQhiyn14TEg+jY58U2KKYb3Awo1qdx57bIxRHuOBZRLP
-         ow9g==
-X-Gm-Message-State: AOAM53203LrygtOGGmmWmvFB5IQQIWu/k+YPioMxaI+eUpVnAeIuFa9X
-        78pphJ7wP9xYddr1UM4uCP9otimvKnncj4UVKM+Qfw==
-X-Google-Smtp-Source: ABdhPJx9nV7wAxP/lyAtNedlGfDPIROj9YXpatcH7EqCac1uVlfTSKszMzYbWUxkatf8WgjTCZNOZTjPAlJBoltWDx4=
-X-Received: by 2002:a17:907:c22:b0:711:dc95:3996 with SMTP id
- ga34-20020a1709070c2200b00711dc953996mr13928684ejc.62.1654774269713; Thu, 09
- Jun 2022 04:31:09 -0700 (PDT)
+        with ESMTP id S239820AbiFILum (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 07:50:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E2940F27B;
+        Thu,  9 Jun 2022 04:50:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC5F160B0C;
+        Thu,  9 Jun 2022 11:50:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC74C34114;
+        Thu,  9 Jun 2022 11:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654775440;
+        bh=gATZaLIUmZR0d4Dmyav0+IhccKug7Z/4zmtUfvd5RJw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rDQHg5r1bCeF77ifffkA8E0SdS22TUjUb0z/nq1nwqUqCCeVG6Z0j6BkRhQs6y5c1
+         hgPdv+j7ZW4EPvt8V5X1AINKEDLB0inQKYtiqFAm39H1+e3HSTWiXP8stv5Cx19Guv
+         ZgthtHps0dmgh4+5GMGHbs+PJQazuj6olM6aMmn4ytw7p7gKIkHGxrbb78werfnkgY
+         AhiGGmxPM+HSzPUR3I80FTyevRAQ2VDgu7Dtf2K9olvpQsuM8v3/Jp7j6C6CI3d7TL
+         /ERtIPEstLy9yo6HcSAnUByX5kv8uT8aSQRCCyE3B+uR//s7FiXqG9vwYlUYVX/XkE
+         7g9cC1xBXgihQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1nzGgO-0000wl-1B; Thu, 09 Jun 2022 13:50:36 +0200
+Date:   Thu, 9 Jun 2022 13:50:36 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: gdsc: add support for collapse-vote
+ registers
+Message-ID: <YqHejM86/T0f3Vt+@hovoldconsulting.com>
+References: <20220520100948.19622-1-johan+linaro@kernel.org>
+ <20220520100948.19622-3-johan+linaro@kernel.org>
+ <20220521035228.1FD9AC385A9@smtp.kernel.org>
+ <Yot4XHaf6uHcJxTL@hovoldconsulting.com>
+ <20220526183219.9F047C385A9@smtp.kernel.org>
 MIME-Version: 1.0
-References: <20220608142723.103523089@infradead.org> <20220608144517.444659212@infradead.org>
- <YqG6URbihTNCk9YR@alley> <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net>
-In-Reply-To: <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net>
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-Date:   Thu, 9 Jun 2022 20:30:58 +0900
-Message-ID: <CA+_sPaoJGrXhNPCs2dKf2J7u07y1xYrRFZBUtkKwzK9GqcHSuQ@mail.gmail.com>
-Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Petr Mladek <pmladek@suse.com>, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
-        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
-        quic_neeraju@quicinc.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220526183219.9F047C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-My emails are getting rejected... Let me try web-interface
+On Thu, May 26, 2022 at 11:32:17AM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2022-05-23 05:04:44)
+> > On Fri, May 20, 2022 at 08:52:26PM -0700, Stephen Boyd wrote:
+> > > Quoting Johan Hovold (2022-05-20 03:09:47)
+> > > > Recent Qualcomm platforms have APCS collapse-vote registers that allow
+> > > > for sharing GDSCs with other masters (e.g. LPASS).
+> > > 
+> > > Maybe just say 'with other subsystems' because LPASS is an entire
+> > > subsystem.
+> > 
+> > The term "subsystem" is too broad and also has a different meaning in
+> > Linux.
+> > 
+> > The vendor kernel uses "masters" here which is clear enough and
+> > presumably matches their documentation.
+> > 
+> 
+> How about "voter"? Then it isn't confused with linux subsystems.
 
-Kudos to Petr for the questions and thanks to PeterZ for the answers.
+Yeah, voters vote, but that's not very informative, is it?
 
-On Thu, Jun 9, 2022 at 7:02 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> This is the tracepoint used to spool all of printk into ftrace, I
-> suspect there's users, but I haven't used it myself.
+I don't see any reason to obfuscate the commit message here.
 
-I'm somewhat curious whether we can actually remove that trace event.
+Johan
