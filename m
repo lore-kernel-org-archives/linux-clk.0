@@ -2,82 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FDDC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 08:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A63C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jun 2022 09:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242411AbiFIIoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jun 2022 04:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39340 "EHLO
+        id S238564AbiFIJQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jun 2022 05:16:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242436AbiFIInA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 04:43:00 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5CEF6F;
-        Thu,  9 Jun 2022 01:41:13 -0700 (PDT)
-Received: by mail-qk1-f169.google.com with SMTP id a184so13697356qkg.5;
-        Thu, 09 Jun 2022 01:41:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M4fbvg4+7mZxGqgX0/rSfvFWe/Uwj0QhWrczwxwmPXk=;
-        b=165IlljCoX7s5/LyOeeXlfYSB1dgqll28J/qdzOfYjRnVjWDCIPUPWrJ3KLSUzT2/l
-         DYxYKrxVm9FXq6+6avS+dO6gte3ws+AOzwul9Rr52Loct2zga/Gjeo2AiFHgqrV2bkZ0
-         n5WwfuU/Qn2+SweyTFvhenUYerwPEniesbYNohAW6fb3bm9ZrzyI0xZl8FA3uBMHhLS1
-         4KKjgJ6/bMbMx8DDSrNbuDQaLcWdY+O9C4N+PPc6yZbWh25nm3/D/sGXC66JteNQ6tra
-         8TpzQGkAWPBFmt02C366RlPn9dz/ejAP3XEdNlSYY8tXHVYRzlguDdLnK+1uKfTDifCN
-         +u9A==
-X-Gm-Message-State: AOAM5313Kj8YE0l+ZD1Yp90R1oP37l6sQ3R8EEZa7sgL/5iAt8ghxuYt
-        lVsYd5OAPgTLSMnKm+GmjciiGD8DImSLeg==
-X-Google-Smtp-Source: ABdhPJx9hBqwb6zBD7uXxqpAL/w0JNmgQjbRci/UijJj9OV7CzxYb0x5NzmTEiidBSGqkj/aeL5oBQ==
-X-Received: by 2002:a05:620a:4086:b0:6a6:f8b3:6eed with SMTP id f6-20020a05620a408600b006a6f8b36eedmr6288321qko.777.1654764072420;
-        Thu, 09 Jun 2022 01:41:12 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id i187-20020a3786c4000000b0069fc13ce1fesm17841687qkd.47.2022.06.09.01.41.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jun 2022 01:41:12 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id w2so40598908ybi.7;
-        Thu, 09 Jun 2022 01:41:11 -0700 (PDT)
-X-Received: by 2002:a25:cc53:0:b0:65c:b19c:fac1 with SMTP id
- l80-20020a25cc53000000b0065cb19cfac1mr37098351ybf.89.1654764071719; Thu, 09
- Jun 2022 01:41:11 -0700 (PDT)
+        with ESMTP id S233025AbiFIJQz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jun 2022 05:16:55 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA0E1A046;
+        Thu,  9 Jun 2022 02:16:53 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 31C7E1FDAF;
+        Thu,  9 Jun 2022 09:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1654766212; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=d57/DrqDiiJ2foYz2ew+5Cqn+PqODCYrsHqzu7X2C2Q=;
+        b=fo+sYmFjpmQOmpyD3JvJl9AYNinBjxAVeUE+HbamyvnKBmUJ4aJ/YSAu3A8+CqB7Ibeuz8
+        5d8JOsM43+X+4Im3fKziKImYEhGOTr+/e/e7kKF981tYnqb1CU7vBLnpyqhaj1HOQaPm0q
+        8dfR9EB/TBh2sOsSKiFiTu8q7nOVsPQ=
+Received: from suse.cz (unknown [10.100.208.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id B45BB2C14F;
+        Thu,  9 Jun 2022 09:16:46 +0000 (UTC)
+Date:   Thu, 9 Jun 2022 11:16:46 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
+        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
+        linus.walleij@linaro.org, shawnguo@kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
+        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
+        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
+        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
+        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
+        shorne@gmail.com, James.Bottomley@hansenpartnership.com,
+        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
+        senozhatsky@chromium.org, john.ogness@linutronix.de,
+        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com, joel@joelfernandes.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org
+Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
+Message-ID: <YqG6URbihTNCk9YR@alley>
+References: <20220608142723.103523089@infradead.org>
+ <20220608144517.444659212@infradead.org>
 MIME-Version: 1.0
-References: <20220603233437.21819-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20220603233437.21819-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 9 Jun 2022 10:41:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdURJ2oDym6ga=DtjE88ioC6hxb8+5mDi_LQ=XnVjcLUuw@mail.gmail.com>
-Message-ID: <CAMuHMdURJ2oDym6ga=DtjE88ioC6hxb8+5mDi_LQ=XnVjcLUuw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a779f0: Add SDHI0 clock
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220608144517.444659212@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
+On Wed 2022-06-08 16:27:47, Peter Zijlstra wrote:
+> The problem, per commit fc98c3c8c9dc ("printk: use rcuidle console
+> tracepoint"), was printk usage from the cpuidle path where RCU was
+> already disabled.
+> 
+> Per the patches earlier in this series, this is no longer the case.
 
-On Mon, Jun 6, 2022 at 7:05 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+My understanding is that this series reduces a lot the amount
+of code called with RCU disabled. As a result the particular printk()
+call mentioned by commit fc98c3c8c9dc ("printk: use rcuidle console
+tracepoint") is called with RCU enabled now. Hence this particular
+problem is fixed better way now.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.20.
+But is this true in general?
+Does this "prevent" calling printk() a safe way in code with
+RCU disabled?
 
-> DTS patches will come soon. eMMC works fine, SD still needs to be
-> tested.
+I am not sure if anyone cares. printk() is the best effort
+functionality because of the consoles code anyway. Also I wonder
+if anyone uses this trace_console().
 
-Note that SD0H is not yet supported by this driver.
+Therefore if this patch allows to remove some tricky tracing
+code then it might be worth it. But if trace_console_rcuidle()
+variant is still going to be available then I would keep using it.
 
-Gr{oetje,eeting}s,
+Best Regards,
+Petr
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/printk/printk.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2238,7 +2238,7 @@ static u16 printk_sprint(char *text, u16
+>  		}
+>  	}
+>  
+> -	trace_console_rcuidle(text, text_len);
+> +	trace_console(text, text_len);
+>  
+>  	return text_len;
+>  }
+> 
