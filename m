@@ -2,93 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225E3C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 07:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 07:36:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346941AbiFJHaW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jun 2022 03:30:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38024 "EHLO
+        id S245087AbiFJHgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jun 2022 03:36:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347025AbiFJHaE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 03:30:04 -0400
-Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D4E7134650;
-        Fri, 10 Jun 2022 00:30:01 -0700 (PDT)
-Received: from mail (mail.baikal.int [192.168.51.25])
-        by mail.baikalelectronics.com (Postfix) with ESMTP id 63080BD2;
-        Fri, 10 Jun 2022 10:22:24 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com 63080BD2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baikalelectronics.ru; s=mail; t=1654845744;
-        bh=3UfPEG9NoKRc1ViJ6X0Y9kRe75ENoa5FpKOJZHHMvCA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-        b=avykppIBpoyrI2q5eEojPnj5AcXNHhy0xGSKlVn3x467yB9UU2sB55Ew7ADyBdUP5
-         OcNEGklL/IZTcEzFeFwR/TFkkxEU3SY7lm5GMi0PYy/4fcOTOOhE7NIUHWSSWCE7mq
-         wMOlLKlT9C5UQgHMN85vjegOvQHFAWeelS+YhZoI=
-Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
- Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 10 Jun 2022 10:21:31 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        with ESMTP id S1346684AbiFJHgC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 03:36:02 -0400
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [5.144.164.164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F69812B03F;
+        Fri, 10 Jun 2022 00:35:59 -0700 (PDT)
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id DC1E31F714;
+        Fri, 10 Jun 2022 09:35:54 +0200 (CEST)
+Date:   Fri, 10 Jun 2022 09:35:47 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>
-CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/8] reset: Fix devm bulk optional exclusive control getter
-Date:   Fri, 10 Jun 2022 10:21:17 +0300
-Message-ID: <20220610072124.8714-2-Sergey.Semin@baikalelectronics.ru>
-In-Reply-To: <20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru>
-References: <20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru>
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 04/11] drm/msm/dsi/phy: Reindent and reflow multiline
+ function calls
+Message-ID: <20220610073547.meftbrcxk274kxhq@SoMainline.org>
+Mail-Followup-To: Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jonathan Marek <jonathan@marek.ca>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20220601220747.1145095-1-marijn.suijten@somainline.org>
+ <20220601220747.1145095-5-marijn.suijten@somainline.org>
+ <CAA8EJpqU6y3YKfZpgKORCfns-LN81NhqOetQbBC_Z4gVdMQakg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqU6y3YKfZpgKORCfns-LN81NhqOetQbBC_Z4gVdMQakg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most likely due to copy-paste mistake the device managed version of the
-denoted reset control getter has been implemented with invalid semantic,
-which can be immediately spotted by having "WARN_ON(shared && acquired)"
-warning in the system log as soon as the method is called. Anyway let's
-fix it by altering the boolean arguments passed to the
-__devm_reset_control_bulk_get() method from
-- shared = true, optional = false, acquired = true
-to
-+ shared = false, optional = true, acquired = true
-That's what they were supposed to be in the first place (see the non-devm
-version of the same method: reset_control_bulk_get_optional_exclusive()).
+On 2022-06-02 13:14:26, Dmitry Baryshkov wrote:
+> On Thu, 2 Jun 2022 at 01:07, Marijn Suijten
+> <marijn.suijten@somainline.org> wrote:
+> >
+> > Patch 613cbd1da3c9 ("drm/msm/dsi: use devm_clk_*register to registe DSI
+> > PHY clocks") introduced the devm_ prefix to clk_hw registration calls,
+> > without updating the indentation of the arguments on the following
+> > lines.
+> >
+> > Similarly e55b3fbbbbc8 ("drm/msm/dsi: drop PLL accessor functions")
+> > moved from pll_write to dsi_phy_write without updating the indentation
+> > of followup arguments either.
+> >
+> > Preparing for a series that heavily touches the clk calls, reflow and
+> > reindent function calls that are adhering to an 80-char column limit by
+> > spanning multiple lines.  Where function names are very long the
+> > arguments are indented with a fixed number of two tab characters instead
+> > of aligning with the opening parenthesis of the function call.
+> >
+> 
+> I'm not a fan of reindenting the code, but let's do it.
 
-Fixes: 48d71395896d ("reset: Add reset_control_bulk API")
-Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+I don't like it either, but it's better than trying to figure out how to
+add and flow new arguments into the call-site while also leaving the
+indentation in the same broken state.  At the same time it seems more
+consistent to fix up most faults rather than only touching clk calls.
 
----
+It's unfortunate that there's no proper autoformatter for C, that is
+consistently used across the kernel tree.  Makes for a lot of mundane,
+error-prone, manual work.  But alas.
 
-Changelog v4:
-- This is a new patch added on v4 lap of the series.
----
- include/linux/reset.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index 8a21b5756c3e..514ddf003efc 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -731,7 +731,7 @@ static inline int __must_check
- devm_reset_control_bulk_get_optional_exclusive(struct device *dev, int num_rstcs,
- 					       struct reset_control_bulk_data *rstcs)
- {
--	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, true, false, true);
-+	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, false, true, true);
- }
- 
- /**
--- 
-2.35.1
-
+- Marijn
