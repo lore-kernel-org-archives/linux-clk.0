@@ -2,68 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2032EC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 18:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17232CCA47B
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 19:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349922AbiFJSmX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jun 2022 14:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        id S1345812AbiFJTBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jun 2022 15:01:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350087AbiFJSmV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 14:42:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F624149DB4;
-        Fri, 10 Jun 2022 11:42:20 -0700 (PDT)
+        with ESMTP id S243528AbiFJTBO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 15:01:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB312C36B9;
+        Fri, 10 Jun 2022 12:01:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 15BE1B836FF;
-        Fri, 10 Jun 2022 18:42:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE96AC34114;
-        Fri, 10 Jun 2022 18:42:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B2D556222E;
+        Fri, 10 Jun 2022 19:01:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1352DC34114;
+        Fri, 10 Jun 2022 19:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654886537;
-        bh=PJBR6bKb3Ylt/8DyDdQwk5imWJG0lzjWUnMRvGHHesE=;
+        s=k20201202; t=1654887672;
+        bh=Hnvop1nQB2a1YvXC9KrSU6WdMwLevAsVoA6EE55HKf0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bi4mAHAcf2fgQoDLYAunF0CMvF+EqEcOGK1JshkXVnrIa6ig8IJPbyKqqzr1fz45Y
-         G/SPsoq/l31XgT/FUMq4A1plS6YNt5Pf2zMVP1Z0uXnQ/zA0t3C4829OJj1RJ5LTF1
-         70UNuYrXPXFw3r2mc2qVDEkLEF4Kz68uIT//qft0cGKDozMWC35E83x0bN7oBpcMsX
-         TrQEYTHRgNoP/nMYlkT6+2jZ6kwUgYlNVws+e2MjcAvVrwNq2TINy2ZKpr2kyksrow
-         0odJG4t5S3UQWpyNOk7iY0yV8piZCTrTC3VfPDqwZU4ePiXN6vimqM8tXA5bXLt061
-         6aEwYPE34OXWg==
+        b=j2V8JdBRB9od3csLhFaWyYbQv4LOFTb655urrswTus3Zufk/CEtBBoyna10Gf0yzw
+         g2Q25Psjl8EgSp54TApA8f2BEC4zmE/5LyPX/9sWAd+T/8SbBiqlZnpRS8NJmLdfLJ
+         YXccNmbOugAmc0N1Y4Y3Zqb3FiKyYm8NFPBK6NqoIj0m2eVqVFUeBXoiZHdMKm2T3t
+         UlUApgeWIfxWnmUOGL1W8187VMKi/0/uYDgZMax5vUo8xdYFSmcp0F5suozphejrz8
+         WDs2WSLXWc27b2R5mOv8MNt7/VTjNxoQHJIWnHepHV54LX80fhopqJX0VAsjrJGjXj
+         z8wubT/wkWYcA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220523102339.21927-3-matthias.bgg@kernel.org>
-References: <20220523102339.21927-1-matthias.bgg@kernel.org> <20220523102339.21927-3-matthias.bgg@kernel.org>
-Subject: Re: [PATCH v3 2/2] clk: mediatek: Delete MT8192 msdc gate
+In-Reply-To: <20220610074632.abtec5kulbclund4@SoMainline.org>
+References: <20220601220747.1145095-1-marijn.suijten@somainline.org> <20220601220747.1145095-4-marijn.suijten@somainline.org> <CAA8EJpomtbN0+ocD2pRbkYriUY4D9OnjgoFzL9qNHhPm3Uz5cQ@mail.gmail.com> <20220609221211.684C1C34114@smtp.kernel.org> <20220610074632.abtec5kulbclund4@SoMainline.org>
+Subject: Re: [PATCH v2 03/11] clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     allen-kh.cheng@mediatek.com, weiyi.lu@mediatek.com,
-        chun-jie.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        ikjn@chromium.org, miles.chen@mediatek.com, robh+dt@kernel.org,
-        linux-mediatek@lists.infradead.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        angelogioacchino.delregno@collabora.com,
-        Matthias Brugger <matthias.bgg@gmail.com>
-To:     matthias.bgg@kernel.org, mturquette@baylibre.com
-Date:   Fri, 10 Jun 2022 11:42:15 -0700
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Date:   Fri, 10 Jun 2022 12:01:10 -0700
 User-Agent: alot/0.10
-Message-Id: <20220610184217.BE96AC34114@smtp.kernel.org>
+Message-Id: <20220610190112.1352DC34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting matthias.bgg@kernel.org (2022-05-23 03:23:39)
-> From: Matthias Brugger <matthias.bgg@gmail.com>
+Quoting Marijn Suijten (2022-06-10 00:46:32)
+> On 2022-06-09 15:12:09, Stephen Boyd wrote:
+> > Quoting Dmitry Baryshkov (2022-06-02 03:20:19)
+> > > On Thu, 2 Jun 2022 at 01:07, Marijn Suijten
+> > > <marijn.suijten@somainline.org> wrote:
+> > > > diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed=
+-factor.c
+> > > > index 54942d758ee6..fabb98d0cdb2 100644
+> > > > --- a/drivers/clk/clk-fixed-factor.c
+> > > > +++ b/drivers/clk/clk-fixed-factor.c
+> > > > @@ -148,17 +151,50 @@ struct clk_hw *devm_clk_hw_register_fixed_fac=
+tor_index(struct device *dev,
+> > > >                 const char *name, unsigned int index, unsigned long=
+ flags,
+> > > >                 unsigned int mult, unsigned int div)
+> > > >  {
+> > > > -       return __clk_hw_register_fixed_factor(dev, NULL, name, NULL=
+, index,
+> > > > -                                             flags, mult, div, tru=
+e);
+> > > > +       return __clk_hw_register_fixed_factor(dev, NULL, name, NULL=
+, NULL,
+> > > > +                                             index, flags, mult, d=
+iv, true);
+> > >=20
+> > > Here (and several times later) you are inserting an argument and then
+> > > moving arguments to the next line. My slight preference would be to
+> > > just insert the arg (and maybe break the line if it gets too long) w/o
+> > > touching the next lines.
 >=20
-> The msdc gate is part of the MMC driver. Delete the not used code.
->=20
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
->=20
-> ---
+> That'll definitely look odd, as we'll end up with index floating on a
+> single line, all on its own.
 
-Applied to clk-next
+Pretty sure Dmitry is suggesting to make the line longer, not put the
+index on a line by itself. Ignore the 80-column limit.
+
+>=20
+> > I'd just add the argument at the end because when it is added in the
+> > middle it makes the diff more difficult to read.
+>=20
+> How strong is this feeling, against keeping argument ordering consistent
+> with other implementations of similar __clk_hw_register_* functions?
+>=20
+
+Not super strong. Just try to minimize the diff to make the reviewer's
+job easier. In this case it would be inserting NULL before 'index' and
+not modifying the next line so the diff is one line instead of two.
