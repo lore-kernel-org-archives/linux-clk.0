@@ -2,114 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060F6C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 10:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC40C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 10:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347910AbiFJKYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jun 2022 06:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37282 "EHLO
+        id S1349276AbiFJKwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jun 2022 06:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245446AbiFJKYp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 06:24:45 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B528DFB7;
-        Fri, 10 Jun 2022 03:24:44 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id d19so16618899lji.10;
-        Fri, 10 Jun 2022 03:24:44 -0700 (PDT)
+        with ESMTP id S245306AbiFJKwf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 06:52:35 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D067F3082EE
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 03:49:16 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id t25so42169562lfg.7
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 03:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mQkg5BFcWf589C+wuulEqAsCmR3RQXLtbhuR5v5QD+Q=;
-        b=l2+IJM229M3SPHh7e8DgjWAjrbApaXeUGaYU6B5FfKIRrgDeAvXZz+caPFdCePZGus
-         n3EBieDnYjrDEyRGGEJQbvZN3361ADG9TH8Iqc9aE6nntloE6GkBfJd3V4VFDIyQlVNq
-         u2gINhMYrP2b3WjmrU9JB2J7/aRQhnCccMo5YGL7+NfX/4uamau/Io1PLJIf5vrLKMbd
-         dXNNhY8WgG3z79hP/kXytEFUPY5uwrbjaa9Vy71yiRRBhhsmBsumQvQ2k+R1kZXIWMaS
-         MoGr8/iuiM92eAZ9i/zyVXKybD6gRV7dnxtIqEbNshK8dENbhQ8pcV9QsXih/cuXS+2c
-         OUAQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dgkI3VAYwFIaWeGVD2P9W7qrwDfpBrNAVPNjW8QKPXg=;
+        b=ru3SIZhIV3kbuf9JsGpv/nAyTPGTBD+wPbkMljuZdehZNautA0RBEtGymeX4Y5UKwi
+         DirjHiGMQLgOIqCOjZeW+NHIafXzaQkxJixkqkqih2z33QxjTTc1VriPJdprqPAhiq8M
+         aKSL2aV2vnjbZZpat0A+2MpJEgx8U972IAIoPjM5eLbRaDyl6fioHC8kB6gDfH9Js+3l
+         miGRa1XqmNS6Y+IjznPqLMGMpQUkBeWqWub8wfWLpFGOZqXivdAjVe3Z8eeGSkd9lxr+
+         IqBhWFTxCf+BqeBaI/pARlfEh2M0m2onno35F4f3/05ExYaz2DFPH6D5muhgziM0efZj
+         0BEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mQkg5BFcWf589C+wuulEqAsCmR3RQXLtbhuR5v5QD+Q=;
-        b=NyXQMlobysz246+GiVNy0Y4p9FB3/Ak7fItUFTunlJW7WDMARviESTW1fk7xU0QAVS
-         ueZsrJkvsqBpJQfXp653Wo3qoU8Jao401rKSQAjg2RgcdXJzbdIH05iUB0xJDpzhKY8O
-         6aJb7+4CEuFDHJH1+M66UNR0Ud0bAfB2ey5g/H6xzy7Ycr1yU/0/Hf+eAfeH7eqjAofD
-         uQe8xVEQCnbP/slrrC8Q7RzL1mZxfi/H/8UT/jzpBltqwGJvznVAKa/W+0t9JLq0YuOj
-         kqxiMGDhdgJcr73c0+5eFU3R0ImglSXN53AmE84b4vRVvtQ4u13DWFhVW1oABUcvIRcL
-         +92Q==
-X-Gm-Message-State: AOAM533Ny1KoXeYgVkqoE3o8UpTwsns/XI0hdjPbjb2xCQyyZsj9PthX
-        nsRJuyKZJ4dYSIgbKqXFKIM=
-X-Google-Smtp-Source: ABdhPJxgxcCtlb5Z+Y7tZ/ZH2Zooff5ggN8+p1CIxsDICuK0H9aEHtzuS0DOVgFRxpWe3OivTBz9zg==
-X-Received: by 2002:a2e:b8c4:0:b0:258:f008:5b75 with SMTP id s4-20020a2eb8c4000000b00258f0085b75mr189727ljp.189.1654856682873;
-        Fri, 10 Jun 2022 03:24:42 -0700 (PDT)
-Received: from mobilestation ([95.79.189.214])
-        by smtp.gmail.com with ESMTPSA id d21-20020a05651c089500b0025567827117sm4064786ljq.13.2022.06.10.03.24.41
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dgkI3VAYwFIaWeGVD2P9W7qrwDfpBrNAVPNjW8QKPXg=;
+        b=eupv9sr9DMqdiiDLKr3vDE5riAx/wr4oWRhD6CwmtKLjA64pNJJCtnXuAQEOtfQuJp
+         iJkl6bCJr3HyCguEmQZ72NdNohmIlGHMuh1t6mugYZnWgi140MeGXCmjnFPP/2lH6R+x
+         KskY5ARCk05I21MvGlVSNdHpxnX6ESXdCU2bWc4FDImPmxXQml8+1MZRyElA0lGA+vN6
+         aQDQXXMmFmFCbT+wGPsgqUki1UOy4mSemPn7iThMLv5K1bn26xG2o/HO3PFGmVOqxhpc
+         Q9k8qCNjiRt5GuJ06Y9ZBqCUFaqOhvz9yZwKRBYOwcNZDW88cfadA3M6l9s8FQQp8D/J
+         PVPQ==
+X-Gm-Message-State: AOAM531UA/5AhH3TOiVLG873g7cNJsu5C93Jaz7IAlabW234qYF1e3Ij
+        AexTQg8b0c4wH12Gy7W3JZksKA==
+X-Google-Smtp-Source: ABdhPJxU+SHkuDdjHziMvXBr91lJUJ/ry4kOJqJZLAGx+bNgx8smoPFOfELuL5w3Unwph2Ib3gK6Lw==
+X-Received: by 2002:a05:6512:b1d:b0:47d:ab06:e627 with SMTP id w29-20020a0565120b1d00b0047dab06e627mr2745898lfu.669.1654858155119;
+        Fri, 10 Jun 2022 03:49:15 -0700 (PDT)
+Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id h11-20020ac24d2b000000b00477a287438csm4683468lfk.2.2022.06.10.03.49.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jun 2022 03:24:42 -0700 (PDT)
-Date:   Fri, 10 Jun 2022 13:24:40 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Fri, 10 Jun 2022 03:49:14 -0700 (PDT)
+From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v4 2/8] clk: vc5: Fix 5P49V6901 outputs disabling when
- enabling FOD
-Message-ID: <20220610102440.ubejkcbkwb7wgah6@mobilestation>
-References: <20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru>
- <20220610072124.8714-3-Sergey.Semin@baikalelectronics.ru>
- <eb0cbc41-2868-4cbf-9fbf-eeabd25dda04@omp.ru>
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v7 0/7] clk: qcom: add camera clock controller driver for SM8450 SoC
+Date:   Fri, 10 Jun 2022 13:49:09 +0300
+Message-Id: <20220610104911.2296472-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb0cbc41-2868-4cbf-9fbf-eeabd25dda04@omp.ru>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 01:03:10PM +0300, Sergey Shtylyov wrote:
-> On 6/10/22 10:21 AM, Serge Semin wrote:
-> 
-> > We have discovered random glitches during the system boot up procedure.
-> > The problem investigation led us to the weird outcomes: when none of the
-> > Renesas 5P49V6901 ports are explicitly enabled by the kernel driver, the
-> > glitches disappeared. It was a mystery since the SoC external clock
-> > domains were fed with different 5P49V6901 outputs. The driver code didn't
-> > seem like bogus either. We almost despaired to find out a root cause when
-> > the solution was found for a more modern revision of the chip. It turned
-> > out the 5P49V6901 clock generator stopped its output for a short period of
-> > time during the VC5_OUT_DIV_CONTROL register writing. The same problem has
-> > was found for the 5P49V6965 revision of the chip and the was successfully
-> 
+The patchset adds support of a camera clock controller found on
+QCOM SM8450 SoC, noticeably a camcc pll2 is a new "rivian evo"
+type of pll, its generic support is added in the series.
 
->    s/was found/been found/, s/the was/that was/?
+Note that SM8450 ES variant has a slightly different configurtion,
+the published version is intended to support SM8450 CS SoC.
 
-Right. Thanks.)
+Changes from v6 to v7:
+* rebased on top of v5.19-rc1,
+* fixed a warning in a usage example found in yaml file.
 
--Sergey
+Changes from v5 to v6:
+* rebased on top of linux-next,
+* added Rob's tag,
+* fixed a topology of power domains around titan_top.
 
-> 
-> > fixed in commit fc336ae622df ("clk: vc5: fix output disabling when
-> > enabling a FOD") by enabling the "bypass_sync" flag hidden inside "Unused
-> > Factory Reserved Register". Even though the 5P49V6901 registers
-> > description and programming guide doesn't provide any intel regarding that
-> > flag, setting it up anyway in the officially unused register completely
-> > eliminated the denoted glitches. Thus let's activate the functionality
-> > submitted in commit fc336ae622df ("clk: vc5: fix output disabling when
-> > enabling a FOD") for the Renesas 5P49V6901 chip too in order to remove
-> > the ports implicit inter-dependency.
-> > 
-> > Fixes: dbf6b16f5683 ("clk: vc5: Add support for IDT VersaClock 5P49V6901")
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> 
-> [...]
-> 
-> MBR, Sergey
+Changes from v4 to v5:
+* fixed the same typo in a usage example found in yaml file as in v3
+  change.
+
+Changes from v3 to v4:
+* fixed a changed path in the yaml file.
+
+Changes from v2 to v3:
+* fixed a typo in a usage example found in yaml file,
+* renamed dt related files to match the compatible "qcom,sm8450-camcc",
+* minor fixes in the driver per review requests from Bjorn,
+* added Bjorn's tag to a change of exported symbols namespace.
+
+Changes from v1 to v2:
+* updated qcom,camcc-sm8450.yaml according to review comments from Rob,
+* changed qcom,camcc-sm8450.h licence to dual one,
+* disabled camcc device tree node by default,
+* added Stephen's tag,
+* rebased the series on top of clk-for-5.18
+
+Vladimir Zapolskiy (7):
+  dt-bindings: clock: add QCOM SM8450 camera clock bindings
+  arm64: dts: qcom: sm8450: Add description of camera clock controller
+  clk: qcom: clk-alpha-pll: fix clk_trion_pll_configure description
+  clk: qcom: clk-alpha-pll: limit exported symbols to GPL licensed code
+  clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces
+  clk: qcom: clk-alpha-pll: add Rivian EVO PLL configuration interfaces
+  clk: qcom: add camera clock controller driver for SM8450 SoC
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |   94 +
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |   20 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8450.c               | 2866 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |  145 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |   11 +-
+ include/dt-bindings/clock/qcom,sm8450-camcc.h |  159 +
+ 8 files changed, 3297 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm8450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
+
+-- 
+2.33.0
+
