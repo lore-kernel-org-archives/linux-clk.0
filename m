@@ -2,82 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8FBC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jun 2022 19:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6DFC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jun 2022 02:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347206AbiFJT7C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jun 2022 15:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57778 "EHLO
+        id S244611AbiFKCZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jun 2022 22:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234379AbiFJT67 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 15:58:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15C8A4ECE5;
-        Fri, 10 Jun 2022 12:58:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 412CE611E2;
-        Fri, 10 Jun 2022 19:58:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D7EC3411C;
-        Fri, 10 Jun 2022 19:58:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654891136;
-        bh=WWXrwEFko5hYfaIMqNjo1K4YUAKrZpIONasUIUWJCb4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=glT70v/MYLZtzjPQoFUsEGIgn0Jaq/mrwjh79pbvuVlIPcjm4R5jl826fnHlugvHh
-         AH2Kq8mIFz/cORgwcVEi5wnwcTytQ4GvxKjK+4G4Xw6VvIkFQwNEWJdVVF++xg7GJT
-         Qk/3rdYWHxyK6Tdz95N7xBy1X5EPy9F443kd4ZgVur6Yuyh5R/KnxAo4W/OBbjWfjm
-         GiaW3WuAVRYuGoncnA1agkTujLOlWJyEWDQIV5mfTMDTSsMsyfyc9gX2HkryIGQkJ5
-         1i24pVz1SOU5PNbzzn+KYJ/a9hxYpgEXIqVSbs3KsMre24vFdw6kOG5dxLzCRpHu8t
-         czlsR4Cd0e5Mw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1349000AbiFKCXU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 22:23:20 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDF543F466D
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 19:23:14 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 25so986421edw.8
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 19:23:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HvaEucNyttJ72r4dgkt1sbWCJsvBPyIh5zMt0LNXalY=;
+        b=D62jI1p8sOcmW+dGG367yCKI6736qfwlRYdRbtg+pQI3VQ/mZvhMkSh4muEy4yFzXi
+         1pifN6keFBPADAFAutLs2f+vKDRy3jOy1SmannYfmHY7tjbpoLbP8600CMqIboz22zit
+         FmdCeKC+IDyY3i3YwKCGDz5In1oYgHbIW3q58=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HvaEucNyttJ72r4dgkt1sbWCJsvBPyIh5zMt0LNXalY=;
+        b=rYHFdkxcuFklDM9WeeC7IWTm0EPgL1BjkQzWcvkDxyoz3LICUJ50PmwIQ1O7W70WCb
+         j12Ve2er6qvGeLGQ/s6FAs7Er74mHoHn7StaysLGkXAqZ9Rg/aHnrUkFvtTZM7QZzEZm
+         Pp5UtA8nmsdBQcKfujArZWxcvIobMeBZJK2uwNcGILR4bxo/8xXWzV49sueg3CHoozAK
+         C3AxpxRXXNNcu9QYRl8UUZiuwG++HL587rsTYQa6af91mB+C7lD21Fm4QOAWYWr+TlsT
+         NH7SHUQSGsayMT1vDcQSzUas4mtWlIGTddXK8oBftPsTzlEeWbzQ7EAm2slqKkhXSZ/6
+         opYA==
+X-Gm-Message-State: AOAM531wD8h8cJWPRZphrvfAoO3l1kYrmJb0VtMwCBmDSA5qNwgKqIUn
+        DrB2b+CHGhwyBMg9dfVvHU3KegAukN1fs0h2EC0VuQ==
+X-Google-Smtp-Source: ABdhPJz16+9kQdS9QDTB0tjL4FsLbUEsFaIS0ykQfnx5qpyFYyBQCn1i8W4mcCkA/y3viUzYkXAgYYv9JpSOTwgMdpQ=
+X-Received: by 2002:a50:eb91:0:b0:42d:c1d8:616a with SMTP id
+ y17-20020a50eb91000000b0042dc1d8616amr54940771edr.219.1654914192936; Fri, 10
+ Jun 2022 19:23:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220531094539.252642-1-lizhengyu3@huawei.com>
-References: <20220531094539.252642-1-lizhengyu3@huawei.com>
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Fix if statement to match comment
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Li Zhengyu <lizhengyu3@huawei.com>, quic_tdas@quicinc.com
-Date:   Fri, 10 Jun 2022 12:58:54 -0700
-User-Agent: alot/0.10
-Message-Id: <20220610195856.A2D7EC3411C@smtp.kernel.org>
+References: <20220608142723.103523089@infradead.org> <20220608144517.444659212@infradead.org>
+ <YqG6URbihTNCk9YR@alley> <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net> <YqHwOFg/WlMqe8/Z@alley>
+In-Reply-To: <YqHwOFg/WlMqe8/Z@alley>
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+Date:   Sat, 11 Jun 2022 11:23:02 +0900
+Message-ID: <CA+_sPaq_47C2PWnGU7WfGXMc03E1Nz+1=F-wZe0B2+ymqdm3Fg@mail.gmail.com>
+Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
+        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
+        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
+        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
+        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
+        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
+        dinguyen@kernel.org, jonas@southpole.se,
+        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
+        James.Bottomley@hansenpartnership.com, deller@gmx.de,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
+        davem@davemloft.net, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
+        amakhalov@vmware.com, pv-drivers@vmware.com,
+        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, mturquette@baylibre.com,
+        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
+        sudeep.holla@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, anup@brainfault.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
+        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
+        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
+        quic_neeraju@quicinc.com, josh@joshtriplett.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+        vschneid@redhat.com, jpoimboe@kernel.org,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
+        rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Li Zhengyu (2022-05-31 02:45:39)
-> (c->state) is u32, (enable) is bool. It returns false when
-> (c->state) > 1 and (enable) is true. Convert (c->state) to bool.
->=20
-> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
+On Thu, Jun 9, 2022 at 10:06 PM Petr Mladek <pmladek@suse.com> wrote:
+>
+> Makes sense. Feel free to use for this patch:
+>
+> Acked-by: Petr Mladek <pmladek@suse.com>
 
-Nice catch! It looks like it fixes an optimization, where we don't want
-to run through and check has_state_changed() if this clk is already
-enabled or disabled. But how does this ever happen? The clk framework
-already reference counts prepare/unprepare, so how can we get into this
-function when the condition would be true, after this patch?
-
-I think we can simply remove the if condition entirely. Do you agree?
-
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index aed907982344..851e127432a9 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -196,7 +196,7 @@ static int clk_rpmh_aggregate_state_send_command(stru=
-ct clk_rpmh *c,
->         int ret;
-> =20
->         /* Nothing required to be done if already off or on */
-> -       if (enable =3D=3D c->state)
-> +       if (enable =3D=3D !!c->state)
->                 return 0;
-> =20
->         c->state =3D enable ? c->valid_state_mask : 0;
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
