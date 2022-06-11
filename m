@@ -2,143 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B931CCA485
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jun 2022 02:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC315C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jun 2022 16:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346495AbiFKCd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jun 2022 22:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43072 "EHLO
+        id S233405AbiFKQX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Jun 2022 12:23:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349011AbiFKCdX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jun 2022 22:33:23 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2536B003
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 19:33:17 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id b8so983456edj.11
-        for <linux-clk@vger.kernel.org>; Fri, 10 Jun 2022 19:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rgKkPquDB/3ylB22sdoq44O3nuMRqOGPmfYPJEM3DpI=;
-        b=JsXVqmPM/FghNi+FuyecZKJimRfQRZRaZMN7LbU4AElduixKN8TVkmhpZTWnrsGkbZ
-         5LwE/p8/n+cIXvQ1YTcLTi0yyURcD/DMLBUnB+eqSpwlWIAygkMHM4b3P17Zp5erCg7D
-         knTgcyr8j5ARmG7z3CGlckVUGoumxDAZyb+n8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rgKkPquDB/3ylB22sdoq44O3nuMRqOGPmfYPJEM3DpI=;
-        b=2+mSp2GdBVvdOBzHvbJbu5ZQfwdD2NaVSiQgsBZfs0orFIb9PD+yofBJqDQrNhvFT7
-         aPS7VLxl5hf67HvOqbX2VRqeLPRJ00FVyZdxTGfVFN0+zx5yeGUS01qayFIISglBBLRF
-         JB4zA1MjECMzNcmCaeBNECFYGC/dnAn7IJA4SwNrAW/woOirIM4jItfxN31CRPUGZyDw
-         nM770scjMkCXqUYu6pgCNdoNrXbDLj14inOaF1dJc6awiSc8utYg+updaX7/EahGGa1n
-         8+Kt9IQ+sWj3ep5g6orgK5Y64F+ZiAM4/5URs4IXw5ZlfGW5Ff8ZyPSD/Hs6tnIL29M9
-         QltA==
-X-Gm-Message-State: AOAM531OujehoZC9YyhLdw7qAoeCO+lNyVw3hvri7uyF/U+769eH8aub
-        YK9SepTTDzQBB0acRBrLVWrQj0F6v8Uy+dLhoEjfGg==
-X-Google-Smtp-Source: ABdhPJzFbgEeXrjhdaEFlL5CPKYiFgrRM2XGTpISMDDKOxh3YJg+nd70yb1Qcu1fnLsZwhWAweXqTRUn04uTYMjQVNU=
-X-Received: by 2002:aa7:c604:0:b0:42d:cffb:f4dc with SMTP id
- h4-20020aa7c604000000b0042dcffbf4dcmr55022482edq.270.1654914796079; Fri, 10
- Jun 2022 19:33:16 -0700 (PDT)
+        with ESMTP id S232372AbiFKQX0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Jun 2022 12:23:26 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0996A64D2;
+        Sat, 11 Jun 2022 09:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654964605; x=1686500605;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5Zq9g8LTA+1hA+FsecBlfcG5IHjh6rZsFPf+8W/o9wk=;
+  b=S+mX/JYDfl+sbOm6BQ4zR0dpRvvGl5AC3g2rPidUU4qZ/Kb7lM3sk9Rv
+   S2zVPWB/ZUzbqKLsBYjhnorla1JiWBluqmZNn0O6Wwq1wYA6GG8HoWfjW
+   +6vQxqL0TKZXJk2qV24OfQXTwbzBvHbh4QuecI6RasR9bxVtUOCCFtBbQ
+   Fj8NzkwaX5ldQR7s2X/S6VOeel9taq7tnGWZEXtmkacSZ49UmOsdAVbsC
+   1IYYLE5GDYQnDafJza8aLCucORHC+ZbfZq4vEBeJwSfjcpquPS/deaqR1
+   Lz0eQHwFLks3doS/jEsmt6YqFG3m26fQbuxeSulRio3uY0DegRfINloig
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10375"; a="275437753"
+X-IronPort-AV: E=Sophos;i="5.91,293,1647327600"; 
+   d="scan'208";a="275437753"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2022 09:23:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,293,1647327600"; 
+   d="scan'208";a="725467052"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 11 Jun 2022 09:23:21 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o03tQ-000J4N-Qb;
+        Sat, 11 Jun 2022 16:23:20 +0000
+Date:   Sun, 12 Jun 2022 00:22:41 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Qin Jian <qinjian@cqplus1.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v17 07/10] irqchip: Add Sunplus SP7021 interrupt
+ controller driver
+Message-ID: <202206120014.snDYJsw8-lkp@intel.com>
+References: <0f1a1b0e38f4f0eaef245833c4c97a4e98619553.1654565776.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-References: <20220608142723.103523089@infradead.org> <20220608144517.444659212@infradead.org>
- <YqG6URbihTNCk9YR@alley> <YqHFHB6qqv5wiR8t@worktop.programming.kicks-ass.net>
- <CA+_sPaoJGrXhNPCs2dKf2J7u07y1xYrRFZBUtkKwzK9GqcHSuQ@mail.gmail.com> <YqHvXFdIJfvUDI6e@alley>
-In-Reply-To: <YqHvXFdIJfvUDI6e@alley>
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-Date:   Sat, 11 Jun 2022 11:33:05 +0900
-Message-ID: <CA+_sPaq1ez7jah0bibAdeA__Yp92K_VA7E-NZ9knoUmOW9itJg@mail.gmail.com>
-Subject: Re: [PATCH 24/36] printk: Remove trace_.*_rcuidle() usage
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org,
-        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
-        quic_neeraju@quicinc.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f1a1b0e38f4f0eaef245833c4c97a4e98619553.1654565776.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 9, 2022 at 10:02 PM Petr Mladek <pmladek@suse.com> wrote:
->
-> On Thu 2022-06-09 20:30:58, Sergey Senozhatsky wrote:
-> > My emails are getting rejected... Let me try web-interface
->
-> Bad day for mail sending. I have problems as well ;-)
+Hi Qin,
 
-For me the problem is still there and apparently it's an "too many
-recipients" error.
+I love your patch! Perhaps something to improve:
 
-> > I'm somewhat curious whether we can actually remove that trace event.
->
-> Good question.
->
-> Well, I think that it might be useful. It allows to see trace and
-> printk messages together.
+[auto build test WARNING on pza/reset/next]
+[also build test WARNING on robh/for-next clk/clk-next tip/irq/core linus/master v5.19-rc1 next-20220610]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Fair enough. Seems that back in 2011 people were pretty happy with it
-https://lore.kernel.org/all/1322161388.5366.54.camel@jlt3.sipsolutions.net/T/#m7bf6416f469119372191f22a6ecf653c5f7331d2
+url:    https://github.com/intel-lab-lkp/linux/commits/Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220607-100746
+base:   https://git.pengutronix.de/git/pza/linux reset/next
+config: arm64-buildonly-randconfig-r005-20220611 (https://download.01.org/0day-ci/archive/20220612/202206120014.snDYJsw8-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project ff4abe755279a3a47cc416ef80dbc900d9a98a19)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm64 cross compiling tool for clang build
+        # apt-get install binutils-aarch64-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/5c7f5cae7ce9484dabe81e5a56fe42c5d1a37ca0
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Qin-Jian/Add-Sunplus-SP7021-SoC-Support/20220607-100746
+        git checkout 5c7f5cae7ce9484dabe81e5a56fe42c5d1a37ca0
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/clk/qcom/ drivers/irqchip/
 
-but... reportedly, one of the folks who Ack-ed it (*cough cough*
-PeterZ) has never used it.
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
 
-> It was ugly when it was in the console code. The new location
-> in vprintk_store() allows to have it even "correctly" sorted
-> (timestamp) against other tracing messages.
+All warnings (new ones prefixed by >>):
 
-That's true.
+>> drivers/irqchip/irq-sp7021-intc.c:170:16: warning: cast to smaller integer type 'int' from 'void *' [-Wvoid-pointer-to-int-cast]
+           int ext_num = (int)irq_desc_get_handler_data(desc);
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/irqchip/irq-sp7021-intc.c:218:69: warning: cast to 'void *' from smaller integer type 'int' [-Wint-to-void-pointer-cast]
+           irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
+                                                                              ^~~~~~~~~
+   2 warnings generated.
+
+
+vim +170 drivers/irqchip/irq-sp7021-intc.c
+
+   166	
+   167	static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
+   168	{
+   169		struct irq_chip *chip = irq_desc_get_chip(desc);
+ > 170		int ext_num = (int)irq_desc_get_handler_data(desc);
+   171		int hwirq;
+   172	
+   173		chained_irq_enter(chip, desc);
+   174	
+   175		while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
+   176			if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_ACTIVE))) { // WORKAROUND
+   177				ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
+   178				sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, TEST_STATE(hwirq, _IS_LOW));
+   179			} else {
+   180				generic_handle_domain_irq(sp_intc.domain, hwirq);
+   181			}
+   182		}
+   183	
+   184		chained_irq_exit(chip, desc);
+   185	}
+   186	
+   187	static struct irq_chip sp_intc_chip = {
+   188		.name = "sp_intc",
+   189		.irq_ack = sp_intc_ack_irq,
+   190		.irq_mask = sp_intc_mask_irq,
+   191		.irq_unmask = sp_intc_unmask_irq,
+   192		.irq_set_type = sp_intc_set_type,
+   193	};
+   194	
+   195	static int sp_intc_irq_domain_map(struct irq_domain *domain,
+   196					  unsigned int irq, irq_hw_number_t hwirq)
+   197	{
+   198		irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
+   199		irq_set_chip_data(irq, &sp_intc_chip);
+   200		irq_set_noprobe(irq);
+   201	
+   202		return 0;
+   203	}
+   204	
+   205	static const struct irq_domain_ops sp_intc_dm_ops = {
+   206		.xlate = irq_domain_xlate_twocell,
+   207		.map = sp_intc_irq_domain_map,
+   208	};
+   209	
+   210	static int sp_intc_irq_map(struct device_node *node, int i)
+   211	{
+   212		unsigned int irq;
+   213	
+   214		irq = irq_of_parse_and_map(node, i);
+   215		if (!irq)
+   216			return -ENOENT;
+   217	
+ > 218		irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
+   219	
+   220		return 0;
+   221	}
+   222	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
