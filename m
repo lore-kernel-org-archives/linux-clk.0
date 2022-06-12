@@ -2,46 +2,46 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB690C43334
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B77C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234141AbiFLTae (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jun 2022 15:30:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
+        id S234244AbiFLTbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jun 2022 15:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234915AbiFLTaM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:12 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7905C42480
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:11 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id r1so3425188plo.10
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:11 -0700 (PDT)
+        with ESMTP id S234885AbiFLTaL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:11 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA7CF41FBF
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:10 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id i64so4017770pfc.8
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=schmorgal.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jYyuIzkRUZ/ETLXLEkF1edqBOnsRUFVhHuMnqcsR9Qs=;
-        b=lXBMN4yL9tG8E5eDzs1gqAi/J40Rv2XEosqThocMSbyGQivFRAJWI45CbYoB4vMK8B
-         iu5AyiXp8XGevTmk16J2ARicLVDg06Z86lWRLVNW8iRiMByjdVYyJeyJgQMlyh6GDaU7
-         6vz42RzRueDjXxCwip7rHeyeQkvqpBv/SxfH4=
+        bh=9BD6fOCQDuXGNvvC7Eq1XdWqHijpUDxeMXf7cXPhn/U=;
+        b=ekaOO6grv5yZSjOghiSIAjlDOGcAb0wyh+MxZ0id8V3LmNUBEPzMMpQ12bPnVe6yVS
+         TvbYZdXPOqT5xIhZ/68CB6UlAw4w+G18Gt2DMh5RdiF2jyeAJHDQUHm2h+gTAVbzolCB
+         ysrR9VidY0hW9ZOuS2R+J8Jjr5AKLayp0Q078=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jYyuIzkRUZ/ETLXLEkF1edqBOnsRUFVhHuMnqcsR9Qs=;
-        b=3tjt/FiUNV7H61j99RVepBbuZ35FvHmnoZvOiZ6tdgdiaQyv7RdI9EHAQogEaGdMML
-         ADDYJjvk1Wm60Cr5mN0waiB9sm4L5QcGXDyGEVAJlpDqlKIfCbn0FKHw6TjnFCXvmeoP
-         FCn8TeF4sy+Y1zI9QkOzTQuw/LXaSTikiSe44DGr/w8cvqAwB6MCWKOqkwGQPUYnEtiA
-         r1ixa3NqfLGs5qYl6mlPgrrC5KCNrXijYcZam41lJwYC4//ZZtVtBAScsoq8+gTgeBT6
-         kd/lCKXStC9+6L7lMX3OlXz6sZ8SUrdpIhDtZCCUeOd33VBM2KKOY26vw/lziuzt8Sym
-         kcyQ==
-X-Gm-Message-State: AOAM531GhupGRE7mFuzHj3tPb1rBBNEHmzJNfbPgHWN//evPcxrw+LuC
-        tOl4zHExdsPih7RClQvYcZCZ5w==
-X-Google-Smtp-Source: ABdhPJxmilQFpnr19n+NZ92iuTDCn8cjeBQBoehAKcO8xfKGUrEE+3EsZ2HApI2j4BOgzs4d/DUuMg==
-X-Received: by 2002:a17:90b:287:b0:1e3:45c9:9a93 with SMTP id az7-20020a17090b028700b001e345c99a93mr11842774pjb.80.1655062210958;
+        bh=9BD6fOCQDuXGNvvC7Eq1XdWqHijpUDxeMXf7cXPhn/U=;
+        b=T09mE5sHJJ4YV0fz1hLnRhtGzZWn3hsFKLwIeZzjApQTI+9TqaPRN+U2SQCCCpZm5C
+         LQqJfBvbP4ryx/SR5rQC+sCjBFQ8hSSr2Qi5bvDYVgmwsPCKNXljnf1qHGYWaCnoane4
+         4i+VdhHDaPF/QQS6tOp6FMEDZsyJy57YqBc5XR0roB2wFmvi/R5/eGplAbj90zv8oizb
+         4QI6W2AsxP4Lr0dT+gthuChWHEdw0TqqCzXNqS3mLxakCwkeuyIvcTJNMWDOtgxlFuHP
+         hiRSyrC2BKZ/SRSc+AVv02yWGf1NcUNLsZHxmEOAU+FZ13HSHwQQgLcMoQeLPxso9wO2
+         P/ZQ==
+X-Gm-Message-State: AOAM530p9jeiZ0WO5D1JOS5GqZpBBXAykV4kghGK5PryBGQ2tT5wqENQ
+        F8HFeuoRuE5SkDzEndzUVd4nnA==
+X-Google-Smtp-Source: ABdhPJwQfhdGxJV30Cbdr17NLWpeB0QvwXwA+v81ZoNaXLnOReUnmy/Zue4tDZXVeFwkx3v/d7TLng==
+X-Received: by 2002:a63:2a16:0:b0:3fe:192a:2d3 with SMTP id q22-20020a632a16000000b003fe192a02d3mr23720346pgq.39.1655062210302;
         Sun, 12 Jun 2022 12:30:10 -0700 (PDT)
 Received: from localhost.localdomain ([50.45.132.243])
-        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.10
+        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 12 Jun 2022 12:30:10 -0700 (PDT)
 From:   Doug Brown <doug@schmorgal.com>
@@ -51,9 +51,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Doug Brown <doug@schmorgal.com>
-Subject: [PATCH 03/12] dt-bindings: marvell,pxa168: add clock ids for additional dividers
-Date:   Sun, 12 Jun 2022 12:29:28 -0700
-Message-Id: <20220612192937.162952-4-doug@schmorgal.com>
+Subject: [PATCH 02/12] clk: mmp: pxa168: fix incorrect dividers
+Date:   Sun, 12 Jun 2022 12:29:27 -0700
+Message-Id: <20220612192937.162952-3-doug@schmorgal.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220612192937.162952-1-doug@schmorgal.com>
 References: <20220612192937.162952-1-doug@schmorgal.com>
@@ -63,30 +63,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds a few new clocks divided from PLL1 and CLK32 that are
-potentially used by a few peripherals with muxed clocks.
+These two clocks had multipliers and dividers that didn't match their
+names. A subsequent commit goes through all of the existing peripherals
+and ensure the correct clocks are being used everywhere.
 
 Signed-off-by: Doug Brown <doug@schmorgal.com>
 ---
- include/dt-bindings/clock/marvell,pxa168.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/mmp/clk-of-pxa168.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/clock/marvell,pxa168.h b/include/dt-bindings/clock/marvell,pxa168.h
-index db2b41f1b127..8686bc7bf7b6 100644
---- a/include/dt-bindings/clock/marvell,pxa168.h
-+++ b/include/dt-bindings/clock/marvell,pxa168.h
-@@ -20,8 +20,11 @@
- #define PXA168_CLK_PLL1_2_1_5		19
- #define PXA168_CLK_PLL1_3_16		20
- #define PXA168_CLK_PLL1_192		21
-+#define PXA168_CLK_PLL1_2_1_10		22
-+#define PXA168_CLK_PLL1_2_3_16		23
- #define PXA168_CLK_UART_PLL		27
- #define PXA168_CLK_USB_PLL		28
-+#define PXA168_CLK_CLK32_2		50
+diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
+index c975a45f9bb6..42569cf3f42f 100644
+--- a/drivers/clk/mmp/clk-of-pxa168.c
++++ b/drivers/clk/mmp/clk-of-pxa168.c
+@@ -91,8 +91,8 @@ static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
+ 	{PXA168_CLK_PLL1_96, "pll1_96", "pll1_48", 1, 2, 0},
+ 	{PXA168_CLK_PLL1_192, "pll1_192", "pll1_96", 1, 2, 0},
+ 	{PXA168_CLK_PLL1_13, "pll1_13", "pll1", 1, 13, 0},
+-	{PXA168_CLK_PLL1_13_1_5, "pll1_13_1_5", "pll1_13", 2, 3, 0},
+-	{PXA168_CLK_PLL1_2_1_5, "pll1_2_1_5", "pll1_2", 2, 3, 0},
++	{PXA168_CLK_PLL1_13_1_5, "pll1_13_1_5", "pll1_13", 1, 5, 0},
++	{PXA168_CLK_PLL1_2_1_5, "pll1_2_1_5", "pll1_2", 1, 5, 0},
+ 	{PXA168_CLK_PLL1_3_16, "pll1_3_16", "pll1", 3, 16, 0},
+ };
  
- /* apb peripherals */
- #define PXA168_CLK_TWSI0		60
 -- 
 2.25.1
 
