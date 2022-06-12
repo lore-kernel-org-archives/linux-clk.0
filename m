@@ -2,124 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA6ACCA486
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 15:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B097FC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234285AbiFLPKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jun 2022 11:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58416 "EHLO
+        id S234249AbiFLTaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jun 2022 15:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237475AbiFLPKh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 11:10:37 -0400
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D2BA5EDE1;
-        Sun, 12 Jun 2022 08:10:34 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 42F564B010;
-        Sun, 12 Jun 2022 20:00:18 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1655046018; bh=d75aH6lgsop7H0tTJMNEsXUOXMX4zeKLj6KVJaiEtl4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EaGNG4X9LzC4R+SBFyBhIoZYMfcgbDfpjypiC3F+s1ziY2oFYp4ZxR1c7NGzgKnXT
-         R5FPPlTa5+0WGxD2r3iYW5Edq1GrlBGkl6qHcBeY8Oi2rTfOdH/lBWt/2OFntqtE5n
-         Muc7aBr1Gd/NyrlN9Rid1o9+t8behBxbQ8q1ADSbX0IoN1xpLyOgmpa8hK9UvHj+44
-         RvHMh+N8eEB1DbfkGbrSN7/INyeQOcxBwWs/BSO6ybjdPie226PtZluC3UEF1bq4S9
-         SDiprayGYE5Q3fhIOvC7RIwBQ9zmojnLDoi4473YR/2Mb4wKajIIBuKfcUB4QWt/e8
-         RmeYtdHVNOckQ==
-From:   Nikita Travkin <nikita@trvn.ru>
-To:     mturquette@baylibre.com, sboyd@kernel.org, linus.walleij@linaro.org
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
-        joonwoop@codeaurora.org, svarbanov@mm-sol.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Nikita Travkin <nikita@trvn.ru>
-Subject: [PATCH v2 4/4] clk: qcom: gcc-msm8916: Add rates to the GP clocks
-Date:   Sun, 12 Jun 2022 19:59:55 +0500
-Message-Id: <20220612145955.385787-5-nikita@trvn.ru>
-In-Reply-To: <20220612145955.385787-1-nikita@trvn.ru>
-References: <20220612145955.385787-1-nikita@trvn.ru>
+        with ESMTP id S234220AbiFLTaN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:13 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBAA41FB9
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:12 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id c196so4041110pfb.1
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=schmorgal.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zH7tRgS1kPhp4yimKnmW6BSRKLogEiz0V2ye7JMw0J4=;
+        b=Tt9ZMWoGP/SE3JgfszEeP/C9v21GL9hkArBg8JYTU9zbzYsU9roh2KHavOcY0fDYhg
+         S1Rj4Hvr1V/A8nGgnBGwgxzifzmWQ8Bxd+EmffCx3WRDL8ioJr9B3oyjnahihzmgJN80
+         a2jBx7pmL5O3vPSY1gLaAdyb+cq73bRVtkbRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zH7tRgS1kPhp4yimKnmW6BSRKLogEiz0V2ye7JMw0J4=;
+        b=eoyM786ocWsWcWmfF1LW5+VNvTgyqN1EaOFgpPsIcOn3g/GLHX8VxsFW4Sryn79yIf
+         1KfhZ7FpyY3I/cxlR5Jb0sd/LRF1+GJAu4WjxZ+77W1qhKGmNZ2VvZukl11tjNOoYn4M
+         GZ+i/xEWdS9KzYuJPZJvzxAuN5rTPLs68y4Kwo4+mIkhH6iGVdzy+X6rKEXj1bp4YpHL
+         z+iBZj52hjKxBFa9atgpmbBA54NPzoPqJbWRz1stjoGik80a7vdjv6li1jRhS0DoV8jY
+         TdYZHdsxXSkVlXCe/8Eopqfa6Du/s1hoc5g4oMSQgsdfCs6PtAbu7At1Le3A6mUIywZk
+         EayQ==
+X-Gm-Message-State: AOAM5310+mCecgcF1HorHQ9Ec4S4ECwZt+vkdZnZWHKi5FmzWS+yhT6/
+        7uJ7ZB0w0nlBoJZ0kwKowqwubLYm1TQeaImXXsT/RA==
+X-Google-Smtp-Source: ABdhPJyC2dSfEqr78OqhXUN5sNUdf+zX6fhM99vw6G1E98GZfGT9DAdYLLGCHL36SW5k0FHFQgFZpQ==
+X-Received: by 2002:a62:7b94:0:b0:51b:c723:5724 with SMTP id w142-20020a627b94000000b0051bc7235724mr54680295pfc.8.1655062211601;
+        Sun, 12 Jun 2022 12:30:11 -0700 (PDT)
+Received: from localhost.localdomain ([50.45.132.243])
+        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jun 2022 12:30:11 -0700 (PDT)
+From:   Doug Brown <doug@schmorgal.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Doug Brown <doug@schmorgal.com>
+Subject: [PATCH 04/12] clk: mmp: pxa168: add new clocks for peripherals
+Date:   Sun, 12 Jun 2022 12:29:29 -0700
+Message-Id: <20220612192937.162952-5-doug@schmorgal.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220612192937.162952-1-doug@schmorgal.com>
+References: <20220612192937.162952-1-doug@schmorgal.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-msm8916 has (at least) 6 "General Purpose" clocks that can be muxed to
-SoC pins. These clocks are:
+This commit adds three new clocks that previously didn't exist, but are
+needed in order to match the clock parenting as described in the PXA168
+datasheet.
 
-GP_CLK{0, 1} : GPIO_{31, 32} (Belongs to CAMSS according to Linux)
-GP_CLK_{1-3}{A, B} : GPIO_{49-51, 97, 12, 13} (Belongs to GCC itself)
-GP_MN : GPIO_110 (Doesn't seem to be described in gcc,
-    ignored in this patch)
-
-Those clocks may be used as e.g. PWM sources for external peripherals.
-Add more frequencies to the table for those clocks so it's possible
-for arbitrary peripherals to make use of them.
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+Signed-off-by: Doug Brown <doug@schmorgal.com>
 ---
- drivers/clk/qcom/gcc-msm8916.c | 35 ++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/clk/mmp/clk-of-pxa168.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 17e4a5a2a9fd..9a46794f6eb8 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -765,7 +765,20 @@ static struct clk_rcg2 cci_clk_src = {
- 	},
+diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
+index 42569cf3f42f..aba58ce6e60c 100644
+--- a/drivers/clk/mmp/clk-of-pxa168.c
++++ b/drivers/clk/mmp/clk-of-pxa168.c
+@@ -94,6 +94,9 @@ static struct mmp_param_fixed_factor_clk fixed_factor_clks[] = {
+ 	{PXA168_CLK_PLL1_13_1_5, "pll1_13_1_5", "pll1_13", 1, 5, 0},
+ 	{PXA168_CLK_PLL1_2_1_5, "pll1_2_1_5", "pll1_2", 1, 5, 0},
+ 	{PXA168_CLK_PLL1_3_16, "pll1_3_16", "pll1", 3, 16, 0},
++	{PXA168_CLK_PLL1_2_1_10, "pll1_2_1_10", "pll1_2", 1, 10, 0},
++	{PXA168_CLK_PLL1_2_3_16, "pll1_2_3_16", "pll1_2", 3, 16, 0},
++	{PXA168_CLK_CLK32_2, "clk32_2", "clk32", 1, 2, 0},
  };
  
-+/*
-+ * This is a frequency table for "General Purpose" clocks.
-+ * These clocks can be muxed to the SoC pins and may be used by
-+ * external devices. They're often used as PWM source.
-+ *
-+ * See comment at ftbl_gcc_gp1_3_clk.
-+ */
- static const struct freq_tbl ftbl_gcc_camss_gp0_1_clk[] = {
-+	F(10000,   P_XO,    16,  1, 120),
-+	F(100000,  P_XO,    16,  1,  12),
-+	F(500000,  P_GPLL0, 16,  1, 100),
-+	F(1000000, P_GPLL0, 16,  1,  50),
-+	F(2500000, P_GPLL0, 16,  1,  20),
-+	F(5000000, P_GPLL0, 16,  1,  10),
- 	F(100000000, P_GPLL0, 8, 0, 0),
- 	F(200000000, P_GPLL0, 4, 0, 0),
- 	{ }
-@@ -927,7 +940,29 @@ static struct clk_rcg2 crypto_clk_src = {
- 	},
- };
- 
-+/*
-+ * This is a frequency table for "General Purpose" clocks.
-+ * These clocks can be muxed to the SoC pins and may be used by
-+ * external devices. They're often used as PWM source.
-+ *
-+ * Please note that MND divider must be enabled for duty-cycle
-+ * control to be possible. (M != N) Also since D register is configured
-+ * with a value multiplied by 2, and duty cycle is calculated as
-+ *                             (2 * D) % 2^W
-+ *                DutyCycle = ----------------
-+ *                              2 * (N % 2^W)
-+ * (where W = .mnd_width)
-+ * N must be half or less than maximum value for the register.
-+ * Otherwise duty-cycle control would be limited.
-+ * (e.g. for 8-bit NMD N should be less than 128)
-+ */
- static const struct freq_tbl ftbl_gcc_gp1_3_clk[] = {
-+	F(10000,   P_XO,    16,  1, 120),
-+	F(100000,  P_XO,    16,  1,  12),
-+	F(500000,  P_GPLL0, 16,  1, 100),
-+	F(1000000, P_GPLL0, 16,  1,  50),
-+	F(2500000, P_GPLL0, 16,  1,  20),
-+	F(5000000, P_GPLL0, 16,  1,  10),
- 	F(19200000, P_XO, 1, 0,	0),
- 	{ }
- };
+ static struct mmp_clk_factor_masks uart_factor_masks = {
 -- 
-2.35.3
+2.25.1
 
