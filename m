@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57715CCA473
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109DDCCA47C
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234391AbiFLTbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jun 2022 15:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40964 "EHLO
+        id S234461AbiFLTbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jun 2022 15:31:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234959AbiFLTaP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:15 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96CF41FBE
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:14 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id gd1so3858668pjb.2
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:14 -0700 (PDT)
+        with ESMTP id S234984AbiFLTaQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:16 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B68A41FBB
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:16 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id t3-20020a17090a510300b001ea87ef9a3dso4072761pjh.4
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=schmorgal.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ssmxgu7/WVcfzUuifiGObu7zWoTqolOirVs5XPrVt3A=;
-        b=Kzap7XLBwCwfSpamfeUSffG16sJvbz6zF7IytsvdbWKYE9MT4FMzGtU7FKCj7A21Px
-         h8AGQ/GjAz/k8Sd1Q8OjKCIIrYnucTQ+TdTF7RPbYXxM6dU53Uzd3ieFbRmtq8nZNBR+
-         q4SilJSh0QVuorQzbyB2QWOg4pRNsQwrIpC+Q=
+        bh=V52v8toWUF8IhJDBBzoO58I9WaMVuk6G80A6C1feD40=;
+        b=FFjAIM+FdoNfCcOYnN7gcV1sob7H24JUnj3kBSo13KgZUkzscXlajzdnDP/ni1WsrR
+         5C/7wvJE33gLEXd/whvP3ocTbuSttIrkdCN5P7WYWB/G8q0VzNIIx4GiJwvl3+PSxDoA
+         7gqBEzay2BDIpK/YfwnoM5Oo2z4PBSM8zrtWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ssmxgu7/WVcfzUuifiGObu7zWoTqolOirVs5XPrVt3A=;
-        b=G1JYKCUvUkhwrB3KbfzooLmgjckWQUSUAWmbUsGmasDsjIoaIQTE3r3x3fLfzap6JX
-         Uv9RogtaYKFFoodXA/hJxU/3GRvz6r3EMPuoTrAkx+sIl7zF+xvK76gC7bnS2G0VdE3U
-         y5UtZ32XtSL2hSafdDaNdkrDSBtI8XnE5m0tdr9u52NFt3VIrgYWMBQdnIGFp32733t9
-         YS9FCNLLyamhdNKcl+KzSwv8j+UYEzqqFar3HIJv8S8Gnb4fVu+xz7iidsBz6yCZaeFj
-         RTt1AkJHnENBX0NOjXzTJN41JqFshp49LjVQ+cMwmTBqMV9hUMSvkqI12Wpp7IBYKNeJ
-         iz3g==
-X-Gm-Message-State: AOAM533IY/sK8mwHZLfF5zTn2kZ4dId6yNQs/kaFj40j4ubj76PUsdba
-        ka9rNJHXclkmuM6s4ojICqIs+g==
-X-Google-Smtp-Source: ABdhPJzweDtxhwKJRSdLbgbvFVJldlf7U7zT4zMbctp+XLX8Qwlxs8JwOzOdJi31hXPUxMJC0sZ9JA==
-X-Received: by 2002:a17:90a:7023:b0:1e8:a692:b3e9 with SMTP id f32-20020a17090a702300b001e8a692b3e9mr11592198pjk.176.1655062214211;
-        Sun, 12 Jun 2022 12:30:14 -0700 (PDT)
+        bh=V52v8toWUF8IhJDBBzoO58I9WaMVuk6G80A6C1feD40=;
+        b=4k1e0atDleYlZc46v0FTqtSIJdsVYD79YmpgFKIoDSoMyzqZEHOWxnPiD+TbhxJLGD
+         oywc07Zn2r4k1QLM/wN3zX6PTAySfiG79ccjseUuT0jxNq2uiNC6Mt9n5FmRaWKZIPgk
+         VrCtoJn/C0QWTBsEEOE/X/WelV1IE08Bgz7P2qT4KxZMqgyVNvMFeKUvTfhsN1C3dJv+
+         Cs6FhlFcK52fCSaKHU0RReARHrt8eixKtHDqCsbHD1oU779Jwg+/TwG+mbDjNKdcXrOr
+         6mMx0A7IdlU04F+Bdfgt+zYVrTdXT6dUXg53++21SZnZxHaqa6LJCoTrdpGl0ui/+D52
+         Ybrw==
+X-Gm-Message-State: AOAM532XKAh5UjR+Pg/WuBX5PpXxv739lTI2mylySBs9NayBkjJ5/XAa
+        L1gbhESc4CaKOXQnX6qMvrN15A==
+X-Google-Smtp-Source: ABdhPJywp6RXPZb13R+RwhewUreQMN24OqGxGT2cUUfL1rcRH2MBcfSKkXzQbUIfokpEDlVXMRlb9w==
+X-Received: by 2002:a17:90b:240e:b0:1e0:775b:f8fc with SMTP id nr14-20020a17090b240e00b001e0775bf8fcmr11798804pjb.132.1655062215647;
+        Sun, 12 Jun 2022 12:30:15 -0700 (PDT)
 Received: from localhost.localdomain ([50.45.132.243])
-        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.13
+        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jun 2022 12:30:14 -0700 (PDT)
+        Sun, 12 Jun 2022 12:30:15 -0700 (PDT)
 From:   Doug Brown <doug@schmorgal.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -51,9 +51,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Doug Brown <doug@schmorgal.com>
-Subject: [PATCH 08/12] clk: mmp: pxa168: fix GPIO clock enable bits
-Date:   Sun, 12 Jun 2022 12:29:33 -0700
-Message-Id: <20220612192937.162952-9-doug@schmorgal.com>
+Subject: [PATCH 10/12] clk: mmp: pxa168: add clocks for SDH2 and SDH3
+Date:   Sun, 12 Jun 2022 12:29:35 -0700
+Message-Id: <20220612192937.162952-11-doug@schmorgal.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220612192937.162952-1-doug@schmorgal.com>
 References: <20220612192937.162952-1-doug@schmorgal.com>
@@ -63,27 +63,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the datasheet, only bit 0 of APBC_GPIO should be controlled
-for the clock enable. Bit 1 is marked as reserved (always write 0).
+The PXA168 has four SDHC peripherals. This commit adds the last two.
 
 Signed-off-by: Doug Brown <doug@schmorgal.com>
 ---
- drivers/clk/mmp/clk-of-pxa168.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mmp/clk-of-pxa168.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index d779b3f89656..eb6a651d2366 100644
+index eb6a651d2366..98046019c5c2 100644
 --- a/drivers/clk/mmp/clk-of-pxa168.c
 +++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -182,7 +182,7 @@ static struct mmp_param_mux_clk apbc_mux_clks[] = {
- static struct mmp_param_gate_clk apbc_gate_clks[] = {
- 	{PXA168_CLK_TWSI0, "twsi0_clk", "twsi0_mux", CLK_SET_RATE_PARENT, APBC_TWSI0, 0x3, 0x3, 0x0, 0, &twsi0_lock},
- 	{PXA168_CLK_TWSI1, "twsi1_clk", "twsi1_mux", CLK_SET_RATE_PARENT, APBC_TWSI1, 0x3, 0x3, 0x0, 0, &twsi1_lock},
--	{PXA168_CLK_GPIO, "gpio_clk", "vctcxo", CLK_SET_RATE_PARENT, APBC_GPIO, 0x3, 0x3, 0x0, 0, &reset_lock},
-+	{PXA168_CLK_GPIO, "gpio_clk", "vctcxo", CLK_SET_RATE_PARENT, APBC_GPIO, 0x1, 0x1, 0x0, 0, &reset_lock},
- 	{PXA168_CLK_KPC, "kpc_clk", "kpc_mux", CLK_SET_RATE_PARENT, APBC_KPC, 0x3, 0x3, 0x0, MMP_CLK_GATE_NEED_DELAY, &kpc_lock},
- 	{PXA168_CLK_RTC, "rtc_clk", "clk32", CLK_SET_RATE_PARENT, APBC_RTC, 0x83, 0x83, 0x0, MMP_CLK_GATE_NEED_DELAY, NULL},
- 	{PXA168_CLK_PWM0, "pwm0_clk", "pwm0_mux", CLK_SET_RATE_PARENT, APBC_PWM0, 0x3, 0x3, 0x0, 0, &pwm0_lock},
+@@ -217,6 +217,8 @@ static const char * const dfc_parent_names[] = {"pll1_4", "pll1_8"};
+ 
+ static DEFINE_SPINLOCK(sdh0_lock);
+ static DEFINE_SPINLOCK(sdh1_lock);
++static DEFINE_SPINLOCK(sdh2_lock);
++static DEFINE_SPINLOCK(sdh3_lock);
+ static const char * const sdh_parent_names[] = {"pll1_13", "pll1_12", "pll1_8"};
+ 
+ static DEFINE_SPINLOCK(usb_lock);
+@@ -232,6 +234,8 @@ static struct mmp_param_mux_clk apmu_mux_clks[] = {
+ 	{0, "dfc_mux", dfc_parent_names, ARRAY_SIZE(dfc_parent_names), CLK_SET_RATE_PARENT, APMU_DFC, 6, 1, 0, &dfc_lock},
+ 	{0, "sdh0_mux", sdh_parent_names, ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT, APMU_SDH0, 6, 2, 0, &sdh0_lock},
+ 	{0, "sdh1_mux", sdh_parent_names, ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT, APMU_SDH1, 6, 2, 0, &sdh1_lock},
++	{0, "sdh2_mux", sdh_parent_names, ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT, APMU_SDH2, 6, 2, 0, &sdh2_lock},
++	{0, "sdh3_mux", sdh_parent_names, ARRAY_SIZE(sdh_parent_names), CLK_SET_RATE_PARENT, APMU_SDH3, 6, 2, 0, &sdh3_lock},
+ 	{0, "disp0_mux", disp_parent_names, ARRAY_SIZE(disp_parent_names), CLK_SET_RATE_PARENT, APMU_DISP0, 6, 1, 0, &disp0_lock},
+ 	{0, "ccic0_mux", ccic_parent_names, ARRAY_SIZE(ccic_parent_names), CLK_SET_RATE_PARENT, APMU_CCIC0, 6, 1, 0, &ccic0_lock},
+ 	{0, "ccic0_phy_mux", ccic_phy_parent_names, ARRAY_SIZE(ccic_phy_parent_names), CLK_SET_RATE_PARENT, APMU_CCIC0, 7, 1, 0, &ccic0_lock},
+@@ -247,6 +251,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+ 	{PXA168_CLK_SPH, "sph_clk", "usb_pll", 0, APMU_USB, 0x12, 0x12, 0x0, 0, &usb_lock},
+ 	{PXA168_CLK_SDH0, "sdh0_clk", "sdh0_mux", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh0_lock},
+ 	{PXA168_CLK_SDH1, "sdh1_clk", "sdh1_mux", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh1_lock},
++	{PXA168_CLK_SDH2, "sdh2_clk", "sdh2_mux", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh2_lock},
++	{PXA168_CLK_SDH3, "sdh3_clk", "sdh3_mux", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh3_lock},
+ 	{PXA168_CLK_DISP0, "disp0_clk", "disp0_mux", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
+ 	{PXA168_CLK_CCIC0, "ccic0_clk", "ccic0_mux", CLK_SET_RATE_PARENT, APMU_CCIC0, 0x1b, 0x1b, 0x0, 0, &ccic0_lock},
+ 	{PXA168_CLK_CCIC0_PHY, "ccic0_phy_clk", "ccic0_phy_mux", CLK_SET_RATE_PARENT, APMU_CCIC0, 0x24, 0x24, 0x0, 0, &ccic0_lock},
 -- 
 2.25.1
 
