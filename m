@@ -2,92 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DBCC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 02:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FFDC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 03:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238155AbiFMCuw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jun 2022 22:50:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43824 "EHLO
+        id S232144AbiFMDux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jun 2022 23:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236546AbiFMCus (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 22:50:48 -0400
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4684236E1B;
-        Sun, 12 Jun 2022 19:50:47 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id s23so4771361iog.13;
-        Sun, 12 Jun 2022 19:50:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=rmYoTFjwwfLHaEAKyMwepQVd6Fyyjo475AJRyY0r/yQ=;
-        b=YUSsW6W19zhbhRvuS0DwdHWUQOZiglEd1pOjHXaqb3nOWVzd88lu1muS2jSg0J8mDm
-         ENa0esP3n+JpDJsqui+secRM3CZmi10jCXhTHdZwUzoCm2tTNwjs8/FscivzMk52tDxi
-         LaD7TmzMUI+IbnvKg7PqfkE5bhXVo4AJ1ykGgbaanu7d1er8OneJVbvvT+oCZYkz0qqh
-         n+kjk22MrrUfVohWHRG0OAlAkt6lhcB9L1ybCYyGLon3T7Xv9bI+YDvLN0XJAWiQjVcp
-         O5fAk9WNSVUnp+AtSZ5sbrE5575dl277/fI+Z3hmCp6hzM/A9fUBccjHMO7T52WxZhxL
-         zW7Q==
-X-Gm-Message-State: AOAM533JWv68DRmbk1wmc3WCO6AsG5nc8qzNmknSxIdFpp36klRN++4j
-        08Rc/jx0gMJ1F8bT+01WEQ==
-X-Google-Smtp-Source: ABdhPJxyFckgQT337XDCiRAwgwtx3vUFkJL/tbw8qlrIqOoTtJpo2NVfXZ2udavPLZEGvQXL+u+/Tg==
-X-Received: by 2002:a05:6638:dc5:b0:332:3180:fd5e with SMTP id m5-20020a0566380dc500b003323180fd5emr5261454jaj.285.1655088645082;
-        Sun, 12 Jun 2022 19:50:45 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id w4-20020a056e021c8400b002d10dc367a1sm3261489ill.49.2022.06.12.19.50.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jun 2022 19:50:44 -0700 (PDT)
-Received: (nullmailer pid 2612895 invoked by uid 1000);
-        Mon, 13 Jun 2022 02:50:42 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Johnson Wang <johnson.wang@mediatek.com>
-Cc:     sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220612135414.3003-2-johnson.wang@mediatek.com>
-References: <20220612135414.3003-1-johnson.wang@mediatek.com> <20220612135414.3003-2-johnson.wang@mediatek.com>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: arm: mediatek: Add new bindings of MediaTek frequency hopping
-Date:   Sun, 12 Jun 2022 20:50:42 -0600
-Message-Id: <1655088642.973172.2612894.nullmailer@robh.at.kernel.org>
+        with ESMTP id S230125AbiFMDuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 23:50:52 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580FB193EF;
+        Sun, 12 Jun 2022 20:50:50 -0700 (PDT)
+Received: from kwepemi500014.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LLyFH4SkkzRj1f;
+        Mon, 13 Jun 2022 11:47:31 +0800 (CST)
+Received: from [10.67.111.227] (10.67.111.227) by
+ kwepemi500014.china.huawei.com (7.221.188.232) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 13 Jun 2022 11:50:47 +0800
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Fix if statement to match comment
+To:     Stephen Boyd <sboyd@kernel.org>, <quic_tdas@quicinc.com>
+CC:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220531094539.252642-1-lizhengyu3@huawei.com>
+ <20220610195856.A2D7EC3411C@smtp.kernel.org>
+From:   "lizhengyu (E)" <lizhengyu3@huawei.com>
+Message-ID: <788c25d7-0968-9d69-7753-d7cb8010a9f5@huawei.com>
+Date:   Mon, 13 Jun 2022 11:50:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20220610195856.A2D7EC3411C@smtp.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.111.227]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi500014.china.huawei.com (7.221.188.232)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 12 Jun 2022 21:54:13 +0800, Johnson Wang wrote:
-> This patch adds the new binding documentation for frequency hopping
-> and spread spectrum clocking control on MT8186.
-> 
-> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
-> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,fhctl.yaml | 149 ++++++++++++++++++
->  1 file changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+On Fri, 10 Jun 2022 12:58:54 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Li Zhengyu (2022-05-31 02:45:39)
+>> (c->state) is u32, (enable) is bool. It returns false when
+>> (c->state) > 1 and (enable) is true. Convert (c->state) to bool.
+>>
+>> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
+> Nice catch! It looks like it fixes an optimization, where we don't want
+> to run through and check has_state_changed() if this clk is already
+> enabled or disabled. But how does this ever happen? The clk framework
+> already reference counts prepare/unprepare, so how can we get into this
+> function when the condition would be true, after this patch?
+>
+> I think we can simply remove the if condition entirely. Do you agree?
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml:44:111: [warning] line too long (133 > 110 characters) (line-length)
+Sure. It seems Taniya Das (also I) hasn't mind the prepare/unprepare
 
-dtschema/dtc warnings/errors:
+of clk framework. As the result,  this if condition should be never true.
 
-doc reference errors (make refcheckdocs):
+I will send a patch to remove it.
 
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+>> ---
+>>   drivers/clk/qcom/clk-rpmh.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index aed907982344..851e127432a9 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -196,7 +196,7 @@ static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
+>>          int ret;
+>>   
+>>          /* Nothing required to be done if already off or on */
+>> -       if (enable == c->state)
+>> +       if (enable == !!c->state)
+>>                  return 0;
+>>   
+>>          c->state = enable ? c->valid_state_mask : 0;
+> .
