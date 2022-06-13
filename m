@@ -2,105 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9CFCCA473
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jun 2022 19:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DBCC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 02:50:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234520AbiFLTbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jun 2022 15:31:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41296 "EHLO
+        id S238155AbiFMCuw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jun 2022 22:50:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235058AbiFLTaS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 15:30:18 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A448641FBE
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:17 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id y196so4022300pfb.6
-        for <linux-clk@vger.kernel.org>; Sun, 12 Jun 2022 12:30:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=schmorgal.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=owW+nBGY5KQZbmIX7FckqySpt3Bs/rQ8fif+G1Lctfc=;
-        b=DuAXWYsJXOnoau6qyz/cIENh+uIFhWRvx/tJJp6KkS6gpGjtmWmuave4BMWGBanzQo
-         uEkt8Q0z+WeTrZHK3XStAO7LUKbVBFtnqQSZL86QAyhUhaYJfbs2bBBaRq67SaC86BBK
-         Ff2ZfjULOBTQHv90ADLeDDpuF5BMKlq87m088=
+        with ESMTP id S236546AbiFMCus (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jun 2022 22:50:48 -0400
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4684236E1B;
+        Sun, 12 Jun 2022 19:50:47 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id s23so4771361iog.13;
+        Sun, 12 Jun 2022 19:50:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=owW+nBGY5KQZbmIX7FckqySpt3Bs/rQ8fif+G1Lctfc=;
-        b=EgSjfMbgBNJ+F5ue0Fk7oPaMHIefz8IZA4HURlgzwn2Y0x1w8EDlnVtBnoIt3QN4qW
-         lVK5AhuDfjgMi5bSCTX5jSKeiKClz3Bu8SiL9SZuCmf58lUKQTCDdoNnoM9T4xBE4mFs
-         EiOBnWHvyeLIp89DKGUCzR+vY55OFy3I/lYaFp8TuirttrIki3udXedegvGkY8+t0qTq
-         xR0JfPOHNpd1rSuh3tVNBgM20anU/AhQOsAx4flF0ObFfVuldyN2wXIpyzv+P5KjnXXv
-         Ws0UkHzIt+M6mGa9Y8SXmClBQJLhW2REsmm7dOeX3t7VceVCQHhXMxk+jSWgdJ6EcbzE
-         Bh4A==
-X-Gm-Message-State: AOAM531JbAUFfrgy3Ik/zQd7NHjHKwSbhCyeFRZgbGSGw3GhjmgOaH0f
-        k4THVF002L/Q4I7gm9wgU4o/eA==
-X-Google-Smtp-Source: ABdhPJySe0dxz7H+On2G+CHzJ/BlEJdN2Q8LdWeNbfs8kIE0/b53X3hUsGD12Expbm27b5eYS/je2g==
-X-Received: by 2002:a63:c63:0:b0:3fe:e14b:b5a0 with SMTP id 35-20020a630c63000000b003fee14bb5a0mr18479240pgm.428.1655062217066;
-        Sun, 12 Jun 2022 12:30:17 -0700 (PDT)
-Received: from localhost.localdomain ([50.45.132.243])
-        by smtp.gmail.com with ESMTPSA id i62-20020a628741000000b0050dc76281bdsm3603607pfe.151.2022.06.12.12.30.16
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=rmYoTFjwwfLHaEAKyMwepQVd6Fyyjo475AJRyY0r/yQ=;
+        b=YUSsW6W19zhbhRvuS0DwdHWUQOZiglEd1pOjHXaqb3nOWVzd88lu1muS2jSg0J8mDm
+         ENa0esP3n+JpDJsqui+secRM3CZmi10jCXhTHdZwUzoCm2tTNwjs8/FscivzMk52tDxi
+         LaD7TmzMUI+IbnvKg7PqfkE5bhXVo4AJ1ykGgbaanu7d1er8OneJVbvvT+oCZYkz0qqh
+         n+kjk22MrrUfVohWHRG0OAlAkt6lhcB9L1ybCYyGLon3T7Xv9bI+YDvLN0XJAWiQjVcp
+         O5fAk9WNSVUnp+AtSZ5sbrE5575dl277/fI+Z3hmCp6hzM/A9fUBccjHMO7T52WxZhxL
+         zW7Q==
+X-Gm-Message-State: AOAM533JWv68DRmbk1wmc3WCO6AsG5nc8qzNmknSxIdFpp36klRN++4j
+        08Rc/jx0gMJ1F8bT+01WEQ==
+X-Google-Smtp-Source: ABdhPJxyFckgQT337XDCiRAwgwtx3vUFkJL/tbw8qlrIqOoTtJpo2NVfXZ2udavPLZEGvQXL+u+/Tg==
+X-Received: by 2002:a05:6638:dc5:b0:332:3180:fd5e with SMTP id m5-20020a0566380dc500b003323180fd5emr5261454jaj.285.1655088645082;
+        Sun, 12 Jun 2022 19:50:45 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id w4-20020a056e021c8400b002d10dc367a1sm3261489ill.49.2022.06.12.19.50.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jun 2022 12:30:16 -0700 (PDT)
-From:   Doug Brown <doug@schmorgal.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Doug Brown <doug@schmorgal.com>
-Subject: [PATCH 12/12] clk: mmp: pxa168: control shared SDH bits with separate clock
-Date:   Sun, 12 Jun 2022 12:29:37 -0700
-Message-Id: <20220612192937.162952-13-doug@schmorgal.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220612192937.162952-1-doug@schmorgal.com>
-References: <20220612192937.162952-1-doug@schmorgal.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 12 Jun 2022 19:50:44 -0700 (PDT)
+Received: (nullmailer pid 2612895 invoked by uid 1000);
+        Mon, 13 Jun 2022 02:50:42 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Johnson Wang <johnson.wang@mediatek.com>
+Cc:     sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        devicetree@vger.kernel.org
+In-Reply-To: <20220612135414.3003-2-johnson.wang@mediatek.com>
+References: <20220612135414.3003-1-johnson.wang@mediatek.com> <20220612135414.3003-2-johnson.wang@mediatek.com>
+Subject: Re: [RFC PATCH 1/2] dt-bindings: arm: mediatek: Add new bindings of MediaTek frequency hopping
+Date:   Sun, 12 Jun 2022 20:50:42 -0600
+Message-Id: <1655088642.973172.2612894.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PXA168 has a peculiar setup with the AXI clock enable control for
-the SDHC controllers. The bits in the SDH0 register control the AXI
-clock enable for both SDH0 and SDH1. Likewise, the bits in the SDH2
-register control both SDH2 and SDH3. This is modeled with two new
-parentless clocks that control the shared bits.
+On Sun, 12 Jun 2022 21:54:13 +0800, Johnson Wang wrote:
+> This patch adds the new binding documentation for frequency hopping
+> and spread spectrum clocking control on MT8186.
+> 
+> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+> ---
+>  .../bindings/arm/mediatek/mediatek,fhctl.yaml | 149 ++++++++++++++++++
+>  1 file changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml
+> 
 
-Previously, SDH0 had to be enabled in order for SDH1 to be used, and
-when SDH1 was enabled, unused bits in the SDH1 register were being
-controlled. This fixes those issues. A future commit will add support
-for these new shared clocks to be enabled by the PXA168 SDHC driver.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Signed-off-by: Doug Brown <doug@schmorgal.com>
----
- drivers/clk/mmp/clk-of-pxa168.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/arm/mediatek/mediatek,fhctl.yaml:44:111: [warning] line too long (133 > 110 characters) (line-length)
 
-diff --git a/drivers/clk/mmp/clk-of-pxa168.c b/drivers/clk/mmp/clk-of-pxa168.c
-index 98046019c5c2..8d0ec06f25ee 100644
---- a/drivers/clk/mmp/clk-of-pxa168.c
-+++ b/drivers/clk/mmp/clk-of-pxa168.c
-@@ -249,10 +249,13 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
- 	{PXA168_CLK_DFC, "dfc_clk", "dfc_mux", CLK_SET_RATE_PARENT, APMU_DFC, 0x19b, 0x19b, 0x0, 0, &dfc_lock},
- 	{PXA168_CLK_USB, "usb_clk", "usb_pll", 0, APMU_USB, 0x9, 0x9, 0x0, 0, &usb_lock},
- 	{PXA168_CLK_SPH, "sph_clk", "usb_pll", 0, APMU_USB, 0x12, 0x12, 0x0, 0, &usb_lock},
--	{PXA168_CLK_SDH0, "sdh0_clk", "sdh0_mux", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh0_lock},
--	{PXA168_CLK_SDH1, "sdh1_clk", "sdh1_mux", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh1_lock},
--	{PXA168_CLK_SDH2, "sdh2_clk", "sdh2_mux", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh2_lock},
--	{PXA168_CLK_SDH3, "sdh3_clk", "sdh3_mux", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh3_lock},
-+	{PXA168_CLK_SDH0, "sdh0_clk", "sdh0_mux", CLK_SET_RATE_PARENT, APMU_SDH0, 0x12, 0x12, 0x0, 0, &sdh0_lock},
-+	{PXA168_CLK_SDH1, "sdh1_clk", "sdh1_mux", CLK_SET_RATE_PARENT, APMU_SDH1, 0x12, 0x12, 0x0, 0, &sdh1_lock},
-+	{PXA168_CLK_SDH2, "sdh2_clk", "sdh2_mux", CLK_SET_RATE_PARENT, APMU_SDH2, 0x12, 0x12, 0x0, 0, &sdh2_lock},
-+	{PXA168_CLK_SDH3, "sdh3_clk", "sdh3_mux", CLK_SET_RATE_PARENT, APMU_SDH3, 0x12, 0x12, 0x0, 0, &sdh3_lock},
-+	/* SDH0/1 and 2/3 AXI clocks are also gated by common bits in SDH0 and SDH2 registers */
-+	{PXA168_CLK_SDH01_AXI, "sdh01_axi_clk", NULL, CLK_SET_RATE_PARENT, APMU_SDH0, 0x9, 0x9, 0x0, 0, &sdh0_lock},
-+	{PXA168_CLK_SDH23_AXI, "sdh23_axi_clk", NULL, CLK_SET_RATE_PARENT, APMU_SDH2, 0x9, 0x9, 0x0, 0, &sdh2_lock},
- 	{PXA168_CLK_DISP0, "disp0_clk", "disp0_mux", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
- 	{PXA168_CLK_CCIC0, "ccic0_clk", "ccic0_mux", CLK_SET_RATE_PARENT, APMU_CCIC0, 0x1b, 0x1b, 0x0, 0, &ccic0_lock},
- 	{PXA168_CLK_CCIC0_PHY, "ccic0_phy_clk", "ccic0_phy_mux", CLK_SET_RATE_PARENT, APMU_CCIC0, 0x24, 0x24, 0x0, 0, &ccic0_lock},
--- 
-2.25.1
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
