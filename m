@@ -2,121 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F7EC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 09:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39661C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 09:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231440AbiFMJCa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jun 2022 05:02:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57580 "EHLO
+        id S239668AbiFMJZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jun 2022 05:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbiFMJC2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2022 05:02:28 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6511C3;
-        Mon, 13 Jun 2022 02:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1655110940; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wzTq3X/06BFOnsk1/1jD9KPlkg3opvD7FWyWkz4J1rI=;
-        b=eLbD7wDeL0e0UWjrlIAm+qxeUDjLUr4Yyk0i2d54W+5bAOCWSQRMYIi1m81Qr72nZqeEgF
-        HnHc235l7jwMFS6tEjgir9ZSM+GK0ETMW/sTRnSfdAKWWG+73XAR2rdXGhp/vLId5m1VXb
-        aklKa5aNN8ZZcUu/Obf/x/a9IfsHEi4=
-Date:   Mon, 13 Jun 2022 10:02:11 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] clk: ingenic-tcu: Properly enable registers before
- accessing timers
-To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <NRREDR.U6G6SM5BIXEC3@crapouillou.net>
-In-Reply-To: <20220603134705.11156-1-aidanmacdonald.0x0@gmail.com>
-References: <20220603134705.11156-1-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S229577AbiFMJZS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2022 05:25:18 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BEB12AC1;
+        Mon, 13 Jun 2022 02:25:17 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id a29so7885267lfk.2;
+        Mon, 13 Jun 2022 02:25:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xUYF6Y1hCqd5t8WxA/+uJZZHaISwa+qUcLkVEX3FDtY=;
+        b=OZRK4j4GfMvvujegmLuiiyQfatSbywM4kRdRc1tMAOzluF9+R3ROjAPU3l7ABr8vnN
+         jYtnDvoHI2bSR7Kn4LK8/ztorjpVQXZ2uSDdgpxBZhlEi2T9raelsgwGWpgrCmVTF1ng
+         +jtfpdHxAxBWbneZjvuPphDXeVMYqaI7GuHnfR/C9zsLfnkFjud27cobWdzB8VQCmmf7
+         CUqYCzZDZac86aaP53eZzM6opXQBwDLw0lkE/+JhAnd0rjVfdtJLXqWYI/7dX/nxVL7B
+         6oAE7Xd3AmopNE8kT4f8CY9HGoy/EEkLZuu4y4iGct6vRqeb8A+Agl+ljt2/6CRdvDGF
+         W5cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xUYF6Y1hCqd5t8WxA/+uJZZHaISwa+qUcLkVEX3FDtY=;
+        b=jCfGaR9EhmtmrGq19XLLS2LQymZPC9QkkvQwyzmTmszJ7aOvm04dsmUt/lYG2dpHDF
+         ACoqEZmr34IDvsexmDrvLt0IFTmKU12aCkskwF7w+ab1Tp2ABAhF3jmT21vcMZad66zu
+         BTKtg6PKcpm7U2jX/u9m1zl2MZ0EC+p3WdQvwn6HgnVEqazrn4kyse0+3CJfuw94cuFn
+         94bJtCYyimjNhfNtGDYUDiuhEGUibgSxFcIs6LymLtXtDDVb7r4lBTxJ867tku+5kSyP
+         h42E43hHXfoARWdpi8kDfRBMDnwYIrcMew6qqJX/yCMkEn0QBOOVINKkpY7XSbAmrL2l
+         u7Sw==
+X-Gm-Message-State: AOAM532FpcBbl+Rs6UmKKv1kfIhbruI1OqPMEM0+kMEePEU1icOV70wl
+        PgJC71w7jNMWxE+p2oim2X8pNgGCRzJ113vZx0o=
+X-Google-Smtp-Source: ABdhPJxXc679feoHAf2D/GisUYLrlv1MVhsVhMMqlkvsfBNlHHdqjK5/eafARXLQjX3HPF+NV1BKVh2veyAWJgShjls=
+X-Received: by 2002:a05:6512:1052:b0:479:1f92:13b4 with SMTP id
+ c18-20020a056512105200b004791f9213b4mr27864941lfb.200.1655112316061; Mon, 13
+ Jun 2022 02:25:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+References: <20220608095623.22327-1-tmaimon77@gmail.com> <20220608095623.22327-13-tmaimon77@gmail.com>
+ <add025b6-c622-b204-d39e-67b31878d37f@linaro.org> <CAP6Zq1iDbB+X5QPE4Nsqk4nV41bZiVzQZExS1pQTuKEBz-iYew@mail.gmail.com>
+ <381ff739-e898-8812-d549-df7101f0eaa2@linaro.org>
+In-Reply-To: <381ff739-e898-8812-d549-df7101f0eaa2@linaro.org>
+From:   Tomer Maimon <tmaimon77@gmail.com>
+Date:   Mon, 13 Jun 2022 12:25:05 +0300
+Message-ID: <CAP6Zq1j=x3OcOPSOjJJmOcze7ziM=oWcKdbYzoHhGnvZipu_UQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/20] dt-bindings: reset: npcm: Add support for NPCM8XX
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Robert Hancock <robert.hancock@calian.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aidan,
+Hi Krzysztof,
 
-Le ven., juin 3 2022 at 14:47:05 +0100, Aidan MacDonald=20
-<aidanmacdonald.0x0@gmail.com> a =E9crit :
-> Access to registers is guarded by ingenic_tcu_{enable,disable}_regs()
-> so the stop bit can be cleared before accessing a timer channel, but
-> those functions did not clear the stop bit on SoCs with a global TCU
-> clock gate.
->=20
-> Testing on the X1000 has revealed that the stop bits must be cleared
-> _and_ the global TCU clock must be ungated to access timer registers.
-> Programming manuals for the X1000, JZ4740, and JZ4725B specify this
-> behavior. If the stop bit isn't cleared, then writes to registers do
-> not take effect, which can leave clocks with no defined parent when
-> registered and leave clock tree state out of sync with the hardware,
-> triggering bugs in downstream drivers relying on TCU clocks.
->=20
-> Fixing this is easy: have ingenic_tcu_{enable,disable}_regs() always
-> clear the stop bit, regardless of the presence of a global TCU gate.
->=20
-> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Thanks for your clarification.
 
-Tested on JZ4770, it still works fine.
+We can remove the dt-binding file and use numbers in the DTS,
+appreciate if you can answer few additional questions:
+1. Do you suggest adding all NPCM reset values to the NPCM reset
+document or the reset values should describe in the module
+documentation that uses it?
+2. Some of the NPCM7XX document modules describe the reset value they
+use from the dt-binding for example:
+https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/nuvoton%2Cnpcm750-adc.yaml#L61
+If we remove the NPCM8XX dt-binding file should we describe the
+NPCM8XX values in the NPCM-ADC document file?
 
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Best regards,
 
-Still needs a Fixes: tag (+ Cc: linux-stable) so I'm expecting a V2.
+Tomer
 
-Cheers,
--Paul
-
-> ---
->  drivers/clk/ingenic/tcu.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-> index 201bf6e6b6e0..d5544cbc5c48 100644
-> --- a/drivers/clk/ingenic/tcu.c
-> +++ b/drivers/clk/ingenic/tcu.c
-> @@ -101,15 +101,11 @@ static bool ingenic_tcu_enable_regs(struct=20
-> clk_hw *hw)
->  	bool enabled =3D false;
->=20
->  	/*
-> -	 * If the SoC has no global TCU clock, we must ungate the channel's
-> -	 * clock to be able to access its registers.
-> -	 * If we have a TCU clock, it will be enabled automatically as it=20
-> has
-> -	 * been attached to the regmap.
-> +	 * According to the programming manual, a timer channel's registers=20
-> can
-> +	 * only be accessed when the channel's stop bit is clear.
->  	 */
-> -	if (!tcu->clk) {
-> -		enabled =3D !!ingenic_tcu_is_enabled(hw);
-> -		regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
-> -	}
-> +	enabled =3D !!ingenic_tcu_is_enabled(hw);
-> +	regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
->=20
->  	return enabled;
->  }
-> @@ -120,8 +116,7 @@ static void ingenic_tcu_disable_regs(struct=20
-> clk_hw *hw)
->  	const struct ingenic_tcu_clk_info *info =3D tcu_clk->info;
->  	struct ingenic_tcu *tcu =3D tcu_clk->tcu;
->=20
-> -	if (!tcu->clk)
-> -		regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
-> +	regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
->  }
->=20
->  static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
-> --
-> 2.35.1
->=20
-
-
+On Fri, 10 Jun 2022 at 12:55, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 10/06/2022 00:05, Tomer Maimon wrote:
+> > Hi Krzysztof,
+> >
+> > Sorry, but I thought the fix is only to add an explanation to the
+> > dt-binding file as was done in V2.
+> >
+> > The NPCM8XX binding is done in the same way as the NPCM7XX and both
+> > use the same reset driver and use the same reset method in upstreamed
+> > NPCM reset driver.
+> >
+> > Can you please explain again what you suggest to do?
+>
+> If you want abstract IDs, they must be abstract, so not representing
+> hardware registers. Then they start at 1 and are incremented by 1.
+>
+> Other option is to skip such IDs entirely and use register
+> offsets/addresses directly, like Arnd suggested in linked documents. I
+> think he expressed it clearly, so please read his answers which I linked
+> in previous discussion.
+>
+> There is no single reason to store register addresses/values/offsets as
+> binding headers. These are not bindings.
+>
+> Best regards,
+> Krzysztof
