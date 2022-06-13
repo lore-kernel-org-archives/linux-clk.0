@@ -2,145 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6252ECCA47B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 08:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DB2CCA47E
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 08:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239720AbiFMIpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jun 2022 04:45:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60786 "EHLO
+        id S235761AbiFMIvn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jun 2022 04:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240320AbiFMIpG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2022 04:45:06 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7CB20192;
-        Mon, 13 Jun 2022 01:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pN3d4KEFcv2ptnSv0mvCj6MvUML0g63O/kngZ8T7P5U=; b=jHY41velXm5OfTDUZVWOgGoGBS
-        3XcfJnIs2Kw4MnQzhXHXXp0NuTvYgWNNcy9H8ZMc64VSaMQLttlBqVnSkycnBSdvSyy0Jak2Oc/oh
-        vvGayo0C9yY99bqhrLdUZmtWJXcMrqnljzCxzdeOwv7I5/kT19cRmZ3SrWtebHTgXMFdZAZxKh/LD
-        FLvZqYIpmAvjq1lnM+gSi7696QvqdD2nf0hqYc6h4USx92PA9LVEoUSL3WQM5ig7zhrj1+/gECYeb
-        R1xWNHwwSLm1F21Q9Cu7wJn7J1PofxmN5bqxHgiOokEGCrOE72TMA7ta7eHf7Pxf1c+Q+Jc6wUzzF
-        Why4PJmw==;
-Received: from dhcp-077-249-017-003.chello.nl ([77.249.17.3] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o0fgQ-007VfF-TN; Mon, 13 Jun 2022 08:44:27 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D9091302DA8;
-        Mon, 13 Jun 2022 10:44:22 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BB85B200C72F2; Mon, 13 Jun 2022 10:44:22 +0200 (CEST)
-Date:   Mon, 13 Jun 2022 10:44:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
-        quic_neeraju@quicinc.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
-Message-ID: <Yqb45vclY2KVL0wZ@hirez.programming.kicks-ass.net>
-References: <20220608142723.103523089@infradead.org>
- <20220608144516.172460444@infradead.org>
- <20220609164921.5e61711d@jacob-builder>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220609164921.5e61711d@jacob-builder>
+        with ESMTP id S240558AbiFMIvl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2022 04:51:41 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547DEB1DD;
+        Mon, 13 Jun 2022 01:51:40 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id x5so6165931edi.2;
+        Mon, 13 Jun 2022 01:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=3rvOcjBqs1stdMUxQr8PedtmVi6/pRZU8HZK/5D9mX0=;
+        b=jeybOxuqIIOR+8rj1ITlZhxbNOJ7NpncY4wTlVF4S+WdfBPfdn5KF4/XiAhyiEnAVt
+         uqWGKsIVz/7jLISM/+OIZKgg/zz8Oe2V8g4LnKe22dm5J3OgTBGEBuQ/+vv5gdp4X5Cr
+         UXYZ/LsTwtngw8W3twsx8J15f9V2JnV5TZ5abxjoxIncQsf33tx1IYXPRsqIsFJu2nWk
+         TpC8Ry8qJkPsHj9V/Lut9jnTitKGhSTyAnuBm//jevuXmFLSrcXXos/FwXYUJ7dc9Oco
+         UTgC8tQQHqBkjb2dwCIZky5QunFnwZ2/KW9OWiYoXxmyNEariCeT/C4z52Gd8OwWm97N
+         q/pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3rvOcjBqs1stdMUxQr8PedtmVi6/pRZU8HZK/5D9mX0=;
+        b=U1gAI7/NKDUg7OO8TFemkQzDgDzDXd8Ae0Lt7GgJtI6ShwuAi/sxuuMzPey1FvLaQx
+         ko148OFZK8436MDWMQTvRd7X6D6pk1l72z2KBIhJJ6MC8Ae3nG19+RpfjytVKxsHpAQv
+         5n0+WmDEtBYeJfmqAv70OOPu9Oc8DzLLRjXQV1DWzV3o2iZ8I9fK6EVYOTig6w7e2joN
+         eaRqtt/r4FBiAL3wE/XyPo3VXdwJjv+lbtlWD7UZlATiE2O5Aq7MsviGEgJtE7ERH9nV
+         6bFA1OQCkhb9zyVkytcrxi9p5XkSS6cYsg2mRenmPUBcoBCnTC76uDdvYLSTkBve0zLf
+         ePkQ==
+X-Gm-Message-State: AOAM530WMFk9b7R7hOxNZBrU1FiWDBWnIPz2AmZQgy6OfAtBgNkeqSTB
+        aVgGGaHtmuWvhJek2g633uDxfVdbblY=
+X-Google-Smtp-Source: ABdhPJxvbKo+0ZKTIuYmeCYp3MTRhPEPP1M9mite+BnQUo4qt7+h9LN39t7ONWltk2NywAvSyLUJVw==
+X-Received: by 2002:a05:6402:2789:b0:42d:ce10:1d6 with SMTP id b9-20020a056402278900b0042dce1001d6mr64339618ede.188.1655110298718;
+        Mon, 13 Jun 2022 01:51:38 -0700 (PDT)
+Received: from felia.fritz.box (200116b8260df50089ef6db2443adc92.dip.versatel-1u1.de. [2001:16b8:260d:f500:89ef:6db2:443a:dc92])
+        by smtp.gmail.com with ESMTPSA id q8-20020a056402040800b0042dd4f9c464sm4477714edv.84.2022.06.13.01.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 01:51:38 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add include/dt-bindings/clock to COMMON CLK FRAMEWORK
+Date:   Mon, 13 Jun 2022 10:51:00 +0200
+Message-Id: <20220613085100.402-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 09, 2022 at 04:49:21PM -0700, Jacob Pan wrote:
-> Hi Peter,
-> 
-> On Wed, 08 Jun 2022 16:27:27 +0200, Peter Zijlstra <peterz@infradead.org>
-> wrote:
-> 
-> > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > Xeons") wrecked intel_idle in two ways:
-> > 
-> >  - must not have tracing in idle functions
-> >  - must return with IRQs disabled
-> > 
-> > Additionally, it added a branch for no good reason.
-> > 
-> > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on Xeons")
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  drivers/idle/intel_idle.c |   48
-> > +++++++++++++++++++++++++++++++++++----------- 1 file changed, 37
-> > insertions(+), 11 deletions(-)
-> > 
-> > --- a/drivers/idle/intel_idle.c
-> > +++ b/drivers/idle/intel_idle.c
-> > @@ -129,21 +137,37 @@ static unsigned int mwait_substates __in
-> >   *
-> >   * Must be called under local_irq_disable().
-> >   */
-> nit: this comment is no long true, right?
+Maintainers of the directory Documentation/devicetree/bindings/clock
+are also the maintainers of the corresponding directory in
+include/dt-bindings/clock.
 
-It still is, all the idle routines are called with interrupts disabled,
-but must also exit with interrupts disabled.
+Add the file entry for include/dt-bindings/clock to the appropriate
+section in MAINTAINERS.
 
-If the idle method requires interrupts to be enabled, it must be sure to
-disable them again before returning. Given all the RCU/tracing concerns
-it must use raw_local_irq_*() for this though.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Michael, Stephen, please pick this MAINTAINERS addition to your section.
+
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 475e28365385..2e7d1e885aed 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4970,6 +4970,7 @@ Q:	http://patchwork.kernel.org/project/linux-clk/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ F:	Documentation/devicetree/bindings/clock/
+ F:	drivers/clk/
++F:	include/dt-bindings/clock/
+ F:	include/linux/clk-pr*
+ F:	include/linux/clk/
+ F:	include/linux/of_clk.h
+-- 
+2.17.1
+
