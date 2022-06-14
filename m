@@ -2,83 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28157C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jun 2022 21:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4EBC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 08:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244964AbiFMVOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36974 "EHLO
+        id S1355486AbiFNImq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 04:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352110AbiFMVNT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jun 2022 17:13:19 -0400
-Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C9523A;
-        Mon, 13 Jun 2022 13:53:13 -0700 (PDT)
-Received: from [77.244.183.192] (port=64104 helo=[192.168.178.42])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.95)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1o0r3f-0001vP-Is;
-        Mon, 13 Jun 2022 22:53:11 +0200
-Message-ID: <86596495-9c26-4915-9a39-395ea3a78553@lucaceresoli.net>
-Date:   Mon, 13 Jun 2022 22:53:09 +0200
+        with ESMTP id S1355529AbiFNImJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 04:42:09 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C359427C7
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 01:41:45 -0700 (PDT)
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 172.28.114.216
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(29251:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Tue, 14 Jun 2022 16:31:19 +0800 (CST)
+From:   Qin Jian <qinjian@cqplus1.com>
+To:     sboyd@kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Qin Jian <qinjian@cqplus1.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v18 02/10] dt-bindings: reset: Add bindings for SP7021 reset driver
+Date:   Tue, 14 Jun 2022 16:31:01 +0800
+Message-Id: <c5174f9ff766ea526d5f58ba2701e2cadb1c3370.1655194858.git.qinjian@cqplus1.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1655194858.git.qinjian@cqplus1.com>
+References: <cover.1655194858.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Move versaclock.h to
- dt-bindings/clock
-Content-Language: en-US
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>,
-        linux-clk@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        devicetree@vger.kernel.org, patches@opensource.cirrus.com,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220613081632.2159-1-lukas.bulwahn@gmail.com>
- <20220613081632.2159-3-lukas.bulwahn@gmail.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-In-Reply-To: <20220613081632.2159-3-lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lukas,
+Add documentation to describe Sunplus SP7021 reset driver bindings.
 
-On 13/06/22 10:16, Lukas Bulwahn wrote:
-> Most of the clock related dt-binding header files are located in
-> dt-bindings/clock folder. It would be good to keep all the similar
-> header files at a single location.
-> 
-> This was discovered while investigating the state of ownership of the
-> files in include/dt-bindings/ according to the MAINTAINERS file.
-> 
-> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
-> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
-> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+---
+ .../bindings/reset/sunplus,reset.yaml         | 38 ++++++++
+ MAINTAINERS                                   |  2 +
+ .../dt-bindings/reset/sunplus,sp7021-reset.h  | 87 +++++++++++++++++++
+ 3 files changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ create mode 100644 include/dt-bindings/reset/sunplus,sp7021-reset.h
 
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-(I'm switching to the Bootlin address, patches are out but the
-MAINTAINERS one is not yet on master(
-
+diff --git a/Documentation/devicetree/bindings/reset/sunplus,reset.yaml b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+new file mode 100644
+index 000000000..f24646ba9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) Sunplus Co., Ltd. 2021
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/reset/sunplus,reset.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Sunplus SoC Reset Controller
++
++maintainers:
++  - Qin Jian <qinjian@cqplus1.com>
++
++properties:
++  compatible:
++    const: sunplus,sp7021-reset
++
++  reg:
++    maxItems: 1
++
++  "#reset-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    rstc: reset@9c000054 {
++      compatible = "sunplus,sp7021-reset";
++      reg = <0x9c000054 0x28>;
++      #reset-cells = <1>;
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d75a7a5c8..c13a89373 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2811,6 +2811,8 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
+ S:	Maintained
+ W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
++F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
++F:	include/dt-bindings/reset/sunplus,sp7021-reset.h
+ 
+ ARM/Synaptics SoC support
+ M:	Jisheng Zhang <jszhang@kernel.org>
+diff --git a/include/dt-bindings/reset/sunplus,sp7021-reset.h b/include/dt-bindings/reset/sunplus,sp7021-reset.h
+new file mode 100644
+index 000000000..ab4867073
+--- /dev/null
++++ b/include/dt-bindings/reset/sunplus,sp7021-reset.h
+@@ -0,0 +1,87 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
++ */
++#ifndef _DT_BINDINGS_RST_SUNPLUS_SP7021_H
++#define _DT_BINDINGS_RST_SUNPLUS_SP7021_H
++
++#define RST_SYSTEM              0
++#define RST_RTC                 1
++#define RST_IOCTL               2
++#define RST_IOP                 3
++#define RST_OTPRX               4
++#define RST_NOC                 5
++#define RST_BR                  6
++#define RST_RBUS_L00            7
++#define RST_SPIFL               8
++#define RST_SDCTRL0             9
++#define RST_PERI0               10
++#define RST_A926                11
++#define RST_UMCTL2              12
++#define RST_PERI1               13
++#define RST_DDR_PHY0            14
++#define RST_ACHIP               15
++#define RST_STC0                16
++#define RST_STC_AV0             17
++#define RST_STC_AV1             18
++#define RST_STC_AV2             19
++#define RST_UA0                 20
++#define RST_UA1                 21
++#define RST_UA2                 22
++#define RST_UA3                 23
++#define RST_UA4                 24
++#define RST_HWUA                25
++#define RST_DDC0                26
++#define RST_UADMA               27
++#define RST_CBDMA0              28
++#define RST_CBDMA1              29
++#define RST_SPI_COMBO_0         30
++#define RST_SPI_COMBO_1         31
++#define RST_SPI_COMBO_2         32
++#define RST_SPI_COMBO_3         33
++#define RST_AUD                 34
++#define RST_USBC0               35
++#define RST_USBC1               36
++#define RST_UPHY0               37
++#define RST_UPHY1               38
++#define RST_I2CM0               39
++#define RST_I2CM1               40
++#define RST_I2CM2               41
++#define RST_I2CM3               42
++#define RST_PMC                 43
++#define RST_CARD_CTL0           44
++#define RST_CARD_CTL1           45
++#define RST_CARD_CTL4           46
++#define RST_BCH                 47
++#define RST_DDFCH               48
++#define RST_CSIIW0              49
++#define RST_CSIIW1              50
++#define RST_MIPICSI0            51
++#define RST_MIPICSI1            52
++#define RST_HDMI_TX             53
++#define RST_VPOST               54
++#define RST_TGEN                55
++#define RST_DMIX                56
++#define RST_TCON                57
++#define RST_INTERRUPT           58
++#define RST_RGST                59
++#define RST_GPIO                60
++#define RST_RBUS_TOP            61
++#define RST_MAILBOX             62
++#define RST_SPIND               63
++#define RST_I2C2CBUS            64
++#define RST_SEC                 65
++#define RST_DVE                 66
++#define RST_GPOST0              67
++#define RST_OSD0                68
++#define RST_DISP_PWM            69
++#define RST_UADBG               70
++#define RST_DUMMY_MASTER        71
++#define RST_FIO_CTL             72
++#define RST_FPGA                73
++#define RST_L2SW                74
++#define RST_ICM                 75
++#define RST_AXI_GLOBAL          76
++
++#endif
 -- 
-Luca
+2.33.1
+
