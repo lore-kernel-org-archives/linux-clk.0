@@ -2,38 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E860BC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 10:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985D5C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 10:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbiFNKm3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 06:42:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59854 "EHLO
+        id S243116AbiFNKov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 06:44:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355855AbiFNKm2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 06:42:28 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B861EAE;
-        Tue, 14 Jun 2022 03:42:20 -0700 (PDT)
-Received: from mail-yb1-f179.google.com ([209.85.219.179]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MuDoR-1niiMo0ijt-00uXdY; Tue, 14 Jun 2022 12:42:19 +0200
-Received: by mail-yb1-f179.google.com with SMTP id x38so14421240ybd.9;
-        Tue, 14 Jun 2022 03:42:18 -0700 (PDT)
-X-Gm-Message-State: AJIora8re/FrlikpDt370Goy4QV8Z7b2DkAY74vkH8CxaNMHl7zapDA0
-        bd7b+l85xDG8FV7Rje/+vOidX3enChRydW9Im28=
-X-Google-Smtp-Source: AGRyM1u6BlNZePQaiEYdbfT4gFiK0Xn992NOenYqFrbDIeUHsQsd0C4/8zDUMmJUO2awoVTP7FmYkvrgx8xfclApE7Q=
-X-Received: by 2002:a25:69c4:0:b0:65c:ed2b:9106 with SMTP id
- e187-20020a2569c4000000b0065ced2b9106mr4223896ybc.394.1655203337779; Tue, 14
- Jun 2022 03:42:17 -0700 (PDT)
+        with ESMTP id S242976AbiFNKop (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 06:44:45 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D823D4889B;
+        Tue, 14 Jun 2022 03:44:42 -0700 (PDT)
+Received: from mail-yw1-f171.google.com ([209.85.128.171]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M9ntb-1o6qvU0Dn3-005pCs; Tue, 14 Jun 2022 12:44:41 +0200
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-30fdbe7467cso25375657b3.1;
+        Tue, 14 Jun 2022 03:44:40 -0700 (PDT)
+X-Gm-Message-State: AJIora9YmfidbEhKptpk6GMGoCNvgERNUROiq5G2t6WYJO9J1kS8rm3O
+        grlNZhl1D0WiKwcYRq2FM875bCFyxAiIm5s0ax0=
+X-Google-Smtp-Source: AGRyM1tr/ng9g9sm93eXlz+bdGnyiIzeyyD0zeJbGcgCyaf7ssINAXTuhAQgINggNB8yp6EGGkLewqJtLvVBwFTVyu4=
+X-Received: by 2002:a81:2f84:0:b0:314:2bfd:bf1f with SMTP id
+ v126-20020a812f84000000b003142bfdbf1fmr4800845ywv.320.1655203479718; Tue, 14
+ Jun 2022 03:44:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1655194858.git.qinjian@cqplus1.com> <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
-In-Reply-To: <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
+References: <cover.1655194858.git.qinjian@cqplus1.com> <42ed93cf0e5cfeaffdf50d63da558a3f1f6c1021.1655194858.git.qinjian@cqplus1.com>
+In-Reply-To: <42ed93cf0e5cfeaffdf50d63da558a3f1f6c1021.1655194858.git.qinjian@cqplus1.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 14 Jun 2022 12:42:01 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0XgDS-iJEfOrTjTRGODosxj0gc748PAH_hc534DkyswQ@mail.gmail.com>
-Message-ID: <CAK8P3a0XgDS-iJEfOrTjTRGODosxj0gc748PAH_hc534DkyswQ@mail.gmail.com>
-Subject: Re: [PATCH v18 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
- device tree
+Date:   Tue, 14 Jun 2022 12:44:23 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0p3M2Z7aaB3tGJSud3Tr+E7BtwQka6j5HS3VooV7L8XQ@mail.gmail.com>
+Message-ID: <CAK8P3a0p3M2Z7aaB3tGJSud3Tr+E7BtwQka6j5HS3VooV7L8XQ@mail.gmail.com>
+Subject: Re: [PATCH v18 05/10] clk: Add Sunplus SP7021 clock driver
 To:     Qin Jian <qinjian@cqplus1.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -47,104 +46,42 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:xPtpOpauGmwccM9RruS3e6Fd9pdl+xGLPXirghaSnNcDK5RwwvY
- ag8Xry7Id2nfnu8O6+AzsIlXHfWwe38hdO2eq2l7LTJL1RNQhUfBhIdomYdQqmK3Ppm6vAp
- LtYNeVMCjCnZqTbOmRWIb2+8QR5rfTfihjSfU2Gw8kvWmg1ucK6pi3a6pQpRBhROzKD5Pw0
- zbsvhlPQ6CcfYKlrpneYQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:BVGO3whnGok=:4JXmS7J51MsbvjTA1x/DDX
- wGJ15qMV9EwBZXNsU/ejxe+u27G4x5exYdoSQ/roZ8AiaNXmoy98XNj2TqTEb6+IKN2wLm2ZT
- SsD4eIQUa26cQomzNq5B44IELRsD0fYmWX8/XViqhreE1UIgWkvlxYPa9YcIAwc6ttQMSYgOm
- GzEkiuRsCdca+hfNwhZ4S7tM2a670ZyDseOEoHeWJSqG/9RpHVvqzMx4tYIrgiLrByaUVq+n6
- kGN7DczCLkbDuB/ZbEK2NLFqvITkIg2DcdxDOAhaCYP8PDJa+V145/gDNqnBJ9laOL9/DRXU/
- dl8It1oxxEXAaBxfc71CDlZKdZuTNNmIWR5lKvdZZmeKBHhXPPCoJzIIzGDSmZJZrP2qclOIb
- 2cKY2ah9r9yQKK3FO3Yk0kCogMWUqw56JqtaxvErB8YDLsOOOgMc662abg6wVzZutcUA1mGDL
- LwN45qz/O36DVktIEq2ToOYNijED0Rer5P746N9Mna0kJdzQbXMVfydzOxpxNQB23caBCM64N
- eHst7yaMRT7t4/S9kentb5HP7KRHvqfRmjgUbIJBt90jDiZYhCQsQtIUv4k3YuD7xbQCTxhnN
- Wae4RbY1sJB98XhBYoUz1DrdY73eNFdXZvzGWaXMbPLEKm+Km8FrxQsAJ1sBR4jHKfeISDR+5
- a0qWnEUAaadjziCQsdrpdKFV/4cMG+pxxERlA+8+9zSIc6xG3wH21UtER1gWaNpT02QeH0YXy
- h+Lx0ynQ0J3gGG5nGeiqMp0Ye7vsDa+dbU1CQ7Rms8aVseCFtTbaGjB8zW/hqpTRGkU1RLZX9
- toACVMLXst10FTK6uN8H17U2yyo6Gc4UM1YMbyLzWa4HXf04QI++Z/pCt5LT5uxgHvXIr7fRv
- U0jv7+q6CmrPu4ZRD2lQ==
+X-Provags-ID: V03:K1:ey+dO0+lUy7FfGtAxlF5Bijf8TCIsvXafMT3lHTzHl/7apLNQzy
+ CtpLCAuknHeB88VpoOoZigtOBMnXW4C66GHMWSFewXNW0hIpON+KFQd7jXxXBUGKGvhuKV3
+ u8Fh1n/uUfCqYv3PVHTzYRos1txUt2TMJD1M4mg28wA9KrqB9YR2XHgZhspjfCHcKlCgD9A
+ HLm9/Sf3Du2RUi1ZSPhQA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xzCm8Sh6xA8=:/Fidt+9OqPZYqqIuZqLMc9
+ dtOMh1fukRJvCDE4s48Hn7iDLXI/clYZF6Sk+abYf0B9qOYQW58uYw65UgzXBKV2IzCkKxtWI
+ TDn7za1VzREeHhxhM6QFlWu/6RgzWm/LG6Agcco8zo+3QXJiFW4vHDUGpRsVO3UIynTwPVI5P
+ gmDZG14LU5HsCIDCrbMPjzbgkMMKXmWwNj/o/hb09sySuGsE9SfL3b+4/o0WH1FBiQCRD9nQN
+ V4PkV3B8b+AS8Yp/yG7EoI9zl0rbCT9ap5LUK7TkSW2CjI8XtwxVF6vTUN9Gn5OvHBNnWl8Gu
+ X/wGG0wWy2smh6DgOc6SutuEKyyNqa+6G3nYZnI+m0qd6U7JeOW78L/LQLH48rsmTd+MfgT25
+ MsdYNoFzpjdZ31fbVu3gj7vgZdmLeJy6Sbfdt/RvfCYtJAAh3tQ/5Vi5Bkk6Ux+l0gIhdBEVt
+ lI1MivnTBKCd4EogxRWKZoNd75k+lxWs4y8T8TbYN0arb3kjduglhBCAmZU9VCcPWk4RT98l0
+ bi9t8WtmbtiWt+c+uB/8P9H+hbW1ysPU0UXBt0QH6ayvuM4KuNlf4s+OjGXHaYQrYpOonlVjz
+ 4PYNlAHLzqlUYxUabMewpyI6A+ICyNuBKWZCZN9LGd7s0mpb6tA1bv3u1PL5wUtRCZXec4V0C
+ x7cc6UZFgiQJq1KThZWymR9XX/+YCaFxcTqNpou5kSG2yD8Awj29jlFDG9OOQrbsK1XIRwvhZ
+ 24OkaD1oeBmsFws7fFoyy5UQIZCoFHPvTP4ZElXRpHTqyMZCqpBOMa5/ozKbCgcfb1L1F47r5
+ ti+MUTlKymS5l3ej58mBoP3X/x2FGiSLQZbinXir0pJ2d6n4Aq8I8gz+HLsTW4QSvuHgB0kMF
+ X8M4UhJokuPBvNqqILGQ==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
- beOn Tue, Jun 14, 2022 at 10:31 AM Qin Jian <qinjian@cqplus1.com> wrote:
+On Tue, Jun 14, 2022 at 10:31 AM Qin Jian <qinjian@cqplus1.com> wrote:
 >
-> Add the basic support for Sunplus SP7021-Demo-V3 board.
+> Add clock driver for Sunplus SP7021 SoC.
 >
 > Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 > ---
-> Fix the comments from Krzysztof.
+> Fix the comments from Stephen Boyd.
 
-I'll wait for a final Ack from Krzysztof before applying this.
+Do you mean you still need to address the comments from Stephen, or
+that you have
+done this already?
 
+I can't apply the series if there are patches in it that still need to
+be fixed or
+finish review, so I hope this is only waiting for a final Ack.
 
-A few more details I noticed:
-
-
-> +/ {
-> +       compatible = "sunplus,sp7021";
-> +       model = "Sunplus SP7021";
-> +
-> +       aliases {
-> +               serial0 = &uart0;
-> +               serial1 = &uart1;
-> +               serial2 = &uart2;
-> +               serial3 = &uart3;
-> +               serial4 = &uart4;
-> +       };
-
-Some of these are disabled, presumably because they are not
-actually connected on all boards. Better move the aliases to the .dts file
-and only list the ports that are in fact used, using the numbering that
-matches the labels on the board, not the numbers inside of the SoC
-
-> +
-> +       soc {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges;
-> +               interrupt-parent = <&intc>;
-> +
-> +               intc: interrupt-controller@9c000780 {
-> +                       compatible = "sunplus,sp7021-intc";
-> +                       reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <2>;
-> +               };
-
-All child nodes below /soc have registers in the 0x9c000000 range. I would
-suggest you use a matching 'ranges' property to translate these into a
-zero-based
-address like
-
-/soc {
-       ranges = <0 0x9c000000 0x10000>;
-
-      interrupt-controller@780 {
-             reg = <0x780 0x80>, <0xa80 0x80>;
-             ...
-      };
-};
-
-> +               clkc: clock-controller@9c000004 {
-> +                       compatible = "sunplus,sp7021-clkc";
-> +                       reg = <0x9c000004 0x28>,
-> +                             <0x9c000200 0x44>,
-> +                             <0x9c000268 0x04>;
-> +                       clocks = <&extclk>;
-> +                       #clock-cells = <1>;
-> +               };
-> +
-> +               rstc: reset@9c000054 {
-> +                       compatible = "sunplus,sp7021-reset";
-> +                       reg = <0x9c000054 0x28>;
-> +                       #reset-cells = <1>;
-> +               };
-
-
-Maybe sort the nodes by address, or possibly by name.
-
-       Arnd
+        Arnd
