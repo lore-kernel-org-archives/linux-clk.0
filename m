@@ -2,189 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB90C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 15:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C71C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 15:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352660AbiFNPeB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 11:34:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41034 "EHLO
+        id S1356942AbiFNPjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 11:39:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344390AbiFNPd4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 11:33:56 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD832A427;
-        Tue, 14 Jun 2022 08:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1655220835; x=1686756835;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=BjbQKVg6lB501/rTvvJ6HNGtWrfGVCJD1IYIXBWP0c8=;
-  b=JE7eUWeWSisfnPt2HWkvQB43zZAU+ZcJfSYykNQmuvH0rwG9978l7fxC
-   49siwdnTO1HeumARNkFNpL0vym/UjC74B5O7W1QaLS9DbN3+aAIqrB2rr
-   e79Mf23ODjC6VmNgSn8PDzE5oO8LjDdcFFMKXCtYUgqmoM1zM4IoqGgLF
-   w=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 14 Jun 2022 08:33:55 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2022 08:33:56 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 14 Jun 2022 08:33:54 -0700
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 14 Jun 2022 08:33:50 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh@kernel.org>,
-        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH v5 3/3] clk: qcom: lpass: Add support for resets & external mclk for SC7280
-Date:   Tue, 14 Jun 2022 21:03:06 +0530
-Message-ID: <20220614153306.29339-4-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220614153306.29339-1-quic_tdas@quicinc.com>
-References: <20220614153306.29339-1-quic_tdas@quicinc.com>
+        with ESMTP id S235793AbiFNPjA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 11:39:00 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96DD13584A;
+        Tue, 14 Jun 2022 08:38:59 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id o73so6644393qke.7;
+        Tue, 14 Jun 2022 08:38:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gWkjio64HLTn0FlN5EkGUWjaDjlbrlEM+HvPB5I3j9E=;
+        b=sylXMzY9Zbu7NqvGwOD4iakjZEjAwZNxyJcuurhUPW3ZiS4Sg7/hv+xGGN93sAj5dh
+         myyHf6JMo6AfaxcbWE59tNjRCOXVw1ZpEuNxYxPp+crpxYMEImaHdvrA+5Bgh12ZxL3+
+         3PKBLcZ4S6UeUr1YqapVA7p/PBrfpaAna+RmALgtSBnuyWlKROOG6+E5qTrZ5CG/+pui
+         HB8DQNsj8dejxOtqx+vEqoCacSnHpk8FKxAriMyymM7MfqC1b7WsrdfB7/HfJSiprCOW
+         S4xw1jqoVBQguOWUgGtX7F43bAs14ocl6xIDzQMBGFDoLhadxAHti8OYyKhTPbyuQIMI
+         fAgA==
+X-Gm-Message-State: AOAM532pYEu4t84IqQvdFBnEOtEh4s+Gy/5V5OolSn01P/IUsZZvI6fp
+        +HFLel4Jintpn/pmLQ0sXgmeCJL9I6nQTA==
+X-Google-Smtp-Source: ABdhPJxvKFHxcioMbwZjyA2gRSp9NSKOOfJQxmukKa+6g6nz7KpWom5tHXpB6cOFkf0Qxv8+FBxuLA==
+X-Received: by 2002:a05:620a:24c7:b0:6a7:2d03:2de3 with SMTP id m7-20020a05620a24c700b006a72d032de3mr4569133qkn.134.1655221138486;
+        Tue, 14 Jun 2022 08:38:58 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id n7-20020a05620a294700b006a708baa069sm10119944qkp.101.2022.06.14.08.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jun 2022 08:38:58 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-313a8a8b95aso33885307b3.5;
+        Tue, 14 Jun 2022 08:38:58 -0700 (PDT)
+X-Received: by 2002:a81:f41:0:b0:313:4d6c:49db with SMTP id
+ 62-20020a810f41000000b003134d6c49dbmr6307027ywp.384.1655221137793; Tue, 14
+ Jun 2022 08:38:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+References: <20220613115627.2831257-1-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20220613115627.2831257-1-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 14 Jun 2022 17:38:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMCCwh_QEt+uPX1cg2KiaWbFbN6VLC535bkOAwxumP4A@mail.gmail.com>
+Message-ID: <CAMuHMdWMCCwh_QEt+uPX1cg2KiaWbFbN6VLC535bkOAwxumP4A@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a779f0: Add PCIe clocks
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock gating control for TX/RX/WSA core bus clocks would be required
-to be reset(moved from hardware control) from audio core driver. Thus
-add the support for the reset clocks.
+On Mon, Jun 13, 2022 at 1:56 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Add the module clocks used by the PCIe controllers on the Renesas
+> R-Car S4-8 (R8A779F0) SoC.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Also add the external mclk to interface external MI2S.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.20.
 
-Fixes: a9dd26639d05 ("clk: qcom: lpass: Add support for LPASS clock controller for SC7280").
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 22 ++++++++++++++++-
- drivers/clk/qcom/lpasscorecc-sc7280.c  | 33 ++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 6ab6e5a34c72..4a71f261eb6e 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -22,6 +22,7 @@
- #include "clk-regmap-mux.h"
- #include "common.h"
- #include "gdsc.h"
-+#include "reset.h"
+                        Geert
 
- enum {
- 	P_BI_TCXO,
-@@ -221,7 +222,7 @@ static struct clk_rcg2 lpass_aon_cc_main_rcg_clk_src = {
- 		.parent_data = lpass_aon_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(lpass_aon_cc_parent_data_0),
- 		.flags = CLK_OPS_PARENT_ENABLE,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
-
-@@ -665,6 +666,18 @@ static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
- 	.num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
- };
-
-+static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-+	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-+	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
-+	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-+};
-+
-+static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-+	.config = &lpass_audio_cc_sc7280_regmap_config,
-+	.resets = lpass_audio_cc_sc7280_resets,
-+	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-+};
-+
- static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
- 	{ .compatible = "qcom,sc7280-lpassaudiocc" },
- 	{ }
-@@ -741,6 +754,13 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 		return ret;
- 	}
-
-+	ret = qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7280_desc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC Resets\n");
-+		pm_runtime_disable(&pdev->dev);
-+		return ret;
-+	}
-+
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
- 	pm_runtime_put_sync(&pdev->dev);
-diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpasscorecc-sc7280.c
-index 1f1f1bd1b68e..6ad19b06b1ce 100644
---- a/drivers/clk/qcom/lpasscorecc-sc7280.c
-+++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
-@@ -190,6 +190,19 @@ static struct clk_rcg2 lpass_core_cc_ext_if1_clk_src = {
- 	},
- };
-
-+static struct clk_rcg2 lpass_core_cc_ext_mclk0_clk_src = {
-+	.cmd_rcgr = 0x20000,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = lpass_core_cc_parent_map_0,
-+	.freq_tbl = ftbl_lpass_core_cc_ext_if0_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data){
-+		.name = "lpass_core_cc_ext_mclk0_clk_src",
-+		.parent_data = lpass_core_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(lpass_core_cc_parent_data_0),
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-
- static struct clk_branch lpass_core_cc_core_clk = {
- 	.halt_reg = 0x1f000,
-@@ -283,6 +296,24 @@ static struct clk_branch lpass_core_cc_lpm_mem0_core_clk = {
- 	},
- };
-
-+static struct clk_branch lpass_core_cc_ext_mclk0_clk = {
-+	.halt_reg = 0x20014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x20014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data){
-+			.name = "lpass_core_cc_ext_mclk0_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&lpass_core_cc_ext_mclk0_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch lpass_core_cc_sysnoc_mport_core_clk = {
- 	.halt_reg = 0x23000,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -326,6 +357,8 @@ static struct clk_regmap *lpass_core_cc_sc7280_clocks[] = {
- 	[LPASS_CORE_CC_LPM_CORE_CLK] = &lpass_core_cc_lpm_core_clk.clkr,
- 	[LPASS_CORE_CC_LPM_MEM0_CORE_CLK] = &lpass_core_cc_lpm_mem0_core_clk.clkr,
- 	[LPASS_CORE_CC_SYSNOC_MPORT_CORE_CLK] = &lpass_core_cc_sysnoc_mport_core_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK] = &lpass_core_cc_ext_mclk0_clk.clkr,
-+	[LPASS_CORE_CC_EXT_MCLK0_CLK_SRC] = &lpass_core_cc_ext_mclk0_clk_src.clkr,
- };
-
- static struct regmap_config lpass_core_cc_sc7280_regmap_config = {
 --
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
