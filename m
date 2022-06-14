@@ -2,211 +2,363 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC82ACCA47E
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 17:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D20BC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 18:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236164AbiFNRd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 13:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53896 "EHLO
+        id S239232AbiFNSC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 14:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242526AbiFNRdZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 13:33:25 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 77C763056C;
-        Tue, 14 Jun 2022 10:33:23 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD0DD1762;
-        Tue, 14 Jun 2022 10:33:22 -0700 (PDT)
-Received: from FVFF77S0Q05N (unknown [10.57.41.154])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C0913F66F;
-        Tue, 14 Jun 2022 10:33:04 -0700 (PDT)
-Date:   Tue, 14 Jun 2022 18:33:00 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com,
-        srivatsa@csail.mit.edu, amakhalov@vmware.com,
-        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
-        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH 00/36] cpuidle,rcu: Cleanup the mess
-Message-ID: <YqjGTFEWSJGGOjNA@FVFF77S0Q05N>
-References: <20220608142723.103523089@infradead.org>
- <YqhuwQjmZyOVSiLI@FVFF77S0Q05N>
- <Yqi+Nqz1J8wI5GcX@hirez.programming.kicks-ass.net>
+        with ESMTP id S238037AbiFNSC6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 14:02:58 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0795544A1E
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 11:02:53 -0700 (PDT)
+Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 7FE7E843A9;
+        Tue, 14 Jun 2022 20:02:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1655229771;
+        bh=nmt6hKLNNwrBLN0Ny6DiQww3SNZGMxBs39oedellKME=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y831NPVsnHSIcpDITOOHrUALu4F5GHT1/7UJ01pB6ZUmahBEhc+zMeOMSVkLLd0Z0
+         LxMqvIsAEF+tkWNkyKmR1uXV9UDXPAqbHQdDnbKqSJm4eFTHdNmdCW7W9FH/2Rg69f
+         6wO+Ds/REJ9Q0xxL/zNzIeBlAN1SgHsD4aya1QkCNqqqPe0BdMct5CPEd73Ut+3SuO
+         oh8xTcT/LsqIAXKilzHgaDGJSpMf/xWNSypqRcovrNvvbHGkGUttYRhWbuErAiA5pZ
+         D6Mout6r8l4Hyv23mPslpTbYujzp1ng9tATHab5LhqkRoBnsbbh1b3KMWUPCtyZTrU
+         c8areIpf9uicg==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: [PATCH v2 1/4] clk: imx: imx8mp: Add audiomix block control
+Date:   Tue, 14 Jun 2022 20:02:36 +0200
+Message-Id: <20220614180239.778334-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yqi+Nqz1J8wI5GcX@hirez.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 06:58:30PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 14, 2022 at 12:19:29PM +0100, Mark Rutland wrote:
-> > On Wed, Jun 08, 2022 at 04:27:23PM +0200, Peter Zijlstra wrote:
-> > > Hi All! (omg so many)
-> > 
-> > Hi Peter,
-> > 
-> > Sorry for the delay; my plate has also been rather full recently. I'm beginning
-> > to page this in now.
-> 
-> No worries; we all have too much to do ;-)
-> 
-> > > These here few patches mostly clear out the utter mess that is cpuidle vs rcuidle.
-> > > 
-> > > At the end of the ride there's only 2 real RCU_NONIDLE() users left
-> > > 
-> > >   arch/arm64/kernel/suspend.c:            RCU_NONIDLE(__cpu_suspend_exit());
-> > >   drivers/perf/arm_pmu.c:                 RCU_NONIDLE(armpmu_start(event, PERF_EF_RELOAD));
-> > 
-> > The latter of these is necessary because apparently PM notifiers are called
-> > with RCU not watching. Is that still the case today (or at the end of this
-> > series)? If so, that feels like fertile land for more issues (yaey...). If not,
-> > we should be able to drop this.
-> 
-> That should be fixed; fingers crossed :-)
+Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
+series of clock gates and muxes. Model it as a large static table of
+gates and muxes with one exception, which is the PLL14xx . The PLL14xx
+SAI PLL has to be registered separately.
 
-Cool; I'll try to give that a spin when I'm sat next to some relevant hardware. :)
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abel.vesa@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Jacky Bai <ping.bai@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+To: linux-clk@vger.kernel.org
+Cc: linux-imx@nxp.com
+---
+V2: No change
+---
+ drivers/clk/imx/Makefile              |   2 +-
+ drivers/clk/imx/clk-imx8mp-audiomix.c | 262 ++++++++++++++++++++++++++
+ 2 files changed, 263 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-imx8mp-audiomix.c
 
-> > >   kernel/cfi.c:   RCU_NONIDLE({
-> > > 
-> > > (the CFI one is likely dead in the kCFI rewrite) and there's only a hand full
-> > > of trace_.*_rcuidle() left:
-> > > 
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, CALLER_ADDR1);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
-> > >   kernel/trace/trace_preemptirq.c:                        trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
-> > >   kernel/trace/trace_preemptirq.c:                trace_preempt_enable_rcuidle(a0, a1);
-> > >   kernel/trace/trace_preemptirq.c:                trace_preempt_disable_rcuidle(a0, a1);
-> > > 
-> > > All of them are in 'deprecated' code that is unused for GENERIC_ENTRY.
-> > I think those are also unused on arm64 too?
-> > 
-> > If not, I can go attack that.
-> 
-> My grep spots:
-> 
-> arch/arm64/kernel/entry-common.c:               trace_hardirqs_on();
-> arch/arm64/include/asm/daifflags.h:     trace_hardirqs_off();
-> arch/arm64/include/asm/daifflags.h:             trace_hardirqs_off();
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 88b9b9285d22e..c4290937637eb 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -25,7 +25,7 @@ obj-$(CONFIG_MXC_CLK) += mxc-clk.o
+ 
+ obj-$(CONFIG_CLK_IMX8MM) += clk-imx8mm.o
+ obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
+-obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
++obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o clk-imx8mp-audiomix.o
+ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+ 
+ obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
+diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+new file mode 100644
+index 0000000000000..bfa6080f274ff
+--- /dev/null
++++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Driver for i.MX8M Plus Audio BLK_CTRL
++ *
++ * Copyright (C) 2022 Marek Vasut <marex@denx.de>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++
++#include <dt-bindings/clock/imx8mp-clock.h>
++
++#include "clk.h"
++
++#define CLKEN0			0x000
++#define CLKEN1			0x004
++#define SAI_MCLK_SEL(n)		(300 + 4 * (n))	/* n in 0..5 */
++#define PDM_SEL			0x318
++#define SAI_PLL_GNRL_CTL	0x400
++
++#define SAIn_MCLK1_PARENT(n)						\
++static const char *clk_imx8mp_audiomix_sai##n##_mclk1_parents[] = {	\
++	"sai"__stringify(n), "sai"__stringify(n)"_mclk"			\
++}
++
++SAIn_MCLK1_PARENT(1);
++SAIn_MCLK1_PARENT(2);
++SAIn_MCLK1_PARENT(3);
++SAIn_MCLK1_PARENT(5);
++SAIn_MCLK1_PARENT(6);
++SAIn_MCLK1_PARENT(7);
++
++static const char *clk_imx8mp_audiomix_sai_mclk2_parents[] = {
++	"sai1", "sai2", "sai3", "dummy",
++	"sai5", "sai6", "sai7",
++	"sai1_mclk", "sai2_mclk", "sai3_mclk", "dummy",
++	"sai5_mclk", "sai6_mclk", "sai7_mclk",
++	"spdif_extclk", "dummy"
++};
++
++static const char *clk_imx8mp_audiomix_pdm_parents[] = {
++	"ccm_pdm", "sai_pll_out_div2", "sai1_mclk", "dummy"
++};
++
++
++static const char * const clk_imx8mp_audiomix_pll_parents[] = {
++	"osc_24m", "dummy", "dummy", "dummy"
++};
++
++static const char * const clk_imx8mp_audiomix_pll_bypass_sels[] = {
++	"sai_pll", "sai_pll_ref_sel"
++};
++
++#define CLK_GATE(name, cname)						\
++	{								\
++		name"_cg",						\
++		IMX8MP_CLK_AUDIOMIX_##cname,				\
++		"audio_ahb", NULL, 1,					\
++		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
++		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
++	}
++
++#define CLK_SAIn(n)							\
++	{								\
++		"sai"__stringify(n)"_mclk1_sel",			\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1_SEL,			\
++		NULL,							\
++		clk_imx8mp_audiomix_sai##n##_mclk1_parents,		\
++		ARRAY_SIZE(clk_imx8mp_audiomix_sai##n##_mclk1_parents), \
++		SAI_MCLK_SEL(n), 1, 0					\
++	}, {								\
++		"sai"__stringify(n)"_mclk2_sel",			\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2_SEL,			\
++		NULL,							\
++		clk_imx8mp_audiomix_sai_mclk2_parents,		\
++		ARRAY_SIZE(clk_imx8mp_audiomix_sai_mclk2_parents),	\
++		SAI_MCLK_SEL(n), 4, 1					\
++	}, {								\
++		"sai"__stringify(n)"_ipg_cg",				\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG,			\
++		"audio_ahb", NULL, 1,					\
++		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG		\
++	}, {								\
++		"sai"__stringify(n)"_mclk1_cg",				\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1,			\
++		"sai"__stringify(n)"_mclk1_sel", NULL, 1,		\
++		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1		\
++	}, {								\
++		"sai"__stringify(n)"_mclk2_cg",				\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2,			\
++		"sai"__stringify(n)"_mclk2_sel", NULL, 1,		\
++		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2		\
++	}, {								\
++		"sai"__stringify(n)"_mclk3_cg",				\
++		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3,			\
++		"sai_pll_out_div2", NULL, 1,				\
++		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3		\
++	}
++
++#define CLK_PDM								\
++	{								\
++		"pdm_sel", IMX8MP_CLK_AUDIOMIX_PDM_SEL, NULL,		\
++		clk_imx8mp_audiomix_pdm_parents,			\
++		ARRAY_SIZE(clk_imx8mp_audiomix_pdm_parents),		\
++		PDM_SEL, 2, 0						\
++	}
++
++struct clk_imx8mp_audiomix_sel {
++	const char	*name;
++	int		clkid;
++	const char	*parent;	/* For gate */
++	const char	**parents;	/* For mux */
++	int		num_parents;
++	u16		reg;
++	u8		width;
++	u8		shift;
++};
++
++static struct clk_imx8mp_audiomix_sel sels[] = {
++	CLK_GATE("asrc", ASRC_IPG),
++	CLK_GATE("pdm", PDM_IPG),
++	CLK_GATE("earc", EARC_IPG),
++	CLK_GATE("ocrama", OCRAMA_IPG),
++	CLK_GATE("aud2htx", AUD2HTX_IPG),
++	CLK_GATE("earc_phy", EARC_PHY),
++	CLK_GATE("sdma2", SDMA2_ROOT),
++	CLK_GATE("sdma3", SDMA3_ROOT),
++	CLK_GATE("spba2", SPBA2_ROOT),
++	CLK_GATE("dsp", DSP_ROOT),
++	CLK_GATE("dspdbg", DSPDBG_ROOT),
++	CLK_GATE("edma", EDMA_ROOT),
++	CLK_GATE("audpll", AUDPLL_ROOT),
++	CLK_GATE("mu2", MU2_ROOT),
++	CLK_GATE("mu3", MU3_ROOT),
++	CLK_PDM,
++	CLK_SAIn(1),
++	CLK_SAIn(2),
++	CLK_SAIn(3),
++	CLK_SAIn(5),
++	CLK_SAIn(6),
++	CLK_SAIn(7)
++};
++
++struct clk_imx8mp_audiomix_priv {
++	struct clk_hw		*clk[IMX8MP_CLK_AUDIOMIX_END];
++};
++
++static struct clk_hw *
++clk_imx8mp_audiomix_of_clk_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct clk_imx8mp_audiomix_priv *priv = data;
++	unsigned int idx = clkspec->args[0];
++
++	return priv->clk[idx];
++}
++
++static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
++{
++	struct clk_imx8mp_audiomix_priv *priv;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	void __iomem *base;
++	struct clk_hw *hw;
++	int i;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	for (i = 0; i < ARRAY_SIZE(sels); i++) {
++		if (sels[i].num_parents == 1) {
++			hw = devm_clk_hw_register_gate(dev,
++						       sels[i].name,
++						       sels[i].parent,
++						       0,
++						       base + sels[i].reg,
++						       sels[i].shift,
++						       0, NULL);
++		} else {
++			hw = devm_clk_hw_register_mux(dev, sels[i].name,
++						      sels[i].parents,
++						      sels[i].num_parents,
++						      0,
++						      base + sels[i].reg,
++						      sels[i].shift,
++						      sels[i].width,
++						      0, NULL);
++		}
++
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++
++		priv->clk[sels[i].clkid] = hw;
++	}
++
++	/* SAI PLL */
++	hw = devm_clk_hw_register_mux(dev, "sai_pll_ref_sel",
++				      clk_imx8mp_audiomix_pll_parents,
++				      ARRAY_SIZE(clk_imx8mp_audiomix_pll_parents),
++				      CLK_SET_RATE_NO_REPARENT,
++				      base + SAI_PLL_GNRL_CTL, 0, 2, 0, NULL);
++	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_REF_SEL] = hw;
++
++	hw = imx_dev_clk_hw_pll14xx(dev, "sai_pll", "sai_pll_ref_sel",
++				    base + 0x400, &imx_1443x_pll);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL] = hw;
++
++	hw = devm_clk_hw_register_mux(dev, "sai_pll_bypass",
++				      clk_imx8mp_audiomix_pll_bypass_sels,
++				      ARRAY_SIZE(clk_imx8mp_audiomix_pll_bypass_sels),
++				      CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
++				      base + SAI_PLL_GNRL_CTL, 16, 1, 0, NULL);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS] = hw;
++
++	hw = devm_clk_hw_register_gate(dev, "sai_pll_out", "sai_pll_bypass",
++				       0, base + SAI_PLL_GNRL_CTL, 13,
++				       0, NULL);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT] = hw;
++
++	hw = devm_clk_hw_register_fixed_factor(dev, "sai_pll_out_div2",
++					       "sai_pll_out", 0, 1, 2);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	return devm_of_clk_add_hw_provider(&pdev->dev,
++					   clk_imx8mp_audiomix_of_clk_get,
++					   priv);
++}
++
++static const struct of_device_id clk_imx8mp_audiomix_of_match[] = {
++	{ .compatible = "fsl,imx8mp-audio-blk-ctrl" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, clk_imx8mp_audiomix_of_match);
++
++static struct platform_driver clk_imx8mp_audiomix_driver = {
++	.probe	= clk_imx8mp_audiomix_probe,
++	.driver = {
++		.name = "imx8mp-audio-blk-ctrl",
++		.of_match_table = clk_imx8mp_audiomix_of_match,
++	},
++};
++
++module_platform_driver(clk_imx8mp_audiomix_driver);
++
++MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
++MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller driver");
++MODULE_LICENSE("GPL");
+-- 
+2.35.1
 
-Ah; I hadn't realised those used trace_.*_rcuidle() behind the scenes.
-
-That affects local_irq_{enable,disable,restore}() too (which is what the
-daifflags.h bits are emulating), and also the generic entry code's
-irqentry_exit().
-
-So it feels to me like we should be fixing those more generally? e.g. say that
-with a new STRICT_ENTRY[_RCU], we can only call trace_hardirqs_{on,off}() with
-RCU watching, and alter the definition of those?
-
-> The _on thing should be replaced with something like:
-> 
-> 	trace_hardirqs_on_prepare();
-> 	lockdep_hardirqs_on_prepare();
-> 	instrumentation_end();
-> 	rcu_irq_exit();
-> 	lockdep_hardirqs_on(CALLER_ADDR0);
-> 
-> (as I think you know, since you have some of that already). And
-> something similar for the _off thing, but with _off_finish().
-
-Sure; I knew that was necessary for the outermost parts of entry (and I think
-that's all handled), I just hadn't realised that trace_hardirqs_{on,off} did
-the rcuidle thing in the middle.
-
-It'd be nice to not have to open-code the whole sequence everywhere for the
-portions which run after entry and are instrumentable, so (as above) I reckon
-we want to make trace_hardirqs_{on,off}() not do the rcuidle part
-unnecessarily (which IIUC is an end-goal anyway)?
-
-> > > I've touched a _lot_ of code that I can't test and likely broken some of it :/
-> > > In particular, the whole ARM cpuidle stuff was quite involved with OMAP being
-> > > the absolute 'winner'.
-> > > 
-> > > I'm hoping Mark can help me sort the remaining ARM64 bits as he moves that to
-> > > GENERIC_ENTRY.
-> > 
-> > Moving to GENERIC_ENTRY as a whole is going to take a tonne of work
-> > (refactoring both arm64 and the generic portion to be more amenable to each
-> > other), but we can certainly move closer to that for the bits that matter here.
-> 
-> I know ... been there etc.. :-)
-> 
-> > Maybe we want a STRICT_ENTRY option to get rid of all the deprecated stuff that
-> > we can select regardless of GENERIC_ENTRY to make that easier.
-> 
-> Possible yeah.
-> 
-> > > I've also got a note that says ARM64 can probably do a WFE based
-> > > idle state and employ TIF_POLLING_NRFLAG to avoid some IPIs.
-> > 
-> > Possibly; I'm not sure how much of a win that'll be given that by default we'll
-> > have a ~10KHz WFE wakeup from the timer, but we could take a peek.
-> 
-> Ohh.. I didn't know it woke up *that* often. I just know Will made use
-> of it in things like smp_cond_load_relaxed() which would be somewhat
-> similar to a very shallow idle state that looks at the TIF word.
-
-We'll get some saving, I'm just not sure where that falls on the curve of idle
-states. FWIW the wakeup *can* be disabled (and it'd be nice to when we have
-WFxT instructions which take a timeout), it jsut happens to be on by default
-for reasons.
-
-Thanks,
-Mark.
