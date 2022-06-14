@@ -2,97 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E72C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 14:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305E5CCA47C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 15:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237979AbiFNOwB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 10:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47962 "EHLO
+        id S237579AbiFNPdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 11:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241269AbiFNOwA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 10:52:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CCA3615E;
-        Tue, 14 Jun 2022 07:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=D3NOT4tpYtv2HMaFujNLkUDSr1AXyXNIkEbr424oYcs=; b=f51FEOUJbj03rZqo34HGJaUFE7
-        0QcBBHNgi8bfhxJRhiN4R9ozNNFz4oJWSxa9y1aMISaspWK8NjHwf5ncUKnTbWFQvyndRzXGbwuge
-        iYNkyyV4ZIIocTWrbL3AKKx6RltBORGZBdW+tKr3gYnR6k3ITTGV3aO1I0t4a865Frm+gZPLKA13p
-        xhwSQuRRbJj6z2mu3aN7/1vbd6dJwfL0uGhtIjfhuLXU2aaOIn+n6gaAqOdvTo/qD900ShEQh+BAx
-        I7Zfq5ahw2yzbpBBj0yDcAlugZ9E3i3mRe1MtLH8EBgi9OWeDBbH6+ATvlYPm9PbkxYJq+JmHbOB+
-        spa//gIQ==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o17tS-000Fsw-7e; Tue, 14 Jun 2022 14:51:46 +0000
-Message-ID: <09aec36b-f1c2-938d-5e9b-535c5b6315f3@infradead.org>
-Date:   Tue, 14 Jun 2022 07:51:41 -0700
+        with ESMTP id S240519AbiFNPdZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 11:33:25 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 492B02A24F;
+        Tue, 14 Jun 2022 08:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1655220804; x=1686756804;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=IcwlQFF1CgyHHTyNe42OaYeopZYp3rDLu2zQYBBYThs=;
+  b=oDQPjZIgSjZgWujGn2kAdcWkeYJnd5Ih7A53eTYBaBVIrFLXUbTNxJ9c
+   rTL4szxqtrS4Y4Y/npQfo9ZR6DPJhlhD9I/+juwzNK8fRtPB6Go/qO4c/
+   CCGTYBeCjgjMAz9oBKM3rBoh7S+81uO11WonGGa+0EqmEQG+OyjW9+J9i
+   s=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 14 Jun 2022 08:33:24 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2022 08:33:24 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 14 Jun 2022 08:33:23 -0700
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 14 Jun 2022 08:33:19 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>,
+        <robh+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v5 0/3] Add support for audio clock gating resets for SC7280
+Date:   Tue, 14 Jun 2022 21:03:03 +0530
+Message-ID: <20220614153306.29339-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v18 08/10] ARM: sunplus: Add initial support for Sunplus
- SP7021 SoC
-Content-Language: en-US
-To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1655194858.git.qinjian@cqplus1.com>
- <932bd48e7d17748a308ee487785243b141dafda1.1655194858.git.qinjian@cqplus1.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <932bd48e7d17748a308ee487785243b141dafda1.1655194858.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi--
+Add support for clock gating resets for lpass audio clock controller and
+also add support for external MCLKs for I2S.
 
-On 6/14/22 01:31, Qin Jian wrote:
-> diff --git a/arch/arm/mach-sunplus/Kconfig b/arch/arm/mach-sunplus/Kconfig
-> new file mode 100644
-> index 000000000..be20425c2
-> --- /dev/null
-> +++ b/arch/arm/mach-sunplus/Kconfig
-> @@ -0,0 +1,27 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +menuconfig ARCH_SUNPLUS
-> +	bool "Sunplus SoCs"
-> +	depends on ARCH_MULTI_V7
-> +	help
-> +	  Support for Sunplus SoC family: SP7021 and succeeding SoC-based systems,
-> +	  such as the Banana Pi BPI-F2S development board (and derivatives).
-> +	  (<http://www.sinovoip.com.cn/ecp_view.asp?id=586>)
-> +	  (<https://tibbo.com/store/plus1.html>)
-> +
-> +config SOC_SP7021
-> +	bool "Sunplus SP7021 SoC support"
-> +	depends on ARCH_SUNPLUS
-> +	default ARCH_SUNPLUS
-> +	select HAVE_ARM_ARCH_TIMER
-> +	select ARM_GIC
-> +	select ARM_PSCI
-> +	select PINCTRL
-> +	select PINCTRL_SPPCTL
-> +	select SERIAL_SUNPLUS
-> +	select SERIAL_SUNPLUS_CONSOLE
-> +	help
-> +	  Support for Sunplus SP7021 SoC. It is based on ARM 4-core
-> +	  Cortex-A7 with various peripherals (ex: I2C, SPI, SDIO,
+[v5]
+  * Fix the fail path and add pm_runtime_disable().
 
-	                                     (e.g.: I2C, SPI, SDIO,
+[v4]
+  * Fix the "fixes" tag.
 
-> +	  Ethernet and etc.), FPGA interface,  chip-to-chip bus.
+[v3]
+  * Remove the maxItems from reg property.
 
-	  Ethernet, etc.), FPGA interface, chip-to-chip bus.
+[v2]
+  * Update/fix the YAML for reg property against each compatible.
 
-> +	  It is designed for industrial control.
+[v1]
+  * Add support for clock gating resets for lpass audio clock
+    controller & MCLKs.
+*** BLURB HERE ***
 
--- 
-~Randy
+Taniya Das (3):
+  dt-bindings: clock: Add resets for LPASS audio clock controller for
+    SC7280
+  dt-bindings: clock: Add support for external MCLKs for LPASS on SC7280
+  clk: qcom: lpass: Add support for resets & external mclk for SC7280
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 19 +++++++++--
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 22 ++++++++++++-
+ drivers/clk/qcom/lpasscorecc-sc7280.c         | 33 +++++++++++++++++++
+ .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++
+ .../clock/qcom,lpasscorecc-sc7280.h           |  2 ++
+ 5 files changed, 77 insertions(+), 4 deletions(-)
+
+--
+2.17.1
+
