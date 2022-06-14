@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D20BC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 18:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEF6CCA47E
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 18:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239232AbiFNSC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 14:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
+        id S232199AbiFNSDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 14:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238037AbiFNSC6 (ORCPT
+        with ESMTP id S232240AbiFNSC6 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 14:02:58 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0795544A1E
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 11:02:53 -0700 (PDT)
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071F24477B
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 11:02:54 -0700 (PDT)
 Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 7FE7E843A9;
-        Tue, 14 Jun 2022 20:02:51 +0200 (CEST)
+        by phobos.denx.de (Postfix) with ESMTPSA id E0E14843C1;
+        Tue, 14 Jun 2022 20:02:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1655229771;
-        bh=nmt6hKLNNwrBLN0Ny6DiQww3SNZGMxBs39oedellKME=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Y831NPVsnHSIcpDITOOHrUALu4F5GHT1/7UJ01pB6ZUmahBEhc+zMeOMSVkLLd0Z0
-         LxMqvIsAEF+tkWNkyKmR1uXV9UDXPAqbHQdDnbKqSJm4eFTHdNmdCW7W9FH/2Rg69f
-         6wO+Ds/REJ9Q0xxL/zNzIeBlAN1SgHsD4aya1QkCNqqqPe0BdMct5CPEd73Ut+3SuO
-         oh8xTcT/LsqIAXKilzHgaDGJSpMf/xWNSypqRcovrNvvbHGkGUttYRhWbuErAiA5pZ
-         D6Mout6r8l4Hyv23mPslpTbYujzp1ng9tATHab5LhqkRoBnsbbh1b3KMWUPCtyZTrU
-         c8areIpf9uicg==
+        s=phobos-20191101; t=1655229773;
+        bh=cdxvvb+UL4F8dsRtkBAgbsLjwlzRd8Wjs1V6ChwEzm4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EC1jrJalb20qY6Qkh4Kxj/HzsiM7dJGPXFjaatLlNT4NIKSJYGIBEwz58RNRaUjP2
+         t9kabvIvJKlnyVDUmhVpZ5TkTyje3U8E+jTJeaAP6b/TybWccC+VMYJ86WmftLB+wM
+         +VEU428iIeD3uh1C+2WOGUf5LNbeGn4HrEC6kxZFLflpbOOAPRHEZEGNiPtpxJaVuW
+         8v8mI047IPrp97HXFNRMAa1OqR/klO0C+YLGyExWKDhZclR5FRW291eMG3739SzavL
+         y3U+sJUuPd6N9sfzD0Tmam+40i45JTO0KHcs9+v7KUIwcl8nhxlhrG2zoZF3qScFWf
+         rTh/dqjDyf5vQ==
 From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
 Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
@@ -41,10 +41,12 @@ Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Subject: [PATCH v2 1/4] clk: imx: imx8mp: Add audiomix block control
-Date:   Tue, 14 Jun 2022 20:02:36 +0200
-Message-Id: <20220614180239.778334-1-marex@denx.de>
+Subject: [PATCH v2 4/4] arm64: dts: imx8mp: Add analog audio output on i.MX8MP EVK
+Date:   Tue, 14 Jun 2022 20:02:39 +0200
+Message-Id: <20220614180239.778334-4-marex@denx.de>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220614180239.778334-1-marex@denx.de>
+References: <20220614180239.778334-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
@@ -53,10 +55,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
-series of clock gates and muxes. Model it as a large static table of
-gates and muxes with one exception, which is the PLL14xx . The PLL14xx
-SAI PLL has to be registered separately.
+Enable SAI3 on i.MX8MP EVK, add WM8960 codec binding and regulator.
+This is all that is needed to get analog audio output operational
+on i.MX8MP EVK.
 
 Signed-off-by: Marek Vasut <marex@denx.de>
 Cc: Abel Vesa <abel.vesa@nxp.com>
@@ -73,292 +74,108 @@ Cc: linux-imx@nxp.com
 ---
 V2: No change
 ---
- drivers/clk/imx/Makefile              |   2 +-
- drivers/clk/imx/clk-imx8mp-audiomix.c | 262 ++++++++++++++++++++++++++
- 2 files changed, 263 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-imx8mp-audiomix.c
+ arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 60 ++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 88b9b9285d22e..c4290937637eb 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_MXC_CLK) += mxc-clk.o
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+index 668fe155051b7..75b3d2cf3a863 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
+@@ -40,6 +40,16 @@ pcie0_refclk: pcie0-refclk {
+ 			clock-frequency = <100000000>;
+ 	};
  
- obj-$(CONFIG_CLK_IMX8MM) += clk-imx8mm.o
- obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
--obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
-+obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o clk-imx8mp-audiomix.o
- obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
++	reg_audio_pwr: regulator-audio-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "audio-pwr";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&gpio4 29 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++	};
++
+ 	reg_can1_stby: regulator-can1-stby {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "can1-stby";
+@@ -83,6 +93,23 @@ reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++
++	sound-wm8960 {
++		compatible = "fsl,imx-audio-wm8960";
++		model = "wm8960-audio";
++		audio-cpu = <&sai3>;
++		audio-codec = <&codec>;
++		audio-routing =
++			"Headphone Jack", "HP_L",
++			"Headphone Jack", "HP_R",
++			"Ext Spk", "SPK_LP",
++			"Ext Spk", "SPK_LN",
++			"Ext Spk", "SPK_RP",
++			"Ext Spk", "SPK_RN",
++			"LINPUT1", "Mic Jack",
++			"LINPUT3", "Mic Jack",
++			"Mic Jack", "MICB";
++	};
+ };
  
- obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-new file mode 100644
-index 0000000000000..bfa6080f274ff
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -0,0 +1,262 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Driver for i.MX8M Plus Audio BLK_CTRL
-+ *
-+ * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-+ */
+ &A53_0 {
+@@ -333,6 +360,17 @@ &i2c3 {
+ 	pinctrl-0 = <&pinctrl_i2c3>;
+ 	status = "okay";
+ 
++	codec: wm8960@1a {
++		compatible = "wlf,wm8960";
++		reg = <0x1a>;
++		clocks = <&audio_blk_ctrl IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1>;
++		clock-names = "mclk";
++		wlf,shared-lrclk;
++		wlf,hp-cfg = <3 2 3>;
++		wlf,gpio-cfg = <1 3>;
++		SPKVDD1-supply = <&reg_audio_pwr>;
++	};
 +
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+
-+#include "clk.h"
-+
-+#define CLKEN0			0x000
-+#define CLKEN1			0x004
-+#define SAI_MCLK_SEL(n)		(300 + 4 * (n))	/* n in 0..5 */
-+#define PDM_SEL			0x318
-+#define SAI_PLL_GNRL_CTL	0x400
-+
-+#define SAIn_MCLK1_PARENT(n)						\
-+static const char *clk_imx8mp_audiomix_sai##n##_mclk1_parents[] = {	\
-+	"sai"__stringify(n), "sai"__stringify(n)"_mclk"			\
-+}
-+
-+SAIn_MCLK1_PARENT(1);
-+SAIn_MCLK1_PARENT(2);
-+SAIn_MCLK1_PARENT(3);
-+SAIn_MCLK1_PARENT(5);
-+SAIn_MCLK1_PARENT(6);
-+SAIn_MCLK1_PARENT(7);
-+
-+static const char *clk_imx8mp_audiomix_sai_mclk2_parents[] = {
-+	"sai1", "sai2", "sai3", "dummy",
-+	"sai5", "sai6", "sai7",
-+	"sai1_mclk", "sai2_mclk", "sai3_mclk", "dummy",
-+	"sai5_mclk", "sai6_mclk", "sai7_mclk",
-+	"spdif_extclk", "dummy"
+ 	pca6416: gpio@20 {
+ 		compatible = "ti,tca6416";
+ 		reg = <0x20>;
+@@ -402,6 +440,16 @@ &pcie{
+ 	status = "okay";
+ };
+ 
++&sai3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sai3>;
++	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
++	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
++	assigned-clock-rates = <12288000>;
++	fsl,sai-mclk-direction-output;
++	status = "okay";
 +};
 +
-+static const char *clk_imx8mp_audiomix_pdm_parents[] = {
-+	"ccm_pdm", "sai_pll_out_div2", "sai1_mclk", "dummy"
-+};
+ &snvs_pwrkey {
+ 	status = "okay";
+ };
+@@ -594,6 +642,18 @@ MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19	0x41
+ 		>;
+ 	};
+ 
++	pinctrl_sai3: sai3grp {
++		fsl,pins = <
++			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
++			MX8MP_IOMUXC_SAI3_TXC__AUDIOMIX_SAI3_TX_BCLK	0xd6
++			MX8MP_IOMUXC_SAI3_RXD__AUDIOMIX_SAI3_RX_DATA00	0xd6
++			MX8MP_IOMUXC_SAI3_TXD__AUDIOMIX_SAI3_TX_DATA00	0xd6
++			MX8MP_IOMUXC_SAI3_MCLK__AUDIOMIX_SAI3_MCLK	0xd6
++			MX8MP_IOMUXC_SAI3_RXFS__GPIO4_IO28		0xd6
++			MX8MP_IOMUXC_SAI3_RXC__GPIO4_IO29		0xd6
++		>;
++	};
 +
-+
-+static const char * const clk_imx8mp_audiomix_pll_parents[] = {
-+	"osc_24m", "dummy", "dummy", "dummy"
-+};
-+
-+static const char * const clk_imx8mp_audiomix_pll_bypass_sels[] = {
-+	"sai_pll", "sai_pll_ref_sel"
-+};
-+
-+#define CLK_GATE(name, cname)						\
-+	{								\
-+		name"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		"audio_ahb", NULL, 1,					\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
-+#define CLK_SAIn(n)							\
-+	{								\
-+		"sai"__stringify(n)"_mclk1_sel",			\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1_SEL,			\
-+		NULL,							\
-+		clk_imx8mp_audiomix_sai##n##_mclk1_parents,		\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_sai##n##_mclk1_parents), \
-+		SAI_MCLK_SEL(n), 1, 0					\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk2_sel",			\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2_SEL,			\
-+		NULL,							\
-+		clk_imx8mp_audiomix_sai_mclk2_parents,		\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_sai_mclk2_parents),	\
-+		SAI_MCLK_SEL(n), 4, 1					\
-+	}, {								\
-+		"sai"__stringify(n)"_ipg_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG,			\
-+		"audio_ahb", NULL, 1,					\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk1_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1,			\
-+		"sai"__stringify(n)"_mclk1_sel", NULL, 1,		\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk2_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2,			\
-+		"sai"__stringify(n)"_mclk2_sel", NULL, 1,		\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk3_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3,			\
-+		"sai_pll_out_div2", NULL, 1,				\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3		\
-+	}
-+
-+#define CLK_PDM								\
-+	{								\
-+		"pdm_sel", IMX8MP_CLK_AUDIOMIX_PDM_SEL, NULL,		\
-+		clk_imx8mp_audiomix_pdm_parents,			\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_pdm_parents),		\
-+		PDM_SEL, 2, 0						\
-+	}
-+
-+struct clk_imx8mp_audiomix_sel {
-+	const char	*name;
-+	int		clkid;
-+	const char	*parent;	/* For gate */
-+	const char	**parents;	/* For mux */
-+	int		num_parents;
-+	u16		reg;
-+	u8		width;
-+	u8		shift;
-+};
-+
-+static struct clk_imx8mp_audiomix_sel sels[] = {
-+	CLK_GATE("asrc", ASRC_IPG),
-+	CLK_GATE("pdm", PDM_IPG),
-+	CLK_GATE("earc", EARC_IPG),
-+	CLK_GATE("ocrama", OCRAMA_IPG),
-+	CLK_GATE("aud2htx", AUD2HTX_IPG),
-+	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE("sdma2", SDMA2_ROOT),
-+	CLK_GATE("sdma3", SDMA3_ROOT),
-+	CLK_GATE("spba2", SPBA2_ROOT),
-+	CLK_GATE("dsp", DSP_ROOT),
-+	CLK_GATE("dspdbg", DSPDBG_ROOT),
-+	CLK_GATE("edma", EDMA_ROOT),
-+	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE("mu2", MU2_ROOT),
-+	CLK_GATE("mu3", MU3_ROOT),
-+	CLK_PDM,
-+	CLK_SAIn(1),
-+	CLK_SAIn(2),
-+	CLK_SAIn(3),
-+	CLK_SAIn(5),
-+	CLK_SAIn(6),
-+	CLK_SAIn(7)
-+};
-+
-+struct clk_imx8mp_audiomix_priv {
-+	struct clk_hw		*clk[IMX8MP_CLK_AUDIOMIX_END];
-+};
-+
-+static struct clk_hw *
-+clk_imx8mp_audiomix_of_clk_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct clk_imx8mp_audiomix_priv *priv = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	return priv->clk[idx];
-+}
-+
-+static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
-+{
-+	struct clk_imx8mp_audiomix_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	void __iomem *base;
-+	struct clk_hw *hw;
-+	int i;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	for (i = 0; i < ARRAY_SIZE(sels); i++) {
-+		if (sels[i].num_parents == 1) {
-+			hw = devm_clk_hw_register_gate(dev,
-+						       sels[i].name,
-+						       sels[i].parent,
-+						       0,
-+						       base + sels[i].reg,
-+						       sels[i].shift,
-+						       0, NULL);
-+		} else {
-+			hw = devm_clk_hw_register_mux(dev, sels[i].name,
-+						      sels[i].parents,
-+						      sels[i].num_parents,
-+						      0,
-+						      base + sels[i].reg,
-+						      sels[i].shift,
-+						      sels[i].width,
-+						      0, NULL);
-+		}
-+
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		priv->clk[sels[i].clkid] = hw;
-+	}
-+
-+	/* SAI PLL */
-+	hw = devm_clk_hw_register_mux(dev, "sai_pll_ref_sel",
-+				      clk_imx8mp_audiomix_pll_parents,
-+				      ARRAY_SIZE(clk_imx8mp_audiomix_pll_parents),
-+				      CLK_SET_RATE_NO_REPARENT,
-+				      base + SAI_PLL_GNRL_CTL, 0, 2, 0, NULL);
-+	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_REF_SEL] = hw;
-+
-+	hw = imx_dev_clk_hw_pll14xx(dev, "sai_pll", "sai_pll_ref_sel",
-+				    base + 0x400, &imx_1443x_pll);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL] = hw;
-+
-+	hw = devm_clk_hw_register_mux(dev, "sai_pll_bypass",
-+				      clk_imx8mp_audiomix_pll_bypass_sels,
-+				      ARRAY_SIZE(clk_imx8mp_audiomix_pll_bypass_sels),
-+				      CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
-+				      base + SAI_PLL_GNRL_CTL, 16, 1, 0, NULL);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS] = hw;
-+
-+	hw = devm_clk_hw_register_gate(dev, "sai_pll_out", "sai_pll_bypass",
-+				       0, base + SAI_PLL_GNRL_CTL, 13,
-+				       0, NULL);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->clk[IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT] = hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, "sai_pll_out_div2",
-+					       "sai_pll_out", 0, 1, 2);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
-+	return devm_of_clk_add_hw_provider(&pdev->dev,
-+					   clk_imx8mp_audiomix_of_clk_get,
-+					   priv);
-+}
-+
-+static const struct of_device_id clk_imx8mp_audiomix_of_match[] = {
-+	{ .compatible = "fsl,imx8mp-audio-blk-ctrl" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_imx8mp_audiomix_of_match);
-+
-+static struct platform_driver clk_imx8mp_audiomix_driver = {
-+	.probe	= clk_imx8mp_audiomix_probe,
-+	.driver = {
-+		.name = "imx8mp-audio-blk-ctrl",
-+		.of_match_table = clk_imx8mp_audiomix_of_match,
-+	},
-+};
-+
-+module_platform_driver(clk_imx8mp_audiomix_driver);
-+
-+MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
-+MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller driver");
-+MODULE_LICENSE("GPL");
+ 	pinctrl_uart2: uart2grp {
+ 		fsl,pins = <
+ 			MX8MP_IOMUXC_UART2_RXD__UART2_DCE_RX	0x49
 -- 
 2.35.1
 
