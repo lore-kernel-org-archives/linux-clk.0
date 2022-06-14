@@ -2,58 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D346DC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 19:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BD5C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jun 2022 21:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344995AbiFNTP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 15:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56566 "EHLO
+        id S1354027AbiFNVCB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 17:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344784AbiFNTPz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 15:15:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3239764E;
-        Tue, 14 Jun 2022 12:15:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 700E160A75;
-        Tue, 14 Jun 2022 19:15:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD49C3411B;
-        Tue, 14 Jun 2022 19:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655234153;
-        bh=6hbdX0woT8V0SmoPGKiyf3mxXcYsvphTWfMcAMjl43Q=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aqvqshr66xDqYRSEtNNm7zLiKChU1xH9iKqGyCCVjEOD1/jahmYP6xVVQ9uCZ3KLE
-         p9jArETIGRcEw3jCqpqQkYt5qOBsdvLhiUVr3FaSqREyqPGCUvLOfUZCTM2hPj6Luu
-         l9UBAzIjbPapadYDDO61Ubvsc4E48RUb0dctLKGALUD02bFL0dHVljnAkfAb2IpEHr
-         jSCpsU40+jrF2InbQKugDeflkQ+wanigH4Idaz2t55UAF0y1crB/jVEbScV943YIrU
-         K61qIWHFuprdTSprG8BY77aVF+b5azATeBX2iR4ZFb6FX0wwSTNRNvxRQXpHVZxu/4
-         9F2LiQDsrJwYw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S239539AbiFNVB7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 17:01:59 -0400
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D667B50440;
+        Tue, 14 Jun 2022 14:01:58 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id r5so10744606iod.5;
+        Tue, 14 Jun 2022 14:01:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TL1WTuBKTa7cKzECeYRrXncjAWiPzLakQFszrf4wMsQ=;
+        b=sF3qEfIPj/cU5Uyl4lSEVWoH7hI1MeO8ozYDAHNMn2ybJZJ9K0KuxukTQv3/70AO+1
+         6RFP1IXtdnP+1R6Y54DmFVzZ7IApCddKe3caPvkhmHSh/hhRlaym6BKaEUteix+pX5rk
+         xd2F+LHEt7+Zd5Ejug0GkSA5SzeLNuOy7b61UAMVKMQoe/VjKdI8hd4lk/SAE9Vu86Bd
+         hyTqQBLVeVauZeaFGuNA80oq0vfNdi3ihMZb/NM/+CxDp2LBUMlRadR0TWuQwOBv5bnR
+         1jpkciBGxuJX7dJfF0ybRl0FmAGY5BruVC1E8qM67z56OKw16G2aDPsevetm/vofV5N1
+         iCXQ==
+X-Gm-Message-State: AOAM533QZWu9e7WaMig0IerfWwILiGAUNAm/oBe/tCEuHjGbnNRboz9k
+        U3J7S88m5qhWKzQwcLz8ZEUcSG0/aw==
+X-Google-Smtp-Source: ABdhPJz3ckJeS9cJKzeQ/ZlqP/pJ3ZtN4q5nNLKM8HZwAHwD3kcckohHKsoPRuyQF8ZBO/8ggipJeQ==
+X-Received: by 2002:a05:6638:240a:b0:332:783:156b with SMTP id z10-20020a056638240a00b003320783156bmr3706950jat.306.1655240517981;
+        Tue, 14 Jun 2022 14:01:57 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id cb12-20020a0566381b0c00b00331cf064215sm5271294jab.65.2022.06.14.14.01.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 14:01:57 -0700 (PDT)
+Received: (nullmailer pid 2562716 invoked by uid 1000);
+        Tue, 14 Jun 2022 21:01:56 -0000
+Date:   Tue, 14 Jun 2022 15:01:56 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org, sboyd@kernel.org,
+        robh+dt@kernel.org, jonathan@marek.ca,
+        Dmitry Baryshkov <dmityr.baryshkov@linaro.org>,
+        devicetree@vger.kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, krzk+dt@kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        mturquette@baylibre.com,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 3/6] dt-bindings: clock: Add Qcom SM8350 GPUCC bindings
+Message-ID: <20220614210156.GA2562380-robh@kernel.org>
+References: <20220609092940.304740-1-robert.foss@linaro.org>
+ <20220609092940.304740-4-robert.foss@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220613063327.89320-1-lizhengyu3@huawei.com>
-References: <20220613063327.89320-1-lizhengyu3@huawei.com>
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Remove redundant if statement
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Li Zhengyu <lizhengyu3@huawei.com>, quic_tdas@quicinc.com
-Date:   Tue, 14 Jun 2022 12:15:51 -0700
-User-Agent: alot/0.10
-Message-Id: <20220614191553.CAD49C3411B@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220609092940.304740-4-robert.foss@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Li Zhengyu (2022-06-12 23:33:27)
-> By the clk framework already reference counts prepare/unprepare,
-> this if statement should be never true.
->=20
-> Signed-off-by: Li Zhengyu <lizhengyu3@huawei.com>
+On Thu, 09 Jun 2022 11:29:37 +0200, Robert Foss wrote:
+> Add device tree bindings for graphics clock controller for
+> Qualcomm Technology Inc's SM8350 SoCs.
+> 
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> Reviewed-by: Dmitry Baryshkov <dmityr.baryshkov@linaro.org>
 > ---
+> 
+> Changes since v3
+>  - Separate from qcom,gpucc
+>  - Remove clock-names
+>  - Make example sm8350 based
+>  - Changed author to me due to size of changes
+> 
+> 
+> 
+>  .../bindings/clock/qcom,gpucc-sm8350.yaml     | 72 +++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gpucc-sm8350.h | 52 ++++++++++++++
+>  2 files changed, 124 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc-sm8350.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8350.h
+> 
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
