@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E60C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 02:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F8EC43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 03:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345561AbiFOCdn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 22:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        id S1345968AbiFODkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 23:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345710AbiFOCdi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 22:33:38 -0400
+        with ESMTP id S229924AbiFODkJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 23:40:09 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44E1F2873A
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 19:33:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 42F2A4D9E9
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 20:40:00 -0700 (PDT)
 X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
         R,40,3)
 Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(28633:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Wed, 15 Jun 2022 10:25:26 +0800 (CST)
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(28649:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 15 Jun 2022 11:31:54 +0800 (CST)
 Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
  CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.6; Wed, 15 Jun 2022 10:25:22 +0800
+ 15.1.2507.6; Wed, 15 Jun 2022 11:31:50 +0800
 Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2507.006; Wed, 15 Jun 2022 10:25:22 +0800
+ ([::1]) with mapi id 15.01.2507.006; Wed, 15 Jun 2022 11:31:50 +0800
 From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
-        "soc@kernel.org" <soc@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v18 05/10] clk: Add Sunplus SP7021 clock driver
-Thread-Topic: [PATCH v18 05/10] clk: Add Sunplus SP7021 clock driver
-Thread-Index: AQHYf8r5uo30wfgQ7kKLEgfDFgKMD61Ow22AgAD0FaA=
-Date:   Wed, 15 Jun 2022 02:25:22 +0000
-Message-ID: <aaf96491f1a94b5694003797853aa732@cqplus1.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v18 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Thread-Topic: [PATCH v18 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Thread-Index: AQHYf8r27MMUrQucmUWH+5A1oaj77q1OMQ+AgAGftCA=
+Date:   Wed, 15 Jun 2022 03:31:50 +0000
+Message-ID: <f19b479d70704784ae5fb00ca610fda3@cqplus1.com>
 References: <cover.1655194858.git.qinjian@cqplus1.com>
- <42ed93cf0e5cfeaffdf50d63da558a3f1f6c1021.1655194858.git.qinjian@cqplus1.com>
- <20220614192555.86436C3411B@smtp.kernel.org>
-In-Reply-To: <20220614192555.86436C3411B@smtp.kernel.org>
+ <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
+ <CAK8P3a0XgDS-iJEfOrTjTRGODosxj0gc748PAH_hc534DkyswQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a0XgDS-iJEfOrTjTRGODosxj0gc748PAH_hc534DkyswQ@mail.gmail.com>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach: 
@@ -60,37 +60,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3A3MDIxLmMgYi9kcml2ZXJzL2Nsay9j
-bGstc3A3MDIxLmMNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAw
-MC4uMGNhZWYxYmM3DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Ns
-ay1zcDcwMjEuYw0KPiA+IEBAIC0wLDAgKzEsNzI1IEBADQo+ID4gKy8vIFNQRFgtTGljZW5zZS1J
-ZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkNCj4gDQo+IFRoaXMgaXNu
-J3QgYSBjb21tb24gbGljZW5zZSBvbiBkcml2ZXIgZmlsZXMuIElzIGl0IGludGVuZGVkPyBPcg0K
-PiBjb3B5L3Bhc3RlIGZyb20gRFQ/DQoNClllcywgSSBjb3B5L3Bhc3RlIGZyb20gRFQuDQpEaWQg
-SSBuZWVkIGNoYW5nZWQgaXQgdG8gJ0dQTC0yLjAtb25seSc/DQoNCj4gDQo+ID4gKy8qDQo+ID4g
-KyAqIENvcHlyaWdodCAoQykgU3VucGx1cyBUZWNobm9sb2d5IENvLiwgTHRkLg0KPiA+ICsgKiAg
-ICAgICBBbGwgcmlnaHRzIHJlc2VydmVkLg0KPiA+ICsgKi8NCj4gWy4uLl0NCj4gPiArDQo+ID4g
-K3N0YXRpYyBpbnQgc3A3MDIxX2Nsa19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQ0KPiA+ICt7DQo+IFsuLi5dDQo+ID4gKw0KPiA+ICsgICAgICAgLyogZ2F0ZXMgKi8NCj4gPiAr
-ICAgICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHNwX2Nsa19nYXRlcyk7IGkrKykgew0K
-PiA+ICsgICAgICAgICAgICAgICBjaGFyIG5hbWVbMTBdOw0KPiA+ICsgICAgICAgICAgICAgICB1
-MzIgaiA9IHNwX2Nsa19nYXRlc1tpXS5yZWc7DQo+ID4gKyAgICAgICAgICAgICAgIHN0cnVjdCBj
-bGtfcGFyZW50X2RhdGEgKnBkID0gc3BfY2xrX2dhdGVzW2ldLmV4dF9wYXJlbnQgPyAmcGRfZXh0
-IDogJnBkX3N5czsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIHNwcmludGYobmFtZSwgIiUw
-MmRfMHglMDJ4IiwgaSwgaik7DQo+ID4gKyAgICAgICAgICAgICAgIGh3c1tpXSA9IGNsa19od19y
-ZWdpc3Rlcl9nYXRlX3BhcmVudF9kYXRhKGRldiwgbmFtZSwgcGQsIDAsDQo+IA0KPiBUaGlzIG5l
-ZWRzIHRvIGJlIGRldm0gYXMgd2VsbC4gT3RoZXJ3aXNlIGlmIHRoZSBkcml2ZXIgaXMgdW5ib3Vu
-ZCB3ZSdsbA0KPiBsZWFrIHRoZXNlIHJlZ2lzdGVyZWQgY2xrcy4NCj4gDQoNCmNsay1wcm92aWRl
-ci5oOg0Kc3RydWN0IGNsa19odyAqX19kZXZtX2Nsa19od19yZWdpc3Rlcl9nYXRlKHN0cnVjdCBk
-ZXZpY2UgKmRldiwNCgkJc3RydWN0IGRldmljZV9ub2RlICpucCwgY29uc3QgY2hhciAqbmFtZSwN
-CgkJY29uc3QgY2hhciAqcGFyZW50X25hbWUsIGNvbnN0IHN0cnVjdCBjbGtfaHcgKnBhcmVudF9o
-dywNCgkJY29uc3Qgc3RydWN0IGNsa19wYXJlbnRfZGF0YSAqcGFyZW50X2RhdGEsDQoJCXVuc2ln
-bmVkIGxvbmcgZmxhZ3MsDQoJCXZvaWQgX19pb21lbSAqcmVnLCB1OCBiaXRfaWR4LA0KCQl1OCBj
-bGtfZ2F0ZV9mbGFncywgc3BpbmxvY2tfdCAqbG9jayk7DQojZGVmaW5lIGRldm1fY2xrX2h3X3Jl
-Z2lzdGVyX2dhdGUoZGV2LCBuYW1lLCBwYXJlbnRfbmFtZSwgZmxhZ3MsIHJlZywgYml0X2lkeCxc
-DQoJCQkJICBjbGtfZ2F0ZV9mbGFncywgbG9jaykJCQkgICAgICBcDQoJX19kZXZtX2Nsa19od19y
-ZWdpc3Rlcl9nYXRlKChkZXYpLCBOVUxMLCAobmFtZSksIChwYXJlbnRfbmFtZSksIE5VTEwsIFwN
-CgkJCSAgICAgICBOVUxMLCAoZmxhZ3MpLCAocmVnKSwgKGJpdF9pZHgpLAkJICAgICAgXA0KCQkJ
-ICAgICAgIChjbGtfZ2F0ZV9mbGFncyksIChsb2NrKSkNCg0KU2hvdWxkIEkgdXNlIF9fZGV2bV9j
-bGtfaHdfcmVnaXN0ZXJfZ2F0ZSgpIHdpdGggcGFyZW50X2RhdGENCm9yDQpkZXZtX2Nsa19od19y
-ZWdpc3Rlcl9nYXRlKCkgd2l0aCBwYXJlbnRfbmFtZT8NCg0K
+PiANCj4gSSdsbCB3YWl0IGZvciBhIGZpbmFsIEFjayBmcm9tIEtyenlzenRvZiBiZWZvcmUgYXBw
+bHlpbmcgdGhpcy4NCj4gDQo+IA0KPiBBIGZldyBtb3JlIGRldGFpbHMgSSBub3RpY2VkOg0KPiAN
+Cj4gDQo+ID4gKy8gew0KPiA+ICsgICAgICAgY29tcGF0aWJsZSA9ICJzdW5wbHVzLHNwNzAyMSI7
+DQo+ID4gKyAgICAgICBtb2RlbCA9ICJTdW5wbHVzIFNQNzAyMSI7DQo+ID4gKw0KPiA+ICsgICAg
+ICAgYWxpYXNlcyB7DQo+ID4gKyAgICAgICAgICAgICAgIHNlcmlhbDAgPSAmdWFydDA7DQo+ID4g
+KyAgICAgICAgICAgICAgIHNlcmlhbDEgPSAmdWFydDE7DQo+ID4gKyAgICAgICAgICAgICAgIHNl
+cmlhbDIgPSAmdWFydDI7DQo+ID4gKyAgICAgICAgICAgICAgIHNlcmlhbDMgPSAmdWFydDM7DQo+
+ID4gKyAgICAgICAgICAgICAgIHNlcmlhbDQgPSAmdWFydDQ7DQo+ID4gKyAgICAgICB9Ow0KPiAN
+Cj4gU29tZSBvZiB0aGVzZSBhcmUgZGlzYWJsZWQsIHByZXN1bWFibHkgYmVjYXVzZSB0aGV5IGFy
+ZSBub3QNCj4gYWN0dWFsbHkgY29ubmVjdGVkIG9uIGFsbCBib2FyZHMuIEJldHRlciBtb3ZlIHRo
+ZSBhbGlhc2VzIHRvIHRoZSAuZHRzIGZpbGUNCj4gYW5kIG9ubHkgbGlzdCB0aGUgcG9ydHMgdGhh
+dCBhcmUgaW4gZmFjdCB1c2VkLCB1c2luZyB0aGUgbnVtYmVyaW5nIHRoYXQNCj4gbWF0Y2hlcyB0
+aGUgbGFiZWxzIG9uIHRoZSBib2FyZCwgbm90IHRoZSBudW1iZXJzIGluc2lkZSBvZiB0aGUgU29D
+DQo+IA0KPiA+ICsNCj4gPiArICAgICAgIHNvYyB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBh
+dGlibGUgPSAic2ltcGxlLWJ1cyI7DQo+ID4gKyAgICAgICAgICAgICAgICNhZGRyZXNzLWNlbGxz
+ID0gPDE+Ow0KPiA+ICsgICAgICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDwxPjsNCj4gPiArICAg
+ICAgICAgICAgICAgcmFuZ2VzOw0KPiA+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHQtcGFyZW50
+ID0gPCZpbnRjPjsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGludGM6IGludGVycnVwdC1j
+b250cm9sbGVyQDljMDAwNzgwIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRp
+YmxlID0gInN1bnBsdXMsc3A3MDIxLWludGMiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+IHJlZyA9IDwweDljMDAwNzgwIDB4ODA+LCA8MHg5YzAwMGE4MCAweDgwPjsNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICBpbnRlcnJ1cHQtY29udHJvbGxlcjsNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICAjaW50ZXJydXB0LWNlbGxzID0gPDI+Ow0KPiA+ICsgICAgICAgICAgICAgICB9
+Ow0KPiANCj4gQWxsIGNoaWxkIG5vZGVzIGJlbG93IC9zb2MgaGF2ZSByZWdpc3RlcnMgaW4gdGhl
+IDB4OWMwMDAwMDAgcmFuZ2UuIEkgd291bGQNCj4gc3VnZ2VzdCB5b3UgdXNlIGEgbWF0Y2hpbmcg
+J3JhbmdlcycgcHJvcGVydHkgdG8gdHJhbnNsYXRlIHRoZXNlIGludG8gYQ0KPiB6ZXJvLWJhc2Vk
+DQo+IGFkZHJlc3MgbGlrZQ0KPiANCj4gL3NvYyB7DQo+ICAgICAgICByYW5nZXMgPSA8MCAweDlj
+MDAwMDAwIDB4MTAwMDA+Ow0KPiANCj4gICAgICAgaW50ZXJydXB0LWNvbnRyb2xsZXJANzgwIHsN
+Cj4gICAgICAgICAgICAgIHJlZyA9IDwweDc4MCAweDgwPiwgPDB4YTgwIDB4ODA+Ow0KPiAgICAg
+ICAgICAgICAgLi4uDQo+ICAgICAgIH07DQo+IH07DQo+IA0KPiA+ICsgICAgICAgICAgICAgICBj
+bGtjOiBjbG9jay1jb250cm9sbGVyQDljMDAwMDA0IHsNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICBjb21wYXRpYmxlID0gInN1bnBsdXMsc3A3MDIxLWNsa2MiOw0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIHJlZyA9IDwweDljMDAwMDA0IDB4Mjg+LA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIDwweDljMDAwMjAwIDB4NDQ+LA0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIDwweDljMDAwMjY4IDB4MDQ+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgIGNsb2NrcyA9IDwmZXh0Y2xrPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAjY2xv
+Y2stY2VsbHMgPSA8MT47DQo+ID4gKyAgICAgICAgICAgICAgIH07DQo+ID4gKw0KPiA+ICsgICAg
+ICAgICAgICAgICByc3RjOiByZXNldEA5YzAwMDA1NCB7DQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgY29tcGF0aWJsZSA9ICJzdW5wbHVzLHNwNzAyMS1yZXNldCI7DQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgcmVnID0gPDB4OWMwMDAwNTQgMHgyOD47DQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgI3Jlc2V0LWNlbGxzID0gPDE+Ow0KPiA+ICsgICAgICAgICAgICAgICB9Ow0K
+PiANCj4gDQo+IE1heWJlIHNvcnQgdGhlIG5vZGVzIGJ5IGFkZHJlc3MsIG9yIHBvc3NpYmx5IGJ5
+IG5hbWUuDQo+IA0KPiAgICAgICAgQXJuZA0KDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMsIEkn
+bGwgZml4IHRoZXNlIGluIG5leHQgcGF0Y2guDQoNCg==
