@@ -2,167 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB39AC43334
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 00:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E60C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 02:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237400AbiFOAoP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jun 2022 20:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51120 "EHLO
+        id S1345561AbiFOCdn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jun 2022 22:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbiFOAoO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 20:44:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4434BBBE;
-        Tue, 14 Jun 2022 17:44:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4259A61949;
-        Wed, 15 Jun 2022 00:44:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DFBC3411B;
-        Wed, 15 Jun 2022 00:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655253852;
-        bh=rcjBHcwDa3Vvz9ae34yYid9fcwgrK1WVNSLCfZ/KP5E=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=fdhcRapfOZeMu89rXN1F9+PFgQBw1jq2TFCvdWilZKBPl7d60xoaf+Z1BoVI71oyo
-         RqJwT7IyOmWKrdq1gGthk/wr5qRLVQoB8lFuH3bhpG8v28ehqFht7ixYYEHPsMm9AB
-         B8Nl92yiOr67Th9tcRyEPi0fRLrSpOhoRzoC/T6UuHa5X12CLk5h++1bfLpyoCHqB+
-         fvK77b4d+EdbOzzr1aIJ1u6gTHC44L8QS8SaSAp9SKbflwgVl3VgsZCvB9XatY8lhL
-         9YwdPZU6iL7l0pnNRdqWmeOhCsfxrQ+i6D2NKXEGZhl5QpSSUjx5BoIk0tcHaLBiwv
-         bedv5BuhTNO6Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 327DD5C0BCC; Tue, 14 Jun 2022 17:44:12 -0700 (PDT)
-Date:   Tue, 14 Jun 2022 17:44:12 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@HansenPartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH 16/36] rcu: Fix rcu_idle_exit()
-Message-ID: <20220615004412.GA5766@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20220608142723.103523089@infradead.org>
- <20220608144516.935970247@infradead.org>
+        with ESMTP id S1345710AbiFOCdi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jun 2022 22:33:38 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 44E1F2873A
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jun 2022 19:33:28 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(28633:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 15 Jun 2022 10:25:26 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.6; Wed, 15 Jun 2022 10:25:22 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2507.006; Wed, 15 Jun 2022 10:25:22 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v18 05/10] clk: Add Sunplus SP7021 clock driver
+Thread-Topic: [PATCH v18 05/10] clk: Add Sunplus SP7021 clock driver
+Thread-Index: AQHYf8r5uo30wfgQ7kKLEgfDFgKMD61Ow22AgAD0FaA=
+Date:   Wed, 15 Jun 2022 02:25:22 +0000
+Message-ID: <aaf96491f1a94b5694003797853aa732@cqplus1.com>
+References: <cover.1655194858.git.qinjian@cqplus1.com>
+ <42ed93cf0e5cfeaffdf50d63da558a3f1f6c1021.1655194858.git.qinjian@cqplus1.com>
+ <20220614192555.86436C3411B@smtp.kernel.org>
+In-Reply-To: <20220614192555.86436C3411B@smtp.kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220608144516.935970247@infradead.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 04:27:39PM +0200, Peter Zijlstra wrote:
-> Current rcu_idle_exit() is terminally broken because it uses
-> local_irq_{save,restore}(), which are traced which uses RCU.
-> 
-> However, now that all the callers are sure to have IRQs disabled, we
-> can remove these calls.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Paul E. McKenney <paulmck@kernel.org>
-
-We have some fun conflicts between this series and Frederic's context-tracking
-series.  But it looks like these can be resolved by:
-
-1.	A patch on top of Frederic's series that provides the old rcu_*()
-	names for the functions now prefixed with ct_*() such as
-	ct_idle_exit().
-
-2.	Another patch on top of Frederic's series that takes the
-	changes remaining from this patch, shown below.  Frederic's
-	series uses raw_local_irq_save() and raw_local_irq_restore(),
-	which can then be removed.
-
-Or is there a better way to do this?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit f64cee8c159e9863a74594efe3d33fb513a6a7b5
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Tue Jun 14 17:24:43 2022 -0700
-
-    context_tracking: Interrupts always disabled for ct_idle_exit()
-    
-    Now that the idle-loop cleanups have ensured that rcu_idle_exit() is
-    always invoked with interrupts disabled, remove the interrupt disabling
-    in favor of a debug check.
-    
-    Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-    Cc: Frederic Weisbecker <frederic@kernel.org>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-index 1da44803fd319..99310cf5b0254 100644
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -332,11 +332,8 @@ EXPORT_SYMBOL_GPL(ct_idle_enter);
-  */
- void noinstr ct_idle_exit(void)
- {
--	unsigned long flags;
--
--	raw_local_irq_save(flags);
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
- 	ct_kernel_enter(false, RCU_DYNTICKS_IDX - CONTEXT_IDLE);
--	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(ct_idle_exit);
- 
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstc3A3MDIxLmMgYi9kcml2ZXJzL2Nsay9j
+bGstc3A3MDIxLmMNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAw
+MC4uMGNhZWYxYmM3DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Ns
+ay1zcDcwMjEuYw0KPiA+IEBAIC0wLDAgKzEsNzI1IEBADQo+ID4gKy8vIFNQRFgtTGljZW5zZS1J
+ZGVudGlmaWVyOiAoR1BMLTIuMC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkNCj4gDQo+IFRoaXMgaXNu
+J3QgYSBjb21tb24gbGljZW5zZSBvbiBkcml2ZXIgZmlsZXMuIElzIGl0IGludGVuZGVkPyBPcg0K
+PiBjb3B5L3Bhc3RlIGZyb20gRFQ/DQoNClllcywgSSBjb3B5L3Bhc3RlIGZyb20gRFQuDQpEaWQg
+SSBuZWVkIGNoYW5nZWQgaXQgdG8gJ0dQTC0yLjAtb25seSc/DQoNCj4gDQo+ID4gKy8qDQo+ID4g
+KyAqIENvcHlyaWdodCAoQykgU3VucGx1cyBUZWNobm9sb2d5IENvLiwgTHRkLg0KPiA+ICsgKiAg
+ICAgICBBbGwgcmlnaHRzIHJlc2VydmVkLg0KPiA+ICsgKi8NCj4gWy4uLl0NCj4gPiArDQo+ID4g
+K3N0YXRpYyBpbnQgc3A3MDIxX2Nsa19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
+KQ0KPiA+ICt7DQo+IFsuLi5dDQo+ID4gKw0KPiA+ICsgICAgICAgLyogZ2F0ZXMgKi8NCj4gPiAr
+ICAgICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHNwX2Nsa19nYXRlcyk7IGkrKykgew0K
+PiA+ICsgICAgICAgICAgICAgICBjaGFyIG5hbWVbMTBdOw0KPiA+ICsgICAgICAgICAgICAgICB1
+MzIgaiA9IHNwX2Nsa19nYXRlc1tpXS5yZWc7DQo+ID4gKyAgICAgICAgICAgICAgIHN0cnVjdCBj
+bGtfcGFyZW50X2RhdGEgKnBkID0gc3BfY2xrX2dhdGVzW2ldLmV4dF9wYXJlbnQgPyAmcGRfZXh0
+IDogJnBkX3N5czsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIHNwcmludGYobmFtZSwgIiUw
+MmRfMHglMDJ4IiwgaSwgaik7DQo+ID4gKyAgICAgICAgICAgICAgIGh3c1tpXSA9IGNsa19od19y
+ZWdpc3Rlcl9nYXRlX3BhcmVudF9kYXRhKGRldiwgbmFtZSwgcGQsIDAsDQo+IA0KPiBUaGlzIG5l
+ZWRzIHRvIGJlIGRldm0gYXMgd2VsbC4gT3RoZXJ3aXNlIGlmIHRoZSBkcml2ZXIgaXMgdW5ib3Vu
+ZCB3ZSdsbA0KPiBsZWFrIHRoZXNlIHJlZ2lzdGVyZWQgY2xrcy4NCj4gDQoNCmNsay1wcm92aWRl
+ci5oOg0Kc3RydWN0IGNsa19odyAqX19kZXZtX2Nsa19od19yZWdpc3Rlcl9nYXRlKHN0cnVjdCBk
+ZXZpY2UgKmRldiwNCgkJc3RydWN0IGRldmljZV9ub2RlICpucCwgY29uc3QgY2hhciAqbmFtZSwN
+CgkJY29uc3QgY2hhciAqcGFyZW50X25hbWUsIGNvbnN0IHN0cnVjdCBjbGtfaHcgKnBhcmVudF9o
+dywNCgkJY29uc3Qgc3RydWN0IGNsa19wYXJlbnRfZGF0YSAqcGFyZW50X2RhdGEsDQoJCXVuc2ln
+bmVkIGxvbmcgZmxhZ3MsDQoJCXZvaWQgX19pb21lbSAqcmVnLCB1OCBiaXRfaWR4LA0KCQl1OCBj
+bGtfZ2F0ZV9mbGFncywgc3BpbmxvY2tfdCAqbG9jayk7DQojZGVmaW5lIGRldm1fY2xrX2h3X3Jl
+Z2lzdGVyX2dhdGUoZGV2LCBuYW1lLCBwYXJlbnRfbmFtZSwgZmxhZ3MsIHJlZywgYml0X2lkeCxc
+DQoJCQkJICBjbGtfZ2F0ZV9mbGFncywgbG9jaykJCQkgICAgICBcDQoJX19kZXZtX2Nsa19od19y
+ZWdpc3Rlcl9nYXRlKChkZXYpLCBOVUxMLCAobmFtZSksIChwYXJlbnRfbmFtZSksIE5VTEwsIFwN
+CgkJCSAgICAgICBOVUxMLCAoZmxhZ3MpLCAocmVnKSwgKGJpdF9pZHgpLAkJICAgICAgXA0KCQkJ
+ICAgICAgIChjbGtfZ2F0ZV9mbGFncyksIChsb2NrKSkNCg0KU2hvdWxkIEkgdXNlIF9fZGV2bV9j
+bGtfaHdfcmVnaXN0ZXJfZ2F0ZSgpIHdpdGggcGFyZW50X2RhdGENCm9yDQpkZXZtX2Nsa19od19y
+ZWdpc3Rlcl9nYXRlKCkgd2l0aCBwYXJlbnRfbmFtZT8NCg0K
