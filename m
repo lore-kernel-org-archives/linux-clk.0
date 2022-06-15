@@ -2,184 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62B9CCA480
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 11:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A4CC43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 14:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353645AbiFOLCf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 07:02:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52120 "EHLO
+        id S241332AbiFOODl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 10:03:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346649AbiFOK7w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 06:59:52 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B487A522F5;
-        Wed, 15 Jun 2022 03:59:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FDrui5z1yTek9UBCMq60Xj9TFr45wmqTH8ZzctPmHf/JNga6yeqIsGPNm/SN6x/cgkxYOvad0/Uw8Mpv8zRyaE71e3d2T5tuhzNtb724hAi2FcwJo3/VMMCn8vup1AYVZwKpzELqS6gCwFr2BV8r//VOshJMTW9e6EUxhtiriCM7S55kMS48C4kkE8XhmwfIYIo1oDypKalUqDkaxLzlCiDi1CXpHN5pMs6BmqmHYOTqDu2yEZzu+nGT6PBT55SLY9DofII9Gm6z1ZeHprwdAv5HTrvdMh12pkAPxhFbsnvAy6tJG5P4aCVfdQaT02Lb4MY6b9zAWqVImkBxQsrrWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HcajCSh71JLMVZTcpLZs3IelNiqQoKqwZoCv+uOqa/c=;
- b=aKTo6nrTjwKzx+HIYwAVH51ShP9ImFE4UfAl8zU+hIeIBbiFBEyS6GYO+2mJ9vXcz50aMkpwxFhJJ3ZYs0wckDuPpKWzOLs4hgDZpHqvIiiGahAv+RjrRJiwM+G5idn0C07V6X16TcCKu9ClW9TmfAxGf/GshNeIFovCTflSobCCDTZ5c0WePOZLjQNGFTbxJHuEC4k52icyUrJ2EingQP8Sg7xAluyfR76hy1jJplyqdL2NJISyFlP6K+tQ8sxfRKEBvBCW08mp1EV98o2xWussqiVsf74+RF/dakDMJoUondYe+mRUFP8sWu+82EcDmpenD3LDlXvN5wu7wLa5Aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HcajCSh71JLMVZTcpLZs3IelNiqQoKqwZoCv+uOqa/c=;
- b=idvWOE2j3A994Zyij9Nozt+dMjpn+pVHKYUQkweyL380uqbuDtv9q2RCcSdDJoeiddcvbS6+Rbqmk+Z8/OZu5Hjq+RynuDsDdQsrEGb2m7gdm3AzHrnBaeBkUFSEpC2QRis/Q4Is/jtH7YYHao2OfEzBtQTTYJX9wc2EEjiPmls=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
- by DB3PR0402MB3948.eurprd04.prod.outlook.com (2603:10a6:8:d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.17; Wed, 15 Jun
- 2022 10:59:49 +0000
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::7505:2581:368f:5619]) by VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::7505:2581:368f:5619%5]) with mapi id 15.20.5332.022; Wed, 15 Jun 2022
- 10:59:49 +0000
-From:   Viorel Suman <viorel.suman@nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Peng Fan <peng.fan@nxp.com>, Shijie Qin <shijie.qin@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     LnxNXP@nxp.com
-Subject: [PATCH v4 11/14] arm64: dts: freescale: imx8: Fix power controller name
-Date:   Wed, 15 Jun 2022 13:58:31 +0300
-Message-Id: <20220615105834.743045-12-viorel.suman@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220615105834.743045-1-viorel.suman@nxp.com>
-References: <20220615105834.743045-1-viorel.suman@nxp.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR02CA0159.eurprd02.prod.outlook.com
- (2603:10a6:20b:28d::26) To VI1PR04MB5005.eurprd04.prod.outlook.com
- (2603:10a6:803:57::30)
+        with ESMTP id S1356373AbiFOODF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 10:03:05 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 164661144E
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 07:02:59 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 184so11437229pga.12
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 07:02:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=M66DAB+19p6w4Na1SDbCKZUUw5Zn5mhELOHN0rTlLtM=;
+        b=UDjUEJIiRoVktXJeykSYszQEk/7Fo9qKyvSGWv6zm3yB6tuZvYVMddV+i8fQajPkE2
+         aAaZE2cW8WfJiV9Bl+ja/qocfZ84YXu66CvwLgyWfYpBuRUjIAVQEVjMuyhiy55sy0gE
+         YOvQWptxx1hqEzX37f8EcQieP+Vbu9XWAZq5akpeLLmyBJFhwQ9UhvZYcBtFuhISrnOI
+         FfbJhNxSShwSO+3+Rz9AZhWy9ZSyMi/6umtFS4lMPcttPWLIfe2s52GsUErh6DBdP0Kg
+         Z2qNqFD+vvD2WozRI6qLTIw42MhWmb8/TfULi1FUTchhKTMP2R5yRC8BhddQzPIyQxHd
+         +i8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=M66DAB+19p6w4Na1SDbCKZUUw5Zn5mhELOHN0rTlLtM=;
+        b=mulH7j9xSQVCEr9+8OE2WHQjaZ32oSEA8cDFP0uPi0VLVsc4XsYki9ltFHBlbL/ZgK
+         XisI8R/1AUyMJDy1ugysd+kNE4DVkohbFDmcRKovJ1MKQbt6yWncVVsPMwziJ9o/QPAD
+         IgEKX47E3+/E0BisNAW9Motk8EX8OU4DF+fRn/f3ls+uRMURv4a9TQzeBBKup6BR41kP
+         YvLfajDuDgOSBRzqCqjEO/neAotcNtqpQBTYoFYwMYBnHAbQNnkqGySwfmdyp51z+pec
+         YfDkZdtHazgFzi9X8R1pfDDd2hjv66fH9ZPNyB9dsrPJZK0DTwRyMwE7QE1bRujtGV3h
+         1skA==
+X-Gm-Message-State: AJIora8dhOSjI1PJ9oCSBreIU5ayAjS+sJy/u1GOxkVC3JTeAJycTqQ9
+        HtZpQMAeR36OZfPoFq7VMBeAuQ==
+X-Google-Smtp-Source: ABdhPJx3UrcgrUWHd4kpkHv8SdYGvKistJLOVKNX4XSrYpzd92CUkt0EJ89uNYlWk0nQnhp3+4adig==
+X-Received: by 2002:a05:6a00:421a:b0:522:8b4c:69a9 with SMTP id cd26-20020a056a00421a00b005228b4c69a9mr9997626pfb.60.1655301778548;
+        Wed, 15 Jun 2022 07:02:58 -0700 (PDT)
+Received: from [172.20.0.255] ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id x3-20020a1709029a4300b001663165eb16sm9358196plv.7.2022.06.15.07.02.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 07:02:58 -0700 (PDT)
+Message-ID: <53d94169-d724-7763-1b34-30f219c9963c@linaro.org>
+Date:   Wed, 15 Jun 2022 07:02:50 -0700
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 720d01b2-5749-467d-d210-08da4ebe2a88
-X-MS-TrafficTypeDiagnostic: DB3PR0402MB3948:EE_
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-Microsoft-Antispam-PRVS: <DB3PR0402MB3948669970B1D2B62B95CC9092AD9@DB3PR0402MB3948.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BHLjukEPq55toTHn/7OuVaY6jwpDyYeTOoCH5xiFt0d5or8apNmW+Q4Wqa5EgTX1JrwgX+SmQUrYDGXjJPD/fR4BgFHXE3v35qBSxsTqpBCMhl3phWCE3buTTpP1JEteJkXDjXcjpZReCJP21fqud5REgBN8UaUeuB1Y5i93J/d0/+WpC35N0hbYGCU5C/xENXWXgcy1vo4xCuZ39ADNvPmAdXWPx1UxOKbSxFexyCLPzhfH8s8riw8bDpeEC18etx1y3g/wAvisCnE1PSc808JuzhsSfnhGVhT5G6oT5ycj86/qQ4YHM9TD7MqNJEZ4K1iE9hsTZWTxYHDneEIU11R4m2S3VOtF2BFZRioClQtjUZMJLlLduxfiLpgTrPOx0z5ILeqBBQhtpvjd5BH74SCmPus9DoZHeyR5TCCvM+BvtltNtCnF+m4HPPw85cQqL/NJALYaMjjUmBJ+UKAlSjnChQZTqV/7N+j2wMDKIwcUQGUUPygm9vwqtG3YKEPdCO79Hf45dp7GKiHcWqZAarFRW/fYFC+tQLoA+vPr7QO6wrycXouiJhz4XPShABbNHmVS09ZxhzB9igPPkBfBURuPv785sfAC8somIJccHbm69KLwmUfiuaNY28JjknMlTvibAMinPnIlVaZrCyZwcci7HEbbM4P/cE25XgszHGlh4k22+tYi7yl7E5Hjf5BpwBQ/S78oRikzszxHtfaNkJ5Rrj3oDr7knDbUIRUXut4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(26005)(52116002)(6512007)(44832011)(7416002)(2616005)(4326008)(6486002)(6666004)(508600001)(186003)(83380400001)(1076003)(8676002)(6506007)(7406005)(2906002)(38100700002)(38350700002)(66476007)(316002)(66556008)(86362001)(36756003)(66946007)(921005)(8936002)(110136005)(5660300002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?Det32uIAxpbbiF+2FrUuIPmpx8ceW4eUWemgeC6y9Y1VrUw3WzVJame8bm?=
- =?iso-8859-1?Q?VTbv3She+5bLZF2DjwoolUAluKCPwp5gpp7uNfeAjXMrXNjTj70mWoJk/4?=
- =?iso-8859-1?Q?SJG5uNEOBMasijj+jYK2wTqM8rpEIggCTjsD+mgcn3eRBT7zrl4yGMSUKt?=
- =?iso-8859-1?Q?UgqBXlT3ky3nP8FQnAur0jw0nvfjYh5H5UwxCpcyusW6MTOnNlwLBRzl9l?=
- =?iso-8859-1?Q?qCNyOiXLrtOhhxubR6TRhDlztCJvKBXL3Xa//QZpjvcgWh2Ml07GOeq3hS?=
- =?iso-8859-1?Q?Ei/CVaReRiIV2Q8FV2PxnEFq5L//uyr+5B2obI2c+Tl/PcH9lbqx9e/Phf?=
- =?iso-8859-1?Q?IJgERuuXEDWMZo+HaD7LmZF3vyJmd31Jac6SMEiw81Xa40mFyCan+Ga6Ok?=
- =?iso-8859-1?Q?SRuBGgi7LrVPhwa8jP2DHZPcVOH3CbhRUBH2erocCFG0AAZCzN0oxJ3ibE?=
- =?iso-8859-1?Q?ASFMZ70fASNWG0K/DS4kj7cUd9kBsUVA9BgYPz9CWYHQG9rYNhu2+WZREo?=
- =?iso-8859-1?Q?JBtZgIt86MCjqvLa4gTmon3urZKcafRxeZt/rXws3zIJJjH7Jh5seWQvUY?=
- =?iso-8859-1?Q?P2KDlDmpNUDBhduL4DI//Ds8uuh7dEv+CQTNWYfGwWI4vIe/OrPKEhcrhs?=
- =?iso-8859-1?Q?EuVOboQal83QrbtQU3hXbE0GdQki92/D6M6Mvl1KdbkWTqps90yFznBJdM?=
- =?iso-8859-1?Q?OXrBBe+vq1lDSEULXwODxN3G9QIYt+IUddmsCaH3EtSW+D3kIALtgobMuA?=
- =?iso-8859-1?Q?VQ3jWbT6hieJ41tXr4rfCyLVLLaKtWczzOzMiB2ChFkl+t9trl2k7dGGqs?=
- =?iso-8859-1?Q?Cq0ZrghAIJ8NVebTmwb823KcN/DPF5jvth39ej0ZpyEvCWvRXxkvsOD15A?=
- =?iso-8859-1?Q?xg4lof/YNNahROvqvbqzrjGEz7LQI5ZnJR4YK9RRgBQC3mBESwe8sFDsKW?=
- =?iso-8859-1?Q?echex/Z2Nhqm1FC7EvqFafiUFNBnYYD3sYTpCy/rp90Q0+kIjf5Su2i07C?=
- =?iso-8859-1?Q?aJyxUmEQolWzAWyf/KsBrvYnS+MRmUSio3N+SxrYv3ia/w/Bxd3cFTKyoF?=
- =?iso-8859-1?Q?Bzz2UOweUFAxZPtWiScG29oLr5O/sb8E0wZpJwBXGC7oFswI+Pl3HLbHIR?=
- =?iso-8859-1?Q?G3oICFCEEQwx27XQuVHd2ypKayLBF+oFet7On6+rLd9nw6a5yxCDsIgPtb?=
- =?iso-8859-1?Q?78XOcEUiGiwL5GP9l3GguIO02IW8BERylb2PHbgJRIMyfgfya9SFxW84Oa?=
- =?iso-8859-1?Q?woZd4RR927ZFxZDNxZ4GE1TXjtIHi+FHC2ZdyrHLYSbEL6aEUZbrQUks7d?=
- =?iso-8859-1?Q?EZfbkj3jQuDqh5YlRtXEleU+beEpOatAdg6ssx4GAPSK9aYVPcp5cJAQTU?=
- =?iso-8859-1?Q?9Q6aNcUfvJAMEQKSHTBK3TMlnXvbxTSa9WQN8DQo5HgyOwvIMYhwknl730?=
- =?iso-8859-1?Q?7kHXT0kHgteo0OGexMPgvwWy1MRCwYvxEB8gD44LNgNIc/gDnpp+zs1mT5?=
- =?iso-8859-1?Q?p6gyvyJL34hRfqlRYdBl5Nnq1eQp5spfzUXaCMXu0L1XiT/+WZ3fk+JuQY?=
- =?iso-8859-1?Q?6obgQhDtxdG+Qhg9Wx8f96OurMHvRwRxx4Y1vGyT0PGSUzht3w02b/5BiO?=
- =?iso-8859-1?Q?p+RdEqzsBvtKUTSC9bneXJNl66qQzFTxfs6H2XAQhXyQ+As2ZwmY/BKLoh?=
- =?iso-8859-1?Q?GyX/QUQj5TnlTQDP83ZiovwhYEfXCudroRF2V2nD+q/LiiyzQqXkIbBjF3?=
- =?iso-8859-1?Q?NCKlW8j/xF8FohQB690+moCAHAa14unJD9axJp4nY91MuImjRT2wE01eqo?=
- =?iso-8859-1?Q?rEIsR60KKQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 720d01b2-5749-467d-d210-08da4ebe2a88
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2022 10:59:49.2271
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4s07YZRSNtW6rSNEAlo6csbluOgUGGWEhi1lbux4f8aefBj5kxbv0O6mGaWmPMM62XMCxgavS2f0Aq5C7nP+zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3948
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v18 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
+ device tree
+Content-Language: en-US
+To:     Qin Jian <qinjian@cqplus1.com>, sboyd@kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
+        olof@lixom.net, soc@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1655194858.git.qinjian@cqplus1.com>
+ <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Abel Vesa <abel.vesa@nxp.com>
+On 14/06/2022 01:31, Qin Jian wrote:
+> Add the basic support for Sunplus SP7021-Demo-V3 board.
+> 
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+> Fix the comments from Krzysztof.
+> ---
+>  MAINTAINERS                                  |   1 +
+>  arch/arm/boot/dts/Makefile                   |   2 +
+>  arch/arm/boot/dts/sunplus-sp7021-achip.dtsi  |  84 +++++
+>  arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts |  26 ++
+>  arch/arm/boot/dts/sunplus-sp7021.dtsi        | 318 +++++++++++++++++++
+>  5 files changed, 431 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/sunplus-sp7021-achip.dtsi
+>  create mode 100644 arch/arm/boot/dts/sunplus-sp7021-demo-v3.dts
+>  create mode 100644 arch/arm/boot/dts/sunplus-sp7021.dtsi
+> 
 
-The proper name is power-controller, not imx8qx-pd.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8qm.dtsi  | 2 +-
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-index 4f767012f1f5..5ad1c9a5933c 100644
---- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
-@@ -190,7 +190,7 @@ scu {
- 			  &lsio_mu1 1 0
- 			  &lsio_mu1 3 3>;
- 
--		pd: imx8qx-pd {
-+		pd: power-controller {
- 			compatible = "fsl,imx8qm-scu-pd", "fsl,scu-pd";
- 			#power-domain-cells = <1>;
- 		};
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-index 483996a1f2d5..542bc47509ca 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -210,7 +210,7 @@ scu {
- 			  &lsio_mu1 1 0
- 			  &lsio_mu1 3 3>;
- 
--		pd: imx8qx-pd {
-+		pd: power-controller {
- 			compatible = "fsl,imx8qxp-scu-pd", "fsl,scu-pd";
- 			#power-domain-cells = <1>;
- 		};
--- 
-2.25.1
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
