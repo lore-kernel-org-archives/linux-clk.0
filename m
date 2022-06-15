@@ -2,169 +2,710 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92441C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 06:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD040C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 06:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236566AbiFOGFT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 02:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52476 "EHLO
+        id S237430AbiFOGoP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 02:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245729AbiFOGFR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 02:05:17 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2B7118E08;
-        Tue, 14 Jun 2022 23:05:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79489617AA;
-        Wed, 15 Jun 2022 06:05:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B477C34115;
-        Wed, 15 Jun 2022 06:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655273115;
-        bh=yf3pNom/syiLiOha7Upiq9/nR1Hjl9dv2JULctSWZP0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SjnyzJRJ5maovA4d7DzY2/Ij5TNs/akt5ph8MDjdNnh42oSEnpEqun3aky3dQcf6z
-         rGme0eLVsl/XoKZXtCCkL0+cKE/nzsKpLCn2sT4A50UeO3p7crMUO1XfASUME8HSj0
-         pD6alvihCcM/657amEHKEos8BTfaNv0g8jeH8Q6QrkIG8VgVi/YsytFwbegMDMw6Gn
-         Pxj0w5BlxtbfpWb4+1rV886T9D/GynKsmxsWQDGtqkBJk0CUIxtfKvkZpW8JkVRt5W
-         zI01Adx6IQH3zR34l9+HTfR6cCjay+Ytdyco9DFFfWGGA7opCch5d/Lzswk+yKRRZO
-         /G8E+1jj9J/iQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <maz@kernel.org>)
-        id 1o1M9R-000hh4-Lq;
-        Wed, 15 Jun 2022 07:05:13 +0100
-Date:   Wed, 15 Jun 2022 07:05:11 +0100
-Message-ID: <87mteepilk.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
-        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com,
-        srivatsa@csail.mit.edu, amakhalov@vmware.com,
-        pv-drivers@vmware.com, boris.ostrovsky@oracle.com,
-        chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org,
-        lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        paulmck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org
-Subject: Re: [PATCH 23/36] arm64,smp: Remove trace_.*_rcuidle() usage
-In-Reply-To: <Yqi2UGb4alCAR5s4@FVFF77S0Q05N>
-References: <20220608142723.103523089@infradead.org>
-        <20220608144517.380962958@infradead.org>
-        <Yqi2UGb4alCAR5s4@FVFF77S0Q05N>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: mark.rutland@arm.com, peterz@infradead.org, rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org, linux@armlinux.org.uk, ulli.kroll@googlemail.com, linus.walleij@linaro.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org, guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org, jonas@southpole.se, stefan.kristiansson@saunalahti.fi, shorne@gmail.com, James.Bottomley@HansenPartnership.com, deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@
- libc.org, davem@davemloft.net, richard@nod.at, anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, acme@kernel.org, alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu, amakhalov@vmware.com, pv-drivers@vmware.com, boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com, rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz, gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org, sudeep.holla@arm.com, agross@kernel.org, bjorn.andersson@linaro.org, anup@brainfault.org, thierry.reding@gmail.com, jonathanh@nvidia.com, jacob.jun.pan@linux.intel.com, arnd@arndb.de, yury.norov@gmail.com, andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org, john.ogness@linutronix.de, paul
- mck@kernel.org, frederic@kernel.org, quic_neeraju@quicinc.com, josh@joshtriplett.org, mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, joel@joelfernandes.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, openrisc@lists.librecores.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org, virtualization@lists.linux-foundation.org, xen-devel@lists.xenproject.org, 
- linux-xtensa@linux-xtensa.org, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org, rcu@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        with ESMTP id S1345826AbiFOGnR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 02:43:17 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 77BF62F67E;
+        Tue, 14 Jun 2022 23:43:11 -0700 (PDT)
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 67ACB80FE;
+        Wed, 15 Jun 2022 06:38:24 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-omap@vger.kernel.org, Tero Kristo <kristo@kernel.org>
+Subject: [PATCH v2 1/1] clk: ti: Stop using legacy clkctrl names for omap4 and 5
+Date:   Wed, 15 Jun 2022 09:43:06 +0300
+Message-Id: <20220615064306.22254-1-tony@atomide.com>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Jun 2022 17:24:48 +0100,
-Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> On Wed, Jun 08, 2022 at 04:27:46PM +0200, Peter Zijlstra wrote:
-> > Ever since commit d3afc7f12987 ("arm64: Allow IPIs to be handled as
-> > normal interrupts") this function is called in regular IRQ context.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> [adding Marc since he authored that commit]
-> 
-> Makes sense to me:
-> 
->   Acked-by: Mark Rutland <mark.rutland@arm.com>
-> 
-> Mark.
-> 
-> > ---
-> >  arch/arm64/kernel/smp.c |    4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > --- a/arch/arm64/kernel/smp.c
-> > +++ b/arch/arm64/kernel/smp.c
-> > @@ -865,7 +865,7 @@ static void do_handle_IPI(int ipinr)
-> >  	unsigned int cpu = smp_processor_id();
-> >  
-> >  	if ((unsigned)ipinr < NR_IPI)
-> > -		trace_ipi_entry_rcuidle(ipi_types[ipinr]);
-> > +		trace_ipi_entry(ipi_types[ipinr]);
-> >  
-> >  	switch (ipinr) {
-> >  	case IPI_RESCHEDULE:
-> > @@ -914,7 +914,7 @@ static void do_handle_IPI(int ipinr)
-> >  	}
-> >  
-> >  	if ((unsigned)ipinr < NR_IPI)
-> > -		trace_ipi_exit_rcuidle(ipi_types[ipinr]);
-> > +		trace_ipi_exit(ipi_types[ipinr]);
-> >  }
-> >  
-> >  static irqreturn_t ipi_handler(int irq, void *data)
+With the addition of clock-output-names, we can now unify the internal
+clock naming for omap4 and 5 to follow the other TI SoCs.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+We are still using legacy clkctrl names for omap4 and 5 based on the clock
+manager name which is wrong. Instead, we want to use the clkctrl clock
+based naming.
 
-	M.
+We must now also drop the legacy TI_CLK_CLKCTRL_COMPAT quirk for the
+clkctrl clock.
 
+This change will allow further devicetree warning cleanup as already
+done for am3/4 and dra7.
+
+Cc: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Tero Kristo <kristo@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+
+Stephen, an immutable branch against v5.19-rc1 for me to merge in would be
+nice for further dts changes.
+
+Changes since v1:
+
+- Send separately as the dts changes have been already merged
+
+- Update description on why we want to unify the internal naming
+
+---
+ drivers/clk/ti/clk-44xx.c | 210 +++++++++++++++++++-------------------
+ drivers/clk/ti/clk-54xx.c | 160 ++++++++++++++---------------
+ drivers/clk/ti/clkctrl.c  |   4 -
+ 3 files changed, 185 insertions(+), 189 deletions(-)
+
+diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
+--- a/drivers/clk/ti/clk-44xx.c
++++ b/drivers/clk/ti/clk-44xx.c
+@@ -56,7 +56,7 @@ static const struct omap_clkctrl_bit_data omap4_aess_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_dmic_abe_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0018:26",
++	"abe-clkctrl:0018:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -76,7 +76,7 @@ static const struct omap_clkctrl_bit_data omap4_dmic_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_mcasp_abe_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0020:26",
++	"abe-clkctrl:0020:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -89,7 +89,7 @@ static const struct omap_clkctrl_bit_data omap4_mcasp_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_func_mcbsp1_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0028:26",
++	"abe-clkctrl:0028:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -102,7 +102,7 @@ static const struct omap_clkctrl_bit_data omap4_mcbsp1_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap4_func_mcbsp2_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0030:26",
++	"abe-clkctrl:0030:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -115,7 +115,7 @@ static const struct omap_clkctrl_bit_data omap4_mcbsp2_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap4_func_mcbsp3_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0038:26",
++	"abe-clkctrl:0038:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -183,18 +183,18 @@ static const struct omap_clkctrl_bit_data omap4_timer8_bit_data[] __initconst =
+ 
+ static const struct omap_clkctrl_reg_data omap4_abe_clkctrl_regs[] __initconst = {
+ 	{ OMAP4_L4_ABE_CLKCTRL, NULL, 0, "ocp_abe_iclk" },
+-	{ OMAP4_AESS_CLKCTRL, omap4_aess_bit_data, CLKF_SW_SUP, "abe_cm:clk:0008:24" },
++	{ OMAP4_AESS_CLKCTRL, omap4_aess_bit_data, CLKF_SW_SUP, "abe-clkctrl:0008:24" },
+ 	{ OMAP4_MCPDM_CLKCTRL, NULL, CLKF_SW_SUP, "pad_clks_ck" },
+-	{ OMAP4_DMIC_CLKCTRL, omap4_dmic_bit_data, CLKF_SW_SUP, "abe_cm:clk:0018:24" },
+-	{ OMAP4_MCASP_CLKCTRL, omap4_mcasp_bit_data, CLKF_SW_SUP, "abe_cm:clk:0020:24" },
+-	{ OMAP4_MCBSP1_CLKCTRL, omap4_mcbsp1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0028:24" },
+-	{ OMAP4_MCBSP2_CLKCTRL, omap4_mcbsp2_bit_data, CLKF_SW_SUP, "abe_cm:clk:0030:24" },
+-	{ OMAP4_MCBSP3_CLKCTRL, omap4_mcbsp3_bit_data, CLKF_SW_SUP, "abe_cm:clk:0038:24" },
+-	{ OMAP4_SLIMBUS1_CLKCTRL, omap4_slimbus1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0040:8" },
+-	{ OMAP4_TIMER5_CLKCTRL, omap4_timer5_bit_data, CLKF_SW_SUP, "abe_cm:clk:0048:24" },
+-	{ OMAP4_TIMER6_CLKCTRL, omap4_timer6_bit_data, CLKF_SW_SUP, "abe_cm:clk:0050:24" },
+-	{ OMAP4_TIMER7_CLKCTRL, omap4_timer7_bit_data, CLKF_SW_SUP, "abe_cm:clk:0058:24" },
+-	{ OMAP4_TIMER8_CLKCTRL, omap4_timer8_bit_data, CLKF_SW_SUP, "abe_cm:clk:0060:24" },
++	{ OMAP4_DMIC_CLKCTRL, omap4_dmic_bit_data, CLKF_SW_SUP, "abe-clkctrl:0018:24" },
++	{ OMAP4_MCASP_CLKCTRL, omap4_mcasp_bit_data, CLKF_SW_SUP, "abe-clkctrl:0020:24" },
++	{ OMAP4_MCBSP1_CLKCTRL, omap4_mcbsp1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0028:24" },
++	{ OMAP4_MCBSP2_CLKCTRL, omap4_mcbsp2_bit_data, CLKF_SW_SUP, "abe-clkctrl:0030:24" },
++	{ OMAP4_MCBSP3_CLKCTRL, omap4_mcbsp3_bit_data, CLKF_SW_SUP, "abe-clkctrl:0038:24" },
++	{ OMAP4_SLIMBUS1_CLKCTRL, omap4_slimbus1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0040:8" },
++	{ OMAP4_TIMER5_CLKCTRL, omap4_timer5_bit_data, CLKF_SW_SUP, "abe-clkctrl:0048:24" },
++	{ OMAP4_TIMER6_CLKCTRL, omap4_timer6_bit_data, CLKF_SW_SUP, "abe-clkctrl:0050:24" },
++	{ OMAP4_TIMER7_CLKCTRL, omap4_timer7_bit_data, CLKF_SW_SUP, "abe-clkctrl:0058:24" },
++	{ OMAP4_TIMER8_CLKCTRL, omap4_timer8_bit_data, CLKF_SW_SUP, "abe-clkctrl:0060:24" },
+ 	{ OMAP4_WD_TIMER3_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+ };
+@@ -287,7 +287,7 @@ static const struct omap_clkctrl_bit_data omap4_fdif_bit_data[] __initconst = {
+ 
+ static const struct omap_clkctrl_reg_data omap4_iss_clkctrl_regs[] __initconst = {
+ 	{ OMAP4_ISS_CLKCTRL, omap4_iss_bit_data, CLKF_SW_SUP, "ducati_clk_mux_ck" },
+-	{ OMAP4_FDIF_CLKCTRL, omap4_fdif_bit_data, CLKF_SW_SUP, "iss_cm:clk:0008:24" },
++	{ OMAP4_FDIF_CLKCTRL, omap4_fdif_bit_data, CLKF_SW_SUP, "iss-clkctrl:0008:24" },
+ 	{ 0 },
+ };
+ 
+@@ -320,7 +320,7 @@ static const struct omap_clkctrl_bit_data omap4_dss_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_dss_clkctrl_regs[] __initconst = {
+-	{ OMAP4_DSS_CORE_CLKCTRL, omap4_dss_core_bit_data, CLKF_SW_SUP, "l3_dss_cm:clk:0000:8" },
++	{ OMAP4_DSS_CORE_CLKCTRL, omap4_dss_core_bit_data, CLKF_SW_SUP, "l3-dss-clkctrl:0000:8" },
+ 	{ 0 },
+ };
+ 
+@@ -336,7 +336,7 @@ static const struct omap_clkctrl_bit_data omap4_gpu_bit_data[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_gfx_clkctrl_regs[] __initconst = {
+-	{ OMAP4_GPU_CLKCTRL, omap4_gpu_bit_data, CLKF_SW_SUP, "l3_gfx_cm:clk:0000:24" },
++	{ OMAP4_GPU_CLKCTRL, omap4_gpu_bit_data, CLKF_SW_SUP, "l3-gfx-clkctrl:0000:24" },
+ 	{ 0 },
+ };
+ 
+@@ -372,12 +372,12 @@ static const struct omap_clkctrl_bit_data omap4_hsi_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_usb_host_hs_utmi_p1_clk_parents[] __initconst = {
+-	"l3_init_cm:clk:0038:24",
++	"l3-init-clkctrl:0038:24",
+ 	NULL,
+ };
+ 
+ static const char * const omap4_usb_host_hs_utmi_p2_clk_parents[] __initconst = {
+-	"l3_init_cm:clk:0038:25",
++	"l3-init-clkctrl:0038:25",
+ 	NULL,
+ };
+ 
+@@ -418,7 +418,7 @@ static const struct omap_clkctrl_bit_data omap4_usb_host_hs_bit_data[] __initcon
+ };
+ 
+ static const char * const omap4_usb_otg_hs_xclk_parents[] __initconst = {
+-	"l3_init_cm:clk:0040:24",
++	"l3-init-clkctrl:0040:24",
+ 	NULL,
+ };
+ 
+@@ -452,14 +452,14 @@ static const struct omap_clkctrl_bit_data omap4_ocp2scp_usb_phy_bit_data[] __ini
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l3_init_clkctrl_regs[] __initconst = {
+-	{ OMAP4_MMC1_CLKCTRL, omap4_mmc1_bit_data, CLKF_SW_SUP, "l3_init_cm:clk:0008:24" },
+-	{ OMAP4_MMC2_CLKCTRL, omap4_mmc2_bit_data, CLKF_SW_SUP, "l3_init_cm:clk:0010:24" },
+-	{ OMAP4_HSI_CLKCTRL, omap4_hsi_bit_data, CLKF_HW_SUP, "l3_init_cm:clk:0018:24" },
++	{ OMAP4_MMC1_CLKCTRL, omap4_mmc1_bit_data, CLKF_SW_SUP, "l3-init-clkctrl:0008:24" },
++	{ OMAP4_MMC2_CLKCTRL, omap4_mmc2_bit_data, CLKF_SW_SUP, "l3-init-clkctrl:0010:24" },
++	{ OMAP4_HSI_CLKCTRL, omap4_hsi_bit_data, CLKF_HW_SUP, "l3-init-clkctrl:0018:24" },
+ 	{ OMAP4_USB_HOST_HS_CLKCTRL, omap4_usb_host_hs_bit_data, CLKF_SW_SUP, "init_60m_fclk" },
+ 	{ OMAP4_USB_OTG_HS_CLKCTRL, omap4_usb_otg_hs_bit_data, CLKF_HW_SUP, "l3_div_ck" },
+ 	{ OMAP4_USB_TLL_HS_CLKCTRL, omap4_usb_tll_hs_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+ 	{ OMAP4_USB_HOST_FS_CLKCTRL, NULL, CLKF_SW_SUP, "func_48mc_fclk" },
+-	{ OMAP4_OCP2SCP_USB_PHY_CLKCTRL, omap4_ocp2scp_usb_phy_bit_data, CLKF_HW_SUP, "l3_init_cm:clk:00c0:8" },
++	{ OMAP4_OCP2SCP_USB_PHY_CLKCTRL, omap4_ocp2scp_usb_phy_bit_data, CLKF_HW_SUP, "l3-init-clkctrl:00c0:8" },
+ 	{ 0 },
+ };
+ 
+@@ -530,7 +530,7 @@ static const struct omap_clkctrl_bit_data omap4_gpio6_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap4_per_mcbsp4_gfclk_parents[] __initconst = {
+-	"l4_per_cm:clk:00c0:26",
++	"l4-per-clkctrl:00c0:26",
+ 	"pad_clks_ck",
+ 	NULL,
+ };
+@@ -570,12 +570,12 @@ static const struct omap_clkctrl_bit_data omap4_slimbus2_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initconst = {
+-	{ OMAP4_TIMER10_CLKCTRL, omap4_timer10_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0008:24" },
+-	{ OMAP4_TIMER11_CLKCTRL, omap4_timer11_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0010:24" },
+-	{ OMAP4_TIMER2_CLKCTRL, omap4_timer2_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0018:24" },
+-	{ OMAP4_TIMER3_CLKCTRL, omap4_timer3_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0020:24" },
+-	{ OMAP4_TIMER4_CLKCTRL, omap4_timer4_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0028:24" },
+-	{ OMAP4_TIMER9_CLKCTRL, omap4_timer9_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0030:24" },
++	{ OMAP4_TIMER10_CLKCTRL, omap4_timer10_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0008:24" },
++	{ OMAP4_TIMER11_CLKCTRL, omap4_timer11_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0010:24" },
++	{ OMAP4_TIMER2_CLKCTRL, omap4_timer2_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0018:24" },
++	{ OMAP4_TIMER3_CLKCTRL, omap4_timer3_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0020:24" },
++	{ OMAP4_TIMER4_CLKCTRL, omap4_timer4_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0028:24" },
++	{ OMAP4_TIMER9_CLKCTRL, omap4_timer9_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0030:24" },
+ 	{ OMAP4_ELM_CLKCTRL, NULL, 0, "l4_div_ck" },
+ 	{ OMAP4_GPIO2_CLKCTRL, omap4_gpio2_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+ 	{ OMAP4_GPIO3_CLKCTRL, omap4_gpio3_bit_data, CLKF_HW_SUP, "l4_div_ck" },
+@@ -588,14 +588,14 @@ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initcons
+ 	{ OMAP4_I2C3_CLKCTRL, NULL, CLKF_SW_SUP, "func_96m_fclk" },
+ 	{ OMAP4_I2C4_CLKCTRL, NULL, CLKF_SW_SUP, "func_96m_fclk" },
+ 	{ OMAP4_L4_PER_CLKCTRL, NULL, 0, "l4_div_ck" },
+-	{ OMAP4_MCBSP4_CLKCTRL, omap4_mcbsp4_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:00c0:24" },
++	{ OMAP4_MCBSP4_CLKCTRL, omap4_mcbsp4_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:00c0:24" },
+ 	{ OMAP4_MCSPI1_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI2_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MCSPI4_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MMC3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_MMC4_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+-	{ OMAP4_SLIMBUS2_CLKCTRL, omap4_slimbus2_bit_data, CLKF_SW_SUP, "l4_per_cm:clk:0118:8" },
++	{ OMAP4_SLIMBUS2_CLKCTRL, omap4_slimbus2_bit_data, CLKF_SW_SUP, "l4-per-clkctrl:0118:8" },
+ 	{ OMAP4_UART1_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_UART2_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+ 	{ OMAP4_UART3_CLKCTRL, NULL, CLKF_SW_SUP, "func_48m_fclk" },
+@@ -630,7 +630,7 @@ static const struct omap_clkctrl_reg_data omap4_l4_wkup_clkctrl_regs[] __initcon
+ 	{ OMAP4_L4_WKUP_CLKCTRL, NULL, 0, "l4_wkup_clk_mux_ck" },
+ 	{ OMAP4_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ OMAP4_GPIO1_CLKCTRL, omap4_gpio1_bit_data, CLKF_HW_SUP, "l4_wkup_clk_mux_ck" },
+-	{ OMAP4_TIMER1_CLKCTRL, omap4_timer1_bit_data, CLKF_SW_SUP, "l4_wkup_cm:clk:0020:24" },
++	{ OMAP4_TIMER1_CLKCTRL, omap4_timer1_bit_data, CLKF_SW_SUP, "l4-wkup-clkctrl:0020:24" },
+ 	{ OMAP4_COUNTER_32K_CLKCTRL, NULL, 0, "sys_32k_ck" },
+ 	{ OMAP4_KBD_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+@@ -644,7 +644,7 @@ static const char * const omap4_pmd_stm_clock_mux_ck_parents[] __initconst = {
+ };
+ 
+ static const char * const omap4_trace_clk_div_div_ck_parents[] __initconst = {
+-	"emu_sys_cm:clk:0000:22",
++	"emu-sys-clkctrl:0000:22",
+ 	NULL,
+ };
+ 
+@@ -662,7 +662,7 @@ static const struct omap_clkctrl_div_data omap4_trace_clk_div_div_ck_data __init
+ };
+ 
+ static const char * const omap4_stm_clk_div_ck_parents[] __initconst = {
+-	"emu_sys_cm:clk:0000:20",
++	"emu-sys-clkctrl:0000:20",
+ 	NULL,
+ };
+ 
+@@ -716,73 +716,73 @@ static struct ti_dt_clk omap44xx_clks[] = {
+ 	 * hwmod support. Once hwmod is removed, these can be removed
+ 	 * also.
+ 	 */
+-	DT_CLK(NULL, "aess_fclk", "abe_cm:0008:24"),
+-	DT_CLK(NULL, "cm2_dm10_mux", "l4_per_cm:0008:24"),
+-	DT_CLK(NULL, "cm2_dm11_mux", "l4_per_cm:0010:24"),
+-	DT_CLK(NULL, "cm2_dm2_mux", "l4_per_cm:0018:24"),
+-	DT_CLK(NULL, "cm2_dm3_mux", "l4_per_cm:0020:24"),
+-	DT_CLK(NULL, "cm2_dm4_mux", "l4_per_cm:0028:24"),
+-	DT_CLK(NULL, "cm2_dm9_mux", "l4_per_cm:0030:24"),
+-	DT_CLK(NULL, "dmic_sync_mux_ck", "abe_cm:0018:26"),
+-	DT_CLK(NULL, "dmt1_clk_mux", "l4_wkup_cm:0020:24"),
+-	DT_CLK(NULL, "dss_48mhz_clk", "l3_dss_cm:0000:9"),
+-	DT_CLK(NULL, "dss_dss_clk", "l3_dss_cm:0000:8"),
+-	DT_CLK(NULL, "dss_sys_clk", "l3_dss_cm:0000:10"),
+-	DT_CLK(NULL, "dss_tv_clk", "l3_dss_cm:0000:11"),
+-	DT_CLK(NULL, "fdif_fck", "iss_cm:0008:24"),
+-	DT_CLK(NULL, "func_dmic_abe_gfclk", "abe_cm:0018:24"),
+-	DT_CLK(NULL, "func_mcasp_abe_gfclk", "abe_cm:0020:24"),
+-	DT_CLK(NULL, "func_mcbsp1_gfclk", "abe_cm:0028:24"),
+-	DT_CLK(NULL, "func_mcbsp2_gfclk", "abe_cm:0030:24"),
+-	DT_CLK(NULL, "func_mcbsp3_gfclk", "abe_cm:0038:24"),
+-	DT_CLK(NULL, "gpio1_dbclk", "l4_wkup_cm:0018:8"),
+-	DT_CLK(NULL, "gpio2_dbclk", "l4_per_cm:0040:8"),
+-	DT_CLK(NULL, "gpio3_dbclk", "l4_per_cm:0048:8"),
+-	DT_CLK(NULL, "gpio4_dbclk", "l4_per_cm:0050:8"),
+-	DT_CLK(NULL, "gpio5_dbclk", "l4_per_cm:0058:8"),
+-	DT_CLK(NULL, "gpio6_dbclk", "l4_per_cm:0060:8"),
+-	DT_CLK(NULL, "hsi_fck", "l3_init_cm:0018:24"),
+-	DT_CLK(NULL, "hsmmc1_fclk", "l3_init_cm:0008:24"),
+-	DT_CLK(NULL, "hsmmc2_fclk", "l3_init_cm:0010:24"),
+-	DT_CLK(NULL, "iss_ctrlclk", "iss_cm:0000:8"),
+-	DT_CLK(NULL, "mcasp_sync_mux_ck", "abe_cm:0020:26"),
+-	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe_cm:0028:26"),
+-	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe_cm:0030:26"),
+-	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe_cm:0038:26"),
+-	DT_CLK(NULL, "mcbsp4_sync_mux_ck", "l4_per_cm:00c0:26"),
+-	DT_CLK(NULL, "ocp2scp_usb_phy_phy_48m", "l3_init_cm:00c0:8"),
+-	DT_CLK(NULL, "otg_60m_gfclk", "l3_init_cm:0040:24"),
+-	DT_CLK(NULL, "per_mcbsp4_gfclk", "l4_per_cm:00c0:24"),
+-	DT_CLK(NULL, "pmd_stm_clock_mux_ck", "emu_sys_cm:0000:20"),
+-	DT_CLK(NULL, "pmd_trace_clk_mux_ck", "emu_sys_cm:0000:22"),
+-	DT_CLK(NULL, "sgx_clk_mux", "l3_gfx_cm:0000:24"),
+-	DT_CLK(NULL, "slimbus1_fclk_0", "abe_cm:0040:8"),
+-	DT_CLK(NULL, "slimbus1_fclk_1", "abe_cm:0040:9"),
+-	DT_CLK(NULL, "slimbus1_fclk_2", "abe_cm:0040:10"),
+-	DT_CLK(NULL, "slimbus1_slimbus_clk", "abe_cm:0040:11"),
+-	DT_CLK(NULL, "slimbus2_fclk_0", "l4_per_cm:0118:8"),
+-	DT_CLK(NULL, "slimbus2_fclk_1", "l4_per_cm:0118:9"),
+-	DT_CLK(NULL, "slimbus2_slimbus_clk", "l4_per_cm:0118:10"),
+-	DT_CLK(NULL, "stm_clk_div_ck", "emu_sys_cm:0000:27"),
+-	DT_CLK(NULL, "timer5_sync_mux", "abe_cm:0048:24"),
+-	DT_CLK(NULL, "timer6_sync_mux", "abe_cm:0050:24"),
+-	DT_CLK(NULL, "timer7_sync_mux", "abe_cm:0058:24"),
+-	DT_CLK(NULL, "timer8_sync_mux", "abe_cm:0060:24"),
+-	DT_CLK(NULL, "trace_clk_div_div_ck", "emu_sys_cm:0000:24"),
+-	DT_CLK(NULL, "usb_host_hs_func48mclk", "l3_init_cm:0038:15"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3_init_cm:0038:13"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3_init_cm:0038:14"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3_init_cm:0038:11"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3_init_cm:0038:12"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3_init_cm:0038:8"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3_init_cm:0038:9"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3_init_cm:0038:10"),
+-	DT_CLK(NULL, "usb_otg_hs_xclk", "l3_init_cm:0040:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3_init_cm:0048:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3_init_cm:0048:9"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3_init_cm:0048:10"),
+-	DT_CLK(NULL, "utmi_p1_gfclk", "l3_init_cm:0038:24"),
+-	DT_CLK(NULL, "utmi_p2_gfclk", "l3_init_cm:0038:25"),
++	DT_CLK(NULL, "aess_fclk", "abe-clkctrl:0008:24"),
++	DT_CLK(NULL, "cm2_dm10_mux", "l4-per-clkctrl:0008:24"),
++	DT_CLK(NULL, "cm2_dm11_mux", "l4-per-clkctrl:0010:24"),
++	DT_CLK(NULL, "cm2_dm2_mux", "l4-per-clkctrl:0018:24"),
++	DT_CLK(NULL, "cm2_dm3_mux", "l4-per-clkctrl:0020:24"),
++	DT_CLK(NULL, "cm2_dm4_mux", "l4-per-clkctrl:0028:24"),
++	DT_CLK(NULL, "cm2_dm9_mux", "l4-per-clkctrl:0030:24"),
++	DT_CLK(NULL, "dmic_sync_mux_ck", "abe-clkctrl:0018:26"),
++	DT_CLK(NULL, "dmt1_clk_mux", "l4-wkup-clkctrl:0020:24"),
++	DT_CLK(NULL, "dss_48mhz_clk", "l3-dss-clkctrl:0000:9"),
++	DT_CLK(NULL, "dss_dss_clk", "l3-dss-clkctrl:0000:8"),
++	DT_CLK(NULL, "dss_sys_clk", "l3-dss-clkctrl:0000:10"),
++	DT_CLK(NULL, "dss_tv_clk", "l3-dss-clkctrl:0000:11"),
++	DT_CLK(NULL, "fdif_fck", "iss-clkctrl:0008:24"),
++	DT_CLK(NULL, "func_dmic_abe_gfclk", "abe-clkctrl:0018:24"),
++	DT_CLK(NULL, "func_mcasp_abe_gfclk", "abe-clkctrl:0020:24"),
++	DT_CLK(NULL, "func_mcbsp1_gfclk", "abe-clkctrl:0028:24"),
++	DT_CLK(NULL, "func_mcbsp2_gfclk", "abe-clkctrl:0030:24"),
++	DT_CLK(NULL, "func_mcbsp3_gfclk", "abe-clkctrl:0038:24"),
++	DT_CLK(NULL, "gpio1_dbclk", "l4-wkup-clkctrl:0018:8"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4-per-clkctrl:0040:8"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4-per-clkctrl:0048:8"),
++	DT_CLK(NULL, "gpio4_dbclk", "l4-per-clkctrl:0050:8"),
++	DT_CLK(NULL, "gpio5_dbclk", "l4-per-clkctrl:0058:8"),
++	DT_CLK(NULL, "gpio6_dbclk", "l4-per-clkctrl:0060:8"),
++	DT_CLK(NULL, "hsi_fck", "l3-init-clkctrl:0018:24"),
++	DT_CLK(NULL, "hsmmc1_fclk", "l3-init-clkctrl:0008:24"),
++	DT_CLK(NULL, "hsmmc2_fclk", "l3-init-clkctrl:0010:24"),
++	DT_CLK(NULL, "iss_ctrlclk", "iss-clkctrl:0000:8"),
++	DT_CLK(NULL, "mcasp_sync_mux_ck", "abe-clkctrl:0020:26"),
++	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe-clkctrl:0028:26"),
++	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe-clkctrl:0030:26"),
++	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe-clkctrl:0038:26"),
++	DT_CLK(NULL, "mcbsp4_sync_mux_ck", "l4-per-clkctrl:00c0:26"),
++	DT_CLK(NULL, "ocp2scp_usb_phy_phy_48m", "l3-init-clkctrl:00c0:8"),
++	DT_CLK(NULL, "otg_60m_gfclk", "l3-init-clkctrl:0040:24"),
++	DT_CLK(NULL, "per_mcbsp4_gfclk", "l4-per-clkctrl:00c0:24"),
++	DT_CLK(NULL, "pmd_stm_clock_mux_ck", "emu-sys-clkctrl:0000:20"),
++	DT_CLK(NULL, "pmd_trace_clk_mux_ck", "emu-sys-clkctrl:0000:22"),
++	DT_CLK(NULL, "sgx_clk_mux", "l3-gfx-clkctrl:0000:24"),
++	DT_CLK(NULL, "slimbus1_fclk_0", "abe-clkctrl:0040:8"),
++	DT_CLK(NULL, "slimbus1_fclk_1", "abe-clkctrl:0040:9"),
++	DT_CLK(NULL, "slimbus1_fclk_2", "abe-clkctrl:0040:10"),
++	DT_CLK(NULL, "slimbus1_slimbus_clk", "abe-clkctrl:0040:11"),
++	DT_CLK(NULL, "slimbus2_fclk_0", "l4-per-clkctrl:0118:8"),
++	DT_CLK(NULL, "slimbus2_fclk_1", "l4-per-clkctrl:0118:9"),
++	DT_CLK(NULL, "slimbus2_slimbus_clk", "l4-per-clkctrl:0118:10"),
++	DT_CLK(NULL, "stm_clk_div_ck", "emu-sys-clkctrl:0000:27"),
++	DT_CLK(NULL, "timer5_sync_mux", "abe-clkctrl:0048:24"),
++	DT_CLK(NULL, "timer6_sync_mux", "abe-clkctrl:0050:24"),
++	DT_CLK(NULL, "timer7_sync_mux", "abe-clkctrl:0058:24"),
++	DT_CLK(NULL, "timer8_sync_mux", "abe-clkctrl:0060:24"),
++	DT_CLK(NULL, "trace_clk_div_div_ck", "emu-sys-clkctrl:0000:24"),
++	DT_CLK(NULL, "usb_host_hs_func48mclk", "l3-init-clkctrl:0038:15"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3-init-clkctrl:0038:13"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3-init-clkctrl:0038:14"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3-init-clkctrl:0038:11"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3-init-clkctrl:0038:12"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3-init-clkctrl:0038:8"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3-init-clkctrl:0038:9"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3_init-clkctrl:0038:10"),
++	DT_CLK(NULL, "usb_otg_hs_xclk", "l3-init-clkctrl:0040:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3-init-clkctrl:0048:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3-init-clkctrl:0048:9"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3-init-clkctrl:0048:10"),
++	DT_CLK(NULL, "utmi_p1_gfclk", "l3-init-clkctrl:0038:24"),
++	DT_CLK(NULL, "utmi_p2_gfclk", "l3-init-clkctrl:0038:25"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
+--- a/drivers/clk/ti/clk-54xx.c
++++ b/drivers/clk/ti/clk-54xx.c
+@@ -50,7 +50,7 @@ static const struct omap_clkctrl_bit_data omap5_aess_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_dmic_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0018:26",
++	"abe-clkctrl:0018:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -70,7 +70,7 @@ static const struct omap_clkctrl_bit_data omap5_dmic_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_mcbsp1_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0028:26",
++	"abe-clkctrl:0028:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -83,7 +83,7 @@ static const struct omap_clkctrl_bit_data omap5_mcbsp1_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap5_mcbsp2_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0030:26",
++	"abe-clkctrl:0030:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -96,7 +96,7 @@ static const struct omap_clkctrl_bit_data omap5_mcbsp2_bit_data[] __initconst =
+ };
+ 
+ static const char * const omap5_mcbsp3_gfclk_parents[] __initconst = {
+-	"abe_cm:clk:0038:26",
++	"abe-clkctrl:0038:26",
+ 	"pad_clks_ck",
+ 	"slimbus_clk",
+ 	NULL,
+@@ -136,16 +136,16 @@ static const struct omap_clkctrl_bit_data omap5_timer8_bit_data[] __initconst =
+ 
+ static const struct omap_clkctrl_reg_data omap5_abe_clkctrl_regs[] __initconst = {
+ 	{ OMAP5_L4_ABE_CLKCTRL, NULL, 0, "abe_iclk" },
+-	{ OMAP5_AESS_CLKCTRL, omap5_aess_bit_data, CLKF_SW_SUP, "abe_cm:clk:0008:24" },
++	{ OMAP5_AESS_CLKCTRL, omap5_aess_bit_data, CLKF_SW_SUP, "abe-clkctrl:0008:24" },
+ 	{ OMAP5_MCPDM_CLKCTRL, NULL, CLKF_SW_SUP, "pad_clks_ck" },
+-	{ OMAP5_DMIC_CLKCTRL, omap5_dmic_bit_data, CLKF_SW_SUP, "abe_cm:clk:0018:24" },
+-	{ OMAP5_MCBSP1_CLKCTRL, omap5_mcbsp1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0028:24" },
+-	{ OMAP5_MCBSP2_CLKCTRL, omap5_mcbsp2_bit_data, CLKF_SW_SUP, "abe_cm:clk:0030:24" },
+-	{ OMAP5_MCBSP3_CLKCTRL, omap5_mcbsp3_bit_data, CLKF_SW_SUP, "abe_cm:clk:0038:24" },
+-	{ OMAP5_TIMER5_CLKCTRL, omap5_timer5_bit_data, CLKF_SW_SUP, "abe_cm:clk:0048:24" },
+-	{ OMAP5_TIMER6_CLKCTRL, omap5_timer6_bit_data, CLKF_SW_SUP, "abe_cm:clk:0050:24" },
+-	{ OMAP5_TIMER7_CLKCTRL, omap5_timer7_bit_data, CLKF_SW_SUP, "abe_cm:clk:0058:24" },
+-	{ OMAP5_TIMER8_CLKCTRL, omap5_timer8_bit_data, CLKF_SW_SUP, "abe_cm:clk:0060:24" },
++	{ OMAP5_DMIC_CLKCTRL, omap5_dmic_bit_data, CLKF_SW_SUP, "abe-clkctrl:0018:24" },
++	{ OMAP5_MCBSP1_CLKCTRL, omap5_mcbsp1_bit_data, CLKF_SW_SUP, "abe-clkctrl:0028:24" },
++	{ OMAP5_MCBSP2_CLKCTRL, omap5_mcbsp2_bit_data, CLKF_SW_SUP, "abe-clkctrl:0030:24" },
++	{ OMAP5_MCBSP3_CLKCTRL, omap5_mcbsp3_bit_data, CLKF_SW_SUP, "abe-clkctrl:0038:24" },
++	{ OMAP5_TIMER5_CLKCTRL, omap5_timer5_bit_data, CLKF_SW_SUP, "abe-clkctrl:0048:24" },
++	{ OMAP5_TIMER6_CLKCTRL, omap5_timer6_bit_data, CLKF_SW_SUP, "abe-clkctrl:0050:24" },
++	{ OMAP5_TIMER7_CLKCTRL, omap5_timer7_bit_data, CLKF_SW_SUP, "abe-clkctrl:0058:24" },
++	{ OMAP5_TIMER8_CLKCTRL, omap5_timer8_bit_data, CLKF_SW_SUP, "abe-clkctrl:0060:24" },
+ 	{ 0 },
+ };
+ 
+@@ -268,12 +268,12 @@ static const struct omap_clkctrl_bit_data omap5_gpio8_bit_data[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_l4per_clkctrl_regs[] __initconst = {
+-	{ OMAP5_TIMER10_CLKCTRL, omap5_timer10_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0008:24" },
+-	{ OMAP5_TIMER11_CLKCTRL, omap5_timer11_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0010:24" },
+-	{ OMAP5_TIMER2_CLKCTRL, omap5_timer2_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0018:24" },
+-	{ OMAP5_TIMER3_CLKCTRL, omap5_timer3_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0020:24" },
+-	{ OMAP5_TIMER4_CLKCTRL, omap5_timer4_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0028:24" },
+-	{ OMAP5_TIMER9_CLKCTRL, omap5_timer9_bit_data, CLKF_SW_SUP, "l4per_cm:clk:0030:24" },
++	{ OMAP5_TIMER10_CLKCTRL, omap5_timer10_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0008:24" },
++	{ OMAP5_TIMER11_CLKCTRL, omap5_timer11_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0010:24" },
++	{ OMAP5_TIMER2_CLKCTRL, omap5_timer2_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0018:24" },
++	{ OMAP5_TIMER3_CLKCTRL, omap5_timer3_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0020:24" },
++	{ OMAP5_TIMER4_CLKCTRL, omap5_timer4_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0028:24" },
++	{ OMAP5_TIMER9_CLKCTRL, omap5_timer9_bit_data, CLKF_SW_SUP, "l4per-clkctrl:0030:24" },
+ 	{ OMAP5_GPIO2_CLKCTRL, omap5_gpio2_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_GPIO3_CLKCTRL, omap5_gpio3_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_GPIO4_CLKCTRL, omap5_gpio4_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+@@ -345,7 +345,7 @@ static const struct omap_clkctrl_bit_data omap5_dss_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_dss_clkctrl_regs[] __initconst = {
+-	{ OMAP5_DSS_CORE_CLKCTRL, omap5_dss_core_bit_data, CLKF_SW_SUP, "dss_cm:clk:0000:8" },
++	{ OMAP5_DSS_CORE_CLKCTRL, omap5_dss_core_bit_data, CLKF_SW_SUP, "dss-clkctrl:0000:8" },
+ 	{ 0 },
+ };
+ 
+@@ -378,7 +378,7 @@ static const struct omap_clkctrl_bit_data omap5_gpu_core_bit_data[] __initconst
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_gpu_clkctrl_regs[] __initconst = {
+-	{ OMAP5_GPU_CLKCTRL, omap5_gpu_core_bit_data, CLKF_SW_SUP, "gpu_cm:clk:0000:24" },
++	{ OMAP5_GPU_CLKCTRL, omap5_gpu_core_bit_data, CLKF_SW_SUP, "gpu-clkctrl:0000:24" },
+ 	{ 0 },
+ };
+ 
+@@ -389,7 +389,7 @@ static const char * const omap5_mmc1_fclk_mux_parents[] __initconst = {
+ };
+ 
+ static const char * const omap5_mmc1_fclk_parents[] __initconst = {
+-	"l3init_cm:clk:0008:24",
++	"l3init-clkctrl:0008:24",
+ 	NULL,
+ };
+ 
+@@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data omap5_mmc1_bit_data[] __initconst = {
+ };
+ 
+ static const char * const omap5_mmc2_fclk_parents[] __initconst = {
+-	"l3init_cm:clk:0010:24",
++	"l3init-clkctrl:0010:24",
+ 	NULL,
+ };
+ 
+@@ -430,12 +430,12 @@ static const char * const omap5_usb_host_hs_hsic480m_p3_clk_parents[] __initcons
+ };
+ 
+ static const char * const omap5_usb_host_hs_utmi_p1_clk_parents[] __initconst = {
+-	"l3init_cm:clk:0038:24",
++	"l3init-clkctrl:0038:24",
+ 	NULL,
+ };
+ 
+ static const char * const omap5_usb_host_hs_utmi_p2_clk_parents[] __initconst = {
+-	"l3init_cm:clk:0038:25",
++	"l3init-clkctrl:0038:25",
+ 	NULL,
+ };
+ 
+@@ -494,8 +494,8 @@ static const struct omap_clkctrl_bit_data omap5_usb_otg_ss_bit_data[] __initcons
+ };
+ 
+ static const struct omap_clkctrl_reg_data omap5_l3init_clkctrl_regs[] __initconst = {
+-	{ OMAP5_MMC1_CLKCTRL, omap5_mmc1_bit_data, CLKF_SW_SUP, "l3init_cm:clk:0008:25" },
+-	{ OMAP5_MMC2_CLKCTRL, omap5_mmc2_bit_data, CLKF_SW_SUP, "l3init_cm:clk:0010:25" },
++	{ OMAP5_MMC1_CLKCTRL, omap5_mmc1_bit_data, CLKF_SW_SUP, "l3init-clkctrl:0008:25" },
++	{ OMAP5_MMC2_CLKCTRL, omap5_mmc2_bit_data, CLKF_SW_SUP, "l3init-clkctrl:0010:25" },
+ 	{ OMAP5_USB_HOST_HS_CLKCTRL, omap5_usb_host_hs_bit_data, CLKF_SW_SUP, "l3init_60m_fclk" },
+ 	{ OMAP5_USB_TLL_HS_CLKCTRL, omap5_usb_tll_hs_bit_data, CLKF_HW_SUP, "l4_root_clk_div" },
+ 	{ OMAP5_SATA_CLKCTRL, omap5_sata_bit_data, CLKF_SW_SUP, "func_48m_fclk" },
+@@ -519,7 +519,7 @@ static const struct omap_clkctrl_reg_data omap5_wkupaon_clkctrl_regs[] __initcon
+ 	{ OMAP5_L4_WKUP_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ OMAP5_WD_TIMER2_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ OMAP5_GPIO1_CLKCTRL, omap5_gpio1_bit_data, CLKF_HW_SUP, "wkupaon_iclk_mux" },
+-	{ OMAP5_TIMER1_CLKCTRL, omap5_timer1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0020:24" },
++	{ OMAP5_TIMER1_CLKCTRL, omap5_timer1_bit_data, CLKF_SW_SUP, "wkupaon-clkctrl:0020:24" },
+ 	{ OMAP5_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ OMAP5_KBD_CLKCTRL, NULL, CLKF_SW_SUP, "sys_32k_ck" },
+ 	{ 0 },
+@@ -549,58 +549,58 @@ const struct omap_clkctrl_data omap5_clkctrl_data[] __initconst = {
+ static struct ti_dt_clk omap54xx_clks[] = {
+ 	DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
+ 	DT_CLK(NULL, "sys_clkin_ck", "sys_clkin"),
+-	DT_CLK(NULL, "dmic_gfclk", "abe_cm:0018:24"),
+-	DT_CLK(NULL, "dmic_sync_mux_ck", "abe_cm:0018:26"),
+-	DT_CLK(NULL, "dss_32khz_clk", "dss_cm:0000:11"),
+-	DT_CLK(NULL, "dss_48mhz_clk", "dss_cm:0000:9"),
+-	DT_CLK(NULL, "dss_dss_clk", "dss_cm:0000:8"),
+-	DT_CLK(NULL, "dss_sys_clk", "dss_cm:0000:10"),
+-	DT_CLK(NULL, "gpio1_dbclk", "wkupaon_cm:0018:8"),
+-	DT_CLK(NULL, "gpio2_dbclk", "l4per_cm:0040:8"),
+-	DT_CLK(NULL, "gpio3_dbclk", "l4per_cm:0048:8"),
+-	DT_CLK(NULL, "gpio4_dbclk", "l4per_cm:0050:8"),
+-	DT_CLK(NULL, "gpio5_dbclk", "l4per_cm:0058:8"),
+-	DT_CLK(NULL, "gpio6_dbclk", "l4per_cm:0060:8"),
+-	DT_CLK(NULL, "gpio7_dbclk", "l4per_cm:00f0:8"),
+-	DT_CLK(NULL, "gpio8_dbclk", "l4per_cm:00f8:8"),
+-	DT_CLK(NULL, "mcbsp1_gfclk", "abe_cm:0028:24"),
+-	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe_cm:0028:26"),
+-	DT_CLK(NULL, "mcbsp2_gfclk", "abe_cm:0030:24"),
+-	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe_cm:0030:26"),
+-	DT_CLK(NULL, "mcbsp3_gfclk", "abe_cm:0038:24"),
+-	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe_cm:0038:26"),
+-	DT_CLK(NULL, "mmc1_32khz_clk", "l3init_cm:0008:8"),
+-	DT_CLK(NULL, "mmc1_fclk", "l3init_cm:0008:25"),
+-	DT_CLK(NULL, "mmc1_fclk_mux", "l3init_cm:0008:24"),
+-	DT_CLK(NULL, "mmc2_fclk", "l3init_cm:0010:25"),
+-	DT_CLK(NULL, "mmc2_fclk_mux", "l3init_cm:0010:24"),
+-	DT_CLK(NULL, "sata_ref_clk", "l3init_cm:0068:8"),
+-	DT_CLK(NULL, "timer10_gfclk_mux", "l4per_cm:0008:24"),
+-	DT_CLK(NULL, "timer11_gfclk_mux", "l4per_cm:0010:24"),
+-	DT_CLK(NULL, "timer1_gfclk_mux", "wkupaon_cm:0020:24"),
+-	DT_CLK(NULL, "timer2_gfclk_mux", "l4per_cm:0018:24"),
+-	DT_CLK(NULL, "timer3_gfclk_mux", "l4per_cm:0020:24"),
+-	DT_CLK(NULL, "timer4_gfclk_mux", "l4per_cm:0028:24"),
+-	DT_CLK(NULL, "timer5_gfclk_mux", "abe_cm:0048:24"),
+-	DT_CLK(NULL, "timer6_gfclk_mux", "abe_cm:0050:24"),
+-	DT_CLK(NULL, "timer7_gfclk_mux", "abe_cm:0058:24"),
+-	DT_CLK(NULL, "timer8_gfclk_mux", "abe_cm:0060:24"),
+-	DT_CLK(NULL, "timer9_gfclk_mux", "l4per_cm:0030:24"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3init_cm:0038:13"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3init_cm:0038:14"),
+-	DT_CLK(NULL, "usb_host_hs_hsic480m_p3_clk", "l3init_cm:0038:7"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3init_cm:0038:11"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3init_cm:0038:12"),
+-	DT_CLK(NULL, "usb_host_hs_hsic60m_p3_clk", "l3init_cm:0038:6"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3init_cm:0038:8"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3init_cm:0038:9"),
+-	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3init_cm:0038:10"),
+-	DT_CLK(NULL, "usb_otg_ss_refclk960m", "l3init_cm:00d0:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3init_cm:0048:8"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3init_cm:0048:9"),
+-	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3init_cm:0048:10"),
+-	DT_CLK(NULL, "utmi_p1_gfclk", "l3init_cm:0038:24"),
+-	DT_CLK(NULL, "utmi_p2_gfclk", "l3init_cm:0038:25"),
++	DT_CLK(NULL, "dmic_gfclk", "abe-clkctrl:0018:24"),
++	DT_CLK(NULL, "dmic_sync_mux_ck", "abe-clkctrl:0018:26"),
++	DT_CLK(NULL, "dss_32khz_clk", "dss-clkctrl:0000:11"),
++	DT_CLK(NULL, "dss_48mhz_clk", "dss-clkctrl:0000:9"),
++	DT_CLK(NULL, "dss_dss_clk", "dss-clkctrl:0000:8"),
++	DT_CLK(NULL, "dss_sys_clk", "dss-clkctrl:0000:10"),
++	DT_CLK(NULL, "gpio1_dbclk", "wkupaon-clkctrl:0018:8"),
++	DT_CLK(NULL, "gpio2_dbclk", "l4per-clkctrl:0040:8"),
++	DT_CLK(NULL, "gpio3_dbclk", "l4per-clkctrl:0048:8"),
++	DT_CLK(NULL, "gpio4_dbclk", "l4per-clkctrl:0050:8"),
++	DT_CLK(NULL, "gpio5_dbclk", "l4per-clkctrl:0058:8"),
++	DT_CLK(NULL, "gpio6_dbclk", "l4per-clkctrl:0060:8"),
++	DT_CLK(NULL, "gpio7_dbclk", "l4per-clkctrl:00f0:8"),
++	DT_CLK(NULL, "gpio8_dbclk", "l4per-clkctrl:00f8:8"),
++	DT_CLK(NULL, "mcbsp1_gfclk", "abe-clkctrl:0028:24"),
++	DT_CLK(NULL, "mcbsp1_sync_mux_ck", "abe-clkctrl:0028:26"),
++	DT_CLK(NULL, "mcbsp2_gfclk", "abe-clkctrl:0030:24"),
++	DT_CLK(NULL, "mcbsp2_sync_mux_ck", "abe-clkctrl:0030:26"),
++	DT_CLK(NULL, "mcbsp3_gfclk", "abe-clkctrl:0038:24"),
++	DT_CLK(NULL, "mcbsp3_sync_mux_ck", "abe-clkctrl:0038:26"),
++	DT_CLK(NULL, "mmc1_32khz_clk", "l3init-clkctrl:0008:8"),
++	DT_CLK(NULL, "mmc1_fclk", "l3init-clkctrl:0008:25"),
++	DT_CLK(NULL, "mmc1_fclk_mux", "l3init-clkctrl:0008:24"),
++	DT_CLK(NULL, "mmc2_fclk", "l3init-clkctrl:0010:25"),
++	DT_CLK(NULL, "mmc2_fclk_mux", "l3init-clkctrl:0010:24"),
++	DT_CLK(NULL, "sata_ref_clk", "l3init-clkctrl:0068:8"),
++	DT_CLK(NULL, "timer10_gfclk_mux", "l4per-clkctrl:0008:24"),
++	DT_CLK(NULL, "timer11_gfclk_mux", "l4per-clkctrl:0010:24"),
++	DT_CLK(NULL, "timer1_gfclk_mux", "wkupaon-clkctrl:0020:24"),
++	DT_CLK(NULL, "timer2_gfclk_mux", "l4per-clkctrl:0018:24"),
++	DT_CLK(NULL, "timer3_gfclk_mux", "l4per-clkctrl:0020:24"),
++	DT_CLK(NULL, "timer4_gfclk_mux", "l4per-clkctrl:0028:24"),
++	DT_CLK(NULL, "timer5_gfclk_mux", "abe-clkctrl:0048:24"),
++	DT_CLK(NULL, "timer6_gfclk_mux", "abe-clkctrl:0050:24"),
++	DT_CLK(NULL, "timer7_gfclk_mux", "abe-clkctrl:0058:24"),
++	DT_CLK(NULL, "timer8_gfclk_mux", "abe-clkctrl:0060:24"),
++	DT_CLK(NULL, "timer9_gfclk_mux", "l4per-clkctrl:0030:24"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p1_clk", "l3init-clkctrl:0038:13"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p2_clk", "l3init-clkctrl:0038:14"),
++	DT_CLK(NULL, "usb_host_hs_hsic480m_p3_clk", "l3init-clkctrl:0038:7"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p1_clk", "l3init-clkctrl:0038:11"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p2_clk", "l3init-clkctrl:0038:12"),
++	DT_CLK(NULL, "usb_host_hs_hsic60m_p3_clk", "l3init-clkctrl:0038:6"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p1_clk", "l3init-clkctrl:0038:8"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p2_clk", "l3init-clkctrl:0038:9"),
++	DT_CLK(NULL, "usb_host_hs_utmi_p3_clk", "l3init-clkctrl:0038:10"),
++	DT_CLK(NULL, "usb_otg_ss_refclk960m", "l3init-clkctrl:00d0:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch0_clk", "l3init-clkctrl:0048:8"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch1_clk", "l3init-clkctrl:0048:9"),
++	DT_CLK(NULL, "usb_tll_hs_usb_ch2_clk", "l3init-clkctrl:0048:10"),
++	DT_CLK(NULL, "utmi_p1_gfclk", "l3init-clkctrl:0038:24"),
++	DT_CLK(NULL, "utmi_p2_gfclk", "l3init-clkctrl:0038:25"),
+ 	{ .node_name = NULL },
+ };
+ 
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -528,10 +528,6 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	char *c;
+ 	u16 soc_mask = 0;
+ 
+-	if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
+-	    of_node_name_eq(node, "clk"))
+-		ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
+-
+ 	addrp = of_get_address(node, 0, NULL, NULL);
+ 	addr = (u32)of_translate_address(node, addrp);
+ 
 -- 
-Without deviation from the norm, progress is not possible.
+2.36.1
