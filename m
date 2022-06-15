@@ -2,122 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 683EEC43334
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 08:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22D7C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 08:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240275AbiFOIZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 04:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58586 "EHLO
+        id S1343541AbiFOIha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 04:37:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232170AbiFOIZj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 04:25:39 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BBB237C2
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 01:25:37 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id bg6so21829461ejb.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 01:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=42THmoY9ZwUf7E9pXMyKG0cEp/ni0i9p0WfpREB2n10=;
-        b=IzXbdm+MSDrAUM/lNjl81RFo6yj1cN4/UWpTi2VyoC8cuXokTBY/XslJ6f8EgwlHHR
-         Nqv+vLJCcvriZm89d5qLtZ9vWefp92+txsJV3xA0TJKJRWaBC0X0xB7n8kwB+ZjvEjFd
-         UwuD1M6X9yi0TmtYRspTDQSK/ydvBdHIkBXUA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=42THmoY9ZwUf7E9pXMyKG0cEp/ni0i9p0WfpREB2n10=;
-        b=GefgzUifPrHz/1EtBi8xR4C80EyrVzo82kDPaqpMc33IM1rD8vEXnD1nCrYBGAYHv3
-         B4Ytfm6T9ksPFefbjXPngbEBUP4TxfuIksPYE9HqQGV/WTsV/qmFLpm3rI7wjo3/0Mq3
-         xKDe3/yuzFnX0KUhsz5PIskPltdYhXGfcAzE2g8u08g8wiwzAhmk5F6EhGVzEcZF8095
-         C9bf72YIOgu6n1X09nQBVeWwzRJUuBvnZ/h9Lq/UrMjlTCx4Wswo/XgylD2r9VBCPZDh
-         J3Dk/lEd1mQav8h6Ue8WpwwoTf+4Vy8y/xQH0gJ6WgpHlg6QaM5QltypF96SZrbbNSwJ
-         V5OA==
-X-Gm-Message-State: AJIora81f5jidMn507k9moTz44KikyjEcaSm5BSTvg32Pkuqw+aFhTPT
-        4b9blHF8SfIvP0g1wAF0bSrF8rENEpYc3a/BAZ0FPjZMbruuJA==
-X-Google-Smtp-Source: ABdhPJzwhpiEvPHgnYKirBM5dhwCXY18u70ilKxIbysLJLQFgRqgBSktW8XVTVC7cX35FBuWGfmGK84g72VBIQQ80rQ=
-X-Received: by 2002:a17:906:a10e:b0:6f3:e70b:b572 with SMTP id
- t14-20020a170906a10e00b006f3e70bb572mr7595326ejy.546.1655281536262; Wed, 15
- Jun 2022 01:25:36 -0700 (PDT)
+        with ESMTP id S245226AbiFOIhM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 04:37:12 -0400
+X-Greylist: delayed 417 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Jun 2022 01:37:10 PDT
+Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9174A23BFA;
+        Wed, 15 Jun 2022 01:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=u6YQg
+        HrK1S8KKnarhxByDY6BuIzlDp0AO/shcqnjQyY=; b=ePY+hZkbzAva3Cg41mAP0
+        Wj2Ku7jTIbd7N/omPzCMCbZL48b+En0mdGubI1p1H3WPCyD9KzlxaDfHWkxtQQf2
+        W7PxuxKXYG2VaE+xKz6Yu+ivdhoJczPgDaFXy2rfipliFXKDw2UyvRDjWLotCEvG
+        2YABC5MPr16AiPT3xDZdgI=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp1 (Coremail) with SMTP id C8mowABXXvbtmaliW+ubEQ--.53231S2;
+        Wed, 15 Jun 2022 16:35:59 +0800 (CST)
+From:   heliang <windhl@126.com>
+To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, windhl@126.com
+Subject: [PATCH] clk: tegra: Add missing of_node_put in clk-tegra124.c
+Date:   Wed, 15 Jun 2022 16:35:56 +0800
+Message-Id: <20220615083556.3960821-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Wed, 15 Jun 2022 16:25:25 +0800
-Message-ID: <CAGXv+5G9j_XVhuH2XO8g0YQn=NT3Typ0OYkKtr7qHkZM9XKpwQ@mail.gmail.com>
-Subject: Dealing with temporary clock parents for PLL consumers?
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        matthias.bgg@kernel.org
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8mowABXXvbtmaliW+ubEQ--.53231S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GFyrKF4xGw1xZw1xCF15Arb_yoW3Wrb_XF
+        15XryxXw15Can3AFsxur13ZryIyr1fWrsYqFWSya17Gw18Zr4UWrs0vrn2k3srW39rWFW3
+        Ja4kKw40k34YvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREQJ5DUUUUU==
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3A8hF1pEDuVFTgAAsb
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+In tegra124_132_clock_init_pre, of_find_matching_node() will return
+a node pointer with refcount incremented. We should use of_node_put()
+when it is not used anymore.
 
-As part of getting Panfrost to support devfreq on MediaTek SoCs, we've
-been trying to internalize PLL consumer reparenting during PLL
-reconfiguration into the clock drivers. This was previously done by
-the individual clock consumer hardware drivers, Panfrost in this case.
+Signed-off-by: heliang <windhl@126.com>
+---
+ drivers/clk/tegra/clk-tegra124.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I posted some patches for temporarily reparenting PLL consumers while the
-PLL is reconfigured on MediaTek platforms [1]. This is based on a similar
-mechanism in the Allwinner sunxi-ng clock driver. This works OK for the
-MT8183, but as Angelo recently discovered, there are complications for
-MT8192 and MT8195 due to how the clock tree is.
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 934520aab6e3..a9d4efcef2d4 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
+ 	}
+ 
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		WARN_ON(1);
+-- 
+2.25.1
 
-On MT8183, the clock tree for the GPU looks like this:
-
-  <XTAL>     ----------------\
-  <GPU PLL>  ------- <gate>--\\ <mux> --> GPU
-  <stable PLL 1>  -- <gate>--//
-  <stable PLL 2>  -- <gate>--/
-
-Since we temporarily reparent the GPU to the XTAL, everything is OK.
-
-On MT8192 / MT8195, the clock tree is more complicated with a fast mux:
-(same parent with different dividers omitted)
-
-  <GPU PLL>  <gate> ----------------------------\
-                                                 \
-  <XTAL>     ---------------\                     <fast mux> --> GPU
-  <stable PLL 1> -- <gate> --- <mux> -- <gate> --/
-  <stable PLL 2> -- <gate> -/
-
-As shown, we now have a gate in the temporary clock parent (the other side
-of the fast mux) that needs to be ungated. The question is how do we deal
-with this, since the temporary muxing away from the GPU PLL is done without
-updating the clk core's view of the clock tree.
-
-Angelo and I discussed various solutions:
-
-a) We could mark it as a critical clock so that it's always ungated,
-   but that seems a bit heavy handed.
-
-b) (by me) Add clk_prepare_enable() / clk_disable_unprepare() calls in
-   the clk notifier that handles the temporary muxing. This might trip
-   up the clk core in unexpected ways.
-
-c) (by Angelo) Tie the temporary clock parent to the GPU's power domain.
-   This means the clock is only enabled when the GPU is in use. I think
-   this is a bit hackish though.
-
-d) Add support for such a mechanism to the clock core. I assume this is
-   a common requirement across platforms, as PLLs tend to overshoot when
-   being reconfigured on the fly, and can cause glitches in their consumers.
-
-We'd like to get opinions from folks about:
-
-1. Whether (b) is acceptable from the clk subsystem's perspective.
-2. Whether (c) is acceptable in the platform maintainer's view.
-3. Whether there is interest in (d), assuming it is doable.
-
-
-Thanks
-ChenYu
-
-[1] https://lore.kernel.org/linux-mediatek/20220523085923.1430470-1-wenst@chromium.org/
