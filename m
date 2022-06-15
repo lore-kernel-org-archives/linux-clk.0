@@ -2,97 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 198A7CCA473
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 20:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E456DC43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 20:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346265AbiFOUd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 16:33:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57018 "EHLO
+        id S1349521AbiFOUxt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 16:53:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347017AbiFOUdc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 16:33:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB432AE22;
-        Wed, 15 Jun 2022 13:33:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BAC41615FA;
-        Wed, 15 Jun 2022 20:33:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4C3C3411A;
-        Wed, 15 Jun 2022 20:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655325211;
-        bh=dZSh/1EPxFzyVUoIKdcYesKaX0mdqi8N1p0fMT7k7hI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UNkgnuxGm+fwXNgLv/MQ2bTSd+HJ+1VURAL1vwRCKqqJs8qibd5WTFEtYsZMrlZd5
-         oZ/bw08aZ0tqFJJUQUFVotdtFlLFmeGkICY4KKW2RFARHPoQVftWBjeNIMgBmqZr6l
-         3nkFPsuHAQv0V+VMMsdlJu2euzlxMFjcmFmlhma1QETimNSLofqoIPCVssMyNXIEF8
-         6kNy6uaeE2hZr/QjpA40vTzz0gzx50DcqF+nv9WSAWtKFcxYuomDorAoxZjwlInLjC
-         FY/JVkEZ7CpFKYNcues//I0OrXVSE0YsSxvEq/Ox+5GamCdqqoEf6vzNaigHi60N0R
-         VyNErqTrNB03Q==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1348984AbiFOUxs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 16:53:48 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A3B54FAB
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 13:53:46 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id w21so12543570pfc.0
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 13:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=dqUZddHd2eUD1yS52Gl+Px29FvkVippx8mvYDs3Nfp8=;
+        b=oFBSWa5N5hISjc6dUgBXrl+Fi95HxIWz6sU0iEIXft5yBHzixVAob+7keHBHVtI8bk
+         e5mZ/sXI+ax27roSpAiWEQ9TgGihz2l2U7+D87iAj4CgPM+JMMKh0hQ6AAnL+UMkPeUd
+         Vqy/KUUW81mNLeV096MwdOSSUIKeoBuuu2FUzoJwSrEUaWMzj8YIGk3eHHy0Jv9hACL5
+         7pLmRONbvAprOzld5Z32HqRfP3U/j2W4xDFjRx4KrGDe4AzgaZYC6268zC8Bi8snJX2F
+         8B6pN4nI+fWaCApsLhalJRuLIpBIOvB79jHwdp58skjrLVNVf3B3ECibZdjspfqu5275
+         VSYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dqUZddHd2eUD1yS52Gl+Px29FvkVippx8mvYDs3Nfp8=;
+        b=b+KghQArVjm1InkeFo0EbaipDQ0B5OFNl8ljMw+GeV5Ve+0UQ+F1pFzQ26/ahnQFq8
+         eBZr8CMj2C5J83ofnpSm+d67CdxoxGSzSQRGxXpQGJy8wk4WBP5ZYFu5KAzB9RVqGWQN
+         wViClHGicpUjk9OkJb/lvPSWcrDSrZ1VNTeWG2AHE0j44Xtqbd0sJlD/HvMz5SXW8J/6
+         uI08ayzQWb48wPGAuMbov2OpQOvJaLqOOxEz0+/Jdt8/WekOiyaEDcsZxQRsc5p4Cz4R
+         dWxcds1mqJ1ACk8ry8U/PzNJ3KtOPRKRyzJXat78V6x+7eON1sn9j96v5cUIwrsZyXfY
+         B0MQ==
+X-Gm-Message-State: AJIora+8P2lZnLcec0QXcx0m2EQ8p2ceMkQ3RB5mrUaRZ5wEhDq76mRa
+        UZuppi9r8LLxHvrwivtylEqFCg==
+X-Google-Smtp-Source: AGRyM1uylt1sMxbqAyk47BNBSqxPP7neT6hLMSku9E/k6xbp/vkxQR34uadVNp9ZTysVcsegIEucZw==
+X-Received: by 2002:a05:6a00:1811:b0:51b:fec8:be7b with SMTP id y17-20020a056a00181100b0051bfec8be7bmr1450763pfa.22.1655326426283;
+        Wed, 15 Jun 2022 13:53:46 -0700 (PDT)
+Received: from [172.22.33.138] ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id a7-20020a170902710700b00168a4ee4dc7sm78602pll.32.2022.06.15.13.53.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 13:53:46 -0700 (PDT)
+Message-ID: <044dacdb-7d11-8c68-3fb7-ebd67621225e@linaro.org>
+Date:   Wed, 15 Jun 2022 13:53:44 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220517235919.200375-2-marex@denx.de>
-References: <20220517235919.200375-1-marex@denx.de> <20220517235919.200375-2-marex@denx.de>
-Subject: Re: [PATCH v3 2/2] clk: Introduce 'critical-clocks' property
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek Vasut <marex@denx.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/3] dt-bindings: clock: add pcm reset for ipq806x lcc
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
-Date:   Wed, 15 Jun 2022 13:33:29 -0700
-User-Agent: alot/0.10
-Message-Id: <20220615203331.1E4C3C3411A@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20220615163408.30154-1-ansuelsmth@gmail.com>
+ <a92fe431-a995-4c7f-b90b-8e80298bc71a@linaro.org>
+ <62aa1b41.1c69fb81.95632.5b71@mx.google.com>
+ <717ad899-31ad-5e70-b299-ffb8ca287071@linaro.org>
+ <62aa1dd0.1c69fb81.b9887.676e@mx.google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <62aa1dd0.1c69fb81.b9887.676e@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2022-05-17 16:59:19)
-> Some platforms require select clock to be always running, e.g. because
-> those clock supply vital devices which are not otherwise attached to
-> the system and thus do not have a matching DT node and clock consumer.
->=20
-> An example is a system where the SoC serves as a crystal oscillator
-> replacement for a programmable logic device. The "critical-clocks"
-> property of a clock controller allows listing clock which must never
-> be turned off.
->=20
-> Clock listed in the "critical-clocks" property may have other consumers
-> in DT, listing the clock in "critical-clocks" only assures those clock
-> are never turned off, and none of these optional additional consumers
-> can turn the clock off either. This is achieved by adding CLK_IS_CRITICAL
-> flag to these critical clock.
->=20
-> This flag has thus far been added to select clock by hard-coding it in
-> various clock drivers, this patch provides generic DT interface to add
-> the flag to arbitrary clock that may be critical.
->=20
-> The implementation is modeled after "protected-clocks", except the protec=
-ted
-> clock property is currently driver specific. This patch attempts to provi=
-de
-> a generic implementation of "critical-clocks" instead.
->=20
-> Unlike "assigned-clocks", the "critical-clocks" must be parsed much earli=
-er
-> in __clk_register() to assign CLK_IS_CRITICAL flag to clk_init_data .flags
-> field.
+On 15/06/2022 10:04, Ansuel Smith wrote:
+> On Wed, Jun 15, 2022 at 10:50:17AM -0700, Krzysztof Kozlowski wrote:
+>> On 15/06/2022 09:53, Ansuel Smith wrote:
+>>> On Wed, Jun 15, 2022 at 10:43:10AM -0700, Krzysztof Kozlowski wrote:
+>>>> On 15/06/2022 09:34, Christian 'Ansuel' Marangi wrote:
+>>>>> Add pcm reset define for ipq806x lcc.
+>>>>>
+>>>>> Signed-off-by: Christian 'Ansuel' Marangi <ansuelsmth@gmail.com>
+>>>> To prevent any confusion about identities (we have strict rules about
+>>>> these), I need to ask - who uses this email address?
+>>>>
+>>>> https://lore.kernel.org/all/?q=ansuelsmth%40gmail.com
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>> Same person. Started using extended name, wanted to do this change from
+>>> a long time but all the patch were already pushed so I couldn't change
+>>> it since they were already proposed and on the various mailing list.
+>>
+>> Previously "Ansuel Smith" was used entirely, without any parts of this
+>> name. Here 'Ansuel' appears in quotes, which usually is used for nicknames.
+>>
+>> Is "Ansuel Smith" your real name or a nickname? What do you mean by
+>> "extended name"?
+>>
+> 
+> Ansuel is second name. Smith is not real... (sorry)
+> So with extendend name I mean full name + second name that is
+> Christian Ansuel Marangi.
+> 
+> Honestly it's a very stupid mistake by me not using the full name from
+> the start.
 
-Why? Instead of using the CLK_IS_CRITICAL flag to enable at registration
-time for this, why can't we parse the property when a clk provider is
-registered and enable those clks manually and then set the
-CLK_IS_CRITICAL flag? Ideally we don't implement another clk_op for
-this.
+Not-real names are no accepted [1] and since we cannot validate this, we
+trust. Quite a lot in our process depends on trust. Once trust is gone,
+it's not easy to get it back... Worth watching - Trust and the Linux
+development model; Greg KH [2].
 
->=20
-> The new match_clkspec() callback is used to determine whether struct clk_=
-hw
-> that is currently being registered matches the clock specifier in the DT
-> "critical-clocks" property, and if so, then the CLK_IS_CRITICAL is added =
-to
-> these newly registered clock. This callback can only be driver specific.
->=20
-> Signed-off-by: Marek Vasut <marex@denx.de>
+Anyway I have no clue which identity to trust...
+
+
+[1]
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html?highlight=certificate#sign-your-work-the-developer-s-certificate-of-origin
+
+[2] https://www.youtube.com/watch?v=nhJqaZT94z0&t=7044s&ab_channel=hupstream
+
+Best regards,
+Krzysztof
