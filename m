@@ -2,145 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB4FC43334
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 21:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD09C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 21:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350216AbiFOVcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 17:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55278 "EHLO
+        id S239284AbiFOVdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 17:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347869AbiFOVcF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 17:32:05 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0167A562F0;
-        Wed, 15 Jun 2022 14:32:03 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id o16so17006443wra.4;
-        Wed, 15 Jun 2022 14:32:03 -0700 (PDT)
+        with ESMTP id S1349738AbiFOVdc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 17:33:32 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD3E8562F3
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 14:33:31 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id m32-20020a05600c3b2000b0039756bb41f2so1782545wms.3
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 14:33:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=QopEfhTkFlF6asUqaeewrIqz9LEOWIA0DIGY0C56DCA=;
-        b=NHVyVE06MIrOuTx88mvD/5kFBj4tSiOZIt3qtlKYy9iWIRYmJdctsXy0XbIYXcEpKY
-         /am8V/tQO3aKJWF0s26guj2RzFwKQixfXcxPr8LVMHGwfZDFaSrJdwnGLROTb+lwjIAx
-         YLwSHnQGlau80zz+OtIahw3vBwTCNUKzR4ic51PkMKUhhgPY9ZYGJu3qIggam92ErT0b
-         grWKbkiB44I8P2Mu7HUH5UwuJZnByT3AaCpnjHeKaa/sRKLxY97yzZOH5GGB53T1eR8z
-         oflE5XKAbk2VlORfVNH5xIcmTsyVfnceGs1KcS3nfzFHn+7oArFIFzZa3nHo0j5tQb8v
-         EH8Q==
+        bh=FHCgMR0zC6073KkKzBA7+KuYMf8m8qDzlw0gsozoQIE=;
+        b=W2QVbbAYYu7mWgIYle5tHxbX0FLapzLXF0sLdVCrI227bEvunK2SICl7MLBavrSx2d
+         3YtGMuLqfoJxUYbi8NDEmBV4lRqvx9YldMl4ezfeHU/o8AzdfmTiIPuczRjptgv9DeVC
+         4Jj5JCdPRvJd6aN1vSahO0ukJZEkwpFvicoYYS+DT0FcjX/T2BjxebQr3VhqUI12pG6K
+         uTt+XyUe6BIXpd26MxXZKtzBg5QjrxKLd961Ho7/pwd6zmckQZkGqEtWG78yWEsQB5nq
+         3scVK+/lJmqz4DF1oQfodurvKt5dB4PQQSOo3gP9zQe1d1d6mHUhvrlWu+dGUbrtzefR
+         BnrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=QopEfhTkFlF6asUqaeewrIqz9LEOWIA0DIGY0C56DCA=;
-        b=vvLDYBiB5jwSxq5ZjPaC4jrINIVwSerpvq5ufZ7imYmWIcdnLGlHf+AJskzbEvVQcN
-         l1uVq1sQa/+GXPfHC6Q8SsHJNDv+3PSgUkm9Rb4My+FfMbfaeOQr1juk7QvKV6NlzRCp
-         l7+tvLGZTH1ed8vjgzbHtiInjuNAFSPTW1A8lZQm07M1wSdGSs8usa+rP1SIXuQLqLmm
-         p/h7ffF3gtR5aZEl+VHZjSXHd9j0KcLl3WRnOQpC8yJBvOl3xbtFZT6YB1G5LpsOMVny
-         XHEKVNHcK/SU05poI+OUbMa4QWI16ld3o8p9hS1G3UP9FFLpn04q1Ew5DnAZ5y4WRh6Y
-         LJLw==
-X-Gm-Message-State: AJIora+4rfAcGpRSigaFvZ7lKBvB9081XpO83a1b493MFbARFqYaErzc
-        BxnES++6vxVSsKH3wt5SRYhaNPZps64=
-X-Google-Smtp-Source: AGRyM1uYQR07hPtOK9I7b/8Q5GHYy1IwlK8jeKJC6zVVl4Tov0DYRWCl6mrkG+oodNfVhHKN1usclQ==
-X-Received: by 2002:a05:6000:1ac8:b0:218:64a2:9d00 with SMTP id i8-20020a0560001ac800b0021864a29d00mr1724239wry.272.1655328722163;
-        Wed, 15 Jun 2022 14:32:02 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id b3-20020adfe643000000b0020e6c51f070sm12931wrn.112.2022.06.15.14.32.00
+        bh=FHCgMR0zC6073KkKzBA7+KuYMf8m8qDzlw0gsozoQIE=;
+        b=reurhS0aa63o+vZsuJmQOd/3oJPiJDvLVp9YBTMtsd/6FoLftpFqJx9T4fOuOXudW3
+         lTlOaxNGX5uFG+TPzBOWZHosKKT4OTi6eHVKKleZ8cx84H1EbARbiGX96pOOPBpsaQEA
+         HgyXFSB7knjA2Vp1Jr5pAMHcGzH+e/Gm9KTsVHBvAegUHW/4XExL2C/nnr9fQbt8Ilj1
+         pNM7MriWjyfOEP60Cm3aq9VfTFFc7QZPidvLXZwXWA597XV//8vuC5K80c8aiqIWbVLV
+         5KRPjRFzCcoA1Pgr/1jNU8Lg1Mk3ajxMU52ECBb+axqQV1AECU7CcPaKrPBjJzVN4FAm
+         FTpQ==
+X-Gm-Message-State: AJIora/+bAbQzRqegCgpZlpgmcVt/t0QuUfwM1jCemZszRTB/J/vzfGA
+        mit13R2zrRgW7aIz755Jz4te1g==
+X-Google-Smtp-Source: AGRyM1svoZTNQUoMWyJhFy1AB6oHLf7bgOw37rJYJjPV9QaPGg6mHy//U6S7JSX4hvFGrav1+gSQUQ==
+X-Received: by 2002:a05:600c:d0:b0:39c:5927:3fa7 with SMTP id u16-20020a05600c00d000b0039c59273fa7mr1547005wmm.36.1655328810461;
+        Wed, 15 Jun 2022 14:33:30 -0700 (PDT)
+Received: from ryzen ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id z7-20020a1c4c07000000b0039c4b518df4sm209452wmf.5.2022.06.15.14.33.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 14:32:01 -0700 (PDT)
-Message-ID: <62aa4fd1.1c69fb81.8e536.0056@mx.google.com>
-X-Google-Original-Message-ID: <YqpP4bxiByTCxC9E@Ansuel-xps.>
-Date:   Wed, 15 Jun 2022 23:32:17 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: add pcm reset for ipq806x lcc
-References: <20220615163408.30154-1-ansuelsmth@gmail.com>
- <a92fe431-a995-4c7f-b90b-8e80298bc71a@linaro.org>
- <62aa1b41.1c69fb81.95632.5b71@mx.google.com>
- <717ad899-31ad-5e70-b299-ffb8ca287071@linaro.org>
- <62aa1dd0.1c69fb81.b9887.676e@mx.google.com>
- <044dacdb-7d11-8c68-3fb7-ebd67621225e@linaro.org>
+        Wed, 15 Jun 2022 14:33:30 -0700 (PDT)
+Date:   Thu, 16 Jun 2022 00:33:28 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/7] clk: imx93: correct nic_media parent
+Message-ID: <YqpQKMeAHwuOgb8U@ryzen>
+References: <20220609132902.3504651-1-peng.fan@oss.nxp.com>
+ <20220609132902.3504651-3-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <044dacdb-7d11-8c68-3fb7-ebd67621225e@linaro.org>
+In-Reply-To: <20220609132902.3504651-3-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 01:53:44PM -0700, Krzysztof Kozlowski wrote:
-> On 15/06/2022 10:04, Ansuel Smith wrote:
-> > On Wed, Jun 15, 2022 at 10:50:17AM -0700, Krzysztof Kozlowski wrote:
-> >> On 15/06/2022 09:53, Ansuel Smith wrote:
-> >>> On Wed, Jun 15, 2022 at 10:43:10AM -0700, Krzysztof Kozlowski wrote:
-> >>>> On 15/06/2022 09:34, Christian 'Ansuel' Marangi wrote:
-> >>>>> Add pcm reset define for ipq806x lcc.
-> >>>>>
-> >>>>> Signed-off-by: Christian 'Ansuel' Marangi <ansuelsmth@gmail.com>
-> >>>> To prevent any confusion about identities (we have strict rules about
-> >>>> these), I need to ask - who uses this email address?
-> >>>>
-> >>>> https://lore.kernel.org/all/?q=ansuelsmth%40gmail.com
-> >>>>
-> >>>> Best regards,
-> >>>> Krzysztof
-> >>>
-> >>> Same person. Started using extended name, wanted to do this change from
-> >>> a long time but all the patch were already pushed so I couldn't change
-> >>> it since they were already proposed and on the various mailing list.
-> >>
-> >> Previously "Ansuel Smith" was used entirely, without any parts of this
-> >> name. Here 'Ansuel' appears in quotes, which usually is used for nicknames.
-> >>
-> >> Is "Ansuel Smith" your real name or a nickname? What do you mean by
-> >> "extended name"?
-> >>
-> > 
-> > Ansuel is second name. Smith is not real... (sorry)
-> > So with extendend name I mean full name + second name that is
-> > Christian Ansuel Marangi.
-> > 
-> > Honestly it's a very stupid mistake by me not using the full name from
-> > the start.
-> 
-> Not-real names are no accepted [1] and since we cannot validate this, we
-> trust. Quite a lot in our process depends on trust. Once trust is gone,
-> it's not easy to get it back... Worth watching - Trust and the Linux
-> development model; Greg KH [2].
-> 
-> Anyway I have no clue which identity to trust...
+On 22-06-09 21:28:57, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 >
+> NIC_MEDIA sources from media_axi_root, not media_apb_root.
+>
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Again it's the same person, just a change in the name but I see your
-point. As suggested in the other patch I will just change to Christian
-Marangi sadly if necessary, hoping I regain trust in the future.
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Just as an info, as I pushed also other patch and some are with various
-revision, how to handle the Sob? Change it and put an alert in the
-version changelog or should I keep the old one?
-
-Again sorry for the mess but it had to be done, didn't think it caused
-that much problems :(
-
-> 
-> [1]
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html?highlight=certificate#sign-your-work-the-developer-s-certificate-of-origin
-> 
-> [2] https://www.youtube.com/watch?v=nhJqaZT94z0&t=7044s&ab_channel=hupstream
-> 
-> Best regards,
-> Krzysztof
-
-(if the concern is with understanding if I'm not stealing the identity
-of someone else, there must be a way to prove that, on github I sign
-every commit with the PGP key and I updated the name also there.)
-
--- 
-	Ansuel
+> ---
+>  drivers/clk/imx/clk-imx93.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 172cd56c9610..26885bd3971c 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -219,7 +219,7 @@ static const struct imx93_clk_ccgr {
+>  	{ IMX93_CLK_LCDIF_GATE,		"lcdif",	"media_apb_root",	0x9640, },
+>  	{ IMX93_CLK_PXP_GATE,		"pxp",		"media_apb_root",	0x9680, },
+>  	{ IMX93_CLK_ISI_GATE,		"isi",		"media_apb_root",	0x96c0, },
+> -	{ IMX93_CLK_NIC_MEDIA_GATE,	"nic_media",	"media_apb_root",	0x9700, },
+> +	{ IMX93_CLK_NIC_MEDIA_GATE,	"nic_media",	"media_axi_root",	0x9700, },
+>  	{ IMX93_CLK_USB_CONTROLLER_GATE, "usb_controller", "hsio_root",		0x9a00, },
+>  	{ IMX93_CLK_USB_TEST_60M_GATE,	"usb_test_60m",	"hsio_usb_test_60m_root", 0x9a40, },
+>  	{ IMX93_CLK_HSIO_TROUT_24M_GATE, "hsio_trout_24m", "osc_24m",		0x9a80, },
+> --
+> 2.25.1
+>
