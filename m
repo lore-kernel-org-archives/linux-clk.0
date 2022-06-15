@@ -2,56 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931A3C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 17:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EA0C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jun 2022 17:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348173AbiFORrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 13:47:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60770 "EHLO
+        id S1357992AbiFORuU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 13:50:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349899AbiFORrs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 13:47:48 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C442F1147F;
-        Wed, 15 Jun 2022 10:47:47 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id m24so16323263wrb.10;
-        Wed, 15 Jun 2022 10:47:47 -0700 (PDT)
+        with ESMTP id S1349807AbiFORuU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 13:50:20 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E303D5403C
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 10:50:18 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id g186so12056594pgc.1
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 10:50:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UEplRBRe8Not6/N/87KHMRBTXuTr13tJIbM6hc9f8sQ=;
-        b=Px0sxprY8EaTIf37otn4bHLOMuOiouEYqETuqdXAoedA3jFIrkkKeHZvQZcfi6IDQd
-         +gPo6UtC+5oE4EUy+jA8XQ7k3lqlL722vCj/oANcJfB4eG3pUwsqRPv0uGe/HecIqW06
-         cSNnPJbGMJNoz1TcKBBRCF+5+Gy+Cravzkx4VbGZqli8BcwNbigqDx4TMiTrEehL3wXu
-         /D+jaAoPIZIEEgXk+EJBQxt2H4K1b7kI15klNggExGmPBJhVD7tPrtpUq9FphpwM1H+2
-         rWMXGX3cud6Dblde43mQIlZpBjDyX+LwEaufSxZUdSU0FK7uOYBP2vVcdz9tV4MoyFOx
-         aIxA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=1jMu+lGlLUwxIWSFxtxOqoxXa/O8y+ZJH6Jya8QmVS4=;
+        b=i9YjTi5IhhH6B1eVTcD7vZp7dzPi7c05gv6//PZkCoCOEIvpGuYvj3dEghm9izJvC2
+         8OUWFh2YvuBTdcjTU372xEWxRV1lUYPQRcXz7SxgYhN+Ab1txjF7N3MRHK3Lh45OjTSL
+         Ase4zsKsalkoKI4I9LHqh9NuddjJSdL/HSR1GdOBTcmILZPrSYoqf45z2INpMZ5ZIdwh
+         zr8ZK/Nz1w06bwVKiH7sR9I2YBfmO/BCf6mJ7fpFJC12BwKVkRGmpUBYwWac/qSjd+lo
+         WNCfJFIN339BbeVXAngEtr2RGmA5EM0UIYG+lR0iO8WMBILzOElXhZBOd23GfmSBvHDG
+         M4hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UEplRBRe8Not6/N/87KHMRBTXuTr13tJIbM6hc9f8sQ=;
-        b=XmkHLc8sQbZFr9+YfpUvC5ZH2Hs730EVQDCJXfaC4BlUx8++x44X979WJ4s0TAJEcf
-         czsDR6qCe9wnUxjxiDdhLWrNGMjlqo679z46Oa7fM9UHwFa3gTww8JQVgm1G6Itwr+M/
-         mdTBlLpMXq8xiCb5BwGgki6EZD1qqzSJhM7JK8V3HrWmZE9H2YLM2bvW/sORDZoc0oig
-         lzq1RJLQB3x87/qwijIk/z2JDOltq8t/LJNm2v6yj9rhMpd4wy4efYQAmjhUJgZ20oxo
-         pQctcnY0ZKJHdJHqVxWy6nI7KqBOCPVe7ddVTtomtBiFWsRmRgbnQ/aP+IO1APnnsscC
-         zddA==
-X-Gm-Message-State: AJIora9mYJz6gINCGfT/pH7z/3rHTopUqOAVwAyowjn4IwH/4UHSDIr8
-        V/LicxDMldimP+JMyy4OCeFowHQaquU=
-X-Google-Smtp-Source: AGRyM1sdCdaiNcC0qqAatgAXTIR/dGxEV0s1FBUtTraV7r7iycMccsJTIVFL8TKmFtDbKNmYjUCrwg==
-X-Received: by 2002:a05:6000:1548:b0:217:6480:e65 with SMTP id 8-20020a056000154800b0021764800e65mr934830wry.381.1655315266192;
-        Wed, 15 Jun 2022 10:47:46 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id l125-20020a1c2583000000b0039c4d9737f3sm3158157wml.34.2022.06.15.10.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jun 2022 10:47:45 -0700 (PDT)
-Message-ID: <62aa1b41.1c69fb81.95632.5b71@mx.google.com>
-X-Google-Original-Message-ID: <YqoOmlGklknRj8Yf@Ansuel-xps.>
-Date:   Wed, 15 Jun 2022 18:53:46 +0200
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1jMu+lGlLUwxIWSFxtxOqoxXa/O8y+ZJH6Jya8QmVS4=;
+        b=ugty0QlkTAJyeeXSzpgrCS84RXlyOXCGSKlFzVW/35gHZWQto9DJvFwyT+pKI1J4Yh
+         pCcpJhdU9TTArf12c2GO2gNTqJrzmXZqcEBmqqMJezSq85wQdjIuHBexEirp3hTMb9Yu
+         l29XgI+GuZCLqOxDTlwxKgq6E27nswrjUizUDRlD856P6a9hJY4opNNQKYkQtThiv+5f
+         lymnTxdbjnHHbm/obrmePvAvj3eh++9inKNdXeh5yr0kSbL1Onnwj/TlCYdbxliu2Zjg
+         viZgkjServKPsLtf45ovSGccCo3TRTlE1Jj3o1A20HPs7yWNQsWrXevCpF5qwdqpI4hc
+         FNcA==
+X-Gm-Message-State: AJIora/wGLkM+JBkOA4H28C8toeeDTpSf0KK0WpfZRsuoc8kgga56/Sl
+        qo2zvF1+VgNscY++tAjlKwWhIg==
+X-Google-Smtp-Source: AGRyM1tgx5wd//aRy3L6R0T8NZ35VS+4Jjjtdj74hI5yzt3PaMKVofPzTq+GGVbzPuXw0Vby1azuDw==
+X-Received: by 2002:a65:6b8a:0:b0:3db:7dc5:fec2 with SMTP id d10-20020a656b8a000000b003db7dc5fec2mr788601pgw.223.1655315418377;
+        Wed, 15 Jun 2022 10:50:18 -0700 (PDT)
+Received: from [172.22.33.138] ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id br8-20020a056a00440800b00518a473265csm10034338pfb.217.2022.06.15.10.50.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jun 2022 10:50:17 -0700 (PDT)
+Message-ID: <717ad899-31ad-5e70-b299-ffb8ca287071@linaro.org>
+Date:   Wed, 15 Jun 2022 10:50:17 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/3] dt-bindings: clock: add pcm reset for ipq806x lcc
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -60,33 +64,41 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: add pcm reset for ipq806x lcc
 References: <20220615163408.30154-1-ansuelsmth@gmail.com>
  <a92fe431-a995-4c7f-b90b-8e80298bc71a@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a92fe431-a995-4c7f-b90b-8e80298bc71a@linaro.org>
+ <62aa1b41.1c69fb81.95632.5b71@mx.google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <62aa1b41.1c69fb81.95632.5b71@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 10:43:10AM -0700, Krzysztof Kozlowski wrote:
-> On 15/06/2022 09:34, Christian 'Ansuel' Marangi wrote:
-> > Add pcm reset define for ipq806x lcc.
-> > 
-> > Signed-off-by: Christian 'Ansuel' Marangi <ansuelsmth@gmail.com>
-> To prevent any confusion about identities (we have strict rules about
-> these), I need to ask - who uses this email address?
+On 15/06/2022 09:53, Ansuel Smith wrote:
+> On Wed, Jun 15, 2022 at 10:43:10AM -0700, Krzysztof Kozlowski wrote:
+>> On 15/06/2022 09:34, Christian 'Ansuel' Marangi wrote:
+>>> Add pcm reset define for ipq806x lcc.
+>>>
+>>> Signed-off-by: Christian 'Ansuel' Marangi <ansuelsmth@gmail.com>
+>> To prevent any confusion about identities (we have strict rules about
+>> these), I need to ask - who uses this email address?
+>>
+>> https://lore.kernel.org/all/?q=ansuelsmth%40gmail.com
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> https://lore.kernel.org/all/?q=ansuelsmth%40gmail.com
-> 
-> Best regards,
-> Krzysztof
+> Same person. Started using extended name, wanted to do this change from
+> a long time but all the patch were already pushed so I couldn't change
+> it since they were already proposed and on the various mailing list.
 
-Same person. Started using extended name, wanted to do this change from
-a long time but all the patch were already pushed so I couldn't change
-it since they were already proposed and on the various mailing list.
+Previously "Ansuel Smith" was used entirely, without any parts of this
+name. Here 'Ansuel' appears in quotes, which usually is used for nicknames.
 
--- 
-	Ansuel
+Is "Ansuel Smith" your real name or a nickname? What do you mean by
+"extended name"?
+
+
+Best regards,
+Krzysztof
