@@ -2,83 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBA6C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 18:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0559C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 18:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232821AbiFPSA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 14:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        id S229953AbiFPSV0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 14:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbiFPSA6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 14:00:58 -0400
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EFF13F44;
-        Thu, 16 Jun 2022 11:00:57 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id a10so2249450ioe.9;
-        Thu, 16 Jun 2022 11:00:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fQXZSJhht4X5yNvw03hLRu3BZWLlJCfLhF7rU9SmcRw=;
-        b=SBDuUIjY3V9QWdkZKbh/lMHW/CKxuk9YPjIQ+0wyD0H2Pq3wQA3BIljWG4eU4hU42U
-         vuN1cP6Vge93K9x+1axw9YeKyMz3aOtOtBBbZp39N7xDDsqnZFJ6OJ/XRJqfI7Pgst/K
-         g88Jf5BJyhp0grG+ZP2z6I/mo/lWghnC2C+8n1bF0ogeQ/Gm176HIM47IITFJ7dAje6p
-         7iFOt9OVF1RJ2wpvDU9DP7xMoyBfOhtZ2i9YbMyhdHiWFp4dJ1QJ9ywfP2tgMsoeLIi5
-         4Oa+tTaTHmpXQWx2fytKf5oNYNvSL+5/13Vz0STCiBJOstG4lLaHTTuOI0zJTsyP5Rfl
-         JnYg==
-X-Gm-Message-State: AJIora/JK/aPjNXZfiKvSUxpaeBwUVHWaTWZjlaSeF1VpCkjgCVy9m93
-        UUfj9RKnoSFz+R8+d9t8FQ==
-X-Google-Smtp-Source: AGRyM1spQJ7T8UrCvJ5pQYvBWRSSImqT+IRmKQ5FRE4451GZSxPWdZRJu8178mpfIlKesP0Ydg80uw==
-X-Received: by 2002:a05:6602:2c4c:b0:64f:a897:80cb with SMTP id x12-20020a0566022c4c00b0064fa89780cbmr3138193iov.139.1655402457088;
-        Thu, 16 Jun 2022 11:00:57 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id y203-20020a6bc8d4000000b00669c07fbcb5sm1457589iof.5.2022.06.16.11.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 11:00:56 -0700 (PDT)
-Received: (nullmailer pid 3729785 invoked by uid 1000);
-        Thu, 16 Jun 2022 18:00:54 -0000
-Date:   Thu, 16 Jun 2022 12:00:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, linux-serial@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        with ESMTP id S229541AbiFPSVZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 14:21:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 202E4506C4;
+        Thu, 16 Jun 2022 11:21:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A8F0861BA2;
+        Thu, 16 Jun 2022 18:21:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53F8C34114;
+        Thu, 16 Jun 2022 18:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655403683;
+        bh=cmRfg7X//eVIPrSvjI8seaNeifUe7vwALs4NzXS6qmg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=OIlpiPrVQUlhy6+TSS6fJYhCo/WvFB/R6IZzUy5dLiTZsrErDG+UTVf7UeNu1mkMj
+         OBG6AlE5WbgDrf8C/QwTQGQpFptTkMseP5bu3IzYoPs0fMGaZNboXuMSewLsPOGWD2
+         awAt/ERxe9QEPpBLH7UsnhMG2RMruGx4axjbZ9fZEVvHUs0nNBHq935hsA25cA5zqY
+         fyKZ0kwJt6SIZLb/gxgOI6zXMgS0ESdGkO6XjV/oAUvXvRnskgwmOk/Qgb3lvfv3C+
+         sXuZpbmW/tDX+77d9ZBtxs3AQIUic+CZTz4l/xMyANUyO74E1VjIJapLVt5ctgz4T4
+         WgOI7S6on3PDQ==
+Date:   Thu, 16 Jun 2022 13:21:20 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-spi@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] dt-bindings: efm32: remove bindings for deleted platform
-Message-ID: <20220616180054.GA3728782-robh@kernel.org>
-References: <20220615210720.6363-1-wsa@kernel.org>
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v11 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+Message-ID: <20220616182120.GA1099986@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220615210720.6363-1-wsa@kernel.org>
+In-Reply-To: <20220608105238.2973600-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Jun 2022 23:07:19 +0200, Wolfram Sang wrote:
-> Commit cc6111375cec ("ARM: drop efm32 platform") removed the platform,
-> so no need to still carry the bindings.
+On Wed, Jun 08, 2022 at 01:52:33PM +0300, Dmitry Baryshkov wrote:
+> PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> Currently this is handcoded in the PCIe driver by reparenting the
+> gcc_pipe_N_clk_src clock.
 > 
-> Signed-off-by: Wolfram Sang <wsa@kernel.org>
-> ---
->  .../devicetree/bindings/clock/efm32-clock.txt | 11 -----
->  .../devicetree/bindings/i2c/i2c-efm32.txt     | 33 --------------
->  .../devicetree/bindings/serial/efm32-uart.txt | 20 ---------
->  .../devicetree/bindings/spi/efm32-spi.txt     | 39 -----------------
->  include/dt-bindings/clock/efm32-cmu.h         | 43 -------------------
->  5 files changed, 146 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/efm32-clock.txt
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-efm32.txt
->  delete mode 100644 Documentation/devicetree/bindings/serial/efm32-uart.txt
->  delete mode 100644 Documentation/devicetree/bindings/spi/efm32-spi.txt
->  delete mode 100644 include/dt-bindings/clock/efm32-cmu.h
+> Instead of doing it manually, follow the approach used by
+> clk_rcg2_shared_ops and implement this parking in the enable() and
+> disable() clock operations for respective pipe clocks.
 > 
+> Changes since v10:
+>  - Added linux/bitfield.h include (lkp)
+>  - Split fw_name/name lines in the gcc-sm8450.c (Johan)
+> 
+> Changes since v9:
+>  - Respin fixing Tested-by tags, no code changes
+> 
+> Changes since v8:
+>  - Readded .name to changed entries in gcc-sc7280 driver to restore
+>    compatibility with older DTS,
+>  - Rebased on top of linux-next, dropping reverts,
+>  - Verified to include all R-b tags (excuse me, Johan, I missed them
+>    in the previous iteration).
+> 
+> Changes since v7:
+>  - Brought back the struct clk_regmap_phy_mux (Johan)
+>  - Fixed includes (Stephen)
+>  - Dropped CLK_SET_RATE_PARENT flags from changed pipe clocks, they are
+>    not set in the current code and they are useless as the PHY's clock
+>    has fixed rate.
+> 
+> Changes since v6:
+>  - Switched the ops to use GENMASK/FIELD_GET/FIELD_PUT (Stephen),
+>  - As all pipe/symbol clock source clocks have the same register (and
+>    parents) layout, hardcode all the values. If the need arises, this
+>    can be changed later (Stephen),
+>  - Fixed commit messages and comments (suggested by Johan),
+>  - Added revert for the clk_regmap_mux_safe that have been already
+>    picked up by Bjorn.
+> 
+> Changes since v5:
+>  - Rename the clock to clk-regmap-phy-mux and the enable/disable values
+>    to phy_src_val and ref_src_val respectively (as recommended by
+>    Johan).
+> 
+> Changes since v4:
+>  - Renamed the clock to clk-regmap-pipe-src,
+>  - Added mention of PCIe2 PHY to the commit message,
+>  - Expanded commit messages to mention additional pipe clock details.
+> 
+> Changes since v3:
+>  - Replaced the clock multiplexer implementation with branch-like clock.
+> 
+> Changes since v2:
+>  - Added is_enabled() callback
+>  - Added default parent to the pipe clock configuration
+> 
+> Changes since v1:
+>  - Rebased on top of [1].
+>  - Removed erroneous Fixes tag from the patch 4.
+> 
+> Changes since RFC:
+>  - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
+>    than specifying the register value directly
+>  - Expand commit message to the first patch to specially mention that
+>    it is required only on newer generations of Qualcomm chipsets.
+> 
+> Dmitry Baryshkov (5):
+>   clk: qcom: regmap: add PHY clock source implementation
+>   clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
+>     clocks
+>   clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
+>     clocks
+>   PCI: qcom: Remove unnecessary pipe_clk handling
+>   PCI: qcom: Drop manual pipe_clk_src handling
+> 
+> 
+> Dmitry Baryshkov (5):
+>   clk: qcom: regmap: add PHY clock source implementation
+>   clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
+>     clocks
+>   clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
+>     clocks
+>   PCI: qcom: Remove unnecessary pipe_clk handling
+>   PCI: qcom: Drop manual pipe_clk_src handling
+> 
+>  drivers/clk/qcom/Makefile              |  1 +
+>  drivers/clk/qcom/clk-regmap-phy-mux.c  | 62 ++++++++++++++++++++
+>  drivers/clk/qcom/clk-regmap-phy-mux.h  | 33 +++++++++++
+>  drivers/clk/qcom/gcc-sc7280.c          | 49 +++++-----------
+>  drivers/clk/qcom/gcc-sm8450.c          | 49 +++++-----------
+>  drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
+>  6 files changed, 127 insertions(+), 148 deletions(-)
+>  create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.c
+>  create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.h
 
-Deletions are automatically applied, thanks! ;)
+I applied this to pci/ctrl/qcom for v5.20, thanks!
+
+Clock folks (Bjorn A, Andy, Michael, Stephen), I assume you're OK with
+these being merged via the PCI tree.  Let me know if you prefer
+anything different.
