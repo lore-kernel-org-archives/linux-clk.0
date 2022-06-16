@@ -2,138 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D3DC43334
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB6CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 09:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376603AbiFPIy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 04:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47100 "EHLO
+        id S1359614AbiFPJK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 05:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376642AbiFPIyR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:54:17 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA5F5E161;
-        Thu, 16 Jun 2022 01:52:03 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9ED816601745;
-        Thu, 16 Jun 2022 09:51:58 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1655369519;
-        bh=23ovZaBNRPxqVpFGtTYFhJNEhe3Arny8xrxLGcB24LU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Bte3D/ZevCMuzsqY8vuxglJ8b5kBWgRtByfk6Ts/443xXWkEun3wFQJKzpjHV33pT
-         1IlBD41Er+scyhSwviQcpNof+IK+MgipYVGAKVD4CSiEer9GuICckzrY9HhU/Q4PE8
-         tSTfICGpDsKtMHdyHiHon1IR4vrJiNeuEnXnzngkZB+LnqWCdD6mjP2LbNqWvCR8qi
-         yy8C1fO7WaynvaSsBwru9Rq8yeIzoDjBXw5ZW0IUed4mRRI2f3I2BbBHsAeEqt9u+K
-         KlKHMLHtf0M2ldftRkT/jaLdyOaf43AVC8enfVVFy2SuWA9rZmUuUb0xwmL4VSq0z8
-         YVM/3z78FRqgQ==
-Message-ID: <b48b3de0-d521-a9ad-f9f9-1312f8486ba7@collabora.com>
-Date:   Thu, 16 Jun 2022 10:51:55 +0200
+        with ESMTP id S1359112AbiFPJK4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 05:10:56 -0400
+Received: from m1550.mail.126.com (m1550.mail.126.com [220.181.15.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9A0A0527EC;
+        Thu, 16 Jun 2022 02:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=Gs586
+        khXITVsVMfZEq1LZJ5IRpiCyvubOmH4rmPCc6c=; b=DlTRC05uU1fBrOH95/ord
+        oaTDb71ZdvRRpOM0LgLelxFQrg41iTNH/P/vL4ISmErkAG6EnvpLvUISHCfC43Ld
+        cwYsp4KjjiEIm41gM2KfY4Y5Bx0LgND03wx/k6kZLX2IZ0WneHLlPf29dLgcWQrq
+        3LVMNpWLnGyu3Xsf/d3utg=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr50
+ (Coremail) ; Thu, 16 Jun 2022 17:09:48 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Thu, 16 Jun 2022 17:09:48 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     Conor.Dooley@microchip.com
+Cc:     sboyd@kernel.org, jonathanh@nvidia.com, mturquette@baylibre.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v2] clk: tegra: (clk-tegra30) Add missing
+ of_node_put()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <f7f1e910-24e5-4bdf-f4ca-12f1a5293ef1@microchip.com>
+References: <20220616033622.3975621-1-windhl@126.com>
+ <20220616060037.5AEB8C34114@smtp.kernel.org>
+ <1a776c99.5e5c.1816b98bfee.Coremail.windhl@126.com>
+ <f7f1e910-24e5-4bdf-f4ca-12f1a5293ef1@microchip.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] clk: mediatek: clk-mt8195-vdo0: Set rate on
- vdo0_dp_intf0_dp_intf's parent
-Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <Miles.Chen@mediatek.com>,
-        "chun-jie.chen@mediatek.com" <chun-jie.chen@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        jitao.shi@mediatek.com, mandyjh.liu@mediatek.com
-References: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
- <3de597c1ab963cc8f6dd89da089c6f0660517f34.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <3de597c1ab963cc8f6dd89da089c6f0660517f34.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <6a979593.670b.1816bc69fd0.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: MsqowABHnfFd86piqMo3AA--.53459W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QsiF1pEANbjwwABs6
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 16/06/22 09:12, Rex-BC Chen ha scritto:
-> On Tue, 2022-06-14 at 17:10 +0800, AngeloGioacchino Del Regno wrote:
->> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
->> clock: this is required to trigger clock source selection on
->> CLK_TOP_EDP, while avoiding to manage the enablement of the former
->> separately from the latter in the displayport driver.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <
->> angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c
->> b/drivers/clk/mediatek/clk-mt8195-vdo0.c
->> index 261a7f76dd3c..07b46bfd5040 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
->> @@ -37,6 +37,10 @@ static const struct mtk_gate_regs vdo0_2_cg_regs =
->> {
->>   #define GATE_VDO0_2(_id, _name, _parent, _shift)			
->> \
->>   	GATE_MTK(_id, _name, _parent, &vdo0_2_cg_regs, _shift,
->> &mtk_clk_gate_ops_setclr)
->>   
->> +#define GATE_VDO0_2_FLAGS(_id, _name, _parent, _shift, _flags)	
->> 	\
->> +	GATE_MTK_FLAGS(_id, _name, _parent, &vdo0_2_cg_regs, _shift,	
->> \
->> +		       &mtk_clk_gate_ops_setclr, _flags)
->> +
->>   static const struct mtk_gate vdo0_clks[] = {
->>   	/* VDO0_0 */
->>   	GATE_VDO0_0(CLK_VDO0_DISP_OVL0, "vdo0_disp_ovl0", "top_vpp",
->> 0),
->> @@ -85,7 +89,8 @@ static const struct mtk_gate vdo0_clks[] = {
->>   	/* VDO0_2 */
->>   	GATE_VDO0_2(CLK_VDO0_DSI0_DSI, "vdo0_dsi0_dsi", "top_dsi_occ",
->> 0),
->>   	GATE_VDO0_2(CLK_VDO0_DSI1_DSI, "vdo0_dsi1_dsi", "top_dsi_occ",
->> 8),
->> -	GATE_VDO0_2(CLK_VDO0_DP_INTF0_DP_INTF, "vdo0_dp_intf0_dp_intf",
->> "top_edp", 16),
->> +	GATE_VDO0_2_FLAGS(CLK_VDO0_DP_INTF0_DP_INTF,
->> "vdo0_dp_intf0_dp_intf",
->> +			  "top_edp", 16, CLK_SET_RATE_PARENT),
->>   };
->>   
->>   static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
->> -- 
->> 2.35.1
->>
-> 
-> Hello Angelo,
-> 
-> Thanks for this patch.
-> Another dp clock should also be fix.
-> After confirming with Jitao who is our dp expert.
-> The parent of CLK_VDO1_DPINTF should be top_dp instead of top_vpp.
-> 
-> Thanks!
-
-Hey.
-
-Yes, we should really fix that, I can send a separated series with:
-* A first commit fixing the clock parent (with a Fixes: tag)
-* A second commit adding the CLK_SET_RATE_PARENT
-
-...and I'll do that ASAP.
-
-Thank you!
-Angelo
+CgoKQXQgMjAyMi0wNi0xNiAxNjo0MjoyNiwgQ29ub3IuRG9vbGV5QG1pY3JvY2hpcC5jb20gd3Jv
+dGU6Cj5PbiAxNi8wNi8yMDIyIDA5OjE5LCBMaWFuZyBIZSB3cm90ZToKPj4gQXQgMjAyMi0wNi0x
+NiAxNDowMDozNSwgIlN0ZXBoZW4gQm95ZCIgPHNib3lkQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pj4g
+VGhlIHN1YmplY3Qgc2hvdWxkIG1hdGNoIGhpc3RvcmljYWwgc3ViamVjdHMKPj4+Cj4+PiAkIGdp
+dCBsb2cgLS1vbmVsaW5lIC0zIC0tIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMKPj4+
+Cj4+PiBzaG93cyBtb3N0bHkgImNsazogdGVncmE6ICIuIENhbiB5b3UgYWxzbyBjb21iaW5lIHRo
+aXMgd2l0aCB0aGUgb3RoZXIKPj4+IHRlZ3JhIHBhdGNoPyBEb24ndCB0aGluayB3ZSBuZWVkIHR3
+byBwYXRjaGVzIGZvciBlc3NlbnRpYWxseSB0aGUgc2FtZQo+Pj4gdGhpbmcuCj4+Pgo+Pj4gUXVv
+dGluZyBMaWFuZyBIZSAoMjAyMi0wNi0xNSAyMDozNjoyMikKPj4+PiBJbiB0ZWdyYTMwX2Nsb2Nr
+X2luaXQsIG9mX2ZpbmRfbWF0Y2hpbmdfbm9kZSgpIHdpbGwgcmV0dXJuIGEgbm9kZQo+Pj4+IHBv
+aW50ZXIgd2l0aCByZWZjb3VudCBpbmNyZW1lbnRlZC4gV2Ugc2hvdWxkIHVzZSBvZl9ub2RlX3B1
+dCgpIHdoZW4KPj4+PiB0aGUgbm9kZSBwb2ludGVyIGlzIG5vdCB1c2VkIGFueW1vcmUuCj4+Pj4K
+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+Pj4gLS0tCj4+
+Pj4gICBjaGFuZ2Vsb2c6Cj4+Pj4KPj4+PiAgIHYyOiB1c2UgcmVhbCBuYW1lIGZvciBTb2IKPj4+
+Cj4+PiBUaGFua3MhCj4+Pgo+Pj4+ICAgdjE6IGZpeCBtaXNzaW5nIGJ1Zwo+PiAKPj4gU29ycnkg
+Zm9yIG15IGZhdWx0LiBJIGhhdmUgYmVlbiBhZHZpc2VkIHRvIHVzZSByZWFsIG5hbWUgYW5kIEkg
+cmVzZW5kIGEgUEFUQ0ggdjIgd2l0aCBteSByZWFsIG5hbWUsIGJ1dCByZWFsbHkgd2l0aCB0aGUg
+c2FtZSBwYXRjaCBjb2RlLgo+PiAKPj4gU28gaG93IGNhbiBJIHdpdGhkcmF3IHRoZSBmaXJzdCBw
+YXRjaCBvciByZXNlbmQgb3RoZXIgdGhpbmc/IEkgYW0gY29uZnVzZWQuCj4+IAo+PiBDYW4geW91
+IGhlbHAgbWUsIENvbm9yPwo+Cj5ZZWFoLCBzdXJlLiBJIHRoaW5rIHlvdSdyZSBqdXN0IGdldHRp
+bmcgYSBiaXQgY29uZnVzZWQgYnkgY29uZmxpY3RpbmcKPnJlc3BvbnNlcyBmcm9tIGRpZmZlcmVu
+dCBwZW9wbGUuIFNvbWUgb2YgdGhlIHRoaW5ncyBJIHNhaWQgb24gd2hhdGV2ZXIKPnRoZSBvcmln
+aW5hbCBwYXRjaCBJIHJlcGxpZWQgdG8gYXBwbHkgZXZlcnl3aGVyZSAtIGxpa2UgdXNpbmcgeW91
+ciByZWFsCj5uYW1lIG9yIGFkZGluZyBjaGFuZ2Vsb2dzLgo+SG93ZXZlciwgZGlmZmVyZW50IHN1
+YnN5c3RlbSBtYWludGFpbmVycyBoYXZlIGEgZGlmZmVyZW50IG9waW5pb25zIGFib3V0Cj5ob3cg
+cGF0Y2hlcyBmb3IgdGhlaXIgc3Vic3lzdGVtIHNob3VsZCBsb29rLiBJIHdvdWxkIGltYWdpbmUg
+dGhhdCBpdCB3YXMKPkd1ZW50ZXIgUm9lY2sgdGhhdCBhc2tlZCB5b3UgdG8gdXNlIHRoZSAic3Vi
+c3lzdGVtOiAoZHJpdmVyKSBhY3Rpb24iCj5zdWJqZWN0LCB3aGljaCBpcyBob3cgaHdtb24gcGF0
+Y2hlcyBhcmUgZG9uZSAtIGJ1dCBub3Qgb3RoZXIgc3Vic3lzdGVtcy4KPgo+V2hhdCBTdGVwaGVu
+IGlzIGFza2luZywgaXMgdGhhdCB5b3UgcnVuCj4kIGdpdCBsb2cgLS1vbmVsaW5lIC0zIC0tIGRy
+aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMKPnRvIGZpZ3VyZSBvdXQgd2hhdCB0aGUgc3Vi
+amVjdCBzaG91bGQgYmUsIGJhc2VkIG9uIHByZXZpb3VzIHN1YmplY3RzLgo+VGhhdCdzIGdvb2Qg
+YWR2aWNlIHRvIGZvbGxvdyBmb3IgYW55IHBhdGNoIHlvdSBzZW5kIDopCj4KCgo+VGhpcyBvdGhl
+ciBjb21tZW50IHdhczoKPj4gRG9uJ3QgdGhpbmsgd2UgbmVlZCB0d28gcGF0Y2hlcyBmb3IgZXNz
+ZW50aWFsbHkgdGhlIHNhbWUgdGhpbmcuCj4KPkkgYXNzdW1lIHlvdSBzZW50IHR3byBkaWZmZXJl
+bnQgcGF0Y2hlcyBmb3IgdGhlIHNhbWUgZHJpdmVyLCBvciB0aGUKPnNhbWUgZGlyZWN0b3J5IG9m
+IGRyaXZlcnM/Cj5IZSdzIGp1c3QgYXNraW5nIHRoYXQgeW91IHNxdWFzaCB0aGUgdHdvIGNvbW1p
+dHMgdG9nZXRoZXIgaW50byBvbmUKPmNvbW1pdC4KPgoKT2ssIHRoYW5rcywgQ29ub3IsIEkgZ290
+IGl0IGFuZCBJIHdpbGwgcHJlcGFyZSBteSBuZXh0IG1lcmdlZCBwYXRjaCBmb3IKdGhlc2UgZmls
+ZXMgd2hpY2ggYXJlIGluZGVlZCBpbiB0aGUgc2FtZSBkcml2ZXIgZGlyZWN0b3J5LgoKPiBGcm9t
+IHlvdXIgb3RoZXIgZW1haWw6Cj4+IFNvcnJ5LCB3aGF0IGRvIHlvdSBtZWFuIHNhbWUgc3ViamVj
+dCBsaW5lIGNvbW1lbnQ/Cj4+IEkgYWRkIGEgW1BBVENIIHYyXSB0YWcgd2hlbiBJIHVzZSAnZ2l0
+IGZvcm1hdC1wYXRjaCAtdiAyJy4KPgo+SSBhc3N1bWUgU3RlcGhlbiBtZWFudDogdGhlIHNhbWUg
+Y29tbWVudHMgYWJvdXQgIihjbGstdGVncmEzMCkiCj5mcm9tIHRoaXMgcGF0Y2ggYXBwbHkgdG8g
+dGhhdCBwYXRjaCB0b28uIFRoZXJlJ3Mgbm90aGluZyB3cm9uZwo+d2l0aCBoYXZpbmcgIltQQVRD
+SCB2Ml0iLgo+Cj4+IFlvdSBtZWFuIHRoZSB0d28gY29tbWl0IGhhcyBzYW1lIHN1YmplY3QgY29u
+dGVudD8KPj4gU29ycnksIEkgYW0gYSBiZWdpbm5lciB0byBzdWJtaXQgcGF0Y2ggY29tbWl0Lgo+
+Cj5PaGggZG9uJ3Qgd29ycnksIHdlIGhhdmUgYWxsIGJlZW4gdGhlcmUgKGFuZCBpbiBteSBjYXNl
+IG5vdCB0b28KPmxvbmcgYWdvIGVpdGhlci4uLikKPgo+SG9wZSB0aGF0IGhlbHBzIQo+VGhhbmtz
+LAo+Q29ub3IuCj4KPgoKCgpUaGFua3MgYWdhaW4sIENvbm9yLgoKTGlhbmcK
