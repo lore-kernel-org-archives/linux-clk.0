@@ -2,103 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB6CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 09:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C49CCA47A
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 11:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359614AbiFPJK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 05:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
+        id S229708AbiFPLwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 07:52:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359112AbiFPJK4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 05:10:56 -0400
-Received: from m1550.mail.126.com (m1550.mail.126.com [220.181.15.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9A0A0527EC;
-        Thu, 16 Jun 2022 02:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=Gs586
-        khXITVsVMfZEq1LZJ5IRpiCyvubOmH4rmPCc6c=; b=DlTRC05uU1fBrOH95/ord
-        oaTDb71ZdvRRpOM0LgLelxFQrg41iTNH/P/vL4ISmErkAG6EnvpLvUISHCfC43Ld
-        cwYsp4KjjiEIm41gM2KfY4Y5Bx0LgND03wx/k6kZLX2IZ0WneHLlPf29dLgcWQrq
-        3LVMNpWLnGyu3Xsf/d3utg=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr50
- (Coremail) ; Thu, 16 Jun 2022 17:09:48 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Thu, 16 Jun 2022 17:09:48 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     Conor.Dooley@microchip.com
-Cc:     sboyd@kernel.org, jonathanh@nvidia.com, mturquette@baylibre.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v2] clk: tegra: (clk-tegra30) Add missing
- of_node_put()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <f7f1e910-24e5-4bdf-f4ca-12f1a5293ef1@microchip.com>
-References: <20220616033622.3975621-1-windhl@126.com>
- <20220616060037.5AEB8C34114@smtp.kernel.org>
- <1a776c99.5e5c.1816b98bfee.Coremail.windhl@126.com>
- <f7f1e910-24e5-4bdf-f4ca-12f1a5293ef1@microchip.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        with ESMTP id S1376388AbiFPLwr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 07:52:47 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F2F9DE83
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 04:52:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1655380363; x=1686916363;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=vk7Af8JwsrfACg/0fCg/GedJCunirCOg2VKS3d1gDLI=;
+  b=EOjVCmUwHjXuOKkLGLacyVmf4qcQJW/ZGQ6sz+T9FxynSdN1nfWDlJg4
+   KxNT5HqDuFaaKpQ3yIiL+p6xM9ZSXHu3jDFaCwMXAESclwSUpBwNphfoS
+   B+jdkJvijWjbVpZyTGkdMz9C6aUp6GZ5p7p2+CmCVX8xzdW1VNgfC1izP
+   JbEpCqT2wWku/CRhnAgyEhPQYrOdrUZGBKvUdwxSgAJ7nuWXprptsYYFz
+   4PRTg/5Hne63cVu0Jz2v3AJVNuoFWyKXn8/QyMv2zxgKoPKl9UuZcWZFK
+   wmSdqmsv5t9fpsQrWK8GpmVX+bqoe4lNJK/MVw3eHLxX1n4pOEOjQphB+
+   A==;
+X-IronPort-AV: E=Sophos;i="5.91,305,1647298800"; 
+   d="scan'208";a="24495252"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 16 Jun 2022 13:52:41 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Thu, 16 Jun 2022 13:52:41 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Thu, 16 Jun 2022 13:52:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1655380361; x=1686916361;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=vk7Af8JwsrfACg/0fCg/GedJCunirCOg2VKS3d1gDLI=;
+  b=Itpau83LTSdpVfkrBD6ETqMTBKOmX8nK/OYpmbUoZT1OGX+bVOgWoH9V
+   S7btTRnRH5fZdo1khqpQp2aJTteKwdeqQ91mUtB/Y425A71+x2ea0SFC8
+   RwDN37+g52fYADvcONEwskumf5Opa4C5sn0qEDudxjBK79Ispy7DbTPUj
+   uLW7P5qraEF7AXtS8AnjmVFgWTA7Xxck3nPqG95ocg/GypON5Fcw07uNl
+   GW/lrAFqq/2ITs8cmZ2Gvv5HwIShKBL/wt0iUWEzln1nO7O00fg711neP
+   ePeV/8Grejfk/t01pVdjuP7TSPtNOmVlBEcX4QX/vpcaNPEeTAnRVsp1M
+   g==;
+X-IronPort-AV: E=Sophos;i="5.91,305,1647298800"; 
+   d="scan'208";a="24495251"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 16 Jun 2022 13:52:41 +0200
+Received: from steina-w.localnet (unknown [10.123.49.12])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 91EE6280056;
+        Thu, 16 Jun 2022 13:52:41 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: (EXT) Re: clock consumer for output clocks?
+Date:   Thu, 16 Jun 2022 13:52:41 +0200
+Message-ID: <7958678.DvuYhMxLoT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20220616025252.36F7CC3411E@smtp.kernel.org>
+References: <3677796.MHq7AAxBmi@steina-w> <20220616025252.36F7CC3411E@smtp.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6a979593.670b.1816bc69fd0.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: MsqowABHnfFd86piqMo3AA--.53459W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QsiF1pEANbjwwABs6
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CgoKQXQgMjAyMi0wNi0xNiAxNjo0MjoyNiwgQ29ub3IuRG9vbGV5QG1pY3JvY2hpcC5jb20gd3Jv
-dGU6Cj5PbiAxNi8wNi8yMDIyIDA5OjE5LCBMaWFuZyBIZSB3cm90ZToKPj4gQXQgMjAyMi0wNi0x
-NiAxNDowMDozNSwgIlN0ZXBoZW4gQm95ZCIgPHNib3lkQGtlcm5lbC5vcmc+IHdyb3RlOgo+Pj4g
-VGhlIHN1YmplY3Qgc2hvdWxkIG1hdGNoIGhpc3RvcmljYWwgc3ViamVjdHMKPj4+Cj4+PiAkIGdp
-dCBsb2cgLS1vbmVsaW5lIC0zIC0tIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMKPj4+
-Cj4+PiBzaG93cyBtb3N0bHkgImNsazogdGVncmE6ICIuIENhbiB5b3UgYWxzbyBjb21iaW5lIHRo
-aXMgd2l0aCB0aGUgb3RoZXIKPj4+IHRlZ3JhIHBhdGNoPyBEb24ndCB0aGluayB3ZSBuZWVkIHR3
-byBwYXRjaGVzIGZvciBlc3NlbnRpYWxseSB0aGUgc2FtZQo+Pj4gdGhpbmcuCj4+Pgo+Pj4gUXVv
-dGluZyBMaWFuZyBIZSAoMjAyMi0wNi0xNSAyMDozNjoyMikKPj4+PiBJbiB0ZWdyYTMwX2Nsb2Nr
-X2luaXQsIG9mX2ZpbmRfbWF0Y2hpbmdfbm9kZSgpIHdpbGwgcmV0dXJuIGEgbm9kZQo+Pj4+IHBv
-aW50ZXIgd2l0aCByZWZjb3VudCBpbmNyZW1lbnRlZC4gV2Ugc2hvdWxkIHVzZSBvZl9ub2RlX3B1
-dCgpIHdoZW4KPj4+PiB0aGUgbm9kZSBwb2ludGVyIGlzIG5vdCB1c2VkIGFueW1vcmUuCj4+Pj4K
-Pj4+PiBTaWduZWQtb2ZmLWJ5OiBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+Pj4gLS0tCj4+
-Pj4gICBjaGFuZ2Vsb2c6Cj4+Pj4KPj4+PiAgIHYyOiB1c2UgcmVhbCBuYW1lIGZvciBTb2IKPj4+
-Cj4+PiBUaGFua3MhCj4+Pgo+Pj4+ICAgdjE6IGZpeCBtaXNzaW5nIGJ1Zwo+PiAKPj4gU29ycnkg
-Zm9yIG15IGZhdWx0LiBJIGhhdmUgYmVlbiBhZHZpc2VkIHRvIHVzZSByZWFsIG5hbWUgYW5kIEkg
-cmVzZW5kIGEgUEFUQ0ggdjIgd2l0aCBteSByZWFsIG5hbWUsIGJ1dCByZWFsbHkgd2l0aCB0aGUg
-c2FtZSBwYXRjaCBjb2RlLgo+PiAKPj4gU28gaG93IGNhbiBJIHdpdGhkcmF3IHRoZSBmaXJzdCBw
-YXRjaCBvciByZXNlbmQgb3RoZXIgdGhpbmc/IEkgYW0gY29uZnVzZWQuCj4+IAo+PiBDYW4geW91
-IGhlbHAgbWUsIENvbm9yPwo+Cj5ZZWFoLCBzdXJlLiBJIHRoaW5rIHlvdSdyZSBqdXN0IGdldHRp
-bmcgYSBiaXQgY29uZnVzZWQgYnkgY29uZmxpY3RpbmcKPnJlc3BvbnNlcyBmcm9tIGRpZmZlcmVu
-dCBwZW9wbGUuIFNvbWUgb2YgdGhlIHRoaW5ncyBJIHNhaWQgb24gd2hhdGV2ZXIKPnRoZSBvcmln
-aW5hbCBwYXRjaCBJIHJlcGxpZWQgdG8gYXBwbHkgZXZlcnl3aGVyZSAtIGxpa2UgdXNpbmcgeW91
-ciByZWFsCj5uYW1lIG9yIGFkZGluZyBjaGFuZ2Vsb2dzLgo+SG93ZXZlciwgZGlmZmVyZW50IHN1
-YnN5c3RlbSBtYWludGFpbmVycyBoYXZlIGEgZGlmZmVyZW50IG9waW5pb25zIGFib3V0Cj5ob3cg
-cGF0Y2hlcyBmb3IgdGhlaXIgc3Vic3lzdGVtIHNob3VsZCBsb29rLiBJIHdvdWxkIGltYWdpbmUg
-dGhhdCBpdCB3YXMKPkd1ZW50ZXIgUm9lY2sgdGhhdCBhc2tlZCB5b3UgdG8gdXNlIHRoZSAic3Vi
-c3lzdGVtOiAoZHJpdmVyKSBhY3Rpb24iCj5zdWJqZWN0LCB3aGljaCBpcyBob3cgaHdtb24gcGF0
-Y2hlcyBhcmUgZG9uZSAtIGJ1dCBub3Qgb3RoZXIgc3Vic3lzdGVtcy4KPgo+V2hhdCBTdGVwaGVu
-IGlzIGFza2luZywgaXMgdGhhdCB5b3UgcnVuCj4kIGdpdCBsb2cgLS1vbmVsaW5lIC0zIC0tIGRy
-aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMKPnRvIGZpZ3VyZSBvdXQgd2hhdCB0aGUgc3Vi
-amVjdCBzaG91bGQgYmUsIGJhc2VkIG9uIHByZXZpb3VzIHN1YmplY3RzLgo+VGhhdCdzIGdvb2Qg
-YWR2aWNlIHRvIGZvbGxvdyBmb3IgYW55IHBhdGNoIHlvdSBzZW5kIDopCj4KCgo+VGhpcyBvdGhl
-ciBjb21tZW50IHdhczoKPj4gRG9uJ3QgdGhpbmsgd2UgbmVlZCB0d28gcGF0Y2hlcyBmb3IgZXNz
-ZW50aWFsbHkgdGhlIHNhbWUgdGhpbmcuCj4KPkkgYXNzdW1lIHlvdSBzZW50IHR3byBkaWZmZXJl
-bnQgcGF0Y2hlcyBmb3IgdGhlIHNhbWUgZHJpdmVyLCBvciB0aGUKPnNhbWUgZGlyZWN0b3J5IG9m
-IGRyaXZlcnM/Cj5IZSdzIGp1c3QgYXNraW5nIHRoYXQgeW91IHNxdWFzaCB0aGUgdHdvIGNvbW1p
-dHMgdG9nZXRoZXIgaW50byBvbmUKPmNvbW1pdC4KPgoKT2ssIHRoYW5rcywgQ29ub3IsIEkgZ290
-IGl0IGFuZCBJIHdpbGwgcHJlcGFyZSBteSBuZXh0IG1lcmdlZCBwYXRjaCBmb3IKdGhlc2UgZmls
-ZXMgd2hpY2ggYXJlIGluZGVlZCBpbiB0aGUgc2FtZSBkcml2ZXIgZGlyZWN0b3J5LgoKPiBGcm9t
-IHlvdXIgb3RoZXIgZW1haWw6Cj4+IFNvcnJ5LCB3aGF0IGRvIHlvdSBtZWFuIHNhbWUgc3ViamVj
-dCBsaW5lIGNvbW1lbnQ/Cj4+IEkgYWRkIGEgW1BBVENIIHYyXSB0YWcgd2hlbiBJIHVzZSAnZ2l0
-IGZvcm1hdC1wYXRjaCAtdiAyJy4KPgo+SSBhc3N1bWUgU3RlcGhlbiBtZWFudDogdGhlIHNhbWUg
-Y29tbWVudHMgYWJvdXQgIihjbGstdGVncmEzMCkiCj5mcm9tIHRoaXMgcGF0Y2ggYXBwbHkgdG8g
-dGhhdCBwYXRjaCB0b28uIFRoZXJlJ3Mgbm90aGluZyB3cm9uZwo+d2l0aCBoYXZpbmcgIltQQVRD
-SCB2Ml0iLgo+Cj4+IFlvdSBtZWFuIHRoZSB0d28gY29tbWl0IGhhcyBzYW1lIHN1YmplY3QgY29u
-dGVudD8KPj4gU29ycnksIEkgYW0gYSBiZWdpbm5lciB0byBzdWJtaXQgcGF0Y2ggY29tbWl0Lgo+
-Cj5PaGggZG9uJ3Qgd29ycnksIHdlIGhhdmUgYWxsIGJlZW4gdGhlcmUgKGFuZCBpbiBteSBjYXNl
-IG5vdCB0b28KPmxvbmcgYWdvIGVpdGhlci4uLikKPgo+SG9wZSB0aGF0IGhlbHBzIQo+VGhhbmtz
-LAo+Q29ub3IuCj4KPgoKCgpUaGFua3MgYWdhaW4sIENvbm9yLgoKTGlhbmcK
+Hello Stephen,
+
+Am Donnerstag, 16. Juni 2022, 04:52:50 CEST schrieb Stephen Boyd:
+> Quoting Alexander Stein (2022-06-01 07:15:54)
+> 
+> > Hi,
+> > 
+> > I want to use an output clock, which provides some internal clock on an
+> > putput pad, such as IMX8MP_CLK_CLKOUT1 or IMX6QDL_CLK_CKO.
+> > To prepare and enable a clock I need a consumer, but in my case there is
+> > no
+> > (local) consumer. Is there some way, DT node or some kind of driver/uapi,
+> > which I can use to enable the clock?
+> 
+> I think you want to use an "always-on-clocks" property in DT for your
+> device. See the proposal[1].
+> 
+> [1] https://lore.kernel.org/linux-clk/20220517235919.200375-1-marex@denx.de
+
+Nice, this looks interesting. Thanks for the link.
+
+Best regards,
+Alexander
+
+
+
