@@ -2,89 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E340AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 15:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81857C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 16:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237142AbiFPPPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 11:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52678 "EHLO
+        id S1377357AbiFPQB6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 12:01:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233390AbiFPPPB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 11:15:01 -0400
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25FF1FCC5;
-        Thu, 16 Jun 2022 08:15:00 -0700 (PDT)
-Received: by mail-il1-f172.google.com with SMTP id h7so1122442ila.10;
-        Thu, 16 Jun 2022 08:15:00 -0700 (PDT)
+        with ESMTP id S237882AbiFPQB5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 12:01:57 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C726D45ADB
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 09:01:55 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id m24so2451391wrb.10
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 09:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fDpptzLHw4Uf98ATfaDvWk2RI324uTrH2wMxpJWMHDM=;
+        b=up4O2HccUmVrpuUM2kscgGbI6UVb7idsbYT+nw9G84eoifDcsHZkNzMQD+vuJZ/7Cz
+         uHmqCZmd8DlOBROpDabzsZ8tOrlz7Fq2QwcVHvKtvHvlk4QV0k1Td3DR11GjApNRWPYc
+         8gjiMujkBmEZxbVYxynKK4nKBmLeHyoAnJsWZHW9EnN1/qfjRo4fRXsQ6Nh/i3vb/glh
+         3TfId7o8XfI47blXRtA/5V9/3ogvV4YHl1FlzSBvOzFKA5kNuGeFLyLMcBj9BA0zOJNC
+         O8vBXgQ3G5Fyejl/ptrU/5bR21PaoGeMeKjMoD1zzD+TeA7UzD6x1I7BurpaNFNDwRZr
+         wapg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=biXCDQT90ObJ6hyRTS7k12rAG7yzeSvs6GnS6eorWy4=;
-        b=4KFni0JUHy/RXePEgug3lRYdrB/T3gWGyRUi1151sGPri6b+rvBu7RKG5zvX4vpsmi
-         9sSVxq4Hvty5mYp86O74xKyaDYf4MGlc/eGkxDKU8fYsbMlw7SkBHI5M19ky3VmTRlwy
-         sC/oUJN5LHxjuhM7fSODk8XO2v+jE4bl9nsDLhuKF/P0svMZ24NxMKCYOm4mzgTWtrtL
-         rvZzNyiYvHXEptWdmrQNYRe6MYGdb66IuMDSE4EstVUA+z0+xLxFP8UQHFQGoC3pt5ta
-         wvN0a89/DVWXp/IaA7v/ID8edocSguDB6RI/DvNrtPQMb6bp3zR9XJrO8cjmIOD+zjS6
-         znYg==
-X-Gm-Message-State: AJIora8tIyfcBdLh+7YDVFFnYGXKqYwqqcbqMOFSHuhoeyMSCYyv7d2Z
-        tI9RnXJ8U177ZX4qaBgu5A==
-X-Google-Smtp-Source: AGRyM1vyI6gtpeykTILPZnbma0073Cvcndgl+qd/LTGfH3eUbekQPxJg89MwT/qdbvfooBY3nSXjMQ==
-X-Received: by 2002:a92:cdac:0:b0:2d3:bf8e:8389 with SMTP id g12-20020a92cdac000000b002d3bf8e8389mr3153113ild.56.1655392500209;
-        Thu, 16 Jun 2022 08:15:00 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id z4-20020a926504000000b002d11c598e12sm1103936ilb.61.2022.06.16.08.14.59
+        bh=fDpptzLHw4Uf98ATfaDvWk2RI324uTrH2wMxpJWMHDM=;
+        b=o1PmyHNRf2bONw3zxYO1SgHALXdlqeGcnr64h6PYrneRfPJNo+ulcO/C7UMlcLTW75
+         PI1BEz0QKsubfcEA/kPaOTgis/EOM76Lydd2ofgejt2R0/y6rfiMnDEjORtVAO20nioV
+         M8JhNsq+RvEu5fl4woI7GtblspSwDIaT7UKo/3yxYyBuvTbxeFDeFQpSzae3+7w4CKjX
+         lhQbNjl6ZEwbpr4HKhXXQM0R4H5YgEs/9o6dtznPCF+mIwJrwNmNtnmyPHqdovCKuwag
+         W2Fzh9Qn5oCrmv+qeukzxmRq4OY3A2m6LZ7/p6s3k/whKWX7X2N/FtjMfJ6TH3kdsQPt
+         8thA==
+X-Gm-Message-State: AJIora9qZ4Ek7bwzvAWMYVk8Ag8pf4zUl2aLHalAwsHZ/7mEVRcAgoh1
+        FSdHRRQE815OFk8CLFq0b1nvZw==
+X-Google-Smtp-Source: AGRyM1sPf418xHWiCQdMTOL82E/BmMZ+P8xYSL/p1HJFjlzMJCMrCUE6kDNOqMiha4tRCnInDwHwWw==
+X-Received: by 2002:adf:d1ed:0:b0:215:98d7:2a93 with SMTP id g13-20020adfd1ed000000b0021598d72a93mr5360534wrd.637.1655395314406;
+        Thu, 16 Jun 2022 09:01:54 -0700 (PDT)
+Received: from ryzen ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id v11-20020a5d4b0b000000b0020d07d90b71sm2211270wrq.66.2022.06.16.09.01.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jun 2022 08:14:59 -0700 (PDT)
-Received: (nullmailer pid 3488523 invoked by uid 1000);
-        Thu, 16 Jun 2022 15:14:58 -0000
-Date:   Thu, 16 Jun 2022 09:14:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        linux-kernel@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        kernel-janitors@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Move versaclock.h to
- dt-bindings/clock
-Message-ID: <20220616151458.GA3488452-robh@kernel.org>
-References: <20220613081632.2159-1-lukas.bulwahn@gmail.com>
- <20220613081632.2159-3-lukas.bulwahn@gmail.com>
+        Thu, 16 Jun 2022 09:01:53 -0700 (PDT)
+Date:   Thu, 16 Jun 2022 19:01:51 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/7] clk: imx93: pll/imx93 fixes and update
+Message-ID: <YqtT70KkSnLzG1zH@ryzen>
+References: <20220609132902.3504651-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220613081632.2159-3-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220609132902.3504651-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Jun 2022 10:16:32 +0200, Lukas Bulwahn wrote:
-> Most of the clock related dt-binding header files are located in
-> dt-bindings/clock folder. It would be good to keep all the similar
-> header files at a single location.
-> 
-> This was discovered while investigating the state of ownership of the
-> files in include/dt-bindings/ according to the MAINTAINERS file.
-> 
-> This change here is similar to commit 8e28918a85a0 ("dt-bindings: clock:
-> Move ti-dra7-atl.h to dt-bindings/clock") and commit 35d35aae8177
-> ("dt-bindings: clock: Move at91.h to dt-bindigs/clock").
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/idt,versaclock5.yaml | 4 ++--
->  arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi    | 2 +-
->  arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi          | 2 +-
->  drivers/clk/clk-versaclock5.c                                | 2 +-
->  include/dt-bindings/{clk => clock}/versaclock.h              | 0
->  5 files changed, 5 insertions(+), 5 deletions(-)
->  rename include/dt-bindings/{clk => clock}/versaclock.h (100%)
-> 
+On 22-06-09 21:28:55, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> This patchset covers a few Fixes to pll and i.mx93 clk, also includes
+> one patch to update pll freq.
+>
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied all, thanks.
+
+> Haibo Chen (1):
+>   clk: imx93: use adc_root as the parent clock of adc1
+>
+> Jacky Bai (1):
+>   clk: imx93: Correct the edma1's parent clock
+>
+> Liu Ying (1):
+>   clk: imx: clk-fracn-gppll: Return rate in rate table properly in
+>     ->recalc_rate()
+>
+> Peng Fan (4):
+>   clk: imx93: correct nic_media parent
+>   clk: imx: clk-fracn-gppll: fix mfd value
+>   clk: imx: clk-fracn-gppll: correct rdiv
+>   clk: imx: clk-fracn-gppll: Add more freq config for video pll
+>
+>  drivers/clk/imx/clk-fracn-gppll.c | 36 ++++++++++++++++++-------------
+>  drivers/clk/imx/clk-imx93.c       |  6 +++---
+>  2 files changed, 24 insertions(+), 18 deletions(-)
+>
+> --
+> 2.25.1
+>
