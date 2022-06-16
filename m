@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD6CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 01:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D36CCA47E
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 01:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350287AbiFPBuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 21:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
+        id S232658AbiFPBu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 21:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344417AbiFPBuQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 21:50:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2229580D4;
-        Wed, 15 Jun 2022 18:50:15 -0700 (PDT)
+        with ESMTP id S1356490AbiFPBut (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 21:50:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904AB580D5;
+        Wed, 15 Jun 2022 18:50:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A4833B8216B;
-        Thu, 16 Jun 2022 01:50:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A52EC3411A;
-        Thu, 16 Jun 2022 01:50:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 25420B8216C;
+        Thu, 16 Jun 2022 01:50:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5B70C3411A;
+        Thu, 16 Jun 2022 01:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655344213;
-        bh=FhkQ0cJWFo5/+JckmuSC374vXWxCqLkRJWGOYKujcis=;
+        s=k20201202; t=1655344245;
+        bh=kD2O/0TJ6MNpLluiWVl9sq76xMGmLRw02lOE7VH4VsA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PNl/1VYOBJX+GK1z/xA0+SyTgO77bCwmSxek9sWJiyXF3hW18+uFdu0FcHGn+4Rx/
-         Gv0XGdBins1WjCWomLRsl7tauGUnSyXxzsjmsa4vh6ZDtiQV02ChpP5fQ4ikDrDFOn
-         oMy4hfUozi4SBaiACcCWlMKILFEVurMDHqsBRen96yGLnOFELzJn4MGLJjUbho386e
-         oEU3GgbEr/t+ZN634T47FHhEgniX2FAfKEHOZbbZ2DaZnonktjtpD1Uo5+AzcVuPIj
-         RQXm75B7sBP7fUgbeBJKjGMG8Vr+Z6RaTV+9zHzO14D7ultcXw6zha8FDShsJWlmAB
-         CtdmnB63fvC7A==
+        b=ss2rrLqW7RFI8cZuMx4Ri3CeZru6V6cmVJTKZCZ4R+bzZ/gQOw9YzjbVL1LfcTYPe
+         +GxOBBZ04D0kE/cVdOBybgIWwewStCnHNOJk7v7/hl/Po7VF1qafXa6xD4OuVXqKIH
+         PJAblCkJzlgc+DBxMB93dsMaAjj7F9nDXzmHDdgbXIAb16XfvD6lh4wsYdozJYYsv6
+         MOJLSuRCUdZl1T0LPd88VUOcoVcKeoDYT7ImA6FjOk5ovsbR4mKPnLx/nJc9fJJhFI
+         OrD+GvrCepNgKPtwr2NKRvHnIDHntj60kKAz9kMzWPu8B0FwFE1U17CUnG+w4eXtDE
+         dsR3UHYy4DpWw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220523093346.28493-2-rex-bc.chen@mediatek.com>
-References: <20220523093346.28493-1-rex-bc.chen@mediatek.com> <20220523093346.28493-2-rex-bc.chen@mediatek.com>
-Subject: Re: [RESEND v8 01/19] clk: mediatek: reset: Add reset.h
+In-Reply-To: <20220523093346.28493-4-rex-bc.chen@mediatek.com>
+References: <20220523093346.28493-1-rex-bc.chen@mediatek.com> <20220523093346.28493-4-rex-bc.chen@mediatek.com>
+Subject: Re: [RESEND v8 03/19] clk: mediatek: reset: Refine and reorder functions in reset.c
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
         nfraprado@collabora.com, chun-jie.chen@mediatek.com,
@@ -49,15 +49,16 @@ Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Wed, 15 Jun 2022 18:50:10 -0700
+Date:   Wed, 15 Jun 2022 18:50:42 -0700
 User-Agent: alot/0.10
-Message-Id: <20220616015013.3A52EC3411A@smtp.kernel.org>
+Message-Id: <20220616015045.A5B70C3411A@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rex-BC Chen (2022-05-23 02:33:28)
-> Add a new file "reset.h" to place some definitions for clock reset.
+Quoting Rex-BC Chen (2022-05-23 02:33:30)
+> To make drivers more readable, we modify the indentation of the drivers
+> and reorder the location of functions.
 >=20
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
