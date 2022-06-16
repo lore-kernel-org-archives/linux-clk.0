@@ -2,68 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AF2C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25497C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:27:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359548AbiFPIU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 04:20:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
+        id S1358711AbiFPI1B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 04:27:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359431AbiFPIU5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:20:57 -0400
+        with ESMTP id S230328AbiFPI1A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:27:00 -0400
 Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 414855D672;
-        Thu, 16 Jun 2022 01:20:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2B7FA393C5;
+        Thu, 16 Jun 2022 01:26:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=kdfWx
-        6XZzO9qni6lYYIV53hUL9pVC8liXgCxesDNue4=; b=fDdsfZSOIjmmMME9HNlGp
-        s3ZAOyD1rJd6nF/EL5bezm4dK64DttUz9gL3AfeqUsPeVyen774bO5c6T/SDB2bc
-        mpZU01Kl0/Bcm0E8R5zmORY058MsoCAoiKD56jemA6V1kN968Smea6aHeHB6EY4L
-        IIEHVZQgw/FZ9Xd90mEz30=
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=as9Cc
+        zfU4pBW9WzJ5FIGAqVUtplg6qawQ77z7V7IwXE=; b=e+C4bgt6/6lvYf2mR8tUQ
+        5/ppsTjn208uSQpP4MkF3UhbzCcWpVYXMd+v7z/3LH0YnjpV1nD0/cF0H3Qz+nH1
+        lCqXjXLgJU/VsH56RWNKfvv5C8MguA3MN8Gz15tRuutITZosRzhjZzuR8h+cY0QX
+        D2+jPXG4L1YFu21SKjzwMM=
 Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
- (Coremail) ; Thu, 16 Jun 2022 16:19:41 +0800 (CST)
+ (Coremail) ; Thu, 16 Jun 2022 16:24:46 +0800 (CST)
 X-Originating-IP: [124.16.139.61]
-Date:   Thu, 16 Jun 2022 16:19:41 +0800 (CST)
+Date:   Thu, 16 Jun 2022 16:24:46 +0800 (CST)
 From:   "Liang He" <windhl@126.com>
 To:     "Stephen Boyd" <sboyd@kernel.org>, Conor.Dooley@microchip.com
-Cc:     jonathanh@nvidia.com, mturquette@baylibre.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v2] clk: tegra: (clk-tegra30) Add missing
+Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v2] drivers: clk: (clk-nomadik) Add missing
  of_node_put()
 X-Priority: 3
 X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
  Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <20220616060037.5AEB8C34114@smtp.kernel.org>
-References: <20220616033622.3975621-1-windhl@126.com>
- <20220616060037.5AEB8C34114@smtp.kernel.org>
+In-Reply-To: <20220616060225.3495EC34114@smtp.kernel.org>
+References: <20220616032448.3974916-1-windhl@126.com>
+ <20220616060225.3495EC34114@smtp.kernel.org>
 Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Message-ID: <1a776c99.5e5c.1816b98bfee.Coremail.windhl@126.com>
+Message-ID: <22796950.5fb1.1816b9d67a7.Coremail.windhl@126.com>
 X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GMqowABHTyef56pi0jA3AA--.10921W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGhQiF1-HZTyeegACsc
+X-CM-TRANSID: GMqowABHTyfP6Kpi1TI3AA--.10962W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGgEiF1-HZTzNtAABsX
 X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CgoKCgoKQXQgMjAyMi0wNi0xNiAxNDowMDozNSwgIlN0ZXBoZW4gQm95ZCIgPHNib3lkQGtlcm5l
-bC5vcmc+IHdyb3RlOgo+VGhlIHN1YmplY3Qgc2hvdWxkIG1hdGNoIGhpc3RvcmljYWwgc3ViamVj
-dHMKPgo+ICQgZ2l0IGxvZyAtLW9uZWxpbmUgLTMgLS0gZHJpdmVycy9jbGsvdGVncmEvY2xrLXRl
-Z3JhMzAuYwo+Cj5zaG93cyBtb3N0bHkgImNsazogdGVncmE6ICIuIENhbiB5b3UgYWxzbyBjb21i
-aW5lIHRoaXMgd2l0aCB0aGUgb3RoZXIKPnRlZ3JhIHBhdGNoPyBEb24ndCB0aGluayB3ZSBuZWVk
-IHR3byBwYXRjaGVzIGZvciBlc3NlbnRpYWxseSB0aGUgc2FtZQo+dGhpbmcuCj4KPlF1b3Rpbmcg
-TGlhbmcgSGUgKDIwMjItMDYtMTUgMjA6MzY6MjIpCj4+IEluIHRlZ3JhMzBfY2xvY2tfaW5pdCwg
-b2ZfZmluZF9tYXRjaGluZ19ub2RlKCkgd2lsbCByZXR1cm4gYSBub2RlCj4+IHBvaW50ZXIgd2l0
-aCByZWZjb3VudCBpbmNyZW1lbnRlZC4gV2Ugc2hvdWxkIHVzZSBvZl9ub2RlX3B1dCgpIHdoZW4K
-Pj4gdGhlIG5vZGUgcG9pbnRlciBpcyBub3QgdXNlZCBhbnltb3JlLgo+PiAKPj4gU2lnbmVkLW9m
-Zi1ieTogTGlhbmcgSGUgPHdpbmRobEAxMjYuY29tPgo+PiAtLS0KPj4gIGNoYW5nZWxvZzoKPj4g
-Cj4+ICB2MjogdXNlIHJlYWwgbmFtZSBmb3IgU29iCj4KPlRoYW5rcyEKPgo+PiAgdjE6IGZpeCBt
-aXNzaW5nIGJ1ZwoKU29ycnkgZm9yIG15IGZhdWx0LiBJIGhhdmUgYmVlbiBhZHZpc2VkIHRvIHVz
-ZSByZWFsIG5hbWUgYW5kIEkgcmVzZW5kIGEgUEFUQ0ggdjIgd2l0aCBteSByZWFsIG5hbWUsIGJ1
-dCByZWFsbHkgd2l0aCB0aGUgc2FtZSBwYXRjaCBjb2RlLgoKU28gaG93IGNhbiBJIHdpdGhkcmF3
-IHRoZSBmaXJzdCBwYXRjaCBvciByZXNlbmQgb3RoZXIgdGhpbmc/IEkgYW0gY29uZnVzZWQuIAoK
-Q2FuIHlvdSBoZWxwIG1lLCBDb25vcj8K
+CgpBdCAyMDIyLTA2LTE2IDE0OjAyOjIzLCAiU3RlcGhlbiBCb3lkIiA8c2JveWRAa2VybmVsLm9y
+Zz4gd3JvdGU6Cj5TYW1lIHN1YmplY3QgbGluZSBjb21tZW50IGFwcGxpZXMgaGVyZS4gTG9vayBh
+dCBwcmV2aW91cyBwYXRjaGVzIHRvIHRoZQo+ZmlsZS4KClNvcnJ5LCB3aGF0IGRvIHlvdSBtZWFu
+IHNhbWUgc3ViamVjdCBsaW5lIGNvbW1lbnQ/CgpJIGFkZCBhIFtQQVRDSCB2Ml0gdGFnIHdoZW4g
+SSB1c2UgJ2dpdCBmb3JtYXQtcGF0Y2ggLXYgMicuCgpZb3UgbWVhbiB0aGUgdHdvIGNvbW1pdCBo
+YXMgc2FtZSBzdWJqZWN0IGNvbnRlbnQ/CgpTb3JyeSwgSSBhbSBhIGJlZ2lubmVyIHRvIHN1Ym1p
+dCBwYXRjaCBjb21taXQuCgo+Cj5RdW90aW5nIExpYW5nIEhlICgyMDIyLTA2LTE1IDIwOjI0OjQ4
+KQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLW5vbWFkaWsuYyBiL2RyaXZlcnMvY2xr
+L2Nsay1ub21hZGlrLmMKPj4gaW5kZXggYmFkMjY3N2UxMWFlLi40OGQ1NzcyYjM2YTUgMTAwNjQ0
+Cj4+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1ub21hZGlrLmMKPj4gKysrIGIvZHJpdmVycy9jbGsv
+Y2xrLW5vbWFkaWsuYwo+PiBAQCAtOTksNyArOTksNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgbm9t
+YWRpa19zcmNfaW5pdCh2b2lkKQo+PiAgICAgICAgIGlmICghc3JjX2Jhc2UpIHsKPj4gICAgICAg
+ICAgICAgICAgIHByX2VycigiJXM6IG11c3QgaGF2ZSBzcmMgcGFyZW50IG5vZGUgd2l0aCBSRUdT
+ICglcE9GbilcbiIsCj4+ICAgICAgICAgICAgICAgICAgICAgICAgX19mdW5jX18sIG5wKTsKPj4g
+LSAgICAgICAgICAgICAgIHJldHVybjsKPj4gKyAgICAgICAgICAgICAgIGdvdG8gb3V0X3B1dDsK
+Pj4gICAgICAgICB9Cj4+ICAKPj4gICAgICAgICAvKiBTZXQgYWxsIHRpbWVycyB0byB1c2UgdGhl
+IDIuNCBNSHogVElNQ0xLICovCj4+IEBAIC0xMzIsNiArMTMyLDkgQEAgc3RhdGljIHZvaWQgX19p
+bml0IG5vbWFkaWtfc3JjX2luaXQodm9pZCkKPj4gICAgICAgICB9Cj4+ICAgICAgICAgd3JpdGVs
+KHZhbCwgc3JjX2Jhc2UgKyBTUkNfWFRBTENSKTsKPj4gICAgICAgICByZWdpc3Rlcl9yZWJvb3Rf
+bm90aWZpZXIoJm5vbWFkaWtfY2xrX3JlYm9vdF9ub3RpZmllcik7Cj4+ICsgICAgICAgCj4+ICtv
+dXRwdXQ6Cj4+ICsgICAgb2Zfbm9kZV9wdXQobnApOyAgIAo+Cj50YWJiZWQgaW5jb3JyZWN0bHk/
+CgpTb3JyeSBmb3IgdGhpcyBpbmNvcnJjdCB0YWIgc2V0dGluZy4=
