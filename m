@@ -2,65 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BEBCCA473
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 02:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EBEC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 02:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbiFPCor (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 22:44:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47756 "EHLO
+        id S1350511AbiFPCw6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 22:52:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229693AbiFPCop (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 22:44:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7217393FF;
-        Wed, 15 Jun 2022 19:44:44 -0700 (PDT)
+        with ESMTP id S229693AbiFPCw4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 22:52:56 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAD8647E
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 19:52:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 844B8B82268;
-        Thu, 16 Jun 2022 02:44:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1337EC3411E;
-        Thu, 16 Jun 2022 02:44:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1291B82205
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 02:52:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F7CC3411E;
+        Thu, 16 Jun 2022 02:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655347482;
-        bh=+tybOX2ZUq1lkkdmlC+t9c+9BDKLoV6q0HGEOURZYcw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZzFIFIqi1MdnlLbUz0m/h8wJ/XgZtDNARx+EJ10xb7IC3HXW7ovy1bUvGYEmCIvQk
-         buhDcMgynemjSh/s3EkbL6E2OiHedz6cR6iaMGcdTsC1n7UHuYa3NnnIlN6r34Pfgy
-         rpOZZx7bv4DgRQsXTgtzKa4QhZ0coTpYKwHkkGWpYT6FR/bHLEAudLQ+Hf/9wHyINR
-         yNFNRrBe8M5dJ4q3uSPY8rZe841F5ZXnju8DuzM0RHy83Kqb7Yf+9rtYDvZoIHu3qa
-         N4AlMW2N+QXY+alSqJm+/onS7eoX5aA2nyPfaS5y7BWTmQnpA5IhhFWNOMbTatXE6i
-         k/adjTWR9u5Sw==
+        s=k20201202; t=1655347972;
+        bh=ZcfZSR/OWB5EpBDmMVDLjacTpdQ6DpYl8i9edWsPk5w=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=Gq2ePgJrF/CVv9OFy5/EYiPlcbdZdm2kRNdmV8Bz/SwShkfZQ9JWBEGPr+P3PN5gH
+         EQC/c6c/jKfYMBPuWDkduQDC3V5mQ2VRHijXlF9uKOzqN4IFyJTuqdaQZlC3/+NxwE
+         pc0bupueHHxGfS8Q5nF1xqCBLI5x+eqUhucUI3YJtNqk9k+mnlz9tsy8TxLKcluu7e
+         mGNYOF3sau6nKBqmtjVWYV8iPUH5jifQ0+j/Quv1E19R7eUnTGXoi3oEpPmbCFEnMd
+         TEhF3oGExyyHfTrqlCWh4Pl/yjqklxhP0p5SFwVXZ8Cv1xhpuGv+Xk0vceDYtbR0Fd
+         VFKPtOkf55Adw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
-References: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: clk-mt8195-vdo0: Set rate on vdo0_dp_intf0_dp_intf's parent
+In-Reply-To: <3677796.MHq7AAxBmi@steina-w>
+References: <3677796.MHq7AAxBmi@steina-w>
+Subject: Re: clock consumer for output clocks?
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, wenst@chromium.org,
-        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        rex-bc.chen@mediatek.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Wed, 15 Jun 2022 19:44:40 -0700
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 15 Jun 2022 19:52:50 -0700
 User-Agent: alot/0.10
-Message-Id: <20220616024442.1337EC3411E@smtp.kernel.org>
+Message-Id: <20220616025252.36F7CC3411E@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2022-06-14 02:10:20)
-> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
-> clock: this is required to trigger clock source selection on
-> CLK_TOP_EDP, while avoiding to manage the enablement of the former
-> separately from the latter in the displayport driver.
+Quoting Alexander Stein (2022-06-01 07:15:54)
+> Hi,
 >=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
+> I want to use an output clock, which provides some internal clock on an p=
+utput=20
+> pad, such as IMX8MP_CLK_CLKOUT1 or IMX6QDL_CLK_CKO.
+> To prepare and enable a clock I need a consumer, but in my case there is =
+no=20
+> (local) consumer. Is there some way, DT node or some kind of driver/uapi,=
+=20
+> which I can use to enable the clock?
 
-Any Fixes tag?
+I think you want to use an "always-on-clocks" property in DT for your
+device. See the proposal[1].
+
+[1] https://lore.kernel.org/linux-clk/20220517235919.200375-1-marex@denx.de
