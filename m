@@ -2,71 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D593C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 07:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C895C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:17:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242049AbiFPHud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 03:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40482 "EHLO
+        id S1359575AbiFPIR5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 04:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiFPHuc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 03:50:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237DD56F98;
-        Thu, 16 Jun 2022 00:50:32 -0700 (PDT)
+        with ESMTP id S229462AbiFPIRz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:17:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C2713CE7;
+        Thu, 16 Jun 2022 01:17:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BFA25B8213C;
-        Thu, 16 Jun 2022 07:50:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C05C34114;
-        Thu, 16 Jun 2022 07:50:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE3BA61D29;
+        Thu, 16 Jun 2022 08:17:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68449C34114;
+        Thu, 16 Jun 2022 08:17:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655365829;
-        bh=c1Fklzn9ReeW/FcEJgHJCunMay9LhWESILSmNJZ7Ecw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IAINSoDeMlPobTkRYuI5dYGy+M+os6G3xLXGYB61huHOP+CNZXmZgiwVaae5PcJsE
-         QyTotzBG+4ZeIY8k0Sv9R682mwhORZBBzlIjNjoybchW73VRIfBMvl557wmPsaufef
-         HIrhRFkedg6v2FjMDScFjIke+E2jrYBiqaYGV7SNP8m+4Pmj7Mt16JpeNZiKASOAeh
-         Anpy2xCOYEPAm4LbTquZIFy7aL5v29KuJ1YsRSOJuQ86+t1W+HnZMO13iNEIc45NI/
-         P8PBWxqR3dmFZI7qPzYdYXUjgRO+OhSvv91xrucVIICjKcAqMq5zUmKEgMvWzbWyLB
-         Z1yFuiPcy+rug==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1655367473;
+        bh=XoJ4+rFkSAX4O5qYIqK5h8B/dlR8CbRJGdER6wLYAg8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VeSUTIggYN810w8JCA1g7TGpTRWOa9WbH3c5dRxNFna+XrzdVydsFSgYQyONOaxEt
+         w9W+YGVqVi/i8tGuiOpPx73ynWAJipXxXg6B70UfFGD4o/kjGwym+kW3V6qdOpoX+/
+         NKI58usFqFmnOzEbhzrxEqpIxwWMB29P8vTmO93RP9bXrnJ3jJEes9IlSSUGHiXUBm
+         11RkFhYK9BCSZxBfA9SRdLH3gLkRYA6Jt8ZJa1vPBoVG+PZmSF/BkBlKY08Wwd4dUh
+         opgk7Xw5Ci5jvRY3svNJ7tfZHg7SyoAk0Ml2NRnaEDteGr21MNVqASZ7aahFB7W2cm
+         W0NyF6YInU/wg==
+Date:   Thu, 16 Jun 2022 09:17:46 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     linux-doc@vger.kernel.org,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: efm32: remove bindings for deleted platform
+Message-ID: <YqrnKtkm4Xdl8vTy@sirena.org.uk>
+References: <20220615210720.6363-1-wsa@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220615064306.22254-1-tony@atomide.com>
-References: <20220615064306.22254-1-tony@atomide.com>
-Subject: Re: [PATCH v2 1/1] clk: ti: Stop using legacy clkctrl names for omap4 and 5
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
-        Tero Kristo <kristo@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org
-Date:   Thu, 16 Jun 2022 00:50:27 -0700
-User-Agent: alot/0.10
-Message-Id: <20220616075029.43C05C34114@smtp.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gF7RWUCch1/TUW4O"
+Content-Disposition: inline
+In-Reply-To: <20220615210720.6363-1-wsa@kernel.org>
+X-Cookie: Pass with care.
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2022-06-14 23:43:06)
-> With the addition of clock-output-names, we can now unify the internal
-> clock naming for omap4 and 5 to follow the other TI SoCs.
->=20
-> We are still using legacy clkctrl names for omap4 and 5 based on the clock
-> manager name which is wrong. Instead, we want to use the clkctrl clock
-> based naming.
->=20
-> We must now also drop the legacy TI_CLK_CLKCTRL_COMPAT quirk for the
-> clkctrl clock.
->=20
-> This change will allow further devicetree warning cleanup as already
-> done for am3/4 and dra7.
->=20
-> Cc: linux-clk@vger.kernel.org
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tero Kristo <kristo@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
 
-Applied to clk-ti-dt and merged into clk-next
+--gF7RWUCch1/TUW4O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jun 15, 2022 at 11:07:19PM +0200, Wolfram Sang wrote:
+> Commit cc6111375cec ("ARM: drop efm32 platform") removed the platform,
+> so no need to still carry the bindings.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--gF7RWUCch1/TUW4O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmKq5yoACgkQJNaLcl1U
+h9D6Bgf9FsWZbqfrpPz05MqsAP5L5zXrH6+wVnlkfyL60hVYPRq4/YkegM0Ttbjm
+uU+opIQjjzpOCx7uPPqovy+19nZ1WXEk7oL8yHmjp35I9wzEAflDpj2VhJqROabZ
+hJSF+yEWSSh3mIhD4AkvMtz/Jo4unndHxzC/sRsRWdQJLVsX6d9etfXNHOPKVmc+
+XNiD+z27IMfgqM5f6Ax1AziQwVKPMtu/FszTUWQt1UIPNLq2hv/R5MdF13of/gM6
+gwwGJJuLTaPNhvHF0b1T8RdyyWzJnc3KPO5zED3DpHhKGDz6u8OBAHDrQXLQeeEc
+aufEoFD8GNwShKIK9ai+ouZEkFscHQ==
+=DN3x
+-----END PGP SIGNATURE-----
+
+--gF7RWUCch1/TUW4O--
