@@ -2,158 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6B3C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 14:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CE8C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 14:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377469AbiFPOJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 10:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48128 "EHLO
+        id S1377055AbiFPOS1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 10:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377101AbiFPOJG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 10:09:06 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E39073BA66;
-        Thu, 16 Jun 2022 07:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655388544; x=1686924544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KbhRQpNJ/e3Byf+2uQ+3EqvHWdCIC7aeEObpWN1nN8g=;
-  b=MX3hk770tNSyar9AnHYGE2wT6CRzsayEbTO3Hs1k8ViqeJYpjN/zjfce
-   fZqY7xkW/hKayw+ff16goDiiHhI+fQDhq2i2TYLrBZ4IcUN/BlJVtWQ5Z
-   e748fSVi6ze4nikCJm+kRSrnkZh35B6vlN8hUg1PWsHYGagLqnd4Y1xgP
-   ctImGzkX3sh1MazwSu8y61PQFaIv3vNkaETxvfyGOi8pcTKTgbfZIf3AJ
-   rQOpnU3uhNWQKOt/6CNju3pwUOO4rYV6qrRftsT+kSamL2JXswv4aazFs
-   /9agZCdq9PWiR824B4ZAklHysB0oRHogwVENBo0/BqxjT19Dk2QS0sPIa
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10379"; a="278051784"
-X-IronPort-AV: E=Sophos;i="5.92,305,1650956400"; 
-   d="scan'208";a="278051784"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 07:09:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,305,1650956400"; 
-   d="scan'208";a="613172888"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 16 Jun 2022 07:09:02 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o1qBB-000ORq-MZ;
-        Thu, 16 Jun 2022 14:09:01 +0000
-Date:   Thu, 16 Jun 2022 22:08:16 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Liang He <windhl@126.com>, linus.walleij@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     kbuild-all@lists.01.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        windhl@126.com
-Subject: Re: [PATCH v2] drivers: clk: (clk-nomadik) Add missing of_node_put()
-Message-ID: <202206162212.4SKEX9z6-lkp@intel.com>
-References: <20220616032448.3974916-1-windhl@126.com>
+        with ESMTP id S1377668AbiFPOSZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 10:18:25 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F372252B3
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 07:18:24 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id z17so863639wmi.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 07:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UN5i/UKbtbONOs/WPjPNnPxxMDAl0vrQLK88lnS0mL4=;
+        b=borFl+1dJOHpYvvyoUMMVCWKZHUKiB35x656cUgpGZgxyXRd6BlVe9MlysI1XLGXg2
+         LweQJzHCnssF4XbGeZNoo7DA+CeUxz2YtHDA+83oRpTfPLs2dA/VPk1VVJA3X64TdXPe
+         hTV1eB97I8OWUdnKliftqc6oVC+j1VcKcay5espvSvYmdGbovu0ejbWlypNtvvg0iBta
+         ouQgQqDzxPy284vv3evT54tmfbzR041f+jeU2c0UGA0TU0XfTeB59j9R4FCCF3RYXZfy
+         t0V3hFxDqTShT5A/HEDkDrc3mIm7+Ltysddd2tYTaFoJrWVWQzIy1hhHn8paBqBwsa36
+         XE6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UN5i/UKbtbONOs/WPjPNnPxxMDAl0vrQLK88lnS0mL4=;
+        b=0+BQTPx3B7j+d+YYm7CI++aoY61cHgnvnPX+B9HdNgz8L3pN2ZwiS8rfuRFarnx023
+         Wa1831tc2dI9oaDsEBojbEECXRAJgGkmlpVibMKP0xz5Lla00LeM4ZxRFTNGTDtn065K
+         0039DfHBVNEIHBSSiyloQQZmsKXAT0xT64I8Dc+pDDNq0CkSgmfudAuvtp4Vh1K1Jzz5
+         JmKruAVRYmOE7SBR79NdrQMX5zf4Zj5nyaNTvkI6Q9oUXDPr9ekDSuaRianDghizZ+dj
+         sUWq3I1JkXgq0kLQX4sVxs8Ad35Pap0klkrpOZHkghTFuq9izTXSDeT8xWdo9ILL1OUo
+         jDWA==
+X-Gm-Message-State: AJIora9F/Y7dLgDYM4M5Rfh/42Pe6hPfCEvnc6Oits3ZMl914i3NWzUZ
+        AwjQCcoiV9Z5Xle/EEvphKs2Qw==
+X-Google-Smtp-Source: AGRyM1s5H8lKNZFdVa1S5zuMhAw0QUhD3qePq0J1JVU31PInsz4xDL9JKRXazszmikfRAVP5FcBYpA==
+X-Received: by 2002:a05:600c:1caa:b0:39c:49a4:2e34 with SMTP id k42-20020a05600c1caa00b0039c49a42e34mr5423762wms.82.1655389103112;
+        Thu, 16 Jun 2022 07:18:23 -0700 (PDT)
+Received: from ryzen ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id t15-20020adfeb8f000000b0020e63ab5d78sm2055631wrn.26.2022.06.16.07.18.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jun 2022 07:18:22 -0700 (PDT)
+Date:   Thu, 16 Jun 2022 17:18:20 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [PATCH 3/7] clk: imx93: Correct the edma1's parent clock
+Message-ID: <Yqs7rPynoWBi0XoY@ryzen>
+References: <20220609132902.3504651-1-peng.fan@oss.nxp.com>
+ <20220609132902.3504651-4-peng.fan@oss.nxp.com>
+ <YqpRjwTVZU12H4Gb@ryzen>
+ <20220616001604.D4C3CC3411A@smtp.kernel.org>
+ <DU0PR04MB9417B711D79B0DE67D425E7B88AC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220616032448.3974916-1-windhl@126.com>
+In-Reply-To: <DU0PR04MB9417B711D79B0DE67D425E7B88AC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Liang,
+On 22-06-16 03:58:10, Peng Fan wrote:
+> > Subject: Re: [PATCH 3/7] clk: imx93: Correct the edma1's parent clock
+> >
+> > Quoting Abel Vesa (2022-06-15 14:39:27)
+> > > On 22-06-09 21:28:58, Peng Fan (OSS) wrote:
+> > > > From: Jacky Bai <ping.bai@nxp.com>
+> > > >
+> > > > For EDMA1 in AONMIX, its parent clock should be from cm33_root, so
+> > > > Correct it.
+> > > >
+> > > > Fixes: 24defbe194b65("clk: imx: add i.MX93 clk")
+> > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > The reviews done internally do no count in upstream.
+> > > I think that's the rule. So drop the R-b tags from all patches.
+> > > Keep only the S-o-b tags.
+> >
+> > Is it any different code from what is sent upstream here? If not any different
+> > then I don't think anything is stopping the review tags from being kept.
+>
+> There is no difference, I directly cherry-pick downstream patch to upstream,
+> with only a very minor subject change, dropping the JIRA ticket number.
+>
 
-Thank you for the patch! Yet something to improve:
+Sounds good to me then. I'll apply it now. Thanks.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v5.19-rc2 next-20220616]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Liang-He/drivers-clk-clk-nomadik-Add-missing-of_node_put/20220616-112612
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: arm-nhk8815_defconfig (https://download.01.org/0day-ci/archive/20220616/202206162212.4SKEX9z6-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/12a305918ea40c01116a3cab94fe62a487eac499
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Liang-He/drivers-clk-clk-nomadik-Add-missing-of_node_put/20220616-112612
-        git checkout 12a305918ea40c01116a3cab94fe62a487eac499
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/clk-nomadik.c: In function 'nomadik_src_init':
-   drivers/clk/clk-nomadik.c:136:1: warning: label 'output' defined but not used [-Wunused-label]
-     136 | output:
-         | ^~~~~~
->> drivers/clk/clk-nomadik.c:102:17: error: label 'out_put' used but not defined
-     102 |                 goto out_put;
-         |                 ^~~~
-
-
-vim +/out_put +102 drivers/clk/clk-nomadik.c
-
-    87	
-    88	static void __init nomadik_src_init(void)
-    89	{
-    90		struct device_node *np;
-    91		u32 val;
-    92	
-    93		np = of_find_matching_node(NULL, nomadik_src_match);
-    94		if (!np) {
-    95			pr_crit("no matching node for SRC, aborting clock init\n");
-    96			return;
-    97		}
-    98		src_base = of_iomap(np, 0);
-    99		if (!src_base) {
-   100			pr_err("%s: must have src parent node with REGS (%pOFn)\n",
-   101			       __func__, np);
- > 102			goto out_put;
-   103		}
-   104	
-   105		/* Set all timers to use the 2.4 MHz TIMCLK */
-   106		val = readl(src_base + SRC_CR);
-   107		val |= SRC_CR_T0_ENSEL;
-   108		val |= SRC_CR_T1_ENSEL;
-   109		val |= SRC_CR_T2_ENSEL;
-   110		val |= SRC_CR_T3_ENSEL;
-   111		val |= SRC_CR_T4_ENSEL;
-   112		val |= SRC_CR_T5_ENSEL;
-   113		val |= SRC_CR_T6_ENSEL;
-   114		val |= SRC_CR_T7_ENSEL;
-   115		writel(val, src_base + SRC_CR);
-   116	
-   117		val = readl(src_base + SRC_XTALCR);
-   118		pr_info("SXTALO is %s\n",
-   119			(val & SRC_XTALCR_SXTALDIS) ? "disabled" : "enabled");
-   120		pr_info("MXTAL is %s\n",
-   121			(val & SRC_XTALCR_MXTALSTAT) ? "enabled" : "disabled");
-   122		if (of_property_read_bool(np, "disable-sxtalo")) {
-   123			/* The machine uses an external oscillator circuit */
-   124			val |= SRC_XTALCR_SXTALDIS;
-   125			pr_info("disabling SXTALO\n");
-   126		}
-   127		if (of_property_read_bool(np, "disable-mxtalo")) {
-   128			/* Disable this too: also run by external oscillator */
-   129			val |= SRC_XTALCR_MXTALOVER;
-   130			val &= ~SRC_XTALCR_MXTALEN;
-   131			pr_info("disabling MXTALO\n");
-   132		}
-   133		writel(val, src_base + SRC_XTALCR);
-   134		register_reboot_notifier(&nomadik_clk_reboot_notifier);
-   135		
- > 136	output:
-   137	    of_node_put(np);	
-   138	}
-   139	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> Thanks,
+> Peng.
