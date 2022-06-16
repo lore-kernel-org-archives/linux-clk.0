@@ -2,86 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C895C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AF2C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 08:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359575AbiFPIR5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 04:17:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36850 "EHLO
+        id S1359548AbiFPIU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 04:20:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbiFPIRz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:17:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C2713CE7;
-        Thu, 16 Jun 2022 01:17:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CE3BA61D29;
-        Thu, 16 Jun 2022 08:17:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68449C34114;
-        Thu, 16 Jun 2022 08:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655367473;
-        bh=XoJ4+rFkSAX4O5qYIqK5h8B/dlR8CbRJGdER6wLYAg8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VeSUTIggYN810w8JCA1g7TGpTRWOa9WbH3c5dRxNFna+XrzdVydsFSgYQyONOaxEt
-         w9W+YGVqVi/i8tGuiOpPx73ynWAJipXxXg6B70UfFGD4o/kjGwym+kW3V6qdOpoX+/
-         NKI58usFqFmnOzEbhzrxEqpIxwWMB29P8vTmO93RP9bXrnJ3jJEes9IlSSUGHiXUBm
-         11RkFhYK9BCSZxBfA9SRdLH3gLkRYA6Jt8ZJa1vPBoVG+PZmSF/BkBlKY08Wwd4dUh
-         opgk7Xw5Ci5jvRY3svNJ7tfZHg7SyoAk0Ml2NRnaEDteGr21MNVqASZ7aahFB7W2cm
-         W0NyF6YInU/wg==
-Date:   Thu, 16 Jun 2022 09:17:46 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     linux-doc@vger.kernel.org,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: efm32: remove bindings for deleted platform
-Message-ID: <YqrnKtkm4Xdl8vTy@sirena.org.uk>
-References: <20220615210720.6363-1-wsa@kernel.org>
+        with ESMTP id S1359431AbiFPIU5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 04:20:57 -0400
+Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 414855D672;
+        Thu, 16 Jun 2022 01:20:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=kdfWx
+        6XZzO9qni6lYYIV53hUL9pVC8liXgCxesDNue4=; b=fDdsfZSOIjmmMME9HNlGp
+        s3ZAOyD1rJd6nF/EL5bezm4dK64DttUz9gL3AfeqUsPeVyen774bO5c6T/SDB2bc
+        mpZU01Kl0/Bcm0E8R5zmORY058MsoCAoiKD56jemA6V1kN968Smea6aHeHB6EY4L
+        IIEHVZQgw/FZ9Xd90mEz30=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
+ (Coremail) ; Thu, 16 Jun 2022 16:19:41 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Thu, 16 Jun 2022 16:19:41 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     "Stephen Boyd" <sboyd@kernel.org>, Conor.Dooley@microchip.com
+Cc:     jonathanh@nvidia.com, mturquette@baylibre.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v2] clk: tegra: (clk-tegra30) Add missing
+ of_node_put()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <20220616060037.5AEB8C34114@smtp.kernel.org>
+References: <20220616033622.3975621-1-windhl@126.com>
+ <20220616060037.5AEB8C34114@smtp.kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gF7RWUCch1/TUW4O"
-Content-Disposition: inline
-In-Reply-To: <20220615210720.6363-1-wsa@kernel.org>
-X-Cookie: Pass with care.
+Message-ID: <1a776c99.5e5c.1816b98bfee.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: GMqowABHTyef56pi0jA3AA--.10921W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGhQiF1-HZTyeegACsc
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---gF7RWUCch1/TUW4O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jun 15, 2022 at 11:07:19PM +0200, Wolfram Sang wrote:
-> Commit cc6111375cec ("ARM: drop efm32 platform") removed the platform,
-> so no need to still carry the bindings.
-
-Acked-by: Mark Brown <broonie@kernel.org>
-
---gF7RWUCch1/TUW4O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmKq5yoACgkQJNaLcl1U
-h9D6Bgf9FsWZbqfrpPz05MqsAP5L5zXrH6+wVnlkfyL60hVYPRq4/YkegM0Ttbjm
-uU+opIQjjzpOCx7uPPqovy+19nZ1WXEk7oL8yHmjp35I9wzEAflDpj2VhJqROabZ
-hJSF+yEWSSh3mIhD4AkvMtz/Jo4unndHxzC/sRsRWdQJLVsX6d9etfXNHOPKVmc+
-XNiD+z27IMfgqM5f6Ax1AziQwVKPMtu/FszTUWQt1UIPNLq2hv/R5MdF13of/gM6
-gwwGJJuLTaPNhvHF0b1T8RdyyWzJnc3KPO5zED3DpHhKGDz6u8OBAHDrQXLQeeEc
-aufEoFD8GNwShKIK9ai+ouZEkFscHQ==
-=DN3x
------END PGP SIGNATURE-----
-
---gF7RWUCch1/TUW4O--
+CgoKCgoKQXQgMjAyMi0wNi0xNiAxNDowMDozNSwgIlN0ZXBoZW4gQm95ZCIgPHNib3lkQGtlcm5l
+bC5vcmc+IHdyb3RlOgo+VGhlIHN1YmplY3Qgc2hvdWxkIG1hdGNoIGhpc3RvcmljYWwgc3ViamVj
+dHMKPgo+ICQgZ2l0IGxvZyAtLW9uZWxpbmUgLTMgLS0gZHJpdmVycy9jbGsvdGVncmEvY2xrLXRl
+Z3JhMzAuYwo+Cj5zaG93cyBtb3N0bHkgImNsazogdGVncmE6ICIuIENhbiB5b3UgYWxzbyBjb21i
+aW5lIHRoaXMgd2l0aCB0aGUgb3RoZXIKPnRlZ3JhIHBhdGNoPyBEb24ndCB0aGluayB3ZSBuZWVk
+IHR3byBwYXRjaGVzIGZvciBlc3NlbnRpYWxseSB0aGUgc2FtZQo+dGhpbmcuCj4KPlF1b3Rpbmcg
+TGlhbmcgSGUgKDIwMjItMDYtMTUgMjA6MzY6MjIpCj4+IEluIHRlZ3JhMzBfY2xvY2tfaW5pdCwg
+b2ZfZmluZF9tYXRjaGluZ19ub2RlKCkgd2lsbCByZXR1cm4gYSBub2RlCj4+IHBvaW50ZXIgd2l0
+aCByZWZjb3VudCBpbmNyZW1lbnRlZC4gV2Ugc2hvdWxkIHVzZSBvZl9ub2RlX3B1dCgpIHdoZW4K
+Pj4gdGhlIG5vZGUgcG9pbnRlciBpcyBub3QgdXNlZCBhbnltb3JlLgo+PiAKPj4gU2lnbmVkLW9m
+Zi1ieTogTGlhbmcgSGUgPHdpbmRobEAxMjYuY29tPgo+PiAtLS0KPj4gIGNoYW5nZWxvZzoKPj4g
+Cj4+ICB2MjogdXNlIHJlYWwgbmFtZSBmb3IgU29iCj4KPlRoYW5rcyEKPgo+PiAgdjE6IGZpeCBt
+aXNzaW5nIGJ1ZwoKU29ycnkgZm9yIG15IGZhdWx0LiBJIGhhdmUgYmVlbiBhZHZpc2VkIHRvIHVz
+ZSByZWFsIG5hbWUgYW5kIEkgcmVzZW5kIGEgUEFUQ0ggdjIgd2l0aCBteSByZWFsIG5hbWUsIGJ1
+dCByZWFsbHkgd2l0aCB0aGUgc2FtZSBwYXRjaCBjb2RlLgoKU28gaG93IGNhbiBJIHdpdGhkcmF3
+IHRoZSBmaXJzdCBwYXRjaCBvciByZXNlbmQgb3RoZXIgdGhpbmc/IEkgYW0gY29uZnVzZWQuIAoK
+Q2FuIHlvdSBoZWxwIG1lLCBDb25vcj8K
