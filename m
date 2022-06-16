@@ -2,162 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532EDC43334
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 07:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88944C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 07:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358844AbiFPHMi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 03:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
+        id S230449AbiFPHrH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 03:47:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358853AbiFPHMh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 03:12:37 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9F5F51;
-        Thu, 16 Jun 2022 00:12:34 -0700 (PDT)
-X-UUID: 450dc388895640b8bb5be844d54c3dc1-20220616
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.6,REQID:e5f7ed83-ef2d-4e55-a1e2-0bd5cfe595ce,OB:0,LO
-        B:10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,AC
-        TION:release,TS:45
-X-CID-INFO: VERSION:1.1.6,REQID:e5f7ed83-ef2d-4e55-a1e2-0bd5cfe595ce,OB:0,LOB:
-        10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:45
-X-CID-META: VersionHash:b14ad71,CLOUDID:765873f6-e099-41ba-a32c-13b8bfe63214,C
-        OID:91b86b891a75,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,QS:nil,BEC:nil,COL:0
-X-UUID: 450dc388895640b8bb5be844d54c3dc1-20220616
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 481259333; Thu, 16 Jun 2022 15:12:29 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Thu, 16 Jun 2022 15:12:28 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 16 Jun 2022 15:12:28 +0800
-Message-ID: <3de597c1ab963cc8f6dd89da089c6f0660517f34.camel@mediatek.com>
-Subject: Re: [PATCH] clk: mediatek: clk-mt8195-vdo0: Set rate on
- vdo0_dp_intf0_dp_intf's parent
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        "Miles Chen =?UTF-8?Q?=28=E9=99=B3=E6=B0=91=E6=A8=BA=29?=" 
-        <Miles.Chen@mediatek.com>,
-        "chun-jie.chen@mediatek.com" <chun-jie.chen@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <jitao.shi@mediatek.com>, <mandyjh.liu@mediatek.com>
-Date:   Thu, 16 Jun 2022 15:12:28 +0800
-In-Reply-To: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
-References: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S229751AbiFPHrG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 03:47:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94B05D18A;
+        Thu, 16 Jun 2022 00:47:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C57261CFB;
+        Thu, 16 Jun 2022 07:47:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06F1C34114;
+        Thu, 16 Jun 2022 07:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655365624;
+        bh=WvXWN/2Zdd9ltiiG67Oz2GlJzBbZnQxc/zeK3AgSyXo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=brxp3SJOfdupMT3gHseHoMnPOVitQL/dl3e/jVl3eO3gowVQ+TpOMTkD6Ko6sl/ay
+         WHhX2rLKtgQmDAh2k17V+ZumSYsJIKp79b2a4e/XZYn6SreJjcnF+gRMjusq0lqLXQ
+         pIcTuQI2w5KbYts+/KtGYLO26vXBPRCMD3+hL3bTjlyqhGeckLhwM5s7e2OpIed3yV
+         Wk19MIGirYi2zr5C0lWMW93JNFdN7D8nLmYZjZgIYdUd29L1vGyOFNtZ0QMLvUrN+T
+         eUgbowvI4S3Bg/kipLfqhKLHMqAYyAs1d65dtIoAq9Ml3z117fd7xnQ/2PhVDxiB+D
+         x5zIXo7kaKCCQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220610104911.2296472-2-vladimir.zapolskiy@linaro.org>
+References: <20220610104911.2296472-1-vladimir.zapolskiy@linaro.org> <20220610104911.2296472-2-vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v7 1/7] dt-bindings: clock: add QCOM SM8450 camera clock bindings
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Date:   Thu, 16 Jun 2022 00:47:02 -0700
+User-Agent: alot/0.10
+Message-Id: <20220616074704.D06F1C34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2022-06-14 at 17:10 +0800, AngeloGioacchino Del Regno wrote:
-> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
-> clock: this is required to trigger clock source selection on
-> CLK_TOP_EDP, while avoiding to manage the enablement of the former
-> separately from the latter in the displayport driver.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <
-> angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> index 261a7f76dd3c..07b46bfd5040 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> @@ -37,6 +37,10 @@ static const struct mtk_gate_regs vdo0_2_cg_regs =
-> {
->  #define GATE_VDO0_2(_id, _name, _parent, _shift)			
-> \
->  	GATE_MTK(_id, _name, _parent, &vdo0_2_cg_regs, _shift,
-> &mtk_clk_gate_ops_setclr)
->  
-> +#define GATE_VDO0_2_FLAGS(_id, _name, _parent, _shift, _flags)	
-> 	\
-> +	GATE_MTK_FLAGS(_id, _name, _parent, &vdo0_2_cg_regs, _shift,	
-> \
-> +		       &mtk_clk_gate_ops_setclr, _flags)
+Quoting Vladimir Zapolskiy (2022-06-10 03:49:10)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.ya=
+ml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> new file mode 100644
+> index 000000000000..6e774e59f213
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -0,0 +1,94 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+[..]
 > +
->  static const struct mtk_gate vdo0_clks[] = {
->  	/* VDO0_0 */
->  	GATE_VDO0_0(CLK_VDO0_DISP_OVL0, "vdo0_disp_ovl0", "top_vpp",
-> 0),
-> @@ -85,7 +89,8 @@ static const struct mtk_gate vdo0_clks[] = {
->  	/* VDO0_2 */
->  	GATE_VDO0_2(CLK_VDO0_DSI0_DSI, "vdo0_dsi0_dsi", "top_dsi_occ",
-> 0),
->  	GATE_VDO0_2(CLK_VDO0_DSI1_DSI, "vdo0_dsi1_dsi", "top_dsi_occ",
-> 8),
-> -	GATE_VDO0_2(CLK_VDO0_DP_INTF0_DP_INTF, "vdo0_dp_intf0_dp_intf",
-> "top_edp", 16),
-> +	GATE_VDO0_2_FLAGS(CLK_VDO0_DP_INTF0_DP_INTF,
-> "vdo0_dp_intf0_dp_intf",
-> +			  "top_edp", 16, CLK_SET_RATE_PARENT),
->  };
->  
->  static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
-> -- 
-> 2.35.1
-> 
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    soc {
+> +      #address-cells =3D <2>;
+> +      #size-cells =3D <2>;
 
-Hello Angelo,
+I'd prefer to not have container node and just change the reg property
+of the clock-controller node instead.
 
-Thanks for this patch.
-Another dp clock should also be fix.
-After confirming with Jitao who is our dp expert.
-The parent of CLK_VDO1_DPINTF should be top_dp instead of top_vpp.
-
-Thanks!
-
---- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -43,6 +43,9 @@ static const struct mtk_gate_regs vdo1_3_cg_regs = {
- #define GATE_VDO1_2(_id, _name, _parent,
-_shift)                       \
-        GATE_MTK(_id, _name, _parent, &vdo1_2_cg_regs, _shift,
-&mtk_clk_gate_ops_setclr)
-
-+#define GATE_VDO1_2_FLAGS(_id, _name, _parent, _shift,
-_flags)                 \
-+       GATE_MTK_FLAGS(_id, _name, _parent, &vdo1_2_cg_regs, _shift,
-&mtk_clk_gate_ops_setclr, _flags)
-+
- #define GATE_VDO1_3(_id, _name, _parent,
-_shift)                       \
-        GATE_MTK(_id, _name, _parent, &vdo1_3_cg_regs, _shift,
-&mtk_clk_gate_ops_setclr)
-
-@@ -99,7 +102,7 @@ static const struct mtk_gate vdo1_clks[] = {
-        GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI0,
-"vdo1_disp_monitor_dpi0", "top_vpp", 1),
-        GATE_VDO1_2(CLK_VDO1_DPI1, "vdo1_dpi1", "top_vpp", 8),
-        GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI1,
-"vdo1_disp_monitor_dpi1", "top_vpp", 9),
--       GATE_VDO1_2(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_vpp", 16),
-+       GATE_VDO1_2_FLAGS(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_dp", 16,
-CLK_SET_RATE_PARENT),
-
-BRs,
-Bo-Chen
-
+> +
+> +      clock-controller@ade0000 {
+> +        compatible =3D "qcom,sm8450-camcc";
+> +        reg =3D <0 0xade0000 0 0x20000>;
+> +        clocks =3D <&gcc GCC_CAMERA_AHB_CLK>,
+> +                 <&rpmhcc RPMH_CXO_CLK>,
