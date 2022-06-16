@@ -2,130 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D9ECCA47A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 13:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6B3C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 14:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377189AbiFPNm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 09:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
+        id S1377469AbiFPOJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 10:09:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377121AbiFPNmz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 09:42:55 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6648115A1C
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 06:42:52 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id 3-20020a17090a174300b001e426a02ac5so1868861pjm.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 06:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=aNEeKuprTbTs5LWWfeMDjy1KZmrz1EiAxXm6JSqXnbU=;
-        b=AtLPdduL5q5b2YWCXSxu/s0KWycSnUha2yes+KuNgoj+MI0badVhC6uG83O5867Yqq
-         3Yf/wqsNPawZn2q34DI9FdzVHmnUMppElAyOKygqRFaNM4vpt3gvNjCdIesBdQb9lLWP
-         OOjzODwWOx7k1tBExXpcJzf+ZULGERqNptgKw3xKFCKun6tEEsZQqErgxy+y9fbwRk+c
-         Q1pLGwXF2mVxiuLfEbGgHQM68raYem8K8h8T9PhsWwOUB3qKn56p7Wafz0+YaQ48qL8U
-         u9hcjHSRkMcRKB88ZXLfN1B4GkTDNCC689K8WcTHOLnr3S6ML111WPyr5DI31g2t/D2W
-         5HUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=aNEeKuprTbTs5LWWfeMDjy1KZmrz1EiAxXm6JSqXnbU=;
-        b=T74wT3m9UALGlHXvYMdiEHEpzSIRfyS199SbUfVSkv4J6008sJZ8rQlP863RWaAVAX
-         Nn3mF4mLXWhaJg+zY7nT2BwWpVsMo/scUbtV74yPuWktMvzrNGQ+wts3Vt+UzwABPIXV
-         evMNDJS5NTaCvPwhf+rqbFcLYVnDdUovOGX93f+A9bRbZhvw4XcyTyWu9SK08ehcxbDQ
-         0JQbF8X5n7d/QHjvI8pR9u2LAxhWr6SntwvqX6U5xgRLTvt9MOf+llCjH9WrAMKZGQ1j
-         ezxyTAK7gYSM5eaKb/dwQ5xSM2/lGFADYb5wBNsauiZBfPcbS7pTFTg/Z5y0Cd3BMI00
-         0PUg==
-X-Gm-Message-State: AJIora+Yi5jRfJyWqA3w7l8CfYe0NwkgBX0rlRUll/jjOqixGN1MzMyp
-        SqiS5rsIUNeG9V71d23xOMxRGg==
-X-Google-Smtp-Source: AGRyM1uOiNZH9+Db6fJogZkx01+5krAEqlx/kpcj5J7iOOcLUTZi02KkxtOsyTtdg6Sg5lx9L6FqFw==
-X-Received: by 2002:a17:90b:4c4e:b0:1e3:368b:c09c with SMTP id np14-20020a17090b4c4e00b001e3368bc09cmr5181474pjb.140.1655386971761;
-        Thu, 16 Jun 2022 06:42:51 -0700 (PDT)
-Received: from [172.20.0.255] ([192.77.111.2])
-        by smtp.gmail.com with ESMTPSA id c2-20020a639602000000b003fb098151c9sm1775868pge.64.2022.06.16.06.42.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jun 2022 06:42:51 -0700 (PDT)
-Message-ID: <ff933448-433c-30a5-765b-4a86069c239c@linaro.org>
-Date:   Thu, 16 Jun 2022 06:42:49 -0700
+        with ESMTP id S1377101AbiFPOJG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 10:09:06 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E39073BA66;
+        Thu, 16 Jun 2022 07:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655388544; x=1686924544;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KbhRQpNJ/e3Byf+2uQ+3EqvHWdCIC7aeEObpWN1nN8g=;
+  b=MX3hk770tNSyar9AnHYGE2wT6CRzsayEbTO3Hs1k8ViqeJYpjN/zjfce
+   fZqY7xkW/hKayw+ff16goDiiHhI+fQDhq2i2TYLrBZ4IcUN/BlJVtWQ5Z
+   e748fSVi6ze4nikCJm+kRSrnkZh35B6vlN8hUg1PWsHYGagLqnd4Y1xgP
+   ctImGzkX3sh1MazwSu8y61PQFaIv3vNkaETxvfyGOi8pcTKTgbfZIf3AJ
+   rQOpnU3uhNWQKOt/6CNju3pwUOO4rYV6qrRftsT+kSamL2JXswv4aazFs
+   /9agZCdq9PWiR824B4ZAklHysB0oRHogwVENBo0/BqxjT19Dk2QS0sPIa
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10379"; a="278051784"
+X-IronPort-AV: E=Sophos;i="5.92,305,1650956400"; 
+   d="scan'208";a="278051784"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 07:09:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,305,1650956400"; 
+   d="scan'208";a="613172888"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 16 Jun 2022 07:09:02 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o1qBB-000ORq-MZ;
+        Thu, 16 Jun 2022 14:09:01 +0000
+Date:   Thu, 16 Jun 2022 22:08:16 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Liang He <windhl@126.com>, linus.walleij@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     kbuild-all@lists.01.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        windhl@126.com
+Subject: Re: [PATCH v2] drivers: clk: (clk-nomadik) Add missing of_node_put()
+Message-ID: <202206162212.4SKEX9z6-lkp@intel.com>
+References: <20220616032448.3974916-1-windhl@126.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 12/20] dt-bindings: reset: npcm: Add support for
- NPCM8XX
-Content-Language: en-US
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20220608095623.22327-1-tmaimon77@gmail.com>
- <20220608095623.22327-13-tmaimon77@gmail.com>
- <add025b6-c622-b204-d39e-67b31878d37f@linaro.org>
- <CAP6Zq1iDbB+X5QPE4Nsqk4nV41bZiVzQZExS1pQTuKEBz-iYew@mail.gmail.com>
- <381ff739-e898-8812-d549-df7101f0eaa2@linaro.org>
- <CAP6Zq1j=x3OcOPSOjJJmOcze7ziM=oWcKdbYzoHhGnvZipu_UQ@mail.gmail.com>
- <e6e478a5-9080-fb2f-9ccd-2490cdfab4c7@linaro.org>
- <CAP6Zq1gy=rj-wyqqNQF+Pt1dtHsf+90AnTGTqt-v9madj8tfGA@mail.gmail.com>
- <d3432cce-079e-3d6d-91df-6da10bd69d08@linaro.org>
- <CAP6Zq1jdMN_vB1Uoi6rb_E1DydS7+-A0sWMRNUhDPF4pzkr2kA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAP6Zq1jdMN_vB1Uoi6rb_E1DydS7+-A0sWMRNUhDPF4pzkr2kA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220616032448.3974916-1-windhl@126.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/06/2022 06:41, Tomer Maimon wrote:
+Hi Liang,
 
->>>> What is NPCM-ADC document file? What do you want to describe there?
->>>> Again - how is it different than interrupts?
->>> It is not different from the interrupts.
->>> I will remove the dt-binding reset include file, the reset property
->>> will use numbers and not macro's.
->>
->> I have no clue what are you referring now... This is NPCM8xx and it has
->> no binding header with reset values. What to remove then?
-> I refer nuvoton,npcm8xx-reset.h file, we don't need it.
+Thank you for the patch! Yet something to improve:
 
-There is no such file in kernel, I believe. If you refer to the patchset
-here, then of course it should not be sent.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v5.19-rc2 next-20220616]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Liang-He/drivers-clk-clk-nomadik-Add-missing-of_node_put/20220616-112612
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: arm-nhk8815_defconfig (https://download.01.org/0day-ci/archive/20220616/202206162212.4SKEX9z6-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/12a305918ea40c01116a3cab94fe62a487eac499
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Liang-He/drivers-clk-clk-nomadik-Add-missing-of_node_put/20220616-112612
+        git checkout 12a305918ea40c01116a3cab94fe62a487eac499
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/clk-nomadik.c: In function 'nomadik_src_init':
+   drivers/clk/clk-nomadik.c:136:1: warning: label 'output' defined but not used [-Wunused-label]
+     136 | output:
+         | ^~~~~~
+>> drivers/clk/clk-nomadik.c:102:17: error: label 'out_put' used but not defined
+     102 |                 goto out_put;
+         |                 ^~~~
 
 
-Best regards,
-Krzysztof
+vim +/out_put +102 drivers/clk/clk-nomadik.c
+
+    87	
+    88	static void __init nomadik_src_init(void)
+    89	{
+    90		struct device_node *np;
+    91		u32 val;
+    92	
+    93		np = of_find_matching_node(NULL, nomadik_src_match);
+    94		if (!np) {
+    95			pr_crit("no matching node for SRC, aborting clock init\n");
+    96			return;
+    97		}
+    98		src_base = of_iomap(np, 0);
+    99		if (!src_base) {
+   100			pr_err("%s: must have src parent node with REGS (%pOFn)\n",
+   101			       __func__, np);
+ > 102			goto out_put;
+   103		}
+   104	
+   105		/* Set all timers to use the 2.4 MHz TIMCLK */
+   106		val = readl(src_base + SRC_CR);
+   107		val |= SRC_CR_T0_ENSEL;
+   108		val |= SRC_CR_T1_ENSEL;
+   109		val |= SRC_CR_T2_ENSEL;
+   110		val |= SRC_CR_T3_ENSEL;
+   111		val |= SRC_CR_T4_ENSEL;
+   112		val |= SRC_CR_T5_ENSEL;
+   113		val |= SRC_CR_T6_ENSEL;
+   114		val |= SRC_CR_T7_ENSEL;
+   115		writel(val, src_base + SRC_CR);
+   116	
+   117		val = readl(src_base + SRC_XTALCR);
+   118		pr_info("SXTALO is %s\n",
+   119			(val & SRC_XTALCR_SXTALDIS) ? "disabled" : "enabled");
+   120		pr_info("MXTAL is %s\n",
+   121			(val & SRC_XTALCR_MXTALSTAT) ? "enabled" : "disabled");
+   122		if (of_property_read_bool(np, "disable-sxtalo")) {
+   123			/* The machine uses an external oscillator circuit */
+   124			val |= SRC_XTALCR_SXTALDIS;
+   125			pr_info("disabling SXTALO\n");
+   126		}
+   127		if (of_property_read_bool(np, "disable-mxtalo")) {
+   128			/* Disable this too: also run by external oscillator */
+   129			val |= SRC_XTALCR_MXTALOVER;
+   130			val &= ~SRC_XTALCR_MXTALEN;
+   131			pr_info("disabling MXTALO\n");
+   132		}
+   133		writel(val, src_base + SRC_XTALCR);
+   134		register_reboot_notifier(&nomadik_clk_reboot_notifier);
+   135		
+ > 136	output:
+   137	    of_node_put(np);	
+   138	}
+   139	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
