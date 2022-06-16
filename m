@@ -2,143 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0E2C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 06:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532EDC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 07:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359168AbiFPGzN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 02:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42020 "EHLO
+        id S1358844AbiFPHMi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 03:12:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359228AbiFPGzB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 02:55:01 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 51BF85C84C
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jun 2022 23:54:22 -0700 (PDT)
-X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
-        LIVER,40,3)
-Received: from 172.28.114.216
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(23338:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Thu, 16 Jun 2022 14:42:36 +0800 (CST)
-From:   Qin Jian <qinjian@cqplus1.com>
-To:     sboyd@kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, linux@armlinux.org.uk, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v19 10/11] ARM: sp7021_defconfig: Add Sunplus SP7021 defconfig
-Date:   Thu, 16 Jun 2022 14:42:26 +0800
-Message-Id: <0072611a57bd6fe41afec1ca5c5da99c83c9b9b5.1655360818.git.qinjian@cqplus1.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <cover.1655360818.git.qinjian@cqplus1.com>
-References: <cover.1655360818.git.qinjian@cqplus1.com>
+        with ESMTP id S1358853AbiFPHMh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 03:12:37 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9F5F51;
+        Thu, 16 Jun 2022 00:12:34 -0700 (PDT)
+X-UUID: 450dc388895640b8bb5be844d54c3dc1-20220616
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.6,REQID:e5f7ed83-ef2d-4e55-a1e2-0bd5cfe595ce,OB:0,LO
+        B:10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,AC
+        TION:release,TS:45
+X-CID-INFO: VERSION:1.1.6,REQID:e5f7ed83-ef2d-4e55-a1e2-0bd5cfe595ce,OB:0,LOB:
+        10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:45
+X-CID-META: VersionHash:b14ad71,CLOUDID:765873f6-e099-41ba-a32c-13b8bfe63214,C
+        OID:91b86b891a75,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,QS:nil,BEC:nil,COL:0
+X-UUID: 450dc388895640b8bb5be844d54c3dc1-20220616
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 481259333; Thu, 16 Jun 2022 15:12:29 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Thu, 16 Jun 2022 15:12:28 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 16 Jun 2022 15:12:28 +0800
+Message-ID: <3de597c1ab963cc8f6dd89da089c6f0660517f34.camel@mediatek.com>
+Subject: Re: [PATCH] clk: mediatek: clk-mt8195-vdo0: Set rate on
+ vdo0_dp_intf0_dp_intf's parent
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        "Miles Chen =?UTF-8?Q?=28=E9=99=B3=E6=B0=91=E6=A8=BA=29?=" 
+        <Miles.Chen@mediatek.com>,
+        "chun-jie.chen@mediatek.com" <chun-jie.chen@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <jitao.shi@mediatek.com>, <mandyjh.liu@mediatek.com>
+Date:   Thu, 16 Jun 2022 15:12:28 +0800
+In-Reply-To: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
+References: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add generic Sunplus SP7021 based board defconfig
+On Tue, 2022-06-14 at 17:10 +0800, AngeloGioacchino Del Regno wrote:
+> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
+> clock: this is required to trigger clock source selection on
+> CLK_TOP_EDP, while avoiding to manage the enablement of the former
+> separately from the latter in the displayport driver.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <
+> angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> b/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> index 261a7f76dd3c..07b46bfd5040 100644
+> --- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
+> @@ -37,6 +37,10 @@ static const struct mtk_gate_regs vdo0_2_cg_regs =
+> {
+>  #define GATE_VDO0_2(_id, _name, _parent, _shift)			
+> \
+>  	GATE_MTK(_id, _name, _parent, &vdo0_2_cg_regs, _shift,
+> &mtk_clk_gate_ops_setclr)
+>  
+> +#define GATE_VDO0_2_FLAGS(_id, _name, _parent, _shift, _flags)	
+> 	\
+> +	GATE_MTK_FLAGS(_id, _name, _parent, &vdo0_2_cg_regs, _shift,	
+> \
+> +		       &mtk_clk_gate_ops_setclr, _flags)
+> +
+>  static const struct mtk_gate vdo0_clks[] = {
+>  	/* VDO0_0 */
+>  	GATE_VDO0_0(CLK_VDO0_DISP_OVL0, "vdo0_disp_ovl0", "top_vpp",
+> 0),
+> @@ -85,7 +89,8 @@ static const struct mtk_gate vdo0_clks[] = {
+>  	/* VDO0_2 */
+>  	GATE_VDO0_2(CLK_VDO0_DSI0_DSI, "vdo0_dsi0_dsi", "top_dsi_occ",
+> 0),
+>  	GATE_VDO0_2(CLK_VDO0_DSI1_DSI, "vdo0_dsi1_dsi", "top_dsi_occ",
+> 8),
+> -	GATE_VDO0_2(CLK_VDO0_DP_INTF0_DP_INTF, "vdo0_dp_intf0_dp_intf",
+> "top_edp", 16),
+> +	GATE_VDO0_2_FLAGS(CLK_VDO0_DP_INTF0_DP_INTF,
+> "vdo0_dp_intf0_dp_intf",
+> +			  "top_edp", 16, CLK_SET_RATE_PARENT),
+>  };
+>  
+>  static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
+> -- 
+> 2.35.1
+> 
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Qin Jian <qinjian@cqplus1.com>
----
- MAINTAINERS                         |  1 +
- arch/arm/configs/multi_v7_defconfig |  1 +
- arch/arm/configs/sp7021_defconfig   | 59 +++++++++++++++++++++++++++++
- 3 files changed, 61 insertions(+)
- create mode 100644 arch/arm/configs/sp7021_defconfig
+Hello Angelo,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ac2cb50d0..8955d4a1a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2831,6 +2831,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
- F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	arch/arm/configs/sp7021_*defconfig
- F:	arch/arm/mach-sunplus/
- F:	drivers/clk/clk-sp7021.c
- F:	drivers/irqchip/irq-sp7021-intc.c
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index ce9826bce..1a796b16e 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -94,6 +94,7 @@ CONFIG_MACH_SPEAR1310=y
- CONFIG_MACH_SPEAR1340=y
- CONFIG_ARCH_STI=y
- CONFIG_ARCH_STM32=y
-+CONFIG_ARCH_SUNPLUS=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_UNIPHIER=y
-diff --git a/arch/arm/configs/sp7021_defconfig b/arch/arm/configs/sp7021_defconfig
-new file mode 100644
-index 000000000..703b9aaa4
---- /dev/null
-+++ b/arch/arm/configs/sp7021_defconfig
-@@ -0,0 +1,59 @@
-+CONFIG_SYSVIPC=y
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_PREEMPT=y
-+CONFIG_IKCONFIG=y
-+CONFIG_IKCONFIG_PROC=y
-+CONFIG_LOG_BUF_SHIFT=14
-+# CONFIG_RD_GZIP is not set
-+# CONFIG_RD_BZIP2 is not set
-+# CONFIG_RD_LZMA is not set
-+# CONFIG_RD_XZ is not set
-+# CONFIG_RD_LZO is not set
-+# CONFIG_RD_LZ4 is not set
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_PERF_EVENTS=y
-+CONFIG_SLAB=y
-+CONFIG_ARCH_SUNPLUS=y
-+# CONFIG_VDSO is not set
-+CONFIG_SMP=y
-+CONFIG_THUMB2_KERNEL=y
-+CONFIG_FORCE_MAX_ZONEORDER=12
-+CONFIG_VFP=y
-+CONFIG_NEON=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_MODVERSIONS=y
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+CONFIG_UEVENT_HELPER=y
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_INPUT_SPARSEKMAP=y
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_LEGACY_PTYS is not set
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_HWMON is not set
-+# CONFIG_IOMMU_SUPPORT is not set
-+CONFIG_RESET_CONTROLLER=y
-+CONFIG_EXT4_FS=y
-+# CONFIG_DNOTIFY is not set
-+CONFIG_FANOTIFY=y
-+CONFIG_VFAT_FS=y
-+CONFIG_FAT_DEFAULT_IOCHARSET="utf8"
-+CONFIG_EXFAT_FS=y
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+# CONFIG_MISC_FILESYSTEMS is not set
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_UTF8=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_FS=y
-+CONFIG_DEBUG_USER=y
--- 
-2.33.1
+Thanks for this patch.
+Another dp clock should also be fix.
+After confirming with Jitao who is our dp expert.
+The parent of CLK_VDO1_DPINTF should be top_dp instead of top_vpp.
+
+Thanks!
+
+--- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
++++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
+@@ -43,6 +43,9 @@ static const struct mtk_gate_regs vdo1_3_cg_regs = {
+ #define GATE_VDO1_2(_id, _name, _parent,
+_shift)                       \
+        GATE_MTK(_id, _name, _parent, &vdo1_2_cg_regs, _shift,
+&mtk_clk_gate_ops_setclr)
+
++#define GATE_VDO1_2_FLAGS(_id, _name, _parent, _shift,
+_flags)                 \
++       GATE_MTK_FLAGS(_id, _name, _parent, &vdo1_2_cg_regs, _shift,
+&mtk_clk_gate_ops_setclr, _flags)
++
+ #define GATE_VDO1_3(_id, _name, _parent,
+_shift)                       \
+        GATE_MTK(_id, _name, _parent, &vdo1_3_cg_regs, _shift,
+&mtk_clk_gate_ops_setclr)
+
+@@ -99,7 +102,7 @@ static const struct mtk_gate vdo1_clks[] = {
+        GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI0,
+"vdo1_disp_monitor_dpi0", "top_vpp", 1),
+        GATE_VDO1_2(CLK_VDO1_DPI1, "vdo1_dpi1", "top_vpp", 8),
+        GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI1,
+"vdo1_disp_monitor_dpi1", "top_vpp", 9),
+-       GATE_VDO1_2(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_vpp", 16),
++       GATE_VDO1_2_FLAGS(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_dp", 16,
+CLK_SET_RATE_PARENT),
+
+BRs,
+Bo-Chen
 
