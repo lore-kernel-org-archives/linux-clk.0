@@ -2,100 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C49CCA47A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 11:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9871C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 12:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbiFPLwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 07:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
+        id S231831AbiFPMyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 08:54:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376388AbiFPLwr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 07:52:47 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F2F9DE83
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 04:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1655380363; x=1686916363;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=vk7Af8JwsrfACg/0fCg/GedJCunirCOg2VKS3d1gDLI=;
-  b=EOjVCmUwHjXuOKkLGLacyVmf4qcQJW/ZGQ6sz+T9FxynSdN1nfWDlJg4
-   KxNT5HqDuFaaKpQ3yIiL+p6xM9ZSXHu3jDFaCwMXAESclwSUpBwNphfoS
-   B+jdkJvijWjbVpZyTGkdMz9C6aUp6GZ5p7p2+CmCVX8xzdW1VNgfC1izP
-   JbEpCqT2wWku/CRhnAgyEhPQYrOdrUZGBKvUdwxSgAJ7nuWXprptsYYFz
-   4PRTg/5Hne63cVu0Jz2v3AJVNuoFWyKXn8/QyMv2zxgKoPKl9UuZcWZFK
-   wmSdqmsv5t9fpsQrWK8GpmVX+bqoe4lNJK/MVw3eHLxX1n4pOEOjQphB+
-   A==;
-X-IronPort-AV: E=Sophos;i="5.91,305,1647298800"; 
-   d="scan'208";a="24495252"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 16 Jun 2022 13:52:41 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Thu, 16 Jun 2022 13:52:41 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Thu, 16 Jun 2022 13:52:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1655380361; x=1686916361;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=vk7Af8JwsrfACg/0fCg/GedJCunirCOg2VKS3d1gDLI=;
-  b=Itpau83LTSdpVfkrBD6ETqMTBKOmX8nK/OYpmbUoZT1OGX+bVOgWoH9V
-   S7btTRnRH5fZdo1khqpQp2aJTteKwdeqQ91mUtB/Y425A71+x2ea0SFC8
-   RwDN37+g52fYADvcONEwskumf5Opa4C5sn0qEDudxjBK79Ispy7DbTPUj
-   uLW7P5qraEF7AXtS8AnjmVFgWTA7Xxck3nPqG95ocg/GypON5Fcw07uNl
-   GW/lrAFqq/2ITs8cmZ2Gvv5HwIShKBL/wt0iUWEzln1nO7O00fg711neP
-   ePeV/8Grejfk/t01pVdjuP7TSPtNOmVlBEcX4QX/vpcaNPEeTAnRVsp1M
-   g==;
-X-IronPort-AV: E=Sophos;i="5.91,305,1647298800"; 
-   d="scan'208";a="24495251"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 16 Jun 2022 13:52:41 +0200
-Received: from steina-w.localnet (unknown [10.123.49.12])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 91EE6280056;
-        Thu, 16 Jun 2022 13:52:41 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: (EXT) Re: clock consumer for output clocks?
-Date:   Thu, 16 Jun 2022 13:52:41 +0200
-Message-ID: <7958678.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20220616025252.36F7CC3411E@smtp.kernel.org>
-References: <3677796.MHq7AAxBmi@steina-w> <20220616025252.36F7CC3411E@smtp.kernel.org>
+        with ESMTP id S232908AbiFPMyg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 08:54:36 -0400
+Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A5DC839823;
+        Thu, 16 Jun 2022 05:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8tzS2
+        e4mBnzb5V406qiQEdwk81OWAt9nUM9IjI52OqY=; b=WKez3PvSC18boMEtLCqZ0
+        /ECzCRthgCT7USRyoGkFO8mSZqcVHM4IzHDwyqtAMtdDNRD2DBKfSFCtUjCrS0xW
+        0iNmHKn86f3rl1zr+abiMX7e4VGEwQcE99LKqC7kOAgMkmYzeRveWHsPOhgA3fx0
+        cP7ngX8nOVPdKSpedYue2I=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp1 (Coremail) with SMTP id C8mowACnhd7xJ6tik_1JEg--.21353S2;
+        Thu, 16 Jun 2022 20:54:10 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     windhl@126.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] drivers: clk: Add missing of_node_put()
+Date:   Thu, 16 Jun 2022 20:54:09 +0800
+Message-Id: <20220616125409.3986745-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8mowACnhd7xJ6tik_1JEg--.21353S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJrW5Jw4kur1DJw17Cr4rXwb_yoW8uF1rpr
+        y7XrW5AF97XF4xKF1xXFWUZFW5C3W2gFW8K3s3Cw1kZrs8Ca48Jr40qa40kFs8trZ5A3yS
+        yr18tr48GF1rXFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_HUDUUUUUU=
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizhMiF18RPTjkHQAAsa
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+In these clk-related drivers' xxx_init() funcitons, of_find_matching_node()
+will return a node pointer with refcount incremented. We should use
+of_node_put() in fail path or when it is not used anymore.
 
-Am Donnerstag, 16. Juni 2022, 04:52:50 CEST schrieb Stephen Boyd:
-> Quoting Alexander Stein (2022-06-01 07:15:54)
-> 
-> > Hi,
-> > 
-> > I want to use an output clock, which provides some internal clock on an
-> > putput pad, such as IMX8MP_CLK_CLKOUT1 or IMX6QDL_CLK_CKO.
-> > To prepare and enable a clock I need a consumer, but in my case there is
-> > no
-> > (local) consumer. Is there some way, DT node or some kind of driver/uapi,
-> > which I can use to enable the clock?
-> 
-> I think you want to use an "always-on-clocks" property in DT for your
-> device. See the proposal[1].
-> 
-> [1] https://lore.kernel.org/linux-clk/20220517235919.200375-1-marex@denx.de
+Signed-off-by: Liang He <windhl@126.com>
+---
+ changelog:
 
-Nice, this looks interesting. Thanks for the link.
-
-Best regards,
-Alexander
+ v3: merge clk 'missing of_node_put()' patches into one commit.
+ v2: use Liang He as real name for S-o-b.
+ v1: fix the missing of_node_put().
 
 
+ drivers/clk/clk-nomadik.c        | 5 ++++-
+ drivers/clk/tegra/clk-tegra124.c | 1 +
+ drivers/clk/tegra/clk-tegra30.c  | 1 +
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index bad2677e11ae..71fbe687fa7b 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -99,7 +99,7 @@ static void __init nomadik_src_init(void)
+ 	if (!src_base) {
+ 		pr_err("%s: must have src parent node with REGS (%pOFn)\n",
+ 		       __func__, np);
+-		return;
++		goto out_put;
+ 	}
+ 
+ 	/* Set all timers to use the 2.4 MHz TIMCLK */
+@@ -132,6 +132,9 @@ static void __init nomadik_src_init(void)
+ 	}
+ 	writel(val, src_base + SRC_XTALCR);
+ 	register_reboot_notifier(&nomadik_clk_reboot_notifier);
++
++out_put:
++	of_node_put(np);
+ }
+ 
+ /**
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 934520aab6e3..a9d4efcef2d4 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
+ 	}
+ 
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		WARN_ON(1);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 04b496123820..168c07d5a5f2 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1320,6 +1320,7 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 	}
+ 
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		BUG();
+-- 
+2.25.1
 
