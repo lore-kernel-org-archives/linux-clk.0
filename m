@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510A3CCA473
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 01:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47564C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 01:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244905AbiFPBv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jun 2022 21:51:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54080 "EHLO
+        id S1350424AbiFPBvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jun 2022 21:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350198AbiFPBvB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 21:51:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010BD58388;
-        Wed, 15 Jun 2022 18:51:00 -0700 (PDT)
+        with ESMTP id S1350843AbiFPBve (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jun 2022 21:51:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FB258E53;
+        Wed, 15 Jun 2022 18:51:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9110F61CC7;
-        Thu, 16 Jun 2022 01:51:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E68FAC3411A;
-        Thu, 16 Jun 2022 01:50:59 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 01B1361CED;
+        Thu, 16 Jun 2022 01:51:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5697EC341C0;
+        Thu, 16 Jun 2022 01:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655344260;
-        bh=4U5Lj/b/Nnw+5T77ExxngXXDFdxOraiwkpEje5p7KTU=;
+        s=k20201202; t=1655344288;
+        bh=VHGuD3oUIVDRtnrxF+nkSpDbHsE8XAqaQQ+vQslwz24=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CtlotVeT91CLGG4UkX+Gnwkhe1AIRE5ubXXYSpecAlUEGQ9SjZEYZkLGdSRbGVCOT
-         3aycrxRrgAOHgxXIIGInEqijPmvJbuO/48ZDkce4qnhNa6xDRMHE9dXK7tE9K44hnT
-         1fikloK8vPgcZGR272scLnjvK1VgD5weJnl3dMAiWYoq4bDo1a0hDX5sMocq1ziii9
-         1gngOsjsyJWA3oK0QTl9Gjmddil6Ifg3q0zRgosDN7RWI/KcsyBicEb93h3na61Apo
-         TXKLyloEB8iIWnLKPXq6M+uQEmKH5vDZgur33S4m0Ac+NCLTBfCDU/gVj2AK663mou
-         YBwWyta05xgkQ==
+        b=JBkr00yLx65g8QqtPLDb+l0cklP3maYgekq569wr7R3nmYSO1gLOvXunnsrAEZdiH
+         AzmlXp/SGpXGfX9MLqakAzE2az8Shk1BGKg+IoPgWR1KQ/wJHjn6LghRyx7lG13EEW
+         ZQQdCwGnZJw+HV4l3wOrrCqM10471yTtKQKrzWmvLMq5ZaViqJwMboJdWzZsQ4Ir6C
+         G4NZ1CwP2Xz01PHkKO4LdwiMOgSOsLd9q0jV2Lgp+BHgUx76wCsNkE260NyjBZNcbI
+         NQ+9itvcbWFDXwBrc60FortDi/gGWjVDgrcbj1fukyxpL2BnhjgpDNhe00HxxAoRC4
+         y53lDX23NWIvA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220523093346.28493-5-rex-bc.chen@mediatek.com>
-References: <20220523093346.28493-1-rex-bc.chen@mediatek.com> <20220523093346.28493-5-rex-bc.chen@mediatek.com>
-Subject: Re: [RESEND v8 04/19] clk: mediatek: reset: Extract common drivers to update function
+In-Reply-To: <20220523093346.28493-6-rex-bc.chen@mediatek.com>
+References: <20220523093346.28493-1-rex-bc.chen@mediatek.com> <20220523093346.28493-6-rex-bc.chen@mediatek.com>
+Subject: Re: [RESEND v8 05/19] clk: mediatek: reset: Merge and revise reset register function
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
         nfraprado@collabora.com, chun-jie.chen@mediatek.com,
@@ -49,17 +49,32 @@ Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>,
         krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Wed, 15 Jun 2022 18:50:56 -0700
+Date:   Wed, 15 Jun 2022 18:51:25 -0700
 User-Agent: alot/0.10
-Message-Id: <20220616015059.E68FAC3411A@smtp.kernel.org>
+Message-Id: <20220616015128.5697EC341C0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rex-BC Chen (2022-05-23 02:33:31)
-> To make drivers more clear and readable, we extract common code
-> within assert and deassert to mtk_reset_update_set_clr() and
-> mtk_reset_update().
+Quoting Rex-BC Chen (2022-05-23 02:33:32)
+> There are two versions for clock reset register control for MediaTek
+> SoCs. The old hardware is one bit per reset control, and does not
+> have separate registers for bit set, clear and read-back operations.
+> This matches the scheme supported by the simple reset driver.
+>=20
+> However, because we need to use different data structure from
+> reset_simple_data, we can not use the operation of simple reset
+> driver.
+> For this reason, we keep the original functions and name this version
+> as "MTK_RST_SIMPLE".
+>=20
+> In this patch:
+> - Add a version enumeration to separate different reset hardware.
+> - Merge the reset register function of simple and set_clr into one
+>   function "mtk_register_reset_controller".
+> - Rename input variable "num_regs" to "rst_bank_nr" to avoid
+>   confusion. This variable is used to define the quantity of reset bank.
+> - Document mtk_reset_version and mtk_register_reset_controller.
 >=20
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
