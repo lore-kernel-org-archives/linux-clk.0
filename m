@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1E7C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 14:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D46CCA479
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 14:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382895AbiFQOrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 10:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50168 "EHLO
+        id S1382837AbiFQOrW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 10:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382880AbiFQOrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 10:47:20 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC94554BEF
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 07:47:17 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id y32so7300757lfa.6
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 07:47:17 -0700 (PDT)
+        with ESMTP id S1382878AbiFQOrV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 10:47:21 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 240FE562DC
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 07:47:19 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id h23so4986314ljl.3
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 07:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d7IyyWcogW6tzD/uS39NdaxdXjnV0hMVXgONOdwNoQI=;
-        b=iGJFN/+WVtIXDzPKRmw43NyFfYfiKVIkVvkY3vISZDB67HLGS37o0WlFGGtigKjSwA
-         xPf10AL6B9vqB1gO0sqIxh6r8RhrDoWcmIPXWib1nDq45SfnlkL1rpNNPKciOfhJ5fvS
-         ucpGTQgjgKvG3iuLzMO8fYYNjRLa8q2WTOLjELoeldGI/fPrCWiz2eiCukfF22A10Gkq
-         daYI4J1UkBUjggEheVSZEjtJcqZogw+bJPLvYeJkdgw557ZqQxfcJrd4l51Kb+ZsmLfW
-         DRYl/ztLHZ0DPryZASx+ejmjqLh8yYBquH24OeRCMLSGpUCIcBYVEDGDrr1PmvJFVW11
-         PuUQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JOBjrXoPoH1ofPIXqu96DbxIuUW2WoHytXZVgEy9tqQ=;
+        b=CUlCysVkaum7qEAwP8IlB4QtfnbK66sIwJLAepVRt1Ht4HOYZ+d2iKSY7boaCWbQh6
+         ElDFnK7/V/9YSu+XUV9+dLH9/pkDn5GwQMvOUTQ1PcI4d7Aov6MMQP2NXHymFCDue3O/
+         Tcq84ow+y7EVuqCwaTswtK//ETfUdKAezfYWAHMwWNBiqA6zV1QXHAi+y/GNeEBOLEQe
+         tQvHW4wPylB+Ngd1Kug5QgYOnovnDYAkwjkEteDjgRoBSRQE2YNw6H7/w6U+UCqofHX3
+         ruF1kVUyUfWJcOBFo4/kDUHS3a707qFDxitVNrezAXJjgd/58DKuLSgNOSoq+lml3MPj
+         mGyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d7IyyWcogW6tzD/uS39NdaxdXjnV0hMVXgONOdwNoQI=;
-        b=LV1M97NnxGHB6dbXeE79t8pBK5EbHMUzR50COuw3VUlswUGaGjzYoR3lRl6ZYOMtv9
-         Ij1A+FKDKmDei+YYQg8sR5rQHgZEPJuc692JjYj1PKjdZIJity7v4c2tk6Lltrp1vWuH
-         +kZEdMrpkazy8/aknb3XRxAsRd4GYLRDnqBuZpSI2VxrKfmZE4q3wOba1VrMlfNBjDGD
-         //bSUqi1Zg3tyuCs4rseOfzFal0A0zfj6pY3N4jrIZ6yfMn34w1msMtaDYtZV7lwCOAR
-         Bdu1KRfkC75kZJc5QSN6i+MPe5san1yH94LvmCCuInSywjt1lJc5IoH7HlXg4rQNIcj6
-         Mdig==
-X-Gm-Message-State: AJIora8kI9gGwTZXOWR+9Lha2if2RIhEbkk+CCabvqVD/S94Zwm4Ox1T
-        fVZ7Z/84/SIJrVQc6YMZPYoVag==
-X-Google-Smtp-Source: AGRyM1uYWX+CX2LWivh0Oae4UjqnwJb4t4TlULauVCsJ0YPqcusd6ubt2RGg5Vh3NiZpWbUOL1Xv0w==
-X-Received: by 2002:a05:6512:2983:b0:47d:a3ac:3574 with SMTP id du3-20020a056512298300b0047da3ac3574mr5814842lfb.343.1655477236204;
-        Fri, 17 Jun 2022 07:47:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JOBjrXoPoH1ofPIXqu96DbxIuUW2WoHytXZVgEy9tqQ=;
+        b=pteoYOFfRJG+LiqgXui9WKGJK4FEZIFGii2I/xhd19WK4ncGQmT06zEZb9f68VTGVF
+         82FiypnbH2juYdiBC0gRR2gdzSbTyuhP5bNryB2jdEjKlI7oNRicUfgyhP6O7hHw3SeY
+         TsivWPGqr2J16+X9KLkV61PQLc1K09QqGDBN8ur0ptzrOVeT+/FF3AqWEE4Eyg6MMPGH
+         M4IWCYhJhv5f0RqqI/sVMnJf+jwsQEkcRgLoZrZaR1gyy9LEoHuAk7+ur9uh8O+DVa9q
+         kuk4n6uymrxONSy6oAbZiDqgK6smrKX42Xlww31X4D9/mZmqOhEPS5uOGWG9ZffwwU3l
+         hdzw==
+X-Gm-Message-State: AJIora9q8Q5/m+ZAAbEDRhQ+LJdXPuiVS4habzTeTCIRPgg21a7Xg3I+
+        dAyabJvMY6hpoHBDupzSUxcCLhAg9WSo1n6Z
+X-Google-Smtp-Source: AGRyM1vTRxinlw1ys5/mB2Jj2rgEEFeP72Q+BPg7bTK+fQayywt4YGJIVqJNt+7qrN3ff+B3G94m3Q==
+X-Received: by 2002:a2e:b8d2:0:b0:255:93e3:6fb2 with SMTP id s18-20020a2eb8d2000000b0025593e36fb2mr5271126ljp.334.1655477237317;
+        Fri, 17 Jun 2022 07:47:17 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id a5-20020a2eb165000000b002553ab60e17sm571867ljm.122.2022.06.17.07.47.14
+        by smtp.gmail.com with ESMTPSA id a5-20020a2eb165000000b002553ab60e17sm571867ljm.122.2022.06.17.07.47.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 07:47:15 -0700 (PDT)
+        Fri, 17 Jun 2022 07:47:16 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,55 +57,797 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 0/7] clk: qcom: gcc-msm8916: modernize the driver
-Date:   Fri, 17 Jun 2022 17:47:07 +0300
-Message-Id: <20220617144714.817765-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 1/7] dt-bindings: clk: qcom,gcc-*: use qcom,gcc.yaml
+Date:   Fri, 17 Jun 2022 17:47:08 +0300
+Message-Id: <20220617144714.817765-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220617144714.817765-1-dmitry.baryshkov@linaro.org>
+References: <20220617144714.817765-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update gcc-msm8916 driver and bindings to use DT-specified clocks
-rather than fetching the clocks from the global clocks list.
+Use qcom,gcc.yaml which contains a set of properties common to most
+Qualcomm GCC bindings.
 
-Dmitry Baryshkov (7):
-  dt-bindings: clk: qcom,gcc-*: use qcom,gcc.yaml
-  dt-bindings: clock: separate bindings for MSM8916 GCC device
-  clk: qcom: gcc-msm8916: use ARRAY_SIZE instead of specifying
-    num_parents
-  clk: qcom: gcc-msm8916: move clock parent tables down
-  clk: qcom: gcc-msm8916: move gcc_mss_q6_bimc_axi_clk down
-  clk: qcom: gcc-msm8916: use parent_hws/_data instead of parent_names
-  arm64: dts: qcom: msm8916: add clocks to the GCC device node
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../bindings/clock/qcom,gcc-msm8976.yaml      | 21 +++-------------
+ .../bindings/clock/qcom,gcc-msm8994.yaml      | 21 +++-------------
+ .../bindings/clock/qcom,gcc-msm8996.yaml      | 25 +++----------------
+ .../bindings/clock/qcom,gcc-msm8998.yaml      | 25 +++----------------
+ .../bindings/clock/qcom,gcc-qcm2290.yaml      | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sc7180.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sc7280.yaml       | 21 +++-------------
+ .../bindings/clock/qcom,gcc-sc8180x.yaml      | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sc8280xp.yaml     | 21 +++-------------
+ .../bindings/clock/qcom,gcc-sdm845.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sdx55.yaml        | 21 +++-------------
+ .../bindings/clock/qcom,gcc-sdx65.yaml        | 21 +++-------------
+ .../bindings/clock/qcom,gcc-sm6115.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sm6125.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sm6350.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sm8150.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sm8250.yaml       | 25 +++----------------
+ .../bindings/clock/qcom,gcc-sm8350.yaml       | 21 +++-------------
+ .../bindings/clock/qcom,gcc-sm8450.yaml       | 21 +++-------------
+ 19 files changed, 76 insertions(+), 367 deletions(-)
 
- .../bindings/clock/qcom,gcc-msm8916.yaml      |   61 +
- .../bindings/clock/qcom,gcc-msm8976.yaml      |   21 +-
- .../bindings/clock/qcom,gcc-msm8994.yaml      |   21 +-
- .../bindings/clock/qcom,gcc-msm8996.yaml      |   25 +-
- .../bindings/clock/qcom,gcc-msm8998.yaml      |   25 +-
- .../bindings/clock/qcom,gcc-other.yaml        |    1 -
- .../bindings/clock/qcom,gcc-qcm2290.yaml      |   25 +-
- .../bindings/clock/qcom,gcc-sc7180.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sc7280.yaml       |   21 +-
- .../bindings/clock/qcom,gcc-sc8180x.yaml      |   25 +-
- .../bindings/clock/qcom,gcc-sc8280xp.yaml     |   21 +-
- .../bindings/clock/qcom,gcc-sdm845.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sdx55.yaml        |   21 +-
- .../bindings/clock/qcom,gcc-sdx65.yaml        |   21 +-
- .../bindings/clock/qcom,gcc-sm6115.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sm6125.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sm6350.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sm8150.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sm8250.yaml       |   25 +-
- .../bindings/clock/qcom,gcc-sm8350.yaml       |   21 +-
- .../bindings/clock/qcom,gcc-sm8450.yaml       |   21 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi         |   14 +
- drivers/clk/qcom/gcc-msm8916.c                | 1020 +++++++++--------
- 23 files changed, 669 insertions(+), 870 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+index f3430b159caa..4b7d69518371 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+@@ -45,29 +45,16 @@ properties:
+     description:
+       Phandle to voltage regulator providing power to the GX domain.
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+   - vdd_gfx-supply
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+index 22e67b238bb6..7b9fef6d9b23 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8994.yaml
+@@ -32,28 +32,15 @@ properties:
+       - const: xo
+       - const: sleep
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+index 5a5b2214f0ca..70f7d3101bd3 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+@@ -33,30 +33,13 @@ properties:
+       - const: cxo2
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+index 8151c0a05649..544a2335cf05 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+@@ -37,32 +37,15 @@ properties:
+       - const: core_bi_pll_test_se # Optional clock
+     minItems: 2
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qcm2290.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qcm2290.yaml
+index 5de9c8263138..aec37e3f5e30 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-qcm2290.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qcm2290.yaml
+@@ -30,32 +30,15 @@ properties:
+       - const: bi_tcxo
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+index a404c8fbee67..e4d490e65d14 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+@@ -33,32 +33,15 @@ properties:
+       - const: bi_tcxo_ao
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+index 5693b8997570..ea61367e5abc 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+@@ -44,28 +44,15 @@ properties:
+       - const: ufs_phy_tx_symbol_0_clk
+       - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8180x.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8180x.yaml
+index f03ef96e57fa..30b5d1215fa8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8180x.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8180x.yaml
+@@ -32,32 +32,15 @@ properties:
+       - const: bi_tcxo_ao
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+index 0bcdc69c6f89..e33dea86fb9e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc8280xp.yaml
+@@ -56,30 +56,17 @@ properties:
+       - description: First EMAC controller reference clock
+       - description: Second EMAC controller reference clock
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+   protected-clocks:
+     maxItems: 389
+ 
+ required:
+   - compatible
+   - clocks
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+index d902f137ab17..2b8a35d8739e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+@@ -37,30 +37,13 @@ properties:
+       - const: pcie_0_pipe_clk
+       - const: pcie_1_pipe_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   # Example for GCC for SDM845:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+index b0d1c65aa354..13ffa16e0833 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx55.yaml
+@@ -35,28 +35,15 @@ properties:
+       - const: core_bi_pll_test_se # Optional clock
+     minItems: 2
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
+index 16c4cdc7b4d6..8a1419c4d465 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
+@@ -20,9 +20,6 @@ properties:
+   compatible:
+     const: qcom,gcc-sdx65
+ 
+-  reg:
+-    maxItems: 1
+-
+   clocks:
+     items:
+       - description: Board XO source
+@@ -43,25 +40,15 @@ properties:
+       - const: core_bi_pll_test_se # Optional clock
+     minItems: 5
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+index 26050da844d5..bb81a27a1b16 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6115.yaml
+@@ -30,32 +30,15 @@ properties:
+       - const: bi_tcxo
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml
+index ab12b391effc..03e84e15815c 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6125.yaml
+@@ -30,32 +30,15 @@ properties:
+       - const: bi_tcxo
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml
+index 20926cd8293e..cbe98c01c085 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm6350.yaml
+@@ -32,32 +32,15 @@ properties:
+       - const: bi_tcxo_ao
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+index 12766a866625..0333ccb07d8d 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+@@ -31,32 +31,15 @@ properties:
+       - const: bi_tcxo
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+index 80bd6caf5bc9..4e2a9cac0a91 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+@@ -31,32 +31,15 @@ properties:
+       - const: bi_tcxo
+       - const: sleep_clk
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+index 1122700dcc2b..3edbeca70a9c 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8350.yaml
+@@ -54,28 +54,15 @@ properties:
+       - const: usb3_uni_phy_sec_gcc_usb30_pipe_clk # Optional clock
+     minItems: 2
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+   - clocks
+   - clock-names
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8450.yaml
+index 58d98a766de6..102ce6862e24 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8450.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8450.yaml
+@@ -46,28 +46,15 @@ properties:
+       - const: usb3_phy_wrapper_gcc_usb30_pipe_clk # Optional clock
+     minItems: 2
+ 
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
+-
+ required:
+   - compatible
+-  - reg
+   - clocks
+   - clock-names
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+ 
+-additionalProperties: false
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
 -- 
 2.35.1
 
