@@ -2,88 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7679EC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 10:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E57C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 11:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234995AbiFQKeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 06:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53666 "EHLO
+        id S1381835AbiFQLMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 07:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231422AbiFQKeR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 06:34:17 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235B36AA5A;
-        Fri, 17 Jun 2022 03:34:15 -0700 (PDT)
-Received: (Authenticated sender: clement.leger@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id D28E5E0004;
-        Fri, 17 Jun 2022 10:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1655462054;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Sh3h0KKkH6ovJsX0vy6O3bBPL81E+4+ofSuniX7ztG4=;
-        b=Xy6M9vpl+zl00OQvESFdbLJ0pEVP/qApo5QP44FMG3tjrWlx1CSkmTGz6DWIotYjfLxnDS
-        7fXhi/FOOcY2bXoUEFCfZccATy40KEiIPwoGdT7UFb5JjOtgp1KElTvGD4MmEzWp/xhynK
-        oB44dMN75FryY8HlMVAMA/sazwkSQZnEIAZddsTmFC3Z8zGSPigbxf3EIWvKXlSQYs5MTt
-        s+/tLQRi5sJHevMz5zsg/ivX2vcfjwC6VUA0Kxj8hUA1uLcgmgPQrm7ST+9dGlSp9zEPeY
-        zaO1uqnIIz2R8SrYnqaKbekn0Uh9Ps+WASAcuRUD3RWZw4/pS0o//5cbxN/5mw==
-From:   =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steen Hegelund <steen.hegelund@microchip.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Allan Nielsen <allan.nielsen@microchip.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH] clk: allow building lan966x as a module
-Date:   Fri, 17 Jun 2022 12:33:06 +0200
-Message-Id: <20220617103306.489466-1-clement.leger@bootlin.com>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S1380571AbiFQLMy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 07:12:54 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 922F322500;
+        Fri, 17 Jun 2022 04:12:53 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B53C4660179A;
+        Fri, 17 Jun 2022 12:12:51 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1655464372;
+        bh=gW6UerJ1ORzjD0MbtZbHUrldkZVnFiwBi9ZNmW1eHC4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RaLfKMPnFOjxHSKNhZi9a076M0kae3pMwZPels+9MG7T2PpBuOzGeANIeecEnyxv1
+         yBq0dD6q91QPoRPUGw6NB5zX74ty0TcTp0AB8yQnuplI/SELLOWZyokBz6+om4u23l
+         RKzlH8jOExlvcCwKhsYVRBcuZmrI8jyLnCLPKDjtQ/W5gas0NcSQtLBRiiM0fEg0Om
+         wHHIM6Y7u2znG3dFXGhvqGroM3d/ZFqDqvJ8BrMXdApmuLpGuw5LcGWohiubucE6cj
+         YXtNoTcxvN8A5V4eH37yWm1aI9rOP5RxfVpebCKbsZHAw3y0p5/OvulpMCp3c9RNbe
+         f7V8MV84larPA==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
+        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] MediaTek Kompanio 1200 MT8195 - DisplayPort clocks fixes
+Date:   Fri, 17 Jun 2022 13:12:46 +0200
+Message-Id: <20220617111248.90505-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Set the COMMON_CLK_LAN966X option as a tristate and switch from
-builtin_platform_driver() to module_platform_driver() to allow building
-and using this driver as a module.
+This series fixes the two DPINTF clocks to propagate rate change
+requests to their own parent (and also fixes vdo1_dpintf's parent name).
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
----
- drivers/clk/Kconfig       | 2 +-
- drivers/clk/clk-lan966x.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This is needed in order to stay clean in the DisplayPort driver and
+avoid adding (now useless) custom handling of clocks reparenting based
+on the wanted final clock rate.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 48f8f4221e21..ac77d4b2c742 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -249,7 +249,7 @@ config COMMON_CLK_GEMINI
- 	  platform, also known as SL3516 or CS3516.
- 
- config COMMON_CLK_LAN966X
--	bool "Generic Clock Controller driver for LAN966X SoC"
-+	tristate "Generic Clock Controller driver for LAN966X SoC"
- 	depends on HAS_IOMEM
- 	depends on OF
- 	depends on SOC_LAN966 || COMPILE_TEST
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index d1535ac13e89..90a335ddd735 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -286,7 +286,7 @@ static struct platform_driver lan966x_clk_driver = {
- 		.of_match_table = lan966x_clk_dt_ids,
- 	},
- };
--builtin_platform_driver(lan966x_clk_driver);
-+module_platform_driver(lan966x_clk_driver);
- 
- MODULE_AUTHOR("Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>");
- MODULE_DESCRIPTION("LAN966X clock driver");
+Changes in v3:
+ - Fixed tags ordering.
+
+AngeloGioacchino Del Regno (2):
+  clk: mediatek: clk-mt8195-vdo0: Set rate on vdo0_dp_intf0_dp_intf's
+    parent
+  clk: mediatek: clk-mt8195-vdo1: Reparent and set rate on vdo1_dpintf's
+    parent
+
+ drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c | 6 +++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
 -- 
-2.36.1
+2.35.1
 
