@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2FDC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 22:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052A5C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 22:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236295AbiFQWBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 18:01:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48712 "EHLO
+        id S243982AbiFQWCO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 18:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiFQWBG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 18:01:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1225D1A4;
-        Fri, 17 Jun 2022 15:01:05 -0700 (PDT)
+        with ESMTP id S242164AbiFQWCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 18:02:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABE15DA41;
+        Fri, 17 Jun 2022 15:02:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 890B3620D4;
-        Fri, 17 Jun 2022 22:01:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FE2C3411B;
-        Fri, 17 Jun 2022 22:01:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C6657620CE;
+        Fri, 17 Jun 2022 22:02:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28C07C3411B;
+        Fri, 17 Jun 2022 22:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655503265;
-        bh=bQ1dAF1qDYgdOmo3nkb3devawGGSEo3xA0fInJTp/dE=;
+        s=k20201202; t=1655503331;
+        bh=72pXmZ6V0+wVJEHfPORA/Kru3cDr3Nbp2x3i6u7zZL8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=t1Lk9DPBiIrL5eCYJsqv2Kq6TmmblafzeqT0m1VRmp8DnkDmP6POXAZ0LdlC85Peo
-         Wlm0aXlEfWAJCUWCWMj9oiDjLmczVU0vixzqEsUFJrBDfrvM5JJYN4oyUgpOYfUCdp
-         UKStAI9tqQSffmVstSKpkLOW7iPXcF2SbiXytmA1zoToCs2nNBQzPn+QkS8P1BGG9p
-         sMnLokPtREh9YndjqeH5b9IlxRwKXWQSM/ZztFs+/YDBnbzIlEgESJK0XocsuZDU73
-         vApNlnD+TATQtjkr1mZBhEEVqxAyQnTADtp2SkY4otXPfITfiBSEU5KpaFpSMPcEi3
-         jdDskS7f/F/cw==
+        b=m/LKrwFU7xZb1M/hMSLHCdK1DSaatM2ic8c0qOUeAJVUp3dwsj8oqug18t/CtZTt0
+         SaimzNxh00c4fmipONyiHHovVIO0S9LdVcT/dkwuHCKtRxZqUIoLVFeZZG1en4ISL7
+         QXVkrYZXlcuzg65a0W5TjQai68T3Jk0Eo1qO6T0xpCOB1QerrxHL4bDaOzQPN83khJ
+         BZ7M0iaWeLS/3Lv8a0AnhoDmNqEFaBz0RQN1rKnOJkzVp4R91O4wZs4oZNr8/UQHOS
+         B2QXLqxkmN/vyAcByAaZyYJFDEaE/SzobnZVofQBtV8JI7feO1Q8TEyjSU8I1tTMav
+         dkRH8baQd9nTA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220617122922.769562-6-dmitry.baryshkov@linaro.org>
-References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org> <20220617122922.769562-6-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 5/6] clk: qcom: mmcc-msm8996: use parent_hws/_data instead of parent_names
+In-Reply-To: <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
+References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org> <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: msm8996: add clocks to the MMCC device node
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
@@ -46,25 +46,18 @@ To:     Andy Gross <agross@kernel.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
-Date:   Fri, 17 Jun 2022 15:01:03 -0700
+Date:   Fri, 17 Jun 2022 15:02:09 -0700
 User-Agent: alot/0.10
-Message-Id: <20220617220104.E0FE2C3411B@smtp.kernel.org>
+Message-Id: <20220617220211.28C07C3411B@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2022-06-17 05:29:21)
-> Convert the clock driver to specify parent data rather than parent
-> names, to actually bind using 'clock-names' specified in the DTS rather
-> than global clock names. Use parent_hws where possible to refer parent
-> clocks directly, skipping the lookup.
+Quoting Dmitry Baryshkov (2022-06-17 05:29:22)
+> As we are converting this platform to use DT clock bindings, add clocks
+> and clock-names properties to the MMCC device tree node.
 >=20
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-
-Any reason to not move directly to DT index numbers instead of string
-names?
-
-Anyway,
 
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
