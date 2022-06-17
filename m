@@ -2,93 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B149CCA479
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 09:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C31DC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 10:10:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381000AbiFQJee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 05:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
+        id S235799AbiFQKKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 06:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379989AbiFQJed (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 05:34:33 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA84951E4B;
-        Fri, 17 Jun 2022 02:34:32 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id D1DD3660179D;
-        Fri, 17 Jun 2022 10:34:30 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1655458471;
-        bh=pGH8Jhv8K2/nD4MKxwp8iQfMRDcZpcfthKCb1vXYh2w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RJyotv6t4Hiv4uT6+vHHfgJSpwbVQGm+bhfIc3s3jUCxTIfCoHF5Z9MnG6MVlq+aj
-         whAdRbaaFqIchO11AOf4dcEC2sGPJO5dqwc/dXtwzmjhr4MObVw7Qex48SXuhjLe9z
-         2C71GzdOIkDyG0037SJnLaP/Nblv9F4K4HxSlFUAsYq5Ghp51jlYviRmuG2rGVZ3hE
-         92D07YHRMu8tnkKfp/cc6Fc3tGtdW71ilzmqRuZds/i42Ceet3hKNsPnZDxYF97Cvd
-         witAY/tFVtA22foFeLsQaM4cs5q5ZxPDkfjNSOivCcU/11/iCEmfduEtwUzX6f6/FC
-         bFYKgXSs7tHhA==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
-        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: mediatek: clk-mt8195-vdo1: Reparent and set rate on vdo1_dpintf's parent
-Date:   Fri, 17 Jun 2022 11:34:24 +0200
-Message-Id: <20220617093424.75589-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220617093424.75589-1-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S1381545AbiFQKKL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 06:10:11 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AFF239687;
+        Fri, 17 Jun 2022 03:10:09 -0700 (PDT)
+X-UUID: 1168c715a116493e9ac067b9b3e1ffd5-20220617
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.6,REQID:8ba90b2b-66e1-41f4-8d9d-7bcc2620fdbd,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:b14ad71,CLOUDID:ac7ce748-4c92-421c-ad91-b806c0f58b2a,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:nil,BEC:nil,COL:0
+X-UUID: 1168c715a116493e9ac067b9b3e1ffd5-20220617
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+        (envelope-from <rex-bc.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 2081643202; Fri, 17 Jun 2022 18:10:05 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Fri, 17 Jun 2022 18:10:04 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 17 Jun 2022 18:10:04 +0800
+Message-ID: <1b5c83ce0b2257f931b270c87cf2c6845ec1b004.camel@mediatek.com>
+Subject: Re: [PATCH v2 1/2] clk: mediatek: clk-mt8195-vdo0: Set rate on
+ vdo0_dp_intf0_dp_intf's parent
+From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "wenst@chromium.org" <wenst@chromium.org>,
+        "Miles Chen =?UTF-8?Q?=28=E9=99=B3=E6=B0=91=E6=A8=BA=29?=" 
+        <Miles.Chen@mediatek.com>,
+        "chun-jie.chen@mediatek.com" <chun-jie.chen@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 17 Jun 2022 18:10:03 +0800
+In-Reply-To: <20220617093424.75589-2-angelogioacchino.delregno@collabora.com>
 References: <20220617093424.75589-1-angelogioacchino.delregno@collabora.com>
+         <20220617093424.75589-2-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Like it was done for the vdo0_dp_intf0_dp_intf clock (used for eDP),
-add the CLK_SET_RATE_PARENT flag to CLK_VDO1_DPINTF (used for DP)
-and also fix its parent clock name as it has to be "top_dp" for two
-reasons:
- - This is its real parent!
- - Likewise to eDP/VDO0 counterpart, we need clock source
-   selection on CLK_TOP_DP.
+On Fri, 2022-06-17 at 17:34 +0800, AngeloGioacchino Del Regno wrote:
+> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
+> clock: this is required to trigger clock source selection on
+> CLK_TOP_EDP, while avoiding to manage the enablement of the former
+> separately from the latter in the displayport driver.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <
+> angelogioacchino.delregno@collabora.com>
+> Fixes: 70282c90d4a2 ("clk: mediatek: Add MT8195 vdosys0 clock
+> support")
+> ---
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Fixes: 269987505ba9 ("clk: mediatek: Add MT8195 vdosys1 clock support")
----
- drivers/clk/mediatek/clk-mt8195-vdo1.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-index 3378487d2c90..d54d7726d186 100644
---- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -43,6 +43,10 @@ static const struct mtk_gate_regs vdo1_3_cg_regs = {
- #define GATE_VDO1_2(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
- 
-+#define GATE_VDO1_2_FLAGS(_id, _name, _parent, _shift, _flags)		\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &vdo1_2_cg_regs, _shift,	\
-+		       &mtk_clk_gate_ops_setclr, _flags)
-+
- #define GATE_VDO1_3(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_3_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
- 
-@@ -99,7 +103,7 @@ static const struct mtk_gate vdo1_clks[] = {
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI0, "vdo1_disp_monitor_dpi0", "top_vpp", 1),
- 	GATE_VDO1_2(CLK_VDO1_DPI1, "vdo1_dpi1", "top_vpp", 8),
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI1, "vdo1_disp_monitor_dpi1", "top_vpp", 9),
--	GATE_VDO1_2(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_vpp", 16),
-+	GATE_VDO1_2_FLAGS(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_dp", 16, CLK_SET_RATE_PARENT),
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPINTF, "vdo1_disp_monitor_dpintf", "top_vpp", 17),
- 	/* VDO1_3 */
- 	GATE_VDO1_3(CLK_VDO1_26M_SLOW, "vdo1_26m_slow", "clk26m", 8),
--- 
-2.35.1
+Hello Angelo,
+
+Thanks for this series.
+I can use this series to do modetest using MT8195 Tomato Chromebook for
+both dp and edp in kernel v5.19-rc1.
+
+Therefore,
+Tested-by: Bo-Chen Chen <rex-bc.chen@mediatek.com>
+and,
+Reviewed-by: Bo-Chen Chen <rex-bc.chen@mediatek.com>
+
+BRs,
+Bo-Chen
 
