@@ -2,78 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877ADC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 00:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C92EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 01:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbiFQALh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 20:11:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60192 "EHLO
+        id S231899AbiFQBUi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 21:20:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbiFQALg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 20:11:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABDB862215;
-        Thu, 16 Jun 2022 17:11:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 486976182F;
-        Fri, 17 Jun 2022 00:11:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD0CC34114;
-        Fri, 17 Jun 2022 00:11:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655424694;
-        bh=uQeVB00AjJrbZT5b4yd3bF+T7xqW+4EKimhddU+zKSc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oJ1o0qOkIqjaahotZjelLA95CRGSCBeyUZCf31ei/1X/0WSeF0ZKdDuayhIRGRJaN
-         6j1kQcUVqOjkYoKEw876rX7umHBVYVEBNJwY24iO8e0Yw7YTCBu71WcIRxPo6hldkU
-         qpwPiNw/XYPAUnoX6TGRaeru4wkyTjt7Bm+EiSkfrDnqRCAKBKUBY1FPvHtx7X5IYp
-         wYKZfsJgBT5LsbGLO5L/VPtlxW2yDXypTR8NjdFK3+9M6mD9Qp7CUE7123WMclPqVx
-         /2Zgj0GtMcEnyiA89/ZeAgyCEhZb0S0Ug+cYCSAcgkDaNSwMaJczKIJLGsLfjaIJJ+
-         vWXbe0S3qEFfQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230016AbiFQBUi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 21:20:38 -0400
+Received: from m1550.mail.126.com (m1550.mail.126.com [220.181.15.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4005762201;
+        Thu, 16 Jun 2022 18:20:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=sWQM3
+        9UnjCAPyGb6n+UzLQBAULepaLyIUJckb/BXXUo=; b=ATGtbKgdaJ2zKRKBEchCR
+        3K4nh+ZSXMN/gJUkXUENZfys0+J3WbY9rpFkC6okmKlTBMe+Rs8565oPG//dqUmm
+        9d+D037ydgUqRGlkhxD0l+0dpS2znJRnD2nClSkHiWAWvCTZ8d9ZEygRP9+y7Li9
+        YTGaLp2KDWo3XFdDDzpk1k=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr50
+ (Coremail) ; Fri, 17 Jun 2022 09:20:13 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Fri, 17 Jun 2022 09:20:13 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     "Stephen Boyd" <sboyd@kernel.org>
+Cc:     jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v3] drivers: clk: Add missing of_node_put()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <20220617000913.24A4CC34114@smtp.kernel.org>
+References: <20220616125409.3986745-1-windhl@126.com>
+ <20220617000913.24A4CC34114@smtp.kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <88be9f00-2b1a-977d-dadd-95a131bf7f1f@collabora.com>
-References: <20220614091020.21472-1-angelogioacchino.delregno@collabora.com> <20220616024442.1337EC3411E@smtp.kernel.org> <88be9f00-2b1a-977d-dadd-95a131bf7f1f@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: clk-mt8195-vdo0: Set rate on vdo0_dp_intf0_dp_intf's parent
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, wenst@chromium.org,
-        miles.chen@mediatek.com, chun-jie.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        rex-bc.chen@mediatek.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Date:   Thu, 16 Jun 2022 17:11:32 -0700
-User-Agent: alot/0.10
-Message-Id: <20220617001134.9AD0CC34114@smtp.kernel.org>
+Message-ID: <454850f.e70.1816f3f14a6.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: MsqowABXrPDP1qtiOA44AA--.31659W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGgYiF1-HZUGFPAACsu
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2022-06-16 01:48:44)
-> Il 16/06/22 04:44, Stephen Boyd ha scritto:
-> > Quoting AngeloGioacchino Del Regno (2022-06-14 02:10:20)
-> >> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
-> >> clock: this is required to trigger clock source selection on
-> >> CLK_TOP_EDP, while avoiding to manage the enablement of the former
-> >> separately from the latter in the displayport driver.
-> >>
-> >> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@c=
-ollabora.com>
-> >> ---
-> >=20
-> > Any Fixes tag?
->=20
-> Backporting is useless because there's no DisplayPort driver that support=
-s MT8195
-> in the previous kernel versions, so this clock (and whatever logic behind=
- it) is
-> unused.
->=20
-> Though, if you think that's going to be useful in any way, I can add one?
->=20
-
-It's always useful. A Fixes tag doesn't mean anything for backporting to
-stable kernels.
+CgpBdCAyMDIyLTA2LTE3IDA4OjA5OjExLCAiU3RlcGhlbiBCb3lkIiA8c2JveWRAa2VybmVsLm9y
+Zz4gd3JvdGU6Cj5RdW90aW5nIExpYW5nIEhlICgyMDIyLTA2LTE2IDA1OjU0OjA5KQo+PiBJbiB0
+aGVzZSBjbGstcmVsYXRlZCBkcml2ZXJzJyB4eHhfaW5pdCgpIGZ1bmNpdG9ucywgb2ZfZmluZF9t
+YXRjaGluZ19ub2RlKCkKPj4gd2lsbCByZXR1cm4gYSBub2RlIHBvaW50ZXIgd2l0aCByZWZjb3Vu
+dCBpbmNyZW1lbnRlZC4gV2Ugc2hvdWxkIHVzZQo+PiBvZl9ub2RlX3B1dCgpIGluIGZhaWwgcGF0
+aCBvciB3aGVuIGl0IGlzIG5vdCB1c2VkIGFueW1vcmUuCj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBM
+aWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+IC0tLQo+PiAgY2hhbmdlbG9nOgo+PiAKPj4gIHYz
+OiBtZXJnZSBjbGsgJ21pc3Npbmcgb2Zfbm9kZV9wdXQoKScgcGF0Y2hlcyBpbnRvIG9uZSBjb21t
+aXQuCj4+ICB2MjogdXNlIExpYW5nIEhlIGFzIHJlYWwgbmFtZSBmb3IgUy1vLWIuCj4+ICB2MTog
+Zml4IHRoZSBtaXNzaW5nIG9mX25vZGVfcHV0KCkuCj4+IAo+PiAKPj4gIGRyaXZlcnMvY2xrL2Ns
+ay1ub21hZGlrLmMgICAgICAgIHwgNSArKysrLQo+PiAgZHJpdmVycy9jbGsvdGVncmEvY2xrLXRl
+Z3JhMTI0LmMgfCAxICsKPj4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTMwLmMgIHwgMSAr
+Cj4KPlBsZWFzZSBzcGxpdCBpbnRvIGEgdGVncmEgcGF0Y2ggYW5kIGEgbm9tYWRpayBwYXRjaC4K
+ClRoYW5rcywgSSB3aWxsIHNwbGl0IHRoZW0gYW5kIHJlc2VuZCBzb29uLgo=
