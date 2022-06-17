@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BACFC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 12:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B65BCCA482
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 12:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381840AbiFQM3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 08:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53098 "EHLO
+        id S1382222AbiFQM3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 08:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236185AbiFQM32 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 08:29:28 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B964E49F16
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:25 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id h23so6710077lfe.4
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:25 -0700 (PDT)
+        with ESMTP id S1382271AbiFQM3c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 08:29:32 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCC4606ED
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:29 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id d19so4557384lji.10
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M4AQh+bAvu+Zh7HRjgwZPxuz/E+WPBnd3QNkdPlKR2k=;
-        b=I8RB2XA+Ew9qY+812tOI8r4eqa1ng/Uwm29/nrAScpyK5nZ8MqaicwhAYBmwVfdGuL
-         YQCwGsYdNQYwVqZpiWIe7mt1zvUpb5e1Olg+sbJcgBqybtEGZK8bz4XKbDtuZP0uf4fp
-         bedsdG8i+Eyi4zJiDX+/jpeVdt5VP6NLhjq0dEUQ2EfOMad2z9xnbWJI+2BCovsT7A6u
-         97tsdFI5C3FbhMpV+pf8vir7XCOBTgvwN8Ccx817YWyQxcrLwXlK0EiNNwBL/pxWPEmI
-         aduLg2McJhKNz3kqU9b9bMgVdM7hw77k/e7Z3vsh4xC59B0SM94xOhGuZDMTAC3uO54O
-         OVfA==
+        bh=bGeccNDCBeLsb8V2UEPm2YdO4aA4EMY5TjAXSJDABD0=;
+        b=e9w62j0uWtKr7FsHGlHFnDLN7QfktdUKyYKHKqm45BUP9sG8t9cDFKdxXtUmblJwYs
+         kBLTEy46y24UQ9QS13QANcc9xsIuLG5deZj8he85aFa8PvsJvblQzjwliOp6ZNDUM/KH
+         VRukBFksleSWvRbig+RWHjmWrCKrwXitJbLel66n0hD/FfOjKIlKyMlbxHYE1VHVyZw8
+         pRL8JNVrbEwu4ZiEA88kLpadF08Dbhc6efarSu9UnjB4H0elpINxI0qagyAbQ9/TYrJ4
+         V4hcmopoSMdclftwieT133ZmBS42JimOzWQC/GoYAhIs6+KNoCGYCaZhoTYIDLQJXWUd
+         pNHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M4AQh+bAvu+Zh7HRjgwZPxuz/E+WPBnd3QNkdPlKR2k=;
-        b=w33fK0pXgRbYd3JOGWO7pa2FBYkrOGkAKLuacc9I2JzoVl1OcYQNPgzZdXOLOm/7yB
-         lOas2xB2YxA6X4NZVSAskFFU/oLdrEShC+m9t1ZUgZtIjeVpxmZZ0G4PHrFWymMkvATx
-         tb2jPS1va8cl3a9y+ZiSF19Jp3lMiIlhfIpu7jS0Esbe+cfypeCmwQaUcC8dlc8+BWGX
-         yTnZwMzmp7bHD+fvhZmAjGlfaKeB93C8f9YTB5BDt93FOL0kDJsW2UldHkpD62o5zfMN
-         Ss0iyBYQy9kZmQYqBojRPLS782ElUBRDoNpqCN6DbQ/jIU0laMkGLqfaFHuQG+24P6RT
-         jqZA==
-X-Gm-Message-State: AJIora9W23hMFcJ+l3/S2ohlQtAvj2bS+kpX07umr6V5Z1hB2bgehLdj
-        nDpSmf0w5yW+xVa22mOTvKOh0Q==
-X-Google-Smtp-Source: AGRyM1sGotD83M1ervvta2Zu2ZtZMUp/8jq6fWOPWXWw6+4bAR9zPI1VH0snd9eUA7AUugCuPCurHg==
-X-Received: by 2002:a05:6512:1085:b0:479:7d28:3284 with SMTP id j5-20020a056512108500b004797d283284mr5402710lfg.592.1655468964076;
-        Fri, 17 Jun 2022 05:29:24 -0700 (PDT)
+        bh=bGeccNDCBeLsb8V2UEPm2YdO4aA4EMY5TjAXSJDABD0=;
+        b=EOQ3l+j3g2hFn0nVLUSDE0VITT/DnCVHbm4Mw0VhvovilqQZ+bOl6aNwDsKJC4Ccbo
+         IKS/m8QofS0wHMu6JacW9Ebrvx8asdAafpCz0uNTBmm0HzokQIbHx21VXP1cGfkRxwrH
+         4FxnBGZZ+RCxOdzweptmb6FNoM65+G3BQ2MKjHOJZDxNYQnWGvxh3EOvm29uvq6tPzUl
+         TlEOL7J5KHNKSBmnrTbTZQoBn2i//tss7BsPOCzXV056qswqSpqlvKYJQSFy8Im33MQ+
+         QyyQEds8FPj4+1hRZtiXd2g6o7tjfi0f9dYi2kCYJdj/gf/UJj5kusujz523SD47uOCU
+         MXkg==
+X-Gm-Message-State: AJIora+IOLxSQXKA4Ot5Nb5lVS8moIlM++JEasgF3VfMpAq3z3D9LTQL
+        jXxROakg2tjfx+sCIH/KskaKjQ==
+X-Google-Smtp-Source: AGRyM1vdjRy+BCqpyZ3tLDjOl2VIOGzlWV1J901EdHDM6CIzlHMOP0RhSBVH0wsgmnzO4sa72wYh6A==
+X-Received: by 2002:a2e:8749:0:b0:255:81b8:163e with SMTP id q9-20020a2e8749000000b0025581b8163emr4834846ljj.463.1655468968270;
+        Fri, 17 Jun 2022 05:29:28 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b8-20020a2e8948000000b0025568a2a018sm539471ljk.129.2022.06.17.05.29.23
+        by smtp.gmail.com with ESMTPSA id b8-20020a2e8948000000b0025568a2a018sm539471ljk.129.2022.06.17.05.29.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 05:29:23 -0700 (PDT)
+        Fri, 17 Jun 2022 05:29:27 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -56,9 +56,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Marijn Suijten <marijn.suijten@somainline.org>
-Subject: [PATCH 1/6] dt-bindings: clock: qcom,mmcc: fix clocks/clock-names definitions
-Date:   Fri, 17 Jun 2022 15:29:17 +0300
-Message-Id: <20220617122922.769562-2-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 6/6] arm64: dts: qcom: msm8996: add clocks to the MMCC device node
+Date:   Fri, 17 Jun 2022 15:29:22 +0300
+Message-Id: <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
 References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
@@ -68,175 +68,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rather than defining (incorrect) global clocks and clock-names lists,
-define them per platform using conditionals. Also, while we are at it,
-mark these properties as required for all platforms for which DT files
-contained clocks/clock-names for the MMCC nodes from the beginning (in
-addition to existing MSM8998 this adds MSM8994, SDM630 and SDM660).
+As we are converting this platform to use DT clock bindings, add clocks
+and clock-names properties to the MMCC device tree node.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../devicetree/bindings/clock/qcom,mmcc.yaml  | 133 ++++++++++++++----
- 1 file changed, 109 insertions(+), 24 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-index 32e87014bb55..d02fe6dc79b5 100644
---- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-@@ -31,30 +31,12 @@ properties:
-       - qcom,mmcc-sdm660
- 
-   clocks:
--    items:
--      - description: Board XO source
--      - description: Board sleep source
--      - description: Global PLL 0 clock
--      - description: DSI phy instance 0 dsi clock
--      - description: DSI phy instance 0 byte clock
--      - description: DSI phy instance 1 dsi clock
--      - description: DSI phy instance 1 byte clock
--      - description: HDMI phy PLL clock
--      - description: DisplayPort phy PLL vco clock
--      - description: DisplayPort phy PLL link clock
-+    minItems: 9
-+    maxItems: 10
- 
-   clock-names:
--    items:
--      - const: xo
--      - const: sleep
--      - const: gpll0
--      - const: dsi0dsi
--      - const: dsi0byte
--      - const: dsi1dsi
--      - const: dsi1byte
--      - const: hdmipll
--      - const: dpvco
--      - const: dplink
-+    minItems: 9
-+    maxItems: 10
- 
-   '#clock-cells':
-     const: 1
-@@ -89,13 +71,116 @@ if:
-   properties:
-     compatible:
-       contains:
--        const: qcom,mmcc-msm8998
--
-+        enum:
-+          - qcom,mmcc-msm8994
-+          - qcom,mmcc-msm8998
-+          - qcom,mmcc-sdm630
-+          - qcom,mmcc-sdm660
- then:
-   required:
-     - clocks
-     - clock-names
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,mmcc-msm8994
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: Global PLL 0 clock
-+            - description: MMSS NoC AHB clock
-+            - description: GFX3D clock
-+            - description: DSI phy instance 0 dsi clock
-+            - description: DSI phy instance 0 byte clock
-+            - description: DSI phy instance 1 dsi clock
-+            - description: DSI phy instance 1 byte clock
-+            - description: HDMI phy PLL clock
-+
-+        clock-names:
-+          items:
-+            - const: xo
-+            - const: gpll0
-+            - const: mmssnoc_ahb
-+            - const: oxili_gfx3d_clk_src
-+            - const: dsi0pll
-+            - const: dsi0pllbyte
-+            - const: dsi1pll
-+            - const: dsi1pllbyte
-+            - const: hdmipll
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,mmcc-msm8998
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: Global PLL 0 clock
-+            - description: DSI phy instance 0 dsi clock
-+            - description: DSI phy instance 0 byte clock
-+            - description: DSI phy instance 1 dsi clock
-+            - description: DSI phy instance 1 byte clock
-+            - description: HDMI phy PLL clock
-+            - description: DisplayPort phy PLL link clock
-+            - description: DisplayPort phy PLL vco clock
-+            - description: Test clock
-+
-+        clock-names:
-+          items:
-+            - const: xo
-+            - const: gpll0
-+            - const: dsi0dsi
-+            - const: dsi0byte
-+            - const: dsi1dsi
-+            - const: dsi1byte
-+            - const: hdmipll
-+            - const: dplink
-+            - const: dpvco
-+            - const: core_bi_pll_test_se
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,mmcc-sdm630
-+              - qcom,mmcc-sdm660
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: Board sleep source
-+            - description: Global PLL 0 clock
-+            - description: Global PLL 0 DIV clock
-+            - description: DSI phy instance 0 dsi clock
-+            - description: DSI phy instance 0 byte clock
-+            - description: DSI phy instance 1 dsi clock
-+            - description: DSI phy instance 1 byte clock
-+            - description: DisplayPort phy PLL link clock
-+            - description: DisplayPort phy PLL vco clock
-+
-+        clock-names:
-+          items:
-+            - const: xo
-+            - const: sleep_clk
-+            - const: gpll0
-+            - const: gpll0_div
-+            - const: dsi0pll
-+            - const: dsi0pllbyte
-+            - const: dsi1pll
-+            - const: dsi1pllbyte
-+            - const: dp_link_2x_clk_divsel_five
-+            - const: dp_vco_divided_clk_src_mux
-+
- examples:
-   # Example for MMCC for MSM8960:
-   - |
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index dffb87a5ee74..0c7b7cd9f23e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -751,6 +751,22 @@ mmcc: clock-controller@8c0000 {
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			reg = <0x008c0000 0x40000>;
++			clocks = <&xo_board>,
++				 <&gcc GCC_MMSS_NOC_CFG_AHB_CLK>,
++				 <&gcc GPLL0>,
++				 <&dsi0_phy 1>,
++				 <&dsi0_phy 0>,
++				 <0>,
++				 <0>,
++				 <0>;
++			clock-names = "xo",
++				      "gcc_mmss_noc_cfg_ahb_clk",
++				      "gpll0",
++				      "dsi0pll",
++				      "dsi0pllbyte",
++				      "dsi1pll",
++				      "dsi1pllbyte",
++				      "hdmipll";
+ 			assigned-clocks = <&mmcc MMPLL9_PLL>,
+ 					  <&mmcc MMPLL1_PLL>,
+ 					  <&mmcc MMPLL3_PLL>,
 -- 
 2.35.1
 
