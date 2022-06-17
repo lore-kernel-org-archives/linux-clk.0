@@ -2,131 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C03C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 19:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61753C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 20:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234027AbiFQT6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 15:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
+        id S1380988AbiFQUiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 16:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344081AbiFQT6N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 15:58:13 -0400
-Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB55381BC
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 12:58:12 -0700 (PDT)
-Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-101bb9275bcso1866203fac.8
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 12:58:12 -0700 (PDT)
+        with ESMTP id S1383451AbiFQUhv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 16:37:51 -0400
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6579062CDC
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 13:34:54 -0700 (PDT)
+Received: by mail-qv1-xf29.google.com with SMTP id 43so8063311qvb.3
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 13:34:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:user-agent:date:message-id:subject:to:cc;
-        bh=A8JJMVbZngK6NaVYvhxrE43QJFDmbjJcs++TiSORqUk=;
-        b=aW2v/DYU2Usd+mTFmULe9Bqe1w3rcI9eZXk7h+q0xwRblBqUXiuTNc46pmjZ3ZKHgd
-         5zzI3L4XFDskEtEKrP1ArYQmnwM1Fs6TpbOki2XmDOz98N+2OhOmXxnhR3XTlqWhy2D8
-         OY1vhyUpl85BZ4asz6nEltUqaYpKNLGsXqbaU=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WGHL7WjNLqD3YEDXO1vrsqgtsGl62CAfBugSKIsxPxU=;
+        b=cv2r4yXkHLvtqCXoPhTFcG1riYBBF5Kc9CwQxrBxiOqHHo1j2zt96Z+UPpK/d0vYjT
+         QAKszsSLwTOvcHDnf8kSUe4XAWy7MHdHeLhBv7n83WyTsivH7mvGi8V5MFaNxRB0ZCpe
+         0695dC3x1z/Y8Qwk90ZzRmtKbyg8bD4E7jmkAtpoZBEhHUv0jx6zVzUznJiC3CLZlIqb
+         7UPNh+xGdNmiYkaqJVB3W8prl6jYY4Y+HrYQGwVjTxLJkPnfpIDJqCK4QHhjs+nqtn0N
+         fo8LQUk3cAjTPtnMqbImMaIIRo5lUIIlX5ddqCcyWiFQ9efSaPh29wGfoCBmRlm4mEuN
+         1WTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=A8JJMVbZngK6NaVYvhxrE43QJFDmbjJcs++TiSORqUk=;
-        b=cdaePVpgxoZUJQCpWe9VLrv/ede9y9tWXA34xl3N0vY5nwz7prm+AhPHZ3OmxL+NFh
-         Cspy2umnpVPD2T1EyQ5PkU1X8jhRgRovcpR0g0k3y/1dE29HriPt81y3fsbbgj7jpBvl
-         PRptlApWmqrmhOysdm17psFJK/Yc0yCVA7o3570rh5FRSvdDRXYBOYR9BUCSUOJT3hnT
-         s0ZH0NKggaOn3B44Q6VJ/FyojCJmJFJSQFO04nZFIUH2rS5CZrpUqhWp1FhR6NUavtCS
-         w0AmC76P/+5Mal3tvrk9dcDwz9+QJ1t1OfrczMjIP13BTb6Z0fpe6gs7L+23V8JX8IBP
-         mfjw==
-X-Gm-Message-State: AJIora8CUN0UBe/0lfWOxX+IdRbGojfsUFc0FgjfTlcee1j3cawKjkJG
-        2rM51+UWw75TdHCla7IU1MdI9yfP5mtFWrUNpSS2Bw==
-X-Google-Smtp-Source: AGRyM1vThDhDqP0PhYfZVq8vkNpd2vUQo0ppMWV9t0NxanyTHP+FhzT6Q3fc6CqnvvPOBarxGmE9XTJPQ7+z8YbSrck=
-X-Received: by 2002:a05:6870:b381:b0:fe:2004:b3b5 with SMTP id
- w1-20020a056870b38100b000fe2004b3b5mr6450848oap.63.1655495891813; Fri, 17 Jun
- 2022 12:58:11 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 17 Jun 2022 12:58:11 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WGHL7WjNLqD3YEDXO1vrsqgtsGl62CAfBugSKIsxPxU=;
+        b=LasNAz3podOqTFbP7Zoi0i47AHaUDEZI92gIHSozmtBdX1qM8VIjOR9AXDR0C9emMD
+         JW2IAP6l5UlM1pQ2u+IcbMbj98EzCXm6Iipg3Iv2Iqjjy1UotIF8wY7XjZbAw1CB4ndi
+         BejyUuExkxA/7g+ZbCP49Jp3cFckMaVChjv3iBGyvqUiu0AkikHdF8gSAH+NcPxulXxh
+         FZyqcGftZ11cvusirQlBJnXq2LZOvOI665g79Xepe9LKjxJ1THc3ewAKQ9MxvLLHL6PR
+         iTLWohlfMDjHhoS/CvUgvGKVL7RqCV8pZF8OhDfH271rPS8XpWzWeAaAR6joLe4eJQuS
+         6YUA==
+X-Gm-Message-State: AJIora9jBoqGUgddy8+3f7hgOptImnsPFEtqJmdN4uf0dH5f/rm5Neje
+        NLV02CVgGl1lfFiJYmj4Kn2PpjtC4VAK610eZaL3pA==
+X-Google-Smtp-Source: AGRyM1v1dl9Ik0o1hcC8TstCh11I+Up1jTnlCPJuDlc0Pv5THsRcNLs3/HX/N2TDNDkhjKWfpAIeQ5ODqcdIrs8eZZk=
+X-Received: by 2002:a05:622a:487:b0:304:fbfc:9933 with SMTP id
+ p7-20020a05622a048700b00304fbfc9933mr10445999qtx.682.1655498075238; Fri, 17
+ Jun 2022 13:34:35 -0700 (PDT)
 MIME-Version: 1.0
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Fri, 17 Jun 2022 12:58:11 -0700
-Message-ID: <CAE-0n52xbZeJ66RaKwggeRB57fUAwjvxGxfFMKOKJMKVyFTe+w@mail.gmail.com>
-Subject: clk: qcom: genpd lockdep warning in gdsc
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Yu Zhao <yuzhao@google.com>, linux-arm-msm@vger.kernel.org
+References: <20220617144714.817765-1-dmitry.baryshkov@linaro.org>
+ <20220617144714.817765-8-dmitry.baryshkov@linaro.org> <Yqy2YHpl93kEQRYU@gerhold.net>
+In-Reply-To: <Yqy2YHpl93kEQRYU@gerhold.net>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 17 Jun 2022 23:34:24 +0300
+Message-ID: <CAA8EJpozu6PoWC-kOpFB9OSZLVZaZt6ZkUpYo=bOr0zhErkWqA@mail.gmail.com>
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: msm8916: add clocks to the GCC
+ device node
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn and Dmitry,
+On Fri, 17 Jun 2022 at 20:14, Stephan Gerhold <stephan@gerhold.net> wrote:
+>
+> Hi Dmitry,
+>
+> Thanks for cleaning up MSM8916! :)
+>
+> On Fri, Jun 17, 2022 at 05:47:14PM +0300, Dmitry Baryshkov wrote:
+> > As we are converting this platform to use DT clock bindings, add clocks
+> > and clock-names properties to the MMCC device tree node.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/msm8916.dtsi | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> > index 05472510e29d..e905415b3456 100644
+> > --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> > @@ -934,6 +934,20 @@ gcc: clock-controller@1800000 {
+> >                       #reset-cells = <1>;
+> >                       #power-domain-cells = <1>;
+> >                       reg = <0x01800000 0x80000>;
+> > +                     clocks = <&rpmcc RPM_SMD_BB_CLK1_PIN>,
+>
+> This should be <&xo_board> to avoid functional changes.
 
-Yu reported a lockdep warning coming from the gdsc driver. It looks like
-the runtime PM usage in gdsc.c is causing lockdep to see an AA deadlock
-possibility with 'genpd->mlock'. I suspect this is because we have
-commit 1b771839de05 ("clk: qcom: gdsc: enable optional power domain
-support"), and that is now calling runtime PM code from within the genpd
-code. I think genpd already has nested lock support, so the only
-solution is to not use runtime PM from within genpd code and start
-expressing genpd parent relationships in genpd itself? Or maybe genpd
-needs to drop locks while calling down into gdsc_disable() and reacquire
-them after that?
+Ack, thanks for the suggestion.
 
-============================================
-WARNING: possible recursive locking detected
-5.19.0-rc2-lockdep+ #7 Not tainted
---------------------------------------------
-kworker/2:1/49 is trying to acquire lock:
-ffffffeea0370788 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+>
+> If we want to change this to the actual votable clock later this should
+> probably be <&rpmcc RPM_SMD_XO_CLK_SRC>. AFAIK that clock exists in RPM
+> on MSM8916 but was never added to the clk-smd-rpm driver (for MSM8916).
+>
+> Not sure where the pin-controlled BB_CLK1 is coming from here. :)
 
-but task is already holding lock:
-ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
+It came from the schematics I had at hand (db410c). It uses the
+BB_CLK1 together with the enable pin. I'll probably use xo_board for
+now and postpone changing this to rpmcc clock until the next attempt
+to read msm-3.x code.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&genpd->mlock);
-  lock(&genpd->mlock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by kworker/2:1/49:
- #0: 74ffff80811a5748 ((wq_completion)pm){+.+.}-{0:0}, at:
-process_one_work+0x320/0x5fc
- #1: ffffffc008537cf8
-((work_completion)(&genpd->power_off_work)){+.+.}-{0:0}, at:
-process_one_work+0x354/0x5fc
- #2: ffffffeea03710a8 (&genpd->mlock){+.+.}-{3:3}, at: genpd_lock_mtx+0x24/0x30
-
-stack backtrace:
-CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 5.19.0-rc2-lockdep+ #7
-Hardware name: Google Lazor (rev3 - 8) with KB Backlight (DT)
-Workqueue: pm genpd_power_off_work_fn
-Call trace:
- dump_backtrace+0x1a0/0x200
- show_stack+0x24/0x30
- dump_stack_lvl+0x7c/0xa0
- dump_stack+0x18/0x44
- __lock_acquire+0xb38/0x3634
- lock_acquire+0x180/0x2d4
- __mutex_lock_common+0x118/0xe30
- mutex_lock_nested+0x70/0x7c
- genpd_lock_mtx+0x24/0x30
- genpd_runtime_suspend+0x2f0/0x414
- __rpm_callback+0xdc/0x1b8
- rpm_callback+0x4c/0xcc
- rpm_suspend+0x21c/0x5f0
- rpm_idle+0x17c/0x1e0
- __pm_runtime_idle+0x78/0xcc
- gdsc_disable+0x24c/0x26c
- _genpd_power_off+0xd4/0x1c4
- genpd_power_off+0x2d8/0x41c
- genpd_power_off_work_fn+0x60/0x94
- process_one_work+0x398/0x5fc
- worker_thread+0x42c/0x6c4
- kthread+0x194/0x1b4
- ret_from_fork+0x10/0x20
+-- 
+With best wishes
+Dmitry
