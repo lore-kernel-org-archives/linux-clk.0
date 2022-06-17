@@ -2,115 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEA0C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 05:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9C5C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 09:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379887AbiFQF53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 01:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49912 "EHLO
+        id S1380018AbiFQJed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 05:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbiFQF52 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 01:57:28 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB7266F88
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 22:57:27 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o24yq-0001Mj-TF; Fri, 17 Jun 2022 07:57:16 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o24yn-00109t-8f; Fri, 17 Jun 2022 07:57:14 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o24yo-00GttI-0N; Fri, 17 Jun 2022 07:57:14 +0200
-Date:   Fri, 17 Jun 2022 07:57:10 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     linux-doc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: efm32: remove bindings for deleted platform
-Message-ID: <20220617055710.d4wnya5aclskpqjg@pengutronix.de>
-References: <20220615210720.6363-1-wsa@kernel.org>
+        with ESMTP id S1381237AbiFQJec (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 05:34:32 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3559266FA8;
+        Fri, 17 Jun 2022 02:34:31 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3F027660179B;
+        Fri, 17 Jun 2022 10:34:29 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1655458469;
+        bh=qNXMzT2jD6Hu7vIEmFarbDuyoK/cbMytCaqq9CTTLMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ip5v8GWPyv6LpjgOCKtwoBTlu9lna799wxt6GSE76YD1KQlS2QRBYwmiKjUI4N7hg
+         4oBZBHkAK7kaXaYo6GpG2xcMKPWyKRERNjO7Nd1PdsJkqb8JQx4mNcKL9FX7OJHrzn
+         FnOkIt9Quc0wyfhXylWYhO5tRUEr8KgTqsm1LRJgQyAhfpo0z6uy2BCB+LM1PFA1jG
+         t/7NQIbZcYq4O/o7zAOYnuLlbNsGMEGK+djRIz2mnBEd3LiI4dcjaLaVpV5GZfia0u
+         Gr4tJ+brHdnTdPeqd0iqZspEipLE3n2RFj2iRseG90BGp4SP1/KU5c1A4nnfTnEQ6p
+         38GhCGc1mCbkQ==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
+        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
+        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] MediaTek Kompanio 1200 MT8195 - DisplayPort clocks fixes
+Date:   Fri, 17 Jun 2022 11:34:22 +0200
+Message-Id: <20220617093424.75589-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="olp76qajcz2msgae"
-Content-Disposition: inline
-In-Reply-To: <20220615210720.6363-1-wsa@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This series fixes the two DPINTF clocks to propagate rate change
+requests to their own parent (and also fixes vdo1_dpintf's parent name).
 
---olp76qajcz2msgae
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is needed in order to stay clean in the DisplayPort driver and
+avoid adding (now useless) custom handling of clocks reparenting based
+on the wanted final clock rate.
 
-On Wed, Jun 15, 2022 at 11:07:19PM +0200, Wolfram Sang wrote:
-> Commit cc6111375cec ("ARM: drop efm32 platform") removed the platform,
-> so no need to still carry the bindings.
->=20
-> Signed-off-by: Wolfram Sang <wsa@kernel.org>
-> ---
->  .../devicetree/bindings/clock/efm32-clock.txt | 11 -----
->  .../devicetree/bindings/i2c/i2c-efm32.txt     | 33 --------------
->  .../devicetree/bindings/serial/efm32-uart.txt | 20 ---------
->  .../devicetree/bindings/spi/efm32-spi.txt     | 39 -----------------
->  include/dt-bindings/clock/efm32-cmu.h         | 43 -------------------
->  5 files changed, 146 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/efm32-clock.t=
-xt
->  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-efm32.txt
->  delete mode 100644 Documentation/devicetree/bindings/serial/efm32-uart.t=
-xt
->  delete mode 100644 Documentation/devicetree/bindings/spi/efm32-spi.txt
->  delete mode 100644 include/dt-bindings/clock/efm32-cmu.h
+AngeloGioacchino Del Regno (2):
+  clk: mediatek: clk-mt8195-vdo0: Set rate on vdo0_dp_intf0_dp_intf's
+    parent
+  clk: mediatek: clk-mt8195-vdo1: Reparent and set rate on vdo1_dpintf's
+    parent
 
-I didn't do that back then wondering if the bindings are sensible to
-keep even for removed arch (or more general drivers). In this case the
-chip isn't old and unavailable, but just too small for sensible Linux
-usage.
+ drivers/clk/mediatek/clk-mt8195-vdo0.c | 7 ++++++-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c | 6 +++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-OTOH I'm not aware of any dtb usage on efm32.
+-- 
+2.35.1
 
-No hard feelings here, if you consider it not useful to keep the binding
-around, go on and remove them.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---olp76qajcz2msgae
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKsF7IACgkQwfwUeK3K
-7AmlkAgAkeP7ubk1SId4jZw5jRCgEtryr8uSSJbLjLngkCCk9Tk4niLiq7RE9svU
-ogytTFnt0i4WSXrORBidg644EcgoWZrpUDA1ULORe/EbRS3k6bupHQneGP7BkXgo
-GiNgDvJ+ufdcLrI0Nj+jH/C5PxNqOa1sH7GnRE5viYXpbpB6kwyqR18v6G2CAUin
-E3b2QRB32jCAXTYlitLmbjLweY/Qz0pW8yTY4pwhLoG3w+wDshQVwRqSt778yqZN
-dLwli2Zv0+zs2EBKBZgST0hruHpcZ3HJXQy/6UhnXTCdHbxm2pI0AdQo5nIxrYe6
-/oWYm+u40EbHnR0PPhQFCKeOW1OExg==
-=4gVo
------END PGP SIGNATURE-----
-
---olp76qajcz2msgae--
