@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C31DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6AEC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 10:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235799AbiFQKKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 06:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
+        id S1381662AbiFQKKv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 06:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381545AbiFQKKL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 06:10:11 -0400
+        with ESMTP id S1381655AbiFQKKu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 06:10:50 -0400
 Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AFF239687;
-        Fri, 17 Jun 2022 03:10:09 -0700 (PDT)
-X-UUID: 1168c715a116493e9ac067b9b3e1ffd5-20220617
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB356A02C;
+        Fri, 17 Jun 2022 03:10:48 -0700 (PDT)
+X-UUID: c532be217fc54cc69614eaa295a05c49-20220617
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.6,REQID:8ba90b2b-66e1-41f4-8d9d-7bcc2620fdbd,OB:0,LO
+X-CID-O-INFO: VERSION:1.1.6,REQID:b14705de-28a6-4434-a274-7c34c82fd3c1,OB:0,LO
         B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
         ON:release,TS:0
-X-CID-META: VersionHash:b14ad71,CLOUDID:ac7ce748-4c92-421c-ad91-b806c0f58b2a,C
+X-CID-META: VersionHash:b14ad71,CLOUDID:d181e748-4c92-421c-ad91-b806c0f58b2a,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
         ,QS:nil,BEC:nil,COL:0
-X-UUID: 1168c715a116493e9ac067b9b3e1ffd5-20220617
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+X-UUID: c532be217fc54cc69614eaa295a05c49-20220617
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
         (envelope-from <rex-bc.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2081643202; Fri, 17 Jun 2022 18:10:05 +0800
+        with ESMTP id 1485325868; Fri, 17 Jun 2022 18:10:43 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Fri, 17 Jun 2022 18:10:04 +0800
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 17 Jun 2022 18:10:43 +0800
 Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 17 Jun 2022 18:10:04 +0800
-Message-ID: <1b5c83ce0b2257f931b270c87cf2c6845ec1b004.camel@mediatek.com>
-Subject: Re: [PATCH v2 1/2] clk: mediatek: clk-mt8195-vdo0: Set rate on
- vdo0_dp_intf0_dp_intf's parent
+ Transport; Fri, 17 Jun 2022 18:10:43 +0800
+Message-ID: <a3c480a3aa87b87c707b92bc80040764d2434a03.camel@mediatek.com>
+Subject: Re: [PATCH v2 2/2] clk: mediatek: clk-mt8195-vdo1: Reparent and set
+ rate on vdo1_dpintf's parent
 From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
@@ -53,10 +53,10 @@ CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
         "linux-mediatek@lists.infradead.org" 
         <linux-mediatek@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 17 Jun 2022 18:10:03 +0800
-In-Reply-To: <20220617093424.75589-2-angelogioacchino.delregno@collabora.com>
+Date:   Fri, 17 Jun 2022 18:10:42 +0800
+In-Reply-To: <20220617093424.75589-3-angelogioacchino.delregno@collabora.com>
 References: <20220617093424.75589-1-angelogioacchino.delregno@collabora.com>
-         <20220617093424.75589-2-angelogioacchino.delregno@collabora.com>
+         <20220617093424.75589-3-angelogioacchino.delregno@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -67,18 +67,19 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Fri, 2022-06-17 at 17:34 +0800, AngeloGioacchino Del Regno wrote:
-> Add the CLK_SET_RATE_PARENT flag to the CLK_VDO0_DP_INTF0_DP_INTF
-> clock: this is required to trigger clock source selection on
-> CLK_TOP_EDP, while avoiding to manage the enablement of the former
-> separately from the latter in the displayport driver.
+> Like it was done for the vdo0_dp_intf0_dp_intf clock (used for eDP),
+> add the CLK_SET_RATE_PARENT flag to CLK_VDO1_DPINTF (used for DP)
+> and also fix its parent clock name as it has to be "top_dp" for two
+> reasons:
+>  - This is its real parent!
+>  - Likewise to eDP/VDO0 counterpart, we need clock source
+>    selection on CLK_TOP_DP.
 > 
 > Signed-off-by: AngeloGioacchino Del Regno <
 > angelogioacchino.delregno@collabora.com>
-> Fixes: 70282c90d4a2 ("clk: mediatek: Add MT8195 vdosys0 clock
+> Fixes: 269987505ba9 ("clk: mediatek: Add MT8195 vdosys1 clock
 > support")
-> ---
-
-
+> 
 Hello Angelo,
 
 Thanks for this series.
