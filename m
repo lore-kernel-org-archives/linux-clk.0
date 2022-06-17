@@ -2,86 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6199DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 01:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB60C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 01:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231591AbiFQBpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 21:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38334 "EHLO
+        id S232424AbiFQB7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 21:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379789AbiFQBnh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 21:43:37 -0400
-Received: from mail-m964.mail.126.com (mail-m964.mail.126.com [123.126.96.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 88D1926541;
-        Thu, 16 Jun 2022 18:43:35 -0700 (PDT)
+        with ESMTP id S1379390AbiFQB7h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 21:59:37 -0400
+Received: from m15114.mail.126.com (m15114.mail.126.com [220.181.15.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DBC960AAA;
+        Thu, 16 Jun 2022 18:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DI+WC
-        bTryVSUwE4AJeh6OWVzHOzOvSO0HxklZbRyl3k=; b=dva0AQ1IFaf7I2q4kud7S
-        wZutFVLuDWFe+CChYT+e4kN5FGaxFNlNXk7LMp7pkiE7/A8JHAvE/nyfftt3KKcA
-        j1OVb8lBo9icRYznJ7UoK7HXDnKGAqlJyRsHHuFzeRv43rh/o0ob5TE4lzjnqxHR
-        76j5YTWffQmgw6pxY9TYwM=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vsEwa
+        4Q3Nuw5b/RYwlym5mojsapn/Da3u7pPStla0+8=; b=H7Q4Bi/nV43shYU2Z7wWb
+        NfWjklqmXs6CxrNTv1J0+t5733VEAfO9IftKHMgz9K/nbrw5zj2BFzCw9H9OZ9vR
+        m9CEmPBok+H3+jiZIdITixg1AGHTDv+sJEuRaOYUZZ9spPysKSWHM2KjwKVQK3E2
+        HmXLyTfRf/eaCz/7hkMScI=
 Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp9 (Coremail) with SMTP id NeRpCgBHTpot3Ktio_HDEw--.8636S2;
-        Fri, 17 Jun 2022 09:43:10 +0800 (CST)
+        by smtp7 (Coremail) with SMTP id DsmowABnNfH236ticEIdDg--.10993S2;
+        Fri, 17 Jun 2022 09:59:20 +0800 (CST)
 From:   Liang He <windhl@126.com>
-To:     linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     windhl@126.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] clk: nomadik: Add missing of_node_put()
-Date:   Fri, 17 Jun 2022 09:43:08 +0800
-Message-Id: <20220617014308.4001511-1-windhl@126.com>
+To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Liang He <windhl@126.com>
+Subject: [PATCH v4] clk: tegra: Add missing of_node_put()
+Date:   Fri, 17 Jun 2022 09:59:18 +0800
+Message-Id: <20220617015918.4001865-1-windhl@126.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: NeRpCgBHTpot3Ktio_HDEw--.8636S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFyUCr15GrW3ZryDJF17trb_yoWkAFb_WF
-        4rWrnrCFW2kF4kur4jvF13u39I9r1rur4xX3Wxt3W3J342vF1DGFsFvFs3uw1UWrW2gry7
-        ZFsrKr4jyrWj9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRibyZUUUUUU==
+X-CM-TRANSID: DsmowABnNfH236ticEIdDg--.10993S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KFyrXw4fZF47uw1xCFykXwb_yoW8Xr1rpr
+        yUXry5ArykXFs2gF1IvFWUZF98C3W3WrWjq34fC3WkZr4DGa48Jr40qa4jkFs0yrZYy393
+        Ar1kKr4kGa1Fva7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pM_M3fUUUUU=
 X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizg4jF18RPTzJKAAAsa
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3A8jF1pEDvJlTgABsv
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In nomadik_src_init(), of_find_matching_node() will return a node
-pointer with refcount incremented. We should use of_node_put() in
-fail path or when it is not used anymore.
+In tegra124_132_clock_init_pre() and tegra30_clock_init(),
+of_find_matching_node() will return a node pointer with
+refcount incremented. We should use of_node_put() when it
+is not used anymore.
 
 Signed-off-by: Liang He <windhl@126.com>
 ---
  changelog:
- v4: split v3 into nmadik and tegra
+ 
+ v4: split v3 into nomadik and tegra
  v3: merge clk 'missing of_node_put()' patches into one commit.
  v2: use Liang He as real name for S-o-b.
  v1: fix the missing of_node_put().
- 
- drivers/clk/clk-nomadik.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index bad2677e11ae..71fbe687fa7b 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -99,7 +99,7 @@ static void __init nomadik_src_init(void)
- 	if (!src_base) {
- 		pr_err("%s: must have src parent node with REGS (%pOFn)\n",
- 		       __func__, np);
--		return;
-+		goto out_put;
+ drivers/clk/tegra/clk-tegra124.c | 1 +
+ drivers/clk/tegra/clk-tegra30.c  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 934520aab6e3..a9d4efcef2d4 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
  	}
  
- 	/* Set all timers to use the 2.4 MHz TIMCLK */
-@@ -132,6 +132,9 @@ static void __init nomadik_src_init(void)
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		WARN_ON(1);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 04b496123820..168c07d5a5f2 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1320,6 +1320,7 @@ static void __init tegra30_clock_init(struct device_node *np)
  	}
- 	writel(val, src_base + SRC_XTALCR);
- 	register_reboot_notifier(&nomadik_clk_reboot_notifier);
-+
-+out_put:
-+	of_node_put(np);
- }
  
- /**
+ 	pmc_base = of_iomap(node, 0);
++	of_node_put(node);
+ 	if (!pmc_base) {
+ 		pr_err("Can't map pmc registers\n");
+ 		BUG();
 -- 
 2.25.1
 
