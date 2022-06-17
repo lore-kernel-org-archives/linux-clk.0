@@ -2,160 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2857CCA481
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jun 2022 21:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A324C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 00:09:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379018AbiFPVWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 17:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
+        id S231899AbiFQAJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jun 2022 20:09:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378999AbiFPVWx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 17:22:53 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 783DC1EC6A;
-        Thu, 16 Jun 2022 14:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655414572; x=1686950572;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eIVB2Wcg0d4KNkOlM5BOJs0iOIDhUm5jxxQVobMAAIM=;
-  b=RP2YCFWJTKa74eNpADc52RfwyjDAvZ8LbqtQ+29QXXL8TwRbvjSWS7Ba
-   pq99M69aIQ9JNjTvJTyVDW//G+jY7TSkumi1VWip/2CpHCCXM6c6TDOdt
-   ovkJ3Yi3iryHnvVyD2y26qw2tMuSleKA/emETgYWmPoT1kmV2lQAziBjw
-   O3q86x2LyuYnnhk+Vs+DKTvFCxrgF97TC4OmRtb6/SSLEM/JP4XfqNzIy
-   uBWpPFsIMbGc2UKu+E2AO9bfY2POAwfylNkeUEpgS6fQsCe6X4buSH60h
-   /gpL6lhB831yaHj1bisym9RyaHXfKLRndrfm290x2hFX1FL/TzwTh4/0s
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10380"; a="259207705"
-X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
-   d="scan'208";a="259207705"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 14:22:51 -0700
-X-IronPort-AV: E=Sophos;i="5.92,306,1650956400"; 
-   d="scan'208";a="560027674"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.198.157])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2022 14:22:51 -0700
-Date:   Thu, 16 Jun 2022 14:26:56 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org, linux@armlinux.org.uk,
-        ulli.kroll@googlemail.com, linus.walleij@linaro.org,
-        shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tony@atomide.com, khilman@kernel.org, catalin.marinas@arm.com,
-        will@kernel.org, guoren@kernel.org, bcain@quicinc.com,
-        chenhuacai@kernel.org, kernel@xen0n.name, geert@linux-m68k.org,
-        sammy@sammy.net, monstr@monstr.eu, tsbogend@alpha.franken.de,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi, shorne@gmail.com,
-        James.Bottomley@hansenpartnership.com, deller@gmx.de,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        Arnd Bergmann <arnd@arndb.de>, yury.norov@gmail.com,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        rostedt@goodmis.org, pmladek@suse.com, senozhatsky@chromium.org,
-        john.ogness@linutronix.de, paulmck@kernel.org, frederic@kernel.org,
-        quic_neeraju@quicinc.com, josh@joshtriplett.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
-Message-ID: <20220616142656.4b1acc4a@jacob-builder>
-In-Reply-To: <Yqb45vclY2KVL0wZ@hirez.programming.kicks-ass.net>
-References: <20220608142723.103523089@infradead.org>
-        <20220608144516.172460444@infradead.org>
-        <20220609164921.5e61711d@jacob-builder>
-        <Yqb45vclY2KVL0wZ@hirez.programming.kicks-ass.net>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S229454AbiFQAJQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 20:09:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C04D86212F;
+        Thu, 16 Jun 2022 17:09:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7C7AEB82686;
+        Fri, 17 Jun 2022 00:09:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A4CC34114;
+        Fri, 17 Jun 2022 00:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655424553;
+        bh=30Al5rKQBM/7mOW3himhps8ySLSwkF/wPX3fgQop4wY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ZSo8wnvpiXlbFs2rASMFuJBYq96l4+nt3YHVn04zliVCx5u28iFJxoTS0iZBxHwH1
+         RsvUhyl9rwBDHVrQjGoklMyaQs9JAWS0Td3MhaL4wGsuyXz0I+imP241rOplqsZUzO
+         wn5WAG+MafJp7XSJme+km/S/da7e4bjRz+mq8oQJ98dLY3C0e23pN1Z3jvRICQ5oeC
+         hFZN0fDJfjkD8bopbIcocPUoFuJx9V5ugmGJsTn931YPeKOmWW79YA30vEiu+IA8M9
+         2FY1bevIzP5yYJleeR3SuF6Z5wu5GlDz3e9oNMSz6BfCyWQfNyobzjpkmEKP/jsdtY
+         /HBVGEj7vIBMA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220616125409.3986745-1-windhl@126.com>
+References: <20220616125409.3986745-1-windhl@126.com>
+Subject: Re: [PATCH v3] drivers: clk: Add missing of_node_put()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     windhl@126.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Liang He <windhl@126.com>, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com
+Date:   Thu, 16 Jun 2022 17:09:11 -0700
+User-Agent: alot/0.10
+Message-Id: <20220617000913.24A4CC34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Peter,
+Quoting Liang He (2022-06-16 05:54:09)
+> In these clk-related drivers' xxx_init() funcitons, of_find_matching_node=
+()
+> will return a node pointer with refcount incremented. We should use
+> of_node_put() in fail path or when it is not used anymore.
+>=20
+> Signed-off-by: Liang He <windhl@126.com>
+> ---
+>  changelog:
+>=20
+>  v3: merge clk 'missing of_node_put()' patches into one commit.
+>  v2: use Liang He as real name for S-o-b.
+>  v1: fix the missing of_node_put().
+>=20
+>=20
+>  drivers/clk/clk-nomadik.c        | 5 ++++-
+>  drivers/clk/tegra/clk-tegra124.c | 1 +
+>  drivers/clk/tegra/clk-tegra30.c  | 1 +
 
-On Mon, 13 Jun 2022 10:44:22 +0200, Peter Zijlstra <peterz@infradead.org>
-wrote:
-
-> On Thu, Jun 09, 2022 at 04:49:21PM -0700, Jacob Pan wrote:
-> > Hi Peter,
-> > 
-> > On Wed, 08 Jun 2022 16:27:27 +0200, Peter Zijlstra
-> > <peterz@infradead.org> wrote:
-> >   
-> > > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > > Xeons") wrecked intel_idle in two ways:
-> > > 
-> > >  - must not have tracing in idle functions
-> > >  - must return with IRQs disabled
-> > > 
-> > > Additionally, it added a branch for no good reason.
-> > > 
-> > > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > > Xeons") Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  drivers/idle/intel_idle.c |   48
-> > > +++++++++++++++++++++++++++++++++++----------- 1 file changed, 37
-> > > insertions(+), 11 deletions(-)
-> > > 
-> > > --- a/drivers/idle/intel_idle.c
-> > > +++ b/drivers/idle/intel_idle.c
-> > > @@ -129,21 +137,37 @@ static unsigned int mwait_substates __in
-> > >   *
-> > >   * Must be called under local_irq_disable().
-> > >   */  
-> > nit: this comment is no long true, right?  
-> 
-> It still is, all the idle routines are called with interrupts disabled,
-> but must also exit with interrupts disabled.
-> 
-> If the idle method requires interrupts to be enabled, it must be sure to
-> disable them again before returning. Given all the RCU/tracing concerns
-> it must use raw_local_irq_*() for this though.
-Makes sense, it is just little confusing when the immediate caller does
-raw_local_irq_enable() which does not cancel out local_irq_disable().
-
-Thanks,
-
-Jacob
+Please split into a tegra patch and a nomadik patch.
