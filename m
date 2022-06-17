@@ -2,92 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB60C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 01:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEA0C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 05:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232424AbiFQB7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jun 2022 21:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49134 "EHLO
+        id S1379887AbiFQF53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 01:57:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379390AbiFQB7h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jun 2022 21:59:37 -0400
-Received: from m15114.mail.126.com (m15114.mail.126.com [220.181.15.114])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5DBC960AAA;
-        Thu, 16 Jun 2022 18:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vsEwa
-        4Q3Nuw5b/RYwlym5mojsapn/Da3u7pPStla0+8=; b=H7Q4Bi/nV43shYU2Z7wWb
-        NfWjklqmXs6CxrNTv1J0+t5733VEAfO9IftKHMgz9K/nbrw5zj2BFzCw9H9OZ9vR
-        m9CEmPBok+H3+jiZIdITixg1AGHTDv+sJEuRaOYUZZ9spPysKSWHM2KjwKVQK3E2
-        HmXLyTfRf/eaCz/7hkMScI=
-Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp7 (Coremail) with SMTP id DsmowABnNfH236ticEIdDg--.10993S2;
-        Fri, 17 Jun 2022 09:59:20 +0800 (CST)
-From:   Liang He <windhl@126.com>
-To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Liang He <windhl@126.com>
-Subject: [PATCH v4] clk: tegra: Add missing of_node_put()
-Date:   Fri, 17 Jun 2022 09:59:18 +0800
-Message-Id: <20220617015918.4001865-1-windhl@126.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S229696AbiFQF52 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 01:57:28 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB7266F88
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jun 2022 22:57:27 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o24yq-0001Mj-TF; Fri, 17 Jun 2022 07:57:16 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o24yn-00109t-8f; Fri, 17 Jun 2022 07:57:14 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o24yo-00GttI-0N; Fri, 17 Jun 2022 07:57:14 +0200
+Date:   Fri, 17 Jun 2022 07:57:10 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Wolfram Sang <wsa@kernel.org>
+Cc:     linux-doc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: efm32: remove bindings for deleted platform
+Message-ID: <20220617055710.d4wnya5aclskpqjg@pengutronix.de>
+References: <20220615210720.6363-1-wsa@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsmowABnNfH236ticEIdDg--.10993S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KFyrXw4fZF47uw1xCFykXwb_yoW8Xr1rpr
-        yUXry5ArykXFs2gF1IvFWUZF98C3W3WrWjq34fC3WkZr4DGa48Jr40qa4jkFs0yrZYy393
-        Ar1kKr4kGa1Fva7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pM_M3fUUUUU=
-X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi3A8jF1pEDvJlTgABsv
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="olp76qajcz2msgae"
+Content-Disposition: inline
+In-Reply-To: <20220615210720.6363-1-wsa@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In tegra124_132_clock_init_pre() and tegra30_clock_init(),
-of_find_matching_node() will return a node pointer with
-refcount incremented. We should use of_node_put() when it
-is not used anymore.
 
-Signed-off-by: Liang He <windhl@126.com>
----
- changelog:
- 
- v4: split v3 into nomadik and tegra
- v3: merge clk 'missing of_node_put()' patches into one commit.
- v2: use Liang He as real name for S-o-b.
- v1: fix the missing of_node_put().
+--olp76qajcz2msgae
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/clk/tegra/clk-tegra124.c | 1 +
- drivers/clk/tegra/clk-tegra30.c  | 1 +
- 2 files changed, 2 insertions(+)
+On Wed, Jun 15, 2022 at 11:07:19PM +0200, Wolfram Sang wrote:
+> Commit cc6111375cec ("ARM: drop efm32 platform") removed the platform,
+> so no need to still carry the bindings.
+>=20
+> Signed-off-by: Wolfram Sang <wsa@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/efm32-clock.txt | 11 -----
+>  .../devicetree/bindings/i2c/i2c-efm32.txt     | 33 --------------
+>  .../devicetree/bindings/serial/efm32-uart.txt | 20 ---------
+>  .../devicetree/bindings/spi/efm32-spi.txt     | 39 -----------------
+>  include/dt-bindings/clock/efm32-cmu.h         | 43 -------------------
+>  5 files changed, 146 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/efm32-clock.t=
+xt
+>  delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-efm32.txt
+>  delete mode 100644 Documentation/devicetree/bindings/serial/efm32-uart.t=
+xt
+>  delete mode 100644 Documentation/devicetree/bindings/spi/efm32-spi.txt
+>  delete mode 100644 include/dt-bindings/clock/efm32-cmu.h
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 934520aab6e3..a9d4efcef2d4 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1471,6 +1471,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	}
- 
- 	pmc_base = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!pmc_base) {
- 		pr_err("Can't map pmc registers\n");
- 		WARN_ON(1);
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 04b496123820..168c07d5a5f2 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1320,6 +1320,7 @@ static void __init tegra30_clock_init(struct device_node *np)
- 	}
- 
- 	pmc_base = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!pmc_base) {
- 		pr_err("Can't map pmc registers\n");
- 		BUG();
--- 
-2.25.1
+I didn't do that back then wondering if the bindings are sensible to
+keep even for removed arch (or more general drivers). In this case the
+chip isn't old and unavailable, but just too small for sensible Linux
+usage.
 
+OTOH I'm not aware of any dtb usage on efm32.
+
+No hard feelings here, if you consider it not useful to keep the binding
+around, go on and remove them.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--olp76qajcz2msgae
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKsF7IACgkQwfwUeK3K
+7AmlkAgAkeP7ubk1SId4jZw5jRCgEtryr8uSSJbLjLngkCCk9Tk4niLiq7RE9svU
+ogytTFnt0i4WSXrORBidg644EcgoWZrpUDA1ULORe/EbRS3k6bupHQneGP7BkXgo
+GiNgDvJ+ufdcLrI0Nj+jH/C5PxNqOa1sH7GnRE5viYXpbpB6kwyqR18v6G2CAUin
+E3b2QRB32jCAXTYlitLmbjLweY/Qz0pW8yTY4pwhLoG3w+wDshQVwRqSt778yqZN
+dLwli2Zv0+zs2EBKBZgST0hruHpcZ3HJXQy/6UhnXTCdHbxm2pI0AdQo5nIxrYe6
+/oWYm+u40EbHnR0PPhQFCKeOW1OExg==
+=4gVo
+-----END PGP SIGNATURE-----
+
+--olp76qajcz2msgae--
