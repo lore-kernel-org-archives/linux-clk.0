@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B65BCCA482
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 12:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9FBCCA479
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 12:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382222AbiFQM3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 08:29:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53144 "EHLO
+        id S236185AbiFQM3c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 08:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382271AbiFQM3c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 08:29:32 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCC4606ED
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:29 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id d19so4557384lji.10
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:29 -0700 (PDT)
+        with ESMTP id S236636AbiFQM3a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 08:29:30 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C3B27B08
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:26 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id l18so4553107lje.13
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jun 2022 05:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bGeccNDCBeLsb8V2UEPm2YdO4aA4EMY5TjAXSJDABD0=;
-        b=e9w62j0uWtKr7FsHGlHFnDLN7QfktdUKyYKHKqm45BUP9sG8t9cDFKdxXtUmblJwYs
-         kBLTEy46y24UQ9QS13QANcc9xsIuLG5deZj8he85aFa8PvsJvblQzjwliOp6ZNDUM/KH
-         VRukBFksleSWvRbig+RWHjmWrCKrwXitJbLel66n0hD/FfOjKIlKyMlbxHYE1VHVyZw8
-         pRL8JNVrbEwu4ZiEA88kLpadF08Dbhc6efarSu9UnjB4H0elpINxI0qagyAbQ9/TYrJ4
-         V4hcmopoSMdclftwieT133ZmBS42JimOzWQC/GoYAhIs6+KNoCGYCaZhoTYIDLQJXWUd
-         pNHQ==
+        bh=/Z+AMU7vrtO5o4KexqAVpmPzeKjXxbfUDDVj5eR8YgE=;
+        b=NasIhQJ8njHh6EJ/Jb/E09pmIvlloYmqEDStQrVhi/XB53zTcgNqqfL7DFKcu1JhD+
+         bxijVAyhVOFnyWLjPegjK12n4AXIpxy6UV3S2lHZ1mkjR2U7H3/1q6cO2+l51XjaN9BS
+         qsViaWRsyv0HpfA/ixgndDmBt/ZGTP6Zrso943pu1yPg4ftwtz094PIhxJoW6agEqjhh
+         5yeIB46cNoflK35gQAxIEVJEoeuRKy5wX/htwzRZ5B+ma0+P8DUaySOM6GkFpE5PPyEP
+         MsgwkTXn1bLKBzsYdj/wYCmydcHRy1nIRVDwUCr8TUyu46Vg1ABHURiilSySint0zxIj
+         lx1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bGeccNDCBeLsb8V2UEPm2YdO4aA4EMY5TjAXSJDABD0=;
-        b=EOQ3l+j3g2hFn0nVLUSDE0VITT/DnCVHbm4Mw0VhvovilqQZ+bOl6aNwDsKJC4Ccbo
-         IKS/m8QofS0wHMu6JacW9Ebrvx8asdAafpCz0uNTBmm0HzokQIbHx21VXP1cGfkRxwrH
-         4FxnBGZZ+RCxOdzweptmb6FNoM65+G3BQ2MKjHOJZDxNYQnWGvxh3EOvm29uvq6tPzUl
-         TlEOL7J5KHNKSBmnrTbTZQoBn2i//tss7BsPOCzXV056qswqSpqlvKYJQSFy8Im33MQ+
-         QyyQEds8FPj4+1hRZtiXd2g6o7tjfi0f9dYi2kCYJdj/gf/UJj5kusujz523SD47uOCU
-         MXkg==
-X-Gm-Message-State: AJIora+IOLxSQXKA4Ot5Nb5lVS8moIlM++JEasgF3VfMpAq3z3D9LTQL
-        jXxROakg2tjfx+sCIH/KskaKjQ==
-X-Google-Smtp-Source: AGRyM1vdjRy+BCqpyZ3tLDjOl2VIOGzlWV1J901EdHDM6CIzlHMOP0RhSBVH0wsgmnzO4sa72wYh6A==
-X-Received: by 2002:a2e:8749:0:b0:255:81b8:163e with SMTP id q9-20020a2e8749000000b0025581b8163emr4834846ljj.463.1655468968270;
-        Fri, 17 Jun 2022 05:29:28 -0700 (PDT)
+        bh=/Z+AMU7vrtO5o4KexqAVpmPzeKjXxbfUDDVj5eR8YgE=;
+        b=lNJGoBiEKuqgY557GoMK0BAnRUQPOFKBWE8IFFYlcYI5rO8g6XA1ltBHDtJD9ymkhd
+         FwPK2eahpTYFnw7DNwOCSvkBulHtEnejJxkRGDzT4DLx+mLoZc83b9aBTn1e/D1305i1
+         AOdx/t/1aw2/t7ENvwXmFUwIpZ5vF+Sib8FDftWucQoUCuQg8TkNj8jXx2rKUfctCvyn
+         rZgWMUqCVZlRl3U5KkaLjc100NIvskECvE1pXdRPoagpTXpyyI4Gsrk1mUeq2gobErYC
+         rFuMRBlH2vopHYOSE5RX0645T1aWDJKE/XcClzbleZeZqvHkZD/H+Db6OjZIMziQZAV6
+         O2Ew==
+X-Gm-Message-State: AJIora//MD4rQEoHNX/DlvUnP7uAO7mfjOMwiLulC5yK0vxfVATkaDDm
+        9mGaCkxHqm4sHJgrA2WsXrtHgg==
+X-Google-Smtp-Source: AGRyM1uET43SPf2YBPsiv9lOOHA8Rj2QWblgCJX1YA2Tz/S75RJhO36ZkZK0JQNdouoNm+wI/txKuQ==
+X-Received: by 2002:a05:651c:1988:b0:255:b2ef:6a5b with SMTP id bx8-20020a05651c198800b00255b2ef6a5bmr5012858ljb.465.1655468964896;
+        Fri, 17 Jun 2022 05:29:24 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id b8-20020a2e8948000000b0025568a2a018sm539471ljk.129.2022.06.17.05.29.27
+        by smtp.gmail.com with ESMTPSA id b8-20020a2e8948000000b0025568a2a018sm539471ljk.129.2022.06.17.05.29.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jun 2022 05:29:27 -0700 (PDT)
+        Fri, 17 Jun 2022 05:29:24 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -56,9 +56,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Marijn Suijten <marijn.suijten@somainline.org>
-Subject: [PATCH 6/6] arm64: dts: qcom: msm8996: add clocks to the MMCC device node
-Date:   Fri, 17 Jun 2022 15:29:22 +0300
-Message-Id: <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 2/6] dt-bindings: clocks: qcom,mmcc: define clocks/clock-names for MSM8996
+Date:   Fri, 17 Jun 2022 15:29:18 +0300
+Message-Id: <20220617122922.769562-3-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
 References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
@@ -68,41 +68,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As we are converting this platform to use DT clock bindings, add clocks
-and clock-names properties to the MMCC device tree node.
+Define clock/clock-names properties of the MMCC device node to be used
+on MSM8996 platform.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  | 33 +++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index dffb87a5ee74..0c7b7cd9f23e 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -751,6 +751,22 @@ mmcc: clock-controller@8c0000 {
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 			reg = <0x008c0000 0x40000>;
-+			clocks = <&xo_board>,
-+				 <&gcc GCC_MMSS_NOC_CFG_AHB_CLK>,
-+				 <&gcc GPLL0>,
-+				 <&dsi0_phy 1>,
-+				 <&dsi0_phy 0>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "xo",
-+				      "gcc_mmss_noc_cfg_ahb_clk",
-+				      "gpll0",
-+				      "dsi0pll",
-+				      "dsi0pllbyte",
-+				      "dsi1pll",
-+				      "dsi1pllbyte",
-+				      "hdmipll";
- 			assigned-clocks = <&mmcc MMPLL9_PLL>,
- 					  <&mmcc MMPLL1_PLL>,
- 					  <&mmcc MMPLL3_PLL>,
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index d02fe6dc79b5..f1d8325be4eb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -31,11 +31,11 @@ properties:
+       - qcom,mmcc-sdm660
+ 
+   clocks:
+-    minItems: 9
++    minItems: 8
+     maxItems: 10
+ 
+   clock-names:
+-    minItems: 9
++    minItems: 8
+     maxItems: 10
+ 
+   '#clock-cells':
+@@ -113,6 +113,35 @@ allOf:
+             - const: dsi1pllbyte
+             - const: hdmipll
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,mmcc-msm8996
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: Global PLL 0 clock
++            - description: MMSS NoC AHB clock
++            - description: DSI phy instance 0 dsi clock
++            - description: DSI phy instance 0 byte clock
++            - description: DSI phy instance 1 dsi clock
++            - description: DSI phy instance 1 byte clock
++            - description: HDMI phy PLL clock
++
++        clock-names:
++          items:
++            - const: xo
++            - const: gpll0
++            - const: gcc_mmss_noc_cfg_ahb_clk
++            - const: dsi0pll
++            - const: dsi0pllbyte
++            - const: dsi1pll
++            - const: dsi1pllbyte
++            - const: hdmipll
++
+   - if:
+       properties:
+         compatible:
 -- 
 2.35.1
 
