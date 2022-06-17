@@ -2,95 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3A6CCA479
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 11:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED84C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jun 2022 12:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382342AbiFQLM5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jun 2022 07:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S1381669AbiFQMWQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jun 2022 08:22:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382340AbiFQLM4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 07:12:56 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94E3922500;
-        Fri, 17 Jun 2022 04:12:54 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3BEF6660179C;
-        Fri, 17 Jun 2022 12:12:53 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1655464373;
-        bh=WkHnfO6PWMXpQT5nfqhbXwC+34pz7EH8/LW7Tl1ijxg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Obv9xiDNpffYAoSPYZnZ7QmMSL58msikQgc5w93Wyz9tLLs3ioDEaeEi4WA7DAye8
-         V+jPOG2RlvhqgzdyqsnybDiaLlvV2VmXujycQ40JFq53x7CoTh5iCLQVC3WKJaLM11
-         91mKIGRoBqFfOkTMj035vrg4zwH4fzJVo2X/4YNz/a8KMDMeS3tgQMsvqTCW1R4t5a
-         pH/jMI4hpv+NI2nrSC+7BLQMwRLlnqur07BFL57eH3JvEZmo2G6APEErreI91ze/ie
-         nXj8VrldqZDeaQcV9HwIe0m6XB5J3e82urD5+Xp4hva9UJVf7JaCMYYcMca+Xbfah4
-         WlYFDY9vPFnQw==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
-        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
-        chun-jie.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] clk: mediatek: clk-mt8195-vdo1: Reparent and set rate on vdo1_dpintf's parent
-Date:   Fri, 17 Jun 2022 13:12:48 +0200
-Message-Id: <20220617111248.90505-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220617111248.90505-1-angelogioacchino.delregno@collabora.com>
-References: <20220617111248.90505-1-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S245358AbiFQMWP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jun 2022 08:22:15 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9164F9E9;
+        Fri, 17 Jun 2022 05:22:14 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id y19so8445398ejq.6;
+        Fri, 17 Jun 2022 05:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RydpU3/Y4IwrqethePzwVBMR4EHpFdhl0iBO2HaWGOo=;
+        b=RlcBBBRIzlH6kQoXVTZt5AiXbi9BDK/e/F0d36mdhebJwwjZAUpnRYzfg2d+ZNXBHC
+         oNFKCMtx04SJZS5T8XsSoEL3Zn4+KTfFsuUCcR3N2Qjr2GaGbFfrfLEM1pr1YMdNWUyQ
+         CnGoeZsMjqupvjIl75gM3qMvkeBbJOCTWEHjOra4noAF9uIP9QSGOtz6/lcUSBjL9nji
+         5mP0bnAAWQj801+DnkFij89kDkRW3ZzmT1QfiZ2pC6jU9jHRirEh7Y+k2k0qb7BaImJf
+         LhO0KMIJUDY6WC0TFn7cK7sLD7NgtLVL+QqOfyzkLsvI8BpUyST9neG+JcLxnfA264TI
+         CX+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RydpU3/Y4IwrqethePzwVBMR4EHpFdhl0iBO2HaWGOo=;
+        b=jFPoXvxey0nyaAEnxLaVVGNM2I00yhFAQnBsHoZnv8yXcHmdPKB4J0R9nUcfVmyo9f
+         RslHQurATZiqYQyHCVHEoyLraE0tipaBZ0xlllEHL7ss2+cYRHnpgguEl8oaUcipSJmC
+         nMtxkZMn0BET+HStylHo8YSDuM2GJQVI5wBzZ7UnOQnWPR9Rn0A4yElZj5Wuhjofp8VH
+         t7EDuKTHxjEtYl50JjytkdeJBQVi4sM9+g5bJZcF5UFXhuUJ+Vm2HFypld7NgQUn4OV1
+         gNKNxW54FM6gm3Yow6yNNFQR55MEc0lcEIJqUzWIgdOEXBVAfWeeKvKz+U0HOFLtGOyz
+         1ghw==
+X-Gm-Message-State: AJIora/YPLV/XyLHZFK5D5YuFyp3u4tMQOYxbp4HGU2MjNoXNhuYLqvE
+        kBNuMzeZJzM/+DF6TGVUrMs=
+X-Google-Smtp-Source: AGRyM1tn/JU0YI5iK2BvBsGqmsGR8kMLwx+2/o/xkiZVgQArHzh3tWIGKimuBdMAKwTOh9EGrrbxnA==
+X-Received: by 2002:a17:907:97c4:b0:711:ea9a:103b with SMTP id js4-20020a17090797c400b00711ea9a103bmr9512333ejc.155.1655468532770;
+        Fri, 17 Jun 2022 05:22:12 -0700 (PDT)
+Received: from localhost (92.40.168.188.threembb.co.uk. [92.40.168.188])
+        by smtp.gmail.com with ESMTPSA id fm18-20020a1709072ad200b006f3ef214e63sm2059914ejc.201.2022.06.17.05.22.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jun 2022 05:22:12 -0700 (PDT)
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com
+Cc:     paul@crapouillou.net, paulburton@kernel.org,
+        linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: ingenic-tcu: Properly enable registers before accessing timers
+Date:   Fri, 17 Jun 2022 13:22:54 +0100
+Message-Id: <20220617122254.738900-1-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Like it was done for the vdo0_dp_intf0_dp_intf clock (used for eDP),
-add the CLK_SET_RATE_PARENT flag to CLK_VDO1_DPINTF (used for DP)
-and also fix its parent clock name as it has to be "top_dp" for two
-reasons:
- - This is its real parent!
- - Likewise to eDP/VDO0 counterpart, we need clock source
-   selection on CLK_TOP_DP.
+Access to registers is guarded by ingenic_tcu_{enable,disable}_regs()
+so the stop bit can be cleared before accessing a timer channel, but
+those functions did not clear the stop bit on SoCs with a global TCU
+clock gate.
 
-Fixes: 269987505ba9 ("clk: mediatek: Add MT8195 vdosys1 clock support")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Tested-by: Bo-Chen Chen <rex-bc.chen@mediatek.com>
-Reviewed-by: Bo-Chen Chen <rex-bc.chen@mediatek.com>
+Testing on the X1000 has revealed that the stop bits must be cleared
+_and_ the global TCU clock must be ungated to access timer registers.
+This appears to be the norm on Ingenic SoCs, and is specified in the
+documentation for the X1000 and numerous JZ47xx SoCs.
+
+If the stop bit isn't cleared, register writes don't take effect and
+the system can be left in a broken state, eg. the watchdog timer may
+not run.
+
+The bug probably went unnoticed because stop bits are zeroed when
+the SoC is reset, and the kernel does not set them unless a timer
+gets disabled at runtime. However, it is possible that a bootloader
+or a previous kernel (if using kexec) leaves the stop bits set and
+we should not rely on them being cleared.
+
+Fixing this is easy: have ingenic_tcu_{enable,disable}_regs() always
+clear the stop bit, regardless of the presence of a global TCU gate.
+
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Paul Cercueil <paul@crapouillou.net>
+Fixes: 4f89e4b8f121 ("clk: ingenic: Add driver for the TCU clocks")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
 ---
- drivers/clk/mediatek/clk-mt8195-vdo1.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+v2: Update commit description
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-index 3378487d2c90..d54d7726d186 100644
---- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -43,6 +43,10 @@ static const struct mtk_gate_regs vdo1_3_cg_regs = {
- #define GATE_VDO1_2(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ drivers/clk/ingenic/tcu.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+index 201bf6e6b6e0..d5544cbc5c48 100644
+--- a/drivers/clk/ingenic/tcu.c
++++ b/drivers/clk/ingenic/tcu.c
+@@ -101,15 +101,11 @@ static bool ingenic_tcu_enable_regs(struct clk_hw *hw)
+ 	bool enabled = false;
  
-+#define GATE_VDO1_2_FLAGS(_id, _name, _parent, _shift, _flags)		\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &vdo1_2_cg_regs, _shift,	\
-+		       &mtk_clk_gate_ops_setclr, _flags)
-+
- #define GATE_VDO1_3(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &vdo1_3_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+ 	/*
+-	 * If the SoC has no global TCU clock, we must ungate the channel's
+-	 * clock to be able to access its registers.
+-	 * If we have a TCU clock, it will be enabled automatically as it has
+-	 * been attached to the regmap.
++	 * According to the programming manual, a timer channel's registers can
++	 * only be accessed when the channel's stop bit is clear.
+ 	 */
+-	if (!tcu->clk) {
+-		enabled = !!ingenic_tcu_is_enabled(hw);
+-		regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
+-	}
++	enabled = !!ingenic_tcu_is_enabled(hw);
++	regmap_write(tcu->map, TCU_REG_TSCR, BIT(info->gate_bit));
  
-@@ -99,7 +103,7 @@ static const struct mtk_gate vdo1_clks[] = {
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI0, "vdo1_disp_monitor_dpi0", "top_vpp", 1),
- 	GATE_VDO1_2(CLK_VDO1_DPI1, "vdo1_dpi1", "top_vpp", 8),
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPI1, "vdo1_disp_monitor_dpi1", "top_vpp", 9),
--	GATE_VDO1_2(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_vpp", 16),
-+	GATE_VDO1_2_FLAGS(CLK_VDO1_DPINTF, "vdo1_dpintf", "top_dp", 16, CLK_SET_RATE_PARENT),
- 	GATE_VDO1_2(CLK_VDO1_DISP_MONITOR_DPINTF, "vdo1_disp_monitor_dpintf", "top_vpp", 17),
- 	/* VDO1_3 */
- 	GATE_VDO1_3(CLK_VDO1_26M_SLOW, "vdo1_26m_slow", "clk26m", 8),
+ 	return enabled;
+ }
+@@ -120,8 +116,7 @@ static void ingenic_tcu_disable_regs(struct clk_hw *hw)
+ 	const struct ingenic_tcu_clk_info *info = tcu_clk->info;
+ 	struct ingenic_tcu *tcu = tcu_clk->tcu;
+ 
+-	if (!tcu->clk)
+-		regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
++	regmap_write(tcu->map, TCU_REG_TSSR, BIT(info->gate_bit));
+ }
+ 
+ static u8 ingenic_tcu_get_parent(struct clk_hw *hw)
 -- 
 2.35.1
 
