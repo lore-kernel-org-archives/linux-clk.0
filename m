@@ -2,31 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEEEC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Jun 2022 23:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0067C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Jun 2022 23:50:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbiFRXmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Jun 2022 19:42:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44882 "EHLO
+        id S231274AbiFRXut (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Jun 2022 19:50:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiFRXmb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jun 2022 19:42:31 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874C0CE05
-        for <linux-clk@vger.kernel.org>; Sat, 18 Jun 2022 16:42:29 -0700 (PDT)
+        with ESMTP id S229504AbiFRXut (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jun 2022 19:50:49 -0400
+Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [IPv6:2001:4b7a:2000:18::162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79254B7E9
+        for <linux-clk@vger.kernel.org>; Sat, 18 Jun 2022 16:50:47 -0700 (PDT)
 Received: from [192.168.1.101] (abxh227.neoplus.adsl.tpnet.pl [83.9.1.227])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 5436D2059D;
-        Sun, 19 Jun 2022 01:42:23 +0200 (CEST)
-Message-ID: <b6b1e1ab-1bf9-3510-d67f-9ed491997b97@somainline.org>
-Date:   Sun, 19 Jun 2022 01:42:22 +0200
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1E20220572;
+        Sun, 19 Jun 2022 01:50:45 +0200 (CEST)
+Message-ID: <44fb0795-605e-1870-6118-c770ba7bb385@somainline.org>
+Date:   Sun, 19 Jun 2022 01:50:44 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH 3/6] clk: qcom: mmcc-msm8996: use ARRAY_SIZE instead of
- specifying num_parents
+Subject: Re: [PATCH 4/6] clk: qcom: mmcc-msm8996: move clock parent tables
+ down
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -37,9 +37,9 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Marijn Suijten <marijn.suijten@somainline.org>
 References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
- <20220617122922.769562-4-dmitry.baryshkov@linaro.org>
+ <20220617122922.769562-5-dmitry.baryshkov@linaro.org>
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220617122922.769562-4-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220617122922.769562-5-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -49,415 +49,397 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 17.06.2022 14:29, Dmitry Baryshkov wrote:
-> Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
-> adding/removing entries to/from parent_data easy and errorproof.
+> Move clock parent tables down, after the MMPLL declrataions, so that we
+> can use gpll hw clock fields in the next commit.
 > 
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
 Konrad
->  drivers/clk/qcom/mmcc-msm8996.c | 88 ++++++++++++++++-----------------
->  1 file changed, 44 insertions(+), 44 deletions(-)
+>  drivers/clk/qcom/mmcc-msm8996.c | 364 ++++++++++++++++----------------
+>  1 file changed, 182 insertions(+), 182 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-> index 24843e4f2599..bf0f8eb78989 100644
+> index bf0f8eb78989..27c92818c49c 100644
 > --- a/drivers/clk/qcom/mmcc-msm8996.c
 > +++ b/drivers/clk/qcom/mmcc-msm8996.c
-> @@ -486,7 +486,7 @@ static struct clk_rcg2 ahb_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "ahb_clk_src",
->  		.parent_names = mmss_xo_mmpll0_gpll0_gpll0_div,
-> -		.num_parents = 4,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
+> @@ -45,188 +45,6 @@ enum {
+>  	P_MMPLL4,
+>  };
+>  
+> -static const struct parent_map mmss_xo_hdmi_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_HDMIPLL, 1 }
+> -};
+> -
+> -static const char * const mmss_xo_hdmi[] = {
+> -	"xo",
+> -	"hdmipll"
+> -};
+> -
+> -static const struct parent_map mmss_xo_dsi0pll_dsi1pll_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_DSI0PLL, 1 },
+> -	{ P_DSI1PLL, 2 }
+> -};
+> -
+> -static const char * const mmss_xo_dsi0pll_dsi1pll[] = {
+> -	"xo",
+> -	"dsi0pll",
+> -	"dsi1pll"
+> -};
+> -
+> -static const struct parent_map mmss_xo_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_dsibyte_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_DSI0PLL_BYTE, 1 },
+> -	{ P_DSI1PLL_BYTE, 2 }
+> -};
+> -
+> -static const char * const mmss_xo_dsibyte[] = {
+> -	"xo",
+> -	"dsi0pllbyte",
+> -	"dsi1pllbyte"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL1, 2 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll1",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL3, 3 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll3",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL5, 2 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll5",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL4, 3 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll4",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL9, 2 },
+> -	{ P_MMPLL2, 3 },
+> -	{ P_MMPLL8, 4 },
+> -	{ P_GPLL0, 5 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll9",
+> -	"mmpll2",
+> -	"mmpll8",
+> -	"gpll0"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL9, 2 },
+> -	{ P_MMPLL2, 3 },
+> -	{ P_MMPLL8, 4 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll9",
+> -	"mmpll2",
+> -	"mmpll8",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+> -static const struct parent_map mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div_map[] = {
+> -	{ P_XO, 0 },
+> -	{ P_MMPLL0, 1 },
+> -	{ P_MMPLL1, 2 },
+> -	{ P_MMPLL4, 3 },
+> -	{ P_MMPLL3, 4 },
+> -	{ P_GPLL0, 5 },
+> -	{ P_GPLL0_DIV, 6 }
+> -};
+> -
+> -static const char * const mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div[] = {
+> -	"xo",
+> -	"mmpll0",
+> -	"mmpll1",
+> -	"mmpll4",
+> -	"mmpll3",
+> -	"gpll0",
+> -	"gpll0_div"
+> -};
+> -
+>  static struct clk_fixed_factor gpll0_div = {
+>  	.mult = 1,
+>  	.div = 2,
+> @@ -471,6 +289,188 @@ static struct clk_alpha_pll_postdiv mmpll9 = {
 >  	},
 >  };
-> @@ -510,7 +510,7 @@ static struct clk_rcg2 axi_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "axi_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -523,7 +523,7 @@ static struct clk_rcg2 maxi_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "maxi_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -536,7 +536,7 @@ static struct clk_rcg2_gfx3d gfx3d_clk_src = {
->  		.clkr.hw.init = &(struct clk_init_data){
->  			.name = "gfx3d_clk_src",
->  			.parent_names = mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0,
-> -			.num_parents = 6,
-> +			.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0),
->  			.ops = &clk_gfx3d_ops,
->  			.flags = CLK_SET_RATE_PARENT,
->  		},
-> @@ -561,7 +561,7 @@ static struct clk_rcg2 rbbmtimer_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "rbbmtimer_clk_src",
->  		.parent_names = mmss_xo_mmpll0_gpll0_gpll0_div,
-> -		.num_parents = 4,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -573,7 +573,7 @@ static struct clk_rcg2 isense_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "isense_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -592,7 +592,7 @@ static struct clk_rcg2 rbcpr_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "rbcpr_clk_src",
->  		.parent_names = mmss_xo_mmpll0_gpll0_gpll0_div,
-> -		.num_parents = 4,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -614,7 +614,7 @@ static struct clk_rcg2 video_core_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "video_core_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -628,7 +628,7 @@ static struct clk_rcg2 video_subcore0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "video_subcore0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -642,7 +642,7 @@ static struct clk_rcg2 video_subcore1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "video_subcore1_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -655,7 +655,7 @@ static struct clk_rcg2 pclk0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "pclk0_clk_src",
->  		.parent_names = mmss_xo_dsi0pll_dsi1pll,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsi0pll_dsi1pll),
->  		.ops = &clk_pixel_ops,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -669,7 +669,7 @@ static struct clk_rcg2 pclk1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "pclk1_clk_src",
->  		.parent_names = mmss_xo_dsi0pll_dsi1pll,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsi0pll_dsi1pll),
->  		.ops = &clk_pixel_ops,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -696,7 +696,7 @@ static struct clk_rcg2 mdp_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "mdp_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -714,7 +714,7 @@ static struct clk_rcg2 extpclk_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "extpclk_clk_src",
->  		.parent_names = mmss_xo_hdmi,
-> -		.num_parents = 2,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_hdmi),
->  		.ops = &clk_byte_ops,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -733,7 +733,7 @@ static struct clk_rcg2 vsync_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "vsync_clk_src",
->  		.parent_names = mmss_xo_gpll0_gpll0_div,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -751,7 +751,7 @@ static struct clk_rcg2 hdmi_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "hdmi_clk_src",
->  		.parent_names = mmss_xo_gpll0_gpll0_div,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -763,7 +763,7 @@ static struct clk_rcg2 byte0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "byte0_clk_src",
->  		.parent_names = mmss_xo_dsibyte,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsibyte),
->  		.ops = &clk_byte2_ops,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -776,7 +776,7 @@ static struct clk_rcg2 byte1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "byte1_clk_src",
->  		.parent_names = mmss_xo_dsibyte,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsibyte),
->  		.ops = &clk_byte2_ops,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -795,7 +795,7 @@ static struct clk_rcg2 esc0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "esc0_clk_src",
->  		.parent_names = mmss_xo_dsibyte,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsibyte),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -808,7 +808,7 @@ static struct clk_rcg2 esc1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "esc1_clk_src",
->  		.parent_names = mmss_xo_dsibyte,
-> -		.num_parents = 3,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_dsibyte),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -832,7 +832,7 @@ static struct clk_rcg2 camss_gp0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "camss_gp0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -846,7 +846,7 @@ static struct clk_rcg2 camss_gp1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "camss_gp1_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -874,7 +874,7 @@ static struct clk_rcg2 mclk0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "mclk0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -888,7 +888,7 @@ static struct clk_rcg2 mclk1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "mclk1_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -902,7 +902,7 @@ static struct clk_rcg2 mclk2_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "mclk2_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -916,7 +916,7 @@ static struct clk_rcg2 mclk3_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "mclk3_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -938,7 +938,7 @@ static struct clk_rcg2 cci_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "cci_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -958,7 +958,7 @@ static struct clk_rcg2 csi0phytimer_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi0phytimer_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -971,7 +971,7 @@ static struct clk_rcg2 csi1phytimer_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi1phytimer_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -984,7 +984,7 @@ static struct clk_rcg2 csi2phytimer_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi2phytimer_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1005,7 +1005,7 @@ static struct clk_rcg2 csiphy0_3p_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csiphy0_3p_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1018,7 +1018,7 @@ static struct clk_rcg2 csiphy1_3p_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csiphy1_3p_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1031,7 +1031,7 @@ static struct clk_rcg2 csiphy2_3p_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csiphy2_3p_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1054,7 +1054,7 @@ static struct clk_rcg2 jpeg0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "jpeg0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1076,7 +1076,7 @@ static struct clk_rcg2 jpeg2_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "jpeg2_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1089,7 +1089,7 @@ static struct clk_rcg2 jpeg_dma_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "jpeg_dma_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1112,7 +1112,7 @@ static struct clk_rcg2 vfe0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "vfe0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1125,7 +1125,7 @@ static struct clk_rcg2 vfe1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "vfe1_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1147,7 +1147,7 @@ static struct clk_rcg2 cpp_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "cpp_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1169,7 +1169,7 @@ static struct clk_rcg2 csi0_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi0_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1182,7 +1182,7 @@ static struct clk_rcg2 csi1_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi1_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1195,7 +1195,7 @@ static struct clk_rcg2 csi2_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi2_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1208,7 +1208,7 @@ static struct clk_rcg2 csi3_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "csi3_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div,
-> -		.num_parents = 7,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1228,7 +1228,7 @@ static struct clk_rcg2 fd_core_clk_src = {
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "fd_core_clk_src",
->  		.parent_names = mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div,
-> -		.num_parents = 5,
-> +		.num_parents = ARRAY_SIZE(mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div),
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
+>  
+> +static const struct parent_map mmss_xo_hdmi_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_HDMIPLL, 1 }
+> +};
+> +
+> +static const char * const mmss_xo_hdmi[] = {
+> +	"xo",
+> +	"hdmipll"
+> +};
+> +
+> +static const struct parent_map mmss_xo_dsi0pll_dsi1pll_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_DSI0PLL, 1 },
+> +	{ P_DSI1PLL, 2 }
+> +};
+> +
+> +static const char * const mmss_xo_dsi0pll_dsi1pll[] = {
+> +	"xo",
+> +	"dsi0pll",
+> +	"dsi1pll"
+> +};
+> +
+> +static const struct parent_map mmss_xo_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_dsibyte_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_DSI0PLL_BYTE, 1 },
+> +	{ P_DSI1PLL_BYTE, 2 }
+> +};
+> +
+> +static const char * const mmss_xo_dsibyte[] = {
+> +	"xo",
+> +	"dsi0pllbyte",
+> +	"dsi1pllbyte"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL1, 2 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll1_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll1",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL3, 3 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll3_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll3",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL5, 2 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll5_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll5",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL4, 3 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll4_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll4",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL9, 2 },
+> +	{ P_MMPLL2, 3 },
+> +	{ P_MMPLL8, 4 },
+> +	{ P_GPLL0, 5 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll9",
+> +	"mmpll2",
+> +	"mmpll8",
+> +	"gpll0"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL9, 2 },
+> +	{ P_MMPLL2, 3 },
+> +	{ P_MMPLL8, 4 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll9_mmpll2_mmpll8_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll9",
+> +	"mmpll2",
+> +	"mmpll8",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+> +static const struct parent_map mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div_map[] = {
+> +	{ P_XO, 0 },
+> +	{ P_MMPLL0, 1 },
+> +	{ P_MMPLL1, 2 },
+> +	{ P_MMPLL4, 3 },
+> +	{ P_MMPLL3, 4 },
+> +	{ P_GPLL0, 5 },
+> +	{ P_GPLL0_DIV, 6 }
+> +};
+> +
+> +static const char * const mmss_xo_mmpll0_mmpll1_mmpll4_mmpll3_gpll0_gpll0_div[] = {
+> +	"xo",
+> +	"mmpll0",
+> +	"mmpll1",
+> +	"mmpll4",
+> +	"mmpll3",
+> +	"gpll0",
+> +	"gpll0_div"
+> +};
+> +
+>  static const struct freq_tbl ftbl_ahb_clk_src[] = {
+>  	F(19200000, P_XO, 1, 0, 0),
+>  	F(40000000, P_GPLL0_DIV, 7.5, 0, 0),
 > 
