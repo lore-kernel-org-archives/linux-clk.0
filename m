@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBFECCA47A
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 21:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02269CCA481
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 21:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235329AbiFSV0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jun 2022 17:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56666 "EHLO
+        id S236943AbiFSV0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jun 2022 17:26:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237204AbiFSVZ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 17:25:59 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5264FA47D
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:58 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id g12so3876410ljk.11
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:58 -0700 (PDT)
+        with ESMTP id S234783AbiFSV0B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 17:26:01 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B1BAE41
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:26:00 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id c4so14365254lfj.12
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:26:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jBMiZ5n8BJY+cCNJKWjEq/LIN5KyB8obYQ76cG0oR6M=;
-        b=v7NMQqejamGgvPZNiT6U7aLP6t5ZtEO6EYAfaNLJGGaecPpploS7PsJ4LT7E9PvUqz
-         WYkqSd+vl89Z5Vj4ztIkAHfQSlCfCG3zuxIDKeWXLt1AlrrGH4HvowevqClCGxO1p74a
-         H7MwQ30LIwDXyHU1Ew0KRe5NMDLwoPiceMG2RHUK5Ga7j+YFDlYnry0p2gpOTeEaRYz8
-         RS3O/FmF796IG0DDx9lBguzIC+wxWBvLFvWP4WJRgdq6+M+2UzU+y7J5LiEYS2yJkpIE
-         c1VaQx13KLmftaEu5NI7SPBb1Am+EA8pyJ1d955ewfvZ3i1/d53gdELMqLo8RvhvKr8R
-         wZcg==
+        bh=mgNG4CqobFmIv3cjkJhZdSr5JTtKXvysIj6GWq9VnJY=;
+        b=s0KMIc9+Eo29Hz94u3DVPWl2jKS80lBkD8M/KQwfulYJr4wZ1gTlTic8LGYD4Sf/Y0
+         qia8qqXA5OQtAM5XOPg/SPXG9diNxiC84BJBZtXohpKmbUkdu9mkUhty9qNiwkkBRD5R
+         AT33yH33Enn9lXpowLmQnA3WOcZpoSH17oYEHGhvGKF9NxIf4HmZaD7pyPXGsFrXPl+e
+         JZ2O/SMUnIwlOJucMRxu3C84X/QaefBlD31fzSuRXseOu7TZjWMCWUPXy2uMkq7r1Wri
+         r2fOOgIqvvxcPcTZi7u+GqDBcCWNPV3LjdnFJh2eR5Qge0lN8bI7/OzAlUqrjM10WloO
+         Knkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jBMiZ5n8BJY+cCNJKWjEq/LIN5KyB8obYQ76cG0oR6M=;
-        b=TybAWITY1+crZlWeTjEQcUn/XWhNmJgw7OdnOPikjHLX8k0+AnobfyWGBJNJkUuMxm
-         mzaIW01JbF/sCaWRUFkYYb3V8VN68JZgY86976L/2QKPJ1CsPA0OqPlvzB5kLoA2F9zb
-         YNQwAihiB7MHSSzLhonjsLmaYtmLa8yfrsNmO7GejCnqkiM3PLlJ2zfgKUwpWsF9ofqI
-         tJ34+incaQbQobUaDK3+DXrzf7M/K7qBF4vGZPb9EJrP6p1r/AekvQB2a4W/qAHyaowM
-         EJSbL6eXEirZHzWnqSG2Se+M54aovn6+T5KR0SUv7iNRSUQJxVTLzTx4uuqw71Gqd8QS
-         Ew7A==
-X-Gm-Message-State: AJIora/5o6SRm4qBRvEY26iRe+SOJ/z55noZIhGe+OvoRS+g6qA4JPLi
-        UwG0nN4RFeV60QUvRKTA6/NGOw==
-X-Google-Smtp-Source: AGRyM1ug13XzfxGZltW+yAhl7e/nx6k5T1F+NxtfI9zi5wkdez4utlS7rWwcIlqBDN+f164GruT9UA==
-X-Received: by 2002:a2e:3a16:0:b0:255:7811:2827 with SMTP id h22-20020a2e3a16000000b0025578112827mr10270316lja.130.1655673956697;
-        Sun, 19 Jun 2022 14:25:56 -0700 (PDT)
+        bh=mgNG4CqobFmIv3cjkJhZdSr5JTtKXvysIj6GWq9VnJY=;
+        b=f7DS9j6EMKQllRl03K9Q50aO22WVuy/9rjnvcUWsWR6kPXCMsq9n6ZjaJ07XaUUXq0
+         MNeGvMmdS7RTvGEhB0dwFROVRIi4ppBcn+xrmWG8HyWmeDzGmlOkcCXIVAC3Sjq1P+/U
+         dn5R/PLzAf5oMbuPLxge+jE3H9NhnJidJOCUV/kE+OrGufOYb+OOAWuZv9VsQzlymaxd
+         YDYOX2Jgc7lWrYChC+c842gSF8b4DLRdqzLP7SmO6QBCJUbzU3blfY7a83J070H9AU7r
+         bi1ePJAY1N9nmqnrhStI3jvXlsF2OQqYVhqQKDQlxacYSsR7np8hofeWi2xNxW8b/A7c
+         qJFw==
+X-Gm-Message-State: AJIora/6sBrwKSqQOnUfvidacv2E2fMynh/+kpPq1kpNsjzFBLFWIEeP
+        ZgAl23gkxqVfKpVVsE/S+a9ARw==
+X-Google-Smtp-Source: AGRyM1sLUaSI2w7lpsyGmFlTdfSL2NBxf81GzHNNJ1hv2G64VYnhNsg8z3XZmoVAmDXrJCpEgtTkEw==
+X-Received: by 2002:a05:6512:11c3:b0:479:5b9d:6174 with SMTP id h3-20020a05651211c300b004795b9d6174mr12029377lfr.75.1655673958820;
+        Sun, 19 Jun 2022 14:25:58 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id u3-20020ac258c3000000b00478de10cf5esm626866lfo.247.2022.06.19.14.25.55
+        by smtp.gmail.com with ESMTPSA id u3-20020ac258c3000000b00478de10cf5esm626866lfo.247.2022.06.19.14.25.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 14:25:56 -0700 (PDT)
+        Sun, 19 Jun 2022 14:25:58 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -59,9 +59,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH v2 5/7] clk: qcom: gcc-msm8916: move gcc_mss_q6_bimc_axi_clk down
-Date:   Mon, 20 Jun 2022 00:25:47 +0300
-Message-Id: <20220619212549.1240891-6-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 7/7] arm64: dts: qcom: msm8916: add clocks to the GCC device node
+Date:   Mon, 20 Jun 2022 00:25:49 +0300
+Message-Id: <20220619212549.1240891-8-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220619212549.1240891-1-dmitry.baryshkov@linaro.org>
 References: <20220619212549.1240891-1-dmitry.baryshkov@linaro.org>
@@ -71,66 +71,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gcc_mss_q6_bimc_axi_clk clock depends on the bimc_ddr_clk_src clock.
-Move it down in the file to come after the source clock.
+As we are converting this platform to use DT clock bindings, add clocks
+and clock-names properties to the MMCC device tree node.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/gcc-msm8916.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 7962edbdbcf6..4d726ca4b0da 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -2594,23 +2594,6 @@ static struct clk_branch gcc_mss_cfg_ahb_clk = {
- 	},
- };
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 05472510e29d..e905415b3456 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -934,6 +934,20 @@ gcc: clock-controller@1800000 {
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			reg = <0x01800000 0x80000>;
++			clocks = <&rpmcc RPM_SMD_BB_CLK1_PIN>,
++				 <&sleep_clk>,
++				 <&dsi_phy0 1>,
++				 <&dsi_phy0 0>,
++				 <0>,
++				 <0>,
++				 <0>;
++			clock-names = "xo",
++				      "sleep_clk",
++				      "dsi0pll",
++				      "dsi0pllbyte",
++				      "ext_mclk",
++				      "ext_pri_i2s",
++				      "ext_sec_i2s";
+ 		};
  
--static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
--	.halt_reg = 0x49004,
--	.clkr = {
--		.enable_reg = 0x49004,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_mss_q6_bimc_axi_clk",
--			.parent_names = (const char *[]){
--				"bimc_ddr_clk_src",
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_oxili_ahb_clk = {
- 	.halt_reg = 0x59028,
- 	.clkr = {
-@@ -2860,6 +2843,23 @@ static struct clk_branch gcc_bimc_gpu_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_mss_q6_bimc_axi_clk = {
-+	.halt_reg = 0x49004,
-+	.clkr = {
-+		.enable_reg = 0x49004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_bimc_axi_clk",
-+			.parent_names = (const char *[]){
-+				"bimc_ddr_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_jpeg_tbu_clk = {
- 	.halt_reg = 0x12034,
- 	.clkr = {
+ 		tcsr_mutex: hwlock@1905000 {
 -- 
 2.35.1
 
