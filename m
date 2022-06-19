@@ -2,62 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0066C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 14:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8968C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 15:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234304AbiFSOMP convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jun 2022 10:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52018 "EHLO
+        id S231438AbiFSPMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jun 2022 11:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234498AbiFSOMM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 10:12:12 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7956B840;
-        Sun, 19 Jun 2022 07:12:09 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 3BCE71C0B8F; Sun, 19 Jun 2022 16:12:07 +0200 (CEST)
-Date:   Sun, 19 Jun 2022 16:12:02 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, mturquette@baylibre.com, linux@armlinux.org.uk,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v18 10/10] ARM: dts: Add Sunplus SP7021-Demo-V3 board
- device tree
-Message-ID: <20220619141202.GA1197@bug>
-References: <cover.1655194858.git.qinjian@cqplus1.com>
- <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
+        with ESMTP id S230057AbiFSPMr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 11:12:47 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9F8B7DF64;
+        Sun, 19 Jun 2022 08:12:35 -0700 (PDT)
+Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 7C0FC1C811FF;
+        Sun, 19 Jun 2022 23:12:28 +0800 (CST)
+Received: from NTHCCAS03.nuvoton.com (10.1.20.28) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Sun, 19
+ Jun 2022 23:12:28 +0800
+Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS03.nuvoton.com
+ (10.1.20.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1847.3; Sun, 19 Jun
+ 2022 23:12:28 +0800
+Received: from taln60.nuvoton.co.il (10.191.1.180) by NTHCCAS04.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2176.2 via Frontend
+ Transport; Sun, 19 Jun 2022 23:12:27 +0800
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 31A0463A17; Sun, 19 Jun 2022 18:12:27 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
+        <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+        <gregkh@linuxfoundation.org>, <daniel.lezcano@linaro.org>,
+        <tglx@linutronix.de>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <arnd@arndb.de>, <olof@lixom.net>, <jirislaby@kernel.org>,
+        <shawnguo@kernel.org>, <bjorn.andersson@linaro.org>,
+        <geert+renesas@glider.be>, <marcel.ziswiler@toradex.com>,
+        <vkoul@kernel.org>, <biju.das.jz@bp.renesas.com>,
+        <nobuhiro1.iwamatsu@toshiba.co.jp>, <robert.hancock@calian.com>,
+        <j.neuschaefer@gmx.net>, <lkundrak@v3.sk>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 04/18] dt-bindings: watchdog: npcm: Add npcm845 compatible string
+Date:   Sun, 19 Jun 2022 18:12:11 +0300
+Message-ID: <20220619151225.209029-5-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20220619151225.209029-1-tmaimon77@gmail.com>
+References: <20220619151225.209029-1-tmaimon77@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <0574ed0ad1e9ec4c12645fe2d2dde8f701d285e5.1655194858.git.qinjian@cqplus1.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+Add a compatible string for Nuvoton BMC NPCM845 watchdog.
 
-> +	led {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&leds_pins>;
-> +		system-led {
-> +			label = "system-led";
-> +			gpios = <&pctl 0 GPIO_ACTIVE_HIGH>;
-> +			default-state = "off";
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt          | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Can we get label more in line with other systems?
+diff --git a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+index 9059f54dc023..866a958b8a2b 100644
+--- a/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/nuvoton,npcm-wdt.txt
+@@ -6,7 +6,8 @@ expiry.
+ 
+ Required properties:
+ - compatible      : "nuvoton,npcm750-wdt" for NPCM750 (Poleg), or
+-                    "nuvoton,wpcm450-wdt" for WPCM450 (Hermon).
++                    "nuvoton,wpcm450-wdt" for WPCM450 (Hermon), or
++                    "nuvoton,npcm845-wdt" for NPCM845 (Arbel).
+ - reg             : Offset and length of the register set for the device.
+ - interrupts      : Contain the timer interrupt with flags for
+                     falling edge.
+-- 
+2.33.0
 
-Thanks,
-								Pavel
-
--- (english) http://www.livejournal.com/~pavelmachek (cesky, pictures) 
-http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
