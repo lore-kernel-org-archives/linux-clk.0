@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACFCC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 16:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EA2C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 16:50:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235860AbiFSQuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jun 2022 12:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
+        id S236237AbiFSQu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jun 2022 12:50:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235653AbiFSQuX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 12:50:23 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D26763A5
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id o16so11669361wra.4
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
+        with ESMTP id S236030AbiFSQuZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 12:50:25 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5274763A5
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:24 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id s1so11655823wra.9
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=conchuod.ie; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2U26d1RUDN40F8pXZDx2og6vajjIrs72J5qYfLoOCUY=;
-        b=a/KqKSDua/YhHcpIKxVc8N8J0GVZLdyKnxxK3no+G+TEd54zlxZbnLXf6+9OWzvsxq
-         DOd0uguBWie7LqV06kD7ZewrXbZPCniZgbyif/L35ANFqGvpRp3UwzXxwM1ScFl1R0+R
-         28pxiiOS0ZDKMTZk0Qk2yfnP6ng/hJ5fwURg02GE+LwyOBgbhADUjLuaQv4os/xaHTBT
-         IFzNk/9XQwZJ/2Tno4ftGaxnf95/ShVfH4KNIDRQFq9WF/zVnQWNH1uLrncHDmAmS3CZ
-         91gn5GRHKWbHzpo6+ol9JmDwsRhcIqpRtwZLgaOyidCrvd9kWy3GZFXCjX0xopx+CIeq
-         CzyQ==
+        bh=gopwvsW4YZ7UonEyNdDMzhV85NCQ2TW0QKUGmgQ7L+A=;
+        b=PPRsmuFvXCAnoP528hN1t16BHLynhT/bO2rdEnC0Xz4knixhQo48QsK8CVqIHwVuHt
+         1MQg+IXAktJOWtHvgZLi01BCJEpfF/f0hjZVEfXIAxarIhHn6jci/o5r56pFckiE8lHO
+         xL59bWW7auYReXeIDVHZsU0rdTbOm3y/6AU5GDj6hfOgM3Z9IUpA6BkY0zdE1EW5fB5f
+         +23QiHLcxNZUnzSIlRpsFejQ2aPd3p1xJe3rpFvVIMpk/4G461je7S5b+gh2lMtMzirn
+         D31QY5/tHoJHPcYQY9eO3U/UXkD5nKSCshArD8i5ieLniTPWojHTEIPDmte7x4BtDIla
+         3uhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2U26d1RUDN40F8pXZDx2og6vajjIrs72J5qYfLoOCUY=;
-        b=w/PrMXND1/ETvzfX9EaGHcxw2EXa4IPwgyVBmi5T3LNrk850RM/PznDMGKXRqT2DMf
-         PwV/xiaWATSYMhXaUID/7T7QqRcMut4aBVn9G9UrAnlrvAnWeo96fgSD+vGAFfFBhrBw
-         wzPrfSEr8Jp+kBuRW4dWEfyqGObtXtPoK85sHxvKedn++m3mUrvvkS5qZbzEyoaDR1NQ
-         mWrXQKThI2ABPVoEiHyMZoUhjoMBGIjl0bGbikLTBA39pXPOalrbd91PgefP0UW+LwMR
-         lLA9RmyKROI4AJLD0UPSDrHTeGhlKvpMf3wi/l1WZN/YheUAdeJBaH17BLK7KxIgVo/w
-         W4kw==
-X-Gm-Message-State: AJIora86Hk17w/Y25j1zSm0ZCgfVDeW9ahJTM/z7JQ243QftCyIG3Aw1
-        Dy0RQQYICmgVOcPHyy1Le+wpbQ==
-X-Google-Smtp-Source: AGRyM1u2F06uLF9I1C9pTm9cF8MTa7GrTptuqR0ZCQFATDOGJcdnLqgdR8SoNllm822PnnzCYlk8BA==
-X-Received: by 2002:adf:de8d:0:b0:21a:23e0:6881 with SMTP id w13-20020adfde8d000000b0021a23e06881mr18743406wrl.291.1655657420799;
-        Sun, 19 Jun 2022 09:50:20 -0700 (PDT)
+        bh=gopwvsW4YZ7UonEyNdDMzhV85NCQ2TW0QKUGmgQ7L+A=;
+        b=lONrTZgLE6i6+gact6gcWfdp3pAJaX41IctcquJqnDJ2Q9tWIADrrEPDy/GQgJLP/K
+         6MTlRKPsUIvoP+YUkPrE1+9U6AAL8gEN6vyuWDEnmnCD1OhH+N5BUmGG9q/7My13l94b
+         Km3U5h0c+eYRgxfYgPyGZV6yZOeBmzP2miAJBSVRfqP9to5vQNVds546nX9l12lDcB2b
+         0oSoKppB6qYcudfp/U3cehWoACGInhZCjEGB/AwXdoLf/S2JOktzMXCg2uym0FeTqRfn
+         T+ZvNCGrEomgXMtfaHHxUF5+wzhlkGzL9gH9yBi+nm5Zya94jUzSqe1jJR9yeiC0wSdE
+         uU+w==
+X-Gm-Message-State: AJIora+evp57VwYSEdVVNsUmoOj+Zg84hU+HbN/2b/RAZMQpIlx4xfVU
+        +zyDG2J2upwMuBR1xiWU1Mbhww==
+X-Google-Smtp-Source: AGRyM1u8/TXPS06SfhDWZfnvfFABhGjitdfgdEIZo8EF7U4BuS6IZE7QVX/Y0ckD0cYHUGtSh+yJwA==
+X-Received: by 2002:a05:6000:2c7:b0:219:b52d:d122 with SMTP id o7-20020a05600002c700b00219b52dd122mr18399366wry.507.1655657422909;
+        Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
 Received: from henark71.. ([51.37.234.167])
-        by smtp.gmail.com with ESMTPSA id m14-20020adfdc4e000000b0021a3c960214sm9189510wrj.6.2022.06.19.09.50.19
+        by smtp.gmail.com with ESMTPSA id m14-20020adfdc4e000000b0021a3c960214sm9189510wrj.6.2022.06.19.09.50.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 09:50:20 -0700 (PDT)
+        Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
 From:   Conor Dooley <mail@conchuod.ie>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -56,9 +56,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Daire McNamara <daire.mcnamara@microchip.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: [RFC 3/6] clk: microchip: mpfs: add reset controller
-Date:   Sun, 19 Jun 2022 17:49:33 +0100
-Message-Id: <20220619164935.1492823-4-mail@conchuod.ie>
+Subject: [RFC 5/6] net: macb: add polarfire soc reset support
+Date:   Sun, 19 Jun 2022 17:49:35 +0100
+Message-Id: <20220619164935.1492823-6-mail@conchuod.ie>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220619164935.1492823-1-mail@conchuod.ie>
 References: <20220619164935.1492823-1-mail@conchuod.ie>
@@ -70,230 +70,95 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-Add a reset controller to PolarFire SoC's clock driver. This reset
-controller is registered as an aux device and read/write functions
-exported to the drivers namespace so that the reset controller can
-access the peripheral device reset register.
+To date, the Microchip PolarFire SoC (MPFS) has been using the
+cdns,macb compatible, however the generic device does not have reset
+support. Add a new compatible & .data for MPFS to hook into the reset
+functionality added for zynqmp support (and make the zynqmp init
+function generic in the process).
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/clk/microchip/Kconfig    |   1 +
- drivers/clk/microchip/clk-mpfs.c | 118 ++++++++++++++++++++++++++++---
- include/soc/microchip/mpfs.h     |   8 +++
- 3 files changed, 116 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 25 +++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
-index a5a99873c4f5..b46e864b3bd8 100644
---- a/drivers/clk/microchip/Kconfig
-+++ b/drivers/clk/microchip/Kconfig
-@@ -6,5 +6,6 @@ config COMMON_CLK_PIC32
- config MCHP_CLK_MPFS
- 	bool "Clk driver for PolarFire SoC"
- 	depends on (RISCV && SOC_MICROCHIP_POLARFIRE) || COMPILE_TEST
-+	select AUXILIARY_BUS
- 	help
- 	  Supports Clock Configuration for PolarFire SoC
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index 070c3b896559..19a9f8cd12ff 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -3,12 +3,15 @@
-  * Daire McNamara,<daire.mcnamara@microchip.com>
-  * Copyright (C) 2020 Microchip Technology Inc.  All rights reserved.
-  */
-+#include "linux/device.h"
-+#include <linux/auxiliary_bus.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <dt-bindings/clock/microchip,mpfs-clock.h>
-+#include <soc/microchip/mpfs.h>
- 
- /* address offset of control registers */
- #define REG_MSSPLL_REF_CR	0x08u
-@@ -28,6 +31,7 @@
- #define MSSPLL_FIXED_DIV	4u
- 
- struct mpfs_clock_data {
-+	struct device *dev;
- 	void __iomem *base;
- 	void __iomem *msspll_base;
- 	struct clk_hw_onecell_data hw_data;
-@@ -302,10 +306,6 @@ static int mpfs_periph_clk_enable(struct clk_hw *hw)
- 
- 	spin_lock_irqsave(&mpfs_clk_lock, flags);
- 
--	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
--	val = reg & ~(1u << periph->shift);
--	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
--
- 	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
- 	val = reg | (1u << periph->shift);
- 	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
-@@ -339,12 +339,9 @@ static int mpfs_periph_clk_is_enabled(struct clk_hw *hw)
- 	void __iomem *base_addr = periph_hw->sys_base;
- 	u32 reg;
- 
--	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
--	if ((reg & (1u << periph->shift)) == 0u) {
--		reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
--		if (reg & (1u << periph->shift))
--			return 1;
--	}
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+	if (reg & (1u << periph->shift))
-+		return 1;
- 
- 	return 0;
- }
-@@ -438,6 +435,99 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
- 	return 0;
- }
- 
-+/*
-+ * Peripheral clock resets
-+ */
-+
-+#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-+
-+u32 mpfs_reset_read(struct device *dev)
-+{
-+	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
-+
-+	return readl_relaxed(clock_data->base + REG_SUBBLK_RESET_CR);
-+}
-+EXPORT_SYMBOL_NS_GPL(mpfs_reset_read, MCHP_CLK_MPFS);
-+
-+void mpfs_reset_write(struct device *dev, u32 val)
-+{
-+	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
-+
-+	writel_relaxed(val, clock_data->base + REG_SUBBLK_RESET_CR);
-+}
-+EXPORT_SYMBOL_NS_GPL(mpfs_reset_write, MCHP_CLK_MPFS);
-+
-+static void mpfs_reset_unregister_adev(void *_adev)
-+{
-+	struct auxiliary_device *adev = _adev;
-+
-+	auxiliary_device_delete(adev);
-+}
-+
-+static void mpfs_reset_adev_release(struct device *dev)
-+{
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-+
-+	auxiliary_device_uninit(adev);
-+
-+	kfree(adev->name);
-+	kfree(adev);
-+}
-+
-+static struct auxiliary_device *mpfs_reset_adev_alloc(struct mpfs_clock_data *clk_data)
-+{
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	adev->name = "reset-mpfs";
-+	adev->dev.parent = clk_data->dev;
-+	adev->dev.release = mpfs_reset_adev_release;
-+	adev->id = 666u;
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret) {
-+		kfree(adev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return adev;
-+}
-+
-+static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
-+{
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = mpfs_reset_adev_alloc(clk_data);
-+	if (IS_ERR(adev))
-+		return PTR_ERR(adev);
-+
-+	ret = auxiliary_device_add(adev);
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(clk_data->dev, mpfs_reset_unregister_adev, adev);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+#else /* !CONFIG_RESET_CONTROLLER */
-+
-+static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
-+{
-+	return 0;
-+}
-+
-+#endif /* !CONFIG_RESET_CONTROLLER */
-+
- static int mpfs_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -462,6 +552,8 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(clk_data->msspll_base);
- 
- 	clk_data->hw_data.num = num_clks;
-+	clk_data->dev = dev;
-+	dev_set_drvdata(dev, clk_data);
- 
- 	ret = mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, ARRAY_SIZE(mpfs_msspll_clks),
- 					clk_data);
-@@ -481,6 +573,10 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = mpfs_reset_controller_register(clk_data);
-+	if (ret)
-+		return ret;
-+
- 	return ret;
- }
- 
-@@ -488,7 +584,7 @@ static const struct of_device_id mpfs_clk_of_match_table[] = {
- 	{ .compatible = "microchip,mpfs-clkcfg", },
- 	{}
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index d89098f4ede8..325f0463fd42 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -4689,33 +4689,32 @@ static const struct macb_config np4_config = {
+ 	.usrio = &macb_default_usrio,
  };
--MODULE_DEVICE_TABLE(of, mpfs_clk_match_table);
-+MODULE_DEVICE_TABLE(of, mpfs_clk_of_match_table);
  
- static struct platform_driver mpfs_clk_driver = {
- 	.probe = mpfs_clk_probe,
-diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
-index 6466515262bd..f916dcde457f 100644
---- a/include/soc/microchip/mpfs.h
-+++ b/include/soc/microchip/mpfs.h
-@@ -40,4 +40,12 @@ struct mpfs_sys_controller *mpfs_sys_controller_get(struct device *dev);
+-static int zynqmp_init(struct platform_device *pdev)
++static int init_reset_optional(struct platform_device *pdev)
+ {
+ 	struct net_device *dev = platform_get_drvdata(pdev);
+ 	struct macb *bp = netdev_priv(dev);
+ 	int ret;
  
- #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
+ 	if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII) {
+-		/* Ensure PS-GTR PHY device used in SGMII mode is ready */
++		/* Ensure PHY device used in SGMII mode is ready */
+ 		bp->sgmii_phy = devm_phy_optional_get(&pdev->dev, NULL);
  
-+#if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
+ 		if (IS_ERR(bp->sgmii_phy)) {
+ 			ret = PTR_ERR(bp->sgmii_phy);
+ 			dev_err_probe(&pdev->dev, ret,
+-				      "failed to get PS-GTR PHY\n");
++				      "failed to get SGMII PHY\n");
+ 			return ret;
+ 		}
+ 
+ 		ret = phy_init(bp->sgmii_phy);
+ 		if (ret) {
+-			dev_err(&pdev->dev, "failed to init PS-GTR PHY: %d\n",
++			dev_err(&pdev->dev, "failed to init SGMII PHY: %d\n",
+ 				ret);
+ 			return ret;
+ 		}
+ 	}
+ 
+-	/* Fully reset GEM controller at hardware level using zynqmp-reset driver,
+-	 * if mapped in device tree.
++	/* Fully reset controller at hardware level if mapped in device tree
+ 	 */
+ 	ret = device_reset_optional(&pdev->dev);
+ 	if (ret) {
+@@ -4737,7 +4736,7 @@ static const struct macb_config zynqmp_config = {
+ 			MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_BD_RD_PREFETCH,
+ 	.dma_burst_length = 16,
+ 	.clk_init = macb_clk_init,
+-	.init = zynqmp_init,
++	.init = init_reset_optional,
+ 	.jumbo_max_len = 10240,
+ 	.usrio = &macb_default_usrio,
+ };
+@@ -4751,6 +4750,17 @@ static const struct macb_config zynq_config = {
+ 	.usrio = &macb_default_usrio,
+ };
+ 
++static const struct macb_config mpfs_config = {
++	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE |
++			MACB_CAPS_JUMBO |
++			MACB_CAPS_GEM_HAS_PTP,
++	.dma_burst_length = 16,
++	.clk_init = macb_clk_init,
++	.init = init_reset_optional,
++	.usrio = &macb_default_usrio,
++	.jumbo_max_len = 10240,
++};
 +
-+u32 mpfs_reset_read(struct device *dev);
-+
-+void mpfs_reset_write(struct device *dev, u32 val);
-+
-+#endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
-+
- #endif /* __SOC_MPFS_H__ */
+ static const struct macb_config sama7g5_gem_config = {
+ 	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_CLK_HW_CHG |
+ 		MACB_CAPS_MIIONRGMII,
+@@ -4787,6 +4797,7 @@ static const struct of_device_id macb_dt_ids[] = {
+ 	{ .compatible = "cdns,zynqmp-gem", .data = &zynqmp_config},
+ 	{ .compatible = "cdns,zynq-gem", .data = &zynq_config },
+ 	{ .compatible = "sifive,fu540-c000-gem", .data = &fu540_c000_config },
++	{ .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
+ 	{ .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
+ 	{ .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
+ 	{ /* sentinel */ }
 -- 
 2.36.1
 
