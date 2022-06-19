@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB3CCCA482
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 21:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A37CFCCA487
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 21:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235640AbiFSVZ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jun 2022 17:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
+        id S236347AbiFSV0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jun 2022 17:26:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235143AbiFSVZ4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 17:25:56 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0292A47D
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:54 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id j22so3321866ljg.0
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:54 -0700 (PDT)
+        with ESMTP id S236352AbiFSVZ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 17:25:58 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19FD9A457
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:57 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id c30so9940336ljr.9
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 14:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yPj7GOpWp1DSXI8ysjZP1E1qF++Mm4LPpAM6Pwa9fAw=;
-        b=eELOzUWaYIB24DqAip66PpDuAeimY9mn2gXhrspneQI6clam/DiBL5D1revRnmKglc
-         gANfJ8HGC5sUe8Nu+aZ7UdE/MGEGAUlGZ7WQqTjoHevWJOcvmKW9zlnO8ho8jcnxZ+4V
-         YVaUoT4yOpQZAG7W+hBVEgeqViJy64X6v2XCJY/J//DAyef7xbOU8SpPW1QZj/REnGQw
-         aAxGo0Y7WKVL/xXF8AA/6Xtxm6dgnkFMU1AIBCngthcPzTb+/gPTnL985UdQrChVJ01T
-         quz/bl3GRdVQTzQdTqKmNls6sBRP0egqgsLU5A4gnBQo0wcSDrYkxP36BpubXOBPd8oh
-         TNUw==
+        bh=1XfJMqbTrvbGcMadqMaMwRzo8TXWgiYVxdNJ7Eqss70=;
+        b=CbtILTZF6dTmisXfA1a16lZSofY1OkzuGs8v0V9ofFzMLbo/ZERy+f3TZGcg/sUv3V
+         wncCTAacvcHYcUrgnGvDrqLzGbzxX3LOHeTmt9TDYo097d9zkiw29NFMziJ8MbyhkqaV
+         SSYQWOfwOmS2BR/UDZIEbXB5ZEhQ5l0UtRCtaiDgbGZFSWUtBjlSnC6dp5E11Jr7MB0n
+         Tsec9/VBnhsxnli7HnYvHYZnjkTIn5vQZdqk3o71dg4VVhtAc5ZoJ+tPmb4fg0qCI9Wl
+         YLoWO2EWbiwcO/eXzVIYh6r1zY9LbDaHC1vsnWHHv/ytr+IwqzoDz1Sd3DpTWIIoMnbl
+         Hrgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yPj7GOpWp1DSXI8ysjZP1E1qF++Mm4LPpAM6Pwa9fAw=;
-        b=utkiIVAZ8Xu+iY+S63p2R+giMz9/vkopcWn0+2CxljaqG+EBFVUqw4YxQTUpSPLKvJ
-         AJDpi8JIquZUx1ah4f7RIQEW18Jb0cqrpZSdKCuroz5u9QXb4oGiFIhuohvGbHQD4qqL
-         9hisHJkA3J7OSpFNHjhpiC9yhkWOeIltLT7bgV9HYMyMWdhkXoKWPsH0/VRZ5f9PV+Cm
-         4hAc5aS86y/B961pPuq9xaG7gI3IWuJ/TTGcvHv86xn0HwPAox6KTrk6HGLVOnMRsKNT
-         ga4yczalYM9MNSUBVTkZD3OpEfOtpCJbsfDFzXMKKEcXk3IUgpEtada42YblBTuxGcaC
-         hdsQ==
-X-Gm-Message-State: AJIora/O4Y1FioNOP/+mjG2/JzZ/0eCae+hb2PnqtJ1kAfJxPurSYJRQ
-        bHGGri2NAlZkWMRpyTRnEY58nw==
-X-Google-Smtp-Source: AGRyM1uGeIBHjqrCAlcPO8ZDoRc7CEEfeeyqFPuE+xqRAlBqRELPnhL51jjTUbub7fHO9zQ3oOq9UA==
-X-Received: by 2002:a2e:b0ce:0:b0:25a:6ad3:1ee7 with SMTP id g14-20020a2eb0ce000000b0025a6ad31ee7mr2235556ljl.1.1655673952967;
-        Sun, 19 Jun 2022 14:25:52 -0700 (PDT)
+        bh=1XfJMqbTrvbGcMadqMaMwRzo8TXWgiYVxdNJ7Eqss70=;
+        b=2qY5WnWFCvKUmHuPceYelaJMkZhUBAJL4CIjxEO86IBJvIUG82u6WODMDezaDoc1yn
+         2TMiYWG/cMorAbnq1PP1Z2ordJ26RkwM7YR470BK80GzpPv1vQFE2p5LmhMzuIa1v3v/
+         ok9lnRDKTEGrH9kmNmCM5pSjGmuuof/knU7X+liyyDtu3RGqvdxtZeNtc/mGDzWd0ke9
+         0olFdL+pgh5UeyFuyFhyO8AfNAO3ikMSdqyf6dx3a5pxajnsGrmHRAaHPbIVgO6Yb4Ds
+         IX+O51ls6iLL6iF4eqkr9eI/vWmzl080rghpTJaGabEarPBDQASa/cnJsfh0d9WYiNdF
+         6pLQ==
+X-Gm-Message-State: AJIora+jGjUGcAKwqyOQxtdcj+HNh1Gf6v/fwP5181sb1f65W3I9/qzf
+        MM3gKOAhBshWpbQWYFmrpbff13u396DAmOk6
+X-Google-Smtp-Source: AGRyM1tYZ0WAJjcvUNSHlDb9frFXs0f3/Ggxsnof5ZA1OICtLvok8UmxpHW6ZG+ZK+8tsqd8oW63CQ==
+X-Received: by 2002:a2e:b048:0:b0:25a:6dc9:dcd0 with SMTP id d8-20020a2eb048000000b0025a6dc9dcd0mr1664923ljl.402.1655673955408;
+        Sun, 19 Jun 2022 14:25:55 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id u3-20020ac258c3000000b00478de10cf5esm626866lfo.247.2022.06.19.14.25.51
+        by smtp.gmail.com with ESMTPSA id u3-20020ac258c3000000b00478de10cf5esm626866lfo.247.2022.06.19.14.25.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 14:25:51 -0700 (PDT)
+        Sun, 19 Jun 2022 14:25:54 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -59,9 +59,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH v2 2/7] dt-bindings: clock: separate bindings for MSM8916 GCC device
-Date:   Mon, 20 Jun 2022 00:25:44 +0300
-Message-Id: <20220619212549.1240891-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 4/7] clk: qcom: gcc-msm8916: move clock parent tables down
+Date:   Mon, 20 Jun 2022 00:25:46 +0300
+Message-Id: <20220619212549.1240891-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220619212549.1240891-1-dmitry.baryshkov@linaro.org>
 References: <20220619212549.1240891-1-dmitry.baryshkov@linaro.org>
@@ -71,95 +71,248 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Separate bindings for GCC on Qualcomm MSM8916 platforms. This adds new
-clocks/clock-names properties to be used for clock links.
+Move clock parent tables down, after the GPLL declrataions, so that we
+can use gpll hw clock fields in the next commit.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/clock/qcom,gcc-msm8916.yaml      | 61 +++++++++++++++++++
- .../bindings/clock/qcom,gcc-other.yaml        |  1 -
- 2 files changed, 61 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml
+ drivers/clk/qcom/gcc-msm8916.c | 216 ++++++++++++++++-----------------
+ 1 file changed, 108 insertions(+), 108 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml
-new file mode 100644
-index 000000000000..564aa764b17b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8916.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 40c27ba6286f..7962edbdbcf6 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -42,6 +42,114 @@ enum {
+ 	P_EXT_MCLK,
+ };
+ 
++static struct clk_pll gpll0 = {
++	.l_reg = 0x21004,
++	.m_reg = 0x21008,
++	.n_reg = 0x2100c,
++	.config_reg = 0x21010,
++	.mode_reg = 0x21000,
++	.status_reg = 0x2101c,
++	.status_bit = 17,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll0",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_pll_ops,
++	},
++};
 +
-+title: Qualcomm Global Clock & Reset Controller Binding for MSM8916
++static struct clk_regmap gpll0_vote = {
++	.enable_reg = 0x45000,
++	.enable_mask = BIT(0),
++	.hw.init = &(struct clk_init_data){
++		.name = "gpll0_vote",
++		.parent_names = (const char *[]){ "gpll0" },
++		.num_parents = 1,
++		.ops = &clk_pll_vote_ops,
++	},
++};
 +
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
-+  - Taniya Das <quic_tdas@quicinc.com>
++static struct clk_pll gpll1 = {
++	.l_reg = 0x20004,
++	.m_reg = 0x20008,
++	.n_reg = 0x2000c,
++	.config_reg = 0x20010,
++	.mode_reg = 0x20000,
++	.status_reg = 0x2001c,
++	.status_bit = 17,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll1",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_pll_ops,
++	},
++};
 +
-+description: |
-+  Qualcomm global clock control module which supports the clocks, resets and
-+  power domains on MSM8916.
++static struct clk_regmap gpll1_vote = {
++	.enable_reg = 0x45000,
++	.enable_mask = BIT(1),
++	.hw.init = &(struct clk_init_data){
++		.name = "gpll1_vote",
++		.parent_names = (const char *[]){ "gpll1" },
++		.num_parents = 1,
++		.ops = &clk_pll_vote_ops,
++	},
++};
 +
-+  See also:
-+  - dt-bindings/clock/qcom,gcc-msm8916.h
++static struct clk_pll gpll2 = {
++	.l_reg = 0x4a004,
++	.m_reg = 0x4a008,
++	.n_reg = 0x4a00c,
++	.config_reg = 0x4a010,
++	.mode_reg = 0x4a000,
++	.status_reg = 0x4a01c,
++	.status_bit = 17,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll2",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_pll_ops,
++	},
++};
 +
-+properties:
-+  compatible:
-+    const: qcom,gcc-msm8916
++static struct clk_regmap gpll2_vote = {
++	.enable_reg = 0x45000,
++	.enable_mask = BIT(2),
++	.hw.init = &(struct clk_init_data){
++		.name = "gpll2_vote",
++		.parent_names = (const char *[]){ "gpll2" },
++		.num_parents = 1,
++		.ops = &clk_pll_vote_ops,
++	},
++};
 +
-+  clocks:
-+    items:
-+      - description: XO source
-+      - description: Sleep clock source
-+      - description: DSI phy instance 0 dsi clock
-+      - description: DSI phy instance 0 byte clock
-+      - description: External MCLK clock
-+      - description: External Primary I2S clock
-+      - description: External Secondary I2S clock
++static struct clk_pll bimc_pll = {
++	.l_reg = 0x23004,
++	.m_reg = 0x23008,
++	.n_reg = 0x2300c,
++	.config_reg = 0x23010,
++	.mode_reg = 0x23000,
++	.status_reg = 0x2301c,
++	.status_bit = 17,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "bimc_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_pll_ops,
++	},
++};
 +
-+  clock-names:
-+    items:
-+      - const: xo
-+      - const: sleep_clk
-+      - const: dsi0pll
-+      - const: dsi0pllbyte
-+      - const: ext_mclk
-+      - const: ext_pri_i2s
-+      - const: ext_sec_i2s
++static struct clk_regmap bimc_pll_vote = {
++	.enable_reg = 0x45000,
++	.enable_mask = BIT(3),
++	.hw.init = &(struct clk_init_data){
++		.name = "bimc_pll_vote",
++		.parent_names = (const char *[]){ "bimc_pll" },
++		.num_parents = 1,
++		.ops = &clk_pll_vote_ops,
++	},
++};
 +
-+required:
-+  - compatible
-+
-+allOf:
-+  - $ref: qcom,gcc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@300000 {
-+      compatible = "qcom,gcc-msm8916";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+      reg = <0x300000 0x90000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-index 6c78df0c46a9..61b90e836b5b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-@@ -41,7 +41,6 @@ properties:
-       - qcom,gcc-mdm9607
-       - qcom,gcc-msm8226
-       - qcom,gcc-msm8660
--      - qcom,gcc-msm8916
-       - qcom,gcc-msm8939
-       - qcom,gcc-msm8953
-       - qcom,gcc-msm8974
+ static const struct parent_map gcc_xo_gpll0_map[] = {
+ 	{ P_XO, 0 },
+ 	{ P_GPLL0, 1 },
+@@ -256,114 +364,6 @@ static const char * const gcc_xo_gpll1_emclk_sleep[] = {
+ 	"sleep_clk",
+ };
+ 
+-static struct clk_pll gpll0 = {
+-	.l_reg = 0x21004,
+-	.m_reg = 0x21008,
+-	.n_reg = 0x2100c,
+-	.config_reg = 0x21010,
+-	.mode_reg = 0x21000,
+-	.status_reg = 0x2101c,
+-	.status_bit = 17,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gpll0",
+-		.parent_names = (const char *[]){ "xo" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_ops,
+-	},
+-};
+-
+-static struct clk_regmap gpll0_vote = {
+-	.enable_reg = 0x45000,
+-	.enable_mask = BIT(0),
+-	.hw.init = &(struct clk_init_data){
+-		.name = "gpll0_vote",
+-		.parent_names = (const char *[]){ "gpll0" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_vote_ops,
+-	},
+-};
+-
+-static struct clk_pll gpll1 = {
+-	.l_reg = 0x20004,
+-	.m_reg = 0x20008,
+-	.n_reg = 0x2000c,
+-	.config_reg = 0x20010,
+-	.mode_reg = 0x20000,
+-	.status_reg = 0x2001c,
+-	.status_bit = 17,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gpll1",
+-		.parent_names = (const char *[]){ "xo" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_ops,
+-	},
+-};
+-
+-static struct clk_regmap gpll1_vote = {
+-	.enable_reg = 0x45000,
+-	.enable_mask = BIT(1),
+-	.hw.init = &(struct clk_init_data){
+-		.name = "gpll1_vote",
+-		.parent_names = (const char *[]){ "gpll1" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_vote_ops,
+-	},
+-};
+-
+-static struct clk_pll gpll2 = {
+-	.l_reg = 0x4a004,
+-	.m_reg = 0x4a008,
+-	.n_reg = 0x4a00c,
+-	.config_reg = 0x4a010,
+-	.mode_reg = 0x4a000,
+-	.status_reg = 0x4a01c,
+-	.status_bit = 17,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gpll2",
+-		.parent_names = (const char *[]){ "xo" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_ops,
+-	},
+-};
+-
+-static struct clk_regmap gpll2_vote = {
+-	.enable_reg = 0x45000,
+-	.enable_mask = BIT(2),
+-	.hw.init = &(struct clk_init_data){
+-		.name = "gpll2_vote",
+-		.parent_names = (const char *[]){ "gpll2" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_vote_ops,
+-	},
+-};
+-
+-static struct clk_pll bimc_pll = {
+-	.l_reg = 0x23004,
+-	.m_reg = 0x23008,
+-	.n_reg = 0x2300c,
+-	.config_reg = 0x23010,
+-	.mode_reg = 0x23000,
+-	.status_reg = 0x2301c,
+-	.status_bit = 17,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "bimc_pll",
+-		.parent_names = (const char *[]){ "xo" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_ops,
+-	},
+-};
+-
+-static struct clk_regmap bimc_pll_vote = {
+-	.enable_reg = 0x45000,
+-	.enable_mask = BIT(3),
+-	.hw.init = &(struct clk_init_data){
+-		.name = "bimc_pll_vote",
+-		.parent_names = (const char *[]){ "bimc_pll" },
+-		.num_parents = 1,
+-		.ops = &clk_pll_vote_ops,
+-	},
+-};
+-
+ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
+ 	.cmd_rcgr = 0x27000,
+ 	.hid_width = 5,
 -- 
 2.35.1
 
