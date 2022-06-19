@@ -2,93 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E16BC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Jun 2022 23:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94389C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 03:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230494AbiFRXxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Jun 2022 19:53:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50670 "EHLO
+        id S230124AbiFSDkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Jun 2022 23:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiFRXxi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jun 2022 19:53:38 -0400
-X-Greylist: delayed 672 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 18 Jun 2022 16:53:37 PDT
-Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [5.144.164.162])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9061FBC17;
-        Sat, 18 Jun 2022 16:53:37 -0700 (PDT)
-Received: from [192.168.1.101] (abxh227.neoplus.adsl.tpnet.pl [83.9.1.227])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S229733AbiFSDk3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jun 2022 23:40:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86995EE0A;
+        Sat, 18 Jun 2022 20:40:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id B0ECC1FF02;
-        Sun, 19 Jun 2022 01:53:35 +0200 (CEST)
-Message-ID: <155e3867-c37e-4cc4-782c-3903b134c427@somainline.org>
-Date:   Sun, 19 Jun 2022 01:53:35 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1C77F60F31;
+        Sun, 19 Jun 2022 03:40:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A747C341C5;
+        Sun, 19 Jun 2022 03:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655610027;
+        bh=xIBW4zY8o0dIMBDkNL+vL5e593wLZH72rGNycDvq6g0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=quIGM6FY6UkXU19LL3wVxd5wenzFHp7sT0yVHQpeIIYKU7jqHpt5kUHpFCMwZuAr4
+         3fxK1Uay2polsUlUJQp2V77TrNxL0SchGbEg/p4dstxx6GdyN7NDHmZ5BYWySmF8WI
+         gMRN+PVgJqSJl+n5R4BKdBsLwVeulQyUACVyP/WVUEYjb/kKaTmGAy7GVpQBRelX+W
+         ClA/30ko6DxZf5AZj0E6AN9A3dPjxw/a0dxLXlm9ZEiPXxQH+vWlZrzMRSJ7GHo9A0
+         cuP0MFlaRxY15efHZgIVkAlgnnGYT9o5LsxKCWN95Q+cZS/17FkSTOfltU7699FLzi
+         Qzar2hWbwpINw==
+Date:   Sun, 19 Jun 2022 11:40:22 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: imx25: support silicon revision 1.2
+Message-ID: <20220619034022.GZ254723@dragon>
+References: <20220602080344.208702-1-martin@kaiser.cx>
+ <20220602080344.208702-2-martin@kaiser.cx>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: msm8996: add clocks to the MMCC
- device node
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>
-References: <20220617122922.769562-1-dmitry.baryshkov@linaro.org>
- <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220617122922.769562-7-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220602080344.208702-2-martin@kaiser.cx>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 17.06.2022 14:29, Dmitry Baryshkov wrote:
-> As we are converting this platform to use DT clock bindings, add clocks
-> and clock-names properties to the MMCC device tree node.
+On Thu, Jun 02, 2022 at 10:03:42AM +0200, Martin Kaiser wrote:
+> Update the mx25_read_cpu_rev function to recognize silicon revision 1.2
+> for imx25 chipsets.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-
-
-Sidenote: would RPM XO work here, or is it broken on 8996?
-
-Konrad
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> Silicon revision 1.2 is mentioned in the errata document at
+> https://www.nxp.com/docs/en/errata/IMX25CE.pdf. The imx25 chips on my
+> test boards show revision 1.2 as well.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index dffb87a5ee74..0c7b7cd9f23e 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -751,6 +751,22 @@ mmcc: clock-controller@8c0000 {
->  			#reset-cells = <1>;
->  			#power-domain-cells = <1>;
->  			reg = <0x008c0000 0x40000>;
-> +			clocks = <&xo_board>,
-> +				 <&gcc GCC_MMSS_NOC_CFG_AHB_CLK>,
-> +				 <&gcc GPLL0>,
-> +				 <&dsi0_phy 1>,
-> +				 <&dsi0_phy 0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
-> +			clock-names = "xo",
-> +				      "gcc_mmss_noc_cfg_ahb_clk",
-> +				      "gpll0",
-> +				      "dsi0pll",
-> +				      "dsi0pllbyte",
-> +				      "dsi1pll",
-> +				      "dsi1pllbyte",
-> +				      "hdmipll";
->  			assigned-clocks = <&mmcc MMPLL9_PLL>,
->  					  <&mmcc MMPLL1_PLL>,
->  					  <&mmcc MMPLL3_PLL>,
-> 
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+
+Applied this one, thanks!
