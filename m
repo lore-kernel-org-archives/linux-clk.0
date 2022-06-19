@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EA2C43334
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 16:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B30CCA47A
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jun 2022 16:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236237AbiFSQu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jun 2022 12:50:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37850 "EHLO
+        id S236030AbiFSQu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jun 2022 12:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236030AbiFSQuZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 12:50:25 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5274763A5
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:24 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id s1so11655823wra.9
-        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:24 -0700 (PDT)
+        with ESMTP id S236199AbiFSQu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jun 2022 12:50:27 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FBAD121
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:25 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id m16-20020a7bca50000000b0039c8a224c95so4621445wml.2
+        for <linux-clk@vger.kernel.org>; Sun, 19 Jun 2022 09:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=conchuod.ie; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gopwvsW4YZ7UonEyNdDMzhV85NCQ2TW0QKUGmgQ7L+A=;
-        b=PPRsmuFvXCAnoP528hN1t16BHLynhT/bO2rdEnC0Xz4knixhQo48QsK8CVqIHwVuHt
-         1MQg+IXAktJOWtHvgZLi01BCJEpfF/f0hjZVEfXIAxarIhHn6jci/o5r56pFckiE8lHO
-         xL59bWW7auYReXeIDVHZsU0rdTbOm3y/6AU5GDj6hfOgM3Z9IUpA6BkY0zdE1EW5fB5f
-         +23QiHLcxNZUnzSIlRpsFejQ2aPd3p1xJe3rpFvVIMpk/4G461je7S5b+gh2lMtMzirn
-         D31QY5/tHoJHPcYQY9eO3U/UXkD5nKSCshArD8i5ieLniTPWojHTEIPDmte7x4BtDIla
-         3uhQ==
+        bh=HNXopq52OdPOW8hnENMbdffTvgekfwjZqRQxiWITItA=;
+        b=UXseDhSOx0rUAEvMqPdKjoNX6iw9kl3ksS1KhacDVTvFn9tN8JSbBObzwz8gdyDzQg
+         uQJkGfWZksWFLd0JITNB4k8Lp+jk+Tb4Jco9WbPkapDV40a/UXo94H0yAwxGoAu8j4Vg
+         KwVUHLnxGxGypw8UpX7J2FHUCRkPpv7drdKjkZfhGI/gTAirqZbp2sUhgpyPIL9pmLIj
+         qlkBRg4NNpCccrXRS+RduITB9GoWEe29/VUCSe5YbbNnsbABBPX8VNSs+PUJET+TxzYp
+         HnkLC3Qc4N0cRB7whR+tm0GM/2NItv0jxMP8CQW86kPt2rl2M6rnavs5s0wUyftzUI9k
+         +Kuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gopwvsW4YZ7UonEyNdDMzhV85NCQ2TW0QKUGmgQ7L+A=;
-        b=lONrTZgLE6i6+gact6gcWfdp3pAJaX41IctcquJqnDJ2Q9tWIADrrEPDy/GQgJLP/K
-         6MTlRKPsUIvoP+YUkPrE1+9U6AAL8gEN6vyuWDEnmnCD1OhH+N5BUmGG9q/7My13l94b
-         Km3U5h0c+eYRgxfYgPyGZV6yZOeBmzP2miAJBSVRfqP9to5vQNVds546nX9l12lDcB2b
-         0oSoKppB6qYcudfp/U3cehWoACGInhZCjEGB/AwXdoLf/S2JOktzMXCg2uym0FeTqRfn
-         T+ZvNCGrEomgXMtfaHHxUF5+wzhlkGzL9gH9yBi+nm5Zya94jUzSqe1jJR9yeiC0wSdE
-         uU+w==
-X-Gm-Message-State: AJIora+evp57VwYSEdVVNsUmoOj+Zg84hU+HbN/2b/RAZMQpIlx4xfVU
-        +zyDG2J2upwMuBR1xiWU1Mbhww==
-X-Google-Smtp-Source: AGRyM1u8/TXPS06SfhDWZfnvfFABhGjitdfgdEIZo8EF7U4BuS6IZE7QVX/Y0ckD0cYHUGtSh+yJwA==
-X-Received: by 2002:a05:6000:2c7:b0:219:b52d:d122 with SMTP id o7-20020a05600002c700b00219b52dd122mr18399366wry.507.1655657422909;
-        Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
+        bh=HNXopq52OdPOW8hnENMbdffTvgekfwjZqRQxiWITItA=;
+        b=mENHiyLhYjfGU2hX/nFZ+GHRCDT7ksB4+96ka1cdvuohvDZBW2UkDJATXBSItc/nFs
+         H6ZB9smHzo0OoBfnmHHMgjm3VArrn6hzOGj6LWIdWTqN0TQNR6E7Mn8u8lz/JFIidLAH
+         YGR+5dBL69L0KuQZjvgAyfSO5Tspy5ANpig1sb6w2Dqae0w4tWAugHgkaoAi7OgYtmPW
+         3UAFw7FUwqhQj5Ef/Gdy6qGy7GpL4Y3w8WCs1HNlhH9psb2HWwmTCTcCofS1ztpTl3Ha
+         K49OMJYTpD9oA4FQPf4RXhv5nuV0ksQn39x2XxUUz1sg5iP1iO3no9nBkRvRePt8JEA1
+         HbHg==
+X-Gm-Message-State: AOAM530ry0e6pLmHljsd95kbN/LixZZ9StSfF8+Ow3PceDVFkYR5zVPu
+        qyFAcIWyetONvEN2kDSkYs420g==
+X-Google-Smtp-Source: ABdhPJxL+7m5XLx2s4xgfyyeKIsKdf3d5gNOY2UtvWLXs/QJRThfo178XdMRDOR1NdK/T7YB6xi5OQ==
+X-Received: by 2002:a1c:4682:0:b0:39c:4459:6a84 with SMTP id t124-20020a1c4682000000b0039c44596a84mr30464743wma.167.1655657424029;
+        Sun, 19 Jun 2022 09:50:24 -0700 (PDT)
 Received: from henark71.. ([51.37.234.167])
-        by smtp.gmail.com with ESMTPSA id m14-20020adfdc4e000000b0021a3c960214sm9189510wrj.6.2022.06.19.09.50.21
+        by smtp.gmail.com with ESMTPSA id m14-20020adfdc4e000000b0021a3c960214sm9189510wrj.6.2022.06.19.09.50.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jun 2022 09:50:22 -0700 (PDT)
+        Sun, 19 Jun 2022 09:50:23 -0700 (PDT)
 From:   Conor Dooley <mail@conchuod.ie>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -56,9 +56,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     Daire McNamara <daire.mcnamara@microchip.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
-Subject: [RFC 5/6] net: macb: add polarfire soc reset support
-Date:   Sun, 19 Jun 2022 17:49:35 +0100
-Message-Id: <20220619164935.1492823-6-mail@conchuod.ie>
+Subject: [RFC 6/6] riscv: dts: microchip: add mpfs specific macb reset support
+Date:   Sun, 19 Jun 2022 17:49:36 +0100
+Message-Id: <20220619164935.1492823-7-mail@conchuod.ie>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220619164935.1492823-1-mail@conchuod.ie>
 References: <20220619164935.1492823-1-mail@conchuod.ie>
@@ -70,95 +70,59 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
-To date, the Microchip PolarFire SoC (MPFS) has been using the
-cdns,macb compatible, however the generic device does not have reset
-support. Add a new compatible & .data for MPFS to hook into the reset
-functionality added for zynqmp support (and make the zynqmp init
-function generic in the process).
+The macb on PolarFire SoC has reset support which the generic compatible
+does not use. Add the newly introduced MPFS specific compatible as the
+primary compatible to avail of this support & wire up the reset to the
+clock controllers devicetree entry.
 
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 25 +++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ arch/riscv/boot/dts/microchip/mpfs.dtsi | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index d89098f4ede8..325f0463fd42 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -4689,33 +4689,32 @@ static const struct macb_config np4_config = {
- 	.usrio = &macb_default_usrio,
- };
+diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+index 8c3259134194..5a33cbf9467a 100644
+--- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
++++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
+@@ -197,6 +197,7 @@ clkcfg: clkcfg@20002000 {
+ 			reg = <0x0 0x20002000 0x0 0x1000>, <0x0 0x3E001000 0x0 0x1000>;
+ 			clocks = <&refclk>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
  
--static int zynqmp_init(struct platform_device *pdev)
-+static int init_reset_optional(struct platform_device *pdev)
- {
- 	struct net_device *dev = platform_get_drvdata(pdev);
- 	struct macb *bp = netdev_priv(dev);
- 	int ret;
+ 		mmuart0: serial@20000000 {
+@@ -331,7 +332,7 @@ i2c1: i2c@2010b000 {
+ 		};
  
- 	if (bp->phy_interface == PHY_INTERFACE_MODE_SGMII) {
--		/* Ensure PS-GTR PHY device used in SGMII mode is ready */
-+		/* Ensure PHY device used in SGMII mode is ready */
- 		bp->sgmii_phy = devm_phy_optional_get(&pdev->dev, NULL);
+ 		mac0: ethernet@20110000 {
+-			compatible = "cdns,macb";
++			compatible = "microchip,mpfs-macb", "cdns,macb";
+ 			reg = <0x0 0x20110000 0x0 0x2000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -340,11 +341,12 @@ mac0: ethernet@20110000 {
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			clocks = <&clkcfg CLK_MAC0>, <&clkcfg CLK_AHB>;
+ 			clock-names = "pclk", "hclk";
++			resets = <&clkcfg CLK_MAC0>;
+ 			status = "disabled";
+ 		};
  
- 		if (IS_ERR(bp->sgmii_phy)) {
- 			ret = PTR_ERR(bp->sgmii_phy);
- 			dev_err_probe(&pdev->dev, ret,
--				      "failed to get PS-GTR PHY\n");
-+				      "failed to get SGMII PHY\n");
- 			return ret;
- 		}
+ 		mac1: ethernet@20112000 {
+-			compatible = "cdns,macb";
++			compatible = "microchip,mpfs-macb", "cdns,macb";
+ 			reg = <0x0 0x20112000 0x0 0x2000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -353,6 +355,7 @@ mac1: ethernet@20112000 {
+ 			local-mac-address = [00 00 00 00 00 00];
+ 			clocks = <&clkcfg CLK_MAC1>, <&clkcfg CLK_AHB>;
+ 			clock-names = "pclk", "hclk";
++			resets = <&clkcfg CLK_MAC1>;
+ 			status = "disabled";
+ 		};
  
- 		ret = phy_init(bp->sgmii_phy);
- 		if (ret) {
--			dev_err(&pdev->dev, "failed to init PS-GTR PHY: %d\n",
-+			dev_err(&pdev->dev, "failed to init SGMII PHY: %d\n",
- 				ret);
- 			return ret;
- 		}
- 	}
- 
--	/* Fully reset GEM controller at hardware level using zynqmp-reset driver,
--	 * if mapped in device tree.
-+	/* Fully reset controller at hardware level if mapped in device tree
- 	 */
- 	ret = device_reset_optional(&pdev->dev);
- 	if (ret) {
-@@ -4737,7 +4736,7 @@ static const struct macb_config zynqmp_config = {
- 			MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_BD_RD_PREFETCH,
- 	.dma_burst_length = 16,
- 	.clk_init = macb_clk_init,
--	.init = zynqmp_init,
-+	.init = init_reset_optional,
- 	.jumbo_max_len = 10240,
- 	.usrio = &macb_default_usrio,
- };
-@@ -4751,6 +4750,17 @@ static const struct macb_config zynq_config = {
- 	.usrio = &macb_default_usrio,
- };
- 
-+static const struct macb_config mpfs_config = {
-+	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE |
-+			MACB_CAPS_JUMBO |
-+			MACB_CAPS_GEM_HAS_PTP,
-+	.dma_burst_length = 16,
-+	.clk_init = macb_clk_init,
-+	.init = init_reset_optional,
-+	.usrio = &macb_default_usrio,
-+	.jumbo_max_len = 10240,
-+};
-+
- static const struct macb_config sama7g5_gem_config = {
- 	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_CLK_HW_CHG |
- 		MACB_CAPS_MIIONRGMII,
-@@ -4787,6 +4797,7 @@ static const struct of_device_id macb_dt_ids[] = {
- 	{ .compatible = "cdns,zynqmp-gem", .data = &zynqmp_config},
- 	{ .compatible = "cdns,zynq-gem", .data = &zynq_config },
- 	{ .compatible = "sifive,fu540-c000-gem", .data = &fu540_c000_config },
-+	{ .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
- 	{ .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
- 	{ .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
- 	{ /* sentinel */ }
 -- 
 2.36.1
 
