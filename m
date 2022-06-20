@@ -2,192 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C7DCCA479
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 08:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C09CCA479
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 10:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239786AbiFTIvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 04:51:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34668 "EHLO
+        id S236612AbiFTK3S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 06:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238836AbiFTIvl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 04:51:41 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1278E12D05;
-        Mon, 20 Jun 2022 01:51:40 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id a29so16148160lfk.2;
-        Mon, 20 Jun 2022 01:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Nmsby/owyh04k0ycvHIy9l6TCn3KX4vCVQ8FvknbAxM=;
-        b=OhX35MjDbqMX8PT+D6KgZRwN4bXObTsbs0ih7IFYqtsvOa1wuBKqHj/RyYXlS3d87a
-         acnj6QFINKrCvJVEwTCPQMx8iqGAfRdGKSIaOen1/wiSYmvuHHL9IZAc4FMsdJacFG8m
-         Le4ZFTQhp7OU1Tp48G8+wSKci6gOp3qVE1kiWeGGwZnzYmS7g28O6WZuPZGEVT59zLuL
-         vLX2rDcUHCgvd39E7LLZSfnomBVATG0w3h1mBxwquDjVC1X3LvfMXGT5oIXuwYF1BjCR
-         qj3D6IeMXHff3qbezYRsA0jv/3e9ITV7luOJ27hBzyUnyGVW0jqTdrD6erT/DV9BZhxM
-         j0Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Nmsby/owyh04k0ycvHIy9l6TCn3KX4vCVQ8FvknbAxM=;
-        b=Li5jmL2vATkjTk3/K0AExIvlhU3HiPDjwSQsdF+MS65kWLofzBVX6eTe+1TetOltx7
-         geW22ooKbl8Bye1oTrCeY7Ziw1VgSGRSAYtNk9IJQxCGgVhnAONRj6mPOPINkNkcY0TV
-         0xIJlCkdTdqLLElnhcwavb48j/M2fiab1bz/sNIgBGHOX0JzrOHVFeM8r/Q9LNPpOnf0
-         O9XYW7UNoIoB1MScsE/2Cvq6hsGh1DrVkVYobSPOyNJZ/ZnqEZCoTZcSdjH/Liz84VDY
-         yV7q4yuPAjvcosRHGH0LgZ60jdaNBkQSDLTtNTKEuAWnNWN8WChmpGWnhLBYgewU/x64
-         JMYQ==
-X-Gm-Message-State: AJIora+574n4jiYVoHx3l/lJQxeLcRdj/D+VPPS1Q2WCIXYfZWJu4rlt
-        MLjeaW2cmEBwdehVec8PWq5lVx59LTi1MEzeX2Q=
-X-Google-Smtp-Source: AGRyM1sVjX2HtRVHYgJLfOUlDY1CN4gBAcxTLBHTjQ4lp3ME+dD6n0bXuPvlQwDNAMCQBdXF21S0fja6MceEuZ+Ul8M=
-X-Received: by 2002:a05:6512:1390:b0:47f:74c4:dd45 with SMTP id
- p16-20020a056512139000b0047f74c4dd45mr1117184lfa.536.1655715098427; Mon, 20
- Jun 2022 01:51:38 -0700 (PDT)
+        with ESMTP id S240802AbiFTK23 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 06:28:29 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 136B8BC39
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 03:28:26 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220620102820euoutp02eb4a3a92bbd51a22709eba8a294fa79b~6TWMEEMI_0956109561euoutp02B
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 10:28:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220620102820euoutp02eb4a3a92bbd51a22709eba8a294fa79b~6TWMEEMI_0956109561euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1655720900;
+        bh=qp9YVJlu4olz3oYnsD1sNkejmf6dHxDAHbWKn3wrbXs=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=m8sKfqYXwOKq5iRyo4466JVOkrWa0z1iy1XM4gumHu6yoXKRriiPGLto+i78nYnwQ
+         SMt+eUYIto0HPecP7TCEueI31x+r31LMo6dKIH6z3yu1p9NQy9V3xoylrOnSepAIEC
+         ww91rexUyZHR2VmLQVm2kWpcNd7Gam4v+JWPW47A=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220620102820eucas1p257ab2bd019e065e26fc7f61d487100e9~6TWLl3p8S0766307663eucas1p2w;
+        Mon, 20 Jun 2022 10:28:20 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 11.E8.09664.4CB40B26; Mon, 20
+        Jun 2022 11:28:20 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a~6TWLB5yxx1180011800eucas1p2P;
+        Mon, 20 Jun 2022 10:28:19 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220620102819eusmtrp1d406de29bcbd43e98e82e8fcfe0fbfea~6TWLAuDit3265932659eusmtrp1X;
+        Mon, 20 Jun 2022 10:28:19 +0000 (GMT)
+X-AuditID: cbfec7f2-d97ff700000025c0-d7-62b04bc46c2e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id FB.B5.09038.3CB40B26; Mon, 20
+        Jun 2022 11:28:19 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220620102818eusmtip249ef53827dc9ea948a39b0409a3c2ca2~6TWKQ8suX3096730967eusmtip2G;
+        Mon, 20 Jun 2022 10:28:18 +0000 (GMT)
+Message-ID: <4b132eb8-d823-248f-0fc0-c825ba3754fa@samsung.com>
+Date:   Mon, 20 Jun 2022 12:28:18 +0200
 MIME-Version: 1.0
-References: <20220619151225.209029-1-tmaimon77@gmail.com> <20220619151225.209029-6-tmaimon77@gmail.com>
- <040f149b-c441-c778-6d4f-f3b2b2afaf4e@linaro.org>
-In-Reply-To: <040f149b-c441-c778-6d4f-f3b2b2afaf4e@linaro.org>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Mon, 20 Jun 2022 11:51:27 +0300
-Message-ID: <CAP6Zq1j9=wsK=HGLkvPRrVYrQdCqL0+LaujmTxnRY7fbK2zi1g@mail.gmail.com>
-Subject: Re: [PATCH v3 05/18] dt-binding: clk: npcm845: Add binding for
- Nuvoton NPCM8XX Clock
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add bindings for Exynos7885
+ CMU_FSYS
+Content-Language: en-US
+To:     David Virag <virag.david003@gmail.com>
+Cc:     phone-devel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+In-Reply-To: <20220601233743.56317-2-virag.david003@gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKKsWRmVeSWpSXmKPExsWy7djPc7pHvDckGUxYyW7xYN42NovrX56z
+        Wsw/co7Vou/FQ2aLTY+vsVp87LnHanF51xw2ixnn9zFZXDzlarHgj51F694j7Bb/rm1ksVi1
+        6w+jxfH3jxkd+Dze32hl99g56y67x6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtijuGxSUnMy
+        y1KL9O0SuDIm3NvOXnCWqaL91EPGBsYZTF2MHBwSAiYSkz/ZdjFycQgJrGCUOLnnABuE84VR
+        4vPsaSxdjJxAzmdGiVNXKkFskIaGXfOhipYzSvxofscE4XxklGg7+IwZpIpXwE5iXfcyRhCb
+        RUBVon/3Pai4oMTJmU/ApooKJEucO3uVDcQWFgiW+N46jRXEZhYQl7j1ZD4TiC0ioCXx4cxD
+        VpAFzAJPmCVutExlB0mwCRhK9B7tA1vACbTs6tFlLBDN8hLb385hBmmQEJjNKXG3bwMjxKMu
+        Ej333SBeEJZ4dXwLO4QtI3F6cg8LhF0vMXnKFTYIu4NR4uteMwjbWmLCphNsIGOYBTQl1u/S
+        hwg7SjyatwEajHwSN94KQlzAJzFp23RmiDCvREebEES1isTvVdOZIGwpie4n/1kmMCrNQgqU
+        WUien4Xkl1kIexcwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITGmn/x3/tINx7quP
+        eocYmTgYDzFKcDArifDacG9IEuJNSaysSi3Kjy8qzUktPsQozcGiJM6bnLkhUUggPbEkNTs1
+        tSC1CCbLxMEp1cDEcKWKte2ttejHzsKcjarcU97rc+7RXp2ztODB1PznfHPPhm/ieXJs+iyh
+        vPsr5hRGqa7P1+yRT+TkNBBMLKuafGXHziJjtmXfbsgElNfufxJYcqR5toblNlkezs81vVu0
+        WHdO1969c5H2wiP8Ehe7mQRT+nbtvdT69GX13vS4S5K2BV9/fbaQVI3/ZiT441yf78nrImlh
+        kzgu1hpW8T7w0NOevmyttvXRpG/VZ0TEP62sFq1QWZcRHfrIpn2yrp9Rt91MppVTJt5Y9n/z
+        oWgmbud1S5V0Fh+3rJ2f8265hqqMvG6Fr+1/hglnA9dc9vc4I2O5JEt5bc5u36Lggrk3Thf7
+        uRgYt8zL+JKquEeJpTgj0VCLuag4EQBjWi322AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xe7qHvTckGZxfL2XxYN42NovrX56z
+        Wsw/co7Vou/FQ2aLTY+vsVp87LnHanF51xw2ixnn9zFZXDzlarHgj51F694j7Bb/rm1ksVi1
+        6w+jxfH3jxkd+Dze32hl99g56y67x6ZVnWwed67tYfPYvKTeo2/LKkaPz5vkAtij9GyK8ktL
+        UhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DIm3NvOXnCWqaL9
+        1EPGBsYZTF2MnBwSAiYSDbvms3UxcnEICSxllDjx7htjFyMHUEJKYn6LEkSNsMSfa11QNe8Z
+        Jc7d+8cMkuAVsJNY172MEcRmEVCV6N99DyouKHFy5hMWEFtUIFmiecshsGXCAsES31unsYLY
+        zALiEreezAeLiwhoSXw48xAq/oxZouOlJIgtJFAosWlJN1gNm4ChRO/RPrBdnEB7rx5dxgJy
+        J7OAusT6eUIQrfIS29/OYZ7AKDQLyRWzkGybhdAxC0nHAkaWVYwiqaXFuem5xUZ6xYm5xaV5
+        6XrJ+bmbGIExvO3Yzy07GFe++qh3iJGJg/EQowQHs5IIrw33hiQh3pTEyqrUovz4otKc1OJD
+        jKbAkJjILCWanA9MInkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxS
+        DUx7Iz4eaJ6cm+mje+rmYfMzsv96lx1LlOTb01HkUztFS1n8w97z66bbRqs4WkhPNNht6bBO
+        5KJIPIuUbVPh8mrrmOkTX8t/a2m5N2m78fl8o9CXrO9LDt/4sejVodeTNne3iMetS7miGtWS
+        x/zjbL2wuNK90z5eO/9F+u6tvbgiJiWman1Pdormx5UZp/c9eM7/iT02KWLBr8Xnl/xc9Js3
+        jKlZUb35cGVbULDrCVX1rsNSb7keiATXrSqPfSWu7XQ/YPcbrxCzqcel5n6fyjhrmvyN+Lbb
+        OzJ6uwpWxZYs2ZPCWfaTTUZxY8zR6zNKLwdze9x4NOFm8I+U9w6+Rr+Xavx+uGzKZYXEbb6P
+        d/5VYinOSDTUYi4qTgQAZI0iF2oDAAA=
+X-CMS-MailID: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a
+References: <20220601233743.56317-1-virag.david003@gmail.com>
+        <20220601233743.56317-2-virag.david003@gmail.com>
+        <CGME20220620102819eucas1p2b03a01c45ca3d0d42ebb9542954f0a4a@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+On 02.06.2022 01:37, David Virag wrote:
+> CMU_FSYS clock domain provides clocks for MMC (MMC_CARD, MMC_EMBD,
+> MMC_SDIO), and USB30DRD.
+> 
+> Add clock indices and bindings documentation for CMU_FSYS domain.
+> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 
-On Mon, 20 Jun 2022 at 11:21, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 19/06/2022 17:12, Tomer Maimon wrote:
-> > Add binding for the Arbel BMC NPCM8XX Clock controller.
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > ---
-> >  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 49 +++++++++++++++++++
-> >  .../dt-bindings/clock/nuvoton,npcm8xx-clock.h | 49 +++++++++++++++++++
-> >  2 files changed, 98 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> >  create mode 100644 include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > new file mode 100644
-> > index 000000000000..3d4fddc090ca
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton NPCM8XX Clock Controller Binding
-> > +
-> > +maintainers:
-> > +  - Tomer Maimon <tmaimon77@gmail.com>
-> > +
-> > +description: |
-> > +  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
-> > +  generates and supplies clocks to all modules within the BMC.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nuvoton,npcm845-clk
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +    description:
-> > +      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
-> > +      list of NPCM8XX clock IDs.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#clock-cells"
->
-> Use same quotes through your patchset - either " or '. Do not mix.
->
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    ahb {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        clock-controller@f0801000 {
-> > +            compatible = "nuvoton,npcm845-clk";
-> > +            reg = <0x0 0xf0801000 0x0 0x1000>;
-> > +            #clock-cells = <1>;
-> > +        };
-> > +    };
-> > +...
-> > diff --git a/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
-> > new file mode 100644
-> > index 000000000000..e5cce08b00e1
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
-> > @@ -0,0 +1,49 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->
-> My comment about filename is still waiting to be resolved. I asked for
-> same filename as bindings in v1.
-Right, forgot to modify the file name will be done in next version.
->
-> https://lore.kernel.org/all/CAP6Zq1gXEqqquKzxTHoxYnvh2LCGt-ES+k=aX61FKyHW5WB62w@mail.gmail.com/
->
-> I am still going to NAK it if it is not implemented.
->
-> Best regards,
-> Krzysztof
-
-Best regards,
-
-Tomer
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
