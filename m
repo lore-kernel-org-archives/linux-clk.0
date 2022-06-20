@@ -2,141 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06B4C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 10:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3307ACCA47F
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 11:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233998AbiFTKbM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 06:31:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57274 "EHLO
+        id S241174AbiFTLHv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 07:07:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236612AbiFTKbL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 06:31:11 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB69114010
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 03:31:09 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220620103108euoutp02ae8ed81edb374c4a046a949f611f7873~6TYoZ0bA41349313493euoutp022
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 10:31:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220620103108euoutp02ae8ed81edb374c4a046a949f611f7873~6TYoZ0bA41349313493euoutp022
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1655721068;
-        bh=BurjW1WW2KeTxxxdhC7NErnPk+2pomzAB87ahjLvfu0=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=UyUT6iuF82GKqM+BpK1XsJM5OuE4H6WAdbMjgyNSSEk8AWT1gzckzBoQApgkPUGfA
-         QkN0iloctEEPDU0Csxp4rv4AIeSa+1OD5JjddmKs2wnSJFB4VZUUD6ew7qLmKV2/gl
-         wM7emUlcrl1eyqcmq4gbolbt4lAs4U389Ww5YmFA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220620103108eucas1p2b65435f45ffac70cf014a1075f20357a~6TYoC_foz3271232712eucas1p20;
-        Mon, 20 Jun 2022 10:31:08 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 9D.F8.10067.C6C40B26; Mon, 20
-        Jun 2022 11:31:08 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220620103107eucas1p217192cc1d2c87ed8b7e4c799b4773f1d~6TYnoZDIt1972319723eucas1p27;
-        Mon, 20 Jun 2022 10:31:07 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220620103107eusmtrp124878fdcd4369a8a21ccd5e737afed5d~6TYnnQm8c0342803428eusmtrp1q;
-        Mon, 20 Jun 2022 10:31:07 +0000 (GMT)
-X-AuditID: cbfec7f4-dc1ff70000002753-3a-62b04c6cb174
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 50.36.09038.B6C40B26; Mon, 20
-        Jun 2022 11:31:07 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220620103106eusmtip28c55cb16ee518ef155877f61cc050a4a~6TYm4xmFI3070130701eusmtip2w;
-        Mon, 20 Jun 2022 10:31:06 +0000 (GMT)
-Message-ID: <85be3992-39fb-e95f-6e25-29e73ab6f97f@samsung.com>
-Date:   Mon, 20 Jun 2022 12:31:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add bindings for Exynos7885
- CMU_FSYS
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     phone-devel@vger.kernel.org,
-        David Virag <virag.david003@gmail.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
+        with ESMTP id S241318AbiFTLHs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 07:07:48 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56EBD1582B
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 04:07:44 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id v8so11488354ljj.8
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 04:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IxM5Fh4o0hCwPM/3g/Dj/MQgpI2jjFoc6FSkQHRtfDs=;
+        b=AHOXPjXZHoFAqbBm2TMZqN9WxMBQqz2a6nn7o5tJUorYk75b/LBf22WxQefs/rEmb+
+         V2aNMX7/+LAQXYroOUBXxEduCz7MUNVejG9jsNlHjIRui0Q3WVNxprrdKFE96wUVryLj
+         zGNzC5/kbPsFPIdsHK+qB+g4KTWCpQryMYdDrNgY49UfZdHL1uW5LTi3Lk52wK+DDS/T
+         vX9G8HrBDFI08PghZyl0V0uXUcaALzRpdcyJ0vB1+IIh2zkA4RSJzyyedKJr1i3DYbwC
+         MGOLSRxi9iZAho6Coi3i7hD8YUitI8ZisQi1m1SdUOTNZGipFo+2j5ndZb9pA5fwHvXU
+         RgtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IxM5Fh4o0hCwPM/3g/Dj/MQgpI2jjFoc6FSkQHRtfDs=;
+        b=gS7OUYTFsJpWFyR/yt/kyAQRpx/7P5qy5tqfrd/DOwgLOYzFEWgn9AhAvVOm/NMeZw
+         qPNAZSGtui44UonEo4EFzymcurX67mWe6usekV7vnGFCp3lKEOOJxn4mrW5rUZS2yjm8
+         PCzTWYAtIUgSv4JiAfIPbtaQa0Pju7xXrPyyi3nQgrN2ZY0g1lFMz9PGvxWGHPUfr2ox
+         Occ73xMPovu5ervORZ/svhIgAKpFxLbZ5He5BHqsC7YGqdW2CMVELdkeW1UtRb7e5lVs
+         BJVtDLdfoBCqlvBKLpMtFu+J1f5zbFfDGmuq880SMLVOMqWIorKP7CcEIa9bEgIDAB9P
+         XOsQ==
+X-Gm-Message-State: AJIora9b973ENQgbuzgiwDm7XIXWbbY8ZUtAvXKz/0MTH7ZFlqukH6Xe
+        oDOxoqsfwoV2cDtUyIhnXbEIiQ==
+X-Google-Smtp-Source: AGRyM1u4omvimDF5tT7z4eQP21s3HNrizZzAVQBkrRrULB500Rgdz8/vXXUE/UO+Vj9QHFU1nC26Uw==
+X-Received: by 2002:a2e:bf1c:0:b0:259:f33:a4db with SMTP id c28-20020a2ebf1c000000b002590f33a4dbmr11077336ljr.454.1655723262648;
+        Mon, 20 Jun 2022 04:07:42 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id d19-20020a194f13000000b00479a825aa5esm1722564lfb.154.2022.06.20.04.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 04:07:41 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <6178d685-5a87-6057-1200-e41baa3ece7d@linaro.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7djP87o5PhuSDKbNYrV4MG8bm8X1L89Z
-        LeYfOcdq0ffiIbPF3tdb2S02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxYI/dhate4+wW/y7
-        tpHFYtWuP4wWx98/ZnTg93h/o5XdY+esu+wem1Z1snncubaHzWPzknqPvi2rGD0+b5ILYI/i
-        sklJzcksSy3St0vgyvi8I6hgK2tF94cF7A2M61m6GDk5JARMJDa8fMXUxcjFISSwglHi/qEt
-        zBDOF0aJ9/Mms0E4nxkljkyaCtey5dpKdojEckaJOz+6oKo+Mko8fLyNHaSKV8BO4se0lUwg
-        NouAqsSLTV+YIeKCEidnPgGbJCqQLHHu7FU2EFtYIFjie+s0VhCbWUBc4taT+WC9IgIWEos3
-        LGQFWcAs0McisfHSSrBBbAKGEr1H+xhBbE6gZee3zGGEaJaX2P52DtgTEgLLOSXuzZvCDHG3
-        i8SSj79YIWxhiVfHt7BD2DISpyf3QP1WLzF5yhU2CLuDUeLrXjMI21piwqYTQHEOoAWaEut3
-        6UOEHSUWdGxnBwlLCPBJ3HgrCHECn8SkbdOZIcK8Eh1tQhDVKhK/V01ngrClJLqf/GeZwKg0
-        CylUZiH5fhaSZ2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84Mbe4NC9dLzk/dxMjMMGd/nf8yw7G
-        5a8+6h1iZOJgPMQowcGsJMJrw70hSYg3JbGyKrUoP76oNCe1+BCjNAeLkjhvcuaGRCGB9MSS
-        1OzU1ILUIpgsEwenVAPT0t1rN0QaP9ztkOUSa56l1qi1c+qeWzz/X3o5u1+SXHPpSo3RnJYM
-        8yuWxm959e5UTZu1Z2kVz6HD7pfsrht0nzr6Kef0ad7OCW+jXmfPZDywbvZBgSwxpmdH31Su
-        EeqyzFl2amPxrbp1fu7yU/Q2f4zb9FvXeebmbj4xwy83DxcwZ0SfD9tz+IDcudvv4pY8r29i
-        3JvOoBOkZOHWtfh0+QKHM18217EmiKxJ3rtS+sNX73XiydeeCK8u2luT4PXkfu9NgUWrPfpe
-        mXzNkOO3arHj/K18LOya7bFPAbe1DX/Kh5yzqdyffeqwoe/nR90nddZa7fr77/uk/OwNc6MS
-        Xs6/MU/D0iEv8dynzVu5TimxFGckGmoxFxUnAgDCZKob3wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xe7rZPhuSDJ5sULd4MG8bm8X1L89Z
-        LeYfOcdq0ffiIbPF3tdb2S02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxYI/dhate4+wW/y7
-        tpHFYtWuP4wWx98/ZnTg93h/o5XdY+esu+wem1Z1snncubaHzWPzknqPvi2rGD0+b5ILYI/S
-        synKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy/i8I6hg
-        K2tF94cF7A2M61m6GDk5JARMJLZcW8kOYgsJLGWUWPPctIuRAyguJTG/RQmiRFjiz7Uuti5G
-        LqCS90Al79eB9fIK2En8mLaSCcRmEVCVeLHpCzNEXFDi5MwnYDWiAskSzVsOgdUICwRLfG+d
-        xgpiMwuIS9x6Mh8sLiJgIbF4w0JWkAXMAhNYJHaef8YKse0no8T+1o1gHWwChhK9R/sYQWxO
-        oM3nt8xhBLmUWUBdYv08IYih8hLb385hnsAoNAvJHbOQ7JuF0DELSccCRpZVjCKppcW56bnF
-        RnrFibnFpXnpesn5uZsYgdG87djPLTsYV776qHeIkYmD8RCjBAezkgivDfeGJCHelMTKqtSi
-        /Pii0pzU4kOMpsCwmMgsJZqcD0wneSXxhmYGpoYmZpYGppZmxkrivJ4FHYlCAumJJanZqakF
-        qUUwfUwcnFINTK1Oq3rsE9PZogTFD92tlNntuP7/qslOPkeezk7ucCzkr5z575vx4UXq2yWC
-        BbZO55x47fl/HtVFF9wi978p0Ot1DdOexz9Puk8pq+fXITHLpRKh1g77pjK8YzBc3Txhx7EF
-        IlP+3ml6J8szt+D/es5OoSdaWrssRTPK366OEjfie33c4RQ3z3XlO8XPpmzpPnLBbIZqTJHp
-        hCX+lpdCQ+P8hZ9V5ZkaNa16cS92zu8G3tiwbZ8qSzSFdnD+nLMss+7gMlc+xQt1C7+tWvdH
-        Umj6G8FPDfxXMg/ONBF4vbfaevVj+9euFi9DTc957Jqw87HV5PQPaVNXflJoEOz05Dv89cXG
-        JQf2190Kikv1PKPEUpyRaKjFXFScCAA5NIm7bwMAAA==
-X-CMS-MailID: 20220620103107eucas1p217192cc1d2c87ed8b7e4c799b4773f1d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220608151219eucas1p20af4138a6cc6c471791240b00ecffade
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220608151219eucas1p20af4138a6cc6c471791240b00ecffade
-References: <20220601233743.56317-1-virag.david003@gmail.com>
-        <20220601233743.56317-2-virag.david003@gmail.com>
-        <CGME20220608151219eucas1p20af4138a6cc6c471791240b00ecffade@eucas1p2.samsung.com>
-        <6178d685-5a87-6057-1200-e41baa3ece7d@linaro.org>
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/4] dt-bindings: clock: qcom,gcc-msm8660: separate GCC bindings for MSM8660
+Date:   Mon, 20 Jun 2022 14:07:36 +0300
+Message-Id: <20220620110739.1598514-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08.06.2022 17:12, Krzysztof Kozlowski wrote:
-> On 02/06/2022 01:37, David Virag wrote:
->> CMU_FSYS clock domain provides clocks for MMC (MMC_CARD, MMC_EMBD,
->> MMC_SDIO), and USB30DRD.
->>
->> Add clock indices and bindings documentation for CMU_FSYS domain.
->>
->> Signed-off-by: David Virag <virag.david003@gmail.com>
->> ---
->>  .../clock/samsung,exynos7885-clock.yaml       | 27 ++++++++++++++++
->>  include/dt-bindings/clock/exynos7885.h        | 31 ++++++++++++++++++-
+Create a separate DT bindings for Global Clock Controller on MSM8660
+platform.
 
-> It seems the clock IDs from bindings are used by both driver and DTS.
-> Sylwester, can I take them to Samsung Soc and send you a pull request?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../bindings/clock/qcom,gcc-msm8660.yaml      | 54 +++++++++++++++++++
+ .../bindings/clock/qcom,gcc-other.yaml        |  3 --
+ 2 files changed, 54 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8660.yaml
 
-Sure, let's do it that way.
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8660.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8660.yaml
+new file mode 100644
+index 000000000000..09b2ea60d356
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8660.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-msm8660.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8660
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <quic_tdas@quicinc.com>
++
++description: |
++  Qualcomm global clock control module which supports the clocks and resets on
++  MSM8660
++
++  See also:
++  - dt-bindings/clock/qcom,gcc-msm8660.h
++  - dt-bindings/reset/qcom,gcc-msm8660.h
++
++allOf:
++  - $ref: "qcom,gcc.yaml#"
++
++properties:
++  compatible:
++    enum:
++      - qcom,gcc-msm8660
++
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pxo
++      - const: cxo
++
++required:
++  - compatible
++
++unevaluatedProperties: false
++
++examples:
++  # Example for GCC for MSM8974:
++  - |
++    clock-controller@900000 {
++      compatible = "qcom,gcc-msm8660";
++      reg = <0x900000 0x4000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++      clocks = <&pxo_board>, <&cxo_board>;
++      clock-names = "pxo", "cxo";
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index 61b90e836b5b..aae83a22b5fb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -21,8 +21,6 @@ description: |
+   - dt-bindings/clock/qcom,gcc-msm8939.h
+   - dt-bindings/clock/qcom,gcc-msm8953.h
+   - dt-bindings/reset/qcom,gcc-msm8939.h
+-  - dt-bindings/clock/qcom,gcc-msm8660.h
+-  - dt-bindings/reset/qcom,gcc-msm8660.h
+   - dt-bindings/clock/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+   - dt-bindings/reset/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+   - dt-bindings/clock/qcom,gcc-mdm9607.h
+@@ -40,7 +38,6 @@ properties:
+       - qcom,gcc-ipq6018
+       - qcom,gcc-mdm9607
+       - qcom,gcc-msm8226
+-      - qcom,gcc-msm8660
+       - qcom,gcc-msm8939
+       - qcom,gcc-msm8953
+       - qcom,gcc-msm8974
 -- 
-Regards,
-Sylwester
+2.35.1
+
