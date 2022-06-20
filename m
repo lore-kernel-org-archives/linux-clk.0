@@ -2,163 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24C8CCA480
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 21:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D41CCA480
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 21:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiFTVeC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 17:34:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41888 "EHLO
+        id S229608AbiFTVvz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 17:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239653AbiFTVeB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 17:34:01 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BD71570A;
-        Mon, 20 Jun 2022 14:34:00 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id c2so19273884lfk.0;
-        Mon, 20 Jun 2022 14:33:59 -0700 (PDT)
+        with ESMTP id S236325AbiFTVvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 17:51:54 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE2D1A3A0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 14:51:52 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id c30so13343124ljr.9
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 14:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=s0R5mmM05lsGfWIfbL6p8eqpR6CxHgnjZf4kJe++K6A=;
-        b=XarjFldC0uD5OUmY2R2d+LkYVknWoBbcxLhDnPZZ5rj5CZfCZ89pqO75sRGhNRWJ67
-         QV6w6lX46zpW6uSgZp/gfYo9LhcajmzJvclYf48zdADp6EvTttBxURmfVcYEqjDnWeLj
-         ZkOkjtzfsONBTWvhTBpch1iXDkHYc3Dyqh+j+XNbL6jWYdrPIixDjopoYknYRaI0R27g
-         IoZ6XjQJyZRYCWuI6+O2VcZQ/ZqP0KLaAVGfCNxyD9OjcME7rgD8JS+Sb2T1WlZq+HA1
-         LiTv6dlmIG8blmjIjMKee+lIEVu1rwbt2ut7h26zb4Ezu5Oc1qo4o+W96nfBmiLDVzOh
-         rCGQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5VB+OjNM0FgonA9OHE0Kg6JQZj4dnCquoYDOQxZe7mo=;
+        b=cSQ/oyUJ0l8bbipEuGZvIJbKdKDyUZMNlwVg8LRafAdPRUa9D0djloP235lZUMRwDw
+         jkwaAYtU8t3g8YuYJdS2FZQrwcyVIJgxS6yZ227PYhN3yWad1AqT6BpZ1YFeqRIM+ASv
+         1DyE29iwPK17YCir+i3cl2T8kumxk9VIfX8hsMl7YD9PrMWrXB+5n36815k+usCQFwsJ
+         MthIcOk+TC8tuata+ssCePg0xWkbggqN7EJ8Ejj55/4XDWNwPN/jNXD0BDjXMJByJCLY
+         jXzIABNP1yLrVbVaDiEU2LdU0UiWWtfRM0gypEMQaFl3sqsi5eRICLOqzKzgcLoUo2sU
+         yZwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s0R5mmM05lsGfWIfbL6p8eqpR6CxHgnjZf4kJe++K6A=;
-        b=r716l8DpJBuLIxrBCSTNCTN3kVzPp80bKPf14VWkPLG57b6YEapNrLV5OnNtqLFsps
-         Uas76h2Wc7k8m1t4BXDRyVYBBnuboQ7cLVoeKJKdlBELp2lX4fCr6ncAg1ivgbjm07ar
-         mgiGTjYwsq4y2QbQ+ren0g+3sVhM8fHi5twoklSHPlZRmZQZ7ImJUR3yva84XQGtNfas
-         cCCKJ9dCDakjD/him+Ke8doj7qgnz/Ezj2Wdv5jH4/pjJOcvplxvuuEm5+ny9OHW6/k/
-         twW2ptmmo5upbW9RURSmlewiAsaWBptGLYVzsPSaTFcviHoUT0Xc6I88+w0GtnSyJqmB
-         +85g==
-X-Gm-Message-State: AJIora/Yqf6CWP4p+MWZ8HFJ9GoV94HGsc77rsRy/3zYQcq3Y6omTo5s
-        1zf34qeY2XZMm6mR7/B0E5I=
-X-Google-Smtp-Source: AGRyM1tB6Drp/umy1VSMi2cffqS7UB8ehavkbrFBMG3EU0JZUloawCq0vJ3PgIQDSYEZMZgYjILLkg==
-X-Received: by 2002:a05:6512:238a:b0:47f:6a9a:ea39 with SMTP id c10-20020a056512238a00b0047f6a9aea39mr5283214lfv.215.1655760838354;
-        Mon, 20 Jun 2022 14:33:58 -0700 (PDT)
-Received: from mobilestation ([95.79.189.214])
-        by smtp.gmail.com with ESMTPSA id o7-20020a198c07000000b0047255d211e9sm1889833lfd.280.2022.06.20.14.33.57
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5VB+OjNM0FgonA9OHE0Kg6JQZj4dnCquoYDOQxZe7mo=;
+        b=JiY18V5NW5t5kq+rkjAs/lLAyUXOREWLmgUg98ay6iO1wJgzBH8WE3dZXMFCN1lffy
+         heMYIbBUC6fROCoOX7lZYXvI+DUXpYq2pFm++br/3Ae5rhn1wgG4II3rmtk8XORzLpeX
+         u/Gnb/oLHOZ+wksw/Johi/YHxHKH4IBADe3qFwdaLUJrhWb7lguL+4znA1q6jCiNHhrr
+         Sz2o6l7qv2+oCWZMoV8pKmBPGJTS6OdTfWDH/zmESVhnSTiPhR0i5BwH3PyfzkZ4nYOm
+         DT1OR1ItHfSBgYRmXEwEJlbOtujemb/8KNgggihLmb8FffaQkyEw+Tq0J73fSZxyXrXX
+         hKdg==
+X-Gm-Message-State: AJIora+mIWhmWxKHo+Amm0Ps3br0ImcfExhuyCD+/otOCXqN6vJHFGzr
+        rBFUtnC+DaDCvCW8e1buuGDt7EF0kIBsRuBV
+X-Google-Smtp-Source: AGRyM1vMoxB1T2TWeP+vflMBzhmgPmXF5Lj32pDYPWXE9f/D85wvLBD/f/9hzHWJX5L/IGNQX5slig==
+X-Received: by 2002:a2e:bf02:0:b0:25a:6348:95c6 with SMTP id c2-20020a2ebf02000000b0025a634895c6mr6553256ljr.183.1655761911351;
+        Mon, 20 Jun 2022 14:51:51 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id s30-20020a195e1e000000b00479307e4a1bsm1897989lfb.135.2022.06.20.14.51.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 14:33:57 -0700 (PDT)
-Date:   Tue, 21 Jun 2022 00:33:55 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Mon, 20 Jun 2022 14:51:50 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/8] clk/resets: baikal-t1: Add DDR/PCIe resets and
- xGMAC/SATA fixes
-Message-ID: <20220620213355.q6qlpiy2orninq3g@mobilestation>
-References: <20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Ansuel Smith <ansuelsmth@gmail.com>
+Subject: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
+Date:   Tue, 21 Jun 2022 00:51:50 +0300
+Message-Id: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi @Philipp,
-Could you have a look at the reset-related patches of series? One of
-them is a fix and another one concerns the reset-part of the Clock/Reset
-controller embedded into our SoC.
+Use parent_data for the last remaining entry (pll4). This clock is
+provided by the lcc device.
 
-Hi @Stephen,
-The series has been here for about four months now. Can we speed the
-review up somehow?
+Fixes: cb02866f9a74 ("clk: qcom: gcc-ipq806x: convert parent_names to parent_data")
+Cc: Ansuel Smith <ansuelsmth@gmail.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
--Sergey
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 718de17a1e60..6447f3e81b55 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -79,7 +79,9 @@ static struct clk_regmap pll4_vote = {
+ 	.enable_mask = BIT(4),
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "pll4_vote",
+-		.parent_names = (const char *[]){ "pll4" },
++		.parent_data = &(const struct clk_parent_data){
++			.fw_name = "pll4", .name = "pll4",
++		},
+ 		.num_parents = 1,
+ 		.ops = &clk_pll_vote_ops,
+ 	},
+-- 
+2.35.1
 
-On Fri, Jun 10, 2022 at 10:21:16AM +0300, Serge Semin wrote:
-> Short summary regarding this patchset. The series starts from fixing a
-> wrong semantic of the device managed optional exclusive bulk reset control
-> getter. Then we suggest a fix of the clocks glitching cause by the Renesas
-> 5P49V6901 chip in some circumstances. Afterwards a few more modifications
-> are introduced to finally finish the Baikal-T1 CCU unit support up and
-> prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
-> all it turned out I specified wrong DW xGMAC PTP reference clock divider
-> in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
-> joint xGMAC Ref and PTP clock instead of having them separately defined.
-> The SoC manual describes these clocks as separate fixed clock wrappers.
-> Finally in order to close the SoC clock/reset support up we need to add
-> the DDR and PCIe interfaces reset controls support. It's done in two
-> steps. First I've moved the reset-controls-related code into a dedicated
-> module. Then the DDR/PCIe reset-control functionality is added. As the
-> series finalization we've decided to convert the Baikal-T1 clock/reset
-> source drivers to mainly being the platform device driver and
-> pre-initialize the basic clocks only at the early kernel boot stages.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v2:
-> - Resubmit the series with adding @Philipp to the list of the recipients.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v3:
-> - No comments. Just resend the series.
-> - Rebased from v5.17 onto v5.18-rc3.
-> 
-> Link: https://lore.kernel.org/linux-clk/20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v4:
-> - Completely split the CCU Dividers and Resets functionality up. (@Stephen)
-> - Add a new fixes patch: "clk: baikal-t1: Actually enable SATA internal
->   ref clock".
-> - Add a new fixes patch: "reset: Fix devm bulk optional exclusive control
->   getter".
-> - Add a new fixes patch: "clk: vc5: Fix 5P49V6901 outputs disabling when
->   enabling FOD".
-> - Add a new feagure patch: "clk: baikal-t1: Convert to platform device
->   driver".
-> - Change the internal clock ID to the XGMAC-referred name.
-> - Rebase onto the kernel v5.18.
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Serge Semin (8):
->   reset: Fix devm bulk optional exclusive control getter
->   clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
->   clk: baikal-t1: Fix invalid xGMAC PTP clock divider
->   clk: baikal-t1: Add shared xGMAC ref/ptp clocks internal parent
->   clk: baikal-t1: Add SATA internal ref clock buffer
->   clk: baikal-t1: Move reset-controls code into a dedicated module
->   clk: baikal-t1: Add DDR/PCIe directly controlled resets support
->   clk: baikal-t1: Convert to platform device driver
-> 
->  drivers/clk/baikal-t1/Kconfig       |  12 +-
->  drivers/clk/baikal-t1/Makefile      |   1 +
->  drivers/clk/baikal-t1/ccu-div.c     |  84 +++++++--
->  drivers/clk/baikal-t1/ccu-div.h     |  17 +-
->  drivers/clk/baikal-t1/ccu-pll.h     |   8 +
->  drivers/clk/baikal-t1/ccu-rst.c     |  99 ++++++++++
->  drivers/clk/baikal-t1/ccu-rst.h     |  79 ++++++++
->  drivers/clk/baikal-t1/clk-ccu-div.c | 272 +++++++++++++++++-----------
->  drivers/clk/baikal-t1/clk-ccu-pll.c | 128 ++++++++++---
->  drivers/clk/baikal-t1/clk-ccu-rst.c | 257 ++++++++++++++++++++++++++
->  drivers/clk/clk-versaclock5.c       |   2 +-
->  include/dt-bindings/reset/bt1-ccu.h |   9 +
->  include/linux/reset.h               |   2 +-
->  13 files changed, 814 insertions(+), 156 deletions(-)
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
->  create mode 100644 drivers/clk/baikal-t1/clk-ccu-rst.c
-> 
-> -- 
-> 2.35.1
-> 
