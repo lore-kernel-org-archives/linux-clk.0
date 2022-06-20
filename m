@@ -2,154 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80596C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 06:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC43C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 08:01:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238716AbiFTGlB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 02:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59594 "EHLO
+        id S239730AbiFTIB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 04:01:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238194AbiFTGlA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 02:41:00 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9373DDF1F;
-        Sun, 19 Jun 2022 23:40:51 -0700 (PDT)
-X-UUID: c162e9edf4db4404856e4756a22d8076-20220620
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.6,REQID:f6cdc3df-dea3-4d74-8c15-1165459c00cc,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:45
-X-CID-INFO: VERSION:1.1.6,REQID:f6cdc3df-dea3-4d74-8c15-1165459c00cc,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:45
-X-CID-META: VersionHash:b14ad71,CLOUDID:f20e832d-1756-4fa3-be7f-474a6e4be921,C
-        OID:69f70ab7a418,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:1,File:nil,QS:nil,BEC:nil,COL:0
-X-UUID: c162e9edf4db4404856e4756a22d8076-20220620
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1999594167; Mon, 20 Jun 2022 14:40:47 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Mon, 20 Jun 2022 14:40:47 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.3 via Frontend
- Transport; Mon, 20 Jun 2022 14:40:47 +0800
-Message-ID: <08653b784294bb11182faf82c74757a14d780c4e.camel@mediatek.com>
-Subject: Re: [PATCH v8 16/19] arm64: dts: mediatek: Add infra #reset-cells
- property for MT8195
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>,
-        "nfraprado@collabora.com" <nfraprado@collabora.com>,
-        Chun-Jie Chen =?UTF-8?Q?=28=E9=99=B3=E6=B5=9A=E6=A1=80=29?= 
-        <Chun-Jie.Chen@mediatek.com>,
-        "wenst@chromium.org" <wenst@chromium.org>,
-        Runyang Chen =?UTF-8?Q?=28=E9=99=88=E6=B6=A6=E6=B4=8B=29?= 
-        <Runyang.Chen@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Mon, 20 Jun 2022 14:40:46 +0800
-In-Reply-To: <20220523060056.24396-17-rex-bc.chen@mediatek.com>
-References: <20220523060056.24396-1-rex-bc.chen@mediatek.com>
-         <20220523060056.24396-17-rex-bc.chen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S239703AbiFTIBW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 04:01:22 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 516271114B
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:01:21 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id s10so10958011ljh.12
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wUIvXR9Mu2pLw1SfGOC2FM4d/2jWMPxr8mZkKP9waiM=;
+        b=qQjYJlRFdD687Uf+tt832g2VTANb/8zxoidvyGiwpQ04yXBPiK1rx08+XhNUMsceUz
+         1fvVyoEkSaFJcDlvKu76iF5qHiF3hFzp5NaQoV7mUHvdcU+sdXuNfi5aGxwdgs8TERAe
+         hmxPel8SXJQU7KfnwoR3QNIMqAHIoUUupjGUblmyLKScGihrYXy9I4L9he6jfF2ghUoa
+         4GloSL4p7tDVmMnXPUunGCDRGiqzEU5ZsoM2Cg+B3+4SXq7ksOLdtWhhzttamq8uUR8R
+         NYAToDYLueybLCGxFCfLlmo8ae3Tb1y1slLYCPogZWf/wiKTQCdeaQFEtoY/dNTUjpLO
+         DMVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wUIvXR9Mu2pLw1SfGOC2FM4d/2jWMPxr8mZkKP9waiM=;
+        b=mONegexNGW/4EysHhFZo74ntCdASDAKqYk8y/kEtfNepW93nHIz2e4vA2zRKhmSoVd
+         3uGop1qymwKlgrUdcxWFlt1Vi/Ki2LOOdV+ehIDUBqRgVrALhgGzQt2vcJyzmMZ0hTxf
+         P80vmh0g1WVn9sAOLq+6lMwuNsNeepNevCcNzxs1lM4ZjCHtd38w/BqweuRBY+ij0Dc4
+         cTjDGwHCODeccT7cjHY1hFA6Bwlo0Sj0S3NEtpHvXsNKsZco00PmvxYYk0M9W7Z/gP4I
+         RG/KyZ1nio9qvAbX9SNH0eYOCl9O6Qno5InUWkd26EWsWzrtamkU41yu8mPpX1tMQq4Y
+         gcTg==
+X-Gm-Message-State: AJIora826u8vGkTmrY95WpxO5BiHiuDI2+XUb8omgfSUx4BJpTFV35Si
+        wI1q6LDAa+cFnTiBa8DiuYAQ+Q==
+X-Google-Smtp-Source: AGRyM1uZA+3ncytO2eIJHcwDX/qsGA3mZKhMouzbCWKg9dQiH99RzrxHnVU8hgp8GEJ694E9CZ794Q==
+X-Received: by 2002:a2e:96d6:0:b0:25a:6f63:ae7e with SMTP id d22-20020a2e96d6000000b0025a6f63ae7emr1782381ljj.73.1655712079705;
+        Mon, 20 Jun 2022 01:01:19 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id w17-20020a2e9591000000b0025a6d0509d7sm461857ljh.78.2022.06.20.01.01.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jun 2022 01:01:18 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: qcom: common: use parent_hws in _qcom_cc_register_board_clk()
+Date:   Mon, 20 Jun 2022 11:01:17 +0300
+Message-Id: <20220620080117.1571807-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2022-05-23 at 14:00 +0800, Rex-BC Chen wrote:
-> We will use mediatek clock reset as infracfg_ao reset instead of
-> ti-syscon. To support this, remove property of ti reset and add
-> property of #reset-cells for mediatek clock reset.
-> 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <
-> angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  arch/arm64/boot/dts/mediatek/mt8195.dtsi | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> index b57e620c2c72..db16eba9d475 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> @@ -10,7 +10,6 @@
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/phy/phy.h>
->  #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
-> -#include <dt-bindings/reset/ti-syscon.h>
->  
->  / {
->  	compatible = "mediatek,mt8195";
-> @@ -292,20 +291,10 @@
->  		};
->  
->  		infracfg_ao: syscon@10001000 {
-> -			compatible = "mediatek,mt8195-infracfg_ao",
-> "syscon", "simple-mfd";
-> +			compatible = "mediatek,mt8195-infracfg_ao",
-> "syscon";
->  			reg = <0 0x10001000 0 0x1000>;
->  			#clock-cells = <1>;
-> -
-> -			infracfg_rst: reset-controller {
-> -				compatible = "ti,syscon-reset";
-> -				#reset-cells = <1>;
-> -				ti,reset-bits = <
-> -					0x140 18 0x144 18 0 0
-> (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* pcie */
-> -					0x120 0  0x124 0  0 0
-> (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
-> -					0x730 10 0x734 10 0 0
-> (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
-> -					0x150 5  0x154 5  0 0
-> (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* svs gpu */
-> -				>;
-> -			};
-> +			#reset-cells = <1>;
->  		};
->  
->  		pericfg: syscon@10003000 {
-> -- 
-> 2.18.0
-> 
+Switch _qcom_cc_register_board_clk() to use parent_hws.
 
-Hello Matthias,
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-driver part is accepted by Setphen[1].
-dts part is also reviewed.
-Is these dts parts ok for you? (including patch 15 and 16)
-Or should I send another series for dts part?
-
-Thanks!
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-next
-
-BRs,
-Bo-Chen
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 75f09e6e057e..2014484fc66d 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -169,7 +169,7 @@ static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ 		factor->hw.init = &init_data;
+ 
+ 		init_data.name = name;
+-		init_data.parent_names = &path;
++		init_data.parent_hws = (const struct clk_hw*[]){ &fixed->hw };
+ 		init_data.num_parents = 1;
+ 		init_data.flags = 0;
+ 		init_data.ops = &clk_fixed_factor_ops;
+-- 
+2.35.1
 
