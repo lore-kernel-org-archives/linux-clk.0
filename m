@@ -2,102 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CEFC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 08:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C22CCA480
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 08:21:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238339AbiFTIFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 04:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57520 "EHLO
+        id S239448AbiFTIVP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 04:21:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237663AbiFTIFI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 04:05:08 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7DEDF0C
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:05:07 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id a13so6097706lfr.10
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:05:07 -0700 (PDT)
+        with ESMTP id S239170AbiFTIVN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 04:21:13 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C88B12094
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:21:10 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id g25so19516968ejh.9
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 01:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bE48RbRziw6wh6f5dFGSQa/Uf6Ukc2JO5uYeJgs1cWs=;
-        b=K8y9ZTfMsDIMABKhnvNbS+HCun1oCfFgMzuKsKL3F+uhWMW6rlw3QvmG0i/JQhJYLh
-         4V9jTqgKF/dCUQb0s1lCatRws3wQmk0LtkKthHyJ22wP1zPGkth4ZgF68tQLPpg2odqd
-         C6IjaSkdkEvp1cXWKrJh64g2PJt1QNtButWQZo/YDyjM2e/SvuruA0oAWU8zMbdMJpxN
-         6uKmW6PbJgSFuyQiHFeVfM7iHVpjTqXNCL71BSx7DC1aGEMDW0MVbXivnvpWrQa6CQlM
-         wZnq4eps5dGnO6oJH7h9pEfNvJaoT4RVoVq3xVYBMZ2PohpzdxkZ2hxHbPxkxAcgXB4E
-         Tx/g==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=H2+1Br+WPxKlr7rhA9GfS8O/m05TRKE7h+ScGuyJAog=;
+        b=JC5OvhqSI3YDLB4ulNcwLiuwrq3174cHPyMi4JeV8uCx84M4SI/6pAzWSwwGIAmo9i
+         p6t9Ivqkdqui3xsiy3Ee0xUhCcJ6w6+jOOIte/Ii6tUtK/BAsuBJ911XGEpGvt1aqiYK
+         QTB7y+CxG1pWhpmx+BPbgHhnHz3voafRZyRc6YsvqsKPdcyWzXQRLQbkHOigs0ZlkeFH
+         UL50DeYMUcOj2rjwGCiX7h9nrnJgw2WRLPQIjCZFjqUqjMVmYlDyNEZWlZCUo4E9gHJJ
+         IdoUff+QZ89fSbkrQWHgF2KZiJcF2i2h9l+lVFA3pPJTh+u+icUmTajeydSWfkGyDcCv
+         +fHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=bE48RbRziw6wh6f5dFGSQa/Uf6Ukc2JO5uYeJgs1cWs=;
-        b=Sc2mkMdS4hpunjce6VqkpugD9bXDZ8mNgP27PfgrLvUt0ZoADblrz0enJB9YVB/TCC
-         Yxq5Exx0hcB+ZWgDozRX3sgqsoHG1CqsQkodKagZsSYhhx06n7ybcEPhfTscDGg8YvYB
-         vSw6g6WBZyXvBPrvR3S9ArneL+9KKzMz+uIuWikevGFRbo41CP+X8MSZi/cP+zT2RP7W
-         PKChF9dAB82scLxfnPjpOPTo9QGsxIHq2znkQ4kN9gXsLN0U/Ka8w26vizRfvFKLB9hF
-         m+XckqZmvcEFowSrcc6fQnIbQNH+kznaRWTN1TLhGfat0qAGWm2Nb7EvTdNaF40VODYZ
-         Z4Og==
-X-Gm-Message-State: AJIora91avI/w3VM6QuPltjpi1U9j0+oGEiZWp6EX261RC1J1Ba8j8OB
-        PWgw/phrJsI55IM7tCQ4T9BldPsFHdId8CNR
-X-Google-Smtp-Source: AGRyM1u7EeQRYIZa5WGY9+0pF5xUtgsrvjnXSzgboqVIi7X/ft8Hfjty3ErYOHEMofjKK/9zFdl5nw==
-X-Received: by 2002:a05:6512:2282:b0:479:7a60:5e16 with SMTP id f2-20020a056512228200b004797a605e16mr13005397lfu.101.1655712306161;
-        Mon, 20 Jun 2022 01:05:06 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id j10-20020a056512344a00b0047939239567sm1668706lfr.240.2022.06.20.01.05.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 01:05:05 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-msm8994: use parent_hws for gpll0/4
-Date:   Mon, 20 Jun 2022 11:05:05 +0300
-Message-Id: <20220620080505.1573948-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
+        bh=H2+1Br+WPxKlr7rhA9GfS8O/m05TRKE7h+ScGuyJAog=;
+        b=pJhtQUJc02DdY35ZejIV+Jox0239KRin7HDxCKjPOeIExalYskM5daASp/hy5xvso+
+         0qOda5/WWJxmwhsC3TDfY9SDvq/3oNzNBi6fsB2gX4CnXYK3Xs1bbjKQo0Qi1vrRLz7e
+         mSSXwppeLXxaZ9R2h3y5wB1quP0DIWAvPG/qICtMPPbK5CySiNv33+/sSM/O1dPZ0yY6
+         RorHOiOnBapx/eNQcpeI22hp2g4n6UF579JlV+5ltnwpn15dRa9gSEt/MAIBvJd+lrA/
+         yu+QFu9ruMBbkFsE4hAToEbwKiqNZRT//lL6s1sqn2DXpsKy0+geGW/Eyzxux4Z8ewE8
+         cVxA==
+X-Gm-Message-State: AJIora8dsDHzgWWcP40VU9hTZhBkRGv8WaezA+Rsz2VKV3L1mFLc1m8w
+        HOB4JaHpmgo1qF1uzpCSD9C9xQ==
+X-Google-Smtp-Source: AGRyM1vUUFN5yFrpsDyCCDudDRBU4X7vKD37ZJhGh+DJw/CUxCKNVKu2v2/I8EJ7euaQXqIHibedZQ==
+X-Received: by 2002:a17:906:72de:b0:711:f8c8:ba00 with SMTP id m30-20020a17090672de00b00711f8c8ba00mr20299153ejl.586.1655713268738;
+        Mon, 20 Jun 2022 01:21:08 -0700 (PDT)
+Received: from [192.168.0.207] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id h20-20020a1709070b1400b006fe7d269db8sm5469823ejl.104.2022.06.20.01.21.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jun 2022 01:21:08 -0700 (PDT)
+Message-ID: <040f149b-c441-c778-6d4f-f3b2b2afaf4e@linaro.org>
+Date:   Mon, 20 Jun 2022 10:21:06 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 05/18] dt-binding: clk: npcm845: Add binding for
+ Nuvoton NPCM8XX Clock
+Content-Language: en-US
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220619151225.209029-1-tmaimon77@gmail.com>
+ <20220619151225.209029-6-tmaimon77@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220619151225.209029-6-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use parent_hws for two remaining clocks in gcc-msm8994 that used
-parent_names.
+On 19/06/2022 17:12, Tomer Maimon wrote:
+> Add binding for the Arbel BMC NPCM8XX Clock controller.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 49 +++++++++++++++++++
+>  .../dt-bindings/clock/nuvoton,npcm8xx-clock.h | 49 +++++++++++++++++++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> new file mode 100644
+> index 000000000000..3d4fddc090ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton NPCM8XX Clock Controller Binding
+> +
+> +maintainers:
+> +  - Tomer Maimon <tmaimon77@gmail.com>
+> +
+> +description: |
+> +  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
+> +  generates and supplies clocks to all modules within the BMC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nuvoton,npcm845-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
+> +      list of NPCM8XX clock IDs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/gcc-msm8994.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Use same quotes through your patchset - either " or '. Do not mix.
 
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 6b702cdacbf2..0f52c48e89d8 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -52,7 +52,9 @@ static struct clk_alpha_pll_postdiv gpll0 = {
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0",
--		.parent_names = (const char *[]) { "gpll0_early" },
-+		.parent_hws = (const struct clk_hw*[]){
-+			&gpll0_early.clkr.hw
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_alpha_pll_postdiv_ops,
- 	},
-@@ -81,7 +83,9 @@ static struct clk_alpha_pll_postdiv gpll4 = {
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll4",
--		.parent_names = (const char *[]) { "gpll4_early" },
-+		.parent_hws = (const struct clk_hw*[]){
-+			&gpll4_early.clkr.hw
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_alpha_pll_postdiv_ops,
- 	},
--- 
-2.35.1
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    ahb {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@f0801000 {
+> +            compatible = "nuvoton,npcm845-clk";
+> +            reg = <0x0 0xf0801000 0x0 0x1000>;
+> +            #clock-cells = <1>;
+> +        };
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
+> new file mode 100644
+> index 000000000000..e5cce08b00e1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/nuvoton,npcm8xx-clock.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 
+My comment about filename is still waiting to be resolved. I asked for
+same filename as bindings in v1.
+
+https://lore.kernel.org/all/CAP6Zq1gXEqqquKzxTHoxYnvh2LCGt-ES+k=aX61FKyHW5WB62w@mail.gmail.com/
+
+I am still going to NAK it if it is not implemented.
+
+Best regards,
+Krzysztof
