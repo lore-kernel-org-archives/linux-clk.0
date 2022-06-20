@@ -2,105 +2,349 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12312C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 17:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8F3C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 17:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241884AbiFTRSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 13:18:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48906 "EHLO
+        id S243781AbiFTR7z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 13:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241585AbiFTRSi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 13:18:38 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B979313D5E
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 10:18:37 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3L2c-0005k3-39; Mon, 20 Jun 2022 19:18:22 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3L2X-001gOU-PV; Mon, 20 Jun 2022 19:18:19 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3L2Y-0002YA-Di; Mon, 20 Jun 2022 19:18:18 +0200
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Russell King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-clk@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] clk: Fix pointer casting to prevent oops in devm_clk_release()
-Date:   Mon, 20 Jun 2022 19:18:15 +0200
-Message-Id: <20220620171815.114212-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <0cdc7588-4dc3-266f-aa37-86bf5996497f@samsung.com>
-References: <0cdc7588-4dc3-266f-aa37-86bf5996497f@samsung.com>
+        with ESMTP id S244902AbiFTR7V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 13:59:21 -0400
+Received: from smtp.smtpout.orange.fr (smtp05.smtpout.orange.fr [80.12.242.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AEE613DDA
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 10:59:13 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 3LfzokdyR6rrE3LfzoiFNn; Mon, 20 Jun 2022 19:59:11 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Mon, 20 Jun 2022 19:59:11 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <8e35f372-0ce6-fd91-3ce0-3aae2f1f27c2@wanadoo.fr>
+Date:   Mon, 20 Jun 2022 19:59:03 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1515; h=from:subject; bh=cF50jFuVNba4Yuy4COxLF2/k5SujMAtkqiBzC14IXxs=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBisKvUwuyPoQz6bqSEr3t7tbvS3LQhpxOD4W/d/wy9 HHMkoF6JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYrCr1AAKCRDB/BR4rcrsCZJBB/ wPQX1DX0h49o9NBGT5uO8u8IcXFwb0w9ketiWKFdAAn8aZS1iPVsDeQJJTlo+cgBODNwpOAkGPPYT8 w1/1ySjIkB2Zbpl6p5Nc8x8zeTAtNfz/0+8pGmPUshTMGj41ZaRBGvXGEOx2DjTR7TOgrAH/a4OjUc 42Y/IKiJkt1AHFv2LLFTap5ymuPZ3EaTY/H2zQQwzSGoCFeky2L6b2D1IoM82LTvhbjPtwsZbwr6Ue Hs1HM3nHMg0xiwTtEYf2Nv+HDgx0OobaE9wlhMZL0XvwG9PKDy7bKE8D8RxP14hCK+LiBZGkrnpvpg yP2txMf/vVir2uVqadDsSbGTYOm7bF
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 06/18] clk: npcm8xx: add clock controller
+Content-Language: fr
+To:     tmaimon77@gmail.com
+Cc:     arnd@arndb.de, avifishman70@gmail.com, benjaminfair@google.com,
+        biju.das.jz@bp.renesas.com, bjorn.andersson@linaro.org,
+        catalin.marinas@arm.com, daniel.lezcano@linaro.org,
+        devicetree@vger.kernel.org, geert+renesas@glider.be,
+        gregkh@linuxfoundation.org, j.neuschaefer@gmx.net,
+        jirislaby@kernel.org, joel@jms.id.au,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux@roeck-us.net, lkundrak@v3.sk,
+        marcel.ziswiler@toradex.com, mturquette@baylibre.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, olof@lixom.net,
+        p.zabel@pengutronix.de, robert.hancock@calian.com,
+        robh+dt@kernel.org, sboyd@kernel.org, shawnguo@kernel.org,
+        tali.perry1@gmail.com, tglx@linutronix.de, venture@google.com,
+        vkoul@kernel.org, will@kernel.org, wim@linux-watchdog.org,
+        yuenn@google.com
+References: <20220619151225.209029-1-tmaimon77@gmail.com>
+ <20220619151225.209029-7-tmaimon77@gmail.com>
+ <6566c16c-f36f-6806-3879-3e6b40713e5e@wanadoo.fr>
+ <CAP6Zq1jT3fbbRzDhriPT7JVYsrAOVGa4ukL_3yh_=wj-4f6zyA@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAP6Zq1jT3fbbRzDhriPT7JVYsrAOVGa4ukL_3yh_=wj-4f6zyA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The release function is called with a pointer to the memory returned by
-devres_alloc(). I was confused about that by the code before the
-generalization that used a struct clk **ptr.
-
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-On Mon, Jun 20, 2022 at 05:26:12PM +0200, Marek Szyprowski wrote:
-> > -   clk_put(*(struct clk **)res);
-> > +   struct devm_clk_state *state = *(struct devm_clk_state **)res;
+Le 20/06/2022 à 14:48, Tomer Maimon a écrit :
+> Hi Christophe,
 > 
-> This should be:
+> Thanks for your comments.
 > 
-> struct devm_clk_state *state = res;
+> On Sun, 19 Jun 2022 at 20:14, Christophe JAILLET
+> <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+>>
+>> Le 19/06/2022 à 17:12, Tomer Maimon a écrit :
+>>> Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
+>>> generates and supplies clocks to all modules within the BMC.
+>>>
+>>> Signed-off-by: Tomer Maimon <tmaimon77-Re5JQEeQqe8AvxtiuMwx3w-XMD5yJDbdMQAvxtiuMwx3w@public.gmane.organe.org>
+>>> ---
+>>>    drivers/clk/Kconfig       |   6 +
+>>>    drivers/clk/Makefile      |   1 +
+>>>    drivers/clk/clk-npcm8xx.c | 760 ++++++++++++++++++++++++++++++++++++++
+>>>    3 files changed, 767 insertions(+)
+>>>    create mode 100644 drivers/clk/clk-npcm8xx.c
+>>>
+>>
+>> [...]
+>>
+>> Hi, below a few comments related to error handling and possible
+>> dev_err_probe() usage to savec a few LoC.
+>>
+>> CJ
+>>
+>>> +static struct clk_hw *
+>>> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
+>>> +                      const char *name, const char *parent_name,
+>>> +                      unsigned long flags)
+>>> +{
+>>> +     struct npcm8xx_clk_pll *pll;
+>>> +     struct clk_init_data init;
+>>> +     struct clk_hw *hw;
+>>> +     int ret;
+>>> +
+>>> +     pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+>>> +     if (!pll)
+>>> +             return ERR_PTR(-ENOMEM);
+>>> +
+>>> +     pr_debug("%s reg, name=%s, p=%s\n", __func__, name, parent_name);
+>>> +
+>>> +     init.name = name;
+>>> +     init.ops = &npcm8xx_clk_pll_ops;
+>>> +     init.parent_names = &parent_name;
+>>> +     init.num_parents = 1;
+>>> +     init.flags = flags;
+>>> +
+>>> +     pll->pllcon = pllcon;
+>>> +     pll->hw.init = &init;
+>>> +
+>>> +     hw = &pll->hw;
+>>> +
+>>> +     ret = devm_clk_hw_register(dev, hw);
+>>> +     if (ret) {
+>>> +             kfree(pll);
+>>
+>> Hi,
+>>
+>> there is no other kfree(() in this patch. It is handled by the framework
+>> once the clk is registered or should there be another kfree() somewhere
+>> or should pll be devm_alloc()'ed?
+> Could use the devm_kzalloc but the hw is sent to the devm function and
+> not the pll struct.
+
+My point, as explained below is that some resources are managed (i.e. 
+allocated by a devm_ function and released by the framework if the probe 
+fails or if the driver is removed), but not all.
+
+I think that it is not consistent and that maybe the release of the 
+corresponding resources should be handled in a way or another.
+
+>>
+>>
+>>> +             return ERR_PTR(ret);
+>>> +     }
+>>> +
+>>> +     return hw;
+>>> +}
+>>> +
+>>
+>> [...]
+>>
+>>> +static int npcm8xx_clk_probe(struct platform_device *pdev)
+>>> +{
+>>> +     struct clk_hw_onecell_data *npcm8xx_clk_data;
+>>> +     struct device *dev = &pdev->dev;
+>>> +     void __iomem *clk_base;
+>>> +     struct clk_hw *hw;
+>>> +     int i;
+>>> +
+>>> +     npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
+>>> +                                                      NPCM8XX_NUM_CLOCKS),
+>>> +                                     GFP_KERNEL);
+>>> +     if (!npcm8xx_clk_data)
+>>> +             return -ENOMEM;
+>>> +
+>>> +     clk_base = devm_platform_ioremap_resource(pdev, 0);
+>>> +     if (IS_ERR(clk_base))
+>>> +             return PTR_ERR(clk_base);
+>>> +
+>>> +     npcm8xx_clk_data->num = NPCM8XX_NUM_CLOCKS;
+>>> +
+>>> +     for (i = 0; i < NPCM8XX_NUM_CLOCKS; i++)
+>>> +             npcm8xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+>>> +
+>>> +     /* Reference 25MHz clock */
+>>> +     hw = clk_hw_register_fixed_rate(dev, "refclk", NULL, 0, NPCM8XX_REF_CLK);
+>>
+>> Other resoruces are managed, but not this one.
+>> Is it on purpose?
+> This is the fixed clock - the SoC Reference clock, what do you mean by
+> not managed?
+
+clk_hw_register_fixed_rate() allocates some memory. If an error occures 
+later on or if the driver is .remove()'ed, this memory will leak. 
+(unless I missed something).
+
+Most of your other function calls use some devm_ variant, so the 
+corresponding resources are released automatically in case of error or 
+if the driver is unloaed.
+
+>> Is an error handling path needed or a devm_add_action_or_reset()?
+>>
+>>> +     if (IS_ERR(hw))
+>>> +             return PTR_ERR(hw);
+>>> +     npcm8xx_clk_data->hws[NPCM8XX_CLK_REFCLK] = hw;
+>>> +
+>>> +     /* Register plls */
+>>> +     for (i = 0; i < ARRAY_SIZE(npcm8xx_plls); i++) {
+>>> +             const struct npcm8xx_clk_pll_data *pll_data = &npcm8xx_plls[i];
+>>> +
+>>> +             hw = npcm8xx_clk_register_pll(dev, clk_base + pll_data->reg,
+>>> +                                           pll_data->name,
+>>> +                                           pll_data->parent_name,
+>>> +                                           pll_data->flags);
+>>> +             if (IS_ERR(hw)) {
+>>> +                     dev_err(dev, "npcm8xx_clk: Can't register pll\n");
+>>> +                     return PTR_ERR(hw);
+>>> +             }
+>>> +
+>>> +             if (pll_data->onecell_idx >= 0)
+>>> +                     npcm8xx_clk_data->hws[pll_data->onecell_idx] = hw;
+>>> +     }
+>>> +
+>>> +     /* Register fixed dividers */
+>>> +     hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_DIV2,
+>>> +                                            NPCM8XX_CLK_S_PLL1, 0, 1, 2);
+>>> +     if (IS_ERR(hw)) {
+>>> +             dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
+>>> +             return PTR_ERR(hw);
+>>
+>> return dev_err_probe()?
+> it will save online but still enter to a bigger function, I am not
+> sure that the error will be EPROBE_DEFER, and we have returned the
+> error in the code.
+
+It is mostly a matter of taste, so if you don't think my proposal 
+improves anything, just forget about it.
+
+>>
+>>> +     }
+>>> +
+>>> +     hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_DIV2,
+>>> +                                            NPCM8XX_CLK_S_PLL2, 0, 1, 2);
+>>> +     if (IS_ERR(hw)) {
+>>> +             dev_err(dev, "npcm8xx_clk: Can't register pll div2\n");
+>>> +             return PTR_ERR(hw);
+>>
+>> Same here and in other calls below.
+>>
+>>> +     }
+>>> +
+>>> +     hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_CLK,
+>>> +                                            NPCM8XX_CLK_S_CPU_MUX, 0, 1, 2);
+>>> +     if (IS_ERR(hw)) {
+>>> +             dev_err(dev, "npcm8xx_clk: Can't register ckclk div2\n");
+>>> +             return PTR_ERR(hw);
+>>> +     }
+>>> +
+>>> +     hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
+>>> +                                            NPCM8XX_CLK_S_TH, 0, 1, 2);
+>>> +     if (IS_ERR(hw)) {
+>>> +             dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
+>>> +             return PTR_ERR(hw);
+>>> +     }
+>>> +
+>>> +     hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
+>>> +                                            NPCM8XX_CLK_S_AXI, 0, 1, 2);
+>>> +     if (IS_ERR(hw)) {
+>>> +             dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
+>>> +             return PTR_ERR(hw);
+>>> +     }
+>>> +
+>>> +     /* Register muxes */
+>>> +     for (i = 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
+>>> +             const struct npcm8xx_clk_mux_data *mux_data = &npcm8xx_muxes[i];
+>>> +
+>>> +             hw = clk_hw_register_mux_table(dev, mux_data->name,
+>>> +                                            mux_data->parent_names,
+>>> +                                            mux_data->num_parents,
+>>> +                                            mux_data->flags,
+>>> +                                            clk_base + NPCM8XX_CLKSEL,
+>>> +                                            mux_data->shift,
+>>> +                                            mux_data->mask, 0,
+>>> +                                            mux_data->table,
+>>> +                                            &npcm8xx_clk_lock);
+>>> +
+>> Same here. Error handling?
+> what do you mean?
+
+I mean the same as above. clk_hw_register_mux_table() allocates some 
+memory. If an error occures later on or if the driver is .remove()'ed, 
+this memory will leak. (unless I missed something).
+
+Error handling was not a really good wording. You should read "should 
+the resources allocated by this function be released if an error occures 
+below"
+
+>>
+>>> +             if (IS_ERR(hw)) {
+>>> +                     dev_err(dev, "npcm8xx_clk: Can't register mux\n");
+>>> +                     return PTR_ERR(hw);
+>>> +             }
+>>> +
+>>> +             if (mux_data->onecell_idx >= 0)
+>>> +                     npcm8xx_clk_data->hws[mux_data->onecell_idx] = hw;
+>>> +     }
+>>> +
+>>> +     /* Register clock dividers specified in npcm8xx_divs */
+>>> +     for (i = 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
+>>> +             const struct npcm8xx_clk_div_data *div_data = &npcm8xx_divs[i];
+>>> +
+>>> +             hw = clk_hw_register_divider(dev, div_data->name,
+>>> +                                          div_data->parent_name,
+>>> +                                          div_data->flags,
+>>> +                                          clk_base + div_data->reg,
+>>> +                                          div_data->shift, div_data->width,
+>>> +                                          div_data->clk_divider_flags,
+>>> +                                          &npcm8xx_clk_lock);
+>>
+>> devm_clk_hw_register_divider()?
+> Will do.
+
+Here, the devm_ alternative exist. But my point is the same as above. 
+(release of resources in cae of error or if the driver is removed)
+
+>>
+>>> +             if (IS_ERR(hw)) {
+>>> +                     dev_err(dev, "npcm8xx_clk: Can't register div table\n");
+>>> +                     return PTR_ERR(hw);
+>>> +             }
+>>> +
+>>> +             if (div_data->onecell_idx >= 0)
+>>> +                     npcm8xx_clk_data->hws[div_data->onecell_idx] = hw;
+>>> +     }
+>>> +
+>>> +     return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>>> +                                        npcm8xx_clk_data);
+>>> +}
+>>> +
+>>> +static const struct of_device_id npcm8xx_clk_dt_ids[] = {
+>>> +     { .compatible = "nuvoton,npcm845-clk", },
+>>> +     { }
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, npcm8xx_clk_dt_ids);
+>>> +
+>>> +static struct platform_driver npcm8xx_clk_driver = {
+>>> +     .probe  = npcm8xx_clk_probe,
+>>> +     .driver = {
+>>> +             .name = "npcm8xx_clk",
+>>> +             .of_match_table = npcm8xx_clk_dt_ids,
+>>> +     },
+>>> +};
+>>> +
+>>> +static int __init npcm8xx_clk_driver_init(void)
+>>> +{
+>>> +     return platform_driver_register(&npcm8xx_clk_driver);
+>>> +}
+>>> +arch_initcall(npcm8xx_clk_driver_init);
+>>> +
+>>
 > 
-> otherwise it nukes badly during cleanup:
-> [...]
-
-How embarrassing. I understood how I confused that, but I wonder how
-that didn't pop up earlier.
-
-FTR: I didn't test that now, but assume you did. My focus now was to get
-out an applicable patch fast.
-
-Thanks for your report
-Uwe
-
- drivers/clk/clk-devres.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index c822f4ef1584..1bb086695051 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -11,7 +11,7 @@ struct devm_clk_state {
- 
- static void devm_clk_release(struct device *dev, void *res)
- {
--	struct devm_clk_state *state = *(struct devm_clk_state **)res;
-+	struct devm_clk_state *state = res;
- 
- 	if (state->exit)
- 		state->exit(state->clk);
-
-base-commit: abae8e57e49aa75f6db76aa866c775721523908f
--- 
-2.36.1
+> Best regards,
+> 
+> Tomer
+> 
 
