@@ -2,374 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CB6C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF13BC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 15:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242640AbiFTMsZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 08:48:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59742 "EHLO
+        id S244432AbiFTPUh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jun 2022 11:20:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237161AbiFTMsY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 08:48:24 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6148F10FEB;
-        Mon, 20 Jun 2022 05:48:23 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id a29so17094626lfk.2;
-        Mon, 20 Jun 2022 05:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yoBzSqACQn33+ca8WrFRr+QEzFTSdDl1Gyu09fSh7Yk=;
-        b=qnRqP2NIM1rA5mQ8bZSBCDGOv+6XdmHAwIWBLdG4hV1eyYgpuKzUfKvGSQvRoz+cuE
-         AoisPbz2tu+KCdOJVfSjOW/8+n+Ma4XdEyDEaUdyVEPjpyHmclosj34FzdWtW1rtnV/8
-         BMqy2f6ugXS4nsAehjPOkOK73Nepv7VWISD6akvHn5qtkdKS/buqR/vZVDluhiMmbfKp
-         0Aducig3sZqNCXtplUq1b0PeGXb30NJVYeRnGvCKivxHj5NMTUbOYU7FNZ0ujK2CwmKc
-         c16wcOK02CLxbmXTBR/JZaPioV1om8t2qTFCNcX4LEc3ry+bPVmvYv1tuCTc9r34bz4C
-         EM7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yoBzSqACQn33+ca8WrFRr+QEzFTSdDl1Gyu09fSh7Yk=;
-        b=xyI+jxf7Qo1fIT9/NFJzpT+NySVTvoiH1sxMIrL9r6I8ZX3rIUwDt9UxWKAaeMDO62
-         mje6XubhDX6alwx3ku+In+4uDzlzPM+79Rmv9bNGj/eEZuCHij6+DqYGHYrAocpkeciM
-         wrtlFPijxq5eBGJoaiS5gpUV4CgNnYy06IKmXyXJ14bcLnG6CAkcEvNem2VtWWt8u8vt
-         Xt/WF1XRkxmUv8sv92bR56PO5/tPc3XPYz2Dx5s/n+EhTiQEsmBnnpAGVVcLZeT7H/HE
-         IQ2X7Hoy3KwyztbRM2DU0PBICPd2ldvox1wqHN/MuV+Q+IP8vKxF7DgUA1P3CJQT/u6J
-         0dOw==
-X-Gm-Message-State: AJIora/dnnfIrH5imPbwWJv6GNBIrMQK1lMATrSN8cBgVKxkaRMK/Oq5
-        q1j1X8PlAuBLVBQCdKcsKoJdT6CofICOuiYcjWU=
-X-Google-Smtp-Source: AGRyM1uOZaiLHFcU0DmO5rkF3sDamaM4UPkYUTs4W17rltoOoI/9h4hu2+EdnbBzetM6WfkARuWTWvp1igeAytcvU3I=
-X-Received: by 2002:a05:6512:1685:b0:47f:5ec2:becc with SMTP id
- bu5-20020a056512168500b0047f5ec2beccmr6829516lfb.639.1655729301528; Mon, 20
- Jun 2022 05:48:21 -0700 (PDT)
+        with ESMTP id S244457AbiFTPUM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 11:20:12 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC60F1EECE;
+        Mon, 20 Jun 2022 08:13:40 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25KC9fn8006964;
+        Mon, 20 Jun 2022 17:13:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=1oPWdJ+//Nblq7WtAbY8XqP8ikmhOJuE2xTdicCqfMU=;
+ b=fa2IZogG8gkWE4+RBdVPb2APCY/mXSlPIHrTJZfEMit/C7+0+QHRWrS40jyuHxv1ouR8
+ 6tJaZljyfwN0RzKGdvvh5eAOzyEpy959bS9BSmflCibMB5Nnp7Kzg11gB5jiMHlFtiR1
+ 8jCmExJN0SfOh/P9FDEmynhPCBz6/kKI8VVtUfq6ybn7yIbICNOrjXi+yddnawzxE1bp
+ pdEp4YDx5ee5CUUwg80uY4PrZCs7Orv3EWpjKMXblh+kszA3d7OUZgedDau2v4xGF5gU
+ 8z+W5lMwbeurW268C+RwnwfJOwX06kolDxa/zGX28bJjJ9nAteDib9L0hhepUXK+1RAR DA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3gtnj9tsmd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 20 Jun 2022 17:13:23 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 212F010002A;
+        Mon, 20 Jun 2022 17:13:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0FB8722D18A;
+        Mon, 20 Jun 2022 17:13:23 +0200 (CEST)
+Received: from [10.201.21.93] (10.75.127.118) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Mon, 20 Jun
+ 2022 17:13:21 +0200
+Message-ID: <ce4b0d5f-398e-7d2d-91e2-883e16c2dec1@foss.st.com>
+Date:   Mon, 20 Jun 2022 17:13:21 +0200
 MIME-Version: 1.0
-References: <20220619151225.209029-1-tmaimon77@gmail.com> <20220619151225.209029-7-tmaimon77@gmail.com>
- <6566c16c-f36f-6806-3879-3e6b40713e5e@wanadoo.fr>
-In-Reply-To: <6566c16c-f36f-6806-3879-3e6b40713e5e@wanadoo.fr>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Mon, 20 Jun 2022 15:48:10 +0300
-Message-ID: <CAP6Zq1jT3fbbRzDhriPT7JVYsrAOVGa4ukL_3yh_=wj-4f6zyA@mail.gmail.com>
-Subject: Re: [PATCH v3 06/18] clk: npcm8xx: add clock controller
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 00/14] Introduction of STM32MP13 RCC driver (Reset
+ Clock Controller)
+Content-Language: en-US
+To:     <gabriel.fernandez@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Olof Johansson <olof@lixom.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Robert Hancock <robert.hancock@calian.com>,
-        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Patrick Venture <venture@google.com>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Nancy Yuen <yuenn@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
+From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20220516070600.7692-1-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.118]
+X-ClientProxiedBy: GPXDAG2NODE5.st.com (10.75.127.69) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-20_05,2022-06-17_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christophe,
+Hi Gabriel
 
-Thanks for your comments.
+On 5/16/22 09:05, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> v4: (rebased on next-20220512)
+>    - rename scmi_shm@0 node into scmi-sram@0
+>    - move sram node
+>    - add reserved memory for optee
+> 
+> v3:
+>    - cosmetic change from Stephen Boyd
+>    - rename some functions in clk-stm32-core
+>    - add missing static for variables or functions
+> 
+> v2:
+>    - Resend because patch 9,10,12,13 has not been sent
+>    - add Reviewed by Krzysztof Kozlowski for patch 1
+> 
+> Gabriel Fernandez (14):
+>    dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
+>    clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
+>    clk: stm32mp13: add stm32_mux clock management
+>    clk: stm32mp13: add stm32_gate management
+>    clk: stm32mp13: add stm32 divider clock
+>    clk: stm32mp13: add composite clock
+>    clk: stm32mp13: manage secured clocks
+>    clk: stm32mp13: add all STM32MP13 peripheral clocks
+>    clk: stm32mp13: add all STM32MP13 kernel clocks
+>    clk: stm32mp13: add multi mux function
+>    clk: stm32mp13: add safe mux management
+>    ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
+>    ARM: dts: stm32: add RCC on STM32MP13x SoC family
+>    ARM: dts: stm32: add optee reserved memory on stm32mp135f-dk
+> 
+>   .../bindings/clock/st,stm32mp1-rcc.yaml       |    2 +
+>   arch/arm/boot/dts/stm32mp131.dtsi             |  142 +-
+>   arch/arm/boot/dts/stm32mp133.dtsi             |    4 +-
+>   arch/arm/boot/dts/stm32mp135f-dk.dts          |   16 +
+>   arch/arm/boot/dts/stm32mp13xf.dtsi            |    3 +-
+>   drivers/clk/Kconfig                           |    5 +
+>   drivers/clk/Makefile                          |    1 +
+>   drivers/clk/stm32/Makefile                    |    1 +
+>   drivers/clk/stm32/clk-stm32-core.c            |  695 +++++++
+>   drivers/clk/stm32/clk-stm32-core.h            |  188 ++
+>   drivers/clk/stm32/clk-stm32mp13.c             | 1620 +++++++++++++++
+>   drivers/clk/stm32/reset-stm32.c               |  122 ++
+>   drivers/clk/stm32/reset-stm32.h               |    8 +
+>   drivers/clk/stm32/stm32mp13_rcc.h             | 1748 +++++++++++++++++
+>   include/dt-bindings/clock/stm32mp13-clks.h    |  229 +++
+>   include/dt-bindings/reset/stm32mp13-resets.h  |  100 +
+>   16 files changed, 4813 insertions(+), 71 deletions(-)
+>   create mode 100644 drivers/clk/stm32/Makefile
+>   create mode 100644 drivers/clk/stm32/clk-stm32-core.c
+>   create mode 100644 drivers/clk/stm32/clk-stm32-core.h
+>   create mode 100644 drivers/clk/stm32/clk-stm32mp13.c
+>   create mode 100644 drivers/clk/stm32/reset-stm32.c
+>   create mode 100644 drivers/clk/stm32/reset-stm32.h
+>   create mode 100644 drivers/clk/stm32/stm32mp13_rcc.h
+>   create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
+>   create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
+> 
 
-On Sun, 19 Jun 2022 at 20:14, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 19/06/2022 =C3=A0 17:12, Tomer Maimon a =C3=A9crit :
-> > Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
-> > generates and supplies clocks to all modules within the BMC.
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77-Re5JQEeQqe8AvxtiuMwx3w@public.gm=
-ane.org>
-> > ---
-> >   drivers/clk/Kconfig       |   6 +
-> >   drivers/clk/Makefile      |   1 +
-> >   drivers/clk/clk-npcm8xx.c | 760 +++++++++++++++++++++++++++++++++++++=
-+
-> >   3 files changed, 767 insertions(+)
-> >   create mode 100644 drivers/clk/clk-npcm8xx.c
-> >
->
-> [...]
->
-> Hi, below a few comments related to error handling and possible
-> dev_err_probe() usage to savec a few LoC.
->
-> CJ
->
-> > +static struct clk_hw *
-> > +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
-> > +                      const char *name, const char *parent_name,
-> > +                      unsigned long flags)
-> > +{
-> > +     struct npcm8xx_clk_pll *pll;
-> > +     struct clk_init_data init;
-> > +     struct clk_hw *hw;
-> > +     int ret;
-> > +
-> > +     pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> > +     if (!pll)
-> > +             return ERR_PTR(-ENOMEM);
-> > +
-> > +     pr_debug("%s reg, name=3D%s, p=3D%s\n", __func__, name, parent_na=
-me);
-> > +
-> > +     init.name =3D name;
-> > +     init.ops =3D &npcm8xx_clk_pll_ops;
-> > +     init.parent_names =3D &parent_name;
-> > +     init.num_parents =3D 1;
-> > +     init.flags =3D flags;
-> > +
-> > +     pll->pllcon =3D pllcon;
-> > +     pll->hw.init =3D &init;
-> > +
-> > +     hw =3D &pll->hw;
-> > +
-> > +     ret =3D devm_clk_hw_register(dev, hw);
-> > +     if (ret) {
-> > +             kfree(pll);
->
-> Hi,
->
-> there is no other kfree(() in this patch. It is handled by the framework
-> once the clk is registered or should there be another kfree() somewhere
-> or should pll be devm_alloc()'ed?
-Could use the devm_kzalloc but the hw is sent to the devm function and
-not the pll struct.
->
->
-> > +             return ERR_PTR(ret);
-> > +     }
-> > +
-> > +     return hw;
-> > +}
-> > +
->
-> [...]
->
-> > +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> > +{
-> > +     struct clk_hw_onecell_data *npcm8xx_clk_data;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     void __iomem *clk_base;
-> > +     struct clk_hw *hw;
-> > +     int i;
-> > +
-> > +     npcm8xx_clk_data =3D devm_kzalloc(dev, struct_size(npcm8xx_clk_da=
-ta, hws,
-> > +                                                      NPCM8XX_NUM_CLOC=
-KS),
-> > +                                     GFP_KERNEL);
-> > +     if (!npcm8xx_clk_data)
-> > +             return -ENOMEM;
-> > +
-> > +     clk_base =3D devm_platform_ioremap_resource(pdev, 0);
-> > +     if (IS_ERR(clk_base))
-> > +             return PTR_ERR(clk_base);
-> > +
-> > +     npcm8xx_clk_data->num =3D NPCM8XX_NUM_CLOCKS;
-> > +
-> > +     for (i =3D 0; i < NPCM8XX_NUM_CLOCKS; i++)
-> > +             npcm8xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
-> > +
-> > +     /* Reference 25MHz clock */
-> > +     hw =3D clk_hw_register_fixed_rate(dev, "refclk", NULL, 0, NPCM8XX=
-_REF_CLK);
->
-> Other resoruces are managed, but not this one.
-> Is it on purpose?
-This is the fixed clock - the SoC Reference clock, what do you mean by
-not managed?
-> Is an error handling path needed or a devm_add_action_or_reset()?
->
-> > +     if (IS_ERR(hw))
-> > +             return PTR_ERR(hw);
-> > +     npcm8xx_clk_data->hws[NPCM8XX_CLK_REFCLK] =3D hw;
-> > +
-> > +     /* Register plls */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_plls); i++) {
-> > +             const struct npcm8xx_clk_pll_data *pll_data =3D &npcm8xx_=
-plls[i];
-> > +
-> > +             hw =3D npcm8xx_clk_register_pll(dev, clk_base + pll_data-=
->reg,
-> > +                                           pll_data->name,
-> > +                                           pll_data->parent_name,
-> > +                                           pll_data->flags);
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register pll\n")=
-;
-> > +                     return PTR_ERR(hw);
-> > +             }
-> > +
-> > +             if (pll_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[pll_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     /* Register fixed dividers */
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_=
-DIV2,
-> > +                                            NPCM8XX_CLK_S_PLL1, 0, 1, =
-2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
-> > +             return PTR_ERR(hw);
->
-> return dev_err_probe()?
-it will save online but still enter to a bigger function, I am not
-sure that the error will be EPROBE_DEFER, and we have returned the
-error in the code.
->
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_=
-DIV2,
-> > +                                            NPCM8XX_CLK_S_PLL2, 0, 1, =
-2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register pll div2\n");
-> > +             return PTR_ERR(hw);
->
-> Same here and in other calls below.
->
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_C=
-LK,
-> > +                                            NPCM8XX_CLK_S_CPU_MUX, 0, =
-1, 2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register ckclk div2\n");
-> > +             return PTR_ERR(hw);
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
-> > +                                            NPCM8XX_CLK_S_TH, 0, 1, 2)=
-;
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
-> > +             return PTR_ERR(hw);
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
-> > +                                            NPCM8XX_CLK_S_AXI, 0, 1, 2=
-);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
-> > +             return PTR_ERR(hw);
-> > +     }
-> > +
-> > +     /* Register muxes */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
-> > +             const struct npcm8xx_clk_mux_data *mux_data =3D &npcm8xx_=
-muxes[i];
-> > +
-> > +             hw =3D clk_hw_register_mux_table(dev, mux_data->name,
-> > +                                            mux_data->parent_names,
-> > +                                            mux_data->num_parents,
-> > +                                            mux_data->flags,
-> > +                                            clk_base + NPCM8XX_CLKSEL,
-> > +                                            mux_data->shift,
-> > +                                            mux_data->mask, 0,
-> > +                                            mux_data->table,
-> > +                                            &npcm8xx_clk_lock);
-> > +
-> Same here. Error handling?
-what do you mean?
->
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register mux\n")=
-;
-> > +                     return PTR_ERR(hw);
-> > +             }
-> > +
-> > +             if (mux_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[mux_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     /* Register clock dividers specified in npcm8xx_divs */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
-> > +             const struct npcm8xx_clk_div_data *div_data =3D &npcm8xx_=
-divs[i];
-> > +
-> > +             hw =3D clk_hw_register_divider(dev, div_data->name,
-> > +                                          div_data->parent_name,
-> > +                                          div_data->flags,
-> > +                                          clk_base + div_data->reg,
-> > +                                          div_data->shift, div_data->w=
-idth,
-> > +                                          div_data->clk_divider_flags,
-> > +                                          &npcm8xx_clk_lock);
->
-> devm_clk_hw_register_divider()?
-Will do.
->
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register div tab=
-le\n");
-> > +                     return PTR_ERR(hw);
-> > +             }
-> > +
-> > +             if (div_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[div_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> > +                                        npcm8xx_clk_data);
-> > +}
-> > +
-> > +static const struct of_device_id npcm8xx_clk_dt_ids[] =3D {
-> > +     { .compatible =3D "nuvoton,npcm845-clk", },
-> > +     { }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, npcm8xx_clk_dt_ids);
-> > +
-> > +static struct platform_driver npcm8xx_clk_driver =3D {
-> > +     .probe  =3D npcm8xx_clk_probe,
-> > +     .driver =3D {
-> > +             .name =3D "npcm8xx_clk",
-> > +             .of_match_table =3D npcm8xx_clk_dt_ids,
-> > +     },
-> > +};
-> > +
-> > +static int __init npcm8xx_clk_driver_init(void)
-> > +{
-> > +     return platform_driver_register(&npcm8xx_clk_driver);
-> > +}
-> > +arch_initcall(npcm8xx_clk_driver_init);
-> > +
->
+DT Patches [12][13][14] applied on stm32-next.
 
-Best regards,
-
-Tomer
+Cheers
+Alex
