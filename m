@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A296C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 23:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD7ECCA481
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 23:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242736AbiFUXen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 19:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41006 "EHLO
+        id S229982AbiFUXep (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 19:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232103AbiFUXee (ORCPT
+        with ESMTP id S1355060AbiFUXee (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 19:34:34 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C2130F55
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:24 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id w6so7319544pfw.5
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:24 -0700 (PDT)
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E3030F5D
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id g8so13857486plt.8
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=sNiBBGtjCK+ZmFTWiJaqByp/lu5YMU+M8mXSHVMyVJw=;
-        b=ZwObd0CSO+MLtJB8wKqxSdosHAvmXMCbPRSKofeOUqh1e7CGe+kGO2qxWv2p9k1B7B
-         D2XP8nWKsQnjA/bdhaymxK61nIF/9mJXk4qUF1cwzuaZWi0dClahLj4YpOie/jEcmdH4
-         ANKE2bTH0uNQj4ex5hzZevgT5lHKEQ/cgsJ5pFUlS5mJqKr2jsHtOkt4Akw2FDY0Bebt
-         RE+Nd5LVhyyXf6BIwYezVn3QeWL3joNxCjiVkzMZGLA9bxi63u1NdC67LIfzsOYUWf8b
-         P72tcqoXNi4QzoTPhAmhHprPO3mDsBbnpcuibaklq11m7WZrgxgO2ak7+PYsfkDP27DB
-         SfrA==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=ViEFcKjroQXvwBGepxaEQeL4Q+Xf8p05t8vesOONSwM=;
+        b=iOIeFKS1PDNNnEKTQ8DM/+fsNaaVzzQfZlWTkM4SC+6zPlpmnT9VqwCHD+OtHDxbS2
+         f2UOsP7lPVsfJbYwLAtil9gq2RnDBR5wcz81MpZntsQ555etBAmE+LbxT6cyVnApN22U
+         BxngAJICMfBz2+EqJOJgVogunEW0KBlODrekdbqrcAgBA6SSKOuA+PEelKLKvMJZZFmg
+         /7gmaYjRfWExSJaW68nQmasr2sUgBKcDiAvoh8JRnI+/Hq7BQ02tJkHeVQcI3hd5kYF8
+         AWPF9ppLjp4a2UTMZqD0MdLYMwjmzz/oiCuiu+U8G5t8EwfQvILbyFD3q6Ikw+21yZXY
+         dCUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sNiBBGtjCK+ZmFTWiJaqByp/lu5YMU+M8mXSHVMyVJw=;
-        b=1siWThuCgHHuy6DcxUmYef8ZwcQQFW4Ugc7aPdhH02HjOTJCkz93D4QA7DIm11yBMT
-         pLd4BdOu9iuCSfRImzE9gG2a8gtozcda3f92w2mGY9KUzVK7jbYRhlp4Uzm9D3V4wvCg
-         d8nBt4QVI1oKiKh1XD19UAK8WNorf5/pM3YAo8keNgb1gzEDKmCPBxf9B0KScsj8L6R8
-         WzQFv9XpV6wVIescIDs6KImkrYZ3huED+I0Y2zGfSvQW+W7u5vRbYZgJOJp253FKnBAu
-         FJSRU8lVFzhx/86IVPz350onJrlmpYdd9H5oxUSjRdolPPjkvKOClyhh7hONblPldMh2
-         KfMg==
-X-Gm-Message-State: AJIora+RDa23l6YyfnfSDamEoB/ZN40XjhgUZCzih7p3HcNHnrN1S57c
-        d6wzRGY6oOoab7WryV2an7yXrQ==
-X-Google-Smtp-Source: AGRyM1s2Nnz+Lp+zR3dX5jvhHc8pmNbz7oQtyNkSD5Ad2DsPSowgA8NjpyNE+oWJTTCY8iEAl5GrZw==
-X-Received: by 2002:a63:d57:0:b0:3fd:ac2b:75aa with SMTP id 23-20020a630d57000000b003fdac2b75aamr352867pgn.533.1655854464257;
-        Tue, 21 Jun 2022 16:34:24 -0700 (PDT)
+        bh=ViEFcKjroQXvwBGepxaEQeL4Q+Xf8p05t8vesOONSwM=;
+        b=YgJtejtKeDAko/6+lSctIw83ntyxxbf5YiAKo1JsRyoR/1o4X0mb87aGQqf5Nw7Wkg
+         LRieb2p9Wrodcue4Evf2s4hluSDwyrP7kFDEAWoNynt7/5752grjkkEnESuBW5U+Ex+f
+         NQv3Gyp4i8a7FhgYFiRYjf96DBn7agFPhvgDG0QRyrao7P9hmporg3JEmPNVB6Nye91z
+         CTxxhARdpprTZNjlqU3UB+xDnwkWqxvUed2PJaCK5qgtHCFkkF8cul8DKPZaOZl30dRj
+         zSYYr5iNxptSDli1M1sKV3JWPT+w0IOlLYO1WhQScAbhTZDLtNC/wFbobB8ZAXX2ua7A
+         9jqA==
+X-Gm-Message-State: AJIora9MasjtI1RAZ/EWGO/JuCX3GXFomCX13aMJinh/jCa+8sUO7hmS
+        uUCEyWZwjrebmoQBZl60FTHvBw==
+X-Google-Smtp-Source: AGRyM1uA3DgDswAU+ttXuWuvTdwhYhitUaUKJz7J9lYdhqUCo/NT6EpS1MtC/WtMklbduEikCBvKgw==
+X-Received: by 2002:a17:902:9b83:b0:164:59e:b189 with SMTP id y3-20020a1709029b8300b00164059eb189mr30449024plp.91.1655854465221;
+        Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
 Received: from prec5560.. (71-212-119-14.tukw.qwest.net. [71.212.119.14])
-        by smtp.gmail.com with ESMTPSA id s7-20020a17090302c700b00168e83eda56sm11297873plk.3.2022.06.21.16.34.23
+        by smtp.gmail.com with ESMTPSA id s7-20020a17090302c700b00168e83eda56sm11297873plk.3.2022.06.21.16.34.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jun 2022 16:34:23 -0700 (PDT)
+        Tue, 21 Jun 2022 16:34:24 -0700 (PDT)
 From:   Robert Foss <robert.foss@linaro.org>
 To:     bjorn.andersson@linaro.org, agross@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -55,10 +55,9 @@ To:     bjorn.andersson@linaro.org, agross@kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 5/6] dt-bindings: clock: Add Qcom SM8350 DISPCC bindings
-Date:   Wed, 22 Jun 2022 01:34:11 +0200
-Message-Id: <20220621233412.506768-6-robert.foss@linaro.org>
+Subject: [PATCH v6 6/6] arm64: dts: qcom: sm8350: Add DISPCC node
+Date:   Wed, 22 Jun 2022 01:34:12 +0200
+Message-Id: <20220621233412.506768-7-robert.foss@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220621233412.506768-1-robert.foss@linaro.org>
 References: <20220621233412.506768-1-robert.foss@linaro.org>
@@ -68,81 +67,69 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+Add the dispcc clock-controller DT node for sm8350.
 
-Add sm8350 DISPCC bindings, which are simply a symlink to the sm8250
-bindings. Update the documentation with the new compatible.
-
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 Signed-off-by: Robert Foss <robert.foss@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
 
 Changes since v2
- - Add SoB - Bjorn
+ - Remove interconnect include - Bjorn
 
 Changes since v3
- - Separate from qcom,dispcc-sm8x50
- - Remove clock-names
- - Make example sm8350 based
- - Changed author to me due to size of changes
-
-Changes since v4
- - Add RB - Rob
+ - Switch from .fw_name to .index
 
 Changes since v5
- - Reverted split from dispcc-sm8250
- - Re-added tags from v3
+ - Revert .fw_name to .index change
 
 
- .../devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml       | 6 ++++--
- include/dt-bindings/clock/qcom,dispcc-sm8350.h              | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
- create mode 120000 include/dt-bindings/clock/qcom,dispcc-sm8350.h
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-index 31497677e8de..7a8d375e055e 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8x50.yaml
-@@ -4,18 +4,19 @@
- $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+index 52428b6df64e..99464cd1299e 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+@@ -4,6 +4,7 @@
+  */
  
--title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8150/SM8250/SM8350
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,dispcc-sm8350.h>
+ #include <dt-bindings/clock/qcom,gcc-sm8350.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/dma/qcom-gpi.h>
+@@ -2525,6 +2526,31 @@ usb_2_dwc3: usb@a800000 {
+ 			};
+ 		};
  
- maintainers:
-   - Jonathan Marek <jonathan@marek.ca>
- 
- description: |
-   Qualcomm display clock control module which supports the clocks, resets and
--  power domains on SM8150 and SM8250.
-+  power domains on SM8150/SM8250/SM8350.
- 
-   See also:
-     dt-bindings/clock/qcom,dispcc-sm8150.h
-     dt-bindings/clock/qcom,dispcc-sm8250.h
-+    dt-bindings/clock/qcom,dispcc-sm8350.h
- 
- properties:
-   compatible:
-@@ -23,6 +24,7 @@ properties:
-       - qcom,sc8180x-dispcc
-       - qcom,sm8150-dispcc
-       - qcom,sm8250-dispcc
-+      - qcom,sm8350-dispcc
- 
-   clocks:
-     items:
-diff --git a/include/dt-bindings/clock/qcom,dispcc-sm8350.h b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-new file mode 120000
-index 000000000000..0312b4544acb
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dispcc-sm8350.h
-@@ -0,0 +1 @@
-+qcom,dispcc-sm8250.h
-\ No newline at end of file
++		dispcc: clock-controller@af00000 {
++			compatible = "qcom,sm8350-dispcc";
++			reg = <0 0x0af00000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>;
++			clock-names = "bi_tcxo",
++				      "dsi0_phy_pll_out_byteclk",
++				      "dsi0_phy_pll_out_dsiclk",
++				      "dsi1_phy_pll_out_byteclk",
++				      "dsi1_phy_pll_out_dsiclk",
++				      "dp_phy_pll_link_clk",
++				      "dp_phy_pll_vco_div_clk";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++
++			power-domains = <&rpmhpd SM8350_MMCX>;
++			power-domain-names = "mmcx";
++		};
++
+ 		adsp: remoteproc@17300000 {
+ 			compatible = "qcom,sm8350-adsp-pas";
+ 			reg = <0 0x17300000 0 0x100>;
 -- 
 2.34.1
 
