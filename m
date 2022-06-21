@@ -2,166 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F25DCCA481
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 16:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D046BCCA473
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 17:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbiFUQu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 12:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33026 "EHLO
+        id S1352089AbiFURAl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 13:00:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230491AbiFUQu2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 12:50:28 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A115925E88;
-        Tue, 21 Jun 2022 09:50:27 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id s21so12817091lfs.13;
-        Tue, 21 Jun 2022 09:50:27 -0700 (PDT)
+        with ESMTP id S1352029AbiFURAj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 13:00:39 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 860CA25C69
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:00:38 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id 15so10578382qki.6
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TI9vr7TQPqxwZb2z/IMuFAGZ9nSwT2vz/9F9w7eTiWQ=;
-        b=TDZvDdbimBZ9N0fLFWDfy5OD6MDoKJOihMspOG15unZ0NEuqew7BxxnIchsQ+PhHgO
-         T6BOw+9I5o+nWV8GHYUlnmqC+25cRk2bRt31Sc+I1WeaCzEkH27k1pFQkjegG+u6RUbZ
-         NYshk6amV0oCvL+VLUH1aUrGk9ZXlGqO+qWVXg53sWiZVL5HWjoBFEeycbez/tIBgMXp
-         gPMQYSRgl1EKHv1J59+lDXS6L7p2YrxryNavQDhzbaRxJggnIGMpKyV34oEeJAKcBART
-         5POeFytTtnDoXGngY+PeLZdWFYmIpr54Nka/grGGjwy4k7+rI8Sb84PX+aE1vwNeKS/K
-         kzhQ==
+        bh=ZkEO4M7jOV59qCHyyw5pNgv0UuC6b2G1AI1tuCyDlaA=;
+        b=mtqPOXuTZWFBF/kLU/7R0s5qGBDSwlgvLQm89SWh4DiOT4vVRtUaktsNZNEQsqdPXS
+         nFL+k25MASc3viAKtDqEP7RsrFIXvMrYiYNARgfLvRQ8Ww8cW0RIGBV3JXeI83/RBYXb
+         T8PJCIFKrybguxPsRoFcEMdw2zr+zq7vCX/D2bLyXQKUUSn3YWgs73AbKCi6vRYEr3n1
+         H67vQf//aTcgLNHiynKjJ4ugnVs9kZb3UrGB8X8darfnUOveKkkKgoS5LNAiTah4NTwM
+         ROhQmRup2OFQ/YUZV92iHqFDsdaFJgrcFMRu4gZrgFwWP40AXHC18/0Loiw1GECUbhlx
+         tSCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TI9vr7TQPqxwZb2z/IMuFAGZ9nSwT2vz/9F9w7eTiWQ=;
-        b=RtQve16AUsYx0IxlGUW/iDksdi9wQPUCq52Yrv7WK7eoucTTfJ6ZFruIzggg2Clp4a
-         w5XNfJrv0FeAr6yQyK8ZKE0PvJrpiqGOwHvfn/FVN/qdlSttWswOb1l8oC2vPVquKUpW
-         FAk9hcpEWXZp5X/QXJWbVYkX9G4CkomPB1woPApfJ2guEdkUfEaze/taqQdjV6lVQ2Dl
-         7pUCOYT4Uc24KX7yFB6wEU097gMggkK57TbZFH/prq+a6GJZNUO7XkjMwfbojBjwIkXr
-         xAZrt0iBKAAfGzOhvSh6GM3YwuwixbvLfuxQ0Kk+sdEiDacIrXgkzkpFNM4ZSR5kZ9x6
-         COhQ==
-X-Gm-Message-State: AJIora9Wu2TjHLm+kAotpNNmeP5PcKknxiBoa+1iJSL/Jprpck0+P/JE
-        b5jGhbKIlkGN53XzmIugepJX7/0vsLdPaxvBCLlN1agV2gSIlA==
-X-Google-Smtp-Source: AGRyM1skPQQLpMHGrrtCYFJIKwZltL1tW6qpkSB1j4XHK/bat+sYAi+niUvvWjRNyH+0E//6sHWS5YsdxF42Ge3teJA=
-X-Received: by 2002:a05:6512:3d1a:b0:47f:79df:2ea8 with SMTP id
- d26-20020a0565123d1a00b0047f79df2ea8mr3853154lfv.610.1655830225857; Tue, 21
- Jun 2022 09:50:25 -0700 (PDT)
+        bh=ZkEO4M7jOV59qCHyyw5pNgv0UuC6b2G1AI1tuCyDlaA=;
+        b=XB7/v2inELro+M4u2ULVDtkzUiuUOznQ6QD7mj39AgZ9UaNsl128oaecp+fSrQRDwd
+         l9cIEr/zGBiJaah3DbD6Rdw4TrYRkY2+HfpJRDmGS+iedFi/EvCHGss//r1eWpfkJ3Yj
+         EoXmS5BHM5bsIeNVHZ0eqNPgH/dFJEtfW6GAh0UHOCMuO3q0leos4RtxRKE7BdP/7PBV
+         eOoydXNjPTbxzVfWltqGQPtAQS01aR/7Fsq9oMPcYOFIS8YvWiEkKT25umiqEybRQBn7
+         yJN7IqMhLUDu/01UtMGPDy/CnmFlbIJ41Kb/PBOjNqS18CX3kzOWgWY/o1Op2PjXNFhV
+         9xcg==
+X-Gm-Message-State: AJIora/A+Pix5xxlrpqwr7TOgfdUAUk743MgxHe13ZuvzGqYMcVNoRbi
+        /L+WvOPXCMEXUGpexlfSwtM9283qAzqUSk4pQR7S/w==
+X-Google-Smtp-Source: AGRyM1tpUHhHSSiROE4fi9M7Q5m/N0ialxxH/8ZL4M59Dvo2uPLFsi/GJ1HYDg5pqxD333cgmrK3tCvG/1IBvP73I2M=
+X-Received: by 2002:a05:620a:2a0e:b0:6a7:8346:1601 with SMTP id
+ o14-20020a05620a2a0e00b006a783461601mr20504725qkp.593.1655830837507; Tue, 21
+ Jun 2022 10:00:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220621131424.162355-1-tmaimon77@gmail.com> <20220621131424.162355-6-tmaimon77@gmail.com>
- <5832f7f1-3c8f-d88d-3b72-99effc1e2e83@linaro.org>
-In-Reply-To: <5832f7f1-3c8f-d88d-3b72-99effc1e2e83@linaro.org>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Tue, 21 Jun 2022 19:50:14 +0300
-Message-ID: <CAP6Zq1itHGFw9ZV9cMr-9Fhx8fqYVGYXhmTOiLbGVjoV7TQ5hA@mail.gmail.com>
-Subject: Re: [PATCH v4 05/18] dt-binding: clk: npcm845: Add binding for
- Nuvoton NPCM8XX Clock
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
+References: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org> <62b1e1ea.1c69fb81.aafda.3244@mx.google.com>
+In-Reply-To: <62b1e1ea.1c69fb81.aafda.3244@mx.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Tue, 21 Jun 2022 20:00:26 +0300
+Message-ID: <CAA8EJprEhHXSz2f2Estn-3Xih9W=S0qTMg950aXfEFQgoYuVXg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last
+ remaining entry
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-
-On Tue, 21 Jun 2022 at 18:40, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Tue, 21 Jun 2022 at 18:21, Christian Marangi <ansuelsmth@gmail.com> wrote:
 >
-> On 21/06/2022 15:14, Tomer Maimon wrote:
-> > Add binding for the Arbel BMC NPCM8XX Clock controller.
+> On Tue, Jun 21, 2022 at 12:51:50AM +0300, Dmitry Baryshkov wrote:
+> > Use parent_data for the last remaining entry (pll4). This clock is
+> > provided by the lcc device.
 > >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > Fixes: cb02866f9a74 ("clk: qcom: gcc-ipq806x: convert parent_names to parent_data")
+> > Cc: Ansuel Smith <ansuelsmth@gmail.com>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > > ---
-> >  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 49 +++++++++++++++++++
-> >  .../dt-bindings/clock/nuvoton,npcm845-clk.h   | 49 +++++++++++++++++++
-> >  2 files changed, 98 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> >  create mode 100644 include/dt-bindings/clock/nuvoton,npcm845-clk.h
+> >  drivers/clk/qcom/gcc-ipq806x.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > new file mode 100644
-> > index 000000000000..3d4fddc090ca
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton NPCM8XX Clock Controller Binding
-> > +
-> > +maintainers:
-> > +  - Tomer Maimon <tmaimon77@gmail.com>
-> > +
-> > +description: |
-> > +  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
-> > +  generates and supplies clocks to all modules within the BMC.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nuvoton,npcm845-clk
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +    description:
-> > +      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
-> > +      list of NPCM8XX clock IDs.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - "#clock-cells"
+> > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+> > index 718de17a1e60..6447f3e81b55 100644
+> > --- a/drivers/clk/qcom/gcc-ipq806x.c
+> > +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> > @@ -79,7 +79,9 @@ static struct clk_regmap pll4_vote = {
+> >       .enable_mask = BIT(4),
+> >       .hw.init = &(struct clk_init_data){
+> >               .name = "pll4_vote",
+> > -             .parent_names = (const char *[]){ "pll4" },
+> > +             .parent_data = &(const struct clk_parent_data){
+> > +                     .fw_name = "pll4", .name = "pll4",
+> > +             },
+> >               .num_parents = 1,
+> >               .ops = &clk_pll_vote_ops,
+> >       },
+> > --
+> > 2.35.1
+> >
 >
-> You fixed one comment and ignore second. The same was with v3.
-Sorry, I missed the quotes comment, will be addressed next version.
->
-> This is still no. Implement all the comments you received. I have to
-> double check your patchsets every time because I cannot trust that you
-> implemented what I asked for.
->
->
-> Best regards,
-> Krzysztof
+> Hi my intention was finding a way to directly reference the hw clk from
+> the lcc driver instead of using fw_name/name parent data. Wonder if that
+> would be a better solution... Seems wrong to me to eventually add also
+> the pll4 clk in the dts to correctly use the fw_name definition (when
+> that will be fixed in the ipq8064 dtsi)
 
-Best regards,
+Please don't. They are two separate hardware pieces, two separate
+drivers. Please don't invent anything fancy. Let the OF clk code
+handle it.
+Yes, this will result in "pll4" clock being referenced in DT. We
+already have binding for that, <&lcc PLL4>.
 
-Tomer
+-- 
+With best wishes
+Dmitry
