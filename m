@@ -2,96 +2,167 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D41CCA480
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jun 2022 21:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C81EC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 06:25:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiFTVvz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jun 2022 17:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52758 "EHLO
+        id S242106AbiFUGZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 02:25:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236325AbiFTVvy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jun 2022 17:51:54 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE2D1A3A0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 14:51:52 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id c30so13343124ljr.9
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 14:51:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5VB+OjNM0FgonA9OHE0Kg6JQZj4dnCquoYDOQxZe7mo=;
-        b=cSQ/oyUJ0l8bbipEuGZvIJbKdKDyUZMNlwVg8LRafAdPRUa9D0djloP235lZUMRwDw
-         jkwaAYtU8t3g8YuYJdS2FZQrwcyVIJgxS6yZ227PYhN3yWad1AqT6BpZ1YFeqRIM+ASv
-         1DyE29iwPK17YCir+i3cl2T8kumxk9VIfX8hsMl7YD9PrMWrXB+5n36815k+usCQFwsJ
-         MthIcOk+TC8tuata+ssCePg0xWkbggqN7EJ8Ejj55/4XDWNwPN/jNXD0BDjXMJByJCLY
-         jXzIABNP1yLrVbVaDiEU2LdU0UiWWtfRM0gypEMQaFl3sqsi5eRICLOqzKzgcLoUo2sU
-         yZwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5VB+OjNM0FgonA9OHE0Kg6JQZj4dnCquoYDOQxZe7mo=;
-        b=JiY18V5NW5t5kq+rkjAs/lLAyUXOREWLmgUg98ay6iO1wJgzBH8WE3dZXMFCN1lffy
-         heMYIbBUC6fROCoOX7lZYXvI+DUXpYq2pFm++br/3Ae5rhn1wgG4II3rmtk8XORzLpeX
-         u/Gnb/oLHOZ+wksw/Johi/YHxHKH4IBADe3qFwdaLUJrhWb7lguL+4znA1q6jCiNHhrr
-         Sz2o6l7qv2+oCWZMoV8pKmBPGJTS6OdTfWDH/zmESVhnSTiPhR0i5BwH3PyfzkZ4nYOm
-         DT1OR1ItHfSBgYRmXEwEJlbOtujemb/8KNgggihLmb8FffaQkyEw+Tq0J73fSZxyXrXX
-         hKdg==
-X-Gm-Message-State: AJIora+mIWhmWxKHo+Amm0Ps3br0ImcfExhuyCD+/otOCXqN6vJHFGzr
-        rBFUtnC+DaDCvCW8e1buuGDt7EF0kIBsRuBV
-X-Google-Smtp-Source: AGRyM1vMoxB1T2TWeP+vflMBzhmgPmXF5Lj32pDYPWXE9f/D85wvLBD/f/9hzHWJX5L/IGNQX5slig==
-X-Received: by 2002:a2e:bf02:0:b0:25a:6348:95c6 with SMTP id c2-20020a2ebf02000000b0025a634895c6mr6553256ljr.183.1655761911351;
-        Mon, 20 Jun 2022 14:51:51 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id s30-20020a195e1e000000b00479307e4a1bsm1897989lfb.135.2022.06.20.14.51.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jun 2022 14:51:50 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Ansuel Smith <ansuelsmth@gmail.com>
-Subject: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
-Date:   Tue, 21 Jun 2022 00:51:50 +0300
-Message-Id: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S1345471AbiFUGZf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 02:25:35 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A383E18E23
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 23:25:30 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220621062525euoutp01d64fc444961573504d1949d7c76b94db~6jrYK6vKK1159511595euoutp01c
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 06:25:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220621062525euoutp01d64fc444961573504d1949d7c76b94db~6jrYK6vKK1159511595euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1655792725;
+        bh=2M7VrybOVemCI84SREzv/nQfzD8PLsxPY9hkSljilfw=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=Ytdosr9hHAatWFWr0+AarxHbDtLx2tSu3oHpJItD7uQfT62OgryrY/3DHo0brvB0K
+         9K+pxsBHEpRhnkXkn4ZVbfvUhxkmeLwBbgmZ8X8ObcFok28OFXhznGMBSmvs8QQ2oD
+         HDZwfzsB79Whtcn6wRKiz8m1mLm0IVpFnK/Bqg+w=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220621062525eucas1p206d47a3f677a6c25d08c1c086de60a48~6jrX3AzMN2170121701eucas1p2c;
+        Tue, 21 Jun 2022 06:25:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id F9.98.10067.55461B26; Tue, 21
+        Jun 2022 07:25:25 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220621062524eucas1p163b1c93486dd407ac49bef26a9372554~6jrXgydPW2976529765eucas1p1P;
+        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220621062524eusmtrp2814b93abd9430123effca46d1978f6e8~6jrXf2JtK1457314573eusmtrp2j;
+        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
+X-AuditID: cbfec7f4-dc1ff70000002753-c4-62b164553eb7
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.CD.09038.45461B26; Tue, 21
+        Jun 2022 07:25:24 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220621062524eusmtip1936e2ffaa8a9a78436233d30f2c89dc8~6jrW63KFL0178601786eusmtip1s;
+        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
+Message-ID: <5ebb4585-90fa-02b5-a49c-dc81fce7285a@samsung.com>
+Date:   Tue, 21 Jun 2022 08:25:23 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.9.1
+Subject: Re: [PATCH] clk: Fix pointer casting to prevent oops in
+ devm_clk_release()
+Content-Language: en-US
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        kernel@pengutronix.de,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-clk@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20220620171815.114212-1-u.kleine-koenig@pengutronix.de>
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURSFfZ1pOwULz0Hlpi5o3aJGNk0YI6lLhDTGqNEgajQ6hQmgQLVl
+        kx+KS4lWTAUlaE0ElwQyolBQFKJG64JFEcpSiWJdooIgKkJExLq048K/c+89X869L48i6Ati
+        BZWQnMLpktlEpcSLrLo32DAnKtaiCS51SpnsjqnMi728iOFPOyQMn19NMr05TjFjzb+OGHtd
+        BPPDYSGZp7lH0SKZutlhJ9Qf2wxSNV99kVDvv9MjVlfwByVqkytY3VcxcZV0g1d4LJeYkMbp
+        glRbvOJvfTFLtz+TZ1ga8skslOttRDIK8DxwHuoijciLonEJgj5Lh1go+hHU778vFYo+BB/t
+        LeRf5O3tPJEwKEaQz9uQUPQieHOn8zdCUXKsgu+FC90AiafB1+ZuDyzHo8B24rVHj8EaKKwy
+        iN3aD0dB9dlzyK0J7A9PXhd6AkZjEwJTTqUngMCdCG7wRRK3S4JDwNhj9GgZjoAcW8sfOgD2
+        XT5JuAHAXyk43uDwbAR4KbR9ChZO8IOu2ktSQY+Hn9XuNLdFC67jc4V2Bji6SwlBL4D2R98k
+        bguBZ0JZTZDQXgzOa09IgfSBtp5RwgI+kFdVQAhtORzIpgX3dDDXXvyXeauxiTiClOZhj2Ie
+        drx52Cnm/7lFiOSRP5eqT4rj9KHJXHqgnk3SpybHBcZokyrQ7x/14Edt/1VU3NUbaEUiClkR
+        UIRytDzcu1xDy2PZnZmcTrtZl5rI6a1oHEUq/eUxCeUsjePYFG4bx23ndH+nIkqmyBJNmF9q
+        r1pT93aXKmxFAf/FkTYSR/uF3euYcTRvU39m5DIFd/OYdvxA5mHNgKumeUZtiMG+c90IxePT
+        TaYld9dWfns+MMSfMfHPDza5Ijcpw12VHQ8/TKN3NxTxMqNl48brth1P572kz714GFp5zXuX
+        7l1xxM0pnwsljvrykpmTopYbvFVbxnWSez4hic/5wVbfgbJoWvW+kW1Nm93q29++PiZ9ZdkY
+        K4qCSZGT67VFirGvYPBVYnx24xDJBam6I6c65ys/LIsbmhIKNRlnA9btSX/3BjSntkbrUq4Y
+        VjC3S9pbbLlU1gWaC/BNRZfCaFb7QFv38v5eovPq6sP672YlqY9nQ2YROj37C2Htxx7AAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7ohKRuTDC4+1rNoe65i8aBpFZPF
+        qoXX2CxWTd3JYvGx5x6rxaGpexktLp5ytfh3bSOLxe2JkxkdOD0uX7vI7PH+Riu7x6qd65g9
+        Wo68ZfXYtKqTzaP/r4HH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
+        pkr6djYpqTmZZalF+nYJehkHv81iL7jLW7Hx/FSWBsaJ3F2MnBwSAiYSzw5PYupi5OIQEljK
+        KPHt1x02iISMxMlpDawQtrDEn2tdYHEhgfeMEp9O83YxcnDwCthJ/JlvDxJmEVCV+HH5NQuI
+        zSsgKHFy5hMwW1QgSWLe3tWMILawQKjEzsVLwGxmAXGJW0/mg+0VEehnlPh99BSYwyzwglHi
+        wdx97BAXnWWUmDZ9PjtIC5uAoUTXW4grOAVcJXpOXoEaZSbRtbULypaXaN46m3kCo9AsJJfM
+        QrJxFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiMzG3Hfm7Zwbjy1Ue9Q4xM
+        HIyHGCU4mJVEeG24NyQJ8aYkVlalFuXHF5XmpBYfYjQFBsdEZinR5HxgasgriTc0MzA1NDGz
+        NDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamCa+G3l6bNCJ0Miyn9uetUa36DQU9fY
+        vPU9Y7Wi0x2THVsuPo4otK1vlTvzz8fa19Jn67U/4l28//i6l91ebN13K4clNk/++8esyusZ
+        Bzsc/IJMBWY2hRz+F+HZ2vKxu/6GptzrI2wf419mVRktz3azr/v3qX2nyq7L5zWPTFL32nn6
+        /N6zfiU8ZlqLvirb3Fx3L4x9R9r/vpK6RbP1D3w+zGIs2OgQtDEx5KakcqGG/ZYTswV7e2wk
+        zNbPX3r/acDhd25XObcdyVNkbGqLlTic/tHlO/NCHt39vH1Hej/xBmdwaCS7iy3Z99d5ukjZ
+        lXObQtPuLXN7pJ1s9zz4q5KKD2s025ZdR6uKu0y2eCqxFGckGmoxFxUnAgDvfc92VQMAAA==
+X-CMS-MailID: 20220621062524eucas1p163b1c93486dd407ac49bef26a9372554
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38
+References: <0cdc7588-4dc3-266f-aa37-86bf5996497f@samsung.com>
+        <CGME20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38@eucas1p2.samsung.com>
+        <20220620171815.114212-1-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use parent_data for the last remaining entry (pll4). This clock is
-provided by the lcc device.
+On 20.06.2022 19:18, Uwe Kleine-König wrote:
+> The release function is called with a pointer to the memory returned by
+> devres_alloc(). I was confused about that by the code before the
+> generalization that used a struct clk **ptr.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Fixes: cb02866f9a74 ("clk: qcom: gcc-ipq806x: convert parent_names to parent_data")
-Cc: Ansuel Smith <ansuelsmth@gmail.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/gcc-ipq806x.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 718de17a1e60..6447f3e81b55 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -79,7 +79,9 @@ static struct clk_regmap pll4_vote = {
- 	.enable_mask = BIT(4),
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pll4_vote",
--		.parent_names = (const char *[]){ "pll4" },
-+		.parent_data = &(const struct clk_parent_data){
-+			.fw_name = "pll4", .name = "pll4",
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
- 	},
+> ---
+> On Mon, Jun 20, 2022 at 05:26:12PM +0200, Marek Szyprowski wrote:
+>>> -   clk_put(*(struct clk **)res);
+>>> +   struct devm_clk_state *state = *(struct devm_clk_state **)res;
+>> This should be:
+>>
+>> struct devm_clk_state *state = res;
+>>
+>> otherwise it nukes badly during cleanup:
+>> [...]
+> How embarrassing. I understood how I confused that, but I wonder how
+> that didn't pop up earlier.
+>
+> FTR: I didn't test that now, but assume you did. My focus now was to get
+> out an applicable patch fast.
+>
+> Thanks for your report
+> Uwe
+>
+>   drivers/clk/clk-devres.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index c822f4ef1584..1bb086695051 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -11,7 +11,7 @@ struct devm_clk_state {
+>   
+>   static void devm_clk_release(struct device *dev, void *res)
+>   {
+> -	struct devm_clk_state *state = *(struct devm_clk_state **)res;
+> +	struct devm_clk_state *state = res;
+>   
+>   	if (state->exit)
+>   		state->exit(state->clk);
+>
+> base-commit: abae8e57e49aa75f6db76aa866c775721523908f
+
+Best regards
 -- 
-2.35.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
