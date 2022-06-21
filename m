@@ -2,84 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755B1CCA481
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 17:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA832CCA473
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 17:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353122AbiFURRB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 13:17:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50712 "EHLO
+        id S238008AbiFUR3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 13:29:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353149AbiFURQ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 13:16:58 -0400
-Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540882CDEC
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:16:56 -0700 (PDT)
-Received: by mail-qv1-xf2c.google.com with SMTP id p31so21325771qvp.5
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:16:56 -0700 (PDT)
+        with ESMTP id S1353708AbiFUR3K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 13:29:10 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2278E64DB;
+        Tue, 21 Jun 2022 10:29:09 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id z7so20293048edm.13;
+        Tue, 21 Jun 2022 10:29:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E5ccaIvRIXteqVNt2w/oxW2Vfyr34lOQhBiY70Y2LiY=;
-        b=ukzNEN/xGYg9ZwWaTaxi/CYWjN1UXK+IY2/TKjL+wloNxlUdoJRzLvkMCVkfEwO4aN
-         1bWcy9Y90TS3+x/R6MmfLOOFVTaFDVhWAjHcJ8ev3cFJJ095ei0I5lZHgebIJo2zR0WR
-         j35TfRnQ6d4deWqqSgVHNkHo9a1iOswMR5v0Xji6rJ1ZtgSguQnGO2XALyfIBdDGTIdQ
-         55D7s7HuF8FzXaL/0pRZG07Nt4ubghd70zGZRxL088Gwh6un2jjdGz83AWbiW2bUgBi1
-         LCXonnOQhnGePzt3elAb7pz/8JJ52pnBNhSlsGnM2PmyTeEQAeN+yoC0f/Osyj2Lp49l
-         Yirw==
+        d=gmail.com; s=20210112;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=tQy7cTmu/gQgDJkbt44xMaYq/OxSKXjoHtKVP2MMyy0=;
+        b=WMjEpeEX2LsVXx0mNTwwQBoNqATYbZ1jZSD5BpylETPUBf0IVROfQr/8H5QKghEC6d
+         6feqKilgc7a93eo4BHCUWVleR9pIpLXLYZF8m+GNzpGsOIc4OPblDLTBJrP/b7bWn6hK
+         4fl01DBa9ANlk6AOzKE7Rj2FO+nlvEKrTtZqSCQr9dC49+SF3rOXOgqu4yh9UCmA+CpA
+         eehaR5uAWWTpnawHYHH5fagM91pkSf21n54pqtBsj/nHREIAAbAYUjIDPcsObtLkAsf8
+         q9mX7Pdd5ZyIfYUXBhjj1w2RexD2dFDy9hVrQVkP42vjB08oNo0F6J2djVhpIq1i+Uyi
+         qwbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E5ccaIvRIXteqVNt2w/oxW2Vfyr34lOQhBiY70Y2LiY=;
-        b=idC4k8l/lQ5zUiOtuFX0gUqYABNYVEUzrkARS3GeZ6Dzd7aTNl2f94Desa4/pi9AkH
-         7avWofrstuTWdmy1KAW0ycIXtvdxRmsthxl8BVO/596RouiCR/BlfnP/XL/0aFPQhFl5
-         FG2ABonL/FOMxT8EKLJnLqiAd2udvalI4D7PooRTlwYxtvB1Fkc8/xpEuMR1Tgu2KNCs
-         64v273N3igwcu6KstlMDtx63gfFSKZDqukF4z7d1LR7rZKyDYo63/65AGP13EcpmWoyU
-         0WYmNgBCo+FXtZ3eBhwoDZJjW5zym2VSyHv2tCxMXEG3cLA15dSIWY3kvNWkqWFiHtrG
-         42yw==
-X-Gm-Message-State: AJIora/strkukPUh8xTynz4riJi9WZIMJ33rQVxfaVHAeRMs1uMlQnoK
-        Nbnp7a8qVzEZpCe+kWOiQCQSdWPyYyliTnrE2R0wcQ==
-X-Google-Smtp-Source: AGRyM1szZM/xn2oBTLu0KT0Kma3pFng6DiJJW2zHeQ49W5OAaSbei+2IZa+4TPCPwzTRPns55/vkxr0LiQy3eLxlUaE=
-X-Received: by 2002:a05:622a:487:b0:304:fbfc:9933 with SMTP id
- p7-20020a05622a048700b00304fbfc9933mr25369800qtx.682.1655831815253; Tue, 21
- Jun 2022 10:16:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220621163326.16858-1-ansuelsmth@gmail.com> <20220621163326.16858-2-ansuelsmth@gmail.com>
-In-Reply-To: <20220621163326.16858-2-ansuelsmth@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 21 Jun 2022 20:16:44 +0300
-Message-ID: <CAA8EJpo2cfWz6ph1BQLjkQ5HEvG3HWqmxN273dpDxg-aoHXzVw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: qcom: lcc-ipq806x: add reset definition
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=tQy7cTmu/gQgDJkbt44xMaYq/OxSKXjoHtKVP2MMyy0=;
+        b=FXG+OV5pt82gxr9GBWlQAHxBEEEhybjXJhKSaY9GZpc5tzoybPxvicHvYbaGFKmhjw
+         72/RKdBG2tuYIwO4K8oZF3GFza92ER4uE2vmfFArUpVkdstQhTIZvF0yuN3MQq7NrNcq
+         E8l54dR+qpEbXYjC07q7QDpAaP1dXCVTg++HvkizaQ8NlqvWpoRCo44Vd1LJJqpHeQ5J
+         fixwqBLnvMEgdYzGbYO03PxtsSqlPxoIR3vTusuIyME3p986ChKvFZHfeJelyUI4xdfQ
+         9hJVlqDoP8eVrkYl0djAR34U37XKMg0KVIuOB7Q+ekQ/u0MIX+ujKxRzcmeInIUABuD8
+         9Zeg==
+X-Gm-Message-State: AJIora/qTWYYEb/gnIVhRPfRCXjsXqnDiAb4e0vrqGdpnETGq0WU9kLt
+        Y8jed8r3mDysE4jTqE6qzJ8=
+X-Google-Smtp-Source: AGRyM1thdqSzA0MP1eOFglefQAu9FQsKqWvKlZH2bgE+/+4N6AKakfltp6Ehcp4n8/1xAjHPLKB9Fg==
+X-Received: by 2002:a05:6402:201:b0:431:665f:11f1 with SMTP id t1-20020a056402020100b00431665f11f1mr37689389edv.378.1655832547575;
+        Tue, 21 Jun 2022 10:29:07 -0700 (PDT)
+Received: from [192.168.236.247] ([185.107.57.61])
+        by smtp.gmail.com with ESMTPSA id lb10-20020a170907784a00b00722e84c3d44sm643352ejc.118.2022.06.21.10.28.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jun 2022 10:29:07 -0700 (PDT)
+Date:   Tue, 21 Jun 2022 21:28:45 +0400
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 5/6] dt-bindings: clock: qcom,msm8996-apcc: Fix clocks
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <XJ8UDR.9Y06T8FUTMOH2@gmail.com>
+In-Reply-To: <CAA8EJprQTiU+=ajKSWbFfbHuVxjEiybTPNez66Ob+4YZ+fXW_A@mail.gmail.com>
+References: <20220621160621.24415-1-y.oudjana@protonmail.com>
+        <20220621160621.24415-6-y.oudjana@protonmail.com>
+        <CAA8EJprQTiU+=ajKSWbFfbHuVxjEiybTPNez66Ob+4YZ+fXW_A@mail.gmail.com>
+X-Mailer: geary/40.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 at 19:33, Christian Marangi <ansuelsmth@gmail.com> wrote:
->
-> Add reset definition for lcc-ipq806x.
->
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Tue, Jun 21 2022 at 20:07:50 +0300, Dmitry Baryshkov 
+<dmitry.baryshkov@linaro.org> wrote:
+> On Tue, 21 Jun 2022 at 19:07, Yassine Oudjana 
+> <yassine.oudjana@gmail.com> wrote:
+>> 
+>>  From: Yassine Oudjana <y.oudjana@protonmail.com>
+>> 
+>>  The clocks currently listed in clocks and clock-names are the ones
+>>  supplied by this clock controller, not the ones it consumes. Replace
+>>  them with the only clock it consumes - the on-board oscillator (XO),
+>>  and make the properties required.
+>> 
+>>  Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>  ---
+>>   .../bindings/clock/qcom,msm8996-apcc.yaml         | 15 
+>> +++++++--------
+>>   1 file changed, 7 insertions(+), 8 deletions(-)
+>> 
+>>  diff --git 
+>> a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml 
+>> b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  index a20cb10636dd..c4971234fef8 100644
+>>  --- a/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  +++ b/Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+>>  @@ -26,22 +26,18 @@ properties:
+>> 
+>>     clocks:
+>>       items:
+>>  -      - description: Primary PLL clock for power cluster (little)
+>>  -      - description: Primary PLL clock for perf cluster (big)
+>>  -      - description: Alternate PLL clock for power cluster (little)
+>>  -      - description: Alternate PLL clock for perf cluster (big)
+>>  +      - description: XO source
+>> 
+>>     clock-names:
+>>       items:
+>>  -      - const: pwrcl_pll
+>>  -      - const: perfcl_pll
+>>  -      - const: pwrcl_alt_pll
+>>  -      - const: perfcl_alt_pll
+>>  +      - const: xo
+>> 
+>>   required:
+>>     - compatible
+>>     - reg
+>>     - '#clock-cells'
+>>  +  - clocks
+>>  +  - clock-names
+> 
+> I think we can not list them as required, as then older DT files won't
+> pass schema validation. But I'll leave this into the hands of Rob and
+> Krzyshtof.
 
-> ---
-> v2:
-> - Fix Sob tag
->
->  drivers/clk/qcom/lcc-ipq806x.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+The old DT files that didn't have XO defined had a wrong
+compatible string to begin with (fixed in [1]), so I don't
+think it's a problem.
 
--- 
-With best wishes
-Dmitry
+>>   additionalProperties: false
+>> 
+>>  @@ -51,4 +47,7 @@ examples:
+>>           compatible = "qcom,msm8996-apcc";
+>>           reg = <0x6400000 0x90000>;
+>>           #clock-cells = <1>;
+>>  +
+>>  +        clocks = <&xo_board>;
+>>  +        clock-names = "xo";
+>>       };
+>>  --
+>>  2.36.1
+>> 
+> 
+> 
+> --
+> With best wishes
+> Dmitry
+
+[1] 
+https://lore.kernel.org/linux-arm-msm/20210527192958.775434-1-konrad.dybcio@somainline.org/
+
+
