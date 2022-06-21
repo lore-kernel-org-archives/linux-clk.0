@@ -2,167 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C81EC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 06:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 068A3C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 06:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242106AbiFUGZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 02:25:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46526 "EHLO
+        id S1346026AbiFUGqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 02:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345471AbiFUGZf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 02:25:35 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A383E18E23
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 23:25:30 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220621062525euoutp01d64fc444961573504d1949d7c76b94db~6jrYK6vKK1159511595euoutp01c
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 06:25:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220621062525euoutp01d64fc444961573504d1949d7c76b94db~6jrYK6vKK1159511595euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1655792725;
-        bh=2M7VrybOVemCI84SREzv/nQfzD8PLsxPY9hkSljilfw=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=Ytdosr9hHAatWFWr0+AarxHbDtLx2tSu3oHpJItD7uQfT62OgryrY/3DHo0brvB0K
-         9K+pxsBHEpRhnkXkn4ZVbfvUhxkmeLwBbgmZ8X8ObcFok28OFXhznGMBSmvs8QQ2oD
-         HDZwfzsB79Whtcn6wRKiz8m1mLm0IVpFnK/Bqg+w=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220621062525eucas1p206d47a3f677a6c25d08c1c086de60a48~6jrX3AzMN2170121701eucas1p2c;
-        Tue, 21 Jun 2022 06:25:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F9.98.10067.55461B26; Tue, 21
-        Jun 2022 07:25:25 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220621062524eucas1p163b1c93486dd407ac49bef26a9372554~6jrXgydPW2976529765eucas1p1P;
-        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220621062524eusmtrp2814b93abd9430123effca46d1978f6e8~6jrXf2JtK1457314573eusmtrp2j;
-        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
-X-AuditID: cbfec7f4-dc1ff70000002753-c4-62b164553eb7
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.CD.09038.45461B26; Tue, 21
-        Jun 2022 07:25:24 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220621062524eusmtip1936e2ffaa8a9a78436233d30f2c89dc8~6jrW63KFL0178601786eusmtip1s;
-        Tue, 21 Jun 2022 06:25:24 +0000 (GMT)
-Message-ID: <5ebb4585-90fa-02b5-a49c-dc81fce7285a@samsung.com>
-Date:   Tue, 21 Jun 2022 08:25:23 +0200
+        with ESMTP id S239480AbiFUGqT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 02:46:19 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D610D1C121;
+        Mon, 20 Jun 2022 23:46:18 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25L0qdhD031178;
+        Tue, 21 Jun 2022 06:46:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : in-reply-to : mime-version;
+ s=corp-2021-07-09; bh=nObtXQFnj9nspfwJ4u3GY2uUVEP+rI34OY8nhtLb+48=;
+ b=vCXwUBOkwqvQUaSY1FLBrdAQTEMduNExrzlbb87CwQHZI2v6yj4hOMcESkhVYjtKxP3/
+ wZOfKzlYkMvlSp2uHJq3XeFMz5nud1r127fSKpW5A4ukHZ7Qe3luV0HWNL4gBgLbM4BI
+ rMfwhY23lx7PuW6NN42NAf6OpuAb5/DsHRf/8KSS60lWvlHuWG2lAKQQy79eDNFqhEHf
+ LFIHHiBP11OfAbGyc4rN8XrxIybCf/kJsG/kG4+xqJ4L6ToG62x72LOTlLMKpQHnzerN
+ 1RZEpSOFXcVIUHi2eGDxKjBHwfe18THgPR8l4UmRYcJJJOZ8dCVqKhtz8x0qOrnjFtFN 3g== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gs6kf4n7c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jun 2022 06:46:03 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 25L6egTC011206;
+        Tue, 21 Jun 2022 06:46:02 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2048.outbound.protection.outlook.com [104.47.74.48])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3gtd9tub01-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jun 2022 06:46:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C7A+z5Ipu7GKf27CpFy9GFdMDoeCgnQsyGd6CAIEw5sdcWZLq1hLRY/eZkF9nEDOGme+Nk7nsOHK6Xg1L71BzMIrF+2NGIUiQC9wBi3LPCqsdAddK2hhRxRjFXhfFI/imupYhu0A9yQzN/rTFfwkA8aw7iURcADa+WnRGgAkjCEeQOOBn4mo8qMY8Z4Z3GGM9OpDezewgBgg9WC517A6kU1S52PwjAwirL+vYehM91QZRXtaOv96AAPGLmJIQQ74jiXcwsZaJm+MNRgGUZfS7A0nxJ7C/sWSWYpIafdR8UCLqlHqg6K2M/SzzgyZqzIBXEHqdogUUpDJa46OZbb6Sw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nObtXQFnj9nspfwJ4u3GY2uUVEP+rI34OY8nhtLb+48=;
+ b=FlMOTTsvTZHqqEwNMQO2jumyQhQVChY2K83p0BroYiYyHPdf6GyD7kcfoABRo5Kv+BxzA5JVmDaTU9r3IC5mmExPYAa3pVQZ2sxibdlHOC/kIn6FaiYcf0ZHhPXx34i5faqF464xGK3ZOYGsp5R4i8B35YM9J1FXUU9wEmcEzNWadIC/vf+Yq9fu908j4yDbsfByeuy/k3/qiLaQcy3qLYrys0wr8SSWFyqUZ0TumWVxZQojlZUvU/gtDzvOwOVdh/WfsdB1O2MC13bETHlur5w1RbZIujtxW0VlyRYgAAsNsQrJhQBWpgeOVcn/XKKxqShNOCdqirOB4RRbOpENRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nObtXQFnj9nspfwJ4u3GY2uUVEP+rI34OY8nhtLb+48=;
+ b=XPR+dXo7E6gXBsLoKUcKxSMeSLmk/ODjH9HW8JDQMAnZddeP3/wyDZDAgXcqi0xnQVxJLFr3quxR4RReCvnvjKSVJbASr8VZuIi0o0mOS1JasWqnwKBsFIuSADd0pXeYOyCCW1PydNbuFdpdSC0WU0KDzzGVnTrF+cBDdAw8JPM=
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by SA2PR10MB4617.namprd10.prod.outlook.com
+ (2603:10b6:806:118::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14; Tue, 21 Jun
+ 2022 06:46:00 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5020:9b82:5917:40b%6]) with mapi id 15.20.5353.022; Tue, 21 Jun 2022
+ 06:46:00 +0000
+Date:   Tue, 21 Jun 2022 09:45:36 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     kbuild@lists.01.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     lkp@intel.com, kbuild-all@lists.01.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [kbuild] Re: [PATCH] clk: qcom: common: use parent_hws in
+ _qcom_cc_register_board_clk()
+Message-ID: <202206210257.lD0x1WPz-lkp@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220620080117.1571807-1-dmitry.baryshkov@linaro.org>
+Message-ID-Hash: I3RIBYGVOPTARPVC6EXC4NWLMN3QPLFU
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: JNAP275CA0040.ZAFP275.PROD.OUTLOOK.COM (2603:1086:0:4e::17)
+ To MWHPR1001MB2365.namprd10.prod.outlook.com (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH] clk: Fix pointer casting to prevent oops in
- devm_clk_release()
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        kernel@pengutronix.de,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-clk@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20220620171815.114212-1-u.kleine-koenig@pengutronix.de>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SaUwTURSFfZ1pOwULz0Hlpi5o3aJGNk0YI6lLhDTGqNEgajQ6hQmgQLVl
-        kx+KS4lWTAUlaE0ElwQyolBQFKJG64JFEcpSiWJdooIgKkJExLq048K/c+89X869L48i6Ati
-        BZWQnMLpktlEpcSLrLo32DAnKtaiCS51SpnsjqnMi728iOFPOyQMn19NMr05TjFjzb+OGHtd
-        BPPDYSGZp7lH0SKZutlhJ9Qf2wxSNV99kVDvv9MjVlfwByVqkytY3VcxcZV0g1d4LJeYkMbp
-        glRbvOJvfTFLtz+TZ1ga8skslOttRDIK8DxwHuoijciLonEJgj5Lh1go+hHU778vFYo+BB/t
-        LeRf5O3tPJEwKEaQz9uQUPQieHOn8zdCUXKsgu+FC90AiafB1+ZuDyzHo8B24rVHj8EaKKwy
-        iN3aD0dB9dlzyK0J7A9PXhd6AkZjEwJTTqUngMCdCG7wRRK3S4JDwNhj9GgZjoAcW8sfOgD2
-        XT5JuAHAXyk43uDwbAR4KbR9ChZO8IOu2ktSQY+Hn9XuNLdFC67jc4V2Bji6SwlBL4D2R98k
-        bguBZ0JZTZDQXgzOa09IgfSBtp5RwgI+kFdVQAhtORzIpgX3dDDXXvyXeauxiTiClOZhj2Ie
-        drx52Cnm/7lFiOSRP5eqT4rj9KHJXHqgnk3SpybHBcZokyrQ7x/14Edt/1VU3NUbaEUiClkR
-        UIRytDzcu1xDy2PZnZmcTrtZl5rI6a1oHEUq/eUxCeUsjePYFG4bx23ndH+nIkqmyBJNmF9q
-        r1pT93aXKmxFAf/FkTYSR/uF3euYcTRvU39m5DIFd/OYdvxA5mHNgKumeUZtiMG+c90IxePT
-        TaYld9dWfns+MMSfMfHPDza5Ijcpw12VHQ8/TKN3NxTxMqNl48brth1P572kz714GFp5zXuX
-        7l1xxM0pnwsljvrykpmTopYbvFVbxnWSez4hic/5wVbfgbJoWvW+kW1Nm93q29++PiZ9ZdkY
-        K4qCSZGT67VFirGvYPBVYnx24xDJBam6I6c65ys/LIsbmhIKNRlnA9btSX/3BjSntkbrUq4Y
-        VjC3S9pbbLlU1gWaC/BNRZfCaFb7QFv38v5eovPq6sP672YlqY9nQ2YROj37C2Htxx7AAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7ohKRuTDC4+1rNoe65i8aBpFZPF
-        qoXX2CxWTd3JYvGx5x6rxaGpexktLp5ytfh3bSOLxe2JkxkdOD0uX7vI7PH+Riu7x6qd65g9
-        Wo68ZfXYtKqTzaP/r4HH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
-        pkr6djYpqTmZZalF+nYJehkHv81iL7jLW7Hx/FSWBsaJ3F2MnBwSAiYSzw5PYupi5OIQEljK
-        KPHt1x02iISMxMlpDawQtrDEn2tdYHEhgfeMEp9O83YxcnDwCthJ/JlvDxJmEVCV+HH5NQuI
-        zSsgKHFy5hMwW1QgSWLe3tWMILawQKjEzsVLwGxmAXGJW0/mg+0VEehnlPh99BSYwyzwglHi
-        wdx97BAXnWWUmDZ9PjtIC5uAoUTXW4grOAVcJXpOXoEaZSbRtbULypaXaN46m3kCo9AsJJfM
-        QrJxFpKWWUhaFjCyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAiMzG3Hfm7Zwbjy1Ue9Q4xM
-        HIyHGCU4mJVEeG24NyQJ8aYkVlalFuXHF5XmpBYfYjQFBsdEZinR5HxgasgriTc0MzA1NDGz
-        NDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamCa+G3l6bNCJ0Miyn9uetUa36DQU9fY
-        vPU9Y7Wi0x2THVsuPo4otK1vlTvzz8fa19Jn67U/4l28//i6l91ebN13K4clNk/++8esyusZ
-        Bzsc/IJMBWY2hRz+F+HZ2vKxu/6GptzrI2wf419mVRktz3azr/v3qX2nyq7L5zWPTFL32nn6
-        /N6zfiU8ZlqLvirb3Fx3L4x9R9r/vpK6RbP1D3w+zGIs2OgQtDEx5KakcqGG/ZYTswV7e2wk
-        zNbPX3r/acDhd25XObcdyVNkbGqLlTic/tHlO/NCHt39vH1Hej/xBmdwaCS7iy3Z99d5ukjZ
-        lXObQtPuLXN7pJ1s9zz4q5KKD2s025ZdR6uKu0y2eCqxFGckGmoxFxUnAgDvfc92VQMAAA==
-X-CMS-MailID: 20220621062524eucas1p163b1c93486dd407ac49bef26a9372554
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38
-References: <0cdc7588-4dc3-266f-aa37-86bf5996497f@samsung.com>
-        <CGME20220620171854eucas1p2702e46ab21fd706d9c1d1c76f68e0d38@eucas1p2.samsung.com>
-        <20220620171815.114212-1-u.kleine-koenig@pengutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 33c1712f-8d60-405c-7c98-08da5351b420
+X-MS-TrafficTypeDiagnostic: SA2PR10MB4617:EE_
+X-Microsoft-Antispam-PRVS: <SA2PR10MB4617B30B8F4CD602DF0425228EB39@SA2PR10MB4617.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: W8qyuC1NbgiX32SEIhtiey/wa7xGTmAfenhtMyAO9OsAh0EelCFdSBd9Vz/QOENaNJh5ly6wgRM2SI+tWPAlEvrDST8XVULq63I1/4UOK33KcLWhFMC2tU++xGEhHxXj5ZS3YM8LF9SoFiVmngein0IMo0AxRACdh0x2qrE1xHfiai3EDAiG3SQjyxJripwX/PmN9r/iwDLA4dOpUIsB9tJ1KZcfl0Fdsm7sBJrVadI/0gPS38R5zW3UchcI1MVAaH/UbxHMnvJhb2B5/Uu1RVJFUKR3dg/LKk66C0KuRvFVYkjKWpY1sJPIWUqbFKnkVQszQoRlZOF7WkggE6gIfFRDF2vAu2mxXR78hwN/KrRu7Jk/UZn/DsLIBHM6gdLoFHfeGXEO56ypR7SWxhtJIonbiyZvIjRITRaay3qOFsAwLVL0bXkEaGHuM/x8ENZ0EPnCKq8ftb1Qm8SDzr2cNYxJ0m8WaDI5sPo3yHdw5uoyvvOIZlN0usa9fXEP9QkBqH63FXFdJxR21kSCD9LBh0OXpvHpOkI3acuMCwj4rRMPpdZOWf+xW4gpuBxEB64nWJuD+lfYX286gls1QPxY/b+2go/pt8kvI/DXJd3e0Znlv2ccom++uk0J4yEwrrPpAlphHSO+heBlPtc0whGNKc0I08menVQIqqVRg/fmuKEOOHoeHV8LF8nn5GLFM2Sb5kdYPzaCRZPfhH3BqN2yjZnxifkzXX3e6UVssanJfR9N5bBvjb/JsJhMDMP/vY/Hay69AS7KfGwIt58uy3wI0yZJUCIeiRIHgGcCO3fNu3LymFcandb1+2W72tV+GgIysV1sj2HCSQ+CUxxQZhuZdA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(346002)(376002)(396003)(366004)(136003)(39860400002)(26005)(6512007)(41300700001)(86362001)(6506007)(1076003)(9686003)(6666004)(38350700002)(186003)(66476007)(52116002)(38100700002)(66556008)(4326008)(44832011)(7416002)(83380400001)(8676002)(36756003)(5660300002)(8936002)(2906002)(4001150100001)(316002)(966005)(66946007)(6486002)(478600001)(110136005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NH80+GtCbqySUJW4cB4Y7Cp4ocGc119uYu9AB3h98eNB3ChJbbnYQY3G8xR9?=
+ =?us-ascii?Q?eDafaG01y4SQiVmrzfz/56yCrxQ0lWlllct+dOYsS18tXRxER0gBmgT+7Ia+?=
+ =?us-ascii?Q?PvwcjgUFoN92ELK0j4f7efQs76sNXhOB9KgHhSVqAyib2hK0d7AyqaCP9j7E?=
+ =?us-ascii?Q?RSrVTL9AMazlOu/t9ajd1jQn0KUqGeVHnH8UJSZsXFSIrTZ0N9g2tS6ee6vl?=
+ =?us-ascii?Q?d9mmN2OGRzCJuXSNMNyYyMWDf5qk6uWXYo7/w/s/ezFDh3wkOL/MImZ0kUG1?=
+ =?us-ascii?Q?7Gnyk1Kfeae4Usvo7aVIEJs0bYgRJd7z9y5NpxtcxpQvgSCNgHj3NTpuwluT?=
+ =?us-ascii?Q?W1+djwwkntZ4hihGzKmMeObyG0mWg8yG9RYUg3TM7Hy6vUGmp1VRsZ6qMDUv?=
+ =?us-ascii?Q?wrqeqvyxBxYvTJ7fpPYpwo3zGgXXe1G6c2T6aPZnH5Sp35P2FOM0V6qKfrxZ?=
+ =?us-ascii?Q?P8zzWZLBW8mLydb0XA4LiuOWdMMPgLIq6JsKjVQ0vJ+RPT7SqnI4ug9DCirl?=
+ =?us-ascii?Q?ijofc+3Kp5CZkgZssoY591eoDRiuAI3PZ83CatXBNZznPU+WVisfU8pg5b/w?=
+ =?us-ascii?Q?p6qkvTPGHepf/E0E41m63nXOQndFZaj5lExJ/ECCYH9NaSbEOW6XebpiHlxH?=
+ =?us-ascii?Q?mpZ8KNw/jPYqJNpOw/+6mIsb+vAHbaxD/HMFPLi/TaG+m7F5RtzXQw1izqPZ?=
+ =?us-ascii?Q?pDaTjhoR2BDQpsh+ph5UpyIvObgTmvRnfpEK3AtHopc1SGsgzG6ONHsNos74?=
+ =?us-ascii?Q?ZSqUj86ZiO3Lhv3uRol/19LNSIipMHO7F58gNmsytYRFcEHYUkIp431oThP1?=
+ =?us-ascii?Q?/amopur9ndF4ZlNMPKOtM8thqkukb0tsVY2vBrYEx6II1luMwBLXqPlWaZGN?=
+ =?us-ascii?Q?LgOrPn7Zn9BVgzw4CjjqKMj1xLJMdw6q4emaSAMdXx6y+8iEPhW1iVCkodUV?=
+ =?us-ascii?Q?kVSKvns53LWuuy+F5dSa+qTPJBkp4ImB52eAMc2MiXqZxMAbcHUFhS0hcTsk?=
+ =?us-ascii?Q?YcVjFQtBZiEnUmmKbWBIp7gQtKknsyM8X1gNiyhwhof2K/alczxx2pEhIod9?=
+ =?us-ascii?Q?zyZDqhH6Qk/aYuch/bo1Y4RrCfvm7W29Mz3+m78+7Cd9X0Au37767KK+ZoD0?=
+ =?us-ascii?Q?TeuR3uOhDcOPvVidauKC2xgWp38Nf1c/BxC71/QVOP/JUOCK7UhR3d60AmGu?=
+ =?us-ascii?Q?fpNE5oFPF+OuBrGKVg+FnB27nBRSQi6SKPt+jwKJg9xDPQOISeE0rrZdvKYP?=
+ =?us-ascii?Q?jkVVDCUFtccWKb3CKiWYNIAZ8G8C49ZFuWktAf97nVBU+zgse0/zg8fjcHq0?=
+ =?us-ascii?Q?TDaydiAoYzA/a5k6BNAdDHyjpc/l14cYsV+WZPQCuMZpoN4/aQL0MqRn4s4H?=
+ =?us-ascii?Q?qtNS/ekVaN/RNHfABHJ9jaWkh2NphffanYvB1wmXd+mkiIx9JkCTVCKm0e2A?=
+ =?us-ascii?Q?feYD185VsGPzYGVWOA720U7hU4y86j2/Y5opCzQmZa7lqmstT3P2tMQUKMMZ?=
+ =?us-ascii?Q?hKXLCXCoUkIEWBXguAGgCICdigjjv1acyHXC5Gm+BM56yX9dAmzwMQI6afkd?=
+ =?us-ascii?Q?br+1Y70FDQhNqfhIFnoBLnI+a7rI4jduJZxpiUmU7VF83i6wRCECO6QObMXY?=
+ =?us-ascii?Q?CgLhOtDqIMvY80xtj9LbJ++PdB6kMrWh0YpFb52aDujxNbLrhUtOB3LXqLQd?=
+ =?us-ascii?Q?5ktZNCyzGtrN6MJt0d12ZfMst60ap6gbhVKqqNr+9iXlp28Oez2M4VLeWNu6?=
+ =?us-ascii?Q?FjHI8zPKg+QWFXtEXCjvvpX0bXawRp4=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33c1712f-8d60-405c-7c98-08da5351b420
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2022 06:46:00.7705
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pMCvbCXgtiGIv6uwIhMPD+RQx3hRwpjRenzTA9kkoGPL9j3aTqCVcZ6eB184coaIr5A2gtKqqJbB8c5SGBF0p17hsM/tcpSTn6P++RG2its=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4617
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.883
+ definitions=2022-06-21_02:2022-06-17,2022-06-21 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206210028
+X-Proofpoint-ORIG-GUID: UTdVJbLoInitrxvXM_1n4dzpBjXOB5VJ
+X-Proofpoint-GUID: UTdVJbLoInitrxvXM_1n4dzpBjXOB5VJ
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20.06.2022 19:18, Uwe Kleine-König wrote:
-> The release function is called with a pointer to the memory returned by
-> devres_alloc(). I was confused about that by the code before the
-> generalization that used a struct clk **ptr.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Hi Dmitry,
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/clk-qcom-common-use-parent_hws-in-_qcom_cc_register_board_clk/20220620-160242 
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git  clk-next
+config: parisc-randconfig-m031-20220619 (https://download.01.org/0day-ci/archive/20220621/202206210257.lD0x1WPz-lkp@intel.com/config )
+compiler: hppa-linux-gcc (GCC) 11.3.0
 
-> ---
-> On Mon, Jun 20, 2022 at 05:26:12PM +0200, Marek Szyprowski wrote:
->>> -   clk_put(*(struct clk **)res);
->>> +   struct devm_clk_state *state = *(struct devm_clk_state **)res;
->> This should be:
->>
->> struct devm_clk_state *state = res;
->>
->> otherwise it nukes badly during cleanup:
->> [...]
-> How embarrassing. I understood how I confused that, but I wonder how
-> that didn't pop up earlier.
->
-> FTR: I didn't test that now, but assume you did. My focus now was to get
-> out an applicable patch fast.
->
-> Thanks for your report
-> Uwe
->
->   drivers/clk/clk-devres.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index c822f4ef1584..1bb086695051 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -11,7 +11,7 @@ struct devm_clk_state {
->   
->   static void devm_clk_release(struct device *dev, void *res)
->   {
-> -	struct devm_clk_state *state = *(struct devm_clk_state **)res;
-> +	struct devm_clk_state *state = res;
->   
->   	if (state->exit)
->   		state->exit(state->clk);
->
-> base-commit: abae8e57e49aa75f6db76aa866c775721523908f
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Best regards
+smatch warnings:
+drivers/clk/qcom/common.c:172 _qcom_cc_register_board_clk() error: uninitialized symbol 'fixed'.
+
+vim +/fixed +172 drivers/clk/qcom/common.c
+
+ee15faffef1130 Stephen Boyd     2015-10-26  129  static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
+ee15faffef1130 Stephen Boyd     2015-10-26  130  				       const char *name, unsigned long rate,
+ee15faffef1130 Stephen Boyd     2015-10-26  131  				       bool add_factor)
+ee15faffef1130 Stephen Boyd     2015-10-26  132  {
+ee15faffef1130 Stephen Boyd     2015-10-26  133  	struct device_node *node = NULL;
+ee15faffef1130 Stephen Boyd     2015-10-26  134  	struct device_node *clocks_node;
+ee15faffef1130 Stephen Boyd     2015-10-26  135  	struct clk_fixed_factor *factor;
+ee15faffef1130 Stephen Boyd     2015-10-26  136  	struct clk_fixed_rate *fixed;
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ee15faffef1130 Stephen Boyd     2015-10-26  137  	struct clk_init_data init_data = { };
+120c1552839036 Stephen Boyd     2016-08-16  138  	int ret;
+ee15faffef1130 Stephen Boyd     2015-10-26  139  
+ee15faffef1130 Stephen Boyd     2015-10-26  140  	clocks_node = of_find_node_by_path("/clocks");
+43a51019cc8ff1 Johan Hovold     2017-11-11  141  	if (clocks_node) {
+43a51019cc8ff1 Johan Hovold     2017-11-11  142  		node = of_get_child_by_name(clocks_node, path);
+43a51019cc8ff1 Johan Hovold     2017-11-11  143  		of_node_put(clocks_node);
+43a51019cc8ff1 Johan Hovold     2017-11-11  144  	}
+ee15faffef1130 Stephen Boyd     2015-10-26  145  
+ee15faffef1130 Stephen Boyd     2015-10-26  146  	if (!node) {
+ee15faffef1130 Stephen Boyd     2015-10-26  147  		fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
+ee15faffef1130 Stephen Boyd     2015-10-26  148  		if (!fixed)
+ee15faffef1130 Stephen Boyd     2015-10-26  149  			return -EINVAL;
+ee15faffef1130 Stephen Boyd     2015-10-26  150  
+ee15faffef1130 Stephen Boyd     2015-10-26  151  		fixed->fixed_rate = rate;
+ee15faffef1130 Stephen Boyd     2015-10-26  152  		fixed->hw.init = &init_data;
+ee15faffef1130 Stephen Boyd     2015-10-26  153  
+ee15faffef1130 Stephen Boyd     2015-10-26  154  		init_data.name = path;
+ee15faffef1130 Stephen Boyd     2015-10-26  155  		init_data.ops = &clk_fixed_rate_ops;
+ee15faffef1130 Stephen Boyd     2015-10-26  156  
+120c1552839036 Stephen Boyd     2016-08-16  157  		ret = devm_clk_hw_register(dev, &fixed->hw);
+120c1552839036 Stephen Boyd     2016-08-16  158  		if (ret)
+120c1552839036 Stephen Boyd     2016-08-16  159  			return ret;
+ee15faffef1130 Stephen Boyd     2015-10-26  160  	}
+
+"fixed" is not set on else path.
+
+ee15faffef1130 Stephen Boyd     2015-10-26  161  	of_node_put(node);
+ee15faffef1130 Stephen Boyd     2015-10-26  162  
+ee15faffef1130 Stephen Boyd     2015-10-26  163  	if (add_factor) {
+ee15faffef1130 Stephen Boyd     2015-10-26  164  		factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
+ee15faffef1130 Stephen Boyd     2015-10-26  165  		if (!factor)
+ee15faffef1130 Stephen Boyd     2015-10-26  166  			return -EINVAL;
+ee15faffef1130 Stephen Boyd     2015-10-26  167  
+ee15faffef1130 Stephen Boyd     2015-10-26  168  		factor->mult = factor->div = 1;
+ee15faffef1130 Stephen Boyd     2015-10-26  169  		factor->hw.init = &init_data;
+ee15faffef1130 Stephen Boyd     2015-10-26  170  
+ee15faffef1130 Stephen Boyd     2015-10-26  171  		init_data.name = name;
+daa853a735065a Dmitry Baryshkov 2022-06-20 @172  		init_data.parent_hws = (const struct clk_hw*[]){ &fixed->hw };
+                                                                                                                  ^^^^^
+Used here.  This would work if fixed were set to NULL at the start but
+I kind of hate that it requires us to know that ->hw is the first member
+of fixed struct.
+
+ee15faffef1130 Stephen Boyd     2015-10-26  173  		init_data.num_parents = 1;
+ee15faffef1130 Stephen Boyd     2015-10-26  174  		init_data.flags = 0;
+ee15faffef1130 Stephen Boyd     2015-10-26  175  		init_data.ops = &clk_fixed_factor_ops;
+ee15faffef1130 Stephen Boyd     2015-10-26  176  
+120c1552839036 Stephen Boyd     2016-08-16  177  		ret = devm_clk_hw_register(dev, &factor->hw);
+120c1552839036 Stephen Boyd     2016-08-16  178  		if (ret)
+120c1552839036 Stephen Boyd     2016-08-16  179  			return ret;
+ee15faffef1130 Stephen Boyd     2015-10-26  180  	}
+ee15faffef1130 Stephen Boyd     2015-10-26  181  
+ee15faffef1130 Stephen Boyd     2015-10-26  182  	return 0;
+ee15faffef1130 Stephen Boyd     2015-10-26  183  }
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+0-DAY CI Kernel Test Service
+https://01.org/lkp 
+_______________________________________________
+kbuild mailing list -- kbuild@lists.01.org
+To unsubscribe send an email to kbuild-leave@lists.01.org
 
