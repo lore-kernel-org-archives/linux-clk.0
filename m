@@ -2,258 +2,296 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5849C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 17:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D289AC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 17:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353377AbiFURJZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 13:09:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46096 "EHLO
+        id S234333AbiFURQQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 13:16:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353401AbiFURJW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 13:09:22 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F401329CB2
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:09:20 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id x75so10582419qkb.12
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:09:20 -0700 (PDT)
+        with ESMTP id S1352845AbiFURQL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 13:16:11 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6B22B276
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:16:09 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 88so17811040qva.9
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 10:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=j7blovD8yZIVSMDnF6wpQvtTZGOIDSOmS5ueDQXNEg4=;
-        b=NeG3Kaj7vE75G3AkBh2+Yw84vXZI5c+6emC1Wwt5NzbaCSOEMo0R+IgeRsgZ2aoHy/
-         xt/JdsNWanaZL5XtJgQ7G7FPbsZmAzZzQhYSHV7fDUsXOviWLHhqow5EGSRA5ZVhIC8W
-         lHXyZX8fXR2Ax489AidUmQYUIVTaYY38D2KOQEn9IOc0RbiXHayDXC3F2lVah4XrN4G1
-         umL9z9YB8em2O6K8hnlCaXLjdOCDtGG6HX5fe6fKNNySnPOkAtYtXSFUzC8jukqqMmMs
-         nqiIoibpyBkamgXTMQRhCDi/mktwUfjkLHR/4NWr9NFeyLerDsRYG8aOyIKF7Wtz/Yqb
-         Knng==
+        bh=MFxT5wYK+fc+GnsJEuyUHa89IQN9BiQstYPIIQkZDVE=;
+        b=O6Ja82pIbYYX6Bz8cPSxN2qxzzQOIkSJ+zoJJ5BPdeFhijWgTANgQJ1w5rG3z3NhQg
+         7eqg0PQIh7n7o4mzvnxo6kqwxybE9BDb3D+c9hp/Osf6gA3W4jRha/J4JhsyY7Epwjbp
+         TUGm75AkDDGT5p5WXeZVGxEdjKRaAA02is8ntVfv0cLKIL5FrbSUPNR6rFH6R5gD0zdp
+         mvbX2Qxkw/b9BIxKNCJV8ktUjq5SiLvqamVgKR5VWby9oUlcZ1ERXhlCN07d7/w1yYUp
+         jgtnvEO3PU9//hlUStHQG4GFhXnkvtLhrajpngpHW8p2Rx2IZkO3ev9iMTQd4XMOPn0s
+         WPFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=j7blovD8yZIVSMDnF6wpQvtTZGOIDSOmS5ueDQXNEg4=;
-        b=nSh92jnuaFDGb21biSvOYJeSS6SeRTJFSW9hNW0ot0AAJ5bkrhk0KYs6e8F4lM2OPV
-         1mg+1OkAk4LNSpF+9Hd/mORV3cClokskG5p0u9+qO+UsNMcl3tP7gtNFuEm7XAlcsg1E
-         BoBxlJFHJf86Z4p4rf0gsZVnh9uwJLSagINOUG6Z8/60ZVefYUDmjg1IgC7hSqmPkkt8
-         va/gYpNfbNdiMmsSI3+q0LZ8a2wyUrzT3S8sKOcZhKNT+icq7x92Lw6T7zvWoAnF6E2C
-         BHgp1tRigxbwzs/J9I/7GjXwDhL90kIe62CflrW2/oGM7dmY0nk+Ga0j2YqhdNG9RK98
-         V5mQ==
-X-Gm-Message-State: AJIora9Ud94YgSAhY92r1SaPhkGI+odrSQ/l2T8eLq4KLCAOWdbKnmcY
-        Z7JqCwpKePdNrMqfKzWxEerHBlni5TlxMsrzyIFr2Q==
-X-Google-Smtp-Source: AGRyM1vzX9rdE/oum8gEQi8Myh0QDcna7eZrIKYriBs6e5jUFmi+GI0nMJFeYRWdeZlQ0Ly7vp+EGPfSyGI7dzPvJ2U=
-X-Received: by 2002:a05:620a:4156:b0:6a6:f8d2:6d9e with SMTP id
- k22-20020a05620a415600b006a6f8d26d9emr21129486qko.30.1655831359859; Tue, 21
- Jun 2022 10:09:19 -0700 (PDT)
+        bh=MFxT5wYK+fc+GnsJEuyUHa89IQN9BiQstYPIIQkZDVE=;
+        b=yeiuWrUeUlJHxGe6hUWjWGNkJcjDsWiaftWejtKZgycgGlLpeQ3ZYrNiGUz0ljd0z7
+         uCEc9pmh9e06E1pdpw21CHXOA2vnMsWYAMr5SuIW0maSr7wmyjECG/bUu71+ONGRbf0Q
+         JAvysrE+uzSjz3ZmYklJV38BvncmI4syoJhZuKr6fs1swpdn/q8KceCLDrcqN89p1uEf
+         mnsqouecIsZdcUGoQLR7nLGB+qR4N2FcXMGinnROMgThS4j7A9SaR/j3NYnyADHav4m7
+         qmeZZElSzpoQd43xGuaxGMobxSPXGr1WfpLyO5p36KPfUqFAp+wZioYQMI60S7EJv04n
+         ykfA==
+X-Gm-Message-State: AJIora9xIj9Bt7UtzA1fUkn5wFRRrxLvoT6YbuA8Zg5FOf2xcr4KY11x
+        2h+977/Pykp5g7ZzvfUdOQL/W1EeUod0AB9i9xpxLg==
+X-Google-Smtp-Source: AGRyM1siES0WjcBWqz13IoSkH7OHEZqGW3GGEoEBp3ACtwuTF4UjeLUFwQbFE+jn4GGNCja6EUVpw8/+K9TEyN2ax6Y=
+X-Received: by 2002:ad4:4d88:0:b0:470:46d2:5653 with SMTP id
+ cv8-20020ad44d88000000b0047046d25653mr7186408qvb.115.1655831768817; Tue, 21
+ Jun 2022 10:16:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220621160621.24415-1-y.oudjana@protonmail.com> <20220621160621.24415-7-y.oudjana@protonmail.com>
-In-Reply-To: <20220621160621.24415-7-y.oudjana@protonmail.com>
+References: <20220621163326.16858-1-ansuelsmth@gmail.com> <20220621163326.16858-3-ansuelsmth@gmail.com>
+In-Reply-To: <20220621163326.16858-3-ansuelsmth@gmail.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 21 Jun 2022 20:09:08 +0300
-Message-ID: <CAA8EJpo8E68_nw+H54CqVm7w_5WDYLQYt=UXdyzy=bZobEAs=Q@mail.gmail.com>
-Subject: Re: [PATCH 6/6] clk: qcom: msm8996-cpu: Use parent_data for all clocks
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Date:   Tue, 21 Jun 2022 20:15:57 +0300
+Message-ID: <CAA8EJpqQTTevQa4pQg3E+x4_AOjYo8ajOqUrfwGsVtC8N=bpOw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] clk: qcom: lcc-ipq806x: convert to parent data
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 at 19:07, Yassine Oudjana <yassine.oudjana@gmail.com> wrote:
+On Tue, 21 Jun 2022 at 19:33, Christian Marangi <ansuelsmth@gmail.com> wrote:
 >
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> Convert lcc-ipq806x driver to parent_data API.
 >
-> Replace parent_names in PLLs, secondary muxes and primary muxes with
-> parent_data. For primary muxes there were never any *cl_pll_acd clocks,
-> so instead of adding them, put the primary PLLs in both PLL_INDEX and
-> ACD_INDEX, then make sure ACD_INDEX is always picked over PLL_INDEX when
-> setting parent since we always want ACD when using the primary PLLs.
->
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/clk/qcom/clk-cpu-8996.c | 79 ++++++++++++++++++++-------------
->  1 file changed, 47 insertions(+), 32 deletions(-)
+> v2:
+> - Fix Sob tag
 >
-> diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-> index b3ad9245874d..cdb7b2ef3367 100644
-> --- a/drivers/clk/qcom/clk-cpu-8996.c
-> +++ b/drivers/clk/qcom/clk-cpu-8996.c
-> @@ -112,14 +112,18 @@ static const struct alpha_pll_config hfpll_config = {
->         .early_output_mask = BIT(3),
->  };
+>  drivers/clk/qcom/lcc-ipq806x.c | 79 +++++++++++++++++++---------------
+>  1 file changed, 44 insertions(+), 35 deletions(-)
 >
-> +static const struct clk_parent_data pll_parent[] = {
-> +       { .fw_name = "xo" },
-> +};
-> +
->  static struct clk_alpha_pll pwrcl_pll = {
->         .offset = PWRCL_REG_OFFSET,
->         .regs = prim_pll_regs,
->         .flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
->         .clkr.hw.init = &(struct clk_init_data){
->                 .name = "pwrcl_pll",
-> -               .parent_names = (const char *[]){ "xo" },
-> -               .num_parents = 1,
-> +               .parent_data = pll_parent,
-> +               .num_parents = ARRAY_SIZE(pll_parent),
->                 .ops = &clk_alpha_pll_huayra_ops,
->         },
->  };
-> @@ -130,8 +134,8 @@ static struct clk_alpha_pll perfcl_pll = {
->         .flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
->         .clkr.hw.init = &(struct clk_init_data){
->                 .name = "perfcl_pll",
-> -               .parent_names = (const char *[]){ "xo" },
-> -               .num_parents = 1,
-> +               .parent_data = pll_parent,
-> +               .num_parents = ARRAY_SIZE(pll_parent),
->                 .ops = &clk_alpha_pll_huayra_ops,
->         },
->  };
-> @@ -190,8 +194,8 @@ static struct clk_alpha_pll pwrcl_alt_pll = {
->         .flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "pwrcl_alt_pll",
-> -               .parent_names = (const char *[]){ "xo" },
-> -               .num_parents = 1,
-> +               .parent_data = pll_parent,
-> +               .num_parents = ARRAY_SIZE(pll_parent),
->                 .ops = &clk_alpha_pll_hwfsm_ops,
->         },
->  };
-> @@ -204,8 +208,8 @@ static struct clk_alpha_pll perfcl_alt_pll = {
->         .flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "perfcl_alt_pll",
-> -               .parent_names = (const char *[]){ "xo" },
-> -               .num_parents = 1,
-> +               .parent_data = pll_parent,
-> +               .num_parents = ARRAY_SIZE(pll_parent),
->                 .ops = &clk_alpha_pll_hwfsm_ops,
->         },
->  };
-> @@ -252,6 +256,9 @@ static int clk_cpu_8996_pmux_set_parent(struct clk_hw *hw, u8 index)
->         u32 val;
+> diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
+> index ba90bebba597..c07ca8dc6e3a 100644
+> --- a/drivers/clk/qcom/lcc-ipq806x.c
+> +++ b/drivers/clk/qcom/lcc-ipq806x.c
+> @@ -24,6 +24,10 @@
+>  #include "clk-regmap-mux.h"
+>  #include "reset.h"
 >
->         val = index;
-> +       /* We always want ACD when using the primary PLL */
-> +       if (val == PLL_INDEX)
-> +               val = ACD_INDEX;
->         val <<= cpuclk->shift;
->
->         return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
-> @@ -282,17 +289,24 @@ static const struct clk_ops clk_cpu_8996_pmux_ops = {
->         .determine_rate = clk_cpu_8996_pmux_determine_rate,
->  };
->
-> +static const struct clk_parent_data pwrcl_smux_parents[] = {
-> +       { .fw_name = "xo" },
-> +       { .hw = &pwrcl_pll_postdiv.hw },
-> +};
-> +
-> +static const struct clk_parent_data perfcl_smux_parents[] = {
-> +       { .fw_name = "xo" },
-> +       { .hw = &perfcl_pll_postdiv.hw },
-> +};
-> +
->  static struct clk_regmap_mux pwrcl_smux = {
->         .reg = PWRCL_REG_OFFSET + MUX_OFFSET,
->         .shift = 2,
->         .width = 2,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "pwrcl_smux",
-> -               .parent_names = (const char *[]){
-> -                       "xo",
-> -                       "pwrcl_pll_postdiv",
-> -               },
-> -               .num_parents = 2,
-> +               .parent_data = pwrcl_smux_parents,
-> +               .num_parents = ARRAY_SIZE(pwrcl_smux_parents),
->                 .ops = &clk_regmap_mux_closest_ops,
->                 .flags = CLK_SET_RATE_PARENT,
->         },
-> @@ -304,16 +318,27 @@ static struct clk_regmap_mux perfcl_smux = {
->         .width = 2,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "perfcl_smux",
-> -               .parent_names = (const char *[]){
-> -                       "xo",
-> -                       "perfcl_pll_postdiv",
-> -               },
-> -               .num_parents = 2,
-> +               .parent_data = perfcl_smux_parents,
-> +               .num_parents = ARRAY_SIZE(perfcl_smux_parents),
->                 .ops = &clk_regmap_mux_closest_ops,
->                 .flags = CLK_SET_RATE_PARENT,
->         },
->  };
->
-> +static const struct clk_parent_data pwrcl_pmux_parents[] = {
-> +       [SMUX_INDEX] = { .hw = &pwrcl_smux.clkr.hw },
-> +       [PLL_INDEX] = { .hw = &pwrcl_pll.clkr.hw },
-> +       [ACD_INDEX] = { .hw = &pwrcl_pll.clkr.hw },
-> +       [ALT_INDEX] = { .hw = &pwrcl_alt_pll.clkr.hw },
-> +};
-> +
-> +static const struct clk_parent_data perfcl_pmux_parents[] = {
-> +       [SMUX_INDEX] = { .hw = &perfcl_smux.clkr.hw },
-> +       [PLL_INDEX] = { .hw = &perfcl_pll.clkr.hw },
-> +       [ACD_INDEX] = { .hw = &perfcl_pll.clkr.hw },
-> +       [ALT_INDEX] = { .hw = &perfcl_alt_pll.clkr.hw },
-> +};
-> +
->  static struct clk_cpu_8996_pmux pwrcl_pmux = {
->         .reg = PWRCL_REG_OFFSET + MUX_OFFSET,
->         .shift = 0,
-> @@ -323,13 +348,8 @@ static struct clk_cpu_8996_pmux pwrcl_pmux = {
->         .nb.notifier_call = cpu_clk_notifier_cb,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "pwrcl_pmux",
-> -               .parent_names = (const char *[]){
-> -                       "pwrcl_smux",
-> -                       "pwrcl_pll",
-> -                       "pwrcl_pll_acd",
-> -                       "pwrcl_alt_pll",
-> -               },
-> -               .num_parents = 4,
-> +               .parent_data = pwrcl_pmux_parents,
+> +static const struct clk_parent_data gcc_pxo[] = {
+> +       { .fw_name = "pxo", .name = "pxo" },
 
-Please use parent_hws here and below.
+I think you'd use .name = "pxo_board" here. You don't need to use the
+interim clock.
 
-> +               .num_parents = ARRAY_SIZE(pwrcl_pmux_parents),
->                 .ops = &clk_cpu_8996_pmux_ops,
->                 /* CPU clock is critical and should never be gated */
->                 .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> @@ -345,13 +365,8 @@ static struct clk_cpu_8996_pmux perfcl_pmux = {
->         .nb.notifier_call = cpu_clk_notifier_cb,
->         .clkr.hw.init = &(struct clk_init_data) {
->                 .name = "perfcl_pmux",
-> -               .parent_names = (const char *[]){
-> -                       "perfcl_smux",
-> -                       "perfcl_pll",
-> -                       "perfcl_pll_acd",
-> -                       "perfcl_alt_pll",
-> -               },
-> -               .num_parents = 4,
-> +               .parent_data = perfcl_pmux_parents,
-> +               .num_parents = ARRAY_SIZE(perfcl_pmux_parents),
->                 .ops = &clk_cpu_8996_pmux_ops,
->                 /* CPU clock is critical and should never be gated */
->                 .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+> +};
+> +
+>  static struct clk_pll pll4 = {
+>         .l_reg = 0x4,
+>         .m_reg = 0x8,
+> @@ -34,7 +38,7 @@ static struct clk_pll pll4 = {
+>         .status_bit = 16,
+>         .clkr.hw.init = &(struct clk_init_data){
+>                 .name = "pll4",
+> -               .parent_names = (const char *[]){ "pxo" },
+> +               .parent_data = gcc_pxo,
+>                 .num_parents = 1,
+
+Could you please either inline the gcc_pxo here (yes, it's ugly, but
+it works for small arrays) or use ARRAY_SIZE here.
+
+>                 .ops = &clk_pll_ops,
+>         },
+> @@ -64,9 +68,9 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
+>         { P_PLL4, 2 }
+>  };
+>
+> -static const char * const lcc_pxo_pll4[] = {
+> -       "pxo",
+> -       "pll4_vote",
+> +static const struct clk_parent_data lcc_pxo_pll4[] = {
+> +       { .fw_name = "pxo", .name = "pxo" },
+> +       { .fw_name = "pll4_vote", .name = "pll4_vote" },
+>  };
+>
+>  static struct freq_tbl clk_tbl_aif_mi2s[] = {
+> @@ -131,18 +135,14 @@ static struct clk_rcg mi2s_osr_src = {
+>                 .enable_mask = BIT(9),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "mi2s_osr_src",
+> -                       .parent_names = lcc_pxo_pll4,
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_pxo_pll4,
+> +                       .num_parents = ARRAY_SIZE(lcc_pxo_pll4),
+>                         .ops = &clk_rcg_ops,
+>                         .flags = CLK_SET_RATE_GATE,
+>                 },
+>         },
+>  };
+>
+> -static const char * const lcc_mi2s_parents[] = {
+> -       "mi2s_osr_src",
+> -};
+> -
+>  static struct clk_branch mi2s_osr_clk = {
+>         .halt_reg = 0x50,
+>         .halt_bit = 1,
+> @@ -152,7 +152,9 @@ static struct clk_branch mi2s_osr_clk = {
+>                 .enable_mask = BIT(17),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "mi2s_osr_clk",
+> -                       .parent_names = lcc_mi2s_parents,
+> +                       .parent_hws = (const struct clk_hw*[]){
+> +                               &mi2s_osr_src.clkr.hw,
+> +                       },
+>                         .num_parents = 1,
+>                         .ops = &clk_branch_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+> @@ -167,7 +169,9 @@ static struct clk_regmap_div mi2s_div_clk = {
+>         .clkr = {
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "mi2s_div_clk",
+> -                       .parent_names = lcc_mi2s_parents,
+> +                       .parent_hws = (const struct clk_hw*[]){
+> +                               &mi2s_osr_src.clkr.hw,
+> +                       },
+>                         .num_parents = 1,
+>                         .ops = &clk_regmap_div_ops,
+>                 },
+> @@ -183,7 +187,9 @@ static struct clk_branch mi2s_bit_div_clk = {
+>                 .enable_mask = BIT(15),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "mi2s_bit_div_clk",
+> -                       .parent_names = (const char *[]){ "mi2s_div_clk" },
+> +                       .parent_hws = (const struct clk_hw*[]){
+> +                               &mi2s_div_clk.clkr.hw,
+> +                       },
+>                         .num_parents = 1,
+>                         .ops = &clk_branch_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+> @@ -191,6 +197,10 @@ static struct clk_branch mi2s_bit_div_clk = {
+>         },
+>  };
+>
+> +static const struct clk_parent_data lcc_mi2s_bit_div_codec_clk[] = {
+> +       { .hw = &mi2s_bit_div_clk.clkr.hw, },
+> +       { .fw_name = "mi2s_codec_clk", .name = "mi2s_codec_clk" },
+> +};
+>
+>  static struct clk_regmap_mux mi2s_bit_clk = {
+>         .reg = 0x48,
+> @@ -199,11 +209,8 @@ static struct clk_regmap_mux mi2s_bit_clk = {
+>         .clkr = {
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "mi2s_bit_clk",
+> -                       .parent_names = (const char *[]){
+> -                               "mi2s_bit_div_clk",
+> -                               "mi2s_codec_clk",
+> -                       },
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_mi2s_bit_div_codec_clk,
+> +                       .num_parents = ARRAY_SIZE(lcc_mi2s_bit_div_codec_clk),
+>                         .ops = &clk_regmap_mux_closest_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+>                 },
+> @@ -245,8 +252,8 @@ static struct clk_rcg pcm_src = {
+>                 .enable_mask = BIT(9),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "pcm_src",
+> -                       .parent_names = lcc_pxo_pll4,
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_pxo_pll4,
+> +                       .num_parents = ARRAY_SIZE(lcc_pxo_pll4),
+>                         .ops = &clk_rcg_ops,
+>                         .flags = CLK_SET_RATE_GATE,
+>                 },
+> @@ -262,7 +269,9 @@ static struct clk_branch pcm_clk_out = {
+>                 .enable_mask = BIT(11),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "pcm_clk_out",
+> -                       .parent_names = (const char *[]){ "pcm_src" },
+> +                       .parent_hws = (const struct clk_hw*[]){
+> +                               &pcm_src.clkr.hw,
+> +                       },
+>                         .num_parents = 1,
+>                         .ops = &clk_branch_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+> @@ -270,6 +279,11 @@ static struct clk_branch pcm_clk_out = {
+>         },
+>  };
+>
+> +static const struct clk_parent_data lcc_pcm_clk_out_codec_clk[] = {
+> +       { .hw = &pcm_clk_out.clkr.hw, },
+> +       { .fw_name = "pcm_codec_clk", .name = "pcm_codec_clk" },
+> +};
+> +
+>  static struct clk_regmap_mux pcm_clk = {
+>         .reg = 0x54,
+>         .shift = 10,
+> @@ -277,11 +291,8 @@ static struct clk_regmap_mux pcm_clk = {
+>         .clkr = {
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "pcm_clk",
+> -                       .parent_names = (const char *[]){
+> -                               "pcm_clk_out",
+> -                               "pcm_codec_clk",
+> -                       },
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_pcm_clk_out_codec_clk,
+> +                       .num_parents = ARRAY_SIZE(lcc_pcm_clk_out_codec_clk),
+>                         .ops = &clk_regmap_mux_closest_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+>                 },
+> @@ -325,18 +336,14 @@ static struct clk_rcg spdif_src = {
+>                 .enable_mask = BIT(9),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "spdif_src",
+> -                       .parent_names = lcc_pxo_pll4,
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_pxo_pll4,
+> +                       .num_parents = ARRAY_SIZE(lcc_pxo_pll4),
+>                         .ops = &clk_rcg_ops,
+>                         .flags = CLK_SET_RATE_GATE,
+>                 },
+>         },
+>  };
+>
+> -static const char * const lcc_spdif_parents[] = {
+> -       "spdif_src",
+> -};
+> -
+>  static struct clk_branch spdif_clk = {
+>         .halt_reg = 0xd4,
+>         .halt_bit = 1,
+> @@ -346,7 +353,9 @@ static struct clk_branch spdif_clk = {
+>                 .enable_mask = BIT(12),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "spdif_clk",
+> -                       .parent_names = lcc_spdif_parents,
+> +                       .parent_hws = (const struct clk_hw*[]){
+> +                               &spdif_src.clkr.hw,
+> +                       },
+>                         .num_parents = 1,
+>                         .ops = &clk_branch_ops,
+>                         .flags = CLK_SET_RATE_PARENT,
+> @@ -384,8 +393,8 @@ static struct clk_rcg ahbix_clk = {
+>                 .enable_mask = BIT(11),
+>                 .hw.init = &(struct clk_init_data){
+>                         .name = "ahbix",
+> -                       .parent_names = lcc_pxo_pll4,
+> -                       .num_parents = 2,
+> +                       .parent_data = lcc_pxo_pll4,
+> +                       .num_parents = ARRAY_SIZE(lcc_pxo_pll4),
+>                         .ops = &clk_rcg_lcc_ops,
+>                 },
+>         },
 > --
 > 2.36.1
 >
