@@ -2,166 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52237C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 06:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD89C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 09:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346170AbiFUGzC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 02:55:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33928 "EHLO
+        id S1347336AbiFUJL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 05:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345662AbiFUGzB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 02:55:01 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092E41CB1F
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 23:55:00 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 43so19054952qvb.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jun 2022 23:54:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RSa8jrClGDA2tFtOGptl0Oo8l560h/UCVEpeEMIh4Bg=;
-        b=FuK2wNxaws2uw8oizsv8YfrFiwI+VXapXplvut6EeVzRts/YDCrzRy4engy49/BWrI
-         /JUraVJdm+pdH+PQ9hDrJDB4/ae8LXt/q6diW0wND9JTXszOYRE1QF5A9Pk+/QyJLF/O
-         6TeRiw7uGd8bXsxPUF28h7ZUKA/OruOwYRuMaJPNHJmuHOlUNdRc6fnm57KBx+g/sVb0
-         N3SPojMq22bTw4Bqy/vjvVgFXdB15rdSpGE4zNHHcO4RNu/n5JuWkfxF7H4I+GHbnaeL
-         /CCvxS1lp0ldUb0EBYVczCnICPwxNdFFP+CQ1K9BhMw4tUzkfMpIjxF96ZprUMDOESB2
-         qPdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RSa8jrClGDA2tFtOGptl0Oo8l560h/UCVEpeEMIh4Bg=;
-        b=hxXc42mjZRcQiIFqNLxgl4O6YAplb3CBy9+EAbkuZjg/9V9g3iaSLXWWUtGRn+ogm2
-         Sia6tAaW69CoHMlsSsda7+Vrsw/2CkvYhRtZcBjuoVokPoOOlZJ4PIEL3aVNoFABSCGy
-         Ky0idFgyxISImQBveoOalAFXFMnV88yLzTd9LuOYHBtmfgi6LuDOPdUoXZPg0wkHj/3T
-         YaOlTfDnhPpWX9GoyZj4t3R6XiCIh+qszwei8Jo45mIeypQX2a5Ryxr6vSSBP7fzruoj
-         WqEZaNQmNMRDxJNBYiZS25xn20/fqpvPwO8+jGoBPVTraeYEzvyRfOaW/6Ii6WPWT52j
-         bvaA==
-X-Gm-Message-State: AJIora970s77nVEenWPQgZpkswc8A7AEX5qkX+xs5l9sZLzMMyEYPokw
-        XSRl97QRc70WY1oTxuy80U9MTUUkpH/hvwkpAa4wNJW0lVxOJg==
-X-Google-Smtp-Source: AGRyM1sRH6DIPLEbODu3wVohAC9xeARKZiESG0XcyVTajdZyb0MNS/6sIDRVwZAWU+3lLQ7eq+++tnCYE0ucMV59+44=
-X-Received: by 2002:ad4:4d88:0:b0:470:46d2:5653 with SMTP id
- cv8-20020ad44d88000000b0047046d25653mr4952039qvb.115.1655794499103; Mon, 20
- Jun 2022 23:54:59 -0700 (PDT)
+        with ESMTP id S1346528AbiFUJLZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 05:11:25 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C16C45F52;
+        Tue, 21 Jun 2022 02:11:24 -0700 (PDT)
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 9CB90809F;
+        Tue, 21 Jun 2022 09:06:25 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-omap@vger.kernel.org
+Subject: [PATCH] clk: ti: Fix missing of_node_get() ti_find_clock_provider()
+Date:   Tue, 21 Jun 2022 12:11:18 +0300
+Message-Id: <20220621091118.33930-1-tony@atomide.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220620080117.1571807-1-dmitry.baryshkov@linaro.org> <202206210257.lD0x1WPz-lkp@intel.com>
-In-Reply-To: <202206210257.lD0x1WPz-lkp@intel.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 21 Jun 2022 09:54:48 +0300
-Message-ID: <CAA8EJppbejsNXkxz=LFFVBDL=YLkOqQrk0tzx965PiNDznBdWg@mail.gmail.com>
-Subject: Re: [kbuild] Re: [PATCH] clk: qcom: common: use parent_hws in _qcom_cc_register_board_clk()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     kbuild@lists.01.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>, lkp@intel.com,
-        kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 at 09:46, Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Hi Dmitry,
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/clk-qcom-common-use-parent_hws-in-_qcom_cc_register_board_clk/20220620-160242
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git  clk-next
-> config: parisc-randconfig-m031-20220619 (https://download.01.org/0day-ci/archive/20220621/202206210257.lD0x1WPz-lkp@intel.com/config )
-> compiler: hppa-linux-gcc (GCC) 11.3.0
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
->
-> smatch warnings:
-> drivers/clk/qcom/common.c:172 _qcom_cc_register_board_clk() error: uninitialized symbol 'fixed'.
->
-> vim +/fixed +172 drivers/clk/qcom/common.c
->
-> ee15faffef1130 Stephen Boyd     2015-10-26  129  static int _qcom_cc_register_board_clk(struct device *dev, const char *path,
-> ee15faffef1130 Stephen Boyd     2015-10-26  130                                        const char *name, unsigned long rate,
-> ee15faffef1130 Stephen Boyd     2015-10-26  131                                        bool add_factor)
-> ee15faffef1130 Stephen Boyd     2015-10-26  132  {
-> ee15faffef1130 Stephen Boyd     2015-10-26  133         struct device_node *node = NULL;
-> ee15faffef1130 Stephen Boyd     2015-10-26  134         struct device_node *clocks_node;
-> ee15faffef1130 Stephen Boyd     2015-10-26  135         struct clk_fixed_factor *factor;
-> ee15faffef1130 Stephen Boyd     2015-10-26  136         struct clk_fixed_rate *fixed;
->                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> ee15faffef1130 Stephen Boyd     2015-10-26  137         struct clk_init_data init_data = { };
-> 120c1552839036 Stephen Boyd     2016-08-16  138         int ret;
-> ee15faffef1130 Stephen Boyd     2015-10-26  139
-> ee15faffef1130 Stephen Boyd     2015-10-26  140         clocks_node = of_find_node_by_path("/clocks");
-> 43a51019cc8ff1 Johan Hovold     2017-11-11  141         if (clocks_node) {
-> 43a51019cc8ff1 Johan Hovold     2017-11-11  142                 node = of_get_child_by_name(clocks_node, path);
-> 43a51019cc8ff1 Johan Hovold     2017-11-11  143                 of_node_put(clocks_node);
-> 43a51019cc8ff1 Johan Hovold     2017-11-11  144         }
-> ee15faffef1130 Stephen Boyd     2015-10-26  145
-> ee15faffef1130 Stephen Boyd     2015-10-26  146         if (!node) {
-> ee15faffef1130 Stephen Boyd     2015-10-26  147                 fixed = devm_kzalloc(dev, sizeof(*fixed), GFP_KERNEL);
-> ee15faffef1130 Stephen Boyd     2015-10-26  148                 if (!fixed)
-> ee15faffef1130 Stephen Boyd     2015-10-26  149                         return -EINVAL;
-> ee15faffef1130 Stephen Boyd     2015-10-26  150
-> ee15faffef1130 Stephen Boyd     2015-10-26  151                 fixed->fixed_rate = rate;
-> ee15faffef1130 Stephen Boyd     2015-10-26  152                 fixed->hw.init = &init_data;
-> ee15faffef1130 Stephen Boyd     2015-10-26  153
-> ee15faffef1130 Stephen Boyd     2015-10-26  154                 init_data.name = path;
-> ee15faffef1130 Stephen Boyd     2015-10-26  155                 init_data.ops = &clk_fixed_rate_ops;
-> ee15faffef1130 Stephen Boyd     2015-10-26  156
-> 120c1552839036 Stephen Boyd     2016-08-16  157                 ret = devm_clk_hw_register(dev, &fixed->hw);
-> 120c1552839036 Stephen Boyd     2016-08-16  158                 if (ret)
-> 120c1552839036 Stephen Boyd     2016-08-16  159                         return ret;
-> ee15faffef1130 Stephen Boyd     2015-10-26  160         }
->
-> "fixed" is not set on else path.
->
-> ee15faffef1130 Stephen Boyd     2015-10-26  161         of_node_put(node);
-> ee15faffef1130 Stephen Boyd     2015-10-26  162
-> ee15faffef1130 Stephen Boyd     2015-10-26  163         if (add_factor) {
-> ee15faffef1130 Stephen Boyd     2015-10-26  164                 factor = devm_kzalloc(dev, sizeof(*factor), GFP_KERNEL);
-> ee15faffef1130 Stephen Boyd     2015-10-26  165                 if (!factor)
-> ee15faffef1130 Stephen Boyd     2015-10-26  166                         return -EINVAL;
-> ee15faffef1130 Stephen Boyd     2015-10-26  167
-> ee15faffef1130 Stephen Boyd     2015-10-26  168                 factor->mult = factor->div = 1;
-> ee15faffef1130 Stephen Boyd     2015-10-26  169                 factor->hw.init = &init_data;
-> ee15faffef1130 Stephen Boyd     2015-10-26  170
-> ee15faffef1130 Stephen Boyd     2015-10-26  171                 init_data.name = name;
-> daa853a735065a Dmitry Baryshkov 2022-06-20 @172                 init_data.parent_hws = (const struct clk_hw*[]){ &fixed->hw };
->                                                                                                                   ^^^^^
-> Used here.  This would work if fixed were set to NULL at the start but
-> I kind of hate that it requires us to know that ->hw is the first member
-> of fixed struct.
+For ti_find_clock_provider() we want to return the np with refcount
+incremented. However we are missing of_node_get() for the
+clock-output-names case that causes refcount warnings.
 
-Thanks for reporting this. The problem is a bit worse. If the node
-exists, we are expected to use the existing global clock here instead
-of the newly created 'fixed' clock.
+Fixes: 51f661ef9a10 ("clk: ti: Add ti_find_clock_provider() to use clock-output-names")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/ti/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> ee15faffef1130 Stephen Boyd     2015-10-26  173                 init_data.num_parents = 1;
-> ee15faffef1130 Stephen Boyd     2015-10-26  174                 init_data.flags = 0;
-> ee15faffef1130 Stephen Boyd     2015-10-26  175                 init_data.ops = &clk_fixed_factor_ops;
-> ee15faffef1130 Stephen Boyd     2015-10-26  176
-> 120c1552839036 Stephen Boyd     2016-08-16  177                 ret = devm_clk_hw_register(dev, &factor->hw);
-> 120c1552839036 Stephen Boyd     2016-08-16  178                 if (ret)
-> 120c1552839036 Stephen Boyd     2016-08-16  179                         return ret;
-> ee15faffef1130 Stephen Boyd     2015-10-26  180         }
-> ee15faffef1130 Stephen Boyd     2015-10-26  181
-> ee15faffef1130 Stephen Boyd     2015-10-26  182         return 0;
-> ee15faffef1130 Stephen Boyd     2015-10-26  183  }
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://01.org/lkp
-> _______________________________________________
-> kbuild mailing list -- kbuild@lists.01.org
-> To unsubscribe send an email to kbuild-leave@lists.01.org
->
-
-
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -135,6 +135,7 @@ static struct device_node *ti_find_clock_provider(struct device_node *from,
+ 			continue;
+ 
+ 		if (!strncmp(n, tmp, strlen(tmp))) {
++			of_node_get(np);
+ 			found = true;
+ 			break;
+ 		}
 -- 
-With best wishes
-Dmitry
+2.36.1
