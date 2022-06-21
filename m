@@ -2,111 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB0BC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 15:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907E0C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 15:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352608AbiFUPVS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 11:21:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
+        id S232521AbiFUPam (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 11:30:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237311AbiFUPVS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 11:21:18 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95CD328705;
-        Tue, 21 Jun 2022 08:21:16 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id g27so12782612wrb.10;
-        Tue, 21 Jun 2022 08:21:16 -0700 (PDT)
+        with ESMTP id S241313AbiFUPal (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 11:30:41 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C041FA70
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id f8so12844058plo.9
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qd+fXNIigO6bT/TI4/YvAL8F3wpHGElIc1OVu6S8MEo=;
-        b=hm+qUkm+3WNmF/VXhDTQ7wkhJUBeAZiFDPrDnEp8BWAeR8d3pFOZeDGCyK1N39ydx0
-         yn8pHHS0DXq3j8mR/JozSCkdo9RTvoNhnzYbPtyzqGiyQzxGCzmQzCBrM7T24pHY7K/m
-         7fUZHwx7l0mi4092IciMkNS+PfTw1X6n0fxqXrB+vDJyS/Ydl2MnVH38Awygy9hd1y3K
-         L4jcq8kOeXqn0m/mHeM53cn+C1yzvT29hbEVXUQK/C6bcOoHaUwdq32A+AEt6677EbVr
-         toLz3Yz2L/2ZVww0CFftAe58d2/nT4CH26d/AAAKG3nahAP4N6Bt0/KJMX1XhRQB3VNI
-         tLag==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=OO6V8vJtdU31DJMzJLPQj0Yl71jJW7+6gQMWZVWS8Mc=;
+        b=nqcFAYWrGd92KqHBlKPXcKcM8irlULNVyqN5HcgDOqEOyuDetESQ6HQnJfQ7ArM60W
+         LKEIsfSwqnv5O4X2OewKcbMgAdbpwJ2p8F+5x4O4addUm4j50ifw9fl2Iovb0tRTRCG9
+         +Y6Fdy8xIyilG0atYtk5uNO9NAWO5Pa/CD88gBySQOYf39IZKg414pUblCLijZFCysHY
+         Poodql/NPx2PjIRTpR8qCxZRBtYSghSAzrBDSKeC+UVq7l4QOUMjyUs7qcFHd0ry/ybG
+         LafCMTBAE8Ld5OcvwXmryD9Xkek57etzKeCF3jKpUA1AQv5ZZjxZ3+PMwDPxlih5IQN6
+         NCfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qd+fXNIigO6bT/TI4/YvAL8F3wpHGElIc1OVu6S8MEo=;
-        b=uBpcz58g2MTjqG/E45Pz0RLak2h7up0vpt4JrE7BIbhkBi5F/E93Bu+CbUTq1ATHhT
-         neih6YfBldgSmh/p3BDUSEhdjzErUFfwsOEPzv8X9PqIPrXmqWsv+a9EuydFsNRJVZ7w
-         ewcRGtrO9HEo1i1xOcI1sQxoc6lQswAEqznpCpBBXQinNmOXymiXZGsb9y71BwuRiYkc
-         M1O3Qy+7ruBX/PMJEIPdji4fX70OgNxxjXN7dfh68X9mATyNSiDbJbjCgIJJF1Qzkxjk
-         6bBCtTtj47UfD+WdiIPHQ7v1kaWNphLcnl/APaxfk/vYEatRDLwhhGfYWBRDF4g2oaum
-         2TOA==
-X-Gm-Message-State: AJIora8ACHyB5JxYq4zPRk+2Ie+iXSP69OES8mjobAoAE1FUEaCBND9n
-        W5wJHiVSGuzR5xetp9ZjY8w=
-X-Google-Smtp-Source: AGRyM1tQfP7qGqIvY8mVsTifRoAdgXmtbjWBgNERiEbu572ag1ss0LEijGLxMRoKfsRanU1QFaSf7g==
-X-Received: by 2002:adf:e801:0:b0:21b:873f:ed62 with SMTP id o1-20020adfe801000000b0021b873fed62mr17015242wrm.17.1655824875093;
-        Tue, 21 Jun 2022 08:21:15 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id f23-20020a7bcc17000000b0039740903c39sm18405298wmh.7.2022.06.21.08.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jun 2022 08:21:14 -0700 (PDT)
-Message-ID: <62b1e1ea.1c69fb81.aafda.3244@mx.google.com>
-X-Google-Original-Message-ID: <YrHh6YN6WiGOH1d4@Ansuel-xps.>
-Date:   Tue, 21 Jun 2022 17:21:13 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last
- remaining entry
-References: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OO6V8vJtdU31DJMzJLPQj0Yl71jJW7+6gQMWZVWS8Mc=;
+        b=iGeUhDtF1lk/H+aD8utRBl1CwZ17++IaHRKlurqOKP7tQt/OKJeU8UfSuCqVV6Vr2e
+         VsKSuCOmXYBYbFiU+LNWiTdBvVbp9W5UMVQqhjBFgFF7AZB8fm3eYmnAnvr6DV+Nt9s8
+         317+kKCxe2LgSu1d7Qcd+OQ5W9JdsNZsvaahllU+a1a4lz9Vtrubzae6syGvvSZBsxUN
+         z5++UPppmvfdKulvaZ8e8D3eap/uN8M1Xof+u0g9Fi2yXI+TQ2k6rLnv7IYaFk9A5ccj
+         7mmodDkt4XpjkkniafrAesudtzb+2HQ1iqQ6aU/mt2Kn+2g5v4sMZspVdkIwi0WejU4k
+         0VsQ==
+X-Gm-Message-State: AJIora/9FynlygjbfuKTVtw1LSu4OLXd2XB3vG4ctk6dj0CIxmgGOshq
+        bcvrgPPA0S8bf4JfuB07Sdg=
+X-Google-Smtp-Source: AGRyM1uUx1Y+V7DuAp4dUVEr+8l63DfRog3R8F5oHWMg+Au/ou8ILaOvnQlw04lWQ6+mRMrhgFs99w==
+X-Received: by 2002:a17:90a:450c:b0:1ea:a6b8:7601 with SMTP id u12-20020a17090a450c00b001eaa6b87601mr44205159pjg.205.1655825440165;
+        Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id q3-20020a170902edc300b0015e8d4eb27esm10883690plk.200.2022.06.21.08.30.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jun 2022 08:30:38 -0700 (PDT)
+Message-ID: <144582e3-7acd-3231-0ef3-003b87ce19e4@gmail.com>
+Date:   Tue, 21 Jun 2022 08:30:37 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Guillaume GARDET <guillaume.gardet@arm.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <20220526113616.aqpzj4ojseeropjz@suse>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220526113616.aqpzj4ojseeropjz@suse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 21, 2022 at 12:51:50AM +0300, Dmitry Baryshkov wrote:
-> Use parent_data for the last remaining entry (pll4). This clock is
-> provided by the lcc device.
-> 
-> Fixes: cb02866f9a74 ("clk: qcom: gcc-ipq806x: convert parent_names to parent_data")
-> Cc: Ansuel Smith <ansuelsmth@gmail.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-ipq806x.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> index 718de17a1e60..6447f3e81b55 100644
-> --- a/drivers/clk/qcom/gcc-ipq806x.c
-> +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> @@ -79,7 +79,9 @@ static struct clk_regmap pll4_vote = {
->  	.enable_mask = BIT(4),
->  	.hw.init = &(struct clk_init_data){
->  		.name = "pll4_vote",
-> -		.parent_names = (const char *[]){ "pll4" },
-> +		.parent_data = &(const struct clk_parent_data){
-> +			.fw_name = "pll4", .name = "pll4",
-> +		},
->  		.num_parents = 1,
->  		.ops = &clk_pll_vote_ops,
->  	},
-> -- 
-> 2.35.1
-> 
 
-Hi my intention was finding a way to directly reference the hw clk from
-the lcc driver instead of using fw_name/name parent data. Wonder if that
-would be a better solution... Seems wrong to me to eventually add also
-the pll4 clk in the dts to correctly use the fw_name definition (when
-that will be fixed in the ipq8064 dtsi)
 
+On 5/26/2022 4:36 AM, Ivan T. Ivanov wrote:
+> On 04-28 09:57, Ivan T. Ivanov wrote:
+>> Date: Thu, 28 Apr 2022 09:57:40 +0300
+>> From: "Ivan T. Ivanov" <iivanov@suse.de>
+>> To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+>>   <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>
+>> Cc: Maxime Ripard <maxime@cerno.tech>, Dave Stevenson
+>>   <dave.stevenson@raspberrypi.com>, Guillaume GARDET
+>>   <guillaume.gardet@arm.com>, bcm-kernel-feedback-list@broadcom.com,
+>>   linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+>>   linux-arm-kernel@lists.infradead.org, "Ivan T. Ivanov" <iivanov@suse.de>
+>> Subject: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+>> Message-Id: <20220428065743.94967-1-iivanov@suse.de>
+>>
+>> Add missing clock required by RPiVid video decoder and provide more
+>> reliable and accurate source for HDMI pixel and video encoder clocks.
+>>
+> 
+> Hi Stephen, Michael. What is the plan for this series of patches?
+
+Ping?
 -- 
-	Ansuel
+Florian
