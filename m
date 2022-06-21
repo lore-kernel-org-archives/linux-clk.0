@@ -2,101 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 907E0C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 15:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06CBC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 15:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232521AbiFUPam (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 11:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41308 "EHLO
+        id S1352995AbiFUPkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 11:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241313AbiFUPal (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 11:30:41 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4C041FA70
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id f8so12844058plo.9
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
+        with ESMTP id S1352970AbiFUPkM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 11:40:12 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2E72B27A
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:40:11 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id o10so19931305edi.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 08:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=OO6V8vJtdU31DJMzJLPQj0Yl71jJW7+6gQMWZVWS8Mc=;
-        b=nqcFAYWrGd92KqHBlKPXcKcM8irlULNVyqN5HcgDOqEOyuDetESQ6HQnJfQ7ArM60W
-         LKEIsfSwqnv5O4X2OewKcbMgAdbpwJ2p8F+5x4O4addUm4j50ifw9fl2Iovb0tRTRCG9
-         +Y6Fdy8xIyilG0atYtk5uNO9NAWO5Pa/CD88gBySQOYf39IZKg414pUblCLijZFCysHY
-         Poodql/NPx2PjIRTpR8qCxZRBtYSghSAzrBDSKeC+UVq7l4QOUMjyUs7qcFHd0ry/ybG
-         LafCMTBAE8Ld5OcvwXmryD9Xkek57etzKeCF3jKpUA1AQv5ZZjxZ3+PMwDPxlih5IQN6
-         NCfA==
+        bh=1sFbExhS+OPLRXtZhG6HHO16GCs3zpUEDAo1KtqwhuU=;
+        b=WQGkyOh69T3rIJ9GhJep6gi1zgBYkO0OBKsIaFlY+6AZisg0V3xR73aaPs3OW44eku
+         iZWOjwrf100p6yo3l8E8v5hOW+GH3yJA5uKRG4XDKXJ+gLTDhEUS8GfWWzYhJWGfA6VC
+         LS+o7CtrxuSbhvNrlgpEL29B7aE5ENttCeCVqDmoYneLkjLqd71jeTE0hgfqWqxBwRfR
+         PSvyjcKzNSC8TiGVclA7Cb+V8S6/yK6zy9koJlgPvyz+pARkqDykE0wSnEI9tFrq+PHm
+         karQv1IJcNPCk0k6N430IaWslTnkrtyrPzoYJVoUeQlHOLnf9TIddhVCsVKtMgMP64Qw
+         WP3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=OO6V8vJtdU31DJMzJLPQj0Yl71jJW7+6gQMWZVWS8Mc=;
-        b=iGeUhDtF1lk/H+aD8utRBl1CwZ17++IaHRKlurqOKP7tQt/OKJeU8UfSuCqVV6Vr2e
-         VsKSuCOmXYBYbFiU+LNWiTdBvVbp9W5UMVQqhjBFgFF7AZB8fm3eYmnAnvr6DV+Nt9s8
-         317+kKCxe2LgSu1d7Qcd+OQ5W9JdsNZsvaahllU+a1a4lz9Vtrubzae6syGvvSZBsxUN
-         z5++UPppmvfdKulvaZ8e8D3eap/uN8M1Xof+u0g9Fi2yXI+TQ2k6rLnv7IYaFk9A5ccj
-         7mmodDkt4XpjkkniafrAesudtzb+2HQ1iqQ6aU/mt2Kn+2g5v4sMZspVdkIwi0WejU4k
-         0VsQ==
-X-Gm-Message-State: AJIora/9FynlygjbfuKTVtw1LSu4OLXd2XB3vG4ctk6dj0CIxmgGOshq
-        bcvrgPPA0S8bf4JfuB07Sdg=
-X-Google-Smtp-Source: AGRyM1uUx1Y+V7DuAp4dUVEr+8l63DfRog3R8F5oHWMg+Au/ou8ILaOvnQlw04lWQ6+mRMrhgFs99w==
-X-Received: by 2002:a17:90a:450c:b0:1ea:a6b8:7601 with SMTP id u12-20020a17090a450c00b001eaa6b87601mr44205159pjg.205.1655825440165;
-        Tue, 21 Jun 2022 08:30:40 -0700 (PDT)
-Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id q3-20020a170902edc300b0015e8d4eb27esm10883690plk.200.2022.06.21.08.30.37
+        bh=1sFbExhS+OPLRXtZhG6HHO16GCs3zpUEDAo1KtqwhuU=;
+        b=jmqfitzxiGnuNMrMXsiu5EewJ+UY+TI+L11kKAs8+SKtJBpJSrMVwXYcr6s2+jZoB8
+         Ri4saPdcYdO2UkL8wdpvV266Axd6ztrE0ZA8tG66Fd09zlW924W0+vxGbEA+TLZR7CFv
+         WpWEK1//MlqnaxKt9IgL1Pmemk3EsbvrAwbwemNLoGII7gsL5tx3BbSI5eaQHycCELRc
+         ZHqgtR8ZARhnESGmvQaT3VUWnigoxnon2gJPaBXSvXsq2bQQGC+9/s7LtDZMZf3MjEIl
+         wjxGJKkT3ZinPXVA6L+STZb1+vdS4YEor1uRde7k/9rmJT4nHTtQB3knA2mrkO4+tMpS
+         T2jw==
+X-Gm-Message-State: AJIora/dbx1YblUHxnb7YSnQy2PteyziXtys+iEQS+j2BaE3c2gcVWZL
+        X9i5IAGI01d5caKnTMJIedQ62g==
+X-Google-Smtp-Source: AGRyM1tgLH2e5nkg+AVdA2b8Jkx7KfBK6e+fSRsOTK0URy9oXzrHdA0RHNt8rt1JcY6ND0eqmpRGiw==
+X-Received: by 2002:a05:6402:51d3:b0:431:6c7b:28d with SMTP id r19-20020a05640251d300b004316c7b028dmr35227379edd.281.1655826009584;
+        Tue, 21 Jun 2022 08:40:09 -0700 (PDT)
+Received: from [192.168.0.221] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id z6-20020a17090665c600b006feb6dee4absm7929479ejn.137.2022.06.21.08.40.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jun 2022 08:30:38 -0700 (PDT)
-Message-ID: <144582e3-7acd-3231-0ef3-003b87ce19e4@gmail.com>
-Date:   Tue, 21 Jun 2022 08:30:37 -0700
+        Tue, 21 Jun 2022 08:40:09 -0700 (PDT)
+Message-ID: <5832f7f1-3c8f-d88d-3b72-99effc1e2e83@linaro.org>
+Date:   Tue, 21 Jun 2022 17:40:07 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Subject: Re: [PATCH v4 05/18] dt-binding: clk: npcm845: Add binding for
+ Nuvoton NPCM8XX Clock
 Content-Language: en-US
-To:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Guillaume GARDET <guillaume.gardet@arm.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-References: <20220428065743.94967-1-iivanov@suse.de>
- <20220526113616.aqpzj4ojseeropjz@suse>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220526113616.aqpzj4ojseeropjz@suse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20220621131424.162355-1-tmaimon77@gmail.com>
+ <20220621131424.162355-6-tmaimon77@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220621131424.162355-6-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 5/26/2022 4:36 AM, Ivan T. Ivanov wrote:
-> On 04-28 09:57, Ivan T. Ivanov wrote:
->> Date: Thu, 28 Apr 2022 09:57:40 +0300
->> From: "Ivan T. Ivanov" <iivanov@suse.de>
->> To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
->>   <sboyd@kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>
->> Cc: Maxime Ripard <maxime@cerno.tech>, Dave Stevenson
->>   <dave.stevenson@raspberrypi.com>, Guillaume GARDET
->>   <guillaume.gardet@arm.com>, bcm-kernel-feedback-list@broadcom.com,
->>   linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
->>   linux-arm-kernel@lists.infradead.org, "Ivan T. Ivanov" <iivanov@suse.de>
->> Subject: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
->> Message-Id: <20220428065743.94967-1-iivanov@suse.de>
->>
->> Add missing clock required by RPiVid video decoder and provide more
->> reliable and accurate source for HDMI pixel and video encoder clocks.
->>
+On 21/06/2022 15:14, Tomer Maimon wrote:
+> Add binding for the Arbel BMC NPCM8XX Clock controller.
 > 
-> Hi Stephen, Michael. What is the plan for this series of patches?
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../bindings/clock/nuvoton,npcm845-clk.yaml   | 49 +++++++++++++++++++
+>  .../dt-bindings/clock/nuvoton,npcm845-clk.h   | 49 +++++++++++++++++++
+>  2 files changed, 98 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/nuvoton,npcm845-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> new file mode 100644
+> index 000000000000..3d4fddc090ca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton NPCM8XX Clock Controller Binding
+> +
+> +maintainers:
+> +  - Tomer Maimon <tmaimon77@gmail.com>
+> +
+> +description: |
+> +  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
+> +  generates and supplies clocks to all modules within the BMC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nuvoton,npcm845-clk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
+> +      list of NPCM8XX clock IDs.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
 
-Ping?
--- 
-Florian
+You fixed one comment and ignore second. The same was with v3.
+
+This is still no. Implement all the comments you received. I have to
+double check your patchsets every time because I cannot trust that you
+implemented what I asked for.
+
+
+Best regards,
+Krzysztof
