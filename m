@@ -2,127 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FA3C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 11:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86545CCA488
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 11:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236836AbiFVLIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 07:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
+        id S1355462AbiFVLOw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jun 2022 07:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231809AbiFVLIL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 07:08:11 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69C235DF3;
-        Wed, 22 Jun 2022 04:08:10 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id o10so23373592edi.1;
-        Wed, 22 Jun 2022 04:08:10 -0700 (PDT)
+        with ESMTP id S1355165AbiFVLOt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 07:14:49 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369733A72E
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jun 2022 04:14:46 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id e25so19033931wrc.13
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jun 2022 04:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=vlJPaWZrBAzG9zVsTlPDKOfBvLxqfXex9tzVExVOy6w=;
-        b=l2D9wYP1r3RQtj7l6aaHLf2JXJZmHzq2H8bmoRYlR8YceEn2ApY30wqlSsH+ylJt3v
-         aqxCRoD9MW+spCqGJUBmuQpRG3SMxRI2EtH0YHLlYeQm6HySHBGoEEsX4GrvimNBpPDp
-         BMFdlqX7E5RleJMd2O1pKxntnwRzVnc3eoNmhcVe1GQeMkxZPcfcTniul2+fjAZBp9+n
-         q5JWib1nloudfIx/EShgbGI45Qmb4v6ceOSaD3OCtmJi1fh8vKPJy61T7xxAgxdXs+GW
-         wDDPiGpEKHqyne9YWzTjfnKj5X1syOEsP5jvhDFgxkO6tz1B6grNEHuy1uU0hXKo3H9V
-         EC9g==
+         :cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=PUdU9WfpnqAsGBFkVc2KUHImdcpkKUBXRwogLKDyHSY=;
+        b=z/ocsiUElwq2Ol2fF5l1HRqMMaNGMSC1/+8oQHLpQWLu429YrVBR/tnvq7KNWtwIO1
+         vKJqA7rgUAiiGOKNdlwMjFurZAQLeqniaiGR74ASbDLlSriMOOzxItVhWE0QSvWSDF1z
+         wnPR/hU6q/nU74KNLjXg2X84SJR1U2jxSqWO8a/x7jRbPZXjDqGeLFevtBezqUe56R1a
+         7f0rlv+IRmpyGwRbiZXR3FrVvja2Yq3MOLg0mNs6za1kfz0V4uxdyGWKXZaA8ELytILx
+         BDkiRFg7pp2SBYMObq/aoJYfogEZJWR+YhfycgXRStqMXxha87O37ft3cnQe33+/4mvE
+         LISg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:to:cc:references:from:organization:in-reply-to
          :content-transfer-encoding;
-        bh=vlJPaWZrBAzG9zVsTlPDKOfBvLxqfXex9tzVExVOy6w=;
-        b=4adcFzoxUPi4fnSzdX2ltajMEq3ja/QI4WCMQWONr9LcfP5AmChR/bA0S9zv/QNn1S
-         xXh0W422es27260cYtlWvYHbAPBxfQQje9ZrpCfPayvid0ImD8Nd8eyHSaEJGU1k5eIv
-         7Lf87s/YfNtB7PmhGuLBOU62aG3XSYXjLRnij2Xh5kNrAnpMRHV/e34GU/zx8FDp73aS
-         4MTxQS1H7wB4YRGQFTHwNUW8gf3JqrfJV24AyGu1dxrpcHvhVSYXuon50E8Ws2P4BPMA
-         QdwvLocVu/RpN9xEBbZKSN2a0wcBY84cBAUjVlWzkrTQa3WouH7dgL+MXf4fmsOV+hg/
-         Ui/w==
-X-Gm-Message-State: AJIora9c6vN8Ze2B7oYNl8hovniQfkwZfBjcjp+TF+iwd67wcLf6UQey
-        /hlaYCJe73CeK7AY2BxH5C0=
-X-Google-Smtp-Source: AGRyM1tPvqoJyTRlLUMrUILBK6wwNicXk74DfsMpdEzAjQEzwlAMJ5hbcjGcUi16hzG9hv0/UbZNMQ==
-X-Received: by 2002:a05:6402:520a:b0:435:965f:e266 with SMTP id s10-20020a056402520a00b00435965fe266mr3371871edd.409.1655896089167;
-        Wed, 22 Jun 2022 04:08:09 -0700 (PDT)
-Received: from [192.168.0.24] (80.174.78.229.dyn.user.ono.com. [80.174.78.229])
-        by smtp.gmail.com with ESMTPSA id 21-20020a170906329500b006fe8a4ec62fsm9104708ejw.4.2022.06.22.04.08.06
+        bh=PUdU9WfpnqAsGBFkVc2KUHImdcpkKUBXRwogLKDyHSY=;
+        b=VoFZNVG6Kf6eThx0uOgYT6XgMTAoiFuF5S0tsXFF1SmUvylW/Udbl7jF3AWov9Lhzo
+         R7AbLYBK/A2EyzrFkxYIhwy8PMcKr+PFaVcmGAmQ43PKNnhA9ZhYePvs1JDDCSPkDWlr
+         S2mZEzbiW2vfcU/Xn+9zWB4wuvP+5DHL3ZMnSLeOvo6a3hl1wjjgHfD2VvT/oKq0bva+
+         iWbfcPuzVntxtOwq/S0k7H6mi151jCqvWHpQPouqNQuLHdIX6RrPI3m1iP/XedVpUN5c
+         JBCxLtPUp4GpKo0rCX1O5MLIApJHqH4FoS/dxm+Fz3Fw7H13EaFfqt8MReeqyQaLEuEb
+         5FOA==
+X-Gm-Message-State: AJIora/j8N4gcBxP8hVro+9u5MOLDpEw3MRoiOBTipYo2AMUURTDtxou
+        DAm5OUx0/NUFJ6ncEQ4Egq1J4w==
+X-Google-Smtp-Source: AGRyM1v8ZhY0hH8c8n7TvnmAfbU48Dyk1bFg4uJSDokafOQgQ79E0o3w+OeeG5ifCToe2pBEDS6Ykw==
+X-Received: by 2002:adf:fe81:0:b0:21a:3574:ec8e with SMTP id l1-20020adffe81000000b0021a3574ec8emr2726909wrr.410.1655896484628;
+        Wed, 22 Jun 2022 04:14:44 -0700 (PDT)
+Received: from ?IPV6:2001:861:44c0:66c0:1a3a:95bd:5b55:a798? ([2001:861:44c0:66c0:1a3a:95bd:5b55:a798])
+        by smtp.gmail.com with ESMTPSA id e16-20020adfdbd0000000b0021b91ec8f6esm7841714wrj.67.2022.06.22.04.14.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 04:08:08 -0700 (PDT)
-Message-ID: <3a587e20-f991-adf8-fe4e-a09caa1e14c7@gmail.com>
-Date:   Wed, 22 Jun 2022 13:08:05 +0200
+        Wed, 22 Jun 2022 04:14:43 -0700 (PDT)
+Message-ID: <d57a6c52-a9e1-5660-cd47-6f9ba2389d86@baylibre.com>
+Date:   Wed, 22 Jun 2022 13:14:40 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH v6 16/16] arm64: dts: mediatek: Add infra #reset-cells
- property for MT8195
+Subject: Re: [PATCH v8 01/16] clk: generalize devm_clk_get() a bit
 Content-Language: en-US
-To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220503093856.22250-1-rex-bc.chen@mediatek.com>
- <20220503093856.22250-17-rex-bc.chen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20220503093856.22250-17-rex-bc.chen@mediatek.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lars Povlsen <lars.povlsen@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        linux-hwmon@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Tomislav Denis <tomislav.denis@avl.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Andy Gross <agross@kernel.org>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        linux-pwm@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        =?UTF-8?Q?Andr=c3=a9_Gustavo_Nakagomi_Lopez?= <andregnl@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        linux-amlogic <linux-amlogic@lists.infradead.org>,
+        Amireddy Mallikarjuna reddy 
+        <mallikarjunax.reddy@linux.intel.com>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Cai Huoqing <caihuoqing@baidu.com>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        dmaengine <dmaengine@vger.kernel.org>
+References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
+ <20220314141643.22184-2-u.kleine-koenig@pengutronix.de>
+ <d6b890c8-bfb5-cfa5-c6d8-ee245701c077@nvidia.com>
+ <20220621204914.byokkrxiznvod7vq@pengutronix.de>
+ <CAHp75VcBEpLo+pYy+RG3O2BbePJbGEQ89jxi-oG1W6=+2hgXrQ@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+In-Reply-To: <CAHp75VcBEpLo+pYy+RG3O2BbePJbGEQ89jxi-oG1W6=+2hgXrQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 03/05/2022 11:38, Rex-BC Chen wrote:
-> We will use mediatek clock reset as infracfg_ao reset instead of
-> ti-syscon. To support this, remove property of ti reset and add
-> property of #reset-cells for mediatek clock reset.
+On 22/06/2022 12:36, Andy Shevchenko wrote:
+> On Tue, Jun 21, 2022 at 11:01 PM Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+>> On Tue, Jun 21, 2022 at 08:57:00PM +0100, Jon Hunter wrote:
 > 
-> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-My understanding is that using the old DTS with a newer kernel wouldn't 
-introduce a regression, correct?
-
-Applied, thanks!
-
-> ---
->   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 13 +------------
->   1 file changed, 1 insertion(+), 12 deletions(-)
+> ...
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> index b57e620c2c72..8e5ac11b19f1 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> @@ -10,7 +10,6 @@
->   #include <dt-bindings/interrupt-controller/irq.h>
->   #include <dt-bindings/phy/phy.h>
->   #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
-> -#include <dt-bindings/reset/ti-syscon.h>
->   
->   / {
->   	compatible = "mediatek,mt8195";
-> @@ -295,17 +294,7 @@
->   			compatible = "mediatek,mt8195-infracfg_ao", "syscon", "simple-mfd";
->   			reg = <0 0x10001000 0 0x1000>;
->   			#clock-cells = <1>;
-> -
-> -			infracfg_rst: reset-controller {
-> -				compatible = "ti,syscon-reset";
-> -				#reset-cells = <1>;
-> -				ti,reset-bits = <
-> -					0x140 18 0x144 18 0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* pcie */
-> -					0x120 0  0x124 0  0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
-> -					0x730 10 0x734 10 0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
-> -					0x150 5  0x154 5  0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* svs gpu */
-> -				>;
-> -			};
-> +			#reset-cells = <1>;
->   		};
->   
->   		pericfg: syscon@10003000 {
+>> (Pro tipp: The commit in next has a Link: footer. If you follow the
+>> link, you find the thread that was actually applied (i.e. v9) and where
+>> the fix is also contained.)
+> 
+> Even easier, you may take a message-id from the Link and supply to `b4`:
+> 
+>    b4 mbox ${message-id}
+>    mutt -f ${message-id}.mbx # or whatever MUA that handles mboxes
+> 
+> 
+> Dunno if `b4` has capability to parse Link instead of message-id.
+> 
+
+It does:
+
+
+$ b4 mbox https://lore.kernel.org/r/20220616144915.3988071-1-windhl@126.com
+Looking up https://lore.kernel.org/r/20220616144915.3988071-1-windhl%40126.com
+Grabbing thread from lore.kernel.org/all/20220616144915.3988071-1-windhl%40126.com/t.mbox.gz
+5 messages in the thread
+Saved ./20220616144915.3988071-1-windhl@126.com.mbx
+
+Neil
