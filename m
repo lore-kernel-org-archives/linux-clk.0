@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D06C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 11:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FA3C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 11:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349975AbiFVLF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 07:05:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
+        id S236836AbiFVLIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jun 2022 07:08:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234590AbiFVLFY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 07:05:24 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC853BBD2;
-        Wed, 22 Jun 2022 04:05:17 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id ej4so19413036edb.7;
-        Wed, 22 Jun 2022 04:05:17 -0700 (PDT)
+        with ESMTP id S231809AbiFVLIL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 07:08:11 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C69C235DF3;
+        Wed, 22 Jun 2022 04:08:10 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id o10so23373592edi.1;
+        Wed, 22 Jun 2022 04:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=BsWeZKTMRUjS4UGWGKXKi/F6OhLV9oNlEr0sqKPjdhY=;
-        b=goSSVIS2xMmIt8+zQ+4MnTruyoXO+gM/WRoEM6Cuo0Prstx1aOOwxieSEas175GI/Y
-         pR2Ri8ptjhMZM/G7BHcC7rgqDl7INoPAriq7bsCHGZaWu/qkjeRlUw4V0ROTlGdz8Jsz
-         ZGNVA9rlMFvvpoELJv0Gr/0V7oP28iDObt/v/9fSfFXohainHuDFWRfYpz0WhcPFSn5v
-         TZkEbd++U+4Lt5ORaWDswJ87h+OTBxqy3lfL3eFCaJcKfpk3IXE4l8eYzXXW4G6vNZaq
-         /7L3bJjNz22oFeOw74YdcXFiGlAiK/Hpa+Ha3pZuSu6M0TMMTi0rSX0YXOE9lEsDAZtb
-         l3oQ==
+        bh=vlJPaWZrBAzG9zVsTlPDKOfBvLxqfXex9tzVExVOy6w=;
+        b=l2D9wYP1r3RQtj7l6aaHLf2JXJZmHzq2H8bmoRYlR8YceEn2ApY30wqlSsH+ylJt3v
+         aqxCRoD9MW+spCqGJUBmuQpRG3SMxRI2EtH0YHLlYeQm6HySHBGoEEsX4GrvimNBpPDp
+         BMFdlqX7E5RleJMd2O1pKxntnwRzVnc3eoNmhcVe1GQeMkxZPcfcTniul2+fjAZBp9+n
+         q5JWib1nloudfIx/EShgbGI45Qmb4v6ceOSaD3OCtmJi1fh8vKPJy61T7xxAgxdXs+GW
+         wDDPiGpEKHqyne9YWzTjfnKj5X1syOEsP5jvhDFgxkO6tz1B6grNEHuy1uU0hXKo3H9V
+         EC9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=BsWeZKTMRUjS4UGWGKXKi/F6OhLV9oNlEr0sqKPjdhY=;
-        b=gwWPpagxg2tym0yF/TD0jGE4LAX/u3gka7dvKYdEcUELY1WEyBLs5jwSpzqWAKNLCn
-         Zo9mifafSVtbchn3n84YYOVA6b2Pnta+Bzi7vMXgLBKT3b8em40/EdNGpT3qH7JhEkuI
-         ESho1wW8uHmjzpv2TgHb4ZBZRxS2MieNcRbiH6rod8nJqDjeiPNgcPKmC7dVdrVwX5IS
-         2ztDEIAzfqhy/9DNBPrPlbmbx8yPWTNit6XRmtcQ8NDd96OvL8lpposXfThD0h2AzAAW
-         XZqGNh9kmUBTTU6DezDODB9D0o4LYf1MN9fFJbHEAyPqmnMr1fPWFDlnJN/nCxJjdXEU
-         rbqA==
-X-Gm-Message-State: AJIora9OBXkgtVf4P9PEZVqYcYxPG4LxyTOq4xBg4aviCMJhaUwYoEl6
-        uI/TKVwPq8utOiG02mjjLGM=
-X-Google-Smtp-Source: AGRyM1s9nDUowq9+/oNlBIcMXsoZizGRGfHc6q9TiQd5vkG3V7Wuhzig5PXTkxlYtZVA2ciTT6f/JA==
-X-Received: by 2002:a05:6402:4385:b0:435:9104:955b with SMTP id o5-20020a056402438500b004359104955bmr3470937edc.45.1655895915755;
-        Wed, 22 Jun 2022 04:05:15 -0700 (PDT)
+        bh=vlJPaWZrBAzG9zVsTlPDKOfBvLxqfXex9tzVExVOy6w=;
+        b=4adcFzoxUPi4fnSzdX2ltajMEq3ja/QI4WCMQWONr9LcfP5AmChR/bA0S9zv/QNn1S
+         xXh0W422es27260cYtlWvYHbAPBxfQQje9ZrpCfPayvid0ImD8Nd8eyHSaEJGU1k5eIv
+         7Lf87s/YfNtB7PmhGuLBOU62aG3XSYXjLRnij2Xh5kNrAnpMRHV/e34GU/zx8FDp73aS
+         4MTxQS1H7wB4YRGQFTHwNUW8gf3JqrfJV24AyGu1dxrpcHvhVSYXuon50E8Ws2P4BPMA
+         QdwvLocVu/RpN9xEBbZKSN2a0wcBY84cBAUjVlWzkrTQa3WouH7dgL+MXf4fmsOV+hg/
+         Ui/w==
+X-Gm-Message-State: AJIora9c6vN8Ze2B7oYNl8hovniQfkwZfBjcjp+TF+iwd67wcLf6UQey
+        /hlaYCJe73CeK7AY2BxH5C0=
+X-Google-Smtp-Source: AGRyM1tPvqoJyTRlLUMrUILBK6wwNicXk74DfsMpdEzAjQEzwlAMJ5hbcjGcUi16hzG9hv0/UbZNMQ==
+X-Received: by 2002:a05:6402:520a:b0:435:965f:e266 with SMTP id s10-20020a056402520a00b00435965fe266mr3371871edd.409.1655896089167;
+        Wed, 22 Jun 2022 04:08:09 -0700 (PDT)
 Received: from [192.168.0.24] (80.174.78.229.dyn.user.ono.com. [80.174.78.229])
-        by smtp.gmail.com with ESMTPSA id b12-20020a17090630cc00b00722edb5fb53sm1007705ejb.116.2022.06.22.04.05.13
+        by smtp.gmail.com with ESMTPSA id 21-20020a170906329500b006fe8a4ec62fsm9104708ejw.4.2022.06.22.04.08.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jun 2022 04:05:14 -0700 (PDT)
-Message-ID: <6b4f108c-b4bc-72cf-5972-222fbb2f3fca@gmail.com>
-Date:   Wed, 22 Jun 2022 13:05:13 +0200
+        Wed, 22 Jun 2022 04:08:08 -0700 (PDT)
+Message-ID: <3a587e20-f991-adf8-fe4e-a09caa1e14c7@gmail.com>
+Date:   Wed, 22 Jun 2022 13:08:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-Subject: Re: [PATCH v6 15/16] arm64: dts: mediatek: Add infra #reset-cells
- property for MT8192
+Subject: Re: [PATCH v6 16/16] arm64: dts: mediatek: Add infra #reset-cells
+ property for MT8195
 Content-Language: en-US
 To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
         sboyd@kernel.org, robh+dt@kernel.org,
@@ -67,9 +67,9 @@ Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20220503093856.22250-1-rex-bc.chen@mediatek.com>
- <20220503093856.22250-16-rex-bc.chen@mediatek.com>
+ <20220503093856.22250-17-rex-bc.chen@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20220503093856.22250-16-rex-bc.chen@mediatek.com>
+In-Reply-To: <20220503093856.22250-17-rex-bc.chen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -79,25 +79,49 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 03/05/2022 11:38, Rex-BC Chen wrote:
-> To support reset of infra, we add property of #reset-cells.
+> We will use mediatek clock reset as infracfg_ao reset instead of
+> ti-syscon. To support this, remove property of ti reset and add
+> property of #reset-cells for mediatek clock reset.
 > 
 > Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
+My understanding is that using the old DTS with a newer kernel wouldn't 
+introduce a regression, correct?
+
 Applied, thanks!
 
 > ---
->   arch/arm64/boot/dts/mediatek/mt8192.dtsi | 1 +
->   1 file changed, 1 insertion(+)
+>   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 13 +------------
+>   1 file changed, 1 insertion(+), 12 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-> index 411feb294613..79803420d8ef 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
-> @@ -269,6 +269,7 @@
->   			compatible = "mediatek,mt8192-infracfg", "syscon";
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> index b57e620c2c72..8e5ac11b19f1 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+> @@ -10,7 +10,6 @@
+>   #include <dt-bindings/interrupt-controller/irq.h>
+>   #include <dt-bindings/phy/phy.h>
+>   #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
+> -#include <dt-bindings/reset/ti-syscon.h>
+>   
+>   / {
+>   	compatible = "mediatek,mt8195";
+> @@ -295,17 +294,7 @@
+>   			compatible = "mediatek,mt8195-infracfg_ao", "syscon", "simple-mfd";
 >   			reg = <0 0x10001000 0 0x1000>;
 >   			#clock-cells = <1>;
+> -
+> -			infracfg_rst: reset-controller {
+> -				compatible = "ti,syscon-reset";
+> -				#reset-cells = <1>;
+> -				ti,reset-bits = <
+> -					0x140 18 0x144 18 0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* pcie */
+> -					0x120 0  0x124 0  0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
+> -					0x730 10 0x734 10 0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* thermal */
+> -					0x150 5  0x154 5  0 0 (ASSERT_SET | DEASSERT_SET | STATUS_NONE) /* svs gpu */
+> -				>;
+> -			};
 > +			#reset-cells = <1>;
 >   		};
 >   
