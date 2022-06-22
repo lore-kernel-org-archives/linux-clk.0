@@ -2,169 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006C3C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 17:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C70C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 17:11:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355951AbiFVRCb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 13:02:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39036 "EHLO
+        id S1358056AbiFVRLt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jun 2022 13:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236323AbiFVRCa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 13:02:30 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041973EF0B;
-        Wed, 22 Jun 2022 10:02:28 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id a11-20020a17090acb8b00b001eca0041455so1757057pju.1;
-        Wed, 22 Jun 2022 10:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-description:content-disposition:in-reply-to:user-agent;
-        bh=pXIjVqh7UNlrSF8snJz0VCjdbj2n7TzPYTerNEzotLI=;
-        b=he8SrFgDk4FZgath+IeSaTDbd47ndveK3t5y392ThdKTnUnzMZhM91r2pJLPzXKWaP
-         8k65Z3FbXaKyE7lbXtPDEAjAq/7uAu5WofskgKdcM909J8CkbK8kXn5wa/Cy+mhiAEh6
-         boVOPkpOybt4TCz6fRpOWCyc2YLP66NqX3tkLbSZY0IRuzcAnDtByVCqem7INXRHeNTz
-         L9nHWG3noI02O9Y0pkU8PXdXxCmJMeF0Gaofu6iwdoy7hNNghKfQeHgTZmHv2BDqq5Se
-         mxsr9xqORJY46HjmI+4k5/r9el52m4B88h9C3imCIEWa8k7b4VCKSSspyxU0Pq5k6dDy
-         bHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-description:content-disposition:in-reply-to
-         :user-agent;
-        bh=pXIjVqh7UNlrSF8snJz0VCjdbj2n7TzPYTerNEzotLI=;
-        b=p2B2x6lUfOXuzNUpLoz0F+8/VA9101iVtdmhLpER9IZLJ8uAfCYPjKR2eIMZ93ZO3G
-         DaAJWCKUeCegVeqFsci37TxV7QPNodu3YUNk1MHXKtMrExAF2pZtLLjNKcBfzZMLLM5l
-         r0uZt+MXy1bhbg9JuBMrEt/apAcvzhn0U8ZFhIduT6lgoo0s+kd0gOJWqPJkvE54V0q5
-         YkH5q5KckmI0WCY5rV/qXP83xzEIrwIVJWajGB8bHHS4/bAHxHZF+VJi3SB9sGO4ZMM8
-         TpWT89k+tELgfbXGsp5KtbKwRGll5nPLQftMsh3xoLHeLls7/6AGFqKAKlhhDAHt4/Yx
-         JybA==
-X-Gm-Message-State: AJIora+oW6iBw1fkK+pukqE+Cd9CmHajs9ljGKR5CWvDJfDcZaCJJkF+
-        QONybSouLS1XZoo3ZxyTKXw=
-X-Google-Smtp-Source: AGRyM1uAGqHGG/G1oXYd0S84V1DymZno8oCjguvQ1D5MRbhviAjOPGj/kFGXVX+KsJer1KFmsxetmg==
-X-Received: by 2002:a17:902:ab8a:b0:16a:4521:a7b7 with SMTP id f10-20020a170902ab8a00b0016a4521a7b7mr5167702plr.57.1655917347433;
-        Wed, 22 Jun 2022 10:02:27 -0700 (PDT)
-Received: from Mahakal ([2401:4900:1cc4:6ac4:7541:33fc:3c9c:4592])
-        by smtp.gmail.com with ESMTPSA id p8-20020aa78608000000b005183cf12184sm3984506pfn.133.2022.06.22.10.02.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Jun 2022 10:02:26 -0700 (PDT)
-Date:   Wed, 22 Jun 2022 22:32:20 +0530
-From:   "<Vishal Badole>" <badolevishal1116@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     chinmoyghosh2001@gmail.com, mintupatel89@gmail.com
-Subject: Re: [PATCH] Common clock: =?utf-8?B?4oCL?= =?utf-8?B?4oCLVG8=?= list
- active consumers of clocks
-Message-ID: <20220622170219.GA6978@Mahakal>
-References: <CAEXpiVQihEadxsNodarz2-wxSAipfpzEaA8zKpnozszC+weYTQ@mail.gmail.com>
- <20220610194013.DD39DC34114@smtp.kernel.org>
+        with ESMTP id S236563AbiFVRLs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 13:11:48 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F983AB;
+        Wed, 22 Jun 2022 10:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1655917907; x=1687453907;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fcA9AcB3NWmPG6Co6bXGd9pKtVTF1zImy8268NHVjQw=;
+  b=GkSn3rjXM3lrm4TPkO+1m2WIsh3LyT+pfmQtpb0FA5bZsw5AyyuFWPJ4
+   eY6HkXq8HQG7MhBBTGcvZcJ5xO+06rG1bYHP9EDBn3rU/If36PGrMQ32C
+   h30HshODapwxu7fvoRqsxv/3RjW4yKTPba/0ZNxToE5UjUzicom1LERua
+   zj9uxaAWHY5D/fxlFKhcynY+MO/V95vOQCVEqE9dDDtmuLRqVqU/70t3C
+   IMy6dAO1TWJ5MuBq7Jtu4cBosOl/Rg6s5Je2Gz/xiHIoimLRDFwRPsJMe
+   LDFPehyBnqjJK7ayFu5s035TiF9tK8OD3MTGp5rFXFrRPlyPY1jlIw8Ro
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10386"; a="281555212"
+X-IronPort-AV: E=Sophos;i="5.92,212,1650956400"; 
+   d="scan'208";a="281555212"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2022 10:11:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,212,1650956400"; 
+   d="scan'208";a="690599907"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Jun 2022 10:11:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 6729E136; Wed, 22 Jun 2022 20:11:49 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] clk: Remove never used devm_clk_*unregister()
+Date:   Wed, 22 Jun 2022 20:11:47 +0300
+Message-Id: <20220622171147.85603-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Description: Thanks Stephen for the input, the patch has beed revised as below:
-Content-Disposition: inline
-In-Reply-To: <20220610194013.DD39DC34114@smtp.kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+For the entire history of the devm_clk_*unregister() existence they were
+used only once (*) in 2015. Remove them.
 
-From f2e9d78bd0f135206fbfbf2e0178a5782b972939 Mon Sep 17 00:00:00 2001
-From: Vishal Badole <badolevishal1116@gmail.com>
-Date: Tue, 21 Jun 2022 09:55:51 +0530
-Subject: [PATCH] Common clock: To list active consumers of clocks
+*) The commit 264e3b75de4e ("clk: s2mps11: Simplify s2mps11_clk_probe unwind
+   paths") exactly supports the point of the change proposed here.
 
-This feature lists the name of clocks and their consumer devices.
-Using this feature user can easily check which device is using a
-perticular clock. Consumers without dev_id are listed as no_dev_id.
-
-Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
-Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
-Acked-by: Vimal Kumar <vimal.kumar32@gmail.com>
-Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/clk.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+v2: removed now unused match() functions as well
+ drivers/clk/clk.c            | 48 ------------------------------------
+ include/linux/clk-provider.h |  2 --
+ 2 files changed, 50 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ed11918..b191009 100644
+index f00d4c1158d7..7fc191c15507 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -3018,6 +3018,63 @@ static int clk_summary_show(struct seq_file *s, void *data)
+@@ -4279,54 +4279,6 @@ int devm_clk_hw_register(struct device *dev, struct clk_hw *hw)
  }
- DEFINE_SHOW_ATTRIBUTE(clk_summary);
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register);
  
-+static void clk_consumer_show_one(struct seq_file *s, struct clk_core *core, int level)
-+{
-+	struct clk *clk_user;
-+	const char *consumer;
-+
-+	hlist_for_each_entry(clk_user, &core->clks, clks_node) {
-+		if (!clk_user->dev_id)
-+			consumer = "no_dev_id";
-+		else
-+			consumer = clk_user->dev_id;
-+
-+		seq_printf(s, "%*s%-*s %30s %5d %7d ",
-+			   level * 3 + 1, "",
-+			   30 - level * 3, clk_user->core->name, consumer,
-+			   clk_user->core->enable_count, clk_user->core->prepare_count);
-+
-+		if (clk_user->core->ops->is_enabled)
-+			seq_printf(s, " %8c\n", clk_core_is_enabled(clk_user->core) ? 'Y' : 'N');
-+		else if (!clk_user->core->ops->enable)
-+			seq_printf(s, " %8c\n", 'Y');
-+		else
-+			seq_printf(s, " %8c\n", '?');
-+	}
-+}
-+
-+static void clk_consumer_show_subtree(struct seq_file *s, struct clk_core *c, int level)
-+{
-+	struct clk_core *child;
-+
-+	clk_consumer_show_one(s, c, level);
-+
-+	hlist_for_each_entry(child, &c->children, child_node)
-+		clk_consumer_show_subtree(s, child, level + 1);
-+}
-+
-+static int clk_consumer_show(struct seq_file *s, void *data)
-+{
-+	struct clk_core *c;
-+	struct hlist_head **lists = (struct hlist_head **)s->private;
-+
-+	seq_puts(s, "                                                              enable   prepare   hardware\n");
-+	seq_puts(s, "   clock                                       consumer        count     count     enable\n");
-+	seq_puts(s, "-----------------------------------------------------------------------------------------\n");
-+	clk_prepare_lock();
-+
-+	/*Traversing Linked List to print clock consumer*/
-+
-+	for (; *lists; lists++)
-+		hlist_for_each_entry(c, *lists, child_node)
-+			clk_consumer_show_subtree(s, c, 0);
-+
-+	clk_prepare_unlock();
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(clk_consumer);
-+
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+-static int devm_clk_match(struct device *dev, void *res, void *data)
+-{
+-	struct clk *c = res;
+-	if (WARN_ON(!c))
+-		return 0;
+-	return c == data;
+-}
+-
+-static int devm_clk_hw_match(struct device *dev, void *res, void *data)
+-{
+-	struct clk_hw *hw = res;
+-
+-	if (WARN_ON(!hw))
+-		return 0;
+-	return hw == data;
+-}
+-
+-/**
+- * devm_clk_unregister - resource managed clk_unregister()
+- * @dev: device that is unregistering the clock data
+- * @clk: clock to unregister
+- *
+- * Deallocate a clock allocated with devm_clk_register(). Normally
+- * this function will not need to be called and the resource management
+- * code will ensure that the resource is freed.
+- */
+-void devm_clk_unregister(struct device *dev, struct clk *clk)
+-{
+-	WARN_ON(devres_release(dev, devm_clk_unregister_cb, devm_clk_match, clk));
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_unregister);
+-
+-/**
+- * devm_clk_hw_unregister - resource managed clk_hw_unregister()
+- * @dev: device that is unregistering the hardware-specific clock data
+- * @hw: link to hardware-specific clock data
+- *
+- * Unregister a clk_hw registered with devm_clk_hw_register(). Normally
+- * this function will not need to be called and the resource management
+- * code will ensure that the resource is freed.
+- */
+-void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
+-{
+-	WARN_ON(devres_release(dev, devm_clk_hw_unregister_cb, devm_clk_hw_match,
+-				hw));
+-}
+-EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
+-
+ static void devm_clk_release(struct device *dev, void *res)
  {
- 	int phase;
-@@ -3437,6 +3494,8 @@ static int __init clk_debug_init(void)
- 			    &clk_summary_fops);
- 	debugfs_create_file("clk_orphan_dump", 0444, rootdir, &orphan_list,
- 			    &clk_dump_fops);
-+	debugfs_create_file("clk_consumer", 0444, rootdir, &all_lists,
-+			    &clk_consumer_fops);
+ 	clk_put(*(struct clk **)res);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index c10dc4c659e2..72d937c03a3e 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1176,10 +1176,8 @@ int __must_check devm_clk_hw_register(struct device *dev, struct clk_hw *hw);
+ int __must_check of_clk_hw_register(struct device_node *node, struct clk_hw *hw);
  
- 	mutex_lock(&clk_debug_lock);
- 	hlist_for_each_entry(core, &clk_debug_list, debug_node)
+ void clk_unregister(struct clk *clk);
+-void devm_clk_unregister(struct device *dev, struct clk *clk);
+ 
+ void clk_hw_unregister(struct clk_hw *hw);
+-void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+ 
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
 -- 
-2.7.4
+2.35.1
 
