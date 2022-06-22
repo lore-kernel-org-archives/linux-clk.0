@@ -2,134 +2,188 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD7ECCA481
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jun 2022 23:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6F0C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 01:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbiFUXep (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jun 2022 19:34:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41126 "EHLO
+        id S1355409AbiFVBLp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jun 2022 21:11:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355060AbiFUXee (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 19:34:34 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E3030F5D
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id g8so13857486plt.8
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
+        with ESMTP id S1354552AbiFVBLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jun 2022 21:11:44 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6235032057
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 18:11:43 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id e2so10789869edv.3
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jun 2022 18:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=ViEFcKjroQXvwBGepxaEQeL4Q+Xf8p05t8vesOONSwM=;
-        b=iOIeFKS1PDNNnEKTQ8DM/+fsNaaVzzQfZlWTkM4SC+6zPlpmnT9VqwCHD+OtHDxbS2
-         f2UOsP7lPVsfJbYwLAtil9gq2RnDBR5wcz81MpZntsQ555etBAmE+LbxT6cyVnApN22U
-         BxngAJICMfBz2+EqJOJgVogunEW0KBlODrekdbqrcAgBA6SSKOuA+PEelKLKvMJZZFmg
-         /7gmaYjRfWExSJaW68nQmasr2sUgBKcDiAvoh8JRnI+/Hq7BQ02tJkHeVQcI3hd5kYF8
-         AWPF9ppLjp4a2UTMZqD0MdLYMwjmzz/oiCuiu+U8G5t8EwfQvILbyFD3q6Ikw+21yZXY
-         dCUw==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=DqCQfjcZfJ+ruuhSkMvBw9XJIfHviZVa7mY8XvJJhLs=;
+        b=SLJUM6trAm7TO3ucIxX1VwKotldGWdIAwF+2+JPs2Rb0WOT0Pr/irD+RaeaoLh5JlF
+         7cg+MqVf+Q/vRVER8umKWFwcv3kIwOWvUlkppgehx1QccUh1aBLc6RZtwVeAUrDGuvoJ
+         XotRir3ilnfjGIaPMcya2V+71wHnW6EiqQOyncKdeL2kIvo0aGypjxI0xXUMgfVkNDAu
+         34FeQjL9DskkkzzelvXLpFB8oLATx1gewBJCCvcOOSgNQIfIhuP/Y13HCTfLLCXFDbcj
+         ZRq9SkWY52ag/wVbAynwp4Bp5h4TrHeuRmBgLHVz5HMHy6DZFG/0jLykm0uaTyAZ9PSm
+         oNcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ViEFcKjroQXvwBGepxaEQeL4Q+Xf8p05t8vesOONSwM=;
-        b=YgJtejtKeDAko/6+lSctIw83ntyxxbf5YiAKo1JsRyoR/1o4X0mb87aGQqf5Nw7Wkg
-         LRieb2p9Wrodcue4Evf2s4hluSDwyrP7kFDEAWoNynt7/5752grjkkEnESuBW5U+Ex+f
-         NQv3Gyp4i8a7FhgYFiRYjf96DBn7agFPhvgDG0QRyrao7P9hmporg3JEmPNVB6Nye91z
-         CTxxhARdpprTZNjlqU3UB+xDnwkWqxvUed2PJaCK5qgtHCFkkF8cul8DKPZaOZl30dRj
-         zSYYr5iNxptSDli1M1sKV3JWPT+w0IOlLYO1WhQScAbhTZDLtNC/wFbobB8ZAXX2ua7A
-         9jqA==
-X-Gm-Message-State: AJIora9MasjtI1RAZ/EWGO/JuCX3GXFomCX13aMJinh/jCa+8sUO7hmS
-        uUCEyWZwjrebmoQBZl60FTHvBw==
-X-Google-Smtp-Source: AGRyM1uA3DgDswAU+ttXuWuvTdwhYhitUaUKJz7J9lYdhqUCo/NT6EpS1MtC/WtMklbduEikCBvKgw==
-X-Received: by 2002:a17:902:9b83:b0:164:59e:b189 with SMTP id y3-20020a1709029b8300b00164059eb189mr30449024plp.91.1655854465221;
-        Tue, 21 Jun 2022 16:34:25 -0700 (PDT)
-Received: from prec5560.. (71-212-119-14.tukw.qwest.net. [71.212.119.14])
-        by smtp.gmail.com with ESMTPSA id s7-20020a17090302c700b00168e83eda56sm11297873plk.3.2022.06.21.16.34.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jun 2022 16:34:24 -0700 (PDT)
-From:   Robert Foss <robert.foss@linaro.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzk+dt@kernel.org, jonathan@marek.ca, robert.foss@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH v6 6/6] arm64: dts: qcom: sm8350: Add DISPCC node
-Date:   Wed, 22 Jun 2022 01:34:12 +0200
-Message-Id: <20220621233412.506768-7-robert.foss@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220621233412.506768-1-robert.foss@linaro.org>
-References: <20220621233412.506768-1-robert.foss@linaro.org>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=DqCQfjcZfJ+ruuhSkMvBw9XJIfHviZVa7mY8XvJJhLs=;
+        b=5TSmKH0vMza8oj1lo3Mzmzt6AAo4wTHRXhHfhEtKjmHtQzXrielKg6jKEXw7k6U9fw
+         ucITQszidTYrdtPIK0bJgR/n/UoD/mM2ReuOYzHIP1qJ2nYoI0rCUmwtjyNLuw42G6yX
+         OrTAiXS/HsOpfdrFl/8hLoR5BAHjRyvfUWZAQ4sBvLcE0IPho7ot+oYQ4qniac7QyL7L
+         /7Zv+jfbzwsMSlkjGjTt116ONtfxbogmAwyx9EbSFzsT0QYXs8nvvCKliZYsaFxRDnri
+         NyjyWiXTbLmfL1FIOMSOL9PzqlOh79oL/fIbr26tKeTHrerXH+92vLfrGmRxHFsmySjg
+         0vtg==
+X-Gm-Message-State: AJIora9iYh5R5Hs7dAYe/1ZWINNAHoOJU0dXO3EDHa7+8wnRKHBlnXvm
+        JPhwMeZ+aP0rzUA8FEhVG8aDY6gdRKIIktCwiF1VQg==
+X-Google-Smtp-Source: AGRyM1uz/tRqIq8YRugq2/2SBCewMkEcozj0l41jEk/kpZwBaB6ESrqjTZhYh/C3AJm3TktK1Xu3vGPzCwJawitcA/s=
+X-Received: by 2002:a05:6402:249c:b0:431:3883:967a with SMTP id
+ q28-20020a056402249c00b004313883967amr1135089eda.264.1655860301822; Tue, 21
+ Jun 2022 18:11:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 22 Jun 2022 06:41:30 +0530
+Message-ID: <CA+G9fYv4S2TqZ53oH5FEK07qHV+LwkZEx7+KNiCa5wZWruDSfA@mail.gmail.com>
+Subject: [next] Unable to handle kernel execute from non-executable memory at
+ virtual address - devm_clk_release
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        regressions@lists.linux.dev, lkft-triage@lists.linaro.org
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the dispcc clock-controller DT node for sm8350.
+The following kernel crash was noticed on arm64 Raspberry Pi 4 Model B
+devices while booting. This crash is always reproducible.
 
-Signed-off-by: Robert Foss <robert.foss@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Changes since v2
- - Remove interconnect include - Bjorn
+metadata:
+  git_ref: master
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: 1e502319853ceebfe7480a436ba22ab01372fa0c
+  git_describe: next-20220620
+  kernel_version: 5.19.0-rc3
+  kernel-config: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2GnWiUk/config
+  build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/pipelines/567830223
+  artifact-location: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2GnWiUk
+  toolchain: gcc-11
 
-Changes since v3
- - Switch from .fw_name to .index
+Crash log:
+----------
+[    0.000000] Linux version 5.19.0-rc3-next-20220620
+(tuxmake@tuxmake) (aarch64-linux-gnu-gcc (Debian 11.3.0-3) 11.3.0, GNU
+ld (GNU Binutils for Debian) 2.38) #1 SMP PREEMPT @1655717238
+[    0.000000] Machine model: Raspberry Pi 4 Model B
+<trim>
 
-Changes since v5
- - Revert .fw_name to .index change
+[   18.462465] Bluetooth: HCI UART protocol Broadcom registered
+[   18.462543] Bluetooth: HCI UART protocol QCA registered
+[   18.462633] Bluetooth: HCI UART protocol Marvell registered
+[   18.464172] hci_uart_bcm serial0-0: supply vbat not found, using
+dummy regulator
+[   18.464478] hci_uart_bcm serial0-0: supply vddio not found, using
+dummy regulator
+[   18.464942] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   18.465655] platform regulatory.0: Direct firmware load for
+regulatory.db failed with error -2
+[   18.465683] cfg80211: failed to load regulatory.db
+[   18.465928] bcm2835-power bcm2835-power: Timeout waiting for grafx power OK
+[   18.472964] bcm2835-power bcm2835-power: Timeout waiting for grafx power OK
+[   18.475203] raspberrypi-firmware soc:firmware: Request 0x00030066
+returned status 0x80000001
+[   18.475231] vc4-drm gpu: [drm] Couldn't stop firmware display driver: -22
+[   18.490782] vc4-drm gpu: bound fe400000.hvs (ops vc4_hvs_ops [vc4])
+[   18.500428] Unable to handle kernel execute from non-executable
+memory at virtual address ffff000040241c10
+[   18.500455] Mem abort info:
+[   18.500465]   ESR = 0x000000008600000f
+[   18.500477]   EC = 0x21: IABT (current EL), IL = 32 bits
+[   18.500491]   SET = 0, FnV = 0
+[   18.500503]   EA = 0, S1PTW = 0
+[   18.500514]   FSC = 0x0f: level 3 permission fault
+[   18.500527] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000020b6000
+[   18.500542] [ffff000040241c10] pgd=18000000fbff8003,
+p4d=18000000fbff8003, pud=18000000fbe2a003, pmd=18000000fbe28003,
+pte=0068000040241707
+[   18.500612] Internal error: Oops: 8600000f [#1] PREEMPT SMP
+[   18.500624] Modules linked in: hci_uart vc4(+) btqca btbcm cec
+bluetooth drm_display_helper cfg80211 crct10dif_ce v3d drm_cma_helper
+clk_raspberrypi drm_shmem_helper reset_raspberrypi raspberrypi_hwmon
+drm_kms_helper gpu_sched rfkill bcm2711_thermal iproc_rng200
+pwm_bcm2835 i2c_bcm2835 drm rng_core pcie_brcmstb fuse
+[   18.500752] CPU: 0 PID: 246 Comm: systemd-udevd Not tainted
+5.19.0-rc3-next-20220620 #1
+[   18.500765] Hardware name: Raspberry Pi 4 Model B (DT)
+[   18.500772] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   18.500785] pc : 0xffff000040241c10
+[   18.500800] lr : devm_clk_release+0x30/0x50
+[   18.500817] sp : ffff80000b42b6f0
+[   18.500823] x29: ffff80000b42b6f0 x28: ffff0000423bad50 x27: 0000000000000000
+[   18.500845] x26: 00000000fffffdfb x25: ffff800009cc7d80 x24: ffff80000a98ea78
+[   18.500866] x23: ffff80000a0d7008 x22: ffff000040241c10 x21: ffff80000b42b7a8
+[   18.500886] x20: ffff00004893c600 x19: ffff00004893d300 x18: 000000003957dc32
+[   18.500906] x17: 000000000000001c x16: 000000005d75779c x15: 00000000c3027b0d
+[   18.500926] x14: 000000000000001a x13: 0000000000000000 x12: ffff000042d25338
+[   18.500946] x11: 0000000000000040 x10: ffff000042d25240 x9 : ffff800008a4d774
+[   18.500965] x8 : ffff000042d25268 x7 : 0000000000000000 x6 : ffff80000a98f000
+[   18.500984] x5 : ffff800008a4d780 x4 : fffffc0001224f20 x3 : ffff00004893c700
+[   18.501003] x2 : ffff80000886d9d0 x1 : ffff000040241c10 x0 : ffff000040104700
+[   18.501022] Call trace:
+[   18.501028]  0xffff000040241c10
+[   18.501037]  release_nodes+0x64/0x104
+[   18.501052]  devres_release_group+0xd8/0x14c
+[   18.501063]  component_bind_all+0x144/0x290
+[   18.501079]  vc4_drm_bind+0x118/0x2f4 [vc4]
+[   18.501181]  try_to_bring_up_aggregate_device+0x230/0x320
+[   18.501198]  component_master_add_with_match+0xbc/0x10c
+[   18.501212]  vc4_platform_drm_probe+0xcc/0x10c [vc4]
+[   18.501300]  platform_probe+0x74/0xf0
+[   18.501318]  really_probe+0xc8/0x3f0
+[   18.501331]  __driver_probe_device+0x11c/0x190
+[   18.501344]  driver_probe_device+0x44/0x100
+[   18.501357]  __driver_attach+0xd8/0x200
+[   18.501370]  bus_for_each_dev+0x7c/0xe0
+[   18.501381]  driver_attach+0x30/0x40
+[   18.501393]  bus_add_driver+0x154/0x240
+[   18.501405]  driver_register+0x84/0x140
+[   18.501419]  __platform_driver_register+0x34/0x40
+[   18.501434]  vc4_drm_register+0x5c/0x1000 [vc4]
+[   18.501520]  do_one_initcall+0x50/0x2b0
+[   18.501533]  do_init_module+0x50/0x200
+[   18.501544]  load_module+0x1b80/0x1f40
+[   18.501553]  __do_sys_finit_module+0xac/0x12c
+[   18.501562]  __arm64_sys_finit_module+0x2c/0x40
+[   18.501571]  invoke_syscall+0x50/0x120
+[   18.501588]  el0_svc_common.constprop.0+0x104/0x124
+[   18.501604]  do_el0_svc+0x3c/0xcc
+[   18.501619]  el0_svc+0x38/0xc0
+[   18.501633]  el0t_64_sync_handler+0xbc/0x140
+[   18.501647]  el0t_64_sync+0x18c/0x190
+[   18.501663] Code: 40a43e00 ffff0000 ffffffff 00000000 (40a43e00)
+[   18.501674] ---[ end trace 0000000000000000 ]---
 
 
- arch/arm64/boot/dts/qcom/sm8350.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+URL:
+[1] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220620/testrun/10270853/suite/ltp-sched-tests/test/cfs_bandwidth01/details/
+[2] https://lkft.validation.linaro.org/scheduler/job/5191948#L810
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index 52428b6df64e..99464cd1299e 100644
---- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,dispcc-sm8350.h>
- #include <dt-bindings/clock/qcom,gcc-sm8350.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/dma/qcom-gpi.h>
-@@ -2525,6 +2526,31 @@ usb_2_dwc3: usb@a800000 {
- 			};
- 		};
- 
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sm8350-dispcc";
-+			reg = <0 0x0af00000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "bi_tcxo",
-+				      "dsi0_phy_pll_out_byteclk",
-+				      "dsi0_phy_pll_out_dsiclk",
-+				      "dsi1_phy_pll_out_byteclk",
-+				      "dsi1_phy_pll_out_dsiclk",
-+				      "dp_phy_pll_link_clk",
-+				      "dp_phy_pll_vco_div_clk";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+
-+			power-domains = <&rpmhpd SM8350_MMCX>;
-+			power-domain-names = "mmcx";
-+		};
-+
- 		adsp: remoteproc@17300000 {
- 			compatible = "qcom,sm8350-adsp-pas";
- 			reg = <0 0x17300000 0 0x100>;
--- 
-2.34.1
 
+--
+Linaro LKFT
+https://lkft.linaro.org
