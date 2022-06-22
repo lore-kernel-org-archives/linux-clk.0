@@ -2,112 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7153BC43334
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 10:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D06C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 11:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353361AbiFVK7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 06:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43670 "EHLO
+        id S1349975AbiFVLF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jun 2022 07:05:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353254AbiFVK7e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 06:59:34 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E3536155
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jun 2022 03:59:33 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id ej4so19391622edb.7
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jun 2022 03:59:33 -0700 (PDT)
+        with ESMTP id S234590AbiFVLFY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 07:05:24 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FC853BBD2;
+        Wed, 22 Jun 2022 04:05:17 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id ej4so19413036edb.7;
+        Wed, 22 Jun 2022 04:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wj1B3rbla67dRHBQd3aIS8YH2O6WyryO8AEPaxFsJyo=;
-        b=F41jgn/3+dYOv8iERCwg43h6IvZqTibMge9LkwVaB7blZudC10xBDFwcrj7vNfiACS
-         warpSAkPMAi0K7Cj6mbucgq4N/+ZDO1c/ld1ozSfcTmxjMx1iGV7rq3yBiA6RbmF3DhL
-         yqatch4bRC51WMI6k2EUKt1gXhRT8qyO2Lhfw5YGvazDt3zPRCXnfRLVvRMZablXm9YU
-         HgH61fM3wDzijZUpqGFvO65wDf0fHWjTErwdyO1se82Ce+Fbg4jO3smycsilnV6mcsQP
-         OeE6XMXNdW0m66CxsXOXqH1gZ+QUUwgltDhEjWsYTe6GyvD5rY5/Fw83C/IQYJB45jtN
-         RU0w==
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=BsWeZKTMRUjS4UGWGKXKi/F6OhLV9oNlEr0sqKPjdhY=;
+        b=goSSVIS2xMmIt8+zQ+4MnTruyoXO+gM/WRoEM6Cuo0Prstx1aOOwxieSEas175GI/Y
+         pR2Ri8ptjhMZM/G7BHcC7rgqDl7INoPAriq7bsCHGZaWu/qkjeRlUw4V0ROTlGdz8Jsz
+         ZGNVA9rlMFvvpoELJv0Gr/0V7oP28iDObt/v/9fSfFXohainHuDFWRfYpz0WhcPFSn5v
+         TZkEbd++U+4Lt5ORaWDswJ87h+OTBxqy3lfL3eFCaJcKfpk3IXE4l8eYzXXW4G6vNZaq
+         /7L3bJjNz22oFeOw74YdcXFiGlAiK/Hpa+Ha3pZuSu6M0TMMTi0rSX0YXOE9lEsDAZtb
+         l3oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wj1B3rbla67dRHBQd3aIS8YH2O6WyryO8AEPaxFsJyo=;
-        b=RUsmE8C8zqTGKpzsG83swS6vKnmibkyREtMayll2PPEo/wUjcBJ6AkJJXEj1k3UjVQ
-         kjEUWWf6lA7KMDSXZkALUsKgu4NNtzf6/eEufvU850dRtBkrAfr9foDDX4kOPYQMS10H
-         qrfktKsRSibmUIlhDtJV/8x5WiEJ/FNrFjHbKhDWYp8t1+oGPioNL8BKisyzs1PBFoq7
-         acAeChpDwChUkprTno524Wo8Tf2yd7xyGE7kh4H6EXiiNLGek832OoBoTOVh2gw8DZ6r
-         xcca5ntUyvDooAFGFi678XZbMvVXmqnfamNbAL1o3iZhEuNr+zKvxCxFWsVUEhagOq/m
-         l5Hw==
-X-Gm-Message-State: AJIora/ssROTy2BOKZOsPYBSIbG7yePUTPLeImR+uxyDCSQXEsCq0DQF
-        677zKhiP2YUor2/6B6JR0wngS4YpNFxjEE1xCSevzxpjeWD+jw==
-X-Google-Smtp-Source: AGRyM1usguThhtkDmHl7BY4SM52Xi7XhmpslgIGFT9Fcp9guUqDUlDedM37XJ3e4ReBmdiFE5ks3eSkofnpGgs2Cxdc=
-X-Received: by 2002:a05:6402:1694:b0:435:79d2:a441 with SMTP id
- a20-20020a056402169400b0043579d2a441mr3447377edv.55.1655895571612; Wed, 22
- Jun 2022 03:59:31 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=BsWeZKTMRUjS4UGWGKXKi/F6OhLV9oNlEr0sqKPjdhY=;
+        b=gwWPpagxg2tym0yF/TD0jGE4LAX/u3gka7dvKYdEcUELY1WEyBLs5jwSpzqWAKNLCn
+         Zo9mifafSVtbchn3n84YYOVA6b2Pnta+Bzi7vMXgLBKT3b8em40/EdNGpT3qH7JhEkuI
+         ESho1wW8uHmjzpv2TgHb4ZBZRxS2MieNcRbiH6rod8nJqDjeiPNgcPKmC7dVdrVwX5IS
+         2ztDEIAzfqhy/9DNBPrPlbmbx8yPWTNit6XRmtcQ8NDd96OvL8lpposXfThD0h2AzAAW
+         XZqGNh9kmUBTTU6DezDODB9D0o4LYf1MN9fFJbHEAyPqmnMr1fPWFDlnJN/nCxJjdXEU
+         rbqA==
+X-Gm-Message-State: AJIora9OBXkgtVf4P9PEZVqYcYxPG4LxyTOq4xBg4aviCMJhaUwYoEl6
+        uI/TKVwPq8utOiG02mjjLGM=
+X-Google-Smtp-Source: AGRyM1s9nDUowq9+/oNlBIcMXsoZizGRGfHc6q9TiQd5vkG3V7Wuhzig5PXTkxlYtZVA2ciTT6f/JA==
+X-Received: by 2002:a05:6402:4385:b0:435:9104:955b with SMTP id o5-20020a056402438500b004359104955bmr3470937edc.45.1655895915755;
+        Wed, 22 Jun 2022 04:05:15 -0700 (PDT)
+Received: from [192.168.0.24] (80.174.78.229.dyn.user.ono.com. [80.174.78.229])
+        by smtp.gmail.com with ESMTPSA id b12-20020a17090630cc00b00722edb5fb53sm1007705ejb.116.2022.06.22.04.05.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jun 2022 04:05:14 -0700 (PDT)
+Message-ID: <6b4f108c-b4bc-72cf-5972-222fbb2f3fca@gmail.com>
+Date:   Wed, 22 Jun 2022 13:05:13 +0200
 MIME-Version: 1.0
-References: <CA+G9fYv4S2TqZ53oH5FEK07qHV+LwkZEx7+KNiCa5wZWruDSfA@mail.gmail.com>
- <20220622071151.xmabagjyr5qasff5@pengutronix.de>
-In-Reply-To: <20220622071151.xmabagjyr5qasff5@pengutronix.de>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 22 Jun 2022 16:29:20 +0530
-Message-ID: <CA+G9fYtUu2VCZ2NRpKMV4iCimi8koQ3OTeqQ3byZ9W11sE9fSg@mail.gmail.com>
-Subject: Re: [next] Unable to handle kernel execute from non-executable memory
- at virtual address - devm_clk_release
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        regressions@lists.linux.dev, lkft-triage@lists.linaro.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v6 15/16] arm64: dts: mediatek: Add infra #reset-cells
+ property for MT8192
+Content-Language: en-US
+To:     Rex-BC Chen <rex-bc.chen@mediatek.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     p.zabel@pengutronix.de, angelogioacchino.delregno@collabora.com,
+        chun-jie.chen@mediatek.com, wenst@chromium.org,
+        runyang.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20220503093856.22250-1-rex-bc.chen@mediatek.com>
+ <20220503093856.22250-16-rex-bc.chen@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20220503093856.22250-16-rex-bc.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 22 Jun 2022 at 12:42, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> On Wed, Jun 22, 2022 at 06:41:30AM +0530, Naresh Kamboju wrote:
-> > The following kernel crash was noticed on arm64 Raspberry Pi 4 Model B
-> > devices while booting. This crash is always reproducible.
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > metadata:
-> >   git_ref: master
-> >   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> >   git_sha: 1e502319853ceebfe7480a436ba22ab01372fa0c
-> >   git_describe: next-20220620
-> >   kernel_version: 5.19.0-rc3
-> >   kernel-config: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2GnWiU=
-k/config
-> >   build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/p=
-ipelines/567830223
-> >   artifact-location: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2G=
-nWiUk
-> >   toolchain: gcc-11
->
-> Patch available at https://lore.kernel.org/all/20220620171815.114212-1-u.=
-kleine-koenig@pengutronix.de/
 
-I have tested your patch and the reported issues got fixed.
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> I wonder how the recipents of this mail were choosen. If your build bot
-> identified abae8e57e49aa75f6db76aa866c775721523908f as the broken
-> commit, this would be a very helpful information in this report.
+On 03/05/2022 11:38, Rex-BC Chen wrote:
+> To support reset of infra, we add property of #reset-cells.
+> 
+> Signed-off-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-We are working on improving our tooling for test bisection
-and reporting emailers.
+Applied, thanks!
 
-- Naresh
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8192.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8192.dtsi b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
+> index 411feb294613..79803420d8ef 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8192.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8192.dtsi
+> @@ -269,6 +269,7 @@
+>   			compatible = "mediatek,mt8192-infracfg", "syscon";
+>   			reg = <0 0x10001000 0 0x1000>;
+>   			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+>   		};
+>   
+>   		pericfg: syscon@10003000 {
