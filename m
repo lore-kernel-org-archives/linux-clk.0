@@ -2,116 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ED0CCA482
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 07:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC19C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jun 2022 10:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352258AbiFVHMI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 03:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48068 "EHLO
+        id S1343770AbiFVKH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jun 2022 06:07:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352227AbiFVHMG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 03:12:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BF036B75
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jun 2022 00:12:05 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3uWu-0005OK-HA; Wed, 22 Jun 2022 09:12:00 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3uWo-001z4j-Sk; Wed, 22 Jun 2022 09:11:56 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o3uWp-000Mys-IW; Wed, 22 Jun 2022 09:11:55 +0200
-Date:   Wed, 22 Jun 2022 09:11:51 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        regressions@lists.linux.dev, lkft-triage@lists.linaro.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [next] Unable to handle kernel execute from non-executable
- memory at virtual address - devm_clk_release
-Message-ID: <20220622071151.xmabagjyr5qasff5@pengutronix.de>
-References: <CA+G9fYv4S2TqZ53oH5FEK07qHV+LwkZEx7+KNiCa5wZWruDSfA@mail.gmail.com>
+        with ESMTP id S1347121AbiFVKHz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 06:07:55 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B67CCDA;
+        Wed, 22 Jun 2022 03:07:52 -0700 (PDT)
+Received: from [192.168.1.101] (abxi223.neoplus.adsl.tpnet.pl [83.9.2.223])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1565820554;
+        Wed, 22 Jun 2022 12:07:46 +0200 (CEST)
+Message-ID: <bc646661-9be5-5256-5ec9-a27623003693@somainline.org>
+Date:   Wed, 22 Jun 2022 12:07:45 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lqt3bo3e3asngv5g"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYv4S2TqZ53oH5FEK07qHV+LwkZEx7+KNiCa5wZWruDSfA@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v6 1/6] arm64: dts: qcom: sm8350: Replace integers with
+ rpmpd defines
+Content-Language: en-US
+To:     Robert Foss <robert.foss@linaro.org>, bjorn.andersson@linaro.org,
+        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, jonathan@marek.ca,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20220621233412.506768-1-robert.foss@linaro.org>
+ <20220621233412.506768-2-robert.foss@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220621233412.506768-2-robert.foss@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lqt3bo3e3asngv5g
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 22, 2022 at 06:41:30AM +0530, Naresh Kamboju wrote:
-> The following kernel crash was noticed on arm64 Raspberry Pi 4 Model B
-> devices while booting. This crash is always reproducible.
->=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->=20
-> metadata:
->   git_ref: master
->   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->   git_sha: 1e502319853ceebfe7480a436ba22ab01372fa0c
->   git_describe: next-20220620
->   kernel_version: 5.19.0-rc3
->   kernel-config: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2GnWiUk/=
-config
->   build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/pip=
-elines/567830223
->   artifact-location: https://builds.tuxbuild.com/2ApqivCh2DP6v2QxI17B2GnW=
-iUk
->   toolchain: gcc-11
+On 22.06.2022 01:34, Robert Foss wrote:
+> Replace &rpmhpd power domain integers with their respective defines
+> in order to improve legibility.
+> 
+> Signed-off-by: Robert Foss <robert.foss@linaro.org>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-Patch available at https://lore.kernel.org/all/20220620171815.114212-1-u.kl=
-eine-koenig@pengutronix.de/
-
-I wonder how the recipents of this mail were choosen. If your build bot
-identified abae8e57e49aa75f6db76aa866c775721523908f as the broken
-commit, this would be a very helpful information in this report.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---lqt3bo3e3asngv5g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmKywLQACgkQwfwUeK3K
-7AleAgf+JZg7IG3GJ2dkcv/k61X0tlqdukxR0hKi2O69G3gOTAy/nWRvoJNfizdj
-T77eaizrdrfpqU2hpjsjd2XCiW5USzUItWtvhwC2BOZFqhvWYizrbt1GC922lf0Y
-u48Jf3b7de0Ft4KgaCAAGWB5F4GvU8qP9tMNLlx57ojiO6my7Inwlef4gJ7sRkpt
-UUDX+3uMQRbWT7n6IcLvcKtKPobuyZmmt0S7IRjyeanrWOT96Nz9OodBnwb/82VG
-vppCQ+bhilNUSHDpQIVyqiCvrD3aPMG8+rffdczKVPe9iW/nWlV7W6ZCF4MYDcB3
-q9VWq/HxAc7IUoH1g/yWXWKSXcmGlQ==
-=b4NL
------END PGP SIGNATURE-----
-
---lqt3bo3e3asngv5g--
+Konrad
+>  arch/arm64/boot/dts/qcom/sm8350.dtsi | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+> index c0137bdcf94b..52428b6df64e 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+> @@ -1656,8 +1656,8 @@ mpss: remoteproc@4080000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd 0>,
+> -					<&rpmhpd 12>;
+> +			power-domains = <&rpmhpd SM8350_CX>,
+> +					<&rpmhpd SM8350_MSS>;
+>  			power-domain-names = "cx", "mss";
+>  
+>  			interconnects = <&mc_virt MASTER_LLCC &mc_virt SLAVE_EBI1>;
+> @@ -2167,8 +2167,8 @@ slpi: remoteproc@5c00000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd 4>,
+> -					<&rpmhpd 5>;
+> +			power-domains = <&rpmhpd SM8350_LCX>,
+> +					<&rpmhpd SM8350_LMX>;
+>  			power-domain-names = "lcx", "lmx";
+>  
+>  			memory-region = <&pil_slpi_mem>;
+> @@ -2235,8 +2235,8 @@ cdsp: remoteproc@98900000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd 0>,
+> -					<&rpmhpd 10>;
+> +			power-domains = <&rpmhpd SM8350_CX>,
+> +					<&rpmhpd SM8350_MXC>;
+>  			power-domain-names = "cx", "mxc";
+>  
+>  			interconnects = <&compute_noc MASTER_CDSP_PROC &mc_virt SLAVE_EBI1>;
+> @@ -2540,8 +2540,8 @@ adsp: remoteproc@17300000 {
+>  			clocks = <&rpmhcc RPMH_CXO_CLK>;
+>  			clock-names = "xo";
+>  
+> -			power-domains = <&rpmhpd 4>,
+> -					<&rpmhpd 5>;
+> +			power-domains = <&rpmhpd SM8350_LCX>,
+> +					<&rpmhpd SM8350_LMX>;
+>  			power-domain-names = "lcx", "lmx";
+>  
+>  			memory-region = <&pil_adsp_mem>;
