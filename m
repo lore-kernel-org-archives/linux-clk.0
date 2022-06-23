@@ -2,43 +2,43 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D859CCA480
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 11:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BEFC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 11:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbiFWL53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 07:57:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41290 "EHLO
+        id S231600AbiFWL5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 07:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbiFWL51 (ORCPT
+        with ESMTP id S231630AbiFWL51 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 07:57:27 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23FF4D608;
-        Thu, 23 Jun 2022 04:57:23 -0700 (PDT)
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A554D614;
+        Thu, 23 Jun 2022 04:57:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655985443; x=1687521443;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rFzp9FJ0Hi0BvdZQ2nyFZrp7Abz1SQG22Ug72RhOvrw=;
-  b=Wb3HMytS9EwKCkpsukehAgyPHfmNGFYlPS15fDHAemhUJxmxuGLLxslQ
-   WfRP1C1SuArc08PcZ4QXw+2ucFb/w4pCxA1JuhKW3tZk6risfJCqcuV7n
-   2ztMJQeiSu4J93c/Fajm0Gyx+nwYQLzUK0p075KtSZDLnBr8k01l7h4Mc
-   vozDBeJSTvtZ6wOQVnkoLhkvwHx2cK7SZlwBhsAEJxJCJWJNwduOhKGub
-   VqGbyUssS/z0xvm+ftL/CxcALEYqVfgXVDB49XsPtqyAzPJzj6Yv4JVUq
-   nTqRVI8HImQ6OFREjvQZXlvSe0H8OyKA/p6vKFPNTyDNOWDf3jYskWlU/
+  t=1655985445; x=1687521445;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ce43flTutdWp+lJ4X2FWdJd4XMwCf5ChCFOwzmnicV8=;
+  b=Oy1Xox+fe6er+VthNJppUZSxy/ov+pys5nPlQavM3J6FySXGoI19sgMC
+   vOy7fGqhBTno8o6pF9Gr9uKFmEUjocIr+/xOE7GIUKOYdg3XEDpUzpj+r
+   79EjKrDlCLYrubUB8zQRwWzvIV6C7ryhIM356UvcdXCMti/6BLqcUJsGH
+   Wu2orW3omclFEApH8MZ3mW/XlRILIl/Kh0lnQt5ZCQSXAqM1Nu248ImJm
+   ZQ/cM7htuSln6uH8O3P00UOyVX7sdOFUfM5BK54UFmCo7t4i1b9KHQGKI
+   VyBKgH76dLednk8WKxVhCzgi0+aoyVfUUud4rO/2+u7lc/W1RSf8qe7os
    w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10386"; a="280745085"
+X-IronPort-AV: E=McAfee;i="6400,9594,10386"; a="281776426"
 X-IronPort-AV: E=Sophos;i="5.92,215,1650956400"; 
-   d="scan'208";a="280745085"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 04:57:23 -0700
+   d="scan'208";a="281776426"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 04:57:23 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.92,215,1650956400"; 
-   d="scan'208";a="586128577"
+   d="scan'208";a="644704180"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 23 Jun 2022 04:57:20 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 23 Jun 2022 04:57:20 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 218AC136; Thu, 23 Jun 2022 14:57:26 +0300 (EEST)
+        id 3A458152; Thu, 23 Jun 2022 14:57:26 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -46,84 +46,69 @@ To:     Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v1 1/3] clk: Remove never used devm_of_clk_del_provider()
-Date:   Thu, 23 Jun 2022 14:57:17 +0300
-Message-Id: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/3] clkdev: Simplify devm_clk_hw_register_clkdev() function
+Date:   Thu, 23 Jun 2022 14:57:19 +0300
+Message-Id: <20220623115719.52683-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
+References: <20220623115719.52683-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For the entire history of the devm_of_clk_del_provider) existence
-(since 2017) it was never used. Remove it for good.
+Use devm_add_action_or_reset() instead of devres_alloc() and
+devres_add(), which works the same. This will simplify the
+code. There is no functional changes.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/clk.c            | 26 --------------------------
- include/linux/clk-provider.h |  4 ++--
- 2 files changed, 2 insertions(+), 28 deletions(-)
+ drivers/clk/clkdev.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 5cbf21acb1a8..1a9dd980f74a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4751,32 +4751,6 @@ void of_clk_del_provider(struct device_node *np)
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 716bb1710b89..b5eed37dc71a 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -348,9 +348,9 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
  }
- EXPORT_SYMBOL_GPL(of_clk_del_provider);
+ EXPORT_SYMBOL(clk_hw_register_clkdev);
  
--static int devm_clk_provider_match(struct device *dev, void *res, void *data)
--{
--	struct device_node **np = res;
--
--	if (WARN_ON(!np || !*np))
--		return 0;
--
--	return *np == data;
--}
--
--/**
-- * devm_of_clk_del_provider() - Remove clock provider registered using devm
-- * @dev: Device to whose lifetime the clock provider was bound
-- */
--void devm_of_clk_del_provider(struct device *dev)
--{
--	int ret;
--	struct device_node *np = get_clk_provider_node(dev);
--
--	ret = devres_release(dev, devm_of_clk_release_provider,
--			     devm_clk_provider_match, np);
--
--	WARN_ON(ret);
--}
--EXPORT_SYMBOL(devm_of_clk_del_provider);
--
- /**
-  * of_parse_clkspec() - Parse a DT clock specifier for a given device node
-  * @np: device node to parse clock specifier from
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 72d937c03a3e..8ad92a4a748f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1420,7 +1420,7 @@ int devm_of_clk_add_hw_provider(struct device *dev,
- 						 void *data),
- 			   void *data);
- void of_clk_del_provider(struct device_node *np);
--void devm_of_clk_del_provider(struct device *dev);
-+
- struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
- 				  void *data);
- struct clk_hw *of_clk_hw_simple_get(struct of_phandle_args *clkspec,
-@@ -1457,7 +1457,7 @@ static inline int devm_of_clk_add_hw_provider(struct device *dev,
- 	return 0;
- }
- static inline void of_clk_del_provider(struct device_node *np) {}
--static inline void devm_of_clk_del_provider(struct device *dev) {}
-+
- static inline struct clk *of_clk_src_simple_get(
- 	struct of_phandle_args *clkspec, void *data)
+-static void devm_clkdev_release(struct device *dev, void *res)
++static void devm_clkdev_release(void *res)
  {
+-	clkdev_drop(*(struct clk_lookup **)res);
++	clkdev_drop(res);
+ }
+ 
+ /**
+@@ -371,17 +371,13 @@ static void devm_clkdev_release(struct device *dev, void *res)
+ int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
+ 				const char *con_id, const char *dev_id)
+ {
+-	int rval = -ENOMEM;
+-	struct clk_lookup **cl;
+-
+-	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
+-	if (cl) {
+-		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
+-		if (!rval)
+-			devres_add(dev, cl);
+-		else
+-			devres_free(cl);
+-	}
+-	return rval;
++	struct clk_lookup *cl;
++	int rval;
++
++	rval = do_clk_register_clkdev(hw, &cl, con_id, dev_id);
++	if (rval)
++		return rval;
++
++	return devm_add_action_or_reset(dev, devm_clkdev_release, cl);
+ }
+ EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
 -- 
 2.35.1
 
