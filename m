@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C27CCA485
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01408CCA483
 	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 16:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231984AbiFWQEn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 12:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
+        id S231923AbiFWQEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 12:04:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232129AbiFWQEX (ORCPT
+        with ESMTP id S232119AbiFWQEX (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 12:04:23 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8004477E;
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED92944A17;
         Thu, 23 Jun 2022 09:04:21 -0700 (PDT)
 Received: from jupiter.universe (unknown [95.33.159.255])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 63D8466017E4;
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4852766017DF;
         Thu, 23 Jun 2022 17:04:20 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
         s=mail; t=1656000260;
-        bh=JyODDbAkozctO2YF4+4+8QrF0xaiP+MYadCgEeOgwr0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGglfLaFni5u8gXAQ2JFlRVE1lfhiFRI+lJp2LSBZDn1JEAzJfBs3Q90TkocJaeIa
-         7hghODJXm5+mrtYT0qLq6djDtK2DNq2AbqQSE0HtBHXhDVrSIv8CedmSpsEnBH1PfS
-         yYEEaaTSWIUOOxbHncdqwQXiWYJ2c+n0sXd98dZ6NwtBzWDfpNuL6XxxHjV5NoNl8Q
-         w5iJyEOblil+/hjQehSoaoWD3nwctT+rMYEl4lDOqEc6GGOrDSNrINNm1597tm6qpP
-         OmSKb+PeV8BgVNWEdWdT0E35YrH4t6kbLmtaCfHoGy19JwdDp45l3dFdvzE6dxAoEk
-         G+jcyKwV6PVIA==
+        bh=zjDrFX45JCbBeibf/cBhGS7s1nuAsOUhgqAPOq3rbRg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TsVNhEoI98MAUIQkJPaWhfmD0sdrYQpC9cvsXv9JHQ2bszl61qUYPSFzqLaCIzbKl
+         DnKHf1MNcqrXJxPp6tNjpiTpYWloHzYVKMppk77y7yvlzugkg+EXFmQXs2K8cKvyaE
+         h6JyEzZ0qpeNhAhlGSphPZD9S3QL2o//zwnMhUChwjZhVAH7+SKty8lPjM/SrZL+gS
+         mh2A9vLHm6fhZ0cESUWBLOUNOarnznhZF4Ek71lKIMGVhyWj3jWKFaXtUyYaCoWp7w
+         By6hvtCCzmlYAupqHtZtiqUYHO7j8rYvKvJ6/iXDcflnBqg68C0fbHaw6GTC/lIQ0F
+         D68Sy+350fvng==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id CAB7A48059B; Thu, 23 Jun 2022 18:04:17 +0200 (CEST)
+        id C0904480122; Thu, 23 Jun 2022 18:04:17 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -41,14 +41,12 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4/5] clk: rockchip: clk-cpu: add mux setting for cpu change frequency
-Date:   Thu, 23 Jun 2022 18:03:28 +0200
-Message-Id: <20220623160329.239501-5-sebastian.reichel@collabora.com>
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH 0/5] RK3588 Clock and Reset Support
+Date:   Thu, 23 Jun 2022 18:03:24 +0200
+Message-Id: <20220623160329.239501-1-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220623160329.239501-1-sebastian.reichel@collabora.com>
-References: <20220623160329.239501-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -56,123 +54,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Elaine Zhang <zhangqing@rock-chips.com>
+RK3588 Clock and Reset Support
 
-In order to improve the main frequency of CPU, the clock path of CPU is
-simplified as follows:
-                         |--\
-                         |   \            |--\
- --apll--|\              |    \           |   \
-         | |--apll_core--|     \          |    \
- --24M---|/              |mux1 |--[gate]--|mux2|---clk_core
-                         |     /          |    /
- --gpll--|\              |    /    |------|   /
-         | |--gpll_core--|   /     |      |--/
- --24M---|/              |--/      |
-                                   |
- -------apll_directly--------------|
+This has been part of a bigger patchset adding basic rk3588 support.
+Since that gets more and more out of hand, I'm now sending patches
+for each subsystem as individual patchset. Previou patchet:
 
-When the CPU requests high frequency, we want to use MUX2 select the
-"apll_directly".
-At low frequencies use MUX1 to select “apll_core" and then MUX2 to
-select "apll_core_gate".
+https://lore.kernel.org/all/20220504213251.264819-1-sebastian.reichel@collabora.com/
 
-However, in this way, the CPU frequency conversion needs to be
-in the following order:
-1. MUX2 select to "apll_core_gate", MUX1 select "gpll_core"
-2. Apll sets slow_mode, sets APLL parameters, locks APLL, and then APLL
-sets normal_mode
-3. MUX1 select "apll_core", MUX2 select "apll_directly"
+Changes:
+ * Sync'd against latest downstream changes
+ * Update bindings according to Rob's comments, except for license
+   (no feedback from Rockchip)
 
-So add pre_muxs and post_muxs to cover this special requirements.
+-- Sebastian
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-[rebase]
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/clk/rockchip/clk-cpu.c | 41 ++++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.h     |  2 ++
- 2 files changed, 43 insertions(+)
+Elaine Zhang (5):
+  dt-binding: clock: Document rockchip,rk3588-cru bindings
+  clk: rockchip: add register offset of the cores select parent
+  clk: rockchip: add pll type for RK3588
+  clk: rockchip: clk-cpu: add mux setting for cpu change frequency
+  clk: rockchip: Add clock controller for the RK3588
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 11aa2259b532..6ea7fba9f9e5 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -113,6 +113,42 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 	}
- }
- 
-+static void rockchip_cpuclk_set_pre_muxs(struct rockchip_cpuclk *cpuclk,
-+					 const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the pre_muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->pre_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->pre_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
-+static void rockchip_cpuclk_set_post_muxs(struct rockchip_cpuclk *cpuclk,
-+					  const struct rockchip_cpuclk_rate_table *rate)
-+{
-+	int i;
-+
-+	/* alternate parent is active now. set the muxs */
-+	for (i = 0; i < ARRAY_SIZE(rate->post_muxs); i++) {
-+		const struct rockchip_cpuclk_clksel *clksel = &rate->post_muxs[i];
-+
-+		if (!clksel->reg)
-+			break;
-+
-+		pr_debug("%s: setting reg 0x%x to 0x%x\n",
-+			 __func__, clksel->reg, clksel->val);
-+		writel(clksel->val, cpuclk->reg_base + clksel->reg);
-+	}
-+}
-+
- static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 					   struct clk_notifier_data *ndata)
- {
-@@ -165,6 +201,9 @@ static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
- 			       cpuclk->reg_base + reg_data->core_reg[i]);
- 		}
- 	}
-+
-+	rockchip_cpuclk_set_pre_muxs(cpuclk, rate);
-+
- 	/* select alternate parent */
- 	if (reg_data->mux_core_reg)
- 		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
-@@ -219,6 +258,8 @@ static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
- 				     reg_data->mux_core_shift),
- 		       cpuclk->reg_base + reg_data->core_reg[0]);
- 
-+	rockchip_cpuclk_set_post_muxs(cpuclk, rate);
-+
- 	/* remove dividers */
- 	for (i = 0; i < reg_data->num_cores; i++) {
- 		writel(HIWORD_UPDATE(0, reg_data->div_core_mask[i],
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index bf7c8d082fde..2bd1863a7418 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -380,6 +380,8 @@ struct rockchip_cpuclk_clksel {
- struct rockchip_cpuclk_rate_table {
- 	unsigned long prate;
- 	struct rockchip_cpuclk_clksel divs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel pre_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
-+	struct rockchip_cpuclk_clksel post_muxs[ROCKCHIP_CPUCLK_NUM_DIVIDERS];
- };
- 
- /**
+ .../bindings/clock/rockchip,rk3588-cru.yaml   |   59 +
+ drivers/clk/rockchip/Kconfig                  |    8 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-cpu.c                |   69 +-
+ drivers/clk/rockchip/clk-pll.c                |  218 +-
+ drivers/clk/rockchip/clk-rk3588.c             | 2530 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |   65 +
+ include/dt-bindings/clock/rk3588-cru.h        | 1516 ++++++++++
+ 8 files changed, 4457 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3588-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3588.c
+ create mode 100644 include/dt-bindings/clock/rk3588-cru.h
+
 -- 
 2.35.1
 
