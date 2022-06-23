@@ -2,223 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA4DCCA47C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 07:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181F4C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 07:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbiFWHTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 03:19:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
+        id S230433AbiFWHnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 03:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiFWHTd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 03:19:33 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62FE45AF1;
-        Thu, 23 Jun 2022 00:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1655968772; x=1687504772;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=5lPbECoT8Z/3W+qVNGRvi8kQA8ZEoBHnTPns26WjHgc=;
-  b=QPQ6piBxkIrny11+I9J4z1WGGryt8s6tpzMOHOZqzHPtZ1iiFrWio0S9
-   9U1nirZwqAehycDt4SlHEsmUQ391WzU+ae4zNfHuHOvMXD7kxbK5l9o5g
-   oxj6g1DITMeA5GsDQV6FnTtVwxPErq6EoMoH+Jp/NTGq6W2c8agdtQfmD
-   A=;
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 23 Jun 2022 00:19:32 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 00:19:32 -0700
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 23 Jun 2022 00:19:31 -0700
-Received: from [10.242.242.148] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 23 Jun
- 2022 00:19:25 -0700
-Message-ID: <dfccfc26-ce21-1355-6103-14e921f8e29c@quicinc.com>
-Date:   Thu, 23 Jun 2022 12:49:22 +0530
+        with ESMTP id S230416AbiFWHnT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 03:43:19 -0400
+X-Greylist: delayed 384 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 23 Jun 2022 00:43:18 PDT
+Received: from mail.forindustry.pl (mail.forindustry.pl [37.187.225.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E8236B51
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 00:43:18 -0700 (PDT)
+Received: by mail.forindustry.pl (Postfix, from userid 1002)
+        id 87D2CA310A; Thu, 23 Jun 2022 07:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=forindustry.pl;
+        s=mail; t=1655969813;
+        bh=Vw5jk5D1DE7WK/GNf/MxRQNyAyPYcC0rMJLibxKTj58=;
+        h=Date:From:To:Subject:From;
+        b=VXDSMM+UlRYGYkKNcjVe2fjmael3pSYrYoqsm0AXNR0n+D6uVqEm9+70XG1URU4Fg
+         yfD4abAPtkDRMverq1b8VCvRA6+d1R0CIVDJ1TGFXiPmjFcUfaisFTqqQlB/5fQ8Aw
+         /pkk6QZ79DGeiU2bxiATYuRE5/BdF6B9ar5RlaN6Py9H1kDlhij/iMw1Cin8mHSok6
+         4sDGVi4qVtNBt3eKP6pGz2UfjZAU/qjUjaG/CQ6yD+BDzkHVWfAWAUqnXYmxC6SDP/
+         61vBjbpyaEqhnXbxaHEiC5jvEDH3Th7dZSLltHBzG0tXNXSaE/nPpEr3jY1p2DFWmh
+         IUVPV6dx0R8Xw==
+Received: by mail.forindustry.pl for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 07:35:39 GMT
+Message-ID: <20220623064500-0.1.3z.vtmr.0.t78m3ebphd@forindustry.pl>
+Date:   Thu, 23 Jun 2022 07:35:39 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@forindustry.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.forindustry.pl
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH V2 7/8] arm64: dts: Add ipq5018 SoC and MP03 board support
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <quic_varada@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com>
- <20220621161126.15883-8-quic_srichara@quicinc.com>
- <876c9580-48ca-0491-24bc-4f20871277f0@linaro.org>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <876c9580-48ca-0491-24bc-4f20871277f0@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
-On 6/22/2022 8:48 PM, Krzysztof Kozlowski wrote:
-> On 21/06/2022 18:11, Sricharan R wrote:
->> From: Varadarajan Narayanan <quic_varada@quicinc.com>
->>
->> Add initial device tree support for the Qualcomm IPQ5018 SoC and
->> MP03.1-C2 board.
->>
->> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Chain needs fixes.
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99.
 
-  ok.
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
 
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>   .../arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts |  29 +++
->>   arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 221 ++++++++++++++++++
->>   3 files changed, 251 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index f9e6343acd03..c44e701f093c 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c2.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-g7.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.1-c2.dtb
-> This does not look like in proper order.
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
-   ok, will fix.
-
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8150.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8910.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->> new file mode 100644
->> index 000000000000..d1cd080ec3db
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->> @@ -0,0 +1,29 @@
->> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
->> +/*
->> + * IPQ5018 CP01 board device tree source
->> + *
->> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "ipq5018.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. IPQ5018/AP-MP03-C2";
->> +	compatible = "qcom,ipq5018-mp03", "qcom,ipq5018";
->> +
->> +	aliases {
->> +		serial0 = &blsp1_uart1;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:115200n8";
->> +	};
->> +};
->> +
->> +&blsp1_uart1 {
->> +	pinctrl-0 = <&serial_1_pins>;
->> +	pinctrl-names = "default";
->> +	status = "ok";
-> "okay" is preferred.
-
-   ok.
-
-
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
->> new file mode 100644
->> index 000000000000..084fb7b30dfd
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
->> @@ -0,0 +1,221 @@
->> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
->> +/*
->> + * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
->> + */
->> +/*
->> + * IPQ5018 SoC device tree source
->> + *
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-> Combine these two comments.
-
-   ok.
-
-
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/qcom,gcc-ipq5018.h>
->> +#include <dt-bindings/reset/qcom,gcc-ipq5018.h>
->> +
->> +/ {
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +	interrupt-parent = <&intc>;
->> +
->> +	sleep_clk: sleep-clk {
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <32000>;
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +	xo: xo {
-> Node name: xo-clk
-
-  ok.
-
-
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <24000000>;
-> The clock is provided by board, so at least frequency should be defined
-> there.
-
-   ok, will move to board file. Somehow all other boards are defining it 
-in soc dts itself, so
-   followed it.
-
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +	gen2clk0: gen2clk0 {
-> Keep consistent prefixes, so gen2-clk or gen2-0-clk
-
-  ok, will fix.
-
-
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <125000000>;
->> +		clock-output-names = "pcie20_phy0_pipe_clk";
->> +	};
->> +
->> +	gen2clk1: gen2clk1 {
-> gen2-1-clk
-
-  ok, will fix.
-
-Regards,
-   Sricharan
-
+Pozdrawiam,
+Arkadiusz Soko=C5=82owski
