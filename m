@@ -2,163 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B467C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 15:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033D6C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 15:37:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbiFWPcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 11:32:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
+        id S231594AbiFWPh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 11:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231905AbiFWPcf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 11:32:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 04A2B41997
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 08:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655998352;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b2n5xLD7AQDK+GpcG4O4X1piM0yxBHUCyVpdCvBcmLA=;
-        b=S5cyvcpU1NI+RYtM/nYMvX9oqoLb9NUQParyUrmbZc3sR9Q3w/IG1l0w4hxGyFbpaHSVhS
-        0QJB171zxroBhehOycPvGO525DM6QUOFtwl8NS94ZHS1Lr7qqYcz+Do4zqKOIULQVd9BRa
-        q5CtWrHeO8tckiWc44I18Dhxi2l7MfQ=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-481-tzu-BiZKPPmJGDiO7pXbvg-1; Thu, 23 Jun 2022 11:32:30 -0400
-X-MC-Unique: tzu-BiZKPPmJGDiO7pXbvg-1
-Received: by mail-qk1-f199.google.com with SMTP id bi36-20020a05620a31a400b006a79f0706e5so23882531qkb.2
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 08:32:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b2n5xLD7AQDK+GpcG4O4X1piM0yxBHUCyVpdCvBcmLA=;
-        b=X2pT/uRpDhuCLeMb4Con8P0v/gf01DI97oINiw84O/aJW9+uhy8bB00tKemHggqKdc
-         IfscWaV/xWk+J98fvhFhV/IaBXFh2YViAiFCvFm1vQ1MT0GcxPOcxJLzhwHtl/wEnk3D
-         Q7N+Q4g0NiyeEwDzzPEOwLFFYRa9L6bXZ85Ssn64AEgPhUIlAzs5608nhtUTfyM7g6Ff
-         uJSy7VKUaldzcIvqushzTeDrVgCC9oNA1SxMqVTYnIbObr3WnYpq87lrfgY67NmVy/QY
-         KThQYvLXNDC1c/yRpeevpshqITJ2SNGi5TDx4/9veu8Rt2x2eH2KQelhsjFUxps5gHri
-         TwWQ==
-X-Gm-Message-State: AJIora91PADvbtQ9SpBnW38g+/3+EowYMcMC1TISsyRKR/INAw2xAU9x
-        KHUueMiwfp03UcNxj1kILJsN/OLujeHb1/OjZnzqtm7Qe45Ws2Nq5IjQyV2hy89a3ouXskY6AKZ
-        CM0gjc9IUXlU6qCar83pn
-X-Received: by 2002:a05:6214:29ca:b0:46b:92c5:9f3b with SMTP id gh10-20020a05621429ca00b0046b92c59f3bmr32129041qvb.20.1655998349429;
-        Thu, 23 Jun 2022 08:32:29 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1v3ddAmHP4GNMm6NGiuKRAyJLCHiaGoJECW7QzVyWqpeYX0hMGqRDuYk0d3CinVTSkb2kBBeA==
-X-Received: by 2002:a05:6214:29ca:b0:46b:92c5:9f3b with SMTP id gh10-20020a05621429ca00b0046b92c59f3bmr32129018qvb.20.1655998349055;
-        Thu, 23 Jun 2022 08:32:29 -0700 (PDT)
-Received: from halaneylaptop ([2600:1700:1ff0:d0e0::46])
-        by smtp.gmail.com with ESMTPSA id y29-20020a37f61d000000b006a3325fd985sm18291762qkj.13.2022.06.23.08.32.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 08:32:28 -0700 (PDT)
-Date:   Thu, 23 Jun 2022 10:32:26 -0500
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     Brian Masney <bmasney@redhat.com>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        echanude@redhat.com
-Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk
- for sa8540p
-Message-ID: <20220623153226.drrbx2jolrxxe7as@halaneylaptop>
-References: <20220623142837.3140680-1-bmasney@redhat.com>
+        with ESMTP id S230520AbiFWPh1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 11:37:27 -0400
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F040F2FFE3;
+        Thu, 23 Jun 2022 08:37:25 -0700 (PDT)
+Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 24 Jun 2022 00:37:25 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id 6BD59205845A;
+        Fri, 24 Jun 2022 00:37:25 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 24 Jun 2022 00:37:25 +0900
+Received: from [10.212.180.217] (unknown [10.212.180.217])
+        by kinkan2.css.socionext.com (Postfix) with ESMTP id 0A3C1B62E2;
+        Fri, 24 Jun 2022 00:37:23 +0900 (JST)
+Subject: Re: [PATCH] clk: Fix referring to wrong pointer in devm_clk_release()
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <20220623070620.ndhnxeiw4wtjgpjm@pengutronix.de>
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Message-ID: <3896b73a-d8fe-6b92-168a-f30d0a60bbbe@socionext.com>
+Date:   Fri, 24 Jun 2022 00:37:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220623142837.3140680-1-bmasney@redhat.com>
+In-Reply-To: <20220623070620.ndhnxeiw4wtjgpjm@pengutronix.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 10:28:37AM -0400, Brian Masney wrote:
-> The sa8540p automotive board has the same SOC as the sc8280xp. In order
-> to get the first UFS controller working on the sa8540p,
-> GCC_UFS_REF_CLKREF_CLK needs to be setup as a parent to
-> GCC_UFS_PHY_AXI_CLK.
-> 
-> This clock name came from the DTS for the downstream MSM 5.4 kernel
-> sources for the sa8540p. It also references GCC_UFS_CARD_CLKREF_CLK,
-> however that wasn't needed to get the first UFS controller working.
-> 
+Hi Uwe,
 
-I'm not knowledgable enough on the clock subsystem or have access to
-documentation to comment on correctness outside of the 5.4 MSM kernel
-you mentioned, but I think this probably deserves a Fixes: tag?
+Thank you for pointing out.
 
-I can at least also comment that without this change the sa8540p doesn't
-boot on the QDrive3 boards we have.
+On 2022/06/23 16:06, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Thu, Jun 23, 2022 at 10:02:22AM +0900, Kunihiko Hayashi wrote:
+>> At bind phase, __devm_clk_get() calls devres_alloc() to allocate devres,
+>> and dr->data is treated as a variable "state".
+>>
+>> At unbind phase, release_nodes() calls devm_clk_release() specified by
+>> devres_alloc().
+>>
+>> The argument "res" of devm_clk_release() is dr->data, and this entity is
+>> "state", however in devm_clk_release(), "*res" is treated as "state",
+>> resulting in pointer inconsistency.
+>>
+>> Unbinding a driver caused a panic.
+>>
+>>      Unable to handle kernel execute from non-executable memory
+>>      at virtual address ffff000100236810
+>>      ...
+>>      pc : 0xffff000100236810
+>>      lr : devm_clk_release+0x6c/0x9c
+>>      ...
+>>      Call trace:
+>>       0xffff000100236810
+>>       release_nodes+0xb0/0x150
+>>       devres_release_all+0x94/0xf8
+>>       device_unbind_cleanup+0x20/0x70
+>>       device_release_driver_internal+0x114/0x1a0
+>>       device_driver_detach+0x20/0x30
+>>
+>> Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+>> Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
+>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> 
+> This is already fixed in clk-next:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=8b3d743fc9e2542822826890b482afabf0e7522a
 
-Thanks,
-Andrew
+Sorry for not finding the fix patch and duplicating it.
+I'm waiting for it to be merged.
 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
-> I originally added this under GCC_UFS_PHY_PHY_AUX_CLK since that's
-> what's in the downstream DTS. I was getting errors about
-> GCC_UFS_PHY_AXI_CLK being stuck at off so I moved it there.
-> 
-> Also I don't have access to any documentation for this board so I'm
-> hoping that someone with docs access can verify that this is the
-> appropriate place to put this.
-> 
->  drivers/clk/qcom/gcc-sc8280xp.c | 27 ++++++++++++++-------------
->  1 file changed, 14 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> index 4b894442fdf5..4639b50da418 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -5685,6 +5685,19 @@ static struct clk_branch gcc_ufs_phy_ahb_clk = {
->  	},
->  };
->  
-> +static struct clk_branch gcc_ufs_ref_clkref_clk = {
-> +	.halt_reg = 0x8c058,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x8c058,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "gcc_ufs_ref_clkref_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_branch gcc_ufs_phy_axi_clk = {
->  	.halt_reg = 0x77010,
->  	.halt_check = BRANCH_HALT_VOTED,
-> @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk = {
->  		.hw.init = &(const struct clk_init_data) {
->  			.name = "gcc_ufs_phy_axi_clk",
->  			.parent_hws = (const struct clk_hw*[]){
-> +				&gcc_ufs_ref_clkref_clk.clkr.hw,
->  				&gcc_ufs_phy_axi_clk_src.clkr.hw,
->  			},
->  			.num_parents = 1,
-> @@ -5899,19 +5913,6 @@ static struct clk_branch gcc_ufs_phy_unipro_core_hw_ctl_clk = {
->  	},
->  };
->  
-> -static struct clk_branch gcc_ufs_ref_clkref_clk = {
-> -	.halt_reg = 0x8c058,
-> -	.halt_check = BRANCH_HALT,
-> -	.clkr = {
-> -		.enable_reg = 0x8c058,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(const struct clk_init_data) {
-> -			.name = "gcc_ufs_ref_clkref_clk",
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
->  static struct clk_branch gcc_usb2_hs0_clkref_clk = {
->  	.halt_reg = 0x8c044,
->  	.halt_check = BRANCH_HALT,
-> -- 
-> 2.36.1
-> 
+Thank you,
 
+---
+Best Regards
+Kunihiko Hayashi
