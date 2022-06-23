@@ -2,116 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127EAC43334
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 07:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA4DCCA47C
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 07:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbiFWHG6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 03:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
+        id S230106AbiFWHTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 03:19:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbiFWHGi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 03:06:38 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68E3457B7
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 00:06:28 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o4Gv1-0003oc-SC; Thu, 23 Jun 2022 09:06:23 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o4Guz-002Bz4-AY; Thu, 23 Jun 2022 09:06:22 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o4Gv0-000aJj-4y; Thu, 23 Jun 2022 09:06:22 +0200
-Date:   Thu, 23 Jun 2022 09:06:20 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Fix referring to wrong pointer in devm_clk_release()
-Message-ID: <20220623070620.ndhnxeiw4wtjgpjm@pengutronix.de>
-References: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
+        with ESMTP id S229774AbiFWHTd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 03:19:33 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62FE45AF1;
+        Thu, 23 Jun 2022 00:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1655968772; x=1687504772;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=5lPbECoT8Z/3W+qVNGRvi8kQA8ZEoBHnTPns26WjHgc=;
+  b=QPQ6piBxkIrny11+I9J4z1WGGryt8s6tpzMOHOZqzHPtZ1iiFrWio0S9
+   9U1nirZwqAehycDt4SlHEsmUQ391WzU+ae4zNfHuHOvMXD7kxbK5l9o5g
+   oxj6g1DITMeA5GsDQV6FnTtVwxPErq6EoMoH+Jp/NTGq6W2c8agdtQfmD
+   A=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 23 Jun 2022 00:19:32 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2022 00:19:32 -0700
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Thu, 23 Jun 2022 00:19:31 -0700
+Received: from [10.242.242.148] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 23 Jun
+ 2022 00:19:25 -0700
+Message-ID: <dfccfc26-ce21-1355-6103-14e921f8e29c@quicinc.com>
+Date:   Thu, 23 Jun 2022 12:49:22 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jv3qenidbph7ovk4"
-Content-Disposition: inline
-In-Reply-To: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH V2 7/8] arm64: dts: Add ipq5018 SoC and MP03 board support
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <quic_varada@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220621161126.15883-1-quic_srichara@quicinc.com>
+ <20220621161126.15883-8-quic_srichara@quicinc.com>
+ <876c9580-48ca-0491-24bc-4f20871277f0@linaro.org>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <876c9580-48ca-0491-24bc-4f20871277f0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---jv3qenidbph7ovk4
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 6/22/2022 8:48 PM, Krzysztof Kozlowski wrote:
+> On 21/06/2022 18:11, Sricharan R wrote:
+>> From: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>
+>> Add initial device tree support for the Qualcomm IPQ5018 SoC and
+>> MP03.1-C2 board.
+>>
+>> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
+>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Chain needs fixes.
 
-Hello,
+  ok.
 
-On Thu, Jun 23, 2022 at 10:02:22AM +0900, Kunihiko Hayashi wrote:
-> At bind phase, __devm_clk_get() calls devres_alloc() to allocate devres,
-> and dr->data is treated as a variable "state".
->=20
-> At unbind phase, release_nodes() calls devm_clk_release() specified by
-> devres_alloc().
->=20
-> The argument "res" of devm_clk_release() is dr->data, and this entity is
-> "state", however in devm_clk_release(), "*res" is treated as "state",
-> resulting in pointer inconsistency.
->=20
-> Unbinding a driver caused a panic.
->=20
->     Unable to handle kernel execute from non-executable memory
->     at virtual address ffff000100236810
->     ...
->     pc : 0xffff000100236810
->     lr : devm_clk_release+0x6c/0x9c
->     ...
->     Call trace:
->      0xffff000100236810
->      release_nodes+0xb0/0x150
->      devres_release_all+0x94/0xf8
->      device_unbind_cleanup+0x20/0x70
->      device_release_driver_internal+0x114/0x1a0
->      device_driver_detach+0x20/0x30
->=20
-> Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-This is already fixed in clk-next:
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>>   .../arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts |  29 +++
+>>   arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 221 ++++++++++++++++++
+>>   3 files changed, 251 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
+>>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index f9e6343acd03..c44e701f093c 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-g7.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.1-c2.dtb
+> This does not look like in proper order.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=3D=
-clk-next&id=3D8b3d743fc9e2542822826890b482afabf0e7522a
+   ok, will fix.
 
-Thanks anyhow,
-Uwe
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8150.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8910.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
+>> new file mode 100644
+>> index 000000000000..d1cd080ec3db
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
+>> @@ -0,0 +1,29 @@
+>> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
+>> +/*
+>> + * IPQ5018 CP01 board device tree source
+>> + *
+>> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "ipq5018.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. IPQ5018/AP-MP03-C2";
+>> +	compatible = "qcom,ipq5018-mp03", "qcom,ipq5018";
+>> +
+>> +	aliases {
+>> +		serial0 = &blsp1_uart1;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +};
+>> +
+>> +&blsp1_uart1 {
+>> +	pinctrl-0 = <&serial_1_pins>;
+>> +	pinctrl-names = "default";
+>> +	status = "ok";
+> "okay" is preferred.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+   ok.
 
---jv3qenidbph7ovk4
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+>> +};
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>> new file mode 100644
+>> index 000000000000..084fb7b30dfd
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+>> @@ -0,0 +1,221 @@
+>> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
+>> + */
+>> +/*
+>> + * IPQ5018 SoC device tree source
+>> + *
+>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> Combine these two comments.
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmK0EOoACgkQwfwUeK3K
-7AkjWwgAg4a0+xMiicHufojk42bdnz9tqwzBgqZbaMiftq3u8vfeTFJfZOfuyyik
-9LgGHGu0qRDSWsCgW7p438rSqniQJfemDF7y8lomhap0azNXt8UGSTtFC99Xjh5m
-Yiybiq05TOYvry1U0Dg7VH3ZrmUUDxfXH/XfS0ztLjCZRmSoQhJiO/cnY2t0WTWY
-d/EES4gL87EPgSsrDg7BXUDOfHq5sIwrhRuK7sM4wWwnoGOT34EoTZzPD1A0ahPx
-5DHoYF3cf7qDjKhlVf+42A99RD7lIQIwiMsdGi7AN67fRBtqYi7gNvzB+u5a3/jc
-fNlecLC+DEjdJw152cED9uArIOl7ZQ==
-=KX9w
------END PGP SIGNATURE-----
+   ok.
 
---jv3qenidbph7ovk4--
+
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>> +#include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+>> +
+>> +/ {
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +	interrupt-parent = <&intc>;
+>> +
+>> +	sleep_clk: sleep-clk {
+>> +		compatible = "fixed-clock";
+>> +		clock-frequency = <32000>;
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
+>> +	xo: xo {
+> Node name: xo-clk
+
+  ok.
+
+
+>> +		compatible = "fixed-clock";
+>> +		clock-frequency = <24000000>;
+> The clock is provided by board, so at least frequency should be defined
+> there.
+
+   ok, will move to board file. Somehow all other boards are defining it 
+in soc dts itself, so
+   followed it.
+
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
+>> +	gen2clk0: gen2clk0 {
+> Keep consistent prefixes, so gen2-clk or gen2-0-clk
+
+  ok, will fix.
+
+
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-frequency = <125000000>;
+>> +		clock-output-names = "pcie20_phy0_pipe_clk";
+>> +	};
+>> +
+>> +	gen2clk1: gen2clk1 {
+> gen2-1-clk
+
+  ok, will fix.
+
+Regards,
+   Sricharan
+
