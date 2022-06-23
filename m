@@ -2,89 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A33DC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 06:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127EAC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 07:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229760AbiFWG26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 02:28:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59446 "EHLO
+        id S230106AbiFWHG6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 03:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbiFWG25 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 02:28:57 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68DC39141;
-        Wed, 22 Jun 2022 23:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1655965736; x=1687501736;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=jocLkGp1VXmknBvXV/K17H/H1y8PcS/JMLkx80qGTXM=;
-  b=hElQj1MnqEz2uAl2egQCYmmp0UG5Nn7qEdOSJOeyc9mf9sa/Jbcxg/xY
-   9bqGB/wMrXMzMTBk7LXf9+AHSFK5H9tgs5ncFBsnvz3YNX+X5bWQHEkiK
-   AEx3/IRS9nFLG0WJzx3N1ubaq4GMFYNapp+KMd0pdvKsLqm93+l/TEdi3
-   g=;
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 22 Jun 2022 23:28:56 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2022 23:28:55 -0700
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 22 Jun 2022 23:28:55 -0700
-Received: from [10.242.242.148] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 22 Jun
- 2022 23:28:50 -0700
-Message-ID: <76025864-e264-21e0-cba4-5c9a672afcea@quicinc.com>
-Date:   Thu, 23 Jun 2022 11:58:47 +0530
+        with ESMTP id S230073AbiFWHGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 03:06:38 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68E3457B7
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 00:06:28 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o4Gv1-0003oc-SC; Thu, 23 Jun 2022 09:06:23 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o4Guz-002Bz4-AY; Thu, 23 Jun 2022 09:06:22 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o4Gv0-000aJj-4y; Thu, 23 Jun 2022 09:06:22 +0200
+Date:   Thu, 23 Jun 2022 09:06:20 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: Fix referring to wrong pointer in devm_clk_release()
+Message-ID: <20220623070620.ndhnxeiw4wtjgpjm@pengutronix.de>
+References: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH V2 6/8] dt-bindings: qcom: Add ipq5018 bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <p.zabel@pengutronix.de>, <quic_varada@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com>
- <20220621161126.15883-7-quic_srichara@quicinc.com>
- <317d18af-e4a0-523e-960f-5e2df66afe19@linaro.org>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <317d18af-e4a0-523e-960f-5e2df66afe19@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jv3qenidbph7ovk4"
+Content-Disposition: inline
+In-Reply-To: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 6/22/2022 8:44 PM, Krzysztof Kozlowski wrote:
-> On 21/06/2022 18:11, Sricharan R wrote:
->> From: Varadarajan Narayanan <quic_varada@quicinc.com>
->>
->> Document the new ipq5018 SOC/board device tree bindings.
->>
->> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Your chain is wrong. Since you send it, your SoB is the last. We have
-> nice example for this:
->
-> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L473
->
-   sure, will fix it.
+--jv3qenidbph7ovk4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-   Sricharan
+Hello,
 
+On Thu, Jun 23, 2022 at 10:02:22AM +0900, Kunihiko Hayashi wrote:
+> At bind phase, __devm_clk_get() calls devres_alloc() to allocate devres,
+> and dr->data is treated as a variable "state".
+>=20
+> At unbind phase, release_nodes() calls devm_clk_release() specified by
+> devres_alloc().
+>=20
+> The argument "res" of devm_clk_release() is dr->data, and this entity is
+> "state", however in devm_clk_release(), "*res" is treated as "state",
+> resulting in pointer inconsistency.
+>=20
+> Unbinding a driver caused a panic.
+>=20
+>     Unable to handle kernel execute from non-executable memory
+>     at virtual address ffff000100236810
+>     ...
+>     pc : 0xffff000100236810
+>     lr : devm_clk_release+0x6c/0x9c
+>     ...
+>     Call trace:
+>      0xffff000100236810
+>      release_nodes+0xb0/0x150
+>      devres_release_all+0x94/0xf8
+>      device_unbind_cleanup+0x20/0x70
+>      device_release_driver_internal+0x114/0x1a0
+>      device_driver_detach+0x20/0x30
+>=20
+> Cc: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+This is already fixed in clk-next:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=3D=
+clk-next&id=3D8b3d743fc9e2542822826890b482afabf0e7522a
+
+Thanks anyhow,
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--jv3qenidbph7ovk4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmK0EOoACgkQwfwUeK3K
+7AkjWwgAg4a0+xMiicHufojk42bdnz9tqwzBgqZbaMiftq3u8vfeTFJfZOfuyyik
+9LgGHGu0qRDSWsCgW7p438rSqniQJfemDF7y8lomhap0azNXt8UGSTtFC99Xjh5m
+Yiybiq05TOYvry1U0Dg7VH3ZrmUUDxfXH/XfS0ztLjCZRmSoQhJiO/cnY2t0WTWY
+d/EES4gL87EPgSsrDg7BXUDOfHq5sIwrhRuK7sM4wWwnoGOT34EoTZzPD1A0ahPx
+5DHoYF3cf7qDjKhlVf+42A99RD7lIQIwiMsdGi7AN67fRBtqYi7gNvzB+u5a3/jc
+fNlecLC+DEjdJw152cED9uArIOl7ZQ==
+=KX9w
+-----END PGP SIGNATURE-----
+
+--jv3qenidbph7ovk4--
