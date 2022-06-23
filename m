@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBB3CCA486
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 12:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609CAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 12:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231591AbiFWMEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 08:04:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52058 "EHLO
+        id S231607AbiFWMEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 08:04:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbiFWMEc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 08:04:32 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DF654926E
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 05:04:25 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id by38so1230416ljb.10
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 05:04:25 -0700 (PDT)
+        with ESMTP id S231548AbiFWMEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 08:04:36 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65ECD496A7
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 05:04:28 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id b7so23049654ljr.6
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 05:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yf/yx25JwN/CNAUtHPPwkTUDXLMD54uQut5mDpGElUM=;
-        b=DfJ/5yZlOD8HGBZYKKssrvGhhIC+EvkQu4yYGkrlt3faubECHb8VtGnJ9eSbq7Is7L
-         IXhVbb/GG1wlUXGKz81UieeCaJO01UWnRWz2YxIKhE0WFPCiacRW6SOAiCFKghBgV8uk
-         zItfnLn+enXTrK4H3REUOQpn03YcGI+hiJNBTZTi8bOiXNRxPSZ890HM7GXBhSi2e3O/
-         S+MkBgfuIbDL1hU22yCyAQFT/m+s29VfGBe7u27f6DBRt0E5VTEPn0NftCSZ7KWiBK1G
-         lJbVSCDGBvjQViPOGuwcuIPLF9UsQ8kaN1DluuPOBB0P0sNKTlF2yg+YjJ++611udIwG
-         qkng==
+        bh=bIQD0JLz3hwfzeywuJjz4RFSXqLmEyBqYNGSe42ZS8o=;
+        b=e682+5BxHtsPh62hwY6pVO3CHBpdSjURVWAaC6F2eh6wxnCIgQcG2RWhXu0/n12hk9
+         +0smeNhje0RFu8+4lWjGaCK9/3bPxx27S8q89YxpYtzlfLBpvTVywxoExNR29r/Gwc7X
+         kl/py0CEnTSwIcxQmuJYJU46xhB/Ts3sK68RQlUhOXStq9UcM1HLAxjUsN92vrJrRpg6
+         D0e2+5raCuzw+fTCj22gCvxS7mUq/wFd1OjseIpL7kAsebtMJ/tuUKml9sy/MzHxQ426
+         7nJq9RxbuqV8lQBtp0HGXYFAhiXA7rSUmT1C0bc7X4FJ9evvO+T5RbQ07zPRgbXHabHh
+         K4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yf/yx25JwN/CNAUtHPPwkTUDXLMD54uQut5mDpGElUM=;
-        b=sDC7I1zuRK/gCJa6/NeS6KGmznko/1EDZjrEJ8XOTtrCs6ctbNul/cRfHlbOXbjGWi
-         DaemF7PCWwZWRg9pbhj06m85G0as6k00r3w9r2Ku1TQD79RxDqemtBlanaylOBD5zkrp
-         RbFTp2SpOHH6+xuH/S7ylbkWP7iaBRc8wM12vlTBsVgYQlfbB2F4qJxAKbM8kARZGpCN
-         yI2FYqGQI9Zz1iLhZg3TOG7sU3GQS9cDB0/i10L25BeqjuAtRhFc6/2BclE2rz/ws1CU
-         PHJ+zsxkLKOrGqc0HZf5SdxvgbJ1DAk2/K4bjtUs2Fi6hW0aESc5V6aKEr79CKy48vKh
-         7oQw==
-X-Gm-Message-State: AJIora+cKQDMWyxNC3j6tWbTBfPtbnufvdVDvc2WSPdOl+765qeiHnbd
-        uhVgvW26iu5MQaYblSYfEoEeIDjH6taqRcZh
-X-Google-Smtp-Source: AGRyM1u/O0NgxYeKA0KNd1BMeM6hc9aHpLhdHM4kX7GmYDOksjx642511xiPmqQ2SrZCgjFJ1rvbTw==
-X-Received: by 2002:a2e:918f:0:b0:25a:7164:f408 with SMTP id f15-20020a2e918f000000b0025a7164f408mr4497705ljg.523.1655985863591;
-        Thu, 23 Jun 2022 05:04:23 -0700 (PDT)
+        bh=bIQD0JLz3hwfzeywuJjz4RFSXqLmEyBqYNGSe42ZS8o=;
+        b=tHrbilycZTigokB2t9PEiRNufyGvWMnQh18Thpy7x8+24J01CUBo313juTV97IM0Ip
+         B3AfaUosmXM8atIKdeGee+Rsf1rcGMWKQQmh6hGsiE2AVDr9deTROIWaC5cCpTuNnQH9
+         oMR5NlVGgAoGjrVqFm6jh6Fy+KfSUg1XfDFNN7p1cmstjFv+00ZERC9RVdQhj8ncFz2a
+         z3o3JwqI5WrcSk1hubAENoe9mqTja46fCIvaVpaYx+h1VnLrQsJrBRGqbKg1tQb4ngW2
+         LuM+Ud+M31k+39Yz1MRPYQaWIsK4EpTkzyTQDxXJvwCKsgmw/VP9ieC5Sf01ySgO6RUX
+         Owiw==
+X-Gm-Message-State: AJIora+tljLExMivgDGMPu+E2DTNBcXmUTQcAvAhf5H5TzaYVZ4neQtH
+        mPAySp1X5FODwdgIEiHLreswQQ==
+X-Google-Smtp-Source: AGRyM1tvi4J5mES8sTS2kkvUsYmYy1IvJelxL4zehStAIPVZVbt3iDuhCkxnvWSyJ7plCStgAMc57g==
+X-Received: by 2002:a2e:a90d:0:b0:25a:7edb:4034 with SMTP id j13-20020a2ea90d000000b0025a7edb4034mr4550229ljq.129.1655985865110;
+        Thu, 23 Jun 2022 05:04:25 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id 18-20020ac25f52000000b0047f6b4a53cdsm1799888lfz.172.2022.06.23.05.04.22
+        by smtp.gmail.com with ESMTPSA id 18-20020ac25f52000000b0047f6b4a53cdsm1799888lfz.172.2022.06.23.05.04.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 05:04:23 -0700 (PDT)
+        Thu, 23 Jun 2022 05:04:24 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 05/15] clk: qcom: lcc-msm8960: use macros to implement mi2s clocks
-Date:   Thu, 23 Jun 2022 15:04:08 +0300
-Message-Id: <20220623120418.250589-6-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 07/15] clk: qcom: mmcc-msm8960: use ARRAY_SIZE instead of specifying num_parents
+Date:   Thu, 23 Jun 2022 15:04:10 +0300
+Message-Id: <20220623120418.250589-8-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
 References: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
@@ -69,224 +69,396 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Split and extend existing CLK_AIF_OSR_DIV macro to implement mi2s
-clocks. This simplifies the driver and removes extra code duplication.
-
-The clock mi2s_div_clk used .enable_reg/.enable_bit, however these
-fields are not used with by the clk_regmap_div_ops, thus they are
-silently dropped. Clock enablement is handled in the mi2s_bit_div_clk
-clock.
+Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
+adding/removing entries to/from parent_data easy and errorproof.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/lcc-msm8960.c | 142 +++++++--------------------------
- 1 file changed, 27 insertions(+), 115 deletions(-)
+ drivers/clk/qcom/mmcc-msm8960.c | 84 ++++++++++++++++-----------------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/clk/qcom/lcc-msm8960.c b/drivers/clk/qcom/lcc-msm8960.c
-index 84817cf2b6bd..99a3d2d486b4 100644
---- a/drivers/clk/qcom/lcc-msm8960.c
-+++ b/drivers/clk/qcom/lcc-msm8960.c
-@@ -86,112 +86,7 @@ static struct freq_tbl clk_tbl_aif_osr_393[] = {
- 	{ }
+diff --git a/drivers/clk/qcom/mmcc-msm8960.c b/drivers/clk/qcom/mmcc-msm8960.c
+index aaaad65b6458..d5c989a71e13 100644
+--- a/drivers/clk/qcom/mmcc-msm8960.c
++++ b/drivers/clk/qcom/mmcc-msm8960.c
+@@ -193,7 +193,7 @@ static struct clk_rcg camclk0_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "camclk0_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -242,7 +242,7 @@ static struct clk_rcg camclk1_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "camclk1_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -291,7 +291,7 @@ static struct clk_rcg camclk2_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "camclk2_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -346,7 +346,7 @@ static struct clk_rcg csi0_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi0_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -410,7 +410,7 @@ static struct clk_rcg csi1_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi1_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -474,7 +474,7 @@ static struct clk_rcg csi2_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi2_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -619,7 +619,7 @@ static struct clk_pix_rdi csi_pix_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi_pix_clk",
+ 			.parent_names = pix_rdi_parents,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(pix_rdi_parents),
+ 			.ops = &clk_ops_pix_rdi,
+ 		},
+ 	},
+@@ -636,7 +636,7 @@ static struct clk_pix_rdi csi_pix1_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi_pix1_clk",
+ 			.parent_names = pix_rdi_parents,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(pix_rdi_parents),
+ 			.ops = &clk_ops_pix_rdi,
+ 		},
+ 	},
+@@ -653,7 +653,7 @@ static struct clk_pix_rdi csi_rdi_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi_rdi_clk",
+ 			.parent_names = pix_rdi_parents,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(pix_rdi_parents),
+ 			.ops = &clk_ops_pix_rdi,
+ 		},
+ 	},
+@@ -670,7 +670,7 @@ static struct clk_pix_rdi csi_rdi1_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi_rdi1_clk",
+ 			.parent_names = pix_rdi_parents,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(pix_rdi_parents),
+ 			.ops = &clk_ops_pix_rdi,
+ 		},
+ 	},
+@@ -687,7 +687,7 @@ static struct clk_pix_rdi csi_rdi2_clk = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csi_rdi2_clk",
+ 			.parent_names = pix_rdi_parents,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(pix_rdi_parents),
+ 			.ops = &clk_ops_pix_rdi,
+ 		},
+ 	},
+@@ -726,7 +726,7 @@ static struct clk_rcg csiphytimer_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "csiphytimer_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -742,7 +742,7 @@ static struct clk_branch csiphy0_timer_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = csixphy_timer_src,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(csixphy_timer_src),
+ 			.name = "csiphy0_timer_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -758,7 +758,7 @@ static struct clk_branch csiphy1_timer_clk = {
+ 		.enable_mask = BIT(9),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = csixphy_timer_src,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(csixphy_timer_src),
+ 			.name = "csiphy1_timer_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -774,7 +774,7 @@ static struct clk_branch csiphy2_timer_clk = {
+ 		.enable_mask = BIT(11),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = csixphy_timer_src,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(csixphy_timer_src),
+ 			.name = "csiphy2_timer_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -836,7 +836,7 @@ static struct clk_dyn_rcg gfx2d0_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gfx2d0_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -896,7 +896,7 @@ static struct clk_dyn_rcg gfx2d1_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gfx2d1_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -997,7 +997,7 @@ static struct clk_dyn_rcg gfx3d_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gfx3d_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2_pll3,
+-			.num_parents = 4,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2_pll3),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -1006,7 +1006,7 @@ static struct clk_dyn_rcg gfx3d_src = {
+ static const struct clk_init_data gfx3d_8064_init = {
+ 	.name = "gfx3d_src",
+ 	.parent_names = mmcc_pxo_pll8_pll2_pll15,
+-	.num_parents = 4,
++	.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2_pll15),
+ 	.ops = &clk_dyn_rcg_ops,
  };
  
--static struct clk_rcg mi2s_osr_src = {
--	.ns_reg = 0x48,
--	.md_reg = 0x4c,
--	.mn = {
--		.mnctr_en_bit = 8,
--		.mnctr_reset_bit = 7,
--		.mnctr_mode_shift = 5,
--		.n_val_shift = 24,
--		.m_val_shift = 8,
--		.width = 8,
--	},
--	.p = {
--		.pre_div_shift = 3,
--		.pre_div_width = 2,
--	},
--	.s = {
--		.src_sel_shift = 0,
--		.parent_map = lcc_pxo_pll4_map,
--	},
--	.freq_tbl = clk_tbl_aif_osr_393,
--	.clkr = {
--		.enable_reg = 0x48,
--		.enable_mask = BIT(9),
--		.hw.init = &(struct clk_init_data){
--			.name = "mi2s_osr_src",
--			.parent_names = lcc_pxo_pll4,
+@@ -1075,7 +1075,7 @@ static struct clk_dyn_rcg vcap_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "vcap_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -1154,7 +1154,7 @@ static struct clk_rcg ijpeg_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "ijpeg_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -1202,7 +1202,7 @@ static struct clk_rcg jpegd_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "jpegd_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -1282,7 +1282,7 @@ static struct clk_dyn_rcg mdp_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "mdp_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -1381,7 +1381,7 @@ static struct clk_dyn_rcg rot_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "rot_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -1444,7 +1444,7 @@ static struct clk_rcg tv_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "tv_src",
+ 			.parent_names = mmcc_pxo_hdmi,
 -			.num_parents = 2,
--			.ops = &clk_rcg_ops,
--			.flags = CLK_SET_RATE_GATE,
--		},
--	},
--};
--
--static const char * const lcc_mi2s_parents[] = {
--	"mi2s_osr_src",
--};
--
--static struct clk_branch mi2s_osr_clk = {
--	.halt_reg = 0x50,
--	.halt_bit = 1,
--	.halt_check = BRANCH_HALT_ENABLE,
--	.clkr = {
--		.enable_reg = 0x48,
--		.enable_mask = BIT(17),
--		.hw.init = &(struct clk_init_data){
--			.name = "mi2s_osr_clk",
--			.parent_names = lcc_mi2s_parents,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_hdmi),
+ 			.ops = &clk_rcg_bypass_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 		},
+@@ -1461,7 +1461,7 @@ static struct clk_branch tv_enc_clk = {
+ 		.enable_mask = BIT(8),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
 -			.num_parents = 1,
--			.ops = &clk_branch_ops,
--			.flags = CLK_SET_RATE_PARENT,
--		},
--	},
--};
--
--static struct clk_regmap_div mi2s_div_clk = {
--	.reg = 0x48,
--	.shift = 10,
--	.width = 4,
--	.clkr = {
--		.enable_reg = 0x48,
--		.enable_mask = BIT(15),
--		.hw.init = &(struct clk_init_data){
--			.name = "mi2s_div_clk",
--			.parent_names = lcc_mi2s_parents,
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "tv_enc_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1477,7 +1477,7 @@ static struct clk_branch tv_dac_clk = {
+ 		.enable_mask = BIT(10),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
 -			.num_parents = 1,
--			.ops = &clk_regmap_div_ops,
--		},
--	},
--};
--
--static struct clk_branch mi2s_bit_div_clk = {
--	.halt_reg = 0x50,
--	.halt_bit = 0,
--	.halt_check = BRANCH_HALT_ENABLE,
--	.clkr = {
--		.enable_reg = 0x48,
--		.enable_mask = BIT(15),
--		.hw.init = &(struct clk_init_data){
--			.name = "mi2s_bit_div_clk",
--			.parent_names = (const char *[]){ "mi2s_div_clk" },
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "tv_dac_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1493,7 +1493,7 @@ static struct clk_branch mdp_tv_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
 -			.num_parents = 1,
--			.ops = &clk_branch_ops,
--			.flags = CLK_SET_RATE_PARENT,
--		},
--	},
--};
--
--static struct clk_regmap_mux mi2s_bit_clk = {
--	.reg = 0x48,
--	.shift = 14,
--	.width = 1,
--	.clkr = {
--		.hw.init = &(struct clk_init_data){
--			.name = "mi2s_bit_clk",
--			.parent_names = (const char *[]){
--				"mi2s_bit_div_clk",
--				"mi2s_codec_clk",
--			},
--			.num_parents = 2,
--			.ops = &clk_regmap_mux_closest_ops,
--			.flags = CLK_SET_RATE_PARENT,
--		},
--	},
--};
--
--#define CLK_AIF_OSR_DIV(prefix, _ns, _md, hr)			\
-+#define CLK_AIF_OSR_SRC(prefix, _ns, _md)			\
- static struct clk_rcg prefix##_osr_src = {			\
- 	.ns_reg = _ns,						\
- 	.md_reg = _md,						\
-@@ -228,14 +123,15 @@ static struct clk_rcg prefix##_osr_src = {			\
- static const char * const lcc_##prefix##_parents[] = {		\
- 	#prefix "_osr_src",					\
- };								\
--								\
-+
-+#define CLK_AIF_OSR_CLK(prefix, _ns, hr, en_bit)		\
- static struct clk_branch prefix##_osr_clk = {			\
- 	.halt_reg = hr,						\
- 	.halt_bit = 1,						\
- 	.halt_check = BRANCH_HALT_ENABLE,			\
- 	.clkr = {						\
- 		.enable_reg = _ns,				\
--		.enable_mask = BIT(21),				\
-+		.enable_mask = BIT(en_bit),			\
- 		.hw.init = &(struct clk_init_data){		\
- 			.name = #prefix "_osr_clk",		\
- 			.parent_names = lcc_##prefix##_parents,	\
-@@ -245,11 +141,12 @@ static struct clk_branch prefix##_osr_clk = {			\
- 		},						\
- 	},							\
- };								\
--								\
-+
-+#define CLK_AIF_OSR_DIV_CLK(prefix, _ns, _width)		\
- static struct clk_regmap_div prefix##_div_clk = {		\
- 	.reg = _ns,						\
- 	.shift = 10,						\
--	.width = 8,						\
-+	.width = _width,					\
- 	.clkr = {						\
- 		.hw.init = &(struct clk_init_data){		\
- 			.name = #prefix "_div_clk",		\
-@@ -259,14 +156,15 @@ static struct clk_regmap_div prefix##_div_clk = {		\
- 		},						\
- 	},							\
- };								\
--								\
-+
-+#define CLK_AIF_OSR_BIT_DIV_CLK(prefix, _ns, hr, en_bit)	\
- static struct clk_branch prefix##_bit_div_clk = {		\
- 	.halt_reg = hr,						\
- 	.halt_bit = 0,						\
- 	.halt_check = BRANCH_HALT_ENABLE,			\
- 	.clkr = {						\
- 		.enable_reg = _ns,				\
--		.enable_mask = BIT(19),				\
-+		.enable_mask = BIT(en_bit),			\
- 		.hw.init = &(struct clk_init_data){		\
- 			.name = #prefix "_bit_div_clk",		\
- 			.parent_names = (const char *[]){	\
-@@ -278,10 +176,11 @@ static struct clk_branch prefix##_bit_div_clk = {		\
- 		},						\
- 	},							\
- };								\
--								\
-+
-+#define CLK_AIF_OSR_BIT_CLK(prefix, _ns, _shift)		\
- static struct clk_regmap_mux prefix##_bit_clk = {		\
- 	.reg = _ns,						\
--	.shift = 18,						\
-+	.shift = _shift,					\
- 	.width = 1,						\
- 	.clkr = {						\
- 		.hw.init = &(struct clk_init_data){		\
-@@ -295,7 +194,20 @@ static struct clk_regmap_mux prefix##_bit_clk = {		\
- 			.flags = CLK_SET_RATE_PARENT,		\
- 		},						\
- 	},							\
--}
-+};
-+
-+CLK_AIF_OSR_SRC(mi2s, 0x48, 0x4c)
-+CLK_AIF_OSR_CLK(mi2s, 0x48, 0x50, 17)
-+CLK_AIF_OSR_DIV_CLK(mi2s, 0x48, 4)
-+CLK_AIF_OSR_BIT_DIV_CLK(mi2s, 0x48, 0x50, 15)
-+CLK_AIF_OSR_BIT_CLK(mi2s, 0x48, 14)
-+
-+#define CLK_AIF_OSR_DIV(prefix, _ns, _md, hr)			\
-+	CLK_AIF_OSR_SRC(prefix, _ns, _md)			\
-+	CLK_AIF_OSR_CLK(prefix, _ns, hr, 21)			\
-+	CLK_AIF_OSR_DIV_CLK(prefix, _ns, 8)			\
-+	CLK_AIF_OSR_BIT_DIV_CLK(prefix, _ns, hr, 19)		\
-+	CLK_AIF_OSR_BIT_CLK(prefix, _ns, 18)
- 
- CLK_AIF_OSR_DIV(codec_i2s_mic, 0x60, 0x64, 0x68);
- CLK_AIF_OSR_DIV(spare_i2s_mic, 0x78, 0x7c, 0x80);
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "mdp_tv_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1509,7 +1509,7 @@ static struct clk_branch hdmi_tv_clk = {
+ 		.enable_mask = BIT(12),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "hdmi_tv_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1525,7 +1525,7 @@ static struct clk_branch rgb_tv_clk = {
+ 		.enable_mask = BIT(14),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "rgb_tv_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1541,7 +1541,7 @@ static struct clk_branch npl_tv_clk = {
+ 		.enable_mask = BIT(16),
+ 		.hw.init = &(struct clk_init_data){
+ 			.parent_names = tv_src_name,
+-			.num_parents = 1,
++			.num_parents = ARRAY_SIZE(tv_src_name),
+ 			.name = "npl_tv_clk",
+ 			.ops = &clk_branch_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -1615,7 +1615,7 @@ static struct clk_dyn_rcg vcodec_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "vcodec_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_dyn_rcg_ops,
+ 		},
+ 	},
+@@ -1666,7 +1666,7 @@ static struct clk_rcg vpe_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "vpe_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -1734,7 +1734,7 @@ static struct clk_rcg vfe_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "vfe_src",
+ 			.parent_names = mmcc_pxo_pll8_pll2,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_pll8_pll2),
+ 			.ops = &clk_rcg_ops,
+ 		},
+ 	},
+@@ -2068,7 +2068,7 @@ static struct clk_rcg dsi1_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi1_src",
+ 			.parent_names = mmcc_pxo_dsi2_dsi1,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi2_dsi1),
+ 			.ops = &clk_rcg_bypass2_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 		},
+@@ -2116,7 +2116,7 @@ static struct clk_rcg dsi2_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi2_src",
+ 			.parent_names = mmcc_pxo_dsi2_dsi1,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi2_dsi1),
+ 			.ops = &clk_rcg_bypass2_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 		},
+@@ -2155,7 +2155,7 @@ static struct clk_rcg dsi1_byte_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi1_byte_src",
+ 			.parent_names = mmcc_pxo_dsi1_dsi2_byte,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi1_dsi2_byte),
+ 			.ops = &clk_rcg_bypass2_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 		},
+@@ -2194,7 +2194,7 @@ static struct clk_rcg dsi2_byte_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi2_byte_src",
+ 			.parent_names = mmcc_pxo_dsi1_dsi2_byte,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi1_dsi2_byte),
+ 			.ops = &clk_rcg_bypass2_ops,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 		},
+@@ -2233,7 +2233,7 @@ static struct clk_rcg dsi1_esc_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi1_esc_src",
+ 			.parent_names = mmcc_pxo_dsi1_dsi2_byte,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi1_dsi2_byte),
+ 			.ops = &clk_rcg_esc_ops,
+ 		},
+ 	},
+@@ -2271,7 +2271,7 @@ static struct clk_rcg dsi2_esc_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi2_esc_src",
+ 			.parent_names = mmcc_pxo_dsi1_dsi2_byte,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi1_dsi2_byte),
+ 			.ops = &clk_rcg_esc_ops,
+ 		},
+ 	},
+@@ -2318,7 +2318,7 @@ static struct clk_rcg dsi1_pixel_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi1_pixel_src",
+ 			.parent_names = mmcc_pxo_dsi2_dsi1,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi2_dsi1),
+ 			.ops = &clk_rcg_pixel_ops,
+ 		},
+ 	},
+@@ -2365,7 +2365,7 @@ static struct clk_rcg dsi2_pixel_src = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "dsi2_pixel_src",
+ 			.parent_names = mmcc_pxo_dsi2_dsi1,
+-			.num_parents = 3,
++			.num_parents = ARRAY_SIZE(mmcc_pxo_dsi2_dsi1),
+ 			.ops = &clk_rcg_pixel_ops,
+ 		},
+ 	},
 -- 
 2.35.1
 
