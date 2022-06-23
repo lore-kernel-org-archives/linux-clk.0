@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C38CCA481
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 11:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C51FCCA480
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 11:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbiFWLrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 07:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34040 "EHLO
+        id S231529AbiFWLro (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 07:47:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231318AbiFWLrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 07:47:42 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A690A4CD62
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 04:47:40 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id s14so16244341ljs.3
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 04:47:40 -0700 (PDT)
+        with ESMTP id S231421AbiFWLrn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 07:47:43 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5474CD6E
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 04:47:42 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id g12so16916019ljk.11
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 04:47:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Fv1CnzZON0JY092A1gbceDkbwjjWMEW2SS9t0ptHP00=;
-        b=d2+uU/+dtTkkRGlCvBOxkfbJxOjQD3AJkN9iUAGhqND1ZMwFnG/3nOy92JwQghQCtn
-         iDcWWhUn+22BKUU2x6DDr08x3y1QPk2jrD3b1YaM+LLNyYPfE9IvO2WDHUS5ngIy7L8s
-         RaQzn8tVwcTdBT+OtPGk8z92yv4IVh6nlb5cceNg7x+i6y7jZgN+aoqX6i4odsEiC1Jy
-         WE7jqnoaeJTSpgjzAW3GFLPcpsj+NXoehQeJ4NpL/febb2uUS31pxOrW1CzySgXANaJh
-         jl6Qupz6VcHqyn4wooygZXydT+lJ425cH8xEZotmnCOEf5S2cy3Ky/pCohGjeJ3o/4YM
-         McMw==
+        bh=Ylw+8hFWBGTG5if/KGltO0zJr3Y+Zkr0la0zkZDe1NA=;
+        b=TusmLvK/VxAf4zzAPeFby7CSskXqt6YUq+iDuxlh/TCLpQBCfwvnLTzLirKWJ3SMDm
+         10F25B3kjVqSgZt78IU0LOuP5477pBtiPzhy2QQ1Z83DnKEZ69vW/UDwf3Ilb1WZI6qH
+         zIUnoSW0GQJp1LpYXXikaO1gYguBk0SDYWtxeEGPqqaAZG4N4+l/IwRIEeBjorNI1q/n
+         zmzlWIX5yAtbS44xdbm0K0zs4wUk1egK4HU9LbPQtrlS0YcYVXBXWfNUw1fyfXbgpSsl
+         Gry4Xpk6u9geaChPBDv4j8Ef8P0NWGTxZ/MZ0UniSM8VuWP8fzecyNfhOxOJFIsa20+E
+         Jepw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Fv1CnzZON0JY092A1gbceDkbwjjWMEW2SS9t0ptHP00=;
-        b=2OzctPQs+CfejI2UjmY74kpzU/AcFgCqXeNXtfVfHoD2rfNPci+le745yaI1b1hQXr
-         dP98wTTbb1lrnrch/7vK+yJakQtTp7SQbwtdk4hDdTfyQr4U8oZZLof79Yw+PWdSvjMU
-         CKA+aE72UOXlZJ1tmgq3OKSrLOLOdjFOnejfNzOTciC/Y1pjaDOjSkvv5UW6ER6nxxCg
-         f2W9c8w4Bpmhs7NJ94KCGIZYJZDNLmoHi2CkChD7teKXeN/7qOPLOHlCn0CYpqmKHodK
-         KBAySEHzCgmAjc0t+wthX585kltc3XoCQDiiQS/QC6HaqQ0dCEABpPvo2yFXWQi5yrGZ
-         DwCg==
-X-Gm-Message-State: AJIora9F+q9fo8jh9niiCWi9soXVZ/IUpaaohCSjG8F/1J02Th0A9mkX
-        VXeZ0TFREhNEMTTWsECxWRaBAg==
-X-Google-Smtp-Source: AGRyM1tIn0nc7ZoMdnHP2t1fsfsOicpivOwTkmi+N6MNKzKWeqZTDmHcQMzjSNugi89LjFVgVEQ1hA==
-X-Received: by 2002:a2e:547:0:b0:25a:6ad0:7b4c with SMTP id 68-20020a2e0547000000b0025a6ad07b4cmr4642974ljf.249.1655984858915;
-        Thu, 23 Jun 2022 04:47:38 -0700 (PDT)
+        bh=Ylw+8hFWBGTG5if/KGltO0zJr3Y+Zkr0la0zkZDe1NA=;
+        b=eU3zoZThq0twgbK1K9QztpXz3kzqmjs3jbr/UhnxKd5A5/6g3A1F1wgoF2hUcql/st
+         ZOiyNJzvGZda3FY3tRwihCXMMDN8qmnJfU+/p1krGGyIgO+8eKAGVBYKjDjU4I5yNyMT
+         nxfdjRDmmjCllNtj4qtIy0/TYOIMIQzlLcldJHcN7Q6zbR6aUn66Qr1ruCd90sYJGRmx
+         9LM0YX5wdAqwA7jM1ahIEVLq6YFREXyA7J9Lc/8ABIOoELJx21LlyXGWqo/+1qRMsAzl
+         n+nT53VtDLnYKPeU7874KyIdggJ+HloDJkCXOJiOdY20BQtpXTPs7t3hjTuTz2gO3nyB
+         7MYg==
+X-Gm-Message-State: AJIora+TXGeVfeeADtlxU3x/3hUAvEdEAeiGYaIUF/3VhMOKPZmGaf8M
+        y/QuBCaPRBuSFz9GsXaUVCza8mYAmKAQ8+pE
+X-Google-Smtp-Source: AGRyM1tH60ZSzb0jyWtkWx3PmDJnzjIBYnJ8AHAOMky6H7UXE0wk6Cd34qeybVQOKNzE/SSChfCf+g==
+X-Received: by 2002:a2e:a90c:0:b0:258:edc3:4d2b with SMTP id j12-20020a2ea90c000000b00258edc34d2bmr4563823ljq.225.1655984860511;
+        Thu, 23 Jun 2022 04:47:40 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id x5-20020a056512078500b0047f77729723sm1369968lfr.43.2022.06.23.04.47.38
+        by smtp.gmail.com with ESMTPSA id x5-20020a056512078500b0047f77729723sm1369968lfr.43.2022.06.23.04.47.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jun 2022 04:47:38 -0700 (PDT)
+        Thu, 23 Jun 2022 04:47:40 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v1 1/4] dt-bindings: clock: qcom: add bindings for dispcc on SM8450
-Date:   Thu, 23 Jun 2022 14:47:34 +0300
-Message-Id: <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v1 3/4] clk: qcom: alpha-pll: add support for power off mode for lucid evo PLL
+Date:   Thu, 23 Jun 2022 14:47:36 +0300
+Message-Id: <20220623114737.247703-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
 References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
@@ -69,153 +69,103 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for the display clock controller on Qualcomm
-SM8450 platform.
+PLLs can be kept in standby (default configuration) or in off mode
+when disabled during power collapse. Hence add support for pll
+disable off mode for lucid evo PLL.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/clock/qcom,dispcc-sm8450.yaml    | 132 ++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+ drivers/clk/qcom/clk-alpha-pll.c | 40 +++++++++++++++++++++++++++++---
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 38 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
-new file mode 100644
-index 000000000000..953d20a25cfb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
-@@ -0,0 +1,132 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8450.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 4a2d91996ce6..493cde7964f8 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2077,7 +2077,7 @@ static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
+ 	return ret;
+ }
+ 
+-static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
++static void _alpha_pll_lucid_evo_disable(struct clk_hw *hw, bool reset)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	struct regmap *regmap = pll->clkr.regmap;
+@@ -2106,9 +2106,12 @@ static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
+ 
+ 	/* Place the PLL mode in STANDBY */
+ 	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
 +
-+title: Qualcomm Display Clock & Reset Controller Binding for SM8450
++	if (reset)
++		regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, 0);
+ }
+ 
+-static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
++static int _alpha_pll_lucid_evo_prepare(struct clk_hw *hw, bool reset)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	struct clk_hw *p;
+@@ -2128,11 +2131,31 @@ static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+ 
+-	alpha_pll_lucid_evo_disable(hw);
++	_alpha_pll_lucid_evo_disable(hw, reset);
+ 
+ 	return 0;
+ }
+ 
++static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
++{
++	_alpha_pll_lucid_evo_disable(hw, false);
++}
 +
-+maintainers:
-+  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
++static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
++{
++	return _alpha_pll_lucid_evo_prepare(hw, false);
++}
 +
-+description: |
-+  Qualcomm display clock control module which supports the clocks, resets and
-+  power domains on SM8450.
++static void alpha_pll_reset_lucid_evo_disable(struct clk_hw *hw)
++{
++	_alpha_pll_lucid_evo_disable(hw, true);
++}
 +
-+  See also:
-+    dt-bindings/clock/qcom,dispcc-sm8450.h
++static int alpha_pll_reset_lucid_evo_prepare(struct clk_hw *hw)
++{
++	return _alpha_pll_lucid_evo_prepare(hw, true);
++}
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sm8450-dispcc
+ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
+ 						     unsigned long parent_rate)
+ {
+@@ -2179,3 +2202,14 @@ const struct clk_ops clk_alpha_pll_lucid_evo_ops = {
+ 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_evo_ops);
 +
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board Always On XO source
-+      - description: Byte clock from DSI PHY0
-+      - description: Pixel clock from DSI PHY0
-+      - description: Byte clock from DSI PHY1
-+      - description: Pixel clock from DSI PHY1
-+      - description: Link clock from DP PHY0
-+      - description: VCO DIV clock from DP PHY0
-+      - description: Link clock from DP PHY1
-+      - description: VCO DIV clock from DP PHY1
-+      - description: Link clock from DP PHY2
-+      - description: VCO DIV clock from DP PHY2
-+      - description: Link clock from DP PHY3
-+      - description: VCO DIV clock from DP PHY3
-+      - description: sleep clock
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: dsi0_phy_pll_out_byteclk
-+      - const: dsi0_phy_pll_out_dsiclk
-+      - const: dsi1_phy_pll_out_byteclk
-+      - const: dsi1_phy_pll_out_dsiclk
-+      - const: dp0_phy_pll_link_clk
-+      - const: dp0_phy_pll_vco_div_clk
-+      - const: dp1_phy_pll_link_clk
-+      - const: dp1_phy_pll_vco_div_clk
-+      - const: dp2_phy_pll_link_clk
-+      - const: dp2_phy_pll_vco_div_clk
-+      - const: dp3_phy_pll_link_clk
-+      - const: dp3_phy_pll_vco_div_clk
-+      - const: sleep_clk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    clock-controller@af00000 {
-+      compatible = "qcom,sm8450-dispcc";
-+      reg = <0x0af00000 0x10000>;
-+      clocks = <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&dsi0_phy 0>,
-+               <&dsi0_phy 1>,
-+               <&dsi1_phy 0>,
-+               <&dsi1_phy 1>,
-+               <0>, <0>,
-+               <0>, <0>,
-+               <0>, <0>,
-+               <0>, <0>,
-+               <&sleep_clk>;
-+      clock-names = "bi_tcxo",
-+                    "bi_tcxo_ao",
-+                    "dsi0_phy_pll_out_byteclk",
-+                    "dsi0_phy_pll_out_dsiclk",
-+                    "dsi1_phy_pll_out_byteclk",
-+                    "dsi1_phy_pll_out_dsiclk",
-+                    "dp0_phy_pll_link_clk",
-+                    "dp0_phy_pll_vco_div_clk",
-+                    "dp1_phy_pll_link_clk",
-+                    "dp1_phy_pll_vco_div_clk",
-+                    "dp2_phy_pll_link_clk",
-+                    "dp2_phy_pll_vco_div_clk",
-+                    "dp3_phy_pll_link_clk",
-+                    "dp3_phy_pll_vco_div_clk",
-+                    "sleep_clk";
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+      power-domains = <&rpmhpd SM8450_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+    };
-+...
++const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
++	.prepare = alpha_pll_reset_lucid_evo_prepare,
++	.enable = alpha_pll_lucid_evo_enable,
++	.disable = alpha_pll_reset_lucid_evo_disable,
++	.is_enabled = clk_trion_pll_is_enabled,
++	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++	.set_rate = alpha_pll_lucid_5lpe_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 0b7a6859ca2c..f2cc0de7313c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -154,6 +154,7 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+ #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
+ 
+ extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
++extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+ 
 -- 
 2.35.1
 
