@@ -2,91 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8201C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 01:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03BCC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 04:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358484AbiFWBC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jun 2022 21:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36600 "EHLO
+        id S229878AbiFWEvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 00:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231239AbiFWBC2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jun 2022 21:02:28 -0400
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7563A41F9B;
-        Wed, 22 Jun 2022 18:02:26 -0700 (PDT)
-Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 23 Jun 2022 10:02:24 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id CB9BD205845A;
-        Thu, 23 Jun 2022 10:02:24 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 23 Jun 2022 10:02:24 +0900
-Received: from plum.e01.socionext.com (unknown [10.212.243.119])
-        by kinkan2.css.socionext.com (Postfix) with ESMTP id 6F134B62E2;
-        Thu, 23 Jun 2022 10:02:24 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] clk: Fix referring to wrong pointer in devm_clk_release()
-Date:   Thu, 23 Jun 2022 10:02:22 +0900
-Message-Id: <1655946142-1346-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S232494AbiFWEtK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 00:49:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EC44578C;
+        Wed, 22 Jun 2022 21:42:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 397AA61D9E;
+        Thu, 23 Jun 2022 04:42:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA26EC3411B;
+        Thu, 23 Jun 2022 04:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655959357;
+        bh=072D4YRa+8bNhL8h0zmwyPbXZIrIvz4zrYvGCXxDlC8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sFAQedGsoKXIA0lMQQOWwssdFfcInsvPW/e5JDnzVZNt+Fph+NDe7mAF/242Us2T/
+         IhoTU9CrmMvgQkDa9jCQkxb5zk5Q8hR/ASHwf7XpWLQeo5vjDV2EMgxAhBvoUsgR9F
+         SyzQjMvcBnwFCK12fehWT5fScpkm1ISIeqPdX7jX8f8aFgRi6QfzRyXsoOZsRTIxUg
+         hHuDjoT2ap+Ce357gPTxtoAdlrv2ohxS68ZwCWZQynxFx9a5Qtx3rQvkaRUcO9Pgia
+         9MH9Acv7Ta+eUyD14Hz1/JDHeieg3ZLdnWiylJxDy5obMCliF5XeTQMH5Jdy32TQw6
+         RVK8zH/GUNWkQ==
+Date:   Thu, 23 Jun 2022 10:12:32 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Robert Foss <robert.foss@linaro.org>
+Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzk+dt@kernel.org, jonathan@marek.ca,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH v7 1/6] arm64: dts: qcom: sm8350: Replace integers with
+ rpmpd defines
+Message-ID: <YrPvOBYOIM1McgsM@matsya>
+References: <20220622232846.852771-1-robert.foss@linaro.org>
+ <20220622232846.852771-2-robert.foss@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220622232846.852771-2-robert.foss@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-At bind phase, __devm_clk_get() calls devres_alloc() to allocate devres,
-and dr->data is treated as a variable "state".
+On 23-06-22, 01:28, Robert Foss wrote:
+> Replace &rpmhpd power domain integers with their respective defines
+> in order to improve legibility.
 
-At unbind phase, release_nodes() calls devm_clk_release() specified by
-devres_alloc().
 
-The argument "res" of devm_clk_release() is dr->data, and this entity is
-"state", however in devm_clk_release(), "*res" is treated as "state",
-resulting in pointer inconsistency.
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Unbinding a driver caused a panic.
+This can go separately as well...
 
-    Unable to handle kernel execute from non-executable memory
-    at virtual address ffff000100236810
-    ...
-    pc : 0xffff000100236810
-    lr : devm_clk_release+0x6c/0x9c
-    ...
-    Call trace:
-     0xffff000100236810
-     release_nodes+0xb0/0x150
-     devres_release_all+0x94/0xf8
-     device_unbind_cleanup+0x20/0x70
-     device_release_driver_internal+0x114/0x1a0
-     device_driver_detach+0x20/0x30
-
-Cc: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Fixes: abae8e57e49a ("clk: generalize devm_clk_get() a bit")
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- drivers/clk/clk-devres.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 43ccd20e0298..1f37ed7ad395 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -11,7 +11,7 @@ struct devm_clk_state {
- 
- static void devm_clk_release(struct device *dev, void *res)
- {
--	struct devm_clk_state *state = *(struct devm_clk_state **)res;
-+	struct devm_clk_state *state = (struct devm_clk_state *)res;
- 
- 	if (state->exit)
- 		state->exit(state->clk);
 -- 
-2.25.1
-
+~Vinod
