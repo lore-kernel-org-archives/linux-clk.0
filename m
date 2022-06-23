@@ -2,328 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18423C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 14:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E862FC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 14:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbiFWOWy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 10:22:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51686 "EHLO
+        id S231624AbiFWO3D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 10:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbiFWOWv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 10:22:51 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BDA443DA;
-        Thu, 23 Jun 2022 07:22:49 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id w20so33607026lfa.11;
-        Thu, 23 Jun 2022 07:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jddTL9QD/ReUBIK8e7DEu/2c3B2sdMOmbz7ylbgg8uU=;
-        b=UdndNViC1lHdJAjcXSRoDDIr6TN77FcLRu+YCKR3eVBxGgsbZ7lJbxmF8KPVWNx+1k
-         7SuvoW4pKqtAMSvuflg3/QAzVcBMXxFRrpe9z0LDJE5XYqiGUW0/ZhciCi7cZHXqdMIm
-         WtBSFpKwEsrGROx1aIl5mwHlb3ljWGXW9TQVTJSF1j8gz978P10jgp15xv9+3T6PAXcF
-         8YUzukpaLKNliwihcO2ao/HizK8M1pEh39tjovB95oIGDgrp7QRpLER0KZKhSMmjhwLk
-         QJW4g4T/c+5QvzwShprF9WYbQE6hpfq7wijajKSj8RgnS+NDXv3u6BXvKuzDJfsJ2VvA
-         bOGw==
+        with ESMTP id S231841AbiFWO3C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 10:29:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A517A4551F
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 07:29:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655994539;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=WD6aAT4eAfkhBAGxc5usx5w9FCyTvm/RJ0Dv5y8ZHUg=;
+        b=LUL52ma29PfNPz6sWUK35UC0yOwUdBPgllsZVCkvIXiz4+EEFvREGt/akXpqELNQLnVRCa
+        ahidn44ArhC3PRjPtaQ+6fPIHAMIirwpR4B2nERsZYW4MPNYFRk+YHavOkgM1zjF7V+or1
+        HDMbRZUlEbF+KX1G35Tvhr/ibgfLYT0=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-636-ETGGYBGHM3WmQ39TjVvLdg-1; Thu, 23 Jun 2022 10:28:58 -0400
+X-MC-Unique: ETGGYBGHM3WmQ39TjVvLdg-1
+Received: by mail-qk1-f200.google.com with SMTP id y8-20020a05620a44c800b006a6f8cd53cbso23655885qkp.5
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 07:28:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jddTL9QD/ReUBIK8e7DEu/2c3B2sdMOmbz7ylbgg8uU=;
-        b=4weovZTlBeOhfnhNuEV+i8uoGcOCvN40Z+bHu031TV55pQYgkRmyUg/QWEBXXw0DTD
-         7U19vHFPdq0+Dy0PL2G4/7XTbKfuGH53cdTnsn99gcN8anLcsCiTyCsViCEoJjLlsIH8
-         xwv2LP3kQkllo+E/EW1xdN8g1nasr2i64vW70k/HjmKhW4yn/LRBwOPgMLlxUnkHYca0
-         D9IStkf8Ir8g+8j7/bGTn7oGSC7A7FrNSDI4l2Fucg9VAKHV6P23TNzNBCbNw300BBLS
-         MgZN+SbJQmMq31YZUxZkcN/qGnH9I2c4Um6WfYm03cvi31pzZX1kAWl+dmarpbOPXo1G
-         JlsA==
-X-Gm-Message-State: AJIora8jYCb9xMviuUyPDia21jdPYin7qkRWZr6Ac8Aopg/hdqu8anWZ
-        GTZVa4f87DtXKFvWscED/8dMRji+sTQtAdY89Sc=
-X-Google-Smtp-Source: AGRyM1u4kTKF1M/+gcdpRyS3zlRbZrXYLNTyR21rReGGI/adWyMDVQRkBDvMt3c2QttvOyzZECBuIq4aM0VQ7Nr0Q7k=
-X-Received: by 2002:a05:6512:15a1:b0:47f:933e:a865 with SMTP id
- bp33-20020a05651215a100b0047f933ea865mr5336686lfb.200.1655994167914; Thu, 23
- Jun 2022 07:22:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WD6aAT4eAfkhBAGxc5usx5w9FCyTvm/RJ0Dv5y8ZHUg=;
+        b=cU9wE1pEVA+kIUZMqU1hIj0erw+kQnoIYVVvBG4uLpptun7PE3lQna0DGthOLclrqD
+         dvmMhwx3oIGKfBW0255QGCZXE/03cUuhrg3uYu7gnFrseJZFwrbCvj4qFD07Zj5W+XeE
+         Hx7kwiTh3G+OXxQpGkoTURqyQCyNROtgStYWFMzYv/sKilTB7D4/M48gjzfxC8Sewsy1
+         pvzTM4JPw6cu81MyKQ1VnOHAu6i/+SPQuzAQTO35E2hVmJm2JihNNcQjD7Uu4T6dOz4d
+         WfW0yh77bZjcoRa3EsUcRZuvlMqaajtmMaVxeb7cYTyUeDBswOwklvjLF53XClD86A5A
+         fHXg==
+X-Gm-Message-State: AJIora+VC7jxUGol6Wdr5OGY5u1UQS5yM22KAhBmYQdZtXVvis8MAHmv
+        dMunQKbk5WQF4uJOFB6r/P6akzdWVx0XUfMqgRFkSgt9sAYSj/3+lx3wA9/pZkHze0+U43brrUF
+        FIexn8L61a2n334ENuSis
+X-Received: by 2002:a05:6214:b69:b0:470:4d46:a399 with SMTP id ey9-20020a0562140b6900b004704d46a399mr14931481qvb.68.1655994537268;
+        Thu, 23 Jun 2022 07:28:57 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1s3HQBpI082cjSWrflbTXyicJSxjqvis1d5yO6iArcXxXYDi5XlJzjhdU6+uUThw6LfTCvY2Q==
+X-Received: by 2002:a05:6214:b69:b0:470:4d46:a399 with SMTP id ey9-20020a0562140b6900b004704d46a399mr14931452qvb.68.1655994536929;
+        Thu, 23 Jun 2022 07:28:56 -0700 (PDT)
+Received: from xps13.redhat.com (c-98-239-145-235.hsd1.wv.comcast.net. [98.239.145.235])
+        by smtp.gmail.com with ESMTPSA id d124-20020a379b82000000b006a6ae9150fesm18412531qke.41.2022.06.23.07.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 07:28:56 -0700 (PDT)
+From:   Brian Masney <bmasney@redhat.com>
+To:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahalaney@redhat.com, echanude@redhat.com
+Subject: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk for sa8540p
+Date:   Thu, 23 Jun 2022 10:28:37 -0400
+Message-Id: <20220623142837.3140680-1-bmasney@redhat.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220621131424.162355-1-tmaimon77@gmail.com> <20220621131424.162355-7-tmaimon77@gmail.com>
- <9a320833-e951-7a0f-e2bd-3f8deb7e705b@wanadoo.fr>
-In-Reply-To: <9a320833-e951-7a0f-e2bd-3f8deb7e705b@wanadoo.fr>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Thu, 23 Jun 2022 17:22:36 +0300
-Message-ID: <CAP6Zq1iaAyhwY9biRCAXr7nbgPwZdyeUV9YU0w3fNmraC6ToPw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/18] clk: npcm8xx: add clock controller
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christophe,
+The sa8540p automotive board has the same SOC as the sc8280xp. In order
+to get the first UFS controller working on the sa8540p,
+GCC_UFS_REF_CLKREF_CLK needs to be setup as a parent to
+GCC_UFS_PHY_AXI_CLK.
 
-Thanks for your comments
+This clock name came from the DTS for the downstream MSM 5.4 kernel
+sources for the sa8540p. It also references GCC_UFS_CARD_CLKREF_CLK,
+however that wasn't needed to get the first UFS controller working.
 
-On Thu, 23 Jun 2022 at 11:08, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 21/06/2022 =C3=A0 15:14, Tomer Maimon a =C3=A9crit :
-> > Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
-> > generates and supplies clocks to all modules within the BMC.
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > ---
-> >   drivers/clk/Kconfig       |   6 +
-> >   drivers/clk/Makefile      |   1 +
-> >   drivers/clk/clk-npcm8xx.c | 594 +++++++++++++++++++++++++++++++++++++=
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+I originally added this under GCC_UFS_PHY_PHY_AUX_CLK since that's
+what's in the downstream DTS. I was getting errors about
+GCC_UFS_PHY_AXI_CLK being stuck at off so I moved it there.
+
+Also I don't have access to any documentation for this board so I'm
+hoping that someone with docs access can verify that this is the
+appropriate place to put this.
+
+ drivers/clk/qcom/gcc-sc8280xp.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index 4b894442fdf5..4639b50da418 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -5685,6 +5685,19 @@ static struct clk_branch gcc_ufs_phy_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_ufs_ref_clkref_clk = {
++	.halt_reg = 0x8c058,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8c058,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_ufs_ref_clkref_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
-> >   3 files changed, 601 insertions(+)
-> >   create mode 100644 drivers/clk/clk-npcm8xx.c
-> >
->
-> [...]
->
-> > +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> > +{
-> > +     struct clk_hw_onecell_data *npcm8xx_clk_data;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     void __iomem *clk_base;
-> > +     struct clk_hw *hw;
-> > +     int i;
-> > +
-> > +     npcm8xx_clk_data =3D devm_kzalloc(dev, struct_size(npcm8xx_clk_da=
-ta, hws,
-> > +                                                      NPCM8XX_NUM_CLOC=
-KS),
-> > +                                     GFP_KERNEL);
-> > +     if (!npcm8xx_clk_data)
-> > +             return -ENOMEM;
-> > +
-> > +     clk_base =3D devm_platform_ioremap_resource(pdev, 0);
-> > +     if (IS_ERR(clk_base))
-> > +             return PTR_ERR(clk_base);
-> > +
-> > +     npcm8xx_clk_data->num =3D NPCM8XX_NUM_CLOCKS;
-> > +
-> > +     for (i =3D 0; i < NPCM8XX_NUM_CLOCKS; i++)
-> > +             npcm8xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
-> > +
-> > +     /* Reference 25MHz clock */
-> > +     hw =3D clk_hw_register_fixed_rate(dev, "refclk", NULL, 0, NPCM8XX=
-_REF_CLK);
-> > +     if (IS_ERR(hw))
-> > +             return PTR_ERR(hw);
-> > +     npcm8xx_clk_data->hws[NPCM8XX_CLK_REFCLK] =3D hw;
-> > +
-> > +     /* Register plls */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_plls); i++) {
-> > +             const struct npcm8xx_clk_pll_data *pll_data =3D &npcm8xx_=
-plls[i];
-> > +
-> > +             hw =3D npcm8xx_clk_register_pll(dev, clk_base + pll_data-=
->reg,
-> > +                                           pll_data->name,
-> > +                                           pll_data->parent_name,
-> > +                                           pll_data->flags);
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register pll\n")=
-;
-> > +                     goto unregister_refclk;
->
-> goto err_mux_clk?
->
-> (so that we unregister what has already been registered in the loop ;
-> and unregister_refclk becomes useless)
-The err_mux_clk related only to npcm8xx_muxes,
-npcm8xx_clk_register_pll calling devm_clk_hw_register function in case
-it fails it will unregister.
->
-> > +             }
-> > +
-> > +             if (pll_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[pll_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     /* Register fixed dividers */
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_=
-DIV2,
-> > +                                            NPCM8XX_CLK_S_PLL1, 0, 1, =
-2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
-> > +             goto unregister_refclk;
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_=
-DIV2,
-> > +                                            NPCM8XX_CLK_S_PLL2, 0, 1, =
-2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register pll div2\n");
-> > +             goto unregister_refclk;
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_C=
-LK,
-> > +                                            NPCM8XX_CLK_S_CPU_MUX, 0, =
-1, 2);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register ckclk div2\n");
-> > +             goto unregister_refclk;
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
-> > +                                            NPCM8XX_CLK_S_TH, 0, 1, 2)=
-;
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
-> > +             goto unregister_refclk;
-> > +     }
-> > +
-> > +     hw =3D devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
-> > +                                            NPCM8XX_CLK_S_AXI, 0, 1, 2=
-);
-> > +     if (IS_ERR(hw)) {
-> > +             dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
-> > +             goto unregister_refclk;
-> > +     }
-> > +
-> > +     /* Register clock dividers specified in npcm8xx_divs */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
-> > +             const struct npcm8xx_clk_div_data *div_data =3D &npcm8xx_=
-divs[i];
-> > +
-> > +             hw =3D devm_clk_hw_register_divider(dev, div_data->name,
-> > +                                               div_data->parent_name,
-> > +                                               div_data->flags,
-> > +                                               clk_base + div_data->re=
-g,
-> > +                                               div_data->shift,
-> > +                                               div_data->width,
-> > +                                               div_data->clk_divider_f=
-lags,
-> > +                                               &npcm8xx_clk_lock);
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register div tab=
-le\n");
-> > +                     goto unregister_refclk;
-> > +             }
-> > +
-> > +             if (div_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[div_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     /* Register muxes */
-> > +     for (i =3D 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
-> > +             const struct npcm8xx_clk_mux_data *mux_data =3D &npcm8xx_=
-muxes[i];
-> > +
-> > +             hw =3D clk_hw_register_mux_table(dev, mux_data->name,
-> > +                                            mux_data->parent_names,
-> > +                                            mux_data->num_parents,
-> > +                                            mux_data->flags,
-> > +                                            clk_base + NPCM8XX_CLKSEL,
-> > +                                            mux_data->shift,
-> > +                                            mux_data->mask, 0,
-> > +                                            mux_data->table,
-> > +                                            &npcm8xx_clk_lock);
-> > +
-> > +             if (IS_ERR(hw)) {
-> > +                     dev_err(dev, "npcm8xx_clk: Can't register mux\n")=
-;
-> > +                     goto err_mux_clk;
-> > +             }
-> > +
-> > +             if (mux_data->onecell_idx >=3D 0)
-> > +                     npcm8xx_clk_data->hws[mux_data->onecell_idx] =3D =
-hw;
-> > +     }
-> > +
-> > +     return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> > +                                        npcm8xx_clk_data);
->
-> If this fails, I think we should also "goto err_mux_clk;"
-Will be fix in V6
->
-> > +
-> > +err_mux_clk:
-> > +     while (i--) {
-> > +             if (npcm8xx_muxes[i].onecell_idx >=3D 0)
-> > +                     clk_hw_unregister_mux(npcm8xx_clk_data->hws[npcm8=
-xx_muxes[i].onecell_idx]);
-> > +     }
-> > +unregister_refclk:
-> > +     clk_hw_unregister(npcm8xx_clk_data->hws[NPCM8XX_CLK_REFCLK]);
-> > +     return PTR_ERR(hw);
-> > +}
->
-> Does a .remove() function is needed to match this error handling path?
-> (or use devm_add_action_or_reset())?
-I am not sure that the remove driver function is needed in the clock
-driver because the clock driver is a service driver for other driver
-modules (same as the Pin controller).
->
-> CJ
-> > +
-> > +static const struct of_device_id npcm8xx_clk_dt_ids[] =3D {
-> > +     { .compatible =3D "nuvoton,npcm845-clk", },
-> > +     { }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, npcm8xx_clk_dt_ids);
-> > +
-> > +static struct platform_driver npcm8xx_clk_driver =3D {
-> > +     .probe  =3D npcm8xx_clk_probe,
-> > +     .driver =3D {
-> > +             .name =3D "npcm8xx_clk",
-> > +             .of_match_table =3D npcm8xx_clk_dt_ids,
-> > +     },
-> > +};
-> > +
-> > +static int __init npcm8xx_clk_driver_init(void)
-> > +{
-> > +     return platform_driver_register(&npcm8xx_clk_driver);
-> > +}
-> > +arch_initcall(npcm8xx_clk_driver_init);
-> > +
->
+ static struct clk_branch gcc_ufs_phy_axi_clk = {
+ 	.halt_reg = 0x77010,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk = {
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_ufs_phy_axi_clk",
+ 			.parent_hws = (const struct clk_hw*[]){
++				&gcc_ufs_ref_clkref_clk.clkr.hw,
+ 				&gcc_ufs_phy_axi_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+@@ -5899,19 +5913,6 @@ static struct clk_branch gcc_ufs_phy_unipro_core_hw_ctl_clk = {
+ 	},
+ };
+ 
+-static struct clk_branch gcc_ufs_ref_clkref_clk = {
+-	.halt_reg = 0x8c058,
+-	.halt_check = BRANCH_HALT,
+-	.clkr = {
+-		.enable_reg = 0x8c058,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(const struct clk_init_data) {
+-			.name = "gcc_ufs_ref_clkref_clk",
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_usb2_hs0_clkref_clk = {
+ 	.halt_reg = 0x8c044,
+ 	.halt_check = BRANCH_HALT,
+-- 
+2.36.1
 
-Best regards,
-
-Tomer
