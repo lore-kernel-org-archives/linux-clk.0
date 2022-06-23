@@ -2,96 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E8BCCA47C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 08:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029A6C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jun 2022 11:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbiFWIc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 04:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44106 "EHLO
+        id S230146AbiFWLoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 07:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbiFWIc1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 04:32:27 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B81548E4C;
-        Thu, 23 Jun 2022 01:32:23 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id CB3AF21CEF;
-        Thu, 23 Jun 2022 08:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1655973141; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YhxK8ZZPI3lUmCLii+65rd4UgUV1fnm192cvOMrF6jY=;
-        b=cSLQD/HW8YWib0EtDF6YMhVwjZqBHB1wXhqVj8oTrsAeRwlbEkB695BH54J5l9iI8bE9ZZ
-        kQIjySKbdNyswhTWYCpa7RbTf8ty+MBBzFFi7CxTcwTcz8ZC2YsT9clsQbMa8OqC6pwuHo
-        pJJwUlT4GyHdivZUZxMM8BpSMglX+Mk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1655973141;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YhxK8ZZPI3lUmCLii+65rd4UgUV1fnm192cvOMrF6jY=;
-        b=s6UwSurfXFe9u0KCb0T1ed3urucBA8q2fdMS61gbXg3x/jy9iqMp+DxXle8rghennq6GGy
-        HzGe22e28xNhZFDg==
-Received: from localhost.localdomain (unknown [10.100.208.98])
+        with ESMTP id S230111AbiFWLoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 07:44:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2964BFCC;
+        Thu, 23 Jun 2022 04:44:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id BBDA12C143;
-        Thu, 23 Jun 2022 08:32:15 +0000 (UTC)
-From:   Jiri Slaby <jslaby@suse.cz>
-To:     mturquette@baylibre.com
-Cc:     mliska@suse.cz, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 2/2] clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config
-Date:   Thu, 23 Jun 2022 10:32:17 +0200
-Message-Id: <20220623083217.26433-2-jslaby@suse.cz>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220623083217.26433-1-jslaby@suse.cz>
-References: <20220623083217.26433-1-jslaby@suse.cz>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7FCDFB8222E;
+        Thu, 23 Jun 2022 11:44:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B01C3411B;
+        Thu, 23 Jun 2022 11:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655984660;
+        bh=P1iWsP2UtAywzqCwCm4D9qSKvP6DUbZa5icNk1SrGNY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q8qDmauth47YOiRfp6Rh3MqIoSEYVFaCufAmzk7nn5WulII7hc6YBIxCjkiDRWjgr
+         jY/qgkpk3unKgdicobjFx1jtu4JBKiHYySeTr7++3fyARaGXbN3CoFgAK6h3lGiIdH
+         OKz1rpA9wqqqz83H7JBbA1xpm2qDXsVI+qsboEXZjUTeE1aLt+aXIm48Gi37rJW/TN
+         1yhUjDx5gcpYQptvsm1SoaI0d5wt5r8y32eqlwc/3RkRIpWmHMjg/g20Jc+MIn8ndI
+         8TWKio/NQgsXlLHA7LAH1uDAUXWBOSVOozwy7dXoMqetlUdohNuMyb1JKc7aqpLau9
+         LiwnDE0AtXixg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1o4LFx-0007p9-NJ; Thu, 23 Jun 2022 13:44:17 +0200
+Date:   Thu, 23 Jun 2022 13:44:17 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: qcom: gdsc: add support for collapse-vote
+ registers
+Message-ID: <YrRSEbR5OnjbZNZ1@hovoldconsulting.com>
+References: <20220520100948.19622-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220520100948.19622-1-johan+linaro@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On Fri, May 20, 2022 at 12:09:45PM +0200, Johan Hovold wrote:
+> Recent Qualcomm platforms have APCS collapse-vote registers that allow
+> for sharing GDSCs with other masters (e.g. LPASS).
+>     
+> Add support for using such vote registers instead of the control
+> register when updating the GDSC power state.
+> 
+> Note that the gcc-sc8280xp driver has not yet been merged. [1]
 
-A variable pointing to const isn't const itself. It'd have to contain
-"const" keyword after "*" too. Therefore, cpg_pll_config cannot be put
-to "rodata".  Hence use __initdata instead of __initconst to fix this.
+The sc8280xp driver has been merged so this series could go in now.
 
-[js] more explanatory commit message.
-
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index c7ed43d6aa67..e27832e5114f 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -23,7 +23,7 @@
- #include "rcar-gen4-cpg.h"
- #include "rcar-cpg-lib.h"
+Bjorn?
  
--static const struct rcar_gen4_cpg_pll_config *cpg_pll_config __initconst;
-+static const struct rcar_gen4_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
- static u32 cpg_mode __initdata;
- 
--- 
-2.36.1
+> [1] https://lore.kernel.org/all/20220505025457.1693716-1-bjorn.andersson@linaro.org/
+> 
+> 
+> Johan Hovold (3):
+>   clk: qcom: gdsc: add collapse-bit helper
+>   clk: qcom: gdsc: add support for collapse-vote registers
+>   clk: qcom: gcc-sc8280xp: use collapse-voting for PCIe GDSCs
+> 
+>  drivers/clk/qcom/gcc-sc8280xp.c | 21 +++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.c         | 28 ++++++++++++++++++++++------
+>  drivers/clk/qcom/gdsc.h         |  4 ++++
+>  3 files changed, 47 insertions(+), 6 deletions(-)
 
+Johan
