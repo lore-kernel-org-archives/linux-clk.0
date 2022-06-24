@@ -2,171 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49598CCA482
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 10:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0735AC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 10:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231454AbiFXKTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 06:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34600 "EHLO
+        id S230032AbiFXKV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 06:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231545AbiFXKTx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 06:19:53 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BEAE7B37F
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:19:51 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id c13so2755700eds.10
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Q/ovqEoOD+hVmnJ1ZaktfSaUD+tCfL6g1YxFd7nkrg4=;
-        b=AKgStJX5Aau9B4NUvSQeYUqMYzsnwzORpUESXepLAMWshgDtfR1h9wQGbrnGlM+QCB
-         vt/StFAHYfiJHl7quv14FjPTSXfj4s5bB+NjgxOXHZkhl2ovoAkMTjmC/icHtVZj835F
-         HUc4UhiI85m9PhoIjx9iAVsisdH5E7hpDwWugls9+m7vMvBsZ0HeE8GeUOQ+FbIBTDv6
-         FLnJ+dVTJVRDDE28sx3jtdy+/KCF83vz2ty+q+4iG8bzC+VM4EpWAuyoBC7FE//UckJY
-         gKlmt3yjVmxXSYS5/L9+Fw+g90aI3TobVPTkJN2D/QguySH9FwGVnYuQd2mozR/ho8cO
-         c2WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Q/ovqEoOD+hVmnJ1ZaktfSaUD+tCfL6g1YxFd7nkrg4=;
-        b=QqPMZ3SUK3qXAjH8dvGaKoRLBijaCSc7P1rJd9i5kzRamOssMVW+F0E/t3X/0UGkW2
-         sc9ilQIIWwhLZePlu/Csp9dd61yweoEfY7mZcvKzgM8VYWj2HLlgXXS/syMu1Y/fqUw8
-         vbCheQn1+nYBjy2hF+W3n12fcHEWgsq4N/XbiMwSovoxy+uCUtvw5IZVyCTHfXPHKaiB
-         JZfYY12R5KPg+rrMQP5A/I5y2lz16ceD0K7IxRmCV1E8Xjs1ZyOiEGgC3ucXT+T14PT1
-         dHgCWybFufxPmYR8sHUs4Vusr3w+kan+HrHZmZg9do3vwxw7eioFbBAaQ9Hh4M7kuG+Z
-         MVDA==
-X-Gm-Message-State: AJIora8ziq6JQiEIrPQ76P15iCEKMpWwIJfRLial6D6SgMYqhljmbCcJ
-        EUCgnfAbySnMHeaS5hWB7Lzpgw==
-X-Google-Smtp-Source: AGRyM1vuu58Df44GqIbPYw7kKBGPJa+EM9ddo6TMqN8wrNwFBXS4pW3xOw33Lo5nwodAZ32L02wywA==
-X-Received: by 2002:a05:6402:2753:b0:431:9c8b:5635 with SMTP id z19-20020a056402275300b004319c8b5635mr16567506edd.152.1656065989588;
-        Fri, 24 Jun 2022 03:19:49 -0700 (PDT)
-Received: from [192.168.0.234] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id u3-20020aa7db83000000b0043580ac5888sm1621695edt.82.2022.06.24.03.19.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jun 2022 03:19:49 -0700 (PDT)
-Message-ID: <6df3bcd8-10a9-55a1-330b-19ef0d5603a5@linaro.org>
-Date:   Fri, 24 Jun 2022 12:19:47 +0200
+        with ESMTP id S230022AbiFXKV0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 06:21:26 -0400
+Received: from m15113.mail.126.com (m15113.mail.126.com [220.181.15.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BF9BF7C502
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DMc2e
+        I+1osZbRID9dFyduBJ/EfZtPNvtEkr4O+8jO0c=; b=J5Vt5whiAdhA5afu9dNoE
+        7gx8MKdh0A0jXbMRML03mHmNVdMDQ2M5aJx/GIET4HGexvfE5Z2RpezpqVrjoncB
+        J7vII8/xw08SurbahJFTf6isJCPg4h4h+hM8NLF3vfz2hKPWybErJ4xOOvOszVVe
+        Zvwds4GytZK8zuy2y3Zjqo=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp3 (Coremail) with SMTP id DcmowADngJLhj7ViMtfGDw--.39438S2;
+        Fri, 24 Jun 2022 18:20:17 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
+        linux-clk@vger.kernel.org, windhl@126.com
+Subject: [PATCH] clk/oxnas: Hold reference returned by of_get_parent()
+Date:   Fri, 24 Jun 2022 18:20:17 +0800
+Message-Id: <20220624102017.4164778-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v5 09/14] dt-bindings: watchdog: Add fsl,scu-wdt yaml file
-Content-Language: en-US
-To:     Viorel Suman <viorel.suman@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>
-References: <20220616164303.790379-1-viorel.suman@nxp.com>
- <20220616164303.790379-10-viorel.suman@nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220616164303.790379-10-viorel.suman@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DcmowADngJLhj7ViMtfGDw--.39438S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF4UuryrXFW7XF1rKr18AFb_yoW8GFWkpF
+        WDCayFkFsrX3yrG3y0ya1kAa4Yg3y2yayrKrZ7Cw1S9rn8JF1UXFyrXa4jkFs5JrZ5GFWf
+        JrnFyrZ7ZF4UXF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5uciUUUUU=
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QIqF1pEARV5yQAAso
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/06/2022 18:42, Viorel Suman wrote:
-> From: Abel Vesa <abel.vesa@nxp.com>
-> 
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch documents
-> separately the 'watchdog' child node of the SCU main node.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> ---
->  .../bindings/watchdog/fsl,scu-wdt.yaml        | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml
-> new file mode 100644
-> index 000000000000..c5d3063a4130
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/watchdog/fsl,scu-wdt.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: i.MX SCU Client Device Node - Watchdog bindings based on SCU Message Protocol
-> +
-> +maintainers:
-> +  - Dong Aisheng <aisheng.dong@nxp.com>
-> +
-> +description: i.MX SCU Client Device Node
-> +  Client nodes are maintained as children of the relevant IMX-SCU device node.
-> +
-> +allOf:
-> +  - $ref: /schemas/watchdog/watchdog.yaml
+In oxnas_stdclk_probe(), we need to hold the reference returned by
+of_get_parent() and use it to call of_node_put() for refcount
+balance.
 
-Blank line
-
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: fsl,imx8qxp-sc-wdt
-> +      - const: fsl,imx-sc-wdt
-> +
-> +  timeout-sec: true
-
-Drop it.
-
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-
-unevaluatedProperties: false
-
-> +
-> +examples:
-> +  - |
-> +    watchdog {
-> +             compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
-
-Indentation...
-
-> +             timeout-sec = <60>;
-> +    };
+Fixes: 0bbd72b4c64f ("clk: Add Oxford Semiconductor OXNAS Standard Clocks")
+Signed-off-by: Liang He <windhl@126.com>
+---
+ these bugs are found in 5.19rc2
+ these bugs are confirmed not fixed by lore.kernel.org
+ these bugs are compiled tested in 5.19rc2 with at91_dt_defconfig
 
 
-Best regards,
-Krzysztof
+ drivers/clk/clk-oxnas.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
+index cda5e258355b..23e1bbe3c4cd 100644
+--- a/drivers/clk/clk-oxnas.c
++++ b/drivers/clk/clk-oxnas.c
+@@ -207,7 +207,7 @@ static const struct of_device_id oxnas_stdclk_dt_ids[] = {
+ 
+ static int oxnas_stdclk_probe(struct platform_device *pdev)
+ {
+-	struct device_node *np = pdev->dev.of_node;
++	struct device_node *np = pdev->dev.of_node, *tp;
+ 	const struct oxnas_stdclk_data *data;
+ 	struct regmap *regmap;
+ 	int ret;
+@@ -215,7 +215,9 @@ static int oxnas_stdclk_probe(struct platform_device *pdev)
+ 
+ 	data = of_device_get_match_data(&pdev->dev);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	tp = of_get_parent(np);
++	regmap = syscon_node_to_regmap(tp);
++	of_node_put(tp);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(&pdev->dev, "failed to have parent regmap\n");
+ 		return PTR_ERR(regmap);
+-- 
+2.25.1
+
