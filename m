@@ -2,105 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66B1CCA485
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1891CC43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiFXR1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 13:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51396 "EHLO
+        id S230227AbiFXR1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 13:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiFXR0k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:26:40 -0400
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D26892BE6;
-        Fri, 24 Jun 2022 10:26:39 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id s17so3378785iob.7;
-        Fri, 24 Jun 2022 10:26:39 -0700 (PDT)
+        with ESMTP id S231739AbiFXR0y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:26:54 -0400
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7352559B;
+        Fri, 24 Jun 2022 10:26:45 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id z191so3373901iof.6;
+        Fri, 24 Jun 2022 10:26:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=92QKbH/mPXhxHIYJf1fLlrKB6WxLUvpdcDo1o4OtEnM=;
-        b=nkLqdtay6VGjJqffHvqtqksKSKVkBilY1c1m5KAlQMy8AJo7DT/wTGSiN7+Hvhm6OZ
-         5NK5dApuZdhWE7sD7gmiuW8mnZNgcBVUWr08Y2QT5VUkWgLZWrdwwqNJFe3KLCMcVDiy
-         OQkBVynzJVclFSBAvtlpFjkdTFkU7nBi+RExRN7qf2SF4KNAnAp6m35rcdlw3XWHjg0O
-         jyaGn8aX9MWabkgmH4krflJGpABcTYGkLvT9Ff1Cn7vmFykm0oh3DpTKayQDOu7LFBY1
-         KBdZbUaiR+/9Mg6TXWzJbqbh+o2F5a/G524sZ1RjL+AJcIYtJGIsyIPiLUmvaUnoWf/K
-         cWTA==
-X-Gm-Message-State: AJIora/T87xyD3LzBX1ATxDZL4VjYTWfmf/6ffZkthaxIq5ZiERfn/8E
-        aw/Pd2wwO9Z6XxwV5t2hItwyaxa/og==
-X-Google-Smtp-Source: AGRyM1s8SzrwSpGacP/r2ARwl+tUdS8WymnOz9QJv44qHprtsvHiQ9e/7OSdNfiAyfKqtnqiAMvqmw==
-X-Received: by 2002:a02:90ce:0:b0:32e:e2ce:b17c with SMTP id c14-20020a0290ce000000b0032ee2ceb17cmr153954jag.268.1656091599142;
-        Fri, 24 Jun 2022 10:26:39 -0700 (PDT)
+        bh=n2XNNHfnlSzPCpBxhAe6aF2TsSHsKDP/VUmQAtti+ps=;
+        b=LkkIWWo9Vou612Jvm/ZNYmdNzmnusgkETjkk9tQRpmP+7HFW4C2tTTLGcfvFJp8ljx
+         5Eq2u4wlDFg8LenV16TTfBFFNN4TkEvut1sj/UgZ1IhFeSWF5/a7/oo3hZotXtr/m+jV
+         HLaaj022f244dviPqbbwlC340fg6fza8XWyjDrPl9+/certNkzAEArA7Sk7IqwUiAEtw
+         RIjhwqZKw+QDjf0++UTrFvPIVC0urB+hg/zxD2LXCJUw2RnuFbbWs8IwVxBoEEYAPlb3
+         VClnS/8m8hgVE0ttLS+tvF7jUCtGL1eLUUQywdhMOWBUgFZO5/C0548kRNYUCRY8THMk
+         er2Q==
+X-Gm-Message-State: AJIora/uqdn5JjtJenggTV36v7myioHtklYgbNwUMbe7JCqBxRZ3TpA2
+        nZHW8LLXtmt3MFCedD9IdA==
+X-Google-Smtp-Source: AGRyM1sf4ha7eK26cIM7jLNomU3rhP57Kcz5dGvzHk+OKIszOwQIVSEmCb7pX+/RoCjgFzkNOR6bYA==
+X-Received: by 2002:a05:6638:4889:b0:331:b103:a74c with SMTP id ct9-20020a056638488900b00331b103a74cmr158177jab.66.1656091604724;
+        Fri, 24 Jun 2022 10:26:44 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id u10-20020a92da8a000000b002d925059ba6sm1354817iln.87.2022.06.24.10.26.36
+        by smtp.gmail.com with ESMTPSA id p70-20020a022949000000b00339d2cd8da1sm1274202jap.152.2022.06.24.10.26.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 10:26:38 -0700 (PDT)
-Received: (nullmailer pid 146342 invoked by uid 1000);
+        Fri, 24 Jun 2022 10:26:44 -0700 (PDT)
+Received: (nullmailer pid 146350 invoked by uid 1000);
         Fri, 24 Jun 2022 17:26:34 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     tinghan.shen@mediatek.com, linux-kernel@vger.kernel.org,
-        wenst@chromium.org, p.zabel@pengutronix.de,
-        chun-jie.chen@mediatek.com, matthias.bgg@gmail.com,
-        sboyd@kernel.org, konrad.dybcio@somainline.org,
-        linux-clk@vger.kernel.org, fparent@baylibre.com,
-        phone-devel@vger.kernel.org, robh+dt@kernel.org,
-        y.oudjana@protonmail.com, rex-bc.chen@mediatek.com,
-        martin.botka@somainline.org, marijn.suijten@somainline.org,
-        sam.shih@mediatek.com, kernel@collabora.com,
-        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-        ikjn@chromium.org, krzysztof.kozlowski+dt@linaro.org,
-        weiyi.lu@mediatek.com, miles.chen@mediatek.com, ck.hu@mediatek.com,
-        linux-mediatek@lists.infradead.org, jason-jh.lin@mediatek.com,
-        ~postmarketos/upstreaming@lists.sr.ht, bgolaszewski@baylibre.com,
-        paul.bouchara@somainline.org, devicetree@vger.kernel.org
-In-Reply-To: <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
-References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com> <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v3 4/7] dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
+To:     Sricharan R <quic_srichara@quicinc.com>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20220621161126.15883-3-quic_srichara@quicinc.com>
+References: <20220621161126.15883-1-quic_srichara@quicinc.com> <20220621161126.15883-3-quic_srichara@quicinc.com>
+Subject: Re: [PATCH V2 2/8] dt-bindings: arm64: ipq5018: Add binding descriptions for clock and reset
 Date:   Fri, 24 Jun 2022 11:26:34 -0600
-Message-Id: <1656091594.386709.146341.nullmailer@robh.at.kernel.org>
+Message-Id: <1656091594.420060.146349.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 24 Jun 2022 11:35:22 +0200, AngeloGioacchino Del Regno wrote:
-> Add the bindings for the clock drivers of the MediaTek Helio X10
-> MT6795 SoC.
+On Tue, 21 Jun 2022 21:41:20 +0530, Sricharan R wrote:
+> From: Varadarajan Narayanan <quic_varada@quicinc.com>
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> This patch adds support for the global clock controller found on
+> the IPQ5018 based devices.
+> 
+> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++
->  .../clock/mediatek,mt6795-sys-clock.yaml      | 74 +++++++++++++++++++
->  2 files changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>  .../bindings/clock/qcom,gcc-other.yaml        |   3 +
+>  include/dt-bindings/clock/qcom,gcc-ipq5018.h  | 188 ++++++++++++++++++
+>  include/dt-bindings/reset/qcom,gcc-ipq5018.h  | 122 ++++++++++++
+>  3 files changed, 313 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq5018.h
+>  create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq5018.h
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
 
-yamllint warnings/errors:
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.example.dtb: power-controller@10001000: '#power-domain-cells' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/power-domain.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.example.dtb: power-controller@10003000: '#power-domain-cells' is a required property
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/power/power-domain.yaml
+Full log is available here: https://patchwork.ozlabs.org/patch/
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/patch/
+gcc@1800000: '#power-domain-cells' is a required property
+	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+gcc@1800000: Unevaluated properties are not allowed ('#clock-cells', '#reset-cells', 'clock-names', 'clocks', 'reg' were unexpected)
+	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
 
