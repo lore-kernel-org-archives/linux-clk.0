@@ -2,303 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D657ECCA473
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 10:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE437C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 10:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230022AbiFXKZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 06:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38476 "EHLO
+        id S229928AbiFXK2p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 06:28:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbiFXKZw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 06:25:52 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3F37B35F
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:25:48 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id mf9so3883273ejb.0
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=CHttmF3yGSGx+TZUTVwg9kv22SlC4meEkXeiN/iN2v8=;
-        b=z7ATTMHw/uFuGMTH0cx/WUmez2cGoKvXN2RGic2tU6NQONge6izMZ6WAYMGWzduOWp
-         JWDhKgDR/MVsJX+70XppIMM4wZ8+AiIDjk7CAUxgScaYttqFNk+esnEw4Jrakkpc7EPx
-         v+5iwZ1jeuDfshxkaPQsByIECd1PIFX5RcvumpAa/nm6sZVxk2gHoCqnlZtKYpxWBmDS
-         0iYf4QHhB4e5m6l54EuFC7W3UOueSP8Lhln71JGbUMb8ORvik3KJQQaZZz7xhnwU9sgm
-         koPcWq7QohPq+EMTtzEUQaYx4TNywITpEwUqkucd7Mr6j+hvtSE07ltE1eC8hgyUcwy+
-         M/EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=CHttmF3yGSGx+TZUTVwg9kv22SlC4meEkXeiN/iN2v8=;
-        b=VF0dUSxLRb/HdjwKZLZrBScc5h8cdfIFIj+qBrRB8S6tVBNE6KM23dy2Lhu0tsapHa
-         4I1xz1RxIoxopkWLk75rUSY2u0osgBQcl79UwYD8ooPwjZV22yWQffQResx45Pm4Hz8a
-         RzSQXp9XIoBZPMOe7TKRStflzvoKFvWYmp6Rw4zLGFsxxjUhr7NcfX8zm9e8vsv7O+ND
-         deoofr8h2eKqRv1kcny5YLfuu34yRZf2U8d8aj/TVjRb4YDEp2wkiKFVwnRgF9SdYrYl
-         Xz2wPjuh0wmEzWfPRF3nILNjemQaaIRoV6zku7O819KyBX44cRTPrfCCwjDsbJUtTixf
-         SlfQ==
-X-Gm-Message-State: AJIora9e6X4KNJLiJ7fyo4xFkeOpwyet+NV0KyeKr9yKmzLZTszHeor8
-        ppzgqADn4Y7l84ohrlU5Cnadyg==
-X-Google-Smtp-Source: AGRyM1tJuZF3QgXNIjmCTm5JxpaOyY6m5vZGMqLZG9V/JEZvRn/GC7cwsOcwhASPRcGnwcf/5J5bBw==
-X-Received: by 2002:a17:906:7288:b0:722:da04:da51 with SMTP id b8-20020a170906728800b00722da04da51mr12547124ejl.316.1656066347402;
-        Fri, 24 Jun 2022 03:25:47 -0700 (PDT)
-Received: from [192.168.0.234] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id w13-20020a170906d20d00b00726298147b1sm851210ejz.161.2022.06.24.03.25.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jun 2022 03:25:46 -0700 (PDT)
-Message-ID: <b653d7af-f846-abb2-d260-3ce615b070a4@linaro.org>
-Date:   Fri, 24 Jun 2022 12:25:44 +0200
+        with ESMTP id S230253AbiFXK2o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 06:28:44 -0400
+Received: from m15114.mail.126.com (m15114.mail.126.com [220.181.15.114])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9014D60F1D
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 03:28:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=YQEMA
+        Jwho1dpvA2cYEpUQiIvp+xYug1V/GH8HoE8DYQ=; b=dtxKEtj/5HxIspYy5wJCN
+        S9nr31G0CxC9i+n6BBgr0Nl5KRN0t+eL8VQBsSaYVOmF5ezk/yEcKFkbmP1+8PBg
+        o21OzVWB2B+y2PsX78RNgKVP+ZR5EX6X0G418yYtCJY7dXbG2EyBkulweTCLom9w
+        6MWc3T7QEmnv5Lbe6wxd2g=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp7 (Coremail) with SMTP id DsmowAA34vuHkbViAIufDw--.39196S2;
+        Fri, 24 Jun 2022 18:27:20 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, windhl@126.com
+Subject: [PATCH] clk/meson: Hold reference returned by of_get_parent()
+Date:   Fri, 24 Jun 2022 18:27:19 +0800
+Message-Id: <20220624102719.4166125-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v5 10/14] dt-bindings: firmware: Add fsl,scu yaml file
-Content-Language: en-US
-To:     Viorel Suman <viorel.suman@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>
-References: <20220616164303.790379-1-viorel.suman@nxp.com>
- <20220616164303.790379-11-viorel.suman@nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220616164303.790379-11-viorel.suman@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DsmowAA34vuHkbViAIufDw--.39196S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr18Kr18Cr17JF13Kr4kZwb_yoW5Cr47pF
+        97JFySyF47Xr15Wr18trZrCFWSg34IgFWYk397Cw1rZwn3JFyUJFy3Jay8CFs0vFWrCa4r
+        JrnYkrW8Ar47XF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U4BTrUUUUU=
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi2gkqF1uwMRqlQgAAsJ
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/06/2022 18:42, Viorel Suman wrote:
-> From: Abel Vesa <abel.vesa@nxp.com>
-> 
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch adds the
-> fsl,scu.yaml in the firmware bindings folder. This one is only for
-> the main SCU node. The old txt file will be removed only after all
-> the child nodes have been properly switch to yaml.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> ---
->  .../devicetree/bindings/firmware/fsl,scu.yaml | 170 ++++++++++++++++++
->  1 file changed, 170 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/fsl,scu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/fsl,scu.yaml b/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
-> new file mode 100644
-> index 000000000000..a28f729bfadb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
-> @@ -0,0 +1,170 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/firmware/fsl,scu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX System Controller Firmware (SCFW)
-> +
-> +maintainers:
-> +  - Dong Aisheng <aisheng.dong@nxp.com>
-> +
-> +description: System Controller Device Node
-> +  The System Controller Firmware (SCFW) is a low-level system function
-> +  which runs on a dedicated Cortex-M core to provide power, clock, and
-> +  resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
-> +  (QM, QP), and i.MX8QX (QXP, DX).
-> +  The AP communicates with the SC using a multi-ported MU module found
-> +  in the LSIO subsystem. The current definition of this MU module provides
-> +  5 remote AP connections to the SC to support up to 5 execution environments
-> +  (TZ, HV, standard Linux, etc.). The SC side of this MU module interfaces
-> +  with the LSIO DSC IP bus. The SC firmware will communicate with this MU
-> +  using the MSI bus.
-> +
-> +properties:
-> +  $nodename:
-> +    const: 'scu'
+We should hold the reference returned by of_get_parent() and use it
+to call of_node_put() for refcount balance.
 
-Why enforcing node name? Second point is that node names should be
-generic, so I wonder what "SCU" exactly means and whether it is generic?
-
-> +
-> +  compatible:
-> +    const: fsl,imx-scu
-> +
-> +  clock-controller:
-> +    description: |
-> +      $ref: /schemas/clock/fsl,scu-clk.yaml
-
-That's not a valid syntax. ref is not part of description
-
-> +      Clock controller node that provides the clocks controlled by the SCU
-> +
-> +  imx8qx-ocotp:
-> +    description: |
-> +      $ref: /schemas/nvmem/fsl,scu-ocotp.yaml
-> +      OCOTP controller node provided by the SCU
-> +
-> +  keys:
-> +    description: |
-> +      $ref: /schemas/input/fsl,scu-key.yaml
-> +      Keys provided by the SCU
-> +
-> +  mboxes:
-> +    description: |
-> +      $ref: /schemas/mailbox/fsl,mu.yaml
-> +      List of phandle of 4 MU channels for tx, 4 MU channels for
-> +      rx, and 1 optional MU channel for general interrupt.
-> +      All MU channels must be in the same MU instance.
-> +      Cross instances are not allowed. The MU instance can only
-> +      be one of LSIO MU0~M4 for imx8qxp and imx8qm. Users need
-> +      to make sure use the one which is not conflict with other
-> +      execution environments. e.g. ATF.
-> +    minItems: 1
-> +    maxItems: 10
-> +
-> +  mbox-names:
-> +    description:
-> +      include "gip3" if want to support general MU interrupt.
-> +    minItems: 1
-> +    maxItems: 10
-> +
-> +  pinctrl:
-> +    description: |
-> +      $ref: /schemas/pinctrl/fsl,scu-pinctrl.yaml
-> +      Pin controller provided by the SCU
-> +
-> +  power-controller:
-> +    description: |
-> +      $ref: /schemas/power/fsl,scu-pd.yaml
-> +      Power domains controller node that provides the power domains
-> +      controlled by the SCU
-> +
-> +  rtc:
-> +    description: |
-> +      $ref: /schemas/rtc/fsl,scu-rtc.yaml
-> +      RTC controller provided by the SCU
-> +
-> +  thermal-sensor:
-> +    description: |
-> +      $ref: /schemas/thermal/fsl,scu-thermal.yaml
-> +      Thermal sensor provided by the SCU
-> +
-> +  watchdog:
-> +    description: |
-> +      $ref: /schemas/watchdog/fsl,scu-wdt.yaml
-> +      Watchdog controller provided by the SCU
-> +
-> +required:
-> +  - compatible
-> +  - mbox-names
-> +  - mboxes
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/firmware/imx/rsrc.h>
-> +    #include <dt-bindings/input/input.h>
-> +    #include <dt-bindings/pinctrl/pads-imx8qxp.h>
-> +
-> +    firmware {
-> +           scu {
-> +                   compatible = "fsl,imx-scu";
-> +                   mbox-names = "tx0", "tx1", "tx2", "tx3",
-> +                                "rx0", "rx1", "rx2", "rx3",
-> +                                "gip3";
-> +                   mboxes = <&lsio_mu1 0 0
-> +                            &lsio_mu1 0 1
-> +                            &lsio_mu1 0 2
-> +                            &lsio_mu1 0 3
-> +                            &lsio_mu1 1 0
-> +                            &lsio_mu1 1 1
-> +                            &lsio_mu1 1 2
-> +                            &lsio_mu1 1 3
-> +                            &lsio_mu1 3 3>;
-> +
-> +                   clock-controller {
-> +                            compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
-> +                            #clock-cells = <2>;
-> +                   };
-> +
-> +                   pinctrl {
-> +                            compatible = "fsl,imx8qxp-iomuxc";
-> +
-> +                            pinctrl_lpuart0: lpuart0grp {
-> +                                   fsl,pins = <
-> +                                           IMX8QXP_UART0_RX_ADMA_UART0_RX   0x06000020
-> +                                           IMX8QXP_UART0_TX_ADMA_UART0_TX   0x06000020
-> +                                   >;
-> +                            };
-> +                   };
-> +
-> +                   imx8qx-ocotp {
-> +                            compatible = "fsl,imx8qxp-scu-ocotp";
-> +                            #address-cells = <1>;
-> +                            #size-cells = <1>;
-> +
-> +                            fec_mac0: mac@2c4 {
-> +                                   reg = <0x2c4 6>;
-> +                            };
-> +                   };
-> +
-> +                   power-controller {
-> +                            compatible = "fsl,imx8qxp-scu-pd", "fsl,scu-pd";
-> +                            #power-domain-cells = <1>;
-> +                   };
-> +
-> +                   rtc {
-> +                            compatible = "fsl,imx8qxp-sc-rtc";
-> +                   };
-> +
-> +                   keys {
-> +                            compatible = "fsl,imx8qxp-sc-key", "fsl,imx-sc-key";
-> +                            linux,keycodes = <KEY_POWER>;
-> +                   };
-> +
-> +                   watchdog {
-> +                            compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
-> +                            timeout-sec = <60>;
-> +                   };
-> +
-> +                   thermal-sensor {
-> +                            compatible = "fsl,imx8qxp-sc-thermal", "fsl,imx-sc-thermal";
-> +                            #thermal-sensor-cells = <1>;
-> +                   };
-> +            };
-> +    };
+Fixes: 88e2da81241e ("clk: meson: aoclk: refactor common code into dedicated file")
+Fixes: 6682bd4d443f ("clk: meson: factorise meson64 peripheral clock controller drivers")
+Fixes: bb6eddd1d28c ("clk: meson: meson8b: use the HHI syscon if available")
+Signed-off-by: Liang He <windhl@126.com>
+---
+ these bugs are found in 5.19rc2
+ these bugs are confirmed not fixed by lore.kernel.org
+ these bugs are compiled tested in 5.19rc2 with at91_dt_defconfig
 
 
-Best regards,
-Krzysztof
+ drivers/clk/meson/meson-aoclk.c | 5 ++++-
+ drivers/clk/meson/meson-eeclk.c | 5 ++++-
+ drivers/clk/meson/meson8b.c     | 5 ++++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index 27cd2c1f3f61..434cd8f9de82 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -38,6 +38,7 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 	struct meson_aoclk_reset_controller *rstc;
+ 	struct meson_aoclk_data *data;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np;
+ 	struct regmap *regmap;
+ 	int ret, clkid;
+ 
+@@ -49,7 +50,9 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 	if (!rstc)
+ 		return -ENOMEM;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	np = of_get_parent(dev->of_node);
++	regmap = syscon_node_to_regmap(np);
++	of_node_put(np);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(dev, "failed to get regmap\n");
+ 		return PTR_ERR(regmap);
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 8d5a5dab955a..0e5e6b57eb20 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -18,6 +18,7 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ {
+ 	const struct meson_eeclkc_data *data;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np;
+ 	struct regmap *map;
+ 	int ret, i;
+ 
+@@ -26,7 +27,9 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 
+ 	/* Get the hhi system controller node */
+-	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	np = of_get_parent(dev->of_node);
++	map = syscon_node_to_regmap(np);
++	of_node_put(np);
+ 	if (IS_ERR(map)) {
+ 		dev_err(dev,
+ 			"failed to get HHI regmap\n");
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 8f3b7a94a667..54188319f349 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -3796,8 +3796,11 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 	struct clk *notifier_clk;
+ 	struct regmap *map;
+ 	int i, ret;
++	struct device_node *tp;
+ 
+-	map = syscon_node_to_regmap(of_get_parent(np));
++	tp = of_get_parent(np);
++	map = syscon_node_to_regmap(tp);
++	of_node_put(tp);
+ 	if (IS_ERR(map)) {
+ 		pr_err("failed to get HHI regmap - Trying obsolete regs\n");
+ 		return;
+-- 
+2.25.1
+
