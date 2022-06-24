@@ -2,101 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA026C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 16:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4141C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 16:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbiFXQkd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37466 "EHLO
+        id S230418AbiFXQwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 12:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231598AbiFXQkd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 12:40:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 859AE50B32
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 09:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656088831;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=n8dnSmLnMjgwT5vMe64j54S8t18apFExaSS8ijTHrlc=;
-        b=a3hkPg0DUVp9u1kMboSvzrTIeuuQ0ELzCTm7YTTOQuxJKTeQ3v6RDbkJWnxbe6X4wcbK3o
-        Q32hiOE4r5xEM88sBG5j2cYRVS0CjiH1GRMThWfMuh8HTKfi/LnWmMQNF9K1c33EDBRS1W
-        jeHBxy2qHdMp28SYwpfsahHPqhfb+kU=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-84-FCgd6rNLN8KDaRBwRdBS9Q-1; Fri, 24 Jun 2022 12:40:29 -0400
-X-MC-Unique: FCgd6rNLN8KDaRBwRdBS9Q-1
-Received: by mail-qk1-f197.google.com with SMTP id o10-20020a05620a2a0a00b006a77a64cd23so3126847qkp.21
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 09:40:29 -0700 (PDT)
+        with ESMTP id S230451AbiFXQwV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 12:52:21 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F141560F2D;
+        Fri, 24 Jun 2022 09:52:18 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id g26so5881254ejb.5;
+        Fri, 24 Jun 2022 09:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wbymErIEYkOFeBKk/ebEJiqOJG2qjdsYlqZoWmC7QLE=;
+        b=PRRbdWpwESnTfnifMOyCgpGVdaGmvXQWwSZ3f6whE1ZxjZFa+545KZbP2dWC4hkBEt
+         s8vL/QSlIJgYyoxdYpenaVdfezjz27HCliox/O8r2THavoUObV+SS2MMsEVNQSbOIp+n
+         wCH7a7NFJV2lMsxU+B0haGz6nXtJ8llqqjADcitqejPzY0VyRQQXEgP8v5m/7kwr2Gp1
+         C0Ymu6A4GldzaR/0OPpjHzgD72fNiKUTcDZ3MUa20hnakwVjsukV94zH2NHIlNVRi5BQ
+         HdKJTKnXWgz7g3LCKr7CKtpz9v/RYj2A5eIXNOLJL35/V4eLwAcxTC5oFnu7ukuIBb70
+         uv4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n8dnSmLnMjgwT5vMe64j54S8t18apFExaSS8ijTHrlc=;
-        b=MM8OEVmiv6hq9IvwJtPkMDjNwXqxagQpFjRydiNVcrI5FFEP/Id28+kktEIyIwP+td
-         mIWVVKrd9RHAdAtwOUEwV8dZXmWYhlMXgE3GQpHNIEREc4TWKBpjwAOx3+eQjMFO7q+8
-         F4MIq8nb5GRBS89+TlE//yiRRxWviuBZ/mchbeJDMw+463g447Zbttw62nKscZff+BzA
-         1zOGoM+3ul2UvI0G+b3DXdn0VTCCisImEHPgreZoIDSG8SKxiwAI1VUgVH8kddsoBxxq
-         F2PPA7SIGJG0khHvbb9lEvAsg/93mlNDwNjrdXgob3hPSu+OPm4X86CG1nt21NEbo015
-         3wgw==
-X-Gm-Message-State: AJIora9dC0NEiTzEIFj7cTsbnOxf8KtdgDx/QuTQg/aeY43glLoum30x
-        5hK0zDzKn4rqkaoUr2fBt5T8Eh9RPS5KLRprLGULzqRTIAOcsXLClfxlA9HzY2pkTNBsNmFAFfn
-        Xm4BKJNr49lfEXJ4YFje5
-X-Received: by 2002:a05:620a:570:b0:6ab:91fc:59c6 with SMTP id p16-20020a05620a057000b006ab91fc59c6mr11437615qkp.707.1656088828951;
-        Fri, 24 Jun 2022 09:40:28 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vqIV6HjcrEOXeE3hIpiQoSxjY9PaPqQRY3anfHa/xGyouZ9QZhIZc62/U1nlcbovrv0ARCZQ==
-X-Received: by 2002:a05:620a:570:b0:6ab:91fc:59c6 with SMTP id p16-20020a05620a057000b006ab91fc59c6mr11437579qkp.707.1656088828311;
-        Fri, 24 Jun 2022 09:40:28 -0700 (PDT)
-Received: from xps13 (c-98-239-145-235.hsd1.wv.comcast.net. [98.239.145.235])
-        by smtp.gmail.com with ESMTPSA id o1-20020a05620a2a0100b006a79479657fsm2408131qkp.108.2022.06.24.09.40.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wbymErIEYkOFeBKk/ebEJiqOJG2qjdsYlqZoWmC7QLE=;
+        b=Cx1DCrz0F6//D/Kx9y/JxwznEMLWfLezKwM++2Z/ro7Tm6nk6hMjEzCp9mxGxGI6L9
+         77f5fV4auA14tVoff3DKf2kbZAEDCO9aq+4u22KwABmfnqwOO7f/L3EDhtfi5pbDrPmV
+         bS7QVkA85b/Bdhm0lshqBtTC80dJMsHPEcXCrMxHO912g9jTdwjKJyERp+14J+Os2Ttu
+         zEAu9pFbVHOTsYMeW/DwCzZvRfAnEpqcrqKhpgK3KvaX/F66knYb6SVNi9Y9cCZFqeUm
+         ijzM50frVMhBM9ej4tRK+32Lpmxgp4DaMI6GpDIT1aIZ5Sf+g9+bUVpB5D1sQvUHOpgL
+         qV6Q==
+X-Gm-Message-State: AJIora/Tn8lgMu6PvXMSYxvL6pJ/dnKPZu76eSP9Q/1cfG+DyvvtXpcF
+        XvuFpWmkfIeVYJVk54JjjQJKgTtqj+c=
+X-Google-Smtp-Source: AGRyM1vrLg2W+cGGP3wxtvgoeuzjy++7TyLF+nXPHCinNEq5lfVYYODHu3V1BUQIakLhaOy9dyJ/iw==
+X-Received: by 2002:a17:907:7249:b0:711:e939:bbb4 with SMTP id ds9-20020a170907724900b00711e939bbb4mr14351418ejc.480.1656089537406;
+        Fri, 24 Jun 2022 09:52:17 -0700 (PDT)
+Received: from roman-Latitude-3400.globallogic.com ([195.234.74.2])
+        by smtp.gmail.com with ESMTPSA id b20-20020a0564021f1400b0042e15364d14sm2494479edb.8.2022.06.24.09.52.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:40:27 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 12:40:26 -0400
-From:   Brian Masney <bmasney@redhat.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahalaney@redhat.com, echanude@redhat.com
-Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk
- for sa8540p
-Message-ID: <YrXo+i3wwl2ERKIj@xps13>
-References: <20220623142837.3140680-1-bmasney@redhat.com>
- <20220624002055.58BCFC341C0@smtp.kernel.org>
+        Fri, 24 Jun 2022 09:52:16 -0700 (PDT)
+From:   Roman Stratiienko <r.stratiienko@gmail.com>
+To:     peron.clem@gmail.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mripard@kernel.org,
+        wens@csie.org, jernej.skrabec@gmail.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org,
+        Roman Stratiienko <r.stratiienko@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DFS
+Date:   Fri, 24 Jun 2022 19:52:11 +0300
+Message-Id: <20220624165211.4318-1-r.stratiienko@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220624002055.58BCFC341C0@smtp.kernel.org>
-User-Agent: Mutt/2.2.5 (2022-05-16)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 23, 2022 at 05:20:53PM -0700, Stephen Boyd wrote:
-> Quoting Brian Masney (2022-06-23 07:28:37)
-> > diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> > index 4b894442fdf5..4639b50da418 100644
-> > --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> > +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> > @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk = {
-> >                 .hw.init = &(const struct clk_init_data) {
-> >                         .name = "gcc_ufs_phy_axi_clk",
-> >                         .parent_hws = (const struct clk_hw*[]){
-> > +                               &gcc_ufs_ref_clkref_clk.clkr.hw,
-> >                                 &gcc_ufs_phy_axi_clk_src.clkr.hw,
-> >                         },
-> >                         .num_parents = 1,
-> 
-> num_parents needs an update. 
+Using simple bash script it was discovered that not all CCU registers
+can be safely used for DFS, e.g.:
 
-Oops!
+    while true
+    do
+        devmem 0x3001030 4 0xb0003e02
+        devmem 0x3001030 4 0xb0001e02
+    done
 
-> But this is a branch, not a mux, so it can't have more than one
-> parent.
+Script above changes the GPU_PLL multiplier register value. While the
+script is running, the user should interact with the user interface.
 
-Would a mux be represented with 'struct clk_rcg2'?
+Using this method the following results were obtained:
 
-Brian
+| Register  | Name           | Bits  | Values | Result |
+| --        | --             | --    | --     | --     |
+| 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
+| 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
+| 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
+| 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
+
+Once bits that caused system failure disabled (kept default 0),
+it was discovered that GPU_CLK.MUX was used during DFS for some
+reason and was causing the failure too.
+
+After disabling GPU_PLL.OUTDIV the system started to fail during
+booting for some reason until the maximum frequency of GPU_PLL
+clock was limited to 756MHz.
+
+After all the changes made DVFS started to work seamlessly.
+
+Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index 2ddf0a0da526f..d941238cd178a 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -95,13 +95,14 @@ static struct ccu_nkmp pll_periph1_clk = {
+ 	},
+ };
+ 
++/* For GPU PLL, using an output divider for DFS causes system to fail */
+ #define SUN50I_H6_PLL_GPU_REG		0x030
+ static struct ccu_nkmp pll_gpu_clk = {
+ 	.enable		= BIT(31),
+ 	.lock		= BIT(28),
+ 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+ 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+-	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
++	.max_rate	= 756000000UL,
+ 	.common		= {
+ 		.reg		= 0x030,
+ 		.hw.init	= CLK_HW_INIT("pll-gpu", "osc24M",
+@@ -294,12 +295,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
+ static SUNXI_CCU_GATE(bus_deinterlace_clk, "bus-deinterlace", "psi-ahb1-ahb2",
+ 		      0x62c, BIT(0), 0);
+ 
+-static const char * const gpu_parents[] = { "pll-gpu" };
+-static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
+-				       0, 3,	/* M */
+-				       24, 1,	/* mux */
+-				       BIT(31),	/* gate */
+-				       CLK_SET_RATE_PARENT);
++/* GPU_CLK divider kept disabled to avoid interferences with DFS */
++static SUNXI_CCU_GATE(gpu_clk, "gpu", "pll-gpu", 0x670,
++		      BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
+ 		      0x67c, BIT(0), 0);
+-- 
+2.34.1
 
