@@ -2,75 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D347EC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 00:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EB7C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 01:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230244AbiFXAtS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 20:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
+        id S229545AbiFXBJd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 21:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229740AbiFXAtR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 20:49:17 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ABB13AA42;
-        Thu, 23 Jun 2022 17:49:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B9E99B8254F;
-        Fri, 24 Jun 2022 00:49:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD78C3411D;
-        Fri, 24 Jun 2022 00:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656031754;
-        bh=0qCwaq5D4b5O4uYLnizdNCcctcwschOc7iUhpOYaWXU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Are6Plg4wm7dDQ++jHVXmfENbxBErviPpx1JGaIBwLr0oiX8S0dZEAcwSTi4//xxJ
-         B8D4SUg/2F2MyW0RFWFssaCLFqpvoNAkSxoXSWnSpP9MMngZIJTMIsuCVZV2DLfDh6
-         B1ZJH8NO31a4DI3q752Qelzxh/6cW9cfhZkqMRITnILwB3gKztSzqM89+9QJK6E20u
-         BJVTH+nOWT7mpyUebKALg+d7gc1x94Jt1/yyWSFudI1qbz5VtfKM7gYZUyzMHPOBRl
-         oo+801YQWtKI7tcKOoLLnDL0ftFvGSs2t5o89GRmFLQKWtDq7g5dOdVBaDRd6b9s3t
-         Yqy/gRSvy3ajQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229475AbiFXBJc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 21:09:32 -0400
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45B0522E9
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 18:09:30 -0700 (PDT)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-101dc639636so1781674fac.6
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 18:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=OCHZxokmpPS3ghyjxdWAlsOmOJoJ7RkmN7lu9vpq/qc=;
+        b=mgmCgBe5WxBpH89yuOr301hjK5lL5qvKpX+q0WY3Kvk8Uct1ju85U3VL84gbnUbFGm
+         umtfp93y0TObeGA/vX0kAbt5pmZnBdQTd3LOEemB+ztk752fsZT48g2k4qF4gTuG3BxW
+         yMWg66ompzCQcsliNLhBFppZ8A6TCE7euehNM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=OCHZxokmpPS3ghyjxdWAlsOmOJoJ7RkmN7lu9vpq/qc=;
+        b=Pbv3Zigiz9XDgSQtBekmbVR/9cULaTonEWIPhSyjJWw6ZjlMdpeqms6rrmwy5Kd2I9
+         xNn3UnIpJ0dytC1gqGagsj3mNnT+U2lCvkOHVVKET7lndoUf5fMGRNFgx6W3A5jAN+c5
+         CYf2uGVuCzGApyYhj0JPyPl53QJKazQAVLlM3tRgpsTQY0dZ0rdz5RprF7FtnhSh6yZN
+         4OdM5qpFN725SrhwUuW1CbQe4aYTwFfi+76aCuiQHmCTVd7swNFxUsYaI52V4SAJmrTy
+         5cvNQedltH7dSPqaLtU9kehjIrx68zIe3mI02xYSO/bqcveIYR4oQgGyDFXR4gIyDM55
+         dnfw==
+X-Gm-Message-State: AJIora/E11J1jQgolpIaxyHw20ykXM6EPepAiERWFfSTuXcxyRJohLYw
+        25CipELF/mffrQhujkv3ytw/HJfZl9rn5ZF1dOX8lQ==
+X-Google-Smtp-Source: AGRyM1tXirInAlabjW2wEws7IJSezLdoi0NAHbcTGFYyFOOwxy2J/0t4iXkfHnq/bVhSuIcagOvo549caWEkIJTT/0w=
+X-Received: by 2002:a05:6870:b627:b0:102:f25:a460 with SMTP id
+ cm39-20020a056870b62700b001020f25a460mr481377oab.193.1656032970163; Thu, 23
+ Jun 2022 18:09:30 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 Jun 2022 18:09:29 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <62b50863.1c69fb81.be104.158e@mx.google.com>
-References: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org> <CAE-0n53X6mwQuoZAgC-mBP42HKqy=NuE7nJpgHGk-pYSFQpcjQ@mail.gmail.com> <20220624003714.918ACC3411D@smtp.kernel.org> <62b50863.1c69fb81.be104.158e@mx.google.com>
-Subject: Re: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
+In-Reply-To: <20220620153956.1723269-2-dmitry.baryshkov@linaro.org>
+References: <20220620153956.1723269-1-dmitry.baryshkov@linaro.org> <20220620153956.1723269-2-dmitry.baryshkov@linaro.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Thu, 23 Jun 2022 18:09:29 -0700
+Message-ID: <CAE-0n50P1sre19Vn76m2JuyNV1dLsBt7dOA30rnGPS_z3=aVjw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] phy: qcom-qmp-ufs: provide symbol clocks
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Date:   Thu, 23 Jun 2022 17:49:12 -0700
-User-Agent: alot/0.10
-Message-Id: <20220624004914.5AD78C3411D@smtp.kernel.org>
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Christian Marangi (2022-06-23 17:42:05)
-> On Thu, Jun 23, 2022 at 05:37:12PM -0700, Stephen Boyd wrote:
-> >=20
-> > Also I'd appreciate clk patches be sent to my kernel.org email instead
-> > of chromium to help my filters.
->=20
-> Sorry for the OT but as you mention... there are many series for ipq806x
-> all reviewed. Wonder if they can be picked or should I RESEND them?
->=20
-> Some of them are blocking me from sending other fixes as the current
-> dtsi have wrong definition that would cause kernel panic (if things are
-> correctly implemented on the driver side)
->=20
+Quoting Dmitry Baryshkov (2022-06-20 08:39:56)
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index a2526068232b..0f31d3255897 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1167,6 +1167,54 @@ static int qcom_qmp_phy_ufs_clk_init(struct device *dev, const struct qmp_phy_cf
+>         return devm_clk_bulk_get(dev, num, qmp->clks);
+>  }
+>
+> +static void phy_clk_release_provider(void *res)
+> +{
+> +       of_clk_del_provider(res);
+> +}
+> +
+> +#define UFS_SYMBOL_CLOCKS 3
+> +
+> +static int phy_symbols_clk_register(struct qcom_qmp *qmp, struct device_node *np)
+> +{
+> +       struct clk_hw_onecell_data *clk_data;
+> +       struct clk_hw *hw;
+> +       int ret;
+> +
+> +       clk_data = devm_kzalloc(qmp->dev, struct_size(clk_data, hws, UFS_SYMBOL_CLOCKS), GFP_KERNEL);
+> +       clk_data->num = UFS_SYMBOL_CLOCKS;
+> +
+> +       hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_rx_symbol_0_clk_src",
+> +                                                          NULL, 0, 0);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       clk_data->hws[0] = hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_rx_symbol_1_clk_src",
+> +                                                          NULL, 0, 0);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       clk_data->hws[1] = hw;
+> +
+> +       hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_tx_symbol_0_clk_src",
+> +                                                          NULL, 0, 0);
 
-Bjorn has agreed to pick up qcom clk patches and send them off as a pull
-request to clk maintainers (i.e. me). Please don't RESEND patches unless
-requested. When that happens I have to mark the old series as
-"superseded" and then look at the resends. Then I review code slower and
-everyone is sad.
+This line should be aligned with the opening parenthesis. Same for the
+above other two.
+
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       clk_data->hws[2] = hw;
+> +
+> +       ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
+> +       if (ret)
+> +               return ret;
+> +
+> +        /*
+
+This is tabbed weird. It doesn't align with the if above.
+
+
+> +         * Roll a devm action because the clock provider is the child node, but
+> +         * the child node is not actually a device.
+> +         */
+> +        return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
+> +}
+> +
+>  static const struct phy_ops qcom_qmp_ufs_ops = {
+>         .power_on       = qcom_qmp_phy_ufs_enable,
+>         .power_off      = qcom_qmp_phy_ufs_disable,
