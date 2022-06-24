@@ -2,122 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A0DC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 12:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C2FCCA480
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 14:35:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230177AbiFXMBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 08:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50378 "EHLO
+        id S231750AbiFXOft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 10:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiFXMBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 08:01:49 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17097E01D
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 05:01:48 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id n01o2700F4C55Sk0601oFH; Fri, 24 Jun 2022 14:01:48 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1o4i0R-000gXW-PT; Fri, 24 Jun 2022 14:01:47 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1o4i0Q-009mro-RY; Fri, 24 Jun 2022 14:01:46 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.20
-Date:   Fri, 24 Jun 2022 14:01:43 +0200
-Message-Id: <cover.1656071712.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S232616AbiFXOfN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 10:35:13 -0400
+Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 53F7456773;
+        Fri, 24 Jun 2022 07:34:52 -0700 (PDT)
+Received: from mail (mail.baikal.int [192.168.51.25])
+        by mail.baikalelectronics.com (Postfix) with ESMTP id E5D8716C8;
+        Fri, 24 Jun 2022 17:20:18 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com E5D8716C8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baikalelectronics.ru; s=mail; t=1656080419;
+        bh=YrWLm+KZr1EyqRgLsnSLO9iR2EG0j+IlZGICVjODVIw=;
+        h=From:To:CC:Subject:Date:From;
+        b=BJJOnystZUcVnJQMlgxTP9kwPSGW+RdQo75pSPf09HWs5KK4yU4zgnJ8qkNjk0knT
+         lxUHBM1GB2kUKW12ytZAHjC3CVFsH3JAbWpkFHuzB5VQeCNOZHTK066ZZV8Lo/7F/J
+         rS0vIiNGv4Pn57IiwK5TdwupCmE+BUj7+5DrFz3M=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 24 Jun 2022 17:18:59 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND v5 0/8] clk/resets: baikal-t1: Add DDR/PCIe resets and xGMAC/SATA fixes
+Date:   Fri, 24 Jun 2022 17:18:44 +0300
+Message-ID: <20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Folks! It has been over four months since the first series submission for
+review. Please merge it in.
 
-The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
+Short summary regarding this patchset. The series starts from fixing a
+wrong semantic of the device managed optional exclusive bulk reset control
+getter. Then we suggest a fix of the clocks glitching cause by the Renesas
+5P49V6901 chip in some circumstances. Afterwards a few more modifications
+are introduced to finally finish the Baikal-T1 CCU unit support up and
+prepare the code before adding the Baikal-T1 PCIe/xGMAC support. First of
+all it turned out I specified wrong DW xGMAC PTP reference clock divider
+in my initial patches. It must be 8, not 10. Secondly I was wrong to add a
+joint xGMAC Ref and PTP clock instead of having them separately defined.
+The SoC manual describes these clocks as separate fixed clock wrappers.
+Finally in order to close the SoC clock/reset support up we need to add
+the DDR and PCIe interfaces reset controls support. It's done in two
+steps. First I've moved the reset-controls-related code into a dedicated
+module. Then the DDR/PCIe reset-control functionality is added. As the
+series finalization we've decided to convert the Baikal-T1 clock/reset
+source drivers to mainly being the platform device driver and
+pre-initialize the basic clocks only at the early kernel boot stages.
 
-  Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v2:
+- Resubmit the series with adding @Philipp to the list of the recipients.
 
-are available in the Git repository at:
+Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v3:
+- No comments. Just resend the series.
+- Rebased from v5.17 onto v5.18-rc3.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.20-tag1
+Link: https://lore.kernel.org/linux-clk/20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v4:
+- Completely split the CCU Dividers and Resets functionality up. (@Stephen)
+- Add a new fixes patch: "clk: baikal-t1: Actually enable SATA internal
+  ref clock".
+- Add a new fixes patch: "reset: Fix devm bulk optional exclusive control
+  getter".
+- Add a new fixes patch: "clk: vc5: Fix 5P49V6901 outputs disabling when
+  enabling FOD".
+- Add a new feagure patch: "clk: baikal-t1: Convert to platform device
+  driver".
+- Change the internal clock ID to the XGMAC-referred name.
+- Rebase onto the kernel v5.18.
 
-for you to fetch changes up to 080bcd8d5997b1a615e17cab02bd9d16d1d4fbf3:
+Link: https://lore.kernel.org/lkml/20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru/
+Changelog v5:
+- Just resend.
+- Rebase onto the kernel v5.19-rcX.
 
-  clk: renesas: r8a779f0: Add HSCIF clocks (2022-06-17 09:14:13 +0200)
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-----------------------------------------------------------------
-clk: renesas: Updates for v5.20
+Serge Semin (8):
+  reset: Fix devm bulk optional exclusive control getter
+  clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
+  clk: baikal-t1: Fix invalid xGMAC PTP clock divider
+  clk: baikal-t1: Add shared xGMAC ref/ptp clocks internal parent
+  clk: baikal-t1: Add SATA internal ref clock buffer
+  clk: baikal-t1: Move reset-controls code into a dedicated module
+  clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+  clk: baikal-t1: Convert to platform device driver
 
-  - Add GPT/POEG (PWM) clocks and resets on RZ/G2L,
-  - Add PFC and WDT clocks and resets on RZ/V2M,
-  - Add thermal, SDHI, Z (CPU core), PCIe, and HSCIF (serial) clocks on
-    R-Car S4-8,
-  - Miscellaneous fixes and improvements.
+ drivers/clk/baikal-t1/Kconfig       |  12 +-
+ drivers/clk/baikal-t1/Makefile      |   1 +
+ drivers/clk/baikal-t1/ccu-div.c     |  84 +++++++--
+ drivers/clk/baikal-t1/ccu-div.h     |  17 +-
+ drivers/clk/baikal-t1/ccu-pll.h     |   8 +
+ drivers/clk/baikal-t1/ccu-rst.c     |  99 ++++++++++
+ drivers/clk/baikal-t1/ccu-rst.h     |  79 ++++++++
+ drivers/clk/baikal-t1/clk-ccu-div.c | 272 +++++++++++++++++-----------
+ drivers/clk/baikal-t1/clk-ccu-pll.c | 128 ++++++++++---
+ drivers/clk/baikal-t1/clk-ccu-rst.c | 257 ++++++++++++++++++++++++++
+ drivers/clk/clk-versaclock5.c       |   2 +-
+ include/dt-bindings/reset/bt1-ccu.h |   9 +
+ include/linux/reset.h               |   2 +-
+ 13 files changed, 814 insertions(+), 156 deletions(-)
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
+ create mode 100644 drivers/clk/baikal-t1/clk-ccu-rst.c
 
-Thanks for pulling!
+-- 
+2.35.1
 
-----------------------------------------------------------------
-Biju Das (3):
-      clk: renesas: r9a07g044: Add GPT clock and reset entry
-      clk: renesas: r9a07g044: Add POEG clock and reset entries
-      clk: renesas: rzg2l: Fix reset status function
-
-Geert Uytterhoeven (8):
-      clk: renesas: r8a73a4: Remove r8a73a4_cpg.reg
-      clk: renesas: r8a7740: Remove r8a7740_cpg.reg
-      clk: renesas: sh73a0: Remove sh73a0_cpg.reg
-      clk: renesas: r8a7778: Remove struct r8a7778_cpg
-      clk: renesas: r8a7779: Remove struct r8a7779_cpg
-      clk: renesas: rza1: Remove struct rz_cpg
-      dt-bindings: clock: renesas,rzg2l: Simplify header file references
-      clk: renesas: r8a779f0: Add Z0 and Z1 clock support
-
-Phil Edworthy (2):
-      clk: renesas: r9a09g011: Add PFC clock and reset entries
-      clk: renesas: r9a09g011: Add WDT clock and reset entries
-
-Ralph Siemsen (2):
-      clk: renesas: r9a06g032: Drop some unused fields
-      clk: renesas: r9a06g032: Fix UART clkgrp bitsel
-
-Wolfram Sang (3):
-      clk: renesas: r8a779f0: Add thermal clock
-      clk: renesas: r8a779f0: Add SDHI0 clock
-      clk: renesas: r8a779f0: Add HSCIF clocks
-
-Yoshihiro Shimoda (1):
-      clk: renesas: r8a779f0: Add PCIe clocks
-
- .../bindings/clock/renesas,rzg2l-cpg.yaml          |  7 ++---
- drivers/clk/renesas/clk-r8a73a4.c                  | 22 +++++++--------
- drivers/clk/renesas/clk-r8a7740.c                  | 20 ++++++-------
- drivers/clk/renesas/clk-r8a7778.c                  | 31 ++++++--------------
- drivers/clk/renesas/clk-r8a7779.c                  | 27 ++++++------------
- drivers/clk/renesas/clk-rz.c                       | 33 ++++++++++------------
- drivers/clk/renesas/clk-sh73a0.c                   | 26 ++++++++---------
- drivers/clk/renesas/r8a779f0-cpg-mssr.c            | 10 +++++++
- drivers/clk/renesas/r9a06g032-clocks.c             | 32 ++++++++++-----------
- drivers/clk/renesas/r9a07g044-cpg.c                | 17 ++++++++++-
- drivers/clk/renesas/r9a09g011-cpg.c                |  5 ++++
- drivers/clk/renesas/rzg2l-cpg.c                    |  2 +-
- 12 files changed, 117 insertions(+), 115 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
