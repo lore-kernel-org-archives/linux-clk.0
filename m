@@ -2,68 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F3EC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 00:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39E9C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 00:27:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbiFXAU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 20:20:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
+        id S230168AbiFXA1V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 20:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiFXAU7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 20:20:59 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB745DC1B;
-        Thu, 23 Jun 2022 17:20:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A0A80B824D7;
-        Fri, 24 Jun 2022 00:20:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58BCFC341C0;
-        Fri, 24 Jun 2022 00:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656030055;
-        bh=yK4Zpaw3ZHGZQHmZW7TtaxpLVjkSC7bBZS4WR2KxmTI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=l9lTf31ikj9HsC9DhtTjkjjCpEYRAdMH3kimqLIVG3W15+EyEHhihk+8pTTSpAsof
-         TajdkAlbhriZweDazz6c0I+lwjUmnsLKqKHjq0zfXfq6Gt/HGlA/jHss8iT9YjaW9B
-         Ya/eGHv1jIdxTW9U2xaSQeH8OqeB1v6g7XTKGgoWfQSbfILAhimMYHi1Km2YN0uoL4
-         QMtLc1zufVAJrYQ6H9H9loZEFxxPMzD4Y0s/HBia/GmEuhv50CMmSG0gVffzXFin6T
-         QscbOifhjqdcu3GJk9eklNmJ8LK+TcYsxkdyFKFBPq2b/uR8JBwvtIR9pJWA19rBxU
-         fveX6EbJn3JOw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229437AbiFXA1U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 20:27:20 -0400
+Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04C4C527C7
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 17:27:20 -0700 (PDT)
+Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-fe023ab520so1637451fac.10
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 17:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=vLPxQpPVe53r4Mmfefvo8bhM2y//XoAwBTSHLhdIZPQ=;
+        b=MyDz/Sjcr8o+Jg+xDYH48Fl5WxupXhtIMJBqfOTWYuOy+VhCnX/qkbZOVPjkAlNxAM
+         X3Fv8LuoMcN5F6GXeFtsBxzWDMzq7ky0tYus1++h0irkP4A9d03Ft6UxH6hNzlnnR9OG
+         S/L6duzsWf6bP0o731XIjZNA5h2d6TULlXpro=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=vLPxQpPVe53r4Mmfefvo8bhM2y//XoAwBTSHLhdIZPQ=;
+        b=G9mYZIkvzx8xfAH5bdm8I208P+LQD1u+O1GP99RBwyCSp7Fo3Td1yW6OWXiXx6fKco
+         OhUkpgiAv8nETXLRr+5naxLE3VmIUEzOfswxSdP9J4svW+5DHgSPAjPKiFkTL35g9COK
+         OxhRX77RLeNszawXPp3oQhZCrFSeAimMHngS85yq1X903Y0hUxbFXafZR66UpUm9T7y/
+         7vlIe7c1QA86Em4hjzu9i0NxW9b2gRlTyTtrbxt+5QGlpsObyNq0oMs44XZbdJ9yhqPA
+         8MIHpeTNAmUWjuL7z8+Q148B5IWsNWyUgvkYj/fCxuBGRRrvQKNtwN5AYrd6f3eX8ZOr
+         2gVw==
+X-Gm-Message-State: AJIora9Ljrq2Gnh02w4oLiQrBdpNnZHFl15y395tKEWOqLji6PSNcPEx
+        LES7UY38pEDeHrfblq0WsQSgh2+UvCRgZky1pG1xNA==
+X-Google-Smtp-Source: AGRyM1uB/dutJHNaka6kNs4qoT8rU8wUqlI3HgOkLTqitXnSC3bXULQe/NMJ3pyp4NsEokhzwdvdz6WoxIpBtRaxW1Y=
+X-Received: by 2002:a05:6870:b381:b0:fe:2004:b3b5 with SMTP id
+ w1-20020a056870b38100b000fe2004b3b5mr413726oap.63.1656030439375; Thu, 23 Jun
+ 2022 17:27:19 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 Jun 2022 17:27:18 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220623142837.3140680-1-bmasney@redhat.com>
-References: <20220623142837.3140680-1-bmasney@redhat.com>
-Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk for sa8540p
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahalaney@redhat.com, echanude@redhat.com
-To:     Brian Masney <bmasney@redhat.com>, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org
-Date:   Thu, 23 Jun 2022 17:20:53 -0700
+In-Reply-To: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
+References: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org>
+From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Message-Id: <20220624002055.58BCFC341C0@smtp.kernel.org>
+Date:   Thu, 23 Jun 2022 17:27:18 -0700
+Message-ID: <CAE-0n53X6mwQuoZAgC-mBP42HKqy=NuE7nJpgHGk-pYSFQpcjQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last
+ remaining entry
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Ansuel Smith <ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Brian Masney (2022-06-23 07:28:37)
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc828=
-0xp.c
-> index 4b894442fdf5..4639b50da418 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk =3D {
->                 .hw.init =3D &(const struct clk_init_data) {
->                         .name =3D "gcc_ufs_phy_axi_clk",
->                         .parent_hws =3D (const struct clk_hw*[]){
-> +                               &gcc_ufs_ref_clkref_clk.clkr.hw,
->                                 &gcc_ufs_phy_axi_clk_src.clkr.hw,
->                         },
->                         .num_parents =3D 1,
+Quoting Dmitry Baryshkov (2022-06-20 14:51:50)
+> Use parent_data for the last remaining entry (pll4). This clock is
+> provided by the lcc device.
+>
+> Fixes: cb02866f9a74 ("clk: qcom: gcc-ipq806x: convert parent_names to parent_data")
+> Cc: Ansuel Smith <ansuelsmth@gmail.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-ipq806x.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+> index 718de17a1e60..6447f3e81b55 100644
+> --- a/drivers/clk/qcom/gcc-ipq806x.c
+> +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> @@ -79,7 +79,9 @@ static struct clk_regmap pll4_vote = {
+>         .enable_mask = BIT(4),
+>         .hw.init = &(struct clk_init_data){
+>                 .name = "pll4_vote",
+> -               .parent_names = (const char *[]){ "pll4" },
+> +               .parent_data = &(const struct clk_parent_data){
+> +                       .fw_name = "pll4", .name = "pll4",
 
-num_parents needs an update. But this is a branch, not a mux, so it
-can't have more than one parent.
+Is there a DT binding update?
