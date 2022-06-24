@@ -2,81 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243FC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 20:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C3FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 21:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229614AbiFXUQ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 16:16:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60998 "EHLO
+        id S231584AbiFXVyV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 17:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbiFXUQz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 16:16:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B7F7C840;
-        Fri, 24 Jun 2022 13:16:54 -0700 (PDT)
+        with ESMTP id S229645AbiFXVyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 17:54:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C597A828BD;
+        Fri, 24 Jun 2022 14:54:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5D8CAB82B97;
-        Fri, 24 Jun 2022 20:16:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04747C34114;
-        Fri, 24 Jun 2022 20:16:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 65487623B2;
+        Fri, 24 Jun 2022 21:54:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82ADC3411C;
+        Fri, 24 Jun 2022 21:54:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656101812;
-        bh=4QRUtnLSzmrMQQ9qX22jJ4l+dPRlwBTscT5+qfKgSD8=;
+        s=k20201202; t=1656107658;
+        bh=Qkhuf+bjK+a+TQiaqrelJvif8tE2ah8LdfGpZv8h8vU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gkJ8T59vdML4M8M5BzskJhOxZRZvGe3BrktXTIpvBQ7Gn0TGH5CjOCDF2r+5i7nF6
-         fU0CFPd+uWOnALRg0FQAU8P25cbkfKBSmExAzEzmo6iVp/AJSwmkyPEcc7BaOv3Dlr
-         wrvTP0tbGsBKQ2Bjw9GdmodnnwmQaMNOnsxsUIIHKgCkd2oj6VPYGH4y58SRxjE47w
-         T1AMJVUeBFiabLuaD0duj4yKRdghVwnfMQ/HKtpVCVCrez0ygD8Y2GLiRV5nK+Ainc
-         pKe/ej4fi/7MaH0QOFigrLcmfzbcCaYePgQKUvLaZsXbaTa9J2X6NrsiUHWDfwlYtw
-         paiWjDn4+V0sw==
+        b=aSjgKGdxwlbxOMDNjHOvkDY9qeRNoM2ZaxXOA5cD1XvrnqAtDduCQGKxb/HrxNHWn
+         ihcDAukvj8ghNiq6D2TIC6AgWUL9ld0r2onBqY5gVM/mE0T8iSm7qBioKa70tv22P1
+         a6jZR7A88x6pLnet/oCdrdR6Lr757r7CXhLbdwgho2+wpToak4C0ii4kSeWRE+o7qt
+         QwqtoSfXiO3JWKHNd1gdPShwpy3z2f5GljSwfzuoYDgNrewU/uB8M8qD7zNnNSZCHF
+         Dz/Nu9g0jzTEdj0wMZJ5qFhBpgvl7db32N/EuV0elk93aMOVN+w2+t/0LQoZ7Wdovg
+         Et2hRGUGezEPQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YrXo+i3wwl2ERKIj@xps13>
-References: <20220623142837.3140680-1-bmasney@redhat.com> <20220624002055.58BCFC341C0@smtp.kernel.org> <YrXo+i3wwl2ERKIj@xps13>
-Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk for sa8540p
+In-Reply-To: <cover.1656071712.git.geert+renesas@glider.be>
+References: <cover.1656071712.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.20
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahalaney@redhat.com, echanude@redhat.com
-To:     Brian Masney <bmasney@redhat.com>
-Date:   Fri, 24 Jun 2022 13:16:49 -0700
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 24 Jun 2022 14:54:15 -0700
 User-Agent: alot/0.10
-Message-Id: <20220624201652.04747C34114@smtp.kernel.org>
+Message-Id: <20220624215418.B82ADC3411C@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Brian Masney (2022-06-24 09:40:26)
-> On Thu, Jun 23, 2022 at 05:20:53PM -0700, Stephen Boyd wrote:
-> > Quoting Brian Masney (2022-06-23 07:28:37)
-> > > diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-s=
-c8280xp.c
-> > > index 4b894442fdf5..4639b50da418 100644
-> > > --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> > > +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> > > @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk =
-=3D {
-> > >                 .hw.init =3D &(const struct clk_init_data) {
-> > >                         .name =3D "gcc_ufs_phy_axi_clk",
-> > >                         .parent_hws =3D (const struct clk_hw*[]){
-> > > +                               &gcc_ufs_ref_clkref_clk.clkr.hw,
-> > >                                 &gcc_ufs_phy_axi_clk_src.clkr.hw,
-> > >                         },
-> > >                         .num_parents =3D 1,
-> >=20
-> > num_parents needs an update.=20
+Quoting Geert Uytterhoeven (2022-06-24 05:01:43)
+>         Hi Mike, Stephen,
 >=20
-> Oops!
+> The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a=
+56:
 >=20
-> > But this is a branch, not a mux, so it can't have more than one
-> > parent.
+>   Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
 >=20
-> Would a mux be represented with 'struct clk_rcg2'?
+> are available in the Git repository at:
 >=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.20-tag1
+>=20
+> for you to fetch changes up to 080bcd8d5997b1a615e17cab02bd9d16d1d4fbf3:
+>=20
+>   clk: renesas: r8a779f0: Add HSCIF clocks (2022-06-17 09:14:13 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Could be. An RCG is more than a mux, because it also has a divider and
-an m/n counter.
+Thanks. Pulled into clk-next
