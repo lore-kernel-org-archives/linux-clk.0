@@ -2,80 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32201C43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243FC43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 20:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbiFXRzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 13:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
+        id S229614AbiFXUQ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 16:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbiFXRzf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:55:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D48A7655;
-        Fri, 24 Jun 2022 10:55:34 -0700 (PDT)
+        with ESMTP id S229522AbiFXUQz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 16:16:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B7F7C840;
+        Fri, 24 Jun 2022 13:16:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 37F47B82B67;
-        Fri, 24 Jun 2022 17:55:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F67C34114;
-        Fri, 24 Jun 2022 17:55:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5D8CAB82B97;
+        Fri, 24 Jun 2022 20:16:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04747C34114;
+        Fri, 24 Jun 2022 20:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656093331;
-        bh=ifbQWrSacxUg2H6ShAtyaoldstP4yu0ExIla1qMp8+A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Z254G4QIEyIBoNKv9dQBEtArmGVblyDCBp5RdgIhZobV2Wt3Cr8rqu4pQvTxdlNbE
-         hjneVy6tAq2P/KG8/lhQ9gZMwlTo/VhEOuet8QKbz6W2nGZleD6rT6NxeVikB85JfM
-         CS5/I/uXa6GQdbz0kj5hixsb1PUERksTr2MAMYcpM5ZCy9GMhns0TEzB4IuZ3x0kSE
-         dXt2GeLJJXpVZSznB51j5tLvAsaP155Sjns73v+uKSJLRDkHdrVqevMtpFRfKgwZAv
-         6XwLEZZBD2XeXf1RaL0ou7XM/Cz86MAGQwRoL+G2032SId2PoARzI3X51OSyOGi71h
-         Qc7MPlwVIwyDA==
-Date:   Fri, 24 Jun 2022 10:55:22 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/3] Create common DPLL/clock configuration API
-Message-ID: <20220624105522.1961b4d3@kernel.org>
-In-Reply-To: <3d2970c7-f785-edf7-2936-807cf21ec65e@gmail.com>
-References: <20220623005717.31040-1-vfedorenko@novek.ru>
-        <3d2970c7-f785-edf7-2936-807cf21ec65e@gmail.com>
+        s=k20201202; t=1656101812;
+        bh=4QRUtnLSzmrMQQ9qX22jJ4l+dPRlwBTscT5+qfKgSD8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gkJ8T59vdML4M8M5BzskJhOxZRZvGe3BrktXTIpvBQ7Gn0TGH5CjOCDF2r+5i7nF6
+         fU0CFPd+uWOnALRg0FQAU8P25cbkfKBSmExAzEzmo6iVp/AJSwmkyPEcc7BaOv3Dlr
+         wrvTP0tbGsBKQ2Bjw9GdmodnnwmQaMNOnsxsUIIHKgCkd2oj6VPYGH4y58SRxjE47w
+         T1AMJVUeBFiabLuaD0duj4yKRdghVwnfMQ/HKtpVCVCrez0ygD8Y2GLiRV5nK+Ainc
+         pKe/ej4fi/7MaH0QOFigrLcmfzbcCaYePgQKUvLaZsXbaTa9J2X6NrsiUHWDfwlYtw
+         paiWjDn4+V0sw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YrXo+i3wwl2ERKIj@xps13>
+References: <20220623142837.3140680-1-bmasney@redhat.com> <20220624002055.58BCFC341C0@smtp.kernel.org> <YrXo+i3wwl2ERKIj@xps13>
+Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk for sa8540p
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        agross@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahalaney@redhat.com, echanude@redhat.com
+To:     Brian Masney <bmasney@redhat.com>
+Date:   Fri, 24 Jun 2022 13:16:49 -0700
+User-Agent: alot/0.10
+Message-Id: <20220624201652.04747C34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 24 Jun 2022 10:20:44 -0700 Florian Fainelli wrote:
-> On 6/22/22 17:57, Vadim Fedorenko wrote:
-> > Implement common API for clock/DPLL configuration and status reporting.
-> > The API utilises netlink interface as transport for commands and event
-> > notifications. This API aim to extend current pin configuration and
-> > make it flexible and easy to cover special configurations.  
-> 
-> Any reasons why you are not copying the Linux common clock framework 
-> maintainers and not seeking to get your code included under drivers/clk/ 
-> where it would seem like a more natural place for it?
-> 
-> Is netlink really a necessary configuration interface for those devices?
+Quoting Brian Masney (2022-06-24 09:40:26)
+> On Thu, Jun 23, 2022 at 05:20:53PM -0700, Stephen Boyd wrote:
+> > Quoting Brian Masney (2022-06-23 07:28:37)
+> > > diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-s=
+c8280xp.c
+> > > index 4b894442fdf5..4639b50da418 100644
+> > > --- a/drivers/clk/qcom/gcc-sc8280xp.c
+> > > +++ b/drivers/clk/qcom/gcc-sc8280xp.c
+> > > @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk =
+=3D {
+> > >                 .hw.init =3D &(const struct clk_init_data) {
+> > >                         .name =3D "gcc_ufs_phy_axi_clk",
+> > >                         .parent_hws =3D (const struct clk_hw*[]){
+> > > +                               &gcc_ufs_ref_clkref_clk.clkr.hw,
+> > >                                 &gcc_ufs_phy_axi_clk_src.clkr.hw,
+> > >                         },
+> > >                         .num_parents =3D 1,
+> >=20
+> > num_parents needs an update.=20
+>=20
+> Oops!
+>=20
+> > But this is a branch, not a mux, so it can't have more than one
+> > parent.
+>=20
+> Would a mux be represented with 'struct clk_rcg2'?
+>=20
 
-Sorry, likely my fault. Vadim asked me who to CC and I suggested to just
-hit linux-arm-kernel assuming it's the best place for chance encounters
-with embedded folks. An assumption based on no real data or experience.
-
-Regarding the clock framework I think I brought that suggestion up in
-the mega thread when Maciej M proposed the SyncE support and putting
-all the PLL info directly in rtnetlink. There wasn't much support,
-and perhaps that's fair, clock generation vs runtime DPLL config for
-time source purposes are different use cases.
-
-With that longish excuse out of the way, CCing linux-clk now, here's
-the lore link to the thread:
-
-https://lore.kernel.org/r/20220623005717.31040-2-vfedorenko@novek.ru/
-
+Could be. An RCG is more than a mux, because it also has a divider and
+an m/n counter.
