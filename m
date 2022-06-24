@@ -2,116 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99668CCA481
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32201C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbiFXR1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 13:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51396 "EHLO
+        id S230248AbiFXRzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 13:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232116AbiFXR0z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:26:55 -0400
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A821B34650;
-        Fri, 24 Jun 2022 10:26:52 -0700 (PDT)
-Received: by mail-il1-f171.google.com with SMTP id a16so1918127ilr.6;
-        Fri, 24 Jun 2022 10:26:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=Hcu9Y5I2TimI6GlhyMhgQe9uEC4LVq7xIAa/nAEPBC8=;
-        b=Ks9Kxud5Ef+I3tMy+o1ZwmojUgWitXjhm+aOI+TAM+04nwtxS5Y4ixfMDKV45zMDMl
-         xNr1C+I4tmkK2aqyAf87mcOULKZoq/ZX+XVgrrHr79686T5Id6dKPPAJQEhY2saPyaT0
-         Eh4KnkR0cjXYld71EopeDXFBiXWEzxKQ1GQou6rUu7UkJx86rkRFnT7f5cWwGyS/adKS
-         8a8mJwS9Z89/1ewYgwN+LPvw0nSLJG3FqhEYsIU+FCOJ8Db48beet0FsB5bLV/GnQuaS
-         VNqFZUUf+HcYiqUzeZc4FpzVnq8TfTQgw358aMvjRadnfv39OXfqAaKqlGaY6k9HuL+7
-         BmUg==
-X-Gm-Message-State: AJIora9rzcVhj4Zz/mVgjnyCbuBakjjT1gUQ3I71b7tklDn+Q1JyVQjq
-        p/Aw5+PyuA7RuZi/2HLdRw==
-X-Google-Smtp-Source: AGRyM1vzAHHR7MUdvcHbYB9plvLeB5pijXtWczq677bgA2sQBUma/I2wqLWx2WXMYorxt26CDMLDSg==
-X-Received: by 2002:a92:a041:0:b0:2d7:7935:effa with SMTP id b1-20020a92a041000000b002d77935effamr44849ilm.222.1656091611881;
-        Fri, 24 Jun 2022 10:26:51 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id s12-20020a92d90c000000b002d92c91da91sm1344610iln.77.2022.06.24.10.26.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 10:26:51 -0700 (PDT)
-Received: (nullmailer pid 146334 invoked by uid 1000);
-        Fri, 24 Jun 2022 17:26:34 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sricharan R <quic_srichara@quicinc.com>
-Cc:     linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        agross@kernel.org, quic_varada@quicinc.com,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, p.zabel@pengutronix.de
-In-Reply-To: <20220621161126.15883-5-quic_srichara@quicinc.com>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com> <20220621161126.15883-5-quic_srichara@quicinc.com>
-Subject: Re: [PATCH V2 4/8] dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl bindings
-Date:   Fri, 24 Jun 2022 11:26:34 -0600
-Message-Id: <1656091594.356132.146333.nullmailer@robh.at.kernel.org>
+        with ESMTP id S229784AbiFXRzf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:55:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D48A7655;
+        Fri, 24 Jun 2022 10:55:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 37F47B82B67;
+        Fri, 24 Jun 2022 17:55:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F67C34114;
+        Fri, 24 Jun 2022 17:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1656093331;
+        bh=ifbQWrSacxUg2H6ShAtyaoldstP4yu0ExIla1qMp8+A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Z254G4QIEyIBoNKv9dQBEtArmGVblyDCBp5RdgIhZobV2Wt3Cr8rqu4pQvTxdlNbE
+         hjneVy6tAq2P/KG8/lhQ9gZMwlTo/VhEOuet8QKbz6W2nGZleD6rT6NxeVikB85JfM
+         CS5/I/uXa6GQdbz0kj5hixsb1PUERksTr2MAMYcpM5ZCy9GMhns0TEzB4IuZ3x0kSE
+         dXt2GeLJJXpVZSznB51j5tLvAsaP155Sjns73v+uKSJLRDkHdrVqevMtpFRfKgwZAv
+         6XwLEZZBD2XeXf1RaL0ou7XM/Cz86MAGQwRoL+G2032SId2PoARzI3X51OSyOGi71h
+         Qc7MPlwVIwyDA==
+Date:   Fri, 24 Jun 2022 10:55:22 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
+        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/3] Create common DPLL/clock configuration API
+Message-ID: <20220624105522.1961b4d3@kernel.org>
+In-Reply-To: <3d2970c7-f785-edf7-2936-807cf21ec65e@gmail.com>
+References: <20220623005717.31040-1-vfedorenko@novek.ru>
+        <3d2970c7-f785-edf7-2936-807cf21ec65e@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 21:41:22 +0530, Sricharan R wrote:
-> From: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Fri, 24 Jun 2022 10:20:44 -0700 Florian Fainelli wrote:
+> On 6/22/22 17:57, Vadim Fedorenko wrote:
+> > Implement common API for clock/DPLL configuration and status reporting.
+> > The API utilises netlink interface as transport for commands and event
+> > notifications. This API aim to extend current pin configuration and
+> > make it flexible and easy to cover special configurations.  
 > 
-> Add device tree binding Documentation details for ipq5018
-> pinctrl driver.
+> Any reasons why you are not copying the Linux common clock framework 
+> maintainers and not seeking to get your code included under drivers/clk/ 
+> where it would seem like a more natural place for it?
 > 
-> Co-developed-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  .../pinctrl/qcom,ipq5018-pinctrl.yaml         | 145 ++++++++++++++++++
->  1 file changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
-> 
+> Is netlink really a necessary configuration interface for those devices?
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Sorry, likely my fault. Vadim asked me who to CC and I suggested to just
+hit linux-arm-kernel assuming it's the best place for chance encounters
+with embedded folks. An assumption based on no real data or experience.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:72:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:73:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:74:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:75:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:76:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:77:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:78:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:79:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:80:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:81:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:82:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:83:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:84:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:85:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:86:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:87:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:88:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:89:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
-./Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml:90:11: [warning] wrong indentation: expected 16 but found 10 (indentation)
+Regarding the clock framework I think I brought that suggestion up in
+the mega thread when Maciej M proposed the SyncE support and putting
+all the PLL info directly in rtnetlink. There wasn't much support,
+and perhaps that's fair, clock generation vs runtime DPLL config for
+time source purposes are different use cases.
 
-dtschema/dtc warnings/errors:
+With that longish excuse out of the way, CCing linux-clk now, here's
+the lore link to the thread:
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+https://lore.kernel.org/r/20220623005717.31040-2-vfedorenko@novek.ru/
 
