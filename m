@@ -2,140 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4141C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 16:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 763AFCCA473
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbiFXQwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:52:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
+        id S231616AbiFXRGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 13:06:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbiFXQwV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 12:52:21 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F141560F2D;
-        Fri, 24 Jun 2022 09:52:18 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id g26so5881254ejb.5;
-        Fri, 24 Jun 2022 09:52:18 -0700 (PDT)
+        with ESMTP id S231565AbiFXRGG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:06:06 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC64849F82
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 10:06:04 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id w193so4352253oie.5
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 10:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wbymErIEYkOFeBKk/ebEJiqOJG2qjdsYlqZoWmC7QLE=;
-        b=PRRbdWpwESnTfnifMOyCgpGVdaGmvXQWwSZ3f6whE1ZxjZFa+545KZbP2dWC4hkBEt
-         s8vL/QSlIJgYyoxdYpenaVdfezjz27HCliox/O8r2THavoUObV+SS2MMsEVNQSbOIp+n
-         wCH7a7NFJV2lMsxU+B0haGz6nXtJ8llqqjADcitqejPzY0VyRQQXEgP8v5m/7kwr2Gp1
-         C0Ymu6A4GldzaR/0OPpjHzgD72fNiKUTcDZ3MUa20hnakwVjsukV94zH2NHIlNVRi5BQ
-         HdKJTKnXWgz7g3LCKr7CKtpz9v/RYj2A5eIXNOLJL35/V4eLwAcxTC5oFnu7ukuIBb70
-         uv4A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0+0vhPEExLAjmHmvWpzqEFXlBkwHLniOzXACImlZjrY=;
+        b=Y3mu5a2lveFJrWpQklsmSrTWN64yCIpvDo+RT/i91W74AZ3BUMW1bIWJYDW8u4SaUl
+         dSSx0h06uVpA/sc7sE//Yjzbsc2ju4EIBKcm6Ctr6i2zNCe316zBQvuG7phJiGVrSvUA
+         v3MwBaqJUkqC0QFHo/T+i+m5qlDKhoen47JoXF+6dwTQgqOHDe88bJKcHJ8Q2MXwNphU
+         QzfqxpHXpilXixRBClD67ppKEhEEeYgmdOCx6zQyUJOT4mfCZ1XX9W4uYAuFUPxuyifF
+         hPvrfJd9IIlsZd7mBsZG3aetEzsk77QGIH10KMy4Cv864w062iG8SILWrde16ZGhHxnX
+         6rfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wbymErIEYkOFeBKk/ebEJiqOJG2qjdsYlqZoWmC7QLE=;
-        b=Cx1DCrz0F6//D/Kx9y/JxwznEMLWfLezKwM++2Z/ro7Tm6nk6hMjEzCp9mxGxGI6L9
-         77f5fV4auA14tVoff3DKf2kbZAEDCO9aq+4u22KwABmfnqwOO7f/L3EDhtfi5pbDrPmV
-         bS7QVkA85b/Bdhm0lshqBtTC80dJMsHPEcXCrMxHO912g9jTdwjKJyERp+14J+Os2Ttu
-         zEAu9pFbVHOTsYMeW/DwCzZvRfAnEpqcrqKhpgK3KvaX/F66knYb6SVNi9Y9cCZFqeUm
-         ijzM50frVMhBM9ej4tRK+32Lpmxgp4DaMI6GpDIT1aIZ5Sf+g9+bUVpB5D1sQvUHOpgL
-         qV6Q==
-X-Gm-Message-State: AJIora/Tn8lgMu6PvXMSYxvL6pJ/dnKPZu76eSP9Q/1cfG+DyvvtXpcF
-        XvuFpWmkfIeVYJVk54JjjQJKgTtqj+c=
-X-Google-Smtp-Source: AGRyM1vrLg2W+cGGP3wxtvgoeuzjy++7TyLF+nXPHCinNEq5lfVYYODHu3V1BUQIakLhaOy9dyJ/iw==
-X-Received: by 2002:a17:907:7249:b0:711:e939:bbb4 with SMTP id ds9-20020a170907724900b00711e939bbb4mr14351418ejc.480.1656089537406;
-        Fri, 24 Jun 2022 09:52:17 -0700 (PDT)
-Received: from roman-Latitude-3400.globallogic.com ([195.234.74.2])
-        by smtp.gmail.com with ESMTPSA id b20-20020a0564021f1400b0042e15364d14sm2494479edb.8.2022.06.24.09.52.15
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0+0vhPEExLAjmHmvWpzqEFXlBkwHLniOzXACImlZjrY=;
+        b=Y4S8F+QEM/wdY0WtVcYR1Q0pMk+yvTIPsGDnBd6SOQ/8nNGr/GDRN7ytjcCJDswR0w
+         FHzavRQl+kpmPvBHAMNx9r65pFxMP1YNp/FNdjaw3HalpmzUuc3hpgjtH8HGZ1UL1EJc
+         vHpnN7nFMpI0JFihg71e5LScpujpBLFXRx+ikjqkiKP9/ul0PIUkfyOwzIvqpRBGQBrO
+         ybBTRpGj2DMCU+YLbXOiotMRaCZN0nv3BEOQAGUv7WmxeEcvgjB6STazqzws/BO7ybee
+         ZlBQ3Wk0rmK9HNxUMcCZbnmoUKMohle069W7UdJRpa2X9/sfR2hOrV2feh3a6FkNn1Z1
+         Gl5Q==
+X-Gm-Message-State: AJIora8N/IR/5B+6TbNCzmXRVyzbWj/nn5jp0CUwbDawNv7Mxfaz8pcT
+        gI6H8hqXJ72H2kUZ1SZ386VV2w==
+X-Google-Smtp-Source: AGRyM1txfnmyDcykZy0fXC5KNNgxnfMaOc//EpKeR/oIrHOotIDXvosZFm+cAeMGPhFMd4+XEsa78A==
+X-Received: by 2002:a05:6808:23cb:b0:335:2987:1209 with SMTP id bq11-20020a05680823cb00b0033529871209mr38099oib.69.1656090364070;
+        Fri, 24 Jun 2022 10:06:04 -0700 (PDT)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id i14-20020a056830402e00b0060b128b935csm1807450ots.39.2022.06.24.10.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:52:16 -0700 (PDT)
-From:   Roman Stratiienko <r.stratiienko@gmail.com>
-To:     peron.clem@gmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, mripard@kernel.org,
-        wens@csie.org, jernej.skrabec@gmail.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org,
-        Roman Stratiienko <r.stratiienko@gmail.com>
-Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DFS
-Date:   Fri, 24 Jun 2022 19:52:11 +0300
-Message-Id: <20220624165211.4318-1-r.stratiienko@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 24 Jun 2022 10:06:03 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 10:08:05 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette ? <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] clk: qcom: sc7280: Update clk_init_data to const
+ for GCC
+Message-ID: <YrXvdWe5c1ZdS0AR@ripper>
+References: <20220202183528.3911-1-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220202183528.3911-1-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Using simple bash script it was discovered that not all CCU registers
-can be safely used for DFS, e.g.:
+On Wed 02 Feb 10:35 PST 2022, Taniya Das wrote:
 
-    while true
-    do
-        devmem 0x3001030 4 0xb0003e02
-        devmem 0x3001030 4 0xb0001e02
-    done
+> Update clk_init_data to const and also use index instead of fw_name for
+> global clock controller.
+> 
+> Fixes: a3cc092196ef6 ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-Script above changes the GPU_PLL multiplier register value. While the
-script is running, the user should interact with the user interface.
+Hi Taniya,
 
-Using this method the following results were obtained:
+I'm not able to find a new revision of this series in the inbox, could
+you please respin it?
 
-| Register  | Name           | Bits  | Values | Result |
-| --        | --             | --    | --     | --     |
-| 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
-| 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
-| 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
-| 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
+> ---
+>  drivers/clk/qcom/gcc-sc7280.c | 362 +++++++++++++++++-----------------
+>  1 file changed, 181 insertions(+), 181 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> index 423627d49719..ccecd3d8a6d9 100644
+> --- a/drivers/clk/qcom/gcc-sc7280.c
+> +++ b/drivers/clk/qcom/gcc-sc7280.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2020-2022, The Linux Foundation. All rights reserved.
+>   */
+> 
+>  #include <linux/clk-provider.h>
+> @@ -45,10 +45,10 @@ static struct clk_alpha_pll gcc_gpll0 = {
+>  	.clkr = {
+>  		.enable_reg = 0x52010,
+>  		.enable_mask = BIT(0),
+> -		.hw.init = &(struct clk_init_data){
+> +		.hw.init = &(const struct clk_init_data){
 
-Once bits that caused system failure disabled (kept default 0),
-it was discovered that GPU_CLK.MUX was used during DFS for some
-reason and was causing the failure too.
+And while doing so, please split this into one patch adding the const...
 
-After disabling GPU_PLL.OUTDIV the system started to fail during
-booting for some reason until the maximum frequency of GPU_PLL
-clock was limited to 756MHz.
+>  			.name = "gcc_gpll0",
+>  			.parent_data = &(const struct clk_parent_data){
+> -				.fw_name = "bi_tcxo",
+> +				.index = 0,
 
-After all the changes made DVFS started to work seamlessly.
+and a separate patch changing fw_name to index. If there are regressions
+we want to be able to bisect it down to the right one.
 
-Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+Also, please add a define for BI_TCXO, instead of having a comment in
+most places - like I did in gcc-sc8280xp.c (but as we have existing dts
+I don't think it's wise to replace all fw_name entries with .index)..
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 2ddf0a0da526f..d941238cd178a 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -95,13 +95,14 @@ static struct ccu_nkmp pll_periph1_clk = {
- 	},
- };
- 
-+/* For GPU PLL, using an output divider for DFS causes system to fail */
- #define SUN50I_H6_PLL_GPU_REG		0x030
- static struct ccu_nkmp pll_gpu_clk = {
- 	.enable		= BIT(31),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
--	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
-+	.max_rate	= 756000000UL,
- 	.common		= {
- 		.reg		= 0x030,
- 		.hw.init	= CLK_HW_INIT("pll-gpu", "osc24M",
-@@ -294,12 +295,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
- static SUNXI_CCU_GATE(bus_deinterlace_clk, "bus-deinterlace", "psi-ahb1-ahb2",
- 		      0x62c, BIT(0), 0);
- 
--static const char * const gpu_parents[] = { "pll-gpu" };
--static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
--				       0, 3,	/* M */
--				       24, 1,	/* mux */
--				       BIT(31),	/* gate */
--				       CLK_SET_RATE_PARENT);
-+/* GPU_CLK divider kept disabled to avoid interferences with DFS */
-+static SUNXI_CCU_GATE(gpu_clk, "gpu", "pll-gpu", 0x670,
-+		      BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
- 		      0x67c, BIT(0), 0);
--- 
-2.34.1
-
+Thanks,
+Bjorn
