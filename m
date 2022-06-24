@@ -2,92 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1891CC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48443CCA489
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 17:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbiFXR1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230299AbiFXR1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 24 Jun 2022 13:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51010 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbiFXR0y (ORCPT
+        with ESMTP id S231737AbiFXR0y (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 13:26:54 -0400
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB7352559B;
-        Fri, 24 Jun 2022 10:26:45 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id z191so3373901iof.6;
-        Fri, 24 Jun 2022 10:26:45 -0700 (PDT)
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470AC2A242;
+        Fri, 24 Jun 2022 10:26:47 -0700 (PDT)
+Received: by mail-il1-f179.google.com with SMTP id i17so1896370ils.12;
+        Fri, 24 Jun 2022 10:26:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
          :message-id;
-        bh=n2XNNHfnlSzPCpBxhAe6aF2TsSHsKDP/VUmQAtti+ps=;
-        b=LkkIWWo9Vou612Jvm/ZNYmdNzmnusgkETjkk9tQRpmP+7HFW4C2tTTLGcfvFJp8ljx
-         5Eq2u4wlDFg8LenV16TTfBFFNN4TkEvut1sj/UgZ1IhFeSWF5/a7/oo3hZotXtr/m+jV
-         HLaaj022f244dviPqbbwlC340fg6fza8XWyjDrPl9+/certNkzAEArA7Sk7IqwUiAEtw
-         RIjhwqZKw+QDjf0++UTrFvPIVC0urB+hg/zxD2LXCJUw2RnuFbbWs8IwVxBoEEYAPlb3
-         VClnS/8m8hgVE0ttLS+tvF7jUCtGL1eLUUQywdhMOWBUgFZO5/C0548kRNYUCRY8THMk
-         er2Q==
-X-Gm-Message-State: AJIora/uqdn5JjtJenggTV36v7myioHtklYgbNwUMbe7JCqBxRZ3TpA2
-        nZHW8LLXtmt3MFCedD9IdA==
-X-Google-Smtp-Source: AGRyM1sf4ha7eK26cIM7jLNomU3rhP57Kcz5dGvzHk+OKIszOwQIVSEmCb7pX+/RoCjgFzkNOR6bYA==
-X-Received: by 2002:a05:6638:4889:b0:331:b103:a74c with SMTP id ct9-20020a056638488900b00331b103a74cmr158177jab.66.1656091604724;
-        Fri, 24 Jun 2022 10:26:44 -0700 (PDT)
+        bh=vZ0KuXzCWjXQ6AOsXh2KIfZrb6C7pE5QQouNmQuZeM8=;
+        b=ABNNc6AlB50Tq7S1qoNUr0v/4EGyhjD2Ex4eiZohbT96jr6TqU8ckxV8gT3goUOjmz
+         GMr0hHuumHijyCK8Xe/LTcM86SHtMSJGLE8iLLkasgPFGix5vUpreaG5SsOCu3gcQvKe
+         KBzrWWucc9OXscrZe5zPZtZYQihM6mPCvJOfkeqqAL7NtH6NRZGJroxCFiX1k/j72ro/
+         i4xxT6/BuCBUgv3lRSI9GZusLLaMPMQY/b014bx0I0FETmpa2ks6WIIFjvKSIcquyeK+
+         lymyZbPbnzWzKnMUzbDGK4iFdGBU/xJofm8GF5mL91mAGZgnEHUb6Mbk964LcPTi4ulO
+         2CZw==
+X-Gm-Message-State: AJIora/0V/OliWyDXK+bLnwq4UHZlwGXtl2yo5FzwxQkrP16eoj59YWO
+        z49SxYU7CP6XMznJNdxcaQ==
+X-Google-Smtp-Source: AGRyM1sBSKVmc+LUuAPAyJCPs6KiKiCCRkgo+ta5nSdAMPAK8ZAQAS7zk/gkV6LhWB/SkzLPVhM2Gw==
+X-Received: by 2002:a92:c567:0:b0:2d1:6268:2fd5 with SMTP id b7-20020a92c567000000b002d162682fd5mr25811ilj.255.1656091606321;
+        Fri, 24 Jun 2022 10:26:46 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id p70-20020a022949000000b00339d2cd8da1sm1274202jap.152.2022.06.24.10.26.43
+        by smtp.gmail.com with ESMTPSA id k16-20020a023350000000b00339cb105ae7sm1342385jak.92.2022.06.24.10.26.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 10:26:44 -0700 (PDT)
-Received: (nullmailer pid 146350 invoked by uid 1000);
+        Fri, 24 Jun 2022 10:26:46 -0700 (PDT)
+Received: (nullmailer pid 146338 invoked by uid 1000);
         Fri, 24 Jun 2022 17:26:34 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Sricharan R <quic_srichara@quicinc.com>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_varada@quicinc.com,
-        linus.walleij@linaro.org, catalin.marinas@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20220621161126.15883-3-quic_srichara@quicinc.com>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com> <20220621161126.15883-3-quic_srichara@quicinc.com>
-Subject: Re: [PATCH V2 2/8] dt-bindings: arm64: ipq5018: Add binding descriptions for clock and reset
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, Andy Gross <agross@kernel.org>
+In-Reply-To: <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
+References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org> <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v1 1/4] dt-bindings: clock: qcom: add bindings for dispcc on SM8450
 Date:   Fri, 24 Jun 2022 11:26:34 -0600
-Message-Id: <1656091594.420060.146349.nullmailer@robh.at.kernel.org>
+Message-Id: <1656091594.372061.146337.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jun 2022 21:41:20 +0530, Sricharan R wrote:
-> From: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Thu, 23 Jun 2022 14:47:34 +0300, Dmitry Baryshkov wrote:
+> Add device tree bindings for the display clock controller on Qualcomm
+> SM8450 platform.
 > 
-> This patch adds support for the global clock controller found on
-> the IPQ5018 based devices.
-> 
-> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../bindings/clock/qcom,gcc-other.yaml        |   3 +
->  include/dt-bindings/clock/qcom,gcc-ipq5018.h  | 188 ++++++++++++++++++
->  include/dt-bindings/reset/qcom,gcc-ipq5018.h  | 122 ++++++++++++
->  3 files changed, 313 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq5018.h
->  create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq5018.h
+>  .../bindings/clock/qcom,dispcc-sm8450.yaml    | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
 > 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+yamllint warnings/errors:
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.example.dtb: clock-controller@af00000: clocks: [[4294967295, 0], [4294967295, 1], [4294967295, 0], [4294967295, 1], [4294967295, 0], [4294967295, 1, 0, 0, 0, 0, 0, 0, 0, 0], [4294967295]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
 
+doc reference errors (make refcheckdocs):
 
-gcc@1800000: '#power-domain-cells' is a required property
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
+See https://patchwork.ozlabs.org/patch/
 
-gcc@1800000: Unevaluated properties are not allowed ('#clock-cells', '#reset-cells', 'clock-names', 'clocks', 'reg' were unexpected)
-	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
