@@ -2,85 +2,266 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6705EC43334
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 01:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248F0C43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 03:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbiFXBK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 21:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55640 "EHLO
+        id S229800AbiFXDob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 23:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiFXBKz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 21:10:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A82522E9;
-        Thu, 23 Jun 2022 18:10:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 76503B824E9;
-        Fri, 24 Jun 2022 01:10:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC7BC3411D;
-        Fri, 24 Jun 2022 01:10:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656033052;
-        bh=NmgagNBV9gwyhlChqhV/v07V/dIV0rkFErcWLoUCSAw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=HwHYvAZ4Ia+YMvOHpa9O7bQy34QnFxHF0HREeVjJNj1xbvp5RrFQK3Dl2QIylJD0q
-         FNzYHu+lLFeNpjhZO8ZL9ud7L4bW95bZ/5wuNNemDGu0iqkUBwbdE/WePnn3XxuVDz
-         +KI4zEDOuRVwcnySCWv66QIn/1sczkmhKIH9BacbSh57H8Io35NjxUexYhSGlKFH83
-         wlgTwV6uZKlLfo12+Iy10uO1jcZ+5sQ8H2KBVDdlTgv/QPId4JL8LO6sNJBeDzFjKw
-         VBs4/E3YqoPY5t9bFAOMoL/MFiT01m4cki7WSqBOmM1K0jDv33dgTU9qkVoBacnvTk
-         i05q3WYediiZQ==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231254AbiFXDo2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 23:44:28 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8892C3DDE5
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 20:44:26 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-101cdfddfacso2159286fac.7
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jun 2022 20:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=LsVAWFxXYW9U7WkPksAuQVnNc7dyC8As5T0zm8UW5hA=;
+        b=D5WWm9pkGorlJ7Oa+cZXIDW1PD5SceZfIHMI8VXpHeIGLw0b83jZdMGGX8XbWbZfO4
+         K8rThFQLq1mkrE73KGALs4VVkDn8WobG02FY9KvRwfmW3VD5Cjz/12OORsaiqSmB36hl
+         5ns1Hr7gwIp6AKa9Lptj0zjZFtKHqwrEBsYR21yUcj84TM7gjgN4EVd5xRDm4xnXOHfG
+         ePFn3k5mw/rBp/Z1lR+HfB/YfhEFFJRH/Yowku94N3PZjpL5gzd/2Zwx+Cj6q4SmJdD/
+         iQJn98KTUvlRXgDwymt1y/haALFj9Z4kZhAQeLY98COTUK/SJn19XewzWzL2glXXj3Yi
+         GSCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LsVAWFxXYW9U7WkPksAuQVnNc7dyC8As5T0zm8UW5hA=;
+        b=Piqr+a14f+5QfFkY27b+pFN8U7UA4jOa4oqVIpq9eG5wGRkQ2yHpIRNW7WlUckhoPf
+         Ea1E3Hon5Vsuth83ouDOVZElY095oiRdh8MZ/9fpxCcHq4JWsrXAHU6TAE8l2NkeBI6B
+         CsQcZ+GTDMR5I108HyZ5TFwaxJThEKPuUSk8OyuBLesRcPdQSnv4DS4anEWrkW/AE/Xu
+         gF1cLowQQT0XUF3OvljDQPtM2Tuh44WzmaQwsM0hYyq6SCYsy5/XCcKthdBWCBk93rzg
+         yYFg4Fo6Pk6eIInV6QHfZZ7H2ZbGiQh9K6MTnZsDfRK5N8n18B6MzSg40VUsSDy0xGAB
+         xM9A==
+X-Gm-Message-State: AJIora8q2HICZ4PZP7H2Vo0izRfPVa7Uby70pMO10hGkYknXvd3V2QLJ
+        lZJxvYQgmz4giVG3EQTu1+qbOw==
+X-Google-Smtp-Source: AGRyM1tsiqNsqAvJu0wE+gfTif8LTF9rrpM54BGnBx5SoMvZNMqeZ0rwn08kFQqwe9EasV4DxsivsA==
+X-Received: by 2002:a05:6870:6195:b0:100:ee8a:ce86 with SMTP id a21-20020a056870619500b00100ee8ace86mr906630oah.40.1656042265790;
+        Thu, 23 Jun 2022 20:44:25 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id m28-20020a9d609c000000b0060c0b3c1b2asm907505otj.33.2022.06.23.20.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 20:44:25 -0700 (PDT)
+Date:   Thu, 23 Jun 2022 22:44:22 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sricharan R <quic_srichara@quicinc.com>
+Cc:     agross@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org,
+        catalin.marinas@arm.com, p.zabel@pengutronix.de,
+        quic_varada@quicinc.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2 4/8] dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl
+ bindings
+Message-ID: <YrUzFgB+PxYViH5L@builder.lan>
+References: <20220621161126.15883-1-quic_srichara@quicinc.com>
+ <20220621161126.15883-5-quic_srichara@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220620153956.1723269-1-dmitry.baryshkov@linaro.org>
-References: <20220620153956.1723269-1-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 1/2] clk: fixed-rate: add devm_clk_hw_register_fixed_rate
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Vinod Koul <vkoul@kernel.org>
-Date:   Thu, 23 Jun 2022 18:10:50 -0700
-User-Agent: alot/0.10
-Message-Id: <20220624011052.1EC7BC3411D@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220621161126.15883-5-quic_srichara@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2022-06-20 08:39:55)
-> Add devm_clk_hw_register_fixed_rate(), devres-managed helper to register
-> fixed-rate clock.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Tue 21 Jun 11:11 CDT 2022, Sricharan R wrote:
+
+> From: Varadarajan Narayanan <quic_varada@quicinc.com>
+> 
+> Add device tree binding Documentation details for ipq5018
+> pinctrl driver.
+> 
+> Co-developed-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  drivers/clk/clk-asm9260.c    |  2 +-
->  drivers/clk/clk-fixed-rate.c | 28 ++++++++++++++++++++++++----
->  include/linux/clk-provider.h | 27 ++++++++++++++++++++-------
->  3 files changed, 45 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-> index bacebd457e6f..4da5f38249bf 100644
-> --- a/drivers/clk/clk-asm9260.c
-> +++ b/drivers/clk/clk-asm9260.c
-> @@ -278,7 +278,7 @@ static void __init asm9260_acc_init(struct device_nod=
-e *np)
->         ref_clk =3D of_clk_get_parent_name(np, 0);
->         hw =3D __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
->                         ref_clk, NULL, NULL, 0, rate, 0,
-> -                       CLK_FIXED_RATE_PARENT_ACCURACY);
-> +                       CLK_FIXED_RATE_PARENT_ACCURACY, false);
+>  .../pinctrl/qcom,ipq5018-pinctrl.yaml         | 145 ++++++++++++++++++
+>  1 file changed, 145 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..9b16c08bd127
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq5018-pinctrl.yaml
+> @@ -0,0 +1,145 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq5018-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. IPQ5018 TLMM block
+> +
+> +maintainers:
+> +  - Varadarajan Narayanan <quic_varada@quicinc.com>
+> +  - Sricharan R <quic_srichara@quicinc.com>
+> +  - Nitheesh Sekar <quic_nsekar@quicinc.com>
+> +
+> +description: |
+> +  This binding describes the Top Level Mode Multiplexer block found in the
+> +  IPQ5018 platform.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,ipq5018-pinctrl
 
-Can you also make this usage into a macro so that it doesn't change in
-the future when a new argument is added?
+qcom,ipq5018-tlmm please
 
-> =20
->         if (IS_ERR(hw))
->                 panic("%pOFn: can't register REFCLK. Check DT!", np);
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: Specifies the TLMM summary IRQ
+> +    maxItems: 1
+
+Please rely on qcom,tlmm-common.yaml, in line with e.g.
+qcom,sc8280xp-pinctrl.yaml.
+
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    description:
+> +      Specifies the PIN numbers and Flags, as defined in defined in
+> +      include/dt-bindings/interrupt-controller/irq.h
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    description: Specifying the pin number and flags, as defined in
+> +      include/dt-bindings/gpio/gpio.h
+> +    const: 2
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +#PIN CONFIGURATION NODES
+> +patternProperties:
+> +  '-pinmux$':
+
+This will only allow describing properties directly in the state node,
+not under subnodes. Please update according to e.g. sc8280xp
+
+Also, please use the suffix "-state"
+
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: "/schemas/pinctrl/pincfg-node.yaml"
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          oneOf:
+> +            - pattern: "^gpio([1-9]|[1-7][0-9]|80)$"
+
+According to the implementation you should only accept
+"^gpio([1-9]|[1-3][0-9]|4[0-6]$"
+
+> +        minItems: 1
+> +        maxItems: 4
+> +
+> +      function:
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +        enum: [ atest_char, atest_char0, atest_char1, atest_char2, atest_char3,
+> +          audio_pdm0, audio_pdm1, audio_rxbclk, audio_rxd, audio_rxfsync,
+> +          audio_rxmclk, audio_txbclk, audio_txd, audio_txfsync, audio_txmclk,
+> +          blsp0_i2c, blsp0_spi, blsp0_uart0, blsp0_uart1, blsp1_i2c0,
+> +          blsp1_i2c1, blsp1_spi0, blsp1_spi1, blsp1_uart0, blsp1_uart1,
+> +          blsp1_uart2, blsp2_i2c0, blsp2_i2c1, blsp2_spi, blsp2_spi0,
+> +          blsp2_spi1, btss0, btss1, btss10, btss11, btss12, btss13, btss2,
+> +          btss3, btss4, btss5, btss6, btss7, btss8, btss9, burn0, burn1,
+> +          cri_trng, cri_trng0, cri_trng1, cxc_clk, cxc_data, dbg_out, eud_gpio,
+> +          gcc_plltest, gcc_tlmm, gpio, mac0, mac1, mdc, mdio, pcie0_clk,
+> +          pcie0_wake, pcie1_clk, pcie1_wake, pll_test, prng_rosc, pwm0, pwm1,
+> +          pwm2, pwm3, qdss_cti_trig_in_a0, qdss_cti_trig_in_a1,
+> +          qdss_cti_trig_in_b0, qdss_cti_trig_in_b1, qdss_cti_trig_out_a0,
+> +          qdss_cti_trig_out_a1, qdss_cti_trig_out_b0, qdss_cti_trig_out_b1,
+> +          qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
+> +          qdss_tracedata_a, qdss_tracedata_b, qspi_clk, qspi_cs, qspi0, qspi1,
+> +          qspi2, qspi3, reset_out, sdc1_clk, sdc1_cmd, sdc10, sdc11, sdc12,
+> +          sdc13, wci0, wci1, wci2, wci3, wci4, wci5, wci6, wci7, wsa_swrm,
+> +          wsi_clk3, wsi_data3, wsis_reset, xfem0, xfem1, xfem2, xfem3, xfem4,
+> +          xfem5, xfem6, xfem7 ]
+> +
+> +      drive-strength:
+> +        enum: [2, 4, 6, 8, 10, 12, 14, 16]
+> +        default: 2
+> +        description:
+> +          Selects the drive strength for the specified pins, in mA.
+> +
+> +      bias-pull-down: true
+> +
+> +      bias-pull-up: true
+> +
+> +      bias-disable: true
+> +
+> +      output-high: true
+> +
+> +      output-low: true
+> +
+> +    required:
+> +      - pins
+> +      - function
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +        tlmm: pinctrl@1000000 {
+> +              compatible = "qcom,ipq5018-pinctrl";
+> +              reg = <0x01000000 0x300000>;
+> +              interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +              interrupt-controller;
+> +              #interrupt-cells = <2>;
+> +              gpio-controller;
+> +              #gpio-cells = <2>;
+> +              gpio-ranges = <&tlmm 0 80>;
+
+I think this should be 47.
+
+Regards,
+Bjorn
+
+> +
+> +              serial3-pinmux {
+> +                      pins = "gpio44", "gpio45";
+> +                      function = "blsp0_uart0";
+> +                      drive-strength = <8>;
+> +                      bias-pull-down;
+> +              };
+> +        };
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
