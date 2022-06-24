@@ -2,71 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1DDC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 00:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D347EC43334
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jun 2022 00:49:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbiFXAmn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jun 2022 20:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35296 "EHLO
+        id S230244AbiFXAtS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jun 2022 20:49:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbiFXAmm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 20:42:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21BF45DC25;
-        Thu, 23 Jun 2022 17:42:42 -0700 (PDT)
+        with ESMTP id S229740AbiFXAtR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jun 2022 20:49:17 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ABB13AA42;
+        Thu, 23 Jun 2022 17:49:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B232261F9D;
-        Fri, 24 Jun 2022 00:42:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCD4C3411D;
-        Fri, 24 Jun 2022 00:42:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B9E99B8254F;
+        Fri, 24 Jun 2022 00:49:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD78C3411D;
+        Fri, 24 Jun 2022 00:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656031360;
-        bh=DI0FXxI6PSfD9rLKB6kDL9lKC6YPyy5SZxWJ3Enrfj4=;
+        s=k20201202; t=1656031754;
+        bh=0qCwaq5D4b5O4uYLnizdNCcctcwschOc7iUhpOYaWXU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AfhC1nDK01STGD+Lb1EqlIFbNQ+zlukNen3ynfq+EboThvy8BR4juTElrvkfZ0VML
-         rLP/yiUhzgLYzYRg+V+dCxRSX+E3TN0/eEzxlX4gEAU83CQwTwjIXbSHOKzyVcxs6P
-         MqBU8GkzddsYctfOC9Ear7/3idSGBLLoH6Q5BXbwId3Sh8dlOQb9Q9JqrNSxpgsVRp
-         yHkGkV8qUCVMfXG00JDINfROFl3/MN4l/CySga9cTK4h02IsIcoJTrhsawQC8kadgJ
-         SIrl2B4ad7Rf7XeUFsbnoNv3GbuMs5k+1ipm1K3f1YGMO06BLna1E6XZV3UxwjentC
-         ltMBdYjYWEe/g==
+        b=Are6Plg4wm7dDQ++jHVXmfENbxBErviPpx1JGaIBwLr0oiX8S0dZEAcwSTi4//xxJ
+         B8D4SUg/2F2MyW0RFWFssaCLFqpvoNAkSxoXSWnSpP9MMngZIJTMIsuCVZV2DLfDh6
+         B1ZJH8NO31a4DI3q752Qelzxh/6cW9cfhZkqMRITnILwB3gKztSzqM89+9QJK6E20u
+         BJVTH+nOWT7mpyUebKALg+d7gc1x94Jt1/yyWSFudI1qbz5VtfKM7gYZUyzMHPOBRl
+         oo+801YQWtKI7tcKOoLLnDL0ftFvGSs2t5o89GRmFLQKWtDq7g5dOdVBaDRd6b9s3t
+         Yqy/gRSvy3ajQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220623083217.26433-2-jslaby@suse.cz>
-References: <20220623083217.26433-1-jslaby@suse.cz> <20220623083217.26433-2-jslaby@suse.cz>
-Subject: Re: [PATCH 2/2] clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config
+In-Reply-To: <62b50863.1c69fb81.be104.158e@mx.google.com>
+References: <20220620215150.1875557-1-dmitry.baryshkov@linaro.org> <CAE-0n53X6mwQuoZAgC-mBP42HKqy=NuE7nJpgHGk-pYSFQpcjQ@mail.gmail.com> <20220624003714.918ACC3411D@smtp.kernel.org> <62b50863.1c69fb81.be104.158e@mx.google.com>
+Subject: Re: [PATCH] clk: qcom: gcc-ipq806x: use parent_data for the last remaining entry
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mliska@suse.cz, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>
-To:     Jiri Slaby <jslaby@suse.cz>, mturquette@baylibre.com
-Date:   Thu, 23 Jun 2022 17:42:39 -0700
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Date:   Thu, 23 Jun 2022 17:49:12 -0700
 User-Agent: alot/0.10
-Message-Id: <20220624004240.DBCD4C3411D@smtp.kernel.org>
+Message-Id: <20220624004914.5AD78C3411D@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jiri Slaby (2022-06-23 01:32:17)
-> From: Andi Kleen <ak@linux.intel.com>
+Quoting Christian Marangi (2022-06-23 17:42:05)
+> On Thu, Jun 23, 2022 at 05:37:12PM -0700, Stephen Boyd wrote:
+> >=20
+> > Also I'd appreciate clk patches be sent to my kernel.org email instead
+> > of chromium to help my filters.
 >=20
-> A variable pointing to const isn't const itself. It'd have to contain
-> "const" keyword after "*" too. Therefore, cpg_pll_config cannot be put
-> to "rodata".  Hence use __initdata instead of __initconst to fix this.
+> Sorry for the OT but as you mention... there are many series for ipq806x
+> all reviewed. Wonder if they can be picked or should I RESEND them?
 >=20
-> [js] more explanatory commit message.
+> Some of them are blocking me from sending other fixes as the current
+> dtsi have wrong definition that would cause kernel panic (if things are
+> correctly implemented on the driver side)
 >=20
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Bjorn has agreed to pick up qcom clk patches and send them off as a pull
+request to clk maintainers (i.e. me). Please don't RESEND patches unless
+requested. When that happens I have to mark the old series as
+"superseded" and then look at the resends. Then I review code slower and
+everyone is sad.
