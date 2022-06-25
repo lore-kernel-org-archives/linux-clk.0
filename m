@@ -2,393 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56551CCA473
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 01:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D32C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 08:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231576AbiFYBcz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 21:32:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51014 "EHLO
+        id S232233AbiFYIgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Jun 2022 04:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbiFYBcy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 21:32:54 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 368B745AF7
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 18:32:51 -0700 (PDT)
-Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 6ADC584468;
-        Sat, 25 Jun 2022 03:32:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1656120768;
-        bh=pbyeTTpmlrvHjxo/gjJT06OUAehGfkJuUtVoL8eBmlo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z75oqYiMpqlqGNR0cFI4LxW1kcdX/OvSLsdOH3slie5ozeshP0IvP8/mkJhE1qnu8
-         PSSlpLlhB4SDZEsHLBhiepvAXz5YL34eDZbWBrmZlYMV8ahrdhvcSegCIME5v3fqL1
-         PV1/BmW7A/tVCMymvUBIbCYzicopWKw1g81mIHVGVEzZIdvTQvyGEorwlRFdDE+mMO
-         NHgLNdoUUYTr36L3l0QE1QGD0pW967rXGQMaQ8Hr1uQfTiUQtKNfE0+DYHbc2NiBkW
-         XBNFTdTpNYMQtoESu/LfY2qFvKCr9gYU/BWFGd/T4YYqJW4XK5qqnvxKbKyyJPduI6
-         FBlgc8dpJ7lJA==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Subject: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
-Date:   Sat, 25 Jun 2022 03:32:32 +0200
-Message-Id: <20220625013235.710346-3-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220625013235.710346-1-marex@denx.de>
-References: <20220625013235.710346-1-marex@denx.de>
+        with ESMTP id S231923AbiFYIgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jun 2022 04:36:18 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C16931347
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 01:36:17 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id k127so4505411pfd.10
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 01:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3G45Ha3MPAdx2Dfi/T7nhMmV+ZP9SJFb+X3NtmPtjsU=;
+        b=nrwBrx8VMTuqaHQvQy41rutAX09/iP7ZitjiewlGC/aCrp6Lso6Vg+qYSCmc9CWlAc
+         Jn0KDrwl1qMJJTJCCLZp1HSN6Q2Le9XQRLLW9TqMlkkPXery2H9cHjaITSoEHRMy5GEU
+         MBEAgFxoC/+LypJJKZU22oVQrfKeNXUStg/JCqXOMqt78I5RiAbhNNZHa8XkORd6fDnd
+         Ul6xSJUpnPQBzRPkMW4xPhqAwEm6YOuu7Jh7sPE84KUPlc++VmmhEBGvIO8CxzIlcddp
+         9Dgbl+MmtaV0dcGc9YbFnbieMJLSiGcjILXsHGUBd6sHar8/4YxTP69auSg2i5ylBjPb
+         uspA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3G45Ha3MPAdx2Dfi/T7nhMmV+ZP9SJFb+X3NtmPtjsU=;
+        b=WqXvm0EYuO3ZthPOY+flZEEbQHtyidyzJsfSeZUQNQ2MZ1ZLaMbKpLavp/ARYMTxcm
+         yt/Xnr4Nj7qdscp/bKb3aSHvZkQ5f+2EyUaZ3QcRSpFgubx5eCjrVy4etoe1rqO3P89c
+         NChL5J/IxkR0usFYcEgYVFH7JgdGpb+nLYt8PslcHLLls4UiqwDLcEHvFazGUUjZxHHW
+         BXDS3s8lHmSBvlR+QHaXoPwEoiJGc3uuqr6how5JwaKSo36hqw58upNgmAdZOvyzaflI
+         4faCNZPTc2tLm4sRFOV1qJ8/yALbmhzEIbOftw0llGd0mZ8t8B1h/plns8+bb1glBIYl
+         OlCA==
+X-Gm-Message-State: AJIora8TCiw+m3a0sBmIEOw6VOyJuX7CjdJJCmfamDK0IqbJBgPKX2pa
+        yzj49R6i6NEhn32iVtAtzax4PawqZRGsljV9dwU=
+X-Google-Smtp-Source: AGRyM1uACz4brVUWA3kGx2xAzWmaK2fK3UnketOPqWVkrn+YSSGox3npCBY1tn2BHbrQJrIWoLyrFiPzz1kLAiuvSzc=
+X-Received: by 2002:a63:8549:0:b0:40d:2864:efff with SMTP id
+ u70-20020a638549000000b0040d2864efffmr2806826pgd.146.1656146176482; Sat, 25
+ Jun 2022 01:36:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20220624103809.4167753-1-windhl@126.com>
+In-Reply-To: <20220624103809.4167753-1-windhl@126.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Sat, 25 Jun 2022 16:36:04 +0800
+Message-ID: <CA+H2tpEZ6GNYjZ669w4yxK7EPm8bk_uRdq+6-5Z95FpPy4S8nA@mail.gmail.com>
+Subject: Re: [PATCH] clk/sprd: Hold reference returned by of_get_parent()
+To:     Liang He <windhl@126.com>
+Cc:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
-series of clock gates and muxes. Model it as a large static table of
-gates and muxes with one exception, which is the PLL14xx . The PLL14xx
-SAI PLL has to be registered separately.
+Hi Liang,
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Abel Vesa <abel.vesa@nxp.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Jacky Bai <ping.bai@nxp.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-imx@nxp.com
----
-V2: No change
-V3: - Use devm_platform_ioremap_resource
-    - Use clk_hw_onecell_data instead of clk_imx8mp_audiomix_priv
-    - Include mod_devicetable.h for of_device_id struct
-    - Use struct clk_parent_data instead of string parent_name
----
- drivers/clk/imx/Makefile              |   2 +-
- drivers/clk/imx/clk-imx8mp-audiomix.c | 286 ++++++++++++++++++++++++++
- 2 files changed, 287 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-imx8mp-audiomix.c
+On Fri, Jun 24, 2022 at 6:39 PM Liang He <windhl@126.com> wrote:
+>
+> We should hold the reference returned by of_get_parent() and use it
+> to call of_node_out() for refcount balance.
+>
+> Fixes: f95e8c7923d1 ("clk: sprd: support to get regmap from parent node")
+> Signed-off-by: Liang He <windhl@126.com>
+> ---
+>  these bugs are found in 5.19rc2
+>  these bugs are confirmed not fixed by lore.kernel.org
+>  these bugs are compiled tested in 5.19rc2 with at91_dt_defconfig
+>
+>  drivers/clk/sprd/common.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+> index d620bbbcdfc8..08c1d7a9ec8b 100644
+> --- a/drivers/clk/sprd/common.c
+> +++ b/drivers/clk/sprd/common.c
+> @@ -41,35 +41,41 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+>  {
+>         void __iomem *base;
+>         struct device *dev = &pdev->dev;
+> -       struct device_node *node = dev->of_node;
+> +       struct device_node *node = dev->of_node, *np;
+>         struct regmap *regmap;
+>
+> +       np = of_get_parent(dev->of_node);
+>         if (of_find_property(node, "sprd,syscon", NULL)) {
+>                 regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 88b9b9285d22e..c4290937637eb 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_MXC_CLK) += mxc-clk.o
- 
- obj-$(CONFIG_CLK_IMX8MM) += clk-imx8mm.o
- obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
--obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
-+obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o clk-imx8mp-audiomix.o
- obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
- 
- obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-new file mode 100644
-index 0000000000000..2d5d8255c7fa2
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -0,0 +1,286 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Driver for i.MX8M Plus Audio BLK_CTRL
-+ *
-+ * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+
-+#include "clk.h"
-+
-+#define CLKEN0			0x000
-+#define CLKEN1			0x004
-+#define SAI_MCLK_SEL(n)		(300 + 4 * (n))	/* n in 0..5 */
-+#define PDM_SEL			0x318
-+#define SAI_PLL_GNRL_CTL	0x400
-+
-+#define SAIn_MCLK1_PARENT(n)						\
-+static const struct clk_parent_data					\
-+clk_imx8mp_audiomix_sai##n##_mclk1_parents[] = {			\
-+	{								\
-+		.fw_name = "sai"__stringify(n),				\
-+		.name = "sai"__stringify(n)				\
-+	}, {								\
-+		.fw_name = "sai"__stringify(n)"_mclk",			\
-+		.name = "sai"__stringify(n)"_mclk"			\
-+	},								\
-+}
-+
-+SAIn_MCLK1_PARENT(1);
-+SAIn_MCLK1_PARENT(2);
-+SAIn_MCLK1_PARENT(3);
-+SAIn_MCLK1_PARENT(5);
-+SAIn_MCLK1_PARENT(6);
-+SAIn_MCLK1_PARENT(7);
-+
-+static const struct clk_parent_data clk_imx8mp_audiomix_sai_mclk2_parents[] = {
-+	{ .fw_name = "sai1", .name = "sai1" },
-+	{ .fw_name = "sai2", .name = "sai2" },
-+	{ .fw_name = "sai3", .name = "sai3" },
-+	{ .name = "dummy" },
-+	{ .fw_name = "sai5", .name = "sai5" },
-+	{ .fw_name = "sai6", .name = "sai6" },
-+	{ .fw_name = "sai7", .name = "sai7" },
-+	{ .fw_name = "sai1_mclk", .name = "sai1_mclk" },
-+	{ .fw_name = "sai2_mclk", .name = "sai2_mclk" },
-+	{ .fw_name = "sai3_mclk", .name = "sai3_mclk" },
-+	{ .name = "dummy" },
-+	{ .fw_name = "sai5_mclk", .name = "sai5_mclk" },
-+	{ .fw_name = "sai6_mclk", .name = "sai6_mclk" },
-+	{ .fw_name = "sai7_mclk", .name = "sai7_mclk" },
-+	{ .fw_name = "spdif_extclk", .name = "spdif_extclk" },
-+	{ .name = "dummy" },
-+};
-+
-+static const struct clk_parent_data clk_imx8mp_audiomix_pdm_parents[] = {
-+	{ .fw_name = "pdm", .name = "pdm" },
-+	{ .name = "sai_pll_out_div2" },
-+	{ .fw_name = "sai1_mclk", .name = "sai1_mclk" },
-+	{ .name = "dummy" },
-+};
-+
-+
-+static const struct clk_parent_data clk_imx8mp_audiomix_pll_parents[] = {
-+	{ .fw_name = "osc_24m", .name = "osc_24m" },
-+	{ .name = "dummy" },
-+	{ .name = "dummy" },
-+	{ .name = "dummy" },
-+};
-+
-+static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
-+	{ .fw_name = "sai_pll", .name = "sai_pll" },
-+	{ .fw_name = "sai_pll_ref_sel", .name = "sai_pll_ref_sel" },
-+};
-+
-+#define CLK_GATE(gname, cname)						\
-+	{								\
-+		gname"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		{ .fw_name = "ahb", .name = "ahb" }, NULL, 1,		\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
-+#define CLK_SAIn(n)							\
-+	{								\
-+		"sai"__stringify(n)"_mclk1_sel",			\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1_SEL, {},		\
-+		clk_imx8mp_audiomix_sai##n##_mclk1_parents,		\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_sai##n##_mclk1_parents), \
-+		SAI_MCLK_SEL(n), 1, 0					\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk2_sel",			\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2_SEL, {},		\
-+		clk_imx8mp_audiomix_sai_mclk2_parents,			\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_sai_mclk2_parents),	\
-+		SAI_MCLK_SEL(n), 4, 1					\
-+	}, {								\
-+		"sai"__stringify(n)"_ipg_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG,			\
-+		{ .fw_name = "ahb", .name = "ahb" }, NULL, 1,		\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_IPG		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk1_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1,			\
-+		{							\
-+			.fw_name = "sai"__stringify(n)"_mclk1_sel",	\
-+			.name = "sai"__stringify(n)"_mclk1_sel"		\
-+		}, NULL, 1,						\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK1		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk2_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2,			\
-+		{							\
-+			.fw_name = "sai"__stringify(n)"_mclk2_sel",	\
-+			.name = "sai"__stringify(n)"_mclk2_sel"		\
-+		}, NULL, 1,						\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK2		\
-+	}, {								\
-+		"sai"__stringify(n)"_mclk3_cg",				\
-+		IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3,			\
-+		{							\
-+			.fw_name = "sai_pll_out_div2",			\
-+			.name = "sai_pll_out_div2"			\
-+		}, NULL, 1,						\
-+		CLKEN0, 1, IMX8MP_CLK_AUDIOMIX_SAI##n##_MCLK3		\
-+	}
-+
-+#define CLK_PDM								\
-+	{								\
-+		"pdm_sel", IMX8MP_CLK_AUDIOMIX_PDM_SEL, {},		\
-+		clk_imx8mp_audiomix_pdm_parents,			\
-+		ARRAY_SIZE(clk_imx8mp_audiomix_pdm_parents),		\
-+		PDM_SEL, 2, 0						\
-+	}
-+
-+struct clk_imx8mp_audiomix_sel {
-+	const char			*name;
-+	int				clkid;
-+	const struct clk_parent_data	parent;		/* For gate */
-+	const struct clk_parent_data	*parents;	/* For mux */
-+	int				num_parents;
-+	u16				reg;
-+	u8				width;
-+	u8				shift;
-+};
-+
-+static struct clk_imx8mp_audiomix_sel sels[] = {
-+	CLK_GATE("asrc", ASRC_IPG),
-+	CLK_GATE("pdm", PDM_IPG),
-+	CLK_GATE("earc", EARC_IPG),
-+	CLK_GATE("ocrama", OCRAMA_IPG),
-+	CLK_GATE("aud2htx", AUD2HTX_IPG),
-+	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE("sdma2", SDMA2_ROOT),
-+	CLK_GATE("sdma3", SDMA3_ROOT),
-+	CLK_GATE("spba2", SPBA2_ROOT),
-+	CLK_GATE("dsp", DSP_ROOT),
-+	CLK_GATE("dspdbg", DSPDBG_ROOT),
-+	CLK_GATE("edma", EDMA_ROOT),
-+	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE("mu2", MU2_ROOT),
-+	CLK_GATE("mu3", MU3_ROOT),
-+	CLK_PDM,
-+	CLK_SAIn(1),
-+	CLK_SAIn(2),
-+	CLK_SAIn(3),
-+	CLK_SAIn(5),
-+	CLK_SAIn(6),
-+	CLK_SAIn(7)
-+};
-+
-+static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *priv;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct clk_hw *hw;
-+	int i;
-+
-+	priv = devm_kzalloc(dev,
-+			    struct_size(priv, hws, IMX8MP_CLK_AUDIOMIX_END),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->num = IMX8MP_CLK_AUDIOMIX_END;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	for (i = 0; i < ARRAY_SIZE(sels); i++) {
-+		if (sels[i].num_parents == 1) {
-+			hw = devm_clk_hw_register_gate_parent_data(dev,
-+								   sels[i].name,
-+								   &sels[i].parent,
-+								   0,
-+								   base + sels[i].reg,
-+								   sels[i].shift,
-+								   0, NULL);
-+		} else {
-+			hw = devm_clk_hw_register_mux_parent_data(dev,
-+								  sels[i].name,
-+								  sels[i].parents,
-+								  sels[i].num_parents,
-+								  0,
-+								  base + sels[i].reg,
-+								  sels[i].shift,
-+								  sels[i].width,
-+								  0, NULL);
-+		}
-+
-+		if (IS_ERR(hw))
-+			return PTR_ERR(hw);
-+
-+		priv->hws[sels[i].clkid] = hw;
-+	}
-+
-+	/* SAI PLL */
-+	hw = devm_clk_hw_register_mux_parent_data(dev, "sai_pll_ref_sel",
-+						  clk_imx8mp_audiomix_pll_parents,
-+						  ARRAY_SIZE(clk_imx8mp_audiomix_pll_parents),
-+						  CLK_SET_RATE_NO_REPARENT,
-+						  base + SAI_PLL_GNRL_CTL,
-+						  0, 2, 0, NULL);
-+	priv->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_REF_SEL] = hw;
-+
-+	hw = imx_dev_clk_hw_pll14xx(dev, "sai_pll", "sai_pll_ref_sel",
-+				    base + 0x400, &imx_1443x_pll);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL] = hw;
-+
-+	hw = devm_clk_hw_register_mux_parent_data(dev, "sai_pll_bypass",
-+						  clk_imx8mp_audiomix_pll_bypass_sels,
-+						  ARRAY_SIZE(clk_imx8mp_audiomix_pll_bypass_sels),
-+						  CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
-+						  base + SAI_PLL_GNRL_CTL,
-+						  16, 1, 0, NULL);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS] = hw;
-+
-+	hw = devm_clk_hw_register_gate(dev, "sai_pll_out", "sai_pll_bypass",
-+				       0, base + SAI_PLL_GNRL_CTL, 13,
-+				       0, NULL);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	priv->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT] = hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, "sai_pll_out_div2",
-+					       "sai_pll_out", 0, 1, 2);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
-+	return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
-+					   priv);
-+}
-+
-+static const struct of_device_id clk_imx8mp_audiomix_of_match[] = {
-+	{ .compatible = "fsl,imx8mp-audio-blk-ctrl" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_imx8mp_audiomix_of_match);
-+
-+static struct platform_driver clk_imx8mp_audiomix_driver = {
-+	.probe	= clk_imx8mp_audiomix_probe,
-+	.driver = {
-+		.name = "imx8mp-audio-blk-ctrl",
-+		.of_match_table = clk_imx8mp_audiomix_of_match,
-+	},
-+};
-+
-+module_platform_driver(clk_imx8mp_audiomix_driver);
-+
-+MODULE_AUTHOR("Marek Vasut <marex@denx.de>");
-+MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller driver");
-+MODULE_LICENSE("GPL");
--- 
-2.35.1
+Why not to call of_node_put() in this function?
+He returns an error and it is his responsibility to clean up
+everything he used, right?
 
+-Orson
+
+>                 if (IS_ERR(regmap)) {
+>                         pr_err("%s: failed to get syscon regmap\n", __func__);
+> +                       of_node_put(np);
+>                         return PTR_ERR(regmap);
+>                 }
+> -       } else if (of_device_is_compatible(of_get_parent(dev->of_node),
+> -                          "syscon")) {
+> -               regmap = device_node_to_regmap(of_get_parent(dev->of_node));
+> +       } else if (of_device_is_compatible(np, "syscon")) {
+> +               regmap = device_node_to_regmap(np);
+>                 if (IS_ERR(regmap)) {
+> +                       of_node_put(np);
+>                         dev_err(dev, "failed to get regmap from its parent.\n");
+>                         return PTR_ERR(regmap);
+>                 }
+>         } else {
+>                 base = devm_platform_ioremap_resource(pdev, 0);
+> -               if (IS_ERR(base))
+> +               if (IS_ERR(base)) {
+> +                       of_node_put(np);
+>                         return PTR_ERR(base);
+> +               }
+>
+>                 regmap = devm_regmap_init_mmio(&pdev->dev, base,
+>                                                &sprdclk_regmap_config);
+>                 if (IS_ERR(regmap)) {
+> +                       of_node_put(np);
+>                         pr_err("failed to init regmap\n");
+>                         return PTR_ERR(regmap);
+>                 }
+>         }
+>
+> +       of_node_put(np);
+>         sprd_clk_set_regmap(desc, regmap);
+>
+>         return 0;
+> --
+> 2.25.1
+>
