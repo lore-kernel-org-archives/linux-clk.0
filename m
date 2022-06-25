@@ -2,189 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A5FC43334
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 00:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3AAC43334
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 01:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230289AbiFYAH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 20:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56054 "EHLO
+        id S231587AbiFYBcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 21:32:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbiFYAH4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 20:07:56 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1355EAE;
-        Fri, 24 Jun 2022 17:07:54 -0700 (PDT)
-X-UUID: cef0bde0206e4c2e9490ca53b9f60f0c-20220625
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.6,REQID:f41f7e5b-b7fa-4302-a08d-21553d5a2f9b,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:22,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:22
-X-CID-INFO: VERSION:1.1.6,REQID:f41f7e5b-b7fa-4302-a08d-21553d5a2f9b,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:22,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:22
-X-CID-META: VersionHash:b14ad71,CLOUDID:a28784d8-850a-491d-a127-60d9309b2b3e,C
-        OID:IGNORED,Recheck:0,SF:28|100|17|19|48|101,TC:nil,Content:0,EDM:-3,IP:ni
-        l,URL:0,File:nil,QS:nil,BEC:nil,COL:0
-X-UUID: cef0bde0206e4c2e9490ca53b9f60f0c-20220625
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2042925076; Sat, 25 Jun 2022 08:07:49 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Sat, 25 Jun 2022 08:07:47 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Sat, 25 Jun 2022 08:07:47 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <angelogioacchino.delregno@collabora.com>
-CC:     <bgolaszewski@baylibre.com>, <chun-jie.chen@mediatek.com>,
-        <ck.hu@mediatek.com>, <devicetree@vger.kernel.org>,
-        <fparent@baylibre.com>, <ikjn@chromium.org>,
-        <jason-jh.lin@mediatek.com>, <kernel@collabora.com>,
-        <konrad.dybcio@somainline.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <marijn.suijten@somainline.org>, <martin.botka@somainline.org>,
-        <matthias.bgg@gmail.com>, <miles.chen@mediatek.com>,
-        <mturquette@baylibre.com>, <p.zabel@pengutronix.de>,
-        <paul.bouchara@somainline.org>, <phone-devel@vger.kernel.org>,
-        <rex-bc.chen@mediatek.com>, <robh+dt@kernel.org>,
-        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
-        <tinghan.shen@mediatek.com>, <weiyi.lu@mediatek.com>,
-        <wenst@chromium.org>, <y.oudjana@protonmail.com>,
-        <~postmarketos/upstreaming@lists.sr.ht>
-Subject: Re: [PATCH v3 7/7] clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers
-Date:   Sat, 25 Jun 2022 08:07:47 +0800
-Message-ID: <20220625000747.12582-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220624093525.243077-8-angelogioacchino.delregno@collabora.com>
-References: <20220624093525.243077-8-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S231395AbiFYBcy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 21:32:54 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3675645AF3
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 18:32:51 -0700 (PDT)
+Received: from tr.lan (ip-86-49-12-201.net.upcbroadband.cz [86.49.12.201])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 7C4A98442A;
+        Sat, 25 Jun 2022 03:32:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1656120767;
+        bh=ub8RMPbP0uoe9EccENfCUfkDtaDT3OE/IkQwCT8/y0Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NQmbyZQvnXSrWeD7NWQCuSUnDdXq0n0ftU6TNZIjE5JNBi7ZZa4khbpb38+Varfgy
+         z6/N5eUFduqKvCuQdWfsb6yFBH3rtv9RTk17+H4qjV6hx5x7l9aOZeItwp3I04sizn
+         39phPxqQt2Y+BcqIX/fErJ70j6FgS1ndockQboX6QlSlzpn+eguETEDtwmdl0uAw6N
+         STLrPO18BdwYKfqdy0mhPizTt5evIemrhfhVHP9kHgnC9lUpYG2WMbg9zMUQAVaril
+         wqwA6JVzqxqpI/xYfX44GsRE//d+R+UlJoF4YaiMitzH2Z+N1tq2Fvf5/V4aO1mAPQ
+         6EOmgAHSRoZWw==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: [PATCH v3 1/6] clk: Introduce devm_clk_hw_register_mux_parent_data()
+Date:   Sat, 25 Jun 2022 03:32:30 +0200
+Message-Id: <20220625013235.710346-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Angelo,
+Add an API for clock mux that uses parent_data for the parent instead of
+a string parent_name.
 
-> Add the clock drivers for the entire clock tree of MediaTek Helio X10
-> MT6795, including system clocks (apmixedsys, infracfg, pericfg, topckgen)
-> and multimedia clocks (mmsys, mfg, vdecsys, vencsys).
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
->  drivers/clk/mediatek/Kconfig                 |  37 ++
->  drivers/clk/mediatek/Makefile                |   6 +
->  drivers/clk/mediatek/clk-mt6795-apmixedsys.c | 157 +++++
->  drivers/clk/mediatek/clk-mt6795-infracfg.c   | 148 +++++
->  drivers/clk/mediatek/clk-mt6795-mfg.c        |  50 ++
->  drivers/clk/mediatek/clk-mt6795-mm.c         | 106 ++++
->  drivers/clk/mediatek/clk-mt6795-pericfg.c    | 160 +++++
->  drivers/clk/mediatek/clk-mt6795-topckgen.c   | 610 +++++++++++++++++++
->  drivers/clk/mediatek/clk-mt6795-vdecsys.c    |  55 ++
->  drivers/clk/mediatek/clk-mt6795-vencsys.c    |  50 ++
->  10 files changed, 1379 insertions(+)
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
->  create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
-> 
-> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-> index d5936cfb3bee..da8142dff3c3 100644
-> --- a/drivers/clk/mediatek/Kconfig
-> +++ b/drivers/clk/mediatek/Kconfig
-> @@ -259,6 +259,43 @@ config COMMON_CLK_MT6779_AUDSYS
->  	help
->  	  This driver supports Mediatek MT6779 audsys clocks.
->  
-> +config COMMON_CLK_MT6795
-> +	tristate "Clock driver for MediaTek MT6795"
-> +	depends on ARCH_MEDIATEK || COMPILE_TEST
-> +	select COMMON_CLK_MEDIATEK
-> +	default ARCH_MEDIATEK
-> +	help
-> +	  This driver supports MediaTek MT6795 basic clocks and clocks
-> +	  required for various peripherals found on MediaTek.
-> +
-> +config COMMON_CLK_MT6795_MFGCFG
-> +	tristate "Clock driver for MediaTek MT6795 mfgcfg"
-> +	depends on COMMON_CLK_MT6795
-> +	default COMMON_CLK_MT6795
-> +	help
-> +	  This driver supports MediaTek MT6795 mfgcfg clocks.
-> +
-> +config COMMON_CLK_MT6795_MMSYS
-> +       tristate "Clock driver for MediaTek MT6795 mmsys"
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abel.vesa@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Jacky Bai <ping.bai@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-imx@nxp.com
+---
+V3: New patch
+---
+ include/linux/clk-provider.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-snip...
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 8c6ad6ea53e52..1f5dff4507812 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -964,6 +964,13 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 			      (parent_names), NULL, NULL, (flags), (reg),     \
+ 			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
+ 			      NULL, (lock))
++#define devm_clk_hw_register_mux_parent_data(dev, name, parent_data,	      \
++					     num_parents, flags, reg, shift,  \
++					     width, clk_mux_flags, lock)      \
++	__devm_clk_hw_register_mux((dev), NULL, (name), (num_parents),	      \
++			      NULL, NULL, (parent_data), (flags), (reg),      \
++			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
++			      NULL, (lock))
+ 
+ int clk_mux_val_to_index(struct clk_hw *hw, const u32 *table, unsigned int flags,
+ 			 unsigned int val);
+-- 
+2.35.1
 
-> +	{ /* sentinel */ }
-> +};
-> +
-> +static int clk_mt6795_infracfg_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *clk_data;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	ret = mtk_register_reset_controller_with_dev(&pdev->dev, &clk_rst_desc);
-> +	if (ret)
-> +		goto free_clk_data;
-> +
-> +	ret = mtk_clk_register_gates(node, infra_gates, ARRAY_SIZE(infra_gates), clk_data);
-> +	if (ret)
-> +		goto free_clk_data;
-
-While checking the error path, I learned that
-mtk_register_reset_controller_with_dev uses devm_reset_controller_register and it will
-be unregister the reset automatically if probe failed.
-
-Thanks for this patch!
-
-Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
-
-
-thanks,
-Miles
-
-> +
-> +	ret = mtk_clk_register_cpumuxes(node, cpu_muxes, ARRAY_SIZE(cpu_muxes), clk_data);
-> +	if (ret)
-> +		goto unregister_gates;
-> +
-> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> +	if (ret)
-> +		goto unregister_cpumuxes;
-> +
-> +	return 0;
-> +
-> +unregister_cpumuxes:
-> +	mtk_clk_unregister_cpumuxes(cpu_muxes, ARRAY_SIZE(cpu_muxes), clk_data);
-> +unregister_gates:
-> +	mtk_clk_unregister_gates(infra_gates, ARRAY_SIZE(infra_gates), clk_data);
-> +free_clk_data:
-> +	mtk_free_clk_data(clk_data);
-> +	return ret;
-> +}
-> +
-> +static int clk_mt6795_infracfg_remove(struct platform_device *pdev)
-> +{
