@@ -2,134 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA790C43334
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 00:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEAFC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 00:07:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230421AbiFYAA2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jun 2022 20:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52340 "EHLO
+        id S231576AbiFYAHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jun 2022 20:07:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiFYAA1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 20:00:27 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C12D8BEF6
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 17:00:26 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id k20so3074496qkj.1
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jun 2022 17:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IJAvhDroqXmrsqH4iFc0E0GuqNL82U57VX6UdPTB9n4=;
-        b=UjArEFJwORom6BY7pUnOBCcQ0EVVDgVYIpnJWPp0BMyABVVRD1xExo45roAleP5uys
-         R5ue84Q/xYTkg7Pk/QwD/ZTYk6pmkULGBg2rJ7g2+5NS7XmUTsc1KYWB4KfJN8p3NXTT
-         JsFzxwEboUM+nV0Ve4r6i8fbRenjKlWnX4glXb00XQtdtsZ0e592YIGwQ1/ZB1V4s7hO
-         qSx1QU3tiwgnZu5QfxwijJbNrQTx5TvlYracdQUpOb5ljOy/s68U4W1pPS++J9fEdJ+6
-         lyGxPm3Yv2FpyrxYiI/K9538LR/Z8KpAEwdXIq/AW2poyhpws3a75rNPyZw2JJRIjPWw
-         mPbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IJAvhDroqXmrsqH4iFc0E0GuqNL82U57VX6UdPTB9n4=;
-        b=EWwNC4REm8m1c1sT/b3AzjIj5mzHaNGhzPN29j1nmsRS9m5JQDyuYmC53R+arjIwpz
-         69FqhHOB+P1VoREWkNKJK9s2Ea7r9dllQRBFJF2yXMglw35hznL7GgAYhNCY/+haO5vx
-         g3xm/rgy4+06w8jkBWTo3wwp+96pU9IKQpqCWz7TxciUck4iXCH13A5d7kO8Bvg0V6Rr
-         gwUWEDN2daYKfjEbVTUzGeyhDenOnG3AIz5SVnMk9NKxAZX9kBbzUF2rKlqSCwr5wy3S
-         6Y7ruAfSCMdgmuq1VULS0OXfHEDx2X9qnYce2ILxeEs88zOO8d3QZinH64tvZFLYEVgc
-         vGQQ==
-X-Gm-Message-State: AJIora/jEBOp2Ir8dInFp8/BIDW3ANb0Gp+6hWsQ+420IIucttnNg7sV
-        dCyNz5lPX/pjNmgicZ/aOcIK1u8m2u2Hq0auWf9I+A==
-X-Google-Smtp-Source: AGRyM1tKMU1zp+sgdctuv70FNenlX/Oh6sbMw452AJpPiUL9wpU9PVXvgjjHaSl5eBf1lE3MMCyE6Eg6264uUtkypd4=
-X-Received: by 2002:a05:620a:4156:b0:6a6:f8d2:6d9e with SMTP id
- k22-20020a05620a415600b006a6f8d26d9emr1424978qko.30.1656115225461; Fri, 24
- Jun 2022 17:00:25 -0700 (PDT)
+        with ESMTP id S231572AbiFYAHb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jun 2022 20:07:31 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEDC78AC36;
+        Fri, 24 Jun 2022 17:07:24 -0700 (PDT)
+X-UUID: b9183ccfe3574f87899e93a81761789e-20220625
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.6,REQID:042ac45f-7b1d-49cd-b928-455eb01938c5,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:b14ad71,CLOUDID:ed3776ea-f7af-4e69-92ee-0fd74a0c286c,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:-5,EDM:-3,IP:nil,URL:0,File:ni
+        l,QS:nil,BEC:nil,COL:0
+X-UUID: b9183ccfe3574f87899e93a81761789e-20220625
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 596147150; Sat, 25 Jun 2022 08:07:17 +0800
+Received: from mtkmbs07n1.mediatek.inc (172.21.101.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Sat, 25 Jun 2022 08:07:16 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Sat, 25 Jun 2022 08:07:16 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Sat, 25 Jun 2022 08:07:16 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <angelogioacchino.delregno@collabora.com>
+CC:     <bgolaszewski@baylibre.com>, <chun-jie.chen@mediatek.com>,
+        <ck.hu@mediatek.com>, <devicetree@vger.kernel.org>,
+        <fparent@baylibre.com>, <ikjn@chromium.org>,
+        <jason-jh.lin@mediatek.com>, <kernel@collabora.com>,
+        <konrad.dybcio@somainline.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <marijn.suijten@somainline.org>, <martin.botka@somainline.org>,
+        <matthias.bgg@gmail.com>, <miles.chen@mediatek.com>,
+        <mturquette@baylibre.com>, <p.zabel@pengutronix.de>,
+        <paul.bouchara@somainline.org>, <phone-devel@vger.kernel.org>,
+        <rex-bc.chen@mediatek.com>, <robh+dt@kernel.org>,
+        <sam.shih@mediatek.com>, <sboyd@kernel.org>,
+        <tinghan.shen@mediatek.com>, <weiyi.lu@mediatek.com>,
+        <wenst@chromium.org>, <y.oudjana@protonmail.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+Subject: Re: [PATCH v3 5/7] clk: mediatek: clk-apmixed: Remove unneeded __init annotation
+Date:   Sat, 25 Jun 2022 08:07:16 +0800
+Message-ID: <20220625000716.12272-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220624093525.243077-6-angelogioacchino.delregno@collabora.com>
+References: <20220624093525.243077-6-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-References: <20220623120418.250589-1-dmitry.baryshkov@linaro.org>
- <20220623120418.250589-3-dmitry.baryshkov@linaro.org> <21efbf73-74af-8f80-3577-b82f39e161e6@linaro.org>
-In-Reply-To: <21efbf73-74af-8f80-3577-b82f39e161e6@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 25 Jun 2022 03:00:14 +0300
-Message-ID: <CAA8EJpp+pTPjFnGXaWvjUBFc=B9b=OwnHYUP33MNQOsaxwqk4w@mail.gmail.com>
-Subject: Re: [PATCH 02/15] dt-bindings: clocks: qcom,mmcc: define
- clocks/clock-names for MSM8960
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 24 Jun 2022 at 18:57, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 23/06/2022 14:04, Dmitry Baryshkov wrote:
-> > Define clock/clock-names properties of the MMCC device node to be used
-> > on MSM8960/APQ8064 platform.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,mmcc.yaml  | 31 +++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > index d02fe6dc79b5..c13243682365 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > @@ -82,6 +82,37 @@ then:
-> >      - clock-names
-> >
-> >  allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - qcom,mmcc-apq8064
-> > +              - qcom,mmcc-msm8960
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: Board PXO source
-> > +            - description: PLL 3 clock
-> > +            - description: PLL 3 Vote clock
-> > +            - description: DSI phy instance 1 dsi clock
-> > +            - description: DSI phy instance 1 byte clock
-> > +            - description: DSI phy instance 2 dsi clock
-> > +            - description: DSI phy instance 2 byte clock
-> > +            - description: HDMI phy PLL clock
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: pxo
-> > +            - const: pll3
-> > +            - const: pll8_vote
-> > +            - const: dsi1pll
-> > +            - const: dsi1pllbyte
-> > +            - const: dsi2pll
-> > +            - const: dsi2pllbyte
-> > +            - const: hdmipll
->
-> The clocks are listed in properties, so they have min/max constraints
-> set implicitly. Are you sure this now works fine?
+> Remove an unneeded __init annotation from the declaration of function
+> mtk_clk_register_ref2usb_tx(): this avoids section mismatch warnings
+> during modpost phase when called from functions that have no such
+> annotation (useful when clocks are platform drivers).
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I mentioned this while listing dependencies in the patchset description (00/15):
+Reviewed-by: Miles Chen <miles.chen@mediatek.com> 
 
-Dependencies: [1] (whole series), [2], [3]
-[...]
-[2] https://lore.kernel.org/linux-arm-msm/20220617122922.769562-2-dmitry.baryshkov@linaro.org/
+> ---
+>  drivers/clk/mediatek/clk-apmixed.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-apmixed.c b/drivers/clk/mediatek/clk-apmixed.c
+> index fc3d4146f482..6b0ab0a346e8 100644
+> --- a/drivers/clk/mediatek/clk-apmixed.c
+> +++ b/drivers/clk/mediatek/clk-apmixed.c
+> @@ -70,7 +70,7 @@ static const struct clk_ops mtk_ref2usb_tx_ops = {
+>  	.unprepare	= mtk_ref2usb_tx_unprepare,
+>  };
+>  
+> -struct clk_hw * __init mtk_clk_register_ref2usb_tx(const char *name,
+> +struct clk_hw *mtk_clk_register_ref2usb_tx(const char *name,
+>  			const char *parent_name, void __iomem *reg)
+>  {
+>  	struct mtk_ref2usb_tx *tx;
+> -- 
+> 2.35.1
 
-This patch moves clocks/clock-names to the conditional clause.
 
--- 
-With best wishes
-Dmitry
