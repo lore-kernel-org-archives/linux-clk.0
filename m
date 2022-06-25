@@ -2,112 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5155FC43334
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 15:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31806C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 20:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233092AbiFYPeG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Jun 2022 11:34:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52834 "EHLO
+        id S233302AbiFYUAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Jun 2022 16:00:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233065AbiFYPeF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jun 2022 11:34:05 -0400
-Received: from m1550.mail.126.com (m1550.mail.126.com [220.181.15.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B419EDF23
-        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 08:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=2d5rd
-        DvClzm/4r+vCnQZz7JZfVM0S6UliOjy6AL3h/s=; b=Msjnbq2HP9X0SrPSxDd2c
-        j+DfZrOj7zkZWOC2j1QuC1VttumLp12UZ48U6cuxOZrFjM1sB34+x8Yif7A22YEs
-        TalWx9o1FSJq8c/nCHAyyzQlAZwRaq9O9ghNCG/0tQNZlAILPj1rq3QvXOpSaT4j
-        EpObq5EGQCT86aR7YgioPA=
-Received: from windhl$126.com ( [123.112.70.164] ) by ajax-webmail-wmsvr50
- (Coremail) ; Sat, 25 Jun 2022 23:32:42 +0800 (CST)
-X-Originating-IP: [123.112.70.164]
-Date:   Sat, 25 Jun 2022 23:32:42 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     "Orson Zhai" <orsonzhai@gmail.com>
-Cc:     mturquette@baylibre.com, "Stephen Boyd" <sboyd@kernel.org>,
-        "Baolin Wang" <baolin.wang7@gmail.com>,
-        "Lyra Zhang" <zhang.lyra@gmail.com>, linux-clk@vger.kernel.org
-Subject: Re:Re: [PATCH] clk/sprd: Hold reference returned by of_get_parent()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <CA+H2tpEZ6GNYjZ669w4yxK7EPm8bk_uRdq+6-5Z95FpPy4S8nA@mail.gmail.com>
-References: <20220624103809.4167753-1-windhl@126.com>
- <CA+H2tpEZ6GNYjZ669w4yxK7EPm8bk_uRdq+6-5Z95FpPy4S8nA@mail.gmail.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        with ESMTP id S233276AbiFYUAn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jun 2022 16:00:43 -0400
+Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F44B7E9
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
+Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-101d96fe0a5so8185231fac.2
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GoHTL5pc7929tKgNPXg2nW2kzENqcme0/+lvG0VCiB8=;
+        b=P9/d2vqi0S4nDX0/Q7iwQJQXtcSWzOF+75qBFEQXnxYG012L7l7Y6rZtrqpnV8sn/H
+         g6rkxGsOBdw13y9r9b2vdilnR5zuwrJOXtyxuvDPJzKEf0Lbq+ZBVoAyKOKdkC/cB4XA
+         62sQOQ5g6gDJMRDKtabVKkCKdTOvHdHeGBsPV9KIPRaS27ikp7AkPtt0Iup0UrRyTAx4
+         Sm+rnL8iYjCrhJmFosCSClpgwoO51DrA9dEU3vmnEzFAZpUGk2Usoy/yg9y1Pe0Sf3qH
+         wpM6zJpivs+tmMMYDJ1iK2sapz3k1ejoqNaNhp9r3IcEcRy66Hq93qfnhpX+EDBbrlS3
+         XqHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GoHTL5pc7929tKgNPXg2nW2kzENqcme0/+lvG0VCiB8=;
+        b=GwZ2pb1OJq36HKnN+77HFLLVraAKpWfLC2JIcnzgzU2dNvUMkxSfRH5e28EIR6gS14
+         amhsRsFvgteNiOe0olIS+eH84a1kz0+o8tl9mrmTGooX7oUcy/J3ULHTX0dGE7IAKd5b
+         3uXlIKtlRXHmLP64IpsuxVlGcYpK8GOsgPpR1OT9dEQ+VscL86TcA176VuJ+HxptEI0c
+         j5vQ5ZhTRgTbcd7cPE1sfPSFqCsVr+Zg6hdh/blalQ81bhPeKPi8J42kBN4dyvxgcP+Y
+         zNW2Mj9fxOooXoPdsvqn1BIt99zWbVM8ks+zREKcIu7EbKnyP76JVaxiIcetwGXmwlMi
+         xwLg==
+X-Gm-Message-State: AJIora9cAPxjkS11yLrhr2eXZfeq14gABt2K0mCirkk0xnceBxlKmWVZ
+        mZ81G4TiKI2RXg/l0Sdpp326FQ==
+X-Google-Smtp-Source: AGRyM1uS2g0J6WOPaAL2iqi0XdzNdGYJ9SATCQGmKDYOVVcrz9/DIH+EaNp3mGkr0Upk6fjqJEr4MQ==
+X-Received: by 2002:a05:6870:3920:b0:101:d628:b053 with SMTP id b32-20020a056870392000b00101d628b053mr6084774oap.111.1656187239166;
+        Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id y21-20020a056870419500b000f3321caa73sm4160632oac.16.2022.06.25.13.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Jun 2022 13:00:38 -0700 (PDT)
+Date:   Sat, 25 Jun 2022 15:00:36 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, patches@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, Alex Elder <elder@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: rpmh: Add note about sleep/wake state for BCMs
+Message-ID: <YrdpZHbsJ+2m/fI+@builder.lan>
+References: <20220517190949.2922197-1-swboyd@chromium.org>
 MIME-Version: 1.0
-Message-ID: <7cb414e.2aa5.1819b7e699f.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: MsqowABnvfGbKrdiy4c9AA--.16681W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGhQrF1-HZYNKHAACsY
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517190949.2922197-1-swboyd@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CkF0IDIwMjItMDYtMjUgMTY6MzY6MDQsICJPcnNvbiBaaGFpIiA8b3Jzb256aGFpQGdtYWlsLmNv
-bT4gd3JvdGU6Cj5IaSBMaWFuZywKPgo+T24gRnJpLCBKdW4gMjQsIDIwMjIgYXQgNjozOSBQTSBM
-aWFuZyBIZSA8d2luZGhsQDEyNi5jb20+IHdyb3RlOgo+Pgo+PiBXZSBzaG91bGQgaG9sZCB0aGUg
-cmVmZXJlbmNlIHJldHVybmVkIGJ5IG9mX2dldF9wYXJlbnQoKSBhbmQgdXNlIGl0Cj4+IHRvIGNh
-bGwgb2Zfbm9kZV9vdXQoKSBmb3IgcmVmY291bnQgYmFsYW5jZS4KPj4KPj4gRml4ZXM6IGY5NWU4
-Yzc5MjNkMSAoImNsazogc3ByZDogc3VwcG9ydCB0byBnZXQgcmVnbWFwIGZyb20gcGFyZW50IG5v
-ZGUiKQo+PiBTaWduZWQtb2ZmLWJ5OiBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+IC0tLQo+
-PiAgdGhlc2UgYnVncyBhcmUgZm91bmQgaW4gNS4xOXJjMgo+PiAgdGhlc2UgYnVncyBhcmUgY29u
-ZmlybWVkIG5vdCBmaXhlZCBieSBsb3JlLmtlcm5lbC5vcmcKPj4gIHRoZXNlIGJ1Z3MgYXJlIGNv
-bXBpbGVkIHRlc3RlZCBpbiA1LjE5cmMyIHdpdGggYXQ5MV9kdF9kZWZjb25maWcKPj4KPj4gIGRy
-aXZlcnMvY2xrL3NwcmQvY29tbW9uLmMgfCAxNiArKysrKysrKysrKy0tLS0tCj4+ICAxIGZpbGUg
-Y2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvY2xrL3NwcmQvY29tbW9uLmMgYi9kcml2ZXJzL2Nsay9zcHJkL2NvbW1vbi5j
-Cj4+IGluZGV4IGQ2MjBiYmJjZGZjOC4uMDhjMWQ3YTllYzhiIDEwMDY0NAo+PiAtLS0gYS9kcml2
-ZXJzL2Nsay9zcHJkL2NvbW1vbi5jCj4+ICsrKyBiL2RyaXZlcnMvY2xrL3NwcmQvY29tbW9uLmMK
-Pj4gQEAgLTQxLDM1ICs0MSw0MSBAQCBpbnQgc3ByZF9jbGtfcmVnbWFwX2luaXQoc3RydWN0IHBs
-YXRmb3JtX2RldmljZSAqcGRldiwKPj4gIHsKPj4gICAgICAgICB2b2lkIF9faW9tZW0gKmJhc2U7
-Cj4+ICAgICAgICAgc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsKPj4gLSAgICAgICBz
-dHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGUgPSBkZXYtPm9mX25vZGU7Cj4+ICsgICAgICAgc3RydWN0
-IGRldmljZV9ub2RlICpub2RlID0gZGV2LT5vZl9ub2RlLCAqbnA7Cj4+ICAgICAgICAgc3RydWN0
-IHJlZ21hcCAqcmVnbWFwOwo+Pgo+PiArICAgICAgIG5wID0gb2ZfZ2V0X3BhcmVudChkZXYtPm9m
-X25vZGUpOwo+PiAgICAgICAgIGlmIChvZl9maW5kX3Byb3BlcnR5KG5vZGUsICJzcHJkLHN5c2Nv
-biIsIE5VTEwpKSB7Cj4+ICAgICAgICAgICAgICAgICByZWdtYXAgPSBzeXNjb25fcmVnbWFwX2xv
-b2t1cF9ieV9waGFuZGxlKG5vZGUsICJzcHJkLHN5c2NvbiIpOwo+Cj5XaHkgbm90IHRvIGNhbGwg
-b2Zfbm9kZV9wdXQoKSBpbiB0aGlzIGZ1bmN0aW9uPwo+SGUgcmV0dXJucyBhbiBlcnJvciBhbmQg
-aXQgaXMgaGlzIHJlc3BvbnNpYmlsaXR5IHRvIGNsZWFuIHVwCj5ldmVyeXRoaW5nIGhlIHVzZWQs
-IHJpZ2h0Pwo+Cj4tT3Jzb24KPgpIaSwgT3Jzb24sCgpJIG9ubHkga25vdyB3ZSBzaG91bGQgdXNl
-IHRoZSBwYWlyIG9mIGZ1bmN0aW9ucyAob2ZfZ2V0X3BhcmVudCgpLCBvZl9ub2RlX3B1dCkKdG8g
-a2VlcCByZWZjb3VudCBiYWxhbmNlLgoKSG93ZXZlciwgYXMgSSBkbyBub3QgcmVhbGx5IGtub3cg
-dGhlIHNlbWFudGljIG9mIG90aGVyIGZ1bmN0aW9ucywgc28gSSBjYW5ub3QKZ2l2ZSBvdGhlciBr
-aW5kcyBvZiBwYXRjaC4KCkJ5IHRoZSB3YXksIGlmIHdlIGNob3NlIHRvIHB1dCBvZl9ub2RlX3B1
-dCgpIGluIHRoaXMgZnVuY3Rpb24sIEkgdGhpbmsgaXQgYWxzbyBuZWVkIAp0byBwdXQgb2Zfbm9k
-ZV9wdXQoKSBpbnRvICdkZXZpY2Vfbm9kZV90b19yZWdtYXAnIGFzIGl0IGFsc28gcmV0dXJuIGVy
-cm9yIGNvZGUgaW4KZm9sbG93aW5nIHBhdGguCgpBbnl3YXksIHRoYW5rcyB2ZXJ5IG11Y2ggZm9y
-IHlvdXIgcmVwbHkgYW5kIHJldmlldyBvbiBteSBwYXRjaCBjb2RlLgoKTGlhbmcKCgo+PiAgICAg
-ICAgICAgICAgICAgaWYgKElTX0VSUihyZWdtYXApKSB7Cj4+ICAgICAgICAgICAgICAgICAgICAg
-ICAgIHByX2VycigiJXM6IGZhaWxlZCB0byBnZXQgc3lzY29uIHJlZ21hcFxuIiwgX19mdW5jX18p
-Owo+PiArICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2RlX3B1dChucCk7Cj4+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJSKHJlZ21hcCk7Cj4+ICAgICAgICAgICAgICAg
-ICB9Cj4+IC0gICAgICAgfSBlbHNlIGlmIChvZl9kZXZpY2VfaXNfY29tcGF0aWJsZShvZl9nZXRf
-cGFyZW50KGRldi0+b2Zfbm9kZSksCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICJzeXNj
-b24iKSkgewo+PiAtICAgICAgICAgICAgICAgcmVnbWFwID0gZGV2aWNlX25vZGVfdG9fcmVnbWFw
-KG9mX2dldF9wYXJlbnQoZGV2LT5vZl9ub2RlKSk7Cj4+ICsgICAgICAgfSBlbHNlIGlmIChvZl9k
-ZXZpY2VfaXNfY29tcGF0aWJsZShucCwgInN5c2NvbiIpKSB7Cj4+ICsgICAgICAgICAgICAgICBy
-ZWdtYXAgPSBkZXZpY2Vfbm9kZV90b19yZWdtYXAobnApOwo+PiAgICAgICAgICAgICAgICAgaWYg
-KElTX0VSUihyZWdtYXApKSB7Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0
-KG5wKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJmYWlsZWQgdG8g
-Z2V0IHJlZ21hcCBmcm9tIGl0cyBwYXJlbnQuXG4iKTsKPj4gICAgICAgICAgICAgICAgICAgICAg
-ICAgcmV0dXJuIFBUUl9FUlIocmVnbWFwKTsKPj4gICAgICAgICAgICAgICAgIH0KPj4gICAgICAg
-ICB9IGVsc2Ugewo+PiAgICAgICAgICAgICAgICAgYmFzZSA9IGRldm1fcGxhdGZvcm1faW9yZW1h
-cF9yZXNvdXJjZShwZGV2LCAwKTsKPj4gLSAgICAgICAgICAgICAgIGlmIChJU19FUlIoYmFzZSkp
-Cj4+ICsgICAgICAgICAgICAgICBpZiAoSVNfRVJSKGJhc2UpKSB7Cj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIG9mX25vZGVfcHV0KG5wKTsKPj4gICAgICAgICAgICAgICAgICAgICAgICAgcmV0
-dXJuIFBUUl9FUlIoYmFzZSk7Cj4+ICsgICAgICAgICAgICAgICB9Cj4+Cj4+ICAgICAgICAgICAg
-ICAgICByZWdtYXAgPSBkZXZtX3JlZ21hcF9pbml0X21taW8oJnBkZXYtPmRldiwgYmFzZSwKPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAmc3ByZGNsa19y
-ZWdtYXBfY29uZmlnKTsKPj4gICAgICAgICAgICAgICAgIGlmIChJU19FUlIocmVnbWFwKSkgewo+
-PiArICAgICAgICAgICAgICAgICAgICAgICBvZl9ub2RlX3B1dChucCk7Cj4+ICAgICAgICAgICAg
-ICAgICAgICAgICAgIHByX2VycigiZmFpbGVkIHRvIGluaXQgcmVnbWFwXG4iKTsKPj4gICAgICAg
-ICAgICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIocmVnbWFwKTsKPj4gICAgICAgICAgICAg
-ICAgIH0KPj4gICAgICAgICB9Cj4+Cj4+ICsgICAgICAgb2Zfbm9kZV9wdXQobnApOwo+PiAgICAg
-ICAgIHNwcmRfY2xrX3NldF9yZWdtYXAoZGVzYywgcmVnbWFwKTsKPj4KPj4gICAgICAgICByZXR1
-cm4gMDsKPj4gLS0KPj4gMi4yNS4xCj4+Cg==
+On Tue 17 May 14:09 CDT 2022, Stephen Boyd wrote:
+
+> The sleep/wake state doesn't need to be set here because of specific
+> RPMh behavior that carries over the active state when sleep/wake state
+> hasn't been modified. Add a note to the code so we aren't tempted to set
+> the sleep/wake states.
+> 
+> Cc: Alex Elder <elder@linaro.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> 
+> This superseedes a previous patch[1] I sent that tried to fix this.
+> 
+>  drivers/clk/qcom/clk-rpmh.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index aed907982344..c07cab6905cb 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -274,6 +274,11 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+>  		cmd.addr = c->res_addr;
+>  		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+>  
+> +		/*
+> +		 * Send only an active only state request. RPMh continues to
+> +		 * use the active state when we're in sleep/wake state as long
+> +		 * as the sleep/wake state has never been set.
+> +		 */
+>  		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
+>  		if (ret) {
+>  			dev_err(c->dev, "set active state of %s failed: (%d)\n",
+> 
+> base-commit: 42226c989789d8da4af1de0c31070c96726d990c
+> -- 
+> https://chromeos.dev
+> [1] https://lore.kernel.org/r/20220412194505.614002-1-swboyd@chromium.org
