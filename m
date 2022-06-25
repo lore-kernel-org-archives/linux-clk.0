@@ -2,108 +2,245 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31806C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 20:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A34C2C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Jun 2022 20:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233302AbiFYUAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Jun 2022 16:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36484 "EHLO
+        id S233385AbiFYU3O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Jun 2022 16:29:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233276AbiFYUAn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jun 2022 16:00:43 -0400
-Received: from mail-oa1-x2a.google.com (mail-oa1-x2a.google.com [IPv6:2001:4860:4864:20::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F44B7E9
-        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
-Received: by mail-oa1-x2a.google.com with SMTP id 586e51a60fabf-101d96fe0a5so8185231fac.2
-        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
+        with ESMTP id S233285AbiFYU3M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jun 2022 16:29:12 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11057DF21
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:29:11 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id z7so7834023edm.13
+        for <linux-clk@vger.kernel.org>; Sat, 25 Jun 2022 13:29:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GoHTL5pc7929tKgNPXg2nW2kzENqcme0/+lvG0VCiB8=;
-        b=P9/d2vqi0S4nDX0/Q7iwQJQXtcSWzOF+75qBFEQXnxYG012L7l7Y6rZtrqpnV8sn/H
-         g6rkxGsOBdw13y9r9b2vdilnR5zuwrJOXtyxuvDPJzKEf0Lbq+ZBVoAyKOKdkC/cB4XA
-         62sQOQ5g6gDJMRDKtabVKkCKdTOvHdHeGBsPV9KIPRaS27ikp7AkPtt0Iup0UrRyTAx4
-         Sm+rnL8iYjCrhJmFosCSClpgwoO51DrA9dEU3vmnEzFAZpUGk2Usoy/yg9y1Pe0Sf3qH
-         wpM6zJpivs+tmMMYDJ1iK2sapz3k1ejoqNaNhp9r3IcEcRy66Hq93qfnhpX+EDBbrlS3
-         XqHA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=CyZdIB+a3zmI9o7okjV52QU2Tq6j8r50F7h1g1/ZmqM=;
+        b=jh1P9SHTYiAY6bJeR6u5NXLil88CtmmVqCbzHotLRzOL2Uckkj8zWG4OGOELTd5s60
+         yyymcNJwXxFkpHnuqFpuqtjPJL7L8GVR6j1Yv+mxzhTqDuUWsXXe4Xq73f9dU6gJsT2M
+         9RC5dc6PF4Tfjrg64GyzSY2T3uIe9dS97Ybx6dQbikZ2qEUz2mgkL6UYSL1lZcVn1bVU
+         NXpkl29vfd+iHN4xvmv0MnSxr/ln8wSE1K46AKqhsv2Lhu+XDwHNJ6WRqssjIlzBUaAf
+         b6wVTAGq38CTBfNUF6dGDhRdnjWD4ebbw0MOTLuHr/bfGtYMKiCegkxvdAipfPMbeESd
+         Lm9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GoHTL5pc7929tKgNPXg2nW2kzENqcme0/+lvG0VCiB8=;
-        b=GwZ2pb1OJq36HKnN+77HFLLVraAKpWfLC2JIcnzgzU2dNvUMkxSfRH5e28EIR6gS14
-         amhsRsFvgteNiOe0olIS+eH84a1kz0+o8tl9mrmTGooX7oUcy/J3ULHTX0dGE7IAKd5b
-         3uXlIKtlRXHmLP64IpsuxVlGcYpK8GOsgPpR1OT9dEQ+VscL86TcA176VuJ+HxptEI0c
-         j5vQ5ZhTRgTbcd7cPE1sfPSFqCsVr+Zg6hdh/blalQ81bhPeKPi8J42kBN4dyvxgcP+Y
-         zNW2Mj9fxOooXoPdsvqn1BIt99zWbVM8ks+zREKcIu7EbKnyP76JVaxiIcetwGXmwlMi
-         xwLg==
-X-Gm-Message-State: AJIora9cAPxjkS11yLrhr2eXZfeq14gABt2K0mCirkk0xnceBxlKmWVZ
-        mZ81G4TiKI2RXg/l0Sdpp326FQ==
-X-Google-Smtp-Source: AGRyM1uS2g0J6WOPaAL2iqi0XdzNdGYJ9SATCQGmKDYOVVcrz9/DIH+EaNp3mGkr0Upk6fjqJEr4MQ==
-X-Received: by 2002:a05:6870:3920:b0:101:d628:b053 with SMTP id b32-20020a056870392000b00101d628b053mr6084774oap.111.1656187239166;
-        Sat, 25 Jun 2022 13:00:39 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id y21-20020a056870419500b000f3321caa73sm4160632oac.16.2022.06.25.13.00.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jun 2022 13:00:38 -0700 (PDT)
-Date:   Sat, 25 Jun 2022 15:00:36 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, patches@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, Alex Elder <elder@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: rpmh: Add note about sleep/wake state for BCMs
-Message-ID: <YrdpZHbsJ+2m/fI+@builder.lan>
-References: <20220517190949.2922197-1-swboyd@chromium.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=CyZdIB+a3zmI9o7okjV52QU2Tq6j8r50F7h1g1/ZmqM=;
+        b=ztz9hR3mtk56WbGBL7ZaVVGDEuLjlQs5VERCKB7YsQzfzY7lxMdjTCN37kSLRybkQw
+         /5AZfh129KWczL9JEv1GIhr0OxETXTM0hA1O8RI5wCBPyo/gGmDULZjYdI5T/7Z4K/12
+         L1jFhaOJVxsAZUXzMrFbPYLh8mRUolyMf9BWcu8MrRZV0ES5t4gd5WIy1sGj6xAqxdrS
+         1Rl7WO/nfLpfXGQrGZhhLTw5+83c5BHkycE1Vx+rm8v2G6GzfTLwYpF7G7HGNUcGdgKT
+         PmPxPJECv2EbnZbk7oo37dWwh9DzxGKku3NhLsLf6ZrH7EX0l82Bf7kcRV7JMqNz/LxH
+         Y5uA==
+X-Gm-Message-State: AJIora8YZmqtqt/g00TmWn7MIlJ5oi70rIP6eqtFgumhxpOIApchHsNj
+        CGpdGd536dpIq80JqYSjXyqCcg==
+X-Google-Smtp-Source: AGRyM1v6ZQH0/qOeo1s9JIO2lBEu0I3AR8lap3IT4Akxx776t9v/QxwM3w6b6PhwZmfK4m5bsV8r/A==
+X-Received: by 2002:a05:6402:e0c:b0:435:25cd:6088 with SMTP id h12-20020a0564020e0c00b0043525cd6088mr6989495edh.60.1656188949672;
+        Sat, 25 Jun 2022 13:29:09 -0700 (PDT)
+Received: from [192.168.0.239] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id jw14-20020a170906e94e00b007263481a43fsm2644762ejb.81.2022.06.25.13.29.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Jun 2022 13:29:09 -0700 (PDT)
+Message-ID: <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
+Date:   Sat, 25 Jun 2022 22:29:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220517190949.2922197-1-swboyd@chromium.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 4/7] dt-bindings: clock: mediatek: Add clock driver
+ bindings for MT6795
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, robh+dt@kernel.org
+Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
+        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
+        kernel@collabora.com
+References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com>
+ <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 17 May 14:09 CDT 2022, Stephen Boyd wrote:
-
-> The sleep/wake state doesn't need to be set here because of specific
-> RPMh behavior that carries over the active state when sleep/wake state
-> hasn't been modified. Add a note to the code so we aren't tempted to set
-> the sleep/wake states.
+On 24/06/2022 11:35, AngeloGioacchino Del Regno wrote:
+> Add the bindings for the clock drivers of the MediaTek Helio X10
+> MT6795 SoC.
 > 
-> Cc: Alex Elder <elder@linaro.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
+>  .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++
+>  .../clock/mediatek,mt6795-sys-clock.yaml      | 74 +++++++++++++++++++
+>  2 files changed, 140 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
 > 
-> This superseedes a previous patch[1] I sent that tried to fix this.
-> 
->  drivers/clk/qcom/clk-rpmh.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index aed907982344..c07cab6905cb 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -274,6 +274,11 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->  		cmd.addr = c->res_addr;
->  		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
->  
-> +		/*
-> +		 * Send only an active only state request. RPMh continues to
-> +		 * use the active state when we're in sleep/wake state as long
-> +		 * as the sleep/wake state has never been set.
-> +		 */
->  		ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
->  		if (ret) {
->  			dev_err(c->dev, "set active state of %s failed: (%d)\n",
-> 
-> base-commit: 42226c989789d8da4af1de0c31070c96726d990c
-> -- 
-> https://chromeos.dev
-> [1] https://lore.kernel.org/r/20220412194505.614002-1-swboyd@chromium.org
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+> new file mode 100644
+> index 000000000000..795fb18721c3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek Functional Clock Controller for MT6795
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description: |
+> +  The clock architecture in MediaTek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The devices provide clock gate control in different IP blocks.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt6795-mfgcfg
+> +      - mediatek,mt6795-vdecsys
+> +      - mediatek,mt6795-vencsys
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        mfgcfg: clock-controller@13000000 {
+> +            compatible = "mediatek,mt6795-mfgcfg";
+> +            reg = <0 0x13000000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +        };
+> +
+> +        vdecsys: clock-controller@16000000 {
+> +            compatible = "mediatek,mt6795-vdecsys";
+> +            reg = <0 0x16000000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +        };
+> +
+> +        vencsys: clock-controller@18000000 {
+> +            compatible = "mediatek,mt6795-vencsys";
+> +            reg = <0 0x18000000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..44b96af9ceaf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-sys-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: MediaTek System Clock Controller for MT6795
+> +
+> +maintainers:
+> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The Mediatek system clock controller provides various clocks and system configuration
+
+Wrap according to Linux coding convention, so at 80.
+
+> +  like reset and bus protection on MT6795.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt6795-apmixedsys
+> +          - mediatek,mt6795-infracfg
+> +          - mediatek,mt6795-pericfg
+> +          - mediatek,mt6795-topckgen
+> +      - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        topckgen: clock-controller@10000000 {
+> +            compatible = "mediatek,mt6795-topckgen", "syscon";
+> +            reg = <0 0x10000000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +        };
+> +
+> +        infracfg: power-controller@10001000 {
+> +            compatible = "mediatek,mt6795-infracfg", "syscon";
+> +            reg = <0 0x10001000 0 0x1000>;
+> +            #clock-cells = <1>;
+> +            #reset-cells = <1>;
+
+No need for four examples of the same. They differ only by compatible,
+so this is just unnecessary code... which as you can see does not pass
+the checks. This also has to be fixed.
+
+Maybe keep it as clock-controller?
+
+
+Best regards,
+Krzysztof
