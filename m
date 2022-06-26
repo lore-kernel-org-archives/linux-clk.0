@@ -2,44 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66D4CCA481
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Jun 2022 09:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13167C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Jun 2022 10:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbiFZJsD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Jun 2022 05:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
+        id S233651AbiFZKbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Jun 2022 06:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233502AbiFZJsC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Jun 2022 05:48:02 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA132100E;
-        Sun, 26 Jun 2022 02:48:00 -0700 (PDT)
-Received: from [10.0.0.163] (ip-94-112-206-30.net.upcbroadband.cz [94.112.206.30])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: david.heidelberg)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 72C3366016D9;
-        Sun, 26 Jun 2022 10:47:57 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656236878;
-        bh=ZBhVm6IGWseUER7MkXUlFCT29ycUychI6NdxaG+9H94=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=QQSQB7DpPodscJDotm27LdPwtvKQBhPJink12zTUxiTf78vdtog82vhEEXSPVG5xS
-         TAIXfK6BsNQyVFktTkAscotdLCOZ5HaqtE3BwSfJ7WotKB0jHMYC/eeeGLqY9tYYXu
-         gMZpdTdhxY8KTl+sEE18b3EVcIKv/tIASVu+I89zUF53k3NV0eWN1q2VLD4n5nKy5J
-         9Ew89pAXHluttSW+sk3h4VmSObHVTlLErOWFcJDf0rM0aHxGhEQ7Ha5wWZJK7rk76x
-         3yZVkhu6Fr1ySgtrmZPuuLHVWF9TWaQyhGDTtLVa0C98brBtkl+apxnTDq0bMKUzrU
-         Q71bzJBYLHZ0w==
-Message-ID: <728b2c54-0dc0-533f-bab8-fca228f6c1b1@collabora.com>
-Date:   Sun, 26 Jun 2022 11:47:55 +0200
+        with ESMTP id S232734AbiFZKbl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Jun 2022 06:31:41 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4121F1261E
+        for <linux-clk@vger.kernel.org>; Sun, 26 Jun 2022 03:31:39 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id fi2so13289731ejb.9
+        for <linux-clk@vger.kernel.org>; Sun, 26 Jun 2022 03:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=uid1nPU8KOeE8niwF3D46qRU8qJY11HwGt4P2APkK6s=;
+        b=XAAC8AAlqRMmEzIHciueTzD3m22dmzWily6b8BHr6rpAvs0uXwzFyjFU045Lj7kkAe
+         E79BdJ7MTKVbCL4wI6W9DsNgbpv6aW6GnwH7FZ4j3Es873/RwWQZOYfEASsZ8PPpzVP5
+         dP5C+APcEInT67HZF1QBAf2do2AqTi8t07BAr4Gnx6UU+kyFOgz3SrYCkQ0LvoCC2dY5
+         wAIMpoeO6Tp2eb8BRQqGfvmaMIF2KLt6qtodk3zqF8PF3YIfXCn9TvG9r4GjheCfMRFh
+         8ec2U8O7uXcId5goQakMrd/qdV1II34NJfmrTyvrbe0MNI60NvlpB6Mwy0F/+l4Rqp0l
+         6+eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=uid1nPU8KOeE8niwF3D46qRU8qJY11HwGt4P2APkK6s=;
+        b=afygsTUYhow7D4SVC1/L2kWrAZ5vfTqPg0M3bJPjPapt/SihwNPM3oY45kMzHzY6C0
+         U1eTIumkMSLtDFMVIRAEga8IvXuONaWiSxeNOj+tAnibPzs39KZOMWb51nkD1zmSv46l
+         O0pULk+lOnwZnLnm/KtRqXPN+JX1T/Awi1wbY+FaDR2UerShEHFb5TC/qZpmodCfaK7T
+         SRTJLWQwzakONtt5kOyxHFE0oWV22NQuF0O0X9F3D7uoomV+seEOKw+TL7YnhP3dY30j
+         E0/2Il7KMufW3gsnBwqP94M14SGkYLZ2pwpMoWyRsBH/Rpc7Epj3H32XVnNwZKlh2oy4
+         9dFg==
+X-Gm-Message-State: AJIora/eU6GUIuDPgZx87qZDK2IP3dVe9cu354NsiHEsmL2pFBOFMbIC
+        7W8SF397MkmIah4r+JZrCYWq8g==
+X-Google-Smtp-Source: AGRyM1v5PkYm9NSDHkT60vS80gGlYU4SSApNwB4dG6nO+r0o1Sb57gZPEpYSfK3zIyIeGsRQtSZH7A==
+X-Received: by 2002:a17:907:980a:b0:722:f4a7:e00 with SMTP id ji10-20020a170907980a00b00722f4a70e00mr7752467ejc.114.1656239497724;
+        Sun, 26 Jun 2022 03:31:37 -0700 (PDT)
+Received: from [192.168.0.239] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id g10-20020aa7dc4a000000b0043567edac3csm5724723edu.61.2022.06.26.03.31.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Jun 2022 03:31:37 -0700 (PDT)
+Message-ID: <ee945844-5d78-7c2b-215e-25fe5617b481@linaro.org>
+Date:   Sun, 26 Jun 2022 12:31:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
 Subject: Re: [PATCH v3 4/7] dt-bindings: clock: mediatek: Add clock driver
  bindings for MT6795
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To:     David Heidelberg <david.heidelberg@collabora.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
@@ -59,203 +76,140 @@ Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
 References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com>
  <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
  <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
-From:   David Heidelberg <david.heidelberg@collabora.com>
-Autocrypt: addr=david.heidelberg@collabora.com; keydata=
- xjMEYlvLOxYJKwYBBAHaRw8BAQdA5CoWEzz4igpwK4h6lK6ZformRk84+ymcfkGNPwqEeILN
- MURhdmlkIEhlaWRlbGJlcmcgPGRhdmlkLmhlaWRlbGJlcmdAY29sbGFib3JhLmNvbT7ClgQT
- FggAPhYhBEo7kSl22BK0F1Np/mn1Z4YcHsAUBQJiW8s7AhsDBQkFo5qABQsJCAcCBhUKCQgL
- AgQWAgMBAh4BAheAAAoJEGn1Z4YcHsAU84kBAK5YqSWAOuIumAqgWvke6BEsaIGWGQzXSuKj
- er/TXuFuAQCwc9ITSVXWWTSpdFt2+4z7Wch8tIGlbIFcS9dCFddwCc44BGJbyzsSCisGAQQB
- l1UBBQEBB0AEk7jXEwDApGOwMH/X0UAPBH8Y3isjxhNMjpyRcnl2CwMBCAfCfgQYFggAJhYh
- BEo7kSl22BK0F1Np/mn1Z4YcHsAUBQJiW8s7AhsMBQkFo5qAAAoJEGn1Z4YcHsAU0PEA/j0Y
- uAOKJCnnwrkf3ozPP0sutA5bojoARwcIaZKO/zvIAP9PwTC9DGLg+8LJm7m2Lyf0LxLA8FXD
- wueLHBdwHg6zAQ==
-In-Reply-To: <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------01SB8j7fsrDg1UCCZJHvnO6w"
+ <728b2c54-0dc0-533f-bab8-fca228f6c1b1@collabora.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <728b2c54-0dc0-533f-bab8-fca228f6c1b1@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------01SB8j7fsrDg1UCCZJHvnO6w
-Content-Type: multipart/mixed; boundary="------------igpTnjsExajZs0wD231Hp3a8";
- protected-headers="v1"
-From: David Heidelberg <david.heidelberg@collabora.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- y.oudjana@protonmail.com, jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
- fparent@baylibre.com, rex-bc.chen@mediatek.com, tinghan.shen@mediatek.com,
- chun-jie.chen@mediatek.com, weiyi.lu@mediatek.com, ikjn@chromium.org,
- miles.chen@mediatek.com, sam.shih@mediatek.com, wenst@chromium.org,
- bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
- konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
- martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
- kernel@collabora.com
-Message-ID: <728b2c54-0dc0-533f-bab8-fca228f6c1b1@collabora.com>
-Subject: Re: [PATCH v3 4/7] dt-bindings: clock: mediatek: Add clock driver
- bindings for MT6795
-References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com>
- <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
- <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
-In-Reply-To: <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
+On 26/06/2022 11:47, David Heidelberg wrote:
+> On 25/06/2022 22:29, Krzysztof Kozlowski wrote:
+>> On 24/06/2022 11:35, AngeloGioacchino Del Regno wrote:
+>>> Add the bindings for the clock drivers of the MediaTek Helio X10
+>>> MT6795 SoC.
+>>>
+>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> ---
+>>>   .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++
+>>>   .../clock/mediatek,mt6795-sys-clock.yaml      | 74 +++++++++++++++++++
+>>>   2 files changed, 140 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>>   create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>> new file mode 100644
+>>> index 000000000000..795fb18721c3
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>> @@ -0,0 +1,66 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-clock.yaml#"
+>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>> +
+>>> +title: MediaTek Functional Clock Controller for MT6795
+>>> +
+>>> +maintainers:
+>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>> +
+>>> +description: |
+>>> +  The clock architecture in MediaTek like below
+>>> +  PLLs -->
+>>> +          dividers -->
+>>> +                      muxes
+>>> +                           -->
+>>> +                              clock gate
+>>> +
+>>> +  The devices provide clock gate control in different IP blocks.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - mediatek,mt6795-mfgcfg
+>>> +      - mediatek,mt6795-vdecsys
+>>> +      - mediatek,mt6795-vencsys
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - '#clock-cells'
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    soc {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +
+>>> +        mfgcfg: clock-controller@13000000 {
+>>> +            compatible = "mediatek,mt6795-mfgcfg";
+>>> +            reg = <0 0x13000000 0 0x1000>;
+>>> +            #clock-cells = <1>;
+>>> +        };
+>>> +
+>>> +        vdecsys: clock-controller@16000000 {
+>>> +            compatible = "mediatek,mt6795-vdecsys";
+>>> +            reg = <0 0x16000000 0 0x1000>;
+>>> +            #clock-cells = <1>;
+>>> +        };
+>>> +
+>>> +        vencsys: clock-controller@18000000 {
+>>> +            compatible = "mediatek,mt6795-vencsys";
+>>> +            reg = <0 0x18000000 0 0x1000>;
+>>> +            #clock-cells = <1>;
+>>> +        };
+>>> +    };
+>>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>> new file mode 100644
+>>> index 000000000000..44b96af9ceaf
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>> @@ -0,0 +1,74 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-sys-clock.yaml#"
+>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>> +
+>>> +title: MediaTek System Clock Controller for MT6795
+>>> +
+>>> +maintainers:
+>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>> +
+>>> +description:
+>>> +  The Mediatek system clock controller provides various clocks and system configuration
+>> Wrap according to Linux coding convention, so at 80.
+> 
+> What I understood that 100 length was agreed [1] as a limit. I haven't 
+> noticed any recent change regarding to line length.
+> 
+> [1] 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bdc48fa11e46f867ea4d75fa59ee87a7f48be144
 
---------------igpTnjsExajZs0wD231Hp3a8
-Content-Type: multipart/mixed; boundary="------------4TT4k8GW9tO0EQaIeP92D69x"
+The coding style (also in change above) clearly states:
+"The preferred limit on the length of a single line is 80 columns."
+Just read the first line of new diff/hunk...
 
---------------4TT4k8GW9tO0EQaIeP92D69x
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+checkpatch was indeed long time converted not to complain on 80 but on
+100, but that does not change coding style. The point of that was only
+to accept 100 wrapping when it is beneficial,  iow, it increases the
+code readability.
 
-T24gMjUvMDYvMjAyMiAyMjoyOSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24g
-MjQvMDYvMjAyMiAxMTozNSwgQW5nZWxvR2lvYWNjaGlubyBEZWwgUmVnbm8gd3JvdGU6DQo+
-PiBBZGQgdGhlIGJpbmRpbmdzIGZvciB0aGUgY2xvY2sgZHJpdmVycyBvZiB0aGUgTWVkaWFU
-ZWsgSGVsaW8gWDEwDQo+PiBNVDY3OTUgU29DLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEFu
-Z2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2NoaW5vLmRlbHJlZ25vQGNv
-bGxhYm9yYS5jb20+DQo+PiAtLS0NCj4+ICAgLi4uL2JpbmRpbmdzL2Nsb2NrL21lZGlhdGVr
-LG10Njc5NS1jbG9jay55YW1sIHwgNjYgKysrKysrKysrKysrKysrKysNCj4+ICAgLi4uL2Ns
-b2NrL21lZGlhdGVrLG10Njc5NS1zeXMtY2xvY2sueWFtbCAgICAgIHwgNzQgKysrKysrKysr
-KysrKysrKysrKw0KPj4gICAyIGZpbGVzIGNoYW5nZWQsIDE0MCBpbnNlcnRpb25zKCspDQo+
-PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvY2xvY2svbWVkaWF0ZWssbXQ2Nzk1LWNsb2NrLnlhbWwNCj4+ICAgY3JlYXRlIG1vZGUg
-MTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9tZWRpYXRl
-ayxtdDY3OTUtc3lzLWNsb2NrLnlhbWwNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL21lZGlhdGVrLG10Njc5NS1jbG9jay55
-YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL21lZGlhdGVr
-LG10Njc5NS1jbG9jay55YW1sDQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXgg
-MDAwMDAwMDAwMDAwLi43OTVmYjE4NzIxYzMNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBi
-L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9tZWRpYXRlayxtdDY3
-OTUtY2xvY2sueWFtbA0KPj4gQEAgLTAsMCArMSw2NiBAQA0KPj4gKyMgU1BEWC1MaWNlbnNl
-LUlkZW50aWZpZXI6IChHUEwtMi4wIE9SIEJTRC0yLUNsYXVzZSkNCj4+ICslWUFNTCAxLjIN
-Cj4+ICstLS0NCj4+ICskaWQ6ICJodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9jbG9j
-ay9tZWRpYXRlayxtdDY3OTUtY2xvY2sueWFtbCMiDQo+PiArJHNjaGVtYTogImh0dHA6Ly9k
-ZXZpY2V0cmVlLm9yZy9tZXRhLXNjaGVtYXMvY29yZS55YW1sIyINCj4+ICsNCj4+ICt0aXRs
-ZTogTWVkaWFUZWsgRnVuY3Rpb25hbCBDbG9jayBDb250cm9sbGVyIGZvciBNVDY3OTUNCj4+
-ICsNCj4+ICttYWludGFpbmVyczoNCj4+ICsgIC0gQW5nZWxvR2lvYWNjaGlubyBEZWwgUmVn
-bm8gPGFuZ2Vsb2dpb2FjY2hpbm8uZGVscmVnbm9AY29sbGFib3JhLmNvbT4NCj4+ICsgIC0g
-Q2h1bi1KaWUgQ2hlbiA8Y2h1bi1qaWUuY2hlbkBtZWRpYXRlay5jb20+DQo+PiArDQo+PiAr
-ZGVzY3JpcHRpb246IHwNCj4+ICsgIFRoZSBjbG9jayBhcmNoaXRlY3R1cmUgaW4gTWVkaWFU
-ZWsgbGlrZSBiZWxvdw0KPj4gKyAgUExMcyAtLT4NCj4+ICsgICAgICAgICAgZGl2aWRlcnMg
-LS0+DQo+PiArICAgICAgICAgICAgICAgICAgICAgIG11eGVzDQo+PiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgLS0+DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Y2xvY2sgZ2F0ZQ0KPj4gKw0KPj4gKyAgVGhlIGRldmljZXMgcHJvdmlkZSBjbG9jayBnYXRl
-IGNvbnRyb2wgaW4gZGlmZmVyZW50IElQIGJsb2Nrcy4NCj4+ICsNCj4+ICtwcm9wZXJ0aWVz
-Og0KPj4gKyAgY29tcGF0aWJsZToNCj4+ICsgICAgZW51bToNCj4+ICsgICAgICAtIG1lZGlh
-dGVrLG10Njc5NS1tZmdjZmcNCj4+ICsgICAgICAtIG1lZGlhdGVrLG10Njc5NS12ZGVjc3lz
-DQo+PiArICAgICAgLSBtZWRpYXRlayxtdDY3OTUtdmVuY3N5cw0KPj4gKw0KPj4gKyAgcmVn
-Og0KPj4gKyAgICBtYXhJdGVtczogMQ0KPj4gKw0KPj4gKyAgJyNjbG9jay1jZWxscyc6DQo+
-PiArICAgIGNvbnN0OiAxDQo+PiArDQo+PiArcmVxdWlyZWQ6DQo+PiArICAtIGNvbXBhdGli
-bGUNCj4+ICsgIC0gcmVnDQo+PiArICAtICcjY2xvY2stY2VsbHMnDQo+PiArDQo+PiArYWRk
-aXRpb25hbFByb3BlcnRpZXM6IGZhbHNlDQo+PiArDQo+PiArZXhhbXBsZXM6DQo+PiArICAt
-IHwNCj4+ICsgICAgc29jIHsNCj4+ICsgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDI+Ow0K
-Pj4gKyAgICAgICAgI3NpemUtY2VsbHMgPSA8Mj47DQo+PiArDQo+PiArICAgICAgICBtZmdj
-Zmc6IGNsb2NrLWNvbnRyb2xsZXJAMTMwMDAwMDAgew0KPj4gKyAgICAgICAgICAgIGNvbXBh
-dGlibGUgPSAibWVkaWF0ZWssbXQ2Nzk1LW1mZ2NmZyI7DQo+PiArICAgICAgICAgICAgcmVn
-ID0gPDAgMHgxMzAwMDAwMCAwIDB4MTAwMD47DQo+PiArICAgICAgICAgICAgI2Nsb2NrLWNl
-bGxzID0gPDE+Ow0KPj4gKyAgICAgICAgfTsNCj4+ICsNCj4+ICsgICAgICAgIHZkZWNzeXM6
-IGNsb2NrLWNvbnRyb2xsZXJAMTYwMDAwMDAgew0KPj4gKyAgICAgICAgICAgIGNvbXBhdGli
-bGUgPSAibWVkaWF0ZWssbXQ2Nzk1LXZkZWNzeXMiOw0KPj4gKyAgICAgICAgICAgIHJlZyA9
-IDwwIDB4MTYwMDAwMDAgMCAweDEwMDA+Ow0KPj4gKyAgICAgICAgICAgICNjbG9jay1jZWxs
-cyA9IDwxPjsNCj4+ICsgICAgICAgIH07DQo+PiArDQo+PiArICAgICAgICB2ZW5jc3lzOiBj
-bG9jay1jb250cm9sbGVyQDE4MDAwMDAwIHsNCj4+ICsgICAgICAgICAgICBjb21wYXRpYmxl
-ID0gIm1lZGlhdGVrLG10Njc5NS12ZW5jc3lzIjsNCj4+ICsgICAgICAgICAgICByZWcgPSA8
-MCAweDE4MDAwMDAwIDAgMHgxMDAwPjsNCj4+ICsgICAgICAgICAgICAjY2xvY2stY2VsbHMg
-PSA8MT47DQo+PiArICAgICAgICB9Ow0KPj4gKyAgICB9Ow0KPj4gZGlmZiAtLWdpdCBhL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9tZWRpYXRlayxtdDY3OTUt
-c3lzLWNsb2NrLnlhbWwgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xv
-Y2svbWVkaWF0ZWssbXQ2Nzk1LXN5cy1jbG9jay55YW1sDQo+PiBuZXcgZmlsZSBtb2RlIDEw
-MDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi40NGI5NmFmOWNlYWYNCj4+IC0tLSAvZGV2
-L251bGwNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9j
-ay9tZWRpYXRlayxtdDY3OTUtc3lzLWNsb2NrLnlhbWwNCj4+IEBAIC0wLDAgKzEsNzQgQEAN
-Cj4+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBCU0QtMi1DbGF1
-c2UpDQo+PiArJVlBTUwgMS4yDQo+PiArLS0tDQo+PiArJGlkOiAiaHR0cDovL2RldmljZXRy
-ZWUub3JnL3NjaGVtYXMvY2xvY2svbWVkaWF0ZWssbXQ2Nzk1LXN5cy1jbG9jay55YW1sIyIN
-Cj4+ICskc2NoZW1hOiAiaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3Jl
-LnlhbWwjIg0KPj4gKw0KPj4gK3RpdGxlOiBNZWRpYVRlayBTeXN0ZW0gQ2xvY2sgQ29udHJv
-bGxlciBmb3IgTVQ2Nzk1DQo+PiArDQo+PiArbWFpbnRhaW5lcnM6DQo+PiArICAtIEFuZ2Vs
-b0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2NoaW5vLmRlbHJlZ25vQGNvbGxh
-Ym9yYS5jb20+DQo+PiArICAtIENodW4tSmllIENoZW4gPGNodW4tamllLmNoZW5AbWVkaWF0
-ZWsuY29tPg0KPj4gKw0KPj4gK2Rlc2NyaXB0aW9uOg0KPj4gKyAgVGhlIE1lZGlhdGVrIHN5
-c3RlbSBjbG9jayBjb250cm9sbGVyIHByb3ZpZGVzIHZhcmlvdXMgY2xvY2tzIGFuZCBzeXN0
-ZW0gY29uZmlndXJhdGlvbg0KPiBXcmFwIGFjY29yZGluZyB0byBMaW51eCBjb2RpbmcgY29u
-dmVudGlvbiwgc28gYXQgODAuDQoNCldoYXQgSSB1bmRlcnN0b29kIHRoYXQgMTAwIGxlbmd0
-aCB3YXMgYWdyZWVkIFsxXSBhcyBhIGxpbWl0LiBJIGhhdmVuJ3QgDQpub3RpY2VkIGFueSBy
-ZWNlbnQgY2hhbmdlIHJlZ2FyZGluZyB0byBsaW5lIGxlbmd0aC4NCg0KWzFdIA0KaHR0cHM6
-Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGlu
-dXguZ2l0L2NvbW1pdC8/aWQ9YmRjNDhmYTExZTQ2Zjg2N2VhNGQ3NWZhNTllZTg3YTdmNDhi
-ZTE0NA0KDQo+DQo+PiArICBsaWtlIHJlc2V0IGFuZCBidXMgcHJvdGVjdGlvbiBvbiBNVDY3
-OTUuDQo+PiArDQo+PiArcHJvcGVydGllczoNCj4+ICsgIGNvbXBhdGlibGU6DQo+PiArICAg
-IGl0ZW1zOg0KPj4gKyAgICAgIC0gZW51bToNCj4+ICsgICAgICAgICAgLSBtZWRpYXRlayxt
-dDY3OTUtYXBtaXhlZHN5cw0KPj4gKyAgICAgICAgICAtIG1lZGlhdGVrLG10Njc5NS1pbmZy
-YWNmZw0KPj4gKyAgICAgICAgICAtIG1lZGlhdGVrLG10Njc5NS1wZXJpY2ZnDQo+PiArICAg
-ICAgICAgIC0gbWVkaWF0ZWssbXQ2Nzk1LXRvcGNrZ2VuDQo+PiArICAgICAgLSBjb25zdDog
-c3lzY29uDQo+PiArDQo+PiArICByZWc6DQo+PiArICAgIG1heEl0ZW1zOiAxDQo+PiArDQo+
-PiArICAnI2Nsb2NrLWNlbGxzJzoNCj4+ICsgICAgY29uc3Q6IDENCj4+ICsNCj4+ICsgICcj
-cmVzZXQtY2VsbHMnOg0KPj4gKyAgICBjb25zdDogMQ0KPj4gKw0KPj4gK3JlcXVpcmVkOg0K
-Pj4gKyAgLSBjb21wYXRpYmxlDQo+PiArICAtIHJlZw0KPj4gKyAgLSAnI2Nsb2NrLWNlbGxz
-Jw0KPj4gKw0KPj4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KPj4gKw0KPj4gK2V4
-YW1wbGVzOg0KPj4gKyAgLSB8DQo+PiArICAgIHNvYyB7DQo+PiArICAgICAgICAjYWRkcmVz
-cy1jZWxscyA9IDwyPjsNCj4+ICsgICAgICAgICNzaXplLWNlbGxzID0gPDI+Ow0KPj4gKw0K
-Pj4gKyAgICAgICAgdG9wY2tnZW46IGNsb2NrLWNvbnRyb2xsZXJAMTAwMDAwMDAgew0KPj4g
-KyAgICAgICAgICAgIGNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQ2Nzk1LXRvcGNrZ2VuIiwg
-InN5c2NvbiI7DQo+PiArICAgICAgICAgICAgcmVnID0gPDAgMHgxMDAwMDAwMCAwIDB4MTAw
-MD47DQo+PiArICAgICAgICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KPj4gKyAgICAgICAg
-fTsNCj4+ICsNCj4+ICsgICAgICAgIGluZnJhY2ZnOiBwb3dlci1jb250cm9sbGVyQDEwMDAx
-MDAwIHsNCj4+ICsgICAgICAgICAgICBjb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Njc5NS1p
-bmZyYWNmZyIsICJzeXNjb24iOw0KPj4gKyAgICAgICAgICAgIHJlZyA9IDwwIDB4MTAwMDEw
-MDAgMCAweDEwMDA+Ow0KPj4gKyAgICAgICAgICAgICNjbG9jay1jZWxscyA9IDwxPjsNCj4+
-ICsgICAgICAgICAgICAjcmVzZXQtY2VsbHMgPSA8MT47DQo+IE5vIG5lZWQgZm9yIGZvdXIg
-ZXhhbXBsZXMgb2YgdGhlIHNhbWUuIFRoZXkgZGlmZmVyIG9ubHkgYnkgY29tcGF0aWJsZSwN
-Cj4gc28gdGhpcyBpcyBqdXN0IHVubmVjZXNzYXJ5IGNvZGUuLi4gd2hpY2ggYXMgeW91IGNh
-biBzZWUgZG9lcyBub3QgcGFzcw0KPiB0aGUgY2hlY2tzLiBUaGlzIGFsc28gaGFzIHRvIGJl
-IGZpeGVkLg0KPg0KPiBNYXliZSBrZWVwIGl0IGFzIGNsb2NrLWNvbnRyb2xsZXI/DQo+DQo+
-DQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+DQotLSANCkRhdmlkIEhlaWRlbGJl
-cmcNCkNvbnN1bHRhbnQgU29mdHdhcmUgRW5naW5lZXINCg0KQ29sbGFib3JhIEx0ZC4NClBs
-YXRpbnVtIEJ1aWxkaW5nLCBTdCBKb2huJ3MgSW5ub3ZhdGlvbiBQYXJrLCBDYW1icmlkZ2Ug
-Q0I0IDBEUywgVUsNClJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzLCBuby4gNTUxMzcx
-OA0KDQo=
---------------4TT4k8GW9tO0EQaIeP92D69x
-Content-Type: application/pgp-keys; name="OpenPGP_0x69F567861C1EC014.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x69F567861C1EC014.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+It's not the case here and coding style clearly asks for 80. Wrap at 80.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
 
-xjMEYlvLOxYJKwYBBAHaRw8BAQdA5CoWEzz4igpwK4h6lK6ZformRk84+ymcfkGN
-PwqEeILNMURhdmlkIEhlaWRlbGJlcmcgPGRhdmlkLmhlaWRlbGJlcmdAY29sbGFi
-b3JhLmNvbT7ClgQTFggAPhYhBEo7kSl22BK0F1Np/mn1Z4YcHsAUBQJiW8s7AhsD
-BQkFo5qABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEGn1Z4YcHsAU84kBAK5Y
-qSWAOuIumAqgWvke6BEsaIGWGQzXSuKjer/TXuFuAQCwc9ITSVXWWTSpdFt2+4z7
-Wch8tIGlbIFcS9dCFddwCc44BGJbyzsSCisGAQQBl1UBBQEBB0AEk7jXEwDApGOw
-MH/X0UAPBH8Y3isjxhNMjpyRcnl2CwMBCAfCfgQYFggAJhYhBEo7kSl22BK0F1Np
-/mn1Z4YcHsAUBQJiW8s7AhsMBQkFo5qAAAoJEGn1Z4YcHsAU0PEA/j0YuAOKJCnn
-wrkf3ozPP0sutA5bojoARwcIaZKO/zvIAP9PwTC9DGLg+8LJm7m2Lyf0LxLA8FXD
-wueLHBdwHg6zAQ=3D=3D
-=3DOQS+
------END PGP PUBLIC KEY BLOCK-----
-
---------------4TT4k8GW9tO0EQaIeP92D69x--
-
---------------igpTnjsExajZs0wD231Hp3a8--
-
---------------01SB8j7fsrDg1UCCZJHvnO6w
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQRKO5EpdtgStBdTaf5p9WeGHB7AFAUCYrgrSwAKCRBp9WeGHB7A
-FI9aAPwKZ9qdy8fkfWuR5+0DNALpnxhA22wMeS/Rr+FJzCIO6wD/Q/q4xqSAb6h2
-Q4m/b/mqOFD4AYAJ416vkMM4dwJj0wg=
-=NSS0
------END PGP SIGNATURE-----
-
---------------01SB8j7fsrDg1UCCZJHvnO6w--
+Best regards,
+Krzysztof
