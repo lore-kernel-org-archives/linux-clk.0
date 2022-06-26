@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358F3CCA47C
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Jun 2022 19:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5CCCCA47E
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Jun 2022 19:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231688AbiFZTel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Jun 2022 15:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
+        id S229999AbiFZTen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Jun 2022 15:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229999AbiFZTel (ORCPT
+        with ESMTP id S231874AbiFZTel (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Jun 2022 15:34:41 -0400
 Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11EB55BA
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E925F86
         for <linux-clk@vger.kernel.org>; Sun, 26 Jun 2022 12:34:39 -0700 (PDT)
 Received: from nat1.ooonet.ru (gw.zelenaya.net [91.207.137.40])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id 4BA0750060C;
-        Sun, 26 Jun 2022 22:23:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 4BA0750060C
+        by novek.ru (Postfix) with ESMTPSA id 39B39500609;
+        Sun, 26 Jun 2022 22:23:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 39B39500609
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1656271407; bh=PoAGmN9iHzuv3rSXJ9WprVYx6fk+kyvcciPDG4gfsP4=;
+        t=1656271403; bh=nZT+ESujiXQETcw67x7YtqoGr5Q2y4rdBkQtDI054+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wxpUx/GvGh4GEvSsVQ6vZ4tjbm9skB23u0I5Z2EHCOu8b5MJOT55U5tqIAMrz7RaO
-         ptB7+Rv8wlYboDoFIwXoL6v4IID0IOQcO6s64r1Ay6l4Ay3i9cSetpyjgiI9UNZ4SN
-         kWs1zzEXuce2OEpr3L/OUZ2mAGFl739H0WOmGZz0=
+        b=zAwT4ib/juPJFHZn1VHzVp9amDaTK/xMuOsmBoBPV2z65TaWRztjniSle8gL2pFVU
+         cxPxtXkH6z3nG1MFUlgl3u98T1v5orv4t5MWkmr0jjooQPthUqvpj0id1hlbGC2W1p
+         hRfyE5Zti7an3CXRSXzf8uyUP7UWsv4C7NZjvXMs=
 From:   Vadim Fedorenko <vfedorenko@novek.ru>
 To:     Jakub Kicinski <kuba@kernel.org>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
@@ -33,9 +33,9 @@ To:     Jakub Kicinski <kuba@kernel.org>,
 Cc:     Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
         netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-Subject: [RFC PATCH v2 3/3] ptp_ocp: implement DPLL ops
-Date:   Sun, 26 Jun 2022 22:24:44 +0300
-Message-Id: <20220626192444.29321-4-vfedorenko@novek.ru>
+Subject: [RFC PATCH v2 1/3] dpll: Add DPLL framework base functions
+Date:   Sun, 26 Jun 2022 22:24:42 +0300
+Message-Id: <20220626192444.29321-2-vfedorenko@novek.ru>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220626192444.29321-1-vfedorenko@novek.ru>
 References: <20220626192444.29321-1-vfedorenko@novek.ru>
@@ -47,274 +47,902 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Vadim Fedorenko <vadfed@fb.com>
 
-Implement DPLL operations in ptp_ocp driver.
+DPLL framework is used to represent and configure DPLL devices
+in systems. Each device that has DPLL and can configure sources
+and outputs can use this framework.
 
 Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
 ---
- drivers/ptp/Kconfig       |   1 +
- drivers/ptp/ptp_ocp.c     | 169 ++++++++++++++++++++++++++++++--------
- include/uapi/linux/dpll.h |   2 +
- 3 files changed, 136 insertions(+), 36 deletions(-)
+ MAINTAINERS                 |   8 +
+ drivers/Kconfig             |   2 +
+ drivers/Makefile            |   1 +
+ drivers/dpll/Kconfig        |   7 +
+ drivers/dpll/Makefile       |   7 +
+ drivers/dpll/dpll_core.c    | 159 +++++++++++++
+ drivers/dpll/dpll_core.h    |  40 ++++
+ drivers/dpll/dpll_netlink.c | 454 ++++++++++++++++++++++++++++++++++++
+ drivers/dpll/dpll_netlink.h |   7 +
+ include/linux/dpll.h        |  29 +++
+ include/uapi/linux/dpll.h   |  79 +++++++
+ 11 files changed, 793 insertions(+)
+ create mode 100644 drivers/dpll/Kconfig
+ create mode 100644 drivers/dpll/Makefile
+ create mode 100644 drivers/dpll/dpll_core.c
+ create mode 100644 drivers/dpll/dpll_core.h
+ create mode 100644 drivers/dpll/dpll_netlink.c
+ create mode 100644 drivers/dpll/dpll_netlink.h
+ create mode 100644 include/linux/dpll.h
+ create mode 100644 include/uapi/linux/dpll.h
 
-diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
-index 458218f88c5e..f74846ebc177 100644
---- a/drivers/ptp/Kconfig
-+++ b/drivers/ptp/Kconfig
-@@ -176,6 +176,7 @@ config PTP_1588_CLOCK_OCP
- 	depends on !S390
- 	depends on COMMON_CLK
- 	select NET_DEVLINK
-+	select DPLL
- 	help
- 	  This driver adds support for an OpenCompute time card.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 05fcbea3e432..5532130baf36 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6122,6 +6122,14 @@ F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/switch-drive
+ F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-switch*
+ F:	drivers/net/ethernet/freescale/dpaa2/dpsw*
  
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index e59ea2173aac..f830625a63a3 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -21,6 +21,7 @@
- #include <linux/mtd/mtd.h>
- #include <linux/nvmem-consumer.h>
- #include <linux/crc16.h>
-+#include <uapi/linux/dpll.h>
++DPLL CLOCK SUBSYSTEM
++M:	Vadim Fedorenko <vadfed@fb.com>
++L:	netdev@vger.kernel.org
++S:	Maintained
++F:	drivers/dpll/*
++F:	include/net/dpll.h
++F:	include/uapi/linux/dpll.h
++
+ DPT_I2O SCSI RAID DRIVER
+ M:	Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+ L:	linux-scsi@vger.kernel.org
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index b6a172d32a7d..dcdc23116eb8 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -241,4 +241,6 @@ source "drivers/peci/Kconfig"
  
- #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
- #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
-@@ -336,6 +337,7 @@ struct ptp_ocp {
- 	struct ptp_ocp_signal	signal[4];
- 	struct ptp_ocp_sma_connector sma[4];
- 	const struct ocp_sma_op *sma_op;
+ source "drivers/hte/Kconfig"
+ 
++source "drivers/dpll/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index 9a30842b22c5..acc370a2cda6 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -189,3 +189,4 @@ obj-$(CONFIG_COUNTER)		+= counter/
+ obj-$(CONFIG_MOST)		+= most/
+ obj-$(CONFIG_PECI)		+= peci/
+ obj-$(CONFIG_HTE)		+= hte/
++obj-$(CONFIG_DPLL)		+= dpll/
+diff --git a/drivers/dpll/Kconfig b/drivers/dpll/Kconfig
+new file mode 100644
+index 000000000000..a4cae73f20d3
+--- /dev/null
++++ b/drivers/dpll/Kconfig
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Generic DPLL drivers configuration
++#
++
++config DPLL
++  bool
+diff --git a/drivers/dpll/Makefile b/drivers/dpll/Makefile
+new file mode 100644
+index 000000000000..0748c80097e4
+--- /dev/null
++++ b/drivers/dpll/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for DPLL drivers.
++#
++
++obj-$(CONFIG_DPLL)          += dpll_sys.o
++dpll_sys-y                  += dpll_core.o dpll_netlink.o
+diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+new file mode 100644
+index 000000000000..dc0330e3687d
+--- /dev/null
++++ b/drivers/dpll/dpll_core.c
+@@ -0,0 +1,159 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  dpll_core.c - Generic DPLL Management class support.
++ *
++ *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++
++#include "dpll_core.h"
++
++static DEFINE_MUTEX(dpll_device_xa_lock);
++static DEFINE_XARRAY_FLAGS(dpll_device_xa, XA_FLAGS_ALLOC);
++#define DPLL_REGISTERED XA_MARK_1
++
++#define ASSERT_DPLL_REGISTERED(d)                                           \
++	WARN_ON_ONCE(!xa_get_mark(&dpll_device_xa, (d)->id, DPLL_REGISTERED))
++#define ASSERT_DPLL_NOT_REGISTERED(d)                                      \
++	WARN_ON_ONCE(xa_get_mark(&dpll_device_xa, (d)->id, DPLL_REGISTERED))
++
++
++int for_each_dpll_device(int id, int (*cb)(struct dpll_device *, void *), void *data)
++{
 +	struct dpll_device *dpll;
- };
- 
- #define OCP_REQ_TIMESTAMP	BIT(0)
-@@ -660,18 +662,19 @@ static DEFINE_IDR(ptp_ocp_idr);
- struct ocp_selector {
- 	const char *name;
- 	int value;
-+	int dpll_type;
- };
- 
- static const struct ocp_selector ptp_ocp_clock[] = {
--	{ .name = "NONE",	.value = 0 },
--	{ .name = "TOD",	.value = 1 },
--	{ .name = "IRIG",	.value = 2 },
--	{ .name = "PPS",	.value = 3 },
--	{ .name = "PTP",	.value = 4 },
--	{ .name = "RTC",	.value = 5 },
--	{ .name = "DCF",	.value = 6 },
--	{ .name = "REGS",	.value = 0xfe },
--	{ .name = "EXT",	.value = 0xff },
-+	{ .name = "NONE",	.value = 0,		.dpll_type = 0 },
-+	{ .name = "TOD",	.value = 1,		.dpll_type = 0 },
-+	{ .name = "IRIG",	.value = 2,		.dpll_type = 0 },
-+	{ .name = "PPS",	.value = 3,		.dpll_type = 0 },
-+	{ .name = "PTP",	.value = 4,		.dpll_type = 0 },
-+	{ .name = "RTC",	.value = 5,		.dpll_type = 0 },
-+	{ .name = "DCF",	.value = 6,		.dpll_type = 0 },
-+	{ .name = "REGS",	.value = 0xfe,		.dpll_type = 0 },
-+	{ .name = "EXT",	.value = 0xff,		.dpll_type = 0 },
- 	{ }
- };
- 
-@@ -680,37 +683,37 @@ static const struct ocp_selector ptp_ocp_clock[] = {
- #define SMA_SELECT_MASK		GENMASK(14, 0)
- 
- static const struct ocp_selector ptp_ocp_sma_in[] = {
--	{ .name = "10Mhz",	.value = 0x0000 },
--	{ .name = "PPS1",	.value = 0x0001 },
--	{ .name = "PPS2",	.value = 0x0002 },
--	{ .name = "TS1",	.value = 0x0004 },
--	{ .name = "TS2",	.value = 0x0008 },
--	{ .name = "IRIG",	.value = 0x0010 },
--	{ .name = "DCF",	.value = 0x0020 },
--	{ .name = "TS3",	.value = 0x0040 },
--	{ .name = "TS4",	.value = 0x0080 },
--	{ .name = "FREQ1",	.value = 0x0100 },
--	{ .name = "FREQ2",	.value = 0x0200 },
--	{ .name = "FREQ3",	.value = 0x0400 },
--	{ .name = "FREQ4",	.value = 0x0800 },
--	{ .name = "None",	.value = SMA_DISABLE },
-+	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
-+	{ .name = "PPS1",	.value = 0x0001,	.dpll_type = DPLL_TYPE_EXT_1PPS },
-+	{ .name = "PPS2",	.value = 0x0002,	.dpll_type = DPLL_TYPE_EXT_1PPS },
-+	{ .name = "TS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS3",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "TS4",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ1",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ2",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ3",	.value = 0x0400,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "FREQ4",	.value = 0x0800,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "None",	.value = SMA_DISABLE,	.dpll_type = DPLL_TYPE_NONE },
- 	{ }
- };
- 
- static const struct ocp_selector ptp_ocp_sma_out[] = {
--	{ .name = "10Mhz",	.value = 0x0000 },
--	{ .name = "PHC",	.value = 0x0001 },
--	{ .name = "MAC",	.value = 0x0002 },
--	{ .name = "GNSS1",	.value = 0x0004 },
--	{ .name = "GNSS2",	.value = 0x0008 },
--	{ .name = "IRIG",	.value = 0x0010 },
--	{ .name = "DCF",	.value = 0x0020 },
--	{ .name = "GEN1",	.value = 0x0040 },
--	{ .name = "GEN2",	.value = 0x0080 },
--	{ .name = "GEN3",	.value = 0x0100 },
--	{ .name = "GEN4",	.value = 0x0200 },
--	{ .name = "GND",	.value = 0x2000 },
--	{ .name = "VCC",	.value = 0x4000 },
-+	{ .name = "10Mhz",	.value = 0x0000,	.dpll_type = DPLL_TYPE_EXT_10MHZ },
-+	{ .name = "PHC",	.value = 0x0001,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
-+	{ .name = "MAC",	.value = 0x0002,	.dpll_type = DPLL_TYPE_INT_OSCILLATOR },
-+	{ .name = "GNSS1",	.value = 0x0004,	.dpll_type = DPLL_TYPE_GNSS },
-+	{ .name = "GNSS2",	.value = 0x0008,	.dpll_type = DPLL_TYPE_GNSS },
-+	{ .name = "IRIG",	.value = 0x0010,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "DCF",	.value = 0x0020,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN1",	.value = 0x0040,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN2",	.value = 0x0080,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN3",	.value = 0x0100,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GEN4",	.value = 0x0200,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "GND",	.value = 0x2000,	.dpll_type = DPLL_TYPE_CUSTOM },
-+	{ .name = "VCC",	.value = 0x4000,	.dpll_type = DPLL_TYPE_CUSTOM },
- 	{ }
- };
- 
-@@ -3713,6 +3716,90 @@ ptp_ocp_detach(struct ptp_ocp *bp)
- 	device_unregister(&bp->dev);
- }
- 
-+static int ptp_ocp_dpll_get_status(struct dpll_device *dpll)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	int sync;
++	unsigned long index;
++	int ret = 0;
 +
-+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
-+	return sync;
-+}
-+
-+static int ptp_ocp_dpll_get_lock_status(struct dpll_device *dpll)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	int sync;
-+
-+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
-+	return sync;
-+}
-+
-+static int ptp_ocp_sma_get_dpll_type(struct ptp_ocp *bp, int sma_nr)
-+{
-+	struct ocp_selector *tbl;
-+	u32 val;
-+
-+	if (bp->sma[sma_nr].mode == SMA_MODE_IN)
-+		tbl = bp->sma_op->tbl[0];
-+	else
-+		tbl = bp->sma_op->tbl[1];
-+
-+	val = ptp_ocp_sma_get(bp, sma_nr);
-+	return tbl[val].dpll_type;
-+}
-+
-+static int ptp_ocp_dpll_type_supported(struct dpll_device *dpll, int sma, int type, int dir)
-+{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
-+	struct ocp_selector *tbl = bp->sma_op->tbl[dir];
-+	int i;
-+
-+	for (i = 0; i < sizeof(*tbl); i++) {
-+		if (tbl[i].dpll_type == type)
-+			return 1;
++	mutex_lock(&dpll_device_xa_lock);
++	xa_for_each_start(&dpll_device_xa, index, dpll, id) {
++		if (!xa_get_mark(&dpll_device_xa, index, DPLL_REGISTERED))
++			continue;
++		ret = cb(dpll, data);
++		if (ret)
++			break;
 +	}
++	mutex_unlock(&dpll_device_xa_lock);
++
++	return ret;
++}
++
++struct dpll_device *dpll_device_get_by_id(int id)
++{
++	struct dpll_device *dpll = NULL;
++
++	if (xa_get_mark(&dpll_device_xa, id, DPLL_REGISTERED))
++		dpll = xa_load(&dpll_device_xa, id);
++	return dpll;
++}
++
++void *dpll_priv(struct dpll_device *dpll)
++{
++	return dpll->priv;
++}
++EXPORT_SYMBOL_GPL(dpll_priv);
++
++static void dpll_device_release(struct device *dev)
++{
++	struct dpll_device *dpll;
++
++	dpll = to_dpll_device(dev);
++
++	dpll_device_unregister(dpll);
++	dpll_device_free(dpll);
++}
++
++static struct class dpll_class = {
++	.name = "dpll",
++	.dev_release = dpll_device_release,
++};
++
++struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, int sources_count,
++					 int outputs_count, void *priv)
++{
++	struct dpll_device *dpll;
++	int ret;
++
++	dpll = kzalloc(sizeof(*dpll), GFP_KERNEL);
++	if (!dpll)
++		return ERR_PTR(-ENOMEM);
++
++	mutex_init(&dpll->lock);
++	dpll->ops = ops;
++	dpll->dev.class = &dpll_class;
++	dpll->sources_count = sources_count;
++	dpll->outputs_count = outputs_count;
++
++	mutex_lock(&dpll_device_xa_lock);
++	ret = xa_alloc(&dpll_device_xa, &dpll->id, dpll, xa_limit_16b, GFP_KERNEL);
++	if (ret)
++		goto error;
++	dev_set_name(&dpll->dev, "dpll%d", dpll->id);
++	mutex_unlock(&dpll_device_xa_lock);
++	dpll->priv = priv;
++
++	return dpll;
++
++error:
++	mutex_unlock(&dpll_device_xa_lock);
++	kfree(dpll);
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(dpll_device_alloc);
++
++void dpll_device_free(struct dpll_device *dpll)
++{
++	if (!dpll)
++		return;
++
++	mutex_destroy(&dpll->lock);
++	kfree(dpll);
++}
++
++void dpll_device_register(struct dpll_device *dpll)
++{
++	ASSERT_DPLL_NOT_REGISTERED(dpll);
++
++	mutex_lock(&dpll_device_xa_lock);
++	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
++	dpll_notify_device_create(dpll->id, dev_name(&dpll->dev));
++	mutex_unlock(&dpll_device_xa_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_device_register);
++
++void dpll_device_unregister(struct dpll_device *dpll)
++{
++	ASSERT_DPLL_REGISTERED(dpll);
++
++	mutex_lock(&dpll_device_xa_lock);
++	xa_erase(&dpll_device_xa, dpll->id);
++	mutex_unlock(&dpll_device_xa_lock);
++}
++EXPORT_SYMBOL_GPL(dpll_device_unregister);
++
++static int __init dpll_init(void)
++{
++	int ret;
++
++	ret = dpll_netlink_init();
++	if (ret)
++		goto error;
++
++	ret = class_register(&dpll_class);
++	if (ret)
++		goto unregister_netlink;
++
++	return 0;
++
++unregister_netlink:
++	dpll_netlink_finish();
++error:
++	mutex_destroy(&dpll_device_xa_lock);
++	return ret;
++}
++subsys_initcall(dpll_init);
+diff --git a/drivers/dpll/dpll_core.h b/drivers/dpll/dpll_core.h
+new file mode 100644
+index 000000000000..5ad3224d5caf
+--- /dev/null
++++ b/drivers/dpll/dpll_core.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
++ */
++
++#ifndef __DPLL_CORE_H__
++#define __DPLL_CORE_H__
++
++#include <linux/dpll.h>
++
++#include "dpll_netlink.h"
++
++/**
++ * struct dpll_device - structure for a DPLL device
++ * @id:		unique id number for each edvice
++ * @dev:	&struct device for this dpll device
++ * @sources_count:	amount of input sources this dpll_device supports
++ * @outputs_count:	amount of outputs this dpll_device supports
++ * @ops:	operations this &dpll_device supports
++ * @lock:	mutex to serialize operations
++ * @priv:	pointer to private information of owner
++ */
++struct dpll_device {
++	int id;
++	struct device dev;
++	int sources_count;
++	int outputs_count;
++	struct dpll_device_ops *ops;
++	struct mutex lock;
++	void *priv;
++};
++
++#define to_dpll_device(_dev) \
++	container_of(_dev, struct dpll_device, dev)
++
++int for_each_dpll_device(int id, int (*cb)(struct dpll_device *, void *),
++			  void *data);
++struct dpll_device *dpll_device_get_by_id(int id);
++void dpll_device_unregister(struct dpll_device *dpll);
++#endif
+diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+new file mode 100644
+index 000000000000..e15106f30377
+--- /dev/null
++++ b/drivers/dpll/dpll_netlink.c
+@@ -0,0 +1,454 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Generic netlink for DPLL management framework
++ *
++ * Copyright (c) 2021 Meta Platforms, Inc. and affiliates
++ *
++ */
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <net/genetlink.h>
++#include "dpll_core.h"
++
++#include <uapi/linux/dpll.h>
++
++static const struct genl_multicast_group dpll_genl_mcgrps[] = {
++	{ .name = DPLL_CONFIG_DEVICE_GROUP_NAME, },
++	{ .name = DPLL_CONFIG_SOURCE_GROUP_NAME, },
++	{ .name = DPLL_CONFIG_OUTPUT_GROUP_NAME, },
++	{ .name = DPLL_MONITOR_GROUP_NAME,  },
++};
++
++static const struct nla_policy dpll_genl_get_policy[] = {
++	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
++	[DPLLA_DEVICE_NAME]	= { .type = NLA_STRING,
++				    .len = DPLL_NAME_LENGTH },
++	[DPLLA_FLAGS]		= { .type = NLA_U32 },
++};
++
++static const struct nla_policy dpll_genl_set_source_policy[] = {
++	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
++	[DPLLA_SOURCE_ID]	= { .type = NLA_U32 },
++	[DPLLA_SOURCE_TYPE]	= { .type = NLA_U32 },
++};
++
++static const struct nla_policy dpll_genl_set_output_policy[] = {
++	[DPLLA_DEVICE_ID]	= { .type = NLA_U32 },
++	[DPLLA_OUTPUT_ID]	= { .type = NLA_U32 },
++	[DPLLA_OUTPUT_TYPE]	= { .type = NLA_U32 },
++};
++
++struct param {
++	struct netlink_callback *cb;
++	struct dpll_device *dpll;
++	struct nlattr **attrs;
++	struct sk_buff *msg;
++	int dpll_id;
++	int dpll_source_id;
++	int dpll_source_type;
++	int dpll_output_id;
++	int dpll_output_type;
++};
++
++struct dpll_dump_ctx {
++	struct dpll_device *dev;
++	int flags;
++	int pos_idx;
++	int pos_src_idx;
++	int pos_out_idx;
++};
++
++typedef int (*cb_t)(struct param *);
++
++static struct genl_family dpll_gnl_family;
++
++static struct dpll_dump_ctx *dpll_dump_context(struct netlink_callback *cb)
++{
++	return (struct dpll_dump_ctx *)cb->ctx;
++}
++
++static int __dpll_cmd_device_dump_one(struct dpll_device *dpll,
++					   struct sk_buff *msg)
++{
++	if (nla_put_u32(msg, DPLLA_DEVICE_ID, dpll->id))
++		return -EMSGSIZE;
++
++	if (nla_put_string(msg, DPLLA_DEVICE_NAME, dev_name(&dpll->dev)))
++		return -EMSGSIZE;
++
 +	return 0;
 +}
 +
-+static int ptp_ocp_dpll_get_source_type(struct dpll_device *dpll, int sma)
++static int __dpll_cmd_dump_sources(struct dpll_device *dpll,
++					   struct sk_buff *msg)
 +{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	struct nlattr *src_attr;
++	int i, ret = 0, type;
 +
-+	if (bp->sma[sma].mode != SMA_MODE_IN)
-+		return -1;
++	for (i = 0; i < dpll->sources_count; i++) {
++		src_attr = nla_nest_start(msg, DPLLA_SOURCE);
++		if (!src_attr) {
++			ret = -EMSGSIZE;
++			break;
++		}
++		type = dpll->ops->get_source_type(dpll, i);
++		if (nla_put_u32(msg, DPLLA_SOURCE_ID, i) ||
++		    nla_put_u32(msg, DPLLA_SOURCE_TYPE, type)) {
++			nla_nest_cancel(msg, src_attr);
++			ret = -EMSGSIZE;
++			break;
++		}
++		if (dpll->ops->get_source_supported) {
++			for (type = 0; type <= DPLL_TYPE_MAX; type++) {
++				ret = dpll->ops->get_source_supported(dpll, i, type);
++				if (ret && nla_put_u32(msg, DPLLA_SOURCE_SUPPORTED, type)) {
++					ret = -EMSGSIZE;
++					break;
++				}
++			}
++			ret = 0;
++		}
++		nla_nest_end(msg, src_attr);
++	}
 +
-+	return ptp_ocp_sma_get_dpll_type(bp, sma);
++	return ret;
 +}
 +
-+static int ptp_ocp_dpll_get_source_supported(struct dpll_device *dpll, int sma, int type)
++static int __dpll_cmd_dump_outputs(struct dpll_device *dpll,
++					   struct sk_buff *msg)
 +{
-+	return ptp_ocp_dpll_type_supported(dpll, sma, type, 0);
++	struct nlattr *out_attr;
++	int i, ret = 0, type;
++
++	for (i = 0; i < dpll->outputs_count; i++) {
++		out_attr = nla_nest_start(msg, DPLLA_OUTPUT);
++		if (!out_attr) {
++			ret = -EMSGSIZE;
++			break;
++		}
++		type = dpll->ops->get_output_type(dpll, i);
++		if (nla_put_u32(msg, DPLLA_OUTPUT_ID, i) ||
++		    nla_put_u32(msg, DPLLA_OUTPUT_TYPE, type)) {
++			nla_nest_cancel(msg, out_attr);
++			ret = -EMSGSIZE;
++			break;
++		}
++		if (dpll->ops->get_output_supported) {
++			for (type = 0; type <= DPLL_TYPE_MAX; type++) {
++				ret = dpll->ops->get_output_supported(dpll, i, type);
++				if (ret && nla_put_u32(msg, DPLLA_OUTPUT_SUPPORTED, type)) {
++					ret = -EMSGSIZE;
++					break;
++				}
++			}
++			ret = 0;
++		}
++		nla_nest_end(msg, out_attr);
++	}
++
++	return ret;
 +}
 +
-+static int ptp_ocp_dpll_get_output_type(struct dpll_device *dpll, int sma)
++static int __dpll_cmd_dump_status(struct dpll_device *dpll,
++					   struct sk_buff *msg)
 +{
-+	struct ptp_ocp *bp = (struct ptp_ocp *)dpll_priv(dpll);
++	int ret;
 +
-+	if (bp->sma[sma].mode != SMA_MODE_OUT)
-+		return -1;
++	if (dpll->ops->get_status) {
++		ret = dpll->ops->get_status(dpll);
++		if (nla_put_u32(msg, DPLLA_STATUS, ret))
++			return -EMSGSIZE;
++	}
 +
-+	return ptp_ocp_sma_get_dpll_type(bp, sma);
++	if (dpll->ops->get_temp) {
++		ret = dpll->ops->get_temp(dpll);
++		if (nla_put_u32(msg, DPLLA_TEMP, ret))
++			return -EMSGSIZE;
++	}
++
++	if (dpll->ops->get_lock_status) {
++		ret = dpll->ops->get_lock_status(dpll);
++		if (nla_put_u32(msg, DPLLA_LOCK_STATUS, ret))
++			return -EMSGSIZE;
++	}
++
++	return 0;
 +}
 +
-+static int ptp_ocp_dpll_get_output_supported(struct dpll_device *dpll, int sma, int type)
++static int dpll_device_dump_one(struct dpll_device *dpll, struct sk_buff *msg, int flags)
 +{
-+	return ptp_ocp_dpll_type_supported(dpll, sma, type, 1);
++	struct nlattr *hdr;
++	int ret;
++
++	hdr = nla_nest_start(msg, DPLLA_DEVICE);
++	if (!hdr)
++		return -EMSGSIZE;
++
++	mutex_lock(&dpll->lock);
++	ret = __dpll_cmd_device_dump_one(dpll, msg);
++	if (ret)
++		goto out_cancel_nest;
++
++	if (flags & DPLL_FLAG_SOURCES && dpll->ops->get_source_type) {
++		ret = __dpll_cmd_dump_sources(dpll, msg);
++		if (ret)
++			goto out_cancel_nest;
++	}
++
++	if (flags & DPLL_FLAG_OUTPUTS && dpll->ops->get_output_type) {
++		ret = __dpll_cmd_dump_outputs(dpll, msg);
++		if (ret)
++			goto out_cancel_nest;
++	}
++
++	if (flags & DPLL_FLAG_STATUS) {
++		ret = __dpll_cmd_dump_status(dpll, msg);
++		if (ret)
++			goto out_cancel_nest;
++	}
++
++	mutex_unlock(&dpll->lock);
++	nla_nest_end(msg, hdr);
++
++	return 0;
++
++out_cancel_nest:
++	mutex_unlock(&dpll->lock);
++	nla_nest_cancel(msg, hdr);
++
++	return ret;
 +}
 +
-+static struct dpll_device_ops dpll_ops = {
-+	.get_status		= ptp_ocp_dpll_get_status,
-+	.get_lock_status	= ptp_ocp_dpll_get_lock_status,
-+	.get_source_type	= ptp_ocp_dpll_get_source_type,
-+	.get_source_supported	= ptp_ocp_dpll_get_source_supported,
-+	.get_output_type	= ptp_ocp_dpll_get_output_type,
-+	.get_output_supported	= ptp_ocp_dpll_get_output_supported,
++static int dpll_genl_cmd_set_source(struct param *p)
++{
++	const struct genl_dumpit_info *info = genl_dumpit_info(p->cb);
++	struct dpll_device *dpll = p->dpll;
++	int ret = 0, src_id, type;
++
++	if (!info->attrs[DPLLA_SOURCE_ID] ||
++	    !info->attrs[DPLLA_SOURCE_TYPE])
++		return -EINVAL;
++
++	if (!dpll->ops->set_source_type)
++		return -EOPNOTSUPP;
++
++	src_id = nla_get_u32(info->attrs[DPLLA_SOURCE_ID]);
++	type = nla_get_u32(info->attrs[DPLLA_SOURCE_TYPE]);
++
++	mutex_lock(&dpll->lock);
++	ret = dpll->ops->set_source_type(dpll, src_id, type);
++	mutex_unlock(&dpll->lock);
++
++	return ret;
++}
++
++static int dpll_genl_cmd_set_output(struct param *p)
++{
++	const struct genl_dumpit_info *info = genl_dumpit_info(p->cb);
++	struct dpll_device *dpll = p->dpll;
++	int ret = 0, out_id, type;
++
++	if (!info->attrs[DPLLA_OUTPUT_ID] ||
++	    !info->attrs[DPLLA_OUTPUT_TYPE])
++		return -EINVAL;
++
++	if (!dpll->ops->set_output_type)
++		return -EOPNOTSUPP;
++
++	out_id = nla_get_u32(info->attrs[DPLLA_OUTPUT_ID]);
++	type = nla_get_u32(info->attrs[DPLLA_OUTPUT_TYPE]);
++
++	mutex_lock(&dpll->lock);
++	ret = dpll->ops->set_source_type(dpll, out_id, type);
++	mutex_unlock(&dpll->lock);
++
++	return ret;
++}
++
++static int dpll_device_loop_cb(struct dpll_device *dpll, void *data)
++{
++	struct dpll_dump_ctx *ctx;
++	struct param *p = (struct param *)data;
++
++	ctx = dpll_dump_context(p->cb);
++
++	ctx->pos_idx = dpll->id;
++
++	return dpll_device_dump_one(dpll, p->msg, ctx->flags);
++}
++
++static int dpll_cmd_device_dump(struct param *p)
++{
++	struct dpll_dump_ctx *ctx = dpll_dump_context(p->cb);
++
++	return for_each_dpll_device(ctx->pos_idx, dpll_device_loop_cb, p);
++}
++
++static int dpll_genl_cmd_device_get_id(struct param *p)
++{
++	struct dpll_device *dpll = p->dpll;
++	int flags = 0;
++
++	if (p->attrs[DPLLA_FLAGS])
++		flags = nla_get_u32(p->attrs[DPLLA_FLAGS]);
++
++	return dpll_device_dump_one(dpll, p->msg, flags);
++}
++
++static cb_t cmd_doit_cb[] = {
++	[DPLL_CMD_DEVICE_GET]		= dpll_genl_cmd_device_get_id,
++	[DPLL_CMD_SET_SOURCE_TYPE]	= dpll_genl_cmd_set_source,
++	[DPLL_CMD_SET_OUTPUT_TYPE]	= dpll_genl_cmd_set_output,
 +};
 +
- static int
- ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
-@@ -3768,6 +3855,14 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	ptp_ocp_info(bp);
- 	devlink_register(devlink);
++static cb_t cmd_dump_cb[] = {
++	[DPLL_CMD_DEVICE_GET]		= dpll_cmd_device_dump,
++};
 +
-+	bp->dpll = dpll_device_alloc(&dpll_ops, ARRAY_SIZE(bp->sma), ARRAY_SIZE(bp->sma), bp);
-+	if (!bp->dpll) {
-+		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
-+		return 0;
++static int dpll_genl_cmd_start(struct netlink_callback *cb)
++{
++	const struct genl_dumpit_info *info = genl_dumpit_info(cb);
++	struct dpll_dump_ctx *ctx = dpll_dump_context(cb);
++
++	ctx->dev = NULL;
++	if (info->attrs[DPLLA_FLAGS])
++		ctx->flags = nla_get_u32(info->attrs[DPLLA_FLAGS]);
++	else
++		ctx->flags = 0;
++	ctx->pos_idx = 0;
++	ctx->pos_src_idx = 0;
++	ctx->pos_out_idx = 0;
++	return 0;
++}
++
++static int dpll_genl_cmd_dumpit(struct sk_buff *skb,
++				   struct netlink_callback *cb)
++{
++	struct param p = { .cb = cb, .msg = skb };
++	const struct genl_dumpit_info *info = genl_dumpit_info(cb);
++	int cmd = info->op.cmd;
++	int ret;
++	void *hdr;
++
++	hdr = genlmsg_put(skb, 0, 0, &dpll_gnl_family, 0, cmd);
++	if (!hdr)
++		return -EMSGSIZE;
++
++	ret = cmd_dump_cb[cmd](&p);
++	if (ret)
++		goto out_cancel_msg;
++
++	genlmsg_end(skb, hdr);
++
++	return 0;
++
++out_cancel_msg:
++	genlmsg_cancel(skb, hdr);
++
++	return ret;
++}
++
++static int dpll_genl_cmd_doit(struct sk_buff *skb,
++				 struct genl_info *info)
++{
++	struct param p = { .attrs = info->attrs, .dpll = info->user_ptr[0] };
++	int cmd = info->genlhdr->cmd;
++	struct sk_buff *msg;
++	void *hdr;
++	int ret;
++
++	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++	p.msg = msg;
++
++	hdr = genlmsg_put_reply(msg, info, &dpll_gnl_family, 0, cmd);
++	if (!hdr) {
++		ret = -EMSGSIZE;
++		goto out_free_msg;
 +	}
-+	dpll_device_register(bp->dpll);
 +
- 	return 0;
- 
- out:
-@@ -3785,6 +3880,8 @@ ptp_ocp_remove(struct pci_dev *pdev)
- 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
- 	struct devlink *devlink = priv_to_devlink(bp);
- 
-+	dpll_device_unregister(bp->dpll);
-+	dpll_device_free(bp->dpll);
- 	devlink_unregister(devlink);
- 	ptp_ocp_detach(bp);
- 	pci_disable_device(pdev);
++	ret = cmd_doit_cb[cmd](&p);
++	if (ret)
++		goto out_cancel_msg;
++
++	genlmsg_end(msg, hdr);
++
++	return genlmsg_reply(msg, info);
++
++out_cancel_msg:
++	genlmsg_cancel(msg, hdr);
++out_free_msg:
++	nlmsg_free(msg);
++
++	return ret;
++}
++
++static int dpll_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
++						 struct genl_info *info)
++{
++	struct dpll_device *dpll;
++	int id;
++
++	if (!info->attrs[DPLLA_DEVICE_ID])
++		return -EINVAL;
++	id = nla_get_u32(info->attrs[DPLLA_DEVICE_ID]);
++
++	dpll = dpll_device_get_by_id(id);
++	if (!dpll)
++		return -ENODEV;
++	info->user_ptr[0] = dpll;
++
++	return 0;
++}
++
++static const struct genl_ops dpll_genl_ops[] = {
++	{
++		.cmd	= DPLL_CMD_DEVICE_GET,
++		.start	= dpll_genl_cmd_start,
++		.dumpit	= dpll_genl_cmd_dumpit,
++		.doit	= dpll_genl_cmd_doit,
++		.policy	= dpll_genl_get_policy,
++		.maxattr = ARRAY_SIZE(dpll_genl_get_policy) - 1,
++	},
++	{
++		.cmd	= DPLL_CMD_SET_SOURCE_TYPE,
++		.flags	= GENL_UNS_ADMIN_PERM,
++		.doit	= dpll_genl_cmd_doit,
++		.policy	= dpll_genl_set_source_policy,
++		.maxattr = ARRAY_SIZE(dpll_genl_set_source_policy) - 1,
++	},
++	{
++		.cmd	= DPLL_CMD_SET_OUTPUT_TYPE,
++		.flags	= GENL_UNS_ADMIN_PERM,
++		.doit	= dpll_genl_cmd_doit,
++		.policy	= dpll_genl_set_output_policy,
++		.maxattr = ARRAY_SIZE(dpll_genl_set_output_policy) - 1,
++	},
++};
++
++static struct genl_family dpll_gnl_family __ro_after_init = {
++	.hdrsize	= 0,
++	.name		= DPLL_FAMILY_NAME,
++	.version	= DPLL_VERSION,
++	.ops		= dpll_genl_ops,
++	.n_ops		= ARRAY_SIZE(dpll_genl_ops),
++	.mcgrps		= dpll_genl_mcgrps,
++	.n_mcgrps	= ARRAY_SIZE(dpll_genl_mcgrps),
++	.pre_doit	= dpll_pre_doit,
++};
++
++int __init dpll_netlink_init(void)
++{
++	return genl_register_family(&dpll_gnl_family);
++}
++
++void dpll_netlink_finish(void)
++{
++	genl_unregister_family(&dpll_gnl_family);
++}
++
++void __exit dpll_netlink_fini(void)
++{
++	dpll_netlink_finish();
++}
+diff --git a/drivers/dpll/dpll_netlink.h b/drivers/dpll/dpll_netlink.h
+new file mode 100644
+index 000000000000..e2d100f59dd6
+--- /dev/null
++++ b/drivers/dpll/dpll_netlink.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
++ */
++
++int __init dpll_netlink_init(void);
++void dpll_netlink_finish(void);
+diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+new file mode 100644
+index 000000000000..4ebda933d5f6
+--- /dev/null
++++ b/include/linux/dpll.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
++ */
++
++#ifndef __DPLL_H__
++#define __DPLL_H__
++
++struct dpll_device;
++
++struct dpll_device_ops {
++	int (*get_status)(struct dpll_device *dpll);
++	int (*get_temp)(struct dpll_device *dpll);
++	int (*get_lock_status)(struct dpll_device *dpll);
++	int (*get_source_type)(struct dpll_device *dpll, int id);
++	int (*get_source_supported)(struct dpll_device *dpll, int id, int type);
++	int (*get_output_type)(struct dpll_device *dpll, int id);
++	int (*get_output_supported)(struct dpll_device *dpll, int id, int type);
++	int (*set_source_type)(struct dpll_device *dpll, int id, int val);
++	int (*set_output_type)(struct dpll_device *dpll, int id, int val);
++};
++
++struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, int sources_count,
++					 int outputs_count, void *priv);
++void dpll_device_register(struct dpll_device *dpll);
++void dpll_device_unregister(struct dpll_device *dpll);
++void dpll_device_free(struct dpll_device *dpll);
++void *dpll_priv(struct dpll_device *dpll);
++#endif
 diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
-index 7ce45c6b4fd4..5e8c46712d18 100644
---- a/include/uapi/linux/dpll.h
+new file mode 100644
+index 000000000000..7ce45c6b4fd4
+--- /dev/null
 +++ b/include/uapi/linux/dpll.h
-@@ -41,11 +41,13 @@ enum dpll_genl_attr {
- 
- /* DPLL signal types used as source or as output */
- enum dpll_genl_signal_type {
-+	DPLL_TYPE_NONE,
- 	DPLL_TYPE_EXT_1PPS,
- 	DPLL_TYPE_EXT_10MHZ,
- 	DPLL_TYPE_SYNCE_ETH_PORT,
- 	DPLL_TYPE_INT_OSCILLATOR,
- 	DPLL_TYPE_GNSS,
-+	DPLL_TYPE_CUSTOM,
- 
- 	__DPLL_TYPE_MAX,
- };
+@@ -0,0 +1,79 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_DPLL_H
++#define _UAPI_LINUX_DPLL_H
++
++#define DPLL_NAME_LENGTH	20
++
++/* Adding event notification support elements */
++#define DPLL_FAMILY_NAME		"dpll"
++#define DPLL_VERSION			0x01
++#define DPLL_CONFIG_DEVICE_GROUP_NAME  "config"
++#define DPLL_CONFIG_SOURCE_GROUP_NAME  "source"
++#define DPLL_CONFIG_OUTPUT_GROUP_NAME  "output"
++#define DPLL_MONITOR_GROUP_NAME        "monitor"
++
++#define DPLL_FLAG_SOURCES	1
++#define DPLL_FLAG_OUTPUTS	2
++#define DPLL_FLAG_STATUS	4
++
++/* Attributes of dpll_genl_family */
++enum dpll_genl_attr {
++	DPLLA_UNSPEC,
++	DPLLA_DEVICE,
++	DPLLA_DEVICE_ID,
++	DPLLA_DEVICE_NAME,
++	DPLLA_SOURCE,
++	DPLLA_SOURCE_ID,
++	DPLLA_SOURCE_TYPE,
++	DPLLA_SOURCE_SUPPORTED,
++	DPLLA_OUTPUT,
++	DPLLA_OUTPUT_ID,
++	DPLLA_OUTPUT_TYPE,
++	DPLLA_OUTPUT_SUPPORTED,
++	DPLLA_STATUS,
++	DPLLA_TEMP,
++	DPLLA_LOCK_STATUS,
++	DPLLA_FLAGS,
++
++	__DPLLA_MAX,
++};
++#define DPLLA_MAX (__DPLLA_MAX - 1)
++
++/* DPLL signal types used as source or as output */
++enum dpll_genl_signal_type {
++	DPLL_TYPE_EXT_1PPS,
++	DPLL_TYPE_EXT_10MHZ,
++	DPLL_TYPE_SYNCE_ETH_PORT,
++	DPLL_TYPE_INT_OSCILLATOR,
++	DPLL_TYPE_GNSS,
++
++	__DPLL_TYPE_MAX,
++};
++#define DPLL_TYPE_MAX (__DPLL_TYPE_MAX - 1)
++
++/* Events of dpll_genl_family */
++enum dpll_genl_event {
++	DPLL_EVENT_UNSPEC,
++	DPLL_EVENT_DEVICE_CREATE,		/* DPLL device creation */
++	DPLL_EVENT_DEVICE_DELETE,		/* DPLL device deletion */
++	DPLL_EVENT_STATUS_LOCKED,		/* DPLL device locked to source */
++	DPLL_EVENT_STATUS_UNLOCKED,	/* DPLL device freerun */
++	DPLL_EVENT_SOURCE_CHANGE,		/* DPLL device source changed */
++	DPLL_EVENT_OUTPUT_CHANGE,		/* DPLL device output changed */
++
++	__DPLL_EVENT_MAX,
++};
++#define DPLL_EVENT_MAX (__DPLL_EVENT_MAX - 1)
++
++/* Commands supported by the dpll_genl_family */
++enum dpll_genl_cmd {
++	DPLL_CMD_UNSPEC,
++	DPLL_CMD_DEVICE_GET,	/* List of DPLL devices id */
++	DPLL_CMD_SET_SOURCE_TYPE,	/* Set the DPLL device source type */
++	DPLL_CMD_SET_OUTPUT_TYPE,	/* Set the DPLL device output type */
++
++	__DPLL_CMD_MAX,
++};
++#define DPLL_CMD_MAX (__DPLL_CMD_MAX - 1)
++
++#endif /* _UAPI_LINUX_DPLL_H */
 -- 
 2.27.0
 
