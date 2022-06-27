@@ -2,102 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EE2C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 20:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57251C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 20:55:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241132AbiF0UPX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 16:15:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34640 "EHLO
+        id S231307AbiF0Uy7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 16:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236356AbiF0UPX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 16:15:23 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B2491D30B
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 13:15:22 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-101e1a33fe3so14317154fac.11
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 13:15:22 -0700 (PDT)
+        with ESMTP id S229601AbiF0Uy6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 16:54:58 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E3E2DC5
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 13:54:56 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id l81so14523566oif.9
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 13:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=3blwfZZTMRBH390nLectWFhgIDm492Spnq2Xbbt6JLs=;
-        b=WwMLVEADRqo0P379S218zDtekCtrer/BHLyL1Q2GaVLMcC5xK9GWWt7DxKFdvVZVnZ
-         FejS5WV95S3MzGXd57qtDbBRWVd/tn+PYMXOlPxV48dS0NOa4SjR1EffahaZGmf1Jhcr
-         eziLCY/lyiwqwkZYBgZkxclzxmmrH9tRF7uyCDs4xsFD+1LMMGG7LFpoEI+RvldIqm3e
-         09xfsDIVVV6s/cWINSeGZi9zUrbBZF08G2i2qTyvOOmst+4WJg9Sq6ePf8noRA5QB1AE
-         2xVqZ7v6vPUmbVC73zoANim7if9CR/SVuolDXeVO+Kxd5SP7VZLyM0TRkIuVPhdt/ZhO
-         H3vw==
+        bh=+wu8FbJfJ+Q9MxmPPrAR91FAjnYekUfFagsceeKXjh0=;
+        b=loSSV131mIFKt3HpYTok7q4CoL9EKNUepLdX1KxCRXfu8a57sYL2uzn14dMUx/gSSk
+         VFxRQ53JaaPjOhxKg5QR/5lW7P6NuePeUVL8A45QCT0xNOi9ZcH2Kag49Pz3PQOddYhD
+         832ct3sFqIPJsHlWcoVfdoi5ySm8yAflN71laKCOlM331XmwE5gKW29jvnTW8ZJ/bk+F
+         Kmo+p5JbqhBZM1+smuwJ7F6i3aM5zbHfZieorgBQGA4UCHs99cTdVgIKqBI1s1EwBena
+         Q9rzvAN5ccj9luYtSSME8+YZ/NhcLOf60XnbyjjhH/mkAhE2aJe7mQR5szplNQzUh3rP
+         vzwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=3blwfZZTMRBH390nLectWFhgIDm492Spnq2Xbbt6JLs=;
-        b=HVyZKkFczrIJYwYB3TAZhMoJnt21DfmBYN0G5y6DSQ2V9gP606n7nCgI3ZKz+aSHGG
-         DskWv6zButtc65hEoM9BcMze0ZxjtnfanJWmWWtVQzoTqg6WhKfzJw3epdiWQMYtKR8s
-         jlhz1HfbcPGEuull9SLPCQYw5S4wMiwdhKJoORxKrtlyIrTx+RE2hWF3/3XAPjp4ILid
-         fOw6tFWRGhVrdAB6iSjkhM3T7K16guhystIW+kou1vtDItldp3D9bn4Oj/1BoXI1ILDW
-         cQ5UxMhQak92LIFNW0NqhRQ8g4NfpcT/A7dXJkwO1++reRrKgn+UZkB6J5L9eX3CUpzU
-         hkoQ==
-X-Gm-Message-State: AJIora8mcsVtchTd8W9SqW40vG5UjHkf4Yp8SbzestCm8ud4VJU4Zoog
-        M4a+Ga6pKzxLKodrH7y9tW0StQ==
-X-Google-Smtp-Source: AGRyM1s6/0wpqNUDQhjiqZ+M7gqbWaoTWXguFmAH0NmwWfEtd/aNBLP+yimen/s314Wj9uF8MuPn7g==
-X-Received: by 2002:a05:6870:430c:b0:101:f886:3760 with SMTP id w12-20020a056870430c00b00101f8863760mr8002029oah.88.1656360921523;
-        Mon, 27 Jun 2022 13:15:21 -0700 (PDT)
+        bh=+wu8FbJfJ+Q9MxmPPrAR91FAjnYekUfFagsceeKXjh0=;
+        b=H6MGsE+IMaRnC7pGvgWdz9ioHRsSMDheCbpuVHP4h0CwXOrhddO60JQHLF5rmxLlkQ
+         b94Arw2pK892WS4e4Ax6t1qQsigRvHauUC3vUEG/KE4JVq3lwTr3/9YDsuFPXAkcvDcS
+         LKtXW5g3q9G2ecsy1CWJnWTjmPuLSU/gnYlwA28UqqH2C8D106ASsOHJopfVOpFw1NkO
+         U+GXZ2heypIHnoXyAAIK619fGZyLg6BRBkt+2uwHFg9dJyMRM5radJnfrcp0GvaHox6f
+         CEtC2gGmIdKJlc2YBqpfJ9y6grMILE2hvI5k+9CaUXqvoIQxGeQJIH9A2D5b4s0Qn4tq
+         azcg==
+X-Gm-Message-State: AJIora/tXx5GCANzH+ggO8HfV66TPYmVp1aphrf6DErNm0NAZFEsegvP
+        j//cBzvtRBZYet1g6bSiRz3B1g==
+X-Google-Smtp-Source: AGRyM1tgbmKXwzWoirqUL53jUbbUZ64FHe+zsXVc527cYaSy3639GImZYXL6jCmaQhREfAnBhkhhDg==
+X-Received: by 2002:a05:6808:1202:b0:2f9:c7b4:fd56 with SMTP id a2-20020a056808120200b002f9c7b4fd56mr8925688oil.55.1656363296088;
+        Mon, 27 Jun 2022 13:54:56 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a18-20020a9d3e12000000b006168dbb001fsm6731199otd.7.2022.06.27.13.15.20
+        by smtp.gmail.com with ESMTPSA id w12-20020a056870a2cc00b000f33624baa4sm7751272oak.18.2022.06.27.13.54.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 13:15:20 -0700 (PDT)
-Date:   Mon, 27 Jun 2022 15:15:18 -0500
+        Mon, 27 Jun 2022 13:54:55 -0700 (PDT)
+Date:   Mon, 27 Jun 2022 15:54:53 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Li kunyu <kunyu@nfschina.com>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: the return value statement of the
- gcc_sm6350_probe function has an extra semicolon
-Message-ID: <YroP1pW3dzoV9F4D@builder.lan>
-References: <20220627020500.135125-1-kunyu@nfschina.com>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: arm: msm: Convert kpss-gcc driver
+ Documentation to yaml
+Message-ID: <YroZHWEbVK5BHEFM@builder.lan>
+References: <20220430060125.9124-1-ansuelsmth@gmail.com>
+ <20220430060125.9124-4-ansuelsmth@gmail.com>
+ <fec305d1-d4b3-3f9d-bc31-bc33490d1ad7@linaro.org>
+ <626d4cbf.1c69fb81.e6965.76b4@mx.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220627020500.135125-1-kunyu@nfschina.com>
+In-Reply-To: <626d4cbf.1c69fb81.e6965.76b4@mx.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun 26 Jun 21:05 CDT 2022, Li kunyu wrote:
+On Sat 30 Apr 02:42 CDT 2022, Ansuel Smith wrote:
 
-> I think this semicolon could be deleted.
+> On Sat, Apr 30, 2022 at 04:40:54PM +0200, Krzysztof Kozlowski wrote:
+> > On 30/04/2022 08:01, Ansuel Smith wrote:
+> > > Convert kpss-gcc driver Documentation to yaml.
+> > > Add #clock-cells additional binding to required bindings and example
+> > > as it's a required binding for clock-output-names.
+> > > 
+> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > 
+> > 
+> > (...)
+> > 
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - qcom,kpss-gcc-ipq8064
+> > > +          - qcom,kpss-gcc-apq8064
+> > > +          - qcom,kpss-gcc-msm8974
+> > > +          - qcom,kpss-gcc-msm8960
+> > > +      - const: qcom,kpss-gcc
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: phandle to pll8_vote
+> > > +      - description: phandle to pxo_board
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: pll8_vote
+> > > +      - const: pxo
+> > > +
+> > > +  clock-output-names:
+> > > +    const: acpu_l2_aux
+> > 
+> > It does not make sense having a constant output name. What is the
+> > meaning this property in such case? The original binding did not enforce it.
+> > 
+> > 
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+> Mh. Should I just drop the const and put a description referring to an
+> advised name? The driver with the kpss-gcc hardcode the name to
+> acpu_l2_aux that's why I thought it was a correct conversion using a
+> const but I assume this is another problem of not making a correct 1:1
+> conversion and adding fixes on pure conversion.
+> Think I should drop it and put a description to it. (and then later fix
+> it when I will push the other series with all the tweaks)
+> 
+> What do you think?
 > 
 
-Thank you for the patch Li.
+The typical reason for using clock-output-names is that we have some
+consumer that finds the clock based on global name lookup. Over time
+we've been moving these to use .fw_name or .index based lookup, which
+removes this problem.
 
-Please look at the git log for suggestions about the prefix for your
-commit subject (clk: qcom: gcc-sm6350: in this case).
+But I don't see that being the case here. So my suggestion is that you
+just drop clock-output-names from the binding, which will solve
+Krzysztof's objection.
 
-I've updated the commit message and picked up the patch.
+
+From there we can review what needs to be done in the Linux driver to
+work with the improved binding.
 
 Regards,
 Bjorn
-
-> Signed-off-by: Li kunyu <kunyu@nfschina.com>
-> ---
->  drivers/clk/qcom/gcc-sm6350.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
-> index a4f7fba70393..69412400efa4 100644
-> --- a/drivers/clk/qcom/gcc-sm6350.c
-> +++ b/drivers/clk/qcom/gcc-sm6350.c
-> @@ -2558,7 +2558,7 @@ static int gcc_sm6350_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);;
-> +	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);
->  }
->  
->  static struct platform_driver gcc_sm6350_driver = {
-> -- 
-> 2.18.2
-> 
