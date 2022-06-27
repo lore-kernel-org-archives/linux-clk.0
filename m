@@ -2,72 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187CEC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 16:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA389C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 16:24:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237765AbiF0QXj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 12:23:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54988 "EHLO
+        id S238927AbiF0QYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 12:24:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236443AbiF0QXi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 12:23:38 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A765DAE7E
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 09:23:36 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id D7B8083E3A;
-        Mon, 27 Jun 2022 18:23:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1656347014;
-        bh=qyRqRKTcgCbtBEtdObSLSc6Y2Bi2gAfQy+jLb9syFLE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=aoBI1xtyR05DdOJWxQRP5Ld292ikzanHOi4LUlHlAAqug+7dxr38icjCXZxk2kCYZ
-         CTFuddo+7LVOxt2CYkf9EH/v8yNv14koHkt9zwx8lWYXkIMGoRfj5bnkjx5kp3VfjA
-         ddtno241N8WKHdE8As/z7yeEzt3pM2AETgDz99KEJQ2jhRT93DMQoKwE+KT50E853S
-         HpGBW6YxQuBfVnf7yZP8/B0Ta1lDqKSzQUY7k/8LLj9n0ynn8QIB3Dd0WUB16jeNC8
-         FCx71dHkI3Cy+/Z+tGMYlcAcZyiKkhe8Rb+X6ozCpi2Rk4mQVM5yawVhFHq/WVHW6+
-         hbTdsH2bWTYSg==
-Message-ID: <66f689d9-a691-8bf6-62a2-48fac6eb3938@denx.de>
-Date:   Mon, 27 Jun 2022 18:23:33 +0200
+        with ESMTP id S237910AbiF0QYz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 12:24:55 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21D9BE39;
+        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id e63so9571186pgc.5;
+        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=agTdFC77wAiPKF65qUDFakFqsb81qxDJ3UaD4sEYt/w=;
+        b=IIE+TLwo/0K9iYZITp/hc6jUuto3k5HhvAD+nsiUisLv5Q4wyvr9FmMjtJYZsH3E9S
+         Wzs6+cVruekXJPSY8wVLoZOU7kIYaO8EcBZqF2+r2+a+Ox3/W+rQ4jWtvvZMN2HM0C5O
+         QzYBRzgRINKohbhhk9bD7Dd1XLJ0A7sx2MfwMjPKt4f6Hjr4DxpWchGyvEsDN9G3Xvde
+         ae3vzMHrE2kgBP93GTa6ag/KAS5mfEFH56yPg1cfYiMM7LnTLOET5S8qHNldYHckM3gS
+         UK+qtGImHgor6rqpZY5chuYnLqBsxZ9FGT/Mgl9qjCMG5++fuTWOmo9eoPb0ODtsjMVK
+         yhBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=agTdFC77wAiPKF65qUDFakFqsb81qxDJ3UaD4sEYt/w=;
+        b=HCn4KS8skzPRWOIUDCIeV1yZyd06mnToGc48CraRjc1pIS3RIBaK6GrunI3VaeQxLo
+         GP1QkK6r1qme+sOOX6YHfCdLsvtx5IZ+dT657K7hBzEDkjD2Ffk8U8HfQxXQiTzq/oNi
+         gVo5vyT8IT0b72HGDm8W2zBRcj0hodA2Z0pRfUrYX0EtzHzfYHAV57tyY7u2Dsiicfoc
+         wpWIrJLgqP7C6O2QPCREAdUw++6NEdFoVvL55olbWeKSJjg2iFhOYyPwM53AGZl2VdAO
+         rZT4DX8ElmJqScNh+cU/tY5i0bgSUmfX47dq83CQg8kRFvTNCMloAFtgGSIP54BwYEn+
+         iw6g==
+X-Gm-Message-State: AJIora+NIQG7ibCYlEocUEA8mHXBV5jJlPAg5xLKePU4eqU/mOIdvPEj
+        /Aah2p3NrorM45Nyio9E5q8=
+X-Google-Smtp-Source: AGRyM1sG27yOPsRPwIvHWPhLNZZUlBJTHGS/Rtcv+tHJafgzf9lXLWrQ3EU8HM3gCD6lvDfXgJVNHA==
+X-Received: by 2002:a63:6e44:0:b0:40c:73a7:b6c9 with SMTP id j65-20020a636e44000000b0040c73a7b6c9mr13235895pgc.285.1656347094073;
+        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id t5-20020a17090aae0500b001ec4f258028sm7647327pjq.55.2022.06.27.09.24.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jun 2022 09:24:53 -0700 (PDT)
+Message-ID: <7656fa2c-590a-8f0f-03ef-904e4f186c82@gmail.com>
+Date:   Mon, 27 Jun 2022 09:24:51 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] clk: bcm: rpi: Fix error handling of
+ raspberrypi_fw_get_rate
 Content-Language: en-US
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Cc:     linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-References: <20220625013235.710346-1-marex@denx.de>
- <20220625013235.710346-3-marex@denx.de> <YrnOTaLS2r7QBMNx@linaro.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <YrnOTaLS2r7QBMNx@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220625083643.4012-1-stefan.wahren@i2se.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220625083643.4012-1-stefan.wahren@i2se.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.6 at phobos.denx.de
-X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/27/22 17:35, Abel Vesa wrote:
-> On 22-06-25 03:32:32, Marek Vasut wrote:
->> Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
->> series of clock gates and muxes. Model it as a large static table of
->> gates and muxes with one exception, which is the PLL14xx . The PLL14xx
->> SAI PLL has to be registered separately.
->>
+On 6/25/22 01:36, Stefan Wahren wrote:
+> The function raspberrypi_fw_get_rate (e.g. used for the recalc_rate
+> hook) can fail to get the clock rate from the firmware. In this case
+> we cannot return a signed error value, which would be casted to
+> unsigned long. Fix this by returning 0 instead.
 > 
-> Again, there is a chance that the blk-ctrl driver might disable the PD
-> from under this.
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-Can you elaborate a bit more on this ? How/why do you think so ?
+Fixes: 4e85e535e6cc ("clk: bcm283x: add driver interfacing with 
+Raspberry Pi's firmware")
+
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
