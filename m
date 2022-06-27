@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301A5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 23:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E674C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 23:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235002AbiF0XWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 19:22:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60608 "EHLO
+        id S241901AbiF0XYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 19:24:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237413AbiF0XWE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 19:22:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534C12409E
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 16:22:03 -0700 (PDT)
+        with ESMTP id S237413AbiF0XYF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 19:24:05 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCCD23169
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 16:24:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1849DB818E4
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 23:22:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3ABDC34115;
-        Mon, 27 Jun 2022 23:22:00 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 2F588CE1412
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 23:24:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81710C34115;
+        Mon, 27 Jun 2022 23:24:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656372120;
-        bh=nM18KZ2pRb363aBJRrW1+lITPPVp3+qR4rjIT5kq82E=;
+        s=k20201202; t=1656372241;
+        bh=85r9R7R+0EgQGKeG2WuXCrWFlGzJPgl07GZmZn+q1f4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m7MA36FQn71YNtfOO5hkfxRV+FxQUiWEg7PvyVIqCElPrXgkObF24WGAirZanr2Bp
-         bWWcl9sIH/jrZo0v7jqZEytmrVggIh1safgh+1xWbg1kd4tIpWX+hLeZiOpiRnuI86
-         kYP571x5B2f30k+oeQ8BNWEfQUrF8C4xlivtz0Kq7xC+dwx1q4V5fVicO4qxvqmZLL
-         qIlrBvzQzUY7Y1xskWdW7kBFlMfH5QkV32r56CPNqqAmQQlywQjxnh8L/uqKrnpRv4
-         Vu7dZOpDwBzpdMDh4e+NR43TXlgySVXK1rN7ORFqr8s5EyShbk0J+8ewbd4Q9n2PHc
-         FBwal67SrleLQ==
+        b=d8/ZV3ipGMkdPTv7zcJjwauVwTyBfYdaYhuZoROaS8lW/T/vj6VkuAF1fnG5cJxEP
+         idPEcEgTMnT3gXMpGLEEqMT1XURYdRKhUPEu2z0P5pNRQ/riC4GrXiWvGz+a0IpxO6
+         upX5Q1xwGCRq+N88du9SQLc2/sC6kXTct4erqzlf96oRsDOlVx91r1iWayaTHz0oKQ
+         WjVceMx28rb8G9OyWLKSoCs43dFZiOjJamM2ioBCGA1m+ctXy9xerfdRYUKumo/L+o
+         GxiKleLwX3W7STlT9BrtBNqpW3uKXsuQxTQBN8FK37poCoVfc6Kayozp2Mk8fcT2gg
+         P2MWtBS/LLHkQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220516132527.328190-3-maxime@cerno.tech>
-References: <20220516132527.328190-1-maxime@cerno.tech> <20220516132527.328190-3-maxime@cerno.tech>
-Subject: Re: [PATCH v5 02/28] clk: Skip clamping when rounding if there's no boundaries
+In-Reply-To: <20220516132527.328190-4-maxime@cerno.tech>
+References: <20220516132527.328190-1-maxime@cerno.tech> <20220516132527.328190-4-maxime@cerno.tech>
+Subject: Re: [PATCH v5 03/28] clk: Introduce clk_get_rate_range()
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
@@ -50,59 +50,30 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
 To:     Maxime Ripard <maxime@cerno.tech>,
         Mike Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org
-Date:   Mon, 27 Jun 2022 16:21:58 -0700
+Date:   Mon, 27 Jun 2022 16:23:59 -0700
 User-Agent: alot/0.10
-Message-Id: <20220627232200.C3ABDC34115@smtp.kernel.org>
+Message-Id: <20220627232401.81710C34115@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-05-16 06:25:01)
-> Commit 948fb0969eae ("clk: Always clamp the rounded rate") recently
-> started to clamp the request rate in the clk_rate_request passed as an
-> argument of clk_core_determine_round_nolock() with the min_rate and
-> max_rate fields of that same request.
+Quoting Maxime Ripard (2022-05-16 06:25:02)
+> With the recent introduction of clock drivers that will force their
+> clock rate to either the minimum or maximum boundaries, it becomes
+> harder for clock users to discover either boundary of their clock.
 >=20
-> While the clk_rate_requests created by the framework itself always have
-> those fields set, some drivers will create it themselves and don't
-> always fill min_rate and max_rate.
+> Indeed, the best way to do that previously was to call clk_round_rate()
+> on either 0 or ULONG_MAX and count on the driver to clamp the rate to
+> the current boundary, but that won't work anymore.
 >=20
-> In such a case, we end up clamping the rate with a minimum and maximum
-> of 0, thus always rounding the rate to 0.
+> Since any other alternative (calling clk_set_rate_range() and looking at
+> the returned value, calling clk_round_rate() still, or just doing
+> nothing) depends on how the driver will behaves, we actually are
+> punching a hole through the abstraction provided by the clock framework.
 >=20
-> Let's skip the clamping if both min_rate and max_rate are set to 0 and
-> complain so that it gets fixed.
->=20
-> Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/clk.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 2a32fa9f7618..d46c00bbedea 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1341,7 +1341,19 @@ static int clk_core_determine_round_nolock(struct =
-clk_core *core,
->         if (!core)
->                 return 0;
-> =20
-> -       req->rate =3D clamp(req->rate, req->min_rate, req->max_rate);
-> +       /*
-> +        * Some clock providers hand-craft their clk_rate_requests and
-> +        * might not fill min_rate and max_rate.
-> +        *
-> +        * If it's the case, clamping the rate is equivalent to setting
-> +        * the rate to 0 which is bad. Skip the clamping but complain so
-> +        * that it gets fixed, hopefully.
-> +        */
-> +       if (!req->min_rate && !req->max_rate)
-> +               pr_warn("%s: %s: clk_rate_request has initialized min or =
-max rate.\n",
-> +                       __func__, core->name);
+> In order to avoid any abstraction violation, let's create a bunch of
+> accessors that will return the current minimum and maximum for a given
+> clock.
 
-Is this going to trigger anytime soon? I'd prefer we return an error
-from here if the min/max is 0. The warning can stay. Also probably needs
-to be a pr_warn_once() or ratelimited because sometimes rate setting
-code is called very often.
+Why does a clk consumer need to know the rate range? I don't see any
+information in the commit text about that.
