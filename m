@@ -2,223 +2,205 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99001C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 06:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A3AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 07:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiF0GqK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 02:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38616 "EHLO
+        id S231768AbiF0Ho7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 03:44:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231859AbiF0GqJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 02:46:09 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83969559B
-        for <linux-clk@vger.kernel.org>; Sun, 26 Jun 2022 23:46:08 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id u12so16966217eja.8
-        for <linux-clk@vger.kernel.org>; Sun, 26 Jun 2022 23:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ADBX8pzB7I4NVaAI/SWhyMsSxZmAZE/UmxR90sSNn3w=;
-        b=PuvvswSYGXHqs6gwAEwQpzWBAPQ0IpC9CnKE5r81hf2Si6B5l5738Css0MpGyYsoCx
-         hVygkdwfayTMifPN5OMvV40xwI4c5U/8apZQh2diqpRWr+2JHmenjtU2P2MJOEvLBeAS
-         hPtZZB44xXiRi1K6OC8FOgn8tib49180cgozu//0nBp6q95byr+poBjwAkPht8kk4TQv
-         RN+ddVIdoLUxNcgt8dImlfoJhB5RgpIpQKSP+Lp22zzvjV6ouIK1dQD2O8cxy1N8v/Yh
-         bbWsQONEmY63t9fX/VvPRqaouz5zHYKDbs5L9kHLA0OWS80v2IdsnymDUAqZAHXDAiCb
-         dXQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ADBX8pzB7I4NVaAI/SWhyMsSxZmAZE/UmxR90sSNn3w=;
-        b=D3vpIedd2zPV54ckyqb0V2flTYbCaRuly1rjYKk3t7Vy3XdeU+fC2xpi6Hzof08omt
-         nN5S8/yZoUhV9GJFRnAJIoOpgY/CfF9uO5NBDWxj3sr/hfD+uQwBobnKQEAh4bZonrvP
-         zbkjCDedWVCkVtPhKUoGhKYaMiIPng9mVXrB/3BiRl0NND9FCILwUC3HRzOUqRQMnDQm
-         gUuucJ6iotPwbj/s5UdAG5C4TIa5RKBnwIYtLY70JsVB+Dc9vkAuaXRtc46Gk4JLezoA
-         STirA3JQCHpDLcLz+lzA6AQMhlihm9OstxiUGOjdBFhXKuj3vydqKgxR8HWVxjQ8XGnR
-         a1rQ==
-X-Gm-Message-State: AJIora8kwdB2N+e8yiqJKU7gpj8I5MELxB/8PLcg7+ukrHwvb7ZTTWk0
-        qLvC/iGY9Z1Q/aXQoVqP5r8a7Q==
-X-Google-Smtp-Source: AGRyM1vTDdRRHIDDxqaXUnByiIT8mDOmWurINlYJm6kz/6G9IyK97xle0oFuXHZrrn/3ao5xz2XK2w==
-X-Received: by 2002:a17:907:7678:b0:726:9fca:8106 with SMTP id kk24-20020a170907767800b007269fca8106mr4586490ejc.640.1656312367106;
-        Sun, 26 Jun 2022 23:46:07 -0700 (PDT)
-Received: from [192.168.0.246] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id jw14-20020a170906e94e00b007263481a43fsm4305504ejb.81.2022.06.26.23.46.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Jun 2022 23:46:06 -0700 (PDT)
-Message-ID: <97bb42c0-725f-3611-ff3f-0c7344aa0a00@linaro.org>
-Date:   Mon, 27 Jun 2022 08:46:05 +0200
+        with ESMTP id S231735AbiF0Ho5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 03:44:57 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D32360C6;
+        Mon, 27 Jun 2022 00:44:56 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E35756601824;
+        Mon, 27 Jun 2022 08:44:52 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656315894;
+        bh=98ifQbG2wsM55eIgKV0UnH7X42SVzBCwPS6JtUzdqNY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=PdCo2C2OuBcV/T11XPWp3z93NWE6k8d2tKMy8CgviMeERazXsNCHqTRs9GyOv+C4n
+         THQkk2DRJ+WpUEDCgUzzwj5JNLoyFMLW4145KxoQbJW75T5jnlV1kpYXlCcposD0f1
+         0HG5CdK7NerVKo0eo6Vg+wBJhxPz65aCVl383FpEXXPk3q8xnPhnFUgblpDFji74ZI
+         GNDCgN91TPbmYWbjuLRUdqgD7MNsgDKaOlu36YONK1gaYWSSmerV0oEbLRwaRFfFkl
+         6o0qNC1sOJq7VrK6xl7YHt8QpGkC2bltAKKusU/l+CRq0HuuZvKiwVFvGiWp5Uzw8r
+         iGL8eWcTylyXA==
+Message-ID: <2111b4a7-d195-0333-1d43-02fcd91f89e2@collabora.com>
+Date:   Mon, 27 Jun 2022 09:44:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH 1/5] dt-binding: clock: Document rockchip,rk3588-cru
- bindings
+Subject: Re: [PATCH v3 4/7] dt-bindings: clock: mediatek: Add clock driver
+ bindings for MT6795
 Content-Language: en-US
-To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Elaine Zhang <zhangqing@rock-chips.com>, kernel@collabora.com
-References: <20220623160329.239501-1-sebastian.reichel@collabora.com>
- <20220623160329.239501-2-sebastian.reichel@collabora.com>
- <0841741a-22f6-40f6-c745-6065dfdbcb1d@linaro.org> <8081469.T7Z3S40VBb@diego>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8081469.T7Z3S40VBb@diego>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        David Heidelberg <david.heidelberg@collabora.com>
+Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
+        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
+        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
+        sam.shih@mediatek.com, wenst@chromium.org,
+        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
+        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
+        kernel@collabora.com
+References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com>
+ <20220624093525.243077-5-angelogioacchino.delregno@collabora.com>
+ <cea65d6a-7d9b-7b14-9984-bcd7f115da47@linaro.org>
+ <728b2c54-0dc0-533f-bab8-fca228f6c1b1@collabora.com>
+ <ee945844-5d78-7c2b-215e-25fe5617b481@linaro.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <ee945844-5d78-7c2b-215e-25fe5617b481@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/06/2022 08:14, Heiko Stübner wrote:
-> Hi Krzysztof,
-> 
-> Am Sonntag, 26. Juni 2022, 22:27:41 CEST schrieb Krzysztof Kozlowski:
->>> +#define PLL_V0PLL			4
->>> +#define PLL_AUPLL			5
->>> +#define PLL_CPLL			6
->>> +#define PLL_GPLL			7
->>> +#define PLL_NPLL			8
->>> +#define PLL_PPLL			9
->>> +#define ARMCLK_L			10
->>> +#define ARMCLK_B01			11
->>> +#define ARMCLK_B23			12
->>> +
->>> +/* cru clocks */
->>> +#define PCLK_BIGCORE0_ROOT		20
+Il 26/06/22 12:31, Krzysztof Kozlowski ha scritto:
+> On 26/06/2022 11:47, David Heidelberg wrote:
+>> On 25/06/2022 22:29, Krzysztof Kozlowski wrote:
+>>> On 24/06/2022 11:35, AngeloGioacchino Del Regno wrote:
+>>>> Add the bindings for the clock drivers of the MediaTek Helio X10
+>>>> MT6795 SoC.
+>>>>
+>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>    .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++
+>>>>    .../clock/mediatek,mt6795-sys-clock.yaml      | 74 +++++++++++++++++++
+>>>>    2 files changed, 140 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>>>    create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..795fb18721c3
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+>>>> @@ -0,0 +1,66 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-clock.yaml#"
+>>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>>> +
+>>>> +title: MediaTek Functional Clock Controller for MT6795
+>>>> +
+>>>> +maintainers:
+>>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>>> +
+>>>> +description: |
+>>>> +  The clock architecture in MediaTek like below
+>>>> +  PLLs -->
+>>>> +          dividers -->
+>>>> +                      muxes
+>>>> +                           -->
+>>>> +                              clock gate
+>>>> +
+>>>> +  The devices provide clock gate control in different IP blocks.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - mediatek,mt6795-mfgcfg
+>>>> +      - mediatek,mt6795-vdecsys
+>>>> +      - mediatek,mt6795-vencsys
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  '#clock-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - '#clock-cells'
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    soc {
+>>>> +        #address-cells = <2>;
+>>>> +        #size-cells = <2>;
+>>>> +
+>>>> +        mfgcfg: clock-controller@13000000 {
+>>>> +            compatible = "mediatek,mt6795-mfgcfg";
+>>>> +            reg = <0 0x13000000 0 0x1000>;
+>>>> +            #clock-cells = <1>;
+>>>> +        };
+>>>> +
+>>>> +        vdecsys: clock-controller@16000000 {
+>>>> +            compatible = "mediatek,mt6795-vdecsys";
+>>>> +            reg = <0 0x16000000 0 0x1000>;
+>>>> +            #clock-cells = <1>;
+>>>> +        };
+>>>> +
+>>>> +        vencsys: clock-controller@18000000 {
+>>>> +            compatible = "mediatek,mt6795-vencsys";
+>>>> +            reg = <0 0x18000000 0 0x1000>;
+>>>> +            #clock-cells = <1>;
+>>>> +        };
+>>>> +    };
+>>>> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..44b96af9ceaf
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+>>>> @@ -0,0 +1,74 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-sys-clock.yaml#"
+>>>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>>>> +
+>>>> +title: MediaTek System Clock Controller for MT6795
+>>>> +
+>>>> +maintainers:
+>>>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+>>>> +
+>>>> +description:
+>>>> +  The Mediatek system clock controller provides various clocks and system configuration
+>>> Wrap according to Linux coding convention, so at 80.
 >>
->> These are abstract IDs, not register offsets, so no holes, incremented
->> by one.
-> 
-> I do believe Rockchip nowadays creates these automatically from soc design-
-> documents. I've looked up the thread in [0] as this seems to have started
-> with the rk3568.
-> 
-> So these are in fact not created as abstract IDs, but are part of the SoCs
-> manual.
-> 
-> [0] https://lore.kernel.org/all/b663994d-853b-4474-bd77-a444317bfffb@rock-chips.com/
-
-Nothing stops Rockchip to change the tools to generate incremental IDs
-without holes, right?
-
-> 
-> 
->>> +#define PCLK_BIGCORE0_PVTM		21
->>> +#define PCLK_BIGCORE1_ROOT		22
->>> +#define PCLK_BIGCORE1_PVTM		23
-> 
-> [...]
-> 
->>> +
->>> +#define CLK_NR_CLKS			(HCLK_SDIO_PRE + 1)
->>> +
->>> +/********Name=SOFTRST_CON01,Offset=0xA04********/
->>> +#define SRST_A_TOP_BIU			19
+>> What I understood that 100 length was agreed [1] as a limit. I haven't
+>> noticed any recent change regarding to line length.
 >>
->> What are all these? Bindings should not store register values or offsets.
->>
->> Also, resets go to separate header.
+>> [1]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bdc48fa11e46f867ea4d75fa59ee87a7f48be144
 > 
-> I think the comments are misleading, these are not register offsets.
+> The coding style (also in change above) clearly states:
+> "The preferred limit on the length of a single line is 80 columns."
+> Just read the first line of new diff/hunk...
 > 
-> Which in turn is a set of registers SOFTRST_CON0, etc containing the
-> bits which to toggle to soft-reset individual blocks of the SoC.
+> checkpatch was indeed long time converted not to complain on 80 but on
+> 100, but that does not change coding style. The point of that was only
+> to accept 100 wrapping when it is beneficial,  iow, it increases the
+> code readability.
+> 
+> It's not the case here and coding style clearly asks for 80. Wrap at 80.
+> 
 
-So these are IDs used by the driver, not hardware? Then they can be as
-IDs as well, don't they?
+Hello David, Krzysztof,
 
-> The CRU (clock-and-reset-unit) always also contains the softreset block,
-> so they have always been part of the cru dt binding as well.
+there's no problem at all, I can resend... after all, it's a fast fix and
+all it takes is 10 minutes of my time!
 
-Separate header under reset would still be part of the CRU DT binding -
-I did not propose change that. However why storing reset IDs in a clock
-subsystem binding header, instead of reset subsystem?
+Cheers,
+Angelo
 
-> 
-> 
->>> +#define SRST_P_TOP_BIU			20
->>> +#define SRST_P_CSIPHY0			22
->>> +#define SRST_CSIPHY0			23
->>> +#define SRST_P_CSIPHY1			24
->>> +#define SRST_CSIPHY1			25
->>> +#define SRST_A_TOP_M500_BIU		31
->>
->> No holes, but abstract IDs incremented from 0 or 1.
-> 
-> The IDs are not abstract but instead do describe the location of
-> the reset bit inside the soft-reset register block.
-> 
-> For reference see drivers/clk/rockchip/softrst.c and its
-> 
-> 	int bank = id / softrst->num_per_reg;
-> 	int offset = id % softrst->num_per_reg;
-
-So these are register offsets, as I mentioned before. Bindings are not
-for this, this is not the purpose of binding headers. You do not store
-as binding headers GPIO numbers, IRQ numbers, block unit addresses,
-right? There is only one case such offsets make sense - firmware also
-uses them and you cannot change it.
-
-This is not the case here, so these values should not be in bindings.
-
-To clarify - I don't ask you to change the driver, you can still code
-offset like that. Just don't store this as binding.
-
-> 
-> And as we're doing this since 2013 this way, including these bindings,
-> I guess it can't be too wrong :-)
-
-I guess no one raised the question...
-
-> 
-> And they're probably also done via tooling.
-> 
-> 
-> 
->>> +/********Name=PHPTOPSOFTRST_CON0,Offset=0x8A00********/
->>> +#define SRST_P_PHPTOP_CRU		131073
->>> +#define SRST_P_PCIE2_GRF0		131074
->>> +#define SRST_P_PCIE2_GRF1		131075
->>> +#define SRST_P_PCIE2_GRF2		131076
->>> +#define SRST_P_PCIE2_PHY0		131077
->>> +#define SRST_P_PCIE2_PHY1		131078
->>> +#define SRST_P_PCIE2_PHY2		131079
->>> +#define SRST_P_PCIE3_PHY		131080
->>> +#define SRST_P_APB2ASB_SLV_CHIP_TOP	131081
->>> +#define SRST_PCIE30_PHY			131082
->>> +
->>> +/********Name=PMU1SOFTRST_CON00,Offset=0x30A00********/
->>> +#define SRST_H_PMU1_BIU			786442
->>> +#define SRST_P_PMU1_BIU			786443
->>
->>
->> The numbering is getting quite unusual... As the value is not used by
->> the driver, it suggests it is some register offset or value, which are
->> not suitable for the bindings.
-> 
-> see above, it is used by the driver. Though it's still very much unusual.
-> 
-> Looking at the register offsets mentioned in the comments, the
-> main block handling softreset-ids starts at 0xA04 in the clock controller.
-> 
-> And historically the soft-reset block has been a compact set of registers
-> inside the device, though this time it seems someone tacked some more
-> registers into the CRU far behind everything else (0x8A00 and 0x30a00).
-> 
-> So the IDs are in-line with the how we handle reset-ids currently, but
-> I'm somewhat undecided if this counts as more of a hack.
-
-These are not IDs but register offsets. You do not use them in a meaning
-of ID. ID is a abstract number providing a mapping between this abstract
-number and actual value. You do not have mapping here - you directly
-decode this ID.
-
-Best regards,
-Krzysztof
