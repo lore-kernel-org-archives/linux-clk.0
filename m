@@ -2,87 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA389C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 16:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3A0C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 19:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238927AbiF0QYz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 12:24:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55724 "EHLO
+        id S240284AbiF0Tfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 15:35:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237910AbiF0QYz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 12:24:55 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21D9BE39;
-        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id e63so9571186pgc.5;
-        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
+        with ESMTP id S236184AbiF0Tfm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 15:35:42 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5766A62EC;
+        Mon, 27 Jun 2022 12:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=agTdFC77wAiPKF65qUDFakFqsb81qxDJ3UaD4sEYt/w=;
-        b=IIE+TLwo/0K9iYZITp/hc6jUuto3k5HhvAD+nsiUisLv5Q4wyvr9FmMjtJYZsH3E9S
-         Wzs6+cVruekXJPSY8wVLoZOU7kIYaO8EcBZqF2+r2+a+Ox3/W+rQ4jWtvvZMN2HM0C5O
-         QzYBRzgRINKohbhhk9bD7Dd1XLJ0A7sx2MfwMjPKt4f6Hjr4DxpWchGyvEsDN9G3Xvde
-         ae3vzMHrE2kgBP93GTa6ag/KAS5mfEFH56yPg1cfYiMM7LnTLOET5S8qHNldYHckM3gS
-         UK+qtGImHgor6rqpZY5chuYnLqBsxZ9FGT/Mgl9qjCMG5++fuTWOmo9eoPb0ODtsjMVK
-         yhBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=agTdFC77wAiPKF65qUDFakFqsb81qxDJ3UaD4sEYt/w=;
-        b=HCn4KS8skzPRWOIUDCIeV1yZyd06mnToGc48CraRjc1pIS3RIBaK6GrunI3VaeQxLo
-         GP1QkK6r1qme+sOOX6YHfCdLsvtx5IZ+dT657K7hBzEDkjD2Ffk8U8HfQxXQiTzq/oNi
-         gVo5vyT8IT0b72HGDm8W2zBRcj0hodA2Z0pRfUrYX0EtzHzfYHAV57tyY7u2Dsiicfoc
-         wpWIrJLgqP7C6O2QPCREAdUw++6NEdFoVvL55olbWeKSJjg2iFhOYyPwM53AGZl2VdAO
-         rZT4DX8ElmJqScNh+cU/tY5i0bgSUmfX47dq83CQg8kRFvTNCMloAFtgGSIP54BwYEn+
-         iw6g==
-X-Gm-Message-State: AJIora+NIQG7ibCYlEocUEA8mHXBV5jJlPAg5xLKePU4eqU/mOIdvPEj
-        /Aah2p3NrorM45Nyio9E5q8=
-X-Google-Smtp-Source: AGRyM1sG27yOPsRPwIvHWPhLNZZUlBJTHGS/Rtcv+tHJafgzf9lXLWrQ3EU8HM3gCD6lvDfXgJVNHA==
-X-Received: by 2002:a63:6e44:0:b0:40c:73a7:b6c9 with SMTP id j65-20020a636e44000000b0040c73a7b6c9mr13235895pgc.285.1656347094073;
-        Mon, 27 Jun 2022 09:24:54 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id t5-20020a17090aae0500b001ec4f258028sm7647327pjq.55.2022.06.27.09.24.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 09:24:53 -0700 (PDT)
-Message-ID: <7656fa2c-590a-8f0f-03ef-904e4f186c82@gmail.com>
-Date:   Mon, 27 Jun 2022 09:24:51 -0700
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1656358541; x=1687894541;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PZ6plud3Rf5fEMbZRuJvL10vqzgxzYsgamogPc/ulSs=;
+  b=zi+neXZS5Tfo8fYmWYaZOlttgNGauVp6rk2ICfxqGMGlQse7BKBO7maI
+   eN5wZGHT8LvaOr6ITx1HFWxxGYmFMckpxD0oewFFbcRNNQfEBHQ2M5Lua
+   GqUZfBFVk/15lH2LNTw1JuzUqSUBPQVIqubt+ixvOSNDPq/3LahM1Xvqf
+   0=;
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 27 Jun 2022 12:35:41 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2022 12:35:40 -0700
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 27 Jun 2022 12:35:40 -0700
+Received: from [10.216.11.205] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Mon, 27 Jun
+ 2022 12:35:35 -0700
+Message-ID: <1a58e260-773e-754c-6f85-b4b2cbd19d2a@quicinc.com>
+Date:   Tue, 28 Jun 2022 01:05:31 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] clk: bcm: rpi: Fix error handling of
- raspberrypi_fw_get_rate
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH V2 5/8] pinctrl: qcom: Add IPQ5018 pinctrl driver
 Content-Language: en-US
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220625083643.4012-1-stefan.wahren@i2se.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220625083643.4012-1-stefan.wahren@i2se.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <agross@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
+        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220621161126.15883-1-quic_srichara@quicinc.com>
+ <20220621161126.15883-6-quic_srichara@quicinc.com>
+ <YrU1b+37DeZqIMTh@builder.lan>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <YrU1b+37DeZqIMTh@builder.lan>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/25/22 01:36, Stefan Wahren wrote:
-> The function raspberrypi_fw_get_rate (e.g. used for the recalc_rate
-> hook) can fail to get the clock rate from the firmware. In this case
-> we cannot return a signed error value, which would be casted to
-> unsigned long. Fix this by returning 0 instead.
-> 
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Thanks Bjorn for your review
 
-Fixes: 4e85e535e6cc ("clk: bcm283x: add driver interfacing with 
-Raspberry Pi's firmware")
+On 6/24/2022 9:24 AM, Bjorn Andersson wrote:
+> On Tue 21 Jun 11:11 CDT 2022, Sricharan R wrote:
+> [..]
+>> +
+>> +static const struct of_device_id ipq5018_pinctrl_of_match[] = {
+>> +	{ .compatible = "qcom,ipq5018-pinctrl", },
+> Please make this qcom,ipq5018-tlmm, as requested in the binding.
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+
+  Sure will do.
+
+>
+> With that:
+>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+
+   Thanks for that.
+
+Regards,
+   Sricharan
+
