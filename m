@@ -2,144 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BCCC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 22:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA21CCA47F
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 22:36:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242562AbiF0WUX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 18:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
+        id S242679AbiF0WgM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 18:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239498AbiF0WUW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 18:20:22 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5021C7642;
-        Mon, 27 Jun 2022 15:20:21 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id bn8so12687838ljb.2;
-        Mon, 27 Jun 2022 15:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Lv97kZwIEvE6e2lFXgmW14bUeahaNYgjo3zqSJ3yKaU=;
-        b=VfmTzmKnkxq/4yEFf3otLMH9pFlVljnvzOiK+yy+o/eZBHy24sXmub24Z8DMsd7STQ
-         Ib8ctUGuIevuIybvT8cq0lyBA5pYiDtvjcOkasUR/G0EaDgtzLKxSdUwocx8jMWGsCvi
-         3GDKDkzt/YS3CVbHxqtyccLTpaf4Eq+KntgjN8AuFtiUOaC6qHcMQliSUOHRa0Jkf25n
-         7wGkyZ+bKoTqIGyu+doibLQUIsBZzciG2RI7REyQitl8h4Bv8DEx8NvbeetRivMTmEc0
-         MdcP32b8Xq4lzvThur4amJKjIJH08UJXzvEzBNsT15XUgqG6hkIfw+A4WF4f9YM40BLG
-         Cvow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Lv97kZwIEvE6e2lFXgmW14bUeahaNYgjo3zqSJ3yKaU=;
-        b=fnl8/c2uQdwRYq0E8yWJv9jo6F1vDTRYVOdvgIcPIzspjODlyeGJ+TvWAC8bejovgW
-         XGuVFYu2rGzSB0w1CtPko7AG3mdFxCWwO5O/qBNMVCnzKIp9myFOCXL66xGqWX/kREy/
-         DKxgk7zZhQ8+2CFDeyauhSxBBjvH+zGerMPV5Qw8JOSvRIoTsgRBEpvMSfmzkIYaxoSe
-         9VnbomFlh9UmOOhF9EPbsVa6sKaOAX8TY/2O5NgdCcLCeScFdWmiRGuUfEQlCXSUNMV8
-         aLH1byyTDEhkLLhrqijTFFl+BJuDOmFxJcJ0GO3dNyn4d6K+H7+1v2+IrNEF//arURpc
-         HVlw==
-X-Gm-Message-State: AJIora90aVWXeAHRyaTwUVR/pdrdV934jLtpVo/gV5zKg/Wz5go203HQ
-        MghT+hQvhTjQIgwyWPf7gxU=
-X-Google-Smtp-Source: AGRyM1vIRfekQgVI3ucSH1aR0h1x2ezwGNpC+TWeVF+5DMFzj4tfSviRwOBCQPjPi17JO3mDKE8rjQ==
-X-Received: by 2002:a2e:8283:0:b0:25b:b830:4535 with SMTP id y3-20020a2e8283000000b0025bb8304535mr5496242ljg.353.1656368419670;
-        Mon, 27 Jun 2022 15:20:19 -0700 (PDT)
-Received: from mobilestation ([95.79.140.178])
-        by smtp.gmail.com with ESMTPSA id bf27-20020a2eaa1b000000b0025911ee8411sm1561397ljb.14.2022.06.27.15.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jun 2022 15:20:17 -0700 (PDT)
-Date:   Tue, 28 Jun 2022 01:20:14 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        with ESMTP id S241088AbiF0WgK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 18:36:10 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53297205E5
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 15:36:07 -0700 (PDT)
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id B36953F812;
+        Tue, 28 Jun 2022 00:36:05 +0200 (CEST)
+Date:   Tue, 28 Jun 2022 00:36:03 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v5 1/8] reset: Fix devm bulk optional exclusive
- control getter
-Message-ID: <20220627222014.3qlbakgtyp3noweo@mobilestation>
-References: <20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru>
- <20220624141853.7417-2-Sergey.Semin@baikalelectronics.ru>
- <b6e28520-01cc-f163-7ed2-a7f99ad6be26@collabora.com>
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 03/11] clk: fixed-factor: Introduce
+ *clk_hw_register_fixed_factor_parent_hw()
+Message-ID: <20220627223603.5dxxbqqqjddkgdnb@SoMainline.org>
+References: <20220601220747.1145095-1-marijn.suijten@somainline.org>
+ <20220601220747.1145095-4-marijn.suijten@somainline.org>
+ <CAA8EJpomtbN0+ocD2pRbkYriUY4D9OnjgoFzL9qNHhPm3Uz5cQ@mail.gmail.com>
+ <20220609221211.684C1C34114@smtp.kernel.org>
+ <20220610074632.abtec5kulbclund4@SoMainline.org>
+ <20220610190112.1352DC34114@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b6e28520-01cc-f163-7ed2-a7f99ad6be26@collabora.com>
+In-Reply-To: <20220610190112.1352DC34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 27, 2022 at 01:35:28AM +0300, Dmitry Osipenko wrote:
-> On 6/24/22 17:18, Serge Semin wrote:
-> > Most likely due to copy-paste mistake the device managed version of the
-> > denoted reset control getter has been implemented with invalid semantic,
-> > which can be immediately spotted by having "WARN_ON(shared && acquired)"
-> > warning in the system log as soon as the method is called. Anyway let's
-> > fix it by altering the boolean arguments passed to the
-> > __devm_reset_control_bulk_get() method from
-> > - shared = true, optional = false, acquired = true
-> > to
-> > + shared = false, optional = true, acquired = true
-> > That's what they were supposed to be in the first place (see the non-devm
-> > version of the same method: reset_control_bulk_get_optional_exclusive()).
+On 2022-06-10 12:01:10, Stephen Boyd wrote:
+> Quoting Marijn Suijten (2022-06-10 00:46:32)
+> > On 2022-06-09 15:12:09, Stephen Boyd wrote:
+> > > Quoting Dmitry Baryshkov (2022-06-02 03:20:19)
+> > > > On Thu, 2 Jun 2022 at 01:07, Marijn Suijten
+> > > > <marijn.suijten@somainline.org> wrote:
+> > > > > diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+> > > > > index 54942d758ee6..fabb98d0cdb2 100644
+> > > > > --- a/drivers/clk/clk-fixed-factor.c
+> > > > > +++ b/drivers/clk/clk-fixed-factor.c
+> > > > > @@ -148,17 +151,50 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+> > > > >                 const char *name, unsigned int index, unsigned long flags,
+> > > > >                 unsigned int mult, unsigned int div)
+> > > > >  {
+> > > > > -       return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, index,
+> > > > > -                                             flags, mult, div, true);
+> > > > > +       return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL,
+> > > > > +                                             index, flags, mult, div, true);
+> > > > 
+> > > > Here (and several times later) you are inserting an argument and then
+> > > > moving arguments to the next line. My slight preference would be to
+> > > > just insert the arg (and maybe break the line if it gets too long) w/o
+> > > > touching the next lines.
 > > 
-> > Fixes: 48d71395896d ("reset: Add reset_control_bulk API")
-> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > 
-> > ---
-> > 
-> > Changelog v4:
-> > - This is a new patch added on v4 lap of the series.
-> > ---
-> >  include/linux/reset.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/reset.h b/include/linux/reset.h
-> > index 8a21b5756c3e..514ddf003efc 100644
-> > --- a/include/linux/reset.h
-> > +++ b/include/linux/reset.h
-> > @@ -731,7 +731,7 @@ static inline int __must_check
-> >  devm_reset_control_bulk_get_optional_exclusive(struct device *dev, int num_rstcs,
-> >  					       struct reset_control_bulk_data *rstcs)
-> >  {
-> > -	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, true, false, true);
-> > +	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, false, true, true);
-> >  }
-> >  
-> >  /**
+> > That'll definitely look odd, as we'll end up with index floating on a
+> > single line, all on its own.
 > 
+> Pretty sure Dmitry is suggesting to make the line longer, not put the
+> index on a line by itself. Ignore the 80-column limit.
 
-> Good catch,
-> 
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+There's a "(and maybe break the line if it gets too long)" in there, but
+it's ugly especially for short (ie. "0,") arguments.  I'm following your
+request to ignore 80-columns as a limit.
 
-Thanks.
+Will resend this after being able to physically build-test it tomorrow,
+thanks!
 
-> 
-> Although, this patch should be sent as standalone since it's unrelated
-> to the rest of the clk patches.
-
-Mainly you are right, but I've discovered the problem in the framework
-of this patchset development. So it was more suitable for me to submit
-the patch in the framework of it.
-
-There is an implicit context too. Due to the patchset containing the
-reset-control-related patches I has been trying to attract the
-Philipp' attention for about four months now, but with no luck.
-Having the kernel API fix-patch in the series was supposed to
-implicitly raise the patchset valuability for him. I don't know what
-else to do, but Stephen said he wanted to see what Philipp thought of
-the reset-part of the series.
-
--Sergey
-
-> 
-> -- 
-> Best regards,
-> Dmitry
+- Marijn
