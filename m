@@ -2,151 +2,259 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E1CC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 12:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33B6C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 13:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239509AbiF0MIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 08:08:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45164 "EHLO
+        id S235943AbiF0NdW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 09:33:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240466AbiF0MHo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 08:07:44 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85935DEF6
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 05:06:23 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id n1so12715243wrg.12
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 05:06:23 -0700 (PDT)
+        with ESMTP id S236253AbiF0Ncn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 09:32:43 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2A919589
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 06:32:41 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id h23so19141686ejj.12
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jun 2022 06:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=/Vr70S1itQTBF/3bCew+jxqxaJK1aORpqchqJlIulN8=;
-        b=nj5oQcZi8JzRsGM3DFad9Xybe6hpa6FG+MoP8L51KifR9Vnx9eDEerY0sFLxcH32pP
-         yh2DJfqgWpq2zpXtrzs4dP+HhJVpTk5m0rTdKps26yOU5SUfkbzy/DhlLyYaSC+Ocq2j
-         H3cMckzKhtqrZnldgDo9v8nChVSAtAKLitLXMZObAYq0T3IoOVCt5uiwdmKFyMacY5kl
-         FdlOqE9NXg1fkkJPIyCBNCNntcZWm+sNt4zl5IY81kL60mqK4eJnz6Hpt6TLaEC137rb
-         exNw3wpIXASEHPhT6/6P7i5ajW9wGdM3C5LjbdfGViBQtJSbFlgSIPKIxOaBshjymIB6
-         ZoPg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MOugzhFcAjO+If2z96kba/vfySD/CKxYnEQLAZDDWG8=;
+        b=JlVP/Q8P2kDZ2Dj0GBc8YWFiJhJ0FEL+gAbkHJ84/Dtqa4qijiBspjfVN99losd6cS
+         4rsKyepUjljwHPnqK4l87Uog2dVeNnZ9Bogixfx5qIcVPF02HEMhYKX7YSBEfakvbgLN
+         1WuGPD0nYZ+AmSrgdBOanAFfloIltbml0IlF3hIrZUbLsZO+TaXEtZrSZakY8qzDGxxL
+         1Mb/RI6ncBhq8FkFHDYMy24uQcv0kNU/cxD8Vq7LD6v0alfCxSFjYU/4N1pIRpIo936H
+         H/jAwZa8tk/UMh0J/CZuociC/C2+5woT8bt4KE/h6xEH85IuNRjok8mZxHqA5iEPwmeA
+         mg6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/Vr70S1itQTBF/3bCew+jxqxaJK1aORpqchqJlIulN8=;
-        b=QBE2F0uSNu7QgJhlr+yB02QTmI6EtBMzPU4UOgAfAbMBvpZwg0neo/CO/TDZ19jp72
-         Bs3uiGQWqAS/pIuAzIU+irXltfcz/CWn7Ir6WY8H8fThyucNIf+LMWmPgy7eIY1Qto21
-         ZaNX/FAPZCRJss3gCFj0VT00NvPtI650QEXb/5/yEFtMauzgQ2r4HgBkkmVFLcdKhizE
-         OOhfUDdCu88fLq9ZYfFiTPNJK/P+ju6529N4FEiJX7QBNYolLYO2ZS/vWoOH7Kzw2wu3
-         uEEeqiM6W66oDo1uKiPYNmMOIGDodgpTmsJBC5eSBwrEHk05HQvKKpWmHDa4s1Lq67nO
-         pjiQ==
-X-Gm-Message-State: AJIora/J+tYcLJ5rCOUpCheO1HnGur8ftI8VB86G0YpRnnYVKpOrQcLv
-        7z34+I8p/YAmPdu8uBepaXlyDg==
-X-Google-Smtp-Source: AGRyM1v4mipmlBAmPoKRfrckMoNmVytCsUsuVXsuKFVR2SVoD35b+p0iU2bhx9v38CDsNf6vGT/67A==
-X-Received: by 2002:a5d:5c11:0:b0:21b:a9a2:7eec with SMTP id cc17-20020a5d5c11000000b0021ba9a27eecmr12101736wrb.579.1656331582103;
-        Mon, 27 Jun 2022 05:06:22 -0700 (PDT)
-Received: from [192.168.0.249] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id f8-20020a1cc908000000b0039c99f61e5bsm16608790wmb.5.2022.06.27.05.06.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jun 2022 05:06:21 -0700 (PDT)
-Message-ID: <dca6534e-2601-a943-b6a8-2593f7fc64eb@linaro.org>
-Date:   Mon, 27 Jun 2022 14:06:19 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v5 10/14] dt-bindings: firmware: Add fsl,scu yaml file
-Content-Language: en-US
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MOugzhFcAjO+If2z96kba/vfySD/CKxYnEQLAZDDWG8=;
+        b=CHhiMBOcymlIlLOeFUwa6uVZ1BkBjb2f+3Q4Pr6tI0TSqbvL24KhuSZQSES1CZPDkk
+         vnO4VrFX68WN6WUCfDOcobD+V+C1941WG+UKaOAYGvAtMRM8X1ITckoIgAdOepZLkp5M
+         3wl3z+nWc8gbBcrOUBbi1JcIsypCXhJzsjdFTe+gXEaoYeWnQoC4cwMafeeAQn4wrosD
+         94Vb23kiKz3EaXEpCbHCEgAjgYcEXo0oi0160jDLy1FgXJure2Lfx7Ltw/sAJPxZyXIh
+         aZTvviU+AjnQB+zGmQ114RqU2EhDQGdbUQgskDl9x8z1CBC2+HfXXOUEz4tAUv12Dzxl
+         g7Pw==
+X-Gm-Message-State: AJIora/S1InvlM3EIqAoZtDA4+2TZD8uvDot5vXZmLIkT/NqGyUwPwe6
+        rxIwnkTzfqpsBHyaZc9b2iKGMw==
+X-Google-Smtp-Source: AGRyM1u3dZOndJbMOz1PnEKgh/KohhYGA8SFXR6A6ZFn1gSCIFjMIKmB5NvYcDU9vjOqSiLDYTVQYw==
+X-Received: by 2002:a17:907:97c9:b0:726:b4f8:f675 with SMTP id js9-20020a17090797c900b00726b4f8f675mr2718638ejc.427.1656336760410;
+        Mon, 27 Jun 2022 06:32:40 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id d25-20020a50fe99000000b004355998ec1asm7523587edt.14.2022.06.27.06.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jun 2022 06:32:39 -0700 (PDT)
+Date:   Mon, 27 Jun 2022 16:32:37 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, olof@lixom.net,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
-References: <20220616164303.790379-1-viorel.suman@nxp.com>
- <20220616164303.790379-11-viorel.suman@nxp.com>
- <b653d7af-f846-abb2-d260-3ce615b070a4@linaro.org>
- <20220627114949.pg7az36fz4jrwebp@fsr-ub1664-116>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220627114949.pg7az36fz4jrwebp@fsr-ub1664-116>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 08/13] clk: imx: Update pllv3 to support i.MXRT1170
+Message-ID: <YrmxdaSqHnEg28uG@linaro.org>
+References: <20220626064523.3683775-1-Mr.Bossman075@gmail.com>
+ <20220626064523.3683775-9-Mr.Bossman075@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220626064523.3683775-9-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/06/2022 13:49, Viorel Suman wrote:
-> On 22-06-24 12:25:44, Krzysztof Kozlowski wrote:
->> On 16/06/2022 18:42, Viorel Suman wrote:
->>> From: Abel Vesa <abel.vesa@nxp.com>
->>>
->>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
->>> we need to split it between the right subsystems. This patch adds the
->>> fsl,scu.yaml in the firmware bindings folder. This one is only for
->>> the main SCU node. The old txt file will be removed only after all
->>> the child nodes have been properly switch to yaml.
->>>
->>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
->>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
->>> ---
->>>  .../devicetree/bindings/firmware/fsl,scu.yaml | 170 ++++++++++++++++++
->>>  1 file changed, 170 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/firmware/fsl,scu.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/firmware/fsl,scu.yaml b/Documentation/devicetree/bindings/firmware/fsl,scu.yaml
-> 
-> [...]
-> 
->>> +properties:
->>> +  $nodename:
->>> +    const: 'scu'
->>
->> Why enforcing node name? Second point is that node names should be
->> generic, so I wonder what "SCU" exactly means and whether it is generic?
->>
-> 
-> It stands for "System Control Unit" - looks generic to me.
+On 22-06-26 02:45:18, Jesse Taube wrote:
+> The i.MXRT1170 has a pll that has the multiplier bits inverted and
+> cannot be changed add IMX_PLLV3_GENERICV2.
+>
+> The i.MXRT1170 also has the lock bit moved as well as the
+> power bit inverted the power bit also is in different locations on each
+> pll control register.
+>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> ---
+> V1 -> V2:
+>  - Nothing done
+> V2 -> V3:
+>  - Nothing done
+> V3 -> V4:
+>  - Nothing done
+> ---
+>  drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++++--
+>  drivers/clk/imx/clk.h       |  4 +++
+>  2 files changed, 59 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> index eea32f87c60a..740412ea2f7e 100644
+> --- a/drivers/clk/imx/clk-pllv3.c
+> +++ b/drivers/clk/imx/clk-pllv3.c
+> @@ -23,6 +23,7 @@
+>
+>  #define BM_PLL_POWER		(0x1 << 12)
+>  #define BM_PLL_LOCK		(0x1 << 31)
+> +#define BM_PLL_LOCK_V2		(0x1 << 29)
+>  #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+>  #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+>
+> @@ -34,6 +35,7 @@
+>   * @base:	 base address of PLL registers
+>   * @power_bit:	 pll power bit mask
+>   * @powerup_set: set power_bit to power up the PLL
+> + * @lock_bit:	 pll lock bit mask
+>   * @div_mask:	 mask of divider bits
+>   * @div_shift:	 shift of divider bits
+>   * @ref_clock:	reference clock rate
+> @@ -48,6 +50,7 @@ struct clk_pllv3 {
+>  	void __iomem	*base;
+>  	u32		power_bit;
+>  	bool		powerup_set;
+> +	u32		lock_bit;
+>  	u32		div_mask;
+>  	u32		div_shift;
+>  	unsigned long	ref_clock;
+> @@ -65,7 +68,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+>  	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+>  		return 0;
+>
+> -	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
+> +	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
+>  					  500, PLL_LOCK_TIMEOUT);
+>  }
+>
+> @@ -101,7 +104,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
+>  {
+>  	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+>
+> -	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
+> +	if (readl_relaxed(pll->base) & pll->lock_bit)
+>  		return 1;
+>
+>  	return 0;
+> @@ -155,6 +158,39 @@ static const struct clk_ops clk_pllv3_ops = {
+>  	.set_rate	= clk_pllv3_set_rate,
+>  };
+>
+> +static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +		unsigned long parent_rate)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +	u32 val, div;
+> +
+> +	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
+> +	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> +
+> +	if (rate == val)
+> +		return 0;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
+> +					   unsigned long parent_rate)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
+> +
+> +	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> +}
+> +
+> +static const struct clk_ops clk_pllv3_genericv2_ops = {
+> +	.prepare	= clk_pllv3_prepare,
+> +	.unprepare	= clk_pllv3_unprepare,
+> +	.is_prepared	= clk_pllv3_is_prepared,
+> +	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
+> +	.round_rate	= clk_pllv3_round_rate,
+> +	.set_rate	= clk_pllv3_genericv2_set_rate,
+> +};
+> +
+>  static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+>  					       unsigned long parent_rate)
+>  {
+> @@ -407,6 +443,13 @@ static const struct clk_ops clk_pllv3_enet_ops = {
+>  	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+>  };
+>
+> +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift)
+> +{
+> +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> +
+> +	pll->power_bit = shift;
+> +}
+> +
 
-Nope, it's specific, just like other scu - Snoop Control Unit. What's
-more, reusing the same acronym leads to confusions.
+I can see why you need this, but I think the approach is not quite
+right.
 
-If it was generic, then I expect it to be present in several other
-places, but it's not (except the other SCU).
+I suggest we rename the imx_clk_hw_pllv3 to __imx_clk_hw_pllv3 and add
+the power_bit parameter to it (and set it accordingly inside).
 
-Generic name is for example "system-controller".
+Then we should do the following in imx/clk.h:
 
-> I guess a reason to enforce it - need to check with Abel - might be
-> the need to group multiple SCU implementations under a common known name.
+#define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
+				bypass1, bypass2, base, flags)		\
+	__imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
+				bypass1, bypass2, base, flags, BM_PLL_POWER)
 
-Device bindings do not enforce the names, unless it's really needed, and
-I doubt there is a need here.  Just drop it and rename nodes in DTS to
-something generic.
+And then, the i.MXRT1170 can use the __imx_clk_hw_pllv3 and pass the
+right power_bit shift.
 
-
-Best regards,
-Krzysztof
+>  struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  			  const char *parent_name, void __iomem *base,
+>  			  u32 div_mask)
+> @@ -422,10 +465,20 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  		return ERR_PTR(-ENOMEM);
+>
+>  	pll->power_bit = BM_PLL_POWER;
+> +	pll->lock_bit = BM_PLL_LOCK;
+>  	pll->num_offset = PLL_NUM_OFFSET;
+>  	pll->denom_offset = PLL_DENOM_OFFSET;
+>
+>  	switch (type) {
+> +	case IMX_PLLV3_GENERICV2:
+> +		pll->lock_bit = BM_PLL_LOCK_V2;
+> +		pll->powerup_set = true;
+> +		ops = &clk_pllv3_genericv2_ops;
+> +		break;
+> +	case IMX_PLLV3_SYSV2:
+> +		pll->lock_bit = BM_PLL_LOCK_V2;
+> +		pll->powerup_set = true;
+> +		fallthrough;
+>  	case IMX_PLLV3_SYS:
+>  		ops = &clk_pllv3_sys_ops;
+>  		break;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 5061a06468df..31e017248602 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -242,6 +242,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+>
+>  enum imx_pllv3_type {
+>  	IMX_PLLV3_GENERIC,
+> +	IMX_PLLV3_GENERICV2,
+> +	IMX_PLLV3_SYSV2,
+>  	IMX_PLLV3_SYS,
+>  	IMX_PLLV3_USB,
+>  	IMX_PLLV3_USB_VF610,
+> @@ -253,6 +255,8 @@ enum imx_pllv3_type {
+>  	IMX_PLLV3_AV_IMX7,
+>  };
+>
+> +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift);
+> +
+>  struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+>  		const char *parent_name, void __iomem *base, u32 div_mask);
+>
+> --
+> 2.36.1
+>
