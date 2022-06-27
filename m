@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB21CCA486
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 08:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BA5CCA47F
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 08:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233686AbiF0I4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 04:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49438 "EHLO
+        id S233674AbiF0I4u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 04:56:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233682AbiF0I4r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 04:56:47 -0400
+        with ESMTP id S233696AbiF0I4t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 04:56:49 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D68D6381;
-        Mon, 27 Jun 2022 01:56:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1998D637D;
+        Mon, 27 Jun 2022 01:56:48 -0700 (PDT)
 Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id BB39B660182F;
-        Mon, 27 Jun 2022 09:56:41 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6A1D1660182A;
+        Mon, 27 Jun 2022 09:56:45 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656320203;
-        bh=V3hd8ZGxu16YELyegH+GNRJ+gjGj/OqYGlpVBVmxOVY=;
+        s=mail; t=1656320206;
+        bh=RoQA5gkCw09CgkpEIeYkpojdGgYBObH2GQWkGs2+xaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NO3cK9QSKMVJA7s84DVeUM5/EF+XsTjdKejEUz/s0RIqwfW61Kab1f6QYyJMmi06K
-         +X1NJpCupW8MbzELHIR+vHVa27Dk/iaibTOX3pJA3g5UdYvhX3G/lZMFBne3KX13+u
-         hA45FgluTj+CYqin4UFH7RWFU+xUraBeKCLUlosPtzAEKA2HPHCAGUayIdoiS8xSyH
-         jdi5bwNHnW8rNGeLAJRWcWwkDU8HE3Y/Qzrob91yDlhBhc+HF0MiJYoIRN17ouQ8Ht
-         0+jK4HOtVMXGngq5Osi/Y6beRmiw4ftM3zI0xzNt926vSzvG69PKAVa0seg/v5DO2a
-         jvq9wIrgyRjrA==
+        b=M4zzcmRau2+V/n/EWDPTqcJJZzv6WYUQmakrebglR+GfjQtJolgutJtp6kxGXwb0/
+         YBGTa8dHiRZyvDU4Y19r4zbnhOV/i3JJdwh8Rm8udfXoJY1SNAOP/SCOGeUXGyDmmG
+         rMrQEhIvz/cJ+QzmS/vHngB4+K7setLuX7KdBXX3y+Cn9h/cXhN40rxeke3dUkNblE
+         mlz0fwxgmAhvWZeB9TKQZXvFtRPoGzothVMsMTRWF/nlLt7hvdW6MRgLCp79cHN8hE
+         9fMGcpLkG6Rm6FGx/VjLXTCzbCcsNKZmGZJGsPEu2aVXSXSmd/O/2qtCfFI0wVWBbm
+         6Misa9e6VDdrw==
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
 To:     robh+dt@kernel.org
@@ -48,10 +48,10 @@ Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
         phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
-        kernel@collabora.com, Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 2/7] dt-bindings: clock: Add MediaTek Helio X10 MT6795 clock bindings
-Date:   Mon, 27 Jun 2022 10:56:27 +0200
-Message-Id: <20220627085632.23797-3-angelogioacchino.delregno@collabora.com>
+        kernel@collabora.com
+Subject: [PATCH v4 4/7] dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
+Date:   Mon, 27 Jun 2022 10:56:29 +0200
+Message-Id: <20220627085632.23797-5-angelogioacchino.delregno@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220627085632.23797-1-angelogioacchino.delregno@collabora.com>
 References: <20220627085632.23797-1-angelogioacchino.delregno@collabora.com>
@@ -61,296 +61,149 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the bindings for MT6795's clock controller.
+Add the bindings for the clock drivers of the MediaTek Helio X10
+MT6795 SoC.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/mt6795-clk.h | 275 +++++++++++++++++++++++++
- 1 file changed, 275 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt6795-clk.h
+ .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++++
+ .../clock/mediatek,mt6795-sys-clock.yaml      | 54 +++++++++++++++
+ 2 files changed, 120 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
 
-diff --git a/include/dt-bindings/clock/mt6795-clk.h b/include/dt-bindings/clock/mt6795-clk.h
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
 new file mode 100644
-index 000000000000..9902906ac902
+index 000000000000..795fb18721c3
 --- /dev/null
-+++ b/include/dt-bindings/clock/mt6795-clk.h
-@@ -0,0 +1,275 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2022 Collabora Ltd.
-+ * Author: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-clock.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
-+#ifndef _DT_BINDINGS_CLK_MT6795_H
-+#define _DT_BINDINGS_CLK_MT6795_H
++title: MediaTek Functional Clock Controller for MT6795
 +
-+/* TOPCKGEN */
-+#define CLK_TOP_ADSYS_26M		0
-+#define CLK_TOP_CLKPH_MCK_O		1
-+#define CLK_TOP_USB_SYSPLL_125M		2
-+#define CLK_TOP_DSI0_DIG		3
-+#define CLK_TOP_DSI1_DIG		4
-+#define CLK_TOP_ARMCA53PLL_754M		5
-+#define CLK_TOP_ARMCA53PLL_502M		6
-+#define CLK_TOP_MAIN_H546M		7
-+#define CLK_TOP_MAIN_H364M		8
-+#define CLK_TOP_MAIN_H218P4M		9
-+#define CLK_TOP_MAIN_H156M		10
-+#define CLK_TOP_TVDPLL_445P5M		11
-+#define CLK_TOP_TVDPLL_594M		12
-+#define CLK_TOP_UNIV_624M		13
-+#define CLK_TOP_UNIV_416M		14
-+#define CLK_TOP_UNIV_249P6M		15
-+#define CLK_TOP_UNIV_178P3M		16
-+#define CLK_TOP_UNIV_48M		17
-+#define CLK_TOP_CLKRTC_EXT		18
-+#define CLK_TOP_CLKRTC_INT		19
-+#define CLK_TOP_FPC			20
-+#define CLK_TOP_HDMITXPLL_D2		21
-+#define CLK_TOP_HDMITXPLL_D3		22
-+#define CLK_TOP_ARMCA53PLL_D2		23
-+#define CLK_TOP_ARMCA53PLL_D3		24
-+#define CLK_TOP_APLL1			25
-+#define CLK_TOP_APLL2			26
-+#define CLK_TOP_DMPLL			27
-+#define CLK_TOP_DMPLL_D2		28
-+#define CLK_TOP_DMPLL_D4		29
-+#define CLK_TOP_DMPLL_D8		30
-+#define CLK_TOP_DMPLL_D16		31
-+#define CLK_TOP_MMPLL			32
-+#define CLK_TOP_MMPLL_D2		33
-+#define CLK_TOP_MSDCPLL			34
-+#define CLK_TOP_MSDCPLL_D2		35
-+#define CLK_TOP_MSDCPLL_D4		36
-+#define CLK_TOP_MSDCPLL2		37
-+#define CLK_TOP_MSDCPLL2_D2		38
-+#define CLK_TOP_MSDCPLL2_D4		39
-+#define CLK_TOP_SYSPLL_D2		40
-+#define CLK_TOP_SYSPLL1_D2		41
-+#define CLK_TOP_SYSPLL1_D4		42
-+#define CLK_TOP_SYSPLL1_D8		43
-+#define CLK_TOP_SYSPLL1_D16		44
-+#define CLK_TOP_SYSPLL_D3		45
-+#define CLK_TOP_SYSPLL2_D2		46
-+#define CLK_TOP_SYSPLL2_D4		47
-+#define CLK_TOP_SYSPLL_D5		48
-+#define CLK_TOP_SYSPLL3_D2		49
-+#define CLK_TOP_SYSPLL3_D4		50
-+#define CLK_TOP_SYSPLL_D7		51
-+#define CLK_TOP_SYSPLL4_D2		52
-+#define CLK_TOP_SYSPLL4_D4		53
-+#define CLK_TOP_TVDPLL			54
-+#define CLK_TOP_TVDPLL_D2		55
-+#define CLK_TOP_TVDPLL_D4		56
-+#define CLK_TOP_TVDPLL_D8		57
-+#define CLK_TOP_TVDPLL_D16		58
-+#define CLK_TOP_UNIVPLL_D2		59
-+#define CLK_TOP_UNIVPLL1_D2		60
-+#define CLK_TOP_UNIVPLL1_D4		61
-+#define CLK_TOP_UNIVPLL1_D8		62
-+#define CLK_TOP_UNIVPLL_D3		63
-+#define CLK_TOP_UNIVPLL2_D2		64
-+#define CLK_TOP_UNIVPLL2_D4		65
-+#define CLK_TOP_UNIVPLL2_D8		66
-+#define CLK_TOP_UNIVPLL_D5		67
-+#define CLK_TOP_UNIVPLL3_D2		68
-+#define CLK_TOP_UNIVPLL3_D4		69
-+#define CLK_TOP_UNIVPLL3_D8		70
-+#define CLK_TOP_UNIVPLL_D7		71
-+#define CLK_TOP_UNIVPLL_D26		72
-+#define CLK_TOP_UNIVPLL_D52		73
-+#define CLK_TOP_VCODECPLL		74
-+#define CLK_TOP_VCODECPLL_370P5		75
-+#define CLK_TOP_VENCPLL			76
-+#define CLK_TOP_VENCPLL_D2		77
-+#define CLK_TOP_VENCPLL_D4		78
-+#define CLK_TOP_AXI_SEL			79
-+#define CLK_TOP_MEM_SEL			80
-+#define CLK_TOP_DDRPHYCFG_SEL		81
-+#define CLK_TOP_MM_SEL			82
-+#define CLK_TOP_PWM_SEL			83
-+#define CLK_TOP_VDEC_SEL		84
-+#define CLK_TOP_VENC_SEL		85
-+#define CLK_TOP_MFG_SEL			86
-+#define CLK_TOP_CAMTG_SEL		87
-+#define CLK_TOP_UART_SEL		88
-+#define CLK_TOP_SPI_SEL			89
-+#define CLK_TOP_USB20_SEL		90
-+#define CLK_TOP_USB30_SEL		91
-+#define CLK_TOP_MSDC50_0_H_SEL		92
-+#define CLK_TOP_MSDC50_0_SEL		93
-+#define CLK_TOP_MSDC30_1_SEL		94
-+#define CLK_TOP_MSDC30_2_SEL		95
-+#define CLK_TOP_MSDC30_3_SEL		96
-+#define CLK_TOP_AUDIO_SEL		97
-+#define CLK_TOP_AUD_INTBUS_SEL		98
-+#define CLK_TOP_PMICSPI_SEL		99
-+#define CLK_TOP_SCP_SEL			100
-+#define CLK_TOP_MJC_SEL			101
-+#define CLK_TOP_DPI0_SEL		102
-+#define CLK_TOP_IRDA_SEL		103
-+#define CLK_TOP_CCI400_SEL		104
-+#define CLK_TOP_AUD_1_SEL		105
-+#define CLK_TOP_AUD_2_SEL		106
-+#define CLK_TOP_MEM_MFG_IN_SEL		107
-+#define CLK_TOP_AXI_MFG_IN_SEL		108
-+#define CLK_TOP_SCAM_SEL		109
-+#define CLK_TOP_I2S0_M_SEL		110
-+#define CLK_TOP_I2S1_M_SEL		111
-+#define CLK_TOP_I2S2_M_SEL		112
-+#define CLK_TOP_I2S3_M_SEL		113
-+#define CLK_TOP_I2S3_B_SEL		114
-+#define CLK_TOP_APLL1_DIV0		115
-+#define CLK_TOP_APLL1_DIV1		116
-+#define CLK_TOP_APLL1_DIV2		117
-+#define CLK_TOP_APLL1_DIV3		118
-+#define CLK_TOP_APLL1_DIV4		119
-+#define CLK_TOP_APLL1_DIV5		120
-+#define CLK_TOP_APLL2_DIV0		121
-+#define CLK_TOP_APLL2_DIV1		122
-+#define CLK_TOP_APLL2_DIV2		123
-+#define CLK_TOP_APLL2_DIV3		124
-+#define CLK_TOP_APLL2_DIV4		125
-+#define CLK_TOP_APLL2_DIV5		126
-+#define CLK_TOP_NR_CLK			127
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
 +
-+/* APMIXED_SYS */
-+#define CLK_APMIXED_ARMCA53PLL		0
-+#define CLK_APMIXED_MAINPLL		1
-+#define CLK_APMIXED_UNIVPLL		2
-+#define CLK_APMIXED_MMPLL		3
-+#define CLK_APMIXED_MSDCPLL		4
-+#define CLK_APMIXED_VENCPLL		5
-+#define CLK_APMIXED_TVDPLL		6
-+#define CLK_APMIXED_MPLL		7
-+#define CLK_APMIXED_VCODECPLL		8
-+#define CLK_APMIXED_APLL1		9
-+#define CLK_APMIXED_APLL2		10
-+#define CLK_APMIXED_REF2USB_TX		11
-+#define CLK_APMIXED_NR_CLK		12
++description: |
++  The clock architecture in MediaTek like below
++  PLLs -->
++          dividers -->
++                      muxes
++                           -->
++                              clock gate
 +
-+/* INFRA_SYS */
-+#define CLK_INFRA_DBGCLK		0
-+#define CLK_INFRA_SMI			1
-+#define CLK_INFRA_AUDIO			2
-+#define CLK_INFRA_GCE			3
-+#define CLK_INFRA_L2C_SRAM		4
-+#define CLK_INFRA_M4U			5
-+#define CLK_INFRA_MD1MCU		6
-+#define CLK_INFRA_MD1BUS		7
-+#define CLK_INFRA_MD1DBB		8
-+#define CLK_INFRA_DEVICE_APC		9
-+#define CLK_INFRA_TRNG			10
-+#define CLK_INFRA_MD1LTE		11
-+#define CLK_INFRA_CPUM			12
-+#define CLK_INFRA_KP			13
-+#define CLK_INFRA_CA53_C0_SEL		14
-+#define CLK_INFRA_CA53_C1_SEL		15
-+#define CLK_INFRA_NR_CLK		16
++  The devices provide clock gate control in different IP blocks.
 +
-+/* PERI_SYS */
-+#define CLK_PERI_NFI			0
-+#define CLK_PERI_THERM			1
-+#define CLK_PERI_PWM1			2
-+#define CLK_PERI_PWM2			3
-+#define CLK_PERI_PWM3			4
-+#define CLK_PERI_PWM4			5
-+#define CLK_PERI_PWM5			6
-+#define CLK_PERI_PWM6			7
-+#define CLK_PERI_PWM7			8
-+#define CLK_PERI_PWM			9
-+#define CLK_PERI_USB0			10
-+#define CLK_PERI_USB1			11
-+#define CLK_PERI_AP_DMA			12
-+#define CLK_PERI_MSDC30_0		13
-+#define CLK_PERI_MSDC30_1		14
-+#define CLK_PERI_MSDC30_2		15
-+#define CLK_PERI_MSDC30_3		16
-+#define CLK_PERI_NLI_ARB		17
-+#define CLK_PERI_IRDA			18
-+#define CLK_PERI_UART0			19
-+#define CLK_PERI_UART1			20
-+#define CLK_PERI_UART2			21
-+#define CLK_PERI_UART3			22
-+#define CLK_PERI_I2C0			23
-+#define CLK_PERI_I2C1			24
-+#define CLK_PERI_I2C2			25
-+#define CLK_PERI_I2C3			26
-+#define CLK_PERI_I2C4			27
-+#define CLK_PERI_AUXADC			28
-+#define CLK_PERI_SPI0			29
-+#define CLK_PERI_UART0_SEL		30
-+#define CLK_PERI_UART1_SEL		31
-+#define CLK_PERI_UART2_SEL		32
-+#define CLK_PERI_UART3_SEL		33
-+#define CLK_PERI_NR_CLK			34
++properties:
++  compatible:
++    enum:
++      - mediatek,mt6795-mfgcfg
++      - mediatek,mt6795-vdecsys
++      - mediatek,mt6795-vencsys
 +
-+/* MFG */
-+#define CLK_MFG_BAXI			0
-+#define CLK_MFG_BMEM			1
-+#define CLK_MFG_BG3D			2
-+#define CLK_MFG_B26M			3
-+#define CLK_MFG_NR_CLK			4
++  reg:
++    maxItems: 1
 +
-+/* MM_SYS */
-+#define CLK_MM_SMI_COMMON		0
-+#define CLK_MM_SMI_LARB0		1
-+#define CLK_MM_CAM_MDP			2
-+#define CLK_MM_MDP_RDMA0		3
-+#define CLK_MM_MDP_RDMA1		4
-+#define CLK_MM_MDP_RSZ0			5
-+#define CLK_MM_MDP_RSZ1			6
-+#define CLK_MM_MDP_RSZ2			7
-+#define CLK_MM_MDP_TDSHP0		8
-+#define CLK_MM_MDP_TDSHP1		9
-+#define CLK_MM_MDP_CROP			10
-+#define CLK_MM_MDP_WDMA			11
-+#define CLK_MM_MDP_WROT0		12
-+#define CLK_MM_MDP_WROT1		13
-+#define CLK_MM_FAKE_ENG			14
-+#define CLK_MM_MUTEX_32K		15
-+#define CLK_MM_DISP_OVL0		16
-+#define CLK_MM_DISP_OVL1		17
-+#define CLK_MM_DISP_RDMA0		18
-+#define CLK_MM_DISP_RDMA1		19
-+#define CLK_MM_DISP_RDMA2		20
-+#define CLK_MM_DISP_WDMA0		21
-+#define CLK_MM_DISP_WDMA1		22
-+#define CLK_MM_DISP_COLOR0		23
-+#define CLK_MM_DISP_COLOR1		24
-+#define CLK_MM_DISP_AAL			25
-+#define CLK_MM_DISP_GAMMA		26
-+#define CLK_MM_DISP_UFOE		27
-+#define CLK_MM_DISP_SPLIT0		28
-+#define CLK_MM_DISP_SPLIT1		29
-+#define CLK_MM_DISP_MERGE		30
-+#define CLK_MM_DISP_OD			31
-+#define CLK_MM_DISP_PWM0MM		32
-+#define CLK_MM_DISP_PWM026M		33
-+#define CLK_MM_DISP_PWM1MM		34
-+#define CLK_MM_DISP_PWM126M		35
-+#define CLK_MM_DSI0_ENGINE		36
-+#define CLK_MM_DSI0_DIGITAL		37
-+#define CLK_MM_DSI1_ENGINE		38
-+#define CLK_MM_DSI1_DIGITAL		39
-+#define CLK_MM_DPI_PIXEL		40
-+#define CLK_MM_DPI_ENGINE		41
-+#define CLK_MM_NR_CLK			42
++  '#clock-cells':
++    const: 1
 +
-+/* VDEC_SYS */
-+#define CLK_VDEC_CKEN			0
-+#define CLK_VDEC_LARB_CKEN		1
-+#define CLK_VDEC_NR_CLK			2
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
 +
-+/* VENC_SYS */
-+#define CLK_VENC_LARB			0
-+#define CLK_VENC_VENC			1
-+#define CLK_VENC_JPGENC			2
-+#define CLK_VENC_JPGDEC			3
-+#define CLK_VENC_NR_CLK			4
++additionalProperties: false
 +
-+#endif /* _DT_BINDINGS_CLK_MT6795_H */
++examples:
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        mfgcfg: clock-controller@13000000 {
++            compatible = "mediatek,mt6795-mfgcfg";
++            reg = <0 0x13000000 0 0x1000>;
++            #clock-cells = <1>;
++        };
++
++        vdecsys: clock-controller@16000000 {
++            compatible = "mediatek,mt6795-vdecsys";
++            reg = <0 0x16000000 0 0x1000>;
++            #clock-cells = <1>;
++        };
++
++        vencsys: clock-controller@18000000 {
++            compatible = "mediatek,mt6795-vencsys";
++            reg = <0 0x18000000 0 0x1000>;
++            #clock-cells = <1>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+new file mode 100644
+index 000000000000..629e0cc7c916
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/mediatek,mt6795-sys-clock.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: MediaTek System Clock Controller for MT6795
++
++maintainers:
++  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
++  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
++
++description:
++  The Mediatek system clock controller provides various clocks and system
++  configuration like reset and bus protection on MT6795.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - mediatek,mt6795-apmixedsys
++          - mediatek,mt6795-infracfg
++          - mediatek,mt6795-pericfg
++          - mediatek,mt6795-topckgen
++      - const: syscon
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        topckgen: clock-controller@10000000 {
++            compatible = "mediatek,mt6795-topckgen", "syscon";
++            reg = <0 0x10000000 0 0x1000>;
++            #clock-cells = <1>;
++        };
++    };
 -- 
 2.35.1
 
