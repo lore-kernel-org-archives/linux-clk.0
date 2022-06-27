@@ -2,49 +2,43 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295D3CCA47E
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 08:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139CAC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jun 2022 08:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbiF0ItR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jun 2022 04:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42920 "EHLO
+        id S233561AbiF0I4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jun 2022 04:56:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232615AbiF0ItQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 04:49:16 -0400
+        with ESMTP id S233673AbiF0I4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jun 2022 04:56:43 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02AC06278;
-        Mon, 27 Jun 2022 01:49:15 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F766380;
+        Mon, 27 Jun 2022 01:56:41 -0700 (PDT)
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CB5FA6601828;
-        Mon, 27 Jun 2022 09:49:12 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 699136601826;
+        Mon, 27 Jun 2022 09:56:38 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1656319754;
-        bh=o4KMjR/ZJMxFhZCtqu5FCmZbc0KpnWFELMON025GNow=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=YEcKuN9F7zr9YHZJ6SYqEkxZ03gQ8MkukZCgHEIgsdT0jrBqRB4H8xzKH2yIUiVix
-         uAwnTIW0oa2ltYINpE6E5EWHfcW4oOXAinDlHd/Wk3VrObMjKuC9vN3CByop4pWHJs
-         +PdewMxVydIslZSVxLsSTpRhzJQR6KvHtcPRvMr5r+mhDd+ZCAEJRBhph4SETfcs+6
-         wqR+2tgzir/S++iNAm6++irP1L0fP99p7p1SPHrnGvAdwK53KGJ2EY9OFGyEHqpudc
-         dD9MzF2c1ffEb8GtoDzj0wWHAQDjK851hRs+TffQlba/Mo7dLBSlDKKV7BzhuZO7ON
-         iu3d7G+wgu69A==
-Message-ID: <9554982a-c48b-e902-2d96-b317c46df698@collabora.com>
-Date:   Mon, 27 Jun 2022 10:49:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 2/7] dt-bindings: clock: Add MediaTek Helio X10 MT6795
- clock bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        robh+dt@kernel.org
+        s=mail; t=1656320199;
+        bh=rTb2BKGQFipvuxltOmZjku9+TmcuBbyadctbj6rJURw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OXO/JGgTuxrppa3BBBZdxpbl+j/SQYfb3wmob9xb8HN/cCXaFT9NgxxsKM67mKbXV
+         2Hb/NsSQr1uleUlVD8UZRxNFZylfmrPM4TV2dPoNPeCaB2vPBnZTE27tw2jCrzRlv3
+         CIBmwysbVsouw9sGfiB1DDXIZmGtTqOShaIBkhspwpTjNGYAW6RTNb7tLoWYu4eNqH
+         hDckYfNG7QI1F+C6nGUMHa1juUTcArSYEc3av2p5GFD4Bd88ax9Jo+m2LcYxnhY1La
+         RGUiYV9vsfI6mzhzRdwKpVJUvVPOI9dWItO5C74idBSYhiAKlqB3JiTupU5FOWUabz
+         BLjWgFAuKWijg==
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+To:     robh+dt@kernel.org
 Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
-        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
+        y.oudjana@protonmail.com, angelogioacchino.delregno@collabora.com,
+        jason-jh.lin@mediatek.com, ck.hu@mediatek.com,
+        fparent@baylibre.com, rex-bc.chen@mediatek.com,
         tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
         weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
         sam.shih@mediatek.com, wenst@chromium.org,
@@ -54,45 +48,90 @@ Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
         konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
         martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
         phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
-        kernel@collabora.com, Rob Herring <robh@kernel.org>
-References: <20220624093525.243077-1-angelogioacchino.delregno@collabora.com>
- <20220624093525.243077-3-angelogioacchino.delregno@collabora.com>
- <de5a0e6f-411f-0c7b-ae1e-1117a4126d2d@linaro.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <de5a0e6f-411f-0c7b-ae1e-1117a4126d2d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        kernel@collabora.com
+Subject: [PATCH v4 0/7] MediaTek Helio X10 MT6795 - Clock drivers
+Date:   Mon, 27 Jun 2022 10:56:25 +0200
+Message-Id: <20220627085632.23797-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 25/06/22 22:30, Krzysztof Kozlowski ha scritto:
-> On 24/06/2022 11:35, AngeloGioacchino Del Regno wrote:
->> Add the bindings for MT6795's clock controller.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->>   include/dt-bindings/clock/mt6795-clk.h | 275 +++++++++++++++++++++++++
->>   1 file changed, 275 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/mt6795-clk.h
->>
->> diff --git a/include/dt-bindings/clock/mt6795-clk.h b/include/dt-bindings/clock/mt6795-clk.h
->> new file mode 100644
->> index 000000000000..9902906ac902
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/mt6795-clk.h
-> 
-> Vendor prefix.
-> 
+In an effort to give some love to the apparently forgotten MT6795 SoC,
+I am upstreaming more components that are necessary to support platforms
+powered by this one apart from a simple boot to serial console.
 
-For consistency, I'd really like to keep the filename as it is.
+This (very big) series introduces system clock, multimedia clock drivers
+(including resets) for this SoC.
 
-At least in this directory, all of the MediaTek clock bindings
-are using the format mtXXXX-clk.h... and that's not only seen
-in MediaTek, but also in Broadcom, Renesas, RockChip, HiSilicon,
-nVidia, etc.
+Tested on a MT6795 Sony Xperia M5 (codename "Holly") smartphone.
 
-Thanks,
-Angelo
+This series depends on, and can be merged on top of:
+[1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=640122
+[2]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=637849
+
+Changes in v4:
+ - Removed unnecessary examples for clock controllers in commit [4/7]
+ - Fixed one instance of 88 columns line wrap in commit [4/7]
+
+Changes in v3:
+ - Fixed typo in commit [4/7]
+
+Changes in v2:
+ - Fixed yaml clock bindings as per Rob's review
+ - Added ability to compile all MT6795 clock drivers as modules
+ - Added commits to export some symbols, required to compile as module
+
+AngeloGioacchino Del Regno (7):
+  dt-bindings: mediatek: Document MT6795 system controllers bindings
+  dt-bindings: clock: Add MediaTek Helio X10 MT6795 clock bindings
+  dt-bindings: reset: Add bindings for MT6795 Helio X10 reset
+    controllers
+  dt-bindings: clock: mediatek: Add clock driver bindings for MT6795
+  clk: mediatek: clk-apmixed: Remove unneeded __init annotation
+  clk: mediatek: Export required symbols to compile clk drivers as
+    module
+  clk: mediatek: Add MediaTek Helio X10 MT6795 clock drivers
+
+ .../arm/mediatek/mediatek,infracfg.yaml       |   2 +
+ .../bindings/arm/mediatek/mediatek,mmsys.yaml |   1 +
+ .../arm/mediatek/mediatek,pericfg.yaml        |   1 +
+ .../bindings/clock/mediatek,apmixedsys.yaml   |   1 +
+ .../bindings/clock/mediatek,mt6795-clock.yaml |  66 ++
+ .../clock/mediatek,mt6795-sys-clock.yaml      |  54 ++
+ .../bindings/clock/mediatek,topckgen.yaml     |   1 +
+ drivers/clk/mediatek/Kconfig                  |  37 ++
+ drivers/clk/mediatek/Makefile                 |   6 +
+ drivers/clk/mediatek/clk-apmixed.c            |   3 +-
+ drivers/clk/mediatek/clk-cpumux.c             |   2 +
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c  | 157 +++++
+ drivers/clk/mediatek/clk-mt6795-infracfg.c    | 148 +++++
+ drivers/clk/mediatek/clk-mt6795-mfg.c         |  50 ++
+ drivers/clk/mediatek/clk-mt6795-mm.c          | 106 +++
+ drivers/clk/mediatek/clk-mt6795-pericfg.c     | 160 +++++
+ drivers/clk/mediatek/clk-mt6795-topckgen.c    | 610 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt6795-vdecsys.c     |  55 ++
+ drivers/clk/mediatek/clk-mt6795-vencsys.c     |  50 ++
+ drivers/clk/mediatek/clk-mtk.c                |   2 +
+ drivers/clk/mediatek/reset.c                  |   1 +
+ include/dt-bindings/clock/mt6795-clk.h        | 275 ++++++++
+ include/dt-bindings/reset/mt6795-resets.h     |  50 ++
+ 23 files changed, 1837 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
+ create mode 100644 include/dt-bindings/clock/mt6795-clk.h
+ create mode 100644 include/dt-bindings/reset/mt6795-resets.h
+
+-- 
+2.35.1
+
