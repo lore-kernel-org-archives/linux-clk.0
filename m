@@ -2,136 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA94CCA482
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 10:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA565CCA47F
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 11:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344417AbiF1KoJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45330 "EHLO
+        id S1345405AbiF1LIv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 07:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345020AbiF1KoB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 06:44:01 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 750223138F
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 03:43:54 -0700 (PDT)
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220628104348epoutp026e17abcbec74a74cb176b9dc05185fca~8wt_f_qyK1792917929epoutp02K
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 10:43:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220628104348epoutp026e17abcbec74a74cb176b9dc05185fca~8wt_f_qyK1792917929epoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1656413028;
-        bh=8siWDXvXbIxEDOLi9RbF0Oau9kIZ9qcJ/y4+IQQOilQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=E7xNZgIQUu4AUxofCo3M6dOOXO14Hxf/k3kUfAFtj3DVU71aYiEMqJ8na7u/XANpe
-         QU2wILlsQAFEyBuKLUN64yzP45fOt3Pud4kEpQT7CU+DghY1TY2yhxxM1wk3JAu9VS
-         8rY+bK9mCSAKeen9D7GivjvWVfbBx17fqSutw/x4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20220628104347epcas2p2ddc54f0d5455a832cf93ffdaab9f406f~8wt90-9HR1795617956epcas2p2_;
-        Tue, 28 Jun 2022 10:43:47 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.92]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4LXLmg4Zjcz4x9Pv; Tue, 28 Jun
-        2022 10:43:47 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4A.07.09642.36BDAB26; Tue, 28 Jun 2022 19:43:47 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220628104347epcas2p40f5b491f6c31b07300b5b17fe108bef7~8wt9EvTLZ1212012120epcas2p4g;
-        Tue, 28 Jun 2022 10:43:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220628104347epsmtrp18976b6bff250444cf63f700a37a9888c~8wt9DuI7M0764207642epsmtrp1H;
-        Tue, 28 Jun 2022 10:43:47 +0000 (GMT)
-X-AuditID: b6c32a47-5f7ff700000025aa-26-62badb63e3eb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4B.FC.08905.26BDAB26; Tue, 28 Jun 2022 19:43:47 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220628104346epsmtip1db59ff898a2dd72592007d61a364672f~8wt80FQzv1975519755epsmtip1E;
-        Tue, 28 Jun 2022 10:43:46 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1345402AbiF1LIu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 07:08:50 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5A52AE3F
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 04:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=fnN1d4Dq8Eak6DfJZbGGF+U86n3u
+        0SFngUX3XdYVtTo=; b=nr7U4POmIS0EoP/sKwkDHFnvTOb24VLFEhEtcz5CA0+q
+        tHfaTXud7aravkiVOFc7KloRqru1fEMjJUemarsNOCiF+dB+3x92dbA4vunqVCpH
+        48eZC6TBSXhIQizsgx8AshxBmHIoCwxjnbpHiBULM19y+jOsFt7UOM3CnvrFuok=
+Received: (qmail 2835320 invoked from network); 28 Jun 2022 13:08:44 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jun 2022 13:08:44 +0200
+X-UD-Smtp-Session: l3s3148p1@tWtRD4Di/1tZD+zG
+Date:   Tue, 28 Jun 2022 13:08:43 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v2 0/3] fixes for exynosautov9 clock
-Date:   Tue, 28 Jun 2022 19:41:35 +0900
-Message-Id: <20220628104138.152118-1-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.36.1
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: renesas: rcar-gen4: implement SDSRC properly
+Message-ID: <YrrhO+kb5d2rtTNA@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmhW7y7V1JBkceylk8mLeNzeLyfm2L
-        61+es1rMP3KO1aLvxUNmi72vt7JbbHp8jdXiY889VosZ5/cxWVw85WrRuvcIu8XhN+2sFv+u
-        bWSxWLXrD6MDn8f7G63sHjtn3WX32LSqk83jzrU9bB6bl9R79G1ZxejxeZNcAHtUtk1GamJK
-        apFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0MFKCmWJOaVAoYDE
-        4mIlfTubovzSklSFjPziElul1IKUnALzAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM5stP2Qpa
-        WCtu/uhla2DsZOli5OSQEDCRaHt4hq2LkYtDSGAHo8SRhqOsIAkhgU+MEo+WZkEkvjFKTPh8
-        lbGLkQOsY9N8G4j4XkaJe0cbmCCcj4wSP/acYATpZhPQldjy/BUjSEJE4DGTxOEjbWwgCWaB
-        G4wSh7cyg9jCQJOe/5oEZrMIqEps67gEVsMrYC/xYsFRNoj75CU2zO9lhogLSpyc+YQFYo68
-        RPPW2cwQNRM5JLbsKIGwXSRWT14O1Sss8er4FnYIW0riZX8blF0ssXTWJ7CrJQQaGCUub/sF
-        1WAsMetZO9ibzAKaEut36UN8rCxx5BbUWj6JjsN/2SHCvBIdbUIQjeoSB7ZPh4aorET3nM+s
-        ELaHxON7jxghARor0XvrGPsERvlZSJ6ZheSZWQh7FzAyr2IUSy0ozk1PLTYqMIbHaXJ+7iZG
-        cJLVct/BOOPtB71DjEwcjIcYJTiYlUR4F57ZmSTEm5JYWZValB9fVJqTWnyI0RQYvBOZpUST
-        84FpPq8k3tDE0sDEzMzQ3MjUwFxJnNcrZUOikEB6YklqdmpqQWoRTB8TB6dUA5Px59NHZ2W6
-        RDPuZL4Xuqddevuu6aoS7CKSFWf3BM+8evfpMknvRW8TdGZkffh9d236/6XLWNc/tO1xaNfZ
-        vee1Eg+nq3rI122f5f8vmf7gkvbxI63+hqkuf5pOPV935YNlrusFk+bVEzd/+ta+al/TryNz
-        JB7kV/PLPtNZ8yurvkpz6tOLtopnmUuT+vh1klZfaj1+LudBzUalx+FVsyuSGRQ+Hzjxn8v0
-        vIT/9ERvFx5vl0nmb+YVcCRN1ZvonH+ibu/ivAkqji0zj66JeJH0LOPZMjlLr3pXXb8L0smd
-        TLqFymUKU9uZY7PUAiL5nVawiIsY8mjP7s6XTnp+8M9h5RPxVlJfY6c26biqtCmxFGckGmox
-        FxUnAgB3nqJ8OwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJLMWRmVeSWpSXmKPExsWy7bCSnG7y7V1JBjPuMFk8mLeNzeLyfm2L
-        61+es1rMP3KO1aLvxUNmi72vt7JbbHp8jdXiY889VosZ5/cxWVw85WrRuvcIu8XhN+2sFv+u
-        bWSxWLXrD6MDn8f7G63sHjtn3WX32LSqk83jzrU9bB6bl9R79G1ZxejxeZNcAHsUl01Kak5m
-        WWqRvl0CV0bz5adsBS2sFTd/9LI1MHaydDFycEgImEhsmm/TxcjJISSwm1Fi7dYwEFtCQFbi
-        2bsd7BC2sMT9liOsXYxcQDXvGSUud/QxgyTYBHQltjx/xQiSEBF4ziQxZcVBMIdZ4A6jxJTZ
-        s5lAqoSBNjz/NQmsg0VAVWJbxyU2EJtXwF7ixYKjbBAr5CU2zO9lhogLSpyc+YQFxGYGijdv
-        nc08gZFvFpLULCSpBYxMqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgkNfS3MH4/ZV
-        H/QOMTJxMB5ilOBgVhLhXXhmZ5IQb0piZVVqUX58UWlOavEhRmkOFiVx3gtdJ+OFBNITS1Kz
-        U1MLUotgskwcnFINTP0e7BN8P9T9OWklXq/UFSW1taW3qPPAfp2SP5k72f0E9opdVJ6/ODDU
-        /8W7jwcKNh3SsHp9YYZo7TSXp2kpe36FuPvd1xNUnBfYXX/9/k+2yRFLFglPMjNWNGeYohEg
-        KpD/bPcKqTNF5s1VJ9+1MjzbtrRZ66Ka7DnOtr7HiQ/vtQTtN/XILn8V8PNin9dax0fsj20s
-        LSovLFRizX/ksC/VWfFrmX5Z8cHULpPvz18VbYqO+a0w0/Cnja/k8byZX2btfnXrfMfXRJ4z
-        DQc2Zt/2NX00/9BljjUSpdvTeJ/1Vn7pKbu49eu+e/Kfhd4EFCpzfapwXZinHvH1wiTTHCVO
-        5RUbZ31ctnvJGq1nfEosxRmJhlrMRcWJAPyP0D7sAgAA
-X-CMS-MailID: 20220628104347epcas2p40f5b491f6c31b07300b5b17fe108bef7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220628104347epcas2p40f5b491f6c31b07300b5b17fe108bef7
-References: <CGME20220628104347epcas2p40f5b491f6c31b07300b5b17fe108bef7@epcas2p4.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Qfk1NNd/R1nDqBr5"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are some fixes for exynosautov9 such as clock id numbering,
-missing clocks and register offsets.
 
-Changes from v1:
-- Add Krzysztof's R-B tags for #1 and #3 patches
-- Drop fixes tag of #2 patch
+--Qfk1NNd/R1nDqBr5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Chanho Park (3):
-  dt-bindings: clock: exynosautov9: correct clock numbering of peric0/c1
-  clk: samsung: exynosautov9: add missing gate clks for peric0/c1
-  clk: samsung: exynosautov9: correct register offsets of peric0/c1
+Hi Geert,
 
- drivers/clk/samsung/clk-exynosautov9.c        | 28 ++++++----
- .../dt-bindings/clock/samsung,exynosautov9.h  | 56 +++++++++----------
- 2 files changed, 46 insertions(+), 38 deletions(-)
+> > Tested on my Spider board (r8a779f0). Only build tested for r8a779g0 but
+> > the docs for the registers are the same.
+>=20
+> While the SDSRCSEL bits are the same, the register at offset 0x8a4 is
+> called SD0CKCR1 on R-Car S4-8, and CKSRCSELCR on R-Car V4H.
+> I guess that is why you removed the definition of SD0CKCR1, and stored
+> the register offset in DEF_GEN4_SDSRC(), despite both being the same?
 
--- 
-2.36.1
+TBH, no :) I did that to be future proof in case the register gets moved
+somewhere else. Also, this is consistent how we did it with DEF_GEN3_SD.
 
+> >         case CLK_TYPE_GEN4_SDSRC:
+> > -               div =3D ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
+> > +               value =3D (readl(base + core->offset) >> 29) & 3;
+> > +               if (value) {
+> > +                       div =3D value + 4;
+> > +               } else {
+> > +                       parent =3D clks[core->parent >> 16];
+> > +                       if (IS_ERR(parent))
+> > +                               return ERR_CAST(parent);
+> > +                       div =3D 2;
+> > +               }
+>=20
+> So this gives the exact same divider of PLL5 before.
+>=20
+> The clock diagram indeed shows different paths for value 0
+> (PLL5 -> 1/2 -> 1/2) and values 1 and 2 (PLL5 -> {1/5 or 1/6}).
+> But the textual description for SDSRC says "The SDSRC divider divides
+> PLL5 output clock", matching the original code.
+>=20
+> Do we have to complicate the code? ;-)
+> I guess the clock diagram was based on the diagram for R-Car H3
+> (which has two daisy-chained fixed 1/2 dividers), with the new 1/5
+> and 1/6 dividers added.
+
+We don't have to complicate the code unnecessarily. If you think the
+diagram is flawed, then we can keep the current code. I changed the code
+because I was confused when checking 'clk_summary' with the diagram and
+wanted to make it proper to reduce my confusion.
+
+My patches to enable eMMC on Spider have a significantly lower
+throughput than the BSP, so this was the first step of trying to verify
+things and get the clocks in shape.
+
+If you call it superfluous, then we can drop it. No hard feelings here.
+
+All the best,
+
+   Wolfram
+
+
+--Qfk1NNd/R1nDqBr5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmK64TgACgkQFA3kzBSg
+KbZ9FQ/+MrsommjVLbJc4WToCH5kc03TkVY1LirYpMT4lEyo6kO5FEF3Ca6vE9VQ
+PjsAq+B0xTPTV0+uOK1X7f+lc2dcJg6X77Zm/atVoa6X3ySyCNMssW+8PTQzNGrY
+jlgdNT6wChWRDhRnQItPKE8/curwc0NFdI5eYwayY+B8eaMUlGBuECdR6AmY96/3
+CEMWJhDAUJruWWJEDh1qz74V25Z593Em5O+m0jG0xR4d4JrrKs+cUc9yszYJZHko
+nDseuN3m8rp1dh4GXoD3Od5jdGzOA6YyTMHJTxf8+sVQF9d7ciuH5dBpJ7KsdbKg
+SdJ5Gt/gbL1trwQOEN2zP61jjb+iaa1MtW8d3OpgpAvD/OIfMxd+CXIWcNv8rQjH
+Zjc5vbaaXGwRr5v02+zVV+hTv+y03RxzzhdIIOPNKpoi/tH61plKMTgowjRd7gSw
+aHefwrvRd3ySKpphQH+8YGK3aC4NW0/fY804UYKdc0fCYxsdKQEUWFvTGf3dpsPs
+ui58LGZIjfuVqU5y9JFwI86UCgN2jEhJL9a/dQhmc0aRgT3Gtu+s+uJ3uh+pdqKe
+1j3dmgsnOAfC3KFeC8dM+1ETW3QDJy0kPnevPulLdw91qUkp45mGrI400bs+hHj6
+d4j2cY74V9co/gxYEfSp1r7ZXDm964Ixqmt4EqQ8Bf9lEidIjsk=
+=3yCg
+-----END PGP SIGNATURE-----
+
+--Qfk1NNd/R1nDqBr5--
