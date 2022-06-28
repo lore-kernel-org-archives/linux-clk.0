@@ -2,65 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5EEC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 20:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3264FCCA47E
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 20:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232430AbiF1UVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 16:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35992 "EHLO
+        id S234013AbiF1UXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 16:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbiF1UV2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 16:21:28 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9368C63D3
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 13:19:16 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-101b4f9e825so18563920fac.5
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 13:19:16 -0700 (PDT)
+        with ESMTP id S229866AbiF1UVk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 16:21:40 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EC964FB
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 13:19:36 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id t26-20020a9d775a000000b006168f7563daso10562168otl.2
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 13:19:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=TCcMfFRtuhcnVZP9mkAnGiDz0f6ZT8Z4OqJ7ET/FUrU=;
-        b=Jal3fOHABSnUElZ8o0vsXuyk//GtCzW9cGLepf1PYxzeeyvccgublrQeOVpMT/5fjy
-         M4FbF2W5h31spifuQzU3U6U2WM1q6pPr8zqgbJB2ayEfX5M/7puMrvOxX+oHJKEH8UH9
-         qmtBCozdL0O3c4P7NZ85hlvczOVMeZ2k+FDrVPFX1qrjFqu7OD9w6UMPn2EVS9alp1yZ
-         +11TSA2T0INvP5FIe8Y2GG87dDhhQc8gRbechyk0K2ReJzz4lSp6LLuASjHYF4jwmnIL
-         g/EMD25yD3mJKS0n1j7qxOk0pZ9xlA85gaO5MSq5qKftq96FWdgIhDJXHQ/0RRBIGbWh
-         oqpw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VHrN/Oxxf35D3M+A4ASVVo4AXIbjxEuhMehr+bJZKZk=;
+        b=B/v3D5svjuBFLzOL8VzgQJkhF0VdwlREaHaC4TsKMch8wGlPNksdnqPS0DXLYT7GPZ
+         8QYEFiaMQJE8BRJUTVVWoGKj8dQlviSVvxuNMKVvRKy4TrcIep4tN3euFg3jSNSITPiT
+         RyKmXeu6XnWu1jQa7W5q52rRU5kwe3yuVoA6hQhS9pHusdiXxFGWSsOhgIX7tm9OmpLB
+         XhOMGIUIEn4v8rFRblfGuFAcZia1V0juR6yOQOiSdbgeKQQaH2d2H1AsvwWJL7qnxK9y
+         IAh03PJOF+bhULSqVIn4zRNp/i0VGAK5WVjlLLCV4zebhPYBaSV69KLRzApSJUfkMbQL
+         tqiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TCcMfFRtuhcnVZP9mkAnGiDz0f6ZT8Z4OqJ7ET/FUrU=;
-        b=h7Zj29McNjcpNAkuO6DQgHSDQZkUaaU20is8mJSAlCf/4BmPk7lGcX0isRrc5OMo8G
-         ybj1oxc02GLm1SvMN7JrcdnOf+D+yS2qUEHyoKeoUpplvD9VFw1ILmVV+P8YZZw0Xour
-         aRe+fROclks4AUPqSlWe23bdyedILX3X/tGAgrcQtpbiHbrZeLZ1ss6TUAT9oeL9V7Bd
-         VsJs/whYb19wXxkf6ABcUFQ6WT8pLGciXNgv2r0M+kB/GU43NCNEbSIWQ3NlT+05OVcC
-         aps1aBv9YirF+Ef4Mb9O4gI7P/5i1yZtAAyhbqRYo80A1gA+IZ9LTU/xA73W0kFki5TP
-         49Qg==
-X-Gm-Message-State: AJIora+AeGuXp8HvSDbP8gXw8AuMRuiRwCiK+4HycH47G3DdjVpq3k/f
-        x0XFkZ5WJj8XnxCb48plRZYZoIf0OnDuIQ==
-X-Google-Smtp-Source: AGRyM1uS9oXAEb/kDm4KVv9+HRisJG2CyJsvRd+zbAogIYh5jQtGRqn5Wof4gXMG4zs6pf1ij8mCwA==
-X-Received: by 2002:a05:6871:420b:b0:108:be11:7e42 with SMTP id li11-20020a056871420b00b00108be117e42mr846361oab.133.1656447555445;
-        Tue, 28 Jun 2022 13:19:15 -0700 (PDT)
+        bh=VHrN/Oxxf35D3M+A4ASVVo4AXIbjxEuhMehr+bJZKZk=;
+        b=D83BIXzXQX48QBL2Qcf3cIJzIP9EGp0HJIvO/UNeojzQCP54N7/IGyeDSJ0AVa6LfX
+         DISovreJoo4SDJsxRY8I2RwKx1tkpTMrZj5+Rx3oCxHmfpye0sOKPZXaQd+6dqNNiSeK
+         gRHqzqODKuxSMTUu1d6YRpHXP99Vu9yDG2mQWr7cjPMQNuBfB1Zcpbjv55B1SeoP/KY7
+         8st37eu+WwGMb/tyFoC1cJ552NPUHUPhFPWhUQdtvrk829/3NvJ9eYBhEvtbTcP2YtyZ
+         5y8jPT7hcTdAr8Z5tQUyeIn0x6UNnCjXbjinpbK9BAluiGTrj7R4+mWmqXSJRId+b1SA
+         8wNg==
+X-Gm-Message-State: AJIora8bFqBl1AQQC5cv0vcIHoHuUUfIxyM6cUtjxMFf+kR9PXploUwP
+        d1mE1HC9m6b35txn8icWhuxvvw==
+X-Google-Smtp-Source: AGRyM1sPJhvyMknN/nwu+IU7uPEKW5OwqDp2rh4N54sd0eJEeitwSz/E7S8HBXOZoX3bnieDIZ6S+Q==
+X-Received: by 2002:a05:6830:2801:b0:60c:76b1:d23c with SMTP id w1-20020a056830280100b0060c76b1d23cmr9459452otu.154.1656447575670;
+        Tue, 28 Jun 2022 13:19:35 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id a12-20020a056870d60c00b000f30837129esm9536923oaq.55.2022.06.28.13.19.14
+        by smtp.gmail.com with ESMTPSA id a12-20020a056870d60c00b000f30837129esm9536923oaq.55.2022.06.28.13.19.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jun 2022 13:19:14 -0700 (PDT)
+        Tue, 28 Jun 2022 13:19:34 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Sricharan R <sricharan@codeaurora.org>
-Subject: Re: [PATCH v2 0/3] Small fixes/improvement for hfpll and krait
-Date:   Tue, 28 Jun 2022 15:18:51 -0500
-Message-Id: <165644753306.10525.8110695593593375784.b4-ty@linaro.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
+        Li kunyu <kunyu@nfschina.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH] drivers: the return value statement of the gcc_sm6350_probe function has an extra semicolon
+Date:   Tue, 28 Jun 2022 15:19:05 -0500
+Message-Id: <165644753306.10525.6775278248022275480.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220430054458.31321-1-ansuelsmth@gmail.com>
-References: <20220430054458.31321-1-ansuelsmth@gmail.com>
+In-Reply-To: <20220627020500.135125-1-kunyu@nfschina.com>
+References: <20220627020500.135125-1-kunyu@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -68,28 +65,15 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 30 Apr 2022 07:44:55 +0200, Ansuel Smith wrote:
-> This series has small fixes/improvement to the hfpll and krait clk
-> driver.
+On Mon, 27 Jun 2022 10:05:00 +0800, Li kunyu wrote:
+> I think this semicolon could be deleted.
 > 
-> This comes from another series that got split to better facilitate the
-> merge since it was grown to 21 patches and was getting hard to review.
 > 
-> For hfpll, a conversion to read_poll macro and introduction
-> of a timeout to prevent a stall.
-> For krait, a fix for the mux sel logic and an introduction for
-> 8064 errata.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/3] clk: qcom: clk-hfpll: use poll_timeout macro
-      commit: fcfbfe373d41b4728ffec075f8f91b6572a88c27
-[2/3] clk: qcom: clk-krait: unlock spin after mux completion
-      commit: df83d2c9e72910416f650ade1e07cc314ff02731
-[3/3] clk: qcom: clk-krait: add apq/ipq8064 errata workaround
-      commit: 898d0d6483a9360f1968e0a900465c1fa152a4a9
+[1/1] drivers: the return value statement of the gcc_sm6350_probe function has an extra semicolon
+      commit: 255a47e745674dbbda9250ae0ad1f78a49179988
 
 Best regards,
 -- 
