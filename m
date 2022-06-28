@@ -2,406 +2,279 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584F3CCA479
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 07:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C465CCA479
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 07:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbiF1HPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 03:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48066 "EHLO
+        id S242787AbiF1Hko (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 03:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiF1HPA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 03:15:00 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E56382C12A;
-        Tue, 28 Jun 2022 00:14:58 -0700 (PDT)
+        with ESMTP id S242793AbiF1Hkn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 03:40:43 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 588102CC8C
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 00:40:41 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id sb34so23864975ejc.11
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 00:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1656400499; x=1687936499;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=lwXZcqdSLbWOAYvNr7FmnphJ8eGlnyLRMExAFU84AxA=;
-  b=ltyox8WnviG2e+S+kpvGUU5F/F05ebqqTKJt65x+AdKX/AnKKUrgfBbq
-   715SK6pUm6NxUD+v9vLeWRFxl5MqGdEADWDaD7B5VKe/88pRzyYo51SMP
-   C7K9wfG+lDIYMcWqkNYL8DKAW3A7coz5NbVH7lJFMbGH7H5MVe+4gQiIp
-   E=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 28 Jun 2022 00:14:58 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 00:14:58 -0700
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 28 Jun 2022 00:14:57 -0700
-Received: from [10.216.11.205] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 28 Jun
- 2022 00:14:51 -0700
-Message-ID: <2a16703b-5b1e-5ce9-0af0-2e08da49d8ed@quicinc.com>
-Date:   Tue, 28 Jun 2022 12:44:48 +0530
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=v4aAjKeEqKxV1NZCwNURdwE5iyyJ3850e9bBA4IL6TE=;
+        b=fZUVuR8MAnFt80lyGhLyLIoKAZ8EbaWnwlr6Dhqgnaz4qf8HDNGHcRaKlb+ffefFJF
+         +cK56e2+AQUxXYRmZkJPs9Gqn4upLMX4hOm36+ieqy54hngUL7kVsqXI62DzUFXdXpTu
+         bFIwTrnhyv1W1PB9ROoaFlzYiPc33SZesTzb87wFbCI41WzQZW124LjmMA+ilICi8hZ5
+         W1VgALipzx2vfLrhDkgYkIxOAsWCOu7Ki3ZCe44lF8apBfbyuJDn2mIyZxXW9XiQgrkO
+         3mxbj2T9gyOiNJeiKNwA5txvaY24VIS8tesvFf/gvUHlwo+G8y1RmTyqceXXzcOQcaIa
+         aEMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=v4aAjKeEqKxV1NZCwNURdwE5iyyJ3850e9bBA4IL6TE=;
+        b=qTJo5sgwQ2+8Qz0pBnUR4c5qZbZhP6owkZ2bhuQaqWd0olI/jpVUQDD2c7dGyecfm8
+         t8Z98FvwYwnxF4uOGOlMhdAnOYOTMhyo7UdH1oIS7XDRby181d+5YncDnqcDD4vL5TqH
+         WU1Ble1RnNS5IvwNzPk7W5w2QfIXTr3xiH5jdOhym+UmfYsh7LkTasqQwOqIaGYhV5lr
+         U3p8/RC6Bq7RTDsKdbohYUpxU1WkuKld6SBOMvi3IBJI6uFYRlQOB/w7XgEnp60s7b4o
+         v1hnybUBIqzjZc5JHvT/7nk+WGxkMsImPV1gx8Oat7PkX0Iu7/iMBbMd0aqUgtwBwT7d
+         RPPA==
+X-Gm-Message-State: AJIora90tp3ronV00vPdpxnbkvWl3w/eMcCNUT+Mtx6GEj6updbjilfS
+        /IAgzDO/f8AwTu7GhD5Yj9dhIw==
+X-Google-Smtp-Source: AGRyM1sJNF5OFItLhacBVarsuGoAnjScolptSzxQIcldwkpTgGDiPvm/BOZVSzA2WJLkg3Pl6IF0Cw==
+X-Received: by 2002:a17:906:7394:b0:722:e9c5:8e82 with SMTP id f20-20020a170906739400b00722e9c58e82mr16543887ejl.239.1656402039481;
+        Tue, 28 Jun 2022 00:40:39 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id cb25-20020a0564020b7900b004359dafe822sm9069835edb.29.2022.06.28.00.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 00:40:38 -0700 (PDT)
+Date:   Tue, 28 Jun 2022 10:40:36 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, olof@lixom.net,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 08/13] clk: imx: Update pllv3 to support i.MXRT1170
+Message-ID: <YrqwdCsLgxJYPfOw@linaro.org>
+References: <20220626064523.3683775-1-Mr.Bossman075@gmail.com>
+ <20220626064523.3683775-9-Mr.Bossman075@gmail.com>
+ <YrmxdaSqHnEg28uG@linaro.org>
+ <c8f13238-c927-4aab-e54d-3a1a5c031877@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH V2 7/8] arm64: dts: Add ipq5018 SoC and MP03 board support
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com>
- <20220621161126.15883-8-quic_srichara@quicinc.com>
- <f8aa5f81-e77c-db28-519d-7d9ee119dcf3@somainline.org>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <f8aa5f81-e77c-db28-519d-7d9ee119dcf3@somainline.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8f13238-c927-4aab-e54d-3a1a5c031877@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks Konrad for the review.
-
-On 6/27/2022 12:02 AM, Konrad Dybcio wrote:
+On 22-06-27 12:11:31, Jesse Taube wrote:
 >
-> On 21.06.2022 18:11, Sricharan R wrote:
->> From: Varadarajan Narayanan <quic_varada@quicinc.com>
->>
->> Add initial device tree support for the Qualcomm IPQ5018 SoC and
->> MP03.1-C2 board.
->>
->> Co-developed-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
->>   .../arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts |  29 +++
->>   arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 221 ++++++++++++++++++
->>   3 files changed, 251 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->>   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index f9e6343acd03..c44e701f093c 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c2.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-g7.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.1-c2.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8150.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8910.dtb
->>   dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-mtp.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->> new file mode 100644
->> index 000000000000..d1cd080ec3db
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq5018-mp03.1-c2.dts
->> @@ -0,0 +1,29 @@
->> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
->> +/*
->> + * IPQ5018 CP01 board device tree source
->> + *
->> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include "ipq5018.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. IPQ5018/AP-MP03-C2";
->> +	compatible = "qcom,ipq5018-mp03", "qcom,ipq5018";
->> +
->> +	aliases {
->> +		serial0 = &blsp1_uart1;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:115200n8";
->> +	};
->> +};
->> +
->> +&blsp1_uart1 {
->> +	pinctrl-0 = <&serial_1_pins>;
->> +	pinctrl-names = "default";
->> +	status = "ok";
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
->> new file mode 100644
->> index 000000000000..084fb7b30dfd
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
->> @@ -0,0 +1,221 @@
->> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
->> +/*
->> + * Copyright (c) 2017-2021, The Linux Foundation. All rights reserved.
->> + */
->> +/*
->> + * IPQ5018 SoC device tree source
->> + *
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/qcom,gcc-ipq5018.h>
->> +#include <dt-bindings/reset/qcom,gcc-ipq5018.h>
->> +
->> +/ {
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +	interrupt-parent = <&intc>;
-> Hi!
 >
-> interrupt-parent could go first.
-
-  ok.
-
-
->> +
->> +	sleep_clk: sleep-clk {
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <32000>;
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +	xo: xo {
->> +		compatible = "fixed-clock";
->> +		clock-frequency = <24000000>;
->> +		#clock-cells = <0>;
->> +	};
->> +
->> +	gen2clk0: gen2clk0 {
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <125000000>;
->> +		clock-output-names = "pcie20_phy0_pipe_clk";
->> +	};
->> +
->> +	gen2clk1: gen2clk1 {
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <125000000>;
->> +		clock-output-names = "pcie20_phy1_pipe_clk";
->> +	};
-> I am not sure what's the current stance on this, but previously clock nodes
-> used to be wrapped in a clocks {} node, as currently they are not sorted
-> properly.
+> On 6/27/22 09:32, Abel Vesa wrote:
+> > On 22-06-26 02:45:18, Jesse Taube wrote:
+> > > The i.MXRT1170 has a pll that has the multiplier bits inverted and
+> > > cannot be changed add IMX_PLLV3_GENERICV2.
+> > >
+> > > The i.MXRT1170 also has the lock bit moved as well as the
+> > > power bit inverted the power bit also is in different locations on each
+> > > pll control register.
+> > >
+> > > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> > > ---
+> > > V1 -> V2:
+> > >   - Nothing done
+> > > V2 -> V3:
+> > >   - Nothing done
+> > > V3 -> V4:
+> > >   - Nothing done
+> > > ---
+> > >   drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++++--
+> > >   drivers/clk/imx/clk.h       |  4 +++
+> > >   2 files changed, 59 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+> > > index eea32f87c60a..740412ea2f7e 100644
+> > > --- a/drivers/clk/imx/clk-pllv3.c
+> > > +++ b/drivers/clk/imx/clk-pllv3.c
+> > > @@ -23,6 +23,7 @@
+> > >
+> > >   #define BM_PLL_POWER		(0x1 << 12)
+> > >   #define BM_PLL_LOCK		(0x1 << 31)
+> > > +#define BM_PLL_LOCK_V2		(0x1 << 29)
+> > >   #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+> > >   #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+> > >
+> > > @@ -34,6 +35,7 @@
+> > >    * @base:	 base address of PLL registers
+> > >    * @power_bit:	 pll power bit mask
+> > >    * @powerup_set: set power_bit to power up the PLL
+> > > + * @lock_bit:	 pll lock bit mask
+> > >    * @div_mask:	 mask of divider bits
+> > >    * @div_shift:	 shift of divider bits
+> > >    * @ref_clock:	reference clock rate
+> > > @@ -48,6 +50,7 @@ struct clk_pllv3 {
+> > >   	void __iomem	*base;
+> > >   	u32		power_bit;
+> > >   	bool		powerup_set;
+> > > +	u32		lock_bit;
+> > >   	u32		div_mask;
+> > >   	u32		div_shift;
+> > >   	unsigned long	ref_clock;
+> > > @@ -65,7 +68,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+> > >   	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+> > >   		return 0;
+> > >
+> > > -	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
+> > > +	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
+> > >   					  500, PLL_LOCK_TIMEOUT);
+> > >   }
+> > >
+> > > @@ -101,7 +104,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
+> > >   {
+> > >   	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> > >
+> > > -	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
+> > > +	if (readl_relaxed(pll->base) & pll->lock_bit)
+> > >   		return 1;
+> > >
+> > >   	return 0;
+> > > @@ -155,6 +158,39 @@ static const struct clk_ops clk_pllv3_ops = {
+> > >   	.set_rate	= clk_pllv3_set_rate,
+> > >   };
+> > >
+> > > +static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > +		unsigned long parent_rate)
+> > > +{
+> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> > > +	u32 val, div;
+> > > +
+> > > +	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
+> > > +	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> > > +
+> > > +	if (rate == val)
+> > > +		return 0;
+> > > +
+> > > +	return -EINVAL;
+> > > +}
+> > > +
+> > > +static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
+> > > +					   unsigned long parent_rate)
+> > > +{
+> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> > > +	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
+> > > +
+> > > +	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
+> > > +}
+> > > +
+> > > +static const struct clk_ops clk_pllv3_genericv2_ops = {
+> > > +	.prepare	= clk_pllv3_prepare,
+> > > +	.unprepare	= clk_pllv3_unprepare,
+> > > +	.is_prepared	= clk_pllv3_is_prepared,
+> > > +	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
+> > > +	.round_rate	= clk_pllv3_round_rate,
+> > > +	.set_rate	= clk_pllv3_genericv2_set_rate,
+> > > +};
+> > > +
+> > >   static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+> > >   					       unsigned long parent_rate)
+> > >   {
+> > > @@ -407,6 +443,13 @@ static const struct clk_ops clk_pllv3_enet_ops = {
+> > >   	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+> > >   };
+> > >
+> > > +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift)
+> > > +{
+> > > +	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+> > > +
+> > > +	pll->power_bit = shift;
+> > > +}
+> > > +
+> >
+> > I can see why you need this, but I think the approach is not quite
+> > right.
 >
-  hmm ok, yeah, see the clocks { node in some recent dts as well, will 
-add the wrapper.
-
-
->> +
->> +	cpus: cpus {
-> Is this label going to be used?
-   hmm, not used, will remove.
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		CPU0: cpu@0 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			reg = <0x0>;
->> +			enable-method = "psci";
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		CPU1: cpu@1 {
->> +			device_type = "cpu";
->> +			compatible = "arm,cortex-a53";
->> +			enable-method = "psci";
->> +			reg = <0x1>;
->> +			next-level-cache = <&L2_0>;
->> +		};
->> +
->> +		L2_0: l2-cache {
->> +			compatible = "cache";
->> +			cache-level = <0x2>;
-> This should probably be dec, as it's not a register.
-
-    'dec' ? Sorry, i did not get that.
-
-
->> +		};
->> +	};
->> +
->> +	pmuv8: pmu {
-> Are there any other PMUs? And is this label going to be used?
-
-   ok, will remove the label.
-
-
->> +		compatible = "arm,cortex-a53-pmu";
->> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) |
->> +					 IRQ_TYPE_LEVEL_HIGH)>;
-> I think this can fit in a single 100-char line.
+> I wasn't sure if modifying the function like that was appropriate for this,
+> but sense it is I will do like you said.
 >
-   ok.
-
-
->> +	};
->> +
->> +	psci: psci {
->> +		compatible = "arm,psci-1.0";
->> +		method = "smc";
->> +	};
->> +
->> +	memory@40000000 {
-> This node is not sorted properly.
-
-   ok, will sort for all nodes.
-
-
->> +		device_type = "memory";
->> +		/* We expect the bootloader to fill in the size */
->> +		reg = <0x0 0x40000000 0x0 0x0>;
->> +	};
->> +
->> +	reserved-memory {
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
->> +
->> +		tz: tz@4ac00000 {
-> Please rename it to tz_memory or tz_region or something more
-> descriptive. Also, memory@
-
-  ok.
-
-
->> +			reg = <0x0 0x4ac00000 0x0 0x00400000>;
-> I don't think we tend to pad size to 8 hex digits.
-
-  ok.
-
-
->> +			no-map;
->> +		};
->> +	};
->> +
->> +	timer {
-> This is not sorted properly.
-
-  ok.
-
-
->> +		compatible = "arm,armv8-timer";
->> +		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->> +	};
->> +
->> +	soc: soc@0 {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0 0 0 0xffffffff>;
-> Isn't that the default value?
-
-   ok, if omitting this would be retain the default, then will do it.
-
-
->> +		compatible = "simple-bus";
-> Please sort the properties.
-
-   ok.
-
-
->> +
->> +		tlmm: pinctrl@1000000 {
->> +			compatible = "qcom,ipq5018-pinctrl";
->> +			reg = <0x01000000 0x300000>;
->> +			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
->> +			gpio-controller;
->> +			#gpio-cells = <2>;
->> +			gpio-ranges = <&tlmm 0 80>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +
->> +			serial_1_pins: serial1-pinmux {
-> Other DTs call it uart pins, also this is the default/poweron
-> state but the hardware provides support for sleep/poweroff.
-> Please rename this accordingly.
-
-   ok.
-
-
->> +				pins = "gpio31", "gpio32", "gpio33", "gpio34";
->> +				function = "blsp1_uart1";
->> +				drive-strength = <8>;
->> +				bias-pull-down;
->> +			};
->> +		};
->> +
->> +		gcc: clock-controller@1800000 {
->> +			compatible = "qcom,gcc-ipq5018";
->> +			reg = <0x01800000 0x80000>;
->> +			clocks = <&xo>, <&sleep_clk>;
->> +			clock-names = "xo", "sleep_clk";
->> +			#clock-cells = <1>;
->> +			#reset-cells = <1>;
->> +		};
->> +
->> +		blsp1_uart1: serial@78af000 {
->> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
->> +			reg = <0x078af000 0x200>;
->> +			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
->> +				<&gcc GCC_BLSP1_AHB_CLK>;
-> Not sure whether thunderbird is dumb again, or the indentation
-> is off by 1 space.
-   indentation issue, will fix.
->> +			clock-names = "core", "iface";
->> +			status = "disabled";
->> +		};
->> +
->> +		intc: interrupt-controller@b000000 {
->> +			compatible = "qcom,msm-qgic2";
-> Please sort the properties (compatible and reg gotta go first, etc.).
-
-  ok.
-
-
->> +			interrupt-controller;
->> +			#interrupt-cells = <0x3>;
-> *-cells should be decimal.
+> > I suggest we rename the imx_clk_hw_pllv3 to __imx_clk_hw_pllv3 and add
+> > the power_bit parameter to it (and set it accordingly inside).
+> >
+> > Then we should do the following in imx/clk.h:
+> >
+> > #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
+> > 				bypass1, bypass2, base, flags)		\
+> > 	__imx_clk_hw_pllv3(name, parent_names, num_parents, parent,	\
+> > 				bypass1, bypass2, base, flags, BM_PLL_POWER)
 >
-   ok.
+> One problem BM_PLL_POWER will have to be in imx/clk.h, but then it will be
+> the only macro like it in the file, is line 9 ok for it.
+> I could also make a function instead of a macro.
+>
 
+Line 9 is OK. #define will do.
 
->> +			reg =   <0x0b000000 0x1000>,  /*GICD*/
-> /* GICD */, please (and the next ones too)
+There are macros like that for the composite clocks too.
 
-  ok.
-
-
->> +				<0x0b002000 0x1000>,  /*GICC*/
->> +				<0x0b001000 0x1000>,  /*GICH*/
->> +				<0x0b004000 0x1000>;  /*GICV*/
->> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->> +		};
->> +
->> +		timer@b120000 {
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			compatible = "arm,armv7-timer-mem";
->> +			reg = <0x0b120000 0x1000>;
->> +			clock-frequency = <19200000>;
-> Please sort the properties, also in subnodes.
-
-   ok, will do.
-
-Regards,
-   Sricharan
-
-
+> thanks,
+> Jesse Taube
+> > And then, the i.MXRT1170 can use the __imx_clk_hw_pllv3 and pass the
+> > right power_bit shift.
+> >
+> > >   struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+> > >   			  const char *parent_name, void __iomem *base,
+> > >   			  u32 div_mask)
+> > > @@ -422,10 +465,20 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+> > >   		return ERR_PTR(-ENOMEM);
+> > >
+> > >   	pll->power_bit = BM_PLL_POWER;
+> > > +	pll->lock_bit = BM_PLL_LOCK;
+> > >   	pll->num_offset = PLL_NUM_OFFSET;
+> > >   	pll->denom_offset = PLL_DENOM_OFFSET;
+> > >
+> > >   	switch (type) {
+> > > +	case IMX_PLLV3_GENERICV2:
+> > > +		pll->lock_bit = BM_PLL_LOCK_V2;
+> > > +		pll->powerup_set = true;
+> > > +		ops = &clk_pllv3_genericv2_ops;
+> > > +		break;
+> > > +	case IMX_PLLV3_SYSV2:
+> > > +		pll->lock_bit = BM_PLL_LOCK_V2;
+> > > +		pll->powerup_set = true;
+> > > +		fallthrough;
+> > >   	case IMX_PLLV3_SYS:
+> > >   		ops = &clk_pllv3_sys_ops;
+> > >   		break;
+> > > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> > > index 5061a06468df..31e017248602 100644
+> > > --- a/drivers/clk/imx/clk.h
+> > > +++ b/drivers/clk/imx/clk.h
+> > > @@ -242,6 +242,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+> > >
+> > >   enum imx_pllv3_type {
+> > >   	IMX_PLLV3_GENERIC,
+> > > +	IMX_PLLV3_GENERICV2,
+> > > +	IMX_PLLV3_SYSV2,
+> > >   	IMX_PLLV3_SYS,
+> > >   	IMX_PLLV3_USB,
+> > >   	IMX_PLLV3_USB_VF610,
+> > > @@ -253,6 +255,8 @@ enum imx_pllv3_type {
+> > >   	IMX_PLLV3_AV_IMX7,
+> > >   };
+> > >
+> > > +void imx_clk_hw_pll3_powerbit(struct clk_hw *hw, u8 shift);
+> > > +
+> > >   struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+> > >   		const char *parent_name, void __iomem *base, u32 div_mask);
+> > >
+> > > --
+> > > 2.36.1
+> > >
