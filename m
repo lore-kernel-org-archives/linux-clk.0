@@ -2,442 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AC0C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 13:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAE1C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 14:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbiF1N2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 09:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
+        id S1345980AbiF1OMC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 10:12:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346259AbiF1N0o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 09:26:44 -0400
+        with ESMTP id S1345830AbiF1OMB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 10:12:01 -0400
 Received: from mail-m963.mail.126.com (mail-m963.mail.126.com [123.126.96.3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 26D3E3139A
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 06:24:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B2C7435DFA
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 07:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Uk0ar
-        11Ph77wbmifa2Hj9EZ4YWfZlgBAdGL2dAONd50=; b=DkSo+ZaDFkRaPru8CQCrH
-        jdS8XHkpIGKwJRkRc2sYIpAjMbMwNnG9WQ5bqZH/He82/FaYlcuEzv+j1Yo/QobY
-        oezHiel42oBnvtnQIq8/tzHJeaIWsZtOejNDdI1abGWhOH0FVKZGtmVYSmBrQzBg
-        DZcz/B+91NhiE3cIqdIb+k=
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=nbtdk
+        VvI5oHd7r8n3n+kNerm1aS4yfmbZ+fLV7KGzDg=; b=goFiIUIUTrnxz0IeDVBAG
+        nt+d8ABEcfk9yfJBFS+rowIZR70iUu96OMNnHgzbV72bBo8Gwu80JguWq9h+W8Nt
+        emG7az4KqTHyuW5mWIYya8IPe7gmIQWPkhjCkvyuz/0gIhNBTO0PTLWFCUTp8T7C
+        eBZAdggzQLWu8KiGywO6LE=
 Received: from localhost.localdomain (unknown [124.16.139.61])
-        by smtp8 (Coremail) with SMTP id NORpCgB3f3OzALtiXknKGg--.24496S2;
-        Tue, 28 Jun 2022 21:23:00 +0800 (CST)
+        by smtp8 (Coremail) with SMTP id NORpCgA3xIDfC7titVbMGg--.17991S2;
+        Tue, 28 Jun 2022 22:10:40 +0800 (CST)
 From:   Liang He <windhl@126.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        claudiu.beznea@microchip.com, linux-clk@vger.kernel.org,
-        windhl@126.com
-Subject: [PATCH v2] clk: at91: dt-compat: Hold reference returned by of_get_parent()
-Date:   Tue, 28 Jun 2022 21:22:56 +0800
-Message-Id: <20220628132256.164120-1-windhl@126.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.co, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, windhl@126.com
+Subject: [PATCH v2] clk: meson: Hold reference returned by of_get_parent()
+Date:   Tue, 28 Jun 2022 22:10:38 +0800
+Message-Id: <20220628141038.168383-1-windhl@126.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: NORpCgB3f3OzALtiXknKGg--.24496S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3ZFW3urWkZrWfuw15ZryftFb_yoW8Jw48Wo
-        W7GF4xWF18Cw18tFW5W3sxtF129w1kuryxWa4qkwsF9ayjk345Xr17XF43JFnIqr1fWrZ3
-        Zry8tan8GF1UJr1xn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RpGQDUUUUU
+X-CM-TRANSID: NORpCgA3xIDfC7titVbMGg--.17991S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr15WF1xXr4fGr4DXFykAFb_yoW5uF43pF
+        ykJFWIyr47Xr15Ww18trZrAFWSgw1IgFWYka97Aw1rZrn3JFyUJFy3Jay8CFs0vFWrCa4r
+        JrnYkr48Ar47XF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRjg4fUUUUU=
 X-Originating-IP: [124.16.139.61]
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi2hQuF1uwMTa7RwAAsn
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi2gAuF1uwMTbhGwAAs1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We need to hold the reference returned by of_get_parent() and use
-it to call of_node_put() for refcount balance.
+We should hold the reference returned by of_get_parent() and use it
+to call of_node_put() for refcount balance.
+
+Fixes: 88e2da81241e ("clk: meson: aoclk: refactor common code into dedicated file")
+Fixes: 6682bd4d443f ("clk: meson: factorise meson64 peripheral clock controller drivers")
+Fixes: bb6eddd1d28c ("clk: meson: meson8b: use the HHI syscon if available")
 
 Signed-off-by: Liang He <windhl@126.com>
 ---
  changelog:
+ 
+ v2: change the name of 'tp', change the title format, keep reverse christmas tree
+ v1: hold reference returned by of_get_parent()
 
- v2: use 'parent_np' to replace 'tp' and use xx:yy:zz title format
- v1: hold references returned by of_get_parent() and put them
+ v1-link: https://lore.kernel.org/all/20220624102719.4166125-1-windhl@126.com/
 
- drivers/clk/at91/dt-compat.c | 112 +++++++++++++++++++++++++++--------
- 1 file changed, 86 insertions(+), 26 deletions(-)
+ Patched files have been compiled test in 5.19rc2.
 
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index 8ca8bcacf66d..0d36b4e7fd6e 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -33,8 +33,11 @@ static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
+
+ drivers/clk/meson/meson-aoclk.c | 5 ++++-
+ drivers/clk/meson/meson-eeclk.c | 5 ++++-
+ drivers/clk/meson/meson8b.c     | 5 ++++-
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index 27cd2c1f3f61..434cd8f9de82 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -38,6 +38,7 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 	struct meson_aoclk_reset_controller *rstc;
+ 	struct meson_aoclk_data *data;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np;
  	struct regmap *regmap;
-+	struct device_node *parent_np;
+ 	int ret, clkid;
  
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
+@@ -49,7 +50,9 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 	if (!rstc)
+ 		return -ENOMEM;
  
-@@ -56,8 +59,11 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -79,8 +85,11 @@ static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -120,7 +129,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
- 	struct clk_hw *hw;
- 	unsigned int num_parents;
- 	const char *parent_names[GENERATED_SOURCE_MAX];
--	struct device_node *gcknp;
-+	struct device_node *gcknp, *parent_np;
- 	struct clk_range range = CLK_RANGE(0, 0);
- 	struct regmap *regmap;
- 
-@@ -134,7 +143,9 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
- 	if (!num || num > PERIPHERAL_MAX)
- 		return;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -180,8 +191,11 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
- 	const char *name = np->name;
- 	const char *parent_name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -243,12 +257,15 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
- 	const char *parent_name;
- 	struct regmap *regmap;
- 	bool bypass;
-+	struct device_node *parent_np;
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -268,12 +285,15 @@ static void __init of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np)
- 	u32 accuracy = 0;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 	of_property_read_u32(np, "clock-frequency", &frequency);
- 	of_property_read_u32(np, "clock-accuracy", &accuracy);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -292,11 +312,14 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
- 	const char *parent_name;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -316,13 +339,16 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
- 	unsigned int num_parents;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > 2)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -373,6 +399,7 @@ of_at91_clk_master_setup(struct device_node *np,
- 	const char *name = np->name;
- 	struct clk_master_characteristics *characteristics;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > MASTER_SOURCE_MAX)
-@@ -386,7 +413,9 @@ of_at91_clk_master_setup(struct device_node *np,
- 	if (!characteristics)
- 		return;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -433,6 +462,7 @@ of_at91_clk_periph_setup(struct device_node *np, u8 type)
- 	const char *name;
- 	struct device_node *periphclknp;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 	if (!parent_name)
-@@ -442,7 +472,9 @@ of_at91_clk_periph_setup(struct device_node *np, u8 type)
- 	if (!num || num > PERIPHERAL_MAX)
- 		return;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -601,6 +633,7 @@ of_at91_clk_pll_setup(struct device_node *np,
- 	struct regmap *regmap;
- 	const char *parent_name;
- 	const char *name = np->name;
-+	struct device_node *parent_np;
- 	struct clk_pll_characteristics *characteristics;
- 
- 	if (of_property_read_u32(np, "reg", &id))
-@@ -610,7 +643,9 @@ of_at91_clk_pll_setup(struct device_node *np,
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -665,12 +700,15 @@ of_at91sam9x5_clk_plldiv_setup(struct device_node *np)
- 	const char *parent_name;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -694,8 +732,8 @@ of_at91_clk_prog_setup(struct device_node *np,
- 	unsigned int num_parents;
- 	const char *parent_names[PROG_SOURCE_MAX];
- 	const char *name;
--	struct device_node *progclknp;
- 	struct regmap *regmap;
-+	struct device_node *progclknp, *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > PROG_SOURCE_MAX)
-@@ -707,7 +745,9 @@ of_at91_clk_prog_setup(struct device_node *np,
- 	if (!num || num > (PROG_ID_MAX + 1))
- 		return;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -756,13 +796,16 @@ static void __init of_at91sam9260_clk_slow_setup(struct device_node *np)
- 	unsigned int num_parents;
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents != 2)
- 		return;
- 
- 	of_clk_parent_fill(np, parent_names, num_parents);
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -788,6 +831,7 @@ static void __init of_at91sam9x5_clk_smd_setup(struct device_node *np)
- 	const char *parent_names[SMD_SOURCE_MAX];
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > SMD_SOURCE_MAX)
-@@ -797,7 +841,9 @@ static void __init of_at91sam9x5_clk_smd_setup(struct device_node *np)
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -818,15 +864,17 @@ static void __init of_at91rm9200_clk_sys_setup(struct device_node *np)
- 	u32 id;
- 	struct clk_hw *hw;
- 	const char *name;
--	struct device_node *sysclknp;
- 	const char *parent_name;
- 	struct regmap *regmap;
-+	struct device_node *sysclknp, *parent_np;
- 
- 	num = of_get_child_count(np);
- 	if (num > (SYSTEM_MAX_ID + 1))
- 		return;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -859,6 +907,7 @@ static void __init of_at91sam9x5_clk_usb_setup(struct device_node *np)
- 	const char *parent_names[USB_SOURCE_MAX];
- 	const char *name = np->name;
- 	struct regmap *regmap;
-+	struct device_node *parent_np;
- 
- 	num_parents = of_clk_get_parent_count(np);
- 	if (num_parents == 0 || num_parents > USB_SOURCE_MAX)
-@@ -868,7 +917,9 @@ static void __init of_at91sam9x5_clk_usb_setup(struct device_node *np)
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -885,9 +936,10 @@ CLK_OF_DECLARE(at91sam9x5_clk_usb, "atmel,at91sam9x5-clk-usb",
- static void __init of_at91sam9n12_clk_usb_setup(struct device_node *np)
+-	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	np = of_get_parent(dev->of_node);
++	regmap = syscon_node_to_regmap(np);
++	of_node_put(np);
+ 	if (IS_ERR(regmap)) {
+ 		dev_err(dev, "failed to get regmap\n");
+ 		return PTR_ERR(regmap);
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 8d5a5dab955a..0e5e6b57eb20 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -18,6 +18,7 @@ int meson_eeclkc_probe(struct platform_device *pdev)
  {
- 	struct clk_hw *hw;
-+	struct regmap *regmap;
- 	const char *parent_name;
- 	const char *name = np->name;
--	struct regmap *regmap;
-+	struct device_node *parent_np;
+ 	const struct meson_eeclkc_data *data;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *np;
+ 	struct regmap *map;
+ 	int ret, i;
  
- 	parent_name = of_clk_get_parent_name(np, 0);
- 	if (!parent_name)
-@@ -895,7 +947,9 @@ static void __init of_at91sam9n12_clk_usb_setup(struct device_node *np)
+@@ -26,7 +27,9 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-@@ -911,10 +965,11 @@ CLK_OF_DECLARE(at91sam9n12_clk_usb, "atmel,at91sam9n12-clk-usb",
- static void __init of_at91rm9200_clk_usb_setup(struct device_node *np)
+ 	/* Get the hhi system controller node */
+-	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
++	np = of_get_parent(dev->of_node);
++	map = syscon_node_to_regmap(np);
++	of_node_put(np);
+ 	if (IS_ERR(map)) {
+ 		dev_err(dev,
+ 			"failed to get HHI regmap\n");
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 8f3b7a94a667..827e78fb16a8 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -3792,12 +3792,15 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 			struct clk_hw_onecell_data *clk_hw_onecell_data)
  {
- 	struct clk_hw *hw;
-+	struct regmap *regmap;
- 	const char *parent_name;
- 	const char *name = np->name;
+ 	struct meson8b_clk_reset *rstc;
 +	struct device_node *parent_np;
- 	u32 divisors[4] = {0, 0, 0, 0};
--	struct regmap *regmap;
+ 	const char *notifier_clk_name;
+ 	struct clk *notifier_clk;
+ 	struct regmap *map;
+ 	int i, ret;
  
- 	parent_name = of_clk_get_parent_name(np, 0);
- 	if (!parent_name)
-@@ -926,7 +981,9 @@ static void __init of_at91rm9200_clk_usb_setup(struct device_node *np)
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
+-	map = syscon_node_to_regmap(of_get_parent(np));
 +	parent_np = of_get_parent(np);
-+	regmap = syscon_node_to_regmap(parent_np);
++	map = syscon_node_to_regmap(parent_np);
 +	of_node_put(parent_np);
- 	if (IS_ERR(regmap))
+ 	if (IS_ERR(map)) {
+ 		pr_err("failed to get HHI regmap - Trying obsolete regs\n");
  		return;
- 	hw = at91rm9200_clk_register_usb(regmap, name, parent_name, divisors);
-@@ -945,13 +1002,16 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
- 	struct clk_hw *hw;
- 	const char *parent_name;
- 	const char *name = np->name;
-+	struct device_node *parent_np;
- 	struct regmap *regmap_pmc, *regmap_sfr;
- 
- 	parent_name = of_clk_get_parent_name(np, 0);
- 
- 	of_property_read_string(np, "clock-output-names", &name);
- 
--	regmap_pmc = syscon_node_to_regmap(of_get_parent(np));
-+	parent_np = of_get_parent(np);
-+	regmap_pmc = syscon_node_to_regmap(parent_np);
-+	of_node_put(parent_np);
- 	if (IS_ERR(regmap_pmc))
- 		return;
- 
 -- 
 2.25.1
 
