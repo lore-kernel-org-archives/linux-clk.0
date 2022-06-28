@@ -2,258 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FEBC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 08:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD4BC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 09:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245728AbiF1I6g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 04:58:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55758 "EHLO
+        id S1344254AbiF1JaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 05:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242244AbiF1I6d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 04:58:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 742B4B4B;
-        Tue, 28 Jun 2022 01:58:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1B1D61548;
-        Tue, 28 Jun 2022 08:58:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4475EC3411D;
-        Tue, 28 Jun 2022 08:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656406711;
-        bh=5S9xPKZrc7nmOZmYexyOwDlb74dnXm3mkY7WwiGdm34=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WpXPbMzf1KsgHn5mb3ndtqAD+Fvn6oLjzotcwyKdV/vq2FuGmc+Abnshd3Vl/6Ast
-         YlmP3fvwCeEO3vbMtyU+0CSCIxqxuuyxGBfvYBJviLXkLBfM6inzPc527Due+CivO3
-         0q+KYNZp3RLZr7xFAyG6UYJzeTCXAlnMdtDVIdpXhzsvXafB69D8tgDLRXXKPOuvDF
-         7zodsPotdl/4BiOqWoVkGOMYNmK5CL7FW2+eZe+kpgC5S/m9Y9LTrSaqVqJFNJg1ak
-         SsfL9TsaTtHQrx0lLu1rREfzE3jZdCBNr+jobK/k0rnsoED5Aw5H5eIcgXOmDdLHSs
-         33nYHYEOXer4A==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan+linaro@kernel.org>)
-        id 1o673C-0004EL-OM; Tue, 28 Jun 2022 10:58:27 +0200
-From:   Johan Hovold <johan+linaro@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] clk: qcom: gcc-sc8280xp: use phy-mux clock for PCIe
-Date:   Tue, 28 Jun 2022 10:57:07 +0200
-Message-Id: <20220628085707.16214-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229747AbiF1JaA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 05:30:00 -0400
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B0F1D327;
+        Tue, 28 Jun 2022 02:29:58 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id q4so19106283qvq.8;
+        Tue, 28 Jun 2022 02:29:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8nl+YSQWi5co5//msD4X8kc4HSNtS5aQKM6ed50ckE0=;
+        b=EG9UGNgZEr8oLHOzQnIYIHMJL42S4cenMv1+1hLf82UhcMK8VCuTiyiVQI/vX/N8vt
+         WQhaHhiUEQiO97KojsxnrmiGaZRMDks22+/9fM4DIDyKd6trwNmZP4ldWYpqVxMLrJlC
+         lkvkjPX343SqX68qcV7v6MtrJtZErh0tEu/QoYEaTUpSTc3LuiXeIYAU46djC/kzHhip
+         cGoIdkFKPIh5r8A7g3iGjzWC9XBLhHRAfs1zO+f3t6GJV7gAa6vxXTYJ4M1vTCA+PXQ6
+         OjEPQE4dj4ulr0NcIihy+JY5Ug1VP+KwyyMJ4P+Ou//kXbak+lHnAqdSee2/xr7y57n7
+         xDXg==
+X-Gm-Message-State: AJIora8yXaa+ldWibxFWZYvIvj8cc7gko8AP2UZQkwE0CBst+rJ+Lfju
+        b4XGu9pMBcftQNsBULbV5ixeQaKXQS8p4w==
+X-Google-Smtp-Source: AGRyM1t17bZZUtAr7/2L7IAyQRDQwiw/bhYfIO4KAWnapufGYvpqrK86QPT6elN37HIgnOU3qXRdQw==
+X-Received: by 2002:ac8:5bca:0:b0:31b:eb73:7ec with SMTP id b10-20020ac85bca000000b0031beb7307ecmr3120412qtb.272.1656408597806;
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id b20-20020ae9eb14000000b006aee8580a37sm10349035qkg.10.2022.06.28.02.29.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-317741c86fdso110575987b3.2;
+        Tue, 28 Jun 2022 02:29:57 -0700 (PDT)
+X-Received: by 2002:a81:3a81:0:b0:317:7dcf:81d4 with SMTP id
+ h123-20020a813a81000000b003177dcf81d4mr19723908ywa.47.1656408597026; Tue, 28
+ Jun 2022 02:29:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20220615101227.13463-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Jun 2022 11:29:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
+Message-ID: <CAMuHMdVX9_qO2Ydi=_57NC2fFRy=YAzuSV7xH=huAamXKOKwCA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen4: implement SDSRC properly
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the new phy-mux clock implementation for the PCIe pipe clock muxes
-so that the pipe clock source is set to the QMP PHY PLL when the
-downstream pipe clock is enabled and restored to the always-on XO when
-it is again disabled.
+Hi Wolfram,
 
-This is needed to prevent the corresponding GDSC from hanging when
-enabling or disabling the PCIe power domain, something which requires a
-ticking source.
+On Wed, Jun 15, 2022 at 12:12 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Depending on the divider setting, SDSRC can have a different parent.
+> Implement this when reading the divider, to get a correct clock tree.
+> Setting the divider is left to the bootloader for now.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/clk/qcom/gcc-sc8280xp.c | 121 ++++++++------------------------
- 1 file changed, 31 insertions(+), 90 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index f186ddf6954e..a2f3ffcc5849 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -20,6 +20,7 @@
- #include "clk-regmap.h"
- #include "clk-regmap-divider.h"
- #include "clk-regmap-mux.h"
-+#include "clk-regmap-phy-mux.h"
- #include "common.h"
- #include "gdsc.h"
- #include "reset.h"
-@@ -82,11 +83,6 @@ enum {
- 	P_GCC_USB4_PHY_PCIE_PIPEGMUX_CLK_SRC,
- 	P_GCC_USB4_PHY_PIPEGMUX_CLK_SRC,
- 	P_GCC_USB4_PHY_SYS_PIPEGMUX_CLK_SRC,
--	P_PCIE_2A_PIPE_CLK,
--	P_PCIE_2B_PIPE_CLK,
--	P_PCIE_3A_PIPE_CLK,
--	P_PCIE_3B_PIPE_CLK,
--	P_PCIE_4_PIPE_CLK,
- 	P_QUSB4PHY_1_GCC_USB4_RX0_CLK,
- 	P_QUSB4PHY_1_GCC_USB4_RX1_CLK,
- 	P_QUSB4PHY_GCC_USB4_RX0_CLK,
-@@ -351,56 +347,6 @@ static const struct clk_parent_data gcc_parent_data_9[] = {
- 	{ .hw = &gcc_gpll0_out_even.clkr.hw },
- };
- 
--static const struct parent_map gcc_parent_map_10[] = {
--	{ P_PCIE_2A_PIPE_CLK, 0 },
--	{ P_BI_TCXO, 2 },
--};
--
--static const struct clk_parent_data gcc_parent_data_10[] = {
--	{ .index = DT_PCIE_2A_PIPE_CLK },
--	{ .index = DT_BI_TCXO },
--};
--
--static const struct parent_map gcc_parent_map_11[] = {
--	{ P_PCIE_2B_PIPE_CLK, 0 },
--	{ P_BI_TCXO, 2 },
--};
--
--static const struct clk_parent_data gcc_parent_data_11[] = {
--	{ .index = DT_PCIE_2B_PIPE_CLK },
--	{ .index = DT_BI_TCXO },
--};
--
--static const struct parent_map gcc_parent_map_12[] = {
--	{ P_PCIE_3A_PIPE_CLK, 0 },
--	{ P_BI_TCXO, 2 },
--};
--
--static const struct clk_parent_data gcc_parent_data_12[] = {
--	{ .index = DT_PCIE_3A_PIPE_CLK },
--	{ .index = DT_BI_TCXO },
--};
--
--static const struct parent_map gcc_parent_map_13[] = {
--	{ P_PCIE_3B_PIPE_CLK, 0 },
--	{ P_BI_TCXO, 2 },
--};
--
--static const struct clk_parent_data gcc_parent_data_13[] = {
--	{ .index = DT_PCIE_3B_PIPE_CLK },
--	{ .index = DT_BI_TCXO },
--};
--
--static const struct parent_map gcc_parent_map_14[] = {
--	{ P_PCIE_4_PIPE_CLK, 0 },
--	{ P_BI_TCXO, 2 },
--};
--
--static const struct clk_parent_data gcc_parent_data_14[] = {
--	{ .index = DT_PCIE_4_PIPE_CLK },
--	{ .index = DT_BI_TCXO },
--};
--
- static const struct parent_map gcc_parent_map_15[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_GCC_GPLL0_OUT_MAIN, 1 },
-@@ -741,77 +687,72 @@ static const struct clk_parent_data gcc_parent_data_41[] = {
- 	{ .index = DT_USB4_PHY_GCC_USB4_PCIE_PIPE_CLK },
- };
- 
--static struct clk_regmap_mux gcc_pcie_2a_pipe_clk_src = {
-+static struct clk_regmap_phy_mux gcc_pcie_2a_pipe_clk_src = {
- 	.reg = 0x9d05c,
--	.shift = 0,
--	.width = 2,
--	.parent_map = gcc_parent_map_10,
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie_2a_pipe_clk_src",
--			.parent_data = gcc_parent_data_10,
--			.num_parents = ARRAY_SIZE(gcc_parent_data_10),
--			.ops = &clk_regmap_mux_closest_ops,
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_PCIE_2A_PIPE_CLK,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_phy_mux_ops,
- 		},
- 	},
- };
- 
--static struct clk_regmap_mux gcc_pcie_2b_pipe_clk_src = {
-+static struct clk_regmap_phy_mux gcc_pcie_2b_pipe_clk_src = {
- 	.reg = 0x9e05c,
--	.shift = 0,
--	.width = 2,
--	.parent_map = gcc_parent_map_11,
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie_2b_pipe_clk_src",
--			.parent_data = gcc_parent_data_11,
--			.num_parents = ARRAY_SIZE(gcc_parent_data_11),
--			.ops = &clk_regmap_mux_closest_ops,
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_PCIE_2B_PIPE_CLK,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_phy_mux_ops,
- 		},
- 	},
- };
- 
--static struct clk_regmap_mux gcc_pcie_3a_pipe_clk_src = {
-+static struct clk_regmap_phy_mux gcc_pcie_3a_pipe_clk_src = {
- 	.reg = 0xa005c,
--	.shift = 0,
--	.width = 2,
--	.parent_map = gcc_parent_map_12,
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie_3a_pipe_clk_src",
--			.parent_data = gcc_parent_data_12,
--			.num_parents = ARRAY_SIZE(gcc_parent_data_12),
--			.ops = &clk_regmap_mux_closest_ops,
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_PCIE_3A_PIPE_CLK,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_phy_mux_ops,
- 		},
- 	},
- };
- 
--static struct clk_regmap_mux gcc_pcie_3b_pipe_clk_src = {
-+static struct clk_regmap_phy_mux gcc_pcie_3b_pipe_clk_src = {
- 	.reg = 0xa205c,
--	.shift = 0,
--	.width = 2,
--	.parent_map = gcc_parent_map_13,
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie_3b_pipe_clk_src",
--			.parent_data = gcc_parent_data_13,
--			.num_parents = ARRAY_SIZE(gcc_parent_data_13),
--			.ops = &clk_regmap_mux_closest_ops,
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_PCIE_3B_PIPE_CLK,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_phy_mux_ops,
- 		},
- 	},
- };
- 
--static struct clk_regmap_mux gcc_pcie_4_pipe_clk_src = {
-+static struct clk_regmap_phy_mux gcc_pcie_4_pipe_clk_src = {
- 	.reg = 0x6b05c,
--	.shift = 0,
--	.width = 2,
--	.parent_map = gcc_parent_map_14,
- 	.clkr = {
- 		.hw.init = &(const struct clk_init_data) {
- 			.name = "gcc_pcie_4_pipe_clk_src",
--			.parent_data = gcc_parent_data_14,
--			.num_parents = ARRAY_SIZE(gcc_parent_data_14),
--			.ops = &clk_regmap_mux_closest_ops,
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_PCIE_4_PIPE_CLK,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_regmap_phy_mux_ops,
- 		},
- 	},
- };
--- 
-2.35.1
+> Tested on my Spider board (r8a779f0). Only build tested for r8a779g0 but
+> the docs for the registers are the same.
 
+While the SDSRCSEL bits are the same, the register at offset 0x8a4 is
+called SD0CKCR1 on R-Car S4-8, and CKSRCSELCR on R-Car V4H.
+I guess that is why you removed the definition of SD0CKCR1, and stored
+the register offset in DEF_GEN4_SDSRC(), despite both being the same?
+
+> --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+> @@ -71,7 +71,7 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
+>         DEF_FIXED(".pll6_div2", CLK_PLL6_DIV2,  CLK_PLL6,       2, 1),
+>         DEF_FIXED(".s0",        CLK_S0,         CLK_PLL1_DIV2,  2, 1),
+>
+> -       DEF_BASE(".sdsrc",      CLK_SDSRC,      CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
+> +       DEF_GEN4_SDSRC(".sdsrc", CLK_SDSRC,     CLK_PLL5_DIV2,  CLK_PLL5, 0x08a4),
+>         DEF_RATE(".oco",        CLK_OCO,        32768),
+>
+>         DEF_BASE(".rpcsrc",     CLK_RPCSRC,     CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
+> diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> index 3fc4233b1ead..c8cd32cf4606 100644
+> --- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
+> @@ -86,7 +86,7 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
+>         DEF_FIXED(".s0_hsc",    CLK_S0_HSC,     CLK_PLL1_DIV2,  2, 1),
+>         DEF_FIXED(".sv_vip",    CLK_SV_VIP,     CLK_PLL1,       5, 1),
+>         DEF_FIXED(".sv_ir",     CLK_SV_IR,      CLK_PLL1,       5, 1),
+> -       DEF_BASE(".sdsrc",      CLK_SDSRC,      CLK_TYPE_GEN4_SDSRC, CLK_PLL5),
+> +       DEF_GEN4_SDSRC(".sdsrc", CLK_SDSRC,     CLK_PLL5_DIV2,  CLK_PLL5, 0x08a4),
+>         DEF_RATE(".oco",        CLK_OCO,        32768),
+>
+>         DEF_BASE(".rpcsrc",     CLK_RPCSRC,             CLK_TYPE_GEN4_RPCSRC, CLK_PLL5),
+> diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+> index c7ed43d6aa67..c6662ec10292 100644
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -240,7 +240,15 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
+>                                           base, core->div, core->offset);
+>
+>         case CLK_TYPE_GEN4_SDSRC:
+> -               div = ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
+> +               value = (readl(base + core->offset) >> 29) & 3;
+> +               if (value) {
+> +                       div = value + 4;
+> +               } else {
+> +                       parent = clks[core->parent >> 16];
+> +                       if (IS_ERR(parent))
+> +                               return ERR_CAST(parent);
+> +                       div = 2;
+> +               }
+
+So this gives the exact same divider of PLL5 before.
+
+The clock diagram indeed shows different paths for value 0
+(PLL5 -> 1/2 -> 1/2) and values 1 and 2 (PLL5 -> {1/5 or 1/6}).
+But the textual description for SDSRC says "The SDSRC divider divides
+PLL5 output clock", matching the original code.
+
+Do we have to complicate the code? ;-)
+I guess the clock diagram was based on the diagram for R-Car H3
+(which has two daisy-chained fixed 1/2 dividers), with the new 1/5
+and 1/6 dividers added.
+
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.h
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.h
+> @@ -67,7 +71,6 @@ struct rcar_gen4_cpg_pll_config {
+>  };
+>
+>  #define CPG_RPCCKCR    0x874
+> -#define SD0CKCR1       0x8a4
+>
+>  struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
+>         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
