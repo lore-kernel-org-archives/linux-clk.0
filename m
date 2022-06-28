@@ -2,140 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB96C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 10:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C47DC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jun 2022 10:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbiF1KCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 06:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57780 "EHLO
+        id S1344702AbiF1KDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jun 2022 06:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240067AbiF1KCa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 06:02:30 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D7B32ED78
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 03:02:12 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id e28so11724536wra.0
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 03:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=3ZLTvjDl16WXAfxrYhPgAG4dx8YGkXCU/wb2ZjBGHxQ=;
-        b=msmzAW7PSUdijfx025BCp2/8s3pOGKHZjzRWntzmi6KAvV8jW6AQruHlpJe5hJBJ+T
-         EM36fcnz/XIBu2v5ab+3p5b9NWV5h9s4w+Y2RWsFE7tH3czqwpsz9Nr3RGgr7QXncXSv
-         IqLV58rvPzMwjDi88tiKUSd21vSifDdBvmsrqCLAje/NYaaR98WdoEfymvhd8dnDnIqD
-         vyxsP4pEjPBuji0NZGr+bHgoOIbvX8wbqQ4R5jSCelXDfwmjbKNLdBD3IVFK4DMOZAkr
-         ED6qGkg/LjDsKf6P3IrWkWIKh07p7qquUuFXS/yYJgTyDMy9zWksPt0WrKG+V4FZouU/
-         5n+Q==
+        with ESMTP id S1344633AbiF1KDX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 06:03:23 -0400
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE42E2E9DF;
+        Tue, 28 Jun 2022 03:03:21 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 59so19241599qvb.3;
+        Tue, 28 Jun 2022 03:03:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=3ZLTvjDl16WXAfxrYhPgAG4dx8YGkXCU/wb2ZjBGHxQ=;
-        b=cGXM4aWn8sG7YavRB7MzSP4uqyTGMzihYpYA4a5+aMX6rDjKjrJuG0gwAEsjQ1afH4
-         FLfiV32hPhftXPmqlZjZx9A9AgCmEylsXW9blY8uDeO5uRif3kHNpshxofNW9DeehGk+
-         0iTmyU54RaksdSqukvpyiKjIbxFcPoYSl6Avp2konHwwAO2O4Tqv8Jn/z1LcO97QOwgO
-         4qtac4iClDVIXoHMm6RU1Fp/Udr4sLMfUCY4I/m7s6TInHC1yQONh68y+K71urxqWiue
-         5bhR/oYtxDDLCF71JhCentSKaEGelMuQ6VrQF9KZxZzNo9nx37XLDeAL+pHTMxKWsmZ4
-         scbA==
-X-Gm-Message-State: AJIora8gKioPaPd8P4r85/klRZzzYHhw2MS2nmkwDH6wFBSg+BbzSkBx
-        00zurKuD2PxZvdVuNsaiBDDhzw==
-X-Google-Smtp-Source: AGRyM1ticr0v/IxsOpoo3bMVweszhCvDeSWbd9rkPrNp8Fcov6Tmwht2shB+7n3Tz1p27DACrMqxkw==
-X-Received: by 2002:a05:6000:1d84:b0:20e:5fae:6e71 with SMTP id bk4-20020a0560001d8400b0020e5fae6e71mr16980710wrb.224.1656410530736;
-        Tue, 28 Jun 2022 03:02:10 -0700 (PDT)
-Received: from [192.168.0.252] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id c3-20020adfef43000000b0021bab0ba755sm13629129wrp.106.2022.06.28.03.02.09
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y6DnWbrDioxwLTi6qSUpdk3hXp2GMF5P/uW1uFfY/eg=;
+        b=hquJL540O1wD1sC/T6E/YgagOwLs7bsYWyNTE1Rr4q5QY+ilwA9uow09mR0lNXvpj+
+         RvVwQKHX8hSDlNynXwNFY+dN4MBZOcYO5grAZhGP+TS/1EiIwZfscC7Jt0pd8FyzPuAM
+         aWFskvRofV6U3t5Pm9tR7gdF7sy8/ZTyxNfW4QTlcWQSJ+tM2fc1bNu49HZGTMrYfNPp
+         rzK1j3h9oaQVJG0CR4O3lbxGNRdTrtUAHBiICJUknP490QFZJIb2uhESKRvBQ3qbzLxR
+         4fCnyhQtoP7AcvKZz0IZhJc+89Deu/ssi1de9ramQIVN9kWduVkon/GPZGLQsoPvXaNy
+         rguA==
+X-Gm-Message-State: AJIora+623Je+7Yl/mqbehDSgEgGxtPyZi9nSK5PHDj4s/U0UWin4e3i
+        rCzt2eCuIL7neg0dfTg6BUIFv+Dw9Sw54A==
+X-Google-Smtp-Source: AGRyM1tjAeE56/NICnzJHpX+vYgoPokIMvFK9bogMQE3wvPwIqTY12ICt13Dyw1IzVeUDKs65HbwXw==
+X-Received: by 2002:a05:622a:1648:b0:305:d833:3aba with SMTP id y8-20020a05622a164800b00305d8333abamr12229650qtj.205.1656410600722;
+        Tue, 28 Jun 2022 03:03:20 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id c190-20020ae9edc7000000b006a743b360bcsm10096444qkg.136.2022.06.28.03.03.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 03:02:09 -0700 (PDT)
-Message-ID: <354b2ae2-92b4-bb56-387a-599f0451a1c0@linaro.org>
-Date:   Tue, 28 Jun 2022 12:02:08 +0200
+        Tue, 28 Jun 2022 03:03:20 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-3176d94c236so111558937b3.3;
+        Tue, 28 Jun 2022 03:03:19 -0700 (PDT)
+X-Received: by 2002:a81:9bcc:0:b0:317:9ff1:5a39 with SMTP id
+ s195-20020a819bcc000000b003179ff15a39mr21179091ywg.384.1656410599473; Tue, 28
+ Jun 2022 03:03:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov9: correct clock
- numbering of peric0/c1
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-        'Tomasz Figa' <tomasz.figa@gmail.com>,
-        'Chanwoo Choi' <cw00.choi@samsung.com>,
-        'Stephen Boyd' <sboyd@kernel.org>,
-        'Michael Turquette' <mturquette@baylibre.com>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Krzysztof Kozlowski' <krzysztof.kozlowski+dt@linaro.org>
-Cc:     'Alim Akhtar' <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220627005210.6473-1-chanho61.park@samsung.com>
- <CGME20220627005413epcas2p39750fb5876366881b8535ee516c1bebe@epcas2p3.samsung.com>
- <20220627005210.6473-2-chanho61.park@samsung.com>
- <0e9aab63-7ddf-dead-11b2-4ba81235dcb4@linaro.org>
- <001901d88a94$e87208d0$b9561a70$@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <001901d88a94$e87208d0$b9561a70$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220623083217.26433-1-jslaby@suse.cz> <20220623083217.26433-2-jslaby@suse.cz>
+In-Reply-To: <20220623083217.26433-2-jslaby@suse.cz>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 28 Jun 2022 12:03:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUTizh1pC14Uw+gpT3PQHPTTZP+hhRA_vo1Co5ZnNHMBg@mail.gmail.com>
+Message-ID: <CAMuHMdUTizh1pC14Uw+gpT3PQHPTTZP+hhRA_vo1Co5ZnNHMBg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     Michael Turquette <mturquette@baylibre.com>, mliska@suse.cz,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/06/2022 04:15, Chanho Park wrote:
->> Subject: Re: [PATCH 1/3] dt-bindings: clock: exynosautov9: correct clock
->> numbering of peric0/c1
->>
->> On 27/06/2022 02:52, Chanho Park wrote:
->>> There are duplicated definitions of peric0 and peric1 cmu blocks.
->>> Thus, they should be defined correctly as numerical order.
->>>
->>> Fixes: 680e1c8370a2 ("dt-bindings: clock: add clock binding
->>> definitions for Exynos Auto v9")
->>> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->>> ---
->>>  .../dt-bindings/clock/samsung,exynosautov9.h  | 56
->>> +++++++++----------
->>>  1 file changed, 28 insertions(+), 28 deletions(-)
->>>
->>> diff --git a/include/dt-bindings/clock/samsung,exynosautov9.h
->>> b/include/dt-bindings/clock/samsung,exynosautov9.h
->>> index ea9f91b4eb1a..a7db6516593f 100644
->>> --- a/include/dt-bindings/clock/samsung,exynosautov9.h
->>> +++ b/include/dt-bindings/clock/samsung,exynosautov9.h
->>> @@ -226,21 +226,21 @@
->>>  #define CLK_GOUT_PERIC0_IPCLK_8		28
->>>  #define CLK_GOUT_PERIC0_IPCLK_9		29
->>>  #define CLK_GOUT_PERIC0_IPCLK_10	30
->>> -#define CLK_GOUT_PERIC0_IPCLK_11	30
->>> -#define CLK_GOUT_PERIC0_PCLK_0		31
->>> -#define CLK_GOUT_PERIC0_PCLK_1		32
->>> -#define CLK_GOUT_PERIC0_PCLK_2		33
->>> -#define CLK_GOUT_PERIC0_PCLK_3		34
->>> -#define CLK_GOUT_PERIC0_PCLK_4		35
->>> -#define CLK_GOUT_PERIC0_PCLK_5		36
->>> -#define CLK_GOUT_PERIC0_PCLK_6		37
->>> -#define CLK_GOUT_PERIC0_PCLK_7		38
->>> -#define CLK_GOUT_PERIC0_PCLK_8		39
->>> -#define CLK_GOUT_PERIC0_PCLK_9		40
->>> -#define CLK_GOUT_PERIC0_PCLK_10		41
->>> -#define CLK_GOUT_PERIC0_PCLK_11		42
->>> +#define CLK_GOUT_PERIC0_IPCLK_11	31
->>> +#define CLK_GOUT_PERIC0_PCLK_0		32
->>> +#define CLK_GOUT_PERIC0_PCLK_1		33
->>
->> Is this a fix for current cycle? If yes, it's ok, otherwise all other IDs
->> should not be changed, because it's part of ABI.
-> 
-> What is the current cycle? 5.19-rc or 5.20?
-> I prefer this goes on 5.19-rc but if it's not possible due to the ABI breakage, I'm okay this can be going to v5.20.
+On Thu, Jun 23, 2022 at 10:32 AM Jiri Slaby <jslaby@suse.cz> wrote:
+> From: Andi Kleen <ak@linux.intel.com>
+>
+> A variable pointing to const isn't const itself. It'd have to contain
+> "const" keyword after "*" too. Therefore, cpg_pll_config cannot be put
+> to "rodata".  Hence use __initdata instead of __initconst to fix this.
+>
+> [js] more explanatory commit message.
+>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
 
-The change was introduced indeed in v5.19-rc1, so this should go to
-current cycle as well (v5.19) and your patch is fine.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.20.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Gr{oetje,eeting}s,
 
-Sylwester or Stephen,
+                        Geert
 
-Please kindly grab it for fixes.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
