@@ -2,80 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48DFC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 14:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB15CCA47E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 15:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232912AbiF2O7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 10:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33816 "EHLO
+        id S233973AbiF2PHT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 11:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiF2O7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 10:59:35 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C99C18B26
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 07:59:34 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id sb34so33077942ejc.11
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 07:59:34 -0700 (PDT)
+        with ESMTP id S233904AbiF2PHG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 11:07:06 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 682CA13CD3;
+        Wed, 29 Jun 2022 08:07:05 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id t24so28606620lfr.4;
+        Wed, 29 Jun 2022 08:07:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TsyG4q/xF+q4jrUA2VTKKCJE7zAVddwGIb9EBb8KNxw=;
-        b=SYRgzqNQfoKncnUD3dWD1qMgms4bsuZ/5NN0MsNS6AGn0mU0OknapuhDsq6Mq+rYRH
-         6WQn8HKu1xZM3ZaR3WUXALau7JBXqcKWEECExvUDBjOOeWC9slJkssCMLH4pd01cUzqw
-         xXdBKho7RzvleJlpQvH+78mXybQzoGd//YYcJT8WaPDzMQl+UC3ii1HNLOqNcJHOiq/9
-         dOp53GZtW6270f4o4FsXdFbBOjgGnNezsTaYNaAmjUEFIVQXOtl8WySKI9morMytvbOm
-         D5tZ3fnOzTqln83Wud59vIEEoUp7JjYjeIaJ22q0RlnBy+S3Jl/byqZ343ZLu/uMl7MF
-         I+xw==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=X7kFcchBkGtAozFYIhhWmH8j7mV7PoFuQksuWlZQBWs=;
+        b=gcwdUlo7pR4Sdwvta8DpwPhDTEdgdaHa8EIn+saMIbSh2ycCmiO4WbTKo8jAB6Q6Gt
+         /EcSq94IabAAkXEwOvtejBNkzOqrIodwB3GpZM3GjiPB4Kwdp3tmAgtuIR0WshPMaF8V
+         2xotB2F9WWW+vKWvWzM9LWhudb/mzd5g0uhxIny89oUHRo4bN2tVuaxa6/EYmUXYqbzy
+         6UYD7AmDbGe7CtfNAjQ5WbV9JsWM9GZEbgP5zAV/mw2JCFMTwYv7FCaDLZImLueFNQII
+         r1+b9amQOxIA92SaVB1SRIojEQy+iVbuItTTClFgrOQ6Hfi6AddMKkPzkS3897xJeLiy
+         tcqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TsyG4q/xF+q4jrUA2VTKKCJE7zAVddwGIb9EBb8KNxw=;
-        b=vtBgvLvEu5KoD50iR+DPXFwPlSBTnSZByUIcQJn+tyjGpsF7VKvpHZyNkfZPq8P3fI
-         05h1E/DuH7pppMQMpHxZ6TOFptb+9h2bv1eD2D1nEZNqsKoM8R3DFQ/zKjN7BsxlcSbM
-         WCmfc/Bg8WXg5o6ym3tMILtrPcDx18upLB/8rBojV0lfT2V9G3nCvUeW4j2PFhu1L+wx
-         Ds0Dp+eWbfqRk2InzDv24jGW6NGLjsxOAfGzfNb8aAOxM+Tim1b4C2hINwrWM8VnsMNz
-         9TZ6efhQIS3gvWDKbuNTjDVHwvsjjpAccygmBLyGPynLpGlalOW19myo6vM7YqowGDDf
-         W6+A==
-X-Gm-Message-State: AJIora+XHWKmI3xvrx2EqX0Zh1juF+l2tmRWRKQdVP1aA99vmABzpdFD
-        PwbUI+Q5qdZt/CP7iLx5DUTXwMcqihiwXwpIcae5SBbF22A=
-X-Google-Smtp-Source: AGRyM1sVQxNfUe8lk7CTdDAdBuh1kYb6B7kaLrg51MwdW1PWgV3C0umHoVyIz//DYgaRToGiLYTe0MpQH+WyqoaSsZM=
-X-Received: by 2002:a17:906:7a0e:b0:722:e8c5:ee96 with SMTP id
- d14-20020a1709067a0e00b00722e8c5ee96mr3754828ejo.147.1656514773127; Wed, 29
- Jun 2022 07:59:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=X7kFcchBkGtAozFYIhhWmH8j7mV7PoFuQksuWlZQBWs=;
+        b=b4q9YWE0IEQK2FrdVCS+JC/ueQfKSlN9x1rBQ7ymkWYCTyOmYqa3qB9Si4j3IUhSws
+         +6mnkfDXnfoeTjIjqFE3YY/w46m5AEuQOQzCyvyjHgCVF+mzkT1FkvBFtQB+KU9wiShq
+         seciTlLlGKcq3gHFcCDG5xmYsNUQqBSuJxlg/sqQMS+rDgUv/sbya/fe+BzsUpEPbky8
+         5C4Vrina8lGKvzBABpAnZu5f9mvRhbAfm90Nr4HXNkoXPIyW1/46Q931mkhoc/BqDbo1
+         84foWMVKap7QOssVrseKVFdZKXL+DwFAcCNEz1Yd7SpIWu63aAXLZeXpEQU//nv8dAmI
+         ba+A==
+X-Gm-Message-State: AJIora+DiQwt8vdh+VIdV8OdoXtHHa7bgc5REEH+1ehjAK2op3zr4DDO
+        7XDlQ0FNInBbjiy/luLccjMJLxLxCaj1rQ==
+X-Google-Smtp-Source: AGRyM1vHzF2/5EFz2vUjTUeqp2yrAeLOohVUMI38ZRSxGCEjLojVPTa1SuYM5A260UPY40fcLooq1Q==
+X-Received: by 2002:ac2:4e4e:0:b0:47f:b3c0:2f3d with SMTP id f14-20020ac24e4e000000b0047fb3c02f3dmr2363445lfr.15.1656515222156;
+        Wed, 29 Jun 2022 08:07:02 -0700 (PDT)
+Received: from mobilestation ([95.79.140.178])
+        by smtp.gmail.com with ESMTPSA id d22-20020a2e3316000000b0025907141aa6sm2172108ljc.83.2022.06.29.08.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 08:07:01 -0700 (PDT)
+Date:   Wed, 29 Jun 2022 18:06:59 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v5 1/8] reset: Fix devm bulk optional exclusive
+ control getter
+Message-ID: <20220629150659.4mutbylylukmoduq@mobilestation>
+References: <20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru>
+ <20220624141853.7417-2-Sergey.Semin@baikalelectronics.ru>
+ <c6794e78b9425c84f090d3058b93319bbb17e10f.camel@pengutronix.de>
 MIME-Version: 1.0
-References: <20220628141038.168383-1-windhl@126.com>
-In-Reply-To: <20220628141038.168383-1-windhl@126.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 29 Jun 2022 16:59:22 +0200
-Message-ID: <CAFBinCBPcrJZMXAtOjRZ6rJ0H2u7aa6=_kr2=Zb+TRroR6cdQg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: meson: Hold reference returned by of_get_parent()
-To:     Liang He <windhl@126.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.co>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c6794e78b9425c84f090d3058b93319bbb17e10f.camel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 4:12 PM Liang He <windhl@126.com> wrote:
->
-> We should hold the reference returned by of_get_parent() and use it
-> to call of_node_put() for refcount balance.
->
-> Fixes: 88e2da81241e ("clk: meson: aoclk: refactor common code into dedicated file")
-> Fixes: 6682bd4d443f ("clk: meson: factorise meson64 peripheral clock controller drivers")
-> Fixes: bb6eddd1d28c ("clk: meson: meson8b: use the HHI syscon if available")
->
-> Signed-off-by: Liang He <windhl@126.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Wed, Jun 29, 2022 at 04:02:43PM +0200, Philipp Zabel wrote:
+> Hi Serge,
+> 
+> On Fr, 2022-06-24 at 17:18 +0300, Serge Semin wrote:
+> > Most likely due to copy-paste mistake the device managed version of the
+> > denoted reset control getter has been implemented with invalid semantic,
+> > which can be immediately spotted by having "WARN_ON(shared && acquired)"
+> > warning in the system log as soon as the method is called. Anyway let's
+> > fix it by altering the boolean arguments passed to the
+> > __devm_reset_control_bulk_get() method from
+> > - shared = true, optional = false, acquired = true
+> > to
+> > + shared = false, optional = true, acquired = true
+> > That's what they were supposed to be in the first place (see the non-devm
+> > version of the same method: reset_control_bulk_get_optional_exclusive()).
+> > 
+> > Fixes: 48d71395896d ("reset: Add reset_control_bulk API")
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > 
+> > ---
+> > 
+> > Changelog v4:
+> > - This is a new patch added on v4 lap of the series.
+> > ---
+> >  include/linux/reset.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/reset.h b/include/linux/reset.h
+> > index 8a21b5756c3e..514ddf003efc 100644
+> > --- a/include/linux/reset.h
+> > +++ b/include/linux/reset.h
+> > @@ -731,7 +731,7 @@ static inline int __must_check
+> >  devm_reset_control_bulk_get_optional_exclusive(struct device *dev, int num_rstcs,
+> >  					       struct reset_control_bulk_data *rstcs)
+> >  {
+> > -	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, true, false, true);
+> > +	return __devm_reset_control_bulk_get(dev, num_rstcs, rstcs, false, true, true);
+> >  }
+> 
 
-> ---
->  changelog:
->
->  v2: change the name of 'tp', change the title format, keep reverse christmas tree
->  v1: hold reference returned by of_get_parent()
-Thank you for these changes in v2!
+> You are right, thank you. I'll take this as a sign that the internal
+> functions should probably switch from collecting ever more boolean
+> arguments to a flags parameter, similar to enum gpiod_flags.
+> 
+> I'll pick this up separately into the reset/fixes branch.
+
+Ok. Thanks. Meanwhile could you please take a look at the rest of the
+reset-related patches of the series? They concern the reset-control
+functionality updates of the Baikal-T1 CCU common-clock driver.
+
+[PATCH RESEND v5 6/8] clk: baikal-t1: Move reset-controls code into a dedicated module
+Link: https://lore.kernel.org/linux-clk/20220624141853.7417-7-Sergey.Semin@baikalelectronics.ru/
+[PATCH RESEND v5 7/8] clk: baikal-t1: Add DDR/PCIe directly controlled resets support
+Link: https://lore.kernel.org/linux-clk/20220624141853.7417-8-Sergey.Semin@baikalelectronics.ru/
+
+The functionality has been placed in the clocks subsystem because the
+reset-control is tightly coupled with the clock-control part of CCU.
+It's a normal approach for the SoC CCU/RCU devices, which normally
+have both clocks and reset controls intermixed. Anyway the main goal
+of the series was to add the directly controlled resets of the
+DDR and PCIe SoC sub-domains provided in the framework of the patch
+7/8. Please see the patches log for details.
+
+-Sergey
+
+> 
+> regards
+> Philipp
