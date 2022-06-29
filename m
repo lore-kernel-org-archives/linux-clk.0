@@ -2,179 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4C5C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 12:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41AFC43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 12:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233180AbiF2MPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 08:15:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46084 "EHLO
+        id S233340AbiF2MmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 08:42:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232943AbiF2MPG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 08:15:06 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920F31AD9C;
-        Wed, 29 Jun 2022 05:15:04 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id fd6so21905061edb.5;
-        Wed, 29 Jun 2022 05:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=9nkymMh6Fyk5ogMBLfEwOg5w2y/IS5hDP9brUec1NtE=;
-        b=mdiOJKmco0uz+90t28h7UDuv3yVDL2/6xUmKrOOYANCVCX2IzSj2gxsV13mK0aJTI0
-         1NBxsEid8Nb2AG7LsGggfPEq00l/PLEFI7n0Yv1YAEp2Ew47RNJrtWfbgmFiWP1R4Pg5
-         hkFcr7kBnaPhJW2eS2QDmQC/b/HpuIxBnmJfxKQRcCuUobWomkxjF1EBlaRu07Cj5IcY
-         eLQSAHfVtAGS6blCvRz7keXfvn/RvxRcSjuVPyYJbB9RlKXBr2fjaNWpjcnNHIEZPpJu
-         EAjRwN2GraWuNkPaL3xvhzrYxB7Cc2lxnh5qPAn6Dj8r2ASzDRTRVcARqrWbQbAp5YpX
-         VMJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9nkymMh6Fyk5ogMBLfEwOg5w2y/IS5hDP9brUec1NtE=;
-        b=6Dg4D4S10oEWNRwNfGDjTkTk7gcd5yKSG+unqMCLhtaTzf9QZIK2SwKre+EOetRx5E
-         g/vdS3qkvNjSQgi7WWVCZ2Eu49hpgri/96jdZ+YTQK3O7KSpO0bBwn+H12CZhdqWctm5
-         vLaLD0yMuC45Zu656Un+isT0QMmQJTGpQ0LAEnEhN2conx2/3nf9l8mQvG0T6fgsOD3d
-         K0Zp5/xn4W0vL+sevyommC/ms7RbqabKXaSwCfzfJpGPOtH0cha+HfCiAWgetEjxEQLU
-         FzQiuqMC0Y3PR+I19RVQzYPgKSWgF6iXey/VNfQ6Xv0W97ZrlUDvS8llxu3+0RSpxKVU
-         B1Fg==
-X-Gm-Message-State: AJIora/bAdbcZKu0+KCwJln27QqBWdN6qSSE7K4X8VixhfxaqFeop4D/
-        KCa/RF/gmYnPZlGDIDfW+sk=
-X-Google-Smtp-Source: AGRyM1sGidUWBzVWwbLejT/lZ1A3XwWnBKmGFFBW92YO9QU0BMJuUyU+pdv+zl5/dtv8FMXZtUs8HA==
-X-Received: by 2002:aa7:c38d:0:b0:435:9257:99a5 with SMTP id k13-20020aa7c38d000000b00435925799a5mr3832719edq.204.1656504903032;
-        Wed, 29 Jun 2022 05:15:03 -0700 (PDT)
-Received: from localhost.localdomain (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.googlemail.com with ESMTPSA id l23-20020aa7cad7000000b004356afc7009sm11224421edt.59.2022.06.29.05.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jun 2022 05:15:02 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 4/5] ARM: dts: qcom: fix various wrong definition for kpss-gcc node
-Date:   Wed, 29 Jun 2022 14:14:40 +0200
-Message-Id: <20220629121441.6552-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220629121441.6552-1-ansuelsmth@gmail.com>
-References: <20220629121441.6552-1-ansuelsmth@gmail.com>
+        with ESMTP id S231316AbiF2MmW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 08:42:22 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5050A35DD0
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 05:42:20 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 110733200564;
+        Wed, 29 Jun 2022 08:42:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 29 Jun 2022 08:42:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1656506536; x=1656592936; bh=6ZNi1qE1Rv
+        4Yx1c13tcwOHL6CBF0F1dypVzWbX0avLM=; b=fpaja//WcD0crMT7oONgzi90ch
+        RnU+NRvRD2cMqH1PJZItGrHeI8yKqxL4MrtiTAsc8Avlkq+TodGvrSKJ1InhnJvg
+        mTVeijOwCe3CW6hcKuto0dEm7RnA+c6qsrLmTYPl9PTxypF3FEXoAAJu7uRiSAMb
+        /L+qIN/perlXNlTnb6WMvmue5jQvohPxxr/h5JIrUjmxaJtj14Q+qrpN80nYk/sK
+        px0EawwVTnFYPuswCv7m+6nMn4chHMpr1P2B7UtJdtiSep/Uq11/J4y9rZJNwFs/
+        qTa0W43DfcT2IiLNWWru1z29RrUory+EYqRI4mHbq9V2jbGugbeiiuTI9NFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1656506536; x=1656592936; bh=6ZNi1qE1Rv4Yx1c13tcwOHL6CBF0
+        F1dypVzWbX0avLM=; b=KBM2vmXj2BLHnE+wd8xJE+Ev4mc6wK4j3Kl9V+HlppI0
+        mg/jT4dkPpQcMmmVp7sC65eNO6jwLZZcajjGj26zv1j7SMk04dvAXe975Z7Bew5Y
+        1xc3+5koYGf2znJd4aUTgSu/5+6JbPuMNFl+UvKVlG5o9aW7HqJFAv0+EhJ9dZTk
+        2KSJatGa6qtSX1XcC2Cwf0apAsQDVVqFCYaamkdx0yH1xxrhT5Q5kChp34RolIpN
+        0DOYg8irumEtfIovsyoESq15TaCas7JaMtLAtJJIDDS52H1ev63cjfiRUfpORsao
+        L5EsxNHfpVGPy/U+qwhOQXpBIDXYdfqu9ql6uXRkfQ==
+X-ME-Sender: <xms:p0i8YuggIg-YroYixk92hlT4wo5AiwQstHs85tY54CK2yL7FiPeEew>
+    <xme:p0i8YvCO7uhF7wOzzwPsKIjHPs3XTkK6Zo5Mj5_9tjNcIQQaFOZdjD7DyNU-bkqVf
+    TT72XMcDsFveqJsNpQ>
+X-ME-Received: <xmr:p0i8YmHUnl6H-wY6WK3KLDIyjLGWGJrP7Y4lJHI53CcjynKysG4jRW0NHZJ8y56181yCYn1TpXpjHn2pIIX6ZISkw_kr3EUmPRZxjPY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudegledgheegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
+    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:p0i8YnT_vigU_8BLCltnugNwqxfVOg_g0JyUZnvLmqxUTTwgjp2sCw>
+    <xmx:p0i8YrzACEbLCwz68gHCaFP8lKeVPB_molZVAJ1RXIKde4H3RBftnw>
+    <xmx:p0i8Yl6UGeX592iNdqBSfGE_ifB6KOiUXAldkPfLHzkUpmAaE5xMsA>
+    <xmx:qEi8YjflIjTfzcKG7P_pAR1dRL3MnKZeOM8XnF04d2uRdvpI9bD0Qw>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Jun 2022 08:42:14 -0400 (EDT)
+Date:   Wed, 29 Jun 2022 14:42:13 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v5 13/28] clk: Take into account uncached clocks in
+ clk_set_rate_range()
+Message-ID: <20220629124213.2fuhlsjjtv3hnlqw@houat>
+References: <20220516132527.328190-1-maxime@cerno.tech>
+ <20220516132527.328190-14-maxime@cerno.tech>
+ <20220629090146.8E3DEC341CA@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wlfn6nhswctj4syh"
+Content-Disposition: inline
+In-Reply-To: <20220629090146.8E3DEC341CA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix dtbs_check warning now that we have a correct kpss-gcc yaml
-schema. Add additional qcom,kpss-gcc compatible to differentiate
-devices where kpss-gcc should provide a clk and where kpss-gcc should
-just provide the registers and the syscon phandle.
-Add missing #clock-cells and remove useless clock-output-names for
-ipq806x.
-Add missing bindings for msm8960 and apq8064 kpss-gcc node.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm/boot/dts/qcom-apq8064.dtsi | 5 ++++-
- arch/arm/boot/dts/qcom-ipq8064.dtsi | 4 ++--
- arch/arm/boot/dts/qcom-mdm9615.dtsi | 2 +-
- arch/arm/boot/dts/qcom-msm8660.dtsi | 2 +-
- arch/arm/boot/dts/qcom-msm8960.dtsi | 7 +++++--
- 5 files changed, 13 insertions(+), 7 deletions(-)
+--wlfn6nhswctj4syh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index 34c0ba7fa358..a5b4574be095 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -836,8 +836,11 @@ mmcc: clock-controller@4000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible	= "qcom,kpss-gcc", "syscon";
-+			compatible	= "qcom,kpss-gcc-apq8064", "qcom,kpss-gcc", "syscon";
- 			reg		= <0x2011000 0x1000>;
-+			clocks		= <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names	= "pll8_vote", "pxo";
-+			#clock-cells	= <0>;
- 		};
- 
- 		rpm@108000 {
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index 808ea1862283..ba94fb4c3d55 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -782,11 +782,11 @@ tcsr: syscon@1a400000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc", "syscon";
- 			reg = <0x2011000 0x1000>;
- 			clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
- 			clock-names = "pll8_vote", "pxo";
--			clock-output-names = "acpu_l2_aux";
-+			#clock-cells = <0>;
- 		};
- 
- 		lcc: clock-controller@28000000 {
-diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-index 0ce0d04bd994..5df65056247e 100644
---- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
-+++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-@@ -152,7 +152,7 @@ lcc: clock-controller@28000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible = "qcom,kpss-gcc", "syscon";
-+			compatible = "qcom,kpss-gcc-mdm9615", "qcom,kpss-gcc", "syscon";
- 			reg = <0x02011000 0x1000>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
-index 47b97daecef1..fcc10cac1218 100644
---- a/arch/arm/boot/dts/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
-@@ -392,7 +392,7 @@ vibrator@4a {
- 		};
- 
- 		l2cc: clock-controller@2082000 {
--			compatible	= "qcom,kpss-gcc", "syscon";
-+			compatible	= "qcom,kpss-gcc-msm8660", "qcom,kpss-gcc", "syscon";
- 			reg		= <0x02082000 0x1000>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom-msm8960.dtsi
-index 4a2d74cf01d2..a11a0fe7e0a9 100644
---- a/arch/arm/boot/dts/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8960.dtsi
-@@ -63,7 +63,7 @@ cxo_board {
- 			clock-output-names = "cxo_board";
- 		};
- 
--		pxo_board {
-+		pxo_board: pxo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <27000000>;
-@@ -148,8 +148,11 @@ clock-controller@4000000 {
- 		};
- 
- 		l2cc: clock-controller@2011000 {
--			compatible	= "qcom,kpss-gcc", "syscon";
-+			compatible	= "qcom,kpss-gcc-msm8960", "qcom,kpss-gcc", "syscon";
- 			reg		= <0x2011000 0x1000>;
-+			clocks		= <&gcc PLL8_VOTE>, <&pxo_board>;
-+			clock-names	= "pll8_vote", "pxo";
-+			#clock-cells	= <0>;
- 		};
- 
- 		rpm@108000 {
--- 
-2.36.1
+On Wed, Jun 29, 2022 at 02:01:44AM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-05-16 06:25:12)
+> > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> > index 8de6339f4f8d..9aa5b946f324 100644
+> > --- a/drivers/clk/clk_test.c
+> > +++ b/drivers/clk/clk_test.c
+> > @@ -362,9 +362,37 @@ static void clk_test_uncached_set_range(struct kun=
+it *test)
+> >         KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
+> >  }
+> > =20
+> > +/*
+> > + * Test that for an uncached clock, clk_set_rate_range() will work
+> > + * properly if the rate has changed in hardware.
+> > + *
+> > + * In this case, it means that if the rate wasn't initially in the ran=
+ge
+> > + * we're trying to set, but got changed at some point into the range
+> > + * without the kernel knowing about it, its rate shouldn't be affected.
+> > + */
+> > +static void clk_test_uncached_updated_rate_set_range(struct kunit *tes=
+t)
+> > +{
+> > +       struct clk_dummy_context *ctx =3D test->priv;
+> > +       struct clk_hw *hw =3D &ctx->hw;
+> > +       struct clk *clk =3D hw->clk;
+> > +       unsigned long rate;
+> > +
+> > +       ctx->rate =3D DUMMY_CLOCK_RATE_1 + 1000;
+>=20
+> Is this where we set the rate behind clk framework's back? Maybe add a
+> comment here to state that.
 
+Yes, I'll add a comment
+
+> > +       KUNIT_ASSERT_EQ(test,
+> > +                       clk_set_rate_range(clk,
+> > +                                          DUMMY_CLOCK_RATE_1,
+> > +                                          DUMMY_CLOCK_RATE_2),
+> > +                       0);
+> > +
+> > +       rate =3D clk_get_rate(clk);
+> > +       KUNIT_ASSERT_GT(test, rate, 0);
+>=20
+> This will almost always be true because rate is unsigned. Should it be
+> KUNIT_ASSERT_NE() instead?
+>=20
+> Is there any benefit at all to this check?  We're going to check the
+> rate with an expectation in the next line for what we're actually
+> testing for, so it's not like we need to assert that the rate is
+> non-zero before checking that it is exactly DUMMY_CLOCK_RATE_1 + 1000.
+>=20
+> I thought assertions were about checking sanity of the parts of the test
+> that aren't under test. If the assertion fails then our test is so
+> busted the expectation can't be trusted and we shouldn't even try to
+> continue. It's similar to BUG_ON() and WARN_ON().
+
+I'm not entirely up to speed on what is our expectations when it comes
+to unit tests.
+
+clk_get_rate() mentions that it can return 0, and it definitely
+shouldn't with the setup we are testing here. So it was my impression
+that we were in "totally busted" territory, but if you feel it's
+overkill I'll remove it.
+
+Maxime
+
+--wlfn6nhswctj4syh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYrxIpQAKCRDj7w1vZxhR
+xaViAQCu7pFEOr0ACxrKXUsVN4bFwQxQl+xnROh1mOFqEBrfFAD9FdKwGvjTxXBd
+91x5Y/JJ+0Fcf+wKrcZsE7UGtubaOgs=
+=7S93
+-----END PGP SIGNATURE-----
+
+--wlfn6nhswctj4syh--
