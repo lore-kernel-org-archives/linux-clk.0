@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD59C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 09:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA32C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 09:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiF2JBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
+        id S230136AbiF2JFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 05:05:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiF2JBw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 05:01:52 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22C9A2495E
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 02:01:49 -0700 (PDT)
+        with ESMTP id S229811AbiF2JFr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 05:05:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7448263A9
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 02:05:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CBD59B821DD
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 09:01:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E3DEC341CA;
-        Wed, 29 Jun 2022 09:01:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0FFA561DED
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 09:05:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52719C34114;
+        Wed, 29 Jun 2022 09:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656493306;
-        bh=eeZ09KUc0A9ILU8NQsLNk+7v5t7F9/TgHSr1SHhfkq8=;
+        s=k20201202; t=1656493545;
+        bh=w6i3D/kiYYJcCaEfiNQbAAvgKQbjnnJzhVFlDg/jWkE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pPcWSvjnfsios83ImwlWmfP6b7IbD+bCbHr0HK+JCHLIWa6f+JHAXd0JAc5DNQ1o6
-         UR/KEenwSbRnxSwduXLsf5s3nO8XPI7AjQjbIT8an/2oApTgCnoK8BWl2kAFdOZ+4m
-         xcTRgc064ZC90t33B5s0aHtZlhDx0NTVddQ/FpJKgLrvk6/5je0cZ/vbSHu2xRlbkR
-         VBUbkBnaKnxipDcWMZG7gnu8+wwJa9Via+VWHVoQZtkk8iNBIjJs/lh6DGu+wE9+fb
-         pypmcxh0hWHjGpTPn0R36C2MqTLQ4YuAsUiZP/GnfMntbLFT3awag74YpHOUdgdH8h
-         YvXzlruQuMT/A==
+        b=DPUyjaPic7MMaPUFydH1msXvH4HlNYz40TNq7LjWjBW2pMX2P9gjsWdXUzxC8LFMt
+         fmqeJmO/AQKYFpn8J8Xsmm1gxtiAway0OTPsMgU9RODw4OsAzwp4cuxdguDSyjIm+/
+         OyHlVwUkQhas5zI5L5m96LH3d0rFJkc7KYNOOLmEOV/YYzBpwEc+X5fEReW59me7qJ
+         K8fkiN8w/mwh7GeGsejz6uAyaq5Lk4YxRieKTuNHtx9vpkbr3VIf7090jDFGXss+Y6
+         uqzuh5Dz3aN0fRH15zJ71b7HsuUz3aEoW7GCGXpm50Gdx7d7wgxpUscWTLOP3Eh4TE
+         zbqgG2HSzy4RA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220516132527.328190-14-maxime@cerno.tech>
-References: <20220516132527.328190-1-maxime@cerno.tech> <20220516132527.328190-14-maxime@cerno.tech>
-Subject: Re: [PATCH v5 13/28] clk: Take into account uncached clocks in clk_set_rate_range()
+In-Reply-To: <20220516132527.328190-15-maxime@cerno.tech>
+References: <20220516132527.328190-1-maxime@cerno.tech> <20220516132527.328190-15-maxime@cerno.tech>
+Subject: Re: [PATCH v5 14/28] clk: Fix clk_get_parent() documentation
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Naresh Kamboju <naresh.kamboju@linaro.org>,
@@ -50,65 +50,104 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
 To:     Maxime Ripard <maxime@cerno.tech>,
         Mike Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org
-Date:   Wed, 29 Jun 2022 02:01:44 -0700
+Date:   Wed, 29 Jun 2022 02:05:43 -0700
 User-Agent: alot/0.10
-Message-Id: <20220629090146.8E3DEC341CA@smtp.kernel.org>
+Message-Id: <20220629090545.52719C34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-05-16 06:25:12)
+Quoting Maxime Ripard (2022-05-16 06:25:13)
+> The clk_get_parent() documentation in the header states that it will
+> return a valid pointer, or an error pointer on failure.
+>=20
+> However, the documentation in the source file, and the code itself, will
+> return also return NULL if there isn't any parent for that clock. Let's
+
+s/return//
+
+> mention it.
+>=20
+> An orphan clock should return NULL too, so let's add a test for it.
+>=20
+> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meso=
+n g12b
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/clk_test.c | 17 +++++++++++++++++
+>  include/linux/clk.h    |  5 +++--
+>  2 files changed, 20 insertions(+), 2 deletions(-)
+>=20
 > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index 8de6339f4f8d..9aa5b946f324 100644
+> index 9aa5b946f324..c52098e463d3 100644
 > --- a/drivers/clk/clk_test.c
 > +++ b/drivers/clk/clk_test.c
-> @@ -362,9 +362,37 @@ static void clk_test_uncached_set_range(struct kunit=
- *test)
->         KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
+> @@ -532,6 +532,22 @@ clk_orphan_transparent_multiple_parent_mux_test_exit=
+(struct kunit *test)
+>         clk_hw_unregister(&ctx->parents_ctx[1].hw);
 >  }
 > =20
 > +/*
-> + * Test that for an uncached clock, clk_set_rate_range() will work
-> + * properly if the rate has changed in hardware.
-> + *
-> + * In this case, it means that if the rate wasn't initially in the range
-> + * we're trying to set, but got changed at some point into the range
-> + * without the kernel knowing about it, its rate shouldn't be affected.
+> + * Test that, for a mux whose current parent hasn't been registered yet,
+
+Mention "orphan" here somehow.
+
+> + * clk_get_parent() will return NULL.
 > + */
-> +static void clk_test_uncached_updated_rate_set_range(struct kunit *test)
+> +static void
+> +clk_test_orphan_transparent_multiple_parent_mux_get_parent(struct kunit =
+*test)
 > +{
-> +       struct clk_dummy_context *ctx =3D test->priv;
+> +       struct clk_multiple_parent_ctx *ctx =3D test->priv;
 > +       struct clk_hw *hw =3D &ctx->hw;
 > +       struct clk *clk =3D hw->clk;
-> +       unsigned long rate;
+> +       struct clk *parent;
 > +
-> +       ctx->rate =3D DUMMY_CLOCK_RATE_1 + 1000;
+> +       parent =3D clk_get_parent(clk);
+> +       KUNIT_EXPECT_PTR_EQ(test, parent, NULL);
 
-Is this where we set the rate behind clk framework's back? Maybe add a
-comment here to state that.
+Please put clk_get_parent() into the expectation so that the print on
+error is more verbose.
 
-> +       KUNIT_ASSERT_EQ(test,
-> +                       clk_set_rate_range(clk,
-> +                                          DUMMY_CLOCK_RATE_1,
-> +                                          DUMMY_CLOCK_RATE_2),
-> +                       0);
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_GT(test, rate, 0);
-
-This will almost always be true because rate is unsigned. Should it be
-KUNIT_ASSERT_NE() instead?
-
-Is there any benefit at all to this check?  We're going to check the
-rate with an expectation in the next line for what we're actually
-testing for, so it's not like we need to assert that the rate is
-non-zero before checking that it is exactly DUMMY_CLOCK_RATE_1 + 1000.
-
-I thought assertions were about checking sanity of the parts of the test
-that aren't under test. If the assertion fails then our test is so
-busted the expectation can't be trusted and we shouldn't even try to
-continue. It's similar to BUG_ON() and WARN_ON().
-
-> +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
 > +}
 > +
+>  /*
+>   * Test that, for a mux whose current parent hasn't been registered yet,
+>   * calling clk_set_parent() to a valid parent will properly update the
+> @@ -678,6 +694,7 @@ clk_test_orphan_transparent_multiple_parent_mux_set_r=
+ange_set_parent_get_rate(st
+>  }
+> =20
+>  static struct kunit_case clk_orphan_transparent_multiple_parent_mux_test=
+_cases[] =3D {
+> +       KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_get_pa=
+rent),
+>         KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_pa=
+rent),
+>         KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_pa=
+rent_get_rate),
+>         KUNIT_CASE(clk_test_orphan_transparent_multiple_parent_mux_set_pa=
+rent_set_range_modified),
+
+Please split the test from the documentation update.
+
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 1507d5147898..39710b8453fa 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -755,8 +755,9 @@ int clk_set_parent(struct clk *clk, struct clk *paren=
+t);
+>   * clk_get_parent - get the parent clock source for this clock
+>   * @clk: clock source
+>   *
+> - * Returns struct clk corresponding to parent clock source, or
+> - * valid IS_ERR() condition containing errno.
+> + * Returns struct clk corresponding to parent clock source, a NULL
+> + * pointer if it doesn't have a parent, or a valid IS_ERR() condition
+> + * containing errno.
+
+I'd rather not update this. A return value of NULL is a 'struct clk
+corresponding to parent clock source' already, and we don't want to
+document CCF implementation details in clk.h because there are other
+implementations of the API.
