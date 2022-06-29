@@ -2,261 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC19EC43334
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 06:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B741C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 07:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230465AbiF3GpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 02:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47836 "EHLO
+        id S233108AbiF3HpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 03:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232833AbiF3GpR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 02:45:17 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 360EB2FFDB
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 23:45:15 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id u14so8433985ljh.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 23:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:subject:user-agent:in-reply-to:references:message-id
-         :mime-version:content-transfer-encoding;
-        bh=fTV3UZJ8iWa2cSqb4oJMbGSxrzXh4aLO9yzSsaSbNW8=;
-        b=sQ9mpyLEUMu6hJYiXdFDncQJ0BJCa0ot78zi4pUlPT7BFc1v8Yh/MQgyo0E1wiOljb
-         Tl+6R0AfPc8ImR3AKsWMP7G4PYLa7h9v/XJXineSAeEC7LsEAFB6eVp+2rYOYsI0xjyT
-         XN3rDDxv+lrxceIdHxjWz8g19DPvLUBPkzsk74lvrlyodedG8fFbBi/EuzJl6r8VD4O7
-         yr2ko687WHJ/ZkL786xe9BD+SEjfimE+KQ6a8rcT8yZRs0/bG8HQzAgiaNmyjf8Og9uy
-         NgLzAeooWsIXOgd2H0VjXBhgLabIex/hIXQTmUAEGltppttpn5fD2ZcSt1gOFezRQ5tE
-         DYzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:user-agent:in-reply-to
-         :references:message-id:mime-version:content-transfer-encoding;
-        bh=fTV3UZJ8iWa2cSqb4oJMbGSxrzXh4aLO9yzSsaSbNW8=;
-        b=eUYDMlLEtCxFt7VYE6hTNHWTOLEX8fDJCbihUVcdy0x/Dzzf1YgCNqqKv9fhI3v7da
-         7d33iF+neup5fTFnlm9B4cJRkN9+o2kEIQYnpmK3jNRZxCRkBIVeFAFK6z1R2Y4bC9/T
-         T/KJkF2FnKjLrAg35PRJ6BYgV2ici85LEt9SWWt9j71dEJXbta7f5iERki0gVI/IfcL7
-         KMUPF0t60VAOUX5MaQBPh0T5+kMmpO0AR8Q3lAMSB+z7Gx8OwsPCtKN8tG/Yty7sxy67
-         2AzMASq08vhePNiax/yRL4271ObN9nooJsilHG2fmP4sF0WGfallqRsrza8WcIX/uO+V
-         ILCA==
-X-Gm-Message-State: AJIora+eqZgP2IrN4BfcXJ7wWaXDgp0EUcgltuduX9uVb7R02RKT5Zqs
-        su2iwo09AcgN6Kzm276E8pViSQ==
-X-Google-Smtp-Source: AGRyM1sg5NrMfFA43dw9hkBCjjzWbbjZlTBQWU2W1F81EEQzjiWxr05HUwdPiFvHyKlySpuzKLH/Pw==
-X-Received: by 2002:a05:651c:158c:b0:250:a23d:2701 with SMTP id h12-20020a05651c158c00b00250a23d2701mr4209164ljq.475.1656571513552;
-        Wed, 29 Jun 2022 23:45:13 -0700 (PDT)
-Received: from [127.0.0.1] ([94.25.229.210])
-        by smtp.gmail.com with ESMTPSA id 20-20020ac25f54000000b0047fa0251460sm2942546lfz.174.2022.06.29.23.45.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Jun 2022 23:45:12 -0700 (PDT)
-Date:   Thu, 30 Jun 2022 09:43:05 +0300
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_3/5=5D_dt-bindings=3A_arm=3A_msm=3A_R?= =?US-ASCII?Q?ework_kpss-gcc_driver_Documentation_to_yaml?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20220629121441.6552-4-ansuelsmth@gmail.com>
-References: <20220629121441.6552-1-ansuelsmth@gmail.com> <20220629121441.6552-4-ansuelsmth@gmail.com>
-Message-ID: <D90DE67E-DA29-4A0D-BBC1-C8209FDF69D3@linaro.org>
+        with ESMTP id S232259AbiF3HpA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 03:45:00 -0400
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E611A36B54
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 00:44:59 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 5EBF13200910;
+        Thu, 30 Jun 2022 03:44:58 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 30 Jun 2022 03:44:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1656575097; x=1656661497; bh=A+U71uKJdO
+        d2smRluuKdX1mOFQDd+vmvxx2MN/bO4sI=; b=A6Wr9ZNCXusjBLUBmhI96qpec9
+        VTCoqtjFM1RJcfDZsrWvkVx2rxQodIsFknfqft4GspjaQpyHijEMx/NOJpEdbkUF
+        YIOiLKflRxvfjk3DPw1noPGINRpkSxbvrvdQFMm3wYgzAK4v36vViTq5eOtXuufL
+        OyPo6hP8xHIYAgoDfJVZTrO+SD9nkSpahLcgrumHYSf7pev5AecC8SNx4tTnEF/s
+        KcCIuBfbIArquos812N7NcZj5R7HxMmYin53oakS4xWM3zO/Y7GdSLlfL/ea5BoK
+        LtXB62gKPn69Hi1uqx9F2XVHnua+Ir33xc3XMywQmLkwj23HnH7hE0tqaCeQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1656575097; x=1656661497; bh=A+U71uKJdOd2smRluuKdX1mOFQDd
+        +vmvxx2MN/bO4sI=; b=NP4tw73V2KIp+uS0HZNTctuElDD8su0Y5mNTxyVNtNCQ
+        rEDXu96W+zSja4nU7/vpP5BpuJEVK1dzgWeOqdWzDOR0MvSECRZ3NegePYYh+Qsb
+        jXZ1Per0uA+Zs3C46kK5uH395ixheh/YIyzlJr/iwb5rRWDNGtXS+PALb9cqk8EX
+        ZDNuF932BrLmDyGMuE5D8OHSqfVYK+Qld6PoNII/ak/ILdaAR+L/hSs+wUw7pfx/
+        gR4XNY4c//YpUf668bCr8pD/wmLi13jDLeXIGk3hkC0E9P0syM4GEdcRDPXtBhlz
+        ZyWaGVCRyaZSnrwWvjC+r+VI3aNrpwh+PuuICqiphg==
+X-ME-Sender: <xms:eVS9YkoOxZcQ6FGzmB2u2kvCnluprEmwdWiDH0qwMdvnPxjtBMXo0Q>
+    <xme:eVS9Yqqt60nTfUnxzRo7yYtBEDSl36lR6WtoO0Y0dvFFZ7WhhSUWZxIi_UTZF4rQe
+    L0d54gUdI5sR9DvYwI>
+X-ME-Received: <xmr:eVS9YpMFeLMjPqBmqCT52Xe5ZMooz-IHuFa3P_6fbgA7Xfsvj0uNXV7CaxHRpm3Ji_EsNJ3KA3bI_fNgYutbC7EE9ZUGJ08bfAsxdhc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehtddguddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffvfevuffkhfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepgeehtdejvdeiieejkeegfffgleejffdvjeefhedtheehvdetlefhfffg
+    jeetkeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:eVS9Yr7dgyF_rAlKHV1YgskSjQkepG0-emMTTVZSyV7w286bD-M9tA>
+    <xmx:eVS9Yj7iySnfERUvEiN_gMPOZwDDhjHcVGP9B4pybpmsd29xlbnMvw>
+    <xmx:eVS9YrikRwLNPQt0Y2BCn-oD5Btle67yWW5jCXewuSQbnhil7usPtg>
+    <xmx:eVS9YgHqY2HpM3tM69pTTTY1LA9P-_X4PK3bFxSQa5-kFILsx8ENwg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Jun 2022 03:44:56 -0400 (EDT)
+Date:   Wed, 29 Jun 2022 15:12:56 +0200
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v5 14/28] clk: Fix clk_get_parent() documentation
+Message-ID: <20220629131256.vqk5t42r4paainsq@houat>
+From:   Maxime Ripard <maxime@cerno.tech>
+References: <20220516132527.328190-1-maxime@cerno.tech>
+ <20220516132527.328190-15-maxime@cerno.tech>
+ <20220629090545.52719C34114@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vnwsaaoohljytiwq"
+Content-Disposition: inline
+In-Reply-To: <20220629090545.52719C34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--vnwsaaoohljytiwq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 29 June 2022 15:14:39 GMT+03:00, Christian Marangi <ansuelsmth@gmail=2E=
-com> wrote:
->Rework kpss-gcc driver Documentation to yaml Documentation=2E
->The current kpss-gcc Documentation have major problems and can't be
->converted directly=2E Introduce various changes to the original
->Documentation=2E
->
->Add #clock-cells additional binding as this clock outputs a static clk
->named acpu_l2_aux with supported compatible=2E
->Only some compatible require and outputs a clock, for the others, set
->only the reg as a required binding to correctly export the kpss-gcc
->registers=2E As the reg is shared also add the required syscon compatible=
-=2E
->
->Signed-off-by: Christian Marangi <ansuelsmth@gmail=2Ecom>
->---
-> =2E=2E=2E/bindings/arm/msm/qcom,kpss-gcc=2Etxt        | 44 ---------
-> =2E=2E=2E/bindings/arm/msm/qcom,kpss-gcc=2Eyaml       | 90 +++++++++++++=
-++++++
-> 2 files changed, 90 insertions(+), 44 deletions(-)
-> delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-g=
-cc=2Etxt
-> create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-g=
-cc=2Eyaml
->
->diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Etx=
-t b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Etxt
->deleted file mode 100644
->index e628758950e1=2E=2E000000000000
->--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Etxt
->+++ /dev/null
->@@ -1,44 +0,0 @@
->-Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
->-
->-PROPERTIES
->-
->-- compatible:
->-	Usage: required
->-	Value type: <string>
->-	Definition: should be one of the following=2E The generic compatible
->-			"qcom,kpss-gcc" should also be included=2E
->-			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
->-			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
->-			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
->-			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
->-
->-- reg:
->-	Usage: required
->-	Value type: <prop-encoded-array>
->-	Definition: base address and size of the register region
->-
->-- clocks:
->-	Usage: required
->-	Value type: <prop-encoded-array>
->-	Definition: reference to the pll parents=2E
->-
->-- clock-names:
->-	Usage: required
->-	Value type: <stringlist>
->-	Definition: must be "pll8_vote", "pxo"=2E
->-
->-- clock-output-names:
->-	Usage: required
->-	Value type: <string>
->-	Definition: Name of the output clock=2E Typically acpu_l2_aux indicatin=
-g
->-		    an L2 cache auxiliary clock=2E
->-
->-Example:
->-
->-	l2cc: clock-controller@2011000 {
->-		compatible =3D "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
->-		reg =3D <0x2011000 0x1000>;
->-		clocks =3D <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
->-		clock-names =3D "pll8_vote", "pxo";
->-		clock-output-names =3D "acpu_l2_aux";
->-	};
->diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Eya=
-ml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Eyaml
->new file mode 100644
->index 000000000000=2E=2E27f7df7e3ec4
->--- /dev/null
->+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Eyaml
->@@ -0,0 +1,90 @@
->+# SPDX-License-Identifier: GPL-2=2E0-only OR BSD-2-Clause
->+%YAML 1=2E2
->+---
->+$id: http://devicetree=2Eorg/schemas/arm/msm/qcom,kpss-gcc=2Eyaml#
->+$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
->+
->+title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
->+
->+maintainers:
->+  - Christian Marangi <ansuelsmth@gmail=2Ecom>
->+
->+description: |
->+  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)=2E Use=
-d
->+  to control L2 mux (in the current implementation) and provide access
->+  to the kpss-gcc registers=2E
->+
->+properties:
->+  compatible:
->+    items:
->+      - enum:
->+          - qcom,kpss-gcc-ipq8064
->+          - qcom,kpss-gcc-apq8064
->+          - qcom,kpss-gcc-msm8974
->+          - qcom,kpss-gcc-msm8960
->+          - qcom,kpss-gcc-msm8660
->+          - qcom,kpss-gcc-mdm9615
->+      - const: qcom,kpss-gcc
->+      - const: syscon
->+
->+  reg:
->+    maxItems: 1
->+
->+  clocks:
->+    items:
->+      - description: phandle to pll8_vote
->+      - description: phandle to pxo_board
->+
->+  clock-names:
->+    items:
->+      - const: pll8_vote
->+      - const: pxo
->+
->+  '#clock-cells':
->+    const: 0
->+
->+required:
->+  - compatible
->+  - reg
->+
->+if:
->+  properties:
->+    compatible:
->+      contains:
->+        enum:
->+          - qcom,kpss-gcc-ipq8064
->+          - qcom,kpss-gcc-apq8064
->+          - qcom,kpss-gcc-msm8974
->+          - qcom,kpss-gcc-msm8960
->+then:
->+  required:
->+    - clocks
->+    - clock-names
->+    - '#clock-cells'
->+else:
->+  properties:
->+    clock: false
->+    clock-names: false
->+    '#clock-cells': false
+Hi,
 
-I suppose this chunk is not so correct=2E We can not describe these proper=
-ties as required since current DTs do not have them=2E Also if somebody dec=
-ides to fix the mdm9615 or msm8660 platforms, he works have to change this =
-(again)=2E Thus I'd just leave this whole chunk out=2E
+On Wed, Jun 29, 2022 at 02:05:43AM -0700, Stephen Boyd wrote:
+> > diff --git a/include/linux/clk.h b/include/linux/clk.h
+> > index 1507d5147898..39710b8453fa 100644
+> > --- a/include/linux/clk.h
+> > +++ b/include/linux/clk.h
+> > @@ -755,8 +755,9 @@ int clk_set_parent(struct clk *clk, struct clk *par=
+ent);
+> >   * clk_get_parent - get the parent clock source for this clock
+> >   * @clk: clock source
+> >   *
+> > - * Returns struct clk corresponding to parent clock source, or
+> > - * valid IS_ERR() condition containing errno.
+> > + * Returns struct clk corresponding to parent clock source, a NULL
+> > + * pointer if it doesn't have a parent, or a valid IS_ERR() condition
+> > + * containing errno.
+>=20
+> I'd rather not update this. A return value of NULL is a 'struct clk
+> corresponding to parent clock source' already, and we don't want to
+> document CCF implementation details in clk.h because there are other
+> implementations of the API.
 
->+
->+additionalProperties: false
->+
->+examples:
->+  - |
->+    #include <dt-bindings/clock/qcom,gcc-ipq806x=2Eh>
->+
->+    clock-controller@2011000 {
->+      compatible =3D "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc", "syscon";
->+      reg =3D <0x2011000 0x1000>;
->+      clocks =3D <&gcc PLL8_VOTE>, <&pxo_board>;
->+      clock-names =3D "pll8_vote", "pxo";
->+      #clock-cells =3D <0>;
->+    };
->+
->+  - |
->+    clock-controller@2011000 {
->+      compatible =3D "qcom,kpss-gcc-mdm9615", "qcom,kpss-gcc", "syscon";
->+      reg =3D <0x02011000 0x1000>;
->+    };
->+=2E=2E=2E
->+
+I find it slightly misleading still since using IS_ERR still doesn't get
+you a safe pointer you can use.
 
---=20
-With best wishes
-Dmitry
+I'll drop it though if you feel like it's too troublesome
+
+Maxime
+
+--vnwsaaoohljytiwq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYrxP2AAKCRDj7w1vZxhR
+xaz2AP4tY+13t6REay+/Cy/avofxV/ew/321dejMmTnib/rgOQEA7foiHxTvxAmI
+S+IRI5hwXu26Wbu0Wznj2XBFgwg7kAM=
+=BYjp
+-----END PGP SIGNATURE-----
+
+--vnwsaaoohljytiwq--
