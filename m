@@ -2,78 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64A1C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 03:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B6DC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 06:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230470AbiF2DYu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jun 2022 23:24:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
+        id S231844AbiF2GOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 02:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231671AbiF2DYT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jun 2022 23:24:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0609BC08;
-        Tue, 28 Jun 2022 20:24:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 94655B81BAF;
-        Wed, 29 Jun 2022 03:24:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC686C341C6;
-        Wed, 29 Jun 2022 03:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656473056;
-        bh=hEKpqsCTCBYl6X3gx6o4CGg4SOmuRDZ3EoHxt9IO4QA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IhmRobJSTIP86pLtSRAiaGG98BmiqQqGSXRMjhzDITCuEpkAwp5eCrogCu1DVC4Ih
-         e50Vdb4galVkGeIOYFbI/eDIWJ/XXq1dFSQgyj2Gl8ZeRvKdg4kmOS22Y2QsjcQm0g
-         UgGPMw7F2ZXVKKY8j16xQvZ6UDXgfrm+9kLh/kgRp2tXl2gbss9tg1MB3RC8A5gN60
-         fqQjfkPXY+CIhOvcJcl2OIhwnq2PmJBxqIg8njS7vTeFcyC+OjTQRIPUoxiChWc2PA
-         HOM0mvHoXbCDSZYWR9j9n71AS5hGnEjF+whcOpjJX03ScJmD8tMjAbk8C3uOylkekO
-         0E5mkTI/KcKKQ==
-Date:   Tue, 28 Jun 2022 20:24:14 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] ptp_ocp: implement DPLL ops
-Message-ID: <20220628202414.02ac8fd1@kernel.org>
-In-Reply-To: <20220628191124.qvto5tyfe63htxxr@bsd-mbp.dhcp.thefacebook.com>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
-        <20220626192444.29321-4-vfedorenko@novek.ru>
-        <20220627193436.3wjunjqqtx7dtqm6@bsd-mbp.dhcp.thefacebook.com>
-        <7c2fa2e9-6353-5472-75c8-b3ffe403f0f3@novek.ru>
-        <20220628191124.qvto5tyfe63htxxr@bsd-mbp.dhcp.thefacebook.com>
+        with ESMTP id S231484AbiF2GOR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 02:14:17 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35051AF04
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 23:14:15 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id ay16so30418362ejb.6
+        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 23:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=MmF1du2ylVDr8xJMUNJ8PZh1/Xb57TfnDF3b9gRJpt0=;
+        b=FKgRXwQCFkXdqFwyGiX3cIUWyDWovuprXZ/ONaoPETsY5/YgrbFdFxiScnnAMLGBIl
+         uR51YLCM8v/yHodq8992rO5zrgLlGlsT3NLEL861ZEND+kwEsihdZ13Ucqo9NBPlT1Gi
+         C8WILUvP18ED581LFsaxNtNiUSOecljuY+lDt7SwuW12qR4kZ7uhzTNbipG0MTX25DG+
+         OFrDWIxhX8oOCmeRFHHd4iGFpKnAzOXN+GhP71LLiOL7sSuefPVBfOpyZvBKvmU4pCW6
+         lUS7nctXfNAmss5nbUZhwVRrMj39GlIHS/FaH9kP4UDaopo8p2vUiU1sbEQkKX42Lf6H
+         mlsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=MmF1du2ylVDr8xJMUNJ8PZh1/Xb57TfnDF3b9gRJpt0=;
+        b=BO3XMUtSYq0u4To8qXoKuy64QIZgG2qqew84rqIU1Xx/VFaLGxZ3H3uKrS9e6HgKMe
+         KIXWxLd1OJy9QV8Kz+Pk/qBCujZIxPngVKwtcDmnR2U+dv9OE4ra7P57np0mdlcUrfH0
+         vzf3gD0Wvsqqj+l474fDOubowYXB0qwku0/wD02oUxZrCizeQVnTTuVAhmQ5pCzBF7ds
+         Z6ktfYEznJkNv4jy+HIijAMX7c2tG4Imcs1muaq5+BDKPVGdMFiehdcHgzEoQZps1UJv
+         dnuAKrmB2Rz0zXNCs0UPeczyH1Yuf2Kr0zYotsHg2QR2gqhJ0m3V9FS3dYTRIQPi4lgU
+         gLfg==
+X-Gm-Message-State: AJIora8jMVwxrzt2kEYPKQRiqNyJH/8GfxS/UxiVA6ChNzXvTxD5A6HG
+        SqWj6l8qp1HGWovMmL5dIw4SSw==
+X-Google-Smtp-Source: AGRyM1sL8drXcAVjnDFcws+DixDxqtS4d3ygjMxZkQkzufaPqB/t4/hIsYtbViUbltel0oQSOYvYCw==
+X-Received: by 2002:a17:907:1c9d:b0:726:3666:2ea4 with SMTP id nb29-20020a1709071c9d00b0072636662ea4mr1665574ejc.547.1656483254247;
+        Tue, 28 Jun 2022 23:14:14 -0700 (PDT)
+Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id d17-20020a1709061f5100b0072846e4dbd9sm534911ejk.215.2022.06.28.23.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jun 2022 23:14:13 -0700 (PDT)
+Message-ID: <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
+Date:   Wed, 29 Jun 2022 08:14:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 2/4] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+Content-Language: en-US
+To:     Christian Marangi <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+References: <20220628184137.21678-1-ansuelsmth@gmail.com>
+ <20220628184137.21678-3-ansuelsmth@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220628184137.21678-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 28 Jun 2022 12:11:24 -0700 Jonathan Lemon wrote:
-> > > 80-column limit (here and throughout the file)  
-> > 
-> > I thought this rule was relaxed up to 100-columns?  
+On 28/06/2022 20:41, Christian Marangi wrote:
+> Convert kpss-acc driver Documentation to yaml.
+> The original Documentation was wrong all along. Fix it while we are
+> converting it.
+> The example was wrong as kpss-acc-v2 should only expose the regs but we
+> don't have any driver that expose additional clocks. The kpss-acc driver
+> is only specific to v1. For this exact reason, limit all the additional
+> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> v1 and also flag that these bindings should NOT be used for v2.
 > 
-> Only in exceptional cases, IIRC.  checkpatch complains too.
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Yup, for networking I still prefer 80 chars. 
-My field of vision is narrow.
+This is still not fixed and not tested. Since 4 versions of this
+patchset (previously was part of other set).
 
-> > > 80 cols, and this should be done before ptp_ocp_complete()
-> > > Also, should 'goto out', not return 0 and leak resources.  
-> > 
-> > I don't think we have to go with error path. Driver itself can work without
-> > DPLL device registered, there is no hard dependency. The DPLL device will
-> > not be registered and HW could not be configured/monitored via netlink, but
-> > could still be usable.  
-> 
-> Not sure I agree with that - the DPLL device is selected in Kconfig, so
-> users would expect to have it present.  I think it makes more sense to
-> fail if it cannot be allocated.
+I retract my review. Please test the bindings.
 
-+1
+Best regards,
+Krzysztof
