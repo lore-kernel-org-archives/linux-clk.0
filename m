@@ -2,90 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF29C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 11:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB21C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 12:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232642AbiF2Lqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 07:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
+        id S232117AbiF2MAW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 08:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232572AbiF2Lqr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 07:46:47 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0830A3F88D
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:46:47 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id q6so31950613eji.13
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:46:46 -0700 (PDT)
+        with ESMTP id S231208AbiF2MAV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 08:00:21 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6461C3F8AE;
+        Wed, 29 Jun 2022 05:00:20 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id q6so32019744eji.13;
+        Wed, 29 Jun 2022 05:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=y26EqFL9g5dJmCSYo/uiI7QjtNL6pCpbp9EtOx0DV2k=;
-        b=Xs0iqTshoHumfeIOWL/pDmURrLeeZH6zhilSdxZPMQdL1VsBFaBZ2wS2NtClKado9J
-         IJajaGH+wiNLsgGnkXvQwQ0Q1DQ46NgL+wJj3hRda9LnjJ8WFE9/UKVAL6Z+F/RkLwKT
-         95cJIPkbww0uqMXiEs67n2yHsbvHTG0Gw6KqqZ3mLdCPjoBT4sijYCR7gLfQxGBkc2Co
-         oYpTxnKiBv/RueGhSE4FGYytFwr8hUKxGIxmvBnReaURlfYKdO8ZxR8l/rA7P4KbIP4j
-         UPB/E1T1cZP2VCttYrc1aDfknofasecBmLnRkD9k8RmFHHt5qjMz/g/a4mps+oMmzoTF
-         sAVw==
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sTKSvmVJgHL+kk11gbOgnsoG5Ap89tTp12M6SLk9RRk=;
+        b=jc29pOELtAijL/e6YGadOP4bEWJw+xqeGDq/AT49k1EfunnpVNt42V1A5G5N0Ow6fj
+         P/Ukwqw1Yw8AUY9UiAim79hcv2pKzzYxBEM20A0qkHo6SBzQe/SizENPzBPYxc3kXjIT
+         bEvf4YE0ZdJVpGCpf3IY3/Qz1QABgOzzN96AaS9H4i2lhHRMfRMMK84DHkH3GDF/yNtb
+         jb6CgJBRB07UOzrpaMPDtqjemFr76w6PQun6DZl3IuQxdmYXUkhquGerl0hDBFyj1Mn/
+         +eFA5cFwZsOOjAvZfgxTFt9InrbKvyhNatS8Pml3gSIRG6Jk74VU1vmwifZ+02eoI1q+
+         uwIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=y26EqFL9g5dJmCSYo/uiI7QjtNL6pCpbp9EtOx0DV2k=;
-        b=LFZYpyfpGcs+t8t/ivOgKw5hMBWKNTqyVxbJxpxAu9jB+MJeaddTOVMCEOvULKH4SV
-         CxLeUFrGE30n+sXci/knUpPtbfUZldAhhiZ0KcuLwNnWv0iIQ1eJCGpoGvVrczpwOfQ1
-         NFJZYJKg6oUHSBZ/66s1I5apzc9l5/v86Ts+mjyuTmGnboe7G/Tmyu8xEhBMH7oGAlMT
-         dBurN9pi5B3CGgoAhjWWGLgAsL+rufH1GX3vaWdhRpBrPwiyqgP7yONKsH6zKHie/4/l
-         ExCZBWs0TcqVZjrpSM0WphmirWvA+mGXspDHf99vQEvXRC0BwQCmU/qIq4LomDgXlqoS
-         TM/w==
-X-Gm-Message-State: AJIora/htOR5jnrKh18Ym9MxymyWsI8+0N5WkoUVOzEUTVx87PX9pRcT
-        r0vKs2z3pu6yQeFJpA2Jxt6e2g==
-X-Google-Smtp-Source: AGRyM1uh2G3mI6ImWNz8iu33UFfTR01pMKRnSNrsb6NJV3DDngQMz4Q29Cs61ZqPiJ7yXvPUhJQicQ==
-X-Received: by 2002:a17:906:6545:b0:722:7c99:1ad7 with SMTP id u5-20020a170906654500b007227c991ad7mr2906545ejn.325.1656503205568;
-        Wed, 29 Jun 2022 04:46:45 -0700 (PDT)
-Received: from [192.168.0.184] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id cq12-20020a056402220c00b004356b8ad003sm11028134edb.60.2022.06.29.04.46.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 04:46:45 -0700 (PDT)
-Message-ID: <bd98faab-a94b-17ad-fbaf-aafe5b882bdd@linaro.org>
-Date:   Wed, 29 Jun 2022 13:46:43 +0200
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sTKSvmVJgHL+kk11gbOgnsoG5Ap89tTp12M6SLk9RRk=;
+        b=XZnBCkrTMdLLWvz1uvbfWQkIrxjUtDF0/Ws9FXz23PnLjeVP0KOm01tszSCzGlc6NB
+         nVccE2iF9mr2M6qvB+nAnggD4+FH6EvSw5+viFzeY8a8eQcGDKHrpNTL4cYR+gxTEi8v
+         9Ix1LIhJAAqF1ILWNCwPdyyAK0rNPWWRkGLwxaSn2vUqciVzWL2yWFxKwwaiqzJNXTuJ
+         WMqKGmeJhF6aEmJgNsvpyfFEEttsyAv4lrJ6eAtCsDJF708Q77cGAxv/+Wrma6h4fBGU
+         0OcssxpxYp4cmDoJpMb+KT40an0OmbTT0xpxKiTFD++aaQL9y3KlJcN8gJvKxLey20fH
+         37Jg==
+X-Gm-Message-State: AJIora8ZcOM1iw4NbYFZcag48j87L6Nngf2u8TytXV2HasjidrSNk+W7
+        wr6U2hNjHS8Q2jxcBh1Y3qQ=
+X-Google-Smtp-Source: AGRyM1vLRjTblxwGdLCUo4A+gmq5aFOXeRLZNbRGAo7Su++pSc82k89UUoo8hCcoXWy2wJS1/m1HhA==
+X-Received: by 2002:a17:906:7cc5:b0:726:38e0:4e80 with SMTP id h5-20020a1709067cc500b0072638e04e80mr3018159ejp.664.1656504018833;
+        Wed, 29 Jun 2022 05:00:18 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.gmail.com with ESMTPSA id i21-20020a508715000000b004357558a243sm11308904edb.55.2022.06.29.05.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 05:00:18 -0700 (PDT)
+Message-ID: <62bc3ed2.1c69fb81.c8439.4982@mx.google.com>
+X-Google-Original-Message-ID: <Yrw+2+7FwaLFVEJZ@Ansuel-xps.>
+Date:   Wed, 29 Jun 2022 14:00:27 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+References: <20220628184137.21678-1-ansuelsmth@gmail.com>
+ <20220628184137.21678-3-ansuelsmth@gmail.com>
+ <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
+ <62bc2c1d.1c69fb81.09d2.e244@mx.google.com>
+ <3ad4876b-1efa-c4c4-2139-3823cf80ff68@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 1/2] dt-bindings: reset: mt8195: Add resets for PCIE
- controllers
-Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        wenst@chromium.org, chun-jie.chen@mediatek.com,
-        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220629105205.173471-1-angelogioacchino.delregno@collabora.com>
- <20220629105205.173471-2-angelogioacchino.delregno@collabora.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220629105205.173471-2-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ad4876b-1efa-c4c4-2139-3823cf80ff68@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/06/2022 12:52, AngeloGioacchino Del Regno wrote:
-> Add the reset index for PCIe P0 and P1 (PCIe0, PCIe1) on MT8195.
+On Wed, Jun 29, 2022 at 01:12:37PM +0200, Krzysztof Kozlowski wrote:
+> On 29/06/2022 12:40, Christian Marangi wrote:
+> > On Wed, Jun 29, 2022 at 08:14:12AM +0200, Krzysztof Kozlowski wrote:
+> >> On 28/06/2022 20:41, Christian Marangi wrote:
+> >>> Convert kpss-acc driver Documentation to yaml.
+> >>> The original Documentation was wrong all along. Fix it while we are
+> >>> converting it.
+> >>> The example was wrong as kpss-acc-v2 should only expose the regs but we
+> >>> don't have any driver that expose additional clocks. The kpss-acc driver
+> >>> is only specific to v1. For this exact reason, limit all the additional
+> >>> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> >>> v1 and also flag that these bindings should NOT be used for v2.
+> >>>
+> >>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> >>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>
+> >> This is still not fixed and not tested. Since 4 versions of this
+> >> patchset (previously was part of other set).
+> >>
+> >> I retract my review. Please test the bindings.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> > 
+> > Thing is that I tested them and on my side I don't have such errors.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  include/dt-bindings/reset/mt8195-resets.h | 2 ++
->  1 file changed, 2 insertions(+)
+> Then maybe update your dtschema because I can easily see them.
+>
 
+You are totally right. I didn't had the problem as I was updating the
+dtschema with sudo pip3... and it wasn't updating the dtschema local to
+the linux repo. Didn't know that and I could't understand why I didn't
+had the error.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > 
+> > I'm using the linux-next branch. Should I use something else that have
+> > newer schema files?
+> > 
+> > Also on other patch there are some error reported that are unrelated to
+> > my change and that looks strange.
+> 
+> The other might be not be relevant, but this one is real and reproducible.
+> 
+> Best regards,
+> Krzysztof
 
-
-Best regards,
-Krzysztof
+-- 
+	Ansuel
