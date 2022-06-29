@@ -2,70 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F852C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 08:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C339BCCA483
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 08:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231807AbiF2Iel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 04:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48956 "EHLO
+        id S232915AbiF2Ist (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 04:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbiF2Iel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 04:34:41 -0400
+        with ESMTP id S232906AbiF2Isr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 04:48:47 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DAAFE0E8;
-        Wed, 29 Jun 2022 01:34:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156C53CFE2
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 01:48:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2701361D9C;
-        Wed, 29 Jun 2022 08:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F5E3C34114;
-        Wed, 29 Jun 2022 08:34:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9FD5061DC9
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 08:48:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E750CC34114;
+        Wed, 29 Jun 2022 08:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656491679;
-        bh=SMibcKHmejQMaGMtAlC/Nipg6tudBRypeBB8W2Rzp7U=;
+        s=k20201202; t=1656492525;
+        bh=Hf8xvb7EW2dIXc85BRGJqTZPrbdJNzWbMyZUkT2ll60=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DyVu2wl+v8Y6B0cJ7WyzUXEJlcm53mO80NZvJl/RbqkF4KezQWXh5R+94iHf8tJ/6
-         +xDqmU0sknExE5WIqFJ/dfQK8jspbNRrqIRMszRIiFNm7hILjXG2ZuMrQ5K7mFwo/V
-         5R1WhWlnZe8hTVkAgWWLaVSxB1rH3eAkEuJUOCCJ2zcak4qHH++egUxnA1GGK/+viZ
-         pRtq0KV+t01G9lrJNHcNifnz6uVwdMwhB/XgelpTJ3S4KOTroT42H7kQ5mNCfqGucH
-         A0oC+AuyUKc9z5mvWdvHE7eE2SMYiDJjAljcVM79ftHYOKyhJCgf3etfLO6T3gqazx
-         1RkPdSMgalevQ==
+        b=hi9J6ZqQXsxMu27ubDm00GOxryqEwU+HPYIcay3tTtgmL1r+RksHZw4pPZmOZQ34e
+         OCD4hVauUJI3C3StEKpWaBOmF6wO42+O+UYgrbHxGQqpUd990E0+ndvNT6E3kn0Xso
+         zWuGHsZmPP6XEdEmCW+E3laZLg173ROaZozXOrB7KlNJ0QTM0/53pb7KqbS37lkDZD
+         NbEEGUkZFvedKST+fNeKvmDP9/igeAbJXn4wn132nSuaD/8N+q7vl1Qdl3OZ3rRx5Y
+         QEGBewgl6ToNla/hyxW3/T1pSOsOBM7WR+IuAg2LlczG3GDVLUEQ7Ehl3Nl59ZaOsD
+         0BnR/jELzJ5eA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220626192444.29321-2-vfedorenko@novek.ru>
-References: <20220626192444.29321-1-vfedorenko@novek.ru> <20220626192444.29321-2-vfedorenko@novek.ru>
-Subject: Re: [RFC PATCH v2 1/3] dpll: Add DPLL framework base functions
+In-Reply-To: <20220628094753.l6m65dhhj3wzqjtb@houat>
+References: <20220516132527.328190-1-maxime@cerno.tech> <20220516132527.328190-5-maxime@cerno.tech> <20220627233106.646B0C34115@smtp.kernel.org> <20220628094753.l6m65dhhj3wzqjtb@houat>
+Subject: Re: [PATCH v5 04/28] drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Vadim Fedorenko <vfedorenko@novek.ru>
-Date:   Wed, 29 Jun 2022 01:34:37 -0700
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Wed, 29 Jun 2022 01:48:42 -0700
 User-Agent: alot/0.10
-Message-Id: <20220629083439.6F5E3C34114@smtp.kernel.org>
+Message-Id: <20220629084844.E750CC34114@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vadim Fedorenko (2022-06-26 12:24:42)
-> From: Vadim Fedorenko <vadfed@fb.com>
+Quoting Maxime Ripard (2022-06-28 02:47:53)
+> Hi,
 >=20
-> DPLL framework is used to represent and configure DPLL devices
-> in systems. Each device that has DPLL and can configure sources
-> and outputs can use this framework.
+> On Mon, Jun 27, 2022 at 04:31:04PM -0700, Stephen Boyd wrote:
+> >=20
+> > Ok, so this driver must want the new API.
+> >=20
+> > What is happening here though? The driver is setting 'disable_4kp60' at
+> > bind/probe time based on a clk_round_rate() returning a frequency.
+>=20
+> The main issue that we're trying to address is that whether or not HDMI
+> modes with a rate over 340MHz (so most likely 4k/60Hz but others are
+> affected) need a bootloader parameter to be set. If it isn't set, we
+> can't output those modes.
+>=20
+> Since it's a bootloader parameter though the kernel can't access it. The
+> main hint that we can use to figure out whether it's been enabled is
+> that the maximum clock frequency reported by the firmware will be
+> higher. So this code will try to round a frequency higher than the
+> maximum allowed when that setting isn't there, and thus figure out
+> whether it's enabled or not.
 
-Please add more details to the commit text, and possibly introduce some
-Documentation/ about this driver subsystem. I'm curious what is
-different from drivers/clk/, is it super large frequencies that don't
-fit into 32-bits when represented in Hz? Or PLL focused? Or is sub-Hz
-required?
+So the kernel is at least able to ask for the max frequency during
+rounding and figure out that the frequency can't be larger than that. Is
+that right?
 
-Details please!
+>=20
+> If it's not, we prevent any of these modes from being exposed to
+> userspace or being used.
+>=20
+> > That returned value could change at runtime though based on rate
+> > constraints, or simply because the clk driver decides that the wind is
+> > blowing differently today and thus calling clk_set_rate() with that
+> > frequency will cause the clk to be wildly different than before.
+>=20
+> Yeah, that's true
+>=20
+> > I don't understand how we can decide to disable 4kp60 at probe time.
+>=20
+> We're trying to infer a bootloader/firmware parameter, so the only way
+> it can change is through a reboot.
 
-Does DPLL stand for digital phase locked loop? Again, I have no idea! I
-think you get my point.
+Got it.
+
+>=20
+> > Why doesn't the driver try to set the rate it wants (or the rate range
+> > it wants) and then if that succeeds it knows 4kp60 is achievable and
+> > if not then it rejects the attempt by userspace to set such a
+> > resolution.
+>=20
+> We can't really do that. The clock here drives the HDMI output so it can
+> only change when we change the mode. However, because of the atomic
+> commits in KMS, we can't fail when we actually change the mode, we have
+> to fail beforehand when we check that the new state is sane.
+
+Alright. I feel like we've discussed this before.
+
+>=20
+> We also can't change the clock rate then, because there's no guarantee
+> that the state being checked is actually going to be committed, and
+> because we still have the hardware running when we check it so we would
+> modify the clock while the hardware is running.
+>=20
+> I had another go in the RaspberryPi downstream kernel for this:
+> https://github.com/raspberrypi/linux/commit/df368502ecbe1de26cf02a9b7837d=
+a9e967d64ca
+>=20
+
+It really looks to me like we're trying to hide the firmware API behind
+the clk API. When the clk API doesn't provide what's needed, we add an
+API to expose internal clk details that the clk consumer should already
+know because it sets them. That's my main concern here. The driver is
+querying an OPP table through the clk framework.
+
+Why can't we either expose the firmware API directly to this driver or
+have the firmware driver probe and populate/trim an OPP table for this
+display device so that it can query the OPP table at probe time to
+determine the maximum frequency supported. The clk framework isn't in
+the business of exposing OPP tables, that's what the OPP framework is
+for.
