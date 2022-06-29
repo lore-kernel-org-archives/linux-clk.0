@@ -2,232 +2,357 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FB7C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 14:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C22C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 07:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232921AbiGDOg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jul 2022 10:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37078 "EHLO
+        id S232194AbiF2Hlx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 03:41:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232665AbiGDOg5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 10:36:57 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F15AE5A;
-        Mon,  4 Jul 2022 07:36:56 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d5so8691947plo.12;
-        Mon, 04 Jul 2022 07:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=7KxmduLl9TT6f15/J/PDQ9/IN0k99jvPKZFbcZ7+1fU=;
-        b=KLRsdZHt1knmZDc/bHaPXEiex77NSjVfbWeYUQf3UTphb7Jve1HuNQu74Xnve3/BcM
-         ZxKWJHewXRMjFXi7f0MWETUH775lz4vyxfzyOLSxQL4P3UjuEF0//zGvK744l1IH47lP
-         Wlb8CG6vOf5CCKxVTLvsu+ZKSaGKH+QJ/M/FMcCR8sCdut9SM9zDyuZvyHFJT6ZWR9kW
-         0daHmkW+gN72rUza4vQ0nrr4wmQvEjltNR49hJsOyTg/B6l2jO6RtW/P5NSO2voCI4Ia
-         ma+MyVSDy83OkshgX47I5L9yFb4sBujNqayhg7AK0n7JEfPRSZWffR3loyOdYlm6tJuu
-         xa0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=7KxmduLl9TT6f15/J/PDQ9/IN0k99jvPKZFbcZ7+1fU=;
-        b=LGtiEUGivm6EucXyWbnunqyd04szH2fVdXEAqSQe6HZgaI5tO6uOz31AzvOaV2eWit
-         PQmTiaBeDp+ArIrfFTEc8Q6CkPRYe8LfcdDceCI8ed9FxZvX8dpCo1HN+jPRjiHXlQLN
-         xczphGULxky5hMSTBgB7HSX35A7Ge37+RASxDeWa/RmE0GhoX9bBxa++/YTd8gptkV4b
-         GwAfphzEhrk9loQhwn1drLMgnuMF+2BIsgAz6U/bHaeqJNFC6gD4bU6lUdpjjdf2z22t
-         lS1G+SNoSXpR9jfledhntm+OWPq1knp8w0MkdAd+EAeoLRneBoV6OQouTum1oVRCmLjO
-         zdCg==
-X-Gm-Message-State: AJIora8XaFlcCdfnOusBWVfLOusgChuM4XhqhCJoFsnrckUlh+7smmOw
-        Ovnhsr8kzhe6XjpLZy3tp1+JLDEudm8dP1DsqbsPMAOwUc3gDg==
-X-Google-Smtp-Source: AGRyM1tIvSdxnQTi76OrcTZvhnnQa07r3JgF+bcbssPpDTAEh0s89KbU3QwmU+FsoFEptjztsRLLsDzVhZ2w1Uiepw4=
-X-Received: by 2002:a17:90a:e384:b0:1ec:9ef5:8704 with SMTP id
- b4-20020a17090ae38400b001ec9ef58704mr36049001pjz.125.1656945416162; Mon, 04
- Jul 2022 07:36:56 -0700 (PDT)
+        with ESMTP id S229820AbiF2Hlv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 03:41:51 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F1236B42;
+        Wed, 29 Jun 2022 00:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1656488510; x=1688024510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hRLWAheTUgpMqJ+CTyhb8q72eqCf5jXCD+qdlPmQdX8=;
+  b=V7EsYYr9EIij1ip70+OQMY/gzrh5wyGiKcYp8AWCHb25bOJrQa8ldVVA
+   WjfiGM9RSi7+O2v6aTzjnGFtciC06e+wwz660J8d1fRqDhDUuFa+GCisT
+   rKUaoFvcqeLu972MEnNCCaodyFq5KFw65hrEObpxXK1USTMOqGTNjghk1
+   M6eAb7r6RhwTd49jKSf+itMDaZ5Gu/jHoVMqNBN++BYhLvCzxTurIoN9M
+   /3H0k+pz3CbrRrMwvdgEhSQ7BUW5H6fpDqV6CtG6BHjQGM7QYyLOK833q
+   sD1PkwJUKQH1n3D/+a5t4ubmQSAULxHZs8gKZv4cjGcBr80q05Z6ghIMA
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="307444900"
+X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
+   d="scan'208";a="307444900"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 00:41:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
+   d="scan'208";a="733074160"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by fmsmga001.fm.intel.com with SMTP; 29 Jun 2022 00:40:24 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 29 Jun 2022 10:40:23 +0300
+Date:   Wed, 29 Jun 2022 10:40:23 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Scott Wood <oss@buserror.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Robin van der Gracht <robin@protonic.nl>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Corey Minyard <minyard@acm.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Phong LE <ple@baylibre.com>,
+        Adrien Grassein <adrien.grassein@gmail.com>,
+        Peter Senna Tschudin <peter.senna@gmail.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Florian Fainelli <f.fainelli@gmail.com>, Broad@vger.kernel.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <YrwB5xPKZmHlXzrC@kuha.fi.intel.com>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+ <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-From:   Alex Natalsson <harmoniesworlds@gmail.com>
-Date:   Mon, 4 Jul 2022 17:36:44 +0300
-Message-ID: <CADs9LoN7mvP0MV1NheXsBVoXYDNc5S-qNK6CLNUiOqRasuNVJQ@mail.gmail.com>
-Subject: System is very slow after resume on Amlogic A311D
-To:     linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000f1940e05e2fbaa50"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---000000000000f1940e05e2fbaa50
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-König wrote:
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index cd47c3597e19..2a58185fb14c 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -245,14 +245,12 @@ static int hd3ss3220_probe(struct i2c_client *client,
+>  	return ret;
+>  }
+>  
+> -static int hd3ss3220_remove(struct i2c_client *client)
+> +static void hd3ss3220_remove(struct i2c_client *client)
+>  {
+>  	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
+>  
+>  	typec_unregister_port(hd3ss3220->port);
+>  	usb_role_switch_put(hd3ss3220->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id dev_ids[] = {
+> diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
+> index 6184f5367190..d6495e533e58 100644
+> --- a/drivers/usb/typec/mux/fsa4480.c
+> +++ b/drivers/usb/typec/mux/fsa4480.c
+> @@ -181,14 +181,12 @@ static int fsa4480_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> -static int fsa4480_remove(struct i2c_client *client)
+> +static void fsa4480_remove(struct i2c_client *client)
+>  {
+>  	struct fsa4480 *fsa = i2c_get_clientdata(client);
+>  
+>  	typec_mux_unregister(fsa->mux);
+>  	typec_switch_unregister(fsa->sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id fsa4480_table[] = {
+> diff --git a/drivers/usb/typec/mux/pi3usb30532.c b/drivers/usb/typec/mux/pi3usb30532.c
+> index 6ce9f282594e..1cd388b55c30 100644
+> --- a/drivers/usb/typec/mux/pi3usb30532.c
+> +++ b/drivers/usb/typec/mux/pi3usb30532.c
+> @@ -160,13 +160,12 @@ static int pi3usb30532_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> -static int pi3usb30532_remove(struct i2c_client *client)
+> +static void pi3usb30532_remove(struct i2c_client *client)
+>  {
+>  	struct pi3usb30532 *pi = i2c_get_clientdata(client);
+>  
+>  	typec_mux_unregister(pi->mux);
+>  	typec_switch_unregister(pi->sw);
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id pi3usb30532_table[] = {
+> diff --git a/drivers/usb/typec/rt1719.c b/drivers/usb/typec/rt1719.c
+> index f1b698edd7eb..ea8b700b0ceb 100644
+> --- a/drivers/usb/typec/rt1719.c
+> +++ b/drivers/usb/typec/rt1719.c
+> @@ -930,14 +930,12 @@ static int rt1719_probe(struct i2c_client *i2c)
+>  	return ret;
+>  }
+>  
+> -static int rt1719_remove(struct i2c_client *i2c)
+> +static void rt1719_remove(struct i2c_client *i2c)
+>  {
+>  	struct rt1719_data *data = i2c_get_clientdata(i2c);
+>  
+>  	typec_unregister_port(data->port);
+>  	usb_role_switch_put(data->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id __maybe_unused rt1719_device_table[] = {
+> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
+> index e7745d1c2a5c..8638f1d39896 100644
+> --- a/drivers/usb/typec/stusb160x.c
+> +++ b/drivers/usb/typec/stusb160x.c
+> @@ -801,7 +801,7 @@ static int stusb160x_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int stusb160x_remove(struct i2c_client *client)
+> +static void stusb160x_remove(struct i2c_client *client)
+>  {
+>  	struct stusb160x *chip = i2c_get_clientdata(client);
+>  
+> @@ -823,8 +823,6 @@ static int stusb160x_remove(struct i2c_client *client)
+>  
+>  	if (chip->main_supply)
+>  		regulator_disable(chip->main_supply);
+> -
+> -	return 0;
+>  }
+>  
+>  static int __maybe_unused stusb160x_suspend(struct device *dev)
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index 96c55eaf3f80..5e9348f28d50 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1771,7 +1771,7 @@ static int fusb302_probe(struct i2c_client *client,
+>  	return ret;
+>  }
+>  
+> -static int fusb302_remove(struct i2c_client *client)
+> +static void fusb302_remove(struct i2c_client *client)
+>  {
+>  	struct fusb302_chip *chip = i2c_get_clientdata(client);
+>  
+> @@ -1783,8 +1783,6 @@ static int fusb302_remove(struct i2c_client *client)
+>  	fwnode_handle_put(chip->tcpc_dev.fwnode);
+>  	destroy_workqueue(chip->wq);
+>  	fusb302_debugfs_exit(chip);
+> -
+> -	return 0;
+>  }
+>  
+>  static int fusb302_pm_suspend(struct device *dev)
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index f33e08eb7670..c48fca60bb06 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -869,7 +869,7 @@ static int tcpci_probe(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -static int tcpci_remove(struct i2c_client *client)
+> +static void tcpci_remove(struct i2c_client *client)
+>  {
+>  	struct tcpci_chip *chip = i2c_get_clientdata(client);
+>  	int err;
+> @@ -880,8 +880,6 @@ static int tcpci_remove(struct i2c_client *client)
+>  		dev_warn(&client->dev, "Failed to disable irqs (%pe)\n", ERR_PTR(err));
+>  
+>  	tcpci_unregister_port(chip->tcpci);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id tcpci_id[] = {
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.c b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> index df2505570f07..a11be5754128 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.c
+> @@ -493,14 +493,12 @@ static int max_tcpci_probe(struct i2c_client *client, const struct i2c_device_id
+>  	return ret;
+>  }
+>  
+> -static int max_tcpci_remove(struct i2c_client *client)
+> +static void max_tcpci_remove(struct i2c_client *client)
+>  {
+>  	struct max_tcpci_chip *chip = i2c_get_clientdata(client);
+>  
+>  	if (!IS_ERR_OR_NULL(chip->tcpci))
+>  		tcpci_unregister_port(chip->tcpci);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id max_tcpci_id[] = {
+> diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> index b56a0880a044..9ad4924b4ba7 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
+> @@ -263,12 +263,11 @@ static int rt1711h_probe(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> -static int rt1711h_remove(struct i2c_client *client)
+> +static void rt1711h_remove(struct i2c_client *client)
+>  {
+>  	struct rt1711h_chip *chip = i2c_get_clientdata(client);
+>  
+>  	tcpci_unregister_port(chip->tcpci);
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id rt1711h_id[] = {
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index dfbba5ae9487..b637e8b378b3 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -857,15 +857,13 @@ static int tps6598x_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int tps6598x_remove(struct i2c_client *client)
+> +static void tps6598x_remove(struct i2c_client *client)
+>  {
+>  	struct tps6598x *tps = i2c_get_clientdata(client);
+>  
+>  	tps6598x_disconnect(tps, 0);
+>  	typec_unregister_port(tps->port);
+>  	usb_role_switch_put(tps->role_sw);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct of_device_id tps6598x_of_match[] = {
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index 6db7c8ddd51c..920b7e743f56 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -1398,7 +1398,7 @@ static int ucsi_ccg_probe(struct i2c_client *client,
+>  	return status;
+>  }
+>  
+> -static int ucsi_ccg_remove(struct i2c_client *client)
+> +static void ucsi_ccg_remove(struct i2c_client *client)
+>  {
+>  	struct ucsi_ccg *uc = i2c_get_clientdata(client);
+>  
+> @@ -1408,8 +1408,6 @@ static int ucsi_ccg_remove(struct i2c_client *client)
+>  	ucsi_unregister(uc->ucsi);
+>  	ucsi_destroy(uc->ucsi);
+>  	free_irq(uc->irq, uc);
+> -
+> -	return 0;
+>  }
+>  
+>  static const struct i2c_device_id ucsi_ccg_device_id[] = {
+> diff --git a/drivers/usb/typec/wusb3801.c b/drivers/usb/typec/wusb3801.c
+> index e63509f8b01e..3cc7a15ecbd3 100644
+> --- a/drivers/usb/typec/wusb3801.c
+> +++ b/drivers/usb/typec/wusb3801.c
+> @@ -399,7 +399,7 @@ static int wusb3801_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>  
+> -static int wusb3801_remove(struct i2c_client *client)
+> +static void wusb3801_remove(struct i2c_client *client)
+>  {
+>  	struct wusb3801 *wusb3801 = i2c_get_clientdata(client);
+>  
+> @@ -411,8 +411,6 @@ static int wusb3801_remove(struct i2c_client *client)
+>  
+>  	if (wusb3801->vbus_on)
+>  		regulator_disable(wusb3801->vbus_supply);
+> -
+> -	return 0;
+>  }
 
-Hello friends!
-I using the Khadas VIM3 SBC with Amlogic A311D device.
-When I resuming after "echo mem > /sys/power/state" my system is very
-and very slow, more than 5 times slowing.
-CPU frequensies throght sysfs are similars for before suspend and after resume
-VIM3 ~ # cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq
-1800000
-VIM3 ~ # cat /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
-2208000
-VIM3 ~ # echo mem > /sys/power/state
-VIM3 ~ # cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq
-1800000
-VIM3 ~ # cat /sys/devices/system/cpu/cpufreq/policy2/cpuinfo_cur_freq
-2208000
-VIM3 ~ #
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-However in uart console log I recieve such message:
-
-bl30 get wakeup sources!
-process command 00000006
-bl30 enter suspend!
-Little core clk suspend rate 1800000000
-Big core clk suspend rate 24000000
-store restore gp0 pll
-suspend_counter: 1
-Enter ddr suspend
-DMC_DRAM_STAT11: 0x544
-ddr suspend time: 2177us
-alarm=0S
-process command 00000001
-cec ver:2018/04/29
-CEC cfg:0x0000
-use vddee new table!
-use vddee new table!
-exit_reason:0x06
-Enter ddr resume
-DMC_DRAM_STAT3: 0x544
-ddr resume time: 3187us
-store restore gp0 pll
-cfg15 3b00000
-cfg15 63b00000
-Little core clk resume rate 1800000000
-Big core clk resume rate 50000000
-login: timed out after 60 seconds
-Arch Linux 5.19.0-rc2-ARCH+ (ttyAML0)
-VIM3 login:
-
-I'm not sure, but I think what the  "Big core clk resume rate too
-small  for Amlogic A311D and therefore my system is very slow.
-Is there any way to fix this?
-
---000000000000f1940e05e2fbaa50
-Content-Type: application/octet-stream; name=sysbench_before_suspend
-Content-Disposition: attachment; filename=sysbench_before_suspend
-Content-Transfer-Encoding: base64
-Content-ID: <f_l56ui5qo1>
-X-Attachment-Id: f_l56ui5qo1
-
-bGVoYUBWSU0zIH4vQXJjaGxpbnV4VklNL2xpbnV4LWdpdC1zdXNwZW5kICQgc3lzYmVuY2ggY3B1
-IC0tdGhyZWFkcz0xMCBydW4Kc3lzYmVuY2ggMS4wLjIwICh1c2luZyBzeXN0ZW0gTHVhSklUIDIu
-MS4wLWJldGEzKQoKUnVubmluZyB0aGUgdGVzdCB3aXRoIGZvbGxvd2luZyBvcHRpb25zOgpOdW1i
-ZXIgb2YgdGhyZWFkczogMTAKSW5pdGlhbGl6aW5nIHJhbmRvbSBudW1iZXIgZ2VuZXJhdG9yIGZy
-b20gY3VycmVudCB0aW1lCgoKUHJpbWUgbnVtYmVycyBsaW1pdDogMTAwMDAKCkluaXRpYWxpemlu
-ZyB3b3JrZXIgdGhyZWFkcy4uLgoKVGhyZWFkcyBzdGFydGVkIQoKQ1BVIHNwZWVkOgogICAgZXZl
-bnRzIHBlciBzZWNvbmQ6IDEwMTY2LjYxCgpHZW5lcmFsIHN0YXRpc3RpY3M6CiAgICB0b3RhbCB0
-aW1lOiAgICAgICAgICAgICAgICAgICAgICAgICAgMTAuMDAwOHMKICAgIHRvdGFsIG51bWJlciBv
-ZiBldmVudHM6ICAgICAgICAgICAgICAxMDE3MTQKCkxhdGVuY3kgKG1zKToKICAgICAgICAgbWlu
-OiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuNDcKICAgICAgICAgYXZnOiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAuOTgKICAgICAgICAgbWF4OiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMzQuMzYKICAgICAgICAgOTV0aCBwZXJjZW50
-aWxlOiAgICAgICAgICAgICAgICAgICAgICAgIDEuMTIKICAgICAgICAgc3VtOiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgOTk4MTIuODIKClRocmVhZHMgZmFpcm5lc3M6CiAgICBldmVu
-dHMgKGF2Zy9zdGRkZXYpOiAgICAgICAgICAgMTAxNzEuNDAwMC82NTYuNDUKICAgIGV4ZWN1dGlv
-biB0aW1lIChhdmcvc3RkZGV2KTogICA5Ljk4MTMvMC4wMQoK
---000000000000f1940e05e2fbaa50
-Content-Type: text/x-log; charset="US-ASCII"; name="dmesg.log"
-Content-Disposition: attachment; filename="dmesg.log"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l56ui5ld0>
-X-Attachment-Id: f_l56ui5ld0
-
-WzE3NTA3Ny44NTQxNjFdIFBNOiBzdXNwZW5kIGVudHJ5IChkZWVwKQpbMTc1MDc4LjMwNzcxOV0g
-RmlsZXN5c3RlbXMgc3luYzogMC40NTMgc2Vjb25kcwpbMTc1MDc4LjMzOTY2M10gRnJlZXppbmcg
-dXNlciBzcGFjZSBwcm9jZXNzZXMgLi4uIChlbGFwc2VkIDAuMDU2IHNlY29uZHMpIGRvbmUuClsx
-NzUwNzguMzk2MTM0XSBPT00ga2lsbGVyIGRpc2FibGVkLgpbMTc1MDc4LjM5NjEzNl0gRnJlZXpp
-bmcgcmVtYWluaW5nIGZyZWV6YWJsZSB0YXNrcyAuLi4gKGVsYXBzZWQgMC4wMDEgc2Vjb25kcykg
-ZG9uZS4KWzE3NTA3OC4zOTczNjFdIHByaW50azogU3VzcGVuZGluZyBjb25zb2xlKHMpICh1c2Ug
-bm9fY29uc29sZV9zdXNwZW5kIHRvIGRlYnVnKQpbMTc1MDc4LjUwMzkyNl0gd2xhbjA6IGRlYXV0
-aGVudGljYXRpbmcgZnJvbSAwYzozNzpkYzpkMTpmMjpiOCBieSBsb2NhbCBjaG9pY2UgKFJlYXNv
-bjogMz1ERUFVVEhfTEVBVklORykKWzE3NTA3OC41MjY1ODRdIHNkIDA6MDowOjA6IFtzZGFdIFN5
-bmNocm9uaXppbmcgU0NTSSBjYWNoZQpbMTc1MDc4LjU5MDAzOF0gUE06IHN1c3BlbmQgZGV2aWNl
-cyB0b29rIDAuMDg2IHNlY29uZHMKWzE3NTA3OC41OTA4NDBdIERpc2FibGluZyBub24tYm9vdCBD
-UFVzIC4uLgpbMTc1MDc4LjU5MjQ4M10gcHNjaTogQ1BVMSBraWxsZWQgKHBvbGxlZCAxIG1zKQpb
-MTc1MDc4LjU5MzU2Nl0gcHNjaTogQ1BVMiBraWxsZWQgKHBvbGxlZCAxIG1zKQpbMTc1MDc4LjU5
-NTIwMF0gcHNjaTogQ1BVMyBraWxsZWQgKHBvbGxlZCAxIG1zKQpbMTc1MDc4LjU5NzA1NF0gcHNj
-aTogQ1BVNCBraWxsZWQgKHBvbGxlZCAxIG1zKQpbMTc1MDc4LjU5ODYzOV0gcHNjaTogQ1BVNSBr
-aWxsZWQgKHBvbGxlZCAxIG1zKQpbMTc1MDc4LjU5OTYwMl0gRW5hYmxpbmcgbm9uLWJvb3QgQ1BV
-cyAuLi4KWzE3NTA3OC42MDAwMDFdIERldGVjdGVkIFZJUFQgSS1jYWNoZSBvbiBDUFUxClsxNzUw
-NzguNjAwMDU1XSBDUFUxOiBCb290ZWQgc2Vjb25kYXJ5IHByb2Nlc3NvciAweDAwMDAwMDAwMDEg
-WzB4NDEwZmQwMzRdClsxNzUwNzguNjAwNDY3XSBDUFUxIGlzIHVwClsxNzUwNzguNjAxMzE5XSBE
-ZXRlY3RlZCBWSVBUIEktY2FjaGUgb24gQ1BVMgpbMTc1MDc4LjYwMTM3MF0gYXJjaF90aW1lcjog
-Q1BVMjogVHJhcHBpbmcgQ05UVkNUIGFjY2VzcwpbMTc1MDc4LjYwMTM4NF0gQ1BVMjogQm9vdGVk
-IHNlY29uZGFyeSBwcm9jZXNzb3IgMHgwMDAwMDAwMTAwIFsweDQxMGZkMDkyXQpbMTc1MDc4LjYw
-MTkzMl0gQ1BVMiBpcyB1cApbMTc1MDc4LjYwMjU4M10gRGV0ZWN0ZWQgVklQVCBJLWNhY2hlIG9u
-IENQVTMKWzE3NTA3OC42MDI1OTZdIGFyY2hfdGltZXI6IENQVTM6IFRyYXBwaW5nIENOVFZDVCBh
-Y2Nlc3MKWzE3NTA3OC42MDI2MDBdIENQVTM6IEJvb3RlZCBzZWNvbmRhcnkgcHJvY2Vzc29yIDB4
-MDAwMDAwMDEwMSBbMHg0MTBmZDA5Ml0KWzE3NTA3OC42MDI3NzddIENQVTMgaXMgdXAKWzE3NTA3
-OC42MDMwMzFdIERldGVjdGVkIFZJUFQgSS1jYWNoZSBvbiBDUFU0ClsxNzUwNzguNjAzMDQ1XSBh
-cmNoX3RpbWVyOiBDUFU0OiBUcmFwcGluZyBDTlRWQ1QgYWNjZXNzClsxNzUwNzguNjAzMDQ5XSBD
-UFU0OiBCb290ZWQgc2Vjb25kYXJ5IHByb2Nlc3NvciAweDAwMDAwMDAxMDIgWzB4NDEwZmQwOTJd
-ClsxNzUwNzguNjAzMjQwXSBDUFU0IGlzIHVwClsxNzUwNzguNjAzNDkxXSBEZXRlY3RlZCBWSVBU
-IEktY2FjaGUgb24gQ1BVNQpbMTc1MDc4LjYwMzUwNV0gYXJjaF90aW1lcjogQ1BVNTogVHJhcHBp
-bmcgQ05UVkNUIGFjY2VzcwpbMTc1MDc4LjYwMzUwOV0gQ1BVNTogQm9vdGVkIHNlY29uZGFyeSBw
-cm9jZXNzb3IgMHgwMDAwMDAwMTAzIFsweDQxMGZkMDkyXQpbMTc1MDc4LjYwMzcwM10gQ1BVNSBp
-cyB1cApbMTc1MDc4LjYwNTc5OF0gbWVzb244Yi1kd21hYyBmZjNmMDAwMC5ldGhlcm5ldCBldGgw
-OiBjb25maWd1cmluZyBmb3IgcGh5L3JnbWlpIGxpbmsgbW9kZQpbMTc1MDc4LjYzODQ4N10gbWVz
-b244Yi1kd21hYyBmZjNmMDAwMC5ldGhlcm5ldCBldGgwOiBObyBTYWZldHkgRmVhdHVyZXMgc3Vw
-cG9ydCBmb3VuZApbMTc1MDc4LjYzODU2M10gbWVzb244Yi1kd21hYyBmZjNmMDAwMC5ldGhlcm5l
-dCBldGgwOiBQVFAgbm90IHN1cHBvcnRlZCBieSBIVwpbMTc1MDc4LjY4MTA0N10geGhjaS1oY2Qg
-eGhjaS1oY2QuMi5hdXRvOiB4SEMgZXJyb3IgaW4gcmVzdW1lLCBVU0JTVFMgMHg0MTEsIFJlaW5p
-dApbMTc1MDc4LjY4MTIxNV0gdXNiIHVzYjE6IHJvb3QgaHViIGxvc3QgcG93ZXIgb3Igd2FzIHJl
-c2V0ClsxNzUwNzguNjgxMjkyXSB1c2IgdXNiMjogcm9vdCBodWIgbG9zdCBwb3dlciBvciB3YXMg
-cmVzZXQKWzE3NTA3OC45NzcwMzZdIHVzYiAxLTE6IHJlc2V0IGhpZ2gtc3BlZWQgVVNCIGRldmlj
-ZSBudW1iZXIgMiB1c2luZyB4aGNpLWhjZApbMTc1MDc5LjIzOTg5NF0gdXNiIDItMTogcmVzZXQg
-U3VwZXJTcGVlZCBVU0IgZGV2aWNlIG51bWJlciAyIHVzaW5nIHhoY2ktaGNkClsxNzUwNzkuNDQy
-OTc4XSB1c2IgMS0xLjI6IHJlc2V0IGhpZ2gtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMyB1c2lu
-ZyB4aGNpLWhjZApbMTc1MDgwLjAzODAzM10gdXNiIDEtMS4yLjI6IHJlc2V0IGxvdy1zcGVlZCBV
-U0IgZGV2aWNlIG51bWJlciA0IHVzaW5nIHhoY2ktaGNkClsxNzUwODAuMzc4MzQyXSB1c2IgMS0x
-LjIuMzogcmVzZXQgaGlnaC1zcGVlZCBVU0IgZGV2aWNlIG51bWJlciA1IHVzaW5nIHhoY2ktaGNk
-ClsxNzUwODAuNDY4Nzk0XSBtdDc2MDF1IDEtMS4yLjM6MS4wOiBGaXJtd2FyZSBWZXJzaW9uOiAw
-LjEuMDAgQnVpbGQ6IDc2NDAgQnVpbGQgdGltZTogMjAxMzAyMDUyMTQ2X19fXwpbMTc1MDgwLjUy
-MTQ1Nl0gdXNiIDEtMS4yLjQ6IHJlc2V0IGZ1bGwtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMTUg
-dXNpbmcgeGhjaS1oY2QKWzE3NTA4MC44MjE0OThdIG10NzYwMXUgMS0xLjIuMzoxLjA6IEVycm9y
-OiBNQ1UgcmVzcG9uc2UgcHJlLWNvbXBsZXRlZCEKWzE3NTA4MC44ODM5ODddIG10NzYwMXUgMS0x
-LjIuMzoxLjA6IEVFUFJPTSB2ZXI6MGMgZmFlOjAwClsxNzUwODEuMjM3OTA2XSBQTTogcmVzdW1l
-IGRldmljZXMgdG9vayAyLjYzMiBzZWNvbmRzClsxNzUwODEuMzQzMTIxXSBPT00ga2lsbGVyIGVu
-YWJsZWQuClsxNzUwODEuMzQzMTQzXSBSZXN0YXJ0aW5nIHRhc2tzIC4uLiBkb25lLgpbMTc1MDgx
-LjM2MjM5M10gcmFuZG9tOiBjcm5nIHJlc2VlZGVkIG9uIHN5c3RlbSByZXN1bXB0aW9uClsxNzUw
-ODEuMzg1Mzc1XSBQTTogc3VzcGVuZCBleGl0ClsxNzUwODYuMTYxNzI2XSB3bGFuMDogYXV0aGVu
-dGljYXRlIHdpdGggMGM6Mzc6ZGM6ZDE6ZjI6YjgKWzE3NTA4Ni4xNjI0NjldIHdsYW4wOiBiYWQg
-VkhUIGNhcGFiaWxpdGllcywgZGlzYWJsaW5nIFZIVApbMTc1MDg2LjE4Nzc1MF0gd2xhbjA6IHNl
-bmQgYXV0aCB0byAwYzozNzpkYzpkMTpmMjpiOCAodHJ5IDEvMykKWzE3NTA4Ni4yMDA0OTldIHds
-YW4wOiBhdXRoZW50aWNhdGVkClsxNzUwODYuMjA1Njc1XSB3bGFuMDogYXNzb2NpYXRlIHdpdGgg
-MGM6Mzc6ZGM6ZDE6ZjI6YjggKHRyeSAxLzMpClsxNzUwODYuMjExNzgzXSB3bGFuMDogUlggQXNz
-b2NSZXNwIGZyb20gMGM6Mzc6ZGM6ZDE6ZjI6YjggKGNhcGFiPTB4NDExIHN0YXR1cz0wIGFpZD0x
-KQpbMTc1MDg2LjI3Mzc4MV0gd2xhbjA6IGFzc29jaWF0ZWQKWzE3NTE3OC40OTI2NjVdIGlucHV0
-OiBCVDUuMiBNb3VzZSBhcyAvZGV2aWNlcy92aXJ0dWFsL21pc2MvdWhpZC8wMDA1OjEyMzU6QUEy
-Mi4wMDFCL2lucHV0L2lucHV0MzAKWzE3NTE3OC41MzcyMzldIGhpZC1nZW5lcmljIDAwMDU6MTIz
-NTpBQTIyLjAwMUI6IGlucHV0LGhpZHJhdzM6IEJMVUVUT09USCBISUQgdjAuMDEgTW91c2UgW0JU
-NS4yIE1vdXNlXSBvbiBkNDo5YzpkZDpkOTpjNTo4NQo=
---000000000000f1940e05e2fbaa50
-Content-Type: application/octet-stream; name=sysbench_after_resume
-Content-Disposition: attachment; filename=sysbench_after_resume
-Content-Transfer-Encoding: base64
-Content-ID: <f_l56ui5r72>
-X-Attachment-Id: f_l56ui5r72
-
-bGVoYUBWSU0zIH4vQXJjaGxpbnV4VklNL2xpbnV4LWdpdC1zdXNwZW5kICQgc3lzYmVuY2ggY3B1
-IC0tdGhyZWFkcz0xMCBydW4gCnN5c2JlbmNoIDEuMC4yMCAodXNpbmcgc3lzdGVtIEx1YUpJVCAy
-LjEuMC1iZXRhMykKClJ1bm5pbmcgdGhlIHRlc3Qgd2l0aCBmb2xsb3dpbmcgb3B0aW9uczoKTnVt
-YmVyIG9mIHRocmVhZHM6IDEwCkluaXRpYWxpemluZyByYW5kb20gbnVtYmVyIGdlbmVyYXRvciBm
-cm9tIGN1cnJlbnQgdGltZQoKClByaW1lIG51bWJlcnMgbGltaXQ6IDEwMDAwCgpJbml0aWFsaXpp
-bmcgd29ya2VyIHRocmVhZHMuLi4KClRocmVhZHMgc3RhcnRlZCEKCkNQVSBzcGVlZDoKICAgIGV2
-ZW50cyBwZXIgc2Vjb25kOiAgMTg4OS42OAoKR2VuZXJhbCBzdGF0aXN0aWNzOgogICAgdG90YWwg
-dGltZTogICAgICAgICAgICAgICAgICAgICAgICAgIDEwLjAyNzZzCiAgICB0b3RhbCBudW1iZXIg
-b2YgZXZlbnRzOiAgICAgICAgICAgICAgMTkwMzYKCkxhdGVuY3kgKG1zKToKICAgICAgICAgbWlu
-OiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDEuMTEKICAgICAgICAgYXZnOiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDUuMjQKICAgICAgICAgbWF4OiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAxMzYuMTUKICAgICAgICAgOTV0aCBwZXJjZW50
-aWxlOiAgICAgICAgICAgICAgICAgICAgICAgNDIuNjEKICAgICAgICAgc3VtOiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgOTk3NjQuNjIKClRocmVhZHMgZmFpcm5lc3M6CiAgICBldmVu
-dHMgKGF2Zy9zdGRkZXYpOiAgICAgICAgICAgMTkwMy42MDAwLzI0NjguMjUKICAgIGV4ZWN1dGlv
-biB0aW1lIChhdmcvc3RkZGV2KTogICA5Ljk3NjUvMC4wMQoKbGVoYUBWSU0zIH4vQXJjaGxpbnV4
-VklNL2xpbnV4LWdpdC1zdXNwZW5kICQgCgo=
---000000000000f1940e05e2fbaa50--
+-- 
+heikki
