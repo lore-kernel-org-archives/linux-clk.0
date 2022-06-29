@@ -2,118 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0F0C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 11:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF29C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 11:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbiF2LMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 07:12:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
+        id S232642AbiF2Lqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 07:46:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbiF2LMq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 07:12:46 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC293B56D
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:12:41 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id sb34so31785028ejc.11
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:12:40 -0700 (PDT)
+        with ESMTP id S232572AbiF2Lqr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 07:46:47 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0830A3F88D
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:46:47 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id q6so31950613eji.13
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 04:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ZklBbrhWeRu7F0FN0Aat62/hrdRJUTCtSkFm/hGOW5k=;
-        b=Cn585zu3809Rjl4M/+WAgSXANgY9EbR6kBiumg85SPIlAFcp2ij9ntr7mWL+wma/Oh
-         xXudPLJponuwkVBdm8CrU7H9IzMb8oRoeS+Frzi1yT1RvMofP0FgwTCn2JvUdez3GKCA
-         2O++VwJNa3uaaMZZdor2aoP0ayFFqYKbaUab2mqH2+kRRweYywTidyl3+g9bRtiIzMDe
-         a6Iu0JEPBZnPEARMY6JaS+uzcTT5jxphvnqyaJHkPrQ6VY07IoMVtcAsgs1yHz2/Kexv
-         d7m2dut6jAWbcPaqcx/aQppAFTGVSa8ue73kHVkRud5H9d3/DNt+RX9ViNIwLUwYZ/Yi
-         npHA==
+        bh=y26EqFL9g5dJmCSYo/uiI7QjtNL6pCpbp9EtOx0DV2k=;
+        b=Xs0iqTshoHumfeIOWL/pDmURrLeeZH6zhilSdxZPMQdL1VsBFaBZ2wS2NtClKado9J
+         IJajaGH+wiNLsgGnkXvQwQ0Q1DQ46NgL+wJj3hRda9LnjJ8WFE9/UKVAL6Z+F/RkLwKT
+         95cJIPkbww0uqMXiEs67n2yHsbvHTG0Gw6KqqZ3mLdCPjoBT4sijYCR7gLfQxGBkc2Co
+         oYpTxnKiBv/RueGhSE4FGYytFwr8hUKxGIxmvBnReaURlfYKdO8ZxR8l/rA7P4KbIP4j
+         UPB/E1T1cZP2VCttYrc1aDfknofasecBmLnRkD9k8RmFHHt5qjMz/g/a4mps+oMmzoTF
+         sAVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=ZklBbrhWeRu7F0FN0Aat62/hrdRJUTCtSkFm/hGOW5k=;
-        b=X6V+dTrqJC1jHryzKfi4NQ39NPmH6nvrlQbibHJ4RveVc7klGWT7gBCfRKYiAXFYnG
-         VpemHTBkaCacAEQtxZh+EfClChAdbY6j4CLAKXOmJVpsfaJlZwbzkvFMT88IG+S4zj1N
-         wSkVHxTKia4HiVWp9hZrk66GHXf5KwR9avEbzZNl6xp010LX1S3F3JfDXIvSR0krEd74
-         PT4lRwUoLfLul9V0+jhQK4sFwglF4DmkhdyOzuaAiQKcH2z/btiAxzOx8jIFmi57Aljz
-         jN41nSlgluKnOSRl5r3G5++8TojEzj7tw1r8yMDnKgGqVfRdVU7FaI8LYy33fNWECSJE
-         G9lw==
-X-Gm-Message-State: AJIora83AETPIUk1Euo+ZWRcVNAhJNL3cChffCZ3W0oXOr7wm3IhbMzW
-        YMCQUZcFJ/xxb1Mwp8OE+50SSw==
-X-Google-Smtp-Source: AGRyM1scRNZiTlfpuZxRNQgJz5mgfY4et1r59dsU2jOJq3RWl2MpKqBbzxXhl1VxC9ZRgy+vujVKEw==
-X-Received: by 2002:a17:906:6448:b0:723:2e05:af41 with SMTP id l8-20020a170906644800b007232e05af41mr2735760ejn.423.1656501159622;
-        Wed, 29 Jun 2022 04:12:39 -0700 (PDT)
+        bh=y26EqFL9g5dJmCSYo/uiI7QjtNL6pCpbp9EtOx0DV2k=;
+        b=LFZYpyfpGcs+t8t/ivOgKw5hMBWKNTqyVxbJxpxAu9jB+MJeaddTOVMCEOvULKH4SV
+         CxLeUFrGE30n+sXci/knUpPtbfUZldAhhiZ0KcuLwNnWv0iIQ1eJCGpoGvVrczpwOfQ1
+         NFJZYJKg6oUHSBZ/66s1I5apzc9l5/v86Ts+mjyuTmGnboe7G/Tmyu8xEhBMH7oGAlMT
+         dBurN9pi5B3CGgoAhjWWGLgAsL+rufH1GX3vaWdhRpBrPwiyqgP7yONKsH6zKHie/4/l
+         ExCZBWs0TcqVZjrpSM0WphmirWvA+mGXspDHf99vQEvXRC0BwQCmU/qIq4LomDgXlqoS
+         TM/w==
+X-Gm-Message-State: AJIora/htOR5jnrKh18Ym9MxymyWsI8+0N5WkoUVOzEUTVx87PX9pRcT
+        r0vKs2z3pu6yQeFJpA2Jxt6e2g==
+X-Google-Smtp-Source: AGRyM1uh2G3mI6ImWNz8iu33UFfTR01pMKRnSNrsb6NJV3DDngQMz4Q29Cs61ZqPiJ7yXvPUhJQicQ==
+X-Received: by 2002:a17:906:6545:b0:722:7c99:1ad7 with SMTP id u5-20020a170906654500b007227c991ad7mr2906545ejn.325.1656503205568;
+        Wed, 29 Jun 2022 04:46:45 -0700 (PDT)
 Received: from [192.168.0.184] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id s1-20020aa7c541000000b004357171dcccsm11162081edr.12.2022.06.29.04.12.38
+        by smtp.gmail.com with ESMTPSA id cq12-20020a056402220c00b004356b8ad003sm11028134edb.60.2022.06.29.04.46.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 04:12:38 -0700 (PDT)
-Message-ID: <3ad4876b-1efa-c4c4-2139-3823cf80ff68@linaro.org>
-Date:   Wed, 29 Jun 2022 13:12:37 +0200
+        Wed, 29 Jun 2022 04:46:45 -0700 (PDT)
+Message-ID: <bd98faab-a94b-17ad-fbaf-aafe5b882bdd@linaro.org>
+Date:   Wed, 29 Jun 2022 13:46:43 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v3 2/4] dt-bindings: arm: msm: Convert kpss-acc driver
- Documentation to yaml
+Subject: Re: [PATCH 1/2] dt-bindings: reset: mt8195: Add resets for PCIE
+ controllers
 Content-Language: en-US
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-References: <20220628184137.21678-1-ansuelsmth@gmail.com>
- <20220628184137.21678-3-ansuelsmth@gmail.com>
- <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
- <62bc2c1d.1c69fb81.09d2.e244@mx.google.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        wenst@chromium.org, chun-jie.chen@mediatek.com,
+        miles.chen@mediatek.com, rex-bc.chen@mediatek.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220629105205.173471-1-angelogioacchino.delregno@collabora.com>
+ <20220629105205.173471-2-angelogioacchino.delregno@collabora.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <62bc2c1d.1c69fb81.09d2.e244@mx.google.com>
+In-Reply-To: <20220629105205.173471-2-angelogioacchino.delregno@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/06/2022 12:40, Christian Marangi wrote:
-> On Wed, Jun 29, 2022 at 08:14:12AM +0200, Krzysztof Kozlowski wrote:
->> On 28/06/2022 20:41, Christian Marangi wrote:
->>> Convert kpss-acc driver Documentation to yaml.
->>> The original Documentation was wrong all along. Fix it while we are
->>> converting it.
->>> The example was wrong as kpss-acc-v2 should only expose the regs but we
->>> don't have any driver that expose additional clocks. The kpss-acc driver
->>> is only specific to v1. For this exact reason, limit all the additional
->>> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
->>> v1 and also flag that these bindings should NOT be used for v2.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
->>
->> This is still not fixed and not tested. Since 4 versions of this
->> patchset (previously was part of other set).
->>
->> I retract my review. Please test the bindings.
->>
->> Best regards,
->> Krzysztof
+On 29/06/2022 12:52, AngeloGioacchino Del Regno wrote:
+> Add the reset index for PCIe P0 and P1 (PCIe0, PCIe1) on MT8195.
 > 
-> Thing is that I tested them and on my side I don't have such errors.
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  include/dt-bindings/reset/mt8195-resets.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Then maybe update your dtschema because I can easily see them.
 
-> 
-> I'm using the linux-next branch. Should I use something else that have
-> newer schema files?
-> 
-> Also on other patch there are some error reported that are unrelated to
-> my change and that looks strange.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The other might be not be relevant, but this one is real and reproducible.
 
 Best regards,
 Krzysztof
