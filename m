@@ -2,91 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68439C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 06:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C62DC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 07:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231274AbiF2GwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33368 "EHLO
+        id S232183AbiF2Hln (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 03:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230088AbiF2GwH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 02:52:07 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8EB2E680;
-        Tue, 28 Jun 2022 23:52:06 -0700 (PDT)
+        with ESMTP id S232203AbiF2Hlk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 03:41:40 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 342F436B72
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 00:41:39 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id g26so30782166ejb.5
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 00:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1656485526; x=1688021526;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pDeFX0MitWJP5A/Gqlq5Jl1bM/EI4WOu64tF/J2XmMo=;
-  b=kWC54FNg3YnTxBuE6ezaJqaC4fLOrTjlbEL8cas+T7ONNRGoPCzFNzf7
-   /7ZeRM1HFxDiJ1qoeenhG3ObUaffmSVxFMnY0NxvfqKJAHsOFe9q0dU5E
-   efPTbn/Dp+/v3mt+5eTGwzaTpLgEBdKoizXquayeLvpU336n5rW6JiHLz
-   k=;
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 28 Jun 2022 23:52:06 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 23:52:05 -0700
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 28 Jun 2022 23:52:04 -0700
-Received: from [10.242.243.224] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 28 Jun
- 2022 23:51:59 -0700
-Message-ID: <1bc6383a-4e82-342a-c458-4f2c847adf76@quicinc.com>
-Date:   Wed, 29 Jun 2022 12:21:56 +0530
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TdkY72fU+VAjEVTDGUhkxypIF01xtYBlRjBQERW8zTI=;
+        b=Bj0ruVqnSInSJl0FgwwskzMtrnErn3lOKlN9NGf41rKmubvI5VKzEO/eq6zTfuOsE6
+         boWZP10MWJuc5w0SgEb73Y0npK6J+296i6pjOPGLdzOiCslr8zTfxN7bgaK+refMn4NU
+         vEO6WZIc/eXhJV9eqA1RqYb8dDPr1z4uBnl9U6n9Hkrvs+MQCTKTeToD9/lE2kFLy0PQ
+         r2Ff+4q4llsncnM9rAEDv3rGMX/ITebAYWTRt4TZuvaMQhGkvBRMVqREqxGcTxM1T4mQ
+         TFh2z95+9hh5dj/nDbxDQJTH9i23Po5Ks6U+UTdhFft1jJc3jYEx7/DSAel7RviGSj9D
+         9iqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TdkY72fU+VAjEVTDGUhkxypIF01xtYBlRjBQERW8zTI=;
+        b=WCIhNrF00WTMorE+MY+Wlc2ynTwa4INTAK8Ix9inTF8D65hPMTsA+0iHtweHssJeJp
+         aKhqKRtCGNacX1Nn7XMNEgE9u4crAVV5n6fMTMFAzvyDVXI1TyS/90+2WwWC5bLmNET7
+         ZYJ2Pyv74SUxD3yEHCPrK0RuSiulzR1eeAZebZrKIRQ0eaYONZKMMRMP5HJBRHHpDT5Z
+         bsILlsHIB2ovjgO3biQOb1HHDzj7g6ON0yr5yHzlwMaIK/1DkSrKkgCfJtDmkkuXrKeM
+         W9nku/vYzVUWgyE0SkEVU+w93f8ABdilfDJMS/MY+OC4NPtRZg00u9i/fuyafrA8wCbB
+         eSJg==
+X-Gm-Message-State: AJIora9n2BgX0g8ctAUWAY0mGxxFwPxOMP2Es8jyINSiKSxSWEridXne
+        TYt6YUGqfUYGWargFN8wZxIRGA==
+X-Google-Smtp-Source: AGRyM1tyC9QQH5yDJ0Du3Th/pcsyMACbfhtfx3HrLQk2OT2vJDqrjNu0JAWdmfhWmOFOJN5xcEYp9w==
+X-Received: by 2002:a17:906:ce:b0:715:705e:52fb with SMTP id 14-20020a17090600ce00b00715705e52fbmr1893034eji.303.1656488497742;
+        Wed, 29 Jun 2022 00:41:37 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id l7-20020a170906644700b0072354a54137sm7360766ejn.34.2022.06.29.00.41.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 00:41:37 -0700 (PDT)
+Date:   Wed, 29 Jun 2022 10:41:35 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Marek Vasut <marex@denx.de>
+Cc:     Lucas Stach <l.stach@pengutronix.de>, linux-clk@vger.kernel.org,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Subject: Re: [PATCH v3 3/6] clk: imx: imx8mp: Add audiomix block control
+Message-ID: <YrwCL2DNUp0mBpEe@linaro.org>
+References: <20220625013235.710346-1-marex@denx.de>
+ <20220625013235.710346-3-marex@denx.de>
+ <YrnOTaLS2r7QBMNx@linaro.org>
+ <66f689d9-a691-8bf6-62a2-48fac6eb3938@denx.de>
+ <YrqxZFvKen7QybA9@linaro.org>
+ <8d3fcbd9-2fd0-bf90-afa0-a21a79c81dbb@denx.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH V2 0/8] Add minimal boot support for IPQ5018
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     <agross@kernel.org>, <robh+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220621161126.15883-1-quic_srichara@quicinc.com>
- <CACRpkdZs=kwFciZaNGWR3t=Q4Vy08qg6UNH6obcyubC=6jkYuw@mail.gmail.com>
-From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <CACRpkdZs=kwFciZaNGWR3t=Q4Vy08qg6UNH6obcyubC=6jkYuw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d3fcbd9-2fd0-bf90-afa0-a21a79c81dbb@denx.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Linus,
-
-On 6/28/2022 6:25 PM, Linus Walleij wrote:
-> On Tue, Jun 21, 2022 at 6:11 PM Sricharan R <quic_srichara@quicinc.com> wrote:
+On 22-06-28 19:06:39, Marek Vasut wrote:
+> On 6/28/22 09:44, Abel Vesa wrote:
+> > On 22-06-27 18:23:33, Marek Vasut wrote:
+> > > On 6/27/22 17:35, Abel Vesa wrote:
+> > > > On 22-06-25 03:32:32, Marek Vasut wrote:
+> > > > > Unlike the other block control IPs in i.MX8M, the audiomix is mostly a
+> > > > > series of clock gates and muxes. Model it as a large static table of
+> > > > > gates and muxes with one exception, which is the PLL14xx . The PLL14xx
+> > > > > SAI PLL has to be registered separately.
+> > > > >
+> > > >
+> > > > Again, there is a chance that the blk-ctrl driver might disable the PD
+> > > > from under this.
+> > >
+> > > Can you elaborate a bit more on this ? How/why do you think so ?
+> >
+> > At some point, the PDs from the Audiomix IP block will be added to the
+> > drivers/soc/imx/imx8mp-blk-ctrl.c. Then, you'll have 2 drivers with the
+> > same address range and the imx8mp-blk-ctrl also has runtime PM enabled.
 >
->> The IPQ5018 is Qualcomm's 802.11ax SoC for Routers,
->> Gateways and Access Points.
->>
->> This series adds minimal board boot support for ipq5018-mp03.1-c2 board.
-> Pretty cool!
+> Why would the PDs be added into the block control driver?
 >
->>    dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl bindings
->>    pinctrl: qcom: Add IPQ5018 pinctrl driver
-> I'm happy to merge the two pinctrl patches separately to the pinctrl
-> tree if I can get a review from Bjorn or Krzysztof.
+> The audiomix is purely a clock mux driver, not really a block control driver
+> providing PDs of its own.
 
-    Thanks. Have few review comments from Bjorn and Krzysztof on the 
-bindings.
-     Will post V3 and hopefully that should have their acks on that.
-
-Regards,
-   Sricharan
-
+OK then, fine by me.
