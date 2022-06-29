@@ -2,223 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62942C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 22:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA139C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 23:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231345AbiF2Wym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 18:54:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36818 "EHLO
+        id S231426AbiF2XcC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 19:32:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbiF2WyS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 18:54:18 -0400
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [IPv6:2001:4b7a:2000:18::169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99782FE7B
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 15:53:57 -0700 (PDT)
-Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S231394AbiF2XcB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 19:32:01 -0400
+Received: from novek.ru (unknown [213.148.174.62])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36FCD31F;
+        Wed, 29 Jun 2022 16:32:00 -0700 (PDT)
+Received: from [10.22.0.128] (unknown [176.74.39.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E6DC73F809;
-        Thu, 30 Jun 2022 00:53:54 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     phone-devel@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rajeev Nandan <quic_rajeevny@quicinc.com>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v3 11/11] drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
-Date:   Thu, 30 Jun 2022 00:53:31 +0200
-Message-Id: <20220629225331.357308-12-marijn.suijten@somainline.org>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220629225331.357308-1-marijn.suijten@somainline.org>
-References: <20220629225331.357308-1-marijn.suijten@somainline.org>
+        by novek.ru (Postfix) with ESMTPSA id C79E35005C5;
+        Thu, 30 Jun 2022 02:30:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru C79E35005C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
+        t=1656545421; bh=nuefLE1G5OwMPAfk0WFiIBC94LretIpZqAk2u42KMGM=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jnkK6/hdmhGC57itbxeqFGEgknpFnkbX2UJqz7nKPf/PEhlZ7A4CbEAp8rL3RtQYm
+         MIABuOuDSwEs2O14YhqR9qUpo6aSJ9q0pvnKsi1rh9si9Z/B6cOo1kKyq3GejP0xVk
+         6syGeALP6k2iVRFN3iJJKOPBodcW3gNA9fEWu0h8=
+Message-ID: <a4defe2e-143d-0dba-03a1-cb23082ce673@novek.ru>
+Date:   Thu, 30 Jun 2022 00:31:55 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [RFC PATCH v2 3/3] ptp_ocp: implement DPLL ops
+Content-Language: en-US
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <20220626192444.29321-1-vfedorenko@novek.ru>
+ <20220626192444.29321-4-vfedorenko@novek.ru>
+ <20220627193436.3wjunjqqtx7dtqm6@bsd-mbp.dhcp.thefacebook.com>
+ <7c2fa2e9-6353-5472-75c8-b3ffe403f0f3@novek.ru>
+ <20220628191124.qvto5tyfe63htxxr@bsd-mbp.dhcp.thefacebook.com>
+ <20220628202414.02ac8fd1@kernel.org>
+From:   Vadim Fedorenko <vfedorenko@novek.ru>
+In-Reply-To: <20220628202414.02ac8fd1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-parent_hw pointers are easier to manage and cheaper to use than
-repeatedly formatting the parent name and subsequently leaving the clk
-framework to perform lookups based on that name.
+On 29.06.2022 04:24, Jakub Kicinski wrote:
+> On Tue, 28 Jun 2022 12:11:24 -0700 Jonathan Lemon wrote:
+>>>> 80-column limit (here and throughout the file)
+>>>
+>>> I thought this rule was relaxed up to 100-columns?
+>>
+>> Only in exceptional cases, IIRC.  checkpatch complains too.
+> 
+> Yup, for networking I still prefer 80 chars.
+> My field of vision is narrow.
+> 
+Ok, no problem, will follow strict rules next time.
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 70 +++++++++++------------
- 1 file changed, 34 insertions(+), 36 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 6a58dd62bac5..c1710a8824e7 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -588,24 +588,24 @@ static int dsi_7nm_set_usecase(struct msm_dsi_phy *phy)
-  */
- static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provided_clocks)
- {
--	char clk_name[32], parent[32], vco_name[32];
--	char parent2[32];
-+	char clk_name[32];
- 	struct clk_init_data vco_init = {
- 		.parent_data = &(const struct clk_parent_data) {
- 			.fw_name = "ref",
- 		},
- 		.num_parents = 1,
--		.name = vco_name,
-+		.name = clk_name,
- 		.flags = CLK_IGNORE_UNUSED,
- 		.ops = &clk_ops_dsi_pll_7nm_vco,
- 	};
- 	struct device *dev = &pll_7nm->phy->pdev->dev;
--	struct clk_hw *hw;
-+	struct clk_hw *hw, *pll_out_div, *pll_bit, *pll_by_2_bit;
-+	struct clk_hw *pll_post_out_div, *phy_pll_out_dsi_parent;
- 	int ret;
- 
- 	DBG("DSI%d", pll_7nm->phy->id);
- 
--	snprintf(vco_name, sizeof(vco_name), "dsi%dvco_clk", pll_7nm->phy->id);
-+	snprintf(clk_name, sizeof(clk_name), "dsi%dvco_clk", pll_7nm->phy->id);
- 	pll_7nm->clk_hw.init = &vco_init;
- 
- 	ret = devm_clk_hw_register(dev, &pll_7nm->clk_hw);
-@@ -613,36 +613,34 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		return ret;
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%dvco_clk", pll_7nm->phy->id);
- 
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT, pll_7nm->phy->pll_base +
-+	pll_out_div = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			&pll_7nm->clk_hw, CLK_SET_RATE_PARENT,
-+			pll_7nm->phy->pll_base +
- 				REG_DSI_7nm_PHY_PLL_PLL_OUTDIV_RATE,
- 			0, 2, CLK_DIVIDER_POWER_OF_TWO, NULL);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	if (IS_ERR(pll_out_div)) {
-+		ret = PTR_ERR(pll_out_div);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
- 
- 	/* BIT CLK: DIV_CTRL_3_0 */
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT,
-+	pll_bit = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			pll_out_div, CLK_SET_RATE_PARENT,
- 			pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
- 			0, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	if (IS_ERR(pll_bit)) {
-+		ret = PTR_ERR(pll_bit);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_phy_pll_out_byteclk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
- 
- 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--			CLK_SET_RATE_PARENT, 1,
-+	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, clk_name,
-+			pll_bit, CLK_SET_RATE_PARENT, 1,
- 			pll_7nm->phy->cphy_mode ? 7 : 8);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -652,24 +650,24 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 	provided_clocks[DSI_BYTE_PLL_CLK] = hw;
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
- 
--	hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent,
--					       0, 1, 2);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+	pll_by_2_bit = devm_clk_hw_register_fixed_factor_parent_hw(dev,
-+			clk_name, pll_bit, 0, 1, 2);
-+	if (IS_ERR(pll_by_2_bit)) {
-+		ret = PTR_ERR(pll_by_2_bit);
- 		goto fail;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
--	snprintf(parent, sizeof(parent), "dsi%d_pll_out_div_clk", pll_7nm->phy->id);
- 
- 	if (pll_7nm->phy->cphy_mode)
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 2, 7);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 2, 7);
- 	else
--		hw = devm_clk_hw_register_fixed_factor(dev, clk_name, parent, 0, 1, 4);
--	if (IS_ERR(hw)) {
--		ret = PTR_ERR(hw);
-+		pll_post_out_div = devm_clk_hw_register_fixed_factor_parent_hw(
-+				dev, clk_name, pll_out_div, 0, 1, 4);
-+	if (IS_ERR(pll_post_out_div)) {
-+		ret = PTR_ERR(pll_post_out_div);
- 		goto fail;
- 	}
- 
-@@ -682,15 +680,14 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 		data = dsi_phy_read(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1);
- 		dsi_phy_write(pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG1, data | 3);
- 
--		snprintf(parent, sizeof(parent), "dsi%d_pll_post_out_div_clk", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = pll_post_out_div;
- 	} else {
- 		snprintf(clk_name, sizeof(clk_name), "dsi%d_pclk_mux", pll_7nm->phy->id);
--		snprintf(parent, sizeof(parent), "dsi%d_pll_bit_clk", pll_7nm->phy->id);
--		snprintf(parent2, sizeof(parent2), "dsi%d_pll_by_2_bit_clk", pll_7nm->phy->id);
- 
--		hw = devm_clk_hw_register_mux(dev, clk_name,
--				((const char *[]){
--					parent, parent2,
-+		hw = devm_clk_hw_register_mux_parent_hws(dev, clk_name,
-+				((const struct clk_hw *[]){
-+					pll_bit,
-+					pll_by_2_bit,
- 				}), 2, 0, pll_7nm->phy->base +
- 					REG_DSI_7nm_PHY_CMN_CLK_CFG1,
- 				0, 1, 0, NULL);
-@@ -699,13 +696,14 @@ static int pll_7nm_register(struct dsi_pll_7nm *pll_7nm, struct clk_hw **provide
- 			goto fail;
- 		}
- 
--		snprintf(parent, sizeof(parent), "dsi%d_pclk_mux", pll_7nm->phy->id);
-+		phy_pll_out_dsi_parent = hw;
- 	}
- 
- 	snprintf(clk_name, sizeof(clk_name), "dsi%d_phy_pll_out_dsiclk", pll_7nm->phy->id);
- 
- 	/* PIX CLK DIV : DIV_CTRL_7_4*/
--	hw = devm_clk_hw_register_divider(dev, clk_name, parent, 0,
-+	hw = devm_clk_hw_register_divider_parent_hw(dev, clk_name,
-+			phy_pll_out_dsi_parent, 0,
- 			pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_CLK_CFG0,
- 			4, 4, CLK_DIVIDER_ONE_BASED, &pll_7nm->postdiv_lock);
- 	if (IS_ERR(hw)) {
--- 
-2.37.0
+>>>> 80 cols, and this should be done before ptp_ocp_complete()
+>>>> Also, should 'goto out', not return 0 and leak resources.
+>>>
+>>> I don't think we have to go with error path. Driver itself can work without
+>>> DPLL device registered, there is no hard dependency. The DPLL device will
+>>> not be registered and HW could not be configured/monitored via netlink, but
+>>> could still be usable.
+>>
+>> Not sure I agree with that - the DPLL device is selected in Kconfig, so
+>> users would expect to have it present.  I think it makes more sense to
+>> fail if it cannot be allocated.
+> 
+> +1
 
+Ok, it's not a big deal to make it fail in case of DPLL error, will do it in 
+next iteration.
