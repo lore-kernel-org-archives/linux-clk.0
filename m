@@ -2,98 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B6DC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 06:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68439C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 06:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231844AbiF2GOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:14:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55408 "EHLO
+        id S231274AbiF2GwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 02:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231484AbiF2GOR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 02:14:17 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35051AF04
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 23:14:15 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id ay16so30418362ejb.6
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jun 2022 23:14:15 -0700 (PDT)
+        with ESMTP id S230088AbiF2GwH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 02:52:07 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8EB2E680;
+        Tue, 28 Jun 2022 23:52:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=MmF1du2ylVDr8xJMUNJ8PZh1/Xb57TfnDF3b9gRJpt0=;
-        b=FKgRXwQCFkXdqFwyGiX3cIUWyDWovuprXZ/ONaoPETsY5/YgrbFdFxiScnnAMLGBIl
-         uR51YLCM8v/yHodq8992rO5zrgLlGlsT3NLEL861ZEND+kwEsihdZ13Ucqo9NBPlT1Gi
-         C8WILUvP18ED581LFsaxNtNiUSOecljuY+lDt7SwuW12qR4kZ7uhzTNbipG0MTX25DG+
-         OFrDWIxhX8oOCmeRFHHd4iGFpKnAzOXN+GhP71LLiOL7sSuefPVBfOpyZvBKvmU4pCW6
-         lUS7nctXfNAmss5nbUZhwVRrMj39GlIHS/FaH9kP4UDaopo8p2vUiU1sbEQkKX42Lf6H
-         mlsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=MmF1du2ylVDr8xJMUNJ8PZh1/Xb57TfnDF3b9gRJpt0=;
-        b=BO3XMUtSYq0u4To8qXoKuy64QIZgG2qqew84rqIU1Xx/VFaLGxZ3H3uKrS9e6HgKMe
-         KIXWxLd1OJy9QV8Kz+Pk/qBCujZIxPngVKwtcDmnR2U+dv9OE4ra7P57np0mdlcUrfH0
-         vzf3gD0Wvsqqj+l474fDOubowYXB0qwku0/wD02oUxZrCizeQVnTTuVAhmQ5pCzBF7ds
-         Z6ktfYEznJkNv4jy+HIijAMX7c2tG4Imcs1muaq5+BDKPVGdMFiehdcHgzEoQZps1UJv
-         dnuAKrmB2Rz0zXNCs0UPeczyH1Yuf2Kr0zYotsHg2QR2gqhJ0m3V9FS3dYTRIQPi4lgU
-         gLfg==
-X-Gm-Message-State: AJIora8jMVwxrzt2kEYPKQRiqNyJH/8GfxS/UxiVA6ChNzXvTxD5A6HG
-        SqWj6l8qp1HGWovMmL5dIw4SSw==
-X-Google-Smtp-Source: AGRyM1sL8drXcAVjnDFcws+DixDxqtS4d3ygjMxZkQkzufaPqB/t4/hIsYtbViUbltel0oQSOYvYCw==
-X-Received: by 2002:a17:907:1c9d:b0:726:3666:2ea4 with SMTP id nb29-20020a1709071c9d00b0072636662ea4mr1665574ejc.547.1656483254247;
-        Tue, 28 Jun 2022 23:14:14 -0700 (PDT)
-Received: from [192.168.0.181] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d17-20020a1709061f5100b0072846e4dbd9sm534911ejk.215.2022.06.28.23.14.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jun 2022 23:14:13 -0700 (PDT)
-Message-ID: <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
-Date:   Wed, 29 Jun 2022 08:14:12 +0200
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1656485526; x=1688021526;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pDeFX0MitWJP5A/Gqlq5Jl1bM/EI4WOu64tF/J2XmMo=;
+  b=kWC54FNg3YnTxBuE6ezaJqaC4fLOrTjlbEL8cas+T7ONNRGoPCzFNzf7
+   /7ZeRM1HFxDiJ1qoeenhG3ObUaffmSVxFMnY0NxvfqKJAHsOFe9q0dU5E
+   efPTbn/Dp+/v3mt+5eTGwzaTpLgEBdKoizXquayeLvpU336n5rW6JiHLz
+   k=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 28 Jun 2022 23:52:06 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 23:52:05 -0700
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 28 Jun 2022 23:52:04 -0700
+Received: from [10.242.243.224] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 28 Jun
+ 2022 23:51:59 -0700
+Message-ID: <1bc6383a-4e82-342a-c458-4f2c847adf76@quicinc.com>
+Date:   Wed, 29 Jun 2022 12:21:56 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3 2/4] dt-bindings: arm: msm: Convert kpss-acc driver
- Documentation to yaml
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH V2 0/8] Add minimal boot support for IPQ5018
 Content-Language: en-US
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-References: <20220628184137.21678-1-ansuelsmth@gmail.com>
- <20220628184137.21678-3-ansuelsmth@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220628184137.21678-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC:     <agross@kernel.org>, <robh+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
+        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220621161126.15883-1-quic_srichara@quicinc.com>
+ <CACRpkdZs=kwFciZaNGWR3t=Q4Vy08qg6UNH6obcyubC=6jkYuw@mail.gmail.com>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <CACRpkdZs=kwFciZaNGWR3t=Q4Vy08qg6UNH6obcyubC=6jkYuw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/06/2022 20:41, Christian Marangi wrote:
-> Convert kpss-acc driver Documentation to yaml.
-> The original Documentation was wrong all along. Fix it while we are
-> converting it.
-> The example was wrong as kpss-acc-v2 should only expose the regs but we
-> don't have any driver that expose additional clocks. The kpss-acc driver
-> is only specific to v1. For this exact reason, limit all the additional
-> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
-> v1 and also flag that these bindings should NOT be used for v2.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Hi Linus,
 
-This is still not fixed and not tested. Since 4 versions of this
-patchset (previously was part of other set).
+On 6/28/2022 6:25 PM, Linus Walleij wrote:
+> On Tue, Jun 21, 2022 at 6:11 PM Sricharan R <quic_srichara@quicinc.com> wrote:
+>
+>> The IPQ5018 is Qualcomm's 802.11ax SoC for Routers,
+>> Gateways and Access Points.
+>>
+>> This series adds minimal board boot support for ipq5018-mp03.1-c2 board.
+> Pretty cool!
+>
+>>    dt-bindings: pinctrl: qcom: Add ipq5018 pinctrl bindings
+>>    pinctrl: qcom: Add IPQ5018 pinctrl driver
+> I'm happy to merge the two pinctrl patches separately to the pinctrl
+> tree if I can get a review from Bjorn or Krzysztof.
 
-I retract my review. Please test the bindings.
+    Thanks. Have few review comments from Bjorn and Krzysztof on the 
+bindings.
+     Will post V3 and hopefully that should have their acks on that.
 
-Best regards,
-Krzysztof
+Regards,
+   Sricharan
+
