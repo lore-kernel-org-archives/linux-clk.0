@@ -2,91 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE067C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 09:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D997C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 10:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbiF2J7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 05:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45466 "EHLO
+        id S232814AbiF2Kkc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 06:40:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233190AbiF2J7q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 05:59:46 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56FE23CA62
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 02:59:44 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id z19so21395119edb.11
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 02:59:44 -0700 (PDT)
+        with ESMTP id S231659AbiF2Kkc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 06:40:32 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 426F73DDC8;
+        Wed, 29 Jun 2022 03:40:31 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id r18so13706036edb.9;
+        Wed, 29 Jun 2022 03:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=wHx0xHehg63vfEGKTlzZUfteHn01fhYVqm+Y98MQ7+U=;
-        b=cq3NqapgxQIZNLj/B4EpJSN83FT6u7scmebwaohN243g5lWrwO8nYBNIAUn1qhvgUb
-         7jmmYqH4sKXTgPqROvurvn1vcXpXmylTudSKxbz3wfUavJZu/drqoz5sEa+W5iQTRblF
-         5XSJkq1wtz/vUkhZOETe59hjQCYJ80VPeHXi2+7FT76LK3iGsf9cOxGtJxUm6fVg4+tX
-         gHvUST/E4kcHFVBni8Uo5KdGCn6dbo2m2ucg+YQITuLGMf03hSWn6qRpS2d5prRfI4YM
-         nOlY0VqzuovmFZbZyEnVCPfbor3VtedyU1MSOkm8RT7eAzy78HLxQXHEw1K4eepqjNJl
-         5dZA==
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OZGHhwFxChxDscfWMdp/0hPM41tz4KYeItHFPAfWjXg=;
+        b=n6Dj+ubBXgTqBcQ9GNePKalUQR+A4y9r7wELKNOq+i+y3ys8mIlCGuKMsyIj2RKOsS
+         UJQ1d+xB/qbS3xIAqK0empxdbC8+z0TOCeRE9mR2MYXNLxFerD7GB8CTvoyPOeqHXuaD
+         xr6q3vSt2oE6Kn3svS1jLygTCnRloyqsvL+42iQ3N44L95f2NDeSmiMOFzU2h8RS7AA3
+         eVrqhVYzGJIqy4bHlepIiDMwhurmwoVGWTW6Gq2Ru1RLF7mAzPv4UAmuTaMSabmohgtN
+         Kwl/IluHg50DS7wuN9KVMapGq8XasqfGHoDUgr4JtR/8AguKPnIvZxDzUraAZOBtW5zR
+         /nXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=wHx0xHehg63vfEGKTlzZUfteHn01fhYVqm+Y98MQ7+U=;
-        b=IrUQD0yO6jWJDWuAAg+Cik4cFNvA1q+ouBw1tH5IGQjNMrDYeE/4klxdYCtKrBKomd
-         6ARp6QXS5fSaILQZ7YxsyM2V0Q9DAoBkkiuctqMS+hKbcDpdV2Olk7GsK/kGdy12vQmj
-         3Idnw3o8ZGxVp5/6lHOgYfNzlt4mtqnR2p0A8GOxq0RfANH3Lh7OP1FdGOtPjuHwOeDW
-         Lm894faTDJNwuVxAg0qRfUKzVuanDpLA9o6qaaf7+2qPTi+ojQkgtXRk2eNGQRs75X6K
-         2qzcRYeHsYAjv5wUbviE9HnfCU73IMuEf2dgGOwyCn5k7ApbHkonQCVK07zeZDqtDkAu
-         UCjw==
-X-Gm-Message-State: AJIora8KyZVyDlUsdUBp8CVTKMOV9ZQgAplC+OsNZZx1cDgqN3zLmG2v
-        /R+kGCwoVj5+yoNt4HuoeK4sUmHSd8lfsg==
-X-Google-Smtp-Source: AGRyM1uKH7BIvUrbVdQs4hTQzzjvedfKmrpPqHS5rBnnbwQUfXiaigl6zGQSbVqTeAGptfLzPSzvTA==
-X-Received: by 2002:a05:6402:430e:b0:435:9e41:6858 with SMTP id m14-20020a056402430e00b004359e416858mr3130822edc.69.1656496782905;
-        Wed, 29 Jun 2022 02:59:42 -0700 (PDT)
-Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id bo5-20020a170906d04500b006ff0fe78cb7sm7516695ejb.133.2022.06.29.02.59.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 02:59:42 -0700 (PDT)
-Message-ID: <db26821d-9780-5829-5078-d8f8fe6e5875@linaro.org>
-Date:   Wed, 29 Jun 2022 11:59:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2 2/3] clk: samsung: exynosautov9: add missing gate clks
- for peric0/c1
-Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OZGHhwFxChxDscfWMdp/0hPM41tz4KYeItHFPAfWjXg=;
+        b=pj2W/Ka+P8vXJZxtGitlKkAMoAyx0ZY+Md73rNCzyg1Mmxz6Pq4FOr++60ZQPkJR5E
+         UZzkqg/TvbsRWZf7kNgwiJ2SsSqRu2iwAqF5jk47y9WCxYtKrX0UYemeLezg0gtabJc1
+         PoxblufHKAzP4grBciF7Sa0sva1xNfiauiZeABF+UkDWFUJzadbELKC5r6qq4u5R/y2e
+         wja13U62pJvcTcSHLTvTS/yCGlX2VjnmtBs5dX3i5scY+/zUb9BhRch/JZTVSJyyTTnS
+         xa1Ok7Zis/LKTuAujOmb2tbEqHr456SO6Y3Fj066J7iGWf4PCzQLYbyxXt0THH3kDBEZ
+         9WQw==
+X-Gm-Message-State: AJIora/d9tlCIbcYHTtemaDAlEGnPq7+RuhuOrgTbYYC2oTgfrFGLlLh
+        Oes0Gp3LD5PHQ8lGN8DDiM+UgKW5LSM=
+X-Google-Smtp-Source: AGRyM1uWD4Bgc7cQ374NBKdJUhsnzAdBJRMDBDRHEPbI7ogeu6aX2BELORIGdQo2w+wfdKG7xYyWfw==
+X-Received: by 2002:a05:6402:5214:b0:437:5b1d:9966 with SMTP id s20-20020a056402521400b004375b1d9966mr3378608edd.16.1656499229681;
+        Wed, 29 Jun 2022 03:40:29 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.gmail.com with ESMTPSA id h18-20020a1709060f5200b006fe9e717143sm7579266ejj.94.2022.06.29.03.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 03:40:29 -0700 (PDT)
+Message-ID: <62bc2c1d.1c69fb81.09d2.e244@mx.google.com>
+X-Google-Original-Message-ID: <YrwsG4w3piWq+7QX@Ansuel-xps.>
+Date:   Wed, 29 Jun 2022 12:40:27 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220628104138.152118-1-chanho61.park@samsung.com>
- <CGME20220628104347epcas2p4502a4524de0c98ababe8cab4b7b73c3f@epcas2p4.samsung.com>
- <20220628104138.152118-3-chanho61.park@samsung.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220628104138.152118-3-chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/4] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+References: <20220628184137.21678-1-ansuelsmth@gmail.com>
+ <20220628184137.21678-3-ansuelsmth@gmail.com>
+ <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e625e2c9-7321-51fa-b9bb-40ed9742ffcc@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/06/2022 12:41, Chanho Park wrote:
-> "gout_peric0_pclk_1" and "gout_peric1_pclk_1" should be added to peric0
-> and peric1 respectively.
+On Wed, Jun 29, 2022 at 08:14:12AM +0200, Krzysztof Kozlowski wrote:
+> On 28/06/2022 20:41, Christian Marangi wrote:
+> > Convert kpss-acc driver Documentation to yaml.
+> > The original Documentation was wrong all along. Fix it while we are
+> > converting it.
+> > The example was wrong as kpss-acc-v2 should only expose the regs but we
+> > don't have any driver that expose additional clocks. The kpss-acc driver
+> > is only specific to v1. For this exact reason, limit all the additional
+> > bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> > v1 and also flag that these bindings should NOT be used for v2.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> This is still not fixed and not tested. Since 4 versions of this
+> patchset (previously was part of other set).
+> 
+> I retract my review. Please test the bindings.
+> 
+> Best regards,
+> Krzysztof
 
+Thing is that I tested them and on my side I don't have such errors.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I'm using the linux-next branch. Should I use something else that have
+newer schema files?
 
+Also on other patch there are some error reported that are unrelated to
+my change and that looks strange.
 
-Best regards,
-Krzysztof
+-- 
+	Ansuel
