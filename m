@@ -2,174 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41AFC43334
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 12:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BE9C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jun 2022 13:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233340AbiF2MmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jun 2022 08:42:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42630 "EHLO
+        id S233621AbiF2Nfw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jun 2022 09:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231316AbiF2MmW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 08:42:22 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5050A35DD0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 05:42:20 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 110733200564;
-        Wed, 29 Jun 2022 08:42:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 29 Jun 2022 08:42:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1656506536; x=1656592936; bh=6ZNi1qE1Rv
-        4Yx1c13tcwOHL6CBF0F1dypVzWbX0avLM=; b=fpaja//WcD0crMT7oONgzi90ch
-        RnU+NRvRD2cMqH1PJZItGrHeI8yKqxL4MrtiTAsc8Avlkq+TodGvrSKJ1InhnJvg
-        mTVeijOwCe3CW6hcKuto0dEm7RnA+c6qsrLmTYPl9PTxypF3FEXoAAJu7uRiSAMb
-        /L+qIN/perlXNlTnb6WMvmue5jQvohPxxr/h5JIrUjmxaJtj14Q+qrpN80nYk/sK
-        px0EawwVTnFYPuswCv7m+6nMn4chHMpr1P2B7UtJdtiSep/Uq11/J4y9rZJNwFs/
-        qTa0W43DfcT2IiLNWWru1z29RrUory+EYqRI4mHbq9V2jbGugbeiiuTI9NFw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1656506536; x=1656592936; bh=6ZNi1qE1Rv4Yx1c13tcwOHL6CBF0
-        F1dypVzWbX0avLM=; b=KBM2vmXj2BLHnE+wd8xJE+Ev4mc6wK4j3Kl9V+HlppI0
-        mg/jT4dkPpQcMmmVp7sC65eNO6jwLZZcajjGj26zv1j7SMk04dvAXe975Z7Bew5Y
-        1xc3+5koYGf2znJd4aUTgSu/5+6JbPuMNFl+UvKVlG5o9aW7HqJFAv0+EhJ9dZTk
-        2KSJatGa6qtSX1XcC2Cwf0apAsQDVVqFCYaamkdx0yH1xxrhT5Q5kChp34RolIpN
-        0DOYg8irumEtfIovsyoESq15TaCas7JaMtLAtJJIDDS52H1ev63cjfiRUfpORsao
-        L5EsxNHfpVGPy/U+qwhOQXpBIDXYdfqu9ql6uXRkfQ==
-X-ME-Sender: <xms:p0i8YuggIg-YroYixk92hlT4wo5AiwQstHs85tY54CK2yL7FiPeEew>
-    <xme:p0i8YvCO7uhF7wOzzwPsKIjHPs3XTkK6Zo5Mj5_9tjNcIQQaFOZdjD7DyNU-bkqVf
-    TT72XMcDsFveqJsNpQ>
-X-ME-Received: <xmr:p0i8YmHUnl6H-wY6WK3KLDIyjLGWGJrP7Y4lJHI53CcjynKysG4jRW0NHZJ8y56181yCYn1TpXpjHn2pIIX6ZISkw_kr3EUmPRZxjPY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudegledgheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeetfefffefgkedtfefgledugfdtjeefjedvtddtkeetieffjedvgfehheff
-    hfevudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:p0i8YnT_vigU_8BLCltnugNwqxfVOg_g0JyUZnvLmqxUTTwgjp2sCw>
-    <xmx:p0i8YrzACEbLCwz68gHCaFP8lKeVPB_molZVAJ1RXIKde4H3RBftnw>
-    <xmx:p0i8Yl6UGeX592iNdqBSfGE_ifB6KOiUXAldkPfLHzkUpmAaE5xMsA>
-    <xmx:qEi8YjflIjTfzcKG7P_pAR1dRL3MnKZeOM8XnF04d2uRdvpI9bD0Qw>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Jun 2022 08:42:14 -0400 (EDT)
-Date:   Wed, 29 Jun 2022 14:42:13 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v5 13/28] clk: Take into account uncached clocks in
- clk_set_rate_range()
-Message-ID: <20220629124213.2fuhlsjjtv3hnlqw@houat>
-References: <20220516132527.328190-1-maxime@cerno.tech>
- <20220516132527.328190-14-maxime@cerno.tech>
- <20220629090146.8E3DEC341CA@smtp.kernel.org>
+        with ESMTP id S232733AbiF2Nfv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jun 2022 09:35:51 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99FC72B257
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jun 2022 06:35:50 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6Xqa-0006SP-06; Wed, 29 Jun 2022 15:35:12 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6XqQ-003PNQ-Vz; Wed, 29 Jun 2022 15:35:06 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o6XqT-001txR-NY; Wed, 29 Jun 2022 15:35:05 +0200
+Date:   Wed, 29 Jun 2022 15:35:04 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>, dri-devel@lists.freedesktop.org,
+        linux-omap@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-leds@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-clk@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-watchdog@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, netdev@vger.kernel.org,
+        chrome-platform@lists.linux.dev, linux-input@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-hwmon@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        patches@opensource.cirrus.com, UNGLinuxDriver@microchip.com,
+        linux-pwm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-staging@lists.linux.dev
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <20220629133504.syc6x4ptia3mnof5@pengutronix.de>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+ <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+ <CAPAsAGwP4Mw_CJfsi7oapABdTBwO1HfiQux6X4UahspU74VjtQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wlfn6nhswctj4syh"
+        protocol="application/pgp-signature"; boundary="5z6hgi6euioj5d47"
 Content-Disposition: inline
-In-Reply-To: <20220629090146.8E3DEC341CA@smtp.kernel.org>
+In-Reply-To: <CAPAsAGwP4Mw_CJfsi7oapABdTBwO1HfiQux6X4UahspU74VjtQ@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---wlfn6nhswctj4syh
-Content-Type: text/plain; charset=us-ascii
+--5z6hgi6euioj5d47
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 29, 2022 at 02:01:44AM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-05-16 06:25:12)
-> > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> > index 8de6339f4f8d..9aa5b946f324 100644
-> > --- a/drivers/clk/clk_test.c
-> > +++ b/drivers/clk/clk_test.c
-> > @@ -362,9 +362,37 @@ static void clk_test_uncached_set_range(struct kun=
-it *test)
-> >         KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
-> >  }
-> > =20
-> > +/*
-> > + * Test that for an uncached clock, clk_set_rate_range() will work
-> > + * properly if the rate has changed in hardware.
-> > + *
-> > + * In this case, it means that if the rate wasn't initially in the ran=
-ge
-> > + * we're trying to set, but got changed at some point into the range
-> > + * without the kernel knowing about it, its rate shouldn't be affected.
-> > + */
-> > +static void clk_test_uncached_updated_rate_set_range(struct kunit *tes=
-t)
-> > +{
-> > +       struct clk_dummy_context *ctx =3D test->priv;
-> > +       struct clk_hw *hw =3D &ctx->hw;
-> > +       struct clk *clk =3D hw->clk;
-> > +       unsigned long rate;
-> > +
-> > +       ctx->rate =3D DUMMY_CLOCK_RATE_1 + 1000;
+[Dropped most people from Cc, keeping only lists]
+
+On Wed, Jun 29, 2022 at 04:11:26PM +0300, Andrey Ryabinin wrote:
+> On 6/28/22 17:03, Uwe Kleine-K=F6nig wrote:
+> > From: Uwe Kleine-K=F6nig <uwe@kleine-koenig.org>
+> >
+> > The value returned by an i2c driver's remove function is mostly ignored.
+> > (Only an error message is printed if the value is non-zero that the
+> > error is ignored.)
+> >
+> > So change the prototype of the remove function to return no value. This
+> > way driver authors are not tempted to assume that passing an error to
+> > the upper layer is a good idea. All drivers are adapted accordingly.
+> > There is no intended change of behaviour, all callbacks were prepared to
+> > return 0 before.
+> >
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+>                                     | 2 +-
+> >  lib/Kconfig.kasan                                         | 1 +
 >=20
-> Is this where we set the rate behind clk framework's back? Maybe add a
-> comment here to state that.
-
-Yes, I'll add a comment
-
-> > +       KUNIT_ASSERT_EQ(test,
-> > +                       clk_set_rate_range(clk,
-> > +                                          DUMMY_CLOCK_RATE_1,
-> > +                                          DUMMY_CLOCK_RATE_2),
-> > +                       0);
-> > +
-> > +       rate =3D clk_get_rate(clk);
-> > +       KUNIT_ASSERT_GT(test, rate, 0);
+> > diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> > index f0973da583e0..366e61639cb2 100644
+> > --- a/lib/Kconfig.kasan
+> > +++ b/lib/Kconfig.kasan
+> > @@ -149,6 +149,7 @@ config KASAN_STACK
+> >       depends on KASAN_GENERIC || KASAN_SW_TAGS
+> >       depends on !ARCH_DISABLE_KASAN_INLINE
+> >       default y if CC_IS_GCC
+> > +     depends on !ARM
+> >       help
+> >         Disables stack instrumentation and thus KASAN's ability to dete=
+ct
+> >         out-of-bounds bugs in stack variables.
 >=20
-> This will almost always be true because rate is unsigned. Should it be
-> KUNIT_ASSERT_NE() instead?
 >=20
-> Is there any benefit at all to this check?  We're going to check the
-> rate with an expectation in the next line for what we're actually
-> testing for, so it's not like we need to assert that the rate is
-> non-zero before checking that it is exactly DUMMY_CLOCK_RATE_1 + 1000.
->=20
-> I thought assertions were about checking sanity of the parts of the test
-> that aren't under test. If the assertion fails then our test is so
-> busted the expectation can't be trusted and we shouldn't even try to
-> continue. It's similar to BUG_ON() and WARN_ON().
+> What is this doing here?
 
-I'm not entirely up to speed on what is our expectations when it comes
-to unit tests.
+Huh, that is wrong. I needed that for build testing, but it shouldn't
+have been added to the patch. I'm dropping that for the final
+submission.
 
-clk_get_rate() mentions that it can return 0, and it definitely
-shouldn't with the setup we are testing here. So it was my impression
-that we were in "totally busted" territory, but if you feel it's
-overkill I'll remove it.
+Thanks for spotting.
 
-Maxime
+Best regards
+Uwe
 
---wlfn6nhswctj4syh
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--5z6hgi6euioj5d47
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYrxIpQAKCRDj7w1vZxhR
-xaViAQCu7pFEOr0ACxrKXUsVN4bFwQxQl+xnROh1mOFqEBrfFAD9FdKwGvjTxXBd
-91x5Y/JJ+0Fcf+wKrcZsE7UGtubaOgs=
-=7S93
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmK8VQUACgkQwfwUeK3K
+7AkL0wf/Ra+JtsXozoGjhV4ADtJcJAo/mOIZQ6qOdPZGqHYkMvBmkEJ9zbvY4Edk
+SwYoapiHgVT4tDX56ekEGnm/x3udNUt5wugpsqDm4oAgYtbBCMEVtHbp3t/AqMp2
+sZcn0JsvUs6FVWSTomD396Pt10x0r+JrPTJVY2pwj1nUUV63/25oIT/4I77IughK
+LvQBMIesHK9damtObmRGqI5Ljz1L6SP7WgiLSEq1R/LjSeEwbURT3ijca95YO2Jv
+YyxoC7TiNJj2uJiisjl/r1T/LdGF6RpMN197XQjcvaZ0sbTZRF2vXlqp3cSyXrCG
+BbT2nohQYXjznouz9TIuBFtA0iX7SA==
+=YEZr
 -----END PGP SIGNATURE-----
 
---wlfn6nhswctj4syh--
+--5z6hgi6euioj5d47--
