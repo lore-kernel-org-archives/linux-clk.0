@@ -2,81 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1902C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 17:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD3FCCA481
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 18:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235794AbiF3RNU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 13:13:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
+        id S236475AbiF3SBv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 14:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234201AbiF3RNT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 13:13:19 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4715B7F7
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 10:13:17 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id w193so98945oie.5
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 10:13:17 -0700 (PDT)
+        with ESMTP id S236529AbiF3SBi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 14:01:38 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAD339B89
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 11:01:36 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id c65so27616039edf.4
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 11:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=IsDEIufxD7CLx+1ROionmMEdB9wUNBwSr55AU/DLtwQ=;
-        b=dqQCT8eGOe/2dMZ7rfs2sYTCAF4dWwH2LZtnlZM1sLbZDDsXLtnPowxEUKGWPPG1gb
-         qCqyAR5Mpf8xLrJYZygFZcHFXsmxgkfjFehxxTgsrheNM9WTX4LXtjnN/oGhMxYGZ/+E
-         YMohTGPeuiL++PM88Qbgd+6KuEKak1XF/AuqAPTp+Rch+0xpOp8gWx2QrQReQZe5BIP3
-         X6xsq3+iLBfuZKqtP76N9eT/YFdgCOGtF3FX4SxmoElPC+KJRGRV4IEPnqdNUSNX3SAe
-         dYK1O8fPhXcpcNeDGwRWm+8CADIhK7ww77uVV5EMR679d/aJArOCkkg4yVx0lHvClC3w
-         58xA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=oP65LAT/fd0C6OnRp3Ub9OQHA8VbKhPvXbniEJ3nVeM=;
+        b=okhkRQ59JELGFs++y1bGscG5q+VXfKQlxDjG9RGRLYXwjDJN/mCw0UvDSDhJahe+lg
+         kpEd0AdWlbeQcdPmXaBpHZztPo5tSKlkHwcZ9Om/U7Iv0l2AKOHwf7gBjJfy8Jm3CDOg
+         8rdLIRAWUmria9z0tixF4TJb2UB/WJ0sL7nkFpkzp70XkHp0vtgpLLGmbUXSEbbQNsEl
+         Q5wxyUrRxovbmuzBYy895n3/qV3cjBv6E7TfaV47hI1ctNj4KUoHX0+ZgIi5gGadU72h
+         tVJ+P7eIPxKgVjTGnmuRJVRdvpAlvX4cLZhPcPpdaTE/srih/ygqYivQkaEXd87YGLnf
+         E17w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IsDEIufxD7CLx+1ROionmMEdB9wUNBwSr55AU/DLtwQ=;
-        b=eKG/awEW9nUyJpUt4jGQZWmUbexxF+oVaqAHk6raGyxPCMhe5ia0Ed205a/Ag6ybxR
-         4+FQIGOS+4ikMNVXRIgAVtln6RRhQhX1vhGi1nYrk9fPr/K4Tw2e4RzZ4PTARV4NNoXo
-         OjePkQmA9q4YxA7PU0PKjuD1HyKBLDv1b8JfmXmTXYWu/3TkoQtyDQ7o128sBcsXCvzy
-         tcmQyEuhsZ/qtFvpNMKxIO9GRbOHwBzeeU94wvDVjuGouBBHZ1c7406AqQg9/sNXUGLQ
-         7vbDFUGp9vB3DuYZa+04GKrIVrWx1y1RbreBEHJZXSgK0HF6FPV48lacHweW+yoST+9n
-         uGxQ==
-X-Gm-Message-State: AJIora+AeEfzpRYYPiy31pJVKzNCnGN3jcZ7Up+JJNU8ctuRlzxf2SQN
-        R2vQyp00p4bKkfHTKCzo9voCfA==
-X-Google-Smtp-Source: AGRyM1sriIKotGa0j9+nlYnZgzNZEGOdT9GGzOp45hsDuhv1rC9WZ3aB4itMRBdjcJIYO3+l4vejyg==
-X-Received: by 2002:a05:6808:ecf:b0:2f9:f0b1:7ee8 with SMTP id q15-20020a0568080ecf00b002f9f0b17ee8mr6034598oiv.225.1656609197132;
-        Thu, 30 Jun 2022 10:13:17 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id q10-20020a056830232a00b0060b1f3924c3sm11823645otg.44.2022.06.30.10.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 10:13:16 -0700 (PDT)
-Date:   Thu, 30 Jun 2022 12:13:14 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v9 1/7] dt-bindings: clock: add QCOM SM8450 camera clock
- bindings
-Message-ID: <Yr3Zqmi/rq2eKhRl@builder.lan>
-References: <20220630081742.2554006-1-vladimir.zapolskiy@linaro.org>
- <20220630081742.2554006-2-vladimir.zapolskiy@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=oP65LAT/fd0C6OnRp3Ub9OQHA8VbKhPvXbniEJ3nVeM=;
+        b=XNltqhE3HQ2TLLB/QckgWYmZ8ZEPRTJWTgRDX6BXubO0XbVQOOVK++rbaAGLYhKkvE
+         Wv/jpxXqhI8lyiX1OgKawlhN9vzMphNhqbyuHpnczPZL7+vhq+B2Oa8Sis67CG4MzRNn
+         R8otLpYM4rjgNVau8tE3z6oVD+J4nflypW2HQsIsRt/sDFCEtrGcKQA0uhyGwnOhhhEq
+         u1OXpOD6t3ChTtUJuuz5aUuZT3mVL9ivSzPxa6eDKu0xBNN0LOjtF5/MlkK9NcjEe7RG
+         fTq/oHbUjzmsC/nX4WiIur9cRUyxX9485BGP8hfdH7nxHshdMXpn1w7WsbyAoVHYE33q
+         dpOQ==
+X-Gm-Message-State: AJIora/I8U6RF1+h3pVgryLJQCxcfJcBZHhmDyk5lKFLwHek14herwgq
+        nohXA8uJ2pas1RtFaxRANCwxOg==
+X-Google-Smtp-Source: AGRyM1scmyht18TKC54qdhLFMpF/tV95/vYdn9nuKK0yCFXvLEMAhyAbNUUh6YAaGoMZvqq3eZSgKg==
+X-Received: by 2002:a05:6402:2c4:b0:435:8ce0:aef8 with SMTP id b4-20020a05640202c400b004358ce0aef8mr13310561edx.140.1656612095033;
+        Thu, 30 Jun 2022 11:01:35 -0700 (PDT)
+Received: from [192.168.0.190] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id kt26-20020a170906aada00b00726dbb18b59sm3626737ejb.130.2022.06.30.11.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jun 2022 11:01:34 -0700 (PDT)
+Message-ID: <5d8b2044-5ca6-c90c-57b4-afbb2ae20dde@linaro.org>
+Date:   Thu, 30 Jun 2022 20:01:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220630081742.2554006-2-vladimir.zapolskiy@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v6 10/14] arm64: dts: freescale: imx8qxp: Remove
+ unnecessary clock related entries
+Content-Language: en-US
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
+ <20220629164414.301813-11-viorel.suman@oss.nxp.com>
+ <483d5115-4027-e811-8bce-15da6c7c660f@linaro.org>
+ <20220630083636.2c7mclmbq3tjma2j@fsr-ub1664-116>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220630083636.2c7mclmbq3tjma2j@fsr-ub1664-116>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 30 Jun 03:17 CDT 2022, Vladimir Zapolskiy wrote:
-
-> The change adds device tree bindings for camera clock controller
-> found on SM8450 SoC.
+On 30/06/2022 10:36, Viorel Suman wrote:
+> On 22-06-29 20:04:43, Krzysztof Kozlowski wrote:
+>> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
+>>> From: Viorel Suman <viorel.suman@nxp.com>
+>>>
+>>> "clocks" and "clock-names" are not used the driver, so
+>>> remove them in order to match the yaml definition.
+>>
+>> So this explains the unexpected change in the bindings... but actually
+>> it does not explain whether it is correct or not. Just because driver
+>> does not use it, is not a proof that clocks are not there. In different
+>> OS/implementation this DTS might break stuff, so basically it is ABI
+>> break. DTS should describe the hardware fully, so if the clocks are
+>> there, should be in DTS regardless of the driver.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> Hi Krzysztof,
+> 
+> Both XTAL clocks - 24MHz and 32kHz - are still defined in DTSI files, see for instance in
+> arch/arm64/boot/dts/freescale/imx8qxp.dtsi :
+> ---------------
+>         xtal32k: clock-xtal32k {
+>                 compatible = "fixed-clock";
+>                 #clock-cells = <0>;
+>                 clock-frequency = <32768>;
+>                 clock-output-names = "xtal_32KHz";
+>         };
+> 
+>         xtal24m: clock-xtal24m {
+>                 compatible = "fixed-clock";
+>                 #clock-cells = <0>;
+>                 clock-frequency = <24000000>;
+>                 clock-output-names = "xtal_24MHz";
+>         };
+> ---------------
+> Both can be seen in /sys/kernel/debug/clk/clk_summary once boot is complete, both can be referenced
+> in any DTS node, so there is no ABI break.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+ABI break is not relevant to the fixed clocks being or not being defined
+in the DTS. You have a device which was taking the clock inputs, so the
+clocks stayed enabled.
 
-Regards,
-Bjorn
+Now, you don't take these inputs, so for example the clocks are getting
+disabled as not used.
+
+> 
+> "DTS should describe the hardware fully" - this is true in case the OS is supposed to controll the
+> hardware fully. i.MX8 System Controller Unit concept implies resources being allocated and managed
+> by SCU, there is no direct OS access to some hardware. SCU actually defines the hardware environment
+> the OS is being able to see and run within. SCU is able to define several such isolated hardware
+> environments, each having its own OS running. So, in this particular case - i.MX8 SCU concept -
+> DTS should describe the hardware from the perspective of the hardware environment exposed by SCU to
+> OS.
+
+OK, that sounds good, but the question about these clocks remain - are
+they inputs to the SCU or not.
+
+Regardless whether they are actual input or not, you used not
+appropriate argument here - that Linux OS implementation does not use
+them. The proper argument is - whether the hardware environment has them
+connected or not.
+
+Best regards,
+Krzysztof
