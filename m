@@ -2,98 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CD7C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 13:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261DAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 13:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231190AbiF3NfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 09:35:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39372 "EHLO
+        id S233783AbiF3Nob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 09:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230203AbiF3Ne7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 09:34:59 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B9F2871E
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 06:34:54 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id o23so23107898ljg.13
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 06:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Cs0qaK6bESbp2DFdkuLn3sAtIu+NiQn2SQSD9VgJFpI=;
-        b=wx6eI1NSAdoeV0j8dNWEEiceAeuA8jMZOLSZ+CwRcN2U0KxSgnqdufycWwKZJ2S7dR
-         Lq+VQPVPv0+hubv4MABp6tREvsCcovpEHpyj7wHsN46wENGYEJTPwTzT1xpu6cVwR75i
-         2QLItxQwRVXHzcv482DASalbOYhZxPKVsTdmEhD5KVxi/m1l/9XHNdYEHPW+OzVPjXLI
-         FAn84pmM/a0Sa9WtInGvRbRsx11n4qKdymbdJt+Qn3cuJ48NYrPZ9knozJT4ZZNMCC3x
-         MD6Tihx6dM7axGRn9NLNP8zM2iEHiMCMDg45U5ELuM1tq/2XwQlmYQgMPUPyj4I9jcgg
-         kCKw==
+        with ESMTP id S233512AbiF3Noa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 09:44:30 -0400
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB696C33;
+        Thu, 30 Jun 2022 06:44:29 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id i17so12372131ils.12;
+        Thu, 30 Jun 2022 06:44:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Cs0qaK6bESbp2DFdkuLn3sAtIu+NiQn2SQSD9VgJFpI=;
-        b=DovIRl1knZcucFoR2TNC8YlhfVXEPV3HKEDcvxrnEOhfOK/KNN4+50o2SqjHdL7o7T
-         XPKZELrCBD0O1yGR+7KiWNzXfLSnqKp7nePU+lAD7iwfvuhGDMDVgNRSXpxk0pYGJMh2
-         tuIzUkULEWXo5CvOOg99EvX2wHgjhBVc0cFhS3P6wrZWj9q7AMd9uVCuOKnlC6uiTMmT
-         QDh9UxrWz6X5yFojCBwDNVVhJeZV/4ydNzMACxXOzWw5qnaFmcYFG75wA7dlM5a37AWn
-         c/xDGn+3oSZeJcqjEm185wn/VphzZ2SH3SECGGjAem2nrMrv9nAYdfPoIQYBDdJhNB5K
-         7DKg==
-X-Gm-Message-State: AJIora8DL8Jn77skaL/CpHkPPEQAWmOEPQw5TdMO8uA6FwIiHoiVq5fJ
-        jRHLZUUVn92Xqssct9lssbjI1/1YtmmhzQ==
-X-Google-Smtp-Source: AGRyM1tb35ZQuDsFSQ4qqgwkA6YUl7UROEuTommfMO7KDPyAcEPquNXQrTpl+3AcOW8skHiYe6j0/w==
-X-Received: by 2002:a05:651c:11d0:b0:25a:978e:4892 with SMTP id z16-20020a05651c11d000b0025a978e4892mr5411337ljo.517.1656596092401;
-        Thu, 30 Jun 2022 06:34:52 -0700 (PDT)
-Received: from [192.168.1.102] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id z9-20020a0565120c0900b004793240041esm3101067lfu.277.2022.06.30.06.34.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 06:34:51 -0700 (PDT)
-Message-ID: <6c6dddb7-a2d1-e93c-7448-6edb8ae3e665@linaro.org>
-Date:   Thu, 30 Jun 2022 16:34:48 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v9 5/7] clk: qcom: clk-alpha-pll: add Lucid EVO PLL
- configuration interfaces
-Content-Language: en-US
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=F61ursUhOghCCvcGADpml8N5+9VOTyitVooeCIOjB9Y=;
+        b=eHW+NJmgjk83Z9zFdAYVt1x1jUCcY6B4XFDgChxjKkFOnwf3ueoNF6wbLJnOLK3398
+         B8Q8tfeHmsYoIxaUCwI0AjyisozXdQUr/bQ34krdJqD1jbdUASx32WFi0lDacbrqhEDk
+         ME8Vr1iViAyZLzNb1Mg8S2YRTh2xQXKd0TbRsXRnCFozFC4tEoK+fsq9AdImu2kA+kdl
+         rc6UdMZGmM/hWaZl7v+0bUMM//da+HeAaNnaEQKnzHVqK2HCEaejFrprjnd6gAp0PEJk
+         FYPhgc8wusDneoF2WhaQEF2TCa0ckRs5D3PlI4pSZHGp/CrN1GPTpky91XngLwbVgTnb
+         NrHw==
+X-Gm-Message-State: AJIora+YD97Ryq3fMVaepAGXTOQ8TcFYFpbhzeoJcO2y9sMplmEr/04b
+        f38+TCrGNHKoOuQEIjfc3jZVpJSmMQ==
+X-Google-Smtp-Source: AGRyM1va0OfMAzdwHvSEGOAV99yEfmyc7T6+WfNApUwyVgB/zFT14suu4BOYVa6g66ClrDPB/QTk+w==
+X-Received: by 2002:a05:6e02:1ba4:b0:2da:dcc1:488a with SMTP id n4-20020a056e021ba400b002dadcc1488amr910311ili.78.1656596669116;
+        Thu, 30 Jun 2022 06:44:29 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id e42-20020a02862d000000b003316536ebc1sm4069472jai.73.2022.06.30.06.44.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 06:44:28 -0700 (PDT)
+Received: (nullmailer pid 2569455 invoked by uid 1000);
+        Thu, 30 Jun 2022 13:44:25 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        devicetree@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        Ming Qian <ming.qian@nxp.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Fabio Estevam <festevam@gmail.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        linux-arm-kernel@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20220630081742.2554006-1-vladimir.zapolskiy@linaro.org>
- <20220630081825.2554069-1-vladimir.zapolskiy@linaro.org>
- <Yr2TitZR3Yv8z/V1@matsya>
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <Yr2TitZR3Yv8z/V1@matsya>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        linux-watchdog@vger.kernel.org, Amit Kucheria <amitk@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Liu Ying <victor.liu@nxp.com>, linux-kernel@vger.kernel.org,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20220629164414.301813-3-viorel.suman@oss.nxp.com>
+References: <20220629164414.301813-1-viorel.suman@oss.nxp.com> <20220629164414.301813-3-viorel.suman@oss.nxp.com>
+Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux yaml file
+Date:   Thu, 30 Jun 2022 07:44:25 -0600
+Message-Id: <1656596665.734742.2569454.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Vinod,
-
-On 6/30/22 15:14, Vinod Koul wrote:
-> On 30-06-22, 11:18, Vladimir Zapolskiy wrote:
->> Add controls for Lucid EVO PLL configuration and export control functions
->> to clock controller drivers.
+On Wed, 29 Jun 2022 19:44:02 +0300, Viorel Suman (OSS) wrote:
+> From: Abel Vesa <abel.vesa@nxp.com>
 > 
-> This sound fine but maybe add why we are adding this (to be used in
-> dispcc driver)... motivation helps :)
+> In order to replace the fsl,scu txt file from bindings/arm/freescale,
+> we need to split it between the right subsystems. This patch documents
+> separately the 'iomux/pinctrl' child node of the SCU main node.
 > 
-
-sure, and please note, that it's used by camcc as well, basically it's a reason
-why this change is found in the series :)
-
-> Other than this nit, lgtm:
-> 
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> ---
+>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
 > 
 
-Thanks you for review!
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
---
-Best wishes,
-Vladimir
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8ulp-pinctrl.example.dtb: pinctrl@298c0000: lpuart5grp:fsl,pins:0: [312, 2288, 4, 3, 3, 316, 2284, 4, 3, 3] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8ulp-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mn-pinctrl.example.dtb: pinctrl@30330000: uart2grp:fsl,pins:0: [572, 1188, 1276, 0, 0, 320, 576, 1192, 0, 0, 0, 320] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mn-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx93-pinctrl.example.dtb: pinctrl@443c0000: uart3grp:fsl,pins:0: [72, 504, 1052, 1, 0, 73, 76, 508, 1048, 1, 0, 73] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx93-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.example.dtb: pinctrl@30330000: uart2grp:fsl,pins:0: [572, 1188, 1276, 0, 0, 320, 576, 1192, 0, 0, 0, 320] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mm-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.example.dtb: pinctrl@30330000: uart5grp:fsl,pins:0: [352, 976, 1812, 1, 0, 126, 356, 980, 0, 1, 0, 118] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.example.dtb: pinctrl@302c0000: gpio1-grp:fsl,pins:0: [8, 56, 0, 0, 0, 89, 12, 60, 0, 0, 0, 89] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.example.dtb: pinctrl@30330000: uart1grp:fsl,pins:0: [564, 1180, 1268, 0, 0, 73, 568, 1184, 1268, 0, 0, 73] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mq-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.example.dtb: iomuxc@401f8000: lpuart1grp:fsl,pins:0: [236, 732, 0, 2, 0, 241, 240, 736, 0, 2, 0, 241] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.example.dtb: pinctrl@30330000: uart2grp:fsl,pins:0: [552, 1160, 1520, 0, 6, 73, 552, 1160, 0, 0, 0, 73] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imx8mp-pinctrl.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.example.dtb: iomuxc@400e8000: lpuart1grp:fsl,pins:0: [364, 944, 1568, 0, 0, 241, 368, 948, 1564, 0, 0, 241] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
