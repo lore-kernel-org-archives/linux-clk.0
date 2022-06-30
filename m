@@ -2,61 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E258C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 10:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0132EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 11:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230135AbiF3KnP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 06:43:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58184 "EHLO
+        id S234222AbiF3LAk convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 07:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235017AbiF3Kmh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 06:42:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A054D4D5;
-        Thu, 30 Jun 2022 03:40:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 166B16227F;
-        Thu, 30 Jun 2022 10:40:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAED5C34115;
-        Thu, 30 Jun 2022 10:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656585630;
-        bh=6g1EAWaJYoZ7/A1lNl7RJY+2mIc+MU6cpTp4LNWrgb8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GxHPclZ+rbTdaTFp1yLvc0Y4oKqAwnWJlupZMuMFWd5NpG7S7TAhXcxS7U6TDtI39
-         B948/OpJNyPQ5LpedR+F/igWkekBxVdQjrA0owSfgx7fAAZt9a8gH73AV2ABydpzus
-         mpp1Fm3i7i+U8AnqlP4uGY8l878ikR9tDfvF1tZMhuSM4lEbJIGqHoBx1fvFNHEAz2
-         yieMAeKa0CvO/0tq4YxJN4mlnljlprBDHPiv6AcpKj5kU1dAP4f1LLDfAR6wboQR6s
-         y+3npTWfP3p+LG18v5iTJdt402Z/MvO0Nvn3cKoRbsuXcc5iFCRlhwbnnWOv2RDKie
-         HRee1SW+WAffQ==
-Date:   Thu, 30 Jun 2022 16:10:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v9 4/7] clk: qcom: clk-alpha-pll: limit exported symbols
- to GPL licensed code
-Message-ID: <Yr19mh71Av41dbIb@matsya>
-References: <20220630081742.2554006-1-vladimir.zapolskiy@linaro.org>
- <20220630081821.2554050-1-vladimir.zapolskiy@linaro.org>
+        with ESMTP id S234188AbiF3LAj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 07:00:39 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D4142ECB
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 04:00:39 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6rtu-0002Pt-Qp; Thu, 30 Jun 2022 12:59:58 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6rtj-003ZXI-17; Thu, 30 Jun 2022 12:59:50 +0200
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6rtl-0006A7-Mo; Thu, 30 Jun 2022 12:59:49 +0200
+Message-ID: <63f8d70ad9c657890669e9c32775632af4e36995.camel@pengutronix.de>
+Subject: Re: [PATCH v6 08/17] reset: npcm: using syscon instead of device
+ data
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, gregkh@linuxfoundation.org,
+        daniel.lezcano@linaro.org, tglx@linutronix.de,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
+        bjorn.andersson@linaro.org, geert+renesas@glider.be,
+        marcel.ziswiler@toradex.com, vkoul@kernel.org,
+        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 30 Jun 2022 12:59:49 +0200
+In-Reply-To: <20220630103606.83261-9-tmaimon77@gmail.com>
+References: <20220630103606.83261-1-tmaimon77@gmail.com>
+         <20220630103606.83261-9-tmaimon77@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220630081821.2554050-1-vladimir.zapolskiy@linaro.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30-06-22, 11:18, Vladimir Zapolskiy wrote:
-> Unify all exported PLL clock configuration functions and data structures
-> as GPL symbols.
+Hi Tomer,
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+On Do, 2022-06-30 at 13:35 +0300, Tomer Maimon wrote:
+Using syscon device tree property instead of device data to handle the
+NPCM general control registers.
 
--- 
-~Vinod
+In case the syscon not found the code still search for nuvoton,npcm750-gcr
+to support DTS backward compatibility.
+
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ drivers/reset/reset-npcm.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+index 2ea4d3136e15..431ff2b602c5 100644
+--- a/drivers/reset/reset-npcm.c
++++ b/drivers/reset/reset-npcm.c
+@@ -138,8 +138,7 @@ static int npcm_reset_xlate(struct reset_controller_dev *rcdev,
+ }
+ 
+
+ static const struct of_device_id npcm_rc_match[] = {
+-	{ .compatible = "nuvoton,npcm750-reset",
+-		.data = (void *)"nuvoton,npcm750-gcr" },
++	{ .compatible = "nuvoton,npcm750-reset"},
+
+Add a space.                                  ^^
+
+ 	{ }
+ };
+ 
+
+@@ -155,15 +154,15 @@ static int npcm_usb_reset(struct platform_device *pdev, struct npcm_rc_data *rc)
+ 	u32 ipsrst1_bits = 0;
+ 	u32 ipsrst2_bits = NPCM_IPSRST2_USB_HOST;
+ 	u32 ipsrst3_bits = 0;
+-	const char *gcr_dt;
+ 
+
+-	gcr_dt = (const char *)
+-	of_match_device(dev->driver->of_match_table, dev)->data;
+-
+-	gcr_regmap = syscon_regmap_lookup_by_compatible(gcr_dt);
++	gcr_regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "nuvoton,sysgcr");
+ 	if (IS_ERR(gcr_regmap)) {
+-		dev_err(&pdev->dev, "Failed to find %s\n", gcr_dt);
+-		return PTR_ERR(gcr_regmap);
++		dev_warn(&pdev->dev, "Failed to find nuvoton,sysgcr search for nuvoton,npcm750-gcr for Poleg backward compatibility");
+
+Is this warning useful to the user? Maybe add suggestion like "please
+update the device tree". Also there is no further message if
+nuvoton,npcm750-gcr is found and all is well.
+
+regards
+Philipp
