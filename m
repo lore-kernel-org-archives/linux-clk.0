@@ -2,90 +2,301 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E856C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 09:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AFAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 09:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbiF3JCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 05:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59614 "EHLO
+        id S233146AbiF3JMz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 05:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbiF3JCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 05:02:07 -0400
-Received: from m1564.mail.126.com (m1564.mail.126.com [220.181.15.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BDB10F585
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 02:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=ijUlj
-        kPQTHw4Sae0SPIyV5gHdh8w71Lmeu9ydOYOclc=; b=TzcghZjjfzdH4818hE9pw
-        Qizm1UvAxHK5Ncr66Gej80M1cQc2jrLh54Ik9OXM2WFPNKcKGiK4j8VTzX0gEHcq
-        V4POn5AgyrHBmpCFp9ZjWdcQrTs58HLEnTi7MC0WgV0iiUR7Lnj6+rplXcERHUno
-        jBv28DOdRfkVVTjEuAGvyg=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr64
- (Coremail) ; Thu, 30 Jun 2022 16:59:37 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Thu, 30 Jun 2022 16:59:37 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux-clk@vger.kernel.org
-Subject: Re:Re: [PATCH v2] clk: at91: dt-compat: Hold reference returned by
- of_get_parent()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <6a78dca9-96d6-08c3-7cb2-6773b4bc3883@microchip.com>
-References: <20220628132256.164120-1-windhl@126.com>
- <6a78dca9-96d6-08c3-7cb2-6773b4bc3883@microchip.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        with ESMTP id S233404AbiF3JMy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 05:12:54 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0BB1CB05
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 02:12:48 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6qDn-0002b6-SL; Thu, 30 Jun 2022 11:12:23 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6qDh-003YyD-6B; Thu, 30 Jun 2022 11:12:20 +0200
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1o6qDk-0003Cl-3a; Thu, 30 Jun 2022 11:12:20 +0200
+Message-ID: <813a3b51f82a11a86bd3af2c3299c344e08e8963.camel@pengutronix.de>
+Subject: Re: [PATCH v1 04/14] reset: add polarfire soc reset support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Daire McNamara <daire.mcnamara@microchip.com>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-riscv@lists.infradead.org
+Date:   Thu, 30 Jun 2022 11:12:20 +0200
+In-Reply-To: <20220630080532.323731-5-conor.dooley@microchip.com>
+References: <20220630080532.323731-1-conor.dooley@microchip.com>
+         <20220630080532.323731-5-conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Message-ID: <1e2ee2fe.6513.181b3d6580c.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: QMqowAAXJnL6Zb1iacxCAA--.44641W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7QUwF1pEAT8ObgABsO
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CkhpLMKgIENsYXVkaXUuQmV6bmVhLAoKQXQgMjAyMi0wNi0zMCAxNjozOToyNiwgQ2xhdWRpdS5C
-ZXpuZWFAbWljcm9jaGlwLmNvbSB3cm90ZToKPk9uIDI4LjA2LjIwMjIgMTY6MjIsIExpYW5nIEhl
-IHdyb3RlOgo+PiBFWFRFUk5BTCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0
-YWNobWVudHMgdW5sZXNzIHlvdSBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUKPj4gWy4uLl0KPj4g
-QEAgLTY5NCw4ICs3MzIsOCBAQCBvZl9hdDkxX2Nsa19wcm9nX3NldHVwKHN0cnVjdCBkZXZpY2Vf
-bm9kZSAqbnAsCj4+ICAgICAgICAgdW5zaWduZWQgaW50IG51bV9wYXJlbnRzOwo+PiAgICAgICAg
-IGNvbnN0IGNoYXIgKnBhcmVudF9uYW1lc1tQUk9HX1NPVVJDRV9NQVhdOwo+PiAgICAgICAgIGNv
-bnN0IGNoYXIgKm5hbWU7Cj4+IC0gICAgICAgc3RydWN0IGRldmljZV9ub2RlICpwcm9nY2xrbnA7
-Cj4+ICAgICAgICAgc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+PiArICAgICAgIHN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqcHJvZ2Nsa25wLCAqcGFyZW50X25wOwo+Cj5JcyB0aGVyZSBhIHJlYXNvbiB5b3Ug
-Y2hvc2VkIHRvIG1vdmUgdGhpcyBvbiBhIG5ldyBsaW5lPwoKPgoKSW4gZmFjdCwgSSBqdXN0IHdh
-bnQgdG8ga2VlcCBsb25nIGRlY2xhcmF0aW9uIG9uIGJvdHRvbS4KCkhvd2V2ZXIsIHRoaXMgbW9k
-aWZpY2F0aW9uIG1heWJlIHVzZWxlc3MuIAoKCj4+IFsuLi5dCj4+ICAgICAgICAgc3RydWN0IGNs
-a19odyAqaHc7Cj4+ICAgICAgICAgY29uc3QgY2hhciAqbmFtZTsKPj4gLSAgICAgICBzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKnN5c2Nsa25wOwo+PiAgICAgICAgIGNvbnN0IGNoYXIgKnBhcmVudF9uYW1l
-Owo+PiAgICAgICAgIHN0cnVjdCByZWdtYXAgKnJlZ21hcDsKPj4gKyAgICAgICBzdHJ1Y3QgZGV2
-aWNlX25vZGUgKnN5c2Nsa25wLCAqcGFyZW50X25wOwo+Cj5TYW1lIGhlcmUuCgo+CgoKU2FtZSBy
-ZWFzb24gYXMgYWJvdmUuCgo+PiAKPj4gICAgICAgICBudW0gPSBvZl9nZXRfY2hpbGRfY291bnQo
-bnApOwo+PiAgICAgICAgIGlmIChudW0gPiAoU1lTVEVNX01BWF9JRCArIDEpKQoKPj4gQEAgLTg4
-NSw5ICs5MzYsMTAgQEAgQ0xLX09GX0RFQ0xBUkUoYXQ5MXNhbTl4NV9jbGtfdXNiLCAiYXRtZWws
-YXQ5MXNhbTl4NS1jbGstdXNiIiwKPj4gIHN0YXRpYyB2b2lkIF9faW5pdCBvZl9hdDkxc2FtOW4x
-Ml9jbGtfdXNiX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApCj4+ICB7Cj4+ICAgICAgICAg
-c3RydWN0IGNsa19odyAqaHc7Cj4+ICsgICAgICAgc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+PiAg
-ICAgICAgIGNvbnN0IGNoYXIgKnBhcmVudF9uYW1lOwo+PiAgICAgICAgIGNvbnN0IGNoYXIgKm5h
-bWUgPSBucC0+bmFtZTsKPj4gLSAgICAgICBzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7Cj4+ICsgICAg
-ICAgc3RydWN0IGRldmljZV9ub2RlICpwYXJlbnRfbnA7Cj4KPllvdSBtb3ZlZCBhcm91bmQgdGhl
-IGRlY2xhcmF0aW9ucy4KCj4KCgpTb3JyeSwgSSBoYXZlIGJlZW4gdG9sZCB0byBrZWVwIHJldmVy
-c2UgY2hyaXN0bWFzIHRyZWUuCgoKU28gdGhpcyBsb29rIGxpa2UgYSBub3JtYWwgY2hyaXN0bWFz
-IHRyZWU/CgoKPj4gPj4gICAgICAgICBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25h
-bWUobnAsIDApOwpbLi4uXQo+PiArICAgICAgIHN0cnVjdCByZWdtYXAgKnJlZ21hcDsKPj4gICAg
-ICAgICBjb25zdCBjaGFyICpwYXJlbnRfbmFtZTsKPj4gICAgICAgICBjb25zdCBjaGFyICpuYW1l
-ID0gbnAtPm5hbWU7Cj4+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpwYXJlbnRfbnA7Cj4+
-ICAgICAgICAgdTMyIGRpdmlzb3JzWzRdID0gezAsIDAsIDAsIDB9Owo+PiAtICAgICAgIHN0cnVj
-dCByZWdtYXAgKnJlZ21hcDsKPgo+U2FtZSBoZXJlLgoKPgoKClNhbWUgcmVhc29uIGFzIGFib3Zl
-LgoKPj4gCj4+ICAgICAgICAgcGFyZW50X25hbWUgPSBvZl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5w
-LCAwKTsKPj4gICAgICAgICBpZiAoIXBhcmVudF9uYW1lKQo+PiBAQCAtOTI2LDcgKzk4MSw5IEBA
-IHN0YXRpYyB2b2lkIF9faW5pdCBvZl9hdDkxcm05MjAwX2Nsa191c2Jfc2V0dXAoc3RydWN0IGRl
-dmljZV9ub2RlICpucCkKCj4+IAoKCklmIHRoZXNlIGRlY2xhcmF0aW9uIGNoYWdlcyBhcmUgbm90
-IG5lZWRlZCwgSSBjYW4gcmVzZW5kIGEgbmV3IHBhdGNoIGtlZXBpbmcgdGhlIG9yaWdpbmFsIG9y
-ZGVyIG9mIGRlY2xhcmF0aW9ucy4KCgpUaGFua3MuCgoKTGlhbmcg
+Hi Conor,
+
+On Do, 2022-06-30 at 09:05 +0100, Conor Dooley wrote:
+Add support for the resets on Microchip's PolarFire SoC (MPFS).
+Reset control is a single register, wedged in between registers for
+clock control. To fit with existed DT etc, the reset controller is
+
+existing                     ^
+
+created using the aux device framework & set up in the clock driver.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/reset/Kconfig      |   9 +++
+ drivers/reset/Makefile     |   2 +-
+ drivers/reset/reset-mpfs.c | 145 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 155 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/reset/reset-mpfs.c
+
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 93c8d07ee328..edf48951f763 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -122,6 +122,15 @@ config RESET_MCHP_SPARX5
+ 	help
+ 	  This driver supports switch core reset for the Microchip Sparx5 SoC.
+ 
+
++config RESET_POLARFIRE_SOC
++	bool "Microchip PolarFire SoC (MPFS) Reset Driver"
++	depends on AUXILIARY_BUS && MCHP_CLK_MPFS
++	default MCHP_CLK_MPFS
++	help
++	  This driver supports peripheral reset for the Microchip PolarFire SoC
++
++	  CONFIG_RESET_MPFS
+
+This doesn't look intentional.
+
++
+ config RESET_MESON
+ 	tristate "Meson Reset Driver"
+ 	depends on ARCH_MESON || COMPILE_TEST
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index a80a9c4008a7..5fac3a753858 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -17,6 +17,7 @@ obj-$(CONFIG_RESET_K210) += reset-k210.o
+ obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
+ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+ obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
++obj-$(CONFIG_RESET_POLARFIRE_SOC) += reset-mpfs.o
+ obj-$(CONFIG_RESET_MESON) += reset-meson.o
+ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+ obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
+@@ -38,4 +39,3 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+ obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
+ obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+ obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+-
+diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+new file mode 100644
+index 000000000000..49c47a3e6c70
+--- /dev/null
++++ b/drivers/reset/reset-mpfs.c
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * PolarFire SoC (MPFS) Peripheral Clock Reset Controller
++ *
++ * Author: Conor Dooley <conor.dooley@microchip.com>
++ * Copyright (c) 2022 Microchip Technology Inc. and its subsidiaries.
++ *
++ */
++#include <linux/auxiliary_bus.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <dt-bindings/clock/microchip,mpfs-clock.h>
++#include <soc/microchip/mpfs.h>
++
++/*
++ * The ENVM reset is the lowest bit in the register & I am using the CLK_FOO
++ * defines in the dt to make things easier to configure - so this is accounting
++ * for the offset of 3 there.
++ */
++#define MPFS_PERIPH_OFFSET	CLK_ENVM
++#define MPFS_NUM_RESETS		30u
++#define MPFS_SLEEP_MIN_US	100
++#define MPFS_SLEEP_MAX_US	200
++
++/*
++ * Peripheral clock resets
++ */
++
++static int mpfs_assert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	u32 reg;
++
++	reg = mpfs_reset_read(rcdev->dev);
++	reg |= (1u << id);
++	mpfs_reset_write(rcdev->dev, reg);
+
+This is missing a spinlock to protect against concurrent read-modify-
+writes.
+
++
++	return 0;
++}
++
++static int mpfs_deassert(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	u32 reg, val;
++
++	reg = mpfs_reset_read(rcdev->dev);
++	val = reg & ~(1u << id);
+
+You could use BIT(id) instead of (1u << id).
+
++	mpfs_reset_write(rcdev->dev, val);
++
++	return 0;
++}
++
++static int mpfs_status(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	u32 reg = mpfs_reset_read(rcdev->dev);
++
++	return (reg & (1u << id));
+
+Side note, this works because MPFS_NUM_RESETS makes sure the sign bit
+is never hit.
+
++}
++
++static int mpfs_reset(struct reset_controller_dev *rcdev, unsigned long id)
++{
++	mpfs_assert(rcdev, id);
++
++	usleep_range(MPFS_SLEEP_MIN_US, MPFS_SLEEP_MAX_US);
++
++	mpfs_deassert(rcdev, id);
++
++	return 0;
++}
++
++static const struct reset_control_ops mpfs_reset_ops = {
++	.reset = mpfs_reset,
++	.assert = mpfs_assert,
++	.deassert = mpfs_deassert,
++	.status = mpfs_status,
++};
++
++static int mpfs_reset_xlate(struct reset_controller_dev *rcdev,
++			    const struct of_phandle_args *reset_spec)
++{
++	unsigned int index = reset_spec->args[0];
++
++	/*
++	 * CLK_RESERVED does not map to a clock, but it does map to a reset,
++	 * so it has to be accounted for here. It is the reset for the fabric,
++	 * so if this reset gets called - do not reset it.
++	 */
++	if (index == CLK_RESERVED) {
++		dev_err(rcdev->dev, "Resetting the fabric is not supported\n");
++		return -EINVAL;
++	}
++
++	if (index < MPFS_PERIPH_OFFSET || index >= (MPFS_PERIPH_OFFSET + rcdev->nr_resets)) {
++		dev_err(rcdev->dev, "Invalid reset index %u\n", reset_spec->args[0]);
+
+s/reset_spec->args[0]/index/
+
++		return -EINVAL;
++	}
++
++	return index - MPFS_PERIPH_OFFSET;
++}
++
++static int mpfs_reset_probe(struct auxiliary_device *adev,
++			    const struct auxiliary_device_id *id)
++{
++	struct device *dev = &adev->dev;
++	struct reset_controller_dev *rcdev;
++	int ret;
++
++	rcdev = devm_kzalloc(dev, sizeof(*rcdev), GFP_KERNEL);
++	if (!rcdev)
++		return -ENOMEM;
++
++	rcdev->dev = dev;
++	rcdev->dev->parent = adev->dev.parent;
+
+s/adev->dev./dev->/
+
++	rcdev->ops = &mpfs_reset_ops;
++	rcdev->of_node = adev->dev.parent->of_node;
+
+s/adev->dev./dev->/
+
++	rcdev->of_reset_n_cells = 1;
++	rcdev->of_xlate = mpfs_reset_xlate;
++	rcdev->nr_resets = MPFS_NUM_RESETS;
++
++	ret = devm_reset_controller_register(dev, rcdev);
++	if (!ret)
++		dev_info(dev, "Registered MPFS reset controller\n");
+
+Is this really useful information for most users?
+
++
++	return ret;
++}
++
++static const struct auxiliary_device_id mpfs_reset_ids[] = {
++	{
++		.name = "clk_mpfs.reset-mpfs",
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(auxiliary, mpfs_reset_ids);
++
++static struct auxiliary_driver mpfs_reset_driver = {
++	.probe		= mpfs_reset_probe,
++	.id_table	= mpfs_reset_ids,
++};
++
++module_auxiliary_driver(mpfs_reset_driver);
++
++MODULE_DESCRIPTION("Microchip PolarFire SoC Reset Driver");
++MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS(MCHP_CLK_MPFS);
+
+regards
+Philipp
