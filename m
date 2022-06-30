@@ -2,114 +2,433 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF73CCA47B
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 14:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2ABC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 14:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237199AbiF3Ogs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 10:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44044 "EHLO
+        id S232029AbiF3Okn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 10:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236000AbiF3Og1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 10:36:27 -0400
-Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 129B24881D
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 07:29:19 -0700 (PDT)
+        with ESMTP id S232836AbiF3Okm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 10:40:42 -0400
+Received: from m15111.mail.126.com (m15111.mail.126.com [220.181.15.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9F77732F
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 07:40:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=FsvOw
-        zuijBc3Oe+UQUjFJ81+vRMPJDmmhu0q3wbLWKc=; b=Ef92fhDQWQA+ehm1arTt/
-        R1p6a2APzmjyDvlL7iSn9Wna0ZynO6hgtXt7d7U3T/6h8CgcDk1pDPvNw9qvJDqa
-        4k7L9bQvE14WtLWQgIDlyfJXWCC0YWpN7jqiLCUC4igd509eU1l8ukTh91i4+f3l
-        ayB80B+ZTHwFX3HXOg/Fz0=
-Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
- (Coremail) ; Thu, 30 Jun 2022 22:27:49 +0800 (CST)
-X-Originating-IP: [124.16.139.61]
-Date:   Thu, 30 Jun 2022 22:27:49 +0800 (CST)
-From:   "Liang He" <windhl@126.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux-clk@vger.kernel.org
-Subject: Re:Re: [PATCH v2] clk: at91: dt-compat: Hold reference returned by
- of_get_parent()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
- Copyright (c) 2002-2022 www.mailtech.cn 126com
-In-Reply-To: <11362da4-69d2-0ba0-594a-a1ce1025c572@microchip.com>
-References: <20220628132256.164120-1-windhl@126.com>
- <6a78dca9-96d6-08c3-7cb2-6773b4bc3883@microchip.com>
- <1e2ee2fe.6513.181b3d6580c.Coremail.windhl@126.com>
- <b026e219-48f6-f12d-2c91-7b64372fc178@microchip.com>
- <2bd293a2.7c0d.181b4b15961.Coremail.windhl@126.com>
- <11362da4-69d2-0ba0-594a-a1ce1025c572@microchip.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ambHq
+        TuI7t0nkqutkBrw5HhFDtmBz1qHDTS8mdo9hH0=; b=SARBA56R4S99mtrWDZjVj
+        ERbnSP3qG0UBZoSHuaCl8VwGOHLVbGZpQhYeVSUPoWR2kIJ1pDb6ZnAlYIY91uPu
+        No1xPdiFaGHl9iGiaRkaq1tD+BcDSA7keUfu+amJS3s2YX3foXkTdCxjxu0sB1x8
+        wFLwMI+V1oSdm037tV1EQQ=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp1 (Coremail) with SMTP id C8mowADnszS1tb1iIvDSFg--.10625S2;
+        Thu, 30 Jun 2022 22:39:50 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com, linux-clk@vger.kernel.org,
+        windhl@126.com
+Subject: [PATCH v3] clk: at91: dt-compat: Hold reference returned by  of_get_parent()
+Date:   Thu, 30 Jun 2022 22:39:49 +0800
+Message-Id: <20220630143949.218922-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Message-ID: <788d6c23.8053.181b502cf7b.Coremail.windhl@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GMqowAAnLyfmsr1iJSNAAA--.51307W
-X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbizhIwF18RPaFs6QABst
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8mowADnszS1tb1iIvDSFg--.10625S2
+X-Coremail-Antispam: 1Uf129KBjvAXoW3Cry7Ar1UGF43Gr43Xr1UKFg_yoW8JFW8Xo
+        W7GF4xWF10kw18tFW5W3sxtF129w1kuryxWa4qkwsF9ayjk345Xr17XF43JFnIqr1fWrZ3
+        Zry8tan8GF1UJr1xn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU8Z2-DUUUU
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGg8wF1-HZab3agAAs0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CgoKCkF0IDIwMjItMDYtMzAgMjI6MTk6NDUsIENsYXVkaXUuQmV6bmVhQG1pY3JvY2hpcC5jb20g
-d3JvdGU6Cj5PbiAzMC4wNi4yMDIyIDE1OjU4LCBMaWFuZyBIZSB3cm90ZToKPj4gRVhURVJOQUwg
-RU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Ug
-a25vdyB0aGUgY29udGVudCBpcyBzYWZlCj4+IAo+PiBBdCAyMDIyLTA2LTMwIDE4OjIwOjM2LCBD
-bGF1ZGl1LkJlem5lYUBtaWNyb2NoaXAuY29tIHdyb3RlOgo+Pj4gT24gMzAuMDYuMjAyMiAxMTo1
-OSwgTGlhbmcgSGUgd3JvdGU6Cj4+Pj4gRVhURVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5r
-cyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZl
-Cj4+Pj4KPj4+PiBIaSwgIENsYXVkaXUuQmV6bmVhLAo+Pj4+Cj4+Pj4gQXQgMjAyMi0wNi0zMCAx
-NjozOToyNiwgQ2xhdWRpdS5CZXpuZWFAbWljcm9jaGlwLmNvbSB3cm90ZToKPj4+Pj4gT24gMjgu
-MDYuMjAyMiAxNjoyMiwgTGlhbmcgSGUgd3JvdGU6Cj4+Pj4+PiBFWFRFUk5BTCBFTUFJTDogRG8g
-bm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBrbm93IHRoZSBj
-b250ZW50IGlzIHNhZmUKPj4+Pj4+IFsuLi5dCj4+Pj4+PiBAQCAtNjk0LDggKzczMiw4IEBAIG9m
-X2F0OTFfY2xrX3Byb2dfc2V0dXAoc3RydWN0IGRldmljZV9ub2RlICpucCwKPj4+Pj4+ICAgICAg
-ICAgdW5zaWduZWQgaW50IG51bV9wYXJlbnRzOwo+Pj4+Pj4gICAgICAgICBjb25zdCBjaGFyICpw
-YXJlbnRfbmFtZXNbUFJPR19TT1VSQ0VfTUFYXTsKPj4+Pj4+ICAgICAgICAgY29uc3QgY2hhciAq
-bmFtZTsKPj4+Pj4+IC0gICAgICAgc3RydWN0IGRldmljZV9ub2RlICpwcm9nY2xrbnA7Cj4+Pj4+
-PiAgICAgICAgIHN0cnVjdCByZWdtYXAgKnJlZ21hcDsKPj4+Pj4+ICsgICAgICAgc3RydWN0IGRl
-dmljZV9ub2RlICpwcm9nY2xrbnAsICpwYXJlbnRfbnA7Cj4+Pj4+Cj4+Pj4+IElzIHRoZXJlIGEg
-cmVhc29uIHlvdSBjaG9zZWQgdG8gbW92ZSB0aGlzIG9uIGEgbmV3IGxpbmU/Cj4+Pj4KPj4+Pj4K
-Pj4+Pgo+Pj4+IEluIGZhY3QsIEkganVzdCB3YW50IHRvIGtlZXAgbG9uZyBkZWNsYXJhdGlvbiBv
-biBib3R0b20uCj4+Pj4KPj4+PiBIb3dldmVyLCB0aGlzIG1vZGlmaWNhdGlvbiBtYXliZSB1c2Vs
-ZXNzLgo+Pj4+Cj4+Pj4KPj4+Pj4+IFsuLi5dCj4+Pj4+PiAgICAgICAgIHN0cnVjdCBjbGtfaHcg
-Kmh3Owo+Pj4+Pj4gICAgICAgICBjb25zdCBjaGFyICpuYW1lOwo+Pj4+Pj4gLSAgICAgICBzdHJ1
-Y3QgZGV2aWNlX25vZGUgKnN5c2Nsa25wOwo+Pj4+Pj4gICAgICAgICBjb25zdCBjaGFyICpwYXJl
-bnRfbmFtZTsKPj4+Pj4+ICAgICAgICAgc3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+Pj4+Pj4gKyAg
-ICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKnN5c2Nsa25wLCAqcGFyZW50X25wOwo+Pj4+Pgo+Pj4+
-PiBTYW1lIGhlcmUuCj4+Pj4KPj4+Pj4KPj4+Pgo+Pj4+Cj4+Pj4gU2FtZSByZWFzb24gYXMgYWJv
-dmUuCj4+Pj4KPj4+Pj4+Cj4+Pj4+PiAgICAgICAgIG51bSA9IG9mX2dldF9jaGlsZF9jb3VudChu
-cCk7Cj4+Pj4+PiAgICAgICAgIGlmIChudW0gPiAoU1lTVEVNX01BWF9JRCArIDEpKQo+Pj4+Cj4+
-Pj4+PiBAQCAtODg1LDkgKzkzNiwxMCBAQCBDTEtfT0ZfREVDTEFSRShhdDkxc2FtOXg1X2Nsa191
-c2IsICJhdG1lbCxhdDkxc2FtOXg1LWNsay11c2IiLAo+Pj4+Pj4gIHN0YXRpYyB2b2lkIF9faW5p
-dCBvZl9hdDkxc2FtOW4xMl9jbGtfdXNiX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApCj4+
-Pj4+PiAgewo+Pj4+Pj4gICAgICAgICBzdHJ1Y3QgY2xrX2h3ICpodzsKPj4+Pj4+ICsgICAgICAg
-c3RydWN0IHJlZ21hcCAqcmVnbWFwOwo+Pj4+Pj4gICAgICAgICBjb25zdCBjaGFyICpwYXJlbnRf
-bmFtZTsKPj4+Pj4+ICAgICAgICAgY29uc3QgY2hhciAqbmFtZSA9IG5wLT5uYW1lOwo+Pj4+Pj4g
-LSAgICAgICBzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7Cj4+Pj4+PiArICAgICAgIHN0cnVjdCBkZXZp
-Y2Vfbm9kZSAqcGFyZW50X25wOwo+Pj4+Pgo+Pj4+PiBZb3UgbW92ZWQgYXJvdW5kIHRoZSBkZWNs
-YXJhdGlvbnMuCj4+Pj4KPj4+Pj4KPj4+Pgo+Pj4+Cj4+Pj4gU29ycnksIEkgaGF2ZSBiZWVuIHRv
-bGQgdG8ga2VlcCByZXZlcnNlIGNocmlzdG1hcyB0cmVlLgo+Pj4KPj4+IEkgdGhvdWdodCB0aGlz
-IHJ1bGUgaXMgb25seSBmb3IgbmV0d29ya2luZyBzdWJzeXN0ZW0uCj4+Pgo+PiAKPj4gT0ssIHRo
-YW5rcywgSSB3aWxsIGtlZXAgdGhlIHJ1bGUgb25seSB3aGVuIEkgZml4IGJ1Z3MgaW4gbmV0d29y
-a2luZyBzdWJzeXN0ZW0uCj4+IAo+PiBTbyAgaXQgbmVlZHMgdG8gc2VuZCBhIHYzIHRvIHJlc3Rv
-cmUgdGhlIG9yZGVyIG9mIHRoZSBkZWNsYXJhdGlvbnM/Cj4KPlllcywgcGxlYXNlLgoKT0ssIHNv
-b24uCj4KPj4gCj4+IElmIHllcywgSSB3aWxsIHJlc2VuZCBpdCBzb29uLgo+PiAKPj4gVGhhbmtz
-Lgo+PiAKPj4gTGlhbmcKPj4gCj4+IAo+Pj4+Cj4+Pj4KPj4+PiBTbyB0aGlzIGxvb2sgbGlrZSBh
-IG5vcm1hbCBjaHJpc3RtYXMgdHJlZT8KPj4+Pgo+Pj4+Cj4+Pj4+Pj4+ICAgICAgICAgcGFyZW50
-X25hbWUgPSBvZl9jbGtfZ2V0X3BhcmVudF9uYW1lKG5wLCAwKTsKPj4+PiBbLi4uXQo+Pj4+Pj4g
-KyAgICAgICBzdHJ1Y3QgcmVnbWFwICpyZWdtYXA7Cj4+Pj4+PiAgICAgICAgIGNvbnN0IGNoYXIg
-KnBhcmVudF9uYW1lOwo+Pj4+Pj4gICAgICAgICBjb25zdCBjaGFyICpuYW1lID0gbnAtPm5hbWU7
-Cj4+Pj4+PiArICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqcGFyZW50X25wOwo+Pj4+Pj4gICAg
-ICAgICB1MzIgZGl2aXNvcnNbNF0gPSB7MCwgMCwgMCwgMH07Cj4+Pj4+PiAtICAgICAgIHN0cnVj
-dCByZWdtYXAgKnJlZ21hcDsKPj4+Pj4KPj4+Pj4gU2FtZSBoZXJlLgo+Pj4+Cj4+Pj4+Cj4+Pj4K
-Pj4+Pgo+Pj4+IFNhbWUgcmVhc29uIGFzIGFib3ZlLgo+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gICAgICAg
-ICBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25hbWUobnAsIDApOwo+Pj4+Pj4gICAg
-ICAgICBpZiAoIXBhcmVudF9uYW1lKQo+Pj4+Pj4gQEAgLTkyNiw3ICs5ODEsOSBAQCBzdGF0aWMg
-dm9pZCBfX2luaXQgb2ZfYXQ5MXJtOTIwMF9jbGtfdXNiX3NldHVwKHN0cnVjdCBkZXZpY2Vfbm9k
-ZSAqbnApCj4+Pj4KPj4+Pj4+Cj4+Pj4KPj4+Pgo+Pj4+IElmIHRoZXNlIGRlY2xhcmF0aW9uIGNo
-YWdlcyBhcmUgbm90IG5lZWRlZCwgSSBjYW4gcmVzZW5kIGEgbmV3IHBhdGNoIGtlZXBpbmcgdGhl
-IG9yaWdpbmFsIG9yZGVyIG9mIGRlY2xhcmF0aW9ucy4KPj4+Pgo+Pj4+Cj4+Pj4gVGhhbmtzLgo+
-Pj4+Cj4+Pj4KPj4+PiBMaWFuZwo+Pj4KPgo=
+We need to hold the reference returned by of_get_parent() and use
+it to call of_node_put() for refcount balance.
+
+Signed-off-by: Liang He <windhl@126.com>
+---
+ changelog:
+
+ v3: keep the order of original declarations
+ v2: use 'parent_np' to replace 'tp' and use xx:yy:zz title format
+ v1: hold references returned by of_get_parent() and put them
+
+
+ drivers/clk/at91/dt-compat.c | 108 +++++++++++++++++++++++++++--------
+ 1 file changed, 84 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index 8ca8bcacf66d..85a964cb2d89 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -33,8 +33,11 @@ static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
+ 	const char *name = np->name;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -56,8 +59,11 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
+ 	const char *name = np->name;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -79,8 +85,11 @@ static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
+ 	const char *name = np->name;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -120,7 +129,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 	struct clk_hw *hw;
+ 	unsigned int num_parents;
+ 	const char *parent_names[GENERATED_SOURCE_MAX];
+-	struct device_node *gcknp;
++	struct device_node *gcknp, *parent_np;
+ 	struct clk_range range = CLK_RANGE(0, 0);
+ 	struct regmap *regmap;
+ 
+@@ -134,7 +143,9 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 	if (!num || num > PERIPHERAL_MAX)
+ 		return;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -180,8 +191,11 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
+ 	const char *name = np->name;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -243,12 +257,15 @@ static void __init of_at91rm9200_clk_main_osc_setup(struct device_node *np)
+ 	const char *parent_name;
+ 	struct regmap *regmap;
+ 	bool bypass;
++	struct device_node *parent_np;
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -268,12 +285,15 @@ static void __init of_at91sam9x5_clk_main_rc_osc_setup(struct device_node *np)
+ 	u32 accuracy = 0;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 	of_property_read_u32(np, "clock-frequency", &frequency);
+ 	of_property_read_u32(np, "clock-accuracy", &accuracy);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -292,11 +312,14 @@ static void __init of_at91rm9200_clk_main_setup(struct device_node *np)
+ 	const char *parent_name;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -316,13 +339,16 @@ static void __init of_at91sam9x5_clk_main_setup(struct device_node *np)
+ 	unsigned int num_parents;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > 2)
+ 		return;
+ 
+ 	of_clk_parent_fill(np, parent_names, num_parents);
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -373,6 +399,7 @@ of_at91_clk_master_setup(struct device_node *np,
+ 	const char *name = np->name;
+ 	struct clk_master_characteristics *characteristics;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > MASTER_SOURCE_MAX)
+@@ -386,7 +413,9 @@ of_at91_clk_master_setup(struct device_node *np,
+ 	if (!characteristics)
+ 		return;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -433,6 +462,7 @@ of_at91_clk_periph_setup(struct device_node *np, u8 type)
+ 	const char *name;
+ 	struct device_node *periphclknp;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 	if (!parent_name)
+@@ -442,7 +472,9 @@ of_at91_clk_periph_setup(struct device_node *np, u8 type)
+ 	if (!num || num > PERIPHERAL_MAX)
+ 		return;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -601,6 +633,7 @@ of_at91_clk_pll_setup(struct device_node *np,
+ 	struct regmap *regmap;
+ 	const char *parent_name;
+ 	const char *name = np->name;
++	struct device_node *parent_np;
+ 	struct clk_pll_characteristics *characteristics;
+ 
+ 	if (of_property_read_u32(np, "reg", &id))
+@@ -610,7 +643,9 @@ of_at91_clk_pll_setup(struct device_node *np,
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -665,12 +700,15 @@ of_at91sam9x5_clk_plldiv_setup(struct device_node *np)
+ 	const char *parent_name;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -694,7 +732,7 @@ of_at91_clk_prog_setup(struct device_node *np,
+ 	unsigned int num_parents;
+ 	const char *parent_names[PROG_SOURCE_MAX];
+ 	const char *name;
+-	struct device_node *progclknp;
++	struct device_node *progclknp, *parent_np;
+ 	struct regmap *regmap;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+@@ -707,7 +745,9 @@ of_at91_clk_prog_setup(struct device_node *np,
+ 	if (!num || num > (PROG_ID_MAX + 1))
+ 		return;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -756,13 +796,16 @@ static void __init of_at91sam9260_clk_slow_setup(struct device_node *np)
+ 	unsigned int num_parents;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents != 2)
+ 		return;
+ 
+ 	of_clk_parent_fill(np, parent_names, num_parents);
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -788,6 +831,7 @@ static void __init of_at91sam9x5_clk_smd_setup(struct device_node *np)
+ 	const char *parent_names[SMD_SOURCE_MAX];
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > SMD_SOURCE_MAX)
+@@ -797,7 +841,9 @@ static void __init of_at91sam9x5_clk_smd_setup(struct device_node *np)
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -818,7 +864,7 @@ static void __init of_at91rm9200_clk_sys_setup(struct device_node *np)
+ 	u32 id;
+ 	struct clk_hw *hw;
+ 	const char *name;
+-	struct device_node *sysclknp;
++	struct device_node *sysclknp, *parent_np;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
+ 
+@@ -826,7 +872,9 @@ static void __init of_at91rm9200_clk_sys_setup(struct device_node *np)
+ 	if (num > (SYSTEM_MAX_ID + 1))
+ 		return;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -859,6 +907,7 @@ static void __init of_at91sam9x5_clk_usb_setup(struct device_node *np)
+ 	const char *parent_names[USB_SOURCE_MAX];
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > USB_SOURCE_MAX)
+@@ -868,7 +917,9 @@ static void __init of_at91sam9x5_clk_usb_setup(struct device_node *np)
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -888,6 +939,7 @@ static void __init of_at91sam9n12_clk_usb_setup(struct device_node *np)
+ 	const char *parent_name;
+ 	const char *name = np->name;
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 	if (!parent_name)
+@@ -895,7 +947,9 @@ static void __init of_at91sam9n12_clk_usb_setup(struct device_node *np)
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+@@ -915,6 +969,7 @@ static void __init of_at91rm9200_clk_usb_setup(struct device_node *np)
+ 	const char *name = np->name;
+ 	u32 divisors[4] = {0, 0, 0, 0};
+ 	struct regmap *regmap;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 	if (!parent_name)
+@@ -926,7 +981,9 @@ static void __init of_at91rm9200_clk_usb_setup(struct device_node *np)
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 	hw = at91rm9200_clk_register_usb(regmap, name, parent_name, divisors);
+@@ -946,12 +1003,15 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
+ 	const char *parent_name;
+ 	const char *name = np->name;
+ 	struct regmap *regmap_pmc, *regmap_sfr;
++	struct device_node *parent_np;
+ 
+ 	parent_name = of_clk_get_parent_name(np, 0);
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
+-	regmap_pmc = syscon_node_to_regmap(of_get_parent(np));
++	parent_np = of_get_parent(np);
++	regmap_pmc = syscon_node_to_regmap(parent_np);
++	of_node_put(parent_np);
+ 	if (IS_ERR(regmap_pmc))
+ 		return;
+ 
+-- 
+2.25.1
+
