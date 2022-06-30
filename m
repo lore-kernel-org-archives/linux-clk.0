@@ -2,191 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA21C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 08:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A978C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 08:19:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233341AbiF3IKR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 04:10:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36800 "EHLO
+        id S233356AbiF3ITa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 04:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233695AbiF3IJa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 04:09:30 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8955A419AA;
-        Thu, 30 Jun 2022 01:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1656576510; x=1688112510;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9aa9S4nRgmH6ZHHc2YgDURcnmguI4OQsZfesRXqpYaQ=;
-  b=E6HT0CMig6TJl17pwzFTQXMyATqkx6V1Y5Zyhkh/Ex+kD2eRuuC4D2Zs
-   mgJ1oozUGz6LQDpn+nLDo6zjTPGaA262sO6iFcNaFLtzh4GqrYeZcr5Ar
-   JfLApuDyaK3ccDS7Sn2kJemkm3MDx3OxcClpJHIh4RUFtOVeUik+SVcT9
-   b1XCQ8naK3KDLywksoe29d+sAEeOQHEcm3Ltp5u6eKvag1UNtyn6COFhX
-   TK29IaWQ3iH9o6Tt0lBEMsJgjCmawzml5vwtJ7GgdAGyIYpOUN/TpKkFV
-   UxQNdZ/iDox/Gwke09gdTCWsyvHhBSWHgkOdC2A4Og+vypzJm2iLp0rm/
-   w==;
-X-IronPort-AV: E=Sophos;i="5.92,233,1650956400"; 
-   d="scan'208";a="165782188"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jun 2022 01:08:29 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 30 Jun 2022 01:08:27 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Thu, 30 Jun 2022 01:08:23 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233470AbiF3ITH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 04:19:07 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F91B0D
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 01:17:48 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id bx13so13463515ljb.1
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 01:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iwgwXCkgqhWhsAYcDwBGLHI9mFw90gt72ulhS68U2Tk=;
+        b=MngPsYYp9yTp+LiWi6ew/M9vK4DeUiYv2hq/teOhHL9u2Y2nqC6dMWQdsqcXqGIODw
+         5tMduKfmxgvq6EO4slP/MOuEhJ/WvLvwZotvNohXUK99MuXA0lQ3a1xEkb4EDqkR0W5c
+         8kbBmk9EL5S2NMCd2ExsuIU3tTL9EqkRwuX/nggVOQ5vc6ClSG9xdxDChYJi9i6HjR+J
+         +L+HRmDhZgsSiNW91MuMe/Nqi5uRaBAIxBTqknL5q0fRd9m8cC9MbShyVurX4faqetor
+         KlWrThKAjCog5/QDKZZoX4QqiYCm6mEv5CvTTntXJ0UtWOwcrMFN9+E0VCrOhrs8PNhb
+         K46A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iwgwXCkgqhWhsAYcDwBGLHI9mFw90gt72ulhS68U2Tk=;
+        b=oKrInjyOrSndaBtdJq28fAjUYrxofHMwgifxnh/aN1N8YXKNGRzNfIDdqeYjONxgf+
+         56JCEnrgoMAE9fjZxe11QG117+A1/STOOtvmbor73BZWFXhy5uboPsmL9UkeQdY+XEwr
+         YGog89/+YiSTQih4zjG2LnLctMY0FX2A4L+tnPdmYmOr7iv0KGHwqnmgDk+8zokQOYy4
+         0yvaSFzHMvoV0KmOs9FZd2qh46Rl42DQoyO8eMLynySbySqolq/h6Xiod5B/vIjw7uT0
+         tVbPX3hEk9CQiagWFo+qv4WI94bbM/6IHxIAUs6+D16gb+jCFJ4xRxfcn0RoRiwL463+
+         ZjDA==
+X-Gm-Message-State: AJIora/NDk+JVxrOVBUYxTeazqCeJreMS9IV9qsi4jMYw2iHHYLXVX8v
+        w5oBr8BvEMyapPLH6JP1JkwWVw==
+X-Google-Smtp-Source: AGRyM1vG5Bcu+l/FIdi7zPxP8vjkhzHPb/yFlAt0h9EmzNtCM6r+XXga3thU/FLotGxVtQDRs9fYkg==
+X-Received: by 2002:a2e:b049:0:b0:25a:89a2:df44 with SMTP id d9-20020a2eb049000000b0025a89a2df44mr4456080ljl.207.1656577066598;
+        Thu, 30 Jun 2022 01:17:46 -0700 (PDT)
+Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id p18-20020a2eb992000000b0025bda317bdcsm913623ljp.88.2022.06.30.01.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jun 2022 01:17:44 -0700 (PDT)
+From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        "Nicolas Ferre" <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Daire McNamara" <daire.mcnamara@microchip.com>
-CC:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-Subject: [PATCH v1 14/14] clk: microchip: mpfs: convert periph_clk to clk_gate
-Date:   Thu, 30 Jun 2022 09:05:33 +0100
-Message-ID: <20220630080532.323731-15-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220630080532.323731-1-conor.dooley@microchip.com>
-References: <20220630080532.323731-1-conor.dooley@microchip.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v9 0/7] clk: qcom: add camera clock controller driver for SM8450 SoC
+Date:   Thu, 30 Jun 2022 11:17:40 +0300
+Message-Id: <20220630081742.2554006-1-vladimir.zapolskiy@linaro.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With the reset code moved to the recently added reset controller, there
-is no need for custom ops any longer. Remove the custom ops and the
-custom struct by converting to a clk_gate.
+The patchset adds support of a camera clock controller found on
+QCOM SM8450 SoC, noticeably a camcc pll2 is a new "rivian evo"
+type of pll, its generic support is added in the series.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/microchip/clk-mpfs.c | 73 +++-----------------------------
- 1 file changed, 6 insertions(+), 67 deletions(-)
+Note that SM8450 ES variant has a slightly different configurtion,
+the published version is intended to support SM8450 CS SoC.
 
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index c4d1c48d6d3d..9c3bff4f147a 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -58,19 +58,11 @@ struct mpfs_cfg_hw_clock {
- 	u32 reg_offset;
- };
- 
--struct mpfs_periph_clock {
--	void __iomem *reg;
--	u8 shift;
--};
--
- struct mpfs_periph_hw_clock {
--	struct mpfs_periph_clock periph;
--	struct clk_hw hw;
-+	struct clk_gate periph;
- 	unsigned int id;
- };
- 
--#define to_mpfs_periph_clk(_hw) container_of(_hw, struct mpfs_periph_hw_clock, hw)
--
- /*
-  * mpfs_clk_lock prevents anything else from writing to the
-  * mpfs clk block while a software locked register is being written.
-@@ -272,63 +264,10 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
-  * peripheral clocks - devices connected to axi or ahb buses.
-  */
- 
--static int mpfs_periph_clk_enable(struct clk_hw *hw)
--{
--	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
--	struct mpfs_periph_clock *periph = &periph_hw->periph;
--	u32 reg, val;
--	unsigned long flags;
--
--	spin_lock_irqsave(&mpfs_clk_lock, flags);
--
--	reg = readl_relaxed(periph->reg);
--	val = reg | (1u << periph->shift);
--	writel_relaxed(val, periph->reg);
--
--	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
--
--	return 0;
--}
--
--static void mpfs_periph_clk_disable(struct clk_hw *hw)
--{
--	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
--	struct mpfs_periph_clock *periph = &periph_hw->periph;
--	u32 reg, val;
--	unsigned long flags;
--
--	spin_lock_irqsave(&mpfs_clk_lock, flags);
--
--	reg = readl_relaxed(periph->reg);
--	val = reg & ~(1u << periph->shift);
--	writel_relaxed(val, periph->reg);
--
--	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
--}
--
--static int mpfs_periph_clk_is_enabled(struct clk_hw *hw)
--{
--	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
--	struct mpfs_periph_clock *periph = &periph_hw->periph;
--	u32 reg;
--
--	reg = readl_relaxed(periph->reg);
--	if (reg & (1u << periph->shift))
--		return 1;
--
--	return 0;
--}
--
--static const struct clk_ops mpfs_periph_clk_ops = {
--	.enable = mpfs_periph_clk_enable,
--	.disable = mpfs_periph_clk_disable,
--	.is_enabled = mpfs_periph_clk_is_enabled,
--};
--
- #define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {			\
--	.id = _id,							\
--	.periph.shift = _shift,							\
--	.hw.init = CLK_HW_INIT_HW(_name, _parent, &mpfs_periph_clk_ops,		\
-+	.id = _id,								\
-+	.periph.bit_idx = _shift,						\
-+	.periph.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_ops,		\
- 				  _flags),					\
- }
- 
-@@ -388,13 +327,13 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
- 		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
- 
- 		periph_hw->periph.reg = data->base + REG_SUBBLK_CLOCK_CR;
--		ret = devm_clk_hw_register(dev, &periph_hw->hw);
-+		ret = devm_clk_hw_register(dev, &periph_hw->periph.hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     periph_hw->id);
- 
- 		id = periph_hws[i].id;
--		data->hw_data.hws[id] = &periph_hw->hw;
-+		data->hw_data.hws[id] = &periph_hw->periph.hw;
- 	}
- 
- 	return 0;
+Changes from v8 to v9:
+* removed clock-names property per request from Bjorn,
+* corrected a path in the yaml file to the added include file,
+* put status property as the last one in the list of properties,
+* non-functional changes in the clock provider driver code.
+
+Changes from v7 to v8:
+* rebased on top of v5.19-rc2,
+* added Stephen's tags,
+* improved an example found in added yaml file,
+* improved some of the commit messages,
+* narrowed down a list of included headers,
+* constified .hw.init anonymous structs.
+
+Changes from v6 to v7:
+* rebased on top of v5.19-rc1,
+* fixed a warning in a usage example found in yaml file.
+
+Changes from v5 to v6:
+* rebased on top of linux-next,
+* added Rob's tag,
+* fixed a topology of power domains around titan_top.
+
+Changes from v4 to v5:
+* fixed the same typo in a usage example found in yaml file as in v3
+  change.
+
+Changes from v3 to v4:
+* fixed a changed path in the yaml file.
+
+Changes from v2 to v3:
+* fixed a typo in a usage example found in yaml file,
+* renamed dt related files to match the compatible "qcom,sm8450-camcc",
+* minor fixes in the driver per review requests from Bjorn,
+* added Bjorn's tag to a change of exported symbols namespace.
+
+Changes from v1 to v2:
+* updated qcom,camcc-sm8450.yaml according to review comments from Rob,
+* changed qcom,camcc-sm8450.h licence to dual one,
+* disabled camcc device tree node by default,
+* added Stephen's tag,
+* rebased the series on top of clk-for-5.18
+
+Vladimir Zapolskiy (7):
+  dt-bindings: clock: add QCOM SM8450 camera clock bindings
+  arm64: dts: qcom: sm8450: Add description of camera clock controller
+  clk: qcom: clk-alpha-pll: fix clk_trion_pll_configure description
+  clk: qcom: clk-alpha-pll: limit exported symbols to GPL licensed code
+  clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces
+  clk: qcom: clk-alpha-pll: add Rivian EVO PLL configuration interfaces
+  clk: qcom: add camera clock controller driver for SM8450 SoC
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml     |   80 +
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |   16 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/camcc-sm8450.c               | 2856 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |  144 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |   11 +-
+ include/dt-bindings/clock/qcom,sm8450-camcc.h |  159 +
+ 8 files changed, 3268 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm8450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8450-camcc.h
+
 -- 
-2.36.1
+2.33.0
 
