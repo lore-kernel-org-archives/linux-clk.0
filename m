@@ -2,136 +2,296 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B741C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 07:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB24C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 08:07:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233108AbiF3HpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 03:45:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
+        id S233546AbiF3IHp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 04:07:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232259AbiF3HpA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 03:45:00 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E611A36B54
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 00:44:59 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 5EBF13200910;
-        Thu, 30 Jun 2022 03:44:58 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 30 Jun 2022 03:44:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm1; t=1656575097; x=1656661497; bh=A+U71uKJdO
-        d2smRluuKdX1mOFQDd+vmvxx2MN/bO4sI=; b=A6Wr9ZNCXusjBLUBmhI96qpec9
-        VTCoqtjFM1RJcfDZsrWvkVx2rxQodIsFknfqft4GspjaQpyHijEMx/NOJpEdbkUF
-        YIOiLKflRxvfjk3DPw1noPGINRpkSxbvrvdQFMm3wYgzAK4v36vViTq5eOtXuufL
-        OyPo6hP8xHIYAgoDfJVZTrO+SD9nkSpahLcgrumHYSf7pev5AecC8SNx4tTnEF/s
-        KcCIuBfbIArquos812N7NcZj5R7HxMmYin53oakS4xWM3zO/Y7GdSLlfL/ea5BoK
-        LtXB62gKPn69Hi1uqx9F2XVHnua+Ir33xc3XMywQmLkwj23HnH7hE0tqaCeQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; t=1656575097; x=1656661497; bh=A+U71uKJdOd2smRluuKdX1mOFQDd
-        +vmvxx2MN/bO4sI=; b=NP4tw73V2KIp+uS0HZNTctuElDD8su0Y5mNTxyVNtNCQ
-        rEDXu96W+zSja4nU7/vpP5BpuJEVK1dzgWeOqdWzDOR0MvSECRZ3NegePYYh+Qsb
-        jXZ1Per0uA+Zs3C46kK5uH395ixheh/YIyzlJr/iwb5rRWDNGtXS+PALb9cqk8EX
-        ZDNuF932BrLmDyGMuE5D8OHSqfVYK+Qld6PoNII/ak/ILdaAR+L/hSs+wUw7pfx/
-        gR4XNY4c//YpUf668bCr8pD/wmLi13jDLeXIGk3hkC0E9P0syM4GEdcRDPXtBhlz
-        ZyWaGVCRyaZSnrwWvjC+r+VI3aNrpwh+PuuICqiphg==
-X-ME-Sender: <xms:eVS9YkoOxZcQ6FGzmB2u2kvCnluprEmwdWiDH0qwMdvnPxjtBMXo0Q>
-    <xme:eVS9Yqqt60nTfUnxzRo7yYtBEDSl36lR6WtoO0Y0dvFFZ7WhhSUWZxIi_UTZF4rQe
-    L0d54gUdI5sR9DvYwI>
-X-ME-Received: <xmr:eVS9YpMFeLMjPqBmqCT52Xe5ZMooz-IHuFa3P_6fbgA7Xfsvj0uNXV7CaxHRpm3Ji_EsNJ3KA3bI_fNgYutbC7EE9ZUGJ08bfAsxdhc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehtddguddvgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffvfevuffkhfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepgeehtdejvdeiieejkeegfffgleejffdvjeefhedtheehvdetlefhfffg
-    jeetkeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:eVS9Yr7dgyF_rAlKHV1YgskSjQkepG0-emMTTVZSyV7w286bD-M9tA>
-    <xmx:eVS9Yj7iySnfERUvEiN_gMPOZwDDhjHcVGP9B4pybpmsd29xlbnMvw>
-    <xmx:eVS9YrikRwLNPQt0Y2BCn-oD5Btle67yWW5jCXewuSQbnhil7usPtg>
-    <xmx:eVS9YgHqY2HpM3tM69pTTTY1LA9P-_X4PK3bFxSQa5-kFILsx8ENwg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Jun 2022 03:44:56 -0400 (EDT)
-Date:   Wed, 29 Jun 2022 15:12:56 +0200
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v5 14/28] clk: Fix clk_get_parent() documentation
-Message-ID: <20220629131256.vqk5t42r4paainsq@houat>
-From:   Maxime Ripard <maxime@cerno.tech>
-References: <20220516132527.328190-1-maxime@cerno.tech>
- <20220516132527.328190-15-maxime@cerno.tech>
- <20220629090545.52719C34114@smtp.kernel.org>
+        with ESMTP id S233790AbiF3IHn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 04:07:43 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 253D541311;
+        Thu, 30 Jun 2022 01:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1656576462; x=1688112462;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OXB45vMtUs1nfpYjQaPxWOb/6F6yUpAgZPrlzrfPAk4=;
+  b=Qyv5+OtXtfhxwdHrskkXMEHDcqLM5m3FESuN1j5Be8sfEmKrB9ixPA9e
+   Sv01oYf8b8vfw/WoYnK1E0f8OzY1jnPhZ7RY9MJ7I/zybu8a07uSBktUk
+   uVMUS9dBDPFdTo1QdkN/tYQYsX4W7lYvq/WXRYoWayLHDYpwYoG41LC2j
+   xpQkpZdqX0KuJgl4Qi+F0LOrOtbsKsrxjYdQigJkrxeMIXalKrKe0sa/h
+   +KqYvWVqMlxxdbBHsr6NQ+HsjQJDJ/t0Y8a8lcOFuDERI/hYwsas2+bpm
+   W/bhsgVbc3d70xMZcjyWWWCr6juDKfg+Ytc9lACdQSpTyxGeQ6AY3uYC1
+   w==;
+X-IronPort-AV: E=Sophos;i="5.92,233,1650956400"; 
+   d="scan'208";a="102426607"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jun 2022 01:07:41 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 30 Jun 2022 01:07:38 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Thu, 30 Jun 2022 01:07:34 -0700
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        "Nicolas Ferre" <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Daire McNamara" <daire.mcnamara@microchip.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+Subject: [PATCH v1 03/14] clk: microchip: mpfs: add reset controller
+Date:   Thu, 30 Jun 2022 09:05:22 +0100
+Message-ID: <20220630080532.323731-4-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220630080532.323731-1-conor.dooley@microchip.com>
+References: <20220630080532.323731-1-conor.dooley@microchip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vnwsaaoohljytiwq"
-Content-Disposition: inline
-In-Reply-To: <20220629090545.52719C34114@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add a reset controller to PolarFire SoC's clock driver. This reset
+controller is registered as an aux device and read/write functions
+exported to the drivers namespace so that the reset controller can
+access the peripheral device reset register.
 
---vnwsaaoohljytiwq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ drivers/clk/microchip/Kconfig    |   1 +
+ drivers/clk/microchip/clk-mpfs.c | 116 ++++++++++++++++++++++++++++---
+ include/soc/microchip/mpfs.h     |   8 +++
+ 3 files changed, 114 insertions(+), 11 deletions(-)
 
-Hi,
+diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
+index a5a99873c4f5..b46e864b3bd8 100644
+--- a/drivers/clk/microchip/Kconfig
++++ b/drivers/clk/microchip/Kconfig
+@@ -6,5 +6,6 @@ config COMMON_CLK_PIC32
+ config MCHP_CLK_MPFS
+ 	bool "Clk driver for PolarFire SoC"
+ 	depends on (RISCV && SOC_MICROCHIP_POLARFIRE) || COMPILE_TEST
++	select AUXILIARY_BUS
+ 	help
+ 	  Supports Clock Configuration for PolarFire SoC
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 070c3b896559..a93f78619dc3 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -3,12 +3,14 @@
+  * Daire McNamara,<daire.mcnamara@microchip.com>
+  * Copyright (C) 2020 Microchip Technology Inc.  All rights reserved.
+  */
++#include <linux/auxiliary_bus.h>
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <dt-bindings/clock/microchip,mpfs-clock.h>
++#include <soc/microchip/mpfs.h>
+ 
+ /* address offset of control registers */
+ #define REG_MSSPLL_REF_CR	0x08u
+@@ -28,6 +30,7 @@
+ #define MSSPLL_FIXED_DIV	4u
+ 
+ struct mpfs_clock_data {
++	struct device *dev;
+ 	void __iomem *base;
+ 	void __iomem *msspll_base;
+ 	struct clk_hw_onecell_data hw_data;
+@@ -302,10 +305,6 @@ static int mpfs_periph_clk_enable(struct clk_hw *hw)
+ 
+ 	spin_lock_irqsave(&mpfs_clk_lock, flags);
+ 
+-	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
+-	val = reg & ~(1u << periph->shift);
+-	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
+-
+ 	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
+ 	val = reg | (1u << periph->shift);
+ 	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
+@@ -339,12 +338,9 @@ static int mpfs_periph_clk_is_enabled(struct clk_hw *hw)
+ 	void __iomem *base_addr = periph_hw->sys_base;
+ 	u32 reg;
+ 
+-	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
+-	if ((reg & (1u << periph->shift)) == 0u) {
+-		reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
+-		if (reg & (1u << periph->shift))
+-			return 1;
+-	}
++	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
++	if (reg & (1u << periph->shift))
++		return 1;
+ 
+ 	return 0;
+ }
+@@ -438,6 +434,98 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
+ 	return 0;
+ }
+ 
++/*
++ * Peripheral clock resets
++ */
++
++#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
++
++u32 mpfs_reset_read(struct device *dev)
++{
++	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
++
++	return readl_relaxed(clock_data->base + REG_SUBBLK_RESET_CR);
++}
++EXPORT_SYMBOL_NS_GPL(mpfs_reset_read, MCHP_CLK_MPFS);
++
++void mpfs_reset_write(struct device *dev, u32 val)
++{
++	struct mpfs_clock_data *clock_data = dev_get_drvdata(dev->parent);
++
++	writel_relaxed(val, clock_data->base + REG_SUBBLK_RESET_CR);
++}
++EXPORT_SYMBOL_NS_GPL(mpfs_reset_write, MCHP_CLK_MPFS);
++
++static void mpfs_reset_unregister_adev(void *_adev)
++{
++	struct auxiliary_device *adev = _adev;
++
++	auxiliary_device_delete(adev);
++}
++
++static void mpfs_reset_adev_release(struct device *dev)
++{
++	struct auxiliary_device *adev = to_auxiliary_dev(dev);
++
++	auxiliary_device_uninit(adev);
++
++	kfree(adev);
++}
++
++static struct auxiliary_device *mpfs_reset_adev_alloc(struct mpfs_clock_data *clk_data)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
++	if (!adev)
++		return ERR_PTR(-ENOMEM);
++
++	adev->name = "reset-mpfs";
++	adev->dev.parent = clk_data->dev;
++	adev->dev.release = mpfs_reset_adev_release;
++	adev->id = 666u;
++
++	ret = auxiliary_device_init(adev);
++	if (ret) {
++		kfree(adev);
++		return ERR_PTR(ret);
++	}
++
++	return adev;
++}
++
++static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
++{
++	struct auxiliary_device *adev;
++	int ret;
++
++	adev = mpfs_reset_adev_alloc(clk_data);
++	if (IS_ERR(adev))
++		return PTR_ERR(adev);
++
++	ret = auxiliary_device_add(adev);
++	if (ret) {
++		auxiliary_device_uninit(adev);
++		return ret;
++	}
++
++	ret = devm_add_action_or_reset(clk_data->dev, mpfs_reset_unregister_adev, adev);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++#else /* !CONFIG_RESET_CONTROLLER */
++
++static int mpfs_reset_controller_register(struct mpfs_clock_data *clk_data)
++{
++	return 0;
++}
++
++#endif /* !CONFIG_RESET_CONTROLLER */
++
+ static int mpfs_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -462,6 +550,8 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 		return PTR_ERR(clk_data->msspll_base);
+ 
+ 	clk_data->hw_data.num = num_clks;
++	clk_data->dev = dev;
++	dev_set_drvdata(dev, clk_data);
+ 
+ 	ret = mpfs_clk_register_mssplls(dev, mpfs_msspll_clks, ARRAY_SIZE(mpfs_msspll_clks),
+ 					clk_data);
+@@ -481,6 +571,10 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = mpfs_reset_controller_register(clk_data);
++	if (ret)
++		return ret;
++
+ 	return ret;
+ }
+ 
+@@ -488,7 +582,7 @@ static const struct of_device_id mpfs_clk_of_match_table[] = {
+ 	{ .compatible = "microchip,mpfs-clkcfg", },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(of, mpfs_clk_match_table);
++MODULE_DEVICE_TABLE(of, mpfs_clk_of_match_table);
+ 
+ static struct platform_driver mpfs_clk_driver = {
+ 	.probe = mpfs_clk_probe,
+diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
+index 6466515262bd..f916dcde457f 100644
+--- a/include/soc/microchip/mpfs.h
++++ b/include/soc/microchip/mpfs.h
+@@ -40,4 +40,12 @@ struct mpfs_sys_controller *mpfs_sys_controller_get(struct device *dev);
+ 
+ #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
+ 
++#if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
++
++u32 mpfs_reset_read(struct device *dev);
++
++void mpfs_reset_write(struct device *dev, u32 val);
++
++#endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
++
+ #endif /* __SOC_MPFS_H__ */
+-- 
+2.36.1
 
-On Wed, Jun 29, 2022 at 02:05:43AM -0700, Stephen Boyd wrote:
-> > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> > index 1507d5147898..39710b8453fa 100644
-> > --- a/include/linux/clk.h
-> > +++ b/include/linux/clk.h
-> > @@ -755,8 +755,9 @@ int clk_set_parent(struct clk *clk, struct clk *par=
-ent);
-> >   * clk_get_parent - get the parent clock source for this clock
-> >   * @clk: clock source
-> >   *
-> > - * Returns struct clk corresponding to parent clock source, or
-> > - * valid IS_ERR() condition containing errno.
-> > + * Returns struct clk corresponding to parent clock source, a NULL
-> > + * pointer if it doesn't have a parent, or a valid IS_ERR() condition
-> > + * containing errno.
->=20
-> I'd rather not update this. A return value of NULL is a 'struct clk
-> corresponding to parent clock source' already, and we don't want to
-> document CCF implementation details in clk.h because there are other
-> implementations of the API.
-
-I find it slightly misleading still since using IS_ERR still doesn't get
-you a safe pointer you can use.
-
-I'll drop it though if you feel like it's too troublesome
-
-Maxime
-
---vnwsaaoohljytiwq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYrxP2AAKCRDj7w1vZxhR
-xaz2AP4tY+13t6REay+/Cy/avofxV/ew/321dejMmTnib/rgOQEA7foiHxTvxAmI
-S+IRI5hwXu26Wbu0Wznj2XBFgwg7kAM=
-=BYjp
------END PGP SIGNATURE-----
-
---vnwsaaoohljytiwq--
