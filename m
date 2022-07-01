@@ -2,88 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB14C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jun 2022 23:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C651C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 00:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232278AbiF3XNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jun 2022 19:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
+        id S231566AbiGAAPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jun 2022 20:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232023AbiF3XNi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 19:13:38 -0400
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F4C922B33;
-        Thu, 30 Jun 2022 16:13:15 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id v185so659724ioe.11;
-        Thu, 30 Jun 2022 16:13:14 -0700 (PDT)
+        with ESMTP id S229810AbiGAAPg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jun 2022 20:15:36 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 471BD396BA
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 17:15:35 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id r1so802565plo.10
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jun 2022 17:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OmXd4zO8KTEmuxgoyZu7qWt54mbJvvQvUS/Whs7BaDY=;
+        b=SMQW//3O/zpkih/dZQODLoXRdk8ATbOOBGK5XaUk0lLMUwD9pr5NGD/ySGtIDGlSio
+         ykoMsGKzzgLcar0+ruvVOLeMxlecujijZDs7VRGyfnUpQIsQdYBO/LCsBSonMAQ9WAJT
+         1ZNKC97TOF9WPU9U/UdOxR6bQS8s+zcRQ6xPrrfas51ykWGWGL/misdvxcQ3htW3Xlgn
+         31YHMH+Zvq5kcmhEf5TdpVQTT7+WZUaoaflPldjavZnjU7P6a4neUE8rqbm/CdhtYg+p
+         1kv1sni9ZqEeq2lpelVOnMQcDo4UcRWfcSsZpBshS1wxy3AG0pK9JM116QREPnOvfA+4
+         1zXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8mU7qq1xT9xP4AkHkk9ztlC+s1KHGpH2/AR1TP7Q5AU=;
-        b=Nec7cJj6+pkbrR3PoOoB+Zs/eF/5mt2uCKXJ/NTYYkFpyKFce5U16Wqw+2ABFeC26Q
-         z6unKNhu6JXnlmbPCOutIrMjip4/JlcaPxAa/bN3Ai8v2WQjWWqKX81Lc76qQxD0Fr9h
-         7A9V/78YSCLAsccsxW8jMzMd8SIubXaSYF+YOSNwKe2pZ3zScluY+sSYQAZgDOL9nQas
-         yB1Xo/g3cJ10fWL37qABCW3gRwG5gvwy+sECGBuBTeFYeoNVyTqHnj1bb7BUk+mLxD17
-         WaXZ21v42k7tZ2zohiaTbm4dIJRoY0dayUhvq1F8gIFyhjCdCH4AY8zX1okpOzthYRRD
-         T/Dg==
-X-Gm-Message-State: AJIora8c0SxUQhEUkE9JOW3XDrnVPiHHdjkY3SwORuek7UqPpzNSdgpv
-        v9tEjM9PZrLZliDK0jbqnA==
-X-Google-Smtp-Source: AGRyM1tH4HtQwEQklQC5StD8tG8HSFDW3U9bg3qVFD5iYWgjqigY+f6NDhBsU0FoXSsPKDeApCefIA==
-X-Received: by 2002:a5d:9758:0:b0:669:7d33:c556 with SMTP id c24-20020a5d9758000000b006697d33c556mr5613843ioo.2.1656630794249;
-        Thu, 30 Jun 2022 16:13:14 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id s21-20020a6bdc15000000b0067533ab9404sm6237051ioc.16.2022.06.30.16.13.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 16:13:13 -0700 (PDT)
-Received: (nullmailer pid 3508147 invoked by uid 1000);
-        Thu, 30 Jun 2022 23:13:11 -0000
-Date:   Thu, 30 Jun 2022 17:13:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-gpio@vger.kernel.org, stefan@agner.ch, shawnguo@kernel.org,
-        abel.vesa@nxp.com, linux@armlinux.org.uk, linus.walleij@linaro.org,
-        tglx@linutronix.de, devicetree@vger.kernel.org, linux-imx@nxp.com,
-        cniedermaier@dh-electronics.com, kernel@pengutronix.de,
-        tharvey@gateworks.com, festevam@gmail.com, clin@suse.com,
-        robh+dt@kernel.org, sebastian.reichel@collabora.com,
-        leoyang.li@nxp.com, dev@lynxeye.de, olof@lixom.net,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        aisheng.dong@nxp.com, Mr.Bossman075@gmail.com,
-        marcel.ziswiler@toradex.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
-        s.hauer@pengutronix.de, sboyd@kernel.org,
-        giulio.benetti@benettiengineering.com
-Subject: Re: [PATCH v4 06/13] dt-bindings: clock: imx: Add documentation for
- i.MXRT1170 clock
-Message-ID: <20220630231311.GA3508108-robh@kernel.org>
-References: <20220626064523.3683775-1-Mr.Bossman075@gmail.com>
- <20220626064523.3683775-7-Mr.Bossman075@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OmXd4zO8KTEmuxgoyZu7qWt54mbJvvQvUS/Whs7BaDY=;
+        b=Sf5o0hfDwoFjOsoSH6n/QTb5zCnTHpV9uGshtd/xXbkBWTi2NoI3Ndq0FxD+vJaQnw
+         oxBO4oahjd/8DZHJKK5jYz5hpsorISkkodLQaKs+xs97cYJBtG16AArsTnLoaACqRoQi
+         Mzgmwbf/clTNuY/JSsgoMjvFXVyYPc7XZvf2hlvrD7Uv1D0+2vDfgKlyXxal2wuCxRqj
+         MZnvPH5RbW+iW1n9muXkR2NurpQ1SVb0ZJxhkaD7+ZGv6K3xC9ZKkwuCAEWfesA3+9Ab
+         IeD3CfgiH4hjQMNhjovI9w1gvlLCifl8i/kVLYoav5dbPX098p87vhxjiIdYO2gttlbU
+         zMeA==
+X-Gm-Message-State: AJIora+/918oZUP3Az36EofvHMWcEfcAhabe3wY2/q13PQtI86wy5MX+
+        HCyFdk3SHxmWQynKKjE3KtFgqohVXU8lDfq3qg8=
+X-Google-Smtp-Source: AGRyM1sln+cYWfyAm0wg6eSAr4VrJVJWMS3MPeGZCrZfQB+ZESKl9J3aU+UaJSRnpXDxJmTa8EDnxfKq4Q3L2UFcXcM=
+X-Received: by 2002:a17:90a:760e:b0:1ec:83e0:3ae1 with SMTP id
+ s14-20020a17090a760e00b001ec83e03ae1mr14512065pjk.25.1656634534846; Thu, 30
+ Jun 2022 17:15:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220626064523.3683775-7-Mr.Bossman075@gmail.com>
+References: <20220628135230.166601-1-windhl@126.com>
+In-Reply-To: <20220628135230.166601-1-windhl@126.com>
+From:   Orson Zhai <orsonzhai@gmail.com>
+Date:   Fri, 1 Jul 2022 08:15:23 +0800
+Message-ID: <CA+H2tpH1hN1AJ=6vVGQXw6bZ7xQDbzXdaEV_OqWMnw+UxQKCkg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: sprd: Hold reference returned by of_get_parent()
+To:     Liang He <windhl@126.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 26 Jun 2022 02:45:16 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT1170 clock driver.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1 -> V2:
->  - Change title to Clock Controller
->  - Rename to add fsl
-> V2 -> V3:
->  - Remove unused include causing error
-> V3 -> V4:
->  - Add fsl to schema id
-> ---
->  .../bindings/clock/fsl,imxrt1170-clock.yaml   | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imxrt1170-clock.yaml
-> 
+Hi Liang,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, Jun 28, 2022 at 9:54 PM Liang He <windhl@126.com> wrote:
+>
+> We should hold the reference returned by of_get_parent() and use it
+> to call of_node_out() for refcount balance.
+
+typo. s/out/put
+
+>
+> Fixes: f95e8c7923d1 ("clk: sprd: support to get regmap from parent node")
+>
+> Signed-off-by: Liang He <windhl@126.com>
+> ---
+>  changelog:
+>
+>  v2: minimize the effective range of of_get_parent() advised by Orson
+>  v1: hold reference returned by of_get_parent()
+>
+>  v1-link: https://lore.kernel.org/all/20220624103809.4167753-1-windhl@126.com/
+>
+>  Patched file has been compiled test in 5.19rc2.
+>
+>  drivers/clk/sprd/common.c | 37 +++++++++++++++++++++----------------
+>  1 file changed, 21 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+> index d620bbbcdfc8..d85ba80c5931 100644
+> --- a/drivers/clk/sprd/common.c
+> +++ b/drivers/clk/sprd/common.c
+> @@ -50,23 +50,28 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+>                         pr_err("%s: failed to get syscon regmap\n", __func__);
+>                         return PTR_ERR(regmap);
+>                 }
+> -       } else if (of_device_is_compatible(of_get_parent(dev->of_node),
+> -                          "syscon")) {
+> -               regmap = device_node_to_regmap(of_get_parent(dev->of_node));
+> -               if (IS_ERR(regmap)) {
+> -                       dev_err(dev, "failed to get regmap from its parent.\n");
+> -                       return PTR_ERR(regmap);
+> -               }
+>         } else {
+> -               base = devm_platform_ioremap_resource(pdev, 0);
+> -               if (IS_ERR(base))
+> -                       return PTR_ERR(base);
+> -
+> -               regmap = devm_regmap_init_mmio(&pdev->dev, base,
+> -                                              &sprdclk_regmap_config);
+> -               if (IS_ERR(regmap)) {
+> -                       pr_err("failed to init regmap\n");
+> -                       return PTR_ERR(regmap);
+> +               struct device_node *np = of_get_parent(dev->of_node);
+
+move the declaration of "np" to the beginning part without assigning any value.
+
+> +
+> +               if (of_device_is_compatible(np, "syscon")) {
+
+There may be no need to split the origin structure of "if...else if...else".
+How about the following method?
+
+                    else if (of_device_is_compatible(np =
+of_get_parent(dev->of_node), "syscon")
+                        || (of_node_put(np), 0)) {
+
+> +                       regmap = device_node_to_regmap(np);
+> +                       of_node_put(np);
+> +                       if (IS_ERR(regmap)) {
+> +                               dev_err(dev, "failed to get regmap from its parent.\n");
+> +                               return PTR_ERR(regmap);
+> +                       }
+> +               } else {
+> +                       of_node_put(np);
+
+This line would not be necessary then.
+
+-Orson
+
+> +                       base = devm_platform_ioremap_resource(pdev, 0);
+> +                       if (IS_ERR(base))
+> +                               return PTR_ERR(base);
+> +
+> +                       regmap = devm_regmap_init_mmio(&pdev->dev, base,
+> +                                                          &sprdclk_regmap_config);
+> +                       if (IS_ERR(regmap)) {
+> +                               pr_err("failed to init regmap\n");
+> +                               return PTR_ERR(regmap);
+> +                       }
+>                 }
+>         }
+>
+> --
+> 2.25.1
+>
