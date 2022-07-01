@@ -2,120 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0FEC43334
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 14:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70145CCA47B
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 14:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbiGAODv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Jul 2022 10:03:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53214 "EHLO
+        id S233607AbiGAOvl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Jul 2022 10:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbiGAODv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 10:03:51 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F8530F44;
-        Fri,  1 Jul 2022 07:03:48 -0700 (PDT)
-Received: (Authenticated sender: herve.codina@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 70A0940011;
-        Fri,  1 Jul 2022 14:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1656684211;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+L8QLajr74iqGSCFKxQfGD00RTWpYu+5/EnCEEB0stg=;
-        b=FnOWE9J1W70ff+2EMnfrFI3/sjG8N6x30dDC8EzQKe82aGioLmg0DWlxHFDRZABDeBNCHl
-        JuezjGbvMQqG3SksfB0+z2hOTgaVJOGK8ev0PVMjseVoSf9v8IzWplO7pHLULa8rvT9Mwv
-        VhgbAAxjsZ2BEEU7Q89LyIM/hcm/G67NZeT43ixQSgOHUTmZX1k0eCZrbjgqS8y5ezqnfx
-        OU/xdzCQ1lLb/Oy9f9iZLDhrRbDaMuEl1UVnRan7R+vNYSRmhKY/mTOj1wWn1WLK13Wcjb
-        wPdztjBC+lsAL7dvEjd8UkURBXv63DjgylURw46UXbiRtc3cPRREsbMSiFcX9Q==
-Date:   Fri, 1 Jul 2022 16:03:27 +0200
-From:   Herve Codina <herve.codina@bootlin.com>
-To:     <Claudiu.Beznea@microchip.com>
-Cc:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <Horatiu.Vultur@microchip.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 3/3] ARM: dts: lan966x: Add UDPHS support
-Message-ID: <20220701160327.102880e5@bootlin.com>
-In-Reply-To: <72a1e572-45d7-de18-8f1f-9035d75b562b@microchip.com>
-References: <20220701070928.459135-1-herve.codina@bootlin.com>
-        <20220701070928.459135-4-herve.codina@bootlin.com>
-        <72a1e572-45d7-de18-8f1f-9035d75b562b@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        with ESMTP id S233497AbiGAOvl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 10:51:41 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EB630F47
+        for <linux-clk@vger.kernel.org>; Fri,  1 Jul 2022 07:51:40 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id n10so2641898plp.0
+        for <linux-clk@vger.kernel.org>; Fri, 01 Jul 2022 07:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jkLsmDIy0AahYUW8g9Esgr6pvhc7me0usMRBZRidXhs=;
+        b=ffwCwlDaoOkaH0gGVsYaT4ThDo/miD0dBxIsiG0YQ2DadoOPIzyZ+BjgxppTMHaIRb
+         sojCGPgv5ZvRaEuI+Tu2VUmEDV028jJrDoaOtRAs4x9NBRjWbS4sXoVCKflouxwMCkPy
+         w3haGmfWKPx0x+YQACzZQqvuGpsdQztdBcOg0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jkLsmDIy0AahYUW8g9Esgr6pvhc7me0usMRBZRidXhs=;
+        b=ZV3uiam3QmB9DMCfOnLek4ELFGoypsc3FMiqahEt/mHr4XlN6Kkc+bmjRGq3Um3+qh
+         SUDgg57RfZnZ58cqFcTItJ/pw8ZzJRRddNpdQx7H884xW4jSluZLOQZiGryCwH5jNo+4
+         2DY/6O5tdX2UsHo0XxwiRxiZbaDIskU0gBgQG8W7MyNpe7BFD0NPUHzbobqrEUVx9pR3
+         dE9e9aLabU0KPNso0fuTM4IcbYOqD5jlA0nPW8gzHFs2KyJoo2fOB6AvVa52QS8hC3CL
+         2NRTA6KwEph9il/sdCBwNIzjjTxTmfrbeL26rGQ3scDWILkgKxYTvI2oTlr+rsudopJS
+         V25w==
+X-Gm-Message-State: AJIora87/G0RPk3s+ti1XsES4JTiqCaKa4Ms2eotqZXmdLbsrn2S1Cri
+        /Yc0qgeApcmIskdcdkjbsJptqw==
+X-Google-Smtp-Source: AGRyM1vMyAY5ZgoPt421IVDHIPT6UJZNTrC3UubKNP59oeP8S8flayelqZc1t+7PxEyZbImcTFD6Ww==
+X-Received: by 2002:a17:902:d591:b0:16b:a170:8586 with SMTP id k17-20020a170902d59100b0016ba1708586mr13893903plh.91.1656687100324;
+        Fri, 01 Jul 2022 07:51:40 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:59bf:8b47:50a0:b04f])
+        by smtp.gmail.com with ESMTPSA id i4-20020a17090332c400b0016a214e4afasm15780981plr.125.2022.07.01.07.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 07:51:40 -0700 (PDT)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: mediatek: mt8183: Simplify with mtk_clk_simple_*()
+Date:   Fri,  1 Jul 2022 22:51:30 +0800
+Message-Id: <20220701145133.1152387-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.37.0.rc0.161.g10f37bed90-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claudiu,
+As part of clk driver support for MT8192, a pair of "simple"
+probe/remove functions was introduced that provided boilerplate
+driver functions for clk drivers that fit a simple model: they only
+needed to register clock gates. Using them reduces the redundant
+boilerplate code needed for each driver. Instead, only a data structure
+pointing to the clock gate array and the number of clocks is needed.
 
-On Fri, 1 Jul 2022 10:56:46 +0000
-<Claudiu.Beznea@microchip.com> wrote:
+This series converts all the MT8183 clock drivers that only contain
+clock gates over to these wrapper functions. For instances where the
+clk driver not only registers clock gates, the extra action is properly
+sequenced with the wrapper functions instead of outright replacing
+the probe functions. The converted drivers also get removal support.
+This also reduces the overall size by nearly 600 bytes.
 
-> On 01.07.2022 10:09, Herve Codina wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
-the content is safe
-> >=20
-> > Add UDPHS (the USB High Speed Device Port controller) support.
-> >=20
-> > The both lan966x SOCs (LAN9662 and LAN9668) have the same UDPHS
-> > IP. This IP is also the same as the one present in the SAMA5D3
-> > SOC.
-> >=20
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  arch/arm/boot/dts/lan966x.dtsi | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >=20
-> > diff --git a/arch/arm/boot/dts/lan966x.dtsi b/arch/arm/boot/dts/lan966x=
-.dtsi
-> > index 3cb02fffe716..c98e7075c2b4 100644
-> > --- a/arch/arm/boot/dts/lan966x.dtsi
-> > +++ b/arch/arm/boot/dts/lan966x.dtsi
-> > @@ -458,6 +458,17 @@ cpu_ctrl: syscon@e00c0000 {
-> >                         reg =3D <0xe00c0000 0x350>;
-> >                 };
-> >=20
-> > +               udc: usb@e0808000 {
-> > +                       compatible =3D "microchip,lan9662-udc",
-> > +                                    "atmel,sama5d3-udc";
-> > +                       reg =3D <0x00200000 0x80000>,
-> > +                             <0xe0808000 0x400>;
-> > +                       interrupts =3D <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks =3D <&clks GCK_GATE_UDPHS>, <&nic_clk>;
-> > +                       clock-names =3D "pclk", "hclk";
-> > +                       status =3D "disabled";
-> > +               };
-> > + =20
->=20
-> I have these compilation warnings:
->=20
->   DTC     arch/arm/boot/dts/lan966x-pcb8291.dtb
-> arch/arm/boot/dts/lan966x.dtsi:461.21-470.5: Warning (simple_bus_reg):
-> /soc/usb@e0808000: simple-bus unit address format error, expected "200000"
->   DTC     arch/arm/boot/dts/lan966x-kontron-kswitch-d10-mmt-6g-2gs.dtb
-> arch/arm/boot/dts/lan966x.dtsi:461.21-470.5: Warning (simple_bus_reg):
-> /soc/usb@e0808000: simple-bus unit address format error, expected "200000"
->   DTC     arch/arm/boot/dts/lan966x-kontron-kswitch-d10-mmt-8g.dtb
-> arch/arm/boot/dts/lan966x.dtsi:461.21-470.5: Warning (simple_bus_reg):
-> /soc/usb@e0808000: simple-bus unit address format error, expected "200000"
+Patch 1 converts the MT8183 clk drivers that only do clock gate
+registration.
 
-I am a bit confused but these warnings do not appear on my side (patches
-based on v5.19-rc1).
-What is the exact command that leads to these warning ?
+Patch 2 converts the audio clk driver, which also populates sub-devices.
 
-Thanks,
-Herv=C3=A9
+Patch 3 converts the mfgcfg (GPU wrapper) clk driver, which also needs
+to enable runtime PM, as it is tied to a power domain.
 
---=20
-Herv=C3=A9 Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Please have a look, and merge if possible.
+
+Thanks
+ChenYu
+
+
+Chen-Yu Tsai (3):
+  clk: mediatek: mt8183: Convert gate only drivers to mtk_clk_simple_*()
+  clk: mediatek: mt8183-audio: Simplify with mtk_clk_simple_*()
+  clk: mediatek: mt8183-mfgcfg: Simplify with mtk_clk_simple_*()
+
+ drivers/clk/mediatek/clk-mt8183-audio.c   | 40 +++++++++++++++--------
+ drivers/clk/mediatek/clk-mt8183-cam.c     | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-img.c     | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-ipu0.c    | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-ipu1.c    | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-ipu_adl.c | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c  | 23 +++++++------
+ drivers/clk/mediatek/clk-mt8183-vdec.c    | 21 +++++-------
+ drivers/clk/mediatek/clk-mt8183-venc.c    | 21 +++++-------
+ 9 files changed, 95 insertions(+), 115 deletions(-)
+
+-- 
+2.37.0.rc0.161.g10f37bed90-goog
+
