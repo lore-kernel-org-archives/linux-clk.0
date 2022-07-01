@@ -2,45 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9991C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 17:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3EAC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 17:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbiGARco (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Jul 2022 13:32:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
+        id S229664AbiGARoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Jul 2022 13:44:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiGARcm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 13:32:42 -0400
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9164427B26;
-        Fri,  1 Jul 2022 10:32:41 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id p128so2946948iof.1;
-        Fri, 01 Jul 2022 10:32:41 -0700 (PDT)
+        with ESMTP id S229541AbiGARox (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 13:44:53 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AB515A17;
+        Fri,  1 Jul 2022 10:44:51 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id d2so5357975ejy.1;
+        Fri, 01 Jul 2022 10:44:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2w2/BpthXqOHTkCsAaU0UBZebQgMrwCMp2rLplxRxgE=;
+        b=Rx8I1j/jXL3YcmiEv56BHfgMxMTRlOdfVIYYEnZmBb0FNznCz+VEBtA1dE4KBGLx9d
+         j3i1HbaVR6jUi6BtfPbCfh49QFeNvarrY4xJjD+7IRa8EAqHaoOa6wgVJmMAcPGjvt8V
+         +mJgJJ5EhAd2vlrFLXiTA8/Fiy4o+KE7CRtdXM5sPIlZ9BV2rK+FV1EB5kzLuweBm7xQ
+         ck0Akgz+Lw4+1Ed2Kdhrq2hM+QyeWwLu0OJwEm0aJwhy0GIwebfQWv8uI0QE+Lf2Ph/g
+         bS7cHhsb4a0C7FsMRhdc+rMh3FNhBGbrSv6prflLRiwiaUvZI6oW+xeBsMios6Zo0GqJ
+         mMAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
          :mime-version:content-disposition:in-reply-to;
-        bh=kdihIzz/bUBc79Tl403XsRH5T+EuaLhkcyZfLILKxN8=;
-        b=0EYypL/zJa40wA2jfVV5CEgWp+IM4m430msR8ascesOg71Yq50TDy/lb8/69orhHz+
-         wDBR2B/BVX9ZKlmaV5Mb9E+mla15odUsCf8H1efLUS8Pxe0YU0nD9ad+WemRvlY3R+V+
-         VaxOxJwTKyHZMzk+79wul3zI+ucqeh5cerT76m8XgSMMfT7hEqEhVHAyqUP1jXprVmkn
-         4AiRlQS7I2ZLnq7gsUwm+TK0HacGjN17d7lOLmKFrt5p7ni2whJnhU29Yc2gatrLGtMw
-         NHcofuvCUOCwUo7zsPF7uxDb5GYGgxBh9D8Hx6dJIupHa4Vcis0Znz5vCMr1yGdc7ET+
-         ATWg==
-X-Gm-Message-State: AJIora+XLbdAjpwy6BX+2yj3sKHfg09xrHF06arW4fXL8qifakNVPxln
-        6Wh2umCzKT/xTxQ0Tc81WQ==
-X-Google-Smtp-Source: AGRyM1uZ8OwgEzsYCO7/yMQZmvzU4+eDubJKYCRdP+KsYw/UCew6Al3YMalNieo9Vemle++GbRPKbA==
-X-Received: by 2002:a5d:9b85:0:b0:675:31ec:97dd with SMTP id r5-20020a5d9b85000000b0067531ec97ddmr8084076iom.111.1656696760783;
-        Fri, 01 Jul 2022 10:32:40 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id i19-20020a023b53000000b00339cdf821dasm10007287jaf.51.2022.07.01.10.32.39
+        bh=2w2/BpthXqOHTkCsAaU0UBZebQgMrwCMp2rLplxRxgE=;
+        b=YWRKe0cyu6Gz2sxC+NwfNBjAB2xCd1sizt9rHFoHntXHS7R8Z5bRsy8jcZBannSWH3
+         UKIxxvaJJWsS1AqY5BEjADn9aC8d26ro6ijsv5/Al9jtJGE+Jwy0+G5TCx6jFsS+YZA0
+         D58DAeyj6fotcFLtihMx+YwRqC/CY5VLD5zPjD5A0q4fhsa8Ye7UpfumR5O4+iUrTJN8
+         QF2UktP85j1s9b966e8R/A4Yo2aZOOpjDpPpAzW9QQvGa3KZV9/kYYsoUKb9Kflzcfnh
+         YCF4cyVPeKJ7LFAVoRscZTaHLe1yNbt3zs/jSSQYhn0S4vJxpZGr8ssOIGXjBEj0fl3Z
+         rIXA==
+X-Gm-Message-State: AJIora/mRVX2kl9QvW8ElT4AUC9DQ99pNnh65Zw9U8pPs1AQ4A/SDekr
+        tsSqvCMfXiHZuRSCfAC2uf8=
+X-Google-Smtp-Source: AGRyM1vY2qQU6x5AEoRfVHsbQLbVaw0kMakjWaMhipgGZ4HVZJKqUD4I3Y7652u2i2UpsDSCmJ0anw==
+X-Received: by 2002:a17:907:608b:b0:725:f45:39be with SMTP id ht11-20020a170907608b00b007250f4539bemr15963305ejc.669.1656697490382;
+        Fri, 01 Jul 2022 10:44:50 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.gmail.com with ESMTPSA id d6-20020a170906174600b00715705dd23asm10712725eje.89.2022.07.01.10.44.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 10:32:40 -0700 (PDT)
-Received: (nullmailer pid 1184843 invoked by uid 1000);
-        Fri, 01 Jul 2022 17:32:38 -0000
-Date:   Fri, 1 Jul 2022 11:32:38 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
+        Fri, 01 Jul 2022 10:44:50 -0700 (PDT)
+Message-ID: <62bf3292.1c69fb81.f66df.44ed@mx.google.com>
+X-Google-Original-Message-ID: <Yr8vncVpgOcziTu0@Ansuel-xps.>
+Date:   Fri, 1 Jul 2022 19:32:13 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Rob Herring <robh@kernel.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -52,45 +63,54 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
 Subject: Re: [PATCH v4 3/5] dt-bindings: arm: msm: Rework kpss-gcc driver
  Documentation to yaml
-Message-ID: <20220701173238.GA1175908-robh@kernel.org>
 References: <20220629121441.6552-1-ansuelsmth@gmail.com>
  <20220629121441.6552-4-ansuelsmth@gmail.com>
+ <20220701173238.GA1175908-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220629121441.6552-4-ansuelsmth@gmail.com>
+In-Reply-To: <20220701173238.GA1175908-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 29, 2022 at 02:14:39PM +0200, Christian Marangi wrote:
-> Rework kpss-gcc driver Documentation to yaml Documentation.
-
-It's not 'driver Documentation'. It's a DT binding for h/w.
-
-Lot's of things are YAML. I prefer 'DT schema'
-
-The subjects are bit long and get cut off as well. For the subject, 
-something like:
-
-dt-bindings: arm: msm: Convert kpss-gcc to DT schema
-
-And similar for the other patch.
-
-> The current kpss-gcc Documentation have major problems and can't be
-> converted directly. Introduce various changes to the original
-> Documentation.
+On Fri, Jul 01, 2022 at 11:32:38AM -0600, Rob Herring wrote:
+> On Wed, Jun 29, 2022 at 02:14:39PM +0200, Christian Marangi wrote:
+> > Rework kpss-gcc driver Documentation to yaml Documentation.
 > 
-> Add #clock-cells additional binding as this clock outputs a static clk
-> named acpu_l2_aux with supported compatible.
-> Only some compatible require and outputs a clock, for the others, set
-> only the reg as a required binding to correctly export the kpss-gcc
-> registers. As the reg is shared also add the required syscon compatible.
+> It's not 'driver Documentation'. It's a DT binding for h/w.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
->  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 90 +++++++++++++++++++
->  2 files changed, 90 insertions(+), 44 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+> Lot's of things are YAML. I prefer 'DT schema'
+> 
+> The subjects are bit long and get cut off as well. For the subject, 
+> something like:
+> 
+> dt-bindings: arm: msm: Convert kpss-gcc to DT schema
+> 
+> And similar for the other patch.
+>
+
+It was pointed out that since this have additional change than simple
+conversion, using "Convert" can be confusing.
+Is Rework or Refactor a better naming for this single patch?
+
+> > The current kpss-gcc Documentation have major problems and can't be
+> > converted directly. Introduce various changes to the original
+> > Documentation.
+> > 
+> > Add #clock-cells additional binding as this clock outputs a static clk
+> > named acpu_l2_aux with supported compatible.
+> > Only some compatible require and outputs a clock, for the others, set
+> > only the reg as a required binding to correctly export the kpss-gcc
+> > registers. As the reg is shared also add the required syscon compatible.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
+> >  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 90 +++++++++++++++++++
+> >  2 files changed, 90 insertions(+), 44 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+
+-- 
+	Ansuel
