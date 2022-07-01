@@ -2,156 +2,250 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E187EC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 17:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D951EC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Jul 2022 17:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbiGARMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Jul 2022 13:12:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58158 "EHLO
+        id S229664AbiGAR0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Jul 2022 13:26:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230410AbiGARMX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 13:12:23 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9EE201B5
-        for <linux-clk@vger.kernel.org>; Fri,  1 Jul 2022 10:12:22 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id q140so2935998pgq.6
-        for <linux-clk@vger.kernel.org>; Fri, 01 Jul 2022 10:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lhDjl+/N55zvWjy7fFJihLD9IH8iN7fCcLBSAJYRjl0=;
-        b=TGB8iwjp3/4lHJmVG6Owq/wkQOMDkF1/0a739r3I47DAlpWY4O5ZABy64OQh+IA5mL
-         Yi2Vj7IUoqWGjHCA3St+Xo4w6vDDpz6Wy7aCw3AS4XmFfEP1xZQyGhaQ8kUKCkZRUkeB
-         5ug9tHQHP4njXqI1n82/ybihOhPz6vtdk56PLChLDhfo6DkwAhSXD/uVGiModOPaTmHp
-         75W0xtXLDpdDUm3QUIqoevM94rFDeyPGtE8O29aQLX/D+aLz2+xRpTyZzHKvhJKivxIK
-         7q+9aa5VF+Fj/WeEXpQ315nLV76tTLJaQrhwmijaObGl/9K4g0G0EMX68ANQExF+6Lkz
-         kj+Q==
+        with ESMTP id S229639AbiGAR0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 13:26:47 -0400
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9064934B86;
+        Fri,  1 Jul 2022 10:26:46 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id y2so2871391ior.12;
+        Fri, 01 Jul 2022 10:26:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lhDjl+/N55zvWjy7fFJihLD9IH8iN7fCcLBSAJYRjl0=;
-        b=MF5SqgEF7j25LUFTr3lrnweGCCkbh5jwE1DzbI9xufnShZboLQWQO5nBkqtg5bfdPB
-         mplXEzEuuu5EL5BiKCZmlOkKeovHbsbYg31JC5B2/rlmIAxPstyRHMSTx3tdk3pjRJ/O
-         TId/9Scfg0iCAo0I5WeXrnrT8YbPFSYo2bC/d8v3fjbKhazQhEHPaYQQmrGM1Vk02zNG
-         anIeyhcxnB4Ggwh7oPw9apxAV5614dVnOh34JI9eouP8aVyZCCQzHSaqOdRpBzRDo8/o
-         Upl7gLdn0o7CDooMft3FCVoL5LjI6t5/ivSoEgCz//8keXXMyjtc8ZN6ZcuWCgOkCNBy
-         lVNg==
-X-Gm-Message-State: AJIora8jIaw/6ysRpANNb0vT5FYU9y77qXDp6aQvodL9mAr4qo+6fQA3
-        FP5mnRncYKW2ji8J0MkxQ2uQFcZkfrga6AsqKIs=
-X-Google-Smtp-Source: AGRyM1uBVKAfWhtK0ls98NLWy2ez8dIZfA/sqU59Apr1PQRCjnaBOT/vhGcPid2aJmf5jtGUUDjuwpxPJ789deaqFo8=
-X-Received: by 2002:a05:6a00:280f:b0:527:bb6f:ff34 with SMTP id
- bl15-20020a056a00280f00b00527bb6fff34mr20759063pfb.35.1656695542062; Fri, 01
- Jul 2022 10:12:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220701024606.223438-1-windhl@126.com> <CAAfSe-vAuFK1qfCA9H_k3MDTa-7rP4FsfkMPMkR1+L60CU8iMg@mail.gmail.com>
- <5bb0d0ea.455b.181b885b569.Coremail.windhl@126.com>
-In-Reply-To: <5bb0d0ea.455b.181b885b569.Coremail.windhl@126.com>
-From:   Orson Zhai <orsonzhai@gmail.com>
-Date:   Sat, 2 Jul 2022 01:12:10 +0800
-Message-ID: <CA+H2tpFhmYCbAX62Dta-Q7ER4Eh5cJwbc2uCQYQyzdVsM8Lvxg@mail.gmail.com>
-Subject: Re: Re: [PATCH v4] clk: sprd: Hold reference returned by of_get_parent()
-To:     Liang He <windhl@126.com>
-Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tNDBOPW04ACWjZ1RmSaGHvRH0YNKgzkEiDOcMmz1kTM=;
+        b=EOPAH0bqVQ0LpKx4yA9LP2q7wiKQSUqMGITAtw1cicZvRYFaVirPiBBAkY+aVjmRPz
+         7taFY3RKPidYhLUW3XsI2ixvrWdpRo6+nTydRh3SYmhaaP1aeqmd3H8hoCDBft/N+zIw
+         joiER2KE6YwVcZUQbPRO9+bBgwfG3a4KN7glXQmKLv4b5nfjPh4deX72FjMp1dG7D+U9
+         DC9ltMtRSmbVnDozmTdVtQoZmdtLlCGkz06ln/Ye8Ko41uhVI3eR3C8i3AO7uuzvrUPd
+         BLZaBRMHJZ3fj42xxqX6tu7NfPJeZ5PWh+Ps4XVcBlGfzt+mVz7nqnz/zcYiL6JFA6eb
+         b51A==
+X-Gm-Message-State: AJIora+BfdzL9dnSAM66BZffpJ86xLrYFr3xL8XVzCM5nAw1+LWY3qFa
+        Px2LNGmcll3Fq23su5NtIA==
+X-Google-Smtp-Source: AGRyM1s5YOKYKPpMyMLPlv7bpieOeXCM9X1M6uBU3vBT6xcL2vVhAJuG+3VAMTcmOEDmFw4yZUowRw==
+X-Received: by 2002:a05:6638:2b7:b0:33c:d250:12b9 with SMTP id d23-20020a05663802b700b0033cd25012b9mr8636531jaq.220.1656696405810;
+        Fri, 01 Jul 2022 10:26:45 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id u71-20020a02234a000000b0033074471f78sm9990232jau.101.2022.07.01.10.26.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Jul 2022 10:26:45 -0700 (PDT)
+Received: (nullmailer pid 1175627 invoked by uid 1000);
+        Fri, 01 Jul 2022 17:26:43 -0000
+Date:   Fri, 1 Jul 2022 11:26:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] dt-bindings: arm: msm: Convert kpss-acc driver
+ Documentation to yaml
+Message-ID: <20220701172643.GA1164683-robh@kernel.org>
+References: <20220629121441.6552-1-ansuelsmth@gmail.com>
+ <20220629121441.6552-3-ansuelsmth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220629121441.6552-3-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Liang,
+On Wed, Jun 29, 2022 at 02:14:38PM +0200, Christian Marangi wrote:
+> Convert kpss-acc driver Documentation to yaml.
+> The original Documentation was wrong all along. Fix it while we are
+> converting it.
+> The example was wrong as kpss-acc-v2 should only expose the regs but we
+> don't have any driver that expose additional clocks. The kpss-acc driver
+> is only specific to v1. For this exact reason, limit all the additional
+> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
+> v1 and also flag that these bindings should NOT be used for v2.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
+>  .../bindings/arm/msm/qcom,kpss-acc.yaml       | 93 +++++++++++++++++++
+>  2 files changed, 93 insertions(+), 49 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+> deleted file mode 100644
+> index 7f696362a4a1..000000000000
+> --- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+> +++ /dev/null
+> @@ -1,49 +0,0 @@
+> -Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
+> -
+> -The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
+> -There is one ACC register region per CPU within the KPSS remapped region as
+> -well as an alias register region that remaps accesses to the ACC associated
+> -with the CPU accessing the region.
+> -
+> -PROPERTIES
+> -
+> -- compatible:
+> -	Usage: required
+> -	Value type: <string>
+> -	Definition: should be one of:
+> -			"qcom,kpss-acc-v1"
+> -			"qcom,kpss-acc-v2"
+> -
+> -- reg:
+> -	Usage: required
+> -	Value type: <prop-encoded-array>
+> -	Definition: the first element specifies the base address and size of
+> -		    the register region. An optional second element specifies
+> -		    the base address and size of the alias register region.
+> -
+> -- clocks:
+> -        Usage: required
+> -        Value type: <prop-encoded-array>
+> -        Definition: reference to the pll parents.
+> -
+> -- clock-names:
+> -        Usage: required
+> -        Value type: <stringlist>
+> -        Definition: must be "pll8_vote", "pxo".
+> -
+> -- clock-output-names:
+> -	Usage: optional
+> -	Value type: <string>
+> -	Definition: Name of the output clock. Typically acpuX_aux where X is a
+> -		    CPU number starting at 0.
+> -
+> -Example:
+> -
+> -	clock-controller@2088000 {
+> -		compatible = "qcom,kpss-acc-v2";
+> -		reg = <0x02088000 0x1000>,
+> -		      <0x02008000 0x1000>;
+> -		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
+> -		clock-names = "pll8_vote", "pxo";
+> -		clock-output-names = "acpu0_aux";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+> new file mode 100644
+> index 000000000000..5e16121d9f0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-acc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |
+> +  The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
+> +  There is one ACC register region per CPU within the KPSS remapped region as
+> +  well as an alias register region that remaps accesses to the ACC associated
+> +  with the CPU accessing the region.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,kpss-acc-v1
+> +      - qcom,kpss-acc-v2
+> +
+> +  reg:
+> +    items:
+> +      - description: Base address and size of the register region
+> +      - description: Optional base address and size of the alias register region
 
-On Fri, Jul 1, 2022 at 2:50 PM Liang He <windhl@126.com> wrote:
->
->
->
-> At 2022-07-01 14:39:53, "Chunyan Zhang" <zhang.lyra@gmail.com> wrote:
-> >On Fri, 1 Jul 2022 at 10:46, Liang He <windhl@126.com> wrote:
-> >>
-> >> We should hold the reference returned by of_get_parent() and use it
-> >> to call of_node_put() for refcount balance.
-> >>
-> >> Fixes: f95e8c7923d1 ("clk: sprd: support to get regmap from parent node")
-> >> Signed-off-by: Liang He <windhl@126.com>
-> >> ---
-> >>  changelog:
-> >>
-> >>  v4: fix another bug in the same place, missing in v3
-> >>  v3: (1) keep original 'if-else if-else' coding style adviesd by Orson
-> >>      (2) fix typo in commit-log: of_node_out --> of_node_put
-> >>  v2: minimize the effective range of of_get_parent() advised by Orson
-> >>  v1: hold reference returned by of_get_parent()
-> >>
-> >>
-> >>  drivers/clk/sprd/common.c | 9 +++++----
-> >>  1 file changed, 5 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-> >> index d620bbbcdfc8..1b9c2aa0836f 100644
-> >> --- a/drivers/clk/sprd/common.c
-> >> +++ b/drivers/clk/sprd/common.c
-> >> @@ -41,7 +41,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
-> >>  {
-> >>         void __iomem *base;
-> >>         struct device *dev = &pdev->dev;
-> >> -       struct device_node *node = dev->of_node;
-> >> +       struct device_node *node = dev->of_node, *np;
-> >>         struct regmap *regmap;
-> >>
-> >>         if (of_find_property(node, "sprd,syscon", NULL)) {
-> >> @@ -50,9 +50,10 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
-> >>                         pr_err("%s: failed to get syscon regmap\n", __func__);
-> >>                         return PTR_ERR(regmap);
-> >>                 }
-> >> -       } else if (of_device_is_compatible(of_get_parent(dev->of_node),
-> >> -                          "syscon")) {
-> >> -               regmap = device_node_to_regmap(of_get_parent(dev->of_node));
-> >> +       } else if (of_device_is_compatible(np = of_get_parent(node), "syscon")
-> >> +               || (of_node_put(np), 0)) {
-> >> +               regmap = device_node_to_regmap(np = of_get_parent(node));
-> >
-> >of_get_parent() one more time would cause another unbalance, why not
-> >use 'np' directly here?
-> >
-> >I would also suggest to cc LKML (linux-kernel@vger.kernel.org)
-> >
-> >Thanks,
-> >Chunyan
-> >
->
-> Hi, Chunyan,
->
-> Thanks for reviewing this patch code.
->
-> In fact, the 'np' has already  been |PUT| in the 'else if ( ...|| of_node_put(np)..)'.
->
-> Based on the original code, there are two of_get_parent(), so we need the second
-> one with the following second |PUT|.
+Optional? Need 'minItems: 1' then.
 
-Sorry, I missed it. I think what Chunyan said is right.
+> +
+> +  clocks:
+> +    items:
+> +      - description: phandle to pll8_vote
+> +      - description: phandle to pxo_board
 
-np is declared at the beginning, so it's ok to be referred to in all
-places in  this function
-after being assigned.
-the first of_node_put() will not be called if
-of_device_is_compatible() returns success.
-So we can refer to np directly here.
+Not necessarily just a phandle... Needs a better description in terms of 
+the function of the clock within the KPSS ACC block, not the source.
 
--Orson
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pll8_vote
+> +      - const: pxo
+> +
+> +  clock-output-names:
+> +    description: Name of the aux clock. Krait can have at most 4 cpu.
 
->
-> Thanks,
->
-> Liang
->
-> >> +               of_node_put(np);
-> >>                 if (IS_ERR(regmap)) {
-> >>                         dev_err(dev, "failed to get regmap from its parent.\n");
-> >>                         return PTR_ERR(regmap);
-> >> --
-> >> 2.25.1
-> >>
+s/cpu/CPUs/
+
+> +    enum:
+> +      - acpu0_aux
+> +      - acpu1_aux
+> +      - acpu2_aux
+> +      - acpu3_aux
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: qcom,kpss-acc-v1
+> +then:
+> +  required:
+> +    - clocks
+> +    - clock-names
+> +    - clock-output-names
+> +    - '#clock-cells'
+> +else:
+> +  properties:
+> +    clocks: false
+> +    clock-names: false
+> +    clock-output-names: false
+> +    '#clock-cells': false
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+> +
+> +    clock-controller@2088000 {
+> +      compatible = "qcom,kpss-acc-v1";
+> +      reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
+> +      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
+> +      clock-names = "pll8_vote", "pxo";
+> +      clock-output-names = "acpu0_aux";
+> +      #clock-cells = <0>;
+> +    };
+> +
+> +  - |
+> +    clock-controller@f9088000 {
+> +      compatible = "qcom,kpss-acc-v2";
+> +      reg = <0xf9088000 0x1000>,
+> +            <0xf9008000 0x1000>;
+> +    };
+> +...
+> -- 
+> 2.36.1
+> 
+> 
