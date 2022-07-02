@@ -2,187 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F18CCA482
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Jul 2022 01:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B73CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Jul 2022 01:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbiGBBDl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Jul 2022 21:03:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35774 "EHLO
+        id S229787AbiGBB3P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Jul 2022 21:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231173AbiGBBDi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 21:03:38 -0400
-Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C4682409E;
-        Fri,  1 Jul 2022 18:03:35 -0700 (PDT)
-Date:   Fri, 1 Jul 2022 18:03:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1656723813;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UefsvJWBOCsJEHG/jcpgIGR+KBtUCRUqjXcROu7qjh4=;
-        b=oGHlDm4tgr6UzDbC5z/sb7q2WEts5mi8mJ8aiIMXBOzW75BRr4BaIuszRL9hOCzoFfVxku
-        tmO6BM7R9GzDDzZbe/MQeyeOEOAx+3VHqH/w/8ecEZ7fImffcNYGlal4Cw/gQ26E9Sym1J
-        usYWeNXz8OdB9Vt23HLuxwKOwXbZ7ng=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Roman Gushchin <roman.gushchin@linux.dev>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        kernel test robot <lkp@intel.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        usbb2k-api-dev@nongnu.org, tipc-discussion@lists.sourceforge.net,
-        target-devel@vger.kernel.org, sound-open-firmware@alsa-project.org,
-        samba-technical@lists.samba.org, rds-devel@oss.oracle.com,
-        patches@opensource.cirrus.com, osmocom-net-gprs@lists.osmocom.org,
-        openipmi-developer@lists.sourceforge.net, nvdimm@lists.linux.dev,
-        ntb@lists.linux.dev, netfilter-devel@vger.kernel.org,
-        netdev@vger.kernel.org, mjpeg-users@lists.sourceforge.net,
-        megaraidlinux.pdl@broadcom.com, linuxppc-dev@lists.ozlabs.org,
-        linux1394-devel@lists.sourceforge.net, linux-x25@vger.kernel.org,
-        linux-wpan@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-parport@lists.infradead.org,
-        linux-parisc@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-nfc@lists.01.org, linux-mtd@lists.infradead.org,
-        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-cxl@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-bcache@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linaro-mm-sig@lists.linaro.org,
-        legousb-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        keyrings@vger.kernel.org, isdn4linux@listserv.isdn4linux.de,
-        iommu@lists.linux.dev, iommu@lists.linux-foundation.org,
-        intel-wired-lan@lists.osuosl.org, dri-devel@lists.freedesktop.org,
-        dm-devel@redhat.com, devicetree@vger.kernel.org,
-        dev@openvswitch.org, dccp@vger.kernel.org, damon@lists.linux.dev,
-        coreteam@netfilter.org, cgroups@vger.kernel.org,
-        ceph-devel@vger.kernel.org, apparmor@lists.ubuntu.com,
-        amd-gfx@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        accessrunner-general@lists.sourceforge.net
-Subject: Re: [linux-next:master] BUILD REGRESSION
- 6cc11d2a1759275b856e464265823d94aabd5eaf
-Message-ID: <Yr+ZTnLb9lJk6fJO@castle>
-References: <62be3696.+PAAAVlbtWK6G2hk%lkp@intel.com>
+        with ESMTP id S229775AbiGBB3P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jul 2022 21:29:15 -0400
+Received: from m1524.mail.126.com (m1524.mail.126.com [220.181.15.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37C381D0CA
+        for <linux-clk@vger.kernel.org>; Fri,  1 Jul 2022 18:29:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=01M95
+        CR0qCwBVKxPtOSckGXCp4D0+4bjRI39B4ucJMo=; b=TlVjcPyra4OEfLZrpynTx
+        u2dShN9f++kktMT9ktOnlzyGGAdMADvkA1yCbQI9vhpvLzhh+5ER3d1nt/od+rih
+        0S3YkHMAHQ8iRsmlMOq16uPtfIv212gAjCtxYWhLGrkQc4yryDk97pMdp5acMRqi
+        H4y6lXlFmkoAQ8mAn3bAPQ=
+Received: from windhl$126.com ( [124.16.139.61] ) by ajax-webmail-wmsvr24
+ (Coremail) ; Sat, 2 Jul 2022 09:28:49 +0800 (CST)
+X-Originating-IP: [124.16.139.61]
+Date:   Sat, 2 Jul 2022 09:28:49 +0800 (CST)
+From:   "Liang He" <windhl@126.com>
+To:     "Orson Zhai" <orsonzhai@gmail.com>
+Cc:     "Chunyan Zhang" <zhang.lyra@gmail.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Baolin Wang" <baolin.wang7@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re:Re: Re: [PATCH v4] clk: sprd: Hold reference returned by
+ of_get_parent()
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20220113(9671e152)
+ Copyright (c) 2002-2022 www.mailtech.cn 126com
+In-Reply-To: <CA+H2tpFhmYCbAX62Dta-Q7ER4Eh5cJwbc2uCQYQyzdVsM8Lvxg@mail.gmail.com>
+References: <20220701024606.223438-1-windhl@126.com>
+ <CAAfSe-vAuFK1qfCA9H_k3MDTa-7rP4FsfkMPMkR1+L60CU8iMg@mail.gmail.com>
+ <5bb0d0ea.455b.181b885b569.Coremail.windhl@126.com>
+ <CA+H2tpFhmYCbAX62Dta-Q7ER4Eh5cJwbc2uCQYQyzdVsM8Lvxg@mail.gmail.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62be3696.+PAAAVlbtWK6G2hk%lkp@intel.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: linux.dev
+Message-ID: <30a4141c.68c.181bc86547d.Coremail.windhl@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: GMqowAAXJiZSn79icQBBAA--.38728W
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/xtbBGgsxF1-HZa5C+gACse
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-esOn Fri, Jul 01, 2022 at 07:49:42AM +0800, kbuild test robot wrote:
-> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-> branch HEAD: 6cc11d2a1759275b856e464265823d94aabd5eaf  Add linux-next specific files for 20220630
-> 
-> Error/Warning reports:
-> 
-> https://lore.kernel.org/linux-mm/202206301859.UodBCrva-lkp@intel.com
-> 
-> Error/Warning: (recently discovered and may have been fixed)
-> 
-> arch/powerpc/kernel/interrupt.c:542:55: error: suggest braces around empty body in an 'if' statement [-Werror=empty-body]
-> arch/powerpc/kernel/interrupt.c:542:55: warning: suggest braces around empty body in an 'if' statement [-Wempty-body]
-> drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
-> drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
-> mm/shrinker_debug.c:143:9: warning: function 'shrinker_debugfs_rename' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-> mm/shrinker_debug.c:217:9: warning: function 'shrinker_debugfs_rename' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-> mm/vmscan.c:637:9: warning: function 'prealloc_shrinker' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-> mm/vmscan.c:642:9: warning: function 'prealloc_shrinker' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-> mm/vmscan.c:697:9: warning: function 'register_shrinker' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-> mm/vmscan.c:702:9: warning: function 'register_shrinker' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-
-Shrinker-related warnings should be fixed by the following patch.
-
-Thanks!
-
---
-
-From c399aff65c7745a209397a531c5b28fd404d83c2 Mon Sep 17 00:00:00 2001
-From: Roman Gushchin <roman.gushchin@linux.dev>
-Date: Fri, 1 Jul 2022 17:38:31 -0700
-Subject: [PATCH] mm:shrinkers: fix build warnings
-
-Add __printf(a, b) attributes to shrinker functions taking shrinker
-name as an argument to avoid compiler warnings like:
-
-mm/shrinker_debug.c:143:9: warning: function 'shrinker_debugfs_rename'
-  might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-mm/shrinker_debug.c:217:9: warning: function 'shrinker_debugfs_rename'
-  might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-mm/vmscan.c:637:9: warning: function 'prealloc_shrinker' might be a
-  candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-mm/vmscan.c:642:9: warning: function 'prealloc_shrinker' might be a
-  candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-mm/vmscan.c:697:9: warning: function 'register_shrinker' might be a
-  candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-mm/vmscan.c:702:9: warning: function 'register_shrinker' might be a
-  candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- include/linux/shrinker.h | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 64416f3e0a1f..08e6054e061f 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -93,9 +93,11 @@ struct shrinker {
-  */
- #define SHRINKER_NONSLAB	(1 << 3)
- 
--extern int prealloc_shrinker(struct shrinker *shrinker, const char *fmt, ...);
-+extern int __printf(2, 3) prealloc_shrinker(struct shrinker *shrinker,
-+					    const char *fmt, ...);
- extern void register_shrinker_prepared(struct shrinker *shrinker);
--extern int register_shrinker(struct shrinker *shrinker, const char *fmt, ...);
-+extern int __printf(2, 3) register_shrinker(struct shrinker *shrinker,
-+					    const char *fmt, ...);
- extern void unregister_shrinker(struct shrinker *shrinker);
- extern void free_prealloced_shrinker(struct shrinker *shrinker);
- extern void synchronize_shrinkers(void);
-@@ -103,8 +105,8 @@ extern void synchronize_shrinkers(void);
- #ifdef CONFIG_SHRINKER_DEBUG
- extern int shrinker_debugfs_add(struct shrinker *shrinker);
- extern void shrinker_debugfs_remove(struct shrinker *shrinker);
--extern int shrinker_debugfs_rename(struct shrinker *shrinker,
--				   const char *fmt, ...);
-+extern int __printf(2, 3) shrinker_debugfs_rename(struct shrinker *shrinker,
-+						  const char *fmt, ...);
- #else /* CONFIG_SHRINKER_DEBUG */
- static inline int shrinker_debugfs_add(struct shrinker *shrinker)
- {
-@@ -113,8 +115,8 @@ static inline int shrinker_debugfs_add(struct shrinker *shrinker)
- static inline void shrinker_debugfs_remove(struct shrinker *shrinker)
- {
- }
--static inline int shrinker_debugfs_rename(struct shrinker *shrinker,
--					  const char *fmt, ...)
-+static inline __printf(2, 3)
-+int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
- {
- 	return 0;
- }
--- 
-2.36.1
-
+CgoKCkF0IDIwMjItMDctMDIgMDE6MTI6MTAsICJPcnNvbiBaaGFpIiA8b3Jzb256aGFpQGdtYWls
+LmNvbT4gd3JvdGU6Cj5MaWFuZywKPgo+T24gRnJpLCBKdWwgMSwgMjAyMiBhdCAyOjUwIFBNIExp
+YW5nIEhlIDx3aW5kaGxAMTI2LmNvbT4gd3JvdGU6Cj4+Cj4+Cj4+Cj4+IEF0IDIwMjItMDctMDEg
+MTQ6Mzk6NTMsICJDaHVueWFuIFpoYW5nIiA8emhhbmcubHlyYUBnbWFpbC5jb20+IHdyb3RlOgo+
+PiA+T24gRnJpLCAxIEp1bCAyMDIyIGF0IDEwOjQ2LCBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+
+IHdyb3RlOgo+PiA+Pgo+PiA+PiBXZSBzaG91bGQgaG9sZCB0aGUgcmVmZXJlbmNlIHJldHVybmVk
+IGJ5IG9mX2dldF9wYXJlbnQoKSBhbmQgdXNlIGl0Cj4+ID4+IHRvIGNhbGwgb2Zfbm9kZV9wdXQo
+KSBmb3IgcmVmY291bnQgYmFsYW5jZS4KPj4gPj4KPj4gPj4gRml4ZXM6IGY5NWU4Yzc5MjNkMSAo
+ImNsazogc3ByZDogc3VwcG9ydCB0byBnZXQgcmVnbWFwIGZyb20gcGFyZW50IG5vZGUiKQo+PiA+
+PiBTaWduZWQtb2ZmLWJ5OiBMaWFuZyBIZSA8d2luZGhsQDEyNi5jb20+Cj4+ID4+IC0tLQo+PiA+
+PiAgY2hhbmdlbG9nOgo+PiA+Pgo+PiA+PiAgdjQ6IGZpeCBhbm90aGVyIGJ1ZyBpbiB0aGUgc2Ft
+ZSBwbGFjZSwgbWlzc2luZyBpbiB2Mwo+PiA+PiAgdjM6ICgxKSBrZWVwIG9yaWdpbmFsICdpZi1l
+bHNlIGlmLWVsc2UnIGNvZGluZyBzdHlsZSBhZHZpZXNkIGJ5IE9yc29uCj4+ID4+ICAgICAgKDIp
+IGZpeCB0eXBvIGluIGNvbW1pdC1sb2c6IG9mX25vZGVfb3V0IC0tPiBvZl9ub2RlX3B1dAo+PiA+
+PiAgdjI6IG1pbmltaXplIHRoZSBlZmZlY3RpdmUgcmFuZ2Ugb2Ygb2ZfZ2V0X3BhcmVudCgpIGFk
+dmlzZWQgYnkgT3Jzb24KPj4gPj4gIHYxOiBob2xkIHJlZmVyZW5jZSByZXR1cm5lZCBieSBvZl9n
+ZXRfcGFyZW50KCkKPj4gPj4KPj4gPj4KPj4gPj4gIGRyaXZlcnMvY2xrL3NwcmQvY29tbW9uLmMg
+fCA5ICsrKysrLS0tLQo+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBk
+ZWxldGlvbnMoLSkKPj4gPj4KPj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3NwcmQvY29t
+bW9uLmMgYi9kcml2ZXJzL2Nsay9zcHJkL2NvbW1vbi5jCj4+ID4+IGluZGV4IGQ2MjBiYmJjZGZj
+OC4uMWI5YzJhYTA4MzZmIDEwMDY0NAo+PiA+PiAtLS0gYS9kcml2ZXJzL2Nsay9zcHJkL2NvbW1v
+bi5jCj4+ID4+ICsrKyBiL2RyaXZlcnMvY2xrL3NwcmQvY29tbW9uLmMKPj4gPj4gQEAgLTQxLDcg
+KzQxLDcgQEAgaW50IHNwcmRfY2xrX3JlZ21hcF9pbml0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYsCj4+ID4+ICB7Cj4+ID4+ICAgICAgICAgdm9pZCBfX2lvbWVtICpiYXNlOwo+PiA+PiAg
+ICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7Cj4+ID4+IC0gICAgICAgc3Ry
+dWN0IGRldmljZV9ub2RlICpub2RlID0gZGV2LT5vZl9ub2RlOwo+PiA+PiArICAgICAgIHN0cnVj
+dCBkZXZpY2Vfbm9kZSAqbm9kZSA9IGRldi0+b2Zfbm9kZSwgKm5wOwo+PiA+PiAgICAgICAgIHN0
+cnVjdCByZWdtYXAgKnJlZ21hcDsKPj4gPj4KPj4gPj4gICAgICAgICBpZiAob2ZfZmluZF9wcm9w
+ZXJ0eShub2RlLCAic3ByZCxzeXNjb24iLCBOVUxMKSkgewo+PiA+PiBAQCAtNTAsOSArNTAsMTAg
+QEAgaW50IHNwcmRfY2xrX3JlZ21hcF9pbml0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYs
+Cj4+ID4+ICAgICAgICAgICAgICAgICAgICAgICAgIHByX2VycigiJXM6IGZhaWxlZCB0byBnZXQg
+c3lzY29uIHJlZ21hcFxuIiwgX19mdW5jX18pOwo+PiA+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICByZXR1cm4gUFRSX0VSUihyZWdtYXApOwo+PiA+PiAgICAgICAgICAgICAgICAgfQo+PiA+PiAt
+ICAgICAgIH0gZWxzZSBpZiAob2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUob2ZfZ2V0X3BhcmVudChk
+ZXYtPm9mX25vZGUpLAo+PiA+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAic3lzY29uIikp
+IHsKPj4gPj4gLSAgICAgICAgICAgICAgIHJlZ21hcCA9IGRldmljZV9ub2RlX3RvX3JlZ21hcChv
+Zl9nZXRfcGFyZW50KGRldi0+b2Zfbm9kZSkpOwo+PiA+PiArICAgICAgIH0gZWxzZSBpZiAob2Zf
+ZGV2aWNlX2lzX2NvbXBhdGlibGUobnAgPSBvZl9nZXRfcGFyZW50KG5vZGUpLCAic3lzY29uIikK
+Pj4gPj4gKyAgICAgICAgICAgICAgIHx8IChvZl9ub2RlX3B1dChucCksIDApKSB7Cj4+ID4+ICsg
+ICAgICAgICAgICAgICByZWdtYXAgPSBkZXZpY2Vfbm9kZV90b19yZWdtYXAobnAgPSBvZl9nZXRf
+cGFyZW50KG5vZGUpKTsKPj4gPgo+PiA+b2ZfZ2V0X3BhcmVudCgpIG9uZSBtb3JlIHRpbWUgd291
+bGQgY2F1c2UgYW5vdGhlciB1bmJhbGFuY2UsIHdoeSBub3QKPj4gPnVzZSAnbnAnIGRpcmVjdGx5
+IGhlcmU/Cj4+ID4KPj4gPkkgd291bGQgYWxzbyBzdWdnZXN0IHRvIGNjIExLTUwgKGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcpCj4+ID4KPj4gPlRoYW5rcywKPj4gPkNodW55YW4KPj4gPgo+
+Pgo+PiBIaSwgQ2h1bnlhbiwKPj4KPj4gVGhhbmtzIGZvciByZXZpZXdpbmcgdGhpcyBwYXRjaCBj
+b2RlLgo+Pgo+PiBJbiBmYWN0LCB0aGUgJ25wJyBoYXMgYWxyZWFkeSAgYmVlbiB8UFVUfCBpbiB0
+aGUgJ2Vsc2UgaWYgKCAuLi58fCBvZl9ub2RlX3B1dChucCkuLiknLgo+Pgo+PiBCYXNlZCBvbiB0
+aGUgb3JpZ2luYWwgY29kZSwgdGhlcmUgYXJlIHR3byBvZl9nZXRfcGFyZW50KCksIHNvIHdlIG5l
+ZWQgdGhlIHNlY29uZAo+PiBvbmUgd2l0aCB0aGUgZm9sbG93aW5nIHNlY29uZCB8UFVUfC4KPgo+
+U29ycnksIEkgbWlzc2VkIGl0LiBJIHRoaW5rIHdoYXQgQ2h1bnlhbiBzYWlkIGlzIHJpZ2h0Lgo+
+Cj5ucCBpcyBkZWNsYXJlZCBhdCB0aGUgYmVnaW5uaW5nLCBzbyBpdCdzIG9rIHRvIGJlIHJlZmVy
+cmVkIHRvIGluIGFsbAo+cGxhY2VzIGluICB0aGlzIGZ1bmN0aW9uCj5hZnRlciBiZWluZyBhc3Np
+Z25lZC4KPnRoZSBmaXJzdCBvZl9ub2RlX3B1dCgpIHdpbGwgbm90IGJlIGNhbGxlZCBpZgo+b2Zf
+ZGV2aWNlX2lzX2NvbXBhdGlibGUoKSByZXR1cm5zIHN1Y2Nlc3MuCgpIaSwgT3Jzb24sCgpOb3cs
+IEkgdGhpbmsgdGhpcyB0b3RhbGx5IGRlcGVuZHMgb24gdGhlIGltcGxlbWVudGF0aW9uIG9mIGNv
+bXBpbGVycy4KClNvLCB3ZSBzaG91bGQgaW50cm9kdWNlIHRoaXMgcG9zc2libGUgcmlzayBvciB1
+c2UgbW9yZSBjb25zZXJ2YXRpdmUgd2F5IEkgdXNlIGJlZm9yZT8KCmRvIG5vdCBwdXQgfFBVVHwg
+aW4gY29uZGl0aW9uIGFuZCBtb3ZlIGl0IHRvIHRoZSAnZWxzZScgYnJhbmNoPwoKVGhhbmtzLAoK
+TGlhbmcKCgo+U28gd2UgY2FuIHJlZmVyIHRvIG5wIGRpcmVjdGx5IGhlcmUuCj4KPi1PcnNvbgo+
+Cj4+Cj4+IFRoYW5rcywKPj4KPj4gTGlhbmcKPj4KPj4gPj4gKyAgICAgICAgICAgICAgIG9mX25v
+ZGVfcHV0KG5wKTsKPj4gPj4gICAgICAgICAgICAgICAgIGlmIChJU19FUlIocmVnbWFwKSkgewo+
+PiA+PiAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQg
+cmVnbWFwIGZyb20gaXRzIHBhcmVudC5cbiIpOwo+PiA+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICByZXR1cm4gUFRSX0VSUihyZWdtYXApOwo+PiA+PiAtLQo+PiA+PiAyLjI1LjEKPj4gPj4K
