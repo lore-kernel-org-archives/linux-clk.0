@@ -2,88 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D06CCA480
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jul 2022 04:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3D4C43334
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jul 2022 06:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232684AbiGCEBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jul 2022 00:01:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56436 "EHLO
+        id S230214AbiGCGuF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Jul 2022 02:50:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232847AbiGCEAC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jul 2022 00:00:02 -0400
-Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87197DF44
-        for <linux-clk@vger.kernel.org>; Sat,  2 Jul 2022 20:58:03 -0700 (PDT)
-Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-fe023ab520so8803735fac.10
-        for <linux-clk@vger.kernel.org>; Sat, 02 Jul 2022 20:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0RqgirN7BbHsC9UQ94U9L9bhvHlaz6I8H5K/QJE4CSk=;
-        b=KmfWKyrq2EChkZJSLOp+rwX/KH0kL85vtV4uD/TCtw/+zcmcQVqTCsUbQyGiE7OKZu
-         0Nljm4H7HRlU2mTckG2UVnAir1SDdqKnCf7T0ogU5ZZvIrE7cykTUN0TsIF1D3cea+TQ
-         WYCtz3KbkBzJs/EnMQniihYXFyrm4JUZ9JvyuapfzKM07PfdGnDAPYkWWy3E03CAo41n
-         Q5lZ7gZqTW1H0kG55BexKpDvu+TtJiUdU5xGsk/jm+445YPEis2IiRVeN0TjTL3Ho9Wq
-         NY8GDMEtwXyp6khZniCLqgQNHhXcnR/nT4Q32bsP0g3ETQ2UuSlO0JDbrUXPxMkBVGM5
-         /Szw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0RqgirN7BbHsC9UQ94U9L9bhvHlaz6I8H5K/QJE4CSk=;
-        b=o9M1TJJY1juZUgWjkAeU9nm+rskb6GUVGLOyooKI1H9gUsCJO50mbaHd8SY1Owk8BJ
-         93B0TJ0BCmRosc1vHaYq8nsP82aCkljeZnZfdhivqQZM/yyDTUnybxfgNGm97G00jruA
-         YiCcUGdaMwg+nv9kYiw5mO94I0xjEGSuAojZBdHhrEwk8hSfXkPsxYg7xcMVEjcJ1b86
-         8I/CqXNIxYmwaUHSdxTCySq/bDaO2Wo/0P9iSkTaBIvxU1bJRk1P4EXok2b8rPCEF4OL
-         VqsHVyQRJ1/99Puzfz/a55ZwuB/ECvtXoHPxS07+a/LuEChOLGYZRRGm68Thwj/36/tn
-         z3Pg==
-X-Gm-Message-State: AJIora+x95Y7mCUK4R6K7c5OUhlhQECeGC6XjcCRDLXrrfuqkQt61RwA
-        hPT5GCeAKAlRm6LHmErb3oJ91w==
-X-Google-Smtp-Source: AGRyM1uhZrXXBJ/Xo0ltwV4HMYSe8dRq9X4xTR37eLbQyJ1iiFKWE9ahSU9lsNuJl0jthRnxB89r7Q==
-X-Received: by 2002:a05:6870:5494:b0:10b:8bc9:38aa with SMTP id f20-20020a056870549400b0010b8bc938aamr12020450oan.20.1656820683002;
-        Sat, 02 Jul 2022 20:58:03 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 25-20020aca0f19000000b0032e5d0b5d5fsm12965910oip.58.2022.07.02.20.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 20:58:02 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Robert Foss <robert.foss@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 0/2] clk: qcom: Fix topology around titan_top power domain
-Date:   Sat,  2 Jul 2022 22:56:55 -0500
-Message-Id: <165682055970.445910.5680460160488925344.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220519214133.1728979-1-vladimir.zapolskiy@linaro.org>
-References: <20220519214133.1728979-1-vladimir.zapolskiy@linaro.org>
+        with ESMTP id S229562AbiGCGuE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jul 2022 02:50:04 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D812F6578;
+        Sat,  2 Jul 2022 23:50:02 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8B1975C006F;
+        Sun,  3 Jul 2022 02:50:00 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 03 Jul 2022 02:50:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1656831000; x=
+        1656917400; bh=XbHz1O6006EfuGFVS6D/gxZESYgM1ts2Dx5M1x9GZ8s=; b=r
+        NReSIBnmOK33z/OyQ9Ak9zvfdP+pUrIRipAl7qB0fPzEE2BCu+xbnbykWJcsG2HQ
+        UFAp6JPUeuW20HRjGGsp2+Ge5LyvUcXn3mhz7c/PwoR02BLfwaFKbXxmyrjvKgoN
+        SMdG7SD9hTVX9nYHnLa/dgr0Q6T2jVvkV3aHMVjhyH1bZKVvb5Jqaae9Wod9xu+q
+        0xD2JNp3e3aoaSCESRWhbt+Tmcqves+c+MWFd+1uH3r8MFv0evjuOb4kHhWze7sF
+        WT2kyjW744NA00ih64MTZHC40HIQwB6HFzpj4bIfsDKXYApG7hWyr0VagbcxQfSD
+        SQxyr5yXncQDdjzECQ7Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1656831000; x=
+        1656917400; bh=XbHz1O6006EfuGFVS6D/gxZESYgM1ts2Dx5M1x9GZ8s=; b=b
+        Cnm73gzsZPlhFLa83U7pergZ27NN8Hon5RdsVf9JZjpsne31t8cLJMZJQj4hSeRs
+        oaiXw6KHDWbsTVSFserEblBiqwqt8qLXvJQx6Ep5MkPY4VZ8pP5QYNoXDfc4Qh2p
+        mQxlI01qbpVH0FXmizTJpNEtThRIh3ul9sb0ecKe/cAuIjXuw9m9YsIHPGmfpRSr
+        QaOvQm0CAgp69HtdBfEAJp0lXSmX9NfJusbM/JIMFVbpYDJbRA7NI4GGtvM93FzD
+        XTQ4nPqejbwWrSLYqKGkXsfy4GQsgrzGicSHcWDCv+tQHuGq8QbHNMbyQ/SZLWMa
+        tz4jDMiCA/df/8gvXI3IA==
+X-ME-Sender: <xms:FzzBYnpmpR5f8htEICf7SXZkjW8_yqCSnVylYQt4MXgKZVERPYKGiw>
+    <xme:FzzBYhpa7DKi2fV7TK3UH2ri-KUdpYSCWEv7lLD9LXki6e31Ygl4vB27OmlCAq1aW
+    1TwLp2bTkJfHSdrbg>
+X-ME-Received: <xmr:FzzBYkMR7prQ-WAIk1_GgSFnUV-ufDwTtL_aEteqKlqeUb14KiI1NpASZpoI3HPJGuH2TiF8jRAbIoM-LpqApVG8VpzZXBYDxYdn9VCjsu2qwosNW6bFM5Cvpg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudehiedguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefuvfevfhfhkffffgggjggtgfesthejredttdefjeenucfhrhhomhepufgr
+    mhhuvghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqne
+    cuggftrfgrthhtvghrnhepffdtveekvdegkeeuueetgfetffeileevudekuefhheelvdfh
+    iedtheduhfduhefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:FzzBYq73hiNJD3x5qWUG9RLrMX5qzWfEZJqGXpHMo1I3x0fUDB-MzQ>
+    <xmx:FzzBYm6Nqdcmr2sYp3TBgo-ramg7mrlEjZxQtpwLaCBwnRcpgab63A>
+    <xmx:FzzBYiiokG5V0aiOVYpym38VTMjRNCLm_39uCAmYI44Pa7uR7O6gWA>
+    <xmx:GDzBYvFfIauhGWDpbFl3K2EhiM-X5c63m8wIghdkAjXL54zNc9SVIQ>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 3 Jul 2022 02:49:59 -0400 (EDT)
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration
+ to support DFS
+To:     Roman Stratiienko <r.stratiienko@gmail.com>, peron.clem@gmail.com,
+        jernej.skrabec@gmail.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mripard@kernel.org,
+        wens@csie.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+References: <20220624165211.4318-1-r.stratiienko@gmail.com>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <e5837e14-739e-5137-7398-3acfc8a54b84@sholland.org>
+Date:   Sun, 3 Jul 2022 01:49:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220624165211.4318-1-r.stratiienko@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 20 May 2022 00:41:31 +0300, Vladimir Zapolskiy wrote:
-> On SDM845 abd SM8250 platforms two found VFE GDSC power domains shall
-> not be operated, if titan top is turned off, thus the former power
-> domains will be set as subdomains by a GDSC registration routine.
+On 6/24/22 11:52 AM, Roman Stratiienko wrote:
+> Using simple bash script it was discovered that not all CCU registers
+> can be safely used for DFS, e.g.:
 > 
-> The fixes allow to drastically simplify power domain management in CAMSS
-> driver.
+>     while true
+>     do
+>         devmem 0x3001030 4 0xb0003e02
+>         devmem 0x3001030 4 0xb0001e02
+>     done
 > 
-> [...]
+> Script above changes the GPU_PLL multiplier register value. While the
+> script is running, the user should interact with the user interface.
+> 
+> Using this method the following results were obtained:
+> 
+> | Register  | Name           | Bits  | Values | Result |
+> | --        | --             | --    | --     | --     |
+> | 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
+> | 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
+> | 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
+> | 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
+> 
+> Once bits that caused system failure disabled (kept default 0),
+> it was discovered that GPU_CLK.MUX was used during DFS for some
+> reason and was causing the failure too.
 
-Applied, thanks!
+The GPU module clock has only one parent declared, so it is surprising that the
+mux would get set. Did this happen while the kernel driver was changing the
+frequency?
 
-[1/2] clk: qcom: camcc-sdm845: Fix topology around titan_top power domain
-      commit: 103dd2338bbff567bce7acd00fc5a09c806b38ec
-[2/2] clk: qcom: camcc-sm8250: Fix topology around titan_top power domain
-      commit: f8acf01a6a4f84baf05181e24bd48def4ba23f5b
+> After disabling GPU_PLL.OUTDIV the system started to fail during
+> booting for some reason until the maximum frequency of GPU_PLL
+> clock was limited to 756MHz.
 
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+The manual lists PLL_GPU's maximum frequency as 800 MHz. I assume you chose 756
+MHz because that is the highest OPP. That should be okay, too.
+
+> After all the changes made DVFS started to work seamlessly.
+> 
+> Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> index 2ddf0a0da526f..d941238cd178a 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> @@ -95,13 +95,14 @@ static struct ccu_nkmp pll_periph1_clk = {
+>  	},
+>  };
+>  
+> +/* For GPU PLL, using an output divider for DFS causes system to fail */
+>  #define SUN50I_H6_PLL_GPU_REG		0x030
+>  static struct ccu_nkmp pll_gpu_clk = {
+>  	.enable		= BIT(31),
+>  	.lock		= BIT(28),
+>  	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
+>  	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
+> -	.p		= _SUNXI_CCU_DIV(0, 1), /* output divider */
+> +	.max_rate	= 756000000UL,
+>  	.common		= {
+>  		.reg		= 0x030,
+>  		.hw.init	= CLK_HW_INIT("pll-gpu", "osc24M",
+> @@ -294,12 +295,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, "deinterlace",
+>  static SUNXI_CCU_GATE(bus_deinterlace_clk, "bus-deinterlace", "psi-ahb1-ahb2",
+>  		      0x62c, BIT(0), 0);
+>  
+> -static const char * const gpu_parents[] = { "pll-gpu" };
+> -static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
+> -				       0, 3,	/* M */
+> -				       24, 1,	/* mux */
+> -				       BIT(31),	/* gate */
+> -				       CLK_SET_RATE_PARENT);
+> +/* GPU_CLK divider kept disabled to avoid interferences with DFS */
+> +static SUNXI_CCU_GATE(gpu_clk, "gpu", "pll-gpu", 0x670,
+> +		      BIT(31), CLK_SET_RATE_PARENT);
+
+These changes look fine to me. You also need to set the initial value for the
+fixed fields in the driver's probe function.
+
+Regards,
+Samuel
