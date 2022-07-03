@@ -2,207 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5070C433EF
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Jul 2022 10:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D314C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jul 2022 16:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbiGCKIr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Jul 2022 06:08:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35988 "EHLO
+        id S232446AbiGCQkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Jul 2022 12:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbiGCKIq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jul 2022 06:08:46 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2130.outbound.protection.outlook.com [40.107.114.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDAC225C4;
-        Sun,  3 Jul 2022 03:08:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AFKf80wS35/7gP+Q5OmDh900fhpqdJymX0L0/uZW25b9c9TmaLRpmI4kMq/0Kj/c3dZnXsWEREneX2zrsmviZyYJkUiH778SUTIESF8/NdBPoxZ/W3pJaeoi9uK05dQGlQ9QSjlE7gL0mA+aY3EGrg1JLywSUyA+ng+ac7VdtgdTaQav78Yb0Y8orZtS/sB9qbtRC/qlekGwYoYfSnnw0STJsl9cK2FFZRiC/IxvxhHWjVE0drC3kT0TSOSXJ4j6IY0i8tcZ2bYuozqwkCEmGlO+ajZxl5oMBiRrBCfE9xJhgtLjnqnhp8USspdO1FUQPO38wZu0Pm22DiS0JIYphw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=emW5mspLOf6i0g62zdaKEfoVo2QTELAE79zygpWgP0U=;
- b=dFKdeGj7TlldmEetbi/sgcvi64esAHU6YUJKDEd4FCNHKJuteuPWzqDpwOqqzHY8GpRQ5oQqe74jbwHeAoa0dZAIqq+twZikBQB5nzX2lMS3qk3qKqgMtRwG3DcOj9zeimR06Oql2sYK4r4lhkIstyVIO1vDmzBCjsGamQUcXEioMRdhqwnwWN+6JMoFJKI+xBAbQDH/XADj9724dJ+kkw/w0O1PRO9jM7alBIez+TiM64m/1h1P2jWcMTFnKQ3/iC18DNl+ztMHk5g9KiuSmkUbsLAdqxRRBC7OtXL0JTMyhFY5oNqrRPFrDQf406g+FCzPZmz9lOSBdSuGko/chA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=emW5mspLOf6i0g62zdaKEfoVo2QTELAE79zygpWgP0U=;
- b=rHHyPy7qBduK+MzJlOZ3jp8SO0mX0VadNJ15g0z7+JReHtfII9HEUsEKIkHBWjO6o3SMvipo4L/sOY3lJ4Ip9igN8FbfYQUtD6fkgIap12fzuMeQkRK1aph/zNn3E78Q1GYx5GO0yh9tNltl/UTvcoOZcBvDhV6yXNWH59lE4iM=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYAPR01MB4975.jpnprd01.prod.outlook.com (2603:1096:404:127::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Sun, 3 Jul
- 2022 10:08:40 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::dc06:eb07:874:ecce]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::dc06:eb07:874:ecce%9]) with mapi id 15.20.5395.019; Sun, 3 Jul 2022
- 10:08:40 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-CC:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 6/6] can: sja1000: Add support for RZ/N1 SJA1000 CAN
- Controller
-Thread-Topic: [PATCH 6/6] can: sja1000: Add support for RZ/N1 SJA1000 CAN
- Controller
-Thread-Index: AQHYjhxRAU4FS3w2jke6iP64ezr8Wa1rSJoAgADvqqCAABVEAIAAH22Q
-Date:   Sun, 3 Jul 2022 10:08:39 +0000
-Message-ID: <OS0PR01MB592289B120F4E92962A0E1C186BF9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20220702140130.218409-1-biju.das.jz@bp.renesas.com>
- <20220702140130.218409-7-biju.das.jz@bp.renesas.com>
- <20220702164018.ztizq3ftto4lsabr@pengutronix.de>
- <OS0PR01MB592277E660F0DAC3A614A7C286BF9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <20220703081412.75t6w5lgt4n3tup2@pengutronix.de>
-In-Reply-To: <20220703081412.75t6w5lgt4n3tup2@pengutronix.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 04e42a86-4032-4c3e-856e-08da5cdc00ab
-x-ms-traffictypediagnostic: TYAPR01MB4975:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: BlR3H8WPoJTp35TJWIdfSWRWCAHHjOzzeIzj453ZdCQUGLv+SnHWA1tyoEgt8AMgSJbLxHh/4abFl26qZhfFfLADB2SvJ1shZKJd93MR1jVT+HHcgCMjMLcwD9PWzb3DvKrT1EJh4EzZORK5Sk+oq6SSQNRQgRXm7xdCdjb1FECLzcgR+DMKfZMuZMdWbl3B+MEk3ktKvHA6/U63to0E2jv4BioX9Qp24Awfk1OCgikRdy+KcOO61FAdUStZ7kuAPOhKSmmmDFOTx/4u9SykQuvvICNWTvjVdlgDa9dN58jiNLe2V4P8EB3vgfTxjcB5vdpOzIPrClwFzakIsFT3RA+IWO9zmLhVDJUDdFnWSqAAEkTb1V2M/qk50s/1af+HhQnkoGy4cmy6QhGHZ7a0oitGP2u/78w3x12+HoX/YIyDcopqH3s8R4ForbgrJzrXWsTly08VhtfIY6Lh0wqb3J+tm59GhfJzOSbLo12BEQfYdoRHSnrjnHpj1ETnOcvsGDHgNhULYutoikXWf5OGmHTUqcNTLUVjrjvZX68l4W4XtVBz+kaFQajnzMFJcrJTxQTrxEVMtQEL45Rd7xwYuTVLMCkHKZYemCwiNLeEHuecOo36YSZnL4dtEPU6bXCYgEtlMHZp63kjq0H7gzQSnnfT1/+9Ju0u4ZGhrdIC4GaD6m7yelDIrM3itlDTVEwo2LpjA6r8rm9Mg2tX3AXoqMvaxzNL/6kSyjfFwh34w/lqi+MLnPuOkpsJ/NldLRnWo1a3qW8xl7DUL1Zw5xOoQ5vW1f52uVoSOnO33GqvTAwONRBlqc+cs3Ft4X3LUvkW
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(86362001)(66946007)(71200400001)(7416002)(53546011)(38100700002)(316002)(54906003)(6916009)(6506007)(7696005)(55016003)(33656002)(26005)(41300700001)(83380400001)(9686003)(52536014)(186003)(478600001)(64756008)(66476007)(66446008)(4326008)(5660300002)(8676002)(2906002)(76116006)(122000001)(8936002)(66556008)(38070700005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?0aqWIxKeO86PhyWr3eMjXfxM2m1MQi7r5Yrg0p6ZIlg05Kbn/Whs0fnqQC?=
- =?iso-8859-1?Q?C8ohl2jhU6Rzs1Fb+rJYH/Zu7YmQWZVzRpkV/nqx2h1JQ7MD6mCIitISeI?=
- =?iso-8859-1?Q?MvCjDkaCgSfLX3CZgpDvPynTGtbBVvhSK0uogdjFF2i91KRHVhY/nRmiKo?=
- =?iso-8859-1?Q?ZQ71EWfVF5ZEppOGYy1BDN+tYXBWtpdxAeZnwA5T3OqdPsFAkz3Q+s7Ib8?=
- =?iso-8859-1?Q?caPB6Oui+0qiLWkQDFPMH2aHFTSCEu/uv0llZaLGAo0MqHoawzo40lD9NF?=
- =?iso-8859-1?Q?FfaUVu9bwDawTbQfIZTrfAE7Ja3dgM4timsh13ldPlo86+bCwMQFi/AVpK?=
- =?iso-8859-1?Q?c6enS0IN7U/1oTEBbJrd4ECpaWWZCr3Knu3CnNWlWER/A/r/Gv4dFkZc4V?=
- =?iso-8859-1?Q?a7TMfXuyfnuDDJcbsjWIFXJQfW7DFjB4HS8cGCmeaN6xarUQMOZd4QjI6b?=
- =?iso-8859-1?Q?7erey+KWOttybM0Zrbt4CV3fke4Rc2F/P0bC/lQr85xwe7/pqwpm68akyZ?=
- =?iso-8859-1?Q?i5CSljbDWH7Qabb441dFVpGoHQCl24h5C7uadFse8KluMa1lMZqRGTuLsB?=
- =?iso-8859-1?Q?cL4ZYOm5EfQuCoz7rqiFe8So/f2IjzQ+pZdLw099Cfz9biI8YdjMv35clH?=
- =?iso-8859-1?Q?zFVgHM3q8htYMCEb5bEoIW77mg3szlY4W6i5RdNkq4E4z31MpaGcN3esWc?=
- =?iso-8859-1?Q?RGMoY9t5V2OMTm0hhsSbf92IOcRApWFnbgJKV6yYGxv1q6wFiUooRWhuvJ?=
- =?iso-8859-1?Q?Vv55GtpO4F3vBogEO7q/JCmGpObYGZ1PMGxFbggPZkvbKbOIYHgKd14kOI?=
- =?iso-8859-1?Q?8IWkHnEhrioQslV+TPw2H9CqbXOdQy6C7Z6jwkZObD4c319mb7wZVFWC89?=
- =?iso-8859-1?Q?y0I6tYu4d5jNweR0Cv3Oedb582xTfGITOHDxJLBoIhFKYXl/CMDElKe4Un?=
- =?iso-8859-1?Q?mzqEqgt0eKz7OQW/a5ZSIGRgmRffByNHbFsBVohFByuiPbV0j+7hghHD+t?=
- =?iso-8859-1?Q?Tv0fPtyyrbWFqMl5lDUUp5E0SJ9I3qbqKeo2YF5MQ1ceKkx/ytrydxsxy+?=
- =?iso-8859-1?Q?0XslSbpVc4hFBRfG/HCAOZcy+8ev0S9zMaOFvdMVUFtkCHVgPayikzNGVE?=
- =?iso-8859-1?Q?CeE6eW/vAt95B7NquaJV6buYOjDfND5077aKHlsLJxii8d/BwX05DnxVnU?=
- =?iso-8859-1?Q?HadbZsQuGZxrP+kCQ1g9caTxKjxOEBhvV68ApqjwsSrotjN++UjmUnfUSY?=
- =?iso-8859-1?Q?HWLgCxawqfN256uMixY5FBSL3zLCVFDbOLk0SCuj5kBZ+r9dN2wKYxMkfh?=
- =?iso-8859-1?Q?Et4NzXm2/TU/8sh4fcLEhMsWuVyaaUWxmhC/c5TiKwwhcFitcVIYQCvp5M?=
- =?iso-8859-1?Q?Y/MFHExH465t9KQblDDQ+29IbSKaDuGsZCD5lqYUolicm5icCWqpowZIuA?=
- =?iso-8859-1?Q?eF6R5Fw3fQTAbbJ3jMQ2XaWq2aMpafncStThB+EbJMrjSDcg0oC54g4ApX?=
- =?iso-8859-1?Q?btHY7s+LsiiFJ17lLdVuvS6ytDAcUhKD9YLuVUzmT1N2qqqjdcg/ofpgRg?=
- =?iso-8859-1?Q?3CcwRxCKPWCk9y0TPxFilxOiz74Hls81fRXZ6obDEM05ZRX7xEhbYg4s2u?=
- =?iso-8859-1?Q?3Y7drWHo0uiCc6PRXwwyne4NX9DeUUNTZt58z5+lHC/Wm2ebJZ1mASig?=
- =?iso-8859-1?Q?=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229574AbiGCQkr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Jul 2022 12:40:47 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E9706154;
+        Sun,  3 Jul 2022 09:40:45 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id k14so6814286qtm.3;
+        Sun, 03 Jul 2022 09:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=u+xp3Xfhyj2h4RiBWfUaXw+nD5F3F1r+zubvc/HCtbA=;
+        b=LbImrogi+bqI75rGwVoqt0WTJicx+TayHHFvqZGm4bzGI8V2mSRzvhKqIcwNGsliEr
+         5o76i7zSp6MxdVeYNN0ymCH2FAUe78Y+iXGKPmfWdTGKVQAx0D+/4jkdnPTt34rAe5ng
+         NnryDbmvAGwuKcD+WTPp8zWohL5CB3MQjiHt4/F+ofQzhsKWDGsGzJp/7G4S/dx2RuEp
+         ZWhLznwLiGV7Cc9t0cC9j4RFt0osY0oOeLCncdtD2wdcEw9wmiU7PRj5w+s75Hb4KshI
+         9oFnN6SmB5BhrdyD3Y0hYsMHern2SjV43VOfS/4YD+t4wA+auEtDn9ouJuHWs0GAMLTY
+         UI9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=u+xp3Xfhyj2h4RiBWfUaXw+nD5F3F1r+zubvc/HCtbA=;
+        b=z3FIEa3MjbeVu9gA4VfOyURi53ndnkfY0+erDTjHT/zH3zIKuY21bZsVVaQ3CUMDx2
+         SgVZ7eyvgp2ygxvsrTd8lm4fvIoy6DdCH0I+AbRpgp+A+3blF//opcVRUKY1htbWwzY2
+         mfEV7JeQKjiW13L3hUNY1gjyn573ivj2tgIn9oOWJQNGtH+Iow1XdSoQuMOZzgI1UUdM
+         RiRrJROp+pe9SN2UgwrCKUZ0WvCMLS9NWUg1BRDoBtVn6Ved/HtYqAHwBVRg7KNJvLhm
+         2zYaJWPJEEPubZUsDt0Oi4TMhf5SvPwKLMOsf+rF7LKbFFCAeqPHmlfJRd8AMNzVFhyO
+         ZZFw==
+X-Gm-Message-State: AJIora/3hwUn32P0fvJIaian3Anozl9Q+UsWgml0M+yDv1r+oZDBbPpf
+        6IGgmMnSrN5VKjN17fxzg6lx/3UMh5h56lt48zA=
+X-Google-Smtp-Source: AGRyM1uqIs5zlJ7pA8AgTCinVpHPprrG2MifKpTo7bv68esmtiwbtHp41axO/DvFKSeoHmQFgEqXL/uP+faEtICti3c=
+X-Received: by 2002:ad4:5c64:0:b0:472:f016:bfde with SMTP id
+ i4-20020ad45c64000000b00472f016bfdemr3864305qvh.52.1656866444208; Sun, 03 Jul
+ 2022 09:40:44 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04e42a86-4032-4c3e-856e-08da5cdc00ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jul 2022 10:08:39.9509
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: js64F1XY8jND39kK+SyDlFw9kL2VysLuKCOFofPK+n1qoy09djZwIam9eEE/EDaInkWnYK8gROZzk8Gn+Nwg57SIM1jd7M7+jL34f+9DPis=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4975
+References: <20220624165211.4318-1-r.stratiienko@gmail.com> <e5837e14-739e-5137-7398-3acfc8a54b84@sholland.org>
+In-Reply-To: <e5837e14-739e-5137-7398-3acfc8a54b84@sholland.org>
+From:   Roman Stratiienko <r.stratiienko@gmail.com>
+Date:   Sun, 3 Jul 2022 19:40:33 +0300
+Message-ID: <CAGphcd=BKWxOj0bdN386S+KPF=nRiug9hX51gOJAib7u0hdjXw@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration
+ to support DFS
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        mripard@kernel.org, wens@csie.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Uwe,
+Hello Samuel,
 
-Thanks for the feedback.
+Thanks for having a look.
 
-> Subject: Re: [PATCH 6/6] can: sja1000: Add support for RZ/N1 SJA1000 CAN
-> Controller
->=20
-> On Sun, Jul 03, 2022 at 07:15:16AM +0000, Biju Das wrote:
-> > Hi Marc and Uwe,
+=D0=B2=D1=81, 3 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 09:50, Samuel Holla=
+nd <samuel@sholland.org>:
+>
+> On 6/24/22 11:52 AM, Roman Stratiienko wrote:
+> > Using simple bash script it was discovered that not all CCU registers
+> > can be safely used for DFS, e.g.:
 > >
-> > > Subject: Re: [PATCH 6/6] can: sja1000: Add support for RZ/N1 SJA1000
-> > > CAN Controller
-> > >
-> > > On 02.07.2022 15:01:30, Biju Das wrote:
-> > > > The SJA1000 CAN controller on RZ/N1 SoC has some differences
-> > > > compared to others like it has no clock divider register (CDR)
-> > > > support and it has no HW loopback(HW doesn't see tx messages on
-> rx).
-> > > >
-> > > > This patch adds support for RZ/N1 SJA1000 CAN Controller.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > ---
-> > > >  drivers/net/can/sja1000/sja1000_platform.c | 34
-> > > > ++++++++++++++++++----
-> > > >  1 file changed, 29 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/can/sja1000/sja1000_platform.c
-> > > > b/drivers/net/can/sja1000/sja1000_platform.c
-> > > > index 5f3d362e0da5..8e63af76a013 100644
-> > > > --- a/drivers/net/can/sja1000/sja1000_platform.c
-> > > > +++ b/drivers/net/can/sja1000/sja1000_platform.c
-> > > [...]
-> > > > @@ -262,6 +276,16 @@ static int sp_probe(struct platform_device
-> *pdev)
-> > > >  	priv->reg_base =3D addr;
-> > > >
-> > > >  	if (of) {
-> > > > +		clk =3D devm_clk_get_optional(&pdev->dev, "can_clk");
-> > > > +		if (IS_ERR(clk))
-> > > > +			return dev_err_probe(&pdev->dev, PTR_ERR(clk),
-> "no CAN
-> > > clk");
-> > > > +
-> > > > +		if (clk) {
-> > > > +			priv->can.clock.freq  =3D clk_get_rate(clk) / 2;
-> > > > +			if (!priv->can.clock.freq)
-> > > > +				return dev_err_probe(&pdev->dev, -EINVAL,
-> "Zero
-> > > CAN clk rate");
-> > > > +		}
-> > >
-> > > There's no clk_prepare_enable in the driver. You might go the quick
-> > > and dirty way an enable the clock right here. IIRC there's a new
-> > > convenience function to get and enable a clock, managed bei devm.
-> > > Uwe (Cc'ed) can point you in the right direction.
+> >     while true
+> >     do
+> >         devmem 0x3001030 4 0xb0003e02
+> >         devmem 0x3001030 4 0xb0001e02
+> >     done
 > >
-> >  + clk
+> > Script above changes the GPU_PLL multiplier register value. While the
+> > script is running, the user should interact with the user interface.
 > >
-> > As per the patch history devm version for clk_prepare_enable is
-> rejected[1], so the individual drivers implemented the same using
-> devm_add_action_or_reset [2].
-> > So shall I implement devm version here as well?
->=20
-> You want to make use of 7ef9651e9792b08eb310c6beb202cbc947f43cab (which
-> is currently in next). If you cherry-pick this to an older kernel
-> version, make sure to also pick
-> 8b3d743fc9e2542822826890b482afabf0e7522a.
+> > Using this method the following results were obtained:
+> >
+> > | Register  | Name           | Bits  | Values | Result |
+> > | --        | --             | --    | --     | --     |
+> > | 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
+> > | 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
+> > | 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
+> > | 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
+> >
+> > Once bits that caused system failure disabled (kept default 0),
+> > it was discovered that GPU_CLK.MUX was used during DFS for some
+> > reason and was causing the failure too.
+>
+> The GPU module clock has only one parent declared, so it is surprising th=
+at the
+> mux would get set. Did this happen while the kernel driver was changing t=
+he
+> frequency?
 
-Ok will use "devm_clk_get_optional_enabled" and send  V2.
+I looked through the ccu code and didn't see anything that may cause
+issues, so I tested again and DFS works with MUX this time.
 
-Cheers,
-Biju
+I'll drop this change in v2.
 
+>
+> > After disabling GPU_PLL.OUTDIV the system started to fail during
+> > booting for some reason until the maximum frequency of GPU_PLL
+> > clock was limited to 756MHz.
+>
+> The manual lists PLL_GPU's maximum frequency as 800 MHz. I assume you cho=
+se 756
+> MHz because that is the highest OPP. That should be okay, too.
 
+Setting the frequency higher than 756 makes the GPU very unstable.
+
+I decided to validate it again and removed the frequency limitation
+and can't see any issues so far.
+
+I'll also drop this change in v2.
+
+>
+> > After all the changes made DVFS started to work seamlessly.
+> >
+> > Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+> > ---
+> >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 12 +++++-------
+> >  1 file changed, 5 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h6.c
+> > index 2ddf0a0da526f..d941238cd178a 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > @@ -95,13 +95,14 @@ static struct ccu_nkmp pll_periph1_clk =3D {
+> >       },
+> >  };
+> >
+> > +/* For GPU PLL, using an output divider for DFS causes system to fail =
+*/
+> >  #define SUN50I_H6_PLL_GPU_REG                0x030
+> >  static struct ccu_nkmp pll_gpu_clk =3D {
+> >       .enable         =3D BIT(31),
+> >       .lock           =3D BIT(28),
+> >       .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> >       .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider */
+> > -     .p              =3D _SUNXI_CCU_DIV(0, 1), /* output divider */
+> > +     .max_rate       =3D 756000000UL,
+> >       .common         =3D {
+> >               .reg            =3D 0x030,
+> >               .hw.init        =3D CLK_HW_INIT("pll-gpu", "osc24M",
+> > @@ -294,12 +295,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk, =
+"deinterlace",
+> >  static SUNXI_CCU_GATE(bus_deinterlace_clk, "bus-deinterlace", "psi-ahb=
+1-ahb2",
+> >                     0x62c, BIT(0), 0);
+> >
+> > -static const char * const gpu_parents[] =3D { "pll-gpu" };
+> > -static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
+> > -                                    0, 3,    /* M */
+> > -                                    24, 1,   /* mux */
+> > -                                    BIT(31), /* gate */
+> > -                                    CLK_SET_RATE_PARENT);
+> > +/* GPU_CLK divider kept disabled to avoid interferences with DFS */
+> > +static SUNXI_CCU_GATE(gpu_clk, "gpu", "pll-gpu", 0x670,
+> > +                   BIT(31), CLK_SET_RATE_PARENT);
+>
+> These changes look fine to me. You also need to set the initial value for=
+ the
+> fixed fields in the driver's probe function.
+
+Will do that in v2.
+
+I have no idea what was causing additional issues in my previous test
+session. Let's forget about them for now.
+
+Regards,
+Roman.
+
+>
+> Regards,
+> Samuel
