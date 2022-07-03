@@ -2,82 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085E9C43334
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Jul 2022 19:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A793ECCA482
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Jul 2022 03:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229620AbiGBTK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Jul 2022 15:10:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        id S230085AbiGCD5H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Jul 2022 23:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiGBTKZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Jul 2022 15:10:25 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C63ACE2D;
-        Sat,  2 Jul 2022 12:10:24 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id ej4so6708214edb.7;
-        Sat, 02 Jul 2022 12:10:24 -0700 (PDT)
+        with ESMTP id S231172AbiGCD5F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Jul 2022 23:57:05 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5B5B1F2
+        for <linux-clk@vger.kernel.org>; Sat,  2 Jul 2022 20:57:04 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id u9so8875979oiv.12
+        for <linux-clk@vger.kernel.org>; Sat, 02 Jul 2022 20:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UJWlBpt+Os9VSBvRo2e/skaQ1cvHZOQHuCjAGyhuyPw=;
-        b=Zh0ZKdt3rHXANFz38Aylc49cbOlEXMz/vDbBIeLvIzyyBK0L5IVWIIWWMlOjjcrINB
-         Re9B7YvR8KTuP3c/zsxXpQUrcIQ/8IaJO8VcfXolR2t8OTFiFETd/M7aD7FeDp8T+k6j
-         /WwkrafU6tRzmXho/Crt3BcXxUMS1v5OR0hOvrq+LJnnmOJfarj5cSoh7mYvqCluJmVE
-         3ThCf5mhHNewOe7dwj/0TFfZeT32fox+pCI94bwAaQMUH6jsCordmv2vZB6NhG2Un7pc
-         v9s40ZWJX02EVtd4tQ0RqZJWtgQoGTehoULlOynga9qDPzS05bFC3USAFO6TF6OSuKYg
-         b91Q==
+        d=linaro.org; s=google;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=jXBj2zte+82Kd/PHFxKln46sR0S+3vMoDcS7kCmGV/U=;
+        b=TA8jXCzUyYXtA3na/qjR2A2FS0kiVwQFNyHGRWAc+KgiCZcEefWNbXgtPc7wKIAPLE
+         b71AQe3MXpobmjsP4m2fyUHNvJTGz8GUprXEPZ+FHAhyn2Rncc5xCYYeBbVSVG7UsrPG
+         jTOzzS8+0wtZy3QWXluWcbdndrVpQQrlyS51n1diWycp7iropEHYiuD5xR3QcGX38li2
+         TOQeGc2WlL77iK/gUazWcwJjfBWylLf7tk7P6h+DQRDaO+8RYVvR+jhEqdtfpjgV7IJg
+         GpeJg/wtNxP/zrqVLRnxxsUL0sijzcdHT80ScxxcMutpaCjHJgZlGtWqPLFYh7gTnnX/
+         y0FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UJWlBpt+Os9VSBvRo2e/skaQ1cvHZOQHuCjAGyhuyPw=;
-        b=IxhFRphkfLPa+0AUm9xDv8ai3sUhUEGe72cfTuKFSXkegp41DXkLfbwVb+s2GrGog8
-         YYdKYq08kMWtUo4+25dwZc0Lebnbto+llnDPCHE3NND+VU7Wec45l6jWT2MpK3c9VoQe
-         XRGuvMKNBteBD2tqVvQF8ZcQgDif2Uw24XkVQjimXx+ks2PWBpYqnqnjCxFtKtfEbjO8
-         LUzkuuvymzIJ+hWZLMd+lLaS15/UwaruqPxiAzL9mRYzHQQGNU/70VetoKkHl768fZCE
-         nxlzxbjM7Z/1HtQOiD2WKrQ4djQ0KDaTzKe3cSxY0BnZdyaEppUnToVyjpBL6Xzlk+7U
-         jhmg==
-X-Gm-Message-State: AJIora/fjSl63O6STWhui6cPxc8Cs/mdl2GhHuqYfdnXi9DK5jHE7HaE
-        8qHI0dbbHwpXn8OAX8hTr4A=
-X-Google-Smtp-Source: AGRyM1veNLYsqyxkP9J6ypKlqwBrT0s7i8IRXbIqDNfN/1ELacSMYeqk5kXKoeVj6P8AkpFWag0YDw==
-X-Received: by 2002:a05:6402:3785:b0:435:5d0e:2a2e with SMTP id et5-20020a056402378500b004355d0e2a2emr28146324edb.307.1656789023118;
-        Sat, 02 Jul 2022 12:10:23 -0700 (PDT)
-Received: from jernej-laptop.localnet (89-212-118-115.static.t-2.net. [89.212.118.115])
-        by smtp.gmail.com with ESMTPSA id a21-20020a056402169500b004357063bf60sm17228262edv.41.2022.07.02.12.10.22
+        bh=jXBj2zte+82Kd/PHFxKln46sR0S+3vMoDcS7kCmGV/U=;
+        b=xJt/m/zzXw5SKjeAZVhxGB110xB/9edw0i2H8SwC7YkQ2xdrVp92yNiAPpye2kJTTS
+         ryU2Y5a37/Poey+I2fON7Pdb4PkFWBjkg4sfB3bDpG2QRXc7XRXoOtint1Be1GncsZmm
+         8Ez7d2ghVhENNPsFFU3Coy3B9Fhnc3xpY9fi7AXpNhb2InbCjl077WLk0a3v5Of/XB+G
+         53lVWmfFSl/FM/sgwF1yIyv4tJEK8JZLDASqu17DVo5MlR6vFxpJvwZCdf9Zu9Rj6qcU
+         f7zeZfxmE2BE0CaZhaJghwCzhEaXfGn0JAu08fsw5vzxbT7iOvJPEbtrj1yeVh8JJBCq
+         ArPw==
+X-Gm-Message-State: AJIora8Jy2vW8WZFKY1Mr+gQBbATB9lAmLZyhsRynPOtlgjaUNdtEpdf
+        3LwzBOn4fp6UeyxJ2Ew7rylQ4wkyN68dog==
+X-Google-Smtp-Source: AGRyM1soH+NTEfJwNuUB4v0cA1/Nl8f2cLTU/tVz7heqXai6iHI0lZwGUaMIbd4X15JrzjFP1b7tpg==
+X-Received: by 2002:a05:6808:1792:b0:337:af80:e140 with SMTP id bg18-20020a056808179200b00337af80e140mr2349846oib.240.1656820624189;
+        Sat, 02 Jul 2022 20:57:04 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 25-20020aca0f19000000b0032e5d0b5d5fsm12965910oip.58.2022.07.02.20.57.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 12:10:22 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 2/2] clk: sunxi: Do not select the PRCM MFD
-Date:   Sat, 02 Jul 2022 21:10:21 +0200
-Message-ID: <5733611.MhkbZ0Pkbq@jernej-laptop>
-In-Reply-To: <20220702190135.51744-2-samuel@sholland.org>
-References: <20220702190135.51744-1-samuel@sholland.org> <20220702190135.51744-2-samuel@sholland.org>
+        Sat, 02 Jul 2022 20:57:03 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        agross@kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 0/4] clk: qcom: msm8939: DDR and system_mm clock fixes
+Date:   Sat,  2 Jul 2022 22:56:00 -0500
+Message-Id: <165682055969.445910.13240091041676603649.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220504163835.40130-1-bryan.odonoghue@linaro.org>
+References: <20220504163835.40130-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 02. julij 2022 ob 21:01:35 CEST je Samuel Holland napisal(a):
-> The PRCM MFD driver is already selected by the two platforms where it is
-> actually used (MACH_SUN6I and MACH_SUN8I). Selecting it here builds it
-> unnecessarily on the rest of the Allwinner platforms.
+On Wed, 4 May 2022 17:38:31 +0100, Bryan O'Donoghue wrote:
+> There a few omissions/bugs I found recently which are worth fixing up.
+> The BIMC_DDR_CLK_SRC command RCGR points to a value off in the wilderness
+> and should be fixed.
 > 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> More interestingly a number of Multi-media peripherals are defined as
+> pointing at the system NOC for their clocks, instead of at the System NOC
+> MM.
+> 
+> [...]
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Applied, thanks!
+
+[1/4] clk: qcom: Add missing SYSTEM_MM_NOC_BFDCD_CLK_SRC
+      commit: 07e7fcf1714c5f9930ad27613fea940aedba68da
+[2/4] clk: qcom: add gcc-msm8939: Fix bimc_ddr_clk_src rcgr base address
+      commit: 63d42708320d6d2ca9ed505123d50ff4a542c36f
+[3/4] clk: qcom: add gcc-msm8939: Add missing system_mm_noc_bfdcd_clk_src
+      commit: dd363e2f7196278e7a30f509a0e8a841cb763b14
+[4/4] clk: qcom: add gcc-msm8939: Point MM peripherals to system_mm_noc clock
+      commit: 05eed0990927aa9634682fec58660e30f7b7ae30
 
 Best regards,
-Jernej
-
-
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
