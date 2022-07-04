@@ -2,141 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE99AC43334
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 19:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E078C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 20:06:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234358AbiGDTUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jul 2022 15:20:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36944 "EHLO
+        id S229894AbiGDUGC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jul 2022 16:06:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233675AbiGDTUb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 15:20:31 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDEBB60C2;
-        Mon,  4 Jul 2022 12:20:30 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id bs20so10960167qtb.11;
-        Mon, 04 Jul 2022 12:20:30 -0700 (PDT)
+        with ESMTP id S229525AbiGDUGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 16:06:02 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73BD460C5;
+        Mon,  4 Jul 2022 13:06:00 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id fi2so18292967ejb.9;
+        Mon, 04 Jul 2022 13:06:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=efBiIx6Z74wz+LEYNht2L8mOGHfZ2/nsYi3si0X8qUQ=;
-        b=oUIROjQTvBzdYVfmxDoO4IvUMCJsVN0ErIlpDYdemPxncSnGAikTY+jF7Lh5tmyceE
-         okQFItfBRzQ8oa4PwELKembxTH5KTsv4LnNPp+onGOKZo+EouITj75jQ19T2gzYEj3if
-         gPho36rodSAQtXRh6xFAi2/5C8dEEtl99A7tXaQsY7Tiq64S8Ed7HFpfLvW6u58AUK+M
-         DHtR/8pR/WoEBqi3926jPFDAI33/nHtbk1JwgsXyIlYaBg3smQKG1MUAQT+j+i1U5dCH
-         RdoJ4pzBpMhdv/BwK5wQ9Tv9K2UyKMEUnmwty4GwgQ2epoQhLrjDW2Ctz6aLeTW8yDyR
-         j9ew==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aZEfm8OgA9a8APggMVbXRa6KOD2e0raMcZC/Lo67ezY=;
+        b=kDbYoPRMPnJY4F43ynxUS7bOlPI+9tgrMccJAY3tWYxFqE34Jix0e6P+69Q6ghduI7
+         ummaw3aH8l/y6Zl0QWsC2XSbpnqh/LfNpOQ7L89WKeC5z2KALLCJAQJ+2wDlHEs10qby
+         T48pmfvcFE73nQUnTa4USOEknxkxqqnbyPx0CA24XCbCgfSxyOlQNM6jm4c6VPbsriba
+         tsG9fWKjgc1CCrTC2H9j/X+0b8zgVoBPQQlLKa43Vkr0d/E9vqvzQ+Y0suSWR9QuBSwV
+         qROK2TjwLqqGQn/2PKZim11d9Gcqt5mzSHQrNbUr9mYdnS4lqvo20mSpnTkXb66WZ4vm
+         zLqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=efBiIx6Z74wz+LEYNht2L8mOGHfZ2/nsYi3si0X8qUQ=;
-        b=0sBvTRcSn8eZUQsQ4YuK26IURh2FoqeuS4k9sqXV4Ks84/RGUEbc/hTN9e9YbIxZ9+
-         AIAOfskXBylVl2crIiGPEhD8qLTUctq4LZsqqmZwGlgwtPR8o4DtyfQfhPHAUjUcUkJV
-         z/wQYTDuOH0y0AQU8UocCuzDWblKt0CwvD9/OuP3LHvS2BG3QPTqRS1OBBhJgG0r4jzL
-         85ekiRbQ71ERzrX3tPpR55HkbJZzYIHJXsnrgeyElNjP5I1sBhoAva4HpnLfu8WCfr8b
-         ys4+qdC8jT6KZ6GWu+LcAb5taVaAPfvx8oylD1+P+iM+cN+NwsX78mVcCevp0Gdc5RxJ
-         O1FA==
-X-Gm-Message-State: AJIora8bJIaruBqXGRjQ3VstlgITJNQ9XpVcwhIufRYWa2SUCX6wgfVL
-        +mk8HiF3PWD6pipq2orMoULGFCWlltijKena0NU=
-X-Google-Smtp-Source: AGRyM1v9fjtjLV5IOZSPd2UXznyGsSvexOh1kKFoICuxe2R5nQ/R8J3odTQoWU/bbnb5YCO8GjE1rNVnoL12U5EFUto=
-X-Received: by 2002:ac8:59c9:0:b0:31c:22a5:9a5d with SMTP id
- f9-20020ac859c9000000b0031c22a59a5dmr25171871qtf.494.1656962429931; Mon, 04
- Jul 2022 12:20:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220515204540.477711-1-robimarko@gmail.com> <20220515204540.477711-4-robimarko@gmail.com>
- <Yr4q0G1AT4YSOIU5@builder.lan>
-In-Reply-To: <Yr4q0G1AT4YSOIU5@builder.lan>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Mon, 4 Jul 2022 21:20:19 +0200
-Message-ID: <CAOX2RU6UFpZPN0EO+Jyg93x7audYPhq+yzPM2gURUmOBheTLeA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] mailbox: qcom-apcs-ipc: add IPQ8074 APSS clock
- controller support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aZEfm8OgA9a8APggMVbXRa6KOD2e0raMcZC/Lo67ezY=;
+        b=HFjUrmFdWQdO2jugKjzTpPwE+BMoyzpSMoSASo/QI8EvAuzxWusCNjtnlMlowkmCkZ
+         /OHZI/GQnfLe7jP1v94kdHOQtZzYyoTt7e1zxPc9jtvkJXTazGtjuXug5rGzWHW/UuUc
+         3I8LCR+wl2L24/pS8xZuK1tKRANlvy094hxmWgDO0H9kjyh+ei1QAyoygcOn45NNwxQc
+         6rzoJXO9t/zuejaFiTUC/VhfYZsU41sA0auyfVX3BuGu0Pc5pWF0+71fHoNqk/q9QwIh
+         YqGJn1IcwkqtfHpuWUrQBoUkwCeO8njkIAoqXRNmAUcaMSyooqzXft/xYNGzpYKa4InK
+         rH3Q==
+X-Gm-Message-State: AJIora9vJbNSXB/pnNuJk41ZIYDL1gXiIBpnLj7FZeGG5oeOca27RFQU
+        EROq6H/MXLaGKqMwTPopygM=
+X-Google-Smtp-Source: AGRyM1soYWQRElaa4bKg07yrmpQSLf+0z38tMffHvSF+UC5jmKc27NSdJAUqiu/Dt70DCxYeFU0dmQ==
+X-Received: by 2002:a17:906:844a:b0:72a:392d:4c3 with SMTP id e10-20020a170906844a00b0072a392d04c3mr27765840ejy.379.1656965158956;
+        Mon, 04 Jul 2022 13:05:58 -0700 (PDT)
+Received: from kista.localnet (213-161-3-76.dynamic.telemach.net. [213.161.3.76])
+        by smtp.gmail.com with ESMTPSA id s15-20020a170906500f00b00722dceb3f8bsm14686851ejj.151.2022.07.04.13.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Jul 2022 13:05:58 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org
+        Michael Turquette <mturquette@baylibre.com>,
+        Samuel Holland <samuel@sholland.org>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: Re: [PATCH 1/2] clk: sunxi: Limit legacy clocks to 32-bit ARM
+Date:   Mon, 04 Jul 2022 22:05:57 +0200
+Message-ID: <4196041.ejJDZkT8p0@kista>
+In-Reply-To: <8956393.CDJkKcVGEf@jernej-laptop>
+References: <20220702190135.51744-1-samuel@sholland.org> <8956393.CDJkKcVGEf@jernej-laptop>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 1 Jul 2022 at 00:59, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
->
-> On Sun 15 May 15:45 CDT 2022, Robert Marko wrote:
->
-> > IPQ8074 has the APSS clock controller utilizing the same register space as
-> > the APCS, so provide access to the APSS utilizing a child device like
-> > IPQ6018 does as well, but just by utilizing the IPQ8074 specific APSS
-> > clock driver.
-> >
-> > Also, APCS register space in IPQ8074 is 0x6000 so max_register needs to be
-> > updated to 0x5FFC.
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> >  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> > index 80a54d81412e..b3b9debf5673 100644
-> > --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> > +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> > @@ -33,6 +33,10 @@ static const struct qcom_apcs_ipc_data ipq6018_apcs_data = {
-> >       .offset = 8, .clk_name = "qcom,apss-ipq6018-clk"
-> >  };
-> >
-> > +static const struct qcom_apcs_ipc_data ipq8074_apcs_data = {
-> > +     .offset = 8, .clk_name = "qcom,apss-ipq8074-clk"
-> > +};
-> > +
-> >  static const struct qcom_apcs_ipc_data msm8916_apcs_data = {
-> >       .offset = 8, .clk_name = "qcom-apcs-msm8916-clk"
-> >  };
-> > @@ -57,7 +61,7 @@ static const struct regmap_config apcs_regmap_config = {
-> >       .reg_bits = 32,
-> >       .reg_stride = 4,
-> >       .val_bits = 32,
-> > -     .max_register = 0x1008,
-> > +     .max_register = 0x5FFC,
->
-> Please use lower case hex digits.
+Dne sobota, 02. julij 2022 ob 21:09:18 CEST je Jernej =C5=A0krabec napisal(=
+a):
+> Dne sobota, 02. julij 2022 ob 21:01:34 CEST je Samuel Holland napisal(a):
+> > The sunxi legacy clocks were never compatible with any 64-bit SoC,
+> > so there is no point in building them as part of a 64-bit ARM kernel.
+> > They make even less sense being built in to a 64-bit RISC-V kernel.
+> >=20
+> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+>=20
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Hi,
-Will fix it in v5.
+Applied both, thanks!
+=20
+Best regards,
+Jernej
 
->
-> And please send the mailbox patches separately, to make it clear for the
-> maintainers that this can be picked independently of others.
 
-Ok, will send patches 4-6 separately.
-
-Regards,
-Robert
->
-> Regards,
-> Bjorn
->
-> >       .fast_io = true,
-> >  };
-> >
-> > @@ -142,7 +146,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
-> >  /* .data is the offset of the ipc register within the global block */
-> >  static const struct of_device_id qcom_apcs_ipc_of_match[] = {
-> >       { .compatible = "qcom,ipq6018-apcs-apps-global", .data = &ipq6018_apcs_data },
-> > -     { .compatible = "qcom,ipq8074-apcs-apps-global", .data = &msm8994_apcs_data },
-> > +     { .compatible = "qcom,ipq8074-apcs-apps-global", .data = &ipq8074_apcs_data },
-> >       { .compatible = "qcom,msm8916-apcs-kpss-global", .data = &msm8916_apcs_data },
-> >       { .compatible = "qcom,msm8939-apcs-kpss-global", .data = &msm8916_apcs_data },
-> >       { .compatible = "qcom,msm8953-apcs-kpss-global", .data = &msm8994_apcs_data },
-> > --
-> > 2.36.1
-> >
