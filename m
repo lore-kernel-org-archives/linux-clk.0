@@ -2,169 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A1FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 16:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0398CCA479
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 16:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235162AbiGDQSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jul 2022 12:18:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52984 "EHLO
+        id S234090AbiGDQYi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jul 2022 12:24:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234925AbiGDQSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 12:18:23 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60047.outbound.protection.outlook.com [40.107.6.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A93A61209D;
-        Mon,  4 Jul 2022 09:17:36 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YsQruQ645w+b2V9DxVz2DRu9lPbXKE1xzRWskWfAFDE80UOTYFlyErEiWDO5FKN3Hi5+Qw1/IO5CXJW8ZZK8IhnrAyxYYckh/VU/Ij1SO6EVzcdFcNMonoI+LElNLTdQzvg+4bMc57TBQpvyDW5IpOl6CyJJQv4orAzbQZkWRjJOofpgRZHG9NvQqgNcB+VwZjepx0sR6axVH3SfnldubNVjzdk+16qpmokonuUQgivkzrJZ2iCs+53Ta4iNFhse+as53aWMA8fhPRHmFgnmyWzKeR6+I3E6sRdeiSQi86NbQxXOfAoG8mojNDLxljLtEq4xxu21ieQLgJIZ8K8zoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fvYcKREa/S/Th/sEmMrOM2okvZKRcuZWak7e+NSPRmU=;
- b=XKhsI0P1D+SEVA7AyuLJjOjBpsJI9FfC0O/77j6Du6mtNj99QeIJTTIRrgqIIEVhpElszr+nIqTn7lfmpLxGBnzRwwzJgjQlMaAirJzWCowFWImqFdRKas3k8A70wJngJi6YiaEd3IaXUQPRDAee1uaeH7v1/xnp/893GAGCVQEcSm2a8eQE9Bwaf0FCNrqL9wfji4rofs6Hph6pb/yd6TMHGIquFxcPYkGSJSR67HbSbNgYR4+4Tko/e0KN+QTK9f7veDdA7gok5QXcQxNAKSoB/NchkUCBe/fzYfpNSfl6pY7gtHTJcftlNL3AwlbqrVfSgTQELbWsrIrIQeJg/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fvYcKREa/S/Th/sEmMrOM2okvZKRcuZWak7e+NSPRmU=;
- b=JUzgahhlkZBmtx6TBJbMuEKyRzTQp/PvKgH7HQKq3pC+3slpF+ebqrWj838tmhLaPxPdG4L13Im68KK8lp0SDENYQsx3psmtkBqEPmFv03l7bqSv3qO5c6ZHAuycMT4yeV52eB/fuxX+JzKiKX+wXDoCg93OAeasnPb0ObNzM7Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
- by AS8PR04MB8213.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.20; Mon, 4 Jul
- 2022 16:16:59 +0000
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::6546:3ee1:5e6c:278f]) by VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::6546:3ee1:5e6c:278f%5]) with mapi id 15.20.5395.020; Mon, 4 Jul 2022
- 16:16:59 +0000
-From:   "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Viorel Suman <viorel.suman@oss.nxp.com>
-Subject: [PATCH v7 13/15] arm64: dts: freescale: imx8qxp: Fix the ocotp node name
-Date:   Mon,  4 Jul 2022 19:15:39 +0300
-Message-Id: <20220704161541.943696-14-viorel.suman@oss.nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220704161541.943696-1-viorel.suman@oss.nxp.com>
-References: <20220704161541.943696-1-viorel.suman@oss.nxp.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR07CA0008.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::21) To VI1PR04MB5005.eurprd04.prod.outlook.com
- (2603:10a6:803:57::30)
+        with ESMTP id S234042AbiGDQYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 12:24:38 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57295625C
+        for <linux-clk@vger.kernel.org>; Mon,  4 Jul 2022 09:24:36 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id b23so11646571ljh.7
+        for <linux-clk@vger.kernel.org>; Mon, 04 Jul 2022 09:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Sn8r/wCwINZRFzULmvAmngogVLhKxhw5hVjfEMjh1CI=;
+        b=wd/nXp18FtY7THmR0JieeF4k/kTzVljiwQfzEKZvnjBFqlfoj8Qpor3nHLR6jGrgiu
+         EuI+uThVDU/PDVw+uEc5ik935VT1CwO5YBqy5zDZBtxZK2+t4oo7eqfdD97sGk6UqXgB
+         KWVxyjNponQ3FOoghhBhjQhitsq6yghm9fC7U7jtzmKk0DlcjKVhdRW+sAyrKDLsV+Es
+         uGIL5cOO4g/AYZiD1aaHivjC++jUcjf27VjI9q0Ttm0QfmxfnSxYJ41GW9IpdTSWhMUI
+         Qj9hRZsUt6VzugaplHPVpuGdD/N99T9vNfACgYPacReUraFTB64h6zYkyQSogLimkOff
+         0E5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Sn8r/wCwINZRFzULmvAmngogVLhKxhw5hVjfEMjh1CI=;
+        b=8AAEkW5535JTRtzTPttdyx9vZuhvVH+/ZBi3P8H2CwGU7u2YvgxrPMdV+b6RNVdLNp
+         Kca9/LGzjtJYpmrHzW8259V5DjvBZeUG8C+PIS5b+XiqQQFUVr3sSLSCWwgTha5TLQx6
+         ze9cQdI+e34T4XQFhgx8OJJpCpBPK463zx/eOZ9BRZbfjfkANEh3KxRx5nCAWOou6B9p
+         C9Q7DpZ2z8bkSm1cDmSGmv3w6JcgrArk6Wg+d6assl1w8J2hGo67AU3vQIA3vxgl4t3S
+         vGhzSxQDF+n+FZQGWYoJmve+cxAElqrRZD1guanyOozIuPHYbCRY/0cG7PoYeF1uUCh8
+         A+pA==
+X-Gm-Message-State: AJIora98EtsGTcsMOUaZFDfjKtX/VO2erAkQESzcBEX9YUOOEgAzlK4y
+        CNZ6ai1MWUuURP9d6N/HuB3Grg==
+X-Google-Smtp-Source: AGRyM1tbdsfuiNrfGGVut59sxgcRn+0ZzEgGSzB4dwTtug7V8FQj8oHdCsIfj7VmT6QhTQahTndnDA==
+X-Received: by 2002:a05:651c:154b:b0:25b:d2c4:8dd6 with SMTP id y11-20020a05651c154b00b0025bd2c48dd6mr17297808ljp.459.1656951874715;
+        Mon, 04 Jul 2022 09:24:34 -0700 (PDT)
+Received: from [192.168.1.212] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id k22-20020a05651c10b600b00253ceefb668sm4922401ljn.60.2022.07.04.09.24.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Jul 2022 09:24:34 -0700 (PDT)
+Message-ID: <50529c07-d630-c8ec-0127-6919e27d4bd7@linaro.org>
+Date:   Mon, 4 Jul 2022 19:24:33 +0300
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 392c58ab-4880-4145-f24b-08da5dd89f1d
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8213:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0sNaO+fI/ZDZBWBW0nAkYQGT2bgAQQEcvVvSgraPoPA/ICha/tSgBdvbpi/mCo9ewg0DoJWcotU3IAYVEPRnQgpkZnKBnSKWksd9Q/NefEZC8o+TlF55CqSmYK56PVjQbgPcZtCIP6qxOXl4LrnudhdgkXlTx5JOusfgBkZLHhXwUrgAcQO4pY/x9CfH+YmUr8UzrKIBeEpl4AI7l6JDFq1UkGzx7n9qYFe1MrlFVQ2asrjYDYx4eRGsSWy6ObNPbF+CjikfczU3EUxf10Wscpe3exVbOTpIwaLchlemXFBYM7ntr7CUquQBMEA1vsmVdkquVm27kQIou7F6Ld4rh2U5PkjuWHjRX0eINx4Oju+NGA0/GirCxIebMwBgvpdiWG/3he4W/YTOgcCGJDFH4nInYalseiXbw9FDFXuFpC7HIOZU73PK1uCKjKvBbbmd+w6BKrNgXnWgx+nNHRlnXgAq7ayPmz7dmQnQtPUN/F1Ybp7D4zDWiqj1XuuiLRcllmYOfpIXwxl4WGlEfAbY57rd614wIHo8w4zGMms51BRMyJhHeeWZ8dyyQQHjD3CFPn8yRcx7cOPeBIxpMtzhF77DT5lrTfRi2Z2uSFIjBaGDBMxiTT3lm19vDAklFx+hcV+5BzSgG/I9aeBUIqwXC32UwFfp22r4YJVpviNFKTkLR3q1AlcgVrtRFP2yyUPXg/Py5W8RlNp2kxPli6vz5wad5EJdpYKAmT0+ExSeE3DSz2d15DY56uerD2QrY9WcsU/pJRkCo4xNwJKpX3VXaZatuYgOL4QgkfK/74S/zDVXTh6NiUlKtaqaZgG/bfMj028xLqrRfxsRbCCLMygP/2eIXa+or0AbljbBmtYhsvk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(366004)(136003)(39860400002)(346002)(376002)(186003)(26005)(52116002)(2906002)(6506007)(6666004)(6512007)(1076003)(2616005)(41300700001)(86362001)(38350700002)(83380400001)(38100700002)(921005)(5660300002)(4326008)(316002)(8676002)(110136005)(4744005)(66556008)(7416002)(7406005)(66946007)(8936002)(66476007)(6486002)(478600001)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?v4xwa625C9nqPj1FQbU4QiPI4+RKVV9IkVCZIfgl9f+SjQ+ijA8R82bbXa?=
- =?iso-8859-1?Q?wudv4NSA3Yoy+TmXquRzP3N72/qMtsgOPuCSY3WQPma0pPeSNpOL7EIm2T?=
- =?iso-8859-1?Q?RqNhN6CQuo4I7MyaDPoQ8QBMHkaKzjoOsV6tL3b0v8nOrYNIUwFebS6/Ih?=
- =?iso-8859-1?Q?Iqp0pmHsTAiDDDbCf9tYpDAWxfstFTntfZZeT2Wb/UqvB/Mv6lWkqVfha+?=
- =?iso-8859-1?Q?V4vPwmAbC+a5cE0NV4UYUMRFVV48ek3s5qmzkSY5XBoXu0Bp3024+EBcjo?=
- =?iso-8859-1?Q?AAgY49xpili6hJ22bPNZlMGn/Ax4awJ0yov92oM7a2bZ3sjWhh3TC2gQWG?=
- =?iso-8859-1?Q?zlAWcklFghqz/w1npHcKRhHqfTceYapCuW8CUjt4vG6qw9K3s8H2hmvTer?=
- =?iso-8859-1?Q?V+7TI6Fweue/tyzn/g6hkMz4Nk4qs4VCaHqQ1U34w/4TorX6f5ZgwWtjYO?=
- =?iso-8859-1?Q?HehrcRQkI+sisjwD9dTlxjNteIzyCifqRiV7Rjbd9Y07PWdK8M9kChNW5z?=
- =?iso-8859-1?Q?v1onIhkyXazaK8bwV7uIPgExWFpgjq6Z3DP93hkkwWPULupBNLIgTDftWE?=
- =?iso-8859-1?Q?SMkbne+U90kbT9ArRAkZfeLCrYJQaZxvjq7Qhw9tgC4bPpacBT9v0PbRRG?=
- =?iso-8859-1?Q?n9DAK6maVxKyfgaOXyaumXxkcADi425pwz6Wu/8a9NlCU+sAlC1Jv8L9pt?=
- =?iso-8859-1?Q?nTGj68zxqslPHxZM2s7RuYKJmfWIFQ2Bt4BShxYj+xj0ArquNQI07nIWag?=
- =?iso-8859-1?Q?DXv2mL7biGtQItv9eU4TWbAYFtYQu0KELdCxM/gmw+dTmKBEOZgM3WvK6/?=
- =?iso-8859-1?Q?B2M2N7FxM6xChC7pJ+bYZR/aaleAeUQgTu5OfDU14WBfXSLnW9+pJAW/jD?=
- =?iso-8859-1?Q?6WiGQJWlBHGkr762VphnUB0YL8v8/t/xUrLauhYridW/pBVQIxTPyXZlg/?=
- =?iso-8859-1?Q?thg+w42BTqI/VLoIUJW1AAWvvuGVbcl3sCD8Dv2BgM38O4zgNWtayf/4Zj?=
- =?iso-8859-1?Q?QQ57ggyRfWk9Nh160efTcWTPrF0hRqVi0yNBjOLtsisf7gWZop0PXOorEH?=
- =?iso-8859-1?Q?u/35Ry9pnP4/6NNWjsCTbIDKkKxMB5NKvlxiDRzD0s0/4rjVfNbolLIx2Y?=
- =?iso-8859-1?Q?bruNSjaOIlI2oLgBixRi12protsoyJeU/V07dyJQ6/20MxhRb7c2ggfntz?=
- =?iso-8859-1?Q?yUZCNCu+OrVxieYggEm60tC9e6LFxSoHGO1Qo86Eo96CjTy1co7BM2fsQj?=
- =?iso-8859-1?Q?o5rVrY+7jH9XyCs2jt6rCxwn5YFcBGBIeewxNM7uy5xO22NX2hJuoSNPsM?=
- =?iso-8859-1?Q?ByCYev28zZQ7ERBBFow3cYPi3fg8nWzDdl2Z06S/IFHymmbK/mi5Pq1JNj?=
- =?iso-8859-1?Q?P2quw6aVaVPzV4c0YfHc4Saltqa2sunfkAEgLmA+y3CzBOpIaDFhRCcOGN?=
- =?iso-8859-1?Q?Etk54N/woQYBrIJmPyXIF44bqrANTeHAwurI670ZrNTRrJF9c+yewa9ekK?=
- =?iso-8859-1?Q?7kVk3ZwjklZa9v4lLPhBRemvdp5yTwEiRckdqQSv2LZxBdE6awnJb2LiWJ?=
- =?iso-8859-1?Q?Exw6yKQ4qZVIfFhA1rCqA9VTDyWnPF0QfMYNjDd1ldewOJsWgjPogmlkFu?=
- =?iso-8859-1?Q?wt/Xiol0sY3ezBWgf49P5I6vvta7SR0q/t?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 392c58ab-4880-4145-f24b-08da5dd89f1d
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2022 16:16:59.3955
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3XkfrT5YhJoxO/MPrvgzwMIGHcWzWwYI//KCHZshueklkut0XU39dkkXEv4atG8iOO++PE/ZNPJVnjbn7v7L8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8213
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 0/7] clk: qcom: gcc-msm8916: modernize the driver
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>
+References: <20220619212735.1244953-1-dmitry.baryshkov@linaro.org>
+ <cb15fe73-2805-7776-307d-02e1b175301c@somainline.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <cb15fe73-2805-7776-307d-02e1b175301c@somainline.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Viorel Suman <viorel.suman@nxp.com>
+On 20/06/2022 15:12, Konrad Dybcio wrote:
+> 
+> 
+> On 19.06.2022 23:27, Dmitry Baryshkov wrote:
+>> Please excuse me for the spam, I've erroneously sent v2 without the
+>> requested change.
+>>
+> Please excuse me, I didn't notice and gave you R-bs on v2 instead..
 
-The proper name is 'ocotp', not 'imx8qx-ocotp'.
+N/p, I'll pick them while sending v4.
 
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Konrad
+>> Update gcc-msm8916 driver and bindings to use DT-specified clocks
+>> rather than fetching the clocks from the global clocks list.
+>>
+>> Changes since v2:
+>>   - Use xo-board for the XO rather than RPM clock. This will be sorted
+>>     out separately (requested by Stephan Gerhold).
+>>
+>> Changes since v1:
+>>   - None.
+>>
+>> Dmitry Baryshkov (7):
+>>    dt-bindings: clk: qcom,gcc-*: use qcom,gcc.yaml
+>>    dt-bindings: clock: separate bindings for MSM8916 GCC device
+>>    clk: qcom: gcc-msm8916: use ARRAY_SIZE instead of specifying
+>>      num_parents
+>>    clk: qcom: gcc-msm8916: move clock parent tables down
+>>    clk: qcom: gcc-msm8916: move gcc_mss_q6_bimc_axi_clk down
+>>    clk: qcom: gcc-msm8916: use parent_hws/_data instead of parent_names
+>>    arm64: dts: qcom: msm8916: add clocks to the GCC device node
+>>
+>>   .../bindings/clock/qcom,gcc-msm8916.yaml      |   61 +
+>>   .../bindings/clock/qcom,gcc-msm8976.yaml      |   21 +-
+>>   .../bindings/clock/qcom,gcc-msm8994.yaml      |   21 +-
+>>   .../bindings/clock/qcom,gcc-msm8996.yaml      |   25 +-
+>>   .../bindings/clock/qcom,gcc-msm8998.yaml      |   25 +-
+>>   .../bindings/clock/qcom,gcc-other.yaml        |    1 -
+>>   .../bindings/clock/qcom,gcc-qcm2290.yaml      |   25 +-
+>>   .../bindings/clock/qcom,gcc-sc7180.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sc7280.yaml       |   21 +-
+>>   .../bindings/clock/qcom,gcc-sc8180x.yaml      |   25 +-
+>>   .../bindings/clock/qcom,gcc-sc8280xp.yaml     |   21 +-
+>>   .../bindings/clock/qcom,gcc-sdm845.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sdx55.yaml        |   21 +-
+>>   .../bindings/clock/qcom,gcc-sdx65.yaml        |   21 +-
+>>   .../bindings/clock/qcom,gcc-sm6115.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sm6125.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sm6350.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sm8150.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sm8250.yaml       |   25 +-
+>>   .../bindings/clock/qcom,gcc-sm8350.yaml       |   21 +-
+>>   .../bindings/clock/qcom,gcc-sm8450.yaml       |   21 +-
+>>   arch/arm64/boot/dts/qcom/msm8916.dtsi         |   14 +
+>>   drivers/clk/qcom/gcc-msm8916.c                | 1020 +++++++++--------
+>>   23 files changed, 669 insertions(+), 870 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8916.yaml
+>>
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-index d0f56e4dee77..563a006ababe 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -224,7 +224,7 @@ iomuxc: pinctrl {
- 			compatible = "fsl,imx8qxp-iomuxc";
- 		};
- 
--		ocotp: imx8qx-ocotp {
-+		ocotp: ocotp {
- 			compatible = "fsl,imx8qxp-scu-ocotp";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
+
 -- 
-2.25.1
-
+With best wishes
+Dmitry
