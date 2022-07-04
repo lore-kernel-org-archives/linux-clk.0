@@ -2,121 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E71ECCA47F
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 08:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BCAC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 08:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232989AbiGDIGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jul 2022 04:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48484 "EHLO
+        id S233423AbiGDIrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jul 2022 04:47:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233009AbiGDIGp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 04:06:45 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0D5B1CA
-        for <linux-clk@vger.kernel.org>; Mon,  4 Jul 2022 01:06:43 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id b19so10092654ljf.6
-        for <linux-clk@vger.kernel.org>; Mon, 04 Jul 2022 01:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=W9vEcsuPOmb6PFD1YP9Cd5t2i8+H7vKDdbGELGM7w6o=;
-        b=qIVH3JbKvPTI90pL62KYY0CE73JeN2SUYSrBybV8uswZCRUzC7TyQR8SVFp8MZtE+n
-         xr7tJOlv3L2n5ZyjubWWSM+HvxpWMMviQPJGc+z61rfEV7BG6cQlF6JShpAp0jtu8vVF
-         ceTB3j2pH2b/Yt1sE4BJDCgHdKQmyfJZMtTr8D5mHqeWpIZvfd9zndu2IJA4nuyF61qJ
-         PLuksfEnXLVGlUXKspIWeM/QLHcLr0LmFBlIvSpGCb9lgFdOCT5hGek9uM/lI/l3D+aq
-         iN+8aCJy4pGjNnJY/joNcWnXboVwrTUBBtxKGrp15wZVhuCWO0JNd1/VK0fRmlhAUyqW
-         ctvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=W9vEcsuPOmb6PFD1YP9Cd5t2i8+H7vKDdbGELGM7w6o=;
-        b=fQd1Rz40saE1HXnzz4swyQaRRmah+2SsnaV1kjiGd5hN/Wg7znsp160eSG9G7iLpR7
-         rbzhbX4QQYYO8GrcjYnkZsIZDnQSPrm+6MiotFjx2GUkIAUoflR0i5KJWbyu+KDvMLC5
-         MUq6+IvucUMYNZq/cf0PS+Ll5AJTjyTaed8/Ga1Ek8lb9/7LTkyPj5Gvzm5a1yvv6qkL
-         U+iVHE4X3u264NTnIenToIzRH3xdCuJCiaUb1k9D386xQ0qpxUcQ4dpUvH3OiP7sR84E
-         olnaFHRV/atK4cBWulK5Q/rHva5CqYpR+31vnsw64pgH/QhKJjI1yTFQf3yLSVlw/mLh
-         7T0A==
-X-Gm-Message-State: AJIora+kgr8Ge32CSpfP5gq38f5LJFB4aVMC21ISXWmzGq2olKZnO3aU
-        Tu/QZtRdGloGcXS9CPrRogSi3Q==
-X-Google-Smtp-Source: AGRyM1shyweS5X2mqdSfWYknlmTWWG1DGobjjvfheeS4TSNX76HtThJhWEt1hwbwlkge4YLK4Rb5CA==
-X-Received: by 2002:a2e:9097:0:b0:25a:6e3a:8b21 with SMTP id l23-20020a2e9097000000b0025a6e3a8b21mr15698533ljg.37.1656922001547;
-        Mon, 04 Jul 2022 01:06:41 -0700 (PDT)
-Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id b8-20020a056512218800b0047f7c897b61sm5018145lft.129.2022.07.04.01.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Jul 2022 01:06:40 -0700 (PDT)
-Message-ID: <2823c36d-efce-6c02-3b00-df1466c0d2bc@linaro.org>
-Date:   Mon, 4 Jul 2022 10:06:39 +0200
+        with ESMTP id S233306AbiGDIqm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 04:46:42 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AE81BC1C;
+        Mon,  4 Jul 2022 01:46:41 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3C6506601638;
+        Mon,  4 Jul 2022 09:46:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1656924399;
+        bh=R+jPQDQz31uGzbA+I3t13TC7Pm3CHBJfMIbtLFynbJc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZwEVDT7bh3ClwE4hCtFrRK6QldluIZRtMf28iTUXRQRKSFkhv2a3BrK+CGYZ6GhU5
+         opneRPXrHGdo+Plj26UwH1nvGlFARPU+d5A75BgZj+nGBMSnzvvxJ95MTlY9Nmk200
+         gg68cKKkLBxdNLu9iuCIm63B5NdWYVyRRnKiOB4nC384Pq3SnNXE2pEdTk/CKMIb+7
+         1+/P7cjuttfiqgRk2F0cXhYwX6Zz3F72VuhPnMvXBWTzuEGC5IWoVCmUlhw0uV/AW5
+         7GvDY1VexZ7o5pZ19J0m65UcYjC6oTRH+YT5A4YKzpow0GDJeRvsAthjYM+lipUwtq
+         RDYQuzwe8h/3g==
+Message-ID: <e18333d0-e69b-4ab9-68ca-31b69ef043f5@collabora.com>
+Date:   Mon, 4 Jul 2022 10:46:35 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH v6 10/14] arm64: dts: freescale: imx8qxp: Remove
- unnecessary clock related entries
+Subject: Re: [PATCH 0/3] clk: mediatek: mt8183: Simplify with
+ mtk_clk_simple_*()
 Content-Language: en-US
-To:     Viorel Suman <viorel.suman@oss.nxp.com>
-Cc:     Viorel Suman <viorel.suman@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To:     Chen-Yu Tsai <wenst@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
- <20220629164414.301813-11-viorel.suman@oss.nxp.com>
- <483d5115-4027-e811-8bce-15da6c7c660f@linaro.org>
- <20220630083636.2c7mclmbq3tjma2j@fsr-ub1664-116>
- <5d8b2044-5ca6-c90c-57b4-afbb2ae20dde@linaro.org>
- <20220630194804.sa3mvokpv7iksgbx@fsr-ub1664-116>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220630194804.sa3mvokpv7iksgbx@fsr-ub1664-116>
-Content-Type: text/plain; charset=UTF-8
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rex-BC Chen <rex-bc.chen@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220701145133.1152387-1-wenst@chromium.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220701145133.1152387-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/06/2022 21:48, Viorel Suman wrote:
+Il 01/07/22 16:51, Chen-Yu Tsai ha scritto:
+> As part of clk driver support for MT8192, a pair of "simple"
+> probe/remove functions was introduced that provided boilerplate
+> driver functions for clk drivers that fit a simple model: they only
+> needed to register clock gates. Using them reduces the redundant
+> boilerplate code needed for each driver. Instead, only a data structure
+> pointing to the clock gate array and the number of clocks is needed.
 > 
-> The question context looks a bit shifted. The "clocks" and "clock-names"
-> attributes are removed from a clock provider device.
+> This series converts all the MT8183 clock drivers that only contain
+> clock gates over to these wrapper functions. For instances where the
+> clk driver not only registers clock gates, the extra action is properly
+> sequenced with the wrapper functions instead of outright replacing
+> the probe functions. The converted drivers also get removal support.
+> This also reduces the overall size by nearly 600 bytes.
 > 
-> The OS clock provider in this case is a client which uses some protocol
-> to communicate with SCU via a messaging unit. There is no
-> access to xtal clocks via the existing OS<->SCU communication protocol.
+> Patch 1 converts the MT8183 clk drivers that only do clock gate
+> registration.
+> 
+> Patch 2 converts the audio clk driver, which also populates sub-devices.
+> 
+> Patch 3 converts the mfgcfg (GPU wrapper) clk driver, which also needs
+> to enable runtime PM, as it is tied to a power domain.
+> 
+> Please have a look, and merge if possible.
 
-SCU does not need to access them via communication protocol. It's enough
-that they are clock inputs, physical clocks being fed to your hardware
-which you describe in the DTS.
+Hello Chen-Yu,
+great cleanup there!
 
+...I *particularly like* the mfgcfg commit :-) :-)
 
-Best regards,
-Krzysztof
+For the entire series:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
