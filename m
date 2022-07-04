@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F38CCA481
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503E7CCA486
 	for <linux-clk@archiver.kernel.org>; Mon,  4 Jul 2022 13:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234921AbiGDNdD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Jul 2022 09:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39434 "EHLO
+        id S235007AbiGDNdF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Jul 2022 09:33:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234918AbiGDNcZ (ORCPT
+        with ESMTP id S234909AbiGDNcZ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jul 2022 09:32:25 -0400
 Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43D112AC2;
-        Mon,  4 Jul 2022 06:30:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D22412ABA;
+        Mon,  4 Jul 2022 06:30:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JAH+8uIyGXaoyytv44HR9oezm9e5Wx1rOVY/LK5cjIk=; b=LkXgyh05OjnzRAO38Lde+9E5IH
-        ajV21EtMP3XVOuq5qyYmklRSaaKpDTBAZgQuESNI0ujkz7KE+QHzOgP9AvnTSAVPbpsMSmcXqo7gL
-        PMS+HxFTI58eoXO68eOlaoAN11AXsEj1F+Uh0CjHU1eS0BYIVfDhW87lg0rSwnMUTq9VdLo1qk7ue
-        LQYgZ1pCL48kLTg5OXtAOrnWmA8CkLKgovabNsadiFd5X4kLnobpcrj23pd9+Y+5hWoOfbElZRGif
-        4FpntrYqIS8QFGxkvK+uaf4zYmfvBAjkaS8sDHCbJYcjHIEi35yudooTrWR+kueSw3l64dfIvGES5
-        hcot6S/w==;
+        bh=YgCW3baluvqJpS4+BCK3zS2WrqehMu19YfN22Vu+IM4=; b=oG8nH1ojNKyY3ZRlGJSsIfCuqI
+        42gzxtUydBsZZb1uV4BTpbtSi/5lDc1huTAd1GM9KquqV30F86SAc/Yx6ihUyLSZf6plwl2DoI2Fg
+        bDk7I0W0h7nkMb1I27UQuDu1nITt0d3ZEMAyqt87KLUz1Vu/bTmlTb5ySOyYxcSW23S+UICxhsaAQ
+        rbWJ+WI023mPeim17KyFdWBd57PxwEoUPxcjUJBLmni2azfBw5Hw2nl/xFJANU+4Z3u2cYccJx+3I
+        SDkbf499OZNoK2sgNR0/YT9yEGZY+HPvdXIjk8YkTrf4c92qXoMmJRuNLWPy1+hltqx4gTRNJvYqi
+        4xD5x3Vw==;
 Received: from [10.22.3.24] (helo=kernkonzept.com)
         by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1o8M9m-0074oF-Nv; Mon, 04 Jul 2022 15:30:30 +0200
+        id 1o8M9g-0074oF-ND; Mon, 04 Jul 2022 15:30:24 +0200
 From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -43,9 +43,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org,
         Dominik Kobinski <dominikkobinski314@gmail.com>,
         Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Subject: [PATCH 6/6] clk: qcom: smd-rpm: Add clocks for MSM8909
-Date:   Mon,  4 Jul 2022 15:30:00 +0200
-Message-Id: <20220704133000.2768380-7-stephan.gerhold@kernkonzept.com>
+Subject: [PATCH 3/6] clk: qcom: reset: Allow specifying custom reset delay
+Date:   Mon,  4 Jul 2022 15:29:57 +0200
+Message-Id: <20220704133000.2768380-4-stephan.gerhold@kernkonzept.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220704133000.2768380-1-stephan.gerhold@kernkonzept.com>
 References: <20220704133000.2768380-1-stephan.gerhold@kernkonzept.com>
@@ -55,83 +55,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MSM8909 has mostly the same as clocks in RPM as MSM8916,
-but additionally the QPIC clock for the NAND flash controller.
+The amount of time required between asserting and deasserting the reset
+signal can vary depending on the involved hardware component. Sometimes
+1 us might not be enough and a larger delay is necessary to conform to
+the specifications.
+
+Usually this is worked around in the consuming drivers, by replacing
+reset_control_reset() with a sequence of reset_control_assert(), waiting
+for a custom delay, followed by reset_control_deassert().
+
+However, in some cases the driver making use of the reset is generic and
+can be used with different reset controllers. In this case the reset
+time requirement is better handled directly by the reset controller
+driver.
+
+Make this possible by adding an "udelay" field to the qcom_reset_map
+that allows setting a different reset delay (in microseconds).
 
 Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 37 +++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+See the next patch for a real example with the USB PHY on MSM8909.
+---
+ drivers/clk/qcom/reset.c | 4 +++-
+ drivers/clk/qcom/reset.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 10b4e6d8d10f..56096123081c 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -417,6 +417,7 @@ DEFINE_CLK_SMD_RPM_BRANCH(sdm660, bi_tcxo, bi_tcxo_a, QCOM_SMD_RPM_MISC_CLK, 0,
- DEFINE_CLK_SMD_RPM(msm8916, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8916, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
- DEFINE_CLK_SMD_RPM(msm8916, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(qcs404, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
- DEFINE_CLK_SMD_RPM_QDSS(msm8916, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk1, bb_clk1_a, 1, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8916, bb_clk2, bb_clk2_a, 2, 19200000);
-@@ -427,6 +428,40 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, bb_clk2_pin, bb_clk2_a_pin, 2, 192
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk1_pin, rf_clk1_a_pin, 4, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8916, rf_clk2_pin, rf_clk2_a_pin, 5, 19200000);
+diff --git a/drivers/clk/qcom/reset.c b/drivers/clk/qcom/reset.c
+index 819d194be8f7..2a16adb572d2 100644
+--- a/drivers/clk/qcom/reset.c
++++ b/drivers/clk/qcom/reset.c
+@@ -13,8 +13,10 @@
  
-+static struct clk_smd_rpm *msm8909_clks[] = {
-+	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK]		= &msm8916_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK]		= &msm8916_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK]		= &msm8916_bimc_a_clk,
-+	[RPM_SMD_QPIC_CLK]		= &qcs404_qpic_clk,
-+	[RPM_SMD_QPIC_CLK_A]		= &qcs404_qpic_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &msm8916_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &msm8916_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &msm8916_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &msm8916_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &msm8916_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &msm8916_bb_clk2_a,
-+	[RPM_SMD_RF_CLK1]		= &msm8916_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A]		= &msm8916_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2]		= &msm8916_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &msm8916_rf_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &msm8916_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8916_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &msm8916_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8916_bb_clk2_a_pin,
-+	[RPM_SMD_RF_CLK1_PIN]		= &msm8916_rf_clk1_pin,
-+	[RPM_SMD_RF_CLK1_A_PIN]		= &msm8916_rf_clk1_a_pin,
-+	[RPM_SMD_RF_CLK2_PIN]		= &msm8916_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN]		= &msm8916_rf_clk2_a_pin,
-+};
+ static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
+ {
++	struct qcom_reset_controller *rst = to_qcom_reset_controller(rcdev);
 +
-+static const struct rpm_smd_clk_desc rpm_clk_msm8909 = {
-+	.clks = msm8909_clks,
-+	.num_clks = ARRAY_SIZE(msm8909_clks),
-+};
-+
- static struct clk_smd_rpm *msm8916_clks[] = {
- 	[RPM_SMD_PCNOC_CLK]		= &msm8916_pcnoc_clk,
- 	[RPM_SMD_PCNOC_A_CLK]		= &msm8916_pcnoc_a_clk,
-@@ -787,7 +822,6 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8996 = {
+ 	rcdev->ops->assert(rcdev, id);
+-	udelay(1);
++	udelay(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
+ 	rcdev->ops->deassert(rcdev, id);
+ 	return 0;
+ }
+diff --git a/drivers/clk/qcom/reset.h b/drivers/clk/qcom/reset.h
+index 2a08b5e282c7..b8c113582072 100644
+--- a/drivers/clk/qcom/reset.h
++++ b/drivers/clk/qcom/reset.h
+@@ -11,6 +11,7 @@
+ struct qcom_reset_map {
+ 	unsigned int reg;
+ 	u8 bit;
++	u8 udelay;
  };
  
- DEFINE_CLK_SMD_RPM(qcs404, bimc_gpu_clk, bimc_gpu_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
--DEFINE_CLK_SMD_RPM(qcs404, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(qcs404, ln_bb_clk_pin, ln_bb_clk_a_pin, 8, 19200000);
- 
- static struct clk_smd_rpm *qcs404_clks[] = {
-@@ -1146,6 +1180,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcm2290 = {
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-mdm9607", .data = &rpm_clk_mdm9607 },
- 	{ .compatible = "qcom,rpmcc-msm8226", .data = &rpm_clk_msm8974 },
-+	{ .compatible = "qcom,rpmcc-msm8909", .data = &rpm_clk_msm8909 },
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
- 	{ .compatible = "qcom,rpmcc-msm8953", .data = &rpm_clk_msm8953 },
+ struct regmap;
 -- 
 2.30.2
 
