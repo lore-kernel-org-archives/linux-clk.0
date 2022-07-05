@@ -2,198 +2,238 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E40C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 16:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBE8CCA47F
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 17:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbiGEQaG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jul 2022 12:30:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54914 "EHLO
+        id S230047AbiGER1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jul 2022 13:27:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbiGEQ3y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 12:29:54 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C7F1D30B;
-        Tue,  5 Jul 2022 09:29:51 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id ck6so14413394qtb.7;
-        Tue, 05 Jul 2022 09:29:51 -0700 (PDT)
+        with ESMTP id S232854AbiGER1O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 13:27:14 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2128201AA
+        for <linux-clk@vger.kernel.org>; Tue,  5 Jul 2022 10:27:12 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id ck6so14673598qtb.7
+        for <linux-clk@vger.kernel.org>; Tue, 05 Jul 2022 10:27:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=frZfKP9LN/+rExEoWp6ML2iGfeji+NFrp11uK/sqtZk=;
-        b=Ps0DWO6T4WzbDGYeEutFMBaCJEv6EwmO6yfNhrrW9fLvenOnLf8CpHHSeOAY2uvSzw
-         FK7iZ8B6E0AnzHWlnS513BjspevScYhXSq/uM6yfsMgYH/t9vvSn99fYpJ4tYxcJPRvI
-         pG0YzWt8lsWyIwohAoe9w0qNxwNbQ4mhgJZ9AL1hkb1Kmr+k/iyikzaljHLv4ZoV1Vzq
-         i204rqTImulYU6xSsxbh2BzDqQ1ONvXpsds4nrqCDLU94le1JUeqoNfqUPEssfMfDj4L
-         +ESly7tYqPuMo8yHqDapC3YyjA/6SUp5ehLxFFHbIU1XjMvB7Hgxo0zJoSgCOPMCShuk
-         pQ/A==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version;
+        bh=hsLFtpfkNUpQMwczqY0YE13dDRmpgkK9okdo26WXnGo=;
+        b=DRCY7HfzTtj6IP0TNOrHfGMfxj64jjihjqlmOCsBFo3yLhkrY9PAupiPrTh3kl0Wk1
+         mbYRnKNhdD+HH1DuuSBNMBY95Rd88bEdOlhuTcQpra2vrqxDT0Smy+WPTDVw/Rf0Vr9v
+         tVM3xztganmB6Fej9I/6GeoypfEp5cMqGXnKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=frZfKP9LN/+rExEoWp6ML2iGfeji+NFrp11uK/sqtZk=;
-        b=WVZnQxZsrkprKpxx7KzRIlZw/1NSIMoqZKR7DvnD3moVrAHwSwgdu5M91ZC79Pgf9f
-         gCJZhSYXHseXQck2H/NCLrwi8uTvWtl17Uq5gZZMDsEADRCSx50VtxpXDa/xg4Sl8kIP
-         C50Iv7FFNvYYAKGY84MgnmmMbdDIP3J8swHRDYwYn3GSI2OR/uskO15hxKWgu1AVeNmC
-         XsZkKR+VrvBn39OZP3Z+r2ORCE3a4b/nJbHGqTM2Wa7Ny5oeWyNLMx/ZLuve9tpoKBbu
-         JvDsAP8AP5LZUC0ETB3tdcar39rHtescy4I+Xr31eXKcGzTx0Fu/iRu/HE7Fyl/Rx0T3
-         IokA==
-X-Gm-Message-State: AJIora+FeU5AyXL/3+VEZUilTugCp6O1ju+hLOvX18DvTOxahErarXyY
-        H6fU+h8nNOodBGrXvwVvJMzOja6aL+/QWe7jy6q4b7F6mdQ=
-X-Google-Smtp-Source: AGRyM1smvkcc+wx4+dbpJGx0vkJJ67YmA9Lz9S1Sq/2SC52pCZM6JvlduT21q1pxjdSSSb5JIE37QAOE/SzRBkSoX1A=
-X-Received: by 2002:ac8:5dd4:0:b0:31d:4044:c46c with SMTP id
- e20-20020ac85dd4000000b0031d4044c46cmr14241012qtx.174.1657038590357; Tue, 05
- Jul 2022 09:29:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version;
+        bh=hsLFtpfkNUpQMwczqY0YE13dDRmpgkK9okdo26WXnGo=;
+        b=2TlMHfbqzAmWHL6KRUKM8fmkODIUWQo0AYikM1/+JoSd+mgw9RXgddgjYvVOxaIFbU
+         L/zNGAGNgFWh9yP1pm7HUKCv0PLLoYd0mzzAEmOlZlWsIz9+kdX06JqRV1/DHz9QDjbs
+         3g4kza9Sf9zQSGXoTXNVIByuFZFS1XvbUhFj7FsqjeOUi1PTDTIJXWD2eeLW3uuDP41h
+         MO5yTGApTqW5W69YbeJztrKHZ5CFNkf7yYyrjzOdsKqZpYne/GWw3fkPstLqqGEr7DMy
+         liHmHMfe3jEK7y8+WE6Xt9eBXffw/0fXIEHSCtrf94hVD0yOZA2oGntZzpcG1f48JUOC
+         pcPQ==
+X-Gm-Message-State: AJIora9m3gi1b9tRUcCOpwfHOTIAxZk2Q5/QRxyXmwM3WTZ2Ae9YzXnu
+        SBzaYwKJFt7Xpzk/3lexYgQMHQ==
+X-Google-Smtp-Source: AGRyM1vOVkXysb0YxR84eHakGgsbHGQgGl1iVwbyjJOjUVtejkZXor5EdPQQsA1F1Wx/mschZEKEQA==
+X-Received: by 2002:a05:6214:250c:b0:472:6e5e:e2f3 with SMTP id gf12-20020a056214250c00b004726e5ee2f3mr32999791qvb.45.1657042031661;
+        Tue, 05 Jul 2022 10:27:11 -0700 (PDT)
+Received: from ubuntu-22.localdomain ([192.19.222.250])
+        by smtp.gmail.com with ESMTPSA id d8-20020ac85ac8000000b00304e70585f9sm24439851qtd.72.2022.07.05.10.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 10:27:10 -0700 (PDT)
+From:   William Zhang <william.zhang@broadcom.com>
+To:     Linux ARM List <linux-arm-kernel@lists.infradead.org>
+Cc:     joel.peshkin@broadcom.com, kursad.oney@broadcom.com,
+        f.fainelli@gmail.com, anand.gore@broadcom.com,
+        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+        philippe.reynes@softathome.com, dan.beygelman@broadcom.com,
+        William Zhang <william.zhang@broadcom.com>,
+        Al Cooper <alcooperx@gmail.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Cai Huoqing <cai.huoqing@linux.dev>,
+        Conor Dooley <conor.dooley@microchip.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jan Dabros <jsd@semihalf.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Jie Deng <jie.deng@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michael Walle <michael@walle.cc>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Olof Johansson <olof@lixom.net>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Ray Jui <rjui@broadcom.com>, Rob Herring <robh+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sunil Goutham <sgoutham@marvell.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tyrone Ting <kfting@nuvoton.com>,
+        Vinod Koul <vkoul@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, soc@kernel.org
+Subject: [PATCH 0/9] arm: bcmbca: Move BCM63138 SoC support under ARCH_BCMBCA
+Date:   Tue,  5 Jul 2022 10:26:04 -0700
+Message-Id: <20220705172613.21152-1-william.zhang@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20220705075226.359475-1-r.stratiienko@gmail.com> <5580615.DvuYhMxLoT@kista>
-In-Reply-To: <5580615.DvuYhMxLoT@kista>
-From:   Roman Stratiienko <r.stratiienko@gmail.com>
-Date:   Tue, 5 Jul 2022 19:29:39 +0300
-Message-ID: <CAGphcd=O-BQRJwQbUbbFMt29jxHf+KpJWrrm5SmMhumkCBam0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: sunxi-ng: sun50i: h6: Modify GPU clock
- configuration to support DFS
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        mripard@kernel.org, wens@csie.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000b18f1805e3122963"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jernej,
+--000000000000b18f1805e3122963
+Content-Transfer-Encoding: 8bit
 
-=D0=B2=D1=82, 5 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 19:07, Jernej =C5=
-=A0krabec <jernej.skrabec@gmail.com>:
->
-> Hi Roman,
->
-> Dne torek, 05. julij 2022 ob 09:52:26 CEST je Roman Stratiienko napisal(a=
-):
-> > Using simple bash script it was discovered that not all CCU registers
-> > can be safely used for DFS, e.g.:
-> >
-> >     while true
-> >     do
-> >         devmem 0x3001030 4 0xb0003e02
-> >         devmem 0x3001030 4 0xb0001e02
-> >     done
-> >
-> > Script above changes the GPU_PLL multiplier register value. While the
-> > script is running, the user should interact with the user interface.
-> >
-> > Using this method the following results were obtained:
-> > | Register  | Name           | Bits  | Values | Result |
-> > | --        | --             | --    | --     | --     |
-> > | 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
-> > | 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
-> > | 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
-> > | 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
-> >
-> > DVFS started to work seamlessly once dividers which caused the
-> > glitches were set to fixed values.
-> >
-> > Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
-> >
-> > ---
-> >
-> > Changelog:
-> >
-> > V2:
-> > - Drop changes related to mux
-> > - Drop frequency limiting
-> > - Add unused dividers initialization
-> >
-> > V3:
-> > - Adjust comments
->
-> I don't see any comment fixed, at least not to "1", as we discussed. Did =
-I miss
-> anything?
+Now that Broadcom Broadband arch ARCH_BCMBCA is in the kernel, this change
+migrates the existing broadband chip BCM63138 support to ARCH_BCMBCA. It also
+delete the old ARCH_BCM_63XX config as no other chip uses it.
 
-I've added the "bits" word, so now it should sound correct.
+Verified on BCM963138REF board with ramdisk boot.
 
-> Also, please add min and max.
 
-What is the rationale for additional limits?
-CPU_PLL doesn't have these limits. I don't want to make them different.
+William Zhang (9):
+  dt-bindings: arm: add BCM63138 SoC
+  ARM: dts: Move BCM963138DVT board dts to ARCH_BCMBCA
+  ARM: dts: update dts files for bcmbca SoC BCM63138
+  ARM: dts: Add BCM63138 generic board dts
+  arm: bcmbca: Replace ARCH_BCM_63XX with ARCH_BCMBCA
+  arm: bcmbca: Move BCM63138 ARCH_BCM_63XX config to ARCH_BCMBCA
+  arm: bcmbca: Add BCMBCA sub platforms
+  MAINTAINERS: Move BCM63138 to bcmbca arch entry
+  ARM: multi_v7_defconfig: Update configs for BCM63138
 
-> I also consent to R-B, which you
-> didn't include.
+ .../bindings/arm/bcm/brcm,bcmbca.yaml         |  8 +++
+ MAINTAINERS                                   | 10 +--
+ arch/arm/Kconfig.debug                        |  2 +-
+ arch/arm/boot/dts/Makefile                    |  4 +-
+ arch/arm/boot/dts/bcm63138.dtsi               | 18 +++---
+ arch/arm/boot/dts/bcm963138.dts               | 26 ++++++++
+ arch/arm/boot/dts/bcm963138dvt.dts            |  8 +--
+ arch/arm/configs/multi_v7_defconfig           |  4 +-
+ arch/arm/mach-bcm/Kconfig                     | 61 +++++++++++++------
+ arch/arm/mach-bcm/Makefile                    |  7 +--
+ arch/arm/mach-bcm/bcm63xx.c                   | 17 ------
+ drivers/ata/Kconfig                           |  2 +-
+ drivers/char/hw_random/Kconfig                |  2 +-
+ drivers/clk/bcm/Kconfig                       |  4 +-
+ drivers/i2c/busses/Kconfig                    |  2 +-
+ drivers/phy/broadcom/Kconfig                  |  2 +-
+ drivers/spi/Kconfig                           |  2 +-
+ drivers/tty/serial/Kconfig                    |  4 +-
+ 18 files changed, 108 insertions(+), 75 deletions(-)
+ create mode 100644 arch/arm/boot/dts/bcm963138.dts
+ delete mode 100644 arch/arm/mach-bcm/bcm63xx.c
 
-I was expecting an explicit 'review-by' line. Anyway I can add it and
-resend v4 if it's necessary.
+-- 
+2.34.1
 
-Regards,
-Roman
 
-> Did you resend v2 instead of v3?
->
-> Best regards,
-> Jernej
->
-> > ---
-> >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 16 +++++++++++++---
-> >  1 file changed, 13 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c index 2ddf0a0da526f..068d1a6b2eb=
-f3
-> > 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > @@ -95,13 +95,13 @@ static struct ccu_nkmp pll_periph1_clk =3D {
-> >       },
-> >  };
-> >
-> > +/* For GPU PLL, using an output divider for DFS causes system to fail =
-*/
-> >  #define SUN50I_H6_PLL_GPU_REG                0x030
-> >  static struct ccu_nkmp pll_gpu_clk =3D {
-> >       .enable         =3D BIT(31),
-> >       .lock           =3D BIT(28),
-> >       .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
-> >       .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider */
-> > -     .p              =3D _SUNXI_CCU_DIV(0, 1), /* output divider
-> */
-> >       .common         =3D {
-> >               .reg            =3D 0x030,
-> >               .hw.init        =3D CLK_HW_INIT("pll-gpu", "osc24M",
-> > @@ -294,9 +294,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk,
-> > "deinterlace", static SUNXI_CCU_GATE(bus_deinterlace_clk,
-> > "bus-deinterlace", "psi-ahb1-ahb2", 0x62c, BIT(0), 0);
-> >
-> > +/* Keep GPU_CLK divider const to avoid DFS instability. */
-> >  static const char * const gpu_parents[] =3D { "pll-gpu" };
-> > -static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> > -                                    0, 3,    /* M */
-> > +static SUNXI_CCU_MUX_WITH_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> >                                      24, 1,   /* mux */
-> >                                      BIT(31), /* gate */
-> >                                      CLK_SET_RATE_PARENT);
-> > @@ -1193,6 +1193,16 @@ static int sun50i_h6_ccu_probe(struct platform_d=
-evice
-> > *pdev) if (IS_ERR(reg))
-> >               return PTR_ERR(reg);
-> >
-> > +     /* Force PLL_GPU output divider bits to 0 */
-> > +     val =3D readl(reg + SUN50I_H6_PLL_GPU_REG);
-> > +     val &=3D ~BIT(0);
-> > +     writel(val, reg + SUN50I_H6_PLL_GPU_REG);
-> > +
-> > +     /* Force GPU_CLK divider bits to 0 */
-> > +     val =3D readl(reg + gpu_clk.common.reg);
-> > +     val &=3D ~GENMASK(3, 0);
-> > +     writel(val, reg + gpu_clk.common.reg);
-> > +
-> >       /* Enable the lock bits on all PLLs */
-> >       for (i =3D 0; i < ARRAY_SIZE(pll_regs); i++) {
-> >               val =3D readl(reg + pll_regs[i]);
-> > --
-> > 2.34.1
->
->
+--000000000000b18f1805e3122963
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+TltlrAeBKRJ1M9O/DY5v7L1Yrs//7XIRg/d2ZPAOSGBQzFYjYTFWwNBiR1s1zP0m2y56DPbS5gwj
+fqAN/I4PJHIvTh3zUgHXNKadYoYRiPHXfaTWO9UhzysOpQIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
+BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
+YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
+BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
+MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
+YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
+Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
+HREEHjAcgRp3aWxsaWFtLnpoYW5nQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
+BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUohM5GmNlGWe5wpzDxzIy
++EgzbRswDQYJKoZIhvcNAQELBQADggEBACKu9JSQAYTlmC+JTniO/C/UcXGonATI/muBjWTxtkHc
+abZtz0uwzzrRrpV+mbHLGVFFeRbXSLvcEzqHp8VomXifEZlfsE9LajSehzaqhd+np+tmUPz1RlI/
+ibZ7vW+1VF18lfoL+wHs2H0fsG6JfoqZldEWYXASXnUrs0iTLgXxvwaQj69cSMuzfFm1X5kWqWCP
+W0KkR8025J0L5L4yXfkSO6psD/k4VcTsMJHLN4RfMuaXIT6EM0cNO6h3GypyTuPf1N1X+F6WQPKb
+1u+rvdML63P9fX7e7mwwGt5klRnf8aK2VU7mIdYCcrFHaKDTW3fkG6kIgrE1wWSgiZYL400xggJt
+MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
+VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw28eX6TfvsbNfu
+SIMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIJzZcMrLCPErIibvl0hXUANg4zg4
+ed6ZN3tb0yJx/4VmMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIy
+MDcwNTE3MjcxMVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
+AwQCATANBgkqhkiG9w0BAQEFAASCAQCVbrEuOuCzgW+vPuJtquEOo5ynRicDersrNcd1mxQVmhWF
+92zMl5Z8SGgQjjzJiSYIOzNvGiGl3QDiFqrKt0VoT5fu8Tflt3Fgaczpu2fyPnJgywXsNwDuPzkS
+DomYuZ9nznGCOnZUh9iqWNjP4qI5pT50/anrjG4ZaPcBzxty2IcCyvsvBSmwp7FceGWzQM8L01ha
+rUXaasYeSLlDr0OK0kMeiekoOsUKZpKitWBLKcNzhCIDs4JNvYTnyji7ulitY0rVSgn47nUC25YJ
+ckqYQLOxsr/pIm8OrhtoungsBSm02fAf8r6nOL2gAv5+5Ek/2w28B9/3zuRuf0e60987
+--000000000000b18f1805e3122963--
