@@ -2,258 +2,155 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D7EC43334
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 18:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA64C43334
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 18:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232732AbiGESHF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jul 2022 14:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50162 "EHLO
+        id S229701AbiGESeO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jul 2022 14:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232868AbiGESHE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 14:07:04 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD1F51F2CB;
-        Tue,  5 Jul 2022 11:07:02 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id d2so23064018ejy.1;
-        Tue, 05 Jul 2022 11:07:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=C3MBhx1ORlPHZ9G4+h8YaWQcZ6SFmshxeCeN90vs+Vg=;
-        b=EvCJru21FJDLrFNyWj1mt6ib9bZnl2/sCGMrbEAyt2dFLQM9z6JYnPe83RNIeK60bV
-         jI3YqKyUUy7/e43JZ9kE7tQvoBV0i4VJAswQjggNUtK2t9l7DwCFzBTt/BvZ3Hed7JbS
-         01WbxSx+AERck5U4pG3q+2Zh0FAryO1S//6DP9HRrWgEa8/wjs8DOM4aGwF+HZ0KfH/J
-         T+vOc0MaW1I37t0/qaZLY3e2a6RgJDhOVqrxCiM1WzaPmaINtCRJyR8hiFDdGrmSHW0J
-         5pbPx2B2yFUrBwNoH1NOBYzhRJCaGYhKxXygvGXPMF+TRwwtoY7wt6c5iiLDOvbQl5tB
-         80Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=C3MBhx1ORlPHZ9G4+h8YaWQcZ6SFmshxeCeN90vs+Vg=;
-        b=tT23HSxY1nmTtC6pnOjShCRPiTkBDZfAmJ4M0RPrhUeTdxOKzKUf0ZUybE3xvjNGKp
-         3rUGupjJLFuDsabN9Z19p86JtTVYne8MIIx9OxO5AmgGOicywHXYgJdnCD3vJr/+m2Z8
-         9d0/esmhFrdFAtapZmdDvhJ3wu4wXFoH456FlJ7CZH/K1hvCXAT+jr2LYzWjXFztinNN
-         4LtJNovvVwR4cInUOC1K3fDJ5ybZeH4HmbEh/oJXnaCOYAvjS1+NKWsShXauR4sQ6NFN
-         F/Gb5CpRNALFjp0dpMCNhjznkTSCYdalwEMSojQ4HxTA28gzbpE7RQa2lauKcbzesHso
-         hu7g==
-X-Gm-Message-State: AJIora9/2PYiVi1LfQ3UsX9XcaMEvm0qY0/uCr8M1NqaK5duZmSmsM9Z
-        B5Q3hTjljmgetDV5VuJbA/M=
-X-Google-Smtp-Source: AGRyM1uftWZ7uUb2RAX1JiED29UVN81QgJ+i9XK4890u80u5UWT4LYY7hJr9VUBrTSDO3BmPWgydmQ==
-X-Received: by 2002:a17:907:968f:b0:726:9f9b:ab0f with SMTP id hd15-20020a170907968f00b007269f9bab0fmr35971875ejc.237.1657044421330;
-        Tue, 05 Jul 2022 11:07:01 -0700 (PDT)
-Received: from kista.localnet (213-161-3-76.dynamic.telemach.net. [213.161.3.76])
-        by smtp.gmail.com with ESMTPSA id n18-20020a05640204d200b00435a08a3557sm23880887edw.27.2022.07.05.11.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 11:07:00 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Roman Stratiienko <r.stratiienko@gmail.com>
-Cc:     Samuel Holland <samuel@sholland.org>,
-        =?ISO-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        mripard@kernel.org, wens@csie.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v3] clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DFS
-Date:   Tue, 05 Jul 2022 20:06:59 +0200
-Message-ID: <2562485.k3LOHGUjKi@kista>
-In-Reply-To: <CAGphcd=O-BQRJwQbUbbFMt29jxHf+KpJWrrm5SmMhumkCBam0Q@mail.gmail.com>
-References: <20220705075226.359475-1-r.stratiienko@gmail.com> <5580615.DvuYhMxLoT@kista> <CAGphcd=O-BQRJwQbUbbFMt29jxHf+KpJWrrm5SmMhumkCBam0Q@mail.gmail.com>
+        with ESMTP id S229502AbiGESeN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 14:34:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAC71ADB5;
+        Tue,  5 Jul 2022 11:34:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 05C0FB818C2;
+        Tue,  5 Jul 2022 18:34:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F60C341D1;
+        Tue,  5 Jul 2022 18:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657046049;
+        bh=kIyot3zMyMDO8B1YVidHQ7qgbvG3Xa6UO0gOQL2C6Jg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JsU79BmfynIReY3T89cOgEH/6tFNiBBDFqKBs8oXNQm6/+g5IkfnSz6lnxKwnFqNS
+         1j47RNad0YhesCc/SIiouNRpyt21tXxp+7UujB4zP8xtmbwRtNJauDkGspmgUyDhgl
+         fn9thf0FJV9aayLYjrKzsPTW4fWtqpM+dZ3RveMpUH7WbnRHfbzb18F0miRMtdvQQg
+         STNIB53IAwMygQuY6izE+2HL9mzZsy2/DnNlSXpayAhlmHiEb92zuAdqA/GH/jWeIU
+         Jv7618fva2U+QU/c6uDzeyF1fZYZvuxpgXK3qTZ+hcZqIl+t9mRe/sRlTrt7BFed4l
+         OpSgj1Sj26zAw==
+Received: by mail-vs1-f49.google.com with SMTP id h7so12788288vsr.11;
+        Tue, 05 Jul 2022 11:34:09 -0700 (PDT)
+X-Gm-Message-State: AJIora9OmprPX2zAR5He1YiIY879nxCd15nKzisOw36K+FdtQEVDd53T
+        u2U/rkYqhJcRMauGSRv2NZ54vf6RdkWSuCmyBQ==
+X-Google-Smtp-Source: AGRyM1uIXQO86wcgJn/AvE4+AWlqrvIba5lSJyE0SPqE7mHdOeHYb1wL3dEnTAICHhhvz3Q4xUajqxFIJ9dC4e0p4xY=
+X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
+ w20-20020a67d194000000b0035708ea5554mr562557vsi.0.1657046048517; Tue, 05 Jul
+ 2022 11:34:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
+ <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
+ <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
+In-Reply-To: <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 5 Jul 2022 12:33:57 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
+Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
+ yaml file
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne torek, 05. julij 2022 ob 18:29:39 CEST je Roman Stratiienko napisal(a):
-> Hi Jernej,
->=20
-> =D0=B2=D1=82, 5 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 19:07, Jernej =C5=
-=A0krabec <jernej.skrabec@gmail.com>:
-> > Hi Roman,
-> >=20
-> > Dne torek, 05. julij 2022 ob 09:52:26 CEST je Roman Stratiienko=20
-napisal(a):
-> > > Using simple bash script it was discovered that not all CCU registers
-> > >=20
-> > > can be safely used for DFS, e.g.:
-> > >     while true
-> > >     do
-> > >    =20
-> > >         devmem 0x3001030 4 0xb0003e02
-> > >         devmem 0x3001030 4 0xb0001e02
-> > >    =20
-> > >     done
-> > >=20
-> > > Script above changes the GPU_PLL multiplier register value. While the
-> > > script is running, the user should interact with the user interface.
-> > >=20
-> > > Using this method the following results were obtained:
-> > > | Register  | Name           | Bits  | Values | Result |
-> > > | --        | --             | --    | --     | --     |
-> > > | 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
-> > > | 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
-> > > | 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
-> > > | 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
-> > >=20
-> > > DVFS started to work seamlessly once dividers which caused the
-> > > glitches were set to fixed values.
-> > >=20
-> > > Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
-> > >=20
-> > > ---
-> > >=20
-> > > Changelog:
-> > >=20
-> > > V2:
-> > > - Drop changes related to mux
-> > > - Drop frequency limiting
-> > > - Add unused dividers initialization
-> > >=20
-> > > V3:
-> > > - Adjust comments
-> >=20
-> > I don't see any comment fixed, at least not to "1", as we discussed. Di=
-d I
-> > miss anything?
->=20
-> I've added the "bits" word, so now it should sound correct.
+On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
+> > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
+> >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
+> >>> From: Abel Vesa <abel.vesa@nxp.com>
+> >>>
+> >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
+> >>> we need to split it between the right subsystems. This patch documents
+> >>> separately the 'iomux/pinctrl' child node of the SCU main node.
+> >>>
+> >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> >>> ---
+> >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
+> >>>  1 file changed, 68 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..76a2e7b28172
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> > [...]
+> >>> +      fsl,pins:
+> >>> +        description:
+> >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
+> >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
+> >>> +          specified using a PIN_FUNC_ID macro, which can be found in
+> >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
+> >>> +          the pad setting value like pull-up on this pin. Please refer to the
+> >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
+> >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> >>
+> >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
+> >
+> > Added them initially, but later dropped because of some logs like
+> > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
+> > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
+> >
+> > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
+> > version.
+> >
+>
+> The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
+> why dtschema complains in some of the entries. It's like one define was
+> not correct... I'll take a look at this later, but anyway keep the same
+> as fsl,imx8mq-pinctrl.yaml even if it complains.
 
-Technically it's correct, but this would be third form of comments for fixe=
-d=20
-bits. Let's stick to the form which is most informative ("Force PLL_GPU out=
-put=20
-divider to 1"). Ideally, comment would also point to gpu_clk comment for=20
-reason why, like it's done for video PLL block already.
+The issue is that 'fsl,pins' is problematic for the new dtb decoding
+because it has a variable definition in terms of matrix bounds as each
+i.MX platform has its own length (typ 5 or 6). The tools try to work
+around it by figuring out which size fits. That works until there are
+multiple answers which seems to be what's happening here.
 
->=20
-> > Also, please add min and max.
->=20
-> What is the rationale for additional limits?
+The easiest solution I think is to just strip the constraints in
+occurances of this property. I'll look into that.
 
-If limits are specified in whatever form, they should be added. As I said=20
-several times already, vendor code limits PLL frequency to 288 MHz minimum =
-and=20
-lists maximum. As experienced a few times before with video PLLs, these are=
-=20
-important, otherwise PLL is unstable. For example, OPP table in vendor DT h=
-as=20
-two operating points lower than 288 MHz, which means it would either lock u=
-p=20
-or be unstable. In such cases, vendor code actually sets GPU_CLK divider to=
- 2,=20
-but we can skip them, because GPU_CLK divider will be hardcoded to 1 with t=
-his=20
-patch.
-
-> CPU_PLL doesn't have these limits. I don't want to make them different.
-
-Why CPU_PLL? Why not video PLL? In any case, it doesn't matter if struct lo=
-oks=20
-similar to some other or is unique. Only important thing is that struct=20
-describes PLL as best as possible.
-
->=20
-> > I also consent to R-B, which you
-> > didn't include.
->=20
-> I was expecting an explicit 'review-by' line. Anyway I can add it and
-> resend v4 if it's necessary.
-
-If you at least add min and max limits, you can add following tag:
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-If you send it before Friday, it will be in 5.20.
-
-Best regards,
-Jernej
-
->=20
-> Regards,
-> Roman
->=20
-> > Did you resend v2 instead of v3?
-> >=20
-> > Best regards,
-> > Jernej
-> >=20
-> > > ---
-> > >=20
-> > >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 16 +++++++++++++---
-> > >  1 file changed, 13 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > > b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c index
-> > > 2ddf0a0da526f..068d1a6b2ebf3
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> > > @@ -95,13 +95,13 @@ static struct ccu_nkmp pll_periph1_clk =3D {
-> > >=20
-> > >       },
-> > > =20
-> > >  };
-> > >=20
-> > > +/* For GPU PLL, using an output divider for DFS causes system to fail
-> > > */
-> > >=20
-> > >  #define SUN50I_H6_PLL_GPU_REG                0x030
-> > >  static struct ccu_nkmp pll_gpu_clk =3D {
-> > > =20
-> > >       .enable         =3D BIT(31),
-> > >       .lock           =3D BIT(28),
-> > >       .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
-> > >       .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider */
-> > >=20
-> > > -     .p              =3D _SUNXI_CCU_DIV(0, 1), /* output divider
-> >=20
-> > */
-> >=20
-> > >       .common         =3D {
-> > >      =20
-> > >               .reg            =3D 0x030,
-> > >               .hw.init        =3D CLK_HW_INIT("pll-gpu", "osc24M",
-> > >=20
-> > > @@ -294,9 +294,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_clk,
-> > > "deinterlace", static SUNXI_CCU_GATE(bus_deinterlace_clk,
-> > > "bus-deinterlace", "psi-ahb1-ahb2", 0x62c, BIT(0), 0);
-> > >=20
-> > > +/* Keep GPU_CLK divider const to avoid DFS instability. */
-> > >=20
-> > >  static const char * const gpu_parents[] =3D { "pll-gpu" };
-> > >=20
-> > > -static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> > > -                                    0, 3,    /* M */
-> > > +static SUNXI_CCU_MUX_WITH_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> > >=20
-> > >                                      24, 1,   /* mux */
-> > >                                      BIT(31), /* gate */
-> > >                                      CLK_SET_RATE_PARENT);
-> > >=20
-> > > @@ -1193,6 +1193,16 @@ static int sun50i_h6_ccu_probe(struct
-> > > platform_device *pdev) if (IS_ERR(reg))
-> > >=20
-> > >               return PTR_ERR(reg);
-> > >=20
-> > > +     /* Force PLL_GPU output divider bits to 0 */
-> > > +     val =3D readl(reg + SUN50I_H6_PLL_GPU_REG);
-> > > +     val &=3D ~BIT(0);
-> > > +     writel(val, reg + SUN50I_H6_PLL_GPU_REG);
-> > > +
-> > > +     /* Force GPU_CLK divider bits to 0 */
-> > > +     val =3D readl(reg + gpu_clk.common.reg);
-> > > +     val &=3D ~GENMASK(3, 0);
-> > > +     writel(val, reg + gpu_clk.common.reg);
-> > > +
-> > >=20
-> > >       /* Enable the lock bits on all PLLs */
-> > >       for (i =3D 0; i < ARRAY_SIZE(pll_regs); i++) {
-> > >      =20
-> > >               val =3D readl(reg + pll_regs[i]);
-> > >=20
-> > > --
-> > > 2.34.1
-
-
+Rob
