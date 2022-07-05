@@ -2,156 +2,254 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4343AC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 10:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAECC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 11:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231450AbiGEKhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:37:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59260 "EHLO
+        id S230030AbiGEL1j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jul 2022 07:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231310AbiGEKhH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 06:37:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC9DEAE47
-        for <linux-clk@vger.kernel.org>; Tue,  5 Jul 2022 03:37:05 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o8fuq-0001LC-19; Tue, 05 Jul 2022 12:36:24 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o8fue-004XxA-J7; Tue, 05 Jul 2022 12:36:16 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o8fuh-0038F6-8t; Tue, 05 Jul 2022 12:36:15 +0200
-Date:   Tue, 5 Jul 2022 12:36:15 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     Wolfram Sang <wsa@kernel.org>, Guenter Roeck <groeck@chromium.org>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
-        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
-Message-ID: <20220705103615.ceeq7rku53x743ps@pengutronix.de>
-References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
- <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
- <20220705120852.049dc235@endymion.delvare>
+        with ESMTP id S229457AbiGEL1j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 07:27:39 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8D915FEC
+        for <linux-clk@vger.kernel.org>; Tue,  5 Jul 2022 04:27:37 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id bx13so14128124ljb.1
+        for <linux-clk@vger.kernel.org>; Tue, 05 Jul 2022 04:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=B+D+YTDarzK7BrEYLxeiU5uQ8xZ8B5qdXL7zv9BsOTY=;
+        b=LOfuMXhYFNPV/ywD9MsSd553vHxEJl2PBELwo5mB5LhCschnWAI2ezvCvitQ8bkGzx
+         5vsWaK0RQBo8lnGITxt24nyx/05yn63MmSKzXwC+/eowWFFi5I2iez7EEfzZmUqBYuIa
+         eQXapcmC/Aqo/NOihcdeTVfXC5Z5CH/FNCm4fKHRARLVPkP6tFSo8jUKAuMeGs0fxoDt
+         frNbMJqOaHb3aDBdFyKEc34XzYGvm3TRA+tcWR9HPeN6VNIA5+vClV2IROTuO1baRlTA
+         Zl2N2AIYPlonBaJhroWIdFTpsLN+HkjAdf0TgCQELMOeWvge8iQZ/yWSaNjwqUuBoR3e
+         q1Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=B+D+YTDarzK7BrEYLxeiU5uQ8xZ8B5qdXL7zv9BsOTY=;
+        b=3cbryHP+ewqDofC5SPLoWGyG07nwoPnOHxGB1p/r0qIKZ1pHqyf5dCoM/Up5xnwQlj
+         /lbsxLSRO6OJnkOXIUCJFWOKxlBVUt0cO4ouZVMXOaKyhVDzHXTkCXeM0UacU5jJKk7t
+         z+0+Sm6hpJLBKC5DjKR216+zq6FQ/uU+lReWXGrdA47pTO1t5v2VzLo4OQmoxAe3h29P
+         rzYtoM5217cVSEKWQaKLkXRDSuPvYkcPfOyJBzpGMU5l/Y3prTBOrdbmhpfTT+vXsXpF
+         umqFhziBnfZN7uhWokQ5F4zHvbb1zUVr5e4IuMQMBgyPfWW3nwetkkoj8qzqc0rmim/Q
+         gw0g==
+X-Gm-Message-State: AJIora9G718aQxNg7gQt7Okxv4Za9SZZxSA+iqiyKIEcC8PXHkTQNPl1
+        mCd5h8idNcj+JFiJZ0ek+SA0Dw==
+X-Google-Smtp-Source: AGRyM1vu8Vw2EJjVeBT8F0+v7efZg+czGWWIjooMsxgutHakiWFeo89UUTf9Su3s3ADYG6PyMZf6dA==
+X-Received: by 2002:a05:651c:19ac:b0:25b:db26:55c3 with SMTP id bx44-20020a05651c19ac00b0025bdb2655c3mr20204329ljb.457.1657020456187;
+        Tue, 05 Jul 2022 04:27:36 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id k26-20020a05651c10ba00b0025a736f5a41sm5525449ljn.9.2022.07.05.04.27.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 04:27:35 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: clock: qcom,mmcc: fix clocks/clock-names definitions
+Date:   Tue,  5 Jul 2022 14:27:33 +0300
+Message-Id: <20220705112734.1323355-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220705112734.1323355-1-dmitry.baryshkov@linaro.org>
+References: <20220705112734.1323355-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gut2agzhpaayxotv"
-Content-Disposition: inline
-In-Reply-To: <20220705120852.049dc235@endymion.delvare>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Rather than defining (incorrect) global clocks and clock-names lists,
+define them per platform using conditionals. Also, while we are at it,
+mark these properties as required for all platforms for which DT files
+contained clocks/clock-names for the MMCC nodes from the beginning (in
+addition to existing MSM8998 this adds MSM8994, SDM630 and SDM660).
 
---gut2agzhpaayxotv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  | 149 ++++++++++++++----
+ 1 file changed, 117 insertions(+), 32 deletions(-)
 
-On Tue, Jul 05, 2022 at 12:08:52PM +0200, Jean Delvare wrote:
-> On Tue, 28 Jun 2022 16:03:12 +0200, Uwe Kleine-K=F6nig wrote:
-> > From: Uwe Kleine-K=F6nig <uwe@kleine-koenig.org>
-> >=20
-> > The value returned by an i2c driver's remove function is mostly ignored.
-> > (Only an error message is printed if the value is non-zero that the
-> > error is ignored.)
-> >=20
-> > So change the prototype of the remove function to return no value. This
-> > way driver authors are not tempted to assume that passing an error to
-> > the upper layer is a good idea. All drivers are adapted accordingly.
-> > There is no intended change of behaviour, all callbacks were prepared to
-> > return 0 before.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
->=20
-> That's a huge change for a relatively small benefit, but if this is
-> approved by the I2C core maintainer then fine with me. For:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index 32e87014bb55..6b831730a914 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -31,30 +31,12 @@ properties:
+       - qcom,mmcc-sdm660
+ 
+   clocks:
+-    items:
+-      - description: Board XO source
+-      - description: Board sleep source
+-      - description: Global PLL 0 clock
+-      - description: DSI phy instance 0 dsi clock
+-      - description: DSI phy instance 0 byte clock
+-      - description: DSI phy instance 1 dsi clock
+-      - description: DSI phy instance 1 byte clock
+-      - description: HDMI phy PLL clock
+-      - description: DisplayPort phy PLL vco clock
+-      - description: DisplayPort phy PLL link clock
++    minItems: 9
++    maxItems: 10
+ 
+   clock-names:
+-    items:
+-      - const: xo
+-      - const: sleep
+-      - const: gpll0
+-      - const: dsi0dsi
+-      - const: dsi0byte
+-      - const: dsi1dsi
+-      - const: dsi1byte
+-      - const: hdmipll
+-      - const: dpvco
+-      - const: dplink
++    minItems: 9
++    maxItems: 10
+ 
+   '#clock-cells':
+     const: 1
+@@ -85,16 +67,119 @@ required:
+ 
+ additionalProperties: false
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        const: qcom,mmcc-msm8998
+-
+-then:
+-  required:
+-    - clocks
+-    - clock-names
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,mmcc-msm8994
++              - qcom,mmcc-msm8998
++              - qcom,mmcc-sdm630
++              - qcom,mmcc-sdm660
++    then:
++      required:
++        - clocks
++        - clock-names
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,mmcc-msm8994
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: Global PLL 0 clock
++            - description: MMSS NoC AHB clock
++            - description: GFX3D clock
++            - description: DSI phy instance 0 dsi clock
++            - description: DSI phy instance 0 byte clock
++            - description: DSI phy instance 1 dsi clock
++            - description: DSI phy instance 1 byte clock
++            - description: HDMI phy PLL clock
++
++        clock-names:
++          items:
++            - const: xo
++            - const: gpll0
++            - const: mmssnoc_ahb
++            - const: oxili_gfx3d_clk_src
++            - const: dsi0pll
++            - const: dsi0pllbyte
++            - const: dsi1pll
++            - const: dsi1pllbyte
++            - const: hdmipll
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,mmcc-msm8998
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: Global PLL 0 clock
++            - description: DSI phy instance 0 dsi clock
++            - description: DSI phy instance 0 byte clock
++            - description: DSI phy instance 1 dsi clock
++            - description: DSI phy instance 1 byte clock
++            - description: HDMI phy PLL clock
++            - description: DisplayPort phy PLL link clock
++            - description: DisplayPort phy PLL vco clock
++            - description: Test clock
++
++        clock-names:
++          items:
++            - const: xo
++            - const: gpll0
++            - const: dsi0dsi
++            - const: dsi0byte
++            - const: dsi1dsi
++            - const: dsi1byte
++            - const: hdmipll
++            - const: dplink
++            - const: dpvco
++            - const: core_bi_pll_test_se
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,mmcc-sdm630
++              - qcom,mmcc-sdm660
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: Board sleep source
++            - description: Global PLL 0 clock
++            - description: Global PLL 0 DIV clock
++            - description: DSI phy instance 0 dsi clock
++            - description: DSI phy instance 0 byte clock
++            - description: DSI phy instance 1 dsi clock
++            - description: DSI phy instance 1 byte clock
++            - description: DisplayPort phy PLL link clock
++            - description: DisplayPort phy PLL vco clock
++
++        clock-names:
++          items:
++            - const: xo
++            - const: sleep_clk
++            - const: gpll0
++            - const: gpll0_div
++            - const: dsi0pll
++            - const: dsi0pllbyte
++            - const: dsi1pll
++            - const: dsi1pllbyte
++            - const: dp_link_2x_clk_divsel_five
++            - const: dp_vco_divided_clk_src_mux
+ 
+ examples:
+   # Example for MMCC for MSM8960:
+-- 
+2.35.1
 
-Agreed, it's huge. The benefit isn't really measureable, the motivation
-is to improve the situation for driver authors who with the change
-cannot make wrong assumptions about what to return in .remove(). During
-the preparation this uncovered a few bugs. See for example
-bbc126ae381cf0a27822c1f822d0aeed74cc40d9.
-
-> >  drivers/hwmon/adc128d818.c                                | 4 +---
-> >  drivers/hwmon/adt7470.c                                   | 3 +--
-> >  drivers/hwmon/asb100.c                                    | 6 ++----
-> >  drivers/hwmon/asc7621.c                                   | 4 +---
-> >  drivers/hwmon/dme1737.c                                   | 4 +---
-> >  drivers/hwmon/f75375s.c                                   | 5 ++---
-> >  drivers/hwmon/fschmd.c                                    | 6 ++----
-> >  drivers/hwmon/ftsteutates.c                               | 3 +--
-> >  drivers/hwmon/ina209.c                                    | 4 +---
-> >  drivers/hwmon/ina3221.c                                   | 4 +---
-> >  drivers/hwmon/jc42.c                                      | 3 +--
-> >  drivers/hwmon/mcp3021.c                                   | 4 +---
-> >  drivers/hwmon/occ/p8_i2c.c                                | 4 +---
-> >  drivers/hwmon/pcf8591.c                                   | 3 +--
-> >  drivers/hwmon/smm665.c                                    | 3 +--
-> >  drivers/hwmon/tps23861.c                                  | 4 +---
-> >  drivers/hwmon/w83781d.c                                   | 4 +---
-> >  drivers/hwmon/w83791d.c                                   | 6 ++----
-> >  drivers/hwmon/w83792d.c                                   | 6 ++----
-> >  drivers/hwmon/w83793.c                                    | 6 ++----
-> >  drivers/hwmon/w83795.c                                    | 4 +---
-> >  drivers/hwmon/w83l785ts.c                                 | 6 ++----
-> >  drivers/i2c/i2c-core-base.c                               | 6 +-----
-> >  drivers/i2c/i2c-slave-eeprom.c                            | 4 +---
-> >  drivers/i2c/i2c-slave-testunit.c                          | 3 +--
-> >  drivers/i2c/i2c-smbus.c                                   | 3 +--
-> >  drivers/i2c/muxes/i2c-mux-ltc4306.c                       | 4 +---
-> >  drivers/i2c/muxes/i2c-mux-pca9541.c                       | 3 +--
-> >  drivers/i2c/muxes/i2c-mux-pca954x.c                       | 3 +--
->=20
-> Reviewed-by: Jean Delvare <jdelvare@suse.de>
-
-Thanks
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---gut2agzhpaayxotv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmLEFBwACgkQwfwUeK3K
-7AkavggAgLmynakXX/rOF4Jwy2OuBXH29kecKqPd6xj4yHsu3ggy8kd/hlU4jJib
-vV0H9ioq69hhMqjme5AHJJsueLFi/t/iwuQwuWUKluCBBlx0RXBsVx8qxV7A0uWa
-mdKU3ApPaN7y0cS1jccdN7ydsL3H2ayzIwfQuNqx1G3P/uqXfkusV0fjwQ/rQct3
-qs4t2/QiHUd0tStlGw2eSKxp1z5KRrDMstK17fiZSsw/SYoMyldV8Ame6+gaxx0X
-e93FqM5jj67ovjD3jJanfOwI5vesu4+szu4GK6vHRWvpsieHsSeyS+GNgfM5oLA7
-iguZ0rauzy0je3hrHuKgp1maJ59ibQ==
-=fYiS
------END PGP SIGNATURE-----
-
---gut2agzhpaayxotv--
