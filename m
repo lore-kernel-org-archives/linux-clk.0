@@ -2,155 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA64C43334
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 18:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19321C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Jul 2022 19:10:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbiGESeO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Jul 2022 14:34:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
+        id S231414AbiGETKW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Jul 2022 15:10:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbiGESeN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 14:34:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAC71ADB5;
-        Tue,  5 Jul 2022 11:34:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 05C0FB818C2;
-        Tue,  5 Jul 2022 18:34:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F60C341D1;
-        Tue,  5 Jul 2022 18:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657046049;
-        bh=kIyot3zMyMDO8B1YVidHQ7qgbvG3Xa6UO0gOQL2C6Jg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JsU79BmfynIReY3T89cOgEH/6tFNiBBDFqKBs8oXNQm6/+g5IkfnSz6lnxKwnFqNS
-         1j47RNad0YhesCc/SIiouNRpyt21tXxp+7UujB4zP8xtmbwRtNJauDkGspmgUyDhgl
-         fn9thf0FJV9aayLYjrKzsPTW4fWtqpM+dZ3RveMpUH7WbnRHfbzb18F0miRMtdvQQg
-         STNIB53IAwMygQuY6izE+2HL9mzZsy2/DnNlSXpayAhlmHiEb92zuAdqA/GH/jWeIU
-         Jv7618fva2U+QU/c6uDzeyF1fZYZvuxpgXK3qTZ+hcZqIl+t9mRe/sRlTrt7BFed4l
-         OpSgj1Sj26zAw==
-Received: by mail-vs1-f49.google.com with SMTP id h7so12788288vsr.11;
-        Tue, 05 Jul 2022 11:34:09 -0700 (PDT)
-X-Gm-Message-State: AJIora9OmprPX2zAR5He1YiIY879nxCd15nKzisOw36K+FdtQEVDd53T
-        u2U/rkYqhJcRMauGSRv2NZ54vf6RdkWSuCmyBQ==
-X-Google-Smtp-Source: AGRyM1uIXQO86wcgJn/AvE4+AWlqrvIba5lSJyE0SPqE7mHdOeHYb1wL3dEnTAICHhhvz3Q4xUajqxFIJ9dC4e0p4xY=
-X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
- w20-20020a67d194000000b0035708ea5554mr562557vsi.0.1657046048517; Tue, 05 Jul
- 2022 11:34:08 -0700 (PDT)
+        with ESMTP id S229701AbiGETKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jul 2022 15:10:21 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC2515FE8;
+        Tue,  5 Jul 2022 12:10:20 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id x10so9162484edd.13;
+        Tue, 05 Jul 2022 12:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tU6uMaYficFOXva4xeM/4aLqe2TPDWlHeWmOttB+92A=;
+        b=jH3qhLlqZb0nc/oq4t7EFoPKLxaQPgi3X0JqKTDlAjwn3T5TJ26rnfltAMc2ai4vOa
+         Oc+9XlpVdSmNCvL83QtNo3Js/+/4Rh1L7YWBDIjD0YgotPzQJO3mrQ2yewlqP6VrlLvN
+         2o3C7M2infcYeHzXPW1msEvIgr0K44gwIFbfuMz25H1AwbUPRuRDVObHzVTpj93LHpxb
+         glD75OphKTHLLjZ1nbjcBV5GG8DQSMuRSp/R/X2fOTSeeMMY0bciikGcZyQMp4L5txUN
+         9pKVra1XGMiVEAiuJTjW2Ls2PbubVaN6lJpue+UyLtC9f3J/3GiowivW94KF5XMlnX7d
+         1wCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tU6uMaYficFOXva4xeM/4aLqe2TPDWlHeWmOttB+92A=;
+        b=lHhjYzDvtMLf0vOS/Ly67Ja+mtHUQfD2vpsofpzYrcjGtbLWZl5qW5haQP0CIxQ8RE
+         6P0ZqtRHjSn6U94RKr85f2trv+OtVSBJVeTSWZNW/30zu/1be+bcmoJLxWTPTiUejO6b
+         /HdQllTLwUSxFzyQTC6uQz9U2abgqTHrwlsP0sG6gMNwac7uqW3ar3kq+w3CC8e0mugZ
+         nXiMG9WEpdmM6XsFfKF/Dw5wNp49WYW/z1xVQWcNopuCb/JuQzEVGNLGqk2fVtVdzKV8
+         I45UcSnhpoPbd+Q8/AX9zjRld+qQr4fUYrWt9lMQkINE9Zhpzy4wD4z1lxZWfZN3hms2
+         RPsw==
+X-Gm-Message-State: AJIora8/uTqLLz+Y50HLlOp5PIxYKBp+kiCWiHBpnyLfk5RwE0rIGCHg
+        0upMpOvZd6vLD324AdhB7pk=
+X-Google-Smtp-Source: AGRyM1sZ6h91jZ7h6i52CKxzTxQaFPpz5nmhxai745SiA89Dr8J4qYwX2yadkEkyq1GhxPdx8u3oGw==
+X-Received: by 2002:aa7:c45a:0:b0:435:d7a4:99bc with SMTP id n26-20020aa7c45a000000b00435d7a499bcmr48299777edr.158.1657048219306;
+        Tue, 05 Jul 2022 12:10:19 -0700 (PDT)
+Received: from fedora.robimarko.hr (dh207-99-13.xnet.hr. [88.207.99.13])
+        by smtp.googlemail.com with ESMTPSA id es25-20020a056402381900b0043a6b86f024sm4519342edb.67.2022.07.05.12.10.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 12:10:18 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH v5 1/3] clk: qcom: clk-alpha-pll: add support for APSS PLL
+Date:   Tue,  5 Jul 2022 21:10:15 +0200
+Message-Id: <20220705191017.1683716-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
- <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
- <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
-In-Reply-To: <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 5 Jul 2022 12:33:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
- yaml file
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
-> > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
-> >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
-> >>> From: Abel Vesa <abel.vesa@nxp.com>
-> >>>
-> >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> >>> we need to split it between the right subsystems. This patch documents
-> >>> separately the 'iomux/pinctrl' child node of the SCU main node.
-> >>>
-> >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> >>> ---
-> >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
-> >>>  1 file changed, 68 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..76a2e7b28172
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > [...]
-> >>> +      fsl,pins:
-> >>> +        description:
-> >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
-> >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
-> >>> +          specified using a PIN_FUNC_ID macro, which can be found in
-> >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
-> >>> +          the pad setting value like pull-up on this pin. Please refer to the
-> >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
-> >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> >>
-> >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
-> >
-> > Added them initially, but later dropped because of some logs like
-> > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
-> > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
-> >
-> > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
-> > version.
-> >
->
-> The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
-> why dtschema complains in some of the entries. It's like one define was
-> not correct... I'll take a look at this later, but anyway keep the same
-> as fsl,imx8mq-pinctrl.yaml even if it complains.
+APSS PLL type will be used by the IPQ8074 APSS driver for providing the
+CPU core clocks and enabling CPU Frequency scaling.
 
-The issue is that 'fsl,pins' is problematic for the new dtb decoding
-because it has a variable definition in terms of matrix bounds as each
-i.MX platform has its own length (typ 5 or 6). The tools try to work
-around it by figuring out which size fits. That works until there are
-multiple answers which seems to be what's happening here.
+This is ported from the downstream 5.4 kernel.
 
-The easiest solution I think is to just strip the constraints in
-occurances of this property. I'll look into that.
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  1 +
+ 2 files changed, 13 insertions(+)
 
-Rob
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 4406cf609aae..8270363ff98e 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -154,6 +154,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x30,
+ 		[PLL_OFF_TEST_CTL_U1] = 0x34,
+ 	},
++	[CLK_ALPHA_PLL_TYPE_APSS] = {
++		[PLL_OFF_L_VAL] = 0x08,
++		[PLL_OFF_ALPHA_VAL] = 0x10,
++		[PLL_OFF_ALPHA_VAL_U] = 0xff,
++		[PLL_OFF_USER_CTL] = 0x18,
++		[PLL_OFF_USER_CTL_U] = 0xff,
++		[PLL_OFF_CONFIG_CTL] = 0x20,
++		[PLL_OFF_CONFIG_CTL_U] = 0x24,
++		[PLL_OFF_TEST_CTL] = 0x30,
++		[PLL_OFF_TEST_CTL_U] = 0x34,
++		[PLL_OFF_STATUS] = 0x28,
++	},
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 6e9907deaf30..626fdf80336d 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -18,6 +18,7 @@ enum {
+ 	CLK_ALPHA_PLL_TYPE_AGERA,
+ 	CLK_ALPHA_PLL_TYPE_ZONDA,
+ 	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
++	CLK_ALPHA_PLL_TYPE_APSS,
+ 	CLK_ALPHA_PLL_TYPE_MAX,
+ };
+ 
+-- 
+2.36.1
+
