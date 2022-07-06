@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F49CCA473
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC11CCA47F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233147AbiGFNmi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 09:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41212 "EHLO
+        id S233235AbiGFNmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 09:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233178AbiGFNmN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:42:13 -0400
+        with ESMTP id S233617AbiGFNmW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:42:22 -0400
 Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 202F124BF7;
-        Wed,  6 Jul 2022 06:42:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9514425E85;
+        Wed,  6 Jul 2022 06:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8rIjimqdmCUI9rgkVxA2Hl6BTZOM8CKrigt1SZTnDjQ=; b=E065JyYQ/CJdE9RjPHMIJMDVra
-        q/GTxdK990NqKp2Xkk/EepWz9P+fJXA218ZWL7fO/mwMnYY2wnlExLVxUmfgcywOqwoJg+r7D5I05
-        zTj8PpmqCdFa7ZhRR9SWnScPFItbBeQZwbnu9tx0RQ18g/7rnGqCPJTHcjGaFSFDzuRJey16YDWC/
-        QMReat794tf5GlcUyHn6DpXdoCn/HDFpLXFDLF249h/1Bf9vJUMOs/OS3Vy4hT9vmbyz+/CsNP7ZP
-        MFw3X48HC5kt3rx29eMjPIzOpFY8RTjaVAjn2mO63H/gpMjwtfn1VnHddHBa7RwG8dsgRZM0Ph5Lk
-        R9WvwaFw==;
+        bh=utAtQv4SqbiUynayumHMkkGjOVv7dPJdD+8PTBd8DII=; b=ZzNg/eMhPxg1FEQAwGadfaOjs/
+        KNQtsm1KCXYdNudxnncj9xz0RjGOGktD9Q0ZOQhVdrC/gVnQPIfzmhGPnCQCTLHKX0MDpfpUjjKsI
+        TbsGyliDvmZVqasZx95fIDajYiuFSm+Ja/4SlVFTkiUdpEBAijE6sSAyJxjcUKSS1gVsP3ReebxDy
+        6ZgTG/ahN72qQ2qsOIFtQpUlENgDfYqMYvtOakaf7p/pB2LAdBJCNaMm1ZYvt0q0pujVZlA9FHJ86
+        dmGmiOHRPpTLShObqgxtBCh18Eo43yM7WIY8w/A4n/M/2i1Q8LXVj691ZOcFVExH6zM2FsoQVFc5J
+        I/S42NAQ==;
 Received: from [10.22.3.24] (helo=kernkonzept.com)
         by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1o95I4-007M5K-VB; Wed, 06 Jul 2022 15:42:04 +0200
+        id 1o95I9-007M5K-8y; Wed, 06 Jul 2022 15:42:09 +0200
 From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -42,10 +42,11 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Dominik Kobinski <dominikkobinski314@gmail.com>,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Subject: [PATCH v2 3/6] clk: qcom: reset: Allow specifying custom reset delay
-Date:   Wed,  6 Jul 2022 15:41:29 +0200
-Message-Id: <20220706134132.3623415-4-stephan.gerhold@kernkonzept.com>
+        Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 5/6] dt-bindings: clock: qcom,rpmcc: Add MSM8909
+Date:   Wed,  6 Jul 2022 15:41:31 +0200
+Message-Id: <20220706134132.3623415-6-stephan.gerhold@kernkonzept.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
 References: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
@@ -55,61 +56,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The amount of time required between asserting and deasserting the reset
-signal can vary depending on the involved hardware component. Sometimes
-1 us might not be enough and a larger delay is necessary to conform to
-the specifications.
-
-Usually this is worked around in the consuming drivers, by replacing
-reset_control_reset() with a sequence of reset_control_assert(), waiting
-for a custom delay, followed by reset_control_deassert().
-
-However, in some cases the driver making use of the reset is generic and
-can be used with different reset controllers. In this case the reset
-time requirement is better handled directly by the reset controller
-driver.
-
-Make this possible by adding an "udelay" field to the qcom_reset_map
-that allows setting a different reset delay (in microseconds).
+Document the "qcom,rpmcc-msm8909" compatible for the clocks available
+via the RPM on the MSM8909 SoC.
 
 Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-See the next patch for a real example with the USB PHY on MSM8909.
-
-Changes in v2: None.
+Changes in v2: Add Krzysztof's Acked-by
 ---
- drivers/clk/qcom/reset.c | 4 +++-
- drivers/clk/qcom/reset.h | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/reset.c b/drivers/clk/qcom/reset.c
-index 819d194be8f7..2a16adb572d2 100644
---- a/drivers/clk/qcom/reset.c
-+++ b/drivers/clk/qcom/reset.c
-@@ -13,8 +13,10 @@
- 
- static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
- {
-+	struct qcom_reset_controller *rst = to_qcom_reset_controller(rcdev);
-+
- 	rcdev->ops->assert(rcdev, id);
--	udelay(1);
-+	udelay(rst->reset_map[id].udelay ?: 1); /* use 1 us as default */
- 	rcdev->ops->deassert(rcdev, id);
- 	return 0;
- }
-diff --git a/drivers/clk/qcom/reset.h b/drivers/clk/qcom/reset.h
-index 2a08b5e282c7..b8c113582072 100644
---- a/drivers/clk/qcom/reset.h
-+++ b/drivers/clk/qcom/reset.h
-@@ -11,6 +11,7 @@
- struct qcom_reset_map {
- 	unsigned int reg;
- 	u8 bit;
-+	u8 udelay;
- };
- 
- struct regmap;
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+index 9d296b89a8d0..8bbb370198dc 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+@@ -29,6 +29,7 @@ properties:
+           - qcom,rpmcc-mdm9607
+           - qcom,rpmcc-msm8226
+           - qcom,rpmcc-msm8660
++          - qcom,rpmcc-msm8909
+           - qcom,rpmcc-msm8916
+           - qcom,rpmcc-msm8936
+           - qcom,rpmcc-msm8953
 -- 
 2.30.2
 
