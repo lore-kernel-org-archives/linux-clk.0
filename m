@@ -2,148 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB9E4C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707CDCCA473
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:32:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232417AbiGFJQp convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60250 "EHLO
+        id S229898AbiGFJcN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:32:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbiGFJQo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:16:44 -0400
+        with ESMTP id S230418AbiGFJcN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:32:13 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B541B5
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:16:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0D91FCDA
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:32:12 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1o919C-0003MH-IH; Wed, 06 Jul 2022 11:16:38 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o91Nj-0005lo-Ss; Wed, 06 Jul 2022 11:31:39 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1o9195-004jQf-K4; Wed, 06 Jul 2022 11:16:35 +0200
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1o9198-0003QN-9M; Wed, 06 Jul 2022 11:16:34 +0200
-Message-ID: <f28de0c61c06396e36756f2d4f3379fab26abdbf.camel@pengutronix.de>
-Subject: Re: [PATCH RESEND v5 6/8] clk: baikal-t1: Move reset-controls code
- into a dedicated module
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 06 Jul 2022 11:16:34 +0200
-In-Reply-To: <20220705220757.dwzmrx34t2nsxfzl@mobilestation>
-References: <20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru>
-         <20220624141853.7417-7-Sergey.Semin@baikalelectronics.ru>
-         <e0869ae1b10ec19eaf87dc5fa53498f82e7deaac.camel@pengutronix.de>
-         <20220705220757.dwzmrx34t2nsxfzl@mobilestation>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o91Na-004jSK-Sg; Wed, 06 Jul 2022 11:31:34 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1o91Nd-003KbY-Gm; Wed, 06 Jul 2022 11:31:33 +0200
+Date:   Wed, 6 Jul 2022 11:31:30 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
+        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <20220706093130.cet7y7upl76rp6ug@pengutronix.de>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+ <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+ <20220706091315.p5k2jck3rmyjhvqw@skbuf>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yp3ilhvx53xygi7l"
+Content-Disposition: inline
+In-Reply-To: <20220706091315.p5k2jck3rmyjhvqw@skbuf>
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Serge,
 
-On Mi, 2022-07-06 at 01:07 +0300, Serge Semin wrote:
-[...]
-> > What is the reason for separating ccu-rst.c and clk-ccu-rst.c?
-> > 
-> > I expect implementing the reset ops and registering the reset
-> > controller in the same compilation unit would be easier.
-> 
-> From the very beginning of the Baikal-T1 driver live the Clock/Reset functionality
-> has been split up into two parts:
-> 1. ccu-{div,pll}.c - Clock/Reset operations implementation.
-> 2. clk-ccu-{div,pll}.c - Clock/Reset kernel interface implementation.
-> At least for the clk-part it has made the driver much easier to read.
-> Code in 1. provides the interface methods like
-> ccu_{div,pll}_hw_register() to register a clock provider corresponding
-> to the CCU divider/PLL of the particular type. Code in 2. uses these
-> methods to create the CCU Dividers/PLL clock descriptors and register
-> the of-based clocks in the system. The reset functionality was
-> redistributed in the same manner in the framework of the ccu-div.c and
-> clk-ccu-div.c modules.
-> 
-> A similar approach I was trying to utilize in the framework of the
-> separate CCU Resets implementation. Although it turned out to be not as
-> handy as it was for the clock-part due to the different clock and
-> reset subsystems API (clock subsystem provides a single clock
-> source based API, while the reset subsystem expects to have the whole
-> resets controller described). Anyway I've decided to preserve as much
-> similarities as possible for the sake of the code unification and
-> better readability/maintainability. Thus the reset lines control
-> methods have been placed in the ccu-rst.c object file, while the reset
-> control registration has been implemented in the clk-ccu-rst.c module.
+--yp3ilhvx53xygi7l
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for the detailed explanation. I think that splitting doesn't
-help readability much in this case, but I realize that may just be a
-matter of preference.
+On Wed, Jul 06, 2022 at 12:13:15PM +0300, Vladimir Oltean wrote:
+> On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-K=F6nig wrote:
+> > From: Uwe Kleine-K=F6nig <uwe@kleine-koenig.org>
+> >=20
+> > The value returned by an i2c driver's remove function is mostly ignored.
+> > (Only an error message is printed if the value is non-zero that the
+> > error is ignored.)
+> >=20
+> > So change the prototype of the remove function to return no value. This
+> > way driver authors are not tempted to assume that passing an error to
+> > the upper layer is a good idea. All drivers are adapted accordingly.
+> > There is no intended change of behaviour, all callbacks were prepared to
+> > return 0 before.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> > ---
+>=20
+> Assuming you remove the spurious kasan change:
 
-[...]
-> > I don't think this is necessary, see my comments below. Since the reset
-> > ids are contiguous, just setting nr_resets and using the default
-> > .of_xlate should be enough to make sure this is never called with an
-> > invalid id.
-> 
-> Using non-contiguous !Clock! IDs turned to be unexpectedly handy. Due to
-> that design I was able to add the internal clock providers hidden from
-> the DTS users but still visible in the clocks hierarchy. It has made the
-> clocks implementation as detailed as possible and protected from the
-> improper clocks usage. It also simplified a new clock providers adding
-> in future (though there won't be clock sources left undefined in the
-> SoC after this patchset is applied).
-> 
-> All of that made me thinking that the same approach can be useful in
-> the framework of the CCU reset controls implementation too at the very
-> least for the code unification. Although after the next patch in the
-> series is applied there won't be resets left undefined in the
-> Baikal-T1 SoC. So from another side you might be partly right on
-> suggesting to drop the independent reset IDs/descriptors design and
-> just assume the IDs contiguousness.
-> 
-> So could you please confirm that you still insists on dropping it?
+It's already gone in my tree, see
+https://git.pengutronix.de/cgit/ukl/linux/commit/?h=3Di2c-remove-void
 
-Please drop it, then. I don't think there is value in carrying this
-complexity just because it makes the code more similar to the
-neighboring clk code.
+> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 
-I'd prefer to keep the reset ids contiguous, so future hardware should
-just get a different set of contiguous IDs, or new IDs appended
-contiguously as you do in patch 7.
+Thanks
+Uwe
 
-[...]
-> > 
-> > 
-> > 
-> > I would fold this into ccu_rst_hw_unregister().
-> 
-> I disagree in this part. Splitting up the interface methods in a set
-> of the small coherent methods like protagonists and respective
-> antagonists makes the code much easier to read and maintain. So I
-> will insist on having the ccu_rst_free_data() method even if it is
-> left with only a single kfree() function invocation.
-[...]
-> I have to disagree for the same reason as I would preserve the
-> ccu_rst_free_data() method here. Please see my comment above.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-I'm fine with that.
+--yp3ilhvx53xygi7l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-regards
-Philipp
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmLFVmcACgkQwfwUeK3K
+7AkOwAgAkt7aZ38n1lpOoBzXslSDQyp/lKc47Ehs+a1LTESfOP6+4frSHSJhaIMw
+WX2bIAZO2kfHd2GJJ1+miP0YO3eys+YJus7vlVp9LsZCtTrR7uUlJ9PhG4eVmYxD
+ZPZMbP533Mkp9Tj201PJRSbnOlhRhKnwpl4kQfj9nXD478yP1zbT/7CDh4Im1isE
+dOUnNdPTAnT17u0fIRREu6TIC/hKy5Lh772ukCBsHwkBWQD4WTtLmdL1uZrspPa3
+fKxI4tIGoKufFCNMNNzK8li/dghhpkn4uy8iNwyjkkmjfCXAkNdwNJiCDlo6qPwb
+idJ3DvpJEEx44L8KdcjzBYUHdSNUkQ==
+=ZnQL
+-----END PGP SIGNATURE-----
+
+--yp3ilhvx53xygi7l--
