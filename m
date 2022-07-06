@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92692C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 20:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E7BCCA47C
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 20:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233533AbiGFUkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 16:40:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
+        id S234102AbiGFUp3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 16:45:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233173AbiGFUkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 16:40:42 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EC024F21
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 13:40:41 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id t26-20020a9d775a000000b006168f7563daso12622855otl.2
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 13:40:41 -0700 (PDT)
+        with ESMTP id S234330AbiGFUp1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 16:45:27 -0400
+Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BDF128E1B
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 13:45:25 -0700 (PDT)
+Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-10bec750eedso15153339fac.8
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 13:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=jbu+Xolfw/UCGkWoc/N/K4GT7EYnQrpnk3gnXwJ0aDs=;
-        b=uE2rBU+ye6xoSUBC+1Xj831S1uRcJlkgDR1ThqSVS8k4uhsyh1wya8Knai7vTdCsWL
-         PLikT8TA1iuktX4z2LVa7ZNxSl/w58LNiisUyWC5ablf02Da3u+8shynD+jgifvnBh/l
-         7RwB3vHs+rJBYgJt5HMaP47DYx5Ygz8BPqVNc7WT7X9udadKvW7f3vaGijyBjm3Py2Bb
-         ygvPfb0HgfcRYGspJ7wyjgdXocbC4KccCtqf09ROP8FONKSz+5DifoMmXYOHNz8wsmSD
-         Wc1S1IzxbsWaFUEDXWJN5i+1Ctago0S+V1ZXtPjOyUECAeivezpBp+GMBUK2Zag0PJBf
-         kOJg==
+        bh=YBriQrz91n0MgoyO0KTx3Kgs6h8dLEjEgXb98Yv9zJA=;
+        b=yioiZGV+ZVSvNLZdS1kwOHSEiyd4A4bK8QAwtQ5ouYhdsJ0lv9f9kc6Y+ZBI5Azaem
+         y7i56NAGmagDSFWbEGhE9YKwMfLLoo7diuG0tIfu4Mn/3CjHsS7LYNuU8pwkKpHYXnc+
+         Xiju0RL7OxOMgxopmZppJIdqRw8IKsc7Gg6qrS0rUZi6Ln75/aiJXCIeaU6D+Jt3tzTh
+         Cc/93gY0PgqOu8dUYJQT81YiNq/4QTA6oXd37vxaDlrcqOYJPRFrzjX1SnBWIQhYo4Yd
+         tuSr9eS/nhyUyTgV2REY++QF3puIhF73T+mbiNCMpJZ/mffv1hvPnjjLrbB1QeaU20nS
+         1J3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=jbu+Xolfw/UCGkWoc/N/K4GT7EYnQrpnk3gnXwJ0aDs=;
-        b=RLL66QwG4WlEVuZTglOdoAES+vywbbYE2Qebd87R9CNm8izfzbeILXTeoc6MpAWl9r
-         yymH1n1mlrrjXPOjl+JSxekLEtAJvO5yxSEhnBfnQYOrdPSaWjRArNAwdivqeTlnvpHD
-         Iq4SzSaQ9+QzpF6cLfjlftptESlljgQIDBKi+CrgbgAmJ2k4/JMEj97R/jvi2EXdudpE
-         DQDiUv+OkQSxHGUuN4v49cCscAvz2vCPS4foFwmY5UTESKUvC3y/RZeGVVz3ZnSQ4wHv
-         YpGR4KjlD3cZWFpK+EXdXPJb3pSd2PWwwx3ufI3HHY4P+GcxxQzXo2j5g56usYB623dD
-         qw5A==
-X-Gm-Message-State: AJIora8oxOImKm/HfaV29tivZL2pbXh5Qmkcxv8rWKRLFOGaUFV8AStt
-        4/qNa9TB/oTIy6S1npAj49pC6Q==
-X-Google-Smtp-Source: AGRyM1sNeHBBsJB/+2f9iqPz+44tu1Q+eJXIEssGpbPlgYCnk0Shf1qjLZP2HH2kuWCo6jiaotot+g==
-X-Received: by 2002:a9d:7154:0:b0:618:d838:3a07 with SMTP id y20-20020a9d7154000000b00618d8383a07mr12799746otj.158.1657140041071;
-        Wed, 06 Jul 2022 13:40:41 -0700 (PDT)
+        bh=YBriQrz91n0MgoyO0KTx3Kgs6h8dLEjEgXb98Yv9zJA=;
+        b=TmLEFynSMx8EHg3tptdUSrbBQXfdGzBDFX4LFw9aDyjMVYsCvagy6KLChAqo4nFav6
+         J/clZcaL2p5/XnxkSmOv5B80Jv4A5OJj76m3P20mKwDaM8C376MtsBOp/5Vd91dDPNer
+         n8Y/3Mwa2e3ln2cVRtkvt/fFqBHz/hbVJYLljOti8LR1x426MY5joAnhB8DpADI0DOp+
+         VKqjJ3P7bEk8vA9i012tovnXTIEJy8ifAB9o6ADWSDF5L//oG6f42w/DtBP9kh3MV2Xn
+         DdGBoW9sd+z/fN4suWRrRpXIbFnobWPNV3KjjOF3+nb/CXfvqVvGU4RGdbkmawDcuqTn
+         ugLQ==
+X-Gm-Message-State: AJIora+c6OM5D6Bv+XtV+ypYV00s2f/erTyC+T5XVMKIMz1WVi8LxUpk
+        0uTjj0L47iMdS+tuOJblykojXQ==
+X-Google-Smtp-Source: AGRyM1vaciXsz9nBjLjWuFNLPsfamx0NtDp9xdeLPh/Pz9Rv4uQ7ZzXtd2FrFkZ7utztWilG2R9i5g==
+X-Received: by 2002:a05:6870:829e:b0:10c:240b:cbb9 with SMTP id q30-20020a056870829e00b0010c240bcbb9mr335659oae.115.1657140323479;
+        Wed, 06 Jul 2022 13:45:23 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id f21-20020a056830309500b00616a2aa298asm16415803ots.75.2022.07.06.13.40.40
+        by smtp.gmail.com with ESMTPSA id r187-20020a4a4ec4000000b0041ba304546csm16855885ooa.1.2022.07.06.13.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 13:40:40 -0700 (PDT)
-Date:   Wed, 6 Jul 2022 15:40:38 -0500
+        Wed, 06 Jul 2022 13:45:22 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 15:45:21 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
@@ -57,92 +57,192 @@ Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
         Taniya Das <quic_tdas@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] clk: qcom: Add support for Display Clock
- Controller on SM8450
-Message-ID: <YsXzRhcAKgsVts9M@builder.lan>
+Subject: Re: [PATCH v1 1/4] dt-bindings: clock: qcom: add bindings for dispcc
+ on SM8450
+Message-ID: <YsX0YdV40Zp55wz8@builder.lan>
 References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
- <20220623114737.247703-3-dmitry.baryshkov@linaro.org>
+ <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220623114737.247703-3-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu 23 Jun 06:47 CDT 2022, Dmitry Baryshkov wrote:
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index bc4dcf356d82..f409b891fce4 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -635,6 +635,15 @@ config SM_DISPCC_6350
->  	  Say Y if you want to support display devices and functionality such as
->  	  splash screen.
->  
-> +config SM_DISPCC_8450
-> +	tristate "SM8450 Display Clock Controller"
-> +	depends on SM_GCC_8450
-> +	help
-> +	  Support for the display clock controller on Qualcomm Technologies, Inc
-> +	  SM8250 devices.
 
-s/2/4/
-
-> +	  Say Y if you want to support display devices and functionality such as
-> +	  splash screen.
+> Add device tree bindings for the display clock controller on Qualcomm
+> SM8450 platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/clock/qcom,dispcc-sm8450.yaml    | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+> new file mode 100644
+> index 000000000000..953d20a25cfb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+> @@ -0,0 +1,132 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8450.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-[..]
-> diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-[..]
-> +static struct clk_alpha_pll disp_cc_pll0 = {
-> +	.offset = 0x0,
-> +	.vco_table = lucid_evo_vco,
-> +	.num_vco = ARRAY_SIZE(lucid_evo_vco),
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
-> +	.clkr = {
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "disp_cc_pll0",
-> +			.parent_data = &(const struct clk_parent_data){
-> +				.fw_name = "bi_tcxo",
-
-Can we please have this transitioned to using .index as in the other new
-clock drivers?
-
-Also, you have a bi_tcxo clk_parent_data below, how about using that?
-
-And lastly, could I please have a space inbetween ) and {?
-
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_reset_lucid_evo_ops,
-> +		},
-> +	},
-> +};
+> +title: Qualcomm Display Clock & Reset Controller Binding for SM8450
 > +
-[..]
-> +static int __init disp_cc_sm8450_init(void)
-> +{
-> +	return platform_driver_register(&disp_cc_sm8450_driver);
-> +}
-> +subsys_initcall(disp_cc_sm8450_init);
+> +maintainers:
+> +  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > +
-> +static void __exit disp_cc_sm8450_exit(void)
-> +{
-> +	platform_driver_unregister(&disp_cc_sm8450_driver);
-> +}
-> +module_exit(disp_cc_sm8450_exit);
+> +description: |
+> +  Qualcomm display clock control module which supports the clocks, resets and
+> +  power domains on SM8450.
+> +
+> +  See also:
+> +    dt-bindings/clock/qcom,dispcc-sm8450.h
 
-You should be able to module_platform_driver() this instead.
+Please prefix this with include/
 
 > +
-> +MODULE_DESCRIPTION("QTI DISP_CC WAIPIO Driver");
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm8450-dispcc
+> +
+> +  clocks:
+> +    items:
 
-While not secret, please update this to use SM8450 and perhaps a more
-human readable form?
+I really think we should include a reference to GCC_DISP_AHB_CLK here.
 
-> +MODULE_LICENSE("GPL v2");
+There are two cases here, either the implementation does what we do in
+Linux and just always-on the clock from gcc, in which case there's
+nothing in here to ensure probe order and that the clock is actually on
+before dispcc probes.
 
-Please change this to MODULE_LICENSE("GPL")
+The other case would be that the implementation doesn't always-on the
+gcc clock, in which case we need the reference.
 
-Regards,
+> +      - description: Board XO source
+> +      - description: Board Always On XO source
+> +      - description: Byte clock from DSI PHY0
+> +      - description: Pixel clock from DSI PHY0
+> +      - description: Byte clock from DSI PHY1
+> +      - description: Pixel clock from DSI PHY1
+> +      - description: Link clock from DP PHY0
+> +      - description: VCO DIV clock from DP PHY0
+> +      - description: Link clock from DP PHY1
+> +      - description: VCO DIV clock from DP PHY1
+> +      - description: Link clock from DP PHY2
+> +      - description: VCO DIV clock from DP PHY2
+> +      - description: Link clock from DP PHY3
+> +      - description: VCO DIV clock from DP PHY3
+> +      - description: sleep clock
+> +
+> +  clock-names:
+
+Please switch the implementation to index-based lookup and drop the
+clock-names.
+
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: bi_tcxo_ao
+> +      - const: dsi0_phy_pll_out_byteclk
+> +      - const: dsi0_phy_pll_out_dsiclk
+> +      - const: dsi1_phy_pll_out_byteclk
+> +      - const: dsi1_phy_pll_out_dsiclk
+> +      - const: dp0_phy_pll_link_clk
+> +      - const: dp0_phy_pll_vco_div_clk
+> +      - const: dp1_phy_pll_link_clk
+> +      - const: dp1_phy_pll_vco_div_clk
+> +      - const: dp2_phy_pll_link_clk
+> +      - const: dp2_phy_pll_vco_div_clk
+> +      - const: dp3_phy_pll_link_clk
+> +      - const: dp3_phy_pll_vco_div_clk
+> +      - const: sleep_clk
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    description:
+> +      A phandle and PM domain specifier for the MMCX power domain.
+> +    maxItems: 1
+> +
+> +  required-opps:
+> +    description:
+> +      A phandle to an OPP node describing required MMCX performance point.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    clock-controller@af00000 {
+> +      compatible = "qcom,sm8450-dispcc";
+> +      reg = <0x0af00000 0x10000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +               <&rpmhcc RPMH_CXO_CLK_A>,
+> +               <&dsi0_phy 0>,
+> +               <&dsi0_phy 1>,
+> +               <&dsi1_phy 0>,
+> +               <&dsi1_phy 1>,
+> +               <0>, <0>,
+> +               <0>, <0>,
+> +               <0>, <0>,
+> +               <0>, <0>,
+
+One per line please.
+
+Thanks,
 Bjorn
+
+> +               <&sleep_clk>;
+> +      clock-names = "bi_tcxo",
+> +                    "bi_tcxo_ao",
+> +                    "dsi0_phy_pll_out_byteclk",
+> +                    "dsi0_phy_pll_out_dsiclk",
+> +                    "dsi1_phy_pll_out_byteclk",
+> +                    "dsi1_phy_pll_out_dsiclk",
+> +                    "dp0_phy_pll_link_clk",
+> +                    "dp0_phy_pll_vco_div_clk",
+> +                    "dp1_phy_pll_link_clk",
+> +                    "dp1_phy_pll_vco_div_clk",
+> +                    "dp2_phy_pll_link_clk",
+> +                    "dp2_phy_pll_vco_div_clk",
+> +                    "dp3_phy_pll_link_clk",
+> +                    "dp3_phy_pll_vco_div_clk",
+> +                    "sleep_clk";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      power-domains = <&rpmhpd SM8450_MMCX>;
+> +      required-opps = <&rpmhpd_opp_low_svs>;
+> +    };
+> +...
+> -- 
+> 2.35.1
+> 
