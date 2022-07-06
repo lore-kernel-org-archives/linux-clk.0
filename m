@@ -2,129 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C345C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 20:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92692C43334
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 20:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233809AbiGFUi2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 16:38:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
+        id S233533AbiGFUkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 16:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233372AbiGFUi1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 16:38:27 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F936222;
-        Wed,  6 Jul 2022 13:38:22 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id m16so5219583edb.11;
-        Wed, 06 Jul 2022 13:38:22 -0700 (PDT)
+        with ESMTP id S233173AbiGFUkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 16:40:42 -0400
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EC024F21
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 13:40:41 -0700 (PDT)
+Received: by mail-ot1-x335.google.com with SMTP id t26-20020a9d775a000000b006168f7563daso12622855otl.2
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 13:40:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=lzj4BKwrft3c5BU1ClV/hDkBP+dSx6Tr19/Gf1TGgU8=;
-        b=icUqwG/0vVMdN/r6A7nm84dsxBrS9omrMTkearHOYkfRh2YcCP+LSvH3sNtu1cITM5
-         4Yip53urCrq5u5wYXEfwsotwx1POpz/E/HDg1prnbAIpVB3JdwtPCPgBkxWXF/FH3EM0
-         MKNdUISvpeRNG8WWsab8WUqvpPE7awWI4urkqUL2QOsaodKt0fMiSCMf8dNvLSmN6HTu
-         dFL96bf7rzTCUS0nFpEmxjr+bp85gv0il6HIoS/55tkd4rBffUnNbQx7Bw3qUXhajKRH
-         32p5c/Fb44Cu84NGIPdtFKnmw/RpFRMDD/cIoqpY/h05fWXg8wGxv75uGYyz2QooEwuF
-         IfpQ==
+        bh=jbu+Xolfw/UCGkWoc/N/K4GT7EYnQrpnk3gnXwJ0aDs=;
+        b=uE2rBU+ye6xoSUBC+1Xj831S1uRcJlkgDR1ThqSVS8k4uhsyh1wya8Knai7vTdCsWL
+         PLikT8TA1iuktX4z2LVa7ZNxSl/w58LNiisUyWC5ablf02Da3u+8shynD+jgifvnBh/l
+         7RwB3vHs+rJBYgJt5HMaP47DYx5Ygz8BPqVNc7WT7X9udadKvW7f3vaGijyBjm3Py2Bb
+         ygvPfb0HgfcRYGspJ7wyjgdXocbC4KccCtqf09ROP8FONKSz+5DifoMmXYOHNz8wsmSD
+         Wc1S1IzxbsWaFUEDXWJN5i+1Ctago0S+V1ZXtPjOyUECAeivezpBp+GMBUK2Zag0PJBf
+         kOJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=lzj4BKwrft3c5BU1ClV/hDkBP+dSx6Tr19/Gf1TGgU8=;
-        b=Nx+9xPwaDJT3yyFVtz9SJmOBTed34PNwfxeSsZTQ3AuD7Xy1I9eO0ppe+WmnLzTEgy
-         B5MLXrQfwXXdPWyjMLEXQnngxE2LYDSRwo//4TP7Um+xN5rzmi4V7KG8XhASLLrW5tG+
-         buIABSpZE2NEA9vgoqT953S6pS675Vi/O8R3A5GaBi5BpKUXKCu50NB6Mn9fH1tQfpfO
-         fYzH3lK1VEUOxZHMhr496VeZ8Af901eG7B4aN7syvtADzTsEqyDrp/8Nc+R8Ee9awWWl
-         By2M3AumC5CIlecG7nachGEOTKx5AGQQqQlkjuI2PkylgwJHj9CUVFL95WercrikUzt+
-         wCPA==
-X-Gm-Message-State: AJIora9lEwJCBJYfTYrfiwVOc4XFIqNzhis5rPGDpBdIK6o0wb0khVCa
-        jUDr8ENkI+zJLWjLyo3BuEpGWhs+0xY=
-X-Google-Smtp-Source: AGRyM1uxDOb+Rm2+yptTJ52Ii4vEGGlQQ09xk5evqcRzCdX/oTW0/44spaHEX9PSIRJGt976ptsJZw==
-X-Received: by 2002:a05:6402:11cd:b0:439:5cd:1ab7 with SMTP id j13-20020a05640211cd00b0043905cd1ab7mr50402275edw.394.1657139900782;
-        Wed, 06 Jul 2022 13:38:20 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id ew6-20020a056402538600b0043a6dc3c4b0sm6495538edb.41.2022.07.06.13.38.19
+        bh=jbu+Xolfw/UCGkWoc/N/K4GT7EYnQrpnk3gnXwJ0aDs=;
+        b=RLL66QwG4WlEVuZTglOdoAES+vywbbYE2Qebd87R9CNm8izfzbeILXTeoc6MpAWl9r
+         yymH1n1mlrrjXPOjl+JSxekLEtAJvO5yxSEhnBfnQYOrdPSaWjRArNAwdivqeTlnvpHD
+         Iq4SzSaQ9+QzpF6cLfjlftptESlljgQIDBKi+CrgbgAmJ2k4/JMEj97R/jvi2EXdudpE
+         DQDiUv+OkQSxHGUuN4v49cCscAvz2vCPS4foFwmY5UTESKUvC3y/RZeGVVz3ZnSQ4wHv
+         YpGR4KjlD3cZWFpK+EXdXPJb3pSd2PWwwx3ufI3HHY4P+GcxxQzXo2j5g56usYB623dD
+         qw5A==
+X-Gm-Message-State: AJIora8oxOImKm/HfaV29tivZL2pbXh5Qmkcxv8rWKRLFOGaUFV8AStt
+        4/qNa9TB/oTIy6S1npAj49pC6Q==
+X-Google-Smtp-Source: AGRyM1sNeHBBsJB/+2f9iqPz+44tu1Q+eJXIEssGpbPlgYCnk0Shf1qjLZP2HH2kuWCo6jiaotot+g==
+X-Received: by 2002:a9d:7154:0:b0:618:d838:3a07 with SMTP id y20-20020a9d7154000000b00618d8383a07mr12799746otj.158.1657140041071;
+        Wed, 06 Jul 2022 13:40:41 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id f21-20020a056830309500b00616a2aa298asm16415803ots.75.2022.07.06.13.40.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 13:38:20 -0700 (PDT)
-Message-ID: <62c5f2bc.1c69fb81.90a5.aec9@mx.google.com>
-X-Google-Original-Message-ID: <YsXyulhxHhaYOqtN@Ansuel-xps.>
-Date:   Wed, 6 Jul 2022 22:38:18 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Wed, 06 Jul 2022 13:40:40 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 15:40:38 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] ARM: DTS: qcom: fix dtbs_check warning with new
- rpmcc clocks
-References: <20220705202837.667-1-ansuelsmth@gmail.com>
- <20220705202837.667-3-ansuelsmth@gmail.com>
- <18e40247-7151-b50a-97fe-00ee88f47d9b@linaro.org>
- <62c565dc.1c69fb81.a4566.e9b2@mx.google.com>
- <bcb64218-2d2b-2f6b-dc79-303bac8c3bd3@linaro.org>
- <62c5de27.1c69fb81.c73fe.02c5@mx.google.com>
- <e1fed734-8629-5bf2-60ba-ee62243def6f@linaro.org>
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] clk: qcom: Add support for Display Clock
+ Controller on SM8450
+Message-ID: <YsXzRhcAKgsVts9M@builder.lan>
+References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
+ <20220623114737.247703-3-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e1fed734-8629-5bf2-60ba-ee62243def6f@linaro.org>
+In-Reply-To: <20220623114737.247703-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 10:09:05PM +0200, Krzysztof Kozlowski wrote:
-> On 06/07/2022 21:10, Christian Marangi wrote:
-> > On Wed, Jul 06, 2022 at 05:07:12PM +0200, Krzysztof Kozlowski wrote:
-> >> On 06/07/2022 12:20, Christian Marangi wrote:
-> >>> On Wed, Jul 06, 2022 at 09:44:04AM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 05/07/2022 22:28, Christian Marangi wrote:
-> >>>>> Fix dtbs_check warning for new rpmcc Documentation changes and add the
-> >>>>> required clocks.
-> >>>>
-> >>>> There is no warning in the kernel, right? So the commit is not correct.
-> >>>>
-> >>>
-> >>> Oh ok, the warning is generated by the new Documentation.
-> >>
-> >> Patches, especially DTS, might go via different trees, so the moment DTS
-> >> is applied there might be no such warning.
-> >>
-> > 
-> > I'm still confused about this topic...
-> > With this kind of change, I notice I sent Documentation change and then
-> > rob bot complain about dtbs_check having warning...
-> > 
-> > So the correct way is to send Documentation change and fix dtbs_check
-> > warning in the same commit OR keep what I'm doing with sending
-> > Documentation changes and fix DTS in a separate commit?
-> 
-> Binding is almost always separate from DTS and always separate from
-> driver. The order depends on what you're doing. If you bring ABI break
-> change to bindings, then the order does not matter, because each order
-> will be non-bisectable. Because you broke ABI. That's the case in this
-> patchset.
-> 
-> For other cases, usually bindings patches should be the first in patchset.
-> 
-> How it goes via maintainer trees is not your problem here. Patches might
-> go together or might go separate.
-> 
-> Anyway it was not the topic of my comment. Comment was about not
-> specific commit msg which does not fit the Linux kernel process and does
-> not fit git history once applied by maintainer. It fits even less when
-> backported to stable kernels, which you commit msg encourages to do.
->
+On Thu 23 Jun 06:47 CDT 2022, Dmitry Baryshkov wrote:
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index bc4dcf356d82..f409b891fce4 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -635,6 +635,15 @@ config SM_DISPCC_6350
+>  	  Say Y if you want to support display devices and functionality such as
+>  	  splash screen.
+>  
+> +config SM_DISPCC_8450
+> +	tristate "SM8450 Display Clock Controller"
+> +	depends on SM_GCC_8450
+> +	help
+> +	  Support for the display clock controller on Qualcomm Technologies, Inc
+> +	  SM8250 devices.
 
-It was a more generic question so sorry for the OT.
+s/2/4/
 
-Will reword the commit description, thanks again for the clarification
-about this generic topic.
+> +	  Say Y if you want to support display devices and functionality such as
+> +	  splash screen.
+> +
+[..]
+> diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
+[..]
+> +static struct clk_alpha_pll disp_cc_pll0 = {
+> +	.offset = 0x0,
+> +	.vco_table = lucid_evo_vco,
+> +	.num_vco = ARRAY_SIZE(lucid_evo_vco),
+> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+> +	.clkr = {
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_pll0",
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.fw_name = "bi_tcxo",
 
--- 
-	Ansuel
+Can we please have this transitioned to using .index as in the other new
+clock drivers?
+
+Also, you have a bi_tcxo clk_parent_data below, how about using that?
+
+And lastly, could I please have a space inbetween ) and {?
+
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_alpha_pll_reset_lucid_evo_ops,
+> +		},
+> +	},
+> +};
+> +
+[..]
+> +static int __init disp_cc_sm8450_init(void)
+> +{
+> +	return platform_driver_register(&disp_cc_sm8450_driver);
+> +}
+> +subsys_initcall(disp_cc_sm8450_init);
+> +
+> +static void __exit disp_cc_sm8450_exit(void)
+> +{
+> +	platform_driver_unregister(&disp_cc_sm8450_driver);
+> +}
+> +module_exit(disp_cc_sm8450_exit);
+
+You should be able to module_platform_driver() this instead.
+
+> +
+> +MODULE_DESCRIPTION("QTI DISP_CC WAIPIO Driver");
+
+While not secret, please update this to use SM8450 and perhaps a more
+human readable form?
+
+> +MODULE_LICENSE("GPL v2");
+
+Please change this to MODULE_LICENSE("GPL")
+
+Regards,
+Bjorn
