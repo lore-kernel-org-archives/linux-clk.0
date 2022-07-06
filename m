@@ -2,219 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0E5CCA47F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 14:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC0EC43334
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 14:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233371AbiGFOE5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 10:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
+        id S233308AbiGFOMQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 10:12:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232935AbiGFOE4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 10:04:56 -0400
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386F4D72;
-        Wed,  6 Jul 2022 07:04:54 -0700 (PDT)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-2ef5380669cso140921697b3.9;
-        Wed, 06 Jul 2022 07:04:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UBE539EKjjJ8zkn99yLgr6sf0hQeHTgO/l2k1f9VAKg=;
-        b=j7Hpuh+rnxj8p8uzhPFHnQPamCKDD//gbhyIFdN1y25RjFaNQ+hpMekINnCZ4pLLmC
-         hc2g5LPX9BtAYs9kDES2t/wL/dDyLY302bbDf2L+HG7njpoj4DSFY6aJeytEfEVSnhiv
-         qSjMqh/pT3aoJtHyYCu8AHKURj1TtP5mLiV1YZrZiPQ+cW6lmI8HbDwo8PBJ6j0P103m
-         ULpvZwtTKNqPUAujleOqPFQpbCkIH0xEwxHD/X8tyO0WTXs91tV2lFa3DuEa3N+cPxug
-         YfdggNuMLerHmaOwP821rM7mFTGyik4dQvldXpYrYj7uTZAdwprdiz5KML2+95CkqBR8
-         MMBA==
-X-Gm-Message-State: AJIora/nEoDBdwild/DaYPMHgAKtsMFKqtaEufUH27d1lZxUKpDDvvWl
-        rY+Hh9YD5iE93IlCFQNbO1y1gQ0EA1YTPfKfMq4=
-X-Google-Smtp-Source: AGRyM1tzweDvK/HpOTrEcMtuYgu75xJlbU4wLmWYqVeEsIhNId5gL4a/NC1jAK4t+CVNf/Oa7/ufr1ZdqBFMCfc4FVA=
-X-Received: by 2002:a81:24c7:0:b0:314:1e60:a885 with SMTP id
- k190-20020a8124c7000000b003141e60a885mr46512506ywk.301.1657116293184; Wed, 06
- Jul 2022 07:04:53 -0700 (PDT)
+        with ESMTP id S233395AbiGFOMO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 10:12:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36FD1EADE;
+        Wed,  6 Jul 2022 07:12:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C689B81CF5;
+        Wed,  6 Jul 2022 14:12:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B556C341D7;
+        Wed,  6 Jul 2022 14:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657116730;
+        bh=RHN2bWFwgmerCCoeAvGKz0u+MaE/4SRrO+eiHhO2djg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Xh1v7g2+gyzwxF80Ws8Y+37Olx2A+p2HCNlUkanKraSVqF7fZ247SFEXqGjMbnoEA
+         W5jsicurP7E634gMHzCf4Fx19uHJe5JwCnxFUuYNFfhRmkmkMeF6E3bbYUytgq7Pfx
+         23rdkYtJr7jDxQuehVQj5ny1/Tw9GMgijmVosvIF+9tdlKgnPVvjK3icj62nw310/R
+         U7xIjKopbMYUq45nqjKZDFyaVFm6kp1UUeFRho8iRuR5wctpmGd/B7kID3w8a9gKu/
+         R2sCVVDhtv6hxFEXJGTneHyoO7iEiuYWEfN34+HsceWaof/93eeUABzTebZNRFiwFo
+         ipGYZ5e+9buGA==
+Received: by mail-vs1-f48.google.com with SMTP id i186so15177205vsc.9;
+        Wed, 06 Jul 2022 07:12:10 -0700 (PDT)
+X-Gm-Message-State: AJIora/QVmFEoF+T0JaXmmr6AqcmPtjgV8p72Xaj4/PpaGzluZ9BHNkR
+        B5xZL4JpfAV3inbzvDkq5nhAcgmCSDhKA0VgRw==
+X-Google-Smtp-Source: AGRyM1u1HWVn2082EJ5+ru4frCQnJcreiwhKLFDJAiH/WoWedcEtjm0QcNQR7mO+T3bYj9xAqY3u/BVr3918Yjxpxno=
+X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
+ w20-20020a67d194000000b0035708ea5554mr2766153vsi.0.1657116728785; Wed, 06 Jul
+ 2022 07:12:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220608142723.103523089@infradead.org> <20220608144517.885263942@infradead.org>
-In-Reply-To: <20220608144517.885263942@infradead.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 6 Jul 2022 16:04:42 +0200
-Message-ID: <CAJZ5v0j6=x-u3dorwQNd6Sihaa1rx1-uaFXbL1Kc37Hu-fcH3A@mail.gmail.com>
-Subject: Re: [PATCH 31/36] cpuidle,acpi: Make noinstr clean
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rth@twiddle.net, ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        vgupta@kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        ulli.kroll@googlemail.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        bcain@quicinc.com, Huacai Chen <chenhuacai@kernel.org>,
-        kernel@xen0n.name, Geert Uytterhoeven <geert@linux-m68k.org>,
-        sammy@sammy.net, Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        dinguyen@kernel.org, jonas@southpole.se,
-        stefan.kristiansson@saunalahti.fi,
-        Stafford Horne <shorne@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Richard Weinberger <richard@nod.at>,
-        anton.ivanov@cambridgegreys.com,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, acme@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@kernel.org, namhyung@kernel.org,
-        Juergen Gross <jgross@suse.com>, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Chris Zankel <chris@zankel.net>, jcmvbkbc@gmail.com,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
+ <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
+ <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
+ <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 6 Jul 2022 08:11:57 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
+Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
+Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
+ yaml file
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anup Patel <anup@brainfault.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Yury Norov <yury.norov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>, senozhatsky@chromium.org,
-        John Ogness <john.ogness@linutronix.de>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        quic_neeraju@quicinc.com, Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Benjamin Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-snps-arc@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        openrisc@lists.librecores.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-s390@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Liu Ying <victor.liu@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>, rcu@vger.kernel.org
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 8, 2022 at 4:47 PM Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, Jul 5, 2022 at 12:33 PM Rob Herring <robh+dt@kernel.org> wrote:
 >
-> vmlinux.o: warning: objtool: io_idle+0xc: call to __inb.isra.0() leaves .noinstr.text section
-> vmlinux.o: warning: objtool: acpi_idle_enter+0xfe: call to num_online_cpus() leaves .noinstr.text section
-> vmlinux.o: warning: objtool: acpi_idle_enter+0x115: call to acpi_idle_fallback_to_c1.isra.0() leaves .noinstr.text section
+> On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+> >
+> > On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
+> > > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
+> > >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
+> > >>> From: Abel Vesa <abel.vesa@nxp.com>
+> > >>>
+> > >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
+> > >>> we need to split it between the right subsystems. This patch documents
+> > >>> separately the 'iomux/pinctrl' child node of the SCU main node.
+> > >>>
+> > >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> > >>> ---
+> > >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
+> > >>>  1 file changed, 68 insertions(+)
+> > >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> > >>>
+> > >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> > >>> new file mode 100644
+> > >>> index 000000000000..76a2e7b28172
+> > >>> --- /dev/null
+> > >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+> > > [...]
+> > >>> +      fsl,pins:
+> > >>> +        description:
+> > >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
+> > >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
+> > >>> +          specified using a PIN_FUNC_ID macro, which can be found in
+> > >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
+> > >>> +          the pad setting value like pull-up on this pin. Please refer to the
+> > >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
+> > >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> > >>
+> > >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
+> > >
+> > > Added them initially, but later dropped because of some logs like
+> > > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
+> > > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
+> > >
+> > > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
+> > > version.
+> > >
+> >
+> > The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
+> > why dtschema complains in some of the entries. It's like one define was
+> > not correct... I'll take a look at this later, but anyway keep the same
+> > as fsl,imx8mq-pinctrl.yaml even if it complains.
 >
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> The issue is that 'fsl,pins' is problematic for the new dtb decoding
+> because it has a variable definition in terms of matrix bounds as each
+> i.MX platform has its own length (typ 5 or 6). The tools try to work
+> around it by figuring out which size fits. That works until there are
+> multiple answers which seems to be what's happening here.
+>
+> The easiest solution I think is to just strip the constraints in
+> occurances of this property. I'll look into that.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This is now fixed in the dt-schema main branch.
 
-> ---
->  arch/x86/include/asm/shared/io.h |    4 ++--
->  drivers/acpi/processor_idle.c    |    2 +-
->  include/linux/cpumask.h          |    4 ++--
->  3 files changed, 5 insertions(+), 5 deletions(-)
->
-> --- a/arch/x86/include/asm/shared/io.h
-> +++ b/arch/x86/include/asm/shared/io.h
-> @@ -5,13 +5,13 @@
->  #include <linux/types.h>
->
->  #define BUILDIO(bwl, bw, type)                                         \
-> -static inline void __out##bwl(type value, u16 port)                    \
-> +static __always_inline void __out##bwl(type value, u16 port)           \
->  {                                                                      \
->         asm volatile("out" #bwl " %" #bw "0, %w1"                       \
->                      : : "a"(value), "Nd"(port));                       \
->  }                                                                      \
->                                                                         \
-> -static inline type __in##bwl(u16 port)                                 \
-> +static __always_inline type __in##bwl(u16 port)                                \
->  {                                                                      \
->         type value;                                                     \
->         asm volatile("in" #bwl " %w1, %" #bw "0"                        \
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -593,7 +593,7 @@ static int acpi_idle_play_dead(struct cp
->         return 0;
->  }
->
-> -static bool acpi_idle_fallback_to_c1(struct acpi_processor *pr)
-> +static __always_inline bool acpi_idle_fallback_to_c1(struct acpi_processor *pr)
->  {
->         return IS_ENABLED(CONFIG_HOTPLUG_CPU) && !pr->flags.has_cst &&
->                 !(acpi_gbl_FADT.flags & ACPI_FADT_C2_MP_SUPPORTED);
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -908,9 +908,9 @@ static inline const struct cpumask *get_
->   * concurrent CPU hotplug operations unless invoked from a cpuhp_lock held
->   * region.
->   */
-> -static inline unsigned int num_online_cpus(void)
-> +static __always_inline unsigned int num_online_cpus(void)
->  {
-> -       return atomic_read(&__num_online_cpus);
-> +       return arch_atomic_read(&__num_online_cpus);
->  }
->  #define num_possible_cpus()    cpumask_weight(cpu_possible_mask)
->  #define num_present_cpus()     cpumask_weight(cpu_present_mask)
->
->
+Rob
