@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46B6CCA48C
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F364CCA48F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232822AbiGFJHv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:07:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46470 "EHLO
+        id S233003AbiGFJHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:07:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232990AbiGFJGw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:06:52 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707722529B
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:05:06 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id o4so21073596wrh.3
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:05:06 -0700 (PDT)
+        with ESMTP id S232943AbiGFJGW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:06:22 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77E8B25281
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:05:03 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id f2so15687892wrr.6
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:05:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=z10vTtQ4qHSJZ9nRrmQY5lLp9Bvyc0G2kDbemdDveLc=;
-        b=E5GE9YCmCMIhMO2D/gpbHRe1l3D7xDBrlxRw1T0NpHDSuJX2I0zJ01SA77X+Ypb95F
-         IxH9341vzS6f9HRvGDZW1Pvfah1Ajs+GYMuuix6+XAER3HwBkC8VVVKn8re/11zSOLUY
-         /PpGB+RRuIYMS+tnnb7gKAgXTpXUqslS3pUYbx55O7iqFoFMR5yXFZX4/XHD1KneRk27
-         SbYZG0c2XxXOMsPSLg0CkQOe2LamirBkkH4ropL6mvCgJ/uXVy57YtoLlOl2NbUTROU7
-         xs6SXcvpWeY8HlpE/xnWr7NDJiJTiGnStnPsoRqaj2Qc0zZ5J+/gJORvYosCb/3sgoWn
-         UDWg==
+        bh=YTCwVt48y9KJqKpi4AoXVBEGpD4ZzF22SRLhTWJSe6w=;
+        b=aROmTaAGd5Uz5ErAcUPgj5Xng9693lZ8XtgK2awEuQqhxAkqjQwWM4e9bCWIzuN+uc
+         wtw+U7lTfgBdzB7scPLu92+ZDbFpxIMPTR9qj22P+Jfxatc/rsIt/ni7zG9Xvp45Qc1j
+         uxylZy+jPptwy6+sevgtRWzhVjd7xCO+6GlWPmrf39fqipXEwibsZdfy5CiwlqYUiO3o
+         bom/rzprf++oFWPvrbxSimc6AV1Qqlq/sD2yufBm1H2ZYCLsKFaPm61pmYKSrp3q/amA
+         8suMAqn73A02BwL5qgCNRGSjHyO+yp019HEbO8oUz4qJcEuXe9LtkK0kcVIrYMrLg0+v
+         5Y1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=z10vTtQ4qHSJZ9nRrmQY5lLp9Bvyc0G2kDbemdDveLc=;
-        b=RKmnejrkydoFVq7tJRpgk3cUt2P3dZZ76m0owxnhjAxCmEiUiXPJTut0pzcWRXMdBN
-         8YySf4O/EMa0ZOh/+Oit+UxdqyB3PAxrml61Po8pCzG1Fh9V3p4FPKG33Rd2hu/tn8mh
-         aQw0RBw0U7NQkwmxeF3NJfqbZkuf5CgVSLaXn9lIMsH41u4zngufT/tW06BrNqj2Hz2v
-         i8ahm+s3/eJAd5TH7920Pw6sAeeY7DZ6na7x0GKkUo0ScawyRWsbL6B9BUNyb5IspEHQ
-         4DGHf1ZtM7FirrzT0AYgPu8cq2vpC70i3QFA1lfN31jYM0GF+uig921bd64UPvnWLbnw
-         KjUA==
-X-Gm-Message-State: AJIora/EPgPuur16a631+tZxFroxnGZ9btvdCRyCJRJRe0AEEuOp+aGD
-        LdCy0C74gPBxsQR0C+lZd5XuWA==
-X-Google-Smtp-Source: AGRyM1ulg96UJaCG6169ehYplV1+a5sXk+kbCnPbNNkmvYpCCQnDU08EeOTBhit7iFXQIkTZCwV3Gg==
-X-Received: by 2002:a05:6000:1243:b0:21d:6123:7a80 with SMTP id j3-20020a056000124300b0021d61237a80mr20483339wrx.354.1657098305981;
-        Wed, 06 Jul 2022 02:05:05 -0700 (PDT)
+        bh=YTCwVt48y9KJqKpi4AoXVBEGpD4ZzF22SRLhTWJSe6w=;
+        b=jnttrUAqEy5CDyB8kNsowMos4DBLBNRlw2oZkjVLlkQpxX9CRSn6NPgtCPg76bCJIz
+         u92BORw6m6HFngbd/mxYTXrOpqUQ150Vx3M4wXhTstxk9VC+HTyGmZZ/pR+RLv5Ilfe9
+         S4R7ihUK4q8fVZSKWGNIloup4om2s5fmNPka6CbujFK2jB2ON5NntDGM0yewfSZQNFLR
+         c+pNZOw0ySwYAXvbzmjrPDZBgJMduEOxZLy3ax+d+8zpzudZVH+uGBXjTly+BWCD9H3W
+         uOypXABorzzxSxiKpIWCRa162+GaGuGlofAQV0NySLErnW5J8qyvJOK17CnoYQ0oXgb9
+         QzRg==
+X-Gm-Message-State: AJIora/f9D4rQUGU2zR5QcPyNtDHdUR/XChE5J/yvcZqnVg78KGjj/Ye
+        JNJXfg70HxNhPt4m9gO9Axpdwg==
+X-Google-Smtp-Source: AGRyM1vC9VxnuvLBjsVAM6qNEFXl5IPwmRbanNxBUua9l8GqQ2AlSl2w3qIg0HwpaHw77/ccv3FGlw==
+X-Received: by 2002:adf:db12:0:b0:21b:970b:e882 with SMTP id s18-20020adfdb12000000b0021b970be882mr37317063wri.6.1657098303035;
+        Wed, 06 Jul 2022 02:05:03 -0700 (PDT)
 Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.05.05
+        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.05.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 02:05:05 -0700 (PDT)
+        Wed, 06 Jul 2022 02:05:02 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     heiko@sntech.de, herbert@gondor.apana.org.au,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -56,9 +56,9 @@ Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         john@metanate.com, didi.debian@cknow.org,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v8 32/33] crypto: rockchip: permit to have more than one reset
-Date:   Wed,  6 Jul 2022 09:04:11 +0000
-Message-Id: <20220706090412.806101-33-clabbe@baylibre.com>
+Subject: [PATCH v8 29/33] crypto: rockchip: store crypto_info in request context
+Date:   Wed,  6 Jul 2022 09:04:08 +0000
+Message-Id: <20220706090412.806101-30-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220706090412.806101-1-clabbe@baylibre.com>
 References: <20220706090412.806101-1-clabbe@baylibre.com>
@@ -68,27 +68,131 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RK3399 has 3 resets, so the driver to handle multiple resets.
-This is done by using devm_reset_control_array_get_exclusive().
+The crypto_info to use must be stored in the request context.
+This will help when 2 crypto_info will be available on rk3399.
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- drivers/crypto/rockchip/rk3288_crypto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/rockchip/rk3288_crypto.h          |  2 ++
+ drivers/crypto/rockchip/rk3288_crypto_ahash.c    | 14 ++++++--------
+ drivers/crypto/rockchip/rk3288_crypto_skcipher.c |  6 ++++--
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/crypto/rockchip/rk3288_crypto.c b/drivers/crypto/rockchip/rk3288_crypto.c
-index 232dc625d6e5..d96f375423d5 100644
---- a/drivers/crypto/rockchip/rk3288_crypto.c
-+++ b/drivers/crypto/rockchip/rk3288_crypto.c
-@@ -281,7 +281,7 @@ static int rk_crypto_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+diff --git a/drivers/crypto/rockchip/rk3288_crypto.h b/drivers/crypto/rockchip/rk3288_crypto.h
+index 28bf09fe1c1d..ff9fc25972eb 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto.h
++++ b/drivers/crypto/rockchip/rk3288_crypto.h
+@@ -215,6 +215,7 @@ struct rk_ahash_ctx {
  
--	crypto_info->rst = devm_reset_control_get(dev, "crypto-rst");
-+	crypto_info->rst = devm_reset_control_array_get_exclusive(dev);
- 	if (IS_ERR(crypto_info->rst)) {
- 		err = PTR_ERR(crypto_info->rst);
- 		goto err_crypto;
+ /* the private variable of hash for fallback */
+ struct rk_ahash_rctx {
++	struct rk_crypto_info		*dev;
+ 	struct ahash_request		fallback_req;
+ 	u32				mode;
+ 	int nrsg;
+@@ -231,6 +232,7 @@ struct rk_cipher_ctx {
+ };
+ 
+ struct rk_cipher_rctx {
++	struct rk_crypto_info		*dev;
+ 	u8 backup_iv[AES_BLOCK_SIZE];
+ 	u32				mode;
+ 	struct skcipher_request fallback_req;   // keep at the end
+diff --git a/drivers/crypto/rockchip/rk3288_crypto_ahash.c b/drivers/crypto/rockchip/rk3288_crypto_ahash.c
+index 636dbcde0ca3..d1bf68cb390d 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto_ahash.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_ahash.c
+@@ -200,6 +200,7 @@ static int rk_ahash_export(struct ahash_request *req, void *out)
+ 
+ static int rk_ahash_digest(struct ahash_request *req)
+ {
++	struct rk_ahash_rctx *rctx = ahash_request_ctx(req);
+ 	struct rk_ahash_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
+ 	struct rk_crypto_info *dev = tctx->dev;
+ 
+@@ -209,6 +210,8 @@ static int rk_ahash_digest(struct ahash_request *req)
+ 	if (!req->nbytes)
+ 		return zero_message_process(req);
+ 
++	rctx->dev = dev;
++
+ 	return crypto_transfer_hash_request_to_engine(dev->engine, req);
+ }
+ 
+@@ -223,10 +226,8 @@ static void crypto_ahash_dma_start(struct rk_crypto_info *dev, struct scatterlis
+ static int rk_hash_prepare(struct crypto_engine *engine, void *breq)
+ {
+ 	struct ahash_request *areq = container_of(breq, struct ahash_request, base);
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+ 	struct rk_ahash_rctx *rctx = ahash_request_ctx(areq);
+-	struct rk_ahash_ctx *tctx = crypto_ahash_ctx(tfm);
+-	struct rk_crypto_info *rkc = tctx->dev;
++	struct rk_crypto_info *rkc = rctx->dev;
+ 	int ret;
+ 
+ 	ret = dma_map_sg(rkc->dev, areq->src, sg_nents(areq->src), DMA_TO_DEVICE);
+@@ -241,10 +242,8 @@ static int rk_hash_prepare(struct crypto_engine *engine, void *breq)
+ static int rk_hash_unprepare(struct crypto_engine *engine, void *breq)
+ {
+ 	struct ahash_request *areq = container_of(breq, struct ahash_request, base);
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+ 	struct rk_ahash_rctx *rctx = ahash_request_ctx(areq);
+-	struct rk_ahash_ctx *tctx = crypto_ahash_ctx(tfm);
+-	struct rk_crypto_info *rkc = tctx->dev;
++	struct rk_crypto_info *rkc = rctx->dev;
+ 
+ 	dma_unmap_sg(rkc->dev, areq->src, rctx->nrsg, DMA_TO_DEVICE);
+ 	return 0;
+@@ -255,11 +254,10 @@ static int rk_hash_run(struct crypto_engine *engine, void *breq)
+ 	struct ahash_request *areq = container_of(breq, struct ahash_request, base);
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(areq);
+ 	struct rk_ahash_rctx *rctx = ahash_request_ctx(areq);
+-	struct rk_ahash_ctx *tctx = crypto_ahash_ctx(tfm);
+ 	struct ahash_alg *alg = __crypto_ahash_alg(tfm->base.__crt_alg);
+ 	struct rk_crypto_tmp *algt = container_of(alg, struct rk_crypto_tmp, alg.hash);
+ 	struct scatterlist *sg = areq->src;
+-	struct rk_crypto_info *rkc = tctx->dev;
++	struct rk_crypto_info *rkc = rctx->dev;
+ 	int err = 0;
+ 	int i;
+ 	u32 v;
+diff --git a/drivers/crypto/rockchip/rk3288_crypto_skcipher.c b/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
+index cf0dfb6029d8..0b1c90ababb7 100644
+--- a/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_skcipher.c
+@@ -86,12 +86,15 @@ static int rk_cipher_handle_req(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct rk_cipher_ctx *tctx = crypto_skcipher_ctx(tfm);
++	struct rk_cipher_rctx *rctx = skcipher_request_ctx(req);
+ 	struct rk_crypto_info *rkc = tctx->dev;
+ 	struct crypto_engine *engine = rkc->engine;
+ 
+ 	if (rk_cipher_need_fallback(req))
+ 		return rk_cipher_fallback(req);
+ 
++	rctx->dev = rkc;
++
+ 	return crypto_transfer_skcipher_request_to_engine(engine, req);
+ }
+ 
+@@ -290,7 +293,6 @@ static int rk_cipher_run(struct crypto_engine *engine, void *async_req)
+ {
+ 	struct skcipher_request *areq = container_of(async_req, struct skcipher_request, base);
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(areq);
+-	struct rk_cipher_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 	struct rk_cipher_rctx *rctx = skcipher_request_ctx(areq);
+ 	struct scatterlist *sgs, *sgd;
+ 	int err = 0;
+@@ -303,7 +305,7 @@ static int rk_cipher_run(struct crypto_engine *engine, void *async_req)
+ 	unsigned int todo;
+ 	struct skcipher_alg *alg = crypto_skcipher_alg(tfm);
+ 	struct rk_crypto_tmp *algt = container_of(alg, struct rk_crypto_tmp, alg.skcipher);
+-	struct rk_crypto_info *rkc = ctx->dev;
++	struct rk_crypto_info *rkc = rctx->dev;
+ 
+ 	algt->stat_req++;
+ 
 -- 
 2.35.1
 
