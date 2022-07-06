@@ -2,163 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFB2C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6CCCCA481
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233613AbiGFNcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 09:32:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33544 "EHLO
+        id S231321AbiGFNmh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 09:42:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232444AbiGFNcv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:32:51 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CD82495E;
-        Wed,  6 Jul 2022 06:32:49 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id q6so27081118eji.13;
-        Wed, 06 Jul 2022 06:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BwTGtm/bNRREp1aBUcAs+S7luq0oxviV8pBVWLt+InY=;
-        b=GKPSWMhBOzfO/YBN78J2m6A42DBcc3C2SEoO/Cf5G/XgZwOmGDdXUamaES8swT89Gu
-         OGnX6W9oA3Mdu6dObmhJUUIjTSaq9fvK/p3nBY/RnUKCNIZihERp0OTTOjfTS0x7k0w8
-         KULYv6JwX/onnhP5PU8ruMITdTbPb+OFJmi3GdK+arf61qONcqdWn9yKbE/Gxog1JfBh
-         ZSJeNBU9V4JkQES1saWAaImlmXPkUQ+XTtl1UimatEbCgN3TQlkdL2olz7E2xH4Ct5qg
-         +NQoJyXJaspkF2IhOcNwjOP3uBVRW6FM5EpHgDzaYGJhOzWgZQM2iGpRClbdn6LACfft
-         55ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BwTGtm/bNRREp1aBUcAs+S7luq0oxviV8pBVWLt+InY=;
-        b=3Bav7XZQwAP2L4OOUpHiFGCd9F/AsgMfCZ9Tgx/yuLEZ3L0gxOAcI33hrEv2Qr9F7W
-         mGQLkUVmMefqx3LM1p/acbYiyLKqzIEsVKYwFVa+ahFCPS0kJ9A/jvVDXaQ3l3CtFha2
-         lxu2dSeGzESbMByozucPhe/R0OAfTjO4RbdW2BoiRMDGmLLlrZ/uoFSFTI8kwRp7d60M
-         absf9eFLJ61rOF0Ss+4KraYvDsbkiqC2VE4M07mSMBlmV1e6djD8Ya/Wysjjb2DqX8zm
-         S79WYd4UzCZ7oooaqYqiOXWiS98yKNbChmxtRtimQkvub8lH/fwGuavdcKoiqyUSn8sR
-         Klbg==
-X-Gm-Message-State: AJIora9617bp/c1TKCjtnt/55h/b9QGyA7UUc2CkBiE1uKN+I5d3K3Xb
-        xrMZOyUKdZeWDOPmBdeBmkw=
-X-Google-Smtp-Source: AGRyM1tSWBqRJwiH9jeXNAt4N2H9owkS7npZHATrZq4RIBHTxekj9ewJKTqjuQqn9AsFzffHabae/w==
-X-Received: by 2002:a17:907:3f9f:b0:726:39d8:4c8c with SMTP id hr31-20020a1709073f9f00b0072639d84c8cmr38616750ejc.241.1657114367842;
-        Wed, 06 Jul 2022 06:32:47 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id ml22-20020a170906cc1600b006febce7081bsm17412760ejb.163.2022.07.06.06.32.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 06:32:47 -0700 (PDT)
-Message-ID: <62c58eff.1c69fb81.9bbbf.f072@mx.google.com>
-X-Google-Original-Message-ID: <YsWLGqZxMZfUnlL3@Ansuel-xps.>
-Date:   Wed, 6 Jul 2022 15:16:10 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S233152AbiGFNmP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:42:15 -0400
+Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98225252AB;
+        Wed,  6 Jul 2022 06:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=PC6G8cw2IAjtxswfCppuN5Gom/ioWuRR2SaS/QD40Vs=; b=fwU1sVHabFrEgfedhrwyPqvE9V
+        goamlr//PyZDEHhAjDPW5yyriwqekOVvEYdh+LlBSc/DB/3tqyD28vUvUIb8XQKhiwiPYZXSXmYML
+        zMO3UTdrnmKja/NBAonIxVV+Z2hHvCyGuP9czsuFAYJSyboy2MqopkbttNpshb5vgbNazLWFxXruI
+        n4DLgjKeN8dicdyy7PWqX69MBBXsw1IDmTfiBHBe6Pnx1jFh0yQSFzX5J+sTlRhbJBnAhQrUMpbQ/
+        uHve3X4Wdkq8V1uBkEU6BPpiv+IIq7lecbvY3MqyEGspHxhePTFfpZD12t8/fBgHmvxlrWyJW2CSx
+        lVF5HjrA==;
+Received: from [10.22.3.24] (helo=kernkonzept.com)
+        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
+        id 1o95I6-007M5K-Ue; Wed, 06 Jul 2022 15:42:06 +0200
+From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephan Gerhold <stephan@gerhold.net>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: qcom: clk-rpm: convert to parent_data API
-References: <20220705202837.667-1-ansuelsmth@gmail.com>
- <20220705202837.667-4-ansuelsmth@gmail.com>
- <92d41b82-97ab-723d-4191-1fcaca17fb76@somainline.org>
+        devicetree@vger.kernel.org,
+        Dominik Kobinski <dominikkobinski314@gmail.com>,
+        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Subject: [PATCH v2 4/6] clk: qcom: gcc-msm8909: Increase delay for USB PHY reset
+Date:   Wed,  6 Jul 2022 15:41:30 +0200
+Message-Id: <20220706134132.3623415-5-stephan.gerhold@kernkonzept.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
+References: <20220706134132.3623415-1-stephan.gerhold@kernkonzept.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92d41b82-97ab-723d-4191-1fcaca17fb76@somainline.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 03:26:53PM +0200, Konrad Dybcio wrote:
-> 
-> 
-> On 5.07.2022 22:28, Christian Marangi wrote:
-> > Convert clk-rpm driver to parent_data API and change parent names to cxo
-> > and pxo instead of the board variant as pxo_board is an ancient name and
-> > pxo should be used instead.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/qcom/clk-rpm.c | 24 ++++++++++++++++--------
-> >  1 file changed, 16 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> > index a18811c38018..d45a8b0fc97c 100644
-> > --- a/drivers/clk/qcom/clk-rpm.c
-> > +++ b/drivers/clk/qcom/clk-rpm.c
-> > @@ -23,6 +23,14 @@
-> >  #define QCOM_RPM_SCALING_ENABLE_ID			0x2
-> >  #define QCOM_RPM_XO_MODE_ON				0x2
-> >  
-> > +static const struct clk_parent_data gcc_pxo[] = {
-> > +	{ .fw_name = "pxo", .name = "pxo" },
-> The .name lookup should include _board, as the old DTs expect that.
-> If I understand correctly though, you need to preserve both pxo and
-> pxo_board, as they were separate, not sure though..
->
+The USB PHY on MSM8909 works with the driver used on MSM8916
+(phy-qcom-usb-hs.c). When turning the PHY on/off it is first reset
+using the standard reset controller API. On MSM8916 the reset is
+provided by the USB driver (ci_hdrc_msm_por_reset() in ci_hdrc_msm.c).
 
-pxo_board is what comes first... then qcom gcc driver hacks it and
-create a factor clk with 1/1 div and provide pxo.
-In practice they are the same clk. But yhea I should not change the
-name, will resent with .name = pxo_board and be done with it.
+While this seems to work on MSM8909 as well, the Qualcomm Linux sources
+suggest that the PHY should be reset using the GCC_USB2_HS_PHY_ONLY_BCR
+register instead. In general this is easy to set up in the device tree,
+thanks to the standard reset controller API.
 
-> Konrad
-> > +};
-> > +
-> > +static const struct clk_parent_data gcc_cxo[] = {
-> > +	{ .fw_name = "cxo", .name = "cxo" },
-> > +};
-> > +
-> >  #define DEFINE_CLK_RPM(_platform, _name, _active, r_id)			      \
-> >  	static struct clk_rpm _platform##_##_active;			      \
-> >  	static struct clk_rpm _platform##_##_name = {			      \
-> > @@ -32,8 +40,8 @@
-> >  		.hw.init = &(struct clk_init_data){			      \
-> >  			.ops = &clk_rpm_ops,				      \
-> >  			.name = #_name,					      \
-> > -			.parent_names = (const char *[]){ "pxo_board" },      \
-> > -			.num_parents = 1,				      \
-> > +			.parent_data = gcc_pxo,				      \
-> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
-> >  		},							      \
-> >  	};								      \
-> >  	static struct clk_rpm _platform##_##_active = {			      \
-> > @@ -44,8 +52,8 @@
-> >  		.hw.init = &(struct clk_init_data){			      \
-> >  			.ops = &clk_rpm_ops,				      \
-> >  			.name = #_active,				      \
-> > -			.parent_names = (const char *[]){ "pxo_board" },      \
-> > -			.num_parents = 1,				      \
-> > +			.parent_data = gcc_pxo,				      \
-> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
-> >  		},							      \
-> >  	}
-> >  
-> > @@ -56,8 +64,8 @@
-> >  		.hw.init = &(struct clk_init_data){			      \
-> >  			.ops = &clk_rpm_xo_ops,			      \
-> >  			.name = #_name,					      \
-> > -			.parent_names = (const char *[]){ "cxo_board" },      \
-> > -			.num_parents = 1,				      \
-> > +			.parent_data = gcc_cxo,				      \
-> > +			.num_parents = ARRAY_SIZE(gcc_cxo),		      \
-> >  		},							      \
-> >  	}
-> >  
-> > @@ -68,8 +76,8 @@
-> >  		.hw.init = &(struct clk_init_data){			      \
-> >  			.ops = &clk_rpm_fixed_ops,			      \
-> >  			.name = #_name,					      \
-> > -			.parent_names = (const char *[]){ "pxo" },	      \
-> > -			.num_parents = 1,				      \
-> > +			.parent_data = gcc_pxo,				      \
-> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
-> >  		},							      \
-> >  	}
-> >  
+However, to conform to the specifications of the PHY the reset signal
+should be asserted for at least 10 us. This is handled correctly on
+MSM8916 in ci_hdrc_msm_por_reset(), but not within the GCC driver.
 
+Fix this by making use of the new "udelay" field of qcom_reset_map
+and set a delay of ~15 us between the assertion/deassertion of the
+USB PHY reset signal.
+
+Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+---
+Changes in v2: None.
+---
+ drivers/clk/qcom/gcc-msm8909.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-msm8909.c b/drivers/clk/qcom/gcc-msm8909.c
+index c551953d3791..2a00b11ce2cd 100644
+--- a/drivers/clk/qcom/gcc-msm8909.c
++++ b/drivers/clk/qcom/gcc-msm8909.c
+@@ -2670,7 +2670,7 @@ static const struct qcom_reset_map gcc_msm8909_resets[] = {
+ 	[GCC_SDCC2_BCR] = { 0x43000 },
+ 	[GCC_ULT_AUDIO_BCR] = { 0x1c0b4 },
+ 	[GCC_USB2A_PHY_BCR] = { 0x41028 },
+-	[GCC_USB2_HS_PHY_ONLY_BCR] = { 0x41034 },
++	[GCC_USB2_HS_PHY_ONLY_BCR] = { .reg = 0x41034, .udelay = 15 },
+ 	[GCC_USB_HS_BCR] = { 0x41000 },
+ 	[GCC_VENUS0_BCR] = { 0x4c014 },
+ 	/* Subsystem Restart */
 -- 
-	Ansuel
+2.30.2
+
