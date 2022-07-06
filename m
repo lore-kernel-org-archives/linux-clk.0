@@ -2,192 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F90CC43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8D8CCA473
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:14:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232943AbiGFJHx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:07:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43876 "EHLO
+        id S233076AbiGFJOG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:14:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232817AbiGFJGW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:06:22 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7870125284
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:05:03 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id bi22-20020a05600c3d9600b003a04de22ab6so8612069wmb.1
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:05:03 -0700 (PDT)
+        with ESMTP id S232759AbiGFJNs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:13:48 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3931A3B1;
+        Wed,  6 Jul 2022 02:13:20 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id k30so10305959edk.8;
+        Wed, 06 Jul 2022 02:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=X7cJlxa5ip0o5lrSA1Cq27Abc5a+ZcugcbcpPEkeHA0=;
-        b=BfBzAqSa8w4fzWQfTTC5FNOLO2uFMVd7IYdWjSD1AGYBlpM8m5TE1ecjewFy4BzQdm
-         FplphJsHz3EMKXLnuHO0YKsCoQMx9RNS6XtxNkdrGzCO6zQdxMATQaL8JL/UnQKwIv5c
-         r/dKRE5+NOm78+DireDdXfXz7kYN9M2FmHCjQJNAlJkuAE5oh6lL6xe5FEcOBLKr5DYL
-         cAAMmtZtdp+qJ+In3wyGnuARZcJJDnCvMzxpqfqdiomMHErTKlnxg2tQyzjSZRmh+EJU
-         bAqN98KmOGhaUC5nWrNl1UZjuXvogwdsAedOnXZEBJcsl9x4KytoIM8gc4N7HlsFQAef
-         hR4w==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=WKlacHhWVR2IblvCAgYMcCw7cvtmo7gBzlhxFpijOWM=;
+        b=UyINPEp8aUU7+iO4UvYReAysG8acJi4s0lW7fYS990hIHuI2KgReqshlPjlC0FcdQX
+         RWLEJ1iagzj5JHTLAwg1Tfl34CjKErUg06qCwRi5FpbuqXpIfRK0B8kuUc2l5x+40o+8
+         2YldATzAdsq2GhIZIL2D0cZi8oKOkVG5Y5xLvvP4kajNiX5yCXAJSyEYBx1RvA9W9SdO
+         piij5Lfa0VXVwqnHofYdHxRPOmYTBO/NXTATLm6C9JRKYr2iRvgzlsZTZRGqO8gtc9pI
+         zkPBxco6Fa5B8qkZy3WblPhpXY+1PsQ3ol/zLxC+L8wAov5SdI1JA4byrn/VHyXJavbs
+         ZPkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=X7cJlxa5ip0o5lrSA1Cq27Abc5a+ZcugcbcpPEkeHA0=;
-        b=jru6dhFhOZU+/n0HfQzIISnMioJiRzamXdtz2y2pSxghHB7CX4KqX7PxX9nJqKeCfw
-         ul+NR5eZPBQhdlHHA/u0RpzxqJoV6u4K/xrQ1wtwyOK91Pkq0LNEWnIs20YR9oFE/oG0
-         QMp1kzChFgsskt19eVRJ/R+5J/xA13XWzHQC4DrSoEMQ/9VzGNFiLRd1w0HelmSbc6GA
-         uAwpJuQdOo3dt+0u5ujqY5jnGHwcbeH4KJVjymQNIrK+wWBE2pT04jcC2Yl8gqw7ICxa
-         Gi0SlYx275gHn3696h4hLJEKZihmM2spfdE328rbT4OVR+4ZqRh8SMETBcnOzgyF1Ulx
-         qwqg==
-X-Gm-Message-State: AJIora/IkMJoGLfBUy0kUQP1p9AD8C2A1xwl4XwY7O/JZqr4lCsFqsiY
-        Bn7V7Lj6eqycVmKB/Gmm0Qy3kw==
-X-Google-Smtp-Source: AGRyM1utZG4kGVK/bdSC11gh5qhrQPpgTsu7xN4H/jrdTP0t32LTuyn3YGK5ZUhfv+JR9psfGdVT3Q==
-X-Received: by 2002:a05:600c:1f11:b0:3a1:967c:5f0d with SMTP id bd17-20020a05600c1f1100b003a1967c5f0dmr22483370wmb.26.1657098299074;
-        Wed, 06 Jul 2022 02:04:59 -0700 (PDT)
-Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.04.58
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=WKlacHhWVR2IblvCAgYMcCw7cvtmo7gBzlhxFpijOWM=;
+        b=QxR5OpPe3NgjVZHkxNID4w7Mgvcw6XaQKzgi6rmn5TdcUkdgaBseRGdfsFVHDfK+LW
+         qhe6gUqffxKYBwr8jvHWxccaa/ThR1eRottwfKm2NQmkTLT10ajPqMSVzGrGZZaNbfSG
+         ornZME+JmgmlRk5r1vYTpZ8jQF3eEmPw3seTG0dsDKCTXCpG90vpF2NV/bTtBNQ0jo/r
+         Cb/OfvKw5bcMuJ+BRqb9+3CIzWMmEcQ/1X77PlHpLxmiK7TnDOOxNF2f5hWrdOj8ijIm
+         b0bKL/Ab/riiu2JY5h2t0CwqmoaY6Z57nESze7yZBTjtdV2/PF7odfLK7dF3yv5IRI8Q
+         mqsQ==
+X-Gm-Message-State: AJIora808hsnV+UdsynlkTYT6KRbYaZklCtQ/r1z67l8sQQwRm1XoMiS
+        PqE6mIIEjoGD9C62az3dzFg=
+X-Google-Smtp-Source: AGRyM1tgzHocOxIjG9HexS+g9z9ap2nsem/HblqVyMjIbl5ZbLhG8nAvflW5PCvUObUWjIPHfLadCA==
+X-Received: by 2002:a05:6402:350a:b0:435:df44:30aa with SMTP id b10-20020a056402350a00b00435df4430aamr51209856edd.403.1657098799156;
+        Wed, 06 Jul 2022 02:13:19 -0700 (PDT)
+Received: from skbuf ([188.26.185.61])
+        by smtp.gmail.com with ESMTPSA id er13-20020a056402448d00b0043a5bcf80a2sm6350790edb.60.2022.07.06.02.13.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 02:04:58 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     heiko@sntech.de, herbert@gondor.apana.org.au,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org
-Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        john@metanate.com, didi.debian@cknow.org,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 25/33] dt-bindings: crypto: rockchip: convert to new driver bindings
-Date:   Wed,  6 Jul 2022 09:04:04 +0000
-Message-Id: <20220706090412.806101-26-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220706090412.806101-1-clabbe@baylibre.com>
-References: <20220706090412.806101-1-clabbe@baylibre.com>
+        Wed, 06 Jul 2022 02:13:18 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 12:13:15 +0300
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
+        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <20220706091315.p5k2jck3rmyjhvqw@skbuf>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+ <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The latest addition to the rockchip crypto driver need to update the
-driver bindings.
+On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-König wrote:
+> From: Uwe Kleine-König <uwe@kleine-koenig.org>
+> 
+> The value returned by an i2c driver's remove function is mostly ignored.
+> (Only an error message is printed if the value is non-zero that the
+> error is ignored.)
+> 
+> So change the prototype of the remove function to return no value. This
+> way driver authors are not tempted to assume that passing an error to
+> the upper layer is a good idea. All drivers are adapted accordingly.
+> There is no intended change of behaviour, all callbacks were prepared to
+> return 0 before.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- .../crypto/rockchip,rk3288-crypto.yaml        | 85 +++++++++++++++++--
- 1 file changed, 77 insertions(+), 8 deletions(-)
+Assuming you remove the spurious kasan change:
 
-diff --git a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-index 8a219d439d02..5bb6bf4699ff 100644
---- a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-+++ b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-@@ -13,6 +13,8 @@ properties:
-   compatible:
-     enum:
-       - rockchip,rk3288-crypto
-+      - rockchip,rk3328-crypto
-+      - rockchip,rk3399-crypto
- 
-   reg:
-     maxItems: 1
-@@ -21,21 +23,88 @@ properties:
-     maxItems: 1
- 
-   clocks:
-+    minItems: 3
-     maxItems: 4
- 
-   clock-names:
--    items:
--      - const: aclk
--      - const: hclk
--      - const: sclk
--      - const: apb_pclk
-+    minItems: 3
-+    maxItems: 4
- 
-   resets:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 3
- 
-   reset-names:
--    items:
--      - const: crypto-rst
-+    minItems: 1
-+    maxItems: 3
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3288-crypto
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+        clock-names:
-+          items:
-+            - const: aclk
-+            - const: hclk
-+            - const: sclk
-+            - const: apb_pclk
-+          minItems: 4
-+        resets:
-+          maxItems: 1
-+        reset-names:
-+          items:
-+            - const: crypto-rst
-+          maxItems: 1
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3328-crypto
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: hclk_master
-+            - const: hclk_slave
-+            - const: sclk
-+          maxItems: 3
-+        resets:
-+          maxItems: 1
-+        reset-names:
-+          items:
-+            - const: crypto-rst
-+          maxItems: 1
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: rockchip,rk3399-crypto
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: hclk_master
-+            - const: hclk_slave
-+            - const: sclk
-+          maxItems: 3
-+        resets:
-+          minItems: 3
-+        reset-names:
-+          items:
-+            - const: rst_master
-+            - const: rst_slave
-+            - const: crypto-rst
-+          minItems: 3
- 
- required:
-   - compatible
--- 
-2.35.1
-
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
