@@ -2,122 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98C8C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFB2C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 13:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232977AbiGFN3M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 09:29:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57232 "EHLO
+        id S233613AbiGFNcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 09:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbiGFN3K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:29:10 -0400
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD1A22BE2;
-        Wed,  6 Jul 2022 06:29:07 -0700 (PDT)
-Received: by mail-il1-f173.google.com with SMTP id h5so9170019ili.3;
-        Wed, 06 Jul 2022 06:29:07 -0700 (PDT)
+        with ESMTP id S232444AbiGFNcv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 09:32:51 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CD82495E;
+        Wed,  6 Jul 2022 06:32:49 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id q6so27081118eji.13;
+        Wed, 06 Jul 2022 06:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BwTGtm/bNRREp1aBUcAs+S7luq0oxviV8pBVWLt+InY=;
+        b=GKPSWMhBOzfO/YBN78J2m6A42DBcc3C2SEoO/Cf5G/XgZwOmGDdXUamaES8swT89Gu
+         OGnX6W9oA3Mdu6dObmhJUUIjTSaq9fvK/p3nBY/RnUKCNIZihERp0OTTOjfTS0x7k0w8
+         KULYv6JwX/onnhP5PU8ruMITdTbPb+OFJmi3GdK+arf61qONcqdWn9yKbE/Gxog1JfBh
+         ZSJeNBU9V4JkQES1saWAaImlmXPkUQ+XTtl1UimatEbCgN3TQlkdL2olz7E2xH4Ct5qg
+         +NQoJyXJaspkF2IhOcNwjOP3uBVRW6FM5EpHgDzaYGJhOzWgZQM2iGpRClbdn6LACfft
+         55ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=bL71fy7BLG4i0HSqgZRBo3aR1jRlA0eAtGzp+APcptI=;
-        b=y9bkXaWy1jzrEnjmY+jHTnni2nrJNudGT8uQYkoApzxv0E2DtmfVAbn3I2Qm6nhgFk
-         Z8MsymzKR3pIg+sU7ojRT74lak0Khs9ZSWrm85E0yZMZYVR+5xHRAl/UGcZgqPJn9Ria
-         893Xrhf4fxxsDK/GWrL8fQX5UW/hJsFqsgp6/ZK9XJHYnfK1NmKi3EYcc3NxEmPiRKz1
-         yS+gBC/Ym3JSwHp9sV0mJF/2GI2bxcs59z0cXrpk351/M8Ev/utSF0r1FBMWD38WvZxM
-         V0eif+dFFi2bqAqDmrVMVEi2ghXuJnbtd8ZdJO9F+zhkmv9FQfdpmRu1bCVoPtlmwToW
-         ABxA==
-X-Gm-Message-State: AJIora/Gp7P6wdttzoyf6ktO6UicaBs99DZnvBNvIkl65D/r0twMG/Vg
-        4Ed0eZQ7BPKK2zXnGTIBnA==
-X-Google-Smtp-Source: AGRyM1tJGJIVlx7VpB8IkYCckD9b2GDYj12b9uIMBx8AyD4cJrWgClMUDYkNKE6zsrsxzt8Q5IB69w==
-X-Received: by 2002:a05:6e02:1848:b0:2da:af35:e7c3 with SMTP id b8-20020a056e02184800b002daaf35e7c3mr23641658ilv.265.1657114146897;
-        Wed, 06 Jul 2022 06:29:06 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id z10-20020a92650a000000b002dc100ab6fdsm3675172ilb.35.2022.07.06.06.29.05
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BwTGtm/bNRREp1aBUcAs+S7luq0oxviV8pBVWLt+InY=;
+        b=3Bav7XZQwAP2L4OOUpHiFGCd9F/AsgMfCZ9Tgx/yuLEZ3L0gxOAcI33hrEv2Qr9F7W
+         mGQLkUVmMefqx3LM1p/acbYiyLKqzIEsVKYwFVa+ahFCPS0kJ9A/jvVDXaQ3l3CtFha2
+         lxu2dSeGzESbMByozucPhe/R0OAfTjO4RbdW2BoiRMDGmLLlrZ/uoFSFTI8kwRp7d60M
+         absf9eFLJ61rOF0Ss+4KraYvDsbkiqC2VE4M07mSMBlmV1e6djD8Ya/Wysjjb2DqX8zm
+         S79WYd4UzCZ7oooaqYqiOXWiS98yKNbChmxtRtimQkvub8lH/fwGuavdcKoiqyUSn8sR
+         Klbg==
+X-Gm-Message-State: AJIora9617bp/c1TKCjtnt/55h/b9QGyA7UUc2CkBiE1uKN+I5d3K3Xb
+        xrMZOyUKdZeWDOPmBdeBmkw=
+X-Google-Smtp-Source: AGRyM1tSWBqRJwiH9jeXNAt4N2H9owkS7npZHATrZq4RIBHTxekj9ewJKTqjuQqn9AsFzffHabae/w==
+X-Received: by 2002:a17:907:3f9f:b0:726:39d8:4c8c with SMTP id hr31-20020a1709073f9f00b0072639d84c8cmr38616750ejc.241.1657114367842;
+        Wed, 06 Jul 2022 06:32:47 -0700 (PDT)
+Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.gmail.com with ESMTPSA id ml22-20020a170906cc1600b006febce7081bsm17412760ejb.163.2022.07.06.06.32.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 06:29:06 -0700 (PDT)
-Received: (nullmailer pid 4099934 invoked by uid 1000);
-        Wed, 06 Jul 2022 13:29:04 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     john@metanate.com, heiko@sntech.de, p.zabel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, didi.debian@cknow.org,
-        herbert@gondor.apana.org.au, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220706090412.806101-26-clabbe@baylibre.com>
-References: <20220706090412.806101-1-clabbe@baylibre.com> <20220706090412.806101-26-clabbe@baylibre.com>
-Subject: Re: [PATCH v8 25/33] dt-bindings: crypto: rockchip: convert to new driver bindings
-Date:   Wed, 06 Jul 2022 07:29:04 -0600
-Message-Id: <1657114144.957232.4099933.nullmailer@robh.at.kernel.org>
+        Wed, 06 Jul 2022 06:32:47 -0700 (PDT)
+Message-ID: <62c58eff.1c69fb81.9bbbf.f072@mx.google.com>
+X-Google-Original-Message-ID: <YsWLGqZxMZfUnlL3@Ansuel-xps.>
+Date:   Wed, 6 Jul 2022 15:16:10 +0200
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: qcom: clk-rpm: convert to parent_data API
+References: <20220705202837.667-1-ansuelsmth@gmail.com>
+ <20220705202837.667-4-ansuelsmth@gmail.com>
+ <92d41b82-97ab-723d-4191-1fcaca17fb76@somainline.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92d41b82-97ab-723d-4191-1fcaca17fb76@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 06 Jul 2022 09:04:04 +0000, Corentin Labbe wrote:
-> The latest addition to the rockchip crypto driver need to update the
-> driver bindings.
+On Wed, Jul 06, 2022 at 03:26:53PM +0200, Konrad Dybcio wrote:
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  .../crypto/rockchip,rk3288-crypto.yaml        | 85 +++++++++++++++++--
->  1 file changed, 77 insertions(+), 8 deletions(-)
 > 
+> On 5.07.2022 22:28, Christian Marangi wrote:
+> > Convert clk-rpm driver to parent_data API and change parent names to cxo
+> > and pxo instead of the board variant as pxo_board is an ancient name and
+> > pxo should be used instead.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  drivers/clk/qcom/clk-rpm.c | 24 ++++++++++++++++--------
+> >  1 file changed, 16 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+> > index a18811c38018..d45a8b0fc97c 100644
+> > --- a/drivers/clk/qcom/clk-rpm.c
+> > +++ b/drivers/clk/qcom/clk-rpm.c
+> > @@ -23,6 +23,14 @@
+> >  #define QCOM_RPM_SCALING_ENABLE_ID			0x2
+> >  #define QCOM_RPM_XO_MODE_ON				0x2
+> >  
+> > +static const struct clk_parent_data gcc_pxo[] = {
+> > +	{ .fw_name = "pxo", .name = "pxo" },
+> The .name lookup should include _board, as the old DTs expect that.
+> If I understand correctly though, you need to preserve both pxo and
+> pxo_board, as they were separate, not sure though..
+>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+pxo_board is what comes first... then qcom gcc driver hacks it and
+create a factor clk with 1/1 div and provide pxo.
+In practice they are the same clk. But yhea I should not change the
+name, will resent with .name = pxo_board and be done with it.
 
-yamllint warnings/errors:
+> Konrad
+> > +};
+> > +
+> > +static const struct clk_parent_data gcc_cxo[] = {
+> > +	{ .fw_name = "cxo", .name = "cxo" },
+> > +};
+> > +
+> >  #define DEFINE_CLK_RPM(_platform, _name, _active, r_id)			      \
+> >  	static struct clk_rpm _platform##_##_active;			      \
+> >  	static struct clk_rpm _platform##_##_name = {			      \
+> > @@ -32,8 +40,8 @@
+> >  		.hw.init = &(struct clk_init_data){			      \
+> >  			.ops = &clk_rpm_ops,				      \
+> >  			.name = #_name,					      \
+> > -			.parent_names = (const char *[]){ "pxo_board" },      \
+> > -			.num_parents = 1,				      \
+> > +			.parent_data = gcc_pxo,				      \
+> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
+> >  		},							      \
+> >  	};								      \
+> >  	static struct clk_rpm _platform##_##_active = {			      \
+> > @@ -44,8 +52,8 @@
+> >  		.hw.init = &(struct clk_init_data){			      \
+> >  			.ops = &clk_rpm_ops,				      \
+> >  			.name = #_active,				      \
+> > -			.parent_names = (const char *[]){ "pxo_board" },      \
+> > -			.num_parents = 1,				      \
+> > +			.parent_data = gcc_pxo,				      \
+> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
+> >  		},							      \
+> >  	}
+> >  
+> > @@ -56,8 +64,8 @@
+> >  		.hw.init = &(struct clk_init_data){			      \
+> >  			.ops = &clk_rpm_xo_ops,			      \
+> >  			.name = #_name,					      \
+> > -			.parent_names = (const char *[]){ "cxo_board" },      \
+> > -			.num_parents = 1,				      \
+> > +			.parent_data = gcc_cxo,				      \
+> > +			.num_parents = ARRAY_SIZE(gcc_cxo),		      \
+> >  		},							      \
+> >  	}
+> >  
+> > @@ -68,8 +76,8 @@
+> >  		.hw.init = &(struct clk_init_data){			      \
+> >  			.ops = &clk_rpm_fixed_ops,			      \
+> >  			.name = #_name,					      \
+> > -			.parent_names = (const char *[]){ "pxo" },	      \
+> > -			.num_parents = 1,				      \
+> > +			.parent_data = gcc_pxo,				      \
+> > +			.num_parents = ARRAY_SIZE(gcc_pxo),		      \
+> >  		},							      \
+> >  	}
+> >  
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:0:then:properties:clock-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too long
-	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too short
-	False schema does not allow 4
-	1 was expected
-	4 is greater than the maximum of 2
-	4 is greater than the maximum of 3
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:0:then:properties:reset-names: {'items': [{'const': 'crypto-rst'}], 'maxItems': 1} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:1:then:properties:clock-names: {'items': [{'const': 'hclk_master'}, {'const': 'hclk_slave'}, {'const': 'sclk'}], 'maxItems': 3} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:1:then:properties:reset-names: {'items': [{'const': 'crypto-rst'}], 'maxItems': 1} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:2:then:properties:clock-names: {'items': [{'const': 'hclk_master'}, {'const': 'hclk_slave'}, {'const': 'sclk'}], 'maxItems': 3} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:2:then:properties:reset-names: 'oneOf' conditional failed, one must be fixed:
-	[{'const': 'rst_master'}, {'const': 'rst_slave'}, {'const': 'crypto-rst'}] is too long
-	[{'const': 'rst_master'}, {'const': 'rst_slave'}, {'const': 'crypto-rst'}] is too short
-	False schema does not allow 3
-	1 was expected
-	3 is greater than the maximum of 2
-	hint: "minItems" is only needed if less than the "items" list length
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: ignoring, error in schema: allOf: 0: then: properties: reset-names
-Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.example.dtb:0:0: /example-0/crypto@ff8a0000: failed to match any schema with compatible: ['rockchip,rk3288-crypto']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+-- 
+	Ansuel
