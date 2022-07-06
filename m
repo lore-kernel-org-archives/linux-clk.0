@@ -2,123 +2,290 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707CDCCA473
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86906C43334
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229898AbiGFJcN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43830 "EHLO
+        id S229898AbiGFJq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:46:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230418AbiGFJcN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:32:13 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A0D91FCDA
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:32:12 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o91Nj-0005lo-Ss; Wed, 06 Jul 2022 11:31:39 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o91Na-004jSK-Sg; Wed, 06 Jul 2022 11:31:34 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1o91Nd-003KbY-Gm; Wed, 06 Jul 2022 11:31:33 +0200
-Date:   Wed, 6 Jul 2022 11:31:30 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Wolfram Sang <wsa@kernel.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
-        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
-Message-ID: <20220706093130.cet7y7upl76rp6ug@pengutronix.de>
-References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
- <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
- <20220706091315.p5k2jck3rmyjhvqw@skbuf>
+        with ESMTP id S229599AbiGFJq0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:46:26 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C584B223;
+        Wed,  6 Jul 2022 02:46:24 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id o26so3516047qkl.6;
+        Wed, 06 Jul 2022 02:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FlGR5yjoFVwhTWKssnAw48fbsd+AG8btuIa/MYgoHwQ=;
+        b=GyQKyBfcbaQn0NY3C/hXODPWJ2dkrlNEeiztnZ2zXpbzSpHYGloYq7XHMEJ9vxVdc8
+         s0bgr+fkHNk94NF13sbHLYAYLvsweCnLOdpzcrbAFB2zl0gKsdYNnNRT/DgQOaxgJqIz
+         br3yoXUCmIto/jlzELS29AGHJxBVlvfe6y8DWXhDfnohDFhXlfVoDherH/Oe32qCULEa
+         AMNjB0upksTLcWxVDVDqr6dI1fKI3klfMk2i6W4PdSU7+T9N4V9qk5sJjkyTcRoYXanZ
+         xMgwaVEaVQpnFGOqz1AIAHG5s1dWaN7stqz+2Ydhur1Ef0H6EsdthXOCvUtAmBZms+B9
+         K1zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FlGR5yjoFVwhTWKssnAw48fbsd+AG8btuIa/MYgoHwQ=;
+        b=CbEvTbQVpNT+8Ra0/2qiZZD1+KB5b7iZQfvO4x8I380cs9N39zjRMSfVq4m1/FtzcC
+         wGKFKD8wdbq/5xZBqSreEhmYv6kg1G8P8uQNlk03rd0ZoF/MQ9tCmLTO7c3cvlk3obxE
+         JWaKmAA7M+zkSl/mQuYEmuyw32UtbbS4VZJVG1WbsaYh5wNw9ueFXGJhYP/Scr7jjj4c
+         IwL0cr7Jm3Xl5BWNgdi0ULszLYWMDnYRDHeSqv3HRrKCZTnQKSLIa9CfDbvH8M/GkGDo
+         cOD63WNNOX7Mb4gcIjgKHdTb2Au0NjI7K4PIchBPIHspXGnKE7I8Bnq4HAP/foWZZn2p
+         I1QA==
+X-Gm-Message-State: AJIora8gcvHZ3fF2quFcYskdftb7mi4YbqNNiExi4iuE2jKvDgBXrHeO
+        DVFbpGeCVTTJgiMOMBZTCykjV/Di5UkKdVD2L7qJ8dI4gdU=
+X-Google-Smtp-Source: AGRyM1u3wRkI6zt+DKDj6XJdZvXJuqhSbz2ET2++iRICYDpUnH2UbBCwlTN9J0CRziNYkVlaM+tfryyE+GZiJ7R+cyc=
+X-Received: by 2002:a05:620a:408c:b0:6b2:678c:6091 with SMTP id
+ f12-20020a05620a408c00b006b2678c6091mr17060003qko.518.1657100783827; Wed, 06
+ Jul 2022 02:46:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yp3ilhvx53xygi7l"
-Content-Disposition: inline
-In-Reply-To: <20220706091315.p5k2jck3rmyjhvqw@skbuf>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20220705075226.359475-1-r.stratiienko@gmail.com>
+ <5580615.DvuYhMxLoT@kista> <CAGphcd=O-BQRJwQbUbbFMt29jxHf+KpJWrrm5SmMhumkCBam0Q@mail.gmail.com>
+ <2562485.k3LOHGUjKi@kista>
+In-Reply-To: <2562485.k3LOHGUjKi@kista>
+From:   Roman Stratiienko <r.stratiienko@gmail.com>
+Date:   Wed, 6 Jul 2022 12:46:13 +0300
+Message-ID: <CAGphcdnw3+E9cHZGUOLnroo7wTR4HRjiKJXdmihSK40jsga9Qw@mail.gmail.com>
+Subject: Re: Re: [PATCH v3] clk: sunxi-ng: sun50i: h6: Modify GPU clock
+ configuration to support DFS
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc:     Samuel Holland <samuel@sholland.org>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        mripard@kernel.org, wens@csie.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+=D0=B2=D1=82, 5 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 21:07, Jernej =C5=
+=A0krabec <jernej.skrabec@gmail.com>:
+>
+> Dne torek, 05. julij 2022 ob 18:29:39 CEST je Roman Stratiienko napisal(a=
+):
+> > Hi Jernej,
+> >
+> > =D0=B2=D1=82, 5 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 19:07, Jernej =
+=C5=A0krabec <jernej.skrabec@gmail.com>:
+> > > Hi Roman,
+> > >
+> > > Dne torek, 05. julij 2022 ob 09:52:26 CEST je Roman Stratiienko
+> napisal(a):
+> > > > Using simple bash script it was discovered that not all CCU registe=
+rs
+> > > >
+> > > > can be safely used for DFS, e.g.:
+> > > >     while true
+> > > >     do
+> > > >
+> > > >         devmem 0x3001030 4 0xb0003e02
+> > > >         devmem 0x3001030 4 0xb0001e02
+> > > >
+> > > >     done
+> > > >
+> > > > Script above changes the GPU_PLL multiplier register value. While t=
+he
+> > > > script is running, the user should interact with the user interface=
+.
+> > > >
+> > > > Using this method the following results were obtained:
+> > > > | Register  | Name           | Bits  | Values | Result |
+> > > > | --        | --             | --    | --     | --     |
+> > > > | 0x3001030 | GPU_PLL.MULT   | 15..8 | 20-62  | OK     |
+> > > > | 0x3001030 | GPU_PLL.INDIV  |     1 | 0-1    | OK     |
+> > > > | 0x3001030 | GPU_PLL.OUTDIV |     0 | 0-1    | FAIL   |
+> > > > | 0x3001670 | GPU_CLK.DIV    |  3..0 | ANY    | FAIL   |
+> > > >
+> > > > DVFS started to work seamlessly once dividers which caused the
+> > > > glitches were set to fixed values.
+> > > >
+> > > > Signed-off-by: Roman Stratiienko <r.stratiienko@gmail.com>
+> > > >
+> > > > ---
+> > > >
+> > > > Changelog:
+> > > >
+> > > > V2:
+> > > > - Drop changes related to mux
+> > > > - Drop frequency limiting
+> > > > - Add unused dividers initialization
+> > > >
+> > > > V3:
+> > > > - Adjust comments
+> > >
+> > > I don't see any comment fixed, at least not to "1", as we discussed. =
+Did I
+> > > miss anything?
+> >
+> > I've added the "bits" word, so now it should sound correct.
+>
+> Technically it's correct, but this would be third form of comments for fi=
+xed
+> bits. Let's stick to the form which is most informative ("Force PLL_GPU o=
+utput
+> divider to 1"). Ideally, comment would also point to gpu_clk comment for
+> reason why, like it's done for video PLL block already.
+>
+> >
+> > > Also, please add min and max.
+> >
+> > What is the rationale for additional limits?
+>
+> If limits are specified in whatever form, they should be added. As I said
+> several times already, vendor code limits PLL frequency to 288 MHz minimu=
+m and
+> lists maximum. As experienced a few times before with video PLLs, these a=
+re
+> important, otherwise PLL is unstable. For example, OPP table in vendor DT=
+ has
+> two operating points lower than 288 MHz, which means it would either lock=
+ up
+> or be unstable. In such cases, vendor code actually sets GPU_CLK divider =
+to 2,
+> but we can skip them, because GPU_CLK divider will be hardcoded to 1 with=
+ this
+> patch.
 
---yp3ilhvx53xygi7l
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What is the rationale behind vendor's freq limitation?
 
-On Wed, Jul 06, 2022 at 12:13:15PM +0300, Vladimir Oltean wrote:
-> On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-K=F6nig wrote:
-> > From: Uwe Kleine-K=F6nig <uwe@kleine-koenig.org>
-> >=20
-> > The value returned by an i2c driver's remove function is mostly ignored.
-> > (Only an error message is printed if the value is non-zero that the
-> > error is ignored.)
-> >=20
-> > So change the prototype of the remove function to return no value. This
-> > way driver authors are not tempted to assume that passing an error to
-> > the upper layer is a good idea. All drivers are adapted accordingly.
-> > There is no intended change of behaviour, all callbacks were prepared to
-> > return 0 before.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> > ---
->=20
-> Assuming you remove the spurious kasan change:
+There's no min_rate field in ccu_nkmp. After I changed it to ccu_nm
+and set limits, the system started to behave unstable with a lot of
+messages in dmesg:
 
-It's already gone in my tree, see
-https://git.pengutronix.de/cgit/ukl/linux/commit/?h=3Di2c-remove-void
+[   40.089091] panfrost 1800000.gpu: _generic_set_opp_clk_only: failed
+to set clock rate: -22
+[   40.097698] devfreq 1800000.gpu: dvfs failed with (-22) error
 
-> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+From the other end I have no issues so far with the current version
+and I have a lot of other work to do.
+I think it's a good point to stop any further improvements until
+testing results show any issues with the current version.
 
-Thanks
-Uwe
+> > CPU_PLL doesn't have these limits. I don't want to make them different.
+>
+> Why CPU_PLL?
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+According to the H6 usermanual only CPU and GPU PLLs support smooth
+clock transition during DFS.
 
---yp3ilhvx53xygi7l
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+Roman.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmLFVmcACgkQwfwUeK3K
-7AkOwAgAkt7aZ38n1lpOoBzXslSDQyp/lKc47Ehs+a1LTESfOP6+4frSHSJhaIMw
-WX2bIAZO2kfHd2GJJ1+miP0YO3eys+YJus7vlVp9LsZCtTrR7uUlJ9PhG4eVmYxD
-ZPZMbP533Mkp9Tj201PJRSbnOlhRhKnwpl4kQfj9nXD478yP1zbT/7CDh4Im1isE
-dOUnNdPTAnT17u0fIRREu6TIC/hKy5Lh772ukCBsHwkBWQD4WTtLmdL1uZrspPa3
-fKxI4tIGoKufFCNMNNzK8li/dghhpkn4uy8iNwyjkkmjfCXAkNdwNJiCDlo6qPwb
-idJ3DvpJEEx44L8KdcjzBYUHdSNUkQ==
-=ZnQL
------END PGP SIGNATURE-----
-
---yp3ilhvx53xygi7l--
+> Why not video PLL? In any case, it doesn't matter if struct looks
+> similar to some other or is unique. Only important thing is that struct
+> describes PLL as best as possible.
+>
+> >
+> > > I also consent to R-B, which you
+> > > didn't include.
+> >
+> > I was expecting an explicit 'review-by' line. Anyway I can add it and
+> > resend v4 if it's necessary.
+>
+> If you at least add min and max limits, you can add following tag:
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+>
+> If you send it before Friday, it will be in 5.20.
+>
+> Best regards,
+> Jernej
+>
+> >
+> > Regards,
+> > Roman
+> >
+> > > Did you resend v2 instead of v3?
+> > >
+> > > Best regards,
+> > > Jernej
+> > >
+> > > > ---
+> > > >
+> > > >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 16 +++++++++++++---
+> > > >  1 file changed, 13 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c index
+> > > > 2ddf0a0da526f..068d1a6b2ebf3
+> > > > 100644
+> > > > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > @@ -95,13 +95,13 @@ static struct ccu_nkmp pll_periph1_clk =3D {
+> > > >
+> > > >       },
+> > > >
+> > > >  };
+> > > >
+> > > > +/* For GPU PLL, using an output divider for DFS causes system to f=
+ail
+> > > > */
+> > > >
+> > > >  #define SUN50I_H6_PLL_GPU_REG                0x030
+> > > >  static struct ccu_nkmp pll_gpu_clk =3D {
+> > > >
+> > > >       .enable         =3D BIT(31),
+> > > >       .lock           =3D BIT(28),
+> > > >       .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> > > >       .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider */
+> > > >
+> > > > -     .p              =3D _SUNXI_CCU_DIV(0, 1), /* output divider
+> > >
+> > > */
+> > >
+> > > >       .common         =3D {
+> > > >
+> > > >               .reg            =3D 0x030,
+> > > >               .hw.init        =3D CLK_HW_INIT("pll-gpu", "osc24M",
+> > > >
+> > > > @@ -294,9 +294,9 @@ static SUNXI_CCU_M_WITH_MUX_GATE(deinterlace_cl=
+k,
+> > > > "deinterlace", static SUNXI_CCU_GATE(bus_deinterlace_clk,
+> > > > "bus-deinterlace", "psi-ahb1-ahb2", 0x62c, BIT(0), 0);
+> > > >
+> > > > +/* Keep GPU_CLK divider const to avoid DFS instability. */
+> > > >
+> > > >  static const char * const gpu_parents[] =3D { "pll-gpu" };
+> > > >
+> > > > -static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x67=
+0,
+> > > > -                                    0, 3,    /* M */
+> > > > +static SUNXI_CCU_MUX_WITH_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
+> > > >
+> > > >                                      24, 1,   /* mux */
+> > > >                                      BIT(31), /* gate */
+> > > >                                      CLK_SET_RATE_PARENT);
+> > > >
+> > > > @@ -1193,6 +1193,16 @@ static int sun50i_h6_ccu_probe(struct
+> > > > platform_device *pdev) if (IS_ERR(reg))
+> > > >
+> > > >               return PTR_ERR(reg);
+> > > >
+> > > > +     /* Force PLL_GPU output divider bits to 0 */
+> > > > +     val =3D readl(reg + SUN50I_H6_PLL_GPU_REG);
+> > > > +     val &=3D ~BIT(0);
+> > > > +     writel(val, reg + SUN50I_H6_PLL_GPU_REG);
+> > > > +
+> > > > +     /* Force GPU_CLK divider bits to 0 */
+> > > > +     val =3D readl(reg + gpu_clk.common.reg);
+> > > > +     val &=3D ~GENMASK(3, 0);
+> > > > +     writel(val, reg + gpu_clk.common.reg);
+> > > > +
+> > > >
+> > > >       /* Enable the lock bits on all PLLs */
+> > > >       for (i =3D 0; i < ARRAY_SIZE(pll_regs); i++) {
+> > > >
+> > > >               val =3D readl(reg + pll_regs[i]);
+> > > >
+> > > > --
+> > > > 2.34.1
+>
+>
