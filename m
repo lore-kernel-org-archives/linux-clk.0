@@ -2,56 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C98CCA47C
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 10:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68892C43334
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 11:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233015AbiGFKjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 06:39:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53124 "EHLO
+        id S233411AbiGFL7D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 07:59:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232953AbiGFKjW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 06:39:22 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6E619036;
-        Wed,  6 Jul 2022 03:39:21 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id y4so5360488edc.4;
-        Wed, 06 Jul 2022 03:39:21 -0700 (PDT)
+        with ESMTP id S233475AbiGFL6w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 07:58:52 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB8B2408D
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 04:58:49 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id h19so17814632qtp.6
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 04:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=430yAFLJrEHI3Rx/2SsFVVThDkyR0pxUFGx2a++8q3I=;
-        b=mHdZ1luLBV1AcVBcm0nq5FtyTuIZz53+0tLTlZY3rsYSvLa7yMj+x2CPTvM0JdhWQN
-         bli0bbawZ6sfiIvWjbo7KEbV5nstk5SuZoGi5KntG8LFhPgp6GgwNzFV94Floq92taHG
-         uOZIQNkG/S+9PkvKFkRbzNwInWx86beXfOUU4Dr2gVZbn7X2UjEwBI2ty+SdkJuoBiG5
-         7LJmf079ba+bjL2kOv/Tf03pg7o11p8f1dW7ZK93NGnImaqBI5rFeiNALcvzt3eFIdmz
-         pQMVepzJ75u/ACOWQC0+DlewdD0JfDmeTDTzS5ZEbLT/VXwinTLXRkhBvAlKJGATIzL3
-         ZCZQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ybb7VuM+EyU7gq2LFgKPhLmRG/OyaMHbxC7umWksKZ8=;
+        b=rZHzmnQi3KfezNYiiRREFmx9m2Me6jF7bZpGa4gZqjCVViRAUtiS/mSJ1oIufaW90C
+         6x7xa0f/TQHDaiaOrcecdpfhsytEd6kL9jWggpW+VDtopIhdCaPCbvuEGFqcUDk3wMFy
+         jZTZ4gpubNGaq6voWJp1Lwjs/drK2JCgpB8QzA96psxbz3+ccMp25fLdBMW5/lIneZPD
+         PXM5XbW0nTBMl/93G1kCj40H7zoQ2b9FuyvTQCeMV3z34IFxcWgksS4RgK68IGfz5RAk
+         nHCHkUi3A6+b1wdySuOW1Y72jUE2sJ72vS1zgTafXBPk20yKltHrvtNsihsI76rrEhD5
+         VW2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=430yAFLJrEHI3Rx/2SsFVVThDkyR0pxUFGx2a++8q3I=;
-        b=wyADctdu2HeM8HufoXhrIHyLlPBKPcte142V/gSTLMkx1lIZUn+LXhOJgFn73iwcBd
-         aKjZqP4TTQjIE+XCpsfqzNgpcIHJu+OKmQliFPzZ9clDgTF5nCAiVrWm0XPbq5VZOXjv
-         +irdEWFkKcO/F8kuefDm+fTFocfrd8Jys434UJqteRgBDMrJqOGlQKiqaB/4jqtk19Dk
-         MUUrKFoGNZ8lu3wRtmegf16MQ8hfgkj+f50TCZeoEAwkbtZfOWyqISSKwJNNPagjE6+0
-         S5ZxyMuddnRSVjAueeBplQVTobFbxp8dSDQOJVIk+uwZNu5Q24L3oEmSV2SBaYvHgLr3
-         8zug==
-X-Gm-Message-State: AJIora8OsM+7oMiRYicbl0zShmTOOlaQhJHDU0H/Kzo+EDq2y2KwOBU9
-        5nkJzBO8PZtpZs/BZHQiLv3I9UM3fxo=
-X-Google-Smtp-Source: AGRyM1sc7SMB5gkjwZdEYxPzDbMrn3QRowjGxNNzpaubJdLP2URu+xdw0K8H2xLZvVqYTMjgQAyn8g==
-X-Received: by 2002:a05:6402:950:b0:43a:5194:174c with SMTP id h16-20020a056402095000b0043a5194174cmr21692441edz.145.1657103960487;
-        Wed, 06 Jul 2022 03:39:20 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id v8-20020aa7d648000000b004377151dfbdsm22344355edr.50.2022.07.06.03.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 03:39:20 -0700 (PDT)
-Message-ID: <62c56658.1c69fb81.87c41.6b07@mx.google.com>
-X-Google-Original-Message-ID: <YsVic8J7VNpBzaWn@Ansuel-xps.>
-Date:   Wed, 6 Jul 2022 12:22:43 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ybb7VuM+EyU7gq2LFgKPhLmRG/OyaMHbxC7umWksKZ8=;
+        b=LvwzxLzkV/5CQSqJRBw11FQuDFn7t0xqEDHC1XwjdBPk6WvJaz8Qw1fWwLOeQ1lsLm
+         Tap3DD6J1VJqpOlfe1DEXfMwutzE1AIyKWThymPvGpX8I/b7VpldjDjspUqulnREixSB
+         02n4UfLoZL79ckUYo/OfiGAb5ctW21N9fZXPVbG5eVXR/fDG5jY/OdclkEZv+i80M5S2
+         RqVKPOsYMoVqnTuEzoxLFAOi5S10DXE7HvGYRGz5WRHZs3PEMIZCxzRWsrv3K9CN/LYL
+         zmSdO1nLnGCJWVdXOuJjoNNtFknqaY9CHPX38uzADJopIyuOQa0CZN79hLwJeT4q/N3J
+         aweA==
+X-Gm-Message-State: AJIora/FbEkMkz/WEAR6v1cTwVYZfoh40KdBs7dbd/Z181P5wdHSOQUK
+        vv/0vTMDyDEPeYNQbPCmBShm6+Wakna3k9acEJQqyQ==
+X-Google-Smtp-Source: AGRyM1tpqygoo95h06VZ6Q5wy3BGd11IKQKZZYSwcPEJHq3OsTNNYHtH3uXbhLxIK0RsDjRlLemPMxsVoifFDbJWXsg=
+X-Received: by 2002:a05:622a:1981:b0:31a:816f:9d48 with SMTP id
+ u1-20020a05622a198100b0031a816f9d48mr33430632qtc.629.1657108728501; Wed, 06
+ Jul 2022 04:58:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220705202837.667-1-ansuelsmth@gmail.com> <20220705202837.667-2-ansuelsmth@gmail.com>
+ <CAA8EJpoXOwooUYic-_G6jG7MBiHo2mfoKfR0jBDmRy0DsmMNEw@mail.gmail.com> <62c5658d.1c69fb81.1dc23.6884@mx.google.com>
+In-Reply-To: <62c5658d.1c69fb81.1dc23.6884@mx.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 6 Jul 2022 14:58:37 +0300
+Message-ID: <CAA8EJpqAyZp8fNO1DOz4XRFvrhBMw0fJMO4cmmTr500CpPtBYA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: clock: fix wrong clock documentation for qcom,rpmcc
+To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
@@ -61,66 +62,77 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] ARM: dts: qcom: add pxo/cxo clock-output-names for
- ipq8064
-References: <20220705202837.667-1-ansuelsmth@gmail.com>
- <20220705202837.667-5-ansuelsmth@gmail.com>
- <CAA8EJppTCZRpi8EqmRSJQiSmaANr=5+q5Rb5KsMYZROSNGpGqA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJppTCZRpi8EqmRSJQiSmaANr=5+q5Rb5KsMYZROSNGpGqA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 11:29:09AM +0300, Dmitry Baryshkov wrote:
-> On Tue, 5 Jul 2022 at 23:56, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> >
-> > Drivers expect to call pxo/cxo_board clock as pxo/cxo.
-> > Use clock-output-names to set the correct naming for these fixed clock
-> > to save drivers that are migrating to parent_data and still use
-> > parent_names.
-> 
-> Please no. There is no reason to add these names. Let's follow the
-> example of other platforms.
+On Wed, 6 Jul 2022 at 13:35, Christian Marangi <ansuelsmth@gmail.com> wrote:
 >
+> On Wed, Jul 06, 2022 at 11:23:46AM +0300, Dmitry Baryshkov wrote:
+> > On Tue, 5 Jul 2022 at 23:56, Christian Marangi <ansuelsmth@gmail.com> wrote:
+> > >
+> > > qcom,rpmcc describe 2 different kind of device.
+> > > Currently we have definition for rpm-smd based device but we lack
+> > > Documentation for simple rpm based device.
+> > >
+> > > Add the missing clk for ipq806x, apq8060, msm8660 and apq8064 and
+> > > provide and additional example.
+> > >
+> > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/clock/qcom,rpmcc.yaml | 77 ++++++++++++++++++-
+> > >  1 file changed, 73 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> > > index 9d296b89a8d0..028eb0277495 100644
+> > > --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> > > +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> > [,,,,]
+> >
+> > > +
+> > > +then:
+> > > +  properties:
+> > > +    clocks:
+> > > +      description: pxo clock
+> > > +
+> > > +    clock-names:
+> > > +      const: pxo
+> > > +
+> > > +  required:
+> > > +    - clocks
+> > > +    - clock-names
+> >
+> > I don't think you can not mark these properties as required, older
+> > schemas do not have them.
+> >
+>
+> Well considering we changed rpmcc to parent_data and rpm clock require
+> pxo clock as parents it seems to be they should be required.
 
-Okok... just don't like the '_board' suffix but will drop...
+parent_data specifies both the normal flow (.fw_name) and the fallback
+(.name), so they are not required.
+I actually miss 'recommended: true' in YAML for such cases.
 
-> >
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/qcom-ipq8064.dtsi | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-> > index 1425a4e4283f..720e27e29627 100644
-> > --- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-> > +++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-> > @@ -302,12 +302,14 @@ cxo_board: cxo_board {
-> >                         compatible = "fixed-clock";
-> >                         #clock-cells = <0>;
-> >                         clock-frequency = <25000000>;
-> > +                       clock-output-names = "cxo";
-> >                 };
-> >
-> >                 pxo_board: pxo_board {
-> >                         compatible = "fixed-clock";
-> >                         #clock-cells = <0>;
-> >                         clock-frequency = <25000000>;
-> > +                       clock-output-names = "pxo";
-> >                 };
-> >
-> >                 sleep_clk: sleep_clk {
-> > --
-> > 2.36.1
-> >
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+> Actually no idea why this wasn't required before. Probably because this
+> schema described only rpm-smd and not old rpm?
+>
+> > > +
+> > > +else:
+> > > +  if:
+> > > +    properties:
+> > > +      compatible:
+> > > +        contains:
+> > > +          const: qcom,rpmcc-apq8064
+> > > +  then:
+> > > +    properties:
+> > > +      clocks:
+> > > +        items:
+> > > +          - description: pxo clock
+> > > +          - description: cxo clock
+> > [...]
+
 
 -- 
-	Ansuel
+With best wishes
+Dmitry
