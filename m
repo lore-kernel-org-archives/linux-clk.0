@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA06C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD8FC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233043AbiGFJHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 05:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
+        id S232921AbiGFJHY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232900AbiGFJGG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:06:06 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82C1124F25
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:04:58 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id cl1so21071125wrb.4
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:04:58 -0700 (PDT)
+        with ESMTP id S232922AbiGFJGS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:06:18 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7661D24F29
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:05:00 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id v14so21061096wra.5
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Y1ZryWow92c9hwwvz5Hh3ukn+dkdomJWMwO/HyG9hMQ=;
-        b=1hvxm1lYCf3dt/kNWqZz5AZEreEizX7NEtB62mDJGcxhqDzVDR6GsNQjJEw6hU3Li5
-         DiiKB9lR7xHFHTLRAdNpWSWuQbSURbNkL4ltJzXpRwp/LO7NlZUKRyuZNF5Er/bAPBjH
-         fHTn0cTIeLflHz8GDaigTuF2B018PZUuJJJ4xtbR6ZbHJTTNqJHyMKENGJ+uiSownI2k
-         CD5lvOVAK4ovTpy9ILkL1b2htX61KzBLOSOsgPiYEkLzX9zQDN5FUXrVf9eJk04sXXFR
-         j9ASqPnC7sBOK4hXbpnemsRssUwnMlNqTMG60Jpoqpbr/89/GDSIcxJ2Q4T3Chwgbbus
-         lRbg==
+        bh=ZivRzjlDS3OoPoRTHkJnPDZ3sM1VA8uv4BaZC71qcQ0=;
+        b=SoR7Ux0on4nf1Qo15rxc7uNb2HO/RqGdhLcmgjl5TJEByBP0inejUpsOr/9+9c4VNe
+         U116K/wfR+Ufafd45lYbdRzH3rmt6Y/5FzkewGjvyiK8q6SjpI6u+1dIUiDvyYyC4Mbi
+         kwKhdmm9RZMnCRTTCcoYZdYu+JxdHWjrAX3I2fXsey51UGDw96iSQbH4mr2/lvmIjiGJ
+         dVtw7lH3wQ4YX72TefVnwD85Nv4XoN2RiIX5+SqTM5bBc3XRAEYGPiLNCoMlJCcOo4LV
+         cV79VDm8OAtCOf3BIV4j55ctG2COtEOh9mUkjNzSAs8uq1AHXUA3JSxfLnYfZh/13TP/
+         oewA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y1ZryWow92c9hwwvz5Hh3ukn+dkdomJWMwO/HyG9hMQ=;
-        b=Z1NgyV0knSpqwP6s/lJnPHuqQ0tgBSLFLZ6zyYDVrQQc8fP4ae8emkTTrYBqGip0vO
-         fPaV3bsAmdbAvgQXIZcui8Z28fppGTmLh6fJGtpZVZzEE2zqU9fEFfjHEZrpsviTJJ/i
-         6QK4jvac8z57i6YtqoHRD2d+b8Nw0vp+JQOf16atabuxrfdsXXWpJcG0Ur8vxDjrV1eo
-         e1Ed4gLakn8npZeMlAKVQIH5wBl2YMxpw7O5r39EskL+safZteFSY+MB3SH4KawGj3sG
-         Qe6wH9PROwm1fMgDFHyiVB5nLzpUm6TEFFNgJt1sbMx7/cC6BODtk21jWKTWf3MGmjYh
-         ztqA==
-X-Gm-Message-State: AJIora89SSglxpPebJ/RsJr36zqUDG5A9b2hmPMegUcN0xWjOBLl+M3A
-        jCSOPM8bwTHP9IS/jFg8KOVLzg==
-X-Google-Smtp-Source: AGRyM1uabznHJAkndj0/PP8wr1qRzCNfHAe31LWA6AzcW1fqDJpCvWnIpQT9vAyuXkgDBlb3NHxJMw==
-X-Received: by 2002:a5d:59a9:0:b0:21d:7ee2:8f90 with SMTP id p9-20020a5d59a9000000b0021d7ee28f90mr1317827wrr.598.1657098297942;
-        Wed, 06 Jul 2022 02:04:57 -0700 (PDT)
+        bh=ZivRzjlDS3OoPoRTHkJnPDZ3sM1VA8uv4BaZC71qcQ0=;
+        b=Vtzwf55+JS1ubfjohuI5JEn9TdKYg1tHh9y/XOxtWh2uPYwfte+DzubLElUfQZ4iF+
+         mMEr0R81JHRUKxdAQYSvKe19kGjZq7fhjqYXVoiFCicD3OM7BGQuDXpsfQ/U5V8bkT3T
+         7pEfSXjK+gFYG3bQYg+gw1mPyDgksnunAt52QGvQ7Cp7WakLcvbne1+k27scvw4GKgHL
+         LSXgeERh+GwUBKQKpE7VL/oVsUs63v9pkuh7Xz2/FazhURCR4t7X4erE0DR29ttkmaSO
+         UQ1qm3QOG+6cS0mkEVh20yHWPBpFwd0XSWUJSHUt+KyIJwGp5kZdoRGI78ukgEP1edr6
+         eVcA==
+X-Gm-Message-State: AJIora+komoZWv7y8Li072EChjtKayi+ULCqnleIpMGMD1kIS1YXsuX5
+        j9LUWA/OJS0P1AJ1W8Nnu8SoGg==
+X-Google-Smtp-Source: AGRyM1s0NtrzbFsGKeEvThnAUtfR0Dz41YElbKBkLJkfRZht8Yko9gJ0WTqHFIVMkhaWXaYuStEsBg==
+X-Received: by 2002:a5d:6e8d:0:b0:21d:7223:1e1b with SMTP id k13-20020a5d6e8d000000b0021d72231e1bmr7736406wrz.713.1657098300111;
+        Wed, 06 Jul 2022 02:05:00 -0700 (PDT)
 Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.04.57
+        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.04.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 02:04:57 -0700 (PDT)
+        Wed, 06 Jul 2022 02:04:59 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     heiko@sntech.de, herbert@gondor.apana.org.au,
         krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
@@ -56,10 +56,10 @@ Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         john@metanate.com, didi.debian@cknow.org,
         Corentin Labbe <clabbe@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 24/33] dt-bindings: crypto: convert rockchip-crypto to YAML
-Date:   Wed,  6 Jul 2022 09:04:03 +0000
-Message-Id: <20220706090412.806101-25-clabbe@baylibre.com>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 26/33] clk: rk3399: use proper crypto0 name
+Date:   Wed,  6 Jul 2022 09:04:05 +0000
+Message-Id: <20220706090412.806101-27-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220706090412.806101-1-clabbe@baylibre.com>
 References: <20220706090412.806101-1-clabbe@baylibre.com>
@@ -69,122 +69,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert rockchip-crypto to YAML.
+RK3399 has 2 crypto instance, named crypto0 and crypto1 in the TRM.
+Only reset for crypto1 is correctly named, but crypto0 is not.
+Since nobody use them , add a 0 to be consistent with the TRM and crypto1 entries.
 
-Reviewed-by: John Keeping <john@metanate.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- .../crypto/rockchip,rk3288-crypto.yaml        | 64 +++++++++++++++++++
- .../bindings/crypto/rockchip-crypto.txt       | 28 --------
- 2 files changed, 64 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
- delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+ include/dt-bindings/clock/rk3399-cru.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-new file mode 100644
-index 000000000000..8a219d439d02
---- /dev/null
-+++ b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/crypto/rockchip,rk3288-crypto.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip Electronics Security Accelerator
-+
-+maintainers:
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3288-crypto
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 4
-+
-+  clock-names:
-+    items:
-+      - const: aclk
-+      - const: hclk
-+      - const: sclk
-+      - const: apb_pclk
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: crypto-rst
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/rk3288-cru.h>
-+    crypto@ff8a0000 {
-+      compatible = "rockchip,rk3288-crypto";
-+      reg = <0xff8a0000 0x4000>;
-+      interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&cru ACLK_CRYPTO>, <&cru HCLK_CRYPTO>,
-+               <&cru SCLK_CRYPTO>, <&cru ACLK_DMAC1>;
-+      clock-names = "aclk", "hclk", "sclk", "apb_pclk";
-+      resets = <&cru SRST_CRYPTO>;
-+      reset-names = "crypto-rst";
-+    };
-diff --git a/Documentation/devicetree/bindings/crypto/rockchip-crypto.txt b/Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
-deleted file mode 100644
-index 5e2ba385b8c9..000000000000
---- a/Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--Rockchip Electronics And Security Accelerator
--
--Required properties:
--- compatible: Should be "rockchip,rk3288-crypto"
--- reg: Base physical address of the engine and length of memory mapped
--       region
--- interrupts: Interrupt number
--- clocks: Reference to the clocks about crypto
--- clock-names: "aclk" used to clock data
--	       "hclk" used to clock data
--	       "sclk" used to clock crypto accelerator
--	       "apb_pclk" used to clock dma
--- resets: Must contain an entry for each entry in reset-names.
--	  See ../reset/reset.txt for details.
--- reset-names: Must include the name "crypto-rst".
--
--Examples:
--
--	crypto: cypto-controller@ff8a0000 {
--		compatible = "rockchip,rk3288-crypto";
--		reg = <0xff8a0000 0x4000>;
--		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&cru ACLK_CRYPTO>, <&cru HCLK_CRYPTO>,
--			 <&cru SCLK_CRYPTO>, <&cru ACLK_DMAC1>;
--		clock-names = "aclk", "hclk", "sclk", "apb_pclk";
--		resets = <&cru SRST_CRYPTO>;
--		reset-names = "crypto-rst";
--	};
+diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
+index 44e0a319f077..39169d94a44e 100644
+--- a/include/dt-bindings/clock/rk3399-cru.h
++++ b/include/dt-bindings/clock/rk3399-cru.h
+@@ -547,8 +547,8 @@
+ #define SRST_H_PERILP0			171
+ #define SRST_H_PERILP0_NOC		172
+ #define SRST_ROM			173
+-#define SRST_CRYPTO_S			174
+-#define SRST_CRYPTO_M			175
++#define SRST_CRYPTO0_S			174
++#define SRST_CRYPTO0_M			175
+ 
+ /* cru_softrst_con11 */
+ #define SRST_P_DCF			176
+@@ -556,7 +556,7 @@
+ #define SRST_CM0S			178
+ #define SRST_CM0S_DBG			179
+ #define SRST_CM0S_PO			180
+-#define SRST_CRYPTO			181
++#define SRST_CRYPTO0			181
+ #define SRST_P_PERILP1_SGRF		182
+ #define SRST_P_PERILP1_GRF		183
+ #define SRST_CRYPTO1_S			184
 -- 
 2.35.1
 
