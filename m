@@ -2,160 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC0EC43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 14:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78A2C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 14:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233308AbiGFOMQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 10:12:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        id S232320AbiGFO2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 10:28:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233395AbiGFOMO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 10:12:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36FD1EADE;
-        Wed,  6 Jul 2022 07:12:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6C689B81CF5;
-        Wed,  6 Jul 2022 14:12:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B556C341D7;
-        Wed,  6 Jul 2022 14:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657116730;
-        bh=RHN2bWFwgmerCCoeAvGKz0u+MaE/4SRrO+eiHhO2djg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Xh1v7g2+gyzwxF80Ws8Y+37Olx2A+p2HCNlUkanKraSVqF7fZ247SFEXqGjMbnoEA
-         W5jsicurP7E634gMHzCf4Fx19uHJe5JwCnxFUuYNFfhRmkmkMeF6E3bbYUytgq7Pfx
-         23rdkYtJr7jDxQuehVQj5ny1/Tw9GMgijmVosvIF+9tdlKgnPVvjK3icj62nw310/R
-         U7xIjKopbMYUq45nqjKZDFyaVFm6kp1UUeFRho8iRuR5wctpmGd/B7kID3w8a9gKu/
-         R2sCVVDhtv6hxFEXJGTneHyoO7iEiuYWEfN34+HsceWaof/93eeUABzTebZNRFiwFo
-         ipGYZ5e+9buGA==
-Received: by mail-vs1-f48.google.com with SMTP id i186so15177205vsc.9;
-        Wed, 06 Jul 2022 07:12:10 -0700 (PDT)
-X-Gm-Message-State: AJIora/QVmFEoF+T0JaXmmr6AqcmPtjgV8p72Xaj4/PpaGzluZ9BHNkR
-        B5xZL4JpfAV3inbzvDkq5nhAcgmCSDhKA0VgRw==
-X-Google-Smtp-Source: AGRyM1u1HWVn2082EJ5+ru4frCQnJcreiwhKLFDJAiH/WoWedcEtjm0QcNQR7mO+T3bYj9xAqY3u/BVr3918Yjxpxno=
-X-Received: by 2002:a67:d194:0:b0:357:8ea:5554 with SMTP id
- w20-20020a67d194000000b0035708ea5554mr2766153vsi.0.1657116728785; Wed, 06 Jul
- 2022 07:12:08 -0700 (PDT)
+        with ESMTP id S233331AbiGFO2s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 10:28:48 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A001E1CFCC
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 07:28:45 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id f2so16962656wrr.6
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 07:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ftt1gf1maseGqC1Gii2R8eooTq30YUOm7AExkJ1sGBI=;
+        b=Idoj3f1+WjxFSaC8dyFJ6WmfifQA2Bwuj5QgzV8Fe9fCvZIDrYQbVnffG8rK4Nhc4M
+         jvHyyMmjSeGMeDEH4iox8BuBGuO6q8XyI23QONyQjrKEGWhId2FvvYQYj+rZeGaB0/eo
+         MUdXlaK5JbXGM0j2k3ek6BkgxAY9GaYqGOl+mn/4rhtdprQ7qgjNalgVk6pGjrDjT7Ku
+         eeUWJoM0DPwXvseOzmAuU3AAzE03J0h5k3FeeTVa3m4j4nFPgILNL7MqTRu2UnVmw5aX
+         1zZugYcVyqVJ3+nz8LREpA3sfLCyT180zGZkVMDZPDaXbPkBCuENIrpeSE4U0KAp5FG1
+         0IlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ftt1gf1maseGqC1Gii2R8eooTq30YUOm7AExkJ1sGBI=;
+        b=tXZl/SKvEXQYZNPJ3ZQHFnVLaANJ6PSKyW0UISmtR0NtPYejPJY+nF5Otfmzk2e9YK
+         gSLhFW722aMY20b8khhy6PDwX8iDoI6UMpjS5Z8KmNLnNW523wigoQcHMGAZHhb7c3Qv
+         5fcj3bjtIAzgpgMdJ0QSiGgSfZjYTo8+H7cjo39JwGJtpJZr9+PVPjIUJoANs0dZPGsE
+         KSGXMXuFCIQRxfDPkMZX0kI/1i0+R+RRMAkF68SFXj+6hJwfBPMxU0PJ6Tfq1+Eja0Z6
+         5RNDfI/ec7lN+8ELXagberVKncxiGizysR7uiLzYHTF0/7q654PSGxDvSeL3idGDfV72
+         +2mw==
+X-Gm-Message-State: AJIora/UpsA0qVdXoXi9NJJ8CBTnUcUErKWGzRW/DnW0S+Z2Y2naTaTt
+        ue5sm1psvzAEPk5X95se8oFswA==
+X-Google-Smtp-Source: AGRyM1s/EpMgC9IgMxTtWr1OjAkAw4mmTjNBAsTu4Zuo0mz4gDkedlTMxCZZ9t17GTaZzEa0+7q8Kg==
+X-Received: by 2002:adf:ea08:0:b0:21d:6dbf:6366 with SMTP id q8-20020adfea08000000b0021d6dbf6366mr13294602wrm.137.1657117724247;
+        Wed, 06 Jul 2022 07:28:44 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id y5-20020a056000108500b002167efdd549sm8046055wrw.38.2022.07.06.07.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 07:28:43 -0700 (PDT)
+Date:   Wed, 6 Jul 2022 16:28:40 +0200
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     john@metanate.com, heiko@sntech.de, p.zabel@pengutronix.de,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, didi.debian@cknow.org,
+        herbert@gondor.apana.org.au, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v8 25/33] dt-bindings: crypto: rockchip: convert to new
+ driver bindings
+Message-ID: <YsWcGDwPCX+/95i3@Red>
+References: <20220706090412.806101-1-clabbe@baylibre.com>
+ <20220706090412.806101-26-clabbe@baylibre.com>
+ <1657114144.957232.4099933.nullmailer@robh.at.kernel.org>
 MIME-Version: 1.0
-References: <20220629164414.301813-1-viorel.suman@oss.nxp.com>
- <20220629164414.301813-3-viorel.suman@oss.nxp.com> <f0634bf0-77e9-939e-693f-31d50af4768c@linaro.org>
- <20220630123754.esbuac4pfktlseh2@fsr-ub1664-116> <78faf75d-80b7-7a0e-e306-6351dbe5133c@linaro.org>
- <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+0GJBTVkS12XTvUKphMH4XuQ5AS1-QHMw6ULgpWbZBQQ@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 6 Jul 2022 08:11:57 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
-Message-ID: <CAL_Jsq++FqUn3u56boHcoZhskx-6uUiduhJbUyWXbOH6dzExJg@mail.gmail.com>
-Subject: Re: [PATCH v6 02/14] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
- yaml file
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1657114144.957232.4099933.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 5, 2022 at 12:33 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Thu, Jun 30, 2022 at 12:33 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
-> >
-> > On 30/06/2022 14:37, Viorel Suman (OSS) wrote:
-> > > On 22-06-29 19:53:51, Krzysztof Kozlowski wrote:
-> > >> On 29/06/2022 18:44, Viorel Suman (OSS) wrote:
-> > >>> From: Abel Vesa <abel.vesa@nxp.com>
-> > >>>
-> > >>> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> > >>> we need to split it between the right subsystems. This patch documents
-> > >>> separately the 'iomux/pinctrl' child node of the SCU main node.
-> > >>>
-> > >>> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > >>> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> > >>> ---
-> > >>>  .../bindings/pinctrl/fsl,scu-pinctrl.yaml     | 68 +++++++++++++++++++
-> > >>>  1 file changed, 68 insertions(+)
-> > >>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > >>> new file mode 100644
-> > >>> index 000000000000..76a2e7b28172
-> > >>> --- /dev/null
-> > >>> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
-> > > [...]
-> > >>> +      fsl,pins:
-> > >>> +        description:
-> > >>> +          each entry consists of 3 integers and represents the pin ID, the mux value
-> > >>> +          and config setting for the pin. The first 2 integers - pin_id and mux_val - are
-> > >>> +          specified using a PIN_FUNC_ID macro, which can be found in
-> > >>> +          <include/dt-bindings/pinctrl/pads-imx8qxp.h>. The last integer CONFIG is
-> > >>> +          the pad setting value like pull-up on this pin. Please refer to the
-> > >>> +          appropriate i.MX8 Reference Manual for detailed CONFIG settings.
-> > >>> +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> > >>
-> > >> Look at fsl,imx8mq-pinctrl.yaml. Each item is described (items under items).
-> > >
-> > > Added them initially, but later dropped because of some logs like
-> > > "pinctrl@xxxxxxx: usdhc1grp:fsl,pins:0: [...] is too long" shown by
-> > > "make dt_binding_check dtbs_check DT_SCHEMA_FILES=[...]/fsl,scu-pinctrl.yaml"
-> > >
-> > > Same logs are shown for "fsl,imx8mq-pinctrl.yaml". Will add the items description in the next
-> > > version.
-> > >
-> >
-> > The fsl,imx8mq-pinctrl.yaml should be correct and I don't see the reason
-> > why dtschema complains in some of the entries. It's like one define was
-> > not correct... I'll take a look at this later, but anyway keep the same
-> > as fsl,imx8mq-pinctrl.yaml even if it complains.
->
-> The issue is that 'fsl,pins' is problematic for the new dtb decoding
-> because it has a variable definition in terms of matrix bounds as each
-> i.MX platform has its own length (typ 5 or 6). The tools try to work
-> around it by figuring out which size fits. That works until there are
-> multiple answers which seems to be what's happening here.
->
-> The easiest solution I think is to just strip the constraints in
-> occurances of this property. I'll look into that.
+Le Wed, Jul 06, 2022 at 07:29:04AM -0600, Rob Herring a écrit :
+> On Wed, 06 Jul 2022 09:04:04 +0000, Corentin Labbe wrote:
+> > The latest addition to the rockchip crypto driver need to update the
+> > driver bindings.
+> > 
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  .../crypto/rockchip,rk3288-crypto.yaml        | 85 +++++++++++++++++--
+> >  1 file changed, 77 insertions(+), 8 deletions(-)
+> > 
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:0:then:properties:clock-names: 'oneOf' conditional failed, one must be fixed:
+> 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too long
+> 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too short
+> 	False schema does not allow 4
+> 	1 was expected
+> 	4 is greater than the maximum of 2
+> 	4 is greater than the maximum of 3
 
-This is now fixed in the dt-schema main branch.
+Hello
 
-Rob
+I upgraded to dt-schema 2022.07 and fail to reproduce all errors.
+
+Regards
