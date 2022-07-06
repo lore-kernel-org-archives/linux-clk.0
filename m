@@ -2,172 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02782C43334
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 08:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36E0CCA473
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 09:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231964AbiGFIoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 04:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57296 "EHLO
+        id S232222AbiGFJEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 05:04:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229984AbiGFIoY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 04:44:24 -0400
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2054.outbound.protection.outlook.com [40.107.104.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4019A1707C;
-        Wed,  6 Jul 2022 01:44:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LXMUCc6S8iwBzIWr4xL76gUpjbhumC/Nj9wNWL3g4PHUwnBkvKlesMQhnj645RNAx0iPm4X0XzK4MEanXulSrmqliR4GykXk3kwZhaq9mga3BBCl0/P4/VQLEN1QUDQCdfo4OeZ2afzVdZGhmxTDArkhLvU52D1mijKTrEeLDwXovBmiuk7EudrEtKgyzfB7CpMfaAQfd0abySTgwrT9buFa5DHLUvcqohM/QjCnIEFMlOJ748P/iye7pR7pb7+5tbKlB3WA5n2/ll1qiV0zOO6Iiq5uWXW++hPCQAnDQiCfnoGNp7VUq9iFbitDNKGD7XwAwy7jwRXVbTRamAjwWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hAY4Ue8N425D+q4fohbjt1fY2cx5KEMaARzr3yFvefM=;
- b=JQ/7pPfZAIMhJ1lzKVvgrIuX3kkD2dOX0Lm0HWuSXKzaSIZ+GqpXOREITTJNtLBirCk5CUHtVZixxwyUS/PIJEw0LWuXlTty/+YKo0xxyh3f9DvchoI30zYGtRkwq8KlfllcrNYTnnV0TOPY2blyvqN6ChxJXm6oE9hHHOMyy7LN7cVSKRxVg95kx9fMtuLoMgoHmboBncXFBaGaNI+rn1YQatDmzYmdPG2/Tg66mrPyQ85Fb5OH+I8eOZDYn+oimss0uz4UMr3JNipkLoZ1ZQtNpHPnd2i5z1PxFoplZxQvcw/xRsq5dF3s/1AhaecSoz/oDJRmEzpGn0jZZqvhHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hAY4Ue8N425D+q4fohbjt1fY2cx5KEMaARzr3yFvefM=;
- b=ATJi8d0BV74BY5FKKbKQ0YC4YlaORV+ALKDw2ImcN2XAUsGyEQfl1nAqNqw/A0wjB5ye74IxPPclxH3IvOvTow83pl1OIkrvN389dPb1Iy8ubiF13/N77yrTOohTYcB9N6A5XP0BZ4QvvBZKIMA2OcKgPZ6T/2c4J4WePsSj2i4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
- by AM0PR04MB4948.eurprd04.prod.outlook.com (2603:10a6:208:ca::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5373.18; Wed, 6 Jul
- 2022 08:44:17 +0000
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::6546:3ee1:5e6c:278f]) by VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::6546:3ee1:5e6c:278f%5]) with mapi id 15.20.5395.021; Wed, 6 Jul 2022
- 08:44:17 +0000
-Date:   Wed, 6 Jul 2022 11:44:03 +0300
-From:   Viorel Suman <viorel.suman@oss.nxp.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        Liu Ying <victor.liu@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Ming Qian <ming.qian@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [PATCH v7 01/15] dt-bindings: clk: imx: Add fsl,scu-clk yaml file
-Message-ID: <20220706084403.46hsjhkrsss5n3i3@fsr-ub1664-116>
-References: <20220704161541.943696-1-viorel.suman@oss.nxp.com>
- <20220704161541.943696-2-viorel.suman@oss.nxp.com>
- <e9917b17-49e2-6f0f-201c-8b2064c5efc6@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9917b17-49e2-6f0f-201c-8b2064c5efc6@linaro.org>
-X-ClientProxiedBy: AM0PR04CA0091.eurprd04.prod.outlook.com
- (2603:10a6:208:be::32) To VI1PR04MB5005.eurprd04.prod.outlook.com
- (2603:10a6:803:57::30)
+        with ESMTP id S231875AbiGFJEg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 05:04:36 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6155FB0
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 02:04:34 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id s1so21046949wra.9
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 02:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vTfn5kYTl3DZc1w6nMvn5z7ndGSpnwpZR54pnipxf4Q=;
+        b=Jjg/2mnh6qjGyd5qZ24zbDEHD9i6Q0JFDZ1rSazDilSD76foKz0Sl5ZHUDvhdgMIdg
+         NRtjoq58CVh3OoMenOr6Px3/4lT8tsXoa0ZALt4L0BPHg2WQcjqU9S/AAVqWnld0CDzk
+         +0M3kfKvJsh7i7mGT6DCs8kxCVOdh+Kyp1VNS6qAnkuMWG9IQm1oOJ0BmmtMrcBjROOy
+         HTPi4xo9HorrY5sq6Z3WV+qXww4xLr18bm4EhIy/LuQZpbtD3to4RsrFrzsOAxMZlAzq
+         3iCX+wcv0JwX37fzuarB8Ck5bHxe/KcXwkXQ29Vx+ghUOAqcVAlc/s+A9x1daKy0YCVr
+         Ti/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vTfn5kYTl3DZc1w6nMvn5z7ndGSpnwpZR54pnipxf4Q=;
+        b=Ran47jthx82Gc0NKsRrf4kJPcC+bthvJoZ/crbN1qnVJUah7lFyXWGptBm9eJxsHGF
+         XdNjX5mz3iciuxH7U10QvZVv9YAt1bJ8Ig/4xdAxPRv9hCngWQeJJehaqE+46ZpYvMOk
+         tozqD0hkAb7IMRRhQqlr5DAhBo4aEwURSWTalzVDnTbgb0s2ZHl29Ja6xr4wuPY0q4JQ
+         TN22SeCtLl9Vth0Lets1Silut8Eaw094+nWKRAdKa+96YsSEy/0vZRl+zeeV3mcZBbLs
+         KCAeG6sUwciGKioEIcou4oq8+AeCGvEN3PKaGMjyoHl0oYFaOBhctpupW9IV8D4REvPa
+         9GrA==
+X-Gm-Message-State: AJIora95RXJbdlQwyBUjHsRDzCeonUWiSRpEZ8iWOdBOsmyPB7DH2cy5
+        Ko8gJqQvIGj3O1yEZzgy9KW4IA==
+X-Google-Smtp-Source: AGRyM1uSlWsLk/ygXwr8iw9lI5wNKxJ/YnWBhPekE7kkct+MbPS1ZQRSuPMu7KI4aB6OVuhFq1Ry6g==
+X-Received: by 2002:adf:dc09:0:b0:218:5f6a:f5db with SMTP id t9-20020adfdc09000000b002185f6af5dbmr36466505wri.480.1657098273109;
+        Wed, 06 Jul 2022 02:04:33 -0700 (PDT)
+Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id v11-20020adfe28b000000b0021d6ef34b2asm5230223wri.51.2022.07.06.02.04.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Jul 2022 02:04:32 -0700 (PDT)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     heiko@sntech.de, herbert@gondor.apana.org.au,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org
+Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        john@metanate.com, didi.debian@cknow.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v8 00/33] crypto: rockchip: permit to pass self-tests
+Date:   Wed,  6 Jul 2022 09:03:39 +0000
+Message-Id: <20220706090412.806101-1-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0067dbcf-e2c0-495a-10c4-08da5f2bb636
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4948:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: JTC8onsN4yQvYfGlP1Np083G7dHj7+B2805Hii26EzzautPDyH5YAu4wSoUIHyAyayToK1pLcpztolQKLHg3j7Tkn+CtYHcZNZKY55DEtR3O+2XTwXT5NyK/64/QV4M6ab54PoJnaEtPhqEY+0LOMtoW7gWwJ/t4s5aoE95nNkj3WRiCJx4tt5yFEUUR+9OmdaiU4CZDMeLdH8lvU5YoZknp9Xs0MrU8GhctEokTBEVMgs72EgwKJgGBBD9F6qaKYlCOs76FGPE+VJn8dWYMnr0EzevWEJCZZ+eSXOy/TvWK4v+UOyzQqOMeBNJG09D4jK8VuXDLxpCLAjK2DxFdUoMDqcFM1FGHAc7rZsVn8m3Cj4X9FS+5St0nqbqv8Co/Fl2t50Hy71QSfbNQWuNzef7FYuINsTacUXyMT4GLNS38CVfkdkFs69gIFiOYdaUp29MaQeyGJ2qCs9XCE3i0S5bN4FqZWjfQwnSFFljJ4ZlEkZSAjzzBsIDfyNSS+G3m71FCttz3MI0/Q6fptiin8x0nBTKTi5MZiE4RhQdVH9dy4tSkGZzLQboAfjyLKO+A/FWKGOQ2rgl+eoa6t+K96+D5wFOSTJfMC4gbW8tdGw62QyOxXYsm4TkXdk83pX1HlwJ/dA8Uw8CAR6+Qp6jPtmTTDwZelMzSl/ftpQcdTrnU2M4o2I93IwccgPDd0y15JeEENl7pNaLPL8DGoHpTQHUatB602L/29TKUR0pZbPIrWsaKCIjbXoQJn5vjuZNhXZDVYRSRtaf3vsgEyS3bIr6Htb6Hq8uBDIsOv0SJxfT553UXtueXmQiXJ0wxZtR1
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(7916004)(376002)(136003)(346002)(396003)(39860400002)(366004)(1076003)(6512007)(6486002)(9686003)(38350700002)(54906003)(6916009)(316002)(186003)(38100700002)(66476007)(66556008)(4326008)(8676002)(44832011)(41300700001)(86362001)(66946007)(53546011)(52116002)(33716001)(8936002)(83380400001)(5660300002)(26005)(478600001)(7406005)(7416002)(6666004)(6506007)(2906002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?G2aWd0ev/FdpR2Jvc9R3sPEZC1qSgDTUCrs8sBzVJU0O35CY0yQKW4LpSNRM?=
- =?us-ascii?Q?WTubicyOv076GBBjwd3ck35DQaAmLu4u7GSQxS0R3wwsZLn2qJS//TCa/0ja?=
- =?us-ascii?Q?dcSra2AN35rUMTpHzxnZnKT/cKr3Mu4xXublS0ZtyhuSN4K9ezg8vkPrOt2Q?=
- =?us-ascii?Q?/zLckAUtFe+vgVVN5lrQOT7Op+ctt5Cljf8yzABq/9RPX7ISiXQodr+8vuHH?=
- =?us-ascii?Q?tdZN1WG585p5ymf2LtY2xM3vQxedn5pNkLCUSAcOmewIg0zD+2hAhKEknI4Z?=
- =?us-ascii?Q?PIksCdR+t4dbzIP9uSq0XHF9MHmQJVBhnEPgduaBM6HyBaYqQPVhAp1sA6sH?=
- =?us-ascii?Q?nixmFLANaQsPthCbJvGv8p4IfjP+EgPWXGCVI1bvhcB98VmfQPaChT0OzZrd?=
- =?us-ascii?Q?C4sF0QEMISek8rIAkjUzc7U0GdQMdGai0ltNjvsPlHWe4BdfZGa2RCmm2yji?=
- =?us-ascii?Q?sLPS4xAGPMZ7rKhrAJHFi75OvMvAg54HDgEFm9gqtIxo4ZUG7UGJqLYyBPX4?=
- =?us-ascii?Q?k0fI7Pf/Z5AYPjGNC37fYhZTWumgrNmc/5/ujzf8aCSYdOQ3saGe1yw8b9Nf?=
- =?us-ascii?Q?wyFd3T0bMLaWP82t/IHZM7muY6YAn4w5OvctkNJqPHWbBYcekCC+j7K8PPOP?=
- =?us-ascii?Q?iQeKrjV1LTcUMIe+1djiKA/BeI4HiYz1ELrgu4nz3XdFD9u0q9+2qDHZq3Pg?=
- =?us-ascii?Q?jtVCiWHNJK9uYMP46Se3dRY3xlIshZ2lCFf/SD0OVUfYkHr+W57P7aGeEhgi?=
- =?us-ascii?Q?wfvuozndL0RD01WIdDxUxywsM53GvhoCLSnhK4OtPhdErU3FpEAYaye8PF+D?=
- =?us-ascii?Q?TBkrf0QYebUdPGGQnbaUuWpIrLN3By8uk8k4tzrWHsASBoQxGc2I3iLDZunQ?=
- =?us-ascii?Q?tU/OaAQDCVZ5uYGc6JM00yFOnLpe+G5r7RAWp7Z3xSVMGhH9qIY/wehd0UEO?=
- =?us-ascii?Q?oVTZFJ5lBxl1G6nz7+vftfwg5IIR7QKerRJ3fr5Zzw576Vzq5J8ZyUFyB6u2?=
- =?us-ascii?Q?eqDBodLDOtL3yUD9X3YAwEY0zx5V1Gil9nCy8LxVIgVQKILht6C78sRFNEno?=
- =?us-ascii?Q?MjIDeffAWyWmhH3fUC8zOVxWSfcSC1DAlgjtQoTteNzfJ84x+blwRcFaDgEq?=
- =?us-ascii?Q?j7HEdSp2RsomWLBbOBPen1P+NEpnFW104ZpyYI8rX96u0AsGidFDwoN+Dbtx?=
- =?us-ascii?Q?ppMjbNskDAcivVyb4id6Kk3taOE+0vTzGFju72XraUlM1sM/KfUq0dQT52mh?=
- =?us-ascii?Q?eQpCcyQxYDs/mHz8MPoSTkPeSjmClum5ZGUKqvu/noG4AL0pSkN60mgBor6c?=
- =?us-ascii?Q?RD/ojbYtSwh5aRWt5XH0fI7kI7alL99Ge1Bj1JbmhKixojKbhKyHRUScy5OO?=
- =?us-ascii?Q?1zAJIIbqNrJS6q83Z/TBcRkPGKgqBfV6/kSbD1Ad4UyC/yjTzHD7QxwvWvXM?=
- =?us-ascii?Q?HrKw22F8U+9Opu1yEavFD4VWms4OzJeUbRLelpOw+YI96inNHJH5niG/Pxmo?=
- =?us-ascii?Q?jpN+NnIjQY2gLIQ8vQ6JNhtWYfEIrEmRHZGbiNOtR8jmiuZ9XhkyyErFaz2F?=
- =?us-ascii?Q?InN+Exw/tSvCSrH/xR7xTx7Y8A87a4AFKUc75TU7?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0067dbcf-e2c0-495a-10c4-08da5f2bb636
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jul 2022 08:44:17.3606
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TCbVi17vMhKq6zVF6ouvyO27T8HLu46/ItKY5KKfFW5wCrhiTVWEu6jbUXkg3TxbMSfLURYtZxrg8nLQWFOCSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4948
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-07-06 10:27:57, Krzysztof Kozlowski wrote:
-> On 04/07/2022 18:15, Viorel Suman (OSS) wrote:
-> > From: Abel Vesa <abel.vesa@nxp.com>
-> > 
-> > In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> > we need to split it between the right subsystems. This patch documents
-> > separately the 'clock' child node of the SCU main node.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
-> Hm, you kept Stephen's ack, so why you did not keep my review? Sorry, I
-> am not going to do the same review second time. Please add changelog to
-> each patch instead describing what changed, which also will justify why
-> my review was dropped.
+Hello
 
-Hi Krzysztof,
+The rockchip crypto driver is broken and do not pass self-tests.
+This serie's goal is to permit to become usable and pass self-tests.
 
-I thought it would be best to get your final "good to go" before adding
-your "reviewed-by" given that the patches includes additional changes
-and may not fit your expectations. No problem from my side, will
-send one more version.
+This whole serie is tested on a rk3328-rock64, rk3288-miqi and
+rk3399-khadas-edge-v with selftests (with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y)
 
-Regards,
-Viorel
- 
+Regards
+
+Changes since v1:
+- select CRYPTO_ENGINE
+- forgot to free fallbacks TFMs
+- fixed kernel test robots warning
+- add the PM patch
+
+Changes since v2:
+- Added DMA clock back to 3288 since it dont work without it
+- fallback needed to select CBC and ECB configs
+- Added support for rk3399
+- Added more patch (style, read_poll_timeout)
+
+Changes since v3:
+- full rewrite of support for RK3399
+- splited dt-binding patch in two
+
+Changes since v4:
+- Another full rewrite of support for RK3399
+- Fixed dt-binding from Krzysztof Kozlowski's comments
+- Use readl_poll_timeout() instead of read_poll_timeout()
+- Rewrite the fallback SG tests
+
+Changes since v5:
+- fixed errors in DT binding patch
+
+Change since v6:
+- remove quotes around const values in dt-bindings
+
+Changes since v7:
+- added lot of reviewed/tested by
+- In patch 14: keep initial reset pulse.
+
+Corentin Labbe (33):
+  crypto: rockchip: use dev_err for error message about interrupt
+  crypto: rockchip: do not use uninitialized variable
+  crypto: rockchip: do not do custom power management
+  crypto: rockchip: fix privete/private typo
+  crypto: rockchip: do not store mode globally
+  crypto: rockchip: add fallback for cipher
+  crypto: rockchip: add fallback for ahash
+  crypto: rockchip: better handle cipher key
+  crypto: rockchip: remove non-aligned handling
+  crypto: rockchip: rework by using crypto_engine
+  crypto: rockchip: rewrite type
+  crypto: rockchip: add debugfs
+  crypto: rockchip: introduce PM
+  crypto: rockchip: handle reset also in PM
+  crypto: rockchip: use clk_bulk to simplify clock management
+  crypto: rockchip: add myself as maintainer
+  crypto: rockchip: use read_poll_timeout
+  crypto: rockchip: fix style issue
+  crypto: rockchip: add support for rk3328
+  crypto: rockchip: rename ablk functions to cipher
+  crypto: rockchip: rework rk_handle_req function
+  crypto: rockchip: use a rk_crypto_info variable instead of lot of
+    indirection
+  crypto: rockchip: use the rk_crypto_info given as parameter
+  dt-bindings: crypto: convert rockchip-crypto to YAML
+  dt-bindings: crypto: rockchip: convert to new driver bindings
+  clk: rk3399: use proper crypto0 name
+  arm64: dts: rockchip: add rk3328 crypto node
+  arm64: dts: rockchip: rk3399: add crypto node
+  crypto: rockchip: store crypto_info in request context
+  crypto: rockchip: Check for clocks numbers and their frequencies
+  crypto: rockchip: rk_ahash_reg_init use crypto_info from parameter
+  crypto: rockchip: permit to have more than one reset
+  crypto: rockchip: Add support for RK3399
+
+ .../crypto/rockchip,rk3288-crypto.yaml        | 133 +++++
+ .../bindings/crypto/rockchip-crypto.txt       |  28 -
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  11 +
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  20 +
+ drivers/crypto/Kconfig                        |  15 +
+ drivers/crypto/rockchip/rk3288_crypto.c       | 506 ++++++++--------
+ drivers/crypto/rockchip/rk3288_crypto.h       | 107 ++--
+ drivers/crypto/rockchip/rk3288_crypto_ahash.c | 267 +++++----
+ .../crypto/rockchip/rk3288_crypto_skcipher.c  | 543 ++++++++++--------
+ include/dt-bindings/clock/rk3399-cru.h        |   6 +-
+ 11 files changed, 955 insertions(+), 688 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+
+-- 
+2.35.1
 
