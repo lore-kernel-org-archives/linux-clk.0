@@ -2,135 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E288ACCA47F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 15:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE52CCA473
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Jul 2022 15:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbiGFPEn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 11:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49888 "EHLO
+        id S233393AbiGFPHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 11:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232688AbiGFPEm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 11:04:42 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6862415717
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 08:04:41 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id f2so17110286wrr.6
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 08:04:41 -0700 (PDT)
+        with ESMTP id S233490AbiGFPHR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 11:07:17 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E7926546
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 08:07:15 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id a11so18827381ljb.5
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 08:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zUHjRI1jr+Yrh9dUueZjZWr58/iaqkxDRzBkA9rclyI=;
-        b=Yl8J/2mhUuzM78REsuhuyap1UbHG6jdWDrIww75VUghGmOO1FjKfKNKXB/9Jp/9baS
-         XXISx1pqBW+IX9dbVVg4tYE1JTNlP7PEE0HUQN7dN7emEZchaX/5dz/gcvFy9Px1w/Jf
-         ofxWJej6Yn+VNo7jevmxhUvjmrWPZAX7Eayn/M9MNecMAKCFbcyPP0bWYTswl/wIZuMz
-         oaAb+dLxOjW/phWNhUD5/2D0SqTFvt7/S3Q9ym15HCDID55+fCYiHs+sMyKjeHliWxD6
-         DghaBfeRDY8lfxK+W6f72lWjdn6uZuGHNH16kWf0nZU4ubnNsRFto1uxHN9N762AOiLs
-         cqxg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=zYC1cAZNMI4fPCA/JdppgAdHhnjAV/K9sV/UY3ZbdgY=;
+        b=rrSK0lSH6xcD+cXYKAeq6nq5btWfRc6kxx24RmPQUa7FpIkWJv+OHbTarF1Mpw3M36
+         k6np8o4mBd7/prlksYArETIApb7BXM/C3LZEWjwNt/+2kjIDjXiy+qT5J3YbN3iRKYP6
+         2v0MdtGlLkzWnddB0t5B7luXBgPJvAXUZlZWt8iuDoRhtBndyDpFpG7gNVBuDSNd0ktS
+         0+ohzgdG8BPVaEmPIYtXIejY7yEMovsaVH6F5bbtE7sDMCi9DrT5yW07qVqgzthOceou
+         iWLnil+/OvO7JqswmXcPelCFnHufYfEq+EZaKKPtM4d7gZivUxLbNXcM3taX6vEk2oIx
+         U55Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zUHjRI1jr+Yrh9dUueZjZWr58/iaqkxDRzBkA9rclyI=;
-        b=UD10scRJ7mqzkN+c0PJcWUeMucmr3w7pJrE+LCaMbLl5RmBtB4sd4KyCwbmvlvCuKJ
-         Th2q02FKl3G+QZSMAte6Ixcz5PPgqyUJt+NUawMsN4EXwzg2obWjbemYAExhxuBopa9K
-         QdTNG5ls3WqFuoMCge+mm1MOX/wAcfG/AgWeEAh31Ns7KzlIJag1R31UtZtcgFNWE3c8
-         Vth8c3ggwElDudJazY9p68Is49S/bBeI2kp3rvNm5iE11eTGitvYtows9wrby+DSNGVr
-         P1AcRLGykz8UrZRfrufqISjc25dKUXI/9+Yj+Qhwqq0lzyyDb2gYhIairIliru5+LabU
-         UE7w==
-X-Gm-Message-State: AJIora+UUuD0NoTINbaT1cuaewH8YMHUFHCF/B/flIDcnSyos8iHpYlt
-        IbYdUamI+wARmAH8j3044ZTh4A==
-X-Google-Smtp-Source: AGRyM1sTX0EBykUUNSxnDmNCn71gGdN1WibbHuKtCzZndxVWdMyf1gXg/h9NxH+czj+cg9UVEO/qCQ==
-X-Received: by 2002:a05:6000:1446:b0:21d:2245:ab65 with SMTP id v6-20020a056000144600b0021d2245ab65mr37797391wrx.315.1657119879727;
-        Wed, 06 Jul 2022 08:04:39 -0700 (PDT)
-Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id v7-20020a1cac07000000b003a04e6410e0sm22443420wme.33.2022.07.06.08.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 08:04:39 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-Subject: [RFC 2/2] clk: qcom: sdm845: Add clk_sync_state_disable_unused as sync_state
-Date:   Wed,  6 Jul 2022 18:04:11 +0300
-Message-Id: <20220706150411.708213-2-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.3
-In-Reply-To: <20220706150411.708213-1-abel.vesa@linaro.org>
-References: <20220706150411.708213-1-abel.vesa@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=zYC1cAZNMI4fPCA/JdppgAdHhnjAV/K9sV/UY3ZbdgY=;
+        b=Ao6CiXkVhwTdJLQbPN3HA5igYWQMVQxSrfNA5MjeV4Kt3Vj3l9tQCBRGbwk8/2lrhl
+         fDlpVplQARSw826u6nE8wkJZ+OTPIzBUNKkr7KLz49GjmV4V42dNvm4TjGE4w7mFYu0R
+         Wl+1xWX59PScP6aEGNkAkiJ6MYmPUficegVZSb859Kv6WLGdrHKDJ0EYIDPRMzkcWAmO
+         78E86L2Lm+7iStWhixa/DSlqpze586r4CAEdOzFDiSKezvQHXGwHJFmnE51nKp7PoDLP
+         zAXGzoYySVIeP6bkJtv/6qOIJroxaW6N0MAvIGB1CXPw66Nsc+oSmIYfDMgBW4wkA97W
+         CuTA==
+X-Gm-Message-State: AJIora/o3Im40Ksgv8pjiMymZ/Ai5qfg3qmpwDnjSMV/Po6+KemV6YKM
+        GVf3EwSCEdPJctXX+VMpxWlEJA==
+X-Google-Smtp-Source: AGRyM1vZFVDEcDCV3p5oTwQ75dQ6gh8Jm4BQFnEddiEH4wedRKJRyG0O43CyonUbxZkQzd52uJNZ1Q==
+X-Received: by 2002:a2e:87c7:0:b0:25a:9605:a2b8 with SMTP id v7-20020a2e87c7000000b0025a9605a2b8mr22670802ljj.148.1657120034049;
+        Wed, 06 Jul 2022 08:07:14 -0700 (PDT)
+Received: from [192.168.1.52] ([84.20.121.239])
+        by smtp.gmail.com with ESMTPSA id u16-20020ac258d0000000b0047f6f675ea1sm6317115lfo.161.2022.07.06.08.07.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Jul 2022 08:07:13 -0700 (PDT)
+Message-ID: <bcb64218-2d2b-2f6b-dc79-303bac8c3bd3@linaro.org>
+Date:   Wed, 6 Jul 2022 17:07:12 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 2/5] ARM: DTS: qcom: fix dtbs_check warning with new rpmcc
+ clocks
+Content-Language: en-US
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220705202837.667-1-ansuelsmth@gmail.com>
+ <20220705202837.667-3-ansuelsmth@gmail.com>
+ <18e40247-7151-b50a-97fe-00ee88f47d9b@linaro.org>
+ <62c565dc.1c69fb81.a4566.e9b2@mx.google.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <62c565dc.1c69fb81.a4566.e9b2@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-By adding the newly added clk_sync_state_disable_unused as sync_state
-callback to all sdm845 clock providers, we make sure that no clock
-belonging to these providers gets disabled on clk_disable_unused,
-but rather they are disabled on sync_state, when it is safe, since
-all the consumers build as modules have their chance of enabling
-their own clocks.
+On 06/07/2022 12:20, Christian Marangi wrote:
+> On Wed, Jul 06, 2022 at 09:44:04AM +0200, Krzysztof Kozlowski wrote:
+>> On 05/07/2022 22:28, Christian Marangi wrote:
+>>> Fix dtbs_check warning for new rpmcc Documentation changes and add the
+>>> required clocks.
+>>
+>> There is no warning in the kernel, right? So the commit is not correct.
+>>
+> 
+> Oh ok, the warning is generated by the new Documentation.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/clk/qcom/camcc-sdm845.c  | 1 +
- drivers/clk/qcom/dispcc-sdm845.c | 1 +
- drivers/clk/qcom/gcc-sdm845.c    | 1 +
- drivers/clk/qcom/gpucc-sdm845.c  | 1 +
- 4 files changed, 4 insertions(+)
+Patches, especially DTS, might go via different trees, so the moment DTS
+is applied there might be no such warning.
 
-diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
-index 27d44188a7ab..e5aeb832e47b 100644
---- a/drivers/clk/qcom/camcc-sdm845.c
-+++ b/drivers/clk/qcom/camcc-sdm845.c
-@@ -1743,6 +1743,7 @@ static struct platform_driver cam_cc_sdm845_driver = {
- 	.driver	= {
- 		.name = "sdm845-camcc",
- 		.of_match_table = cam_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-index 735adfefc379..1810d58bad09 100644
---- a/drivers/clk/qcom/dispcc-sdm845.c
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -869,6 +869,7 @@ static struct platform_driver disp_cc_sdm845_driver = {
- 	.driver		= {
- 		.name	= "disp_cc-sdm845",
- 		.of_match_table = disp_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 58aa3ec9a7fc..5db75d5ba584 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3624,6 +3624,7 @@ static struct platform_driver gcc_sdm845_driver = {
- 	.driver		= {
- 		.name	= "gcc-sdm845",
- 		.of_match_table = gcc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
-diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-index 110b54401bc6..622a54a67d32 100644
---- a/drivers/clk/qcom/gpucc-sdm845.c
-+++ b/drivers/clk/qcom/gpucc-sdm845.c
-@@ -205,6 +205,7 @@ static struct platform_driver gpu_cc_sdm845_driver = {
- 	.driver = {
- 		.name = "sdm845-gpucc",
- 		.of_match_table = gpu_cc_sdm845_match_table,
-+		.sync_state = clk_sync_state_disable_unused,
- 	},
- };
- 
--- 
-2.34.3
-
+Best regards,
+Krzysztof
