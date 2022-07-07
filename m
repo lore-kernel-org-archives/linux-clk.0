@@ -2,101 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CEBCCA483
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 10:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB31CCA480
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 10:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235179AbiGGKDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 06:03:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33470 "EHLO
+        id S235013AbiGGKNi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 06:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234925AbiGGKDq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 06:03:46 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551A131DE3
-        for <linux-clk@vger.kernel.org>; Thu,  7 Jul 2022 03:03:45 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id r14so19783575wrg.1
-        for <linux-clk@vger.kernel.org>; Thu, 07 Jul 2022 03:03:45 -0700 (PDT)
+        with ESMTP id S234502AbiGGKNh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 06:13:37 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45CA186CA;
+        Thu,  7 Jul 2022 03:13:34 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id d2so31612633ejy.1;
+        Thu, 07 Jul 2022 03:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t0vZOGzWGZ/XO6zAE9EANkv0Ksk8cGK1twtf6zicImM=;
-        b=kznfz8BZq2mc6CDFmmSESwHqfYtxDnIQcY3udHhOo5r4x7ew35us/9p0iWIfwJwKfv
-         FKHSR/kazvJsEtK+ZxxdYyMBQqKz01aiywfvbDtuh8S+551PWf0sNMw1N/eJlVlMQnG8
-         fn4YijInV79eZvhrTHH/o5crrzrgk1ZLXFWYrPBG+CL5RVRzGGuSfg14/FCbLRZec7dn
-         tYlkSqbyKi6AP+4xr49K/LTyy04hmcDDt6kkkEJFXGy3IdiY/XdW5p1zDgtp8PdwSdGI
-         gTqR/jNliQ1gf99f8/j6WzlNeqPjuYXoxuuAGyNRX7RqmHVpv8gh7eO5UoZytJtNttrq
-         prag==
+        bh=TYMK3ln+pSNgbS7KOrXcaQql59e3lfO5o9Vh/Disa6M=;
+        b=PkzgqtL+vZLBFMzGyIXyV4k2GfwuU0yGbZQKU0a/i7SaSARX5OiimigD7PaJ68hrar
+         3w+cv3iVuOGFTg+RO2eCc3lIiNIcGGGqcdD/ONQ2FFLmK8TLPgIT/mxaNADhiTKgGK13
+         PkLGshvr7iBsShkigGpCEEITnNgEMPrgh5OqanjnVgrvMDeGQVagt5y4WUHVkAA5vO7O
+         kcCDnC5Xe7Zq/AZQagkxNRoQGZ44DdM6VGujE3jm4UqCzdZopNWYynQB7AbuwM0VpL9h
+         hFV/HJW8d7ZbnGPFqJkBqQ20szoswTN8ddDht7K6TJp56FHjgNE2qlOWcVMbnYtYl7Us
+         WXfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t0vZOGzWGZ/XO6zAE9EANkv0Ksk8cGK1twtf6zicImM=;
-        b=0Ny67I5+rW/V7YFg9ovq6cko9wD6YvBgPrOdmmNEI5yJsTGyaSxCqT68GlSn2FVkFr
-         LWn5tIDRUNKIycav5LrRfpcu+frxm2rPg8zBsHNmAMKjEQM2zoPgTL4ZaAqt/rw8ZZ6g
-         n2VzGb/M8fnP7L1cwHNn1hpY7evYb5RFga+d1QEEC2t8+x3BitSchiqL/gLS4bueP2iO
-         +wks8v+KSwYvwCr6Gfslrg3+5GnIFrkWhXGSrcOrFeQ3q6KhQaRs140IFyxEdpV/lxDV
-         fBNK8DH5+YUC1mrYX+KxNkutye9EwUe7fyDrFcb8sGLqLpWhArncUOyFRPYLyCyXBR4i
-         9iXw==
-X-Gm-Message-State: AJIora9nqQAtqhQr+Tmh1XtleLSl095Zds4xWJ2RdoIMjczC0Nq1Siwd
-        T/5PCDRry/lvi//g5aEnObF9tg==
-X-Google-Smtp-Source: AGRyM1shZYWd4bEBmVlz7fWpCBjNR12KwTWTJeKuIpR9ErTrkaVkZ5U1PJdsIhR7FR75vPQYLUsd3Q==
-X-Received: by 2002:a5d:6d06:0:b0:21b:c433:d1f6 with SMTP id e6-20020a5d6d06000000b0021bc433d1f6mr42623372wrq.717.1657188223813;
-        Thu, 07 Jul 2022 03:03:43 -0700 (PDT)
-Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id h14-20020a5d548e000000b0021d7ad6b9fdsm4612034wrv.57.2022.07.07.03.03.42
+        bh=TYMK3ln+pSNgbS7KOrXcaQql59e3lfO5o9Vh/Disa6M=;
+        b=IHiMSJOJydaulIB2EQfnNu1z9NyoOVwfKcvwompxJHSSdyKGf5p82JjcFibXd9baDm
+         zbj51TVqTzzkcYhXXgOZ0ZKDcIhBOcj1130A8hw+/06n1ImPO66nRrtLirVSb/gi79Mr
+         XHTr0hSArF1WPbuuaFuLxz8QHpoQH2M9a2YmgJ79mgIO0D2IRJ42cOwVhF3T0yqZaLn4
+         kuI1pt1HYNdvXe4mEsXrEu/IgMwuOsWaVTLGhaIDRvmewW/XHpZGqCncaicY8gOoQA6/
+         QmaTzm1CTg6tLcdqxdNtOpNGRpO3WJphEss+v3K8u1xBGWQwBpMuzNU7MO++2qDmZtOD
+         zowg==
+X-Gm-Message-State: AJIora8wFirCgS9o/oRJNym9rARZCZ9PDXaQwJGFOVsLOOIyaW6wLpJo
+        AuDHsyiLbZNihCMiflrkho0iF9ywNMo=
+X-Google-Smtp-Source: AGRyM1ujARNnAsVPV+Fm+AtrZ7Mo+yZ5WWvQKCrAnn5s0STr+OV2uejbh/obWPVhinrfGHMNu0pyfQ==
+X-Received: by 2002:a17:907:dab:b0:726:8ec4:7219 with SMTP id go43-20020a1709070dab00b007268ec47219mr43602000ejc.260.1657188813173;
+        Thu, 07 Jul 2022 03:13:33 -0700 (PDT)
+Received: from localhost.localdomain (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
+        by smtp.googlemail.com with ESMTPSA id kv12-20020a17090778cc00b0072ac3f06615sm6235747ejc.133.2022.07.07.03.13.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 03:03:43 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-Subject: [RFC PATCH 4/4] clk: Skip disabling clocks if they have consumers
-Date:   Thu,  7 Jul 2022 13:03:09 +0300
-Message-Id: <20220707100309.1357663-4-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.3
-In-Reply-To: <20220707100309.1357663-1-abel.vesa@linaro.org>
-References: <20220707100309.1357663-1-abel.vesa@linaro.org>
+        Thu, 07 Jul 2022 03:13:32 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 2/3] clk: qcom: lcc-ipq806x: add reset definition
+Date:   Thu,  7 Jul 2022 12:13:25 +0200
+Message-Id: <20220707101326.30880-2-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220707101326.30880-1-ansuelsmth@gmail.com>
+References: <20220707101326.30880-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If a clock has already consumers, it should be considered as used.
-So clk_disable_unused should leave it as is.
+Add reset definition for lcc-ipq806x.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/clk.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+v3:
+ - Added review tag
+v2:
+ - Fix Sob tag
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e412e83a6e28..6cce31ea4f72 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1228,6 +1228,9 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_unprepare_unused_subtree(child);
+ drivers/clk/qcom/lcc-ipq806x.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
+index 1a2be4aeb31d..ba90bebba597 100644
+--- a/drivers/clk/qcom/lcc-ipq806x.c
++++ b/drivers/clk/qcom/lcc-ipq806x.c
+@@ -22,6 +22,7 @@
+ #include "clk-branch.h"
+ #include "clk-regmap-divider.h"
+ #include "clk-regmap-mux.h"
++#include "reset.h"
  
-+	if (core->consumers_count)
-+		return;
+ static struct clk_pll pll4 = {
+ 	.l_reg = 0x4,
+@@ -405,6 +406,10 @@ static struct clk_regmap *lcc_ipq806x_clks[] = {
+ 	[AHBIX_CLK] = &ahbix_clk.clkr,
+ };
+ 
++static const struct qcom_reset_map lcc_ipq806x_resets[] = {
++	[LCC_PCM_RESET] = { 0x54, 13 },
++};
 +
- 	if (core->prepare_count)
- 		return;
+ static const struct regmap_config lcc_ipq806x_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+@@ -417,6 +422,8 @@ static const struct qcom_cc_desc lcc_ipq806x_desc = {
+ 	.config = &lcc_ipq806x_regmap_config,
+ 	.clks = lcc_ipq806x_clks,
+ 	.num_clks = ARRAY_SIZE(lcc_ipq806x_clks),
++	.resets = lcc_ipq806x_resets,
++	.num_resets = ARRAY_SIZE(lcc_ipq806x_resets),
+ };
  
-@@ -1259,6 +1262,9 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		clk_disable_unused_subtree(child);
- 
-+	if (core->consumers_count)
-+		return;
-+
- 	if (core->flags & CLK_OPS_PARENT_ENABLE)
- 		clk_core_prepare_enable(core->parent);
- 
+ static const struct of_device_id lcc_ipq806x_match_table[] = {
 -- 
-2.34.3
+2.36.1
 
