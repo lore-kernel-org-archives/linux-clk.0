@@ -2,284 +2,212 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B44CCA487
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 10:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA2FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 12:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234865AbiGGKNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 06:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41154 "EHLO
+        id S235473AbiGGMuz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 08:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbiGGKNh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 06:13:37 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3661CFF1;
-        Thu,  7 Jul 2022 03:13:35 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id y8so16755810eda.3;
-        Thu, 07 Jul 2022 03:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iMZJTyLzHVlGJbjHHwMCbTzqcWe51RNsAkxUieZWJ7k=;
-        b=VCmv0d/idVqsawSw4dNf5d4cG0+v2rlO5EjSeZ+YH70p7NLFR9qk1Haac7TZTyy5cL
-         43pM5tnNFlL4x7fzQbZi4SXIelrYvz/HuQTkFsbtbgDvxYHH3+EPp38na0bnUU8J415J
-         kfascdyDtgisfsEn7UH0U0Ryh6mCx2hlAGTXwy5movjtrpy5KyxmheLiOcAGEPpHYfKg
-         inVARqNn4DJUxZAT5BCouPPQGoRbVW84oaJPQAoOULhoAeKxtaPeW1HeGT57nxMTofuB
-         S+QGZrpQW6cdzr0ALDenkWVBoQT4qzaA361Aex08eAeoHwH7cm+u0gIwT46Il/4bM9gj
-         3hSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iMZJTyLzHVlGJbjHHwMCbTzqcWe51RNsAkxUieZWJ7k=;
-        b=Vuf+/3+F6nVvmiCIiB0RvRiA/9E+dyFmV0+lYJZc1/4yUe9Hy90Rd4o3Dwn20Sz0M/
-         AdNqt7H994acaaa2lsCaxHm+ZKBXDXkn5P/ODfE8l1vm4lvr+ZU/GTioAL7mHBzwbs05
-         et2Cku+lQOb5sL3X2cJ33m7DwfcM73Xy+lWQt7tmrXTzN5gbNakzNkXCc3RLMiVKbtws
-         l5OJ4kLdDl4tIal0rYd/OvEVZen1sk/v/ES1t+iYTacrds8lAEf5Vr+YcdVmdhWskB++
-         dybIhlCe4NYTLGdLn9GiolXEv0btK30GyhPY+pjHj/eZOEVbsmV5KwPikxcQXe492a4y
-         wYig==
-X-Gm-Message-State: AJIora8n0Fj4nYAgDjZAmWbF3pmQa9XsZNvHTseSfRiE+3RtPaflvLNn
-        mTO1GgyoiGi5SoMBN6OqNWQ=
-X-Google-Smtp-Source: AGRyM1sw0JAFEwAiQV7xSiDul0CqnEeHUwawcBNUdD4JRsjNVHXM3EDtYp5uVPB0LbB62B8i4MaDsw==
-X-Received: by 2002:a05:6402:540c:b0:434:d965:f8a with SMTP id ev12-20020a056402540c00b00434d9650f8amr60896932edb.30.1657188814150;
-        Thu, 07 Jul 2022 03:13:34 -0700 (PDT)
-Received: from localhost.localdomain (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.googlemail.com with ESMTPSA id kv12-20020a17090778cc00b0072ac3f06615sm6235747ejc.133.2022.07.07.03.13.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 03:13:33 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        with ESMTP id S234508AbiGGMuy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 08:50:54 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2052.outbound.protection.outlook.com [40.107.21.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BCB92BB11;
+        Thu,  7 Jul 2022 05:50:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ob65cDvmTjAt5lYJ7ElQnCr41wlWx+KHf9390sfzZBhKkYK5ElI85LE+Fwu9ObdzE/rFY/ctfAcqOIDAmhW54znZ9nkiDMc5Mxd8682JSI7j/Zlb4BEKyPcNJFqhBgWe9xANpqh5PHuHi5gMWvpMkTn/oT8r711ePlSz3K9yzCKKJzxvi7fzHR9dwhceDVHZF9j/PXhMGh8BtxvFEtKqfUt61tCrrxMl5PFr4k5M28hajFFLvIJ8+XLyLNGIGeMqgv0MESdUzSm5z2KZfZJauQas2qVLOQQ/TUbdN5omT2baycj22joPHSXfIXippIzwrf0O/OUqtYeT/gsgbjDiMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TFL26jaC0mDaNwHponh0VpQIq4I6lMPZoPIuLQN/HaQ=;
+ b=NninBTvfPsGJUoJIsqQZeAhLSjr4S5NhICbhp/E3EvhVcWgBGs67M/kIYyzdS8sivOc4bl+hrYVt/gZyGdSnz7YTgDV+fWqgnCOvrXhPHOsarki3+EmitkGKHfX0uMo+5Q3/MAImNK27m9K0/aFwf3L8emtu5gBNxf8/T5vQ5ND5pA5a/pMGhv0Uu3A8nMxkC5qqlKVvoqA8T7TGw7iF8DpIZmI97Cmao5j6hMrhkA6PrUnp1TqGWQL63lN92ejG+1FqAWAvq2hd61KX0B07LcitpbFv92wZwkWgKR/k9UZ2Zw/KvUMl/YSYvH79ySweNgBV1GwzqOiAibxhH0T7iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TFL26jaC0mDaNwHponh0VpQIq4I6lMPZoPIuLQN/HaQ=;
+ b=XSgeaQvK1kWFE4WtK/a4UUjLWX41V/0HVHsv9yL7A6rZrujZRYWHgf1n34bGldXU+szhL0sP3aYSsT/iU0nuwZQgP/1xOrdCfA1+Z6eG8bjBmdLE4URDPsZd2fYVBN0iE19TKyAtTXteGDQNUM3LoyRa0xC/Aa5l5xgpNO9uhPw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
+ by AM0PR04MB6418.eurprd04.prod.outlook.com (2603:10a6:208:169::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16; Thu, 7 Jul
+ 2022 12:50:49 +0000
+Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::6546:3ee1:5e6c:278f]) by VI1PR04MB5005.eurprd04.prod.outlook.com
+ ([fe80::6546:3ee1:5e6c:278f%5]) with mapi id 15.20.5417.016; Thu, 7 Jul 2022
+ 12:50:49 +0000
+From:   "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v4 3/3] clk: qcom: lcc-ipq806x: convert to parent data
-Date:   Thu,  7 Jul 2022 12:13:26 +0200
-Message-Id: <20220707101326.30880-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220707101326.30880-1-ansuelsmth@gmail.com>
-References: <20220707101326.30880-1-ansuelsmth@gmail.com>
-MIME-Version: 1.0
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
+        Shijie Qin <shijie.qin@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Viorel Suman <viorel.suman@oss.nxp.com>
+Subject: [PATCH v8 00/15] dt-bindings: arm: freescale: Switch fsl,scu from txt to yaml
+Date:   Thu,  7 Jul 2022 15:50:07 +0300
+Message-Id: <20220707125022.1156498-1-viorel.suman@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM9P192CA0026.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21d::31) To VI1PR04MB5005.eurprd04.prod.outlook.com
+ (2603:10a6:803:57::30)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ecf6893f-3574-4b14-736a-08da60175128
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6418:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: FxVzHycaNY9Tket7hLcAZ9lLsY0+Lj5OdJkWAqDuEusvqHYI23gkwPCjglKHvpNPYevEnJsuDHVglorwjKj5QMn8arM9Ixzowo2PfVK6xMrJhY8xEiYLrQCuAajAql6ZLY1RdrIGc+GATMcYPeDT5OR3+lgVyeEsVGInQ0mMyOHvvY2XDiptJCsNUd9xUgu3ugG3OOA/XXlHM+Llkb1Jz5TrKkW9afoZixfLLJULbKCdSX3JxwE3ok+bQ3Oqh/FUBM7vzTBoZQGKmuOSJgqUiCJAyUMMbvUfYnl4gVeTrUpNReaWrvvYv1z7gly4f3Z8XniEuFs3OnioP2Hu1+Grea6vQAg8zxizTWONAXBPYN0vIipab4MYENwGkGRXTngcfU+tdygi3p8QgQ90GYulfmHojOqL2Pzv78oszdKZ4CUD/dMJiJ8IFsR9PJq4Uu5gEEdmLDQeEN3dCMu1fV/FZJ6GwraWIu3+KSftfD0J7JuXfNFzhSe/K67Ftphvnsse0AKXCkoMrmtOgKUzKZvMDPmxDYvy7YkoC54Y0+Ieu6lm1LbNtB48/l77N84I+KWkAxsr0X8XWACL0CdLTEUEhb2Yil7i8EHE/Ntu0afUMo5RK31qEiCZOj+sHMvPbD3lgi4BTmFV1WcVsOYMJC6FMv3LvxQDYQP2aNLIkAEa/zX1RIRGbIG6ZVHJRa4YtPnKQqj2ELBJKC0BCshLrlWJpvK5RGmJzs5Npf3U8GkoGv/ebJy9HZNOpUPF2dm5zmEZa8q5FNSwiwO6iJrPj3ELMJGLZ/Aox9c2OmDQA/T49m1hD8EcDlALWzf/YQdNhfuAJw3YPLnixIbuXogW9P2HWu83erTJmj0JrtSMB+sQpR3hPkx4jbowWvSwBzuKKlOSiz2rzrP66GHz+FLSxuZ75g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(396003)(136003)(376002)(346002)(39860400002)(366004)(6666004)(86362001)(5660300002)(966005)(38350700002)(6486002)(316002)(38100700002)(2906002)(41300700001)(7416002)(478600001)(921005)(7406005)(66946007)(66476007)(6512007)(66556008)(8676002)(4326008)(8936002)(186003)(52116002)(83380400001)(26005)(110136005)(2616005)(6506007)(1076003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?YKlqU+OGmXDosSzBQHyDXVEnqyfJw+FRem9dH9tuY2j+IgsEYFci61JbkR?=
+ =?iso-8859-1?Q?VIYAxlNVi7iVkUh/WgaWa96s14Cf9Zo/cGYO7WtaOMBN+qIkEAjdlOAhEB?=
+ =?iso-8859-1?Q?GdAVBLq5Kqqlmv/CRaHAg4IgYDY+W1TGhwyihUksReg15aoQn+OgGra9eb?=
+ =?iso-8859-1?Q?a35cuy3DgaqgeMICO09FtJ2NqgySfHb3I8xkCYPzAE+TJ3fXROX/uHCHQi?=
+ =?iso-8859-1?Q?x7s6IFI0/q0wcRWOAnSQo6FMfySjl5pCnmiSl+K6Y4PAWV1cFrlKQf8A99?=
+ =?iso-8859-1?Q?5R6GN8EV3yzjMLnj/OMOlyMv7XjmVzPH2wvOjTzpz/o98J569p662ssiOO?=
+ =?iso-8859-1?Q?WxdDmh6FIbW87fve4GY2kiXCaOoaKtErcEU4BosbMyMWu67FuaHOpl14vr?=
+ =?iso-8859-1?Q?0fvm7ceVP1yPMYMgXr8P4RhgiZmuPEg6ypZzvmFSpxhZZRDjGY7n0giTIf?=
+ =?iso-8859-1?Q?ZNqoLObnrpE8beDY/I70E0TtWSCEozfcYpZRmuiY8MelFLgwKaSFxNKwQC?=
+ =?iso-8859-1?Q?RCs9aAVvvI28v9BZDyg/73PTqokzs3DVYkqPHFR1NZeXi1JyJYPeEl/4PQ?=
+ =?iso-8859-1?Q?O1PfvjPhSWj+ilbN8FEin4beLDqAZn3C9v5zEh4SzwCzPCsaRflWXaxrtL?=
+ =?iso-8859-1?Q?Whfhe9up8+VnpI/1tBX2fu8ffcs4YkrJ+3iaxOPGwRiQnzy1ljyW9eGlcQ?=
+ =?iso-8859-1?Q?y00+TyhwSafsHN+EaFvb1s9dSGz69mTuG3ZwBYiqm/ml69epWNTq8Hxrae?=
+ =?iso-8859-1?Q?SwDw48GN74Af3dxSyOIGcO0Cy4kcO6I5oXJKhmvWigBCiX5DUXJi/2GBjk?=
+ =?iso-8859-1?Q?vZ19S/B+91YCHiwsLpQs/LthhRBEWw0v96vaS+hMxFlCKL22wZqxZBwy77?=
+ =?iso-8859-1?Q?oOZ9yoF470loZY4Q44zB0VD/9qCPYT54+ktUBUvuYX6fxBCUUAk6hkUnOz?=
+ =?iso-8859-1?Q?YU8/oATPGvGhMIPJ9IFnhrpYdHc7I3ST38uRF7aMzU+ASTgEAMvWYKyiT7?=
+ =?iso-8859-1?Q?dvLcQRvbIJloiqqGx9jwq+HRfnnCmKhz1lhwvmuhh+pGrWaBhUExPLUixP?=
+ =?iso-8859-1?Q?ySEGoGvhkx8V3Bdn/pnfWFowXvYjWnvyg6sos3vHwcGy/o89Z8EJBkaCB5?=
+ =?iso-8859-1?Q?qpBSuM+pZiU/PQ/D8+LT6LHGymNlqLBjyXqF1P/wjiWb4xJViQuvPXu3+s?=
+ =?iso-8859-1?Q?o36yaRHis5ptZ9eMCT1Czyo79F144H4Z7uyazHumlFtMWe+IyPlANZSyJk?=
+ =?iso-8859-1?Q?nfSUKtX3L/fzCQQ5wr7wF7jP5ukaKscaNSsisB74ow5ficgJPbWwiwA1gT?=
+ =?iso-8859-1?Q?t+1yzSuInqSVI9MSPQdi2p5jlkRNfq2ryywABv7jWZtI+L/2X9s2h1n5Yo?=
+ =?iso-8859-1?Q?639bHv+viRm0NWqVS8SFp6vzODQVmg8LF2xkdDEJH+zqrZZQqFyVgeoQ25?=
+ =?iso-8859-1?Q?uJkpRgKwTFPALYc3nRjWGEM8YJdl2r7Jalb4ZvoFlO6cBewkVjt/BIC5Qi?=
+ =?iso-8859-1?Q?nXMIHMXItR/gNIgM3Tnv0lMBxYbuF/s9wD7lQq0RRr1865QT8/45vhomc/?=
+ =?iso-8859-1?Q?EdTmBG8sb2Aq/GS76lGJANhJ5e5P1clvHHcXRIN4uaVEefs6fa2T9v4g+i?=
+ =?iso-8859-1?Q?z/X1nwoT5lW33vTyry0iup51cFnkdLfpjQ?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecf6893f-3574-4b14-736a-08da60175128
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2022 12:50:49.1122
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rfJSMzYpf1bupjC1F9ZdEGors5XcZYRMw/2t3kECyELOZ8HzJfT+0iSGLwUMasqgD19Z16c8kaZjLzvtOnKBSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6418
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert lcc-ipq806x driver to parent_data API.
+From: Viorel Suman <viorel.suman@nxp.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-v4:
-- Fix compilation error
-v3:
- - Inline pxo pll4 parent
- - Change .name from pxo to pxo_board
+Changes since v7: https://lore.kernel.org/lkml/20220704161541.943696-1-viorel.suman@oss.nxp.com/
+  * added missing Reviewed-By: 
+  * Defined "mboxes" and "mbox-names" sections in scu-key.yaml as schema.
 
- drivers/clk/qcom/lcc-ipq806x.c | 77 ++++++++++++++++++----------------
- 1 file changed, 42 insertions(+), 35 deletions(-)
+Changes since v6: https://lore.kernel.org/lkml/20220629164414.301813-1-viorel.suman@oss.nxp.com/
+  * The series updated so that each patch making the conversion removes
+    the piece being converted, then finally the patch adding fsl,scu.yaml
+    removes the last pieces, as suggested by Krzysztof Kozlowski.
+  * Updated ocotp and system-controller node names in the existing DTS
+    files
 
-diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
-index ba90bebba597..52711ca59345 100644
---- a/drivers/clk/qcom/lcc-ipq806x.c
-+++ b/drivers/clk/qcom/lcc-ipq806x.c
-@@ -34,7 +34,9 @@ static struct clk_pll pll4 = {
- 	.status_bit = 16,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pll4",
--		.parent_names = (const char *[]){ "pxo" },
-+		.parent_data = (const struct clk_parent_data*[]){
-+			{ .fw_name = "pxo", .name = "pxo_board" },
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_ops,
- 	},
-@@ -64,9 +66,9 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
- 	{ P_PLL4, 2 }
- };
- 
--static const char * const lcc_pxo_pll4[] = {
--	"pxo",
--	"pll4_vote",
-+static const struct clk_parent_data lcc_pxo_pll4[] = {
-+	{ .fw_name = "pxo", .name = "pxo" },
-+	{ .fw_name = "pll4_vote", .name = "pll4_vote" },
- };
- 
- static struct freq_tbl clk_tbl_aif_mi2s[] = {
-@@ -131,18 +133,14 @@ static struct clk_rcg mi2s_osr_src = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mi2s_osr_src",
--			.parent_names = lcc_pxo_pll4,
--			.num_parents = 2,
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
- 		},
- 	},
- };
- 
--static const char * const lcc_mi2s_parents[] = {
--	"mi2s_osr_src",
--};
--
- static struct clk_branch mi2s_osr_clk = {
- 	.halt_reg = 0x50,
- 	.halt_bit = 1,
-@@ -152,7 +150,9 @@ static struct clk_branch mi2s_osr_clk = {
- 		.enable_mask = BIT(17),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mi2s_osr_clk",
--			.parent_names = lcc_mi2s_parents,
-+			.parent_hws = (const struct clk_hw*[]){
-+				&mi2s_osr_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -167,7 +167,9 @@ static struct clk_regmap_div mi2s_div_clk = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mi2s_div_clk",
--			.parent_names = lcc_mi2s_parents,
-+			.parent_hws = (const struct clk_hw*[]){
-+				&mi2s_osr_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_regmap_div_ops,
- 		},
-@@ -183,7 +185,9 @@ static struct clk_branch mi2s_bit_div_clk = {
- 		.enable_mask = BIT(15),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mi2s_bit_div_clk",
--			.parent_names = (const char *[]){ "mi2s_div_clk" },
-+			.parent_hws = (const struct clk_hw*[]){
-+				&mi2s_div_clk.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -191,6 +195,10 @@ static struct clk_branch mi2s_bit_div_clk = {
- 	},
- };
- 
-+static const struct clk_parent_data lcc_mi2s_bit_div_codec_clk[] = {
-+	{ .hw = &mi2s_bit_div_clk.clkr.hw, },
-+	{ .fw_name = "mi2s_codec_clk", .name = "mi2s_codec_clk" },
-+};
- 
- static struct clk_regmap_mux mi2s_bit_clk = {
- 	.reg = 0x48,
-@@ -199,11 +207,8 @@ static struct clk_regmap_mux mi2s_bit_clk = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "mi2s_bit_clk",
--			.parent_names = (const char *[]){
--				"mi2s_bit_div_clk",
--				"mi2s_codec_clk",
--			},
--			.num_parents = 2,
-+			.parent_data = lcc_mi2s_bit_div_codec_clk,
-+			.num_parents = ARRAY_SIZE(lcc_mi2s_bit_div_codec_clk),
- 			.ops = &clk_regmap_mux_closest_ops,
- 			.flags = CLK_SET_RATE_PARENT,
- 		},
-@@ -245,8 +250,8 @@ static struct clk_rcg pcm_src = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "pcm_src",
--			.parent_names = lcc_pxo_pll4,
--			.num_parents = 2,
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
- 		},
-@@ -262,7 +267,9 @@ static struct clk_branch pcm_clk_out = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "pcm_clk_out",
--			.parent_names = (const char *[]){ "pcm_src" },
-+			.parent_hws = (const struct clk_hw*[]){
-+				&pcm_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -270,6 +277,11 @@ static struct clk_branch pcm_clk_out = {
- 	},
- };
- 
-+static const struct clk_parent_data lcc_pcm_clk_out_codec_clk[] = {
-+	{ .hw = &pcm_clk_out.clkr.hw, },
-+	{ .fw_name = "pcm_codec_clk", .name = "pcm_codec_clk" },
-+};
-+
- static struct clk_regmap_mux pcm_clk = {
- 	.reg = 0x54,
- 	.shift = 10,
-@@ -277,11 +289,8 @@ static struct clk_regmap_mux pcm_clk = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "pcm_clk",
--			.parent_names = (const char *[]){
--				"pcm_clk_out",
--				"pcm_codec_clk",
--			},
--			.num_parents = 2,
-+			.parent_data = lcc_pcm_clk_out_codec_clk,
-+			.num_parents = ARRAY_SIZE(lcc_pcm_clk_out_codec_clk),
- 			.ops = &clk_regmap_mux_closest_ops,
- 			.flags = CLK_SET_RATE_PARENT,
- 		},
-@@ -325,18 +334,14 @@ static struct clk_rcg spdif_src = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "spdif_src",
--			.parent_names = lcc_pxo_pll4,
--			.num_parents = 2,
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
- 		},
- 	},
- };
- 
--static const char * const lcc_spdif_parents[] = {
--	"spdif_src",
--};
--
- static struct clk_branch spdif_clk = {
- 	.halt_reg = 0xd4,
- 	.halt_bit = 1,
-@@ -346,7 +351,9 @@ static struct clk_branch spdif_clk = {
- 		.enable_mask = BIT(12),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "spdif_clk",
--			.parent_names = lcc_spdif_parents,
-+			.parent_hws = (const struct clk_hw*[]){
-+				&spdif_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -384,8 +391,8 @@ static struct clk_rcg ahbix_clk = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "ahbix",
--			.parent_names = lcc_pxo_pll4,
--			.num_parents = 2,
-+			.parent_data = lcc_pxo_pll4,
-+			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
- 			.ops = &clk_rcg_lcc_ops,
- 		},
- 	},
+Changes since v5: https://lore.kernel.org/lkml/20220616164303.790379-1-viorel.suman@nxp.com/
+  * Updated according to Krzysztof Kozlowski comments
+
+Changes since v4: https://lore.kernel.org/lkml/20220615105834.743045-1-viorel.suman@nxp.com/
+  * Missing SoB added
+
+Changes since v3: https://lore.kernel.org/lkml/20220609143423.2839186-1-abel.vesa@nxp.com/
+  * Examples included
+  * Included Abel's patches fixing thermal zone, keys and power controller names.
+
+Abel Vesa (12):
+  dt-bindings: clk: imx: Add fsl,scu-clk yaml file
+  dt-bindings: pinctrl: imx: Add fsl,scu-iomux yaml file
+  dt-bindings: input: Add fsl,scu-key yaml file
+  dt-bindings: nvmem: Add fsl,scu-ocotp yaml file
+  dt-bindings: power: Add fsl,scu-pd yaml file
+  dt-bindings: rtc: Add fsl,scu-rtc yaml file
+  dt-bindings: thermal: Add fsl,scu-thermal yaml file
+  dt-bindings: watchdog: Add fsl,scu-wdt yaml file
+  dt-bindings: firmware: Add fsl,scu yaml file
+  arm64: dts: freescale: imx8: Fix power controller name
+  arm64: dts: freescale: imx8qxp: Add fallback compatible for clock
+    controller
+  arm64: dts: freescale: imx8qxp: Fix the keys node name
+
+Viorel Suman (3):
+  arm64: dts: freescale: imx8qxp: Remove unnecessary clock related
+    entries
+  arm64: dts: freescale: imx8qxp: Fix the ocotp node name
+  arm64: dts: freescale: imx8: Fix the system-controller node name
+
+ .../bindings/arm/freescale/fsl,scu.txt        | 271 ------------------
+ .../bindings/clock/fsl,scu-clk.yaml           |  43 +++
+ .../devicetree/bindings/firmware/fsl,scu.yaml | 210 ++++++++++++++
+ .../bindings/input/fsl,scu-key.yaml           |  40 +++
+ .../bindings/nvmem/fsl,scu-ocotp.yaml         |  56 ++++
+ .../bindings/pinctrl/fsl,scu-pinctrl.yaml     |  74 +++++
+ .../devicetree/bindings/power/fsl,scu-pd.yaml |  41 +++
+ .../devicetree/bindings/rtc/fsl,scu-rtc.yaml  |  31 ++
+ .../bindings/thermal/fsl,scu-thermal.yaml     |  38 +++
+ .../bindings/watchdog/fsl,scu-wdt.yaml        |  34 +++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi     |   4 +-
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi    |  12 +-
+ 12 files changed, 574 insertions(+), 280 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,scu-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/firmware/fsl,scu.yaml
+ create mode 100644 Documentation/devicetree/bindings/input/fsl,scu-key.yaml
+ create mode 100644 Documentation/devicetree/bindings/nvmem/fsl,scu-ocotp.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,scu-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/fsl,scu-pd.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/fsl,scu-rtc.yaml
+ create mode 100644 Documentation/devicetree/bindings/thermal/fsl,scu-thermal.yaml
+ create mode 100644 Documentation/devicetree/bindings/watchdog/fsl,scu-wdt.yaml
+
 -- 
-2.36.1
+2.25.1
 
