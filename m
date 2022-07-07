@@ -2,66 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74175C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 02:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FE9CCA485
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 02:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234900AbiGGCbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Jul 2022 22:31:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
+        id S234942AbiGGCbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Jul 2022 22:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234883AbiGGCbc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 22:31:32 -0400
-Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6938B2F3AE
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 19:31:32 -0700 (PDT)
-Received: by mail-oo1-xc31.google.com with SMTP id p6-20020a4aa846000000b0042599456d32so3238367oom.9
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 19:31:32 -0700 (PDT)
+        with ESMTP id S234925AbiGGCbn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jul 2022 22:31:43 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5792F64C
+        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 19:31:41 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-10c0430e27dso12150003fac.4
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 19:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YYAWf1vDUfn+qhF4EbU0apynTp5YyOVUGPAAMYRF5Os=;
-        b=kFGTPVAiO7y8B9+gbjN1lQfUknQZKllmfvvOWGgHYm7mngU3npwDWZ3KxlxBHLRYL9
-         HDkOLjei4Y6PgWGX37FvRkAr7UBWOGCgR78M50tUejmny2TjpQdhG6yJkQYLTAeBKiek
-         2sHFoDgKkbxKBMQsaOj4QWCeGkLVYqOlDi0NBz5lJdFzZR7wwciEvSvjGCoPDV+pc03X
-         ETwcArNpP2IkxdgqivLXFt5OQHf+3vbv8tPCdmVFyNOGZLz1whdKSWp3Elm9ZAAzUkl7
-         1R26QzIQhvr5XK+aLoibMm8mnQ6RwxTr0NN4MTPPRkxso/uDxpf9wYDkDuPAww+pw6cT
-         Cfwg==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=lMUJhKO89u0bEYdwv708x6FRjBuFDPClx2vt9C6ftyQ=;
+        b=AXdnyDKRdWBJ8HLmERnGQQcAuvWwNkuFpLIRyW9jdHiqXs2F3R22dB7sGRl3Oj7ZXF
+         b/PSwtiEIR3T+eCJxQY0G2C6ENd6x/vJzmIo6Z8QORyJNsB9tNxz5U3wYg67B4hYeeWz
+         t43j7bcp7d5N4WNwQUtkHX3HYnOGaoykIhjesi7BHnhFB/ULDsBMR0mNI4uG6QQxOuzL
+         /ZMkscV5RG3MsG6gLiEljhI6TyrRAnYDjmF8Ju5IG0oJVS7Cz7v1jmxw2lCKo0jZISTr
+         CfT/oI1IHtdG/400aeHNwYDPrOdLmR4ubFSxzGWjCvU8i8i2TPRNF9FhO7JyMa/HSUMI
+         KA0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YYAWf1vDUfn+qhF4EbU0apynTp5YyOVUGPAAMYRF5Os=;
-        b=Ab1MVHk8GKRRm2FJEQKmmkRzFlViYv6e6qG+HTnLPb6algVgclf0B7kJOWLOFR63L2
-         /uM9gmXJjxDb6NGlNzF4UTOH7A7ODpa4EzutO48lr+iMeNakvGUyZJsuHa75DWB0XGb9
-         MtnGxKrlJtVkqSdteajq3nQ0E1rxpdhP0rXVJmvZDtwp/qbT436HIBHFRu3tg5NTo8hL
-         HVgqgk/mpj7mkmMjT2jPfRwtAxGC3a/7hSB2/vbbCtDx/j+2cNgOK05VoqHD2qZkjjwx
-         G+Z9I2c0WwiugrLZUmJChTmTTlWwDg7hQFNCxR3cnrDbizLxpYEJ+iAEKaCoHg++b1G/
-         skDw==
-X-Gm-Message-State: AJIora8/xsijLImDa9i9qY0SJx3Q4PDAoxhVcf5IFJEtp2H7con//oHV
-        Zwg+JLtUybdjMR5si7AZ9ogK8AXlHHFm6A==
-X-Google-Smtp-Source: AGRyM1tJ3CfwvID4pMX3J0zja8xUa5LkjynezJaIPR7xGR5GVMJlEJala8g+oXwhZBT9s5yqi88i3w==
-X-Received: by 2002:a4a:b401:0:b0:35e:de93:43a9 with SMTP id y1-20020a4ab401000000b0035ede9343a9mr18013954oon.80.1657161091766;
-        Wed, 06 Jul 2022 19:31:31 -0700 (PDT)
+        bh=lMUJhKO89u0bEYdwv708x6FRjBuFDPClx2vt9C6ftyQ=;
+        b=zWrSTUTvyMlBmhh3V8lsLP2ezQsdTbioJBT9En3YDlaJZG6WEQ2MqvulZWLXuu3G4f
+         j2/7lWB8ijE8LyqaLEB41A3uWdynOhDUzDTvgtP034myfVjbqJDDZVc9A4XY5XZkRj7E
+         5Q1s8lb/PoZAbC6fpg16Kmg5SHCqCWo27axXnxN19kVrueCUtIyfPzfpapUDiT8qPMrG
+         s3xNutMcOxssZHDcw99GaHZURwmGEqbTr2cI4KbR6eMcqfVsxQ+EnbNiZyikU9QVvqAM
+         jTyxcVbwwaxBnc85R1AYs8pQlgMCP24yXKJ9gM+TvOcwoLWKkBXXi7ZC8tzVQaW47M+9
+         DaMA==
+X-Gm-Message-State: AJIora8R92SW8gL9Q6Hu/yFGpttx3lEgz0NGkB4hpBg/hKXRlGNAR0uA
+        5SB8nXWVrMZ8mLPUpwAZEoaNIQ==
+X-Google-Smtp-Source: AGRyM1t2/ufCsHlIzpPLiSl6dF9mKf9yxlJaTNfwUeqjfBG61nASkF/gwlTEXKt4KqtzGYNu5YxiUA==
+X-Received: by 2002:a05:6870:2490:b0:101:d94b:c9fd with SMTP id s16-20020a056870249000b00101d94bc9fdmr1168616oaq.73.1657161101255;
+        Wed, 06 Jul 2022 19:31:41 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id x48-20020a056830247000b006168c71ca4asm17024469otr.56.2022.07.06.19.31.30
+        by smtp.gmail.com with ESMTPSA id x48-20020a056830247000b006168c71ca4asm17024469otr.56.2022.07.06.19.31.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 19:31:31 -0700 (PDT)
+        Wed, 06 Jul 2022 19:31:40 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v6 0/4] arm: qcom: qcom-apq8064: add separate device node for tsens
-Date:   Wed,  6 Jul 2022 21:31:09 -0500
-Message-Id: <165716107313.864223.16495504646338874492.b4-ty@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        konrad.dybcio@somainline.org, jonathan@marek.ca,
+        mturquette@baylibre.com,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org, sboyd@kernel.org,
+        agross@kernel.org, devicetree@vger.kernel.org,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: (subset) [PATCH v8 5/5] arm64: dts: qcom: sm8350: Add DISPCC node
+Date:   Wed,  6 Jul 2022 21:31:18 -0500
+Message-Id: <165716107314.864223.14143394880939195764.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220521151437.1489111-1-dmitry.baryshkov@linaro.org>
-References: <20220521151437.1489111-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220706154337.2026269-6-robert.foss@linaro.org>
+References: <20220706154337.2026269-1-robert.foss@linaro.org> <20220706154337.2026269-6-robert.foss@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -69,24 +69,15 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 21 May 2022 18:14:33 +0300, Dmitry Baryshkov wrote:
-> Currently gcc-msm8960 driver manually creates tsens device. Instantiate
-> the device using DT node instead. This makes the APQ8064 follow the
-> IPQ8064 device tree schema (which is also closer to the way tsens
-> devices are described on newer Qualcomm platforms).
+On Wed, 6 Jul 2022 17:43:37 +0200, Robert Foss wrote:
+> Add the dispcc clock-controller DT node for sm8350.
 > 
-> Compatibility with the previous devices trees is kept intact.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: qcom,gcc-apq8064: move msm8960 compat from gcc-other.yaml
-      commit: 91a4cbf93326f2d27dda7361c43a5bb24cfd93c3
-[2/4] dt-bindings: clock: qcom,gcc-apq8064: split tsens to the child node
-      commit: 621f984840928f0bd14b20c86b70a15590ed2d3e
-[3/4] clk: qcom: gcc-msm8960: create tsens device if there are no child nodes
-      commit: 93b793d88da8b2c7afd63c64772666ec4274efad
+[5/5] arm64: dts: qcom: sm8350: Add DISPCC node
+      commit: 9fd4887cdec6395a4ff447af8988bce61b707fb0
 
 Best regards,
 -- 
