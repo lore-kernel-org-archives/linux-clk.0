@@ -2,106 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81034C43334
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 15:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24ACC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 16:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235548AbiGGPkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 11:40:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
+        id S235913AbiGGQYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 12:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235470AbiGGPkZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 11:40:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BAE2E9A;
-        Thu,  7 Jul 2022 08:40:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A01246239B;
-        Thu,  7 Jul 2022 15:40:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E04C341C0;
-        Thu,  7 Jul 2022 15:40:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657208423;
-        bh=KRAqPIGa6RCSu0JjXWHDhbJsoglo3H9ioTvcj879if8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=KdWsEJtcBSgVVTjX4nc+e2dLbvMXdGLo1F2jebQFfn7uCzpkkCWQQn9LgWzXNA4T3
-         BMmpZFK/l6J5K4Jwywl7yvaw52+wBcjIxNWktAa29stJviqq/lfbeB5TLb04WuZojh
-         VRh/BuevVjqR3Cvly3e3T0cZBs3c5BdcP4ZGbQUlvXeopOUq/Lc9VgnxPW9O9l96yK
-         hg5dRpgymPwt/ynq36iUpx1ADXe9qL2hmXBHpAxKhMe7/xpuZhaGYudhq2Hq4warQI
-         aVQFtCaMGYxfOBzaM/rb2J29pK0P47IlgaK+6giJ3U/6+TXaujgs3zRa9MI5wiJH5U
-         Ru44Fx1OmOj6A==
-Date:   Thu, 7 Jul 2022 10:40:20 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Johan Hovold <johan+linaro@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v11 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
-Message-ID: <20220707154020.GA305104@bhelgaas>
+        with ESMTP id S235363AbiGGQYK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 12:24:10 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9638813E84;
+        Thu,  7 Jul 2022 09:24:09 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id l14so23459467qtx.2;
+        Thu, 07 Jul 2022 09:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=SSJ4elnbxJxvf6QCLf7utXUCEbaIR7Lkt9U8reZ22eE=;
+        b=YLOUb0hlcVdHGIx5N1A2X9na6Phm4zpbcN1Cllw2qlFkfV/HJAyftTwNOXg6wO6HKX
+         8OxyJeZh8vEqvJQTHam8WVTuSghrw5Ahwrg/Zu0yoK+yIMTaJJRt9hXXtKAhZFI/50Rg
+         LNBmZqjSuNA102g0U+8SQwK1N4rSpE1Y+ISNSx2+eTgdZVdHMUkQRVa/5VLHYLnFcf9R
+         LDGCXJjdf9XdyVLD5LPRoLuVIKDK/dzOdjaGwKlwCoFVlfkUPFOEMxRlHx7Ou4YPYbsH
+         shb+7LDcxdQugx43adsLNpnjPNgfzUaPxKuc5t2XsLBArjN8clzVL2IDW94aMhgaqxVo
+         kv/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=SSJ4elnbxJxvf6QCLf7utXUCEbaIR7Lkt9U8reZ22eE=;
+        b=YY4n1dluoX6mQOOF6WBM/T8ymm12gwLJj9Iy20wnE+fh9eHK7NyOZdW48/+YHzhn/Q
+         g06QcpKWpI8GWovAUTTaeqIqSF/VEdRMAQFTTWALnEr8nZSiCXMUczMHeqGtNcW5MlIp
+         qbhWCl4zymOtaNDUsoYWJlYvYpL2HFI2nnX/zLRqxlerts3/7ejSEUisKqUQrzjg9kIl
+         mtSNIAX19ZzKOUZH1OLucIgvZUqV94bVEZxAEKwkz9Kzpaj2y5DLdumx/a4varkc8Viv
+         zgJuU1h/X1NUoG5HXfYaXAn1DaAhKQABHt0ykbK9QBdPtvd5l5wx9cj7JbBVM2Y5CSet
+         VvRg==
+X-Gm-Message-State: AJIora8qybaqNokmTygDj8AHOHXuSCnXs/dm6+v41NhAbhnmAO0VB7o9
+        dhem+rcEURcETWk7UKIlPk0=
+X-Google-Smtp-Source: AGRyM1uCsS0iCSMXGnzmvpiI86+oUjN3r2QLeM33tCNDgPqV62RrZc+/+NtmUVyY28g98b54OnqmCA==
+X-Received: by 2002:a05:622a:4c6:b0:31d:23fe:7b4e with SMTP id q6-20020a05622a04c600b0031d23fe7b4emr38746633qtx.118.1657211048605;
+        Thu, 07 Jul 2022 09:24:08 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id u5-20020a37ab05000000b006b4748535a1sm8741475qke.16.2022.07.07.09.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Jul 2022 09:24:08 -0700 (PDT)
+Message-ID: <1e5efb9a-9355-3cb9-fee7-624e87ae9042@gmail.com>
+Date:   Thu, 7 Jul 2022 09:23:59 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e00b1317-9c2e-0b11-8c0b-1fa4a17e4761@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [RESEND PATCH 4/8] clk: bcm: bcmbca: Replace ARCH_BCM_63XX with
+ ARCH_BCMBCA
+Content-Language: en-US
+To:     William Zhang <william.zhang@broadcom.com>,
+        Linux ARM List <linux-arm-kernel@lists.infradead.org>,
+        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>
+Cc:     anand.gore@broadcom.com, dan.beygelman@broadcom.com,
+        kursad.oney@broadcom.com, joel.peshkin@broadcom.com,
+        f.fainelli@gmail.com, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220707065800.261269-1-william.zhang@broadcom.com>
+ <20220707065800.261269-4-william.zhang@broadcom.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220707065800.261269-4-william.zhang@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 07, 2022 at 05:03:48PM +0300, Dmitry Baryshkov wrote:
-> On 16/06/2022 21:21, Bjorn Helgaas wrote:
-> > On Wed, Jun 08, 2022 at 01:52:33PM +0300, Dmitry Baryshkov wrote:
-> > > PCIe pipe clk (and some other clocks) must be parked to the "safe"
-> > > source (bi_tcxo) when corresponding GDSC is turned off and on again.
-> > > Currently this is handcoded in the PCIe driver by reparenting the
-> > > gcc_pipe_N_clk_src clock.
-
-> > > Dmitry Baryshkov (5):
-> > >    clk: qcom: regmap: add PHY clock source implementation
-> > >    clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
-> > >      clocks
-> > >    clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
-> > >      clocks
-> > >    PCI: qcom: Remove unnecessary pipe_clk handling
-> > >    PCI: qcom: Drop manual pipe_clk_src handling
-> > > 
-> > > 
-> > > Dmitry Baryshkov (5):
-> > >    clk: qcom: regmap: add PHY clock source implementation
-> > >    clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
-> > >      clocks
-> > >    clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
-> > >      clocks
-> > >    PCI: qcom: Remove unnecessary pipe_clk handling
-> > >    PCI: qcom: Drop manual pipe_clk_src handling
-> > > 
-> > >   drivers/clk/qcom/Makefile              |  1 +
-> > >   drivers/clk/qcom/clk-regmap-phy-mux.c  | 62 ++++++++++++++++++++
-> > >   drivers/clk/qcom/clk-regmap-phy-mux.h  | 33 +++++++++++
-> > >   drivers/clk/qcom/gcc-sc7280.c          | 49 +++++-----------
-> > >   drivers/clk/qcom/gcc-sm8450.c          | 49 +++++-----------
-> > >   drivers/pci/controller/dwc/pcie-qcom.c | 81 +-------------------------
-> > >   6 files changed, 127 insertions(+), 148 deletions(-)
-> > >   create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.c
-> > >   create mode 100644 drivers/clk/qcom/clk-regmap-phy-mux.h
-> > 
-> > I applied this to pci/ctrl/qcom for v5.20, thanks!
-> > 
-> > Clock folks (Bjorn A, Andy, Michael, Stephen), I assume you're OK with
-> > these being merged via the PCI tree.  Let me know if you prefer
-> > anything different.
+On 7/6/22 23:57, William Zhang wrote:
+> Prepare for the BCM63138 ARCH_BCM_63XX migration to ARCH_BCMBCA. Make
+> CLK_BCM_63XX depending and setting default on ARCH_BCMBCA.
 > 
-> I noticed that this patchset is not a part of linux-next. Is it still
-> pending to be merged in 5.20?
+> Signed-off-by: William Zhang <william.zhang@broadcom.com>
 
-It's still pending.  I currently have three separate qcom-related
-branches that need to be reconciled before I put them in -next.
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Bjorn
+There is no cover letter for this 8 patch series :/ it is not clear to 
+me whether each subsystem maintainer will be in a position to merge 
+these patches individually, yet still have all 8 (7 of them actually, 
+see comment to patch 1) land in 5.20.
+
+Alternatively, we can merge these patches through the Broadcom ARM SoC 
+pull request(s) to ensure they all land at the same time.
+-- 
+Florian
