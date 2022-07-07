@@ -2,129 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEC6C43334
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 05:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6832EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 06:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234009AbiGGF6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 01:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40750 "EHLO
+        id S234705AbiGGGB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 02:01:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233652AbiGGF6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 01:58:30 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BB9624B;
-        Wed,  6 Jul 2022 22:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657173508; x=1688709508;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1mcSycqF0G5MTVNt6gTs3pvaqAtfai1uUIeXSb6aiy0=;
-  b=QVsfqVSWEBVXtAOABtDxkmwihRsrYQ/JO/Hv3R+CM6Tu6tqR7BIpVvK4
-   qvTpS8LRp9UYdnXw9QYT605YBCZVm+bfBlL+fskviJCED8JxW+eZ2G8t/
-   vtjTPjv5vsDaMKckW5BhauCG+UdHeX0ojOnJhytWYf8aCnRj604UIm7L9
-   lVXpmh2B38C8Cj3hYKH/1iY2EB15iszADOzpWjw5UgRkVE2QpmnNX7TsU
-   ubw+LBq4Xgp7J1w9532rrzCllhIShq5MveYk7wprTbV9q7k5tgfxsgQxn
-   ZHz4Hn3Ve+HavAXEaiZlcbHxi3fEedxcxpyMeA8iwiKHvqq5cavGShuNP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10400"; a="283963220"
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="283963220"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 22:58:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,252,1650956400"; 
-   d="scan'208";a="735843781"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Jul 2022 22:58:25 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o9KWu-000LcW-Ty;
-        Thu, 07 Jul 2022 05:58:24 +0000
-Date:   Thu, 7 Jul 2022 13:57:48 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: qcom: lcc-ipq806x: convert to parent data
-Message-ID: <202207071312.S69DPP30-lkp@intel.com>
-References: <20220706221327.14169-3-ansuelsmth@gmail.com>
+        with ESMTP id S234669AbiGGGB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 02:01:56 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDB6031DC4;
+        Wed,  6 Jul 2022 23:01:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1657173716; x=1688709716;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5N4sUKD/BH+dt+9G8dMcKSapNUZdUb+xeJxu31OaD90=;
+  b=xhKkMbGcSbCxgKsTRm3ky5mOdTrjj9Eu8/1F1Msw4ADxlZhu9HqpRuhR
+   TbQKBHAu/JwENxcx92gGKyJ1s/M0nK6eoD7Gnw/KtuZtTYl5mblSEFUCP
+   QxKdIeuAsCJ3cG9SlSaaNe27Uq6ErmetOcYfD1GT7DPrC7CCGx4SCVmNk
+   Y=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 06 Jul 2022 23:01:55 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2022 23:01:55 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 6 Jul 2022 23:01:54 -0700
+Received: from [10.216.26.218] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Jul 2022
+ 23:01:51 -0700
+Message-ID: <382a74b1-5026-55ad-0d78-0d3c42e59d3d@quicinc.com>
+Date:   Thu, 7 Jul 2022 11:31:48 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220706221327.14169-3-ansuelsmth@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v5 1/3] dt-bindings: clock: Add resets for LPASS audio
+ clock controller for SC7280
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <robh@kernel.org>,
+        <robh+dt@kernel.org>, <mka@chromium.org>
+References: <20220614153306.29339-1-quic_tdas@quicinc.com>
+ <20220614153306.29339-2-quic_tdas@quicinc.com>
+ <20220615195914.D73B9C3411E@smtp.kernel.org>
+From:   Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20220615195914.D73B9C3411E@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christian,
+Hi Stephen,
 
-Thank you for the patch! Yet something to improve:
+On 6/16/2022 1:29 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2022-06-14 08:33:04)
+>> Add support for LPASS audio clock gating for RX/TX/SWA core bus clocks
+>> for SC7280. Update reg property min/max items in YAML schema.
+>>
+>> Fixes: 4185b27b3bef ("dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280").
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>   .../clock/qcom,sc7280-lpasscorecc.yaml        | 19 ++++++++++++++++---
+>>   .../clock/qcom,lpassaudiocc-sc7280.h          |  5 +++++
+>>   2 files changed, 21 insertions(+), 3 deletions(-)
+> 
+> I'm still wondering if the binding is correct, given the overlapping reg
+> properties. Should we be removing a compatible or two and adding a DT
+> property like "qcom,adsp-bypass-mode" instead?
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v5.19-rc5 next-20220706]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-clock-add-pcm-reset-for-ipq806x-lcc/20220707-061833
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: riscv-randconfig-r022-20220706 (https://download.01.org/0day-ci/archive/20220707/202207071312.S69DPP30-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 66ae1d60bb278793fd651cece264699d522bab84)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install riscv cross compiling tool for clang build
-        # apt-get install binutils-riscv-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/c0d7cedbc9ad0201d611bbb386c4fda498e5449d
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Christian-Marangi/dt-bindings-clock-add-pcm-reset-for-ipq806x-lcc/20220707-061833
-        git checkout c0d7cedbc9ad0201d611bbb386c4fda498e5449d
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/qcom/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/qcom/lcc-ipq806x.c:38:6: error: designator in initializer for scalar type 'const struct clk_parent_data *'
-                           { .fw_name = "pxo", .name = "pxo_board" },
-                             ^~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +38 drivers/clk/qcom/lcc-ipq806x.c
-
-    26	
-    27	static struct clk_pll pll4 = {
-    28		.l_reg = 0x4,
-    29		.m_reg = 0x8,
-    30		.n_reg = 0xc,
-    31		.config_reg = 0x14,
-    32		.mode_reg = 0x0,
-    33		.status_reg = 0x18,
-    34		.status_bit = 16,
-    35		.clkr.hw.init = &(struct clk_init_data){
-    36			.name = "pll4",
-    37			.parent_data = (const struct clk_parent_data*[]){
-  > 38				{ .fw_name = "pxo", .name = "pxo_board" },
-    39			}
-    40			.num_parents = 1,
-    41			.ops = &clk_pll_ops,
-    42		},
-    43	};
-    44	
+I can pick this up as cleanup and send it across for review. If you are 
+fine now please help pick these up.
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Thanks & Regards,
+Taniya Das.
