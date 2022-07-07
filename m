@@ -2,147 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A93FFC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 17:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D37B8C43334
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 20:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235862AbiGGRgN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 13:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43092 "EHLO
+        id S236158AbiGGUEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 16:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235347AbiGGRgM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 13:36:12 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65333337C;
-        Thu,  7 Jul 2022 10:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657215371; x=1688751371;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zRlmYVn9zHQI1IKGlhE4MO06PH0yP+9P4EPGr4unR1E=;
-  b=a3tBzOjgoupnmiJo+uEcv8a5j7AXt5bUt4nS0yKA6WpWqhqRFMUmhyRi
-   DvxVoOjB62OnI6MvbieW28XCSdMT2/UzgPExOI712TlOacOfKkrB8VjC+
-   SjCUB6zeIXMJ7ujC/snX5QwckVB+LTjld/0YiKi+xuRwU0XgQ7Ickuz22
-   VE3w0CJhkG9SgN8Sc394cFLe0S0PEI1e5q7REN/W4sxCw41Clay9isnm8
-   rRYYgQ1Uc/5ZsTlHfdK+yC0HNpnYAjFuAcuqY59s7LRtl0/Aw/tDz7Y1e
-   CUkucHdwwWfk2dmquHCvWSxshmSobkxyEoiMWa1e9vPfyFrBbeEWqwnxR
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="267112800"
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="267112800"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 10:35:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="683384996"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Jul 2022 10:35:54 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o9VPu-000MGg-51;
-        Thu, 07 Jul 2022 17:35:54 +0000
-Date:   Fri, 8 Jul 2022 01:35:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S232340AbiGGUEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 16:04:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C61D21804;
+        Thu,  7 Jul 2022 13:04:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 28F44623E4;
+        Thu,  7 Jul 2022 20:04:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBBFC3411E;
+        Thu,  7 Jul 2022 20:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657224247;
+        bh=YPa3BIkZtqvlLnXa9XSQS4ByKHBS3emeXJsmuOZ6STk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=EIrTUJr/srlG7CuhYxq2iVHRDxlSmOVa8iOanyptaS5RBKIXsAz5CFuJPosKN8sBa
+         wbzVRXNIHnDvQurlp9Nbl2bJd6khvp5Q24i/n26KUyFaUaAVbR0yyDbGBntaZ1J34v
+         HQpWDcwO9MIYV07oQIHAefPsX3xRv8UWgQ+BZzV94QtO88aFDSDc5Dv9EMW/1hQqfa
+         M1qD8zBYWZOnWMIxbxeCOB6hKm2GcRL70I/63rJGhX3YG+fBDIUYVQowCHqoGujDwP
+         LcSIbBG6tusvttDjxDmcxLaV7IfNZwCCDHfqIxD2FKCnN32oj/nrQPXy0Kia7bstzs
+         4gf8e6BSyGYCA==
+Date:   Thu, 7 Jul 2022 15:04:04 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH v4 3/3] clk: qcom: lcc-ipq806x: convert to parent data
-Message-ID: <202207080145.UiRhIFg5-lkp@intel.com>
-References: <20220707101326.30880-3-ansuelsmth@gmail.com>
+        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Selvam Sathappan Periakaruppan <quic_speriaka@quicinc.com>,
+        Baruch Siach <baruch.siach@siklu.com>,
+        Robert Marko <robimarko@gmail.com>,
+        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v11 0/5] PCI: qcom: Rework pipe_clk/pipe_clk_src handling
+Message-ID: <20220707200404.GA330065@bhelgaas>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220707101326.30880-3-ansuelsmth@gmail.com>
+In-Reply-To: <20220707154020.GA305104@bhelgaas>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christian,
+[+cc Selvam, Baruch, Robert, Krishna, Krzysztof (other contributors to
+qcom)]
 
-Thank you for the patch! Yet something to improve:
+On Thu, Jul 07, 2022 at 10:40:23AM -0500, Bjorn Helgaas wrote:
+> On Thu, Jul 07, 2022 at 05:03:48PM +0300, Dmitry Baryshkov wrote:
+> > On 16/06/2022 21:21, Bjorn Helgaas wrote:
+> > > On Wed, Jun 08, 2022 at 01:52:33PM +0300, Dmitry Baryshkov wrote:
+> > > > PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> > > > source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> > > > Currently this is handcoded in the PCIe driver by reparenting the
+> > > > gcc_pipe_N_clk_src clock.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master v5.19-rc5 next-20220707]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > > Dmitry Baryshkov (5):
+> > > >    clk: qcom: regmap: add PHY clock source implementation
+> > > >    clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe
+> > > >      clocks
+> > > >    clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe
+> > > >      clocks
+> > > >    PCI: qcom: Remove unnecessary pipe_clk handling
+> > > >    PCI: qcom: Drop manual pipe_clk_src handling
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-clock-add-pcm-reset-for-ipq806x-lcc/20220707-181546
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: nios2-randconfig-r003-20220707 (https://download.01.org/0day-ci/archive/20220708/202207080145.UiRhIFg5-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/81953f04f08f730affa53b4637cc05f97da50a1d
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Christian-Marangi/dt-bindings-clock-add-pcm-reset-for-ipq806x-lcc/20220707-181546
-        git checkout 81953f04f08f730affa53b4637cc05f97da50a1d
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=nios2 SHELL=/bin/bash drivers/clk/qcom/
+> > > I applied this to pci/ctrl/qcom for v5.20, thanks!
+> > > 
+> > > Clock folks (Bjorn A, Andy, Michael, Stephen), I assume you're OK with
+> > > these being merged via the PCI tree.  Let me know if you prefer
+> > > anything different.
+> > 
+> > I noticed that this patchset is not a part of linux-next. Is it still
+> > pending to be merged in 5.20?
+> 
+> It's still pending.  I currently have three separate qcom-related
+> branches that need to be reconciled before I put them in -next.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+The first three patches are on an immutable branch from the clock
+tree:
 
-All errors (new ones prefixed by >>):
+  74e4190cdebe ("clk: qcom: regmap: add PHY clock source implementation")
+  7ee9d2e8b9c9 ("clk: qcom: gcc-sm8450: use new clk_regmap_phy_mux_ops for PCIe pipe clocks")
+  553d12b20c10 ("clk: qcom: gcc-sc7280: use new clk_regmap_phy_mux_ops for PCIe pipe clocks")
 
-   drivers/clk/qcom/lcc-ipq806x.c:38:25: warning: braces around scalar initializer
-      38 |                         { .fw_name = "pxo", .name = "pxo_board" },
-         |                         ^
-   drivers/clk/qcom/lcc-ipq806x.c:38:25: note: (near initialization for '(anonymous)[0]')
-   drivers/clk/qcom/lcc-ipq806x.c:38:27: error: field name not in record or union initializer
-      38 |                         { .fw_name = "pxo", .name = "pxo_board" },
-         |                           ^
-   drivers/clk/qcom/lcc-ipq806x.c:38:27: note: (near initialization for '(anonymous)[0]')
-   drivers/clk/qcom/lcc-ipq806x.c:38:38: error: initialization of 'const struct clk_parent_data *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
-      38 |                         { .fw_name = "pxo", .name = "pxo_board" },
-         |                                      ^~~~~
-   drivers/clk/qcom/lcc-ipq806x.c:38:38: note: (near initialization for '(anonymous)[0]')
-   drivers/clk/qcom/lcc-ipq806x.c:38:45: error: field name not in record or union initializer
-      38 |                         { .fw_name = "pxo", .name = "pxo_board" },
-         |                                             ^
-   drivers/clk/qcom/lcc-ipq806x.c:38:45: note: (near initialization for '(anonymous)[0]')
-   drivers/clk/qcom/lcc-ipq806x.c:38:53: warning: excess elements in scalar initializer
-      38 |                         { .fw_name = "pxo", .name = "pxo_board" },
-         |                                                     ^~~~~~~~~~~
-   drivers/clk/qcom/lcc-ipq806x.c:38:53: note: (near initialization for '(anonymous)[0]')
->> drivers/clk/qcom/lcc-ipq806x.c:37:32: error: initialization of 'const struct clk_parent_data *' from incompatible pointer type 'const struct clk_parent_data **' [-Werror=incompatible-pointer-types]
-      37 |                 .parent_data = (const struct clk_parent_data*[]){
-         |                                ^
-   drivers/clk/qcom/lcc-ipq806x.c:37:32: note: (near initialization for '(anonymous).parent_data')
-   cc1: some warnings being treated as errors
+I added the rest on top of that:
 
+  cbd27d5c2ccf ("PCI: qcom: Move IPQ8074 DBI register accesses after phy_power_on()")
+  633c1fa00ab9 ("PCI: qcom: Move all DBI register accesses after phy_power_on()")
+  e835e9859548 ("dt-bindings: PCI: qcom: Fix description typo")
+  55e8a13ec92f ("PCI: qcom: Remove unnecessary pipe_clk handling")
+  1690864ec3c8 ("PCI: dwc: tegra: move GEN3_RELATED DBI register to common header")
+  39e0a12b484b ("PCI: qcom: Define slot capabilities using PCI_EXP_SLTCAP_*")
+  44d07e984b93 ("PCI: qcom: Add IPQ60xx support")
 
-vim +37 drivers/clk/qcom/lcc-ipq806x.c
+and pushed it to a pci/ctrl/qcom-pending branch so you can check it
+out.  It's "pending" for now because I really want an ack and some
+testing for 633c1fa00ab9 ("PCI: qcom: Move all DBI register accesses
+after phy_power_on()").
 
-    26	
-    27	static struct clk_pll pll4 = {
-    28		.l_reg = 0x4,
-    29		.m_reg = 0x8,
-    30		.n_reg = 0xc,
-    31		.config_reg = 0x14,
-    32		.mode_reg = 0x0,
-    33		.status_reg = 0x18,
-    34		.status_bit = 16,
-    35		.clkr.hw.init = &(struct clk_init_data){
-    36			.name = "pll4",
-  > 37			.parent_data = (const struct clk_parent_data*[]){
-  > 38				{ .fw_name = "pxo", .name = "pxo_board" },
-    39			},
-    40			.num_parents = 1,
-    41			.ops = &clk_pll_ops,
-    42		},
-    43	};
-    44	
+There's a LOT of stuff going on in qcom-land this cycle, and it's
+coming from a lot of different people.  We can deal with that, but it
+does complicate things and slow them down.  I think it would be easier
+and speed things up if we could figure out how to coordinate things on
+the qcom side.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Bjorn
