@@ -2,180 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B48CCA479
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 06:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6BFC43334
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Jul 2022 07:39:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233804AbiGGG7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Jul 2022 02:59:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54326 "EHLO
+        id S235102AbiGGHjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Jul 2022 03:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234294AbiGGG7J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 02:59:09 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 064BE31385
-        for <linux-clk@vger.kernel.org>; Wed,  6 Jul 2022 23:58:37 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id 145so16813328pga.12
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jul 2022 23:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version;
-        bh=9zfCOO1d4tDQhuO3H03U6DPAugBifciH9slYUt0CGvA=;
-        b=X9vxK3bfGzVNf0V/lZBvT4CrmJA0hrSPMIKrx2hGjrNP9tO6oZ0FDkWXR9iQ/+9VpZ
-         tlDa5T5qsDVplS3QSDrDXgmmqA9bUcFIakbGlLq5Q+fca4DaaF4fs2IMgZBajmPsyZBg
-         Wkku4aPsDOx2Zc7IQ+sjyD25AyVpamR6KZrIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version;
-        bh=9zfCOO1d4tDQhuO3H03U6DPAugBifciH9slYUt0CGvA=;
-        b=0iAgeOt8ZixKm9O6G9kYfhOV7KXsnVrWpnQRQcWvKYYVi3rwSZn6WDdB+r38An3Wc6
-         fGnWhGX5Ne984C2ENXWvpWpnLP4F14pEK5u2uyNPLsIHqXhPqY6UKyiGLqw54XPsSMpY
-         H1/6AIknhUFOE/H0i27rIHPTU3w59iAbkgQ/KG83OX8zOocFVaNx7Ol+VdYkAtkgkNvJ
-         WhDAo9EADpUDIjB9763yE/26D8d2A9dLYiDLY3WIc8I01oqU5z4Xq+uV39o6HDHxa4t7
-         RVPe2uLsHa3trclrRx+HiUaYREPRaGKOJs9telbUPI6fNAmhf99bsnVHJkwpDHrCq+g9
-         th/w==
-X-Gm-Message-State: AJIora9ScDO0TuQ6M8Xb17NJteiJq2qUUIRSAJpBz0TDf/C+Mohcr3+6
-        lkkSjh7Jp4gVK7kR1rrf0dVmFQ==
-X-Google-Smtp-Source: AGRyM1snXVtbMICJC99aenv231mO1+FeO5QWLXY3IEAq8HNvlt2E9d7gVrjkdZPQAhZkBsnGUS8BSA==
-X-Received: by 2002:a05:6a02:30d:b0:412:9de2:eb48 with SMTP id bn13-20020a056a02030d00b004129de2eb48mr5557254pgb.47.1657177116480;
-        Wed, 06 Jul 2022 23:58:36 -0700 (PDT)
-Received: from ubuntu-22.localdomain ([192.19.222.250])
-        by smtp.gmail.com with ESMTPSA id d12-20020a170903230c00b0016bdd80a31bsm9104697plh.218.2022.07.06.23.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Jul 2022 23:58:34 -0700 (PDT)
-From:   William Zhang <william.zhang@broadcom.com>
-To:     Linux ARM List <linux-arm-kernel@lists.infradead.org>,
-        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>
-Cc:     anand.gore@broadcom.com, dan.beygelman@broadcom.com,
-        kursad.oney@broadcom.com, joel.peshkin@broadcom.com,
-        f.fainelli@gmail.com, William Zhang <william.zhang@broadcom.com>,
+        with ESMTP id S234758AbiGGHip (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jul 2022 03:38:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0B1E326F2;
+        Thu,  7 Jul 2022 00:38:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5CDDC61B0C;
+        Thu,  7 Jul 2022 07:38:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C07C3411E;
+        Thu,  7 Jul 2022 07:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657179515;
+        bh=dEH00sPee+QPLnv4vCT0+HRB/HiN2iqpU4CrPolA87A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pr3afQObb2yiXatw9whVzqKy3t1SWArA7c5qdephf6Eu2In0y9jjAc7uJkyHaTtRQ
+         RizEOEFsIZ8ZfYclMF/ClpnGUxwRm+FlHbZmOGit74tSA003KaUDCOvUAkd3O7XGi+
+         RsUVglrGvjxr/xQcv5WoRFoPH58lxw9lFfmKQ97XAb5XKWTooPHvbV6K9nE3Izel7v
+         RnY5El1xSJSDLX6wvLHo0J4wwvFkigGOqHNRrh7mGyxcsLjW7ODwbxoWtWeDX6wzIB
+         tFdHv3k1nKrVDxr3vbskQvBXU11LmmL1A9HeiVBPQxHPuuksR9/L7VlVtWl/b9RdLz
+         NIikfJJ7HAgvQ==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1o9M5s-0004XB-V3; Thu, 07 Jul 2022 09:38:37 +0200
+Date:   Thu, 7 Jul 2022 09:38:36 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 4/8] clk: bcm: bcmbca: Replace ARCH_BCM_63XX with ARCH_BCMBCA
-Date:   Wed,  6 Jul 2022 23:57:55 -0700
-Message-Id: <20220707065800.261269-4-william.zhang@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220707065800.261269-1-william.zhang@broadcom.com>
-References: <20220707065800.261269-1-william.zhang@broadcom.com>
+        Taniya Das <quic_tdas@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: qcom-qmp-ufs: provide symbol clocks
+Message-ID: <YsaNfK64RGNp/ZvT@hovoldconsulting.com>
+References: <20220620153956.1723269-1-dmitry.baryshkov@linaro.org>
+ <20220620153956.1723269-2-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000606c4305e3319d89"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220620153956.1723269-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---000000000000606c4305e3319d89
-Content-Transfer-Encoding: 8bit
+On Mon, Jun 20, 2022 at 06:39:56PM +0300, Dmitry Baryshkov wrote:
+> Register three UFS symbol clocks (ufs_rx_symbol_0_clk_src,
+> ufs_rx_symbol_1_clk_src ufs_tx_symbol_0_clk_src). Register OF clock
+> provider to let other devices link these clocks through the DT.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 55 +++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index a2526068232b..0f31d3255897 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1167,6 +1167,54 @@ static int qcom_qmp_phy_ufs_clk_init(struct device *dev, const struct qmp_phy_cf
+>  	return devm_clk_bulk_get(dev, num, qmp->clks);
+>  }
+>  
+> +static void phy_clk_release_provider(void *res)
+> +{
+> +	of_clk_del_provider(res);
+> +}
+> +
+> +#define UFS_SYMBOL_CLOCKS 3
+> +
+> +static int phy_symbols_clk_register(struct qcom_qmp *qmp, struct device_node *np)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct clk_hw *hw;
+> +	int ret;
+> +
+> +	clk_data = devm_kzalloc(qmp->dev, struct_size(clk_data, hws, UFS_SYMBOL_CLOCKS), GFP_KERNEL);
 
-Prepare for the BCM63138 ARCH_BCM_63XX migration to ARCH_BCMBCA. Make
-CLK_BCM_63XX depending and setting default on ARCH_BCMBCA.
+Missing error handling.
 
-Signed-off-by: William Zhang <william.zhang@broadcom.com>
----
+> +	clk_data->num = UFS_SYMBOL_CLOCKS;
+> +
+> +	hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_rx_symbol_0_clk_src",
 
- drivers/clk/bcm/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Don't the clock names need to be globally unique and hence either come
+from the devicetree or encode the device topology some other way?
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index ec738f74a026..77266afb1c79 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -22,9 +22,9 @@ config CLK_BCM2835
- 
- config CLK_BCM_63XX
- 	bool "Broadcom BCM63xx clock support"
--	depends on ARCH_BCM_63XX || COMPILE_TEST
-+	depends on ARCH_BCMBCA || COMPILE_TEST
- 	select COMMON_CLK_IPROC
--	default ARCH_BCM_63XX
-+	default ARCH_BCMBCA
- 	help
- 	  Enable common clock framework support for Broadcom BCM63xx DSL SoCs
- 	  based on the ARM architecture
--- 
-2.34.1
+We have two UFS PHYs on sc8280xp for example.
 
+> +							   NULL, 0, 0);
+> +	if (IS_ERR(hw))
+> +		return PTR_ERR(hw);
+> +
+> +	clk_data->hws[0] = hw;
+> +
+> +	hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_rx_symbol_1_clk_src",
+> +							   NULL, 0, 0);
+> +	if (IS_ERR(hw))
+> +		return PTR_ERR(hw);
+> +
+> +	clk_data->hws[1] = hw;
+> +
+> +	hw = devm_clk_hw_register_fixed_rate(qmp->dev, "ufs_tx_symbol_0_clk_src",
+> +							   NULL, 0, 0);
+> +	if (IS_ERR(hw))
+> +		return PTR_ERR(hw);
+> +
+> +	clk_data->hws[2] = hw;
+> +
+> +	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
+> +	if (ret)
+> +		return ret;
+> +
+> +        /*
+> +         * Roll a devm action because the clock provider is the child node, but
+> +         * the child node is not actually a device.
+> +         */
+> +        return devm_add_action_or_reset(qmp->dev, phy_clk_release_provider, np);
+> +}
 
---000000000000606c4305e3319d89
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIQcAYJKoZIhvcNAQcCoIIQYTCCEF0CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3HMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
-MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
-rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
-aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
-e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
-cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
-MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
-KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
-/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
-TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
-YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
-CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
-BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
-jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
-9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
-/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
-jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
-AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
-dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
-MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
-IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
-SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
-XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
-J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
-nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBU8wggQ3oAMCAQICDDbx5fpN++xs1+5IgzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMTAyMjIwODA1MjJaFw0yMjA5MDUwODEwMTZaMIGQ
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xFjAUBgNVBAMTDVdpbGxpYW0gWmhhbmcxKTAnBgkqhkiG9w0B
-CQEWGndpbGxpYW0uemhhbmdAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
-CgKCAQEA4fxIZbzNLvB+7yJE8mbojRaOoaK1uZy1/etc55NzisSJJfY36BAlb7LlMDsza2/BcjXh
-lSACuzeOyI8sy2pKHGt5SZCMHeHaxP8q4ZNR6EGz7+5Lopw6ies8fkDoZ/XFIHpfU2eKcIYrxI25
-bTaYAPDA50BHTPDFzPNkWEIIQaSBBkk55bndnMmB/pPR/IhKjLefDIhIsiWLrvQstTiSf7iUCwMf
-TltlrAeBKRJ1M9O/DY5v7L1Yrs//7XIRg/d2ZPAOSGBQzFYjYTFWwNBiR1s1zP0m2y56DPbS5gwj
-fqAN/I4PJHIvTh3zUgHXNKadYoYRiPHXfaTWO9UhzysOpQIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
-BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
-YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
-BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
-YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
-Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
-HREEHjAcgRp3aWxsaWFtLnpoYW5nQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
-BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUohM5GmNlGWe5wpzDxzIy
-+EgzbRswDQYJKoZIhvcNAQELBQADggEBACKu9JSQAYTlmC+JTniO/C/UcXGonATI/muBjWTxtkHc
-abZtz0uwzzrRrpV+mbHLGVFFeRbXSLvcEzqHp8VomXifEZlfsE9LajSehzaqhd+np+tmUPz1RlI/
-ibZ7vW+1VF18lfoL+wHs2H0fsG6JfoqZldEWYXASXnUrs0iTLgXxvwaQj69cSMuzfFm1X5kWqWCP
-W0KkR8025J0L5L4yXfkSO6psD/k4VcTsMJHLN4RfMuaXIT6EM0cNO6h3GypyTuPf1N1X+F6WQPKb
-1u+rvdML63P9fX7e7mwwGt5klRnf8aK2VU7mIdYCcrFHaKDTW3fkG6kIgrE1wWSgiZYL400xggJt
-MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
-VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgw28eX6TfvsbNfu
-SIMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIJkxOBBIsXYRZr5Pjqp+laJQ6/QO
-bK8Zmywa73SeKFHPMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIy
-MDcwNzA2NTgzNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQAXXDzmvHF7r6fA0KGxRHbbbrURT+TZu2vLZSsiR4rxZJUt
-ahizp3xEuK6XmlRe/Y+kp1keQbYZP/2l8RLlOE4wGLWraimVovY6rEFkJZGgcYXbshYeevTwHzo2
-bq1ZAVUAS5R9KbJp5yw6r+Fi5fkKpfuHshTX9VIshJhJRp3y8uO1St8AFzQi/b57+LRIp+ZpIfef
-6qcU4YEUTNMdlNvzXiQL+wgtEFL6rUrmqbyOsv+306SHzJCfYLq2WX2pku5FH3lk3GliPAU7NCjf
-icItWkFYy2C1kffctr0OcgBEV310cG/9cygqY3Ek4wk+ZPWnppI1Owy+DqLDLjtkJcZJ
---000000000000606c4305e3319d89--
+Johan
