@@ -2,98 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3150C43334
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 07:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BFBC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 08:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237569AbiGHH1r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 03:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39828 "EHLO
+        id S237336AbiGHIu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 04:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237574AbiGHH1q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 03:27:46 -0400
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23D67C1B3;
-        Fri,  8 Jul 2022 00:27:43 -0700 (PDT)
-Received: by mail-qk1-f182.google.com with SMTP id p11so15103131qkg.12;
-        Fri, 08 Jul 2022 00:27:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pWsvSmTZobtOYrT53fe/z+DLyrXo+T/u50CstCgwFFc=;
-        b=zC7if4SLXMUzUO4hUIqTS1WrHNTPIOZdoOgFn40K3mop0HZzzbDNPdSeT0k/hah7g3
-         NApR7oc2n+JtlnOKczONfI/TDLYE6FFiINh2pEdEXXRb1Vz77Nnlk1VxaKfSy3s7zrO2
-         KVuQxPjThM9UptK67QuBFa8h00XTs1Q1axIRqpV3sdFQWzNcUlMWQLMaq2qaQKf7F+O3
-         tRnylhdCz61t7WKpbKE8yyHogbaEA46j/WJrBDz8eTICs7jfOiuqKNF2doV67fJdDWKL
-         cl6NxaoIqt649r+dn4VDAizMWpe/Vhr4jSRWPW3k+Wj+6uM/Lu5PxwzF0EuePg/otfAO
-         VOtQ==
-X-Gm-Message-State: AJIora9Q9b8tmTQS4hcGR6fJC6eTNl3iS5W+aDNJiH8mvKGVFQ6eFvv+
-        GTgzH4KlJgbEFRSx3spdPAcs2eJaj2Svkw==
-X-Google-Smtp-Source: AGRyM1vNq6mFO5dszfyzWYiEvqPsF9hCxd5ksnU0rWalHElJ7ed+2mbNNL/fY1eB4PDxDSKXYdoZPg==
-X-Received: by 2002:a05:620a:1a15:b0:6a9:3829:b6e with SMTP id bk21-20020a05620a1a1500b006a938290b6emr1311666qkb.756.1657265262693;
-        Fri, 08 Jul 2022 00:27:42 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id y17-20020a05620a25d100b006a6a5d1e240sm37473528qko.34.2022.07.08.00.27.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 00:27:41 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-31c89111f23so140572527b3.0;
-        Fri, 08 Jul 2022 00:27:41 -0700 (PDT)
-X-Received: by 2002:a81:9209:0:b0:31c:b1b7:b063 with SMTP id
- j9-20020a819209000000b0031cb1b7b063mr2415335ywg.383.1657265261362; Fri, 08
- Jul 2022 00:27:41 -0700 (PDT)
+        with ESMTP id S237254AbiGHIu3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 04:50:29 -0400
+Received: from m15112.mail.126.com (m15112.mail.126.com [220.181.15.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4CCDB823BB
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jul 2022 01:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=3KS6s
+        rQbMxrrDv4MFKfQa+LKAKzpUrO5cJF+YHkvCsw=; b=mn/kY0Jx1QYzgiOkMYvmZ
+        1hHSbX5PjLyGHqkvzNtSv81F40ehIZEiRhxLADRX+h5R+kzRmsVccALHKEUvHgXP
+        4pQJCkYeD+xtc4y9HAVW0k4C6DGATnw4IHbo5BICy3xEM2y4RPRvLOW9uWtQkBjG
+        KCQ9P4AnYaE9oKTJ/5dZlI=
+Received: from localhost.localdomain (unknown [124.16.139.61])
+        by smtp2 (Coremail) with SMTP id DMmowABHWgV978dipTQREg--.17769S2;
+        Fri, 08 Jul 2022 16:49:02 +0800 (CST)
+From:   Liang He <windhl@126.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, windhl@126.com,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: berlin: Add of_node_put() for of_get_parent()
+Date:   Fri,  8 Jul 2022 16:49:00 +0800
+Message-Id: <20220708084900.311684-1-windhl@126.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220708071306.4354-1-jslaby@suse.cz> <20220708071306.4354-2-jslaby@suse.cz>
-In-Reply-To: <20220708071306.4354-2-jslaby@suse.cz>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Jul 2022 09:27:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXd3JR+Q+xaQG7eZAf2n9wA0TvuHguzRLRwL-wxetcbtA@mail.gmail.com>
-Message-ID: <CAMuHMdXd3JR+Q+xaQG7eZAf2n9wA0TvuHguzRLRwL-wxetcbtA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: rcar-gen4: Fix initconst confusion
- for cpg_pll_config
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Martin Liska <mliska@suse.cz>, Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DMmowABHWgV978dipTQREg--.17769S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tr18tF17uFyrXF15AFyxXwb_yoW8Cw17pF
+        95GFWYyr48Jr47ZFs7Za9Fvr1fZ3ZIgFW5WF92k3Z5Zrn5JayUJF4UKasYvas8ZFs5Xw4a
+        qr1qvF45Zw4kJFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piGQ6kUUUUU=
+X-Originating-IP: [124.16.139.61]
+X-CM-SenderInfo: hzlqvxbo6rjloofrz/1tbi7R44F1pEAXHpxAAAsf
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jiri,
+In berlin2_clock_setup() and berlin2q_clock_setup(), we need to
+call of_node_put() for the reference returned by of_get_parent()
+which has increased the refcount. We should call *_put() in fail
+path or when it is not used anymore.
 
-On Fri, Jul 8, 2022 at 9:13 AM Jiri Slaby <jslaby@suse.cz> wrote:
-> From: Andi Kleen <ak@linux.intel.com>
->
-> A variable pointing to const isn't const itself. It'd have to contain
-> "const" keyword after "*" too. Therefore, cpg_pll_config cannot be put
-> to "rodata".  Hence use __initdata instead of __initconst to fix this.
->
-> [js] more explanatory commit message.
->
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: Martin Liska <mliska@suse.cz>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Fixes: 26b3b6b959b2 ("clk: berlin: prepare simple-mfd conversion")
+Signed-off-by: Liang He <windhl@126.com>
+---
+ drivers/clk/berlin/bg2.c  | 5 ++++-
+ drivers/clk/berlin/bg2q.c | 6 +++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-Already queued as commit 0e704f6c42dc64f0 ("clk: renesas: rcar-gen4:
-Fix initconst confusion for cpg_pll_config") in renesas-clk-for-v5.20,
-and next-20220706 and later.
+diff --git a/drivers/clk/berlin/bg2.c b/drivers/clk/berlin/bg2.c
+index bccdfa00fd37..67a9edbba29c 100644
+--- a/drivers/clk/berlin/bg2.c
++++ b/drivers/clk/berlin/bg2.c
+@@ -500,12 +500,15 @@ static void __init berlin2_clock_setup(struct device_node *np)
+ 	int n, ret;
+ 
+ 	clk_data = kzalloc(struct_size(clk_data, hws, MAX_CLKS), GFP_KERNEL);
+-	if (!clk_data)
++	if (!clk_data) {
++		of_node_put(parent_np);
+ 		return;
++	}
+ 	clk_data->num = MAX_CLKS;
+ 	hws = clk_data->hws;
+ 
+ 	gbase = of_iomap(parent_np, 0);
++	of_node_put(parent_np);
+ 	if (!gbase)
+ 		return;
+ 
+diff --git a/drivers/clk/berlin/bg2q.c b/drivers/clk/berlin/bg2q.c
+index e9518d35f262..dd2784bb75b6 100644
+--- a/drivers/clk/berlin/bg2q.c
++++ b/drivers/clk/berlin/bg2q.c
+@@ -286,19 +286,23 @@ static void __init berlin2q_clock_setup(struct device_node *np)
+ 	int n, ret;
+ 
+ 	clk_data = kzalloc(struct_size(clk_data, hws, MAX_CLKS), GFP_KERNEL);
+-	if (!clk_data)
++	if (!clk_data) {
++		of_node_put(parent_np);
+ 		return;
++	}
+ 	clk_data->num = MAX_CLKS;
+ 	hws = clk_data->hws;
+ 
+ 	gbase = of_iomap(parent_np, 0);
+ 	if (!gbase) {
++		of_node_put(parent_np);
+ 		pr_err("%pOF: Unable to map global base\n", np);
+ 		return;
+ 	}
+ 
+ 	/* BG2Q CPU PLL is not part of global registers */
+ 	cpupll_base = of_iomap(parent_np, 1);
++	of_node_put(parent_np);
+ 	if (!cpupll_base) {
+ 		pr_err("%pOF: Unable to map cpupll base\n", np);
+ 		iounmap(gbase);
+-- 
+2.25.1
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
