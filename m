@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C283C43334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C47CCA480
 	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 13:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238007AbiGHNNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 09:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53958 "EHLO
+        id S238024AbiGHNNk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 09:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237918AbiGHNNi (ORCPT
+        with ESMTP id S237980AbiGHNNi (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 09:13:38 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82097192B8
-        for <linux-clk@vger.kernel.org>; Fri,  8 Jul 2022 06:13:36 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id m16so4022850ljh.10
-        for <linux-clk@vger.kernel.org>; Fri, 08 Jul 2022 06:13:36 -0700 (PDT)
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C06B193C2
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jul 2022 06:13:37 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id a39so25876650ljq.11
+        for <linux-clk@vger.kernel.org>; Fri, 08 Jul 2022 06:13:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v6/PCW5WRbzPZN02phmsvBdyayCNpfl8Zb3T8MmgeGc=;
-        b=iKiqZFrK3BS6sQC5nrTlmwt3NnZd4cUx/MBTVfs2e+got39YBiKpi9Qe4WDmC7ojyr
-         CIrKaDPDo5heACWSoTVUmQnVTohdFk5P6qJ4S0o1DdJQoBFemCLle5S3VvBdh+yi7bpy
-         EuVyrNAoQAqm2oooz6f973dzd37Kl5IrUHFGoqueydRWKAErukWU38ddvlnsCV+mQHtt
-         y5jDb20yclSDKU8TLBfft0nuCWk1p1LdjIwfQbXaV64ywlAfY5IjQcKYP9AVuFDrH2cT
-         12j33DCZC8jUOP1hbfZeSLT3EcqaMktR4A39oFT7maR6uqP4LB1OPATmZXBiRp6a+l5K
-         bquQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=IjR+2F8VDVzWZtZbL2H5UO7CpeJEqxrSNDvsv43xJOY=;
+        b=I0msIR1xHsrK427ROpYty93HRV1Cf5ngV2kxkvQkzAOxgzph0oKhs9P+bDanaafDLZ
+         H0XsGEMCv7ljW1RXECph6U9flE4iF1S7+BehA1PsEdQBVth996KZ31klFnJhQtGMBGym
+         gZ4pqEmQU99IpsBtLL7Rd0eebCucU/ERWyP3yoT/iZkZ02SVD4J4n0RXu4Z9zMC0IFoL
+         M/RHb34qu0cWPhxkgMV92AGLwvbwLovkIE90g1Lk+B3iyyM3uDreLi5LUPCzegERyUH+
+         GmGUxUGPvYj5M1vCTsanDd1UCZb5tM3Ir/ttI38F2MjmrAOBRfl6WHGdazXNcYVcAHhX
+         hYXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=v6/PCW5WRbzPZN02phmsvBdyayCNpfl8Zb3T8MmgeGc=;
-        b=spGp+zI22i/ieBC7blApk96hmBXSXJ9V/+3mQ7DvV412dMQ6vxBWCyOvQ5ndnn5RMT
-         xAKXNg1YAE20THk2H0+ZgEiNZuW3WSFLEZLS5HzhmsnrpgZBcUYKEw/CqA/9TpNIxd8X
-         1ljBodQKJt3UiFdPF1VnuWQVy11UXuPbyHfOLenGoownV26htgDxwxtIPNKMgoQHL3Ms
-         BwTCQQK+PTtySF9wllqyayU9GdjOHIJsaL9jcziJ+cUvYvQCbkUb6kIzNCo83rAg3Qnh
-         /2IfZVsrIsEp2u4tNe1x2HnVHcHtSw8hvk5p3U3iN7Ho3WtPna9M6CU/Wf55iHgZ1w6w
-         mmmQ==
-X-Gm-Message-State: AJIora8mMQbgc+AQf93fdtb1fxjnuUtBROGG8thHCVigcDRZUJWTjqNP
-        fgzA5Y90q/KPJt8V6BZ3z1jXYA==
-X-Google-Smtp-Source: AGRyM1vffmcfCTZuyPN85KWpI/SicQtx6Zz4UnQksr1NwxLiUcF19Wx7+PpLpTNeleYc6hVNsFiORQ==
-X-Received: by 2002:a2e:b703:0:b0:25a:93d0:8a57 with SMTP id j3-20020a2eb703000000b0025a93d08a57mr1964890ljo.487.1657286014824;
-        Fri, 08 Jul 2022 06:13:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IjR+2F8VDVzWZtZbL2H5UO7CpeJEqxrSNDvsv43xJOY=;
+        b=rMGpkImXXKFRJnRgFdW9fvU8QA1A1YQREp+OqslW/v8KnHgjDDbUr2UY+5xyXZQjfU
+         hx9IZWzvXUQPwbZpTo/eoH0WAs8wHBkAFxTmJJ1TbSvjYhtdly4tqo+tbtmOF6vL2wNd
+         ObuTE29e2lIA2Je3KeztoWnJluqSbjrNYH6+xL3H3Q0z1QG5BwAmnoU7Kos6mqIwdf4L
+         hcUg7VyoSKx+q6n7UvprcDoi7I6xTa5Qo6l0lNI2o0/j1vqDIbpqoYqZRkQxpLYwjEt0
+         GRyKGfuC73A+/2CUVWlNowu//nivOdRRz28qUlP1HOpR/sdLbIcabqRs7JhSuE0FqO1V
+         ecoQ==
+X-Gm-Message-State: AJIora+JXzpyH1XYdtNidkh/n6nCbonDotIG40O6ziRReB4BHxSDoa4Q
+        xZ2osHF9kK9kQJHVqRB8zid1EQ==
+X-Google-Smtp-Source: AGRyM1vS4wofuQbXsdOj4XwEHt7DCrtCFNOpkaD2vtOzu4vM+8vBWRpkAEjkfAI0qItm3zkqMesnhQ==
+X-Received: by 2002:a2e:a54d:0:b0:25d:4fc6:7b4d with SMTP id e13-20020a2ea54d000000b0025d4fc67b4dmr1859128ljn.11.1657286015648;
+        Fri, 08 Jul 2022 06:13:35 -0700 (PDT)
 Received: from eriador.lan ([37.153.55.125])
         by smtp.gmail.com with ESMTPSA id bu35-20020a05651216a300b0047255d211b9sm7410844lfb.232.2022.07.08.06.13.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jul 2022 06:13:34 -0700 (PDT)
+        Fri, 08 Jul 2022 06:13:35 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -59,38 +59,70 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-phy@lists.infradead.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 0/3] phy: qcom-qmp-ufs: add symbol clocks support
-Date:   Fri,  8 Jul 2022 16:13:30 +0300
-Message-Id: <20220708131333.2836900-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 1/3] clk: asm9260: use new helper for fixed rate clock creation
+Date:   Fri,  8 Jul 2022 16:13:31 +0300
+Message-Id: <20220708131333.2836900-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220708131333.2836900-1-dmitry.baryshkov@linaro.org>
+References: <20220708131333.2836900-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register UFS symbol clocks in the Qualcomm QMP PHY driver. Some of the
-platforms (msm8996, sc7280, sm8350/sm8450) expect them to be defined (to
-be used as GCC clock parents).
+The __clk_hw_register_fixed_rate() is an internal API, which is better
+not to be called directly. Add new helper to create fixed rate clocks
+using parent clock accuracy.
 
-Changes since v1:
-- Added a macro used by clk-asm9260, so that the clk-fixed-rate changes
-  do not affect the driver, requested by Stephen;
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/clk-asm9260.c    |  6 ++----
+ include/linux/clk-provider.h | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-- Changed registered clock names to be unique (as e.g. SC8280XP will
-  have two UFS PHYs), suggested by Johan.
-
-Dmitry Baryshkov (3):
-  clk: asm9260: use new helper for fixed rate clock creation
-  clk: fixed-rate: add devm_clk_hw_register_fixed_rate
-  phy: qcom-qmp-ufs: provide symbol clocks
-
- drivers/clk/clk-asm9260.c               |  6 +--
- drivers/clk/clk-fixed-rate.c            | 28 +++++++++++--
- drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 56 +++++++++++++++++++++++++
- include/linux/clk-provider.h            | 41 ++++++++++++++----
- 4 files changed, 116 insertions(+), 15 deletions(-)
-
+diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
+index bacebd457e6f..0609b661ff5a 100644
+--- a/drivers/clk/clk-asm9260.c
++++ b/drivers/clk/clk-asm9260.c
+@@ -276,10 +276,8 @@ static void __init asm9260_acc_init(struct device_node *np)
+ 
+ 	/* TODO: Convert to DT parent scheme */
+ 	ref_clk = of_clk_get_parent_name(np, 0);
+-	hw = __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
+-			ref_clk, NULL, NULL, 0, rate, 0,
+-			CLK_FIXED_RATE_PARENT_ACCURACY);
+-
++	hw = clk_hw_register_fixed_rate_parent_accuracy(NULL, pll_clk, ref_clk,
++							0, rate);
+ 	if (IS_ERR(hw))
+ 		panic("%pOFn: can't register REFCLK. Check DT!", np);
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 72d937c03a3e..659ef5a77246 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -439,6 +439,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
+ 				     (parent_data), NULL, (flags),	      \
+ 				     (fixed_rate), (fixed_accuracy), 0)
++/**
++ * clk_hw_register_fixed_rate_parent_accuracy - register fixed-rate clock with
++ * the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @fixed_rate: non-adjustable clock rate
++ */
++#define clk_hw_register_fixed_rate_parent_accuracy(dev, name, parent_name,    \
++						   flags, fixed_rate)	      \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name),      \
++				     NULL, NULL, (flags), (fixed_rate), 0,    \
++				     CLK_FIXED_RATE_PARENT_ACCURACY)
+ 
+ void clk_unregister_fixed_rate(struct clk *clk);
+ void clk_hw_unregister_fixed_rate(struct clk_hw *hw);
 -- 
 2.35.1
 
