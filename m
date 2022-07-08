@@ -2,130 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFE9CCA47B
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 13:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B3AC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 13:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232462AbiGHNpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 09:45:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49330 "EHLO
+        id S238354AbiGHNyz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 09:54:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231905AbiGHNpw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 09:45:52 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28996237D7;
-        Fri,  8 Jul 2022 06:45:49 -0700 (PDT)
-Received: from mail-oo1-f42.google.com ([209.85.161.42]) by
- mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1M5xDJ-1oCpNP0p1H-007Sud; Fri, 08 Jul 2022 15:45:48 +0200
-Received: by mail-oo1-f42.google.com with SMTP id n11-20020a4ad12b000000b00425b01c3326so4030431oor.8;
-        Fri, 08 Jul 2022 06:45:47 -0700 (PDT)
-X-Gm-Message-State: AJIora/NkYcFzv3biE/No2vIDOOovKULoW3sHuFORcS70u6rD/tcQxwD
-        WHvv0luOX90EwN8N1eFlEGwsMCDJ4RxlvhapwXE=
-X-Google-Smtp-Source: AGRyM1vy4rbxR1Ytn0Zk8NhNJ9KORyOPGe3ZQtW5xW3Of3raZdxBwA3+N0Uu+YK+RloM8boTybyN5UBcBgQVHJwdeE0=
-X-Received: by 2002:a5b:b47:0:b0:66e:3617:d262 with SMTP id
- b7-20020a5b0b47000000b0066e3617d262mr3516820ybr.106.1657287935403; Fri, 08
- Jul 2022 06:45:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220706165406.117349-1-tmaimon77@gmail.com> <CACPK8Xd0n5cpsCJ6guPzEj8JfXkz_ERzU3VdXW-Xx2QX8ssNKg@mail.gmail.com>
-In-Reply-To: <CACPK8Xd0n5cpsCJ6guPzEj8JfXkz_ERzU3VdXW-Xx2QX8ssNKg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 8 Jul 2022 15:45:18 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0Ojf1hm5Q2FJZEGLygku+qkPmKnKpBD8eAZPeRZtb=gw@mail.gmail.com>
-Message-ID: <CAK8P3a0Ojf1hm5Q2FJZEGLygku+qkPmKnKpBD8eAZPeRZtb=gw@mail.gmail.com>
-Subject: Re: [PATCH v7 00/16] Introduce Nuvoton Arbel NPCM8XX BMC SoC
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Tomer Maimon <tmaimon77@gmail.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
+        with ESMTP id S237997AbiGHNyy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 09:54:54 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF49627B2C
+        for <linux-clk@vger.kernel.org>; Fri,  8 Jul 2022 06:54:53 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id q7so3664870lji.12
+        for <linux-clk@vger.kernel.org>; Fri, 08 Jul 2022 06:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oBZ6reeyKLnZu1euC93MTf6+D13zsySYlZ/57ITlSLw=;
+        b=YVBYUoltBc0ykAUny/Jh48Hq+XAvPrz2KTc7ziz9OlLyJjp7QARaZROASWhZzxHBrk
+         4sOQjDNYTYzxlD4fHw2qBPIwm54kh5jrQll5TyAGz0IFAcAGUIcA3Ncyrmp1ioYBmcFE
+         E0g+vJGsxO1UIG/swSjWZ3DMhXwLKObUgtI0H9Cb0BTfLzBm9+fk0afVQabAEniOx7HH
+         arEgE+U7XfhWHbyi182TlBzThTziXq0SgMMxKDCjhLP/1GfnDnhgt2y36I/MkP6Nqqom
+         Em6IBluUT2UmQe3cP+5AjtvX+cH7T3Sq2c0k4tcDffVnV40MUqLgunZuenVuBP9oCaiR
+         RfPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oBZ6reeyKLnZu1euC93MTf6+D13zsySYlZ/57ITlSLw=;
+        b=g37fr9F+J+4KY/irbwSvBhxhqxnE4aRjvlR9Mev3KUCSFwZKeXF1YKvk0Y9TdQhDOR
+         x1vdinjDnmWDKe+Tcl2W/2fSl1z3jLuosRDuU2anYrIq+3xhlaARjIwhbWWmjyrmaXP8
+         D9OtDt0n7UlCkAWeGYAC3G4TT03qg7LD1JNIN4acM+Z+EoBrJ9JbRSCIyvTz9qOstoYa
+         ZfW2gUWC2HCpeNi+Ht86qirhWnOFpJKXOErsnQnzXYKRuw22imXiBp4aRnDdnZlzBgAV
+         33AXD2G6Jm0ZdHhqFI6CWQ+5g9o9JBZxhrym0KAbQyDo74WgIubGoEikdNSONOqL1we7
+         tDtQ==
+X-Gm-Message-State: AJIora90TXz8vrjoNJTOOfgf54sOJlPL5mJ8vCPe/hC/apHwr73I8eeN
+        WJrXUx15DE4f7XPOvpZwZJ2cMA==
+X-Google-Smtp-Source: AGRyM1tRjA2agm7R/j2hqY/ugg7NtFbwGbRKg9vte1R7g02DanxIiuE1HpTeHHE3MtjrjBWefUzAog==
+X-Received: by 2002:a05:651c:4c9:b0:25a:9d24:886 with SMTP id e9-20020a05651c04c900b0025a9d240886mr2154645lji.471.1657288492086;
+        Fri, 08 Jul 2022 06:54:52 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id y9-20020ac24e69000000b0047f647414efsm7428352lfs.190.2022.07.08.06.54.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Jul 2022 06:54:51 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
         Vinod Koul <vkoul@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Robert Hancock <robert.hancock@calian.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Qin Jian <qinjian@cqplus1.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:p60fzRZH6lXRcjLjsToh4E1dS5TOvz9nhqrmXYCRlR7go2qMZu4
- Al1+phUcp+UEblx0TNia+VpZ4BLL7cAU4JntVEikn1/mZJU/GX7vB8fMZJ7iYaOHyLuMz/x
- v/4jUzEmJYh3evJyJWk9Nb3HgrSlCvNPxcdcM53ZGG5VL8b9T/dGJmue9B5B+swz3KBnBsO
- O6lbHITMeKW9cQvi7Cr9w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WmPl8rkq1kE=:fiJt4rwFRraSb7IQg6gC+r
- PUrDoHeJD6QSQo2lMYkl31KUSL18tnsEUT+YDsrrsO2g9pDzekoZz4QZMOlGIzs8ZJeyBPdBY
- 2Ix5249rUjt9CMvN5pSIgea1jcOQz+xoJNGXjPyNEFbfVeo+GpTvD6LbTF94M6OB2zHV07tYs
- XoXK9wU+gogG1nQuu6aveipUAZTWShwJmU/wWbB1W4ea672X4LM1VghzccWc5xZ3A7SbpWAqH
- 89ck8OaNmH8ENc3ciAV8DVwd3/q9zXwSr1f747kLq4fY1SuTlLyqA9omhuNqLDFsBYcpeggOa
- RXHv4U0Ks79Vz2sopK41/3bd2+9HjVolj40aCWfKx3na1bmT9an7BX4DtbDIt29+n4t+DVMLW
- jv5XCpEqH3Y0wN5FQNR8MVutmkjXj5w0SWXpJvOCoBFl8Fu4O7SSu8mV0gCC0rdH7cTt3Vf5n
- AlTYSAbD0GzmMll2foy9vwfIT3h/c6ypTV1jiZgCrmF0N32K49sQ6uPDTQ7Xx4JUwHlXvS7EM
- e7l1iMD6l4Vnt52QvG9ZzNn9x/E8hsq9SVR93PrbE+iOhaZXKe2asQ+IDgATgh6lPFCopq9IW
- z9I7yt2P3GfqPSO3k/IqnwFNnbZKXSGgZMi7s7W36YruHe3PYxZuHCjSdAiuEp14uDnb/eSfp
- PolNTm7i+Bw29cRvlSwyeXbHPcQ1vVReVjjsJuuQskxRRXWPHDBIm8I1rUAMFEwfKIR1CH3c4
- UhuEnPD88k1BbDVVHhKw4UQBHb0h3ujAdRi82WPFZQNHTpAboi4fpA587Zhlxr7/A0epC77mN
- dBB7/FPuoSRda3v6xLht9mR2WepSSZcCL2r0ZYIryn3z01owlQu2skj8+BpcZOL6U9mA2+cjA
- fmcQPV9DfAzIDexPD0mA==
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-phy@lists.infradead.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH v3 0/3] phy: qcom-qmp-ufs: add symbol clocks support
+Date:   Fri,  8 Jul 2022 16:54:47 +0300
+Message-Id: <20220708135450.2845810-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 8, 2022 at 8:50 AM Joel Stanley <joel@jms.id.au> wrote:
->
-> Hi Arnd,
->
-> On Wed, 6 Jul 2022 at 16:54, Tomer Maimon <tmaimon77@gmail.com> wrote:
-> >
-> > This patchset  adds initial support for the Nuvoton
-> > Arbel NPCM8XX Board Management controller (BMC) SoC family.
->
-> Are you happy with a cross tree new soc branch for this series? If so
-> I can put them in a branch and get some build coverage before sending
-> them out.
->
-> (I notice the clock and reset changes are waiting on acks still)
->
+Register UFS symbol clocks in the Qualcomm QMP PHY driver. Some of the
+platforms (msm8996, sc7280, sm8350/sm8450) expect them to be defined (to
+be used as GCC clock parents).
 
-Hi Joel,
+Changes since v2:
+- Added error handling to phy_symbols_clk_register() (requested by
+  Johan).
 
-Yes, I think we should merge the parts that are reviewed already, but I'd
-leave out the clk (4/16) and reset (9/16) patches in this case.
+Changes since v1:
+- Added a macro used by clk-asm9260, so that the clk-fixed-rate changes
+  do not affect the driver
+- Changed registered clock names to be unique (as e.g. SC8280XP will
+  have two UFS PHYs).
 
-Krzysztof has reviewed the binding changes, so I don't mind having
-the DT nodes added in the soc tree even if the two drivers are still
-missing.
+Dmitry Baryshkov (3):
+  clk: asm9260: use new helper for fixed rate clock creation
+  clk: fixed-rate: add devm_clk_hw_register_fixed_rate
+  phy: qcom-qmp-ufs: provide symbol clocks
 
-I would do the same thing for the sunplus SP7021 platform that
-Qin Jian has been posting, as this is also waiting for a final Ack
-on the clk driver.
+ drivers/clk/clk-asm9260.c               |  6 +--
+ drivers/clk/clk-fixed-rate.c            | 28 ++++++++++--
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 59 +++++++++++++++++++++++++
+ include/linux/clk-provider.h            | 41 ++++++++++++++---
+ 4 files changed, 119 insertions(+), 15 deletions(-)
 
-I would put both of the new platforms into a single branch in the
-SoC tree, separate from the usual dt/drivers/soc/defconfig
-branches. I was already planning to pick npcm8xx up myself,
-but if you can do a pull request, that would be even better.
+-- 
+2.35.1
 
-       Arnd
