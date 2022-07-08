@@ -2,96 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673E9C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 07:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAFCC43334
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 07:16:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237465AbiGHHNT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 03:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53604 "EHLO
+        id S237445AbiGHHQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 03:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237458AbiGHHNO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 03:13:14 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8F7E76E8A;
-        Fri,  8 Jul 2022 00:13:11 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 116FB1FE78;
-        Fri,  8 Jul 2022 07:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1657264389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uMhC18ky2++3tPvUW/SF4keQKVbRQIhWZHoumy+pnZ4=;
-        b=EnE3HRHmf01bQyQvM+RsqW4+SpnIZVxprw3naq4D1xDWg6GkfEIbcSDoenUSXfDKKCau32
-        59R6hLHSzw+uRzOaTWkiZ+ddugvcPKTeKlXWVByv3K5oyGoQhVk2CL+h2TUGW91Dcxsegm
-        Wxb3yXvQc8Z9eyKuovhVkBEjjXQh9b0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1657264389;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uMhC18ky2++3tPvUW/SF4keQKVbRQIhWZHoumy+pnZ4=;
-        b=od6cZmruIjKNxTEWN3+lnw0ZtqoPMjNcgM8do+GOsVrPfhv4GyoGlzmeiFpFfs+NNEF9I0
-        ACLGjkqtqOHajSAw==
-Received: from localhost.localdomain (unknown [10.100.201.122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S237206AbiGHHQQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 03:16:16 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D1E796BB;
+        Fri,  8 Jul 2022 00:16:15 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id AB2652C142;
-        Fri,  8 Jul 2022 07:13:08 +0000 (UTC)
-From:   Jiri Slaby <jslaby@suse.cz>
-To:     mturquette@baylibre.com
-Cc:     linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Martin Liska <mliska@suse.cz>, Stephen Boyd <sboyd@kernel.org>,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH v2 2/2] clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config
-Date:   Fri,  8 Jul 2022 09:13:06 +0200
-Message-Id: <20220708071306.4354-2-jslaby@suse.cz>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220708071306.4354-1-jslaby@suse.cz>
-References: <20220708071306.4354-1-jslaby@suse.cz>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 264CB21A46;
+        Fri,  8 Jul 2022 07:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1657264573; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AR73VFU4xhO2Wv5kLjdkzS0nSTAgkRpNRvkdlCke4Ak=;
+        b=Bpppd1GEhso3X+/xusk2NqO2VthvZZ9NUM/R8rzwUFiPbL+NqMmBcNvU0Y72/EsGaFxXNU
+        4BfsCGl1HPqsjjHOq58R82LNgbxVRH9gj7A6ERHrhWCiuZKf6OaPTin+rWsQQgmPwARIQm
+        T7zP516fEPOXztnSV5wvWwaADdlN4KQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1657264573;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AR73VFU4xhO2Wv5kLjdkzS0nSTAgkRpNRvkdlCke4Ak=;
+        b=s1QhdVaXv0j+QjrUNzPD2yeNaEJaxE+XelKwd6DEh3mzpEv69+0f6R1pG8r2pcWrhF0928
+        rvplMhWpotDhgRBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E5A1E13A7D;
+        Fri,  8 Jul 2022 07:16:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id elb8NrzZx2IwDQAAMHmgww
+        (envelope-from <jslaby@suse.cz>); Fri, 08 Jul 2022 07:16:12 +0000
+Message-ID: <98363f27-e7a4-7351-fad7-361f7e465b7e@suse.cz>
+Date:   Fri, 8 Jul 2022 09:16:12 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/2] clk: pistachio: Fix initconst confusion
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc:     mliska@suse.cz, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>, linux-clk@vger.kernel.org
+References: <20220623083217.26433-1-jslaby@suse.cz>
+ <20220624004225.0DE4AC3411D@smtp.kernel.org>
+ <0edab0e2-5355-a3da-445d-b6f45e3082ed@suse.cz>
+ <20220629082104.E25D2C34114@smtp.kernel.org>
+From:   Jiri Slaby <jslaby@suse.cz>
+In-Reply-To: <20220629082104.E25D2C34114@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On 29. 06. 22, 10:21, Stephen Boyd wrote:
+> Quoting Jiri Slaby (2022-06-27 00:46:15)
+>> On 24. 06. 22, 2:42, Stephen Boyd wrote:
+>>> Quoting Jiri Slaby (2022-06-23 01:32:16)
+>>>> From: Andi Kleen <ak@linux.intel.com>
+>>>>
+>>>> A variable pointing to const isn't const itself. It'd have to contain
+>>>> "const" keyword after "*" too. Therefore, PNAME() cannot put the strings
+>>>> to "rodata".  Hence use __initdata instead of __initconst to fix this.
+>>>>
+>>>> [js] more explanatory commit message.
+>>>>
+>>>> Cc: Michael Turquette <mturquette@baylibre.com>
+>>>> Cc: Stephen Boyd <sboyd@kernel.org>
+>>>> Cc: linux-clk@vger.kernel.org
+>>>> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+>>>> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+>>>> ---
+>>>>    drivers/clk/pistachio/clk.h | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+>>>> index f9c31e3a0e47..742e5fab00c0 100644
+>>>> --- a/drivers/clk/pistachio/clk.h
+>>>> +++ b/drivers/clk/pistachio/clk.h
+>>>> @@ -34,7 +34,7 @@ struct pistachio_mux {
+>>>>           const char **parents;
+>>>>    };
+>>>>    
+>>>> -#define PNAME(x) static const char *x[] __initconst
+>>>> +#define PNAME(x) static const char *x[] __initdata
+>>>
+>>> Can it be const char * const and left as __initconst?
+>>
+>> Let me check, IIRC the struct where this is assigned would need to be
+>> updated too.
+>>
+>> I will get into it only some time next week.
+>>
+> 
+> Ok, sounds good. This seems to at least compile locally.
 
-A variable pointing to const isn't const itself. It'd have to contain
-"const" keyword after "*" too. Therefore, cpg_pll_config cannot be put
-to "rodata".  Hence use __initdata instead of __initconst to fix this.
+Yeah, that works. I've sent a v2.
 
-[js] more explanatory commit message.
+BTW is the code intended to put the actual strings to .init.rodata? As 
+that was never the case. Only those PNAME defined arrays (pointers to 
+strings) end up in .init.rodata now and the strings are in .rodata.
 
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: Martin Liska <mliska@suse.cz>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ----8<---
+> 
+> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk.h
+> index f9c31e3a0e47..8be02ac2d909 100644
+> --- a/drivers/clk/pistachio/clk.h
+> +++ b/drivers/clk/pistachio/clk.h
+> @@ -31,10 +31,10 @@ struct pistachio_mux {
+>   	unsigned int shift;
+>   	unsigned int num_parents;
+>   	const char *name;
+> -	const char **parents;
+> +	const char * const *parents;
+>   };
+>   
+> -#define PNAME(x) static const char *x[] __initconst
+> +#define PNAME(x) static const char * const x[] __initconst
+>   
+>   #define MUX(_id, _name, _pnames, _reg, _shift)			\
+>   	{							\
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index c7ed43d6aa67..e27832e5114f 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -23,7 +23,7 @@
- #include "rcar-gen4-cpg.h"
- #include "rcar-cpg-lib.h"
- 
--static const struct rcar_gen4_cpg_pll_config *cpg_pll_config __initconst;
-+static const struct rcar_gen4_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
- static u32 cpg_mode __initdata;
- 
+
 -- 
-2.36.1
-
+js
+suse labs
