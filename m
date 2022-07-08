@@ -2,72 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED97C43334
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 05:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1CAC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 06:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237066AbiGHFPQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 01:15:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41460 "EHLO
+        id S237194AbiGHGoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 02:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbiGHFPO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 01:15:14 -0400
-Received: from fornost.hmeau.com (helcar.hmeau.com [216.24.177.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2C076973;
-        Thu,  7 Jul 2022 22:15:12 -0700 (PDT)
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1o9gKC-00FpLV-D8; Fri, 08 Jul 2022 15:14:45 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 08 Jul 2022 13:14:44 +0800
-Date:   Fri, 8 Jul 2022 13:14:44 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Conor.Dooley@microchip.com
-Cc:     palmer@rivosinc.com, palmer@dabbelt.com, arnd@arndb.de,
-        Cyril.Jean@microchip.com, Daire.McNamara@microchip.com,
-        Lewis.Hanly@microchip.com, aou@eecs.berkeley.edu,
-        gregkh@linuxfoundation.org, kw@linux.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
-        lorenzo.pieralisi@arm.com, mturquette@baylibre.com,
-        paul.walmsley@sifive.com, robh@kernel.org, bhelgaas@google.com,
-        sboyd@kernel.org, wsa@kernel.org
-Subject: Re: [RESEND PATCH v4] MAINTAINERS: add polarfire rng, pci and clock
- drivers
-Message-ID: <Yse9RGTfRgqzzknt@gondor.apana.org.au>
-References: <20220622225822.2166305-1-mail@conchuod.ie>
- <a39bad24-d2bb-ef3e-d57a-2ac4fa1156ef@microchip.com>
+        with ESMTP id S236513AbiGHGoY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 02:44:24 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Jul 2022 23:44:23 PDT
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59EC94F66B;
+        Thu,  7 Jul 2022 23:44:23 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2176.14; Fri, 8 Jul 2022
+ 14:29:16 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Neil Armstrong" <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Yu Tu <yu.tu@amlogic.com>
+Subject: [PATCH 0/3] Add S4 SoC clock controller driver
+Date:   Fri, 8 Jul 2022 14:27:54 +0800
+Message-ID: <20220708062757.3662-1-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a39bad24-d2bb-ef3e-d57a-2ac4fa1156ef@microchip.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 07, 2022 at 01:30:27PM +0000, Conor.Dooley@microchip.com wrote:
-> On 22/06/2022 23:58, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> > 
-> > Hardware random, PCI and clock drivers for the PolarFire SoC have been
-> > upstreamed but are not covered by the MAINTAINERS entry, so add them.
-> > Daire is the author of the clock & PCI drivers, so add him as a
-> > maintainer in place of Lewis.
-> > 
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Arnd, Palmer:
-> Does the SoC tree make more sense for this patch?
-> I am missing an ack from Herbert (but I don't think that's blocking
-> for a MAINTAINERS update to my own entry?).
+1. Add clock controller driver for S4 SOC.
 
-I'm not sure why an ack is needed from me since the entry doesn't
-intersect with crypto at all.  But FWIW
+Yu Tu (3):
+  dt-bindings: clk: meson: add S4 SoC clock controller bindings
+  arm64: dts: meson: add S4 Soc clock controller in DT
+  clk: meson: s4: add s4 SoC clock controller driver
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+ .../bindings/clock/amlogic,gxbb-clkc.txt      |    1 +
+ MAINTAINERS                                   |    3 +-
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |    9 +-
+ drivers/clk/meson/Kconfig                     |   17 +
+ drivers/clk/meson/Makefile                    |    1 +
+ drivers/clk/meson/s4.c                        | 4678 +++++++++++++++++
+ drivers/clk/meson/s4.h                        |  156 +
+ include/dt-bindings/clock/s4-clkc.h           |  354 ++
+ 8 files changed, 5217 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/meson/s4.c
+ create mode 100644 drivers/clk/meson/s4.h
+ create mode 100644 include/dt-bindings/clock/s4-clkc.h
 
-Cheers,
+
+base-commit: 292dcfc1f60eee7d389d0184df4ef27be8b55077
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.33.1
+
