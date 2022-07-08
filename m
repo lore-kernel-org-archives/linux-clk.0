@@ -2,131 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FBBC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 13:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFE9CCA47B
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 13:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237934AbiGHNTd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 09:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57428 "EHLO
+        id S232462AbiGHNpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Jul 2022 09:45:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231287AbiGHNTc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 09:19:32 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B7F275D7;
-        Fri,  8 Jul 2022 06:19:31 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id e7so1620707qts.1;
-        Fri, 08 Jul 2022 06:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JtDIuSDJgMHOnSZ7PDsNMgEqGS4IDU10U0hH9sHl3tg=;
-        b=F1TT9/4N2rf2mudIbCeIRjEmhB/dOOSNMlAnJije4cTLlMr+FJ96dYAM3lSjRN82Fn
-         5phQrraQEKfjUbDlb2u08NXgt4TDCjj9vbuvnJ2SyivezzJxr3FYhYouCxzVqIWPYfYW
-         kI8p2+w2VA1XVe0uwwkP2s4Q1+KKicxu7LYfQymp7H4TTECwVWMWpj9lEhEZwX6StSYO
-         0T1M9bS9eY27tmsDZKaHxYY592yn5PkQ57uyQ8Nt0K9DjpU9ZgJDvZ7IsNkafjWiFqf9
-         u/BOHf3LNPoqR548ZyHd3pk9jyMgHaPHVj2fJbw3ZXFJ3BKJqb6dNlng4aH/ZckF+8+b
-         2DZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JtDIuSDJgMHOnSZ7PDsNMgEqGS4IDU10U0hH9sHl3tg=;
-        b=XPzMYq3XMRr7QOlMLgNhJysAsm4Pr6ccg50dw0j0eofSAkOCFUqqPjK/1m7bAucdAd
-         i/uyRgrSQiwtNZQdPFetp7TuGh84ZwlU9LycfW8qD/UbpOkFui3LuidjwgRgwIzshylD
-         KWHWvU2ma5dzYOaQGTQeBsRj9hoXr+3EiFuev2lYQbHbzoLpz+7amGWgcYFI0XI0eJQY
-         vz3954YMGUCm7uDV+O2XTh8Ghn19V3OlIhQyKQWpzzMZDTJR63OCJaSF9/vxEc4c7V9o
-         Ndh/0p6neOabYG8v7zwb3C3LG55mEB/hUN5yJHzBdprtRG8jNgC3cM+9dKuVx1xPNTfc
-         f3gg==
-X-Gm-Message-State: AJIora8LJmBdq3bfpmdZxVP39FtudiUnSAkUs31XRrhgYFnVAQLhV6Qz
-        IdyAM5+EuftdhhfME3w6x5fodCVohzucJbD4y7ewy0gGe0E=
-X-Google-Smtp-Source: AGRyM1tOJmb8x3r+oLBvKHiggRAd8q9ZzGU7GGBH5P9GK5C4c87aPPF8+j7O07cl13llleHzkRCaPLfYivNLIdaYh0M=
-X-Received: by 2002:ac8:5dcb:0:b0:31d:42c8:95d7 with SMTP id
- e11-20020ac85dcb000000b0031d42c895d7mr2859884qtx.546.1657286370465; Fri, 08
- Jul 2022 06:19:30 -0700 (PDT)
+        with ESMTP id S231905AbiGHNpw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 09:45:52 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28996237D7;
+        Fri,  8 Jul 2022 06:45:49 -0700 (PDT)
+Received: from mail-oo1-f42.google.com ([209.85.161.42]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M5xDJ-1oCpNP0p1H-007Sud; Fri, 08 Jul 2022 15:45:48 +0200
+Received: by mail-oo1-f42.google.com with SMTP id n11-20020a4ad12b000000b00425b01c3326so4030431oor.8;
+        Fri, 08 Jul 2022 06:45:47 -0700 (PDT)
+X-Gm-Message-State: AJIora/NkYcFzv3biE/No2vIDOOovKULoW3sHuFORcS70u6rD/tcQxwD
+        WHvv0luOX90EwN8N1eFlEGwsMCDJ4RxlvhapwXE=
+X-Google-Smtp-Source: AGRyM1vy4rbxR1Ytn0Zk8NhNJ9KORyOPGe3ZQtW5xW3Of3raZdxBwA3+N0Uu+YK+RloM8boTybyN5UBcBgQVHJwdeE0=
+X-Received: by 2002:a5b:b47:0:b0:66e:3617:d262 with SMTP id
+ b7-20020a5b0b47000000b0066e3617d262mr3516820ybr.106.1657287935403; Fri, 08
+ Jul 2022 06:45:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220705191017.1683716-1-robimarko@gmail.com> <fa748405-ca38-8ec8-0e8d-83a99a0c9c57@somainline.org>
-In-Reply-To: <fa748405-ca38-8ec8-0e8d-83a99a0c9c57@somainline.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Fri, 8 Jul 2022 15:19:19 +0200
-Message-ID: <CAOX2RU4bpd5xAMA-2wFWW9iypbqijkhnwkLZ_gqBorCkyuKegQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] clk: qcom: clk-alpha-pll: add support for APSS PLL
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+References: <20220706165406.117349-1-tmaimon77@gmail.com> <CACPK8Xd0n5cpsCJ6guPzEj8JfXkz_ERzU3VdXW-Xx2QX8ssNKg@mail.gmail.com>
+In-Reply-To: <CACPK8Xd0n5cpsCJ6guPzEj8JfXkz_ERzU3VdXW-Xx2QX8ssNKg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 8 Jul 2022 15:45:18 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0Ojf1hm5Q2FJZEGLygku+qkPmKnKpBD8eAZPeRZtb=gw@mail.gmail.com>
+Message-ID: <CAK8P3a0Ojf1hm5Q2FJZEGLygku+qkPmKnKpBD8eAZPeRZtb=gw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/16] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Robert Hancock <robert.hancock@calian.com>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Qin Jian <qinjian@cqplus1.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:p60fzRZH6lXRcjLjsToh4E1dS5TOvz9nhqrmXYCRlR7go2qMZu4
+ Al1+phUcp+UEblx0TNia+VpZ4BLL7cAU4JntVEikn1/mZJU/GX7vB8fMZJ7iYaOHyLuMz/x
+ v/4jUzEmJYh3evJyJWk9Nb3HgrSlCvNPxcdcM53ZGG5VL8b9T/dGJmue9B5B+swz3KBnBsO
+ O6lbHITMeKW9cQvi7Cr9w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WmPl8rkq1kE=:fiJt4rwFRraSb7IQg6gC+r
+ PUrDoHeJD6QSQo2lMYkl31KUSL18tnsEUT+YDsrrsO2g9pDzekoZz4QZMOlGIzs8ZJeyBPdBY
+ 2Ix5249rUjt9CMvN5pSIgea1jcOQz+xoJNGXjPyNEFbfVeo+GpTvD6LbTF94M6OB2zHV07tYs
+ XoXK9wU+gogG1nQuu6aveipUAZTWShwJmU/wWbB1W4ea672X4LM1VghzccWc5xZ3A7SbpWAqH
+ 89ck8OaNmH8ENc3ciAV8DVwd3/q9zXwSr1f747kLq4fY1SuTlLyqA9omhuNqLDFsBYcpeggOa
+ RXHv4U0Ks79Vz2sopK41/3bd2+9HjVolj40aCWfKx3na1bmT9an7BX4DtbDIt29+n4t+DVMLW
+ jv5XCpEqH3Y0wN5FQNR8MVutmkjXj5w0SWXpJvOCoBFl8Fu4O7SSu8mV0gCC0rdH7cTt3Vf5n
+ AlTYSAbD0GzmMll2foy9vwfIT3h/c6ypTV1jiZgCrmF0N32K49sQ6uPDTQ7Xx4JUwHlXvS7EM
+ e7l1iMD6l4Vnt52QvG9ZzNn9x/E8hsq9SVR93PrbE+iOhaZXKe2asQ+IDgATgh6lPFCopq9IW
+ z9I7yt2P3GfqPSO3k/IqnwFNnbZKXSGgZMi7s7W36YruHe3PYxZuHCjSdAiuEp14uDnb/eSfp
+ PolNTm7i+Bw29cRvlSwyeXbHPcQ1vVReVjjsJuuQskxRRXWPHDBIm8I1rUAMFEwfKIR1CH3c4
+ UhuEnPD88k1BbDVVHhKw4UQBHb0h3ujAdRi82WPFZQNHTpAboi4fpA587Zhlxr7/A0epC77mN
+ dBB7/FPuoSRda3v6xLht9mR2WepSSZcCL2r0ZYIryn3z01owlQu2skj8+BpcZOL6U9mA2+cjA
+ fmcQPV9DfAzIDexPD0mA==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 6 Jul 2022 at 15:14, Konrad Dybcio <konrad.dybcio@somainline.org> wrote:
+On Fri, Jul 8, 2022 at 8:50 AM Joel Stanley <joel@jms.id.au> wrote:
 >
+> Hi Arnd,
 >
+> On Wed, 6 Jul 2022 at 16:54, Tomer Maimon <tmaimon77@gmail.com> wrote:
+> >
+> > This patchset  adds initial support for the Nuvoton
+> > Arbel NPCM8XX Board Management controller (BMC) SoC family.
 >
-> On 5.07.2022 21:10, Robert Marko wrote:
-> > APSS PLL type will be used by the IPQ8074 APSS driver for providing the
-> > CPU core clocks and enabling CPU Frequency scaling.
-> >
-> > This is ported from the downstream 5.4 kernel.
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> >  drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
-> >  drivers/clk/qcom/clk-alpha-pll.h |  1 +
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> > index 4406cf609aae..8270363ff98e 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > @@ -154,6 +154,18 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
-> >               [PLL_OFF_TEST_CTL_U] = 0x30,
-> >               [PLL_OFF_TEST_CTL_U1] = 0x34,
-> >       },
-> > +     [CLK_ALPHA_PLL_TYPE_APSS] = {
-> The name is surely not correct, can somebody from qcom chime in
-> and suggest what it should be?
+> Are you happy with a cross tree new soc branch for this series? If so
+> I can put them in a branch and get some build coverage before sending
+> them out.
+>
+> (I notice the clock and reset changes are waiting on acks still)
+>
 
-Hi Konrad,
-That is how Qualcomm refers to the type in the downstream 4.4 and 5.4 kernels.
-I dont have any other reference to the name unless somebody from
-Qualcomm can chime in.
+Hi Joel,
 
-Regards,
-Robert
->
-> Konrad
-> > +             [PLL_OFF_L_VAL] = 0x08,
-> > +             [PLL_OFF_ALPHA_VAL] = 0x10,
-> > +             [PLL_OFF_ALPHA_VAL_U] = 0xff,
-> > +             [PLL_OFF_USER_CTL] = 0x18,
-> > +             [PLL_OFF_USER_CTL_U] = 0xff,
-> > +             [PLL_OFF_CONFIG_CTL] = 0x20,
-> > +             [PLL_OFF_CONFIG_CTL_U] = 0x24,
-> > +             [PLL_OFF_TEST_CTL] = 0x30,
-> > +             [PLL_OFF_TEST_CTL_U] = 0x34,
-> > +             [PLL_OFF_STATUS] = 0x28,
-> > +     },
-> >  };
-> >  EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
-> >
-> > diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> > index 6e9907deaf30..626fdf80336d 100644
-> > --- a/drivers/clk/qcom/clk-alpha-pll.h
-> > +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> > @@ -18,6 +18,7 @@ enum {
-> >       CLK_ALPHA_PLL_TYPE_AGERA,
-> >       CLK_ALPHA_PLL_TYPE_ZONDA,
-> >       CLK_ALPHA_PLL_TYPE_LUCID_EVO,
-> > +     CLK_ALPHA_PLL_TYPE_APSS,
-> >       CLK_ALPHA_PLL_TYPE_MAX,
-> >  };
-> >
+Yes, I think we should merge the parts that are reviewed already, but I'd
+leave out the clk (4/16) and reset (9/16) patches in this case.
+
+Krzysztof has reviewed the binding changes, so I don't mind having
+the DT nodes added in the soc tree even if the two drivers are still
+missing.
+
+I would do the same thing for the sunplus SP7021 platform that
+Qin Jian has been posting, as this is also waiting for a final Ack
+on the clk driver.
+
+I would put both of the new platforms into a single branch in the
+SoC tree, separate from the usual dt/drivers/soc/defconfig
+branches. I was already planning to pick npcm8xx up myself,
+but if you can do a pull request, that would be even better.
+
+       Arnd
