@@ -2,99 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BC4CCA481
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Jul 2022 21:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9028EC43334
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Jul 2022 23:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240482AbiGHVcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Jul 2022 17:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46084 "EHLO
+        id S229544AbiGIXPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 9 Jul 2022 19:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240479AbiGHVcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Jul 2022 17:32:07 -0400
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 375D7A0266;
-        Fri,  8 Jul 2022 14:32:06 -0700 (PDT)
-Received: by mail-il1-f174.google.com with SMTP id v2so4528845ilo.7;
-        Fri, 08 Jul 2022 14:32:06 -0700 (PDT)
+        with ESMTP id S229523AbiGIXPz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jul 2022 19:15:55 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81675201AC
+        for <linux-clk@vger.kernel.org>; Sat,  9 Jul 2022 16:15:53 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id e69so3310281ybh.2
+        for <linux-clk@vger.kernel.org>; Sat, 09 Jul 2022 16:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mP2wLhwavewGA8FVEJebKzO+AyUl27McMXohUrjH32M=;
+        b=lofU9L5Tz9Yj7xkCPTUYbQb7wUBPYtbVCeSlBrpxJ5w75Xs9r8Vn/0QY2Xx3K6HcNx
+         rM5CSUUaLZEQnVc9zTjuDhaqd4yPqihiguwlOaDvsgGkB5gHgemi0DSm92+LyPUN2yWS
+         U570rUJJr5rrCQ6JtpQA5qRpYDR9WlorM1dCYCDGugTUdgfE4B+G2sNtDVEFkyNOh/B9
+         mmx+1Xbs3pPQzd4XzurQKQ0Jy0l6icPmWeFOC4Z9c98obW1c+PlLUNasrOFsjv4CSTPz
+         s321Z29KouSaMVEAwnq66OqpgMwk97Bb31ALluDtP2v9Q383Frxq+DTCYhDF+4h26hDA
+         9eUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=h/KThnF0Zvpky0IHZNl9qc+VZZheZmG8gyVJvHSVNhQ=;
-        b=pDApoo1JabrmAym7aUKn8T5focOWIruGrKSCpQmFvoo85lROFnI0ZPkauiK1SU1DxL
-         fBe6n2sxqLRqhVgjTbtSV4UWOgtoJpSqc5uYUwO7Rfy4rNXaJB37cy1qF2SPL3aG/NQU
-         uPe+ge1s0Zxx0KDgQK5tlaFehRpyMqfsGwuOTgK3Xg1kP+95H9zvG/8VeRY2EQihOGk3
-         GD3uLxxeBWP7IZxDenR8rQT4eAYp3yqj2uoRbsBINdPjs+8GghGtT2V1wMSeuWpLOJC2
-         9L4Dq/6s8VuBsWi2y29hI7P9c86fmkdimDFp6eiYEl7EF3mlFrwmlsIAHSHGNeLZS1Jw
-         KC+w==
-X-Gm-Message-State: AJIora8n9WraeuYY8rT0IC4c54gvesJLCixpKt+NHKxO5ktLeFbn9GV6
-        l1PnqNK36H43J2PPyvLwSQ==
-X-Google-Smtp-Source: AGRyM1t7s/dUjWvFjoRJV3IxWtwgWoFoImaYteUvAgrnXfPfUcdPn31tu04YpAfBM1+rNoSePV6BDw==
-X-Received: by 2002:a92:c26e:0:b0:2da:be5e:69d9 with SMTP id h14-20020a92c26e000000b002dabe5e69d9mr3235847ild.42.1657315925469;
-        Fri, 08 Jul 2022 14:32:05 -0700 (PDT)
-Received: from robh.at.kernel.org ([98.38.210.73])
-        by smtp.gmail.com with ESMTPSA id s19-20020a02cf33000000b00332044db2aasm18862854jar.95.2022.07.08.14.32.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Jul 2022 14:32:04 -0700 (PDT)
-Received: (nullmailer pid 1508203 invoked by uid 1000);
-        Fri, 08 Jul 2022 21:32:02 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     git@xilinx.com, git@amd.com, michal.simek@xilinx.com,
-        shubhrajyoti.datta@amd.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <1cbbf50917ef9d2e2bc2c8862cb8425d54959049.1657276107.git.shubhrajyoti.datta@xilinx.com>
-References: <1cbbf50917ef9d2e2bc2c8862cb8425d54959049.1657276107.git.shubhrajyoti.datta@xilinx.com>
-Subject: Re: [LINUX PATCH] dt-bindings: clock: versal: Remove alt_ref_clk from clock source
-Date:   Fri, 08 Jul 2022 15:32:02 -0600
-Message-Id: <1657315922.459530.1508202.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mP2wLhwavewGA8FVEJebKzO+AyUl27McMXohUrjH32M=;
+        b=EIxRhHexTMgApLEa5vcIJ+XoL5CXufb3wqbC/gnisKzX1ALMakq25TGf07rciFv89N
+         2Hrw9A0UtsHlKgJ2/cQ8RKFkohO+OB8E0q+8fUB7pxVQUVwvuDHXpm5DIuT6c4wFZmiu
+         u8MGYi0j5IDa+x3Jcl904P+IUjwepSKce68oonrjY+U24C6CulU+NnqJNiIHJ6Avo5PY
+         IdMmBWggRexCBJl9WP6PWjYLL/to6GeCC/NDdu/gkYsBsgi4wiytmEra5nTyeUaMqPqO
+         Zm+LRjIOE3B6uqmnHr//E4dnzipSur8dKIOXMwRhozVYkc7pESUHdY95Uh2a8JP5611t
+         oFQA==
+X-Gm-Message-State: AJIora+zsiMqejB7P6Nd9/cLZnkwtWhG+hdyvwdNN8ulEWxHY0Bmo75u
+        pz8PEKNWZUazqRk9zeLUIjI41ZroMMFHhUB8a3D44A==
+X-Google-Smtp-Source: AGRyM1snPIFzzPQrblAAlshjOA0mEK4qfSBKO2mQPb+MmznS2glNgzneCmOnOy4qyulsIyO5WJaID6sPej9uHMFeaSs=
+X-Received: by 2002:a25:4046:0:b0:66e:ddca:2ff5 with SMTP id
+ n67-20020a254046000000b0066eddca2ff5mr8784868yba.492.1657408552750; Sat, 09
+ Jul 2022 16:15:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220707125022.1156498-1-viorel.suman@oss.nxp.com> <20220707125022.1156498-3-viorel.suman@oss.nxp.com>
+In-Reply-To: <20220707125022.1156498-3-viorel.suman@oss.nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 10 Jul 2022 01:15:41 +0200
+Message-ID: <CACRpkdaBXqgxv_2-=Z6Lst7g6kGGL=eti_YaBSqvSQ7LeDgLaA@mail.gmail.com>
+Subject: Re: [PATCH v8 02/15] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
+ yaml file
+To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Oliver Graute <oliver.graute@kococonnector.com>,
+        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
+        Shijie Qin <shijie.qin@nxp.com>, Ming Qian <ming.qian@nxp.com>,
+        Mirela Rabulea <mirela.rabulea@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 08 Jul 2022 16:11:12 +0530, Shubhrajyoti Datta wrote:
-> alt_ref_clk is applicable only for PS extended version.
-> For PS base version there is no separate alt_ref_clk.
-> It is tied with ref_clk. The commit
-> 2b2012d1c1d8 (clk: versal: Remove alt_ref_clk from clock sources)
-> removes the alt_ref_clk from the u-boot code but not the yaml.
-> Remove it from yaml as well.
-> 
-> Fixes: 026049cf37f2 ("clk: versal: Remove alt_ref_clk from clock sources")
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-> u-boot commit refered
-> https://source.denx.de/u-boot/u-boot/-/commit/2b2012d1c1d8515417ba139339d0aa9b47789dca
-> 
->  .../devicetree/bindings/clock/xlnx,versal-clk.yaml          | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
+On Thu, Jul 7, 2022 at 2:51 PM Viorel Suman (OSS)
+<viorel.suman@oss.nxp.com> wrote:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> From: Abel Vesa <abel.vesa@nxp.com>
+>
+> In order to replace the fsl,scu txt file from bindings/arm/freescale,
+> we need to split it between the right subsystems. This patch documents
+> separately the 'iomux/pinctrl' child node of the SCU main node.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-yamllint warnings/errors:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clocks: [[4294967295], [4294967295], [4294967295]] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names:1: 'pl_alt_ref' was expected
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.example.dtb: versal-firmware: clock-controller:clock-names: ['ref', 'alt_ref', 'pl_alt_ref'] is too long
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml
+Tell me if you want me to apply this to the pinctrl tree.
+(I guess Shawn is handling it?)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Yours,
+Linus Walleij
