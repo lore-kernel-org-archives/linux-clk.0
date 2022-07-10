@@ -2,99 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB5AC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 10 Jul 2022 11:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB06DC43334
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Jul 2022 15:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbiGJLMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Jul 2022 07:12:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54502 "EHLO
+        id S229492AbiGJPMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Jul 2022 11:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiGJLMc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2022 07:12:32 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BD4BCB0
-        for <linux-clk@vger.kernel.org>; Sun, 10 Jul 2022 04:12:31 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.249.155]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MQMm9-1nxcqC0jAn-00MIWJ; Sun, 10 Jul 2022 13:12:05 +0200
-Message-ID: <ce3e2e21-dc54-1f77-fdbb-6d3627917830@i2se.com>
-Date:   Sun, 10 Jul 2022 13:12:01 +0200
+        with ESMTP id S229530AbiGJPMw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2022 11:12:52 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F282BE03
+        for <linux-clk@vger.kernel.org>; Sun, 10 Jul 2022 08:12:51 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id p6so819494ljc.8
+        for <linux-clk@vger.kernel.org>; Sun, 10 Jul 2022 08:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=NrSFqXui8IuFWW18AV7BX9JJnZg6RCMbeeOF3ySerrE=;
+        b=QMoJgDgrWpoHgt8V935Yj0tZ7gW3LZdDygouB/iufA4mk/EYDXJyLplXfyn9C8aN3A
+         uIDA0Tu/wnZF2BfBFlpKqh4VyroAYuQZqBcdpiZdNqmtc1Z5K0m7VaZCj9hr+NPEj35l
+         BPUIU1LpogI7MI0Z2g9xvpzLPWDCfvUhqRZswOndvhygeYTuQ8N329fsjMyYoMlPMYqw
+         F5KZ/a6Qya+85rPNA5stUj9xKIurX7xzNqVFP9yMbwrQYxAP3NoSkTUTKHqlfCKkzx6r
+         PnWE30Qp6vO43T+WD+r3zVXt+y24fZZfpGbNtPSRRMTbGF8XcgFbk+cwU5SF+8I8uRG7
+         8q0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=NrSFqXui8IuFWW18AV7BX9JJnZg6RCMbeeOF3ySerrE=;
+        b=f/jPK6dEFWZWkLmQvO3pGwpMms77hMIKO1Xp2mlPBgOSKlDcNmjAxeuax4QmfaJ+F2
+         sf3l38MtRKm9w5kqwCehRwZ44jkKRfWnt3R8nbQLQxg0DDG02IXWEwd1vwBQuZGb96F3
+         00buHtReBw7tPOraoRdZlHoo7VwCR/TjtJKRP85P11RqofCye/3kDlU6/h+X2favbTzJ
+         DI0ayS5DNt9o3NjosIUtBcwU22JBQeB8ztwc4I+X8CTVUQCQ01FjwdlLKXF6+eCEotdA
+         ObT9DIu5qazxGbAdMRRwPdhG3sSF4Yo9g0msgmOj7bKisgyMXNfT0FzkXQwi6qEyP7MA
+         ZLPA==
+X-Gm-Message-State: AJIora9PJDTETMULgshNclhQJQZdzcizAlEs8UzCyS3u39DeMjwwVhqw
+        sjiOLwBvGgIR81pEzct74O5X4g==
+X-Google-Smtp-Source: AGRyM1u4TGEfXbOJWoo2B3uuptUDQWrvhmxrihGijpLpTSzFLDT2nPpmDzKjXMxyCnypzScxX8fVbA==
+X-Received: by 2002:a2e:83c7:0:b0:25b:c007:29e0 with SMTP id s7-20020a2e83c7000000b0025bc00729e0mr7525140ljh.378.1657465969512;
+        Sun, 10 Jul 2022 08:12:49 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5cac-200.bb.online.no. [88.92.172.200])
+        by smtp.gmail.com with ESMTPSA id y18-20020a199152000000b00486d8a63c07sm976213lfj.121.2022.07.10.08.12.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Jul 2022 08:12:49 -0700 (PDT)
+Message-ID: <f6ab024a-582f-45b0-7d26-94a85858c761@linaro.org>
+Date:   Sun, 10 Jul 2022 17:12:46 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v8 25/33] dt-bindings: crypto: rockchip: convert to new
+ driver bindings
 Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Guillaume Gardet <Guillaume.Gardet@arm.com>
-Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-rpi-kernel@lists.infradead.org" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
-References: <20220428065743.94967-1-iivanov@suse.de>
- <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
- <20220510133019.h2urxj3feponfuku@houat>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <20220510133019.h2urxj3feponfuku@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ve7+uNEsWdx8eAPmtn/EJaR05I02baYO5xii/5w0r9BM+lPPf2Z
- sXvmqzcHujcxaVHUgTyE+WQzf169qrHT8SHbfOq5pxAIP4tX7ft1eMcTIExZESIQsRoUTIE
- drZjbi4lSV1JTpGGnHKDuZ30QU2ctHL4kh6R3Kj35RVSK6Cv9d1TXDwcgY4yByRbVeh+mdN
- uEHJdilY5I8pMh7w0SIhA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kiBFckYWZgw=:cH+MKWdkS/HxjsTMOdfNrb
- kPwYDVczJAUFpn58BqWwRv3D27LcK+G2P2742z3SXq7Q/d1sP46kUs0sJ7k9UwM06J4u/MTux
- slfOuLXwavD2sdRrMev54ipBZvJSP1dLJSHrbTRid97sMgwny/2qS2YknXaDxcPb8arK+OPWr
- njRzc5p0m2/xBPM0fcddRKMkZUwmJ7xRvlnLma0tKFKbRwnj60kVdaIgdBgtrEmDdGr35x/y/
- h3sCqsHY+kBOv1VCoRxN5FH9UjtS16mxmhsaiHLGKTdmqfcBoTtZC70yN2KrkCRmUjfe8TCOY
- L1V0MavoROHEDwOJo3y+dMNSIHssioOCoUE6OKTI7XCLnQKlrJDia5K/iD/dGyqpWWBUieHFS
- GOOsBFqtM6HIe9bHmUVAjwGDWVlTatDo6cBbcwRCbK2a/wU5N32XKPGU8jrclMHZdHt7IXkZJ
- 3DPRkYxCo8Geo41d1L5gni5hc5i49eSaRk/St6Y5yRPI/fNROAAKzUPSfk5e1KxkYr40ELwvF
- GEusoEm7ZPXs7JsxuKd7HzmyFC1uGC7ibcZpFXm3eqd6O35eFizB4kxq5/2S73xo3jVUVuGzB
- J+0QQ6WnZR/o9m2U2wRI826JjGFRNWB6cBayj8e/lesAo4lCig7q8R1j9s4bDu42mojo6eUaS
- wmif+by/9anVp/arcu1HEzVsiIzAmT48wL18RX41jV7L7q2xIq9ei2I9pxufJdBAt7P43VURU
- 9NmlUvzhdDGmXeEHNEQYsdVhMjl/1pYk6V5R3nZOrQLcv2ERvQIw8pNBjtU=
+To:     LABBE Corentin <clabbe@baylibre.com>
+Cc:     Rob Herring <robh@kernel.org>, john@metanate.com, heiko@sntech.de,
+        p.zabel@pengutronix.de, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        didi.debian@cknow.org, herbert@gondor.apana.org.au,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220706090412.806101-1-clabbe@baylibre.com>
+ <20220706090412.806101-26-clabbe@baylibre.com>
+ <1657114144.957232.4099933.nullmailer@robh.at.kernel.org>
+ <YsWcGDwPCX+/95i3@Red> <3e47b853-bb82-8766-8884-3da931c038a2@linaro.org>
+ <YsabXrOyAsCkUUVN@Red>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <YsabXrOyAsCkUUVN@Red>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 07/07/2022 10:37, LABBE Corentin wrote:
+> Le Wed, Jul 06, 2022 at 05:25:21PM +0200, Krzysztof Kozlowski a écrit :
+>> On 06/07/2022 16:28, LABBE Corentin wrote:
+>>> Le Wed, Jul 06, 2022 at 07:29:04AM -0600, Rob Herring a écrit :
+>>>> On Wed, 06 Jul 2022 09:04:04 +0000, Corentin Labbe wrote:
+>>>>> The latest addition to the rockchip crypto driver need to update the
+>>>>> driver bindings.
+>>>>>
+>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+>>>>> ---
+>>>>>  .../crypto/rockchip,rk3288-crypto.yaml        | 85 +++++++++++++++++--
+>>>>>  1 file changed, 77 insertions(+), 8 deletions(-)
+>>>>>
+>>>>
+>>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>>>
+>>>> yamllint warnings/errors:
+>>>>
+>>>> dtschema/dtc warnings/errors:
+>>>> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:0:then:properties:clock-names: 'oneOf' conditional failed, one must be fixed:
+>>>> 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too long
+>>>> 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too short
+>>>> 	False schema does not allow 4
+>>>> 	1 was expected
+>>>> 	4 is greater than the maximum of 2
+>>>> 	4 is greater than the maximum of 3
+>>>
+>>> Hello
+>>>
+>>> I upgraded to dt-schema 2022.07 and fail to reproduce all errors.
+>>
+>> Visible on older dtschema (2022.6.dev10+gcd64f75fe091), visible on
+>> newest (2022.7).
+>>
+>> Exactly the same error.
+>>
+> 
+> Hello
+> 
+> I am sorry, I finally succesfully reproduced it.
+> Just doing what the hints gives (removing max/min-items) from "static" list fix the issue.
 
-Am 10.05.22 um 15:30 schrieb Maxime Ripard:
-> Hi,
->
-> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
->> May I ask what's the status/plan of  this patch series?
-> As far as I know it hasn't been merged yet.
->
->> It seems it has not been merged yet, and I know we are a bit late in
->> the 5.18 schedule, but I think this is a good fix for 5.18.
-> Fix for what? I don't think this series fix any bug?
+Not sure what do you mean by "static list". I think you should drop
+min/maxItems from clock-names/reset-names in allOf:if:then sections.
 
-i think this series (or at least parts of it) is a workaround for this 
-issue [1].
+> Does I need to remove your Reviewed-by ?
 
-We better fix the root cause of the potential out of bounds access in 
-clk-raspberrypi properly. I will send a patch soon.
+Let's drop, so it will be back to my to-review queue.
 
-[1] - https://github.com/raspberrypi/firmware/issues/1688
-
->
->> And, this looks like to be a good candidate for a backport to stable
->> kernels.
-> This is not going to be trivial to backmerge, it depends on 12c90f3f27bb
-> that isn't marked for stable
->
-> maxime
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
