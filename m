@@ -2,111 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9028EC43334
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Jul 2022 23:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB5AC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 10 Jul 2022 11:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229544AbiGIXPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 9 Jul 2022 19:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49968 "EHLO
+        id S229476AbiGJLMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Jul 2022 07:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiGIXPz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 9 Jul 2022 19:15:55 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81675201AC
-        for <linux-clk@vger.kernel.org>; Sat,  9 Jul 2022 16:15:53 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id e69so3310281ybh.2
-        for <linux-clk@vger.kernel.org>; Sat, 09 Jul 2022 16:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mP2wLhwavewGA8FVEJebKzO+AyUl27McMXohUrjH32M=;
-        b=lofU9L5Tz9Yj7xkCPTUYbQb7wUBPYtbVCeSlBrpxJ5w75Xs9r8Vn/0QY2Xx3K6HcNx
-         rM5CSUUaLZEQnVc9zTjuDhaqd4yPqihiguwlOaDvsgGkB5gHgemi0DSm92+LyPUN2yWS
-         U570rUJJr5rrCQ6JtpQA5qRpYDR9WlorM1dCYCDGugTUdgfE4B+G2sNtDVEFkyNOh/B9
-         mmx+1Xbs3pPQzd4XzurQKQ0Jy0l6icPmWeFOC4Z9c98obW1c+PlLUNasrOFsjv4CSTPz
-         s321Z29KouSaMVEAwnq66OqpgMwk97Bb31ALluDtP2v9Q383Frxq+DTCYhDF+4h26hDA
-         9eUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mP2wLhwavewGA8FVEJebKzO+AyUl27McMXohUrjH32M=;
-        b=EIxRhHexTMgApLEa5vcIJ+XoL5CXufb3wqbC/gnisKzX1ALMakq25TGf07rciFv89N
-         2Hrw9A0UtsHlKgJ2/cQ8RKFkohO+OB8E0q+8fUB7pxVQUVwvuDHXpm5DIuT6c4wFZmiu
-         u8MGYi0j5IDa+x3Jcl904P+IUjwepSKce68oonrjY+U24C6CulU+NnqJNiIHJ6Avo5PY
-         IdMmBWggRexCBJl9WP6PWjYLL/to6GeCC/NDdu/gkYsBsgi4wiytmEra5nTyeUaMqPqO
-         Zm+LRjIOE3B6uqmnHr//E4dnzipSur8dKIOXMwRhozVYkc7pESUHdY95Uh2a8JP5611t
-         oFQA==
-X-Gm-Message-State: AJIora+zsiMqejB7P6Nd9/cLZnkwtWhG+hdyvwdNN8ulEWxHY0Bmo75u
-        pz8PEKNWZUazqRk9zeLUIjI41ZroMMFHhUB8a3D44A==
-X-Google-Smtp-Source: AGRyM1snPIFzzPQrblAAlshjOA0mEK4qfSBKO2mQPb+MmznS2glNgzneCmOnOy4qyulsIyO5WJaID6sPej9uHMFeaSs=
-X-Received: by 2002:a25:4046:0:b0:66e:ddca:2ff5 with SMTP id
- n67-20020a254046000000b0066eddca2ff5mr8784868yba.492.1657408552750; Sat, 09
- Jul 2022 16:15:52 -0700 (PDT)
+        with ESMTP id S229469AbiGJLMc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2022 07:12:32 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BD4BCB0
+        for <linux-clk@vger.kernel.org>; Sun, 10 Jul 2022 04:12:31 -0700 (PDT)
+Received: from [192.168.1.107] ([37.4.249.155]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MQMm9-1nxcqC0jAn-00MIWJ; Sun, 10 Jul 2022 13:12:05 +0200
+Message-ID: <ce3e2e21-dc54-1f77-fdbb-6d3627917830@i2se.com>
+Date:   Sun, 10 Jul 2022 13:12:01 +0200
 MIME-Version: 1.0
-References: <20220707125022.1156498-1-viorel.suman@oss.nxp.com> <20220707125022.1156498-3-viorel.suman@oss.nxp.com>
-In-Reply-To: <20220707125022.1156498-3-viorel.suman@oss.nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 10 Jul 2022 01:15:41 +0200
-Message-ID: <CACRpkdaBXqgxv_2-=Z6Lst7g6kGGL=eti_YaBSqvSQ7LeDgLaA@mail.gmail.com>
-Subject: Re: [PATCH v8 02/15] dt-bindings: pinctrl: imx: Add fsl,scu-iomux
- yaml file
-To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>
+Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-rpi-kernel@lists.infradead.org" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, nd <nd@arm.com>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
+ <20220510133019.h2urxj3feponfuku@houat>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <20220510133019.h2urxj3feponfuku@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ve7+uNEsWdx8eAPmtn/EJaR05I02baYO5xii/5w0r9BM+lPPf2Z
+ sXvmqzcHujcxaVHUgTyE+WQzf169qrHT8SHbfOq5pxAIP4tX7ft1eMcTIExZESIQsRoUTIE
+ drZjbi4lSV1JTpGGnHKDuZ30QU2ctHL4kh6R3Kj35RVSK6Cv9d1TXDwcgY4yByRbVeh+mdN
+ uEHJdilY5I8pMh7w0SIhA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kiBFckYWZgw=:cH+MKWdkS/HxjsTMOdfNrb
+ kPwYDVczJAUFpn58BqWwRv3D27LcK+G2P2742z3SXq7Q/d1sP46kUs0sJ7k9UwM06J4u/MTux
+ slfOuLXwavD2sdRrMev54ipBZvJSP1dLJSHrbTRid97sMgwny/2qS2YknXaDxcPb8arK+OPWr
+ njRzc5p0m2/xBPM0fcddRKMkZUwmJ7xRvlnLma0tKFKbRwnj60kVdaIgdBgtrEmDdGr35x/y/
+ h3sCqsHY+kBOv1VCoRxN5FH9UjtS16mxmhsaiHLGKTdmqfcBoTtZC70yN2KrkCRmUjfe8TCOY
+ L1V0MavoROHEDwOJo3y+dMNSIHssioOCoUE6OKTI7XCLnQKlrJDia5K/iD/dGyqpWWBUieHFS
+ GOOsBFqtM6HIe9bHmUVAjwGDWVlTatDo6cBbcwRCbK2a/wU5N32XKPGU8jrclMHZdHt7IXkZJ
+ 3DPRkYxCo8Geo41d1L5gni5hc5i49eSaRk/St6Y5yRPI/fNROAAKzUPSfk5e1KxkYr40ELwvF
+ GEusoEm7ZPXs7JsxuKd7HzmyFC1uGC7ibcZpFXm3eqd6O35eFizB4kxq5/2S73xo3jVUVuGzB
+ J+0QQ6WnZR/o9m2U2wRI826JjGFRNWB6cBayj8e/lesAo4lCig7q8R1j9s4bDu42mojo6eUaS
+ wmif+by/9anVp/arcu1HEzVsiIzAmT48wL18RX41jV7L7q2xIq9ei2I9pxufJdBAt7P43VURU
+ 9NmlUvzhdDGmXeEHNEQYsdVhMjl/1pYk6V5R3nZOrQLcv2ERvQIw8pNBjtU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 7, 2022 at 2:51 PM Viorel Suman (OSS)
-<viorel.suman@oss.nxp.com> wrote:
+Hi,
 
-> From: Abel Vesa <abel.vesa@nxp.com>
+Am 10.05.22 um 15:30 schrieb Maxime Ripard:
+> Hi,
 >
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch documents
-> separately the 'iomux/pinctrl' child node of the SCU main node.
+> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
+>> May I ask what's the status/plan of  this patch series?
+> As far as I know it hasn't been merged yet.
 >
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> It seems it has not been merged yet, and I know we are a bit late in
+>> the 5.18 schedule, but I think this is a good fix for 5.18.
+> Fix for what? I don't think this series fix any bug?
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+i think this series (or at least parts of it) is a workaround for this 
+issue [1].
 
-Tell me if you want me to apply this to the pinctrl tree.
-(I guess Shawn is handling it?)
+We better fix the root cause of the potential out of bounds access in 
+clk-raspberrypi properly. I will send a patch soon.
 
-Yours,
-Linus Walleij
+[1] - https://github.com/raspberrypi/firmware/issues/1688
+
+>
+>> And, this looks like to be a good candidate for a backport to stable
+>> kernels.
+> This is not going to be trivial to backmerge, it depends on 12c90f3f27bb
+> that isn't marked for stable
+>
+> maxime
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
