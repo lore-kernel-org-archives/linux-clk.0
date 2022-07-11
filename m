@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B5FC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B3ECCA480
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231428AbiGKL20 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 07:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
+        id S229477AbiGKL22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 07:28:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229621AbiGKL1q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:27:46 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFCFA46A
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:05:27 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id z25so8090438lfr.2
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:05:27 -0700 (PDT)
+        with ESMTP id S229680AbiGKL1s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:27:48 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA22C03
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:06:30 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id bx13so5766950ljb.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=dPrZfAXq7F8ce8t3fuNDg51KlRMukh3iZYk9RgLqoNE=;
-        b=Ss7HyQSh+ofbEmUv0VvjsNobh4eJuEu0heIwrqhODc6RsT3ooq+uTYDKAmfXJiLl1g
-         lcpPVr6IKvLmIYxxIJxpBgYmaD9ce+ueRFIeW3xkkBS+Mw8BvqtSW6HB5yt7N/GCqR7N
-         Dhu0CgbfeUwhJSwtVmNiQHibrjkqYGlOPKjWoKIvEnnoIb5n7KsSeYDAhcW7bRwHrQlV
-         HwfLcVKbF5DRSrVXPLdx1xsIEC2c4zUVhBqH6pGqaCRMdpj/h0CDTFMhfpBeAtEjh45r
-         2HKdKVbE08UkUyGZtuU8L3chtY+xQrdNQHmNmaPl4QrCTzroaZ+z3Isr/rm5lozyh+HR
-         ks6Q==
+        bh=ShcHvaYzrSCb0r8mNkppt/5w+x7vmLFW+WTx8wVnhQ0=;
+        b=BvTPfYUYb/eMVFUbstYpcIcvr+yw+G8nfhpzi9NIfe0kSFO3fQE9MCo7iHYkR3SMSf
+         6XRthFOxKALpu6jFCOpgfu0IW+UFrZ4LzpHS+bqzMwFbzZpXXnnWLg4WfouX22pDUmT7
+         0nNtuUFkU9dnylZZLKoQbQ0sHYoAk2lx8mupKxt/UEptVaf9kBkrqBHUZqEEcwMdgk8v
+         9C5rEUeAIhQcQDpE6o8GoECNfN9lXb7nEvc7t/8CgUDWjX4cyStIAliTZAcLID3LH6pr
+         6VLKf7l6nSvkMIuGMPUCDfP2+aanTjaFO4FzviYJQDQIhYcG4yZ2ARyVxzsqICYUVMEX
+         jMEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=dPrZfAXq7F8ce8t3fuNDg51KlRMukh3iZYk9RgLqoNE=;
-        b=EUPUqs3rAT3+1c8lZhb290c0i1RCNB8EY5NDSmbYrvTm9TnYsBhQLHuyWUEd9tu5iz
-         CaTJuI6AwbRPkX1BhO72iP4JfnO5UQKvpARA+j8uei7eqlN0NnXlM4EBy3B518/LW0RY
-         JPoTB/gum0NsZOf40upGmZbWzltUHuKc3qQkgDEuirS58pXEArlz3DRoXz36ce63I/72
-         +c00hMs+zs87jBdk/+UP4tyz0y+FD5AgQwTN16jVttUR04K2ND1TU+x1slgi7iaF9cfj
-         x/eeEkjjD6Si6v5FF9o3CXiEUdvES+qoskdRB8FlMsTERaRXfxZ2yDk8h4t6sxsVaKMX
-         Ymzw==
-X-Gm-Message-State: AJIora8QjDp2irxaciQq2m8PTDGSGf3e3Dg6SRyzbRDzQV01eqqZNpKD
-        PukDr3Aal6k9Q96QGhD3SioFXQ==
-X-Google-Smtp-Source: AGRyM1u/jw24PhqwPc6UTV/hyxk2KaW3EecjOe9Ez/DY3S2cBKdbASV5EDr17T6xbqPGPzK8st+IRw==
-X-Received: by 2002:a05:6512:1310:b0:481:6154:c292 with SMTP id x16-20020a056512131000b004816154c292mr11134909lfu.95.1657537525579;
-        Mon, 11 Jul 2022 04:05:25 -0700 (PDT)
+        bh=ShcHvaYzrSCb0r8mNkppt/5w+x7vmLFW+WTx8wVnhQ0=;
+        b=hWNXHbt3jMdVH0AsMk70DD6a/Cm/wTic/e0IX26E82bCf6iM95dtTBc8bfpviGqehG
+         mTWtsSbk4SXyv6E9T0R6cx28ov1xrdj+39aS0aFJDRwyT6B8JH0lHR5Kf5ZXchotaq9r
+         IUQV3kqdM1P+jFbY2ZHjDQhxsR7yUyHUNvj9e+sFLe5kUoWJUxFUo+LK3zyxc24/5urX
+         m9gYI4o5zrvvw8/gnbxvzatp0tx91eISx3xfbovu7k9d13Na8RJCGrGfm50dmnC3oEMr
+         rKu+EVT8t7zY1rxwze7CLLdI+Q3zC47ffPk79izvwcpFdfDe5rDzjHvbkJ2zMETJfGIa
+         Mklw==
+X-Gm-Message-State: AJIora9Ij2yCvqLkHKOtkGEectKF5eWQBPiMukQ6epvHZi7dqnx8Ox67
+        Q/ZIkpCswxK+/dLlxOwQrpnHEQ==
+X-Google-Smtp-Source: AGRyM1v5zU+UHoE16m3GejzRdZt8+tkN+Sb1qi2hxjIofCH753ni3v024SbWFXJXw7LM7xl+Q+lfxg==
+X-Received: by 2002:a2e:aaa5:0:b0:25d:5a53:d143 with SMTP id bj37-20020a2eaaa5000000b0025d5a53d143mr8695710ljb.401.1657537588785;
+        Mon, 11 Jul 2022 04:06:28 -0700 (PDT)
 Received: from [10.0.0.8] (fwa5cab-55.bb.online.no. [88.92.171.55])
-        by smtp.gmail.com with ESMTPSA id w21-20020a05651c119500b00255500154fasm1681683ljo.52.2022.07.11.04.05.23
+        by smtp.gmail.com with ESMTPSA id q26-20020ac2515a000000b004797b92f4cdsm1481843lfd.91.2022.07.11.04.06.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Jul 2022 04:05:25 -0700 (PDT)
-Message-ID: <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
-Date:   Mon, 11 Jul 2022 13:05:22 +0200
+        Mon, 11 Jul 2022 04:06:28 -0700 (PDT)
+Message-ID: <c9e03add-5e0f-9130-9a85-5b1b77c971b4@linaro.org>
+Date:   Mon, 11 Jul 2022 13:06:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH 4/6] clk: qcom: apss-ipq6018: add MODULE_ALIAS
+Subject: Re: [PATCH 6/6] clk: qcom: apss-ipq-pll: add support for IPQ8074
 Content-Language: en-US
 To:     Robert Marko <robimarko@gmail.com>, bjorn.andersson@linaro.org,
         agross@kernel.org, konrad.dybcio@somainline.org,
@@ -62,9 +62,9 @@ To:     Robert Marko <robimarko@gmail.com>, bjorn.andersson@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20220711104719.40939-1-robimarko@gmail.com>
- <20220711104719.40939-4-robimarko@gmail.com>
+ <20220711104719.40939-6-robimarko@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220711104719.40939-4-robimarko@gmail.com>
+In-Reply-To: <20220711104719.40939-6-robimarko@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -72,26 +72,35 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 11/07/2022 12:47, Robert Marko wrote:
-> Add MODULE_ALIAS so that driver will be autoloaded if built as a module.
+> Add support for IPQ8074 since it uses the same PLL setup, however it does
+> not require the Alpha PLL to be reconfigured.
 > 
 > Signed-off-by: Robert Marko <robimarko@gmail.com>
 > ---
->  drivers/clk/qcom/apss-ipq6018.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/qcom/apss-ipq-pll.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
-> index f2f502e2d5a4..963c69f2c0c2 100644
-> --- a/drivers/clk/qcom/apss-ipq6018.c
-> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> @@ -101,5 +101,6 @@ static struct platform_driver apss_ipq6018_driver = {
+> diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+> index bef7899ad0d6..acfb3ec4f142 100644
+> --- a/drivers/clk/qcom/apss-ipq-pll.c
+> +++ b/drivers/clk/qcom/apss-ipq-pll.c
+> @@ -55,6 +55,7 @@ static const struct regmap_config ipq_pll_regmap_config = {
+>  static int apss_ipq_pll_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+>  	struct regmap *regmap;
+>  	void __iomem *base;
+>  	int ret;
+> @@ -67,7 +68,8 @@ static int apss_ipq_pll_probe(struct platform_device *pdev)
+>  	if (IS_ERR(regmap))
+>  		return PTR_ERR(regmap);
 >  
->  module_platform_driver(apss_ipq6018_driver);
->  
-> +MODULE_ALIAS("platform:qcom,apss-ipq6018-clk");
+> -	clk_alpha_pll_configure(&ipq_pll, regmap, &ipq_pll_config);
+> +	if (of_device_is_compatible(node, "qcom,ipq6018-a53pll"))
 
-That's not correct alias (no commas) and usually alias is not needed at
-all. If you need one, please explain why it is needed. Module
-autoloading works fine without aliases...
+Use match data instead with quirks. Better not to encode compatibles all
+through the code.
 
 Best regards,
 Krzysztof
