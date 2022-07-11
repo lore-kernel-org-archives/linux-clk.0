@@ -2,165 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5FEC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F2C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230447AbiGKPZV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:25:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
+        id S231126AbiGKPoy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:44:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230339AbiGKPZU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:25:20 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103982D1F8
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:25:20 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 6AC375C01A1;
-        Mon, 11 Jul 2022 11:25:19 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 11 Jul 2022 11:25:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1657553119; x=1657639519; bh=h2
-        Fl3vSMcRu20SwFKzmHS9Q6gvuP02p9iCYZ1kTPdtQ=; b=Qzbj76lFVXfGknEi/M
-        cz2NQ7HmGI3zRSTtzP3unOToWppG3n/Bq5sYDTRzB/05yAckTl00/P3eJ9zFPa6X
-        bgtQeninP0o1WLZp0ceJ+4YXLUwfn1pWCpp9BqRKIfjJKurdbQyvEoeSrhHATfzp
-        7xrH6nbPCKT4yeygyXP4Bl8OZbO+A+bgMo8Mbb0DKS+eEBTAmReSklKbooNgjcU8
-        8EqCCVH1GsJlZ7xTRrU1j7a2zYg2zzOrcu9FzRfMEIY3yQFys2FUYjLkIcBY9mNW
-        WBSQreoQw5BotTSdXjz9RVtslIAuFll0MfZkOvPA7CbNFNHmnuIb0ySmTmo4tNhm
-        ZJ1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1657553119; x=1657639519; bh=h2Fl3vSMcRu20
-        SwFKzmHS9Q6gvuP02p9iCYZ1kTPdtQ=; b=E/uB0PBgNNMut79uosQoah054yjkX
-        1rdTvzBUejH3NAfQurZxDWjVcXES3Avp4bCBIZrO2UGBueqagd5I8V7PgHaA//8m
-        zaVlRf33ivJLlIoFn/+0L6uh0hulL7MGpoAvcaKr9pZq79AteheKp5EZ7oVc/O8U
-        5h/hzH4+JsAR+5dWUyJalHbIpYAw6wTgBlfuuH1jmnDnZFr4dCx/NAiN0vMEPvOn
-        umJ0nWMGxh+SBoj8Cy9uHej5di2ll9VSTC/vnkmOoNahdFefOfmbtghJAzU50QfH
-        NfucyhSAc2eskeOfPJ5P/MFHwHzWn8THRuUew40J7pFAmVggLk7zLTN1Q==
-X-ME-Sender: <xms:30DMYmYsRf-JMlVfWNhcEvqHRrXii5aUtksjl1dG9fZh4houI07vBw>
-    <xme:30DMYpanVYAl3QhQVuca6DtyviSgXSdtMukGRxr-MeHhZ3i6vTHD3k2Rqk2MfVEpK
-    sdY8cE4-8_IjjPyyL4>
-X-ME-Received: <xmr:30DMYg93sSJUoWazTZ99vomFF0qAXodwcGFXf02GXsLu0v8RdcReZVrUeaZLlzVJCgr8i8u2PJYtnISEvUc5QBFHlJFIo392UfSH2gE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:30DMYoqXPj9C5bJxHIg5HRYsg2933gBA4wMTiBLeN3SFIC_LK_SwFw>
-    <xmx:30DMYhpGSMWis2FgOpnEb29xhDlbOrvrNPtKNzJ_P1NVcBLg9xJk6w>
-    <xmx:30DMYmTRn5uWpR5gYhd06K6y2Dwj_jzh48Quh4yYZpBgpnLpCxqBzw>
-    <xmx:30DMYuiSFLwW1zflhqRpCRV70a4Vbo8Q_6RNIx7h9i84IZ83z_7Spg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Jul 2022 11:25:18 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 28/28] clk: tests: Add missing test case for ranges
-Date:   Mon, 11 Jul 2022 17:24:24 +0200
-Message-Id: <20220711152424.701311-29-maxime@cerno.tech>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220711152424.701311-1-maxime@cerno.tech>
-References: <20220711152424.701311-1-maxime@cerno.tech>
+        with ESMTP id S229840AbiGKPox (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:44:53 -0400
+Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5F4912AC5C;
+        Mon, 11 Jul 2022 08:44:49 -0700 (PDT)
+Received: from mail (mail.baikal.int [192.168.51.25])
+        by mail.baikalelectronics.com (Postfix) with ESMTP id BDE5216AC;
+        Mon, 11 Jul 2022 18:46:39 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com BDE5216AC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baikalelectronics.ru; s=mail; t=1657554399;
+        bh=BveNLPY/YG4fFAd5N/AaPUO76c/YnxfM372ERsi7TmM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=RlIlhDFfXWOkpu1kI//ka6ng9WG2tyf9gWii03fuBSB/GJPxq0sNls2Z5z6PZNneQ
+         PjD+BvqUgZoBn8Pq0riIhtRPZlJY+2JBA+4SoTdfNk2tAop3cfhDEUFJWeQYyLhFL1
+         Qn4dCzKYzMCj03VBvdn/8BwGjF6TOX89rpqQL3Rk=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Jul 2022 18:44:46 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Marek Vasut <marek.vasut@gmail.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v7 1/7] clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
+Date:   Mon, 11 Jul 2022 18:44:27 +0300
+Message-ID: <20220711154433.15415-2-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let's add a test on the rate range after a reparenting. This fails for
-now, but it's worth having it to document the corner cases we don't
-support yet.
+We have discovered random glitches during the system boot up procedure.
+The problem investigation led us to the weird outcomes: when none of the
+Renesas 5P49V6901 ports are explicitly enabled by the kernel driver, the
+glitches disappeared. It was a mystery since the SoC external clock
+domains were fed with different 5P49V6901 outputs. The driver code didn't
+seem like bogus either. We almost despaired to find out a root cause when
+the solution has been found for a more modern revision of the chip. It
+turned out the 5P49V6901 clock generator stopped its output for a short
+period of time during the VC5_OUT_DIV_CONTROL register writing. The same
+problem was found for the 5P49V6965 revision of the chip and was
+successfully fixed in commit fc336ae622df ("clk: vc5: fix output disabling
+when enabling a FOD") by enabling the "bypass_sync" flag hidden inside
+"Unused Factory Reserved Register". Even though the 5P49V6901 registers
+description and programming guide doesn't provide any intel regarding that
+flag, setting it up anyway in the officially unused register completely
+eliminated the denoted glitches. Thus let's activate the functionality
+submitted in commit fc336ae622df ("clk: vc5: fix output disabling when
+enabling a FOD") for the Renesas 5P49V6901 chip too in order to remove the
+ports implicit inter-dependency.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Fixes: dbf6b16f5683 ("clk: vc5: Add support for IDT VersaClock 5P49V6901")
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+
 ---
- drivers/clk/clk_test.c | 53 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 5a5b7a8baba2..8e0c76ab1a6d 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -514,9 +514,62 @@ clk_test_multiple_parents_mux_has_parent(struct kunit *test)
- 	clk_put(clk);
- }
- 
-+/*
-+ * Test that for a clock with a multiple parents, if we set a range on
-+ * that clock and the parent is changed, its rate after the reparenting
-+ * is still within the range we asked for.
-+ *
-+ * FIXME: clk_set_parent() only does the reparenting but doesn't
-+ * reevaluate whether the new clock rate is within its boundaries or
-+ * not.
-+ */
-+static void
-+clk_test_multiple_parents_mux_set_range_set_parent_get_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *parent1, *parent2;
-+	unsigned long rate;
-+	int ret;
-+
-+	kunit_skip(test, "This needs to be fixed in the core.");
-+
-+	parent1 = clk_hw_get_clk(&ctx->parents_ctx[0].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent1);
-+	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(clk), parent1));
-+
-+	parent2 = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent2);
-+
-+	ret = clk_set_rate(parent1, DUMMY_CLOCK_RATE_1);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_rate(parent2, DUMMY_CLOCK_RATE_2);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_rate_range(clk,
-+				 DUMMY_CLOCK_RATE_1 - 1000,
-+				 DUMMY_CLOCK_RATE_1 + 1000);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ret = clk_set_parent(clk, parent2);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1 - 1000);
-+	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
-+
-+	clk_put(parent2);
-+	clk_put(parent1);
-+	clk_put(clk);
-+}
-+
- static struct kunit_case clk_multiple_parents_mux_test_cases[] = {
- 	KUNIT_CASE(clk_test_multiple_parents_mux_get_parent),
- 	KUNIT_CASE(clk_test_multiple_parents_mux_has_parent),
-+	KUNIT_CASE(clk_test_multiple_parents_mux_set_range_set_parent_get_rate),
- 	{}
+Changelog v4:
+- This is a new patch added on v4 lap of the series.
+
+Changelog v5:
+- Fix some grammar mistakes in the commit log. (@Sergey Shtylyov)
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index e7be3e54b9be..03cfef494b49 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -1204,7 +1204,7 @@ static const struct vc5_chip_info idt_5p49v6901_info = {
+ 	.model = IDT_VC6_5P49V6901,
+ 	.clk_fod_cnt = 4,
+ 	.clk_out_cnt = 5,
+-	.flags = VC5_HAS_PFD_FREQ_DBL,
++	.flags = VC5_HAS_PFD_FREQ_DBL | VC5_HAS_BYPASS_SYNC_BIT,
  };
  
+ static const struct vc5_chip_info idt_5p49v6965_info = {
 -- 
-2.36.1
+2.35.1
 
