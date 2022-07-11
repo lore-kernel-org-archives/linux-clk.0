@@ -2,90 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575F3C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 21:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63599C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 21:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231858AbiGKVOx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 17:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34972 "EHLO
+        id S232133AbiGKVk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 17:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbiGKVOv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 17:14:51 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C168804AE;
-        Mon, 11 Jul 2022 14:14:50 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id o26so4864986qkl.6;
-        Mon, 11 Jul 2022 14:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m+tiAbR5ipokPOI4Uv53O9dfcW8Zht66rbKGm1GTYpo=;
-        b=d83Mzj9ZZK65lmwWYYeI6vy06BxRU06v3My3PdoLtgOcYputPgxrscy/rjd5CZqllT
-         63zziwo3mkE7LawXf/TDzDPl87omfufHFMXKQ2W0jXGvgbq59LKT/Jydr28jZEw6bpGN
-         P0CyUBQlEjfqo5eQ7ZHRi+6rXLUAlrJxK4LF+AjT2KxUbwvi8kWgWlwwuk3T3Wuz/TV2
-         MgZoTCcsgDQNp1iUsBz3Q64twGH04LT4FOliwpWQWR+WHy0KuOLBA6UXd0jgE+B2/zeZ
-         ipzXBII1wbEub1slH+D7ezKAKCmvGprPTj5G+h0Q4aOB+gIHKizTCb+weJCXVCzT337G
-         7rnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m+tiAbR5ipokPOI4Uv53O9dfcW8Zht66rbKGm1GTYpo=;
-        b=Zq0weeWawfMP2dlexEze8cceNH4Y/lMYroJ88Xe6QrVrIdDH1jega1ZVx1sOmaVeVS
-         pTE9yCddAMGbUrdo7j2Ov1GsRuGMfVWM47CFtPtn5HuyyX9FkupW8gZlmc0orSSP7iq/
-         kdAdczse6on1B/K6ruS/mju4gnlYff9S2aSoh9wlrgR7SPHvqfdeBENkIO9TwK6imcK9
-         roKUM9tPUoypKyFtHcodCUBPzqHRUkawAI4GJnKwG2ZTdczmu9BNkK4gMywvnzF44qCX
-         C1euIfCSEFGu45wbtWwbI+hdCFR7SyBkpdIKibwlPIwKZLp4Wc70OGtrDV9Aa+8Y+e7z
-         OMYw==
-X-Gm-Message-State: AJIora9YIlF93aiY7cEsJQAHZp5dR7WgNYsUFJ5Uqe4gT1dQCd/rxptl
-        sydOsx7n5HjGCaezp5GJBRbkMAPeeIPXNt5Eo4w=
-X-Google-Smtp-Source: AGRyM1tsfk66MvgLGjjCS8tQrgRs7OzckX8WV9p0YXE4enpC7rdc8e4wOi1C3YnZhIIOYJQZ8EscKFmLYbw1Llnf9HI=
-X-Received: by 2002:a05:620a:c8e:b0:6b5:91da:9b04 with SMTP id
- q14-20020a05620a0c8e00b006b591da9b04mr2886309qki.25.1657574089779; Mon, 11
- Jul 2022 14:14:49 -0700 (PDT)
+        with ESMTP id S232216AbiGKVkE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 17:40:04 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F954820CC;
+        Mon, 11 Jul 2022 14:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=MxZLNsEYWmGS2U8Tp+3WU74u0FPSEgIOYWsVk2AnpjQ=; b=GRVeA5E2i4QwxmtSq9juLDjKkV
+        di5hUGbDJLbBDHegFiKEPn3+CS+XYLU0SNwrQ86TpCyXRox+wlsVaBL3ONFk3S4yEFmF0an34vFWv
+        wYYxHDowijTdLyLgJYZpOdeNPxUxj2npRYwXMjThpznC+mbHMkEb1VslIejlb0H/rqbmAlv3tBDhd
+        0gep0ku7RUq/3GsLhFkCFuPggTuHdE0aNG1XoXOwGL0Lc3npYB1sIFUIJZnHUkmRRh3OYoiwB+325
+        tXbC7dGIz6CgyHNTveatDi3IxYaSS+rIDCjoDbz9Zajs2iDtPaB+g664Cky4MN1fzuwwwstVD87sQ
+        Uryyf5LQ==;
+Received: from [2601:1c0:6280:3f0::a6b3]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oB18C-0050Cq-Nt; Mon, 11 Jul 2022 21:39:52 +0000
+Message-ID: <af5f882f-e7f8-ca49-020d-0dab3f2cc145@infradead.org>
+Date:   Mon, 11 Jul 2022 14:39:51 -0700
 MIME-Version: 1.0
-References: <20220515210048.483898-1-robimarko@gmail.com> <20220515210048.483898-10-robimarko@gmail.com>
- <20220711211047.952F4C34115@smtp.kernel.org>
-In-Reply-To: <20220711211047.952F4C34115@smtp.kernel.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Mon, 11 Jul 2022 23:14:38 +0200
-Message-ID: <CAOX2RU7NaJL5dTrjz26oiz0psvXKV8C-7HGMmJ-rfNJ3r=y2qg@mail.gmail.com>
-Subject: Re: [PATCH v4 10/11] clk: qcom: ipq8074: dont disable gcc_sleep_clk_src
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, tdas@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v7 5/7] clk: baikal-t1: Move reset-controls code into a
+ dedicated module
+Content-Language: en-US
+To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru>
+ <20220711154433.15415-6-Sergey.Semin@baikalelectronics.ru>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20220711154433.15415-6-Sergey.Semin@baikalelectronics.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Jul 2022 at 23:10, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Robert Marko (2022-05-15 14:00:47)
-> > diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> > index 3204d550ff76..42d185fe19c8 100644
-> > --- a/drivers/clk/qcom/gcc-ipq8074.c
-> > +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> > @@ -663,6 +663,7 @@ static struct clk_branch gcc_sleep_clk_src = {
-> >                         },
-> >                         .num_parents = 1,
-> >                         .ops = &clk_branch2_ops,
-> > +                       .flags = CLK_IS_CRITICAL,
-> >                 },
->
-> Why not just remove the clk from the driver? Is anything using it?
 
-Hi Stephen, USB sleep clocks are derived from it so it cant be dropped.
 
-Regards,
-Robert
+On 7/11/22 08:44, Serge Semin wrote:
+> diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
+> index 03102f1094bc..56a4ff1d8bf0 100644
+> --- a/drivers/clk/baikal-t1/Kconfig
+> +++ b/drivers/clk/baikal-t1/Kconfig
+> @@ -29,7 +29,6 @@ config CLK_BT1_CCU_PLL
+>  
+>  config CLK_BT1_CCU_DIV
+>  	bool "Baikal-T1 CCU Dividers support"
+> -	select RESET_CONTROLLER
+>  	select MFD_SYSCON
+>  	default MIPS_BAIKAL_T1
+>  	help
+> @@ -39,4 +38,15 @@ config CLK_BT1_CCU_DIV
+>  	  either gateable or ungateable. Some of the CCU dividers can be as well
+>  	  used to reset the domains they're supplying clock to.
+>  
+> +config CLK_BT1_CCU_RST
+> +	bool "Baikal-T1 CCU Resets support"
+> +	select RESET_CONTROLLER
+> +	select MFD_SYSCON
+> +	default MIPS_BAIKAL_T1
+> +	help
+> +	  Enable this to support the CCU reset blocks responsible for the
+> +	  AXI-bus and some subsystems reset. These are mainly the
+> +	  sef-deasserted reset controls but there are several lines which
+
+	  self-deasserted
+?
+
+> +	  can be directly asserted/de-asserted (PCIe and DDR sub-domains).
+
+-- 
+~Randy
