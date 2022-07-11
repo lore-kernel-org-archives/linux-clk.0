@@ -2,63 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7886CC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8476DC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231926AbiGKUax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:30:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45854 "EHLO
+        id S232184AbiGKUfl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbiGKUab (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:30:31 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 560B180517;
-        Mon, 11 Jul 2022 13:28:27 -0700 (PDT)
+        with ESMTP id S232107AbiGKUf0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:35:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850BE80517;
+        Mon, 11 Jul 2022 13:35:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 67E15B810AB;
-        Mon, 11 Jul 2022 20:27:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1599DC34115;
-        Mon, 11 Jul 2022 20:27:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0707D61662;
+        Mon, 11 Jul 2022 20:35:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E464C34115;
+        Mon, 11 Jul 2022 20:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657571274;
-        bh=KFfgfdwRrL4GHtkmhwSXYDkk8SgLMJGPbwToeltW0lA=;
+        s=k20201202; t=1657571701;
+        bh=H3ZMMu+n8X0deD4cYrrflgTwCGdWr0F0+bwRd+0O5Z0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=I/fngGt1+pWcPHOtUDae+NDCx2d6oqdGupTpVb8kqKvQD9kzsP4vCcDEjhjGn/9im
-         TugGlIbGKrrfrROgzQ92WA6m6vVsNSlb1UpxOCCvX7zkPCKzfu1Nu5KcXswpmUmd/C
-         WlKjj0JFudPtGUP3+3Yi3Tg3OY7PTFJ+X+KCMvBPXXBYOyIVD+rrIbAlQRqNhLG+MB
-         rtLsee/bsMoen5gLe5fv8ePQDOIFCX0bVnSxIj8//f525g9+AXdtbpe/mglEBXeVDj
-         eLAolm5+aVxNb0umyFaKCxbx7e82kho9uOG/zQibvxuR/t0GZr+NpXjnDBV6C/Dhc2
-         4/6MTha2ixu+A==
+        b=oxj7bwuGiZA6nllzA9QD7jkeglajNlfVZL0H0o7zi5LKxWZmyQGpwLOr40DPzAQk8
+         453qQrf4cvFrhnPu7+uojeHCTwZI7HC5uJ3hxZGzD1RGlZrk1E3UmGiOVYX5nisMef
+         VFF2bq3sLJtiiZFwLU+viQLn4Ux8wev2eyHpAeReCZTHGr9S72rDTmYNK04vGub/iw
+         RJxcqi5zSPZUsmyV1gKg/UZsbcOJy1J0F80ULQbLntPGRJhyVdZ56JDHHQwM2ogvU1
+         UqF/piISWhlp+qioz8MvkVjTI4STnnCxQfWmPes6/0JPbIhxRthBZ9/oCX1ZPQOWUU
+         j7Y/+SZzXfJjg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220505101433.1575096-4-gengcixi@gmail.com>
-References: <20220505101433.1575096-1-gengcixi@gmail.com> <20220505101433.1575096-4-gengcixi@gmail.com>
-Subject: Re: [PATCH v5 3/4] clk: sprd: Add dt-bindings include file for UMS512
+In-Reply-To: <20220711174004.3047516-1-nathan@kernel.org>
+References: <20220711174004.3047516-1-nathan@kernel.org>
+Subject: Re: [PATCH v2] clk: qcom: gpucc-sm8350: Fix "initializer element is not constant" error
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Cixi Geng <gengcixi@gmail.com>, baolin.wang7@gmail.com,
-        krzysztof.kozlowski+dt@linaro.org, lee.jones@linaro.org,
-        mturquette@baylibre.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        zhang.lyra@gmail.com
-Date:   Mon, 11 Jul 2022 13:27:52 -0700
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Nathan Chancellor <nathan@kernel.org>,
+        kernel test robot <lkp@intel.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Nathan Chancellor <nathan@kernel.org>
+Date:   Mon, 11 Jul 2022 13:34:59 -0700
 User-Agent: alot/0.10
-Message-Id: <20220711202754.1599DC34115@smtp.kernel.org>
+Message-Id: <20220711203501.4E464C34115@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cixi Geng (2022-05-05 03:14:32)
-> From: Cixi Geng <cixi.geng1@unisoc.com>
+Quoting Nathan Chancellor (2022-07-11 10:40:05)
+> When building with clang or GCC older than 8, errors along the following
+> lines occur:
 >=20
-> This file defines all UMS512 clock indexes, it should be included in the
-> device tree in which there's device using the clocks.
+>   drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is no=
+t a compile-time constant
+>           gpu_cc_parent,
+>           ^~~~~~~~~~~~~
+>   drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is no=
+t a compile-time constant
+>           gpu_cc_parent,
+>           ^~~~~~~~~~~~~
+>   2 errors generated.
 >=20
-> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The C standard allows an implementation to accept other forms of
+> constant expressions, which GCC 8+ has chosen to do, but it is not
+> required. Just inline the initializer to resolve the error.
+>=20
+> Fixes: 160758b05ab1 ("clk: qcom: add support for SM8350 GPUCC")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/1660
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 > ---
 
-Applied to clk-next
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
