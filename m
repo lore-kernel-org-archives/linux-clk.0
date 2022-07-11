@@ -2,21 +2,21 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F55CCCA48D
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 12:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EA8CCA485
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 12:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbiGKMfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 08:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59846 "EHLO
+        id S231684AbiGKMfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 08:35:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231338AbiGKMfc (ORCPT
+        with ESMTP id S231347AbiGKMfc (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 08:35:32 -0400
 Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DBA28545D9;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1E690545EB;
         Mon, 11 Jul 2022 05:35:29 -0700 (PDT)
 Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id F14DF1C811A1;
-        Mon, 11 Jul 2022 20:35:25 +0800 (CST)
+        by maillog.nuvoton.com (Postfix) with ESMTP id 1FFC91C811A6;
+        Mon, 11 Jul 2022 20:35:26 +0800 (CST)
 Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS04.nuvoton.com
  (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Mon, 11
@@ -25,7 +25,7 @@ Received: from taln60.nuvoton.co.il (10.191.1.180) by NTHCCAS01.nuvoton.com
  (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
  Transport; Mon, 11 Jul 2022 20:35:25 +0800
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id BB88263A50; Mon, 11 Jul 2022 15:35:23 +0300 (IDT)
+        id 0CCFF63A55; Mon, 11 Jul 2022 15:35:24 +0300 (IDT)
 From:   Tomer Maimon <tmaimon77@gmail.com>
 To:     <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
         <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
@@ -46,60 +46,53 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-watchdog@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Tomer Maimon <tmaimon77@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v8 05/16] dt-bindings: reset: npcm: add GCR syscon property
-Date:   Mon, 11 Jul 2022 15:35:08 +0300
-Message-ID: <20220711123519.217219-6-tmaimon77@gmail.com>
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v8 10/16] dt-bindings: arm: npcm: Add maintainer
+Date:   Mon, 11 Jul 2022 15:35:13 +0300
+Message-ID: <20220711123519.217219-11-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20220711123519.217219-1-tmaimon77@gmail.com>
 References: <20220711123519.217219-1-tmaimon77@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe syscon property that handles general control registers (GCR) in
-Nuvoton BMC NPCM reset driver.
+Add Tomer Maimon to the maintainers list.
 
 Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/reset/nuvoton,npcm750-reset.yaml    | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/arm/npcm/npcm.yaml        | 1 +
+ Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-index fa5e4ea6400e..43a6e77cbf4e 100644
---- a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-@@ -19,6 +19,10 @@ properties:
-   '#reset-cells':
-     const: 2
+diff --git a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml b/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
+index 95e51378089c..ea9c3103761d 100644
+--- a/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
++++ b/Documentation/devicetree/bindings/arm/npcm/npcm.yaml
+@@ -8,6 +8,7 @@ title: NPCM Platforms Device Tree Bindings
  
-+  nuvoton,sysgcr:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: a phandle to access GCR registers.
-+
-   nuvoton,sw-reset-number:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     minimum: 1
-@@ -31,6 +35,7 @@ required:
-   - compatible
-   - reg
-   - '#reset-cells'
-+  - nuvoton,sysgcr
+ maintainers:
+   - Jonathan Neuschäfer <j.neuschaefer@gmx.net>
++  - Tomer Maimon <tmaimon77@gmail.com>
  
- additionalProperties: false
+ properties:
+   $nodename:
+diff --git a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml b/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
+index fcb211add7d3..aad7c85e787f 100644
+--- a/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
++++ b/Documentation/devicetree/bindings/arm/npcm/nuvoton,gcr.yaml
+@@ -8,6 +8,7 @@ title: Global Control Registers block in Nuvoton SoCs
  
-@@ -41,6 +46,7 @@ examples:
-         compatible = "nuvoton,npcm750-reset";
-         reg = <0xf0801000 0x70>;
-         #reset-cells = <2>;
-+        nuvoton,sysgcr = <&gcr>;
-         nuvoton,sw-reset-number = <2>;
-     };
+ maintainers:
+   - Jonathan Neuschäfer <j.neuschaefer@gmx.net>
++  - Tomer Maimon <tmaimon77@gmail.com>
  
+ description:
+   The Global Control Registers (GCR) are a block of registers in Nuvoton SoCs
 -- 
 2.33.0
 
