@@ -2,135 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A90C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 17:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCA1C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 19:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231608AbiGKRmd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 13:42:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44026 "EHLO
+        id S230453AbiGKTIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 15:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230136AbiGKRmc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 13:42:32 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96A76E8A8
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 10:42:30 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id r17so5011890qtx.6
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 10:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YRKpkfAENwaPRHhB52Yk4IsL9JC0VBqj2njlYrjdEfc=;
-        b=Jjs1SJg9ILwBRwrSz85ksnjxvXlcJlYxLcWsAIFy3D+w2CMbVk02Fy90YtRHuT/Gsc
-         7w5I36ok/ezLiv0MwRRSqurKUV8r1WuOn8R/X3vRaSNrl827XgHpwFoNz/xUzBRULcci
-         L2aqTcvr+66l1s0HQsMiDICOiSJlXIUIv0TPQlgFJWyNl+vWFrPal7NgW67WfkDXCkSC
-         On0BlPDuU6OXJUGyN3dDD3HqfV8lELBhAv1dWi6blk7Or/nGbVhfPLfCUMtASG4f0s/h
-         L0SaBtWy0rvA4iVO3GMVZsBuyNVP5u3nC7OLidScTPhquFtAT8UtRBmdn5VFJI0EE9bM
-         ilRQ==
+        with ESMTP id S231542AbiGKTIP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 15:08:15 -0400
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B284F6A3;
+        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id p128so5849354iof.1;
+        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YRKpkfAENwaPRHhB52Yk4IsL9JC0VBqj2njlYrjdEfc=;
-        b=2tGEx725g0gl1spmtgGF/p+zvhFoRK6bhIoqsqsX/JjC4h5hdK/MfrTcXE/YQZe2z4
-         WBuUSa7MGzc+lsVnykMJ7l6pDKuWMd5x8h3Ul8FIvKUTZ8wprBjp867gnYFBQwo/f2yH
-         8qmX2r7c5ZVhhirs3LybBFDIuRU7dfQsWAv4LBLVTxzr7p1F30WCeAWJRM+IyfsBcXnI
-         82OUqSZvsD0sIIx9c1SlpA+cItgauoI5yv0v30oz2XW/f5jM+dqwl8181uHViiKguCAk
-         s4EiSxRgFTkEMuX2EDDDdrlflMSiqVsXhnB0/dmvQI5bB7peTUodt3F8LfPV/wPnbw67
-         wfiw==
-X-Gm-Message-State: AJIora+h1trigvqyLMftxcxysgn9w8XoOX5tKw/moMRAKXwIfhPxGIX5
-        O7IUCUuA/zsrnl5rVJ8rEGN8XnvWk15rsYSjc08l0A==
-X-Google-Smtp-Source: AGRyM1tj3qzQHBkSDWHhizwUEMCkZdcJezeAfWiG+HXdCs+IB9Axc9y1pe7xCYy9X9g/aH4hH/1YmHn6VmM6eMyPTnI=
-X-Received: by 2002:a05:622a:198f:b0:31e:b669:9f29 with SMTP id
- u15-20020a05622a198f00b0031eb6699f29mr3742937qtc.629.1657561349814; Mon, 11
- Jul 2022 10:42:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220711174004.3047516-1-nathan@kernel.org>
-In-Reply-To: <20220711174004.3047516-1-nathan@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 11 Jul 2022 20:42:18 +0300
-Message-ID: <CAA8EJppiUhkbE2c=ce7AVkgMPZ0Sz-uuws220WYk4GaXZbrQzA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: qcom: gpucc-sm8350: Fix "initializer element is
- not constant" error
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EWM6B/BN24k6N+dVD2SEewWXN0WwozRf9TaRIyakfsQ=;
+        b=zf2LcyvglxjGBhMKlwYa6YU8ELdQdlj9xHcBybKp2k90ifUSzDddXEgC9ds9HuwIdC
+         WA7n2S/CpCP2QAWssuPltWjQUDr1teVhMVB5CWC7sARio2CjemosrnTGUuf1VEPk+Znl
+         cGLNrAmtUirApHrVUJQujJ/0HW0sRP5S+z3AL+gxD2ZNYbAQqW2/Ypo1X60wxGtjZ1UO
+         UW0GEL2ZgxxfYVRf08jmCn/h2NaBuJZwLGMgLjuHHV8Qd1WUV6tR9gpDUZNehUr87mCy
+         W62GaB0wKGtg+Qx01zRR9sMPVqAV0Cl8RhKlYZQaGTRqrlWVuvaGMmaKMUWvD1Wv3LZ5
+         KROQ==
+X-Gm-Message-State: AJIora9+xBlxFXsZ6IwxXM6BdFgaOKEEprdUgkIh/BDKGpFg6AoihUG0
+        gOqmNDboM1Bg1tYoadFpxA==
+X-Google-Smtp-Source: AGRyM1tIkZsbZHicAYL56wC+XkcZQD9BsIxHHrfnD2isdQIwSFhNCyZdhgdL5ZRik/sLEF1QCo40Lg==
+X-Received: by 2002:a6b:3fc3:0:b0:678:ea4a:a353 with SMTP id m186-20020a6b3fc3000000b00678ea4aa353mr10555790ioa.59.1657566493112;
+        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id cb15-20020a0566381b0f00b0032e49fcc241sm3206065jab.176.2022.07.11.12.08.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jul 2022 12:08:12 -0700 (PDT)
+Received: (nullmailer pid 106719 invoked by uid 1000);
+        Mon, 11 Jul 2022 19:08:11 -0000
+Date:   Mon, 11 Jul 2022 13:08:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: fix wrong clock documentation
+ for qcom,rpmcc
+Message-ID: <20220711190810.GA106686-robh@kernel.org>
+References: <20220706225321.26215-1-ansuelsmth@gmail.com>
+ <20220706225321.26215-2-ansuelsmth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220706225321.26215-2-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Jul 2022 at 20:41, Nathan Chancellor <nathan@kernel.org> wrote:
->
-> When building with clang or GCC older than 8, errors along the following
-> lines occur:
->
->   drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is not a compile-time constant
->           gpu_cc_parent,
->           ^~~~~~~~~~~~~
->   drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is not a compile-time constant
->           gpu_cc_parent,
->           ^~~~~~~~~~~~~
->   2 errors generated.
->
-> The C standard allows an implementation to accept other forms of
-> constant expressions, which GCC 8+ has chosen to do, but it is not
-> required. Just inline the initializer to resolve the error.
->
-> Fixes: 160758b05ab1 ("clk: qcom: add support for SM8350 GPUCC")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1660
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+On Thu, 07 Jul 2022 00:53:18 +0200, Christian Marangi wrote:
+> qcom,rpmcc describe 2 different kind of device.
+> Currently we have definition for rpm-smd based device but we lack
+> Documentation for simple rpm based device.
+> 
+> Add the missing clk for ipq806x, apq8060, msm8660 and apq8064 and
+> provide additional example to describe these new simple rpm based
+> devices.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->
-> v1 -> v2: https://lore.kernel.org/20220711163021.152578-1-nathan@kernel.org/
->
-> * Just inline the initializer, rather than using a macro (Dmitry).
->
->  drivers/clk/qcom/gpucc-sm8350.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
-> index d13fa813d190..5367ce654ac9 100644
-> --- a/drivers/clk/qcom/gpucc-sm8350.c
-> +++ b/drivers/clk/qcom/gpucc-sm8350.c
-> @@ -108,7 +108,7 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
->  };
->
->  static const struct clk_parent_data gpu_cc_parent_data_0[] = {
-> -       gpu_cc_parent,
-> +       { .fw_name = "bi_tcxo" },
->         { .hw = &gpu_cc_pll0.clkr.hw },
->         { .hw = &gpu_cc_pll1.clkr.hw },
->         { .fw_name = "gcc_gpu_gpll0_clk_src" },
-> @@ -123,7 +123,7 @@ static const struct parent_map gpu_cc_parent_map_1[] = {
->  };
->
->  static const struct clk_parent_data gpu_cc_parent_data_1[] = {
-> -       gpu_cc_parent,
-> +       { .fw_name = "bi_tcxo" },
->         { .hw = &gpu_cc_pll1.clkr.hw },
->         { .fw_name = "gcc_gpu_gpll0_clk_src" },
->         { .fw_name = "gcc_gpu_gpll0_div_clk_src" },
->
-> base-commit: 0dd8e16bfbc003b009f843e75fae4046daa08fe9
-> --
-> 2.37.0
->
+>  .../devicetree/bindings/clock/qcom,rpmcc.yaml | 85 ++++++++++++++++++-
+>  1 file changed, 83 insertions(+), 2 deletions(-)
+> 
 
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Rob Herring <robh@kernel.org>
