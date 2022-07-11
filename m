@@ -2,96 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C66FC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC56C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbiGKUtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42330 "EHLO
+        id S230162AbiGKUxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiGKUtC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:49:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A9D11173;
-        Mon, 11 Jul 2022 13:49:00 -0700 (PDT)
+        with ESMTP id S229593AbiGKUxP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:53:15 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D3952E79;
+        Mon, 11 Jul 2022 13:53:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E49EE6168C;
-        Mon, 11 Jul 2022 20:48:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDD5C34115;
-        Mon, 11 Jul 2022 20:48:59 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 14F9ECE17D7;
+        Mon, 11 Jul 2022 20:53:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAFFDC34115;
+        Mon, 11 Jul 2022 20:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657572539;
-        bh=zuU3VsAsUph7e7zwXq/2Epxqe4K3n6QYBMJuw+41dg4=;
+        s=k20201202; t=1657572791;
+        bh=KXWk2bwFJGa9viXQjgAbCz3X/tgVw7ZmGdeVHoxdjSs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QEZdIJJu0iVDm5NdwtCFe8ql1UaFVZCcBfNxEaQasbGH2e7uNQEXBN7doLRzt2Bsy
-         fs1vcf55GP8RVcGkH99C1uibkz/WVo6CqTcGCPMf76uao0WqlGEaDab+BHznqGcKWN
-         q3Z2sBjpDR338LdZl+EPanBntinMBqPKGHT/n2XtlYlk9Rgsg9SJ2I6nIgNW0x8Yjs
-         4cmMd8K9DZe8kCVEBa0rYUMaZs1lEB++Rkdybbjm3iAET1jz7drgtyxFSCbDvkqHTK
-         enwqPC13nWd6/4hp9rcochN04yl2mCLLHO7xE+XG7hmnC0s4HGV/HccK710csMM5bV
-         pxnTx7huysVhw==
+        b=VwcXpE0FwrmOYBh/WgN9Y4npxfHq0ApT+kDw1RnvbQdp81F5iVCR0cx2beMmsgQS4
+         18768pyPV/FKK4FOYNj+WXWntfcx7oVgK3yA1Glls4So9XytSNe02a/czKjfdSKlw5
+         /b7k+CGtcBqjLhi034R1q8/ETTUMEuRRU2A8C71BM79pKYS1Jqlx24MmK4Jt2T14Xn
+         OP0VHnx69/Z4RW9XCPpXKgfhvaz3aFFtZjULsYprdtxRoASmAGgdK758EiWN1XGQQV
+         jJmh50BMd4SAIevYQMxjD4jHK9t5bK75fwhJtHh+yQt6JuLCDadfQR6f+jn7NXbJcg
+         Z5LqooGnizDqg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220711162713.2467476-1-dlatypov@google.com>
-References: <20220711162713.2467476-1-dlatypov@google.com>
-Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
+In-Reply-To: <98363f27-e7a4-7351-fad7-361f7e465b7e@suse.cz>
+References: <20220623083217.26433-1-jslaby@suse.cz> <20220624004225.0DE4AC3411D@smtp.kernel.org> <0edab0e2-5355-a3da-445d-b6f45e3082ed@suse.cz> <20220629082104.E25D2C34114@smtp.kernel.org> <98363f27-e7a4-7351-fad7-361f7e465b7e@suse.cz>
+Subject: Re: [PATCH 1/2] clk: pistachio: Fix initconst confusion
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-clk@vger.kernel.org, Daniel Latypov <dlatypov@google.com>,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Latypov <dlatypov@google.com>, brendanhiggins@google.com,
-        davidgow@google.com
-Date:   Mon, 11 Jul 2022 13:48:57 -0700
+Cc:     mliska@suse.cz, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>, linux-clk@vger.kernel.org
+To:     Jiri Slaby <jslaby@suse.cz>, mturquette@baylibre.com
+Date:   Mon, 11 Jul 2022 13:53:09 -0700
 User-Agent: alot/0.10
-Message-Id: <20220711204859.3DDD5C34115@smtp.kernel.org>
+Message-Id: <20220711205310.EAFFDC34115@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Latypov (2022-07-11 09:27:13)
-> CONFIG_UML_PCI_OVER_VIRTIO=3Dy is needed to enable CONFIG_PCI=3Dy on UML.
-> However, this causes test failures when running the clk tests, i.e.
-> $ ./tools/testing/kunit/kunit.py run --kunitconfig=3Ddrivers/clk
+Quoting Jiri Slaby (2022-07-08 00:16:12)
+> On 29. 06. 22, 10:21, Stephen Boyd wrote:
+> > Quoting Jiri Slaby (2022-06-27 00:46:15)
+> >> On 24. 06. 22, 2:42, Stephen Boyd wrote:
+> >>> Quoting Jiri Slaby (2022-06-23 01:32:16)
+> >>>> From: Andi Kleen <ak@linux.intel.com>
+> >>>>
+> >>>> A variable pointing to const isn't const itself. It'd have to contain
+> >>>> "const" keyword after "*" too. Therefore, PNAME() cannot put the str=
+ings
+> >>>> to "rodata".  Hence use __initdata instead of __initconst to fix thi=
+s.
+> >>>>
+> >>>> [js] more explanatory commit message.
+> >>>>
+> >>>> Cc: Michael Turquette <mturquette@baylibre.com>
+> >>>> Cc: Stephen Boyd <sboyd@kernel.org>
+> >>>> Cc: linux-clk@vger.kernel.org
+> >>>> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> >>>> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> >>>> ---
+> >>>>    drivers/clk/pistachio/clk.h | 2 +-
+> >>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk=
+.h
+> >>>> index f9c31e3a0e47..742e5fab00c0 100644
+> >>>> --- a/drivers/clk/pistachio/clk.h
+> >>>> +++ b/drivers/clk/pistachio/clk.h
+> >>>> @@ -34,7 +34,7 @@ struct pistachio_mux {
+> >>>>           const char **parents;
+> >>>>    };
+> >>>>   =20
+> >>>> -#define PNAME(x) static const char *x[] __initconst
+> >>>> +#define PNAME(x) static const char *x[] __initdata
+> >>>
+> >>> Can it be const char * const and left as __initconst?
+> >>
+> >> Let me check, IIRC the struct where this is assigned would need to be
+> >> updated too.
+> >>
+> >> I will get into it only some time next week.
+> >>
+> >=20
+> > Ok, sounds good. This seems to at least compile locally.
 >=20
-> A snippet of the particular error is:
-> >     ok 1 - clk_gate_test_parent_rate
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
+> Yeah, that works. I've sent a v2.
 >=20
-> This is triggered by this cast in the test:
->    143          ctx->fake_mem =3D (void __force __iomem *)&ctx->fake_reg;
-> this seems to work except when logic iomem is enabled, i.e.
-> CONFIG_INDIRECT_IOMEM=3Dy.
->=20
-> As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
-> drivers/clk/.kunitconfig so we can enable it for everyone else by
-> default in kunit.py.
->=20
-> The long-term fix probably requires something more complicated, like
->   #ifdef CONFIG_INDIRECT_IOMEM
->     logic_iomem_add_region(...);
->   #endif
+> BTW is the code intended to put the actual strings to .init.rodata? As=20
+> that was never the case. Only those PNAME defined arrays (pointers to=20
+> strings) end up in .init.rodata now and the strings are in .rodata.
 
-If this is how platform IO is mocked then yes we'll have to implement
-that.
-
->=20
-> Signed-off-by: Daniel Latypov <dlatypov@google.com>
-> Reported-by: Maxime Ripard <maxime@cerno.tech>
-> Tested-by: Maxime Ripard <maxime@cerno.tech>
-> ---
-> Note: this targeting the -kselftest kunit branch.
-> There's a commit that triggers this by enabling logic iomem by default
-> [1] and there's also a commit that lets disable it via kunitconfig file
-> [2], which this fix relies on.
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest=
-.git/commit/?h=3Dkunit&id=3D6fc3a8636a7b0f7dbd6d0a4e450e765dc17518d4
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest=
-.git/commit/?h=3Dkunit&id=3D8a7c6f859a20ca36a9e3ce71662de697898c9ef5
-> ---
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I think both the strings and the array should be in .init.rodata. The
+clk framework deep copies data like parent names.
