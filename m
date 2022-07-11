@@ -2,231 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23045C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9220C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbiGKL31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 07:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43328 "EHLO
+        id S230027AbiGKLr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 07:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231290AbiGKL24 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:28:56 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0EB27B31
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:10:24 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id b11so8196423eju.10
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:10:24 -0700 (PDT)
+        with ESMTP id S230376AbiGKLrl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:47:41 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0360EFDC;
+        Mon, 11 Jul 2022 04:46:47 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id v6so3588654qkh.2;
+        Mon, 11 Jul 2022 04:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zkANRKcZbCaKSgW3zgTNeMUMr8X2SBwRfvqFLff+8ZA=;
-        b=ZBgFbOgBqk32UIWTND6ietHkpJ9TJrOwwXtkzswaVpoU8cqklMCFk81fOuqvtO9b9+
-         193XC1MSSCbyeRCTelx7Em66ORq+FmDBSYBVSERNcNEchxozN6pHqlwerTuLzywh1PJ7
-         PPr5INbdvszlJtgdHO6XhLDVfxRYSD+EpLfYzREdWmvAqfTXb1AYuMVQyzz+UgfSKZsT
-         OipXrh2/XOdyT0NtEXhNWLcAzerxjK/m2z7jd3nRq6uX7U+n5jKV+w1Tq89vDB1ZQFIh
-         KjdKi2LPGjl7/fc3L/TZkwDsVRLWhTZ+cQonFNbttvBLHusUdIQosAAUe4FLvsRMbyrB
-         i/ig==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MhYRHiDSTXDwT6ErnpOS8yP7S6qbhKStQYvpDyuemqI=;
+        b=dGjeC2fXH5blEI872lq666Le0oz8iaHLUZmiFKX9wDSH7fLWrxlWdfH+8adrBI3Q5s
+         IRVPAgSST87GbE80+saboGZdMsv/MNaaW5bfDbNLJhlf8sxh9ql/fRJCZahLq43XND1q
+         hc19xeUfN8w0cgrNTRMVqMs2AbQs4vqx2L/PmxGnkdwM9oqeRjbGygcUOBjukAyaLp7q
+         TFEK5BUZZ6f4eInkvaT8U5MRuOV8WRLhavGXKNJOmB2rHDNluRiNnaaN9ydWgmCSvFNX
+         9ooB8xiItMwCpPdjQ+/LSItFmWrNusgBAG5hjkR45WSvndPYtxDjvSQwe9W7d1H0h9DA
+         oLFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zkANRKcZbCaKSgW3zgTNeMUMr8X2SBwRfvqFLff+8ZA=;
-        b=PGRVR1m1Coe7r+RG1nAbK0cnlyf69jbppv5Ta6FbZZmuWP4aZTN3bObUnC0y2Kh1tI
-         pcJM+1zZxkokd5YpimpM08NS+vAQxZnlMFXTXT07OauI9nXHXZ2p6TdElJefs4SXTB5s
-         /KWZQRQpswnvFWLWKOid+uzjqEfqn1S+1ZkQ7o+AQOjnxGtruaBG2/gGmYIpMbaoYptu
-         UPZC6kgnpDXwGs/nGJUJzvvIWqgZfpbpHOYRth1oqu4AI3yNIcWHI/eKVBxN9xDbTlt9
-         2PtlpN0BtywfN8LVJNNyk7XiB6L9P+tpaUA2nvgAmhG1gm5EvB1tnFSTGM6Y2LnWF36n
-         pEcA==
-X-Gm-Message-State: AJIora9pEd16rjzTceTJZryDF2Cw7AXEvzfuGOma/J4L8MMGR8/R3wpx
-        UwHHmXqsSYTch53f0DtPFUmZqw==
-X-Google-Smtp-Source: AGRyM1uSmvI2XhE/U0vJsp/yH6sycrVAD/rDP9hVX00y91ePkUQ92JzvhV0TAf2kqlLOX6iymV68bw==
-X-Received: by 2002:a17:907:6ea3:b0:726:ca39:5d98 with SMTP id sh35-20020a1709076ea300b00726ca395d98mr17992224ejc.400.1657537822607;
-        Mon, 11 Jul 2022 04:10:22 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id gx16-20020a170906f1d000b0072b1bb3cc08sm2562448ejb.120.2022.07.11.04.10.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 04:10:22 -0700 (PDT)
-Date:   Mon, 11 Jul 2022 14:10:19 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MhYRHiDSTXDwT6ErnpOS8yP7S6qbhKStQYvpDyuemqI=;
+        b=pseZTIdBpAFj2CP7L/enibYpJ93eoQoUZL6OlB5XRtziKzHzjbIMVvEydlPXchW1tk
+         tfNRJoEtoQ4cARCbyim11HwfKjJwGG1P88k0GHU4ZhKDECCgM4t1fq8GuU3rcyzCqm8O
+         cb43WQf7fv80facBiuN2p1aXelPQiELxYvtyG0SnNFPufuNsrLzG1WyT7swxslHU6DT2
+         wXWUCZK+27vgU7vjBPGNLCXeN+i4DsrhZEKT5H3WN2/EmFRtIYtli94v750BIznZ++5Z
+         Ib2YbTI72woVdvYgWFfKl0ioBeUvtV+quCeSZaT9qU+5AjafrbUpHIYofsuCZ7s3y+nD
+         psXQ==
+X-Gm-Message-State: AJIora9X7GIQrkXb4kjuxqLQIGPWFpWyD1wrMWurmYqVXcsjeC/5g2nV
+        MmAMhP9T0uP8aQoCFGStaNo4auXKuAtMiP9XjeM=
+X-Google-Smtp-Source: AGRyM1twIJiwkbgBu5OURP7EKSSAQTFE8Ds3WWfTIStHxi+02nK/lWUPngC21gL7tmUeX8U0v2sDoYPiDxUtz971IDk=
+X-Received: by 2002:a05:620a:1a2a:b0:6b5:93bd:b662 with SMTP id
+ bk42-20020a05620a1a2a00b006b593bdb662mr823482qkb.522.1657540006101; Mon, 11
+ Jul 2022 04:46:46 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220711104719.40939-1-robimarko@gmail.com> <20220711104719.40939-4-robimarko@gmail.com>
+ <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
+In-Reply-To: <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Mon, 11 Jul 2022 13:46:35 +0200
+Message-ID: <CAOX2RU6X=JiV1As+_N6c_=VaHfVYpke_deQmmNPMMDxfnz5i8g@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: qcom: apss-ipq6018: add MODULE_ALIAS
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 01/15] dt-bindings: clk: imx: Add fsl,scu-clk yaml file
-Message-ID: <YswFG/JdjGC03rHU@linaro.org>
-References: <20220707125022.1156498-1-viorel.suman@oss.nxp.com>
- <20220707125022.1156498-2-viorel.suman@oss.nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220707125022.1156498-2-viorel.suman@oss.nxp.com>
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, sivaprak@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-07-07 15:50:08, Viorel Suman (OSS) wrote:
-> From: Abel Vesa <abel.vesa@nxp.com>
+On Mon, 11 Jul 2022 at 13:05, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch documents
-> separately the 'clock' child node of the SCU main node.
+> On 11/07/2022 12:47, Robert Marko wrote:
+> > Add MODULE_ALIAS so that driver will be autoloaded if built as a module.
+> >
+> > Signed-off-by: Robert Marko <robimarko@gmail.com>
+> > ---
+> >  drivers/clk/qcom/apss-ipq6018.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+> > index f2f502e2d5a4..963c69f2c0c2 100644
+> > --- a/drivers/clk/qcom/apss-ipq6018.c
+> > +++ b/drivers/clk/qcom/apss-ipq6018.c
+> > @@ -101,5 +101,6 @@ static struct platform_driver apss_ipq6018_driver = {
+> >
+> >  module_platform_driver(apss_ipq6018_driver);
+> >
+> > +MODULE_ALIAS("platform:qcom,apss-ipq6018-clk");
 >
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> That's not correct alias (no commas) and usually alias is not needed at
+> all. If you need one, please explain why it is needed. Module
+> autoloading works fine without aliases...
 
-Shawn, I'm assuming you're going to pick this up through your tree,
-right?
+Hi Krzysztof,
+alias is required here as the driver does not use a DT compatible but
+is registered
+by the APCS driver, if built as a module, it won't get autoloaded
+without an alias.
 
-> ---
->  .../bindings/arm/freescale/fsl,scu.txt        | 31 -------------
->  .../bindings/clock/fsl,scu-clk.yaml           | 43 +++++++++++++++++++
->  2 files changed, 43 insertions(+), 31 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,scu-clk.yaml
+I can only fix up the driver name here and in APCS first to have an
+alias without commas.
+
+Regards,
+Robert
 >
-> diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> index a87ec15e28d2..ef7f5222ac48 100644
-> --- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> @@ -79,29 +79,6 @@ Required properties:
->  			See detailed Resource ID list from:
->  			include/dt-bindings/firmware/imx/rsrc.h
->
-> -Clock bindings based on SCU Message Protocol
-> -------------------------------------------------------------
-> -
-> -This binding uses the common clock binding[1].
-> -
-> -Required properties:
-> -- compatible:		Should be one of:
-> -			  "fsl,imx8dxl-clk"
-> -			  "fsl,imx8qm-clk"
-> -			  "fsl,imx8qxp-clk"
-> -			followed by "fsl,scu-clk"
-> -- #clock-cells:		Should be 2.
-> -			Contains the Resource and Clock ID value.
-> -- clocks:		List of clock specifiers, must contain an entry for
-> -			each required entry in clock-names
-> -- clock-names:		Should include entries "xtal_32KHz", "xtal_24MHz"
-> -
-> -The clock consumer should specify the desired clock by having the clock
-> -ID in its "clocks" phandle cell.
-> -
-> -See the full list of clock IDs from:
-> -include/dt-bindings/clock/imx8qxp-clock.h
-> -
->  Pinctrl bindings based on SCU Message Protocol
->  ------------------------------------------------------------
->
-> @@ -127,7 +104,6 @@ Required properties for Pinctrl sub nodes:
->  			Please refer to i.MX8QXP Reference Manual for detailed
->  			CONFIG settings.
->
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->  [2] Documentation/devicetree/bindings/power/power-domain.yaml
->  [3] Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
->
-> @@ -208,11 +184,6 @@ firmware {
->  			  &lsio_mu1 1 3
->  			  &lsio_mu1 3 3>;
->
-> -		clk: clk {
-> -			compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
-> -			#clock-cells = <2>;
-> -		};
-> -
->  		iomuxc {
->  			compatible = "fsl,imx8qxp-iomuxc";
->
-> @@ -265,7 +236,5 @@ serial@5a060000 {
->  	...
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_lpuart0>;
-> -	clocks = <&uart0_clk IMX_SC_R_UART_0 IMX_SC_PM_CLK_PER>;
-> -	clock-names = "ipg";
->  	power-domains = <&pd IMX_SC_R_UART_0>;
->  };
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,scu-clk.yaml b/Documentation/devicetree/bindings/clock/fsl,scu-clk.yaml
-> new file mode 100644
-> index 000000000000..f2c48460a399
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,scu-clk.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/fsl,scu-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: i.MX SCU Client Device Node - Clock bindings based on SCU Message Protocol
-> +
-> +maintainers:
-> +  - Abel Vesa <abel.vesa@nxp.com>
-> +
-> +description: i.MX SCU Client Device Node
-> +  Client nodes are maintained as children of the relevant IMX-SCU device node.
-> +  This binding uses the common clock binding.
-> +  (Documentation/devicetree/bindings/clock/clock-bindings.txt)
-> +  The clock consumer should specify the desired clock by having the clock
-> +  ID in its "clocks" phandle cell. See the full list of clock IDs from
-> +  include/dt-bindings/clock/imx8qxp-clock.h
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,imx8dxl-clk
-> +          - fsl,imx8qm-clk
-> +          - fsl,imx8qxp-clk
-> +      - const: fsl,scu-clk
-> +
-> +  '#clock-cells':
-> +    const: 2
-> +
-> +required:
-> +  - compatible
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller {
-> +        compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
-> +        #clock-cells = <2>;
-> +    };
-> --
-> 2.25.1
->
+> Best regards,
+> Krzysztof
