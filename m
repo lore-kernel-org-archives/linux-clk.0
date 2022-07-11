@@ -2,65 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1810EC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DA2C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232246AbiGKPYr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49954 "EHLO
+        id S232255AbiGKPYw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:24:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232082AbiGKPYq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:24:46 -0400
+        with ESMTP id S231618AbiGKPYt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:24:49 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD7E252A3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:24:45 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 39C795C0196;
-        Mon, 11 Jul 2022 11:24:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 11 Jul 2022 11:24:45 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E47828726
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:24:47 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id D88C55C01A0;
+        Mon, 11 Jul 2022 11:24:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 11 Jul 2022 11:24:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1657553085; x=1657639485; bh=0C
-        Od+myCi6YNPxPiEB5EEfiL9iegAZ8BdXTc5W0Cnmg=; b=vq1jASYKRXyBreU3kM
-        J02fjCUZoGZCCleTr+gFL0IVWwqWInEyqjSW4T1LpwTnRRjRADpiiBU0PUI0XcjP
-        qHNzkGwe8KG4tGOfrqyWvByxgrXr8wV/uoUaODeHLVNhq6DR7PvCZ8XKQFOiCzbm
-        L/j4fh3nQfA4gj8aYoKH1rg4Smtc98bsHyJn6HDTlkW5mCftxw2N8vC/0rA4ym/i
-        ZA2Uh1zIwEH1gRykSrMHzK+6TrqZuI8VJUz2iKl+sdniBQ9ah0N+eOJRgEtg+Xao
-        7sS4oU+rem8qPyu7bP0euj3e25Z0cha35esYxFNQZQnfzOogKvGvxTSHFuAyWPrF
-        rsAw==
+        :subject:subject:to:to; s=fm2; t=1657553086; x=1657639486; bh=1k
+        5GlUwQehvuPxFsR0RfGQ6yq/X6lKE4rb73APuTasc=; b=cQJCW6jN6EfCVF8Mbl
+        YndjtDrwJRXghZRRLuIhkx+Rp+RO6CQ10qz04yhJTGEIe++geowMmOT45HEHJiTO
+        pCLHMuvDxnnhh8FLRVhL8evytYwnDYHhEf0nuAdtZBAT5Fb0cfzuBo79Ywl1cHMN
+        FcN/Iae6ozkqMICqekr0m0UexxpD/J66k9IrAgccrHLEtTsh1JuSXGFr6Z0JPvE+
+        KLMMalHZVol6iXtPCzDx7bG3xDLWYfw9GzwO6etxJpezJ1260rB+TrYbybFX9VyM
+        wvLUiW95mmJw/vkF5oL/UX1rfkEWf/gUDdoUWORdTDVIcGOqdqYF0J0NttT2fCNr
+        lTkw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1657553085; x=1657639485; bh=0COd+myCi6YNP
-        xPiEB5EEfiL9iegAZ8BdXTc5W0Cnmg=; b=Dwbo2wTwmWrqkr5os1fWX9sUAAjKN
-        Snd/FWB1AtAFyB7gfrGbmdJKM/BP0n+TZQp1ecjsXGMGbq1zi/4QIEK+jpYBVxC5
-        nXefNIs17ThgMLy2dI5H2b0McSs/Gst1QtKKHEza8Rkf50+q1s99GYeJStAxvoVD
-        VRqVZ8K2h1GLSqBV1jsdu9H0qu0XU5s/pg8iLuv7k0VW1wwn2N22FweVjFE0+Rzz
-        1y0bG1jumbcMtrkddJZn5xDq4LKRMXya4M+4KEkxlzGCK59SAkEqNRcIgTUVnVBt
-        Dr0FDNfXXTwwRd5rKRExaK87hTwF7FBnkxlZ3cKn5CBgbfDO3ENgPYyTQ==
-X-ME-Sender: <xms:vUDMYvBTWcdoYmc6WylQfKuAshplxCF6FI0CaPif1UfhEHQ0eQzH7Q>
-    <xme:vUDMYlh5qOtn3-J2pLxXzV5UiJ95f634dOD3O8FSbEeaJZ5g2HPQBmJL4-DbcTASR
-    SOIKC5f8vR_fOiuO2o>
-X-ME-Received: <xmr:vUDMYqkSQdjmMtbAn8ji1sB1zCxefzxxqJOJW32EyW7YZ4iab2lQKRF5lnOmk2QOdw7twrRlTKAlmV0kY9nGdJGqUyxYm_KCscgQx3I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeehucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm3; t=1657553086; x=1657639486; bh=1k5GlUwQehvuP
+        xFsR0RfGQ6yq/X6lKE4rb73APuTasc=; b=ymyITOE/NK2zVn5EMCcBGzts0kVS/
+        KfwaLhvTnlXsSjYjjspPZkbjLuSmVG8STO+6rovDM96FL8q2sCxGhmRUynCgS//g
+        oev6j3jeIDJgzpDFm30qjMN27C9UOYt/m7Nc3TYYJDSXuaWK1FmcTJivZL9TCgGo
+        MboAt2V3K3xVZPkhW2Gh3yYXiWgkFOiQdO2j5HTMe2LBgSOqq3j2kGp1XJv87YFm
+        vuYQOZaq6951lLYjtifTV+lcPCs3RIEMCE+TUvgn7L6r0DTNKuldFSnU+jqQy4nq
+        vhVEMmK1Oy3pYXcyXr1kjYV4pkLwsZvxghPl4qTXHGrjEi4Q7AdkCJBBA==
+X-ME-Sender: <xms:vkDMYnPas5F3Q-dvXbM5BJSXeJFvtScPNxazTb7HFI0JnXE2jjO-Sw>
+    <xme:vkDMYh9x0QMehClZgcBQdCb29mZGTUf-f7UY9WEnDDuFZVn5x31faLKfm9VOxTEnb
+    XqSuI74sc2DZjyMZ8Q>
+X-ME-Received: <xmr:vkDMYmRcw-2rqHpEUeQyYTROJ19mfJKT4XQXyrBUdpvWl-JK94afOpambD7MpCbn2jx-H-prRgj4CmPcseVV3nNsHleEgEaHLaWKQBo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:vUDMYhw0KJFuxRlZ9bhsNr3BpP0e6HB4x-CGyazYU5ZlA0bREBqDHA>
-    <xmx:vUDMYkQcA3tdJSyxg9hekXYtKJ0XZG-CAn8KE2sk9ULqz0KRflwK0g>
-    <xmx:vUDMYka9TrNnLMAdm3CF37P0dnNlJ7WG4VE5zND-2OVzRnB4vDVQSQ>
-    <xmx:vUDMYpJHOSEFxmMMGKAY0Ni1nWsh8dE5Ct1CbzqF6xEdusFoG3tZLQ>
+    htthgvrhhnpeehleetfeejteeivdetveegtdetgeffffdvkeeuheejuedvjeefvdekffel
+    gfefieenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:vkDMYruaQ-p8caWcmCXykIWxeDK7hCjVj-wHQwPqZn7eNDHijCNcFw>
+    <xmx:vkDMYvendIbF5Pxb6ZaNRWCGDOC6sOUOiR9KiG9CrHtUotiRRdxRWw>
+    <xmx:vkDMYn0KLpnpq_2RUWdOnRIsXCmop7II6Q7i9OVdm8fvflRBRjG0YA>
+    <xmx:vkDMYgUmQVnaZglMzrpzt9EehlYlUM_dHQqDPm4eCd0uP1b3qYfgFg>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Jul 2022 11:24:44 -0400 (EDT)
+ 11 Jul 2022 11:24:46 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +74,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 09/28] clk: tests: Add test suites description
-Date:   Mon, 11 Jul 2022 17:24:05 +0200
-Message-Id: <20220711152424.701311-10-maxime@cerno.tech>
+Subject: [PATCH v6 10/28] clk: tests: Add reference to the orphan mux bug report
+Date:   Mon, 11 Jul 2022 17:24:06 +0200
+Message-Id: <20220711152424.701311-11-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220711152424.701311-1-maxime@cerno.tech>
 References: <20220711152424.701311-1-maxime@cerno.tech>
@@ -85,92 +86,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We start to have a few test suites, and we'll add more, so it will get
-pretty confusing to figure out what is supposed to be tested in what
-suite.
-
-Let's add some comments to explain what setup they create, and what we
-should be testing in every suite.
+Some more context might be useful for unit-tests covering a previously
+reported bug, so let's add a link to the discussion for that bug.
 
 Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com> # imx8mp
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com> # exynos4210, meson g12b
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk_test.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/clk/clk_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 7d9da88c39ee..1a7cb482ec58 100644
+index 1a7cb482ec58..b8e32406a6e4 100644
 --- a/drivers/clk/clk_test.c
 +++ b/drivers/clk/clk_test.c
-@@ -258,6 +258,11 @@ static struct kunit_case clk_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
+@@ -322,6 +322,9 @@ static void clk_orphan_transparent_single_parent_mux_test_exit(struct kunit *tes
+ /*
+  * Test that a mux-only clock, with an initial rate within a range,
+  * will still have the same rate after the range has been enforced.
 + *
-+ * These tests exercise the rate API with simple scenarios
-+ */
- static struct kunit_suite clk_test_suite = {
- 	.name = "clk-test",
- 	.init = clk_test_init,
-@@ -346,6 +351,14 @@ static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] =
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic mux clock with one parent. The parent is
-+ * registered after its child. The clock will thus be an orphan when
-+ * registered, but will no longer be when the tests run.
-+ *
-+ * These tests make sure a clock that used to be orphan has a sane,
-+ * consistent, behaviour.
-+ */
- static struct kunit_suite clk_orphan_transparent_single_parent_test_suite = {
- 	.name = "clk-orphan-transparent-single-parent-test",
- 	.init = clk_orphan_transparent_single_parent_mux_test_init,
-@@ -675,6 +688,12 @@ static struct kunit_case clk_range_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range().
-+ */
- static struct kunit_suite clk_range_test_suite = {
- 	.name = "clk-range-test",
- 	.init = clk_test_init,
-@@ -856,6 +875,13 @@ static struct kunit_case clk_range_maximize_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range(), with a
-+ * driver that will always try to run at the highest possible rate.
-+ */
- static struct kunit_suite clk_range_maximize_test_suite = {
- 	.name = "clk-range-maximize-test",
- 	.init = clk_maximize_test_init,
-@@ -1029,6 +1055,13 @@ static struct kunit_case clk_range_minimize_test_cases[] = {
- 	{}
- };
- 
-+/*
-+ * Test suite for a basic rate clock, without any parent.
-+ *
-+ * These tests exercise the rate range API: clk_set_rate_range(),
-+ * clk_set_min_rate(), clk_set_max_rate(), clk_drop_range(), with a
-+ * driver that will always try to run at the lowest possible rate.
-+ */
- static struct kunit_suite clk_range_minimize_test_suite = {
- 	.name = "clk-range-minimize-test",
- 	.init = clk_minimize_test_init,
++ * See:
++ * https://lore.kernel.org/linux-clk/7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com/
+  */
+ static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
+ {
 -- 
 2.36.1
 
