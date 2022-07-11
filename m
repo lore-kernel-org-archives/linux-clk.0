@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9935C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B837CCA47B
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231733AbiGKPYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        id S231342AbiGKPYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231447AbiGKPYf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:24:35 -0400
+        with ESMTP id S230304AbiGKPYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:24:38 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71161C104
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:24:34 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 539235C019D;
-        Mon, 11 Jul 2022 11:24:34 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 11 Jul 2022 11:24:34 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5AB51C104
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:24:36 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 234DC5C0190;
+        Mon, 11 Jul 2022 11:24:36 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 11 Jul 2022 11:24:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1657553074; x=1657639474; bh=b7
-        V9pOeMA8I1XC/Vwky3BaSr5cV9wMKBYVcM2SZN/y4=; b=jK5ocbqTJ7vio77tju
-        2NiBnOqHXav9W/5MgfJMe3SrQzAhUnYlDkRBDbqBW6+7KLC9JQxZA3nKNeLAphwr
-        8KCZI+hjOiibWrXxJkjVyoFDPTA5XyY7jXlOGMm4FYHRAMCOD3ICYFau76XQ7grb
-        cCA/QTqvwCDngOqRPDh3nYp+xwsMhG8qxgnMkghyfPV1WAMDu1gf1sQwgVlIOBcC
-        3TPSUkbSOK5Ci1NkGULANVqYRNAW3TbqUSA5bZo6O4EnBqN3ZsYrTP1eSgozoU4Q
-        xXIwpj0VLscz1aOKn6BaJU9LQx97EUsAc3GBCaUbg7YpO8hS/xozMNz6M7B5ZWBk
-        iX4g==
+        :subject:subject:to:to; s=fm2; t=1657553076; x=1657639476; bh=I7
+        ozYDzbO/QPTjsT2ocFF227MHR1sI6jJVmujxV89Y8=; b=uI3jpaBQIRzd12I0u9
+        rWt5kGjMIrKOTdMJ2QfPijIOf2eS6Yq1mWFNzL+FodVppoItj2xUr2JX5PqjzHRf
+        74v3sK89b2+Ls24/7SgivWZOvINm9JPXYJCNoi82EpXH1LEgoqtULoxZG8O8C4Hq
+        Z2tS1ofStWctajU57zlsQdQ1C+DVXwnbpdYMGvgOsFspzHqAxJ0vZ8F17gGishg9
+        OQ7mCKxZOciEcku+d7PUAfbRQjQMnhvniNInuz1RMP0MNDSPT8Zv1TaajDzKW1hC
+        BsriwIqkEA87C480PrWCgBV8SSztqnRG1/Cya614VyGHNjcFD6krfatMams5zFpI
+        qYsg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1657553074; x=1657639474; bh=b7V9pOeMA8I1X
-        C/Vwky3BaSr5cV9wMKBYVcM2SZN/y4=; b=NlGJjfUthKvMZ3Qpw4sxQgu3C0utT
-        ONx6/M1gJhxH+m+afvamYtqk2OHI03fQax02EMUOlzloX0qH2UaUA/nBpE7kDRAR
-        ZIi2CFyqRHLYYxAv29eT+8AVqGa39n7pfheEYhcYoFLbiterxW4nJhw258cu4ep8
-        FeVUCop2hiMthiTm4RDNI6GPsmEGp0gp0SXawpOD6NFed1FLDpQTDmrlUsp+CNpI
-        utUlLrvQJGLfZC+CAtDOBCJR4+VMzK4jgsk0daDhnx6qieUqKY3yUyhZIz2AJzBt
-        CeL3Zi+Cq5wd2sfdt/pv97AqwGcvt/im4eRTWeqOdcsXQAgr5v1Jh0Clg==
-X-ME-Sender: <xms:skDMYudv0nk2DdOts1svolZzsowd47UqOd2xi000J8hFgT1m_TlSOw>
-    <xme:skDMYoNLDbI9dDuSg2-OHZJ7ee1Rl1PfDZULxbD4LPdx_AwkG6OEpyF6SL2kx66tS
-    dQpiXTDSa4duyTtQiY>
-X-ME-Received: <xmr:skDMYvgwpe8XUdlWOEuTVHLkM2droZct7ZtPC4jE_ngLMR_ck8UiUTVHPPR7rfU3h7111Nzy4bFkZ9vgOUbpG7dSp4zv-8NApumDS3E>
+        :x-sasl-enc; s=fm3; t=1657553076; x=1657639476; bh=I7ozYDzbO/QPT
+        jsT2ocFF227MHR1sI6jJVmujxV89Y8=; b=cQBEvfR05Wjo7cjYSMfcIVM1NrweO
+        k5df3M6ULnOr7hutd/6yigoSs3mOoHXTD7EJGy5qM9kHV1LrrkFHtOpFunQ3DYg3
+        txeli0ROAkKZBOXZorAHVTTliDXkEvnpQR3U5tr6DCBCK+RyuDXyx6upHcQDcbnC
+        JK4tzsigs/O5LJTxnMpWlNgfF5D/2VqP8qXV10VBGJI5ZYEKewtFe/pOYc6CyXK7
+        ujdB6H6oJm3T/z9odtEhOp4j3CIxFiXyfGUqyWPUtY2yBK4GYOS7xqIXww3vCd/f
+        wCHft0osRCaeCiB7qae3RNhyidrt9SWl4CHToKURm66N7oijZlnZnt0bA==
+X-ME-Sender: <xms:tEDMYuN8OMhyFXs_ZAO1voNjgzAlSV-YkJha9H6IKTes6EvbmlUs7A>
+    <xme:tEDMYs86e0P23fUWmlzaoqDhKCtv9lK03yFmjixhu1483UICMKxtVWKhuPP6cqcRY
+    IJ5T58Jb9JXgYp7bT4>
+X-ME-Received: <xmr:tEDMYlRcgiLHItGOtDK8tfOvwD9LIKrSxKR4RqwEZzvMKbza8ajY4xWg4nG-C9MH66GwUpiwj3pSYqTXuqMZTo3H28chM7rgi-VCyOY>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -54,13 +54,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeehucetufdoteggod
     htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
     vdejhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:skDMYr8V2Oyia_uSS7coXJ8Vcl6gz5OyXEP3osxC3hCSSNAnZD712g>
-    <xmx:skDMYqug4uW6Syk0MQjrhMu1pCy01vklBZBTbl9T2m_trKtY30Z1Ug>
-    <xmx:skDMYiGnYmbwfAoYjO_XFJBHeMRstN1CJlkmSIV6jrp5bYqbdA6L-w>
-    <xmx:skDMYrmzrqFsGiPO0g-CwocfUYy0C4FxygN4KEB3s5cR0j8kzAEwug>
+X-ME-Proxy: <xmx:tEDMYuszyArhF3n2muOklQ6zj0-BQOheybsO9-jCINaEk6Gu1VxUMQ>
+    <xmx:tEDMYmcBy1h2FOXZw8oPSrbUDoPReUedA2ohT7XeFOsjdPtRNKqk3Q>
+    <xmx:tEDMYi2_jE9lfHtApMZJ83ZdhN-8elAdZgniSXf-QF5BVMHxyNx_DQ>
+    <xmx:tEDMYnW7oPQvSVAIoyk6bnpsi5PIifgOfPHyqJYo4hjiIo_4NgTGBA>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Jul 2022 11:24:33 -0400 (EDT)
+ 11 Jul 2022 11:24:35 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +73,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 03/28] drm/vc4: hdmi: Rework hdmi_enable_4kp60 detection
-Date:   Mon, 11 Jul 2022 17:23:59 +0200
-Message-Id: <20220711152424.701311-4-maxime@cerno.tech>
+Subject: [PATCH v6 04/28] clk: test: Switch to clk_hw_get_clk
+Date:   Mon, 11 Jul 2022 17:24:00 +0200
+Message-Id: <20220711152424.701311-5-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220711152424.701311-1-maxime@cerno.tech>
 References: <20220711152424.701311-1-maxime@cerno.tech>
@@ -85,49 +85,356 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to support higher HDMI frequencies, users have to set the
-hdmi_enable_4kp60 parameter in their config.txt file.
+Following the clk_hw->clk pointer is equivalent to calling
+clk_hw_get_clk(), but will make the job harder if we need to rework that
+part in the future.
 
-We were detecting this so far by calling clk_round_rate() on the core
-clock with the frequency we're supposed to run at when one of those
-modes is enabled. Whether or not the parameter was enabled could then be
-inferred by the returned rate since the maximum clock rate reported by
-the firmware was one of the side effect of setting that parameter.
-
-However, the recent clock rework we did changed what clk_round_rate()
-was returning to always return the minimum allowed, and thus this test
-wasn't reliable anymore.
-
-Let's use the new clk_get_max_rate() function to reliably determine the
-maximum rate allowed on that clock and fix the 4k@60Hz output.
-
-Fixes: e9d6cea2af1c ("clk: bcm: rpi: Run some clocks at the minimum rate allowed")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk_test.c | 74 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 55 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 1e5f68704d7d..3b75ac6fa0db 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -46,6 +46,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/rational.h>
- #include <linux/reset.h>
-+#include <soc/bcm2835/raspberrypi-clocks.h>
- #include <sound/dmaengine_pcm.h>
- #include <sound/hdmi-codec.h>
- #include <sound/pcm_drm_eld.h>
-@@ -2966,7 +2967,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 6731a822f4e3..7646356f30cb 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -160,12 +160,14 @@ static void clk_test_get_rate(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
  
- 	if (variant->max_pixel_clock == 600000000) {
- 		struct vc4_dev *vc4 = to_vc4_dev(drm);
--		long max_rate = clk_round_rate(vc4->hvs->core_clk, 550000000);
-+		unsigned long max_rate = rpi_firmware_clk_get_max_rate(vc4->hvs->core_clk);
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, ctx->rate);
++
++	clk_put(clk);
+ }
  
- 		if (max_rate < 550000000)
- 			vc4_hdmi->disable_4kp60 = true;
+ /*
+@@ -179,7 +181,7 @@ static void clk_test_set_get_rate(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -189,6 +191,8 @@ static void clk_test_set_get_rate(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -202,7 +206,7 @@ static void clk_test_set_set_get_rate(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -216,6 +220,8 @@ static void clk_test_set_set_get_rate(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -226,7 +232,7 @@ static void clk_test_round_set_get_rate(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rounded_rate, set_rate;
+ 
+ 	rounded_rate = clk_round_rate(clk, DUMMY_CLOCK_RATE_1);
+@@ -240,6 +246,8 @@ static void clk_test_round_set_get_rate(struct kunit *test)
+ 	set_rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, set_rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rounded_rate, set_rate);
++
++	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_test_cases[] = {
+@@ -314,7 +322,7 @@ static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
+ {
+ 	struct clk_single_parent_ctx *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate, new_rate;
+ 
+ 	rate = clk_get_rate(clk);
+@@ -329,6 +337,8 @@ static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
+ 	new_rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, new_rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, new_rate);
++
++	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] = {
+@@ -352,7 +362,7 @@ static void clk_range_test_set_range(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -365,6 +375,8 @@ static void clk_range_test_set_range(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -375,13 +387,15 @@ static void clk_range_test_set_range_invalid(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 
+ 	KUNIT_EXPECT_LT(test,
+ 			clk_set_rate_range(clk,
+ 					   DUMMY_CLOCK_RATE_1 + 1000,
+ 					   DUMMY_CLOCK_RATE_1),
+ 			0);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -420,7 +434,7 @@ static void clk_range_test_set_range_round_rate_lower(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -433,6 +447,8 @@ static void clk_range_test_set_range_round_rate_lower(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -443,7 +459,7 @@ static void clk_range_test_set_range_set_rate_lower(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -460,6 +476,8 @@ static void clk_range_test_set_range_set_rate_lower(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -472,7 +490,7 @@ static void clk_range_test_set_range_set_round_rate_consistent_lower(struct kuni
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	long rounded;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -489,6 +507,8 @@ static void clk_range_test_set_range_set_round_rate_consistent_lower(struct kuni
+ 			0);
+ 
+ 	KUNIT_EXPECT_EQ(test, rounded, clk_get_rate(clk));
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -499,7 +519,7 @@ static void clk_range_test_set_range_round_rate_higher(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -512,6 +532,8 @@ static void clk_range_test_set_range_round_rate_higher(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -522,7 +544,7 @@ static void clk_range_test_set_range_set_rate_higher(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -539,6 +561,8 @@ static void clk_range_test_set_range_set_rate_higher(struct kunit *test)
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1);
+ 	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -551,7 +575,7 @@ static void clk_range_test_set_range_set_round_rate_consistent_higher(struct kun
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	long rounded;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -568,6 +592,8 @@ static void clk_range_test_set_range_set_round_rate_consistent_higher(struct kun
+ 			0);
+ 
+ 	KUNIT_EXPECT_EQ(test, rounded, clk_get_rate(clk));
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -582,7 +608,7 @@ static void clk_range_test_set_range_get_rate_raised(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -598,6 +624,8 @@ static void clk_range_test_set_range_get_rate_raised(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -612,7 +640,7 @@ static void clk_range_test_set_range_get_rate_lowered(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -628,6 +656,8 @@ static void clk_range_test_set_range_get_rate_lowered(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_range_test_cases[] = {
+@@ -664,7 +694,7 @@ static void clk_range_test_set_range_rate_maximized(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -700,6 +730,8 @@ static void clk_range_test_set_range_rate_maximized(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -714,7 +746,7 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	struct clk *user1, *user2;
+ 	unsigned long rate;
+ 
+@@ -758,6 +790,7 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
+ 
+ 	clk_put(user2);
+ 	clk_put(user1);
++	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_range_maximize_test_cases[] = {
+@@ -785,7 +818,7 @@ static void clk_range_test_set_range_rate_minimized(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	unsigned long rate;
+ 
+ 	KUNIT_ASSERT_EQ(test,
+@@ -821,6 +854,8 @@ static void clk_range_test_set_range_rate_minimized(struct kunit *test)
+ 	rate = clk_get_rate(clk);
+ 	KUNIT_ASSERT_GT(test, rate, 0);
+ 	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++
++	clk_put(clk);
+ }
+ 
+ /*
+@@ -835,7 +870,7 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
+ {
+ 	struct clk_dummy_context *ctx = test->priv;
+ 	struct clk_hw *hw = &ctx->hw;
+-	struct clk *clk = hw->clk;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
+ 	struct clk *user1, *user2;
+ 	unsigned long rate;
+ 
+@@ -875,6 +910,7 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
+ 
+ 	clk_put(user2);
+ 	clk_put(user1);
++	clk_put(clk);
+ }
+ 
+ static struct kunit_case clk_range_minimize_test_cases[] = {
 -- 
 2.36.1
 
