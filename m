@@ -2,119 +2,154 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD04C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89DECCA480
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232147AbiGKPKu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:10:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39154 "EHLO
+        id S232193AbiGKPMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:12:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232137AbiGKPKt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:10:49 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A488747BA
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:10:48 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id r76so5163612iod.10
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:10:48 -0700 (PDT)
+        with ESMTP id S229706AbiGKPMl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:12:41 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917D473923;
+        Mon, 11 Jul 2022 08:12:39 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id a39so6563855ljq.11;
+        Mon, 11 Jul 2022 08:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kKpFWpGY0hXoQIb5wD82pXS413+2Z65GNbTveQzCW18=;
-        b=MRk9+HbRvfJ+4gcEttrxCskOj0BK2Cmbb1YFoaYKliW3IGq/Hs3LzP3/0MXew7UWL+
-         VMc9mfyIm8XdcJMDFwVljpTXUGN8vX/0CDFLhD077U3qgRxYZfI9qE5L2ZY8AHZ1tsdX
-         a7lJuohMg43lxOXjYgkUdRaxzihAQM2V4K4DCG6faS1Db/JM5sL/UM772OpiwDpsvcaT
-         f76P2OWkydPIY5iuZCcyZud8fAsRcJsaaCF7zZ83iKxOP3weRJGLV1zSx0rpTv+F97Oy
-         HYOn6LQRv3VIZB8rPG2bEtURRjAD4wJInyRDl9/1H9brKWQky7DUVT6/kVnHsep08U4J
-         Tk5w==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pjRUDXEBBcwSmCiD3m4BMtXVTKXGOIKhkWrDQAwd7uM=;
+        b=i4vY3VVsWv+bHyuXbdCVj/ibOZtbK2KBApk7BDa2fauU85bzJaoDSK7Vw8MiFiD7EJ
+         ot1A6QEuz61cgfxerZMhhRWqi3QpF3TcaKNaBnXiK8Lq+tF6kZRku28q40igTQQv/mMX
+         cQBPMX3lMHZ78asGDdz4OSW2MkxEMbW8zA9Blz+if1N1JPpm3lide9dWdOnoNLYp/NIF
+         2bjoTWACTd55YLjlVT1yH/LYpekVUtOjeGHgk2F2x2juMeySD+KO+j3Zf3U4eT/9fJrP
+         3LbGjvAp3YACsBy+4WKzN0lyAAVzlATJDP3Tvnk8mj1zFdA6wL0hTWv+Kn9brAQt1EDd
+         uB0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kKpFWpGY0hXoQIb5wD82pXS413+2Z65GNbTveQzCW18=;
-        b=gPC5I5WRlf6J40EyL3w9VctHAtpfoxCq/ilr5v9RRprNdr5ixMg/X/TV3IGvF+/09N
-         lTpppybdAjZp79A50KMXerYBIAdNuPtGs0LCAeplxeh/cWo2oD1BaM5HKi1GccHg7gHK
-         lBSX7LQiAp+hv8n+hJRVK9zTJ4DvT69OpE/JjS/d4c/PAaxcnRdeLKNZ8W8sVPaQiwbb
-         8quuchVkZaptcvg1Uih+7MyRQi6EAWyu3F7r+olEz2/KK3aqaggKokBFuh3B8+Uv3xb4
-         cwJawHSRDhwPvcBFREFH2Fu4UlgvSmSHZQA65tqGtASBZX9jfMoyUmt7abq/fsUupt1Q
-         m2IQ==
-X-Gm-Message-State: AJIora9ViBaGAo+QmTYXWmI2HUVuTCurB9/fbFHrfvbV0ALWaRpa0FIr
-        RHRd8b3eIh04/9ONLzdzLmsZBDTsqLvq4hd2TsRKJQ==
-X-Google-Smtp-Source: AGRyM1u9fCra3XN36tzejTX5ACgKM/FySKUP1jrWJwaXmYXu0WfZ3ZjlZ11EZ4uX7jFNpiSTHKHVKuAM/yGVSvCp8kU=
-X-Received: by 2002:a05:6602:2e8d:b0:64f:b683:c70d with SMTP id
- m13-20020a0566022e8d00b0064fb683c70dmr9382841iow.62.1657552247691; Mon, 11
- Jul 2022 08:10:47 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pjRUDXEBBcwSmCiD3m4BMtXVTKXGOIKhkWrDQAwd7uM=;
+        b=Z4VEPMHGQ/JIcxF8GzZJ2C9EJ+ym3PL/1/eSBp3HWWb1SNzfEZ3sSpecJMm1zIs/Ed
+         Z20FjQR9+zKkwdKLjCkFnht47txQmAizAzNO0AgWnL4AZsc2g+zpxHB5BHPMHMsShIn4
+         GSlg+bgGh/vbkRbutxidYRth+PyBstuqk83Cf2F9KdGWfIjIPSLeC3PyG4vKDzRCADLG
+         svTM2LrAR82gD+H9YwnqjE0UUVdHBZi36T9PDEwnX+Q5UF9P08bFMfqo7XM84+E09jVa
+         ge3KGpE2ut+qmptBjsvgeF5DbtnFCy0iibENst2Qgfw2z90y8YxubD68MhMt0CByIilx
+         QWyQ==
+X-Gm-Message-State: AJIora9Vw/15WF00xlzJ9NPqgwIOMaxpWYmxOMahI1DSQa/HCkYxg4gp
+        4Bs6D6UIJECQmE0MYw1J/BA=
+X-Google-Smtp-Source: AGRyM1uqCuw6kDX+p4gjHX6hRZQQQLWuGAYZCNeQAPsJMEy4SEjSMjEn4YAiR+dUiNxvbp+JGucDQw==
+X-Received: by 2002:a2e:a224:0:b0:25d:7448:75fe with SMTP id i4-20020a2ea224000000b0025d744875femr1060353ljm.280.1657552357949;
+        Mon, 11 Jul 2022 08:12:37 -0700 (PDT)
+Received: from mobilestation ([95.79.140.178])
+        by smtp.gmail.com with ESMTPSA id f17-20020a193811000000b00479307e4a1bsm1580284lfa.135.2022.07.11.08.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jul 2022 08:12:37 -0700 (PDT)
+Date:   Mon, 11 Jul 2022 18:12:35 +0300
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 6/7] clk: baikal-t1: Add DDR/PCIe directly controlled
+ resets support
+Message-ID: <20220711151235.ausotedsmrgkccqn@mobilestation>
+References: <20220708192725.9501-1-Sergey.Semin@baikalelectronics.ru>
+ <20220708192725.9501-7-Sergey.Semin@baikalelectronics.ru>
+ <20220711132348.GB3771@pengutronix.de>
 MIME-Version: 1.0
-References: <20220708162711.1309633-1-dlatypov@google.com> <20220711144651.yekrivauz3phkuvm@houat>
-In-Reply-To: <20220711144651.yekrivauz3phkuvm@houat>
-From:   Daniel Latypov <dlatypov@google.com>
-Date:   Mon, 11 Jul 2022 08:10:36 -0700
-Message-ID: <CAGS_qxp=UAJ19zQOZKP8ywPiNAj4wT80ubH2YW060mmADoqBcw@mail.gmail.com>
-Subject: Re: [PATCH v3] kunit: tool: Enable virtio/PCI by default on UML
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     brendanhiggins@google.com, davidgow@google.com,
-        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
-        =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220711132348.GB3771@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 7:46 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Unfortunately, this breaks the clock tests in next-20220711:
-> $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk/.kunitconfig  --raw_output
+On Mon, Jul 11, 2022 at 03:23:48PM +0200, Philipp Zabel wrote:
+> On Fri, Jul 08, 2022 at 10:27:24PM +0300, Serge Semin wrote:
+> > Aside with a set of the trigger-like resets Baikal-T1 CCU provides two
+> > additional blocks with directly controlled reset signals. In particular it
+> > concerns DDR full and initial resets and various PCIe sub-domains resets.
+> > Let's add the direct reset assertion/de-assertion of the corresponding
+> > flags support into the Baikal-T1 CCU driver then. It will be required at
+> > least for the PCIe platform driver. Obviously the DDR controller isn't
+> > supposed to be fully reset in the kernel, so the corresponding controls
+> > are added just for the sake of the interface implementation completeness.
+> > 
+> > Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> > 
+> > ---
+> > 
+> > Changelog v6:
+> > - Refactor the code to support the linear reset IDs only. (@Philipp)
+> > ---
+> >  drivers/clk/baikal-t1/ccu-rst.c     | 67 +++++++++++++++++++++++++++++
+> >  drivers/clk/baikal-t1/ccu-rst.h     | 10 +++++
+> >  include/dt-bindings/reset/bt1-ccu.h |  9 ++++
+> >  3 files changed, 86 insertions(+)
+> > 
+> > diff --git a/drivers/clk/baikal-t1/ccu-rst.c b/drivers/clk/baikal-t1/ccu-rst.c
+> > index 8fd40810d24e..c20aa3e07afb 100644
+> > --- a/drivers/clk/baikal-t1/ccu-rst.c
+> > +++ b/drivers/clk/baikal-t1/ccu-rst.c
+> > @@ -35,18 +35,29 @@
+> >  #define CCU_AXI_HWA_BASE		0x054
+> >  #define CCU_AXI_SRAM_BASE		0x058
+> >  
+> > +#define CCU_SYS_DDR_BASE		0x02c
+> >  #define CCU_SYS_SATA_REF_BASE		0x060
+> >  #define CCU_SYS_APB_BASE		0x064
+> > +#define CCU_SYS_PCIE_BASE		0x144
+> >  
+> >  #define CCU_RST_DELAY_US		1
+> >  
+> >  #define CCU_RST_TRIG(_base, _ofs)		\
+> >  	{					\
+> > +		.type = CCU_RST_TRIG,		\
+> > +		.base = _base,			\
+> > +		.mask = BIT(_ofs),		\
+> > +	}
+> > +
+> > +#define CCU_RST_DIR(_base, _ofs)		\
+> > +	{					\
+> > +		.type = CCU_RST_DIR,		\
+> >  		.base = _base,			\
+> >  		.mask = BIT(_ofs),		\
+> >  	}
+> >  
+> >  struct ccu_rst_info {
+> > +	enum ccu_rst_type type;
+> >  	unsigned int base;
+> >  	unsigned int mask;
+> >  };
+> > @@ -77,8 +88,18 @@ static const struct ccu_rst_info axi_rst_info[] = {
+> >   * well while the Linux kernel is working.
+> >   */
+> >  static const struct ccu_rst_info sys_rst_info[] = {
+> > +
+> 
 
-Thanks, this is indeed an issue.
+> Please drop this empty line. Otherwise,
 
-I remember noticing this in early April.
-I incorrectly remembered that a fix had been sent.
+Don't know how come this has got into the patch. Thanks for noticing
+this. I'll fix it in v7.
 
-A more minimal reproducer:
-$ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
-'clk-gate-test.clk_gate_test_enable'
+> 
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-The part of the test that becomes problematic with this patch (i.e.
-enabling logic iomem) is the cast on line 143.
+Many thanks for review, Philipp. I really appreciate this.
 
-   130  struct clk_gate_test_context {
-   131          void __iomem *fake_mem;
-   132          struct clk_hw *hw;
-   133          struct clk_hw *parent;
-   134          u32 fake_reg; /* Keep at end, KASAN can detect out of bounds */
-   135  };
-   136
-   137  static struct clk_gate_test_context
-*clk_gate_test_alloc_ctx(struct kunit *test)
-   138  {
-   139          struct clk_gate_test_context *ctx;
-   140
-   141          test->priv = ctx = kunit_kzalloc(test, sizeof(*ctx),
-GFP_KERNEL);
-   142          KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-   143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-   144
-   145          return ctx;
-   146  }
+-Sergey
 
-A simple fix we could carry in the KUnit branch is this:
-
-diff --git a/drivers/clk/.kunitconfig b/drivers/clk/.kunitconfig
-index cdbc7d7deba9..2fbeb71316f8 100644
---- a/drivers/clk/.kunitconfig
-+++ b/drivers/clk/.kunitconfig
-@@ -2,3 +2,4 @@ CONFIG_KUNIT=y
- CONFIG_COMMON_CLK=y
- CONFIG_CLK_KUNIT_TEST=y
- CONFIG_CLK_GATE_KUNIT_TEST=y
-+CONFIG_UML_PCI_OVER_VIRTIO=n
-
-The new ability to disable it comes from
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/commit/?h=kunit&id=8a7c6f859a20ca36a9e3ce71662de697898c9ef5
-
-Thoughts?
-
-Daniel
+> 
+> regards
+> Philipp
