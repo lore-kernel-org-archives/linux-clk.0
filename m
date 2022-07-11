@@ -2,86 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EEBC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 16:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7236C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 16:30:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbiGKQ2Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 12:28:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49586 "EHLO
+        id S230247AbiGKQax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 12:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiGKQ2X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 12:28:23 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B6537B34D
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 09:28:22 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id n7so5399539ioo.7
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 09:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4/tk/TUFQLGbAdc70/LIvZeDeOJPiToJkYt+rZXyPGA=;
-        b=IeKhf7GuNYxyS7A5kM2JnoniDfNQzoVPthpIqtMv3+6U30NTpn6G07pu9vGhiao0Ku
-         fHX6DxUhj/z6yZ8A4BTcS3XVPgK4E37NvLzwlIwit3s048xuQ0lEsx1D6G/cziobV95g
-         kL+hNzr0FzjVGCF8iK/wrfStmG8e229zrMTTdG+5DFA5jqKM9SGRlTxepl9ymN99vdOK
-         HbeIr/4224WR8ed88hoL62IwD6IbRuc0dDeyE2H2BJKdftrtu/F+Sf6YyIHKefGxkZcU
-         o8PuiOoSFZz6F8Bhl3jEnt5VS7fDFdomJLpy8lEcWZvyh3ICImSa257DaJtZ73Y2xWkT
-         QIJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4/tk/TUFQLGbAdc70/LIvZeDeOJPiToJkYt+rZXyPGA=;
-        b=QUne+Au7uK3lW2aaJec+1sgKidvVJYYld96HhJbHIFfqpHOFOGbS1f5JMdNrzrV0ax
-         /FFVrsyXsIeTWhcPXMB78m+4ymGI7OtDXg1vg9y+uvoo+ELoYr0uwR8ZtDm6bdOr7BZ2
-         n8Bo0V0u0GgycQ9gTAuPsCRZ+oJxG32K1bbZY0kqeyRSCTg7TchP34ZGz4R7a6KNsAki
-         jf9WgY7n9uJNUeFq6E4ATM1SifvcVM7K7FfQGpS40KmbeLYm78aq0PtER1ZWgqKRzgqZ
-         H4zA1Toil7F45eFeaVWF6tF730W/NpZLN/bei3f0BPPaIsBtYNwBRfn+t+KzKiV+SjZ/
-         fKEw==
-X-Gm-Message-State: AJIora8Srf7vEJFaM784L8FkxwQhpQ3yX7Q2Doq6yo0LLP4Btr4kOYmY
-        rEpcZQbEOw0VW+syiYyrknVwbYpjsPdj+8zBpGQPUQ==
-X-Google-Smtp-Source: AGRyM1tDNLf6Lfp+ypFfP4tVKghz09e9evCMz55QESThGK1cUTEIZHaOrDekXzJ95vPb9tlIuBBvhWZYko2arK0dFeQ=
-X-Received: by 2002:a6b:3e83:0:b0:678:e63b:355d with SMTP id
- l125-20020a6b3e83000000b00678e63b355dmr9793523ioa.134.1657556901473; Mon, 11
- Jul 2022 09:28:21 -0700 (PDT)
+        with ESMTP id S231938AbiGKQav (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 12:30:51 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E768C4198C;
+        Mon, 11 Jul 2022 09:30:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 3B4D1CE157F;
+        Mon, 11 Jul 2022 16:30:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE84C34115;
+        Mon, 11 Jul 2022 16:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657557046;
+        bh=7ys5DT5LCo4Aok86zE8TUi4FZO1ZJabIQ/9L+8kOfnA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=B5nvxvLkr5analne4pcAsLvy47vA10xyIdIuXIaeYQ8DMr63M8PTcGl+P31+cl0JF
+         ZGH0J6ZJUpsk+Jh3kf8Pvg2X/wuMWFt4ypm5s/+U4UAVOU1sEtlRcZAhy2zLRMmFqy
+         J/M4aNdWOw7GmhlS6WrTzXbIoJr5P5xxgy1pFd+k3aO+ondwbDghSI0TQL8vzJAKpb
+         o1gSEVGOZevToclf+pvCJMc/Yk9vhO6vjcrMe8S4ldfcHkjOYblbUAr3TprIem5T4J
+         mT4ukJq3M1aDDK6xQ7corz6dbtaFM2MUi23GWH3AC5q5z6otAFX+LW2A1zsacgVBn2
+         Fa6lso6NwmHCA==
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>,
+        Robert Foss <robert.foss@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Nathan Chancellor <nathan@kernel.org>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: qcom: gpucc-sm8350: Fix "initializer element is not constant" error
+Date:   Mon, 11 Jul 2022 09:30:21 -0700
+Message-Id: <20220711163021.152578-1-nathan@kernel.org>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-References: <20220708162711.1309633-1-dlatypov@google.com> <20220711144651.yekrivauz3phkuvm@houat>
- <CAGS_qxp=UAJ19zQOZKP8ywPiNAj4wT80ubH2YW060mmADoqBcw@mail.gmail.com> <20220711155005.lnebdh534ntmf4sv@houat>
-In-Reply-To: <20220711155005.lnebdh534ntmf4sv@houat>
-From:   Daniel Latypov <dlatypov@google.com>
-Date:   Mon, 11 Jul 2022 09:28:10 -0700
-Message-ID: <CAGS_qxqFAdSCJBrmgY=FvwSjLrdMHqYW4gjh41VaYYh=1PybqQ@mail.gmail.com>
-Subject: Re: [PATCH v3] kunit: tool: Enable virtio/PCI by default on UML
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     brendanhiggins@google.com, davidgow@google.com,
-        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
-        =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 8:50 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> > A simple fix we could carry in the KUnit branch is this:
-> >
-> > diff --git a/drivers/clk/.kunitconfig b/drivers/clk/.kunitconfig
-> > index cdbc7d7deba9..2fbeb71316f8 100644
-> > --- a/drivers/clk/.kunitconfig
-> > +++ b/drivers/clk/.kunitconfig
-> > @@ -2,3 +2,4 @@ CONFIG_KUNIT=y
-> >  CONFIG_COMMON_CLK=y
-> >  CONFIG_CLK_KUNIT_TEST=y
-> >  CONFIG_CLK_GATE_KUNIT_TEST=y
-> > +CONFIG_UML_PCI_OVER_VIRTIO=n
->
-> It works for me now thanks
->
-> Feel free to add my Tested-by
->
-> Maxime
+When building with clang or GCC older than 8, errors along the following
+lines occur:
 
-Thanks, sending out
-https://lore.kernel.org/linux-kselftest/20220711162713.2467476-1-dlatypov@google.com
+  drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is not a compile-time constant
+          gpu_cc_parent,
+          ^~~~~~~~~~~~~
+  drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is not a compile-time constant
+          gpu_cc_parent,
+          ^~~~~~~~~~~~~
+  2 errors generated.
+
+The C standard allows an implementation to accept other forms of
+constant expressions, which GCC 8+ has chosen to do, but it is not
+required. To fix this error with clang and older supported versions of
+GCC, use a macro so that the expression can be used in a designated
+initializer.
+
+Fixes: 160758b05ab1 ("clk: qcom: add support for SM8350 GPUCC")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1660
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/clk/qcom/gpucc-sm8350.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
+index d13fa813d190..9390723f6e40 100644
+--- a/drivers/clk/qcom/gpucc-sm8350.c
++++ b/drivers/clk/qcom/gpucc-sm8350.c
+@@ -51,9 +51,9 @@ static const struct alpha_pll_config gpu_cc_pll0_config = {
+ 	.user_ctl_hi1_val = 0x00000000,
+ };
+ 
+-static const struct clk_parent_data gpu_cc_parent = {
+-	.fw_name = "bi_tcxo",
+-};
++#define GPU_CC_PARENT_INIT { .fw_name = "bi_txco", }
++
++static const struct clk_parent_data gpu_cc_parent = GPU_CC_PARENT_INIT;
+ 
+ static struct clk_alpha_pll gpu_cc_pll0 = {
+ 	.offset = 0x0,
+@@ -108,7 +108,7 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
+ };
+ 
+ static const struct clk_parent_data gpu_cc_parent_data_0[] = {
+-	gpu_cc_parent,
++	GPU_CC_PARENT_INIT,
+ 	{ .hw = &gpu_cc_pll0.clkr.hw },
+ 	{ .hw = &gpu_cc_pll1.clkr.hw },
+ 	{ .fw_name = "gcc_gpu_gpll0_clk_src" },
+@@ -123,7 +123,7 @@ static const struct parent_map gpu_cc_parent_map_1[] = {
+ };
+ 
+ static const struct clk_parent_data gpu_cc_parent_data_1[] = {
+-	gpu_cc_parent,
++	GPU_CC_PARENT_INIT,
+ 	{ .hw = &gpu_cc_pll1.clkr.hw },
+ 	{ .fw_name = "gcc_gpu_gpll0_clk_src" },
+ 	{ .fw_name = "gcc_gpu_gpll0_div_clk_src" },
+
+base-commit: 0dd8e16bfbc003b009f843e75fae4046daa08fe9
+-- 
+2.37.0
+
