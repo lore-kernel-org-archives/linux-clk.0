@@ -2,83 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8476DC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C66FC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbiGKUfl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:35:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
+        id S229476AbiGKUtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:49:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232107AbiGKUf0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:35:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850BE80517;
-        Mon, 11 Jul 2022 13:35:08 -0700 (PDT)
+        with ESMTP id S229593AbiGKUtC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:49:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A9D11173;
+        Mon, 11 Jul 2022 13:49:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0707D61662;
-        Mon, 11 Jul 2022 20:35:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E464C34115;
-        Mon, 11 Jul 2022 20:35:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E49EE6168C;
+        Mon, 11 Jul 2022 20:48:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDD5C34115;
+        Mon, 11 Jul 2022 20:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657571701;
-        bh=H3ZMMu+n8X0deD4cYrrflgTwCGdWr0F0+bwRd+0O5Z0=;
+        s=k20201202; t=1657572539;
+        bh=zuU3VsAsUph7e7zwXq/2Epxqe4K3n6QYBMJuw+41dg4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oxj7bwuGiZA6nllzA9QD7jkeglajNlfVZL0H0o7zi5LKxWZmyQGpwLOr40DPzAQk8
-         453qQrf4cvFrhnPu7+uojeHCTwZI7HC5uJ3hxZGzD1RGlZrk1E3UmGiOVYX5nisMef
-         VFF2bq3sLJtiiZFwLU+viQLn4Ux8wev2eyHpAeReCZTHGr9S72rDTmYNK04vGub/iw
-         RJxcqi5zSPZUsmyV1gKg/UZsbcOJy1J0F80ULQbLntPGRJhyVdZ56JDHHQwM2ogvU1
-         UqF/piISWhlp+qioz8MvkVjTI4STnnCxQfWmPes6/0JPbIhxRthBZ9/oCX1ZPQOWUU
-         j7Y/+SZzXfJjg==
+        b=QEZdIJJu0iVDm5NdwtCFe8ql1UaFVZCcBfNxEaQasbGH2e7uNQEXBN7doLRzt2Bsy
+         fs1vcf55GP8RVcGkH99C1uibkz/WVo6CqTcGCPMf76uao0WqlGEaDab+BHznqGcKWN
+         q3Z2sBjpDR338LdZl+EPanBntinMBqPKGHT/n2XtlYlk9Rgsg9SJ2I6nIgNW0x8Yjs
+         4cmMd8K9DZe8kCVEBa0rYUMaZs1lEB++Rkdybbjm3iAET1jz7drgtyxFSCbDvkqHTK
+         enwqPC13nWd6/4hp9rcochN04yl2mCLLHO7xE+XG7hmnC0s4HGV/HccK710csMM5bV
+         pxnTx7huysVhw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220711174004.3047516-1-nathan@kernel.org>
-References: <20220711174004.3047516-1-nathan@kernel.org>
-Subject: Re: [PATCH v2] clk: qcom: gpucc-sm8350: Fix "initializer element is not constant" error
+In-Reply-To: <20220711162713.2467476-1-dlatypov@google.com>
+References: <20220711162713.2467476-1-dlatypov@google.com>
+Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        Nathan Chancellor <nathan@kernel.org>,
-        kernel test robot <lkp@intel.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Nathan Chancellor <nathan@kernel.org>
-Date:   Mon, 11 Jul 2022 13:34:59 -0700
+Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-clk@vger.kernel.org, Daniel Latypov <dlatypov@google.com>,
+        Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Latypov <dlatypov@google.com>, brendanhiggins@google.com,
+        davidgow@google.com
+Date:   Mon, 11 Jul 2022 13:48:57 -0700
 User-Agent: alot/0.10
-Message-Id: <20220711203501.4E464C34115@smtp.kernel.org>
+Message-Id: <20220711204859.3DDD5C34115@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Chancellor (2022-07-11 10:40:05)
-> When building with clang or GCC older than 8, errors along the following
-> lines occur:
+Quoting Daniel Latypov (2022-07-11 09:27:13)
+> CONFIG_UML_PCI_OVER_VIRTIO=3Dy is needed to enable CONFIG_PCI=3Dy on UML.
+> However, this causes test failures when running the clk tests, i.e.
+> $ ./tools/testing/kunit/kunit.py run --kunitconfig=3Ddrivers/clk
 >=20
->   drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is no=
-t a compile-time constant
->           gpu_cc_parent,
->           ^~~~~~~~~~~~~
->   drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is no=
-t a compile-time constant
->           gpu_cc_parent,
->           ^~~~~~~~~~~~~
->   2 errors generated.
+> A snippet of the particular error is:
+> >     ok 1 - clk_gate_test_parent_rate
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
 >=20
-> The C standard allows an implementation to accept other forms of
-> constant expressions, which GCC 8+ has chosen to do, but it is not
-> required. Just inline the initializer to resolve the error.
+> This is triggered by this cast in the test:
+>    143          ctx->fake_mem =3D (void __force __iomem *)&ctx->fake_reg;
+> this seems to work except when logic iomem is enabled, i.e.
+> CONFIG_INDIRECT_IOMEM=3Dy.
 >=20
-> Fixes: 160758b05ab1 ("clk: qcom: add support for SM8350 GPUCC")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1660
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
+> drivers/clk/.kunitconfig so we can enable it for everyone else by
+> default in kunit.py.
+>=20
+> The long-term fix probably requires something more complicated, like
+>   #ifdef CONFIG_INDIRECT_IOMEM
+>     logic_iomem_add_region(...);
+>   #endif
+
+If this is how platform IO is mocked then yes we'll have to implement
+that.
+
+>=20
+> Signed-off-by: Daniel Latypov <dlatypov@google.com>
+> Reported-by: Maxime Ripard <maxime@cerno.tech>
+> Tested-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+> Note: this targeting the -kselftest kunit branch.
+> There's a commit that triggers this by enabling logic iomem by default
+> [1] and there's also a commit that lets disable it via kunitconfig file
+> [2], which this fix relies on.
+>=20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest=
+.git/commit/?h=3Dkunit&id=3D6fc3a8636a7b0f7dbd6d0a4e450e765dc17518d4
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest=
+.git/commit/?h=3Dkunit&id=3D8a7c6f859a20ca36a9e3ce71662de697898c9ef5
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
