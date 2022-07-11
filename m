@@ -2,101 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D3DC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468C1CCA47B
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 12:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbiGKL43 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 07:56:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49924 "EHLO
+        id S231137AbiGKMCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 08:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiGKL42 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:56:28 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDCD326DD
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:56:26 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id g1so5889789edb.12
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:56:26 -0700 (PDT)
+        with ESMTP id S231235AbiGKMCQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 08:02:16 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E6AD3B972
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 05:02:06 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id y11so1754978lfs.6
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 05:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7PtfrXO1muPciH2j8bRjfuNDfP1Fsd4zwF2waXvYN50=;
-        b=onJg3HN0oCrv0W9dCJRxiNKQyqV0TFr8Dfwdc6eY989ZSl6ci0/0AY2iXw2m4ibjeH
-         0OjAJXtJYm1FPVegXDX5Gvdh4tEDG9PMMK1MDRnVw65gG+UOrFGa3r1PCKFWXz8IbDYe
-         Xku+4mbYsI6U+HV+o47l+gFl9fNlAO6fHYzIDhVkLTrUDpTKWGOD2F39yTxbpEPZt1cX
-         tdb791uUZvPSSo2YwpY0j6fB5gOzUhdEKV6AN0W/hgPp3G4883XWlecmnuyaatZdpHtm
-         wQasHxidD1d0T9fW9LYURrF4UtYTzcXoBU0MbwlIJxf5D+0e8v9Qb1ZMzBG/rU74QlxC
-         VFcg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=QVqxg0dp3wEYOZpL9v9ilM2FSVRUoonO6i41pxiTzI8=;
+        b=hFlw6gC8Q7phUNCtcoZ+mnhDG3DT2Icr9ctPW9MH8XjMtD29CbFUV/+EqObdE85V3+
+         84TFY8D/cPCLDmxM+Yjze8C5OqepE/+Jks3xTPjY8bvxWBK6PIcNzNssTM1CFhs9LtEk
+         jwd7bOEnaXnycO0NG4YXMJQxd0/Iydvchv52ywJ4QVSlfLFKenAy31lHszz6+D8Fiwtu
+         0PxvFQZMrFg2Ig2iOO7St7bU6PIywmAR7oIdOA8wSFtGZNMLW2Wx+fOS0U4T/Sc9xrDA
+         yiqr7V7dxkxre7p2jDbyB8gkHTM4L7MGLh1bGnShicdj+usImIZHWFNsR4CLEWZT0lgl
+         /CIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=7PtfrXO1muPciH2j8bRjfuNDfP1Fsd4zwF2waXvYN50=;
-        b=S/Ar9pA3Zf5bjCVDaJ6uzrLDm7Ob2i90G0giMgoSXnkHgd+ai4PE91QNqzEz4gz3sR
-         lNr6Epcu7aphqtTXBuKAOzirY0Fmv+yKOVOftA6bJVDGMvWxo6ZlOcpCD7bu6cPJbbpD
-         kUQWnBkWlC2/ifFVNcSsW32RZMc/e5EWA/ZiHHynDgWzCJeB47j/Z0yXYawvVCSUpgp3
-         7gzp42RCDXeAhPNB0GOPt2ojILuJQZ6/CSVXRenjl/Wh7luCGGrDJeT7HdKzjTNoe9kQ
-         Y+qmWifi2jm+uiAIy/1KwMa8A1DHocGDm1kXKwC/9wmAquFYaEmRyv2TzUx+YxMJuEWq
-         jJqw==
-X-Gm-Message-State: AJIora8R1jUvXt3B+BC6/euk3M07wbNKp9tHZs+jSonkF7jykz4ecZbC
-        jwg+heVLkEqYtC8q2RwcHHSexQ==
-X-Google-Smtp-Source: AGRyM1vMfIA4XQ6ZtFet6Vbj8aoaBP0vzK/gnYP4nB46mV88UIvfjrpml3nHPraiPFFSJbxez3fkQw==
-X-Received: by 2002:aa7:d389:0:b0:43a:56c0:c863 with SMTP id x9-20020aa7d389000000b0043a56c0c863mr24055139edq.373.1657540585360;
-        Mon, 11 Jul 2022 04:56:25 -0700 (PDT)
-Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id z9-20020a170906270900b00722e50dab2csm2594932ejc.109.2022.07.11.04.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 04:56:24 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v5.20
-Date:   Mon, 11 Jul 2022 14:55:42 +0300
-Message-Id: <20220711115542.1015136-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.3
+        bh=QVqxg0dp3wEYOZpL9v9ilM2FSVRUoonO6i41pxiTzI8=;
+        b=ijZJvxp0ZuGBWlDK5IKIQdsyef/vMCmoRCobQFBsdp8PHe6sCt8CWhz9+4aO8jS+Ud
+         gtvaqUXzkISaLjz6wl3Faj+vT9Xi17TP035mZO56/sSDC6c9vFZChp6EI294zo5FPbud
+         udgLGSNjWDmmEmhoKmFdl4cwlOf8AFYLjutCYMMuLSDs+S4Tt7SDJsyT6qZBRwFWLPWF
+         4DUxv+z2ye75lmiX8PHlvq9iOLhRNT8+r7WRhH79ixs0DQ4vJaeVsm2nodQJxBDf4Yi/
+         xSrf2cWShXRY6Z2MqNQtzzdoFeiT+ztRNXORB8jOO4dlgyy6NMerQdZ59xsu1z2lD304
+         YejQ==
+X-Gm-Message-State: AJIora8sd4WGrrmvQpm68OmgnaEKYbCwKqGx9aRNhAL7SvXlp33x+AWh
+        +qB0Oyi+tGx3zro3T8eo3saDZQ==
+X-Google-Smtp-Source: AGRyM1tPFsxY/xB1ICxsLpx4b0d9lJislbMty935ePwpSxLaNm08XHOXHHUPjHR/WWsfjwVIeBOlQg==
+X-Received: by 2002:a05:6512:398c:b0:488:f524:b7e9 with SMTP id j12-20020a056512398c00b00488f524b7e9mr10868068lfu.259.1657540924386;
+        Mon, 11 Jul 2022 05:02:04 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5cab-55.bb.online.no. [88.92.171.55])
+        by smtp.gmail.com with ESMTPSA id d28-20020ac25edc000000b00489c719b809sm1492196lfq.284.2022.07.11.05.02.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Jul 2022 05:02:03 -0700 (PDT)
+Message-ID: <9e1ff864-3952-6442-13db-a3d8e18f86c3@linaro.org>
+Date:   Mon, 11 Jul 2022 14:02:01 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 4/6] clk: qcom: apss-ipq6018: add MODULE_ALIAS
+Content-Language: en-US
+To:     Robert Marko <robimarko@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, sivaprak@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20220711104719.40939-1-robimarko@gmail.com>
+ <20220711104719.40939-4-robimarko@gmail.com>
+ <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
+ <CAOX2RU6X=JiV1As+_N6c_=VaHfVYpke_deQmmNPMMDxfnz5i8g@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAOX2RU6X=JiV1As+_N6c_=VaHfVYpke_deQmmNPMMDxfnz5i8g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
+On 11/07/2022 13:46, Robert Marko wrote:
+> On Mon, 11 Jul 2022 at 13:05, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 11/07/2022 12:47, Robert Marko wrote:
+>>> Add MODULE_ALIAS so that driver will be autoloaded if built as a module.
+>>>
+>>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+>>> ---
+>>>  drivers/clk/qcom/apss-ipq6018.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+>>> index f2f502e2d5a4..963c69f2c0c2 100644
+>>> --- a/drivers/clk/qcom/apss-ipq6018.c
+>>> +++ b/drivers/clk/qcom/apss-ipq6018.c
+>>> @@ -101,5 +101,6 @@ static struct platform_driver apss_ipq6018_driver = {
+>>>
+>>>  module_platform_driver(apss_ipq6018_driver);
+>>>
+>>> +MODULE_ALIAS("platform:qcom,apss-ipq6018-clk");
+>>
+>> That's not correct alias (no commas) and usually alias is not needed at
+>> all. If you need one, please explain why it is needed. Module
+>> autoloading works fine without aliases...
+> 
+> Hi Krzysztof,
+> alias is required here as the driver does not use a DT compatible but
+> is registered
+> by the APCS driver, if built as a module, it won't get autoloaded
+> without an alias.
 
-  Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+Instead you need device ID table. Aliases are not a workaround for
+missing core driver elements.
 
-are available in the Git repository at:
+> 
+> I can only fix up the driver name here and in APCS first to have an
+> alias without commas.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-5.20
+I see that the comma is used in driver name, so this is an independent
+issue. Maybe change it to '-' in separate commit?
 
-for you to fetch changes up to c196175acdd3ab06114bde2955971bc7282f2b85:
 
-  clk: imx: clk-fracn-gppll: Add more freq config for video pll (2022-06-16 17:28:59 +0300)
-
-----------------------------------------------------------------
-i.MX clock changes for 5.20
-
-- Correct adc1, nic_media and edma1's parents for i.MX93
-- Fix rdiv, mfd values, the return rate in recalc_rate and add more
-  frequencies in the table for fracn-gppll
-
-----------------------------------------------------------------
-Haibo Chen (1):
-      clk: imx93: use adc_root as the parent clock of adc1
-
-Jacky Bai (1):
-      clk: imx93: Correct the edma1's parent clock
-
-Liu Ying (1):
-      clk: imx: clk-fracn-gppll: Return rate in rate table properly in ->recalc_rate()
-
-Peng Fan (4):
-      clk: imx93: correct nic_media parent
-      clk: imx: clk-fracn-gppll: fix mfd value
-      clk: imx: clk-fracn-gppll: correct rdiv
-      clk: imx: clk-fracn-gppll: Add more freq config for video pll
-
- drivers/clk/imx/clk-fracn-gppll.c | 36 +++++++++++++++++++++---------------
- drivers/clk/imx/clk-imx93.c       |  6 +++---
- 2 files changed, 24 insertions(+), 18 deletions(-)
+Best regards,
+Krzysztof
