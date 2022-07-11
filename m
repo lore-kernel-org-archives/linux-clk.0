@@ -2,92 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63599C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 21:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B0C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 23:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232133AbiGKVk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 17:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
+        id S231152AbiGKXDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 19:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232216AbiGKVkE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 17:40:04 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F954820CC;
-        Mon, 11 Jul 2022 14:40:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=MxZLNsEYWmGS2U8Tp+3WU74u0FPSEgIOYWsVk2AnpjQ=; b=GRVeA5E2i4QwxmtSq9juLDjKkV
-        di5hUGbDJLbBDHegFiKEPn3+CS+XYLU0SNwrQ86TpCyXRox+wlsVaBL3ONFk3S4yEFmF0an34vFWv
-        wYYxHDowijTdLyLgJYZpOdeNPxUxj2npRYwXMjThpznC+mbHMkEb1VslIejlb0H/rqbmAlv3tBDhd
-        0gep0ku7RUq/3GsLhFkCFuPggTuHdE0aNG1XoXOwGL0Lc3npYB1sIFUIJZnHUkmRRh3OYoiwB+325
-        tXbC7dGIz6CgyHNTveatDi3IxYaSS+rIDCjoDbz9Zajs2iDtPaB+g664Cky4MN1fzuwwwstVD87sQ
-        Uryyf5LQ==;
-Received: from [2601:1c0:6280:3f0::a6b3]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oB18C-0050Cq-Nt; Mon, 11 Jul 2022 21:39:52 +0000
-Message-ID: <af5f882f-e7f8-ca49-020d-0dab3f2cc145@infradead.org>
-Date:   Mon, 11 Jul 2022 14:39:51 -0700
+        with ESMTP id S229606AbiGKXDV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 19:03:21 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFF159273
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 16:03:20 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id u6so6169413iop.5
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 16:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZPXhzxwUo/ZCdZLeYUQL98xfFxCi7Cx7vbdqmGr4H/s=;
+        b=od/y9HJhbzw+qEa4XZKbNNmwqNHoga7e9JNh21UKNlGBYkuRwP9U2SQ1vXpHnNkwWp
+         L9pNhUuQaQGtfTyXSm/MGXGbeALkxDS/ebQcZVAxs5+aIKYV7AYjMm5QU+UzkuhwgQwI
+         lwLlWxlemeNQAobTcVsNPKyjzu03zPqCGuoX5YB8vh9ikOLIDv4lH18Na5J0xss6BYGh
+         5QmSW6HGzODXdBa+WANA/hqW5WbANEd+0WIegWRha2zR2NZr6qsyN8UMqYe/2XEwRO+P
+         V/YDcpFBIzCaUozohLooMTc1uewzSTzRBmitz0+YWOh5eoZW7i+gJSAW6PdiU7+tXhL+
+         ZTuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZPXhzxwUo/ZCdZLeYUQL98xfFxCi7Cx7vbdqmGr4H/s=;
+        b=e62Tx/zz5/OhoM9tzaJ30jkdLlgPBMArL91NHMmUBokxg3UHEzZlZNqEZchHECrNez
+         Mn6CXGtW5w3Z/2NQk1yG1bHZN8PiTHXp/GEwPvZfBYdPSItCN6Cp7MThllgnk2OCK4N/
+         4bb0orYYU9aCmn98Q8nFCBevBK9+HTKHap9t+k6GRPdHJXP+0e1fBRFQjiwM34+Rd+my
+         xd3FnxWgT3Zew3KfD+N88rSVkGNgKUN79wnl5LsdlSLXiQBMCtRXr/DymttnYh53JAzd
+         0hYOWKq4rp1ku5qAi2/s6T6JDtMLQZ/4MHbDRvmnh3UQ6ktdrb90tjfIymnc6EA1qsh1
+         IeZw==
+X-Gm-Message-State: AJIora8vzM2SRI8v1mNLBRQTJq9KT+yroAxQ7TrB9n3HeJkK3DW2qvn+
+        kqg7ge479lUuJOY8ah1LsuYloTyc1sASbnGSdKhn0g==
+X-Google-Smtp-Source: AGRyM1s87Q93LXBgrqkRfeMusqvdl65gYPYSYZTJMADI5/6fvr0hZQDbHmoI2Wcof6Sm8CduljX/1HWmuR5vC3zJJKw=
+X-Received: by 2002:a6b:3e83:0:b0:678:e63b:355d with SMTP id
+ l125-20020a6b3e83000000b00678e63b355dmr10624504ioa.134.1657580599491; Mon, 11
+ Jul 2022 16:03:19 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v7 5/7] clk: baikal-t1: Move reset-controls code into a
- dedicated module
-Content-Language: en-US
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru>
- <20220711154433.15415-6-Sergey.Semin@baikalelectronics.ru>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220711154433.15415-6-Sergey.Semin@baikalelectronics.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220711162713.2467476-1-dlatypov@google.com> <20220711204859.3DDD5C34115@smtp.kernel.org>
+In-Reply-To: <20220711204859.3DDD5C34115@smtp.kernel.org>
+From:   Daniel Latypov <dlatypov@google.com>
+Date:   Mon, 11 Jul 2022 16:03:08 -0700
+Message-ID: <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
+Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     brendanhiggins@google.com, davidgow@google.com,
+        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
+        linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jul 11, 2022 at 1:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Daniel Latypov (2022-07-11 09:27:13)
+> > CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
+> > However, this causes test failures when running the clk tests, i.e.
+> > $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
+> >
+> > A snippet of the particular error is:
+> > >     ok 1 - clk_gate_test_parent_rate
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
+> >
+> > This is triggered by this cast in the test:
+> >    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
+> > this seems to work except when logic iomem is enabled, i.e.
+> > CONFIG_INDIRECT_IOMEM=y.
+> >
+> > As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
+> > drivers/clk/.kunitconfig so we can enable it for everyone else by
+> > default in kunit.py.
+> >
+> > The long-term fix probably requires something more complicated, like
+> >   #ifdef CONFIG_INDIRECT_IOMEM
+> >     logic_iomem_add_region(...);
+> >   #endif
+>
+> If this is how platform IO is mocked then yes we'll have to implement
+> that.
 
+It's not clear that it will be, but it's likely.
+Until it's more clear, I figured we'd go with this simple bandaid fix for now.
 
-On 7/11/22 08:44, Serge Semin wrote:
-> diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
-> index 03102f1094bc..56a4ff1d8bf0 100644
-> --- a/drivers/clk/baikal-t1/Kconfig
-> +++ b/drivers/clk/baikal-t1/Kconfig
-> @@ -29,7 +29,6 @@ config CLK_BT1_CCU_PLL
->  
->  config CLK_BT1_CCU_DIV
->  	bool "Baikal-T1 CCU Dividers support"
-> -	select RESET_CONTROLLER
->  	select MFD_SYSCON
->  	default MIPS_BAIKAL_T1
->  	help
-> @@ -39,4 +38,15 @@ config CLK_BT1_CCU_DIV
->  	  either gateable or ungateable. Some of the CCU dividers can be as well
->  	  used to reset the domains they're supplying clock to.
->  
-> +config CLK_BT1_CCU_RST
-> +	bool "Baikal-T1 CCU Resets support"
-> +	select RESET_CONTROLLER
-> +	select MFD_SYSCON
-> +	default MIPS_BAIKAL_T1
-> +	help
-> +	  Enable this to support the CCU reset blocks responsible for the
-> +	  AXI-bus and some subsystems reset. These are mainly the
-> +	  sef-deasserted reset controls but there are several lines which
+There was initially some talk of using function-level
+"stubbing"/"mocking" [1] to do the same, but Brendan started playing
+around with logic iomem more. He and David can comment on it more
+cogently than I can.
 
-	  self-deasserted
-?
+[1] https://lore.kernel.org/linux-kselftest/20220318021314.3225240-3-davidgow@google.com/
 
-> +	  can be directly asserted/de-asserted (PCIe and DDR sub-domains).
-
--- 
-~Randy
+Daniel
