@@ -2,78 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB6FC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 12:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBC6C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 12:46:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbiGKMln convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 08:41:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
+        id S232009AbiGKMqi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 08:46:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231737AbiGKMl1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 08:41:27 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3048460506
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 05:41:11 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1oAsiG-00071j-VM; Mon, 11 Jul 2022 14:40:33 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1oAsiE-000JPB-U5; Mon, 11 Jul 2022 14:40:30 +0200
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1oAsiD-000LJQ-Tn; Mon, 11 Jul 2022 14:40:29 +0200
-Message-ID: <ea6c23bf384900e46a523b0a2aab04b6d5c97310.camel@pengutronix.de>
-Subject: Re: [PATCH v8 09/16] reset: npcm: Add NPCM8XX support
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Tomer Maimon <tmaimon77@gmail.com>, avifishman70@gmail.com,
-        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
-        yuenn@google.com, benjaminfair@google.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, gregkh@linuxfoundation.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-        olof@lixom.net, jirislaby@kernel.org, shawnguo@kernel.org,
-        bjorn.andersson@linaro.org, geert+renesas@glider.be,
-        marcel.ziswiler@toradex.com, vkoul@kernel.org,
-        biju.das.jz@bp.renesas.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        robert.hancock@calian.com, j.neuschaefer@gmx.net, lkundrak@v3.sk
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Mon, 11 Jul 2022 14:40:29 +0200
-In-Reply-To: <20220711123519.217219-10-tmaimon77@gmail.com>
-References: <20220711123519.217219-1-tmaimon77@gmail.com>
-         <20220711123519.217219-10-tmaimon77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
+        with ESMTP id S232035AbiGKMqV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 08:46:21 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8BD621267;
+        Mon, 11 Jul 2022 05:45:57 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id cf13so5140219qtb.13;
+        Mon, 11 Jul 2022 05:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EOHtYs+PqgFv2+4RKD8qT8cMKZM9sv42lV+Bo9Bs7bk=;
+        b=Q3KKt/Hjj7Ag3ycSs+G82xktAOKbdeZEzHkKvSjOCwY1Zi34CXGCQriRhbX7I39SSA
+         UvH2j2FFNiLOeqAJyAdosP/uFjiQq3aQ27NEeQGRj0zFEEwyPNKLJKIBD7HCUyTtrMY4
+         igCRf0KnapJff3dol3HMchhMF/7pi1I0LLUTAkmoniltoqcEjmHQNI2/9ttVnarwuEtp
+         m6Z2693Mp3QbVoCPBRup//P8hCM8uMHbGsc/pAqFr8SOdVqakXA/yxHgTBHWnEUmikH+
+         H+8pUy8AcCFAqznNhwbp9sj9vHSAP6HSI47Gj1Ym1DNa/i39wIqocswpa7YtQs2nKO77
+         j7zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EOHtYs+PqgFv2+4RKD8qT8cMKZM9sv42lV+Bo9Bs7bk=;
+        b=BlE+ZyrxNXtfjBdNuYUP5lHILb3tP3pEjHxvhDRW8npVGpG3rvw5qcmYrZ3u04PQay
+         AMaK4ZpUTiSuggLBHP3sOZKHG35bp6njM6k3q/d4tGO6DkOFXfb6mb3rVN4/J1FvnK26
+         HTitdAW8CZqcePKl4ThvpJsyOZUR3RnHvypNv1TYQIza8/gRIwUpX6LlEA/P4ylk3xmM
+         27Du2u72CPv1LwPE05L+xNNFVvTL3vcZ+M7uZFPNpG9Y3kwWMyXEU1VbjELTtu2PpIq0
+         GPBmWWaga39xoAtzWSvpInDaB8qmFj7a66/aVzN5JLNq+4gAP/sZAGOyTUTN+fregu8+
+         WnxQ==
+X-Gm-Message-State: AJIora/jN5r0bBczwoKv0DI5/95XuT+IjIvAm7UBoLhMjO+kL+mvirR2
+        ITEUTClmNrZ6tUbj+R+oXzPk0gqPmTWTR8q7EyQ=
+X-Google-Smtp-Source: AGRyM1vl04Nhe0vqvpLu28eAB166+vwE6nGvpkxPI1PoNmo/h+9bcIRPtvXmTT74Kwnt7PFaz0cfPvho2f4YXNcsOas=
+X-Received: by 2002:a05:622a:1787:b0:31e:af75:edaa with SMTP id
+ s7-20020a05622a178700b0031eaf75edaamr7471795qtk.82.1657543556896; Mon, 11 Jul
+ 2022 05:45:56 -0700 (PDT)
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20220711104719.40939-1-robimarko@gmail.com> <20220711104719.40939-4-robimarko@gmail.com>
+ <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org> <CAOX2RU6X=JiV1As+_N6c_=VaHfVYpke_deQmmNPMMDxfnz5i8g@mail.gmail.com>
+ <9e1ff864-3952-6442-13db-a3d8e18f86c3@linaro.org>
+In-Reply-To: <9e1ff864-3952-6442-13db-a3d8e18f86c3@linaro.org>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Mon, 11 Jul 2022 14:45:46 +0200
+Message-ID: <CAOX2RU6uQw15Xd5gox41ZxZqrcYQy5HcrAAnWQ=U0bNP-UB+kw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] clk: qcom: apss-ipq6018: add MODULE_ALIAS
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, sivaprak@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mo, 2022-07-11 at 15:35 +0300, Tomer Maimon wrote:
-> Updated the NPCM reset driver to add support for Nuvoton BMC NPCM8XX SoC.
-> As part of adding NPCM8XX support:
-> - Add NPCM8XX specific compatible string.
-> - Add NPCM8XX USB reset.
-> - Add data to handle architecture-specific reset parameters.
-> - Some of the Reset Id and number of resets are different from NPCM7XX.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+On Mon, 11 Jul 2022 at 14:02, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 11/07/2022 13:46, Robert Marko wrote:
+> > On Mon, 11 Jul 2022 at 13:05, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 11/07/2022 12:47, Robert Marko wrote:
+> >>> Add MODULE_ALIAS so that driver will be autoloaded if built as a module.
+> >>>
+> >>> Signed-off-by: Robert Marko <robimarko@gmail.com>
+> >>> ---
+> >>>  drivers/clk/qcom/apss-ipq6018.c | 1 +
+> >>>  1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
+> >>> index f2f502e2d5a4..963c69f2c0c2 100644
+> >>> --- a/drivers/clk/qcom/apss-ipq6018.c
+> >>> +++ b/drivers/clk/qcom/apss-ipq6018.c
+> >>> @@ -101,5 +101,6 @@ static struct platform_driver apss_ipq6018_driver = {
+> >>>
+> >>>  module_platform_driver(apss_ipq6018_driver);
+> >>>
+> >>> +MODULE_ALIAS("platform:qcom,apss-ipq6018-clk");
+> >>
+> >> That's not correct alias (no commas) and usually alias is not needed at
+> >> all. If you need one, please explain why it is needed. Module
+> >> autoloading works fine without aliases...
+> >
+> > Hi Krzysztof,
+> > alias is required here as the driver does not use a DT compatible but
+> > is registered
+> > by the APCS driver, if built as a module, it won't get autoloaded
+> > without an alias.
+>
+> Instead you need device ID table. Aliases are not a workaround for
+> missing core driver elements.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Thanks for pointing this out, it looks like a proper solution for this.
+I will drop this patch and fix up autoloading after this series gets merged
+as APCS also requires a fixup, especially since the name in the platform
+table is limited to 20 characters and the current name does not fit.
+>
+> >
+> > I can only fix up the driver name here and in APCS first to have an
+> > alias without commas.
+>
+> I see that the comma is used in driver name, so this is an independent
+> issue. Maybe change it to '-' in separate commit?
 
-regards
-Philipp
+Like with the previous point, I will drop this patch and fix it after
+this series gets merged.
+
+Regards,
+Robert
+>
+>
+> Best regards,
+> Krzysztof
