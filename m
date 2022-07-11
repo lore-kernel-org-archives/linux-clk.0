@@ -2,65 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F744C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5FEC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232258AbiGKPZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50434 "EHLO
+        id S230447AbiGKPZV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232257AbiGKPZT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:25:19 -0400
+        with ESMTP id S230339AbiGKPZU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:25:20 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 400372AC53
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:25:18 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 86D275C01B5;
-        Mon, 11 Jul 2022 11:25:17 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 11 Jul 2022 11:25:17 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 103982D1F8
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:25:20 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6AC375C01A1;
+        Mon, 11 Jul 2022 11:25:19 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 11 Jul 2022 11:25:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1657553117; x=1657639517; bh=ec
-        ZxlGuyIz1nTEqbpwWfaKxOyLrDyGjRBtU8uddXVZY=; b=qCkHvNcrhzoctjl81d
-        Lh2IstJw55/nWxLKAXMtbhcD9i4fGuzha67PTu+xGzhca3e+VJuCTDewf+8Nm7QR
-        qCOXcEd2e3mi0WE7HX4LYoKCnmGA/FhRt22GCv4XC2FRidAoc80XHQWL8DAkHXr4
-        n7zJ3QIq3UAKXAo8r8Qy/K+OCZ6r7VwIjU7qUc11QhQ+T2JjYK+7BeERedqyFKZn
-        W3dgxWK91NZecg41oVSGdGQbPinOTETTZEldghV2ew7ANHsWGGvDzvXF3Vm/tGds
-        EMiv/VDf6W++Kkz9uXrP3l3P5dgPbldIxDUa5dwAablT+vXUSveZK9bTfqRs60Kz
-        do2Q==
+        :subject:subject:to:to; s=fm2; t=1657553119; x=1657639519; bh=h2
+        Fl3vSMcRu20SwFKzmHS9Q6gvuP02p9iCYZ1kTPdtQ=; b=Qzbj76lFVXfGknEi/M
+        cz2NQ7HmGI3zRSTtzP3unOToWppG3n/Bq5sYDTRzB/05yAckTl00/P3eJ9zFPa6X
+        bgtQeninP0o1WLZp0ceJ+4YXLUwfn1pWCpp9BqRKIfjJKurdbQyvEoeSrhHATfzp
+        7xrH6nbPCKT4yeygyXP4Bl8OZbO+A+bgMo8Mbb0DKS+eEBTAmReSklKbooNgjcU8
+        8EqCCVH1GsJlZ7xTRrU1j7a2zYg2zzOrcu9FzRfMEIY3yQFys2FUYjLkIcBY9mNW
+        WBSQreoQw5BotTSdXjz9RVtslIAuFll0MfZkOvPA7CbNFNHmnuIb0ySmTmo4tNhm
+        ZJ1A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1657553117; x=1657639517; bh=ecZxlGuyIz1nT
-        EqbpwWfaKxOyLrDyGjRBtU8uddXVZY=; b=r1KNdClHZkedL/1cWM+zRzrBJFpuc
-        5nf3CJpXbRru0N7+bUbmBUiCAj6NImmeo6bbhiRKKuidHxy7qMsQcGbre+dPqt2W
-        r08SGPGzN3iiKLD2jFe6Rilna2OaFwaX10ce/SHZvJaxS2myRH3bRcUR6UOIGx3r
-        AQ5qOHhtBdPiRwXNV2mTq+Bs3n1+9eK5vpkrVJw4gkbul+tue5+FOySYrEHCQ3V5
-        tvd1sUjJ4yxCrtawlkEFZptoKj+HbRSlbwQ85R7CNT3cTfOxr5fcwMs21XJhCEkC
-        IEAibXxa7wXKhveYnO3d9Ai5awvs8l2ofRzMuuhnBzl7ADwGfQQTZ5kvg==
-X-ME-Sender: <xms:3UDMYm_7R8LXSVkl8FeJ4GNjLkKa6TUlkaZISwYJo2v2NT6G_SEIOg>
-    <xme:3UDMYmvk1bjs01g-6Tvpqava-8eGCnTs5YVjk4PxGGTGH0c6e2AvYYe0DGJX_d-o8
-    uBCXH3aev4HcnsQn6c>
-X-ME-Received: <xmr:3UDMYsC7TjJLET_v4rt_RO6XrJ7v93muI6nS-Iu5s3rDIkoeyt7BetGvSUQJ8tHrERS26gIpMJRvDE_oCSJQlxfDua10-XJDP4q5mfc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeehucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm3; t=1657553119; x=1657639519; bh=h2Fl3vSMcRu20
+        SwFKzmHS9Q6gvuP02p9iCYZ1kTPdtQ=; b=E/uB0PBgNNMut79uosQoah054yjkX
+        1rdTvzBUejH3NAfQurZxDWjVcXES3Avp4bCBIZrO2UGBueqagd5I8V7PgHaA//8m
+        zaVlRf33ivJLlIoFn/+0L6uh0hulL7MGpoAvcaKr9pZq79AteheKp5EZ7oVc/O8U
+        5h/hzH4+JsAR+5dWUyJalHbIpYAw6wTgBlfuuH1jmnDnZFr4dCx/NAiN0vMEPvOn
+        umJ0nWMGxh+SBoj8Cy9uHej5di2ll9VSTC/vnkmOoNahdFefOfmbtghJAzU50QfH
+        NfucyhSAc2eskeOfPJ5P/MFHwHzWn8THRuUew40J7pFAmVggLk7zLTN1Q==
+X-ME-Sender: <xms:30DMYmYsRf-JMlVfWNhcEvqHRrXii5aUtksjl1dG9fZh4houI07vBw>
+    <xme:30DMYpanVYAl3QhQVuca6DtyviSgXSdtMukGRxr-MeHhZ3i6vTHD3k2Rqk2MfVEpK
+    sdY8cE4-8_IjjPyyL4>
+X-ME-Received: <xmr:30DMYg93sSJUoWazTZ99vomFF0qAXodwcGFXf02GXsLu0v8RdcReZVrUeaZLlzVJCgr8i8u2PJYtnISEvUc5QBFHlJFIo392UfSH2gE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
     htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    vdejhfenucevlhhushhtvghrufhiiigvpeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:3UDMYufcFwK6ct8FhneXqqjlrLJWIuhq2tUyPnk8qFPL62p5j_uCyg>
-    <xmx:3UDMYrNc2IcPvADCY6-UCJg6_x-_mOaMR-51qULyF5s0aepYmDlLGA>
-    <xmx:3UDMYonmUmoGQqwqj3EQR749okYQCOg-e-7TEKfPtrMLvd13-J2iKQ>
-    <xmx:3UDMYsGBK-DX_i4jcMpEltofHgjwxAlz5EMj4uH77d4i-YZjyx7UhQ>
+X-ME-Proxy: <xmx:30DMYoqXPj9C5bJxHIg5HRYsg2933gBA4wMTiBLeN3SFIC_LK_SwFw>
+    <xmx:30DMYhpGSMWis2FgOpnEb29xhDlbOrvrNPtKNzJ_P1NVcBLg9xJk6w>
+    <xmx:30DMYmTRn5uWpR5gYhd06K6y2Dwj_jzh48Quh4yYZpBgpnLpCxqBzw>
+    <xmx:30DMYuiSFLwW1zflhqRpCRV70a4Vbo8Q_6RNIx7h9i84IZ83z_7Spg>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Jul 2022 11:25:16 -0400 (EDT)
+ 11 Jul 2022 11:25:18 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +73,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 27/28] clk: qcom: clk-rcg2: Take clock boundaries into consideration for gfx3d
-Date:   Mon, 11 Jul 2022 17:24:23 +0200
-Message-Id: <20220711152424.701311-28-maxime@cerno.tech>
+Subject: [PATCH v6 28/28] clk: tests: Add missing test case for ranges
+Date:   Mon, 11 Jul 2022 17:24:24 +0200
+Message-Id: <20220711152424.701311-29-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220711152424.701311-1-maxime@cerno.tech>
 References: <20220711152424.701311-1-maxime@cerno.tech>
@@ -85,49 +85,82 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gfx3d clock is hand-crafting its own clk_rate_request in
-clk_gfx3d_determine_rate to pass to the parent of that clock.
+Let's add a test on the rate range after a reparenting. This fails for
+now, but it's worth having it to document the corner cases we don't
+support yet.
 
-However, since the clk_rate_request is zero'd at creation, it will have
-a max_rate of 0 which will break any code depending on the clock
-boundaries.
-
-That includes the recent commit 948fb0969eae ("clk: Always clamp the
-rounded rate") which will clamp the rate given to clk_round_rate() to
-the current clock boundaries.
-
-For the gfx3d clock, it means that since both the min_rate and max_rate
-fields are set at zero, clk_round_rate() now always return 0.
-
-Let's initialize the min_rate and max_rate fields properly for that
-clock.
-
-Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/qcom/clk-rcg2.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/clk_test.c | 53 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 28019edd2a50..ee536b457952 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -908,6 +908,15 @@ static int clk_gfx3d_determine_rate(struct clk_hw *hw,
- 		req->best_parent_hw = p2;
- 	}
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 5a5b7a8baba2..8e0c76ab1a6d 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -514,9 +514,62 @@ clk_test_multiple_parents_mux_has_parent(struct kunit *test)
+ 	clk_put(clk);
+ }
  
-+	clk_hw_get_rate_range(req->best_parent_hw,
-+			      &parent_req.min_rate, &parent_req.max_rate);
++/*
++ * Test that for a clock with a multiple parents, if we set a range on
++ * that clock and the parent is changed, its rate after the reparenting
++ * is still within the range we asked for.
++ *
++ * FIXME: clk_set_parent() only does the reparenting but doesn't
++ * reevaluate whether the new clock rate is within its boundaries or
++ * not.
++ */
++static void
++clk_test_multiple_parents_mux_set_range_set_parent_get_rate(struct kunit *test)
++{
++	struct clk_multiple_parent_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = clk_hw_get_clk(hw, NULL);
++	struct clk *parent1, *parent2;
++	unsigned long rate;
++	int ret;
 +
-+	if (req->min_rate > parent_req.min_rate)
-+		parent_req.min_rate = req->min_rate;
++	kunit_skip(test, "This needs to be fixed in the core.");
 +
-+	if (req->max_rate < parent_req.max_rate)
-+		parent_req.max_rate = req->max_rate;
++	parent1 = clk_hw_get_clk(&ctx->parents_ctx[0].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent1);
++	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(clk), parent1));
 +
- 	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
- 	if (ret)
- 		return ret;
++	parent2 = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent2);
++
++	ret = clk_set_rate(parent1, DUMMY_CLOCK_RATE_1);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ret = clk_set_rate(parent2, DUMMY_CLOCK_RATE_2);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ret = clk_set_rate_range(clk,
++				 DUMMY_CLOCK_RATE_1 - 1000,
++				 DUMMY_CLOCK_RATE_1 + 1000);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	ret = clk_set_parent(clk, parent2);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++	KUNIT_EXPECT_GE(test, rate, DUMMY_CLOCK_RATE_1 - 1000);
++	KUNIT_EXPECT_LE(test, rate, DUMMY_CLOCK_RATE_1 + 1000);
++
++	clk_put(parent2);
++	clk_put(parent1);
++	clk_put(clk);
++}
++
+ static struct kunit_case clk_multiple_parents_mux_test_cases[] = {
+ 	KUNIT_CASE(clk_test_multiple_parents_mux_get_parent),
+ 	KUNIT_CASE(clk_test_multiple_parents_mux_has_parent),
++	KUNIT_CASE(clk_test_multiple_parents_mux_set_range_set_parent_get_rate),
+ 	{}
+ };
+ 
 -- 
 2.36.1
 
