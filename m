@@ -2,137 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC77C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0FAC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 21:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229796AbiGKU5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47988 "EHLO
+        id S229622AbiGKVGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 17:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229629AbiGKU5s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:57:48 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449DB71BD4;
-        Mon, 11 Jul 2022 13:57:46 -0700 (PDT)
-Received: from notapiano.myfiosgateway.com (pool-98-113-53-228.nycmny.fios.verizon.net [98.113.53.228])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7B19C6601A08;
-        Mon, 11 Jul 2022 21:57:42 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657573064;
-        bh=lT2RbPUhF1d7L6O72t6D2MDk7XFGvlh+JP1mpe3bNmE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ONr3aZj2yAqacjB/6ndNsvSF1urKkAwSJUU60eNh08Zg3DzD7Pl5z9PmISv7undHo
-         bsnM1YkzSqlc1FMZ4Moax+DugL1UCI30LWGd3GZIlB08u8QZXwi972F7fYBuD/Xl9t
-         dHyB7qmkYIxg7YSmNycsZ0PUHRU27bB7I8xTZyySCobiE3N5WaCJrzVUOFPzx/D+ga
-         ORNCF3qA4flzcbGBenKwj1/ZBiQUBsaX3y/5WDA8hnHtCktgveSgpv4jsRjztIOXeS
-         4ea8KL7nkC2sDVQUcP+b2EUHSBDPXQouG5LevJ49ZJfGh9ReqJhCu3ivqt1Oz8/Xlm
-         zVfmSmZAFOvYQ==
-From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Ran Jianping <ran.jianping@zte.com.cn>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: Don't check HW status for mt8192/5's imp_iic_wrap clocks
-Date:   Mon, 11 Jul 2022 16:57:33 -0400
-Message-Id: <20220711205733.203963-1-nfraprado@collabora.com>
-X-Mailer: git-send-email 2.37.0
+        with ESMTP id S229476AbiGKVGj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 17:06:39 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746365A451;
+        Mon, 11 Jul 2022 14:06:38 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id m16so7744897edb.11;
+        Mon, 11 Jul 2022 14:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xfp89QyK0/p/8PmDaqGqGqPNT0fmeAkB/Wk4K0Cj4hI=;
+        b=h7qJwRXjuIF5/hRpUwuhAUXZrPIT36RfWFWRQzyE53G2dK1gl40u+X3NukQI/xyISR
+         TB5FLI6Y2DQwU1bC0aGmsgyhkgqKQUcdptIIxDyi//HjQjwZD1QIkvunHqWg7CbUoN9X
+         qe+Er0GIK2fL5fhM288QM6MoaPc9a/XcuS6kDo1tyUynTJVp+wrIFk+CoCOuNb8B0UAi
+         mzbXV5+3Q+nXGjeDoQpxQtp6T06ETs+eD3olHpfAVT9NGi9M1KfGERP0gtEd5V37uVtN
+         gGh7xWhxbHAfrbRxfUkNTX8fklN/dlqGikQQR6kygNdcgQsb3FdwCntgkJF5yK0n5kgC
+         sFCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xfp89QyK0/p/8PmDaqGqGqPNT0fmeAkB/Wk4K0Cj4hI=;
+        b=ISqe3pF3K62J5nsawVpeNfx+2WtVNcSaDLeI21oTATcQOjTWA9QwO/GzRJuUODg+1/
+         0pgk8JCHXx2/so7goTKWxmzV4y1R5qacei5J/+zPe4ly2BJP3xueYKOOLdv7Jy67Cf1A
+         4hKthTb+gFdX858saU1H3IGo1+DXq3eoAosEwm0UGKCSZ0nKkD+LLV6i9xom95ZkpXa+
+         rL8bYu8kWvRBC6ny9wpxVMRcmRjZEMZ0XOk1AJQhQsm0at2cmkNFYGCvrCyVT+z69qug
+         9Q+/tLMlAxeWsfXqCR2jABGNI/TVteAhgqDE7AyGOw4cUBTCdMQVoWoD+8WClK0/EuQu
+         CayA==
+X-Gm-Message-State: AJIora8lqE5tkt6y+slEtI7CH9bXR0FhONGUN1Pyx2Qt2Vm1GVR8dy/C
+        9f/GUS8GoB943nxI1fMqevg=
+X-Google-Smtp-Source: AGRyM1sH60y9Q8ZWrBVFITITOeGCiSlaWCsvQmhRaNGjeHqGABOg3dklQHXFKaOC0FNlCC6krenczg==
+X-Received: by 2002:a05:6402:5205:b0:43a:b520:c7de with SMTP id s5-20020a056402520500b0043ab520c7demr23403794edd.22.1657573597018;
+        Mon, 11 Jul 2022 14:06:37 -0700 (PDT)
+Received: from fedora.robimarko.hr (cpe-94-253-165-104.zg.cable.xnet.hr. [94.253.165.104])
+        by smtp.googlemail.com with ESMTPSA id lb17-20020a170907785100b0072a430d2abdsm3052562ejc.91.2022.07.11.14.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Jul 2022 14:06:36 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     bjorn.andersson@linaro.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Robert Marko <robimarko@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 1/7] clk: qcom: clk-rcg2: add rcg2 mux ops
+Date:   Mon, 11 Jul 2022 23:06:28 +0200
+Message-Id: <20220711210634.3042092-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The imp_iic_wrap clocks on mt8192/mt8195 require that the i2c_sel parent
-clock be enabled before their hardware status can be checked. Since this
-wasn't taken into account, reading from the clk_summary debugfs file
-would cause the system to completely freeze.
+From: Christian Marangi <ansuelsmth@gmail.com>
 
-Assuming that this clock is managed only by the kernel, and not by any
-firmware, simply drop the is_enabled() optional callback and instead
-rely on the enable count for the imp_iic_wrap clocks.
+An RCG may act as a mux that switch between 2 parents.
+This is the case on IPQ6018 and IPQ8074 where the APCS core clk that feeds
+the CPU cluster clock just switches between XO and the PLL that feeds it.
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Add the required ops to add support for this special configuration and use
+the generic mux function to determine the rate.
 
+This way we dont have to keep a essentially dummy frequency table to use
+RCG2 as a mux.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
+ drivers/clk/qcom/clk-rcg.h  | 1 +
+ drivers/clk/qcom/clk-rcg2.c | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
- drivers/clk/mediatek/clk-gate.c                | 6 ++++++
- drivers/clk/mediatek/clk-gate.h                | 1 +
- drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c | 2 +-
- drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 +-
- 4 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 421806236228..8e7c719a69b3 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -124,6 +124,12 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
- 	mtk_cg_clr_bit_no_setclr(hw);
- }
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 012e745794fd..01581f4d2c39 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -167,6 +167,7 @@ struct clk_rcg2_gfx3d {
  
-+const struct clk_ops mtk_clk_gate_ops_setclr_counted = {
-+	.enable		= mtk_cg_enable,
-+	.disable	= mtk_cg_disable,
+ extern const struct clk_ops clk_rcg2_ops;
+ extern const struct clk_ops clk_rcg2_floor_ops;
++extern const struct clk_ops clk_rcg2_mux_closest_ops;
+ extern const struct clk_ops clk_edp_pixel_ops;
+ extern const struct clk_ops clk_byte_ops;
+ extern const struct clk_ops clk_byte2_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 28019edd2a50..609c10f8d0d9 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -509,6 +509,13 @@ const struct clk_ops clk_rcg2_floor_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+ 
++const struct clk_ops clk_rcg2_mux_closest_ops = {
++	.determine_rate = __clk_mux_determine_rate_closest,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
 +};
-+EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_counted);
++EXPORT_SYMBOL_GPL(clk_rcg2_mux_closest_ops);
 +
- const struct clk_ops mtk_clk_gate_ops_setclr = {
- 	.is_enabled	= mtk_cg_bit_is_cleared,
- 	.enable		= mtk_cg_enable,
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index d9897ef53528..b5502b2911f5 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -19,6 +19,7 @@ extern const struct clk_ops mtk_clk_gate_ops_setclr;
- extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
- extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
- extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
-+extern const struct clk_ops mtk_clk_gate_ops_setclr_counted;
- 
- struct mtk_gate_regs {
- 	u32 sta_ofs;
-diff --git a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-index 700356ac6a58..900ee601169c 100644
---- a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-+++ b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-@@ -20,7 +20,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
- 
- #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)			\
- 	GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,	\
--		&mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
-+		&mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
- 
- static const struct mtk_gate imp_iic_wrap_c_clks[] = {
- 	GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_C_I2C10, "imp_iic_wrap_c_i2c10", "infra_i2c0", 0),
-diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
-index fbc809d05072..e50a77b844f4 100644
---- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
-+++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
-@@ -18,7 +18,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
- 
- #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)				\
- 	GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,	\
--		&mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
-+		&mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
- 
- static const struct mtk_gate imp_iic_wrap_s_clks[] = {
- 	GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_S_I2C5, "imp_iic_wrap_s_i2c5", "top_i2c", 0),
+ struct frac_entry {
+ 	int num;
+ 	int den;
 -- 
-2.37.0
+2.36.1
 
