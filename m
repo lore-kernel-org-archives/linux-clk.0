@@ -2,103 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC56C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC77C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 20:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbiGKUxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 16:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44050 "EHLO
+        id S229796AbiGKU5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 16:57:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiGKUxP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:53:15 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D3952E79;
-        Mon, 11 Jul 2022 13:53:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229629AbiGKU5s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 16:57:48 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449DB71BD4;
+        Mon, 11 Jul 2022 13:57:46 -0700 (PDT)
+Received: from notapiano.myfiosgateway.com (pool-98-113-53-228.nycmny.fios.verizon.net [98.113.53.228])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 14F9ECE17D7;
-        Mon, 11 Jul 2022 20:53:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAFFDC34115;
-        Mon, 11 Jul 2022 20:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657572791;
-        bh=KXWk2bwFJGa9viXQjgAbCz3X/tgVw7ZmGdeVHoxdjSs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VwcXpE0FwrmOYBh/WgN9Y4npxfHq0ApT+kDw1RnvbQdp81F5iVCR0cx2beMmsgQS4
-         18768pyPV/FKK4FOYNj+WXWntfcx7oVgK3yA1Glls4So9XytSNe02a/czKjfdSKlw5
-         /b7k+CGtcBqjLhi034R1q8/ETTUMEuRRU2A8C71BM79pKYS1Jqlx24MmK4Jt2T14Xn
-         OP0VHnx69/Z4RW9XCPpXKgfhvaz3aFFtZjULsYprdtxRoASmAGgdK758EiWN1XGQQV
-         jJmh50BMd4SAIevYQMxjD4jHK9t5bK75fwhJtHh+yQt6JuLCDadfQR6f+jn7NXbJcg
-         Z5LqooGnizDqg==
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7B19C6601A08;
+        Mon, 11 Jul 2022 21:57:42 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1657573064;
+        bh=lT2RbPUhF1d7L6O72t6D2MDk7XFGvlh+JP1mpe3bNmE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ONr3aZj2yAqacjB/6ndNsvSF1urKkAwSJUU60eNh08Zg3DzD7Pl5z9PmISv7undHo
+         bsnM1YkzSqlc1FMZ4Moax+DugL1UCI30LWGd3GZIlB08u8QZXwi972F7fYBuD/Xl9t
+         dHyB7qmkYIxg7YSmNycsZ0PUHRU27bB7I8xTZyySCobiE3N5WaCJrzVUOFPzx/D+ga
+         ORNCF3qA4flzcbGBenKwj1/ZBiQUBsaX3y/5WDA8hnHtCktgveSgpv4jsRjztIOXeS
+         4ea8KL7nkC2sDVQUcP+b2EUHSBDPXQouG5LevJ49ZJfGh9ReqJhCu3ivqt1Oz8/Xlm
+         zVfmSmZAFOvYQ==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@collabora.com,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Ran Jianping <ran.jianping@zte.com.cn>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: Don't check HW status for mt8192/5's imp_iic_wrap clocks
+Date:   Mon, 11 Jul 2022 16:57:33 -0400
+Message-Id: <20220711205733.203963-1-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.37.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <98363f27-e7a4-7351-fad7-361f7e465b7e@suse.cz>
-References: <20220623083217.26433-1-jslaby@suse.cz> <20220624004225.0DE4AC3411D@smtp.kernel.org> <0edab0e2-5355-a3da-445d-b6f45e3082ed@suse.cz> <20220629082104.E25D2C34114@smtp.kernel.org> <98363f27-e7a4-7351-fad7-361f7e465b7e@suse.cz>
-Subject: Re: [PATCH 1/2] clk: pistachio: Fix initconst confusion
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mliska@suse.cz, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>, linux-clk@vger.kernel.org
-To:     Jiri Slaby <jslaby@suse.cz>, mturquette@baylibre.com
-Date:   Mon, 11 Jul 2022 13:53:09 -0700
-User-Agent: alot/0.10
-Message-Id: <20220711205310.EAFFDC34115@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jiri Slaby (2022-07-08 00:16:12)
-> On 29. 06. 22, 10:21, Stephen Boyd wrote:
-> > Quoting Jiri Slaby (2022-06-27 00:46:15)
-> >> On 24. 06. 22, 2:42, Stephen Boyd wrote:
-> >>> Quoting Jiri Slaby (2022-06-23 01:32:16)
-> >>>> From: Andi Kleen <ak@linux.intel.com>
-> >>>>
-> >>>> A variable pointing to const isn't const itself. It'd have to contain
-> >>>> "const" keyword after "*" too. Therefore, PNAME() cannot put the str=
-ings
-> >>>> to "rodata".  Hence use __initdata instead of __initconst to fix thi=
-s.
-> >>>>
-> >>>> [js] more explanatory commit message.
-> >>>>
-> >>>> Cc: Michael Turquette <mturquette@baylibre.com>
-> >>>> Cc: Stephen Boyd <sboyd@kernel.org>
-> >>>> Cc: linux-clk@vger.kernel.org
-> >>>> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> >>>> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> >>>> ---
-> >>>>    drivers/clk/pistachio/clk.h | 2 +-
-> >>>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/pistachio/clk.h b/drivers/clk/pistachio/clk=
-.h
-> >>>> index f9c31e3a0e47..742e5fab00c0 100644
-> >>>> --- a/drivers/clk/pistachio/clk.h
-> >>>> +++ b/drivers/clk/pistachio/clk.h
-> >>>> @@ -34,7 +34,7 @@ struct pistachio_mux {
-> >>>>           const char **parents;
-> >>>>    };
-> >>>>   =20
-> >>>> -#define PNAME(x) static const char *x[] __initconst
-> >>>> +#define PNAME(x) static const char *x[] __initdata
-> >>>
-> >>> Can it be const char * const and left as __initconst?
-> >>
-> >> Let me check, IIRC the struct where this is assigned would need to be
-> >> updated too.
-> >>
-> >> I will get into it only some time next week.
-> >>
-> >=20
-> > Ok, sounds good. This seems to at least compile locally.
->=20
-> Yeah, that works. I've sent a v2.
->=20
-> BTW is the code intended to put the actual strings to .init.rodata? As=20
-> that was never the case. Only those PNAME defined arrays (pointers to=20
-> strings) end up in .init.rodata now and the strings are in .rodata.
+The imp_iic_wrap clocks on mt8192/mt8195 require that the i2c_sel parent
+clock be enabled before their hardware status can be checked. Since this
+wasn't taken into account, reading from the clk_summary debugfs file
+would cause the system to completely freeze.
 
-I think both the strings and the array should be in .init.rodata. The
-clk framework deep copies data like parent names.
+Assuming that this clock is managed only by the kernel, and not by any
+firmware, simply drop the is_enabled() optional callback and instead
+rely on the enable count for the imp_iic_wrap clocks.
+
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+---
+
+ drivers/clk/mediatek/clk-gate.c                | 6 ++++++
+ drivers/clk/mediatek/clk-gate.h                | 1 +
+ drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c | 2 +-
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 +-
+ 4 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index 421806236228..8e7c719a69b3 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -124,6 +124,12 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
+ 	mtk_cg_clr_bit_no_setclr(hw);
+ }
+ 
++const struct clk_ops mtk_clk_gate_ops_setclr_counted = {
++	.enable		= mtk_cg_enable,
++	.disable	= mtk_cg_disable,
++};
++EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_counted);
++
+ const struct clk_ops mtk_clk_gate_ops_setclr = {
+ 	.is_enabled	= mtk_cg_bit_is_cleared,
+ 	.enable		= mtk_cg_enable,
+diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
+index d9897ef53528..b5502b2911f5 100644
+--- a/drivers/clk/mediatek/clk-gate.h
++++ b/drivers/clk/mediatek/clk-gate.h
+@@ -19,6 +19,7 @@ extern const struct clk_ops mtk_clk_gate_ops_setclr;
+ extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
+ extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
+ extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
++extern const struct clk_ops mtk_clk_gate_ops_setclr_counted;
+ 
+ struct mtk_gate_regs {
+ 	u32 sta_ofs;
+diff --git a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
+index 700356ac6a58..900ee601169c 100644
+--- a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
+@@ -20,7 +20,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
+ 
+ #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)			\
+ 	GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,	\
+-		&mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
++		&mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
+ 
+ static const struct mtk_gate imp_iic_wrap_c_clks[] = {
+ 	GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_C_I2C10, "imp_iic_wrap_c_i2c10", "infra_i2c0", 0),
+diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+index fbc809d05072..e50a77b844f4 100644
+--- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+@@ -18,7 +18,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
+ 
+ #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)				\
+ 	GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,	\
+-		&mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
++		&mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
+ 
+ static const struct mtk_gate imp_iic_wrap_s_clks[] = {
+ 	GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_S_I2C5, "imp_iic_wrap_s_i2c5", "top_i2c", 0),
+-- 
+2.37.0
+
