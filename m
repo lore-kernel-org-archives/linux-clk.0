@@ -2,109 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9220C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DDAC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 11:56:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbiGKLr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 07:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36112 "EHLO
+        id S229478AbiGKL4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 07:56:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbiGKLrl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:47:41 -0400
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0360EFDC;
-        Mon, 11 Jul 2022 04:46:47 -0700 (PDT)
-Received: by mail-qk1-x72e.google.com with SMTP id v6so3588654qkh.2;
-        Mon, 11 Jul 2022 04:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MhYRHiDSTXDwT6ErnpOS8yP7S6qbhKStQYvpDyuemqI=;
-        b=dGjeC2fXH5blEI872lq666Le0oz8iaHLUZmiFKX9wDSH7fLWrxlWdfH+8adrBI3Q5s
-         IRVPAgSST87GbE80+saboGZdMsv/MNaaW5bfDbNLJhlf8sxh9ql/fRJCZahLq43XND1q
-         hc19xeUfN8w0cgrNTRMVqMs2AbQs4vqx2L/PmxGnkdwM9oqeRjbGygcUOBjukAyaLp7q
-         TFEK5BUZZ6f4eInkvaT8U5MRuOV8WRLhavGXKNJOmB2rHDNluRiNnaaN9ydWgmCSvFNX
-         9ooB8xiItMwCpPdjQ+/LSItFmWrNusgBAG5hjkR45WSvndPYtxDjvSQwe9W7d1H0h9DA
-         oLFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MhYRHiDSTXDwT6ErnpOS8yP7S6qbhKStQYvpDyuemqI=;
-        b=pseZTIdBpAFj2CP7L/enibYpJ93eoQoUZL6OlB5XRtziKzHzjbIMVvEydlPXchW1tk
-         tfNRJoEtoQ4cARCbyim11HwfKjJwGG1P88k0GHU4ZhKDECCgM4t1fq8GuU3rcyzCqm8O
-         cb43WQf7fv80facBiuN2p1aXelPQiELxYvtyG0SnNFPufuNsrLzG1WyT7swxslHU6DT2
-         wXWUCZK+27vgU7vjBPGNLCXeN+i4DsrhZEKT5H3WN2/EmFRtIYtli94v750BIznZ++5Z
-         Ib2YbTI72woVdvYgWFfKl0ioBeUvtV+quCeSZaT9qU+5AjafrbUpHIYofsuCZ7s3y+nD
-         psXQ==
-X-Gm-Message-State: AJIora9X7GIQrkXb4kjuxqLQIGPWFpWyD1wrMWurmYqVXcsjeC/5g2nV
-        MmAMhP9T0uP8aQoCFGStaNo4auXKuAtMiP9XjeM=
-X-Google-Smtp-Source: AGRyM1twIJiwkbgBu5OURP7EKSSAQTFE8Ds3WWfTIStHxi+02nK/lWUPngC21gL7tmUeX8U0v2sDoYPiDxUtz971IDk=
-X-Received: by 2002:a05:620a:1a2a:b0:6b5:93bd:b662 with SMTP id
- bk42-20020a05620a1a2a00b006b593bdb662mr823482qkb.522.1657540006101; Mon, 11
- Jul 2022 04:46:46 -0700 (PDT)
+        with ESMTP id S229456AbiGKL4D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 07:56:03 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26D73247E
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 04:56:01 -0700 (PDT)
+Received: from [192.168.1.107] ([37.4.249.155]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MPrXf-1nyZx41n6Z-00Msxu; Mon, 11 Jul 2022 13:55:37 +0200
+Message-ID: <c131ad48-aaea-7d56-6370-5131c11251d6@i2se.com>
+Date:   Mon, 11 Jul 2022 13:55:36 +0200
 MIME-Version: 1.0
-References: <20220711104719.40939-1-robimarko@gmail.com> <20220711104719.40939-4-robimarko@gmail.com>
- <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
-In-Reply-To: <4de38d90-0020-c2db-b283-319b4a0e2ce5@linaro.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Mon, 11 Jul 2022 13:46:35 +0200
-Message-ID: <CAOX2RU6X=JiV1As+_N6c_=VaHfVYpke_deQmmNPMMDxfnz5i8g@mail.gmail.com>
-Subject: Re: [PATCH 4/6] clk: qcom: apss-ipq6018: add MODULE_ALIAS
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, sivaprak@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, nd <nd@arm.com>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
+ <20220510133019.h2urxj3feponfuku@houat>
+ <ce3e2e21-dc54-1f77-fdbb-6d3627917830@i2se.com>
+ <b5c560cf5610fa8da1cfd7ef06ca6bac@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <b5c560cf5610fa8da1cfd7ef06ca6bac@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:p/+h/V05rq6PEONcSaAvhJ0YwM2fc3XX4/s5J2mu6wc9Yc1Wl9B
+ ACwAwYP4XRc5onQoUiOkEgX7TSvfMebABnYdMC6x6ReEHuCHZDx4ls4IOP0hKhlSQOtD5kR
+ 7z8rVrlGqM0l3jIPt8+fLDyrsg3kLYeMFtYVxGJc9T5TY35kVbTp6dLWAwhTUp40JMw/ngz
+ ZVD2Ilhpo0c2jRciuGyvA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hWfTAZ/Hpg4=:p1L0f3VxThNwqkRhekJHAU
+ bQWOdGTpaEm35yF6gJbVVqRQrinGZzA9obgOQ7tAcbZdvejR5ZTLKdIWTHXkZa8nRerVp4d49
+ +UcgNmTYH1VPafV43Fg40Z67i2wealNvpzZ70TzvrwFRAFVllXc/FPOQ928iuv+AeaR2Iua1w
+ w1UFeaCQpdK9QArecDThO9KtB0bwTX9FzQ2eMYs/wWwQCh9xRe5NuMkgJxRED9jWiyFjrwCq7
+ nODOCaSxLgNBH7nfa8JvACnMZMZnAp3MYtRMuvP2dK7WrSiuuUVY/QfGa4zhWnY+DSLr5Eusw
+ mos9N2PuhEzgB2ZBUiTWpMrkjBfoj2PQBszbh9fecFGMz5OZhWpqRyzXLdzWYctg3Gjrt9bOr
+ AQopPOmFCjJ1dyvkluYrrFCZc6PSQAXcqUwiIh3nXdrT3c5WVj1payOt++WP7vzqPvOgPFatA
+ YqC+CEt/Em1RUJoQzDYZfIql7st59Hi/h/9rfYxaTUkLfDSnSdMkIxAgIgghK+I/YCDp00nSp
+ FytqaMnmfwRWVMEOyiP7CxbIU82AdzInvke1uQd+bAgzNP67mveoSWTmJpCApv8UDtFsiQABX
+ wTtGeikNdqPtxVAwo16pvZNeXOp7AgOLguKlPnfJbCnDC7K+6g31jjxQqJvIACTo2ppmGij1X
+ 00EWpBLMvDNw28GJE4rdjPzvX1kiGcigXf2TO0kAbUUkVrJC+4SDCnk3G8E+p6Ub3KXPa+934
+ n0N4vUpbaMxiSDmzf2OUNPb5qPRBnbsuokasKcRu5D1SwjfhgQeMqTpvbBk=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Jul 2022 at 13:05, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 11/07/2022 12:47, Robert Marko wrote:
-> > Add MODULE_ALIAS so that driver will be autoloaded if built as a module.
-> >
-> > Signed-off-by: Robert Marko <robimarko@gmail.com>
-> > ---
-> >  drivers/clk/qcom/apss-ipq6018.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
-> > index f2f502e2d5a4..963c69f2c0c2 100644
-> > --- a/drivers/clk/qcom/apss-ipq6018.c
-> > +++ b/drivers/clk/qcom/apss-ipq6018.c
-> > @@ -101,5 +101,6 @@ static struct platform_driver apss_ipq6018_driver = {
-> >
-> >  module_platform_driver(apss_ipq6018_driver);
-> >
-> > +MODULE_ALIAS("platform:qcom,apss-ipq6018-clk");
->
-> That's not correct alias (no commas) and usually alias is not needed at
-> all. If you need one, please explain why it is needed. Module
-> autoloading works fine without aliases...
+Hi,
 
-Hi Krzysztof,
-alias is required here as the driver does not use a DT compatible but
-is registered
-by the APCS driver, if built as a module, it won't get autoloaded
-without an alias.
-
-I can only fix up the driver name here and in APCS first to have an
-alias without commas.
-
-Regards,
-Robert
+Am 11.07.22 um 09:02 schrieb Ivan T. Ivanov:
 >
-> Best regards,
-> Krzysztof
+> Hi,
+>
+> On 2022-07-10 14:12, Stefan Wahren wrote:
+>> Hi,
+>>
+>> Am 10.05.22 um 15:30 schrieb Maxime Ripard:
+>>> Hi,
+>>>
+>>> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
+>>>> May I ask what's the status/plan of this patch series?
+>>> As far as I know it hasn't been merged yet.
+>>>
+>>>> It seems it has not been merged yet, and I know we are a bit late in
+>>>> the 5.18 schedule, but I think this is a good fix for 5.18.
+>>> Fix for what? I don't think this series fix any bug?
+>>
+>> i think this series (or at least parts of it) is a workaround for this
+>> issue [1].
+>
+> No, not really. Bug which this patch set fixes is this one [2].
+
+Both are related. In your case the device tree defines a clock ID which 
+isn't define in the kernel driver. So the behavior (abort probing in 
+case of invalid DTB) is correct to me. But the log message isn't helpful 
+to end users.
+
+This is broken by design, since we need to synchronize videocore 
+firmware, kernel and DTB at the same time. Maybe this works for 
+Raspberry Pi OS, but not for all users.
+
+We need to fix this driver before add new clocks.
+
+> When using downstream dtb and up to date bootloader index 15 is
+> valid id RPI_FIRMWARE_VEC_CLK_ID which is used by vc4 module.
+I think this only applies to the downstream kernel. AFAIK the 
+bcm2835-clk is still used for VEC in mainline.
+>
+>>
+>> We better fix the root cause of the potential out of bounds access in
+>> clk-raspberrypi properly. I will send a patch soon.
+>
+> If not mistaken after last rework driver already handle this properly.
+> clk-raspberrypi.c:362
+
+No, this doesn't prevent the possible out of bounds access, what i mean. 
+It's the condition of the while loop.
+
+Best regards
+
+>
+> Regards,
+> Ivan
+>
+>>
+>> [1] - https://github.com/raspberrypi/firmware/issues/1688
+>
+> [2] https://bugzilla.suse.com/show_bug.cgi?id=1196632
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
