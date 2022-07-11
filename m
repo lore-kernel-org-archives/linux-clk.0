@@ -2,79 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BA6C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 02:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EA5C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 07:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbiGKCLX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Jul 2022 22:11:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58162 "EHLO
+        id S229518AbiGKHC7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 03:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbiGKCLW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Jul 2022 22:11:22 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38AE18356;
-        Sun, 10 Jul 2022 19:11:21 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id q5so3264147plr.11;
-        Sun, 10 Jul 2022 19:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dz9Fmr8N6qhVe2M4Rtzgf5gDh4JycsFpsHAn+cejyws=;
-        b=VuAEnbnfb1MGz+ES+Ya5ba4dCuL7/sfR5YmjcUwr2xMuz5vztJwVRl26rJ4vMlmtD3
-         xEn2pq70DFAFZzmOZ9DvbzjfNHAWG0GcuTL9NhA7DOWPGBWYaNL2bweA6dxravkbtVlk
-         ddAR+GsztLxtNO6zUpHO6Qy0TeBrBfpPq66SGMc8w4gt+Tfdl72wjgFLQ7XTPUpSlRIg
-         K6osbKTTP11shv2xfZovbR9QDxGxwAml5oJvoGFugTO5Z9kma5zhiPXYtX0ZYO1ZMIe/
-         cjUajsIUh8jD3wVWqHdK+2nknD9k694MBLqPvhg9MDOIqVDN5lLuvH5JFQKeNPlXpNBv
-         XPoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dz9Fmr8N6qhVe2M4Rtzgf5gDh4JycsFpsHAn+cejyws=;
-        b=gjfIzUWSWHMLkzVva9nhmOsnI9oCAbgm/6d/o03fjpyO8TTqgU/90PJttnM8FpYkBq
-         UvL1Tor5kqL1s+LEPiYmLH56CFlZalLbmxW53pfIy3LoA/FZF4xtukUeV5U6aWW7Oi4y
-         ckk5AZihhKCTwPrPn8+d4K44UzExTZEBpdZKqnv7Ig8h/zxTFqhQMgAdyZ+DD+SyOehy
-         hwDfi/78tP7zV+8M9+8iyz5BuHzvIsirHbokQ5yqHCqKPVODkHju7/5r/bQTS7Ej91OK
-         f8n6yvSkCTQME7xxgHN8ZPapaFX3h63WdkdFvOkvRSF8ZoxjItYyleFPgjnpVnImoUI8
-         mqGQ==
-X-Gm-Message-State: AJIora8Fa9c7DhImr9V/PSwGQQoFYmw7W8HQA67dfXXejzWYXD/S5Xky
-        3ugYEhdsmQKaK/GMD3jpY54=
-X-Google-Smtp-Source: AGRyM1uVKkRSt9XsN1ZR2mGKYBgotdTS5tGfVIQqOLbTCvO996UnOIKfaLLEPgQKEGwxzbfDdhpEHA==
-X-Received: by 2002:a17:90b:3b90:b0:1ef:eb4a:fbd with SMTP id pc16-20020a17090b3b9000b001efeb4a0fbdmr15118385pjb.2.1657505481472;
-        Sun, 10 Jul 2022 19:11:21 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id p23-20020a170902a41700b0016a71196150sm3372559plq.135.2022.07.10.19.11.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Jul 2022 19:11:20 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     bcm-kernel-feedback-list@broadcom.com,
-        William Zhang <william.zhang@broadcom.com>,
-        Linux ARM List <linux-arm-kernel@lists.infradead.org>
-Cc:     anand.gore@broadcom.com, dan.beygelman@broadcom.com,
-        kursad.oney@broadcom.com, joel.peshkin@broadcom.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH 4/8] clk: bcm: bcmbca: Replace ARCH_BCM_63XX with ARCH_BCMBCA
-Date:   Sun, 10 Jul 2022 19:11:18 -0700
-Message-Id: <20220711021118.3289767-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220707065800.261269-4-william.zhang@broadcom.com>
-References: <20220707065800.261269-1-william.zhang@broadcom.com> <20220707065800.261269-4-william.zhang@broadcom.com>
+        with ESMTP id S229463AbiGKHC5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 03:02:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2717C1A06D
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 00:02:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D9CC6225C9;
+        Mon, 11 Jul 2022 07:02:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1657522974; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nas+4WYvLdZm2xpQjkLc49qXucZAF+SzuoebcX3npfw=;
+        b=XUkD6vVfnI2Oxep9v7gKhZZ/rhK58axzInGpOSHzL9iMnOevZhBqK/fc/Y9zTSIDjfOvAv
+        57tqpZS3wF98+N4u7487KdzCAqm8Rwl4cuT5+Qoal7rL7Gx2e/sR8CvgU59mQIO4ytWpoo
+        FU1W1IUgUarRHKZ2uVCX0pp+97rv+2U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1657522974;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nas+4WYvLdZm2xpQjkLc49qXucZAF+SzuoebcX3npfw=;
+        b=l2wazvTrNCzEfmjyuhkRrnn2w4TgiNjHo/oYQsSc1DuoSJ2K0pYXO2e2KhKRe386jt6wMs
+        Pp7f+B/IPtLWl+BQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CC6ED13524;
+        Mon, 11 Jul 2022 07:02:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /Pm6MR7Ly2KOfgAAMHmgww
+        (envelope-from <iivanov@suse.de>); Mon, 11 Jul 2022 07:02:54 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Mon, 11 Jul 2022 10:02:54 +0300
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Guillaume Gardet <Guillaume.Gardet@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, nd <nd@arm.com>
+Subject: Re: [PATCH v4 0/3] clk: bcm: rpi: Add support for three more clocks
+In-Reply-To: <ce3e2e21-dc54-1f77-fdbb-6d3627917830@i2se.com>
+References: <20220428065743.94967-1-iivanov@suse.de>
+ <VI1PR08MB2847DA5DC2665EBA2756D7EB83C99@VI1PR08MB2847.eurprd08.prod.outlook.com>
+ <20220510133019.h2urxj3feponfuku@houat>
+ <ce3e2e21-dc54-1f77-fdbb-6d3627917830@i2se.com>
+User-Agent: Roundcube Webmail
+Message-ID: <b5c560cf5610fa8da1cfd7ef06ca6bac@suse.de>
+X-Sender: iivanov@suse.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed,  6 Jul 2022 23:57:55 -0700, William Zhang <william.zhang@broadcom.com> wrote:
-> Prepare for the BCM63138 ARCH_BCM_63XX migration to ARCH_BCMBCA. Make
-> CLK_BCM_63XX depending and setting default on ARCH_BCMBCA.
-> 
-> Signed-off-by: William Zhang <william.zhang@broadcom.com>
-> ---
 
-Applied to https://github.com/Broadcom/stblinux/commits/drivers/next, thanks!
---
-Florian
+Hi,
+
+On 2022-07-10 14:12, Stefan Wahren wrote:
+> Hi,
+> 
+> Am 10.05.22 um 15:30 schrieb Maxime Ripard:
+>> Hi,
+>> 
+>> On Tue, May 10, 2022 at 01:20:18PM +0000, Guillaume Gardet wrote:
+>>> May I ask what's the status/plan of  this patch series?
+>> As far as I know it hasn't been merged yet.
+>> 
+>>> It seems it has not been merged yet, and I know we are a bit late in
+>>> the 5.18 schedule, but I think this is a good fix for 5.18.
+>> Fix for what? I don't think this series fix any bug?
+> 
+> i think this series (or at least parts of it) is a workaround for this
+> issue [1].
+
+No, not really. Bug which this patch set fixes is this one [2].
+When using downstream dtb and up to date bootloader index 15 is
+valid id RPI_FIRMWARE_VEC_CLK_ID which is used by vc4 module.
+
+> 
+> We better fix the root cause of the potential out of bounds access in
+> clk-raspberrypi properly. I will send a patch soon.
+
+If not mistaken after last rework driver already handle this properly.
+clk-raspberrypi.c:362
+
+Regards,
+Ivan
+
+> 
+> [1] - https://github.com/raspberrypi/firmware/issues/1688
+
+[2] https://bugzilla.suse.com/show_bug.cgi?id=1196632
+
