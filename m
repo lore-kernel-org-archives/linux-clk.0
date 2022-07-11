@@ -2,80 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCA1C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 19:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A81EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 19:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230453AbiGKTIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 15:08:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
+        id S229677AbiGKTsZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 15:48:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231542AbiGKTIP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 15:08:15 -0400
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B284F6A3;
-        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id p128so5849354iof.1;
-        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EWM6B/BN24k6N+dVD2SEewWXN0WwozRf9TaRIyakfsQ=;
-        b=zf2LcyvglxjGBhMKlwYa6YU8ELdQdlj9xHcBybKp2k90ifUSzDddXEgC9ds9HuwIdC
-         WA7n2S/CpCP2QAWssuPltWjQUDr1teVhMVB5CWC7sARio2CjemosrnTGUuf1VEPk+Znl
-         cGLNrAmtUirApHrVUJQujJ/0HW0sRP5S+z3AL+gxD2ZNYbAQqW2/Ypo1X60wxGtjZ1UO
-         UW0GEL2ZgxxfYVRf08jmCn/h2NaBuJZwLGMgLjuHHV8Qd1WUV6tR9gpDUZNehUr87mCy
-         W62GaB0wKGtg+Qx01zRR9sMPVqAV0Cl8RhKlYZQaGTRqrlWVuvaGMmaKMUWvD1Wv3LZ5
-         KROQ==
-X-Gm-Message-State: AJIora9+xBlxFXsZ6IwxXM6BdFgaOKEEprdUgkIh/BDKGpFg6AoihUG0
-        gOqmNDboM1Bg1tYoadFpxA==
-X-Google-Smtp-Source: AGRyM1tIkZsbZHicAYL56wC+XkcZQD9BsIxHHrfnD2isdQIwSFhNCyZdhgdL5ZRik/sLEF1QCo40Lg==
-X-Received: by 2002:a6b:3fc3:0:b0:678:ea4a:a353 with SMTP id m186-20020a6b3fc3000000b00678ea4aa353mr10555790ioa.59.1657566493112;
-        Mon, 11 Jul 2022 12:08:13 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id cb15-20020a0566381b0f00b0032e49fcc241sm3206065jab.176.2022.07.11.12.08.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jul 2022 12:08:12 -0700 (PDT)
-Received: (nullmailer pid 106719 invoked by uid 1000);
-        Mon, 11 Jul 2022 19:08:11 -0000
-Date:   Mon, 11 Jul 2022 13:08:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: fix wrong clock documentation
- for qcom,rpmcc
-Message-ID: <20220711190810.GA106686-robh@kernel.org>
-References: <20220706225321.26215-1-ansuelsmth@gmail.com>
- <20220706225321.26215-2-ansuelsmth@gmail.com>
+        with ESMTP id S229437AbiGKTsY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 15:48:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1745509F;
+        Mon, 11 Jul 2022 12:48:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39EFAB81195;
+        Mon, 11 Jul 2022 19:48:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F14C34115;
+        Mon, 11 Jul 2022 19:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657568901;
+        bh=Lxp2E8ekZg/0/qPQCqI9niN28BmOoqa+084t2OecaxQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YxXD/mTjTqCaB+xAsUAsx5wPlZyTLA1JS2cWIDvH8zPMmp5WHHU47M3vosuOTGWPw
+         uNxWJ63ztw8V59ffzmkIyoBKSZX2JrfB2W86xG5zQDRaiyT4/gMmBNVrORIN+9G3xN
+         6ZjIi7Pgid+EMsffKAoxGvyEOGvDEOt6huxIQDUWFcueM+NmlaVHxZgzXBINFib5Eu
+         OZx1Om4AIdigCzUXyqwihik63qeY3U0zqugh38tx/nHCLZyF79zSLgae0glCzUklwW
+         n9w9PctF478M6weu4usG28B5GV0GbHoON8uf6q0mjrTOHbZ7oEvC680MwuSO47Dmff
+         DYGga0ZiAQT3Q==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220706225321.26215-2-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220711123519.217219-4-tmaimon77@gmail.com>
+References: <20220711123519.217219-1-tmaimon77@gmail.com> <20220711123519.217219-4-tmaimon77@gmail.com>
+Subject: Re: [PATCH v8 03/16] dt-binding: clk: npcm845: Add binding for Nuvoton NPCM8XX Clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Tomer Maimon <tmaimon77@gmail.com>, arnd@arndb.de,
+        avifishman70@gmail.com, benjaminfair@google.com,
+        biju.das.jz@bp.renesas.com, bjorn.andersson@linaro.org,
+        catalin.marinas@arm.com, daniel.lezcano@linaro.org,
+        geert+renesas@glider.be, gregkh@linuxfoundation.org,
+        j.neuschaefer@gmx.net, jirislaby@kernel.org, joel@jms.id.au,
+        krzysztof.kozlowski+dt@linaro.org, linux@roeck-us.net,
+        lkundrak@v3.sk, marcel.ziswiler@toradex.com,
+        mturquette@baylibre.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        olof@lixom.net, p.zabel@pengutronix.de, robert.hancock@calian.com,
+        robh+dt@kernel.org, shawnguo@kernel.org, tali.perry1@gmail.com,
+        tglx@linutronix.de, venture@google.com, vkoul@kernel.org,
+        will@kernel.org, wim@linux-watchdog.org, yuenn@google.com
+Date:   Mon, 11 Jul 2022 12:48:18 -0700
+User-Agent: alot/0.10
+Message-Id: <20220711194820.D9F14C34115@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 07 Jul 2022 00:53:18 +0200, Christian Marangi wrote:
-> qcom,rpmcc describe 2 different kind of device.
-> Currently we have definition for rpm-smd based device but we lack
-> Documentation for simple rpm based device.
-> 
-> Add the missing clk for ipq806x, apq8060, msm8660 and apq8064 and
-> provide additional example to describe these new simple rpm based
-> devices.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Quoting Tomer Maimon (2022-07-11 05:35:06)
+> Add binding for the Arbel BMC NPCM8XX Clock controller.
+>=20
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../devicetree/bindings/clock/qcom,rpmcc.yaml | 85 ++++++++++++++++++-
->  1 file changed, 83 insertions(+), 2 deletions(-)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
