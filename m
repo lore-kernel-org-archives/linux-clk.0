@@ -2,65 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3919BC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F744C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 15:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbiGKPZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 11:25:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50382 "EHLO
+        id S232258AbiGKPZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Jul 2022 11:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232257AbiGKPZR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:25:17 -0400
+        with ESMTP id S232257AbiGKPZT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 11:25:19 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D40252A3
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:25:16 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id A89E55C01B6;
-        Mon, 11 Jul 2022 11:25:15 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 11 Jul 2022 11:25:15 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 400372AC53
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 08:25:18 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 86D275C01B5;
+        Mon, 11 Jul 2022 11:25:17 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 11 Jul 2022 11:25:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1657553115; x=1657639515; bh=3E
-        H5v5McC3jEi65SSBa5R6U9TYEoq9N0vbsDoTx8KvQ=; b=l3JDu9eehNy2TNgjHb
-        C3XC60xxr9R7exUbbu01kJtb11+c8xRS/uP/gtOBvbBaANRhxTWHFNU8efCi2Mk/
-        KA4rxpUAYOZg6DLNyT5i5hfDI2Vd3eSCwlfDUMquaCqV3vkl6pno0J4BR9HsKvsj
-        7nrk3KLpfSaE6SWhniaUoYvQ7/Dqj3FhHSbJ7E8cH0caM/AKxBwxFY07cfXkKXL6
-        ObjQeqPH3xPl5p/rXQ2EzdzLt+Febjhu3QRRfS1CgS7ABw3jgfZgvymum6W5rHoE
-        Sf08k3+JZTWl1uHY/a84iBe3pLYWNiaG4Z8z0VlHuHuoUvuaKGUdfihpv9K9BTaE
-        uoFQ==
+        :subject:subject:to:to; s=fm2; t=1657553117; x=1657639517; bh=ec
+        ZxlGuyIz1nTEqbpwWfaKxOyLrDyGjRBtU8uddXVZY=; b=qCkHvNcrhzoctjl81d
+        Lh2IstJw55/nWxLKAXMtbhcD9i4fGuzha67PTu+xGzhca3e+VJuCTDewf+8Nm7QR
+        qCOXcEd2e3mi0WE7HX4LYoKCnmGA/FhRt22GCv4XC2FRidAoc80XHQWL8DAkHXr4
+        n7zJ3QIq3UAKXAo8r8Qy/K+OCZ6r7VwIjU7qUc11QhQ+T2JjYK+7BeERedqyFKZn
+        W3dgxWK91NZecg41oVSGdGQbPinOTETTZEldghV2ew7ANHsWGGvDzvXF3Vm/tGds
+        EMiv/VDf6W++Kkz9uXrP3l3P5dgPbldIxDUa5dwAablT+vXUSveZK9bTfqRs60Kz
+        do2Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1657553115; x=1657639515; bh=3EH5v5McC3jEi
-        65SSBa5R6U9TYEoq9N0vbsDoTx8KvQ=; b=FK7biBLTHoDd/XKqtLgeYZBkfNd3A
-        yLMR9LfYw9fudyzM9YU9BiJZw0pxAi92Mysos2q+h54SC3BrnxtYJK4JZsl7FipD
-        /1IRArNEY1lPpoLQTt09eg993MDEXrMx2CqHwQt/L7fwgzZR80uVsFZXuYhDDRbh
-        FGBcT38Uhqrq0dLUUD/YkL2HBBkZXf8LVv/SyFs4khRBSN0T3gCr8YLOXw/tVux4
-        WGnDu7NC5/oURW1ZZmY2HzXEEvUhbNKkwIoKGQMZYXkvh6mvQqRWiDh0pKWZ4JDF
-        k1yMAvf4EyCHZ5StKr4cqhWL4UZzrnSezryz49tFee//fCJVcByIefjFw==
-X-ME-Sender: <xms:20DMYjkWPT2JmPRDnKFU2TAiVyrDVPyhyi364GuhU15vmhF4hTeD-A>
-    <xme:20DMYm3IeyfeHG7867ZeK7UorstczP1P2AB5BbPRJ2pAAuhRSVRHvQUj8mlbneHLo
-    sLKhUAeXGba1MHK9xQ>
-X-ME-Received: <xmr:20DMYpqcokf4bPQ1COJXCGzwWnEZlW-q_mxDVWyrN7Ldy6-MmmndDTK8DAGETzKB9LIJtNs1r-tWzL9cCklvz-at806JnN8yt2GweVo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeeiucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm3; t=1657553117; x=1657639517; bh=ecZxlGuyIz1nT
+        EqbpwWfaKxOyLrDyGjRBtU8uddXVZY=; b=r1KNdClHZkedL/1cWM+zRzrBJFpuc
+        5nf3CJpXbRru0N7+bUbmBUiCAj6NImmeo6bbhiRKKuidHxy7qMsQcGbre+dPqt2W
+        r08SGPGzN3iiKLD2jFe6Rilna2OaFwaX10ce/SHZvJaxS2myRH3bRcUR6UOIGx3r
+        AQ5qOHhtBdPiRwXNV2mTq+Bs3n1+9eK5vpkrVJw4gkbul+tue5+FOySYrEHCQ3V5
+        tvd1sUjJ4yxCrtawlkEFZptoKj+HbRSlbwQ85R7CNT3cTfOxr5fcwMs21XJhCEkC
+        IEAibXxa7wXKhveYnO3d9Ai5awvs8l2ofRzMuuhnBzl7ADwGfQQTZ5kvg==
+X-ME-Sender: <xms:3UDMYm_7R8LXSVkl8FeJ4GNjLkKa6TUlkaZISwYJo2v2NT6G_SEIOg>
+    <xme:3UDMYmvk1bjs01g-6Tvpqava-8eGCnTs5YVjk4PxGGTGH0c6e2AvYYe0DGJX_d-o8
+    uBCXH3aev4HcnsQn6c>
+X-ME-Received: <xmr:3UDMYsC7TjJLET_v4rt_RO6XrJ7v93muI6nS-Iu5s3rDIkoeyt7BetGvSUQJ8tHrERS26gIpMJRvDE_oCSJQlxfDua10-XJDP4q5mfc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudejfedgkeehucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
     htthgvrhhnpeelkeefteduhfekjeeihfetudfguedvveekkeetteekhfekhfdtlefgfedu
-    vdejhfenucevlhhushhtvghrufhiiigvpeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    vdejhfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:20DMYrl1ysd9icAcpN--mHgQyZGPKbhtGg05eEUokUThxkqiJbQXkg>
-    <xmx:20DMYh0ayCd3ChBFbdOQgzcBtfnW4bkeSWkA28GemllBCgaCaBoPwA>
-    <xmx:20DMYqvIS3Gf-nfIykSzsUwO6PwY4GeoZbLz6AaiyE94SHBW-aIDKQ>
-    <xmx:20DMYqttje_6OsoCWOB3QvPkEkuuYKrGyEYD-sIGOmCFoxZG58I47Q>
+X-ME-Proxy: <xmx:3UDMYufcFwK6ct8FhneXqqjlrLJWIuhq2tUyPnk8qFPL62p5j_uCyg>
+    <xmx:3UDMYrNc2IcPvADCY6-UCJg6_x-_mOaMR-51qULyF5s0aepYmDlLGA>
+    <xmx:3UDMYonmUmoGQqwqj3EQR749okYQCOg-e-7TEKfPtrMLvd13-J2iKQ>
+    <xmx:3UDMYsGBK-DX_i4jcMpEltofHgjwxAlz5EMj4uH77d4i-YZjyx7UhQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Jul 2022 11:25:15 -0400 (EDT)
+ 11 Jul 2022 11:25:16 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
@@ -73,9 +73,9 @@ Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 26/28] clk: Introduce the clk_hw_get_rate_range function
-Date:   Mon, 11 Jul 2022 17:24:22 +0200
-Message-Id: <20220711152424.701311-27-maxime@cerno.tech>
+Subject: [PATCH v6 27/28] clk: qcom: clk-rcg2: Take clock boundaries into consideration for gfx3d
+Date:   Mon, 11 Jul 2022 17:24:23 +0200
+Message-Id: <20220711152424.701311-28-maxime@cerno.tech>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220711152424.701311-1-maxime@cerno.tech>
 References: <20220711152424.701311-1-maxime@cerno.tech>
@@ -85,58 +85,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some clock providers are hand-crafting their clk_rate_request, and need
-to figure out the current boundaries of their clk_hw to fill it
-properly.
+The gfx3d clock is hand-crafting its own clk_rate_request in
+clk_gfx3d_determine_rate to pass to the parent of that clock.
 
-Let's create such a function for clock providers.
+However, since the clk_rate_request is zero'd at creation, it will have
+a max_rate of 0 which will break any code depending on the clock
+boundaries.
 
+That includes the recent commit 948fb0969eae ("clk: Always clamp the
+rounded rate") which will clamp the rate given to clk_round_rate() to
+the current clock boundaries.
+
+For the gfx3d clock, it means that since both the min_rate and max_rate
+fields are set at zero, clk_round_rate() now always return 0.
+
+Let's initialize the min_rate and max_rate fields properly for that
+clock.
+
+Fixes: 948fb0969eae ("clk: Always clamp the rounded rate")
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk.c            | 16 ++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 18 insertions(+)
+ drivers/clk/qcom/clk-rcg2.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 77601f435f12..5bdfd645f1dc 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -683,6 +683,22 @@ static void clk_core_get_boundaries(struct clk_core *core,
- 		*max_rate = min(*max_rate, clk_user->max_rate);
- }
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 28019edd2a50..ee536b457952 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -908,6 +908,15 @@ static int clk_gfx3d_determine_rate(struct clk_hw *hw,
+ 		req->best_parent_hw = p2;
+ 	}
  
-+/*
-+ * clk_hw_get_rate_range() - returns the clock rate range for a hw clk
-+ * @hw: the hw clk we want to get the range from
-+ * @min_rate: pointer to the variable that will hold the minimum
-+ * @max_rate: pointer to the variable that will hold the maximum
-+ *
-+ * Fills the @min_rate and @max_rate variables with the minimum and
-+ * maximum that clock can reach.
-+ */
-+void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
-+			   unsigned long *max_rate)
-+{
-+	clk_core_get_boundaries(hw->core, min_rate, max_rate);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_rate_range);
++	clk_hw_get_rate_range(req->best_parent_hw,
++			      &parent_req.min_rate, &parent_req.max_rate);
 +
- static bool clk_core_check_boundaries(struct clk_core *core,
- 				      unsigned long min_rate,
- 				      unsigned long max_rate)
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 0bfebea2a50a..1e38886a2916 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1233,6 +1233,8 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
-+void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
-+			   unsigned long *max_rate);
- void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- 			   unsigned long max_rate);
- 
++	if (req->min_rate > parent_req.min_rate)
++		parent_req.min_rate = req->min_rate;
++
++	if (req->max_rate < parent_req.max_rate)
++		parent_req.max_rate = req->max_rate;
++
+ 	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
+ 	if (ret)
+ 		return ret;
 -- 
 2.36.1
 
