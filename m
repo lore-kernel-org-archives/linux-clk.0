@@ -2,102 +2,224 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B0C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Jul 2022 23:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E8CC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 06:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231152AbiGKXDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Jul 2022 19:03:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56306 "EHLO
+        id S231912AbiGLGoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 02:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbiGKXDV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jul 2022 19:03:21 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFF159273
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 16:03:20 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id u6so6169413iop.5
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 16:03:20 -0700 (PDT)
+        with ESMTP id S229709AbiGLGoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 02:44:23 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED14A3C8D1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 23:44:20 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id l22-20020a05600c4f1600b003a2e10c8cdeso277135wmq.1
+        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 23:44:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZPXhzxwUo/ZCdZLeYUQL98xfFxCi7Cx7vbdqmGr4H/s=;
-        b=od/y9HJhbzw+qEa4XZKbNNmwqNHoga7e9JNh21UKNlGBYkuRwP9U2SQ1vXpHnNkwWp
-         L9pNhUuQaQGtfTyXSm/MGXGbeALkxDS/ebQcZVAxs5+aIKYV7AYjMm5QU+UzkuhwgQwI
-         lwLlWxlemeNQAobTcVsNPKyjzu03zPqCGuoX5YB8vh9ikOLIDv4lH18Na5J0xss6BYGh
-         5QmSW6HGzODXdBa+WANA/hqW5WbANEd+0WIegWRha2zR2NZr6qsyN8UMqYe/2XEwRO+P
-         V/YDcpFBIzCaUozohLooMTc1uewzSTzRBmitz0+YWOh5eoZW7i+gJSAW6PdiU7+tXhL+
-         ZTuQ==
+        bh=OqnX1WvjcG1TunJPu3Y1sp5DHJ1C/aUJIiViO2AaEJE=;
+        b=mUiqxSxDUL7hDt5JBQK8cVz7O+mF9bon1/gqLgxpV6dhcksW2KttAvrHa/DZW/Zo+T
+         wgoqGHXHUzpt4E3GXOZO6+W1zhHhKiXOxwfvPhBeXI/3Y8quql2DRK5teufKhkvafA3P
+         BTGdUKcfUefGzFkVNcCfWDQ3vQx7Hue8h9+WjRrF8qnUX7/McFOjlERBGVo9e3gmprPW
+         FynYjdIFN5npCnMNcTgaZwo2jmzeH4T9HWNGFKST8QTU4PMXwgnRLaFbWJNBsdgMREQQ
+         9rHTqYLmyNl/g3jCOiraP6C8WM1Sn/2t1oS29kj2t7AQk55dHbwwVI4jLWkqCw0c6opj
+         9tFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZPXhzxwUo/ZCdZLeYUQL98xfFxCi7Cx7vbdqmGr4H/s=;
-        b=e62Tx/zz5/OhoM9tzaJ30jkdLlgPBMArL91NHMmUBokxg3UHEzZlZNqEZchHECrNez
-         Mn6CXGtW5w3Z/2NQk1yG1bHZN8PiTHXp/GEwPvZfBYdPSItCN6Cp7MThllgnk2OCK4N/
-         4bb0orYYU9aCmn98Q8nFCBevBK9+HTKHap9t+k6GRPdHJXP+0e1fBRFQjiwM34+Rd+my
-         xd3FnxWgT3Zew3KfD+N88rSVkGNgKUN79wnl5LsdlSLXiQBMCtRXr/DymttnYh53JAzd
-         0hYOWKq4rp1ku5qAi2/s6T6JDtMLQZ/4MHbDRvmnh3UQ6ktdrb90tjfIymnc6EA1qsh1
-         IeZw==
-X-Gm-Message-State: AJIora8vzM2SRI8v1mNLBRQTJq9KT+yroAxQ7TrB9n3HeJkK3DW2qvn+
-        kqg7ge479lUuJOY8ah1LsuYloTyc1sASbnGSdKhn0g==
-X-Google-Smtp-Source: AGRyM1s87Q93LXBgrqkRfeMusqvdl65gYPYSYZTJMADI5/6fvr0hZQDbHmoI2Wcof6Sm8CduljX/1HWmuR5vC3zJJKw=
-X-Received: by 2002:a6b:3e83:0:b0:678:e63b:355d with SMTP id
- l125-20020a6b3e83000000b00678e63b355dmr10624504ioa.134.1657580599491; Mon, 11
- Jul 2022 16:03:19 -0700 (PDT)
+        bh=OqnX1WvjcG1TunJPu3Y1sp5DHJ1C/aUJIiViO2AaEJE=;
+        b=ddrbVytcCUnOLT5+WVA9yMFDppbbrdBYmu2O0sLX1usbHFbXShrYzT+m+5fBFMSSl4
+         R9qJU4E7eEDjT/Hnf1mipx2TmAOtUAtUMw77xtKR+Pe94mvW+SrwpRkbmRwlDbSzRSVT
+         USC1s3nvfkrA31DH+W/zxuuAqd+PwZKgShe4ty1TNyUi0ZgUSxWrLPsB4WNl3tXzZcND
+         WVNP/pnEFDRVOCJ/u71CrMW6E96ySSK2Cpk4T+zpNI+MtvjwRmsZbhAhdhn5VAJnW001
+         /CXUmHDNYd75B1BRkLP3Ehi+nR9V6TSQn6ghsVIJHXbKLQyaMUoXmHVMtRd+ozyTbAOJ
+         fsFQ==
+X-Gm-Message-State: AJIora8/rIoDoPab3BGT5hpfIX57GS+AeBYb8SR1OxxEj0jeBlF+DSWp
+        /dPpf2NMvLMafZHcTQU5841YGwKka7ETUf05/0zVZA==
+X-Google-Smtp-Source: AGRyM1tZaNY3RnpsWXPhubtirONGD9WJkruBLM3+IN0NN9iASwGWk+J9hyYDSii8WApr2iertUTtnt4b6jMvtc4zgRQ=
+X-Received: by 2002:a05:600c:34ce:b0:3a0:3b4b:9022 with SMTP id
+ d14-20020a05600c34ce00b003a03b4b9022mr2117717wmq.66.1657608259479; Mon, 11
+ Jul 2022 23:44:19 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220711162713.2467476-1-dlatypov@google.com> <20220711204859.3DDD5C34115@smtp.kernel.org>
-In-Reply-To: <20220711204859.3DDD5C34115@smtp.kernel.org>
-From:   Daniel Latypov <dlatypov@google.com>
-Date:   Mon, 11 Jul 2022 16:03:08 -0700
-Message-ID: <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
+ <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
+In-Reply-To: <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
+From:   David Gow <davidgow@google.com>
+Date:   Tue, 12 Jul 2022 14:44:08 +0800
+Message-ID: <CABVgOS=bm5TmEBd8jxuTPJy426OgC14ryqn4FLQR1pHNf5uhsw@mail.gmail.com>
 Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     brendanhiggins@google.com, davidgow@google.com,
-        linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
+To:     Daniel Latypov <dlatypov@google.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
         linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000007f92ae05e395ffcd"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 1:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
+--0000000000007f92ae05e395ffcd
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, Jul 12, 2022 at 7:03 AM Daniel Latypov <dlatypov@google.com> wrote:
 >
-> Quoting Daniel Latypov (2022-07-11 09:27:13)
-> > CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
-> > However, this causes test failures when running the clk tests, i.e.
-> > $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
+> On Mon, Jul 11, 2022 at 1:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
 > >
-> > A snippet of the particular error is:
-> > >     ok 1 - clk_gate_test_parent_rate
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
+> > Quoting Daniel Latypov (2022-07-11 09:27:13)
+> > > CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
+> > > However, this causes test failures when running the clk tests, i.e.
+> > > $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
+> > >
+> > > A snippet of the particular error is:
+> > > >     ok 1 - clk_gate_test_parent_rate
+> > > > ------------[ cut here ]------------
+> > > > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
+> > >
+> > > This is triggered by this cast in the test:
+> > >    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
+> > > this seems to work except when logic iomem is enabled, i.e.
+> > > CONFIG_INDIRECT_IOMEM=y.
+> > >
+> > > As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
+> > > drivers/clk/.kunitconfig so we can enable it for everyone else by
+> > > default in kunit.py.
+> > >
+> > > The long-term fix probably requires something more complicated, like
+> > >   #ifdef CONFIG_INDIRECT_IOMEM
+> > >     logic_iomem_add_region(...);
+> > >   #endif
 > >
-> > This is triggered by this cast in the test:
-> >    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-> > this seems to work except when logic iomem is enabled, i.e.
-> > CONFIG_INDIRECT_IOMEM=y.
-> >
-> > As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
-> > drivers/clk/.kunitconfig so we can enable it for everyone else by
-> > default in kunit.py.
-> >
-> > The long-term fix probably requires something more complicated, like
-> >   #ifdef CONFIG_INDIRECT_IOMEM
-> >     logic_iomem_add_region(...);
-> >   #endif
+> > If this is how platform IO is mocked then yes we'll have to implement
+> > that.
 >
-> If this is how platform IO is mocked then yes we'll have to implement
-> that.
+> It's not clear that it will be, but it's likely.
+> Until it's more clear, I figured we'd go with this simple bandaid fix for now.
+>
+> There was initially some talk of using function-level
+> "stubbing"/"mocking" [1] to do the same, but Brendan started playing
+> around with logic iomem more. He and David can comment on it more
+> cogently than I can.
 
-It's not clear that it will be, but it's likely.
-Until it's more clear, I figured we'd go with this simple bandaid fix for now.
+So, as I understand it, casting a regular pointer to an __iomem
+pointer (as the clk test does) isn't technically correct, though it
+does work on almost every architecture out there. If we want some way
+of intercepting I/O access, then then that'll need to be handled by
+the various read()/write() functions.
 
-There was initially some talk of using function-level
-"stubbing"/"mocking" [1] to do the same, but Brendan started playing
-around with logic iomem more. He and David can comment on it more
-cogently than I can.
+UML doesn't support iomem at all out of the box, and logic_iomem is a
+way of implementing it which allow us to attach handler functions to
+blocks of memory, albeit with more constraints about what addresses
+get used. Brendan started implementing a "fake hardware" interface on
+top of this here, though it's still in-progress:
+https://kunit-review.googlesource.com/c/linux/+/5272/4
 
-[1] https://lore.kernel.org/linux-kselftest/20220318021314.3225240-3-davidgow@google.com/
+Ultimately, I think the 'correct' solution here will be
+logic_iomem-based, but doing that nicely will probably require one of
+two things:
+- logic_iomem to support non-UML architectures as well (becoming a
+generic "insert a 'fake' device here" system)
+- logic_iomem to have some way of "passing through" access to an io
+memory region through to the normal underlying memory.
 
-Daniel
+Ideally, we'll have both, and maybe even defaults which will allow
+hacks like this to continue working (perhaps with a warning?). That'll
+require some significant (and probably not uncontroversial) work on
+how iomem accesses work in general, though, possibly with performance
+impact.
+
+The other option of using function redirection on the io read()
+write() functions exists, and would be a bit simpler in the
+short-term, but would probably result in a lot of tests reimplementing
+this, and also would have some performance impacts, as the I/O
+accesses wouldn't be able to be inlined if KUNIT is enabled.
+
+Cheers,
+-- David
+
+--0000000000007f92ae05e395ffcd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+z/tQRXr3iPeVmZCr7nttMEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQAx+EQjLATc/sze
+VoZkH7OLz+/no1+y31x4BQ3wjW7lKfay9DAAVym896b7ECttSo95GEvS7pYMikzud57WypK7Bjpi
+ep8YLarLRDrvyyvBuYtyDrIewkuASHtV1oy5E6QZZe2VOxMm6e2oJnFFjbflot4A08D3SwqDwV0i
+OOYwT0BUtHYR/3903Dmdx5Alq+NDvUHDjozgo0f6oIkwDXT3yBV36utQ/jFisd36C8RD5mM+NFpu
+3aqLXARRbKtxw29ErCwulof2dcAonG7cd5j+gmS84sLhKU+BhL1OQVXnJ5tj7xZ5Ri5I23brcwk0
+lk/gWqfgs3ppT9Xk7zVit9q8MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBn
+Tk66uJbvglg0AKHX/x9QBJo9CpMpTq1HZEq2FGB/JzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjA3MTIwNjQ0MTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAURDWVVbo39P6Fu6M/q7O
+bf56OiM9u1dc0ScLJCMYnpvpJGQS38C8nCBZwcYajFWO6hz5W/YtOSRStKF7zPHY+CaQ7lk1pD3N
+bW5/dB3ryH1aEmRs4NOalJkhJm48Pe4JHxpdmPIDC9WLacXN6vRStThkoL+GIAlg2q45U20nqakA
+OssWtfUuvOv1geY0g0dFds4cYZxPjgV1eH7tbZ2XqlsMKiPyK8buBWy4eGEQ1R0aUPXSg8FF5DpC
+1itT9aulzOc3KiJW4s8UTaDJPV0g6IOpY2pyMCYSWtPLWaLvJniJfKEFkclazl8/YYXshnN392mb
+GwNMlikx8xcElsu/UA==
+--0000000000007f92ae05e395ffcd--
