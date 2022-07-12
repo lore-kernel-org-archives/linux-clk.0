@@ -2,118 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8562EC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 09:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90604C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 10:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231916AbiGLJzX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 05:55:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44800 "EHLO
+        id S232416AbiGLKDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 06:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbiGLJzW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 05:55:22 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E09AA81A
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:55:20 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id r9so5041038lfp.10
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :references:from:in-reply-to:content-transfer-encoding;
-        bh=axICpN3J/kMmaCf6S84TqGPCux368wms9PQ9I5oaU1Y=;
-        b=sgRn9iuPJDgWVdjaKv2jASetCuvgyB1fPCM+Uk+k1rQUY3idehVWK1F4ch8IyPAEL5
-         FLVBeM9+sq3kyoUucHx7vTTLeD+achPZeHZy3NRQrkkyVfNWc9F7WQWm+Oj2EuYQPdpz
-         YXxhCFWIt7xsMqneckUIjOBUTiPboVK1aOSBEj/wO+dTDnBnKSvtzuwMQk08jASq7gNo
-         9JD7RhZ8ken9hZb2xjtdeNiAvgrDcyErGBZ1dvLfdvb2636w+OTb7KBnEmJVvfILLFpA
-         +V+7xgf0gQlYirp33ZUZFPzMd/R7CdXvfPH9MK2WANEwqze1NZIyyqKWFx86eZNeXxcg
-         Q5dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=axICpN3J/kMmaCf6S84TqGPCux368wms9PQ9I5oaU1Y=;
-        b=59MvoGNQ6nvfBV2+e/kWz7TqL3uCkv/38m4k6SZhOJPH+RYZccha1k8K0FA0Q9f4mG
-         H00SkPOXdqKcT2Xjm+gpZkGC67BXyiF//R7c++o6x0DmppqY6CweENqWFynzOUup1IMX
-         rVXqabv/hGaYdGunuRYOKWG6pB5JTDt6JlkPBZ+KntwEijsNqPS7GhPrj6bTHI6xrhg9
-         TC37tFc9pFX/g3fa4xAjkUjM4Ffe3cKxhyC+RdlAnFaU0EIaP1u/KOFjXVEyRaV+gpqf
-         k8UfdE1OF5jWZ6GSG/uZ7xPJtG9Syoxt6w+90VkBwCfLFhhClVkao9bSLMnGpF/OajdL
-         Q7bw==
-X-Gm-Message-State: AJIora/VOoDK71RS7OqZNlQc+H+qU2pn19LJJlSZkL+ibBRe7XvdCgQ8
-        Mns4egrEKPdplomEHPigkFnd9g==
-X-Google-Smtp-Source: AGRyM1ssaxls1fUxMc6/WdaimSgtDYowXLkqFMFTIULBRqh8A9jBeagdf7UHpFRz2wr0G30u76TsUw==
-X-Received: by 2002:a05:6512:108d:b0:489:e640:df8c with SMTP id j13-20020a056512108d00b00489e640df8cmr4334829lfg.332.1657619718613;
-        Tue, 12 Jul 2022 02:55:18 -0700 (PDT)
-Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
-        by smtp.gmail.com with ESMTPSA id f28-20020a05651c03dc00b0025d40241c1dsm2354259ljp.6.2022.07.12.02.55.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jul 2022 02:55:17 -0700 (PDT)
-Message-ID: <6f9d2ea8-1ffd-41d1-9441-00c2b35187ec@linaro.org>
-Date:   Tue, 12 Jul 2022 11:55:13 +0200
+        with ESMTP id S231571AbiGLKDs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 06:03:48 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621B6E0FE
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 03:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1657620226; x=1689156226;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oc3MQ3KuTQWhIOa1CwfhwVSh4PktPWFuTMH5rum+SM4=;
+  b=TLZOYT4pyslb7+2tuO9oXH+aEtzNHtyEUoBPoNegslJixIQhuip2WmqV
+   1MaPwlPoLxJ//5phi1PTnR/EWZzt/9RrAhKo7gl0+dqcQ6+pYcbo331ty
+   1mqvsnderhQcR//xW5wLKMvw9NmJDxOnnruw5sgJLLT9LT4v2JxCU5C/m
+   e/Yi2HXmkDtZOyAvQYUvdo/upDeBQi8LZcYztVL5aiHtJ2Hf1oy7Eh5SH
+   5NsFb6liZ/susb9VqSgjNqKuowgXklVNM5LY5aESudlwG5vqgd/pcRW1J
+   Y4WdfPCvSpY2r76wDXR7hMViws13xX2GUw/bHNt4FD+BV4eU23pZeycdJ
+   A==;
+X-IronPort-AV: E=Sophos;i="5.92,265,1650956400"; 
+   d="scan'208";a="172007895"
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Jul 2022 03:03:39 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Tue, 12 Jul 2022 03:03:39 -0700
+Received: from localhost.localdomain (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2375.17 via Frontend Transport; Tue, 12 Jul 2022 03:03:38 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
+CC:     <linux-clk@vger.kernel.org>
+Subject: [GIT PULL] AT91 clk fixes for v5.19
+Date:   Tue, 12 Jul 2022 13:06:05 +0300
+Message-ID: <20220712100605.898385-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v8 09/15] dt-bindings: firmware: Add fsl,scu yaml file
-Content-Language: en-US
-To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Peng Fan <peng.fan@nxp.com>, Liu Ying <victor.liu@nxp.com>,
-        Shijie Qin <shijie.qin@nxp.com>, Ming Qian <ming.qian@nxp.com>,
-        Mirela Rabulea <mirela.rabulea@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20220707125022.1156498-1-viorel.suman@oss.nxp.com>
- <20220707125022.1156498-10-viorel.suman@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220707125022.1156498-10-viorel.suman@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/07/2022 14:50, Viorel Suman (OSS) wrote:
-> From: Abel Vesa <abel.vesa@nxp.com>
-> 
-> In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch adds the
-> fsl,scu.yaml in the firmware bindings folder. This one is only for
-> the main SCU node. The old txt file will be removed only after all
-> the child nodes have been properly switch to yaml.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+Hi, Stephen, Michael,
 
+In case it is not too late, please pull these 2 fixes for 5.19.
+They are necessary for proper working of:
+- new features enabled on LAN966 SoCs that uses clock gating support
+  in clk-lan966x driver
+- proper balance of reference counter embedded in struct device_node
+  objects that is incremented by of_get_parent()
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you,
+Claudiu Beznea
 
+The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a56:
 
-Best regards,
-Krzysztof
+  Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-fixes-at91
+
+for you to fetch changes up to 4e03ba2fea702f1499c7a29e30e2916ec6cfa269:
+
+  clk: at91: dt-compat: Hold reference returned by of_get_parent() (2022-07-11 11:04:40 +0300)
+
+----------------------------------------------------------------
+AT91 clock fixes for v5.19
+
+It fixes the base address for gate clock in clk-lan966x driver and
+release the reference counter taken by of_get_parent() in dt-compat
+driver.
+
+----------------------------------------------------------------
+Herve Codina (1):
+      clk: lan966x: Fix the lan966x clock gate register address
+
+Liang He (1):
+      clk: at91: dt-compat: Hold reference returned by of_get_parent()
+
+ drivers/clk/at91/dt-compat.c | 108 +++++++++++++++++++++++++++++++++----------
+ drivers/clk/clk-lan966x.c    |   2 +-
+ 2 files changed, 85 insertions(+), 25 deletions(-)
