@@ -2,97 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F02FC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C00C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 14:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231857AbiGLM7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 08:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
+        id S233237AbiGLOBQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 10:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbiGLM7c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:59:32 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 228371FCEA
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:31 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id d16so11036955wrv.10
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yS4aszlD6wfaJXkFTxX6G5kce/Ags3GTvPz2INj0vkA=;
-        b=UtgpWScOPK7ulWYKExX2Qx9TQNSVmYi0q0KDI8/sVm3ASbTAMqcfHrtlRs990t4y+h
-         XM/fntk0QB3Bb+zaUnAZQvKcxryXHvT11aOocDHsC+nvnkNfh4PVLK34/qMv+RrozEyU
-         tBF2bz0PdodHsLRBZkOjfxSJybvznPt552YmFU7nGv6AWU1GaQegj1yoaPvyDFC4fZzE
-         8rhSsy4v+8p2nPWGnt1b8X9c4nNAvj2yj6j7vrFltMbTSvuO/gtHxc5ntYM5jpIH8rnt
-         a8JS2JkHTJFcYQTc2BtnqCsMaiZ+yRBwCd2Wp5i1t4F5xGNci8H2g2Qt4F/Kk49N45+i
-         uo+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yS4aszlD6wfaJXkFTxX6G5kce/Ags3GTvPz2INj0vkA=;
-        b=FXDKDWjyJFSdd4+aNP+xOvUo+057/R/6cin8WFTvAHC07hRixnAGy0yYzXIyiOxfjN
-         cxdpC+o25i5mtMEzYTRJnYKAOloeuO43IB29zuRiUktMXpni6Vzw30p19PdOnszZ8ljY
-         44S4KfETrKfbQY9pMvI1T3QDVMxZcaiZybBOo2TVfLEBcmCsYxDDWgy0AhOIRPrJrxSN
-         8aqOL9GvR2qhUVczwcHoVB4Bg5ii9x1rRVVPFEhntHCaRqxKmR3vEymfPd9kRQeWnUaT
-         1DyMds5XI+46xxt7rIOxR65g+6E4YxzESCbuQXEWzwcrPTdhTH34/joJL+6n/wmm4MQz
-         zGaA==
-X-Gm-Message-State: AJIora+i+nrS2Q13ae2PHkQ9LELaNeiv3CJ6fstNzXX5VUOvk76mdRuU
-        dZCPcBL/Hsi/9zcRXoR+4c0mCg==
-X-Google-Smtp-Source: AGRyM1u3GMRPvrLIVNDWN96Q8Wkz0b8cZSpRfZWd35w1BmXUjX2DQ+HSF8WSSV36pxXN0vvN+Id6Gw==
-X-Received: by 2002:a5d:4584:0:b0:21d:62f5:c2da with SMTP id p4-20020a5d4584000000b0021d62f5c2damr22706157wrq.671.1657630770741;
-        Tue, 12 Jul 2022 05:59:30 -0700 (PDT)
-Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id t123-20020a1c4681000000b003973c54bd69sm13008627wma.1.2022.07.12.05.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 05:59:30 -0700 (PDT)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org,
-        konrad.dybcio@somainline.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH 6/6] clk: qcom: gcc-msm8939: Add missing USB HS system clock frequencies
-Date:   Tue, 12 Jul 2022 13:59:22 +0100
-Message-Id: <20220712125922.3461675-7-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
-References: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
+        with ESMTP id S233516AbiGLOAy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 10:00:54 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEA3E02B;
+        Tue, 12 Jul 2022 07:00:17 -0700 (PDT)
+Received: from notapiano (pool-98-113-53-228.nycmny.fios.verizon.net [98.113.53.228])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 13E0B66016F8;
+        Tue, 12 Jul 2022 15:00:13 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1657634415;
+        bh=mbcA91S5p6wcOQpchlxMqQs99CbpqYRQB8T7w4Nci6I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZJoOAEjRo3DgflaYetEXXTahyQ9YbJxeMhcsLOru17+VQSWm9crnflya6zAuO169F
+         PNDsaEQuwqqiFB1VNtKUVJcj0YtMGihuCBjJI4vA9cMWj4XT94jEaQWzqUB3IiUidy
+         SIWEei97AJus7Ya3q2UC3HRAuFhK7iAImVhCf+C3+m9SHKJbiXTKuM5NvrXIc1bcTN
+         3jLhUWa6zb7yjqru4RzRLzkt1aWIhr3fE1cA/c5rjSpsF0tgwT/0cQYJFLL8m00bow
+         woUWTYKMRB/Ad+/KIX962tsD1G5jnbxDqG1VGF+E6g64HOPDRv4pLMimjAJlfdDAXT
+         VWZ/kAd0IUP2Q==
+Date:   Tue, 12 Jul 2022 10:00:10 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
+        kernel@collabora.com, Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Ran Jianping <ran.jianping@zte.com.cn>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] clk: mediatek: Don't check HW status for mt8192/5's
+ imp_iic_wrap clocks
+Message-ID: <20220712140010.nfxo42td3zzy3iqp@notapiano>
+References: <20220711205733.203963-1-nfraprado@collabora.com>
+ <CAGXv+5Enkz20o8BLXmnCUBmB930sH+20U=XvTWA82neaiqqc2A@mail.gmail.com>
+ <473aa749-fcfe-bd38-0d83-95375aeef8a3@collabora.com>
+ <CAGXv+5E+HVi2kxkRrwhWhq2XgbmfCxj+ZywPT4orBXTxtJ7X1Q@mail.gmail.com>
+ <9102680e-2c4c-6c62-0255-5f3f669dd16c@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9102680e-2c4c-6c62-0255-5f3f669dd16c@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The shipped qcom driver defines:
-static struct clk_freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
-        F(  57140000,      gpll0_out_main,  14,    0,    0),
-        F(  80000000,      gpll0_out_main,  10,   0,    0),
-        F( 100000000,      gpll0_out_main,   8,   0,    0),
-        F_END
-};
-In the upstream code we omit 57.14 MHz and 100 MHz.
+On Tue, Jul 12, 2022 at 12:57:47PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 12/07/22 12:56, Chen-Yu Tsai ha scritto:
+> > On Tue, Jul 12, 2022 at 6:55 PM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> > > 
+> > > Il 12/07/22 12:44, Chen-Yu Tsai ha scritto:
+> > > > Hi,
+> > > > 
+> > > > On Tue, Jul 12, 2022 at 4:57 AM Nícolas F. R. A. Prado
+> > > > <nfraprado@collabora.com> wrote:
+> > > > > 
+> > > > > The imp_iic_wrap clocks on mt8192/mt8195 require that the i2c_sel parent
+> > > > > clock be enabled before their hardware status can be checked. Since this
+> > > > > wasn't taken into account, reading from the clk_summary debugfs file
+> > > > > would cause the system to completely freeze.
+> > > > > 
+> > > > > Assuming that this clock is managed only by the kernel, and not by any
+> > > > > firmware, simply drop the is_enabled() optional callback and instead
+> > > > > rely on the enable count for the imp_iic_wrap clocks.
+> > > > 
+> > > > That's the wrong way to go about it.
+> > > > 
+> > > > The I2C clocks already have the CLK_OPS_PARENT_ENABLE flag set. So the
+> > > > issue is that somewhere in the clk core, a piece of code is not honoring
+> > > > that flag.
+> > > > 
+> > > > And it seems that's in more than one place.
+> > > > 
+> > > 
+> > > Uhm, you're right. I gave my Tested-by, but not a Reviewed-by because I
+> > > wasn't really convinced about this solution being the best.
+> > > 
+> > > Now that I think of it, the solution may be as simple as:
+> > > 
+> > > clk.c
+> > > 
+> > > static bool clk_core_is_enabled(struct clk_core *core)
+> > > {
+> > >          bool ret = false;
+> > > 
+> > >          /*
+> > >           * If this clock needs parent enabled, but its parent is
+> > >           * off, we directly return false for two reasons:
+> > >           * 1. This clock being enabled would be impossible
+> > >           * 2. The platform may crash for unclocked access while
+> > >           *    reading the status of this clock (where a .is_enabled
+> > >           *    callback is provided).
+> > >           */
+> > >          if (core->flags & CLK_OPS_PARENT_ENABLE &&
+> > >              !clk_core_is_enabled(core->parent))
+> > >                  return false;
+> > > 
+> > >          ... etc etc etc ...
+> > > }
+> > > 
+> > > Nícolas, did you try this approach?
 
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/clk/qcom/gcc-msm8939.c | 2 ++
- 1 file changed, 2 insertions(+)
+From reading the core clock code, it's mentioned that CLK_OPS_PARENT_ENABLE is
+used "during gate/ungate, set rate and re-parent", there's no mention of
+"checking the gate state", so I assumed this operation was intentionally not
+handled by this flag. That's why I went for this solution.
 
-diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
-index 7f71491d52c4b..754d5573b1df5 100644
---- a/drivers/clk/qcom/gcc-msm8939.c
-+++ b/drivers/clk/qcom/gcc-msm8939.c
-@@ -1468,7 +1468,9 @@ static struct clk_rcg2 bimc_gpu_clk_src = {
- };
- 
- static const struct freq_tbl ftbl_gcc_usb_hs_system_clk[] = {
-+	F(57140000, P_GPLL0, 14, 0, 0),
- 	F(80000000, P_GPLL0, 10, 0, 0),
-+	F(100000000, P_GPLL0, 8, 0, 0),
- 	{ }
- };
- 
--- 
-2.36.1
+But from the discussion sounds like the flag should indeed be caring about the
+is_enabled() operation as well, so let's go with Chen-Yu's patch.
 
+Thanks,
+Nícolas
+
+> > 
+> > I have a patch ready, but I got distracted by other stuff today.
+> > 
+> 
+> Let's just wait for your patch then, seems like being the most sensible option.
+> 
+> Cheers!
