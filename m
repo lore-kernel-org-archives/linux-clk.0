@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12384C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 09:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8562EC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 09:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbiGLJyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 05:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43996 "EHLO
+        id S231916AbiGLJzX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 05:55:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231877AbiGLJx7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 05:53:59 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C1821801
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:53:56 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 19so9255291ljz.4
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:53:56 -0700 (PDT)
+        with ESMTP id S229809AbiGLJzW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 05:55:22 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E09AA81A
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:55:20 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id r9so5041038lfp.10
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 02:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=LMjElaEycr7SAx7h59JBZKxM3vi9DYxeY8Usf5KNPqA=;
-        b=M79X/n3YtBxlMJx0CE/v58ek7eJ/4+aNYp72M7tUXpcGUajqpRjpqWDvzIfk0iDKaZ
-         RBqy7cwj2XdbTfuZTg2g2RKKDn///7skzfv3cZpPIpd0ma8qBuX6zO/9CcEdT+LGPYp9
-         mocZH4KtdzqtbMKmes2DKIjZRmoMQKCICJVEyjM9+tOb/tOTNZIjZmj3nyY0erFmK3Rv
-         WQQtDREaTeHmisLSJ2kBHx5avl8u//N3xZyIhfN2v3n0e4N3CZ4uNp3nkSlgf2tOn5b/
-         WxkW5FP3vbpO3C2Dx2hgQBqQSsndsCtpbpGvI07V9Sxf/OO2qXrUlfyfFzCEnlikGbgr
-         YEZw==
+        bh=axICpN3J/kMmaCf6S84TqGPCux368wms9PQ9I5oaU1Y=;
+        b=sgRn9iuPJDgWVdjaKv2jASetCuvgyB1fPCM+Uk+k1rQUY3idehVWK1F4ch8IyPAEL5
+         FLVBeM9+sq3kyoUucHx7vTTLeD+achPZeHZy3NRQrkkyVfNWc9F7WQWm+Oj2EuYQPdpz
+         YXxhCFWIt7xsMqneckUIjOBUTiPboVK1aOSBEj/wO+dTDnBnKSvtzuwMQk08jASq7gNo
+         9JD7RhZ8ken9hZb2xjtdeNiAvgrDcyErGBZ1dvLfdvb2636w+OTb7KBnEmJVvfILLFpA
+         +V+7xgf0gQlYirp33ZUZFPzMd/R7CdXvfPH9MK2WANEwqze1NZIyyqKWFx86eZNeXxcg
+         Q5dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=LMjElaEycr7SAx7h59JBZKxM3vi9DYxeY8Usf5KNPqA=;
-        b=KvfqWG+aQtFJaC1OY15SnhDmgJeg9fv/KyHzlSa8phfX1PKEDVEza1Jv7WM08ob6xc
-         P+aUEgRKNvwTjRS6x03I4tDcIn1id2wUhTyFFgFWfRxUo+ko8uIwZZr/nP0mzT7Nllbh
-         X7VVYGrH2JhHYc2Z44QsdyBbe7t0+kOe6JjXbhV/7oK39Al2J7o+1zcwo3Xx4wCG9T5Z
-         yWKhAz2f/4C7f4me1vLw6WfuuL9UB3SrtwCSVtIPlLiHShV6FwO8cYNilOMGOYd9lw2V
-         p2YQ3KMIdontyAebvJ8r0/cZLM+m/+eZZDeFKD/nbwIE33NgDYY6Cjl2+f3lTUkMzPT7
-         1WUg==
-X-Gm-Message-State: AJIora/QpEhl9cFiPBWxOq1JBG7EXLO1TrgXvfUAa7UN8kvUky4dM/dx
-        NZ7Z9Q1JoFGHcgZ8jGIDZLIGSg==
-X-Google-Smtp-Source: AGRyM1vUyYI89x6KhM9BfxnYOCsnYfp6d4jaPd18IXEKS6Ap6dTYvp3qlHHbxDjKTmb0zSmt5WDAMQ==
-X-Received: by 2002:a2e:96c2:0:b0:25d:7b22:f2dc with SMTP id d2-20020a2e96c2000000b0025d7b22f2dcmr1112264ljj.297.1657619634971;
-        Tue, 12 Jul 2022 02:53:54 -0700 (PDT)
+        bh=axICpN3J/kMmaCf6S84TqGPCux368wms9PQ9I5oaU1Y=;
+        b=59MvoGNQ6nvfBV2+e/kWz7TqL3uCkv/38m4k6SZhOJPH+RYZccha1k8K0FA0Q9f4mG
+         H00SkPOXdqKcT2Xjm+gpZkGC67BXyiF//R7c++o6x0DmppqY6CweENqWFynzOUup1IMX
+         rVXqabv/hGaYdGunuRYOKWG6pB5JTDt6JlkPBZ+KntwEijsNqPS7GhPrj6bTHI6xrhg9
+         TC37tFc9pFX/g3fa4xAjkUjM4Ffe3cKxhyC+RdlAnFaU0EIaP1u/KOFjXVEyRaV+gpqf
+         k8UfdE1OF5jWZ6GSG/uZ7xPJtG9Syoxt6w+90VkBwCfLFhhClVkao9bSLMnGpF/OajdL
+         Q7bw==
+X-Gm-Message-State: AJIora/VOoDK71RS7OqZNlQc+H+qU2pn19LJJlSZkL+ibBRe7XvdCgQ8
+        Mns4egrEKPdplomEHPigkFnd9g==
+X-Google-Smtp-Source: AGRyM1ssaxls1fUxMc6/WdaimSgtDYowXLkqFMFTIULBRqh8A9jBeagdf7UHpFRz2wr0G30u76TsUw==
+X-Received: by 2002:a05:6512:108d:b0:489:e640:df8c with SMTP id j13-20020a056512108d00b00489e640df8cmr4334829lfg.332.1657619718613;
+        Tue, 12 Jul 2022 02:55:18 -0700 (PDT)
 Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
-        by smtp.gmail.com with ESMTPSA id z2-20020a19f702000000b004794a78bfe7sm2103304lfe.6.2022.07.12.02.53.51
+        by smtp.gmail.com with ESMTPSA id f28-20020a05651c03dc00b0025d40241c1dsm2354259ljp.6.2022.07.12.02.55.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Jul 2022 02:53:54 -0700 (PDT)
-Message-ID: <16107992-a69f-9856-aa36-8596c7cdd4ce@linaro.org>
-Date:   Tue, 12 Jul 2022 11:53:50 +0200
+        Tue, 12 Jul 2022 02:55:17 -0700 (PDT)
+Message-ID: <6f9d2ea8-1ffd-41d1-9441-00c2b35187ec@linaro.org>
+Date:   Tue, 12 Jul 2022 11:55:13 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v8 04/15] dt-bindings: nvmem: Add fsl,scu-ocotp yaml file
+Subject: Re: [PATCH v8 09/15] dt-bindings: firmware: Add fsl,scu yaml file
 Content-Language: en-US
 To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -90,9 +90,9 @@ To:     "Viorel Suman (OSS)" <viorel.suman@oss.nxp.com>,
         linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20220707125022.1156498-1-viorel.suman@oss.nxp.com>
- <20220707125022.1156498-5-viorel.suman@oss.nxp.com>
+ <20220707125022.1156498-10-viorel.suman@oss.nxp.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220707125022.1156498-5-viorel.suman@oss.nxp.com>
+In-Reply-To: <20220707125022.1156498-10-viorel.suman@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -103,8 +103,10 @@ On 07/07/2022 14:50, Viorel Suman (OSS) wrote:
 > From: Abel Vesa <abel.vesa@nxp.com>
 > 
 > In order to replace the fsl,scu txt file from bindings/arm/freescale,
-> we need to split it between the right subsystems. This patch documents
-> separately the 'ocotp' child node of the SCU main node.
+> we need to split it between the right subsystems. This patch adds the
+> fsl,scu.yaml in the firmware bindings folder. This one is only for
+> the main SCU node. The old txt file will be removed only after all
+> the child nodes have been properly switch to yaml.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
