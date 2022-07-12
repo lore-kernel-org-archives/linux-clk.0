@@ -2,150 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E8CC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 06:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EE2C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 07:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231912AbiGLGoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 02:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58680 "EHLO
+        id S232328AbiGLHTg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 03:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbiGLGoX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 02:44:23 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED14A3C8D1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 23:44:20 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l22-20020a05600c4f1600b003a2e10c8cdeso277135wmq.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 Jul 2022 23:44:20 -0700 (PDT)
+        with ESMTP id S232217AbiGLHTd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 03:19:33 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DB911C25
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 00:19:30 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id a5so9864397wrx.12
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 00:19:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OqnX1WvjcG1TunJPu3Y1sp5DHJ1C/aUJIiViO2AaEJE=;
-        b=mUiqxSxDUL7hDt5JBQK8cVz7O+mF9bon1/gqLgxpV6dhcksW2KttAvrHa/DZW/Zo+T
-         wgoqGHXHUzpt4E3GXOZO6+W1zhHhKiXOxwfvPhBeXI/3Y8quql2DRK5teufKhkvafA3P
-         BTGdUKcfUefGzFkVNcCfWDQ3vQx7Hue8h9+WjRrF8qnUX7/McFOjlERBGVo9e3gmprPW
-         FynYjdIFN5npCnMNcTgaZwo2jmzeH4T9HWNGFKST8QTU4PMXwgnRLaFbWJNBsdgMREQQ
-         9rHTqYLmyNl/g3jCOiraP6C8WM1Sn/2t1oS29kj2t7AQk55dHbwwVI4jLWkqCw0c6opj
-         9tFA==
+        bh=nHLORxMrBqD/Puy0ObTT81F0q9u6uGAm1oaQVjoVneg=;
+        b=Ui89J0Tcf/pvIU2X3qQ4hX+HR94Y/+WGdew981Ao8OXO/LLL+w/qFdhWVCMarBQQJN
+         +l41amWvodEWM9N0YWC38NmVd7zGqer8XmRFIVTI0wT5v+c0yebXyHV0GyTv12LNIhHM
+         hDp2Nnuf3KX9eAZBtkHio37fqNTBK3Q3M5Iq0w6gYD/anoqeL06iBpXCQjjEYgr1FOaG
+         DEAwxAx7k2YC00lIkUyOGJoJ766E+kVUr+uRxpSymUcyPO84fVPBeOkOfQjQa6+/yo+U
+         2QA2zRxbeOvlt1ThA644aFBlojaAfYi7YlOMzuBltQxFmyQ4JDVKtR+i8yB94ChBavGs
+         eLKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OqnX1WvjcG1TunJPu3Y1sp5DHJ1C/aUJIiViO2AaEJE=;
-        b=ddrbVytcCUnOLT5+WVA9yMFDppbbrdBYmu2O0sLX1usbHFbXShrYzT+m+5fBFMSSl4
-         R9qJU4E7eEDjT/Hnf1mipx2TmAOtUAtUMw77xtKR+Pe94mvW+SrwpRkbmRwlDbSzRSVT
-         USC1s3nvfkrA31DH+W/zxuuAqd+PwZKgShe4ty1TNyUi0ZgUSxWrLPsB4WNl3tXzZcND
-         WVNP/pnEFDRVOCJ/u71CrMW6E96ySSK2Cpk4T+zpNI+MtvjwRmsZbhAhdhn5VAJnW001
-         /CXUmHDNYd75B1BRkLP3Ehi+nR9V6TSQn6ghsVIJHXbKLQyaMUoXmHVMtRd+ozyTbAOJ
-         fsFQ==
-X-Gm-Message-State: AJIora8/rIoDoPab3BGT5hpfIX57GS+AeBYb8SR1OxxEj0jeBlF+DSWp
-        /dPpf2NMvLMafZHcTQU5841YGwKka7ETUf05/0zVZA==
-X-Google-Smtp-Source: AGRyM1tZaNY3RnpsWXPhubtirONGD9WJkruBLM3+IN0NN9iASwGWk+J9hyYDSii8WApr2iertUTtnt4b6jMvtc4zgRQ=
-X-Received: by 2002:a05:600c:34ce:b0:3a0:3b4b:9022 with SMTP id
- d14-20020a05600c34ce00b003a03b4b9022mr2117717wmq.66.1657608259479; Mon, 11
- Jul 2022 23:44:19 -0700 (PDT)
+        bh=nHLORxMrBqD/Puy0ObTT81F0q9u6uGAm1oaQVjoVneg=;
+        b=ZfeqK2an7v76FGErnPsTbze+53iYdnyWkbv1VaFH4Z8DTuO9BWlrYM6EhlxmeqyTg3
+         zKLTAoKKJYffmvw79tLf45JjKzNcNlTNhEl8AAP1rEWhvdqI5hpvEiMF0ViVD41zWYY2
+         KsAdHCS5L5ajglBBBKe++swxnRmiLmKBTYzfotLwmI8Gsm8jVmSIbs8IYrr3LLnRk/jZ
+         GXW+LUh86+j6NVZfT21+N53KDpkyeh7jK8shXp0jUZis/fxDjAbvEA+21h8K9tFUQcoL
+         yAOvrXAodBaVa01C6FWaD4R1O29+NsyM6kejugEVpGjYRyBIJui82+fS5DaHtgrriuHY
+         43Lg==
+X-Gm-Message-State: AJIora8jNLCZHngp+DKigkjVLaYGTmWemv3bjJpbpW/XMRSu1yoM4fC2
+        JZfXBmhHU/VT7QDhGfNysJF4Gh53A9NyqCxhu4IbQw==
+X-Google-Smtp-Source: AGRyM1tu7uvjAakm2E5phW8PHa+BxBSNdykerlRB9Bw0zuH+Gb/3l4pHyhL8kYh6W29eQGpqM6MYIVXtgUVwc1ZNz6k=
+X-Received: by 2002:adf:fd4a:0:b0:21d:8b59:dcb1 with SMTP id
+ h10-20020adffd4a000000b0021d8b59dcb1mr20181622wrs.622.1657610368960; Tue, 12
+ Jul 2022 00:19:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220711162713.2467476-1-dlatypov@google.com> <20220711204859.3DDD5C34115@smtp.kernel.org>
- <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
-In-Reply-To: <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
+References: <20220711162713.2467476-1-dlatypov@google.com>
+In-Reply-To: <20220711162713.2467476-1-dlatypov@google.com>
 From:   David Gow <davidgow@google.com>
-Date:   Tue, 12 Jul 2022 14:44:08 +0800
-Message-ID: <CABVgOS=bm5TmEBd8jxuTPJy426OgC14ryqn4FLQR1pHNf5uhsw@mail.gmail.com>
+Date:   Tue, 12 Jul 2022 15:19:17 +0800
+Message-ID: <CABVgOS=FzA5oKkTEJLMp6=funMiLqp5SzcwOcoqdfVeuxMQLqA@mail.gmail.com>
 Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
 To:     Daniel Latypov <dlatypov@google.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         KUnit Development <kunit-dev@googlegroups.com>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
         Shuah Khan <skhan@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <maxime@cerno.tech>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="0000000000007f92ae05e395ffcd"
+        boundary="0000000000003c591405e3967d73"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---0000000000007f92ae05e395ffcd
+--0000000000003c591405e3967d73
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 12, 2022 at 7:03 AM Daniel Latypov <dlatypov@google.com> wrote:
+On Tue, Jul 12, 2022 at 12:27 AM 'Daniel Latypov' via KUnit
+Development <kunit-dev@googlegroups.com> wrote:
 >
-> On Mon, Jul 11, 2022 at 1:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Daniel Latypov (2022-07-11 09:27:13)
-> > > CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
-> > > However, this causes test failures when running the clk tests, i.e.
-> > > $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
-> > >
-> > > A snippet of the particular error is:
-> > > >     ok 1 - clk_gate_test_parent_rate
-> > > > ------------[ cut here ]------------
-> > > > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
-> > >
-> > > This is triggered by this cast in the test:
-> > >    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-> > > this seems to work except when logic iomem is enabled, i.e.
-> > > CONFIG_INDIRECT_IOMEM=y.
-> > >
-> > > As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
-> > > drivers/clk/.kunitconfig so we can enable it for everyone else by
-> > > default in kunit.py.
-> > >
-> > > The long-term fix probably requires something more complicated, like
-> > >   #ifdef CONFIG_INDIRECT_IOMEM
-> > >     logic_iomem_add_region(...);
-> > >   #endif
-> >
-> > If this is how platform IO is mocked then yes we'll have to implement
-> > that.
+> CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
+> However, this causes test failures when running the clk tests, i.e.
+> $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
 >
-> It's not clear that it will be, but it's likely.
-> Until it's more clear, I figured we'd go with this simple bandaid fix for now.
+> A snippet of the particular error is:
+> >     ok 1 - clk_gate_test_parent_rate
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
 >
-> There was initially some talk of using function-level
-> "stubbing"/"mocking" [1] to do the same, but Brendan started playing
-> around with logic iomem more. He and David can comment on it more
-> cogently than I can.
+> This is triggered by this cast in the test:
+>    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
+> this seems to work except when logic iomem is enabled, i.e.
+> CONFIG_INDIRECT_IOMEM=y.
+>
+> As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
+> drivers/clk/.kunitconfig so we can enable it for everyone else by
+> default in kunit.py.
+>
+> The long-term fix probably requires something more complicated, like
+>   #ifdef CONFIG_INDIRECT_IOMEM
+>     logic_iomem_add_region(...);
+>   #endif
+>
+> Signed-off-by: Daniel Latypov <dlatypov@google.com>
+> Reported-by: Maxime Ripard <maxime@cerno.tech>
+> Tested-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+> Note: this targeting the -kselftest kunit branch.
+> There's a commit that triggers this by enabling logic iomem by default
+> [1] and there's also a commit that lets disable it via kunitconfig file
+> [2], which this fix relies on.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/commit/?h=kunit&id=6fc3a8636a7b0f7dbd6d0a4e450e765dc17518d4
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/commit/?h=kunit&id=8a7c6f859a20ca36a9e3ce71662de697898c9ef5
+> ---
 
-So, as I understand it, casting a regular pointer to an __iomem
-pointer (as the clk test does) isn't technically correct, though it
-does work on almost every architecture out there. If we want some way
-of intercepting I/O access, then then that'll need to be handled by
-the various read()/write() functions.
+Looks good, works for me (and doesn't break either i386 or arm64,
+which I also tested on).
 
-UML doesn't support iomem at all out of the box, and logic_iomem is a
-way of implementing it which allow us to attach handler functions to
-blocks of memory, albeit with more constraints about what addresses
-get used. Brendan started implementing a "fake hardware" interface on
-top of this here, though it's still in-progress:
-https://kunit-review.googlesource.com/c/linux/+/5272/4
-
-Ultimately, I think the 'correct' solution here will be
-logic_iomem-based, but doing that nicely will probably require one of
-two things:
-- logic_iomem to support non-UML architectures as well (becoming a
-generic "insert a 'fake' device here" system)
-- logic_iomem to have some way of "passing through" access to an io
-memory region through to the normal underlying memory.
-
-Ideally, we'll have both, and maybe even defaults which will allow
-hacks like this to continue working (perhaps with a warning?). That'll
-require some significant (and probably not uncontroversial) work on
-how iomem accesses work in general, though, possibly with performance
-impact.
-
-The other option of using function redirection on the io read()
-write() functions exists, and would be a bit simpler in the
-short-term, but would probably result in a lot of tests reimplementing
-this, and also would have some performance impacts, as the I/O
-accesses wouldn't be able to be inlined if KUNIT is enabled.
+Reviewed-by: David Gow <davidgow@google.com>
 
 Cheers,
 -- David
 
---0000000000007f92ae05e395ffcd
+>  drivers/clk/.kunitconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clk/.kunitconfig b/drivers/clk/.kunitconfig
+> index cdbc7d7deba9..2fbeb71316f8 100644
+> --- a/drivers/clk/.kunitconfig
+> +++ b/drivers/clk/.kunitconfig
+> @@ -2,3 +2,4 @@ CONFIG_KUNIT=y
+>  CONFIG_COMMON_CLK=y
+>  CONFIG_CLK_KUNIT_TEST=y
+>  CONFIG_CLK_GATE_KUNIT_TEST=y
+> +CONFIG_UML_PCI_OVER_VIRTIO=n
+>
+> base-commit: 7635778bac7e46458392c1261e3916e8e9e86860
+> --
+> 2.37.0.rc0.161.g10f37bed90-goog
+>
+> --
+> You received this message because you are subscribed to the Google Groups "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kunit-dev/20220711162713.2467476-1-dlatypov%40google.com.
+
+--0000000000003c591405e3967d73
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -212,14 +205,14 @@ OOYwT0BUtHYR/3903Dmdx5Alq+NDvUHDjozgo0f6oIkwDXT3yBV36utQ/jFisd36C8RD5mM+NFpu
 3aqLXARRbKtxw29ErCwulof2dcAonG7cd5j+gmS84sLhKU+BhL1OQVXnJ5tj7xZ5Ri5I23brcwk0
 lk/gWqfgs3ppT9Xk7zVit9q8MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
 R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
-MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBn
-Tk66uJbvglg0AKHX/x9QBJo9CpMpTq1HZEq2FGB/JzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-MBwGCSqGSIb3DQEJBTEPFw0yMjA3MTIwNjQ0MTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+MDIwAhABh9LgIPnlfMFHR0Die8n7MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBc
+UHKisVTKbyvY4pnUEfVA4bNRBUr8jO+EzGm/HED/FjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjA3MTIwNzE5MjlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
 BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
-CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAURDWVVbo39P6Fu6M/q7O
-bf56OiM9u1dc0ScLJCMYnpvpJGQS38C8nCBZwcYajFWO6hz5W/YtOSRStKF7zPHY+CaQ7lk1pD3N
-bW5/dB3ryH1aEmRs4NOalJkhJm48Pe4JHxpdmPIDC9WLacXN6vRStThkoL+GIAlg2q45U20nqakA
-OssWtfUuvOv1geY0g0dFds4cYZxPjgV1eH7tbZ2XqlsMKiPyK8buBWy4eGEQ1R0aUPXSg8FF5DpC
-1itT9aulzOc3KiJW4s8UTaDJPV0g6IOpY2pyMCYSWtPLWaLvJniJfKEFkclazl8/YYXshnN392mb
-GwNMlikx8xcElsu/UA==
---0000000000007f92ae05e395ffcd--
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAEtpVOtBnifipDV4Tl2IO
+UUE8RCR5Xl3U6rwhDmxKRz6iEN1INU/p+xGZWCoWjNYaaQv05HPzHQPjgq7+bcT+8FZZ6YsJfQee
++m2pJESFb59f5JnAD4I/MG2TcJpbSNPvt0BX+7AWm3QS97iyI8laJypURXy35okOrqM2cSG8NLF4
+klNfv8BmbCkAk1hJ/Hd1sSrk0X+8zPK1ES4r6AH7dnlQaRdiVeoIrDjl0DuhanSomNJw2ASLhfLR
+3BLIz/BdZPv3yeUgjBIIU30VFbqU+e8ypAOgZ0zySHNcDfupu4iDt3m030Y3cAZ6oDy2sK+eX2Nl
+Kw5frsT8CLAAbcR57A==
+--0000000000003c591405e3967d73--
