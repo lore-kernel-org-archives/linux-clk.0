@@ -2,184 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C353CC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC68CCA47C
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233029AbiGLMQy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 08:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34444 "EHLO
+        id S231226AbiGLM72 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 08:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232252AbiGLMQc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:16:32 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CDF6B278;
-        Tue, 12 Jul 2022 05:16:17 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id a10so7809602ljj.5;
-        Tue, 12 Jul 2022 05:16:17 -0700 (PDT)
+        with ESMTP id S229789AbiGLM71 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:59:27 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA431EEDC
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:26 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id bu1so9881231wrb.9
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mtU+3hpXIQ0RaypIhW03nhtWkWJS41n4eDqTOWyxkpo=;
-        b=oUMXXSvfCQY0UPANG698hvuz/3sP7+kr0tIluCnHUMWU/BdOmFACRkQ+I4FAEP1MRN
-         oF+xwWrI8ySUTxImqq9hQhxPfYMMnmYUc3hYWQGLjs+UbNW4yRbCb8xHbwb9mt0dMnb7
-         dh8sAN2FqCzrPpEPdkyLmd18PS3TYAYHBUVm1Hdpd75KfT09L86qSUNLAwKokruvWB1z
-         vLF/fkq7wmr2IMSSh05Ru11P0+V4zRsw7Jhr6rG17L3mEdy/Q9i49LBSk6A5zYOWWgqG
-         gJ+PPEkDaeeFo/Fi9y49Kbyqq+MChKLiJL31l1ViHzHB/7AhWiCru5jbu2HUhDRLT4Cd
-         gwVg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j8VZ0clunUQBnjW7zf8qlAsvO8C64gVCnbbBGVGcFgM=;
+        b=adoif1L1XNbykYk33LLvb+mM60dhPvmSPTDnTCV126MZgphD6iYn/L6Ii4+YDOqPxP
+         JUVSllPZrOCAkRXSr4svr+6htFgZUUZ82NZtA304fvl8TDdguchQcGRvxYTsSsg0E3Mn
+         auXf1pWBYCMwqYU8zkfxNZ7/CrNcGAQUkOuIbiXuKdY5264sH/yc5EbmpWRlcF8Ex6kz
+         kF1OD6xRlbiBqDu660bD6DD0NfsnAC6NWSnnJihG0+s1poYgIP7fyjI5bxX1xWtMq+r3
+         niTsXGrFgzORTDsI2aBwfmIzjrLz1uUFCLXI16wd7whjBUAZvVac0JleFRhX51Tj2Yb8
+         WvUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mtU+3hpXIQ0RaypIhW03nhtWkWJS41n4eDqTOWyxkpo=;
-        b=f9zCX/SYA+7fCkrJXPS3vc0XmpFotbLEIqmQATkUnehE6VIuHvQQwOqp++lxR6TIYH
-         W2GTjqfTJyi2WU45P/pDOOqs6GobI11Z6pdhCrs0bAkDpDbawAJ5EerehlQMhSQCsQzy
-         ELIq4w9mtQFDeJvbUg19aIJju4yFCFhwxUp5OpCdom448k59LFMlfkQtzx0bREgGu4Bs
-         8pTbpvC1OKDLsQZOFrmx1DYma0M4FT9pW3kaO+ymoVJkSs6PUsPJyJEpEDAoeZE+vzLC
-         gx+vRul56Y+t7yTt4U40/LCquK81t9/z9qCtnEb8dkvqD3kCIy5lC/Kl1LnyVnTKQIou
-         gekA==
-X-Gm-Message-State: AJIora8uC+U4MB2ABGuDifOQbN5gnf9RcULvrKlcwnC3Z77/D4GXIRML
-        BcAzu9P9s0YbVY7HLBIsY2U=
-X-Google-Smtp-Source: AGRyM1tB99ugT+BT75+vH7nbfAb+ZELaZ9ZW+YGAawL45pqg9GR5xnOoJpddKzUWIrHdcohnUoPmcg==
-X-Received: by 2002:a05:651c:1a0a:b0:25d:71b6:7154 with SMTP id by10-20020a05651c1a0a00b0025d71b67154mr3956009ljb.340.1657628175897;
-        Tue, 12 Jul 2022 05:16:15 -0700 (PDT)
-Received: from mobilestation ([95.79.140.178])
-        by smtp.gmail.com with ESMTPSA id p23-20020a056512139700b00489ab10f1b1sm2163602lfa.20.2022.07.12.05.16.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j8VZ0clunUQBnjW7zf8qlAsvO8C64gVCnbbBGVGcFgM=;
+        b=neISJ2P4sOkpHDqNYaHLTaDSBm5qvUKdkoVMvl421OlJnUrdswB7sGnr3NioRtd7BK
+         3pdjmBAhMbQceFDfjfK7Ph87tnbygxwM2XSfUNNBTVfr2TNFYV+7YHb2DuJZdX2te5lp
+         ksjnuZYIoLpSQKFwW732o1FXfYT4IOUw3883etAR7LQrjLcMqvttEufDvqZN7Nl8D2Xq
+         ZjneXQWQOU+T3IzSaPFXh7gaLO75YOa6aNn6UOUAnuwyqnHJLD89QiDA9yYsROS/5Yzv
+         o07fyJ5iXuTlJbxoTtfyHbAVVHm55pS3QSIpaY9BufgbzkV+Vlc+WJjnSr335lRCsm6w
+         jDgA==
+X-Gm-Message-State: AJIora/vYlS+PGeZ/oFQmZJd+/n1HMitcEnfCtywA0m3wg9Rd9pAI7yX
+        t1bvgcr5OamXfQ2zZOg3Qu2tKw==
+X-Google-Smtp-Source: AGRyM1s7EwNMlAWio5Kd772TWMYptjSJsAawCToYB/HjbL9ipwCIOivSTMTo516tbxYyGVQD1ns4Dg==
+X-Received: by 2002:adf:f345:0:b0:21d:6927:ec8f with SMTP id e5-20020adff345000000b0021d6927ec8fmr22258111wrp.490.1657630764806;
+        Tue, 12 Jul 2022 05:59:24 -0700 (PDT)
+Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id t123-20020a1c4681000000b003973c54bd69sm13008627wma.1.2022.07.12.05.59.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 05:16:15 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 15:16:13 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/7] clk/resets: baikal-t1: Add DDR/PCIe resets and
- xGMAC/SATA fixes
-Message-ID: <20220712121613.rvb2s4i3ls6nlkbu@mobilestation>
-References: <20220712121505.5671-1-Sergey.Semin@baikalelectronics.ru>
+        Tue, 12 Jul 2022 05:59:24 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     bjorn.andersson@linaro.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/6] clk: qcom: gcc-msm8939: Align clock frequencies with downstream driver
+Date:   Tue, 12 Jul 2022 13:59:16 +0100
+Message-Id: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220712121505.5671-1-Sergey.Semin@baikalelectronics.ru>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi @Stephen.
+The gcc-msm8939 driver is a copy/paste of the gcc-msm8916 for the good
+reason that msm8936/msm8939 are an expanded version of msm8916. Reviewing
+the qcom driver though there are some obvious missing/wrong frequencies
+which a simple side-by-side comparison can show up.
 
-Philipp has completed the reset-related patches review. Could you
-please merge the series in so it would make it into the kernel v5.20?
+This series captures that side-by-side and transmits into updated frequency
+tables.
 
--Sergey
+Bryan O'Donoghue (6):
+  clk: qcom: gcc-msm8939: Fix weird field spacing in
+    ftbl_gcc_camss_cci_clk
+  clk: qcom: gcc-msm8939: Add missing CAMSS CCI bus clock
+  clk: qcom: gcc-msm8939: Fix venus0_vcodec0_clk frequency definitions
+  clk: qcom: gcc-msm8939: Add missing CAMSS CPP clock frequencies
+  clk: qcom: gcc-msm8939: Add missing MDSS MDP clock frequencies
+  clk: qcom: gcc-msm8939: Add missing USB HS system clock frequencies
 
-On Tue, Jul 12, 2022 at 03:14:58PM +0300, Serge Semin wrote:
-> Folks! It has been over four months since the first series submission for
-> review. Please merge it in.
-> 
-> Short summary regarding this patchset. The series starts from fixing of
-> the clocks glitching cause by the Renesas 5P49V6901 chip in some
-> circumstances. Afterwards a few more modifications are introduced to
-> finally finish the Baikal-T1 CCU unit support up and prepare the code
-> before adding the Baikal-T1 PCIe/xGMAC support. First of all it turned out
-> I specified wrong DW xGMAC PTP reference clock divider in my initial
-> patches. It must be 8, not 10. Secondly I was wrong to add a joint xGMAC
-> Ref and PTP clock instead of having them separately defined.  The SoC
-> manual describes these clocks as separate fixed clock wrappers. Finally
-> in order to close the SoC clock/reset support up we need to add the DDR
-> and PCIe interfaces reset controls support. It's done in two steps. First
-> I've moved the reset-controls-related code into a dedicated module. Then
-> the DDR/PCIe reset-control functionality is added. As the series
-> finalization we've decided to convert the Baikal-T1 clock/reset source
-> drivers to mainly being the platform device driver and pre-initialize the
-> basic clocks only at the early kernel boot stages.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v2:
-> - Resubmit the series with adding @Philipp to the list of the recipients.
-> 
-> Link: https://lore.kernel.org/linux-pci/20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v3:
-> - No comments. Just resend the series.
-> - Rebased from v5.17 onto v5.18-rc3.
-> 
-> Link: https://lore.kernel.org/linux-clk/20220503205722.24755-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v4:
-> - Completely split the CCU Dividers and Resets functionality up. (@Stephen)
-> - Add a new fixes patch: "clk: baikal-t1: Actually enable SATA internal
->   ref clock".
-> - Add a new fixes patch: "reset: Fix devm bulk optional exclusive control
->   getter".
-> - Add a new fixes patch: "clk: vc5: Fix 5P49V6901 outputs disabling when
->   enabling FOD".
-> - Add a new feagure patch: "clk: baikal-t1: Convert to platform device
->   driver".
-> - Change the internal clock ID to the XGMAC-referred name.
-> - Rebase onto the kernel v5.18.
-> 
-> Link: https://lore.kernel.org/lkml/20220610072124.8714-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v5:
-> - Just resend.
-> - Rebase onto the kernel v5.19-rcX.
-> 
-> Link: https://lore.kernel.org/linux-clk/20220624141853.7417-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v6:
-> - Drop the patch
->   [PATCH RESEND v5 1/8] reset: Fix devm bulk optional exclusive control getter
->   since it has already been accepted by @Philipp.
-> - Refactor the reset-control code to support the linear reset IDs only.
->   (@Philipp)
-> - Combine the reset-related code into a single file. (@Philipp)
-> - Drop CCU_DIV_RST_MAP() macro. It's no longer used.
-> 
-> Link: https://lore.kernel.org/linux-clk/20220708192725.9501-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v7:
-> - Fix "Alignment should match open parenthesis" warning for the
->   pr_err() method invocations. (@Philipp)
-> - Drop empty line from the sys_rst_info structure initialization block.
->   (@Philipp)
-> 
-> Link: https://lore.kernel.org/linux-clk/20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru/
-> Changelog v8:
-> - Fix "sef-deasserted" spelling in the CLK_BT1_CCU_RST config help
->   text. (@Randy)
-> 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Serge Semin (7):
->   clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
->   clk: baikal-t1: Fix invalid xGMAC PTP clock divider
->   clk: baikal-t1: Add shared xGMAC ref/ptp clocks internal parent
->   clk: baikal-t1: Add SATA internal ref clock buffer
->   clk: baikal-t1: Move reset-controls code into a dedicated module
->   clk: baikal-t1: Add DDR/PCIe directly controlled resets support
->   clk: baikal-t1: Convert to platform device driver
-> 
->  drivers/clk/baikal-t1/Kconfig       |  12 +-
->  drivers/clk/baikal-t1/Makefile      |   1 +
->  drivers/clk/baikal-t1/ccu-div.c     |  84 +++++++--
->  drivers/clk/baikal-t1/ccu-div.h     |  17 +-
->  drivers/clk/baikal-t1/ccu-pll.h     |   8 +
->  drivers/clk/baikal-t1/ccu-rst.c     | 217 +++++++++++++++++++++++
->  drivers/clk/baikal-t1/ccu-rst.h     |  67 +++++++
->  drivers/clk/baikal-t1/clk-ccu-div.c | 263 ++++++++++++++++------------
->  drivers/clk/baikal-t1/clk-ccu-pll.c | 128 +++++++++++---
->  drivers/clk/clk-versaclock5.c       |   2 +-
->  include/dt-bindings/reset/bt1-ccu.h |   9 +
->  11 files changed, 647 insertions(+), 161 deletions(-)
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.c
->  create mode 100644 drivers/clk/baikal-t1/ccu-rst.h
-> 
-> -- 
-> 2.35.1
-> 
+ drivers/clk/qcom/gcc-msm8939.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+-- 
+2.36.1
+
