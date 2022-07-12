@@ -2,26 +2,26 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAB3C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 16:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6444CC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 16:17:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbiGLQOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 12:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58044 "EHLO
+        id S234298AbiGLQRR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 12:17:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234263AbiGLQOB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 12:14:01 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 346E312D16
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 09:14:00 -0700 (PDT)
+        with ESMTP id S234301AbiGLQRR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 12:17:17 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D977CCA6CD
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 09:17:15 -0700 (PDT)
 Received: from [192.168.1.101] (abxj14.neoplus.adsl.tpnet.pl [83.9.3.14])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 0C8253F696;
-        Tue, 12 Jul 2022 18:13:53 +0200 (CEST)
-Message-ID: <92b87d0b-82bc-3530-58af-e4188d13bfb7@somainline.org>
-Date:   Tue, 12 Jul 2022 18:13:49 +0200
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id CA8B23EED0;
+        Tue, 12 Jul 2022 18:17:11 +0200 (CEST)
+Message-ID: <d4b34c4a-51d3-b76c-6ce6-555b32e65bb6@somainline.org>
+Date:   Tue, 12 Jul 2022 18:17:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
