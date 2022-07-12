@@ -2,117 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85276C43334
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 11:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A68CCA47C
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233113AbiGLL7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 07:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44968 "EHLO
+        id S232956AbiGLMPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 08:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233225AbiGLL71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 07:59:27 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E2587F68;
-        Tue, 12 Jul 2022 04:59:15 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id bu42so13607750lfb.0;
-        Tue, 12 Jul 2022 04:59:15 -0700 (PDT)
+        with ESMTP id S231902AbiGLMPN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:15:13 -0400
+Received: from mail.baikalelectronics.com (mail.baikalelectronics.com [87.245.175.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC6A645056;
+        Tue, 12 Jul 2022 05:15:09 -0700 (PDT)
+Received: from mail (mail.baikal.int [192.168.51.25])
+        by mail.baikalelectronics.com (Postfix) with ESMTP id ECC98BC0;
+        Tue, 12 Jul 2022 15:17:01 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.com ECC98BC0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KZ3KYMTVveHo2jJXRt9lg02K2HAgxM3VDqKDTiz5L5I=;
-        b=f4WI/5p+hFmynH5Occ846McURQkcxkHB4J3bqBpiJfC465TR9kctYpctRlCNmUXucc
-         0JcBPKmqgTTFHJ2KGH4H4l+jEUUpHQZDOI90HDkVOVzV3R6F+1gzKEx5m/JnHLbIloPs
-         GeSj5k37Ep6g7cwDCW5L6aM6AFFUvY7XMr7c5SB1Tt6sBYmUiOrJJUrYvelxAoR5ERc3
-         h2K7VjWYttoB96xFjr9dW9txnDbuRY4JBLNxYrjXqpewHPd5ljBrAFVE7xP6xa7RebWY
-         qcDk+RmwoJjGmwL9LJAYqbPEgsYkicRgj1p8tdiHFzhjiIbvstm+JixNlLwl7dzwfrLu
-         Sx/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KZ3KYMTVveHo2jJXRt9lg02K2HAgxM3VDqKDTiz5L5I=;
-        b=B6JKlZWv3DRdUMZhaiESwPIr4Ae9fevztkZqjXVH6t+FtLTevhcPojfF0BxSZl0yvK
-         R0LGMgCx1A7Ou32U5nm4YjfILfCVFAVID0PHWWgOkMaZ63rBgTNZZh+VMvOfSH9L2Aty
-         g030OMngv9MbBaFeBi/Ak5CHBTe9Ims+19TvwnTtdx3xI3t9JkzXpEHvbVFjGVBsyXZi
-         +OQpvsuNs/AZju4wBt/eZM6tqDexyHdP37FWQjarTUwyzBTGAOWfyjWF03pZ0joE2FBY
-         48QRwqFCJvNco1ahI6AgNmHf9xnYoOdmZj7BSYvlv3CelC/uo8CYwRPjDH1U02udCbvj
-         Xksw==
-X-Gm-Message-State: AJIora8yKTNjO03mKZ/WL0BFDn98auyn6cmznm9YQ6Nt9zHih1IiMIAl
-        wI2N+UwrlRGEe+YHG3LBewE=
-X-Google-Smtp-Source: AGRyM1uxGzrwOXK7F+VLwKbnuNSNO/dZWDvqwZ4Xyy1lLukXMCfbiEcxHbkrYomd6t3kf8k1QNJ65Q==
-X-Received: by 2002:a05:6512:2823:b0:485:6312:2a07 with SMTP id cf35-20020a056512282300b0048563122a07mr14636413lfb.525.1657627153506;
-        Tue, 12 Jul 2022 04:59:13 -0700 (PDT)
-Received: from mobilestation ([95.79.140.178])
-        by smtp.gmail.com with ESMTPSA id f2-20020ac24982000000b00489c5e840d4sm2137853lfl.227.2022.07.12.04.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 04:59:13 -0700 (PDT)
-Date:   Tue, 12 Jul 2022 14:59:11 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
+        d=baikalelectronics.ru; s=mail; t=1657628222;
+        bh=BveNLPY/YG4fFAd5N/AaPUO76c/YnxfM372ERsi7TmM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=S/UvqGHLTjAgh/hCwra5uJoir16ytBU7ZCQylF9DFOIQprsFP9B88V4s3KKqRi+OC
+         m/YpdyQWh8eqwatnYIGS7W/fLZnSLaPZ29AcK2kf/4njTcTuFFy+DhuDKgq0v8dMdB
+         98MAvS0Z8OXybDyDirizopQq7A5Pw7VI8HPTjwPk=
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 12 Jul 2022 15:15:07 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Marek Vasut <marek.vasut@gmail.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
         Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
         Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/7] clk: baikal-t1: Move reset-controls code into a
- dedicated module
-Message-ID: <20220712115911.jbmkikaugpvtdt65@mobilestation>
-References: <20220711154433.15415-1-Sergey.Semin@baikalelectronics.ru>
- <20220711154433.15415-6-Sergey.Semin@baikalelectronics.ru>
- <af5f882f-e7f8-ca49-020d-0dab3f2cc145@infradead.org>
+        <linux-clk@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v8 1/7] clk: vc5: Fix 5P49V6901 outputs disabling when enabling FOD
+Date:   Tue, 12 Jul 2022 15:14:59 +0300
+Message-ID: <20220712121505.5671-2-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20220712121505.5671-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220712121505.5671-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af5f882f-e7f8-ca49-020d-0dab3f2cc145@infradead.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 02:39:51PM -0700, Randy Dunlap wrote:
-> 
-> 
-> On 7/11/22 08:44, Serge Semin wrote:
-> > diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
-> > index 03102f1094bc..56a4ff1d8bf0 100644
-> > --- a/drivers/clk/baikal-t1/Kconfig
-> > +++ b/drivers/clk/baikal-t1/Kconfig
-> > @@ -29,7 +29,6 @@ config CLK_BT1_CCU_PLL
-> >  
-> >  config CLK_BT1_CCU_DIV
-> >  	bool "Baikal-T1 CCU Dividers support"
-> > -	select RESET_CONTROLLER
-> >  	select MFD_SYSCON
-> >  	default MIPS_BAIKAL_T1
-> >  	help
-> > @@ -39,4 +38,15 @@ config CLK_BT1_CCU_DIV
-> >  	  either gateable or ungateable. Some of the CCU dividers can be as well
-> >  	  used to reset the domains they're supplying clock to.
-> >  
-> > +config CLK_BT1_CCU_RST
-> > +	bool "Baikal-T1 CCU Resets support"
-> > +	select RESET_CONTROLLER
-> > +	select MFD_SYSCON
-> > +	default MIPS_BAIKAL_T1
-> > +	help
-> > +	  Enable this to support the CCU reset blocks responsible for the
-> > +	  AXI-bus and some subsystems reset. These are mainly the
-> > +	  sef-deasserted reset controls but there are several lines which
-> 
+We have discovered random glitches during the system boot up procedure.
+The problem investigation led us to the weird outcomes: when none of the
+Renesas 5P49V6901 ports are explicitly enabled by the kernel driver, the
+glitches disappeared. It was a mystery since the SoC external clock
+domains were fed with different 5P49V6901 outputs. The driver code didn't
+seem like bogus either. We almost despaired to find out a root cause when
+the solution has been found for a more modern revision of the chip. It
+turned out the 5P49V6901 clock generator stopped its output for a short
+period of time during the VC5_OUT_DIV_CONTROL register writing. The same
+problem was found for the 5P49V6965 revision of the chip and was
+successfully fixed in commit fc336ae622df ("clk: vc5: fix output disabling
+when enabling a FOD") by enabling the "bypass_sync" flag hidden inside
+"Unused Factory Reserved Register". Even though the 5P49V6901 registers
+description and programming guide doesn't provide any intel regarding that
+flag, setting it up anyway in the officially unused register completely
+eliminated the denoted glitches. Thus let's activate the functionality
+submitted in commit fc336ae622df ("clk: vc5: fix output disabling when
+enabling a FOD") for the Renesas 5P49V6901 chip too in order to remove the
+ports implicit inter-dependency.
 
-> 	  self-deasserted
-> ?
+Fixes: dbf6b16f5683 ("clk: vc5: Add support for IDT VersaClock 5P49V6901")
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
 
-Right. Thanks.
+---
 
--Serge(y)
+Changelog v4:
+- This is a new patch added on v4 lap of the series.
 
-> 
-> > +	  can be directly asserted/de-asserted (PCIe and DDR sub-domains).
-> 
-> -- 
-> ~Randy
+Changelog v5:
+- Fix some grammar mistakes in the commit log. (@Sergey Shtylyov)
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index e7be3e54b9be..03cfef494b49 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -1204,7 +1204,7 @@ static const struct vc5_chip_info idt_5p49v6901_info = {
+ 	.model = IDT_VC6_5P49V6901,
+ 	.clk_fod_cnt = 4,
+ 	.clk_out_cnt = 5,
+-	.flags = VC5_HAS_PFD_FREQ_DBL,
++	.flags = VC5_HAS_PFD_FREQ_DBL | VC5_HAS_BYPASS_SYNC_BIT,
+ };
+ 
+ static const struct vc5_chip_info idt_5p49v6965_info = {
+-- 
+2.35.1
+
