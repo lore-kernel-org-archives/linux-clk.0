@@ -2,87 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC68CCA47C
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9D8C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 12:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231226AbiGLM72 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 08:59:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46534 "EHLO
+        id S231254AbiGLM73 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 08:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbiGLM71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:59:27 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA431EEDC
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:26 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id bu1so9881231wrb.9
-        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:26 -0700 (PDT)
+        with ESMTP id S231233AbiGLM72 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 08:59:28 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7A71FCC3
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:27 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id q9so11063631wrd.8
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 05:59:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=j8VZ0clunUQBnjW7zf8qlAsvO8C64gVCnbbBGVGcFgM=;
-        b=adoif1L1XNbykYk33LLvb+mM60dhPvmSPTDnTCV126MZgphD6iYn/L6Ii4+YDOqPxP
-         JUVSllPZrOCAkRXSr4svr+6htFgZUUZ82NZtA304fvl8TDdguchQcGRvxYTsSsg0E3Mn
-         auXf1pWBYCMwqYU8zkfxNZ7/CrNcGAQUkOuIbiXuKdY5264sH/yc5EbmpWRlcF8Ex6kz
-         kF1OD6xRlbiBqDu660bD6DD0NfsnAC6NWSnnJihG0+s1poYgIP7fyjI5bxX1xWtMq+r3
-         niTsXGrFgzORTDsI2aBwfmIzjrLz1uUFCLXI16wd7whjBUAZvVac0JleFRhX51Tj2Yb8
-         WvUQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=YcLvi+3H4SZDC4Wsi6Jml9K8EcZLIybrbSAvZgpWSqA=;
+        b=dmGcYqbWfgUh+Q1+INrTNsZzRzGhE2fn0s41tXguGC9PkK0FL4oIgSUfFVymKl7RBS
+         m4NtcbRJMJuWfoYr3CbyaLVuJpsP+2vnDZ48mFdA9tMEHvJQZ2hH7jhu7bMFCBtpt9Lv
+         wGQo5Q6zKhANT1yLQYqOQSdoY0zC0QRKcFMMjmDCStRAehvNb4D+/aXzy5GICKPadft1
+         sYvVEMu3BolHb5rOV/CN4SsgbJYunypTKpwUzQURdSIe7GQPE+2aDCEs8YCvnBbLW7ta
+         ZXGyNbhXc1zEPdiZrQsrLslTEd77+wTRN0x4BZVvpw8Fz0GSZfiPD1t0yjjNB3lYuFTi
+         whNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=j8VZ0clunUQBnjW7zf8qlAsvO8C64gVCnbbBGVGcFgM=;
-        b=neISJ2P4sOkpHDqNYaHLTaDSBm5qvUKdkoVMvl421OlJnUrdswB7sGnr3NioRtd7BK
-         3pdjmBAhMbQceFDfjfK7Ph87tnbygxwM2XSfUNNBTVfr2TNFYV+7YHb2DuJZdX2te5lp
-         ksjnuZYIoLpSQKFwW732o1FXfYT4IOUw3883etAR7LQrjLcMqvttEufDvqZN7Nl8D2Xq
-         ZjneXQWQOU+T3IzSaPFXh7gaLO75YOa6aNn6UOUAnuwyqnHJLD89QiDA9yYsROS/5Yzv
-         o07fyJ5iXuTlJbxoTtfyHbAVVHm55pS3QSIpaY9BufgbzkV+Vlc+WJjnSr335lRCsm6w
-         jDgA==
-X-Gm-Message-State: AJIora/vYlS+PGeZ/oFQmZJd+/n1HMitcEnfCtywA0m3wg9Rd9pAI7yX
-        t1bvgcr5OamXfQ2zZOg3Qu2tKw==
-X-Google-Smtp-Source: AGRyM1s7EwNMlAWio5Kd772TWMYptjSJsAawCToYB/HjbL9ipwCIOivSTMTo516tbxYyGVQD1ns4Dg==
-X-Received: by 2002:adf:f345:0:b0:21d:6927:ec8f with SMTP id e5-20020adff345000000b0021d6927ec8fmr22258111wrp.490.1657630764806;
-        Tue, 12 Jul 2022 05:59:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YcLvi+3H4SZDC4Wsi6Jml9K8EcZLIybrbSAvZgpWSqA=;
+        b=DkQArcDjUG1nvMZlkH6dg79zP8uaXI9+JKqN7Bf5iVhOZubxV5Q4jcEaoAJ3fdwj9y
+         5zBLijlB5mq5Prs6Hmujk7PoxTbajs1an+komqumxTUIesGYcnAZgSsnXcJiKHPuu2kd
+         pNPF403oolCU+DKmUJL/2FwrvniaiPJzRXcBO1Trn1JzBeocFBL/DfrEDeAheNN4+JKt
+         j/5DKlCZKDCuBhr/6BvYfvbo7s0GHAgrtiaYmy3M2MbKn0MmSRu4J1d3vqRf0M5PJor6
+         cUtaxrh0LdSAIsqPrwNH/53CzJaXdE90HGimb5QGEJOLvdirdrqN/eissxGeJuN3odnO
+         OduA==
+X-Gm-Message-State: AJIora/0Q/mIK7w3k36kDIygr3XIlALym7Wv8kl7TvEl+Gpbf4hxW2Ii
+        kT9XIMxd/9j6EfOcBVYFtJsWNQ==
+X-Google-Smtp-Source: AGRyM1sk2ydtTGiAIm2ysjC3FJO4ph1CqAj/xRQPAVIZmuTklOKE/MQhoamv2UhmdjFnZnBKb7/VzA==
+X-Received: by 2002:a5d:69c9:0:b0:21d:6427:f553 with SMTP id s9-20020a5d69c9000000b0021d6427f553mr22567022wrw.257.1657630765679;
+        Tue, 12 Jul 2022 05:59:25 -0700 (PDT)
 Received: from sagittarius-a.chello.ie (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id t123-20020a1c4681000000b003973c54bd69sm13008627wma.1.2022.07.12.05.59.23
+        by smtp.gmail.com with ESMTPSA id t123-20020a1c4681000000b003973c54bd69sm13008627wma.1.2022.07.12.05.59.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 05:59:24 -0700 (PDT)
+        Tue, 12 Jul 2022 05:59:25 -0700 (PDT)
 From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 To:     bjorn.andersson@linaro.org, agross@kernel.org,
         konrad.dybcio@somainline.org, mturquette@baylibre.com,
         sboyd@kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH 0/6] clk: qcom: gcc-msm8939: Align clock frequencies with downstream driver
-Date:   Tue, 12 Jul 2022 13:59:16 +0100
-Message-Id: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
+Subject: [PATCH 1/6] clk: qcom: gcc-msm8939: Fix weird field spacing in ftbl_gcc_camss_cci_clk
+Date:   Tue, 12 Jul 2022 13:59:17 +0100
+Message-Id: <20220712125922.3461675-2-bryan.odonoghue@linaro.org>
 X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
+References: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The gcc-msm8939 driver is a copy/paste of the gcc-msm8916 for the good
-reason that msm8936/msm8939 are an expanded version of msm8916. Reviewing
-the qcom driver though there are some obvious missing/wrong frequencies
-which a simple side-by-side comparison can show up.
+Adding a new item to this frequency table I see the existing indentation is
+incorrect.
 
-This series captures that side-by-side and transmits into updated frequency
-tables.
+Fixes: 1664014e4679 ("clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller")
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8939.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bryan O'Donoghue (6):
-  clk: qcom: gcc-msm8939: Fix weird field spacing in
-    ftbl_gcc_camss_cci_clk
-  clk: qcom: gcc-msm8939: Add missing CAMSS CCI bus clock
-  clk: qcom: gcc-msm8939: Fix venus0_vcodec0_clk frequency definitions
-  clk: qcom: gcc-msm8939: Add missing CAMSS CPP clock frequencies
-  clk: qcom: gcc-msm8939: Add missing MDSS MDP clock frequencies
-  clk: qcom: gcc-msm8939: Add missing USB HS system clock frequencies
-
- drivers/clk/qcom/gcc-msm8939.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-msm8939.c b/drivers/clk/qcom/gcc-msm8939.c
+index 39ebb443ae3d5..628b476a5468e 100644
+--- a/drivers/clk/qcom/gcc-msm8939.c
++++ b/drivers/clk/qcom/gcc-msm8939.c
+@@ -1002,7 +1002,7 @@ static struct clk_rcg2 blsp1_uart2_apps_clk_src = {
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_camss_cci_clk[] = {
+-	F(19200000,	P_XO, 1, 0,	0),
++	F(19200000, P_XO, 1, 0, 0),
+ 	{ }
+ };
+ 
 -- 
 2.36.1
 
