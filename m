@@ -2,212 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E782BC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 10:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7748CC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 11:32:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232862AbiGLK6V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 06:58:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43798 "EHLO
+        id S230004AbiGLLcR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Jul 2022 07:32:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232864AbiGLK57 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 06:57:59 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2130FAF755;
-        Tue, 12 Jul 2022 03:57:52 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3006466018EA;
-        Tue, 12 Jul 2022 11:57:50 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657623470;
-        bh=zNavgn7eqp0AZ8YWzxsjeIyE+kpCiuIr7vB2/QMskHA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NoVfHOzb7wbgqSNF8TfU3MKhpSjp7SYxbjN5LvVc7V6o94SAgp8XgNDf5rH3bALLn
-         cWmVCsK3A8WlH4wjg4TXj9TYwMy++nBR91YevrkvdOocLO4uw53p5hspkCZzD53U7+
-         0ICR8b08Y/dDHDT+2sUQh6Lo9hJ35XaOgz+ozcixv/VPPEnVqYCyINTDgIM1pKGtqf
-         xV6BAcQN3KJYNOWNd7ZBguGDL+48p/mN0CQ5Bwj1Sy1rPkPB+wbNju4PFzDYPdfQT8
-         6d13aJ9MebqiRUNwt2NBYSLjcHjFQDuOiDG8GkFoK3F/rFf3kMSYdYiZ8EFEAuLcYI
-         T1YXJb117NF0A==
-Message-ID: <9102680e-2c4c-6c62-0255-5f3f669dd16c@collabora.com>
-Date:   Tue, 12 Jul 2022 12:57:47 +0200
+        with ESMTP id S232194AbiGLLcL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 07:32:11 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F54657258
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 04:32:09 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 73so7279752pgb.10
+        for <linux-clk@vger.kernel.org>; Tue, 12 Jul 2022 04:32:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oyv6ls5n5LtXZ+eFrLN0Kgir8c8eeeHctyKmi21xDfU=;
+        b=ImsYx5Ku+Ab8MqVb/ZzRH9XFV9El4m+WUWrW9VTtX2efmRpl6j584D6ilTaioM7GuY
+         3VWIEvaYsJqJnJa8kNtQyoKP3nRUjATbmmw20kX0OzdXf2ckm2LhB7D57Z1bD50XZDfH
+         PlJK0/nVT2+QXEt8i3DxTxerhl831H78bmZxc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oyv6ls5n5LtXZ+eFrLN0Kgir8c8eeeHctyKmi21xDfU=;
+        b=mAychO5q6Wy2QhVC8pj82cRD0MDDxXRUZl5+ksI4kbkMQEbgYN3LBiRSrdUvkH/n+1
+         TLAkSrtg1emS19Vxiv18LOJqAtDs7YQJ34FutCHwHLiVFgaUJkYCy1cDuMrpaI1EMiw1
+         DyINp5JEW9Yq/vCJms8eAcmxvYseVamKxEwE0tbvID3ykpUaQbo4nH2KF8Ya2DO58qqZ
+         S9CB/BayaFxzv6nP/6ra2KbcIukfsgJ3iswnfExbvmYfnV78R0TJSV+EjJJL06YlXiAw
+         nB7cTVBF/RSHwtRNeGpUqp2Jin2RcLMn47toNs5CS95A8qAs/4s2/JdIg9S1euI8RPkk
+         tROw==
+X-Gm-Message-State: AJIora+6+fb7AAdYDgAgvdZ7FXOgmnzuwxyotCu57yhxHXLpZC2Pqveb
+        jYPaHqRkNzad4ketBgC8kl44OQ==
+X-Google-Smtp-Source: AGRyM1vNTI7P5FFRL8K9PK2KWyhjO0NXooJUOhB6blvPca1HMAd1tLyTL0bTIb9nIiSlIRA9J2QFCg==
+X-Received: by 2002:a63:2c89:0:b0:411:66bf:9efc with SMTP id s131-20020a632c89000000b0041166bf9efcmr19639098pgs.589.1657625528922;
+        Tue, 12 Jul 2022 04:32:08 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d1a9:ca7d:e86f:cf6f])
+        by smtp.gmail.com with ESMTPSA id m12-20020a170902f64c00b0016bf9437766sm6527972plg.261.2022.07.12.04.32.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 04:32:02 -0700 (PDT)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+Subject: [PATCH 0/2] clk: Fix CLK_OPS_PARENT_ENABLE and runtime PM
+Date:   Tue, 12 Jul 2022 19:31:05 +0800
+Message-Id: <20220712113107.871623-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.37.0.144.g8ac04bfd2-goog
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: mediatek: Don't check HW status for mt8192/5's
- imp_iic_wrap clocks
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>, Stephen Boyd <sboyd@kernel.org>,
-        kernel@collabora.com, Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Ran Jianping <ran.jianping@zte.com.cn>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20220711205733.203963-1-nfraprado@collabora.com>
- <CAGXv+5Enkz20o8BLXmnCUBmB930sH+20U=XvTWA82neaiqqc2A@mail.gmail.com>
- <473aa749-fcfe-bd38-0d83-95375aeef8a3@collabora.com>
- <CAGXv+5E+HVi2kxkRrwhWhq2XgbmfCxj+ZywPT4orBXTxtJ7X1Q@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5E+HVi2kxkRrwhWhq2XgbmfCxj+ZywPT4orBXTxtJ7X1Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 12/07/22 12:56, Chen-Yu Tsai ha scritto:
-> On Tue, Jul 12, 2022 at 6:55 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 12/07/22 12:44, Chen-Yu Tsai ha scritto:
->>> Hi,
->>>
->>> On Tue, Jul 12, 2022 at 4:57 AM Nícolas F. R. A. Prado
->>> <nfraprado@collabora.com> wrote:
->>>>
->>>> The imp_iic_wrap clocks on mt8192/mt8195 require that the i2c_sel parent
->>>> clock be enabled before their hardware status can be checked. Since this
->>>> wasn't taken into account, reading from the clk_summary debugfs file
->>>> would cause the system to completely freeze.
->>>>
->>>> Assuming that this clock is managed only by the kernel, and not by any
->>>> firmware, simply drop the is_enabled() optional callback and instead
->>>> rely on the enable count for the imp_iic_wrap clocks.
->>>
->>> That's the wrong way to go about it.
->>>
->>> The I2C clocks already have the CLK_OPS_PARENT_ENABLE flag set. So the
->>> issue is that somewhere in the clk core, a piece of code is not honoring
->>> that flag.
->>>
->>> And it seems that's in more than one place.
->>>
->>
->> Uhm, you're right. I gave my Tested-by, but not a Reviewed-by because I
->> wasn't really convinced about this solution being the best.
->>
->> Now that I think of it, the solution may be as simple as:
->>
->> clk.c
->>
->> static bool clk_core_is_enabled(struct clk_core *core)
->> {
->>          bool ret = false;
->>
->>          /*
->>           * If this clock needs parent enabled, but its parent is
->>           * off, we directly return false for two reasons:
->>           * 1. This clock being enabled would be impossible
->>           * 2. The platform may crash for unclocked access while
->>           *    reading the status of this clock (where a .is_enabled
->>           *    callback is provided).
->>           */
->>          if (core->flags & CLK_OPS_PARENT_ENABLE &&
->>              !clk_core_is_enabled(core->parent))
->>                  return false;
->>
->>          ... etc etc etc ...
->> }
->>
->> Nícolas, did you try this approach?
-> 
-> I have a patch ready, but I got distracted by other stuff today.
-> 
+Hi Mike, Stephen,
 
-Let's just wait for your patch then, seems like being the most sensible option.
+Here are a couple fixes for the clk core. They are unrelated but overlap
+in diff context, so I'm sending them together.
 
-Cheers!
+Patch 1 makes the clk core honor CLK_OPS_PARENT_ENABLE for clk gate ops.
+Without this, dumping clk_summary on the MT8192 would cause the system
+to hang.
 
-> ChenYu
-> 
->>> Regards
->>> ChenYu
->>>
->>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>>
->>>> ---
->>>>
->>>>    drivers/clk/mediatek/clk-gate.c                | 6 ++++++
->>>>    drivers/clk/mediatek/clk-gate.h                | 1 +
->>>>    drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c | 2 +-
->>>>    drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 +-
->>>>    4 files changed, 9 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
->>>> index 421806236228..8e7c719a69b3 100644
->>>> --- a/drivers/clk/mediatek/clk-gate.c
->>>> +++ b/drivers/clk/mediatek/clk-gate.c
->>>> @@ -124,6 +124,12 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
->>>>           mtk_cg_clr_bit_no_setclr(hw);
->>>>    }
->>>>
->>>> +const struct clk_ops mtk_clk_gate_ops_setclr_counted = {
->>>> +       .enable         = mtk_cg_enable,
->>>> +       .disable        = mtk_cg_disable,
->>>> +};
->>>> +EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_counted);
->>>> +
->>>>    const struct clk_ops mtk_clk_gate_ops_setclr = {
->>>>           .is_enabled     = mtk_cg_bit_is_cleared,
->>>>           .enable         = mtk_cg_enable,
->>>> diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
->>>> index d9897ef53528..b5502b2911f5 100644
->>>> --- a/drivers/clk/mediatek/clk-gate.h
->>>> +++ b/drivers/clk/mediatek/clk-gate.h
->>>> @@ -19,6 +19,7 @@ extern const struct clk_ops mtk_clk_gate_ops_setclr;
->>>>    extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
->>>>    extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
->>>>    extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
->>>> +extern const struct clk_ops mtk_clk_gate_ops_setclr_counted;
->>>>
->>>>    struct mtk_gate_regs {
->>>>           u32 sta_ofs;
->>>> diff --git a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
->>>> index 700356ac6a58..900ee601169c 100644
->>>> --- a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
->>>> +++ b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
->>>> @@ -20,7 +20,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
->>>>
->>>>    #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)                 \
->>>>           GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,      \
->>>> -               &mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
->>>> +               &mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
->>>>
->>>>    static const struct mtk_gate imp_iic_wrap_c_clks[] = {
->>>>           GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_C_I2C10, "imp_iic_wrap_c_i2c10", "infra_i2c0", 0),
->>>> diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
->>>> index fbc809d05072..e50a77b844f4 100644
->>>> --- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
->>>> +++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
->>>> @@ -18,7 +18,7 @@ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
->>>>
->>>>    #define GATE_IMP_IIC_WRAP(_id, _name, _parent, _shift)                         \
->>>>           GATE_MTK_FLAGS(_id, _name, _parent, &imp_iic_wrap_cg_regs, _shift,      \
->>>> -               &mtk_clk_gate_ops_setclr, CLK_OPS_PARENT_ENABLE)
->>>> +               &mtk_clk_gate_ops_setclr_counted, CLK_OPS_PARENT_ENABLE)
->>>>
->>>>    static const struct mtk_gate imp_iic_wrap_s_clks[] = {
->>>>           GATE_IMP_IIC_WRAP(CLK_IMP_IIC_WRAP_S_I2C5, "imp_iic_wrap_s_i2c5", "top_i2c", 0),
->>>> --
->>>> 2.37.0
->>>>
->>
->>
+Patch 2 reorders the runtime PM call in clk_core_unprepare() to match
+the order described in its original commit, and the opposite of that
+in clk_core_prepare().
 
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (2):
+  clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops
+  clk: core: Fix runtime PM sequence in clk_core_unprepare()
+
+ drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
 -- 
-AngeloGioacchino Del Regno
-Software Engineer
+2.37.0.144.g8ac04bfd2-goog
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales, no. 5513718
