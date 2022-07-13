@@ -2,93 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD52C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 21:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B09C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 21:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237220AbiGMVJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jul 2022 17:09:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
+        id S237408AbiGMVZ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jul 2022 17:25:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237108AbiGMVJB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 17:09:01 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EF717053
-        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:08:59 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id t1so6281357ejd.12
-        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:08:59 -0700 (PDT)
+        with ESMTP id S237449AbiGMVZy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 17:25:54 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 752201FCE7
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:25:53 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id w184so170708oie.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=joNprEeghBgM9IHa4iiYjH9rl8iDNY24HUyPswAsmd8=;
-        b=eVrp2XJ/S0ULb0BbB+hOGvt8BJrBJemI0i4D//4f11TRt7nQMhieW15OJPMOFjDXNW
-         gk1tW7gH68LhIfkjHG+jTKR3W3iM1yILmkqoXZsiMKEWnHVg9pH4XXebx9cqR3g+TCrk
-         Zj+uXBC+khoFJgn1AewNeNaK747MQLLWfjkKTxSPAs5YUo/4yks9F9fqCsmz2qM7SpbY
-         EoUrh4uRoV49gkSvm/nJGQa82rEeOobkO1cLIL5aG6ZPT4uaVgTIhTQppCx7d75uhPxE
-         BBCLSwKZGfNl9rd5F0EfaoHMyaUwfF+ZOx1QHZvgofigs+V+dPEMOca/a+8VQY8ro3HA
-         me9A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ahCcsqdWm37TmcPFIUtqpK14hIGNNZH3jmW8LtZtMN8=;
+        b=NESHtn59Pikhwx2KrwGd+gSFuwVBsotcrOTVxXYCbQMMmCPtTqw2BsQiJUHHwhM+Ft
+         7wApkkxKaRrTgAe/JMjQyHxtdcGnIj/gVUZn9R0mqMuNyOeHYar/zMnfBFQmQlzXo+wL
+         rYinUkRdSeMp5P4q59cHeOkpWzvpCPxTy2XvizKZq3jtoRfWqOvSs1bjXyRG8DTI4X8O
+         JPZ1IF2SH8AnZJuj6tghmPHFNT0irgIKR7HagvV9gvVDbkMYVFXl3Ehl9BVA9yWPzNuq
+         wGGl63VseOdTBAc3MmFGkioly/NLNjsLIvi5IxhdTauvnsZP/nYyRTvpe2K/3uQW14nl
+         iJ4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=joNprEeghBgM9IHa4iiYjH9rl8iDNY24HUyPswAsmd8=;
-        b=j2VJOaJsNOKrhRlFFsb9nNfd7TbCeyZpgnHEhQtJZk9S6fhLuTHeICnyQUDKyyYLHr
-         XBWrVbVqqzwIIMYXGaT+VOCj36P7iRNVuWlPyACgmP7UhSQIn62KmXlCWf7ldUrtz0Lf
-         grBDQ/YMecxdWIyw/UEMrtME4HVU1hK7aIi2hQY9Nyzy1S4kISIlItFl/eF2jNL3ayIG
-         NCl6x57JaPfl2jO34Slinx9435eY1BLlfTyqZcEnC4i7XOpP6QLIQv2mdUv7TG6Rwhff
-         7aGdGTMo/w7+LCzSpb20PMU0zrZybabnvhy2Owe/YTZe8lYfIM80xd8kigcDzJtnKXkP
-         m1WA==
-X-Gm-Message-State: AJIora+Tvd0SpqWz9vKC8GxWgfrwHDs9ECzC7+9SQZDMql8fFB12XfJ6
-        vsXZ2tTQeS0PDdvF1DV/5zSTISc2CsGh5iCe8+TSUMUyYEgDbQ==
-X-Google-Smtp-Source: AGRyM1vi41yo+5vshIoXBlCHuGemnZQGJJW2aQ31uABZv485i86opVLZATbEbv1rE7brkm2ozeMq51KqmdDNIpFVr5w=
-X-Received: by 2002:a17:907:3f81:b0:6ff:1a3d:9092 with SMTP id
- hr1-20020a1709073f8100b006ff1a3d9092mr5251589ejc.319.1657746537718; Wed, 13
- Jul 2022 14:08:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ahCcsqdWm37TmcPFIUtqpK14hIGNNZH3jmW8LtZtMN8=;
+        b=O6R8ArBw+lEBCpzUstWeVFt2GwJzyqNFke89MVTWceStDe5nOEzglzFQ2siP/o5xwx
+         61BXe70uEMbt/Xu8vB4RIoItClc5pLq0tFDijIj16uZ0TJouVUjcNQ9xqJI3BrouvYGV
+         hJfN5Sh34VXWfpcDa7BXjhKUFqHcGXiRMoZ6xgOeMFhR0zil41Kpdrdcz3U/cGF1rq4L
+         1hu6qYmzCeO0mcufYTlvW+8yqHPi0vEiyFkW+Ol3AqCuw73RfzWOqRRwCCXPSompoT6T
+         hUiGZcjo+sFTY1FxFrb6CnRM1ZzEtwidHC0y0DFMt0ZYrVYcxyhLfsPP0f+SU2KaxuUx
+         etPw==
+X-Gm-Message-State: AJIora/A6HVyM5N+iaEIVpKsDgb+Dt5X3IezIVk3e61cn3CR+L3kLp4g
+        oX5wRpaT28Tx044aqPNDb3aa0Q==
+X-Google-Smtp-Source: AGRyM1t2yHge3yTrtqRyoN4FGuWqSLwDfqF+kw0lyP4FH/bXEbtKTyOGVcHH5ftV7kPTKr0+RWJ9qw==
+X-Received: by 2002:a05:6808:1a19:b0:33a:1514:507b with SMTP id bk25-20020a0568081a1900b0033a1514507bmr3036628oib.58.1657747552837;
+        Wed, 13 Jul 2022 14:25:52 -0700 (PDT)
+Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id z14-20020a056870e30e00b000f33b23a030sm6719965oad.57.2022.07.13.14.25.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Jul 2022 14:25:52 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+Date:   Wed, 13 Jul 2022 14:28:18 -0700
+Message-Id: <20220713212818.130277-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20220711162713.2467476-1-dlatypov@google.com>
-In-Reply-To: <20220711162713.2467476-1-dlatypov@google.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 13 Jul 2022 17:08:46 -0400
-Message-ID: <CAFd5g47bt5Aop2onFpzbcMmWNncxPg6Ju+nomZz33f4kEEHWZA@mail.gmail.com>
-Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
-To:     Daniel Latypov <dlatypov@google.com>
-Cc:     davidgow@google.com, linux-kernel@vger.kernel.org,
-        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        skhan@linuxfoundation.org, linux-clk@vger.kernel.org,
-        sboyd@kernel.org, Maxime Ripard <maxime@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 11, 2022 at 12:27 PM 'Daniel Latypov' via KUnit
-Development <kunit-dev@googlegroups.com> wrote:
->
-> CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
-> However, this causes test failures when running the clk tests, i.e.
-> $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
->
-> A snippet of the particular error is:
-> >     ok 1 - clk_gate_test_parent_rate
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
->
-> This is triggered by this cast in the test:
->    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-> this seems to work except when logic iomem is enabled, i.e.
-> CONFIG_INDIRECT_IOMEM=y.
->
-> As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
-> drivers/clk/.kunitconfig so we can enable it for everyone else by
-> default in kunit.py.
->
-> The long-term fix probably requires something more complicated, like
->   #ifdef CONFIG_INDIRECT_IOMEM
->     logic_iomem_add_region(...);
->   #endif
->
-> Signed-off-by: Daniel Latypov <dlatypov@google.com>
-> Reported-by: Maxime Ripard <maxime@cerno.tech>
-> Tested-by: Maxime Ripard <maxime@cerno.tech>
+When a GDSC is found to be enabled at boot the pm_runtime state will
+be unbalanced as the GDSC is later turned off. Fix this by increasing
+the usage counter on the power-domain, in line with how we handled the
+regulator state.
 
-Acked-by: Brendan Higgins <brendanhiggins@google.com>
+Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+
+Changes since v1:
+- Added error handling
+
+ drivers/clk/qcom/gdsc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 6f746158d28f..d3244006c661 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -437,6 +437,14 @@ static int gdsc_init(struct gdsc *sc)
+ 				return ret;
+ 		}
+ 
++		/* ...and the power-domain */
++		ret = gdsc_pm_runtime_get(sc);
++		if (ret) {
++			if (sc->rsupply)
++				regulator_disable(sc->rsupply);
++			return ret;
++		}
++
+ 		/*
+ 		 * Votable GDSCs can be ON due to Vote from other masters.
+ 		 * If a Votable GDSC is ON, make sure we have a Vote.
+-- 
+2.35.1
+
