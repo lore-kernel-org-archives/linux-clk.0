@@ -2,83 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C503C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 16:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD52C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 21:09:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237244AbiGMQdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jul 2022 12:33:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
+        id S237220AbiGMVJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jul 2022 17:09:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237262AbiGMQdH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 12:33:07 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE6C2E68A;
-        Wed, 13 Jul 2022 09:33:04 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id j1-20020a17090aeb0100b001ef777a7befso4281027pjz.0;
-        Wed, 13 Jul 2022 09:33:04 -0700 (PDT)
+        with ESMTP id S237108AbiGMVJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 17:09:01 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EF717053
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:08:59 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id t1so6281357ejd.12
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 14:08:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=5SHUSXsqONgSGFWlMLIGNgVlfzO3WUzoSZ9tGmnf1gM=;
-        b=UMX7GgiubFUfdB2GgsC6G7qmW5+linWqzt9GFgwiO63t21MLxiiyHE7ktOCygPAQoA
-         kQr/RFT7/ToX66v7K+iamosjBVb0bHccmwhFRRYYmfgpsgrSaUE087wUaDf1EaPlTX5N
-         yeQD8sFr3kOvciTG7xvLtCSIkNQn5V5AIKj3KJP1YE16LooAueC9ZfbebCIjxQwuZsRz
-         P+gqBpkIxr/vI/0VTI3DdFZm+aE/IrFO6SeYMdVjOBehC8VYZKV+/Yqdjqwxvheo9aMI
-         Kmc4NueUyZwOPJF2Qewp/928bTrlETRN7C1v3viblztCM6P8US6ezOIAVwMOGP+q153s
-         kklw==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=joNprEeghBgM9IHa4iiYjH9rl8iDNY24HUyPswAsmd8=;
+        b=eVrp2XJ/S0ULb0BbB+hOGvt8BJrBJemI0i4D//4f11TRt7nQMhieW15OJPMOFjDXNW
+         gk1tW7gH68LhIfkjHG+jTKR3W3iM1yILmkqoXZsiMKEWnHVg9pH4XXebx9cqR3g+TCrk
+         Zj+uXBC+khoFJgn1AewNeNaK747MQLLWfjkKTxSPAs5YUo/4yks9F9fqCsmz2qM7SpbY
+         EoUrh4uRoV49gkSvm/nJGQa82rEeOobkO1cLIL5aG6ZPT4uaVgTIhTQppCx7d75uhPxE
+         BBCLSwKZGfNl9rd5F0EfaoHMyaUwfF+ZOx1QHZvgofigs+V+dPEMOca/a+8VQY8ro3HA
+         me9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=5SHUSXsqONgSGFWlMLIGNgVlfzO3WUzoSZ9tGmnf1gM=;
-        b=UCr5VTEQHupwGn1Xlz/R8uQWirukbP+QFlzjdpmSsIFo5lduU+WU/svlGNlFcAQEiZ
-         AM63tJpb/LTu8FO/Dfl/rQiZ6eq4PXU0JJHfj+LH1a7ixgvCKB52Zq3OK8QhJpI+iZXu
-         1jcLza/pigDZ4uO9qxyWpf1zQvPcgEbpj+sSjioZwEOGI0jtngW9n2WMz81j8ywYnjA3
-         YKxatRgL3Y7Oyl5TU3T3P2HxI4foy9zlNWyW71fkLUcuvQ+nuQ9y6w4hNYwEFQXdT7DW
-         SlhZRY9QX13EdG8PQrCRpZwfUYi4i/5gShGmc3oO5zUxVtWCTd6/9UmSNffLaJdg+byA
-         595A==
-X-Gm-Message-State: AJIora/s51RJi6uIBV1UjrjMytcXOjX4Xx6urVViJpwNyHaHU+l6f+ew
-        Gv6JMK+3ngrdDMOvekgyo6c0b4d+WBQ=
-X-Google-Smtp-Source: AGRyM1uNEtM2WrZzw5jgWAmfRBGong/l1Yg0WCFLKxsTPrXPsLV6Ivv9EMR6UhL/nC1yKcFs9Nxavw==
-X-Received: by 2002:a17:902:e552:b0:16c:571d:fc08 with SMTP id n18-20020a170902e55200b0016c571dfc08mr3824427plf.151.1657729983755;
-        Wed, 13 Jul 2022 09:33:03 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id b17-20020a17090ae39100b001efbc3ad105sm1795316pjz.54.2022.07.13.09.33.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 09:33:03 -0700 (PDT)
-Message-ID: <b0d4e5ee-7862-e873-33da-2da2cbb33fbb@gmail.com>
-Date:   Wed, 13 Jul 2022 09:33:01 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=joNprEeghBgM9IHa4iiYjH9rl8iDNY24HUyPswAsmd8=;
+        b=j2VJOaJsNOKrhRlFFsb9nNfd7TbCeyZpgnHEhQtJZk9S6fhLuTHeICnyQUDKyyYLHr
+         XBWrVbVqqzwIIMYXGaT+VOCj36P7iRNVuWlPyACgmP7UhSQIn62KmXlCWf7ldUrtz0Lf
+         grBDQ/YMecxdWIyw/UEMrtME4HVU1hK7aIi2hQY9Nyzy1S4kISIlItFl/eF2jNL3ayIG
+         NCl6x57JaPfl2jO34Slinx9435eY1BLlfTyqZcEnC4i7XOpP6QLIQv2mdUv7TG6Rwhff
+         7aGdGTMo/w7+LCzSpb20PMU0zrZybabnvhy2Owe/YTZe8lYfIM80xd8kigcDzJtnKXkP
+         m1WA==
+X-Gm-Message-State: AJIora+Tvd0SpqWz9vKC8GxWgfrwHDs9ECzC7+9SQZDMql8fFB12XfJ6
+        vsXZ2tTQeS0PDdvF1DV/5zSTISc2CsGh5iCe8+TSUMUyYEgDbQ==
+X-Google-Smtp-Source: AGRyM1vi41yo+5vshIoXBlCHuGemnZQGJJW2aQ31uABZv485i86opVLZATbEbv1rE7brkm2ozeMq51KqmdDNIpFVr5w=
+X-Received: by 2002:a17:907:3f81:b0:6ff:1a3d:9092 with SMTP id
+ hr1-20020a1709073f8100b006ff1a3d9092mr5251589ejc.319.1657746537718; Wed, 13
+ Jul 2022 14:08:57 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 3/3] clk: bcm: rpi: Show clock id limit in error case
-Content-Language: en-US
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220713154953.3336-1-stefan.wahren@i2se.com>
- <20220713154953.3336-4-stefan.wahren@i2se.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220713154953.3336-4-stefan.wahren@i2se.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220711162713.2467476-1-dlatypov@google.com>
+In-Reply-To: <20220711162713.2467476-1-dlatypov@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 13 Jul 2022 17:08:46 -0400
+Message-ID: <CAFd5g47bt5Aop2onFpzbcMmWNncxPg6Ju+nomZz33f4kEEHWZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
+To:     Daniel Latypov <dlatypov@google.com>
+Cc:     davidgow@google.com, linux-kernel@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        skhan@linuxfoundation.org, linux-clk@vger.kernel.org,
+        sboyd@kernel.org, Maxime Ripard <maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/13/22 08:49, Stefan Wahren wrote:
-> The clock id limit will be extended in the future, so it would be
-> helpful to see the actual clock id limit in case the firmware
-> response has been rejected.
-> 
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+On Mon, Jul 11, 2022 at 12:27 PM 'Daniel Latypov' via KUnit
+Development <kunit-dev@googlegroups.com> wrote:
+>
+> CONFIG_UML_PCI_OVER_VIRTIO=y is needed to enable CONFIG_PCI=y on UML.
+> However, this causes test failures when running the clk tests, i.e.
+> $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
+>
+> A snippet of the particular error is:
+> >     ok 1 - clk_gate_test_parent_rate
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 45 at lib/logic_iomem.c:141 __raw_readl+0x9f/0xd0
+>
+> This is triggered by this cast in the test:
+>    143          ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
+> this seems to work except when logic iomem is enabled, i.e.
+> CONFIG_INDIRECT_IOMEM=y.
+>
+> As a short-term fix, explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in
+> drivers/clk/.kunitconfig so we can enable it for everyone else by
+> default in kunit.py.
+>
+> The long-term fix probably requires something more complicated, like
+>   #ifdef CONFIG_INDIRECT_IOMEM
+>     logic_iomem_add_region(...);
+>   #endif
+>
+> Signed-off-by: Daniel Latypov <dlatypov@google.com>
+> Reported-by: Maxime Ripard <maxime@cerno.tech>
+> Tested-by: Maxime Ripard <maxime@cerno.tech>
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Acked-by: Brendan Higgins <brendanhiggins@google.com>
