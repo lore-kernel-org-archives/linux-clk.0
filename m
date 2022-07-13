@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF35C43334
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 16:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C503C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 16:33:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237142AbiGMQ0Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Jul 2022 12:26:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
+        id S237244AbiGMQdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jul 2022 12:33:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237093AbiGMQ0Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 12:26:24 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE0F197;
-        Wed, 13 Jul 2022 09:26:22 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id bh13so10917322pgb.4;
-        Wed, 13 Jul 2022 09:26:22 -0700 (PDT)
+        with ESMTP id S237262AbiGMQdH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 12:33:07 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE6C2E68A;
+        Wed, 13 Jul 2022 09:33:04 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id j1-20020a17090aeb0100b001ef777a7befso4281027pjz.0;
+        Wed, 13 Jul 2022 09:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=crb5cIXxi4gQ1vTPA/VLZMHirV73SnIKGrsPdVuQdLI=;
-        b=WQdVZcuMsp1zBR0WXGRaAg2tM3B5oVRhw55kf06DgY443JkE0cXl6mHZYz9wj0RMwb
-         gqtETEHgJuYl67U+m1DZGitFtKfI6kdx/FWnr2ofiPmpcFZ8LNzsRRcVMZS9Lc7a9+2L
-         ShqAD0md/x8O8a8vDCEynjOYPN618hjDTUgnyLyoTSzKtzKcUHSoxlw5VWJLvDQIIK8W
-         W5ddwNrwqd+vHq57qlHdrWNMDhVtXIB7AlJobYb1cpKTxDToUG9Yxvgw6qft9vaxg8hU
-         iM1CNPsJYXEbLVB9PARKyAr9MNRn3uF6cZd6pg73NYRrUtrqiz6BdnamCA6ZhfDiK3qU
-         i1kw==
+        bh=5SHUSXsqONgSGFWlMLIGNgVlfzO3WUzoSZ9tGmnf1gM=;
+        b=UMX7GgiubFUfdB2GgsC6G7qmW5+linWqzt9GFgwiO63t21MLxiiyHE7ktOCygPAQoA
+         kQr/RFT7/ToX66v7K+iamosjBVb0bHccmwhFRRYYmfgpsgrSaUE087wUaDf1EaPlTX5N
+         yeQD8sFr3kOvciTG7xvLtCSIkNQn5V5AIKj3KJP1YE16LooAueC9ZfbebCIjxQwuZsRz
+         P+gqBpkIxr/vI/0VTI3DdFZm+aE/IrFO6SeYMdVjOBehC8VYZKV+/Yqdjqwxvheo9aMI
+         Kmc4NueUyZwOPJF2Qewp/928bTrlETRN7C1v3viblztCM6P8US6ezOIAVwMOGP+q153s
+         kklw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=crb5cIXxi4gQ1vTPA/VLZMHirV73SnIKGrsPdVuQdLI=;
-        b=1Vo6AxgPGeCccDfCXw97uTl0rM6XeZU8tqg0iF1rsDEHt0HAGTw6i2T2pN+eg9Bb2l
-         0+/fsTo9nVvubfVWGSKGpYHLaoPKUphaqwAMoOigTwxZXjoxVvCOokqvmlUGZo+rwDAN
-         EHFzMiCKnkpsC54qVoylUR3tA/icqYHUay4uNQ2BHOcS3U3Bzui17glwzlO4eBJ/e5DZ
-         2pGdrJXUlRs6hHAb3cQWHI/RievjdL6flWhpx4yoATbncb8b9SIhx+mmRZKHZBvRUnJQ
-         n+tyPeabpfoOmCRoJuSs5084V/LgjQmbg49WnMvj9Ybi1iHNDW4rbiMvJQs20eqvzqg1
-         TMcQ==
-X-Gm-Message-State: AJIora9zv52PEKY1DwMxZHo4FsydAyjkXzt/2pjXBwxmKvUXmWylc/s9
-        bqf53KdZ3NqymAmrjQHNH2Q=
-X-Google-Smtp-Source: AGRyM1ukRYaPF/Fg0YeFLTKFaZTsCVc1GLBmxzTNqjtvqslCi/+eD2WIWwxHXXJRFBKZBYG/TyPp/w==
-X-Received: by 2002:a63:3cd:0:b0:415:f76d:fb4 with SMTP id 196-20020a6303cd000000b00415f76d0fb4mr3505407pgd.587.1657729582428;
-        Wed, 13 Jul 2022 09:26:22 -0700 (PDT)
+        bh=5SHUSXsqONgSGFWlMLIGNgVlfzO3WUzoSZ9tGmnf1gM=;
+        b=UCr5VTEQHupwGn1Xlz/R8uQWirukbP+QFlzjdpmSsIFo5lduU+WU/svlGNlFcAQEiZ
+         AM63tJpb/LTu8FO/Dfl/rQiZ6eq4PXU0JJHfj+LH1a7ixgvCKB52Zq3OK8QhJpI+iZXu
+         1jcLza/pigDZ4uO9qxyWpf1zQvPcgEbpj+sSjioZwEOGI0jtngW9n2WMz81j8ywYnjA3
+         YKxatRgL3Y7Oyl5TU3T3P2HxI4foy9zlNWyW71fkLUcuvQ+nuQ9y6w4hNYwEFQXdT7DW
+         SlhZRY9QX13EdG8PQrCRpZwfUYi4i/5gShGmc3oO5zUxVtWCTd6/9UmSNffLaJdg+byA
+         595A==
+X-Gm-Message-State: AJIora/s51RJi6uIBV1UjrjMytcXOjX4Xx6urVViJpwNyHaHU+l6f+ew
+        Gv6JMK+3ngrdDMOvekgyo6c0b4d+WBQ=
+X-Google-Smtp-Source: AGRyM1uNEtM2WrZzw5jgWAmfRBGong/l1Yg0WCFLKxsTPrXPsLV6Ivv9EMR6UhL/nC1yKcFs9Nxavw==
+X-Received: by 2002:a17:902:e552:b0:16c:571d:fc08 with SMTP id n18-20020a170902e55200b0016c571dfc08mr3824427plf.151.1657729983755;
+        Wed, 13 Jul 2022 09:33:03 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id m12-20020a63710c000000b0040d287f1378sm8155638pgc.7.2022.07.13.09.26.21
+        by smtp.googlemail.com with ESMTPSA id b17-20020a17090ae39100b001efbc3ad105sm1795316pjz.54.2022.07.13.09.33.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 09:26:22 -0700 (PDT)
-Message-ID: <1c3449c7-4f89-7678-f782-8cc03753f1bf@gmail.com>
-Date:   Wed, 13 Jul 2022 09:26:19 -0700
+        Wed, 13 Jul 2022 09:33:03 -0700 (PDT)
+Message-ID: <b0d4e5ee-7862-e873-33da-2da2cbb33fbb@gmail.com>
+Date:   Wed, 13 Jul 2022 09:33:01 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH 2/3] clk: bcm: rpi: Add missing newline
+Subject: Re: [PATCH 3/3] clk: bcm: rpi: Show clock id limit in error case
 Content-Language: en-US
 To:     Stefan Wahren <stefan.wahren@i2se.com>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -63,9 +63,9 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20220713154953.3336-1-stefan.wahren@i2se.com>
- <20220713154953.3336-3-stefan.wahren@i2se.com>
+ <20220713154953.3336-4-stefan.wahren@i2se.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20220713154953.3336-3-stefan.wahren@i2se.com>
+In-Reply-To: <20220713154953.3336-4-stefan.wahren@i2se.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -73,9 +73,10 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 7/13/22 08:49, Stefan Wahren wrote:
-> Some log messages lacks the final newline. So add them.
+> The clock id limit will be extended in the future, so it would be
+> helpful to see the actual clock id limit in case the firmware
+> response has been rejected.
 > 
-> Fixes: 93d2725affd6 ("clk: bcm: rpi: Discover the firmware clocks")
 > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
 Acked-by: Florian Fainelli <f.fainelli@gmail.com>
