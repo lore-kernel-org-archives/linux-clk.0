@@ -2,102 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1479C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Jul 2022 21:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9D7C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Jul 2022 08:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230205AbiGLVyw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Jul 2022 17:54:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50578 "EHLO
+        id S235596AbiGMIXo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Jul 2022 04:23:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229982AbiGLVyv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jul 2022 17:54:51 -0400
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85DB3357D7;
-        Tue, 12 Jul 2022 14:54:50 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id y2so9198369ior.12;
-        Tue, 12 Jul 2022 14:54:50 -0700 (PDT)
+        with ESMTP id S235619AbiGMIXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 04:23:13 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9111724F12
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 01:21:17 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id i8-20020a17090a4b8800b001ef8a65bfbdso2390077pjh.1
+        for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 01:21:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O5tqKmI0VtDav4ikokY0BzkYbycUnUxRQ6P+/2oYKpE=;
+        b=a7N3b5EUaL7IAQGgk/tg9fBS5xWt/oI88kNN3Ka8ICnGZuY+llH+mjd0vSJMYO7Chz
+         ppeKVX+nDXuJzLSCYom74OLx+Wts00I2An62EJ8GBTHHn7Y6Ph/63CV9Ur/qTExHHhi0
+         Aefn0JxibQbjbpUnJ4HXXHslE1frvl0Xad5OU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=B8tMYfNlFFBawjqFpMsqY7d8iDUBaf8mx9VTGzxGhHc=;
-        b=yK1Giavcuhhv9YVyIjvsB8daiG1XIH1UuisJaH0T85tWgGTjYdquR+Y1wbauOmcWjx
-         WBcRIhJQD2+jAbBIF+PdIPNAxkCKTIBb2iILIFv3n8ZfTXFgpZkPZwdaqw+xCVfqHOo4
-         8hxVw0jSNGmtnUltmSEhh09H1kg22uR/gx5ZXulsxAMwSYiaGSNm3F/FO2vqj29AE7Zq
-         KEWia26UliJ7YnUnAdIGgrRHbvqJfwICmTAQmnjB4xUPrUS57trVpnhyIra47n/noRaS
-         NapFgtowmQlWDApGTAkPmAphn9EpmCwUPCbsjIhb1MraESbBFOnqQqoSx0Mf01sPPDVK
-         q6Eg==
-X-Gm-Message-State: AJIora+3BaaBOs3uJIAMJLcGkqINT9usBhYFzqxfp6rC9QpG80lbiZpx
-        vHURCWRoGdXVQt6s7RBxuQ==
-X-Google-Smtp-Source: AGRyM1sTNF5cLSCr9EpJMt7vLz/hHDgjnWfrGwvfvH2h5+b+7Aw8r7rfZ4sFTiG0HwWsgHtxjiwo5Q==
-X-Received: by 2002:a05:6602:2a42:b0:678:84be:c9ec with SMTP id k2-20020a0566022a4200b0067884bec9ecmr180408iov.64.1657662889754;
-        Tue, 12 Jul 2022 14:54:49 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id a29-20020a02735d000000b00339ef592279sm4573163jae.127.2022.07.12.14.54.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O5tqKmI0VtDav4ikokY0BzkYbycUnUxRQ6P+/2oYKpE=;
+        b=SdOEtUWF6EuYdaWbvG7NZ7g7XuxHw6oH63c19gEyH0C9DTAygi9wI7fvdkKD3SsJaX
+         lIMSlggPAi15yOX9tcV9ick6fsAi/7iwOPmsMmvQqusaq9LaqqB6TlbQ4vxbjKX4Bwfv
+         HkzQYx8RhJH66VZhU59EXPjlBoNeTXyUvQ2oinGYO4L9VZTJj1qCGgqWKZjaMi+M9Jea
+         kkP2H6K6QtWGKEpDrjsJ2dnc+C0H2HM8L1ZlIFvJ0Vhsuvwv6oyMnDJhHmfVtQfRkYSv
+         +soJ8oFgLTniAZE0MsHGSliaSzAkup11fbqtQ2S4rm0kDe+Pof6Pv9yi5KYm8CAYRYKO
+         24/g==
+X-Gm-Message-State: AJIora+tzEpelhpky7OMuochz76wq8/2mwi7aYms3dBMcpZajcPmD+K3
+        3e4UpwAwl6jvhSlq1qL9498FeQ==
+X-Google-Smtp-Source: AGRyM1uu4akTezwMzGdR0eJQ60s6v0evsIm8YEeeL5lCapS3JSnaGoHdbdpf7uzWtmUvA52hAn6NGA==
+X-Received: by 2002:a17:90b:4d01:b0:1ef:d39b:b140 with SMTP id mw1-20020a17090b4d0100b001efd39bb140mr2595551pjb.82.1657700477146;
+        Wed, 13 Jul 2022 01:21:17 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d1a9:ca7d:e86f:cf6f])
+        by smtp.gmail.com with ESMTPSA id k11-20020aa7972b000000b005281d926733sm8220461pfg.199.2022.07.13.01.21.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jul 2022 14:54:49 -0700 (PDT)
-Received: (nullmailer pid 2428467 invoked by uid 1000);
-        Tue, 12 Jul 2022 21:54:47 -0000
-Date:   Tue, 12 Jul 2022 15:54:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     john@metanate.com, heiko@sntech.de, p.zabel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, didi.debian@cknow.org,
-        herbert@gondor.apana.org.au, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-rockchip@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v8 25/33] dt-bindings: crypto: rockchip: convert to new
- driver bindings
-Message-ID: <20220712215447.GS1823936-robh@kernel.org>
-References: <20220706090412.806101-1-clabbe@baylibre.com>
- <20220706090412.806101-26-clabbe@baylibre.com>
- <1657114144.957232.4099933.nullmailer@robh.at.kernel.org>
- <YsWcGDwPCX+/95i3@Red>
+        Wed, 13 Jul 2022 01:21:16 -0700 (PDT)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+Subject: [PATCH v2 0/2] clk: Fix CLK_OPS_PARENT_ENABLE and runtime PM
+Date:   Wed, 13 Jul 2022 16:21:09 +0800
+Message-Id: <20220713082111.2233016-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.37.0.170.g444d1eabd0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <YsWcGDwPCX+/95i3@Red>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 06, 2022 at 04:28:40PM +0200, LABBE Corentin wrote:
-> Le Wed, Jul 06, 2022 at 07:29:04AM -0600, Rob Herring a écrit :
-> > On Wed, 06 Jul 2022 09:04:04 +0000, Corentin Labbe wrote:
-> > > The latest addition to the rockchip crypto driver need to update the
-> > > driver bindings.
-> > > 
-> > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > > ---
-> > >  .../crypto/rockchip,rk3288-crypto.yaml        | 85 +++++++++++++++++--
-> > >  1 file changed, 77 insertions(+), 8 deletions(-)
-> > > 
-> > 
-> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml: allOf:0:then:properties:clock-names: 'oneOf' conditional failed, one must be fixed:
-> > 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too long
-> > 	[{'const': 'aclk'}, {'const': 'hclk'}, {'const': 'sclk'}, {'const': 'apb_pclk'}] is too short
-> > 	False schema does not allow 4
-> > 	1 was expected
-> > 	4 is greater than the maximum of 2
-> > 	4 is greater than the maximum of 3
-> 
-> Hello
-> 
-> I upgraded to dt-schema 2022.07 and fail to reproduce all errors.
+Hi Mike, Stephen,
 
-Did you clean your tree or just touch this file after upgrading? I'm 
-guessing not. We don't detect dt-schema changes. 
+Here are a couple fixes for the clk core. They are unrelated but overlap
+in diff context, so I'm sending them together.
 
-Rob
+Patch 1 makes the clk core honor CLK_OPS_PARENT_ENABLE for clk gate ops.
+Without this, dumping clk_summary on the MT8192 would cause the system
+to hang.
+
+Patch 2 reorders the runtime PM call in clk_core_unprepare() to match
+the order described in its original commit, and the opposite of that
+in clk_core_prepare().
+
+Changes since v1
+- Use clk_core_{enable,disable}_lock() instead of non-locking variant.
+  Reported by NÃ­colas
+- Added coverage for clk_core_is_prepared()
+- Correct sequencing in clk_core_is_enabled() so that runtime PM is
+  handled before parent clock is enabled, matching other functions.
+
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (2):
+  clk: core: Honor CLK_OPS_PARENT_ENABLE for clk gate ops
+  clk: core: Fix runtime PM sequence in clk_core_unprepare()
+
+ drivers/clk/clk.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
+
+-- 
+2.37.0.170.g444d1eabd0-goog
+
