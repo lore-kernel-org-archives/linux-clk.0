@@ -2,360 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B9DC43334
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 11:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FFDC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 11:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238226AbiGNLFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 07:05:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44168 "EHLO
+        id S238827AbiGNL1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 07:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238579AbiGNLE4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 07:04:56 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB1E300;
-        Thu, 14 Jul 2022 04:04:54 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1D93C6601A3B;
-        Thu, 14 Jul 2022 12:04:52 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657796692;
-        bh=fDnSmz7ATZ9eZAfZWM2eRcCrYCUPAHzXG+z/TTvHfdk=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JupW8+3MR/peFQltkKEv/eaiFhUg++x7z/GRiSkA6bN6G06//wWu4+anYAjSj3FfK
-         DnOMPAQUJdsafhg5T6Rrg1hp29Qj7KJah2afy+f+6SLZJTFoVLbm9RhU56kuT9e2A1
-         PqQ7a3btUVMrBh65uzAHyaVesRyODQpNFE+zIi96DfXpLmsPQlojtJJsINz7v5ofOI
-         qpaave4tETAmUqijtoVfGyx3LsvIbnuWUDurTMn7dgGVFtCagnYcgcwkyVLLarIEt6
-         X5BTpXOax0kslLIib6SLdtKvYIqPMlKb30Gle7tj/NSGIVITrog/tHnAvX2R85X7Uv
-         mRchlu8wOAhog==
-Message-ID: <a1d36cba-a58a-326a-70dc-3578f183a249@collabora.com>
-Date:   Thu, 14 Jul 2022 13:04:49 +0200
+        with ESMTP id S238797AbiGNL1J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 07:27:09 -0400
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on20604.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e83::604])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BADF5885A;
+        Thu, 14 Jul 2022 04:27:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XJl8QtY10eG9Q1fch8sR8R0892BnMgn5/JRdD6qKJcmjr1etyahnKFU95FngHk1Vstz9DHoU/mn0qW89zHR1Yut3l4WnOH98V1VwcizJf+JUFKmdcXYX5ACnSKCgAmYbWdLjWxIV6NxefF6XecO0fYXce0GdOC/tYg6jfoVcPP14Y6ZNbTfV76PcDrFjWjwx3/ePc0lbpT0roozie2U7dPWrHfCy9hs6AgqQOJ9XsWwojuBHK3oiiaVDTqBrtLbGxBWWb+vc+oS6IG4c6P5I1qN7kN29FxyFdKoxidFe6MUK/SgJLuvJjXlzWg8G3JOXsAWwksQWfDBO2LD7ZFvWGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RLS3/kE86UTPO297iPfeEkTCgSKGF6sqQdihn4AI2rA=;
+ b=gbtKidMNSSpmrDDlteuUJylIjWCLMs+07ODNCgiT3v4fHFfyHT4hHfyx/6tO0N+MGHzxULtPeDqHpphVmy+w1/ezF9spsOBwiOSj62n+sQXjmxraipgoYVm3FWXzoLkGKd5rELNIebNQoceDqB9dMr6ZBK3PxAN41H6B9jGM/ZsNOrJ+xg5N+aXq6amzHlL8a1OfmedjlE/melEYnQCLdH0POYESgPxGkrJUjzvA8dnWhMNHmocUIjOjnwjzAP67cbXXv6nwK07PqQVmLRpkRHZjHkfVixpLbnK7kkPgGeIK5rpwfj+6mTTDUyx5mCQtBQ3wHA5ExO4nd4OmQMpYuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=xilinx.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RLS3/kE86UTPO297iPfeEkTCgSKGF6sqQdihn4AI2rA=;
+ b=t4y0h1MMf4BKbH/Ic5USWUfydHvr5ERZDay26t+PPShQ7jsoHuAakTRfpeA9gheLXC1jXE+2al5XkrVR3c7JrTXtOhkdygVEIxJ6HoeyBuO9dI6gHKQetPaEoQSN1dPB8LXaCDnNeP4IoC+BPWSTwmv8yzrVFJOSfg1hpBuKTlk=
+Received: from DM6PR06CA0074.namprd06.prod.outlook.com (2603:10b6:5:336::7) by
+ MWHPR1201MB0174.namprd12.prod.outlook.com (2603:10b6:301:55::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.20; Thu, 14 Jul
+ 2022 11:27:04 +0000
+Received: from DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:336:cafe::f5) by DM6PR06CA0074.outlook.office365.com
+ (2603:10b6:5:336::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.25 via Frontend
+ Transport; Thu, 14 Jul 2022 11:27:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT047.mail.protection.outlook.com (10.13.172.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5438.12 via Frontend Transport; Thu, 14 Jul 2022 11:27:04 +0000
+Received: from [10.254.241.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 14 Jul
+ 2022 06:27:01 -0500
+Message-ID: <155c77c3-25d9-7edc-35bd-56e6cfb19ac6@amd.com>
+Date:   Thu, 14 Jul 2022 13:26:58 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [RFC PATCH 2/2] clk: mediatek: Add frequency hopping support
+Subject: Re: [PATCH v14 0/5] clk: clocking-wizard: Driver updates
 Content-Language: en-US
-To:     Edward-JW Yang <edward-jw.yang@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Cc:     =?UTF-8?B?Sm9obnNvbiBXYW5nICjnjovogZbpkasp?= 
-        <Johnson.Wang@mediatek.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        =?UTF-8?B?WXUtQ2hhbmcgV2FuZyAo546L54Wc5qifKQ==?= 
-        <Yu-Chang.Wang@mediatek.com>,
-        =?UTF-8?B?S3Vhbi1Ic2luIExlZSAo5p2O5Yag5pawKQ==?= 
-        <Kuan-Hsin.Lee@mediatek.com>
-References: <20220612135414.3003-1-johnson.wang@mediatek.com>
- <20220612135414.3003-3-johnson.wang@mediatek.com>
- <ca4b9a0e-b1ca-6861-e4c0-30a8c8a5c99c@collabora.com>
- <9addc9fb0c949e921f915fcf128783393214bfde.camel@mediatek.com>
- <30e07350-ff56-a361-121e-3cb3a27643a1@collabora.com>
- <CAGXv+5F3YK51eL60-SD6pfW90xSZYoVvLXvbQ1oq+8zQmfkKwA@mail.gmail.com>
- <946e6d8fd14151277f00521e1373057a403021b0.camel@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <946e6d8fd14151277f00521e1373057a403021b0.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        <linux-clk@vger.kernel.org>, git <git@xilinx.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
+From:   Michal Simek <michal.simek@amd.com>
+In-Reply-To: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 80fc2ff7-902c-4a0d-8083-08da658bc770
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB0174:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?U283dCt6WDEzRlNMU3IyeDgwejl3L0czN1VoZkpHSitRK2x0a0dQSEJQSE1p?=
+ =?utf-8?B?WXUzWjB1ckdLWjMvRm12dXQxQWlkUzlDMTVOdVJTZDVNZ3RUTHhxeWlwemU0?=
+ =?utf-8?B?YkFGN0FCcUdONTB4L21wckxoVk8rVm5ZVXhVV1lIV2ExU0dXb3JSQUFUWTlu?=
+ =?utf-8?B?a1o0czQzRHVqL29UZ1FrKzlKRHFxSm9UWU1mYkVhWnBBU0owUDA4OGx0cDRB?=
+ =?utf-8?B?RjAwZFpMckZwdjMxUnVYdENaSWh2T2ExZEFTRk5iZytXL0xtMHU3N2Z2bHdx?=
+ =?utf-8?B?Qm04a0FyenNEanRvY2dmdmxJVTJsQVVwMjJpeEtnQXdLM1Z1NWtaN3N3a2JK?=
+ =?utf-8?B?WUZUL0U0UXJOc0dnRHVXRTJVSXJiM0xqYlVLNG9ScGwwVzBxQVVvOGlqbzEx?=
+ =?utf-8?B?eWpTS2EvTEFtd0JadjNUbDJJTDRhRFZKWGxKZE8welFOZjhUQ3RVK3E5Q0xs?=
+ =?utf-8?B?clBzNTZqWkRFN3FncGpmcXdrbjNreWhCb2xrVk9sRUd2OUNyTG1NNEk5RFBy?=
+ =?utf-8?B?RDVhUDBwRlFkYnYvU0M1MEpKUVNEWiswZ0FBVndCdHhvUjVtZTBMTVEyR1Fy?=
+ =?utf-8?B?b04zZS9FRXJSdlhEZ2VONGNwWDVOZnZ3QXRmM3dCSHVCZXRoWDBERExqU3pF?=
+ =?utf-8?B?ZkxwSVNvdnBlRlpMbVRRRGtrZGJHNnMyMGpGMEhyYU5wRzdtNVRvNzRxRXV3?=
+ =?utf-8?B?SHo5dlZrbTYwL24wcG5hRGQrQkZrQXp3NHdzVzQ2NTJqR0NBc0w5SlBXcVRS?=
+ =?utf-8?B?NnJYelRaUzc3R3phdlg4dk1rYXdteHZicEYzOUIvYWFxVGMxTVZrU0UyaGYv?=
+ =?utf-8?B?RDFmd3EwdExOZG81Q09vZ1JJNmRsaDgrUVdFTHJCVno1eW5HVEF4czc1cWJN?=
+ =?utf-8?B?VUNBc2U1Vmowb2s3S2hIZXZ3dDFnV09FMkE5RjlMZldWNjM0bzJHQkRoNlI5?=
+ =?utf-8?B?ckUxTFl6MVVOQ1Yza2VaY0p2L0t2c1NOUUl5d2hpZ2R3QlIxSWxXV3VyeDVx?=
+ =?utf-8?B?U2JyS3Z4NDdQY1p6aTE4a3BDSGtwWVNBeldrMmlVWU50aEVQRC9KNWN3Ri9M?=
+ =?utf-8?B?UEc5eXF6UFExMEdkKzluQU1uWHhFNkorQURGTFhkViszcVlwK3lzTE5Kc0xo?=
+ =?utf-8?B?bjlxMDljNU5yTmZsVk1hbXUwY1Z6RngyVFNRdE1CWVZUaDBtTGJUNy9nM3Zr?=
+ =?utf-8?B?eGdNOW1qKzFrVGNJeDl5NDdqb2ZMcU4wWXlnMXozcHMvaVZzVlBZUFd1Wkh3?=
+ =?utf-8?B?VzNjN3U2K2JsRWQ1QTlIbjlFb0I5Y0hPaHFPalRQQlRHT09HQT09?=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(376002)(39860400002)(396003)(346002)(136003)(46966006)(40470700004)(36840700001)(966005)(36756003)(53546011)(6666004)(31686004)(83380400001)(478600001)(426003)(47076005)(26005)(16526019)(2616005)(82310400005)(41300700001)(336012)(186003)(2906002)(44832011)(40480700001)(36860700001)(110136005)(15650500001)(54906003)(8936002)(356005)(31696002)(5660300002)(82740400003)(70206006)(86362001)(316002)(16576012)(81166007)(70586007)(4326008)(8676002)(40460700003)(43740500002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2022 11:27:04.6151
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80fc2ff7-902c-4a0d-8083-08da658bc770
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT047.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0174
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 06/07/22 15:07, Edward-JW Yang ha scritto:
-> On Wed, 2022-06-29 at 16:54 +0800, Chen-Yu Tsai wrote:
->> On Tue, Jun 28, 2022 at 6:09 PM AngeloGioacchino Del Regno
->> <angelogioacchino.delregno@collabora.com> wrote:
->>>
->>> Il 24/06/22 09:12, Edward-JW Yang ha scritto:
->>>> Hi AngeloGioacchino,
->>>>
->>>> Thanks for all the advices.
->>>>
->>>> On Mon, 2022-06-13 at 17:43 +0800, AngeloGioacchino Del Regno wrote:
->>>>> Il 12/06/22 15:54, Johnson Wang ha scritto:
->>>>>> Add frequency hopping support and spread spectrum clocking
->>>>>> control for MT8186.
->>>>>>
->>>>>> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
->>>>>> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
->>>>>
->>>>> Before going on with the review, there's one important consideration:
->>>>> the Frequency Hopping control is related to PLLs only (so, no other clock
->>>>> types get in the mix).
->>>>>
->>>>> Checking the code, the *main* thing that we do here is initializing the
->>>>> FHCTL by setting some registers, and we're performing the actual frequency
->>>>> hopping operation in clk-pll, which is right but, at this point, I think
->>>>> that the best way to proceed is to add the "FHCTL superpowers" to clk-pll
->>>>> itself, instead of adding multiple new files and devicetree bindings that
->>>>> are specific to the FHCTL itself.
->>>>>
->>>>> This would mean that the `fh-id` and `perms` params that you're setting in
->>>>> the devicetree get transferred to clk-mt8186 (and hardcoded there), as to
->>>>> extend the PLL declarations to include these two: that will also simplify
->>>>> the driver so that you won't have to match names here and there.
->>>>>
->>>>> Just an example:
->>>>>
->>>>>       PLL(CLK_APMIXED_CCIPLL, "ccipll", 0x0224, 0x0230, 0,
->>>>>
->>>>>           PLL_AO, 0, 22, 0x0228, 24, 0, 0, 0, 0x0228, 2, FHCTL_PERM_DBG_DUMP),
->>>>>
->>>>> Besides, there are another couple of reasons why you should do that instead,
->>>>> of which:
->>>>>     - The devicetree should be "generic enough", we shall not see the direct value
->>>>>       to write to the registers in there (yet, perms assigns exactly that)
->>>>>     - These values won't change on a per-device basis, I believe? They're SoC-related,
->>>>>       not board-related, right?
->>>>>
->>>>> In case they're board related (and/or related to TZ permissions), we can always add
->>>>> a bool property to the apmixedsys to advertise that board X needs to use an
->>>>> alternative permission (ex.: `mediatek,secure-fhctl`).
->>>>
->>>> I think we should remain clk-fhctl files because FHCTL is a independent HW and is
->>>> not a necessary component of clk-pll.
->>>
->>> I know what FHCTL is, but thank you anyway for the explanation, that's appreciated.
->>> In any case, this not being a *mandatory* component doesn't mean that when it is
->>> enabled it's not changing the way we manage the PLLs..........
->>>
->>>> Frequency hopping function from FHCTL is not used to replace original flow of
->>>> set_rate in clk-pll. They are two different ways to change PLL's frequency. The
->>>
->>> I disagree: when we want to use FHCTL, we effectively hand-over PLL control from
->>> APMIXEDSYS to the Frequency Hopping controller - and we're effectively replacing
->>> the set_rate() logic of clk-pll.
+Hi Stephen and Michael,
+
+On 4/11/22 12:04, Shubhrajyoti Datta wrote:
+> The patch does the following
+> Update the versions of the clocking wizard ip.
+> Move from staging to clk directory.
+> Update the bindings.
 > 
-> Do you mean we need to drop the current set_rate() logic (direct register write) and
-> use Frequency Hopping Controller instead?
+> v12:
+> No change.
+> Rebased
+> v13:
+> Update the clocking compatible
+> Add the change removing the driver from staging
+> v14:
+> Moved to the xilinx folder
+> 
+> Shubhrajyoti Datta (5):
+>    dt-bindings: add documentation of xilinx clocking wizard
+>    clk: clocking-wizard: Add the clockwizard to clk directory
+>    clk: clocking-wizard: Rename nr-outputs to xlnx,nr-outputs
+>    clk: clocking-wizard: Fix the reconfig for 5.2
+>    clk: clocking-wizard: Update the compatible
+> 
+>   .../bindings/clock/xlnx,clocking-wizard.yaml  | 77 +++++++++++++++++++
+>   drivers/clk/xilinx/Kconfig                    | 11 +++
+>   drivers/clk/xilinx/Makefile                   |  1 +
+>   .../xilinx}/clk-xlnx-clock-wizard.c           | 19 +++--
+>   drivers/staging/Kconfig                       |  2 -
+>   drivers/staging/Makefile                      |  1 -
+>   drivers/staging/clocking-wizard/Kconfig       | 10 ---
+>   drivers/staging/clocking-wizard/Makefile      |  2 -
+>   drivers/staging/clocking-wizard/TODO          | 13 ----
+>   .../staging/clocking-wizard/dt-binding.txt    | 30 --------
+>   10 files changed, 103 insertions(+), 63 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+>   rename drivers/{staging/clocking-wizard => clk/xilinx}/clk-xlnx-clock-wizard.c (96%)
+>   delete mode 100644 drivers/staging/clocking-wizard/Kconfig
+>   delete mode 100644 drivers/staging/clocking-wizard/Makefile
+>   delete mode 100644 drivers/staging/clocking-wizard/TODO
+>   delete mode 100644 drivers/staging/clocking-wizard/dt-binding.txt
 > 
 
-On PLLs that are supported by the Frequency Hopping controller, yes: we should
-simply use a different .set_rate() callback in clk-pll.c, and we should return
-a failure if the FHCTL fails to set the rate - so we should *not* fall back to
-direct register writes, as on some platforms and in some conditions, using
-direct register writes (which means that we skip FHCTL), may lead to unstable
-system.
+I was looking at comment in v13 and moving to xilinx folder was done in v14.
+v13: https://lore.kernel.org/r/cover.1631623906.git.shubhrajyoti.datta@xilinx.com
 
-This means that we need logic such that, in mtk_clk_register_pll(), we end up
-having something like that:
+dt binding is also reviewed by Rob already.
 
-if (fhctl_is_enabled(pll))
-	init.ops = &mtk_pll_fhctl_ops;
-else
-	init.ops = &mtk_pll_ops;
+You asked there to get confirmation from Greg that it can be moved out of 
+staging. I didn't see any reply from Greg about it but not sure if this is 
+really required to get.
+Greg: Can you please ACK it or comment?
 
-> I need to mention that not all PLL support FHCTL, only those PLLs with FHCTL HW can
-> choose to use FHCTL. Take 8186 for example, there are three PLLs don't support FHCTL
-> HW.
+And in your v13 reply you said that you will pick it up
+https://lore.kernel.org/all/20220112204055.CF098C36AE9@smtp.kernel.org/#t
+but I can't see this patch in your linux clk tree yet.
 
-Where we declare the PLLs, for example, in clk-mt8186-apmixedsys.c, we can declare
-that such PLL can be managed by FHCTL, for example:
+I have also see that some people are sending you pull requests to merge it to 
+clock tree. If this is something what you prefer I have really not a problem to 
+do it.
 
-	PLL(CLK_APMIXED_ARMPLL_LL, "armpll_ll", 0x0204, 0x0210, 0,
-
-	    PLL_AO, 0, 22, 0x0208, 24, 0, 0, 0, 0x0208),
-
-becomes
-
-	PLL(CLK_APMIXED_ARMPLL_LL, "armpll_ll", 0x0204, 0x0210, 0,
-
-	    PLL_AO, 0, 22, 0x0208, 24, 0, 0, 0, 0x0208, true);
-
-where 'true' means "FHCTL is supported".
-
-Then, we register the PLLs with something like:
-
-mtk_clk_register_plls(node, plls, num_plls, clk_data, fhctl_register_version);
-
-...where fhctl_register_version is used to assign the right fhctl register offsets.
-Also, it's not needed to assign all of the register offsets statically, because
-they can be easily calculated based on the number of supported PLLs, since the
-registers are structured like
-
-[FHCTL GLOBAL REGISTERS] <--- hp_en...slope1
-[FHCTL SSC GLOBAL REGISTERS] <--- DSSC_CFG, DSSC0...x_CON
-
-[FHCTL PER-PLL REGISTERS] <--- CFG...MON
-^^^ where this is repeated X times for X PLLs.
-
-so, keeping the example of MT8186, we can get the per-pll register like:
-
-#define FHCTL_PLL_OFFSET	0x3c
-#define FHCTL_PLL_LEN		0x14
-
-#define FHCTLx_CFG(pll_id)	(FHCTL_PLL_OFFSET + (pll_id * FHCTL_PLL_LEN))
-#define FHCTLx_UPDNLMT(pll_id)	(FHCTL_PLL_OFFSET + (pll_id * FHCTL_PLL_LEN) + 0x4)
-#define FHCTLx_DDS(pll_id)	(FHCTL_PLL_OFFSET + (pll_id * FHCTL_PLL_LEN) + 0x8)
-
-we don't need to put all of them in a structure and for each PLL.
-
-> So, we need both APMIXEDSYS and Frequency Hopping Controller in set_rate() logic to
-> handle this two types of PLL.
-> 
-
-As already said, we preventively know which PLLs support FHCTL and which does not,
-so we can use a different .set_rate() callback.
-
->>>
->>>> current set_rate method in clk-pll changes PLL register setting directly. Another
->>>> way uses FHCTL to change PLL rate.
->>>
->>> ...and of course, if we change that, we're effectively mutating the functionality
->>> of the MediaTek clk-pll driver and please understand that seeing a clear mutation
->>> in that driver is a bit more human-readable.
->>>
->>> Besides, this makes me think about one question: is there any instance in which,
->>> when FHCTL rate setting fails, we fall back to direct register writes?
->>>
->>> I don't think that this is feasible because we have a register in FHCTL that
->>> effectively hands over control to it, so direct register writes should not work
->>> when the PLL is not under APMIXEDSYS control, but I'm asking just to be extremely
->>> sure that my understanding is right.
-> 
-> It won't fall back to direct register writes when FHCTL rate setting fails. But, PLL
-> control mode will switch back to APMIXEDSYS after frequency hopping completed.
-> 
-> There are two cases that we need to fall back to direct register writes:
->    1. PLL support FHCTL but it doesn't want to use FHCTL.
->    2. PLL doesn't support FHCTL HW.
-> 
-
-For case N.1, if this is board-specific, we have to resort to devicetree properties
-that will enable/disable FHCTL on specific PLLs.
-
-mediatek,fhctl-disable = <CLK_APMIXED_MSDCPLL>, <CLK_APMIXED_NNAPLL>;
-
-mediatek,ssc-enable = <CLK_APMIXED_MFGPLL>, <CLK_APMIXED_TVDPLL>;
-
-These are just examples - I don't currently know if it's a better idea to have an
-allowlist or a blocklist as devicetree properties, as that depends on the expected
-number of PLLs for which we en/dis fhctl or just ssc (if we generally want fhctl
-enabled on all but one PLLs, we should use fhctl-disable, otherwise, fhctl-enable).
-
->>>
->>>> We will set some PLL's frequency be controlled
->>>> by clk-pll and some are controlled by FHCTL.
->>>
->>> Another question: is this also changing on a per-board basis?
->>>
->>> (note: the pll names in the example are random and not specific to anything)
->>>
->>> Example: board A wants FHCTL on MMPLL, TVDPLL, MPLL, but *shall not* hand over
->>>                    NNAPLL, MFGPLL
->>>            board B wants FHCTL on NNAPLL, TVDPLL but *shall not* hand over MMPLL
->>>
->>> Granted that the two A, B boards are using the same SoC, can that ever happen?
-> 
-> This could happen if A, B boards have different desense issue.
-> 
-
-Ok, so it's definitely board specific. Devicetree is the way to go for this.
-
->>>
->>>> And use `perms` param to decide
->>>> whether a PLL is using FHCTL to change its frequency.
->>>
->>> The perms param seems to be about:
->>>    * Enabling debug (but you're not providing any way to actually use debugging
->>>      features, so what's the point?)
-> 
-> Debugging feature is not used yet, we can removed it.
-> 
-
-If the debugging features of the FHCTL driver will be like what I can see on
-the downstream MT6893 5.10 kernel, that's not really applicable to upstream.
-
-In that case, please remove the debug.
-
->>>    * Handing over PLL control to FHCTL for hopping (can be as well done with
->>>      simply using a different .set_rate() callback instead of a flag)
-> 
-> There has some PLL that have FHCTL but don't want to use FHCTL. The flag is used in
-> this case.
-> 
-
-Use the flag to set the right .set_rate() callback, set at probe time, instead of
-checking that flag at every set_rate() call.
-
->>>    * Enabling/disabling Spread Spectrum Clocking (and I think that this is a
->>>      legit use for flags, but if it's just one flag, you can as well use a
->>>      bool and manage this with a devicetree param like "enable-ssc")
->>>
->>> That said, I think that the current way of enabling the FHCTL is more complicated
->>> than how it should really be.
-> 
-> Here needs an option to decide whether to enable FHCTL-hopping or FHCTL-ssc since
-> these two are per-board basis.
-> 
-> We cannot force all PLL hand over to FHCTL for hopping casue not all PLLs support
-> FHCTL and not all PLLs have need of using FHCTL-hopping.
-> 
-
-Board specific -> devicetree
-
-SoC specific -> hardcode, no devicetree.
-
->>>
->>>>
->>>> FHCTL has another function called SSC(spread spectrum clocking) which is used to
->>>> solve PLL de-sense problem. De-sense problem is board-related so we introduce a
->>>> `ssc-rate` param in the devicetree to decide whether SSC is enabled and how many
->>>> rate should be set. Mixing SSC function into clk-pll may cause clk-pll more
->>>> complex.
->>>>
->>>
->>> Thing is, I don't get why you think that adding SSC to clk-pll would complicate it
->>> so much... it's really just a few register writes and nothing else, so I really
->>> don't see where the problem is, here.
->>>
->>> Another issue is that this driver may be largely incomplete, so perhaps I can't
->>> really see the complications you're talking about? Is this the case?
->>>
->>> Regarding keeping the FHCTL code in separated files, that's fine, but I would still
->>> integrate it tightly in clk-pll and its registration flow, because - yes, this is
->>> for sure not mandatory, but the main parameters are constant, they never change for
->>> a specific PLL, as they're register offsets, bits and masks (which, again, will
->>> never change as long as we're using the same SoC).
-> 
-> The driver may need to supoport microP by future HW design, standalone file clk-
-> fhctl.c helps to trigger init flow of such as ap-init-flow, microP-init-flow .....,
-> and those different init-flow also need to run some communication API with microP.
-> Those communication APIs are not suitable to merge into clk-pll.
-> 
-
-Let's use clk-fhctl as an helper then, we can make sure to call the init flow for
-the microP in the SoC-specific clock drivers, I think that's not a problem?
-
-clk_mtfuturesoc_someip_probe()
-{
-	.... register clocks ....
-
-	freqhopping_microp_init();
-
-	return ret;
-}
-
-If there's hardware out there that supports such feature and a downstream kernel to
-look at, please tell me which one, so that I will be able to check it out and
-perhaps understand how this flow works.
-
-P.S.: I guess it's not fhctl-sspm?
-
-Regards,
-Angelo
+Thanks,
+Michal
