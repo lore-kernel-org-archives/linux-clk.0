@@ -2,140 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F4CCCA480
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 12:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094CAC43334
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 16:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbiGNMzM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 08:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52100 "EHLO
+        id S229693AbiGNQ5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 12:57:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238815AbiGNMzL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 08:55:11 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59C74D4F5
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 05:55:09 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id z25so2678388lfr.2
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 05:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=htN8c5e/clHdwV/pWm6QotC7JCLAfymyLpwHsXpBxmk=;
-        b=tywqxw4y2sqVdVvdCQmJ5CKbw0PBTJgqdNBPxC2b2ACQ41Ei7YYBZVE1G1OwGkPhcF
-         wmFRjHM9GqNZEvomGQNDB+50mROUbUmL2Ek5H8KV2aVEQwT49dbzcvJc5eegLD4FK850
-         mjF3LozalrWPctG13HOLFTfPpbJxrl1xUUHs1OJt62mZRuxDjvY9x2lLwSjjzfr6QUeS
-         B4iUC96DYGF+8qZLHyJc8RrIQB747y48SAIO0pdaH4/4KqDNxst0UidOJiPNVKJYd9C6
-         rvQJ77x+KCN7K0ffjght3eSaB03ZRQCaruJxJy1jjq0wekY6VfgYLWUMLbgoQtPCrYlw
-         dghg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=htN8c5e/clHdwV/pWm6QotC7JCLAfymyLpwHsXpBxmk=;
-        b=gfid8QqYBrU9PIZuGKyi9r1l8acJFzLHhpVzQFYUXn2YTEBuvajnbEL1QDDpfkzh1V
-         zVyWp4sCoReMXT+aI1yBkWGOE0QrBiMA+5/APjoRfoXXAljoowae23/mt9ckMsj8c0pD
-         rBM4obofWqhX32caIjn9vSASbey5smBNVN0b5ISKBAJsR04/R+2EQbZD4cba8Uv4Qq2Q
-         BLnBfJ3GHhHaES02NvLLyBel8BwVwdI5efI5ev6oYRKJ/yXWYInCuBOmlmM4PMXL2pWn
-         w90xSU3tIjx79WAJdn7QeJFQ+lIDmykrWfxjW3qpAKx7xHIt9nP1w+RZ0LU2EOsKB67q
-         oSyw==
-X-Gm-Message-State: AJIora90X3pNsuM0YI3a56B4W/ky5Z8It5z2kWh3gYJErnhxYw8sRGd+
-        2ATQcRshCqidbcZyMuueHPBQKA==
-X-Google-Smtp-Source: AGRyM1tE+kix12/jjaJK26eAoX32moOOAR1WjGNwla6iNBAsn0fbYTT0OYBcTTkOddsITmqZk2M5Tg==
-X-Received: by 2002:a05:6512:2812:b0:489:e611:5546 with SMTP id cf18-20020a056512281200b00489e6115546mr5309482lfb.638.1657803308260;
-        Thu, 14 Jul 2022 05:55:08 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id u20-20020a05651220d400b0047255d21132sm347067lfr.97.2022.07.14.05.55.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 05:55:07 -0700 (PDT)
-Message-ID: <7f555901-da65-59d5-9997-b93baab20ce9@linaro.org>
-Date:   Thu, 14 Jul 2022 15:55:06 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v1 1/4] dt-bindings: clock: qcom: add bindings for dispcc
- on SM8450
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
+        with ESMTP id S240043AbiGNQ5F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 12:57:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E95254CBD;
+        Thu, 14 Jul 2022 09:56:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C3054B82750;
+        Thu, 14 Jul 2022 16:56:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09324C34115;
+        Thu, 14 Jul 2022 16:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657817810;
+        bh=BK72IdLo+uV0vANGvG41enZ8wflciKo/ZGWbE5eG9xQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=A1ar2hCOOyNRX3gTgads1I75OA03ZMPHHe8xjxrvqomDv7jAwHKKCWTck1gqoQhpz
+         KFrnO7aYLk8d9VnY0Gb0PgQ7QWyyKEQm4X5WJzBRWJ2cRXUY6nzhaKKD4P4jKcyINa
+         qhUlP8ijgLgztYK7j2zCvZ9+rL4wqx3kxYr37W96WJ+nqJGPUDubUvYBfDW7UKjq/z
+         7NqLtET1TEgfk0pNMCif/ci1YmLy81Isw933mQHd4SOQDAYdE/1lUddsPTkSmjkK7U
+         3jOL8UJXTI6L2OwJmC17WgqwoB6r9n+nBiGjI2lF+TAh/vTBngaJVk6INsELAZ3SpM
+         4Embo6Oqef50w==
+Date:   Thu, 14 Jul 2022 11:56:48 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Stanimir Varbanov <svarbanov@mm-sol.com>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
- <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
- <YsX0YdV40Zp55wz8@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YsX0YdV40Zp55wz8@builder.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v11 5/5] PCI: qcom: Drop manual pipe_clk_src handling
+Message-ID: <20220714165648.GA1023269@bhelgaas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8763d03-c491-70f3-bb47-b3dbf68b4ad2@mm-sol.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/07/2022 23:45, Bjorn Andersson wrote:
-> On Thu 23 Jun 06:47 CDT 2022, Dmitry Baryshkov wrote:
+On Thu, Jul 14, 2022 at 04:08:06AM +0300, Stanimir Varbanov wrote:
+> Hi Dmitry,
 > 
->> Add device tree bindings for the display clock controller on Qualcomm
->> SM8450 platform.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   .../bindings/clock/qcom,dispcc-sm8450.yaml    | 132 ++++++++++++++++++
->>   1 file changed, 132 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
->> new file mode 100644
->> index 000000000000..953d20a25cfb
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
->> @@ -0,0 +1,132 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8450.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Display Clock & Reset Controller Binding for SM8450
->> +
->> +maintainers:
->> +  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> +
->> +description: |
->> +  Qualcomm display clock control module which supports the clocks, resets and
->> +  power domains on SM8450.
->> +
->> +  See also:
->> +    dt-bindings/clock/qcom,dispcc-sm8450.h
+> On 6/8/22 13:52, Dmitry Baryshkov wrote:
+> > Manual reparenting of pipe_clk_src is being replaced with the parking of
+> > the clock with clk_disable()/clk_enable() in the phy driver. Drop
+> > redundant code switching of the pipe clock between the PHY clock source
+> > and the safe bi_tcxo.
+> > 
+> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> > Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom.c | 39 +-------------------------
+> >  1 file changed, 1 insertion(+), 38 deletions(-)
 > 
-> Please prefix this with include/
+> Cool!
 > 
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,sm8450-dispcc
->> +
->> +  clocks:
->> +    items:
-> 
-> I really think we should include a reference to GCC_DISP_AHB_CLK here.
-> 
-> There are two cases here, either the implementation does what we do in
-> Linux and just always-on the clock from gcc, in which case there's
-> nothing in here to ensure probe order and that the clock is actually on
-> before dispcc probes.
-> 
-> The other case would be that the implementation doesn't always-on the
-> gcc clock, in which case we need the reference.
+> Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
 
-Let me check how does this work on earlier platforms. We might want to 
-update them too. Or even better, we can make actual use of DISP_AHB_CLK.
+Thanks, Stan.  Somehow I had applied 4/5 but not 5/5.  I added 5/5 and
+your acks to both on my pci/ctrl/qcom branch for v5.20.
 
-
--- 
-With best wishes
-Dmitry
+Bjorn
