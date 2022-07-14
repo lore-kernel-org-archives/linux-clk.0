@@ -2,121 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7668CCA480
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 10:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F96C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 10:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237954AbiGNKHD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 06:07:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46778 "EHLO
+        id S237888AbiGNKTS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 06:19:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237845AbiGNKHB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 06:07:01 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE8BC4C629
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 03:06:59 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id bf9so1936403lfb.13
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 03:06:59 -0700 (PDT)
+        with ESMTP id S237757AbiGNKTR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 06:19:17 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B4921261
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 03:19:15 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id t25so2016792lfg.7
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 03:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=oOBAiv4m4zZgCi9RT6omzssmkOXhUIRC7hVNaWRM+pw=;
-        b=GuXZXMtlUhn/bYZtCECHZ0J/zYySlyaVpfZP/teUhiOplpvCh9edmjN6uhbm3lL3Vv
-         +EDGGkd+YbSyMtthfbb7KShBEE7PKdlSR/z2zhPaOctGQPhNRCFnJ7pm3gB9jSw9tUPc
-         GxjppDlh1cqy7OHt2X9G0hMCFMPDhCIlSX15ZNrjQ6P4D2QZ1PA1So8oFFhWWUPb7boa
-         +cmAEg+gBJRYQaKFbG62AQGCV2ekA89MdBFpJZabdJof7TI18DSk0qifxNLInE//Kemh
-         6pIUi8xymgPMZ7b4NFCvBNLCXSvhlb4Uk1/IJly1j13IDE4/o62Nf7p+iKWZzL11CiSm
-         lRJA==
+        bh=yCWYh1ov1yBnCO3b57XJ5k3SmQZIpeuqoA5yH1t1vvM=;
+        b=RRVFQ2o5FU5DQxiRgMR0YoN26/nkDsjNHwUHXB/YsUCEfU2h1ssYUiyvqP7JXe/mh0
+         7zxjBEqAGKgoQiU5uKWvxNvWAhTHakJuvi6h8PWN/qVVJCDiobyUo9mgOKsd4NvrVVdA
+         XUZqzbqzUo7M/TWpBTJHmi8x6q+Iap8ccTx+sZ5Q6D6Ft/zqp0h0rONcOv1kUVKdCGBr
+         jcO8TZpZFx6x4961z13YKqYBXr+nZxQa4YUMt/c9m7j4FFJGBluMIUHR0UOfFfnCWDmW
+         wNgKuDANCcVtYPONcqy5bs8EpJG7RWKJfgsqoOhJ7Xgwp4zroPBRGm5YJ9ISurOD2YCh
+         HaGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=oOBAiv4m4zZgCi9RT6omzssmkOXhUIRC7hVNaWRM+pw=;
-        b=MqGDlIgQG4VxKO+sdukzKIOGJnCrZEvkFz5XAgqaJh9Fk7SNEwtaxCYuZ3K2T6IH9e
-         RzjKeqMb/L0rMNvtTVXWt90Chh2CxoOulY5kiWqLmU0lp6+vuFhIp3+ehvQ99AFlJPEs
-         /IkCfh+9howwrIA0KB7xhIVdee163uscAUt5FbqjZyTIUqFcl5EMXco7Fp0aRT+ykxYz
-         u2nQBapFaNK2ZKYvgrn/fvUWdTJr3OBAOGOg6SqLQbaVR6cr0ubV/yqGgcvAX79vhvuj
-         QebpJonjX0/WtIgPtwQMTPXRdDhKWLCPb/wNx20254WRGAzIiseAZDvPU01WJm3x2RCT
-         yn5A==
-X-Gm-Message-State: AJIora/tC0AR7/5e3Ekmqe7JUE/LUYX0ODAo00nwV72hWGJ5F12rS+wg
-        l8IZDS4mbAVuSuycMApeJB3Ldg==
-X-Google-Smtp-Source: AGRyM1ugycvHaKsXPFMNFG8NES1FUWy518rOmpZZEGCyhQq0Hc3UIsLnZ8+OGalwUyO7nc2wfFv6Qg==
-X-Received: by 2002:a05:6512:32c8:b0:48a:10da:b204 with SMTP id f8-20020a05651232c800b0048a10dab204mr3072556lfg.183.1657793218102;
-        Thu, 14 Jul 2022 03:06:58 -0700 (PDT)
+        bh=yCWYh1ov1yBnCO3b57XJ5k3SmQZIpeuqoA5yH1t1vvM=;
+        b=QPJRg4y9u3nHcI+Ry74PPmyNDlFK9e9h91Ftqz5qQ8zvgDhndXzvjDYcwO0/N4No5p
+         sN5EB3794KBC2/BJCwmOf9cqAMMZNInJssiCKIa+g96yqJ0Qr29mOcbijKuE1BBU+CoK
+         sErunHL42npx339nywV0wD3deRyuuQQU16DXJkW2MpnxFOPToU7j4xlT2d7cJHGGK0HC
+         3UYvVrTMnyfFDvzm6BAP8hrR2EL+YFIXvkjiBh+cDkpTDfXU7dGWBd+Ums6Q50KG2+NO
+         ga3peoFvVd3mX4U8N6GClkIcKijGped7NPfN2cHb5xT5/kVAwf2lEdpX2YmrNX4q8WW1
+         FNrw==
+X-Gm-Message-State: AJIora9gORTpnR1KUqwqpsUS896lG6wVRxE6gJ5YqVq9LQeaKUEyuebo
+        RB5w8P2TcWTgMR4nPD/9EU0kOA==
+X-Google-Smtp-Source: AGRyM1uIY8mwk4DVrrhHyzydrC7wSPAvKj2YVPnaHr050XXhPo97i3D2sSmWKaProUzJykLj6SHgXA==
+X-Received: by 2002:a05:6512:128e:b0:489:e63d:3042 with SMTP id u14-20020a056512128e00b00489e63d3042mr4641535lfs.302.1657793954081;
+        Thu, 14 Jul 2022 03:19:14 -0700 (PDT)
 Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id z20-20020a2eb534000000b0025d6ecbc897sm203733ljm.46.2022.07.14.03.06.57
+        by smtp.gmail.com with ESMTPSA id o17-20020ac25e31000000b004891b4a4acfsm281568lfg.185.2022.07.14.03.19.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 03:06:57 -0700 (PDT)
-Message-ID: <463723ee-f155-3bd9-7180-fb0271a19eb6@linaro.org>
-Date:   Thu, 14 Jul 2022 13:06:56 +0300
+        Thu, 14 Jul 2022 03:19:13 -0700 (PDT)
+Message-ID: <192c5f16-8415-dfa1-39d2-8b404553ecd7@linaro.org>
+Date:   Thu, 14 Jul 2022 13:19:12 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH 0/6] clk: qcom: msm8996-cpu: Cleanup and migrate to
- parent_data
+Subject: Re: [PATCH v3 00/11] drm/msm/dsi_phy: Replace parent names with
+ clk_hw pointers
 Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        phone-devel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Martin Botka <martin.botka@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220621160621.24415-1-y.oudjana@protonmail.com>
- <Ys85+7rYjQOSPvD/@builder.lan>
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rajeev Nandan <quic_rajeevny@quicinc.com>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+References: <20220629225331.357308-1-marijn.suijten@somainline.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <Ys85+7rYjQOSPvD/@builder.lan>
+In-Reply-To: <20220629225331.357308-1-marijn.suijten@somainline.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/07/2022 00:32, Bjorn Andersson wrote:
-> On Tue 21 Jun 11:06 CDT 2022, Yassine Oudjana wrote:
+On 30/06/2022 01:53, Marijn Suijten wrote:
+> parent_hw pointers are easier to manage and cheaper to use than
+> repeatedly formatting the parent name and subsequently leaving the clk
+> framework to perform lookups based on that name.
 > 
->> This series includes some cleanup of the MSM8996 CPU clock driver, as well as
->> migration from parent_names to parent_data for all of its clocks. The DT schema
->> is also fixed in this series to show the actual clocks consumed by the clock
->> controller and pass checks.
+> This series starts out by adding extra constructors for divider, mux and
+> fixed-factor clocks that have parent_hw(s) pointer argument(s) instead
+> of some DT index or name.  Followed by individual patches performing the
+> conversion, one DSI PHY at a time.
 > 
-> This series looks almost ready to be merged, could you (or Dmitry?)
-> update the two outstanding items?
+> dsi_phy_28nm_8960 includes an extra fixup to replace "eternal"
+> devm_kzalloc allocations (for the lifetime of the device) with
+> stack-local char arrays, like all the other DSI PHY drivers.
+> 
+> (Questions from v1 cover letter regarding the future of these drivers
+>   is omitted for brevity.)
+> 
+> And with enough future improvements out of the way, let's round out this
+> patch-series by stating that it has been successfully tested on:
+> 
+> - Sony Nile Discovery (Xperia XA2 Ultra): 14nm;
+> - Sony Seine PDX201 (Xperia 10II): 14nm;
+> - Sony Loire Suzu (Xperia X): 28nm.
+> 
+> And no diff is observed in debugfs's clk_summary.
+> 
+> Unfortunately all other devices in my collection with a 7/10nm DSI PHY
+> have a DSC panel which we have yet to get working.
+> 
+> Changes since v2:
+> - in fixed-factor:
+>    - Reorder if - else if change to consume less diff;
+>    - Go over 80-char column lint when adding new arguments to function
+>      calls, instead of reflowing all arguments to adhere to this limit;
+>      also consuming less diff.
+> 
+> v2: https://lore.kernel.org/linux-arm-msm/20220601220747.1145095-1-marijn.suijten@somainline.org/
+> 
+> Changes since v1:
+> 
+> - Moved indentation changes to separate patch (Dmitry);
+> - dsi_phy_28nm_8960: move clock name allocation removal prior to
+>    parent_hw refactor;
+> - Remove vco_name stack-local char array in favour of reusing clk_name
+>    (Dmitry);
+> - Inserted additional patch to replace hardcoded char-array length
+>    constant 32 with sizeof(clk_name).
+> 
+> v1: https://lore.kernel.org/linux-arm-msm/20220523213837.1016542-1-marijn.suijten@somainline.org/T/#u
+> 
+> Marijn Suijten (11):
+>    clk: divider: Introduce devm_clk_hw_register_divider_parent_hw()
+>    clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
+>    clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
 
-I have acked the patch 2 and sent the slightly updated revision of 
-patch6 (together with the rest of small changes).
+Stephen, do we stand a chance of landing patches 1-3 into 5.20? We would 
+like to merge the series into 5.21 through the msm-next. Landing clk 
+patches in 5.20 would save us from using immutable branches, etc.
 
+>    drm/msm/dsi/phy: Reindent and reflow multiline function calls
+>    drm/msm/dsi_phy_28nm_8960: Use stack memory for temporary clock names
+>    drm/msm/dsi/phy: Replace hardcoded char-array length with sizeof()
+>    drm/msm/dsi_phy_28nm_8960: Replace parent names with clk_hw pointers
+>    drm/msm/dsi_phy_28nm: Replace parent names with clk_hw pointers
+>    drm/msm/dsi_phy_14nm: Replace parent names with clk_hw pointers
+>    drm/msm/dsi_phy_10nm: Replace parent names with clk_hw pointers
+>    drm/msm/dsi_phy_7nm: Replace parent names with clk_hw pointers
 > 
-> Thanks,
-> Bjorn
+>   drivers/clk/clk-fixed-factor.c                |  45 ++++-
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c    | 165 +++++++++---------
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    |  55 +++---
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c    | 117 ++++++-------
+>   .../gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c   |  90 +++++-----
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c     | 156 ++++++++---------
+>   include/linux/clk-provider.h                  |  34 ++++
+>   7 files changed, 351 insertions(+), 311 deletions(-)
 > 
->>
->> Yassine Oudjana (6):
->>    clk: qcom: msm8996-cpu: Rename DIV_2_INDEX to SMUX_INDEX
->>    clk: qcom: msm8996-cpu: Statically define PLL dividers
->>    clk: qcom: msm8996-cpu: Unify cluster order
->>    clk: qcom: msm8996-cpu: Convert secondary muxes to clk_regmap_mux
->>    dt-bindings: clock: qcom,msm8996-apcc: Fix clocks
->>    clk: qcom: msm8996-cpu: Use parent_data for all clocks
->>
->>   .../bindings/clock/qcom,msm8996-apcc.yaml     |  15 +-
->>   drivers/clk/qcom/clk-cpu-8996.c               | 235 ++++++++++--------
->>   2 files changed, 140 insertions(+), 110 deletions(-)
->>
->> -- 
->> 2.36.1
->>
 
 
 -- 
