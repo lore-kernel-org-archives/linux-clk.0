@@ -2,141 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB2C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 12:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F4CCCA480
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 12:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238968AbiGNMcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 08:32:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
+        id S231347AbiGNMzM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 08:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239235AbiGNMcd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 08:32:33 -0400
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2061.outbound.protection.outlook.com [40.107.101.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C7E33CBCE
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 05:32:32 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VTF80ByUFXD5i6oeLOhJfKgDm3E8MsVcwnDzbVrqWDS++PVdYWFyIkRGnZ2DQjGFAdewO7PSX7lZVTd4pUWhLPOAD1sfz/aNyfK7MBx1xbxlxNFBDruZVMonoC4TUdWIACtMee/0+YTf5o/s4GrR7TCXP7ajycaDrSqL23mD4pO27L1xKHBZoEzb2NINHEtP51I/Y/peciPRnd4gV59QvGeWVxLynZQgQV9GT2yhvYRnFyOCHx+o+yAZ2LN3K5/gEYduBtp+qFPKZjUNXowZXwSI6W+lG7ymYBlSPQqB/R7/YcAzZ00SV47onEcwLlQdueF/mVOqa/9kyqUt5Nar1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v9A4b/CGbdE8yDyQx6asZw4yh2Cri6kXSaDSkPYGfzQ=;
- b=OgviLWTKspW1kMSubS5tMkCW8IMZk17XRFqY+wvOia67sKDEvLh7Wr+AZRqvwDhDcdqd7yvvsVRlRG9D6Uhg4V+OqehTfzwbh1BF7Bs6M6ijBBc0VpgpW6VqKrbfAexSnzE24cDeaKX3CPE+P2dZzbG4lM9fD7B4tQOiF+1yzzCUXr4v27UJjRwqx9GTPZH7wMTWTLqIPsD/iL0F9zXtcixDmQqW62OxTGJOqM5ovK2wZO+qVjEDrW4eHDHLm9GYkpZMJ1RudcmAsBdRL12Lj6HwOSGSlwle8HsYzCK/WZ7euzTpb9S0QJerBYbIAsFrNpW76oIGF3wrEnsntJFUaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        with ESMTP id S238815AbiGNMzL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 08:55:11 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59C74D4F5
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 05:55:09 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id z25so2678388lfr.2
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 05:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v9A4b/CGbdE8yDyQx6asZw4yh2Cri6kXSaDSkPYGfzQ=;
- b=MVhW/Hb1w4eB0Puoj7mQjBS2S3Nn0gXZXzUTpaWv9EgS2rzL3s2gtwZrK5J03VowbUhkHS///XnL8Yjc3HpdOMPtkW5vMiglvcYM4YxIHD46oO42DFwmFFupLcra/k0MT/JITCOk6HjHSD8Yj3WcnfDh96H5EftYyIWwK31dTf4=
-Received: from BN8PR04CA0023.namprd04.prod.outlook.com (2603:10b6:408:70::36)
- by BN7PR02MB5122.namprd02.prod.outlook.com (2603:10b6:408:2f::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5438.14; Thu, 14 Jul
- 2022 12:32:30 +0000
-Received: from BN1NAM02FT059.eop-nam02.prod.protection.outlook.com
- (2603:10b6:408:70:cafe::7c) by BN8PR04CA0023.outlook.office365.com
- (2603:10b6:408:70::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.22 via Frontend
- Transport; Thu, 14 Jul 2022 12:32:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- BN1NAM02FT059.mail.protection.outlook.com (10.13.2.167) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5438.12 via Frontend Transport; Thu, 14 Jul 2022 12:32:29 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 14 Jul 2022 05:32:15 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Thu, 14 Jul 2022 05:32:15 -0700
-Envelope-to: git@xilinx.com,
- linux-clk@vger.kernel.org,
- mturquette@baylibre.com
-Received: from [10.254.241.52] (port=52744)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1oBy0t-0001JT-1d; Thu, 14 Jul 2022 05:32:15 -0700
-Message-ID: <8ffefafd-cd94-f642-ef23-6313accd8b30@xilinx.com>
-Date:   Thu, 14 Jul 2022 14:32:13 +0200
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=htN8c5e/clHdwV/pWm6QotC7JCLAfymyLpwHsXpBxmk=;
+        b=tywqxw4y2sqVdVvdCQmJ5CKbw0PBTJgqdNBPxC2b2ACQ41Ei7YYBZVE1G1OwGkPhcF
+         wmFRjHM9GqNZEvomGQNDB+50mROUbUmL2Ek5H8KV2aVEQwT49dbzcvJc5eegLD4FK850
+         mjF3LozalrWPctG13HOLFTfPpbJxrl1xUUHs1OJt62mZRuxDjvY9x2lLwSjjzfr6QUeS
+         B4iUC96DYGF+8qZLHyJc8RrIQB747y48SAIO0pdaH4/4KqDNxst0UidOJiPNVKJYd9C6
+         rvQJ77x+KCN7K0ffjght3eSaB03ZRQCaruJxJy1jjq0wekY6VfgYLWUMLbgoQtPCrYlw
+         dghg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=htN8c5e/clHdwV/pWm6QotC7JCLAfymyLpwHsXpBxmk=;
+        b=gfid8QqYBrU9PIZuGKyi9r1l8acJFzLHhpVzQFYUXn2YTEBuvajnbEL1QDDpfkzh1V
+         zVyWp4sCoReMXT+aI1yBkWGOE0QrBiMA+5/APjoRfoXXAljoowae23/mt9ckMsj8c0pD
+         rBM4obofWqhX32caIjn9vSASbey5smBNVN0b5ISKBAJsR04/R+2EQbZD4cba8Uv4Qq2Q
+         BLnBfJ3GHhHaES02NvLLyBel8BwVwdI5efI5ev6oYRKJ/yXWYInCuBOmlmM4PMXL2pWn
+         w90xSU3tIjx79WAJdn7QeJFQ+lIDmykrWfxjW3qpAKx7xHIt9nP1w+RZ0LU2EOsKB67q
+         oSyw==
+X-Gm-Message-State: AJIora90X3pNsuM0YI3a56B4W/ky5Z8It5z2kWh3gYJErnhxYw8sRGd+
+        2ATQcRshCqidbcZyMuueHPBQKA==
+X-Google-Smtp-Source: AGRyM1tE+kix12/jjaJK26eAoX32moOOAR1WjGNwla6iNBAsn0fbYTT0OYBcTTkOddsITmqZk2M5Tg==
+X-Received: by 2002:a05:6512:2812:b0:489:e611:5546 with SMTP id cf18-20020a056512281200b00489e6115546mr5309482lfb.638.1657803308260;
+        Thu, 14 Jul 2022 05:55:08 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id u20-20020a05651220d400b0047255d21132sm347067lfr.97.2022.07.14.05.55.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jul 2022 05:55:07 -0700 (PDT)
+Message-ID: <7f555901-da65-59d5-9997-b93baab20ce9@linaro.org>
+Date:   Thu, 14 Jul 2022 15:55:06 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] clk: zynqmp: Add a check for NULL pointer
-Content-Language: en-US
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        <linux-clk@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <michal.simek@xilinx.com>,
-        <git@xilinx.com>
-References: <20220518055314.2486-1-shubhrajyoti.datta@xilinx.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-In-Reply-To: <20220518055314.2486-1-shubhrajyoti.datta@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v1 1/4] dt-bindings: clock: qcom: add bindings for dispcc
+ on SM8450
+Content-Language: en-GB
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220623114737.247703-1-dmitry.baryshkov@linaro.org>
+ <20220623114737.247703-2-dmitry.baryshkov@linaro.org>
+ <YsX0YdV40Zp55wz8@builder.lan>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <YsX0YdV40Zp55wz8@builder.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: effab4fa-00ed-4d7b-f826-08da6594eaef
-X-MS-TrafficTypeDiagnostic: BN7PR02MB5122:EE_
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +RbEJt96a60sq1iA0Lapg7MYL4cKTbGe6g+ciIDmiBbm+rXB2vhTb0xESDf6gSDoIuSaD6vq+s3ljkPup/8ru5VdXs+NPBNrOP03BwihlqZ7URhadle4Av6eDLJHhkQZvSDDBc55jL+hRa6IdkNxzX1CSjbCPGGPkr6u4F313wDqAEeZwb042DobVqPwSVQKJ1j/OrLPBCEWobVrofpdj06kOLIXEmeRmMgW43rlLycjbGyHMgY9O88VNIEvzESM7/1si/0xg1MSf9HE5NAxgl2Gg4C65+LTWu3A9CCrbQgsQlhPoAg324Eeveb44eRdd5UhJaca6ImaZf7I7hgC6UoZpKd1fW43JU2axY3nQyRlM1NqQZknZMx0foHIg9d9qY31r3qi5PaBH6M5cq8csN96Gh31/VKzXt6dJr0MSSlw65M1H/mA1EryFnkX78qoh1mQpKefCW3CegpSYQ4Ridj9y2zb6Ki4Tg+exe0+BYJWRLb2rd5qx9WlEZKu9DcEUgfhp1M3qDOR6V+Ax23Mrwzq+IW7I7mkU4XksTdbJqyRVwVDcV31wV/wvGlOKznyhXtnACgk+xn7AHvHsyclxvKr1E/feAJ7WVGwQRBsgOOuvGsgqOa28Uu7wv+80cWV5KZn7ZPZJgmkyHrgGrQ5ITQWZofZYYMSln1/1Z7Vp29H7twALnPe5RmeHWRPTjgvlaY4SvM/r6QDTktS3GJirgw3olIS0u32m1DNtxt7BFSYXlpIqaDKZcpqv4+27NCpB2KdhDZPdGTkyCIVvgHuBG7aVgEOVD3pQqnGpPU/4ddVdl5kdob+N2SAjL5aiQZxT3sBzbAcP4ns1lcrhUcq2iAsF2xloI3qiBEaUPUlE7oQa89IPUo5/q0LJldILXgZ
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(346002)(136003)(396003)(39860400002)(376002)(40470700004)(46966006)(36840700001)(36860700001)(36756003)(31696002)(8936002)(9786002)(2616005)(186003)(107886003)(336012)(356005)(82740400003)(31686004)(47076005)(426003)(7636003)(83380400001)(53546011)(478600001)(54906003)(110136005)(41300700001)(26005)(316002)(40460700003)(70586007)(70206006)(4326008)(8676002)(44832011)(5660300002)(2906002)(40480700001)(82310400005)(50156003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jul 2022 12:32:29.6100
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: effab4fa-00ed-4d7b-f826-08da6594eaef
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT059.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR02MB5122
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 5/18/22 07:53, Shubhrajyoti Datta wrote:
-> Add a NULL pointer check as clk_hw_get_parent can return NULL.
+On 06/07/2022 23:45, Bjorn Andersson wrote:
+> On Thu 23 Jun 06:47 CDT 2022, Dmitry Baryshkov wrote:
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
->   drivers/clk/zynqmp/divider.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
+>> Add device tree bindings for the display clock controller on Qualcomm
+>> SM8450 platform.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   .../bindings/clock/qcom,dispcc-sm8450.yaml    | 132 ++++++++++++++++++
+>>   1 file changed, 132 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+>> new file mode 100644
+>> index 000000000000..953d20a25cfb
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm8450.yaml
+>> @@ -0,0 +1,132 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8450.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Display Clock & Reset Controller Binding for SM8450
+>> +
+>> +maintainers:
+>> +  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> +
+>> +description: |
+>> +  Qualcomm display clock control module which supports the clocks, resets and
+>> +  power domains on SM8450.
+>> +
+>> +  See also:
+>> +    dt-bindings/clock/qcom,dispcc-sm8450.h
 > 
-> diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-> index 422ea79907dd..8d1a21214084 100644
-> --- a/drivers/clk/zynqmp/divider.c
-> +++ b/drivers/clk/zynqmp/divider.c
-> @@ -120,10 +120,13 @@ static void zynqmp_get_divider2_val(struct clk_hw *hw,
->   	long error = LONG_MAX;
->   	unsigned long div1_prate;
->   	struct clk_hw *div1_parent_hw;
-> +	struct zynqmp_clk_divider *pdivider;
->   	struct clk_hw *div2_parent_hw = clk_hw_get_parent(hw);
-> -	struct zynqmp_clk_divider *pdivider =
-> -				to_zynqmp_clk_divider(div2_parent_hw);
->   
-> +	if (!div2_parent_hw)
-> +		return;
-> +
-> +	pdivider = to_zynqmp_clk_divider(div2_parent_hw);
->   	if (!pdivider)
->   		return;
->   
+> Please prefix this with include/
 > 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,sm8450-dispcc
+>> +
+>> +  clocks:
+>> +    items:
+> 
+> I really think we should include a reference to GCC_DISP_AHB_CLK here.
+> 
+> There are two cases here, either the implementation does what we do in
+> Linux and just always-on the clock from gcc, in which case there's
+> nothing in here to ensure probe order and that the clock is actually on
+> before dispcc probes.
+> 
+> The other case would be that the implementation doesn't always-on the
+> gcc clock, in which case we need the reference.
 
-Acked-by: Michal Simek <michal.simek@amd.com>
+Let me check how does this work on earlier platforms. We might want to 
+update them too. Or even better, we can make actual use of DISP_AHB_CLK.
 
-Thanks,
-Michal
+
+-- 
+With best wishes
+Dmitry
