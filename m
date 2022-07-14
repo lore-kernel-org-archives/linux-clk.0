@@ -2,109 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD686C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 11:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB2BC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 12:13:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238952AbiGNLfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 07:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
+        id S238711AbiGNMNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 08:13:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238944AbiGNLfM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 07:35:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76F34599DA;
-        Thu, 14 Jul 2022 04:35:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1E12DB82491;
-        Thu, 14 Jul 2022 11:35:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E76AC34114;
-        Thu, 14 Jul 2022 11:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1657798507;
-        bh=GoPENEZo+F+yKjXbviWObMwoSO/Kysv/2liCtyZrmTk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1KfLNB6EuC7vE7Pl/wY1g5ijbMVKCRxztSyFddc4BAzG+XfLNoi3gMCgSWY4HdUrr
-         FuqXf/GTvTDdyht0HSzrOCtdapt7PuxdrifMbVvR0WOzxQlUcsPGdgPpo31j7YzMbz
-         BiTsWTry44+HQontWt/cjm70WQu/8k3IuYW2HyC0=
-Date:   Thu, 14 Jul 2022 13:35:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michal Simek <michal.simek@amd.com>
-Cc:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-clk@vger.kernel.org, git <git@xilinx.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 0/5] clk: clocking-wizard: Driver updates
-Message-ID: <Ys//aPLkLGaooYYw@kroah.com>
-References: <20220411100443.15132-1-shubhrajyoti.datta@xilinx.com>
- <155c77c3-25d9-7edc-35bd-56e6cfb19ac6@amd.com>
+        with ESMTP id S238644AbiGNMNt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 08:13:49 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4993FDFCE;
+        Thu, 14 Jul 2022 05:13:45 -0700 (PDT)
+Received: from dggpeml500020.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4LkCzy3k91zFq24;
+        Thu, 14 Jul 2022 20:12:46 +0800 (CST)
+Received: from dggpeml500008.china.huawei.com (7.185.36.147) by
+ dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 14 Jul 2022 20:13:43 +0800
+Received: from huawei.com (10.67.175.34) by dggpeml500008.china.huawei.com
+ (7.185.36.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 14 Jul
+ 2022 20:13:42 +0800
+From:   Ren Zhijie <renzhijie2@huawei.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <konrad.dybcio@somainline.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jonathan@marek.ca>, <robert.foss@linaro.org>,
+        <vkoul@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ren Zhijie <renzhijie2@huawei.com>
+Subject: [PATCH -next] clk: qcom: fix build error initializer element is not constant
+Date:   Thu, 14 Jul 2022 20:11:44 +0800
+Message-ID: <20220714121144.71062-1-renzhijie2@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155c77c3-25d9-7edc-35bd-56e6cfb19ac6@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.175.34]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500008.china.huawei.com (7.185.36.147)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 14, 2022 at 01:26:58PM +0200, Michal Simek wrote:
-> Hi Stephen and Michael,
-> 
-> On 4/11/22 12:04, Shubhrajyoti Datta wrote:
-> > The patch does the following
-> > Update the versions of the clocking wizard ip.
-> > Move from staging to clk directory.
-> > Update the bindings.
-> > 
-> > v12:
-> > No change.
-> > Rebased
-> > v13:
-> > Update the clocking compatible
-> > Add the change removing the driver from staging
-> > v14:
-> > Moved to the xilinx folder
-> > 
-> > Shubhrajyoti Datta (5):
-> >    dt-bindings: add documentation of xilinx clocking wizard
-> >    clk: clocking-wizard: Add the clockwizard to clk directory
-> >    clk: clocking-wizard: Rename nr-outputs to xlnx,nr-outputs
-> >    clk: clocking-wizard: Fix the reconfig for 5.2
-> >    clk: clocking-wizard: Update the compatible
-> > 
-> >   .../bindings/clock/xlnx,clocking-wizard.yaml  | 77 +++++++++++++++++++
-> >   drivers/clk/xilinx/Kconfig                    | 11 +++
-> >   drivers/clk/xilinx/Makefile                   |  1 +
-> >   .../xilinx}/clk-xlnx-clock-wizard.c           | 19 +++--
-> >   drivers/staging/Kconfig                       |  2 -
-> >   drivers/staging/Makefile                      |  1 -
-> >   drivers/staging/clocking-wizard/Kconfig       | 10 ---
-> >   drivers/staging/clocking-wizard/Makefile      |  2 -
-> >   drivers/staging/clocking-wizard/TODO          | 13 ----
-> >   .../staging/clocking-wizard/dt-binding.txt    | 30 --------
-> >   10 files changed, 103 insertions(+), 63 deletions(-)
-> >   create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> >   rename drivers/{staging/clocking-wizard => clk/xilinx}/clk-xlnx-clock-wizard.c (96%)
-> >   delete mode 100644 drivers/staging/clocking-wizard/Kconfig
-> >   delete mode 100644 drivers/staging/clocking-wizard/Makefile
-> >   delete mode 100644 drivers/staging/clocking-wizard/TODO
-> >   delete mode 100644 drivers/staging/clocking-wizard/dt-binding.txt
-> > 
-> 
-> I was looking at comment in v13 and moving to xilinx folder was done in v14.
-> v13: https://lore.kernel.org/r/cover.1631623906.git.shubhrajyoti.datta@xilinx.com
-> 
-> dt binding is also reviewed by Rob already.
-> 
-> You asked there to get confirmation from Greg that it can be moved out of
-> staging. I didn't see any reply from Greg about it but not sure if this is
-> really required to get.
-> Greg: Can you please ACK it or comment?
+CONFIG_CC_VERSION_TEXT="x86_64-linux-gnu-gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0"
+make ARCH=x86_64 CROSS_COMPILE=x86_64-linux-gnu-, will be failed, like this:
 
-No objection from me if others want to maintainer it in their portion of
-the kernel tree:
+drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is not constant
+  gpu_cc_parent,
+  ^~~~~~~~~~~~~
+drivers/clk/qcom/gpucc-sm8350.c:111:2: note: (near initialization for ‘gpu_cc_parent_data_0[0]’)
+drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is not constant
+  gpu_cc_parent,
+  ^~~~~~~~~~~~~
+drivers/clk/qcom/gpucc-sm8350.c:126:2: note: (near initialization for ‘gpu_cc_parent_data_1[0]’)
+make[3]: *** [drivers/clk/qcom/gpucc-sm8350.o] Error 1
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It seems that nested constant initializer is not supported in GCC 7.4.0. For portability resons, we should fix it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 160758b05ab1 ("clk: qcom: add support for SM8350 GPUCC")
+Signed-off-by: Ren Zhijie <renzhijie2@huawei.com>
+---
+ drivers/clk/qcom/gpucc-sm8350.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
+index d13fa813d190..5367ce654ac9 100644
+--- a/drivers/clk/qcom/gpucc-sm8350.c
++++ b/drivers/clk/qcom/gpucc-sm8350.c
+@@ -108,7 +108,7 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
+ };
+ 
+ static const struct clk_parent_data gpu_cc_parent_data_0[] = {
+-	gpu_cc_parent,
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpu_cc_pll0.clkr.hw },
+ 	{ .hw = &gpu_cc_pll1.clkr.hw },
+ 	{ .fw_name = "gcc_gpu_gpll0_clk_src" },
+@@ -123,7 +123,7 @@ static const struct parent_map gpu_cc_parent_map_1[] = {
+ };
+ 
+ static const struct clk_parent_data gpu_cc_parent_data_1[] = {
+-	gpu_cc_parent,
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpu_cc_pll1.clkr.hw },
+ 	{ .fw_name = "gcc_gpu_gpll0_clk_src" },
+ 	{ .fw_name = "gcc_gpu_gpll0_div_clk_src" },
+-- 
+2.17.1
 
