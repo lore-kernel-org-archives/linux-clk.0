@@ -2,39 +2,40 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03D9C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 01:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409E2C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 01:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbiGNBPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230028AbiGNBPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 13 Jul 2022 21:15:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230028AbiGNBPK (ORCPT
+        with ESMTP id S231214AbiGNBPK (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jul 2022 21:15:10 -0400
+X-Greylist: delayed 469 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Jul 2022 18:15:09 PDT
 Received: from extserv.mm-sol.com (ns.mm-sol.com [37.157.136.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 773A320F62
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D45A20F64
         for <linux-clk@vger.kernel.org>; Wed, 13 Jul 2022 18:15:09 -0700 (PDT)
 Received: from [192.168.1.11] (unknown [195.24.90.54])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: svarbanov@mm-sol.com)
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 5F6ABD2F6;
-        Thu, 14 Jul 2022 04:08:09 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 018DFD2F3;
+        Thu, 14 Jul 2022 04:07:17 +0300 (EEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mm-sol.com; s=201706;
-        t=1657760890; bh=bxbqPbickwXNPZ2uM8LTBZ4oID6l2IyD6C4uMWMGxhc=;
+        t=1657760838; bh=mAG87b/Rz00R7S5lWkO464tvyYZ6zSSv0akbCiqbGt4=;
         h=Date:Subject:To:Cc:From:From;
-        b=PdHe5DtEXBOrbGDp9LMEQixn8kgx2dE6VkGa+SeF75FpY8Pe+JsaZmOYLbzXtyNGD
-         2pKmRXnvTIREBKdgsyA2gW01r05iO9RPSTsKD1mTylEWDGRpt0nT4+P1CdVMvkDGVr
-         QUpo5vxw32TDk3fx41LSv9T+KVC+kBPInuE1ErWguIfXICjTep8VExhr8jvTMx673l
-         x5Y6iow3yay+prGaAZ3XQTDrISdlf7cXe6RmFVsR5Xx+leEH1H40wfEkXpVX21xFlU
-         R+ptr+oO1ZSNg+3KFI1MCawsIbNwaNjg3iwFhqoe+P8f1Ql92PDbPnVvWQWxo+8bN4
-         vOF+pD63q5Guw==
-Message-ID: <f8763d03-c491-70f3-bb47-b3dbf68b4ad2@mm-sol.com>
-Date:   Thu, 14 Jul 2022 04:08:06 +0300
+        b=ejyy8UYRFHznhUOI96LxcPz90zQQgKq1RoJ1HsEB6rOl6PzEvYeoKob4ZLBQ+57QJ
+         W+qvDl2GAG6Wf2Rgyb8TbZi+IYh8RtHIsiAcwWvIaP20c3A9h7y3p07BTV1+yr6mtZ
+         yeaXaJtiF7cUw+cr/NsYQL3mPSPkKtxtsiirtZhPCLv/mdwYLSkR+iSFLPA6HK4yh4
+         2fiAkH2oOj+fTeT8dPKJAE1Dyfq0ahrWt3hjpJISinS2+D5JrDVLzvDgfduD67yfhm
+         skTbQ21qaBk572vbc+tQ1qHtzS0z7yemnd4cXJ/sfa/fRoCUYheIiiyx0TPTP/tBu1
+         P3mi5siR4U4VQ==
+Message-ID: <8044c29c-ca00-c901-1b5b-073329b37618@mm-sol.com>
+Date:   Thu, 14 Jul 2022 04:07:10 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH v11 5/5] PCI: qcom: Drop manual pipe_clk_src handling
+Subject: Re: [PATCH v11 4/5] PCI: qcom: Remove unnecessary pipe_clk handling
 Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -47,11 +48,12 @@ To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Bjorn Helgaas <bhelgaas@google.com>
 Cc:     Johan Hovold <johan+linaro@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>
+        linux-pci@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 References: <20220608105238.2973600-1-dmitry.baryshkov@linaro.org>
- <20220608105238.2973600-6-dmitry.baryshkov@linaro.org>
+ <20220608105238.2973600-5-dmitry.baryshkov@linaro.org>
 From:   Stanimir Varbanov <svarbanov@mm-sol.com>
-In-Reply-To: <20220608105238.2973600-6-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220608105238.2973600-5-dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -61,24 +63,24 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Hi Dmitry,
 
 On 6/8/22 13:52, Dmitry Baryshkov wrote:
-> Manual reparenting of pipe_clk_src is being replaced with the parking of
-> the clock with clk_disable()/clk_enable() in the phy driver. Drop
-> redundant code switching of the pipe clock between the PHY clock source
-> and the safe bi_tcxo.
+> PCIe PHY drivers (both QMP and PCIe2) already do clk_prepare_enable() /
+> clk_prepare_disable() pipe_clk. Remove extra calls to enable/disable
+> this clock from the PCIe driver, so that the PHY driver can manage the
+> clock on its own.
 > 
 > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 > Tested-by: Johan Hovold <johan+linaro@kernel.org>
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 39 +-------------------------
->  1 file changed, 1 insertion(+), 38 deletions(-)
+>  drivers/pci/controller/dwc/pcie-qcom.c | 44 ++------------------------
+>  1 file changed, 3 insertions(+), 41 deletions(-)
 > 
 
-Cool!
+I'm very happy to see that is gone.
 
 Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-
 
 -- 
 regards,
