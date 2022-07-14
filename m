@@ -2,112 +2,246 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED60FCCA47B
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 08:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C64C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 08:32:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbiGNIJb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 04:09:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
+        id S235412AbiGNIcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 04:32:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbiGNIJa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 04:09:30 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0806C2B19A
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 01:09:27 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id bx13so1280730ljb.1
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 01:09:27 -0700 (PDT)
+        with ESMTP id S235239AbiGNIcv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 04:32:51 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC16286FC;
+        Thu, 14 Jul 2022 01:32:49 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id y22-20020a7bcd96000000b003a2e2725e89so784983wmj.0;
+        Thu, 14 Jul 2022 01:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=eug4fwts06ljl3bIhOz7HlYGU3mc05ie4gAPEb/LZr8=;
-        b=q9TvXr5zTpj+xu+3bRrE7S3Z45IY+DANlI/KHzaSL88ZBSqjQx7BHz9rdG2rkL5ZYS
-         jTxizTW9LYqqBHwGNFgCubPKnnP+h9RRtMAGTSTZ5Fjw4Qp2xmFU3lwr6aitQecO3E8c
-         +AUbokK37PRczpB+/U4JFeyl7+c3aM6zPODf8Qsm9DJ58279IQYXlr6cyDW0RmsqmId0
-         OvwYycgi4Ock2+WZpt6cx+3z5IPZPeOXBXNOSHW8uqiDsVjEiax9SBsW/WZLERW4i0aA
-         J0YJZcnksFOYkGSxlDzkdTMCI5b5TfN9WsPIwEB3vlfPI+XQczpXbTJ0/Sjl5TX4qwsG
-         1FCQ==
+        d=gmail.com; s=20210112;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=6xc+YDuIfvXxIC+O6+IU1kPpAw3fGddKU5daN249fsU=;
+        b=cZHYBUMkLjdNB0YKczZHY6aivyAMJ/ONJAWluY9qjPBVx5u4hBDOHZOMmbfhFGsB8g
+         qtRa4zJ3lrmOnt5z0hMpYJkVXDNJGi2bXc9IhmINx8WBRitdTpw7QCxqCB6aRVaiPbDY
+         4hpAy8TWsht1pMdzeL3OQgWbBur6XaSPGlcv5LjR0noVfYOfszM7M5FAfh3jaaw+ifMT
+         a+6cfV+HposCMlDoNTRyWlD83B9zkgttCwSkYizb2FgzrCYs0v8Bc4SZM8Cmv7CVIauH
+         YrxjGjX/w2zBSllpltL+Qh+R2uSE2+G6gh00BpQqandCHSqzpgdKz0jSffeZ6rLiyjPQ
+         BlZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=eug4fwts06ljl3bIhOz7HlYGU3mc05ie4gAPEb/LZr8=;
-        b=BjJMT+NlpGSjfhUeow664x0bkW/MOPXxwUlFBfXlzkyVVi7YhTtlwUMUh++ukuE2K5
-         dw7n8eOPhuPLoyDZAEMzv4IqdED69BjtbB2lUjRTP2h2LFR0xh6m5pQ3OkK2z+U2h3SJ
-         QOyesgNGVzridSAfPYvyNY8GeY+VJNpIfslJnuuKyQ1IGa4jA83n2iZK8cEtBUJBzZep
-         5bzP8ykYJMfE2/0UWYbQgqR/ZC2/I8V9hi5IKHpODFvNRjGKkcxSUcnBlVDAGe9nPin7
-         HcY79YaEjRFgIZjNylhlXKufFysXI30cz4AaXIo6OqFKptkP6QABCJZETDzo49lIBcDn
-         cOhg==
-X-Gm-Message-State: AJIora+vrsX9MiWhJJvu1MpDSVbsb8u4vKpiRcifojKe97ISLwDNWXp9
-        WnpUC6P9+lVS7nFw6eRvNIhdvw==
-X-Google-Smtp-Source: AGRyM1uNyTDieNyYglod7hULm/TGluwst3C+RtGk1MIeEE0gr+/XKgDr5Xn0Z802XbVUIS/v/JmC8w==
-X-Received: by 2002:a2e:3606:0:b0:25d:9de6:629b with SMTP id d6-20020a2e3606000000b0025d9de6629bmr162045lja.339.1657786166289;
-        Thu, 14 Jul 2022 01:09:26 -0700 (PDT)
-Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
-        by smtp.gmail.com with ESMTPSA id f6-20020a0565123b0600b004785b66a9a4sm227687lfv.126.2022.07.14.01.09.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 01:09:25 -0700 (PDT)
-Message-ID: <14e42eda-7eab-0570-b6c1-101722c8aa1e@linaro.org>
-Date:   Thu, 14 Jul 2022 10:09:22 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 4/4] ARM: dts: qcom: msm8660: add pxo/cxo clocks to the
- GCC node
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=6xc+YDuIfvXxIC+O6+IU1kPpAw3fGddKU5daN249fsU=;
+        b=KwMVLf+FQ7Zl0JnsX1f8wbcBch2TxqBktNWUY5Bp6ybjxA+q5jRzadJcXtAVmVF9iF
+         LlKhYx+08RGIeuCBMi6vA6OpzdOvsdrotIC/gFQbFZjOja7k24w2CCvNv4W/xOSqlXg7
+         LPryfujqOggIeWCbqG5WPY4uzSTnfUpguYM+viSDywWecSDWIbnPo78MgcqWSFK9RJTP
+         HyBazgq7vOW1cTpaUdJM9UUyCFiGeoJ0P6VKxFobQFiAant8aKdxQaYIHgLCfihr+g8r
+         YfEAnfM4GEozHahpEtcZjJBnDRzy87MInYqb5Y6+0r8N8HNdI3u+7jOn7HlY7U3WT3vH
+         SGvA==
+X-Gm-Message-State: AJIora+SVE7kFJnH1gXHyFeQach5HKn0WfVkxHVLPHhM9nz/iDZH0sk0
+        oQKeTAptBa+yJf4H2jgpqSBrHXZVDO/gkqAm
+X-Google-Smtp-Source: AGRyM1vdlBeARWA3UmGrtweL6mLA0mTff+K0S9p3U2jsCdAcpdyZhaSYEp4Awg1PDAEmk6gjejkubg==
+X-Received: by 2002:a05:600c:4ece:b0:3a1:7816:31a7 with SMTP id g14-20020a05600c4ece00b003a1781631a7mr7898848wmq.76.1657787568186;
+        Thu, 14 Jul 2022 01:32:48 -0700 (PDT)
+Received: from [192.168.214.247] (185-165-241-34.hosted-by-worldstream.net. [185.165.241.34])
+        by smtp.gmail.com with ESMTPSA id z3-20020a5d4c83000000b0021baf5e590dsm849370wrs.71.2022.07.14.01.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jul 2022 01:32:47 -0700 (PDT)
+Date:   Thu, 14 Jul 2022 12:32:34 +0400
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 2/6] clk: qcom: msm8996-cpu: Statically define PLL
+ dividers
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220620110739.1598514-1-dmitry.baryshkov@linaro.org>
- <20220620110739.1598514-4-dmitry.baryshkov@linaro.org>
- <Ys85KUGnlXlUI+zE@builder.lan>
- <50ce334b-4c13-1eb3-0e6e-96c9ccee7e1d@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <50ce334b-4c13-1eb3-0e6e-96c9ccee7e1d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <A250FR.22DB6BQXIGPX1@gmail.com>
+In-Reply-To: <CAA8EJpq4YYdeXVtYORaDROiFLRL6p-_jmjx3mj4JtrYDhik3hQ@mail.gmail.com>
+References: <20220621160621.24415-1-y.oudjana@protonmail.com>
+        <20220621160621.24415-3-y.oudjana@protonmail.com>
+        <CAA8EJpq4YYdeXVtYORaDROiFLRL6p-_jmjx3mj4JtrYDhik3hQ@mail.gmail.com>
+X-Mailer: geary/40.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/07/2022 09:41, Dmitry Baryshkov wrote:
-> On 14/07/2022 00:29, Bjorn Andersson wrote:
->> On Mon 20 Jun 06:07 CDT 2022, Dmitry Baryshkov wrote:
->>
->>> Add pxo/cxo clocks to the GCC device tree node.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>   arch/arm/boot/dts/qcom-msm8660.dtsi | 6 ++++--
->>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
->>> index 47b97daecef1..61e3ab0ebfd3 100644
->>> --- a/arch/arm/boot/dts/qcom-msm8660.dtsi
->>> +++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
->>> @@ -50,13 +50,13 @@ cpu-pmu {
->>>   	};
->>>   
->>>   	clocks {
->>> -		cxo_board {
->>> +		cxo_board: cxo_board {
->>
->> As requested by Krzysztof, please use clock-output-names to specify the
->> name of the clock, and rename the node "cxo-board-clk".
+
+On Tue, Jun 21 2022 at 20:02:28 +0300, Dmitry Baryshkov 
+<dmitry.baryshkov@linaro.org> wrote:
+> On Tue, 21 Jun 2022 at 19:07, Yassine Oudjana 
+> <yassine.oudjana@gmail.com> wrote:
+>> 
+>>  From: Yassine Oudjana <y.oudjana@protonmail.com>
+>> 
+>>  This will allow for adding them to clk_parent_data arrays
+>>  in an upcoming patch.
+>> 
+>>  Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>  ---
+>>   drivers/clk/qcom/clk-cpu-8996.c | 66 
+>> +++++++++++++++++++++------------
+>>   1 file changed, 42 insertions(+), 24 deletions(-)
+>> 
+>>  diff --git a/drivers/clk/qcom/clk-cpu-8996.c 
+>> b/drivers/clk/qcom/clk-cpu-8996.c
+>>  index 5dc68dc3621f..217f9392c23d 100644
+>>  --- a/drivers/clk/qcom/clk-cpu-8996.c
+>>  +++ b/drivers/clk/qcom/clk-cpu-8996.c
+>>  @@ -135,6 +135,34 @@ static struct clk_alpha_pll pwrcl_pll = {
+>>          },
+>>   };
+>> 
+>>  +static struct clk_fixed_factor pwrcl_pll_postdiv = {
+>>  +       .mult = 1,
+>>  +       .div = 2,
+>>  +       .hw.init = &(struct clk_init_data){
+>>  +               .name = "pwrcl_pll_postdiv",
+>>  +               .parent_data = &(const struct clk_parent_data){
+>>  +                       .hw = &pwrcl_pll.clkr.hw
+>>  +               },
+>>  +               .num_parents = 1,
+>>  +               .ops = &clk_fixed_factor_ops,
+>>  +               .flags = CLK_SET_RATE_PARENT,
+>>  +       },
+>>  +};
+>>  +
+>>  +static struct clk_fixed_factor perfcl_pll_postdiv = {
+>>  +       .mult = 1,
+>>  +       .div = 2,
+>>  +       .hw.init = &(struct clk_init_data){
+>>  +               .name = "perfcl_pll_postdiv",
+>>  +               .parent_data = &(const struct clk_parent_data){
+>>  +                       .hw = &perfcl_pll.clkr.hw
+>>  +               },
+>>  +               .num_parents = 1,
+>>  +               .ops = &clk_fixed_factor_ops,
+>>  +               .flags = CLK_SET_RATE_PARENT,
+>>  +       },
+>>  +};
+>>  +
+>>   static const struct pll_vco alt_pll_vco_modes[] = {
+>>          VCO(3,  250000000,  500000000),
+>>          VCO(2,  500000000,  750000000),
+>>  @@ -261,7 +289,7 @@ static struct clk_cpu_8996_mux pwrcl_smux = {
+>>                  .name = "pwrcl_smux",
+>>                  .parent_names = (const char *[]){
+>>                          "xo",
+>>  -                       "pwrcl_pll_main",
+>>  +                       "pwrcl_pll_postdiv",
+>>                  },
+>>                  .num_parents = 2,
+>>                  .ops = &clk_cpu_8996_mux_ops,
+>>  @@ -277,7 +305,7 @@ static struct clk_cpu_8996_mux perfcl_smux = {
+>>                  .name = "perfcl_smux",
+>>                  .parent_names = (const char *[]){
+>>                          "xo",
+>>  -                       "perfcl_pll_main",
+>>  +                       "perfcl_pll_postdiv",
+>>                  },
+>>                  .num_parents = 2,
+>>                  .ops = &clk_cpu_8996_mux_ops,
+>>  @@ -354,32 +382,25 @@ static int 
+>> qcom_cpu_clk_msm8996_register_clks(struct device *dev,
+>>   {
+>>          int i, ret;
+>> 
+>>  -       perfcl_smux.pll = clk_hw_register_fixed_factor(dev, 
+>> "perfcl_pll_main",
+>>  -                                                      "perfcl_pll",
+>>  -                                                      
+>> CLK_SET_RATE_PARENT,
+>>  -                                                      1, 2);
+>>  -       if (IS_ERR(perfcl_smux.pll)) {
+>>  -               dev_err(dev, "Failed to initialize 
+>> perfcl_pll_main\n");
+>>  -               return PTR_ERR(perfcl_smux.pll);
+>>  +       ret = devm_clk_hw_register(dev, &pwrcl_pll_postdiv.hw);
 > 
-> Actually I believe Krzysztof agreed (and acked) this change, as it 
-> follows the example of existing boards.
+> No need to. I'd suggest picking up the
+> devm_clk_hw_register_fixed_factor patch from my patchset and using
+> this API.
 
-Yeah, because this would be out of scope of this change. In the long
-term fixing the node name would be still useful, because DTC W=2 complains.
+I did it this way to be able to define it statically in the
+`parent_data` arrays of the secondary muxes in patch 6/6. How
+would I do it this way? Do I define global `static struct clk_hw *`s
+for the postdivs and use them in the `parent_data` arrays, or
+perhaps un-constify the arrays and insert the returned
+`struct clk_hw *`s into them here? Also can you send a link to
+your patch? or is it already applied?
+
+> 
+>>  +       if (ret) {
+>>  +               dev_err(dev, "Failed to register pwrcl_pll_postdiv: 
+>> %d", ret);
+>>  +               return ret;
+>>          }
+>> 
+>>  -       pwrcl_smux.pll = clk_hw_register_fixed_factor(dev, 
+>> "pwrcl_pll_main",
+>>  -                                                     "pwrcl_pll",
+>>  -                                                     
+>> CLK_SET_RATE_PARENT,
+>>  -                                                     1, 2);
+>>  -       if (IS_ERR(pwrcl_smux.pll)) {
+>>  -               dev_err(dev, "Failed to initialize 
+>> pwrcl_pll_main\n");
+>>  -               clk_hw_unregister(perfcl_smux.pll);
+>>  -               return PTR_ERR(pwrcl_smux.pll);
+>>  +       ret = devm_clk_hw_register(dev, &perfcl_pll_postdiv.hw);
+>>  +       if (ret) {
+>>  +               dev_err(dev, "Failed to register 
+>> perfcl_pll_postdiv: %d", ret);
+>>  +               return ret;
+>>          }
+>> 
+>>  +       pwrcl_smux.pll = &pwrcl_pll_postdiv.hw;
+>>  +       perfcl_smux.pll = &perfcl_pll_postdiv.hw;
+>>  +
+>>          for (i = 0; i < ARRAY_SIZE(cpu_msm8996_clks); i++) {
+>>                  ret = devm_clk_register_regmap(dev, 
+>> cpu_msm8996_clks[i]);
+>>  -               if (ret) {
+>>  -                       clk_hw_unregister(perfcl_smux.pll);
+>>  -                       clk_hw_unregister(pwrcl_smux.pll);
+>>  +               if (ret)
+>>                          return ret;
+>>  -               }
+>>          }
+>> 
+>>          clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
+>>  @@ -409,9 +430,6 @@ static int 
+>> qcom_cpu_clk_msm8996_unregister_clks(void)
+>>          if (ret)
+>>                  return ret;
+>> 
+>>  -       clk_hw_unregister(perfcl_smux.pll);
+>>  -       clk_hw_unregister(pwrcl_smux.pll);
+>>  -
+>>          return 0;
+>>   }
+>> 
+>>  --
+>>  2.36.1
+>> 
+> 
+> 
+> --
+> With best wishes
+> Dmitry
 
 
-Best regards,
-Krzysztof
