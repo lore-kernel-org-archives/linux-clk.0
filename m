@@ -2,61 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C417CCA47B
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 07:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED60FCCA47B
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 08:09:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbiGNHlH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 03:41:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39578 "EHLO
+        id S229437AbiGNIJb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 04:09:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233069AbiGNHlG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 03:41:06 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1578A1FCCC
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 00:41:05 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id y11so1436396lfs.6
-        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 00:41:04 -0700 (PDT)
+        with ESMTP id S229895AbiGNIJa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 04:09:30 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0806C2B19A
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 01:09:27 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id bx13so1280730ljb.1
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jul 2022 01:09:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=HgFqzbnGex/viFGpubqhq0dmXVFonIW0bw0LdRvMvsE=;
-        b=OGTPYuUdvmlcQPFyx/Kys+T0o68/AI6USKJuhqgcRdfIKPZ6C502xLBQbmnuv6+GNd
-         mgxRDwBlLv0DJsg5GEiC+4SIXv+/wL9hYKCusTv0vpiLtIf8Q/Gk6zRlIeOzWTRuqnaS
-         p4AQeE5WpvQbDOOTYHvg0vRFv4OG/2veUz7u62ICUQYzUO7DotDIRhLV2SdT4tZF7Anc
-         crDkN08rWDTYmt6r8qkT7YjDRPzO5ZQOGvNr2EBm0udfvfnFV3PTBMmD1Ojo5WKk8lEx
-         sWjBvzEl7xaMhv5pW/F3JEPWamnYWyWTjdaCcsY2znAZ1gPfxF5d8gOdi9ni424QV3kT
-         z7ZA==
+        bh=eug4fwts06ljl3bIhOz7HlYGU3mc05ie4gAPEb/LZr8=;
+        b=q9TvXr5zTpj+xu+3bRrE7S3Z45IY+DANlI/KHzaSL88ZBSqjQx7BHz9rdG2rkL5ZYS
+         jTxizTW9LYqqBHwGNFgCubPKnnP+h9RRtMAGTSTZ5Fjw4Qp2xmFU3lwr6aitQecO3E8c
+         +AUbokK37PRczpB+/U4JFeyl7+c3aM6zPODf8Qsm9DJ58279IQYXlr6cyDW0RmsqmId0
+         OvwYycgi4Ock2+WZpt6cx+3z5IPZPeOXBXNOSHW8uqiDsVjEiax9SBsW/WZLERW4i0aA
+         J0YJZcnksFOYkGSxlDzkdTMCI5b5TfN9WsPIwEB3vlfPI+XQczpXbTJ0/Sjl5TX4qwsG
+         1FCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=HgFqzbnGex/viFGpubqhq0dmXVFonIW0bw0LdRvMvsE=;
-        b=6CkDoXyJRp0RjL3RV5sVF3DJV9FPFZpnV20AYliyUeONWNPiMwGlehyAwsRN/EIDgv
-         yK2vHYT/hrSX0J4ESKexxsE32AJRfraa/vSJRv72DgmV9i8pRDR45Rsjbc0MarWDNSb2
-         9x2IKiWf3WC35V5uSv44q8bSbjBgAhvK1jVE5DsOJ4VCbGNHvQ3/FBqY+Bx9slpNsGRr
-         4GxNeMTTkAfFbEmSJmnKjn+AUCPM2JWZP79B/TXAzmpVhqS5krOifPCs2ZcONZtin7Ck
-         fcpFH9Cty4nh87FBcosrUuTe26fiZr7HyGHcWuPkIOfnzDci6OM+rnsV80t9iKyXVsKf
-         wXBw==
-X-Gm-Message-State: AJIora9so2I1nw6i5WOvKydM4kEj3d0cDquEBRE7M3xek3Sz50nA8a8t
-        YXGhQp9mxhvhkWjhHOd4HlPxqQ==
-X-Google-Smtp-Source: AGRyM1vUem2jmxH1oSZWWgvjndTc6uWdIU3yhZJH4Ldw9SB3oVGbaxs0KwY0Wq1OLiYV1H7G+pd3jA==
-X-Received: by 2002:a05:6512:3503:b0:481:4470:4134 with SMTP id h3-20020a056512350300b0048144704134mr4340287lfs.42.1657784463417;
-        Thu, 14 Jul 2022 00:41:03 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id j8-20020a2eb708000000b0025d696f5fe6sm135783ljo.73.2022.07.14.00.41.02
+        bh=eug4fwts06ljl3bIhOz7HlYGU3mc05ie4gAPEb/LZr8=;
+        b=BjJMT+NlpGSjfhUeow664x0bkW/MOPXxwUlFBfXlzkyVVi7YhTtlwUMUh++ukuE2K5
+         dw7n8eOPhuPLoyDZAEMzv4IqdED69BjtbB2lUjRTP2h2LFR0xh6m5pQ3OkK2z+U2h3SJ
+         QOyesgNGVzridSAfPYvyNY8GeY+VJNpIfslJnuuKyQ1IGa4jA83n2iZK8cEtBUJBzZep
+         5bzP8ykYJMfE2/0UWYbQgqR/ZC2/I8V9hi5IKHpODFvNRjGKkcxSUcnBlVDAGe9nPin7
+         HcY79YaEjRFgIZjNylhlXKufFysXI30cz4AaXIo6OqFKptkP6QABCJZETDzo49lIBcDn
+         cOhg==
+X-Gm-Message-State: AJIora+vrsX9MiWhJJvu1MpDSVbsb8u4vKpiRcifojKe97ISLwDNWXp9
+        WnpUC6P9+lVS7nFw6eRvNIhdvw==
+X-Google-Smtp-Source: AGRyM1uNyTDieNyYglod7hULm/TGluwst3C+RtGk1MIeEE0gr+/XKgDr5Xn0Z802XbVUIS/v/JmC8w==
+X-Received: by 2002:a2e:3606:0:b0:25d:9de6:629b with SMTP id d6-20020a2e3606000000b0025d9de6629bmr162045lja.339.1657786166289;
+        Thu, 14 Jul 2022 01:09:26 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
+        by smtp.gmail.com with ESMTPSA id f6-20020a0565123b0600b004785b66a9a4sm227687lfv.126.2022.07.14.01.09.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 00:41:02 -0700 (PDT)
-Message-ID: <50ce334b-4c13-1eb3-0e6e-96c9ccee7e1d@linaro.org>
-Date:   Thu, 14 Jul 2022 10:41:02 +0300
+        Thu, 14 Jul 2022 01:09:25 -0700 (PDT)
+Message-ID: <14e42eda-7eab-0570-b6c1-101722c8aa1e@linaro.org>
+Date:   Thu, 14 Jul 2022 10:09:22 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
+ Thunderbird/91.11.0
 Subject: Re: [PATCH 4/4] ARM: dts: qcom: msm8660: add pxo/cxo clocks to the
  GCC node
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -67,69 +68,46 @@ Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
 References: <20220620110739.1598514-1-dmitry.baryshkov@linaro.org>
  <20220620110739.1598514-4-dmitry.baryshkov@linaro.org>
  <Ys85KUGnlXlUI+zE@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <Ys85KUGnlXlUI+zE@builder.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ <50ce334b-4c13-1eb3-0e6e-96c9ccee7e1d@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <50ce334b-4c13-1eb3-0e6e-96c9ccee7e1d@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/07/2022 00:29, Bjorn Andersson wrote:
-> On Mon 20 Jun 06:07 CDT 2022, Dmitry Baryshkov wrote:
-> 
->> Add pxo/cxo clocks to the GCC device tree node.
+On 14/07/2022 09:41, Dmitry Baryshkov wrote:
+> On 14/07/2022 00:29, Bjorn Andersson wrote:
+>> On Mon 20 Jun 06:07 CDT 2022, Dmitry Baryshkov wrote:
 >>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   arch/arm/boot/dts/qcom-msm8660.dtsi | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>> Add pxo/cxo clocks to the GCC device tree node.
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>   arch/arm/boot/dts/qcom-msm8660.dtsi | 6 ++++--
+>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
+>>> index 47b97daecef1..61e3ab0ebfd3 100644
+>>> --- a/arch/arm/boot/dts/qcom-msm8660.dtsi
+>>> +++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
+>>> @@ -50,13 +50,13 @@ cpu-pmu {
+>>>   	};
+>>>   
+>>>   	clocks {
+>>> -		cxo_board {
+>>> +		cxo_board: cxo_board {
 >>
->> diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
->> index 47b97daecef1..61e3ab0ebfd3 100644
->> --- a/arch/arm/boot/dts/qcom-msm8660.dtsi
->> +++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
->> @@ -50,13 +50,13 @@ cpu-pmu {
->>   	};
->>   
->>   	clocks {
->> -		cxo_board {
->> +		cxo_board: cxo_board {
+>> As requested by Krzysztof, please use clock-output-names to specify the
+>> name of the clock, and rename the node "cxo-board-clk".
 > 
-> As requested by Krzysztof, please use clock-output-names to specify the
-> name of the clock, and rename the node "cxo-board-clk".
+> Actually I believe Krzysztof agreed (and acked) this change, as it 
+> follows the example of existing boards.
 
-Actually I believe Krzysztof agreed (and acked) this change, as it 
-follows the example of existing boards.
-
-> 
-> Thanks,
-> Bjorn
-> 
->>   			compatible = "fixed-clock";
->>   			#clock-cells = <0>;
->>   			clock-frequency = <19200000>;
->>   		};
->>   
->> -		pxo_board {
->> +		pxo_board: pxo_board {
->>   			compatible = "fixed-clock";
->>   			#clock-cells = <0>;
->>   			clock-frequency = <27000000>;
->> @@ -129,6 +129,8 @@ gcc: clock-controller@900000 {
->>   			#power-domain-cells = <1>;
->>   			#reset-cells = <1>;
->>   			reg = <0x900000 0x4000>;
->> +			clocks = <&pxo_board>, <&cxo_board>;
->> +			clock-names = "pxo", "cxo";
->>   		};
->>   
->>   		gsbi6: gsbi@16500000 {
->> -- 
->> 2.35.1
->>
+Yeah, because this would be out of scope of this change. In the long
+term fixing the node name would be still useful, because DTC W=2 complains.
 
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
