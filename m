@@ -2,300 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2E2C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Jul 2022 23:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A25DCC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Jul 2022 00:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbiGNX31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Jul 2022 19:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48904 "EHLO
+        id S232620AbiGOAeU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Jul 2022 20:34:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiGNX3Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 19:29:25 -0400
-Received: from novek.ru (unknown [213.148.174.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BE42CCAA;
-        Thu, 14 Jul 2022 16:29:22 -0700 (PDT)
-Received: from [192.168.0.18] (unknown [37.228.234.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by novek.ru (Postfix) with ESMTPSA id 9247E5005CD;
-        Fri, 15 Jul 2022 02:27:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 novek.ru 9247E5005CD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=novek.ru; s=mail;
-        t=1657841248; bh=K4qmP/AFNB/H9gDgFkX+YqSbzNJF2Avz9QsUbwC1QK4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=hk8sqsxOXZITpOm5/sqrvdDCpuJ5zdjGWv8tacknNJknLpgPFWCjH6Pe1P8hTeeXf
-         H/Le0dOPyATmxcHV+ZgZcHFmjmhc57cXq7+UxQCysdY8qneHzm2RWcN5q9dyC+ccB0
-         upOza14aCCTOcHICH3exXHYX8fZ+x3944eBj0NXs=
-Message-ID: <715d8f47-d246-6b4a-b22d-82672e8f11d8@novek.ru>
-Date:   Fri, 15 Jul 2022 00:29:18 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [RFC PATCH v2 2/3] dpll: add netlink events
-Content-Language: en-US
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc:     Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        with ESMTP id S229481AbiGOAeS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jul 2022 20:34:18 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBDDB2C666;
+        Thu, 14 Jul 2022 17:34:16 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id bp17so5453200lfb.3;
+        Thu, 14 Jul 2022 17:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0rGhQNj8uyI81ckYT+VVXENe31UkgplONZDpQgE07Oc=;
+        b=OJvE62rheMLYWZq+X7rgvtv16ZB7jTNFNFTOzPn3VF3TfaBbnFxZ7IcnTWLufUQ/Sq
+         8vmpblIw2uB79k1hSM2nwB07SXvqn6klzDQB34zD1XTfDNtq03IT2fawwG3vB5e/UaEc
+         54TuWDF5+IQ+KiUz8cQjzsG/f2QlCcOC0Axf4na2Px8iuAeSrx0AceCEDc5vaSet/QeZ
+         K0EeyoPlMBA4XDc++rpu/50E7Tw/+/fbMm/1nC0+Hju6U82QQp5czw/YiB2KDZqwOg9P
+         oPrxYP7pvPn3t6ypHzYdAUlaNvWOlgZEcbDwL7LSzbynJ62+TnFojVdYpekd1dp9cY8Z
+         uQJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0rGhQNj8uyI81ckYT+VVXENe31UkgplONZDpQgE07Oc=;
+        b=Zr94QWUKXnLDYfp2ux4WVZ2INFYzdd2V+za9t+b30K92g/oW5EktalwQsqnMzARkZe
+         Bemcn1GcW29tdnxO8wVudBZnBDZPXFY8pPw7zwc+dmtBl86RywZiXDB26JM10jIyvc3e
+         tI4sA+9bBwv0Ku+gvNRBkU+G8hKWJgVvbseL/tPZdyjhHq4z/10IIbr2f1DSDqqnGicj
+         VHLb4f2s6o6a7cUU7T7pmPnjgzGSrcuGNGT1qfNJ4hN8jCF3fusAaqA+ickXRZPX4uz2
+         T7HfQjMd3R8cea2mtf/rWEy8+DxAEx0Pj55FsiMb3wcUuQz+rYCwXjVUgKcWDgRMtRIe
+         qaIA==
+X-Gm-Message-State: AJIora9SzGgMafYOZmKrB5NJs+MSCBohDJ2/sAs4s2M165ouFfsDt8we
+        1P70UczRdF5Sz/aPgmwsLnvN3jZZjvg=
+X-Google-Smtp-Source: AGRyM1usyJz6kpmTfXzeczUPK2/IMjlyR5QuGEBBFmZFCHYqMZWb9dUAwwdgAB08tbdMcnN2jXnxrA==
+X-Received: by 2002:a05:6512:a8b:b0:48a:14b1:e7a6 with SMTP id m11-20020a0565120a8b00b0048a14b1e7a6mr3587523lfu.634.1657845255029;
+        Thu, 14 Jul 2022 17:34:15 -0700 (PDT)
+Received: from pc ([104.28.230.247])
+        by smtp.gmail.com with ESMTPSA id n27-20020a05651203fb00b0047fae90bfb4sm610293lfq.56.2022.07.14.17.34.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jul 2022 17:34:14 -0700 (PDT)
+Date:   Fri, 15 Jul 2022 03:34:09 +0300
+From:   Boris Lysov <arz65xx@gmail.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Edward-JW Yang <edward-jw.yang@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        "Johnson Wang (=?UTF-8?B?546L6IGW6ZGr?=)" <Johnson.Wang@mediatek.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
- <20220626192444.29321-3-vfedorenko@novek.ru>
- <DM6PR11MB46573FA8D51D40DAD2AC060B9B879@DM6PR11MB4657.namprd11.prod.outlook.com>
-From:   Vadim Fedorenko <vfedorenko@novek.ru>
-In-Reply-To: <DM6PR11MB46573FA8D51D40DAD2AC060B9B879@DM6PR11MB4657.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        "Yu-Chang Wang ( =?UTF-8?B?546L54Wc5qif?=)" 
+        <Yu-Chang.Wang@mediatek.com>,
+        "Kuan-Hsin Lee ( =?UTF-8?B?5p2O5Yag5paw?=)" 
+        <Kuan-Hsin.Lee@mediatek.com>
+Subject: Re: [RFC PATCH 2/2] clk: mediatek: Add frequency hopping support
+Message-ID: <20220715033409.553ce65c@pc>
+In-Reply-To: <a1d36cba-a58a-326a-70dc-3578f183a249@collabora.com>
+References: <20220612135414.3003-1-johnson.wang@mediatek.com>
+        <20220612135414.3003-3-johnson.wang@mediatek.com>
+        <ca4b9a0e-b1ca-6861-e4c0-30a8c8a5c99c@collabora.com>
+        <9addc9fb0c949e921f915fcf128783393214bfde.camel@mediatek.com>
+        <30e07350-ff56-a361-121e-3cb3a27643a1@collabora.com>
+        <CAGXv+5F3YK51eL60-SD6pfW90xSZYoVvLXvbQ1oq+8zQmfkKwA@mail.gmail.com>
+        <946e6d8fd14151277f00521e1373057a403021b0.camel@mediatek.com>
+        <a1d36cba-a58a-326a-70dc-3578f183a249@collabora.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11.07.2022 10:02, Kubalewski, Arkadiusz wrote:
-> -----Original Message-----
-> From: Vadim Fedorenko <vfedorenko@novek.ru>
-> Sent: Sunday, June 26, 2022 9:25 PM
->>
->> From: Vadim Fedorenko <vadfed@fb.com>
->>
->> Add netlink interface to enable notification of users about
->> events in DPLL framework. Part of this interface should be
->> used by drivers directly, i.e. lock status changes.
->>
->> Signed-off-by: Vadim Fedorenko <vadfed@fb.com>
->> ---
->> drivers/dpll/dpll_core.c    |   2 +
->> drivers/dpll/dpll_netlink.c | 141 ++++++++++++++++++++++++++++++++++++
->> drivers/dpll/dpll_netlink.h |   7 ++
->> 3 files changed, 150 insertions(+)
->>
->> diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
->> index dc0330e3687d..387644aa910e 100644
->> --- a/drivers/dpll/dpll_core.c
->> +++ b/drivers/dpll/dpll_core.c
->> @@ -97,6 +97,8 @@ struct dpll_device *dpll_device_alloc(struct dpll_device_ops *ops, int sources_c
->> 	mutex_unlock(&dpll_device_xa_lock);
->> 	dpll->priv = priv;
->>
->> +	dpll_notify_device_create(dpll->id, dev_name(&dpll->dev));
->> +
->> 	return dpll;
->>
->> error:
->> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->> index e15106f30377..4b1684fcf41e 100644
->> --- a/drivers/dpll/dpll_netlink.c
->> +++ b/drivers/dpll/dpll_netlink.c
->> @@ -48,6 +48,8 @@ struct param {
->> 	int dpll_source_type;
->> 	int dpll_output_id;
->> 	int dpll_output_type;
->> +	int dpll_status;
->> +	const char *dpll_name;
->> };
->>
->> struct dpll_dump_ctx {
->> @@ -239,6 +241,8 @@ static int dpll_genl_cmd_set_source(struct param *p)
->> 	ret = dpll->ops->set_source_type(dpll, src_id, type);
->> 	mutex_unlock(&dpll->lock);
->>
->> +	dpll_notify_source_change(dpll->id, src_id, type);
->> +
->> 	return ret;
->> }
->>
->> @@ -262,6 +266,8 @@ static int dpll_genl_cmd_set_output(struct param *p)
->> 	ret = dpll->ops->set_source_type(dpll, out_id, type);
->> 	mutex_unlock(&dpll->lock);
->>
->> +	dpll_notify_source_change(dpll->id, out_id, type);
->> +
->> 	return ret;
->> }
->>
->> @@ -438,6 +444,141 @@ static struct genl_family dpll_gnl_family __ro_after_init = {
->> 	.pre_doit	= dpll_pre_doit,
->> };
->>
->> +static int dpll_event_device_create(struct param *p)
->> +{
->> +	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
->> +	    nla_put_string(p->msg, DPLLA_DEVICE_NAME, p->dpll_name))
->> +		return -EMSGSIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +static int dpll_event_device_delete(struct param *p)
->> +{
->> +	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id))
->> +		return -EMSGSIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +static int dpll_event_status(struct param *p)
->> +{
->> +	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
->> +		nla_put_u32(p->msg, DPLLA_LOCK_STATUS, p->dpll_status))
->> +		return -EMSGSIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +static int dpll_event_source_change(struct param *p)
->> +{
->> +	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
->> +	    nla_put_u32(p->msg, DPLLA_SOURCE_ID, p->dpll_source_id) ||
->> +		nla_put_u32(p->msg, DPLLA_SOURCE_TYPE, p->dpll_source_type))
->> +		return -EMSGSIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +static int dpll_event_output_change(struct param *p)
->> +{
->> +	if (nla_put_u32(p->msg, DPLLA_DEVICE_ID, p->dpll_id) ||
->> +	    nla_put_u32(p->msg, DPLLA_OUTPUT_ID, p->dpll_output_id) ||
->> +		nla_put_u32(p->msg, DPLLA_OUTPUT_TYPE, p->dpll_output_type))
->> +		return -EMSGSIZE;
->> +
->> +	return 0;
->> +}
->> +
->> +static cb_t event_cb[] = {
->> +	[DPLL_EVENT_DEVICE_CREATE]	= dpll_event_device_create,
->> +	[DPLL_EVENT_DEVICE_DELETE]	= dpll_event_device_delete,
->> +	[DPLL_EVENT_STATUS_LOCKED]	= dpll_event_status,
->> +	[DPLL_EVENT_STATUS_UNLOCKED]	= dpll_event_status,
->> +	[DPLL_EVENT_SOURCE_CHANGE]	= dpll_event_source_change,
->> +	[DPLL_EVENT_OUTPUT_CHANGE]	= dpll_event_output_change,
->> +};
->> +/*
->> + * Generic netlink DPLL event encoding
->> + */
->> +static int dpll_send_event(enum dpll_genl_event event,
->> +				   struct param *p)
->> +{
->> +	struct sk_buff *msg;
->> +	int ret = -EMSGSIZE;
->> +	void *hdr;
->> +
->> +	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
->> +	if (!msg)
->> +		return -ENOMEM;
->> +	p->msg = msg;
->> +
->> +	hdr = genlmsg_put(msg, 0, 0, &dpll_gnl_family, 0, event);
->> +	if (!hdr)
->> +		goto out_free_msg;
->> +
->> +	ret = event_cb[event](p);
->> +	if (ret)
->> +		goto out_cancel_msg;
->> +
->> +	genlmsg_end(msg, hdr);
->> +
->> +	genlmsg_multicast(&dpll_gnl_family, msg, 0, 1, GFP_KERNEL);
+On Thu, 14 Jul 2022 13:04:49 +0200
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com> wrote:
+
+> Il 06/07/22 15:07, Edward-JW Yang ha scritto:
+> > On Wed, 2022-06-29 at 16:54 +0800, Chen-Yu Tsai wrote:
+> >> On Tue, Jun 28, 2022 at 6:09 PM AngeloGioacchino Del Regno
+> >> <angelogioacchino.delregno@collabora.com> wrote:
+> >>>
+> >>> Il 24/06/22 09:12, Edward-JW Yang ha scritto:
+> >>>> Hi AngeloGioacchino,
+> >>>>
+> >>>> Thanks for all the advices.
+> >>>>
+> >>>> On Mon, 2022-06-13 at 17:43 +0800, AngeloGioacchino Del Regno wrote:
+> >>>>> Il 12/06/22 15:54, Johnson Wang ha scritto:
+> >>>>>> Add frequency hopping support and spread spectrum clocking
+> >>>>>> control for MT8186.
+> >>>>>>
+> >>>>>> Signed-off-by: Edward-JW Yang <edward-jw.yang@mediatek.com>
+> >>>>>> Signed-off-by: Johnson Wang <johnson.wang@mediatek.com>
+> >>>>>
+> >>>>> Before going on with the review, there's one important consideration:
+> >>>>> the Frequency Hopping control is related to PLLs only (so, no other
+> >>>>> clock types get in the mix).
+> >>>>>
+> >>>>> Checking the code, the *main* thing that we do here is initializing the
+> >>>>> FHCTL by setting some registers, and we're performing the actual
+> >>>>> frequency hopping operation in clk-pll, which is right but, at this
+> >>>>> point, I think that the best way to proceed is to add the "FHCTL
+> >>>>> superpowers" to clk-pll itself, instead of adding multiple new files
+> >>>>> and devicetree bindings that are specific to the FHCTL itself.
+> >>>>>
+> >>>>> This would mean that the `fh-id` and `perms` params that you're setting
+> >>>>> in the devicetree get transferred to clk-mt8186 (and hardcoded there),
+> >>>>> as to extend the PLL declarations to include these two: that will also
+> >>>>> simplify the driver so that you won't have to match names here and
+> >>>>> there.
+> >>>>>
+> >>>>> Just an example:
+> >>>>>
+> >>>>>       PLL(CLK_APMIXED_CCIPLL, "ccipll", 0x0224, 0x0230, 0,
+> >>>>>
+> >>>>>           PLL_AO, 0, 22, 0x0228, 24, 0, 0, 0, 0x0228, 2,
+> >>>>> FHCTL_PERM_DBG_DUMP),
+> >>>>>
+> >>>>> Besides, there are another couple of reasons why you should do that
+> >>>>> instead, of which:
+> >>>>>     - The devicetree should be "generic enough", we shall not see the
+> >>>>> direct value to write to the registers in there (yet, perms assigns
+> >>>>> exactly that)
+> >>>>>     - These values won't change on a per-device basis, I believe?
+> >>>>> They're SoC-related, not board-related, right?
+> >>>>>
+> >>>>> In case they're board related (and/or related to TZ permissions), we
+> >>>>> can always add a bool property to the apmixedsys to advertise that
+> >>>>> board X needs to use an alternative permission (ex.:
+> >>>>> `mediatek,secure-fhctl`).
+> >>>>
+> >>>> I think we should remain clk-fhctl files because FHCTL is a independent
+> >>>> HW and is not a necessary component of clk-pll.
+> >>>
+> >>> I know what FHCTL is, but thank you anyway for the explanation, that's
+> >>> appreciated. In any case, this not being a *mandatory* component doesn't
+> >>> mean that when it is enabled it's not changing the way we manage the
+> >>> PLLs..........
+> >>>
+> >>>> Frequency hopping function from FHCTL is not used to replace original
+> >>>> flow of set_rate in clk-pll. They are two different ways to change PLL's
+> >>>> frequency. The
+> >>>
+> >>> I disagree: when we want to use FHCTL, we effectively hand-over PLL
+> >>> control from APMIXEDSYS to the Frequency Hopping controller - and we're
+> >>> effectively replacing the set_rate() logic of clk-pll.
+> > 
+> > Do you mean we need to drop the current set_rate() logic (direct register
+> > write) and use Frequency Hopping Controller instead?
+> > 
 > 
-> All multicasts are send only for group "1" (DPLL_CONFIG_SOURCE_GROUP_NAME),
-> but 4 groups were defined.
->
-
-Yes, you are right! Will update it in the next round.
-
->> +
->> +	return 0;
->> +
->> +out_cancel_msg:
->> +	genlmsg_cancel(msg, hdr);
->> +out_free_msg:
->> +	nlmsg_free(msg);
->> +
->> +	return ret;
->> +}
->> +
->> +int dpll_notify_device_create(int dpll_id, const char *name)
->> +{
->> +	struct param p = { .dpll_id = dpll_id, .dpll_name = name };
->> +
->> +	return dpll_send_event(DPLL_EVENT_DEVICE_CREATE, &p);
->> +}
->> +
->> +int dpll_notify_device_delete(int dpll_id)
->> +{
->> +	struct param p = { .dpll_id = dpll_id };
->> +
->> +	return dpll_send_event(DPLL_EVENT_DEVICE_DELETE, &p);
->> +}
->> +
->> +int dpll_notify_status_locked(int dpll_id)
->> +{
->> +	struct param p = { .dpll_id = dpll_id, .dpll_status = 1 };
->> +
->> +	return dpll_send_event(DPLL_EVENT_STATUS_LOCKED, &p);
->> +}
->> +
->> +int dpll_notify_status_unlocked(int dpll_id)
->> +{
->> +	struct param p = { .dpll_id = dpll_id, .dpll_status = 0 };
->> +
->> +	return dpll_send_event(DPLL_EVENT_STATUS_UNLOCKED, &p);
->> +}
->> +
->> +int dpll_notify_source_change(int dpll_id, int source_id, int source_type)
->> +{
->> +	struct param p =  { .dpll_id = dpll_id, .dpll_source_id = source_id,
->> +						.dpll_source_type = source_type };
->> +
->> +	return dpll_send_event(DPLL_EVENT_SOURCE_CHANGE, &p);
->> +}
->> +
->> +int dpll_notify_output_change(int dpll_id, int output_id, int output_type)
->> +{
->> +	struct param p =  { .dpll_id = dpll_id, .dpll_output_id = output_id,
->> +						.dpll_output_type = output_type };
->> +
->> +	return dpll_send_event(DPLL_EVENT_OUTPUT_CHANGE, &p);
->> +}
->> +
->> int __init dpll_netlink_init(void)
->> {
->> 	return genl_register_family(&dpll_gnl_family);
->> diff --git a/drivers/dpll/dpll_netlink.h b/drivers/dpll/dpll_netlink.h
->> index e2d100f59dd6..0dc81320f982 100644
->> --- a/drivers/dpll/dpll_netlink.h
->> +++ b/drivers/dpll/dpll_netlink.h
->> @@ -3,5 +3,12 @@
->>   *  Copyright (c) 2021 Meta Platforms, Inc. and affiliates
->>   */
->>
->> +int dpll_notify_device_create(int dpll_id, const char *name);
->> +int dpll_notify_device_delete(int dpll_id);
->> +int dpll_notify_status_locked(int dpll_id);
->> +int dpll_notify_status_unlocked(int dpll_id);
->> +int dpll_notify_source_change(int dpll_id, int source_id, int source_type);
->> +int dpll_notify_output_change(int dpll_id, int output_id, int output_type);
+> On PLLs that are supported by the Frequency Hopping controller, yes: we should
+> simply use a different .set_rate() callback in clk-pll.c, and we should return
+> a failure if the FHCTL fails to set the rate - so we should *not* fall back to
+> direct register writes, as on some platforms and in some conditions, using
+> direct register writes (which means that we skip FHCTL), may lead to unstable
+> system.
 > 
-> Only dpll_notify_device_create is actually used, rest is not.
-> I am getting confused a bit, who should call those "notify" functions?
-> It is straightforward for create/delete, dpll subsystem shall do it, but what
-> about the rest?
-> I would say notifications about status or source/output change shall originate
-> in the driver implementing dpll interface, thus they shall be exported and
-> defined in the header included by the driver.
+> This means that we need logic such that, in mtk_clk_register_pll(), we end up
+> having something like that:
 > 
+> if (fhctl_is_enabled(pll))
+> 	init.ops = &mtk_pll_fhctl_ops;
+> else
+> 	init.ops = &mtk_pll_ops;
 
-I was thinking about driver too, because device can have different interfaces to 
-configure source/output, and different notifications to update status. I will 
-update ptp_ocp driver to implement this logic. And it will also cover question 
-of exporting these functions and their definitions.
-
->> +
->> int __init dpll_netlink_init(void);
->> void dpll_netlink_finish(void);
->> -- 
->> 2.27.0
->>
-
+Looks like accepting my patch [1] wouldn't be a bad idea, after all.
+[1] https://lists.infradead.org/pipermail/linux-mediatek/2022-May/041293.html
