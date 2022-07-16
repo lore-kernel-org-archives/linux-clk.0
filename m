@@ -2,139 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BF4C43334
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Jul 2022 04:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF973C43334
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Jul 2022 14:54:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbiGPEzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Jul 2022 00:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
+        id S231229AbiGPOys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Jul 2022 10:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiGPEzD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jul 2022 00:55:03 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D602188F25
-        for <linux-clk@vger.kernel.org>; Fri, 15 Jul 2022 21:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657947301; x=1689483301;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4pJPGEi7Hn0AypK+V1Lo+r6a4HsrKmdzDkH/UfXow5A=;
-  b=iJsQQsSvSqp2myD27pvOVZFtGL5ZRq4FZQsLkIjGTbENouHxZ29SRXWk
-   uzGRCRUOQRDbHRr+DfPbUmXQLoSzLmfNsZAFewG6M/90lQlP8vixNaWOJ
-   JP7J2nE09bIOrf6TTDXqbK4VoY8s0kS2yThVopS/hSt3C73QBnWmgvHmZ
-   H7h7+a6Rq+ldspGnnAPhV2OqtRZIB8WEtjY5S4ZfFBzoDirVjsWSLKn09
-   J//6JJr3IgPsknqrxN6nB//FTP+47t5E8QNqTYsBdqRxQDjnpUu7FKoNj
-   stlg9pnXRCh0zeeVGayaLdBNv2Z41B29HFvYLsKeRzfmfUYKr3ZZDu78f
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10409"; a="286683543"
-X-IronPort-AV: E=Sophos;i="5.92,275,1650956400"; 
-   d="scan'208";a="286683543"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2022 21:55:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,275,1650956400"; 
-   d="scan'208";a="738892928"
-Received: from lkp-server02.sh.intel.com (HELO ff137eb26ff1) ([10.239.97.151])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Jul 2022 21:54:58 -0700
-Received: from kbuild by ff137eb26ff1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1oCZpR-0001A2-Mj;
-        Sat, 16 Jul 2022 04:54:57 +0000
-Date:   Sat, 16 Jul 2022 12:54:22 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kbuild-all@lists.01.org,
-        Yassine Oudjana <y.oudjana@protonmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: Re: [PATCH v6 02/28] clk: bcm: rpi: Add a function to retrieve the
- maximum
-Message-ID: <202207161221.vqfztQIZ-lkp@intel.com>
-References: <20220711152424.701311-3-maxime@cerno.tech>
+        with ESMTP id S229926AbiGPOyr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jul 2022 10:54:47 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12B301A829
+        for <linux-clk@vger.kernel.org>; Sat, 16 Jul 2022 07:54:46 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id z12-20020a056830128c00b0061c8168d3faso3852362otp.7
+        for <linux-clk@vger.kernel.org>; Sat, 16 Jul 2022 07:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ekPldm2A1SVt6kxU75sPPup61vgqjjJ2DCb2TpRe0gk=;
+        b=JxEpfrwSqIHzHrXzQybnp31riyX3iEKfds8el+eDvc50Y1ubQe5s99VwZHKfkLpxF4
+         cLs6sCd3TU41ZSbDShuqCsEyIJYi6YVjESGIM5Ofz82vcfijHM8VT7mNxro5FNEQ6kIH
+         jXzRcAjo7+ZjxU0yHFPJBp8H0TRiUj9NMkcNkO+ViAj6z+A4PSf+TdW1upV+CcOTTPJu
+         dm4Tcgp8ez816zkS7wzt8YdTe2/2W7Eaos5uo3FUYTFSzsoa27KEIL2yQxow8Pf32+eO
+         rOorFTHeEDDys7GOPDgKe+WTh8VbBpuGsHadOe/2qY/7b+6Ls58Q5eIH0SjBYJK+a3pD
+         Oi9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ekPldm2A1SVt6kxU75sPPup61vgqjjJ2DCb2TpRe0gk=;
+        b=6WP2AdjfdO/KQbg6Bn2anc0p5lauIhFkI9XWeC/QUaCrKO+nJpWD406Ru1SOZfTT0a
+         DugxgddcKFIfH9GFQ3rhw0hnfwK+OYmd0rezdhttlaXw2VkqpOcmlQzf7kw40Gavyh8c
+         vJAggi6pBCGKNGvcNTfau40OtNqFpONTVaDJzparm4bDXmo1crzcrPmI1IiVZO6j4T2S
+         6P6/eWCE9+FxGHm/wtMfNXuclGaOXp2RxFtUqelqJGD3+d3H1lGItfNy8PuC5PYjY3AN
+         RPwzBVsMkmmTDyPJmvsl/9K19CQc4WSvDjsEgGIo7WVZ7PmA46iL9N+g5biuEeWM1xEP
+         WHbw==
+X-Gm-Message-State: AJIora/AdxpBwZ6fYWUHdTp1jrnlaLMPlbGdUQ4d7HMpJMENqW8r77S0
+        wVIwElmiZXEoT4/SalnKpFdJSQ==
+X-Google-Smtp-Source: AGRyM1sEFBcpxDdFdR1gAwvBYtPyOEd03azO1l5+Cj57kze/T0j64sULneyVIZwM4Xof3Vnn1TjOTQ==
+X-Received: by 2002:a05:6830:2465:b0:61c:8d2e:215 with SMTP id x37-20020a056830246500b0061c8d2e0215mr1957724otr.116.1657983285360;
+        Sat, 16 Jul 2022 07:54:45 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t4-20020a4a96c4000000b004356bc04240sm3044445ooi.5.2022.07.16.07.54.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Jul 2022 07:54:44 -0700 (PDT)
+Date:   Sat, 16 Jul 2022 09:54:43 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <bmasney@redhat.com>
+Cc:     linux-arm-msm@vger.kernel.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ahalaney@redhat.com, echanude@redhat.com
+Subject: Re: [PATCH] clk: qcom: sc8280xp: add parent to gcc_ufs_phy_axi_clk
+ for sa8540p
+Message-ID: <YtLRM7vQhimGFimN@builder.lan>
+References: <20220623142837.3140680-1-bmasney@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220711152424.701311-3-maxime@cerno.tech>
+In-Reply-To: <20220623142837.3140680-1-bmasney@redhat.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+On Thu 23 Jun 09:28 CDT 2022, Brian Masney wrote:
 
-I love your patch! Perhaps something to improve:
+> The sa8540p automotive board has the same SOC as the sc8280xp. In order
+> to get the first UFS controller working on the sa8540p,
+> GCC_UFS_REF_CLKREF_CLK needs to be setup as a parent to
+> GCC_UFS_PHY_AXI_CLK.
+> 
+> This clock name came from the DTS for the downstream MSM 5.4 kernel
+> sources for the sa8540p. It also references GCC_UFS_CARD_CLKREF_CLK,
+> however that wasn't needed to get the first UFS controller working.
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+> I originally added this under GCC_UFS_PHY_PHY_AUX_CLK since that's
+> what's in the downstream DTS. I was getting errors about
+> GCC_UFS_PHY_AXI_CLK being stuck at off so I moved it there.
+> 
+> Also I don't have access to any documentation for this board so I'm
+> hoping that someone with docs access can verify that this is the
+> appropriate place to put this.
+> 
+>  drivers/clk/qcom/gcc-sc8280xp.c | 27 ++++++++++++++-------------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+> index 4b894442fdf5..4639b50da418 100644
+> --- a/drivers/clk/qcom/gcc-sc8280xp.c
+> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
+> @@ -5685,6 +5685,19 @@ static struct clk_branch gcc_ufs_phy_ahb_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch gcc_ufs_ref_clkref_clk = {
+> +	.halt_reg = 0x8c058,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x8c058,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "gcc_ufs_ref_clkref_clk",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch gcc_ufs_phy_axi_clk = {
+>  	.halt_reg = 0x77010,
+>  	.halt_check = BRANCH_HALT_VOTED,
+> @@ -5696,6 +5709,7 @@ static struct clk_branch gcc_ufs_phy_axi_clk = {
+>  		.hw.init = &(const struct clk_init_data) {
+>  			.name = "gcc_ufs_phy_axi_clk",
+>  			.parent_hws = (const struct clk_hw*[]){
+> +				&gcc_ufs_ref_clkref_clk.clkr.hw,
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on drm-misc/drm-misc-next linus/master v5.19-rc6 next-20220715]
-[cannot apply to anholt/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+gcc_ufs_ref_clkref_clk isn't the parent of gcc_ufs_phy_axi_clk.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220711-232652
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: arc-randconfig-r043-20220715 (https://download.01.org/0day-ci/archive/20220716/202207161221.vqfztQIZ-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/461ea72e08a9200c6874414e709885d73fe0cfb9
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Maxime-Ripard/clk-More-clock-rate-fixes-and-tests/20220711-232652
-        git checkout 461ea72e08a9200c6874414e709885d73fe0cfb9
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash drivers/clk/bcm/ drivers/iio/adc/
+But I presume that if this works, then you're just enabling the ufs
+clkref clock, indirectly. Seems reasonable that you should be specifying
+gcc_ufs_ref_clkref_clk as "ref_clk" instead.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+Could you please give that a go?
 
-All warnings (new ones prefixed by >>):
+Regards,
+Bjorn
 
->> drivers/clk/bcm/clk-raspberrypi.c:257:15: warning: no previous prototype for 'rpi_firmware_clk_get_max_rate' [-Wmissing-prototypes]
-     257 | unsigned long rpi_firmware_clk_get_max_rate(struct clk *clk)
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/rpi_firmware_clk_get_max_rate +257 drivers/clk/bcm/clk-raspberrypi.c
-
-   256	
- > 257	unsigned long rpi_firmware_clk_get_max_rate(struct clk *clk)
-   258	{
-   259		const struct raspberrypi_clk_data *data;
-   260		struct raspberrypi_clk *rpi;
-   261		struct clk_hw *hw;
-   262		u32 max_rate;
-   263		int ret;
-   264	
-   265		if (!clk)
-   266			return 0;
-   267	
-   268		hw =  __clk_get_hw(clk);
-   269		if (!hw)
-   270			return 0;
-   271	
-   272		data = clk_hw_to_data(hw);
-   273		rpi = data->rpi;
-   274		ret = raspberrypi_clock_property(rpi->firmware, data,
-   275						 RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
-   276						 &max_rate);
-   277		if (ret)
-   278			return 0;
-   279	
-   280		return max_rate;
-   281	}
-   282	EXPORT_SYMBOL_GPL(rpi_firmware_clk_get_max_rate);
-   283	
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+>  				&gcc_ufs_phy_axi_clk_src.clkr.hw,
+>  			},
+>  			.num_parents = 1,
+> @@ -5899,19 +5913,6 @@ static struct clk_branch gcc_ufs_phy_unipro_core_hw_ctl_clk = {
+>  	},
+>  };
+>  
+> -static struct clk_branch gcc_ufs_ref_clkref_clk = {
+> -	.halt_reg = 0x8c058,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0x8c058,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_ufs_ref_clkref_clk",
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+>  static struct clk_branch gcc_usb2_hs0_clkref_clk = {
+>  	.halt_reg = 0x8c044,
+>  	.halt_check = BRANCH_HALT,
+> -- 
+> 2.36.1
+> 
