@@ -2,133 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E8BC43334
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Jul 2022 19:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4B6CCA479
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Jul 2022 03:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230433AbiGPT11 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Jul 2022 15:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43508 "EHLO
+        id S233640AbiGQDIm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Jul 2022 23:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbiGPT10 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jul 2022 15:27:26 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FCE1A82D
-        for <linux-clk@vger.kernel.org>; Sat, 16 Jul 2022 12:27:25 -0700 (PDT)
-Received: from localhost.localdomain (abxj77.neoplus.adsl.tpnet.pl [83.9.3.77])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id F37AB3F6C0;
-        Sat, 16 Jul 2022 21:27:21 +0200 (CEST)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     ~postmarketos/upstreaming@lists.sr.ht
-Cc:     martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: qcom: smd: Add SM6375 clocks
-Date:   Sat, 16 Jul 2022 21:27:14 +0200
-Message-Id: <20220716192714.454031-3-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.37.0
-In-Reply-To: <20220716192714.454031-1-konrad.dybcio@somainline.org>
-References: <20220716192714.454031-1-konrad.dybcio@somainline.org>
+        with ESMTP id S233476AbiGQDIg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jul 2022 23:08:36 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A059C15724
+        for <linux-clk@vger.kernel.org>; Sat, 16 Jul 2022 20:08:35 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1013ecaf7e0so15580371fac.13
+        for <linux-clk@vger.kernel.org>; Sat, 16 Jul 2022 20:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gIxUE5cXSV3+QGx/oRwxtYuDWIYOJbAf1W0ycXXi4ag=;
+        b=lX11eWz3WxHgwgSc4EqDi3y/9st0DQwgDeuy/rZs4c8JS8PbbTm35VgxaJm6HfHtNB
+         RFjBvtgcUEY4xktxvmdIwhmE6CIysuC9QW3dFirii4jdwzyH62qb4/Bksd9cNccQHoXZ
+         7/Uyz0ijvljcoj9zvv+cDXzae2x9YtJ/NAAljWH7UBvkO82F/CHGBBllaXi2kcIHdPx2
+         iwceKVnKHfC9dCiTFquH9WVn14+pmvhU/a78h/S3ooeb1T5QZbffZZjPkuEEKBC1lacp
+         eD7RZxlUDVvXy3GRH7LzlV3n7Ok5zzLYPZgVtOu5BX0sW/CJT9a7OI7/DPlhQmU80joN
+         l5rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gIxUE5cXSV3+QGx/oRwxtYuDWIYOJbAf1W0ycXXi4ag=;
+        b=d5jlPf5ZzsbV8yVvG93yY/FygP2ET48ZxP3MFBmMwSFLdv0Wt+6KPP1aF3qGsIesUf
+         G4mhIAI3rFn95BpSP2cgMcXRP/aJuhCCXvoLAYRvwRZAjaq+GnQ/7sXsXGKN5a5pC6GY
+         o5jmH2sURt/YYhzF9d5DwJljmC9352PRpSjiVnjkYM73A7mWo18yOzs9pyZ8kZ6LPnye
+         z6wl6kKYcbYWF8pKtjfQdmo9DDjc4FSV0Iz+StgSqVmFKOM/Lyo3MTbHe797GPv8v/9J
+         +vU9FXuXmYeMfLE/bjWt56f92INX2RMwPkgNN5ey06tc8veaoC4YDXopA8BqFcmPuiQJ
+         Nryw==
+X-Gm-Message-State: AJIora/Tq3tOmF4AJgtytKAZJItRsZtVkBHNCcIMcSSqp6cUxWEn1VAw
+        c9KSzE3T8R9Jdpf6lmNtLSGzbA==
+X-Google-Smtp-Source: AGRyM1slwpooy2vZuZujiQWhMlKWXik47foLA/lsehdf1RlFAm9Q1KkX3Xjeh/nCMpsfeTfdniynmw==
+X-Received: by 2002:a05:6870:c1cb:b0:10b:f2d0:e0bf with SMTP id i11-20020a056870c1cb00b0010bf2d0e0bfmr13334505oad.143.1658027315355;
+        Sat, 16 Jul 2022 20:08:35 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id z203-20020a4a49d4000000b0043577be222bsm3203928ooa.22.2022.07.16.20.08.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Jul 2022 20:08:34 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     vkoul@kernel.org, Ren Zhijie <renzhijie2@huawei.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, robert.foss@linaro.org,
+        agross@kernel.org, jonathan@marek.ca, konrad.dybcio@somainline.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] clk: qcom: fix build error initializer element is not constant
+Date:   Sat, 16 Jul 2022 22:08:25 -0500
+Message-Id: <165802729676.1737676.8397755968659757422.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220714121144.71062-1-renzhijie2@huawei.com>
+References: <20220714121144.71062-1-renzhijie2@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for controlling SMD RPM clocks on SM6375.
+On Thu, 14 Jul 2022 20:11:44 +0800, Ren Zhijie wrote:
+> CONFIG_CC_VERSION_TEXT="x86_64-linux-gnu-gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0"
+> make ARCH=x86_64 CROSS_COMPILE=x86_64-linux-gnu-, will be failed, like this:
+> 
+> drivers/clk/qcom/gpucc-sm8350.c:111:2: error: initializer element is not constant
+>   gpu_cc_parent,
+>   ^~~~~~~~~~~~~
+> drivers/clk/qcom/gpucc-sm8350.c:111:2: note: (near initialization for ‘gpu_cc_parent_data_0[0]’)
+> drivers/clk/qcom/gpucc-sm8350.c:126:2: error: initializer element is not constant
+>   gpu_cc_parent,
+>   ^~~~~~~~~~~~~
+> drivers/clk/qcom/gpucc-sm8350.c:126:2: note: (near initialization for ‘gpu_cc_parent_data_1[0]’)
+> make[3]: *** [drivers/clk/qcom/gpucc-sm8350.o] Error 1
+> 
+> [...]
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
----
- drivers/clk/qcom/clk-smd-rpm.c   | 46 ++++++++++++++++++++++++++++++--
- include/linux/soc/qcom/smd-rpm.h |  1 +
- 2 files changed, 45 insertions(+), 2 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 10b4e6d8d10f..b221dd474218 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -1085,13 +1085,54 @@ static const struct rpm_smd_clk_desc rpm_clk_sm6115 = {
- 	.num_clks = ARRAY_SIZE(sm6115_clks),
- };
- 
-+/* SM6375 */
-+DEFINE_CLK_SMD_RPM(sm6375, mmnrt_clk, mmnrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(sm6375, mmrt_clk, mmrt_a_clk, QCOM_SMD_RPM_MMXI_CLK, 1);
-+DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
-+DEFINE_CLK_SMD_RPM_BRANCH(sm6375, bimc_freq_log, bimc_freq_log_a, QCOM_SMD_RPM_MISC_CLK, 4, 1);
-+static struct clk_smd_rpm *sm6375_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &sdm660_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &sdm660_bi_tcxo_a,
-+	[RPM_SMD_SNOC_CLK] = &sm6125_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &sm6125_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK] = &msm8916_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &msm8916_bimc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &sm6125_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &sm6125_qdss_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &sm6125_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &sm6125_cnoc_a_clk,
-+	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
-+	[RPM_SMD_QUP_CLK] = &sm6125_qup_clk,
-+	[RPM_SMD_QUP_A_CLK] = &sm6125_qup_a_clk,
-+	[RPM_SMD_MMRT_CLK] = &sm6375_mmrt_clk,
-+	[RPM_SMD_MMRT_A_CLK] = &sm6375_mmrt_a_clk,
-+	[RPM_SMD_MMNRT_CLK] = &sm6375_mmnrt_clk,
-+	[RPM_SMD_MMNRT_A_CLK] = &sm6375_mmnrt_a_clk,
-+	[RPM_SMD_SNOC_PERIPH_CLK] = &sm6125_snoc_periph_clk,
-+	[RPM_SMD_SNOC_PERIPH_A_CLK] = &sm6125_snoc_periph_a_clk,
-+	[RPM_SMD_SNOC_LPASS_CLK] = &sm6125_snoc_lpass_clk,
-+	[RPM_SMD_SNOC_LPASS_A_CLK] = &sm6125_snoc_lpass_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8992_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8992_ce1_a_clk,
-+	[RPM_SMD_HWKM_CLK] = &qcm2290_hwkm_clk,
-+	[RPM_SMD_HWKM_A_CLK] = &qcm2290_hwkm_a_clk,
-+	[RPM_SMD_PKA_CLK] = &qcm2290_pka_clk,
-+	[RPM_SMD_PKA_A_CLK] = &qcm2290_pka_a_clk,
-+	[RPM_SMD_BIMC_FREQ_LOG] = &sm6375_bimc_freq_log,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_sm6375 = {
-+	.clks = sm6375_clks,
-+	.num_clks = ARRAY_SIZE(sm6375_clks),
-+};
-+
- /* QCM2290 */
- DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, ln_bb_clk2, ln_bb_clk2_a, 0x2, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(qcm2290, rf_clk3, rf_clk3_a, 6, 38400000);
- 
- DEFINE_CLK_SMD_RPM(qcm2290, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
--DEFINE_CLK_SMD_RPM(qcm2290, hwkm_clk, hwkm_a_clk, QCOM_SMD_RPM_HWKM_CLK, 0);
--DEFINE_CLK_SMD_RPM(qcm2290, pka_clk, pka_a_clk, QCOM_SMD_RPM_PKA_CLK, 0);
- DEFINE_CLK_SMD_RPM(qcm2290, cpuss_gnoc_clk, cpuss_gnoc_a_clk,
- 		   QCOM_SMD_RPM_MEM_CLK, 1);
- DEFINE_CLK_SMD_RPM(qcm2290, bimc_gpu_clk, bimc_gpu_a_clk,
-@@ -1160,6 +1201,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-sdm660",  .data = &rpm_clk_sdm660  },
- 	{ .compatible = "qcom,rpmcc-sm6115",  .data = &rpm_clk_sm6115  },
- 	{ .compatible = "qcom,rpmcc-sm6125",  .data = &rpm_clk_sm6125  },
-+	{ .compatible = "qcom,sm6375-rpmcc",  .data = &rpm_clk_sm6375  },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index 82c9d489833a..3ab8c07f71c0 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -41,6 +41,7 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_HWKM_CLK	0x6d6b7768
- #define QCOM_SMD_RPM_PKA_CLK	0x616b70
- #define QCOM_SMD_RPM_MCFG_CLK	0x6766636d
-+#define QCOM_SMD_RPM_MMXI_CLK	0x69786d6d
- 
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
+[1/1] clk: qcom: fix build error initializer element is not constant
+      commit: b5eb8cde863cdf455436c7ba3fb7362c49e1e64e
+
+Best regards,
 -- 
-2.37.0
-
+Bjorn Andersson <bjorn.andersson@linaro.org>
