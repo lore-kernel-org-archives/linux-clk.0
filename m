@@ -2,69 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B0FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 21:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794C5C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 22:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbiGRVR4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 17:17:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44430 "EHLO
+        id S233858AbiGRWTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 18:19:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiGRVRz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 17:17:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 476DF28705;
-        Mon, 18 Jul 2022 14:17:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S232115AbiGRWTE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 18:19:04 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461E05F50;
+        Mon, 18 Jul 2022 15:19:04 -0700 (PDT)
+Received: from notapiano (pool-98-113-53-228.nycmny.fios.verizon.net [98.113.53.228])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E2DACB81616;
-        Mon, 18 Jul 2022 21:17:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A47C341C0;
-        Mon, 18 Jul 2022 21:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658179072;
-        bh=K/9SDjqw4vYpv+vkfU1NchDdEJsTlnMjcryymCgfXs0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sqCVA01TnIsANagwDR4tSav1T4rDy2FVOcsOKuNZTtzdmtnF2zVKJeBVLO+JlxHc0
-         a1yYXfZRi59MvsPQjSLCpwQbZrIsWqmgCZJL8X9d7tP1N7wdLSvhqrlJUkUN/tXiLu
-         7hQdxIIKAtkJVqJbNf+GvCUL7pCRmD57EYoeFi6AvRJE2v/efKkGdUx0cYHGXgqwnH
-         p+qVuIMzuoLzrBlBAcA/V33hMfN+T56tP5gRE0M/8vNGb1Mgy9Y8dRB9NF7yD76/Ns
-         b9wN6tspAHwpcPftH98/rVnzSCxkjc5i8IFq6N0DEhry1iEBczlo6mUp1/HNXZbkc1
-         ap2Ik7Trdl1lA==
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7A8A366019F3;
+        Mon, 18 Jul 2022 23:19:01 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1658182742;
+        bh=cpVbYxStkk0TBWfh3vWvgvkINPgtVFCpknaqG3L5bMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Dse5PnL5X29rke4WJf6H2vO5GuMVfPClG3lZkbvKx+BXigza2knJVk+8uxcFG3+Nm
+         DVDe2juLAnNjXr1s6JUVsg9z5EEdXAKQUtZ6trhIWlXE1fp1zrdcZsAP44BN7egHl3
+         F2NYsMgwxYObJ1/VHsHJ6j4do6ireEAM3+oppRVwslGpf3I028n+CgST8QYFsIgT0O
+         08p7peYZDEFsM7fpsj2oES2+1v/WtWDQIryOsgtzoCSOR+MMczJJuDSzYujjHZwz++
+         vDiQCbeRxkUe9pi1eIc06YdkLxAQBPzSiCcn8w/iJNk92uorvbIMKJbpbXf9HBObg0
+         5qUSCxAjMXxnQ==
+Date:   Mon, 18 Jul 2022 18:18:57 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2 1/2] clk: core: Honor CLK_OPS_PARENT_ENABLE for clk
+ gate ops
+Message-ID: <20220718221857.7vgmsgqxozytkofa@notapiano>
+References: <20220713082111.2233016-1-wenst@chromium.org>
+ <20220713082111.2233016-2-wenst@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220711115542.1015136-1-abel.vesa@linaro.org>
-References: <20220711115542.1015136-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v5.20
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Date:   Mon, 18 Jul 2022 14:17:50 -0700
-User-Agent: alot/0.10
-Message-Id: <20220718211752.83A47C341C0@smtp.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220713082111.2233016-2-wenst@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2022-07-11 04:55:42)
-> The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a=
-56:
->=20
->   Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-5.20
->=20
-> for you to fetch changes up to c196175acdd3ab06114bde2955971bc7282f2b85:
->=20
->   clk: imx: clk-fracn-gppll: Add more freq config for video pll (2022-06-=
-16 17:28:59 +0300)
->=20
-> ----------------------------------------------------------------
+On Wed, Jul 13, 2022 at 04:21:10PM +0800, Chen-Yu Tsai wrote:
+> In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
+> this flag was only added to rate change operations (rate setting and
+> reparent) and disabling unused subtree. It was not added to the
+> clock gate related operations. Any hardware driver that needs it for
+> these operations will either see bogus results, or worse, hang.
+> 
+> This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
+> drivers set this, but dumping debugfs clk_summary would cause it
+> to hang.
+> 
+> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Thanks. Pulled into clk-next
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Tested that MT8192 no longer hangs when dumping clk_summary.
+
+Thanks,
+Nícolas
