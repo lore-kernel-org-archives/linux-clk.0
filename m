@@ -2,157 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CA7C43334
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Jul 2022 20:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A26C5C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 11:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbiGQULP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Jul 2022 16:11:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51672 "EHLO
+        id S233913AbiGRLZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 07:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbiGQULO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Jul 2022 16:11:14 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA6FF0D
-        for <linux-clk@vger.kernel.org>; Sun, 17 Jul 2022 13:11:13 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id mi10so7540408qvb.1
-        for <linux-clk@vger.kernel.org>; Sun, 17 Jul 2022 13:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PigXQwKM0HFVf977KpJSmEmDxCSJ/94yMR8JWMEuSKA=;
-        b=XGsblwnKyTOHGD+NCSzwrCwIrW3uo8gEMmxRfTEImmCf4UQf281/Iz8nE8qoeVSISh
-         g+Urw2+uGfabP/rwLmK3GsIcpTA78qLbgkLHbKaK/LZ6xv/cu2Ddxck8u2Jpo2Dj/Y1I
-         IPEfYA8rTP4FQqePDLXMqCfUm+bUSwpEZxu/128HJE1l5rX6HXVyi/qok9pWd/d3Wj3o
-         suhRcEWruo5GX40SxMGAXHJjJigoKFO5xM6it10VDCNYpw+CH6nsIJ172cn3e3JJ6y56
-         Vo3FJggCPBFqx1L8BJ9LuX5QbbqVsMI7RjkmPfWJHKK5yEbPOnGcG6lGnnYMgzqLw4pt
-         W7cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PigXQwKM0HFVf977KpJSmEmDxCSJ/94yMR8JWMEuSKA=;
-        b=bMVzmPk57R5YHEX8dCl1E62vuRnSvu61dWuDlJNRSK4oyAU1HM+kWupecsd/ieRU5T
-         rII46lvwxnn6Kl1nuq9Yf19KZxjOqO+gezFcMmNQdNtXuO8l9VN91eA/98/ZWpChdjDC
-         RQIN0osKQzELGFnJ0MRz1Jlu67DCpAjCqP68pSC5usAdpk1e2To7zExlqJLbAKYCjfLc
-         C6zMbXJEyXpocGZ53d/Vo+4dV2KAhytwHBF/FE5EzDiSyx49xVzTKTQxctgip3bkb1BZ
-         AQZu8WpXeoIfPCX2eFM3CGsxov6Mrl+jtIVOv5Alqj4rtFNVNZG5slkmapWfevoJ3Xez
-         F60g==
-X-Gm-Message-State: AJIora+lGm17n4ZOaJm7b4GMHeZOVv79yYkv++9i5adlJ8UhfiJmvCPI
-        ae95VgjRumy6FcAAVEihH/7isV/edlYRYlXQfkNTEA==
-X-Google-Smtp-Source: AGRyM1u8+W8I9UXM+TPZAI1GxZM+CKGG6bJ3LlrO8Ax0BlTKV10aRJr+uq4nd8moWqlfrW1Oc5tOU0uygG/Skot3HUA=
-X-Received: by 2002:a05:6214:d03:b0:473:7764:2ab with SMTP id
- 3-20020a0562140d0300b00473776402abmr18366070qvh.119.1658088672281; Sun, 17
- Jul 2022 13:11:12 -0700 (PDT)
+        with ESMTP id S232286AbiGRLZE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 07:25:04 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC61BCB1;
+        Mon, 18 Jul 2022 04:25:01 -0700 (PDT)
+Received: from mail-yw1-f170.google.com ([209.85.128.170]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MsHwC-1nPQgA0KZ0-00tjPu; Mon, 18 Jul 2022 13:25:00 +0200
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-31e1ecea074so26608577b3.8;
+        Mon, 18 Jul 2022 04:24:59 -0700 (PDT)
+X-Gm-Message-State: AJIora+XZxXwlbeo8tYRIcu6UrcArdCFUnfN41ji1cKx2TLUisIzJ1Pr
+        PRqoYLaACkjWRTk1llHbQmYvaVUEXxktkfAttNw=
+X-Google-Smtp-Source: AGRyM1tzL7hthvP1sOdr1X/BfOKLedAJn4Urbe8k3BQ7Z19q4rX8bfPxpzkeM1Uk0JKELZ+zlaoPYOQFI7A/abx5b1Y=
+X-Received: by 2002:a81:9b02:0:b0:31c:9ae4:99ec with SMTP id
+ s2-20020a819b02000000b0031c9ae499ecmr29471022ywg.495.1658143498552; Mon, 18
+ Jul 2022 04:24:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220713143200.3686765-1-abel.vesa@linaro.org> <YtOOYryxh9oEJXyg@builder.lan>
-In-Reply-To: <YtOOYryxh9oEJXyg@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sun, 17 Jul 2022 23:11:01 +0300
-Message-ID: <CAA8EJprbnckZSR7v172x0CAKRTieG6JHdC+Xc-12xM=kBfa0EA@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Drop mmcx gdsc supply for dispcc and videocc
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Abel Vesa <abel.vesa@linaro.org>, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1656396767.git.qinjian@cqplus1.com> <CAK8P3a1HoB74TA9EKJFuPLuw_zJfy_p7fwkm0M45+jaGkK6ivA@mail.gmail.com>
+In-Reply-To: <CAK8P3a1HoB74TA9EKJFuPLuw_zJfy_p7fwkm0M45+jaGkK6ivA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Jul 2022 13:24:42 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3eSNR4xdGkjiBadNd+YsvEP6WtdAcJjinX+5AAiZWQog@mail.gmail.com>
+Message-ID: <CAK8P3a3eSNR4xdGkjiBadNd+YsvEP6WtdAcJjinX+5AAiZWQog@mail.gmail.com>
+Subject: Re: [PATCH v20 00/11] Add Sunplus SP7021 SoC Support
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Qin Jian <qinjian@cqplus1.com>, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:ez5RRW2DnTCgtLBs77BuhklVwUiXDDX6Rjn05D2CM3wYwbvtcV+
+ UIjey1f9G0pqstGJgytrgMLQ25ReWBgVjD3A0DiFX1OVpvK8Eb43bRIGDJPW3R1Cyg1skgz
+ 4M6TiYFY1eRxrWC5ZXqsoroEYy4/mmpc0Plpt6L5ql53Ge97ELgZ2cqdspfCpehAN/dlUPa
+ RZQve9n2SqmYT/SiKe83g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vmE3xwsqK9A=:MD3/WQhQvR5PchRTMYws0Z
+ MMhpZNbXkPxQM22yc9lk6QdR5VFAK8D/rcXc8F6B07ukICnehNh9Z2heeel5TIdoAPhG4/H8U
+ lvaXpa8D2oJGueodqXTa4f/tXbaMAq7uzM0qsoTT/s6wmn+RH3jwnEpecf9VKlaqKsutfTjpd
+ jEAobfhxUYsS4brByThBmiFCHhvh3PyS59K/zKbwnTOiVHbNRK+VKBON/mbkV2DY3m/WHbWwc
+ AjHcwjf9VMkDAiN4pTBaDFPYlof3l9YVk5yvBoAWUWC8dPQgYvKmAlcUM5XH3TJ+VEp7vfvFG
+ zBcUPuIxIo8LRc81JMiQVo6BGFN6prfyEbLxHxMC0XVaahBPC5q5cLqTfQjVRs0UqOMAhc8Bp
+ PTtiK9qvV5ovuZ4CYNcTJZTJZ7rYzu0PVx7dR9xkBvsLWTcPtdug9QzvttB1oFI6fdGAEFtZA
+ ELv2R8U5sAfleLpbMZsrW7cQQRdAY0VJPVBpP4NS19Fpjlmt/W//R5aL6Y2LJrz77sfz/PBeJ
+ u6AN3gz/8+fr0CsuPU5yp4H2x9xrUoMC6RH3VNH6kPo+IPEBtL+oEIuujNzUbUhQyPs9n6ZNo
+ tS3PBel49g25WYKjRDd5dEMopEb7pM0miu5c/mvLvpIRHdpi6vVpY3eB8ehsZK6XXh+yISVVh
+ rqcQkyTxRJwecHO8fvW2hsFSHR4ykP8MUaXWuChh5F7ZrdNg0bnl8HRQoXErDmrz04tVJ6Ckw
+ 4mgzB+XmOpuEroNvCQEdqr3JAM7S2upeP45cAg==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 17 Jul 2022 at 07:21, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Wed, Jul 6, 2022 at 5:01 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Wed 13 Jul 09:32 CDT 2022, Abel Vesa wrote:
->
-> > Both dispcc and videocc use mmcx power domain now.
-> > Lets drop the supply mmcx from every gdsc.
+> On Tue, Jun 28, 2022 at 8:26 AM Qin Jian <qinjian@cqplus1.com> wrote:
 > >
-> > Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Fixes: 266e5cf39a0f ("arm64: dts: qcom: sm8250: remove mmcx regulator")
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > This patch series add Sunplus SP7021 SoC support.
+> >
+> > Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
+> > peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
+> > single chip. It is designed for industrial control.
+> >
+> > SP7021 consists of two chips (dies) in a package. One is called C-chip
+> > (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
+> > process (22 nm) for high performance computing. The other is called P-
+> > chip (peripheral chip). It has many peripherals and an ARM A926 added
+> > especially for real-time control. P-chip is made for customers. It adopts
+> > low-level process (ex: 0.11 um) to reduce cost.
+> >
 >
-> This would break backwards compatibility with dtbs that used
-> mmcx-supply. We only ever used mmcx-supply in sm8250.dtsi upstream and
-> given that we only boot sm8250 off Android boot images it's unlikely
-> that anyone would use a new kernel with that old of a dtb...
->
-> So:
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->
-> Dmitry, what do you think?
+> As far as I can tell, all review comments have been fully addressed,
+> but I'm missing an Ack from Stephen Boyd so I can apply it through
+> the SoC tree.
 
-I think it's fine.
+I ended up applying the series without the clk driver now, please see
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?h=arm/newsoc&id=7cb7b8fe63393d77
 
->
-> Regards,
-> Bjorn
->
-> > ---
-> >  drivers/clk/qcom/dispcc-sm8250.c  | 1 -
-> >  drivers/clk/qcom/videocc-sm8250.c | 4 ----
-> >  2 files changed, 5 deletions(-)
-> >
-> > diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> > index 39b344ebb049..709076f0f9d7 100644
-> > --- a/drivers/clk/qcom/dispcc-sm8250.c
-> > +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> > @@ -1138,7 +1138,6 @@ static struct gdsc mdss_gdsc = {
-> >       },
-> >       .pwrsts = PWRSTS_OFF_ON,
-> >       .flags = HW_CTRL,
-> > -     .supply = "mmcx",
-> >  };
-> >
-> >  static struct clk_regmap *disp_cc_sm8250_clocks[] = {
-> > diff --git a/drivers/clk/qcom/videocc-sm8250.c b/drivers/clk/qcom/videocc-sm8250.c
-> > index 8617454e4a77..f28f2cb051d7 100644
-> > --- a/drivers/clk/qcom/videocc-sm8250.c
-> > +++ b/drivers/clk/qcom/videocc-sm8250.c
-> > @@ -277,7 +277,6 @@ static struct gdsc mvs0c_gdsc = {
-> >       },
-> >       .flags = 0,
-> >       .pwrsts = PWRSTS_OFF_ON,
-> > -     .supply = "mmcx",
-> >  };
-> >
-> >  static struct gdsc mvs1c_gdsc = {
-> > @@ -287,7 +286,6 @@ static struct gdsc mvs1c_gdsc = {
-> >       },
-> >       .flags = 0,
-> >       .pwrsts = PWRSTS_OFF_ON,
-> > -     .supply = "mmcx",
-> >  };
-> >
-> >  static struct gdsc mvs0_gdsc = {
-> > @@ -297,7 +295,6 @@ static struct gdsc mvs0_gdsc = {
-> >       },
-> >       .flags = HW_CTRL,
-> >       .pwrsts = PWRSTS_OFF_ON,
-> > -     .supply = "mmcx",
-> >  };
-> >
-> >  static struct gdsc mvs1_gdsc = {
-> > @@ -307,7 +304,6 @@ static struct gdsc mvs1_gdsc = {
-> >       },
-> >       .flags = HW_CTRL,
-> >       .pwrsts = PWRSTS_OFF_ON,
-> > -     .supply = "mmcx",
-> >  };
-> >
-> >  static struct clk_regmap *video_cc_sm8250_clocks[] = {
-> > --
-> > 2.34.3
-> >
+No need to resend the series any more, please just work with
+the clk maintainers to get that driver included through their tree.
 
+If there are any issues with the patches that I merged, it's best
+to send bugfix patches that can be applied on top of the branch
+listed above, or a pull request based on that commit.
 
+For new features to be merged in a later release, e.g. patches to
+add device tree nodes for other on-chip components, or additional
+dts files, please base them on the coming -rc1 release when that
+is out.
 
--- 
-With best wishes
-Dmitry
+       Arnd
