@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794C5C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 22:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2DBC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 22:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233858AbiGRWTF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 18:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
+        id S234598AbiGRWWk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 18:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232115AbiGRWTE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 18:19:04 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461E05F50;
-        Mon, 18 Jul 2022 15:19:04 -0700 (PDT)
+        with ESMTP id S229647AbiGRWWj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 18:22:39 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9A723135A;
+        Mon, 18 Jul 2022 15:22:38 -0700 (PDT)
 Received: from notapiano (pool-98-113-53-228.nycmny.fios.verizon.net [98.113.53.228])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7A8A366019F3;
-        Mon, 18 Jul 2022 23:19:01 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 244E466019F3;
+        Mon, 18 Jul 2022 23:22:36 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658182742;
-        bh=cpVbYxStkk0TBWfh3vWvgvkINPgtVFCpknaqG3L5bMU=;
+        s=mail; t=1658182956;
+        bh=ZtaFeUkq1jYD1KkAdKtkGmQDm6nyXB5ITHnEHsXVkLo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Dse5PnL5X29rke4WJf6H2vO5GuMVfPClG3lZkbvKx+BXigza2knJVk+8uxcFG3+Nm
-         DVDe2juLAnNjXr1s6JUVsg9z5EEdXAKQUtZ6trhIWlXE1fp1zrdcZsAP44BN7egHl3
-         F2NYsMgwxYObJ1/VHsHJ6j4do6ireEAM3+oppRVwslGpf3I028n+CgST8QYFsIgT0O
-         08p7peYZDEFsM7fpsj2oES2+1v/WtWDQIryOsgtzoCSOR+MMczJJuDSzYujjHZwz++
-         vDiQCbeRxkUe9pi1eIc06YdkLxAQBPzSiCcn8w/iJNk92uorvbIMKJbpbXf9HBObg0
-         5qUSCxAjMXxnQ==
-Date:   Mon, 18 Jul 2022 18:18:57 -0400
+        b=GYq3dgaY7yFDp96HSAeWfP4klcykjmMYkTNIPSDlNOBHlZCWdd3037EgUEEvpnGFa
+         DVHFzWIKAq37znRj4IeTEr9Fsybh8GcRJdKkQLFYuLCYOCYAs/pvlPZ/XOLdnSbpwA
+         y5ojemF2ezxyJ3Xe52EQ4cKEDV1si/tSk926WCsc8haNDGiejZA+9Cp18L2MUSaGdS
+         tKOUoDAGWQm7yFC8wG2kuqLluW1u8WDqW+ggclzxG0x6cfBCsMmlw/vz+SMUbDlXIF
+         DnN09LuR4KSWJAtuwGiVQRkKS7GeDXf5fimTKtZBy9HwbzCl/QDCz1+uSOq2t4+j7E
+         VmedVrZGXJRhQ==
+Date:   Mon, 18 Jul 2022 18:22:32 -0400
 From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
         <nfraprado@collabora.com>
 To:     Chen-Yu Tsai <wenst@chromium.org>
@@ -40,39 +40,34 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 1/2] clk: core: Honor CLK_OPS_PARENT_ENABLE for clk
- gate ops
-Message-ID: <20220718221857.7vgmsgqxozytkofa@notapiano>
+Subject: Re: [PATCH v2 2/2] clk: core: Fix runtime PM sequence in
+ clk_core_unprepare()
+Message-ID: <20220718222232.lffgerc6qfi6jnha@notapiano>
 References: <20220713082111.2233016-1-wenst@chromium.org>
- <20220713082111.2233016-2-wenst@chromium.org>
+ <20220713082111.2233016-3-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220713082111.2233016-2-wenst@chromium.org>
+In-Reply-To: <20220713082111.2233016-3-wenst@chromium.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 04:21:10PM +0800, Chen-Yu Tsai wrote:
-> In the previous commits that added CLK_OPS_PARENT_ENABLE, support for
-> this flag was only added to rate change operations (rate setting and
-> reparent) and disabling unused subtree. It was not added to the
-> clock gate related operations. Any hardware driver that needs it for
-> these operations will either see bogus results, or worse, hang.
+On Wed, Jul 13, 2022 at 04:21:11PM +0800, Chen-Yu Tsai wrote:
+> In the original commit 9a34b45397e5 ("clk: Add support for runtime PM"),
+> the commit message mentioned that pm_runtime_put_sync() would be done
+> at the end of clk_core_unprepare(). This mirrors the operations in
+> clk_core_prepare() in the opposite order.
 > 
-> This has been seen on MT8192 and MT8195, where the imp_ii2_* clk
-> drivers set this, but dumping debugfs clk_summary would cause it
-> to hang.
+> However, the actual code that was added wasn't in the order the commit
+> message described. Move clk_pm_runtime_put() to the end of
+> clk_core_unprepare() so that it is in the correct order.
 > 
-> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents enable (part 1)")
+> Fixes: 9a34b45397e5 ("clk: Add support for runtime PM")
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
-Tested that MT8192 no longer hangs when dumping clk_summary.
 
 Thanks,
 Nícolas
