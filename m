@@ -2,64 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5076C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 19:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC0EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 19:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbiGRTPx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 15:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37602 "EHLO
+        id S236232AbiGRTi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 15:38:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbiGRTPw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 15:15:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6F12F3A9;
-        Mon, 18 Jul 2022 12:15:51 -0700 (PDT)
+        with ESMTP id S236307AbiGRTix (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 15:38:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574AC6578;
+        Mon, 18 Jul 2022 12:38:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 25B91616BD;
-        Mon, 18 Jul 2022 19:15:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5489CC341C0;
-        Mon, 18 Jul 2022 19:15:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8E576B816FF;
+        Mon, 18 Jul 2022 19:38:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AC4C341C0;
+        Mon, 18 Jul 2022 19:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658171750;
-        bh=ivffnQS2mswQoB5NrsbpXchrpNQcGZflHS3nnPcl5MY=;
+        s=k20201202; t=1658173128;
+        bh=bTynAwr3TaAm3WNJ7sbmubRNZoIAMbwK3m9PnZY4z5c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m7ytv4rl0pplcivw1k7CURCkzP6fBxodsrTF73vTIStFmMTvf3N2wnCi6a5qM/DZD
-         ulQC5apEEN1aBD9Ft7U5u6QJ1Y4f2xDIPzYEAN69q6QOZSWQmcqesNQi1mchg2GM2H
-         V8ClfaXQiSzgwX8ZsZjSk27aqEtqPXw0ZqYDPagennsXQNnKp63ImBJufiB9TsUZ8X
-         HmxU7umMjXjUyfF6M6re65CL92yHE/a0Bss8d1uMNJ9vKOnZ365B/3rAwrb6Yw06gg
-         5/MjMj38PZ97YKhuV8fOcV9Dk1nqzD83YjsegYs6Jh72B2twA3KN1HZuokAQwQS6z3
-         sROxkfxq7ZA0A==
+        b=sB6BJZkTR304uuUU1Qr6OvIXrBgTZAivsVcG795lOCNuRtYG/IdzVB63Xizhpbd1l
+         DGE6nM4xJN4H7crOl3dKkhXnJDEWEk9K5vuHBWznzouqKoFJCSwHgSJ1r8bH6E8p/M
+         nZ069xBTkwtk19Za6UtBE5FhVJkXPyIBlbGWWtcdufQSwRGbPlHGNtm3oOdXDSsWjL
+         2tUcjjO/S9PRqYF7dd063RZVcL8rvNDtQDQHqTuck84ubVreV77kS7M8j9IBfk2Psr
+         7Q1bkk0PupTIDk7vji/HpMT4rirv1diqyoopjIrJwuqfJ6jpwPuv+OzcDiMysBFYuC
+         0l2LUeV/8JH/Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220713212818.130277-1-bjorn.andersson@linaro.org>
-References: <20220713212818.130277-1-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+In-Reply-To: <cover.1657279252.git.geert+renesas@glider.be>
+References: <cover.1657279252.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.20 (take two)
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Mon, 18 Jul 2022 12:15:48 -0700
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 18 Jul 2022 12:38:46 -0700
 User-Agent: alot/0.10
-Message-Id: <20220718191550.5489CC341C0@smtp.kernel.org>
+Message-Id: <20220718193848.44AC4C341C0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-07-13 14:28:18)
-> When a GDSC is found to be enabled at boot the pm_runtime state will
-> be unbalanced as the GDSC is later turned off. Fix this by increasing
-> the usage counter on the power-domain, in line with how we handled the
-> regulator state.
+Quoting Geert Uytterhoeven (2022-07-08 04:26:59)
+>         Hi Mike, Stephen,
 >=20
-> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain suppo=
-rt")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+> The following changes since commit 080bcd8d5997b1a615e17cab02bd9d16d1d4fb=
+f3:
+>=20
+>   clk: renesas: r8a779f0: Add HSCIF clocks (2022-06-17 09:14:13 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.20-tag2
+>=20
+> for you to fetch changes up to 0e704f6c42dc64f081d0b1738d06b2dee9524f27:
+>=20
+>   clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config (20=
+22-07-05 09:20:34 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Thanks. Pulled into clk-next
