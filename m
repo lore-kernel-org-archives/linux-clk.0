@@ -2,70 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC0EC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 19:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C3DC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 21:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236232AbiGRTi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 15:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
+        id S230427AbiGRVNg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 17:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236307AbiGRTix (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 15:38:53 -0400
+        with ESMTP id S229916AbiGRVNf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 17:13:35 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574AC6578;
-        Mon, 18 Jul 2022 12:38:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F10B326FD
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 14:13:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8E576B816FF;
-        Mon, 18 Jul 2022 19:38:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AC4C341C0;
-        Mon, 18 Jul 2022 19:38:48 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0C825B81616
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:13:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A160CC341C0;
+        Mon, 18 Jul 2022 21:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658173128;
-        bh=bTynAwr3TaAm3WNJ7sbmubRNZoIAMbwK3m9PnZY4z5c=;
+        s=k20201202; t=1658178811;
+        bh=3ZeacVnqNecYCnFgRv8FYWYVoPrKJUcCC4ed0oBS7ak=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sB6BJZkTR304uuUU1Qr6OvIXrBgTZAivsVcG795lOCNuRtYG/IdzVB63Xizhpbd1l
-         DGE6nM4xJN4H7crOl3dKkhXnJDEWEk9K5vuHBWznzouqKoFJCSwHgSJ1r8bH6E8p/M
-         nZ069xBTkwtk19Za6UtBE5FhVJkXPyIBlbGWWtcdufQSwRGbPlHGNtm3oOdXDSsWjL
-         2tUcjjO/S9PRqYF7dd063RZVcL8rvNDtQDQHqTuck84ubVreV77kS7M8j9IBfk2Psr
-         7Q1bkk0PupTIDk7vji/HpMT4rirv1diqyoopjIrJwuqfJ6jpwPuv+OzcDiMysBFYuC
-         0l2LUeV/8JH/Q==
+        b=PCdCZCsvn+r9ZtkjQqGHzkdN21cfynSrjXjFyP5miehsHr8iGx7OQIUgfoDo0WlmC
+         8ebdtcwMqiR8sU09qrIKvthuJIee6f/4Ia0yvWBWLA2vlH9o44ChYvBsEKrF/chC5d
+         h0TR/rm1om9KGJttczLhB2rW9RMoqlGF0/Be4ildZ+71vpksDDSw+h+aHP0IF3vQam
+         QSHCyLsmalISHXmlUwEezsZKFumd7o0xfioWG7jB0RKFZVqAfDiwwwbqZGPXJNLl7H
+         /TqBsop5kpmd5ABEpqIH+zoUmdgg/q3fwwOZrmotij9cJsZou+yuZO+NrSsxUDqXz7
+         bVZEn/DIQLskA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1657279252.git.geert+renesas@glider.be>
-References: <cover.1657279252.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.20 (take two)
+In-Reply-To: <YshcQP6rsWJHgfYO@kista.localdomain>
+References: <YshcQP6rsWJHgfYO@kista.localdomain>
+Subject: Re: [GIT PULL] Allwinner clock changes for 5.20
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 18 Jul 2022 12:38:46 -0700
+Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev
+To:     Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
+Date:   Mon, 18 Jul 2022 14:13:29 -0700
 User-Agent: alot/0.10
-Message-Id: <20220718193848.44AC4C341C0@smtp.kernel.org>
+Message-Id: <20220718211331.A160CC341C0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2022-07-08 04:26:59)
->         Hi Mike, Stephen,
+Quoting Jernej Skrabec (2022-07-08 09:33:04)
+> Hi!
 >=20
-> The following changes since commit 080bcd8d5997b1a615e17cab02bd9d16d1d4fb=
-f3:
+> Please pull following clock changes for 5.20.
 >=20
->   clk: renesas: r8a779f0: Add HSCIF clocks (2022-06-17 09:14:13 +0200)
+> Best regards,
+> Jernej
+>=20
+> The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a=
+56:
+>=20
+>   Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.20-tag2
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-for-5.20-1
 >=20
-> for you to fetch changes up to 0e704f6c42dc64f081d0b1738d06b2dee9524f27:
+> for you to fetch changes up to 4167ac8a657e4f0860419adf24d4b91a26580488:
 >=20
->   clk: renesas: rcar-gen4: Fix initconst confusion for cpg_pll_config (20=
-22-07-05 09:20:34 +0200)
+>   clk: sunxi-ng: sun50i: h6: Modify GPU clock configuration to support DF=
+S (2022-07-08 18:13:50 +0200)
 >=20
 > ----------------------------------------------------------------
 
