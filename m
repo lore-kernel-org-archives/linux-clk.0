@@ -2,64 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B114DC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 04:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E05C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 04:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233803AbiGSEsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jul 2022 00:48:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47760 "EHLO
+        id S234480AbiGSEsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jul 2022 00:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229784AbiGSEsK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 00:48:10 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE8133E20
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:09 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1013ecaf7e0so29269429fac.13
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:09 -0700 (PDT)
+        with ESMTP id S232796AbiGSEsN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 00:48:13 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02AF033E20
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-10d7170b2fcso679409fac.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=3Miz9syEFJn7QliOMjPkvrAypLemtj44SeEriFNdhzo=;
-        b=EMagCCNx42JY9bLMeQky5VTtCcgB5ZIrZc/o2b5Nd47Z2D/lqhLpuJYt3iK7C8fz2Z
-         +huY50jkXhQi0LVOT4MCbDSIdMsg4hzwOuL9WzcN+d1tG8b4OVvCoWZnall6qRNtCv2T
-         jJ4o7zyk1yvwW+Wzby8QFUH17cw3B5CH7cAVYGVSwBw/yWp2eaPh0eDHGiQOQKvNoTXo
-         QyENe8OrA+yYZXK6BMadEZ29xnOUubaDDQREGm3iIPQ7ac0TSkxYkUmOrbo4AGgWZYL/
-         vDoRSQEHcWoJ1AR3IJsbuPJXCQhKtmxeqCeCeTTFvESkppnYldc5i1tGBZmq39j1m0iZ
-         CqJA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Hrgm9iEjYHCT7vDiZxnb9/DfHJ5rEp8gmRRLQ6cFG7c=;
+        b=RECNLmCaJxojJZNOm+5PR9WHb91ExNN0P3ArQuuOqntoErDHl8ElcnKbaB7IkyjEkh
+         /iyZZpjBO2PbufjY3pu42n0cHnrmL3bpkj2bm1YeZqu9PDnKZ0E7BGNMg8cqGRww1262
+         ekvKjnBeaHtkMUvVMBbRXOWuPVTQUQuqQbmaOVT8xjIDw0vPCLFZQepPNgZTuaxGHtXn
+         SZwr+YjzyqHmkDkXIi2TxCOzrf5m57cCw6zxkajKmplEyyoj+LiRbzZPVM1AQr7OtCCz
+         lpiySCgc4GRaa5+f3VHDQbXPwWWWF63DXxrkKd0O6GqchZrOePtNbbvC3EDCKMW/Sbsq
+         Ad1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3Miz9syEFJn7QliOMjPkvrAypLemtj44SeEriFNdhzo=;
-        b=3mPigRFQh/7K5SMxWt/oMS3mtnFPCN+48FTiX6CPlM1Q2N6D93Mrkv6EMMlk/7vH9I
-         CerOI1G/fP7GEsRVeumnUTjyBEGTqPPDaiLhUsfj5oLaNp1Hc4DORPDWutIuI7LmE36n
-         1PGTqJqAt5S6RPPfXJPHGTslhNxo7dIAZZfYgb44LOpCorhJzSxdS6QZ8DeBaNGxmoPA
-         LWsYMNqZZTCSNKexJ+QCMNM+bCNxs1JoEVIn1Ks9s5k0x3nTGlzpq+JdPVcYHap2BLRC
-         c3QyqOHt2xNvNqKyw8IGS3Z1otJ8s3tWi9z0xyGizYWwjrxv4UimAUrQPYrDtdwaqcxr
-         GOnw==
-X-Gm-Message-State: AJIora/EQiKAlf8zNEwdkFSe3g66hpp7bDei7YJsO88LRGekadtcMEOq
-        BJ1XKq2/s6xMsKTXhufEwauAJA==
-X-Google-Smtp-Source: AGRyM1tsSjfRTUVstZHZ6U28OsKodWt1hi4Twskm2X3hpdboUZvvg/D8U0Smg+fRxOLk2pe41UjoCQ==
-X-Received: by 2002:a05:6870:231d:b0:10b:7a0e:1be6 with SMTP id w29-20020a056870231d00b0010b7a0e1be6mr16000377oao.114.1658206088532;
-        Mon, 18 Jul 2022 21:48:08 -0700 (PDT)
+        bh=Hrgm9iEjYHCT7vDiZxnb9/DfHJ5rEp8gmRRLQ6cFG7c=;
+        b=Lb8/MIX+Te0o6MVhniWLFX78xxZpgWV6LW0s8GqXV1M+hduLR93MV6fUWTpeLZnNTU
+         vcQdiM4FLL7/Yypu9p6dVl3Gja65fpUToLbwhGD+MLwNSNldnfmxqhMVCrjb7xjI7Xd+
+         WtOZk/YgNWOlbBfp9zBtqCWy9HZzDb56JG1BsOxvepdXSnmcHsqU96W7HV+BY7qExZh6
+         OcgmRu/+9JXhlTRGin9y2cw9ZWZJU3cKKlYyEnH7azMBGTE07035tQvc39w3rTyIqwtg
+         oAsU7RVzCX8rvukNTP2kkjQFAGIjwrBB3RPkPJ2up8hL7SE7MMLUyvBj7YQvGOJytZjR
+         OiFw==
+X-Gm-Message-State: AJIora/45CqdTTlNyu9duk1q65/MfYLvLWHowIMD/lVr6tqS5VCvIlYv
+        9fUo28L36Y6QXC0FuYC7OLPInw==
+X-Google-Smtp-Source: AGRyM1vGiqdkuIEkrXAVQzakFroZcZdk2ytwJ2YMCWLQz7mDYQ0epTYbKJP1cZ/zA5Q6b9I/RVOpDQ==
+X-Received: by 2002:a05:6870:5715:b0:101:a89e:8d6b with SMTP id k21-20020a056870571500b00101a89e8d6bmr16289832oap.277.1658206091614;
+        Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w9-20020a9d70c9000000b0061c9bbac1f9sm2803209otj.16.2022.07.18.21.48.07
+        by smtp.gmail.com with ESMTPSA id w9-20020a9d70c9000000b0061c9bbac1f9sm2803209otj.16.2022.07.18.21.48.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 21:48:08 -0700 (PDT)
+        Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, ansuelsmth@gmail.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        krzysztof.kozlowski+dt@linaro.org
-Subject: Re: (subset) [PATCH v2 0/4] clk: qcom: Drop use of pxo/cxo_board for rpm devices
-Date:   Mon, 18 Jul 2022 23:47:56 -0500
-Message-Id: <165820608074.1955453.9110920777524045791.b4-ty@linaro.org>
+To:     bjorn.andersson@linaro.org, sboyd@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org,
+        linux-clk@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: (subset) [PATCH v2] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+Date:   Mon, 18 Jul 2022 23:47:59 -0500
+Message-Id: <165820608069.1955453.5113985730851647863.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220706225321.26215-1-ansuelsmth@gmail.com>
-References: <20220706225321.26215-1-ansuelsmth@gmail.com>
+In-Reply-To: <20220713212818.130277-1-bjorn.andersson@linaro.org>
+References: <20220713212818.130277-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,20 +66,18 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 7 Jul 2022 00:53:17 +0200, Christian Marangi wrote:
-> Trying to convert every driver used by ipq806x to parent_data api, I notice
-> RPM was still using pxo_board clk.
+On Wed, 13 Jul 2022 14:28:18 -0700, Bjorn Andersson wrote:
+> When a GDSC is found to be enabled at boot the pm_runtime state will
+> be unbalanced as the GDSC is later turned off. Fix this by increasing
+> the usage counter on the power-domain, in line with how we handled the
+> regulator state.
 > 
-> pxo and pxo_board are the same clock and are defined just to handle old
-> clock definition. It was discovered that rpm is the last driver using
-> pxo_board instead of pxo.
 > 
-> [...]
 
 Applied, thanks!
 
-[2/4] ARM: DTS: qcom: add rpmcc missing clocks for apq/ipq8064 and msm8660
-      commit: aa7fd3bb6017b343585e97a909f9b7d2fe174018
+[1/1] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
+      commit: 41fff779d7948147f2440c4bb134cdf8b45b22d7
 
 Best regards,
 -- 
