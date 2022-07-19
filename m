@@ -2,132 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B97C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 01:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE7CC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 02:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236509AbiGSB5U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 21:57:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34402 "EHLO
+        id S235192AbiGSCjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 22:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236530AbiGSB5R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 21:57:17 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301B43A4A7;
-        Mon, 18 Jul 2022 18:57:09 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id h14-20020a1ccc0e000000b0039eff745c53so8328224wmb.5;
-        Mon, 18 Jul 2022 18:57:09 -0700 (PDT)
+        with ESMTP id S234465AbiGSCjH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 22:39:07 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E7026566
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 19:39:06 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-f2a4c51c45so28808157fac.9
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 19:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=cMdIIoXo0FxTmPtZAYMM+ebkWDuNNu4halIh9g0H150=;
-        b=QEp68kdpNdHrPewjZ17Oqg9GlxRj3DcdLdteTarojRBSKXQM8FA9DGO5RuIwk0IIXE
-         aMlkHP9fRnLlSLaVutro69FwqJ4AYy6FxgpzjBuacIBzxjbXlWEnDu1UYVNoaRWJfSao
-         o8gOCNkyaXDfikW1l/wXL3otFgYKE52dP3xeXWcvdWhaaywZiQg+YrIgt67mZM8pk+st
-         58ibWKjy9vqw1WXde0+SNC75AqVBYX2I5d7zesnQsOuh+J7ZDfou7UHQ0A46MoYjo++X
-         yR/akz5RYGHCau4jwZrDqvz8Y1e/E+mDSmK/n0oA50UvMloDix3hjvhNDm7ATiKQYB6+
-         PInw==
+        bh=wm/d7g9+Kn3JB5OGUKlcMYsTmYkIW1B3SgCJ+oJ3vPY=;
+        b=qj+zm++BHUM19KuCYUWWGC9VksbbnkAY2Yoll9PG/f71LMcHVsVacpzH+ZJ8/rLpcx
+         PcbhY+WSU6tmQCXl6m4z9IZcvrzlpUhVHZSuq8JhaMOSm7Ah+q+v52xxyx9BiQRbTcRN
+         qzCFOwxpPNMqHX0dURrkwnM6OHvSJBSzVqR3u5yPRufyidgGW8QKucaqvvPJsjE/TF/L
+         /d9vxXX9w++niTY41HYrIMTKAr1ocB7COLldmtw50NA8ijMPCwD+w3dOwNb9C9DnTHH2
+         mkOa/AGa6wb6o1YNNEJNi+tu02kVBmMeU2RJWt5UwRNIK50wkYJ4naM0PqYMyl5fgPgl
+         ZaYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=cMdIIoXo0FxTmPtZAYMM+ebkWDuNNu4halIh9g0H150=;
-        b=UEMGv0B52jI97bkG2IPDD7QA35DbixVmNROWod3bGN+DGl9HYzIuUTYNvvp6wXcu7h
-         siYTVeeJzglZip06YvsN63FNmWIo9/vdL7FkgwKBx3BvuizxC4azufVQ+0QFXWoF3x54
-         pioQlQ5qN5IqflJ4h/Yomli3IZxGUYXBFwzMro588MwN3dVQ6sRMvbu22hhvu5S8gfPz
-         gsPHNwKjtJot5lMI7741qJj6ZKWETXkKuIdfRZJeFAH0Z8RxiM3ru6ueyD6+yazja4UR
-         aj26yY5s+L0mFrTnisZhuPLRXQw1E4VB1UsM5+H7xDXbBQ+Q30quZkulDu28DhSW7bWn
-         5LHw==
-X-Gm-Message-State: AJIora9dtTJXU75dz8cTNZb5NMQSnT3o9EzCI5fdSAzp/gw53zE6nAc3
-        7uAmTBeqCddM3YFgxrTKp0NhBlc2SB4=
-X-Google-Smtp-Source: AGRyM1uIG7y0Cw3cup9C6XUdbEkziq17iApIgTsjUJfsrpyS2sx5wh/uBSkgRD+Z4/eq70fFM9PxEA==
-X-Received: by 2002:a05:600c:1d17:b0:3a2:ff6b:9a2d with SMTP id l23-20020a05600c1d1700b003a2ff6b9a2dmr23755129wms.103.1658195827618;
-        Mon, 18 Jul 2022 18:57:07 -0700 (PDT)
-Received: from Ansuel-xps. (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.gmail.com with ESMTPSA id r129-20020a1c2b87000000b003a2eacc8179sm16981793wmr.27.2022.07.18.18.57.06
+        bh=wm/d7g9+Kn3JB5OGUKlcMYsTmYkIW1B3SgCJ+oJ3vPY=;
+        b=ggF0ubQ+6oqCI6Lz0vgOBTg3obQthaVwgZUL56Tm5KR2xFBQAYjgfSEaXQhyiBrISZ
+         fdepEVFcfz4Zouhsp1FS9eYcufAEL4ci8PQRvIFp1dfzP1dML8g1iSNpeNfkXcbEDihI
+         XxR6zG6C6oQ+1rLhDeniOc9NzSqds86NrJuCNaBGcQyPJ+HPHRJGHK4IROn1uvirfVaM
+         BcmcFItUJ7xK2ifGAnih+ltaR0jMl46GH8e46zYs8v1+tqNEnsd00Rt9HccSzM3ZXAk8
+         PYFaPEyo4WZLsLtiv/TF/U2iveLDog9XDPwmBMcFUVLrgpvTOl41Q5VRtHuD3rqc739h
+         74xQ==
+X-Gm-Message-State: AJIora/MnzRN8P7Rc/M+8XDZ6p6lWpKlYbX+0QlYxCAA1zobD8JR+IFL
+        nl6JKgsyuUiLPJsSXj+0AUqHnw==
+X-Google-Smtp-Source: AGRyM1v9rzKtUFZreXzWZUMZg6qf4gz5UAJnvdDhJcDD7UtLWZLNDCLDmHphVGWEwgqoLgSXjbs7kw==
+X-Received: by 2002:a05:6808:654:b0:33a:66b8:a7ef with SMTP id z20-20020a056808065400b0033a66b8a7efmr6406262oih.108.1658198346055;
+        Mon, 18 Jul 2022 19:39:06 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id m3-20020a9d4003000000b0061c34f86b31sm5765168ote.5.2022.07.18.19.39.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 18:57:07 -0700 (PDT)
-Message-ID: <62d60f73.1c69fb81.feea9.5487@mx.google.com>
-X-Google-Original-Message-ID: <YtYLcONk3l90lJL8@Ansuel-xps.>
-Date:   Tue, 19 Jul 2022 03:40:00 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mon, 18 Jul 2022 19:39:05 -0700 (PDT)
+Date:   Mon, 18 Jul 2022 21:39:03 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: qcom: gcc-ipq806x: remove cc_register_board
- for pxo and cxo
-References: <20220706225321.26215-1-ansuelsmth@gmail.com>
- <20220706225321.26215-5-ansuelsmth@gmail.com>
- <YtX2///aNWyhKpJn@builder.lan>
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: a53-pll: convert to use parent_data rather
+ than parent_names
+Message-ID: <YtYZR9tsfNw8OwvO@builder.lan>
+References: <20220620010643.1533531-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YtX2///aNWyhKpJn@builder.lan>
+In-Reply-To: <20220620010643.1533531-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 18, 2022 at 07:12:47PM -0500, Bjorn Andersson wrote:
-> On Wed 06 Jul 17:53 CDT 2022, Christian Marangi wrote:
-> 
-> > Now that these clock are defined as fixed clk in dts, we can drop the
-> > register_board_clk for cxo_board and pxo_board in gcc_ipq806x_probe.
-> > 
-> 
-> Are you trying to say, that now that we have .fw_name based lookup of
-> these clocks we don't need the globally registered [cp]xo clocks to
-> bridge towards the [cp]xo_board_clocks which was introduced in:
-> 
-> 30fc4212d541 ("arm: dts: qcom: Add more board clocks")
-> 
-> I think this change would work out if you also replace .name = "pxo"
-> with .name = "pxo_board_clk" (and same for cxo)...
->
+On Sun 19 Jun 20:06 CDT 2022, Dmitry Baryshkov wrote:
 
-Mhhh why pxo_board_clk? Why _clk? It should be pxo_board.
-Anyway about this, only the rpm clocks use pxo_board as parent,
-everything else use pxo. Aside from rpm and gcc the other user of pxo is
-the lcc driver and the krait-xcc clock. I sent patches to convert them.
-
+> Change a53-pll driver to use clk_parent_data rather than always looking
+> up the xo clock in the system clock list.
 > 
-> But I don't think we can just drop these, as it would break
-> compatibility with existing devicetree.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/a53-pll.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+> index 329d2c5356d8..f9c5e296dba2 100644
+> --- a/drivers/clk/qcom/a53-pll.c
+> +++ b/drivers/clk/qcom/a53-pll.c
+> @@ -127,7 +127,9 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
+>  	if (!init.name)
+>  		return -ENOMEM;
+>  
+> -	init.parent_names = (const char *[]){ "xo" };
+> +	init.parent_data = &(const struct clk_parent_data){
+> +		.fw_name = "xo", .name = "xo_board",
 
-Wonder if we will be able to drop this ever? 
+This used to look up the globally named clock "xo", now it picked up
+"xo_board". If this is intentional, could you please update the commit
+message to cover this part?
 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/qcom/gcc-ipq806x.c | 8 --------
-> >  1 file changed, 8 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> > index 718de17a1e60..883629de2751 100644
-> > --- a/drivers/clk/qcom/gcc-ipq806x.c
-> > +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> > @@ -3384,14 +3384,6 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
-> >  	struct regmap *regmap;
-> >  	int ret;
-> >  
-> > -	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 25000000);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	ret = qcom_cc_register_board_clk(dev, "pxo_board", "pxo", 25000000);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> >  	if (of_machine_is_compatible("qcom,ipq8065")) {
-> >  		ubi32_core1_src_clk.freq_tbl = clk_tbl_nss_ipq8065;
-> >  		ubi32_core2_src_clk.freq_tbl = clk_tbl_nss_ipq8065;
-> > -- 
-> > 2.36.1
-> > 
+Thanks,
+Bjorn
 
--- 
-	Ansuel
+> +	};
+>  	init.num_parents = 1;
+>  	init.ops = &clk_pll_sr2_ops;
+>  	pll->clkr.hw.init = &init;
+> -- 
+> 2.35.1
+> 
