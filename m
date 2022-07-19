@@ -2,87 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A092BCCA479
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Jul 2022 22:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3481C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 00:12:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236282AbiGRW7Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Jul 2022 18:59:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55214 "EHLO
+        id S236626AbiGSAM6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Jul 2022 20:12:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236258AbiGRW7X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 18:59:23 -0400
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CFF02CDD8
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
-Received: by mail-ot1-x32f.google.com with SMTP id r22-20020a056830419600b0061c6edc5dcfso10437078otu.12
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
+        with ESMTP id S235635AbiGSAMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jul 2022 20:12:53 -0400
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30261357D3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 17:12:51 -0700 (PDT)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-10d6cdf829aso609346fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 17:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=62y54wQxB5Ga3NFTlaQlQOLlwSf/Xs6fX8rzpQ+b4NE=;
-        b=xeNVIxJIQGfmaCIF0FuGOVeMGZsPxdGgO4m0U7Etg9XEKTyE2fZQWlB5awqxEfHrzR
-         ru+gQpjkDGRUEPS/+SHyHTah/uirFcFjYUa1s8EGKFcZD7gjoriEmukvNwZVxKcG7nrU
-         VnwDgyhJuy7qRQ0v9i9fjr0BqlLyEokCE4KPJrCmIJTegyAPrc+evYpIMr9sWkUbs/2V
-         79m3pEBPRvH99k6xzR7P7C3WGKfoIx1Y7SMjp+onMeFLRY0fH+4OKZtfLFGGfNCLu4IS
-         51OrGwI+EGlUIoYPi3HEJ3BNbOH/Cl+e5B3pJLO10Io5jyqnyaYqGLL8jkN8QY/0Yd+T
-         p2nQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pCnOpb/tAWKWPuLC7zFzL9Qy3rXC3raHyDODfytTBvo=;
+        b=R4AhdQijFE22qPnuP8yQk+M/z15peEnGnkKXOCnjUdkAyL/8qYwcHUjbV158/lM6gk
+         sOyavYbNdkIe+MD0G2ei2o1p0XnUtTA2n1crgGwCQOVlDSiuU1QNw148fxYCb2Hn2CZ5
+         00w5GIrzsUT6WALe+OkBqMLXZNrKjZXV/x8xQSScsq84JE0y1I8C2OxrD2HrX35UrIDS
+         s/8jkY6F3XIMtaWX2O0R0XXeLtxRgzpwC9QLHT8YzHdbcbRJC6PQXYNlK3gb97tugHze
+         EAd1IOnVRw6dG/2+z2/q8ET2qWYmUZRPaLYmdlIiPl1rxuoxhQgPNeLNoyKou+G0Hlbi
+         KeVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=62y54wQxB5Ga3NFTlaQlQOLlwSf/Xs6fX8rzpQ+b4NE=;
-        b=r03Gj6fyGnUpzlU9LQOSqCWuF+m+Xo2dMRwvU9bGlVpzBpiXnMTIxU9i80cv2RtDPF
-         00EDaaLSapulEGuNxvFZFn5VE7yJow0WBKIcTuf9Nwbb/uIUH+1YwCexTf90OuY3IkGY
-         g48QxXGuOO533bJq95ZMNhxRLH+qE1ea2JuPwX6N1DMKPc8xzj5YYPXIE2rE5HF2iHL3
-         /smRSIysE0M+VRM9yRzDQFT4nUXLm/t/HBik79ZLp0O5ThmDiDNLtEER5UZYvxVdVacf
-         FA/+KNJfzk2Ro07TeVMuHJ2jlv5gM1riADkWaO6r6+ZarmmH7EGcPiEvqtvLNvHuCk1S
-         K9fg==
-X-Gm-Message-State: AJIora/F63DOutBKewY5c09fHKpjGNZoWDwOvTZkNWIg7W2s22GrWoFC
-        jqSePauhEXyT6JqUgciAIjbSSA==
-X-Google-Smtp-Source: AGRyM1u4xgWpcB3MTEEaiDUTpGZZrIEArX+mVcAS0lu3qMxLRot0DnvnH9s/exLkIl9stcVu5tO0sA==
-X-Received: by 2002:a05:6830:3706:b0:61c:5d4c:7a26 with SMTP id bl6-20020a056830370600b0061c5d4c7a26mr11459899otb.250.1658185161387;
-        Mon, 18 Jul 2022 15:59:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pCnOpb/tAWKWPuLC7zFzL9Qy3rXC3raHyDODfytTBvo=;
+        b=LyenWHtkD7VJLYqMgyssFo+RSfPNdEI2clRSlxnjp9OiYI4zswuehftUbxbgCvLFRM
+         DuUV3XnSijcEphhNHFqosTmupxr/jTVlgYz5B3gxLHFjG6bx7DiWVXh26GCzYmanmr1M
+         Y1JNXADTcwTAb83r/hoFv5yTzXVbeFoJxYD8yrkT7q59nAFiiy6OuuJfAlFNBIgrS13Y
+         kQTMzJ8hsOGmVe5ppggCL7/MD0zIYnse/iSI5BnM9+L3yIS8d5O7OhY+7ZvgJulq3GOF
+         WMQR67YXbJQJ8ydYSTonU0zw5M3FAakef5ezC4uELBG65UhKRyTtAwUzpUhAsOb6HHZg
+         cyXg==
+X-Gm-Message-State: AJIora8Yobc3OJptBVRQx0XqAFWog2ByO+N3RgRZF7c5CbUzyH2UBsvL
+        j0NLGXshC+1Sa+ZdtZbepAD5vg==
+X-Google-Smtp-Source: AGRyM1vHxTCyv1ECJGzC7VKq76lVZumQrcmY3StVxmqIC00SmPeiy/bVkrqijGWSzpEwnT9EqgONqg==
+X-Received: by 2002:a05:6870:2423:b0:fe:4131:6db9 with SMTP id n35-20020a056870242300b000fe41316db9mr15575223oap.75.1658189570175;
+        Mon, 18 Jul 2022 17:12:50 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id j10-20020a4a908a000000b0041ba304546csm5330931oog.1.2022.07.18.15.59.20
+        by smtp.gmail.com with ESMTPSA id n23-20020a056870559700b0010c727a3c79sm7214120oao.26.2022.07.18.17.12.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 15:59:20 -0700 (PDT)
+        Mon, 18 Jul 2022 17:12:49 -0700 (PDT)
+Date:   Mon, 18 Jul 2022 19:12:47 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-        agross@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, mathieu.poirier@linaro.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: (subset) [PATCH 4/8] rpmsg: qcom: glink: replace strncpy() with strscpy_pad()
-Date:   Mon, 18 Jul 2022 17:59:06 -0500
-Message-Id: <165817634384.1905814.11996354687051888253.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220501103520.111561-4-krzysztof.kozlowski@linaro.org>
-References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org> <20220501103520.111561-4-krzysztof.kozlowski@linaro.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] clk: qcom: gcc-ipq806x: remove cc_register_board
+ for pxo and cxo
+Message-ID: <YtX2///aNWyhKpJn@builder.lan>
+References: <20220706225321.26215-1-ansuelsmth@gmail.com>
+ <20220706225321.26215-5-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220706225321.26215-5-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 1 May 2022 12:35:16 +0200, Krzysztof Kozlowski wrote:
-> The use of strncpy() is considered deprecated for NUL-terminated
-> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
-> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
-> glink: Replace strncpy() with strscpy_pad()").  This fixes W=1 warning:
+On Wed 06 Jul 17:53 CDT 2022, Christian Marangi wrote:
+
+> Now that these clock are defined as fixed clk in dts, we can drop the
+> register_board_clk for cxo_board and pxo_board in gcc_ipq806x_probe.
 > 
->   In function ‘qcom_glink_rx_close’,
->     inlined from ‘qcom_glink_work’ at ../drivers/rpmsg/qcom_glink_native.c:1638:4:
->   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
->    1549 |                 strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+
+Are you trying to say, that now that we have .fw_name based lookup of
+these clocks we don't need the globally registered [cp]xo clocks to
+bridge towards the [cp]xo_board_clocks which was introduced in:
+
+30fc4212d541 ("arm: dts: qcom: Add more board clocks")
+
+I think this change would work out if you also replace .name = "pxo"
+with .name = "pxo_board_clk" (and same for cxo)...
+
+
+But I don't think we can just drop these, as it would break
+compatibility with existing devicetree.
+
+Regards,
+Bjorn
+
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  drivers/clk/qcom/gcc-ipq806x.c | 8 --------
+>  1 file changed, 8 deletions(-)
 > 
-> [...]
-
-Applied, thanks!
-
-[4/8] rpmsg: qcom: glink: replace strncpy() with strscpy_pad()
-      commit: 766279a8f85df32345dbda03b102ca1ee3d5ddea
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+> diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+> index 718de17a1e60..883629de2751 100644
+> --- a/drivers/clk/qcom/gcc-ipq806x.c
+> +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> @@ -3384,14 +3384,6 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
+>  	struct regmap *regmap;
+>  	int ret;
+>  
+> -	ret = qcom_cc_register_board_clk(dev, "cxo_board", "cxo", 25000000);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = qcom_cc_register_board_clk(dev, "pxo_board", "pxo", 25000000);
+> -	if (ret)
+> -		return ret;
+> -
+>  	if (of_machine_is_compatible("qcom,ipq8065")) {
+>  		ubi32_core1_src_clk.freq_tbl = clk_tbl_nss_ipq8065;
+>  		ubi32_core2_src_clk.freq_tbl = clk_tbl_nss_ipq8065;
+> -- 
+> 2.36.1
+> 
