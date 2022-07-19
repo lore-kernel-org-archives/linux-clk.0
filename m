@@ -2,252 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D9FC43334
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 15:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99892C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 18:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238465AbiGSPXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jul 2022 11:23:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52768 "EHLO
+        id S238235AbiGSShd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jul 2022 14:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230263AbiGSPXW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 11:23:22 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B58564DF
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 08:23:20 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id a10so17780706ljj.5
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 08:23:20 -0700 (PDT)
+        with ESMTP id S233698AbiGSShc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 14:37:32 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169C04D165;
+        Tue, 19 Jul 2022 11:37:31 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id os14so28881424ejb.4;
+        Tue, 19 Jul 2022 11:37:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=pqhYCDa4k7BSkOT4b1kC76TRKt393t/siOxiGVNN+FI=;
-        b=PIMjyrgrsG9g6DN8NQgtQqvQkaB19xb7Eb7e1Ts+N+rZ+Iy6q9lnejF08vOwSza2Wl
-         hL5vNVFdOf52quFtQeKwD7f7Lz4l03nnu1jC1CRMkeRkMFLhYuwQyskBgA2p2wT1THmS
-         9h3ubm2WjQLxeQ0OyEFv4zLVWZa/5/9Mg64XNd0lNWXyJPfOFMqGtKtDPe9mDao1nNH2
-         bUlkbK9rwt7yFiDn2nObmO2aOpp1ti2VrPKLYxw/pSyvF2yfU36fVDnGHT8447EcmpB6
-         sI+opxU/rIGM4Fp+vsjrRibeVlx19ph4M4/tXxx91xHHQ0mjH4NTAFWD/F10drlqwX5j
-         9/3w==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cmI+PQby/2CoTm1Le4E4JzH/gDv5I8DfTHHCjF+E0Yo=;
+        b=bnapr9AglL7uJ+mEdePPNRjhQ+56XJg0PqREOWrSGwly5HmTo3Pf8wBgUKwYqlDXHW
+         G0xrgAPoC+IUkE+p4NB18uKVhqtIj55YPPQiV+AZaYa+ExFaIttNQIEzXeY34Mc9rqDa
+         M2KY6ixz2qOYzyRtUie1UGdONzvPefyYZkcdysBmO/m/Lypo2w6wgsZps5aHqI37MhcL
+         c2vjJtPGHhTy5IyDXHBWjNTOYggTJNcAcbVtEOoq55h0dU1VbIB8QBq4xVequAa7PI0z
+         51MubYzQIECe2InjtZ+oSxYppZGRJyA1MfqYIcHeW3cR+/USBexggDzau8yvOoa4j/Db
+         honQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pqhYCDa4k7BSkOT4b1kC76TRKt393t/siOxiGVNN+FI=;
-        b=IhhJtomwDuJIvQ5Zu03K8aRXSul0X1O5NBEGm/bFtb/jaaZ8rmQAr8DyLUc6pxEA8V
-         l3NNzHpn+Rdnll8Xk3Qqy9ONTVAeyAmmSTA2O+AkXFmICcB0VG37+4dGxE9eNvyYg4Ow
-         SR2bwLQBhEAoQ8saKjjRF4hZwzGwy9DhBJfx/YhtEHHsi5SVnDwy62p5EQu+qaZfUZGf
-         pZ2ZTo9DazrZ4+SSExGETSMslt1/EKNI1QZZvvveNTKqEacZ6J0OlXU3Ceg9fvsVUc+M
-         2VrlNF6VJlwZJU1oD7rnpLaufcmXTpoXGNvu0/0gNIKTWeCeO34THQVSGSfWy4czbqVH
-         UwBw==
-X-Gm-Message-State: AJIora+9YyUriJT5fUxieqGttFeBI84G6y/+bCLT1Y+o8IOqB5j05iZA
-        sdg7B0kGekjW+LOizO+XDh4RqQ==
-X-Google-Smtp-Source: AGRyM1tOCKexAFz+e+zGasNjbn1CaiiOB7LbcNcKmkcqU8xiVvgvWs/GGve6vLW44dGoc3R2fu9D/w==
-X-Received: by 2002:a2e:9e48:0:b0:258:fc8b:491f with SMTP id g8-20020a2e9e48000000b00258fc8b491fmr15527456ljk.36.1658244198777;
-        Tue, 19 Jul 2022 08:23:18 -0700 (PDT)
-Received: from [192.168.43.7] ([188.162.64.163])
-        by smtp.gmail.com with ESMTPSA id d1-20020a056512368100b0047f4291a118sm3270528lfs.192.2022.07.19.08.23.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Jul 2022 08:23:18 -0700 (PDT)
-Message-ID: <0eda5492-c933-c977-e0db-3bc92749afda@linaro.org>
-Date:   Tue, 19 Jul 2022 18:23:14 +0300
+        bh=cmI+PQby/2CoTm1Le4E4JzH/gDv5I8DfTHHCjF+E0Yo=;
+        b=wB/kUXVX7RY4s7+eXaUgNBA2peYYMbW0QgiqrveF+w7i8bMO6wASOTtZqJYDTx3PI3
+         CCTIVdjcl4fN9j2dJHdOTtdpjN6YT0QRQ+ApTp3tJ55P/qqXbffXonDmVCFu7IGPKcxz
+         WcYO5kvtmZ6HgHCsCvQmiHr8j05lT4OwKrI20I73QnV9KkwXZXL+CCEtox21LHNzS7vk
+         Pzvzjf6lXGIG3qBYZe1E9a7XjxHQWNy/I+o9VC9MCU0Ls9JxIsi7+C+QYNH05/t+Ft5i
+         dQZpPzTaqOqr6KZrFM5jpobsZuLAdCoknepTuR0/ditTpmixYtGrU9U6Nsj3K5aF3h7D
+         tQZw==
+X-Gm-Message-State: AJIora+9eHwxVqyfiWzRzaWa2BVS28pivkMMLPdHAhb1138JuAEiG3pC
+        cDC3sRlsdbr/oo/g9bApWTs=
+X-Google-Smtp-Source: AGRyM1v0H52s37VXka8PL070L/fUmtAwwIDJVKfV4hQtsMLDYV0jRrvxrpV+jaX2mNOgVIZz9/o6Zg==
+X-Received: by 2002:a17:907:980d:b0:72f:2cf2:9aff with SMTP id ji13-20020a170907980d00b0072f2cf29affmr11494969ejc.165.1658255849567;
+        Tue, 19 Jul 2022 11:37:29 -0700 (PDT)
+Received: from kista.localdomain (86-58-13-89.dynamic.telemach.net. [86.58.13.89])
+        by smtp.gmail.com with ESMTPSA id w13-20020aa7cb4d000000b0043a5004e714sm10830602edt.64.2022.07.19.11.37.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Jul 2022 11:37:28 -0700 (PDT)
+From:   Jernej Skrabec <jernej.skrabec@gmail.com>
+To:     samuel@sholland.org, wens@csie.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, andre.przywara@arm.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
+Date:   Tue, 19 Jul 2022 20:37:25 +0200
+Message-Id: <20220719183725.2605141-1-jernej.skrabec@gmail.com>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v5 3/3] clk: qcom: lcc-ipq806x: convert to parent data
-Content-Language: en-GB
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20220708000338.26572-1-ansuelsmth@gmail.com>
- <20220708000338.26572-3-ansuelsmth@gmail.com> <YtY2NWYq3Xbxu2pc@builder.lan>
- <62d6a229.1c69fb81.d5d0b.ac4a@mx.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <62d6a229.1c69fb81.d5d0b.ac4a@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/07/2022 15:23, Christian Marangi wrote:
-> On Mon, Jul 18, 2022 at 11:42:29PM -0500, Bjorn Andersson wrote:
->> On Thu 07 Jul 19:03 CDT 2022, Christian Marangi wrote:
->>
->>> Convert lcc-ipq806x driver to parent_data API.
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
->>> ---
->>> v5:
->>> - Fix the same compilation error (don't know what the hell happen
->>>    to my buildroot)
->>> v4:
->>> - Fix compilation error
->>> v3:
->>>   - Inline pxo pll4 parent
->>>   - Change .name from pxo to pxo_board
->>>
->>>   drivers/clk/qcom/lcc-ipq806x.c | 77 ++++++++++++++++++----------------
->>>   1 file changed, 42 insertions(+), 35 deletions(-)
->>>
->>> diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
->>> index ba90bebba597..72d6aea5be30 100644
->>> --- a/drivers/clk/qcom/lcc-ipq806x.c
->>> +++ b/drivers/clk/qcom/lcc-ipq806x.c
->>> @@ -34,7 +34,9 @@ static struct clk_pll pll4 = {
->>>   	.status_bit = 16,
->>>   	.clkr.hw.init = &(struct clk_init_data){
->>>   		.name = "pll4",
->>> -		.parent_names = (const char *[]){ "pxo" },
->>> +		.parent_data = &(const struct clk_parent_data) {
->>> +			.fw_name = "pxo", .name = "pxo_board",
->>
->> This changes the behavior from looking for the globally named "pxo" to
->> look for the globally named "pxo_board", in the event that no
->> clock-names of "pxo" was found (based on the .fw_name).
->>
->> So you probably want to keep this as .fw_name = "pxo", .name = "pxo".
->>
-> 
-> Hi,
-> I will make this change but just for reference, I could be wrong by
-> Dimitry pointed out that the pattern is .fw_name pxo .name pxo_board.
-> The original patch had both set to pxo and it was asked to be changed.
+While RTC clock was added in H616 ccu_common list, it was not in H6
+list. That caused invalid pointer dereference like this:
 
-We are generally trying to get rid of manually registered 'pxo' clock, 
-thus all parent_names = pxo/cxo/xo entries are converted to .fw_name = 
-"pxo/cxo/xo", .name = "pxo_board/cxo_board/xo_board" clocks. This has 
-been done previously for all converted drivers w/o any questions. May be 
-it's worth it mentioning pxo_board in the commit message.
+Unable to handle kernel NULL pointer dereference at virtual address 000000000000020c
+Mem abort info:
+  ESR = 0x96000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004
+  CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000000004d574000
+[000000000000020c] pgd=0000000000000000, p4d=0000000000000000
+Internal error: Oops: 96000004 [#1] PREEMPT SMP
+CPU: 3 PID: 339 Comm: cat Tainted: G    B             5.18.0-rc1+ #1352
+Hardware name: Tanix TX6 (DT)
+pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : ccu_gate_is_enabled+0x48/0x74
+lr : ccu_gate_is_enabled+0x40/0x74
+sp : ffff80000c0b76d0
+x29: ffff80000c0b76d0 x28: 00000000016e3600 x27: 0000000000000000
+x26: 0000000000000000 x25: 0000000000000002 x24: ffff00000952fe08
+x23: ffff800009611400 x22: ffff00000952fe79 x21: 0000000000000000
+x20: 0000000000000001 x19: ffff80000aad6f08 x18: 0000000000000000
+x17: 2d2d2d2d2d2d2d2d x16: 2d2d2d2d2d2d2d2d x15: 2d2d2d2d2d2d2d2d
+x14: 0000000000000000 x13: 00000000f2f2f2f2 x12: ffff700001816e89
+x11: 1ffff00001816e88 x10: ffff700001816e88 x9 : dfff800000000000
+x8 : ffff80000c0b7447 x7 : 0000000000000001 x6 : ffff700001816e88
+x5 : ffff80000c0b7440 x4 : 0000000000000001 x3 : ffff800008935c50
+x2 : dfff800000000000 x1 : 0000000000000000 x0 : 000000000000020c
+Call trace:
+ ccu_gate_is_enabled+0x48/0x74
+ clk_core_is_enabled+0x7c/0x1c0
+ clk_summary_show_subtree+0x1dc/0x334
+ clk_summary_show_subtree+0x250/0x334
+ clk_summary_show_subtree+0x250/0x334
+ clk_summary_show_subtree+0x250/0x334
+ clk_summary_show_subtree+0x250/0x334
+ clk_summary_show+0x90/0xdc
+ seq_read_iter+0x248/0x6d4
+ seq_read+0x17c/0x1fc
+ full_proxy_read+0x90/0xf0
+ vfs_read+0xdc/0x28c
+ ksys_read+0xc8/0x174
+ __arm64_sys_read+0x44/0x5c
+ invoke_syscall+0x60/0x190
+ el0_svc_common.constprop.0+0x7c/0x160
+ do_el0_svc+0x38/0xa0
+ el0_svc+0x68/0x160
+ el0t_64_sync_handler+0x10c/0x140
+ el0t_64_sync+0x18c/0x190
+Code: d1006260 97e5c981 785e8260 8b0002a0 (b9400000)
+---[ end trace 0000000000000000 ]---
 
-> 
->>> +		},
->>>   		.num_parents = 1,
->>>   		.ops = &clk_pll_ops,
->>>   	},
->>> @@ -64,9 +66,9 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
->>>   	{ P_PLL4, 2 }
->>>   };
->>>   
->>> -static const char * const lcc_pxo_pll4[] = {
->>> -	"pxo",
->>> -	"pll4_vote",
->>> +static const struct clk_parent_data lcc_pxo_pll4[] = {
->>> +	{ .fw_name = "pxo", .name = "pxo" },
->>> +	{ .fw_name = "pll4_vote", .name = "pll4_vote" },
->>
->> This is a reference to a clock defined in this same driver, so you can
->> use { .hw = &pll4_vote.clkr.hw } to avoid the lookup all together.
->>
-> 
-> Eh... pll4_vote is defined in gcc (for some reason) the one we have here
-> is pll4.
-> 
-> I asked if this could be fixed in some way but it was said that it's
-> better to not complicate things too much.
+Fix that by adding rtc clock to H6 ccu_common list too.
 
-The chain is:
-pxo -> pll4 @ lcc -> pll4_vote @ gcc -> i2s clocks @ lcc.
+Fixes: 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate clock")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-> 
->>>   };
->>>   
->>>   static struct freq_tbl clk_tbl_aif_mi2s[] = {
->>> @@ -131,18 +133,14 @@ static struct clk_rcg mi2s_osr_src = {
->>>   		.enable_mask = BIT(9),
->>>   		.hw.init = &(struct clk_init_data){
->>>   			.name = "mi2s_osr_src",
->>> -			.parent_names = lcc_pxo_pll4,
->>> -			.num_parents = 2,
->>> +			.parent_data = lcc_pxo_pll4,
->>> +			.num_parents = ARRAY_SIZE(lcc_pxo_pll4),
->>>   			.ops = &clk_rcg_ops,
->>>   			.flags = CLK_SET_RATE_GATE,
->>>   		},
->>>   	},
->>>   };
->>>   
->>> -static const char * const lcc_mi2s_parents[] = {
->>> -	"mi2s_osr_src",
->>> -};
->>> -
->>>   static struct clk_branch mi2s_osr_clk = {
->>>   	.halt_reg = 0x50,
->>>   	.halt_bit = 1,
->>> @@ -152,7 +150,9 @@ static struct clk_branch mi2s_osr_clk = {
->>>   		.enable_mask = BIT(17),
->>>   		.hw.init = &(struct clk_init_data){
->>>   			.name = "mi2s_osr_clk",
->>> -			.parent_names = lcc_mi2s_parents,
->>> +			.parent_hws = (const struct clk_hw*[]){
->>> +				&mi2s_osr_src.clkr.hw,
->>> +			},
->>>   			.num_parents = 1,
->>>   			.ops = &clk_branch_ops,
->>>   			.flags = CLK_SET_RATE_PARENT,
->>> @@ -167,7 +167,9 @@ static struct clk_regmap_div mi2s_div_clk = {
->>>   	.clkr = {
->>>   		.hw.init = &(struct clk_init_data){
->>>   			.name = "mi2s_div_clk",
->>> -			.parent_names = lcc_mi2s_parents,
->>> +			.parent_hws = (const struct clk_hw*[]){
->>
->> It would be wonderful if you could keep a space between ) and { in
->> these.
->>
-> 
-> You mean only here or in the entire patch? I assume the latter.
-> 
->>> +				&mi2s_osr_src.clkr.hw,
->>> +			},
->>>   			.num_parents = 1,
->>>   			.ops = &clk_regmap_div_ops,
->>>   		},
->>> @@ -183,7 +185,9 @@ static struct clk_branch mi2s_bit_div_clk = {
->>>   		.enable_mask = BIT(15),
->>>   		.hw.init = &(struct clk_init_data){
->>>   			.name = "mi2s_bit_div_clk",
->>> -			.parent_names = (const char *[]){ "mi2s_div_clk" },
->>> +			.parent_hws = (const struct clk_hw*[]){
->>> +				&mi2s_div_clk.clkr.hw,
->>> +			},
->>>   			.num_parents = 1,
->>>   			.ops = &clk_branch_ops,
->>>   			.flags = CLK_SET_RATE_PARENT,
->>> @@ -191,6 +195,10 @@ static struct clk_branch mi2s_bit_div_clk = {
->>>   	},
->>>   };
->>>   
->>> +static const struct clk_parent_data lcc_mi2s_bit_div_codec_clk[] = {
->>> +	{ .hw = &mi2s_bit_div_clk.clkr.hw, },
->>> +	{ .fw_name = "mi2s_codec_clk", .name = "mi2s_codec_clk" },
->>
->> Is mi2s_codec_clk and external clock? I don't see it documented in the
->> DT binding. And if we're introducing new clock-names, perhaps we could
->> skip the _clk suffix - because obviously it's a clock :)
->>
->> Regards,
->> Bjorn
->>
-> 
-> I also didn't find where is mi2s_codec_clk... but yes I will change the
-> fw_name with the clock with _clk stripped.
-
-Downstream seems not to use _codec_clk, it just always uses the 
-bit_div_clk as the codec's bit_clk. Maybe Srini knows additional 
-details, as APQ8064 has more or less the same structure of clocks.
-
-> 
-> Will send v6 with the other question clarified.
-> 
-
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index 29a8c710ae06..b7962e5149a5 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -138,6 +138,7 @@ static struct ccu_common *sun50i_h6_r_ccu_clks[] = {
+ 	&r_apb2_rsb_clk.common,
+ 	&r_apb1_ir_clk.common,
+ 	&r_apb1_w1_clk.common,
++	&r_apb1_rtc_clk.common,
+ 	&ir_clk.common,
+ 	&w1_clk.common,
+ };
 -- 
-With best wishes
-Dmitry
+2.37.1
+
