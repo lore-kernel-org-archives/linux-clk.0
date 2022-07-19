@@ -2,74 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63FBC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 07:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CCFC43334
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 07:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234880AbiGSHEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jul 2022 03:04:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38508 "EHLO
+        id S234215AbiGSHN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jul 2022 03:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234012AbiGSHEx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 03:04:53 -0400
+        with ESMTP id S233789AbiGSHN0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 03:13:26 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C600331DFF;
-        Tue, 19 Jul 2022 00:04:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953D932BA9;
+        Tue, 19 Jul 2022 00:13:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5E96361658;
-        Tue, 19 Jul 2022 07:04:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F5C6C341C6;
-        Tue, 19 Jul 2022 07:04:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 205A1616B2;
+        Tue, 19 Jul 2022 07:13:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55706C341C6;
+        Tue, 19 Jul 2022 07:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658214291;
-        bh=A4C0jcLWbw5eTQtyHQPhjBsYHmiVfNG4D86dfCO5Ujo=;
+        s=k20201202; t=1658214804;
+        bh=f0b/6Gq8XSz4gZwascnvxuyywScLfxOZ0x33lLTnggc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NCPJOa1HVRbRkzrVQhu12U8H2cs2fal6N1kdmBHkfV0rNMlk0luq5KneJuAQELE9C
-         nd2nC169BS9H+L/00LvyDzq7zZjmfF5l/pRIn7yZJNwyPNmNgq7m5pYXivS9iBLCKw
-         0cB9yl++pbbTllbIRqBZd+ytsdw1t7t16k0g71CewYcvVaIwlWjEOpNMBjzJO7VWB7
-         dE1T9LkoHT7XYMIPZY7qALeNzwKyxWTIZiUvJY6ErJ0N/1v954ROvDtRS2OhML1qRD
-         oy5ylyU1zseH9mVBLfoL+Id/v0cjxzFt0cSbB9PKfhFo+XWZNaU3Aup8bzM29a96VF
-         7r4o2wSIPCxgQ==
+        b=q20HdPmGPOV4UZTZejW1hg87agGw1bWtvOtlP+EY4HfrCFVrKowcoLes3nelloR2F
+         2JN8YlBcba8BuX8ad5ugcfi3cAqHQWWDX9+Kiv4kCiS11OATWWGVWHzpi+1i1C0lRp
+         8mCcGukFxCCnJdLfx0+BL6orx4ITfoDJolwDEexGSicTqd1q7tUM5zACv00CtBnWYu
+         5xaM1Vzy4eTSWHsXfuAmIBq4yNdERZ6Dz5C6livVw4nlEuuapkjv8B4xnSznRDyC++
+         HjgFGMX1xGRMS4RKUjvi40VnWF/NapC7ujVfkmtQSqIzGXDTyAXggny0hppNdznsE7
+         cLn3AK6pKf+bw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220704102845.168438-2-herve.codina@bootlin.com>
-References: <20220704102845.168438-1-herve.codina@bootlin.com> <20220704102845.168438-2-herve.codina@bootlin.com>
-Subject: Re: [PATCH v5 1/3] clk: lan966x: Fix the lan966x clock gate register address
+In-Reply-To: <20220716192714.454031-2-konrad.dybcio@somainline.org>
+References: <20220716192714.454031-1-konrad.dybcio@somainline.org> <20220716192714.454031-2-konrad.dybcio@somainline.org>
+Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom: rpmcc: Add BIMC_FREQ_LOG
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 19 Jul 2022 00:04:49 -0700
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Date:   Tue, 19 Jul 2022 00:13:22 -0700
 User-Agent: alot/0.10
-Message-Id: <20220719070451.8F5C6C341C6@smtp.kernel.org>
+Message-Id: <20220719071324.55706C341C6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Herve Codina (2022-07-04 03:28:43)
-> The register address used for the clock gate register is the base
-> register address coming from first reg map (ie. the generic
-> clock registers) instead of the second reg map defining the clock
-> gate register.
+Quoting Konrad Dybcio (2022-07-16 12:27:13)
+> Add the missing definition for the aforementioned clock.
 >=20
-> Use the correct clock gate register address.
->=20
-> Fixes: 5ad5915dea00 ("clk: lan966x: Extend lan966x clock driver for clock=
- gating support")
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
 
-Applied to clk-fixes
+What does the bimc freq log do?
