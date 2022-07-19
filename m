@@ -2,63 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E05C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 04:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED73CCA486
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 04:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234480AbiGSEsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jul 2022 00:48:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
+        id S232986AbiGSEsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jul 2022 00:48:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232796AbiGSEsN (ORCPT
+        with ESMTP id S234295AbiGSEsN (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 00:48:13 -0400
-Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02AF033E20
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
-Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-10d7170b2fcso679409fac.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F203337FBD
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:12 -0700 (PDT)
+Received: by mail-ot1-x32e.google.com with SMTP id w6-20020a056830410600b0061c99652493so5688341ott.8
+        for <linux-clk@vger.kernel.org>; Mon, 18 Jul 2022 21:48:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Hrgm9iEjYHCT7vDiZxnb9/DfHJ5rEp8gmRRLQ6cFG7c=;
-        b=RECNLmCaJxojJZNOm+5PR9WHb91ExNN0P3ArQuuOqntoErDHl8ElcnKbaB7IkyjEkh
-         /iyZZpjBO2PbufjY3pu42n0cHnrmL3bpkj2bm1YeZqu9PDnKZ0E7BGNMg8cqGRww1262
-         ekvKjnBeaHtkMUvVMBbRXOWuPVTQUQuqQbmaOVT8xjIDw0vPCLFZQepPNgZTuaxGHtXn
-         SZwr+YjzyqHmkDkXIi2TxCOzrf5m57cCw6zxkajKmplEyyoj+LiRbzZPVM1AQr7OtCCz
-         lpiySCgc4GRaa5+f3VHDQbXPwWWWF63DXxrkKd0O6GqchZrOePtNbbvC3EDCKMW/Sbsq
-         Ad1w==
+        bh=HCRXTbgWmGWCrtfF1/wxrO6LVa1/UB+3ITVhXItZBKQ=;
+        b=WKWjDptw1ODLxsIcyhHWRYBO3IV4e2n282ExiNANC27yzmqNV6RFel7iRKQsAr7mFJ
+         TCQ0N4Fw/c3ebjTKEY2/9esb9rskDABKgROj0QJ+KPNv8GCqWvutBccaw+Qp9ajwaYgb
+         crHT3vtmHJ8dQ6qxMEtRtSKSgEG7HMrpJ14eUx3l/TLSya4HJF6OGWc4nygLi2RWSU7v
+         0gyiDZKNQbjOArLPUguk04vNguByTU7fVS+ETX8hfEuyOGXOPfnGhIkSxcVU8TNgnhF9
+         syCabeWGR9G8CwhLEW1SRsRqrPeF3GcL19TABsycAZHfjMrLX0NLmLx6tE+s3Y+OPIZD
+         RPMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Hrgm9iEjYHCT7vDiZxnb9/DfHJ5rEp8gmRRLQ6cFG7c=;
-        b=Lb8/MIX+Te0o6MVhniWLFX78xxZpgWV6LW0s8GqXV1M+hduLR93MV6fUWTpeLZnNTU
-         vcQdiM4FLL7/Yypu9p6dVl3Gja65fpUToLbwhGD+MLwNSNldnfmxqhMVCrjb7xjI7Xd+
-         WtOZk/YgNWOlbBfp9zBtqCWy9HZzDb56JG1BsOxvepdXSnmcHsqU96W7HV+BY7qExZh6
-         OcgmRu/+9JXhlTRGin9y2cw9ZWZJU3cKKlYyEnH7azMBGTE07035tQvc39w3rTyIqwtg
-         oAsU7RVzCX8rvukNTP2kkjQFAGIjwrBB3RPkPJ2up8hL7SE7MMLUyvBj7YQvGOJytZjR
-         OiFw==
-X-Gm-Message-State: AJIora/45CqdTTlNyu9duk1q65/MfYLvLWHowIMD/lVr6tqS5VCvIlYv
-        9fUo28L36Y6QXC0FuYC7OLPInw==
-X-Google-Smtp-Source: AGRyM1vGiqdkuIEkrXAVQzakFroZcZdk2ytwJ2YMCWLQz7mDYQ0epTYbKJP1cZ/zA5Q6b9I/RVOpDQ==
-X-Received: by 2002:a05:6870:5715:b0:101:a89e:8d6b with SMTP id k21-20020a056870571500b00101a89e8d6bmr16289832oap.277.1658206091614;
-        Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
+        bh=HCRXTbgWmGWCrtfF1/wxrO6LVa1/UB+3ITVhXItZBKQ=;
+        b=TxOupqad/ba6iHsbzdMJRAf0CRhprFwFO1cn91Cvdo+KT1v6q2dwpdMauBW076MFNr
+         tyzyulewG+zn6ZL24/QvgXt3q0H+MXvDPdyVipYBuCyc/MEe2HtuXWgLyXSx9HV/u14y
+         gJeYPRZgo0Rg6scx+aAIeXlTx++q88fUOVL5rj4QWrL3dOqXbPenJuGjfMQxb7EZZNlU
+         wdEGjh9HgfHfNB6tdgCjIsl6Q3uPuM7pFt0cYdoqt89s2M7UB3noxALcMuUt5h+TT7+O
+         Mh1WJ0r2yJjQfNheL3WmHHwS5r+BQhdDHaZqGAaT8E2bZK19iU37i2XctKVp9UTMBzDu
+         cuXw==
+X-Gm-Message-State: AJIora/+4KF0NanHsRdhxWb+i9JWZCFfuWckhPGPiBSg5glFssVD32Ax
+        EH+4zz0Q1T8lsMiJmL0ixgmxiw==
+X-Google-Smtp-Source: AGRyM1u9ajUSBuR3urB/e0EsuyzDadR/9DSUOquZD2pdRw7dhPrGBe46kge5VtDBlcFLg57OsLLnuQ==
+X-Received: by 2002:a9d:2663:0:b0:61c:7ef9:c117 with SMTP id a90-20020a9d2663000000b0061c7ef9c117mr9493391otb.170.1658206092643;
+        Mon, 18 Jul 2022 21:48:12 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w9-20020a9d70c9000000b0061c9bbac1f9sm2803209otj.16.2022.07.18.21.48.10
+        by smtp.gmail.com with ESMTPSA id w9-20020a9d70c9000000b0061c9bbac1f9sm2803209otj.16.2022.07.18.21.48.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 21:48:11 -0700 (PDT)
+        Mon, 18 Jul 2022 21:48:12 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     bjorn.andersson@linaro.org, sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org,
-        linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: (subset) [PATCH v2] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
-Date:   Mon, 18 Jul 2022 23:47:59 -0500
-Message-Id: <165820608069.1955453.5113985730851647863.b4-ty@linaro.org>
+To:     konrad.dybcio@somainline.org, bryan.odonoghue@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 0/6] clk: qcom: gcc-msm8939: Align clock frequencies with downstream driver
+Date:   Mon, 18 Jul 2022 23:48:00 -0500
+Message-Id: <165820608071.1955453.7214407601083794736.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220713212818.130277-1-bjorn.andersson@linaro.org>
-References: <20220713212818.130277-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
+References: <20220712125922.3461675-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -66,18 +64,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 Jul 2022 14:28:18 -0700, Bjorn Andersson wrote:
-> When a GDSC is found to be enabled at boot the pm_runtime state will
-> be unbalanced as the GDSC is later turned off. Fix this by increasing
-> the usage counter on the power-domain, in line with how we handled the
-> regulator state.
+On Tue, 12 Jul 2022 13:59:16 +0100, Bryan O'Donoghue wrote:
+> The gcc-msm8939 driver is a copy/paste of the gcc-msm8916 for the good
+> reason that msm8936/msm8939 are an expanded version of msm8916. Reviewing
+> the qcom driver though there are some obvious missing/wrong frequencies
+> which a simple side-by-side comparison can show up.
 > 
+> This series captures that side-by-side and transmits into updated frequency
+> tables.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gdsc: Bump parent usage count when GDSC is found enabled
-      commit: 41fff779d7948147f2440c4bb134cdf8b45b22d7
+[1/6] clk: qcom: gcc-msm8939: Fix weird field spacing in ftbl_gcc_camss_cci_clk
+      commit: 2bc308ebc453ba22f3f120f777b9ac48f973ee80
+[2/6] clk: qcom: gcc-msm8939: Add missing CAMSS CCI bus clock
+      commit: 159b2f59d65b4d34e225ef8d96ed290a13610d9c
+[3/6] clk: qcom: gcc-msm8939: Fix venus0_vcodec0_clk frequency definitions
+      commit: 680b86da10a23268b24d65b567830824075eb151
+[4/6] clk: qcom: gcc-msm8939: Add missing CAMSS CPP clock frequencies
+      commit: 2c37d70c82e826e44163ab2c83f8b7b81e7db35a
+[5/6] clk: qcom: gcc-msm8939: Add missing MDSS MDP clock frequencies
+      commit: 2573f7d8629afc1d2c5f841b8a2b2359396a5e77
+[6/6] clk: qcom: gcc-msm8939: Add missing USB HS system clock frequencies
+      commit: 873b98538491feb0b0548ea1a8ee054fcfe0d435
 
 Best regards,
 -- 
