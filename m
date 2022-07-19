@@ -2,103 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E24C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 09:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BE1C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Jul 2022 10:02:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235730AbiGSJdm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Jul 2022 05:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
+        id S237562AbiGSKCl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Jul 2022 06:02:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236818AbiGSJdc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 05:33:32 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50404252A9;
-        Tue, 19 Jul 2022 02:33:31 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S237571AbiGSKCP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jul 2022 06:02:15 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83CD3DF1F
+        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 03:01:57 -0700 (PDT)
+Received: from [192.168.1.101] (abxj77.neoplus.adsl.tpnet.pl [83.9.3.77])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2EF2B6601A84;
-        Tue, 19 Jul 2022 10:33:29 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658223209;
-        bh=yjRdxTBmptUMN4auYeM9Y82+2shgUi3524K4SvRLuJE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QbkfSgiQ3hzr/Zr8LvmYIcl2fBsFQiByscOKdsb43oIvT6sw8TcGugKzCcdH9p7Jv
-         NHb1Uo1Cw7PTE493REX31cUou9KrVOatxv7yZj76j9TmJWrV3yLrqsKgR3FjvYb9Oc
-         C0kdCH+5Up+6ZSrXcU7gfWGxhRAYpV8DRNoNW9YIF1GzGPJ0Jf6BwgG/OYIeQt6ynm
-         znZQkZujL6AiPA3/XE8XDQ0zsptWp87f6eRTRwPzVUvFU0BMQEOI7F7EXROyYly5mi
-         Ylh1VF1muMuxabbQGJIAlpd9UWy43K+6WNS5+L2d2tFN0avc7pJBUiTzLbd6yaw2NL
-         AebOGwAOM9YrQ==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        chun-jie.chen@mediatek.com, miles.chen@mediatek.com,
-        rex-bc.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mediatek: mt8195-infra_ao: Set pwrmcu clocks as critical
-Date:   Tue, 19 Jul 2022 11:33:16 +0200
-Message-Id: <20220719093316.37253-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.35.1
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 6DA4F1F4F6;
+        Tue, 19 Jul 2022 12:01:54 +0200 (CEST)
+Message-ID: <7f5e602c-a02c-2a4d-2b00-7cd934a8867e@somainline.org>
+Date:   Tue, 19 Jul 2022 12:01:53 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom: rpmcc: Add BIMC_FREQ_LOG
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220716192714.454031-1-konrad.dybcio@somainline.org>
+ <20220716192714.454031-2-konrad.dybcio@somainline.org>
+ <20220719071324.55706C341C6@smtp.kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220719071324.55706C341C6@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pwrmcu is responsible for power management and idle states in SSPM:
-on older SoCs this was managed in Linux drivers like sspm/mcupm/eemgpu
-but, at least on MT8195, this functionality was transferred to the ATF
-firmware.
-For this reason, turning off the pwrmcu related clocks from the kernel
-will lead to unability to resume the platform after suspend and other
-currently unknown PM related side-effects.
 
-Set the PWRMCU and PWRMCU_BUS_H clocks as critical to prevent the
-kernel from turning them off, fixing the aforementioned issue.
 
-Fixes: e2edf59dec0b ("clk: mediatek: Add MT8195 infrastructure clock support")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mt8195-infra_ao.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+On 19.07.2022 09:13, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2022-07-16 12:27:13)
+>> Add the missing definition for the aforementioned clock.
+>>
+> 
+> What does the bimc freq log do?
+It does not seem used by any driver downstream, not from a quick glance at
+least. It is however exposed on the downstream kernel and here's what
+debugfs has to say about it on mainline:
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-infra_ao.c b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-index ce7ac16a2f42..75b54ec9c46c 100644
---- a/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-+++ b/drivers/clk/mediatek/clk-mt8195-infra_ao.c
-@@ -55,8 +55,12 @@ static const struct mtk_gate_regs infra_ao4_cg_regs = {
- #define GATE_INFRA_AO1(_id, _name, _parent, _shift)	\
- 	GATE_INFRA_AO1_FLAGS(_id, _name, _parent, _shift, 0)
- 
-+#define GATE_INFRA_AO2_FLAGS(_id, _name, _parent, _shift, _flag)	\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &infra_ao2_cg_regs, _shift,	\
-+		       &mtk_clk_gate_ops_setclr, _flag)
-+
- #define GATE_INFRA_AO2(_id, _name, _parent, _shift)			\
--	GATE_MTK(_id, _name, _parent, &infra_ao2_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+	GATE_INFRA_AO2_FLAGS(_id, _name, _parent, _shift, 0)
- 
- #define GATE_INFRA_AO3_FLAGS(_id, _name, _parent, _shift, _flag)		\
- 	GATE_MTK_FLAGS(_id, _name, _parent, &infra_ao3_cg_regs, _shift,	\
-@@ -136,8 +140,11 @@ static const struct mtk_gate infra_ao_clks[] = {
- 	GATE_INFRA_AO2(CLK_INFRA_AO_UNIPRO_SYS, "infra_ao_unipro_sys", "top_ufs", 11),
- 	GATE_INFRA_AO2(CLK_INFRA_AO_UNIPRO_TICK, "infra_ao_unipro_tick", "top_ufs_tick1us", 12),
- 	GATE_INFRA_AO2(CLK_INFRA_AO_UFS_MP_SAP_B, "infra_ao_ufs_mp_sap_b", "top_ufs_mp_sap_cfg", 13),
--	GATE_INFRA_AO2(CLK_INFRA_AO_PWRMCU, "infra_ao_pwrmcu", "top_pwrmcu", 15),
--	GATE_INFRA_AO2(CLK_INFRA_AO_PWRMCU_BUS_H, "infra_ao_pwrmcu_bus_h", "top_axi", 17),
-+	/* pwrmcu is used by ATF for platform PM: clocks must never be disabled by the kernel */
-+	GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_PWRMCU, "infra_ao_pwrmcu", "top_pwrmcu", 15,
-+			     CLK_IS_CRITICAL),
-+	GATE_INFRA_AO2_FLAGS(CLK_INFRA_AO_PWRMCU_BUS_H, "infra_ao_pwrmcu_bus_h", "top_axi", 17,
-+			     CLK_IS_CRITICAL),
- 	GATE_INFRA_AO2(CLK_INFRA_AO_APDMA_B, "infra_ao_apdma_b", "top_axi", 18),
- 	GATE_INFRA_AO2(CLK_INFRA_AO_SPI4, "infra_ao_spi4", "top_spi", 25),
- 	GATE_INFRA_AO2(CLK_INFRA_AO_SPI5, "infra_ao_spi5", "top_spi", 26),
--- 
-2.35.1
+clk_accuracy:0
+clk_duty_cycle:1/2
+clk_enable_count:0
+clk_max_rate:18446744073709551615
+clk_min_rate:0
+clk_notifier_count:0
+clk_parent:xo_board
+clk_phase:0
+clk_prepare_count:0
+clk_protect_count:0
+clk_rate:1
 
+Konrad 
