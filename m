@@ -2,78 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959C4CCA486
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jul 2022 10:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A493C43334
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jul 2022 11:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237073AbiGTK2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jul 2022 06:28:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
+        id S233306AbiGTLAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jul 2022 07:00:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237481AbiGTK2f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jul 2022 06:28:35 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D375A2D1C7;
-        Wed, 20 Jul 2022 03:28:31 -0700 (PDT)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F154E6601A56;
-        Wed, 20 Jul 2022 11:28:28 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1658312910;
-        bh=BnFrL3fAmMZM58jLVM0qi6FjJFvFVKJ01t/0qCtXjLE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZoVOhXojlkLtRRZKUa3g7ks0wAd9pmmkSlMhw0ti/sB8K4fybJlGMza50IuSxrw4A
-         96su7qg98OwGwWlsIqeLz5m2ZmexKJLcm1UkJKBkCSJNWC8v1IzJ2VcOqViJ5ORXJz
-         +8CvsPsSTmXvT0eRy8yxTteFpsqQEecJTn45IUtrhlY3Tn3CXhUu4N2rmYBb+pkDyO
-         6Le6g1DTqKG6wjYS2TkPYcWullp9WbQkbSfLG6M4ZohT2+lVb6bNfIS/SwwmUAS21p
-         SXCPEZ3QSP6OrovZwhUVVraoqA9uANYoU45MONuniDNONrSN+rvgQP3bJNpVIL5OYj
-         lmjUjYWamOgfQ==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        angelogioacchino.delregno@collabora.com,
-        chun-jie.chen@mediatek.com, wenst@chromium.org,
-        nfraprado@collabora.com, rex-bc.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: reset: mt8195: Add resets for USB/PCIe t-phy port 1
-Date:   Wed, 20 Jul 2022 12:28:16 +0200
-Message-Id: <20220720102817.237483-2-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220720102817.237483-1-angelogioacchino.delregno@collabora.com>
-References: <20220720102817.237483-1-angelogioacchino.delregno@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S231916AbiGTLAn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jul 2022 07:00:43 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E42B27CE6;
+        Wed, 20 Jul 2022 04:00:39 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id l23so32393623ejr.5;
+        Wed, 20 Jul 2022 04:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=U/VJk3xiTJFmLuPsj0qzjQ93oE7pWfHrNWLCEYbjvDg=;
+        b=WcG2kQ+C/cIGYX6jixsYc3gLIX1du1R0yJSxyneeyPfSrAbf8+iuxQf3aLq/UjstCS
+         uR+oHsJWKhC3m1LJ0A+r0ZELP2A5cwF/kojt5rH40KLSyTmFt455X/hj2sQNanATD8Gc
+         ZL5+ons8FkHWU99IaW1arNkAI84VNzQLEk3qrRrxzJTk9pmBqIKpyAQeA0Ht29fL2HmS
+         VmBe8x6hKDmvaSW4D0cF7DLRMREoQR+57VVmv3kKin27OiP1MzjgqfUXlyr1vtsLn4nW
+         8Aa6TWhc0qMe7G7nyu8/8YWOGps9sa8dpsFJf3hfBoPDgDZ3891pva5psG53K2uO7CCj
+         Vikg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U/VJk3xiTJFmLuPsj0qzjQ93oE7pWfHrNWLCEYbjvDg=;
+        b=qkElqA4HofT1YDTR+gkSKy5cgEWYlaGyP7jNLP9zg05IUTJ9fUUExihCM4v+6lDmFW
+         3M4+WNoppa2kKHWjIbyYx2NjNNFkmpsI71YedEI6uQKlCjuHvVuilgjw1QD1uxxf3g6G
+         0pxWfq0xi5YoV4G5CA2UWJXaKK4yqicKDuawViTDBwgfzOs/Y7mY+URsr2kozTBdtdzi
+         imTYDjh5b13cc+OUXtxpGFwljvfIQ2AQAkts46T4TZvQQ+QNKMFjO6I+qmycI4qirPHn
+         qjh3DE1CQ5bD76ov+rs84LPDK40+x+8mgW0ZXmnNv6xopPOJjXGWiNfX7JiuPcdm3v9r
+         WHEg==
+X-Gm-Message-State: AJIora+1xVa8/hNDxIqwdKSO2bShUBZwaEK805BiZPlbM0EHZW1iBDnz
+        BpS3eyLwDz+hb+tuh3p84+auu6U5Gmw=
+X-Google-Smtp-Source: AGRyM1utUQRdA/aCctlsBH6LfOpIwJRY5F9OyAFEBaP68KYk+1PdJYEnw8x664ioOtdKq06XEIXX6g==
+X-Received: by 2002:a17:907:a0c6:b0:72f:2293:bd04 with SMTP id hw6-20020a170907a0c600b0072f2293bd04mr16210418ejc.123.1658314837576;
+        Wed, 20 Jul 2022 04:00:37 -0700 (PDT)
+Received: from felia.fritz.box (200116b826a11f008020c2fc6e115b3e.dip.versatel-1u1.de. [2001:16b8:26a1:1f00:8020:c2fc:6e11:5b3e])
+        by smtp.gmail.com with ESMTPSA id j4-20020a170906474400b0072aed3b2158sm7825842ejs.45.2022.07.20.04.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jul 2022 04:00:36 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: add header file to TI DAVINCI SERIES CLOCK DRIVER
+Date:   Wed, 20 Jul 2022 13:00:26 +0200
+Message-Id: <20220720110026.9173-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the reset index for USBSIF P1 (T-PHY port 1), used as either USB
-or PCI-Express PHY reset.
+While creating a patch submission on the davinci clock drivers, I noticed
+that the header file include/linux/clk/davinci.h belongs to the section
+TI DAVINCI SERIES CLOCK DRIVER.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Add a file entry for this header file in TI DAVINCI SERIES CLOCK DRIVER.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
- include/dt-bindings/reset/mt8195-resets.h | 1 +
+ MAINTAINERS | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/reset/mt8195-resets.h b/include/dt-bindings/reset/mt8195-resets.h
-index 5471468c43b7..e61660438d61 100644
---- a/include/dt-bindings/reset/mt8195-resets.h
-+++ b/include/dt-bindings/reset/mt8195-resets.h
-@@ -33,6 +33,7 @@
- #define MT8195_INFRA_RST4_THERM_CTRL_MCU_SWRST 2
- #define MT8195_INFRA_RST2_PCIE_P0_SWRST        3
- #define MT8195_INFRA_RST2_PCIE_P1_SWRST        4
-+#define MT8195_INFRA_RST2_USBSIF_P1_SWRST      5
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 264e7a72afd6..d4e1a6ef552c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20261,6 +20261,7 @@ R:	Sekhar Nori <nsekhar@ti.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/ti/davinci/
+ F:	drivers/clk/davinci/
++F:	include/linux/clk/davinci.h
  
- /* VDOSYS1 */
- #define MT8195_VDOSYS1_SW0_RST_B_SMI_LARB2                     0
+ TI DAVINCI SERIES GPIO DRIVER
+ M:	Keerthy <j-keerthy@ti.com>
 -- 
-2.35.1
+2.17.1
 
