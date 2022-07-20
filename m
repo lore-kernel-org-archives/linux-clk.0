@@ -2,191 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF61C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Jul 2022 06:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC40CCA483
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Jul 2022 06:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbiGTG1b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Jul 2022 02:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32996 "EHLO
+        id S231561AbiGTGaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Jul 2022 02:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239793AbiGTG1a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jul 2022 02:27:30 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23C0A45F6B
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 23:27:28 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id m9so17330698ljp.9
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 23:27:28 -0700 (PDT)
+        with ESMTP id S231402AbiGTGaT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jul 2022 02:30:19 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF7A1277C
+        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 23:30:17 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id a10so19978780ljj.5
+        for <linux-clk@vger.kernel.org>; Tue, 19 Jul 2022 23:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2RWe/5etiM/Atur64WJRybmJIj56BMtUZj35fRxxeJU=;
-        b=hC0C815XFlatblvHaHA3D/3JwyDCc0lWVZUUvkD1fi4EARD8mXH7BX7uQtEVI5qriz
-         6CgE98OSwz6vx0Zgg18GIU7wJ6MEWxBtXI0z/JJfQIYK0M4GK019WwEJ2NoFmpCVvRV0
-         EKcdO7I3zU2/DbAl0CIgYeDLdiduo0N5BAHne3fxltLKypi8pmTJRWaMbFV/nPVU+k7b
-         E8RT1MoLn6eV0WAEUvpnA/ecF0HsD6uIdSaTkwsj9PP8g4hUxhCP12ivCFFfLxPBAfF4
-         w0r9DCDMszTHWdGc5Bj+Rull8zb/LAwN0wp47OVURvr7j/PQafq+nlXPzQVcYWJidwU0
-         ZSMg==
+        bh=svwBknUY50fmzabnEaICrZK9R0fh/lr5fpPdH5SEovs=;
+        b=wgDaRIzqN/pGdLypgVO3Z8tD5NNE8KvD2Y8qC6/d3+Y5wuR7re/gdIJdrz7BEuOt05
+         UeEi17qiQgHByTtOofLXN+0/nZ52q8ZsQxCZLoDMMORjyv8pRY4nJCR4H9wnOTjb7ROF
+         pA1nSB/JxV/dkVNM24j+K8UMoMd+vuAWpdtlJ78byHtlN2h89B5gKmeuASp/pY7pOa5v
+         v36NW56+nptXuHi0W4Rs2RCgxbu+UvCqehoSw/HtvEHRAzRVX0uVgyYRRfhdciF5oXWO
+         31bcAtekwx1NDiDsaGGnBT0DsH4uL8dkbk4+IQUB90Rnj3Y/8x7TW/Xo+Jok1AWMufru
+         JsTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=2RWe/5etiM/Atur64WJRybmJIj56BMtUZj35fRxxeJU=;
-        b=isRrZAMBJ+VuWIt78fYOAQzjWXMBQG6mfgp+fMpcMKtM54VoDo9LbSMZFhAKG7t0JR
-         rHM2bWTICCB/1Hf1ffY6zAT9MsTm0O7boJvwnqhP2K/ReZjTqbfgEBd0MMfpFEf3hiwv
-         hx0Dk+aKghVyEYF1ZxTIogGAhIslZYQJBPdxC0k1a5bRpOOuD9ybk6pXv0lpDX0a/ijV
-         VUF0MPvmqAH/q9jp+bmSXD2/SaAVQBCoKQ2OXvYKLyPXJa0LTX90wQJqm7AfNVhpEE1/
-         psHvEra16IDyeLduIyLe3Z3+QrJzK73EMgnihNh+rTzCfJGVV7KNDQpxaOX2zu4WDUIR
-         8KkQ==
-X-Gm-Message-State: AJIora9fBQigVm35V2tzUUzuE2fEzPnxjF34OfJ8a0G++X4UhQD//AgS
-        WGuD76xGefLxXi5kyx05YbEXXw==
-X-Google-Smtp-Source: AGRyM1tsEpxIQZ9kT4ftSsfNFNs1JlZSItCy24gOE7mBFnUqo/n9Mj/HB/KCURSz4serspeZznlkGg==
-X-Received: by 2002:a2e:2d09:0:b0:25a:816a:2e62 with SMTP id t9-20020a2e2d09000000b0025a816a2e62mr15449635ljt.147.1658298446484;
-        Tue, 19 Jul 2022 23:27:26 -0700 (PDT)
+        bh=svwBknUY50fmzabnEaICrZK9R0fh/lr5fpPdH5SEovs=;
+        b=rJsbwtLz6Q/77wthl/ICJwkVqwh+77OwWanpu2Avr4nbgw8JCAMjIMD2NAuWaylmjY
+         OYsnu853tlgDipJBi6oMTSLUH5H1zTYukfFlqvQq14W7VGaS5oJtoFnUQGyC8bi9wWBf
+         Ju7q+DWV3hwDu/aOZR1ZwRj37glQH2CjUsgIIfUfgP1C84pI+hp+dWtbl+TN+eXMUMxn
+         u8BFtJ1xncRZmEiSCNlpfRT+deyl+QG/eaFacpIMSJzsjZIWaPeFepfbKlEHiTlLy9Mi
+         6fS/HZtgmyj+0+iaU4GY4xjudXwPJUHLgEeLGKNjgqPCCOPOokQS36BllwToP2ZS6/Jx
+         wD2A==
+X-Gm-Message-State: AJIora/xSLFP1tb8ZapTcsmXMcB3HrCNcgb5i/+VFddznkJH6SbMX3DA
+        RZrxSThTjS9o/2Wu/4Wa+uSk3g==
+X-Google-Smtp-Source: AGRyM1vf7GN6vgL/2J3B+G/GpAG/sQuS7t5m8lyVqk+/jaLOs9tVA7KN2osw6Zf6G8PB2ZE7mExing==
+X-Received: by 2002:a05:651c:204e:b0:25d:4798:9776 with SMTP id t14-20020a05651c204e00b0025d47989776mr16630931ljo.86.1658298615813;
+        Tue, 19 Jul 2022 23:30:15 -0700 (PDT)
 Received: from [192.168.115.193] (89-162-31-138.fiber.signal.no. [89.162.31.138])
-        by smtp.gmail.com with ESMTPSA id p18-20020ac24ed2000000b0047255d210d6sm3617731lfr.5.2022.07.19.23.27.25
+        by smtp.gmail.com with ESMTPSA id a25-20020a194f59000000b004896b58f2fasm3618062lfk.270.2022.07.19.23.30.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Jul 2022 23:27:26 -0700 (PDT)
-Message-ID: <11cc46d8-ae01-f3d2-b9c6-c366c6e4afc9@linaro.org>
-Date:   Wed, 20 Jul 2022 08:27:24 +0200
+        Tue, 19 Jul 2022 23:30:15 -0700 (PDT)
+Message-ID: <991f085e-ae79-bf67-d063-51484a0ba344@linaro.org>
+Date:   Wed, 20 Jul 2022 08:30:13 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: add SM6375 QCOM global clock
- bindings
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,rpmcc: Add compatible for
+ SM6375
 Content-Language: en-US
 To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
         ~postmarketos/upstreaming@lists.sr.ht
 Cc:     martin.botka@somainline.org,
         angelogioacchino.delregno@somainline.org,
         marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220719115756.32231-1-konrad.dybcio@somainline.org>
- <20220719115756.32231-2-konrad.dybcio@somainline.org>
+References: <20220716192714.454031-1-konrad.dybcio@somainline.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220719115756.32231-2-konrad.dybcio@somainline.org>
+In-Reply-To: <20220716192714.454031-1-konrad.dybcio@somainline.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/07/2022 13:57, Konrad Dybcio wrote:
-> Add device tree bindings for global clock controller for SM6375 SoCs.
+On 16/07/2022 21:27, Konrad Dybcio wrote:
+> Add a compatible for RPMCC on SM6375.
 > 
 > Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 > ---
-> Changes since v1:
-> - dropped clock-names (switched to .index)
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->  .../bindings/clock/qcom,sm6375-gcc.yaml       |  65 +++++
->  include/dt-bindings/clock/qcom,sm6375-gcc.h   | 234 ++++++++++++++++++
->  2 files changed, 299 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,sm6375-gcc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
-> new file mode 100644
-> index 000000000000..2e43cd75d3d4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm6375-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for SM6375
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konrad.dybcio@somainline.org>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on SM6375
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,sm6375-gcc.h
-> +
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> index 9d296b89a8d0..f22febdfdce7 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
+> @@ -43,6 +43,7 @@ properties:
+>            - qcom,rpmcc-sdm660
+>            - qcom,rpmcc-sm6115
+>            - qcom,rpmcc-sm6125
+> +          - qcom,sm6375-rpmcc
 
-Why you are not referencing qcom,gcc.yaml?
+I am fine with it, although this contradicts a bit
+https://lore.kernel.org/all/20220705161301.493364-1-krzysztof.kozlowski@linaro.org/
 
-> +properties:
-> +  compatible:
-> +    const: qcom,sm6375-gcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board XO Active-Only source
-> +      - description: Sleep clock source
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,rpmcc.h>
-> +    clock-controller@1400000 {
-> +      compatible = "qcom,sm6375-gcc";
-> +      reg = <0x01400000 0x1f0000>;
-> +      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +               <&rpmcc RPM_SMD_XO_A_CLK_SRC>,
-> +               <&sleep_clk>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,sm6375-gcc.h b/include/dt-bindings/clock/qcom,sm6375-gcc.h
-> new file mode 100644
-> index 000000000000..1e9801e1cedf
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,sm6375-gcc.h
-> @@ -0,0 +1,234 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+Would be nice to get Bjorn's opinion/preference on this.
 
-Hm, Qualcomm gave permission to relicense bindings to dual-license,
-although I am not sure how this works with files where copyrights were
-transferred to Linux Foundation...
-
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022, Konrad Dybcio <konrad.dybcio@somainline.org>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SM6375_H
-> +#define _DT_BINDINGS_CLK_QCOM_GCC_SM6375_H
-> +
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
 Best regards,
