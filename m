@@ -2,112 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07201C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 16:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C57C43334
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 16:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbiGUQis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jul 2022 12:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43528 "EHLO
+        id S229680AbiGUQky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jul 2022 12:40:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229777AbiGUQir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 12:38:47 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 232427B793
-        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:38:45 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id o12so2487296ljc.3
-        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:38:45 -0700 (PDT)
+        with ESMTP id S229379AbiGUQkx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 12:40:53 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C088D21E08
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:40:51 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id a23so1240415lfm.10
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=YGG2EmCH3bS3wBtE1nLRsaoqlR5mpBzOgXAIcspF1i4=;
-        b=VrqwtoLDp0th6beh70O/VpIJb44Tn48oNwIpyGGfXQ82zAA51Bxkl2wSrzc54xQE/D
-         /eJ2dHRsI8MZGQ4pjQvVF1t8TKVtXGTYATm7677RjYbG48zJ3bxXTxpMV2cV9TW7w6Hh
-         cP7/w/VN3A/+5KoeQlod+kp0COrm9v0d6WlE/5Qy00TnKDFxsWNmx6ODhZyxJ6dhRhAM
-         Y5yy18e0BH/qdPfyxUgjkkcmyHyJTUF8q3LLiXQhN0w5N8cujj/SpkvrmEsQn7FUBMAi
-         fbHef/necwPLVOccw2clWPTxl9GZAT0WTerLlXjHRvP87YULrMVYQXyW2YtROS9ppB9u
-         0KsQ==
+        bh=VQ7eOrI6FIZwDaocmq454OANKIbrFQPFfq7eOf2JtIw=;
+        b=BDQmRTlsWdzM7ha06GNX77q/tKZ0XTEo9fJIbCJldo2c1MlEd4Cj96Aq8ofFupXvmm
+         LwwtzSyQK9F6cWGK2OgkIaLHxqqluHEz/5IKQolhL1fshzKoipro7gf4RymDLM/hiLWH
+         l6tXUE3LWZHLMhZDYFxrPe4Q86mEtzivN6uqZVCGeya38tQ4GPAxzX4RAGsznEWHpRyI
+         xV89H4gFPiR1rOdt436tpogKCt2nAzQBp2xdvWUzr68uyNXtqwQGJJQG65Kh5zvErPjW
+         ZcowdcjTLZ/rwBC7wBoQPHOv46iBBnJtMv1fTYchDJpTEuts61DOfDMI+BkO9KqR/7w3
+         4jwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=YGG2EmCH3bS3wBtE1nLRsaoqlR5mpBzOgXAIcspF1i4=;
-        b=y88Ty6U9ZfhdVLrs0EZn+bD7g+XaZTFl0wGaDSivQp+79rxdsyhOwukcVQOpbvixRS
-         jf+4T9SFD8AzaH6yw+Uzn7hjtLN+3so3IxFEqGWJocU8fYeyk+Ae64ICP9c0MrGIPnfQ
-         6QCthNpk5lQC039gyuCxI45nRa1xUHPE037Gwe7hF98w3ZyyrAWs2VaWsBiM3bjFvKUS
-         8QwSM0w++6VsQB+VfheIQ0N+qZOTFikEK/MQWQcXmSO+xZL4tGEaiXmpEF5IZ4Z3Oj/N
-         l/r1+a8GdG6ewbBXfRcchqnuze2fvVshzUiYdEBerEzKKaF4nZqV3X6/qncjLzwuEUrh
-         a/BA==
-X-Gm-Message-State: AJIora84uFszhHlyt/9yBR7NR/N8fZfmwSXUFMWr+9Ah8jpNhM2f1zm3
-        Ci4PuS19qgNIp0tIoRxj53uqVA==
-X-Google-Smtp-Source: AGRyM1sjYIxbnzkQfm9NykntHg4tQ/OMvY4AkQJhXhbKqdP/B68eLxAg+9nBCXyPn7z1aachpSTFmA==
-X-Received: by 2002:a2e:8745:0:b0:25d:eba0:9e2e with SMTP id q5-20020a2e8745000000b0025deba09e2emr247240ljj.384.1658421523172;
-        Thu, 21 Jul 2022 09:38:43 -0700 (PDT)
+        bh=VQ7eOrI6FIZwDaocmq454OANKIbrFQPFfq7eOf2JtIw=;
+        b=A0s0cGXVK5aWDCFDOxsk2KWDh9PsASZZfGeepXuXI/yD3UoTslThfhMOPy4O4EzStu
+         HRLRqlFrViXmsxzj+nNUCE3SDUn3hG2vz7l+ClHeEdT8iocJAJQ2afmFsdx7U/4hHeCb
+         AC1s01rZidceZWkPOIzkZ6cdd8ugcww7mdoAFnqraMXFZUOSntQ25rvE4lTVaenOhMZl
+         KO29d3Wgqh01K9Q3+7v9ETc6E+5G4AlVFKla043kKDTKgHIH5QfTGmSCLLZJCGKGh142
+         5eKyXmYN+qVveNjNi8PQUkdb8ku9kAq7Lt8aIJWZG5SySKPEMxp3M4DtY9ucgeJ3T/3n
+         Hb+Q==
+X-Gm-Message-State: AJIora+YvzcILKeZJjO5gN9Ao3dEf3R/QGKFOJojzzaIyra+6CC/L/wv
+        Mg32n2fzxNzg6hyMfbEElNad+w==
+X-Google-Smtp-Source: AGRyM1vfHkvSll1Vf5naVbcFaiTWlBdlvn27d6kKY+yCpav3hSTxEtd3L6HpE0apL2mqZLBUxlockw==
+X-Received: by 2002:a05:6512:3192:b0:48a:50a0:e0f1 with SMTP id i18-20020a056512319200b0048a50a0e0f1mr6672900lfe.301.1658421650132;
+        Thu, 21 Jul 2022 09:40:50 -0700 (PDT)
 Received: from [192.168.115.193] (89-162-31-138.fiber.signal.no. [89.162.31.138])
-        by smtp.gmail.com with ESMTPSA id o6-20020a056512230600b00478fc420ea6sm400437lfu.244.2022.07.21.09.38.41
+        by smtp.gmail.com with ESMTPSA id p20-20020ac24ed4000000b00489c54859a5sm530202lfr.287.2022.07.21.09.40.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jul 2022 09:38:42 -0700 (PDT)
-Message-ID: <3c781dd6-865f-e59b-17dd-c583e79ef152@linaro.org>
-Date:   Thu, 21 Jul 2022 18:38:40 +0200
+        Thu, 21 Jul 2022 09:40:49 -0700 (PDT)
+Message-ID: <1e0df4bd-0184-d373-b290-128714b2dc53@linaro.org>
+Date:   Thu, 21 Jul 2022 18:40:48 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH v5 0/7] MediaTek Helio X10 MT6795 - Clock drivers
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: add SM6375 QCOM global clock
+ bindings
 Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, robh+dt@kernel.org
-Cc:     krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        y.oudjana@protonmail.com, jason-jh.lin@mediatek.com,
-        ck.hu@mediatek.com, fparent@baylibre.com, rex-bc.chen@mediatek.com,
-        tinghan.shen@mediatek.com, chun-jie.chen@mediatek.com,
-        weiyi.lu@mediatek.com, ikjn@chromium.org, miles.chen@mediatek.com,
-        sam.shih@mediatek.com, wenst@chromium.org,
-        bgolaszewski@baylibre.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        konrad.dybcio@somainline.org, marijn.suijten@somainline.org,
-        martin.botka@somainline.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org, paul.bouchara@somainline.org,
-        kernel@collabora.com
-References: <20220629110254.184213-1-angelogioacchino.delregno@collabora.com>
- <45ff2e82-caeb-9575-ce73-1bd43c37c0c5@collabora.com>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220719115756.32231-1-konrad.dybcio@somainline.org>
+ <20220719115756.32231-2-konrad.dybcio@somainline.org>
+ <11cc46d8-ae01-f3d2-b9c6-c366c6e4afc9@linaro.org>
+ <887b005d-750d-39f2-73b7-851aa0e461f4@somainline.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <45ff2e82-caeb-9575-ce73-1bd43c37c0c5@collabora.com>
+In-Reply-To: <887b005d-750d-39f2-73b7-851aa0e461f4@somainline.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/07/2022 10:53, AngeloGioacchino Del Regno wrote:
-> Il 29/06/22 13:02, AngeloGioacchino Del Regno ha scritto:
->> In an effort to give some love to the apparently forgotten MT6795 SoC,
->> I am upstreaming more components that are necessary to support platforms
->> powered by this one apart from a simple boot to serial console.
->>
->> This (very big) series introduces system clock, multimedia clock drivers
->> (including resets) for this SoC.
->>
->> Tested on a MT6795 Sony Xperia M5 (codename "Holly") smartphone.
->>
->> This series depends on, and can be merged on top of:
->> [1]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=640122
->> [2]: https://patchwork.kernel.org/project/linux-mediatek/list/?series=637849
->>
+On 20/07/2022 21:36, Konrad Dybcio wrote:
 > 
-> Gentle ping for this series...
-> ...I've got a lot of commits to send that depend on this one...
 > 
-> P.S.: The dependencies in [1] and [2] are already upstream.
-> 
+> On 20.07.2022 08:27, Krzysztof Kozlowski wrote:
+>> On 19/07/2022 13:57, Konrad Dybcio wrote:
+>>> Add device tree bindings for global clock controller for SM6375 SoCs.
+>>>
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>>> ---
+>>> Changes since v1:
+>>> - dropped clock-names (switched to .index)
+>>>
+>>>  .../bindings/clock/qcom,sm6375-gcc.yaml       |  65 +++++
+>>>  include/dt-bindings/clock/qcom,sm6375-gcc.h   | 234 ++++++++++++++++++
+>>>  2 files changed, 299 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
+>>>  create mode 100644 include/dt-bindings/clock/qcom,sm6375-gcc.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
+>>> new file mode 100644
+>>> index 000000000000..2e43cd75d3d4
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
+>>> @@ -0,0 +1,65 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/qcom,sm6375-gcc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm Global Clock & Reset Controller Binding for SM6375
+>>> +
+>>> +maintainers:
+>>> +  - Konrad Dybcio <konrad.dybcio@somainline.org>
+>>> +
+>>> +description: |
+>>> +  Qualcomm global clock control module which supports the clocks, resets and
+>>> +  power domains on SM6375
+>>> +
+>>> +  See also:
+>>> +  - dt-bindings/clock/qcom,sm6375-gcc.h
+>>> +
+>>
+>> Why you are not referencing qcom,gcc.yaml?
+> Hm.. Out of all the SoCs we support, only apq8084 and apq/ipq8064 reference it..
+> Should I add that?
 
-You sent this message to Rob (not to others) and you did not mention
-whom are you pinging. Rob provided all necessary tags for you.
+Yes. There was a patchset adding references everywhere, so new code for
+sure must have it.
 
-If you want to ping someone, put proper names in "To" but best - mention
-by name.
 
 Best regards,
 Krzysztof
