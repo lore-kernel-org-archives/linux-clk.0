@@ -2,101 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EFDC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 20:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534B0C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 20:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233575AbiGUUGE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jul 2022 16:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
+        id S229833AbiGUUGY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jul 2022 16:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233435AbiGUUFw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 16:05:52 -0400
-X-Greylist: delayed 320 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 21 Jul 2022 13:05:50 PDT
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C8C74379;
-        Thu, 21 Jul 2022 13:05:48 -0700 (PDT)
+        with ESMTP id S233538AbiGUUGC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 16:06:02 -0400
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8AF70E41;
+        Thu, 21 Jul 2022 13:05:51 -0700 (PDT)
 Received: from toolbox.int.toradex.com ([81.221.243.92]) by mrelay.perfora.net
- (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1MdMsu-1nfHaT43lo-00ZNSc;
- Thu, 21 Jul 2022 22:00:02 +0200
+ (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id 1N2EcM-1nVyz33C3S-013eqi;
+ Thu, 21 Jul 2022 22:00:32 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Abel Vesa <abel.vesa@nxp.com>,
-        Arnaud Ferraris <arnaud.ferraris@collabora.com>,
         Fabio Estevam <festevam@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lucas Stach <dev@lynxeye.de>,
-        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
         Rob Herring <robh+dt@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 00/12] ARM: arm64: dts/clk: imx8mm: indentation whitespace cleanup
-Date:   Thu, 21 Jul 2022 21:59:23 +0200
-Message-Id: <20220721195936.1082422-1-marcel@ziswiler.com>
+Subject: [PATCH v1 12/12] clk: imx8mm: don't use multiple blank lines
+Date:   Thu, 21 Jul 2022 21:59:35 +0200
+Message-Id: <20220721195936.1082422-13-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220721195936.1082422-1-marcel@ziswiler.com>
+References: <20220721195936.1082422-1-marcel@ziswiler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:5cw2TNpGLkkb0Jw3PfQw0Tkjd8MMdgaenIjXAMyu+FXNft96YWP
- ZUDHH45QL/jHX9Q/xAvWhDGHoH7ZS/7SDLGnZiNbjnJDw5KCwZxZxJT12/KkI+429VRBTvf
- mXJ19nuSXUE58zgHThjab++sFKtwUmCAZAbuD29OAgU1KSFsfSdKlCumecn6Iwe4FdQ6utI
- WitXLQReaxlkxKbHl75Jg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:n/cnUxcV+a4=:5PrEH83s6KBtqKUsL0XvUR
- DIqYgkaYxZOntGChikF4zFzODNSUSqXcWHCpCRSadpRBb9S4y6CySmcBL1t8D0wrcjhitxd8E
- 2TZTZnYc6Yd10dHl135H9FZNq644Wu8s6SrUBeiivtRejYbJAjqzHqvKesZBQuNmsCvVZzxET
- vrMq2vbR8/zLGrl7DE1djBu2zpcOyHBXSOAZsYqS3Foh65VIIMKb+Hdy35aLtIjfABXLPNIZW
- tZ//xoGocTdtJ3y9pu/ScQB+FJdmqgkB/RasVX+tv7HwN59s7MwMTcLFTSjSNtXByBVP+xQqw
- JzAgXsZbv6xbp85WELN2xMtAZOg1+THoB4KEXVzqUWYS8ulnGeyPruLnThEDaFxyP5e5XSrYB
- eS/NxPvjQBFLYBAG2FrPRCkeCm93sOpH0miQwFM6rCd/PC+c2GD6Xy79TBfqcXg4j4lERokdL
- s74ZAhg15MXuy0KsvIChR5gpb9EB/9jt4N6IoV7JzVBolRKokiKwn5+Esg07L3LHlHWyHmUe8
- j9qR/tbHO1STWc0TwwXsb7FvzMSDGC29KKsA7BEg3CL+gEKg4fk4t+Ycyxtjrdd+ue05ZqhOz
- 45Wk/zxbgyP60bg6VEyWcnbHpCqL8jViuuhDVpnonZt5b+JAHAL3Fx4Bpg9UUGv1kodNWSfXT
- /aEhaVjv/tmIvHmLKVZrs5wXk38xmJODXm6JdQbp25NVPlHw+3zVV5dDFWiwCuSyf6e3F77UO
- lLvWGIp++TUlCYEBsUwGdgvhZUXnH6ro3f69aIXaUh6abmI9Nk6VedBfKGE=
+X-Provags-ID: V03:K1:dR22pRh9FFpDKCHYA5F6Iwy4bJ5r+Z5lgDQHLY3MMytbO6krkQx
+ gqVymQr3icTKY2cuOIDoHa4CSSv5yYd1+D4nIudj9HoyA2b05MwZIoSLbJnEuy08EoopPCr
+ CyBgfoPSQfrMsCF67w9qdVczpeZb68+i8ijDzY4rMUcsAzzcYO/TDlIfIOnnHmsd7/N8kW0
+ wEypyyob5cV1NTghCpk3g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:D2I4JPn7FEI=:TsASVQtiu57rMYZuJD0/mn
+ F7K8LoBPn4aPs1kNjOC70UTsMTdVR5skP/M898ezujKSfcQLi4//zgzMI7+e8Kr5+kSbeoKOO
+ m24t9CZjW+vFqWvEi9c8HNdPSSLAzBvKqCmxPTbmyxh/xKhQRg6izMCDpho9+t4HhVLrqiYo9
+ +GFH650AkNfykqkd/gD3F0OSE7DE0y1QdhzUfWXmTIIuKUjAgOwtnVVDwPebN6pg5cFIo8vj+
+ vOSk4X+pKp739qbYbrTBDbjBvwNfTCF8/WcAri1A14bQ1OI60e6DB/Voctr1LemhUK9P26oEu
+ QRR7fzOSzeNTMo1b1MXquZx1Uv+W1FCYjbuxqiHEZn4cuLmxzYFw56kLS96fTdNoeWChCNQ6O
+ g+viWpG0wtkyh9Oq85j+8mtJtFrDFl+OAV3NO741EL4RP0IMB9oyKYosDZuIw0z8Ex+0wScZI
+ 1l9REE84V1mP/RXS+pFIx/XwfySKzgm5/aaPbgiztKyI01WC0QbhvmDy1oRwEHMmRVBC+fCPf
+ Gdy8wTp/rI4+MRbvceQ6Kt4Ids0x7VqpJfErzKiE5CdScfbW/bmfY50GGH5vkeX/FGbC8zds9
+ f7iYIbCo69w5JVpEsNoh53t4oZAfL4TjTJ651X+Y/kl+o3uubOjWl8Gy2ArMeQwGCYPN2y9+U
+ yOogLH2H57N/+97f06RhfXWuzC8W1LU3Xi8RCE5UX55ksV3sPbx5BiYsXtGQk7up0b3HQmCdZ
+ CGa+AKHIrTt6fEfBsLUVY0v+fla0rfP5zXRNeVLsOYFfmEKE6+/jQaD0vw4=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
+Avoid the following checkpatch warning:
 
-While synchronising them imx device trees with U-Boot I stumbled over
-various checkpatch warnings. This series addresses those trivial
-indentation and/or whitespace cleanups.
+include/dt-bindings/clock/imx8mm-clock.h:284: check: Please don't use
+ multiple blank lines
 
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Marcel Ziswiler (12):
-  ARM: dts: imx6-sabrelite: change to use SPDX identifiers
-  ARM: dts: imx6qdl-mba6: don't use multiple blank lines
-  ARM: dts: imx6qdl: phytec: no spaces at start of line, indent use tabs
-  ARM: dts: imx6qdl-sabre: change to use SPDX identifiers
-  ARM: dts: imx7d-pico: indent use tabs, no spaces at start of line
-  ARM: dts: vf610: no spaces in indent but tabs
-  ARM: dts: vf610-twr: indent use tabs, no spaces at start of line
-  ARM: dts: vf610: don't use multiple blank lines
-  arm64: dts: imx8mm-venice-gw72xx-0x: blank line at end of file
-  arm64: dts: imx8mp-verdin: don't use multiple blank lines
-  arm64: dts: mnt-reform2: don't use multiple blank lines
-  clk: imx8mm: don't use multiple blank lines
+---
 
- arch/arm/boot/dts/imx6q-sabrelite.dts         | 37 +------------------
- arch/arm/boot/dts/imx6qdl-mba6.dtsi           |  1 -
- .../dts/imx6qdl-phytec-mira-peb-av-02.dtsi    |  2 +-
- arch/arm/boot/dts/imx6qdl-sabrelite.dtsi      | 37 +------------------
- arch/arm/boot/dts/imx7d-pico.dtsi             | 10 ++---
- arch/arm/boot/dts/vf610-pinfunc.h             |  2 +-
- arch/arm/boot/dts/vf610-twr.dts               |  2 +-
- arch/arm/boot/dts/vf610.dtsi                  |  1 -
- .../dts/freescale/imx8mm-venice-gw72xx-0x.dts |  1 -
- .../boot/dts/freescale/imx8mp-verdin.dtsi     |  1 -
- .../boot/dts/freescale/imx8mq-mnt-reform2.dts |  1 -
- include/dt-bindings/clock/imx8mm-clock.h      |  1 -
- 12 files changed, 10 insertions(+), 86 deletions(-)
+ include/dt-bindings/clock/imx8mm-clock.h | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
+index 47c6f7f9582c..1f768b2eeb1a 100644
+--- a/include/dt-bindings/clock/imx8mm-clock.h
++++ b/include/dt-bindings/clock/imx8mm-clock.h
+@@ -281,7 +281,6 @@
+ #define IMX8MM_CLK_CLKOUT2_DIV			256
+ #define IMX8MM_CLK_CLKOUT2			257
+ 
+-
+ #define IMX8MM_CLK_END				258
+ 
+ #endif
 -- 
 2.35.1
 
