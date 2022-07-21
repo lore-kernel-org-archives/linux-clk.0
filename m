@@ -2,135 +2,236 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C57C43334
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 16:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B56CCA485
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Jul 2022 17:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229680AbiGUQky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Jul 2022 12:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
+        id S229658AbiGURBI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Jul 2022 13:01:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiGUQkx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 12:40:53 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C088D21E08
-        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:40:51 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id a23so1240415lfm.10
-        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 09:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=VQ7eOrI6FIZwDaocmq454OANKIbrFQPFfq7eOf2JtIw=;
-        b=BDQmRTlsWdzM7ha06GNX77q/tKZ0XTEo9fJIbCJldo2c1MlEd4Cj96Aq8ofFupXvmm
-         LwwtzSyQK9F6cWGK2OgkIaLHxqqluHEz/5IKQolhL1fshzKoipro7gf4RymDLM/hiLWH
-         l6tXUE3LWZHLMhZDYFxrPe4Q86mEtzivN6uqZVCGeya38tQ4GPAxzX4RAGsznEWHpRyI
-         xV89H4gFPiR1rOdt436tpogKCt2nAzQBp2xdvWUzr68uyNXtqwQGJJQG65Kh5zvErPjW
-         ZcowdcjTLZ/rwBC7wBoQPHOv46iBBnJtMv1fTYchDJpTEuts61DOfDMI+BkO9KqR/7w3
-         4jwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=VQ7eOrI6FIZwDaocmq454OANKIbrFQPFfq7eOf2JtIw=;
-        b=A0s0cGXVK5aWDCFDOxsk2KWDh9PsASZZfGeepXuXI/yD3UoTslThfhMOPy4O4EzStu
-         HRLRqlFrViXmsxzj+nNUCE3SDUn3hG2vz7l+ClHeEdT8iocJAJQ2afmFsdx7U/4hHeCb
-         AC1s01rZidceZWkPOIzkZ6cdd8ugcww7mdoAFnqraMXFZUOSntQ25rvE4lTVaenOhMZl
-         KO29d3Wgqh01K9Q3+7v9ETc6E+5G4AlVFKla043kKDTKgHIH5QfTGmSCLLZJCGKGh142
-         5eKyXmYN+qVveNjNi8PQUkdb8ku9kAq7Lt8aIJWZG5SySKPEMxp3M4DtY9ucgeJ3T/3n
-         Hb+Q==
-X-Gm-Message-State: AJIora+YvzcILKeZJjO5gN9Ao3dEf3R/QGKFOJojzzaIyra+6CC/L/wv
-        Mg32n2fzxNzg6hyMfbEElNad+w==
-X-Google-Smtp-Source: AGRyM1vfHkvSll1Vf5naVbcFaiTWlBdlvn27d6kKY+yCpav3hSTxEtd3L6HpE0apL2mqZLBUxlockw==
-X-Received: by 2002:a05:6512:3192:b0:48a:50a0:e0f1 with SMTP id i18-20020a056512319200b0048a50a0e0f1mr6672900lfe.301.1658421650132;
-        Thu, 21 Jul 2022 09:40:50 -0700 (PDT)
-Received: from [192.168.115.193] (89-162-31-138.fiber.signal.no. [89.162.31.138])
-        by smtp.gmail.com with ESMTPSA id p20-20020ac24ed4000000b00489c54859a5sm530202lfr.287.2022.07.21.09.40.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Jul 2022 09:40:49 -0700 (PDT)
-Message-ID: <1e0df4bd-0184-d373-b290-128714b2dc53@linaro.org>
-Date:   Thu, 21 Jul 2022 18:40:48 +0200
+        with ESMTP id S229517AbiGURBG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jul 2022 13:01:06 -0400
+Received: from smtp.smtpout.orange.fr (smtp02.smtpout.orange.fr [80.12.242.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC06422C1
+        for <linux-clk@vger.kernel.org>; Thu, 21 Jul 2022 10:01:03 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id EZXhoxRl0LFqbEZXhozq3f; Thu, 21 Jul 2022 19:01:02 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Thu, 21 Jul 2022 19:01:02 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <4feebd9e-d1c3-aeea-8294-e7ae182f7918@wanadoo.fr>
+Date:   Thu, 21 Jul 2022 19:00:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: add SM6375 QCOM global clock
- bindings
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Cc:     martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220719115756.32231-1-konrad.dybcio@somainline.org>
- <20220719115756.32231-2-konrad.dybcio@somainline.org>
- <11cc46d8-ae01-f3d2-b9c6-c366c6e4afc9@linaro.org>
- <887b005d-750d-39f2-73b7-851aa0e461f4@somainline.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <887b005d-750d-39f2-73b7-851aa0e461f4@somainline.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v5 7/7] clk: mediatek: Add MediaTek Helio X10 MT6795 clock
+ drivers
+Content-Language: fr
+References: <20220629110254.184213-1-angelogioacchino.delregno@collabora.com>
+ <20220629110254.184213-8-angelogioacchino.delregno@collabora.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     angelogioacchino.delregno@collabora.com
+Cc:     bgolaszewski@baylibre.com, chun-jie.chen@mediatek.com,
+        ck.hu@mediatek.com, devicetree@vger.kernel.org,
+        fparent@baylibre.com, ikjn@chromium.org, jason-jh.lin@mediatek.com,
+        kernel@collabora.com, konrad.dybcio@somainline.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        marijn.suijten@somainline.org, martin.botka@somainline.org,
+        matthias.bgg@gmail.com, miles.chen@mediatek.com,
+        mturquette@baylibre.com, p.zabel@pengutronix.de,
+        paul.bouchara@somainline.org, phone-devel@vger.kernel.org,
+        rex-bc.chen@mediatek.com, robh+dt@kernel.org,
+        sam.shih@mediatek.com, sboyd@kernel.org, tinghan.shen@mediatek.com,
+        weiyi.lu@mediatek.com, wenst@chromium.org,
+        y.oudjana@protonmail.com, ~postmarketos/upstreaming@lists.sr.ht
+In-Reply-To: <20220629110254.184213-8-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/07/2022 21:36, Konrad Dybcio wrote:
+Le 29/06/2022 à 13:02, AngeloGioacchino Del Regno a écrit :
+> Add the clock drivers for the entire clock tree of MediaTek Helio X10
+> MT6795, including system clocks (apmixedsys, infracfg, pericfg, topckgen)
+> and multimedia clocks (mmsys, mfg, vdecsys, vencsys).
 > 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+> Reviewed-by: Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>   drivers/clk/mediatek/Kconfig                 |  37 ++
+>   drivers/clk/mediatek/Makefile                |   6 +
+>   drivers/clk/mediatek/clk-mt6795-apmixedsys.c | 157 +++++
+>   drivers/clk/mediatek/clk-mt6795-infracfg.c   | 148 +++++
+>   drivers/clk/mediatek/clk-mt6795-mfg.c        |  50 ++
+>   drivers/clk/mediatek/clk-mt6795-mm.c         | 106 ++++
+>   drivers/clk/mediatek/clk-mt6795-pericfg.c    | 160 +++++
+>   drivers/clk/mediatek/clk-mt6795-topckgen.c   | 610 +++++++++++++++++++
+>   drivers/clk/mediatek/clk-mt6795-vdecsys.c    |  55 ++
+>   drivers/clk/mediatek/clk-mt6795-vencsys.c    |  50 ++
+>   10 files changed, 1379 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-infracfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-mfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-mm.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-pericfg.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-topckgen.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-vdecsys.c
+>   create mode 100644 drivers/clk/mediatek/clk-mt6795-vencsys.c
 > 
-> On 20.07.2022 08:27, Krzysztof Kozlowski wrote:
->> On 19/07/2022 13:57, Konrad Dybcio wrote:
->>> Add device tree bindings for global clock controller for SM6375 SoCs.
->>>
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
->>> ---
->>> Changes since v1:
->>> - dropped clock-names (switched to .index)
->>>
->>>  .../bindings/clock/qcom,sm6375-gcc.yaml       |  65 +++++
->>>  include/dt-bindings/clock/qcom,sm6375-gcc.h   | 234 ++++++++++++++++++
->>>  2 files changed, 299 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
->>>  create mode 100644 include/dt-bindings/clock/qcom,sm6375-gcc.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
->>> new file mode 100644
->>> index 000000000000..2e43cd75d3d4
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6375-gcc.yaml
->>> @@ -0,0 +1,65 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/clock/qcom,sm6375-gcc.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Global Clock & Reset Controller Binding for SM6375
->>> +
->>> +maintainers:
->>> +  - Konrad Dybcio <konrad.dybcio@somainline.org>
->>> +
->>> +description: |
->>> +  Qualcomm global clock control module which supports the clocks, resets and
->>> +  power domains on SM6375
->>> +
->>> +  See also:
->>> +  - dt-bindings/clock/qcom,sm6375-gcc.h
->>> +
->>
->> Why you are not referencing qcom,gcc.yaml?
-> Hm.. Out of all the SoCs we support, only apq8084 and apq/ipq8064 reference it..
-> Should I add that?
-
-Yes. There was a patchset adding references everywhere, so new code for
-sure must have it.
 
 
-Best regards,
-Krzysztof
+[...]
+
+> diff --git a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+> new file mode 100644
+> index 000000000000..e87db76799af
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+
+[...]
+
+> +static int clk_mt6795_apmixed_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	void __iomem *base;
+> +	struct clk_hw *hw;
+> +	int ret;
+> +
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	ret = mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
+> +	if (ret)
+> +		goto free_clk_data;
+> +
+> +	hw = mtk_clk_register_ref2usb_tx("ref2usb_tx", "clk26m", base + REG_REF2USB);
+
+This calls kzalloc() and clk_hw_register() but...
+
+> +	if (IS_ERR(hw)) {
+> +		ret = PTR_ERR(hw);
+> +		dev_err(dev, "Failed to register ref2usb_tx: %d\n", ret);
+> +		goto unregister_plls;
+> +	}
+> +	clk_data->hws[CLK_APMIXED_REF2USB_TX] = hw;
+> +
+> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot register clock provider: %d\n", ret);
+> +		goto unregister_ref2usb;
+> +	}
+> +
+> +	/* Setup MD1 to avoid random crashes */
+> +	dev_dbg(dev, "Performing initial setup for MD1\n");
+> +	clk_mt6795_apmixed_setup_md1(base);
+> +
+> +	return 0;
+> +
+> +unregister_ref2usb:
+> +	clk_hw_unregister(clk_data->hws[CLK_APMIXED_REF2USB_TX]);
+
+... only clk_hw_register() is undone here. Should a 
+mtk_clk_unregister_ref2usb_tx() be useful?
+
+Or is it already handled somewhere else?
+
+> +unregister_plls:
+> +	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
+> +free_clk_data:
+> +	mtk_free_clk_data(clk_data);
+> +	return ret;
+> +}
+> +
+> +static int clk_mt6795_apmixed_remove(struct platform_device *pdev)
+> +{
+> +	struct device_node *node = pdev->dev.of_node;
+> +	struct clk_hw_onecell_data *clk_data = platform_get_drvdata(pdev);
+> +
+> +	of_clk_del_provider(node);
+> +	clk_hw_unregister(clk_data->hws[CLK_APMIXED_REF2USB_TX]);
+
+Same here.
+
+> +	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
+> +	mtk_free_clk_data(clk_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver clk_mt6795_apmixed_drv = {
+> +	.probe = clk_mt6795_apmixed_probe,
+> +	.remove = clk_mt6795_apmixed_remove,
+> +	.driver = {
+> +		.name = "clk-mt6795-apmixed",
+> +		.of_match_table = of_match_clk_mt6795_apmixed,
+> +	},
+> +};
+> +module_platform_driver(clk_mt6795_apmixed_drv);
+> +
+> +MODULE_DESCRIPTION("MediaTek MT6795 apmixed clocks driver");
+> +MODULE_LICENSE("GPL v2");
+
+[...]
+
+> diff --git a/drivers/clk/mediatek/clk-mt6795-mm.c b/drivers/clk/mediatek/clk-mt6795-mm.c
+> new file mode 100644
+> index 000000000000..27a8859ff5b5
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6795-mm.c
+
+[...]
+
+> +static int clk_mt6795_mm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->parent->of_node;
+> +	struct clk_hw_onecell_data *clk_data;
+> +	int ret;
+> +
+> +	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	ret = mtk_clk_register_gates(node, mm_gates, ARRAY_SIZE(mm_gates), clk_data);
+> +	if (ret)
+
+Add an error handling path and call mtk_free_clk_data(clk_data); if this 
+fails?
+
+> +		return ret;
+> +
+> +	return of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+
+Same here, + mtk_clk_unregister_gates()?
+
+> +}
+> +
+> +static struct platform_driver clk_mt6795_mm_drv = {
+> +	.driver = {
+> +		.name = "clk-mt6795-mm",
+> +	},
+> +	.probe = clk_mt6795_mm_probe,
+
+.remove function that mimics the (non existent) error handling path of 
+the probe?
+
+> +};
+> +module_platform_driver(clk_mt6795_mm_drv);
+> +
+> +MODULE_DESCRIPTION("MediaTek MT6795 multimedia clocks driver");
+> +MODULE_LICENSE("GPL v2");
+
+[...]
+
