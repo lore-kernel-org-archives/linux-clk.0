@@ -2,116 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC7DCCA473
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Jul 2022 03:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7469DC43334
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Jul 2022 10:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234038AbiGWDCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jul 2022 23:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
+        id S238707AbiGWKI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Jul 2022 06:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiGWDCc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jul 2022 23:02:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFADDECC;
-        Fri, 22 Jul 2022 20:02:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0CE0EB82B1E;
-        Sat, 23 Jul 2022 03:02:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E43CC341C6;
-        Sat, 23 Jul 2022 03:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658545346;
-        bh=RmHNidHcM6XnyksPN/PZ9Th3H+UhaPw4mbqV8BGr+lk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eu/SahGnm2hDYt+NNv6xEtT/DRemsy7UcVl/gxuxomUCXoPIbz5QwEzpuI3xmeDCz
-         6CvunG/RROezKcPISJH/AZKEfl5SA9kYZ2cAm8q9MYDhCFWJhnpEhB1LjdF5nWszvo
-         yxQ0h13kwPxBbjHoh9Qb4cPngEMrGcd8vfJT9cQ2BxmLzVqEXOjGCcaU3evhGVcTln
-         ozPywvOhwtK+zhKYTPA2I/JIH1oVMEIwqP8BXwi82kEdk2hgJcTXMdVmSXvzcxerr7
-         /5IotM9Y4VfFM3U5UH2+NHcLu0JYjN+Wqs3J2ch54DBiyzrtJ3KZpebnwAwHq6R/KY
-         l9JO+hwonW7yw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com>
-References: <20220711123519.217219-1-tmaimon77@gmail.com> <20220711123519.217219-5-tmaimon77@gmail.com> <20220711195544.70A30C34115@smtp.kernel.org> <CAP6Zq1ie_RgJ_9S3ftoVJ=eJHX1xR4_O_czKZghNPKVEFOzC8Q@mail.gmail.com> <20220718191454.5B5D3C341C0@smtp.kernel.org> <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com>
-Subject: Re: [PATCH v8 04/16] clk: npcm8xx: add clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
+        with ESMTP id S238791AbiGWKId (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jul 2022 06:08:33 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF0EC5D7B;
+        Sat, 23 Jul 2022 03:01:47 -0700 (PDT)
+Received: from localhost.localdomain (abxj77.neoplus.adsl.tpnet.pl [83.9.3.77])
+        by m-r1.th.seeweb.it (Postfix) with ESMTPA id 25D192067B;
+        Sat, 23 Jul 2022 12:01:40 +0200 (CEST)
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Olof Johansson <olof@lixom.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Robert Hancock <robert.hancock@calian.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas G leixner <tglx@linutronix.de>,
-        Patrick Venture <venture@google.com>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Nancy Yuen <yuenn@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        SERIAL DRIVERS <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Date:   Fri, 22 Jul 2022 20:02:24 -0700
-User-Agent: alot/0.10
-Message-Id: <20220723030226.8E43CC341C6@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] clk: qcom: alpha: Add support for programming the PLL_FSM_LEGACY_MODE bit
+Date:   Sat, 23 Jul 2022 12:01:33 +0200
+Message-Id: <20220723100135.91784-1-konrad.dybcio@somainline.org>
+X-Mailer: git-send-email 2.37.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tomer Maimon (2022-07-19 03:04:43)
-> On Mon, 18 Jul 2022 at 22:14, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> >
-> > So the clk and reset driver should be the same driver, or one driver
-> > should register the other and use the auxiliary bus to express the
-> > relationship. That way we know that the drivers are tightly coupled and
-> > aren't going to stomp over each other.
-> I think it is very problematic to use the same driver for the reset
-> and the clocks also because The NPCM reset driver is an old driver
-> that was used also to the older NPCM BMC SoC so it will be problematic
-> to use the clock and reset driver in the same space.
-> indeed the reset and clocks are using the same memory region but they
-> are not using the same registers, is it not enough?
-> Please be aware that the NPCM reset driver is checking that it is
-> using the reset registers before calling I/O functions.
+This is used on at least SM6375 and its variations.
 
-To put it simply, platform device drivers should use platform device
-APIs. The platform device APIs hide the fact that the firmware is ACPI
-or DT or nothing at all. The usage of of_address_to_resource() is
-problematic.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+---
+No changes since v1/v2
 
-After converting that to platform APIs you'll get janitor style cleanups
-trying to convert to devm_platform_ioremap_resource(). We'll have to
-discuss this again when that happens, even if there's a comment in the
-code indicating we can't reserve the IO space because there's another
-driver. These problems have happened in the past, fun times!
+ drivers/clk/qcom/clk-alpha-pll.c | 5 +++++
+ drivers/clk/qcom/clk-alpha-pll.h | 5 +++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-Furthermore, in DT, reg properties aren't supposed to overlap. When that
-happens it usually indicates the DT is being written to describe driver
-structure instead of the IP blocks that are delivered by the hardware
-engineer. In this case it sounds like a combined clk and reset IP block
-because they piled all the SoC glue stuff into a register range. Are
-there more features in this IO range?
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index b42684703fbb..ea157723906a 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -27,6 +27,7 @@
+ # define PLL_VOTE_FSM_RESET	BIT(21)
+ # define PLL_UPDATE		BIT(22)
+ # define PLL_UPDATE_BYPASS	BIT(23)
++# define PLL_FSM_LEGACY_MODE	BIT(24)
+ # define PLL_OFFLINE_ACK	BIT(28)
+ # define ALPHA_PLL_ACK_LATCH	BIT(29)
+ # define PLL_ACTIVE_FLAG	BIT(30)
+@@ -1102,6 +1103,10 @@ void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 		regmap_update_bits(regmap, PLL_USER_CTL(pll), mask, val);
+ 	}
+ 
++	if (pll->flags & SUPPORTS_FSM_LEGACY_MODE)
++		regmap_update_bits(regmap, PLL_MODE(pll), PLL_FSM_LEGACY_MODE,
++							PLL_FSM_LEGACY_MODE);
++
+ 	regmap_update_bits(regmap, PLL_MODE(pll), PLL_UPDATE_BYPASS,
+ 							PLL_UPDATE_BYPASS);
+ 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 447efb82fe59..b15a62cb8e36 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -70,9 +70,10 @@ struct clk_alpha_pll {
+ 
+ 	const struct pll_vco *vco_table;
+ 	size_t num_vco;
+-#define SUPPORTS_OFFLINE_REQ	BIT(0)
+-#define SUPPORTS_FSM_MODE	BIT(2)
++#define SUPPORTS_OFFLINE_REQ		BIT(0)
++#define SUPPORTS_FSM_MODE		BIT(2)
+ #define SUPPORTS_DYNAMIC_UPDATE	BIT(3)
++#define SUPPORTS_FSM_LEGACY_MODE	BIT(4)
+ 	u8 flags;
+ 
+ 	struct clk_regmap clkr;
+-- 
+2.37.1
+
