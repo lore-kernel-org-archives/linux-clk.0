@@ -2,89 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 789CBC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Jul 2022 21:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC7DCCA473
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Jul 2022 03:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233965AbiGVVz4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Jul 2022 17:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54588 "EHLO
+        id S234038AbiGWDCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Jul 2022 23:02:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236232AbiGVVzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jul 2022 17:55:42 -0400
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B4E2872C;
-        Fri, 22 Jul 2022 14:55:41 -0700 (PDT)
-Received: from toolbox.int.toradex.com ([81.221.243.92]) by mrelay.perfora.net
- (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MJzv9-1oFpYw450H-001U0n;
- Fri, 22 Jul 2022 23:55:28 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/12] clk: imx8mm: don't use multiple blank lines
-Date:   Fri, 22 Jul 2022 23:54:45 +0200
-Message-Id: <20220722215445.3548530-13-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220722215445.3548530-1-marcel@ziswiler.com>
-References: <20220722215445.3548530-1-marcel@ziswiler.com>
+        with ESMTP id S229572AbiGWDCc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Jul 2022 23:02:32 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBFADDECC;
+        Fri, 22 Jul 2022 20:02:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0CE0EB82B1E;
+        Sat, 23 Jul 2022 03:02:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E43CC341C6;
+        Sat, 23 Jul 2022 03:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658545346;
+        bh=RmHNidHcM6XnyksPN/PZ9Th3H+UhaPw4mbqV8BGr+lk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=eu/SahGnm2hDYt+NNv6xEtT/DRemsy7UcVl/gxuxomUCXoPIbz5QwEzpuI3xmeDCz
+         6CvunG/RROezKcPISJH/AZKEfl5SA9kYZ2cAm8q9MYDhCFWJhnpEhB1LjdF5nWszvo
+         yxQ0h13kwPxBbjHoh9Qb4cPngEMrGcd8vfJT9cQ2BxmLzVqEXOjGCcaU3evhGVcTln
+         ozPywvOhwtK+zhKYTPA2I/JIH1oVMEIwqP8BXwi82kEdk2hgJcTXMdVmSXvzcxerr7
+         /5IotM9Y4VfFM3U5UH2+NHcLu0JYjN+Wqs3J2ch54DBiyzrtJ3KZpebnwAwHq6R/KY
+         l9JO+hwonW7yw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:W2K1hk6sSrZYWoqW9yUz1L0+y7LY4l2HE3yBSfIYEstsQzrcf9N
- 3ssv222wak43XOr8KP/nYq+UpG2laB3bLx4SvGFLO/L3QZrK1gZ5rHeW5h33/dWDvPiioxu
- dM/t3XMrPKeXOkfE6ceRtzx5tcpeQlrk28o/z8IdtNUTVyLPTxEadWv5IIATEUKfki9SjEp
- BOySWRyHc+nJobfltQuFw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:cDdhPD1Y09w=:RzOQ+h42/2Pnf7mvqBctRJ
- +g7vvNna96da4vEiQA1qcUMLrRdvP4GB/+3XbDDFYpoDvhIsEFoLg5haJC4fLuKs7sRVAA1FH
- i6RhsQvvMYPfR0UxhNsaIwTEmq7GY4N73NwnxHarh2o2FmrYQrfaaAYVD4IujIgND6QVJDiQK
- 6Lvl4P/U3cqE5c4cQrSYqugq5Pyg8SxT/ZN9kjrWr3avlBP89GcSC+RdKfYzCvj/rs7GYgR5L
- wt6WK57+Wb9cgcpXY5hTS09J96SfY+velBv6yidsomx1gRCIjSiZu3jYFok98GAKEpSyKULd4
- Izi0KkeHmSbT544R1zDU17RA65KEAH624llC/UUYGcbUsd94u7w1a8f+JNv5pSTfOQmzAPYgV
- 08QWfr5QvQKTQfj8aBjl1v/BTSqn8hxe/BST4p2AwL9MF4ivyve+xpzq4nO5grtI4SM6sgCrn
- SfAoLyrTpqMSzWl7JfV7PKUOVsDkIjburKmTYUyQNyi0oupy7UIL66ccvTOHVnqsR28XFnD6A
- eZs1zj+WjgvuyxkFaBIxM7aRHZh9DhHrNKspD57ib5Pnm7SfxtTWZt/Su8SEH+vi9f3S6qAxc
- Wum3IpVGU5aq3pCjnTrYfEWZ6DoXoz5BEzfoB7nYV+iWuPjqgAY129QQVw/Yfhl0Ik5DyimGy
- xUlO3wLLOih/96At0A+cxu6SzAMeEa6NMHACwPPL9S8Wd6/mIUKh/iwXrKWV5EhJJ9VWBlxbN
- N4GTDnLoq07tRSdFmRt4X2iVSe3c8NJ6rgg/j/S0w4xCzO1vXkVVHf0j07Y=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com>
+References: <20220711123519.217219-1-tmaimon77@gmail.com> <20220711123519.217219-5-tmaimon77@gmail.com> <20220711195544.70A30C34115@smtp.kernel.org> <CAP6Zq1ie_RgJ_9S3ftoVJ=eJHX1xR4_O_czKZghNPKVEFOzC8Q@mail.gmail.com> <20220718191454.5B5D3C341C0@smtp.kernel.org> <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com>
+Subject: Re: [PATCH v8 04/16] clk: npcm8xx: add clock controller
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Olof Johansson <olof@lixom.net>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Robert Hancock <robert.hancock@calian.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Thomas G leixner <tglx@linutronix.de>,
+        Patrick Venture <venture@google.com>,
+        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Nancy Yuen <yuenn@google.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        SERIAL DRIVERS <linux-serial@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Date:   Fri, 22 Jul 2022 20:02:24 -0700
+User-Agent: alot/0.10
+Message-Id: <20220723030226.8E43CC341C6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Quoting Tomer Maimon (2022-07-19 03:04:43)
+> On Mon, 18 Jul 2022 at 22:14, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> >
+> > So the clk and reset driver should be the same driver, or one driver
+> > should register the other and use the auxiliary bus to express the
+> > relationship. That way we know that the drivers are tightly coupled and
+> > aren't going to stomp over each other.
+> I think it is very problematic to use the same driver for the reset
+> and the clocks also because The NPCM reset driver is an old driver
+> that was used also to the older NPCM BMC SoC so it will be problematic
+> to use the clock and reset driver in the same space.
+> indeed the reset and clocks are using the same memory region but they
+> are not using the same registers, is it not enough?
+> Please be aware that the NPCM reset driver is checking that it is
+> using the reset registers before calling I/O functions.
 
-Avoid the following checkpatch warning:
+To put it simply, platform device drivers should use platform device
+APIs. The platform device APIs hide the fact that the firmware is ACPI
+or DT or nothing at all. The usage of of_address_to_resource() is
+problematic.
 
-include/dt-bindings/clock/imx8mm-clock.h:284: check: Please don't use
- multiple blank lines
+After converting that to platform APIs you'll get janitor style cleanups
+trying to convert to devm_platform_ioremap_resource(). We'll have to
+discuss this again when that happens, even if there's a comment in the
+code indicating we can't reserve the IO space because there's another
+driver. These problems have happened in the past, fun times!
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-(no changes since v1)
-
- include/dt-bindings/clock/imx8mm-clock.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-index 47c6f7f9582c..1f768b2eeb1a 100644
---- a/include/dt-bindings/clock/imx8mm-clock.h
-+++ b/include/dt-bindings/clock/imx8mm-clock.h
-@@ -281,7 +281,6 @@
- #define IMX8MM_CLK_CLKOUT2_DIV			256
- #define IMX8MM_CLK_CLKOUT2			257
- 
--
- #define IMX8MM_CLK_END				258
- 
- #endif
--- 
-2.35.1
-
+Furthermore, in DT, reg properties aren't supposed to overlap. When that
+happens it usually indicates the DT is being written to describe driver
+structure instead of the IP blocks that are delivered by the hardware
+engineer. In this case it sounds like a combined clk and reset IP block
+because they piled all the SoC glue stuff into a register range. Are
+there more features in this IO range?
