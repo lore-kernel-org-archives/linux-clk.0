@@ -2,295 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF940C43334
-	for <linux-clk@archiver.kernel.org>; Sat, 23 Jul 2022 15:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32340C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 23 Jul 2022 16:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234216AbiGWPSD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 Jul 2022 11:18:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35928 "EHLO
+        id S236463AbiGWQFT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 23 Jul 2022 12:05:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiGWPSC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jul 2022 11:18:02 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87031146A
-        for <linux-clk@vger.kernel.org>; Sat, 23 Jul 2022 08:18:00 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id c3so5627725qko.1
-        for <linux-clk@vger.kernel.org>; Sat, 23 Jul 2022 08:18:00 -0700 (PDT)
+        with ESMTP id S231706AbiGWQFS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jul 2022 12:05:18 -0400
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2EFBB4A0;
+        Sat, 23 Jul 2022 09:05:17 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id i4so5468040qvv.7;
+        Sat, 23 Jul 2022 09:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k+hK9CwwlpYkhVfAzwgLSB6I39rfllXoWawXAO5lSa4=;
-        b=SCCLU7ZrbbSrLVSKIBLlTRn98LuFC7EORa+QL9nQ6mCfZ45D3ky8w/LkicL5KAZ0pb
-         tqrcjf3h8ePQi3X1URBATugpuTJHwukw4K1NPkiM6KmRS9rHB2FqnpEdERqbQD/qB0FN
-         4n7AQzhBK5PHa4CF44p8Bo2D9xMnkXQeyP9HjMspSVcKvVb43OAAuXkLz4eaE/WMt+jV
-         V3ZJ7qYMAcKj+U8iuyHckT+hwrnUvIiktnsGx8dRcDOB3fBJcsOwqpMX0TeLoqdrnXT3
-         CPzXpLwEugcepOEGwTkndQ0uHA6fSzg15fyqP+EBxYoQkkH4BFNyvjFez0FIQ0RGC9dD
-         pN/Q==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NiBXHZtiNNzM7sHjjwSiAophF4Tu0dmf3XqMGID1JOM=;
+        b=gRlQXzeTLOdtN2sYz2mwN+kdfbohHDPBoWrR0vt1QqZOpEJf8qWYqJRApWT4AkkEHB
+         6ZoJLwk8Y1qqD13NypUe8ZMHXPlF1Xwmc2i5NmYyBHI0y4TvgsSgalxdx6dUL8EywhSp
+         4/aWAKZZgvp04WaLmJDXV8yuQuriLEYblcQYgGrLRJ7xeGvJeIP0wPmXhABQ5YVhoRE0
+         xhfn+BdA2s6sKDw+gBi5LY99iqqIAfJY7rdx8YiiaWSGvGoeS8/iG04REyKb6sydRN1E
+         TH+iAD9qOBlL+3KlUuK3K7/tqGMQOF4YBW0rbsfTla3SQYI9WhINmzVgIMgDTDwmVJs8
+         uQ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k+hK9CwwlpYkhVfAzwgLSB6I39rfllXoWawXAO5lSa4=;
-        b=nGcdCgIQeF6/Ii3QZI+8nwLNbBPw7FdYsYTp+vj86dJwYdgxovvdFJr9/ySm7Za2lF
-         7DxXNOaHN3adiV+rn75cJ+HGK3/HSBX72YL2wKnvffJliKrqzbGeZ8vVeRYTqupJEBIZ
-         dQxZSyF9y/SU6ufws62AYT1djJGS7vfcoLhy+POMMe+/j9UtH9zeOhxvpfpt/pa/BUb+
-         Eh5ZDmAqhRqZuwiETlQF98fyJ22GY/lq88lQd7PUeLzdbqUr3N9OIVmMSz+Y8SgkQVjJ
-         Etwze60vS0g2h30ohd3/IxJqgfYTJd8tHRCLXu08ogvyyynuyV5a9bG2p6wRr7E0zAwy
-         MzEQ==
-X-Gm-Message-State: AJIora+HmDPxE292PCYn0oYXrZoQkjOm+wetfWzZOeKRREqMk8Bug2Bn
-        BJNOBD0VcZq8rBCkuJ1Lh7RZ0Cbszm0Dt4rg4C/RiA==
-X-Google-Smtp-Source: AGRyM1v9YprJMgikhVusTUJa7zX3+10whwtO5HRlKFBwbiyBXcSt6N4V1RYN3I9HNSXYn4++EB+xxfxhQ0KhVGgotxg=
-X-Received: by 2002:ae9:f311:0:b0:6b6:30a9:1bb1 with SMTP id
- p17-20020ae9f311000000b006b630a91bb1mr3676804qkg.30.1658589478615; Sat, 23
- Jul 2022 08:17:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NiBXHZtiNNzM7sHjjwSiAophF4Tu0dmf3XqMGID1JOM=;
+        b=Bhp1rCrwcATYDEK3Vhm28BPTBLf+1Bkxpx0umqdBe/rgfQPICyx+NGSTLe9pxhrwHS
+         0309qaGF7R5pqdH2vy7IKnH9nWAkwGRKGyrIrSbN3VU9Ti0mmDDswBC5EdYQAk0dVbe2
+         srbfLkMxdas4Xp1+II/FsXIAvl7dhYp04AueP6dmdpyw+uzFfRdNFh248ipl9tt6KcPN
+         hdJg4nqOdD7TwUuRrgIJxNvCqIeak3YGKVtNov3LXIOv6ZpYqM9msz4aKcIMg3Xk7W2t
+         G7YVA2KQypc+ZC6r53Nlqen0+QR2AclnkiaRGhyi9Ac9+EV93CfbRMbK/awzARMW3p8C
+         bl4g==
+X-Gm-Message-State: AJIora9PmePQ5LnY/KdZ3Tq7e1jKmkZI2iemctzghuHomm6CUs/U9TFU
+        xj/i5YHN2iAkAxvK7J2hweE=
+X-Google-Smtp-Source: AGRyM1tFGvEAl9/tyu4hF4NNXrnTxNm3w9+iEprFORt+uxL5yPCUzTz4QtHT1LgBfv2VcIgWE/nRvw==
+X-Received: by 2002:ad4:5c62:0:b0:473:4585:292f with SMTP id i2-20020ad45c62000000b004734585292fmr4330419qvh.16.1658592316875;
+        Sat, 23 Jul 2022 09:05:16 -0700 (PDT)
+Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id g4-20020ac87f44000000b0031eb3af3ffesm4935046qtk.52.2022.07.23.09.05.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Jul 2022 09:05:15 -0700 (PDT)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, Mr.Bossman075@gmail.com,
+        clin@suse.com, giulio.benetti@benettiengineering.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v5 00/12] Add support for the i.MXRT1170-evk
+Date:   Sat, 23 Jul 2022 12:05:01 -0400
+Message-Id: <20220723160513.271692-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <20220723145558.25210-1-ansuelsmth@gmail.com> <20220723145558.25210-3-ansuelsmth@gmail.com>
-In-Reply-To: <20220723145558.25210-3-ansuelsmth@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 23 Jul 2022 18:17:47 +0300
-Message-ID: <CAA8EJprb6DGfQYzPSe9d=LZWxhuu+c2t=LbidBrf7Mir4fKGTg@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] clk: qcom: lcc-ipq806x: convert to parent data
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 23 Jul 2022 at 17:56, Christian Marangi <ansuelsmth@gmail.com> wrote:
->
-> Convert lcc-ipq806x driver to parent_data API.
+This patch continues support for the imxrt series now with the imxrt1170
 
-Please mention using "pxo_board" rather than "pxo".
+This patch contains:
+- Update to imxrt_defconfig
+- Devicetree
+- Clock driver
+- Pinctrl driver
+- New pll
 
-With that fixed:
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This patch also updates some documentation for both imxrt1170 an 1050.
 
->
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> v6:
-> - Split to separate patch for ARRAY_SIZE
-> - Rename .name to pxo_board
-> - Drop _clk from .fw_name
-> v5:
-> - Fix the same compilation error (don't know what the hell happen
->   to my buildroot)
-> v4:
-> - Fix compilation error
-> v3:
->  - Inline pxo pll4 parent
->  - Change .name from pxo to pxo_board
->
->  drivers/clk/qcom/lcc-ipq806x.c | 69 +++++++++++++++++++---------------
->  1 file changed, 38 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/clk/qcom/lcc-ipq806x.c b/drivers/clk/qcom/lcc-ipq806x.c
-> index ba90bebba597..1833e59a6434 100644
-> --- a/drivers/clk/qcom/lcc-ipq806x.c
-> +++ b/drivers/clk/qcom/lcc-ipq806x.c
-> @@ -34,7 +34,9 @@ static struct clk_pll pll4 = {
->         .status_bit = 16,
->         .clkr.hw.init = &(struct clk_init_data){
->                 .name = "pll4",
-> -               .parent_names = (const char *[]){ "pxo" },
-> +               .parent_data = &(const struct clk_parent_data) {
-> +                       .fw_name = "pxo", .name = "pxo_board",
-> +               },
->                 .num_parents = 1,
->                 .ops = &clk_pll_ops,
->         },
-> @@ -64,9 +66,9 @@ static const struct parent_map lcc_pxo_pll4_map[] = {
->         { P_PLL4, 2 }
->  };
->
-> -static const char * const lcc_pxo_pll4[] = {
-> -       "pxo",
-> -       "pll4_vote",
-> +static const struct clk_parent_data lcc_pxo_pll4[] = {
-> +       { .fw_name = "pxo", .name = "pxo_board" },
-> +       { .fw_name = "pll4_vote", .name = "pll4_vote" },
->  };
->
->  static struct freq_tbl clk_tbl_aif_mi2s[] = {
-> @@ -131,7 +133,7 @@ static struct clk_rcg mi2s_osr_src = {
->                 .enable_mask = BIT(9),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "mi2s_osr_src",
-> -                       .parent_names = lcc_pxo_pll4,
-> +                       .parent_data = lcc_pxo_pll4,
->                         .num_parents = 2,
->                         .ops = &clk_rcg_ops,
->                         .flags = CLK_SET_RATE_GATE,
-> @@ -139,10 +141,6 @@ static struct clk_rcg mi2s_osr_src = {
->         },
->  };
->
-> -static const char * const lcc_mi2s_parents[] = {
-> -       "mi2s_osr_src",
-> -};
-> -
->  static struct clk_branch mi2s_osr_clk = {
->         .halt_reg = 0x50,
->         .halt_bit = 1,
-> @@ -152,7 +150,9 @@ static struct clk_branch mi2s_osr_clk = {
->                 .enable_mask = BIT(17),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "mi2s_osr_clk",
-> -                       .parent_names = lcc_mi2s_parents,
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &mi2s_osr_src.clkr.hw,
-> +                       },
->                         .num_parents = 1,
->                         .ops = &clk_branch_ops,
->                         .flags = CLK_SET_RATE_PARENT,
-> @@ -167,7 +167,9 @@ static struct clk_regmap_div mi2s_div_clk = {
->         .clkr = {
->                 .hw.init = &(struct clk_init_data){
->                         .name = "mi2s_div_clk",
-> -                       .parent_names = lcc_mi2s_parents,
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &mi2s_osr_src.clkr.hw,
-> +                       },
->                         .num_parents = 1,
->                         .ops = &clk_regmap_div_ops,
->                 },
-> @@ -183,7 +185,9 @@ static struct clk_branch mi2s_bit_div_clk = {
->                 .enable_mask = BIT(15),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "mi2s_bit_div_clk",
-> -                       .parent_names = (const char *[]){ "mi2s_div_clk" },
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &mi2s_div_clk.clkr.hw,
-> +                       },
->                         .num_parents = 1,
->                         .ops = &clk_branch_ops,
->                         .flags = CLK_SET_RATE_PARENT,
-> @@ -191,6 +195,10 @@ static struct clk_branch mi2s_bit_div_clk = {
->         },
->  };
->
-> +static const struct clk_parent_data lcc_mi2s_bit_div_codec_clk[] = {
-> +       { .hw = &mi2s_bit_div_clk.clkr.hw, },
-> +       { .fw_name = "mi2s_codec", .name = "mi2s_codec_clk" },
-> +};
->
->  static struct clk_regmap_mux mi2s_bit_clk = {
->         .reg = 0x48,
-> @@ -199,11 +207,8 @@ static struct clk_regmap_mux mi2s_bit_clk = {
->         .clkr = {
->                 .hw.init = &(struct clk_init_data){
->                         .name = "mi2s_bit_clk",
-> -                       .parent_names = (const char *[]){
-> -                               "mi2s_bit_div_clk",
-> -                               "mi2s_codec_clk",
-> -                       },
-> -                       .num_parents = 2,
-> +                       .parent_data = lcc_mi2s_bit_div_codec_clk,
-> +                       .num_parents = ARRAY_SIZE(lcc_mi2s_bit_div_codec_clk),
->                         .ops = &clk_regmap_mux_closest_ops,
->                         .flags = CLK_SET_RATE_PARENT,
->                 },
-> @@ -245,7 +250,7 @@ static struct clk_rcg pcm_src = {
->                 .enable_mask = BIT(9),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "pcm_src",
-> -                       .parent_names = lcc_pxo_pll4,
-> +                       .parent_data = lcc_pxo_pll4,
->                         .num_parents = 2,
->                         .ops = &clk_rcg_ops,
->                         .flags = CLK_SET_RATE_GATE,
-> @@ -262,7 +267,9 @@ static struct clk_branch pcm_clk_out = {
->                 .enable_mask = BIT(11),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "pcm_clk_out",
-> -                       .parent_names = (const char *[]){ "pcm_src" },
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &pcm_src.clkr.hw,
-> +                       },
->                         .num_parents = 1,
->                         .ops = &clk_branch_ops,
->                         .flags = CLK_SET_RATE_PARENT,
-> @@ -270,6 +277,11 @@ static struct clk_branch pcm_clk_out = {
->         },
->  };
->
-> +static const struct clk_parent_data lcc_pcm_clk_out_codec_clk[] = {
-> +       { .hw = &pcm_clk_out.clkr.hw, },
-> +       { .fw_name = "pcm_codec_clk", .name = "pcm_codec_clk" },
-> +};
-> +
->  static struct clk_regmap_mux pcm_clk = {
->         .reg = 0x54,
->         .shift = 10,
-> @@ -277,11 +289,8 @@ static struct clk_regmap_mux pcm_clk = {
->         .clkr = {
->                 .hw.init = &(struct clk_init_data){
->                         .name = "pcm_clk",
-> -                       .parent_names = (const char *[]){
-> -                               "pcm_clk_out",
-> -                               "pcm_codec_clk",
-> -                       },
-> -                       .num_parents = 2,
-> +                       .parent_data = lcc_pcm_clk_out_codec_clk,
-> +                       .num_parents = ARRAY_SIZE(lcc_pcm_clk_out_codec_clk),
->                         .ops = &clk_regmap_mux_closest_ops,
->                         .flags = CLK_SET_RATE_PARENT,
->                 },
-> @@ -325,7 +334,7 @@ static struct clk_rcg spdif_src = {
->                 .enable_mask = BIT(9),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "spdif_src",
-> -                       .parent_names = lcc_pxo_pll4,
-> +                       .parent_data = lcc_pxo_pll4,
->                         .num_parents = 2,
->                         .ops = &clk_rcg_ops,
->                         .flags = CLK_SET_RATE_GATE,
-> @@ -333,10 +342,6 @@ static struct clk_rcg spdif_src = {
->         },
->  };
->
-> -static const char * const lcc_spdif_parents[] = {
-> -       "spdif_src",
-> -};
-> -
->  static struct clk_branch spdif_clk = {
->         .halt_reg = 0xd4,
->         .halt_bit = 1,
-> @@ -346,7 +351,9 @@ static struct clk_branch spdif_clk = {
->                 .enable_mask = BIT(12),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "spdif_clk",
-> -                       .parent_names = lcc_spdif_parents,
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &spdif_src.clkr.hw,
-> +                       },
->                         .num_parents = 1,
->                         .ops = &clk_branch_ops,
->                         .flags = CLK_SET_RATE_PARENT,
-> @@ -384,7 +391,7 @@ static struct clk_rcg ahbix_clk = {
->                 .enable_mask = BIT(11),
->                 .hw.init = &(struct clk_init_data){
->                         .name = "ahbix",
-> -                       .parent_names = lcc_pxo_pll4,
-> +                       .parent_data = lcc_pxo_pll4,
->                         .num_parents = 2,
->                         .ops = &clk_rcg_lcc_ops,
->                 },
-> --
-> 2.36.1
->
+The i.MXRT1170 has a vast array of features including two cores. 2 Ethernet, 2 USB phy, and a 2d gpu.
 
+It also is featured in a new google coral board
+https://coral.ai/products/dev-board-micro
+Not affiliated unfortunately.
+
+---
+V1 -> V2:
+ - Add 3 new commits in documentation
+ - Fix spelling
+---
+
+Jesse Taube (12):
+  dt-bindings: arm: imx: Add i.MXRT compatible Documentation
+  dt-bindings: timer: gpt: Add i.MXRT compatible Documentation
+  dt-bindings: gpio: fsl-imx-gpio: Add i.MXRT compatibles
+  dt-bindings: mmc: fsl-imx-esdhc: add i.MXRT1170 compatible
+  dt-bindings: serial: fsl-lpuart: add i.MXRT1170 compatible
+  ARM: mach-imx: Add support for i.MXRT1170
+  clk: imx: Update pllv3 to support i.MXRT1170
+  dt-bindings: imx: Add clock binding for i.MXRT1170
+  clk: imx: Add initial support for i.MXRT1170 clock driver
+  ARM: dts: imxrt1170-pinfunc: Add pinctrl binding header
+  ARM: dts: imx: Add i.MXRT1170-EVK support
+  ARM: imxrt_defconfig: Add i.MXRT1170
+
+ .../devicetree/bindings/arm/fsl.yaml          |   12 +
+ .../bindings/gpio/fsl-imx-gpio.yaml           |    2 +
+ .../bindings/mmc/fsl-imx-esdhc.yaml           |    4 +
+ .../bindings/serial/fsl-lpuart.yaml           |    3 +
+ .../devicetree/bindings/timer/fsl,imxgpt.yaml |    2 +
+ arch/arm/boot/dts/Makefile                    |    3 +-
+ arch/arm/boot/dts/imxrt1170-evk.dts           |  110 ++
+ arch/arm/boot/dts/imxrt1170-pinfunc.h         | 1561 +++++++++++++++++
+ arch/arm/boot/dts/imxrt1170.dtsi              |  276 +++
+ arch/arm/configs/imxrt_defconfig              |   17 +
+ arch/arm/mach-imx/mach-imxrt.c                |    1 +
+ drivers/clk/imx/Kconfig                       |    7 +
+ drivers/clk/imx/Makefile                      |    1 +
+ drivers/clk/imx/clk-imxrt1170.c               |  749 ++++++++
+ drivers/clk/imx/clk-pllv3.c                   |   57 +-
+ drivers/clk/imx/clk.h                         |   11 +
+ include/dt-bindings/clock/imxrt1170-clock.h   |  282 +++
+ 17 files changed, 3091 insertions(+), 7 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imxrt1170-evk.dts
+ create mode 100644 arch/arm/boot/dts/imxrt1170-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imxrt1170.dtsi
+ create mode 100644 drivers/clk/imx/clk-imxrt1170.c
+ create mode 100644 include/dt-bindings/clock/imxrt1170-clock.h
 
 -- 
-With best wishes
-Dmitry
+2.36.1
+
