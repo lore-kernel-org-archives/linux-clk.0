@@ -2,93 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9458EC43334
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Jul 2022 17:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388E5C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Jul 2022 18:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbiGXRsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Jul 2022 13:48:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37526 "EHLO
+        id S229469AbiGXSX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Jul 2022 14:23:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiGXRsp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jul 2022 13:48:45 -0400
-Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 284D811463;
-        Sun, 24 Jul 2022 10:48:45 -0700 (PDT)
-Received: from dslb-178-004-201-227.178.004.pools.vodafone-ip.de ([178.4.201.227] helo=martin-debian-2.paytec.ch)
-        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <martin@kaiser.cx>)
-        id 1oFfiT-0005LM-Lg; Sun, 24 Jul 2022 19:48:33 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
-Subject: [PATCH v3 1/2] clk: imx25: print silicon revision during init
-Date:   Sun, 24 Jul 2022 19:47:36 +0200
-Message-Id: <20220724174737.212028-2-martin@kaiser.cx>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220724174737.212028-1-martin@kaiser.cx>
-References: <20220602080344.208702-1-martin@kaiser.cx>
- <20220724174737.212028-1-martin@kaiser.cx>
+        with ESMTP id S229456AbiGXSX5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jul 2022 14:23:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07020B7EC;
+        Sun, 24 Jul 2022 11:23:57 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id o17so2415465edi.13;
+        Sun, 24 Jul 2022 11:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSxzmKxjlNqM9TSDpV5dH/r3annlSczSnTdVT/KLPhw=;
+        b=oQyXUMIVAbLJ1EBHHoaawt/CVRSa2HlkUCUCvMvQHzykdIz4bEivASw7SC12BkhPMY
+         fcAaft7Z5AwxI3mGMdww2nFrvAKIsjVi4FSDgaeO90pudPPn+Sw8hqKM0bZJYNgRdC/U
+         DUBOF5NYPZQ+1AHGCLJtZKEyKxWzv20ITajRimMeRjgEZkWHkD0Zt+9TlQ5QwEFdFYKJ
+         PEnMRP827ChYPQb50IdmQYixEBc1lJgOAtZpF+cgpbCngEi7qY3vGF2JS33d5NJBtuVJ
+         zIDp//mnmYxSiic6vHigYs809lKlGF4aKxYVh9XsGm5aCaYjX3hdLZoaN4OTMfM4ikJN
+         ewXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSxzmKxjlNqM9TSDpV5dH/r3annlSczSnTdVT/KLPhw=;
+        b=KEy3kHFth4rKrbtCAtRbf4B2KqY0zeHlrNtDcccwwEMug+hgDYtYrSECjTaHzjer3v
+         YNiYpkm6+AB88pMzocEylmm6dtbghMtDJR/7Ovy4v8I6jIWzBTri/tZ2uYqD2KVN+iIY
+         d6CeDp7xJYFtZbS8pZNsguCcBycGeLNhIhwxl3WrRLi8Pjc1TW0nwLpsn1bMsB69dStA
+         Nt8G8cYJq2a/UdMy2of9mQxwa4rAQsrZVqdebchllFZIpi2/uSgnJQWK9PJwA3YEuBpM
+         o4fSIWxXhsMY0aNKzm5ckUwmpqV8uazP0va2Ds5EwnX9TNTozmmze3l4RXXxV2oQWcVj
+         w+vg==
+X-Gm-Message-State: AJIora+xWvrnG15MIQUA7575Axr1jypPjhA3GEqXjfuloh8c4PB7kmNe
+        3NUCPSj59znXrkA5FrTG0yc=
+X-Google-Smtp-Source: AGRyM1t/68IJCJrHF9d56kGibJqeSwNyNFzzk6XXN4n52qIZNPZTArASZvuowttnthnhro5+p0D4oQ==
+X-Received: by 2002:a05:6402:248f:b0:43a:b89c:20e3 with SMTP id q15-20020a056402248f00b0043ab89c20e3mr9956444eda.335.1658687035404;
+        Sun, 24 Jul 2022 11:23:55 -0700 (PDT)
+Received: from localhost.localdomain ([5.171.121.144])
+        by smtp.googlemail.com with ESMTPSA id kw24-20020a170907771800b0072b609d9a36sm502680ejc.16.2022.07.24.11.23.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Jul 2022 11:23:55 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v7 1/4] dt-bindings: clock: add pcm reset for ipq806x lcc
+Date:   Sun, 24 Jul 2022 20:23:26 +0200
+Message-Id: <20220724182329.9891-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Print the imx25 silicon revision when the clocks are initialised.
+Add pcm reset define for ipq806x lcc.
 
-Use the same mechanism as for imx27, i.e. call mx25_revision.
-This function is unused at the moment.
-
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-changes in v3:
-- rebase against today's linux-next
+v3:
+ - Added review tag
+ - Added ack tag
+v2:
+ - Fix Sob tag
 
-changes in v2:
-- send the patch to the clk maintainers
+ include/dt-bindings/clock/qcom,lcc-ipq806x.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/clk/imx/clk-imx25.c | 3 +++
- include/soc/imx/revision.h  | 1 +
- 2 files changed, 4 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
-index 66192fe0a898..263409fca1eb 100644
---- a/drivers/clk/imx/clk-imx25.c
-+++ b/drivers/clk/imx/clk-imx25.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-+#include <soc/imx/revision.h>
+diff --git a/include/dt-bindings/clock/qcom,lcc-ipq806x.h b/include/dt-bindings/clock/qcom,lcc-ipq806x.h
+index 25b92bbf0ab4..e0fb4acf4ba8 100644
+--- a/include/dt-bindings/clock/qcom,lcc-ipq806x.h
++++ b/include/dt-bindings/clock/qcom,lcc-ipq806x.h
+@@ -19,4 +19,6 @@
+ #define SPDIF_CLK			10
+ #define AHBIX_CLK			11
  
- #include "clk.h"
- 
-@@ -220,6 +221,8 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
- 
- 	imx_register_uart_clocks(6);
- 
-+	imx_print_silicon_rev("i.MX25", mx25_revision());
++#define LCC_PCM_RESET			0
 +
- 	return 0;
- }
- 
-diff --git a/include/soc/imx/revision.h b/include/soc/imx/revision.h
-index b2a55dafaf0a..b122d2fc8881 100644
---- a/include/soc/imx/revision.h
-+++ b/include/soc/imx/revision.h
-@@ -22,6 +22,7 @@
- #define IMX_CHIP_REVISION_3_3		0x33
- #define IMX_CHIP_REVISION_UNKNOWN	0xff
- 
-+int mx25_revision(void);
- int mx27_revision(void);
- int mx31_revision(void);
- int mx35_revision(void);
+ #endif
 -- 
-2.30.2
+2.36.1
 
