@@ -2,68 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2115BC43334
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Jul 2022 17:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E410C43334
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Jul 2022 17:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232095AbiGXRBD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Jul 2022 13:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48410 "EHLO
+        id S229546AbiGXRsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Jul 2022 13:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233417AbiGXRBB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jul 2022 13:01:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D572211C1D;
-        Sun, 24 Jul 2022 10:00:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 83D57B80D8C;
-        Sun, 24 Jul 2022 17:00:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 36834C3411E;
-        Sun, 24 Jul 2022 17:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658682056;
-        bh=z7Gquf+0wz651sKDt6/qleTIpxs2uK3551QZAZKWkKk=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=SkwLtxLRvjLdIhbrJ3euTuSOqMdGwGLY+im5wzpatFBqpxA92ASKIVhiaAI9jEXxW
-         db0JyNz0vrwWQOAS11phdE9KFh8GvbzSLNSUdoa2VSDBS4EZbHijsSh+QwAzBriC1C
-         9QnX+j5BCTUur1voNc6iJ14mnRPs5xFfy4eETBbh5m+UpHLML8LpX6Mhai+RfQPrOJ
-         i6pkTnDz4ujSPmiovS3+2OGNNUpW4V6dfhvwpRpa0otS5hxif/Q81ZqMdwnmYYWv97
-         xgg0VVZOhuFC0Q+LZSjbiNTeiK8dY67v3MJuzKdJwDI13JC+kodPssOD3YeKxFYJw8
-         cqVyDpNey/NYA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 22910E451AD;
-        Sun, 24 Jul 2022 17:00:56 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v5.19-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220724065909.1484190-1-sboyd@kernel.org>
-References: <20220724065909.1484190-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220724065909.1484190-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 25c2a075eb6a3031813b6051bd10dfc22c36a2a4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 714b82c18ba0d2e76e9c3fd7785ff5a060f5980b
-Message-Id: <165868205613.25283.993300011168008308.pr-tracker-bot@kernel.org>
-Date:   Sun, 24 Jul 2022 17:00:56 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S229456AbiGXRsp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Jul 2022 13:48:45 -0400
+Received: from viti.kaiser.cx (viti.kaiser.cx [IPv6:2a01:238:43fe:e600:cd0c:bd4a:7a3:8e9f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 212001117C;
+        Sun, 24 Jul 2022 10:48:44 -0700 (PDT)
+Received: from dslb-178-004-201-227.178.004.pools.vodafone-ip.de ([178.4.201.227] helo=martin-debian-2.paytec.ch)
+        by viti.kaiser.cx with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <martin@kaiser.cx>)
+        id 1oFfiV-0005LM-0m; Sun, 24 Jul 2022 19:48:35 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>
+Subject: [PATCH v3 2/2] clk: imx25: make __mx25_clocks_init return void
+Date:   Sun, 24 Jul 2022 19:47:37 +0200
+Message-Id: <20220724174737.212028-3-martin@kaiser.cx>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220724174737.212028-1-martin@kaiser.cx>
+References: <20220602080344.208702-1-martin@kaiser.cx>
+ <20220724174737.212028-1-martin@kaiser.cx>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Sat, 23 Jul 2022 23:59:09 -0700:
+The __mx25_clocks_init function always returns 0 and its only
+caller does not check the return value. Let's remove it.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+---
+changes in v3:
+- rebase against today's linux-next
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/714b82c18ba0d2e76e9c3fd7785ff5a060f5980b
+changes in v2:
+- send the patch to the clk maintainers
 
-Thank you!
+ drivers/clk/imx/clk-imx25.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx25.c b/drivers/clk/imx/clk-imx25.c
+index 263409fca1eb..72b30dd7f05f 100644
+--- a/drivers/clk/imx/clk-imx25.c
++++ b/drivers/clk/imx/clk-imx25.c
+@@ -74,7 +74,7 @@ enum mx25_clks {
+ 
+ static struct clk *clk[clk_max];
+ 
+-static int __init __mx25_clocks_init(void __iomem *ccm_base)
++static void __init __mx25_clocks_init(void __iomem *ccm_base)
+ {
+ 	BUG_ON(!ccm_base);
+ 
+@@ -222,8 +222,6 @@ static int __init __mx25_clocks_init(void __iomem *ccm_base)
+ 	imx_register_uart_clocks(6);
+ 
+ 	imx_print_silicon_rev("i.MX25", mx25_revision());
+-
+-	return 0;
+ }
+ 
+ static void __init mx25_clocks_init_dt(struct device_node *np)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.30.2
+
