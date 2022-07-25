@@ -2,74 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7923EC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 22:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1193C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 22:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237253AbiGYWWw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 18:22:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32880 "EHLO
+        id S230320AbiGYWYd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jul 2022 18:24:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237252AbiGYWWm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 18:22:42 -0400
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751712558E;
-        Mon, 25 Jul 2022 15:22:41 -0700 (PDT)
-Received: by mail-oi1-f177.google.com with SMTP id l188so3513551oia.4;
-        Mon, 25 Jul 2022 15:22:41 -0700 (PDT)
+        with ESMTP id S229943AbiGYWYc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 18:24:32 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76B125580;
+        Mon, 25 Jul 2022 15:24:31 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-10d8880d055so16571134fac.8;
+        Mon, 25 Jul 2022 15:24:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=NziihmKhvTDMxLR3TeAOkHUMxBmt4TMUH7DKcZSQRks=;
-        b=wmFhAchOZ8ghTWPRd/uGqi1jxZJTbvpxtQ7ZvXfyQ5dyg5X7O7/VCGYQouPiiOAY7s
-         pwqpLRYCGzTUeaBTCHqpkPVwuJdEHu1NC5GWc2DS5/4JIGIMebxjo3cumNkOWSUfgvXT
-         MGOvkv1uLpP80PVWagHIwj3p5KK9BbCFveZSwEJYq2WfM1GRc0jGuEBSkqIEnGnqKi0d
-         c8P0zdLzfSX1vDqC5HhaqeAAQ0A6PC1+NKGZT9Sq++HoqgOT2/3RqwHQwR616th5KnhX
-         9UaRPFPcf/Pv19cu+uz5JheFZrsVyg+Yrep4julv1JiYBnWzCky2vEGBz8qjT2pMf+ld
-         j4Ig==
-X-Gm-Message-State: AJIora9sfF/qccS9pLkindY1TgrqNLLp+DOE0lgk4rZlQHkQLD8l+lIS
-        Hn7oeOa+ozm49udTHyIxLQ==
-X-Google-Smtp-Source: AGRyM1sz3dyj2N3SvoH/2VVg7xnC3nkGgiFx3lU6Jf9MNXRwmoKmqVAoAxFgjKg1QYLt513rHFbMlg==
-X-Received: by 2002:aca:3441:0:b0:33a:7941:bb07 with SMTP id b62-20020aca3441000000b0033a7941bb07mr13816883oia.199.1658787760722;
-        Mon, 25 Jul 2022 15:22:40 -0700 (PDT)
+        bh=0Z0QbmRm1zN3pSx/ZSaoNbtj/O5S0CbGlF0Em9pGX2k=;
+        b=o/kH5R7yriQp3iibIpxEeMfZjys0axU3E4uFqBSjQsmkj+s3Pm0UfyhczPRKrebWeu
+         KLNaTM13tn6U97CWZhPa3L4ePKa+VQJCZao6XoY/6i/Y8GlsJi45CGhyxL4uqGnWOa0a
+         J2E17wzLAKaYG991BkFC61AJIDoBugZv2fICu8oz13DFlXQU5VgC11WnkwyGGI3kvRHS
+         71k6g4phYu/VTSgVQDWnGneeHI7R32jaRpRe4W7fYjDNdyLqUq87XEwc456m3JuC91zz
+         7X361TdoTkq+8lCesZh5KOLHsuXWrc4NaCEH0c+curbKRcexeMYj3+RT2dhaImPVpXRf
+         vNOw==
+X-Gm-Message-State: AJIora+fMSIhdi8bRr/6W4bSVGM57u9WeKR7rreEMCYfAeTVHkPKCpfi
+        8SW5kPJuONHCLdXE+WFhSQ==
+X-Google-Smtp-Source: AGRyM1sQ5rHAplbjf4BXSSxsvWxxvk51Ywc5oLR5A7N+3QkLG6dkpB354z62rWvjblH7M3Jlh/B4Mg==
+X-Received: by 2002:a05:6870:4186:b0:101:17ef:d966 with SMTP id y6-20020a056870418600b0010117efd966mr7479446oac.97.1658787871116;
+        Mon, 25 Jul 2022 15:24:31 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id t18-20020a9d7f92000000b00616f2680487sm5475632otp.34.2022.07.25.15.22.38
+        by smtp.gmail.com with ESMTPSA id e1-20020a0568301e4100b0061c3753c30dsm5542756otj.17.2022.07.25.15.24.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jul 2022 15:22:40 -0700 (PDT)
-Received: (nullmailer pid 2849371 invoked by uid 1000);
-        Mon, 25 Jul 2022 22:22:37 -0000
-Date:   Mon, 25 Jul 2022 16:22:37 -0600
+        Mon, 25 Jul 2022 15:24:30 -0700 (PDT)
+Received: (nullmailer pid 2852673 invoked by uid 1000);
+        Mon, 25 Jul 2022 22:24:28 -0000
+Date:   Mon, 25 Jul 2022 16:24:28 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, wenst@chromium.org,
-        nfraprado@collabora.com, krzysztof.kozlowski+dt@linaro.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, chun-jie.chen@mediatek.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthias.bgg@gmail.com,
-        rex-bc.chen@mediatek.com, p.zabel@pengutronix.de
-Subject: Re: [PATCH 1/2] dt-bindings: reset: mt8195: Add resets for USB/PCIe
- t-phy port 1
-Message-ID: <20220725222237.GA2849337-robh@kernel.org>
-References: <20220720102817.237483-1-angelogioacchino.delregno@collabora.com>
- <20220720102817.237483-2-angelogioacchino.delregno@collabora.com>
+To:     Satya Priya <quic_c_skakit@quicinc.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, quic_tdas@quicinc.com,
+        robh+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V6 1/5] dt-bindings: clock: Add "qcom,adsp-pil-mode"
+ property
+Message-ID: <20220725222428.GA2852621-robh@kernel.org>
+References: <1658315023-3336-1-git-send-email-quic_c_skakit@quicinc.com>
+ <1658315023-3336-2-git-send-email-quic_c_skakit@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220720102817.237483-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <1658315023-3336-2-git-send-email-quic_c_skakit@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 20 Jul 2022 12:28:16 +0200, AngeloGioacchino Del Regno wrote:
-> Add the reset index for USBSIF P1 (T-PHY port 1), used as either USB
-> or PCI-Express PHY reset.
+On Wed, 20 Jul 2022 16:33:39 +0530, Satya Priya wrote:
+> The LPASS Peripheral loader clocks would be used to bring
+> LPASS out of reset, when this property is present.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> This is a cleanup done to handle overlap of regmap of
+> lpasscc and lpass_aon blocks. As a part of this, remove
+> the "cc" regmap from lpasscc node.
+> 
+> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  include/dt-bindings/reset/mt8195-resets.h | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml   | 6 ++----
+>  .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml         | 7 +++++++
+>  2 files changed, 9 insertions(+), 4 deletions(-)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
