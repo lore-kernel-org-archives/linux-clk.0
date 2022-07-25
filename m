@@ -2,162 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607B1C43334
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6194BC43334
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233941AbiGYK2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 06:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50716 "EHLO
+        id S231722AbiGYKyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jul 2022 06:54:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234269AbiGYK1v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:27:51 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.129.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C79315821
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jul 2022 03:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1658744868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AdS8+B/O/n4mduTrHxo0RL4fuHx8wGK9eiouBtBzHLE=;
-        b=lHpywVvLLRwiCAibBi8hEEbr63fJIITdxMLhnMDILx/UZFdzFSrweSnlUykWjYnp8zXb2x
-        YR5nGvvBuXkX84pyWwFPrDdIiHdp/y91ECS/+yE3Jfl+ajtoL15XKEfJY2AE/XL4I7S79j
-        g5FMQyvWDuLz7ty+XmYPZVOpsfzf83qUeOwoGabE9FD9C0u1OfAbCumTIUYBQE52Hh5PfP
-        i/pPrGjLpM+LkTEIG3iVya1DEZqn+bugSHmSizF8w/iYgspP5ErrhVokuZZoLPcaUBe1gU
-        UxVyq2DOqueJElEYkrR+DR8ap6WJxq4D+Qhxxw5lzJOW1CajQwhTwEcJ209jpQ==
-Received: from mail.maxlinear.com (174-47-1-83.static.ctl.one [174.47.1.83])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- us-mta-97-Dh75eSUgPq6mae4Tcwhp4g-1; Mon, 25 Jul 2022 06:27:44 -0400
-X-MC-Unique: Dh75eSUgPq6mae4Tcwhp4g-1
-Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
- mail.maxlinear.com (10.23.38.120) with Microsoft SMTP Server id 15.1.2375.24;
- Mon, 25 Jul 2022 03:27:46 -0700
-From:   Rahul Tanwar <rtanwar@maxlinear.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
-        "Rahul Tanwar" <rtanwar@maxlinear.com>
-Subject: [PATCH RESEND 3/3] clk: mxl: Avoid disabling gate clocks from clk driver
-Date:   Mon, 25 Jul 2022 18:27:29 +0800
-Message-ID: <f63435d71b9772de9628355c05c7de95d38dbbb1.1658742240.git.rtanwar@maxlinear.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1658742240.git.rtanwar@maxlinear.com>
-References: <cover.1658742240.git.rtanwar@maxlinear.com>
+        with ESMTP id S230246AbiGYKyD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:54:03 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B07A165BD;
+        Mon, 25 Jul 2022 03:54:03 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id p6-20020a17090a680600b001f2267a1c84so12335828pjj.5;
+        Mon, 25 Jul 2022 03:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=krgkw1I7zAd+huSeZmLpqFdl30Kwxr2g1Y18wftGeFg=;
+        b=eWZ2WQqtPqIuzdmclnhYugt1a7e5z27AH5KKapYBpcLrNMZJS5biCqmdyASKrok2+a
+         Gl/Evdxr8XmfMeZws1rUkbwAGagrvsxqzpip9LxTzgz2DhlmUk1e5zWrg4JUK5NPUWKA
+         BiQn3lZ1El37vYxQLiTMY2rk/gYKie7riAhWjmGN2zj8DXLa2mayGPYuCbGHFz/4GpqF
+         slRmJqgtU+aUyOn3IUDZ6ymwpp2LIPZuv+93EfTGSn05O2oqraatGY4HMxpo24Aaqr4q
+         e6ACX1c5aQDbEBNDaOboN2yCmyZfp999V4E1yPNZgjBfMZSF9gNA0UYk4qehW2/TG6bt
+         uNGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=krgkw1I7zAd+huSeZmLpqFdl30Kwxr2g1Y18wftGeFg=;
+        b=fO0xJfXabq3qgwyyrQKAPCHgET6Efd/QwPclAVz93c9UxWLiUa+SzzZI1pFjr2OMhV
+         lIUVIgvquL3UQyaohfiiSvem08fL2Ivqp7i0bxe60txGoy+uF6sA4NoCm6D2Bez6IAYN
+         9UHs+iOz4a2fdUTtf00GPNEYXTs5rGZd+YuuxpFYqQgd5n0B7VlQlqwr/mUEuq7FbXoA
+         YZppT0D9TXCHnUbV8w1sH5Uph5snSzwgRxC3KG1B/GghGIHLTjtjD4UDE5h5dgr+BaXN
+         cCdojIOhD0CtIRSU42mgWs80hfxgqBeYzDXhGywtFQtKV4jMu9taMa2LKTddDEJSiZiA
+         /yAg==
+X-Gm-Message-State: AJIora+eYdCFr8F2jMgI6YMuakNlRsd818KpBPIiLrj0yqy6wclxlT6o
+        +cvVu6vqmi655aWj/YXpe+7QQobWr7RKfeS02d4=
+X-Google-Smtp-Source: AGRyM1uhkSpIkdoQcbxMktVHZecGFWJ/I9n0a87I7zviaMzl382Zn/3XBaeGsZeNhmcljYCbUHPKhbw69xC6W9IWpbQ=
+X-Received: by 2002:a17:903:1208:b0:16b:81f6:e992 with SMTP id
+ l8-20020a170903120800b0016b81f6e992mr12086691plh.55.1658746442637; Mon, 25
+ Jul 2022 03:54:02 -0700 (PDT)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA115A51 smtp.mailfrom=rtanwar@maxlinear.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: maxlinear.com
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+References: <20220602080344.208702-1-martin@kaiser.cx> <20220724174737.212028-1-martin@kaiser.cx>
+ <20220724174737.212028-2-martin@kaiser.cx>
+In-Reply-To: <20220724174737.212028-2-martin@kaiser.cx>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 25 Jul 2022 07:53:50 -0300
+Message-ID: <CAOMZO5D=DEi=B0ZXBSkrWwUPhDLmHX7ptaCo5FbUsFVB3hoWug@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: imx25: print silicon revision during init
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20220725102729.QckW6hXse53rpr_GYGO6LgGHr2kmhk3VOEknJ2NE9Sg@z>
 
-In MxL's LGM SoC, gate clocks are supposed to be enabled or disabled
-from EPU (power management IP) in certain power saving modes. If gate
-clocks are allowed to be enabled/disabled from CGU clk driver, then
-there arises a conflict where in case clk driver disables a gate clk,
-and then EPU tries to disable the same gate clk, then it will hang
-polling for the clk gated successful status.
+Hi Martin,
 
-To avoid such a conflict, disable gate clocks enabling/disabling from
-CGU clk driver. But add a GATE_CLK_HW flag to control this in order to
-be backward compatible with other SoCs which share the same CGU IP but
-not the same EPU IP.
+On Sun, Jul 24, 2022 at 2:48 PM Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Print the imx25 silicon revision when the clocks are initialised.
+>
+> Use the same mechanism as for imx27, i.e. call mx25_revision.
+> This function is unused at the moment.
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
-Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
----
- drivers/clk/x86/clk-cgu.c | 32 ++++++++++++++++++++++++--------
- drivers/clk/x86/clk-cgu.h |  1 +
- 2 files changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
-index 1f7e93de67bc..d24173cfe0b0 100644
---- a/drivers/clk/x86/clk-cgu.c
-+++ b/drivers/clk/x86/clk-cgu.c
-@@ -258,8 +258,12 @@ static int lgm_clk_gate_enable(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg;
-=20
--=09reg =3D GATE_HW_REG_EN(gate->reg);
--=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_EN(gate->reg);
-+=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09} else {
-+=09=09gate->reg =3D 1;
-+=09}
-=20
- =09return 0;
- }
-@@ -269,8 +273,12 @@ static void lgm_clk_gate_disable(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg;
-=20
--=09reg =3D GATE_HW_REG_DIS(gate->reg);
--=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_DIS(gate->reg);
-+=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09} else {
-+=09=09gate->reg =3D 0;
-+=09}
- }
-=20
- static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
-@@ -278,8 +286,12 @@ static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg, ret;
-=20
--=09reg =3D GATE_HW_REG_STAT(gate->reg);
--=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_STAT(gate->reg);
-+=09=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
-+=09} else {
-+=09=09ret =3D gate->reg;
-+=09}
-=20
- =09return ret;
- }
-@@ -315,7 +327,8 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
- =09init.num_parents =3D pname ? 1 : 0;
-=20
- =09gate->membase =3D ctx->membase;
--=09gate->reg =3D reg;
-+=09if (cflags & GATE_CLK_HW)
-+=09=09gate->reg =3D reg;
- =09gate->shift =3D shift;
- =09gate->flags =3D cflags;
- =09gate->hw.init =3D &init;
-@@ -326,7 +339,10 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
- =09=09return ERR_PTR(ret);
-=20
- =09if (cflags & CLOCK_FLAG_VAL_INIT) {
--=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
-+=09=09if (cflags & GATE_CLK_HW)
-+=09=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
-+=09=09else
-+=09=09=09gate->reg =3D 1;
- =09}
-=20
- =09return hw;
-diff --git a/drivers/clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h
-index 0aa0f35d63a0..73ce84345f81 100644
---- a/drivers/clk/x86/clk-cgu.h
-+++ b/drivers/clk/x86/clk-cgu.h
-@@ -197,6 +197,7 @@ struct lgm_clk_branch {
- /* clock flags definition */
- #define CLOCK_FLAG_VAL_INIT=09BIT(16)
- #define MUX_CLK_SW=09=09BIT(17)
-+#define GATE_CLK_HW=09=09BIT(18)
-=20
- #define LGM_MUX(_id, _name, _pdata, _f, _reg,=09=09\
- =09=09_shift, _width, _cf, _v)=09=09\
---=20
-2.17.1
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
