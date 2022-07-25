@@ -2,48 +2,46 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA2AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07025C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232440AbiGYKZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 06:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48952 "EHLO
+        id S231635AbiGYK1j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jul 2022 06:27:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232285AbiGYKZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:25:18 -0400
-Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.133.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1A3959584
-        for <linux-clk@vger.kernel.org>; Mon, 25 Jul 2022 03:25:16 -0700 (PDT)
+        with ESMTP id S234059AbiGYK1i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:27:38 -0400
+Received: from us-smtp-delivery-115.mimecast.com (us-smtp-delivery-115.mimecast.com [170.10.129.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 87BF2167C2
+        for <linux-clk@vger.kernel.org>; Mon, 25 Jul 2022 03:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
-        s=selector; t=1658744715;
+        s=selector; t=1658744856;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AdS8+B/O/n4mduTrHxo0RL4fuHx8wGK9eiouBtBzHLE=;
-        b=QeyX90aFcHbmFiw9y5veiWKDO5EzNDNT6UX5rDo1FBCVWV7ymXQE+P+PTBw0HY3A0qNSW6
-        6ZmVIZ0GqwKwJ2RxKO3KulRpOy6NkcNxFRWt5NAclcb1mzZj5NO2rOEBMlPSOIUKpSbZfJ
-        34dzxkoSHiFqFDw9xDXSCZUJ1d08k/rK29nC+p1YPQ2torGhvkasGwO7VDZ2zoiggnqZ4n
-        XlJKeiidK5KVRk56HPHQdugNhNekvxIXiOac9p3mW6gk2cUfRX2MwLtah+Dxsr62GAI2bN
-        VTzmdbHJBb4XlAG5k6bopxIzSnuz1YpB5DPv8EVvnqf3srpNWwAjibUEVSuoEA==
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JUCXNOWGeSPCiwGQYc/T+9+goJfq4FZanOX3lvy182E=;
+        b=gzQHsNGgx8HApdggiBUPR1u/e3G2zl2PUofjPbROgxAx77sElvEwhFXsG8ky4EIz/GcrJY
+        y24/8xkRx+kD33ljddFO4AkfoJdPrTKxDF/Q75m8ByifDD+HebJNnTicfylXSHf19rNl3F
+        yzIWZLkWYPUfnvrj7O47qrtHnZXJnnVxY7FkS5NmwbnRFx9JmsEy/dcmf1pzjzwNtOQPMr
+        f6PivJedrNHy9RwTs7EOWlzuF8FpOM4iqU/K/nztPkADnti0hMIZBfHf5q9RRGGYLfAj5H
+        TgIjYKj6g07+gOZyJ5FPLWlL+DkkX7inzuRy2CYMWYbvmF+mEy0b/TeDFtvI8w==
 Received: from mail.maxlinear.com (174-47-1-83.static.ctl.one [174.47.1.83])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- us-mta-571-JEAdCdy9MY2P_o1JcxDiHQ-1; Mon, 25 Jul 2022 06:19:07 -0400
-X-MC-Unique: JEAdCdy9MY2P_o1JcxDiHQ-1
+ us-mta-649-gvVIEv8FMpuxeTfL3Jqjdw-1; Mon, 25 Jul 2022 06:27:35 -0400
+X-MC-Unique: gvVIEv8FMpuxeTfL3Jqjdw-1
 Received: from sgsxdev001.isng.phoenix.local (10.226.81.111) by
  mail.maxlinear.com (10.23.38.120) with Microsoft SMTP Server id 15.1.2375.24;
- Mon, 25 Jul 2022 03:19:10 -0700
+ Mon, 25 Jul 2022 03:27:37 -0700
 From:   Rahul Tanwar <rtanwar@maxlinear.com>
 To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
         <linux-clk@vger.kernel.org>
-CC:     <linux-lgm-soc@maxlinear.com>, Rahul Tanwar <rtanwar@maxlinear.com>
-Subject: [PATCH 3/3] clk: mxl: Avoid disabling gate clocks from clk driver
-Date:   Mon, 25 Jul 2022 18:18:48 +0800
-Message-ID: <f63435d71b9772de9628355c05c7de95d38dbbb1.1658742240.git.rtanwar@maxlinear.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-lgm-soc@maxlinear.com>,
+        "Rahul Tanwar" <rtanwar@maxlinear.com>
+Subject: [PATCH RESEND 0/3] Modify MxL's CGU clk driver to make it secure boot compatible
+Date:   Mon, 25 Jul 2022 18:27:26 +0800
+Message-ID: <cover.1658742240.git.rtanwar@maxlinear.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1658742240.git.rtanwar@maxlinear.com>
-References: <cover.1658742240.git.rtanwar@maxlinear.com>
 MIME-Version: 1.0
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA115A51 smtp.mailfrom=rtanwar@maxlinear.com
@@ -54,108 +52,48 @@ Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
+Message-ID: <20220725102726.dkAkCZ44djva-zYwugO4iSOBPPwfRXAj2zW8ALQa5Qc@z>
 
-In MxL's LGM SoC, gate clocks are supposed to be enabled or disabled
-from EPU (power management IP) in certain power saving modes. If gate
-clocks are allowed to be enabled/disabled from CGU clk driver, then
-there arises a conflict where in case clk driver disables a gate clk,
-and then EPU tries to disable the same gate clk, then it will hang
-polling for the clk gated successful status.
+* Resend due to a mistake in adding --cc while sending patches
 
-To avoid such a conflict, disable gate clocks enabling/disabling from
-CGU clk driver. But add a GATE_CLK_HW flag to control this in order to
-be backward compatible with other SoCs which share the same CGU IP but
-not the same EPU IP.
+MxL's CGU driver was found to be lacking below required features. Add these
+required lacking features:
 
-Signed-off-by: Rahul Tanwar <rtanwar@maxlinear.com>
----
- drivers/clk/x86/clk-cgu.c | 32 ++++++++++++++++++++++++--------
- drivers/clk/x86/clk-cgu.h |  1 +
- 2 files changed, 25 insertions(+), 8 deletions(-)
+1. Since it is a core driver, it has to conform to secure boot & secure
+   access architecture. In order for the register accesses to be secure
+   access compliant, it needs regmap support as per our security architectu=
+re.
+   Hence, replace direct read/writel with regmap based IO. Also remove spin=
+locks
+   because they are no longer necessary because regmap uses its own lock.
 
-diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
-index 1f7e93de67bc..d24173cfe0b0 100644
---- a/drivers/clk/x86/clk-cgu.c
-+++ b/drivers/clk/x86/clk-cgu.c
-@@ -258,8 +258,12 @@ static int lgm_clk_gate_enable(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg;
+2. There are some gate clocks which are used by the power mgmt IP to gate w=
+hen
+   a certain power saving mode is activated. These gate clocks can also be=
 =20
--=09reg =3D GATE_HW_REG_EN(gate->reg);
--=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_EN(gate->reg);
-+=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09} else {
-+=09=09gate->reg =3D 1;
-+=09}
-=20
- =09return 0;
- }
-@@ -269,8 +273,12 @@ static void lgm_clk_gate_disable(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg;
-=20
--=09reg =3D GATE_HW_REG_DIS(gate->reg);
--=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_DIS(gate->reg);
-+=09=09lgm_set_clk_val(gate->membase, reg, gate->shift, 1, 1);
-+=09} else {
-+=09=09gate->reg =3D 0;
-+=09}
- }
-=20
- static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
-@@ -278,8 +286,12 @@ static int lgm_clk_gate_is_enabled(struct clk_hw *hw)
- =09struct lgm_clk_gate *gate =3D to_lgm_clk_gate(hw);
- =09unsigned int reg, ret;
-=20
--=09reg =3D GATE_HW_REG_STAT(gate->reg);
--=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
-+=09if (gate->flags & GATE_CLK_HW) {
-+=09=09reg =3D GATE_HW_REG_STAT(gate->reg);
-+=09=09ret =3D lgm_get_clk_val(gate->membase, reg, gate->shift, 1);
-+=09} else {
-+=09=09ret =3D gate->reg;
-+=09}
-=20
- =09return ret;
- }
-@@ -315,7 +327,8 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
- =09init.num_parents =3D pname ? 1 : 0;
-=20
- =09gate->membase =3D ctx->membase;
--=09gate->reg =3D reg;
-+=09if (cflags & GATE_CLK_HW)
-+=09=09gate->reg =3D reg;
- =09gate->shift =3D shift;
- =09gate->flags =3D cflags;
- =09gate->hw.init =3D &init;
-@@ -326,7 +339,10 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
- =09=09return ERR_PTR(ret);
-=20
- =09if (cflags & CLOCK_FLAG_VAL_INIT) {
--=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
-+=09=09if (cflags & GATE_CLK_HW)
-+=09=09=09lgm_set_clk_val(gate->membase, reg, shift, 1, list->gate_val);
-+=09=09else
-+=09=09=09gate->reg =3D 1;
- =09}
-=20
- =09return hw;
-diff --git a/drivers/clk/x86/clk-cgu.h b/drivers/clk/x86/clk-cgu.h
-index 0aa0f35d63a0..73ce84345f81 100644
---- a/drivers/clk/x86/clk-cgu.h
-+++ b/drivers/clk/x86/clk-cgu.h
-@@ -197,6 +197,7 @@ struct lgm_clk_branch {
- /* clock flags definition */
- #define CLOCK_FLAG_VAL_INIT=09BIT(16)
- #define MUX_CLK_SW=09=09BIT(17)
-+#define GATE_CLK_HW=09=09BIT(18)
-=20
- #define LGM_MUX(_id, _name, _pdata, _f, _reg,=09=09\
- =09=09_shift, _width, _cf, _v)=09=09\
+   gated from CGU clk driver. This creates a conflict. To avoid the conflic=
+t,
+   by default disable gating such gate registers from CGU clk driver. But k=
+eep
+   a flag to do so for other older IP's which uses same CGU clk IP but does=
+ not
+   use same power mgmt IP.
+
+This patch series is based on below git tree:
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+Rahul Tanwar (3):
+  clk: mxl: Switch from direct readl/writel based IO to regmap based IO
+  clk: mxl: Remove unnecessary spinlocks
+  clk: mxl: Avoid disabling gate clocks from clk driver
+
+ drivers/clk/x86/Kconfig       |   5 +-
+ drivers/clk/x86/clk-cgu-pll.c |  23 ++-----
+ drivers/clk/x86/clk-cgu.c     | 117 +++++++++++-----------------------
+ drivers/clk/x86/clk-cgu.h     |  45 +++++++------
+ drivers/clk/x86/clk-lgm.c     |  14 ++--
+ 5 files changed, 76 insertions(+), 128 deletions(-)
+
 --=20
 2.17.1
 
