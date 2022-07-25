@@ -2,62 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88CDC43334
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8F6C43334
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 10:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231654AbiGYKyn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 06:54:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
+        id S234346AbiGYKzx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jul 2022 06:55:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230246AbiGYKyl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:54:41 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A0E165BD;
-        Mon, 25 Jul 2022 03:54:40 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id p1so1547304plr.11;
-        Mon, 25 Jul 2022 03:54:40 -0700 (PDT)
+        with ESMTP id S234196AbiGYKzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 06:55:53 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD6618E3A;
+        Mon, 25 Jul 2022 03:55:52 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id x24-20020a17090ab01800b001f21556cf48so14011409pjq.4;
+        Mon, 25 Jul 2022 03:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iipJ7AtIgRfXNW1pKHlBsLbJHCUCYgAJVbkYPy8n2kU=;
-        b=ZBqlJKSW6i86H67dVjYG2TclaSUj/VNIl93+bdU47SyxHuB+GttE4Cuu4vxqX8i4+G
-         uG1QqTB9hfxHWk/FeaDUUyJTeVs0ND1Y5XKQmhpPvy2HL+uT8EpEGCLo1HZ+ibMqzSXw
-         DP7rA5hGcOvNIH3NutnfYdLsDRoud1Xra8IU+BQrsoPBUf3hnZdHXRKLIjl/NyrEX6go
-         x4krgLisN7rq+W3nKMDMFtA/y7wewaPD0EhLDOxZFdWrsSV41mFTS1HDTV+dr8KlKMgZ
-         YeY4+ILMG5FbA/G4MT93LZHDojs9E8hIannh7QnIsWbKKgsdd3hWKrRYm+H3ZSOufAiN
-         SPQA==
+        bh=Jizxdn4AeaM9vGiU9lrvZv7w74oicIoCysUCYbSOl84=;
+        b=kRkhrwK3DPW2t7fYXHm1e0ms1G76elOQhzsIn6/FQlpI88C1Kxp88jVAEDg6SkG089
+         hB4feSsHEliEyiZDMhv9sCvTaKG1U6NjuOYJaYzcXn7ECDiyui3kpazIQ42jcGb96OrY
+         9r9GkrVa9lqtOuuoS4coIfJF1iqGjp9dBfthZGIqHxQZYPTKnjkFRj15rwRqkzOnseOz
+         w6BCpaBe/1vvPafvoczJAk0xvVTLFmpUUg4+XeEV7T18UKbnWRDgARjMXTmf1uqum50l
+         eO36vwt1hrvXU/QwVMWPGJFK9i6dDHNpE8vuOeDV0jJY43SSP4SEffLyaHeDT6sMSdNO
+         tM7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iipJ7AtIgRfXNW1pKHlBsLbJHCUCYgAJVbkYPy8n2kU=;
-        b=h2WP4BYpkL4y4OBh6tHZ2GTkOfECdoBiEh5VdzjetrSikA2Ry0qszROVt2n0uKfAXO
-         pWaJymOgfQXC0/sqJfx7vxG5eB0GaoASG2ojD4X/QTRUNO/v5UI+D9izc2aOjrJKnfEy
-         2tqD9z2GaODeB5AZYGQlWohjuqRT94Adc3CdzX3Qv770B/FyIfkORi0tSmdk8mWd4dsE
-         C+KW5FTX8Ukac5XSih5dnELsrSHaFrpYn11AzZSn56E2jiHDrGRUXrWpk19oOxhAkN+9
-         8k/SiUavEdAN5HYDFyvm07bSKb3RDDPlYiEnciDQVuRUitBJhfD7GSg10pDP5K2JvbDv
-         sFmw==
-X-Gm-Message-State: AJIora9tKE0VQRbaz+tYyVBY2PuYR/VZNHYxDNaBACLI5ERc+GzfaY7B
-        uwRGEgkmaz2jQ1rd+gFf+N5p1BZ7iO9ahXX6paTWjQvjz30=
-X-Google-Smtp-Source: AGRyM1uiP0ZgXXE7LSej1LGevAoaip96QQb7xT2652xsiBzPu/UtgQnKdGYDIO1HEpbKMuRaaofyiPx5H3C89o0C0EE=
-X-Received: by 2002:a17:90b:4c8d:b0:1f2:c360:5e6b with SMTP id
- my13-20020a17090b4c8d00b001f2c3605e6bmr2993181pjb.195.1658746480165; Mon, 25
- Jul 2022 03:54:40 -0700 (PDT)
+        bh=Jizxdn4AeaM9vGiU9lrvZv7w74oicIoCysUCYbSOl84=;
+        b=YXFg52RUfr2oSoZN4R8oKL+EkaynABbt1QKjImYfJZ1oX7YFtcUg6vjCJO5m9bboQs
+         V9ujW0419vRA5hVeNxa2GHrScW4mCSt3KntAgBolOxJQi1NLZ03CaP+Fjg3OhPAEplzg
+         Y5ZyqDT0r1IqidmiiCeTpAjGwH95tXWvSPb1YXqyMT0imoqSTXWL/exa/z3mQR1yOJJN
+         /J/yN6F4XUb6oP4I/qa2WWKDakbmMGF/RnPDKoC9a+mO6DbhYM2HbJcdnOmbRbbyjZDQ
+         lpAIux6qFGIfLsfJkja+Zi/8BDXwgf24ReJjY5BPPHQJRtMLc6L6VIWBRhKsnwre5SVQ
+         JATw==
+X-Gm-Message-State: AJIora9YQhFVmLJ1itTPc1VGdoD8tUp4QqUP3mzd8HPOkDnl2uy/CqiT
+        hHV3igRf/Q9aAoENta8//0eUhG/zQEc3cN4e2uk=
+X-Google-Smtp-Source: AGRyM1sJEIM//oT8Ms9EiN859p9vVGAsLNN9o+I83rqP2ZI9QAkpUq7tYiNLOs9YwSKBPn1HocP+qZEWe4/SmofzD7w=
+X-Received: by 2002:a17:902:d582:b0:16d:612c:2d6a with SMTP id
+ k2-20020a170902d58200b0016d612c2d6amr8263669plh.168.1658746551759; Mon, 25
+ Jul 2022 03:55:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220602080344.208702-1-martin@kaiser.cx> <20220724174737.212028-1-martin@kaiser.cx>
- <20220724174737.212028-3-martin@kaiser.cx>
-In-Reply-To: <20220724174737.212028-3-martin@kaiser.cx>
+References: <20220722215445.3548530-1-marcel@ziswiler.com>
+In-Reply-To: <20220722215445.3548530-1-marcel@ziswiler.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 25 Jul 2022 07:54:28 -0300
-Message-ID: <CAOMZO5BTFC8srxEM3=jWv6pQr+2oB+a3T-qCnByhdQ-xbZJS6Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clk: imx25: make __mx25_clocks_init return void
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+Date:   Mon, 25 Jul 2022 07:55:39 -0300
+Message-ID: <CAOMZO5CY5hg=AFdFTFdd4fC0XgEmkmKUPWcA_vCdP6MUHFmbdw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] ARM: arm64: dts/clk: imx8mm: indentation
+ whitespace cleanup
+To:     Marcel Ziswiler <marcel@ziswiler.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Arnaud Ferraris <arnaud.ferraris@collabora.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <dev@lynxeye.de>,
+        Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -65,11 +78,17 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jul 24, 2022 at 2:48 PM Martin Kaiser <martin@kaiser.cx> wrote:
+Hi Marcel,
+
+On Fri, Jul 22, 2022 at 6:55 PM Marcel Ziswiler <marcel@ziswiler.com> wrote:
 >
-> The __mx25_clocks_init function always returns 0 and its only
-> caller does not check the return value. Let's remove it.
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 >
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+>
+> While synchronising them imx device trees with U-Boot I stumbled over
+> various checkpatch warnings. This series addresses those trivial
+> indentation and/or whitespace cleanups.
+
+Thanks for doing this cleanup:
 
 Reviewed-by: Fabio Estevam <festevam@gmail.com>
