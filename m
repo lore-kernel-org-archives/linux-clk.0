@@ -2,84 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BF6C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 22:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D606DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 23:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237443AbiGYWpq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 18:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52234 "EHLO
+        id S237656AbiGYXZW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Jul 2022 19:25:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237490AbiGYWpb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 18:45:31 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B18255A4;
-        Mon, 25 Jul 2022 15:45:27 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id s204so15197089oif.5;
-        Mon, 25 Jul 2022 15:45:27 -0700 (PDT)
+        with ESMTP id S232764AbiGYXZV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 19:25:21 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFAD11181E;
+        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1013ecaf7e0so16683751fac.13;
+        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=owwtlW3rOL0CNBfDOH2DnKrzgv4WQIHmvViMboW6yHk=;
-        b=o7wslRPrDe5jMDxzqlE/JZbtpn16qrQHzSsYTCivvFq0M3IMwZEeQf135ieOdXG4MX
-         08PKMqDOlCvQuszPyPO5yzlMB53TM5nMhJWrb2onLEGYY1Kioc2I6zr5DsedWRfOAm11
-         TYQXQdK9yliUXLwvtXo94j43STTJ9F9fogVg7XVK00iMSaXfWxfbDieQuHpssHLpdMR1
-         Q7/qqHNp1MI4blLlI99FlTgn7/bm17HqqaIj19n55HwBA2ImjDqiA70vsBTxVPZnJR4z
-         ReW1VLf6XWQRo1sIMgboL1/Y43Q4BmwZUcOpmqs7nqVpCv3MW/WrlMUgAsIFlSOg0RAP
-         KqDg==
-X-Gm-Message-State: AJIora+MWI4xKMQhyiD70hAnhmypjjmh3amEo/9n0yWjfp7RTLX70VsD
-        PNsv2BkAZa9jTiD+bU+zBQ==
-X-Google-Smtp-Source: AGRyM1svwSsqAhx+tdPya8Gp0eQkBxcOlgC+d6J8MbW4VLKYGHrsTs/zO+0aGudl40kpceveJ48bmw==
-X-Received: by 2002:a05:6808:1514:b0:33a:ab72:ffa7 with SMTP id u20-20020a056808151400b0033aab72ffa7mr10961459oiw.100.1658789125525;
-        Mon, 25 Jul 2022 15:45:25 -0700 (PDT)
+        bh=dCsn9dzCh6KqkTVcJHWRZAMN2f7ONnySyxeXvQofuFk=;
+        b=iDx2oLOcG4hqnOrxZm5PMVzi/88GFkCxseHhHi2FQw0pkNUh/Vct9Fsd8AlWR9ivK+
+         C1QxAQMqYH1vaj8QenxtqfogAIP4yNtL5VTpSXX6cmxdntooa4Td1h2uHqow//gt0fnX
+         54Y6wBeQ1378a1ZfNVzZ4Pb5ZKMKPE+d3RGiL0L/ZKQQtuH0qz8Z25HqD+BA1ycEdqaC
+         6lL6rKsu9RgAEWc/2/vdG92w0SwU3vXgGjmM8VryZAWqTrBoD1HrsvIybjGStEgh88O9
+         2imfQ/8Gd0Iub2X24TigDqotvgEP3wup9j83apuH4Dq5K+U5j0wmy9ceI6DSNULGNKCC
+         1VTA==
+X-Gm-Message-State: AJIora9a/cqQyr78vjsx+Q9wCsb+oy5U5qWjmzbVgB4wuASuH9j8vFPz
+        stifckOBxO8FHxcUVR1R7vgQJLlPMg==
+X-Google-Smtp-Source: AGRyM1u6PwB1RBpooueI1Ajoq8Nis2ce7rhmBLUoV8FkFFrEgRqWytwkZpjeDnVeAFnBKbEe6ONYsw==
+X-Received: by 2002:a05:6870:79d:b0:10d:8416:e59d with SMTP id en29-20020a056870079d00b0010d8416e59dmr7265810oab.85.1658791520057;
+        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id i6-20020aca2b06000000b0033a11fcb23bsm5317942oik.27.2022.07.25.15.45.22
+        by smtp.gmail.com with ESMTPSA id n8-20020a056870240800b0010d7242b623sm6652099oap.21.2022.07.25.16.25.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jul 2022 15:45:25 -0700 (PDT)
-Received: (nullmailer pid 2886877 invoked by uid 1000);
-        Mon, 25 Jul 2022 22:45:21 -0000
-Date:   Mon, 25 Jul 2022 16:45:21 -0600
+        Mon, 25 Jul 2022 16:25:19 -0700 (PDT)
+Received: (nullmailer pid 2950657 invoked by uid 1000);
+        Mon, 25 Jul 2022 23:25:17 -0000
+Date:   Mon, 25 Jul 2022 17:25:17 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     rex-bc.chen@mediatek.com, ikjn@chromium.org, wenst@chromium.org,
-        sboyd@kernel.org, marijn.suijten@somainline.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        paul.bouchara@somainline.org, p.zabel@pengutronix.de,
-        linux-mediatek@lists.infradead.org, ck.hu@mediatek.com,
-        bgolaszewski@baylibre.com, jason-jh.lin@mediatek.com,
-        mturquette@baylibre.com, matthias.bgg@gmail.com,
-        miles.chen@mediatek.com, konrad.dybcio@somainline.org,
-        krzysztof.kozlowski+dt@linaro.org, tinghan.shen@mediatek.com,
-        ~postmarketos/upstreaming@lists.sr.ht, sam.shih@mediatek.com,
-        linux-clk@vger.kernel.org, y.oudjana@protonmail.com,
-        kernel@collabora.com, robh+dt@kernel.org, fparent@baylibre.com,
-        devicetree@vger.kernel.org, martin.botka@somainline.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 4/8] dt-bindings: clock: mediatek: Add clock driver
- bindings for MT6795
-Message-ID: <20220725224521.GA2886831-robh@kernel.org>
-References: <20220722090609.52364-1-angelogioacchino.delregno@collabora.com>
- <20220722090609.52364-5-angelogioacchino.delregno@collabora.com>
+To:     Jagan Teki <jagan@edgeble.ai>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Finley Xiao <finley.xiao@rock-chips.com>
+Subject: Re: [PATCH 10/22] clk: rockchip: Add RV1126 clock controller
+Message-ID: <20220725232517.GA2949355-robh@kernel.org>
+References: <20220723204335.750095-1-jagan@edgeble.ai>
+ <20220723204335.750095-11-jagan@edgeble.ai>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220722090609.52364-5-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220723204335.750095-11-jagan@edgeble.ai>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 22 Jul 2022 11:06:05 +0200, AngeloGioacchino Del Regno wrote:
-> Add the bindings for the clock drivers of the MediaTek Helio X10
-> MT6795 SoC.
+On Sun, Jul 24, 2022 at 02:13:23AM +0530, Jagan Teki wrote:
+> Add clock controller support for RV1126 SoC.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
+> and CRU_PMU blocks.
+> 
+> This patch is trying to add minimal Clock-Architecture Diagram's
+> inferred from [1] authored by Finley Xiao.
+> 
+> [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
+> 
+> Cc: linux-clk@vger.kernel.org
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Jagan Teki <jagan@edgeble.ai>
 > ---
->  .../bindings/clock/mediatek,mt6795-clock.yaml | 66 +++++++++++++++++++
->  .../clock/mediatek,mt6795-sys-clock.yaml      | 54 +++++++++++++++
->  2 files changed, 120 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt6795-sys-clock.yaml
-> 
+>  drivers/clk/rockchip/Kconfig           |    7 +
+>  drivers/clk/rockchip/Makefile          |    1 +
+>  drivers/clk/rockchip/clk-rv1126.c      | 1107 ++++++++++++++++++++++++
+>  drivers/clk/rockchip/clk.h             |   19 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>  include/dt-bindings/clock/rv1126-cru.h |  632 ++++++++++++++
+
+This goes with the binding patch.
+
+>  5 files changed, 1766 insertions(+)
+>  create mode 100644 drivers/clk/rockchip/clk-rv1126.c
+>  create mode 100644 include/dt-bindings/clock/rv1126-cru.h
