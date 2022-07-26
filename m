@@ -2,85 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1534DCCA48C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 08:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6E6C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 09:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238456AbiGZIIG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 04:08:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56380 "EHLO
+        id S237771AbiGZJPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 05:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238400AbiGZIIE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 04:08:04 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 055302ED78
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 01:08:02 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id f15so8335914edc.4
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 01:08:01 -0700 (PDT)
+        with ESMTP id S237675AbiGZJPn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 05:15:43 -0400
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0552124F32;
+        Tue, 26 Jul 2022 02:15:40 -0700 (PDT)
+Received: by mail-vk1-xa34.google.com with SMTP id z9so5919483vkb.9;
+        Tue, 26 Jul 2022 02:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oXh48ITjNIZwRpcTgBzMIm7xvCXasMciNKj2nW0FLMk=;
-        b=mvC8tzmaF29BiVZk1Z4LrSkhZNsRUiAI03IHsZWdBIGq+21sY3DaehmsTJSCQhOcCN
-         IzDXGzhgPtgoo0weSRcw6clQCDiKyzDjc2VJ61GfKnUunLpFcddwo8T6y4Ox+JSjmmlM
-         rRS/zZe7jNcqCaJMZPS2EnSOhBXmrGSZNEX2+6RylN3Eol7x+kLzHOv88BK7KXWQuKhD
-         6Y28+AUAsiduoBIPGNkUmO4q80A4+6NEPpUn789GXETl2vPl2oVffajX1nEwiKEemX/A
-         CFnBBeIN6MVlaE5OyaBVnc/t8xmEv4oY8fLX79lpUZReRbeqET4R87a5u6pdphdVfgZI
-         XK2g==
+         :cc:content-transfer-encoding;
+        bh=pAq42ao1YTooOwr1NrQpDBaQLMHRfAHTP/kyLO5Tw4Q=;
+        b=VsukYp99jSahECFcFXsodoADb1yDdK1MTzG+DveLz68PrKw0DGfy9SVhkmt8MKBGRf
+         n3R0WVRRFJS755SmXdovMz2pCEckMh0oGZW5B89YSzM/DimcGkJIO/sq3X8CFF6c6Mv/
+         nyIERB6HMYHNRMz1UsN3GJ+Z02aAw2qhVerainCw05Vw95lqyC5QskewKOmgZsif7n1o
+         LcNTIQQ6PH/CPPznjdQFkA/hB2jTJ0zWAIjYxveCP/Oh7/ICLJRjpEo5Mwe7LyB41pL0
+         L7FuwiIAno9mN09dE874cj4ZBdjSMQ6GUGMwkNZZiX4pOZDlfJJj+1ps9cVvjvfd9GX1
+         tmyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oXh48ITjNIZwRpcTgBzMIm7xvCXasMciNKj2nW0FLMk=;
-        b=azcxER/iayOskjM7D96XNe77HOu9QpbiPVtCscQ00nypExg1LmLecwc2ZG+upDJKpn
-         d7nxHk3WI61boEU+vojSt6fR0qb0AT3OwPq3onXnHrT3HpF23JU5p1VdGidy5m9uFpIt
-         WI8FVnggoDJwS2RJkI7dT23gUeIQHuEl75y2VjtO+UDAJ6FmOvXHjy+ru3W2taYWjkQy
-         7JZCI9+8DKruuFwbLjbB79atkkC/fmLpSEAX+ZIraT00Qqn5UzPT1aaaKX4WQNaButL0
-         QoqOEY3dH1BRm6/XSQiY+t5ndFK7T1q8M8e/V2ve1sOxGlb5cFHRBkKE6OKpiZo2eRNB
-         i0qg==
-X-Gm-Message-State: AJIora/FsVOxDpVm2X5hg1ROsMieDqTXVG4uTbu2Zz8gxKpgOfYItr04
-        ucoXUQLAx7iQXGCWAN4BSRJ+U2IEmsEzsqz1juBzTA==
-X-Google-Smtp-Source: AGRyM1sg7WwfgT30Z5gFgGtBrpzTZYvjI5t68L1TNcWlRC/z4bCNfsLxzmsyxNfNlAgqIwmyyt5i4fpHDXen1zH7g1M=
-X-Received: by 2002:a05:6402:2696:b0:43b:eb8b:d0da with SMTP id
- w22-20020a056402269600b0043beb8bd0damr10795013edd.158.1658822880522; Tue, 26
- Jul 2022 01:08:00 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pAq42ao1YTooOwr1NrQpDBaQLMHRfAHTP/kyLO5Tw4Q=;
+        b=zNhMISWNrIM5ydEpJbuEh1wAddYuksxMbfHTUOArmIxkJ+HbctIiy/bLE+ezoRcbI6
+         2GZIG9EtMOZ/vyyLK66rxvQzoP86804CTA6FY2enNrjlF9uvac/dZRnj3hAXodqncy2o
+         wX3oWA4+KweRjIvwAeStFgZi+c4peCsLp/OSMjSvXzdqGg9QPHtbOwKUPZqK9tQw1lr7
+         /e08Y0FZGhYI70ZM+ezosBHtQbCmVgOrXL7BvP/flRv38nFje3JuNyUeYpz8Nrr2OkCU
+         8ALZN477VoN6MKuMMItsysjkc19JokCMDR0UW70jTWA19kvRp6HKvVgEtkcrHFHQ9Qrv
+         LDxQ==
+X-Gm-Message-State: AJIora/jk4ZxCdyKYAMDNCyZu+CvhOCjZBzPthrrthMXS5+AJUZ8isMx
+        J1zdlP25PChECFOyZlNhJtVO8UWFOgTiF6CKwYycjeCn/M51WA==
+X-Google-Smtp-Source: AGRyM1vXrGq8JTTQ0kjBCAFa4iMjcJ5I6FumeFgC+iXy9kXKEbu4yjAKo4AJv63dP3el0VM7Vdw87UW9VBwuo3BGnOk=
+X-Received: by 2002:a1f:b6c8:0:b0:376:380a:b98d with SMTP id
+ g191-20020a1fb6c8000000b00376380ab98dmr3696042vkf.27.1658826939018; Tue, 26
+ Jul 2022 02:15:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220723160513.271692-1-Mr.Bossman075@gmail.com> <20220723160513.271692-11-Mr.Bossman075@gmail.com>
-In-Reply-To: <20220723160513.271692-11-Mr.Bossman075@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Jul 2022 10:07:49 +0200
-Message-ID: <CACRpkdbNbvKySXPziKHkEfbWknXLdV2L4sb2n1MCR=TSOATEPg@mail.gmail.com>
-Subject: Re: [PATCH v5 10/12] ARM: dts: imxrt1170-pinfunc: Add pinctrl binding header
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, daniel.lezcano@linaro.org, tglx@linutronix.de,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
+References: <20180912093456.23400-4-hdegoede@redhat.com> <20220724210037.3906-1-matwey.kornilov@gmail.com>
+ <148f6cb9-aafc-4fd5-9e30-24078866d3fd@linux.intel.com>
+In-Reply-To: <148f6cb9-aafc-4fd5-9e30-24078866d3fd@linux.intel.com>
+From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date:   Tue, 26 Jul 2022 12:15:28 +0300
+Message-ID: <CAJs94EbnDMiHwH44+oHh1Sz5Wb+x80E1K7QCuu+WWZVeYhz7nw@mail.gmail.com>
+Subject: Re: [BISECTED] igb initialization failure on Bay Trail
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        carlo@endlessm.com, davem@davemloft.net, hkallweit1@gmail.com,
+        js@sig21.net, linux-clk@vger.kernel.org,
+        linux-wireless@vger.kernel.org, mturquette@baylibre.com,
+        netdev@vger.kernel.org, sboyd@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jul 23, 2022 at 6:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-
-> Add binding header for i.MXRT1170 pinctrl device tree.
+=D0=BF=D0=BD, 25 =D0=B8=D1=8E=D0=BB. 2022 =D0=B3. =D0=B2 20:08, Pierre-Loui=
+s Bossart
+<pierre-louis.bossart@linux.intel.com>:
 >
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+>
+> On 7/24/22 16:00, Matwey V. Kornilov wrote:
+> > Hello,
+> >
+> > I've just found that the following commit
+> >
+> >     648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> >
+> > breaks the ethernet on my Lex 3I380CW (Atom E3845) motherboard. The boa=
+rd is
+> > equipped with dual Intel I211 based 1Gbps copper ethernet.
+>
+> It's not going to be simple, it's 4 yr old commit that fixes other
+> issues with S0i3...
 
-Assuming the rest of the patch set really isn't getting merged for
-v5.20 I simply applied this patch to the pin control tree so you have
-less stuff to iterate after v5.20-rc1.
+Additionally, it seems that the issue appears only when CONFIG_IGB=3Dm
+is used. When CONFIG_IGB=3Dy then both ethernets are initialized
+correctly.
+However, most (if not all) kernel configs in Linux distros use CONFIG_IGB=
+=3Dm
 
-Yours,
-Linus Walleij
+>
+> >
+> > Before the commit I see the following:
+> >
+> >      igb 0000:01:00.0: added PHC on eth0
+> >      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+> >      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+> >      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+> >      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queu=
+e(s)
+> >      igb 0000:02:00.0: added PHC on eth1
+> >      igb 0000:02:00.0: Intel(R) Gigabit Ethernet Network Connection
+> >      igb 0000:02:00.0: eth1: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e5
+> >      igb 0000:02:00.0: eth1: PBA No: FFFFFF-0FF
+> >      igb 0000:02:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queu=
+e(s)
+> >
+> > while when the commit is applied I see the following:
+> >
+> >      igb 0000:01:00.0: added PHC on eth0
+> >      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+> >      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+> >      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+> >      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queu=
+e(s)
+> >      igb: probe of 0000:02:00.0 failed with error -2
+> >
+> > Please note, that the second ethernet initialization is failed.
+> >
+> >
+> > See also: http://www.lex.com.tw/products/pdf/3I380A&3I380CW.pdf
+
+
+
+--=20
+With best regards,
+Matwey V. Kornilov
