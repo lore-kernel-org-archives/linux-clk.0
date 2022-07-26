@@ -2,84 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1412CC00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49213C00140
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 19:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234205AbiGZR4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 13:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
+        id S239648AbiGZTQ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 15:16:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236755AbiGZR4W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:56:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD2AD5
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:56:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S231297AbiGZTQ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 15:16:28 -0400
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4902982E;
+        Tue, 26 Jul 2022 12:16:26 -0700 (PDT)
+Received: from [192.168.1.101] (abxi232.neoplus.adsl.tpnet.pl [83.9.2.232])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AE0C2B818F8
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 17:56:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C627C433D6;
-        Tue, 26 Jul 2022 17:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658858179;
-        bh=ph2uDxsSutc2DnlVa7eIwwd3K5Vf9gr9912RR4aKO5U=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=O2Pb4nJeDz4nyc0vY47kt/NXyO6BAEBHlwUkJi0ddIyHrP9raI17aK6K40JS/1+my
-         T7Nt2l4/EA8yrT2hNMBdXM7ab4fZQ07VINQQsZTPeK6DvHPUbHGFizDf/krTwc/Agq
-         zN7FFqtDhKBlVwXTiSVmQIo093bNkgYczyqxWDtAwSb3ROu9zqv50LJTRgEow7AfmN
-         akyJ8pBqRhvecnGnKU+SMKrFEhe+G/ZzaafL7alTOBE4CO8/S9fg+hka+ZvCJxxvhI
-         1yVPfowocl4MqP0Im7qxhU93FpXG5QMIoN6U/xQF5Q6hH8NERRHtvn+zbYuWCcc13+
-         m5iiNb32mNQIQ==
-Content-Type: text/plain; charset="utf-8"
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 7D13B203ED;
+        Tue, 26 Jul 2022 21:16:24 +0200 (CEST)
+Message-ID: <d120c72d-09d9-d78b-01ae-f5592f6a07be@somainline.org>
+Date:   Tue, 26 Jul 2022 21:16:22 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YtnDy29glGFDhqU1@kista.localdomain>
-References: <YtnDy29glGFDhqU1@kista.localdomain>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 5.19
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev
-To:     Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
-Date:   Tue, 26 Jul 2022 10:56:17 -0700
-User-Agent: alot/0.10
-Message-Id: <20220726175619.4C627C433D6@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [RFC 0/9] clk: qcom: gcc-sdm845: Swicth from expanded definitions
+ to compact macros
+Content-Language: en-US
+To:     Abel Vesa <abel.vesa@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20220726142303.4126434-1-abel.vesa@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220726142303.4126434-1-abel.vesa@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-07-21 14:23:23)
-> Hi!
->=20
-> As it turns out, commit 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate
-> clock"), queued for 5.19, introduced a bug. This bug is accidentally
-> fixed by commit e1c51d31befc ("clk: sunxi-ng: Deduplicate ccu_clks
-> arrays"), which is already queued for 5.20.
->=20
-> Although this commit as a fix is much bigger than it needs to be, I
-> still suggest that's fast tracked to 5.19. This will also avoid any
-> merge conflicts during merging material for 5.20.
->=20
-> Best regards,
-> Jernej
->=20
-> The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a=
-56:
->=20
->   Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-fixes-for-5.19-1
->=20
-> for you to fetch changes up to 48e29e0f3be086a28a9384befa77d02a43be2f98:
->=20
->   clk: sunxi-ng: Deduplicate ccu_clks arrays (2022-07-21 23:11:28 +0200)
->=20
-> ----------------------------------------------------------------
-> Fix H6 RTC clock
+Hello!
 
-Anymore details besides "Fix"? There's some more details in this pull
-request but the tag tells me almost nothing. Does RTC fail? What's
-actually broken?
+Probably an unnecessary nit: typo in the word 'Switch' in the title
+
+On 26.07.2022 16:22, Abel Vesa wrote:
+> Lets see where this goes.
+> 
+> This RFC is basically a proof-of-concept of how we could use more
+> compact macros rather than expanded definitions for clocks on QCOM
+> platforms. As the subject says, this is only for SDM845 GCC, for now.
+> 
+> Also, there are a couple of hacky solutions here that need to be
+> reworked before it could be merged (if ever). One that comes to mind is
+> the way the branch clock macros differentiate between having no parent,
+> a parent name, or a parent HW. I'm still looking into that, so ...
+> 
+> I tried to make them as compact and readable from the user's POV, but
+> there is some complexity needed in order to allow passing different
+> types (or number) of parents. Maybe that complexity is too crazy and
+> doesn't bring that much benefit.
+> 
+> I managed to put together some semi-automated way to do this for every
+> CC, on every platform, if it's decided so. The only testing I managed to
+> do so far was comparing the preprocessed output before and after. Oh,
+> and the MTP does boot. I still need time to make sure that nothing gets
+> broken.
+> 
+> Also, this series is still WIP, so everything can be reworked fast, if
+> needed.
+> 
+> Abel Vesa (9):
+>   clk: qcom: qcc-sdm845: Collapse gdsc structs into macros
+>   clk: qcom: gcc-sdm845: Switch from parent_hws to parent_data
+>   clk: qcom: rcg: Add macros to collapse definition
+>   clk: qcom: alpha-pll: Add macros to collapse definition
+>   clk: qcom: branch: Add macros to collapse definition
+>   clk: qcom: common: Add macro wrapper for all clock types
+>   clk: qcom: gcc-sdm845: Switch to macros to collapse branch clocks
+>     definitions
+>   clk: qcom: gcc-sdm845: Switch to macros to collapse rcg2 clocks
+>     definitions
+>   clk: qcom: gcc-sdm845: Switch to macros to collapse alpha-pll clocks
+>     definitions
+> 
+>  drivers/clk/qcom/clk-alpha-pll.h |   61 +
+>  drivers/clk/qcom/clk-branch.h    |   82 +
+>  drivers/clk/qcom/clk-rcg.h       |   40 +
+>  drivers/clk/qcom/common.h        |    3 +
+>  drivers/clk/qcom/gcc-sdm845.c    | 3222 ++----------------------------
+>  drivers/clk/qcom/gdsc.h          |   10 +
+>  6 files changed, 406 insertions(+), 3012 deletions(-)
+> 
+> --
+At first I was against it, but now I like it. Saves on LoC and clutter.
+And it will hopefully finally be reviewable, without 15 levels of
+indentation flashing before your eyes :D
+
+I am also happy you mentioned a "semi-automated" way to convert things,
+especially since Qualcomm will take some time to adjust to this scheme
+on their downstream kernel (it's already really good, I still have
+arch/arm/mach-msm flashbacks..) and of course, when it comes to platform
+support, the more the merrier!
+
+Thanks for working on this.
+
+Konrad
+> 2.34.3
+> 
