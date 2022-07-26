@@ -2,58 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8129FC00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD280C00140
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239158AbiGZRrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 13:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
+        id S239600AbiGZRsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 13:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230473AbiGZRrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:47:20 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1510112747
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:47:19 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id w15so15695991lft.11
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:47:18 -0700 (PDT)
+        with ESMTP id S233972AbiGZRsk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:48:40 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEDB13CF9
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:48:38 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id b34so12121493ljr.7
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cTh/VmIIxa6zND0UMmPraAseD9adZ9TkskNpcYoRdAk=;
-        b=q2ltcuqpI8DQqJc1moXciC57Y2UfdkaQNBxBXxX6ty1++FGlekjf7wlfUnrFEHeoU2
-         IyPOOdfOzi7yS4wGJW/zYwNkpjF4YtsvXI/BccpH+UKLDOZDEjZj6wZwK0K26x5Sd1Go
-         MK9SKucLyTlwtbxI2Sp8DtIOiNVM/5mlXJK1fI/MfWoeAu4FRJMiQcRXPpgdKMErz83n
-         oMMx/P6IH1SwLGboZMWjr2gBqp4HgeAcfaDHK5mJFLc51i0Y4/P5VBcL1xHtsE2eaITv
-         9ITmx1rTBw7WleUupSKAzrc1Z+p4Uf1EOrhcSKFEy/fJoA43thKEpSDQafn848cNZS9T
-         o71g==
+        bh=ctzPl5frmb/YoGH10Wg8TSeiwequFD6UNo9wAiW5Nf4=;
+        b=kaaxXkImhFO4vK0QMRJ/+WeBINGdwAZ6r/az/bpjbT0++NxJzUZP+7Y+qP1F8U/57H
+         nHscvRB//Y2s7XCj80eI4RdAoRD0QvU4od1sp4ElzWogq6IK+rwcsA6oFRTeZzpKy7ky
+         0F91nvkSWYVLk/t2lkfQILRYO//iGz80yos1aETzZt+BjF0ReGuSbRaP72M1spKVrpD9
+         ePk45R0DBZCxwVlHiobjJHjsfSCWeCbiShI7WcH/WcoJv2X5iQWkm9gNlR98XTlGYRTG
+         j8zWZd7yyQV8GVXadRoxWaivB3ku7ymhK3MYFC9OVjXTHGaUIluyDUlH7PT05n0m866i
+         uzgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=cTh/VmIIxa6zND0UMmPraAseD9adZ9TkskNpcYoRdAk=;
-        b=o7a0f28PJmR5lz1i9t0N/Eh57ItlIJxsYkKPAUaZ5zhqchTff6WZYtc/q3mRCqKPDN
-         Pl3AVQUWmWet9lCUHjq/6PhMi6iQlBme5biClCDqrCkg9Jgs7uEfJbLrxCQE6+jod+SQ
-         Y1TeERObqgnwhhnUspfv1Cr8MOA8eaL8qafYzRH1yeQfb7nWvw9dLKD0s8oBP7ZV8sMH
-         905Ii1dPKKDffPtyVOKoFEWgVYv/R65FGrkZovhW4bnlfbiTpB/L2FuBr7UzUmpAzwOY
-         2dQ00Iq3/AqhONAWJjxYPSp1eOTmp104lsQZmB/zVmn1GVPl0Hj59V0wBOikXTuUTAd0
-         lKYA==
-X-Gm-Message-State: AJIora9N8GngDqMVuqA4AdLDPscjRSTW5+bhgFeMxhUKflaVUdxLwHDh
-        gyD79imCM57T47jYoxDgW5xS3A==
-X-Google-Smtp-Source: AGRyM1sQWViDqbOuVhkk9dCLiQGiLObMDobj0H5WZA+NU09znGIhyLbA1ayQG/n6sGHWPVQQ4qYXfw==
-X-Received: by 2002:a05:6512:4dd:b0:48a:a01b:887c with SMTP id w29-20020a05651204dd00b0048aa01b887cmr1690322lfq.686.1658857637462;
-        Tue, 26 Jul 2022 10:47:17 -0700 (PDT)
+        bh=ctzPl5frmb/YoGH10Wg8TSeiwequFD6UNo9wAiW5Nf4=;
+        b=gavXCCW3EQRmZ7LSsjiNbhyoD0jccgLyTfZHSrqhDuOb3YLMjBcK6uuKa+zkgET8bv
+         8Fl9TO5PTD2CLth/UylwmxgMyCc6zCwSOuRxxtCDv9/6EBF+pb33sHy2TQFY1LSwqGc3
+         SUkuLcd9+FGhBlno5HWNXCdBMugTbxE9l4+EYhtKKR77kwqsjEZr9Lh6MT/oHG1BUnQ2
+         qvVO4eD+rp8cT3gpnHeDJyd6U4l747kfJzFxEPAkGH/5CWlKB4p5oFrv/wE3xqp0nmWm
+         AT2uYTDkQ+We5V46NEO4QJSK6GMoPXhmwVrPljK6enHhf0EhBfIcheRSVYpUj88WtZpI
+         iUOA==
+X-Gm-Message-State: AJIora9a3md9RMrqjKTsSELjIrJF/hBl0E2R2y4p/MKOv+3fm4//zwj8
+        tm+dPjRbB4qiry0xkauJFWD+pA==
+X-Google-Smtp-Source: AGRyM1vQm0t5vDuroCaPvzxeqKGhulW1RTmsSC5Ln18JTIpOTqEW3j+lwzFTRlTRMYFkWNFF+gQaVg==
+X-Received: by 2002:a2e:9cd9:0:b0:25d:e81e:7b5a with SMTP id g25-20020a2e9cd9000000b0025de81e7b5amr6397430ljj.32.1658857716853;
+        Tue, 26 Jul 2022 10:48:36 -0700 (PDT)
 Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
-        by smtp.gmail.com with ESMTPSA id v9-20020ac258e9000000b0048a8827049bsm1457578lfo.60.2022.07.26.10.47.16
+        by smtp.gmail.com with ESMTPSA id y19-20020a05651c107300b0025d72c1f646sm3436746ljm.58.2022.07.26.10.48.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Jul 2022 10:47:16 -0700 (PDT)
-Message-ID: <7555b0ca-2028-dba9-9950-ca0d21c2863c@linaro.org>
-Date:   Tue, 26 Jul 2022 19:47:15 +0200
+        Tue, 26 Jul 2022 10:48:36 -0700 (PDT)
+Message-ID: <e07cc297-1b89-e6f5-c16e-26750c8402c4@linaro.org>
+Date:   Tue, 26 Jul 2022 19:48:34 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH V6 0/2] Add ums512 clocks and relative bindings file
+Subject: Re: [PATCH V6 1/2] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
 Content-Language: en-US
 To:     Cixi Geng <gengcixi@gmail.com>, lee.jones@linaro.org,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -62,8 +63,9 @@ To:     Cixi Geng <gengcixi@gmail.com>, lee.jones@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <20220726102404.564498-1-gengcixi@gmail.com>
+ <20220726102404.564498-2-gengcixi@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220726102404.564498-1-gengcixi@gmail.com>
+In-Reply-To: <20220726102404.564498-2-gengcixi@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -71,40 +73,22 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 26/07/2022 12:24, Cixi Geng wrote:
-> From: Cixi Geng <cixi.geng1@unisoc.com>
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > 
-> This patchset is add the UMS512 clocks support
+> Add bindings for Unisoc system global register which provide register map
+> for clocks.
 > 
-> v2 changes:
->   adjust description and add the "sprd,ums512-glbregs,syscon,simple-mfd"
->   compatibles to fix match failed logs in the dt_binding_check.
->   add the property license and copyright notice.
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+>  1 file changed, 68 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
 > 
-> v3 changes:
->   fix wrong indentation and hint: "maxItems" is not needed with an "items"
->   list when use the latest dtschema.
-> 
-> v4 changes:
->   move the syscon bindins from clk to glbreg yaml file by pickup 
->   chunyan's patch for global registers bindings
->   fix the comments from Krzysztof in v3 patchset
->   add the Acked-by: Krzysztof in patch v4 3/4
->   fix the  warning Prefer "GPL" over "GPL v2"
-> 
-> v5 changes:
->   Add review tags.
->   fix the comments in ums512-glbreg.yaml.
-> 
-> v6 changes:
->   No more send the patch 1/4 and 3/4 in V5 for applied by Stephen
->   change GPL to GPL v2 license
->   fix the lack of space in some "{" and "}"
->   add check error for sprd_clk_regmap_init.
 
-That's not good. That was a dependency here (for MFD bindings). You must
-describe the dependencies in cover letter so maintainers know how to do it.
-
-Your MFD patch is not applicable now...
+The patch depends on patch in clk tree, so either it goes via clk tree,
+there is cross-tree merge or it must wait for v5.20-rc1.
 
 
 Best regards,
