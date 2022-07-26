@@ -2,55 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00216C00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 16:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD30C3F6B0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 16:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239625AbiGZQkV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 12:40:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50128 "EHLO
+        id S239010AbiGZQrP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 12:47:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239584AbiGZQkQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 12:40:16 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DE32F64E
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:39:52 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id h22so10852879qta.3
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:39:52 -0700 (PDT)
+        with ESMTP id S229738AbiGZQrO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 12:47:14 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F0D2559A
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:47:12 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id g1so11382906qki.7
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pYDd241FvaKCpO6of8uslrgdtlqNOaqdsV1BUmVY4DE=;
-        b=Wp9eRiyhFAw+310douCzpEFBmmFZX447/ljG/YQaS4bLyl8r6OuvfGnhfThCb0btmE
-         M8x6uAw4O9KV3E+2RnBZFR95NJfvMxkTuzalqJ1OkVadY4JGooRtBgA8diDGKzkK/haD
-         kIYeol7TmyTu32xpEfRRXiI5pyLF28/NqIhi7ucPz2pWW29dVHetQ7w6McuYTw7xxmvG
-         3IFdV5S5ApcyA9jcZiVeRA7uZhfSxKTVg8NNFa8VqGkid0niAHotUYUriNXWQ0nwA7o7
-         ydo0JHDXRD7aKUoFWz5d6sScSGjGlrlGJMKihM5SNukwwymTmqARgtFLduaT0nRf+cva
-         E8GA==
+        bh=fnxICBtoZlXeY2qxckxs6f0OS9viGg3qZVl5sr14NPQ=;
+        b=AOJquvQXF3u0cj0bpXLnmvkH2wsAFIkusPxlvkS0CINzQSiVA5XrlWwoa4+gBZSSVr
+         wAt8O/f6Q+FNWDiplHZgoLIiExJjWyAYPntVKWt6SzfiSs48OKFbatqX34F2umy64Tl4
+         b7G7nUPQHeMhPtz5sIb/d3D7qqNt9gWvitP5GgVVj7G9WVcfeMMq9tvHiZT0CkF+h/Ve
+         DTUFmwhM2Y4bUDRKq8NSU1sH0XeAdsG/bvT1BqKMr34B+X/R+ijdYwg0uKqTudDOcqDR
+         WOd+L3SNBsGc7Ix4qC3CQDzLsGKQHDYPYfuiXoqsJfsS+XInncq9LN5JIGn2Jvk8ATCn
+         JP5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pYDd241FvaKCpO6of8uslrgdtlqNOaqdsV1BUmVY4DE=;
-        b=DdHUJ6Y1NkiKwHYnlOKIImyjWiJBs9qrAFoDXzXhV1OTAYLhVQdFUahlqn0UBtFjR6
-         +c0KIdh2pMogByjHwBUeR4PopQPE6HK2+5T4IoCmqsTL5GPhuLWl+G+YsTqwyqKgC3E8
-         SBfhgBntZXlI0fiwACEHq0eEvD9zh8UjU30DQ6lSFYkCoCg2NYsSXnFWr4VtVV2hHDQW
-         bXTkgYGk+wbuJ8DTYIB6Q906TsYS3XVJ6N81fBY/2D7/GAGcRZusEWDqH+8Ml/EsW87b
-         CIDRuzXCujK88spUMgD/Q0vHqru7nFPVdZziul3j8QlFRXaWYH8pEzLKBnKhGB2gZXgd
-         B+jg==
-X-Gm-Message-State: AJIora9dURwvaMRCVnU7JfjiLVnyMNMLIrZgtKB2KKrc9G7vDuhNKA5G
-        +xkNKamOOU3W5QpRDLbcBwPsZS35oe0SZ3P5SC4sdA==
-X-Google-Smtp-Source: AGRyM1vEzG5t3aRQgT+Z2aqBlNPxEjBg4wmsVTxjhOcNmhCE/SF1C84yqtk2xgmVCVhC+1Y6j5/7JiSKk0+B1n+sBtw=
-X-Received: by 2002:a05:622a:178a:b0:31e:f9ff:c685 with SMTP id
- s10-20020a05622a178a00b0031ef9ffc685mr15624221qtk.62.1658853591828; Tue, 26
- Jul 2022 09:39:51 -0700 (PDT)
+        bh=fnxICBtoZlXeY2qxckxs6f0OS9viGg3qZVl5sr14NPQ=;
+        b=nTyXeExQjpxtLtheZQ0Ae2Fzv8MtHKfRdQeQHk3vOncVPf4bnYt33HLSlmOFwZ7Nd9
+         oON4GJj6AxtELN4GMxQ8dCLksWEymc8FEerlM7vO/6Nl4MKNJqeaYcU2YWvMQfi5FTHC
+         jyeOpQXh0fTOUVNLp/pYkOBZgUb2Z/BGJng2gwB/kIDPf4c/aNRUOQysADzBE4Nhl7Ql
+         qeFLZ1/2yEf2i/N1LBwOtExSmMLj6fGxHv6wdYPpQ2Nr+8U8X8uBDySp4Vgp5l8S9AWu
+         u5hqgWmUQUdIOPKFqJNMxYn2Z9GbAPDEYqPgIx6V9Gk3rF31SAk4JetyRQoU/oQJ39UJ
+         DGVA==
+X-Gm-Message-State: AJIora+eDi3MJc1d+YgPTlBtCr7Ffgj5XT+lirZ3kg+hhU0x+xf0s049
+        oxdEnPx2cjyY8+AcaAhfAoZsXqAFZoEU5J+cU9/Ujw==
+X-Google-Smtp-Source: AGRyM1sAT4xEHeETZKUH1vdvbqcGWd6LidWqQu8mEf0H2s05xiqpIGOIQfv5aLJQ/oYOa0/aj4fP4SZw2Hx2Su8QFQY=
+X-Received: by 2002:ae9:f311:0:b0:6b6:30a9:1bb1 with SMTP id
+ p17-20020ae9f311000000b006b630a91bb1mr13340774qkg.30.1658854031375; Tue, 26
+ Jul 2022 09:47:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220726142303.4126434-1-abel.vesa@linaro.org> <20220726142303.4126434-4-abel.vesa@linaro.org>
-In-Reply-To: <20220726142303.4126434-4-abel.vesa@linaro.org>
+References: <20220726142303.4126434-1-abel.vesa@linaro.org> <20220726142303.4126434-9-abel.vesa@linaro.org>
+In-Reply-To: <20220726142303.4126434-9-abel.vesa@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 26 Jul 2022 19:39:40 +0300
-Message-ID: <CAA8EJpofiQ+5OA5UQz4uU1U3hE8iECzBD-Adda7g1mo5wPBo0g@mail.gmail.com>
-Subject: Re: [RFC 3/9] clk: qcom: rcg: Add macros to collapse definition
+Date:   Tue, 26 Jul 2022 19:47:00 +0300
+Message-ID: <CAA8EJprG79PbfLVvrtJiOA7fGtXn6ZrXN4ZT_DiJggx2synefw@mail.gmail.com>
+Subject: Re: [RFC 8/9] clk: qcom: gcc-sdm845: Switch to macros to collapse
+ rcg2 clocks definitions
 To:     Abel Vesa <abel.vesa@linaro.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -64,79 +65,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Jul 2022 at 17:23, Abel Vesa <abel.vesa@linaro.org> wrote:
+On Tue, 26 Jul 2022 at 17:24, Abel Vesa <abel.vesa@linaro.org> wrote:
 >
-> Add macros for a visually more compact rcg clocks definition,
-> one for each type of rcg2 ops struct. These are only the ones
-> used by gcc-sdm845 driver. More will be added later on.
+> Switch from the expanded rcg2 clocks definitions to the more compact
+> macros.
 >
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  drivers/clk/qcom/clk-rcg.h | 40 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+>  drivers/clk/qcom/gcc-sdm845.c | 712 +++-------------------------------
+>  1 file changed, 51 insertions(+), 661 deletions(-)
 >
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 012e745794fd..e856d472a14e 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -180,6 +180,46 @@ struct clk_rcg_dfs_data {
->         struct clk_init_data *init;
->  };
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index 2e66256599d3..d9751d7e617c 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+
+[skipped]
+
+> +DEFINE_QCOM_CC_CLK(RCG2, gcc_cpuss_ahb_clk_src, 0x48014, 0, 5, gcc_parent_map_0, ftbl_gcc_cpuss_ahb_clk_src, gcc_parent_data_7_ao);
+> +DEFINE_QCOM_CC_CLK(RCG2, gcc_cpuss_rbcpr_clk_src, 0x4815c, 0, 5, gcc_parent_map_3, ftbl_gcc_cpuss_rbcpr_clk_src, gcc_parent_data_8_ao);
+
+Well.. Stephen & Bjorn might have other opinions here. But for me
+there are just too many pieces of information on a single line. And
+different values start to meld into each other.
+So, e.g. I find it harder to comprehend what is going on here. What do
+0 and 5 mean, etc. So while it takes less space, it looks harder to
+read. Compare this with the interconnect drivers, where a few releases
+ago we made an opposite switch: from using QNODE macros to the
+expanded structures.
+
+[skipped]
+
 >
-> +#define __DEFINE_QCOM_CC_CLK_RCG2(_name, _cmd_rcgr, _mnd_width,                \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data, _ops, _flags)             \
-> +       static struct clk_init_data _name##_init = {                    \
-> +               .name = #_name,                                         \
-> +               .parent_data = _parent_data,                            \
+>  DEFINE_QCOM_CC_CLK(BRANCH, HALT, gcc_aggre_noc_pcie_tbu_clk, 0, 0x90014, 0, 0, 0x90014, BIT(0), 0);
 
-I must admit, I do not see beauty here. I'd prefer to be able to use
-either parent_data or parent_hws.
+And this is the perfect example. a series of 0, 1 and BIT(0). What do
+they mean? And where is the parent, which is defined for the next
+clocks?
 
-> +               .num_parents = ARRAY_SIZE(_parent_data),                \
-> +               .ops = _ops,                                            \
-> +       };                                                              \
-> +                                                                       \
-> +       static struct clk_rcg2 _name = {                                \
-> +               .cmd_rcgr = _cmd_rcgr,                                  \
-> +               .mnd_width = _mnd_width,                                \
-> +               .hid_width = _hid_width,                                \
-> +               .parent_map = _parent_map,                              \
-> +               .freq_tbl = _freq_tbl,                                  \
-> +               .clkr.hw.init = &_name##_init,                          \
-> +       }
-> +
-> +#define DEFINE_QCOM_CC_CLK_RCG2(_name, _cmd_rcgr, _mnd_width,          \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data)                           \
-> +       __DEFINE_QCOM_CC_CLK_RCG2(_name, _cmd_rcgr, _mnd_width,         \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data, &clk_rcg2_ops, 0)
-> +
-> +#define DEFINE_QCOM_CC_CLK_RCG2_SHARED(_name, _cmd_rcgr, _mnd_width,           \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data)                           \
-> +       __DEFINE_QCOM_CC_CLK_RCG2(_name, _cmd_rcgr, _mnd_width,         \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data, &clk_rcg2_shared_ops, 0)
-> +
-> +#define DEFINE_QCOM_CC_CLK_RCG2_FLOOR(_name, _cmd_rcgr, _mnd_width,            \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data)                           \
-> +       __DEFINE_QCOM_CC_CLK_RCG2(_name, _cmd_rcgr, _mnd_width,         \
-> +                               _hid_width, _parent_map, _freq_tbl,     \
-> +                               _parent_data, &clk_rcg2_floor_ops, 0)
-
-Too many variants. I'd suggest making the default one (&clk_rcg2_ops)
-and the extensible (with variable ops).
-
-> +
->  #define DEFINE_RCG_DFS(r) \
->         { .rcg = &r, .init = &r##_init }
->
-> --
-> 2.34.3
->
+>  DEFINE_QCOM_CC_CLK(BRANCH, HALT, gcc_aggre_ufs_card_axi_clk, 1, 0x82028, 0x82028, 1, 0x82028, BIT(0), CLK_SET_RATE_PARENT, &gcc_ufs_card_axi_clk_src.clkr.hw);
 
 
 -- 
