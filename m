@@ -2,94 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78806C00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 16:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC5CC00140
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239539AbiGZQso (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 12:48:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
+        id S239466AbiGZRpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 13:45:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239481AbiGZQsf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 12:48:35 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5343D26123
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:48:34 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id u12so10880765qtk.0
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 09:48:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d55skeM4MmgFUfCiTeEJDFYaJC6xKxNo35w6mzrGP+g=;
-        b=n4MuAymIchLUx8QBvL/QTx5QA+6PfOFPGtNIfUovn6s/J5vSbT0dvLKZW0tLLBpduP
-         js6ZX+YETo/VZfDb2pAk7RltO8k2PfdyRMI9kk+VlhJuQ7CmoPyYObfcQHPlhDoZvuu0
-         9QNXMyfHTQ4khY6+x1o5iRMZz31leW4a/6NUcabCAvfprfhrH7TT+uOi41mQTrMtQWxb
-         p69OPQ+uJhORMetG3s/8PGz102CAkopUY/Q1CZNO6QZ8GFhLP/XhQ2nVqnQleFlSjRjk
-         Hd5KQU3tcqJJvr8G4kfRQ2tTPErfbnsvdLeBgZmhmyjX4Mzn40cMKdOMI2WG3r4Vs3Yl
-         odwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d55skeM4MmgFUfCiTeEJDFYaJC6xKxNo35w6mzrGP+g=;
-        b=EjfNxcFKkyTISiuw6VdSFrt2HEqqR4qvxB0pCI7Cn+dVtc76ncExE6UMfNlP72dA8Y
-         1BtYqF3/zrSooQGuTxyZ9cwFKZD6rVyZubJ2XzvWlvHr3OSwhzQgbDKbAfKOE4gy9xyo
-         jhkPgDiiC2AoeAd0F70CKys0pKDkbzGFkzC+tfOUmWpge7ysWCyOBRsFKr5bHNC7zFYH
-         cdegyLtqk/gOomw4eI28K+Vn7vYSLP1bM5EkqoF2cb150nCinG5LxGFdXWDzPhEgSbSu
-         fXNJBx/qenideo1BvcGbvkjS8TGRx3NqIHwbgNHUM2VuzzkOLcmh+0sWzyNlecJWka+J
-         QZGA==
-X-Gm-Message-State: AJIora8I+NfVyUn2j4j6SX4xtOZx33kjU1je8zTGiIwYbKa6oHuzpZz9
-        tuLm4okaIjy6e4rKRPqwlNDUiHJQkN3ywjP6PqaX5A==
-X-Google-Smtp-Source: AGRyM1vhmuv0mCM1ZrW2Y1qJDJZKsI+4TTGB5uIo187UYnvAsIDZEXwmWK+76gXk1LuuYBOyqcsIh+2CkUGr1lb+rIU=
-X-Received: by 2002:a05:622a:178a:b0:31e:f9ff:c685 with SMTP id
- s10-20020a05622a178a00b0031ef9ffc685mr15655785qtk.62.1658854113483; Tue, 26
- Jul 2022 09:48:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220726142303.4126434-1-abel.vesa@linaro.org> <20220726142303.4126434-7-abel.vesa@linaro.org>
-In-Reply-To: <20220726142303.4126434-7-abel.vesa@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 26 Jul 2022 19:48:22 +0300
-Message-ID: <CAA8EJpoGkC44wM8ZQnEtQ29YjOr_ALN2kHDSL793TKE4a080cA@mail.gmail.com>
-Subject: Re: [RFC 6/9] clk: qcom: common: Add macro wrapper for all clock types
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S239232AbiGZRpl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:45:41 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC14BDE1;
+        Tue, 26 Jul 2022 10:45:39 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.93,194,1654527600"; 
+   d="scan'208";a="129201531"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 27 Jul 2022 02:45:38 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 71DCE40BF9E8;
+        Wed, 27 Jul 2022 02:45:35 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] dt-bindings: clock: renesas,rzg2l: Document RZ/Five SoC
+Date:   Tue, 26 Jul 2022 18:45:25 +0100
+Message-Id: <20220726174525.620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Jul 2022 at 17:23, Abel Vesa <abel.vesa@linaro.org> wrote:
->
-> Add a generic macro that uses the clk_type to figure out which
-> clock type specific macro to call.
->
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/clk/qcom/common.h | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 9c8f7b798d9f..475febd19dba 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -19,6 +19,9 @@ struct clk_hw;
->  #define PLL_VOTE_FSM_ENA       BIT(20)
->  #define PLL_VOTE_FSM_RESET     BIT(21)
->
-> +#define DEFINE_QCOM_CC_CLK(clk_type, ...)      \
-> +       DEFINE_QCOM_CC_CLK_##clk_type(__VA_ARGS__)
+The CPG block on the RZ/Five SoC is almost identical to one found on the
+RZ/G2UL SoC. "renesas,r9a07g043-cpg" compatible string will be used on
+the RZ/Five SoC so to make this clear, update the comment to include
+RZ/Five SoC.
 
-Please drop this macro. It would make extremely hard to follow the
-definitions. Without it I can just jump-tag to follow the
-DEFINE_QCOM_CC_CLK_RCG2_SHARED_SOMETHING_EXTRA. With this macro in
-place there would be no way to do this.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Note the driver changes [0] have been already queued for v5.20.
 
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+20220622181723.13033-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+---
+ Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+index d036675e0779..487f74cdc749 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+@@ -24,7 +24,7 @@ description: |
+ properties:
+   compatible:
+     enum:
+-      - renesas,r9a07g043-cpg # RZ/G2UL{Type-1,Type-2}
++      - renesas,r9a07g043-cpg # RZ/G2UL{Type-1,Type-2} and RZ/Five
+       - renesas,r9a07g044-cpg # RZ/G2{L,LC}
+       - renesas,r9a07g054-cpg # RZ/V2L
+       - renesas,r9a09g011-cpg # RZ/V2M
 -- 
-With best wishes
-Dmitry
+2.17.1
+
