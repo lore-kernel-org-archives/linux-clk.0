@@ -2,113 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49213C00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 19:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F15C19F2A
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 20:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239648AbiGZTQ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 15:16:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48226 "EHLO
+        id S239699AbiGZUHq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 16:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbiGZTQ2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 15:16:28 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4902982E;
-        Tue, 26 Jul 2022 12:16:26 -0700 (PDT)
-Received: from [192.168.1.101] (abxi232.neoplus.adsl.tpnet.pl [83.9.2.232])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S239708AbiGZUHp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 16:07:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF0532469;
+        Tue, 26 Jul 2022 13:07:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 7D13B203ED;
-        Tue, 26 Jul 2022 21:16:24 +0200 (CEST)
-Message-ID: <d120c72d-09d9-d78b-01ae-f5592f6a07be@somainline.org>
-Date:   Tue, 26 Jul 2022 21:16:22 +0200
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7F55BB80919;
+        Tue, 26 Jul 2022 20:07:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DDA2C433C1;
+        Tue, 26 Jul 2022 20:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658866061;
+        bh=y5wfcocVA31wNAT1AzwXJsrzMI45+ZN+MdMwmwEEHlA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=JgWGgmzyl3SKYdp9DW27KLVN9dJyVSdu1dgw4HHmpM11CzFXuYhtinp0oUVPAibdI
+         B7OYo75rbIEpGXPOJ8q7sT0UMtr5jC2n9ctbz9a1RZ44zY7rQM0RaKpud2gpanljeX
+         phB1II7HBWwZuGvYCsKNGLmtdaQQamYjTOEnRj07D0DLFt0KU3Drrl5/R+0cAA9aRG
+         4BZkylF8KoxQiuv2qNRk1PWwzcYjAsY9cJLw7L1QbVjw86MTZSZ3GK6Pc8IE2FF1bs
+         DsVHv92JI7yw9ezHPoeunxpXQHXQgAvC9WS4HVM8u66Tvz022POYCb0ATXLxynOpvc
+         ufbIGURnMSCjg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [RFC 0/9] clk: qcom: gcc-sdm845: Swicth from expanded definitions
- to compact macros
-Content-Language: en-US
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20220726142303.4126434-1-abel.vesa@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220726142303.4126434-1-abel.vesa@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CABVgOS=bm5TmEBd8jxuTPJy426OgC14ryqn4FLQR1pHNf5uhsw@mail.gmail.com>
+References: <20220711162713.2467476-1-dlatypov@google.com> <20220711204859.3DDD5C34115@smtp.kernel.org> <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com> <CABVgOS=bm5TmEBd8jxuTPJy426OgC14ryqn4FLQR1pHNf5uhsw@mail.gmail.com>
+Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Latypov <dlatypov@google.com>,
+        David Gow <davidgow@google.com>
+Date:   Tue, 26 Jul 2022 13:07:39 -0700
+User-Agent: alot/0.10
+Message-Id: <20220726200741.2DDA2C433C1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello!
+Quoting David Gow (2022-07-11 23:44:08)
+>=20
+> So, as I understand it, casting a regular pointer to an __iomem
+> pointer (as the clk test does) isn't technically correct, though it
+> does work on almost every architecture out there. If we want some way
+> of intercepting I/O access, then then that'll need to be handled by
+> the various read()/write() functions.
 
-Probably an unnecessary nit: typo in the word 'Switch' in the title
+Yep. It's test code though so it seemed ok at the time.
 
-On 26.07.2022 16:22, Abel Vesa wrote:
-> Lets see where this goes.
-> 
-> This RFC is basically a proof-of-concept of how we could use more
-> compact macros rather than expanded definitions for clocks on QCOM
-> platforms. As the subject says, this is only for SDM845 GCC, for now.
-> 
-> Also, there are a couple of hacky solutions here that need to be
-> reworked before it could be merged (if ever). One that comes to mind is
-> the way the branch clock macros differentiate between having no parent,
-> a parent name, or a parent HW. I'm still looking into that, so ...
-> 
-> I tried to make them as compact and readable from the user's POV, but
-> there is some complexity needed in order to allow passing different
-> types (or number) of parents. Maybe that complexity is too crazy and
-> doesn't bring that much benefit.
-> 
-> I managed to put together some semi-automated way to do this for every
-> CC, on every platform, if it's decided so. The only testing I managed to
-> do so far was comparing the preprocessed output before and after. Oh,
-> and the MTP does boot. I still need time to make sure that nothing gets
-> broken.
-> 
-> Also, this series is still WIP, so everything can be reworked fast, if
-> needed.
-> 
-> Abel Vesa (9):
->   clk: qcom: qcc-sdm845: Collapse gdsc structs into macros
->   clk: qcom: gcc-sdm845: Switch from parent_hws to parent_data
->   clk: qcom: rcg: Add macros to collapse definition
->   clk: qcom: alpha-pll: Add macros to collapse definition
->   clk: qcom: branch: Add macros to collapse definition
->   clk: qcom: common: Add macro wrapper for all clock types
->   clk: qcom: gcc-sdm845: Switch to macros to collapse branch clocks
->     definitions
->   clk: qcom: gcc-sdm845: Switch to macros to collapse rcg2 clocks
->     definitions
->   clk: qcom: gcc-sdm845: Switch to macros to collapse alpha-pll clocks
->     definitions
-> 
->  drivers/clk/qcom/clk-alpha-pll.h |   61 +
->  drivers/clk/qcom/clk-branch.h    |   82 +
->  drivers/clk/qcom/clk-rcg.h       |   40 +
->  drivers/clk/qcom/common.h        |    3 +
->  drivers/clk/qcom/gcc-sdm845.c    | 3222 ++----------------------------
->  drivers/clk/qcom/gdsc.h          |   10 +
->  6 files changed, 406 insertions(+), 3012 deletions(-)
-> 
-> --
-At first I was against it, but now I like it. Saves on LoC and clutter.
-And it will hopefully finally be reviewable, without 15 levels of
-indentation flashing before your eyes :D
+>=20
+> UML doesn't support iomem at all out of the box, and logic_iomem is a
+> way of implementing it which allow us to attach handler functions to
+> blocks of memory, albeit with more constraints about what addresses
+> get used. Brendan started implementing a "fake hardware" interface on
+> top of this here, though it's still in-progress:
+> https://kunit-review.googlesource.com/c/linux/+/5272/4
 
-I am also happy you mentioned a "semi-automated" way to convert things,
-especially since Qualcomm will take some time to adjust to this scheme
-on their downstream kernel (it's already really good, I still have
-arch/arm/mach-msm flashbacks..) and of course, when it comes to platform
-support, the more the merrier!
+Cool.
 
-Thanks for working on this.
+>=20
+> Ultimately, I think the 'correct' solution here will be
+> logic_iomem-based, but doing that nicely will probably require one of
+> two things:
+> - logic_iomem to support non-UML architectures as well (becoming a
+> generic "insert a 'fake' device here" system)
+> - logic_iomem to have some way of "passing through" access to an io
+> memory region through to the normal underlying memory.
+>=20
+> Ideally, we'll have both, and maybe even defaults which will allow
+> hacks like this to continue working (perhaps with a warning?). That'll
+> require some significant (and probably not uncontroversial) work on
+> how iomem accesses work in general, though, possibly with performance
+> impact.
 
-Konrad
-> 2.34.3
-> 
+Does it matter to pass through to real iomem? I'd think we wouldn't want
+to actually affect real hardware in test code. Instead we'd like to fake
+it and then look at the result, like how the clk test works.
+
+>=20
+> The other option of using function redirection on the io read()
+> write() functions exists, and would be a bit simpler in the
+> short-term, but would probably result in a lot of tests reimplementing
+> this, and also would have some performance impacts, as the I/O
+> accesses wouldn't be able to be inlined if KUNIT is enabled.
+>=20
+
+That sounds OK to me because nobody is enabling KUNIT in production,
+right?
