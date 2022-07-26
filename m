@@ -2,91 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E04C04A68
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 20:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F00C00144
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 22:58:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239841AbiGZU0T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 16:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59332 "EHLO
+        id S229766AbiGZW66 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 18:58:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230235AbiGZU0S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 16:26:18 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F4EA15FDF
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 13:26:16 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id p5so8023856edi.12
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 13:26:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SCbzcnRoXkiamtSXlne81U8f+vR3j3GE5M+4vscq2sc=;
-        b=NfS+0hNrCJyXM32ZQ5he5a2I24pM/fmUJX0SeLd00f/c62yqVB46pTiaWNp8cgjAIM
-         0enHnLvSax6YWp/NSGPM1OwCieMq6vcfe1/6dVupcEVDqL2lnAlH7sKYc2qj1h2A1J8O
-         0fOxPlkQ0lB/c8EwFrW5W5jfQDsE9JhhCy2Oqkeyb8mkpUcqYWrKirtmC9xFBH7ikGlo
-         9uAsIXrXbVz2DMBCs2KEUK/PH4rfPicJo8rn7bXVFv0ZQZhgH+93V1k0/l1x+/eA4TBG
-         RKu6bK0PP/AMLAdqEiBfxxAGE5HBvGV9t6xNJN/W13AVylc0aQZfHGD7a7KwKUODcqqk
-         Yvcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SCbzcnRoXkiamtSXlne81U8f+vR3j3GE5M+4vscq2sc=;
-        b=SmkcgoB59qN6tZpdFMz0StblIlc1uVk5Zm8hYbriniu75xpM0L9DWwS12Ja2U2DV/t
-         rAmHXkzi3o/DHdyvNiBX/XNWqYQ7bAmwdJMUodIjIvCsX9zndBnYTpwlVruTKBpVRMjX
-         /UQHuyYUGX3ZhJBwOYbPrKhWMQP77qTHp5yROp538hhiZTzcfH5p5cRU38jTVKK9z4QZ
-         zjxZL+uieH63nX9bjXTQKK08aI5t7UNqFlZcyRMNaBU4PXG1Ff/MU5nwF/Nn9eldcxlo
-         bJss/TBiY5qxnCZ/korJ2ju5+hT+IQk+3NeTA6Vcn9oJRfHe1y2rWeZFRRNaoP4dHLbI
-         m3Cg==
-X-Gm-Message-State: AJIora+aHp0Cg9uzKlGoqhY+ONSvdbj/PySRpeUrZa/Z2WwT30PXEBPD
-        cxEwH6+tUZuZx/sszeIlJnx2Ir4ElBh3yACatqiFdMbZ3P6mxg==
-X-Google-Smtp-Source: AGRyM1uSHZOKNK+16xIOfZQvddbpS0HpVegfv+pnKKrmoIOe8YjelL4vvOcf0EzcoXJA63yuLy0EUEbRLglv73klp74=
-X-Received: by 2002:a05:6402:4507:b0:43b:b8df:571d with SMTP id
- ez7-20020a056402450700b0043bb8df571dmr8264202edb.230.1658867174676; Tue, 26
- Jul 2022 13:26:14 -0700 (PDT)
+        with ESMTP id S229642AbiGZW65 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 18:58:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA64630559;
+        Tue, 26 Jul 2022 15:58:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0ED0A616CB;
+        Tue, 26 Jul 2022 22:58:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615E1C433D6;
+        Tue, 26 Jul 2022 22:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658876335;
+        bh=95zhTF3RvSPpdIG4fmJ3Qawy4FvFggDDh2yy8qTKelU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=JB9NLfp2xH0FofRGBLksoua8oV3DsjCIVChSnJpFO1XtWy4f4IoLCP/gShk/y6LqT
+         FAHWIIxyQjul6m5yLpfedt74GPpB+lTKwmJqB76PNk9HeWAqg5R40lJyjxnVooYQjS
+         9ClBvf6YE2QNbtvkA9jhtxxHwX0jY2y4RQstr1PH8AnaUKGKTrI8RTlRwJwuSEqss+
+         1qqxR5IDUfYiCtwnqziueD2qeWnhcFZxbutTu6UDYdrEIX1rwBQPSEj90SxelXi163
+         3ta1foNlveScUW5UGdbpxQUKFlklWAugeKMYhNz88g3HMGtBXGSPSeyqdgstU1kmTY
+         nse+UJATCJVVA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220711162713.2467476-1-dlatypov@google.com> <20220711204859.3DDD5C34115@smtp.kernel.org>
- <CAGS_qxqxGfQ5tA063XoRbL1ktimyfmt+CuucJ_rsYVnoi4i7gw@mail.gmail.com>
- <CABVgOS=bm5TmEBd8jxuTPJy426OgC14ryqn4FLQR1pHNf5uhsw@mail.gmail.com> <20220726200741.2DDA2C433C1@smtp.kernel.org>
-In-Reply-To: <20220726200741.2DDA2C433C1@smtp.kernel.org>
-From:   Daniel Latypov <dlatypov@google.com>
-Date:   Tue, 26 Jul 2022 13:26:03 -0700
-Message-ID: <CAGS_qxpKB_H121kWrCjP6as_FA84ctUz=pv-aKFZq3mV7eqbnw@mail.gmail.com>
-Subject: Re: [PATCH] clk: explicitly disable CONFIG_UML_PCI_OVER_VIRTIO in .kunitconfig
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     David Gow <davidgow@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2118699.Icojqenx9y@jernej-laptop>
+References: <20220719183725.2605141-1-jernej.skrabec@gmail.com> <a7a253a0-1cc3-61e4-ae59-fc299057974a@sholland.org> <2118699.Icojqenx9y@jernej-laptop>
+Subject: Re: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, andre.przywara@arm.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+To:     Jernej =?utf-8?q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>, wens@csie.org
+Date:   Tue, 26 Jul 2022 15:58:53 -0700
+User-Agent: alot/0.10
+Message-Id: <20220726225855.615E1C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 26, 2022 at 1:07 PM Stephen Boyd <sboyd@kernel.org> wrote:
+Quoting Jernej =C5=A0krabec (2022-07-20 08:16:54)
+> Dne sreda, 20. julij 2022 ob 02:21:29 CEST je Samuel Holland napisal(a):
+> > On 7/19/22 1:37 PM, Jernej Skrabec wrote:
+> > >=20
+> > > Fixes: 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate clock")
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> >=20
+> > Reviewed-by: Samuel Holland <samuel@sholland.org>
+> >=20
+> > This bug also got fixed in passing by e1c51d31befc ("clk: sunxi-ng:
+> > Deduplicate ccu_clks arrays"), but that won't land until 5.20.
+>=20
+> Argh, good catch. I will send your patch as fix then, otherwise there wil=
+l be=20
+> issues during merging.
 
-> > The other option of using function redirection on the io read()
-> > write() functions exists, and would be a bit simpler in the
-> > short-term, but would probably result in a lot of tests reimplementing
-> > this, and also would have some performance impacts, as the I/O
-> > accesses wouldn't be able to be inlined if KUNIT is enabled.
-> >
->
-> That sounds OK to me because nobody is enabling KUNIT in production,
-> right?
-
-You'd think so, but...
-
-Android GKI [1] is enabling it. I had thought as =m, but maybe it was =y.
-I can't find a good link for it now, but e.g. here's a patch they're
-carrying to prevent KUnit from running built-in tests [2]
-
-They could just carry another patch if we go down this route, but it
-goes to show that there might be others out there w/ reasons to do
-this.
-
-[1] https://source.android.com/devices/architecture/kernel/generic-kernel-image
-[2] https://android.googlesource.com/kernel/common-patches/+/refs/heads/master/android-mainline/ANDROID-GKI-Disable-KUnit-built-in-testing.patch
+This is a one line fix. I can just apply this and send this off and deal
+with the merge conflict locally by taking the other side.
