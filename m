@@ -2,92 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D606DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Jul 2022 23:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF609C43334
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 07:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237656AbiGYXZW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Jul 2022 19:25:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51690 "EHLO
+        id S238509AbiGZHmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 03:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232764AbiGYXZV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jul 2022 19:25:21 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFAD11181E;
-        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-1013ecaf7e0so16683751fac.13;
-        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
+        with ESMTP id S238235AbiGZHm2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 03:42:28 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA63CDE84
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 00:42:13 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id i13so7598750edj.11
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 00:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LSv0zT3hbYY0NoaOFjUySI9LkcnRa5c63eM0DyOgR4Q=;
+        b=v48qZg+gkpnYGsfN7MlYTDVliXJAKPYp6VGdI8Y2dBdBkiObUrhziZXNTpAgxH3jOo
+         kkdHUCnkqGzIqUQ23XEM7iTGoJfF9kNgedtLQ1nHp3UpsTqgdY3GeGP+tfjG9lky37ww
+         vSpFR6IqM2jfALmsXWMXSKXA5UjGw5UhVVKM8Z43M5YoFBGQPvpssVFPa2fekJNU1uzr
+         UWHViRuRA+U1AiWDl4+fsfypztg/fBvvjzg1qjUvtPePxO8eXcYXSNdWxF0KnlgEGjki
+         IFkjqKMXqO/GMnyBHrj0m9A5bF0yItHwbMG8kZqSQky5nXcXdop9b/5RrmLBex0l4hds
+         bazg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dCsn9dzCh6KqkTVcJHWRZAMN2f7ONnySyxeXvQofuFk=;
-        b=iDx2oLOcG4hqnOrxZm5PMVzi/88GFkCxseHhHi2FQw0pkNUh/Vct9Fsd8AlWR9ivK+
-         C1QxAQMqYH1vaj8QenxtqfogAIP4yNtL5VTpSXX6cmxdntooa4Td1h2uHqow//gt0fnX
-         54Y6wBeQ1378a1ZfNVzZ4Pb5ZKMKPE+d3RGiL0L/ZKQQtuH0qz8Z25HqD+BA1ycEdqaC
-         6lL6rKsu9RgAEWc/2/vdG92w0SwU3vXgGjmM8VryZAWqTrBoD1HrsvIybjGStEgh88O9
-         2imfQ/8Gd0Iub2X24TigDqotvgEP3wup9j83apuH4Dq5K+U5j0wmy9ceI6DSNULGNKCC
-         1VTA==
-X-Gm-Message-State: AJIora9a/cqQyr78vjsx+Q9wCsb+oy5U5qWjmzbVgB4wuASuH9j8vFPz
-        stifckOBxO8FHxcUVR1R7vgQJLlPMg==
-X-Google-Smtp-Source: AGRyM1u6PwB1RBpooueI1Ajoq8Nis2ce7rhmBLUoV8FkFFrEgRqWytwkZpjeDnVeAFnBKbEe6ONYsw==
-X-Received: by 2002:a05:6870:79d:b0:10d:8416:e59d with SMTP id en29-20020a056870079d00b0010d8416e59dmr7265810oab.85.1658791520057;
-        Mon, 25 Jul 2022 16:25:20 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id n8-20020a056870240800b0010d7242b623sm6652099oap.21.2022.07.25.16.25.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Jul 2022 16:25:19 -0700 (PDT)
-Received: (nullmailer pid 2950657 invoked by uid 1000);
-        Mon, 25 Jul 2022 23:25:17 -0000
-Date:   Mon, 25 Jul 2022 17:25:17 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@edgeble.ai>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Finley Xiao <finley.xiao@rock-chips.com>
-Subject: Re: [PATCH 10/22] clk: rockchip: Add RV1126 clock controller
-Message-ID: <20220725232517.GA2949355-robh@kernel.org>
-References: <20220723204335.750095-1-jagan@edgeble.ai>
- <20220723204335.750095-11-jagan@edgeble.ai>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LSv0zT3hbYY0NoaOFjUySI9LkcnRa5c63eM0DyOgR4Q=;
+        b=xL5tGDbARhiM1NpojuUf5rGvYKnMNFKBlHteahtqfTS8ec7pjSfuZ2Ea1UfcflxTYj
+         uADs0a451F4QMzaQwBf/IFPjEjBaUl/sxNI5se8NDmIIIdcJwbztFE1ww65yXEfcJqVc
+         Qjql/CA1s4NZ1yOW8pDNQXK/knFnlWFdRlBLlGhCQljW59bO4vOosVjSMEYXI+MHe7vT
+         /B2c8y57Oct5FCh2vJwbZrmzoAndN9qWLOGMAF0KohQl/Pzeoe/h1fK3oIgD6Z/UmU7w
+         3/8AnH/qY2CzYhboKVHrMAU6eOjLlODP1tfhB/Dxv1t7r16VhBxwmUEDobloeOBYhYYW
+         kF6g==
+X-Gm-Message-State: AJIora8v+c/1B/LpFaKfAKFkJnvpwQYRs0UeylnqjkwQ59kmiwi+hieN
+        32xeabYh07mc1TAjTG4NhJktZgiMmfDIHXiGpOUYYd2m+FpdyQ==
+X-Google-Smtp-Source: AGRyM1tTFSZO4tGo0PCUFIhA8WVv02W9uMHhf8OODiEkjWYbUjWku28ujTzToAsX7ym7ilB5OhgyYpvNchLxnLnsMkM=
+X-Received: by 2002:a05:6402:2696:b0:43b:eb8b:d0da with SMTP id
+ w22-20020a056402269600b0043beb8bd0damr10708934edd.158.1658821332118; Tue, 26
+ Jul 2022 00:42:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220723204335.750095-11-jagan@edgeble.ai>
+References: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20220720082934.17741-1-lukas.bulwahn@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 26 Jul 2022 09:42:01 +0200
+Message-ID: <CACRpkdbmaf1uLqs=k6yyb0twy0hp1izkWuJN-QYPJy1Gg6wJ2Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: davinci: remove PLL and PSC clocks for DaVinci
+ DM644x and DM646x
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jul 24, 2022 at 02:13:23AM +0530, Jagan Teki wrote:
-> Add clock controller support for RV1126 SoC.
-> 
-> Clock & Reset Unit (CRU) in RV1126 support clocks for CRU
-> and CRU_PMU blocks.
-> 
-> This patch is trying to add minimal Clock-Architecture Diagram's
-> inferred from [1] authored by Finley Xiao.
-> 
-> [1] https://github.com/rockchip-linux/kernel/blob/develop-4.19/drivers/clk/rockchip/clk-rv1126.c
-> 
-> Cc: linux-clk@vger.kernel.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Jagan Teki <jagan@edgeble.ai>
-> ---
->  drivers/clk/rockchip/Kconfig           |    7 +
->  drivers/clk/rockchip/Makefile          |    1 +
->  drivers/clk/rockchip/clk-rv1126.c      | 1107 ++++++++++++++++++++++++
->  drivers/clk/rockchip/clk.h             |   19 +
+On Wed, Jul 20, 2022 at 10:30 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
->  include/dt-bindings/clock/rv1126-cru.h |  632 ++++++++++++++
+> Commit 7dd33764486d ("ARM: davinci: Delete DM644x board files") and commit
+> b4aed01de486 ("ARM: davinci: Delete DM646x board files") removes the
+> support for DaVinci DM644x and DM646x boards.
+>
+> Hence, remove the PLL and PSC clock descriptions for those boards as well.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 
-This goes with the binding patch.
+Thanks Lukas!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
->  5 files changed, 1766 insertions(+)
->  create mode 100644 drivers/clk/rockchip/clk-rv1126.c
->  create mode 100644 include/dt-bindings/clock/rv1126-cru.h
+Yours,
+Linus Walleij
