@@ -2,94 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD280C00140
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1412CC00140
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 17:56:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239600AbiGZRsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 13:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42846 "EHLO
+        id S234205AbiGZR4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 13:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233972AbiGZRsk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:48:40 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEDB13CF9
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:48:38 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id b34so12121493ljr.7
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ctzPl5frmb/YoGH10Wg8TSeiwequFD6UNo9wAiW5Nf4=;
-        b=kaaxXkImhFO4vK0QMRJ/+WeBINGdwAZ6r/az/bpjbT0++NxJzUZP+7Y+qP1F8U/57H
-         nHscvRB//Y2s7XCj80eI4RdAoRD0QvU4od1sp4ElzWogq6IK+rwcsA6oFRTeZzpKy7ky
-         0F91nvkSWYVLk/t2lkfQILRYO//iGz80yos1aETzZt+BjF0ReGuSbRaP72M1spKVrpD9
-         ePk45R0DBZCxwVlHiobjJHjsfSCWeCbiShI7WcH/WcoJv2X5iQWkm9gNlR98XTlGYRTG
-         j8zWZd7yyQV8GVXadRoxWaivB3ku7ymhK3MYFC9OVjXTHGaUIluyDUlH7PT05n0m866i
-         uzgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ctzPl5frmb/YoGH10Wg8TSeiwequFD6UNo9wAiW5Nf4=;
-        b=gavXCCW3EQRmZ7LSsjiNbhyoD0jccgLyTfZHSrqhDuOb3YLMjBcK6uuKa+zkgET8bv
-         8Fl9TO5PTD2CLth/UylwmxgMyCc6zCwSOuRxxtCDv9/6EBF+pb33sHy2TQFY1LSwqGc3
-         SUkuLcd9+FGhBlno5HWNXCdBMugTbxE9l4+EYhtKKR77kwqsjEZr9Lh6MT/oHG1BUnQ2
-         qvVO4eD+rp8cT3gpnHeDJyd6U4l747kfJzFxEPAkGH/5CWlKB4p5oFrv/wE3xqp0nmWm
-         AT2uYTDkQ+We5V46NEO4QJSK6GMoPXhmwVrPljK6enHhf0EhBfIcheRSVYpUj88WtZpI
-         iUOA==
-X-Gm-Message-State: AJIora9a3md9RMrqjKTsSELjIrJF/hBl0E2R2y4p/MKOv+3fm4//zwj8
-        tm+dPjRbB4qiry0xkauJFWD+pA==
-X-Google-Smtp-Source: AGRyM1vQm0t5vDuroCaPvzxeqKGhulW1RTmsSC5Ln18JTIpOTqEW3j+lwzFTRlTRMYFkWNFF+gQaVg==
-X-Received: by 2002:a2e:9cd9:0:b0:25d:e81e:7b5a with SMTP id g25-20020a2e9cd9000000b0025de81e7b5amr6397430ljj.32.1658857716853;
-        Tue, 26 Jul 2022 10:48:36 -0700 (PDT)
-Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
-        by smtp.gmail.com with ESMTPSA id y19-20020a05651c107300b0025d72c1f646sm3436746ljm.58.2022.07.26.10.48.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Jul 2022 10:48:36 -0700 (PDT)
-Message-ID: <e07cc297-1b89-e6f5-c16e-26750c8402c4@linaro.org>
-Date:   Tue, 26 Jul 2022 19:48:34 +0200
+        with ESMTP id S236755AbiGZR4W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 13:56:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD2AD5
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 10:56:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AE0C2B818F8
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 17:56:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C627C433D6;
+        Tue, 26 Jul 2022 17:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1658858179;
+        bh=ph2uDxsSutc2DnlVa7eIwwd3K5Vf9gr9912RR4aKO5U=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=O2Pb4nJeDz4nyc0vY47kt/NXyO6BAEBHlwUkJi0ddIyHrP9raI17aK6K40JS/1+my
+         T7Nt2l4/EA8yrT2hNMBdXM7ab4fZQ07VINQQsZTPeK6DvHPUbHGFizDf/krTwc/Agq
+         zN7FFqtDhKBlVwXTiSVmQIo093bNkgYczyqxWDtAwSb3ROu9zqv50LJTRgEow7AfmN
+         akyJ8pBqRhvecnGnKU+SMKrFEhe+G/ZzaafL7alTOBE4CO8/S9fg+hka+ZvCJxxvhI
+         1yVPfowocl4MqP0Im7qxhU93FpXG5QMIoN6U/xQF5Q6hH8NERRHtvn+zbYuWCcc13+
+         m5iiNb32mNQIQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH V6 1/2] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-Content-Language: en-US
-To:     Cixi Geng <gengcixi@gmail.com>, lee.jones@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        orsonzhai@gmail.com, baolin.wang7@gmail.com, zhang.lyra@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220726102404.564498-1-gengcixi@gmail.com>
- <20220726102404.564498-2-gengcixi@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220726102404.564498-2-gengcixi@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YtnDy29glGFDhqU1@kista.localdomain>
+References: <YtnDy29glGFDhqU1@kista.localdomain>
+Subject: Re: [GIT PULL] Allwinner clock fixes for 5.19
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     wens@csie.org, samuel@sholland.org, linux-clk@vger.kernel.org,
+        linux-sunxi@lists.linux.dev
+To:     Jernej Skrabec <jernej@kernel.org>, mturquette@baylibre.com
+Date:   Tue, 26 Jul 2022 10:56:17 -0700
+User-Agent: alot/0.10
+Message-Id: <20220726175619.4C627C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/07/2022 12:24, Cixi Geng wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> 
-> Add bindings for Unisoc system global register which provide register map
-> for clocks.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> Signed-off-by: Cixi Geng <cixi.geng1@unisoc.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> 
+Quoting Jernej Skrabec (2022-07-21 14:23:23)
+> Hi!
+>=20
+> As it turns out, commit 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate
+> clock"), queued for 5.19, introduced a bug. This bug is accidentally
+> fixed by commit e1c51d31befc ("clk: sunxi-ng: Deduplicate ccu_clks
+> arrays"), which is already queued for 5.20.
+>=20
+> Although this commit as a fix is much bigger than it needs to be, I
+> still suggest that's fast tracked to 5.19. This will also avoid any
+> merge conflicts during merging material for 5.20.
+>=20
+> Best regards,
+> Jernej
+>=20
+> The following changes since commit f2906aa863381afb0015a9eb7fefad885d4e5a=
+56:
+>=20
+>   Linux 5.19-rc1 (2022-06-05 17:18:54 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-fixes-for-5.19-1
+>=20
+> for you to fetch changes up to 48e29e0f3be086a28a9384befa77d02a43be2f98:
+>=20
+>   clk: sunxi-ng: Deduplicate ccu_clks arrays (2022-07-21 23:11:28 +0200)
+>=20
+> ----------------------------------------------------------------
+> Fix H6 RTC clock
 
-The patch depends on patch in clk tree, so either it goes via clk tree,
-there is cross-tree merge or it must wait for v5.20-rc1.
-
-
-Best regards,
-Krzysztof
+Anymore details besides "Fix"? There's some more details in this pull
+request but the tag tells me almost nothing. Does RTC fail? What's
+actually broken?
