@@ -2,182 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A92C04A68
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 13:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53600C19F2B
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 13:43:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232885AbiG0NM0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jul 2022 09:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
+        id S232804AbiG0NnD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jul 2022 09:43:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbiG0NMZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 09:12:25 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FAA22BFC;
-        Wed, 27 Jul 2022 06:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1658927544; x=1690463544;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2K+VWj/VVwFKNZXxoXRjQ6QamXRt3ccAfYaRmtxAmTs=;
-  b=Ey9nrgDk+6vI9EKZlYaDiruI3QNnTlIeiY2dh5p7YQU68BIbnmG8jAYv
-   G5sRF6l5zDJaS9vTvQIHA7vJcVJaztsMxJVJr8CqyKI5n1pnjsrQTqqvn
-   iNxkdCd6h2bETwac4CQuJ+0Ei8yVEgb4cFMVlBq3+gHmsMoFD1SxAm778
-   eP59eevUcSNvFob+P0tQ6Cr4d9o5aWebRCSLPxy/3x1V0JsznNFURPh2b
-   Is/ynfXQv8UnpLVyNkzep9HlOMHBCnSai0x/Uk34m6XYR9WNymPAOYqZn
-   qJzrt3zybFXtHURO30pwvSelRls++6f15+EYCih7RdUDFnlQgV9tvG1Ym
-   A==;
-X-IronPort-AV: E=Sophos;i="5.93,195,1654585200"; 
-   d="scan'208";a="106361582"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jul 2022 06:12:23 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 27 Jul 2022 06:12:23 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Wed, 27 Jul 2022 06:12:21 -0700
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S231767AbiG0NnA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 09:43:00 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 761B03E778
+        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 06:42:59 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id t22so20781429lfg.1
+        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 06:42:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=d6dqqop2vynaGEoBxYQ5azwnb7G+A1ThTymWUCXdRyI=;
+        b=MJhONHLKLWhkwP6aGRVTH84Te9BCOHlTZFTtfPGfP3YKM/PkKAoxkD34bZS3Ss7jt8
+         u89rjXGpyglz31n2dMWdTTuLe1VXRLFZXN99vIVGpF0hB0EwKmJFPh/OxZciq2DAJtPU
+         qWXuNi/UQtc6tq9mr8F/xhanPEXXZtvfMtsbX4Pb5cwWYeHgeuD58/nqfj7zCVE7towx
+         y3IEPWig0IOYHt3+RRqlPqsTNHsEv4UWhLYjLsYLwEjSv1SBXXOhIwisCHiXvtb9O1GU
+         /9egxkXrbUBrFMUmxVI3fyAaOCo3mW2EqFYqL9NhSauYsrfWe37UNGLVva3193W4M1pa
+         dkeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=d6dqqop2vynaGEoBxYQ5azwnb7G+A1ThTymWUCXdRyI=;
+        b=5E5cMn/HgTJI1a03XYhTEXkMuMi+ovK2OdoFD3qIHMPE2eTy9G9iJJRNszXCkbhXES
+         cjXZWkln+WHjat0VMxEg37QMpdr8HLLXUZZUllYq8s6ZcuJ0OKUgzWEgFH8hxStfc89D
+         8MRLh05MzVmFsmnBUShMDjxLv8njYaDw2MqYa0xR6cSmuBQurC2bnlGRJzRVYPIDI2ID
+         FPpbiT9ZXiNOx96/UncuA5Na1OiVvGvrwpG2yOa8T8ivAGP0k9xrb0rV3w8iv+ihluHD
+         XqHq0vT1f+4/QK8goljmEPvOJQMGA9zY0jsh7ZCp6XukK0b3Rt/yPDp4GGyQ3yrYOBrd
+         0OhA==
+X-Gm-Message-State: AJIora/8/HCiZPYseICDTqzm8VpO3vafDctsac8VN2V7j5GCZK/38lM1
+        O5wSg6st0pOXbb3uu87rWwWd7A==
+X-Google-Smtp-Source: AGRyM1t9hSJ0xL6l2h7B5F3QkcPXe5D0nv0IWHb/R0ncyU3Xyq01Ywgyvf+weED12LC81MK3ZAEuLw==
+X-Received: by 2002:a05:6512:3983:b0:48a:83ad:5f70 with SMTP id j3-20020a056512398300b0048a83ad5f70mr6606113lfu.283.1658929377734;
+        Wed, 27 Jul 2022 06:42:57 -0700 (PDT)
+Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
+        by smtp.gmail.com with ESMTPSA id a31-20020a2ebe9f000000b0025df0dcdab6sm2997079ljr.8.2022.07.27.06.42.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jul 2022 06:42:57 -0700 (PDT)
+Message-ID: <51df865b-1684-77ad-1b64-51475ddd6144@linaro.org>
+Date:   Wed, 27 Jul 2022 15:42:56 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH] dt-bindings: clock: gpio-gate-clock: Convert to
+ json-schema
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     Jyri Sarha <jsarha@ti.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dt-bindings: clock: gpio-gate-clock: Convert to json-schema
-Date:   Wed, 27 Jul 2022 14:10:16 +0100
-Message-ID: <20220727131015.2073100-1-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.36.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Cc:     Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220727131015.2073100-1-conor.dooley@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220727131015.2073100-1-conor.dooley@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the simple GPIO clock gate Device Tree binding to json-schema
-and fix-up references to this file in other text format bindings.
-Jyri Sarha is the file's only editor/author so they have been added as
-maintainer of the new yaml binding.
+On 27/07/2022 15:10, Conor Dooley wrote:
+> Convert the simple GPIO clock gate Device Tree binding to json-schema
+> and fix-up references to this file in other text format bindings.
+> Jyri Sarha is the file's only editor/author so they have been added as
+> maintainer of the new yaml binding.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> The original file does not specifiy dual licensing, but when Geert did
+> the gpio-mux-clock conversion the yaml binding was created with dual,
+> so I have done the same thing here.
+> ---
+>  .../bindings/clock/gpio-gate-clock.txt        | 21 ----------
+>  .../bindings/clock/gpio-gate-clock.yaml       | 42 +++++++++++++++++++
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-The original file does not specifiy dual licensing, but when Geert did
-the gpio-mux-clock conversion the yaml binding was created with dual,
-so I have done the same thing here.
----
- .../bindings/clock/gpio-gate-clock.txt        | 21 ----------
- .../bindings/clock/gpio-gate-clock.yaml       | 42 +++++++++++++++++++
- .../devicetree/bindings/clock/ti/gate.txt     |  2 +-
- .../bindings/clock/ti/interface.txt           |  2 +-
- 4 files changed, 44 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/gpio-gate-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/gpio-gate-clock.txt b/Documentation/devicetree/bindings/clock/gpio-gate-clock.txt
-deleted file mode 100644
-index d3379ff9b84b..000000000000
---- a/Documentation/devicetree/bindings/clock/gpio-gate-clock.txt
-+++ /dev/null
-@@ -1,21 +0,0 @@
--Binding for simple gpio gated clock.
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be "gpio-gate-clock".
--- #clock-cells : from common clock binding; shall be set to 0.
--- enable-gpios : GPIO reference for enabling and disabling the clock.
--
--Optional properties:
--- clocks: Maximum of one parent clock is supported.
--
--Example:
--	clock {
--		compatible = "gpio-gate-clock";
--		clocks = <&parentclk>;
--		#clock-cells = <0>;
--		enable-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml b/Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
-new file mode 100644
-index 000000000000..d09d0e3f0c6e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/gpio-gate-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Simple GPIO clock gate
-+
-+maintainers:
-+  - Jyri Sarha <jsarha@ti.com>
-+
-+properties:
-+  compatible:
-+    const: gpio-gate-clock
-+
-+  clocks:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 0
-+
-+  enable-gpios:
-+    description: GPIO reference for enabling and disabling the clock.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - enable-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    clock {
-+        compatible = "gpio-gate-clock";
-+        clocks = <&parentclk>;
-+        #clock-cells = <0>;
-+        enable-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/ti/gate.txt b/Documentation/devicetree/bindings/clock/ti/gate.txt
-index b4820b1de4f0..4982615c01b9 100644
---- a/Documentation/devicetree/bindings/clock/ti/gate.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/gate.txt
-@@ -10,7 +10,7 @@ will be controlled instead and the corresponding hw-ops for
- that is used.
- 
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.txt
-+[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
- [3] Documentation/devicetree/bindings/clock/ti/clockdomain.txt
- 
- Required properties:
-diff --git a/Documentation/devicetree/bindings/clock/ti/interface.txt b/Documentation/devicetree/bindings/clock/ti/interface.txt
-index 94ec77dc3c59..d3eb5ca92a7f 100644
---- a/Documentation/devicetree/bindings/clock/ti/interface.txt
-+++ b/Documentation/devicetree/bindings/clock/ti/interface.txt
-@@ -9,7 +9,7 @@ companion clock finding (match corresponding functional gate
- clock) and hardware autoidle enable / disable.
- 
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.txt
-+[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
- 
- Required properties:
- - compatible : shall be one of:
--- 
-2.36.1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+
+Best regards,
+Krzysztof
