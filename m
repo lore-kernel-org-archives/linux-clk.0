@@ -2,111 +2,269 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6600AC00144
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 02:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2845AC19F2B
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 03:16:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240131AbiG0C0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 22:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46444 "EHLO
+        id S240318AbiG0DQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 23:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233553AbiG0C0r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 22:26:47 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226132A96D;
-        Tue, 26 Jul 2022 19:26:47 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id BD53E5C011A;
-        Tue, 26 Jul 2022 22:26:44 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 26 Jul 2022 22:26:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1658888804; x=
-        1658975204; bh=smaAqEBD9EAasFw+KnLs6MeGfeaKJNcvnsdlP0YdAZA=; b=e
-        yH6etxCEem1MHLMcE9mBPEo8DE9rabU94kXFfBczNhejqt6t/CE64WNJk0ecl8Lo
-        KXXsPCHvD6AimHesZfc8DpVujIhjfA2JcrDVFBf9rWXJzrLuAh0y0oDgWWe1tc6r
-        MH/Ehr3Pm1/DQBcfDzXVPaAjEqUBim58abcH/iwSAb/sbOuoqLii1Cxdcf0CCEhx
-        8+XspcZUMP2NJlybm6fU7KCdcXrrFQjiZFmr59M0js4QO/xEOPszUk+mU+e4Y/66
-        ja+W6de23AKWonmvFrqrfCKt6fNevrOq8YEJ2xf3JFWB7TU34ljnNd1gz2x3epPu
-        oV9Yaq/7T4KhwHDDKmjsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1658888804; x=
-        1658975204; bh=smaAqEBD9EAasFw+KnLs6MeGfeaKJNcvnsdlP0YdAZA=; b=C
-        llVo+h5raTWZsHvVx3JWUw6ZM4mvWGUItNeZXhEQvfI7g4+PFX7yOOYsS0QPgzXI
-        p/chPYd/AHFfJPb2wTLq7wFyXYdv9gsMSq/qnETDIgRefyuNb5Ve0TLhRSX6Bc+I
-        daHWFe0zYgSm/GhDZX+IotZslPzFyuJ1YbdfSAlNQSHSZc8WTmfdxVzt9jgr3362
-        KmxLNyIA8H8WiCsKAwAqP71z7DgJ7vzBKrJeqKVmqW9w8RoJ0oogJLOJoDjKFpAG
-        jyq6Vfalo7nL5+vmllKSKnAsV82Fwp2OLnF+hIn1XDmJcWA4CXp+CCpLR0ADpr2B
-        RU90qXJ2k5n8jJJA278RQ==
-X-ME-Sender: <xms:ZKLgYtQwgnRW-fZIUNn-5gJXqJkJmiuXt6o8cxlgL8Z_j5VHwEcd_w>
-    <xme:ZKLgYmxes7YH51fqdfQRJNcUveYHaXUxym_-LK7C4ONpTEUK7u23JjxyfmfIB0pN0
-    zLWsbfvMP_i4_0UjA>
-X-ME-Received: <xmr:ZKLgYi2UJJxZVgV5pTfRuCkOw-DrJIz-w_442pmhMbXXXWFWMhJ83bYPFbqZr9txHpHvkHSk0HJIxNGCIRROeqqT2egkfNu7vBw1INbAWto9X9KBc111k8YQuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdduuddgiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtkeertddtfeejnecuhfhrohhmpefurghm
-    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
-    ggtffrrghtthgvrhhnpedtvefhheehgfdvkeetffeludeuudehudeuvddtveelleekvedv
-    uedviefhkeeuheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:ZKLgYlDxEj25usO0sH-Rqq5EjzfFeZowtX2BJHCAxNRmdnYjFeJDeA>
-    <xmx:ZKLgYmhj4hfwIb1e-jwEKMRsVXu932p0TRpJnAr3370KmBR3H_wi2g>
-    <xmx:ZKLgYppfeuUKoX2WVeMcOmHoiCBb-gidgGnUaFRitTzsLcgNL-Y07A>
-    <xmx:ZKLgYqhboQU9r49rqUhm6TvPoF9m44ekNlOMPcEsGSeCXbXmk9u-Xw>
-Feedback-ID: i0ad843c9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 26 Jul 2022 22:26:43 -0400 (EDT)
-Subject: Re: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@gmail.com>,
-        wens@csie.org
-Cc:     mturquette@baylibre.com, andre.przywara@arm.com,
+        with ESMTP id S240278AbiG0DQL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 23:16:11 -0400
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56D443DBD7;
+        Tue, 26 Jul 2022 20:15:53 -0700 (PDT)
+Received: by mail-qv1-xf2a.google.com with SMTP id b11so7527462qvo.11;
+        Tue, 26 Jul 2022 20:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+bzNz23O5POP059NXGAFxBTvgq0VJPxoUFyJ+Zf+sF4=;
+        b=UDumRfitfDXkwxTCYroM9auAdxgh7zfPXcOozNvr7CHwzo3fFlRvTPLAzo9ts0lpE4
+         H5EvN8f8I2uANMvl+ZLCPB5wHb3i+7dJ1s2yoM0XURiqD/nvxP5WTnXnjBIb9nU1RYJw
+         3Cp2TNZkR5UmS5k6G7FOaaWeVcG6GxWYclTMiL6dyAMuuEpLyV5ReLUMgb3y8Ep4PxXS
+         vNGhe0gbIhnrqiU0ObxkSTn7g5aPTZVes3nEvcvOk1uV3Tf6p2UY80S1XyIEfrhQQX20
+         d4lEl7ge3IDUloHLOeS6oNk4Mf8txKZPGNcKWvE3jP97LK+rkC6dHN04uUaK/uEfEkTQ
+         rQeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+bzNz23O5POP059NXGAFxBTvgq0VJPxoUFyJ+Zf+sF4=;
+        b=GrDQiZlHMbkq3ptJOCavw/5J1/EITPfi2EN6yzIePXDYov33rTPbAGQF/lKW2Q5ARY
+         zKRszQbZ6Lc0FnzJlxtTlqf8rs/wUnOYCTvXt4W2bdOqx8/wRudKgaI86GYV421jO7pb
+         KHzeNIeapc11zusy2W34okPCP8jvPKEcIfG4gFWzU4aCR1R+6PSU3e9ArkatxVQAVUJp
+         oDnBfkerASlUfrv+7c66KplHp4g5YeAHm4IB5sjkOc6i1KuLPoOU+VUWPK/mArhH69lB
+         pcXabtWYc5xinVqGhk5SgYMlV47Ho9am2A1kvwbiGVoNrFcnq1T/yAooJayscNRG6HOz
+         d09Q==
+X-Gm-Message-State: AJIora8bI0I7gLQRIOKVcNWa5uf0AfOFmv/MZTJ5tAu6SF5Z37/gmoXq
+        5zyUxwI0YB6GQj4akx1wlag=
+X-Google-Smtp-Source: AGRyM1t+vUxgJN+mx4u+5T5G83vTtc2ZbeXbJ64OlRvHoSc//1wcJ8a+5wCTXGgNBsHDFR5t20Gc0g==
+X-Received: by 2002:ad4:5ecd:0:b0:474:71ae:da8d with SMTP id jm13-20020ad45ecd000000b0047471aeda8dmr2197372qvb.114.1658891752116;
+        Tue, 26 Jul 2022 20:15:52 -0700 (PDT)
+Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id o21-20020a05620a2a1500b006b249cc505fsm13139981qkp.82.2022.07.26.20.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jul 2022 20:15:46 -0700 (PDT)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, Mr.Bossman075@gmail.com,
+        clin@suse.com, giulio.benetti@benettiengineering.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20220719183725.2605141-1-jernej.skrabec@gmail.com>
- <a7a253a0-1cc3-61e4-ae59-fc299057974a@sholland.org>
- <2118699.Icojqenx9y@jernej-laptop>
- <20220726225855.615E1C433D6@smtp.kernel.org>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <6ff332d4-fcd4-ce6b-3543-377667dbd30e@sholland.org>
-Date:   Tue, 26 Jul 2022 21:26:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v5 07/12] clk: imx: Update pllv3 to support i.MXRT1170
+Date:   Tue, 26 Jul 2022 23:15:41 -0400
+Message-Id: <20220727031541.227335-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <202207270909.VypZ4wfI-lkp@intel.com>
+References: <202207270909.VypZ4wfI-lkp@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20220726225855.615E1C433D6@smtp.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/26/22 5:58 PM, Stephen Boyd wrote:
-> Quoting Jernej Škrabec (2022-07-20 08:16:54)
->> Dne sreda, 20. julij 2022 ob 02:21:29 CEST je Samuel Holland napisal(a):
->>> On 7/19/22 1:37 PM, Jernej Skrabec wrote:
->>>>
->>>> Fixes: 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate clock")
->>>> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
->>>
->>> Reviewed-by: Samuel Holland <samuel@sholland.org>
->>>
->>> This bug also got fixed in passing by e1c51d31befc ("clk: sunxi-ng:
->>> Deduplicate ccu_clks arrays"), but that won't land until 5.20.
->>
->> Argh, good catch. I will send your patch as fix then, otherwise there will be 
->> issues during merging.
-> 
-> This is a one line fix. I can just apply this and send this off and deal
-> with the merge conflict locally by taking the other side.
+The i.MXRT1170 has a pll that has the multiplier bits inverted and
+cannot be changed add IMX_PLLV3_GENERICV2.
 
-That sounds good to me. I also would prefer to take only this targeted fix for 5.19.
+The i.MXRT1170 also has the lock bit moved as well as the
+power bit inverted the power bit also is in different locations on each
+pll control register.
 
-Regards,
-Samuel
+Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+---
+V1 -> V2:
+ - Nothing done
+V2 -> V3:
+ - Nothing done
+V3 -> V4:
+ - Nothing done
+V4 -> V5:
+ - Add __imx_clk_hw_pllv3 to change power bit
+ - Add BM_PLL_POWER and imx_clk_hw_pllv3 to header
+ - Remove imx_clk_hw_pll3_powerbit
+---
+ drivers/clk/imx/clk-pllv3.c | 57 +++++++++++++++++++++++++++++++++----
+ drivers/clk/imx/clk.h       | 11 +++++--
+ 2 files changed, 60 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index eea32f87c60a..68b1498cafe1 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -21,8 +21,8 @@
+ #define PLL_VF610_NUM_OFFSET	0x20
+ #define PLL_VF610_DENOM_OFFSET	0x30
+ 
+-#define BM_PLL_POWER		(0x1 << 12)
+ #define BM_PLL_LOCK		(0x1 << 31)
++#define BM_PLL_LOCK_V2		(0x1 << 29)
+ #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+ #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+ 
+@@ -34,6 +34,7 @@
+  * @base:	 base address of PLL registers
+  * @power_bit:	 pll power bit mask
+  * @powerup_set: set power_bit to power up the PLL
++ * @lock_bit:	 pll lock bit mask
+  * @div_mask:	 mask of divider bits
+  * @div_shift:	 shift of divider bits
+  * @ref_clock:	reference clock rate
+@@ -48,6 +49,7 @@ struct clk_pllv3 {
+ 	void __iomem	*base;
+ 	u32		power_bit;
+ 	bool		powerup_set;
++	u32		lock_bit;
+ 	u32		div_mask;
+ 	u32		div_shift;
+ 	unsigned long	ref_clock;
+@@ -65,7 +67,7 @@ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
+ 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+ 		return 0;
+ 
+-	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
++	return readl_relaxed_poll_timeout(pll->base, val, val & pll->lock_bit,
+ 					  500, PLL_LOCK_TIMEOUT);
+ }
+ 
+@@ -101,7 +103,7 @@ static int clk_pllv3_is_prepared(struct clk_hw *hw)
+ {
+ 	struct clk_pllv3 *pll = to_clk_pllv3(hw);
+ 
+-	if (readl_relaxed(pll->base) & BM_PLL_LOCK)
++	if (readl_relaxed(pll->base) & pll->lock_bit)
+ 		return 1;
+ 
+ 	return 0;
+@@ -155,6 +157,39 @@ static const struct clk_ops clk_pllv3_ops = {
+ 	.set_rate	= clk_pllv3_set_rate,
+ };
+ 
++static int clk_pllv3_genericv2_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 val, div;
++
++	div = (readl_relaxed(pll->base) >> pll->div_shift) & pll->div_mask;
++	val = (div == 0) ? parent_rate * 22 : parent_rate * 20;
++
++	if (rate == val)
++		return 0;
++
++	return -EINVAL;
++}
++
++static unsigned long clk_pllv3_genericv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pllv3 *pll = to_clk_pllv3(hw);
++	u32 div = (readl_relaxed(pll->base) >> pll->div_shift)  & pll->div_mask;
++
++	return (div == 0) ? parent_rate * 22 : parent_rate * 20;
++}
++
++static const struct clk_ops clk_pllv3_genericv2_ops = {
++	.prepare	= clk_pllv3_prepare,
++	.unprepare	= clk_pllv3_unprepare,
++	.is_prepared	= clk_pllv3_is_prepared,
++	.recalc_rate	= clk_pllv3_genericv2_recalc_rate,
++	.round_rate	= clk_pllv3_round_rate,
++	.set_rate	= clk_pllv3_genericv2_set_rate,
++};
++
+ static unsigned long clk_pllv3_sys_recalc_rate(struct clk_hw *hw,
+ 					       unsigned long parent_rate)
+ {
+@@ -407,9 +442,9 @@ static const struct clk_ops clk_pllv3_enet_ops = {
+ 	.recalc_rate	= clk_pllv3_enet_recalc_rate,
+ };
+ 
+-struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
++struct clk_hw *__imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+ 			  const char *parent_name, void __iomem *base,
+-			  u32 div_mask)
++			  u32 div_mask, u8 pwr_bit)
+ {
+ 	struct clk_pllv3 *pll;
+ 	const struct clk_ops *ops;
+@@ -421,11 +456,21 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+ 	if (!pll)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pll->power_bit = BM_PLL_POWER;
++	pll->power_bit = pwr_bit;
++	pll->lock_bit = BM_PLL_LOCK;
+ 	pll->num_offset = PLL_NUM_OFFSET;
+ 	pll->denom_offset = PLL_DENOM_OFFSET;
+ 
+ 	switch (type) {
++	case IMX_PLLV3_GENERICV2:
++		pll->lock_bit = BM_PLL_LOCK_V2;
++		pll->powerup_set = true;
++		ops = &clk_pllv3_genericv2_ops;
++		break;
++	case IMX_PLLV3_SYSV2:
++		pll->lock_bit = BM_PLL_LOCK_V2;
++		pll->powerup_set = true;
++		fallthrough;
+ 	case IMX_PLLV3_SYS:
+ 		ops = &clk_pllv3_sys_ops;
+ 		break;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 5061a06468df..2bf50c92fdfa 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -6,6 +6,8 @@
+ #include <linux/spinlock.h>
+ #include <linux/clk-provider.h>
+ 
++#define BM_PLL_POWER		BIT(12)
++
+ extern spinlock_t imx_ccm_lock;
+ extern bool mcore_booted;
+ 
+@@ -102,6 +104,9 @@ extern struct imx_fracn_gppll_clk imx_fracn_gppll;
+ 	to_clk(clk_hw_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
+ 				cgr_val, cgr_mask, clk_gate_flags, lock, share_count))
+ 
++#define imx_clk_hw_pllv3(type, name, parent_name, base, div_mask) \
++	__imx_clk_hw_pllv3(type, name, parent_name, base, div_mask, 1)
++
+ #define imx_clk_pllv3(type, name, parent_name, base, div_mask) \
+ 	to_clk(imx_clk_hw_pllv3(type, name, parent_name, base, div_mask))
+ 
+@@ -242,6 +247,8 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+ 
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
++	IMX_PLLV3_GENERICV2,
++	IMX_PLLV3_SYSV2,
+ 	IMX_PLLV3_SYS,
+ 	IMX_PLLV3_USB,
+ 	IMX_PLLV3_USB_VF610,
+@@ -253,8 +260,8 @@ enum imx_pllv3_type {
+ 	IMX_PLLV3_AV_IMX7,
+ };
+ 
+-struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
+-		const char *parent_name, void __iomem *base, u32 div_mask);
++struct clk_hw *__imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
++		const char *parent_name, void __iomem *base, u32 div_mask, u8 pwr_bit);
+ 
+ #define PLL_1416X_RATE(_rate, _m, _p, _s)		\
+ 	{						\
+-- 
+2.36.1
+
