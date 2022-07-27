@@ -2,94 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53600C19F2B
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 13:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255F2C19F2B
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 15:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232804AbiG0NnD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jul 2022 09:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48054 "EHLO
+        id S233009AbiG0Phn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jul 2022 11:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231767AbiG0NnA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 09:43:00 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 761B03E778
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 06:42:59 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id t22so20781429lfg.1
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 06:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=d6dqqop2vynaGEoBxYQ5azwnb7G+A1ThTymWUCXdRyI=;
-        b=MJhONHLKLWhkwP6aGRVTH84Te9BCOHlTZFTtfPGfP3YKM/PkKAoxkD34bZS3Ss7jt8
-         u89rjXGpyglz31n2dMWdTTuLe1VXRLFZXN99vIVGpF0hB0EwKmJFPh/OxZciq2DAJtPU
-         qWXuNi/UQtc6tq9mr8F/xhanPEXXZtvfMtsbX4Pb5cwWYeHgeuD58/nqfj7zCVE7towx
-         y3IEPWig0IOYHt3+RRqlPqsTNHsEv4UWhLYjLsYLwEjSv1SBXXOhIwisCHiXvtb9O1GU
-         /9egxkXrbUBrFMUmxVI3fyAaOCo3mW2EqFYqL9NhSauYsrfWe37UNGLVva3193W4M1pa
-         dkeQ==
+        with ESMTP id S229867AbiG0Phm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 11:37:42 -0400
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A80E240A2;
+        Wed, 27 Jul 2022 08:37:41 -0700 (PDT)
+Received: by mail-io1-f48.google.com with SMTP id y197so12986894iof.12;
+        Wed, 27 Jul 2022 08:37:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=d6dqqop2vynaGEoBxYQ5azwnb7G+A1ThTymWUCXdRyI=;
-        b=5E5cMn/HgTJI1a03XYhTEXkMuMi+ovK2OdoFD3qIHMPE2eTy9G9iJJRNszXCkbhXES
-         cjXZWkln+WHjat0VMxEg37QMpdr8HLLXUZZUllYq8s6ZcuJ0OKUgzWEgFH8hxStfc89D
-         8MRLh05MzVmFsmnBUShMDjxLv8njYaDw2MqYa0xR6cSmuBQurC2bnlGRJzRVYPIDI2ID
-         FPpbiT9ZXiNOx96/UncuA5Na1OiVvGvrwpG2yOa8T8ivAGP0k9xrb0rV3w8iv+ihluHD
-         XqHq0vT1f+4/QK8goljmEPvOJQMGA9zY0jsh7ZCp6XukK0b3Rt/yPDp4GGyQ3yrYOBrd
-         0OhA==
-X-Gm-Message-State: AJIora/8/HCiZPYseICDTqzm8VpO3vafDctsac8VN2V7j5GCZK/38lM1
-        O5wSg6st0pOXbb3uu87rWwWd7A==
-X-Google-Smtp-Source: AGRyM1t9hSJ0xL6l2h7B5F3QkcPXe5D0nv0IWHb/R0ncyU3Xyq01Ywgyvf+weED12LC81MK3ZAEuLw==
-X-Received: by 2002:a05:6512:3983:b0:48a:83ad:5f70 with SMTP id j3-20020a056512398300b0048a83ad5f70mr6606113lfu.283.1658929377734;
-        Wed, 27 Jul 2022 06:42:57 -0700 (PDT)
-Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
-        by smtp.gmail.com with ESMTPSA id a31-20020a2ebe9f000000b0025df0dcdab6sm2997079ljr.8.2022.07.27.06.42.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jul 2022 06:42:57 -0700 (PDT)
-Message-ID: <51df865b-1684-77ad-1b64-51475ddd6144@linaro.org>
-Date:   Wed, 27 Jul 2022 15:42:56 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] dt-bindings: clock: gpio-gate-clock: Convert to
- json-schema
-Content-Language: en-US
-To:     Conor Dooley <conor.dooley@microchip.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QAXqhb962aIF+ftcFUwpirKPlbeHs216pD+9zgAjWEc=;
+        b=75a81m1Ay2PAY57CWeSNeM6nyw/X7Ni2kEZUhHKyYyeLW4f+88bsMcKJKP7oi/y/c1
+         BsRcN3w0VuVeQpR1L6/4xedBsJHwAve6WHRvHtdyDkkL8FkGYXXo5v5UWP6rbcQR7Z7L
+         iEiF9jbTcsEm4OhkvtkeFSZrUiIQ07d+SuMMbvcBTkdFN0l3mx/lRPCIODmyeyfmIi1u
+         uQdRdmHM5Y8hCm/MxSD3uPYoVmlXzQ6Hc8n/NIN+7lVarmpdYzjpSEj1N/+aYlPPi6pi
+         /OzZ7wMn47F4Q2FDolTcplJ7k/GlYH2FjwpGmarcIuG3INj22znL0D/dMZbCES2wci8D
+         jjag==
+X-Gm-Message-State: AJIora/VMota+NJhUrFYkTd5gVynYj5scD2pjy7/TQQpdLajtvQw2Aw7
+        itFazi/TU6NauAWI9Q9zOqq8Km80wg==
+X-Google-Smtp-Source: AGRyM1tl6GnTMx3GlitMQd3fxo7OT+8coqpF56gCqFXYRfojqWHVJci7W+cxzUvJrchYWakZoUqlOg==
+X-Received: by 2002:a05:6638:3801:b0:341:68f6:932 with SMTP id i1-20020a056638380100b0034168f60932mr9412207jav.71.1658936260750;
+        Wed, 27 Jul 2022 08:37:40 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id a6-20020a92a306000000b002dc0e7027edsm6877117ili.32.2022.07.27.08.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jul 2022 08:37:40 -0700 (PDT)
+Received: (nullmailer pid 2717776 invoked by uid 1000);
+        Wed, 27 Jul 2022 15:37:38 -0000
+Date:   Wed, 27 Jul 2022 09:37:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Jyri Sarha <jsarha@ti.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220727131015.2073100-1-conor.dooley@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220727131015.2073100-1-conor.dooley@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas,rzg2l: Document RZ/Five SoC
+Message-ID: <20220727153738.GA2696116-robh@kernel.org>
+References: <20220726174525.620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220726174525.620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/07/2022 15:10, Conor Dooley wrote:
-> Convert the simple GPIO clock gate Device Tree binding to json-schema
-> and fix-up references to this file in other text format bindings.
-> Jyri Sarha is the file's only editor/author so they have been added as
-> maintainer of the new yaml binding.
+On Tue, Jul 26, 2022 at 06:45:25PM +0100, Lad Prabhakar wrote:
+> The CPG block on the RZ/Five SoC is almost identical to one found on the
+> RZ/G2UL SoC. "renesas,r9a07g043-cpg" compatible string will be used on
+> the RZ/Five SoC so to make this clear, update the comment to include
+> RZ/Five SoC.
+
+It's either the same part or it isn't. 'almost identical' doesn't sound 
+like the former. Unless it's the former, it's a nak for me.
+
+Litering the drivers with #ifdef CONFIG_ARM64/CONFIG_RISCV is not great 
+either. That's not great for compile coverage and they have nothing to 
+do with the architecture.
+
 > 
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> The original file does not specifiy dual licensing, but when Geert did
-> the gpio-mux-clock conversion the yaml binding was created with dual,
-> so I have done the same thing here.
+> Note the driver changes [0] have been already queued for v5.20.
+> 
+> [0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+> 20220622181723.13033-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 > ---
->  .../bindings/clock/gpio-gate-clock.txt        | 21 ----------
->  .../bindings/clock/gpio-gate-clock.yaml       | 42 +++++++++++++++++++
-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+>  Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> index d036675e0779..487f74cdc749 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> @@ -24,7 +24,7 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> -      - renesas,r9a07g043-cpg # RZ/G2UL{Type-1,Type-2}
+> +      - renesas,r9a07g043-cpg # RZ/G2UL{Type-1,Type-2} and RZ/Five
+>        - renesas,r9a07g044-cpg # RZ/G2{L,LC}
+>        - renesas,r9a07g054-cpg # RZ/V2L
+>        - renesas,r9a09g011-cpg # RZ/V2M
+> -- 
+> 2.17.1
+> 
+> 
