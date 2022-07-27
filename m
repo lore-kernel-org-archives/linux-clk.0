@@ -2,163 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F99C04A68
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 07:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC477C19F29
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 12:19:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbiG0Hx6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jul 2022 03:53:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50642 "EHLO
+        id S232842AbiG0MTE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jul 2022 08:19:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbiG0Hx5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 03:53:57 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAC1422E2
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 00:53:55 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220727075353epoutp04adc9ee6e04011f0fb816615e4b810505~FoG5YJmuS0323503235epoutp044
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 07:53:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220727075353epoutp04adc9ee6e04011f0fb816615e4b810505~FoG5YJmuS0323503235epoutp044
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1658908433;
-        bh=ZFuAEt2AsYWFEFX5DaZU4QMQYWY1k8O2MmbkLH2XzXQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=tOyrEFB6FqYad5LvUd6+p2PTOvY+7Yi2UgBwDjM5V8erQFkagqgq/hG2Yy+0tUe1n
-         Fy3K7eiCfKy98E7r9OFMNgUU2qatCPA65x892TbJCzBo1vHdxexFdjuufC8AiyPXVx
-         is4r0A3Uwa+4WcQpEXvM1GGgpkXyhO9FYue6EDzk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20220727075353epcas2p19946fb2c7adcd6a9e327a1b98b634c3d~FoG452n4i2997029970epcas2p1G;
-        Wed, 27 Jul 2022 07:53:53 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4Lt5dD4xC5z4x9Pw; Wed, 27 Jul
-        2022 07:53:52 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        40.BB.09650.01FE0E26; Wed, 27 Jul 2022 16:53:52 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220727075352epcas2p1458d9036ead4cfcdb53f157477d760da~FoG4DBkca2997029970epcas2p1F;
-        Wed, 27 Jul 2022 07:53:52 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220727075352epsmtrp1b8094f1f473a00931c9c3cacb4ce9bd5~FoG4B6Uef0394903949epsmtrp1h;
-        Wed, 27 Jul 2022 07:53:52 +0000 (GMT)
-X-AuditID: b6c32a46-8bff9a80000025b2-05-62e0ef100581
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        94.B9.08905.F0FE0E26; Wed, 27 Jul 2022 16:53:51 +0900 (KST)
-Received: from KORCO082417 (unknown [10.229.8.121]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220727075351epsmtip17829a445cb327f8cd45457e751071e0a~FoG304_ab2865328653epsmtip1O;
-        Wed, 27 Jul 2022 07:53:51 +0000 (GMT)
-From:   "Chanho Park" <chanho61.park@samsung.com>
-To:     "'Chanwoo Choi'" <cwchoi00@gmail.com>,
-        "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-        "'Tomasz Figa'" <tomasz.figa@gmail.com>,
-        "'Chanwoo Choi'" <cw00.choi@samsung.com>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-        "'Stephen Boyd'" <sboyd@kernel.org>,
-        "'Michael Turquette'" <mturquette@baylibre.com>,
-        "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Krzysztof Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>
-Cc:     "'Sam Protsenko'" <semen.protsenko@linaro.org>,
-        "'Alim Akhtar'" <alim.akhtar@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <7aac0100-5f45-4586-b13e-df0f8bd95060@gmail.com>
-Subject: RE: [PATCH 2/6] dt-bindings: clock: exynosautov9: add fsys1 clock
- definitions
-Date:   Wed, 27 Jul 2022 16:53:51 +0900
-Message-ID: <00ba01d8a18e$0345be80$09d13b80$@samsung.com>
+        with ESMTP id S229489AbiG0MTD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 08:19:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 988294AD51
+        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 05:18:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1658924338;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WmCiTMtuhWI7oCif0/8Z84LPgcREuckswJDytFqvLLY=;
+        b=R/zD2k/ExCCmb6OC/OwUpIWWQpJwTcYms/cbpUfZ5e0qKVhevp5y/eoKCdpwcuaChMgQya
+        hP/x99UaD61R6Oyqyd0HCNvR4ESTLfqMFREFvsjlGNivFn6ozAexRQxTJQM/qpVayNtIcp
+        lZ7T1ggzUgBPkUB62uBfPD8XXqtO7LY=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-133-XbqVOf-qP_GhenuOexAb5A-1; Wed, 27 Jul 2022 08:18:57 -0400
+X-MC-Unique: XbqVOf-qP_GhenuOexAb5A-1
+Received: by mail-ed1-f70.google.com with SMTP id w15-20020a056402268f00b0043be4012ea9so6395560edd.4
+        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 05:18:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=WmCiTMtuhWI7oCif0/8Z84LPgcREuckswJDytFqvLLY=;
+        b=DRSN3/DD2ofEPdpAHhoM4RzhjC579hhK39ueo9ebkeKg/UzlClmvfDZGstuGNF3Yxd
+         j2FibszEA7YeLXolV3gRKtC6JzG1jzkP57rFqReHjwJ3eZ2YO74qi1JMNvfp0bNCF/Y8
+         UfDMKUkL7bWJSE57ToLQxR87V2iLxP8UgEosCE/k6/9Z6C0dYGS+lTUzGhiD4ddK8eHr
+         4BKbzgEYEePzD+lBH9Q6qavH++RFatpw9kpVrGQi4E0R61wOhctInNxvYQyFxUe3Vda7
+         kQacAZygkzxx6eNXDp9kVjMNfsTx2b/5wGbLCqK75VI3Hj8aSdu6ppFCi/TVTWwwGDvm
+         Ieew==
+X-Gm-Message-State: AJIora/mlytdwALXMh1j55sv+UPvBo6sMo7yiJoaT2pfpV86IILvJYJP
+        LzEzkJZ2OQmz3xdtE96AKfiOGFcWoJp08xDByrjOoPbnlxX8jshl9m45ythF+Y62EfEjPlvFTvr
+        Y9hxhjF560PulQXI/DvGe
+X-Received: by 2002:a17:907:7245:b0:72f:39e7:1207 with SMTP id ds5-20020a170907724500b0072f39e71207mr17507006ejc.201.1658924336254;
+        Wed, 27 Jul 2022 05:18:56 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tq77tz3LjPQkemKAdpM2HQ6LQo5dMeyMGCTEGREBkr8scpvEfFdsmnmo1I0sOl4/nEv/Ym3Q==
+X-Received: by 2002:a17:907:7245:b0:72f:39e7:1207 with SMTP id ds5-20020a170907724500b0072f39e71207mr17506990ejc.201.1658924335983;
+        Wed, 27 Jul 2022 05:18:55 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id 11-20020a170906310b00b00722fc0779e3sm7443534ejx.85.2022.07.27.05.18.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Jul 2022 05:18:55 -0700 (PDT)
+Message-ID: <08c744e6-385b-8fcf-ecdf-1292b5869f94@redhat.com>
+Date:   Wed, 27 Jul 2022 14:18:53 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGvHdiJRxrKvfr9COO4ztLuF0RMcAHzpheBAcYwLosCFfdsLq22X/Nw
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGJsWRmVeSWpSXmKPExsWy7bCmma7A+wdJBrPOKFk8mLeNzeL6l+es
-        Fs+OalvMP3KO1aLvxUNmi72vt7JbbHp8jdXiY889VosZ5/cxWVw85WrRuvcIu8XhN+2sFv+u
-        bWSxeN4HFF+16w+jA7/H+xut7B47Z91l99i0qpPN4861PWwem5fUe/RtWcXo8XmTXAB7VLZN
-        RmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtDVSgpliTml
-        QKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjN8/
-        rrIVLOesmLell62B8TR7FyMHh4SAicTaLxVdjFwcQgI7GCXWfW1ih3A+MUrM/rOIBcL5xihx
-        8cl71i5GTrCOez+OsUEk9jJKnD37jRnCecEoMWnGWbAqNgF9iZcd21hBEiICa5glDj7+DDaL
-        WeA1o8S/1rvMINs5BWwlJp3gAmkQFoiQWPR8GiOIzSKgKrHuVy8bSAmvgKVE/zEWkDCvgKDE
-        yZlPwGxmAW2JZQtfM0NcpCDx8+kysL0iAm4SMzbMZoSoEZGY3dkGdpyEwB0OiaM9c6AaXCTO
-        HlnJBmELS7w6voUdwpaSeNnfBmUXSyyd9YkJormBUeLytl9QDcYSs561M4IcxyygKbF+lz4k
-        IJUljtyCuo1PouPwX2j48kp0tAlBNKpLHNg+nQXClpXonvOZdQKj0iwkn81C8tksJB/MQti1
-        gJFlFaNYakFxbnpqsVGBETyyk/NzNzGCE7SW2w7GKW8/6B1iZOJgPMQowcGsJMKbEH0/SYg3
-        JbGyKrUoP76oNCe1+BCjKTCoJzJLiSbnA3NEXkm8oYmlgYmZmaG5kamBuZI4r1fKhkQhgfTE
-        ktTs1NSC1CKYPiYOTqkGppqP6ZzXnKuuG1hceMe54FxSsGiawW+397JXzIwu7DdQbb2Uc/CJ
-        8L3Sl4v8pjfvnxTA1nHKsINN2exAdzTnptW1B8N+aMsXZroy7j/poJVllrvIalP1+z8sc7d8
-        v2KVY3oq4uCyVeHqT/OXnEwSNFs02YWPPebu2nvGYT2+81a85rFecrzr+aO/186E3eRfOG+3
-        9cYlfxM4A4L6r0Q9du1sYp4VqZhs6f6+8PEivRbtu9Ns9wv7p1T1qk+uZjSImn/i/HftHtnz
-        0a2rjdecL/d9VLiD5f6Nw6U3Z1ddSH5w9A6HxrRLKXv8tz6e57j4h8H6nxLqobYCSvbXZu2O
-        kLJdsJvp/p/PFX/qjTl76pVYijMSDbWYi4oTARUnUdNZBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsWy7bCSnK7A+wdJBifjLR7M28Zmcf3Lc1aL
-        Z0e1LeYfOcdq0ffiIbPF3tdb2S02Pb7GavGx5x6rxYzz+5gsLp5ytWjde4Td4vCbdlaLf9c2
-        slg87wOKr9r1h9GB3+P9jVZ2j52z7rJ7bFrVyeZx59oeNo/NS+o9+rasYvT4vEkugD2KyyYl
-        NSezLLVI3y6BK+PYie/MBf2cFb1XZ7A3MG5m72Lk5JAQMJG49+MYWxcjF4eQwG5Gidt/vzJB
-        JGQlnr3bAVUkLHG/5QgrRNEzRokfj3pYQBJsAvoSLzu2gSVEBDYwS8y8fpAdxGEWeM8osW/N
-        XUaQKiGBT4wS25cIdDFycHAK2EpMOsEFEhYWCJOYPuU22CAWAVWJdb962UBKeAUsJfqPgYV5
-        BQQlTs58AmYzC2hLPL35FM5etvA1M8RxChI/ny5jBbFFBNwkZmyYzQhRIyIxu7ONeQKj8Cwk
-        o2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjlUtzR2M21d9
-        0DvEyMTBeIhRgoNZSYQ3Ifp+khBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeC10n44UE0hNLUrNT
-        UwtSi2CyTBycUg1MaeLeQvLdb7rDg1YsPOW522qL/oIzDZsz5M77bzh3XV5mqxdnh5NPb8Q3
-        H88bbbtneUrckgn+4t5Q+Gyiw9Wb/M9sO3Ye8AhwePOZ4ZHi5Xmf83atiI+/8JUzZt4JNeFl
-        gfWVuqUW61ZsSFsTZM4jNf/87OQQ4RV37P2+xryLYjabOss7i+/tQy3m1Tz9+ydo/vjLsfRx
-        W6l4ntnShGknltZvSL+48NXkG/L2wknPBfsKq/7cWKDrFv9ksu7M8nfr04I6O5essfbPeVfp
-        saMwR0b10/lFU2cX862Oriw44O8buXK/a8HbZOtj+03uqFz5Y+/5IvnSoXJX1X0/PqZsj/t3
-        scTUT539l2Bx4fRQJZbijERDLeai4kQAHkJxhUQDAAA=
-X-CMS-MailID: 20220727075352epcas2p1458d9036ead4cfcdb53f157477d760da
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220727060612epcas2p34e861279ece7fbd3c7c87ce02c7d795c
-References: <20220727060146.9228-1-chanho61.park@samsung.com>
-        <CGME20220727060612epcas2p34e861279ece7fbd3c7c87ce02c7d795c@epcas2p3.samsung.com>
-        <20220727060146.9228-3-chanho61.park@samsung.com>
-        <7aac0100-5f45-4586-b13e-df0f8bd95060@gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [BISECTED] igb initialization failure on Bay Trail
+Content-Language: en-US
+To:     "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Cc:     andriy.shevchenko@linux.intel.com, carlo@endlessm.com,
+        davem@davemloft.net, hkallweit1@gmail.com, js@sig21.net,
+        linux-clk@vger.kernel.org, linux-wireless@vger.kernel.org,
+        mturquette@baylibre.com, netdev@vger.kernel.org,
+        pierre-louis.bossart@linux.intel.com, sboyd@kernel.org
+References: <20180912093456.23400-4-hdegoede@redhat.com>
+ <20220724210037.3906-1-matwey.kornilov@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220724210037.3906-1-matwey.kornilov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Subject: Re: =5BPATCH 2/6=5D dt-bindings: clock: exynosautov9: add fsys1 =
-clock
-> definitions
->=20
-> On 22. 7. 27. 15:01, Chanho Park wrote:
-> > Add fsys1(for usb and mmc) clock definitions.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park=40samsung.com>
-> > ---
-> >  .../dt-bindings/clock/samsung,exynosautov9.h  =7C 25 +++++++++++++++++=
-++
-> >  1 file changed, 25 insertions(+)
-> >
-> > diff --git a/include/dt-bindings/clock/samsung,exynosautov9.h
-> b/include/dt-bindings/clock/samsung,exynosautov9.h
-> > index 6305a84396ce..7e11e681da5c 100644
-> > --- a/include/dt-bindings/clock/samsung,exynosautov9.h
-> > +++ b/include/dt-bindings/clock/samsung,exynosautov9.h
-> > =40=40 -228,6 +228,31 =40=40
-> >
-> >  =23define FSYS0_NR_CLK			37
-> >
-> > +/* CMU_FSYS1 */
-> > +=23define FOUT_MMC_PLL				1
-> > +
-> > +=23define CLK_MOUT_FSYS1_BUS_USER			2
-> > +=23define CLK_MOUT_MMC_PLL			3
->=20
-> nitpik. This clock id doesn't have 'FSYS1' word. Is it right?
+Hi Paul,
 
-Nice catch. I copied it from the SoC User manual but it should have the FSY=
-S1 prefix because it's definitely included in the FSYS1 cmu block
-I'll update it next patchset.
+On 7/24/22 23:00, Matwey V. Kornilov wrote:
+> Hello,
+> 
+> I've just found that the following commit
+> 
+>     648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> 
+> breaks the ethernet on my Lex 3I380CW (Atom E3845) motherboard. The board is
+> equipped with dual Intel I211 based 1Gbps copper ethernet.
+> 
+> Before the commit I see the following:
+> 
+>      igb 0000:01:00.0: added PHC on eth0
+>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+>      igb 0000:02:00.0: added PHC on eth1
+>      igb 0000:02:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:02:00.0: eth1: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e5
+>      igb 0000:02:00.0: eth1: PBA No: FFFFFF-0FF
+>      igb 0000:02:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+> 
+> while when the commit is applied I see the following:
+> 
+>      igb 0000:01:00.0: added PHC on eth0
+>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+>      igb: probe of 0000:02:00.0 failed with error -2
+> 
+> Please note, that the second ethernet initialization is failed.
+> 
+> 
+> See also: http://www.lex.com.tw/products/pdf/3I380A&3I380CW.pdf
 
-Best Regards,
-Chanho Park
+Yes some boards use more then 1 clk for the ethernet and do not take
+care of enabling/disabling the clk in their ACPI.
+
+As Pierre-Louis mentioned already the disabling of the clocks is necessary
+to make 100-s of different (tablet) models suspend properly.
+
+Unfortunately this is known to break ethernet on some boards. As a workaround
+we use DMI quirks on those few boards to keep the clocks enabled there, see:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pmc_atom.c#n381
+
+If you can submit a patch adding your board to this DMI table, then I will
+merge it and get it on its way to Linus Torvalds asap.
+
+If you instead want me to write the patch for you, please run:
+
+sudo dmidecode > dmidecode.txt
+
+And attach the generated dmidecode.txt file to your next email.
+
+Regards,
+
+Hans
 
