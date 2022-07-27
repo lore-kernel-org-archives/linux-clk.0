@@ -2,298 +2,182 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FFCC00144
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 02:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AFFC19F21
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 02:18:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240045AbiG0CGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 22:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
+        id S240015AbiG0CSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 22:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240032AbiG0CGs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 22:06:48 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DD83135D;
-        Tue, 26 Jul 2022 19:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1658887606; x=1690423606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HiZZmB3zhZMrYRQqM73N/5JPYTEqt0xeA6+nfmKQHKM=;
-  b=SZOA1rzTf9ecksx/HHO2w3ku5Qf2BeEx8VXTb7MLhBJbl1qOa8TJ6BUw
-   F+umTZ6xx5cBTt7TzkGcC85Tmn5zdnOldlhO8bSufG9OLImGKBPqQZi5p
-   xLbpXoYY0+IvPRSIxnZc29InU4rNXg4ol/wBjRAAz/rahy3YCjdi4lDrf
-   2OnV8ID6Sqhl1GhvkXip3vVzJvbt9DxfGZr+FCGz6lf+maQcCYzyDqOIK
-   eWDOoclP/tYQROVs9QV21iSMa0AV2bdqKy5E+CMtomYBx3sx2GI30+aE2
-   OgXs378qmuWJg1BGQYoAUI3Em8J2kjXpNJcr1+9MUu4eLVAeXekWNqCFa
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10420"; a="289314803"
-X-IronPort-AV: E=Sophos;i="5.93,194,1654585200"; 
-   d="scan'208";a="289314803"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2022 19:06:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,194,1654585200"; 
-   d="scan'208";a="703132242"
-Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Jul 2022 19:06:34 -0700
-Received: from kbuild by e0eace57cfef with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oGWRW-0008AY-06;
-        Wed, 27 Jul 2022 02:06:34 +0000
-Date:   Wed, 27 Jul 2022 10:05:44 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jesse Taube <mr.bossman075@gmail.com>, linux-imx@nxp.com
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, linus.walleij@linaro.org,
-        daniel.lezcano@linaro.org, tglx@linutronix.de, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, linux@armlinux.org.uk,
-        abel.vesa@nxp.com, dev@lynxeye.de, marcel.ziswiler@toradex.com,
-        tharvey@gateworks.com, leoyang.li@nxp.com,
-        sebastian.reichel@collabora.com, cniedermaier@dh-electronics.com,
-        Mr.Bossman075@gmail.com, clin@suse.com,
-        giulio.benetti@benettiengineering.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 07/12] clk: imx: Update pllv3 to support i.MXRT1170
-Message-ID: <202207270909.VypZ4wfI-lkp@intel.com>
-References: <20220723160513.271692-8-Mr.Bossman075@gmail.com>
+        with ESMTP id S240085AbiG0CSa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 22:18:30 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B092F3C8D4
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 19:18:27 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220727021826epoutp01fe03b9158331af89e792ae88bfbafe00~FjiAV2RcM1256712567epoutp010
+        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 02:18:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220727021826epoutp01fe03b9158331af89e792ae88bfbafe00~FjiAV2RcM1256712567epoutp010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1658888306;
+        bh=YeAGP+qWAoBqrwEc8F7nvagQ9EUVjYZ/93z0QykEGF8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dibGNYpOKBKcdxJHL1yqfua8dU5hlqWZE3GP3+j614fAUBP4FQf/Apeet6syx4jGE
+         oEq1KkGbCUOuJu99OYRhNXkoJFy7M6f8d0TIZ0qVVdgeyYHwu2i6Dc/rzpQyjtN9lK
+         3JbvnxXRlQaurGgGUhEYlUBPCB5zhyC6HZekrrKY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20220727021825epcas2p4ebe263252cc2b372ef645a26026479b6~Fjh-eGrSV2725127251epcas2p4e;
+        Wed, 27 Jul 2022 02:18:25 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.101]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4LsyB86m1hz4x9Q2; Wed, 27 Jul
+        2022 02:18:24 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EE.9B.09662.070A0E26; Wed, 27 Jul 2022 11:18:24 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220727021824epcas2p1f87c387e6c4923b036e4736a5c7855cf~Fjh_hQ4jq2667126671epcas2p1S;
+        Wed, 27 Jul 2022 02:18:24 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220727021824epsmtrp1e67fb98144a56989843cfaff4015e3d4~Fjh_gjbG63129031290epsmtrp1M;
+        Wed, 27 Jul 2022 02:18:24 +0000 (GMT)
+X-AuditID: b6c32a48-9f7ff700000025be-ee-62e0a070cba7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        42.F2.08905.070A0E26; Wed, 27 Jul 2022 11:18:24 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220727021823epsmtip1af1facfdc5b8e0bcd7907b2e577e6ed5~Fjh_RKOAG2106221062epsmtip1p;
+        Wed, 27 Jul 2022 02:18:23 +0000 (GMT)
+From:   Chanho Park <chanho61.park@samsung.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Chanho Park <chanho61.park@samsung.com>
+Subject: [RESEND PATCH v2 3/3] clk: samsung: exynosautov9: correct register
+ offsets of peric0/c1
+Date:   Wed, 27 Jul 2022 11:13:57 +0900
+Message-Id: <20220727021357.152421-4-chanho61.park@samsung.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220727021357.152421-1-chanho61.park@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220723160513.271692-8-Mr.Bossman075@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmuW7BggdJBn/OG1s8mLeNzeLyfm2L
+        61+es1rsfb2V3WLT42usFh977rFazDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRgduj/c3Wtk9
+        ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkA9qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B4
+        53hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygC5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUl
+        tkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2Rk7u6cwFRxWqHi68hRLA2OHXBcjJ4eE
+        gInEyfsHmLsYuTiEBHYwSvzbOJEJwvnEKLHrSgMjhPONUeJV71V2mJZ9x4+zQyT2Mko8XX8e
+        quUjo8TjbTuZQarYBHQltjx/BdYuItDCJNF6cAMriMMssAdoy5K1YLOEBZIkzn+/xwZiswio
+        Sqw8tI8RxOYVsJfY+/sZK8Q+eYnrN9vApnIKOEjs65nMBFEjKHFy5hMWEJsZqKZ562ywNyQE
+        pnJILHnwG+pYF4kN7/uhbGGJV8e3QNlSEi/726DsYomlsz4xQTQ3MEpc3vaLDSJhLDHrWTvQ
+        RRxAGzQl1u/SBzElBJQljtyC2ssn0XH4LztEmFeio00IolFd4sD26SwQtqxE95zPUK94SDT2
+        rWGFhNZkRonf524wTmBUmIXknVlI3pmFsHgBI/MqRrHUguLc9NRiowITeCQn5+duYgQnWi2P
+        HYyz337QO8TIxMF4iFGCg1lJhDch+n6SEG9KYmVValF+fFFpTmrxIUZTYGBPZJYSTc4Hpvq8
+        knhDE0sDEzMzQ3MjUwNzJXFer5QNiUIC6YklqdmpqQWpRTB9TBycUg1MIn+dfky9qb3O4fhB
+        vcViLa77ky+dt++qyIuO2h/XucntoMmJY19DdK8cN1/+SHJO1LZzHaf5HSQ2t97RT5aOdi7U
+        s7v9Z4Om+1O2iPfsH5RaQ45U8pytqjqktz3vzJWLczYs3ZI7/1/XgYsxhy/k3eRlji2aMiH/
+        CGvXPpa5YuxHWp2mqXFcVXj98XDWirkHQpMnT2x5uCLi2zPPVbkzZso+ORDO3Cz2+2nEda21
+        UXrXTcJMUpu+JM7ctECefeKv/zsbz25+dGHijrbyGSUlH1Ukjz+Ys511usth8T1sDj9yr17r
+        kQxPlbY/vN9uk/3b+xbfDSyX/2GY6xnOetLkU98lzf2hM368dvEuC79wdrkSS3FGoqEWc1Fx
+        IgAbvv7yPQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsWy7bCSnG7BggdJBqu/s1o8mLeNzeLyfm2L
+        61+es1rsfb2V3WLT42usFh977rFazDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRgduj/c3Wtk9
+        ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkA9igum5TUnMyy1CJ9uwSujJ3dU5gKDitU
+        PF15iqWBsUOui5GTQ0LARGLf8ePsXYxcHEICuxklFq+5xwKRkJV49m4HO4QtLHG/5QgriC0k
+        8J5R4uF2bxCbTUBXYsvzV4wgzSICHUwSs1ZcZAVxmAX2MUrMPb6JGaRKWCBB4smb42DdLAKq
+        EisP7WMEsXkF7CX2/n7GCrFBXuL6zTawek4BB4l9PZOZILbZS6z9cZwdol5Q4uTMJ2DXMQPV
+        N2+dzTyBUWAWktQsJKkFjEyrGCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGC40FLcwfj
+        9lUf9A4xMnEwHmKU4GBWEuFNiL6fJMSbklhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS
+        1OzU1ILUIpgsEwenVANTd6rp+ZZzKqIeS79LnnnfKHPQzOn3jgsshyuvSdVVvL3l1FOeeLdo
+        6xLxd3XcZpkedyeZ6Ye+uCXJyJO85oNGeKPcmasGOyWWPvXXnfS8I/ge47TrU39vWeqewsdw
+        0rgu7K176tPF7TPmLD677PaM8kdhPx2ms86RywtW6q3QeGto6P3n/sZV4YuXeDt/P9Uq5Zwy
+        UZ3FWD80sGG5+OMD3PdWBgbN2S/755/wZbWDqa1/EhJ7n8/Wl9/54UfbpbgnE37fFO4r5fQ8
+        a1nB8b9rzzIWX4F9pTP0+pd7Xn6QMtmZZdfPxItzxbQ+d8gsEHHJ3iQxbbrGhDMhTz9Wv5HN
+        i1RW/frIw/aui+DZe0v+KLEUZyQaajEXFScCAFgdlKb2AgAA
+X-CMS-MailID: 20220727021824epcas2p1f87c387e6c4923b036e4736a5c7855cf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220727021824epcas2p1f87c387e6c4923b036e4736a5c7855cf
+References: <20220727021357.152421-1-chanho61.park@samsung.com>
+        <CGME20220727021824epcas2p1f87c387e6c4923b036e4736a5c7855cf@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jesse,
+Some register offsets of peric0 and peric1 cmu blocks need to be
+corrected and re-ordered by numerical order.
 
-Thank you for the patch! Yet something to improve:
+Fixes: f2dd366992d0 ("clk: samsung: exynosautov9: add cmu_peric0 clock support")
+Fixes: b35f27fe73d8 ("clk: samsung: exynosautov9: add cmu_peric1 clock support")
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/clk/samsung/clk-exynosautov9.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on abelvesa/clk/imx linus/master v5.19-rc8]
-[cannot apply to soc/for-next next-20220726]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesse-Taube/Add-support-for-the-i-MXRT1170-evk/20220724-000710
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: arm-randconfig-c002-20220726 (https://download.01.org/0day-ci/archive/20220727/202207270909.VypZ4wfI-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 9e88cbcc403bdf82f29259ad60ff60a8fc4434a1)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
-        # https://github.com/intel-lab-lkp/linux/commit/96413cc0300321ec18d27ca9983f349a41f99706
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jesse-Taube/Add-support-for-the-i-MXRT1170-evk/20220724-000710
-        git checkout 96413cc0300321ec18d27ca9983f349a41f99706
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/imx/ drivers/firmware/efi/libstub/ drivers/pci/ drivers/soc/fsl/qe/ fs/ecryptfs/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/clk/imx/clk-imx6sl.c:16:
-   drivers/clk/imx/clk.h:268:60: error: too few arguments provided to function-like macro invocation
-                   const char *parent_name, void __iomem *base, u32 div_mask);
-                                                                            ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
->> drivers/clk/imx/clk-imx6sl.c:217:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:218:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:219:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:220:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:221:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:222:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sl.c:223:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   8 errors generated.
---
-   In file included from drivers/clk/imx/clk-imx6sx.c:19:
-   drivers/clk/imx/clk.h:268:60: error: too few arguments provided to function-like macro invocation
-                   const char *parent_name, void __iomem *base, u32 div_mask);
-                                                                            ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
->> drivers/clk/imx/clk-imx6sx.c:160:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:161:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:162:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll3", "osc", base + 0x10, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:163:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll4", "osc", base + 0x70, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:164:93: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,      "pll5", "osc", base + 0xa0, 0x7f);
-                                                                                                      ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:165:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,    "pll6", "osc", base + 0xe0, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6sx.c:166:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6SX_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,     "pll7", "osc", base + 0x20, 0x3);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   8 errors generated.
---
-   In file included from drivers/clk/imx/clk-imx6ul.c:18:
-   drivers/clk/imx/clk.h:268:60: error: too few arguments provided to function-like macro invocation
-                   const char *parent_name, void __iomem *base, u32 div_mask);
-                                                                            ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
->> drivers/clk/imx/clk-imx6ul.c:149:90: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,   "pll1", "osc", base + 0x00, 0x7f);
-                                                                                                    ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:150:92: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL2] = imx_clk_hw_pllv3(IMX_PLLV3_GENERIC, "pll2", "osc", base + 0x30, 0x1);
-                                                                                                     ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:151:89: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL3] = imx_clk_hw_pllv3(IMX_PLLV3_USB,   "pll3", "osc", base + 0x10, 0x3);
-                                                                                                   ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:152:89: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL4] = imx_clk_hw_pllv3(IMX_PLLV3_AV,    "pll4", "osc", base + 0x70, 0x7f);
-                                                                                                    ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:153:89: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL5] = imx_clk_hw_pllv3(IMX_PLLV3_AV,    "pll5", "osc", base + 0xa0, 0x7f);
-                                                                                                    ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:154:90: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL6] = imx_clk_hw_pllv3(IMX_PLLV3_ENET,  "pll6", "osc", base + 0xe0, 0x3);
-                                                                                                   ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   drivers/clk/imx/clk-imx6ul.c:155:89: error: too few arguments provided to function-like macro invocation
-           hws[IMX6UL_CLK_PLL7] = imx_clk_hw_pllv3(IMX_PLLV3_USB,   "pll7", "osc", base + 0x20, 0x3);
-                                                                                                   ^
-   drivers/clk/imx/clk.h:107:9: note: macro 'imx_clk_hw_pllv3' defined here
-   #define imx_clk_hw_pllv3(name, parent_names, num_parents, parent,       \
-           ^
-   8 errors generated.
-
-
-vim +217 drivers/clk/imx/clk-imx6sl.c
-
-751f7e999afcef1 arch/arm/mach-imx/clk-imx6sl.c Anson Huang 2014-01-09  181  
-53bb71da1c5c142 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-21  182  static void __init imx6sl_clocks_init(struct device_node *ccm_node)
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  183  {
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  184  	struct device_node *np;
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  185  	void __iomem *base;
-848db4a0a17aaf9 arch/arm/mach-imx/clk-imx6sl.c Anson Huang 2014-01-07  186  	int ret;
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  187  
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  188  	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  189  					  IMX6SL_CLK_END), GFP_KERNEL);
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  190  	if (WARN_ON(!clk_hw_data))
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  191  		return;
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  192  
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  193  	clk_hw_data->num = IMX6SL_CLK_END;
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  194  	hws = clk_hw_data->hws;
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  195  
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  196  	hws[IMX6SL_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  197  	hws[IMX6SL_CLK_CKIL] = imx_obtain_fixed_clock_hw("ckil", 0);
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  198  	hws[IMX6SL_CLK_OSC] = imx_obtain_fixed_clock_hw("osc", 0);
-e90f41990dce355 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2014-09-01  199  	/* Clock source from external clock via CLK1 PAD */
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  200  	hws[IMX6SL_CLK_ANACLK1] = imx_obtain_fixed_clock_hw("anaclk1", 0);
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  201  
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  202  	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sl-anatop");
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  203  	base = of_iomap(np, 0);
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  204  	WARN_ON(!base);
-8b1a3c0ba9b1cec drivers/clk/imx/clk-imx6sl.c   Anson Huang 2020-02-12  205  	of_node_put(np);
-6e6cdf66563086c arch/arm/mach-imx/clk-imx6sl.c Anson Huang 2014-02-11  206  	anatop_base = base;
-45fe6810347b0a8 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2013-05-03  207  
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  208  	hws[IMX6SL_PLL1_BYPASS_SRC] = imx_clk_hw_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  209  	hws[IMX6SL_PLL2_BYPASS_SRC] = imx_clk_hw_mux("pll2_bypass_src", base + 0x30, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  210  	hws[IMX6SL_PLL3_BYPASS_SRC] = imx_clk_hw_mux("pll3_bypass_src", base + 0x10, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  211  	hws[IMX6SL_PLL4_BYPASS_SRC] = imx_clk_hw_mux("pll4_bypass_src", base + 0x70, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  212  	hws[IMX6SL_PLL5_BYPASS_SRC] = imx_clk_hw_mux("pll5_bypass_src", base + 0xa0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  213  	hws[IMX6SL_PLL6_BYPASS_SRC] = imx_clk_hw_mux("pll6_bypass_src", base + 0xe0, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29  214  	hws[IMX6SL_PLL7_BYPASS_SRC] = imx_clk_hw_mux("pll7_bypass_src", base + 0x20, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
-e90f41990dce355 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2014-09-01  215  
-e90f41990dce355 arch/arm/mach-imx/clk-imx6sl.c Shawn Guo   2014-09-01  216  	/*                                    type               name    parent_name        base         div_mask */
-3a1d8fe6f445b13 drivers/clk/imx/clk-imx6sl.c   Abel Vesa   2019-05-29 @217  	hws[IMX6SL_CLK_PLL1] = imx_clk_hw_pllv3(IMX_PLLV3_SYS,     "pll1", "osc", base + 0x00, 0x7f);
-
+diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
+index c5a4e1bee711..76c4841f2970 100644
+--- a/drivers/clk/samsung/clk-exynosautov9.c
++++ b/drivers/clk/samsung/clk-exynosautov9.c
+@@ -1170,9 +1170,9 @@ static const struct samsung_cmu_info fsys2_cmu_info __initconst = {
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_2	0x2058
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_3	0x205c
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_4	0x2060
+-#define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_7	0x206c
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_5	0x2064
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_6	0x2068
++#define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_7	0x206c
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_8	0x2070
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_9	0x2074
+ #define CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_10	0x204c
+@@ -1422,14 +1422,14 @@ static const struct samsung_cmu_info peric0_cmu_info __initconst = {
+ #define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_IPCLK_11	0x2020
+ #define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_0	0x2044
+ #define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_1	0x2048
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_2	0x2058
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_3	0x205c
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_4	0x2060
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_7	0x206c
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_5	0x2064
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_6	0x2068
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_8	0x2070
+-#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_9	0x2074
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_2	0x2054
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_3	0x2058
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_4	0x205c
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_5	0x2060
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_6	0x2064
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_7	0x2068
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_8	0x206c
++#define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_9	0x2070
+ #define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_10	0x204c
+ #define CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_11	0x2050
+ 
+@@ -1467,9 +1467,9 @@ static const unsigned long peric1_clk_regs[] __initconst = {
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_2,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_3,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_4,
+-	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_7,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_5,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_6,
++	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_7,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_8,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_9,
+ 	CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_10,
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.37.1
+
