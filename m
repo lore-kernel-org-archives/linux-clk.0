@@ -2,69 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F00C00144
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Jul 2022 22:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD329C00144
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 01:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiGZW66 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 18:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51032 "EHLO
+        id S233056AbiG0B1S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 21:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbiGZW65 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 18:58:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA64630559;
-        Tue, 26 Jul 2022 15:58:56 -0700 (PDT)
+        with ESMTP id S230014AbiG0B1R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 21:27:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A2618B11;
+        Tue, 26 Jul 2022 18:27:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0ED0A616CB;
-        Tue, 26 Jul 2022 22:58:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615E1C433D6;
-        Tue, 26 Jul 2022 22:58:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C1D4A6173F;
+        Wed, 27 Jul 2022 01:27:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D561C433D7;
+        Wed, 27 Jul 2022 01:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658876335;
-        bh=95zhTF3RvSPpdIG4fmJ3Qawy4FvFggDDh2yy8qTKelU=;
+        s=k20201202; t=1658885236;
+        bh=1EM03A7cgT10t6ETsDv24Y36NvsARnyAHgi7fActhFw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JB9NLfp2xH0FofRGBLksoua8oV3DsjCIVChSnJpFO1XtWy4f4IoLCP/gShk/y6LqT
-         FAHWIIxyQjul6m5yLpfedt74GPpB+lTKwmJqB76PNk9HeWAqg5R40lJyjxnVooYQjS
-         9ClBvf6YE2QNbtvkA9jhtxxHwX0jY2y4RQstr1PH8AnaUKGKTrI8RTlRwJwuSEqss+
-         1qqxR5IDUfYiCtwnqziueD2qeWnhcFZxbutTu6UDYdrEIX1rwBQPSEj90SxelXi163
-         3ta1foNlveScUW5UGdbpxQUKFlklWAugeKMYhNz88g3HMGtBXGSPSeyqdgstU1kmTY
-         nse+UJATCJVVA==
+        b=s/CKhG3EBG3qoYOcnzw/yjwBi0/jRDqSbkveZJmjMPCw2Q1OEf9OCHTiUmIbYtfme
+         YkvbgoXWl0sttZjJ/ZilFX5tCE25TBCG+0s1znLgSp2aui8Tbb4zzSdPojndZM+cOq
+         bQqm2LbjOPeI1a29HhByXnNZPIUFhSna8nn4J8PF0XCTkNbPYzMK70rW9FqJOKy3Dw
+         w2r1VYYjJ5ASpsbUq+FTCEWW3awdM+7Vi0UZCUit3hOwcw13p9oVjL6CfePyZdueyO
+         v5wJSbf7ys1gwMULlU8sgDMTODA6F59Kaa0oBT4WrNeIYppij3STDbN/ePNwzwII0R
+         gRVYUt4zfaXAA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2118699.Icojqenx9y@jernej-laptop>
-References: <20220719183725.2605141-1-jernej.skrabec@gmail.com> <a7a253a0-1cc3-61e4-ae59-fc299057974a@sholland.org> <2118699.Icojqenx9y@jernej-laptop>
-Subject: Re: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
+In-Reply-To: <1658315023-3336-2-git-send-email-quic_c_skakit@quicinc.com>
+References: <1658315023-3336-1-git-send-email-quic_c_skakit@quicinc.com> <1658315023-3336-2-git-send-email-quic_c_skakit@quicinc.com>
+Subject: Re: [PATCH V6 1/5] dt-bindings: clock: Add "qcom,adsp-pil-mode" property
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, andre.przywara@arm.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-To:     Jernej =?utf-8?q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>, wens@csie.org
-Date:   Tue, 26 Jul 2022 15:58:53 -0700
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        quic_tdas@quicinc.com, quic_c_skakit@quicinc.com
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Satya Priya <quic_c_skakit@quicinc.com>
+Date:   Tue, 26 Jul 2022 18:27:14 -0700
 User-Agent: alot/0.10
-Message-Id: <20220726225855.615E1C433D6@smtp.kernel.org>
+Message-Id: <20220727012716.1D561C433D7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej =C5=A0krabec (2022-07-20 08:16:54)
-> Dne sreda, 20. julij 2022 ob 02:21:29 CEST je Samuel Holland napisal(a):
-> > On 7/19/22 1:37 PM, Jernej Skrabec wrote:
-> > >=20
-> > > Fixes: 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate clock")
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> >=20
-> > Reviewed-by: Samuel Holland <samuel@sholland.org>
-> >=20
-> > This bug also got fixed in passing by e1c51d31befc ("clk: sunxi-ng:
-> > Deduplicate ccu_clks arrays"), but that won't land until 5.20.
+Quoting Satya Priya (2022-07-20 04:03:39)
+> The LPASS Peripheral loader clocks would be used to bring
+> LPASS out of reset, when this property is present.
 >=20
-> Argh, good catch. I will send your patch as fix then, otherwise there wil=
-l be=20
-> issues during merging.
+> This is a cleanup done to handle overlap of regmap of
+> lpasscc and lpass_aon blocks. As a part of this, remove
+> the "cc" regmap from lpasscc node.
+>=20
+> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
 
-This is a one line fix. I can just apply this and send this off and deal
-with the merge conflict locally by taking the other side.
+Found it! Can you mention dependencies between patch series?
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
