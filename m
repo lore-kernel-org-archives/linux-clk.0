@@ -2,157 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8A2C00144
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 02:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6600AC00144
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 02:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240097AbiG0CSh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Jul 2022 22:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
+        id S240131AbiG0C0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Jul 2022 22:26:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240075AbiG0CSa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 22:18:30 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7325E3C8CE
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jul 2022 19:18:27 -0700 (PDT)
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220727021825epoutp030ca161e1499ff8ce63147977e72de136~FjiAGvL2R1629916299epoutp03J
-        for <linux-clk@vger.kernel.org>; Wed, 27 Jul 2022 02:18:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220727021825epoutp030ca161e1499ff8ce63147977e72de136~FjiAGvL2R1629916299epoutp03J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1658888305;
-        bh=IUnM+lvh62qAUhosHw83qajWTKFSqswgd/BBAGoO21A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aHpryTZkXSgr2fILWotDxHcilZBEKFxEFSRLVhCxFdPnmToFvPoWmTSAMIudK+j69
-         mD1JTCtqIqxOjm214CsBsL3mjTWMck6+ZTHVzXWV8kVARaCmz6urydXw4jHi9qMXVH
-         sOWEhTJlJj6JY1/l9hBtFY8qkc9vRPsl9J10lcbI=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20220727021825epcas2p30d10b8870a63f34a649596e2f65de192~Fjh-d8fX92503125031epcas2p3Z;
-        Wed, 27 Jul 2022 02:18:25 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.98]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4LsyB86mSdz4x9Q1; Wed, 27 Jul
-        2022 02:18:24 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.9B.09662.070A0E26; Wed, 27 Jul 2022 11:18:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220727021824epcas2p1f306c36ce58c9c33d4243aa667639398~Fjh_aHmym0147501475epcas2p1N;
-        Wed, 27 Jul 2022 02:18:24 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220727021824epsmtrp1fd4acf3ebe0455d6198f768225f732a1~Fjh_Zanul3129031290epsmtrp1L;
-        Wed, 27 Jul 2022 02:18:24 +0000 (GMT)
-X-AuditID: b6c32a48-9e1ff700000025be-ed-62e0a0702d4c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AE.E7.08802.F60A0E26; Wed, 27 Jul 2022 11:18:24 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.51]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220727021823epsmtip1c54b07302886c07f18cadaf0dfcfe67f~Fjh_NuaAL2108621086epsmtip1n;
-        Wed, 27 Jul 2022 02:18:23 +0000 (GMT)
-From:   Chanho Park <chanho61.park@samsung.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Chanho Park <chanho61.park@samsung.com>
-Subject: [RESEND PATCH v2 2/3] clk: samsung: exynosautov9: add missing gate
- clks for peric0/c1
-Date:   Wed, 27 Jul 2022 11:13:56 +0900
-Message-Id: <20220727021357.152421-3-chanho61.park@samsung.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220727021357.152421-1-chanho61.park@samsung.com>
+        with ESMTP id S233553AbiG0C0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jul 2022 22:26:47 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226132A96D;
+        Tue, 26 Jul 2022 19:26:47 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id BD53E5C011A;
+        Tue, 26 Jul 2022 22:26:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 26 Jul 2022 22:26:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1658888804; x=
+        1658975204; bh=smaAqEBD9EAasFw+KnLs6MeGfeaKJNcvnsdlP0YdAZA=; b=e
+        yH6etxCEem1MHLMcE9mBPEo8DE9rabU94kXFfBczNhejqt6t/CE64WNJk0ecl8Lo
+        KXXsPCHvD6AimHesZfc8DpVujIhjfA2JcrDVFBf9rWXJzrLuAh0y0oDgWWe1tc6r
+        MH/Ehr3Pm1/DQBcfDzXVPaAjEqUBim58abcH/iwSAb/sbOuoqLii1Cxdcf0CCEhx
+        8+XspcZUMP2NJlybm6fU7KCdcXrrFQjiZFmr59M0js4QO/xEOPszUk+mU+e4Y/66
+        ja+W6de23AKWonmvFrqrfCKt6fNevrOq8YEJ2xf3JFWB7TU34ljnNd1gz2x3epPu
+        oV9Yaq/7T4KhwHDDKmjsw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1658888804; x=
+        1658975204; bh=smaAqEBD9EAasFw+KnLs6MeGfeaKJNcvnsdlP0YdAZA=; b=C
+        llVo+h5raTWZsHvVx3JWUw6ZM4mvWGUItNeZXhEQvfI7g4+PFX7yOOYsS0QPgzXI
+        p/chPYd/AHFfJPb2wTLq7wFyXYdv9gsMSq/qnETDIgRefyuNb5Ve0TLhRSX6Bc+I
+        daHWFe0zYgSm/GhDZX+IotZslPzFyuJ1YbdfSAlNQSHSZc8WTmfdxVzt9jgr3362
+        KmxLNyIA8H8WiCsKAwAqP71z7DgJ7vzBKrJeqKVmqW9w8RoJ0oogJLOJoDjKFpAG
+        jyq6Vfalo7nL5+vmllKSKnAsV82Fwp2OLnF+hIn1XDmJcWA4CXp+CCpLR0ADpr2B
+        RU90qXJ2k5n8jJJA278RQ==
+X-ME-Sender: <xms:ZKLgYtQwgnRW-fZIUNn-5gJXqJkJmiuXt6o8cxlgL8Z_j5VHwEcd_w>
+    <xme:ZKLgYmxes7YH51fqdfQRJNcUveYHaXUxym_-LK7C4ONpTEUK7u23JjxyfmfIB0pN0
+    zLWsbfvMP_i4_0UjA>
+X-ME-Received: <xmr:ZKLgYi2UJJxZVgV5pTfRuCkOw-DrJIz-w_442pmhMbXXXWFWMhJ83bYPFbqZr9txHpHvkHSk0HJIxNGCIRROeqqT2egkfNu7vBw1INbAWto9X9KBc111k8YQuA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrvdduuddgiedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvvehfhffkffgfgggjtgfgsehtkeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ggtffrrghtthgvrhhnpedtvefhheehgfdvkeetffeludeuudehudeuvddtveelleekvedv
+    uedviefhkeeuheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
+X-ME-Proxy: <xmx:ZKLgYlDxEj25usO0sH-Rqq5EjzfFeZowtX2BJHCAxNRmdnYjFeJDeA>
+    <xmx:ZKLgYmhj4hfwIb1e-jwEKMRsVXu932p0TRpJnAr3370KmBR3H_wi2g>
+    <xmx:ZKLgYppfeuUKoX2WVeMcOmHoiCBb-gidgGnUaFRitTzsLcgNL-Y07A>
+    <xmx:ZKLgYqhboQU9r49rqUhm6TvPoF9m44ekNlOMPcEsGSeCXbXmk9u-Xw>
+Feedback-ID: i0ad843c9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 26 Jul 2022 22:26:43 -0400 (EDT)
+Subject: Re: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Jernej_=c5=a0krabec?= <jernej.skrabec@gmail.com>,
+        wens@csie.org
+Cc:     mturquette@baylibre.com, andre.przywara@arm.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20220719183725.2605141-1-jernej.skrabec@gmail.com>
+ <a7a253a0-1cc3-61e4-ae59-fc299057974a@sholland.org>
+ <2118699.Icojqenx9y@jernej-laptop>
+ <20220726225855.615E1C433D6@smtp.kernel.org>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <6ff332d4-fcd4-ce6b-3543-377667dbd30e@sholland.org>
+Date:   Tue, 26 Jul 2022 21:26:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
+In-Reply-To: <20220726225855.615E1C433D6@smtp.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmqW7BggdJBjcPG1s8mLeNzeLyfm2L
-        61+es1rsfb2V3WLT42usFh977rFazDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRgduj/c3Wtk9
-        ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkA9qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B4
-        53hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygC5UUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUl
-        tkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ2RmzZy9jKljLW3H1+jL2BsZV3F2MnBwS
-        AiYSG5YsZuli5OIQEtjBKHFl7hp2COcTo8SOqdvZIJzPjBIfXx9ig2nZdmYlM0RiF6PEi18f
-        oao+MkrM/3aSBaSKTUBXYsvzV4wgCRGBFiaJ1oMbWEEcZoE9jBL/lqxlB6kSFkiQOHpsPiOI
-        zSKgKvFu80tWEJtXwF7iWfsmFoh98hLXb7Yxg9icAg4S+3omM0HUCEqcnPkErIYZqKZ562yw
-        myQEJnJIzHg8D6rZRWLb+aVQtrDEq+Nb2CFsKYmX/W1QdrHE0lmfmCCaGxglLm/7BfWpscSs
-        Z+1A13EAbdCUWL9LH8SUEFCWOHILai+fRMfhv+wQYV6JjjYhiEZ1iQPbp0NtlZXonvOZFcL2
-        kPjdtB0a2pMZJZ7d+sw0gVFhFpJ3ZiF5ZxbC4gWMzKsYxVILinPTU4uNCkzgkZycn7uJEZxo
-        tTx2MM5++0HvECMTB+MhRgkOZiUR3oTo+0lCvCmJlVWpRfnxRaU5qcWHGE2BgT2RWUo0OR+Y
-        6vNK4g1NLA1MzMwMzY1MDcyVxHm9UjYkCgmkJ5akZqemFqQWwfQxcXBKNTBFxcV4Sqocuvjs
-        nNjnmMdv3DTzDSvKNvRKsq9cqH94V0z16w/vORY5vrD2YCxYu60xN1bkygy9M18nuvF9XerD
-        v0t86z7hRPWi2ExNn2kKEw4d154+47Rfnf05//Xr8oNrnl9ZXrtjD3dSVWvY/5k/PyWVlDPz
-        XHig+9aee36D4Zsz04VsHunmpn4rFeQ6/y3QfrHJGXGGxNL8Y6+nbSt6IvqFN6/k05eV0S5u
-        klIZDAc2n7zgHxLsuZtT+OiDqIwS6UZxv73163nWV9c/1jzBZR1R2nD969trOstv9Xy6svXZ
-        pMj/xsnJ1vc/nPY609vGOmHB3blH54scOlD8Qu6obv7vfSxTnx28v/Sd/0EpJZbijERDLeai
-        4kQAcB/SCD0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSnG7BggdJBusPMFo8mLeNzeLyfm2L
-        61+es1rsfb2V3WLT42usFh977rFazDi/j8ni4ilXi8Nv2lkt/l3byGKxatcfRgduj/c3Wtk9
-        ds66y+6xaVUnm8eda3vYPDYvqffo27KK0ePzJrkA9igum5TUnMyy1CJ9uwSujNmzlzEVrOWt
-        uHp9GXsD4yruLkZODgkBE4ltZ1YydzFycQgJ7GCUOH5mEiNEQlbi2bsd7BC2sMT9liOsEEXv
-        GSVmt/SxgiTYBHQltjx/xQiSEBHoYJKYteIiWBWzwD5GibnHNzGDVAkLxEnMON0LNopFQFXi
-        3eaXYN28AvYSz9o3sUCskJe4frMNrJ5TwEFiX89kJhBbCKhm7Y/j7BD1ghInZz4Bq2cGqm/e
-        Opt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEeEltYOxj2r
-        PugdYmTiYDzEKMHBrCTCmxB9P0mINyWxsiq1KD++qDQntfgQozQHi5I474Wuk/FCAumJJanZ
-        qakFqUUwWSYOTqkGJsFjNw8VGR+c9S/MoZ2Dt1b+7NZNAjGvHpw6fKZSQoRthdXnD+ttWFT2
-        HuD/MfdUcbzt+QI1n6q/ZUHNmX/2bP8189FKZwUT+R+MvLPEbBjtD1furVr6xPVuvFJMRF/n
-        TJ8fL/3Wdtzzrv7xcXL3GrOnV9u2qBveUWpUsOaYxxugJc079aIY413J5cskjsnsNOF33pDM
-        FSDL9aft1/nEYtZbGUHTT99/JMbcu8eUzy1F0pQrI7hUYf8lpSv/k74e+zNh8tXzk1mWa06e
-        KufmuuPw6go7r9xQAZmrgm7yq7U3zZ/ImJoU9OHOplUZxeaL0+0seN4mbjyc//3N7fsmrL/+
-        Kf/mOu/ipptlkL6lVYmlOCPRUIu5qDgRAOUolp/3AgAA
-X-CMS-MailID: 20220727021824epcas2p1f306c36ce58c9c33d4243aa667639398
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220727021824epcas2p1f306c36ce58c9c33d4243aa667639398
-References: <20220727021357.152421-1-chanho61.park@samsung.com>
-        <CGME20220727021824epcas2p1f306c36ce58c9c33d4243aa667639398@epcas2p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-"gout_peric0_pclk_1" and "gout_peric1_pclk_1" should be added to peric0
-and peric1 respectively.
+On 7/26/22 5:58 PM, Stephen Boyd wrote:
+> Quoting Jernej Škrabec (2022-07-20 08:16:54)
+>> Dne sreda, 20. julij 2022 ob 02:21:29 CEST je Samuel Holland napisal(a):
+>>> On 7/19/22 1:37 PM, Jernej Skrabec wrote:
+>>>>
+>>>> Fixes: 38d321b61bda ("clk: sunxi-ng: h6-r: Add RTC gate clock")
+>>>> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+>>>
+>>> Reviewed-by: Samuel Holland <samuel@sholland.org>
+>>>
+>>> This bug also got fixed in passing by e1c51d31befc ("clk: sunxi-ng:
+>>> Deduplicate ccu_clks arrays"), but that won't land until 5.20.
+>>
+>> Argh, good catch. I will send your patch as fix then, otherwise there will be 
+>> issues during merging.
+> 
+> This is a one line fix. I can just apply this and send this off and deal
+> with the merge conflict locally by taking the other side.
 
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynosautov9.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+That sounds good to me. I also would prefer to take only this targeted fix for 5.19.
 
-diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-index d9e1f8e4a7b4..c5a4e1bee711 100644
---- a/drivers/clk/samsung/clk-exynosautov9.c
-+++ b/drivers/clk/samsung/clk-exynosautov9.c
-@@ -1330,6 +1330,10 @@ static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
- 	     "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_0,
- 	     21, 0, 0),
-+	GATE(CLK_GOUT_PERIC0_PCLK_1, "gout_peric0_pclk_1",
-+	     "mout_peric0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_1,
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC0_PCLK_2, "gout_peric0_pclk_2",
- 	     "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_2,
-@@ -1581,6 +1585,10 @@ static const struct samsung_gate_clock peric1_gate_clks[] __initconst = {
- 	     "mout_peric1_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_0,
- 	     21, 0, 0),
-+	GATE(CLK_GOUT_PERIC1_PCLK_1, "gout_peric1_pclk_1",
-+	     "mout_peric1_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_1,
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC1_PCLK_2, "gout_peric1_pclk_2",
- 	     "mout_peric1_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC1_UID_PERIC1_TOP0_IPCLKPORT_PCLK_2,
--- 
-2.37.1
-
+Regards,
+Samuel
