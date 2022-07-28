@@ -2,119 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D32EC04A68
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 08:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6782C04A68
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 08:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235034AbiG1IOp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 04:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59724 "EHLO
+        id S235082AbiG1IRt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 04:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233818AbiG1IOp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 04:14:45 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D781761D77;
-        Thu, 28 Jul 2022 01:14:43 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14; Thu, 28 Jul
- 2022 16:14:41 +0800
-Message-ID: <da68bb01-0ec9-4b18-c0f5-0cf3b830d4c3@amlogic.com>
-Date:   Thu, 28 Jul 2022 16:14:41 +0800
+        with ESMTP id S234950AbiG1IRs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 04:17:48 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EF561DA8
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 01:17:44 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id b21so1152020ljk.8
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 01:17:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=7Rf45d35Odvx4RRIYeKWOyJLAziqkTwb8otII4FltA4=;
+        b=xIldjVlybxEjNKgdIw/vCDkTBIuMrfPWSoOnpW7cKZcmmSsh32e3xvfza9rxHtX3jR
+         kykvMw1w8Dif8fRi1l9edEmSYto+pzkvtIyuRdUY86P44u9cuBego9KFqg+I6mV17ToM
+         KhWeo8/v1rQhdgaspxHCwNpIvCVR0MkyMN/aKIoKt9ae0chmAAM+WN0bbbDEH9Jrvvy0
+         I2bt9M0lxRrF95DLfYEtc/QrTJO8l4k9wPtFzcJksRnNWkkMrM4NaPiCFAQK4G6vda0Y
+         JqEPIqDFq/atrNtvNQl5MAHqEXmeEAS6H9XI2a1b6YyIW0NJIbL+mQlNDVBr2yxG4ocq
+         YE7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7Rf45d35Odvx4RRIYeKWOyJLAziqkTwb8otII4FltA4=;
+        b=bfbV7WXhUjQtMp5qJYGs7EKYsliULNCrltBQGRhOlxj0ugIeLAAc7u2yOYJYnnR6zd
+         7L7kKHSxrKnaHLIbB4uzIEoSXe2sYLBS47KAThR4muZNEnYmgkcTG2z4uVp7EbOcXm26
+         nPUGBcbzm4JlG6+xrra6NSVRIGKiug5PI9hHYK1dYnYYXfLRgNBMK1nGwqm7qQcj7imo
+         PYrr51UyVPt1NV+U0u03lkEi+ZGSPwjbFuOezYxk03Nenbc6sQolFohAaFTxnPB5Hwfq
+         ZhZIG18AOBFAKtTZQtYPWQwXbda/7X3Mzsff+KTSnCJ+E7Uagdx0p0RVoj/xvU6UpihL
+         Pk7Q==
+X-Gm-Message-State: AJIora/gPFYg97+cTjN7T37rMcSQYJP7pxXD7xfBhPESvTphTPpGOxKR
+        sRsNQsJMRMiZGw80FpddUVS1EQ==
+X-Google-Smtp-Source: AGRyM1tJFlJPLFUpTkeIev6iKmTznXe90a0put6K1iBfwuk/Uo0tDpwOeL9e7gLB5jCvWVZCstoArA==
+X-Received: by 2002:a2e:b70e:0:b0:25e:2caa:6cdc with SMTP id j14-20020a2eb70e000000b0025e2caa6cdcmr535051ljo.492.1658996262663;
+        Thu, 28 Jul 2022 01:17:42 -0700 (PDT)
+Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
+        by smtp.gmail.com with ESMTPSA id o14-20020a2e944e000000b0025dde220a94sm2477ljh.109.2022.07.28.01.17.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Jul 2022 01:17:42 -0700 (PDT)
+Message-ID: <cd2f46c5-b2aa-b85c-9efd-55426d191421@linaro.org>
+Date:   Thu, 28 Jul 2022 10:17:40 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V2 0/3] Add S4 SoC clock controller driver
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 1/6] dt-bindings: clk: exynosautov9: add fys0 clock
+ definitions
 Content-Language: en-US
-From:   Yu Tu <yu.tu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Chanho Park <chanho61.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20220728054202.6981-1-yu.tu@amlogic.com>
- <1j8rodhfn9.fsf@starbuckisacylon.baylibre.com>
- <032b3c3f-f899-bf53-ecbb-35191d39392b@amlogic.com>
-In-Reply-To: <032b3c3f-f899-bf53-ecbb-35191d39392b@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220727060146.9228-1-chanho61.park@samsung.com>
+ <CGME20220727060612epcas2p355e7f9ca3700cad4778e944cbdbf2d50@epcas2p3.samsung.com>
+ <20220727060146.9228-2-chanho61.park@samsung.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220727060146.9228-2-chanho61.park@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi JB,
-	We suspect that you are not looking carefully. You only see two base 
-addresses for controllers, so you think you should use two clock 
-controllers. But you're missing their direct connection.
+On 27/07/2022 08:01, Chanho Park wrote:
+> Add fsys0(for PCIe) clock definitions.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> ---
 
-On 2022/7/28 16:06, Yu Tu wrote:
-> Hi JB，
-> 
-> On 2022/7/28 15:08, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->>
->>
->> On Thu 28 Jul 2022 at 13:41, Yu Tu <yu.tu@amlogic.com> wrote:
->>
->>> 1. Add clock controller driver for S4 SOC.
->>>
->>> Yu Tu (3):
->>>    dt-bindings: clk: meson: add S4 SoC clock controller bindings
->>>    arm64: dts: meson: add S4 Soc clock controller in DT
->>>    clk: meson: s4: add s4 SoC clock controller driver
->>>
->>> V1 -> V2: Change format as discussed in the email.
->>>
->>> Link:https://lore.kernel.org/linux-amlogic/20220708062757.3662-1-yu.tu@amlogic.com/ 
->>>
->>>
->>>   .../bindings/clock/amlogic,gxbb-clkc.txt      |    1 +
->>>   MAINTAINERS                                   |    1 +
->>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |   11 +
->>>   drivers/clk/meson/Kconfig                     |   15 +
->>>   drivers/clk/meson/Makefile                    |    1 +
->>>   drivers/clk/meson/s4.c                        | 4732 +++++++++++++++++
->>>   drivers/clk/meson/s4.h                        |  296 ++
->>>   include/dt-bindings/clock/s4-clkc.h           |  146 +
->>>   8 files changed, 5203 insertions(+)
->>>   create mode 100644 drivers/clk/meson/s4.c
->>>   create mode 100644 drivers/clk/meson/s4.h
->>>   create mode 100644 include/dt-bindings/clock/s4-clkc.h
->>>
->>>
->>> base-commit: b293bc9286ee21824e93f0fcfed3b78fdfee01e6
->>
->> Please don't post until you have addressed *ALL* the comments from the
->> previous version.
-> The last email asked you to adopt A1 method, but you did not reply?
-> 
->>
->> At first glance, I can see that this is still a single driver for
->> what is obviously 2 controllers with 2 register spaces. Simple comments
->> like the "<< 2" in the register declaration have not been addressed 
->> either.
-> I understand that this should be a controller, just two address 
-> descriptions. One is the various PLL registers and one is the clock for 
-> the peripherals. And PLL is to provide a clock source for various 
-> peripheral clocks. So a clock controller is reasonable. I think you got 
-> it wrong.
-> 
-> Ok, if you insist on using two clock controllers,, please provide your 
-> the reason and example code?
-> 
->>
->> Seeing that, I have not reviewed this version further.
->> I won't until all the comments from v1 are either addressed or answer
->>
->> Regards
->> Jerome
->>
->> .
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
