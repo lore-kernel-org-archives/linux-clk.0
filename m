@@ -2,135 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD8DC04A68
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D15CBC19F29
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 13:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237179AbiG1LuV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 07:50:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
+        id S229658AbiG1Nue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 09:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237134AbiG1LuU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 07:50:20 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56A1D132
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:50:16 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id a18-20020a05600c349200b003a30de68697so3250739wmq.0
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:50:16 -0700 (PDT)
+        with ESMTP id S230309AbiG1Nud (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 09:50:33 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B847C25C75
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 06:50:31 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id fy29so3226274ejc.12
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 06:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:subject:date:in-reply-to:message-id
-         :mime-version;
-        bh=FxwqpjhD9/gLaQrnTT9TOXORIlpv5bjNu3/8g5til8A=;
-        b=nTEylWFWV5aRYXQnjm2kiRjVJlk7CEQjzrUBHIDJnxn+cY0Vj8Q7ezPN7FgIiJK/+v
-         ine2IGE+ebrioKCcdP9pPI+ICu9WtJvFA+PUXlNmr8SoGEJwVEgcyeHUlpHnXNjI/HmY
-         pLvlZNwoi1m0h5/WHucjBDABR1SPLS8arubysiloaSV92rt9yiaiMG3l9yCH5l/aQ3/9
-         s+IwJzB984E9vKSpdLwuxLICOc1sgE4UtWWOy3UrfagJPHpMHyDvMoK4x3Cyq1tORPeE
-         gbi0d45zdtr7iycIpE5AhCbM8wEKpE9OrycAhoQLkNBUjTUoAZMsEcibmKdyhO0fjDjX
-         21yw==
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vxq8TONSE00HXKwla5aOrD7/8grrZxrUZOEScjMYlXo=;
+        b=I6w8bTdjtiWIAiiIyaZ8AqDCot6M72QWjJBec1p0ARnt8AHMFhDNL//ZXHs6Aj4TcJ
+         /igAyJV2zhTPOL5+D4ckDgbeeKGK3pDFJZ+uLHafanehs6HrIAZgeCEw8EHOns5jIFk+
+         kyjl9Ue4ngXTZEorTt7u464GVRsyPj5c8vMftb95KYLL3gFvZNpyv6A5Zo94ZzGwndM3
+         7+JncdsyRgSX7u3FMswQZT3L7jNW+jf0yxlZ6ZPCMyQTccQP9r8yzYtBQR4prpLllOTd
+         4gUdCmFwmc7lUNriFAqKS368bnIz7FImfmejvwn+pqMKb/5uwMK0Lacm33F2cCXgb+o5
+         MBUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=FxwqpjhD9/gLaQrnTT9TOXORIlpv5bjNu3/8g5til8A=;
-        b=aKg014ZvQYqNCkF876HIBSp8OfnUD0C/LapEKqG4hYuV9G0kQxtWHGC85V11RnNfM0
-         xoJRq3Z6O2aHz/PoAWuDLYloQaghepfmLbj84rRx8pHFiSm45JlwDMJDXyUzsVcSPAma
-         UYYtBb/+56Yr4+66oI57063XaO32n7roikXp58Q/HEEaBDF54lq/TKWZycsLff1oVxZA
-         HSA8jsmfAv3NlKl/o8xKZqn5Ir1HHoSrka+i1S6QqgICANcfHOj/T9CMiOWJEfUlLI5g
-         GXyE1lTCavM8wWfMnZj6DWcBOYGIUPLP2CA9M5MHBZixkCXqqcSYUZUEokh7Ox01clol
-         hu2w==
-X-Gm-Message-State: AJIora9r/ms8u2RfshtpEF3qo8QD32GlPNf/gCiMnqzsONUTFuNTmmoN
-        /gJ03i8oUV4crsHVMDvxhGSkLWj6pfbw1Q==
-X-Google-Smtp-Source: AGRyM1v0j0TKqWnZsAUWLQ3B4oY6N7U+8YetS6WSCx/Q+1LpG7g7jTIsnd/U+8JWEBXprZeoB78iww==
-X-Received: by 2002:a7b:c453:0:b0:3a3:1c65:ff97 with SMTP id l19-20020a7bc453000000b003a31c65ff97mr6046013wmi.180.1659009015199;
-        Thu, 28 Jul 2022 04:50:15 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o5-20020a05600c510500b003a2d6c623f3sm5639135wms.19.2022.07.28.04.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 04:50:14 -0700 (PDT)
-References: <20220728054202.6981-1-yu.tu@amlogic.com>
- <20220728054202.6981-2-yu.tu@amlogic.com>
- <82e3fd36-df96-a555-4cea-47fabd26502b@linaro.org>
- <74cd833a-4773-eeb0-80aa-75ea1cdc093e@amlogic.com>
- <39395257-703b-a5e9-17c3-80f79f67fdc7@linaro.org>
- <ff582551-9661-4404-c00e-853bc60907cc@amlogic.com>
-User-agent: mu4e 1.8.6; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vxq8TONSE00HXKwla5aOrD7/8grrZxrUZOEScjMYlXo=;
+        b=PiGt9168j7CfJsQCLeqFxSqj7PBlvI7K6pki1woA6sgJpoxUGu9LIXVhZQ0nM0Gs8p
+         OO2B54Ou8v2/Bq7RTj/4ePSia3vMe92Y5RkCaBgVm7z2/XirNcsUAsb9vuzsh35fKNfF
+         Z5+reajJgZVBFZZ725A0eEgo/wiUibIgAZ6R0V5ndERoYMetfouMwVp8QopbkvLuARGA
+         CN2OxQXWXE6WSDJjxY3RiojZOSBHCOf0yTGUXdPhrhYSOgTa0e+iP0nkrfsGj0OABhbk
+         BA3dJqutZDNK781BrA4hqewpTfoNQqKgng/yRyGjuXWwBR8eDFYM9M9L7So8daJ50weO
+         shIg==
+X-Gm-Message-State: AJIora8KNzPfv3ImlyCbe4VrKal9DwwGVJKGaXQmZmrgaeiIO6iziFj/
+        oW4dcM1s8RwBBHaqDoJQAj89o4VWFDDHBhNUZ9Cyxg==
+X-Google-Smtp-Source: AGRyM1vd13k6pgor+DlHJHQfDA7PQXuMPPW6KeHGTUbH0ZXwLGn62yE4jjI826yPI+uPcZiWt3sa3ZGDqeczrsLkYNM=
+X-Received: by 2002:a17:907:9482:b0:72b:8c16:dac0 with SMTP id
+ dm2-20020a170907948200b0072b8c16dac0mr18135736ejc.286.1659016230136; Thu, 28
+ Jul 2022 06:50:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220723160513.271692-1-Mr.Bossman075@gmail.com>
+ <20220723160513.271692-4-Mr.Bossman075@gmail.com> <CACRpkdZMFdYDssk9B7R-MH7xG8Ukp+ZQpXCRVtPRCS=SFh34mA@mail.gmail.com>
+In-Reply-To: <CACRpkdZMFdYDssk9B7R-MH7xG8Ukp+ZQpXCRVtPRCS=SFh34mA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 28 Jul 2022 15:50:19 +0200
+Message-ID: <CAMRc=Mf02_L1Msf3Wynqu1EROq+nsizhdEWEBJR0DpTybQ=KWA@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] dt-bindings: gpio: fsl-imx-gpio: Add i.MXRT compatibles
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jesse Taube <mr.bossman075@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH V2 1/3] dt-bindings: clk: meson: add S4 SoC clock
- controller bindings
-Date:   Thu, 28 Jul 2022 13:48:14 +0200
-In-reply-to: <ff582551-9661-4404-c00e-853bc60907cc@amlogic.com>
-Message-ID: <1jbkt9focq.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>, stefan@agner.ch,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>, olof@lixom.net, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>, abel.vesa@nxp.com,
+        dev@lynxeye.de, Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        cniedermaier@dh-electronics.com, clin@suse.com,
+        giulio.benetti@benettiengineering.com,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Thu 28 Jul 2022 at 18:19, Yu Tu <yu.tu@amlogic.com> wrote:
-
-> On 2022/7/28 18:09, Krzysztof Kozlowski wrote:
->> [ EXTERNAL EMAIL ]
->> On 28/07/2022 12:05, Yu Tu wrote:
->>> Hi Krzysztof,
->>> 	Thanks for your reply.
->>>
->>> On 2022/7/28 16:41, Krzysztof Kozlowski wrote:
->>>> [ EXTERNAL EMAIL ]
->>>>
->>>> On 28/07/2022 07:42, Yu Tu wrote:
->>>>> Add new clock controller compatible and dt-bindings header for the
->>>>> Everything-Else domain of the S4 SoC.
->>>>>
->>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>>
->>>>
->>>>
->>>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>>> index c1abc53f9e91..f872d0c0c253 100644
->>>>> --- a/MAINTAINERS
->>>>> +++ b/MAINTAINERS
->>>>> @@ -1775,6 +1775,7 @@ F:	Documentation/devicetree/bindings/clock/amlogic*
->>>>>    F:	drivers/clk/meson/
->>>>>    F:	include/dt-bindings/clock/gxbb*
->>>>>    F:	include/dt-bindings/clock/meson*
->>>>> +F:	include/dt-bindings/clock/s4-clkc.h
->>>>>       ARM/Amlogic Meson SoC Crypto Drivers
->>>>>    M:	Corentin Labbe <clabbe@baylibre.com>
->>>>> diff --git a/include/dt-bindings/clock/s4-clkc.h b/include/dt-bindings/clock/s4-clkc.h
->>>>> new file mode 100644
->>>>> index 000000000000..b686c8877419
->>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/clock/s4-clkc.h
->>>>
->>>> Filename with vendor prefix, so:
->>>> amlogic,s4-clkc.h
->>> It's fine with me. It's mainly Jerome's opinion.
->> To clarify: I understand such naming might bring inconsistency, but we
->> want to bring some order in the bindings directories. They keep growing
->> and at some point the model names might start conflicting.
-> If Jerome agrees, I will change it according to your opinion and make
-> another edition.
-
-I'm aligned with Krzysztof on this. Please add the vendor prefix.
-
-It was mistake to omit the vendor prefix. Unfortunately, I don't think
-we can fix the old bindings now.
-
+On Tue, Jul 26, 2022 at 10:04 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
->> 
->> Best regards,
->> Krzysztof
->> .
+> On Sat, Jul 23, 2022 at 6:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+>
+> > Both the i.MXRT1170 and 1050 have the same gpio controller as
+> > "fsl,imx35-gpio". Add i.MXRT to the compatible list.
+> >
+> > Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Bartosz needs to apply this to the GPIO tree, I think it can just be applied
+> directly without regard for the rest of the patches.
+>
+> Yours,
+> Linus Waleij
 
+Applied, thanks!
+
+Bart
