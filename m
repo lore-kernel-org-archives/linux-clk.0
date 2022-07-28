@@ -2,232 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D45EC19F2D
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 17:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A899AC04A68
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 18:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbiG1RU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 13:20:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S231313AbiG1SdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 14:33:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiG1RU5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 13:20:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086A55B79D;
-        Thu, 28 Jul 2022 10:20:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9229461D0F;
-        Thu, 28 Jul 2022 17:20:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75B3C433D7;
-        Thu, 28 Jul 2022 17:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659028854;
-        bh=3juGR+P+/PoNu1lEhZFgztJ6A9LmEO7Lb+rh9Y4NDdw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=Ajcg/8L4izAZKa2mPe4A6mwD2xhNPSF6zD8jqYYYRNqfhpnanJCwPLkeDTtzMAAXY
-         M7oUXZ6CZuH31IjVxAqM2gRnsWZITNKb55wlZ5JnD/DUCRDg3UdeAIrzeX0lNHjHAR
-         wzgi3C8wJdIpBMqt7sc3STjd7C0uykM6U86/xrKMdBkv3A6gpbtO4hXjJ5l+TjHaLy
-         e4DKSoCgdb1tzebEFm0O9AJWb9AqCOKWaWW3sVozalRIPGLkf5E1tw9aRE4zu/+akq
-         X3FcajNE+AfhyfG4rrsgNdfZt/xVPEzBnwFe9tFjDbwwql6CH8YXjM30w46DcxQYCb
-         8dZ4kaIUmww0Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 9739D5C0B3E; Thu, 28 Jul 2022 10:20:53 -0700 (PDT)
-Date:   Thu, 28 Jul 2022 10:20:53 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Michel Lespinasse <michel@lespinasse.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
-        linux@armlinux.org.uk, ulli.kroll@googlemail.com,
-        linus.walleij@linaro.org, shawnguo@kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, tony@atomide.com,
-        khilman@kernel.org, catalin.marinas@arm.com, will@kernel.org,
-        guoren@kernel.org, bcain@quicinc.com, chenhuacai@kernel.org,
-        kernel@xen0n.name, geert@linux-m68k.org, sammy@sammy.net,
-        monstr@monstr.eu, tsbogend@alpha.franken.de, dinguyen@kernel.org,
-        jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        shorne@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-        aou@eecs.berkeley.edu, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org,
-        davem@davemloft.net, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, jgross@suse.com, srivatsa@csail.mit.edu,
-        amakhalov@vmware.com, pv-drivers@vmware.com,
-        boris.ostrovsky@oracle.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        rafael@kernel.org, lenb@kernel.org, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com,
-        sboyd@kernel.org, daniel.lezcano@linaro.org, lpieralisi@kernel.org,
-        sudeep.holla@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, anup@brainfault.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        jacob.jun.pan@linux.intel.com, Arnd Bergmann <arnd@arndb.de>,
-        yury.norov@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, rostedt@goodmis.org, pmladek@suse.com,
-        senozhatsky@chromium.org, john.ogness@linutronix.de,
-        frederic@kernel.org, quic_neeraju@quicinc.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com, joel@joelfernandes.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, jpoimboe@kernel.org,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-perf-users@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-xtensa@linux-xtensa.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arch@vger.kernel.org,
-        rcu@vger.kernel.org, rh0@fb.com
-Subject: Re: [PATCH 04/36] cpuidle,intel_idle: Fix CPUIDLE_FLAG_IRQ_ENABLE
-Message-ID: <20220728172053.GA3607379@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20220608142723.103523089@infradead.org>
- <20220608144516.172460444@infradead.org>
- <20220725194306.GA14746@lespinasse.org>
+        with ESMTP id S230007AbiG1SdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 14:33:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7811971BC4
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 11:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659033186;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=AnwrS3QG5lQ/HFybxQGG7GTUMb3M7fOrNMLIdEswKn0=;
+        b=QIsezi2fBxAlCLsF5pdOgOqaHbNcF1+0acQZP/hQ2CfDZhRelCytYyiSyiTX2S/+LZiqNy
+        8dYKRL2Xp9AJshbxdQcebFlyxKSaQ8V35BV9DEmPxChwAXSW/dxQAo5adp7kk2rq7wk3kG
+        LHu6NpVl9iPKqMCw+JIFkYRNksQoamY=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-101-BAQKWy74PCiQ3bP_pQldWg-1; Thu, 28 Jul 2022 14:33:05 -0400
+X-MC-Unique: BAQKWy74PCiQ3bP_pQldWg-1
+Received: by mail-ed1-f69.google.com with SMTP id z1-20020a05640235c100b0043bca7d9b3eso1580070edc.5
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 11:33:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=AnwrS3QG5lQ/HFybxQGG7GTUMb3M7fOrNMLIdEswKn0=;
+        b=zgnyhrdODQQHgPt6R+iERkwZtiqT9iDADzNLAgFqVI1el/I5QLmdLX4II0HAlFjy9Z
+         iinHeJi9AYRtynaeWAlrb6XV+b4KxY8p5cmQg26MSymwSnz/5WPRJDXCTwMOLuu05N+b
+         1v+uqx8/mGWJScxLzwazRuHVY3ApppIM2qajFuJiM0XoHUr5lx7MHZWexKfQO3IrSYIE
+         txzfZHfsQ2ULEal95qSQmc/lXHPF3elaQdVHNutq+Ye4Ysz0JRQYQWyHfoNuU6JxDhmo
+         lqLwExAhpTIuJiBK36S0gpKVt7W6JUyTJuQx6YWmGsg7NDzZ4A9w6mW0QOVKd6TGvv6h
+         rQ/w==
+X-Gm-Message-State: AJIora9prcz5vHtC2CPXTRQEYgb86Dx9HaSUJNYlON/pPD48NhTCSusT
+        YkAIBpMpps2Pa47z6UZAkw5c5uO6uC/Ce+X2mHXtoYmxpVySOjRiwXCPU59J8lyi/z/ggfpSJuk
+        NuXo/JqFYHZkdr5/MzC7g
+X-Received: by 2002:a05:6402:64c:b0:43c:ea8e:85d6 with SMTP id u12-20020a056402064c00b0043cea8e85d6mr228287edx.269.1659033183293;
+        Thu, 28 Jul 2022 11:33:03 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1v6jMX+dL/aR+KCCQhisVrXzLNFfAbYhLOElpzO/t39tU0Nz9HTKclrOheDtnessZNd6m87uQ==
+X-Received: by 2002:a05:6402:64c:b0:43c:ea8e:85d6 with SMTP id u12-20020a056402064c00b0043cea8e85d6mr228236edx.269.1659033182840;
+        Thu, 28 Jul 2022 11:33:02 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id sy13-20020a1709076f0d00b00722d5b26ecesm670162ejc.205.2022.07.28.11.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Jul 2022 11:33:02 -0700 (PDT)
+Message-ID: <5f0b98a5-1929-a78e-4d44-0bb2aec18b5a@redhat.com>
+Date:   Thu, 28 Jul 2022 20:33:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220725194306.GA14746@lespinasse.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] platform/x86: pmc_atom: Add DMI quirk for Lex 3I380A/CW
+ boards
+Content-Language: en-US
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     andriy.shevchenko@linux.intel.com, carlo@endlessm.com,
+        davem@davemloft.net, hkallweit1@gmail.com, js@sig21.net,
+        linux-clk@vger.kernel.org, linux-wireless@vger.kernel.org,
+        matwey.kornilov@gmail.com, mturquette@baylibre.com,
+        netdev@vger.kernel.org, pierre-louis.bossart@linux.intel.com,
+        sboyd@kernel.org, markgross@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        paul.gortmaker@windriver.com, stable@vger.kernel.org
+References: <20220727153232.13359-1-matwey@sai.msu.ru>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220727153232.13359-1-matwey@sai.msu.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 25, 2022 at 12:43:06PM -0700, Michel Lespinasse wrote:
-> On Wed, Jun 08, 2022 at 04:27:27PM +0200, Peter Zijlstra wrote:
-> > Commit c227233ad64c ("intel_idle: enable interrupts before C1 on
-> > Xeons") wrecked intel_idle in two ways:
-> > 
-> >  - must not have tracing in idle functions
-> >  - must return with IRQs disabled
-> > 
-> > Additionally, it added a branch for no good reason.
-> > 
-> > Fixes: c227233ad64c ("intel_idle: enable interrupts before C1 on Xeons")
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Hi,
+
+On 7/27/22 17:32, Matwey V. Kornilov wrote:
+> Lex 3I380A/CW (Atom E3845) motherboards are equipped with dual Intel I211
+> based 1Gbps copper ethernet:
 > 
-> After this change was introduced, I am seeing "WARNING: suspicious RCU
-> usage" when booting a kernel with debug options compiled in. Please
-> see the attached dmesg output. The issue starts with commit 32d4fd5751ea
-> and is still present in v5.19-rc8.
+>      http://www.lex.com.tw/products/pdf/3I380A&3I380CW.pdf
 > 
-> I'm not sure, is this too late to fix or revert in v5.19 final ?
+> This patch is to fix the issue with broken "LAN2" port. Before the
+> patch, only one ethernet port is initialized:
+> 
+>      igb 0000:01:00.0: added PHC on eth0
+>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+>      igb: probe of 0000:02:00.0 failed with error -2
+> 
+> With this patch, both ethernet ports are available:
+> 
+>      igb 0000:01:00.0: added PHC on eth0
+>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
+>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
+>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+>      igb 0000:02:00.0: added PHC on eth1
+>      igb 0000:02:00.0: Intel(R) Gigabit Ethernet Network Connection
+>      igb 0000:02:00.0: eth1: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e5
+>      igb 0000:02:00.0: eth1: PBA No: FFFFFF-0FF
+>      igb 0000:02:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
+> 
+> The issue was observed at 3I380A board with BIOS version "A4 01/15/2016"
+> and 3I380CW board with BIOS version "A3 09/29/2014".
+> 
+> Reference: https://lore.kernel.org/netdev/08c744e6-385b-8fcf-ecdf-1292b5869f94@redhat.com/
+> Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> Cc: <stable@vger.kernel.org> # v4.19+
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
 
-I finally got a chance to take a quick look at this.
 
-The rcu_eqs_exit() function is making a lockdep complaint about
-being invoked with interrupts enabled.  This function is called from
-rcu_idle_exit(), which is an expected code path from cpuidle_enter_state()
-via its call to rcu_idle_exit().  Except that rcu_idle_exit() disables
-interrupts before invoking rcu_eqs_exit().
+Thank you for the patch.
 
-The only other call to rcu_idle_exit() does not disable interrupts,
-but it is via rcu_user_exit(), which would be a very odd choice for
-cpuidle_enter_state().
+The last week I have received 2 different patches adding
+a total of 3 new "Lex BayTrail" entries to critclk_systems[]
+on top of the existing 2.
 
-It seems unlikely, but it might be that it is the use of local_irq_save()
-instead of raw_local_irq_save() within rcu_idle_exit() that is causing
-the trouble.  If this is the case, then the commit shown below would
-help.  Note that this commit removes the warning from lockdep, so it
-is necessary to build the kernel with CONFIG_RCU_EQS_DEBUG=y to enable
-equivalent debugging.
+Looking at: https://www.lex.com.tw/products/embedded-ipc-board/
+we can see that Lex BayTrail makes many embedded boards with
+multiple ethernet boards and none of their products are battery
+powered so we don't need to worry (too much) about power consumption
+when suspended.
 
-Could you please try your test with the -rce commit shown below applied?
+So instead of adding 3 new entries I've written a patch to
+simply disable the turning off of the clocks on all
+systems which have "Lex BayTrail" as their DMI sys_vendor:
 
-							Thanx, Paul
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?h=review-hans&id=c9d959fc32a5f9312282817052d8986614f2dc08
 
-------------------------------------------------------------------------
+I've added a Reported-by tag to give you credit for the work
+you have done on this.
 
-commit ed4ae5eff4b38797607cbdd80da394149110fb37
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Tue May 17 21:00:04 2022 -0700
+I will send this alternative fix to Linus as part of
+the other pdx86 patches for 5.21.
 
-    rcu: Apply noinstr to rcu_idle_enter() and rcu_idle_exit()
-    
-    This commit applies the "noinstr" tag to the rcu_idle_enter() and
-    rcu_idle_exit() functions, which are invoked from portions of the idle
-    loop that cannot be instrumented.  These tags require reworking the
-    rcu_eqs_enter() and rcu_eqs_exit() functions that these two functions
-    invoke in order to cause them to use normal assertions rather than
-    lockdep.  In addition, within rcu_idle_exit(), the raw versions of
-    local_irq_save() and local_irq_restore() are used, again to avoid issues
-    with lockdep in uninstrumented code.
-    
-    This patch is based in part on an earlier patch by Jiri Olsa, discussions
-    with Peter Zijlstra and Frederic Weisbecker, earlier changes by Thomas
-    Gleixner, and off-list discussions with Yonghong Song.
-    
-    Link: https://lore.kernel.org/lkml/20220515203653.4039075-1-jolsa@kernel.org/
-    Reported-by: Jiri Olsa <jolsa@kernel.org>
-    Reported-by: Alexei Starovoitov <ast@kernel.org>
-    Reported-by: Andrii Nakryiko <andrii@kernel.org>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Reviewed-by: Yonghong Song <yhs@fb.com>
+Regards,
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index c25ba442044a6..9a5edab5558c9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -631,8 +631,8 @@ static noinstr void rcu_eqs_enter(bool user)
- 		return;
- 	}
- 
--	lockdep_assert_irqs_disabled();
- 	instrumentation_begin();
-+	lockdep_assert_irqs_disabled();
- 	trace_rcu_dyntick(TPS("Start"), rdp->dynticks_nesting, 0, atomic_read(&rdp->dynticks));
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	rcu_preempt_deferred_qs(current);
-@@ -659,9 +659,9 @@ static noinstr void rcu_eqs_enter(bool user)
-  * If you add or remove a call to rcu_idle_enter(), be sure to test with
-  * CONFIG_RCU_EQS_DEBUG=y.
-  */
--void rcu_idle_enter(void)
-+void noinstr rcu_idle_enter(void)
- {
--	lockdep_assert_irqs_disabled();
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
- 	rcu_eqs_enter(false);
- }
- EXPORT_SYMBOL_GPL(rcu_idle_enter);
-@@ -861,7 +861,7 @@ static void noinstr rcu_eqs_exit(bool user)
- 	struct rcu_data *rdp;
- 	long oldval;
- 
--	lockdep_assert_irqs_disabled();
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !raw_irqs_disabled());
- 	rdp = this_cpu_ptr(&rcu_data);
- 	oldval = rdp->dynticks_nesting;
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && oldval < 0);
-@@ -896,13 +896,13 @@ static void noinstr rcu_eqs_exit(bool user)
-  * If you add or remove a call to rcu_idle_exit(), be sure to test with
-  * CONFIG_RCU_EQS_DEBUG=y.
-  */
--void rcu_idle_exit(void)
-+void noinstr rcu_idle_exit(void)
- {
- 	unsigned long flags;
- 
--	local_irq_save(flags);
-+	raw_local_irq_save(flags);
- 	rcu_eqs_exit(false);
--	local_irq_restore(flags);
-+	raw_local_irq_restore(flags);
- }
- EXPORT_SYMBOL_GPL(rcu_idle_exit);
- 
+Hans
+
+
+
+
+> ---
+>  drivers/platform/x86/pmc_atom.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+> index b8b1ed1406de..5dc82667907b 100644
+> --- a/drivers/platform/x86/pmc_atom.c
+> +++ b/drivers/platform/x86/pmc_atom.c
+> @@ -388,6 +388,24 @@ static const struct dmi_system_id critclk_systems[] = {
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
+>  		},
+>  	},
+> +	{
+> +		/* pmc_plt_clk* - are used for ethernet controllers */
+> +		.ident = "Lex 3I380A",
+> +		.callback = dmi_callback,
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "3I380A"),
+> +		},
+> +	},
+> +	{
+> +		/* pmc_plt_clk* - are used for ethernet controllers */
+> +		.ident = "Lex 3I380CW",
+> +		.callback = dmi_callback,
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "3I380CW"),
+> +		},
+> +	},
+>  	{
+>  		/* pmc_plt_clk0 - 3 are used for the 4 ethernet controllers */
+>  		.ident = "Lex 3I380D",
+
