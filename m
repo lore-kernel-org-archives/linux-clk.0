@@ -2,65 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B98C04A68
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 09:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921F8C19F29
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 09:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235398AbiG1JHp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 05:07:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47970 "EHLO
+        id S235577AbiG1Jf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 05:35:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234498AbiG1JHo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 05:07:44 -0400
-Received: from mail.nfschina.com (unknown [IPv6:2400:dd01:100f:2:72e2:84ff:fe10:5f45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 50524655A4;
-        Thu, 28 Jul 2022 02:07:43 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 7A40C1E80D72;
-        Thu, 28 Jul 2022 17:07:43 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MdfWvtsK_BEc; Thu, 28 Jul 2022 17:07:40 +0800 (CST)
-Received: from localhost.localdomain.localdomain (unknown [219.141.250.2])
-        (Authenticated sender: xupengfei@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 716AA1E80CF5;
-        Thu, 28 Jul 2022 17:07:40 +0800 (CST)
-From:   XU pengfei <xupengfei@nfschina.com>
-To:     abel.vesa@linaro.org
-Cc:     Kernel@nfschina.com, agross@kernel.org, bjorn.andersson@linaro.org,
-        konrad.dybcio@somainline.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, xupengfei@nfschina.com
-Subject: [PATCH v2] clk/qcom/gcc-sm6350: Remove unnecessary semicolon
-Date:   Thu, 28 Jul 2022 17:07:20 +0800
-Message-Id: <20220728090719.3056-1-xupengfei@nfschina.com>
-X-Mailer: git-send-email 2.18.2
-In-Reply-To: <Yt5FAJiEv0WWuDNV@linaro.org>
-References: <Yt5FAJiEv0WWuDNV@linaro.org>
+        with ESMTP id S235551AbiG1Jf1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 05:35:27 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E547658B43
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:35:24 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so2254273wme.0
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=references:user-agent:from:to:subject:date:in-reply-to:message-id
+         :mime-version;
+        bh=k3WJMzc4VlzWe028CTMpp0rc55xqANnpObGj9ASfF4g=;
+        b=kOiWRnnN6mtieKOLjkH8T/0NvwhYzh0u+fsDATST0slwNj6In1/nzfpCUEkvXm7Pyk
+         O/2OKtZs1s4n4YFLLn78mYDpEhfEGHm62+fkQZWOyUz/SEbcaUnE9VKWANHVfee0vKD+
+         QQjzOWZVkRGBmbP+ld5BkAyuZbQ/CaVT+aAvvbFHaNer0Hr8ncc99WZ3ua5goVCC6Ahw
+         XG+RS0KBxgVyH7uiruCjp6x3+yowOOT+5dFJZtNdB5qeEcDKQLfrMMlq4WQ5CUxQUJte
+         Y7aQe6ROKacO/PpnXLfb8LmfCkEGVkvsb1YrN9d9+qwOmZeKKUz3Mu43NYu27HJBzICF
+         QTlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:references:user-agent:from:to:subject:date
+         :in-reply-to:message-id:mime-version;
+        bh=k3WJMzc4VlzWe028CTMpp0rc55xqANnpObGj9ASfF4g=;
+        b=W7/q+L5rISLix61XTPCbQ4TMR3RGJRINvgv30mxog+199uH/QDkye4GIDrSHFvrLkz
+         l/vnVr3Vtfe3AK4ukiswii2T3DTlwhV2sT7l7bRQnVNcyX+1WI2LJAZa2L8QHbBe8Y+G
+         GF7+qW1MU8ct11pMjsPpuT17OuRBjnUp346Fp6eK1VyzQotq/jGxMW228AuN3dzUM7Pt
+         Ytzy8vKJJZNeQ8klMG8l92AbL5K1J3eMS/+ESHZqjeoU+zVbGp4L2ozhwl0Z04ukV71h
+         OTfucDN00EC3kiFcQlLuJ/gqJr4Lce3VDnK3499BH9X/fJcWg1QJqjPKiyS79BMX95c6
+         GBrg==
+X-Gm-Message-State: AJIora+Sa2ZBEZ3rkFx0QEs0EHztAdpjLI9KKzU2C+3Xx+mnbeivGF3e
+        wDBXm5QgOhkEj9Yl4R8/erjcTQ==
+X-Google-Smtp-Source: AGRyM1urGG1USTxB/ciyzDD0khYnDOQsI8Zs2PyCwuGAPjHdiKK1K1HzIvms+8txwfUegpyR48kRGg==
+X-Received: by 2002:a1c:2783:0:b0:3a2:fd82:bf46 with SMTP id n125-20020a1c2783000000b003a2fd82bf46mr5863699wmn.29.1659000923324;
+        Thu, 28 Jul 2022 02:35:23 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003a2e1883a27sm6126778wmq.18.2022.07.28.02.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Jul 2022 02:35:22 -0700 (PDT)
+References: <20220728054202.6981-1-yu.tu@amlogic.com>
+ <20220728054202.6981-2-yu.tu@amlogic.com>
+ <82e3fd36-df96-a555-4cea-47fabd26502b@linaro.org>
+ <1jv8rhfw8h.fsf@starbuckisacylon.baylibre.com>
+ <367cf98b-ef06-8f44-76c8-9099a1ec13dc@linaro.org>
+User-agent: mu4e 1.8.6; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: clk: meson: add S4 SoC clock
+ controller bindings
+Date:   Thu, 28 Jul 2022 11:09:52 +0200
+In-reply-to: <367cf98b-ef06-8f44-76c8-9099a1ec13dc@linaro.org>
+Message-ID: <1jmtctfuli.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove unnecessary semicolon after qcom_cc_really_probe call.
 
-Signed-off-by: XU pengfei <xupengfei@nfschina.com>
----
- drivers/clk/qcom/gcc-sm6350.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu 28 Jul 2022 at 11:02, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
-index a4f7fba70393..69412400efa4 100644
---- a/drivers/clk/qcom/gcc-sm6350.c
-+++ b/drivers/clk/qcom/gcc-sm6350.c
-@@ -2558,7 +2558,7 @@ static int gcc_sm6350_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);;
-+	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);
- }
- 
- static struct platform_driver gcc_sm6350_driver = {
--- 
-2.18.2
+> On 28/07/2022 10:50, Jerome Brunet wrote:
+>> 
+>> On Thu 28 Jul 2022 at 10:41, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+>> 
+>>> On 28/07/2022 07:42, Yu Tu wrote:
+[...]
+>>>> +/*
+>>>> + * CLKID index values
+>>>> + */
+>>>> +
+>>>> +#define CLKID_FIXED_PLL			1
+>>>> +#define CLKID_FCLK_DIV2			3
+>>>> +#define CLKID_FCLK_DIV3			5
+>>>> +#define CLKID_FCLK_DIV4			7
+>>>> +#define CLKID_FCLK_DIV5			9
+>>>> +#define CLKID_FCLK_DIV7			11
+>>>
+>>> Why these aren't continuous? IDs are expected to be incremented by 1.
+>>>
+>> 
+>> All clocks have IDs, it is one big table in the driver, but we are not exposing them all.
+>> For example, with composite 'mux / div / gate' assembly, we usually need
+>> only the leaf.
+>
+> I understand you do not expose them all, but that is not the reason to
+> increment ID by 2 or 3... Otherwise these are not IDs and you are not
+> expected to put register offsets into the bindings (you do not bindings
+> in such case).
+
+Why is it not an IDs if it not continuous in the bindings ?
+
+If there is technical reason, we'll probably end up exposing everything. It
+would not be a dramatic change. I asked for this over v1 because we have
+done that is the past and I think it makes sense.
+
+I'm happy to be convinced to do things differently. Just looking for the
+technical reason that require contiuous exposed IDs.
+
+The other IDs exists, but we do not expose them as bindings.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/meson/gxbb.h#n125
+
+>
+>
+>> Same has been done for the other AML controllers:
+>> For ex:
+>> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/gxbb-clkc.h
+>
+> This cannot be fixed now, but it is very poor argument. Like saying "we
+> had a bug in other driver, so we implemented the bug here as well".
+
+I agree, "done before" is not a good argument. I was trying to provide a
+better picutre. I'm just surprised to have this new requirement that IDs
+have to be incremented by 1 (in the bindings) and I'd like to understand
+why what we had done could be considered a bug now.
+
+For example the simple-reset driver compute the reset offset from the IDs:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/reset/reset-simple.c
+There might be holes in the IDs if not all bits have reset maps.
+I don't think that would be a bug either.
+
+>
+> Best regards,
+> Krzysztof
 
