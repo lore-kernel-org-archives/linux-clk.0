@@ -2,102 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB62C04A68
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 11:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD8DC04A68
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 11:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236609AbiG1LlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 07:41:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40560 "EHLO
+        id S237179AbiG1LuV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 07:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237291AbiG1Lk5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 07:40:57 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA435F6E
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:40:15 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id q18so1822079wrx.8
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:40:15 -0700 (PDT)
+        with ESMTP id S237134AbiG1LuU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 07:50:20 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56A1D132
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:50:16 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id a18-20020a05600c349200b003a30de68697so3250739wmq.0
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 04:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZTE4cnVobwmiqOUoS9ukGmjCOG+lX5jwP+r9zIdwDR4=;
-        b=POCt2LdXxGBz03FDFBw0TqGivbwIbMfy3yVn0vuquDPrOK51EiKmVXwPUuGsbI5Y3o
-         //9o2GyvPB+UJ9t5A7r1v4n3gMDLNDcECNpqAyNY9XuZ7I1adAmgT+eGie172lemzll2
-         VZTyqRdpKrDFrvuUYj7+NHwPUffQXOkyAAwOFklWw0mESAHY5n51/znIUcDHIAsWjjyB
-         CqYYW1aCrzDukJqTyi1PsZqhrW1Q22v8gceNYThdJhzKBpO3NmQf4w4mSHIlfx4A99i6
-         afRf9W0e12L+dHchYBiHfskWdktZwcuSivkE1yoCLKjKhPvhz1LhqcMuBpbTLqii+uP2
-         0Syw==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=references:user-agent:from:to:subject:date:in-reply-to:message-id
+         :mime-version;
+        bh=FxwqpjhD9/gLaQrnTT9TOXORIlpv5bjNu3/8g5til8A=;
+        b=nTEylWFWV5aRYXQnjm2kiRjVJlk7CEQjzrUBHIDJnxn+cY0Vj8Q7ezPN7FgIiJK/+v
+         ine2IGE+ebrioKCcdP9pPI+ICu9WtJvFA+PUXlNmr8SoGEJwVEgcyeHUlpHnXNjI/HmY
+         pLvlZNwoi1m0h5/WHucjBDABR1SPLS8arubysiloaSV92rt9yiaiMG3l9yCH5l/aQ3/9
+         s+IwJzB984E9vKSpdLwuxLICOc1sgE4UtWWOy3UrfagJPHpMHyDvMoK4x3Cyq1tORPeE
+         gbi0d45zdtr7iycIpE5AhCbM8wEKpE9OrycAhoQLkNBUjTUoAZMsEcibmKdyhO0fjDjX
+         21yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZTE4cnVobwmiqOUoS9ukGmjCOG+lX5jwP+r9zIdwDR4=;
-        b=cEpg09jnT13M0FsNTSBm3J4lQJ6ikWVTmjynSS9R6dg+FVoKQJ/BQ23oHxBJ8zLw+0
-         kJlnHAgD7xiP8TsOcO1ezjpmlwWpAsbypeYVzOD7PMVcHMsFUchG7FeX6rWy57aoVVnT
-         5daAPzorsk0qEz8iYMyMpTg6EgVt9GcxQYG94HCB8LLkyBDf9VAYMngKMahaAv9+qMFb
-         YsaNa2dDgE8lfMHi+qk0EbdML/ETc7gh9T/FQkQhjGceclHHwAvFrLB6BuOUr5xZL4p5
-         hSvyEPmAiFg50PV5SfULT16XDgB639Kx/AT7Y2plrXI4kmCG1IWCRLiYDGwTvbdI2C5l
-         p69Q==
-X-Gm-Message-State: AJIora+6B+xC58kAenITidJ5Z5LcnruU2iZJwy+b2be6TYfH2Bk41uNn
-        jK77co9j/p7m/qoZ+WAbpTurKQ==
-X-Google-Smtp-Source: AGRyM1vYKooOSjgWwIWNujjfVy6VuQq0Lw3mcwRtcB1YbS1NSaJR2CGc58Mg2l7pDrGhc3/H3W2OmQ==
-X-Received: by 2002:a05:6000:156e:b0:21d:c50a:7cdb with SMTP id 14-20020a056000156e00b0021dc50a7cdbmr17180485wrz.16.1659008413733;
-        Thu, 28 Jul 2022 04:40:13 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id r41-20020a05600c322900b003a2e89d1fb5sm4444116wmp.42.2022.07.28.04.40.12
+        h=x-gm-message-state:references:user-agent:from:to:subject:date
+         :in-reply-to:message-id:mime-version;
+        bh=FxwqpjhD9/gLaQrnTT9TOXORIlpv5bjNu3/8g5til8A=;
+        b=aKg014ZvQYqNCkF876HIBSp8OfnUD0C/LapEKqG4hYuV9G0kQxtWHGC85V11RnNfM0
+         xoJRq3Z6O2aHz/PoAWuDLYloQaghepfmLbj84rRx8pHFiSm45JlwDMJDXyUzsVcSPAma
+         UYYtBb/+56Yr4+66oI57063XaO32n7roikXp58Q/HEEaBDF54lq/TKWZycsLff1oVxZA
+         HSA8jsmfAv3NlKl/o8xKZqn5Ir1HHoSrka+i1S6QqgICANcfHOj/T9CMiOWJEfUlLI5g
+         GXyE1lTCavM8wWfMnZj6DWcBOYGIUPLP2CA9M5MHBZixkCXqqcSYUZUEokh7Ox01clol
+         hu2w==
+X-Gm-Message-State: AJIora9r/ms8u2RfshtpEF3qo8QD32GlPNf/gCiMnqzsONUTFuNTmmoN
+        /gJ03i8oUV4crsHVMDvxhGSkLWj6pfbw1Q==
+X-Google-Smtp-Source: AGRyM1v0j0TKqWnZsAUWLQ3B4oY6N7U+8YetS6WSCx/Q+1LpG7g7jTIsnd/U+8JWEBXprZeoB78iww==
+X-Received: by 2002:a7b:c453:0:b0:3a3:1c65:ff97 with SMTP id l19-20020a7bc453000000b003a31c65ff97mr6046013wmi.180.1659009015199;
+        Thu, 28 Jul 2022 04:50:15 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o5-20020a05600c510500b003a2d6c623f3sm5639135wms.19.2022.07.28.04.50.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 04:40:13 -0700 (PDT)
-Date:   Thu, 28 Jul 2022 14:40:11 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     XU pengfei <xupengfei@nfschina.com>
-Cc:     Kernel@nfschina.com, agross@kernel.org, bjorn.andersson@linaro.org,
-        konrad.dybcio@somainline.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Subject: Re: [PATCH v2] clk/qcom/gcc-sm6350: Remove unnecessary semicolon
-Message-ID: <20220728114011.2fztt7htj6ekwiz2@linaro.org>
-References: <Yt5FAJiEv0WWuDNV@linaro.org>
- <20220728090719.3056-1-xupengfei@nfschina.com>
+        Thu, 28 Jul 2022 04:50:14 -0700 (PDT)
+References: <20220728054202.6981-1-yu.tu@amlogic.com>
+ <20220728054202.6981-2-yu.tu@amlogic.com>
+ <82e3fd36-df96-a555-4cea-47fabd26502b@linaro.org>
+ <74cd833a-4773-eeb0-80aa-75ea1cdc093e@amlogic.com>
+ <39395257-703b-a5e9-17c3-80f79f67fdc7@linaro.org>
+ <ff582551-9661-4404-c00e-853bc60907cc@amlogic.com>
+User-agent: mu4e 1.8.6; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: clk: meson: add S4 SoC clock
+ controller bindings
+Date:   Thu, 28 Jul 2022 13:48:14 +0200
+In-reply-to: <ff582551-9661-4404-c00e-853bc60907cc@amlogic.com>
+Message-ID: <1jbkt9focq.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220728090719.3056-1-xupengfei@nfschina.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-07-28 17:07:20, XU pengfei wrote:
-> Remove unnecessary semicolon after qcom_cc_really_probe call.
+
+On Thu 28 Jul 2022 at 18:19, Yu Tu <yu.tu@amlogic.com> wrote:
+
+> On 2022/7/28 18:09, Krzysztof Kozlowski wrote:
+>> [ EXTERNAL EMAIL ]
+>> On 28/07/2022 12:05, Yu Tu wrote:
+>>> Hi Krzysztof,
+>>> 	Thanks for your reply.
+>>>
+>>> On 2022/7/28 16:41, Krzysztof Kozlowski wrote:
+>>>> [ EXTERNAL EMAIL ]
+>>>>
+>>>> On 28/07/2022 07:42, Yu Tu wrote:
+>>>>> Add new clock controller compatible and dt-bindings header for the
+>>>>> Everything-Else domain of the S4 SoC.
+>>>>>
+>>>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>>>>
+>>>>
+>>>>
+>>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>>> index c1abc53f9e91..f872d0c0c253 100644
+>>>>> --- a/MAINTAINERS
+>>>>> +++ b/MAINTAINERS
+>>>>> @@ -1775,6 +1775,7 @@ F:	Documentation/devicetree/bindings/clock/amlogic*
+>>>>>    F:	drivers/clk/meson/
+>>>>>    F:	include/dt-bindings/clock/gxbb*
+>>>>>    F:	include/dt-bindings/clock/meson*
+>>>>> +F:	include/dt-bindings/clock/s4-clkc.h
+>>>>>       ARM/Amlogic Meson SoC Crypto Drivers
+>>>>>    M:	Corentin Labbe <clabbe@baylibre.com>
+>>>>> diff --git a/include/dt-bindings/clock/s4-clkc.h b/include/dt-bindings/clock/s4-clkc.h
+>>>>> new file mode 100644
+>>>>> index 000000000000..b686c8877419
+>>>>> --- /dev/null
+>>>>> +++ b/include/dt-bindings/clock/s4-clkc.h
+>>>>
+>>>> Filename with vendor prefix, so:
+>>>> amlogic,s4-clkc.h
+>>> It's fine with me. It's mainly Jerome's opinion.
+>> To clarify: I understand such naming might bring inconsistency, but we
+>> want to bring some order in the bindings directories. They keep growing
+>> and at some point the model names might start conflicting.
+> If Jerome agrees, I will change it according to your opinion and make
+> another edition.
+
+I'm aligned with Krzysztof on this. Please add the vendor prefix.
+
+It was mistake to omit the vendor prefix. Unfortunately, I don't think
+we can fix the old bindings now.
+
 >
-> Signed-off-by: XU pengfei <xupengfei@nfschina.com>
-> ---
+>> 
+>> Best regards,
+>> Krzysztof
+>> .
 
-Thanks for this new version, but there are still some issues with it.
-
-First of, don't use slashes in subject. Use semicolons instead.
-Have a look at how other commits look like by running:
-
-git log --oneline drivers/clk/qcom/
-
-Also, do not send subsquent versions of a patch as a reply to old ones.
-
-
->  drivers/clk/qcom/gcc-sm6350.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
-> index a4f7fba70393..69412400efa4 100644
-> --- a/drivers/clk/qcom/gcc-sm6350.c
-> +++ b/drivers/clk/qcom/gcc-sm6350.c
-> @@ -2558,7 +2558,7 @@ static int gcc_sm6350_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->
-> -	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);;
-> +	return qcom_cc_really_probe(pdev, &gcc_sm6350_desc, regmap);
->  }
->
->  static struct platform_driver gcc_sm6350_driver = {
-> --
-> 2.18.2
->
