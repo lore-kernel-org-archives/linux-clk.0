@@ -2,111 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45063C04A68
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Jul 2022 23:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6585C19F29
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 00:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbiG0XrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Jul 2022 19:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38520 "EHLO
+        id S234253AbiG1Ab7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Jul 2022 20:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229551AbiG0XrU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 19:47:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515492A244;
-        Wed, 27 Jul 2022 16:47:20 -0700 (PDT)
+        with ESMTP id S229505AbiG1Ab6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jul 2022 20:31:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81EE54CA0;
+        Wed, 27 Jul 2022 17:31:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EAAF761736;
-        Wed, 27 Jul 2022 23:47:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501BFC433D6;
-        Wed, 27 Jul 2022 23:47:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 75B23B8229F;
+        Thu, 28 Jul 2022 00:31:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D28C433D6;
+        Thu, 28 Jul 2022 00:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1658965639;
-        bh=lbu5zPdYF9W+kJoFAZzKphWhxdbHEfKvdS1DNBnOYnI=;
+        s=k20201202; t=1658968315;
+        bh=cgMax9nf9qW48JMtAkUoIyip26M7Bpa8V5h47PbKfC4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=R/x9nvQSQSU1hdiddXhKn5BkYFHBFZ4RTZ8QlBUzryOuUJ2CPL03lx8qdcXdjin4t
-         44DD45N6nP9ooPjHjsgP1mZqmcfreULSW3tmdfKgoqnJ4qW04M4fHXTeYYfucf+7O2
-         IGojEBrHPpCJ7eKuLE5kAgQ/DbkkubgxXDb3Otlhbnecw8AUxbs+ERhvv3DqWMS81E
-         Tu92L//5zU4Vus7kEHlg3Yl5fwCM0Cz8Uptdzq3u7JZ4dCKalChJkPLN1+T9B6kHfy
-         0KPW+VAIxUi9TD98Ig9G9b9IoQCaYQkJVmd1Rqc1ENDBkS0t7RjtxiC8EQKRBPxft6
-         ahlGhhIt13ApA==
+        b=nlqaAET4ci75hpEpVFTfRPIEF2htScl2LXIAlqXintsUaUKetcCiPAzb42chVmnkB
+         wKr9EwczFt7JxVVho5QiYakPC+GtoRtP4t0rfUVwGo9Fslccl0m+4xx7uQrCsgmCTm
+         DO7IySLE7/4lrN2Wbug+uNmq4hEj2qUCKYShnJduTcyRX+nB26mLun1a4MxFjOqyJ1
+         f2wI2hMWzsu0AaZVl7XYyzu8ulkz9VwMj5klckTi/1Y0zHSSkpKf/rEdKtDtWEXpkd
+         VpwhUErr0IIXtuOyfLAJvhkyLkJGvvPVMm6yRSH/RtCPQnAFIrj9KScMWnH2Stkk5W
+         Rj4PZYLvujSxA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220719183725.2605141-1-jernej.skrabec@gmail.com>
-References: <20220719183725.2605141-1-jernej.skrabec@gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: Fix H6 RTC clock definition
+In-Reply-To: <20220714203822.186448-1-marijn.suijten@somainline.org>
+References: <20220714203822.186448-1-marijn.suijten@somainline.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sdm660: Use floor ops for SDCC1 clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, andre.przywara@arm.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-To:     Jernej Skrabec <jernej.skrabec@gmail.com>, samuel@sholland.org,
-        wens@csie.org
-Date:   Wed, 27 Jul 2022 16:47:17 -0700
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Craig Tatlor <ctatlor97@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        phone-devel@vger.kernel.org
+Date:   Wed, 27 Jul 2022 17:31:53 -0700
 User-Agent: alot/0.10
-Message-Id: <20220727234719.501BFC433D6@smtp.kernel.org>
+Message-Id: <20220728003155.22D28C433D6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jernej Skrabec (2022-07-19 11:37:25)
-> While RTC clock was added in H616 ccu_common list, it was not in H6
-> list. That caused invalid pointer dereference like this:
+Quoting Marijn Suijten (2022-07-14 13:38:22)
+> In commit 3f905469c8ce ("clk: qcom: gcc: Use floor ops for SDCC clocks")
+> floor ops were applied to SDCC2 only, but flooring is also required on
+> the SDCC1 apps clock which is used by the eMMC card on Sony's Nile
+> platform, and otherwise result in the typicial "Card appears
+> overclocked" warnings observed on many other platforms before:
 >=20
-> Unable to handle kernel NULL pointer dereference at virtual address 00000=
-0000000020c
-> Mem abort info:
->   ESR =3D 0x96000004
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x04: level 0 translation fault
-> Data abort info:
->   ISV =3D 0, ISS =3D 0x00000004
->   CM =3D 0, WnR =3D 0
-> user pgtable: 4k pages, 48-bit VAs, pgdp=3D000000004d574000
-> [000000000000020c] pgd=3D0000000000000000, p4d=3D0000000000000000
-> Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> CPU: 3 PID: 339 Comm: cat Tainted: G    B             5.18.0-rc1+ #1352
-> Hardware name: Tanix TX6 (DT)
-> pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> pc : ccu_gate_is_enabled+0x48/0x74
-> lr : ccu_gate_is_enabled+0x40/0x74
-> sp : ffff80000c0b76d0
-> x29: ffff80000c0b76d0 x28: 00000000016e3600 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000002 x24: ffff00000952fe08
-> x23: ffff800009611400 x22: ffff00000952fe79 x21: 0000000000000000
-> x20: 0000000000000001 x19: ffff80000aad6f08 x18: 0000000000000000
-> x17: 2d2d2d2d2d2d2d2d x16: 2d2d2d2d2d2d2d2d x15: 2d2d2d2d2d2d2d2d
-> x14: 0000000000000000 x13: 00000000f2f2f2f2 x12: ffff700001816e89
-> x11: 1ffff00001816e88 x10: ffff700001816e88 x9 : dfff800000000000
-> x8 : ffff80000c0b7447 x7 : 0000000000000001 x6 : ffff700001816e88
-> x5 : ffff80000c0b7440 x4 : 0000000000000001 x3 : ffff800008935c50
-> x2 : dfff800000000000 x1 : 0000000000000000 x0 : 000000000000020c
-> Call trace:
->  ccu_gate_is_enabled+0x48/0x74
->  clk_core_is_enabled+0x7c/0x1c0
->  clk_summary_show_subtree+0x1dc/0x334
->  clk_summary_show_subtree+0x250/0x334
->  clk_summary_show_subtree+0x250/0x334
->  clk_summary_show_subtree+0x250/0x334
->  clk_summary_show_subtree+0x250/0x334
->  clk_summary_show+0x90/0xdc
->  seq_read_iter+0x248/0x6d4
->  seq_read+0x17c/0x1fc
->  full_proxy_read+0x90/0xf0
->  vfs_read+0xdc/0x28c
->  ksys_read+0xc8/0x174
->  __arm64_sys_read+0x44/0x5c
->  invoke_syscall+0x60/0x190
->  el0_svc_common.constprop.0+0x7c/0x160
->  do_el0_svc+0x38/0xa0
->  el0_svc+0x68/0x160
->  el0t_64_sync_handler+0x10c/0x140
->  el0t_64_sync+0x18c/0x190
-> Code: d1006260 97e5c981 785e8260 8b0002a0 (b9400000)
-> ---[ end trace 0000000000000000 ]---
+>     mmc0: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
+>     mmc0: Card appears overclocked; req 52000000 Hz, actual 100000000 Hz
+>     mmc0: Card appears overclocked; req 104000000 Hz, actual 192000000 Hz
+>=20
+> Fixes: f2a76a2955c0 ("clk: qcom: Add Global Clock controller (GCC) driver=
+ for SDM660")
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
 
-Applied to clk-fixes
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
