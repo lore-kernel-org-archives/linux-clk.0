@@ -2,61 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921F8C19F29
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 09:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7A1C04A68
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 09:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235577AbiG1Jf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 05:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42448 "EHLO
+        id S235125AbiG1JsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 05:48:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235551AbiG1Jf1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 05:35:27 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E547658B43
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:35:24 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id v67-20020a1cac46000000b003a1888b9d36so2254273wme.0
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:35:24 -0700 (PDT)
+        with ESMTP id S234621AbiG1JsR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 05:48:17 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B89065D4D
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:48:16 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id t1so2040542lft.8
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 02:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:subject:date:in-reply-to:message-id
-         :mime-version;
-        bh=k3WJMzc4VlzWe028CTMpp0rc55xqANnpObGj9ASfF4g=;
-        b=kOiWRnnN6mtieKOLjkH8T/0NvwhYzh0u+fsDATST0slwNj6In1/nzfpCUEkvXm7Pyk
-         O/2OKtZs1s4n4YFLLn78mYDpEhfEGHm62+fkQZWOyUz/SEbcaUnE9VKWANHVfee0vKD+
-         QQjzOWZVkRGBmbP+ld5BkAyuZbQ/CaVT+aAvvbFHaNer0Hr8ncc99WZ3ua5goVCC6Ahw
-         XG+RS0KBxgVyH7uiruCjp6x3+yowOOT+5dFJZtNdB5qeEcDKQLfrMMlq4WQ5CUxQUJte
-         Y7aQe6ROKacO/PpnXLfb8LmfCkEGVkvsb1YrN9d9+qwOmZeKKUz3Mu43NYu27HJBzICF
-         QTlw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=DPAyrSv5Oh9I0JWv/cbh3M8iNlmpiJ+L3KUAI07k8nM=;
+        b=khcBZtlfNFfGUhTWR1nODMkOMfMe1YD6Zeye1trFQiFlQ5lXNAXloTmbqF82kXyCwm
+         TrO2qrn8Brdqcl2r7R+MlapuXQxHBbeQXqGrHr07QRxVfajM2YYEM0m0LQxCfNu5Hujp
+         0mGjHb+OzofD5rCCEzIPDqwPeQWAJXYFmaB7Z5L0YaN3+gXbBYl3+PpT9+e2g1NycHZs
+         OoV8LlvWkKoJr6SBIbjgcLJdfcXB+eqR9gsFX2bD/DBpTj/PoZPlqItVgfdmIPH7u6Je
+         zt+pKZsdjOz22679/7lEkBbqf6u2RgsRwuKHjkfRQIUuqXRadPPI0ST1SzBme1ezmfTw
+         vKIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=k3WJMzc4VlzWe028CTMpp0rc55xqANnpObGj9ASfF4g=;
-        b=W7/q+L5rISLix61XTPCbQ4TMR3RGJRINvgv30mxog+199uH/QDkye4GIDrSHFvrLkz
-         l/vnVr3Vtfe3AK4ukiswii2T3DTlwhV2sT7l7bRQnVNcyX+1WI2LJAZa2L8QHbBe8Y+G
-         GF7+qW1MU8ct11pMjsPpuT17OuRBjnUp346Fp6eK1VyzQotq/jGxMW228AuN3dzUM7Pt
-         Ytzy8vKJJZNeQ8klMG8l92AbL5K1J3eMS/+ESHZqjeoU+zVbGp4L2ozhwl0Z04ukV71h
-         OTfucDN00EC3kiFcQlLuJ/gqJr4Lce3VDnK3499BH9X/fJcWg1QJqjPKiyS79BMX95c6
-         GBrg==
-X-Gm-Message-State: AJIora+Sa2ZBEZ3rkFx0QEs0EHztAdpjLI9KKzU2C+3Xx+mnbeivGF3e
-        wDBXm5QgOhkEj9Yl4R8/erjcTQ==
-X-Google-Smtp-Source: AGRyM1urGG1USTxB/ciyzDD0khYnDOQsI8Zs2PyCwuGAPjHdiKK1K1HzIvms+8txwfUegpyR48kRGg==
-X-Received: by 2002:a1c:2783:0:b0:3a2:fd82:bf46 with SMTP id n125-20020a1c2783000000b003a2fd82bf46mr5863699wmn.29.1659000923324;
-        Thu, 28 Jul 2022 02:35:23 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003a2e1883a27sm6126778wmq.18.2022.07.28.02.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Jul 2022 02:35:22 -0700 (PDT)
-References: <20220728054202.6981-1-yu.tu@amlogic.com>
- <20220728054202.6981-2-yu.tu@amlogic.com>
- <82e3fd36-df96-a555-4cea-47fabd26502b@linaro.org>
- <1jv8rhfw8h.fsf@starbuckisacylon.baylibre.com>
- <367cf98b-ef06-8f44-76c8-9099a1ec13dc@linaro.org>
-User-agent: mu4e 1.8.6; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=DPAyrSv5Oh9I0JWv/cbh3M8iNlmpiJ+L3KUAI07k8nM=;
+        b=Sw2shrM6VU5YKua37Qqk6KzshSvz9QFmxzP3ULj7h7RcPZtiQz8oi5dpX9iMR24ihh
+         fhDs/jFFHrEyTNOrJMD1ou7FY/sk290JYgG1wGOLQG1i/NJN/yeuCiKYe3Km2wcgDP85
+         8xKaLnzPsYuiuInh+FPjXawHZg1gvKRU81TTIBD+CJ5I+fEP5eXMDzR2L27HwGEqiwuW
+         uNqyahhc3NF+dxZ4xtLbyQ6LuSvVv6fXqDI0XP40nAyUFJUctEJMsBguvZZNSLJ+1thd
+         oWZulcp5QF08Mw0ZJxHL6rYcQe5yP6z8PLp179mpVGQVd6bMv1i35/iRw7D15NhT5/sf
+         hf/A==
+X-Gm-Message-State: AJIora+Aod85B0NXLqRTY7D0I2C+Ga/MyVyuOEPt/71e+t99/exo2PHc
+        yMg5f0IOvCQidLX/C36+Yk3cV50JhBfH3g==
+X-Google-Smtp-Source: AGRyM1tcCDD/G+nBlrNp6d4l4wQUepusSGXteoykxFWtMJnaYlcJzDCpBuQD0aCBwcGy4p3FFgt/9w==
+X-Received: by 2002:a19:7606:0:b0:48a:74b4:8479 with SMTP id c6-20020a197606000000b0048a74b48479mr9159783lff.441.1659001694241;
+        Thu, 28 Jul 2022 02:48:14 -0700 (PDT)
+Received: from [192.168.3.197] (78-26-46-173.network.trollfjord.no. [78.26.46.173])
+        by smtp.gmail.com with ESMTPSA id p11-20020a2eb98b000000b0025e2e1d7c52sm55711ljp.44.2022.07.28.02.48.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Jul 2022 02:48:13 -0700 (PDT)
+Message-ID: <c088e01c-0714-82be-8347-6140daf56640@linaro.org>
+Date:   Thu, 28 Jul 2022 11:48:12 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH V2 1/3] dt-bindings: clk: meson: add S4 SoC clock
+ controller bindings
+Content-Language: en-US
+To:     Jerome Brunet <jbrunet@baylibre.com>, Yu Tu <yu.tu@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -65,82 +66,115 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH V2 1/3] dt-bindings: clk: meson: add S4 SoC clock
- controller bindings
-Date:   Thu, 28 Jul 2022 11:09:52 +0200
-In-reply-to: <367cf98b-ef06-8f44-76c8-9099a1ec13dc@linaro.org>
-Message-ID: <1jmtctfuli.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+References: <20220728054202.6981-1-yu.tu@amlogic.com>
+ <20220728054202.6981-2-yu.tu@amlogic.com>
+ <82e3fd36-df96-a555-4cea-47fabd26502b@linaro.org>
+ <1jv8rhfw8h.fsf@starbuckisacylon.baylibre.com>
+ <367cf98b-ef06-8f44-76c8-9099a1ec13dc@linaro.org>
+ <1jmtctfuli.fsf@starbuckisacylon.baylibre.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1jmtctfuli.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Thu 28 Jul 2022 at 11:02, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> On 28/07/2022 10:50, Jerome Brunet wrote:
->> 
->> On Thu 28 Jul 2022 at 10:41, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
->> 
->>> On 28/07/2022 07:42, Yu Tu wrote:
-[...]
->>>> +/*
->>>> + * CLKID index values
->>>> + */
->>>> +
->>>> +#define CLKID_FIXED_PLL			1
->>>> +#define CLKID_FCLK_DIV2			3
->>>> +#define CLKID_FCLK_DIV3			5
->>>> +#define CLKID_FCLK_DIV4			7
->>>> +#define CLKID_FCLK_DIV5			9
->>>> +#define CLKID_FCLK_DIV7			11
+On 28/07/2022 11:09, Jerome Brunet wrote:
+> 
+> On Thu 28 Jul 2022 at 11:02, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> 
+>> On 28/07/2022 10:50, Jerome Brunet wrote:
 >>>
->>> Why these aren't continuous? IDs are expected to be incremented by 1.
+>>> On Thu 28 Jul 2022 at 10:41, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 >>>
->> 
->> All clocks have IDs, it is one big table in the driver, but we are not exposing them all.
->> For example, with composite 'mux / div / gate' assembly, we usually need
->> only the leaf.
->
-> I understand you do not expose them all, but that is not the reason to
-> increment ID by 2 or 3... Otherwise these are not IDs and you are not
-> expected to put register offsets into the bindings (you do not bindings
-> in such case).
+>>>> On 28/07/2022 07:42, Yu Tu wrote:
+> [...]
+>>>>> +/*
+>>>>> + * CLKID index values
+>>>>> + */
+>>>>> +
+>>>>> +#define CLKID_FIXED_PLL			1
+>>>>> +#define CLKID_FCLK_DIV2			3
+>>>>> +#define CLKID_FCLK_DIV3			5
+>>>>> +#define CLKID_FCLK_DIV4			7
+>>>>> +#define CLKID_FCLK_DIV5			9
+>>>>> +#define CLKID_FCLK_DIV7			11
+>>>>
+>>>> Why these aren't continuous? IDs are expected to be incremented by 1.
+>>>>
+>>>
+>>> All clocks have IDs, it is one big table in the driver, but we are not exposing them all.
+>>> For example, with composite 'mux / div / gate' assembly, we usually need
+>>> only the leaf.
+>>
+>> I understand you do not expose them all, but that is not the reason to
+>> increment ID by 2 or 3... Otherwise these are not IDs and you are not
+>> expected to put register offsets into the bindings (you do not bindings
+>> in such case).
+> 
+> Why is it not an IDs if it not continuous in the bindings ?
+> 
+> If there is technical reason, we'll probably end up exposing everything. It
+> would not be a dramatic change. I asked for this over v1 because we have
+> done that is the past and I think it makes sense.
+> 
+> I'm happy to be convinced to do things differently. Just looking for the
+> technical reason that require contiuous exposed IDs.
+> 
+> The other IDs exists, but we do not expose them as bindings.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/meson/gxbb.h#n125
 
-Why is it not an IDs if it not continuous in the bindings ?
+https://lore.kernel.org/linux-devicetree/CAK8P3a1APzs74YTcZ=m43G3zrmwJZKcYSTvV5eDDQX-37UY7Tw@mail.gmail.com/
 
-If there is technical reason, we'll probably end up exposing everything. It
-would not be a dramatic change. I asked for this over v1 because we have
-done that is the past and I think it makes sense.
+https://lore.kernel.org/linux-devicetree/CAK8P3a0fDJQvGLEtG0fxLkG08Fh9V7LEMPsx4AaS+2Ldo_xWxw@mail.gmail.com/
 
-I'm happy to be convinced to do things differently. Just looking for the
-technical reason that require contiuous exposed IDs.
+https://lore.kernel.org/linux-devicetree/b60f5fd2-dc48-9375-da1c-ffcfe8292683@linaro.org/
 
-The other IDs exists, but we do not expose them as bindings.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/meson/gxbb.h#n125
+The IDs are abstract numbers, where the number does not matter because
+it is not tied to driver implementation or device programming model. The
+driver maps ID to respective clock.
 
->
->
->> Same has been done for the other AML controllers:
->> For ex:
->> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/gxbb-clkc.h
->
-> This cannot be fixed now, but it is very poor argument. Like saying "we
-> had a bug in other driver, so we implemented the bug here as well".
+Using some meaningful numbers as these IDs, means you tied bindings to
+your implementation and any change in implementation requires change in
+the bindings. This contradicts the idea of bindings.
 
-I agree, "done before" is not a good argument. I was trying to provide a
-better picutre. I'm just surprised to have this new requirement that IDs
-have to be incremented by 1 (in the bindings) and I'd like to understand
-why what we had done could be considered a bug now.
+> 
+>>
+>>
+>>> Same has been done for the other AML controllers:
+>>> For ex:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/dt-bindings/clock/gxbb-clkc.h
+>>
+>> This cannot be fixed now, but it is very poor argument. Like saying "we
+>> had a bug in other driver, so we implemented the bug here as well".
+> 
+> I agree, "done before" is not a good argument. I was trying to provide a
+> better picutre. I'm just surprised to have this new requirement that IDs
+> have to be incremented by 1 (in the bindings) and I'd like to understand
+> why what we had done could be considered a bug now.
 
-For example the simple-reset driver compute the reset offset from the IDs:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/reset/reset-simple.c
-There might be holes in the IDs if not all bits have reset maps.
-I don't think that would be a bug either.
+It was always, just no one ever enforced it. And almost all clock and
+reset providers follow it. There are just literally few exceptions.
 
->
-> Best regards,
-> Krzysztof
+> For example the simple-reset driver compute the reset offset from the IDs:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/reset/reset-simple.c
 
+This is one of the exceptions where it actually made sense, but I would
+argue it still contradicts the bindings. You have now binding which is
+tied to both Linux implementation and to device programming model.
+
+However fixing it would require creating huge mapping tables for each
+SoC, so obviously this exception is quite reasonable.
+
+Clock drivers require tables and translation anyway. Almost all clock
+drivers did it, so such exception is not justified.
+
+> There might be holes in the IDs if not all bits have reset maps.
+> I don't think that would be a bug either.
+
+Bug was of course highly exaggerated example. :)
+
+Best regards,
+Krzysztof
