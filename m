@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97413C25B0D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Jul 2022 00:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E994AC3F6B0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Jul 2022 00:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233305AbiG2AgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 20:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35132 "EHLO
+        id S233676AbiG2AgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 20:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233694AbiG2AgT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 20:36:19 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CDCC785B7
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 17:36:15 -0700 (PDT)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220729003614epoutp011e16fb5516ed68405246f4e8eae3c8d5~GJbV3ohUu0293402934epoutp01L
+        with ESMTP id S233707AbiG2AgV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 20:36:21 -0400
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DCCA77A6E
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 17:36:19 -0700 (PDT)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220729003614epoutp03bdf09440b7e3a8b6acc6bf5b0349b83f~GJbWOoEQl1156411564epoutp03B
         for <linux-clk@vger.kernel.org>; Fri, 29 Jul 2022 00:36:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220729003614epoutp011e16fb5516ed68405246f4e8eae3c8d5~GJbV3ohUu0293402934epoutp01L
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220729003614epoutp03bdf09440b7e3a8b6acc6bf5b0349b83f~GJbWOoEQl1156411564epoutp03B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
         s=mail20170921; t=1659054974;
-        bh=M7oogkQpztp5sjlSRj6N9GMYvr0b+Kxo7LymYzgVHL0=;
+        bh=/y6v2BIvfHn8DiE8LBKhSo+f6cx+IeKLxPebpXSG0Zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QRDBWkngdzPat8ZlTX03e01L6VwLaKORzhKrf8b7EQMa7MoHOps+35jaB0HZN3Q9G
-         kfTo0suSgTgKcifBjo37UYyxjp0J0sA0KXQiXHO/SJOwOuK07n0XOsPQd6UIUIVgnB
-         a+2RKTvmrg97TpzwHGY9XYEn58ReizYsvOb60TlI=
+        b=efF0sIwxjM7D5WIoGi/LhWKiBa2wlZIoxn6JH4EV2MrMAHVALc6Gode0vlcGbYLUi
+         h6jzf/qZQOKlzi96dhkkYPgIDBIX2+Mdj9kTt9ZA8zlgYVbe8BkTyRKLXjB6Q545RX
+         +Udw2WE3yk4WgK6FhcKWkZlakt1ln9hFywidbQEA=
 Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20220729003613epcas2p42b2a43dc9b5cb2166ecfc3cced25471e~GJbVS3dPy1916219162epcas2p43;
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220729003613epcas2p10ff6e39b02b15a0517101bd7d225d895~GJbVk4ejs2881228812epcas2p1b;
         Fri, 29 Jul 2022 00:36:13 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.102]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4Lv7qK0ylwz4x9QB; Fri, 29 Jul
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.97]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Lv7qK0qBqz4x9Q7; Fri, 29 Jul
         2022 00:36:13 +0000 (GMT)
 Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4E.78.09642.C7B23E26; Fri, 29 Jul 2022 09:36:13 +0900 (KST)
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.C1.09666.C7B23E26; Fri, 29 Jul 2022 09:36:13 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220729003612epcas2p466c8e3f2dda399d40a8f8b45edcc9552~GJbUa8YPw1916119161epcas2p4G;
+        epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220729003612epcas2p20729747ecb512eec2b7f8ed55a8bfac2~GJbUOuDMw2400324003epcas2p2Q;
         Fri, 29 Jul 2022 00:36:12 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220729003612epsmtrp28dc476716908699e994540b90bcfdc8d~GJbUZ1nXQ1035210352epsmtrp2c;
+        20220729003612epsmtrp250e6c90ff7919afdc7bb0298ba712a28~GJbUN4LC11035310353epsmtrp2Z;
         Fri, 29 Jul 2022 00:36:12 +0000 (GMT)
-X-AuditID: b6c32a47-5e1ff700000025aa-82-62e32b7c487f
+X-AuditID: b6c32a45-471ff700000025c2-24-62e32b7caa8b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.1B.08905.C7B23E26; Fri, 29 Jul 2022 09:36:12 +0900 (KST)
+        BA.1B.08905.C7B23E26; Fri, 29 Jul 2022 09:36:12 +0900 (KST)
 Received: from localhost.localdomain (unknown [10.229.9.51]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220729003612epsmtip28d8c4f574089dc7d5d2b77d05311dc89~GJbUF43Pc0075200752epsmtip2K;
+        20220729003612epsmtip2c719079d52d19c6ef707e51ca9d2f056~GJbT_QDlm0066700667epsmtip2N;
         Fri, 29 Jul 2022 00:36:12 +0000 (GMT)
 From:   Chanho Park <chanho61.park@samsung.com>
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -65,331 +65,108 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v2 5/6] clk: samsung: exynosautov9: add fsys0 clock support
-Date:   Fri, 29 Jul 2022 09:30:23 +0900
-Message-Id: <ae84d4a0487a5299076bfeef5732579f5207acf9.1659054220.git.chanho61.park@samsung.com>
+Subject: [PATCH v2 4/6] arm64: dts: exynosautov9: add fsys0/1 clock DT nodes
+Date:   Fri, 29 Jul 2022 09:30:22 +0900
+Message-Id: <50f8145bca30cf5c900359d0b78c1c617090e021.1659054220.git.chanho61.park@samsung.com>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <cover.1659054220.git.chanho61.park@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDJsWRmVeSWpSXmKPExsWy7bCmhW6t9uMkg6l3mSwezNvGZnF5v7bF
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHJsWRmVeSWpSXmKPExsWy7bCmhW6t9uMkg3kXmCwezNvGZnF5v7bF
         9S/PWS3mHznHatH34iGzxd7XW9ktNj2+xmrxseceq8WM8/uYLC6ecrVo3XuE3eLwm3ZWi3/X
         NrJYPO8Diq/a9YfRgd/j/Y1Wdo+ds+6ye2xa1cnmcefaHjaPzUvqPfq2rGL0+LxJLoA9Ktsm
         IzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hqJYWyxJxS
-        oFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5eaomVoYGBkSlQYUJ2xozt
-        u9kKvmZWfJx8nbWB8WBsFyMnh4SAiUTT+0usXYxcHEICOxgltrSuZIZwPjFKfFu7Gcr5xihx
-        b+ckVpiW753fmSASexklOh/cYYRwPjJKrDj9HKyKTUBXYsvzV2AJEYHHTBKHj7SxgTjMAm1M
-        EtOebQSrEhbwlui8soQdxGYRUJVo7d/DBGLzCsRLHJvyiBlin7zE9ZttYDangK1EV9N3Foga
-        QYmTM5+A2cxANc1bZ4MdKyGwlkNiyqQ1LBDNLhLrV+yFsoUlXh3fwg5hS0l8freXDcIullg6
-        6xMTRHMDo8Tlbb+gEsYSs561A/3AAbRBU2L9Ln0QU0JAWeLILai9fBIdh/+yQ4R5JTrahCAa
-        1SUObJ8OtVVWonvOZ1aIEg+JR2cKQcJCAhMYJW5PYpzAqDALyTOzkDwzC2HtAkbmVYxiqQXF
-        uempxUYFxvAoTs7P3cQITsZa7jsYZ7z9oHeIkYmD8RCjBAezkghvQvT9JCHelMTKqtSi/Pii
-        0pzU4kOMpsCgnsgsJZqcD8wHeSXxhiaWBiZmZobmRqYG5krivF4pGxKFBNITS1KzU1MLUotg
-        +pg4OKUamCrXsZtOqVHakLgq40dVSOkCjdCcqIX6Mq+//TA2PSFsorVT3GqKt/asjTzLVYO8
-        tf84JZzfo7Na/1nB9U9Jx5ZZfOGZwhK546DEMcZ5y87uMGbYtSeit+XLt39cvJ7LUpN2F6d0
-        7538/IH8ESO5m7+W1BiXRkbI3N7iVrBqVrz05lsNXM3fbz5nLtm8Z+2zVXvvme1IWxDwP7Bn
-        o6Bt2a2KX8V+9TwbbSodC+ybFvlpd+xeeH61Sxafwac37hZL+Xgdyh5oyEd4ltnLf2T5O11e
-        UObHp4P/QozOLjV8mLDlvMnXpLjeI1VeiWvWrDG98jeVce4krRuahppOawVcTKf3VvzM/r5u
-        ZeiW1XVVb5VYijMSDbWYi4oTAcPuMytPBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvG6N9uMkgx93hS0ezNvGZnF5v7bF
+        oFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BeYFecWJucWleul5eaomVoYGBkSlQYUJ2xomn
+        29gKPvJUzOjexNTAuIWri5GTQ0LAROLcpbWsXYxcHEICOxglTn28zgLhfGKUePd1JyOE841R
+        YtG2RmaYlvU/LrBDJPYySvzd+ZsJwvnIKHGgYSYbSBWbgK7EluevwNpFBB4zSRw+0sYG4jAL
+        tDFJTHu2kRWkSljAR+LIr06wuSwCqhI7390Hi/MKxEtcfvaVFWKfvMT1m21gNZwCthJdTd9Z
+        IGoEJU7OfAJmMwPVNG+dzQyyQEJgLYfExg/bGCGaXSTefDjMBmELS7w6voUdwpaS+PxuL1S8
+        WGLprE9MEM0NjBKXt/2CShhLzHrWDjSIA2iDpsT6XfogpoSAssSRW1B7+SQ6Dv9lhwjzSnS0
+        CUE0qksc2D6dBcKWleie8xnqFQ+J2wthoT2BUeLFv2fsExgVZiF5ZxaSd2YhLF7AyLyKUSy1
+        oDg3PbXYqMAQHsnJ+bmbGMEJWct1B+Pktx/0DjEycTAeYpTgYFYS4U2Ivp8kxJuSWFmVWpQf
+        X1Sak1p8iNEUGNgTmaVEk/OBOSGvJN7QxNLAxMzM0NzI1MBcSZzXK2VDopBAemJJanZqakFq
+        EUwfEwenVAOTmMRVr5vyH/uftIev+tv3Z45qrprb5ICq7Ys+XX7ucmHdq3s3Hq295JP0MMfz
+        eI/58hUWZv5t83b+dL2pahv4o3/HEv7Tu25cf3Ilb2bOLPf7P7fNV1Odar+86Y8n15ank+dx
+        Rt5g3/9KPGDWHv1X8bHq6/niWmJzJgaqp9Zwq2hWeIfPansoqHN3gVqK2eO2q7uva75dYROa
+        aZRnvCtQtp339Z+6urW5zXksmtXuZ3RDf/CwKv5ZfYmr790N11fPF8jlFjfe586arz3pSFa7
+        RedWu+gJb7+0GjoZL/DonRZvyzNXpP7Ino3TPu2OUi5Y3HH7Vs+kY6bKDPYezrI8DnNvZpzV
+        /FeqVDF17cKDSizFGYmGWsxFxYkAk1/GC1EEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvG6N9uMkg7vPuS0ezNvGZnF5v7bF
         9S/PWS3mHznHatH34iGzxd7XW9ktNj2+xmrxseceq8WM8/uYLC6ecrVo3XuE3eLwm3ZWi3/X
         NrJYPO8Diq/a9YfRgd/j/Y1Wdo+ds+6ye2xa1cnmcefaHjaPzUvqPfq2rGL0+LxJLoA9issm
-        JTUnsyy1SN8ugStjxvbdbAVfMys+Tr7O2sB4MLaLkZNDQsBE4nvnd6YuRi4OIYHdjBIXpnxl
-        g0jISjx7t4MdwhaWuN9yhBWi6D2jxIS/L1hAEmwCuhJbnr9iBEmICDxnkpiy4iCYwyzQxSRx
-        p+0TWLuwgLdE55UlYDaLgKpEa/8eJhCbVyBe4tiUR8wQK+Qlrt9sA7M5BWwlupq+g20QErCR
-        2LJsERtEvaDEyZlPwOLMQPXNW2czT2AUmIUkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc
-        4tK8dL3k/NxNjODI0dLcwbh91Qe9Q4xMHIyHGCU4mJVEeBOi7ycJ8aYkVlalFuXHF5XmpBYf
-        YpTmYFES573QdTJeSCA9sSQ1OzW1ILUIJsvEwSnVwGS2YtW9v+uWh11TPCy98P2l/61ibXXd
-        XfH7qot2MHpFPLYJ3MjF47deyyrFcXKvwN4P0i/luwUlelo3TTbPKLR6qPI3arO6+IJPbcfm
-        Ja9aIik897/3+bcx5YdvBukeTq3Yp1WuuOaDXVori/9Wkb4gCXYvk4xvdZ+PnNBYYHDPb5ld
-        1kf2b4/fzPCxT1XQXLy0aYFUQUb73A6xzxOmHTljsnXRgvOSHC/lwm9MclwiYnyeW2Olvuqd
-        L+vnT3946fE5dYOy+y5eB3/s1rsVMv/w3YcZ4lyX78/6M82f4fl1lmVihxd/YZ5jN2mNsMn9
-        j1NebplgsN4zOifpifrRvxp2Nv9W//y43y67QlRnhtMKJZbijERDLeai4kQAjyzuqQsDAAA=
-X-CMS-MailID: 20220729003612epcas2p466c8e3f2dda399d40a8f8b45edcc9552
+        JTUnsyy1SN8ugSvjxNNtbAUfeSpmdG9iamDcwtXFyMkhIWAisf7HBfYuRi4OIYHdjBIXj7Uw
+        QSRkJZ6928EOYQtL3G85wgpR9J5R4va2+WAJNgFdiS3PXzGCJEQEnjNJTFlxEMxhFuhikrjT
+        9gmsSljAR+LIr05mEJtFQFVi57v7rCA2r0C8xOVnX1khVshLXL/ZBlbDKWAr0dX0nQXEFhKw
+        kdiybBEbRL2gxMmZT8DizED1zVtnM09gFJiFJDULSWoBI9MqRsnUguLc9NxiwwLDvNRyveLE
+        3OLSvHS95PzcTYzgyNHS3MG4fdUHvUOMTByMhxglOJiVRHgTou8nCfGmJFZWpRblxxeV5qQW
+        H2KU5mBREue90HUyXkggPbEkNTs1tSC1CCbLxMEp1cCkeMayyUNHkH3b0RNa68/mMu860PVu
+        W8oJ8Tqha6aNPbX26S2V4WmNB+Krd19jLl/dfX7ZvG3WB6dp63hpy7GsbWz68+Xo4QbDq/P3
+        +ccmdsrMYtXfxCPf7NO1adKn+6qi95srMv76B2u1f/T0zGv9Ym9/iqsv/PSv9XNTD0k+y74s
+        vsb348pfderZmtemr2SMfdOeNulX7MEHnz2SIj8abll38Zrkz+97Fq/8c+XknZc+f51uNXw5
+        69j7TbRxzZSkvM5i4R1F9wX+G72XmRR71/vtpoJN6ToMy5mv3VI0T0xg27ej+Y3NtZtxBouS
+        37Vr/6ycGR2z9W69yja76EcyiqnP0l/8Oex03+G99KUwJZbijERDLeai4kQAXQ8S9AsDAAA=
+X-CMS-MailID: 20220729003612epcas2p20729747ecb512eec2b7f8ed55a8bfac2
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220729003612epcas2p466c8e3f2dda399d40a8f8b45edcc9552
+X-CMS-RootMailID: 20220729003612epcas2p20729747ecb512eec2b7f8ed55a8bfac2
 References: <cover.1659054220.git.chanho61.park@samsung.com>
-        <CGME20220729003612epcas2p466c8e3f2dda399d40a8f8b45edcc9552@epcas2p4.samsung.com>
+        <CGME20220729003612epcas2p20729747ecb512eec2b7f8ed55a8bfac2@epcas2p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CMU_FSYS0 block provides clocks for PCIe Gen3 1 x 4Lanes and 2 x 2
-Lanes.
+Add cmu_fsys0 and cmu_fsys1 for PCIe clocks and USB/MMC clocks
+respectively.
 
 Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- drivers/clk/samsung/clk-exynosautov9.c | 243 +++++++++++++++++++++++++
- 1 file changed, 243 insertions(+)
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 28 ++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-index d9e1f8e4a7b4..527a6837661e 100644
---- a/drivers/clk/samsung/clk-exynosautov9.c
-+++ b/drivers/clk/samsung/clk-exynosautov9.c
-@@ -1067,6 +1067,246 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
- 	.clk_name		= "dout_clkcmu_core_bus",
- };
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+index 2013718532f3..58b3b0c5d3fc 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+@@ -207,6 +207,34 @@ cmu_peric1: clock-controller@10800000 {
+ 				      "dout_clkcmu_peric1_ip";
+ 		};
  
-+/* ---- CMU_FSYS0 ---------------------------------------------------------- */
++		cmu_fsys0: clock-controller@17700000 {
++			compatible = "samsung,exynosautov9-cmu-fsys0";
++			reg = <0x17700000 0x8000>;
++			#clock-cells = <1>;
 +
-+/* Register Offset definitions for CMU_FSYS2 (0x17700000) */
-+#define PLL_CON0_MUX_CLKCMU_FSYS0_BUS_USER	0x0600
-+#define PLL_CON0_MUX_CLKCMU_FSYS0_PCIE_USER	0x0610
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_FSYS0_CMU_FSYS0_IPCLKPORT_PCLK	0x2000
++			clocks = <&xtcxo>,
++				 <&cmu_top DOUT_CLKCMU_FSYS0_BUS>,
++				 <&cmu_top DOUT_CLKCMU_FSYS0_PCIE>;
++			clock-names = "oscclk",
++				      "dout_clkcmu_fsys0_bus",
++				      "dout_clkcmu_fsys0_pcie";
++		};
 +
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_PHY_REFCLK_IN	0x2004
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_PHY_REFCLK_IN	0x2008
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_PHY_REFCLK_IN	0x200c
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_PHY_REFCLK_IN	0x2010
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_PHY_REFCLK_IN	0x2014
-+#define CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_PHY_REFCLK_IN	0x2018
++		cmu_fsys1: clock-controller@17040000 {
++			compatible = "samsung,exynosautov9-cmu-fsys1";
++			reg = <0x17040000 0x8000>;
++			#clock-cells = <1>;
 +
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_DBI_ACLK	0x205c
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_MSTR_ACLK	0x2060
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_SLV_ACLK	0x2064
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_DBI_ACLK	0x206c
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_MSTR_ACLK	0x2070
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_SLV_ACLK	0x2074
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_PIPE_CLK	0x207c
++			clocks = <&xtcxo>,
++				 <&cmu_top DOUT_CLKCMU_FSYS1_BUS>,
++				 <&cmu_top GOUT_CLKCMU_FSYS1_MMC_CARD>,
++				 <&cmu_top DOUT_CLKCMU_FSYS1_USBDRD>;
++			clock-names = "oscclk",
++				      "dout_clkcmu_fsys1_bus",
++				      "gout_clkcmu_fsys1_mmc_card",
++				      "dout_clkcmu_fsys1_usbdrd";
++		};
 +
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_DBI_ACLK	0x2084
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_MSTR_ACLK	0x2088
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_SLV_ACLK	0x208c
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_DBI_ACLK	0x2094
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_MSTR_ACLK	0x2098
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_SLV_ACLK	0x209c
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_PIPE_CLK	0x20a4
-+
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_DBI_ACLK		0x20ac
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_MSTR_ACLK	0x20b0
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_SLV_ACLK		0x20b4
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_DBI_ACLK		0x20bc
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_MSTR_ACLK	0x20c0
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_SLV_ACLK		0x20c4
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_PIPE_CLK		0x20cc
-+
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L0_CLK		0x20d4
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L1_CLK		0x20d8
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_4L_CLK		0x20dc
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L0_CLK		0x20e0
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L1_CLK		0x20e4
-+#define CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_4L_CLK		0x20e8
-+
-+
-+static const unsigned long fsys0_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_FSYS0_BUS_USER,
-+	PLL_CON0_MUX_CLKCMU_FSYS0_PCIE_USER,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_FSYS0_CMU_FSYS0_IPCLKPORT_PCLK,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_PHY_REFCLK_IN,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_PHY_REFCLK_IN,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_PHY_REFCLK_IN,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_PHY_REFCLK_IN,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_PHY_REFCLK_IN,
-+	CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_PHY_REFCLK_IN,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_PIPE_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_PIPE_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_DBI_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_MSTR_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_SLV_ACLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_PIPE_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L0_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L1_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_4L_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L0_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L1_CLK,
-+	CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_4L_CLK,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_FSYS0 */
-+PNAME(mout_fsys0_bus_user_p) = { "oscclk", "dout_clkcmu_fsys0_bus" };
-+PNAME(mout_fsys0_pcie_user_p) = { "oscclk", "dout_clkcmu_fsys0_pcie" };
-+
-+static const struct samsung_mux_clock fsys0_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_FSYS0_BUS_USER, "mout_fsys0_bus_user",
-+	    mout_fsys0_bus_user_p, PLL_CON0_MUX_CLKCMU_FSYS0_BUS_USER, 4, 1),
-+	MUX(CLK_MOUT_FSYS0_PCIE_USER, "mout_fsys0_pcie_user",
-+	    mout_fsys0_pcie_user_p, PLL_CON0_MUX_CLKCMU_FSYS0_PCIE_USER, 4, 1),
-+};
-+
-+static const struct samsung_gate_clock fsys0_gate_clks[] __initconst = {
-+	GATE(CLK_GOUT_FSYS0_BUS_PCLK, "gout_fsys0_bus_pclk",
-+	     "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_FSYS0_CMU_FSYS0_IPCLKPORT_PCLK,
-+	     21, CLK_IGNORE_UNUSED, 0),
-+
-+	/* Gen3 2L0 */
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_REFCLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x1_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_REFCLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x2_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x1_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x1_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x1_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X1_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x2_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x2_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l0_x2_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L0_X2_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3A_2L0_CLK,
-+	     "gout_fsys0_pcie_gen3a_2l0_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L0_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3B_2L0_CLK,
-+	     "gout_fsys0_pcie_gen3b_2l0_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L0_CLK,
-+	     21, 0, 0),
-+
-+	/* Gen3 2L1 */
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_REFCLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x1_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_REFCLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x2_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x1_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x1_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x1_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X1_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x2_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x2_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_2l1_x2_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_2L1_X2_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3A_2L1_CLK,
-+	     "gout_fsys0_pcie_gen3a_2l1_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_2L1_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3B_2L1_CLK,
-+	     "gout_fsys0_pcie_gen3b_2l1_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_2L1_CLK,
-+	     21, 0, 0),
-+
-+	/* Gen3 4L */
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_REFCLK,
-+	     "gout_fsys0_pcie_gen3_4l_x2_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_REFCLK,
-+	     "gout_fsys0_pcie_gen3_4l_x4_refclk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_CLK_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_PHY_REFCLK_IN,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x2_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x2_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x2_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X2_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_DBI_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x4_dbi_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_DBI_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_MSTR_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x4_mstr_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_MSTR_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_SLV_ACLK,
-+	     "gout_fsys0_pcie_gen3_4l_x4_slv_aclk", "mout_fsys0_bus_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3_4L_X4_SLV_ACLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3A_4L_CLK,
-+	     "gout_fsys0_pcie_gen3a_4l_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3A_4L_CLK,
-+	     21, 0, 0),
-+	GATE(CLK_GOUT_FSYS0_PCIE_GEN3B_4L_CLK,
-+	     "gout_fsys0_pcie_gen3b_4l_clk", "mout_fsys0_pcie_user",
-+	     CLK_CON_GAT_GOUT_BLK_FSYS0_UID_PCIE_GEN3B_4L_CLK,
-+	     21, 0, 0),
-+};
-+
-+static const struct samsung_cmu_info fsys0_cmu_info __initconst = {
-+	.mux_clks		= fsys0_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(fsys0_mux_clks),
-+	.gate_clks		= fsys0_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(fsys0_gate_clks),
-+	.nr_clk_ids		= FSYS0_NR_CLK,
-+	.clk_regs		= fsys0_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(fsys0_clk_regs),
-+	.clk_name		= "dout_clkcmu_fsys0_bus",
-+};
-+
- /* ---- CMU_FSYS2 ---------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_FSYS2 (0x17c00000) */
-@@ -1701,6 +1941,9 @@ static const struct of_device_id exynosautov9_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynosautov9-cmu-core",
- 		.data = &core_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynosautov9-cmu-fsys0",
-+		.data = &fsys0_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynosautov9-cmu-fsys2",
- 		.data = &fsys2_cmu_info,
+ 		cmu_fsys2: clock-controller@17c00000 {
+ 			compatible = "samsung,exynosautov9-cmu-fsys2";
+ 			reg = <0x17c00000 0x8000>;
 -- 
 2.37.1
 
