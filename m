@@ -2,203 +2,187 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A77EC19F29
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Jul 2022 18:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5BCC19F2A
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Jul 2022 00:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231279AbiG1Smf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Jul 2022 14:42:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40698 "EHLO
+        id S233691AbiG2AgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Jul 2022 20:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231925AbiG1Sme (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 14:42:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 13B9475393
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 11:42:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659033753;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/cyqjGuqo8Xez9KZB2n6ef57YiIlFUesAYzckfJsYgo=;
-        b=f7u0bc87BPBA5W3YHZL2DDTKfXGYNZhLm8g17dK+ZKEUzpz6e/EiyYNHvNF4NXqP2zZpod
-        r58ZG1QMhvvovyIGS4Prs5kDaLBJaGJ7f4NYSLR0+CxmFiu0IuhopeguXHL5YF4lzJ8IUV
-        DVkVn0m8zRqEL/5s09lep8DfgrFvKY8=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-329-hBUHIBDSOcKXfb28SxYnPQ-1; Thu, 28 Jul 2022 14:42:15 -0400
-X-MC-Unique: hBUHIBDSOcKXfb28SxYnPQ-1
-Received: by mail-ed1-f72.google.com with SMTP id g15-20020a056402424f00b0043bff7a68dbso1603560edb.10
-        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 11:42:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=/cyqjGuqo8Xez9KZB2n6ef57YiIlFUesAYzckfJsYgo=;
-        b=5BK9Mgo2CJPH3sY9Wy6SI7TN4ZVOB5AQWj6J+4haLccF+lGgBIDxQBptMU5k+tkqqU
-         lt0ckLXgNhgNZT7AIg5YZC0gArrG5qc9a8VAVRhHlM9Tk5FoqngIbcO974qt7SFIpli8
-         5zF9pPRKAHTBYkDl5Eo3PfK0hB74UGLoIrdSNNKy3NMc1XRGH2SF4OQq6P3mBpw5f8LX
-         WvI5ZSAGxRdGpZcT7ygTs/dhyskpEIxxFSc0ZwTIAXqbWx87KyYXorQVRGTMZHRIIIlz
-         Qtz7ct1ktxywK19BIVvaERSuNMWlXAcadoE5NZJxqKJfAfHgs2cBg1dG0L+XvraYbcuL
-         753A==
-X-Gm-Message-State: AJIora/JkLqGqus8opYJQKefcPCasku0+wWHivJWDJJ3RgKxaUGwqYKR
-        U1/K4eCmvUQZLH6WDD/iqXqRIXCtdDpLspC4pfQfZHajaxKJZ0JH7O33GVA25Y/fCod1QWeu8Mv
-        yfKq8DAzprKAEjF28zdhg
-X-Received: by 2002:a17:907:2848:b0:72b:5ba5:1db5 with SMTP id el8-20020a170907284800b0072b5ba51db5mr174736ejc.703.1659033733780;
-        Thu, 28 Jul 2022 11:42:13 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vF8qNtAYroVPoKQ2UZq+B8Pj08nF2u1AMY8+URINTGN7OPMC6aKfgY/EB5StPCkopth70xBw==
-X-Received: by 2002:a17:907:2848:b0:72b:5ba5:1db5 with SMTP id el8-20020a170907284800b0072b5ba51db5mr174717ejc.703.1659033733286;
-        Thu, 28 Jul 2022 11:42:13 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
-        by smtp.gmail.com with ESMTPSA id w10-20020a50fa8a000000b0043bdc47803csm1150947edr.30.2022.07.28.11.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Jul 2022 11:42:12 -0700 (PDT)
-Message-ID: <71041a3b-cdb4-dd3a-d94e-c8f77179a31f@redhat.com>
-Date:   Thu, 28 Jul 2022 20:42:11 +0200
+        with ESMTP id S233662AbiG2AgR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jul 2022 20:36:17 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D0D7392E
+        for <linux-clk@vger.kernel.org>; Thu, 28 Jul 2022 17:36:15 -0700 (PDT)
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220729003613epoutp024957e7be3a670f01ecf7dec936ed2ac1~GJbVWo95Q0513605136epoutp02K
+        for <linux-clk@vger.kernel.org>; Fri, 29 Jul 2022 00:36:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220729003613epoutp024957e7be3a670f01ecf7dec936ed2ac1~GJbVWo95Q0513605136epoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1659054973;
+        bh=UqZEbk3ZGslUU7AM/gfSgRiTLXgIYCkiVIdqh+advB8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=geKmN+6Wrj+j383lRBm1pSr088fF/dxmpTVPuiQg5Re+zzMfPqZ4iU7oRmuqIRPnr
+         o4WLatAg++/yxlGqpK2iqkbObTsWl95KyfaVNMscqcI4cHsvwJYzefZ6Z1/Tg8mEHJ
+         MUjJijKbMBTg2CuDe88LNL61glpr//SrNDEh1A8Y=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20220729003612epcas2p147b0fa410f9d85b18b8e61ac0ce5d3a9~GJbU2y1-w2636226362epcas2p1-;
+        Fri, 29 Jul 2022 00:36:12 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.88]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4Lv7qJ4Q2Sz4x9Pw; Fri, 29 Jul
+        2022 00:36:12 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1B.C1.09666.C7B23E26; Fri, 29 Jul 2022 09:36:12 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220729003611epcas2p3b041a6c19835d3ba25459cd4c3adc94f~GJbT4ZFHF2821828218epcas2p3i;
+        Fri, 29 Jul 2022 00:36:11 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220729003611epsmtrp21131ed9e8018fb24f70b93982ee8a47b~GJbT3elaH1035310353epsmtrp2Y;
+        Fri, 29 Jul 2022 00:36:11 +0000 (GMT)
+X-AuditID: b6c32a45-471ff700000025c2-22-62e32b7c352b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B8.1B.08905.B7B23E26; Fri, 29 Jul 2022 09:36:11 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.51]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220729003611epsmtip2d1a3fa0d8e8cf1d1aa0aa2421a2a0b71~GJbTnq77b0075200752epsmtip2J;
+        Fri, 29 Jul 2022 00:36:11 +0000 (GMT)
+From:   Chanho Park <chanho61.park@samsung.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH v2 1/6] dt-bindings: clk: exynosautov9: add fys0 clock
+ definitions
+Date:   Fri, 29 Jul 2022 09:30:19 +0900
+Message-Id: <6f70a59164ad2c5ce5581047ca39a91afc1105d9.1659054220.git.chanho61.park@samsung.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <cover.1659054220.git.chanho61.park@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH] platform/x86: pmc_atom: Add DMI quirk for Lex 3I380A/CW
- boards
-Content-Language: en-US
-To:     "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        carlo@endlessm.com, davem@davemloft.net, hkallweit1@gmail.com,
-        js@sig21.net, linux-clk@vger.kernel.org,
-        linux-wireless@vger.kernel.org, mturquette@baylibre.com,
-        netdev@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        sboyd@kernel.org, markgross@kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        paul.gortmaker@windriver.com, stable@vger.kernel.org
-References: <20220727153232.13359-1-matwey@sai.msu.ru>
- <5f0b98a5-1929-a78e-4d44-0bb2aec18b5a@redhat.com>
- <CAJs94EYdNVROqDw=ZpzBTGeNRQzzCN9QQNkicv6LapJGDmb=Dg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAJs94EYdNVROqDw=ZpzBTGeNRQzzCN9QQNkicv6LapJGDmb=Dg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmhW6N9uMkg7b5shYP5m1js7i8X9vi
+        +pfnrBbzj5xjteh78ZDZYu/rrewWmx5fY7X42HOP1WLG+X1MFhdPuVq07j3CbnH4TTurxb9r
+        G1ksnvcBxVft+sPowO/x/kYru8fOWXfZPTat6mTzuHNtD5vH5iX1Hn1bVjF6fN4kF8AelW2T
+        kZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3S1kkJZYk4p
+        UCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE748u0
+        WywFz0UqOk5fYm5gPC/UxcjJISFgIvHs2yHWLkYuDiGBHYwSr++/ZIZwPjFKbLo0AyrzjVHi
+        8YZ7rDAtLbOWs4DYQgJ7GSVa9+VB2B8ZJaYcVwax2QR0JbY8f8UI0iwi8JhJ4vCRNjYQh1mg
+        jUli2rONYJOEBUIk3q3ewQZiswioSpzq6QeyOTh4BeIlGl/IQiyTl7h+s40ZxOYUsJXoavoO
+        tphXQFDi5MwnYDYzUE3z1tnMEPVrOSRe3RIAGSMh4CJx4IoFRFhY4tXxLewQtpTE53d72SDs
+        Yomlsz4xgZwmIdDAKHF52y+ohLHErGftjCBzmAU0Jdbv0ocYqSxx5BbUVj6JjsN/2SHCvBId
+        bdAAVZc4sH06C4QtK9E95zMrRImHxK7TRpDQnMAosfXHYaYJjAqzkPwyC8kvsxD2LmBkXsUo
+        llpQnJueWmxUYAiP3uT83E2M4CSs5bqDcfLbD3qHGJk4GA8xSnAwK4nwJkTfTxLiTUmsrEot
+        yo8vKs1JLT7EaAoM6InMUqLJ+cA8kFcSb2hiaWBiZmZobmRqYK4kzuuVsiFRSCA9sSQ1OzW1
+        ILUIpo+Jg1OqgcmL8dP17ZYX+gUKwtI/X+h5Uq516V/JN4Xe0h5h8Q0OZpsfLUzxSOu8zHRt
+        CpPJ0YIVnxIEmFZ2r5266HGs4SPRWTkWMXWX4xtVZ7XeWm7bfs6sX2w9w3TTObI3pnR1Hv6+
+        7EhFdvOmXb3XV0durDz2bW356TXp7n+faU+v7XrQrZ9n+jTmZMSc9TH9rFIxK614a6858D7d
+        dHipf1/ooz+vgstjDASWubZMuMRzrv/6pK2GxwS3/ijcv4olbd/VV+oPeld610qETJH9x3gg
+        OO7kgYkv/vsoBpw5YxC+z+Ytd/0GR+fnbxoENx/LaXjylj9G66HlidIlXc9r7iT9ZNt51Sxu
+        rk2Y45k+Ts4/ah+VWIozEg21mIuKEwHnCaaySwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSvG619uMkgyM3DS0ezNvGZnF5v7bF
+        9S/PWS3mHznHatH34iGzxd7XW9ktNj2+xmrxseceq8WM8/uYLC6ecrVo3XuE3eLwm3ZWi3/X
+        NrJYPO8Diq/a9YfRgd/j/Y1Wdo+ds+6ye2xa1cnmcefaHjaPzUvqPfq2rGL0+LxJLoA9issm
+        JTUnsyy1SN8ugSvjy7RbLAXPRSo6Tl9ibmA8L9TFyMkhIWAi0TJrOUsXIxeHkMBuRol1nx8x
+        QiRkJZ6928EOYQtL3G85wgpR9J5R4sKXK2AJNgFdiS3PXzGCJEQEnjNJTFlxEMxhFuhikrjT
+        9gmsSlggSKJ95yxWEJtFQFXiVE8/WxcjBwevQLxE4wtZiA3yEtdvtjGD2JwCthJdTd9ZQGwh
+        ARuJLcsWsYHYvAKCEidnPgGLMwPVN2+dzTyBUWAWktQsJKkFjEyrGCVTC4pz03OLDQsM81LL
+        9YoTc4tL89L1kvNzNzGC40ZLcwfj9lUf9A4xMnEwHmKU4GBWEuFNiL6fJMSbklhZlVqUH19U
+        mpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVAPT1bQ9VhsFmVZ8z0+rU59+2u5s
+        5568X5Fn5H/F797IFSzA9Gzx8ufyzUmi1uee1+zf9MjnjrlhT9a+vpbAhPOCV/bsszke0+Rh
+        uExqQjyXkZ2hYYLJj3O9zZUSitPKmHLruer5BT4f2T339NIKwQvNNcuiggzF+B5uOxxuuC62
+        UFFAxf3SrafsGVvDPbgTM18sEP7p8kTZ4sNewfMtG2csa26dcPve55eWCdt/vBFvaDOzfGXf
+        VJGu+7b1nPhOe9+8+AQpi7W9C/muvL7js8qc3eTCrSMXqtasEjl/+hxvw5JYmxpfbXchS1f/
+        HoGir/15M8yi3Jh/BzckOO5v6Z9jlVTd/Fqv3rfqq9jBJUosxRmJhlrMRcWJAHTfdXMKAwAA
+X-CMS-MailID: 20220729003611epcas2p3b041a6c19835d3ba25459cd4c3adc94f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220729003611epcas2p3b041a6c19835d3ba25459cd4c3adc94f
+References: <cover.1659054220.git.chanho61.park@samsung.com>
+        <CGME20220729003611epcas2p3b041a6c19835d3ba25459cd4c3adc94f@epcas2p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Add fsys0(for PCIe) clock definitions.
 
-On 7/28/22 20:39, Matwey V. Kornilov wrote:
-> чт, 28 июл. 2022 г. в 21:33, Hans de Goede <hdegoede@redhat.com>:
->>
->> Hi,
->>
->> On 7/27/22 17:32, Matwey V. Kornilov wrote:
->>> Lex 3I380A/CW (Atom E3845) motherboards are equipped with dual Intel I211
->>> based 1Gbps copper ethernet:
->>>
->>>      http://www.lex.com.tw/products/pdf/3I380A&3I380CW.pdf
->>>
->>> This patch is to fix the issue with broken "LAN2" port. Before the
->>> patch, only one ethernet port is initialized:
->>>
->>>      igb 0000:01:00.0: added PHC on eth0
->>>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
->>>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
->>>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
->>>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
->>>      igb: probe of 0000:02:00.0 failed with error -2
->>>
->>> With this patch, both ethernet ports are available:
->>>
->>>      igb 0000:01:00.0: added PHC on eth0
->>>      igb 0000:01:00.0: Intel(R) Gigabit Ethernet Network Connection
->>>      igb 0000:01:00.0: eth0: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e4
->>>      igb 0000:01:00.0: eth0: PBA No: FFFFFF-0FF
->>>      igb 0000:01:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
->>>      igb 0000:02:00.0: added PHC on eth1
->>>      igb 0000:02:00.0: Intel(R) Gigabit Ethernet Network Connection
->>>      igb 0000:02:00.0: eth1: (PCIe:2.5Gb/s:Width x1) 4c:02:89:10:02:e5
->>>      igb 0000:02:00.0: eth1: PBA No: FFFFFF-0FF
->>>      igb 0000:02:00.0: Using MSI-X interrupts. 2 rx queue(s), 2 tx queue(s)
->>>
->>> The issue was observed at 3I380A board with BIOS version "A4 01/15/2016"
->>> and 3I380CW board with BIOS version "A3 09/29/2014".
->>>
->>> Reference: https://lore.kernel.org/netdev/08c744e6-385b-8fcf-ecdf-1292b5869f94@redhat.com/
->>> Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
->>> Cc: <stable@vger.kernel.org> # v4.19+
->>> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
->>
->>
->> Thank you for the patch.
->>
->> The last week I have received 2 different patches adding
->> a total of 3 new "Lex BayTrail" entries to critclk_systems[]
->> on top of the existing 2.
->>
->> Looking at: https://www.lex.com.tw/products/embedded-ipc-board/
->> we can see that Lex BayTrail makes many embedded boards with
->> multiple ethernet boards and none of their products are battery
->> powered so we don't need to worry (too much) about power consumption
->> when suspended.
->>
->> So instead of adding 3 new entries I've written a patch to
->> simply disable the turning off of the clocks on all
->> systems which have "Lex BayTrail" as their DMI sys_vendor:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/commit/?h=review-hans&id=c9d959fc32a5f9312282817052d8986614f2dc08
->>
->> I've added a Reported-by tag to give you credit for the work
->> you have done on this.
->>
->> I will send this alternative fix to Linus as part of
->> the other pdx86 patches for 5.21.
-> 
-> Thank you. Will your fix also appear in stable/lts kernels?
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../dt-bindings/clock/samsung,exynosautov9.h  | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Yes it has the same Fixes tag as your patch did, this will
-cause it to automatically get cherry-picked into kernels
-which have the fixed commit hash.
-
-Regards,
-
-Hans
-
-
->>> ---
->>>  drivers/platform/x86/pmc_atom.c | 18 ++++++++++++++++++
->>>  1 file changed, 18 insertions(+)
->>>
->>> diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
->>> index b8b1ed1406de..5dc82667907b 100644
->>> --- a/drivers/platform/x86/pmc_atom.c
->>> +++ b/drivers/platform/x86/pmc_atom.c
->>> @@ -388,6 +388,24 @@ static const struct dmi_system_id critclk_systems[] = {
->>>                       DMI_MATCH(DMI_PRODUCT_NAME, "CEC10 Family"),
->>>               },
->>>       },
->>> +     {
->>> +             /* pmc_plt_clk* - are used for ethernet controllers */
->>> +             .ident = "Lex 3I380A",
->>> +             .callback = dmi_callback,
->>> +             .matches = {
->>> +                     DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
->>> +                     DMI_MATCH(DMI_PRODUCT_NAME, "3I380A"),
->>> +             },
->>> +     },
->>> +     {
->>> +             /* pmc_plt_clk* - are used for ethernet controllers */
->>> +             .ident = "Lex 3I380CW",
->>> +             .callback = dmi_callback,
->>> +             .matches = {
->>> +                     DMI_MATCH(DMI_SYS_VENDOR, "Lex BayTrail"),
->>> +                     DMI_MATCH(DMI_PRODUCT_NAME, "3I380CW"),
->>> +             },
->>> +     },
->>>       {
->>>               /* pmc_plt_clk0 - 3 are used for the 4 ethernet controllers */
->>>               .ident = "Lex 3I380D",
->>
-> 
-> 
+diff --git a/include/dt-bindings/clock/samsung,exynosautov9.h b/include/dt-bindings/clock/samsung,exynosautov9.h
+index ea9f91b4eb1a..6305a84396ce 100644
+--- a/include/dt-bindings/clock/samsung,exynosautov9.h
++++ b/include/dt-bindings/clock/samsung,exynosautov9.h
+@@ -185,6 +185,49 @@
+ 
+ #define CORE_NR_CLK			6
+ 
++/* CMU_FSYS0 */
++#define CLK_MOUT_FSYS0_BUS_USER		1
++#define CLK_MOUT_FSYS0_PCIE_USER	2
++#define CLK_GOUT_FSYS0_BUS_PCLK		3
++
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_REFCLK		4
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_REFCLK		5
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_DBI_ACLK	6
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_MSTR_ACLK	7
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X1_SLV_ACLK	8
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_DBI_ACLK	9
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_MSTR_ACLK	10
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_SLV_ACLK	11
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L0_X2_PIPE_CLK	12
++#define CLK_GOUT_FSYS0_PCIE_GEN3A_2L0_CLK		13
++#define CLK_GOUT_FSYS0_PCIE_GEN3B_2L0_CLK		14
++
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_REFCLK		15
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_REFCLK		16
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_DBI_ACLK	17
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_MSTR_ACLK	18
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X1_SLV_ACLK	19
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_DBI_ACLK	20
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_MSTR_ACLK	21
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_SLV_ACLK	22
++#define CLK_GOUT_FSYS0_PCIE_GEN3_2L1_X2_PIPE_CLK	23
++#define CLK_GOUT_FSYS0_PCIE_GEN3A_2L1_CLK		24
++#define CLK_GOUT_FSYS0_PCIE_GEN3B_2L1_CLK		25
++
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_REFCLK		26
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_REFCLK		27
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_DBI_ACLK		28
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_MSTR_ACLK	29
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X2_SLV_ACLK		30
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_DBI_ACLK		31
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_MSTR_ACLK	32
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_SLV_ACLK		33
++#define CLK_GOUT_FSYS0_PCIE_GEN3_4L_X4_PIPE_CLK		34
++#define CLK_GOUT_FSYS0_PCIE_GEN3A_4L_CLK		35
++#define CLK_GOUT_FSYS0_PCIE_GEN3B_4L_CLK		36
++
++#define FSYS0_NR_CLK			37
++
+ /* CMU_FSYS2 */
+ #define CLK_MOUT_FSYS2_BUS_USER		1
+ #define CLK_MOUT_FSYS2_UFS_EMBD_USER	2
+-- 
+2.37.1
 
