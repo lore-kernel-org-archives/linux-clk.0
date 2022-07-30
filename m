@@ -2,62 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B06C00144
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Jul 2022 01:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C43AEC19F29
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Jul 2022 09:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbiG3BD4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Jul 2022 21:03:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60020 "EHLO
+        id S232785AbiG3JSM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Jul 2022 05:18:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiG3BDy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jul 2022 21:03:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61EE380F79;
-        Fri, 29 Jul 2022 18:03:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 089F9B82925;
-        Sat, 30 Jul 2022 01:03:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF9ACC433C1;
-        Sat, 30 Jul 2022 01:03:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659143031;
-        bh=PccS8WrqmItI7J5CStplIqLhQ3EyyBbOuuk8HIUo1jw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jKDNZb/lhoqBPXHS8gqhJvoOcGTGkWVgeLHsV+nDyiZLj22E3Hwea91ZFIQsTUS0i
-         EpiDEvWmfROPp6t5wMhZTANxvWD/TTRdQB7bQLlEeJ9JJUgyHYHIBEbQA6BNAlrJRw
-         sfhQI6Tm68AU1+IxBHurRYDGEzCHs1Xid1jBnFnJhCr/+BP+5c9glYI5zAXvB5iMtO
-         iopujrxNZyjO4pLvROvpo2HxZywh+3we292mXsms8s9HDGArKON36vGzsGDQAXvZ+J
-         ihVTySI//Wdyq0eraOOKXiEhBF0XWNw+iJ5T1DnUnnhS8zzJQ+Sz+38HOXq1YYgVrP
-         5+YSFmDMTgr6Q==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220707065800.261269-4-william.zhang@broadcom.com>
-References: <20220707065800.261269-1-william.zhang@broadcom.com> <20220707065800.261269-4-william.zhang@broadcom.com>
-Subject: Re: [RESEND PATCH 4/8] clk: bcm: bcmbca: Replace ARCH_BCM_63XX with ARCH_BCMBCA
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     anand.gore@broadcom.com, dan.beygelman@broadcom.com,
-        kursad.oney@broadcom.com, joel.peshkin@broadcom.com,
-        f.fainelli@gmail.com, William Zhang <william.zhang@broadcom.com>,
+        with ESMTP id S232154AbiG3JSM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Jul 2022 05:18:12 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A714F40BD5;
+        Sat, 30 Jul 2022 02:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1659172690; x=1690708690;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=9DS4bJLebw1lBvzzjml/GDCUoVQ6Slpznv0XDbK9ev4=;
+  b=YlxCfbAXSbgg/M7bAPTE7Hxu+MnMRHSbVXN/DDYs6BPT1lV3CoF8Hlzv
+   FSKlcCGjsWaUa3vyeMbklLAEO2eXDV1W65Z/SjYg62WJBthEUekjn3m71
+   JiC3XI5wBaGZTmeWuilMM+d8IwhlCFpQlyrodpFL/G9nug0B+4Qq8g/8o
+   U=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 30 Jul 2022 02:18:10 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2022 02:18:09 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Sat, 30 Jul 2022 02:18:09 -0700
+Received: from hyd-lnxbld559.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Sat, 30 Jul 2022 02:18:03 -0700
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+To:     freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Stephen Boyd" <swboyd@chromium.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM List <linux-arm-kernel@lists.infradead.org>,
-        William Zhang <william.zhang@broadcom.com>
-Date:   Fri, 29 Jul 2022 18:03:49 -0700
-User-Agent: alot/0.10
-Message-Id: <20220730010351.AF9ACC433C1@smtp.kernel.org>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/5] clk/qcom: Support gdsc collapse polling using 'reset' inteface
+Date:   Sat, 30 Jul 2022 14:47:39 +0530
+Message-ID: <1659172664-10345-1-git-send-email-quic_akhilpo@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting William Zhang (2022-07-06 23:57:55)
-> Prepare for the BCM63138 ARCH_BCM_63XX migration to ARCH_BCMBCA. Make
-> CLK_BCM_63XX depending and setting default on ARCH_BCMBCA.
->=20
-> Signed-off-by: William Zhang <william.zhang@broadcom.com>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Some clients like adreno gpu driver would like to ensure that its gdsc
+is collapsed at hardware during a gpu reset sequence. This is because it
+has a votable gdsc which could be ON due to a vote from another subsystem
+like tz, hyp etc or due to an internal hardware signal. To allow
+this, gpucc driver can expose an interface to the client driver using
+reset framework. Using this the client driver can trigger a polling within
+the gdsc driver.
+
+This series is rebased on top of linus's master branch.
+
+Related discussion: https://patchwork.freedesktop.org/patch/493144/
+
+
+Akhil P Oommen (5):
+  dt-bindings: clk: qcom: Support gpu cx gdsc reset
+  clk: qcom: Allow custom reset ops
+  clk: qcom: gpucc-sc7280: Add cx collapse reset support
+  clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+  arm64: dts: qcom: sc7280: Add Reset support for gpu
+
+ arch/arm64/boot/dts/qcom/sc7280.dtsi          |  3 +++
+ drivers/clk/qcom/gdsc.c                       | 23 +++++++++++++++++++----
+ drivers/clk/qcom/gdsc.h                       |  7 +++++++
+ drivers/clk/qcom/gpucc-sc7280.c               |  6 ++++++
+ drivers/clk/qcom/reset.c                      |  6 ++++++
+ drivers/clk/qcom/reset.h                      |  2 ++
+ include/dt-bindings/clock/qcom,gpucc-sc7280.h |  3 +++
+ 7 files changed, 46 insertions(+), 4 deletions(-)
+
+-- 
+2.7.4
+
