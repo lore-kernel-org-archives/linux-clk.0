@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA53C00140
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Jul 2022 16:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC1C00140
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Jul 2022 16:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233989AbiGaQRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 Jul 2022 12:17:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60366 "EHLO
+        id S235702AbiGaQzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Jul 2022 12:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230244AbiGaQRf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jul 2022 12:17:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071EFDFF9;
-        Sun, 31 Jul 2022 09:17:35 -0700 (PDT)
+        with ESMTP id S237341AbiGaQzs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Jul 2022 12:55:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C6063F2;
+        Sun, 31 Jul 2022 09:55:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9660160F1F;
-        Sun, 31 Jul 2022 16:17:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D217FC433C1;
-        Sun, 31 Jul 2022 16:17:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5513F60F18;
+        Sun, 31 Jul 2022 16:55:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B3A05C433D7;
+        Sun, 31 Jul 2022 16:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659284254;
-        bh=QgAz5bY89pnm43xuM+ZChX7STSLA6T9WvSXtE1C3d/g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b/vwqyKDPnJ9m+s64qW8Jenp6E+spUubFrvV4NXkc2tXDD/kYMUuWs+Q9n27HMZEb
-         eTkWmkXhRdN27pGAQHwbzMr1EJJ5tEd7q9Sab5Ma3V9gStxX2Y0A6ED76YTm6sRmgv
-         bkTxLpabuc5KEpZHm7B5x/HJMnJZ0elB2ARYv0kWfVFMXRLXvQ4ujwhQ7xlJbUm0p6
-         CQVoS9yCAUd0Zl9hd/ePsHIvGXXCZzjo07VHQ8z8G4kT6EWfl0EQdZ+VCuKxcDE1li
-         8uf8mULMzQ6dQlhwsgaqM5KJD+JxwYk3EdTE4qrVmWm+giYnNx5/Q5Z0dcJyeiVdEr
-         3PVIGRzcbeK+w==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=k20201202; t=1659286546;
+        bh=l6FdVPWe1L2Gm6gHVQVu1QZEsFqxuNEDBhFpXRHsxdc=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=I5ExtBhKmu4k1H/nTKe1CfnCygiMygmXo/CJA0pKX4l3h+WEQ1MOI9+ZZpzmn/PD4
+         yZubHvweGOyqRajY6WGFs01khnPVvCI5QtAm0XBgwNRkhTTax/qR4KrSIslikeqN2V
+         s0HY5njdE8GB6Vy09sQOQRCuMarcetuhJGiidMoGRGcLDz4clSe0uUkGkT2ghdXnnr
+         GPsd54gP4MXJaGHHM7Lhbi+uY6RCdv7LK1FdUDQtu8ksv1oyFoLne28/TTRv1C8TF8
+         C0Phrf4FOBHUYWQ1oP6kMc/KhNT9uXlMZ8PjvUjNdxP7h/ptN5gptEaYWd0NToQzzn
+         QGCullkkbhmYQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A2534C43140;
+        Sun, 31 Jul 2022 16:55:46 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v5.19-rc8
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220731161733.2786191-1-sboyd@kernel.org>
+References: <20220731161733.2786191-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220731161733.2786191-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 8dc592c41f38735306d1f1dc0b183601379c6d94
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 334c0ef6429f261c7f53dc035632435ffbc0c60d
+Message-Id: <165928654666.8632.9198524769281032820.pr-tracker-bot@kernel.org>
+Date:   Sun, 31 Jul 2022 16:55:46 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.19-rc8
-Date:   Sun, 31 Jul 2022 09:17:32 -0700
-Message-Id: <20220731161733.2786191-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.37.1.455.g008518b4e5-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 25c2a075eb6a3031813b6051bd10dfc22c36a2a4:
+The pull request you sent on Sun, 31 Jul 2022 09:17:32 -0700:
 
-  clk: lan966x: Fix the lan966x clock gate register address (2022-07-19 00:04:10 -0700)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/334c0ef6429f261c7f53dc035632435ffbc0c60d
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 8dc592c41f38735306d1f1dc0b183601379c6d94:
-
-  clk: sunxi-ng: Fix H6 RTC clock definition (2022-07-27 16:45:58 -0700)
-
-----------------------------------------------------------------
-Fix a NULL pointer deref in the Allwinner clk driver with a one liner.
-
-----------------------------------------------------------------
-Jernej Skrabec (1):
-      clk: sunxi-ng: Fix H6 RTC clock definition
-
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
