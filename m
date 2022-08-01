@@ -2,63 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70DBC00144
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Aug 2022 08:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D9C00144
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Aug 2022 15:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbiHAITx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Aug 2022 04:19:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
+        id S233492AbiHAPU4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Aug 2022 11:20:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbiHAITo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Aug 2022 04:19:44 -0400
-X-Greylist: delayed 494 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 01 Aug 2022 01:19:35 PDT
-Received: from mail.fadrush.pl (mail.fadrush.pl [54.37.225.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF833C146
-        for <linux-clk@vger.kernel.org>; Mon,  1 Aug 2022 01:19:35 -0700 (PDT)
-Received: by mail.fadrush.pl (Postfix, from userid 1002)
-        id 3EB3D222B4; Mon,  1 Aug 2022 08:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fadrush.pl; s=mail;
-        t=1659341480; bh=bD6j9gIFU6CLTaCGl0Ow9oeIxtirvTfMeNZSfLEZQ+I=;
-        h=Date:From:To:Subject:From;
-        b=kIOcZ1NTBhYYMSo2beg+WCvAbomt2GxQnmiahjhaSYbuK6Y67+PcthEBJJjpmCmKZ
-         t4VOMWljfm6dLSogOjcXZjK80KiCWk49IkOCc8khCB/czklBIBS63xzj4FxeXdQI1b
-         he3Z5UNnAH498ZH5IksN3t8Tr0Z0C7O1IqvioGapktzepD6dd3Uvn+Ws0XuPt2DT7A
-         YmXgfYc1cp2bP03KL+EiYXPgJcYmk8W1PwWruYS8zW4GfKPlyVeYIDDBCn/26tlgbE
-         y+hH8sC0lxwUYTpmkgoWZSdx1mk5N3xMyRk+QrtEFKFOsdAh7OZbhvFSCPe/AxIKNQ
-         ZruVFVLDhxinw==
-Received: by mail.fadrush.pl for <linux-clk@vger.kernel.org>; Mon,  1 Aug 2022 08:11:17 GMT
-Message-ID: <20220801064500-0.1.r.58pk.0.rd8bkh2095@fadrush.pl>
-Date:   Mon,  1 Aug 2022 08:11:17 GMT
-From:   "Jakub Olejniczak" <jakub.olejniczak@fadrush.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?Zwi=C4=99kszenie_p=C5=82ynno=C5=9Bci_finansowej?=
-X-Mailer: mail.fadrush.pl
+        with ESMTP id S233520AbiHAPUp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Aug 2022 11:20:45 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63AFB49A;
+        Mon,  1 Aug 2022 08:20:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1659367243; x=1690903243;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2DXcIe7hUnldJ+7bWfHGOv4iXtFwQUzM3UzzWrBzOUs=;
+  b=tI8cjlW8Dnw6seHPjRh0QMTaVhs4p0V1EPvNf57/SbmeXPMSF4vgSoFK
+   vgwjo0/jF3+Ll8ne42heV07x6cq2lOH47r3Jj1hgr6ohm+laI8rXLjQae
+   7EELxaMcb8KwJoqrziw0K4iu7duZhMjTzvYUDHWyTqxdkb07taFoCKKG6
+   o=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 01 Aug 2022 08:20:43 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2022 08:20:42 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 1 Aug 2022 08:20:42 -0700
+Received: from [10.216.14.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Mon, 1 Aug 2022
+ 08:20:35 -0700
+Message-ID: <b3c5dec2-6d73-4d7a-8a2f-194672f2c675@quicinc.com>
+Date:   Mon, 1 Aug 2022 20:50:29 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [Freedreno] [PATCH 2/5] clk: qcom: Allow custom reset ops
+Content-Language: en-US
+To:     kernel test robot <lkp@intel.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        "Bjorn Andersson" <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+CC:     <kbuild-all@lists.01.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20220730144713.2.I4b69f984a97535179acd9637426a1331f84f6646@changeid>
+ <202207302137.mPbHPaHz-lkp@intel.com>
+From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <202207302137.mPbHPaHz-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On 7/30/2022 6:40 PM, kernel test robot wrote:
+> Hi Akhil,
+>
+> Thank you for the patch! Perhaps something to improve:
+>
+> [auto build test WARNING on clk/clk-next]
+> [also build test WARNING on robh/for-next drm-misc/drm-misc-next drm-tip/drm-tip linus/master v5.19-rc8 next-20220728]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-P-Oommen/clk-qcom-Support-gdsc-collapse-polling-using-reset-inteface/20220730-171922
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: ia64-randconfig-r031-20220729 (https://download.01.org/0day-ci/archive/20220730/202207302137.mPbHPaHz-lkp@intel.com/config)
+> compiler: ia64-linux-gcc (GCC) 12.1.0
+> reproduce (this is a W=1 build):
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # https://github.com/intel-lab-lkp/linux/commit/971a03493e9854ff4a227ee4d80b533997959891
+>          git remote add linux-review https://github.com/intel-lab-lkp/linux
+>          git fetch --no-tags linux-review Akhil-P-Oommen/clk-qcom-Support-gdsc-collapse-polling-using-reset-inteface/20220730-171922
+>          git checkout 971a03493e9854ff4a227ee4d80b533997959891
+>          # save the config file
+>          mkdir build_dir && cp config build_dir/.config
+>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/clk/qcom/
+>
+> If you fix the issue, kindly add following tag where applicable
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+> All warnings (new ones prefixed by >>):
+>
+>     drivers/clk/qcom/reset.c: In function 'qcom_reset':
+>>> drivers/clk/qcom/reset.c:17:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+>        17 |         const struct qcom_reset_map *map = &rst->reset_map[id];
+>           |         ^~~~~
+>
+>
+> vim +17 drivers/clk/qcom/reset.c
+>
+>      13	
+>      14	static int qcom_reset(struct reset_controller_dev *rcdev, unsigned long id)
+>      15	{
+>      16		struct qcom_reset_controller *rst = to_qcom_reset_controller(rcdev);
+>    > 17		const struct qcom_reset_map *map = &rst->reset_map[id];
+>      18	
+>      19		if (map->op)
+>      20			return map->op(map);
+>      21	
+>      22		rcdev->ops->assert(rcdev, id);
+>      23		udelay(1);
+>      24		rcdev->ops->deassert(rcdev, id);
+>      25		return 0;
+>      26	}
+>      27	
+>
+Will fix this and send another version of this patch. Please let me know 
+if there is any feedback to the whole series.
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC chcia=C5=82bym za=
-proponowa=C4=87 wygodne rozwi=C4=85zanie, kt=C3=B3re umo=C5=BCliwi Pa=C5=84=
-stwa firmie stabilny rozw=C3=B3j.=20
-
-Konkurencyjne otoczenie wymaga ci=C4=85g=C5=82ego ulepszania i poszerzeni=
-a oferty, co z kolei wi=C4=85=C5=BCe si=C4=99 z konieczno=C5=9Bci=C4=85 i=
-nwestowania. Brak odpowiedniego kapita=C5=82u powa=C5=BCnie ogranicza tem=
-po rozwoju firmy.
-
-Od wielu lat z powodzeniem pomagam firmom w uzyskaniu najlepszej formy fi=
-nansowania z banku oraz UE. Mam sta=C5=82ych Klient=C3=B3w, kt=C3=B3rzy n=
-adal ch=C4=99tnie korzystaj=C4=85 z moich us=C5=82ug, a tak=C5=BCe poleca=
-j=C4=85 je innym.
-
-Czy chcieliby Pa=C5=84stwo skorzysta=C4=87 z pomocy wykwalifikowanego i d=
-o=C5=9Bwiadczonego doradcy finansowego?
-
-
-Pozdrawiam
-Jakub Olejniczak
+-Akhil.
