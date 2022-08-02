@@ -2,195 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480C9C00140
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Aug 2022 18:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA5FC00140
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Aug 2022 18:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234626AbiHBSL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Aug 2022 14:11:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
+        id S229649AbiHBSc0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Aug 2022 14:32:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237793AbiHBSLE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Aug 2022 14:11:04 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B98117E13;
-        Tue,  2 Aug 2022 11:11:00 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 23so13012873pgc.8;
-        Tue, 02 Aug 2022 11:11:00 -0700 (PDT)
+        with ESMTP id S229486AbiHBScZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Aug 2022 14:32:25 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D91813F19;
+        Tue,  2 Aug 2022 11:32:24 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id o2so11277372iof.8;
+        Tue, 02 Aug 2022 11:32:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VSuThS25A1SmF3lUm9zKQZW1zZmHE3Wa8nzE8cQc3xY=;
-        b=MOST/R+9Pu82byZZKWzHAXHowM9RJkX/xUI4J81mR9yItGRirdWszF98BMKIxPBMMc
-         eFq/ID+KIn3x/BMcVPOq7Bi6XBg5OQUaHTKQSeADQsTn6iOtLRyvId6U1uDfwomtA5VZ
-         LTZH4P6s2gF4tLv4cWTa4PIDcuBkZngU3nUhgPvEwijLrDJnvgODE4I+eXddkoYr+NDr
-         YWjGTVn9AQV62O92oy4+KJLOmMYiUAVXVWkeBdR9jJyDgbNfe9Kj6ycgRhXB1t2+YFE8
-         FXXZi/GbneyhW1+4dplOoTGje3/dxMHcX5zm37yB1aLLe6C9uhdij9B4Ym+FUGaGfSEO
-         sjvw==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=jhq8ckgM3wThDcZldY9YmghfnMoP9xPtuQZ8KnzumAo=;
+        b=VdRx0EOsVrd6Ybzj1Gs9qS7AxPtnD2QK2IFIf9RolrI/Ygx7n3CCPKpPU3zj+wbTT1
+         ETLSmXQFke1UC+3v1WU2TyO3kRU0MD0Rdp0SGOvF3myFXUQ6wFHZKpIyw8xahimWkVON
+         jk2wd4Nn434JzCuBcEdlIZySLE0BhWD9fadVz0ZqJ1obVJiJDZr5hMhXw24O2VEI8klm
+         FZk8AO2kd42gWSy82KfZcBwGzBDMF+jqTz9kWkkYy4ue1OxZt0UsLBe6WJKHt6BVeLU2
+         F6WSNBYCEa/kocJxgUbP0v5Frv/SqfhloM8ge/5o3X4nWAl+uGoYAKvubrM7r92YIIw5
+         lt4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VSuThS25A1SmF3lUm9zKQZW1zZmHE3Wa8nzE8cQc3xY=;
-        b=SYRQrTzij38LJm5CQ5gcoMeOPqMh4pr8QNimQUjx/Je/dxDPBuV7UgueaKaYuJ/RzD
-         ExqSXsL/h3ZJSgXliGHSISwl/o875NkVQDaCXUEOzQce5ItX+haChgjPpzVa4CKk1Cqz
-         YUEYyCoFsneXgpehZwmfI3LfQgFT4ljBKKjb8/m49oJv6CqHobFSSfibALiXO8TWimAK
-         fBuHEzkI9NS/LxpikLyzL5UlnTwBmjFZlwhRiy7LUGVprTRYwvFYysWnumD5nLlbSOmb
-         JmfsJZShQVYoVq8XWpIkAye5KDgMFkHZIdWRVewk3yuFyId/LeQt+5oDW3lnrWnH3Zxr
-         C8SA==
-X-Gm-Message-State: AJIora/m6mP3uUCBR4OiP2LyQy+JPaIzuV9v326Zmcj9ZbT8g9yGNetW
-        BqG4oapVFewCI2Rv8BMQGdWj9ql4EuE=
-X-Google-Smtp-Source: AGRyM1vyvI1vzvid8Bo8G+oWfNYRN17arAZ2ebp+U+Q4l6i2IbT8kUgZTGt/txgwEVoiTexo6aTxmA==
-X-Received: by 2002:a05:6a00:1a44:b0:52a:ecd5:bbef with SMTP id h4-20020a056a001a4400b0052aecd5bbefmr21566896pfv.28.1659463859515;
-        Tue, 02 Aug 2022 11:10:59 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1cc5:2406:5d81:6fe8:af08:c752])
-        by smtp.googlemail.com with ESMTPSA id z22-20020aa79496000000b0052d8d7269d7sm4420525pfk.53.2022.08.02.11.10.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Aug 2022 11:10:59 -0700 (PDT)
-From:   Vishal Badole <badolevishal1116@gmail.com>
-To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
-        vimal.kumar32@gmail.com,
-        Vishal Badole <badolevishal1116@gmail.com>,
-        Mintu Patel <mintupatel89@gmail.com>
-Subject: [PATCH v3] Common clock: To list active consumers of clocks
-Date:   Tue,  2 Aug 2022 23:39:47 +0530
-Message-Id: <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20220624010550.582BBC341C7@smtp.kernel.org>
-References: <20220624010550.582BBC341C7@smtp.kernel.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=jhq8ckgM3wThDcZldY9YmghfnMoP9xPtuQZ8KnzumAo=;
+        b=CZajW4LJwenfbh5Np/pf9emzw6nlayYaDbCqgMeq/RPT3mz3j/bl3Ta5htO5+GpAss
+         4BSxEoQE9r4BXsI1SXuNzQm6Dwjcyls+jrsZo/JQRs+63lyd5nSda4J/s7n1BAn5DzCE
+         u2jN0Wz+mDwbXo5HSL7CCKT0AS2XGsJfgBiPNFbhPxY/i1Y8DlH2s3FAC5xuNwF+pefp
+         RmuWPrUwbHt1cjCWGfBWm1XHgctw/6GXEPqQ5W5DymZNvezHyqr62SPRLKjq5LYwl/Yn
+         WU8zMO+JfLGj3UcCUPGHgk1AxhkeGCUkkzy5ZSjCQoYbku1bvyhMHDr+1M0stChTV0/d
+         5oOQ==
+X-Gm-Message-State: ACgBeo1tBaJy1R2zgkgg5urt0D8mFYaf/YrKC8N3toafg81xmzdRo1CJ
+        UA/V3sBGTTAoAQPCLCWjcn7JpBfH4+beEs8WVxY=
+X-Google-Smtp-Source: AA6agR4zB01AwMUmm2uoczyPEG/voRCuVs5QOx8SXiSosbJh2mT+l0ai6vNdX9v3/FVkFqgzoqRCCul6am0CDk+QETo=
+X-Received: by 2002:a05:6638:25d0:b0:342:72f5:a080 with SMTP id
+ u16-20020a05663825d000b0034272f5a080mr4809472jat.51.1659465144024; Tue, 02
+ Aug 2022 11:32:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1659172664-10345-1-git-send-email-quic_akhilpo@quicinc.com> <34ae275e-8d4c-3735-c08c-4769caf2909c@linaro.org>
+In-Reply-To: <34ae275e-8d4c-3735-c08c-4769caf2909c@linaro.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Tue, 2 Aug 2022 11:32:50 -0700
+Message-ID: <CAF6AEGv_cgPtaFpxSPCzWXeBcJvqE2fGucriRvMAJMbQ7ULndQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] clk/qcom: Support gdsc collapse polling using 'reset' inteface
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This feature lists the clock consumer's name and per-user enable count
-in clock summary. Using this feature user can easily check which device
-has acquired a perticular clock and it is enabled by respective device
-or not.
-for example:
-$ cat /sys/kernel/debug/clk/clk_summary
-                      enable  prepare  protect                           duty  hardware                            per-user
-   clock               count    count    count    rate   accuracy phase cycle    enable   consumer                    count
-----------------------------------------------------------------------------------------------------------------------------
- clk_mcasp0_fixed         0        0        0    24576000      0     0  50000     Y      deviceless                      0
-                                                                                         deviceless                      0
-    clk_mcasp0            0        0        0    24576000      0     0  50000     N          simple-audio-card,cpu           0
-                                                                                             deviceless                      0
+On Tue, Aug 2, 2022 at 12:02 AM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On 30/07/2022 12:17, Akhil P Oommen wrote:
+> >
+> > Some clients like adreno gpu driver would like to ensure that its gdsc
+> > is collapsed at hardware during a gpu reset sequence. This is because it
+> > has a votable gdsc which could be ON due to a vote from another subsystem
+> > like tz, hyp etc or due to an internal hardware signal.
+>
+> If this is votable, do we have any guarantee that the gdsc will collapse
+> at all? How can we proceed if it did not collapse?
 
-Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
-Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
-Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
-Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
-Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
-Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
----
- drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 11 deletions(-)
+Other potential votes should be transient.  But I guess we eventually
+need to timeout and give up.  At which point we are no worse off than
+before.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f00d4c1..c96079f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -102,6 +102,7 @@ struct clk {
- 	unsigned long min_rate;
- 	unsigned long max_rate;
- 	unsigned int exclusive_count;
-+	unsigned int enable_count;
- 	struct hlist_node clks_node;
- };
- 
-@@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
- 		return;
- 
- 	clk_core_disable_lock(clk->core);
-+
-+	if (clk->enable_count > 0)
-+		clk->enable_count--;
-+
- }
- EXPORT_SYMBOL_GPL(clk_disable);
- 
-@@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
-  */
- int clk_enable(struct clk *clk)
- {
-+	int ret;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_enable_lock(clk->core);
-+	ret = clk_core_enable_lock(clk->core);
-+	if (!ret)
-+		clk->enable_count++;
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_enable);
- 
-@@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
- 	int phase;
-+	struct clk *clk_user;
-+	int multi_node = 0;
- 
--	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
-+	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
- 		   level * 3 + 1, "",
--		   30 - level * 3, c->name,
-+		   35 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
- 		   clk_core_get_rate_recalc(c),
- 		   clk_core_get_accuracy_recalc(c));
- 
- 	phase = clk_core_get_phase(c);
- 	if (phase >= 0)
--		seq_printf(s, "%5d", phase);
-+		seq_printf(s, "%-5d", phase);
- 	else
- 		seq_puts(s, "-----");
- 
--	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
-+	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
- 
- 	if (c->ops->is_enabled)
--		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
-+		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
- 	else if (!c->ops->enable)
--		seq_printf(s, " %9c\n", 'Y');
-+		seq_printf(s, " %5c ", 'Y');
- 	else
--		seq_printf(s, " %9c\n", '?');
-+		seq_printf(s, " %5c ", '?');
-+
-+	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
-+		seq_printf(s, "%*s%-*s  %-4d\n",
-+			   level * 3 + 2 + 105 * multi_node, "",
-+			   30,
-+			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
-+			   clk_user->enable_count);
-+
-+		multi_node = 1;
-+	}
-+
- }
- 
- static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-@@ -2995,9 +3019,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 	struct clk_core *c;
- 	struct hlist_head **lists = (struct hlist_head **)s->private;
- 
--	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
--	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
--	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
-+	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            per-user\n");
-+	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                    count\n");
-+	seq_puts(s, "-------------------------------------------------------------------------------------------------------------------------------------------\n");
- 
- 	clk_prepare_lock();
- 
--- 
-2.7.4
+But hmm, we aren't using RBBM_SW_RESET_CMD for sw reset like we have
+on previous generations?  That does seem a bit odd.  Looks like kgsl
+does use it.
 
+BR,
+-R
+
+> > To allow
+> > this, gpucc driver can expose an interface to the client driver using
+> > reset framework. Using this the client driver can trigger a polling within
+> > the gdsc driver.
+>
+> Trigger the polling made me think initially that we will actually
+> trigger something in the HW. Instead the client uses reset framework to
+> poll for the gdsc to be reset.
+>
+> >
+> > This series is rebased on top of linus's master branch.
+> >
+> > Related discussion: https://patchwork.freedesktop.org/patch/493144/
+> >
+> >
+> > Akhil P Oommen (5):
+> >    dt-bindings: clk: qcom: Support gpu cx gdsc reset
+> >    clk: qcom: Allow custom reset ops
+> >    clk: qcom: gpucc-sc7280: Add cx collapse reset support
+> >    clk: qcom: gdsc: Add a reset op to poll gdsc collapse
+> >    arm64: dts: qcom: sc7280: Add Reset support for gpu
+> >
+> >   arch/arm64/boot/dts/qcom/sc7280.dtsi          |  3 +++
+> >   drivers/clk/qcom/gdsc.c                       | 23 +++++++++++++++++++----
+> >   drivers/clk/qcom/gdsc.h                       |  7 +++++++
+> >   drivers/clk/qcom/gpucc-sc7280.c               |  6 ++++++
+> >   drivers/clk/qcom/reset.c                      |  6 ++++++
+> >   drivers/clk/qcom/reset.h                      |  2 ++
+> >   include/dt-bindings/clock/qcom,gpucc-sc7280.h |  3 +++
+> >   7 files changed, 46 insertions(+), 4 deletions(-)
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
