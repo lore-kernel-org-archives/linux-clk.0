@@ -2,67 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61827C00140
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Aug 2022 15:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480C9C00140
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Aug 2022 18:11:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237600AbiHBPxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Aug 2022 11:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54536 "EHLO
+        id S234626AbiHBSL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Aug 2022 14:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237557AbiHBPwy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Aug 2022 11:52:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8019A3CBDE;
-        Tue,  2 Aug 2022 08:52:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 72FF5B81F40;
-        Tue,  2 Aug 2022 15:52:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C91C433D6;
-        Tue,  2 Aug 2022 15:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659455527;
-        bh=lQ/X9bP7iO/1coT/3Xnw/EgnIZigs/Kfo/D1jrW3jFU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XhgpnDIjuTWWEEKdx994z7kiUhYI1HRCtjZnWClqzEJIiJ9lsgDQMhhGujm9Rc3If
-         87hmKpOwYjdxn71YEVgtQJBmLjA4/n/6wkgfYmIsfC/jR2n9e63H2uDRIFHu+V3wJ+
-         LBlzJ5GUHHSfrs35HCxor6H0+8zl9I5K3ehUa5DAxr/40rdwjLfT3Lt6qnx7XDrreT
-         UUX53CdVPn+SlMbDWrSDwOH3ODCqHsKEmYqBh13ICwCHpBoLpoaof4c6YYPJflHmI3
-         eXoxsNUq0VSGayLBUfJoWaTUIMuk0rhf5xXZC+3MpbMuzSN1Y0hqyTggmpzUam8E2X
-         aVbt7jKImWizw==
-Date:   Tue, 2 Aug 2022 08:52:05 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vfedorenko@novek.ru>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Vadim Fedorenko <vadfed@fb.com>, Aya Levin <ayal@nvidia.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 2/3] dpll: add netlink events
-Message-ID: <20220802085205.5c371f02@kernel.org>
-In-Reply-To: <DM6PR11MB4657FADDDA75A5F35CF8FE3F9B9D9@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20220626192444.29321-1-vfedorenko@novek.ru>
-        <20220626192444.29321-3-vfedorenko@novek.ru>
-        <DM6PR11MB46573FA8D51D40DAD2AC060B9B879@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <715d8f47-d246-6b4a-b22d-82672e8f11d8@novek.ru>
-        <DM6PR11MB465732355816F30254FCFA9E9B8B9@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <DM6PR11MB4657FADDDA75A5F35CF8FE3F9B9D9@DM6PR11MB4657.namprd11.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S237793AbiHBSLE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Aug 2022 14:11:04 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B98117E13;
+        Tue,  2 Aug 2022 11:11:00 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 23so13012873pgc.8;
+        Tue, 02 Aug 2022 11:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VSuThS25A1SmF3lUm9zKQZW1zZmHE3Wa8nzE8cQc3xY=;
+        b=MOST/R+9Pu82byZZKWzHAXHowM9RJkX/xUI4J81mR9yItGRirdWszF98BMKIxPBMMc
+         eFq/ID+KIn3x/BMcVPOq7Bi6XBg5OQUaHTKQSeADQsTn6iOtLRyvId6U1uDfwomtA5VZ
+         LTZH4P6s2gF4tLv4cWTa4PIDcuBkZngU3nUhgPvEwijLrDJnvgODE4I+eXddkoYr+NDr
+         YWjGTVn9AQV62O92oy4+KJLOmMYiUAVXVWkeBdR9jJyDgbNfe9Kj6ycgRhXB1t2+YFE8
+         FXXZi/GbneyhW1+4dplOoTGje3/dxMHcX5zm37yB1aLLe6C9uhdij9B4Ym+FUGaGfSEO
+         sjvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VSuThS25A1SmF3lUm9zKQZW1zZmHE3Wa8nzE8cQc3xY=;
+        b=SYRQrTzij38LJm5CQ5gcoMeOPqMh4pr8QNimQUjx/Je/dxDPBuV7UgueaKaYuJ/RzD
+         ExqSXsL/h3ZJSgXliGHSISwl/o875NkVQDaCXUEOzQce5ItX+haChgjPpzVa4CKk1Cqz
+         YUEYyCoFsneXgpehZwmfI3LfQgFT4ljBKKjb8/m49oJv6CqHobFSSfibALiXO8TWimAK
+         fBuHEzkI9NS/LxpikLyzL5UlnTwBmjFZlwhRiy7LUGVprTRYwvFYysWnumD5nLlbSOmb
+         JmfsJZShQVYoVq8XWpIkAye5KDgMFkHZIdWRVewk3yuFyId/LeQt+5oDW3lnrWnH3Zxr
+         C8SA==
+X-Gm-Message-State: AJIora/m6mP3uUCBR4OiP2LyQy+JPaIzuV9v326Zmcj9ZbT8g9yGNetW
+        BqG4oapVFewCI2Rv8BMQGdWj9ql4EuE=
+X-Google-Smtp-Source: AGRyM1vyvI1vzvid8Bo8G+oWfNYRN17arAZ2ebp+U+Q4l6i2IbT8kUgZTGt/txgwEVoiTexo6aTxmA==
+X-Received: by 2002:a05:6a00:1a44:b0:52a:ecd5:bbef with SMTP id h4-20020a056a001a4400b0052aecd5bbefmr21566896pfv.28.1659463859515;
+        Tue, 02 Aug 2022 11:10:59 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:1cc5:2406:5d81:6fe8:af08:c752])
+        by smtp.googlemail.com with ESMTPSA id z22-20020aa79496000000b0052d8d7269d7sm4420525pfk.53.2022.08.02.11.10.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Aug 2022 11:10:59 -0700 (PDT)
+From:   Vishal Badole <badolevishal1116@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chinmoyghosh2001@gmail.com,
+        vimal.kumar32@gmail.com,
+        Vishal Badole <badolevishal1116@gmail.com>,
+        Mintu Patel <mintupatel89@gmail.com>
+Subject: [PATCH v3] Common clock: To list active consumers of clocks
+Date:   Tue,  2 Aug 2022 23:39:47 +0530
+Message-Id: <1659463787-25976-1-git-send-email-badolevishal1116@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20220624010550.582BBC341C7@smtp.kernel.org>
+References: <20220624010550.582BBC341C7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2 Aug 2022 14:02:31 +0000 Kubalewski, Arkadiusz wrote:
-> I just wanted to make sure I didn't miss anything through the spam filters or
-> something? We are still waiting for that github repo, or you were on
-> vacation/busy, right?
+This feature lists the clock consumer's name and per-user enable count
+in clock summary. Using this feature user can easily check which device
+has acquired a perticular clock and it is enabled by respective device
+or not.
+for example:
+$ cat /sys/kernel/debug/clk/clk_summary
+                      enable  prepare  protect                           duty  hardware                            per-user
+   clock               count    count    count    rate   accuracy phase cycle    enable   consumer                    count
+----------------------------------------------------------------------------------------------------------------------------
+ clk_mcasp0_fixed         0        0        0    24576000      0     0  50000     Y      deviceless                      0
+                                                                                         deviceless                      0
+    clk_mcasp0            0        0        0    24576000      0     0  50000     N          simple-audio-card,cpu           0
+                                                                                             deviceless                      0
 
-Great timing, I was just asking Vadim for the code as well.
-I should be able to share the auto-generated user space library 
-for the netlink interface soon after Vadim shares the code.
-Still very much WIP but, well, likely better than parsing by hand.
+Co-developed-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Signed-off-by: Chinmoy Ghosh <chinmoyghosh2001@gmail.com>
+Co-developed-by: Mintu Patel <mintupatel89@gmail.com>
+Signed-off-by: Mintu Patel <mintupatel89@gmail.com>
+Co-developed-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vimal Kumar <vimal.kumar32@gmail.com>
+Signed-off-by: Vishal Badole <badolevishal1116@gmail.com>
+---
+ drivers/clk/clk.c | 46 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 35 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f00d4c1..c96079f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -102,6 +102,7 @@ struct clk {
+ 	unsigned long min_rate;
+ 	unsigned long max_rate;
+ 	unsigned int exclusive_count;
++	unsigned int enable_count;
+ 	struct hlist_node clks_node;
+ };
+ 
+@@ -1008,6 +1009,10 @@ void clk_disable(struct clk *clk)
+ 		return;
+ 
+ 	clk_core_disable_lock(clk->core);
++
++	if (clk->enable_count > 0)
++		clk->enable_count--;
++
+ }
+ EXPORT_SYMBOL_GPL(clk_disable);
+ 
+@@ -1169,10 +1174,16 @@ EXPORT_SYMBOL_GPL(clk_restore_context);
+  */
+ int clk_enable(struct clk *clk)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_enable_lock(clk->core);
++	ret = clk_core_enable_lock(clk->core);
++	if (!ret)
++		clk->enable_count++;
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_enable);
+ 
+@@ -2953,28 +2964,41 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
+ {
+ 	int phase;
++	struct clk *clk_user;
++	int multi_node = 0;
+ 
+-	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
++	seq_printf(s, "%*s%-*s %-7d %-8d %-8d %-11lu %-10lu ",
+ 		   level * 3 + 1, "",
+-		   30 - level * 3, c->name,
++		   35 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+ 		   clk_core_get_rate_recalc(c),
+ 		   clk_core_get_accuracy_recalc(c));
+ 
+ 	phase = clk_core_get_phase(c);
+ 	if (phase >= 0)
+-		seq_printf(s, "%5d", phase);
++		seq_printf(s, "%-5d", phase);
+ 	else
+ 		seq_puts(s, "-----");
+ 
+-	seq_printf(s, " %6d", clk_core_get_scaled_duty_cycle(c, 100000));
++	seq_printf(s, " %-6d", clk_core_get_scaled_duty_cycle(c, 100000));
+ 
+ 	if (c->ops->is_enabled)
+-		seq_printf(s, " %9c\n", clk_core_is_enabled(c) ? 'Y' : 'N');
++		seq_printf(s, " %5c ", clk_core_is_enabled(c) ? 'Y' : 'N');
+ 	else if (!c->ops->enable)
+-		seq_printf(s, " %9c\n", 'Y');
++		seq_printf(s, " %5c ", 'Y');
+ 	else
+-		seq_printf(s, " %9c\n", '?');
++		seq_printf(s, " %5c ", '?');
++
++	hlist_for_each_entry(clk_user, &c->clks, clks_node) {
++		seq_printf(s, "%*s%-*s  %-4d\n",
++			   level * 3 + 2 + 105 * multi_node, "",
++			   30,
++			   clk_user->dev_id ? clk_user->dev_id : "deviceless",
++			   clk_user->enable_count);
++
++		multi_node = 1;
++	}
++
+ }
+ 
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -2995,9 +3019,9 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 	struct clk_core *c;
+ 	struct hlist_head **lists = (struct hlist_head **)s->private;
+ 
+-	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware\n");
+-	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable\n");
+-	seq_puts(s, "-------------------------------------------------------------------------------------------------------\n");
++	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            per-user\n");
++	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                    count\n");
++	seq_puts(s, "-------------------------------------------------------------------------------------------------------------------------------------------\n");
+ 
+ 	clk_prepare_lock();
+ 
+-- 
+2.7.4
+
