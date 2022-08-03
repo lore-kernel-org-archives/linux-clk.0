@@ -2,141 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FDAC00140
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 02:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8853DC19F2A
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 06:37:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233691AbiHCC66 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Aug 2022 22:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
+        id S236451AbiHCGhe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Aug 2022 02:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230348AbiHCC65 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Aug 2022 22:58:57 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 000CA22515;
-        Tue,  2 Aug 2022 19:58:54 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id s206so13976701pgs.3;
-        Tue, 02 Aug 2022 19:58:54 -0700 (PDT)
+        with ESMTP id S235590AbiHCGhc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 02:37:32 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C79C32D83
+        for <linux-clk@vger.kernel.org>; Tue,  2 Aug 2022 23:37:30 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id t22so25056704lfg.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 Aug 2022 23:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=NkV3OzYi4AyJ1Ks2Na+Cpx7tYi6xJjC1EGQ4Lxx986g=;
-        b=iPoOBpqGez2XdRMxsM0RUtmTarTEndBr1O0ftlGpWhKVXL0DASQM9iAVJXRH7eaOLa
-         qzHyjAgAgESZq+xSqh2fM2c6dwTt4QEfx5lBFDo3Y6Xbf4WAeSw9E7j7h/f8sEK5BBqF
-         4Kf3S+5vEIYFp9E2wyCfIIyxWQbtLMRvVC3pAPlRjNev1xiSbTAUtxB7g/ebNrM67Z7Z
-         J/iKcV7o5FPY662mVDyb6jWvyFRkHzYDjyMSY1iG8qe+CwYHz5bW6D6OPbJK662AmYnt
-         AIU5cMJA+i/z7OLfB9GwpTZSr6AycPtG2E7jX+ilbpeXvvrjcXtQwk4W2LmC6J09KChh
-         Wz8w==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=3C/lNt77+qlJDztrS8WVjy6lbQy6qfEyINiYOOYnU18=;
+        b=OkTTeDdgE1wq3JFHiRmbjgpyqJF9kC+95jnwwzwrKilHNWflwBySJidfMTBFuX1US3
+         JLlom3TZgEzsdoeqoGjWDbLUUs/wzgFAasq1I/3bubb/U3cA+rKmxQqyjFFm6Goml4Kd
+         yL4A1YBkBsHnJ5jm/nuf9kXHpK+/Wh/bXGqfyfPkqHdEjzw69+Co4UoPHz1VMgo2gXTQ
+         n0GGainzh8Hw+TW+JVZ9ockkmlKNfPaTYHI2oNT/mHU4J9H03QGZhyxvdaY0z6pejV3B
+         UVlfzuHuwgOOoVEZDOtR0K6eVjW6IEUuWpk30GlQNTScVwvI6zi1tmQlxysqusRscnZk
+         PhYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=NkV3OzYi4AyJ1Ks2Na+Cpx7tYi6xJjC1EGQ4Lxx986g=;
-        b=p3pVmWUTgmUVyx7rJApooeIEVWryj2cAKUVzSmaVjBNV6c7G9XivvJA0MZHZBiaVdK
-         twLrL4q6sFc5CKfZOoQqx5dLDWkxJifVij+QNcViQI3xzewx/BaHtDyi+HzCTmYEeLvf
-         DPg18wl0m/o44Xt4qLZeIL1gdzkXtPhv16AEkSQk4vkOuEk9zn13Sph/Rh/GPG3AL2TR
-         13Ko2dVVmdks99qr2C8B11ay2KnfqPt/zUvDiiiDHz8ztfQHiOYLPyWcBvBepbRhS+0N
-         03M7nXnDKEV+xa7B/1Oll3uuuezrm55r2o5rAOZOwdoEx5iNq0vZIuZdUah5W72shBAC
-         Te6w==
-X-Gm-Message-State: AJIora+lE0pgNPykMr2p4bNNjBSUfB5h4cu7QkvjRYthI9Niwwn+vo3A
-        pcQbEuarEb6PUt6KT0y9erb34MeDzsw=
-X-Google-Smtp-Source: AA6agR573v0yHmoXGweA78VvVsbkfA9igmH4jeVqrosgwZyN3y4JAUA+PjzFaYSBRhugAnR3fJOYwg==
-X-Received: by 2002:a05:6a00:a93:b0:528:77d6:f660 with SMTP id b19-20020a056a000a9300b0052877d6f660mr24005567pfl.50.1659495534060;
-        Tue, 02 Aug 2022 19:58:54 -0700 (PDT)
-Received: from localhost.localdomain (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
-        by smtp.gmail.com with ESMTPSA id a13-20020aa78e8d000000b0052d90521d02sm4803725pfr.126.2022.08.02.19.58.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Aug 2022 19:58:53 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     rafal@milecki.pl, Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM IPROC ARM
-        ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: iproc: Do not rely on node name for correct PLL setup
-Date:   Tue,  2 Aug 2022 19:58:34 -0700
-Message-Id: <20220803025836.107886-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=3C/lNt77+qlJDztrS8WVjy6lbQy6qfEyINiYOOYnU18=;
+        b=0oZ2CTm6bnJIK6gzjv4HhwvDNccvpdQLWHA75vLtUulZ6vHcIauTOHH+l/pEyNpwPy
+         UjYWUfknH38n4+nRd7RFy+bHGMYj4VKlofEU+b/46DIqyp6qPuxdatuFbjbahMHy32Nm
+         EKVbGqdsZIMMB8k0ho4WRHugda+TFhdIE7zN4od7xC8TYts5j+CstZHifyUij0edlwBS
+         ZuBEowJRFrLXlRV8JIIYznTncmR4o/wbFtELD1IPHjgu78RoJM1eKhVphdxSF1jKT45F
+         wQO6OBkh6v8A6vTrn7euT53U92NSJAvtlWEXgk+gKMOnaLgZBvWFqWmmN37Y38Ly7X/D
+         h9qg==
+X-Gm-Message-State: AJIora/NZ60OPThlt9BXPt8SkR8Dh3IQRKndDUNFio39UQ9KxADx3Ytf
+        m78+xPkXOKti/+RtJd7wGMtlMw==
+X-Google-Smtp-Source: AGRyM1s5ZskGPA3x2RfGUG+ZddgaBOYCr+PGg5vqJBsdELbLJDGDQFIGpzGmtTAa7OvrGnkfkkU8OQ==
+X-Received: by 2002:a05:6512:3f0c:b0:48a:433:6d3b with SMTP id y12-20020a0565123f0c00b0048a04336d3bmr8447107lfa.570.1659508649004;
+        Tue, 02 Aug 2022 23:37:29 -0700 (PDT)
+Received: from [192.168.1.6] ([213.161.169.44])
+        by smtp.gmail.com with ESMTPSA id a11-20020a19f80b000000b0048af437ce87sm1246604lff.183.2022.08.02.23.37.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Aug 2022 23:37:27 -0700 (PDT)
+Message-ID: <f2453080-d71b-3c33-ba8e-d2ed15e06927@linaro.org>
+Date:   Wed, 3 Aug 2022 08:37:23 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 1/5] dt-bindings: clk: qcom: Support gpu cx gdsc reset
+Content-Language: en-US
+To:     Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1659172664-10345-1-git-send-email-quic_akhilpo@quicinc.com>
+ <20220730144713.1.I68b749219741db01356a42d782f74265d29a2ac3@changeid>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220730144713.1.I68b749219741db01356a42d782f74265d29a2ac3@changeid>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After commit 31fd9b79dc58 ("ARM: dts: BCM5301X: update CRU block
-description") a warning from clk-iproc-pll.c was generated due to a
-duplicate PLL name as well as the console stopped working. Upon closer
-inspection it became clear that iproc_pll_clk_setup() used the Device
-Tree node unit name as an unique identifier as well as a parent name to
-parent all clocks under the PLL.
+On 30/07/2022 11:17, Akhil P Oommen wrote:
+> Add necessary definitions in gpucc bindings to ensure gpu cx gdsc collapse
+> through 'reset' framework for SC7280.
+> 
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
 
-BCM5301X was the first platform on which that got noticed because of the
-DT node unit name renaming but the same assumptions hold true for any
-user of the iproc_pll_clk_setup() function.
+Assuming discussion in cover letter sorts out:
 
-The first 'clock-output-names' property is always guaranteed to be
-unique as well as providing the actual desired PLL clock name, so we
-utilize that to register the PLL and as a parent name of all children
-clock.
-
-Fixes: 5fe225c105fd ("clk: iproc: add initial common clock support")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
-Rafal,
-
-This is a replacement for this patch that you checked into OpenWrt:
-
-https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/bcm53xx/patches-5.15/320-ARM-dts-BCM5301X-Switch-back-to-old-clock-nodes-name.patch;h=cee37732ab9e2ac8bc2a399a53d01b9ead756cb8;hb=HEAD
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
- drivers/clk/bcm/clk-iproc-pll.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-iproc-pll.c b/drivers/clk/bcm/clk-iproc-pll.c
-index 33da30f99c79..92be88eb1d11 100644
---- a/drivers/clk/bcm/clk-iproc-pll.c
-+++ b/drivers/clk/bcm/clk-iproc-pll.c
-@@ -736,6 +736,7 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	const char *parent_name;
- 	struct iproc_clk *iclk_array;
- 	struct clk_hw_onecell_data *clk_data;
-+	const char *clk_name;
- 
- 	if (WARN_ON(!pll_ctrl) || WARN_ON(!clk_ctrl))
- 		return;
-@@ -783,7 +784,12 @@ void iproc_pll_clk_setup(struct device_node *node,
- 	iclk = &iclk_array[0];
- 	iclk->pll = pll;
- 
--	init.name = node->name;
-+	ret = of_property_read_string_index(node, "clock-output-names",
-+					    0, &clk_name);
-+	if (WARN_ON(ret))
-+		goto err_pll_register;
-+
-+	init.name = clk_name;
- 	init.ops = &iproc_pll_ops;
- 	init.flags = 0;
- 	parent_name = of_clk_get_parent_name(node, 0);
-@@ -803,13 +809,12 @@ void iproc_pll_clk_setup(struct device_node *node,
- 		goto err_pll_register;
- 
- 	clk_data->hws[0] = &iclk->hw;
-+	parent_name = clk_name;
- 
- 	/* now initialize and register all leaf clocks */
- 	for (i = 1; i < num_clks; i++) {
--		const char *clk_name;
- 
- 		memset(&init, 0, sizeof(init));
--		parent_name = node->name;
- 
- 		ret = of_property_read_string_index(node, "clock-output-names",
- 						    i, &clk_name);
--- 
-2.25.1
-
+Best regards,
+Krzysztof
