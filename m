@@ -2,71 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581EDC19F28
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 10:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF76C19F28
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 10:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233564AbiHCKCA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Aug 2022 06:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44980 "EHLO
+        id S237733AbiHCKUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Aug 2022 06:20:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231533AbiHCKB7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 06:01:59 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D78F91836B;
-        Wed,  3 Aug 2022 03:01:58 -0700 (PDT)
+        with ESMTP id S237431AbiHCKUk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 06:20:40 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6EB0C10;
+        Wed,  3 Aug 2022 03:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1659520919; x=1691056919;
+  t=1659522039; x=1691058039;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=1rVxQ4eqI3N9wCVO+tgYoYxdpipoicSFsvvHXjVF02g=;
-  b=C3Cu6vOsuzPJuzImBkgFrMpA39OFtZBJnzHRhL1gPpYkCXFfM9ufo5Cm
-   f7HrPkGh/Jr7QW1INMGoqqL18jJuppc/P1JvnOESosfsiwojecjjsT1f6
-   iylDLVO+2Ny4jaDZ59bd4338xhctqw/rvWAMKsU2WR9bBE6LgbVmx+Eeu
-   E=;
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 03 Aug 2022 03:01:59 -0700
+  bh=r2r9v+zdOXg+pjOV8cZBvnLP+wof+DIDY7ngC/evlew=;
+  b=qqlItbeE/Q4dNm3hXXH+UO3t29BevJJqEwc2hrYU0nhmvtGyS+rSau0r
+   55H38xvRu1bEuSjtjLRHxibce+aUsBsGrEdocciO0J0v6WKF3YGxZuPrZ
+   MJDjEXN/mXaLjf7CK1vAUx7cxDmEYguXDZNEZPpek6+YJeRkdgH8Gwso4
+   s=;
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 03 Aug 2022 03:20:39 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2022 03:01:58 -0700
+  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2022 03:20:39 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 3 Aug 2022 03:01:57 -0700
+ 15.2.986.22; Wed, 3 Aug 2022 03:20:39 -0700
 Received: from [10.216.24.92] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 3 Aug 2022
- 03:01:51 -0700
-Message-ID: <0f90ef4d-4b74-2746-a37c-4a661cc0d5ea@quicinc.com>
-Date:   Wed, 3 Aug 2022 15:31:48 +0530
+ 03:20:34 -0700
+Message-ID: <624aaad9-8937-49d1-9e66-38713b5a1f0c@quicinc.com>
+Date:   Wed, 3 Aug 2022 15:50:30 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.2
-Subject: Re: [PATCH 0/5] clk/qcom: Support gdsc collapse polling using 'reset'
- inteface
+Subject: Re: [PATCH 3/5] clk: qcom: gpucc-sc7280: Add cx collapse reset
+ support
 Content-Language: en-US
-To:     Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     freedreno <freedreno@lists.freedesktop.org>,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
         <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
         "Bjorn Andersson" <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>
+CC:     Douglas Anderson <dianders@chromium.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 References: <1659172664-10345-1-git-send-email-quic_akhilpo@quicinc.com>
- <34ae275e-8d4c-3735-c08c-4769caf2909c@linaro.org>
- <CAF6AEGv_cgPtaFpxSPCzWXeBcJvqE2fGucriRvMAJMbQ7ULndQ@mail.gmail.com>
+ <20220730144713.3.I5e64ff4b77bb9079eb2edeea8a02585c9e76778f@changeid>
+ <9098554e-5327-0b7f-f4d0-a81880556136@linaro.org>
 From:   Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAF6AEGv_cgPtaFpxSPCzWXeBcJvqE2fGucriRvMAJMbQ7ULndQ@mail.gmail.com>
+In-Reply-To: <9098554e-5327-0b7f-f4d0-a81880556136@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
@@ -74,71 +71,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/3/2022 12:02 AM, Rob Clark wrote:
-> On Tue, Aug 2, 2022 at 12:02 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->> On 30/07/2022 12:17, Akhil P Oommen wrote:
->>> Some clients like adreno gpu driver would like to ensure that its gdsc
->>> is collapsed at hardware during a gpu reset sequence. This is because it
->>> has a votable gdsc which could be ON due to a vote from another subsystem
->>> like tz, hyp etc or due to an internal hardware signal.
->> If this is votable, do we have any guarantee that the gdsc will collapse
->> at all? How can we proceed if it did not collapse?
-> Other potential votes should be transient.  But I guess we eventually
-> need to timeout and give up.  At which point we are no worse off than
-> before.
+On 8/2/2022 12:45 PM, Dmitry Baryshkov wrote:
+> On 30/07/2022 12:17, Akhil P Oommen wrote:
+>> Allow a consumer driver to poll for cx gdsc collapse through Reset
+>> framework.
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>
+>>   drivers/clk/qcom/gpucc-sc7280.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gpucc-sc7280.c 
+>> b/drivers/clk/qcom/gpucc-sc7280.c
+>> index 9a832f2..f5df51d 100644
+>> --- a/drivers/clk/qcom/gpucc-sc7280.c
+>> +++ b/drivers/clk/qcom/gpucc-sc7280.c
+>> @@ -433,12 +433,18 @@ static const struct regmap_config 
+>> gpu_cc_sc7280_regmap_config = {
+>>       .fast_io = true,
+>>   };
+>>   +static const struct qcom_reset_map gpucc_sc7280_resets[] = {
+>> +    [GPU_CX_COLLAPSE] = { .op = gdsc_wait_for_collapse, .priv = 
+>> &cx_gdsc },
+>> +};
+>> +
+>>   static const struct qcom_cc_desc gpu_cc_sc7280_desc = {
+>>       .config = &gpu_cc_sc7280_regmap_config,
+>>       .clks = gpu_cc_sc7280_clocks,
+>>       .num_clks = ARRAY_SIZE(gpu_cc_sc7280_clocks),
+>>       .gdscs = gpu_cc_sc7180_gdscs,
+>>       .num_gdscs = ARRAY_SIZE(gpu_cc_sc7180_gdscs),
+>> +    .resets = gpucc_sc7280_resets,
+>> +    .num_resets = ARRAY_SIZE(gpucc_sc7280_resets),
 >
-> But hmm, we aren't using RBBM_SW_RESET_CMD for sw reset like we have
-> on previous generations?  That does seem a bit odd.  Looks like kgsl
-> does use it.
->
-> BR,
-> -R
-Like Rob mentioned there could be transient votes from other 
-clients/subsystem. It could be even stuck ON when hardware is in bad 
-shape in some very rare cases. For the worst case scenario, I have added 
-a timeout (500msec) in the gdsc reset op.
+> An implementation question. Do we have to poll for the GDSC on 
+> platforms like sm8150/sm8250 which have the plain BCR resets?
+Yes.
 
-I have added the Soft reset in [1]. But this resets only the core gpu 
-blocks, not everything. For eg. GMU.
-
-[1] [PATCH v3 7/8] drm/msm/a6xx: Improve gpu recovery sequence
-
->
->>> To allow
->>> this, gpucc driver can expose an interface to the client driver using
->>> reset framework. Using this the client driver can trigger a polling within
->>> the gdsc driver.
->> Trigger the polling made me think initially that we will actually
->> trigger something in the HW. Instead the client uses reset framework to
->> poll for the gdsc to be reset.
-Yes. I should replace 'trigger' with 'start' here.
+Thanks for all the feedback, Dmitry. I will post another version of this 
+series.
 
 -Akhil.
->>
->>> This series is rebased on top of linus's master branch.
->>>
->>> Related discussion: https://patchwork.freedesktop.org/patch/493144/
->>>
->>>
->>> Akhil P Oommen (5):
->>>     dt-bindings: clk: qcom: Support gpu cx gdsc reset
->>>     clk: qcom: Allow custom reset ops
->>>     clk: qcom: gpucc-sc7280: Add cx collapse reset support
->>>     clk: qcom: gdsc: Add a reset op to poll gdsc collapse
->>>     arm64: dts: qcom: sc7280: Add Reset support for gpu
->>>
->>>    arch/arm64/boot/dts/qcom/sc7280.dtsi          |  3 +++
->>>    drivers/clk/qcom/gdsc.c                       | 23 +++++++++++++++++++----
->>>    drivers/clk/qcom/gdsc.h                       |  7 +++++++
->>>    drivers/clk/qcom/gpucc-sc7280.c               |  6 ++++++
->>>    drivers/clk/qcom/reset.c                      |  6 ++++++
->>>    drivers/clk/qcom/reset.h                      |  2 ++
->>>    include/dt-bindings/clock/qcom,gpucc-sc7280.h |  3 +++
->>>    7 files changed, 46 insertions(+), 4 deletions(-)
->>>
->>
->> --
->> With best wishes
->> Dmitry
+>
+>>   };
+>>     static const struct of_device_id gpu_cc_sc7280_match_table[] = {
+>
+>
 
