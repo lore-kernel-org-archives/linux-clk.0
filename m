@@ -2,247 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744AAC3F6B0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 17:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27A9C19F29
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 23:28:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236782AbiHCRPM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Aug 2022 13:15:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54528 "EHLO
+        id S232503AbiHCX2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Aug 2022 19:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233632AbiHCRPK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 13:15:10 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B786753D0A;
-        Wed,  3 Aug 2022 10:15:08 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id v16-20020a17090abb9000b001f25244c65dso2689650pjr.2;
-        Wed, 03 Aug 2022 10:15:08 -0700 (PDT)
+        with ESMTP id S229881AbiHCX2p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 19:28:45 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709352B606;
+        Wed,  3 Aug 2022 16:28:44 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id m7so13937017qkk.6;
+        Wed, 03 Aug 2022 16:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=XdSlOXuHhhIbWVCv4buM9Zz2HBRydczrfgZXVip4PUM=;
-        b=odUn1ZstSMUDN2+OzuFWixJp1LJv9UA1r10GnSgKfYx+OY+Am6YE4uzDOmfRsBPE1d
-         dPOIHKm6VD3d6J9cx7abBsIYNh3zJk+HCncxQrvRSG9vMd2m8qZ9UcMGLFjrZJONx7/a
-         MxI0/mwq1a/Jq+pYAdSA+lHX2rErhj5fN4crAgTeZiQpllZlm/CW4h2WKXh3hn/ci3FB
-         0kOsYxuGWjLqenKj1U1rWgNXxgEJ4IZpq9oWMFIt8aQ82fEjkbtLJZYDPPc62jrFBhP2
-         rJTeEUC472Q9qR9yBsLzpzfp3i1ruVyiIIwqbb1Ki6zOuHqRe6wmXBaY3/4zzPEkrFdk
-         i00g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0fTNd6U92aMpnpUk4vc+/qMilauOgZ+f0bSF9oL3Kd8=;
+        b=hMpNLPKlItbeL4FVVwcxF5vkjrf3ZW1ojnVtnJ1gUV32gqco84APvLVZoW25JNgnzG
+         K49N7Lb8+yP9rzO7Mcuu1HJRIvl4yz8K4N76S7wHHXogERApdk85u1FmHOMfknn2w/Rz
+         8qfxaZqDawhcLs5RWkKv1UfRQOCnGAaAX5QR80Ny4nBbLr8tkrDEwKNwycAjKzwc0Ffy
+         B1cakb/FKsPNA7DJfTw6Mc+xw9SGFFOTJK1MFV3cOD52sMGMKTT3pN7Hd9T6Wi/T33UA
+         gBwlwHXnjEDp/+TKv27lpvon3pCIp70e4VDT8KJq6Ztkjgx5aGQTqiRC6uWTI8j1Xznc
+         fj3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=XdSlOXuHhhIbWVCv4buM9Zz2HBRydczrfgZXVip4PUM=;
-        b=T8uHInPOrTJein9dY4Rn355LWSQDiU//XejoOAYyLEVK6nS/5wmlyiHgLiBQyI3L9x
-         SIQ/k4O0xYLPYXWtgAvwwAWm1aeDfCbxuuGJBrh9CSALmhx0aTLNy9K6TjagINajcKV9
-         5Jskl6KDT61y9CxHaKtfMSUbKkZcCEvdDX9gS38vQ/OHuW97rrDKAvd9wkKuLjXz+ONW
-         s/sK6Mea2IW8J/GL8X6wmNYGlPyH4qcSbg1TlHFtnYmqLxwJHVbphPMh1HNmupjbHc4V
-         LbFWKLwQpetPN6eFo7jnXRDERD+eQxqzGMUBumNhRyGttppUdShw3FL6qsB+bOWA3sZy
-         RxdQ==
-X-Gm-Message-State: ACgBeo22daBwaJy1sA5+zti77Rg0TJBQ4pGeMlHpgsJki1C+rm41UjAm
-        krm060/t0ajyyhgLJ3l9Sks=
-X-Google-Smtp-Source: AA6agR5RAm+oqvuu7bYVzVzrfgIb3EeQRLD32uN+b4RbV8Ixqv0wH9Ee4udgR9bdIu4DKoTX/RHIVQ==
-X-Received: by 2002:a17:902:c7c4:b0:16e:d968:6343 with SMTP id r4-20020a170902c7c400b0016ed9686343mr19246695pla.133.1659546907788;
-        Wed, 03 Aug 2022 10:15:07 -0700 (PDT)
-Received: from [172.30.1.52] ([14.32.163.5])
-        by smtp.gmail.com with ESMTPSA id k15-20020a170902c40f00b0016dbaf3ff2esm2347101plk.22.2022.08.03.10.15.03
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0fTNd6U92aMpnpUk4vc+/qMilauOgZ+f0bSF9oL3Kd8=;
+        b=yXzUbCDTwbf9kSUWMLzqQK2jTpiuSBCyAHXV89OOfaz4WrLEIqQ6oeGF46USiogklm
+         RB5+LZi2FFItxM7OMyG7UpmdZomi9+9VjoeLCQF+Jto1V+1qbkktpwM8FnawMiKhd5Iz
+         ylddEZy5yCsUQ6Y9IgZ/6WgStjaj5ICiLAbI48AYcdUdzn7a0Y3mBPVQDB0e9dP/4IFd
+         ryLHqsMvDIxmpZyODhCOLKgVOXHvife28EfZsdEmEaVQrkEoTi9U7WUQ48mmEh1uCXdu
+         rSStbyEp2korkBUT/l2J13EdVml9nuWQ/f6B3vJA1S7O6d6O6SchVHlnapzNWWvW5z0C
+         UkhA==
+X-Gm-Message-State: ACgBeo2XcGjyGmNW1RpwfOYGTskjwtDgF/rfkINMsC+KOH1YgMXPNAcH
+        cDOjadTOPCdikwDk7rKki8Yknw7LH3A=
+X-Google-Smtp-Source: AA6agR6DoNY5ZIjsvWjEXQ8FVjBB0iTJ8DcVbRyqFHMS6j1cUcMIrYBZSZ0BZsOYSlCyAKSJh0nG8Q==
+X-Received: by 2002:a05:620a:22c4:b0:6b8:dcca:1368 with SMTP id o4-20020a05620a22c400b006b8dcca1368mr5866199qki.517.1659569323503;
+        Wed, 03 Aug 2022 16:28:43 -0700 (PDT)
+Received: from [192.168.1.201] (pool-173-73-95-180.washdc.fios.verizon.net. [173.73.95.180])
+        by smtp.gmail.com with ESMTPSA id c27-20020a05620a269b00b006b8cff25187sm4396904qkp.42.2022.08.03.16.28.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Aug 2022 10:15:07 -0700 (PDT)
-Message-ID: <52758b63-1bf9-2ffb-2970-7be37c3baea3@gmail.com>
-Date:   Thu, 4 Aug 2022 02:15:02 +0900
+        Wed, 03 Aug 2022 16:28:42 -0700 (PDT)
+Subject: Re: [RFT PATCH] clk: ls1c: Fix PLL rate calculation
+To:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Keguang Zhang <keguang.zhang@gmail.com>,
+        Du Huanpeng <dhu@hodcarrier.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Yang Ling <gnaygnil@gmail.com>
+References: <20220419051114.1569291-1-seanga2@gmail.com>
+From:   Sean Anderson <seanga2@gmail.com>
+Message-ID: <d92dd996-6961-5291-9504-1fe284b40dd6@gmail.com>
+Date:   Wed, 3 Aug 2022 19:28:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 6/6] clk: samsung: exynosautov9: add fsys1 clock
- support
+In-Reply-To: <20220419051114.1569291-1-seanga2@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-To:     Chanho Park <chanho61.park@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1659054220.git.chanho61.park@samsung.com>
- <CGME20220729003612epcas2p4cd006dcd814ff49583aa44921fbbed5a@epcas2p4.samsung.com>
- <d4aa967538fed9667e9550a256e545026fc2fa8d.1659054220.git.chanho61.park@samsung.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-In-Reply-To: <d4aa967538fed9667e9550a256e545026fc2fa8d.1659054220.git.chanho61.park@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22. 7. 29. 09:30, Chanho Park wrote:
-> CMU_FSYS1 provides clocks for USB(2 x USB3.1 Gen-1, 2 x USB 2.0) and
-> mmc. For MMC clocks, PLL_MMC(PLL0831X type) is also supported as a PLL
-> source clock provider.
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+On 4/19/22 1:11 AM, Sean Anderson wrote:
+> While reviewing Dhu's patch adding ls1c300 clock support to U-Boot [1],=
+ I
+> noticed the following calculation, which is copied from
+> drivers/clk/loongson1/clk-loongson1c.c:
+>=20
+> ulong ls1c300_pll_get_rate(struct clk *clk)
+> {
+> 	unsigned int mult;
+> 	long long parent_rate;
+> 	void *base;
+> 	unsigned int val;
+>=20
+> 	parent_rate =3D clk_get_parent_rate(clk);
+> 	base =3D (void *)clk->data;
+>=20
+> 	val =3D readl(base + START_FREQ);
+> 	mult =3D FIELD_GET(FRAC_N, val) + FIELD_GET(M_PLL, val);
+> 	return (mult * parent_rate) / 4;
+> }
+>=20
+> I would like to examine the use of M_PLL and FRAC_N to calculate the mu=
+ltiplier
+> for the PLL. The datasheet has the following to say:
+>=20
+> START_FREQ =E4=BD=8D    =E7=BC=BA=E7=9C=81=E5=80=BC      =E6=8F=8F=E8=BF=
+=B0
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> FRAC_N     23:16 0           PLL =E5=80=8D=E9=A2=91=E7=B3=BB=E6=95=B0=E7=
+=9A=84=E5=B0=8F=E6=95=B0=E9=83=A8=E5=88=86
+>=20
+>                   =E7=94=B1          PLL =E5=80=8D=E9=A2=91=E7=B3=BB=E6=
+=95=B0=E7=9A=84=E6=95=B4=E6=95=B0=E9=83=A8=E5=88=86
+> M_PLL      15:8  NAND_D[3:0] (=E7=90=86=E8=AE=BA=E5=8F=AF=E4=BB=A5=E8=BE=
+=BE=E5=88=B0 255=EF=BC=8C=E5=BB=BA=E8=AE=AE=E4=B8=8D=E8=A6=81=E8=B6=85=E8=
+=BF=87 100)
+>                   =E9=85=8D=E7=BD=AE
+>=20
+> which according to google translate means
+>=20
+> START_FREQ Bits  Default       Description
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> FRAC_N     23:16 0             Fractional part of the PLL multiplicatio=
+n factor
+>=20
+>                   Depends on    Integer part of PLL multiplication fact=
+or
+> M_PLL      15:8  NAND_D[3:0]   (Theoretically it can reach 255, [but] i=
+t is
+>                   configuration  recommended not to exceed 100)
+>=20
+> So just based on this description, I would expect that the formula to b=
+e
+> something like
+>=20
+> 	rate =3D parent * (255 * M_PLL + FRAC_N) / 255 / 4
+>=20
+> However, the datasheet also gives the following formula:
+>=20
+> 	rate =3D parent * (M_PLL + FRAC_N) / 4
+>=20
+> which is what the Linux driver has implemented. I find this very unusua=
+l.
+> First, the datasheet specifically says that these fields are the intege=
+r and
+> fractional parts of the multiplier. Second, I think such a construct do=
+es not
+> easily map to traditional PLL building blocks. Implementing this formul=
+a in
+> hardware would likely require an adder, just to then set the threshold =
+of a
+> clock divider.
+>=20
+> I think it is much more likely that the first formula is correct. The a=
+uthor of
+> the datasheet may think of a multiplier of (say) 3.14 as
+>=20
+> 	M_PLL =3D 3
+> 	FRAC_N =3D 0.14
+>=20
+> which together sum to the correct multiplier, even though the actual va=
+lue
+> stored in FRAC_N would be 36.
+>=20
+> I suspect that this has slipped by unnoticed because when FRAC_N is 0, =
+there is
+> no difference in the formulae. The following patch is untested, but I s=
+uspect
+> it will fix this issue. I would appreciate if anyone with access to the=
+
+> hardware could measure the output of the PLL (or one of its derived clo=
+cks) and
+> determine the correct formula.
+>=20
+> [1] https://lore.kernel.org/u-boot/20220418204519.19991-1-dhu@hodcarrie=
+r.org/T/#u
+>=20
+> Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
+> Signed-off-by: Sean Anderson <seanga2@gmail.com>
 > ---
->  drivers/clk/samsung/clk-exynosautov9.c | 130 +++++++++++++++++++++++++
->  1 file changed, 130 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-> index 527a6837661e..196d8b023907 100644
-> --- a/drivers/clk/samsung/clk-exynosautov9.c
-> +++ b/drivers/clk/samsung/clk-exynosautov9.c
-> @@ -1307,6 +1307,133 @@ static const struct samsung_cmu_info fsys0_cmu_info __initconst = {
->  	.clk_name		= "dout_clkcmu_fsys0_bus",
->  };
->  
-> +/* ---- CMU_FSYS1 ---------------------------------------------------------- */
-> +
-> +/* Register Offset definitions for CMU_FSYS1 (0x17040000) */
-> +#define PLL_LOCKTIME_PLL_MMC			0x0000
-> +#define PLL_CON0_PLL_MMC			0x0100
-> +#define PLL_CON3_PLL_MMC			0x010c
-> +#define PLL_CON0_MUX_CLKCMU_FSYS1_BUS_USER	0x0600
-> +#define PLL_CON0_MUX_CLKCMU_FSYS1_MMC_CARD_USER	0x0610
-> +#define PLL_CON0_MUX_CLKCMU_FSYS1_USBDRD_USER	0x0620
-> +
-> +#define CLK_CON_MUX_MUX_CLK_FSYS1_MMC_CARD	0x1000
-> +#define CLK_CON_DIV_DIV_CLK_FSYS1_MMC_CARD	0x1800
-> +
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_FSYS1_CMU_FSYS1_IPCLKPORT_PCLK	0x2018
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_MMC_CARD_IPCLKPORT_SDCLKIN	0x202c
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_MMC_CARD_IPCLKPORT_I_ACLK	0x2028
-> +
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB20DRD_0_REF_CLK_40		0x204c
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB20DRD_1_REF_CLK_40		0x2058
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB30DRD_0_REF_CLK_40		0x2064
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB30DRD_1_REF_CLK_40		0x2070
-> +
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB2_0_IPCLKPORT_ACLK	0x2074
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB2_1_IPCLKPORT_ACLK	0x2078
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB3_0_IPCLKPORT_ACLK	0x207c
-> +#define CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB3_1_IPCLKPORT_ACLK	0x2080
-> +
-> +static const unsigned long fsys1_clk_regs[] __initconst = {
-> +	PLL_CON0_MUX_CLKCMU_FSYS1_BUS_USER,
-> +};
-> +
-> +static const struct samsung_pll_clock fsys1_pll_clks[] __initconst = {
-> +	PLL(pll_0831x, FOUT_MMC_PLL, "fout_mmc_pll", "oscclk",
-> +	    PLL_LOCKTIME_PLL_MMC, PLL_CON3_PLL_MMC, NULL),
-> +};
-> +
-> +/* List of parent clocks for Muxes in CMU_FSYS1 */
-> +PNAME(mout_fsys1_bus_user_p) = { "oscclk", "dout_clkcmu_fsys1_bus" };
-> +PNAME(mout_fsys1_mmc_pll_p) = { "oscclk", "fout_mmc_pll" };
-> +PNAME(mout_fsys1_mmc_card_user_p) = { "oscclk", "gout_clkcmu_fsys1_mmc_card" };
-> +PNAME(mout_fsys1_usbdrd_user_p) = { "oscclk", "dout_clkcmu_fsys1_usbdrd" };
-> +PNAME(mout_fsys1_mmc_card_p) = { "mout_fsys1_mmc_card_user",
-> +				 "mout_fsys1_mmc_pll" };
-> +
-> +static const struct samsung_mux_clock fsys1_mux_clks[] __initconst = {
-> +	MUX(CLK_MOUT_FSYS1_BUS_USER, "mout_fsys1_bus_user",
-> +	    mout_fsys1_bus_user_p, PLL_CON0_MUX_CLKCMU_FSYS1_BUS_USER, 4, 1),
-> +	MUX(CLK_MOUT_FSYS1_MMC_PLL, "mout_fsys1_mmc_pll", mout_fsys1_mmc_pll_p,
-> +	    PLL_CON0_PLL_MMC, 4, 1),
-> +	MUX(CLK_MOUT_FSYS1_MMC_CARD_USER, "mout_fsys1_mmc_card_user",
-> +	    mout_fsys1_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_FSYS1_MMC_CARD_USER,
-> +	    4, 1),
-> +	MUX(CLK_MOUT_FSYS1_USBDRD_USER, "mout_fsys1_usbdrd_user",
-> +	    mout_fsys1_usbdrd_user_p, PLL_CON0_MUX_CLKCMU_FSYS1_USBDRD_USER,
-> +	    4, 1),
-> +	MUX(CLK_MOUT_FSYS1_MMC_CARD, "mout_fsys1_mmc_card",
-> +	    mout_fsys1_mmc_card_p, CLK_CON_MUX_MUX_CLK_FSYS1_MMC_CARD,
-> +	    0, 1),
-> +};
-> +
-> +static const struct samsung_div_clock fsys1_div_clks[] __initconst = {
-> +	DIV(CLK_DOUT_FSYS1_MMC_CARD, "dout_fsys1_mmc_card",
-> +	    "mout_fsys1_mmc_card",
-> +	    CLK_CON_DIV_DIV_CLK_FSYS1_MMC_CARD, 0, 9),
-> +};
-> +
-> +static const struct samsung_gate_clock fsys1_gate_clks[] __initconst = {
-> +	GATE(CLK_GOUT_FSYS1_PCLK, "gout_fsys1_pclk", "mout_fsys1_bus_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_FSYS1_CMU_FSYS1_IPCLKPORT_PCLK,
-> +	     21, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_GOUT_FSYS1_MMC_CARD_SDCLKIN, "gout_fsys1_mmc_card_sdclkin",
-> +	     "dout_fsys1_mmc_card",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_MMC_CARD_IPCLKPORT_SDCLKIN,
-> +	     21, CLK_SET_RATE_PARENT, 0),
-> +	GATE(CLK_GOUT_FSYS1_MMC_CARD_ACLK, "gout_fsys1_mmc_card_aclk",
-> +	     "dout_fsys1_mmc_card",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_MMC_CARD_IPCLKPORT_I_ACLK,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB20DRD_0_REFCLK, "gout_fsys1_usb20drd_0_refclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB20DRD_0_REF_CLK_40,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB20DRD_1_REFCLK, "gout_fsys1_usb20drd_1_refclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB20DRD_1_REF_CLK_40,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB30DRD_0_REFCLK, "gout_fsys1_usb30drd_0_refclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB30DRD_0_REF_CLK_40,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB30DRD_1_REFCLK, "gout_fsys1_usb30drd_1_refclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_USB30DRD_1_REF_CLK_40,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB20_0_ACLK, "gout_fsys1_usb20_0_aclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB2_0_IPCLKPORT_ACLK,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB20_1_ACLK, "gout_fsys1_usb20_1_aclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB2_1_IPCLKPORT_ACLK,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB30_0_ACLK, "gout_fsys1_usb30_0_aclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB3_0_IPCLKPORT_ACLK,
-> +	     21, 0, 0),
-> +	GATE(CLK_GOUT_FSYS1_USB30_1_ACLK, "gout_fsys1_usb30_1_aclk",
-> +	     "mout_fsys1_usbdrd_user",
-> +	     CLK_CON_GAT_GOUT_BLK_FSYS1_UID_US_D_USB3_1_IPCLKPORT_ACLK,
-> +	     21, 0, 0),
-> +};
-> +
-> +static const struct samsung_cmu_info fsys1_cmu_info __initconst = {
-> +	.pll_clks		= fsys1_pll_clks,
-> +	.nr_pll_clks		= ARRAY_SIZE(fsys1_pll_clks),
-> +	.mux_clks		= fsys1_mux_clks,
-> +	.nr_mux_clks		= ARRAY_SIZE(fsys1_mux_clks),
-> +	.div_clks		= fsys1_div_clks,
-> +	.nr_div_clks		= ARRAY_SIZE(fsys1_div_clks),
-> +	.gate_clks		= fsys1_gate_clks,
-> +	.nr_gate_clks		= ARRAY_SIZE(fsys1_gate_clks),
-> +	.nr_clk_ids		= FSYS1_NR_CLK,
-> +	.clk_regs		= fsys1_clk_regs,
-> +	.nr_clk_regs		= ARRAY_SIZE(fsys1_clk_regs),
-> +	.clk_name		= "dout_clkcmu_fsys1_bus",
-> +};
-> +
->  /* ---- CMU_FSYS2 ---------------------------------------------------------- */
->  
->  /* Register Offset definitions for CMU_FSYS2 (0x17c00000) */
-> @@ -1944,6 +2071,9 @@ static const struct of_device_id exynosautov9_cmu_of_match[] = {
->  	}, {
->  		.compatible = "samsung,exynosautov9-cmu-fsys0",
->  		.data = &fsys0_cmu_info,
-> +	}, {
-> +		.compatible = "samsung,exynosautov9-cmu-fsys1",
-> +		.data = &fsys1_cmu_info,
->  	}, {
->  		.compatible = "samsung,exynosautov9-cmu-fsys2",
->  		.data = &fsys2_cmu_info,
+>=20
+>   drivers/clk/loongson1/clk-loongson1c.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loong=
+son1/clk-loongson1c.c
+> index 703f87622cf5..2b98a116c1ea 100644
+> --- a/drivers/clk/loongson1/clk-loongson1c.c
+> +++ b/drivers/clk/loongson1/clk-loongson1c.c
+> @@ -21,9 +21,9 @@ static unsigned long ls1x_pll_recalc_rate(struct clk_=
+hw *hw,
+>   	u32 pll, rate;
+>  =20
+>   	pll =3D __raw_readl(LS1X_CLK_PLL_FREQ);
+> -	rate =3D ((pll >> 8) & 0xff) + ((pll >> 16) & 0xff);
+> +	rate =3D (pll & 0xff00) + ((pll >> 16) & 0xff);
+>   	rate *=3D OSC;
+> -	rate >>=3D 2;
+> +	rate >>=3D 10;
+>  =20
+>   	return rate;
+>   }
+>=20
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Since there have been no objections, can we apply this?
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+--Sean
+
