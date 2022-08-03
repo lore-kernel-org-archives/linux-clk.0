@@ -2,44 +2,44 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 761C5C19F2A
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 08:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B39C19F28
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Aug 2022 08:16:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234256AbiHCIQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Aug 2022 04:16:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56430 "EHLO
+        id S234865AbiHCIQJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Aug 2022 04:16:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237124AbiHCIPv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 04:15:51 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2075.outbound.protection.outlook.com [40.107.20.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FE1639D;
-        Wed,  3 Aug 2022 01:15:48 -0700 (PDT)
+        with ESMTP id S237387AbiHCIPz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Aug 2022 04:15:55 -0400
+Received: from EUR03-AM5-obe.outbound.protection.outlook.com (mail-eopbgr30077.outbound.protection.outlook.com [40.107.3.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323DD60E2;
+        Wed,  3 Aug 2022 01:15:54 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SSzhA2oPSzV4G6K93+2zfKOuI2DmVQXHQFzkNjxDK4+Ke/IwfrI9k2Rw6D7qOKpDlX0qhfvGG62/Ku4FGmIsjk7wAPyNcEAjLHVgxN/5uZ8Jhx93x5Qpd1s9IGvR+3sKFuXeSa6egKiLK6vih7UMoiIy8rcU7JdazYRNdK2xNcuqM6uWuXrvCHnRd/oj8N96uAq+kOiFVTn4N03TKc3m/SoQmTAFCeXvBfDsRtoWBUNFVEESc10aXLu6qSdmZt6xVZ1K5Oy2eM5v4idFU6SE6ksN8T38AltmAf4PaAFB30SS8feXI+x743suF8WL5MHZ5WZchNgiDq6I4ATfspemsQ==
+ b=iOeK5WzLRroSvJIiHmp8LGIY969fr/ELC5OzqfbIYaakJARYpJhlkCSpFpL0yvPYD/qZo6Xdg5HfD2RvosWEAOIvm1ms1tl7gHzJumNy/Ds706xYIQobLgpQx15B+OcHr+IrbaFnmE0MWtzm4Uc7U+Fh9c4SRW20qq7dJ/ILQ0jvN957ysJJ1OKnnyi20eELuVTAfyGQ6/duXS+ygTPraahwxaiMu0/mLLbz0nVe0jcChhri/q0zoifpM1BmotFEx/Vs+BhXIdEd55fHTOGdvJDHmfs4RIUJo2pidfSMgLRHQ5mcY/P+mqNVXEBMrgmGHg6pfK6Foh1WqGvi8o4Xww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=25IZcEJKhgE8rBlEiW27t052g3zcNWbMjjdFhGC2q/0=;
- b=PcGdGdfhBCyx7zOV4r5lPlMrXvhbrklgWOrVAK+sZ37iit2JLQcuAh721I68VmhlXNrjeDG38wFu6ybXAW/CFXZyaLEOVE8G7mfbBg5ORK5ZSGjagyv9pA9Z0MK2VKXJQGDTqOAPI2CRWnn5JHl0xKVXLyfNtE5i8iWEZqJcxWKRb5yuabK4jl3gE1xSfHLIsa3fSHz35KBBBctwgakDN67XLTeHjLtHW8zvgjYoWEity+FBDD3asi/BdkZphYkFux9BIWKoL9/7hqA8NjsuCF0/3YnvbSs+c2/BYXiCUgE/zqFuJDE2l1Jqa2YEfNx5trHbiktjgbZdfBWyHn+Kmg==
+ bh=upM2od+mQGjjSmS5JPbpNT0pfKtT2eOu+RlUCIGonr8=;
+ b=WlbMBcdx6+mKZsI2RroaU8HdIDq4LkYgCKynhp2p4urYW84zGTddUYplvd9hucUrq3m4imyGZCp7FHoc7bxAqhfcW0DmJd2dBSRl6yen4UIy2rudRCWZm6YcV2VrtxvQDWc5TEPfAAw9J0RsDCn3E9LLxEu817as1dbtCmd1zHKIsqvDj+y5itkNxwrbrKZX15Ka3ab0JFnLRN34PYWWlyweMPkmvPzJ2RzpxuTrKPzpJsQ8YTav8dk6/sOUSiGexm9iblNkSB3c1LnqBdESKplQBRVg68vbfmMVD5iXUZ8MlT8dh/XQtXbkp4vbLmSSRFIlJIHKkO/YTRzmOF10Xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector2-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=25IZcEJKhgE8rBlEiW27t052g3zcNWbMjjdFhGC2q/0=;
- b=O7s+rXknNzYNl/a460KVHJDbXyP1tXC5dR0+Shr6Op6+oSxYmrMkI+ArXGU8RRRSByhZDtTAtFDr2F8I7AKSc1f3Ccu1QbFwqJE26dTxt3l4+z9q/CA+JC5TeFh2SnBjKqn98tWAdS/FOHCzYRDWl70oR8uV9i8cSRRJgMyEajo=
+ bh=upM2od+mQGjjSmS5JPbpNT0pfKtT2eOu+RlUCIGonr8=;
+ b=Dqg4HBxkMr/xCIAHuevejS0GR4JOcqLnLBis0dgMJ3WghvbOGyoB8bDxZpNXmvotwL0GZlzUVGxKEoqfHMZ0fff6+CsDgNIbk/3TttB7rTfrBbtIhpjpbtyTUhrqcyK/uqbQUzU99XC4AidqgGtues8YCpEzWaAflBtyoNIQcN0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB9PR04MB8233.eurprd04.prod.outlook.com (2603:10a6:10:24b::17) with
+ by AM6PR04MB5560.eurprd04.prod.outlook.com (2603:10a6:20b:9f::33) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5504.14; Wed, 3 Aug
- 2022 08:15:45 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5482.16; Wed, 3 Aug
+ 2022 08:15:50 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::3c6c:b7e6:a93d:d442]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::3c6c:b7e6:a93d:d442%4]) with mapi id 15.20.5504.014; Wed, 3 Aug 2022
- 08:15:45 +0000
+ 08:15:50 +0000
 From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 To:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
@@ -47,9 +47,9 @@ To:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
         Ye Li <ye.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: [PATCH 2/7] clk: imx: clk-composite-93: check slice busy
-Date:   Wed,  3 Aug 2022 16:17:08 +0800
-Message-Id: <20220803081713.3504699-3-peng.fan@oss.nxp.com>
+Subject: [PATCH 3/7] clk: imx: clk-composite-93: check white_list
+Date:   Wed,  3 Aug 2022 16:17:09 +0800
+Message-Id: <20220803081713.3504699-4-peng.fan@oss.nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220803081713.3504699-1-peng.fan@oss.nxp.com>
 References: <20220803081713.3504699-1-peng.fan@oss.nxp.com>
@@ -61,270 +61,147 @@ X-ClientProxiedBy: SI2PR01CA0011.apcprd01.prod.exchangelabs.com
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 72ff2af4-3030-417a-6e2a-08da75285d85
-X-MS-TrafficTypeDiagnostic: DB9PR04MB8233:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebdb9db0-5ae8-40b8-a67b-08da7528604e
+X-MS-TrafficTypeDiagnostic: AM6PR04MB5560:EE_
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: S1POY1RduVv742lWH39g34PJZbJVfX5mj1VJI9oEkzj50iYZiewY/17p8l/pU7L1nnRlRORCuvGbW4a0iovpUJmsbME7x43E1jLKAL3gD+VP14jJupuriFqzD3Z97SfHw+lLP2TWhMIax36Sl/i9QqeAbi0RGGRQFM0hzzv6CE18OjvAWPUEgBspIKkuQFZs9k+1ISndbkCDhquZ9N/dZdxSpHs9UpV7IzU31LQr24vW0yqv7SIuvflTgLyMjh8Gwec46cxm07s/QmoQgOV8912/Y3UU6CkynllABUmcUirk+4sq5JguglrNOQB3CU5HFvo0ve3p6kuShFrvKEgZJ2W99zNQ5dEX+Lhi1NFvR4e+LmfxlbzzGcuD7aYMJ14zFX884NS0vOpWTfbYkTKTLpb+ZFr0mlkXCN6iyN37P1/pC7mSKb27RRpLfMDY8OuFGb2MhFMz1jVZs46aQcu5n6W5typPpj2RMrRETw4NCTU4s4/gL1pmIPoc77elqHfEe5vT1xVpm4AvVTmtrW73NuJXJ3HFld0CobZtIo2lmbFhwxifjffVEQWuF4RKb5CM2dCiV3Pyzoajr4qKy3/nGniHmwhNgJl5XqaNCFOujCqwZ5n+EtBD5BYVjdrPlhcBLFGMEV2WSZzHM0fN0kNFRFIsILgsWOK8PBtu5nxJcjVwrH8SKFwKdIMEnOtEyjlkYd6Jr4ENR1Xj9RHGfw6fwtO0AL6MJX0m7vO05b8Qt/tTM4aIFL2QvHKIp1QTdXm1wLd7DHJytWs4TEcCswtLFvEfZTQD4Ocl1kpaiMg0AATKoQAeAATsjIJ0UQdCf+Y0
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(39860400002)(346002)(396003)(366004)(7416002)(2616005)(6512007)(5660300002)(26005)(186003)(1076003)(54906003)(66556008)(66476007)(8676002)(4326008)(66946007)(316002)(86362001)(6506007)(41300700001)(478600001)(8936002)(52116002)(6666004)(38100700002)(38350700002)(83380400001)(6486002)(2906002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: WOdpER6b3EbNCPOMlT0xwn++GXCLZFXkW2qeXhICMnSGdd7hmI3e4tPj2tjHOkykAjHWZYVNXvtr0MqNqj353vRd1ijLOlMqWZuDpNeh/GNEprBdmAQo33Iepz5cDypTw+9yVgQv1pFm8SpYx6OZISN+gwHWMu/mKFrlL4JCQ9XTZYwr0hRSHb5gS+bLoBYeafgWfPR1Kw7wXFA/KpxwB3I7lpD5SDGdNJ49bAcx4zcU9ROIsxTQjHsbJdMrkoDVqYE+6GcFD71bIzAccsmi7QWKHvB9BMpphHVqjvtNYCoyCFvg6HVHTnGz0xX+FpoeZQh5lexay2fxejjtnuYYle2MjZecTlMKcTGpYrEmVXm3csgeiahq3QTTDnShmwMx+pTe/yFwikAof71+YiYg5UAxOSfoK6fK0jb1Fl5E79XWX34QFs3SvNqdhz6AlDpEqgbgtNl1bj0X4UsQzm8qFGWt6aNthElYQACMkSFxRyDRRSEzpFsioyzLLwF4of5TnOVvDhjJgBv8/z4xYBYnsRilhvnNemybt+XWPvvylN5ZgGEBqzwRQv+IQqzD6V/2S2BB0IsZFeAyGP+VcDk7hLy4IIijs1rQys5QLmMO2cryWWFK/S+wSiTKlXgloejn/wyFvFVeD7o4rJvwl2F0JPepxBFW3F3xm8l8A3fPgAUyy+8OYY6EEPoPNz6Ge0a6Q2bAUnJHUI2J1T2qRH6MSkzXopBL6Tb+u7OtsMq8uwodZVJpqUe/qiGYpHX/CDDzD8rxAL3y/KUV9voUR7YW8S+USR/AyUqCUB4kPOzHoQT8ZL6HdJYPr3IHrUnuXpZp
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(346002)(376002)(396003)(136003)(39860400002)(38100700002)(38350700002)(52116002)(6486002)(6506007)(6666004)(26005)(6512007)(66556008)(41300700001)(478600001)(66476007)(5660300002)(7416002)(2906002)(86362001)(83380400001)(8676002)(8936002)(4326008)(54906003)(316002)(1076003)(186003)(2616005)(66946007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q2gnY1mSoJkHcLzXdaYZXd1nJu3d9dXqt+Or2s1NfT69PkmFLNKdKc0uZm2i?=
- =?us-ascii?Q?AWtr3Hbojcn+nUMJw/raE90RMfTdiPxPwo9tcUbfDzTjlkr1rpXQjAJVLpya?=
- =?us-ascii?Q?a/hb9QT8VXyMmYcuuqECRpsI7B/G2oRSeUH++EN6KKvCmOqhcvA1sibzAmAL?=
- =?us-ascii?Q?OBLTuCrkmrW//33+N94ltniltebluZWSHJJDBW1Gtwv6Bfx7zetCZk61Gemv?=
- =?us-ascii?Q?HPec6HFQwCIIjI0KdYdlVaTTLqNGQY7OffYqRhtXc2u8FFDIEON6kGIxeshe?=
- =?us-ascii?Q?JWcJGTa3pwUvXdc1NLGTwiLS7k3IsSQOpsKdsW1oQfqNpuwp9Emy2Koausoc?=
- =?us-ascii?Q?afqS9VhPjegpCLwmeJ5HGq+ZmJzorGGXI9CQioFrFr28MokTm0PwYBu6bijY?=
- =?us-ascii?Q?1H5ge5A2CVCm5JuLeampcE14kdjMNZYXyEM0wotkkir5nHL2IYu07PgzgaFT?=
- =?us-ascii?Q?RXle7CZjAx0xIFdo2jRXD78rRAUJvk9XnLjpSmWU4Os84vcET4dhEx4zjblH?=
- =?us-ascii?Q?JwZ+bWkD+g2eb9UJyuhdhpIuM/ZC3XQEnM9KpT9YLoTxppTmLI3wo/1yUn37?=
- =?us-ascii?Q?fL9I0+A/GK1GWFBybj5u+E4+xujyz+AfuQ2xCUjFNv2tF0orhvCTDNrfGzfv?=
- =?us-ascii?Q?LPe6EyYWFhsDuWLRMsbtZC+pMvVj9F9YLPnzXVCMxmwnugvD0E6XGOSFcmXb?=
- =?us-ascii?Q?XmvwRAb+zgsiWgL4hL8dQbDXOxJTQlATdHJyWpKGUW8l3VtK/PVgzYiaeJlF?=
- =?us-ascii?Q?Mj/4Amt/3BYtwvbezB7jkGlMHoLH5hd9L6a5sat0tL/D8bVCXj+vqyLDo296?=
- =?us-ascii?Q?iQ6kitp149dvW8W0NlPdYa4omexLCn31onN4nt56t1b2a2LlVFkxit0UA8mu?=
- =?us-ascii?Q?URl0VP2zQJ7Ho4Oyz1Rn46tu/AAylRh+wCFmHMh7f1rMguzSAPKqX0cA887K?=
- =?us-ascii?Q?woRaN32HgnbHdW1eS+3i+AibBsp134YWkrcK+77IA2qYONG8LdOomMx7Spom?=
- =?us-ascii?Q?SQp93+bkbrXqqja5zKLvlZf2vFl0KLZc/nImu3ihFveraeTj/AYLvJAvqhUa?=
- =?us-ascii?Q?12I15/5ne5kdhRa+3uY42yzuM8tMf6rx+LJNJ1FoDk7UqijtCPmWEigj9N6m?=
- =?us-ascii?Q?7mr8jqj0ZHMfX5bd2qg6eVO2kJq+un6Iov8y3WGpKfwLgDaXSin3V78fcNAB?=
- =?us-ascii?Q?xX7BWQR968VEgpDmaRh0sPTG1aS2Ko9uf3HsdNKbeb4KKb1iVDfDGC2yLj7Y?=
- =?us-ascii?Q?4J1DohGFc5E3SK9HPIJXmcSp+kYne5FycyfU2MmSp5SDWOlURx4g6Dhs4GdB?=
- =?us-ascii?Q?QEdbQF2BL4cZpx0fVkYGTxLsl2resV50cFQU3tySyH89m0Kohn8IX0RZ3m9K?=
- =?us-ascii?Q?bN1NV+0/LQo8sEM9pDcQB4O3p4kdmUF29QFg4dyO/LA6kooKkQR9Bi+uPElf?=
- =?us-ascii?Q?OoDahbwNr1nE2GgZ1g4frZ8FchyV8cx3rQ1g+QGZT0BTuQk3AFFhpf/lBHr6?=
- =?us-ascii?Q?ROj5fdiDtEv72fAEgFMowuMm/gNEk6vO+qNV9snhwbKd0qk9H4P/9O3dpwsD?=
- =?us-ascii?Q?dGDGhxcsEFpFNgQTf2kPNpVBT7EBvDzLmAtFImDz?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cjGKsn7EByyIjPSY5z4EScORl4yG7AZ/UINGkUHhiWlgxHNkUAK1MnIsEcc9?=
+ =?us-ascii?Q?5vhhYgpdBCHOkRuZZl6bhgW+bb8yAu12xJS8JM6hRB551GvfSWN/FiZCA82i?=
+ =?us-ascii?Q?23xaCiKMD2TZzvrn4Ybn9rjstyi8acL+SeNPUAzHxWQRdCs60C2OUjwecSoy?=
+ =?us-ascii?Q?Gqq44m2nTIbN1IlSLcHRYIaex5jWsbHdpXoARuWI9EEPuFOFW0A23eZoZCo7?=
+ =?us-ascii?Q?gli4L25Sg+2Ioimi/SEUfrHoAHzAhcMSYaKY/tXBhfW5eQ/DvO1V3l5mSNvR?=
+ =?us-ascii?Q?eoMnigWy3v05btAN2ei+u5oV9ZYHk4DzHShlm7CM8Os7WtaWwxmAhwM5k+N+?=
+ =?us-ascii?Q?SC9lOzxQ/R0WUtmOeXrR0Q/tR0Bh2e2S2lex2CJ3Z97VPeiZ2cmACl35m2DI?=
+ =?us-ascii?Q?HrnyzeUH//Zm3Uzcvenz9TmF5qsnIiMF/hU66FJw6O9Q604NtYqW3DEyto4+?=
+ =?us-ascii?Q?XMbiJMSTFu6PmPWMzcZtf29hdrO+xXYUdL12Ffl59KGKUr/YRH5eDErlOILz?=
+ =?us-ascii?Q?wHriZPW4Vl8A08qJ3m5GU9ww6ktJOnNQrokOEdpHfhDGnZG4gcMVqa6Bp3kP?=
+ =?us-ascii?Q?II9jkqg1su9KLW/duI/rolZp/FD9vgAE4TWoePnESFosuHZvguwQ7jgjKqJQ?=
+ =?us-ascii?Q?fzN8k4Kr9SgpdKsKMbL23n4NBLLWWK+lel4Y9oxtVga3gN9uxAA28pxFYW2Y?=
+ =?us-ascii?Q?JdbRxp9qHdcjqDbTxGx8WeAC9KZK95rlFLhwWc2yVpDTQpOKu+FpZMzEIZyg?=
+ =?us-ascii?Q?3tTvVjJA939NUjU/sdxkvur2lZBh+haQhsK0EQUBX7CcQ8iGvwTTVRqxyziq?=
+ =?us-ascii?Q?rYE70oRj0N5BK8j69f2/jc/nQJSCSYtZjrhXJNg8PQFTOP9qvADmIKP4pnSU?=
+ =?us-ascii?Q?iqFvbA6oQBwKFjnjTI8jkyNChkCX5B/XfCAQCTLdoJtvG/O2QkdpYABG+f5V?=
+ =?us-ascii?Q?GMeply5YhzIjp42x8X7Qno7Vx3IZEnbmNQr6s6uagnzk3NiMJB/TYSPRv8Ww?=
+ =?us-ascii?Q?VVjOC6nnrWI5kL5iQZlUT/Hvb6rxQ7mxK6cGeEnYF5PFL4EYRAi4eo62iuz8?=
+ =?us-ascii?Q?TdiTZypVewCEWEjbz+iQvNGOlNmXnIJdtyZpElKwIodDNI5fPIfq8CgUXn5b?=
+ =?us-ascii?Q?iwKN4ezPm1yk92iLuNSg90OqcpEtWP/1jYZ16JdytkyxFfi6SHHHar0fs7AS?=
+ =?us-ascii?Q?lPdqWK20l1rV2LmhHQDuqmB+5k0OHZvae46aZac60KrZWP6MZ1NARO1fiJ6S?=
+ =?us-ascii?Q?4CEWX77FC1RFWsngMKJjzfvq32jHTJWcMm7fb1lmQJVHZF5pOl5QiLrQcMRP?=
+ =?us-ascii?Q?CmR0v6hSSkG9cOz44MsvmosWklgLAPQN2P5XaoIfHF1Z5Fbo/g3h6Lovokgs?=
+ =?us-ascii?Q?f1GLM2vfYPcmMpnGHBTcV+WJw/ZMjRfe+f6xnhFqJz5YnBlJ3V6h88dZbrY9?=
+ =?us-ascii?Q?tBHuuWkJeqmx2VPWfqwTCF/BUYS6bZZK/NDClB+53rWTTEsWygrIvTYmUFkW?=
+ =?us-ascii?Q?yuC2bclHFDW6LxPGB2dXC0GZBORMSCNW6VtgqU4qqKeEvZD4YyfV9M5pXymX?=
+ =?us-ascii?Q?SE8jqcgs8pM03ujxO84TXvnswpjDHnSa1qoc1NAf?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72ff2af4-3030-417a-6e2a-08da75285d85
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebdb9db0-5ae8-40b8-a67b-08da7528604e
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2022 08:15:45.6544
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2022 08:15:50.5004
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +j1y+fUUeFmkO00KZTNRMqQVS/SkBo3ysgVIxYtKUzFJ6hdT6mcxP2Qoj3JSphYk3BOo5axX56Gq3H3pYd++sQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8233
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4TasCtsvoV4fmqJj1eu1C9QcIZKP4/+SysknvIRXCcGba0iG0VNRcbdmSChzPmk8qq3S6X7AM8UkovKIKO1N4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5560
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-i.MX93 CCM ROOT STAT register has a SLICE_BUSY bit:
-indication for clock generation logic is applying new setting.
-0b - Clock generation logic is not busy.
-1b - Clock generation logic is applying new setting.
+The CCM ROOT AUTHEN register WHITE_LIST indicate:
+Each bit in this field represent for one domain. Bit16~Bit31 represent
+for DOMAIN0~DOMAIN15 respectively. Only corresponding bit of the domains
+is set to 1 can change the registers of this Clock Root.
 
-So when set parent/rate/gate, need check this bit.
-
-Introduce specific ops to do the work.
+i.MX93 DID is 3, so if BIT(3 + WHITE_LIST_SHIFT) is 0, the clk should be
+set to read only. To make the imx93_clk_composite_flags be reusable,
+add a new parameter named did(domain id);
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 Reviewed-by: Ye Li <ye.li@nxp.com>
 Reviewed-by: Jacky Bai <ping.bai@nxp.com>
 ---
- drivers/clk/imx/clk-composite-93.c | 163 ++++++++++++++++++++++++++++-
- 1 file changed, 160 insertions(+), 3 deletions(-)
+ drivers/clk/imx/clk-composite-93.c | 8 ++++++--
+ drivers/clk/imx/clk-imx93.c        | 2 +-
+ drivers/clk/imx/clk.h              | 5 +++--
+ 3 files changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-composite-93.c b/drivers/clk/imx/clk-composite-93.c
-index b44619aa5ca5..19f4037e6cca 100644
+index 19f4037e6cca..74a66b0203e4 100644
 --- a/drivers/clk/imx/clk-composite-93.c
 +++ b/drivers/clk/imx/clk-composite-93.c
-@@ -9,20 +9,176 @@
- #include <linux/errno.h>
- #include <linux/export.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/slab.h>
- 
- #include "clk.h"
- 
-+#define TIMEOUT_US	500U
-+
- #define CCM_DIV_SHIFT	0
- #define CCM_DIV_WIDTH	8
- #define CCM_MUX_SHIFT	8
- #define CCM_MUX_MASK	3
- #define CCM_OFF_SHIFT	24
-+#define CCM_BUSY_SHIFT	28
- 
-+#define STAT_OFFSET	0x4
- #define AUTHEN_OFFSET	0x30
+@@ -28,6 +28,8 @@
  #define TZ_NS_SHIFT	9
  #define TZ_NS_MASK	BIT(9)
  
-+static int imx93_clk_composite_wait_ready(struct clk_hw *hw, void __iomem *reg)
-+{
-+	int ret;
-+	u32 val;
++#define WHITE_LIST_SHIFT	16
 +
-+	ret = readl_poll_timeout_atomic(reg + STAT_OFFSET, val, !(val & BIT(CCM_BUSY_SHIFT)),
-+					0, TIMEOUT_US);
-+	if (ret)
-+		pr_err("Slice[%s] busy timeout\n", clk_hw_get_name(hw));
-+
-+	return ret;
-+}
-+
-+static void imx93_clk_composite_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	unsigned long flags;
-+	u32 reg;
-+
-+	if (gate->lock)
-+		spin_lock_irqsave(gate->lock, flags);
-+
-+	reg = readl(gate->reg);
-+
-+	if (enable)
-+		reg &= ~BIT(gate->bit_idx);
-+	else
-+		reg |= BIT(gate->bit_idx);
-+
-+	writel(reg, gate->reg);
-+
-+	imx93_clk_composite_wait_ready(hw, gate->reg);
-+
-+	if (gate->lock)
-+		spin_unlock_irqrestore(gate->lock, flags);
-+}
-+
-+static int imx93_clk_composite_gate_enable(struct clk_hw *hw)
-+{
-+	imx93_clk_composite_gate_endisable(hw, 1);
-+
-+	return 0;
-+}
-+
-+static void imx93_clk_composite_gate_disable(struct clk_hw *hw)
-+{
-+	imx93_clk_composite_gate_endisable(hw, 0);
-+}
-+
-+static const struct clk_ops imx93_clk_composite_gate_ops = {
-+	.enable = imx93_clk_composite_gate_enable,
-+	.disable = imx93_clk_composite_gate_disable,
-+	.is_enabled = clk_gate_is_enabled,
-+};
-+
-+static unsigned long
-+imx93_clk_composite_divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	return clk_divider_ops.recalc_rate(hw, parent_rate);
-+}
-+
-+static long
-+imx93_clk_composite_divider_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
-+{
-+	return clk_divider_ops.round_rate(hw, rate, prate);
-+}
-+
-+static int
-+imx93_clk_composite_divider_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	return clk_divider_ops.determine_rate(hw, req);
-+}
-+
-+static int imx93_clk_composite_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+						unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	int value;
-+	unsigned long flags = 0;
-+	u32 val;
-+	int ret;
-+
-+	value = divider_get_val(rate, parent_rate, divider->table, divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+
-+	val = readl(divider->reg);
-+	val &= ~(clk_div_mask(divider->width) << divider->shift);
-+	val |= (u32)value << divider->shift;
-+	writel(val, divider->reg);
-+
-+	ret = imx93_clk_composite_wait_ready(hw, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops imx93_clk_composite_divider_ops = {
-+	.recalc_rate = imx93_clk_composite_divider_recalc_rate,
-+	.round_rate = imx93_clk_composite_divider_round_rate,
-+	.determine_rate = imx93_clk_composite_divider_determine_rate,
-+	.set_rate = imx93_clk_composite_divider_set_rate,
-+};
-+
-+static u8 imx93_clk_composite_mux_get_parent(struct clk_hw *hw)
-+{
-+	return clk_mux_ops.get_parent(hw);
-+}
-+
-+static int imx93_clk_composite_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+	u32 val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+	unsigned long flags = 0;
-+	u32 reg;
-+	int ret;
-+
-+	if (mux->lock)
-+		spin_lock_irqsave(mux->lock, flags);
-+
-+	reg = readl(mux->reg);
-+	reg &= ~(mux->mask << mux->shift);
-+	val = val << mux->shift;
-+	reg |= val;
-+	writel(reg, mux->reg);
-+
-+	ret = imx93_clk_composite_wait_ready(hw, mux->reg);
-+
-+	if (mux->lock)
-+		spin_unlock_irqrestore(mux->lock, flags);
-+
-+	return ret;
-+}
-+
-+static int
-+imx93_clk_composite_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	return clk_mux_ops.determine_rate(hw, req);
-+}
-+
-+static const struct clk_ops imx93_clk_composite_mux_ops = {
-+	.get_parent = imx93_clk_composite_mux_get_parent,
-+	.set_parent = imx93_clk_composite_mux_set_parent,
-+	.determine_rate = imx93_clk_composite_mux_determine_rate,
-+};
-+
- struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *parent_names,
- 					 int num_parents, void __iomem *reg,
- 					 unsigned long flags)
-@@ -74,9 +230,10 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
- 		gate->flags = CLK_GATE_SET_TO_DISABLE;
+ static int imx93_clk_composite_wait_ready(struct clk_hw *hw, void __iomem *reg)
+ {
+ 	int ret;
+@@ -180,7 +182,7 @@ static const struct clk_ops imx93_clk_composite_mux_ops = {
+ };
  
- 		hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
--					       mux_hw, &clk_mux_ops, div_hw,
--					       &clk_divider_ops, gate_hw,
--					       &clk_gate_ops, flags | CLK_SET_RATE_NO_REPARENT);
-+					       mux_hw, &imx93_clk_composite_mux_ops, div_hw,
-+					       &imx93_clk_composite_divider_ops, gate_hw,
-+					       &imx93_clk_composite_gate_ops,
-+					       flags | CLK_SET_RATE_NO_REPARENT);
+ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *parent_names,
+-					 int num_parents, void __iomem *reg,
++					 int num_parents, void __iomem *reg, u32 domain_id,
+ 					 unsigned long flags)
+ {
+ 	struct clk_hw *hw = ERR_PTR(-ENOMEM), *mux_hw;
+@@ -189,6 +191,7 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
+ 	struct clk_gate *gate = NULL;
+ 	struct clk_mux *mux = NULL;
+ 	bool clk_ro = false;
++	u32 authen;
+ 
+ 	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+@@ -211,7 +214,8 @@ struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *p
+ 	div->lock = &imx_ccm_lock;
+ 	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+ 
+-	if (!(readl(reg + AUTHEN_OFFSET) & TZ_NS_MASK))
++	authen = readl(reg + AUTHEN_OFFSET);
++	if (!(authen & TZ_NS_MASK) || !(authen & BIT(WHITE_LIST_SHIFT + domain_id)))
+ 		clk_ro = true;
+ 
+ 	if (clk_ro) {
+diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+index f5c9fa40491c..151b2051a5e6 100644
+--- a/drivers/clk/imx/clk-imx93.c
++++ b/drivers/clk/imx/clk-imx93.c
+@@ -293,7 +293,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+ 		root = &root_array[i];
+ 		clks[root->clk] = imx93_clk_composite_flags(root->name,
+ 							    parent_names[root->sel],
+-							    4, base + root->off,
++							    4, base + root->off, 3,
+ 							    root->flags);
  	}
  
- 	if (IS_ERR(hw))
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 5061a06468df..396a5ea75083 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -445,9 +445,10 @@ struct clk_hw *imx93_clk_composite_flags(const char *name,
+ 					 const char * const *parent_names,
+ 					 int num_parents,
+ 					 void __iomem *reg,
++					 u32 domain_id,
+ 					 unsigned long flags);
+-#define imx93_clk_composite(name, parent_names, num_parents, reg) \
+-	imx93_clk_composite_flags(name, parent_names, num_parents, reg, \
++#define imx93_clk_composite(name, parent_names, num_parents, reg, domain_id) \
++	imx93_clk_composite_flags(name, parent_names, num_parents, reg, domain_id \
+ 				  CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+ 
+ struct clk_hw *imx_clk_hw_divider_gate(const char *name, const char *parent_name,
 -- 
 2.25.1
 
