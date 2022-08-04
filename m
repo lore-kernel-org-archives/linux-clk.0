@@ -2,130 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711B3C19F2D
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Aug 2022 14:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D90C25B06
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Aug 2022 14:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238660AbiHDOBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Aug 2022 10:01:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57062 "EHLO
+        id S239511AbiHDOin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Aug 2022 10:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235162AbiHDOBo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Aug 2022 10:01:44 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF20E1C128;
-        Thu,  4 Aug 2022 07:01:43 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id a9so18139695lfm.12;
-        Thu, 04 Aug 2022 07:01:43 -0700 (PDT)
+        with ESMTP id S239931AbiHDOiK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Aug 2022 10:38:10 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72FB4B490
+        for <linux-clk@vger.kernel.org>; Thu,  4 Aug 2022 07:38:00 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id h22so14994696qta.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 Aug 2022 07:38:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc;
-        bh=JaMe6j4fYY9HfpaAc4kq+NXQn/JQWze+bei2ZzmND0I=;
-        b=QSKMyIcYM/epVOjE3xPWm4g7Fax7lyHTwJQV6QgjlHcsv/cO9qjGpwNheGqSJgDhfx
-         emrqTQFK2mDSQ4NpoATQJCLyuB2zWwcio2s5WMthC2HEW4OqjfATYWffLDBA8Z5QtKkZ
-         EdrQwKuI1Rigsooo83kdn/f1PCIPbrD2BeU9N0Ide6iYB/yq/yopo5SIbE4Bzvo2NpxE
-         8pavzD0D8zzoVWA1GgymHDDf+Lv4icd/sdUYt/dTojG8d5rqwxgNhQtDboOQP+0F3yy1
-         vW6yfJMOZl/AXpGWD0W9//zTRIQ+q+NfA0h4Ybvt7EaW+eLXglfH6Vb3cto0ZC1/rGyw
-         T/MQ==
+        bh=7+IHbVKhZDeIBaRjLawIcx6LVul+QTItAJZIivf7gqY=;
+        b=ufg49NFoFDlcynz7pWTVmRZhy3xSI5kCn759tZ9vmnuuILMCnEORQp/wBS20nhayS0
+         0V/i9wvAy3/uIPea3V1Dc3KE6RFzKLuc6hvXJCqHND9c6lE2XyrjkibgMVbhDeCn1v2R
+         gyUSdh5efbQF1Kfqv/rldgMScFGi1Zexm0JHNJFrnmsrmNTcqvJkS+57bkDuzgzP49qa
+         9fpV2hKosk1g95G4qPSblTffq9M3wpMi/Fp/BVJkOYDM++1irp2TinOWITa9Hh41mj1e
+         Md8QcHg4Gk2QOv3qB75ic5zv5DgccD9sqiLfEBzzfZ6NHDB5JxQX5smDIAnM9m40i0vL
+         VmvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=JaMe6j4fYY9HfpaAc4kq+NXQn/JQWze+bei2ZzmND0I=;
-        b=U4EhkMyn/NpqG3NKFpACQtE5Usb5SPIK/ICMSr4meFQxUuAA/p9R8Lgsf+vTF0Pbok
-         q3F2P4uZbep8NP14lCW2EOx/Jc/PafM4bPdIcuNde1+Ub8UgAhm4pNvQJnYWcKJiQQ1J
-         8EzTSwgrq7GAHxe1PBnyc/EcAXZjoQ+4Opb7EmH3mumf067gSl0ylCFrT+kVNBdWhAsX
-         hCqKaskt7hu8xOfbEex38hgBXWWf+UJWIjhQwIx8/EhcmxoFsS3YcQvZrf8g0IjOub2J
-         J2O9r/sJpjpe1yxWe01cn59Cp9NC7WKQfqUJn54TsiwOjjDMkLluxuxADciaT9nKNaMa
-         U00g==
-X-Gm-Message-State: ACgBeo0O6nFMuwWooNnrPrAq7SvBrHzoJKQIOKPIsLz5Ad/6UK2uLJw+
-        FsCsPa8KKauXlmYUxX66+52QdlzHCJgHFlJhMVw=
-X-Google-Smtp-Source: AA6agR65paGn+KC3Fe8XeawVhkTkP00otnvSfxoWcwCf52HbrAmRlzdXLDzIJw4f2/h6gbNdmVYU9iaaEEjx63FHNO4=
-X-Received: by 2002:a05:6512:692:b0:48a:f5fb:188c with SMTP id
- t18-20020a056512069200b0048af5fb188cmr816276lfe.111.1659621702117; Thu, 04
- Aug 2022 07:01:42 -0700 (PDT)
+        bh=7+IHbVKhZDeIBaRjLawIcx6LVul+QTItAJZIivf7gqY=;
+        b=ysaKvwG9iJXG8X1FEBXKgWA0iuAaugJhQ2NF9jBxrBCepO6qKUvD/Qrti2ZBqBHPeu
+         5v0pnIpfWPwb/dVLgJZspF5fPaT4O4G9huKsSa0ACVPtUDfB/2O6S8uJSQ4SB6smPze4
+         InUuC6YrlMR7xsJUwm3C9+VAF/3/PLac7YHUNZnDaOM69HWAKHRvXEnO/rc88KVGGr7b
+         pIATug0fKWPhx9HPF4pazp6MyX2ITR4diunUhNv8x5Y8AYJ/r8T0iBtvpK/UnTT4Kf93
+         z67LwMPe3OucoktfIkiF+8KtVNIU0JD+W1ku+l0QaQABn/8oxkoNzLH4uPXz4APyScWi
+         mN5g==
+X-Gm-Message-State: ACgBeo0kD3LAyLtLHduFX3d4c4dtBB97xrxEmltEKNqosPXg4jenpbrL
+        q03vO4blNh3SJ/mxOmUTVpR8I9hWwbTxoRifyAJSqDCTXwo=
+X-Google-Smtp-Source: AA6agR4WNXQ2KgIruLMHS5Z92OaFYRF1mhbz0dJnN3rCVTFktyanCvf1eGyY73ch+e2FzcsIKbVSG1MHLbE2q7LsGcE=
+X-Received: by 2002:ac8:5942:0:b0:31f:39f6:aba7 with SMTP id
+ 2-20020ac85942000000b0031f39f6aba7mr1755983qtz.295.1659623879819; Thu, 04 Aug
+ 2022 07:37:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220711123519.217219-1-tmaimon77@gmail.com> <20220711123519.217219-5-tmaimon77@gmail.com>
- <20220711195544.70A30C34115@smtp.kernel.org> <CAP6Zq1ie_RgJ_9S3ftoVJ=eJHX1xR4_O_czKZghNPKVEFOzC8Q@mail.gmail.com>
- <20220718191454.5B5D3C341C0@smtp.kernel.org> <CAP6Zq1ju08GSjNnEG+zDUC8W6aQMJxd5He7QJxy9++hTy0Dc7A@mail.gmail.com>
- <20220723030226.8E43CC341C6@smtp.kernel.org> <CAP6Zq1gUvMFG9BNObVNLpVgbMRpV7e--HFxknP8kvL4nGk8Hsw@mail.gmail.com>
- <20220729225603.12528C433D6@smtp.kernel.org>
-In-Reply-To: <20220729225603.12528C433D6@smtp.kernel.org>
-From:   Tomer Maimon <tmaimon77@gmail.com>
-Date:   Thu, 4 Aug 2022 17:01:30 +0300
-Message-ID: <CAP6Zq1hOxG+2X-qTbvPkrVHQ5zf04GO21m1n328Jiqgzns2CMA@mail.gmail.com>
-Subject: Re: [PATCH v8 04/16] clk: npcm8xx: add clock controller
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Olof Johansson <olof@lixom.net>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Robert Hancock <robert.hancock@calian.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas G leixner <tglx@linutronix.de>,
-        Patrick Venture <venture@google.com>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Nancy Yuen <yuenn@google.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        SERIAL DRIVERS <linux-serial@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20220804103456.3176943-1-abel.vesa@linaro.org>
+In-Reply-To: <20220804103456.3176943-1-abel.vesa@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 4 Aug 2022 17:37:48 +0300
+Message-ID: <CAA8EJpoYrXNBeZfDTAmjhsHaMqO+jeUVt4BtQkKy=T7Q0EuH8A@mail.gmail.com>
+Subject: Re: [RFC] clk: qcom: common: Detach the power domain at the end of probe
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 30 Jul 2022 at 01:56, Stephen Boyd <sboyd@kernel.org> wrote:
+On Thu, 4 Aug 2022 at 13:35, Abel Vesa <abel.vesa@linaro.org> wrote:
 >
-> Quoting Tomer Maimon (2022-07-24 02:06:54)
-> > On Sat, 23 Jul 2022 at 06:02, Stephen Boyd <sboyd@kernel.org> wrote:
-> > > Furthermore, in DT, reg properties aren't supposed to overlap. When that
-> > > happens it usually indicates the DT is being written to describe driver
-> > > structure instead of the IP blocks that are delivered by the hardware
-> > > engineer. In this case it sounds like a combined clk and reset IP block
-> > > because they piled all the SoC glue stuff into a register range. Are
-> > > there more features in this IO range?
-> >
-> > No, this range only combined the reset and clock together, but it
-> > combined in a way that we cannot split it to two or even three
-> > different registers...
+> None of the CCs actually need the PD attached to their device,
+> but rather some GDSCs registered by those CCs need that PD as a parent
+> in order to propagate power gating and the performance state.
 >
-> Because it is jumbled in some range?
-Yes.
->
-> >
-> > I do see a way to combine the clock and the reset driver, the NPCM
-> > reset driver is serving other NPCM BMC's.
-> > Should we use regmap to handle the clock registers instead of ioremap?
->
-> Sure? Using regmap or not looks like a parallel discussion. How does it
-> help use platform APIs?
-I mean to use regmap API instead of platform API for handing the clock
-and reset registers.
-the regmap API gives only one user access to R/W (lock).
-I will be happy to get more suggestions, on how should we solve this situation.
+> So lets detach the PD from the CC right at the end of probe, after
+> everything has been successfully set up.
 
-Thanks,
+Would it still be possible to read the clock registers if we detach
+the device from the domain?
+I think it was the original issue behind putting the dispcc/videocc
+into the MMCX domain: to be able to poke into the clock registers,
+which are gated by the MMCX.
 
-Tomer
+
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
