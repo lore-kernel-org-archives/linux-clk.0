@@ -2,106 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B78C19F2A
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Aug 2022 16:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5906DC19F2A
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Aug 2022 17:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230177AbiHDQ4Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Aug 2022 12:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
+        id S239536AbiHDR6Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Aug 2022 13:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233472AbiHDQ4P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Aug 2022 12:56:15 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E1D140F1
-        for <linux-clk@vger.kernel.org>; Thu,  4 Aug 2022 09:56:13 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id a89so419341edf.5
-        for <linux-clk@vger.kernel.org>; Thu, 04 Aug 2022 09:56:13 -0700 (PDT)
+        with ESMTP id S230456AbiHDR6X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Aug 2022 13:58:23 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4189121E0D;
+        Thu,  4 Aug 2022 10:58:23 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id m10so162197qvu.4;
+        Thu, 04 Aug 2022 10:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9RAxd8vXCg6ebH7MqJTjtNEjn+NCrIjJbPyy/864Rdw=;
-        b=SgnT3/z7wOSRxmSgBsg2dLV8AI+Yk7NQTu0NY5LahlFhImWUqUw5E7Z7WnrfRXd/XG
-         j9QLj2tmr3MqrmL3EboqUn2ci+T4jLGjO3rmcP7CJ+ZmIg+gYe38yJHxcI2K9hZ42XuW
-         QHerwQ3wkF0tG2HuvqyFd7YawhKRJIMyLkJFjKZEqdwDTG7Br2VV6ZEhWT9ueGQjOgpp
-         O9PEcaDo3atSqwuw+u7N5ztcTrzocGJP+tL/MvNcsovqbZ6cWA0Zw6ZjqaohYCxnexvd
-         sKh2Sv8bi8FEv0LujC74uY8lfptluR76fuy+hYbM9+igE89s8b6fVN4Y2z86G0/uFmca
-         dd8w==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=W987ISPP8Bt+GvPSaheTpa/RjLogy82MS47AqufvqOQ=;
+        b=i+nKXSYOOUP/QJ93RLbSO+PMCjXUtJ+kPrAa9KZPCL1LkhEzJ56hUheHuSZ7FGEMWf
+         gYnclTUYeh3Sl/4F0utuI+BBJ4xPZiJRjriAd2bx5AVkT7RCuW8Wm/BifQuopk1Eaqi0
+         wO9H/Zb5Jg9YYTfmvLFZH2RQv51rarFphZrW7Lcv7WTgUEiZ8ldOLZeulBSb1+RBtq+a
+         3uiwRFggCR3IdrWJUOGSHKPkYZMd/tnbXHIkbLxB/gNJCav0QgTV4A835bgLvPn5Lmv4
+         TOOWGEfcmH1LpQ+DNCgSDgmiw2ekwJSfM2kByzwCBC/EO6OsuhksAhjpW6oKwIKd406E
+         TQUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9RAxd8vXCg6ebH7MqJTjtNEjn+NCrIjJbPyy/864Rdw=;
-        b=cfKvJ2JqR33m4aW/V1OEqfACkVS6/SrGeFeLE1zpODPn8Tzwk7bVbk1UqoQ6eOyjD4
-         RAm1Dt9mJCUDmWCN+WLsbMAqRqAx12OkBd0Fwn1sdYbw1lHm3O6nD1dLMOiqkHyInnqw
-         X7arBz5/5zUYSmig8666J8T6uhfqpYDPaat82vvWRq1iOQKCP4xuN5KaYaPKSo0FBmEh
-         Hg0wXmJoWCgoFnTnHorAUqQPCc3f0DYXmYA+ycuZ7pxJ5WXazcBpbHYT4091FzOaaOzH
-         X5dHRA/QQlO1UJGCOAuezcolA0symuvxTnDsg7vlDAdHsYQ1VgAYWFuIpuzNF8YDuUhE
-         BpTw==
-X-Gm-Message-State: ACgBeo1toA/JIKIW8iUf/IJjaoz4ZFfregH/9eXBrbvJg1GZkHYgfRNe
-        WedQuqkRUyx52zwlsfOsXfRN5ZeL9b28oQ==
-X-Google-Smtp-Source: AA6agR4vqzFgi3ZOFoI9pHyekMbM4zYfttqGHcixJ/EQsRgF4Gxfs6K/naNbKjK6+z7G/bzY5AzqjA==
-X-Received: by 2002:a05:6402:888:b0:43c:fce0:2f0e with SMTP id e8-20020a056402088800b0043cfce02f0emr2907897edy.247.1659632172064;
-        Thu, 04 Aug 2022 09:56:12 -0700 (PDT)
-Received: from linaro.org ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id bq7-20020a170906d0c700b0072f1d8e7301sm532588ejb.66.2022.08.04.09.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Aug 2022 09:56:11 -0700 (PDT)
-Date:   Thu, 4 Aug 2022 19:56:09 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] clk: qcom: common: Detach the power domain at the end of
- probe
-Message-ID: <20220804165609.hbrcylpayu4ypsbt@linaro.org>
-References: <20220804103456.3176943-1-abel.vesa@linaro.org>
- <CAA8EJpoYrXNBeZfDTAmjhsHaMqO+jeUVt4BtQkKy=T7Q0EuH8A@mail.gmail.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=W987ISPP8Bt+GvPSaheTpa/RjLogy82MS47AqufvqOQ=;
+        b=oejE7Sp7ngk+Bh6AtcDxNEGk8/NwlZ41UfOmKT4iE3Gy+Ug1XDdzFoIhKX/oJ3qGIq
+         3h4uvZVuTPirKkUrN034p1emwl+RFGm1iF12Q1hz5MiIMwGRSGOQrLLIc1hTFuZyFxiU
+         vNDiar/y5Tf8tTsjxboqUwq5sBvg9eRdcbMQ3fQMTY4N9/4sBnD1nGV4tAevnl72x10I
+         dHOuM3DVY+LZWTZojeny+fLjaXAbL23GW//7N61rrbNUursWK2R2izmn5XsKM7Kdee5A
+         /GVYvFM/Bs4MNx8oDlPGi6CEnx4cLzwy/3zJLIRqHUtGu7fEacgQkhL0p0n3TLmMuFFV
+         9BdA==
+X-Gm-Message-State: ACgBeo1OeZisYmeTLRBuWHESgiKOezV7teVq2IL2r05XBUF9y/3lTSkq
+        rgKNOgntY9ms5MluHHeUV9s=
+X-Google-Smtp-Source: AA6agR6RRgiCyOQAc1M8ENCbjusdjVFACKzmkbSQThj9jB1ZNRgwciNDNoRM0AXgGnKcQKjrAOOd8Q==
+X-Received: by 2002:a05:6214:e86:b0:476:6129:25fc with SMTP id hf6-20020a0562140e8600b00476612925fcmr2507126qvb.9.1659635902279;
+        Thu, 04 Aug 2022 10:58:22 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id e13-20020a05622a110d00b00339163a06fcsm1131062qty.6.2022.08.04.10.58.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Aug 2022 10:58:21 -0700 (PDT)
+Message-ID: <c7fea2e5-eeb7-cd66-dc42-9fea98cfda9d@gmail.com>
+Date:   Thu, 4 Aug 2022 10:58:19 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpoYrXNBeZfDTAmjhsHaMqO+jeUVt4BtQkKy=T7Q0EuH8A@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 0/3] clk: bcm: rpi: Fixes and improvement
+Content-Language: en-US
+To:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220713154953.3336-1-stefan.wahren@i2se.com>
+ <20220725081838.nd2tsjcw4uiapl5k@suse>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220725081838.nd2tsjcw4uiapl5k@suse>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-08-04 17:37:48, Dmitry Baryshkov wrote:
-> On Thu, 4 Aug 2022 at 13:35, Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> > None of the CCs actually need the PD attached to their device,
-> > but rather some GDSCs registered by those CCs need that PD as a parent
-> > in order to propagate power gating and the performance state.
-> >
-> > So lets detach the PD from the CC right at the end of probe, after
-> > everything has been successfully set up.
->
-> Would it still be possible to read the clock registers if we detach
-> the device from the domain?
-> I think it was the original issue behind putting the dispcc/videocc
-> into the MMCX domain: to be able to poke into the clock registers,
-> which are gated by the MMCX.
+On 7/25/22 01:18, Ivan T. Ivanov wrote:
+> Hi,
+> 
+> On 07-13 17:49, Stefan Wahren wrote:
+>>
+>> This series tries to fix and improvement the Raspberry Pi firmware clock
+>> driver. This mostly focus on clock discovery mechanism.
+>>
+>> Just a note patch #3 depends on patch #2.
+>>
+>> Stefan Wahren (3):
+>>   clk: bcm: rpi: Prevent out-of-bounds access
+>>   clk: bcm: rpi: Add missing newline
+>>   clk: bcm: rpi: Show clock id limit in error case
+>>
+> 
+> Maybe is little bit late, but still :-)
+> 
+> Reviewed-by: Ivan T. Ivanov <iivanov@suse.de>
 
-+Rajendra
-
-OK, so I might be wrong here, so I'll need to double check. But, AFAICT,
-today, most of the CCs devicetree nodes do not have a power-domain property.
-So I assuming the PD is never really needed for register access by the CC
-itself, but its only use is to be set as parent to those GDSCs that do
-not have specified a different parent.
-
-Again, I need to double check.
-
->
->
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->
->
-> --
-> With best wishes
-> Dmitry
+Stephen, can you apply those patches? Thanks! 
+-- 
+Florian
