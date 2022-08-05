@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9406C00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F91C00140
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240447AbiHEJgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 05:36:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40842 "EHLO
+        id S236064AbiHEJjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 05:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240510AbiHEJgt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:36:49 -0400
+        with ESMTP id S229767AbiHEJjP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:39:15 -0400
 Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB9E7823F;
-        Fri,  5 Aug 2022 02:36:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F909785A9;
+        Fri,  5 Aug 2022 02:39:11 -0700 (PDT)
 Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Fri, 5 Aug 2022
- 17:36:44 +0800
-Message-ID: <759c681e-ec03-4230-b34e-0b2ee67ac870@amlogic.com>
-Date:   Fri, 5 Aug 2022 17:36:44 +0800
+ 17:39:09 +0800
+Message-ID: <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
+Date:   Fri, 5 Aug 2022 17:39:07 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [PATCH V3 5/6] arm64: dts: meson: add S4 Soc Peripheral clock
- controller in DT
+Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock controller
+ in DT
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         <linux-clk@vger.kernel.org>,
@@ -40,10 +40,10 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-6-yu.tu@amlogic.com>
- <60f30470-ca14-1e12-3ed2-7b34c7a93f8a@linaro.org>
+ <20220805085716.5635-3-yu.tu@amlogic.com>
+ <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
 From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <60f30470-ca14-1e12-3ed2-7b34c7a93f8a@linaro.org>
+In-Reply-To: <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.18.29.47]
@@ -60,40 +60,27 @@ On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
 > [ EXTERNAL EMAIL ]
 > 
 > On 05/08/2022 10:57, Yu Tu wrote:
->> Added information about the S4 SOC Peripheral Clock controller in DT.
+>> Added information about the S4 SOC PLL Clock controller in DT.
 >>
 >> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
 >> ---
->>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
+>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
 >>
 >> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> index a816b1f7694b..71be1dda15a2 100644
+>> index ff213618a598..a816b1f7694b 100644
 >> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
 >> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> @@ -6,6 +6,8 @@
->>   #include <dt-bindings/interrupt-controller/irq.h>
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   #include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
->> +#include <dt-bindings/clock/amlogic,s4-clkc.h>
+>> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
+>>   			#size-cells = <2>;
+>>   			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
 >>   
->>   / {
->>   	cpus {
->> @@ -100,6 +102,30 @@ clkc_pll: pll-clock-controller@8000 {
->>   				#clock-cells = <1>;
->>   			};
->>   
->> +			clkc_periphs: periphs-clock-controller {
+>> +			clkc_pll: pll-clock-controller@8000 {
 > 
-> Node names should be generic, so "clock-controller"
+> Node names should be generic - clock-controller.
 > https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 > 
-> You miss here unit address. Test your DTS with dtbs check and with
-> regular compile with W=1.
-I will change to clkc_periphs: clock-controller@0 {.
-Is that okay?
-> 
+I will change to clkc_pll: clock-controller@8000, in next version.
 > 
 > Best regards,
 > Krzysztof
