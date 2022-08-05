@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D18C25B08
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D286C00140
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240497AbiHEJN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 05:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50672 "EHLO
+        id S240056AbiHEJQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 05:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240475AbiHEJNV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:13:21 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88B478206
-        for <linux-clk@vger.kernel.org>; Fri,  5 Aug 2022 02:13:17 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id t1so2562194lft.8
-        for <linux-clk@vger.kernel.org>; Fri, 05 Aug 2022 02:13:17 -0700 (PDT)
+        with ESMTP id S234083AbiHEJQF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:16:05 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35AEB6A484
+        for <linux-clk@vger.kernel.org>; Fri,  5 Aug 2022 02:16:03 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id e15so2664525lfs.0
+        for <linux-clk@vger.kernel.org>; Fri, 05 Aug 2022 02:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=1YjciTp42v6B8MpUc3bNVR0+p597jmP1NofHHP0CW5A=;
-        b=G+mXJvAK1kPPno2wsq/kuteBFt9rHaI3XejdqGG+vSGgabb/tWi6KkiARj4ncVr30H
-         ozH8qcFU3E/N7VoT6+mvc1W/5DSc5mJ3pS7J4NaXRpqM1Oozjfa/1quzdWqRFH3xe00M
-         Bl5gXBKCSD88+0dY5qYrxekCNmIS7ndOGQilK5JC9XTE0uX7rqY1w9JKmyaCUSkAHcHD
-         04CX/swFSCUCtv/wQbqdwNTzIzRLXvrGb6vesKSkdIZURhGXwcGsqTlObd8sobGh0+8F
-         N6wOp9h/YH3NZHAgbZKWG8vPOhoM7SrHQh5fIgFWsTda0l9RaJpgRE92Pvq5cvqP5+6Z
-         nlFg==
+        bh=dyFEWJikncIBUJyKkX0jolBEiIcSUSNj0WDThZ5+3Bg=;
+        b=JcLF69Mv0lfG2mXQv9/1bOz44C/ZSw2PCUbahxeYH5l3+7CmI6YZnCHLxX6jhOBlTA
+         BHf32eHA4uCAslWOeFV0FbEFBTjtXS5k4BXfbP1JC2NTQ/aoOU8zVjh2UaVLuVMFvUZV
+         HixQrwLnQt21NM6GdrqggGp91cpM5XbX5qd2iNSmSDSVKX0/jh+w8/Lq8iVncfSdUjmT
+         jCc/JmEdECHY+vJenOW3sue5jGgwk2AUtJrAanl+nM2ZeSIbdHvarj0W/hTurLyOyEQU
+         x9Gsa2Q6Pv/HdUUHGWMwFu/SVDMZFnCaZJSLB8rdN51b/65p9x9t6AiBjhBIj+wg5WR6
+         vQaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=1YjciTp42v6B8MpUc3bNVR0+p597jmP1NofHHP0CW5A=;
-        b=aUGyMhMQ31LDptPk1EgyQ6eZHYHfeiP503f4unIWDyKUHoWJhaeQQZMU32mQxS9iQy
-         zxfXh8SX8/l2zRf+r9YXz4tUu7pRRWp05a9GKt6MhX8Qt9uvCfEAANBfbtPBJf7B3uY6
-         bFVN0AYdU+UMRFBFEMbxgVGtBLJ0EFwIWyvCwCy9/hm9jMI1w3x+XHls5Ds3aVqUJoJO
-         t5sA0bioB/WPCtHKF0eQRs9h3zD1Jgl+4FrxyqgZ7BJUAc1joiA/cod0gCh86+k/S8uC
-         zYCFvBKDxib9hhgCNKjJK+aSCCpmPUcbnlqq+uRkxGEpFso3Fqcq/VToLMWGdGsGRuNS
-         6BMg==
-X-Gm-Message-State: ACgBeo25PLZjeRqAU4tSJtqugstElYgbvDRiB9GIlpM/RbVLvdvdwyZl
-        Uo/7CIUsKtk4oCqlrhni+bxqhG/wh0DTH+sQLUg=
-X-Google-Smtp-Source: AA6agR4bULYrPCXU3n8gQGnJBTOftjBg7+4i0kVjoCT2OP2w4PZcyJyxhpxAhpaVtFgNcT5U4DyRxw==
-X-Received: by 2002:a05:6512:3b8e:b0:48b:23c6:9b0 with SMTP id g14-20020a0565123b8e00b0048b23c609b0mr2164925lfv.470.1659690795468;
-        Fri, 05 Aug 2022 02:13:15 -0700 (PDT)
+        bh=dyFEWJikncIBUJyKkX0jolBEiIcSUSNj0WDThZ5+3Bg=;
+        b=uBQrtVl1mZn3Qle7bgX6SPxqWhiUm9OOEzIhZgLdSvSM20JK5rY/3QeKjLXGvDE8ZX
+         7oQx6zZuYXR7b2J/hwrkc7qMgRhUZeg4xAy0jc1OSovvTgv1Wfq8Fe6b51QynK3b6Sdw
+         /I4a48xbrQmjSOVDBYf3CeSP2KYbhNS0Amiw0MFVRUA7634hRQ5N54CggnVvJBuSfLh9
+         yosGQ6+xswdPhlAfF2w0GrO/85TVdeKgjqLTkMik/uYNy0Mi4nzKzsfji9R7TX0Nk1YC
+         O38lf2EtIv51Z0ae10NEGc6+VpizA/67YAg6PBJ7ZpP1ETxcpq/4BrjhjVJGPjNarDy3
+         p98Q==
+X-Gm-Message-State: ACgBeo1CIx1yO1ZbZpnYKMYKxQ9npHvwvko+90wrgA1tO1z/vre/Engn
+        q9QoUkbL0q9tnbgqOsyHgBL7ag==
+X-Google-Smtp-Source: AA6agR45ewObgP7I+JAAZ3xFIRQLIe9iM1Wkc+5mixLQG57foQ03YMiFezSy/cXa4p0N2TrOZfffuw==
+X-Received: by 2002:a05:6512:e8c:b0:48a:f47a:63e3 with SMTP id bi12-20020a0565120e8c00b0048af47a63e3mr2200808lfb.325.1659690961562;
+        Fri, 05 Aug 2022 02:16:01 -0700 (PDT)
 Received: from [192.168.1.6] ([77.222.167.48])
-        by smtp.gmail.com with ESMTPSA id q1-20020a2eb4a1000000b0025e6d665a3fsm409199ljm.18.2022.08.05.02.13.11
+        by smtp.gmail.com with ESMTPSA id bi24-20020a05651c231800b0025ebaef9570sm15933ljb.40.2022.08.05.02.15.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Aug 2022 02:13:12 -0700 (PDT)
-Message-ID: <370378a9-4341-30fc-79b0-57ccfa7f3def@linaro.org>
-Date:   Fri, 5 Aug 2022 11:13:09 +0200
+        Fri, 05 Aug 2022 02:15:49 -0700 (PDT)
+Message-ID: <562043e1-83d4-d4ab-2c18-20b770b02955@linaro.org>
+Date:   Fri, 5 Aug 2022 11:15:46 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.12.0
-Subject: Re: [PATCH V3 1/6] dt-bindings: clock: meson: add S4 SoC PLL clock
- controller bindings
+Subject: Re: [PATCH V3 4/6] dt-bindings: clk: meson: add S4 SoC peripheral
+ clock controller bindings
 Content-Language: en-US
 To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -68,9 +68,9 @@ To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-2-yu.tu@amlogic.com>
+ <20220805085716.5635-5-yu.tu@amlogic.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220805085716.5635-2-yu.tu@amlogic.com>
+In-Reply-To: <20220805085716.5635-5-yu.tu@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,36 +78,138 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 05/08/2022 10:57, Yu Tu wrote:
-> Add the documentation to support Amlogic S4 SoC PLL clock driver and
-> add S4 SoC PLL clock controller bindings.
+> Add peripheral clock controller compatible and dt-bindings header for
+> the of the S4 SoC.
 > 
 > Signed-off-by: Yu Tu <yu.tu@amlogic.com>
 > ---
->  .../bindings/clock/amlogic,s4-pll-clkc.yaml   | 51 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  .../dt-bindings/clock/amlogic,s4-pll-clkc.h   | 30 +++++++++++
->  3 files changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+>  .../bindings/clock/amlogic,s4-clkc.yaml       |  92 ++++++++++++
+>  include/dt-bindings/clock/amlogic,s4-clkc.h   | 131 ++++++++++++++++++
+>  2 files changed, 223 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,s4-clkc.h
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
 > new file mode 100644
-> index 000000000000..079ae905b69e
+> index 000000000000..2471276afda9
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
-> @@ -0,0 +1,51 @@
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+
+Filename should be based on compatible, so amlogic,s4-periphs-clkc.yaml
+
+> @@ -0,0 +1,92 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/amlogic,s4-pll-clkc.yaml#
+> +$id: http://devicetree.org/schemas/clock/amlogic,s4-clkc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Amlogic Meson S serials PLL Clock Controller Device Tree Bindings
+> +title: Amlogic Meson S serials Peripheral Clock Controller Device Tree Bindings
 
 s/Device Tree Bindings//
 
-With above:
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +
+> +maintainers:
+> +  - Neil Armstrong <narmstrong@baylibre.com>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Yu Tu <yu.hu@amlogic.com>
+> +
+> +
+> +properties:
+> +  compatible:
+> +    const: amlogic,s4-periphs-clkc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: input fixed pll div2
+> +      - description: input fixed pll div2p5
+> +      - description: input fixed pll div3
+> +      - description: input fixed pll div4
+> +      - description: input fixed pll div5
+> +      - description: input fixed pll div7
+> +      - description: input hifi pll
+> +      - description: input gp0 pll
+> +      - description: input mpll0
+> +      - description: input mpll1
+> +      - description: input mpll2
+> +      - description: input mpll3
+> +      - description: input hdmi pll
+> +      - description: input oscillator (usually at 24MHz)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: fclk_div2
+> +      - const: fclk_div2p5
+> +      - const: fclk_div3
+> +      - const: fclk_div4
+> +      - const: fclk_div5
+> +      - const: fclk_div7
+> +      - const: hifi_pll
+> +      - const: gp0_pll
+> +      - const: mpll0
+> +      - const: mpll1
+> +      - const: mpll2
+> +      - const: mpll3
+> +      - const: hdmi_pll
+> +      - const: xtal
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clkc_periphs: periphs-clock-controller@fe000000 {
+> +      compatible = "amlogic,s4-periphs-clkc";
+> +      reg = <0xfe000000 0x49c>;
+> +      clocks = <&clkc_pll 3>,
+> +              <&clkc_pll 13>,
+> +              <&clkc_pll 5>,
+> +              <&clkc_pll 7>,
+> +              <&clkc_pll 9>,
+> +              <&clkc_pll 11>,
+> +              <&clkc_pll 17>,
+> +              <&clkc_pll 15>,
+> +              <&clkc_pll 25>,
+> +              <&clkc_pll 27>,
+> +              <&clkc_pll 29>,
+> +              <&clkc_pll 31>,
+> +              <&clkc_pll 20>,
+> +              <&xtal>;
+> +      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
+> +                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
+> +                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal";
+> +      #clock-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/amlogic,s4-clkc.h b/include/dt-bindings/clock/amlogic,s4-clkc.h
+> new file mode 100644
+> index 000000000000..d203b9bbf29e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,s4-clkc.h
+
+Probably this should be then amlogic,s4-periphs-clkc.h
+
+> @@ -0,0 +1,131 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
+> + * Author: Yu Tu <yu.tu@amlogic.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_CLKC_H
+> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_CLKC_H
 
 Best regards,
 Krzysztof
