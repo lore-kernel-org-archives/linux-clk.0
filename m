@@ -2,87 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F91C00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE13C00140
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 12:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236064AbiHEJjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 05:39:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42374 "EHLO
+        id S240688AbiHEMNH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 08:13:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229767AbiHEJjP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:39:15 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F909785A9;
-        Fri,  5 Aug 2022 02:39:11 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Fri, 5 Aug 2022
- 17:39:09 +0800
-Message-ID: <c223a85a-b76e-0e82-9a8c-6b60588dc03a@amlogic.com>
-Date:   Fri, 5 Aug 2022 17:39:07 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3 2/6] arm64: dts: meson: add S4 Soc PLL clock controller
- in DT
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        with ESMTP id S240672AbiHEMNG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 08:13:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4463D286F4;
+        Fri,  5 Aug 2022 05:13:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D54AB619EC;
+        Fri,  5 Aug 2022 12:13:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD51C433C1;
+        Fri,  5 Aug 2022 12:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659701585;
+        bh=PA3Jes8esomv6XUVX1XLh+eeP+V+PWzpFq3Big4vhOU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VDmcgm2XSpCJj4Iz+JkznFB0Cw7XoELcozT1CtzxxeJZOuTqIoFw4KqlD0PD+1xs/
+         1sUHnrYJw9Cfe8BKymosmZooo1myuNfOt0SI8kCqDUj1ORnwrFmDaP3bCHBbD0ZgvZ
+         WuNseB4g1AneyBOLFc4rx72favCbME0YI9GcK5eEBFH+9IQrrx667UtXqnbZidLD7e
+         ywunXn9aHY19CNZrDHJPU6Q5PWs6MhfH8ZhFDMJ/D+YOlxqS8PuYAffwF50srtGh3b
+         x9nroS5/rwQJRtFyj1iyDEZAWy5ahtH8i4hN+Mb2utT/7h4LkpoWOM/G9SiXRLdMho
+         0iNLEyXVREF5Q==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1oJwCn-0002hI-JP; Fri, 05 Aug 2022 14:13:29 +0200
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-3-yu.tu@amlogic.com>
- <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <19654574-bdc0-9fa5-6465-fc88b20e20c5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 1/2] clk: gcc-sc8280xp: keep PCIe power-domains always-on
+Date:   Fri,  5 Aug 2022 14:12:49 +0200
+Message-Id: <20220805121250.10347-2-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220805121250.10347-1-johan+linaro@kernel.org>
+References: <20220805121250.10347-1-johan+linaro@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-     Thank you for your reply.
+The Qualcomm PCIe driver does not yet implement suspend so to keep the
+PCIe power domains always-on for now to avoid crashing during resume.
 
-On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 05/08/2022 10:57, Yu Tu wrote:
->> Added information about the S4 SOC PLL Clock controller in DT.
->>
->> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->> ---
->>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> index ff213618a598..a816b1f7694b 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> @@ -92,6 +92,14 @@ apb4: apb4@fe000000 {
->>   			#size-cells = <2>;
->>   			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->>   
->> +			clkc_pll: pll-clock-controller@8000 {
-> 
-> Node names should be generic - clock-controller.
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-I will change to clkc_pll: clock-controller@8000, in next version.
-> 
-> Best regards,
-> Krzysztof
-> 
-> .
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ drivers/clk/qcom/gcc-sc8280xp.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index a2f3ffcc5849..eaeada42e13a 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -6768,6 +6768,10 @@ static struct gdsc pcie_1_tunnel_gdsc = {
+ 	.flags = VOTABLE,
+ };
+ 
++/*
++ * The Qualcomm PCIe driver does not yet implement suspend so to keep the
++ * PCIe power domains always-on for now.
++ */
+ static struct gdsc pcie_2a_gdsc = {
+ 	.gdscr = 0x9d004,
+ 	.collapse_ctrl = 0x52128,
+@@ -6776,7 +6780,7 @@ static struct gdsc pcie_2a_gdsc = {
+ 		.name = "pcie_2a_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc pcie_2b_gdsc = {
+@@ -6787,7 +6791,7 @@ static struct gdsc pcie_2b_gdsc = {
+ 		.name = "pcie_2b_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc pcie_3a_gdsc = {
+@@ -6798,7 +6802,7 @@ static struct gdsc pcie_3a_gdsc = {
+ 		.name = "pcie_3a_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc pcie_3b_gdsc = {
+@@ -6809,7 +6813,7 @@ static struct gdsc pcie_3b_gdsc = {
+ 		.name = "pcie_3b_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc pcie_4_gdsc = {
+@@ -6820,7 +6824,7 @@ static struct gdsc pcie_4_gdsc = {
+ 		.name = "pcie_4_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | ALWAYS_ON,
+ };
+ 
+ static struct gdsc ufs_card_gdsc = {
+-- 
+2.35.1
+
