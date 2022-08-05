@@ -2,82 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E20C00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9406C00140
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233202AbiHEJf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 05:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
+        id S240447AbiHEJgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 05:36:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232052AbiHEJfz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:35:55 -0400
-X-Greylist: delayed 185 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 Aug 2022 02:35:54 PDT
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E2329C91
-        for <linux-clk@vger.kernel.org>; Fri,  5 Aug 2022 02:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1659691967;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=Gek2ApRASV6t/JsLkbPetk9rIIshaj3vueYp6pv94oo=;
-    b=soPEJ9X+3yQHY7NbKoeM+laRqEsPFguU+2ARJND3uJX90HGRE+TIV7zDH6jG4GqEho
-    uiEGQXWfNGUb6yjSlubmJVdU2iv/6pa9YHdICk0ThTOAdgm85GeJs0HSquBExjs0sb7P
-    KRHomvyRy83rkqwzEGYNhkJqybewsXHWkCLumLEJIJ87UgvjbYYgEgGXUUARJnOxMGg1
-    aEoZhePF2n/IXzH+ePnIubLHgS8o8eppIivYcOaOnj3LgUbWEN/Z3z55GKQpr0O53jDp
-    FGCNhnNK8NH1xdDOgzNrfm1hUA4wKj0LJ5D9MYeWWeKsNOwsdEojJcFsaTyU0dDeqlf3
-    6nvw==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw7/aY="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.47.0 AUTH)
-    with ESMTPSA id u1045ey759WkZA8
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Fri, 5 Aug 2022 11:32:46 +0200 (CEST)
-Date:   Fri, 5 Aug 2022 11:32:38 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Jun Nie <jun.nie@linaro.org>
-Cc:     abel.vesa@linaro.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
-        shawn.guo@linaro.org, bryan.odonoghue@linaro.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/4] Support dynamic voltage frequency scaling inside
- clock controller
-Message-ID: <YuzimmCqk2pA5sFZ@gerhold.net>
-References: <20220805074935.1158098-1-jun.nie@linaro.org>
+        with ESMTP id S240510AbiHEJgt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:36:49 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB9E7823F;
+        Fri,  5 Aug 2022 02:36:46 -0700 (PDT)
+Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Fri, 5 Aug 2022
+ 17:36:44 +0800
+Message-ID: <759c681e-ec03-4230-b34e-0b2ee67ac870@amlogic.com>
+Date:   Fri, 5 Aug 2022 17:36:44 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220805074935.1158098-1-jun.nie@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 5/6] arm64: dts: meson: add S4 Soc Peripheral clock
+ controller in DT
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20220805085716.5635-1-yu.tu@amlogic.com>
+ <20220805085716.5635-6-yu.tu@amlogic.com>
+ <60f30470-ca14-1e12-3ed2-7b34c7a93f8a@linaro.org>
+From:   Yu Tu <yu.tu@amlogic.com>
+In-Reply-To: <60f30470-ca14-1e12-3ed2-7b34c7a93f8a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.47]
+X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
+ (10.18.11.5)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 05, 2022 at 03:49:31PM +0800, Jun Nie wrote:
-> Support dynamic voltage frequency scaling inside clock controller with
-> changes in clock framework. And added msm8916 as the first SoC to
-> support this feature.
+Hi Krzysztof,
+     Thank you for your reply.
+
+On 2022/8/5 17:16, Krzysztof Kozlowski wrote:
+> [ EXTERNAL EMAIL ]
 > 
-
-As far as I understand it was decided to handle this on the consumer
-driver side in mainline, together with OPP tables and "required-opps" in
-the device tree. If you look at e.g. sc7180.dtsi you can see that this
-is heavily used there. Also see e.g. [1] for some links to related
-discussions.
-
-For MSM8916 at least the SDHCI and DSI driver should support this 
-already. Some other older drivers (e.g. QUP, USB) would need some change
-similar to [2] (just like they still need changes for interconnects).
-
-I'm not entirely sure why it was decided to not do this as part of the
-clock core (maybe someone can explain or link a relevant mailing list
-post?), but we should try to keep it consistent in any case. :)
-
-Thanks,
-Stephan
-
-[1]: https://lore.kernel.org/linux-arm-msm/20200910162610.GA7008@gerhold.net/
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0472f8d3c054a0ff58122fc9d2dbf84f197a284f
+> On 05/08/2022 10:57, Yu Tu wrote:
+>> Added information about the S4 SOC Peripheral Clock controller in DT.
+>>
+>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+>> ---
+>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 26 +++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> index a816b1f7694b..71be1dda15a2 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+>> @@ -6,6 +6,8 @@
+>>   #include <dt-bindings/interrupt-controller/irq.h>
+>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>   #include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
+>> +#include <dt-bindings/clock/amlogic,s4-clkc.h>
+>>   
+>>   / {
+>>   	cpus {
+>> @@ -100,6 +102,30 @@ clkc_pll: pll-clock-controller@8000 {
+>>   				#clock-cells = <1>;
+>>   			};
+>>   
+>> +			clkc_periphs: periphs-clock-controller {
+> 
+> Node names should be generic, so "clock-controller"
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> You miss here unit address. Test your DTS with dtbs check and with
+> regular compile with W=1.
+I will change to clkc_periphs: clock-controller@0 {.
+Is that okay?
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> .
