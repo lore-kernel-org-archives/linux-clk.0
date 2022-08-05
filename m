@@ -2,201 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88575C00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E20C00140
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 09:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237564AbiHEJdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 05:33:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
+        id S233202AbiHEJf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 05:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235774AbiHEJdH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:33:07 -0400
-Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64097101CA;
-        Fri,  5 Aug 2022 02:33:06 -0700 (PDT)
-Received: from [10.18.29.47] (10.18.29.47) by mail-sh.amlogic.com (10.18.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.9; Fri, 5 Aug 2022
- 17:33:03 +0800
-Message-ID: <4d923b9e-61d4-b4cc-906f-cb186a16e1f4@amlogic.com>
-Date:   Fri, 5 Aug 2022 17:33:03 +0800
+        with ESMTP id S232052AbiHEJfz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 05:35:55 -0400
+X-Greylist: delayed 185 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 Aug 2022 02:35:54 PDT
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E2329C91
+        for <linux-clk@vger.kernel.org>; Fri,  5 Aug 2022 02:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1659691967;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=Gek2ApRASV6t/JsLkbPetk9rIIshaj3vueYp6pv94oo=;
+    b=soPEJ9X+3yQHY7NbKoeM+laRqEsPFguU+2ARJND3uJX90HGRE+TIV7zDH6jG4GqEho
+    uiEGQXWfNGUb6yjSlubmJVdU2iv/6pa9YHdICk0ThTOAdgm85GeJs0HSquBExjs0sb7P
+    KRHomvyRy83rkqwzEGYNhkJqybewsXHWkCLumLEJIJ87UgvjbYYgEgGXUUARJnOxMGg1
+    aEoZhePF2n/IXzH+ePnIubLHgS8o8eppIivYcOaOnj3LgUbWEN/Z3z55GKQpr0O53jDp
+    FGCNhnNK8NH1xdDOgzNrfm1hUA4wKj0LJ5D9MYeWWeKsNOwsdEojJcFsaTyU0dDeqlf3
+    6nvw==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw7/aY="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.47.0 AUTH)
+    with ESMTPSA id u1045ey759WkZA8
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Fri, 5 Aug 2022 11:32:46 +0200 (CEST)
+Date:   Fri, 5 Aug 2022 11:32:38 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Jun Nie <jun.nie@linaro.org>
+Cc:     abel.vesa@linaro.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, agross@kernel.org,
+        shawn.guo@linaro.org, bryan.odonoghue@linaro.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/4] Support dynamic voltage frequency scaling inside
+ clock controller
+Message-ID: <YuzimmCqk2pA5sFZ@gerhold.net>
+References: <20220805074935.1158098-1-jun.nie@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V3 4/6] dt-bindings: clk: meson: add S4 SoC peripheral
- clock controller bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <20220805085716.5635-1-yu.tu@amlogic.com>
- <20220805085716.5635-5-yu.tu@amlogic.com>
- <562043e1-83d4-d4ab-2c18-20b770b02955@linaro.org>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <562043e1-83d4-d4ab-2c18-20b770b02955@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.47]
-X-ClientProxiedBy: mail-sh.amlogic.com (10.18.11.5) To mail-sh.amlogic.com
- (10.18.11.5)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220805074935.1158098-1-jun.nie@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
-	Thank you for your reply.
+On Fri, Aug 05, 2022 at 03:49:31PM +0800, Jun Nie wrote:
+> Support dynamic voltage frequency scaling inside clock controller with
+> changes in clock framework. And added msm8916 as the first SoC to
+> support this feature.
+> 
 
-On 2022/8/5 17:15, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 05/08/2022 10:57, Yu Tu wrote:
->> Add peripheral clock controller compatible and dt-bindings header for
->> the of the S4 SoC.
->>
->> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->> ---
->>   .../bindings/clock/amlogic,s4-clkc.yaml       |  92 ++++++++++++
->>   include/dt-bindings/clock/amlogic,s4-clkc.h   | 131 ++++++++++++++++++
->>   2 files changed, 223 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
->>   create mode 100644 include/dt-bindings/clock/amlogic,s4-clkc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
->> new file mode 100644
->> index 000000000000..2471276afda9
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
-> 
-> Filename should be based on compatible, so amlogic,s4-periphs-clkc.yaml
-I will correct as you suggest in the next version.
-> 
->> @@ -0,0 +1,92 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/amlogic,s4-clkc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Amlogic Meson S serials Peripheral Clock Controller Device Tree Bindings
-> 
-> s/Device Tree Bindings//
-what's mean?
-> 
->> +
->> +maintainers:
->> +  - Neil Armstrong <narmstrong@baylibre.com>
->> +  - Jerome Brunet <jbrunet@baylibre.com>
->> +  - Yu Tu <yu.hu@amlogic.com>
->> +
->> +
->> +properties:
->> +  compatible:
->> +    const: amlogic,s4-periphs-clkc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: input fixed pll div2
->> +      - description: input fixed pll div2p5
->> +      - description: input fixed pll div3
->> +      - description: input fixed pll div4
->> +      - description: input fixed pll div5
->> +      - description: input fixed pll div7
->> +      - description: input hifi pll
->> +      - description: input gp0 pll
->> +      - description: input mpll0
->> +      - description: input mpll1
->> +      - description: input mpll2
->> +      - description: input mpll3
->> +      - description: input hdmi pll
->> +      - description: input oscillator (usually at 24MHz)
->> +
->> +  clock-names:
->> +    items:
->> +      - const: fclk_div2
->> +      - const: fclk_div2p5
->> +      - const: fclk_div3
->> +      - const: fclk_div4
->> +      - const: fclk_div5
->> +      - const: fclk_div7
->> +      - const: hifi_pll
->> +      - const: gp0_pll
->> +      - const: mpll0
->> +      - const: mpll1
->> +      - const: mpll2
->> +      - const: mpll3
->> +      - const: hdmi_pll
->> +      - const: xtal
->> +
->> +  "#clock-cells":
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - "#clock-cells"
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clkc_periphs: periphs-clock-controller@fe000000 {
->> +      compatible = "amlogic,s4-periphs-clkc";
->> +      reg = <0xfe000000 0x49c>;
->> +      clocks = <&clkc_pll 3>,
->> +              <&clkc_pll 13>,
->> +              <&clkc_pll 5>,
->> +              <&clkc_pll 7>,
->> +              <&clkc_pll 9>,
->> +              <&clkc_pll 11>,
->> +              <&clkc_pll 17>,
->> +              <&clkc_pll 15>,
->> +              <&clkc_pll 25>,
->> +              <&clkc_pll 27>,
->> +              <&clkc_pll 29>,
->> +              <&clkc_pll 31>,
->> +              <&clkc_pll 20>,
->> +              <&xtal>;
->> +      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
->> +                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
->> +                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal";
->> +      #clock-cells = <1>;
->> +    };
->> +...
->> diff --git a/include/dt-bindings/clock/amlogic,s4-clkc.h b/include/dt-bindings/clock/amlogic,s4-clkc.h
->> new file mode 100644
->> index 000000000000..d203b9bbf29e
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/amlogic,s4-clkc.h
-> 
-> Probably this should be then amlogic,s4-periphs-clkc.h
-I will correct as you suggest in the next version.
-> 
->> @@ -0,0 +1,131 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
->> + * Author: Yu Tu <yu.tu@amlogic.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_CLKC_H
->> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_CLKC_H
-> 
-> Best regards,
-> Krzysztof
-> 
-> .
+As far as I understand it was decided to handle this on the consumer
+driver side in mainline, together with OPP tables and "required-opps" in
+the device tree. If you look at e.g. sc7180.dtsi you can see that this
+is heavily used there. Also see e.g. [1] for some links to related
+discussions.
+
+For MSM8916 at least the SDHCI and DSI driver should support this 
+already. Some other older drivers (e.g. QUP, USB) would need some change
+similar to [2] (just like they still need changes for interconnects).
+
+I'm not entirely sure why it was decided to not do this as part of the
+clock core (maybe someone can explain or link a relevant mailing list
+post?), but we should try to keep it consistent in any case. :)
+
+Thanks,
+Stephan
+
+[1]: https://lore.kernel.org/linux-arm-msm/20200910162610.GA7008@gerhold.net/
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0472f8d3c054a0ff58122fc9d2dbf84f197a284f
