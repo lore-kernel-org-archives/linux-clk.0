@@ -2,74 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3CBC00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 08:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E94C25B08
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 08:58:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233773AbiHEIdN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 04:33:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
+        id S240049AbiHEI6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 04:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbiHEIdN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 04:33:13 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D6317A8D;
-        Fri,  5 Aug 2022 01:33:11 -0700 (PDT)
-Received: from [192.168.1.107] ([37.4.248.80]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MiMIY-1noNQQ3Cpa-00fUnp; Fri, 05 Aug 2022 10:32:52 +0200
-Message-ID: <0765e37c-be81-33dc-b4a0-8a5786417eb6@i2se.com>
-Date:   Fri, 5 Aug 2022 10:32:51 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] clk: bcm: rpi: Fix error handling of
- raspberrypi_fw_get_rate
-Content-Language: en-US
-To:     Florian Fainelli <f.fainelli@gmail.com>,
+        with ESMTP id S234856AbiHEI6z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 04:58:55 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C543B74E26;
+        Fri,  5 Aug 2022 01:58:53 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.9; Fri, 5 Aug 2022
+ 16:58:51 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220625083643.4012-1-stefan.wahren@i2se.com>
- <7656fa2c-590a-8f0f-03ef-904e4f186c82@gmail.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-In-Reply-To: <7656fa2c-590a-8f0f-03ef-904e4f186c82@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9tIwb1WMqV0HI9ScyE0x2HNCwM17U7bJfxCSa2ZpgAd8xf+5Z98
- CKUrSBtzs81T86+DAQCEX5OlqKQ06XCUAm58ygmooM5OEilfp/pCfw6excuMTvCvLhSpBIl
- bTZlZdcLXDNAcyCSVfa1bo66s40hFgybZDtVleYXElL+XDWtiqz/fftQRBkioKMG3xskzlD
- lzbu9TKJXgBEA5mmH/FIw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eIV8A6KxsVk=:+nACvjnCObJpAqBC5JvhIZ
- RONq6siekC9FC11WsIK/yB1Jtbeh7jT0LxXFQyRasTbyJV2bnW/ARzYu6cq+VpOOKeq+nT/oa
- 8edxrAEGgSBijxlCmWz00uZKkpB0YBDNOqLxhW4UYJLz0iQeo++0HqBtrfcYWSWKwPQMo2Qej
- U6mMzPAOAWk6j0+fot8Q7CBe+Cd9D1Ej7UrL7ehkVcMVn+tDgneixacJ2Na89v24wi5f4t6MC
- mdTJkwuZhtjXvY81VhA+X/8FsRZA9PqT5rjNACBQ8U/BWwxV+fW72UQ2MXfWIwO7c8dKRXnAX
- FYvPZ99VaDPODZ3DeG+mFiGlmTz8q8qqB8iu6qK2wb83q9t/3NBViGGhzhf7K7FEGO8ecJQC2
- tpyCo+lTm2k1gj8onvfNBy+dn8yY1/0BeEzTT2Z1t8vnOf5WCS4Meb1kjl1wGHt/rojj2xSf6
- NePocnoqSicDsbmEFdsy5iUTZlWZ1euOmnSJfOLCSXemA6DKYq0YghWpYAuBnBEyZ3G4v5sci
- z22K5hfOjr73ZFVheD/1wTb9Kzu6IS7uuVq+V0euEagIwQ8FSGd4PVAYJXEMRwpKAai7+Tlk1
- a+N8/EoPWhhaxS/0dyUDUvRXg+vyBjGWXqDUirAeZC/AFmQSQ87xyw5Uz7/+z32C4469vQkG+
- p6/kxpA/aP2EpA69s5NUpttii5vDCOuEJtLmcG4WMQdfxSlXO6Ll8ey3hZVGrenvTi6nA4e/S
- 6qqfvI/qc9Yi0rnvOqZfno+h0hxR6DDWQnzghg==
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Yu Tu <yu.tu@amlogic.com>
+Subject: [PATCH V3 0/6] Add S4 SoC PLL and Peripheral clock controller
+Date:   Fri, 5 Aug 2022 16:57:10 +0800
+Message-ID: <20220805085716.5635-1-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 27.06.22 um 18:24 schrieb Florian Fainelli:
-> On 6/25/22 01:36, Stefan Wahren wrote:
->> The function raspberrypi_fw_get_rate (e.g. used for the recalc_rate
->> hook) can fail to get the clock rate from the firmware. In this case
->> we cannot return a signed error value, which would be casted to
->> unsigned long. Fix this by returning 0 instead.
->>
->> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
->
-> Fixes: 4e85e535e6cc ("clk: bcm283x: add driver interfacing with 
-> Raspberry Pi's firmware")
->
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+1. Add PLL and Peripheral clock controller driver for S4 SOC.
 
-gentle ping
+Yu Tu (6):
+  dt-bindings: clock: meson: add S4 SoC PLL clock controller bindings
+  arm64: dts: meson: add S4 Soc PLL clock controller in DT
+  clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver
+  dt-bindings: clk: meson: add S4 SoC peripheral clock controller
+    bindings
+  arm64: dts: meson: add S4 Soc Peripheral clock controller in DT
+  clk: meson: s4: add s4 SoC peripheral clock controller driver
+
+V2 -> V3: Use two clock controller.
+V1 -> V2: Change format as discussed in the email.
+
+Link:https://lore.kernel.org/all/20220728054202.6981-1-yu.tu@amlogic.com/
+
+ .../bindings/clock/amlogic,s4-clkc.yaml       |   92 +
+ .../bindings/clock/amlogic,s4-pll-clkc.yaml   |   51 +
+ MAINTAINERS                                   |    1 +
+ arch/arm64/boot/dts/amlogic/meson-s4.dtsi     |   34 +
+ drivers/clk/meson/Kconfig                     |   25 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/s4-pll.c                    |  891 ++++
+ drivers/clk/meson/s4-pll.h                    |   88 +
+ drivers/clk/meson/s4.c                        | 3878 +++++++++++++++++
+ drivers/clk/meson/s4.h                        |  232 +
+ include/dt-bindings/clock/amlogic,s4-clkc.h   |  131 +
+ .../dt-bindings/clock/amlogic,s4-pll-clkc.h   |   30 +
+ 12 files changed, 5455 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/s4-pll.c
+ create mode 100644 drivers/clk/meson/s4-pll.h
+ create mode 100644 drivers/clk/meson/s4.c
+ create mode 100644 drivers/clk/meson/s4.h
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-pll-clkc.h
+
+
+base-commit: 08fc500fe3d4b1f0603fb97ad353f246a3d52d2d
+-- 
+2.33.1
 
