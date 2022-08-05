@@ -2,129 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4256C00140
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 06:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81316C3F6B0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Aug 2022 07:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237495AbiHEGx3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Aug 2022 02:53:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59558 "EHLO
+        id S234956AbiHEHtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Aug 2022 03:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230492AbiHEGx2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 02:53:28 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D5021EC7D
-        for <linux-clk@vger.kernel.org>; Thu,  4 Aug 2022 23:53:27 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id t22so2194546lfg.1
-        for <linux-clk@vger.kernel.org>; Thu, 04 Aug 2022 23:53:27 -0700 (PDT)
+        with ESMTP id S240323AbiHEHtm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Aug 2022 03:49:42 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799951018
+        for <linux-clk@vger.kernel.org>; Fri,  5 Aug 2022 00:49:40 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id s5-20020a17090a13c500b001f4da9ffe5fso7522604pjf.5
+        for <linux-clk@vger.kernel.org>; Fri, 05 Aug 2022 00:49:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=svGbdJtoA42vxhMw0xl6uJ/CKt4Zq7+usPD0U/PNy5Q=;
-        b=fcizwj7UD0ZDd1mZ0oDmsurKWnpaQ6W8uIjVJaOD0QvmsghpTV2mhyjgilSZfV3gfp
-         VKxKifhMNxIxkv84hkBVE/pSxJMeMj+KoWkFL2y+KDM6m2ZZWeC9sJYVxT6Eo7Xe5I1W
-         iV/F1O2wQ9eUQTVwfppVzZa0FHW+OxPbQV5/ji8lTUwWD3fxaFyFZOx4kNeQCte4KSj8
-         xKOGnH+sqff7E8e7Pb1UHtsuYRJl+IYJZbr6Ce0PeJiLzh1nHgmWeMbzZFyduUJFdbcX
-         GB7zxiqDzQ0zakdY5rGcgEwK7b7VDGioVCMp2950fn0J5lmPnn7nh8gr6S99j3QHei4p
-         vsYg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OfJQ8R0mCATwfI9fDCSGJfum0HkydojZTInFEU0mh0s=;
+        b=cg0d8WnsOC1iIPYdRWXIufJvvz0yE5RvdVFrp4iL6f5ZCwOYx69KYXVa78G8Bdl7gr
+         +e4R28x2ri1DxIqRQwx7CnU83DUeSibBeNqItmp29GXANjTSoeigmt9v81sUmhRYahMd
+         9zZfQNebmSQXCTdbazgvxFnSuhXWzJhwXnlE2PS6aQAbQ4QufKDOGFmeHXVu+ybHeYTX
+         C70rMbUq6neZ+V8y8InCaEcKnhykI3dYE6ZeA68mN4ZmLRWXEvilKSCAy4Uh/GdslfhV
+         DpGy3rFB5FNKbvL98m0a0yS4nCG/JgVjzTIE7Wt4WxnOOsPGwcGosug3Z+VIRI/2pFvs
+         tmIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=svGbdJtoA42vxhMw0xl6uJ/CKt4Zq7+usPD0U/PNy5Q=;
-        b=Qk2dxAgot8a57e4irjRwPR+fAvIIPb3fQJo1RUPeQtdqRGWoMcwUcICcIod5vO4LcR
-         BDP1rw1yO0Jr9O5163XelOQV1DyviaR3wDbQjxF73VvTtEIMaIZluyM9lGIXXTlXTuks
-         y9NKYx6lgoujEbFSQlFv0Y2x2pGYnn203v6GW3WWzPRjRDpGJhxHvEmUuoBIGNprB+LH
-         Cv6OIkTTsE4DI9P6QONpBG4pe1lTvE9KUcmZb4xj+71bKCRzmdEwsuz9hrUA3z+/KFQz
-         pTPvxXAzGNP1ODpDGT0lJhdl8bSpBztTunsIfF+pqLZuBuZBJUWsMrG6RE4j0+fOYd3L
-         jKFg==
-X-Gm-Message-State: ACgBeo31kMzo6f2lYCaGDLJ5Z+IM0LwlD0w2wmhiKnwiFRKSXZ0IdTAX
-        bJ/HfEgYcPwV5fqoivbiCYfzIg==
-X-Google-Smtp-Source: AA6agR5PP/ENG7yXEHTvyafw/XQB2vIAh7cCSieTd83vPiy91LJfZPa5YrNOmaUMVOVwlr0V6qymXg==
-X-Received: by 2002:a05:6512:230b:b0:48a:7c11:664d with SMTP id o11-20020a056512230b00b0048a7c11664dmr2034885lfu.390.1659682405752;
-        Thu, 04 Aug 2022 23:53:25 -0700 (PDT)
-Received: from [192.168.1.6] ([77.222.167.48])
-        by smtp.gmail.com with ESMTPSA id z16-20020a2e9650000000b0025dd6c8933csm362348ljh.114.2022.08.04.23.53.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Aug 2022 23:53:23 -0700 (PDT)
-Message-ID: <bee3d724-1efb-d5c7-6698-c98a198e69fd@linaro.org>
-Date:   Fri, 5 Aug 2022 08:53:21 +0200
+        bh=OfJQ8R0mCATwfI9fDCSGJfum0HkydojZTInFEU0mh0s=;
+        b=ooTicO8tsHKko2ttoX1VMKUJf3tk8Cx7okjTcKYJ+EJ7vt8NNQ9nJuuhOFEsuRDdXk
+         ZfO4o1+jbNIKDhM4pNwJM5evm2fZ8Gk7EmwsDnN03l7C/yNoKwhtwfa7CgLSc80jTlZs
+         t/QzjFY5XjsY5oWy0OExDyluHUhr/kiBXyBZzg8qISyXdO6Q3SZlSeZx2S7PaQ1FVla0
+         VoRZiy/sj3bWbEJoPpAA6OpsK0cWEj2neNpWNfcCUxC2Lah2BU8pSxQB3q3jQwi9X59y
+         GC6Yqfq34umQpssWxQHquuM9kCDmZQbftZ8ds18mWBIANwgXDg9glaW5U7eI7Nn6BFeO
+         04Wg==
+X-Gm-Message-State: ACgBeo0scjaV5Z5rkoflphKPJXh01pCYWZWNsghyduXS+NDo+/h/8xyl
+        5lPhfcxdRu4PKIPJHq+mXiCB6w==
+X-Google-Smtp-Source: AA6agR4DtEbCApfwN8bj4IG/rcCrnLp0hlFCiYrmCNx3R2PtzojGHcqnDTsqNj53R6uQfCpHwfL++Q==
+X-Received: by 2002:a17:90b:38cb:b0:1f5:2321:63cb with SMTP id nn11-20020a17090b38cb00b001f5232163cbmr15034139pjb.110.1659685779870;
+        Fri, 05 Aug 2022 00:49:39 -0700 (PDT)
+Received: from localhost.localdomain ([45.8.68.134])
+        by smtp.gmail.com with ESMTPSA id z10-20020a1709027e8a00b0016ecda71e26sm2309372pla.39.2022.08.05.00.49.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Aug 2022 00:49:39 -0700 (PDT)
+From:   Jun Nie <jun.nie@linaro.org>
+To:     abel.vesa@linaro.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     agross@kernel.org, shawn.guo@linaro.org,
+        bryan.odonoghue@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Jun Nie <jun.nie@linaro.org>
+Subject: [PATCH 0/4] Support dynamic voltage frequency scaling inside clock controller
+Date:   Fri,  5 Aug 2022 15:49:31 +0800
+Message-Id: <20220805074935.1158098-1-jun.nie@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH v4 3/8] dt-bindings: clock: Add ids for Lynx 10g PLLs
-Content-Language: en-US
-To:     Sean Anderson <sean.anderson@seco.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-phy@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20220804220602.477589-1-sean.anderson@seco.com>
- <20220804220602.477589-4-sean.anderson@seco.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220804220602.477589-4-sean.anderson@seco.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/08/2022 00:05, Sean Anderson wrote:
-> This adds ids for the Lynx 10g SerDes's internal PLLs. These may be used
-> witn assigned-clock* to specify a particular frequency to use.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@seco.com>
-> ---
-> 
-> Changes in v4:
-> - New
-> 
->  include/dt-bindings/clock/fsl,lynx-10g.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/fsl,lynx-10g.h
-> 
-> diff --git a/include/dt-bindings/clock/fsl,lynx-10g.h b/include/dt-bindings/clock/fsl,lynx-10g.h
-> new file mode 100644
-> index 000000000000..f5b955658106
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/fsl,lynx-10g.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+Support dynamic voltage frequency scaling inside clock controller with
+changes in clock framework. And added msm8916 as the first SoC to
+support this feature.
 
-This should be dual license.
+Jun Nie (4):
+  clk: Aggregate power operation in clock controller
+  soc: qcom: rpmpd: Add corner power-domains states
+  arm64: dts: qcom: add power domain for clk controller
+  clk: qcom: gcc-msm8916: Add power domain data
 
-> +/*
-> + * Copyright (C) 2022 Sean Anderson <sean.anderson@seco.com>
+ arch/arm64/boot/dts/qcom/msm8916.dtsi  |  14 +-
+ drivers/clk/clk.c                      | 212 ++++++++++++++++++++++++-
+ drivers/clk/qcom/gcc-msm8916.c         | 182 +++++++++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h |   8 +
+ include/linux/clk-provider.h           |  62 ++++++++
+ 5 files changed, 470 insertions(+), 8 deletions(-)
 
-It's confusing to see personal copyrights with company email. Either the
-copyright is attributed to your employer or to you. If to you, use
-private email.
+-- 
+2.25.1
 
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLK_LYNX_10G_H
-> +#define __DT_BINDINGS_CLK_LYNX_10G_H
-> +
-> +#define LYNX10G_CLKS_PER_PLL 2
-> +
-> +#define LYNX10G_PLLa(a)		((a) * LYNX10G_CLKS_PER_PLL)
-> +#define LYNX10G_PLLa_EX_DLY(a)	((a) * LYNX10G_CLKS_PER_PLL + 1)
-
-These do not look like proper IDs for clocks for bindings. Numbering
-starts from 0 or 1 and any "a" needs to be clearly explained. What do
-you bind here?
-
-> +
-> +#endif /* __DT_BINDINGS_CLK_LYNX_10G_H */
-
-
-Best regards,
-Krzysztof
