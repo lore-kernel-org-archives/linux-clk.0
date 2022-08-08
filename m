@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDE3C3F6B0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 18:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FA9C00140
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Aug 2022 18:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237137AbiHHSQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Aug 2022 14:16:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48202 "EHLO
+        id S244225AbiHHSQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Aug 2022 14:16:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243537AbiHHSQC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 14:16:02 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5BFCB7DC
-        for <linux-clk@vger.kernel.org>; Mon,  8 Aug 2022 11:16:00 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id s11-20020a1cf20b000000b003a52a0945e8so3046091wmc.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 Aug 2022 11:16:00 -0700 (PDT)
+        with ESMTP id S243978AbiHHSQE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Aug 2022 14:16:04 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C049FF2
+        for <linux-clk@vger.kernel.org>; Mon,  8 Aug 2022 11:16:02 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id q1-20020a05600c040100b003a52db97fffso2908574wmb.4
+        for <linux-clk@vger.kernel.org>; Mon, 08 Aug 2022 11:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc;
-        bh=LxdWIrp6h2qjt0XVQVzdJXERuzfBADuhugCm++L0IwA=;
-        b=N86YZZzuDnayOOaNi0efsePGXbiSOgAKze9kj85wpmPnFsUWscz6Lt4mKGpZ+r9z4Q
-         r/p/F+B9TunZGM7AYbeUGvs29EYQCJleei5hT9/XacRD6Knr9jY5PkbaKy3OP0LdyRsU
-         Pn+NZynHTpnAeV7gkSaxUGdZpthYL5Y0BNlgtWXVxZx3svBLFoSABI3DMbXE58c0v3tB
-         +8wriagIXcoGQn/Grf3Vu4ga65fFlwxbji/Yo4/jFKGRA/XuCDmZMtb/7CyW5QfeV4Vg
-         4auHyMeFrvYg2j9VFuKZgJB8Ha3Y+DZq1ZsJT1NE9OWhF6r+SF3DQhrFQL4Z2UdP81AV
-         xpeg==
+        bh=jwpB4SBICrxpQZFhOApDSXu/bCSEYaYVhT4OUlCJ//g=;
+        b=LtkigQ0ABWSJBlvEqNXo1Kah3dvRFTEcc2gpwobRB4K5ST3nm8hU/TwWCRl+j6N40Q
+         Jg7PtMG2BpKf5EmLQvPDA867mPSbyF2MuO50RcS6ZOxHtG1SnRqoUwd0+P42ZYCiD6KU
+         f5zS/oxM4JHsZtczer9YqFFctp/VHueA532368065Qd72m4sradr3up1KIKtsnCH4smT
+         2v8wkfgld63yAu/z5xSB3oWVkac30ysnTc6ROn/pNLnSe3eYd5OKfWuhrSSg+6XhoerV
+         FO857yjP7z8vfWlLuky8c50D+5FCsBsIjET7lE6eulZdpJaI5F9BN6emXRmi2foOCC6h
+         hCbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc;
-        bh=LxdWIrp6h2qjt0XVQVzdJXERuzfBADuhugCm++L0IwA=;
-        b=fWfXChZ6fyJ0D0O/k7ZvDOgKpHzIxqURthBOao4I856z2pwLlPP7y5nRvzML7l/vG5
-         wrVs9zyDQ8j1XdA7k3cD73LciCIewg7rQnUfPCmqNOoe523Oss00Sd9590fcZbGKqXhR
-         NkhyEwVqeu8LiaP6weHfWrkqhHEeHNIfnfzerCPGcJXpQ23sBNlgTIu9sulZFR7DrM2M
-         7z7GMDVnR3QgDLjPF8rEXS2WGIlRdFMyJvDXUJMUM2C7AhSK0qC6CE/8r9oM8hYWTT1F
-         /7Sl14lfk5vCeEPf1ftCFs/Xs2prqWQp3cD6aXxGG9CuuuGiWtaDB9d46qiVkM5kx3k6
-         SOnA==
-X-Gm-Message-State: ACgBeo1mMn0btwYWsH9qYaC7Vd6cHXqBJmPoaDkLpqhw80pI0OVY/7nJ
-        20f8ljKOGIzfvamFnk/ORYG2Fw==
-X-Google-Smtp-Source: AA6agR7762jwygrYknaBhp5g+DOZxc8wyUU/dys/HAGUHbSlGQMGaOy9oH6+cmlbhZmUTQG4Hw7sWg==
-X-Received: by 2002:a05:600c:1c19:b0:3a5:51aa:d041 with SMTP id j25-20020a05600c1c1900b003a551aad041mr444559wms.172.1659982560243;
-        Mon, 08 Aug 2022 11:16:00 -0700 (PDT)
+        bh=jwpB4SBICrxpQZFhOApDSXu/bCSEYaYVhT4OUlCJ//g=;
+        b=bUNd04G1QOINe4CB+dwbdlaTP/Sr5CNAKVWZ8aLMETHjI0/6KEAhjI2KtEzYJ7wgY6
+         gdhFLvmiwLuoR8kgqKbZG86HGgmF7MY3trXqkRu+Tzsj+FzVn0B8RNES1Cwm0wIxNHWH
+         bXQba0DNV3lsycC0ttT4dCheRuFkH7a8FKwtTVcRq4GDX76/eOXaOal7oBhbpSF2pxYS
+         RNIrOieXG+HjUU66wauFXeJJSm0s7B43J0SKak9NlqbHoRmwAG+ivs4hN9cdciCsNXMO
+         je3cfaqYL5AcoZTF8uCpyjy0zSs+YVQMAJhofbajMAAhrh3iRd6gMqfk/j17HUeSrnOv
+         XDiQ==
+X-Gm-Message-State: ACgBeo1nZSsR0/0Ua9vvjc//UzPhlGdmHCDNCmQGPL6kdjRaD4d6pWJx
+        v31+a0yE8tolcSrXwInAXmToqA==
+X-Google-Smtp-Source: AA6agR6ZDsxOt5M5z2VAtx65/CeAg58R1uLsJAkCcRmvd4+UGb8OXpw3NjMyu07m1IhYsDQj/qNpLA==
+X-Received: by 2002:a05:600c:4ecc:b0:3a3:3861:72c2 with SMTP id g12-20020a05600c4ecc00b003a3386172c2mr18362200wmq.46.1659982561527;
+        Mon, 08 Aug 2022 11:16:01 -0700 (PDT)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id c5-20020adfe705000000b0021f1522c93bsm14273227wrm.45.2022.08.08.11.15.59
+        by smtp.gmail.com with ESMTPSA id j6-20020a05600c190600b003a31b79dc0esm42252297wmq.1.2022.08.08.11.16.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Aug 2022 11:15:59 -0700 (PDT)
+        Mon, 08 Aug 2022 11:16:01 -0700 (PDT)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -60,9 +60,9 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] dt-bindings: clock: Add bindings for Exynos850 CMU_IS
-Date:   Mon,  8 Aug 2022 21:15:59 +0300
-Message-Id: <20220808181559.10438-1-semen.protsenko@linaro.org>
+Subject: [PATCH 3/7] dt-bindings: clock: Add bindings for Exynos850 CMU_MFCMSCL
+Date:   Mon,  8 Aug 2022 21:16:00 +0300
+Message-Id: <20220808181600.10491-1-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,112 +70,104 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CMU_IS generates CSIS, IPP, ITP, VRA and GDC clocks for BLK_IS. Add
-clock indices and bindings documentation for CMU_IS domain.
+CMU_MFCMSCL generates MFC, M2M, MCSC and JPEG clocks for BLK_MFCMSCL.
+Add clock indices and binding documentation for CMU_MFCMSCL.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- .../clock/samsung,exynos850-clock.yaml        | 25 ++++++++++++
- include/dt-bindings/clock/exynos850.h         | 40 ++++++++++++++++++-
- 2 files changed, 64 insertions(+), 1 deletion(-)
+ .../clock/samsung,exynos850-clock.yaml        | 25 +++++++++++++++
+ include/dt-bindings/clock/exynos850.h         | 32 ++++++++++++++++++-
+ 2 files changed, 56 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-index 523fdfaae891..c9f78ae7a9fa 100644
+index c9f78ae7a9fa..fdd9ccee49c4 100644
 --- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
 +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
-@@ -38,6 +38,7 @@ properties:
-       - samsung,exynos850-cmu-core
+@@ -39,6 +39,7 @@ properties:
        - samsung,exynos850-cmu-dpu
        - samsung,exynos850-cmu-hsi
-+      - samsung,exynos850-cmu-is
+       - samsung,exynos850-cmu-is
++      - samsung,exynos850-cmu-mfcmscl
        - samsung,exynos850-cmu-peri
  
    clocks:
-@@ -191,6 +192,30 @@ allOf:
-             - const: dout_hsi_mmc_card
-             - const: dout_hsi_usb20drd
+@@ -216,6 +217,30 @@ allOf:
+             - const: dout_is_vra
+             - const: dout_is_gdc
  
 +  - if:
 +      properties:
 +        compatible:
 +          contains:
-+            const: samsung,exynos850-cmu-is
++            const: samsung,exynos850-cmu-mfcmscl
 +
 +    then:
 +      properties:
 +        clocks:
 +          items:
 +            - description: External reference clock (26 MHz)
-+            - description: CMU_IS bus clock (from CMU_TOP)
-+            - description: Image Texture Processing core clock (from CMU_TOP)
-+            - description: Visual Recognition Accelerator clock (from CMU_TOP)
-+            - description: Geometric Distortion Correction clock (from CMU_TOP)
++            - description: Multi-Format Codec clock (from CMU_TOP)
++            - description: Memory to Memory Scaler clock (from CMU_TOP)
++            - description: Multi-Channel Scaler clock (from CMU_TOP)
++            - description: JPEG codec clock (from CMU_TOP)
 +
 +        clock-names:
 +          items:
 +            - const: oscclk
-+            - const: dout_is_bus
-+            - const: dout_is_itp
-+            - const: dout_is_vra
-+            - const: dout_is_gdc
++            - const: dout_mfcmscl_mfc
++            - const: dout_mfcmscl_m2m
++            - const: dout_mfcmscl_mcsc
++            - const: dout_mfcmscl_jpeg
 +
    - if:
        properties:
          compatible:
 diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
-index 3dc55d4e5b9e..f8bf26f118c1 100644
+index f8bf26f118c1..88d5289883d3 100644
 --- a/include/dt-bindings/clock/exynos850.h
 +++ b/include/dt-bindings/clock/exynos850.h
-@@ -61,7 +61,19 @@
- #define CLK_MOUT_AUD			49
- #define CLK_GOUT_AUD			50
- #define CLK_DOUT_AUD			51
--#define TOP_NR_CLK			52
-+#define CLK_MOUT_IS_BUS			52
-+#define CLK_MOUT_IS_ITP			53
-+#define CLK_MOUT_IS_VRA			54
-+#define CLK_MOUT_IS_GDC			55
-+#define CLK_GOUT_IS_BUS			56
-+#define CLK_GOUT_IS_ITP			57
-+#define CLK_GOUT_IS_VRA			58
-+#define CLK_GOUT_IS_GDC			59
-+#define CLK_DOUT_IS_BUS			60
-+#define CLK_DOUT_IS_ITP			61
-+#define CLK_DOUT_IS_VRA			62
-+#define CLK_DOUT_IS_GDC			63
-+#define TOP_NR_CLK			64
+@@ -73,7 +73,19 @@
+ #define CLK_DOUT_IS_ITP			61
+ #define CLK_DOUT_IS_VRA			62
+ #define CLK_DOUT_IS_GDC			63
+-#define TOP_NR_CLK			64
++#define CLK_MOUT_MFCMSCL_MFC		64
++#define CLK_MOUT_MFCMSCL_M2M		65
++#define CLK_MOUT_MFCMSCL_MCSC		66
++#define CLK_MOUT_MFCMSCL_JPEG		67
++#define CLK_GOUT_MFCMSCL_MFC		68
++#define CLK_GOUT_MFCMSCL_M2M		69
++#define CLK_GOUT_MFCMSCL_MCSC		70
++#define CLK_GOUT_MFCMSCL_JPEG		71
++#define CLK_DOUT_MFCMSCL_MFC		72
++#define CLK_DOUT_MFCMSCL_M2M		73
++#define CLK_DOUT_MFCMSCL_MCSC		74
++#define CLK_DOUT_MFCMSCL_JPEG		75
++#define TOP_NR_CLK			76
  
  /* CMU_APM */
  #define CLK_RCO_I3C_PMIC		1
-@@ -187,6 +199,32 @@
- #define CLK_GOUT_SYSREG_HSI_PCLK	13
- #define HSI_NR_CLK			14
+@@ -225,6 +237,24 @@
+ #define CLK_GOUT_IS_SYSREG_PCLK		23
+ #define IS_NR_CLK			24
  
-+/* CMU_IS */
-+#define CLK_MOUT_IS_BUS_USER		1
-+#define CLK_MOUT_IS_ITP_USER		2
-+#define CLK_MOUT_IS_VRA_USER		3
-+#define CLK_MOUT_IS_GDC_USER		4
-+#define CLK_DOUT_IS_BUSP		5
-+#define CLK_GOUT_IS_CMU_IS_PCLK		6
-+#define CLK_GOUT_IS_CSIS0_ACLK		7
-+#define CLK_GOUT_IS_CSIS1_ACLK		8
-+#define CLK_GOUT_IS_CSIS2_ACLK		9
-+#define CLK_GOUT_IS_TZPC_PCLK		10
-+#define CLK_GOUT_IS_CSIS_DMA_CLK	11
-+#define CLK_GOUT_IS_GDC_CLK		12
-+#define CLK_GOUT_IS_IPP_CLK		13
-+#define CLK_GOUT_IS_ITP_CLK		14
-+#define CLK_GOUT_IS_MCSC_CLK		15
-+#define CLK_GOUT_IS_VRA_CLK		16
-+#define CLK_GOUT_IS_PPMU_IS0_ACLK	17
-+#define CLK_GOUT_IS_PPMU_IS0_PCLK	18
-+#define CLK_GOUT_IS_PPMU_IS1_ACLK	19
-+#define CLK_GOUT_IS_PPMU_IS1_PCLK	20
-+#define CLK_GOUT_IS_SYSMMU_IS0_CLK	21
-+#define CLK_GOUT_IS_SYSMMU_IS1_CLK	22
-+#define CLK_GOUT_IS_SYSREG_PCLK		23
-+#define IS_NR_CLK			24
++/* CMU_MFCMSCL */
++#define CLK_MOUT_MFCMSCL_MFC_USER		1
++#define CLK_MOUT_MFCMSCL_M2M_USER		2
++#define CLK_MOUT_MFCMSCL_MCSC_USER		3
++#define CLK_MOUT_MFCMSCL_JPEG_USER		4
++#define CLK_DOUT_MFCMSCL_BUSP			5
++#define CLK_GOUT_MFCMSCL_CMU_MFCMSCL_PCLK	6
++#define CLK_GOUT_MFCMSCL_TZPC_PCLK		7
++#define CLK_GOUT_MFCMSCL_JPEG_ACLK		8
++#define CLK_GOUT_MFCMSCL_M2M_ACLK		9
++#define CLK_GOUT_MFCMSCL_MCSC_CLK		10
++#define CLK_GOUT_MFCMSCL_MFC_ACLK		11
++#define CLK_GOUT_MFCMSCL_PPMU_ACLK		12
++#define CLK_GOUT_MFCMSCL_PPMU_PCLK		13
++#define CLK_GOUT_MFCMSCL_SYSMMU_CLK		14
++#define CLK_GOUT_MFCMSCL_SYSREG_PCLK		15
++#define MFCMSCL_NR_CLK				16
 +
  /* CMU_PERI */
  #define CLK_MOUT_PERI_BUS_USER		1
